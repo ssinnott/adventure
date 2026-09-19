@@ -7,15 +7,16 @@ import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
 import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
 import { viewCells } from './viewport.ts';
+import { drawPortrait } from './portraits.ts';
 import { INK, PANEL, PANEL_LIGHT, BRASS, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, PARCHMENT_DIM } from './palette.ts';
 
 export const LAYOUT = {
-  view: { x: 8, y: 8, w: 400, h: 240 },
+  view: { x: 8, y: 8, w: 400, h: 268 },
   status: { x: 416, y: 8, w: 216, h: 20 },
-  map: { x: 416, y: 32, w: 216, h: 196 },
-  purse: { x: 416, y: 232, w: 216, h: 16 },
-  party: { x: 8, y: 256, w: 624, h: 96 },
-  log: { x: 8, y: 8, w: 400, h: 240 },
+  map: { x: 416, y: 32, w: 216, h: 224 },
+  purse: { x: 416, y: 260, w: 216, h: 16 },
+  party: { x: 8, y: 284, w: 624, h: 68 },
+  log: { x: 8, y: 8, w: 400, h: 268 },
 } as const;
 
 const CARD_W = 100, CARD_GAP = 4.8;
@@ -95,34 +96,27 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
   drawText(ctx, `${i + 1}`, r.x + 4, r.y + 4, { size: 1, color: TEXT_DIM });
   drawText(ctx, c.name, r.x + 14, r.y + 4, { size: 1, color: down ? RED : TEXT });
   drawText(ctx, `${CLASSES[c.cls].name.slice(0, 3)} L${c.level}`, r.x + r.w - 4, r.y + 4, { size: 1, color: TEXT_DIM, align: 'right' });
-  // Portrait block: a coloured token per class, stand-in until the rig portraits land.
-  ctx.fillStyle = CLASS_COLOR[c.cls];
-  ctx.fillRect(r.x + 4, r.y + 16, 24, 30);
-  ctx.fillStyle = INK; ctx.fillRect(r.x + 10, r.y + 22, 4, 4); ctx.fillRect(r.x + 18, r.y + 22, 4, 4);
-  if (down) { ctx.fillStyle = RED; ctx.fillRect(r.x + 8, r.y + 34, 16, 2); }
-  else { ctx.fillStyle = INK; ctx.fillRect(r.x + 10, r.y + 34, 12, 2); }
-  // HP and SP
-  drawText(ctx, 'HP', r.x + 32, r.y + 18, { size: 1, color: TEXT_DIM });
-  bar(ctx, r.x + 46, r.y + 18, 50, 7, c.hp / c.maxHp, c.hp < c.maxHp / 3 ? RED : GREEN);
-  drawText(ctx, `${Math.max(c.hp, -10)}/${c.maxHp}`, r.x + 96, r.y + 27, { size: 1, color: TEXT, align: 'right' });
+  drawPortrait(ctx, c, r.x + 4, r.y + 15);
+  // HP and SP to the right of the portrait.
+  const bx = r.x + 44, bw = r.w - 48;
+  drawText(ctx, 'HP', bx, r.y + 16, { size: 1, color: TEXT_DIM });
+  drawText(ctx, `${Math.max(c.hp, -10)}/${c.maxHp}`, bx + bw, r.y + 16, { size: 1, color: c.hp < c.maxHp / 3 ? RED : TEXT, align: 'right' });
+  bar(ctx, bx, r.y + 25, bw, 5, c.hp / c.maxHp, c.hp < c.maxHp / 3 ? RED : GREEN);
   if (c.maxSp > 0) {
-    drawText(ctx, 'SP', r.x + 32, r.y + 37, { size: 1, color: TEXT_DIM });
-    bar(ctx, r.x + 46, r.y + 37, 50, 7, c.sp / c.maxSp, BLUE);
-    drawText(ctx, `${c.sp}/${c.maxSp}`, r.x + 96, r.y + 46, { size: 1, color: TEXT, align: 'right' });
+    drawText(ctx, 'SP', bx, r.y + 34, { size: 1, color: TEXT_DIM });
+    drawText(ctx, `${c.sp}/${c.maxSp}`, bx + bw, r.y + 34, { size: 1, color: TEXT, align: 'right' });
+    bar(ctx, bx, r.y + 43, bw, 5, c.sp / c.maxSp, BLUE);
   }
   const cond = worstCondition(c);
   const ready = c.xp >= xpForLevel(c.level + 1);
-  if (cond) drawText(ctx, cond.toUpperCase(), r.x + 4, r.y + 54, { size: 1, color: COND_COLOR[cond] ?? TEXT });
-  else if (ready && (frame >> 5) & 1) drawText(ctx, 'READY TO TRAIN', r.x + 4, r.y + 54, { size: 1, color: YELLOW });
-  else drawText(ctx, i < 3 ? 'FRONT' : 'BACK', r.x + 4, r.y + 54, { size: 1, color: TEXT_DIM });
-  drawText(ctx, `AC ${armorClassOf(c)}`, r.x + r.w - 4, r.y + 54, { size: 1, color: TEXT_DIM, align: 'right' });
+  if (cond) drawText(ctx, cond.toUpperCase().slice(0, 9), bx, r.y + 52, { size: 1, color: COND_COLOR[cond] ?? TEXT });
+  else if (ready && (frame >> 5) & 1) drawText(ctx, 'CAN TRAIN', bx, r.y + 52, { size: 1, color: YELLOW });
+  else drawText(ctx, `AC ${armorClassOf(c)}`, bx, r.y + 52, { size: 1, color: TEXT_DIM });
+  // Row marker under the portrait: brass for the front row.
+  ctx.fillStyle = i < 3 ? BRASS : PANEL_LIGHT; ctx.fillRect(r.x + 4, r.y + 62, 36, 2);
 }
 
 import { armorClass as armorClassOf } from '../game/party.ts';
-
-const CLASS_COLOR: Record<string, string> = {
-  knight: '#8a8ea0', paladin: '#c9a34a', ranger: '#5a8a4a', cleric: '#e8dcc0', sorcerer: '#6a5ac6', thief: '#5a5a6a',
-};
 
 /** The last few log lines, over the bottom of the viewport. */
 export function drawLog(ctx: CanvasRenderingContext2D, lines: readonly string[], max = 4): void {

@@ -23,11 +23,27 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload.
 
+## Art
+
+Everything is drawn at runtime from vector shapes; there are no bitmaps in the repo.
+
+- `ui/brush.ts` is a minimal `ShadeTarget`, so sprites and portraits paint with the engine's own
+  cel-shading helpers (`celBall`, `celCapsule`, `celPoly`, `band`) and share the sibling games' look:
+  1px ink outline, three tones, top-left light.
+- `ui/portraits.ts` builds a front-facing portrait per character from the name, race and class
+  (head shape, ears, skin, hair, beard, class headgear), with the expression following the
+  character's state, cached to an offscreen canvas.
+- `ui/sprites.ts` holds the ten monster drawings and the trees, rocks, mountains and pillars.
+- `ui/viewport.ts` textures every surface procedurally: stone courses (front faces and receding
+  side faces), timber-framed houses with gable roofs and windows lit at night, flagstones with
+  mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
+  two bands of distant hills that turn with the party. The static scene is cached per world state
+  and monsters are drawn over it each frame with a line-of-sight check.
+
 ## Stubbed or absent
 
 - Only one Charter (Lanterns) has any presence; no Standing.
 - Town Portal does nothing; no Master trainers; no secondary skills yet beyond race innate ones.
-- Portraits are class-coloured tokens; monster sprites are simple vector shapes.
 - No audio. The engine's synth stack is vendored, unused.
 - Hirelings, promotions, the succession, the Salt Compact, the Lost Expedition: design only.
 

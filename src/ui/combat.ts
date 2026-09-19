@@ -7,6 +7,7 @@ import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse } from './frame.ts';
 import { drawMonsterSprite } from './sprites.ts';
+import { drawViewport } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../game/combat.ts';
 import type { CombatState, PartyAction } from '../game/combat.ts';
@@ -136,11 +137,9 @@ export class CombatScreen implements Screen {
   render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
     const s = this.state;
     const v = LAYOUT.view;
-    // Backdrop: the map's palette, so a cellar fight looks like a cellar.
-    const pal = g.world.map.palette;
-    ctx.fillStyle = g.world.map.kind === 'dungeon' ? pal.ceiling : '#2a3446'; ctx.fillRect(v.x, v.y, v.w, v.h);
-    ctx.fillStyle = pal.floor; ctx.fillRect(v.x, v.y + v.h * 0.6, v.w, v.h * 0.4);
-    ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(v.x, v.y + v.h * 0.6, v.w, 2);
+    // Backdrop: the place the fight happens in, as the viewport shows it, dimmed a touch.
+    drawViewport(ctx, g.world, v, () => null, frame);
+    ctx.fillStyle = 'rgba(10,8,12,0.28)'; ctx.fillRect(v.x, v.y, v.w, v.h);
     // Monsters in a row, grouped, with a marker on the targeted one.
     const alive = aliveMonsters(s);
     const t = currentTurn(s, g.party, g.rng);
@@ -148,8 +147,8 @@ export class CombatScreen implements Screen {
     const n = alive.length, slot = v.w / Math.max(5, n);
     alive.forEach((mi, k) => {
       const m = s.monsters[mi];
-      const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + v.h * 0.6 + 14 + m.group * 8;
-      const h = 26 + m.def.size * 60;
+      const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + v.h * 0.62 + 18 + m.group * 10;
+      const h = 30 + m.def.size * 70;
       if (m.flash > 0) m.flash--;
       const asleep = m.conditions.includes('asleep');
       drawMonsterSprite(ctx, m.def.sprite, x, y, h, m.def.tint, asleep ? 0.6 : 1, frame + mi * 11, m.flash > 0);

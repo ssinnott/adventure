@@ -1,7 +1,7 @@
 // Monster definitions for the slice. `sprite` names the vector drawing in ui/sprites.ts; the
 // numbers are the combat model's. A group on a map is a list of these ids (see map.ts).
 
-export type MonsterSprite = 'rat' | 'wolf' | 'bandit' | 'cultist' | 'skeleton' | 'slime' | 'riftling' | 'boar' | 'spider';
+export type MonsterSprite = 'rat' | 'wolf' | 'bandit' | 'cultist' | 'skeleton' | 'slime' | 'riftling' | 'warden' | 'boar' | 'spider';
 
 export interface MonsterDef {
   id: string;
@@ -43,7 +43,7 @@ export const MONSTERS: Record<string, MonsterDef> = Object.fromEntries([
   M({ id: 'cultist', name: 'Ashen Cultist', plural: 'Ashen Cultists', sprite: 'cultist', hp: 12, ac: 12, attack: 3, dice: 1, sides: 6, bonus: 2, speed: 10, xp: 28, gold: [5, 20], tint: '#5a4a5a', size: 0.9, drops: [{ item: 'potion_sp', chance: 0.15 }] }),
   M({ id: 'skeleton', name: 'Skeleton', plural: 'Skeletons', sprite: 'skeleton', hp: 13, ac: 13, attack: 3, dice: 1, sides: 8, bonus: 1, speed: 8, xp: 30, gold: [0, 6], mindless: true, tint: '#d8d0c0', size: 0.9 }),
   M({ id: 'riftling', name: 'Riftling', plural: 'Riftlings', sprite: 'riftling', hp: 11, ac: 14, attack: 3, dice: 2, sides: 4, bonus: 0, speed: 15, xp: 34, gold: [0, 0], tint: '#c05a3a', size: 0.7, inflict: { cond: 'paralysed', chance: 0.1 } }),
-  M({ id: 'rift_warden', name: 'Rift Warden', plural: 'Rift Wardens', sprite: 'riftling', hp: 40, ac: 15, attack: 5, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 150, gold: [20, 40], tint: '#e07a3a', size: 1.0, mindless: true, drops: [{ item: 'survey_wand', chance: 1 }] }),
+  M({ id: 'rift_warden', name: 'Rift Warden', plural: 'Rift Wardens', sprite: 'warden', hp: 40, ac: 15, attack: 5, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 150, gold: [20, 40], tint: '#e07a3a', size: 1.0, mindless: true, drops: [{ item: 'survey_wand', chance: 1 }] }),
 ]);
 
 export function monster(id: string): MonsterDef {

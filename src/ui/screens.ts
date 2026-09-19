@@ -6,6 +6,7 @@ import { is } from '../input.ts';
 import { drawText, lineHeight } from '../lib/engine/text.ts';
 import { panel, paragraph, menu } from './draw.ts';
 import { LAYOUT, drawPartyCards } from './frame.ts';
+import { drawPortraitLarge } from './portraits.ts';
 import { BRASS, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
 import type { Feature } from '../game/map.ts';
 import { item, ITEMS } from '../game/items.ts';
@@ -13,7 +14,7 @@ import { spell, spellsFor } from '../game/spells.ts';
 import { CLASSES, RACES, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest } from '../game/party.ts';
 import type { Character } from '../game/party.ts';
 
-const BOX = { x: 40, y: 40, w: 560, h: 200 };
+const BOX = { x: 40, y: 40, w: 560, h: 220 };
 
 export class MessageScreen implements Screen {
   readonly overlay = true;
@@ -100,12 +101,13 @@ export class SheetScreen implements Screen {
   }
   render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
     const c = g.party.members[this.who];
-    panel(ctx, 8, 8, 624, 240);
+    panel(ctx, 8, 8, 624, 268);
     drawText(ctx, `${c.name}  ${RACES[c.race].name} ${CLASSES[c.cls].name}  LEVEL ${c.level}`, 20, 18, { size: 1, color: BRASS });
     drawText(ctx, `XP ${c.xp} / ${xpForLevel(c.level + 1)}`, 620, 18, { size: 1, color: c.xp >= xpForLevel(c.level + 1) ? YELLOW : TEXT_DIM, align: 'right' });
+    drawPortraitLarge(ctx, c, 20, 34);
     let y = 36;
-    for (const s of STATS) { drawText(ctx, s.toUpperCase().slice(0, 3), 20, y, { size: 1, color: TEXT_DIM }); drawText(ctx, String(c.stats[s]), 60, y, { size: 1, color: TEXT, align: 'right' }); y += 10; }
-    y += 6;
+    for (const s of STATS) { drawText(ctx, s.toUpperCase().slice(0, 3), 100, y, { size: 1, color: TEXT_DIM }); drawText(ctx, String(c.stats[s]), 140, y, { size: 1, color: TEXT, align: 'right' }); y += 10; }
+    y = 134;
     drawText(ctx, `HP ${c.hp}/${c.maxHp}   SP ${c.sp}/${c.maxSp}`, 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, `AC ${armorClass(c)}   TO-HIT +${attackBonus(c)}`, 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, c.conditions.length ? c.conditions.join(', ').toUpperCase() : 'WELL', 20, y, { size: 1, color: c.conditions.length ? RED : TEXT_DIM }); y += 14;
@@ -118,7 +120,7 @@ export class SheetScreen implements Screen {
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
     if (!items.length) drawText(ctx, 'nothing carried', 340, 50, { size: 1, color: TEXT_DIM });
     else menu(ctx, items.slice(0, 16).map((it) => `${item(it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, 50, this.sel);
-    drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', 620, 236, { size: 1, color: TEXT_DIM, align: 'right' });
+    drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', 620, 264, { size: 1, color: TEXT_DIM, align: 'right' });
     drawPartyCards(ctx, g.party, this.who, frame);
   }
 }

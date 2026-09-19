@@ -20,7 +20,14 @@ await page.waitForFunction(() => (window as any).__game?.ready === true, null, {
 await page.keyboard.press('Space'); await page.waitForTimeout(80);
 if (process.env.STAY_ON_CREATE !== '1') { await page.keyboard.press('Space'); await page.waitForTimeout(100); }
 if (map) await page.evaluate(([m, xx, yy, ff]: string[]) => { const g = (window as any).__game.game; g.world.travel(m, Number(xx), Number(yy), Number(ff)); g.enterCell(); }, [map, x, y, f]);
-for (const k of keys) { await page.keyboard.press(k); await page.waitForTimeout(60); }
+// Pseudo-keys: fight:<groupId> starts a fight, time:<hour> sets the clock, walk:<n> steps forward n times.
+for (const k of keys) {
+  if (k.startsWith('fight:')) await page.evaluate((id: string) => { (window as any).__game.game.fight([id]); }, k.slice(6));
+  else if (k.startsWith('time:')) await page.evaluate((hr: number) => { const g = (window as any).__game.game; g.world.state.minutes = Math.floor(g.world.state.minutes / 1440) * 1440 + hr * 60; }, Number(k.slice(5)));
+  else if (k.startsWith('walk:')) { for (let i = 0; i < Number(k.slice(5)); i++) { await page.keyboard.press('ArrowUp'); await page.waitForTimeout(40); } }
+  else await page.keyboard.press(k);
+  await page.waitForTimeout(60);
+}
 await page.waitForTimeout(150);
 const el = await page.$('#stage');
 await el.screenshot({ path: out });
