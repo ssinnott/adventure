@@ -9,7 +9,7 @@ export const MILL: MapDef = {
   kind: 'dungeon',
   band: [1, 4],
   start: { x: 1, y: 1, facing: SOUTH },
-  palette: { wall: '#7a6a58', wallDark: '#4e4238', floor: '#3a3128', ceiling: '#2a231c' },
+  palette: { wall: '#9a7a5a', wallDark: '#6a5240', floor: '#56463a', ceiling: '#4a3424', wallStyle: 'brick', ceilingStyle: 'beams', banner: '#8a2a22' },
   rows: [
     '################',
     '#......#.......#',

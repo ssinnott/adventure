@@ -96,12 +96,18 @@ export interface MapPalette {
   floor: string;
   ceiling: string;
   door: string;
+  /** 'stone' is large rough blocks; 'brick' is small fired courses. */
+  wallStyle: 'stone' | 'brick';
+  /** 'vault' is stone overhead; 'beams' is a timbered ceiling (cellars, inns). */
+  ceilingStyle: 'vault' | 'beams';
+  /** Colour of hung banners on this map. */
+  banner: string;
 }
 
 export const DEFAULT_PALETTES: Record<MapKind, MapPalette> = {
-  town:    { wall: '#b39a76', wallDark: '#7c6a51', floor: '#8a7a5a', ceiling: '#000000', door: '#5b3a22' },
-  dungeon: { wall: '#6d6a72', wallDark: '#46434b', floor: '#3c3a40', ceiling: '#2a282e', door: '#5b3a22' },
-  outdoor: { wall: '#7c7466', wallDark: '#544e44', floor: '#4f7a3a', ceiling: '#000000', door: '#5b3a22' },
+  town:    { wall: '#e0cfa8', wallDark: '#a8906a', floor: '#a89068', ceiling: '#000000', door: '#6b4426', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#a83a2a' },
+  dungeon: { wall: '#8a8492', wallDark: '#5c5866', floor: '#4a4650', ceiling: '#3a3640', door: '#6b4426', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3a5aa0' },
+  outdoor: { wall: '#9a9080', wallDark: '#6a6254', floor: '#4c9a3a', ceiling: '#000000', door: '#6b4426', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#a83a2a' },
 };
 
 const cell = (terrain: Terrain, solid: Solid = 'none', door: Door = 'none'): Cell => ({ terrain, solid, door, ch: '' });

@@ -16,6 +16,10 @@ export const YELLOW = '#e0c04a';
 export const PURPLE = '#8a5ac6';
 
 export const TERRAIN_COLORS: Record<string, string> = {
-  floor: '#3c3a40', grass: '#4f7a3a', dirt: '#6f5a3e', road: '#8a7a5a', sand: '#c9b47a',
-  water: '#3a6a9a', deep: '#22456e', swamp: '#4a5e3a', lava: '#c04a1a', stone: '#6a6a6a', snow: '#dde4ea',
+  floor: '#4a4650', grass: '#4c9a3a', dirt: '#8a6a42', road: '#a89068', sand: '#e0c888',
+  water: '#3a7ac0', deep: '#24508e', swamp: '#5a7a3a', lava: '#d85a1a', stone: '#7a7a7a', snow: '#eef2f6',
 };
+/** The wood the frame is carved from, and its brass fittings. */
+export const WOOD = '#4a2e1c';
+export const WOOD_LIGHT = '#6a4430';
+export const WOOD_DARK = '#2e1a10';

@@ -8,7 +8,9 @@ import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
 import { viewCells } from './viewport.ts';
 import { drawPortrait } from './portraits.ts';
-import { INK, PANEL, PANEL_LIGHT, BRASS, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, PARCHMENT_DIM } from './palette.ts';
+import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, PARCHMENT_DIM, WOOD, WOOD_DARK } from './palette.ts';
+import { shade, rgba } from '../lib/art/palettes.ts';
+import { hash } from './brush.ts';
 
 export const LAYOUT = {
   view: { x: 8, y: 8, w: 400, h: 268 },
@@ -139,8 +141,42 @@ export function drawPurse(ctx: CanvasRenderingContext2D, party: Party): void {
   drawText(ctx, `${party.food} FOOD`, r.x + r.w - 6, r.y + 4, { size: 1, color: party.food > 0 ? TEXT : RED, align: 'right' });
 }
 
+let frameCache: HTMLCanvasElement | null = null;
+
+/** The carved wooden frame everything sits in, painted once: planks with grain, a brass border. */
 export function drawFrameBackground(ctx: CanvasRenderingContext2D): void {
-  ctx.fillStyle = INK; ctx.fillRect(0, 0, 640, 360);
-  ctx.fillStyle = PANEL_LIGHT; ctx.fillRect(0, 0, 640, 360);
-  ctx.fillStyle = PANEL; ctx.fillRect(2, 2, 636, 356);
+  if (!frameCache) {
+    const cv = document.createElement('canvas'); cv.width = 640; cv.height = 360;
+    const g = cv.getContext('2d')!;
+    g.fillStyle = WOOD; g.fillRect(0, 0, 640, 360);
+    // Planks.
+    for (let y = 0; y < 360; y += 14) {
+      const tone = 1 + (hash(y, 1) - 0.5) * 0.2;
+      g.fillStyle = shade(WOOD, tone); g.fillRect(0, y, 640, 13);
+      g.fillStyle = WOOD_DARK; g.fillRect(0, y + 13, 640, 1);
+      g.strokeStyle = rgba(WOOD_DARK, 0.5); g.lineWidth = 1;
+      for (let i = 0; i < 6; i++) {
+        const gx = hash(y, i, 2) * 640, gl = 30 + hash(y, i, 3) * 90, gy = y + 2 + hash(y, i, 4) * 9;
+        g.beginPath(); g.moveTo(gx, gy); g.quadraticCurveTo(gx + gl / 2, gy + (hash(y, i, 5) - 0.5) * 3, gx + gl, gy); g.stroke();
+      }
+      if (hash(y, 7) > 0.7) { g.fillStyle = shade(WOOD, 0.7); g.beginPath(); g.ellipse(hash(y, 8) * 640, y + 6, 3, 2, 0, 0, Math.PI * 2); g.fill(); }
+    }
+    // Outer brass border with corner plates.
+    g.strokeStyle = BRASS_DARK; g.lineWidth = 2; g.strokeRect(1, 1, 638, 358);
+    g.strokeStyle = BRASS; g.lineWidth = 1; g.strokeRect(3.5, 3.5, 633, 353);
+    g.fillStyle = BRASS;
+    for (const [x, y] of [[0, 0], [630, 0], [0, 350], [630, 350]]) { g.fillRect(x, y, 10, 10); g.fillStyle = INK; g.fillRect(x + 4, y + 4, 2, 2); g.fillStyle = BRASS; }
+    frameCache = cv;
+  }
+  ctx.drawImage(frameCache, 0, 0);
+}
+
+/** A brass surround for the viewport, drawn after it. */
+export function drawViewportFrame(ctx: CanvasRenderingContext2D): void {
+  const v = LAYOUT.view;
+  ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.strokeRect(v.x - 0.5, v.y - 0.5, v.w + 1, v.h + 1);
+  ctx.strokeStyle = BRASS; ctx.strokeRect(v.x - 1.5, v.y - 1.5, v.w + 3, v.h + 3);
+  ctx.strokeStyle = BRASS_DARK; ctx.strokeRect(v.x - 2.5, v.y - 2.5, v.w + 5, v.h + 5);
+  ctx.fillStyle = BRASS;
+  for (const [x, y] of [[v.x - 4, v.y - 4], [v.x + v.w - 2, v.y - 4], [v.x - 4, v.y + v.h - 2], [v.x + v.w - 2, v.y + v.h - 2]]) { ctx.fillRect(x, y, 6, 6); ctx.fillStyle = INK; ctx.fillRect(x + 2, y + 2, 2, 2); ctx.fillStyle = BRASS; }
 }

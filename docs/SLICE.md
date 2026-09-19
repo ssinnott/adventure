@@ -39,6 +39,13 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
   two bands of distant hills that turn with the party. The static scene is cached per world state
   and monsters are drawn over it each frame with a line-of-sight check.
+- The Xeen pass: saturated palette with no distance fog outdoors; per-cell wall dressing chosen by
+  hash (torch sconces with flames animated over the cached scene, banners in the map's colour,
+  cobwebs, cracks, damp streaks, iron rings, barred grates, carved glyph panels; on houses a shop
+  sign with a glyph for the service, a lantern lit after dark, flower boxes, ivy); map palettes
+  choose `wallStyle` (stone or brick) and `ceilingStyle` (vault or timber beams); cobbled roads,
+  flowers in the grass, cracks and puddles on flagstones; a carved plank frame with brass fittings
+  and rivets; a painted title looking west over the sea at the Hearth.
 
 ## Stubbed or absent
 

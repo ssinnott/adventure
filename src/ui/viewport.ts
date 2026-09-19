@@ -12,7 +12,7 @@
 // is cached in an offscreen canvas keyed by the world state; monsters and the light flicker are
 // drawn over it every frame.
 import type { World } from '../game/world.ts';
-import type { GameMap, Cell, Terrain } from '../game/map.ts';
+import type { GameMap, Cell, Terrain, MapPalette } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
@@ -41,16 +41,21 @@ function cellAt(px: number, py: number, f: Facing, d: number, l: number): { x: n
 
 /** Distance fog: nearer is truer. `haze` is the colour far things fade toward. */
 function fog(color: string, d: number, dark: boolean, haze: string | null = null): string {
-  const f = dark ? Math.max(0.12, 1 - d * 0.3) : Math.max(0.5, 1 - d * 0.12);
+  // Outdoors (haze given) keeps its colour with distance, as Xeen does; dungeons fall off into dark.
+  const f = dark ? Math.max(0.12, 1 - d * 0.3) : haze ? Math.max(0.7, 1 - d * 0.07) : Math.max(0.5, 1 - d * 0.12);
   const c = shade(color, f);
-  return haze && !dark ? mix(c, haze, Math.min(0.5, d * 0.09)) : c;
+  return haze && !dark ? mix(c, haze, Math.min(0.3, d * 0.06)) : c;
 }
 
+interface Flame { x: number; y: number; s: number; }
 interface Scene {
   key: string;
   canvas: HTMLCanvasElement;
+  flames: Flame[];
 }
 let scene: Scene | null = null;
+/** Filled while a scene is painted: where the torches and lanterns are, for the per-frame flames. */
+let flames: Flame[] = [];
 
 function isSolidWall(c: Cell): boolean { return c.solid === 'wall' || c.solid === 'building' || c.door !== 'none'; }
 
@@ -62,8 +67,9 @@ export function drawViewport(
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas');
     canvas.width = r.w; canvas.height = r.h;
+    flames = [];
     paintScene(canvas.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
-    scene = { key, canvas };
+    scene = { key, canvas, flames };
   }
   ctx.drawImage(scene.canvas, r.x, r.y);
 
@@ -90,11 +96,13 @@ export function drawViewport(
   }
   // Torch flicker in the dark: a vignette whose reach breathes a little.
   if (dark || (map.kind === 'dungeon' && world.state.light === 0)) {
-    const flick = 0.7 + 0.05 * Math.sin(frame / 5) + 0.03 * Math.sin(frame / 13);
-    const g = ctx.createRadialGradient(cx, horizon, r.h * 0.2, cx, horizon, r.h * flick);
-    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.8)');
+    const flick = 0.75 + 0.05 * Math.sin(frame / 5) + 0.03 * Math.sin(frame / 13);
+    const g = ctx.createRadialGradient(cx, horizon, r.h * 0.22, cx, horizon, r.h * flick);
+    g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.75)');
     ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h);
   }
+  // Flames on the sconces and lanterns, animated over the cached scene.
+  for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
   ctx.restore();
 }
 
@@ -133,7 +141,7 @@ function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect): v
     ctx.fillStyle = shade(map.palette.ceiling, 0.7); ctx.fillRect(r.x, r.y, r.w, r.h / 2);
     ctx.fillStyle = shade(map.palette.floor, 0.5); ctx.fillRect(r.x, horizon, r.w, r.h / 2);
   } else {
-    drawSky(ctx, world, r, cx, horizon, daylight, dark);
+    drawSkyBand(ctx, r, { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark });
     const farCell = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1));
     const ground = shade(TERRAIN_COLORS[farCell.terrain] ?? map.palette.floor, dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
@@ -157,13 +165,13 @@ function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect): v
 
       if (!isSolidWall(cell) && d > 0) {
         drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, map.palette.floor);
-        if (map.kind === 'dungeon') drawCeiling(ctx, map.palette.ceiling, cx, horizon, r.h, d, l, seed);
+        if (map.kind === 'dungeon') drawCeiling(ctx, map.palette, cx, horizon, r.h, d, l, seed, f);
       }
 
       if (isSolidWall(cell)) {
         const before = d > 0 ? map.at(...toPair(cellAt(px, py, f, d - 1, l))) : null;
         if (d > 0 && before && !isSolidWall(before)) {
-          drawFrontFace(ctx, map, cell, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, daylight);
+          drawFrontFace(ctx, map, cell, c.x, c.y, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, daylight);
         }
         if (l !== 0) {
           const inward = map.at(...toPair(cellAt(px, py, f, d, l - Math.sign(l))));
@@ -190,9 +198,13 @@ function toPair(p: { x: number; y: number }): [number, number] { return [p.x, p.
 
 // ------------------------------------------------------------------ sky ----
 
-function drawSky(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, cx: number, horizon: number, daylight: number, dark: boolean): void {
-  const f = world.state.facing;
-  const top = mix('#07091a', '#3f78be', daylight), bottom = mix('#1a1428', '#c9d6e6', daylight);
+export interface SkyOpts { facing: number; hour: number; daylight: number; dark: boolean; }
+
+/** The sky, sun or moon, clouds, stars and distant hills for the top half of `r`. Also used by the title. */
+export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOpts): void {
+  const { facing: f, hour, daylight, dark } = o;
+  const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
+  const top = mix('#07091a', '#2f7ad8', daylight), bottom = mix('#1a1428', '#bcd8f0', daylight);
   const dusk = daylight > 0.05 && daylight < 0.6 ? 1 - Math.abs(daylight - 0.3) / 0.3 : 0;
   const g = ctx.createLinearGradient(0, r.y, 0, horizon);
   g.addColorStop(0, top); g.addColorStop(0.7, mix(bottom, '#e8905a', dusk * 0.35)); g.addColorStop(1, mix(bottom, '#f0b070', dusk * 0.6));
@@ -209,7 +221,6 @@ function drawSky(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, cx: n
     }
   }
   // Sun by day, moon by night: east at dawn, overhead at noon, west at dusk.
-  const hour = (world.state.minutes % 1440) / 60;
   const drawOrb = (t: number, color: string, glow: string, rad: number) => {
     // t: 0 rising in the east .. 1 setting in the west. Compass bearing from east (90) to west (270).
     const bearing = 90 + t * 180;
@@ -228,7 +239,7 @@ function drawSky(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, cx: n
     const cxp = ((hash(i, 11) * 4 * r.w - f * r.w) % (4 * r.w) + 4 * r.w) % (4 * r.w);
     if (cxp < -80 || cxp > r.w + 80) continue;
     const cy = r.y + 18 + hash(i, 12) * (r.h / 2 - 70), w = 40 + hash(i, 13) * 60, h = 8 + hash(i, 14) * 8;
-    const cloud = mix('#2a2a44', '#ffffff', daylight), under = mix('#20203a', '#b8c4d8', daylight);
+    const cloud = mix('#2a2a44', '#ffffff', daylight), under = mix('#20203a', '#a8bcd8', daylight);
     for (let j = 0; j < 4; j++) {
       const bx = r.x + cxp + (j - 1.5) * w * 0.22, by = cy + (j % 2) * h * 0.3, br = h * (0.7 + hash(i, j) * 0.6);
       ctx.beginPath(); ctx.arc(bx, by + br * 0.3, br, 0, Math.PI * 2); ctx.fillStyle = rgba(under, 0.85); ctx.fill();
@@ -236,7 +247,7 @@ function drawSky(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, cx: n
     }
   }
   // Distant hills: two silhouette bands with a profile fixed to the compass.
-  for (const [layer, col, amp, base] of [[0, mix('#101426', '#6f86a8', daylight), 26, 30], [1, mix('#0c101e', '#4f6a52', daylight), 16, 14]] as [number, string, number, number][]) {
+  for (const [layer, col, amp, base] of [[0, mix('#101426', '#6a8ab8', daylight), 26, 30], [1, mix('#0c101e', '#3f8a4a', daylight), 16, 14]] as [number, string, number, number][]) {
     ctx.beginPath(); ctx.moveTo(r.x, horizon + 1);
     for (let x = 0; x <= r.w; x += 8) {
       const wx = (x + f * r.w * 1.0 + layer * 137) / (4 * r.w);
@@ -276,16 +287,48 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
   }
   // Decorations: a few per cell, placed by hash, scaled by depth.
   const u = unit(d, h);
-  const deco = terrain === 'grass' ? 5 : terrain === 'road' || terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : 0;
+  // Cobbled roads: rounded stones packed in a jittered grid, each with a lit top edge.
+  if (terrain === 'road' && d <= 3) {
+    const cols = d <= 1 ? 6 : 4, rows = d <= 1 ? 5 : 3;
+    for (let i = 0; i < rows; i++) for (let j = 0; j < cols; j++) {
+      const s = (i + 0.5 + (hash(seed, 31, i, j) - 0.5) * 0.4) / rows, t = (j + 0.5 + (hash(seed, 32, i, j) - 0.5) * 0.4) / cols;
+      const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
+      const sc = unit(d - 0.5 + s, h) / u;
+      const rx = (u / cols) * 0.8 * sc * 0.9, ry = rx * 0.45;
+      const col = fog(shade(base, 0.85 + hash(seed, 33, i, j) * 0.35), d, dark, haze);
+      ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill();
+      if (rx > 3) { ctx.beginPath(); ctx.ellipse(x, y - ry * 0.35, rx * 0.7, ry * 0.4, 0, 0, Math.PI * 2); ctx.fillStyle = fog(shade(base, 1.2), d, dark, haze); ctx.fill(); }
+      ctx.strokeStyle = fog(shade(base, 0.55), d, dark, haze); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+    }
+  }
+  const deco = terrain === 'grass' ? 7 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
     const sc = unit(d - 0.5 + s, h) / u;
     if (terrain === 'grass') {
-      const tuft = fog(shade(base, 1.25), d, dark, haze);
-      ctx.strokeStyle = tuft; ctx.lineWidth = 1;
+      if (i >= 5) {
+        // A flower or two.
+        if (hash(seed, 41, i) > 0.45) continue;
+        ctx.fillStyle = fog(['#f0e060', '#ffffff', '#e05a6a', '#c080e0'][Math.floor(hash(seed, 42, i) * 4)], d, dark, haze);
+        ctx.fillRect(Math.round(x), Math.round(y - 2 * sc), Math.max(1, Math.round(2 * sc)), Math.max(1, Math.round(2 * sc)));
+        continue;
+      }
+      const tuft = fog(shade(base, 1.3), d, dark, haze);
+      ctx.strokeStyle = tuft; ctx.lineWidth = Math.max(1, sc);
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 1.5 * sc, y - 4 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1 * sc, y - 4.5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 2.5 * sc, y - 3 * sc); ctx.stroke();
-    } else if (terrain === 'road' || terrain === 'dirt') {
+    } else if (flag) {
+      if (hash(seed, 51, i) > 0.5) continue;
+      if (i === 0) {
+        // A crack.
+        ctx.strokeStyle = fog(shade(base, 0.5), d, dark, haze); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 3 * sc, y - 2 * sc); ctx.lineTo(x + 5 * sc, y - 5 * sc); ctx.lineTo(x + 9 * sc, y - 6 * sc); ctx.stroke();
+      } else {
+        // A puddle catching the light.
+        ctx.beginPath(); ctx.ellipse(x, y, 5 * sc, 1.6 * sc, 0, 0, Math.PI * 2); ctx.fillStyle = fog(shade(base, 0.6), d, dark, haze); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(x - sc, y - 0.4 * sc, 2 * sc, 0.5 * sc, 0, 0, Math.PI * 2); ctx.fillStyle = fog('#a0a8c0', d, dark, haze); ctx.fill();
+      }
+    } else if (terrain === 'dirt') {
       ctx.fillStyle = fog(shade(base, 0.7 + hash(seed, i) * 0.6), d, dark, haze);
       ctx.beginPath(); ctx.ellipse(x, y, 1.5 * sc + 0.5, 1 * sc + 0.4, 0, 0, Math.PI * 2); ctx.fill();
     } else if (terrain === 'sand') {
@@ -307,13 +350,30 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
   }
 }
 
-function drawCeiling(ctx: CanvasRenderingContext2D, ceiling: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number): void {
+function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number, horizon: number, h: number, d: number, l: number, seed: number, facing: number): void {
+  const ceiling = pal.ceiling;
+  const P = (s: number, t: number): [number, number] => { const u = unit(d - 0.5 + s, h); return [cx + (l - 0.5 + t) * 2 * u, horizon - u]; };
+  if (pal.ceilingStyle === 'beams') {
+    // Planks running away from the eye, with a heavy beam across every cell.
+    const plank = fog(shade(ceiling, 1.1), d, false), gapCol = fog(shade(ceiling, 0.55), d, false), beam = fog(shade(ceiling, 0.7), d, false);
+    quad(ctx, P(0, 0), P(0, 1), P(1, 1), P(1, 0), gapCol);
+    const planks = 4;
+    for (let j = 0; j < planks; j++) {
+      const g = 0.04 / planks;
+      quad(ctx, P(0, j / planks + g), P(0, (j + 1) / planks - g), P(1, (j + 1) / planks - g), P(1, j / planks + g), shade(plank, 1 + (hash(seed, 61, j) - 0.5) * 0.12));
+    }
+    // The beam is at a fixed world position, so it reads the same from every facing.
+    const along = (facing % 2 === 0) ? 0.5 : 0.5;
+    quad(ctx, P(along - 0.08, -0.02), P(along - 0.08, 1.02), P(along + 0.08, 1.02), P(along + 0.08, -0.02), beam);
+    const [ax, ay] = P(along - 0.08, 0), [bx] = P(along - 0.08, 1);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(Math.round(ax), Math.round(ay), Math.round(bx - ax), 1);
+    return;
+  }
   const n = d <= 2 ? 3 : 2;
   const mortar = fog(shade(ceiling, 0.5), d, false);
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
     const v = hash(seed, 21, i, j) - 0.5;
     const col = fog(shade(ceiling, 1 + v * 0.18), d, false);
-    const P = (s: number, t: number): [number, number] => { const u = unit(d - 0.5 + s, h); return [cx + (l - 0.5 + t) * 2 * u, horizon - u]; };
     quad(ctx, P(i / n, j / n), P(i / n, (j + 1) / n), P((i + 1) / n, (j + 1) / n), P((i + 1) / n, j / n), mortar);
     const k = 0.05 / n;
     quad(ctx, P(i / n + k, j / n + k), P(i / n + k, (j + 1) / n - k), P((i + 1) / n - k, (j + 1) / n - k), P((i + 1) / n - k, j / n + k), col);
@@ -322,23 +382,153 @@ function drawCeiling(ctx: CanvasRenderingContext2D, ceiling: string, cx: number,
 
 // ------------------------------------------------------------------ walls ----
 
-function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, x0: number, x1: number, horizon: number, u: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number): void {
-  const top = horizon - u, bottom = horizon + u, w = x1 - x0, hgt = 2 * u;
+function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, x0: number, x1: number, horizon: number, u: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number): void {
+  const top = horizon - u, bottom = horizon + u;
   const isDoor = cell.door === 'door' || cell.door === 'locked';
-  if (map.kind === 'town' && (cell.solid === 'building' || isDoor)) {
-    drawHouseFront(ctx, x0, x1, top, bottom, d, seed, dark, haze, daylight);
-  } else {
-    drawStoneFront(ctx, map.palette.wall, map.palette.wallDark, x0, x1, top, bottom, d, seed, dark, haze, map.kind === 'outdoor');
-  }
+  const house = map.kind === 'town' && (cell.solid === 'building' || isDoor);
+  if (house) drawHouseFront(ctx, x0, x1, top, bottom, d, seed, dark, haze, daylight);
+  else drawStoneFront(ctx, map.palette, x0, x1, top, bottom, d, seed, dark, haze, map.kind === 'outdoor');
   if (isDoor) drawDoor(ctx, x0, x1, horizon, u, map.palette.door, d, dark, cell.door === 'locked', map.kind === 'town');
-  void w; void hgt;
+  drawWallDecor(ctx, map, cell, mx, my, x0, x1, top, bottom, d, seed, dark, haze, daylight, house, isDoor);
+}
+
+/** What hangs on, grows on, or is scratched into a wall: chosen per cell by hash, so it is stable. */
+function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number, house: boolean, isDoor: boolean): void {
+  const w = x1 - x0, h = bottom - top;
+  if (w < 14) return;
+  const roll = hash(seed, 77);
+  const feature = map.featuresAt(mx, my)[0];
+  const cx = (x0 + x1) / 2;
+  if (house) {
+    // A shop sign for service doors, a lantern by every door, flower boxes and ivy elsewhere.
+    if (isDoor && feature) {
+      const sw = w * 0.34, sh = h * 0.14, sx = x1 - sw - w * 0.06, sy = top + h * 0.1;
+      ctx.strokeStyle = fog('#3a2a20', d, dark, haze); ctx.lineWidth = Math.max(1, w * 0.02);
+      ctx.beginPath(); ctx.moveTo(sx + sw, sy - h * 0.06); ctx.lineTo(sx + sw, sy + sh); ctx.moveTo(sx, sy); ctx.lineTo(sx + sw, sy - h * 0.06); ctx.stroke();
+      ctx.fillStyle = fog('#c9a34a', d, dark, haze); ctx.fillRect(Math.round(sx), Math.round(sy), Math.round(sw), Math.round(sh));
+      ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 1; ctx.strokeRect(Math.round(sx) + 0.5, Math.round(sy) + 0.5, Math.round(sw), Math.round(sh));
+      drawSignGlyph(ctx, feature.kind, sx + sw / 2, sy + sh / 2, Math.min(sw, sh) * 0.7, fog('#3a2a20', d, dark, haze));
+    }
+    if (isDoor) {
+      const lx = x0 + w * 0.16, ly = top + h * 0.42;
+      ctx.fillStyle = fog('#3a3a40', d, dark, haze); ctx.fillRect(Math.round(lx - w * 0.03), Math.round(ly), Math.max(2, Math.round(w * 0.06)), Math.max(3, Math.round(h * 0.1)));
+      if (daylight < 0.5) flames.push({ x: lx, y: ly + h * 0.06, s: Math.max(2, w * 0.05) });
+    } else if (roll < 0.35) {
+      // Flower box under the window.
+      const bw = w * 0.3, bx = cx - bw / 2 + (hash(seed, 3) - 0.5) * w * 0.3, by = top + h * 0.43;
+      ctx.fillStyle = fog('#5a3a24', d, dark, haze); ctx.fillRect(Math.round(bx), Math.round(by), Math.round(bw), Math.max(2, Math.round(h * 0.05)));
+      for (let i = 0; i < 5; i++) { ctx.fillStyle = fog(['#e05a6a', '#f0e060', '#ffffff', '#c080e0'][i % 4], d, dark, haze); ctx.fillRect(Math.round(bx + bw * (i + 0.5) / 5) - 1, Math.round(by) - 2, 2, 2); }
+    } else if (roll < 0.55) {
+      // Ivy climbing a corner.
+      const side = hash(seed, 4) > 0.5 ? x0 + w * 0.08 : x1 - w * 0.08;
+      ctx.fillStyle = fog('#3f8a3a', d, dark, haze);
+      for (let i = 0; i < 12; i++) { const iy = bottom - i * h * 0.075, ix = side + Math.sin(i * 1.7 + seed) * w * 0.05; ctx.beginPath(); ctx.arc(ix, iy, Math.max(1, w * 0.025), 0, Math.PI * 2); ctx.fill(); }
+    }
+    return;
+  }
+  // Stone walls: sconces, banners, cobwebs, cracks, drips, rings, grates, carvings.
+  if (roll < 0.22) {
+    // Torch sconce: iron bracket, then a flame drawn per frame.
+    const sx = cx + (hash(seed, 5) - 0.5) * w * 0.4, sy = top + h * 0.38;
+    ctx.fillStyle = fog('#2a2a30', d, dark, null);
+    ctx.fillRect(Math.round(sx - w * 0.025), Math.round(sy), Math.max(2, Math.round(w * 0.05)), Math.max(3, Math.round(h * 0.14)));
+    ctx.fillRect(Math.round(sx - w * 0.05), Math.round(sy + h * 0.1), Math.max(3, Math.round(w * 0.1)), Math.max(1, Math.round(h * 0.03)));
+    // Torch head.
+    ctx.fillStyle = fog('#6a4a2a', d, dark, null); ctx.fillRect(Math.round(sx - w * 0.02), Math.round(sy - h * 0.06), Math.max(2, Math.round(w * 0.04)), Math.max(2, Math.round(h * 0.08)));
+    flames.push({ x: sx, y: sy - h * 0.06, s: Math.max(3, w * 0.07) });
+  } else if (roll < 0.32) {
+    // A banner hung from a rod.
+    const bw = w * 0.28, bx = cx - bw / 2 + (hash(seed, 6) - 0.5) * w * 0.3, by = top + h * 0.12, bh = h * 0.5;
+    const col = fog(map.palette.banner, d, dark, haze);
+    ctx.fillStyle = fog('#3a3a40', d, dark, haze); ctx.fillRect(Math.round(bx - w * 0.03), Math.round(by), Math.round(bw + w * 0.06), Math.max(1, Math.round(h * 0.02)));
+    ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx + bw, by); ctx.lineTo(bx + bw, by + bh * 0.8); ctx.lineTo(bx + bw / 2, by + bh); ctx.lineTo(bx, by + bh * 0.8); ctx.closePath();
+    ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = fog(shade(map.palette.banner, 0.6), d, dark, haze); ctx.fillRect(Math.round(bx + bw * 0.15), Math.round(by + bh * 0.2), Math.max(1, Math.round(bw * 0.7)), Math.max(1, Math.round(h * 0.02)));
+    // The Lantern emblem: a ring.
+    if (bw > 10) { ctx.strokeStyle = fog('#e8d090', d, dark, haze); ctx.lineWidth = Math.max(1, bw * 0.08); ctx.beginPath(); ctx.arc(bx + bw / 2, by + bh * 0.5, bw * 0.2, 0, Math.PI * 2); ctx.stroke(); }
+  } else if (roll < 0.40) {
+    // Cobweb in a top corner.
+    const left = hash(seed, 8) > 0.5, ox = left ? x0 : x1, s = left ? 1 : -1, r = Math.min(w, h) * 0.28;
+    ctx.strokeStyle = fog('#d8d8e0', d, dark, haze); ctx.lineWidth = 1; ctx.globalAlpha = 0.55;
+    for (let i = 0; i <= 4; i++) { const a = (i / 4) * Math.PI / 2; ctx.beginPath(); ctx.moveTo(ox, top); ctx.lineTo(ox + s * Math.cos(a) * r, top + Math.sin(a) * r); ctx.stroke(); }
+    for (let k = 1; k <= 3; k++) { ctx.beginPath(); ctx.arc(ox, top, r * k / 3, left ? 0 : Math.PI / 2, left ? Math.PI / 2 : Math.PI); ctx.stroke(); }
+    ctx.globalAlpha = 1;
+  } else if (roll < 0.52) {
+    // A crack running down.
+    const sx = x0 + w * (0.2 + hash(seed, 9) * 0.6);
+    ctx.strokeStyle = fog(shade(map.palette.wallDark, 0.5), d, dark, haze); ctx.lineWidth = Math.max(1, w * 0.012);
+    ctx.beginPath(); ctx.moveTo(sx, top + h * 0.1);
+    for (let i = 1; i <= 5; i++) ctx.lineTo(sx + (hash(seed, 10, i) - 0.5) * w * 0.14, top + h * (0.1 + i * 0.13));
+    ctx.stroke();
+  } else if (roll < 0.62) {
+    // Damp streak with moss at the foot.
+    const sx = x0 + w * (0.25 + hash(seed, 11) * 0.5), sw = w * 0.08;
+    ctx.fillStyle = rgba('#000000', 0.22); ctx.fillRect(Math.round(sx), Math.round(top), Math.round(sw), Math.round(h * 0.8));
+    ctx.fillStyle = fog('#4f8a3a', d, dark, haze); ctx.beginPath(); ctx.ellipse(sx + sw / 2, bottom - h * 0.06, sw * 1.4, h * 0.05, 0, 0, Math.PI * 2); ctx.fill();
+  } else if (roll < 0.70) {
+    // Iron ring on a plate.
+    const rx = cx + (hash(seed, 12) - 0.5) * w * 0.5, ry = top + h * 0.5, r = Math.max(2, w * 0.05);
+    ctx.fillStyle = fog('#3a3a40', d, dark, haze); ctx.fillRect(Math.round(rx - r * 0.8), Math.round(ry - r * 1.2), Math.round(r * 1.6), Math.round(r * 0.8));
+    ctx.strokeStyle = fog('#6a6a74', d, dark, haze); ctx.lineWidth = Math.max(1, r * 0.3); ctx.beginPath(); ctx.arc(rx, ry, r, 0, Math.PI * 2); ctx.stroke();
+  } else if (roll < 0.78) {
+    // A barred grate into the dark.
+    const gw = w * 0.26, gh = h * 0.2, gx = cx - gw / 2 + (hash(seed, 13) - 0.5) * w * 0.3, gy = top + h * 0.25;
+    ctx.fillStyle = '#0c0a10'; ctx.fillRect(Math.round(gx), Math.round(gy), Math.round(gw), Math.round(gh));
+    ctx.fillStyle = fog('#5a5a64', d, dark, haze);
+    for (let i = 1; i < 4; i++) ctx.fillRect(Math.round(gx + gw * i / 4), Math.round(gy), Math.max(1, Math.round(w * 0.012)), Math.round(gh));
+    ctx.strokeStyle = fog('#3a3a40', d, dark, haze); ctx.lineWidth = 1; ctx.strokeRect(Math.round(gx) + 0.5, Math.round(gy) + 0.5, Math.round(gw), Math.round(gh));
+  } else if (roll < 0.86 && cell.door === 'none') {
+    // A carved panel of old glyphs.
+    const pw = w * 0.36, ph = h * 0.26, px = cx - pw / 2, py = top + h * 0.3;
+    ctx.fillStyle = fog(shade(map.palette.wall, 0.85), d, dark, haze); ctx.fillRect(Math.round(px), Math.round(py), Math.round(pw), Math.round(ph));
+    ctx.strokeStyle = fog(shade(map.palette.wallDark, 0.6), d, dark, haze); ctx.lineWidth = 1; ctx.strokeRect(Math.round(px) + 0.5, Math.round(py) + 0.5, Math.round(pw), Math.round(ph));
+    if (pw > 16) for (let i = 0; i < 6; i++) {
+      const gx = px + pw * (0.12 + (i % 3) * 0.3), gy = py + ph * (0.15 + Math.floor(i / 3) * 0.45), gs = pw * 0.12;
+      ctx.beginPath(); ctx.moveTo(gx, gy + gs); ctx.lineTo(gx + gs * 0.5, gy); ctx.lineTo(gx + gs, gy + gs); if (hash(seed, 14, i) > 0.5) ctx.moveTo(gx, gy + gs * 0.5), ctx.lineTo(gx + gs, gy + gs * 0.5); ctx.stroke();
+    }
+  }
+}
+
+function drawSignGlyph(ctx: CanvasRenderingContext2D, kind: string, x: number, y: number, s: number, ink: string): void {
+  ctx.fillStyle = ink; ctx.strokeStyle = ink; ctx.lineWidth = Math.max(1, s * 0.12); ctx.lineCap = 'round';
+  switch (kind) {
+    case 'inn': // a tankard
+      ctx.fillRect(Math.round(x - s * 0.3), Math.round(y - s * 0.35), Math.round(s * 0.5), Math.round(s * 0.7));
+      ctx.beginPath(); ctx.arc(x + s * 0.3, y, s * 0.2, -Math.PI / 2, Math.PI / 2); ctx.stroke(); break;
+    case 'shop': // a scale
+      ctx.beginPath(); ctx.moveTo(x, y - s * 0.4); ctx.lineTo(x, y + s * 0.4); ctx.moveTo(x - s * 0.4, y - s * 0.2); ctx.lineTo(x + s * 0.4, y - s * 0.2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x - s * 0.4, y + s * 0.05, s * 0.15, 0, Math.PI); ctx.arc(x + s * 0.4, y + s * 0.05, s * 0.15, 0, Math.PI); ctx.stroke(); break;
+    case 'temple': // a lantern ring
+      ctx.beginPath(); ctx.arc(x, y, s * 0.3, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.arc(x, y, s * 0.1, 0, Math.PI * 2); ctx.fill(); break;
+    case 'guild': // an open book
+      ctx.beginPath(); ctx.moveTo(x - s * 0.4, y - s * 0.25); ctx.lineTo(x, y - s * 0.1); ctx.lineTo(x + s * 0.4, y - s * 0.25); ctx.lineTo(x + s * 0.4, y + s * 0.3); ctx.lineTo(x, y + s * 0.4); ctx.lineTo(x - s * 0.4, y + s * 0.3); ctx.closePath(); ctx.stroke(); break;
+    case 'trainer': // crossed swords
+      ctx.beginPath(); ctx.moveTo(x - s * 0.4, y - s * 0.4); ctx.lineTo(x + s * 0.4, y + s * 0.4); ctx.moveTo(x + s * 0.4, y - s * 0.4); ctx.lineTo(x - s * 0.4, y + s * 0.4); ctx.stroke(); break;
+    default: // a mug for the tavern and anything else
+      ctx.fillRect(Math.round(x - s * 0.25), Math.round(y - s * 0.3), Math.round(s * 0.5), Math.round(s * 0.6));
+  }
+}
+
+/** A flame: two tones and a glow, flickering with the frame. */
+function drawFlame(ctx: CanvasRenderingContext2D, x: number, y: number, s: number, frame: number): void {
+  const f1 = Math.sin(frame / 3.1), f2 = Math.sin(frame / 5.3 + 1);
+  const hgt = s * (2.2 + 0.4 * f1), lean = s * 0.25 * f2;
+  const g = ctx.createRadialGradient(x, y - s * 0.5, s * 0.2, x, y - s * 0.5, s * 5);
+  g.addColorStop(0, `rgba(255,180,80,${0.35 + 0.05 * f1})`); g.addColorStop(1, 'rgba(255,140,40,0)');
+  ctx.fillStyle = g; ctx.fillRect(x - s * 5, y - s * 5.5, s * 10, s * 10);
+  ctx.beginPath(); ctx.moveTo(x - s * 0.55, y); ctx.quadraticCurveTo(x - s * 0.7, y - hgt * 0.5, x + lean, y - hgt); ctx.quadraticCurveTo(x + s * 0.7, y - hgt * 0.5, x + s * 0.55, y); ctx.closePath();
+  ctx.fillStyle = '#ff8a30'; ctx.fill();
+  ctx.beginPath(); ctx.moveTo(x - s * 0.3, y); ctx.quadraticCurveTo(x - s * 0.35, y - hgt * 0.35, x + lean * 0.6, y - hgt * 0.6); ctx.quadraticCurveTo(x + s * 0.35, y - hgt * 0.35, x + s * 0.3, y); ctx.closePath();
+  ctx.fillStyle = '#ffe090'; ctx.fill();
 }
 
 /** Stone block courses on an axis-aligned face. */
-function drawStoneFront(ctx: CanvasRenderingContext2D, wall: string, wallDark: string, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, dark: boolean, haze: string | null, mossy: boolean): void {
+function drawStoneFront(ctx: CanvasRenderingContext2D, pal: MapPalette, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, dark: boolean, haze: string | null, mossy: boolean): void {
+  const wall = pal.wall, wallDark = pal.wallDark;
   const w = x1 - x0, h = bottom - top;
   ctx.fillStyle = fog(wallDark, d, dark, haze); ctx.fillRect(Math.round(x0), Math.round(top), Math.round(w), Math.round(h));
-  const rows = 6, cols = 3;
+  const brick = pal.wallStyle === 'brick';
+  const rows = brick ? 9 : 6, cols = brick ? 4 : 3;
   const rh = h / rows, cw = w / cols;
   const gap = rh > 6 ? 1 : 0;
   for (let i = 0; i < rows; i++) {
@@ -348,7 +538,8 @@ function drawStoneFront(ctx: CanvasRenderingContext2D, wall: string, wallDark: s
       const cx0 = Math.max(x0, bx), cx1 = Math.min(x1, bx + bw);
       if (cx1 - cx0 < 1) continue;
       const v = hash(seed, i, j) - 0.5;
-      let col = shade(wall, 1 + v * 0.22);
+      let col = shade(wall, 1 + v * (brick ? 0.3 : 0.22));
+      if (brick && hash(seed, i, j, 6) > 0.85) col = mix(col, '#7a3a2a', 0.5);
       if (mossy && hash(seed, i, j, 5) > 0.8) col = mix(col, '#4a6a3a', 0.4);
       ctx.fillStyle = fog(col, d, dark, haze);
       ctx.fillRect(Math.round(cx0) + gap, Math.round(top + i * rh) + gap, Math.round(cx1 - cx0) - gap, Math.round(rh) - gap);
@@ -415,8 +606,9 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, x
     quad(ctx, P(0, 0), P(1, 0), [P(1, 0)[0], P(1, 0)[1] - uF * 0.3], [P(0, 0)[0], P(0, 0)[1] - uN * 0.3], fog('#5a2a20', d, dark, haze));
     return;
   }
-  const rows = 6;
-  const cols = 3;
+  const brick = map.palette.wallStyle === 'brick';
+  const rows = brick ? 9 : 6;
+  const cols = brick ? 4 : 3;
   const mortar = fog(shade(map.palette.wallDark, 0.55), d, dark, haze);
   for (let i = 0; i < rows; i++) {
     const t0 = i / rows, t1 = (i + 1) / rows;

@@ -18,7 +18,7 @@ import { is } from '../input.ts';
 import { monster } from './monsters.ts';
 import { drawViewport } from '../ui/viewport.ts';
 import type { ViewMonster } from '../ui/viewport.ts';
-import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBackground, drawPurse } from '../ui/frame.ts';
+import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBackground, drawPurse, drawViewportFrame } from '../ui/frame.ts';
 import { CombatScreen } from '../ui/combat.ts';
 import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen } from '../ui/screens.ts';
 import { TitleScreen } from '../ui/title.ts';
@@ -254,6 +254,7 @@ export class ExploreScreen implements Screen {
     drawAutomap(ctx, g.world, frame);
     drawPartyCards(ctx, g.party, -1, frame);
     drawLog(ctx, g.log);
+    drawViewportFrame(ctx);
     drawPurse(ctx, g.party);
   }
 }

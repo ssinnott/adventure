@@ -1,11 +1,15 @@
 // Small drawing helpers shared by every screen: panels, bars, wrapped text.
 import { drawText, measureText, lineHeight } from '../lib/engine/text.ts';
-import { PANEL, PANEL_EDGE, PANEL_LIGHT, INK } from './palette.ts';
+import { PANEL, PANEL_EDGE, PANEL_LIGHT, INK, BRASS, BRASS_DARK } from './palette.ts';
 
-export function panel(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, fill = PANEL, edge = PANEL_EDGE): void {
+/** A recessed panel in the carved frame: dark field, brass bevel, a rivet in each corner. */
+export function panel(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, fill = PANEL, edge: string = PANEL_EDGE): void {
   ctx.fillStyle = fill; ctx.fillRect(x, y, w, h);
-  ctx.strokeStyle = edge; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
-  ctx.fillStyle = INK; ctx.fillRect(x, y, 1, 1); ctx.fillRect(x + w - 1, y, 1, 1); ctx.fillRect(x, y + h - 1, 1, 1); ctx.fillRect(x + w - 1, y + h - 1, 1, 1);
+  const hi = edge === PANEL_EDGE ? BRASS_DARK : edge;
+  ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+  ctx.strokeStyle = hi; ctx.strokeRect(x + 1.5, y + 1.5, w - 3, h - 3);
+  ctx.fillStyle = BRASS;
+  for (const [rx, ry] of [[x + 1, y + 1], [x + w - 4, y + 1], [x + 1, y + h - 4], [x + w - 4, y + h - 4]]) { ctx.fillRect(rx, ry, 3, 3); ctx.fillStyle = INK; ctx.fillRect(rx + 2, ry + 2, 1, 1); ctx.fillStyle = BRASS; }
 }
 
 export function bar(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, frac: number, color: string, back = PANEL_LIGHT): void {

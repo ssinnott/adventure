@@ -5,7 +5,7 @@ import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
-import { LAYOUT, drawPartyCards, drawStatus, drawPurse } from './frame.ts';
+import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame } from './frame.ts';
 import { drawMonsterSprite } from './sprites.ts';
 import { drawViewport } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
@@ -170,6 +170,7 @@ export class CombatScreen implements Screen {
     ctx.fillStyle = 'rgba(10,8,12,0.75)'; ctx.fillRect(v.x, v.y + v.h - lh, v.w, lh);
     lines.forEach((l, i) => drawText(ctx, l, v.x + 6, v.y + v.h - lh + 4 + i * 10, { size: 1, color: i === lines.length - 1 ? TEXT : TEXT_DIM }));
 
+    drawViewportFrame(ctx);
     drawStatus(ctx, g.world);
     drawPurse(ctx, g.party);
     // Right column: the action menu.
