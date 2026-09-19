@@ -17,7 +17,8 @@ const errors: string[] = [];
 page.on('pageerror', (e: Error) => errors.push(e.message));
 await page.goto(`http://localhost:${port}/`, { waitUntil: 'load' });
 await page.waitForFunction(() => (window as any).__game?.ready === true, null, { timeout: 15000 });
-await page.keyboard.press('Space'); await page.waitForTimeout(100);
+await page.keyboard.press('Space'); await page.waitForTimeout(80);
+if (process.env.STAY_ON_CREATE !== '1') { await page.keyboard.press('Space'); await page.waitForTimeout(100); }
 if (map) await page.evaluate(([m, xx, yy, ff]: string[]) => { const g = (window as any).__game.game; g.world.travel(m, Number(xx), Number(yy), Number(ff)); g.enterCell(); }, [map, x, y, f]);
 for (const k of keys) { await page.keyboard.press(k); await page.waitForTimeout(60); }
 await page.waitForTimeout(150);

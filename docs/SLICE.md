@@ -1,0 +1,60 @@
+# The vertical slice (M0)
+
+What is playable now, what is stubbed, and where things live. Read DESIGN.md first for the why.
+
+## Playable
+
+- **Title and party creation.** Take the premade six or muster your own: name, race, class, rolled
+  stats with reroll. Front row is slots 1–3, back row 4–6.
+- **Harrow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
+  (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
+  when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
+  (the contract and the hand-in), a well, a sign.
+- **The Shelf** (outdoor, 32×32): road, woods, hills, marsh, the coast, eight roaming or lurking
+  monster groups with respawn timers, the Ashcombe farm.
+- **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
+  dead Lantern and her survey wand, the Rift and its Warden.
+- **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors,
+  water and mountains gated by party abilities, a day/night clock with a hazed sky, automap with
+  field-of-view reveal, rest with food, a search action, exploration spells (Light, Wizard Eye).
+- **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
+  conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
+  drops; readiness to train reported.
+- **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
+  survive a reload.
+
+## Stubbed or absent
+
+- Only one Charter (Lanterns) has any presence; no Standing.
+- Town Portal does nothing; no Master trainers; no secondary skills yet beyond race innate ones.
+- Portraits are class-coloured tokens; monster sprites are simple vector shapes.
+- No audio. The engine's synth stack is vendored, unused.
+- Hirelings, promotions, the succession, the Salt Compact, the Lost Expedition: design only.
+
+## Checks
+
+`npm run check` runs three gates, each verified to be able to fail:
+
+| | |
+|---|---|
+| `typecheck` | `tsc --noEmit`, strict, zero suppressions |
+| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable; movement, doors, keys, secrets; roaming groups, encounters, respawn, truce; combat replays byte-for-byte from a seed, the cap, row rules, fleeing; party creation and levelling; a save round-trips and re-applies door changes |
+| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, and asserts every screen painted with no page error |
+
+`node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing.
+
+## Code map
+
+| File | Owns |
+|---|---|
+| `game/map.ts` | `MapDef` (rows + legend + features + encounters), `GameMap` queries (passable, blocksView) |
+| `game/world.ts` | `WorldState` (position, clock, per-map state), movement, reveal, roaming groups, encounter triggers, rest, search |
+| `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling, the premade party |
+| `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
+| `game/game.ts` | `Game` (screen stack, save/load, interactions) and `ExploreScreen` |
+| `ui/viewport.ts` | the depth-layered first-person compositor |
+| `ui/frame.ts` | layout constants, status strip, automap, party cards, log, purse |
+| `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer |
+| `ui/combat.ts` | the combat screen (menus over the resolver) |
+| `ui/create.ts` | party creation |
+| `content/maps/*.ts` | Harrow, the Shelf, the cellar |

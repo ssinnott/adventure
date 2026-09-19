@@ -6,6 +6,7 @@ import { drawText, drawTextOutlined } from '../lib/engine/text.ts';
 import { menu, paragraph } from './draw.ts';
 import { freshSeed } from '../lib/engine/rng.ts';
 import { INK, BRASS, TEXT_DIM, TEXT } from './palette.ts';
+import { CreateScreen } from './create.ts';
 
 export class TitleScreen implements Screen {
   private sel = 0;
@@ -20,7 +21,7 @@ export class TitleScreen implements Screen {
     else if (is(a, 'interact')) {
       const it = this.items[this.sel];
       if (it === 'Continue') { if (!g.loadGame()) this.note = 'The save could not be read.'; }
-      else g.newGame(freshSeed());
+      else g.push(new CreateScreen(freshSeed()));
     }
   }
   render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {

@@ -37,6 +37,8 @@ export class Game {
   party!: Party;
   readonly rng: Rng = rng;
   readonly store: Store | null;
+  /** Set by main.ts; screens that take typed text need it. */
+  input: { textMode: boolean; drainText(current: string, max?: number): string } | null = null;
   log: string[] = [];
   screens: Screen[] = [];
   frame = 0;
@@ -50,10 +52,10 @@ export class Game {
   }
 
   // ---- lifecycle ----
-  newGame(seed: number): void {
+  newGame(seed: number, party?: Party): void {
     this.rng.seed(seed);
     this.maps = buildMaps();
-    this.party = defaultParty(this.rng);
+    this.party = party ?? defaultParty(this.rng);
     this.world = new World(this.maps, this.party, this.rng);
     this.log = [];
     this.screens = [new ExploreScreen()];

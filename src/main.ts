@@ -14,6 +14,7 @@ canvas.addEventListener('pointerdown', () => canvas.focus());
 
 const input = new Input(window);
 const game = new Game();
+game.input = input;
 
 const loop = createLoop({
   update() { game.update(input.next()); },

@@ -50,9 +50,10 @@ const colours = async (): Promise<number> => page.evaluate(() => {
 });
 const titleColours = await colours();
 
-// Title -> new game -> walk out of the gate and into the Shelf -> force a fight.
-await page.keyboard.press('Space');
-await page.waitForTimeout(150);
+// Title -> new game -> premade company -> walk out of the gate and into the Shelf -> force a fight.
+await page.keyboard.press('Space'); await page.waitForTimeout(100);
+const screen0 = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+await page.keyboard.press('Space'); await page.waitForTimeout(150);
 const screen1 = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
 for (const k of ['ArrowDown', 'ArrowDown', 'ArrowDown']) { await page.keyboard.press(k); await page.waitForTimeout(40); }
 await page.waitForTimeout(100);
@@ -73,7 +74,7 @@ let bad = 0;
 const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) bad++; };
 ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
 ok(titleColours > 6, `the title painted (${titleColours} colours)`);
-ok(screen1 === 'ExploreScreen', `Space on the title starts a game (${screen1})`);
+ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the title opens creation, Space again takes the premade company (${screen0}, ${screen1})`);
 ok(state.map === 'shelf' && state.steps === 3, `three steps back through the gate reach the Shelf (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
