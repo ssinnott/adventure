@@ -18,7 +18,8 @@ const BOX = { x: 40, y: 40, w: 560, h: 220 };
 
 export class MessageScreen implements Screen {
   readonly overlay = true;
-  constructor(private text: string, private then?: () => void, private title = '') {}
+  private text: string; private then?: () => void; private title: string;
+  constructor(text: string, then?: () => void, title = '') { this.text = text; this.then = then; this.title = title; }
   update(g: Game, a: Action | null): void {
     if (is(a, 'interact', 'cancel')) { g.pop(); this.then?.(); }
   }
@@ -34,7 +35,8 @@ export class MessageScreen implements Screen {
 export class ChoiceScreen implements Screen {
   readonly overlay = true;
   sel = 0;
-  constructor(private text: string, private options: string[], private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
+  private text: string; private options: string[]; private then: (i: number) => void; private title: string; private disabled: boolean[];
+  constructor(text: string, options: string[], then: (i: number) => void, title = '', disabled: boolean[] = []) { this.text = text; this.options = options; this.then = then; this.title = title; this.disabled = disabled; }
   update(g: Game, a: Action | null): void {
     if (!a) return;
     if (is(a, 'up')) this.sel = (this.sel + this.options.length - 1) % this.options.length;
@@ -63,7 +65,8 @@ export function pickMember(g: Game, text: string, then: (i: number) => void, fil
 export class SheetScreen implements Screen {
   readonly overlay = true;
   sel = 0;
-  constructor(private who: number) {}
+  private who: number;
+  constructor(who: number) { this.who = who; }
   update(g: Game, a: Action | null): void {
     if (!a) return;
     const c = g.party.members[this.who];
@@ -130,7 +133,8 @@ export class SpellScreen implements Screen {
   readonly overlay = true;
   private who = -1;
   private sel = 0;
-  constructor(private context: 'explore', private onDone?: () => void) {}
+  private context: 'explore'; private onDone?: () => void;
+  constructor(context: 'explore', onDone?: () => void) { this.context = context; this.onDone = onDone; }
   private casters(g: Game): number[] { return g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => m.spells.length && !isDown(m) && !hasCondition(m, 'asleep')).map(({ i }) => i); }
   private list(g: Game): string[] { return g.party.members[this.who].spells.filter((s) => spell(s).context !== 'combat'); }
   update(g: Game, a: Action | null): void {

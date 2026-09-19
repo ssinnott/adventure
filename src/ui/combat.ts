@@ -32,7 +32,9 @@ export class CombatScreen implements Screen {
   /** Sparks: position, velocity, life. */
   private sparks: { x: number; y: number; vx: number; vy: number; life: number; col: string }[] = [];
   private lastMonsterHp: number[] = [];
-  constructor(readonly state: CombatState, readonly groupIds: string[]) {
+  readonly state: CombatState; readonly groupIds: string[];
+  constructor(state: CombatState, groupIds: string[]) {
+    this.state = state; this.groupIds = groupIds;
     this.lastMonsterHp = state.monsters.map((m) => m.hp);
   }
 

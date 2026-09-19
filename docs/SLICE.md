@@ -60,14 +60,16 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Checks
 
-`npm run check` runs three gates, each verified to be able to fail:
+`npm run check` runs four gates, each verified to be able to fail:
 
 | | |
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
 | `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable; movement, doors, keys, secrets; roaming groups, encounters, respawn, truce; combat replays byte-for-byte from a seed, the cap, row rules, fleeing; party creation and levelling; a save round-trips and re-applies door changes |
+| `play` | Node: the whole slice played through the keyboard — title, party creation (premade and hand-built), every Harrow service bought and used, Vask's contract, the road to Ashcombe, the cellar with its key, locked door and wand, the Rift Warden, the hand-in; plus save/load mid-run, replay determinism, and a measured win rate for every encounter |
 | `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, and asserts every screen painted with no page error |
 
+`node tools/play.ts quest` runs one chapter; `PLAY_TRACE=1` narrates every fight and camp.
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing.
 
 ## Code map
@@ -85,3 +87,4 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/create.ts` | party creation |
 | `content/maps/*.ts` | Harrow, the Shelf, the cellar |
+| `tools/play.ts` | the playthrough: drives `Game` with `Action`s, so screens and services are covered |

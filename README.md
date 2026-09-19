@@ -29,7 +29,7 @@ src/game/          the model: map, world, party, items, spells, monsters, combat
 src/content/maps/  the authored maps (rows of characters + a legend + features + encounters)
 src/ui/            viewport, frame, sprites, screens, combat screen, title, party creation
 src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
-tools/             dev server, bundler, tests, smoke test, screenshot helper
+tools/             dev server, bundler, tests, playthrough, smoke test, screenshot helper
 ```
 
 ## The engine

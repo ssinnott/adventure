@@ -14,7 +14,9 @@ import { panel } from './draw.ts';
 export class TitleScreen implements Screen {
   private sel = 0;
   private items: string[];
-  constructor(private canContinue: boolean, private note = '') {
+  private canContinue: boolean; private note: string;
+  constructor(canContinue: boolean, note = '') {
+    this.canContinue = canContinue; this.note = note;
     this.items = canContinue ? ['Continue', 'New Game'] : ['New Game'];
   }
   update(g: Game, a: Action | null): void {
