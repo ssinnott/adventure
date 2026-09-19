@@ -135,6 +135,8 @@ export class World {
     if (arrived) {
       this.travel(arrived.to, arrived.tx, arrived.ty, arrived.tf);
       if (arrived.label) messages.push(arrived.label);
+      // The cell you land on speaks too: its sign, and any event that fires once.
+      messages.push(...this.eventsHere());
       return { kind: 'moved', messages, arrived };
     }
     messages.push(...this.eventsHere());
@@ -204,7 +206,7 @@ export class World {
 
   private monsterPassable(x: number, y: number): boolean {
     const c = this.map.at(x, y);
-    if (c.solid !== 'none' || c.terrain === 'deep' || c.terrain === 'water' || c.door === 'locked') return false;
+    if (c.solid !== 'none' || c.terrain === 'deep' || c.terrain === 'water' || c.door === 'locked' || c.door === 'secret') return false;
     return !this.groupAt(x, y);
   }
 

@@ -40,7 +40,7 @@ export const MILL: MapDef = {
     { kind: 'chest', x: 11, y: 10, id: 'mill_c3', gold: 60, items: ['shortbow', 'potion_heal', 'rations', 'rations'] },
     { kind: 'event', x: 6, y: 11, id: 'mill_rift', once: true, text: 'The air here is wrong. The corridor ahead is lit from below by a red seam in the floor, and the stone around it has gone smooth as glass.' },
     { kind: 'event', x: 3, y: 10, id: 'mill_core', once: true, text: 'The Rift. A tear in the floor the size of a door, breathing heat. Beside it, a fist-sized shard of worked stone that hums against your teeth. A Wardstone shard.' },
-    { kind: 'chest', x: 4, y: 10, id: 'mill_shard', gold: 0, items: ['potion_heal', 'potion_heal'] },
+    { kind: 'chest', x: 4, y: 10, id: 'mill_shard', gold: 0, items: ['wardstone_shard', 'potion_heal'] },
   ],
   encounters: [
     { id: 'm_rats', x: 5, y: 1, monsters: ['rat', 'rat', 'rat', 'rat'], aware: 5, respawn: 1440 },

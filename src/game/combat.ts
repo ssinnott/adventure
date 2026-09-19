@@ -173,6 +173,8 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       if (!holder) return false;
       const target = party.members[action.target];
       if (!target) return false;
+      // Spending the item on someone beyond its help just destroys it.
+      if (hasCondition(target, 'dead') || hasCondition(target, 'stoned')) return false;
       holder.splice(holder.indexOf(d.id), 1);
       if (d.use.heal) s.log.push(`${target.name} recovers ${heal(target, d.use.heal)}.`);
       if (d.use.sp) { target.sp = Math.min(target.maxSp, target.sp + d.use.sp); s.log.push(`${target.name} feels sharper.`); }
@@ -187,8 +189,9 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       const p = Math.max(0.15, Math.min(0.9, 0.5 + (ps - ms) * 0.03));
       if (rng.chance(p)) { s.outcome = 'fled'; s.log.push('The party flees!'); return true; }
       s.log.push('The party fails to get away.');
-      // A failed flight costs everyone's remaining turn this round.
-      s.turn = s.order.length;
+      // A failed flight costs the party the rest of the round. The monsters still take theirs:
+      // dropping their turns too made failing to flee nearly free.
+      s.order = s.order.filter((r, i) => i < s.turn || r.side === 'monster');
       checkOutcome(s, party, rng);
       return true;
     }

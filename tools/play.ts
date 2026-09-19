@@ -10,7 +10,7 @@ import { CombatScreen } from '../src/ui/combat.ts';
 import { MessageScreen, ChoiceScreen } from '../src/ui/screens.ts';
 import type { Action } from '../src/input.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../src/game/combat.ts';
-import { countItem, isDown, allDown, hasCondition, defaultParty, xpForLevel, CLASSES } from '../src/game/party.ts';
+import { countItem, isDown, allDown, hasCondition, partyCan, defaultParty, levelUp, xpForLevel, CLASSES } from '../src/game/party.ts';
 import { spell } from '../src/game/spells.ts';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps, MAP_DEFS } from '../src/content/maps/index.ts';
@@ -61,22 +61,45 @@ function usables(g: Game, who: number): string[] {
   return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(id).use && !item(id).use!.food))];
 }
 
-/** Fight the fight on top of the stack the way a player would: mend the badly hurt, else swing. */
+/** Fight the fight on top of the stack the way a player would: put the crowd to sleep, mend the
+ * badly hurt, finish what is nearly dead, and swing with everyone who cannot do better. */
 function playFight(g: Game, budget = 1200): 'victory' | 'defeat' | 'fled' {
   const s = (g.top as CombatScreen).state;
   trace(`[fight] ${s.log[0]} | ${g.party.members.map((m) => `${m.name} ${m.hp}/${m.maxHp} sp${m.sp}`).join(' ')} | food ${g.party.food}`);
+  let slept = false;
+  /** Step the target cursor from the first living monster to the k-th, then commit. */
+  const strike = (k: number): void => { for (let j = 0; j < k; j++) press(g, 'down'); press(g, 'interact'); };
   for (let i = 0; i < budget && s.outcome === 'ongoing'; i++) {
     const t = currentTurn(s, g.party, g.rng);
     if (!t) break;
     if (t.side === 'monster') { press(g, 'interact'); continue; }
     const who = t.i, c = g.party.members[who];
     const hurt = g.party.members.findIndex((m) => !isDown(m) && m.hp <= m.maxHp * 0.4);
+    const alive = aliveMonsters(s);
 
-    // Mend, if this one can and somebody needs it.
+    // Losing? Run. A wipe ends the run; a retreat costs four steps and a truce.
+    const down = g.party.members.filter(isDown).length;
+    const left = g.party.members.reduce((a, m) => a + Math.max(0, m.hp), 0);
+    const full = g.party.members.reduce((a, m) => a + m.maxHp, 0);
+    if (down >= 3 || (down >= 1 && alive.length >= 5) || left < full * 0.35) { press(g, 'cancel'); press(g, 'n5'); continue; }
+    // Finish the nearly dead first: one fewer thing swinging back.
+    const weakest = alive.reduce((best, mi, k) => (s.monsters[mi].hp < s.monsters[alive[best]].hp ? k : best), 0);
     const spells = c.spells.filter((x) => spell(x).context !== 'explore');
+
+    // Slumber, once, while there is still a crowd to catch.
+    const dream = spells.findIndex((x) => { const sp = spell(x); return !!sp.inflict && c.sp >= sp.sp; });
+    if (!slept && dream >= 0 && alive.length >= 3) {
+      press(g, 'n2');
+      for (let k = 0; k < dream; k++) press(g, 'down');
+      press(g, 'interact');
+      strike(alive.length - 1);                                   // the back of the line is the escort
+      slept = true;
+      continue;
+    }
+    // Mend, if this one can and somebody needs it.
     const mend = spells.indexOf('heal');
-    if (hurt >= 0 && canCast(c) && mend >= 0 && c.sp >= spell('heal').sp) {
-      press(g, 'n2');                                             // Cast
+    if (hurt >= 0 && mend >= 0 && c.sp >= spell('heal').sp) {
+      press(g, 'n2');
       for (let k = 0; k < mend; k++) press(g, 'down');
       press(g, 'interact');                                       // Mend targets an ally
       press(g, `n${hurt + 1}` as Action, 'interact');
@@ -94,15 +117,16 @@ function playFight(g: Game, budget = 1200): 'victory' | 'defeat' | 'fled' {
     }
     // A caster's bolt is worth more than a dagger, and it reaches from the back row.
     const bolt = spells.findIndex((x) => { const sp = spell(x); return (sp.target === 'enemy' || sp.target === 'group') && !sp.inflict && c.sp >= sp.sp; });
-    if (bolt >= 0 && (!canAttackFromRow(c, who) || CLASSES[c.cls].spells !== undefined && CLASSES[c.cls].attack <= 1)) {
-      press(g, 'n2');                                             // Cast
+    const casterFirst = bolt >= 0 && (!canAttackFromRow(c, who) || CLASSES[c.cls].attack <= 1);
+    if (casterFirst) {
+      press(g, 'n2');
       for (let k = 0; k < bolt; k++) press(g, 'down');
-      press(g, 'interact');                                       // damage spells pick a monster
       press(g, 'interact');
+      strike(weakest);
       continue;
     }
-    if (canAttackFromRow(c, who)) press(g, 'n1', 'interact');     // Attack, then the first living target
-    else if (bolt >= 0) { press(g, 'n2'); for (let k = 0; k < bolt; k++) press(g, 'down'); press(g, 'interact', 'interact'); }
+    if (canAttackFromRow(c, who)) { press(g, 'n1'); strike(weakest); }
+    else if (bolt >= 0) { press(g, 'n2'); for (let k = 0; k < bolt; k++) press(g, 'down'); press(g, 'interact'); strike(weakest); }
     else press(g, 'n4');                                          // Defend from the back row
   }
   const outcome = s.outcome;
@@ -112,12 +136,12 @@ function playFight(g: Game, budget = 1200): 'victory' | 'defeat' | 'fled' {
   return outcome;
 }
 
-/** Camp after a fight, the way anyone would before opening the next door: eight hours puts the
- * party back to full health and spell points, if it is safe and there is food. */
+/** A quick breather after a fight: eight hours only when somebody is genuinely worn down, because
+ * every camp moves the clock eight hours and the map repopulates on a timer. */
 function recover(g: Game): void {
   if (!(g.top instanceof ExploreScreen)) return;
   const need = g.party.members.some((m) => hasCondition(m, 'unconscious')
-    || (!isDown(m) && (m.hp <= m.maxHp * 0.7 || (m.maxSp > 0 && m.sp <= m.maxSp * 0.34))));
+    || (!isDown(m) && (m.hp < m.maxHp * 0.95 || (m.maxSp > 0 && m.sp < m.maxSp * 0.6))));
   if (!need) return;
   press(g, 'rest');
   const rested = g.top instanceof ChoiceScreen && choose(g, 'Rest');
@@ -126,15 +150,33 @@ function recover(g: Game): void {
   settle(g);
 }
 
+/** Camp until everyone is back to full, the way anyone would before opening the last door. Eight
+ * hours a time, so it is not free: the clock moves and the map repopulates around you, and it is
+ * refused outright when something is close enough to be hunting. */
+function camp(g: Game, tries = 4): boolean {
+  const rested = (): boolean => g.party.members.every((m) => isDown(m) || (m.hp === m.maxHp && m.sp === m.maxSp));
+  for (let i = 0; i < tries && !rested(); i++) {
+    press(g, 'rest');
+    if (!(g.top instanceof ChoiceScreen)) { settle(g); return false; }   // too dangerous to sleep here
+    choose(g, 'Rest');
+    settle(g);
+  }
+  return rested();
+}
+
 /** Stock up before going underground, as anyone would: food and draughts, and a sling for each
  * caster so the back row is not reduced to bracing once the spell points run out. */
 function provision(g: Game): void {
+  const RESERVE = Math.min(220, Math.floor(g.party.gold * 0.25));  // keep back what a level and a raise cost, if the purse can spare it
+  // In order of what the party most regrets not having: something for the back row to do, food to
+  // camp on, then draughts, then food enough for a whole dungeon.
+  const list: string[] = [];
+  for (const who of [4, 5]) if (!item(g.party.members[who].equipment.weapon ?? 'club').ranged) list.push('Sling');
+  for (let f = g.party.food; f < 60; f += 5) list.push('Rations');
+  for (let n = countItem(g.party, 'potion_heal'); n < 5; n++) list.push('Healing Draught');
+  for (let f = Math.max(g.party.food, 60); f < 150; f += 5) list.push('Rations');
   visit(g, 4, 10, 'the shop');
-  if (choose(g, 'Buy')) {
-    for (let i = 0; i < 20; i++) choose(g, 'Rations');            // resting is what restores spell points
-    for (let i = 0; i < 2; i++) choose(g, 'Sling');
-    for (let i = 0; i < 2; i++) choose(g, 'Healing Draught');
-  }
+  if (choose(g, 'Buy')) for (const what of list) { if (g.party.gold <= RESERVE) break; choose(g, what); }
   settle(g);
   for (const who of [4, 5]) equipFromBag(g, who, 'Sling');
   trace(`[shop] ${g.party.gold} gold, ${g.party.food} food, ${countItem(g.party, 'potion_heal')} draughts, weapons ${g.party.members.map((m) => m.equipment.weapon).join('/')}`);
@@ -157,7 +199,7 @@ function equipFromBag(g: Game, who: number, label: string): boolean {
 /** Shortest route on the current map, obeying the real passability rules. */
 function route(g: Game, tx: number, ty: number): [number, number][] | null {
   const m = g.world.map, w = g.world.state;
-  const can = { swim: false, climb: false, keys: countItem(g.party, 'key_iron') };
+  const can = partyCan(g.party);
   const key = (x: number, y: number): number => y * m.width + x;
   const prev = new Map<number, [number, number]>();
   const seen = new Set([key(w.x, w.y)]);
@@ -214,6 +256,108 @@ function visit(g: Game, x: number, y: number, why: string): boolean {
   if (!walkTo(g, x, y, why)) return false;
   if (!(g.top instanceof ChoiceScreen) && !(g.top instanceof MessageScreen)) press(g, 'interact');
   return true;
+}
+
+/** How much of the party's health is left, as a fraction: the signal for when to go home. */
+function vigour(g: Game): number {
+  const full = g.party.members.reduce((a, m) => a + m.maxHp, 0);
+  return g.party.members.reduce((a, m) => a + Math.max(0, m.hp), 0) / Math.max(1, full);
+}
+
+/** The chapel raises whoever did not walk out, and cures what a fight left behind. */
+function tendAtTemple(g: Game): number {
+  let treated = 0;
+  for (let i = 0; i < 8; i++) {
+    const c = g.party.members.find((m) => m.conditions.length > 0);
+    if (!c) break;
+    if (!visit(g, 11, 4, 'the Chapel of the Lanterns')) break;
+    if (!choose(g, c.name)) { settle(g); break; }
+    treated++;
+    settle(g);
+  }
+  return treated;
+}
+
+/** Hunt down every group still alive on this map, the way a player clearing a region does. Each id
+ * is taken once, so a respawn on the long timer does not turn this into an endless farm. */
+function sweep(g: Game, why: string, most = 40): number {
+  const done = new Set<string>();
+  for (let i = 0; i < most; i++) {
+    // Never start the next fight on an empty tank. If it is not safe to camp, the trip is over.
+    if (!camp(g) && vigour(g) < 0.7) return done.size;
+    const live = g.world.liveGroups().filter((x) => !done.has(x.def.id));
+    if (!live.length) break;
+    const p = g.world.state;
+    live.sort((a, b) => (Math.abs(a.state.x - p.x) + Math.abs(a.state.y - p.y)) - (Math.abs(b.state.x - p.x) + Math.abs(b.state.y - p.y)));
+    const target = live[0];
+    done.add(target.def.id);
+    if (!walkTo(g, target.state.x, target.state.y, `${target.def.id} on ${why}`)) return done.size;
+  }
+  return done.size;
+}
+
+/** Train everyone the drillyard will take, one bought level at a time. */
+function trainAll(g: Game): number {
+  let trained = 0;
+  if (!visit(g, 3, 13, 'the Warden Drillyard')) return 0;
+  for (let i = 0; i < 12; i++) {
+    if (!(g.top instanceof ChoiceScreen)) break;
+    const m = g.party.members.find((c) => c.xp >= xpForLevel(c.level + 1) && g.party.gold >= c.level * 25);
+    if (!m || !choose(g, `${m.name}  L${m.level}`)) break;
+    trained++;
+  }
+  settle(g);
+  return trained;
+}
+
+/** Everything town is for, in the order it is worth doing: raise the fallen, sleep it off (camping
+ * inside the walls is free of anything that would interrupt it), buy the levels the experience has
+ * paid for, restock. */
+function townPhase(g: Game): void {
+  tendAtTemple(g);
+  camp(g);
+  for (let i = 0; i < 8 && trainAll(g) > 0; i++) { /* a level at a time, while the purse holds */ }
+  provision(g);
+}
+
+/** Get back to a cell when the way there is contested: rest what can be rested, then push again. */
+function retreatTo(g: Game, x: number, y: number, why: string, tries = 4): boolean {
+  for (let i = 0; i < tries; i++) {
+    if (walkTo(g, x, y, why)) return true;
+    if (allDown(g.party) || !camp(g)) return false;
+  }
+  return false;
+}
+
+/** Play the region until the goal holds: out to clear what is nearest while the party is fit, back
+ * to town to be raised, rested, trained and restocked when it is not. This is the actual loop the
+ * slice is built around, so the test plays it rather than fabricating its way past it. */
+function campaign(g: Game, goal: () => boolean, trips = 14): boolean {
+  for (let i = 0; i < trips && !goal(); i++) {
+    if (g.world.map.id !== 'harrow' && !walkTo(g, 16, 3, 'the Harrow gate')) return goal();
+    townPhase(g);
+    if (goal()) return true;
+    if (!leaveBy(g, 7, 15, 'the south gate')) return goal();
+    sweep(g, 'the Shelf', 4);
+  }
+  return goal();
+}
+
+/** Walk up to a feature and stop on the next cell, facing it, so nothing else happens before the
+ * caller presses Space. Stepping onto a feature triggers it, which is no good when the point of the
+ * test is what changes at that exact moment. */
+function approach(g: Game, x: number, y: number, why: string): boolean {
+  const can = partyCan(g.party);
+  for (const [dx, dy] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) {
+    const ax = x + dx, ay = y + dy;
+    if (g.world.map.passable(ax, ay, can) !== 'ok') continue;
+    if (!walkTo(g, ax, ay, why)) return false;
+    settle(g);
+    const want = FACING_OF[`${x - ax},${y - ay}`];
+    for (let k = 0; k < 4 && g.world.state.facing !== want; k++) press(g, 'turnRight');
+    return true;
+  }
+  return false;
 }
 
 /** Take a map exit that sits on the cell we are standing next to. */
@@ -405,7 +549,7 @@ const suites: Record<string, () => void> = {
 
     // 1b. Supplies, the way anyone would before going underground.
     provision(g);
-    ok(g.party.food >= 100, `the shop sells rations by the sackful (${g.party.food} days of food)`);
+    ok(g.party.food >= 60, `the shop sells rations by the sackful (${g.party.food} days of food)`);
     ok(g.party.members[5].equipment.weapon === 'sling', `the sorcerer buys and equips a sling (${g.party.members[5].equipment.weapon})`);
     ok(countItem(g.party, 'potion_heal') >= 2, `and the shop sells draughts (${countItem(g.party, 'potion_heal')} carried)`);
 
@@ -439,6 +583,7 @@ const suites: Record<string, () => void> = {
     ok(g.world.mapState.doors['7,11'] === 'door', 'the opened door is remembered for the save');
 
     // 6. The Rift Warden guards the Rift, and drops what Vask wants.
+    ok(camp(g), 'the party camps to full before the Rift room');
     ok(walkTo(g, 4, 11, 'the Rift Warden'), 'the party can reach the Rift room');
     const wasDead = !g.world.liveGroups().some((x) => x.def.id === 'm_warden');
     ok(wasDead, 'the Rift Warden has been put down');
@@ -450,8 +595,9 @@ const suites: Record<string, () => void> = {
     ok(g.world.map.id === 'shelf', `the stairs come out in the farmyard (${g.world.map.id} ${g.world.state.x},${g.world.state.y})`);
     ok(walkTo(g, 16, 3, 'the Harrow gate'), 'the party can walk the road home');
     ok(g.world.map.id === 'harrow', `and re-enter Harrow (${g.world.map.id} ${g.world.state.x},${g.world.state.y})`);
+    ok(approach(g, 9, 5, 'Lord Vask'), 'the party can reach Vask again');
     const goldBefore = g.party.gold, wandsBefore = countItem(g.party, 'survey_wand');
-    ok(walkTo(g, 9, 5, 'Lord Vask'), 'the party can reach Vask again');
+    press(g, 'interact');
     ok(g.party.flags.q_ashcombe_done === 1, 'Vask takes the wand and closes the contract');
     ok(g.party.gold === goldBefore + 300, `and pays 300 gold (${goldBefore} -> ${g.party.gold})`);
     ok(countItem(g.party, 'survey_wand') === wandsBefore - 1, `the hand-in takes exactly one wand (${wandsBefore} -> ${countItem(g.party, 'survey_wand')})`);
@@ -463,6 +609,113 @@ const suites: Record<string, () => void> = {
     ok(g.party.gold === goldBefore + 300, `the reward is paid once (${g.party.gold})`);
 
     console.log(`  note:  finished on day ${g.world.day} at ${String(g.world.hour).padStart(2, '0')}:${String(g.world.minute).padStart(2, '0')} after ${g.world.state.steps} steps, ${g.party.gold} gold, xp ${g.party.members[0].xp}`);
+  },
+
+  /** The Lanterns' contract: the shard out of Ashcombe, then the Drowned Chapel it buys you. */
+  chapel() {
+    const g = newRun(501);
+
+    // Perrin wants the stone before the Regent sees it.
+    ok(visit(g, 12, 5, 'Adjunct Perrin'), 'the party can reach Adjunct Perrin');
+    ok(g.party.flags.q_shard === 1, 'talking to Perrin opens the Lanterns\' contract');
+    settle(g);
+    provision(g);
+
+    // The shard is past the Rift Warden, so Ashcombe has to be cleared first.
+    ok(leaveBy(g, 7, 15, 'the south gate'), 'the party leaves town');
+    ok(walkTo(g, 24, 20, 'the Ashcombe farmhouse'), 'and reaches Ashcombe');
+    ok(walkTo(g, 3, 3, 'the key chest'), 'and the cellar key');
+    press(g, 'interact'); settle(g);
+    ok(walkTo(g, 4, 10, 'the Wardstone shard'), 'and fights through to the Rift');
+    press(g, 'interact'); settle(g);
+    ok(countItem(g.party, 'wardstone_shard') === 1, 'the chest beside the Rift holds a Wardstone shard');
+    ok(walkTo(g, 3, 10, 'the Rift itself'), 'the party can stand at the Rift');
+    ok(g.world.used('mill_core'), 'which describes itself');
+
+    // Home, paid, and pointed south.
+    ok(leaveBy(g, 1, 1, 'the cellar stairs'), 'the party climbs out');
+    ok(walkTo(g, 16, 3, 'the Harrow gate'), 'and walks home');
+    ok(approach(g, 12, 5, 'Perrin'), 'and reaches Perrin');
+    const gold = g.party.gold;
+    press(g, 'interact');
+    ok(g.party.flags.q_shard_done === 1, 'Perrin takes the shard');
+    ok(g.party.gold === gold + 150, `and pays 150 gold (${gold} -> ${g.party.gold})`);
+    ok(countItem(g.party, 'wardstone_shard') === 0, 'the shard changes hands');
+    settle(g);
+    provision(g);
+
+    // Earn the level. This is the loop the whole slice is built around: out to the Shelf, back to
+    // Harrow to be patched up and to buy what the experience has paid for, and out again.
+    const levelled = campaign(g, () => g.party.members.every((m) => m.level >= 2));
+    townPhase(g);
+    ok(g.party.members.every((m) => m.xp >= xpForLevel(2)), `the Shelf pays for a level (${g.party.members.map((m) => m.xp).join('/')} xp against ${xpForLevel(2)})`);
+    ok(g.party.members.every((m) => m.level >= 2), `and the Warden Drillyard sells it to all six (levels ${g.party.members.map((m) => m.level).join('')})`);
+    void levelled;
+    ok(g.party.members[5].spells.includes('sleep'), 'the sorcerer levels into Slumber');
+
+    // Whole again before going under: the temple raises, a night in town restores.
+    townPhase(g);
+    ok(g.party.members.every((m) => m.hp === m.maxHp), `the town puts the company back on its feet (${g.party.members.map((m) => `${m.hp}/${m.maxHp}`).join(' ')})`);
+
+    // South past the marsh, into the chapel.
+    ok(leaveBy(g, 7, 15, 'the south gate'), 'the party sets out for the marsh');
+    ok(walkTo(g, 7, 24, 'the marsh steps'), 'and finds the steps under the reeds');
+    ok(g.log.some((l) => /reeds/.test(l)), 'the reeds give the place away');
+    ok(leaveBy(g, 7, 25, 'the chapel stair'), 'and goes down');
+    ok(g.world.map.id === 'chapel' && g.world.state.x === 14 && g.world.state.y === 14, `into the Drowned Chapel (${g.world.map.id} ${g.world.state.x},${g.world.state.y})`);
+    ok(g.log.some((l) => /standing water/.test(l)), 'and the arrival cell speaks for itself');
+
+    // A torch is worth carrying: it doubles what the party can see underground.
+    ok(g.world.sight === 2, `a dungeon without light shows two cells (${g.world.sight})`);
+    ok(equipFromBag(g, 0, 'Torch'), 'the knight lights a torch');
+    ok(g.world.state.light > 0 && g.world.sight === 4, `and now sees four (${g.world.sight}, ${g.world.state.light} steps of light)`);
+    ok(countItem(g.party, 'torch') === 0, 'the torch is spent');
+
+    // The locked crypt.
+    ok(walkTo(g, 1, 13, 'the first chest'), 'the party can reach the first chest');
+    press(g, 'interact'); settle(g);
+    ok(countItem(g.party, 'key_iron') === 1, 'it holds an iron key');
+    ok(walkTo(g, 12, 11, 'the east crypt'), 'the key opens the east crypt');
+    press(g, 'interact'); settle(g);
+    ok(countItem(g.party, 'axe') === 1 && countItem(g.party, 'shield') === 1, 'and the crypt holds the hand axe and the kite shield');
+
+    // The west crypt is behind a wall that is not one.
+    ok(walkTo(g, 6, 10, 'the west crypt wall'), 'the party can reach the west wall');
+    for (let k = 0; k < 4 && g.world.state.facing !== 3; k++) press(g, 'turnRight');
+    press(g, 'forward'); settle(g);
+    ok(g.world.state.x === 6, 'the wall at 5,10 will not let the party through');
+    ok(g.log.some((l) => /wall blocks/.test(l)), 'and says so like any other wall');
+    press(g, 'search');
+    ok(g.world.map.at(5, 10).door === 'door', 'F finds the door behind it');
+    press(g, 'forward'); settle(g);
+    ok(walkTo(g, 3, 11, 'the west crypt chest'), 'and the west crypt opens');
+    press(g, 'interact'); settle(g);
+    ok(countItem(g.party, 'longbow') === 1, 'which is where the long bow was');
+
+    // The apse, the Prior, and a font only a swimmer reaches.
+    camp(g);
+    ok(vigour(g) >= 0.5, `the party is in shape for the altar (${g.party.members.map((m) => `${m.hp}/${m.maxHp}`).join(' ')})`);
+    ok(walkTo(g, 6, 4, 'the altar'), 'the party can reach the altar');
+    ok(g.world.used('ch_altar'), 'the altar describes itself');
+    // A set piece is allowed to send you back down the nave to think about it. Rest and go again.
+    let attempts = 0;
+    for (; attempts < 4 && g.world.liveGroups().some((x) => x.def.id === 'c_prior'); attempts++) {
+      camp(g);
+      if (!walkTo(g, 7, 4, 'the Hollow Prior')) break;
+    }
+    ok(!g.world.liveGroups().some((x) => x.def.id === 'c_prior'), `the Hollow Prior is put down (${attempts} attempt${attempts === 1 ? '' : 's'})`);
+    ok(partyCan(g.party).swim, 'the party has a Tidefolk, so the font is not out of reach');
+    ok(walkTo(g, 7, 2, 'the font'), 'and can swim out to the font');
+    press(g, 'interact'); settle(g);
+    ok(countItem(g.party, 'chain') === 1, 'the font holds the chain mail');
+
+    // Out, the long way, through whatever has crept back in behind them.
+    camp(g);
+    ok(retreatTo(g, 14, 14, 'the chapel stair'), 'the party climbs back out');
+    ok(g.world.map.id === 'shelf', `into the marsh (${g.world.map.id} ${g.world.state.x},${g.world.state.y})`);
+    ok(retreatTo(g, 16, 3, 'the Harrow gate'), 'and walks home');
+    const best = g.party.members.reduce((a, m) => (m.xp > a.xp ? m : a));
+    console.log(`  note:  finished on day ${g.world.day} after ${g.world.state.steps} steps, ${g.party.gold} gold, ${best.xp} xp (level 3 is ${xpForLevel(3)}).`);
   },
 
   /** The same journey again on other seeds: finishing must not depend on lucky dice. */
@@ -484,28 +737,35 @@ const suites: Record<string, () => void> = {
     console.log('  note:  this route collects the wand from the chest and leaves; the Rift Warden is measured in `balance`.');
   },
 
-  /** Is every fight in the slice actually winnable, and is the boss still a fight? Measured, not guessed. */
+  /** Is every fight winnable by a party of the level its map is tuned for, and can you reach level 2? */
   balance() {
     const maps = buildMaps();
-    const rows: { id: string; map: string; monsters: string[]; win: number }[] = [];
-    for (const def of MAP_DEFS) for (const e of maps[def.id].encounters) {
-      rows.push({ id: e.id, map: def.id, monsters: [...e.monsters], win: winRate([...e.monsters], 120) });
+    for (const def of MAP_DEFS) {
+      const level = def.band ? def.band[0] : 1;
+      for (const e of maps[def.id].encounters) {
+        const win = winRate([...e.monsters], 120, level);
+        const label = `${def.id}/${e.id}`.padEnd(22) + e.monsters.join(', ');
+        if (isBoss([...e.monsters])) ok(win >= 0.5 && win <= 0.97, `${label} - a set piece: winnable at L${level} but not a certainty (${Math.round(win * 100)}%)`);
+        else ok(win >= 0.9, `${label} - winnable at L${level} (${Math.round(win * 100)}%)`);
+      }
     }
-    for (const r of rows) {
-      const label = `${r.map}/${r.id}`.padEnd(20) + r.monsters.join(', ');
-      const boss = r.monsters.includes('rift_warden');
-      if (boss) ok(r.win >= 0.5, `${label} - the boss is winnable at full health (${Math.round(r.win * 100)}%)`);
-      else ok(r.win >= 0.9, `${label} - winnable at full health (${Math.round(r.win * 100)}%)`);
-    }
-    const trivial = rows.filter((r) => !r.monsters.includes('rift_warden') && r.win === 1).length;
-    console.log(`  note:  ${trivial} of ${rows.length - 1} ordinary encounters are a certain win at full health, so the only attrition is spell points and food.`);
 
-    // What a clean sweep of the whole slice is worth, against what a level costs.
+    // What the slice is worth, against what a level costs. Levels are the trainer's whole reason to
+    // exist, so the content has to pay for at least one.
     let xp = 0;
     for (const def of MAP_DEFS) for (const e of maps[def.id].encounters) for (const id of e.monsters) xp += MONSTERS[id].xp;
     const each = Math.floor(xp / 6);
-    ok(each > 0, `clearing every encounter in the slice is ${xp} xp, ${each} each`);
-    console.log(`  note:  level 2 needs ${xpForLevel(2)} xp, so one clean sweep of everything leaves each character ${xpForLevel(2) - each} short; the Warden Drillyard advertises training to level 10 (${xpForLevel(10)} xp each).`);
+    ok(each >= xpForLevel(2), `clearing the slice is ${xp} xp, ${each} each: enough for level 2 (${xpForLevel(2)})`);
+    ok(each < xpForLevel(3), `and not enough for level 3 (${xpForLevel(3)}), which is M1's job`);
+    console.log(`  note:  level 2 costs ${Math.round(xpForLevel(2) * 6 / xp * 100)}% of a clean sweep. The Warden Drillyard trains to level 10 (${xpForLevel(10)} xp each).`);
+
+    // And the purse has to cover the services the town advertises.
+    let gold = 0;
+    for (const def of MAP_DEFS) for (const f of maps[def.id].features) if (f.kind === 'chest') gold += f.gold;
+    for (const def of MAP_DEFS) for (const e of maps[def.id].encounters) for (const id of e.monsters) gold += MONSTERS[id].gold[1];
+    const purse = 200 + gold + 150 + 300;   // start, loot, and the two hand-ins
+    const services = 50 + 80 + 100 + 25;    // guild membership, one spell, one raise, one training
+    ok(purse > services * 2, `a full sweep can pay for the town twice over (${purse} gold against ${services})`);
   },
 
   /** Saving and loading in the middle of the journey keeps everything that was earned. */
@@ -574,12 +834,19 @@ const suites: Record<string, () => void> = {
   },
 };
 
-/** How often a full-health premade party wins a fight, played as well as the policy knows how. */
-function winRate(monsters: string[], tries: number): number {
+/** A premade party levelled the honest way, for measuring a fight against the band it is tuned for. */
+function partyAtLevel(level: number, rng: ReturnType<typeof makeRng>): ReturnType<typeof defaultParty> {
+  const p = defaultParty(rng);
+  if (level > 1) for (const m of p.members) { m.xp = xpForLevel(level); levelUp(m, rng); }
+  return p;
+}
+
+/** How often a full-health party of the given level wins a fight, played as well as the policy knows. */
+function winRate(monsters: string[], tries: number, level: number): number {
   let won = 0;
   for (let seed = 1; seed <= tries; seed++) {
     const r = makeRng(seed);
-    const p = defaultParty(r);
+    const p = partyAtLevel(level, r);
     const s = startCombat(p, [{ id: 'g', monsters }], r);
     for (let i = 0; i < 2000 && s.outcome === 'ongoing'; i++) {
       const t = currentTurn(s, p, r);
@@ -598,6 +865,9 @@ function winRate(monsters: string[], tries: number): number {
   }
   return won / tries;
 }
+
+/** A fight built around something worth 100xp or more is a set piece, and is allowed to be lost. */
+const isBoss = (monsters: string[]): boolean => monsters.some((id) => MONSTERS[id].xp >= 100);
 
 /** settle(), as an expression, so chapters can chain steps with &&. */
 function settleQuiet(g: Game): boolean { settle(g); return true; }

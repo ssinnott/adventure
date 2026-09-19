@@ -13,7 +13,7 @@ import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } fr
 import type { CombatState, PartyAction } from '../game/combat.ts';
 import { spell } from '../game/spells.ts';
 import { item } from '../game/items.ts';
-import { weaponOf } from '../game/party.ts';
+import { weaponOf, hasCondition } from '../game/party.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'item' | 'itemTarget' | 'done';
 const MONSTER_DELAY = 22;
@@ -57,7 +57,7 @@ export class CombatScreen implements Screen {
   }
   private usable(g: Game, who: number): string[] {
     const c = g.party.members[who];
-    return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(id).use && !item(id).use!.food))];
+    return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(id).use && !item(id).use!.food && !item(id).use!.light))];
   }
 
   update(g: Game, a: Action | null): void {
@@ -134,11 +134,13 @@ export class CombatScreen implements Screen {
       }
       case 'itemTarget': {
         const n = g.party.members.length;
+        const beyondHelp = (i: number): boolean => hasCondition(g.party.members[i], 'dead') || hasCondition(g.party.members[i], 'stoned');
         if (is(a, 'cancel')) { this.mode = this.pendingItem ? 'item' : 'spell'; this.sub = 0; return; }
-        if (is(a, 'left', 'up')) this.sub = (this.sub + n - 1) % n;
-        else if (is(a, 'right', 'down')) this.sub = (this.sub + 1) % n;
-        else if (/^n[1-6]$/.test(a)) this.sub = Number(a[1]) - 1;
+        if (is(a, 'left', 'up')) { for (let k = 0; k < n; k++) { this.sub = (this.sub + n - 1) % n; if (!beyondHelp(this.sub)) break; } }
+        else if (is(a, 'right', 'down')) { for (let k = 0; k < n; k++) { this.sub = (this.sub + 1) % n; if (!beyondHelp(this.sub)) break; } }
+        else if (/^n[1-6]$/.test(a)) { const i = Number(a[1]) - 1; if (!beyondHelp(i)) this.sub = i; }
         else if (is(a, 'interact')) {
+          if (beyondHelp(this.sub)) return;
           if (this.pendingItem) act({ type: 'use', itemId: this.pendingItem, target: this.sub });
           else act({ type: 'cast', spellId: this.pendingSpell, target: this.sub });
         }
@@ -228,7 +230,8 @@ export class CombatScreen implements Screen {
         menu(ctx, items.map((x) => item(x).name), r.x + 8, y, this.sub);
       } else if (this.mode === 'itemTarget') {
         drawText(ctx, 'ON WHOM', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
-        menu(ctx, g.party.members.map((m) => `${m.name} ${m.hp}/${m.maxHp}`), r.x + 8, y, this.sub);
+        menu(ctx, g.party.members.map((m) => `${m.name} ${m.hp}/${m.maxHp}`), r.x + 8, y, this.sub,
+          { disabled: g.party.members.map((m) => hasCondition(m, 'dead') || hasCondition(m, 'stoned')) });
       }
       drawText(ctx, 'ESC BACK', r.x + r.w - 8, r.y + r.h - 12, { size: 1, color: TEXT_DIM, align: 'right' });
     } else {

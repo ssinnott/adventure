@@ -42,6 +42,7 @@ export const HARROW: MapDef = {
       'A fisherman says: "The Hearth stuttered the night the Queen died. I saw it from the boats."',
       'A Warden mutters: "Something came up out of the Ashcombe farm. Rats first, then worse. Nobody has gone to look."',
       'A Lantern adjunct, drunk: "The survey team went south a week ago. They should have been back."',
+      'The landlord, wiping a glass: "South past Ashcombe the road runs out and the marsh starts. There is a chapel down there the Lanterns kept. Kept."',
     ] },
     { kind: 'well', x: 7, y: 6, text: 'The town well. The water tastes faintly of iron.' },
     { kind: 'sign', x: 8, y: 14, text: 'Harrow. South gate: the Shelf road, the Ashcombe farms.' },
@@ -57,6 +58,19 @@ export const HARROW: MapDef = {
         '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
       ],
       after: ['"Thornmark, when you are ready. The road east is not yet open to you; the Wardens are still clearing it."'],
+    } },
+    { kind: 'npc', x: 12, y: 5, name: 'Adjunct Perrin of the Lanterns', lines: [
+      'A young Lantern in grey, ink to the elbows, guarding a table of charts nobody has asked to see.',
+      '"You are the company the Regent hired. Good. Whatever you bring him, bring me the stone first."',
+      '"A Wardstone does not fail. It is cut, or it is whole. If you find a piece of one down there, I will know which by looking. Vask will not."',
+    ], flag: 'q_shard', quest: {
+      item: 'wardstone_shard', needFlag: 'q_shard', reward: 150, setFlag: 'q_shard_done',
+      done: [
+        'Perrin turns the shard against the light and goes very still. "Cut. Cut with a tool that did not come out of any forge in Caldera."',
+        '"Say nothing to the Regent. Not yet." He counts out coin without looking at it.',
+        '"Our survey team went south a week ago, past Ashcombe, to the old waystation in the marsh. The Drowned Chapel. They have not come back and I am done waiting for the Wardens to care. Go and find them."',
+      ],
+      after: ['"The Drowned Chapel. South through the marsh, and mind the water — the Lanterns built the font deep on purpose."'],
     } },
     { kind: 'event', x: 7, y: 14, id: 'harrow_intro', once: true, text: 'Harrow. The Hearth flickered last night and the Queen is dead. The Regent-Warden is hiring.' },
   ],

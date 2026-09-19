@@ -9,12 +9,19 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
 - **Harrow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
   (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
   when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
-  (the contract and the hand-in), a well, a sign.
-- **The Shelf** (outdoor, 32×32): road, woods, hills, marsh, the coast, eight roaming or lurking
-  monster groups with respawn timers, the Ashcombe farm.
+  (the contract and the hand-in), Adjunct Perrin of the Lanterns (the second contract: the Wardstone
+  shard, and what it buys you), a well, a sign.
+- **The Shelf** (outdoor, 32×32): road, woods, hills, marsh, the coast, twenty monster groups with
+  respawn timers — the hunters roam, the ambushers lie where they are — the Ashcombe farm, and the
+  marsh stair down to the chapel.
 - **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
-  dead Lantern and her survey wand, the Rift and its Warden.
-- **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors,
+  dead Lantern and her survey wand, the Rift, its Warden, and the Wardstone shard beside it.
+- **The Drowned Chapel** (dungeon, 16×16): the Lantern waystation the marsh took back, reached by a
+  stair under the reeds south of Ashcombe. A flooded nave, two crypts — one locked, one behind a
+  wall that is not one — an apse with the Hollow Prior on the broken altar, and a font of deep water
+  only a swimmer reaches. Where the hand axe, kite shield, long bow and chain mail live.
+- **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors that
+  read as walls until `F` finds them, torches that double what you see underground,
   water and mountains gated by party abilities, a day/night clock with a hazed sky, automap with
   field-of-view reveal, rest with food, a search action, exploration spells (Light, Wizard Eye).
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
@@ -66,7 +73,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
 | `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable; movement, doors, keys, secrets; roaming groups, encounters, respawn, truce; combat replays byte-for-byte from a seed, the cap, row rules, fleeing; party creation and levelling; a save round-trips and re-applies door changes |
-| `play` | Node: the whole slice played through the keyboard — title, party creation (premade and hand-built), every Harrow service bought and used, Vask's contract, the road to Ashcombe, the cellar with its key, locked door and wand, the Rift Warden, the hand-in; plus save/load mid-run, replay determinism, and a measured win rate for every encounter |
+| `play` | Node: the whole slice played through the keyboard — title, party creation (premade and hand-built), every Harrow service bought and used, Vask's contract and Perrin's, the road to Ashcombe, both dungeons with their keys, locked doors, secret doors and the swimmer's font, both set pieces, and the loop that earns level 2 and buys it at the drillyard; plus save/load mid-run, replay determinism, and a measured win rate for all 29 encounters against the level its map is banded for |
 | `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, and asserts every screen painted with no page error |
 
 `node tools/play.ts quest` runs one chapter; `PLAY_TRACE=1` narrates every fight and camp.
@@ -86,5 +93,5 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/create.ts` | party creation |
-| `content/maps/*.ts` | Harrow, the Shelf, the cellar |
+| `content/maps/*.ts` | Harrow, the Shelf, the cellar, the chapel |
 | `tools/play.ts` | the playthrough: drives `Game` with `Action`s, so screens and services are covered |

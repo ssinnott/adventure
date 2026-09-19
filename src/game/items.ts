@@ -20,8 +20,8 @@ export interface ItemDef {
   ac?: number;
   /** Classes that may equip it; absent = anyone. */
   classes?: readonly string[];
-  /** Consumable effect. */
-  use?: { heal?: number; sp?: number; cure?: readonly string[]; food?: number };
+  /** Consumable effect. `light` is steps of light, and is spent on the party, not a member. */
+  use?: { heal?: number; sp?: number; cure?: readonly string[]; food?: number; light?: number };
 }
 
 const W = (id: string, name: string, price: number, dice: number, sides: number, extra: Partial<ItemDef> = {}): ItemDef =>
@@ -54,9 +54,10 @@ export const ITEMS: Record<string, ItemDef> = Object.fromEntries(([
   { id: 'potion_sp', name: 'Blue Vial', slot: 'none', price: 45, use: { sp: 10 } },
   { id: 'antidote', name: 'Antidote', slot: 'none', price: 25, use: { cure: ['poisoned'] } },
   { id: 'rations', name: 'Rations', slot: 'none', price: 4, use: { food: 5 } },
-  { id: 'torch', name: 'Torch', slot: 'none', price: 2 },
+  { id: 'torch', name: 'Torch', slot: 'none', price: 2, use: { light: 120 } },
   { id: 'key_iron', name: 'Iron Key', slot: 'none', price: 0 },
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
+  { id: 'wardstone_shard', name: 'Wardstone Shard', slot: 'none', price: 0 },
 ] satisfies ItemDef[]).map((i) => [i.id, i]));
 
 export function item(id: string): ItemDef {

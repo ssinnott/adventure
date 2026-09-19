@@ -46,6 +46,7 @@ export const SHELF: MapDef = {
   exits: [
     { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Harrow.' },
     { x: 24, y: 20, to: 'mill', tx: 1, ty: 1, tf: EAST, label: 'The farmhouse door hangs open. Stairs lead down into the cellar.' },
+    { x: 7, y: 25, to: 'chapel', tx: 14, ty: 14, tf: NORTH, label: 'Steps go down under the reeds, and the water goes with you.' },
   ],
   features: [
     { kind: 'sign', x: 16, y: 4, text: 'North: Harrow. South and east along the road: Ashcombe farm.' },
@@ -54,6 +55,8 @@ export const SHELF: MapDef = {
     { kind: 'event', x: 23, y: 20, id: 'ashcombe_gate', once: true, text: 'Ashcombe. The gate is off its hinges and the yard is silent. Something has scraped the earth in a wide ring around the house.' },
     { kind: 'event', x: 15, y: 28, id: 'coast', once: true, text: 'The sea. Out on the water, far off, the column of the Hearth stands against the sky. It flickers.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
+    { kind: 'sign', x: 13, y: 16, text: 'South: the marsh, and the Lantern waystation. Someone has scratched out "waystation" and cut DROWNED beneath it.' },
+    { kind: 'event', x: 7, y: 24, id: 'marsh_steps', once: true, text: 'The reeds stand in ranks here, too straight for reeds. Under them, cut stone, and a stair going down into black water.' },
   ],
   encounters: [
     { id: 'road_rats', x: 16, y: 7, monsters: ['rat', 'rat', 'rat'], aware: 4, respawn: 1440 },
@@ -61,8 +64,20 @@ export const SHELF: MapDef = {
     { id: 'wood_boar', x: 7, y: 13, monsters: ['boar'], aware: 3, respawn: 2880 },
     { id: 'road_bandits', x: 13, y: 12, monsters: ['bandit', 'bandit', 'bandit_archer'], aware: 5, respawn: 2880 },
     { id: 'hill_wolves', x: 24, y: 11, monsters: ['wolf', 'wolf', 'wolf'], aware: 5, respawn: 1440 },
-    { id: 'marsh_spiders', x: 7, y: 23, monsters: ['spider', 'spider', 'spider', 'spider'], aware: 4, respawn: 1440 },
+    { id: 'marsh_spiders', x: 7, y: 23, monsters: ['spider', 'spider', 'spider', 'spider'], aware: 4, respawn: 1440, roams: false },
     { id: 'farm_rats', x: 22, y: 20, monsters: ['rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: 720 },
     { id: 'coast_bandits', x: 20, y: 27, monsters: ['bandit', 'bandit', 'bandit', 'bandit_archer', 'bandit_archer'], aware: 5, respawn: 2880 },
+    { id: 'wood_spiders', x: 2, y: 4, monsters: ['spider', 'spider', 'spider'], aware: 4, respawn: 1440, roams: false },
+    { id: 'wood_boar2', x: 2, y: 17, monsters: ['boar', 'boar'], aware: 3, respawn: 2880 },
+    { id: 'road_wolves', x: 22, y: 15, monsters: ['wolf', 'wolf'], aware: 3, respawn: 1440 },
+    { id: 'hill_bandits', x: 28, y: 11, monsters: ['bandit', 'bandit', 'bandit_archer'], aware: 4, respawn: 2880 },
+    { id: 'hill_boar', x: 28, y: 15, monsters: ['boar'], aware: 3, respawn: 2880 },
+    { id: 'marsh_lurkers', x: 10, y: 22, monsters: ['bog_lurker', 'bog_lurker'], aware: 3, respawn: 1440, roams: false },
+    { id: 'coast_drowned', x: 14, y: 27, monsters: ['drowned', 'drowned'], aware: 3, respawn: 2880, roams: false },
+    { id: 'coast_bandits2', x: 28, y: 25, monsters: ['bandit', 'bandit', 'bandit'], aware: 4, respawn: 2880 },
+    { id: 'wood_wolves2', x: 2, y: 11, monsters: ['wolf', 'wolf', 'wolf'], aware: 4, respawn: 1440 },
+    { id: 'hill_spiders', x: 28, y: 8, monsters: ['spider', 'spider', 'spider'], aware: 4, respawn: 1440, roams: false },
+    { id: 'marsh_lurk2', x: 3, y: 24, monsters: ['bog_lurker', 'bog_lurker'], aware: 3, respawn: 1440, roams: false },
+    { id: 'coast_drowned2', x: 5, y: 27, monsters: ['drowned', 'drowned'], aware: 3, respawn: 2880, roams: false },
   ],
 };

@@ -4,7 +4,7 @@
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps, MAP_DEFS } from '../src/content/maps/index.ts';
 import { World } from '../src/game/world.ts';
-import { defaultParty, partyCan, xpForLevel, levelUp, equip, armorClass } from '../src/game/party.ts';
+import { defaultParty, partyCan, countItem, xpForLevel, levelUp, equip, armorClass } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
@@ -40,17 +40,21 @@ const suites: Record<string, () => void> = {
       }
     }
     // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
+    // A secret door reads as a wall to `passable` on purpose (that is what makes it secret), so the
+    // walk steps through one the way a player does after searching it open.
     for (const def of MAP_DEFS) {
       const m = maps[def.id];
+      const walkable = (x: number, y: number): boolean =>
+        m.at(x, y).door === 'secret' || m.passable(x, y, { swim: true, climb: true, keys: 1 }) !== 'wall';
       const seen = new Set<number>(); const stack = [[def.start.x, def.start.y]];
       while (stack.length) {
         const [x, y] = stack.pop()!; const k = y * m.width + x;
-        if (seen.has(k) || m.passable(x, y, { swim: true, climb: true, keys: 1 }) === 'wall') continue;
+        if (seen.has(k) || !walkable(x, y)) continue;
         if (m.at(x, y).solid === 'tree' || m.at(x, y).solid === 'rock') continue;
         seen.add(k);
         for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (m.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
       }
-      let open = 0; for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) { const c = m.at(x, y); if (m.passable(x, y, { swim: true, climb: true, keys: 1 }) !== 'wall' && c.solid === 'none') open++; }
+      let open = 0; for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) { const c = m.at(x, y); if (walkable(x, y) && c.solid === 'none') open++; }
       ok(seen.size >= open, `${def.id}: every open cell is reachable from the start (${seen.size} reached of ${open})`);
     }
   },
@@ -82,9 +86,15 @@ const suites: Record<string, () => void> = {
     const unlocked = world.move('forward');
     ok(unlocked.kind === 'moved' && world.map.at(7, 11).door === 'door' && !party.bag.includes('key_iron'), 'an iron key unlocks the door and is used up');
     ok(world.mapState.doors['7,11'] === 'door', 'the unlocked door is recorded for the save');
-    // Secret door: the party has an elf and a gnome, so the search always succeeds.
+    // Secret door: a wall until it is found, then a door. The party has an elf and a gnome, so the
+    // search always succeeds.
     world.travel('mill', 4, 6, 2);
-    ok(world.map.at(4, 7).door === 'secret' && world.search() && world.map.at(4, 7).door === 'door', 'searching finds the secret door');
+    ok(world.map.at(4, 7).door === 'secret', 'the mill has a secret door at 4,7');
+    const unfound = world.move('forward');
+    ok(unfound.kind === 'blocked' && world.state.y === 6, `an unsearched secret door blocks like a wall (${unfound.kind === 'blocked' ? unfound.reason : 'walked through it'})`);
+    ok(world.search() && world.map.at(4, 7).door === 'door', 'searching finds the secret door');
+    ok(world.move('forward').kind === 'moved' && world.state.y === 7, 'and then the party walks through it');
+    ok(world.mapState.doors['4,7'] === 'door', 'the found door is recorded for the save');
     // Water and mountains.
     world.travel('shelf', 5, 28, 2);
     ok(world.move('forward').kind === 'blocked' === !partyCan(party).swim, 'water is passable only with a swimmer (Tidefolk in the party)');
@@ -148,6 +158,37 @@ const suites: Record<string, () => void> = {
     ok(!canAttackFromRow(p.members[3], 3) === !ITEMS[p.members[3].equipment.weapon!].ranged, 'back row melee is refused, back row ranged allowed');
     equip(p.members[3], 'sling');
     ok(canAttackFromRow(p.members[3], 3), 'a sling lets the thief attack from the back row');
+    // A failed flight costs the party the rest of the round. The monsters still take theirs, so it
+    // is never a free way to halve the damage coming in.
+    let failed = false, sameRound = false;
+    for (let seed = 1; seed <= 60 && !failed; seed++) {
+      const r = makeRng(seed); const pp = defaultParty(r);
+      const s = startCombat(pp, [{ id: 'g', monsters: ['rat', 'rat', 'rat'] }], r);
+      const first = currentTurn(s, pp, r);
+      if (!first || first.side !== 'party') continue;
+      if (!s.order.slice(s.turn + 1).some((x) => x.side === 'monster')) continue;
+      partyAct(s, pp, r, { type: 'flee' });
+      if (s.outcome === 'fled') continue;
+      failed = true;
+      const next = currentTurn(s, pp, r);
+      sameRound = s.round === 1 && !!next && next.side === 'monster';
+    }
+    ok(failed && sameRound, 'a failed flight spends the party\'s round but not the monsters\'');
+
+    // A draught is not poured into a corpse.
+    {
+      const r = makeRng(6); const pp = defaultParty(r);
+      pp.bag.push('potion_heal');
+      const s = startCombat(pp, [{ id: 'g', monsters: ['rat'] }], r);
+      pp.members[3].conditions = ['dead']; pp.members[3].hp = -10;
+      const held = countItem(pp, 'potion_heal');
+      const turn = currentTurn(s, pp, r);
+      ok(!!turn, 'the fight has a turn to take');
+      if (turn && turn.side === 'monster') monsterAct(s, pp, r);
+      ok(partyAct(s, pp, r, { type: 'use', itemId: 'potion_heal', target: 3 }) === false, 'a healing draught is refused on the dead');
+      ok(countItem(pp, 'potion_heal') === held, 'and is not spent doing it');
+    }
+
     // Fleeing eventually works and ends the fight.
     let fled = false;
     for (let seed = 1; seed < 20 && !fled; seed++) {

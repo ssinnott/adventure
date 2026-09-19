@@ -197,6 +197,9 @@ export class GameMap {
     if (c.terrain === 'deep') return 'deep';
     if (c.terrain === 'water') return can.swim ? 'ok' : 'water';
     if (c.door === 'locked') return can.keys ? 'unlock' : 'locked';
+    // A secret door is a wall until it is found: it reads as one, it is drawn as one, and
+    // `World.search` is the only thing that turns it into a door.
+    if (c.door === 'secret') return 'wall';
     return 'ok';
   }
 

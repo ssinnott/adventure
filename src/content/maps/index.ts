@@ -3,8 +3,9 @@ import type { MapDef } from '../../game/map.ts';
 import { HARROW } from './harrow.ts';
 import { SHELF } from './shelf.ts';
 import { MILL } from './mill.ts';
+import { CHAPEL } from './chapel.ts';
 
-export const MAP_DEFS: readonly MapDef[] = [HARROW, SHELF, MILL];
+export const MAP_DEFS: readonly MapDef[] = [HARROW, SHELF, MILL, CHAPEL];
 
 /** Fresh GameMap instances (cells are mutable: doors unlock, secrets open). */
 export function buildMaps(): Record<string, GameMap> {

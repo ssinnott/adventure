@@ -83,6 +83,11 @@ export class SheetScreen implements Screen {
       if (d.slot !== 'none') {
         if (equip(c, it.id)) { if (it.from === 'bag') g.party.bag.splice(g.party.bag.indexOf(it.id), 1); g.say(`${c.name} equips ${d.name}.`); }
         else g.say(`${c.name} cannot use ${d.name}.`);
+      } else if (d.use?.light) {
+        const src = it.from === 'bag' ? g.party.bag : c.pack;
+        src.splice(src.indexOf(it.id), 1);
+        g.world.state.light = Math.max(g.world.state.light, d.use.light);
+        g.say(`${c.name} lights the ${d.name.toLowerCase()}. The way ahead is clear.`);
       } else if (d.use) {
         pickMember(g, `Use ${d.name} on whom?`, (i) => {
           if (i < 0) return;
@@ -93,7 +98,7 @@ export class SheetScreen implements Screen {
           if (d.use!.sp) { t.sp = Math.min(t.maxSp, t.sp + d.use!.sp); g.say(`${t.name} feels sharper.`); }
           if (d.use!.cure) { for (const k of d.use!.cure) removeCondition(t, k as never); g.say(`${t.name} is cleansed.`); }
           if (d.use!.food) { g.party.food += d.use!.food; g.say(`The party's food grows by ${d.use!.food}.`); }
-        });
+        }, (m) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
       } else g.say(`${d.name}: nothing to do with it here.`);
       if (this.sel >= this.items(g).length) this.sel = Math.max(0, this.items(g).length - 1);
     }
