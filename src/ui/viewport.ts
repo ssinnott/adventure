@@ -674,8 +674,19 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, m
   quad(ctx, P(0, 0), P(1, 0), P(1, 1), P(0, 1), fog(shade(baseCol, shadeSide), d, dark, haze));
   if (house) {
     const beam = fog('#4a3020', d, dark, haze);
-    ctx.strokeStyle = beam; ctx.lineWidth = Math.max(1, uN * 0.03);
-    line(ctx, P(0, 0.55), P(1, 0.55)); line(ctx, P(0, 0), P(1, 0)); line(ctx, P(0, 1), P(1, 1)); line(ctx, P(0.5, 0), P(0.5, 1));
+    ctx.strokeStyle = beam; ctx.lineWidth = Math.max(1, uN * 0.03); ctx.lineCap = 'butt';
+    // Sill and mid beams, a post at each end and the middle, and braces in the lower panels.
+    line(ctx, P(0, 0.55), P(1, 0.55)); line(ctx, P(0, 0), P(1, 0)); line(ctx, P(0, 1), P(1, 1));
+    line(ctx, P(0, 0), P(0, 1)); line(ctx, P(0.5, 0), P(0.5, 1)); line(ctx, P(1, 0), P(1, 1));
+    line(ctx, P(0.02, 1), P(0.48, 0.57)); line(ctx, P(0.98, 1), P(0.52, 0.57));
+    // A window in the upper half, shuttered dark by day and lit at night.
+    if (uN > 30) {
+      const wl = 0.62, wr = 0.88, wt = 0.14, wb = 0.42;
+      quad(ctx, P(wl, wt), P(wr, wt), P(wr, wb), P(wl, wb), beam);
+      const lit = hash(bseed, 9) > 0.4 && (haze === null || hash(bseed, 10) > 0.5);
+      quad(ctx, P(wl + 0.02, wt + 0.03), P(wr - 0.02, wt + 0.03), P(wr - 0.02, wb - 0.03), P(wl + 0.02, wb - 0.03), lit && dark ? fog('#f0b860', d, false, null) : fog('#2a3040', d, dark, haze));
+      ctx.strokeStyle = beam; ctx.lineWidth = 1; line(ctx, P((wl + wr) / 2, wt), P((wl + wr) / 2, wb)); line(ctx, P(wl, (wt + wb) / 2), P(wr, (wt + wb) / 2));
+    }
     // The roof seen from the side: the eave runs along the wall top and the slope climbs inward
     // (away from the eye laterally) to a ridge, both lines receding in perspective.
     const base = roofColor(bseed);

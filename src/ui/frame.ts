@@ -8,8 +8,9 @@ import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
 import { viewCells } from './viewport.ts';
 import { drawPortrait } from './portraits.ts';
-import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, PARCHMENT_DIM, WOOD, WOOD_DARK } from './palette.ts';
-import { shade, rgba } from '../lib/art/palettes.ts';
+import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, PARCHMENT, WOOD, WOOD_DARK } from './palette.ts';
+import { shade, rgba, mix } from '../lib/art/palettes.ts';
+const PARCHMENT_DARK = '#d8c8a0';
 import { hash } from './brush.ts';
 
 export const LAYOUT = {
@@ -42,7 +43,19 @@ export function drawStatus(ctx: CanvasRenderingContext2D, world: World): void {
 
 export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: number): void {
   const r = LAYOUT.map;
-  panel(ctx, r.x, r.y, r.w, r.h);
+  panel(ctx, r.x, r.y, r.w, r.h, PARCHMENT_DARK);
+  // Parchment: a mottled field with a burnt edge.
+  ctx.save(); ctx.beginPath(); ctx.rect(r.x + 2, r.y + 2, r.w - 4, r.h - 4); ctx.clip();
+  for (let i = 0; i < 24; i++) {
+    const px = r.x + hash(i, 1) * r.w, py = r.y + hash(i, 2) * r.h, pr = 14 + hash(i, 3) * 30;
+    const g = ctx.createRadialGradient(px, py, 0, px, py, pr);
+    g.addColorStop(0, rgba(hash(i, 4) > 0.5 ? '#6a4a20' : '#ffffff', 0.05)); g.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = g; ctx.fillRect(px - pr, py - pr, pr * 2, pr * 2);
+  }
+  ctx.restore();
+  const edge = ctx.createLinearGradient(r.x, r.y, r.x, r.y + r.h);
+  edge.addColorStop(0, 'rgba(60,30,10,0.25)'); edge.addColorStop(0.15, 'rgba(60,30,10,0)'); edge.addColorStop(0.85, 'rgba(60,30,10,0)'); edge.addColorStop(1, 'rgba(60,30,10,0.25)');
+  ctx.fillStyle = edge; ctx.fillRect(r.x + 2, r.y + 2, r.w - 4, r.h - 4);
   const m = world.map;
   const cell = Math.max(3, Math.floor((r.w - 8) / Math.max(m.width, m.height)));
   const ox = r.x + Math.floor((r.w - cell * m.width) / 2), oy = r.y + Math.floor((r.h - cell * m.height) / 2);
@@ -50,21 +63,23 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
     if (!world.explored(x, y)) continue;
     const c = m.at(x, y);
+    // Inked onto parchment: walls dark, open ground a light wash in the terrain's hue.
     let col: string;
-    if (c.solid === 'wall' || c.solid === 'building') col = '#8a8090';
-    else if (c.door !== 'none') col = c.door === 'secret' ? '#8a8090' : '#b07a3a';
-    else if (c.solid === 'tree') col = '#2f5a2a';
-    else if (c.solid === 'mountain') col = '#5a5660';
-    else if (c.solid === 'rock' || c.solid === 'pillar') col = '#6a6660';
-    else col = TERRAIN_COLORS[c.terrain] ?? '#3c3a40';
+    if (c.solid === 'wall' || c.solid === 'building') col = '#4a3a30';
+    else if (c.door !== 'none') col = c.door === 'secret' ? '#4a3a30' : '#a0602a';
+    else if (c.solid === 'tree') col = '#4f7a3a';
+    else if (c.solid === 'mountain') col = '#6a6058';
+    else if (c.solid === 'rock' || c.solid === 'pillar') col = '#8a7a6a';
+    else col = mix(TERRAIN_COLORS[c.terrain] ?? '#3c3a40', PARCHMENT, 0.55);
     ctx.fillStyle = col;
     ctx.fillRect(ox + x * cell, oy + y * cell, cell, cell);
+    if ((c.solid === 'wall' || c.solid === 'building') && cell >= 6) { ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(ox + x * cell, oy + y * cell + cell - 1, cell, 1); }
   }
   // Features the party has stood next to.
   for (const f of m.features) {
     if (!world.explored(f.x, f.y) || f.kind === 'event') continue;
     if (f.kind === 'chest' && world.used(f.id)) continue;
-    ctx.fillStyle = f.kind === 'chest' ? YELLOW : f.kind === 'sign' ? PARCHMENT_DIM : BRASS;
+    ctx.fillStyle = f.kind === 'chest' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
     const s = Math.max(1, cell - 2);
     ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s);
   }
@@ -84,7 +99,13 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
     : f === 2 ? [px, py + h, px - h, py - h, px + h, py - h]
     : [px - h, py, px + h, py - h, px + h, py + h];
   ctx.beginPath(); ctx.moveTo(pts[0], pts[1]); ctx.lineTo(pts[2], pts[3]); ctx.lineTo(pts[4], pts[5]); ctx.closePath();
-  ctx.fillStyle = '#ffffff'; ctx.fill(); ctx.strokeStyle = INK; ctx.stroke();
+  ctx.fillStyle = '#c6453c'; ctx.fill(); ctx.strokeStyle = INK; ctx.stroke();
+  // A compass rose in the corner.
+  const rx = r.x + r.w - 16, ry = r.y + 16;
+  ctx.strokeStyle = '#4a3a30'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(rx, ry, 8, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(rx, ry - 10); ctx.lineTo(rx + 3, ry); ctx.lineTo(rx, ry + 10); ctx.lineTo(rx - 3, ry); ctx.closePath(); ctx.fillStyle = '#4a3a30'; ctx.fill();
+  ctx.fillStyle = '#c6453c'; ctx.beginPath(); ctx.moveTo(rx, ry - 10); ctx.lineTo(rx + 3, ry); ctx.lineTo(rx - 3, ry); ctx.closePath(); ctx.fill();
 }
 
 export function drawPartyCards(ctx: CanvasRenderingContext2D, party: Party, selected: number, frame: number): void {

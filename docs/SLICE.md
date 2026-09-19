@@ -46,6 +46,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   choose `wallStyle` (stone or brick) and `ceilingStyle` (vault or timber beams); cobbled roads,
   flowers in the grass, cracks and puddles on flagstones; a carved plank frame with brass fittings
   and rivets; a painted title looking west over the sea at the Hearth.
+- Final polish: pitched, hipped, tiled roofs that run across adjoining cells with eaves, ridge caps
+  and chimneys, keyed per building; timber bracing and a window on house side faces; a birch tree
+  variant; a parchment automap with inked walls and a compass rose; hit sparks and a red card
+  flash in combat when someone takes damage.
 
 ## Stubbed or absent
 

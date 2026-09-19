@@ -5,7 +5,7 @@ import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
-import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame } from './frame.ts';
+import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect } from './frame.ts';
 import { drawMonsterSprite } from './sprites.ts';
 import { drawViewport } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
@@ -26,7 +26,19 @@ export class CombatScreen implements Screen {
   private pendingSpell = '';
   private pendingItem = '';
   private logSeen = 0;
-  constructor(readonly state: CombatState, readonly groupIds: string[]) {}
+  /** Frames of red flash left on each party card, set when a member loses hp. */
+  private cardFlash: number[] = [];
+  private lastHp: number[] = [];
+  /** Sparks: position, velocity, life. */
+  private sparks: { x: number; y: number; vx: number; vy: number; life: number; col: string }[] = [];
+  private lastMonsterHp: number[] = [];
+  constructor(readonly state: CombatState, readonly groupIds: string[]) {
+    this.lastMonsterHp = state.monsters.map((m) => m.hp);
+  }
+
+  private burst(x: number, y: number, col: string, n = 10): void {
+    for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 2.5; this.sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1, life: 10 + Math.random() * 8, col }); }
+  }
 
   private options(g: Game, who: number): { label: string; key: string; disabled: boolean }[] {
     const c = g.party.members[who];
@@ -137,6 +149,9 @@ export class CombatScreen implements Screen {
   render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
     const s = this.state;
     const v = LAYOUT.view;
+    // Detect damage since the last frame for the flashes and sparks.
+    if (!this.lastHp.length) this.lastHp = g.party.members.map((m) => m.hp);
+    g.party.members.forEach((m, i) => { if (m.hp < this.lastHp[i]) { this.cardFlash[i] = 10; const c = cardRect(i); this.burst(c.x + 22, c.y + 38, '#ff6a4a', 6); } this.lastHp[i] = m.hp; });
     // Backdrop: the place the fight happens in, as the viewport shows it, dimmed a touch.
     drawViewport(ctx, g.world, v, () => null, frame);
     ctx.fillStyle = 'rgba(10,8,12,0.28)'; ctx.fillRect(v.x, v.y, v.w, v.h);
@@ -150,6 +165,7 @@ export class CombatScreen implements Screen {
       const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + v.h * 0.62 + 18 + m.group * 10;
       const h = 30 + m.def.size * 70;
       if (m.flash > 0) m.flash--;
+      if (m.hp < this.lastMonsterHp[mi]) { this.burst(x, y - (30 + m.def.size * 70) * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070'); this.lastMonsterHp[mi] = m.hp; }
       const asleep = m.conditions.includes('asleep');
       drawMonsterSprite(ctx, m.def.sprite, x, y, h, m.def.tint, asleep ? 0.6 : 1, frame + mi * 11, m.flash > 0);
       const hpFrac = m.hp / m.def.hp;
@@ -159,6 +175,10 @@ export class CombatScreen implements Screen {
       if (t && t.side === 'monster' && t.i === mi) drawText(ctx, '*', x, y - h - 12, { size: 1, color: RED, align: 'center' });
       if (asleep) drawText(ctx, 'z', x + 10, y - h - 2, { size: 1, color: TEXT_DIM });
     });
+    // Sparks.
+    for (const p of this.sparks) { ctx.fillStyle = p.col; ctx.globalAlpha = Math.min(1, p.life / 8); ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 2); p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life--; }
+    ctx.globalAlpha = 1;
+    this.sparks = this.sparks.filter((p) => p.life > 0);
     // Group labels
     const groups = new Map<number, number>();
     for (const mi of alive) groups.set(s.monsters[mi].group, (groups.get(s.monsters[mi].group) ?? 0) + 1);
@@ -214,5 +234,6 @@ export class CombatScreen implements Screen {
     }
     const who = t && t.side === 'party' ? t.i : this.mode === 'itemTarget' ? this.sub : -1;
     drawPartyCards(ctx, g.party, this.mode === 'itemTarget' ? this.sub : who, frame);
+    g.party.members.forEach((_, i) => { if (this.cardFlash[i] > 0) { const c = cardRect(i); ctx.fillStyle = `rgba(220,60,40,${0.06 * this.cardFlash[i]})`; ctx.fillRect(c.x, c.y, c.w, c.h); this.cardFlash[i]--; } });
   }
 }

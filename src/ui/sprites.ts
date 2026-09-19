@@ -52,6 +52,16 @@ export function drawTreeSprite(ctx: CanvasRenderingContext2D, x: number, y: numb
       const ty = y - h * (0.25 + i * 0.25), tw = w * (1 - i * 0.22), th = h * 0.36;
       celPoly(ctx, B, [x - tw / 2, ty, x, ty - th, x + tw / 2, ty], shade(leaf, 1 - i * 0.06), 0.4, 0.25);
     }
+  } else if (variant === 2) {
+    // A birch: pale trunk with dark marks, a taller, lighter crown.
+    const h = u * 2.6, r = u * 0.6, bark = shade('#e8e4d8', tone);
+    celTaper(ctx, B, x, y, x, y - h * 0.62, u * 0.11, u * 0.07, bark, 0.2);
+    ctx.fillStyle = shade('#3a3630', tone);
+    for (let i = 0; i < 5; i++) ctx.fillRect(Math.round(x - u * 0.08 + (i % 2) * u * 0.06), Math.round(y - h * (0.1 + i * 0.11)), Math.max(1, Math.round(u * 0.09)), Math.max(1, Math.round(u * 0.03)));
+    const light = shade('#7ab848', tone);
+    celBall(ctx, B, x - r * 0.5, y - h * 0.62, r * 0.55, shade(light, 0.9));
+    celBall(ctx, B, x + r * 0.5, y - h * 0.66, r * 0.55, shade(light, 1.05));
+    celBall(ctx, B, x, y - h * 0.82, r * 0.62, light);
   } else {
     const h = u * 2.3, r = u * 0.8;
     celTaper(ctx, B, x, y, x, y - h * 0.5, u * 0.16, u * 0.11, trunk, 0.2);
