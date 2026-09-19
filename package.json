@@ -1,0 +1,21 @@
+{
+  "name": "adventure",
+  "version": "0.1.0",
+  "description": "The Hearth of Caldera: a first-person grid-based party RPG. TypeScript, canvas, no runtime dependencies.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "dev": "node tools/server.ts",
+    "build": "node tools/build.ts",
+    "test": "node tools/test.ts",
+    "smoke": "node tools/smoke.ts",
+    "check": "npm run typecheck && npm run test && npm run smoke"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.20.3",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3"
+  }
+}

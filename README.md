@@ -1,1 +1,42 @@
-# adventure
+# adventure — The Hearth of Caldera
+
+A first-person, grid-based, six-character party RPG in the tradition of Might and Magic I–V, with
+Oblivion-style faction questlines and spreading Rifts. Strict TypeScript, canvas, no runtime
+dependencies, and nothing compiled to disk during development.
+
+- [docs/DESIGN.md](docs/DESIGN.md) — the high-level design: pillars, world, party, combat, the main
+  plot and three subplots, scope tiers and technical notes.
+- [docs/SLICE.md](docs/SLICE.md) — what the vertical slice (M0) contains and how the code is laid out.
+
+## Running
+
+```
+npm install
+npm run dev        # http://localhost:8080/ — .ts served through esbuild per request, no build step
+npm run build      # dist/index.html, a single self-contained file
+npm run check      # typecheck + Node tests + headless Chromium smoke test
+```
+
+Keys: arrows or WASD move and turn, Q/E strafe, Space acts, F searches the wall ahead, R rests,
+C casts, I opens the character sheet (1–6 jump to a member), M map info, F5/F9 save and load.
+
+## Layout
+
+```
+src/main.ts        boot: canvas, input, loop
+src/input.ts       keyboard -> queued actions (plus a text mode for names)
+src/game/          the model: map, world, party, items, spells, monsters, combat, save, game
+src/content/maps/  the authored maps (rows of characters + a legend + features + encounters)
+src/ui/            viewport, frame, sprites, screens, combat screen, title, party creation
+src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
+tools/             dev server, bundler, tests, smoke test, screenshot helper
+```
+
+## The engine
+
+`src/lib/` is [game-engine](https://github.com/ssinnott/game-engine) `src/`, added with
+`git subtree add --prefix=src/lib ... --squash`. Used here: the fixed-step loop, the render canvas,
+the deterministic rng, the pixel font, and the colour and shape helpers. The rig, audio and net
+modules are vendored but not yet imported. Pull updates with
+`git subtree pull --prefix=src/lib https://github.com/ssinnott/game-engine split --squash`
+once the `split` branch has been re-published from main (it currently predates `src/audio/`).

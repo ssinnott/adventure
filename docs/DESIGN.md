@@ -1,0 +1,411 @@
+# Adventure — High-Level Design
+
+*Working title: **The Hearth of Caldera***
+
+A first-person, grid-based, party RPG in the lineage of Might and Magic I–V (Book One through
+World of Xeen), with the world structure, faction questlines and "gates" pressure of The Elder
+Scrolls IV: Oblivion. Six characters, one square at a time, a huge world you are trusted to get
+lost in, and a fantasy setting with a hard science secret underneath it.
+
+This document is deliberately high level. It fixes the pillars, the shape of the world, the story,
+and the scope tiers. Systems get their own docs once the vertical slice exists.
+
+---
+
+## 1. Vision and pillars
+
+**One line:** *Chart a dying world, one square at a time, and decide whether to save it or wake it.*
+
+**Pillars**, in priority order. When two conflict, the earlier one wins.
+
+1. **Exploration is the game.** The map is the reward. Every region is open from the first hour;
+   difficulty is geographic, not gated by quest flags. Secrets are found by walking into walls.
+2. **The party is the character.** Six people you built, with real class and race
+   differentiation, secondary skills that open the map, and promotions earned through factions.
+3. **Turn-based, tactical, quick.** Combat is turn-based on the grid, resolves fast, and never
+   pads the game with swarms. Twelve enemies is a big fight, not a Tuesday.
+4. **The world has a clock.** Day and night, shop hours, NPC schedules, rifts that spread while
+   you dawdle. Time passing is a resource you spend, not a cosmetic.
+5. **Fantasy on the surface, machinery underneath.** The Might and Magic twist, done our way and
+   earned by exploration rather than exposition.
+
+**Anti-pillars** — things the franchise taught us to avoid:
+
+- No hand-mapping. Automap is on from minute one; the Cartography skill makes it *better*, not
+  *exist*.
+- No difficulty cliff that becomes a difficulty plain. The late game must still ask questions.
+- No hundred-monster rooms. Encounter size is capped by design (see §6).
+- No puzzle whose answer lives outside the game. Every riddle has an in-world hint chain.
+- No dead engine reuse. If a region has nothing new to do or see, it does not ship.
+
+---
+
+## 2. Inspirations
+
+### From Might and Magic I–V (take)
+
+| Take | Why |
+|---|---|
+| Six-character party, first-person grid, 90° turns | The feel the player remembers. Non-negotiable. |
+| Open world with geographic difficulty | The series' most-loved trait across all entries. |
+| Secondary skills (Mountaineer, Pathfinder, Swimmer, Cartographer…) | Skills that *open the map* are the best skills. |
+| Hirelings / temporary party members | Cheap variety, story hooks, and a use for gold. |
+| Spell guilds, spell purchase, per-class spell lists | Makes towns matter and gold meaningful. |
+| Day/night, food, conditions (poison, disease, stone…) | Attrition that makes town trips a decision. |
+| Class promotion quests (VII) | Direction inside an open world. |
+| The sci-fi reveal | The franchise's identity. |
+| Timed respawn of cleared areas | Keeps the world alive without infinite grind. |
+
+### From Might and Magic (leave)
+
+- Typed-answer end puzzles (II), cryptograms, timers on riddles.
+- Wireframe-era encounter rates; graph paper.
+- Real-time toggles and free movement (VI–IX). Wrong branch of the family for this game.
+- Playable dragons and recruited-only parties (VIII). Fun once; hollow as a foundation.
+- Always-online DRM and a small world (X).
+
+### From Oblivion (take, adapted to the grid)
+
+| Oblivion | Our version |
+|---|---|
+| Oblivion gates spawning across the world | **Rifts** open near dead Wardstones and spread. Repeatable, template-built mini-dungeons that stop when the region's Wardstone is restored. |
+| Emperor dies in the prologue; find the heir | The Queen dies in the prologue; **the succession is a subplot**, not the main plot. |
+| Fighters/Mages/Thieves/Dark Brotherhood questlines | **Four Charters** (§8), each a full questline with its own arc and reward, and each the promotion path for a class pair. |
+| Fame / Infamy, faction disposition | **Standing** per faction and region. Gates trainers, prices, and who will talk to you. |
+| NPC schedules, shop hours | Towns have a clock. The smith is not at the forge at 3am. |
+| Skill-by-use | *Not taken directly.* We use level-up points plus trainer mastery, but Charter tasks act like "use it to earn it." |
+| Lockpicking / persuasion minigames | Tiny, optional, skill-skippable. A 10-second grid puzzle, not a wheel. |
+| Shivering Isles-style "strange region" | The **Underdeep** (§4) is our tonal break. |
+
+---
+
+## 3. Core loop
+
+```
+Town ──► Outdoors ──► Dungeon ──► Town
+  │          │           │
+  │          │           └─ loot, keys, journals, a Wardstone, a promotion token
+  │          └─ encounters, rifts, secrets, hidden entrances, terrain skills
+  └─ rest, train, buy spells, take contracts, turn in quests, hear rumours
+```
+
+Minute to minute: walk a square, read the viewport, decide (fight / avoid / search / cast).
+Hour to hour: push a little further than is safe, retreat, grow, return.
+Session to session: a region's Wardstone falls, a Charter rank rises, a promotion lands, the
+story turns.
+
+---
+
+## 4. The world: Caldera
+
+Caldera is a ring of land around an inland sea. In the centre of the sea burns **the Hearth**, a
+column of light that has never gone out in recorded history. It has begun to dim.
+
+Around the sea, six regions, each an outdoor map with towns, dungeons, and one **Wardstone**:
+
+| Region | Character | Difficulty band | Wardstone |
+|---|---|---|---|
+| **The Shelf** | Starting coast. Fishing towns, farmland, the capital *Harrow*. | 1–8 | Harrow Stone (already intact; tutorial) |
+| **Thornmark** | Old forest, elf holds, ruined watchtowers. | 5–14 | The Grove Stone |
+| **The Kilns** | Dwarven mining country, lava tubes, forges. | 8–18 | The Anvil Stone |
+| **Saltreach** | Marsh delta, smuggler ports, drowned temples. | 10–20 | The Tide Stone |
+| **The Whitespine** | High passes, monasteries, giants. Needs Mountaineer. | 14–26 | The Peak Stone |
+| **Ashfall** | Volcanic waste on the far side of the sea. Needs a ship. | 20–32 | The Ember Stone |
+
+Below all of it is **the Underdeep**: not a region but a layer. Every region has at least one
+dungeon that drops into it. Geometry becomes too regular, materials become too smooth, and the
+monsters stop being animals. This is where the secret lives (§7).
+
+The **Hearth Isle** in the centre is reachable only by ship, only after Act 2.
+
+### Scale targets (v1)
+
+| Thing | Count | Grid |
+|---|---|---|
+| Outdoor regions | 6 | 32×32 each |
+| Towns | 9 | 16×16 |
+| Dungeons | 22 | 16×16 to 32×32, 1–4 levels |
+| Underdeep segments | 6 + the core | 32×32 |
+| Rift templates | 8 | 12×12, seeded |
+
+---
+
+## 5. The party
+
+**Six slots.** Created at the start, or hired later. Two extra **hireling** slots for NPCs with
+fixed builds and their own reasons for tagging along.
+
+### Races
+
+| Race | Lean | Hook |
+|---|---|---|
+| Human | Balanced | Fastest Standing gains. |
+| Dwarf | STR, END | Resists poison; can read Kiln-script. |
+| Elf | INT, ACC | Innate Perception; Thornmark trusts them. |
+| Gnome | LCK, PER | Finds secrets a square earlier; cheaper training. |
+| Tidefolk | SPD, END | Swim without the skill; Saltreach kin. |
+| Orcblood | STR, SPD | Cheap intimidation; distrusted in Harrow. |
+
+### Classes and promotions
+
+Base classes map to Might and Magic's six, with two promotion tiers earned through Charters (§8).
+
+| Base | Promotion I | Promotion II | Charter |
+|---|---|---|---|
+| Knight | Cavalier | Champion | Wardens |
+| Paladin | Crusader | Hierophant | Wardens / Lanterns |
+| Ranger | Warden of the Wild | Pathwarden | Cartographers |
+| Cleric | Priest | Oracle | Lanterns |
+| Sorcerer | Wizard | Archmage | Lanterns |
+| Thief | Rogue | Shadow | Salt Compact |
+
+Promotions raise HP/SP per level, unlock the next spell tier, and add a class-specific ability.
+Promotion II always requires a dungeon, not just Standing.
+
+### Stats, skills, mastery
+
+- Seven stats: Might, Intellect, Personality, Endurance, Accuracy, Speed, Luck.
+- **Secondary skills** bought from trainers, most gated by Standing:
+  *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
+  Perception, Arms Master, Spirit Sense, Navigator.*
+- Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
+  regional towns; Master trainers are hidden, expensive, and often want a favour.
+
+---
+
+## 6. Combat
+
+- **Trigger:** monsters move on the grid in real time relative to your steps (they advance one
+  square per party step when aware). Combat begins when a group is adjacent or within ranged
+  line.
+- **Turn order** by Speed, party and monsters interleaved. One action per character.
+- **Rows:** front three take and deal melee; back three need reach, ranged, or spells. Swap costs
+  a turn.
+- **Encounter cap:** a single fight is at most 12 monsters in at most 3 groups. Bigger threats
+  are bigger monsters, not more of them.
+- **Conditions:** Asleep, Poisoned, Diseased, Paralysed, Cursed, Stoned, Unconscious, Dead.
+  Cured by spells, temples, or time. Death is reversible in temples at a cost that scales.
+- **Flee** is always an option and always works if the party is faster; the cost is where you end
+  up.
+- **Respawn:** cleared areas repopulate on a long timer with weaker groups, and never repopulate
+  bosses or keyed rooms.
+
+Difficulty design: a region's band is a promise. Inside it, the hard fights are hard because of
+composition and terrain (a caster behind a wall of shields, a narrow corridor, a room that goes
+dark), not because of numbers.
+
+---
+
+## 7. Magic and the secret
+
+### Spell schools
+
+- **Cleric list** (Body, Mind, Spirit): heal, cure, protect, turn, bless, resurrect.
+- **Sorcerer list** (Fire, Air, Water, Earth): damage, control, and the utility spells that make
+  the world bigger: *Light, Levitate, Wizard Eye, Walk on Water, Town Portal, Waymark / Recall,
+  Detect Secrets, Jump.*
+- Spells are **bought** at guilds after paying a membership fee; the fee is the region's toll for
+  making you stronger there.
+- About 40 spells at v1. Every spell tier lands on a promotion.
+
+### The secret, in brief
+
+Caldera is the inside of a hollowed body in space: a generation habitat. The Hearth is its
+reactor and beacon. The Wardstones are field emitters that keep the habitat's ecology sealed. The
+"gods" of every religion in Caldera are fragments of the **Custodian**, the vessel's steward,
+which has been degrading for centuries and now speaks through different voices in different
+regions. The Underdeep is the hull's service layer.
+
+The player is never told this. They **find** it: Kiln-script that turns out to be a maintenance
+language, a monastery whose bells ring in a pattern that matches the Hearth's flicker, an
+Underdeep room with a window.
+
+---
+
+## 8. Factions: the four Charters
+
+Every adventuring company in Caldera works under a Charter. The player picks one at start (it
+gives a starting contract and a home base) but can join others. Each is an Oblivion-style
+questline of six to eight quests with a rank ladder, a climax dungeon, and a unique reward.
+Standing with one lowers Standing with its rival.
+
+| Charter | Who | Line in one sentence | Rival |
+|---|---|---|---|
+| **The Wardens** | Soldiers, road guards | Hold the roads while the Rifts spread; ends with a siege you may or may not win. | Salt Compact |
+| **The Lanterns** | Clergy and mages who tend the Wardstones | Learn what the Wardstones actually are; ends in a schism you resolve. | — |
+| **The Cartographers' Guild** | Explorers, surveyors | Map the unmapped; ends in the Underdeep. Rewards are the map itself. | — |
+| **The Salt Compact** | Smugglers, fences, and the honest poor | Keep the sea lanes open under the table; ends with you either running it or hanging it. | Wardens |
+
+---
+
+## 9. Main plot: *The Dimming*
+
+### Prologue — The Shelf
+
+Queen Isaure of Harrow dies the night the Hearth first flickers. The party, a freshly chartered
+company, is on the road when it happens and watches the light stutter across the sea. In the
+morning a Rift has opened in a Shelf farmstead. Clearing it is the tutorial. Inside is a dead
+Lantern with a cracked survey wand and a note: *the Grove Stone is next.*
+
+Harrow is in interregnum. The Regent-Warden, **Lord Aumery Vask**, holds the city "until the
+succession is settled." He offers the party a Crown contract: find out why the stones are
+failing.
+
+### Act 1 — Ashes on the road (regions 1–2)
+
+The party reaches Thornmark and finds the Grove Stone not failed but **cut**: worked stone, fresh
+chisel marks, and a sigil the Lanterns recognise as the **Ashen Hand**, a sect that preaches the
+Hearth is a prison and its dimming is the door opening. Restoring the stone is the first real
+dungeon. Restoring it closes Thornmark's Rifts.
+
+Turn: the Ashen Hand's cutting tools are Underdeep-made. Somebody is arming them.
+
+### Act 2 — Five stones (regions 2–6, any order)
+
+The spine of the game. Each region has a Wardstone under threat, a distinct way it is
+threatened, and a regional dungeon to fix it:
+
+- **Kilns:** the dwarves cut their own stone to sell the shards; buying it back or seizing it.
+- **Saltreach:** the Tide Stone was stolen and is on a smuggler's ship (Salt Compact subplot
+  crosses here).
+- **Whitespine:** the Peak Stone is fine; the monastery guarding it has been replaced by
+  something wearing the monks.
+- **Ashfall:** the Ember Stone was never finished. The party completes it with parts from the
+  Underdeep, and the Underdeep notices.
+
+With each stone restored, the Hearth steadies. With each stone restored the party also hears
+the Custodian's voice more clearly, and it is not saying the same thing in every region.
+
+Midpoint reveal: Vask is the Ashen Hand's patron. He has read the Underdeep's writing and
+believes it: that the Hearth is a cage and there is a world beyond the sky. He is not wrong
+about the facts. He is wrong about what "beyond" means.
+
+### Act 3 — The Hearth
+
+With a ship (Navigator skill or a Salt Compact favour) the party crosses to the Hearth Isle. The
+final dungeon descends from a temple, through the Underdeep, into the reactor core. Vask is
+there with the Ashen Hand, halfway through the shutdown sequence, and the Custodian, whole for
+the first time, speaks with one voice:
+
+*The voyage is over. It has been over for four hundred years. The vessel is in orbit around the
+world it was sent to. Arrival was never triggered because the crew who could trigger it forgot
+they were crew.*
+
+### The choice
+
+- **Reignite** the Hearth. Caldera stays sealed and safe. Vask is stopped. The world you spent
+  the game mapping is the world you keep. Standard "good" ending; the Wardens and Lanterns
+  approve.
+- **Arrive.** Open the hull. The Rifts stop for good because there is nothing left to hold out.
+  The sky changes. The ending is a walk out of the Underdeep into daylight that is the wrong
+  colour. Cartographers and the Salt Compact approve; the Lanterns split.
+- **Hidden third:** if the player completed *The Lost Expedition* (§10.3), they know the
+  Custodian is lying about one thing: the vessel is not in orbit yet. They can force it to
+  finish the voyage, and the ending is a promise instead of a result.
+
+---
+
+## 10. Subplots
+
+Each subplot spans the whole game, is optional, touches at least three regions, and changes the
+main plot's texture rather than its rails.
+
+### 10.1 The Empty Throne
+
+*Oblivion's "find the heir," inverted: everyone claims to be one.*
+
+Three claimants to Harrow: the Queen's cousin (backed by the Wardens), a Thornmark elf-hold
+that holds a two-hundred-year-old treaty (backed by the Lanterns), and a Saltreach dockmaster
+with a forged lineage and the only navy (backed by the Compact). Vask needs the throne empty.
+
+The party gathers evidence across four regions, can be bribed by any side, and eventually
+presents a case to the Council of Harrow. Whoever wins changes Harrow's shops, trainers, prices
+and guard behaviour for the rest of the game, and decides who is at the Hearth in Act 3 to help
+or hinder.
+
+**Payoff:** the throne subplot is the only way to remove Vask from Harrow *before* Act 3, which
+weakens the Ashen Hand's presence in the final dungeon.
+
+### 10.2 The Salt Compact
+
+*The thieves' guild line. A Light/Dark path without a morality meter.*
+
+The Compact runs Saltreach's smuggling and quietly feeds half of Caldera. Joining it is the
+Thief promotion path. The questline is a slow reveal that the Compact's founder has been dead for
+a decade and its "orders" now come from a dead-drop in the Underdeep. Somebody down there has
+been running the smugglers, and what they have been smuggling is Wardstone shards.
+
+Ends with a choice: take over the Compact and redirect it (it becomes your ferry, fence and spy
+network for Act 3), or hand it to the Wardens (the Wardens siege becomes winnable, the sea lanes
+close, the Ashfall crossing gets harder).
+
+### 10.3 The Lost Expedition
+
+*The completionist's subplot. For the player who reads every note.*
+
+Thirty years ago the Cartographers' Guild sent the *Meridian Company* to map the Underdeep. They
+never came back. Their journals are scattered through every region's deepest dungeon, and each
+one is a hint to a secret square somewhere else (a wall that isn't, a lake that can be walked on
+at night, a monastery bell that opens a door).
+
+Following the trail finds the Meridian Company's last camp in the Underdeep beneath Ashfall,
+their cartographer still alive and very old, and their real map: the hull. The map shows what the
+Custodian will not say in Act 3 (§9, hidden third ending), and finishing this line is the
+Cartographer Promotion II.
+
+---
+
+## 11. Presentation
+
+- **Viewport:** the classic 3-deep, 5-wide first-person window with depth-layered walls,
+  terrain and objects. Drawn from vector shapes at runtime, not bitmaps, so it scales and re-skins
+  cheaply (see §13).
+- **Frame:** party portraits with condition faces along the bottom, automap and compass on the
+  right, message log below.
+- **Monsters:** cel-shaded, rigged, animated (idle / attack / hurt / die) using the shared
+  paper-doll rig. A few dozen base rigs, recoloured and re-proportioned per variant.
+- **Audio:** synth music per region and time of day, procedural SFX. No recorded assets.
+- **Text:** terse. Two lines per event. Journals and books are the long-form exception.
+
+---
+
+## 12. Scope tiers
+
+| Tier | Contents | Purpose |
+|---|---|---|
+| **M0 — Vertical slice** | Harrow, one Shelf outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
+| **M1 — Act 1** | The Shelf and Thornmark complete; Wardens and Lanterns Charter lines to rank 3; the Grove Stone dungeon; hirelings. | First real playthrough. |
+| **M2 — Act 2** | All six regions and Wardstones; all four Charters; promotions I; the Underdeep entrances; the ship. | The open world. |
+| **M3 — Act 3 + subplots** | Hearth Isle, all endings, all three subplots, promotions II, Master trainers. | Content complete. |
+| **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
+
+---
+
+## 13. Technical notes
+
+- **Stack:** strict TypeScript, canvas, no runtime dependencies, esbuild-on-request dev server,
+  same as the sibling games. `game-engine` is vendored into `src/lib/` with `git subtree`, per
+  `game-engine/docs/VENDORING.md`.
+- **From the engine:** the fixed-timestep loop, deterministic RNG (seeded per save so Rifts and
+  loot are reproducible), text layout, canvas helpers, the rig and cel-shading stack for monsters
+  and portraits, the synth and sequencer for music.
+- **Not from the engine:** netcode. This is single-player; `src/net/` is not vendored.
+- **New, game-owned:** the grid viewport compositor, map format, turn-based combat resolver,
+  spell and item tables, quest state machine, save format, Rift generator.
+- **Data-driven:** maps, monsters, spells, items, quests and dialogue are JSON under `content/`.
+  Code never contains a monster's hit points.
+- **Determinism:** combat and Rift generation are pure functions of (state, seed). This gives us
+  replayable bug reports and a golden-fingerprint check like the sibling games' `tools/golden.js`.
+
+---
+
+## 14. Open questions
+
+1. Grid size: 16×16 dungeons feel right; are 32×32 outdoor maps big enough to feel like
+   Xeen, or do we want 64×64 with sparser content?
+2. Real-time monster approach on the map versus fully turn-based movement outdoors.
+   Xeen does the former; it is tenser. Needs the slice to decide.
+3. Permadeath option at character creation? Cheap to add, changes the temple economy.
+4. How much of the secret is discoverable in Act 1 for a player who goes straight down?
+   The design says "all of it, if you can survive," but we should check that this does not
+   deflate Act 3.
