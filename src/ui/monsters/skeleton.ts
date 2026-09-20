@@ -141,7 +141,7 @@ function skeleton(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   // The hollow inside the ribs, laid down first so the gaps between them read as space, not paint.
   hollow(ctx, [
     X(-11.5 + sw * 0.85), Y(-71), cxr, Y(-72.5), X(14 + sw * 0.85), Y(-70), X(12.5 + sw * 0.85), Y(-57),
-    X(8.5), Y(-45), X(0), Y(-43.5), X(-8), Y(-45), X(-10.5 + sw * 0.85), Y(-56),
+    X(8.5), Y(-50), X(0), Y(-48.5), X(-8), Y(-50), X(-10.5 + sw * 0.85), Y(-56),
   ], murk, 0.04, 6);
 
   // The far side: shoulder blades behind the cage, the arm left hanging back, the leg set behind.
@@ -182,7 +182,12 @@ function skeleton(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
 
   // The axial bones and the near side: spine above and below the cage, four ribs, the near limbs.
   const bones: Part[] = [
-    { k: 'tube', pts: [X(0.5), Y(-39.5), X(1.2 + sw * 0.5), Y(-45), X(1.8 + sw * 0.8), Y(-51)], r0: 2.7 * u, r1: 2.4 * u },
+    // The lumbar column, with a knob per vertebra: below the last rib it stands against the
+    // background rather than against the chest hollow, so it has to read as bone on its own.
+    { k: 'tube', pts: [X(0.5), Y(-39.5), X(1.2 + sw * 0.5), Y(-45), X(1.8 + sw * 0.8), Y(-51)], r0: 3.0 * u, r1: 2.7 * u },
+    { k: 'ball', x: X(0.9), y: Y(-42), r: 2.5 * u },
+    { k: 'ball', x: X(1.4 + sw * 0.4), y: Y(-46.5), r: 2.4 * u },
+    { k: 'ball', x: X(1.8 + sw * 0.7), y: Y(-50.5), r: 2.2 * u },
     { k: 'tube', pts: [X(2 + sw * 0.9), Y(-71), X(3.4 + sw * 1.15), Y(-79)], r0: 2.1 * u, r1: 1.9 * u },
   ];
   // Four ribs with the same sag, so the dark between them stays open right across the chest:
@@ -215,6 +220,9 @@ function skeleton(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   gap(ctx, X(20.5 + sw * 0.6), Y(-59.5), X(14 + sw * 0.9), Y(-71.2), 2.5 * u, murk);
   gap(ctx, X(22.5 + sw * 0.3), Y(-47.8), X(20.5 + sw * 0.6), Y(-59.5), 2.2 * u, murk);
   gap(ctx, X(14.6 + sw * 0.9), Y(-70.6), X(20.5 + sw * 0.6), Y(-59.5), 2.6 * u, murk, 0.8);
+  // Between the lumbar vertebrae, so the waist reads as a stack of bones and not one bone.
+  gap(ctx, X(1.4), Y(-46.5), X(0.9), Y(-42), 2.5 * u, murk, 0.7);
+  gap(ctx, X(1.8), Y(-50.5), X(1.4), Y(-46.5), 2.4 * u, murk, 0.7);
   gap(ctx, X(10.5), Y(-21.5), X(7), Y(-37), 3.1 * u, murk);
   gap(ctx, X(11.5), Y(-6.5), X(10.5), Y(-21.5), 2.4 * u, murk);
   gap(ctx, X(7), Y(-35.8), X(10.5), Y(-21.5), 3.0 * u, murk, 0.5);

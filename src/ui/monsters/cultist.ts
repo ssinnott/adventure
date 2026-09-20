@@ -165,7 +165,7 @@ function zealot(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   blob(ctx, B, m.leather, [
     tube([X(-0.15), Y(-0.5), X(0), Y(-0.477), X(0.145), Y(-0.5)], h * 0.018, h * 0.018, 0.05, 14),
     { k: 'ball', x: X(0.02), y: Y(-0.485), r: h * 0.024 },
-    tube([X(0.04), Y(-0.475), X(0.075), Y(-0.36)], h * 0.012, h * 0.009, 0.08, 25),
+    tube([X(0.042), Y(-0.478), X(0.055), Y(-0.43), X(0.078), Y(-0.375)], h * 0.009, h * 0.006, 0.08, 25),
   ], { h, formK: 0.5 });
   // The ash sigil on the chest: a circle with a cut through it.
   sigil(ctx, X(0.02), Y(-0.6), h * 0.05, m.ash, h);
@@ -352,7 +352,7 @@ function hand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   const ca = Math.atan2(Y(-0.07) - Y(-0.55), X(0.5) - X(0.38));
   hands(ctx, h, hs, [X(0.38), Y(-0.52), h * 0.034], thumb(X(0.38), Y(-0.52), h * 0.034, ca), [X(-0.383), Y(-0.44), h * 0.031]);
   fingers(ctx, h, hs, X(0.38), Y(-0.52), h * 0.034, ca);
-  if (h >= 46) for (let i = -1; i <= 1; i++) softLine(ctx, B, [X(-0.4) + i * h * 0.018, Y(-0.425), X(-0.393) + i * h * 0.02, Y(-0.39)], hs, Math.max(1, h * 0.009), 0.45);
+  if (h >= 46) for (let i = -1; i <= 1; i++) softLine(ctx, B, [X(-0.4) + i * h * 0.016, Y(-0.452), X(-0.396) + i * h * 0.018, Y(-0.428)], hs, Math.max(1, h * 0.009), 0.45);
   // Embers drifting up around the figure, ash drifting from the hem.
   embers(ctx, x, y, h, p.frame, 6, 2);
 }
@@ -378,7 +378,7 @@ function gown(x: number, y: number, h: number, sy: number, shW: number, hemW: nu
     X(-hemW * 0.7), Y(-0.29), X(-shW * 0.7), Y(-0.48),
     X(-shW * 0.88), Y(-0.58), X(-shW * 1.02), sy + h * 0.055,
     X(-shW * 0.86), sy - h * 0.005,
-  ], wobble: 0.022, spiky: tatter, seed, sub: 4 };
+  ], wobble: 0.026, spiky: tatter, seed, sub: 3 };
 }
 
 /** The cowl: a lumpy hood around the head centre, its peak drooping to one side; `k` scales it. */

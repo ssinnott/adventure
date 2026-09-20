@@ -117,13 +117,13 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     { k: 'cap', x0: x + w * 0.305, y0: y - h * 0.48, x1: x + w * 0.314, y1: y - h * 0.26, r0: h * 0.095, r1: h * 0.062 },
     { k: 'cap', x0: x + w * 0.314, y0: y - h * 0.26, x1: x + w * 0.306, y1: y - h * 0.055, r0: h * 0.053, r1: h * 0.042 },
     // Hind leg: thigh forward to the stifle, back to a sharp hock, forward again to the hoof.
-    { k: 'cap', x0: x - w * 0.23, y0: y - h * 0.47, x1: x - w * 0.105, y1: y - h * 0.295, r0: h * 0.105, r1: h * 0.068 },
-    { k: 'cap', x0: x - w * 0.105, y0: y - h * 0.295, x1: x - w * 0.235, y1: y - h * 0.178, r0: h * 0.064, r1: h * 0.042 },
-    { k: 'cap', x0: x - w * 0.235, y0: y - h * 0.178, x1: x - w * 0.162, y1: y - h * 0.055, r0: h * 0.041, r1: h * 0.037 },
+    { k: 'cap', x0: x - w * 0.23, y0: y - h * 0.47, x1: x - w * 0.118, y1: y - h * 0.3, r0: h * 0.103, r1: h * 0.068 },
+    { k: 'cap', x0: x - w * 0.118, y0: y - h * 0.3, x1: x - w * 0.222, y1: y - h * 0.182, r0: h * 0.064, r1: h * 0.042 },
+    { k: 'cap', x0: x - w * 0.222, y0: y - h * 0.182, x1: x - w * 0.163, y1: y - h * 0.055, r0: h * 0.041, r1: h * 0.037 },
   ];
   blob(ctx, B, shade(hide, 0.93), legs, { h, formK: 0.5, spread: 0.8, creases: [
     { x0: x - w * 0.142, y0: y - h * 0.305, x1: x - w * 0.078, y1: y - h * 0.288, r: h * 0.019, a: 0.3 },
-    { x0: x - w * 0.262, y0: y - h * 0.19, x1: x - w * 0.205, y1: y - h * 0.176, r: h * 0.015, a: 0.4 },
+    { x0: x - w * 0.248, y0: y - h * 0.193, x1: x - w * 0.193, y1: y - h * 0.179, r: h * 0.015, a: 0.4 },
     { x0: x + w * 0.28, y0: y - h * 0.263, x1: x + w * 0.35, y1: y - h * 0.263, r: h * 0.02, a: 0.35 },
   ] });
   // Hooves: cloven wedges, narrower than the shank above them, all four as one mass on top. The far
