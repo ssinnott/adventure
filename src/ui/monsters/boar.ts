@@ -112,6 +112,11 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // The head: its own wedge, hung low off the shoulder with the snout near the ground.
   const sx = X(0.72), sy = U(0.40);
+  // The FAR tusk, drawn BEFORE the head so the muzzle occludes it: in profile that tusk is on the
+  // other side of the animal's face, and the only part of it a viewer can see is the tip clearing
+  // the top line of the snout, behind and above the near one. Drawn after the head it just looked
+  // like a second tusk on this side.
+  blob(ctx, B, shade(ivory, 0.72), [{ k: 'tube', pts: [X(0.55), U(0.30), X(0.605), U(0.44), X(0.592), U(0.70)], r0: h * 0.02, r1: h * 0.008, gloss: 0.25 }], { h, formK: 0.5 });
   blob(ctx, B, shade(hide, 0.95), [
     { k: 'curve', pts: [
       X(0.22), U(0.86), X(0.40), U(0.80), X(0.55), U(0.63), X(0.68), U(0.48),
@@ -129,10 +134,6 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   ], { h, formK: 0.55 });
   softLine(ctx, B, [X(0.27), U(0.87), X(0.28), U(0.94)], hide, Math.max(1, h * 0.018), 0.45);
 
-  // The FAR tusk first, so the muzzle and the snout disc cut across it: in profile the far side of
-  // the jaw is on the other side of the head, and a pair both drawn in front reads as two tusks on
-  // the near side rather than one on each.
-  blob(ctx, B, shade(ivory, 0.74), [{ k: 'tube', pts: [X(0.545), U(0.315), X(0.605), U(0.40), X(0.588), U(0.535)], r0: h * 0.02, r1: h * 0.007, gloss: 0.25 }], { h, formK: 0.5 });
   // The pale muzzle ring, the wet snout disc and its nostrils.
   patch(ctx, B, pale, [{ k: 'cap', x0: X(0.56), y0: U(0.40), x1: sx + h * 0.02, y1: U(0.365), r0: h * 0.055, r1: h * 0.05 }], { alpha: 0.5, feather: 0.6 });
   glossBall(ctx, B, sx + h * 0.04, sy - h * 0.025, h * 0.068, snout, { gloss: 0.4 });
