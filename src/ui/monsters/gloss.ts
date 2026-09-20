@@ -340,11 +340,16 @@ export function tubeOutline(pts: readonly number[], r0: number, r1: number, wobb
     left.push(spine[i * 2] + nx * r, spine[i * 2 + 1] + ny * r);
     right.push(spine[i * 2] - nx * r, spine[i * 2 + 1] - ny * r);
   }
-  const cap = (cx: number, cy: number, r: number, a0: number, out: number[]) => { for (let k = 1; k < 6; k++) { const a = a0 + (k / 6) * Math.PI; out.push(cx + Math.cos(a) * r, cy + Math.sin(a) * r); } };
+  // The contour walks: left side start-to-end, end cap, right side end-to-start, start cap. Each cap
+  // must therefore run FROM the side that just ended TO the side that starts next, sweeping around
+  // the outside: from +normal to -normal at the end, from -normal to +normal at the start. Both are a
+  // decreasing sweep from the arriving edge's angle; reversing either one folds the outline into a
+  // bow-tie, and the nonzero fill then punches a half-disc hole out of the cap.
+  const cap = (cx: number, cy: number, r: number, from: number, out: number[]) => { for (let k = 1; k < 6; k++) { const a = from - (k / 6) * Math.PI; out.push(cx + Math.cos(a) * r, cy + Math.sin(a) * r); } };
   const out: number[] = [...left];
-  { const ex = spine[(m - 1) * 2], ey = spine[(m - 1) * 2 + 1], tx = ex - spine[(m - 2) * 2], ty = ey - spine[(m - 2) * 2 + 1]; cap(ex, ey, r1, Math.atan2(ty, tx) - Math.PI / 2, out); }
+  { const ex = spine[(m - 1) * 2], ey = spine[(m - 1) * 2 + 1], tx = ex - spine[(m - 2) * 2], ty = ey - spine[(m - 2) * 2 + 1]; cap(ex, ey, r1, Math.atan2(ty, tx) + Math.PI / 2, out); }
   for (let i = m - 1; i >= 0; i--) out.push(right[i * 2], right[i * 2 + 1]);
-  { const sx = spine[0], sy = spine[1], tx = spine[2] - sx, ty = spine[3] - sy; cap(sx, sy, r0, Math.atan2(ty, tx) + Math.PI / 2, out); }
+  { const sx = spine[0], sy = spine[1], tx = spine[2] - sx, ty = spine[3] - sy; cap(sx, sy, r0, Math.atan2(ty, tx) - Math.PI / 2, out); }
   return out;
 }
 
