@@ -264,6 +264,7 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   if (!B.override) { ctx.fillStyle = HOT; ctx.beginPath(); ctx.arc(ox - h * 0.008, oy - h * 0.008, Math.max(1, h * 0.012), 0, Math.PI * 2); ctx.fill(); }
   // Hands: near on the staff, far open with a small flame standing on the palm.
   hands(ctx, h, m.skin, [X(0.3), Y(-0.6), h * 0.032], [X(-0.31), Y(-0.765), h * 0.031]);
+  fingers(ctx, h, m.skin, X(0.3), Y(-0.6), h * 0.032, Math.PI / 2);
   flame(ctx, X(-0.31), Y(-0.79), h * (0.09 + 0.03 * flick), h, p.frame);
 }
 
@@ -302,7 +303,7 @@ function hand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   drape(ctx, h, p.base, X(0.02), sy + h * 0.22, h * 0.24, h * 0.22, 4, 75, 0.85, 0.26);
   // The wide mantle: shouldered, and kept close to the robe in value so the embers and the mask
   // carry the contrast rather than a pale grey slab across the chest.
-  blob(ctx, B, mix(p.dark, m.ash, 0.34), [{ k: 'curve', pts: [
+  blob(ctx, B, mix(p.dark, m.ash, 0.16), [{ k: 'curve', pts: [
     X(-0.12), sy - h * 0.055, X(0.12), sy - h * 0.055,
     X(0.3), sy + h * 0.005, X(0.4), sy + h * 0.06,
     X(0.34), sy + h * 0.17, X(0.18), sy + h * 0.24, X(0.02), sy + h * 0.3, X(-0.16), sy + h * 0.24, X(-0.33), sy + h * 0.17,
@@ -455,7 +456,12 @@ function halfMask(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: numb
 
 /** Hands as small lumpy skin masses (near, far); each entry is [x, y, r]. */
 function hands(ctx: CanvasRenderingContext2D, h: number, skin: string, ...hs: [number, number, number][]): void {
-  blob(ctx, B, skin, hs.map(([x, y, r], i) => ({ k: 'curve', pts: ring(x, y, r, r * 0.9, 7), wobble: 0.07, seed: 80 + i, sub: 2 } as Part)), { h, formK: 0.5 });
+  // One blob PER hand. In a single blob the gradient runs across the union of both, so a hand out
+  // on the far side of the figure sits at the shadow end of the ramp and renders as a grey lump
+  // while its pair, a body's width away, renders as skin.
+  hs.forEach(([x, y, r], i) => {
+    blob(ctx, B, skin, [{ k: 'curve', pts: ring(x, y, r, r * 0.9, 7), wobble: 0.07, seed: 80 + i, sub: 2 }], { h, formK: 0.5 });
+  });
 }
 
 /**
@@ -483,7 +489,7 @@ function shade2(ctx: CanvasRenderingContext2D, hex: string, parts: readonly Part
 
 /** The matching light: a soft pale plane inside a mass, for a brow, a cheek, a chin, a lit sleeve. */
 function lit2(ctx: CanvasRenderingContext2D, hex: string, parts: readonly Part[], a = 0.4): void {
-  patch(ctx, B, mix(hex, '#ffffff', 0.55), parts, { alpha: a, feather: 0.85 });
+  patch(ctx, B, mix(hex, '#ffffff', 0.32), parts, { alpha: a * 0.72, feather: 0.9 });
 }
 
 /**
@@ -497,7 +503,7 @@ function sleeveEdge(ctx: CanvasRenderingContext2D, h: number, hex: string, x0: n
   let nx = -dy / len, ny = dx / len;
   if (nx * B.light.x + ny * B.light.y < 0) { nx = -nx; ny = -ny; }
   patch(ctx, B, mix(hex, '#000000', 0.62), [{ k: 'cap', x0: x0 - nx * r * 0.58, y0: y0 - ny * r * 0.58, x1: x1 - nx * r * 0.52, y1: y1 - ny * r * 0.52, r0: r * 0.46, r1: r * 0.4 }], { alpha: 0.52 * k, feather: 0.85 });
-  patch(ctx, B, mix(hex, '#ffffff', 0.5), [{ k: 'cap', x0: x0 + nx * r * 0.46, y0: y0 + ny * r * 0.46, x1: x1 + nx * r * 0.42, y1: y1 + ny * r * 0.42, r0: r * 0.36, r1: r * 0.3 }], { alpha: 0.42 * k, feather: 0.9 });
+  patch(ctx, B, mix(hex, '#ffffff', 0.3), [{ k: 'cap', x0: x0 + nx * r * 0.46, y0: y0 + ny * r * 0.46, x1: x1 + nx * r * 0.42, y1: y1 + ny * r * 0.42, r0: r * 0.36, r1: r * 0.3 }], { alpha: 0.3 * k, feather: 0.92 });
 }
 
 /**
@@ -507,14 +513,14 @@ function sleeveEdge(ctx: CanvasRenderingContext2D, h: number, hex: string, x0: n
  */
 function drape(ctx: CanvasRenderingContext2D, h: number, hex: string, ox: number, oy: number, halfW: number, len: number, n: number, seed: number, curve = 0.7, a = 0.3): void {
   if (h < 34 || B.override) return;
-  const w = Math.max(1, h * 0.013), pale = mix(hex, '#ffffff', 0.62);
+  const w = Math.max(1, h * 0.013), pale = mix(hex, '#ffffff', 0.26);
   for (let i = 0; i < n; i++) {
     const t = n === 1 ? 0 : (i / (n - 1) - 0.5) * 2, j = (rnd(seed, i, 1) - 0.5) * 0.3;
     const ex = ox + (t + j) * halfW, ey = oy + len * (0.8 + rnd(seed, i, 2) * 0.4);
     const mx = ox + (t + j) * halfW * curve, my = oy + len * 0.45;
     const pts = [ox + t * halfW * 0.1, oy, mx, my, ex, ey];
     softLine(ctx, B, pts, hex, w, a);
-    softLine(ctx, B, pts.map((v, k) => k % 2 ? v : v - w * 1.1), pale, w * 0.6, a * 0.55);
+    softLine(ctx, B, pts.map((v, k) => k % 2 ? v : v - w * 1.1), pale, w * 0.6, a * 0.38);
   }
 }
 

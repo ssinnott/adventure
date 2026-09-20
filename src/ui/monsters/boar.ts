@@ -3,9 +3,13 @@
 // ivory tusks, a small mean red eye, small ears, short legs on cloven hooves and a paler belly and
 // muzzle. Drawn back to front as sections that must each be nameable: far legs, the barrel with
 // its crest, the wedge head over the shoulder, the near legs over the barrel, then the hooves. A
-// boar's head IS its own form, so it carries its own contour even though it is the same hide;
-// likewise a leg, which is a thigh, a knee and a shank rather than one stub. Three-quarter view
-// facing the party. Idle: the chest breathes, an ear flicks.
+// boar's head IS its own form, so it carries its own contour even though it is the same hide.
+// The four legs are four different drawings, never two mirrored pairs: the forelegs drop straight
+// under the shoulder, the hind legs bend forward to the stifle and back to a sharp hock, and the
+// far pair stands further back on the floor with its feet short of the ground line. The pale belly
+// is a fur marking, so it follows the belly line, pinches at the brisket and dies away under the
+// hind quarters with a ragged edge. Three-quarter view facing the party. Idle: the chest breathes,
+// an ear flicks.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -143,7 +147,7 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   // The wet snout disc with its nostrils.
   glossBall(ctx, B, sx + h * 0.06, sy, h * 0.11, snout, { gloss: 0.35 });
   if (!B.override) {
-    ctx.fillStyle = hoof;
+    ctx.fillStyle = B.col(hoof);
     const nr = Math.max(1, Math.round(h * 0.03));
     ctx.fillRect(Math.round(sx + h * 0.04), Math.round(sy - h * 0.02), nr, nr + 1);
     ctx.fillRect(Math.round(sx + h * 0.1), Math.round(sy - h * 0.02), nr, nr + 1);

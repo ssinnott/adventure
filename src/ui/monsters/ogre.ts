@@ -65,18 +65,23 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
 
   groundShadow(ctx, X(0.0), y + 1, h * 0.66);
 
-  // 1. Far arm and far leg: their own darker mass, behind the hide. The arm hangs outside the ribs,
-  //    so the torso's own outline runs between them as a deep seam.
+  // 1. The far limbs, behind the hide. An arm and a leg are two things, so they are two masses: in
+  //    one blob they unioned from shoulder to floor into a single dark slab that read as a cloak
+  //    and swallowed the hand. The leg goes down first, then the arm hangs over it, a step lighter,
+  //    with its own contour.
   blob(ctx, B, farHex, [
-    { k: 'tube', pts: [X(-0.19), Ys + h * 0.01, X(-0.315), Y(0.59), X(-0.365), Y(0.47)], r0: h * 0.064, r1: h * 0.046, wobble: 0.06, seed: 21 },
-    { k: 'tube', pts: [X(-0.365), Y(0.475), X(-0.34), Y(0.385), X(-0.30), Y(0.30)], r0: h * 0.044, r1: h * 0.034, wobble: 0.06, seed: 22 },
-    { k: 'curve', pts: ring(X(-0.292), Y(0.258), h * 0.052, 8), wobble: 0.11, seed: 29, sub: 2 },
     { k: 'tube', pts: [X(-0.085), Y(0.38), X(-0.19), Y(0.20), X(-0.165), Y(0.055)], r0: h * 0.08, r1: h * 0.048, wobble: 0.05, seed: 23 },
     { k: 'ell', x: X(-0.188), y: Y(0.195), rx: h * 0.058, ry: h * 0.05, rot: -0.2 },
     { k: 'curve', pts: [X(-0.275), Y(0.012), X(-0.285), Y(0.05), X(-0.215), Y(0.078), X(-0.12), Y(0.07), X(-0.09), Y(0.038), X(-0.13), Y(0.01)], wobble: 0.05, seed: 24, sub: 2 },
   ], { h, formK: 0.5, creases: [
-    { x0: X(-0.325), y0: Y(0.515), x1: X(-0.30), y1: Y(0.44), r: h * 0.018, a: 0.45 },   // inside the far elbow
     { x0: X(-0.145), y0: Y(0.225), x1: X(-0.16), y1: Y(0.17), r: h * 0.018, a: 0.4 },    // far knee
+  ] });
+  blob(ctx, B, shade(farHex, 1.16), [
+    { k: 'tube', pts: [X(-0.19), Ys + h * 0.01, X(-0.325), Y(0.60), X(-0.375), Y(0.48)], r0: h * 0.064, r1: h * 0.046, wobble: 0.06, seed: 21 },
+    { k: 'tube', pts: [X(-0.375), Y(0.485), X(-0.35), Y(0.40), X(-0.312), Y(0.315)], r0: h * 0.044, r1: h * 0.036, wobble: 0.06, seed: 22 },
+    { k: 'curve', pts: ring(X(-0.302), Y(0.272), h * 0.054, 8), wobble: 0.11, seed: 29, sub: 2 },
+  ], { h, formK: 0.55, creases: [
+    { x0: X(-0.335), y0: Y(0.525), x1: X(-0.31), y1: Y(0.45), r: h * 0.018, a: 0.45 },   // inside the far elbow
   ] });
 
   // 2. The hide: torso, gut, neck, skull, ears, near leg and foot -- one mass.
@@ -183,7 +188,7 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   softLine(ctx, B, [X(-0.08), hy + h * 0.092, X(0.004), hy + h * 0.11, X(0.085), hy + h * 0.088], p.base, h * 0.024, 0.85);
   ctx.fillStyle = B.col(ivory); ctx.strokeStyle = B.col(B.outline); ctx.lineWidth = 1; ctx.lineJoin = 'round';
   for (const tx of [X(-0.064), X(0.07)]) {
-    ctx.beginPath(); ctx.moveTo(tx - h * 0.023, hy + h * 0.108); ctx.lineTo(tx + h * 0.004, hy + h * 0.016); ctx.lineTo(tx + h * 0.023, hy + h * 0.104); ctx.closePath();
+    ctx.beginPath(); ctx.moveTo(tx - h * 0.016, hy + h * 0.124); ctx.lineTo(tx + h * 0.003, hy + h * 0.055); ctx.lineTo(tx + h * 0.016, hy + h * 0.12); ctx.closePath();
     ctx.stroke(); ctx.fill();
   }
   softLine(ctx, B, [X(0.128), hy + h * 0.016, X(0.136), hy + h * 0.05], p.base, h * 0.014, 0.5);
