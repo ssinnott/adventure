@@ -1,2 +1,6 @@
 node_modules/
 dist/
+
+# Scratch renders from tools/gallery.ts, which defaults to ./gallery.png
+gallery.png
+*.gallery.png
