@@ -35,6 +35,8 @@ export interface WorldState {
   truce: number;
   truceGroups: string[];
   steps: number;
+  /** The town map last stood in; Town Portal returns here. Absent in older saves: Harrow. */
+  lastTown?: string;
 }
 
 export type MoveResult =
@@ -117,6 +119,8 @@ export class World {
     const nx = this.state.x + FACING_DX[mf], ny = this.state.y + FACING_DY[mf];
     const pass = this.map.passable(nx, ny, partyCan(this.party));
     if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: BLOCK_TEXT[pass] };
+    const gate = this.map.exitAt(nx, ny);
+    if (gate?.needFlag && !this.party.flags[gate.needFlag]) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
     const messages: string[] = [];
     if (pass === 'unlock') {
       const c = this.map.at(nx, ny);
@@ -147,7 +151,17 @@ export class World {
     this.ensureMapState(to);
     this.state.mapId = to; this.state.x = x; this.state.y = y;
     if (facing !== undefined) this.state.facing = facing;
+    if (this.map.kind === 'town') this.state.lastTown = to;
     this.reveal();
+  }
+
+  /** Town Portal: back to the start cell of the last town visited (Harrow before any). */
+  townPortal(): string {
+    const id = this.state.lastTown && this.maps[this.state.lastTown] ? this.state.lastTown : Object.values(this.maps).find((m) => m.kind === 'town')!.id;
+    const m = this.maps[id];
+    this.travel(id, m.def.start.x, m.def.start.y, m.def.start.facing);
+    this.state.truce = 0; this.state.truceGroups = [];
+    return m.name;
   }
 
   /** Mark cells around the party seen: the four neighbours always, more with sight. */

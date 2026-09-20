@@ -8,7 +8,7 @@ import { spell } from './spells.ts';
 import type { SpellDef } from './spells.ts';
 import { item } from './items.ts';
 import {
-  armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, xpForLevel,
+  armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain,
 } from './party.ts';
 import type { Party, Character, Condition } from './party.ts';
 
@@ -41,7 +41,10 @@ export interface CombatState {
   round: number;
   order: TurnRef[];
   turn: number;
+  /** Rounds left on each party buff: Bless (+to-hit), Ward (+AC), Haste (+speed and +to-hit). */
   bless: number;
+  shield: number;
+  haste: number;
   defending: boolean[];
   log: string[];
   outcome: Outcome;
@@ -49,6 +52,11 @@ export interface CombatState {
 }
 
 export const FRONT_ROW = 3;
+/** What the buffs are worth while they last. */
+export const BLESS_HIT = 2, HASTE_HIT = 1, HASTE_SPEED = 8, WARD_AC = 3;
+
+/** The party's current to-hit bonus from buffs. */
+export function buffHit(s: CombatState): number { return (s.bless > 0 ? BLESS_HIT : 0) + (s.haste > 0 ? HASTE_HIT : 0); }
 
 export function startCombat(party: Party, groups: { id: string; monsters: string[] }[], rng: RngInstance): CombatState {
   const monsters: MonsterInst[] = [];
@@ -56,7 +64,7 @@ export function startCombat(party: Party, groups: { id: string; monsters: string
     for (const id of g.monsters) if (monsters.length < 12) monsters.push({ def: monster(id), hp: monster(id).hp, group: gi, conditions: [], flash: 0 });
   });
   const s: CombatState = {
-    monsters, groupIds: groups.map((g) => g.id), round: 0, order: [], turn: 0, bless: 0,
+    monsters, groupIds: groups.map((g) => g.id), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
     defending: party.members.map(() => false), log: [], outcome: 'ongoing', loot: null,
   };
   s.log.push(describeGroups(s) + ' attack!');
@@ -74,7 +82,8 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   s.round++;
   s.defending = party.members.map(() => false);
   const refs: { ref: TurnRef; speed: number }[] = [];
-  party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: c.stats.speed + rng.range(0, 4) }); });
+  const haste = s.haste > 0 ? HASTE_SPEED : 0;
+  party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: c.stats.speed + haste + rng.range(0, 4) }); });
   s.monsters.forEach((m, i) => { if (m.hp > 0) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
   refs.sort((a, b) => b.speed - a.speed);
   s.order = refs.map((r) => r.ref);
@@ -108,6 +117,8 @@ export function currentTurn(s: CombatState, party: Party, rng: RngInstance): Tur
 
 function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   if (s.bless > 0) s.bless--;
+  if (s.shield > 0) s.shield--;
+  if (s.haste > 0) s.haste--;
   for (const c of party.members) {
     if (hasCondition(c, 'poisoned') && !isDown(c)) { damage(c, 1); s.log.push(`${c.name} suffers from poison.`); }
     if (hasCondition(c, 'paralysed') && rng.chance(0.35)) { removeCondition(c, 'paralysed'); s.log.push(`${c.name} can move again.`); }
@@ -147,7 +158,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       const m = s.monsters[action.target];
       if (!m || m.hp <= 0 || !canAttackFromRow(c, t.i)) return false;
       const w = weaponOf(c);
-      const hit = rng.chance(toHit(attackBonus(c) + (s.bless > 0 ? 2 : 0), m.def.ac));
+      const hit = rng.chance(toHit(attackBonus(c) + buffHit(s), m.def.ac));
       if (hit) {
         const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)));
         hurtMonster(s, m, dmg);
@@ -230,19 +241,44 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       }
       return;
     }
+    case 'all': {
+      const members = s.monsters.filter((m) => m.hp > 0);
+      let total = 0, killed = 0;
+      for (const m of members) { const d = dmgOf(); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
+      s.log.push(`${c.name} casts ${sp.name}: ${total} damage to every foe` + (killed ? `, ${killed} slain.` : '.'));
+      return;
+    }
     case 'ally': {
       const a = party.members[target] ?? c;
-      if (sp.heal) s.log.push(`${c.name} casts ${sp.name}: ${a.name} recovers ${heal(a, sp.heal + bonus(c.stats.personality))}.`);
-      if (sp.cure) { for (const k of sp.cure) removeCondition(a, k as Condition); s.log.push(`${c.name} casts ${sp.name} on ${a.name}.`); }
+      s.log.push(castOnAlly(c, sp, a));
       return;
     }
     case 'party':
       if (sp.buff === 'bless') { s.bless = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party is blessed.`); }
-      else if (sp.heal) { for (const a of party.members) heal(a, sp.heal); s.log.push(`${c.name} casts ${sp.name}.`); }
+      else if (sp.buff === 'shield') { s.shield = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. A ward settles over the party.`); }
+      else if (sp.buff === 'haste') { s.haste = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party quickens.`); }
+      else if (sp.heal) { for (const a of party.members) heal(a, sp.heal + bonus(c.stats.personality)); s.log.push(`${c.name} casts ${sp.name}. The party is healed.`); }
       return;
     default:
       s.log.push(`${c.name} casts ${sp.name}.`);
   }
+}
+
+/**
+ * A healing, curing or raising spell on one ally, shared by combat and exploration. Returns the log
+ * line. Raising brings the dead back at `heal` hp; other healing scales with the caster's Personality.
+ */
+export function castOnAlly(c: Character, sp: SpellDef, a: Character): string {
+  if (sp.raise) {
+    if (!hasCondition(a, 'dead')) return `${c.name} casts ${sp.name}, but ${a.name} is not dead.`;
+    a.conditions = a.conditions.filter((k) => k === 'cursed');
+    a.hp = Math.min(a.maxHp, Math.max(1, sp.heal ?? 1));
+    return `${c.name} casts ${sp.name}: ${a.name} draws breath again.`;
+  }
+  const parts: string[] = [];
+  if (sp.heal) parts.push(`${a.name} recovers ${heal(a, sp.heal + bonus(c.stats.personality))}`);
+  if (sp.cure) { for (const k of sp.cure) removeCondition(a, k as Condition); if (!sp.heal) parts.push(`${a.name} is cleansed`); }
+  return `${c.name} casts ${sp.name}: ${parts.join(', ')}.`;
 }
 
 /** Resolve the acting monster's turn. */
@@ -255,7 +291,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const pool = m.def.ranged || front.length === 0 ? any : front;
   const pick = rng.pick(pool);
   if (!pick) { s.turn++; checkOutcome(s, party, rng); return true; }
-  const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0);
+  const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0);
   if (rng.chance(toHit(m.def.attack, ac))) {
     let dmg = roll(rng, m.def.dice, m.def.sides, m.def.bonus);
     if (s.defending[pick.i]) dmg = Math.ceil(dmg / 2);
@@ -283,7 +319,7 @@ function checkOutcome(s: CombatState, party: Party, rng: RngInstance): void {
     }
     const alive = party.members.filter((c) => !hasCondition(c, 'dead'));
     const each = Math.floor(loot.xp / Math.max(1, alive.length));
-    for (const c of alive) { const before = c.xp >= xpForLevel(c.level + 1); c.xp += each; if (!before && c.xp >= xpForLevel(c.level + 1)) loot.ready.push(c.name); }
+    for (const c of alive) { const before = canTrain(c); c.xp += each; if (!before && canTrain(c)) loot.ready.push(c.name); }
     party.gold += loot.gold;
     party.bag.push(...loot.items);
     s.loot = loot;

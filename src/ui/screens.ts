@@ -11,7 +11,8 @@ import { BRASS, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
 import type { Feature } from '../game/map.ts';
 import { item, ITEMS } from '../game/items.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest } from '../game/party.ts';
+import { CLASSES, RACES, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, MAX_LEVEL } from '../game/party.ts';
+import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 
 const BOX = { x: 40, y: 40, w: 560, h: 220 };
@@ -103,7 +104,7 @@ export class SheetScreen implements Screen {
     const c = g.party.members[this.who];
     panel(ctx, 8, 8, 624, 268);
     drawText(ctx, `${c.name}  ${RACES[c.race].name} ${CLASSES[c.cls].name}  LEVEL ${c.level}`, 20, 18, { size: 1, color: BRASS });
-    drawText(ctx, `XP ${c.xp} / ${xpForLevel(c.level + 1)}`, 620, 18, { size: 1, color: c.xp >= xpForLevel(c.level + 1) ? YELLOW : TEXT_DIM, align: 'right' });
+    drawText(ctx, c.level >= MAX_LEVEL ? `XP ${c.xp}  (AT THE CAP)` : `XP ${c.xp} / ${xpForLevel(c.level + 1)}`, 620, 18, { size: 1, color: canTrain(c) ? YELLOW : TEXT_DIM, align: 'right' });
     drawPortraitLarge(ctx, c, 20, 34);
     let y = 36;
     for (const s of STATS) { drawText(ctx, s.toUpperCase().slice(0, 3), 100, y, { size: 1, color: TEXT_DIM }); drawText(ctx, String(c.stats[s]), 140, y, { size: 1, color: TEXT, align: 'right' }); y += 10; }
@@ -160,9 +161,7 @@ export class SpellScreen implements Screen {
           const c = g.party.members[caster];
           if (c.sp < sp.sp) { g.say(`${c.name} lacks the spell points.`); return; }
           c.sp -= sp.sp;
-          const t = g.party.members[i];
-          if (sp.heal) g.say(`${c.name} casts ${sp.name}: ${t.name} recovers ${heal(t, sp.heal)}.`);
-          if (sp.cure) { for (const k of sp.cure) removeCondition(t, k as never); g.say(`${c.name} casts ${sp.name} on ${t.name}.`); }
+          g.say(castOnAlly(c, sp, g.party.members[i]));
         });
       } else g.castExplore(caster, sp.id);
       this.onDone?.();
@@ -292,11 +291,11 @@ function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
       g.push(guild(g, f));
     }, f.name);
   }
-  // Spells up to tier 2 for sale, per caster.
+  // Spells up to the guild's tier for sale, per caster; the price climbs with the tier.
   const offers: { who: number; id: string; price: number }[] = [];
   for (const { m, i } of members) {
     const list = CLASSES[m.cls].spells; if (!list) continue;
-    for (const sp of spellsFor(list, 2)) if (!m.spells.includes(sp.id)) offers.push({ who: i, id: sp.id, price: sp.level * 40 });
+    for (const sp of spellsFor(list, f.maxTier ?? 2)) if (!m.spells.includes(sp.id)) offers.push({ who: i, id: sp.id, price: spellPrice(sp.level) });
   }
   if (!offers.length) return new MessageScreen('"We have taught you all we can for now. Come back when you have grown."', undefined, f.name);
   return new ChoiceScreen(`"What would you learn?" (${g.party.gold} gold.)`, [...offers.map((o) => `${g.party.members[o.who].name}: ${spell(o.id).name}  ${o.price}g`), 'Leave'], (i) => {
@@ -309,9 +308,15 @@ function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
   }, f.name, [...offers.map((o) => o.price > g.party.gold), false]);
 }
 
+/** What a guild charges for a spell of the given tier: 40, 80, 160, 320. */
+export function spellPrice(tier: number): number { return 40 * Math.pow(2, tier - 1); }
+
+/** What a trainer charges to teach the next level: 25 a level to 5, 40 a level after. */
+export function trainPrice(c: Character): number { return c.level < 5 ? c.level * 25 : c.level * 40; }
+
 function trainer(g: Game, f: Extract<Feature, { kind: 'trainer' }>): Screen {
-  const cost = (c: Character) => c.level * 25;
-  const can = g.party.members.map((c) => c.level < f.maxLevel && c.xp >= xpForLevel(c.level + 1) && !isDown(c));
+  const cost = trainPrice;
+  const can = g.party.members.map((c) => c.level < f.maxLevel && canTrain(c) && !isDown(c));
   const names = g.party.members.map((c, i) => `${c.name}  L${c.level}  ${can[i] ? `train (${cost(c)}g)` : c.level >= f.maxLevel ? 'beyond me' : `needs ${xpForLevel(c.level + 1) - c.xp} xp`}`);
   return new ChoiceScreen(`"${f.name}. I train to level ${f.maxLevel}. Who is ready?" (${g.party.gold} gold.)`, [...names, 'Leave'], (i) => {
     if (i < 0 || i === names.length) return;
