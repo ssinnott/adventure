@@ -1,5 +1,6 @@
 // The Shelf: the starting coast. Harrow at the north, the Ashcombe farm to the south-east, woods
-// to the west, marsh and the sea at the south. Difficulty band 1-8.
+// to the west, marsh and the sea at the south, and the pass east to Thornmark, which the Wardens
+// hold closed until Vask's contract is done. Difficulty band 1-8.
 import type { MapDef } from '../../game/map.ts';
 import { EAST, NORTH } from '../../game/types.ts';
 
@@ -19,7 +20,7 @@ export const SHELF: MapDef = {
     'M,,,TTT,,,,,,,,,=,,,,,TTTT,,,,,M',
     'M,,,,T,,,,,,,,,,=,,,,,,TT,,,,,,M',
     'M,,,,,,,,,,,,,,,=,,,,,,,,,,,,,,M',
-    'M,,,,,,,,,,,,====,,,,,,,,,,,,,,M',
+    'M,,,,,,,,,,,,===================',
     'M,,,,,,,,,,,,=,,,,,,,,,,,,r,,,,M',
     'M,,,,,,,,,,,,=,,,,,,,,,,,rr,,,,M',
     'M,,,TT,,,,,,,=,,,,,,,,,,,,r,,,,M',
@@ -46,10 +47,13 @@ export const SHELF: MapDef = {
   exits: [
     { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Harrow.' },
     { x: 24, y: 20, to: 'mill', tx: 1, ty: 1, tf: EAST, label: 'The farmhouse door hangs open. Stairs lead down into the cellar.' },
+    { x: 31, y: 9, to: 'thornmark', tx: 1, ty: 9, tf: EAST, label: 'The pass opens onto old forest. Thornmark.',
+      needFlag: 'q_ashcombe_done', blockedText: 'A Warden checkpoint bars the pass. "Thornmark road is closed until the Regent-Warden says otherwise."' },
   ],
   features: [
     { kind: 'sign', x: 16, y: 4, text: 'North: Harrow. South and east along the road: Ashcombe farm.' },
-    { kind: 'sign', x: 13, y: 9, text: 'The road bends south here toward the coast.' },
+    { kind: 'sign', x: 13, y: 9, text: 'South: the coast and Ashcombe. East: the pass to Thornmark, Warden road.' },
+    { kind: 'sign', x: 28, y: 9, text: 'Warden checkpoint. The pass east is closed by order of the Regent-Warden.' },
     { kind: 'sign', x: 18, y: 16, text: 'East: Ashcombe.' },
     { kind: 'event', x: 23, y: 20, id: 'ashcombe_gate', once: true, text: 'Ashcombe. The gate is off its hinges and the yard is silent. Something has scraped the earth in a wide ring around the house.' },
     { kind: 'event', x: 15, y: 28, id: 'coast', once: true, text: 'The sea. Out on the water, far off, the column of the Hearth stands against the sky. It flickers.' },

@@ -63,6 +63,17 @@ await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['roa
 await page.waitForTimeout(150);
 const screen2 = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 const combatColours = await colours();
+// Thornmark: the second region's sprites (ogre, wraith, the big wolves) and a town paint too.
+await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornmark', 6, 8, 3); g.enterCell(); });
+await page.waitForTimeout(150);
+const thornColours = await colours();
+await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['tm_ogre', 'tm_wraiths']); });
+await page.waitForTimeout(150);
+const thornFight = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, monsters: g.top.state.monsters.map((m: any) => m.def.sprite).join(',') }; });
+const thornFightColours = await colours();
+await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornhold', 7, 14, 0); g.enterCell(); });
+await page.waitForTimeout(150);
+const townColours = await colours();
 if (process.env.SMOKE_SHOT) {
   await page.screenshot({ path: process.env.SMOKE_SHOT });
 }
@@ -78,5 +89,8 @@ ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the titl
 ok(state.map === 'shelf' && state.steps === 3, `three steps back through the gate reach the Shelf (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
+ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
+ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
+ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

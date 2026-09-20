@@ -32,6 +32,9 @@ export interface Exit {
   tf?: Facing;
   /** Shown in the log on arrival. */
   label?: string;
+  /** A party flag that must be set before the exit opens; `blockedText` says why not. */
+  needFlag?: string;
+  blockedText?: string;
 }
 
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
@@ -40,7 +43,7 @@ export type Feature =
   | { kind: 'inn'; x: number; y: number; name: string; price: number }
   | { kind: 'temple'; x: number; y: number; name: string }
   | { kind: 'shop'; x: number; y: number; name: string; stock: string[] }
-  | { kind: 'guild'; x: number; y: number; name: string; classes: string[]; fee: number }
+  | { kind: 'guild'; x: number; y: number; name: string; classes: string[]; fee: number; maxTier?: number }
   | { kind: 'trainer'; x: number; y: number; name: string; maxLevel: number }
   | { kind: 'chest'; x: number; y: number; id: string; gold: number; items: string[]; trapped?: boolean }
   | { kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string; quest?: NpcQuest }

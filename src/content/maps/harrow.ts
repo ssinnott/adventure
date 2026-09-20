@@ -36,7 +36,7 @@ export const HARROW: MapDef = {
     { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns' },
     { kind: 'shop', x: 4, y: 10, name: 'Harrow Provisioner', stock: ['club', 'dagger', 'staff', 'shortsword', 'mace', 'spear', 'sling', 'shortbow', 'robe', 'leather', 'buckler', 'potion_heal', 'antidote', 'rations', 'torch'] },
     { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger'], fee: 50 },
-    { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 10 },
+    { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6 },
     { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', lines: [
       'The tavern is loud and smells of eel.',
       'A fisherman says: "The Hearth stuttered the night the Queen died. I saw it from the boats."',
@@ -56,7 +56,7 @@ export const HARROW: MapDef = {
         '"A Lantern tool. So the Lanterns were there before us. Interesting." He drops it into a pocket. "You have done what I asked. The Crown pays its debts."',
         '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
       ],
-      after: ['"Thornmark, when you are ready. The road east is not yet open to you; the Wardens are still clearing it."'],
+      after: ['"The Wardens have opened the pass east. Thornmark, and the Grove Stone: go and see why it has gone quiet, and bring me what you find. Thornhold will train you further than my drillyard can."'],
     } },
     { kind: 'event', x: 7, y: 14, id: 'harrow_intro', once: true, text: 'Harrow. The Hearth flickered last night and the Queen is dead. The Regent-Warden is hiring.' },
   ],

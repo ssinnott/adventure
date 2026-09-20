@@ -4,14 +4,14 @@
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps, MAP_DEFS } from '../src/content/maps/index.ts';
 import { World } from '../src/game/world.ts';
-import { defaultParty, partyCan, xpForLevel, levelUp, equip, armorClass } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../src/game/combat.ts';
+import { defaultParty, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition } from '../src/game/party.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, WARD_AC } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
 import { serialize, deserialize } from '../src/game/save.ts';
 import { ITEMS } from '../src/game/items.ts';
 import { MONSTERS } from '../src/game/monsters.ts';
-import { SPELLS } from '../src/game/spells.ts';
+import { SPELLS, spell, spellsFor } from '../src/game/spells.ts';
 
 let failures = 0;
 const ok = (cond: boolean, msg: string): void => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) failures++; };
@@ -37,7 +37,24 @@ const suites: Record<string, () => void> = {
       for (const f of m.features) {
         if (f.kind === 'chest') for (const id of f.items) ok(id in ITEMS, `${def.id}: chest ${f.id} item '${id}' exists`);
         if (f.kind === 'shop') for (const id of f.stock) ok(id in ITEMS, `${def.id}: shop stock '${id}' exists`);
+        if (f.kind === 'npc' && f.quest) ok(f.quest.item in ITEMS, `${def.id}: quest item '${f.quest.item}' exists`);
       }
+      for (const e of m.exits) if (e.needFlag) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && f.quest?.setFlag === e.needFlag)), `${def.id}: gated exit flag '${e.needFlag}' is set by some quest`);
+    }
+    // Every quest item is dropped or found somewhere; every monster is placed on some map.
+    const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
+    for (const id of Object.keys(MONSTERS)) ok(placed.has(id), `monster '${id}' appears on a map`);
+    const found = new Set([...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'chest' ? f.items : [])), ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
+    for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc' && f.quest) ok(found.has(f.quest.item), `${d.id}: quest item '${f.quest.item}' can be found`);
+    // The trainer ladder: some trainer teaches to the cap, and the cap is what levelUp stops at.
+    const trainers = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'trainer'));
+    ok(Math.max(...trainers.map((t) => t.kind === 'trainer' ? t.maxLevel : 0)) === MAX_LEVEL, `a trainer teaches to level ${MAX_LEVEL}`);
+    const bands = MAP_DEFS.map((d) => d.band?.[1] ?? 0);
+    ok(Math.max(...bands) >= MAX_LEVEL, `some map is tuned for level ${MAX_LEVEL}`);
+    { // The level 10 party: total first-pass xp from every non-respawning and respawning group, once, per member.
+      let total = 0; for (const d of MAP_DEFS) for (const e of d.encounters ?? []) for (const id of e.monsters) total += MONSTERS[id].xp;
+      const each = Math.floor(total / 6);
+      ok(each >= xpForLevel(7), `one clear of every map is worth level 7 or more per member (${each} xp each; level 10 needs ${xpForLevel(10)})`);
     }
     // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
     for (const def of MAP_DEFS) {
@@ -90,6 +107,21 @@ const suites: Record<string, () => void> = {
     ok(world.move('forward').kind === 'blocked' === !partyCan(party).swim, 'water is passable only with a swimmer (Tidefolk in the party)');
     world.travel('shelf', 1, 1, 3);
     ok(world.move('forward').kind === 'blocked', 'mountains block without a mountaineer');
+    // The pass to Thornmark is a flag-gated exit: closed until Vask's contract is done.
+    world.travel('shelf', 30, 9, 1);
+    const closed = world.move('forward');
+    ok(closed.kind === 'blocked' && /checkpoint/.test(closed.reason) && world.map.id === 'shelf', 'the Thornmark pass is closed before the Ashcombe hand-in');
+    party.flags.q_ashcombe_done = 1;
+    const opened = world.move('forward');
+    ok(opened.kind === 'moved' && world.map.id === 'thornmark' && world.state.x === 1 && world.state.y === 9, `the pass opens once the flag is set (${world.map.id} ${world.state.x},${world.state.y})`);
+    // Town Portal returns to the last town stood in.
+    ok(world.townPortal() === 'Harrow' && world.map.id === 'harrow', 'Town Portal goes to Harrow before any other town is visited');
+    world.travel('thornhold', 7, 14, 0); world.travel('grove2', 8, 8, 0);
+    ok(world.townPortal() === 'Thornhold' && world.map.id === 'thornhold' && world.state.x === 7 && world.state.y === 14, 'Town Portal returns to the last town visited');
+    // Dungeon stairs go down and come back up.
+    world.travel('grove1', 11, 11, 0);
+    const down = world.move('forward');
+    ok(down.kind === 'moved' && world.map.id === 'grove2' && world.state.x === 1 && world.state.y === 1, 'the Grove Roots stairs go down to the Cut Stone');
   },
 
   monsters() {
@@ -157,6 +189,29 @@ const suites: Record<string, () => void> = {
       fled = s.outcome === 'fled';
     }
     ok(fled, 'fleeing from a slime succeeds within a few tries');
+    // Tier 4-5 spells: an all-target spell hits every foe; Ward and Haste set their timers; Revive raises the dead.
+    {
+      const r = makeRng(21); const pp = defaultParty(r);
+      const sorc = pp.members[5], cler = pp.members[4];
+      sorc.level = 8; sorc.spells.push('lightning', 'meteor'); sorc.sp = 60; cler.spells.push('ward', 'revive', 'wrath'); cler.sp = 60;
+      const s = startCombat(pp, [{ id: 'a', monsters: ['ogre', 'ogre'] }, { id: 'b', monsters: ['wraith', 'wraith', 'wraith'] }], r);
+      let cast = 0, warded = false;
+      for (let i = 0; i < 60 && s.outcome === 'ongoing' && cast < 2; i++) {
+        const t = currentTurn(s, pp, r); if (!t) break;
+        if (t.side === 'monster') { monsterAct(s, pp, r); continue; }
+        const c = pp.members[t.i];
+        if (c === sorc) { const before = s.monsters.map((m) => m.hp); partyAct(s, pp, r, { type: 'cast', spellId: 'meteor', target: 0 }); ok(s.monsters.every((m, k) => m.hp < before[k]), 'Meteor Swarm damages every monster'); cast++; }
+        else if (c === cler && !warded) { partyAct(s, pp, r, { type: 'cast', spellId: 'ward', target: 0 }); warded = s.shield === 5; cast++; }
+        else partyAct(s, pp, r, { type: 'defend' });
+      }
+      ok(warded, 'Ward sets the party shield for five rounds');
+      ok(WARD_AC > 0 && s.log.some((l) => /ward settles/.test(l)), 'the ward is logged');
+      const dead = pp.members[0]; addCondition(dead, 'dead'); dead.hp = -10;
+      const line = castOnAlly(cler, spell('revive'), dead);
+      ok(!hasCondition(dead, 'dead') && dead.hp === 10 && /draws breath/.test(line), `Revive brings a dead member back at 10 hp (${line})`);
+      ok(/not dead/.test(castOnAlly(cler, spell('revive'), dead)), 'Revive on the living does nothing');
+      ok(spell('haste').buff === 'haste' && spell('town_portal').explore === 'town_portal', 'Haste and Town Portal exist at tier 4 and 5');
+    }
   },
 
   party() {
@@ -175,6 +230,19 @@ const suites: Record<string, () => void> = {
     ok(!equip(p.members[5], 'chain'), 'a sorcerer cannot wear chain');
     ok(armorClass(p.members[0]) > armorClass(p.members[5]), 'the knight has the better AC');
     ok(Object.values(SPELLS).every((sp) => sp.sp > 0), 'every spell costs something');
+    // The road to level 10: tiers land at 1, 2, 4, 6, 8; levelling stops at the cap; nothing is left to train.
+    ok([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join() === '1,2,2,3,3,4,4,5,5,5', `spell tiers by level are ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join()}`);
+    for (const list of ['cleric', 'sorcerer'] as const) for (let t = 1; t <= 5; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
+    const c = p.members[4];
+    c.xp = 1_000_000;
+    const gained = levelUp(c, rng);
+    ok(c.level === MAX_LEVEL && gained === MAX_LEVEL - 1, `a cleric with endless xp levels to exactly ${MAX_LEVEL} (${c.level})`);
+    ok(!canTrain(c), 'and cannot train further');
+    ok(spellsFor('cleric', 5).every((sp) => c.spells.includes(sp.id)), 'at the cap every cleric spell is known, including tier 5');
+    ok(c.maxHp >= 9 * 1 + 8 && c.maxSp > 20, `hp and sp grew with the levels (hp ${c.maxHp}, sp ${c.maxSp})`);
+    const k = p.members[0]; k.xp = xpForLevel(8);
+    ok(levelUp(k, rng) === 7 && k.level === 8 && k.spells.length === 0, 'a knight levels to 8 on level-8 xp and learns no spells');
+    ok(xpForLevel(MAX_LEVEL) === 13050, `level ${MAX_LEVEL} costs ${xpForLevel(MAX_LEVEL)} xp`);
   },
 
   save() {

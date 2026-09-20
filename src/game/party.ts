@@ -95,6 +95,14 @@ export function bonus(v: number): number { return Math.floor((v - 10) / 3); }
 
 export function xpForLevel(level: number): number { return Math.floor(100 * Math.pow(level - 1, 2) * 1.5) + (level - 1) * 100; }
 
+/** The level cap for now. Levels are bought at a trainer; no trainer teaches past this. */
+export const MAX_LEVEL = 10;
+/** Spell tiers unlock at levels 1, 2, 4, 6 and 8; five tiers exist. */
+export const MAX_SPELL_TIER = 5;
+export function spellTierAt(level: number): number { return Math.min(MAX_SPELL_TIER, 1 + Math.floor(level / 2)); }
+/** Whether the character has the experience for the next level (and is not at the cap). */
+export function canTrain(c: Character): boolean { return c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1); }
+
 export function createCharacter(name: string, race: RaceId, cls: ClassId, base: Partial<Stats>, rng: RngInstance): Character {
   const stats = { ...BASE_STATS, ...base };
   for (const s of STATS) stats[s] += RACES[race].mods[s] ?? 0;
@@ -183,10 +191,10 @@ export function rest(c: Character): void {
   c.conditions = c.conditions.filter((k) => k === 'poisoned' || k === 'diseased' || k === 'cursed');
 }
 
-/** Level up as many times as the xp allows; returns how many levels were gained. */
+/** Level up as many times as the xp allows, up to MAX_LEVEL; returns how many levels were gained. */
 export function levelUp(c: Character, rng: RngInstance): number {
   let gained = 0;
-  while (c.xp >= xpForLevel(c.level + 1)) {
+  while (c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1)) {
     c.level++; gained++;
     const cd = CLASSES[c.cls];
     const hp = Math.max(1, rng.int(1, cd.hpDie) + bonus(c.stats.endurance));
@@ -194,8 +202,8 @@ export function levelUp(c: Character, rng: RngInstance): number {
     if (cd.spStat) {
       const sp = Math.max(1, rng.int(1, cd.spDie) + bonus(c.stats[cd.spStat]));
       c.maxSp += sp; c.sp += sp;
-      // A new spell tier every two levels, up to the fourth in this slice.
-      const tier = Math.min(4, 1 + Math.floor(c.level / 2));
+      // A new spell tier every two levels: tier 5 lands at level 8.
+      const tier = spellTierAt(c.level);
       for (const s of spellsFor(cd.spells!, tier)) if (!c.spells.includes(s.id)) c.spells.push(s.id);
     }
     // One stat point in the class's leaning, every other level.

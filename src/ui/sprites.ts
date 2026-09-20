@@ -111,7 +111,7 @@ export function drawMonsterSprite(ctx: CanvasRenderingContext2D, kind: MonsterSp
   const dark = shade(tint, tone * 0.72);
   const light = shade(tint, tone * 1.15);
   const amber = shade('#ffd070', Math.max(0.6, tone));
-  groundShadow(ctx, x, y + 1, h * (kind === 'spider' ? 1.6 : kind === 'wolf' || kind === 'boar' || kind === 'rat' ? 1.3 : 0.7));
+  groundShadow(ctx, x, y + 1, h * (kind === 'spider' ? 1.6 : kind === 'wolf' || kind === 'boar' || kind === 'rat' ? 1.3 : kind === 'wraith' ? 0.5 : 0.7));
   switch (kind) {
     case 'rat': rat(ctx, x, y, h, base, dark, light, amber, breathe); break;
     case 'wolf': wolf(ctx, x, y, h, base, dark, light, amber, breathe); break;
@@ -123,6 +123,8 @@ export function drawMonsterSprite(ctx: CanvasRenderingContext2D, kind: MonsterSp
     case 'skeleton': skeleton(ctx, x, y, h, tone, breathe); break;
     case 'riftling': riftling(ctx, x, y, h, base, dark, light, frame, false); break;
     case 'warden': riftling(ctx, x, y, h, base, dark, light, frame, true); break;
+    case 'ogre': ogre(ctx, x, y, h, base, dark, light, tone, breathe); break;
+    case 'wraith': wraith(ctx, x, y, h, base, dark, light, frame); break;
   }
   B.flash(false);
 }
@@ -374,4 +376,54 @@ function riftling(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   celPoly(ctx, B, [x - w * 0.12, y - h * 0.6, x, y - h * 0.74, x + w * 0.12, y - h * 0.6, x, y - h * 0.46], ember, 0.2, 0.3);
   eye(ctx, x - w * 0.14, y - h * 0.82, h * 0.03, '#fff0a0', false); eye(ctx, x + w * 0.14, y - h * 0.82, h * 0.03, '#fff0a0', false);
   void hash;
+}
+
+function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, base: string, dark: string, light: string, tone: number, br: number): void {
+  // A wide, stooped brute: bare hide for a torso, a rope belt and a hide kilt, a great club.
+  const hide = shade('#5a3a24', tone), boots = shade('#3a2a20', tone);
+  const f = figure(ctx, x, y, h, base, hide, base, boots, br);
+  const w = f.w * 1.35;
+  // Gut and shoulders over the frame, so the ogre is broader than a man.
+  celPoly(ctx, B, [x - w * 0.55, f.shoulder + h * 0.02, x + w * 0.55, f.shoulder + h * 0.02, x + w * 0.5, f.hip + h * 0.05, x - w * 0.5, f.hip + h * 0.05], base, 0.38, 0.3);
+  celBall(ctx, B, x, f.hip - h * 0.06, w * 0.34, shade(base, 1.04), false);
+  celBall(ctx, B, x - w * 0.5, f.shoulder + h * 0.03, h * 0.075, light, false);
+  celBall(ctx, B, x + w * 0.5, f.shoulder + h * 0.03, h * 0.075, light, false);
+  // Kilt and rope belt.
+  celPoly(ctx, B, [x - w * 0.48, f.hip, x + w * 0.48, f.hip, x + w * 0.52, f.hip + h * 0.16, x - w * 0.52, f.hip + h * 0.16], hide, 0.35, 0.2);
+  band(ctx, B, x - w * 0.5, f.hip - h * 0.02, w, h * 0.03, shade('#a08a5a', tone));
+  // The club, held across the body in the right hand.
+  const cx0 = x + w * 0.5, cy0 = f.shoulder + h * 0.2, cx1 = x + w * 0.95, cy1 = f.shoulder - h * 0.28;
+  celTaper(ctx, B, cx0, cy0, cx1, cy1, h * 0.03, h * 0.07, shade('#6a4a2a', tone), 0.2);
+  for (let i = 0; i < 3; i++) celBall(ctx, B, cx1 - (cx1 - cx0) * (0.1 + i * 0.12), cy1 - (cy1 - cy0) * (0.1 + i * 0.12), h * 0.014, shade('#b0b4bc', tone), false);
+  // Head: low brow, jutting jaw, two tusks, a topknot.
+  const r = h * 0.1, hy = f.shoulder - r * 0.9;
+  celBall(ctx, B, x, hy, r, base);
+  celPoly(ctx, B, [x - r * 0.9, hy + r * 0.2, x + r * 0.9, hy + r * 0.2, x + r * 0.75, hy + r * 1.05, x - r * 0.75, hy + r * 1.05], shade(base, 0.92), 0.3, 0.15);
+  band(ctx, B, x - r * 0.8, hy - r * 0.35, r * 1.6, r * 0.22, dark);
+  eye(ctx, x - r * 0.38, hy - r * 0.05, r * 0.14, '#f0e070', false); eye(ctx, x + r * 0.38, hy - r * 0.05, r * 0.14, '#f0e070', false);
+  celPoly(ctx, B, [x - r * 0.5, hy + r * 0.8, x - r * 0.35, hy + r * 0.25, x - r * 0.2, hy + r * 0.8], '#f0ead8', 0.2, 0);
+  celPoly(ctx, B, [x + r * 0.2, hy + r * 0.8, x + r * 0.35, hy + r * 0.25, x + r * 0.5, hy + r * 0.8], '#f0ead8', 0.2, 0);
+  celCapsule(ctx, B, x, hy - r, x + r * 0.2, hy - r * 1.6, r * 0.18, shade('#2a2018', tone), 0);
+}
+
+function wraith(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, base: string, dark: string, light: string, frame: number): void {
+  // A hooded shroud that hangs in the air, frayed to nothing below the waist; a pale inner glow.
+  const drift = Math.sin(frame / 11) * h * 0.03, pulse = 0.7 + 0.3 * Math.sin(frame / 7);
+  const yy = y - h * 0.1 + drift, w = h * 0.5, shoulder = yy - h * 0.72;
+  ctx.fillStyle = B.col(rgba(light, 0.12 * pulse)); ctx.beginPath(); ctx.arc(x, yy - h * 0.5, h * 0.42, 0, Math.PI * 2); ctx.fill();
+  // The shroud: shoulders, then a jagged hem walked right to left, so the tatters hang in points.
+  const pts = [x - w * 0.45, shoulder, x + w * 0.45, shoulder];
+  for (let i = 6; i >= 0; i--) pts.push(x - w * 0.6 + (i / 6) * w * 1.2, yy - h * (i % 2 ? 0.02 : 0.16) - Math.sin(frame / 8 + i) * h * 0.02);
+  celPoly(ctx, B, pts, base, 0.4, 0.25);
+  // Reaching arms, long-fingered.
+  for (const s of [-1, 1]) {
+    const ex = x + s * w * 0.95, ey = shoulder + h * 0.12 + s * drift;
+    celTaper(ctx, B, x + s * w * 0.4, shoulder + h * 0.04, ex, ey, h * 0.05, h * 0.03, dark, 0.15);
+    for (let k = -1; k <= 1; k++) stroke(ctx, [ex, ey, ex + s * h * 0.07, ey + k * h * 0.035 + h * 0.02], light, 1);
+  }
+  // Hood, a dark void inside, two cold eyes.
+  const r = h * 0.11, hy = shoulder - r * 1.05;
+  celPoly(ctx, B, [x - r * 1.3, hy + r * 1.3, x - r * 1.15, hy - r * 0.5, x, hy - r * 1.55, x + r * 1.15, hy - r * 0.5, x + r * 1.3, hy + r * 1.3], base, 0.4, 0.25);
+  pathEllipse(ctx, x, hy + r * 0.25, r * 0.75, r * 0.9); ctx.fillStyle = B.col('#0c0a12'); ctx.fill();
+  eye(ctx, x - r * 0.32, hy + r * 0.1, r * 0.13, mix(light, '#ffffff', 0.5 * pulse), false); eye(ctx, x + r * 0.32, hy + r * 0.1, r * 0.13, mix(light, '#ffffff', 0.5 * pulse), false);
 }
