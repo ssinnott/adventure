@@ -88,6 +88,24 @@ function underShadow(ctx: CanvasRenderingContext2D, pts: readonly number[], hex:
   fillPoly(ctx, o, rgba(tones(B, hex).deep, a));
 }
 
+/**
+ * One lip of a break: the spine pushed to one side by a sawtooth width that tapers to nothing at
+ * both tips, then slid along the break by `shift`. The two lips take opposite `odd`, so their teeth
+ * never mate and the halves read as having ground past one another.
+ */
+function lip(spine: readonly number[], w: number, side: 1 | -1, shift: number, odd: boolean): number[] {
+  const n = spine.length / 2, out: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const a = Math.max(0, i - 1) * 2, c = Math.min(n - 1, i + 1) * 2;
+    const dx = spine[c] - spine[a], dy = spine[c + 1] - spine[a + 1], len = Math.hypot(dx, dy) || 1;
+    const tx = dx / len, ty = dy / len;
+    const taper = Math.sin(Math.PI * (i / (n - 1))) ** 0.45;
+    const k = ((i % 2 === 1) === odd ? 1 : 0.3) * taper;
+    out.push(spine[i * 2] - ty * w * k * side + tx * shift * taper, spine[i * 2 + 1] + tx * w * k * side + ty * shift * taper);
+  }
+  return out;
+}
+
 /** The molten core: a dark ragged gap in the stone, a glow behind it, a hot lump inside with a white heart. */
 function core(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, dark: string, heat: Heat, pulse: number, seed: number, h: number): void {
   blob(ctx, B, dark, [{ k: 'curve', pts: ring(cx, cy, r * 1.35, 7, 1, 1.1, 0.4), wobble: 0.12, seed, sub: 2 }], { h, outline: false, formK: 0.2, spread: 0.5 });
@@ -116,116 +134,125 @@ function fragment(ctx: CanvasRenderingContext2D, x: number, y: number, s: number
  * forward and ready. The head is a blunt crystal skull -- taller than it is long, a heavy brow
  * shelf over two hot eyes, a short square jaw hanging open on shard teeth, thick shards swept up
  * and back off the crown. No forward point anywhere: a beak would make it a bird.
+ *
+ * The trunk is a stack of slabs, not a faceted card. Three tones, three depths: the dark body mass,
+ * then the belly plate and shoulder guard lying on it, then the breastplate and brow lying on those.
+ * Every plate carries its own ink edge and a shadow cast under its far lip, and the core burns in
+ * the notch the breastplate lifts away from the belly, so the light leaks out from BETWEEN them.
  */
 function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, elder: boolean): void {
   const heat = heatOf(p, false), pulse = 0.5 + 0.5 * Math.sin(p.frame / 6);
   const b = p.breathe * h * 0.008, sway = Math.sin(p.frame / 20) * h * 0.006;
   // W widens the frame, T thickens the limbs: the elder is the same creature grown heavy.
-  const W = elder ? 1.16 : 0.94, T = elder ? 1.24 : 1;
-  groundShadow(ctx, x + h * 0.02, y + 1, h * 0.76 * W);
+  const W = elder ? 1.18 : 0.94, T = elder ? 1.3 : 1;
+  groundShadow(ctx, x, y + 1, h * 0.78 * W);
 
-  // Head frame: locals in head units so the whole skull scales as one.
-  const hs = h * (elder ? 0.99 : 0.87);
-  const hx = x + h * 0.12 + sway, hy = y - h * (elder ? 0.785 : 0.79) + b;
+  // The skull's own frame: locals in head units, so brow, jaw, teeth and crown scale as one piece.
+  const hs = h * (elder ? 1.02 : 0.92);
+  const hx = x + h * 0.175 + sway, hy = y - h * 0.815 + b;
   const HD = (u: number, v: number): number[] => [hx + u * hs, hy + v * hs];
 
-  // ---- the far side: leg and arm, their own darker mass, behind everything.
-  const fex = x - h * 0.20 * W, fey = y - h * 0.575 + sway, fwx = x - h * 0.13 * W, fwy = y - h * 0.425 + sway;
+  // ---- the far side: leg and arm, their own darker mass, the elbow swung clear of the body.
+  const fex = x - h * 0.355 * W, fey = y - h * 0.575 + sway, fwx = x - h * 0.3 * W, fwy = y - h * 0.385 + sway;
   blob(ctx, B, p.dark, [
-    { k: 'tube', pts: [x - h * 0.1, y - h * 0.44, x - h * 0.02, y - h * 0.31, x - h * 0.15, y - h * 0.16, x - h * 0.06, y - h * 0.03], r0: h * 0.062 * W, r1: h * 0.036, wobble: 0.1, seed: 11 },
-    { k: 'poly', pts: [x - h * 0.19, y - h * 0.015, x - h * 0.06, y - h * 0.07, x + h * 0.04, y - h * 0.01, x - h * 0.14, y + h * 0.01] },
-    { k: 'cap', x0: x - h * 0.02, y0: y - h * 0.715 + b, x1: fex, y1: fey, r0: h * 0.056 * T, r1: h * 0.046 * T },
-    { k: 'cap', x0: fex, y0: fey, x1: fwx, y1: fwy, r0: h * 0.046 * T, r1: h * 0.036 * T },
-    { k: 'poly', pts: shard(fwx - h * 0.01, fwy, 1.15, h * 0.09 * T, h * 0.028 * T) },
+    { k: 'tube', pts: [x - h * 0.09, y - h * 0.43, x - h * 0.015, y - h * 0.3, x - h * 0.145, y - h * 0.16, x - h * 0.055, y - h * 0.03], r0: h * 0.062 * W, r1: h * 0.036, wobble: 0.1, seed: 11 },
+    { k: 'poly', pts: [x - h * 0.185, y - h * 0.015, x - h * 0.055, y - h * 0.07, x + h * 0.04, y - h * 0.01, x - h * 0.135, y + h * 0.01] },
+    { k: 'cap', x0: x - h * 0.06, y0: y - h * 0.695 + b, x1: fex, y1: fey, r0: h * 0.058 * T, r1: h * 0.047 * T },
+    { k: 'cap', x0: fex, y0: fey, x1: fwx, y1: fwy, r0: h * 0.047 * T, r1: h * 0.036 * T },
+    { k: 'poly', pts: shard(fwx + h * 0.01, fwy + h * 0.008, 0.16, h * 0.088 * T, h * 0.028 * T) },
+    { k: 'poly', pts: shard(fwx + h * 0.004, fwy + h * 0.018, 0.86, h * 0.075 * T, h * 0.025 * T) },
   ], { h, formK: 0.45, tex: 'facets', seed: 21, amount: 0.5 });
 
-  // ---- the near arm: a real upper arm and forearm, an elbow shard, a hand of thick shard claws.
-  const ax = x + h * 0.175 * W, ay = y - h * 0.695 + b;
-  const ex = x + h * 0.315 * W, ey = y - h * 0.545 - sway;
-  const wx = x + h * 0.405 * W, wy = y - h * 0.63 - sway;
-  const fwd = Math.atan2(wy - ey, wx - ex);
+  // ---- the near arm: upper arm as thick as the thigh, a forearm, an elbow shard, shard claws.
+  const ax = x + h * 0.195 * W, ay = y - h * 0.675 + b;
+  const ex = x + h * 0.325 * W, ey = y - h * 0.525 - sway;
+  const wx = x + h * 0.43 * W, wy = y - h * 0.595 - sway;
 
-  // ---- the stone: pelvis, torso, neck, skull, jaw, crown shards, near leg and near arm, one mass.
+  // ---- the body mass: back and haunch, neck, skull, jaw, crown, near leg, near arm.
   const stone: Part[] = [
-    { k: 'curve', pts: ring(x + h * 0.01, y - h * 0.45, h * 0.135 * W, 8, 1.1, 0.92, 0.3), wobble: 0.07, seed: 2, sub: 2 },
-    { k: 'poly', pts: [x - h * 0.185 * W, y - h * 0.49, x - h * 0.225 * W, y - h * 0.665 + b, x - h * 0.115 * W, y - h * 0.775 + b, x + h * 0.06, y - h * 0.79 + b, x + h * 0.205 * W, y - h * 0.735 + b, x + h * 0.245 * W, y - h * 0.565, x + h * 0.1, y - h * 0.455, x - h * 0.06, y - h * 0.45] },
-    { k: 'cap', x0: x + h * 0.07, y0: y - h * 0.735 + b, x1: hx - hs * 0.03, y1: hy + hs * 0.07, r0: h * 0.055 * T, r1: h * 0.05 * T },
-    // The skull: blunt, angular, taller than it is long, the brow and cheek stepping back to the jaw.
-    { k: 'poly', pts: [...HD(-0.075, -0.115), ...HD(-0.010, -0.152), ...HD(0.060, -0.116), ...HD(0.084, -0.056), ...HD(0.064, -0.020), ...HD(0.080, 0.026), ...HD(0.034, 0.048), ...HD(-0.052, 0.044), ...HD(-0.086, -0.016)] },
+    { k: 'poly', pts: [x - h * 0.185 * W, y - h * 0.425, x - h * 0.225 * W, y - h * 0.595, x - h * 0.175 * W, y - h * 0.715 + b, x - h * 0.01, y - h * 0.76 + b, x + h * 0.195 * W, y - h * 0.71 + b, x + h * 0.23 * W, y - h * 0.555, x + h * 0.16, y - h * 0.44, x - h * 0.02, y - h * 0.415] },
+    { k: 'curve', pts: ring(x + h * 0.005, y - h * 0.435, h * 0.13 * W, 8, 1.08, 0.88, 0.3), wobble: 0.07, seed: 2, sub: 2 },
+    { k: 'cap', x0: x + h * 0.08, y0: y - h * 0.735 + b, x1: hx - hs * 0.05, y1: hy + hs * 0.085, r0: h * 0.05 * T, r1: h * 0.046 * T },
+    // The skull: blunt and angular, taller than it is long, brow and cheek stepping back to the jaw.
+    { k: 'poly', pts: [...HD(-0.080, -0.130), ...HD(-0.010, -0.170), ...HD(0.062, -0.132), ...HD(0.090, -0.062), ...HD(0.068, -0.024), ...HD(0.086, 0.048), ...HD(0.036, 0.072), ...HD(-0.056, 0.068), ...HD(-0.092, -0.018)] },
     // The jaw: short and square, hinged at the back, hanging open at the front.
-    { k: 'poly', pts: [...HD(-0.048, 0.032), ...HD(0.070, 0.058), ...HD(0.074, 0.112), ...HD(-0.008, 0.116), ...HD(-0.050, 0.078)] },
-    { k: 'tube', pts: [x + h * 0.11, y - h * 0.45, x + h * 0.215, y - h * 0.3, x + h * 0.075, y - h * 0.15, x + h * 0.195, y - h * 0.03], r0: h * 0.07 * W, r1: h * 0.04 * T, wobble: 0.1, seed: 13 },
-    { k: 'poly', pts: [x + h * 0.06, y - h * 0.015, x + h * 0.18, y - h * 0.075, x + h * 0.3, y - h * 0.01, x + h * 0.1, y + h * 0.01] },
-    { k: 'cap', x0: ax, y0: ay, x1: ex, y1: ey, r0: h * 0.064 * T, r1: h * 0.05 * T },
-    { k: 'cap', x0: ex, y0: ey, x1: wx, y1: wy, r0: h * 0.052 * T, r1: h * 0.041 * T },
-    { k: 'poly', pts: shard(ex + h * 0.012, ey + h * 0.012, 1.0, h * 0.095 * T, h * 0.032 * T) },
+    { k: 'poly', pts: [...HD(-0.052, 0.054), ...HD(0.076, 0.082), ...HD(0.080, 0.140), ...HD(-0.010, 0.144), ...HD(-0.054, 0.104)] },
+    { k: 'tube', pts: [x + h * 0.1, y - h * 0.43, x + h * 0.215, y - h * 0.29, x + h * 0.07, y - h * 0.15, x + h * 0.19, y - h * 0.03], r0: h * 0.072 * W, r1: h * 0.04 * T, wobble: 0.1, seed: 13 },
+    { k: 'poly', pts: [x + h * 0.055, y - h * 0.015, x + h * 0.175, y - h * 0.075, x + h * 0.295, y - h * 0.01, x + h * 0.095, y + h * 0.01] },
+    { k: 'cap', x0: ax, y0: ay, x1: ex, y1: ey, r0: h * 0.072 * T, r1: h * 0.053 * T },
+    { k: 'cap', x0: ex, y0: ey, x1: wx, y1: wy, r0: h * 0.055 * T, r1: h * 0.042 * T },
+    { k: 'poly', pts: shard(ex + h * 0.016, ey + h * 0.018, 1.05, h * 0.1 * T, h * 0.036 * T) },
   ];
-  // Crown shards: short, thick, swept up and back; the elder wears one more and they are longer.
+  // Crown shards: short, thick, swept up and back; the elder wears four and they run longer.
   const crown: [number, number, number, number][] = elder
-    ? [[0.062, -0.082, -1.62, 0.105], [0.026, -0.124, -1.92, 0.128], [-0.024, -0.152, -2.22, 0.112], [-0.070, -0.110, -2.52, 0.086]]
-    : [[0.030, -0.120, -1.80, 0.082], [-0.020, -0.150, -2.10, 0.100], [-0.068, -0.108, -2.45, 0.078]];
+    ? [[0.052, -0.108, -1.50, 0.092], [0.010, -0.164, -1.84, 0.110], [-0.040, -0.156, -2.18, 0.100], [-0.082, -0.096, -2.55, 0.082]]
+    : [[0.032, -0.142, -1.58, 0.078], [-0.024, -0.170, -1.98, 0.098], [-0.078, -0.106, -2.46, 0.076]];
   for (const [u, v, a, len] of crown) {
     const base = HD(u, v);
-    stone.push({ k: 'poly', pts: shard(base[0], base[1], a, hs * len, hs * 0.030) });
+    stone.push({ k: 'poly', pts: shard(base[0], base[1], a, hs * len, hs * 0.031, 0.26) });
   }
-  // The hand: three thick shard claws off the wrist, spread and reaching forward.
-  for (const [da, len] of [[-0.62, 0.098], [-0.16, 0.115], [0.34, 0.09]] as const) {
-    stone.push({ k: 'poly', pts: shard(wx - Math.cos(fwd) * h * 0.012, wy - Math.sin(fwd) * h * 0.012, fwd + da, h * len * T, h * 0.027 * T) });
-  }
-  const creases: Crease[] = [
-    { x0: x + h * 0.05, y0: y - h * 0.755 + b, x1: hx - hs * 0.05, y1: hy + hs * 0.09, r: h * 0.026, a: 0.4 },
-    { x0: x - h * 0.1, y0: y - h * 0.475, x1: x + h * 0.15, y1: y - h * 0.47, r: h * 0.03, a: 0.3 },
-    { x0: ax + h * 0.01, y0: ay + h * 0.02, x1: ex, y1: ey, r: h * 0.022, a: 0.28 },
-    { x0: ex, y0: ey, x1: wx, y1: wy, r: h * 0.018, a: 0.24 },
-  ];
-  blob(ctx, B, p.base, stone, { h, tex: 'facets', seed: 4, amount: 0.9, formK: 0.55, spread: 0.8, creases });
+  // The hand: thick shard claws off the wrist, spread and reaching forward and down.
+  const claws: [number, number][] = elder ? [[-0.34, 0.1], [0.04, 0.118], [0.42, 0.104], [0.82, 0.082]] : [[-0.3, 0.092], [0.08, 0.108], [0.5, 0.09]];
+  for (const [a, len] of claws) stone.push({ k: 'poly', pts: shard(wx - h * 0.012, wy + h * 0.008, a, h * len * T, h * 0.028 * T) });
+  blob(ctx, B, p.base, stone, { h, tex: 'facets', seed: 4, amount: 0.7, formK: 0.55, spread: 0.8, creases: [
+    { x0: x + h * 0.06, y0: y - h * 0.745 + b, x1: hx - hs * 0.07, y1: hy + hs * 0.1, r: h * 0.026, a: 0.4 },
+    { x0: ax + h * 0.015, y0: ay + h * 0.025, x1: ex, y1: ey, r: h * 0.024, a: 0.28 },
+    { x0: ex, y0: ey, x1: wx, y1: wy, r: h * 0.02, a: 0.24 },
+  ] });
 
-  // ---- the core, burning in the gap between the torso and the chest plate that goes on next.
-  const cr = h * (elder ? 0.082 : 0.063), ccx = x + h * 0.015, ccy = y - h * 0.685 + b * 0.5;
+  // ---- first plate layer: the belly slab and the shoulder guard, lying on the body mass.
+  const mid = shade(p.light, elder ? 1.1 : 1.07);
+  const belly = [x - h * 0.16 * W, y - h * 0.425, x - h * 0.19 * W, y - h * 0.53, x - h * 0.03, y - h * 0.585, x + h * 0.15 * W, y - h * 0.545, x + h * 0.195 * W, y - h * 0.45, x + h * 0.05, y - h * 0.4];
+  const guard = [x + h * 0.095, y - h * 0.755 + b, x + h * 0.255 * W, y - h * 0.705 + b, x + h * 0.285 * W, y - h * 0.58, x + h * 0.15, y - h * 0.615];
+  const brow = [...HD(-0.092, -0.084), ...HD(0.100, -0.060), ...HD(0.092, 0.004), ...HD(-0.076, -0.034)];
+  const midSlabs: Part[] = [{ k: 'poly', pts: belly }, { k: 'poly', pts: guard }, { k: 'poly', pts: brow }];
+  if (elder) midSlabs.push({ k: 'poly', pts: [x - h * 0.185 * W, y - h * 0.7 + b, x - h * 0.265 * W, y - h * 0.625 + b, x - h * 0.24 * W, y - h * 0.5, x - h * 0.135, y - h * 0.53] });
+  for (const q of midSlabs) underShadow(ctx, (q as { pts: number[] }).pts, p.dark, h * 0.017, 0.5);
+  blob(ctx, B, mid, midSlabs, { h, tex: 'facets', seed: 17, amount: 0.3, formK: 0.5, spread: 0.7 });
+
+  // ---- the core, burning in the notch the breastplate lifts away from the belly slab.
+  const cr = h * (elder ? 0.062 : 0.05), ccx = x + h * 0.005, ccy = y - h * 0.635 + b * 0.6;
   core(ctx, ccx, ccy, cr, p.dark, heat, pulse, 30, h);
 
-  // ---- the plates: angular shards of a paler stone lying ON the mass, each with its own edge and
-  // a shadow cast under it, so the torso is a stack of overlapping slabs and not a painted card.
-  const plate = mix(p.base, p.light, elder ? 0.55 : 0.42);
-  const chest = [x - h * 0.115 * W, y - h * 0.475, x - h * 0.145 * W, y - h * 0.6, x - h * 0.03, y - h * 0.655 + b, x + h * 0.15 * W, y - h * 0.615 + b, x + h * 0.185 * W, y - h * 0.5, x + h * 0.045, y - h * 0.44];
-  const pauldron = [x + h * 0.07, y - h * 0.765 + b, x + h * 0.235 * W, y - h * 0.725 + b, x + h * 0.27 * W, y - h * 0.6 + b, x + h * 0.135, y - h * 0.635 + b];
-  const brow = [...HD(-0.090, -0.064), ...HD(0.092, -0.052), ...HD(0.080, 0.000), ...HD(-0.074, -0.014)];
-  const slabs: Part[] = [{ k: 'poly', pts: chest }, { k: 'poly', pts: pauldron }, { k: 'poly', pts: brow }];
-  if (elder) slabs.push(
-    { k: 'poly', pts: [x - h * 0.235 * W, y - h * 0.66 + b, x - h * 0.185, y - h * 0.775 + b, x - h * 0.05, y - h * 0.79 + b, x - h * 0.075, y - h * 0.67 + b] },
-    { k: 'poly', pts: [x + h * 0.245 * W, y - h * 0.575, x + h * 0.295 * W, y - h * 0.47, x + h * 0.19, y - h * 0.44, x + h * 0.175, y - h * 0.53] },
-  );
-  for (const q of slabs) underShadow(ctx, (q as { pts: number[] }).pts, p.dark, h * 0.014);
-  blob(ctx, B, plate, slabs, { h, tex: 'facets', seed: 17, amount: 0.7, formK: 0.5, spread: 0.7 });
+  // ---- second plate layer: the breastplate and the brow shelf, palest, lying on the first.
+  const top = shade(p.light, elder ? 1.26 : 1.2);
+  const breast = [x - h * 0.155 * W, y - h * 0.575, x - h * 0.175 * W, y - h * 0.675 + b, x - h * 0.02, y - h * 0.742 + b, x + h * 0.135 * W, y - h * 0.71 + b, x + h * 0.15 * W, y - h * 0.635, x + h * 0.055, y - h * 0.648, x - h * 0.012, y - h * 0.698, x - h * 0.075, y - h * 0.628];
+  const topSlabs: Part[] = [{ k: 'poly', pts: breast }];
+  if (elder) topSlabs.push({ k: 'poly', pts: [x + h * 0.195 * W, y - h * 0.5, x + h * 0.26 * W, y - h * 0.455, x + h * 0.2, y - h * 0.385, x + h * 0.11, y - h * 0.395] });
+  for (const q of topSlabs) underShadow(ctx, (q as { pts: number[] }).pts, p.dark, h * 0.019, 0.55);
+  blob(ctx, B, top, topSlabs, { h, tex: 'facets', seed: 18, amount: 0.3, formK: 0.5, spread: 0.65 });
 
-  // The core's light spilling out over the lip of the chest plate and the gaps beside it.
-  glow(ctx, B, ccx - h * 0.02, ccy + cr * 0.9, cr * 1.9, heat.glow, 0.35 + pulse * 0.25, heat.heart);
-  glow(ctx, B, ccx + h * 0.115 * W, ccy + h * 0.05, cr * 1.2, heat.glow, 0.22 + pulse * 0.15, heat.heart);
+  // The core's light spilling out of the notch and round the lips of the plates that frame it.
+  glow(ctx, B, ccx, ccy + cr * 0.15, cr * 2.3, heat.glow, 0.34 + pulse * 0.24, heat.heart);
+  glow(ctx, B, ccx + h * 0.105 * W, ccy + h * 0.025, cr * 1.3, heat.glow, 0.2 + pulse * 0.14, heat.heart);
+  glow(ctx, B, ccx - h * 0.115 * W, ccy + h * 0.045, cr * 1.2, heat.glow, 0.18 + pulse * 0.12, heat.heart);
 
-  glint(ctx, x - h * 0.13 * W, y - h * 0.69 + b, h * 0.05, 0.55, -0.9);
-  glint(ctx, x - h * 0.05, y - h * 0.6, h * 0.04, 0.45, -0.5);
-  glint(ctx, ...(HD(-0.045, -0.052) as [number, number]), h * 0.035, 0.5, -0.6);
-  glint(ctx, x + h * 0.14, y - h * 0.3, h * 0.03, 0.4, 1.1);
+  glint(ctx, x - h * 0.105 * W, y - h * 0.7 + b, h * 0.05, 0.55, -0.9);
+  glint(ctx, x + h * 0.195 * W, y - h * 0.73 + b, h * 0.04, 0.45, -0.6);
+  glint(ctx, ...(HD(-0.048, -0.062) as [number, number]), hs * 0.04, 0.5, -0.6);
+  glint(ctx, x + h * 0.13, y - h * 0.29, h * 0.03, 0.4, 1.1);
 
-  // ---- seams: hot lines along the plate lips and the shard joins, pulsing with the core.
-  const sa = (elder ? 0.6 : 0.45) + pulse * 0.35, sw = Math.max(1, h * (elder ? 0.019 : 0.014));
-  seam(ctx, [x - h * 0.14 * W, y - h * 0.595, x - h * 0.03, y - h * 0.652 + b, x + h * 0.15 * W, y - h * 0.612 + b], heat.seam, sw, sa);
-  seam(ctx, [x - h * 0.185 * W, y - h * 0.5, x - h * 0.115, y - h * 0.635 + b, x - h * 0.03, y - h * 0.72 + b], heat.seam, sw, sa * 0.7);
-  seam(ctx, [x + h * 0.09, y - h * 0.755 + b, x + h * 0.23 * W, y - h * 0.72 + b], heat.seam, sw, sa * 0.6);
-  seam(ctx, [ax + h * 0.02, ay + h * 0.03, ex - h * 0.01, ey - h * 0.01], heat.seam, sw * 0.8, sa * 0.5);
+  // ---- seams: short hot breaks along the lips of the plates, pulsing with the core.
+  const sa = (elder ? 0.6 : 0.45) + pulse * 0.35, sw = Math.max(1, h * (elder ? 0.017 : 0.013));
+  seam(ctx, [x + h * 0.007, y - h * 0.693, x + h * 0.068, y - h * 0.64, x + h * 0.125 * W, y - h * 0.653], heat.seam, sw, sa);
+  seam(ctx, [x - h * 0.007, y - h * 0.693, x - h * 0.063, y - h * 0.643, x - h * 0.125 * W, y - h * 0.655], heat.seam, sw, sa * 0.9);
+  seam(ctx, [x - h * 0.03, y - h * 0.583, x + h * 0.06, y - h * 0.572, x + h * 0.14 * W, y - h * 0.548], heat.seam, sw, sa * 0.7);
+  seam(ctx, [x + h * 0.1, y - h * 0.752 + b, x + h * 0.18, y - h * 0.726 + b], heat.seam, sw, sa * 0.5);
+  seam(ctx, [x - h * 0.168 * W, y - h * 0.612, x - h * 0.13 * W, y - h * 0.66], heat.seam, sw, sa * 0.5);
 
   // ---- the face: the mouth gaping under the brow, shard teeth, then the two hot eyes.
-  const gum = tones(B, p.dark).deep;
-  fillPoly(ctx, [...HD(-0.020, 0.044), ...HD(0.078, 0.024), ...HD(0.074, 0.062), ...HD(-0.014, 0.064)], gum);
-  ctx.fillStyle = B.col(mix(heat.heart, '#ffffff', 0.4));
-  for (const [u, d] of [[0.060, 1], [0.028, 1], [-0.002, 1], [0.048, -1], [0.014, -1]] as const) {
-    const t0 = HD(u, d > 0 ? 0.034 : 0.062), t1 = HD(u + d * 0.012, d > 0 ? 0.062 : 0.034), t2 = HD(u + d * 0.024, d > 0 ? 0.036 : 0.06);
+  fillPoly(ctx, [...HD(-0.024, 0.066), ...HD(0.084, 0.046), ...HD(0.080, 0.090), ...HD(-0.018, 0.092)], tones(B, p.dark).deep);
+  ctx.fillStyle = B.col(shade('#e8d8b8', Math.max(0.5, p.tone)));
+  for (const [u, d, k] of [[0.056, 1, 1], [0.010, 1, 0.7], [0.034, -1, 0.85]] as const) {
+    const y0 = d > 0 ? 0.058 : 0.09, y1 = d > 0 ? 0.058 + 0.03 * k : 0.09 - 0.03 * k;
+    const t0 = HD(u, y0), t1 = HD(u + 0.013, y1), t2 = HD(u + 0.026, y0);
     ctx.beginPath(); ctx.moveTo(t0[0], t0[1]); ctx.lineTo(t1[0], t1[1]); ctx.lineTo(t2[0], t2[1]); ctx.closePath(); ctx.fill();
   }
-  const er = hs * (elder ? 0.026 : 0.024);
-  hotEye(ctx, ...(HD(0.014, 0.008) as [number, number]), er * 0.85, heat, pulse);
-  hotEye(ctx, ...(HD(0.058, 0.012) as [number, number]), er, heat, pulse);
-  softLine(ctx, B, [...HD(-0.070, -0.010), ...HD(0.078, 0.002)], p.base, hs * 0.018, 0.5);
+  fillPoly(ctx, [...HD(-0.074, -0.030), ...HD(0.092, -0.004), ...HD(0.088, 0.044), ...HD(-0.060, 0.038)], rgba(tones(B, p.dark).deep, 0.8));
+  const er = hs * (elder ? 0.030 : 0.028);
+  hotEye(ctx, ...(HD(0.012, 0.006) as [number, number]), er * 0.8, heat, pulse);
+  hotEye(ctx, ...(HD(0.060, 0.018) as [number, number]), er, heat, pulse);
+  
 }
 
 // ------------------------------------------------------------------ warden ----
@@ -287,18 +314,48 @@ function sentinel(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   glint(ctx, x + h * 0.48, y - h * 0.34, h * 0.035, 0.45, -0.6);
 
   if (cut) {
-    // The Cut: a great crack from the left shoulder to the right hip, glowing white-blue, the core where it gapes.
-    const path = [x - h * 0.32, y - h * 0.82, x - h * 0.24, y - h * 0.7, x - h * 0.16, y - h * 0.68, x - h * 0.06, y - h * 0.6, x + h * 0.04, y - h * 0.5, x + h * 0.06, y - h * 0.42, x + h * 0.13, y - h * 0.36, x + h * 0.16, y - h * 0.28, x + h * 0.26, y - h * 0.22];
-    // A shadow edge below and right of the light, so the crack has depth; two hot spots where it gapes.
-    softLine(ctx, B, path.map((v, i) => v + (i % 2 ? h * 0.014 : h * 0.01)), p.base, h * 0.03, 0.9);
-    glow(ctx, B, x - h * 0.2, y - h * 0.69, h * 0.09, heat.glow, 0.4 + pulse * 0.2, heat.heart);
-    glow(ctx, B, x + h * 0.14, y - h * 0.34, h * 0.08, heat.glow, 0.35 + pulse * 0.2, heat.heart);
-    seam(ctx, path, heat.seam, Math.max(1, h * 0.016), 0.8 + pulse * 0.2);
-    core(ctx, x - h * 0.01, y - h * 0.55 + b, h * 0.085, p.dark, heat, pulse, 31, h);
-    // Lesser cracks branching off, and the stump of the lost hand, hot at the break.
-    seam(ctx, [x - h * 0.14, y - h * 0.64, x - h * 0.22, y - h * 0.5, x - h * 0.28, y - h * 0.46], heat.seam, Math.max(1, h * 0.012), 0.5 + pulse * 0.2);
-    seam(ctx, [x + h * 0.07, y - h * 0.5, x + h * 0.2, y - h * 0.58, x + h * 0.28, y - h * 0.62], heat.seam, Math.max(1, h * 0.012), 0.45 + pulse * 0.2);
-    seam(ctx, [x + h * 0.02, y - h * 0.72, x + h * 0.05, y - h * 0.82], heat.seam, Math.max(1, h * 0.012), 0.4 + pulse * 0.2);
+    // The Cut is not a line drawn on the stone: it is a gap broken clean through it. A jagged spine
+    // runs shoulder to hip; each lip is offset off it by a sawtooth that tapers out at both tips, and
+    // the lower lip is slid along the break so the teeth no longer mate. Between the lips is the dark
+    // of the interior, lit from within; beyond each lip the stone falls away into shadow. The plates
+    // the break crosses are carried down the slip with it, each with its own edge.
+    const anchor = [x - h * 0.34, y - h * 0.84, x - h * 0.25, y - h * 0.72, x - h * 0.17, y - h * 0.685, x - h * 0.07, y - h * 0.6, x + h * 0.03, y - h * 0.515, x + h * 0.055, y - h * 0.425, x + h * 0.13, y - h * 0.365, x + h * 0.16, y - h * 0.275, x + h * 0.27, y - h * 0.21];
+    const spine: number[] = [];
+    for (let i = 0; i < anchor.length / 2 - 1; i++) for (let k = 0; k < 3; k++) {
+      const ax = anchor[i * 2], ay = anchor[i * 2 + 1], dx = anchor[i * 2 + 2] - ax, dy = anchor[i * 2 + 3] - ay, L = Math.hypot(dx, dy) || 1, t = k / 3;
+      const j = ((i * 3 + k) % 2 ? 1 : -1) * h * 0.016;
+      spine.push(ax + dx * t - dy / L * j, ay + dy * t + dx / L * j);
+    }
+    spine.push(anchor[anchor.length - 2], anchor[anchor.length - 1]);
+    const slip = h * 0.036, gw = h * 0.042;
+    // The plates below the break, carried down the slip: their own outline, offset from their match.
+    for (const q of [
+      [x - h * 0.235, y - h * 0.6, x - h * 0.105, y - h * 0.645, x - h * 0.005, y - h * 0.5, x - h * 0.15, y - h * 0.44],
+      [x + h * 0.02, y - h * 0.45, x + h * 0.125, y - h * 0.355, x + h * 0.08, y - h * 0.23, x - h * 0.035, y - h * 0.285],
+    ]) glossPoly(ctx, B, q.map((v, i) => v + (i % 2 ? slip * 0.74 : slip * 0.7)), shade(p.base, 0.82), { gloss: 0.5, h, tex: 'facets', seed: 51, amount: 0.5 });
+    const upper = lip(spine, gw, -1, 0, true), lower = lip(spine, gw, 1, slip, false);
+    // The gap itself: the unlit interior of the stone, with the far wall darker still.
+    const gap: number[] = [...upper];
+    for (let i = lower.length - 2; i >= 0; i -= 2) gap.push(lower[i], lower[i + 1]);
+    fillPoly(ctx, gap, rgba(tones(B, p.dark).deep, 0.96));
+    // Stone falling away into shadow beyond each lip.
+    softLine(ctx, B, upper.map((v, i) => v - (i % 2 ? h * 0.016 : h * 0.014)), p.base, h * 0.03, 0.7);
+    softLine(ctx, B, lower.map((v, i) => v + (i % 2 ? h * 0.016 : h * 0.014)), p.base, h * 0.03, 0.7);
+    // Light from inside: it pools in the gap and rims both lips.
+    for (const [u, k] of [[0.1, 0.8], [0.3, 0.9], [0.5, 1], [0.7, 0.85], [0.9, 0.6]] as const) {
+      const i = Math.round(u * (spine.length / 2 - 1)) * 2;
+      glow(ctx, B, (upper[i] + lower[i]) / 2, (upper[i + 1] + lower[i + 1]) / 2, h * 0.06 * k, heat.glow, (0.3 + pulse * 0.18) * k, heat.heart);
+    }
+    const lw = Math.max(1, h * 0.009), n2 = upper.length;
+    for (const [a0, a1, k] of [[0, 0.34, 0.45], [0.3, 0.72, 1], [0.68, 1, 0.55]] as const) {
+      const i0 = Math.round(a0 * (n2 / 2 - 1)) * 2, i1 = Math.round(a1 * (n2 / 2 - 1)) * 2 + 2;
+      seam(ctx, upper.slice(i0, i1), heat.seam, lw, (0.42 + pulse * 0.2) * k);
+      seam(ctx, lower.slice(i0, i1), heat.seam, lw, (0.38 + pulse * 0.2) * k);
+    }
+    core(ctx, x - h * 0.025, y - h * 0.555 + b, h * 0.072, p.dark, heat, pulse, 31, h);
+    // Lesser cracks branching off the break, and the stump of the lost hand, hot where it snapped.
+    seam(ctx, [x - h * 0.15, y - h * 0.655, x - h * 0.23, y - h * 0.52, x - h * 0.29, y - h * 0.47], heat.seam, Math.max(1, h * 0.011), 0.45 + pulse * 0.2);
+    seam(ctx, [x + h * 0.075, y - h * 0.49, x + h * 0.2, y - h * 0.575, x + h * 0.28, y - h * 0.61], heat.seam, Math.max(1, h * 0.011), 0.4 + pulse * 0.2);
     // A chunk gone from the right shoulder: the fresh fracture face is darker stone, hot along its lip.
     blob(ctx, B, p.dark, [{ k: 'curve', pts: [x + h * 0.16, y - h * 0.74 + b, x + h * 0.24, y - h * 0.84 + b, x + h * 0.36, y - h * 0.8 + b, x + h * 0.34, y - h * 0.68 + b, x + h * 0.22, y - h * 0.66 + b], wobble: 0.1, seed: 34, sub: 2 }], { h, outline: false, formK: 0.3, spread: 0.5 });
     seam(ctx, [x + h * 0.17, y - h * 0.74 + b, x + h * 0.25, y - h * 0.83 + b, x + h * 0.35, y - h * 0.8 + b], heat.seam, Math.max(1, h * 0.012), 0.5 + pulse * 0.2);
