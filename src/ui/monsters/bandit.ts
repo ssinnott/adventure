@@ -65,6 +65,8 @@ interface Rig {
   sNear: Pt; sFar: Pt;
   /** Near-hip y offset in px (+ = lower), so hems and torsos can tilt with the pelvis. */
   hipd: number;
+  /** Trunk half-widths in px at the shoulder, the natural waist and the hip; and the waist's y. */
+  wSh: number; wWa: number; wHi: number; waistY: number;
   /** Head centre and radius. */
   hx: number; hy: number; hr: number;
   /** Hip, knee, ankle of each leg. */
@@ -75,18 +77,37 @@ interface Rig {
   skin: string; skinFar: string; hair: string; leather: string; strap: string; boot: string; steel: string; dull: string; wood: string; bone: string; brass: string;
 }
 
+/**
+ * The frame, measured off a standing man and written in fractions of the sprite height with the
+ * ground at 0. Heights: crown 1.0, chin 0.853, shoulder 0.755, natural waist 0.61, hip 0.555,
+ * crotch 0.50, knee 0.285, ankle 0.10. Half-widths: head 0.073, neck 0.032, shoulder joint 0.164,
+ * trunk 0.128 at the chest, 0.102 at the waist, 0.12 at the hip. That is a head not quite seven
+ * times into the height and a waist three quarters of the chest, so the trunk reads as a V and not
+ * as a barrel.
+ *
+ * The trunk is deliberately NARROWER at the armpit than the shoulder joints are far apart: the
+ * shoulder mass is the deltoid, which belongs to the arm. Carry the trunk all the way out to the
+ * joint and the silhouette notches in at the armpit and bulges again at the ribs, which is what
+ * gave these four their square shoulders.
+ *
+ * These were all about 1.7 times wider, which is why the four of them used to read as slabs with
+ * pads for shoulders: the ratios between them were right, so nothing looked wrong in isolation,
+ * but at that width a figure has no waist left to find. The head is still kept a shade large for a
+ * game sprite, since at combat size it has to carry a face.
+ */
 function makeRig(x: number, y: number, h: number, p: Paint, st: Stance): Rig {
   const lift = p.breathe * h * 0.007;
-  const sy = y - h * 0.7 - lift;
+  const sy = y - h * 0.755 - lift;
   const t = p.tone, d = st.hipTilt * h;
   const back = st.lift ?? [0, 0];
   const L = (u: readonly [number, number, number], hipY: number, lf: number): [Pt, Pt, Pt] =>
     [{ x: x + u[0] * h, y: hipY }, { x: x + u[1] * h, y: y - h * (0.285 + lf * 0.45) }, { x: x + u[2] * h, y: y - h * (0.1 + lf) }];
   return {
     x, y, h, tone: t, sy, hipd: d,
-    sNear: { x: x + h * (0.205 + st.turn), y: sy + st.tilt * h },
-    sFar: { x: x - h * (0.185 - st.turn), y: sy - st.tilt * h },
-    hx: x + h * (0.012 + st.turn * 0.7), hy: sy - h * 0.165 - lift * 0.4, hr: h * 0.095,
+    wSh: h * 0.128, wWa: h * 0.102, wHi: h * 0.12, waistY: sy + h * 0.162,
+    sNear: { x: x + h * (0.164 + st.turn), y: sy + st.tilt * h },
+    sFar: { x: x - h * (0.148 - st.turn), y: sy - st.tilt * h },
+    hx: x + h * (0.012 + st.turn * 0.7), hy: sy - h * 0.175 - lift * 0.4, hr: h * 0.073,
     legR: L(st.near, y - h * 0.5 + d, back[0]), legL: L(st.far, y - h * 0.5 - d, back[1]),
     lift: [back[0] * h, back[1] * h],
     skin: shade('#c89a78', t), skinFar: shade('#8e6a50', t), hair: shade('#2e2018', t),
@@ -164,13 +185,14 @@ const legPts = (l: [Pt, Pt, Pt]): number[] => [l[0].x, l[0].y, l[1].x, l[1].y, l
 /**
  * An arm as two tubes in one mass: an upper arm from the shoulder to the elbow and a forearm that
  * tapers clearly from elbow to wrist. Together they span about 0.37h, so a hanging hand reaches
- * mid-thigh; `k` thickens a padded sleeve or thins a bare one.
+ * mid-thigh; `k` thickens a padded sleeve or thins a bare one. The wrist is barely half the
+ * shoulder — run an arm at even thickness and it reads as a sleeve stuffed with straw.
  */
 function armParts(R: Rig, a: Arm, seed: number, k = 1): Part[] {
   const { h } = R;
   return [
-    tube([a[0].x, a[0].y, a[1].x, a[1].y], h * 0.064 * k, h * 0.052 * k, 0.03, seed),
-    tube([a[1].x, a[1].y, a[2].x, a[2].y], h * 0.052 * k, h * 0.036 * k, 0.03, seed + 1),
+    tube([a[0].x, a[0].y, a[1].x, a[1].y], h * 0.048 * k, h * 0.039 * k, 0.03, seed),
+    tube([a[1].x, a[1].y, a[2].x, a[2].y], h * 0.039 * k, h * 0.026 * k, 0.03, seed + 1),
   ];
 }
 
@@ -208,36 +230,69 @@ function hand(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, a: number | null, s
   const hex = o.hex ?? (o.far ? R.skinFar : R.skin);
   const parts: Part[] = [];
   const creases: Crease[] = [];
-  if (o.cuff) parts.push(tube([o.cuff.x, o.cuff.y, at.x, at.y], h * 0.034 * k, h * 0.056 * k, 0.02, seed + 9));
+  if (o.cuff) parts.push(tube([o.cuff.x, o.cuff.y, at.x, at.y], h * 0.028 * k, h * 0.046 * k, 0.02, seed + 9));
   if (a === null) {
-    parts.push({ k: 'curve', pts: ring(at.x, at.y, h * 0.046 * k, h * 0.058 * k, 9), wobble: 0.1, seed, sub: 2 });
+    parts.push({ k: 'curve', pts: ring(at.x, at.y, h * 0.036 * k, h * 0.05 * k, 9), wobble: 0.1, seed, sub: 2 });
     creases.push(
-      { x0: at.x - h * 0.016 * k, y0: at.y + h * 0.004 * k, x1: at.x - h * 0.018 * k, y1: at.y + h * 0.05 * k, r: h * 0.006 * k, a: 0.45 },
-      { x0: at.x + h * 0.014 * k, y0: at.y + h * 0.004 * k, x1: at.x + h * 0.016 * k, y1: at.y + h * 0.05 * k, r: h * 0.006 * k, a: 0.45 },
+      { x0: at.x - h * 0.013 * k, y0: at.y + h * 0.002 * k, x1: at.x - h * 0.014 * k, y1: at.y + h * 0.044 * k, r: h * 0.006 * k, a: 0.55 },
+      { x0: at.x + h * 0.012 * k, y0: at.y + h * 0.002 * k, x1: at.x + h * 0.013 * k, y1: at.y + h * 0.044 * k, r: h * 0.006 * k, a: 0.55 },
     );
   } else {
     const ux = Math.cos(a), uy = Math.sin(a), nx = -uy * flip, ny = ux * flip;
     // The palm, set back from the shaft on the knuckle side.
-    parts.push({ k: 'curve', pts: ring(at.x - nx * h * 0.01 * k, at.y - ny * h * 0.01 * k, h * 0.051 * k, h * 0.048 * k, 9), wobble: 0.06, seed, sub: 2 });
-    if (o.plate) parts.push({ k: 'ell', x: at.x - nx * h * 0.018 * k, y: at.y - ny * h * 0.018 * k, rx: h * 0.045 * k, ry: h * 0.032 * k, rot: a + Math.PI / 2, gloss: o.gloss ?? 0.5 });
+    parts.push({ k: 'curve', pts: ring(at.x - nx * h * 0.008 * k, at.y - ny * h * 0.008 * k, h * 0.042 * k, h * 0.038 * k, 9), wobble: 0.06, seed, sub: 2 });
+    if (o.plate) parts.push({ k: 'ell', x: at.x - nx * h * 0.016 * k, y: at.y - ny * h * 0.016 * k, rx: h * 0.038 * k, ry: h * 0.026 * k, rot: a + Math.PI / 2, gloss: o.gloss ?? 0.5 });
     // Three fingers lying ACROSS the shaft, in front of it, the outer two a touch shorter.
     for (let i = -1; i <= 1; i++) {
-      const cx = at.x + ux * i * h * 0.034 * k, cy = at.y + uy * i * h * 0.034 * k, s = 1 - Math.abs(i) * 0.13;
-      parts.push(tube([cx - nx * h * 0.046 * k, cy - ny * h * 0.046 * k, cx + nx * h * 0.032 * k * s, cy + ny * h * 0.032 * k * s], h * 0.019 * k * s, h * 0.016 * k * s, 0, seed + 3 + i));
+      const cx = at.x + ux * i * h * 0.028 * k, cy = at.y + uy * i * h * 0.028 * k, s = 1 - Math.abs(i) * 0.14;
+      parts.push(tube([cx - nx * h * 0.038 * k, cy - ny * h * 0.038 * k, cx + nx * h * 0.03 * k * s, cy + ny * h * 0.03 * k * s], h * 0.0155 * k * s, h * 0.0125 * k * s, 0, seed + 3 + i));
       if (i < 1) {
-        const mx = cx + ux * h * 0.017 * k, my = cy + uy * h * 0.017 * k;
-        creases.push({ x0: mx - nx * h * 0.038 * k, y0: my - ny * h * 0.038 * k, x1: mx + nx * h * 0.03 * k, y1: my + ny * h * 0.03 * k, r: h * 0.005 * k, a: 0.5 });
+        const mx = cx + ux * h * 0.014 * k, my = cy + uy * h * 0.014 * k;
+        creases.push({ x0: mx - nx * h * 0.034 * k, y0: my - ny * h * 0.034 * k, x1: mx + nx * h * 0.028 * k, y1: my + ny * h * 0.028 * k, r: h * 0.0055 * k, a: 0.62 });
       }
     }
+    // The thumb, crossing the shaft from the far side and lying up along it: a hand without one
+    // reads as a mitten however carefully the fingers are drawn.
+    const tx = at.x - ux * h * 0.03 * k, ty = at.y - uy * h * 0.03 * k;
+    parts.push(tube([tx + nx * h * 0.03 * k, ty + ny * h * 0.03 * k, tx - nx * h * 0.006 * k + ux * h * 0.016 * k, ty - ny * h * 0.006 * k + uy * h * 0.016 * k], h * 0.017 * k, h * 0.014 * k, 0, seed + 7));
+    creases.push({ x0: tx + nx * h * 0.032 * k + ux * h * 0.018 * k, y0: ty + ny * h * 0.032 * k + uy * h * 0.018 * k, x1: tx - nx * h * 0.018 * k + ux * h * 0.024 * k, y1: ty - ny * h * 0.018 * k + uy * h * 0.024 * k, r: h * 0.006 * k, a: 0.55 });
   }
   blob(ctx, B, hex, parts, { h, formK: 0.6, spread: 0.7, creases, tex: o.tex, seed, amount: 0.6 });
 }
 
-/** A boot around an ankle: a flared lump with a toe turned to one side. */
+/**
+ * A boot around an ankle, built as a foot rather than a wedge: a cuff at the top, the shaft pinched
+ * in at the ankle, then a sole that runs forward to a toe and back to a short heel. `out` swings
+ * the toe: its sign is which way the foot points, its size how far round it is turned. The shape is
+ * laid out toe-forward and then mirrored, point order and all, so the winding survives the flip.
+ */
+function bootSeams(ctx: CanvasRenderingContext2D, R: Rig, ankle: Pt, out: number, lift: number): void {
+  const { h } = R, y = R.y - lift, s = out >= 0 ? 1 : -1;
+  const toe = h * (0.064 + 0.044 * Math.abs(out));
+  // The sole, and the cuff turned over at the top: two lines that say boot faster than any shading.
+  softLine(ctx, B, [ankle.x - s * h * 0.044, y - h * 0.016, ankle.x + s * toe * 0.82, y - h * 0.026], R.boot, Math.max(1, h * 0.022), 0.85);
+  softLine(ctx, B, [ankle.x - s * h * 0.042, y - h * 0.166, ankle.x + s * h * 0.044, y - h * 0.17], R.boot, Math.max(1, h * 0.016), 0.6);
+}
+
 function bootPart(R: Rig, ankle: Pt, out: number, seed: number, lift: number): Part {
-  const { h } = R, ax = ankle.x, y = R.y - lift;
-  const t = out * h * 0.03;
-  return { k: 'curve', pts: [ax - h * 0.05, y - h * 0.17, ax + h * 0.05, y - h * 0.17, ax + h * 0.062, y - h * 0.07, ax + h * 0.075 + Math.max(0, t), y - h * 0.015, ax + h * 0.068 + Math.max(0, t), y, ax - h * 0.068 + Math.min(0, t), y, ax - h * 0.075 + Math.min(0, t), y - h * 0.015, ax - h * 0.062, y - h * 0.07], wobble: 0.04, seed, sub: 2 };
+  const { h } = R, y = R.y - lift;
+  const s = out >= 0 ? 1 : -1, t = Math.abs(out);
+  const toe = h * (0.064 + 0.044 * t);
+  const pts = [
+    -h * 0.044, y - h * 0.188,
+    h * 0.046, y - h * 0.188,
+    h * 0.032, y - h * 0.112,   // the ankle, pinched on BOTH sides: without this the boot is a bell
+    toe * 0.6, y - h * 0.05,
+    toe, y - h * 0.018,
+    toe * 0.9, y,
+    -h * 0.046, y,
+    -h * 0.052, y - h * 0.028,
+    -h * 0.03, y - h * 0.106,
+  ];
+  const o: number[] = [];
+  if (s > 0) for (let i = 0; i < pts.length; i += 2) o.push(ankle.x + pts[i], pts[i + 1]);
+  else for (let i = pts.length - 2; i >= 0; i -= 2) o.push(ankle.x - pts[i], pts[i + 1]);
+  return { k: 'curve', pts: o, wobble: 0.03, seed, sub: 2 };
 }
 
 /**
@@ -252,41 +307,115 @@ function legs(ctx: CanvasRenderingContext2D, R: Rig, trouser: string, seed: numb
     { x0: R.legR[1].x - h * 0.02, y0: R.legR[1].y - h * 0.012, x1: R.legR[1].x + h * 0.024, y1: R.legR[1].y + h * 0.012, r: h * 0.018, a: 0.25 },
     { x0: R.legL[1].x - h * 0.022, y0: R.legL[1].y - h * 0.012, x1: R.legL[1].x + h * 0.02, y1: R.legL[1].y + h * 0.012, r: h * 0.018, a: 0.25 },
   ];
-  blob(ctx, B, trouser, [
-    tube(legPts(R.legL), h * 0.066, h * 0.05, 0.04, seed),
-    tube(legPts(R.legR), h * 0.066, h * 0.05, 0.04, seed + 1),
-  ], { h, formK: 0.55, tex: 'folds', seed, amount: 0.5, creases });
+  // Thigh and shank as separate tubes in the one mass, so the leg pinches at the knee and tapers
+  // on down to an ankle half the thigh's width, instead of running to the ground as a post.
+  const limb = (l: [Pt, Pt, Pt], sd: number): Part[] => [
+    tube([l[0].x, l[0].y, l[1].x, l[1].y], h * 0.057, h * 0.043, 0.035, sd),
+    tube([l[1].x, l[1].y, l[2].x, l[2].y], h * 0.045, h * 0.029, 0.035, sd + 5),
+  ];
+  blob(ctx, B, trouser, [...limb(R.legL, seed), ...limb(R.legR, seed + 1)],
+    { h, formK: 0.55, tex: 'folds', seed, amount: 0.5, creases });
   // Greaves: steel plates strapped over the shins, under the boot tops.
-  if (greave) blob(ctx, B, greave, [
-    { k: 'cap', x0: R.legL[1].x, y0: R.legL[1].y + h * 0.03, x1: R.legL[2].x, y1: R.legL[2].y - h * 0.04, r0: h * 0.046, r1: h * 0.04 },
-    { k: 'cap', x0: R.legR[1].x, y0: R.legR[1].y + h * 0.03, x1: R.legR[2].x, y1: R.legR[2].y - h * 0.04, r0: h * 0.046, r1: h * 0.04 },
-  ], { h, formK: 0.6, gloss: 0.3, spread: 0.6 });
+  if (greave) {
+    const plate = (l: [Pt, Pt, Pt], lf: number): Part[] => [
+      { k: 'ell', x: l[1].x, y: l[1].y - h * 0.004, rx: h * 0.05, ry: h * 0.038, rot: 0, gloss: 0.35 },
+      { k: 'cap', x0: l[1].x, y0: l[1].y + h * 0.012, x1: l[2].x, y1: R.y - lf - h * 0.19, r0: h * 0.046, r1: h * 0.038 },
+    ];
+    blob(ctx, B, greave, [...plate(R.legL, R.lift[1]), ...plate(R.legR, R.lift[0])], { h, formK: 0.6, gloss: 0.3, spread: 0.6 });
+    // The rivet line down each shin, which is what reads as a plate rather than a pale patch.
+    for (const [l, lf] of [[R.legL, R.lift[1]], [R.legR, R.lift[0]]] as const)
+      softLine(ctx, B, [l[1].x, l[1].y + h * 0.02, (l[1].x + l[2].x) / 2, R.y - lf - h * 0.19], greave, Math.max(1, h * 0.012), 0.5);
+  }
   blob(ctx, B, R.boot, [bootPart(R, R.legL[2], toe[1], seed + 2, R.lift[1]), bootPart(R, R.legR[2], toe[0], seed + 3, R.lift[0])], { h, formK: 0.5, spread: 0.7 });
+  bootSeams(ctx, R, R.legL[2], toe[1], R.lift[1]); bootSeams(ctx, R, R.legR[2], toe[0], R.lift[0]);
 }
 
-/** The torso of the biggest garment as a lumpy closed curve; hemY is where it ends over the trousers. */
+/**
+ * Half-width of the trunk at an absolute y: shoulder down to the waist, out again to the hip, then
+ * a slight flare into a hanging hem. Everything worn on the body measures itself against this, so
+ * a vest or a belt cannot quietly put back the barrel the tunic under it has just taken away —
+ * which is exactly what they were doing.
+ */
+function trunkW(R: Rig, yy: number): number {
+  const { sy, h, wSh, wWa, wHi, waistY: w } = R;
+  const a = sy + h * 0.055, hp = sy + h * 0.2;
+  if (yy <= a) return R.wSh;
+  if (yy <= w) return wSh + (wWa - wSh) * ((yy - a) / (w - a));
+  if (yy <= hp) return wWa + (wHi - wWa) * ((yy - w) / (hp - w));
+  return wHi + (yy - hp) * 0.06;
+}
+
+/** How much narrower the far side of the trunk is, the figure being turned a few degrees off square. */
+const FAR = 0.92;
+
+/**
+ * The outline of a tunic or shirt: a trapezius sloping up from each shoulder to the neck, then a
+ * chest that draws IN to the waist and out again at the hip. Run straight from shoulder to hem and
+ * it reads as a barrel with a head on it, which is what these four were wearing.
+ */
 function torsoPts(R: Rig, hemY: number, collar = 0.03): number[] {
   const { x, sy, h, hipd: d } = R, n = R.sNear, f = R.sFar;
+  const a = sy + h * 0.055, w = R.waistY, hp = sy + h * 0.2;
+  const W = (yy: number) => trunkW(R, yy);
   return [
     f.x - h * 0.012, f.y + h * 0.014,
-    x - h * 0.07, sy - h * collar,
-    x + h * 0.08, sy - h * collar,
+    x - h * 0.098, sy - h * (collar * 0.5),
+    x - h * 0.047, sy - h * (collar + 0.022),
+    x + h * 0.055, sy - h * (collar + 0.022),
+    x + h * 0.106, sy - h * (collar * 0.5),
     n.x + h * 0.014, n.y + h * 0.014,
-    x + h * 0.195, sy + h * 0.15 + d * 0.5,
-    x + h * 0.165, hemY + d,
-    x - h * 0.14, hemY - d,
-    x - h * 0.185, sy + h * 0.15 - d * 0.5,
+    x + W(a), a + d * 0.3,
+    x + W(w), w + d * 0.6,
+    x + W(hp), hp + d * 0.8,
+    x + W(hemY), hemY + d,
+    x - W(hemY) * FAR, hemY - d,
+    x - W(hp) * FAR, hp - d * 0.8,
+    x - W(w) * FAR, w - d * 0.6,
+    x - W(a) * FAR, a - d * 0.3,
   ];
 }
 
 /** Armpit and waist creases of a tunic, plus a shadow along the hem so the garment ends on a line. */
 function torsoCreases(R: Rig, hemY: number): Crease[] {
-  const { x, sy, h, hipd: d } = R;
+  const { x, sy, h, hipd: d, wSh, wWa } = R;
   return [
-    { x0: x + h * 0.155, y0: sy + h * 0.055, x1: x + h * 0.145, y1: sy + h * 0.145, r: h * 0.024, a: 0.3 },
-    { x0: x - h * 0.155, y0: sy + h * 0.05, x1: x - h * 0.145, y1: sy + h * 0.135, r: h * 0.022, a: 0.25 },
-    { x0: x - h * 0.13, y0: hemY - d - h * 0.012, x1: x + h * 0.155, y1: hemY + d - h * 0.012, r: h * 0.018, a: 0.45 },
+    { x0: x + wSh - h * 0.012, y0: sy + h * 0.055, x1: x + wWa + h * 0.008, y1: R.waistY, r: h * 0.022, a: 0.3 },
+    { x0: x - wSh * FAR + h * 0.012, y0: sy + h * 0.05, x1: x - wWa * FAR - h * 0.006, y1: R.waistY - h * 0.012, r: h * 0.02, a: 0.25 },
+    { x0: x - trunkW(R, hemY) * FAR + h * 0.01, y0: hemY - d - h * 0.012, x1: x + trunkW(R, hemY) - h * 0.008, y1: hemY + d - h * 0.012, r: h * 0.018, a: 0.45 },
   ];
+}
+
+/**
+ * One panel of an open vest or jerkin: it hugs the trunk, so it follows the waist in with it. `g`
+ * is how far the panel's inner edge sits from the centreline, i.e. how far the garment is open.
+ */
+function vestPanel(R: Rig, s: 1 | -1, hemY: number, g: number, seed: number): Part {
+  const { x, sy, h } = R;
+  const k = s > 0 ? 1 : FAR, a = sy + h * 0.048, hp = sy + h * 0.2, w = R.waistY;
+  const W = (yy: number, inset: number) => x + s * (trunkW(R, yy) * k - h * inset);
+  const pts = [
+    x + s * g, a,
+    W(a, 0.006), sy + h * 0.036,
+    W(w, 0.004), w,
+    W(hp, 0.004), hp,
+    W(hemY - h * 0.05, 0.012), hemY - h * 0.05,
+    x + s * (g + h * 0.016), hemY - h * 0.062,
+    x + s * (g - h * 0.004), w,
+  ];
+  if (s > 0) return { k: 'curve', pts, wobble: 0.03, seed, sub: 2 };
+  const m: number[] = [];
+  for (let i = pts.length - 2; i >= 0; i -= 2) m.push(pts[i], pts[i + 1]);
+  return { k: 'curve', pts: m, wobble: 0.03, seed, sub: 2 };
+}
+
+/** A belt lying across the trunk at `yy`, as thick as `t`, cut to the body's width there. */
+function beltPart(R: Rig, yy: number, t: number, seed: number): Part {
+  const { x, h, hipd: d } = R;
+  const wa = trunkW(R, yy) + h * 0.006, wb = trunkW(R, yy + t) + h * 0.006;
+  return { k: 'curve', pts: [
+    x - wa * FAR, yy - d, x + wa, yy + d,
+    x + wb, yy + t + d, x - wb * FAR, yy + t - d,
+  ], wobble: 0.01, seed, sub: 2 };
 }
 
 /** Skin: the head and neck as one mass, painted before the garments so the collar covers the neck base. */
@@ -294,7 +423,7 @@ function headNeck(ctx: CanvasRenderingContext2D, R: Rig): void {
   const { hx, hy, hr, h } = R;
   blob(ctx, B, R.skin, [
     { k: 'curve', pts: headRing(hx, hy, hr), wobble: 0.035, seed: 41, sub: 2 },
-    { k: 'cap', x0: hx - h * 0.003, y0: hy + hr * 0.7, x1: hx - h * 0.006, y1: R.sy + h * 0.03, r0: hr * 0.42, r1: hr * 0.46 },
+    { k: 'cap', x0: hx - h * 0.003, y0: hy + hr * 0.62, x1: hx - h * 0.006, y1: R.sy + h * 0.035, r0: hr * 0.44, r1: hr * 0.5 },
   ], { h, formK: 0.55, spread: 0.8, creases: [
     { x0: hx - hr * 0.5, y0: hy + hr * 0.9, x1: hx + hr * 0.45, y1: hy + hr * 0.92, r: hr * 0.14, a: 0.35 },
   ] });
@@ -343,19 +472,19 @@ function pauldronParts(R: Rig, at: Pt, s: number): Part[] {
   const { h } = R, d = (s > 0 ? 1 : 0);
   return [
     { k: 'curve', pts: [
-      at.x - s * h * 0.062, at.y - h * 0.012,
-      at.x - s * h * 0.022, at.y - h * 0.05,
-      at.x + s * h * 0.055, at.y - h * 0.042,
-      at.x + s * h * 0.086, at.y + h * 0.004,
-      at.x + s * h * 0.07, at.y + h * 0.032,
-      at.x - s * h * 0.045, at.y + h * 0.022,
+      at.x - s * h * 0.05, at.y - h * 0.022,
+      at.x - s * h * 0.018, at.y - h * 0.056,
+      at.x + s * h * 0.04, at.y - h * 0.05,
+      at.x + s * h * 0.062, at.y - h * 0.01,
+      at.x + s * h * 0.05, at.y + h * 0.016,
+      at.x - s * h * 0.036, at.y + h * 0.008,
     ], wobble: 0.025, seed: 51 + d, sub: 2 },
     { k: 'curve', pts: [
-      at.x - s * h * 0.04, at.y + h * 0.026,
-      at.x + s * h * 0.072, at.y + h * 0.034,
-      at.x + s * h * 0.082, at.y + h * 0.072,
-      at.x + s * h * 0.03, at.y + h * 0.084,
-      at.x - s * h * 0.028, at.y + h * 0.062,
+      at.x - s * h * 0.03, at.y + h * 0.012,
+      at.x + s * h * 0.05, at.y + h * 0.018,
+      at.x + s * h * 0.054, at.y + h * 0.048,
+      at.x + s * h * 0.02, at.y + h * 0.056,
+      at.x - s * h * 0.02, at.y + h * 0.04,
     ], wobble: 0.025, seed: 53 + d, sub: 2 },
   ];
 }
@@ -363,8 +492,8 @@ function pauldronParts(R: Rig, at: Pt, s: number): Part[] {
 /** The seam between a pauldron's two lames, plus the strap that holds it on. */
 function pauldronTrim(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, s: number): void {
   const { h } = R;
-  softLine(ctx, B, [at.x - s * h * 0.038, at.y + h * 0.026, at.x + s * h * 0.076, at.y + h * 0.036], R.leather, Math.max(1, h * 0.014), 0.7);
-  stroke(ctx, [at.x - s * h * 0.05, at.y - h * 0.018, at.x + s * h * 0.03, at.y + h * 0.078], R.strap, Math.max(1, h * 0.016));
+  softLine(ctx, B, [at.x - s * h * 0.028, at.y + h * 0.012, at.x + s * h * 0.052, at.y + h * 0.02], R.leather, Math.max(1, h * 0.012), 0.7);
+  stroke(ctx, [at.x - s * h * 0.038, at.y - h * 0.028, at.x + s * h * 0.02, at.y + h * 0.052], R.strap, Math.max(1, h * 0.014));
 }
 
 /** A short bow held in the hand at `hand`, tilted, with its string and a nocked arrow pointing out. */
@@ -398,14 +527,14 @@ function bow(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, sway: number): numbe
  * out in a full-length arm and a buckler on a bent, visible far forearm.
  */
 function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
-  const R = makeRig(x, y, h, p, { tilt: -0.03, hipTilt: 0.03, turn: 0.026, near: [0.085, 0.175, 0.225], far: [-0.082, -0.07, -0.06], toe: [1, -0.5], lift: [0, 0.05] });
+  const R = makeRig(x, y, h, p, { tilt: -0.03, hipTilt: 0.03, turn: 0.026, near: [0.072, 0.175, 0.225], far: [-0.07, -0.07, -0.06], toe: [1, -0.5], lift: [0, 0.05] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 19) * h * 0.012;
   // Near arm: hangs long, the hand at mid-thigh with the sword up and out past the elbow.
-  const near: Arm = [R.sNear, { x: x + h * 0.298, y: sy + h * 0.165 }, { x: x + h * 0.322, y: sy + h * 0.34 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.257, y: sy + h * 0.165 }, { x: x + h * 0.281, y: sy + h * 0.34 }];
   // Far arm: the upper arm swings clear of the ribs to a low elbow, then the forearm comes up in
   // front to carry the buckler, so the shield sits on an arm instead of floating.
-  const far: Arm = [R.sFar, { x: x - h * 0.278, y: sy + h * 0.208 }, { x: x - h * 0.335, y: sy + h * 0.045 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.241, y: sy + h * 0.208 }, { x: x - h * 0.298, y: sy + h * 0.045 }];
   const hemY = y - h * 0.42;
   groundShadow(ctx, x, y + 1, h * 0.72);
   blob(ctx, B, p.dark, armParts(R, far, 31, 0.9), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
@@ -415,22 +544,24 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   blob(ctx, B, p.base, [{ k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 3, sub: 3 }, ...armParts(R, near, 12)],
     { h, formK: 0.5, tex: 'folds', seed: 3, amount: 0.7, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
   // The leather vest: two panels open at the chest, low enough that the shoulders belong to the arms.
-  blob(ctx, B, shade('#4e2e1a', p.tone), [
-    { k: 'curve', pts: [x - h * 0.16, sy + h * 0.03, x - h * 0.06, sy + h * 0.042, x - h * 0.044, sy + h * 0.13, x - h * 0.05, hemY - h * 0.062, x - h * 0.145, hemY - h * 0.05, x - h * 0.162, sy + h * 0.14], wobble: 0.03, seed: 5, sub: 2 },
-    { k: 'curve', pts: [x + h * 0.06, sy + h * 0.042, x + h * 0.168, sy + h * 0.03, x + h * 0.172, sy + h * 0.14, x + h * 0.152, hemY - h * 0.05, x + h * 0.058, hemY - h * 0.062, x + h * 0.042, sy + h * 0.13], wobble: 0.03, seed: 6, sub: 2 },
-  ], { h, formK: 0.6, spread: 0.7, tex: 'stipple', seed: 5, amount: 0.25 });
+  blob(ctx, B, shade('#4e2e1a', p.tone), [vestPanel(R, -1, hemY, h * 0.046, 5), vestPanel(R, 1, hemY, h * 0.046, 6)],
+    { h, formK: 0.6, spread: 0.7, tex: 'stipple', seed: 5, amount: 0.25 });
+  for (let i = 0; i < 3; i++) {
+    const ly = sy + h * (0.075 + i * 0.062);
+    stroke(ctx, [x - h * 0.044, ly, x + h * 0.048, ly + h * 0.018], R.strap, Math.max(1, h * 0.01));
+  }
   // Leather pauldrons: one mass, two lames each, capping the shoulders where the arms begin.
   blob(ctx, B, R.leather, [...pauldronParts(R, R.sNear, 1), ...pauldronParts(R, R.sFar, -1)],
     { h, formK: 0.6, spread: 0.6, tex: 'stipple', seed: 51, amount: 0.3 });
   pauldronTrim(ctx, R, R.sNear, 1); pauldronTrim(ctx, R, R.sFar, -1);
   // Belt with a buckle, and a pouch at the near hip: one strap mass.
   blob(ctx, B, R.strap, [
-    { k: 'curve', pts: [x - h * 0.16, hemY - R.hipd - h * 0.055, x + h * 0.175, hemY + R.hipd - h * 0.055, x + h * 0.175, hemY + R.hipd - h * 0.008, x - h * 0.16, hemY - R.hipd - h * 0.008], wobble: 0.01, seed: 7, sub: 2 },
-    { k: 'curve', pts: ring(x + h * 0.125, hemY + R.hipd + h * 0.012, h * 0.042, h * 0.048), wobble: 0.07, seed: 8, sub: 2 },
+    beltPart(R, hemY - h * 0.055, h * 0.047, 7),
+    { k: 'curve', pts: ring(x + trunkW(R, hemY) * 0.76, hemY + R.hipd + h * 0.016, h * 0.036, h * 0.044), wobble: 0.07, seed: 8, sub: 2 },
   ], { h, formK: 0.45, spread: 0.6 });
-  band(ctx, B, x - h * 0.03, hemY - h * 0.058, h * 0.05, h * 0.05, R.brass);
+  band(ctx, B, x - h * 0.024, hemY - h * 0.056, h * 0.044, h * 0.044, R.brass);
   // Short sword: the grip runs through the fist, the blade starts above the guard.
-  const ga = blade(ctx, R, near[2], x + h * 0.435, y - h * 0.87, h * 0.018, h * 0.055);
+  const ga = blade(ctx, R, near[2], x + h * 0.394, y - h * 0.87, h * 0.018, h * 0.055);
   hand(ctx, R, near[2], ga, 42, { flip: -1 });
   // Hair tufts at the far temple, the scarf over the lower face, the bandana over the crown.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 1.0, hy - hr * 0.3, hx - hr * 0.7, hy - hr * 0.2, hx - hr * 0.75, hy + hr * 0.5, hx - hr * 1.15, hy + hr * 0.3], wobble: 0.06, spiky: 0.15, seed: 9, sub: 2 }], { h, form: false });
@@ -444,10 +575,10 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The buckler, strapped across the far forearm: the arm runs out from under the body and the
   // shield's rim crosses it, so the join reads.
   stroke(ctx, [far[1].x - h * 0.012, far[1].y - h * 0.048, far[2].x - h * 0.01, far[2].y + h * 0.02], R.strap, Math.max(1, h * 0.012));
-  const bx = x - h * 0.354, by = sy + h * 0.005;
-  glossBall(ctx, B, bx, by, h * 0.1, R.wood, { gloss: 0.1, spread: 0.7, h, tex: 'cracks', seed: 17, amount: 0.6 });
-  ctx.strokeStyle = B.col(R.steel); ctx.lineWidth = Math.max(1, h * 0.014); ctx.beginPath(); ctx.arc(bx, by, h * 0.084, 0, Math.PI * 2); ctx.stroke();
-  glossBall(ctx, B, bx, by, h * 0.034, R.steel, { gloss: 0.6 });
+  const bx = x - h * 0.317, by = sy + h * 0.005;
+  glossBall(ctx, B, bx, by, h * 0.092, R.wood, { gloss: 0.1, spread: 0.7, h, tex: 'cracks', seed: 17, amount: 0.6 });
+  ctx.strokeStyle = B.col(R.steel); ctx.lineWidth = Math.max(1, h * 0.014); ctx.beginPath(); ctx.arc(bx, by, h * 0.077, 0, Math.PI * 2); ctx.stroke();
+  glossBall(ctx, B, bx, by, h * 0.031, R.steel, { gloss: 0.6 });
   void p.light;
 }
 
@@ -457,17 +588,17 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
  * a dagger at mid-thigh.
  */
 function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
-  const R = makeRig(x, y, h, p, { tilt: 0.028, hipTilt: -0.028, turn: -0.032, near: [0.08, 0.085, 0.045], far: [-0.078, -0.175, -0.255], toe: [0.3, -1], lift: [0.085, 0] });
+  const R = makeRig(x, y, h, p, { tilt: 0.028, hipTilt: -0.028, turn: -0.032, near: [0.068, 0.085, 0.045], far: [-0.066, -0.175, -0.255], toe: [0.3, -1], lift: [0.085, 0] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 23) * h * 0.006;
-  const near: Arm = [R.sNear, { x: x + h * 0.278, y: sy + h * 0.175 }, { x: x + h * 0.205, y: sy + h * 0.335 }];
-  const far: Arm = [R.sFar, { x: x - h * 0.285, y: sy + h * 0.17 }, { x: x - h * 0.392, y: sy + h * 0.042 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.237, y: sy + h * 0.175 }, { x: x + h * 0.164, y: sy + h * 0.335 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.248, y: sy + h * 0.17 }, { x: x - h * 0.355, y: sy + h * 0.042 }];
   const hemY = y - h * 0.4;
   groundShadow(ctx, x, y + 1, h * 0.74);
   // Quiver over the near shoulder, behind the body: leather tube with fletched arrows above it.
-  blob(ctx, B, R.leather, [{ k: 'cap', x0: x + h * 0.1, y0: sy + h * 0.12, x1: x + h * 0.24, y1: sy - h * 0.1, r0: h * 0.045, r1: h * 0.04 }], { h, formK: 0.5, spread: 0.7 });
+  blob(ctx, B, R.leather, [{ k: 'cap', x0: x + h * 0.085, y0: sy + h * 0.12, x1: x + h * 0.208, y1: sy - h * 0.1, r0: h * 0.04, r1: h * 0.035 }], { h, formK: 0.5, spread: 0.7 });
   for (let i = 0; i < 3; i++) {
-    const qx = x + h * (0.19 + i * 0.03), qy = sy - h * (0.09 + (i === 1 ? 0.03 : 0.01));
+    const qx = x + h * (0.164 + i * 0.028), qy = sy - h * (0.09 + (i === 1 ? 0.03 : 0.01));
     stroke(ctx, [qx, qy, qx + h * 0.03, qy - h * 0.07], R.wood, 1);
     ctx.fillStyle = B.col(shade(i === 1 ? '#c8c0a0' : '#8a3a30', p.tone));
     ctx.beginPath(); ctx.moveTo(qx + h * 0.03, qy - h * 0.07); ctx.lineTo(qx + h * 0.01, qy - h * 0.08); ctx.lineTo(qx + h * 0.04, qy - h * 0.095); ctx.lineTo(qx + h * 0.045, qy - h * 0.065); ctx.closePath(); ctx.fill();
@@ -482,12 +613,12 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // Inside the hood: shadow, then the face.
   blob(ctx, B, shade(p.dark, 0.55), [{ k: 'curve', pts: [hx - hr * 0.95, hy - hr * 0.85, hx + hr * 0.95, hy - hr * 0.8, hx + hr * 1.0, hy + hr * 0.3, hx + hr * 0.5, hy + hr * 1.05, hx - hr * 0.5, hy + hr * 1.05, hx - hr * 1.0, hy + hr * 0.3], wobble: 0.04, seed: 26, sub: 2 }], { h, form: false, outline: false });
   // Belt over the tunic.
-  blob(ctx, B, R.strap, [{ k: 'curve', pts: [x - h * 0.15, hemY - R.hipd - h * 0.062, x + h * 0.17, hemY + R.hipd - h * 0.062, x + h * 0.17, hemY + R.hipd - h * 0.02, x - h * 0.15, hemY - R.hipd - h * 0.02], wobble: 0.01, seed: 27, sub: 2 }], { h, form: false });
-  band(ctx, B, x - h * 0.02, hemY - h * 0.068, h * 0.04, h * 0.045, R.brass);
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.062, h * 0.042, 27)], { h, form: false });
+  band(ctx, B, x - h * 0.018, hemY - h * 0.066, h * 0.038, h * 0.042, R.brass);
   // The face inside the hood is smaller than a bare head: only the front of it shows.
   blob(ctx, B, R.skin, [{ k: 'curve', pts: [hx - hr * 0.72, hy - hr * 0.62, hx + hr * 0.72, hy - hr * 0.6, hx + hr * 0.86, hy + hr * 0.2, hx + hr * 0.45, hy + hr * 0.95, hx - hr * 0.4, hy + hr * 0.95, hx - hr * 0.82, hy + hr * 0.2], wobble: 0.03, seed: 28, sub: 2 }], { h, formK: 0.55, spread: 0.7 });
   // Dagger at the near hip, hilt up, the near hand closed on it at mid-thigh.
-  const da = blade(ctx, R, near[2], x + h * 0.255, y - h * 0.16, h * 0.013, h * 0.032);
+  const da = blade(ctx, R, near[2], x + h * 0.214, y - h * 0.16, h * 0.013, h * 0.032);
   hand(ctx, R, near[2], da, 29, { flip: 1 });
   // A short beard under the jaw.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.7, hy + hr * 0.45, hx - hr * 0.3, hy + hr * 0.62, hx + hr * 0.3, hy + hr * 0.62, hx + hr * 0.75, hy + hr * 0.42, hx + hr * 0.55, hy + hr * 1.05, hx, hy + hr * 1.2, hx - hr * 0.55, hy + hr * 1.05], wobble: 0.06, spiky: 0.1, seed: 30, sub: 2 }], { h, formK: 0.4 });
@@ -508,34 +639,40 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
  * shield on the far arm, a longsword up in a gauntleted fist, greaves.
  */
 function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
-  const R = makeRig(x, y, h, p, { tilt: -0.042, hipTilt: -0.03, turn: 0.014, near: [0.095, 0.185, 0.245], far: [-0.085, -0.125, -0.145], toe: [1, -0.8], lift: [0, 0.062] });
+  const R = makeRig(x, y, h, p, { tilt: -0.042, hipTilt: -0.03, turn: 0.014, near: [0.08, 0.185, 0.245], far: [-0.072, -0.125, -0.145], toe: [1, -0.8], lift: [0, 0.062] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 21) * h * 0.008;
   // Near arm: the sword arm raised, the hand above the shoulder.
-  const near: Arm = [R.sNear, { x: x + h * 0.338, y: sy + h * 0.125 }, { x: x + h * 0.318, y: sy - h * 0.048 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.297, y: sy + h * 0.125 }, { x: x + h * 0.277, y: sy - h * 0.048 }];
   // Far arm: hangs to a low elbow, the forearm out and up behind the shield.
-  const far: Arm = [R.sFar, { x: x - h * 0.232, y: sy + h * 0.235 }, { x: x - h * 0.318, y: sy + h * 0.165 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.195, y: sy + h * 0.235 }, { x: x - h * 0.281, y: sy + h * 0.165 }];
   const hemY = y - h * 0.4;
   const mail = shade('#767d8c', p.tone);
   groundShadow(ctx, x, y + 1, h * 0.8);
   // The cloak, behind everything, hanging from the shoulders to the knees.
-  blob(ctx, B, p.dark, [{ k: 'curve', pts: [x - h * 0.19, sy - h * 0.005, x + h * 0.21, sy - h * 0.005, x + h * 0.29, sy + h * 0.2, x + h * 0.31 + sway, y - h * 0.22, x - h * 0.3 + sway, y - h * 0.2, x - h * 0.28, sy + h * 0.2], wobble: 0.035, spiky: 0.035, seed: 61, sub: 3 }], { h, formK: 0.4, tex: 'folds', seed: 61, amount: 1.2, creases: [
-    { x0: x - h * 0.22, y0: sy + h * 0.15, x1: x - h * 0.24, y1: y - h * 0.3, r: h * 0.02, a: 0.3 },
-    { x0: x + h * 0.24, y0: sy + h * 0.15, x1: x + h * 0.26, y1: y - h * 0.3, r: h * 0.02, a: 0.3 }] });
+  blob(ctx, B, p.dark, [{ k: 'curve', pts: [x - h * 0.162, sy - h * 0.005, x + h * 0.178, sy - h * 0.005, x + h * 0.258, sy + h * 0.2, x + h * 0.282 + sway, y - h * 0.22, x - h * 0.272 + sway, y - h * 0.2, x - h * 0.25, sy + h * 0.2], wobble: 0.035, spiky: 0.035, seed: 61, sub: 3 }], { h, formK: 0.4, tex: 'folds', seed: 61, amount: 1.2, creases: [
+    { x0: x - h * 0.195, y0: sy + h * 0.15, x1: x - h * 0.215, y1: y - h * 0.3, r: h * 0.02, a: 0.3 },
+    { x0: x + h * 0.212, y0: sy + h * 0.15, x1: x + h * 0.232, y1: y - h * 0.3, r: h * 0.02, a: 0.3 }] });
   blob(ctx, B, shade(mail, 0.92), armParts(R, far, 31), { h, formK: 0.5, tex: 'mail', seed: 31, amount: 0.7, creases: [elbowCrease(R, far)] });
-  legs(ctx, R, shade('#33333e', p.tone), 32, [1, -0.8], shade(R.steel, 0.82));
+  legs(ctx, R, shade('#33333e', p.tone), 32, [1, -0.8], shade(R.dull, 1.04));
   headNeck(ctx, R);
   // The mail shirt: body and near sleeve, ONE mass with one gradient and one ring texture across
   // it (a second pass over the sleeve alone would re-light it and break the arm off the body).
   blob(ctx, B, mail, [{ k: 'curve', pts: torsoPts(R, hemY + h * 0.02), wobble: 0.025, seed: 33, sub: 3 }, ...armParts(R, near, 34)],
     { h, formK: 0.55, gloss: 0.15, tex: 'mail', seed: 33, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
   // The tabard in the tint over the chest, belted, hanging below the mail.
-  blob(ctx, B, p.base, [{ k: 'curve', pts: [x - h * 0.135, sy + h * 0.005, x + h * 0.145, sy + h * 0.005, x + h * 0.14, hemY - h * 0.02, x + h * 0.12, y - h * 0.3, x - h * 0.11, y - h * 0.3, x - h * 0.13, hemY - h * 0.02], wobble: 0.03, seed: 35, sub: 3 }], { h, formK: 0.45, tex: 'folds', seed: 35, amount: 0.7 });
-  blob(ctx, B, R.strap, [{ k: 'curve', pts: [x - h * 0.16, hemY - R.hipd - h * 0.062, x + h * 0.17, hemY + R.hipd - h * 0.062, x + h * 0.17, hemY + R.hipd - h * 0.016, x - h * 0.16, hemY - R.hipd - h * 0.016], wobble: 0.01, seed: 36, sub: 2 }], { h, form: false });
-  band(ctx, B, x - h * 0.02, hemY - h * 0.068, h * 0.045, h * 0.05, R.brass);
+  const tw = (yy: number) => trunkW(R, yy) - h * 0.03;
+  blob(ctx, B, p.base, [{ k: 'curve', pts: [
+    x - tw(R.sy + h * 0.06) * FAR, sy + h * 0.005, x + tw(R.sy + h * 0.06), sy + h * 0.005,
+    x + tw(R.waistY) + h * 0.006, R.waistY, x + tw(hemY) + h * 0.004, hemY - h * 0.02,
+    x + h * 0.098, y - h * 0.3, x - h * 0.09, y - h * 0.3,
+    x - (tw(hemY) + h * 0.004) * FAR, hemY - h * 0.02, x - (tw(R.waistY) + h * 0.006) * FAR, R.waistY,
+  ], wobble: 0.03, seed: 35, sub: 3 }], { h, formK: 0.45, tex: 'folds', seed: 35, amount: 0.7 });
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.062, h * 0.046, 36)], { h, form: false });
+  band(ctx, B, x - h * 0.018, hemY - h * 0.066, h * 0.042, h * 0.046, R.brass);
   // The longsword held up, the grip running through a steel gauntlet: cuff at the wrist, a plate
   // over the back of the hand catching the light, fingers closed across the hilt.
-  const ga = blade(ctx, R, near[2], x + h * 0.37, y - h * 1.09, h * 0.022, h * 0.072);
+  const ga = blade(ctx, R, near[2], x + h * 0.329, y - h * 1.09, h * 0.022, h * 0.072);
   const fa = Math.atan2(near[1].y - near[2].y, near[1].x - near[2].x);
   const cuff: Pt = { x: near[2].x + Math.cos(fa) * h * 0.085, y: near[2].y + Math.sin(fa) * h * 0.085 };
   hand(ctx, R, near[2], ga, 42, { hex: R.dull, cuff, plate: true, gloss: 0.5, flip: -1 });
@@ -555,7 +692,7 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   softLine(ctx, B, [hx - hr * 1.42, hy - hr * 0.22, hx, hy - hr * 0.5, hx + hr * 1.42, hy - hr * 0.2], R.dull, Math.max(1, hr * 0.12), 0.5);
   glossBall(ctx, B, hx - hr * 0.08, hy - hr * 1.56, hr * 0.13, R.brass, { gloss: 0.5 });
   // The heater shield on the far arm: steel rim, painted field with a pale chevron.
-  const cx = x - h * 0.352, cy = y - h * 0.44, sw = h * 0.125, sh = h * 0.19;
+  const cx = x - h * 0.315, cy = y - h * 0.44, sw = h * 0.118, sh = h * 0.182;
   const shieldPts = [cx - sw, cy - sh * 0.9, cx + sw, cy - sh * 0.9, cx + sw * 0.95, cy + sh * 0.15, cx + sw * 0.5, cy + sh * 0.75, cx, cy + sh, cx - sw * 0.5, cy + sh * 0.75, cx - sw * 0.95, cy + sh * 0.15];
   glossPoly(ctx, B, shieldPts, R.steel, { spread: 0.7 });
   const field = shade('#7a2c24', p.tone);
@@ -573,15 +710,15 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
  * the hip, crossbow at port arms with both hands closed on it.
  */
 function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
-  const R = makeRig(x, y, h, p, { tilt: 0.036, hipTilt: 0.028, turn: -0.024, near: [0.082, 0.105, 0.03], far: [-0.08, -0.165, -0.245], toe: [-0.3, -1], lift: [0.088, 0] });
+  const R = makeRig(x, y, h, p, { tilt: 0.036, hipTilt: 0.028, turn: -0.024, near: [0.07, 0.105, 0.03], far: [-0.068, -0.165, -0.245], toe: [-0.3, -1], lift: [0.088, 0] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 21) * h * 0.007;
-  const near: Arm = [R.sNear, { x: x + h * 0.312, y: sy + h * 0.16 }, { x: x + h * 0.142, y: sy + h * 0.252 }];
-  const far: Arm = [R.sFar, { x: x - h * 0.292, y: sy + h * 0.172 }, { x: x - h * 0.248, y: sy + h * 0.018 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.271, y: sy + h * 0.16 }, { x: x + h * 0.106, y: sy + h * 0.252 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.255, y: sy + h * 0.172 }, { x: x - h * 0.211, y: sy + h * 0.018 }];
   const hemY = y - h * 0.41;
   groundShadow(ctx, x, y + 1, h * 0.74);
   // The short cloak, behind, fastened at the near shoulder and thrown back over the far one.
-  blob(ctx, B, p.dark, [{ k: 'curve', pts: [x - h * 0.2, sy - h * 0.01, x + h * 0.2, sy - h * 0.01, x + h * 0.27, sy + h * 0.12, x + h * 0.3 + sway, y - h * 0.36, x - h * 0.33 + sway, y - h * 0.34, x - h * 0.3, sy + h * 0.1], wobble: 0.04, spiky: 0.04, seed: 71, sub: 3 }], { h, formK: 0.4, tex: 'folds', seed: 71, amount: 1.0 });
+  blob(ctx, B, p.dark, [{ k: 'curve', pts: [x - h * 0.17, sy - h * 0.01, x + h * 0.17, sy - h * 0.01, x + h * 0.24, sy + h * 0.12, x + h * 0.27 + sway, y - h * 0.36, x - h * 0.298 + sway, y - h * 0.34, x - h * 0.268, sy + h * 0.1], wobble: 0.04, spiky: 0.04, seed: 71, sub: 3 }], { h, formK: 0.4, tex: 'folds', seed: 71, amount: 1.0 });
   blob(ctx, B, p.dark, armParts(R, far, 72), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
   legs(ctx, R, shade('#3a3744', p.tone), 41, [-0.3, -1]);
   headNeck(ctx, R);
@@ -589,16 +726,21 @@ function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: n
   blob(ctx, B, p.base, [{ k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 73, sub: 3 }, ...armParts(R, near, 74)],
     { h, formK: 0.5, tex: 'folds', seed: 73, amount: 0.7, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
   // Studded leather jerkin over the chest.
-  blob(ctx, B, R.leather, [{ k: 'curve', pts: [x - h * 0.165, sy + h * 0.045, x - h * 0.04, sy + h * 0.05, x + h * 0.05, sy + h * 0.05, x + h * 0.175, sy + h * 0.045, x + h * 0.165, hemY - h * 0.03, x - h * 0.15, hemY - h * 0.03], wobble: 0.03, seed: 75, sub: 2 }], { h, formK: 0.55, spread: 0.7, tex: 'stipple', seed: 75, amount: 0.5 });
+  const jy = sy + h * 0.045;
+  blob(ctx, B, R.leather, [{ k: 'curve', pts: [
+    x - trunkW(R, jy) * FAR, jy, x - h * 0.04, sy + h * 0.05, x + h * 0.05, sy + h * 0.05, x + trunkW(R, jy), jy,
+    x + trunkW(R, R.waistY) + h * 0.004, R.waistY, x + trunkW(R, hemY) - h * 0.006, hemY - h * 0.03,
+    x - (trunkW(R, hemY) - h * 0.006) * FAR, hemY - h * 0.03, x - (trunkW(R, R.waistY) + h * 0.004) * FAR, R.waistY,
+  ], wobble: 0.03, seed: 75, sub: 2 }], { h, formK: 0.55, spread: 0.7, tex: 'stipple', seed: 75, amount: 0.5 });
   // Belt, the quiver of bolts at the far hip, and a pouch.
-  blob(ctx, B, R.strap, [{ k: 'curve', pts: [x - h * 0.16, hemY - R.hipd - h * 0.055, x + h * 0.175, hemY + R.hipd - h * 0.055, x + h * 0.175, hemY + R.hipd - h * 0.008, x - h * 0.16, hemY - R.hipd - h * 0.008], wobble: 0.01, seed: 76, sub: 2 }], { h, form: false });
-  band(ctx, B, x - h * 0.02, hemY - h * 0.058, h * 0.045, h * 0.05, R.brass);
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.055, h * 0.047, 76)], { h, form: false });
+  band(ctx, B, x - h * 0.018, hemY - h * 0.056, h * 0.042, h * 0.046, R.brass);
   for (let i = 0; i < 4; i++) {
-    const qx = x - h * (0.2 - i * 0.022), qy = hemY - h * 0.02;
+    const qx = x - h * (0.172 - i * 0.02), qy = hemY - h * 0.02;
     stroke(ctx, [qx, qy, qx - h * 0.02, qy - h * 0.09], R.wood, 1);
     ctx.fillStyle = B.col(shade(i % 2 ? '#c8c0a0' : '#8a3a30', p.tone)); ctx.beginPath(); ctx.arc(qx - h * 0.02, qy - h * 0.09, Math.max(1, h * 0.012), 0, Math.PI * 2); ctx.fill();
   }
-  blob(ctx, B, R.leather, [{ k: 'curve', pts: [x - h * 0.23, hemY - h * 0.02, x - h * 0.1, hemY - h * 0.02, x - h * 0.09, hemY + h * 0.1, x - h * 0.22, hemY + h * 0.1], wobble: 0.04, seed: 77, sub: 2 }], { h, formK: 0.55, spread: 0.6 });
+  blob(ctx, B, R.leather, [{ k: 'curve', pts: [x - h * 0.198, hemY - h * 0.02, x - h * 0.086, hemY - h * 0.02, x - h * 0.078, hemY + h * 0.095, x - h * 0.19, hemY + h * 0.095], wobble: 0.04, seed: 77, sub: 2 }], { h, formK: 0.55, spread: 0.6 });
   // The single steel pauldron on the near shoulder, two lames, where the arm begins.
   blob(ctx, B, R.dull, pauldronParts(R, R.sNear, 1), { h, formK: 0.6, spread: 0.55, gloss: 0.4 });
   pauldronTrim(ctx, R, R.sNear, 1);
