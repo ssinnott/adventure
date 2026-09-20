@@ -68,6 +68,8 @@ export interface Rig {
   legL: [Pt, Pt, Pt]; legR: [Pt, Pt, Pt];
   /** How far each sole is lifted off the ground line, in px: near, far. */
   lift: [number, number];
+  /** The stance's own toe swing, carried through so a family cannot forget to read it. */
+  toe: readonly [number, number];
   /** Fixed material colours, already toned. */
   skin: string; skinFar: string; hair: string; leather: string; strap: string; boot: string; steel: string; dull: string; wood: string; bone: string; brass: string;
 }/**
@@ -107,7 +109,7 @@ export function makeRig(x: number, y: number, h: number, p: Paint, st: Stance, m
     sFar: { x: x - h * (0.148 - st.turn), y: sy + h * 0.034 - st.tilt * h },
     hx: x + h * (0.012 + st.turn * 0.7), hy: sy - h * 0.175 - lift * 0.4, hr: h * 0.073,
     legR: L(st.near, y - h * 0.5 + d, back[0]), legL: L(st.far, y - h * 0.5 - d, back[1]),
-    lift: [back[0] * h, back[1] * h],
+    lift: [back[0] * h, back[1] * h], toe: st.toe,
     ...(mats ?? OUTLAW)(t),
   };
 }/** Stable 0..1 noise for the tube wobble (the same mix as gloss.ts uses, kept local). */

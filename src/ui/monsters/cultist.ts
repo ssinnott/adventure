@@ -56,22 +56,24 @@ function mats(tone: number) {
 // ------------------------------------------------------------------ the rank and file ----
 function cultist(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const m = mats(p.tone);
-  const R = makeRig(x, y, h, p, { tilt: -0.014, hipTilt: 0.016, turn: 0.02, near: [0.055, 0.07, 0.082], far: [-0.054, -0.066, -0.078], toe: [0.6, -0.6] }, CULT);
+  const R = makeRig(x, y, h, p, { tilt: -0.014, hipTilt: 0.016, turn: 0.02, near: [0.058, 0.076, 0.094], far: [-0.05, -0.058, -0.062], toe: [0.85, -0.3] }, CULT);
   const { sy, hx, hy, hr } = R;
   const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6), flick = Math.sin(p.frame / 3.7) * 0.5 + 0.5;
   const beltY = sy + h * 0.18, hemY = sy + h * 0.7;
-  // Far arm hangs almost straight (171 deg); the near one is bent to a hand at the hip that holds
-  // the staff, so the staff is gripped rather than stood beside.
+  // Both arms hang: the far one at 169 deg, the near one at 152 with the fist closed on the shaft
+  // where the shaft actually passes. Bent up to a grip across the body the elbow swung out past
+  // everything else and won the silhouette at chest height, and the hand missed the staff by more
+  // than the staff was wide.
   const far: Arm = [R.sFar, { x: x - h * 0.175, y: sy + h * 0.225 }, { x: x - h * 0.185, y: sy + h * 0.38 }];
-  const near: Arm = [R.sNear, { x: x + h * 0.28, y: sy + h * 0.178 }, { x: x + h * 0.23, y: sy + h * 0.33 }];
-  const sTop = { x: x + h * 0.175, y: y - h * 1.075 }, sBot = { x: x + h * 0.3, y: y - h * 0.01 };
+  const near: Arm = [R.sNear, { x: x + h * 0.255, y: sy + h * 0.191 }, { x: x + h * 0.24, y: sy + h * 0.35 }];
+  const sTop = { x: x + h * 0.222, y: sy - h * 0.27 }, sBot = { x: x + h * 0.255, y: y };
   groundShadow(ctx, x + h * 0.02, y + 1, h * 0.68);
 
   // Bare feet under the hem, then the far sleeve behind everything with its hand at the cuff.
   blob(ctx, B, m.skin, [
-    footPart(R, R.legL[2], -0.6, 61), footPart(R, R.legR[2], 0.6, 62),
+    footPart(R, R.legL[2], R.toe[1], 61, R.lift[1]), footPart(R, R.legR[2], R.toe[0], 62, R.lift[0]),
   ], { h, formK: 0.45, spread: 0.7 });
-  footMarks(ctx, R, R.legL[2], -0.6, m.skin); footMarks(ctx, R, R.legR[2], 0.6, m.skin);
+  footMarks(ctx, R, R.legL[2], R.toe[1], m.skin, R.lift[1]); footMarks(ctx, R, R.legR[2], R.toe[0], m.skin, R.lift[0]);
   blob(ctx, B, p.dark, armParts(R, far, 31, 1.15), { h, formK: 0.55, creases: [elbowCrease(R, far)] });
   fist(ctx, R, far[2], null, 34, { far: true, k: 0.92 });
 
@@ -81,7 +83,7 @@ function cultist(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   // The robe: gown, cowl and the near sleeve, one mass in the tint.
   blob(ctx, B, p.base, [
     robePart(R, beltY, hemY, 0.19, 3, 0.022),
-    cowlPart(R, 1.48, 2),
+    cowlPart(R, 1.22, 2),
     ...armParts(R, near, 12, 1.2),
   ], { h, tex: 'folds', seed: 3, amount: 0.7, formK: 0.6, creases: [
     { x0: x + trunkW(R, sy + h * 0.06) - h * 0.01, y0: sy + h * 0.07, x1: x + trunkW(R, beltY), y1: beltY - h * 0.01, r: h * 0.022, a: 0.35 },
@@ -133,7 +135,7 @@ function zealot(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The far leg and foot under the robe; the near one strides bare and is drawn over the skirt.
   blob(ctx, B, m.skin, [
     tube([R.legL[0].x, R.legL[0].y, R.legL[1].x, R.legL[1].y, R.legL[2].x, R.legL[2].y], h * 0.055, h * 0.03, 0.03, 9),
-    footPart(R, R.legL[2], -0.9, 73),
+    footPart(R, R.legL[2], R.toe[1], 73, R.lift[1]),
   ], { h, formK: 0.55, spread: 0.7 });
   blob(ctx, B, m.skinFar, [...armParts(R, far, 17)], { h, formK: 0.55, creases: [elbowCrease(R, far)] });
   fist(ctx, R, far[2], null, 19, { far: true, k: 0.95 });
@@ -166,7 +168,7 @@ function zealot(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // through it rather than as painted on it.
   blob(ctx, B, m.skin, [
     tube([R.legR[0].x, R.legR[0].y, R.legR[1].x, R.legR[1].y, R.legR[2].x, R.legR[2].y], h * 0.058, h * 0.031, 0.03, 10),
-    footPart(R, R.legR[2], 1, 74),
+    footPart(R, R.legR[2], R.toe[0], 74, R.lift[0]),
   ], { h, formK: 0.55, spread: 0.7, creases: [
     { x0: R.legR[1].x - h * 0.022, y0: R.legR[1].y - h * 0.012, x1: R.legR[1].x + h * 0.02, y1: R.legR[1].y + h * 0.012, r: h * 0.016, a: 0.4 },
   ] });
@@ -193,7 +195,7 @@ function zealot(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 // ------------------------------------------------------------------ the caster ----
 function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const m = mats(p.tone), Y = (u: number) => y + u * h;
-  const R = makeRig(x, y, h, p, { tilt: 0.016, hipTilt: -0.016, turn: -0.012, near: [0.055, 0.068, 0.08], far: [-0.055, -0.07, -0.085], toe: [0.5, -0.7] }, CULT);
+  const R = makeRig(x, y, h, p, { tilt: 0.016, hipTilt: -0.016, turn: -0.012, near: [0.052, 0.062, 0.07], far: [-0.056, -0.072, -0.09], toe: [0.35, -0.9] }, CULT);
   const { sy, hx, hy, hr } = R;
   const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6), flick = Math.sin(p.frame / 2.9) * 0.5 + 0.5;
   const hover = Math.sin(p.frame / 16) * h * 0.012;
@@ -202,11 +204,11 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   // with the flame standing on it. Near arm bent to a hand on the planted staff.
   const far: Arm = [R.sFar, { x: x - h * 0.295, y: sy + h * 0.171 }, { x: x - h * 0.355, y: sy + h * 0.04 }];
   const near: Arm = [R.sNear, { x: x + h * 0.304, y: sy + h * 0.156 }, { x: x + h * 0.235, y: sy + h * 0.3 }];
-  const sBot = { x: x + h * 0.31, y: Y(-0.01) }, sTop = { x: x + h * 0.322, y: sy - h * 0.255 };
+  const sBot = { x: x + h * 0.305, y: Y(-0.005) }, sTop = { x: x + h * 0.318, y: sy - h * 0.185 };
   groundShadow(ctx, x + h * 0.02, y + 1, h * 0.64);
 
-  blob(ctx, B, m.skin, [footPart(R, R.legL[2], -0.7, 71), footPart(R, R.legR[2], 0.5, 72)], { h, formK: 0.45, spread: 0.7 });
-  footMarks(ctx, R, R.legL[2], -0.7, m.skin); footMarks(ctx, R, R.legR[2], 0.5, m.skin);
+  blob(ctx, B, m.skin, [footPart(R, R.legL[2], R.toe[1], 71, R.lift[1]), footPart(R, R.legR[2], R.toe[0], 72, R.lift[0])], { h, formK: 0.45, spread: 0.7 });
+  footMarks(ctx, R, R.legL[2], R.toe[1], m.skin, R.lift[1]); footMarks(ctx, R, R.legR[2], R.toe[0], m.skin, R.lift[0]);
   blob(ctx, B, p.dark, armParts(R, far, 41, 1.15), { h, formK: 0.6, creases: [elbowCrease(R, far)] });
   blob(ctx, B, p.base, [
     robePart(R, beltY, hemY, 0.17, 42, 0.03),
@@ -231,7 +233,7 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   ], wobble: 0.035, spiky: 0.07, seed: 45, sub: 2 }], { h, tex: 'folds', seed: 46, amount: 0.8, formK: 0.45, creases: [
     { x0: x - h * 0.1, y0: sy + h * 0.01, x1: x + h * 0.1, y1: sy + h * 0.01, r: h * 0.028, a: 0.26 },
   ] });
-  blob(ctx, B, p.base, [cowlPart(R, 1.3, 47)], { h, formK: 0.5, creases: [
+  blob(ctx, B, p.base, [cowlPart(R, 1.18, 47)], { h, formK: 0.5, creases: [
     { x0: hx - hr * 0.9, y0: hy + hr * 1.2, x1: hx + hr * 0.9, y1: hy + hr * 1.2, r: h * 0.03, a: 0.22 },
   ] });
   // Face: void, then a shaped mask over it — brow, eye slits with ember behind, a chin.
@@ -259,7 +261,7 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
 
 function hand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const m = mats(p.tone), Y = (u: number) => y + u * h, X = (u: number) => x + u * h;
-  const R = makeRig(x, y, h, p, { tilt: -0.012, hipTilt: 0.014, turn: 0.014, near: [0.062, 0.08, 0.098], far: [-0.06, -0.078, -0.095], toe: [0.6, -0.6] }, CULT);
+  const R = makeRig(x, y, h, p, { tilt: -0.012, hipTilt: 0.014, turn: 0.014, near: [0.064, 0.084, 0.106], far: [-0.058, -0.07, -0.078], toe: [0.9, -0.4] }, CULT);
   const { sy, hx, hy, hr } = R;
   const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6), flick = Math.sin(p.frame / 3.3) * 0.5 + 0.5;
   const beltY = sy + h * 0.185, hemY = sy + h * 0.73;
@@ -274,7 +276,7 @@ function hand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   glow(ctx, B, x, sy + h * 0.02, h * 0.3, '#ff6020', 0.18 + 0.1 * flick, EMBER);
   blob(ctx, B, mix(m.ash, p.base, 0.2), [{ k: 'curve', pts: [X(-0.46), Y(-0.03), X(-0.34), Y(-0.1), X(-0.1), Y(-0.08), X(0.12), Y(-0.1), X(0.34), Y(-0.09), X(0.47), Y(-0.03), X(0.2), Y(-0.02), X(-0.2), Y(-0.02)], wobble: 0.05, spiky: 0.04, seed: 61, sub: 3 }], { h, outline: false, formK: 0.3 });
 
-  blob(ctx, B, mix(m.skin, m.ash, 0.45), [footPart(R, R.legL[2], -0.6, 75), footPart(R, R.legR[2], 0.6, 76)], { h, formK: 0.45, spread: 0.7 });
+  blob(ctx, B, mix(m.skin, m.ash, 0.45), [footPart(R, R.legL[2], R.toe[1], 75, R.lift[1]), footPart(R, R.legR[2], R.toe[0], 76, R.lift[0])], { h, formK: 0.45, spread: 0.7 });
   blob(ctx, B, p.dark, armParts(R, far, 62, 1.45), { h, formK: 0.6, creases: [elbowCrease(R, far)] });
 
   // The robe: a broad gown gathered low, with the near sleeve in the same mass.
@@ -301,17 +303,17 @@ function hand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     { x0: X(-0.16), y0: sy - h * 0.012, x1: X(0.16), y1: sy - h * 0.012, r: h * 0.03, a: 0.3 },
   ] });
   runeRow(ctx, [x - mw * 0.82, sy + h * 0.17, X(-0.14), sy + h * 0.235, X(0.02), sy + h * 0.285, X(0.18), sy + h * 0.235, x + mw * 0.82, sy + h * 0.17], h, pulse);
-  blob(ctx, B, p.base, [cowlPart(R, 1.62, 68)], { h, formK: 0.5, creases: [
+  blob(ctx, B, p.base, [cowlPart(R, 1.24, 68)], { h, formK: 0.5, creases: [
     { x0: hx - hr * 1.1, y0: hy + hr * 1.35, x1: hx + hr * 1.1, y1: hy + hr * 1.35, r: h * 0.024, a: 0.35 },
   ] });
 
   // The horned ash-mask: bone, skull-like, cracked with ember light.
   faceVoid(ctx, hx, hy + h * 0.024, hr * 1.1, hr * 1.3, 69);
-  const r = hr * 1.28;
+  const r = hr * 1.2;
   blob(ctx, B, m.bone, [
     { k: 'curve', pts: [hx - r, hy - r * 0.3, hx - r * 0.85, hy - r * 0.9, hx, hy - r * 1.1, hx + r * 0.85, hy - r * 0.9, hx + r, hy - r * 0.3, hx + r * 0.75, hy + r * 0.5, hx + r * 0.4, hy + r * 1.05, hx - r * 0.4, hy + r * 1.05, hx - r * 0.75, hy + r * 0.5], wobble: 0.03, seed: 70, sub: 2 },
-    { k: 'poly', pts: [hx - r * 0.95, hy - r * 0.5, hx - r * 1.3, hy - r * 1.15, hx - r * 1.44, hy - r * 1.9, hx - r * 0.98, hy - r * 1.35, hx - r * 0.55, hy - r * 0.95] },
-    { k: 'poly', pts: [hx + r * 0.6, hy - r * 0.95, hx + r * 1.06, hy - r * 1.44, hx + r * 1.52, hy - r * 2.0, hx + r * 1.4, hy - r * 1.15, hx + r * 1.0, hy - r * 0.5] },
+    { k: 'poly', pts: [hx - r * 0.95, hy - r * 0.5, hx - r * 1.3, hy - r * 1.15, hx - r * 1.38, hy - r * 1.62, hx - r * 0.98, hy - r * 1.35, hx - r * 0.55, hy - r * 0.95] },
+    { k: 'poly', pts: [hx + r * 0.6, hy - r * 0.95, hx + r * 1.06, hy - r * 1.44, hx + r * 1.46, hy - r * 1.7, hx + r * 1.4, hy - r * 1.15, hx + r * 1.0, hy - r * 0.5] },
   ], { h, tex: 'cracks', seed: 71, amount: 0.8, formK: 0.55, gloss: 0.2, creases: [
     { x0: hx - r * 0.7, y0: hy - r * 0.55, x1: hx - r * 0.85, y1: hy - r * 0.35, r: r * 0.12, a: 0.3 },
     { x0: hx + r * 0.65, y0: hy - r * 0.6, x1: hx + r * 0.85, y1: hy - r * 0.3, r: r * 0.12, a: 0.3 },
@@ -348,36 +350,7 @@ function hand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
 
 // ------------------------------------------------------------------ shared shapes ----
 
-/**
- * The gown: shoulders, a waist, a hem that swings to the viewer's left with the weight on that leg.
- * shW and hemW are half-widths in units of h; `tatter` is the spikiness of the whole contour.
- */
-function gown(x: number, y: number, h: number, sy: number, shW: number, hemW: number, seed: number, tatter = 0.045): Part {
-  const X = (u: number) => x + u * h, Y = (u: number) => y + u * h;
-  return { k: 'curve', pts: [
-    // The neck: the cloth is narrowest here, so the cowl sits on a throat and not on a sack.
-    X(-shW * 0.34), sy - h * 0.045, X(shW * 0.36), sy - h * 0.045,
-    // Out and down over the shoulder, the widest point of the upper body.
-    X(shW * 0.88), sy - h * 0.005, X(shW * 1.04), sy + h * 0.055,
-    // In again through the ribs to the waist, where the belt gathers it.
-    X(shW * 0.9), Y(-0.58), X(shW * 0.72), Y(-0.48),
-    // Then the skirt falls open to the hem.
-    X(hemW * 0.72), Y(-0.29), X(hemW * 0.98), Y(-0.07),
-    X(hemW * 0.45), Y(-0.06), X(-hemW * 0.1), Y(-0.07), X(-hemW * 0.6), Y(-0.06), X(-hemW * 1.0), Y(-0.07),
-    X(-hemW * 0.7), Y(-0.29), X(-shW * 0.7), Y(-0.48),
-    X(-shW * 0.88), Y(-0.58), X(-shW * 1.02), sy + h * 0.055,
-    X(-shW * 0.86), sy - h * 0.005,
-  ], wobble: 0.026, spiky: tatter, seed, sub: 3 };
-}
 
-/** The cowl: a lumpy hood around the head centre, its peak drooping to one side; `k` scales it. */
-function cowl(hx: number, hy: number, h: number, k: number, seed: number): Part {
-  const r = h * 0.1 * k;
-  return { k: 'curve', pts: [
-    hx - r * 1.3, hy + r * 1.35, hx - r * 1.5, hy + r * 0.1, hx - r * 1.1, hy - r * 0.95, hx - r * 0.45, hy - r * 1.4, hx + r * 0.1, hy - r * 1.85,
-    hx + r * 0.75, hy - r * 1.2, hx + r * 1.35, hy - r * 0.45, hx + r * 1.45, hy + r * 0.6, hx + r * 1.2, hy + r * 1.4, hx, hy + r * 1.5,
-  ], wobble: 0.045, spiky: 0.02, seed, sub: 3 };
-}
 
 function robeCreases(x: number, y: number, h: number, sy: number, hx: number, hy: number, shW: number): Crease[] {
   const X = (u: number) => x + u * h, Y = (u: number) => y + u * h;
@@ -729,7 +702,12 @@ function robePart(R: Rig, beltY: number, hemY: number, flare: number, seed: numb
   return { k: 'curve', pts, wobble: 0.024, spiky: tatter, seed, sub: 3 };
 }
 
-/** The cowl: a hood around the head, peaked at the back and open at the face. */
+/**
+ * The cowl: a hood around the head, peaked at the back and open at the face. The peak reaches
+ * 1.72 of its own radius above the head centre, so k is what decides whether the hood clears the
+ * combat cell: at k = 1.48 the point stood 0.031h above the ceiling, and a sprite that overflows
+ * collides with the target marker drawn above it.
+ */
 function cowlPart(R: Rig, k: number, seed: number): Part {
   const { hx, hy, hr } = R, r = hr * k;
   return { k: 'curve', pts: [
@@ -750,8 +728,8 @@ function cowlPart(R: Rig, k: number, seed: number): Part {
  * Half of it is under the cloth, so only the front two thirds have to carry the read — but drawn
  * as a plain ellipse, which is what these four had, it reads as a pebble.
  */
-function footPart(R: Rig, ankle: Pt, out: number, seed: number): Part {
-  const { h } = R, y = R.y, s = out >= 0 ? 1 : -1;
+function footPart(R: Rig, ankle: Pt, out: number, seed: number, lift = 0): Part {
+  const { h } = R, y = R.y - lift, s = out >= 0 ? 1 : -1;
   const toe = h * (0.072 + 0.03 * Math.abs(out));
   const pts = [
     -h * 0.03, y - h * 0.072,
@@ -770,8 +748,8 @@ function footPart(R: Rig, ankle: Pt, out: number, seed: number): Part {
 }
 
 /** The cleft between the big toe and the rest, and the shadow the hem casts across the instep. */
-function footMarks(ctx: CanvasRenderingContext2D, R: Rig, ankle: Pt, out: number, skin: string): void {
-  const { h } = R, y = R.y, s = out >= 0 ? 1 : -1, toe = h * (0.072 + 0.03 * Math.abs(out));
+function footMarks(ctx: CanvasRenderingContext2D, R: Rig, ankle: Pt, out: number, skin: string, lift = 0): void {
+  const { h } = R, y = R.y - lift, s = out >= 0 ? 1 : -1, toe = h * (0.072 + 0.03 * Math.abs(out));
   if (h < 42) return;
   softLine(ctx, B, [ankle.x + s * toe * 0.62, y - h * 0.018, ankle.x + s * toe * 0.72, y - h * 0.001], skin, Math.max(1, h * 0.008), 0.5);
   softLine(ctx, B, [ankle.x - s * h * 0.026, y - h * 0.056, ankle.x + s * h * 0.03, y - h * 0.05], skin, Math.max(1, h * 0.012), 0.45);
