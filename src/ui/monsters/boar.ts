@@ -1,14 +1,15 @@
 // The wild boar, painted: massive shoulders and neck with a stiff bristle crest along the spine, a
 // back sloping down to a smaller rump, a big wedge head held low with a wet snout disc, two curved
 // ivory tusks, a small mean red eye, small ears, short legs on cloven hooves and a paler belly and
-// muzzle. Shoulders, neck, body, head, ears and near legs are ONE bristled mass (blob); the crest
-// is a spiky curve merged into its top edge; the far legs a darker mass behind; the hooves, tusks
-// and snout their own materials. Three-quarter view facing the party. Idle: the chest breathes, an
-// ear flicks.
+// muzzle. Drawn back to front as sections that must each be nameable: far legs, the barrel with
+// its crest, the wedge head over the shoulder, the near legs over the barrel, then the hooves. A
+// boar's head IS its own form, so it carries its own contour even though it is the same hide;
+// likewise a leg, which is a thigh, a knee and a shank rather than one stub. Three-quarter view
+// facing the party. Idle: the chest breathes, an ear flicks.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
-import { blob, glossBall, softLine } from './gloss.ts';
+import { blob, glossBall, softLine, patch } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { shade, mix } from '../../lib/art/palettes.ts';
 
@@ -65,10 +66,6 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     ], wobble: 0.035, spiky: 0.025, seed: 1, sub: 3 },
     { k: 'ball', x: x + w * 0.16, y: y - h * 0.62 + b, r: h * 0.33 },
     { k: 'ball', x: x - w * 0.26, y: y - h * 0.46, r: h * 0.27 },
-    { k: 'curve', pts: [x + w * 0.25, y - h * 0.78, x + w * 0.3 + flick * h * 0.08, y - h * 1.02 + flick * h * 0.05, x + w * 0.41, y - h * 0.8], wobble: 0.05, seed: 9, sub: 2 },
-    { k: 'cap', x0: x + w * 0.3, y0: y - h * 0.62, x1: sx, y1: sy, r0: h * 0.27, r1: h * 0.12 },
-    { k: 'cap', x0: x - w * 0.17, y0: y - h * 0.4, x1: x - w * 0.17, y1: y - h * 0.09, r0: h * 0.09, r1: h * 0.07 },
-    { k: 'cap', x0: x + w * 0.3, y0: y - h * 0.44, x1: x + w * 0.31, y1: y - h * 0.09, r0: h * 0.095, r1: h * 0.075 },
   ];
   blob(ctx, B, hide, hideParts, { h, tex: 'fur', seed: 3, amount: 0.6, formK: 0.55, spread: 0.9, creases: [
     { x0: x + w * 0.3, y0: y - h * 0.84 + b, x1: x + w * 0.27, y1: y - h * 0.44, r: h * 0.035, a: 0.3 },
@@ -79,19 +76,44 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   ] });
   // Far tusk, from behind the snout.
   blob(ctx, B, shade(ivory, 0.85), [{ k: 'tube', pts: [x + w * 0.48, y - h * 0.3, x + w * 0.53, y - h * 0.3, x + w * 0.545, y - h * 0.46], r0: h * 0.028, r1: h * 0.01, gloss: 0.3 }], { h, formK: 0.5 });
-  // Pale belly and muzzle, inside the hide, no line.
-  blob(ctx, B, pale, [
-    { k: 'ell', x: x + w * 0.02, y: y - h * 0.27, rx: w * 0.3, ry: h * 0.085, rot: 0.03 },
-    { k: 'cap', x0: x + w * 0.42, y0: y - h * 0.4, x1: sx + w * 0.01, y1: sy + h * 0.02, r0: h * 0.12, r1: h * 0.09 },
-  ], { outline: false, formK: 0.3 });
-  // Hooves: the far pair sits clear of the hide, so all four are one mass on top.
-  blob(ctx, B, hoof, [
-    { k: 'poly', pts: [x - w * 0.4, y - h * 0.11, x - w * 0.27, y - h * 0.11, x - w * 0.265, y - h * 0.02, x - w * 0.405, y - h * 0.02] },
-    { k: 'poly', pts: [x + w * 0.07, y - h * 0.11, x + w * 0.21, y - h * 0.11, x + w * 0.215, y - h * 0.02, x + w * 0.065, y - h * 0.02] },
-    { k: 'poly', pts: [x - w * 0.25, y - h * 0.11, x - w * 0.09, y - h * 0.11, x - w * 0.085, y, x - w * 0.255, y] },
-    { k: 'poly', pts: [x + w * 0.22, y - h * 0.11, x + w * 0.4, y - h * 0.11, x + w * 0.405, y, x + w * 0.215, y] },
-  ], { h, formK: 0.35 });
-  if (h > 30) { ctx.fillStyle = B.col(shade(hoof, 0.6)); for (const hx of [x - w * 0.17, x + w * 0.31]) ctx.fillRect(Math.round(hx), Math.round(y - h * 0.08), 1, Math.round(h * 0.08)); }
+  // Pale belly, as a marking in the hide rather than a slab laid on it.
+  patch(ctx, B, pale, [{ k: 'ell', x: x + w * 0.05, y: y - h * 0.26, rx: w * 0.26, ry: h * 0.07, rot: 0.03 }], { alpha: 0.6, feather: 0.6 });
+  // The head: its own wedge over the shoulder, a shade off the barrel so the join reads. The near
+  // ear rides with it, and a crease marks where the cheek meets the neck.
+  blob(ctx, B, shade(hide, 0.96), [
+    { k: 'curve', pts: [
+      x + w * 0.26, y - h * 0.76, x + w * 0.42, y - h * 0.75, x + w * 0.54, y - h * 0.58,
+      sx + h * 0.03, sy - h * 0.13, sx + h * 0.13, sy - h * 0.01, sx + h * 0.06, sy + h * 0.13,
+      x + w * 0.48, y - h * 0.17, x + w * 0.34, y - h * 0.21, x + w * 0.24, y - h * 0.36, x + w * 0.22, y - h * 0.58,
+    ], wobble: 0.035, spiky: 0.02, seed: 11, sub: 3 },
+    { k: 'curve', pts: [x + w * 0.26, y - h * 0.76, x + w * 0.29 + flick * h * 0.06, y - h * 0.92 + flick * h * 0.04, x + w * 0.37, y - h * 0.78], wobble: 0.06, seed: 9, sub: 2 },
+  ], { h, tex: 'fur', seed: 12, amount: 0.5, formK: 0.5, spread: 0.85, creases: [
+    { x0: x + w * 0.26, y0: y - h * 0.7, x1: x + w * 0.27, y1: y - h * 0.3, r: h * 0.03, a: 0.3 },
+  ] });
+  // The pale muzzle, on the head.
+  patch(ctx, B, pale, [{ k: 'cap', x0: x + w * 0.5, y0: y - h * 0.34, x1: sx + w * 0.01, y1: sy + h * 0.03, r0: h * 0.1, r1: h * 0.08 }], { alpha: 0.6, feather: 0.55 });
+  // Near legs: a thigh, a knee and a clearly thinner shank, so a leg is not one stub.
+  const legs: Part[] = [];
+  for (const [hipX, hipY, kneeX, kneeY, footX] of [
+    [x - w * 0.17, y - h * 0.42, x - w * 0.19, y - h * 0.25, x - w * 0.165],
+    [x + w * 0.3, y - h * 0.45, x + w * 0.315, y - h * 0.26, x + w * 0.32],
+  ]) {
+    legs.push({ k: 'cap', x0: hipX, y0: hipY, x1: kneeX, y1: kneeY, r0: h * 0.095, r1: h * 0.068 });
+    legs.push({ k: 'ball', x: kneeX, y: kneeY, r: h * 0.072 });
+    legs.push({ k: 'cap', x0: kneeX, y0: kneeY, x1: footX, y1: y - h * 0.11, r0: h * 0.058, r1: h * 0.044 });
+  }
+  blob(ctx, B, shade(hide, 0.93), legs, { h, formK: 0.5, spread: 0.8, creases: [
+    { x0: x - w * 0.23, y0: y - h * 0.25, x1: x - w * 0.15, y1: y - h * 0.25, r: h * 0.022, a: 0.35 },
+    { x0: x + w * 0.27, y0: y - h * 0.26, x1: x + w * 0.35, y1: y - h * 0.26, r: h * 0.022, a: 0.35 },
+  ] });
+  // Hooves: cloven wedges, narrower than the shank above them, all four as one mass on top.
+  const hooves: Part[] = [];
+  for (const [hxc, top] of [[x - w * 0.335, y - h * 0.1], [x + w * 0.14, y - h * 0.1], [x - w * 0.168, y - h * 0.115], [x + w * 0.32, y - h * 0.115]]) {
+    hooves.push({ k: 'poly', pts: [
+      hxc - h * 0.046, top, hxc + h * 0.046, top, hxc + h * 0.062, y, hxc + h * 0.014, y, hxc, y - h * 0.035, hxc - h * 0.014, y, hxc - h * 0.062, y,
+    ] });
+  }
+  blob(ctx, B, hoof, hooves, { h, formK: 0.4 });
   // The wet snout disc with its nostrils.
   glossBall(ctx, B, sx + h * 0.06, sy, h * 0.11, snout, { gloss: 0.35 });
   if (!B.override) {
@@ -105,6 +127,6 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   // Mouth fold, mean little red eye under a heavy brow, the inner ear.
   softLine(ctx, B, [x + w * 0.44, y - h * 0.24, x + w * 0.56, y - h * 0.2], hide, Math.max(1, h * 0.025), 0.55);
   eye(ctx, x + w * 0.4, y - h * 0.62, h * 0.045, red);
-  softLine(ctx, B, [x + w * 0.33, y - h * 0.72, x + w * 0.45, y - h * 0.67], hide, Math.max(1, h * 0.03), 0.7);
-  softLine(ctx, B, [x + w * 0.31, y - h * 0.8, x + w * 0.31 + flick * h * 0.06, y - h * 0.96 + flick * h * 0.04], hide, Math.max(1, h * 0.035), 0.5);
+  softLine(ctx, B, [x + w * 0.35, y - h * 0.71, x + w * 0.45, y - h * 0.675], hide, Math.max(1, h * 0.022), 0.45);
+  softLine(ctx, B, [x + w * 0.3, y - h * 0.78, x + w * 0.3 + flick * h * 0.05, y - h * 0.88 + flick * h * 0.03], hide, Math.max(1, h * 0.03), 0.45);
 }
