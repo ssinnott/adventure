@@ -7,7 +7,7 @@
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
-import { blob, glossBall, softLine } from './gloss.ts';
+import { blob, glossBall, softLine, patch } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
@@ -77,10 +77,10 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
     { x0: x + w * 0.4, y0: y - h * 0.33, x1: x + w * 0.56, y1: y - h * 0.26, r: h * 0.02, a: 0.2 },
   ] });
   // Pale belly and throat, inside the fur, no line.
-  blob(ctx, B, belly, [
+  patch(ctx, B, belly, [
     { k: 'ell', x: x - w * 0.06, y: y - h * 0.12, rx: w * 0.25, ry: h * 0.1, rot: 0.06 },
     { k: 'cap', x0: x + w * 0.3, y0: y - h * 0.3, x1: x + w * 0.52, y1: y - h * 0.24, r0: h * 0.08, r1: h * 0.05 },
-  ], { outline: false, formK: 0.25 });
+  ], { alpha: 0.68, feather: 0.55 });
   // Near ear: a pale lumpy round with its pink inside.
   blob(ctx, B, light, [{ k: 'curve', pts: ring(x + w * 0.35, y - h * 0.74 + b, h * 0.14, h * 0.145, 9, R3), wobble: 0.06, seed: 6, sub: 2 }], { h, formK: 0.55 });
   if (h > 24) blob(ctx, B, pink, [{ k: 'ell', x: x + w * 0.355, y: y - h * 0.725 + b, rx: h * 0.08, ry: h * 0.085 }], { outline: false, formK: 0.7, spread: 0.6 });

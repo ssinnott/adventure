@@ -47,9 +47,21 @@ export function celEllipse(ctx: CanvasRenderingContext2D, cx: number, cy: number
   ctx.restore();
 }
 
+/**
+ * An eye: the iris, then a pupil and a catchlight. A pupil drawn as a square of rounded pixels is
+ * right at two or three px across, which is all an eye used to get, and reads as a black block
+ * once a sprite fills the viewport; so it is a square only while it is small enough to pass for
+ * one, and an ellipse above that.
+ */
 export function eye(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, color: string, pupil = true): void {
   ctx.beginPath(); ctx.arc(x, y, Math.max(0.8, r), 0, Math.PI * 2); ctx.fillStyle = B.col(color); ctx.fill();
-  if (pupil && r >= 1.5 && !B.override) { ctx.fillStyle = '#120c14'; ctx.fillRect(Math.round(x - r * 0.3), Math.round(y - r * 0.3), Math.max(1, Math.round(r * 0.7)), Math.max(1, Math.round(r * 0.7))); }
+  if (!pupil || r < 1.5 || B.override) return;
+  ctx.fillStyle = '#120c14';
+  if (r < 2) { ctx.fillRect(Math.round(x - r * 0.3), Math.round(y - r * 0.3), Math.max(1, Math.round(r * 0.7)), Math.max(1, Math.round(r * 0.7))); return; }
+  ctx.beginPath(); ctx.ellipse(x, y, r * 0.44, r * 0.52, 0, 0, Math.PI * 2); ctx.fill();
+  // A catchlight on the lit side, which is what makes an eye look wet rather than painted on.
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.beginPath(); ctx.arc(x + B.light.x * r * 0.42, y + B.light.y * r * 0.42, Math.max(0.6, r * 0.2), 0, Math.PI * 2); ctx.fill();
 }
 
 export function stroke(ctx: CanvasRenderingContext2D, pts: number[], color: string, w: number): void {

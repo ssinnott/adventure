@@ -6,7 +6,7 @@
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
-import { blob, softLine, glow } from './gloss.ts';
+import { blob, softLine, glow, patch } from './gloss.ts';
 import type { Part, Crease } from './gloss.ts';
 import { shade, mix } from '../../lib/art/palettes.ts';
 
@@ -134,9 +134,9 @@ function marsh(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   // The pale hourglass on the abdomen: a mass inside, no line.
   const pale = shade(mix(p.light, '#d8d2c0', 0.75), p.tone);
   const hx = ax + h * 0.07, hy = ay + h * 0.03;
-  blob(ctx, B, pale, [
+  patch(ctx, B, pale, [
     { k: 'curve', pts: [hx - h * 0.09, hy - h * 0.19, hx + h * 0.08, hy - h * 0.18, hx + h * 0.02, hy - h * 0.01, hx + h * 0.08, hy + h * 0.15, hx - h * 0.07, hy + h * 0.16, hx - h * 0.02, hy], wobble: 0.04, seed: 8, sub: 2 },
-  ], { outline: false, formK: 0.35 });
+  ], { alpha: 0.8, feather: 0.3 });
   // The waist between the two body masses, and a fold over the eye cluster.
   softLine(ctx, B, [cx - h * 0.17, cy - h * 0.06, cx - h * 0.1, cy - h * 0.13, cx, cy - h * 0.16, cx + h * 0.1, cy - h * 0.14, cx + h * 0.17, cy - h * 0.07], hide, h * 0.028, 0.6);
   // Red eyes, lit from within.
@@ -184,10 +184,10 @@ function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   ];
   blob(ctx, B, hide, parts, { h, formK: 0.6, tex: 'stipple', seed: 21, amount: 0.7, creases });
   // Two pale streaks down the back of the abdomen, inside the mass, no line.
-  blob(ctx, B, shade(mix(p.light, '#b0b068', 0.45), p.tone), [
+  patch(ctx, B, shade(mix(p.light, '#b0b068', 0.45), p.tone), [
     { k: 'curve', pts: [ax - h * 0.16, ay - h * 0.22, ax - h * 0.08, ay - h * 0.24, ax - h * 0.03, ay + h * 0.02, ax - h * 0.09, ay + h * 0.05], wobble: 0.06, seed: 19, sub: 2 },
     { k: 'curve', pts: [ax + h * 0.05, ay - h * 0.24, ax + h * 0.13, ay - h * 0.2, ax + h * 0.1, ay + h * 0.03, ax + h * 0.03, ay + h * 0.02], wobble: 0.06, seed: 23, sub: 2 },
-  ], { outline: false, formK: 0.3 });
+  ], { alpha: 0.7, feather: 0.5 });
   softLine(ctx, B, [cx - h * 0.19, cy - h * 0.06, cx - h * 0.11, cy - h * 0.14, cx, cy - h * 0.175, cx + h * 0.11, cy - h * 0.15, cx + h * 0.19, cy - h * 0.07], hide, h * 0.03, 0.6);
   // Amber-green eyes and heavy fangs.
   glow(ctx, B, cx, cy - h * 0.05, h * 0.13, '#c0d040', 0.18, '#f0f090');
