@@ -58,8 +58,8 @@ function cultist(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   blob(ctx, B, m.skin, [
     { k: 'ell', x: X(-0.11), y: Y(-0.03), rx: h * 0.05, ry: h * 0.026, rot: 0.25 },
     { k: 'ell', x: X(0.1), y: Y(-0.028), rx: h * 0.052, ry: h * 0.027, rot: -0.35 },
-  ], { h, formK: 0.4 });
-  hands(ctx, h, m.skin, [fcu[0] - h * 0.008, fcu[1] + h * 0.038, h * 0.031]);
+    { k: 'curve', pts: ring(fcu[0] - h * 0.008, fcu[1] + h * 0.038, h * 0.031, h * 0.028, 7), wobble: 0.07, seed: 34, sub: 2 },
+  ], { h, formK: 0.45 });
   blob(ctx, B, p.dark, [
     { k: 'cap', x0: fsh[0], y0: fsh[1], x1: fel[0], y1: fel[1], r0: h * 0.052, r1: h * 0.046 },
     { k: 'cap', x0: fel[0], y0: fel[1], x1: fcu[0], y1: fcu[1], r0: h * 0.046, r1: h * 0.042 },
@@ -72,8 +72,8 @@ function cultist(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
 
   // The robe: gown, cowl and the near sleeve (upper arm and forearm), one mass.
   const robe: Part[] = [
-    gown(x, y, h, sy, 0.185, 0.3, 1),
-    cowl(hx, hy, h, 0.88, 2),
+    gown(x, y, h, sy, 0.195, 0.3, 1, 0.022),
+    cowl(hx, hy, h, 0.82, 2),
     { k: 'cap', x0: nsh[0], y0: nsh[1], x1: nel[0], y1: nel[1], r0: h * 0.056, r1: h * 0.045 },
     { k: 'cap', x0: nel[0], y0: nel[1], x1: ncu[0], y1: ncu[1], r0: h * 0.045, r1: h * 0.042 },
   ];
@@ -85,11 +85,13 @@ function cultist(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   ]) });
   // The robe darkens where it runs behind the raised forearm, and each sleeve keeps its own edges.
   shade2(ctx, p.base, [{ k: 'cap', x0: X(0.13), y0: sy + h * 0.06, x1: X(0.16), y1: Y(-0.47), r0: h * 0.042 }], 0.45);
+  shade2(ctx, p.base, [{ k: 'cap', x0: hx - h * 0.1, y0: sy + h * 0.035, x1: hx + h * 0.1, y1: sy + h * 0.035, r0: h * 0.045 }], 0.35);
+  lit2(ctx, p.base, [{ k: 'cap', x0: X(-0.15), y0: sy + h * 0.055, x1: X(-0.06), y1: sy + h * 0.02, r0: h * 0.035 }], 0.3);
   sleeveEdge(ctx, h, p.base, nsh[0], nsh[1], nel[0], nel[1], h * 0.05);
   sleeveEdge(ctx, h, p.base, nel[0], nel[1], ncu[0], ncu[1], h * 0.044);
   // Drape: folds falling from the shoulders and radiating from the belt.
-  drape(ctx, h, p.base, X(-0.09), sy + h * 0.05, h * 0.07, h * 0.16, 3, 51, 0.5, 0.28);
-  drape(ctx, h, p.base, X(0.0), Y(-0.47), h * 0.2, h * 0.4, 5, 52, 0.8, 0.28);
+  drape(ctx, h, p.base, X(-0.1), sy + h * 0.055, h * 0.08, h * 0.19, 3, 51, 0.5, 0.28);
+  drape(ctx, h, p.base, X(0.0), Y(-0.47), h * 0.22, h * 0.4, 6, 52, 0.8, 0.28);
 
   // The face: a dark void under the cowl, a matched pair of embers set deep in it.
   faceVoid(ctx, hx, hy + h * 0.02, h * 0.07, h * 0.082, 4);
@@ -104,8 +106,9 @@ function cultist(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   ], { h, formK: 0.5 });
 
   // The near hand closed round the shaft, then the ember at the staff's head.
-  hands(ctx, h, m.skin, [gx - h * 0.006, gy, h * 0.037]);
-  fingers(ctx, h, m.skin, gx, gy, h * 0.037, Math.atan2(Y(-1.0) - Y(-0.03), X(0.305) - X(0.40)));
+  const ga = Math.atan2(Y(-1.0) - Y(-0.03), X(0.305) - X(0.40));
+  hands(ctx, h, m.skin, [gx - h * 0.006, gy, h * 0.037], thumb(gx, gy, h * 0.037, ga));
+  fingers(ctx, h, m.skin, gx, gy, h * 0.037, ga);
   glow(ctx, B, X(0.31), Y(-1.0), h * (0.08 + 0.02 * flick), EMBER, 0.45 + 0.2 * pulse, HOT);
   glossBall(ctx, B, X(0.31), Y(-1.0), h * 0.028, EMBER, { gloss: 0.7 });
 }
@@ -213,14 +216,14 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
 
   // Far (left) arm raised, palm up, behind the mantle; then the robe (gown and near sleeve).
   blob(ctx, B, p.dark, [
-    { k: 'cap', x0: X(-0.17), y0: sy + h * 0.035, x1: X(-0.255), y1: Y(-0.645), r0: h * 0.052, r1: h * 0.046 },
+    { k: 'cap', x0: X(-0.185), y0: sy + h * 0.055, x1: X(-0.258), y1: Y(-0.645), r0: h * 0.052, r1: h * 0.046 },
     { k: 'cap', x0: X(-0.255), y0: Y(-0.645), x1: X(-0.298), y1: Y(-0.755), r0: h * 0.046, r1: h * 0.05 },
   ], { h, formK: 0.6, creases: [
     { x0: X(-0.232), y0: Y(-0.675), x1: X(-0.262), y1: Y(-0.62), r: h * 0.016, a: 0.35 },
   ] });
   blob(ctx, B, p.base, [
     gown(x, y, h, sy, 0.185, 0.24, 42, 0.03),
-    { k: 'cap', x0: X(0.175), y0: sy + h * 0.035, x1: X(0.245), y1: Y(-0.645), r0: h * 0.052, r1: h * 0.046 },
+    { k: 'cap', x0: X(0.19), y0: sy + h * 0.055, x1: X(0.248), y1: Y(-0.645), r0: h * 0.052, r1: h * 0.046 },
     { k: 'cap', x0: X(0.245), y0: Y(-0.645), x1: X(0.278), y1: Y(-0.595), r0: h * 0.046, r1: h * 0.048 },
   ], { h, tex: 'folds', seed: 44, amount: 0.9, formK: 0.6, creases: [
     { x0: X(0.13), y0: sy + h * 0.08, x1: X(0.16), y1: Y(-0.5), r: h * 0.02, a: 0.3 },
@@ -230,7 +233,7 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
     { x0: X(0.125), y0: sy + h * 0.045, x1: X(0.115), y1: Y(-0.58), r: h * 0.02, a: 0.34 },
     { x0: X(-0.2), y0: sy + h * 0.15, x1: X(0.2), y1: sy + h * 0.15, r: h * 0.03, a: 0.3 },
   ] });
-  sleeveEdge(ctx, h, p.base, X(0.17), sy + h * 0.03, X(0.245), Y(-0.645), h * 0.048);
+  sleeveEdge(ctx, h, p.base, X(0.195), sy + h * 0.07, X(0.246), Y(-0.65), h * 0.05);
   // Drape: the skirt fanning from the waist, folds off the near shoulder.
   drape(ctx, h, p.base, X(-0.01), Y(-0.47), h * 0.18, h * 0.36, 5, 54, 0.75, 0.3);
   drape(ctx, h, p.base, X(0.12), Y(-0.6), h * 0.05, h * 0.11, 2, 55, 0.4, 0.26);
@@ -238,16 +241,16 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   // sloping out over each shoulder so the garment has a body under it.
   blob(ctx, B, mix(p.dark, m.ash, 0.3), [{ k: 'curve', pts: [
     X(-0.1), sy - h * 0.045, X(0.1), sy - h * 0.045,
-    X(0.23), sy + h * 0.005, X(0.31), sy + h * 0.05,
-    X(0.26), sy + h * 0.14, X(0.14), sy + h * 0.21, X(0.02), sy + h * 0.27, X(-0.12), sy + h * 0.21, X(-0.25), sy + h * 0.14,
-    X(-0.31), sy + h * 0.05, X(-0.23), sy + h * 0.005,
+    X(0.2), sy + h * 0.005, X(0.27), sy + h * 0.055,
+    X(0.25), sy + h * 0.14, X(0.14), sy + h * 0.21, X(0.02), sy + h * 0.27, X(-0.12), sy + h * 0.21, X(-0.25), sy + h * 0.14,
+    X(-0.27), sy + h * 0.055, X(-0.2), sy + h * 0.005,
   ], wobble: 0.035, spiky: 0.07, seed: 45, sub: 2 }], { h, tex: 'folds', seed: 46, amount: 0.8, formK: 0.45, creases: [
-    { x0: X(-0.13), y0: sy - h * 0.005, x1: X(0.13), y1: sy - h * 0.005, r: h * 0.026, a: 0.3 },
+    { x0: X(-0.11), y0: sy + h * 0.005, x1: X(0.11), y1: sy + h * 0.005, r: h * 0.03, a: 0.26 },
   ] });
-  blob(ctx, B, p.base, [cowl(hx, hy, h, 1.12, 47)], { h, formK: 0.5, creases: [{ x0: hx - h * 0.08, y0: hy + h * 0.13, x1: hx + h * 0.08, y1: hy + h * 0.13, r: h * 0.02, a: 0.35 }] });
+  blob(ctx, B, p.base, [cowl(hx, hy, h, 1.12, 47)], { h, formK: 0.5, creases: [{ x0: hx - h * 0.06, y0: hy + h * 0.125, x1: hx + h * 0.06, y1: hy + h * 0.125, r: h * 0.032, a: 0.22 }] });
   // Face: void, then a shaped mask over it — brow, eye slits with ember behind, a chin.
   faceVoid(ctx, hx, hy + h * 0.03, h * 0.068, h * 0.092, 48);
-  halfMask(ctx, hx, hy + h * 0.012, h * 0.072, mix(m.bone, m.ash, 0.38), h, pulse);
+  halfMask(ctx, hx, hy + h * 0.014, h * 0.072, mix(m.bone, m.ash, 0.5), h, pulse);
   // Rune bands glowing on both cuffs and along the mantle's edge.
   runeBand(ctx, X(0.265), Y(-0.6), h * 0.055, h * 0.02, 0.3, h, pulse);
   runeBand(ctx, X(-0.295), Y(-0.73), h * 0.055, h * 0.02, -0.4, h, pulse);
@@ -344,7 +347,12 @@ function hand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   }
   // The long ritual chisel-blade in the near hand, pointing down and out; embers off its edge.
   chisel(ctx, X(0.38), Y(-0.55), X(0.5), Y(-0.07), h, m.steel, m.leather, pulse);
-  hands(ctx, h, m.skin, [X(0.38), Y(-0.52), h * 0.038], [X(-0.385), Y(-0.435), h * 0.034]);
+  // Ash-greyed hands: a bright skin blob out on the sleeve would fight the mask and the embers.
+  const hs = mix(m.skin, m.ash, 0.45);
+  const ca = Math.atan2(Y(-0.07) - Y(-0.55), X(0.5) - X(0.38));
+  hands(ctx, h, hs, [X(0.38), Y(-0.52), h * 0.034], thumb(X(0.38), Y(-0.52), h * 0.034, ca), [X(-0.383), Y(-0.44), h * 0.031]);
+  fingers(ctx, h, hs, X(0.38), Y(-0.52), h * 0.034, ca);
+  if (h >= 46) for (let i = -1; i <= 1; i++) softLine(ctx, B, [X(-0.4) + i * h * 0.018, Y(-0.425), X(-0.393) + i * h * 0.02, Y(-0.39)], hs, Math.max(1, h * 0.009), 0.45);
   // Embers drifting up around the figure, ash drifting from the hem.
   embers(ctx, x, y, h, p.frame, 6, 2);
 }
@@ -370,7 +378,7 @@ function gown(x: number, y: number, h: number, sy: number, shW: number, hemW: nu
     X(-hemW * 0.7), Y(-0.29), X(-shW * 0.7), Y(-0.48),
     X(-shW * 0.88), Y(-0.58), X(-shW * 1.02), sy + h * 0.055,
     X(-shW * 0.86), sy - h * 0.005,
-  ], wobble: 0.03, spiky: tatter, seed, sub: 3 };
+  ], wobble: 0.022, spiky: tatter, seed, sub: 4 };
 }
 
 /** The cowl: a lumpy hood around the head centre, its peak drooping to one side; `k` scales it. */
@@ -427,7 +435,7 @@ function halfMask(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: numb
     cx + r * 0.88, cy + r * 0.4, cx + r * 0.5, cy + r * 1.0, cx + r * 0.06, cy + r * 1.3, cx - r * 0.46, cy + r * 0.98, cx - r * 0.86, cy + r * 0.38,
   ], wobble: 0.02, seed: 49, sub: 2 }], { h, formK: 0.7, gloss: 0.3, spread: 0.5 });
   // Planes, not a patch of paint: a lit brow ridge, the shadow it throws, hollow cheeks, a lit chin.
-  lit2(ctx, bone, [{ k: 'cap', x0: cx - r * 0.62, y0: cy - r * 0.62, x1: cx + r * 0.58, y1: cy - r * 0.6, r0: r * 0.24 }], 0.5);
+  lit2(ctx, bone, [{ k: 'cap', x0: cx - r * 0.56, y0: cy - r * 0.62, x1: cx + r * 0.52, y1: cy - r * 0.6, r0: r * 0.2 }], 0.38);
   shade2(ctx, bone, [{ k: 'cap', x0: cx - r * 0.74, y0: cy - r * 0.08, x1: cx + r * 0.76, y1: cy - r * 0.06, r0: r * 0.26 }], 0.52);
   shade2(ctx, bone, [{ k: 'cap', x0: cx - r * 0.8, y0: cy + r * 0.12, x1: cx - r * 0.5, y1: cy + r * 0.78, r0: r * 0.2 }], 0.34);
   shade2(ctx, bone, [{ k: 'cap', x0: cx + r * 0.82, y0: cy + r * 0.14, x1: cx + r * 0.54, y1: cy + r * 0.78, r0: r * 0.2 }], 0.34);
@@ -458,11 +466,14 @@ function fingers(ctx: CanvasRenderingContext2D, h: number, skin: string, cx: num
   if (h < 30) return;
   const ux = Math.cos(a), uy = Math.sin(a), nx = -uy, ny = ux, w = Math.max(1, h * 0.009);
   for (let i = -1; i <= 1; i++) {
-    const px = cx + ux * r * i * 0.62, py = cy + uy * r * i * 0.62;
+    const px = cx + ux * r * i * 0.6, py = cy + uy * r * i * 0.6;
     softLine(ctx, B, [px - nx * r * 0.95, py - ny * r * 0.95, px + nx * r * 0.95, py + ny * r * 0.95], skin, w, 0.5);
   }
-  // A thumb laid over the front of the shaft.
-  blob(ctx, B, skin, [{ k: 'cap', x0: cx - nx * r * 0.3 + ux * r * 0.55, y0: cy - ny * r * 0.3 + uy * r * 0.55, x1: cx + nx * r * 0.55 + ux * r * 0.2, y1: cy + ny * r * 0.55 + uy * r * 0.2, r0: r * 0.34, r1: r * 0.28 }], { h, formK: 0.5 });
+}
+
+/** Where the thumb sits for a hand of radius r closed on a shaft at angle `a`: [x, y, r] for hands(). */
+function thumb(cx: number, cy: number, r: number, a: number): [number, number, number] {
+  return [cx + Math.cos(a) * r * 0.5 + Math.sin(a) * r * 0.42, cy + Math.sin(a) * r * 0.5 - Math.cos(a) * r * 0.42, r * 0.44];
 }
 
 /** The soft dark a limb or a mantle throws on the cloth behind it, laid inside the mass, no line. */

@@ -32,15 +32,22 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   // The hide leans on the light tone: the tint is a dark brown and the beast must read on a dark floor.
   const hide = mix(base, light, 0.6);
   const paleHi = mix(light, shade('#d8c0a0', tone), 0.5), pale = mix(hide, paleHi, 0.5), snout = mix(paleHi, shade('#c88078', tone), 0.55);
+  // The belly is lighter FUR, not a painted stripe: barely a step off the hide, and laid on in two
+  // fur-edged pieces so it can narrow at the brisket and die away under the hind quarters.
+  const belly = mix(hide, paleHi, 0.42);
   const hoof = shade('#2c1e1c', Math.max(0.6, tone)), ivory = shade('#f0e6cc', tone), red = shade('#e04428', Math.max(0.65, tone));
   const ff = p.frame % 140, flick = ff < 9 ? Math.sin(ff / 9 * Math.PI) : 0;
   const b = br * h * 0.008;
 
   groundShadow(ctx, x, y + 1, w * 0.95);
-  // Far legs, far ear and the curled tail: a darker mass behind the body.
+  // Far legs, far ear and the curled tail: a darker mass behind the body. The far pair stands a
+  // little further back on the floor, so it is offset toward the rump and its feet sit higher.
   blob(ctx, B, dark, [
-    { k: 'cap', x0: x - w * 0.33, y0: y - h * 0.42, x1: x - w * 0.34, y1: y - h * 0.09, r0: h * 0.07, r1: h * 0.055 },
-    { k: 'cap', x0: x + w * 0.13, y0: y - h * 0.44, x1: x + w * 0.14, y1: y - h * 0.09, r0: h * 0.075, r1: h * 0.06 },
+    // Far hind: the same hock as the near one, folded shallower because it is turned away.
+    { k: 'cap', x0: x - w * 0.355, y0: y - h * 0.46, x1: x - w * 0.295, y1: y - h * 0.3, r0: h * 0.068, r1: h * 0.052 },
+    { k: 'cap', x0: x - w * 0.295, y0: y - h * 0.3, x1: x - w * 0.332, y1: y - h * 0.09, r0: h * 0.05, r1: h * 0.038 },
+    // Far front: straight, and set inboard of the near foreleg.
+    { k: 'cap', x0: x + w * 0.15, y0: y - h * 0.46, x1: x + w * 0.168, y1: y - h * 0.09, r0: h * 0.072, r1: h * 0.048 },
     { k: 'tube', pts: [x - w * 0.42, y - h * 0.58, x - w * 0.52, y - h * 0.66, x - w * 0.55, y - h * 0.52, x - w * 0.49, y - h * 0.46], r0: h * 0.03, r1: h * 0.015 },
     { k: 'curve', pts: [x + w * 0.13, y - h * 0.8, x + w * 0.15, y - h * 0.98, x + w * 0.25, y - h * 0.84], wobble: 0.05, seed: 8, sub: 2 },
   ], { h, formK: 0.4 });
@@ -61,23 +68,32 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     { k: 'curve', pts: CREST, wobble: 0.03, spiky: 0.24, seed: 2, sub: 3 },
     { k: 'curve', pts: [
       x - w * 0.42, y - h * 0.56, x - w * 0.24, y - h * 0.74 + b, x - w * 0.02, y - h * 0.9 + b, x + w * 0.18, y - h * 0.97 + b,
-      x + w * 0.36, y - h * 0.82 + b, chest, y - h * 0.55, chest - w * 0.04, y - h * 0.34, x + w * 0.2, y - h * 0.22 - b,
-      x - w * 0.1, y - h * 0.2 - b, x - w * 0.32, y - h * 0.26, x - w * 0.48, y - h * 0.42,
+      x + w * 0.36, y - h * 0.82 + b, chest, y - h * 0.55, chest - w * 0.04, y - h * 0.36, x + w * 0.2, y - h * 0.265 - b,
+      x - w * 0.1, y - h * 0.25 - b, x - w * 0.32, y - h * 0.3, x - w * 0.48, y - h * 0.44,
     ], wobble: 0.035, spiky: 0.025, seed: 1, sub: 3 },
     { k: 'ball', x: x + w * 0.16, y: y - h * 0.62 + b, r: h * 0.33 },
-    { k: 'ball', x: x - w * 0.26, y: y - h * 0.46, r: h * 0.27 },
+    { k: 'ball', x: x - w * 0.26, y: y - h * 0.49, r: h * 0.255 },
   ];
   blob(ctx, B, hide, hideParts, { h, tex: 'fur', seed: 3, amount: 0.6, formK: 0.55, spread: 0.9, creases: [
     { x0: x + w * 0.3, y0: y - h * 0.84 + b, x1: x + w * 0.27, y1: y - h * 0.44, r: h * 0.035, a: 0.3 },
     { x0: x - w * 0.3, y0: y - h * 0.52, x1: x - w * 0.18, y1: y - h * 0.34, r: h * 0.03, a: 0.28 },
-    { x0: x - w * 0.24, y0: y - h * 0.34, x1: x - w * 0.1, y1: y - h * 0.3, r: h * 0.03, a: 0.25 },
-    { x0: x + w * 0.22, y0: y - h * 0.36, x1: x + w * 0.34, y1: y - h * 0.32, r: h * 0.03, a: 0.25 },
+    { x0: x - w * 0.24, y0: y - h * 0.37, x1: x - w * 0.1, y1: y - h * 0.33, r: h * 0.03, a: 0.25 },
+    { x0: x + w * 0.22, y0: y - h * 0.39, x1: x + w * 0.34, y1: y - h * 0.35, r: h * 0.03, a: 0.25 },
     { x0: x + w * 0.42, y0: y - h * 0.34, x1: x + w * 0.56, y1: y - h * 0.26, r: h * 0.025, a: 0.25 },
   ] });
   // Far tusk, from behind the snout.
   blob(ctx, B, shade(ivory, 0.85), [{ k: 'tube', pts: [x + w * 0.48, y - h * 0.3, x + w * 0.53, y - h * 0.3, x + w * 0.545, y - h * 0.46], r0: h * 0.028, r1: h * 0.01, gloss: 0.3 }], { h, formK: 0.5 });
-  // Pale belly, as a marking in the hide rather than a slab laid on it.
-  patch(ctx, B, pale, [{ k: 'ell', x: x + w * 0.05, y: y - h * 0.26, rx: w * 0.26, ry: h * 0.07, rot: 0.03 }], { alpha: 0.6, feather: 0.6 });
+  // Pale belly, as a marking in the hide rather than a slab laid on it: it follows the belly line,
+  // pinches to almost nothing at the brisket, swells under the barrel and fades away toward the
+  // hind quarters, with a ragged fur edge instead of a ruled one.
+  patch(ctx, B, belly, [{ k: 'curve', pts: [
+    x + w * 0.33, y - h * 0.325, x + w * 0.20, y - h * 0.35, x + w * 0.04, y - h * 0.342, x - w * 0.08, y - h * 0.316,
+    x - w * 0.08, y - h * 0.253, x + w * 0.08, y - h * 0.244, x + w * 0.22, y - h * 0.263, x + w * 0.30, y - h * 0.289,
+  ], wobble: 0.055, spiky: 0.05, seed: 21, sub: 3 }], { alpha: 0.55, feather: 0.5 });
+  patch(ctx, B, belly, [{ k: 'curve', pts: [
+    x - w * 0.05, y - h * 0.322, x - w * 0.18, y - h * 0.314, x - w * 0.29, y - h * 0.292,
+    x - w * 0.29, y - h * 0.258, x - w * 0.17, y - h * 0.252, x - w * 0.05, y - h * 0.25,
+  ], wobble: 0.06, spiky: 0.06, seed: 22, sub: 3 }], { alpha: 0.26, feather: 0.75 });
   // The head: its own wedge over the shoulder, a shade off the barrel so the join reads. The near
   // ear rides with it, and a crease marks where the cheek meets the neck.
   blob(ctx, B, shade(hide, 0.96), [
@@ -92,25 +108,35 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   ] });
   // The pale muzzle, on the head.
   patch(ctx, B, pale, [{ k: 'cap', x0: x + w * 0.5, y0: y - h * 0.34, x1: sx + w * 0.01, y1: sy + h * 0.03, r0: h * 0.1, r1: h * 0.08 }], { alpha: 0.6, feather: 0.55 });
-  // Near legs: a thigh, a knee and a clearly thinner shank, so a leg is not one stub.
-  const legs: Part[] = [];
-  for (const [hipX, hipY, kneeX, kneeY, footX] of [
-    [x - w * 0.17, y - h * 0.42, x - w * 0.19, y - h * 0.25, x - w * 0.165],
-    [x + w * 0.3, y - h * 0.45, x + w * 0.315, y - h * 0.26, x + w * 0.32],
-  ]) {
-    legs.push({ k: 'cap', x0: hipX, y0: hipY, x1: kneeX, y1: kneeY, r0: h * 0.095, r1: h * 0.068 });
-    legs.push({ k: 'ball', x: kneeX, y: kneeY, r: h * 0.072 });
-    legs.push({ k: 'cap', x0: kneeX, y0: kneeY, x1: footX, y1: y - h * 0.11, r0: h * 0.058, r1: h * 0.044 });
-  }
+  // Near legs. A pig's fore and hind legs are not the same shape and must not read as one: the
+  // foreleg drops straight down under the shoulder in two segments, while the hind leg swings its
+  // thigh forward to the stifle, kicks back to a sharp hock, then drops to the hoof. Their feet are
+  // staggered against the far pair as well, so all four read on a floor.
+  const legs: Part[] = [
+    // Foreleg: straight under the shoulder.
+    { k: 'cap', x0: x + w * 0.305, y0: y - h * 0.48, x1: x + w * 0.314, y1: y - h * 0.26, r0: h * 0.095, r1: h * 0.062 },
+    { k: 'cap', x0: x + w * 0.314, y0: y - h * 0.26, x1: x + w * 0.306, y1: y - h * 0.055, r0: h * 0.053, r1: h * 0.042 },
+    // Hind leg: thigh forward to the stifle, back to a sharp hock, forward again to the hoof.
+    { k: 'cap', x0: x - w * 0.23, y0: y - h * 0.47, x1: x - w * 0.105, y1: y - h * 0.295, r0: h * 0.105, r1: h * 0.068 },
+    { k: 'cap', x0: x - w * 0.105, y0: y - h * 0.295, x1: x - w * 0.235, y1: y - h * 0.178, r0: h * 0.064, r1: h * 0.042 },
+    { k: 'cap', x0: x - w * 0.235, y0: y - h * 0.178, x1: x - w * 0.162, y1: y - h * 0.055, r0: h * 0.041, r1: h * 0.037 },
+  ];
   blob(ctx, B, shade(hide, 0.93), legs, { h, formK: 0.5, spread: 0.8, creases: [
-    { x0: x - w * 0.23, y0: y - h * 0.25, x1: x - w * 0.15, y1: y - h * 0.25, r: h * 0.022, a: 0.35 },
-    { x0: x + w * 0.27, y0: y - h * 0.26, x1: x + w * 0.35, y1: y - h * 0.26, r: h * 0.022, a: 0.35 },
+    { x0: x - w * 0.142, y0: y - h * 0.305, x1: x - w * 0.078, y1: y - h * 0.288, r: h * 0.019, a: 0.3 },
+    { x0: x - w * 0.262, y0: y - h * 0.19, x1: x - w * 0.205, y1: y - h * 0.176, r: h * 0.015, a: 0.4 },
+    { x0: x + w * 0.28, y0: y - h * 0.263, x1: x + w * 0.35, y1: y - h * 0.263, r: h * 0.02, a: 0.35 },
   ] });
-  // Hooves: cloven wedges, narrower than the shank above them, all four as one mass on top.
+  // Hooves: cloven wedges, narrower than the shank above them, all four as one mass on top. The far
+  // pair is smaller and stands short of the ground line, which is what puts it further away.
   const hooves: Part[] = [];
-  for (const [hxc, top] of [[x - w * 0.335, y - h * 0.1], [x + w * 0.14, y - h * 0.1], [x - w * 0.168, y - h * 0.115], [x + w * 0.32, y - h * 0.115]]) {
+  for (const [hxc, top, bot, hw] of [
+    [x - w * 0.332, y - h * 0.095, y - h * 0.04, h * 0.039],
+    [x + w * 0.168, y - h * 0.095, y - h * 0.04, h * 0.041],
+    [x - w * 0.165, y - h * 0.06, y, h * 0.046],
+    [x + w * 0.306, y - h * 0.06, y, h * 0.046],
+  ]) {
     hooves.push({ k: 'poly', pts: [
-      hxc - h * 0.046, top, hxc + h * 0.046, top, hxc + h * 0.062, y, hxc + h * 0.014, y, hxc, y - h * 0.035, hxc - h * 0.014, y, hxc - h * 0.062, y,
+      hxc - hw, top, hxc + hw, top, hxc + hw * 1.35, bot, hxc + hw * 0.3, bot, hxc, bot - h * 0.033, hxc - hw * 0.3, bot, hxc - hw * 1.35, bot,
     ] });
   }
   blob(ctx, B, hoof, hooves, { h, formK: 0.4 });

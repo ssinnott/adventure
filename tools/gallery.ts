@@ -76,7 +76,7 @@ const size = await page.evaluate(async (o: { only: string[]; family?: string; sc
   // The main area is sized from the TALLEST sprite on show, so a big one is never cropped; some
   // sprites also reach above their nominal height (a crown, a raised weapon), hence the headroom.
   const tallest = Math.max(...defs.map((d) => combat(d)));
-  const mainH = Math.round(tallest * 1.24 * s), stripH = strip ? 0 : 104;
+  const mainH = Math.round(tallest * 1.5 * s), stripH = strip ? 0 : 104;
   const cellW = strip ? Math.round(160 * s) * o.frames + 20 : Math.round(170 * s), cellH = 24 + mainH + stripH + 16;
   const rows = Math.ceil(defs.length / cols);
   const c = document.createElement('canvas'); c.id = 'gallery';
@@ -90,7 +90,7 @@ const size = await page.evaluate(async (o: { only: string[]; family?: string; sc
     // Alternate a lit outdoor ground and a dim dungeon floor, so silhouettes are judged on both.
     const lit = i % 2 === 0;
     const sky = lit ? '#7a8a5a' : '#3a3640', floor = lit ? '#5a6a3a' : '#2a2630';
-    const ground = y0 + 20 + mainH * 0.9;
+    const ground = y0 + 20 + mainH * 0.93;
     ctx.fillStyle = sky; ctx.fillRect(x0, y0, cellW, cellH);
     ctx.fillStyle = floor; ctx.fillRect(x0, ground, cellW, y0 + 20 + mainH - ground);
     ctx.save(); ctx.beginPath(); ctx.rect(x0, y0, cellW, cellH); ctx.clip();
