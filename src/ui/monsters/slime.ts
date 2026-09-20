@@ -1,39 +1,90 @@
-// The cellar slime: a translucent mound with a dark core, bubbles and a puddle.
+// The cellar slime, painted: a wet mound whose rim sags and bulges, sitting in its own puddle, with
+// drips hanging off the rim, a darker core mass sunk off-centre inside, bubbles rising through the
+// goo, a high gloss specular on the lit shoulder, two dark eye pits and a wide toothless gape.
+// Every green comes from the def's tint. Idle: a slow wobble (wider as it settles lower) and the
+// bubbles climbing.
 import type { MonsterSprite } from '../../game/monsters.ts';
-import type { MonsterDrawer } from './common.ts';
-import { B, eye, groundShadow } from './common.ts';
-import { rgba } from '../../lib/art/palettes.ts';
-import { pathEllipse } from '../../lib/art/shapes.ts';
-import { outlinePath, tones } from '../../lib/art/shading.ts';
+import type { MonsterDrawer, Paint } from './common.ts';
+import { B, groundShadow } from './common.ts';
+import { blob, lumpy, appendCurve, softLine } from './gloss.ts';
+import type { Part } from './gloss.ts';
+import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
 export const KINDS: readonly MonsterSprite[] = ['slime'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   void kind;
-  groundShadow(ctx, x, y + 1, h * 0.7);
-  slime(ctx, x, y, h, p.base, p.dark, p.light, p.breathe);
+  slime(ctx, x, y, h, p);
 };
 
-function slime(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, base: string, dark: string, light: string, br: number): void {
-  const w = h * 1.5 * (1 + br * 0.03), hh = h * 0.8 * (1 - br * 0.03);
-  // Puddle, body, core, bubbles, drips.
-  pathEllipse(ctx, x, y, w * 0.55, h * 0.08); ctx.fillStyle = B.col(rgba(dark, 0.6)); ctx.fill();
-  ctx.beginPath();
-  ctx.moveTo(x - w / 2, y);
-  ctx.bezierCurveTo(x - w * 0.55, y - hh * 0.9, x - w * 0.15, y - hh * 1.15, x + w * 0.05, y - hh);
-  ctx.bezierCurveTo(x + w * 0.35, y - hh * 1.05, x + w * 0.52, y - hh * 0.5, x + w / 2, y);
-  ctx.closePath();
-  outlinePath(ctx, B);
-  const t = tones(B, base);
-  ctx.fillStyle = B.col(t.base); ctx.fill();
-  if (!B.override) {
-    ctx.save(); ctx.clip();
-    ctx.fillStyle = t.sh; ctx.fillRect(x - w, y - hh * 0.35, w * 2, hh); ctx.fillRect(x + w * 0.25, y - hh * 2, w, hh * 3);
-    ctx.fillStyle = t.hi; pathEllipse(ctx, x - w * 0.2, y - hh * 0.7, w * 0.16, hh * 0.12); ctx.fill();
-    ctx.fillStyle = rgba(dark, 0.7); pathEllipse(ctx, x + w * 0.05, y - hh * 0.4, w * 0.16, hh * 0.18); ctx.fill();
-    ctx.fillStyle = rgba(light, 0.5); for (let i = 0; i < 4; i++) { const bx = x - w * 0.3 + i * w * 0.18, by = y - hh * (0.25 + (i % 2) * 0.3); ctx.beginPath(); ctx.arc(bx, by, h * 0.035, 0, Math.PI * 2); ctx.fill(); }
-    ctx.restore();
+/** Scratch for the mound's contour (16 numbers), filled in place each frame. */
+const MOUND: number[] = new Array<number>(16).fill(0);
+const CORE: number[] = new Array<number>(14).fill(0);
+const PUDDLE: number[] = new Array<number>(12).fill(0);
+
+/** A ring of n points around (cx, cy) written into out. */
+function ring(cx: number, cy: number, rx: number, ry: number, n: number, out: number[], rot = 0): number[] {
+  for (let i = 0; i < n; i++) { const a = rot + i / n * Math.PI * 2; out[i * 2] = cx + Math.cos(a) * rx; out[i * 2 + 1] = cy + Math.sin(a) * ry; }
+  return out;
+}
+
+function slime(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const wob = p.breathe;
+  const w = h * 1.5 * (1 + wob * 0.035), hh = h * 0.86 * (1 - wob * 0.04);
+  const base = p.base, dark = p.dark, light = p.light, tone = p.tone;
+  const core = shade(dark, 0.78), pit = shade(dark, 0.4);
+  const lip = mix(light, shade('#ffffff', tone), 0.3);
+
+  groundShadow(ctx, x, y + 1, w * 0.7);
+  // The puddle it sits in: a flat wet sheet, its own mass.
+  blob(ctx, B, dark, [{ k: 'curve', pts: ring(x + w * 0.02, y - h * 0.015, w * 0.58, h * 0.075, 6, PUDDLE), wobble: 0.08, seed: 4, sub: 3, gloss: 0.3 }], { h, formK: 0.3, spread: 0.7 });
+
+  // The mound: one sagging contour, higher on the left, with drips hanging off the rim.
+  let k = 0;
+  const M = (px: number, py: number) => { MOUND[k++] = px; MOUND[k++] = py; };
+  M(x - w * 0.5, y - hh * 0.04); M(x - w * 0.57, y - hh * 0.42); M(x - w * 0.42, y - hh * 0.8); M(x - w * 0.12, y - hh * 1.0);
+  M(x + w * 0.16, y - hh * 0.93); M(x + w * 0.4, y - hh * 0.68); M(x + w * 0.53, y - hh * 0.3); M(x + w * 0.48, y - hh * 0.03);
+  const parts: Part[] = [
+    { k: 'curve', pts: MOUND, wobble: 0.07, seed: 2, sub: 3, gloss: 0.45 },
+    { k: 'tube', pts: [x - w * 0.44, y - hh * 0.46, x - w * 0.52, y - hh * 0.3, x - w * 0.57, y - hh * 0.1 - wob * h * 0.02], r0: h * 0.055, r1: h * 0.035, wobble: 0.1, seed: 7, gloss: 0.4 },
+    { k: 'tube', pts: [x + w * 0.42, y - hh * 0.38, x + w * 0.5, y - hh * 0.22, x + w * 0.56, y - hh * 0.06 + wob * h * 0.02], r0: h * 0.05, r1: h * 0.03, wobble: 0.1, seed: 8, gloss: 0.4 },
+    { k: 'tube', pts: [x + w * 0.08, y - hh * 0.18, x + w * 0.12, y - hh * 0.08, x + w * 0.15, y - h * 0.005], r0: h * 0.04, r1: h * 0.03, wobble: 0.08, seed: 9, gloss: 0.3 },
+  ];
+  blob(ctx, B, base, parts, { h, formK: 0.45, spread: 0.85, gloss: 0.55 });
+  if (B.override) return;
+
+  // Inside the goo: the core mass, bubbles and the face, clipped to the mound.
+  ctx.save();
+  ctx.beginPath(); appendCurve(ctx, lumpy(MOUND, 0.07, 2, 3)); ctx.clip();
+  // Core: a darker lump sunk low and off-centre, with a deeper nucleus, no line.
+  blob(ctx, B, core, [{ k: 'curve', pts: ring(x + w * 0.28, y - hh * 0.5, w * 0.15, hh * 0.21, 7, CORE, 0.4), wobble: 0.09, seed: 5, sub: 2 }], { outline: false, formK: 0.9, spread: 0.55 });
+  blob(ctx, B, pit, [{ k: 'ell', x: x + w * 0.3, y: y - hh * 0.46, rx: w * 0.065, ry: hh * 0.09, rot: -0.3 }], { outline: false, formK: 0.8, spread: 0.5 });
+  // Bubbles rising through the goo and leaving through the top.
+  ctx.lineWidth = Math.max(1, h * 0.015);
+  for (let i = 0; i < 4; i++) {
+    const t = ((p.frame * 0.3 + i * 37) % 120) / 120;
+    const bx = x - w * 0.28 + i * w * 0.17 + Math.sin(t * 7 + i * 2) * w * 0.035, by = y - hh * (0.08 + t * 0.98);
+    const r = h * (0.025 + (i % 3) * 0.012);
+    ctx.strokeStyle = rgba(light, 0.7); ctx.beginPath(); ctx.arc(bx, by, r, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = rgba(lip, 0.8); ctx.beginPath(); ctx.arc(bx - r * 0.35, by - r * 0.35, Math.max(0.6, r * 0.3), 0, Math.PI * 2); ctx.fill();
   }
-  eye(ctx, x - w * 0.12, y - hh * 0.5, h * 0.05, '#1a1418', false); eye(ctx, x + w * 0.14, y - hh * 0.52, h * 0.05, '#1a1418', false);
+  // Two eye pits sunk into the front, a pale lip of goo under each; then the wide toothless gape.
+  for (const s of [-1, 1]) {
+    const ex = x + s * w * 0.15 - w * 0.07, ey = y - hh * 0.64, rx = h * 0.06, ry = h * 0.075;
+    ctx.fillStyle = rgba(lip, 0.6); ctx.beginPath(); ctx.ellipse(ex + 1, ey + 2, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = pit; ctx.beginPath(); ctx.ellipse(ex, ey, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = rgba(light, 0.35); ctx.beginPath(); ctx.arc(ex - rx * 0.3, ey - ry * 0.4, rx * 0.35, 0, Math.PI * 2); ctx.fill();
+  }
+  // The gape: a wide toothless maw across the front, its far corner drooping, wet lips above and below.
+  const gy = y - hh * 0.3 + wob * h * 0.01;
+  blob(ctx, B, pit, [{ k: 'curve', pts: [x - w * 0.38, gy - h * 0.02, x - w * 0.24, gy - h * 0.1, x - w * 0.04, gy - h * 0.11, x + w * 0.16, gy - h * 0.07, x + w * 0.26, gy + h * 0.01, x + w * 0.14, gy + h * 0.1, x - w * 0.08, gy + h * 0.13, x - w * 0.28, gy + h * 0.09], wobble: 0.05, seed: 6, sub: 2 }], { outline: false, formK: 1, spread: 0.4 });
+  softLine(ctx, B, [x - w * 0.34, gy - h * 0.03, x - w * 0.2, gy - h * 0.12, x - w * 0.02, gy - h * 0.135, x + w * 0.16, gy - h * 0.09], lip, Math.max(1, h * 0.03), 0.5);
+  softLine(ctx, B, [x - w * 0.32, gy + h * 0.08, x - w * 0.1, gy + h * 0.16, x + w * 0.14, gy + h * 0.13, x + w * 0.27, gy + h * 0.03], lip, Math.max(1, h * 0.03), 0.4);
+  // A broad wet sheen over the lit shoulder, on top of everything inside.
+  const gx = x - w * 0.22, gyy = y - hh * 0.72;
+  const sheen = ctx.createRadialGradient(gx, gyy, 0, gx, gyy, w * 0.34);
+  sheen.addColorStop(0, 'rgba(255,255,255,0.32)'); sheen.addColorStop(0.5, 'rgba(255,255,255,0.1)'); sheen.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = sheen; ctx.fillRect(x - w * 0.6, y - hh * 1.1, w * 0.7, hh * 0.9);
+  ctx.restore();
 }
