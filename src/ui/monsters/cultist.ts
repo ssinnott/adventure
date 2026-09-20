@@ -113,8 +113,7 @@ function cultist(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   // The near hand closed round the shaft, then the ember set in the staff's head.
   const ga = Math.atan2(sTop.y - sBot.y, sTop.x - sBot.x);
   fist(ctx, R, near[2], ga, 42, { flip: -1 });
-  glow(ctx, B, sTop.x, sTop.y, h * (0.075 + 0.02 * flick), EMBER, 0.45 + 0.2 * pulse, HOT);
-  glossBall(ctx, B, sTop.x, sTop.y, h * 0.026, EMBER, { gloss: 0.7 });
+  staffHead(ctx, sTop.x, sTop.y, ga, h, m.wood, h * 0.026, pulse, flick);
   void p.light;
 }
 
@@ -138,7 +137,6 @@ function zealot(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     footPart(R, R.legL[2], R.toe[1], 73, R.lift[1]),
   ], { h, formK: 0.55, spread: 0.7 });
   blob(ctx, B, m.skinFar, [...armParts(R, far, 17)], { h, formK: 0.55, creases: [elbowCrease(R, far)] });
-  fist(ctx, R, far[2], null, 19, { far: true, k: 0.95 });
   // Head and neck BEFORE the robe, so the collar covers the throat. Drawn after it, the neck runs
   // from the jaw to the chest as a bare column and the head appears to be on a stalk.
   blob(ctx, B, m.skin, [
@@ -176,7 +174,6 @@ function zealot(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 
   // The near arm, bare, over the robe so it comes out of its shoulder.
   blob(ctx, B, m.skin, [...armParts(R, near, 16)], { h, formK: 0.55, creases: [elbowCrease(R, near)] });
-  fist(ctx, R, near[2], null, 18, { k: 0.95 });
   // Bandaged forearms over the bare skin.
   blob(ctx, B, m.wrap, [
     tube([near[1].x + (near[2].x - near[1].x) * 0.32, near[1].y + (near[2].y - near[1].y) * 0.32, near[2].x, near[2].y], h * 0.036, h * 0.03, 0.06, 20),
@@ -186,9 +183,12 @@ function zealot(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   ], { h, formK: 0.5 });
   // The skull painted on the shaved head in ash, ember eyes in the sockets.
   skullPaint(ctx, hx, hy, hr, mix(m.ash, m.skin, 0.3), h, pulse);
-  // Two curved sacrificial knives, each carrying on from its own forearm.
-  knife(ctx, near[2].x, near[2].y, -0.7, h * 0.2, m.steel, m.leather, false);
-  knife(ctx, far[2].x, far[2].y, 2.72, h * 0.17, m.steel, m.leather, true);
+  // Two curved sacrificial knives, each carrying on from its own forearm, and each with its fist
+  // closed over the grip AFTER it: drawn open beside the blade, a hand grips nothing.
+  const ka = knife(ctx, far[2].x, far[2].y, 2.72, h * 0.17, h, m.steel, m.leather, m.bone, true);
+  fist(ctx, R, far[2], ka, 19, { far: true, k: 0.95, flip: -1 });
+  const kb = knife(ctx, near[2].x, near[2].y, -0.7, h * 0.2, h, m.steel, m.leather, m.bone, false);
+  fist(ctx, R, near[2], kb, 18, { k: 0.95, flip: 1 });
   void p.light;
 }
 
@@ -198,12 +198,11 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   const R = makeRig(x, y, h, p, { tilt: 0.016, hipTilt: -0.016, turn: -0.012, near: [0.052, 0.062, 0.07], far: [-0.056, -0.072, -0.09], toe: [0.35, -0.9] }, CULT);
   const { sy, hx, hy, hr } = R;
   const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6), flick = Math.sin(p.frame / 2.9) * 0.5 + 0.5;
-  const hover = Math.sin(p.frame / 16) * h * 0.012;
   const beltY = sy + h * 0.175, hemY = sy + h * 0.7;
   // Far arm: elbow low and out at the ribs, forearm rising to a palm held up at shoulder height
   // with the flame standing on it. Near arm bent to a hand on the planted staff.
   const far: Arm = [R.sFar, { x: x - h * 0.295, y: sy + h * 0.171 }, { x: x - h * 0.355, y: sy + h * 0.04 }];
-  const near: Arm = [R.sNear, { x: x + h * 0.304, y: sy + h * 0.156 }, { x: x + h * 0.235, y: sy + h * 0.3 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.292, y: sy + h * 0.158 }, { x: x + h * 0.311, y: sy + h * 0.318 }];
   const sBot = { x: x + h * 0.305, y: Y(-0.005) }, sTop = { x: x + h * 0.318, y: sy - h * 0.185 };
   groundShadow(ctx, x + h * 0.02, y + 1, h * 0.64);
 
@@ -243,16 +242,11 @@ function adept(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   runeBand(ctx, near[2].x + h * 0.02, near[2].y - h * 0.03, h * 0.05, h * 0.018, 0.3, h, pulse);
   runeBand(ctx, far[2].x - h * 0.01, far[2].y + h * 0.035, h * 0.05, h * 0.018, -0.4, h, pulse);
   runeRow(ctx, [x - mw * 0.85, sy + h * 0.15, x - h * 0.1, sy + h * 0.205, x + h * 0.01, sy + h * 0.25, x + h * 0.12, sy + h * 0.205, x + mw * 0.85, sy + h * 0.15], h, pulse);
-  // The tall staff, crowned with iron prongs, and the ember orb floating above them.
-  staff(ctx, sBot.x, sBot.y, sTop.x, sTop.y, h, m.wood);
-  const cx0 = sTop.x, cy0 = sTop.y;
-  glossPoly(ctx, B, [cx0 - h * 0.03, cy0 + h * 0.01, cx0 - h * 0.045, cy0 - h * 0.06, cx0 - h * 0.015, cy0 - h * 0.025, cx0, cy0 - h * 0.065, cx0 + h * 0.015, cy0 - h * 0.025, cx0 + h * 0.045, cy0 - h * 0.06, cx0 + h * 0.03, cy0 + h * 0.01], m.leather, { spread: 0.6 });
-  const ox = cx0, oy = cy0 - h * 0.075 + hover;
-  glow(ctx, B, ox, oy, h * (0.13 + 0.02 * flick), EMBER, 0.5 + 0.2 * pulse, HOT);
-  glossBall(ctx, B, ox, oy, h * 0.036, EMBER, { gloss: 0.9 });
-  if (!B.override) { ctx.fillStyle = HOT; ctx.beginPath(); ctx.arc(ox - h * 0.008, oy - h * 0.008, Math.max(1, h * 0.012), 0, Math.PI * 2); ctx.fill(); }
-  // Hands: near closed on the staff, far open with a small flame standing on the palm.
+  // The tall staff: the ember is caged in the iron at its head, not floating above it.
   const ga = Math.atan2(sTop.y - sBot.y, sTop.x - sBot.x);
+  staff(ctx, sBot.x, sBot.y, sTop.x, sTop.y, h, m.wood, 0.44);
+  staffHead(ctx, sTop.x, sTop.y, ga, h, m.wood, h * 0.036, pulse, flick);
+  // Hands: near closed on the staff, far open with a small flame standing on the palm.
   fist(ctx, R, near[2], ga, 49, { flip: -1 });
   fist(ctx, R, far[2], null, 50, { far: true, k: 0.95 });
   flame(ctx, far[2].x, far[2].y - h * 0.06, h * (0.09 + 0.03 * flick), h, p.frame);
@@ -338,10 +332,9 @@ function hand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
 
   // The long ritual chisel-blade, carrying on down and out from the near forearm.
   const ct = { x: X(0.365), y: sy + h * 0.68 };
-  chisel(ctx, near[2].x, near[2].y, ct.x, ct.y, h, m.steel, m.leather, pulse);
+  const ca = chisel(ctx, near[2].x, near[2].y, ct.x, ct.y, h, m.steel, m.leather, pulse);
   // Ash-greyed hands: a bright skin blob out on the sleeve would fight the mask and the embers.
   const hs = mix(m.skin, m.ash, 0.45);
-  const ca = Math.atan2(ct.y - near[2].y, ct.x - near[2].x);
   fist(ctx, R, near[2], ca, 77, { hex: hs, flip: -1, k: 1.1 });
   fist(ctx, R, far[2], null, 78, { hex: mix(hs, m.ash, 0.3), k: 1.05 });
   embers(ctx, x, y, h, p.frame, 6, 2);
@@ -485,10 +478,143 @@ function drape(ctx: CanvasRenderingContext2D, h: number, hex: string, ox: number
   }
 }
 
-/** A wooden staff, slightly knotted, lit across. */
-function staff(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, h: number, wood: string): void {
-  glossTaper(ctx, B, x0, y0, x1, y1, h * 0.018, h * 0.014, wood);
-  if (h >= 50) softLine(ctx, B, [x0 + (x1 - x0) * 0.3 - h * 0.012, y0 + (y1 - y0) * 0.3, x0 + (x1 - x0) * 0.3 + h * 0.012, y0 + (y1 - y0) * 0.32], wood, 1, 0.5);
+// Replaces `staff()` in src/ui/monsters/cultist.ts. `stave` and `staffHead` are new; everything
+// used here (blob, glossTaper, glossBall, glow, softLine, patch, mix, B, EMBER, HOT) is already
+// imported or declared in the file, and `glossPoly` stays imported for knife() and chisel().
+
+/**
+ * The stave's stock: the wood's half-widths in PIXELS at the butt and at the throat, plus the iron
+ * and the cord it is fitted with. Two things worth saying about it.
+ *
+ * The taper is scaled up AS A WHOLE on a small sprite instead of each end being clamped to the same
+ * minimum, because clamping both is what flattens a taper into a parallel post: at h = 40 the old
+ * `h * 0.018 -> h * 0.014` was 0.72 px -> 0.56 px of half-width, a sixth of a pixel of taper over a
+ * whole staff. Scaled, the butt is nearly twice the throat at every size.
+ *
+ * The iron and the cord are mixed OUT OF the wood, so they inherit the distance toning the caller
+ * has already applied to it and the staff needs no extra material parameters.
+ */
+function stave(h: number, wood: string): { rB: number; rT: number; iron: string; cord: string } {
+  const k = Math.max(1, 0.6 / (h * 0.0104));
+  return { rB: h * 0.0198 * k, rT: h * 0.0104 * k, iron: mix(wood, '#2b3038', 0.74), cord: mix(wood, '#a89060', 0.5) };
+}
+
+/**
+ * A cult stave: a cut sapling with an iron shoe on its foot and a corded grip where the hand closes
+ * on it, running from the ground at (x0, y0) to the throat of its head at (x1, y1). The wood STOPS
+ * h * 0.052 short of that point and `staffHead` covers the end grain with its socket, so the two
+ * halves meet inside the iron rather than showing a butt joint — which is also why the head is a
+ * separate call: the shaft goes down early, behind the robe and the gripping hand, and the head and
+ * its ember go on last so the glow lights the cloth instead of being painted over by it.
+ *
+ * `grip` is where the hand closes, as a fraction of the length up from the foot.
+ *
+ * Three silhouette events along the shaft — a dark foot, a fat pale grip, a dark head — are what
+ * carry the read at combat size. The wood is only about two pixels wide there, so the taper, the
+ * grain and the turns of cord are all gated on absolute pixels and simply do not exist at h = 40;
+ * what reads at h = 40 is the VALUE steps between iron, wood and cord, which survive any size.
+ */
+function staff(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, h: number, wood: string, grip = 0.4): void {
+  const dx = x1 - x0, dy = y1 - y0, L = Math.hypot(dx, dy) || 1;
+  const ux = dx / L, uy = dy / L;
+  // n points at the light, so the grain can be laid on the shaded side and the ridge on the lit one.
+  let nx = -uy, ny = ux;
+  if (nx * B.light.x + ny * B.light.y < 0) { nx = -nx; ny = -ny; }
+  const PX = (t: number, s: number): number => x0 + ux * L * t + nx * s;
+  const PY = (t: number, s: number): number => y0 + uy * L * t + ny * s;
+  const { rB, rT, iron, cord } = stave(h, wood);
+  // The wood stops short at BOTH ends: its round butt cap is swallowed by the shoe and its throat
+  // by the head's socket, so neither end of the stave is a visible dome of end grain.
+  const tTop = Math.max(0.55, 1 - (h * 0.052) / L), tBot = (rB * 1.4) / L;
+
+  // The wood: one tapered mass, lit ACROSS its axis like the cylinder it is.
+  glossTaper(ctx, B, PX(tBot, 0), PY(tBot, 0), PX(tTop, 0), PY(tTop, 0), rB, rT, wood, { spread: 0.72 });
+  // Grain and one knot, only once there is a pixel of wood either side of a 1 px mark. Below that
+  // the shaft is two ink edges with a thread of colour between them and any mark in it is mud.
+  const fw = rB + rT;
+  if (fw >= 3) {
+    softLine(ctx, B, [PX(0.12, -fw * 0.2), PY(0.12, -fw * 0.2), PX(0.52, -fw * 0.1), PY(0.52, -fw * 0.1), PX(0.93, -fw * 0.16), PY(0.93, -fw * 0.16)], wood, 1, 0.3);
+    softLine(ctx, B, [PX(0.2, fw * 0.24), PY(0.2, fw * 0.24), PX(0.9, fw * 0.2), PY(0.9, fw * 0.2)], mix(wood, '#ffffff', 0.34), 1, 0.22);
+    patch(ctx, B, mix(wood, '#000000', 0.5), [{ k: 'ell', x: PX(0.63, 0), y: PY(0.63, 0), rx: fw * 0.5, ry: fw * 0.3, rot: Math.atan2(uy, ux) }], { alpha: 0.5, feather: 0.7 });
+  }
+
+  // The iron shoe. A staff's foot is only a little fatter than its butt, so it is drawn to read by
+  // VALUE rather than by width: a clear dark step where the wood meets the ground, which survives
+  // at any size, plus a splayed sole that puts a horizontal under a vertical and says "planted".
+  const sh = Math.max(h * 0.024, rB * 2), F: number[] = [];
+  const AF = (t: number, s: number): void => { F.push(x0 + ux * t + nx * s, y0 + uy * t + ny * s); };
+  AF(sh, -rB); AF(sh * 0.4, -rB * 1.16); AF(-0.4, -rB * 1.22);
+  AF(-0.4, rB * 1.22); AF(sh * 0.4, rB * 1.16); AF(sh, rB);
+  blob(ctx, B, iron, [{ k: 'poly', pts: F }], { h, formK: 0.5, spread: 0.6 });
+
+  // The grip: a whipping of cord, fatter than the wood under it and a clear step paler, so the hand
+  // closes on something instead of on a plain stick. Two caps meeting at the middle, one mass, so
+  // it swells and falls away again rather than being a sleeve with square ends.
+  const g = Math.min(0.86, Math.max(0.14, grip)), gw = Math.max(rB * 1.26, rT * 1.75);
+  blob(ctx, B, cord, [
+    { k: 'cap', x0: PX(g - 0.082, 0), y0: PY(g - 0.082, 0), x1: PX(g + 0.004, 0), y1: PY(g + 0.004, 0), r0: gw * 0.78, r1: gw },
+    { k: 'cap', x0: PX(g + 0.004, 0), y0: PY(g + 0.004, 0), x1: PX(g + 0.086, 0), y1: PY(g + 0.086, 0), r0: gw, r1: gw * 0.74 },
+  ], { h, formK: 0.55, spread: 0.62 });
+  if (gw * 2 >= 3.4) for (let i = -1; i <= 1; i++) {
+    const t = g + i * 0.045;
+    softLine(ctx, B, [PX(t - 0.008, -gw * 0.88), PY(t - 0.008, -gw * 0.88), PX(t + 0.008, gw * 0.88), PY(t + 0.008, gw * 0.88)], cord, 1, 0.42);
+  }
+}
+
+/**
+ * The head the ember is set into: an iron socket over the throat of the shaft, lashed on with cord,
+ * opening into a cup with two horns that close round the ember. The ember is drawn INSIDE it — its
+ * lower half behind the cup, its sides behind the horns — and once the ember is 2.4 px or more, two
+ * claws are laid across its face, because what makes an object read as held is something passing in
+ * FRONT of it. `ang` is the shaft's angle (foot to head), `er` the ember's radius in px.
+ *
+ * Order matters here: iron, then the cord, then the emissive wash over the iron, then the glow, then
+ * the ember. The cage is lit by the thing it holds, which is the whole point of the cult's palette.
+ */
+function staffHead(ctx: CanvasRenderingContext2D, hx: number, hy: number, ang: number, h: number, wood: string, er: number, pulse: number, flick: number): void {
+  const ux = Math.cos(ang), uy = Math.sin(ang), nx = -uy, ny = ux;
+  const { rT, iron, cord } = stave(h, wood);
+  // Everything at the head is sized off the ember, with a floor tied to the shaft so the cage never
+  // shrinks below the wood it is fitted to.
+  const e = Math.max(er, rT * 1.5);
+  const cw = Math.max(e * 1.3, rT * 2), ch = Math.max(e * 0.72, rT * 1.5), ht = Math.max(e * 1.42, rT * 2.2);
+  const sk = Math.max(h * 0.058, ch * 2.8);
+  const PX = (t: number, s: number): number => hx + ux * t + nx * s;
+  const PY = (t: number, s: number): number => hy + uy * t + ny * s;
+  const A = (t: number, s: number, o: number[]): void => { o.push(PX(t, s), PY(t, s)); };
+
+  // The cup: a bowl with two horns and a saddle between them. The saddle sits at the ember's own
+  // centre, so the ball's bottom half is inside the iron and only the horn tips show past it.
+  const cup: number[] = [];
+  A(-ch * 1.5, -cw * 0.6, cup); A(-ch * 0.45, -cw, cup); A(ht * 0.5, -cw * 1.04, cup);
+  A(ht, -cw * 0.58, cup); A(ht * 0.52, -cw * 0.44, cup); A(-ch * 0.2, 0, cup);
+  A(ht * 0.52, cw * 0.44, cup); A(ht, cw * 0.58, cup); A(ht * 0.5, cw * 1.04, cup);
+  A(-ch * 0.45, cw, cup); A(-ch * 1.5, cw * 0.6, cup);
+  blob(ctx, B, iron, [
+    { k: 'cap', x0: PX(-sk, 0), y0: PY(-sk, 0), x1: PX(-ch * 1.15, 0), y1: PY(-ch * 1.15, 0), r0: rT * 1.5, r1: cw * 0.74 },
+    { k: 'poly', pts: cup },
+  ], { h, formK: 0.5, spread: 0.6 });
+  // Two turns of cord lashing the socket to the wood, once a turn has a pixel of iron either side.
+  if (cw * 2 >= 4.5) for (let i = 0; i < 2; i++) {
+    const t = -sk * (0.72 - i * 0.26);
+    softLine(ctx, B, [PX(t, -cw * 0.6), PY(t, -cw * 0.6), PX(t + cw * 0.12, cw * 0.6), PY(t + cw * 0.12, cw * 0.6)], cord, Math.max(1, rT * 0.8), 0.5);
+  }
+  // The iron nearest the ember, warmed by it.
+  patch(ctx, B, EMBER, [{ k: 'ell', x: PX(ch * 0.1, 0), y: PY(ch * 0.1, 0), rx: cw * 1.15, ry: ht * 0.95, rot: ang + Math.PI / 2 }], { alpha: 0.28 + 0.12 * pulse, feather: 0.85 });
+
+  // The bloom is sized off the EMBER, not off h, so a bigger ember burns brighter without the
+  // caller having to say so twice.
+  glow(ctx, B, hx, hy, Math.max(h * 0.055, e * 3.2) * (1 + 0.16 * flick), EMBER, 0.45 + 0.2 * pulse, HOT);
+  glossBall(ctx, B, hx, hy, e, EMBER, { gloss: 0.8 });
+  if (B.override) return;
+  if (e >= 2.2) {
+    ctx.fillStyle = B.col(HOT);
+    ctx.beginPath(); ctx.arc(hx - e * 0.28, hy - e * 0.3, Math.max(1, e * 0.34), 0, Math.PI * 2); ctx.fill();
+  }
+  // The two front claws, closing over the ember's face.
+  if (e >= 2.4) for (const s of [-1, 1]) {
+    softLine(ctx, B, [PX(-ch * 0.5, s * cw * 0.86), PY(-ch * 0.5, s * cw * 0.86), PX(e * 0.34, s * cw * 0.6), PY(e * 0.34, s * cw * 0.6)], iron, Math.max(1, rT * 0.9), 0.8);
+  }
 }
 
 /** The ash sigil: a circle with a cut through it, stroked in ash. */
@@ -512,19 +638,221 @@ function skullPaint(ctx: CanvasRenderingContext2D, hx: number, hy: number, r: nu
   }
 }
 
-/** A curved sacrificial knife from the hand at (x, y), blade sweeping at angle `a`; `flip` mirrors the curve. */
-function knife(ctx: CanvasRenderingContext2D, x: number, y: number, a: number, len: number, steel: string, grip: string, flip: boolean): void {
-  const c = Math.cos(a), s = Math.sin(a), f = flip ? -1 : 1;
-  const P = (u: number, v: number) => [x + (u * c - v * s) * len, y + (u * s + v * c) * len];
-  const pts = [...P(0, -0.05 * f), ...P(0.35, -0.02 * f), ...P(0.75, 0.15 * f), ...P(1.0, 0.45 * f), ...P(0.85, 0.2 * f), ...P(0.55, 0.08 * f), ...P(0.3, 0.1 * f), ...P(0, 0.09 * f)];
-  glossPoly(ctx, B, pts, steel, { gloss: 0.7, spread: 0.6 });
-  // A honed edge: the brightest value on the sprite, so the weapon and not the bandage wins the eye.
-  ctx.strokeStyle = B.col(mix(steel, '#ffffff', 0.82)); ctx.lineWidth = Math.max(1, len * 0.035); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  ctx.beginPath(); ctx.moveTo(...(P(0.06, -0.042 * f) as [number, number]));
-  ctx.quadraticCurveTo(...(P(0.42, -0.015 * f) as [number, number]), ...(P(0.74, 0.14 * f) as [number, number]));
-  ctx.lineTo(...(P(0.96, 0.41 * f) as [number, number])); ctx.stroke();
-  glossTaper(ctx, B, x, y, x - c * len * 0.3, y - s * len * 0.3, len * 0.07, len * 0.06, grip);
+// ---- replaces knife() (cultist.ts:543-554) and chisel() (cultist.ts:603-613); quillons() and Lay
+// ---- are new locals, drop them in immediately above knife(). No imports change: blob, glossPoly,
+// ---- glow, patch, softLine, mix, B, Crease and Pt are all already imported by this file.
+
+/** Lay a point out in a weapon's own coordinates: u along the shaft from the hand, n across it. */
+type Lay = (u: number, n: number, out: number[]) => number[];
+
+/**
+ * A collar with two quillons raked BACK toward the fist, the cult's guard: not the outlaws' straight
+ * crossbar. `qs` is the half-span, and it has to beat the fist's own radius (h*0.042*k) or the thing
+ * is a collar however it is shaped — which is why every caller sizes it off h as well as off w.
+ * Each half of the circuit is monotone in n, so the polygon cannot fold into a bow-tie.
+ */
+function quillons(ctx: CanvasRenderingContext2D, P: Lay, u1: number, u2: number, gt: number, w: number, qs: number, hex: string): void {
+  const g: number[] = [];
+  P(u2 + gt * 0.10, qs * 0.92, g);
+  P(u1 - gt * 1.10, qs * 1.00, g);
+  P(u1 - gt * 0.50, w * 1.45, g);
+  P(u1 - gt * 0.90, 0, g);
+  P(u1 - gt * 0.50, -w * 1.45, g);
+  P(u1 - gt * 1.10, -qs * 1.00, g);
+  P(u2 + gt * 0.10, -qs * 0.92, g);
+  P(u2 + gt * 0.36, -w * 1.65, g);
+  P(u2 + gt * 0.58, 0, g);
+  P(u2 + gt * 0.36, w * 1.65, g);
+  glossPoly(ctx, B, g, hex, { spread: 0.6, gloss: w >= 2.2 ? 0.3 : 0 });
 }
+
+/**
+ * A curved sacrificial knife gripped at (x, y). The hilt runs THROUGH the fist — a bone disc pommel
+ * behind the knuckles, a collar and two back-swept quillons clear in front of them — and the blade
+ * starts above the guard, so drawing the hand AFTERWARDS closes it on the grip. Returns the shaft
+ * angle for that hand.
+ *
+ * It is a sickle, not a small sword: the centre-line bows with an ease-out so the edge is the
+ * CONCAVE side, the belly swells a sixth of the way along and then draws in, and the two edges
+ * converge on a real point set 0.33 of the blade's length off the shaft axis. The old shape was two
+ * chains that pinched to 0.014 of their own length at mid-blade — 0.11 px at h = 40, 0.22 px at
+ * h = 80 — so the blade was severed at every size and both knives read as black commas.
+ *
+ * Laid out in blade coordinates: u along the shaft from the hand toward the point, n across it
+ * toward the SPINE (`flip` mirrors which screen side that is), both in pixels.
+ */
+function knife(
+  ctx: CanvasRenderingContext2D, x: number, y: number, a: number, len: number, h: number,
+  steel: string, grip: string, bone: string, flip: boolean,
+): number {
+  const f = flip ? -1 : 1;
+  const ux = Math.cos(a), uy = Math.sin(a), nx = -uy * f, ny = ux * f;
+  const at2 = (u: number, n: number): Pt => ({ x: x + ux * u + nx * n, y: y + uy * u + ny * n });
+  const P: Lay = (u, n, out) => { out.push(x + ux * u + nx * n, y + uy * u + ny * n); return out; };
+
+  // The pixel floor, the same device blade() uses: under about h = 60 a blade at its true width is
+  // thinner than the ink around it, so floor the half-width (and the quillons with it) and there is
+  // always steel left to shade. px falls away again below h ~ 38 so a distant zealot is not all hilt.
+  const px = Math.min(1, h * 0.026);
+  const w = Math.max(len * 0.095, px * 1.3);
+  const qs = Math.max(h * 0.058, w * 2.2);
+  const u0 = -(len * 0.06 + w * 1.5);            // pommel, behind the knuckles
+  const u1 = w * 0.85, gt = w * 0.8, u2 = u1 + gt; // the collar's near and far faces
+  const b0 = u2 + w * 0.25, L = Math.max(w * 2, len - b0);
+  const bowN = L * 0.33;
+  // Centre-line and half-width as closed forms. hw reaches EXACTLY 0 at t = 1, so the two edges
+  // meet at a point and can never cross back over each other on the way there.
+  const cn = (t: number) => bowN * (1 - Math.pow(1 - t, 1.7));
+  const hw = (t: number) => w * (0.96 + 0.58 * t - 2.02 * t * t + 0.48 * t * t * t);
+
+  // Grip and pommel. The wraps are creases, not soft lines: blob draws creases inside its own clip,
+  // and a round-capped line across a 0.9w cylinder overhangs it.
+  const pom = at2(u0, 0), top = at2(u1 - gt * 0.3, 0);
+  const wraps: Crease[] = [];
+  if (w >= 2.4) for (let i = 0; i < 3; i++) {
+    const p = at2(u0 + (u1 - u0) * (0.3 + i * 0.22), -w * 0.75), q = at2(u0 + (u1 - u0) * (0.36 + i * 0.22), w * 0.75);
+    wraps.push({ x0: p.x, y0: p.y, x1: q.x, y1: q.y, r: Math.max(1, w * 0.3), a: 0.5 });
+  }
+  blob(ctx, B, grip, [{ k: 'cap', x0: pom.x, y0: pom.y, x1: top.x, y1: top.y, r0: w * 0.92, r1: w * 0.78 }],
+    { h, formK: 0.5, spread: 0.6, creases: wraps });
+  blob(ctx, B, bone, [{ k: 'ell', x: pom.x, y: pom.y, rx: w * 1.3, ry: w * 1.0, rot: a + Math.PI / 2, gloss: 0.45 }],
+    { h, formK: 0.5, spread: 0.6, creases: w >= 2.4
+      ? [{ x0: pom.x - nx * w * 0.55, y0: pom.y - ny * w * 0.55, x1: pom.x + nx * w * 0.55, y1: pom.y + ny * w * 0.55, r: Math.max(1, w * 0.28), a: 0.5 }]
+      : undefined });
+
+  // The blade: spine out to the shoulder of the point, the point, then back down the edge. Drawn
+  // BEFORE the guard, because that is the order a hilt assembles — draw the guard first and the
+  // blade's own ink is stroked across its face, leaving a seam through the middle of the hilt.
+  const SAMP = [0, 0.16, 0.38, 0.6, 0.78, 0.9];
+  const bl: number[] = [];
+  for (const t of SAMP) P(b0 + L * t, cn(t) + hw(t), bl);
+  P(b0 + L, cn(1), bl);
+  for (let i = SAMP.length - 1; i >= 0; i--) P(b0 + L * SAMP[i], cn(SAMP[i]) - hw(SAMP[i]), bl);
+  glossPoly(ctx, B, bl, steel, { gloss: w >= 2.2 ? 0.35 : 0, spread: 0.6 });
+
+  // Two tone steps, each gated on the blade's width in PIXELS, never on a fraction of h: the light
+  // line along whichever edge faces the light, and only well above that the fuller, so the blade is
+  // never carrying two 1 px marks on fewer than 5 px of fill.
+  if (w >= 1.9) {
+    const lit = nx * B.light.x + ny * B.light.y >= 0 ? 1 : -1;
+    const e: number[] = [];
+    for (const t of [0.1, 0.45, 0.8]) { const p = at2(b0 + L * t, cn(t) + lit * (hw(t) - w * 0.3)); e.push(p.x, p.y); }
+    ctx.strokeStyle = B.col(mix(steel, '#ffffff', 0.72));
+    ctx.lineWidth = 1; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(e[0], e[1]); ctx.lineTo(e[2], e[3]); ctx.lineTo(e[4], e[5]); ctx.stroke();
+  }
+  if (w >= 2.6) {
+    const g: number[] = [];
+    for (const t of [0.08, 0.34, 0.6]) { const p = at2(b0 + L * t, cn(t)); g.push(p.x, p.y); }
+    softLine(ctx, B, g, steel, Math.max(1, w * 0.55), 0.42);
+  }
+  quillons(ctx, P, u1, u2, gt, w, qs, bone);
+  return a;
+}
+
+/**
+ * The Hand's long ritual blade, gripped at (x0, y0) and running to (x1, y1). Returns the shaft angle
+ * for that hand.
+ *
+ * The light comes out of the STEEL. The body colour is a steel already alight, its ink rim is
+ * ember-dark instead of the brush's near-black, and the heat is laid inside the outline as feathered
+ * patches that are hottest at the point; the halo is spill from all that, spaced along the blade and
+ * sized off its own width, not a smudge dropped on the midpoint. The furniture stays cold iron —
+ * the contrast between unlit horns and a blade the colour of a coal is most of what sells it.
+ *
+ * The flat chisel tip is gone: a parallel-sided shape closed off by a chamfer reads as a plank
+ * however it is shaded, and that is exactly what this was — 1.00 to 1.05 of w down one side, -0.85
+ * to -0.90 down the other, 1.9 px of fill at h = 40 between two 1 px ink edges.
+ */
+function chisel(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, h: number, steel: string, grip: string, pulse: number): number {
+  const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
+  const at2 = (u: number, n: number): Pt => ({ x: x0 + ux * u + nx * n, y: y0 + uy * u + ny * n });
+  const P: Lay = (u, n, out) => { out.push(x0 + ux * u + nx * n, y0 + uy * u + ny * n); return out; };
+
+  const px = Math.min(1, h * 0.026);
+  const w = Math.max(h * 0.03, px * 1.3);
+  const qs = Math.max(h * 0.066, w * 2.5);        // must beat the fist's h*0.042*1.1
+  const u0 = -(h * 0.055 + w * 1.4);
+  const u1 = w * 0.9, gt = w * 1.0, u2 = u1 + gt;
+  const b0 = u2 + w * 0.3, L = Math.max(w * 3, len - b0);
+  const cn = (t: number) => w * 0.38 * t * t;      // a slight lean: a ritual spike, not a symmetric needle
+  const hw = (t: number) => w * (0.97 + 0.42 * t - 1.72 * t * t + 0.33 * t * t * t);
+
+  const iron = mix(steel, grip, 0.62);             // the furniture: cold, so the blade is the only lit thing
+  const lava = mix(steel, '#ffb478', 0.36);        // steel that is itself alight; its own ramp runs warm
+  const rim = mix(EMBER, '#140810', 0.82);         // the blade's ink: ember-dark, not neutral-dark
+  const lit = nx * B.light.x + ny * B.light.y >= 0 ? 1 : -1;
+
+  // Spill first, under everything: several small glows along the axis, sized off the blade, hottest
+  // at the point. One big glow on the midpoint reads as a smudge behind the weapon.
+  for (const t of [0.18, 0.5, 0.8]) {
+    const c = at2(b0 + L * t, cn(t));
+    glow(ctx, B, c.x, c.y, w * (3.2 + 2.6 * t) + h * 0.01, EMBER, 0.16 + 0.1 * pulse, EMBER);
+  }
+  const tip = at2(b0 + L, cn(1));
+  glow(ctx, B, tip.x, tip.y, w * 4.5 + h * 0.018, EMBER, 0.3 + 0.18 * pulse, HOT);
+
+  const pom = at2(u0, 0), top = at2(u1 - gt * 0.3, 0);
+  const wraps: Crease[] = [];
+  if (w >= 2.4) for (let i = 0; i < 4; i++) {
+    const p = at2(u0 + (u1 - u0) * (0.22 + i * 0.18), -w * 0.72), q = at2(u0 + (u1 - u0) * (0.28 + i * 0.18), w * 0.72);
+    wraps.push({ x0: p.x, y0: p.y, x1: q.x, y1: q.y, r: Math.max(1, w * 0.26), a: 0.5 });
+  }
+  blob(ctx, B, grip, [{ k: 'cap', x0: pom.x, y0: pom.y, x1: top.x, y1: top.y, r0: w * 0.88, r1: w * 0.76 }],
+    { h, formK: 0.5, spread: 0.6, creases: wraps });
+  blob(ctx, B, iron, [{ k: 'ell', x: pom.x, y: pom.y, rx: w * 1.3, ry: w * 0.95, rot: Math.atan2(uy, ux) + Math.PI / 2, gloss: 0.4 }],
+    { h, formK: 0.5, spread: 0.6 });
+
+  const SAMP = [0, 0.13, 0.36, 0.6, 0.8, 0.92];
+  const bl: number[] = [];
+  for (const t of SAMP) P(b0 + L * t, cn(t) + hw(t), bl);
+  P(b0 + L, cn(1), bl);
+  for (let i = SAMP.length - 1; i >= 0; i--) P(b0 + L * SAMP[i], cn(SAMP[i]) - hw(SAMP[i]), bl);
+
+  // The rim goes on first at B.ow*2 so exactly ow shows outside the fill, the same trick
+  // outlinePath uses — then the mass is filled with outline off. Through B.col, so a hit frame
+  // whitens it and the silhouette stays flat white.
+  ctx.beginPath(); ctx.moveTo(bl[0], bl[1]);
+  for (let i = 2; i < bl.length; i += 2) ctx.lineTo(bl[i], bl[i + 1]);
+  ctx.closePath();
+  ctx.strokeStyle = B.col(rim); ctx.lineWidth = B.ow * 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.stroke();
+  blob(ctx, B, lava, [{ k: 'poly', pts: bl }], { h, outline: false, formK: 0.4, spread: 0.55, gloss: w >= 2.4 ? 0.3 : 0 });
+
+  // The heat, laid INSIDE the outline as a change of colour in the one surface rather than as a
+  // glow pasted over it. Hottest at the point, cooling back toward the ricasso; it breathes with
+  // the pulse so the steel is what flickers, not a halo in front of it.
+  const heat = (t0: number, t1: number, r0: number, r1: number, hex: string, al: number): void => {
+    const p = at2(b0 + L * t0, cn(t0)), q = at2(b0 + L * t1, cn(t1));
+    patch(ctx, B, hex, [{ k: 'cap', x0: p.x, y0: p.y, x1: q.x, y1: q.y, r0, r1 }], { alpha: al, feather: 0.85 });
+  };
+  heat(0.04, 0.96, w * 0.6, w * 0.16, EMBER, 0.34 + 0.16 * pulse);
+  heat(0.58, 0.99, w * 0.4, w * 0.1, HOT, 0.4 + 0.2 * pulse);
+
+  // The two tone steps, in pixels: a dark back and a white-hot cutting edge. Below this the blade
+  // is 2.6 px of fill and both marks would be mud, so it carries the read on colour alone.
+  if (w >= 2.0) {
+    const sp: number[] = [];
+    for (const t of [0.06, 0.45, 0.86]) { const p = at2(b0 + L * t, cn(t) - lit * hw(t) * 0.78); sp.push(p.x, p.y); }
+    softLine(ctx, B, sp, lava, Math.max(1, w * 0.36), 0.5);
+    ctx.strokeStyle = B.col(mix(HOT, '#ffffff', 0.45));
+    ctx.lineWidth = 1; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const t = 0.08 + i * 0.42, p = at2(b0 + L * t, cn(t) + lit * hw(t) * 0.8);
+      if (i) ctx.lineTo(p.x, p.y); else ctx.moveTo(p.x, p.y);
+    }
+    ctx.stroke();
+  }
+
+  quillons(ctx, P, u1, u2, gt, w, qs, iron);
+  if (!B.override) {
+    const th = at2(u2 + gt * 0.5, 0);
+    glow(ctx, B, th.x, th.y, w * 2.4 + h * 0.008, EMBER, 0.3 + 0.2 * pulse, HOT);
+  }
+  return Math.atan2(uy, ux);
+}
+
 
 /** A glowing rune band around a cuff: an ember arc across the sleeve with a glow under it. */
 function runeBand(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry: number, rot: number, h: number, pulse: number): void {
@@ -572,18 +900,6 @@ function flame(ctx: CanvasRenderingContext2D, cx: number, cy: number, size: numb
   void h;
 }
 
-/** The long ritual chisel-blade: a straight steel blade with a bevelled flat tip, a dark grip, an ember rune down the fuller. */
-function chisel(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, h: number, steel: string, grip: string, pulse: number): void {
-  const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, nx = -uy, ny = ux, w = h * 0.026;
-  const P = (t: number, s: number) => [x0 + ux * len * t + nx * w * s, y0 + uy * len * t + ny * w * s];
-  glossPoly(ctx, B, [...P(0, 1), ...P(0.92, 1.05), ...P(1.0, -0.2), ...P(0.9, -0.9), ...P(0, -0.85)], steel, { gloss: 0.6, spread: 0.6 });
-  glossTaper(ctx, B, x0, y0, x0 - ux * h * 0.13, y0 - uy * h * 0.13, w * 0.75, w * 0.6, grip);
-  glossBall(ctx, B, x0 - ux * h * 0.14, y0 - uy * h * 0.14, w * 0.9, grip, { gloss: 0.3 });
-  if (B.override) return;
-  glow(ctx, B, x0 + ux * len * 0.45, y0 + uy * len * 0.45, len * 0.2, EMBER, 0.2 + 0.15 * pulse, EMBER);
-  ctx.strokeStyle = rgba(EMBER, 0.7 + 0.3 * pulse); ctx.lineWidth = Math.max(1, w * 0.3); ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(...(P(0.12, 0.1) as [number, number])); ctx.lineTo(...(P(0.8, 0.1) as [number, number])); ctx.stroke();
-}
 
 /** Embers rising round the figure and ash flecks lifting off the hem; fixed lanes, phase from the frame. */
 function embers(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, frame: number, n: number, ash: number): void {
