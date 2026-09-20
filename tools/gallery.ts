@@ -52,6 +52,7 @@ const size = await page.evaluate(async (o: { only: string[]; family?: string; sc
   const load = (p: string): Promise<any> => import(p);
   const M = await load('/src/game/monsters.ts');
   const T = await load('/src/lib/engine/text.ts');
+  const S = await load('/src/ui/sprites.ts');
   // Through the dispatcher normally; straight into one family module when asked.
   let draw: (ctx: CanvasRenderingContext2D, kind: string, x: number, y: number, h: number, tint: string, tone: number, frame: number, flash: boolean) => void;
   let kinds: string[] | null = null;
@@ -61,13 +62,13 @@ const size = await page.evaluate(async (o: { only: string[]; family?: string; sc
     kinds = F.KINDS;
     draw = (ctx, kind, x, y, h, tint, tone, frame, flash) => { C.B.flash(flash); F.draw(ctx, kind, x, y, h, C.paintFor(tint, tone, frame)); C.B.flash(false); };
   } else {
-    const S = await load('/src/ui/sprites.ts');
     draw = S.drawMonsterSprite;
   }
   const defs = (Object.values(M.MONSTERS) as any[]).filter((d) => (o.only.length ? o.only.includes(d.sprite) : true) && (kinds ? kinds.includes(d.sprite) : true));
   const s = o.scale;
-  // Combat size is 30 + size * 70; the viewport draws u * 2 * size with u = 134 * 0.9 / (d + 0.5).
-  const combat = (d: any) => 30 + d.size * 70;
+  // The combat screen's own sizing, so a gallery cell is exactly what a fight shows (a five-wide
+  // row, the usual slot); the viewport draws u * 2 * size with u = 134 * 0.9 / (d + 0.5).
+  const combat = (d: any) => S.combatHeight(d.size, 80);
   const view = (d: any, depth: number) => (134 * 0.9 / (depth + 0.5)) * 2 * d.size;
   const strip = o.frames > 0;
   const cols = strip ? 1 : Math.min(7, Math.max(1, defs.length));

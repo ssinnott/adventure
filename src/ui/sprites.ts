@@ -99,6 +99,18 @@ const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
 };
 
 /**
+ * How tall a monster draws on the combat screen. Xeen fills most of the window with the thing you
+ * are fighting, and a sprite that reads as a painted creature deserves the room, so a lone enemy
+ * is drawn near the top of the viewport; a full row of six is pulled back in proportion to the
+ * slot each one gets, so neighbours overlap no more than they did when everything was small.
+ * @param size the def's size (1 = a full cell)
+ * @param slot the horizontal room each monster in the row has, in px
+ */
+export function combatHeight(size: number, slot: number): number {
+  return (34 + size * 92) * Math.min(1, slot / 80);
+}
+
+/**
  * Draw a monster. `h` is the intended height in px; `frame` drives a small idle motion.
  */
 export function drawMonsterSprite(ctx: CanvasRenderingContext2D, kind: MonsterSprite, x: number, y: number, h: number, tint: string, tone: number, frame: number, flash = false): void {

@@ -6,7 +6,7 @@ import { is } from '../input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect } from './frame.ts';
-import { drawMonsterSprite } from './sprites.ts';
+import { drawMonsterSprite, combatHeight } from './sprites.ts';
 import { drawViewport } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../game/combat.ts';
@@ -163,9 +163,9 @@ export class CombatScreen implements Screen {
     alive.forEach((mi, k) => {
       const m = s.monsters[mi];
       const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + v.h * 0.62 + 18 + m.group * 10;
-      const h = 30 + m.def.size * 70;
+      const h = combatHeight(m.def.size, slot);
       if (m.flash > 0) m.flash--;
-      if (m.hp < this.lastMonsterHp[mi]) { this.burst(x, y - (30 + m.def.size * 70) * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070'); this.lastMonsterHp[mi] = m.hp; }
+      if (m.hp < this.lastMonsterHp[mi]) { this.burst(x, y - h * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070'); this.lastMonsterHp[mi] = m.hp; }
       const asleep = m.conditions.includes('asleep');
       drawMonsterSprite(ctx, m.def.sprite, x, y, h, m.def.tint, asleep ? 0.6 : 1, frame + mi * 11, m.flash > 0);
       const hpFrac = m.hp / m.def.hp;
