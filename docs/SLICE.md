@@ -82,6 +82,16 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   sprite kind, so the variants that share a family (the archers and brigands, the cult's ranks,
   the bone knight, the dire wolf and rift hound, the elder and the two wardens) are drawn with
   their own gear, anatomy and glow rather than a recolour.
+- `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
+  look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
+  mass, with one ink outline around the union, one rendered gradient across the whole (a bright
+  core toward the light, a deep band at the far edge), then, clipped inside, a soft volume per
+  part, creases where forms meet, a surface texture (fur, bristle, stipple, scales, mail, cracks,
+  folds, facets; only above a minimum sprite height) and a specular where the surface is wet or
+  crystalline. Contours are `curve` parts (a spline through points, lumpy or fur-tufted) and
+  `tube` parts (a bending tapered tube for tails, necks, legs and tentacles); `glow()` is a real
+  radial light for embers and halos; `softLine()` replaces interior ink. The hit flash still
+  paints a flat white silhouette through all of it.
 - `ui/viewport.ts` textures every surface procedurally: stone courses (front faces and receding
   side faces), timber-framed houses with gable roofs and windows lit at night, flagstones with
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
