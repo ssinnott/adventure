@@ -457,42 +457,56 @@ function face(ctx: CanvasRenderingContext2D, R: Rig, masked: boolean, scar = fal
  * Everything is laid out in blade coordinates: u runs from the grip toward the point, n across it,
  * so the same construction serves a dagger and a longsword by its w and `guard` alone.
  */
-function blade(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, tx: number, ty: number, w: number, guard: number): number {
+function blade(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, tx: number, ty: number, w0: number, guard0: number): number {
   const { h } = R;
   const dx = tx - at.x, dy = ty - at.y, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
   const P = (u: number, n: number, out: number[]): number[] => { out.push(at.x + ux * u + nx * n, at.y + uy * u + ny * n); return out; };
   const at2 = (u: number, n: number): Pt => ({ x: at.x + ux * u + nx * n, y: at.y + uy * u + ny * n });
-  const u0 = -(h * 0.034 + w * 1.7), u1 = h * 0.020 + w * 1.3;   // pommel, and the guard's near face
+  // Below about h = 60 a blade drawn at its true width is thinner than the ink around it: at combat
+  // size the bandit's sword is 1.5 px of steel between two 1 px outlines, so it reads as a black
+  // stick with a gold bar on it. Floor the half-width, and the quillons with it — a guard that does
+  // not clearly overhang the blade is not a guard — so there is always steel left to shade. The
+  // floor only bites under h ≈ 60 and fades out again below h ≈ 38, so a distant figure is not all
+  // hilt. The idea and the numbers are from an independent read of this function's output.
+  const px = Math.min(1, h * 0.026);
+  const w = Math.max(w0, px * 1.15), guard = Math.max(guard0, w * 2.6);
+  const u0 = -(h * 0.03 + w * 1.5), u1 = h * 0.02 + w * 1.3;     // pommel, and the guard's near face
   const gt = w * 1.25, u2 = u1 + gt;                              // the guard's far face
   const pom = at2(u0, 0), top = at2(u1, 0);
-  // Wrapped grip from the pommel to the guard, then the pommel over its end.
-  blob(ctx, B, R.strap, [{ k: 'cap', x0: pom.x, y0: pom.y, x1: top.x, y1: top.y, r0: w * 0.95, r1: w * 0.82 }], { h, formK: 0.5, spread: 0.6 });
-  if (w >= 2) for (let i = 0; i < 3; i++) {
-    const a = at2(u0 + (u1 - u0) * (0.28 + i * 0.22), -w), b = at2(u0 + (u1 - u0) * (0.34 + i * 0.22), w);
-    softLine(ctx, B, [a.x, a.y, b.x, b.y], R.strap, Math.max(1, w * 0.45), 0.7);
+  // Wrapped grip from the pommel to the guard. The wraps are creases, not soft lines: blob draws
+  // creases inside its own clip, and a round-capped line across a 0.9w cylinder overhangs it.
+  const wraps: Crease[] = [];
+  if (w >= 2.4) for (let i = 0; i < 3; i++) {
+    const a = at2(u0 + (u1 - u0) * (0.3 + i * 0.22), -w * 0.8), b = at2(u0 + (u1 - u0) * (0.36 + i * 0.22), w * 0.8);
+    wraps.push({ x0: a.x, y0: a.y, x1: b.x, y1: b.y, r: Math.max(1, w * 0.34), a: 0.5 });
   }
-  glossEllipse(ctx, B, pom.x, pom.y, w * 1.4, w * 1.1, R.brass, Math.atan2(uy, ux), { gloss: 0.45, spread: 0.6 });
-  // Crossguard: a bar that swells over the grip and tapers out to quillons canted at the blade.
-  const g: number[] = [];
-  P(u2 + gt * 0.35, guard, g); P(u2, w * 1.8, g); P(u2 + gt * 0.18, 0, g); P(u2, -w * 1.8, g);
-  P(u2 + gt * 0.35, -guard, g); P(u1 + gt * 0.1, -guard * 0.96, g); P(u1, -w * 1.9, g);
-  P(u1 - gt * 0.28, 0, g); P(u1, w * 1.9, g); P(u1 + gt * 0.1, guard * 0.96, g);
-  glossPoly(ctx, B, g, R.brass, { spread: 0.6, gloss: 0.35 });
+  blob(ctx, B, R.strap, [{ k: 'cap', x0: pom.x, y0: pom.y, x1: top.x, y1: top.y, r0: w * 0.95, r1: w * 0.82 }], { h, formK: 0.5, spread: 0.6, creases: wraps });
+  glossEllipse(ctx, B, pom.x, pom.y, w * 1.25, w * 1.0, R.brass, Math.atan2(uy, ux), { gloss: 0.45, spread: 0.6 });
   // The blade: a slow taper to the shoulder of the point, then two edges converging on the point.
+  // Drawn BEFORE the guard, because that is the order a hilt assembles: draw the guard first and
+  // the blade's own ink is stroked across its face, leaving a seam through the middle of the hilt.
   const b0 = u2 + gt * 0.2, L = len - b0;
   const bl: number[] = [];
   P(b0, w, bl); P(b0 + L * 0.1, w, bl); P(b0 + L * 0.6, w * 0.86, bl); P(b0 + L * 0.87, w * 0.58, bl);
   P(b0 + L, 0, bl);
   P(b0 + L * 0.87, -w * 0.58, bl); P(b0 + L * 0.6, -w * 0.86, bl); P(b0 + L * 0.1, -w, bl); P(b0, -w, bl);
-  glossPoly(ctx, B, bl, R.steel, { gloss: 0.5, spread: 0.6 });
-  if (L > h * 0.12) {
-    // The fuller, and a light line down whichever edge faces the light: two steps, not one.
+  glossPoly(ctx, B, bl, R.steel, { gloss: 0.35, spread: 0.6 });
+  // The fuller and a light line down whichever edge faces the light. Gated on the blade's width in
+  // PIXELS, not on its length against h: the old test was true at every size, so two 1 px marks
+  // 0.7 px apart were always laid on a 1.5 px blade, where they cancel into mud.
+  if (w >= 2.2 && L > h * 0.12) {
     const f0 = at2(b0 + L * 0.07, 0), f1 = at2(b0 + L * 0.62, 0);
-    softLine(ctx, B, [f0.x, f0.y, f1.x, f1.y], R.steel, Math.max(1, w * 0.8), 0.4);
+    softLine(ctx, B, [f0.x, f0.y, f1.x, f1.y], R.steel, Math.max(1, w * 0.7), 0.4);
     const lit = nx * B.light.x + ny * B.light.y >= 0 ? 1 : -1;
     const e0 = at2(b0 + L * 0.1, lit * w * 0.88), e1 = at2(b0 + L * 0.85, lit * w * 0.52);
     stroke(ctx, [e0.x, e0.y, e1.x, e1.y], shade(R.steel, 1.4), 1);
   }
+  // Crossguard: a bar that swells over the grip and tapers out to quillons canted at the blade.
+  const g: number[] = [];
+  P(u2 + gt * 0.3, guard, g); P(u2 + gt * 0.02, w * 1.9, g); P(u2 + gt * 0.22, 0, g); P(u2 + gt * 0.02, -w * 1.9, g);
+  P(u2 + gt * 0.3, -guard, g); P(u1 + gt * 0.45, -guard * 0.97, g); P(u1 + gt * 0.05, -w * 2.0, g);
+  P(u1 - gt * 0.3, 0, g); P(u1 + gt * 0.05, w * 2.0, g); P(u1 + gt * 0.45, guard * 0.97, g);
+  glossPoly(ctx, B, g, R.brass, { spread: 0.6, gloss: 0.35 });
   return Math.atan2(uy, ux);
 }
 
@@ -584,10 +598,13 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   const R = makeRig(x, y, h, p, { tilt: -0.03, hipTilt: 0.03, turn: 0.026, near: [0.072, 0.175, 0.225], far: [-0.07, -0.07, -0.06], toe: [1, -0.5], lift: [0, 0.05] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 19) * h * 0.012;
-  // Near arm: elbow tucked low at the waist, forearm out and up to a hand at chest height, and the
-  // sword carrying on up past it — 63 deg at the elbow, 32 at the wrist. It used to hang straight
-  // down with the blade coming back UP alongside the forearm, a 166 deg wrist no one has.
-  const near: Arm = [R.sNear, { x: x + h * 0.245, y: sy + h * 0.16 }, { x: x + h * 0.352, y: sy + h * 0.06 }];
+  // Near arm, measured off a photograph of a man standing with a sword. What a hand holding a sword
+  // at rest actually does is nothing: the upper arm hangs vertical and close in, the elbow is only
+  // just bent (162 deg), the hand is down at the hip, and the BLADE carries on down and forward from
+  // the forearm. The earlier fix for the reversed wrist swung the whole arm out into a guard and
+  // left the figure standing in a stiff symmetric A — the right answer was to drop the point, not
+  // to raise the arm.
+  const near: Arm = [R.sNear, { x: x + h * 0.228, y: sy + h * 0.15 }, { x: x + h * 0.212, y: sy + h * 0.308 }];
   // Far arm: the upper arm swings clear of the ribs to a low elbow, then the forearm comes up in
   // front to carry the buckler, so the shield sits on an arm instead of floating.
   const far: Arm = [R.sFar, { x: x - h * 0.203, y: sy + h * 0.196 }, { x: x - h * 0.318, y: sy + h * 0.085 }];
@@ -617,7 +634,7 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   ], { h, formK: 0.45, spread: 0.6 });
   band(ctx, B, x - h * 0.024, hemY - h * 0.056, h * 0.044, h * 0.044, R.brass);
   // Short sword: the grip runs through the fist, the blade starts above the guard.
-  const ga = blade(ctx, R, near[2], x + h * 0.421, y - h * 1.089, h * 0.019, h * 0.072);
+  const ga = blade(ctx, R, near[2], x + h * 0.388, y - h * 0.115, h * 0.019, h * 0.072);
   hand(ctx, R, near[2], ga, 42, { flip: -1 });
   // Hair tufts at the far temple, the scarf over the lower face, the bandana over the crown.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 1.0, hy - hr * 0.3, hx - hr * 0.7, hy - hr * 0.2, hx - hr * 0.75, hy + hr * 0.5, hx - hr * 1.15, hy + hr * 0.3], wobble: 0.06, spiky: 0.15, seed: 9, sub: 2 }], { h, form: false });
@@ -698,13 +715,15 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const R = makeRig(x, y, h, p, { tilt: -0.042, hipTilt: -0.03, turn: 0.014, near: [0.08, 0.185, 0.245], far: [-0.072, -0.125, -0.145], toe: [1, -0.8], lift: [0, 0.062] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 21) * h * 0.008;
-  // Near arm: the sword arm raised — elbow out at the ribs, forearm steeply up and out, hand at
-  // shoulder height well clear of the body, blade vertical above it. 70 deg at the elbow. It used
-  // to measure 29 deg, past full flexion: the forearm was lying on the bicep.
-  const near: Arm = [R.sNear, { x: x + h * 0.305, y: sy + h * 0.11 }, { x: x + h * 0.382, y: sy - h * 0.022 }];
-  // Far arm: elbow at the waist, forearm across and down so the hand sits behind the shield's
-  // centre — the shield is strapped to that forearm and has to be ON it.
-  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.215 }, { x: x - h * 0.33, y: sy + h * 0.285 }];
+  // Near arm: the same relaxed drop as the bandit's (162 deg at the elbow) but with a longer blade,
+  // so the veteran stands with his point almost in the turf and the thug's is up at knee height.
+  // Raised, this arm could only be unfolded by winging the elbow out past the ribs, because the
+  // frame is 0.92h wide and the arm alone is 0.345h: there is no room to hold a sword up.
+  const near: Arm = [R.sNear, { x: x + h * 0.232, y: sy + h * 0.145 }, { x: x + h * 0.226, y: sy + h * 0.303 }];
+  // Far arm: elbow at the waist, forearm out and slightly up so the hand sits behind the shield's
+  // centre — the shield is strapped to that forearm and has to be ON it. Held at chest height it
+  // also keeps one arm up now that the sword arm is down, so the two sides still read differently.
+  const far: Arm = [R.sFar, { x: x - h * 0.18, y: sy + h * 0.22 }, { x: x - h * 0.33, y: sy + h * 0.245 }];
   const hemY = y - h * 0.4;
   const mail = shade('#767d8c', p.tone);
   groundShadow(ctx, x, y + 1, h * 0.8);
@@ -731,7 +750,7 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   band(ctx, B, x - h * 0.018, hemY - h * 0.066, h * 0.042, h * 0.046, R.brass);
   // The longsword held up, the grip running through a steel gauntlet: cuff at the wrist, a plate
   // over the back of the hand catching the light, fingers closed across the hilt.
-  const ga = blade(ctx, R, near[2], x + h * 0.382, y - h * 1.205, h * 0.024, h * 0.085);
+  const ga = blade(ctx, R, near[2], x + h * 0.432, y - h * 0.063, h * 0.024, h * 0.085);
   const fa = Math.atan2(near[1].y - near[2].y, near[1].x - near[2].x);
   const cuff: Pt = { x: near[2].x + Math.cos(fa) * h * 0.085, y: near[2].y + Math.sin(fa) * h * 0.085 };
   hand(ctx, R, near[2], ga, 42, { hex: R.dull, cuff, plate: true, gloss: 0.5, flip: -1 });
@@ -751,7 +770,7 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   softLine(ctx, B, [hx - hr * 1.42, hy - hr * 0.22, hx, hy - hr * 0.5, hx + hr * 1.42, hy - hr * 0.2], R.dull, Math.max(1, hr * 0.12), 0.5);
   glossBall(ctx, B, hx - hr * 0.08, hy - hr * 1.56, hr * 0.13, R.brass, { gloss: 0.5 });
   // The heater shield on the far arm: steel rim, painted field with a pale chevron.
-  const cx = x - h * 0.311, cy = y - h * 0.48, sw = h * 0.118, sh = h * 0.182;
+  const cx = x - h * 0.308, cy = y - h * 0.514, sw = h * 0.118, sh = h * 0.182;
   const shieldPts = [cx - sw, cy - sh * 0.9, cx + sw, cy - sh * 0.9, cx + sw * 0.95, cy + sh * 0.15, cx + sw * 0.5, cy + sh * 0.75, cx, cy + sh, cx - sw * 0.5, cy + sh * 0.75, cx - sw * 0.95, cy + sh * 0.15];
   glossPoly(ctx, B, shieldPts, R.steel, { spread: 0.7 });
   const field = shade('#7a2c24', p.tone);
