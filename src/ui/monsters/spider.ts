@@ -10,7 +10,7 @@ import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, softLine, glow, patch } from './gloss.ts';
 import type { Part, Crease } from './gloss.ts';
-import { shade, mix } from '../../lib/art/palettes.ts';
+import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
 export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider'];
@@ -38,23 +38,27 @@ interface Rig { ax: number; ay: number; cx: number; cy: number; legs: Leg[] }
 
 function rig(x: number, y: number, h: number, frame: number, breathe: number, spread: number): Rig {
   const bob = breathe * h * 0.012;
-  const cx = x + h * 0.17, cy = y - h * 0.36 + bob * 0.4;
-  const ax = x - h * 0.17, ay = y - h * 0.74 + bob;
-  // Fanned: the front pair reaches forward (foot low and near), the rear pair back (foot higher, behind).
-  // The shin bows OUTWARD between knee and foot (mx sits wider than the midpoint of knee and foot),
-  // which is what stops a leg reading as two straight rods hinged in the middle.
+  // Measured off a huntsman seen head on: the body is SMALL inside the leg span, and every knee
+  // rises well above the carapace. The old rig had the knees below the abdomen, which is why the
+  // animal read as a lump with bent wires attached rather than as a spider braced on eight legs.
+  // The reference's span is some seven carapace-widths across; this is pulled in to a little under
+  // two sprite heights so that a row of six still fits the combat line without burying each other.
+  const cx = x + h * 0.14, cy = y - h * 0.30 + bob * 0.4;
+  const ax = x - h * 0.15, ay = y - h * 0.56 + bob;
+  // Fanned: the front pair reaches forward, the rear pair back. The shin bows OUTWARD between knee
+  // and foot, which is what stops a leg reading as two straight rods hinged in the middle.
   const L = [
-    { kx: 0.44, ky: 0.76, mx: 0.62, my: 0.38, fx: 0.52, fy: 0.02 },
-    { kx: 0.6, ky: 0.84, mx: 0.84, my: 0.43, fx: 0.76, fy: 0.03 },
-    { kx: 0.62, ky: 0.9, mx: 0.9, my: 0.49, fx: 0.84, fy: 0.08 },
-    { kx: 0.5, ky: 0.92, mx: 0.78, my: 0.55, fx: 0.72, fy: 0.15 },
+    { kx: 0.38, ky: 0.94, mx: 0.64, my: 0.40, fx: 0.55, fy: 0.02 },
+    { kx: 0.52, ky: 1.04, mx: 0.86, my: 0.42, fx: 0.78, fy: 0.03 },
+    { kx: 0.57, ky: 1.06, mx: 0.93, my: 0.46, fx: 0.86, fy: 0.07 },
+    { kx: 0.48, ky: 1.00, mx: 0.82, my: 0.52, fx: 0.75, fy: 0.14 },
   ];
   const legs: Leg[] = [];
   for (const s of [-1, 1]) for (let i = 0; i < 4; i++) {
     const d = L[i];
     // The right-hand legs (the side turned toward us) stand a touch wider and higher; a slow twitch per leg.
     const wide = s > 0 ? 1.06 : 0.94, tw = Math.sin(frame / 8 + i * 1.9 + s * 0.7) * h * 0.012;
-    const hx = cx + s * h * 0.17, hy = cy + (i - 1.5) * h * 0.03;
+    const hx = cx + s * h * 0.15, hy = cy + (i - 1.5) * h * 0.028;
     const kx = x + s * h * d.kx * spread * wide, ky = y - h * d.ky + tw;
     const mx = x + s * h * d.mx * spread * wide, my = y - h * d.my + tw * 0.5;
     const fx = x + s * h * d.fx * spread * wide, fy = y - h * d.fy;
@@ -66,19 +70,41 @@ function rig(x: number, y: number, h: number, frame: number, breathe: number, sp
 }
 
 /**
- * One leg as three segments plus a knee: a thick thigh up to the raised knee, a swelling at the
+ * Dark bands at the joints and blotches along the segments, plus the fine hairs that break a
+ * spider's leg silhouette. On the reference these are the loudest thing about the animal after the
+ * span itself: a plain tapered tube reads as wire, a banded and bristled one reads as a leg.
+ */
+function legMarks(ctx: CanvasRenderingContext2D, legs: readonly Leg[], h: number, band: string): void {
+  if (B.override || h < 26) return;
+  for (const l of legs) {
+    const p = l.pts;
+    const seg: [number, number, number, number][] = [[p[0], p[1], p[4], p[5]], [p[4], p[5], p[8], p[9]], [p[8], p[9], p[10], p[11]]];
+    seg.forEach(([x0, y0, x1, y1], k) => {
+      const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy) || 1, nx = -dy / len, ny = dx / len;
+      // Wide enough to cross the whole limb, or it reads as a scratch laid on one instead.
+      const r = h * (0.062 - k * 0.017);
+      for (const t of k === 2 ? [0.5] : [0.3, 0.68]) {
+        const bx = x0 + dx * t, by = y0 + dy * t;
+        softLine(ctx, B, [bx - nx * r, by - ny * r, bx + nx * r, by + ny * r], band, Math.max(1, h * (0.028 - k * 0.007)), 0.5);
+      }
+    });
+  }
+}
+
+/**
+ * One leg as three segments plus a knee: a thick femur up to the raised knee, a swelling at the
  * joint, then a clearly thinner shin and a thin foot. A single tapered tube from hip to toe reads
- * as wire; the step in thickness and the knuckle at the bend are what say "jointed limb".
+ * as wire; the step in thickness and the knuckle at the bend are what say "jointed limb". The
+ * taper is steep, near three to one from femur to tarsus, which is what the reference shows.
  */
 function legParts(l: Leg, h: number, r0: number, r1: number, wobble: number): Part[] {
   const p = l.pts, seed = 20 + l.i * 2 + (l.s > 0 ? 1 : 0);
   const knee = [p[4], p[5]], mid = [p[8], p[9]], foot = [p[10], p[11]];
-  const rk = h * (r0 * 0.62 + r1 * 0.38);
   return [
-    { k: 'tube', pts: [p[0], p[1], p[2], p[3], knee[0], knee[1]], r0: h * r0, r1: rk / h * h * 0.92, wobble, seed },
-    { k: 'ball', x: knee[0], y: knee[1], r: rk * 1.04 },
-    { k: 'tube', pts: [knee[0], knee[1], p[6], p[7], mid[0], mid[1]], r0: rk * 0.8, r1: h * (r0 * 0.3 + r1 * 0.7), wobble, seed: seed + 40 },
-    { k: 'tube', pts: [mid[0], mid[1], foot[0], foot[1]], r0: h * (r0 * 0.3 + r1 * 0.7), r1: h * r1, wobble, seed: seed + 80 },
+    { k: 'tube', pts: [p[0], p[1], p[2], p[3], knee[0], knee[1]], r0: h * r0, r1: h * r0 * 0.62, wobble, seed },
+    { k: 'ball', x: knee[0], y: knee[1], r: h * r0 * 0.72 },
+    { k: 'tube', pts: [knee[0], knee[1], p[6], p[7], mid[0], mid[1]], r0: h * r0 * 0.56, r1: h * r0 * 0.3, wobble, seed: seed + 40 },
+    { k: 'tube', pts: [mid[0], mid[1], foot[0], foot[1]], r0: h * r0 * 0.3, r1: h * r1, wobble, seed: seed + 80 },
   ];
 }
 
@@ -110,15 +136,23 @@ function legThorns(l: Leg, h: number, n: number): Part[] {
 }
 
 function eyes(ctx: CanvasRenderingContext2D, cx: number, cy: number, h: number, col: string): void {
-  // A big front pair, a medium pair above, and small ones out at the sides.
-  eye(ctx, cx - h * 0.055, cy - h * 0.03, h * 0.036, col, false); eye(ctx, cx + h * 0.06, cy - h * 0.03, h * 0.038, col, false);
-  eye(ctx, cx - h * 0.028, cy - h * 0.1, h * 0.022, col, false); eye(ctx, cx + h * 0.032, cy - h * 0.1, h * 0.022, col, false);
-  eye(ctx, cx - h * 0.12, cy - h * 0.06, h * 0.016, col, false); eye(ctx, cx + h * 0.125, cy - h * 0.05, h * 0.016, col, false);
-  eye(ctx, cx - h * 0.1, cy - h * 0.125, h * 0.013, col, false); eye(ctx, cx + h * 0.105, cy - h * 0.12, h * 0.013, col, false);
-  // A glint on the big pair.
-  if (h >= 40 && !B.override) {
-    ctx.fillStyle = 'rgba(255,255,255,0.7)';
-    ctx.fillRect(Math.round(cx - h * 0.065), Math.round(cy - h * 0.04), 1, 1); ctx.fillRect(Math.round(cx + h * 0.05), Math.round(cy - h * 0.04), 1, 1);
+  // Eight in two tight rows across the front of the carapace, the front row the larger: on the
+  // reference they occupy a patch barely a third of the carapace's width, which is what makes them
+  // read as a cluster of eyes rather than as scattered dots.
+  const w = h * 0.052, r0 = h * 0.021, r1 = h * 0.014;
+  for (let i = 0; i < 4; i++) {
+    const t = (i - 1.5) / 1.5;
+    eye(ctx, cx + t * w, cy - h * 0.012, i === 1 || i === 2 ? r0 : r0 * 0.82, col, false);
+  }
+  for (let i = 0; i < 4; i++) {
+    const t = (i - 1.5) / 1.5;
+    eye(ctx, cx + t * w * 1.12, cy - h * 0.055, i === 1 || i === 2 ? r1 : r1 * 0.85, col, false);
+  }
+  if (h >= 44 && !B.override) {
+    ctx.fillStyle = 'rgba(255,255,255,0.8)';
+    for (const [dx, dy] of [[-0.35, -0.012], [0.35, -0.012]]) {
+      ctx.beginPath(); ctx.arc(cx + dx * w, cy - h * 0.012 + dy * h, Math.max(0.6, r0 * 0.3), 0, Math.PI * 2); ctx.fill();
+    }
   }
 }
 
@@ -145,6 +179,7 @@ function marsh(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   const rear = R.legs.filter((l) => l.i >= 2), near = R.legs.filter((l) => l.i < 2);
   // Rear pairs first: their own darker mass behind everything.
   blob(ctx, B, shade(hide, 0.7), rear.flatMap((l) => legParts(l, h, 0.05, 0.014, 0.04)), { h, formK: 0.4, spread: 0.8, creases: legCreases(rear, h, 0.04) });
+  legMarks(ctx, rear, h, shade(hide, 0.46));
   // The abdomen: the big rear bulb, its own contour so the waist reads.
   blob(ctx, B, hide, [{ k: 'curve', pts: ring(ax, ay, h * 0.32, h * 0.27, 11, 1), wobble: 0.05, seed: 3, sub: 3 }], { h, formK: 0.5, gloss: 0.5, spread: 0.7 });
   // The hourglass: a marking, but a crisp one. A spider's mark has an edge.
@@ -169,6 +204,7 @@ function marsh(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   // A fold over the eye cluster, then the near legs on top, each with its own contour against the body.
   softLine(ctx, B, [cx - h * 0.17, cy - h * 0.07, cx - h * 0.1, cy - h * 0.14, cx, cy - h * 0.17, cx + h * 0.1, cy - h * 0.15, cx + h * 0.17, cy - h * 0.08], hide, h * 0.028, 0.6);
   blob(ctx, B, shade(hide, 0.94), near.flatMap((l) => legParts(l, h, 0.055, 0.015, 0.04)), { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.045) });
+  legMarks(ctx, near, h, shade(hide, 0.46));
   // Red eyes, lit from within.
   glow(ctx, B, cx, cy - h * 0.05, h * 0.14, '#ff3020', 0.25, '#ff8060');
   eyes(ctx, cx, cy, h, shade('#ff4a30', Math.max(0.6, p.tone)));
@@ -193,6 +229,7 @@ function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   const rearParts: Part[] = rear.flatMap((l) => legParts(l, h, 0.058, 0.017, 0.07));
   for (const l of rear) rearParts.push(...legThorns(l, h, 1));
   blob(ctx, B, shade(hide, 0.7), rearParts, { h, formK: 0.4, spread: 0.8, creases: legCreases(rear, h, 0.045) });
+  legMarks(ctx, rear, h, shade(hide, 0.48));
   // The abdomen: the big rear bulb, spiked, its own contour so the waist reads.
   const abdomen: Part[] = [{ k: 'curve', pts: ring(ax, ay, h * 0.33, h * 0.27, 10, 4), wobble: 0.06, spiky: 0.16, seed: 6, sub: 2 }];
   for (let i = 0; i < 4; i++) {
@@ -221,6 +258,7 @@ function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   const nearParts: Part[] = near.flatMap((l) => legParts(l, h, 0.062, 0.018, 0.07));
   for (const l of near) nearParts.push(...legThorns(l, h, 2));
   blob(ctx, B, shade(hide, 0.92), nearParts, { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.05) });
+  legMarks(ctx, near, h, shade(hide, 0.48));
   // Amber-green eyes and heavy fangs.
   glow(ctx, B, cx, cy - h * 0.05, h * 0.13, '#c0d040', 0.18, '#f0f090');
   eyes(ctx, cx, cy, h, shade('#d8e048', Math.max(0.6, p.tone)));
