@@ -9,7 +9,7 @@
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
-import { blob, glow, softLine } from './gloss.ts';
+import { blob, glow, softLine, patch } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 import { celBall } from '../../lib/art/shading.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
@@ -96,7 +96,7 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
       tube([hx - rH * 0.3, hy + rH * 0.5, X(0.2), by(-0.52), X(0.16), by(-0.36)], rH * 0.26, h * 0.075, 0.18, 23),
     ];
     if (v === 'wolf') patches.push({ k: 'curve', pts: [X(-0.36), by(-0.4), X(-0.12), by(-0.38), X(0.1), by(-0.37), X(0.08), by(-0.3), X(-0.16), by(-0.29), X(-0.4), by(-0.34)], wobble: 0.06, spiky: 0.06, seed: 22, sub: 2 });
-    blob(ctx, B, mix(base, pale, v === 'wolf' ? 0.8 : 0.55), patches, { outline: false, form: false });
+    patch(ctx, B, mix(base, pale, v === 'wolf' ? 0.62 : 0.4), patches, { alpha: 0.7, feather: 0.5 });
   }
   // The open mouth: its own material, between the muzzle and the jaw; fangs on top.
   blob(ctx, B, mouth, [{ k: 'poly', pts: [hx + rH * 0.5, hy + rH * 0.52, hx + rH * 1.32, hy + rH * 0.66, jx1 + rH * 0.05, jy1 - rH * 0.14, jx0, jy0 - rH * 0.12] }], { outline: false, form: false });

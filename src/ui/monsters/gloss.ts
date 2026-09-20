@@ -39,15 +39,22 @@ function rnd(a: number, b: number, c: number): number {
   return (h >>> 0) / 4294967296;
 }
 
-/** Gradient fill of the current path: highlight offset toward the light, deep shadow at the far edge. */
-function fillRadial(ctx: CanvasRenderingContext2D, B: Brush, hex: string, cx: number, cy: number, r: number, spread: number): void {
+/**
+ * Gradient fill of the current path, ALONG THE LIGHT rather than out from a centre: lit edge,
+ * base, shadow, deep at the far edge. A radial ramp would reach its dark stop all the way around
+ * the shape, which rings every part with its own outline once parts are unioned into one mass and
+ * makes a single shape look like an inflated balloon. A directional ramp only darkens the side
+ * facing away from the light, which is also what a lit surface actually does.
+ * `spread` < 1 pulls the dark end in, for a harder, more sculpted fall-off.
+ */
+function fillForm(ctx: CanvasRenderingContext2D, B: Brush, hex: string, cx: number, cy: number, r: number, spread: number): void {
   const t = tones(B, hex);
   const lx = B.light.x, ly = B.light.y;
-  const g = ctx.createRadialGradient(cx + lx * r * 0.42, cy + ly * r * 0.42, Math.max(0.5, r * 0.04), cx, cy, r * (0.95 + spread * 0.35));
-  g.addColorStop(0, mix(t.hi, '#ffffff', 0.22));
-  g.addColorStop(0.12, t.hi);
-  g.addColorStop(0.36, t.base);
-  g.addColorStop(0.74, t.sh);
+  const g = ctx.createLinearGradient(cx + lx * r, cy + ly * r, cx - lx * r * (0.4 + spread * 0.6), cy - ly * r * (0.4 + spread * 0.6));
+  g.addColorStop(0, mix(t.hi, '#ffffff', 0.12));
+  g.addColorStop(0.2, t.hi);
+  g.addColorStop(0.5, t.base);
+  g.addColorStop(0.84, t.sh);
   g.addColorStop(1, t.deep);
   ctx.fillStyle = g; ctx.fill();
 }
@@ -87,12 +94,15 @@ function texture(ctx: CanvasRenderingContext2D, B: Brush, hex: string, tex: Text
   ctx.lineCap = 'round'; ctx.lineWidth = 1;
   switch (tex) {
     case 'fur': case 'bristle': {
-      // Short strokes lying down and outward from the spine, shadow-toned; the lit crown gets pale tips.
-      const n = Math.min(90, Math.round(amount * r * r / 9)), len = tex === 'bristle' ? r * 0.3 : r * 0.18;
+      // Short strokes lying down and out from the spine. They are a SURFACE, not a set of scratches:
+      // short relative to the mass, dense, and only a step off the tone under them, or a 70 px
+      // sprite ends up covered in hairs the length of its own leg.
+      const n = Math.min(140, Math.round(amount * r * r / 5)), len = tex === 'bristle' ? r * 0.16 : r * 0.09;
+      const soft = (hex2: string) => rgba(hex2, 0.5);
       for (let i = 0; i < n; i++) {
         const px = cx + (rnd(seed, i, 1) - 0.5) * 2.2 * r, py = cy + (rnd(seed, i, 2) - 0.5) * 2.2 * r;
         const ox = (px - cx) / r * 0.5, oy = tex === 'bristle' ? -0.9 : 0.85, l = len * (0.6 + rnd(seed, i, 3) * 0.7);
-        ctx.strokeStyle = ink(px, py);
+        ctx.strokeStyle = soft(lit(px, py) ? t.sh : t.hi);
         ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px + ox * l, py + oy * l); ctx.stroke();
       }
       break;
@@ -173,7 +183,7 @@ function texture(ctx: CanvasRenderingContext2D, B: Brush, hex: string, tex: Text
 export function glossPath(ctx: CanvasRenderingContext2D, B: Brush, hex: string, cx: number, cy: number, r: number, o: GlossOpts = {}): void {
   outlinePath(ctx, B);
   if (B.override) { ctx.fillStyle = B.override; ctx.fill(); return; }
-  fillRadial(ctx, B, hex, cx, cy, r, o.spread ?? 1);
+  fillForm(ctx, B, hex, cx, cy, r, o.spread ?? 1);
   finish(ctx, B, hex, cx, cy, r, o);
 }
 
@@ -262,7 +272,8 @@ export interface Crease { x0: number; y0: number; x1: number; y1: number; r: num
 export interface BlobOpts extends GlossOpts {
   /** Per-part soft volume shading (default on). */
   form?: boolean;
-  /** Strength of the per-part volume, 0..1 (default 0.5). */
+  /** Strength of the per-part volume, 0..1 (default 0.35). Raise it only on a part that must read
+   * as a distinct rounded form (a shoulder, a gut); the union's own gradient does most of the work. */
   formK?: number;
   creases?: Crease[];
   /** Stroke the union's outline (default on; off for a mass that sits inside another). */
@@ -383,6 +394,7 @@ function formPart(ctx: CanvasRenderingContext2D, B: Brush, hex: string, q: Part,
   const lx = B.light.x, ly = B.light.y;
   let g: CanvasGradient;
   if (q.k === 'cap' || q.k === 'tube') {
+    // A limb is a cylinder: the ramp runs ACROSS it, from the lit side to the far side.
     const x0 = q.k === 'cap' ? q.x0 : q.pts[0], y0 = q.k === 'cap' ? q.y0 : q.pts[1];
     const x1 = q.k === 'cap' ? q.x1 : q.pts[q.pts.length - 2], y1 = q.k === 'cap' ? q.y1 : q.pts[q.pts.length - 1];
     const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy) || 1, r = q.k === 'cap' ? Math.max(q.r0, q.r1 ?? q.r0) : Math.max(q.r0, q.r1);
@@ -391,12 +403,16 @@ function formPart(ctx: CanvasRenderingContext2D, B: Brush, hex: string, q: Part,
     const mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
     g = ctx.createLinearGradient(mx + nx * r, my + ny * r, mx - nx * r, my - ny * r);
   } else {
+    // Everything else: along the light, for the same reason fillForm is. A radial ramp here put a
+    // dark ring right around each part, so a body read as a bag of separate spheres.
     const b = q.k === 'ball' ? { cx: q.x, cy: q.y, r: q.r } : q.k === 'ell' ? { cx: q.x, cy: q.y, r: Math.max(q.rx, q.ry) } : bounds([q]);
-    g = ctx.createRadialGradient(b.cx + lx * b.r * 0.4, b.cy + ly * b.r * 0.4, 0, b.cx, b.cy, b.r * 1.05);
+    g = ctx.createLinearGradient(b.cx + lx * b.r, b.cy + ly * b.r, b.cx - lx * b.r, b.cy - ly * b.r);
   }
-  g.addColorStop(0, rgba(mix(t.hi, '#ffffff', 0.2), 0.55 * k));
-  g.addColorStop(0.45, rgba(t.base, 0));
-  g.addColorStop(1, rgba(t.deep, 0.7 * k));
+  // Gentle, and stopping at the shadow tone rather than the deep one: the far edge of a part is
+  // usually INTERIOR to the mass, so anything strong here reads as that part's outline.
+  g.addColorStop(0, rgba(t.hi, 0.34 * k));
+  g.addColorStop(0.46, rgba(t.base, 0));
+  g.addColorStop(1, rgba(t.sh, 0.34 * k));
   ctx.beginPath(); appendPart(ctx, q);
   ctx.fillStyle = g; ctx.fill();
 }
@@ -409,9 +425,9 @@ export function blob(ctx: CanvasRenderingContext2D, B: Brush, hex: string, parts
   if (o.outline !== false) outlinePath(ctx, B);
   if (B.override) { ctx.fillStyle = B.override; ctx.fill(); return; }
   const b = bounds(parts);
-  fillRadial(ctx, B, hex, b.cx, b.cy, b.r, o.spread ?? 1);
+  fillForm(ctx, B, hex, b.cx, b.cy, b.r, o.spread ?? 1);
   ctx.save(); ctx.clip();
-  if (o.form !== false) for (const q of parts) formPart(ctx, B, hex, q, o.formK ?? 0.5);
+  if (o.form !== false) for (const q of parts) formPart(ctx, B, hex, q, o.formK ?? 0.35);
   const t = tones(B, hex);
   if (o.creases) for (const c of o.creases) { pathCap(ctx, c.x0, c.y0, c.x1, c.y1, c.r); ctx.fillStyle = rgba(t.deep, c.a ?? 0.35); ctx.fill(); }
   if (o.tex && (o.h ?? 0) >= TEX_MIN_H && b.r >= 5) texture(ctx, B, hex, o.tex, b.cx, b.cy, b.r, o.seed ?? 0, o.amount ?? 1);
@@ -422,6 +438,34 @@ export function blob(ctx: CanvasRenderingContext2D, B: Brush, hex: string, parts
   }
   if (o.gloss) specular(ctx, B, b.cx, b.cy, b.r * 0.8, o.gloss);
   ctx.restore();
+}
+
+/** Options for `patch`. */
+export interface PatchOpts {
+  /** Peak opacity, 0..1 (default 0.72): under 1 the form beneath still reads through the marking. */
+  alpha?: number;
+  /** How much of the radius the edge fades over, 0..1 (default 0.45). 0 gives a hard-edged marking. */
+  feather?: number;
+}
+
+/**
+ * A MARKING on a surface: a pale muzzle, a belly, a blaze, a saddle, a war-paint stripe. Filled
+ * with a soft fall-off at its edge and a little of the form showing through, because a marking is
+ * a change of colour in one surface, not a separate object: give it a hard edge and full opacity
+ * and it reads as a sticker laid on the creature. Only a different MATERIAL gets an outline and a
+ * blob of its own. Skipped during the hit flash, which is already a flat silhouette.
+ */
+export function patch(ctx: CanvasRenderingContext2D, B: Brush, hex: string, parts: readonly Part[], o: PatchOpts = {}): void {
+  if (!parts.length || B.override) return;
+  const b = bounds(parts), a = o.alpha ?? 0.72, feather = Math.max(0, Math.min(1, o.feather ?? 0.45));
+  ctx.beginPath();
+  for (const q of parts) appendPart(ctx, q);
+  if (feather <= 0.01) { ctx.fillStyle = rgba(hex, a); ctx.fill(); return; }
+  const g = ctx.createRadialGradient(b.cx, b.cy, 0, b.cx, b.cy, Math.max(0.5, b.r));
+  g.addColorStop(0, rgba(hex, a));
+  g.addColorStop(Math.max(0.02, 1 - feather), rgba(hex, a));
+  g.addColorStop(1, rgba(hex, 0));
+  ctx.fillStyle = g; ctx.fill();
 }
 
 /** A soft interior line (a mouth, a brow, a fold): translucent deep tone, round caps, no ink. */
