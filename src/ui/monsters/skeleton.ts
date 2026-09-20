@@ -10,6 +10,16 @@ import { B, groundShadow, eye } from './common.ts';
 import { blob, glow, softLine, glossBall, glossPoly, glossTaper, appendCurve, lumpy } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
+import type { Arm, Mats } from './figure.ts';
+import { blade, hand as fist, makeRig } from './figure.ts';
+
+/** Bone, and the rusted iron this family carries: nothing here is bright. */
+const BONE = (t: number): Mats => ({
+  skin: shade('#d8d0c0', t), skinFar: shade('#a89e8c', t), hair: shade('#2a2420', t),
+  leather: shade('#4a3424', t), strap: shade('#3a2a1c', t), boot: shade('#2a221e', t),
+  steel: shade('#9c8a7c', t), dull: shade('#6a5a4a', t),
+  wood: shade('#5a4430', t), bone: shade('#e8dcc0', t), brass: shade('#7a6248', t),
+});
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
@@ -128,135 +138,132 @@ function skull(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number,
 }
 
 function skeleton(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
-  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
-  const bn = p.base, old = p.dark;
-  const murk = mix(old, INK, 0.9);
-  const rag = shade('#6b6353', p.tone), rust = shade('#70503c', p.tone), leather = shade('#4a3424', p.tone);
-  const sw = p.breathe * 1.1;                                               // the upper body sways on the spine
+  const R = makeRig(x, y, h, p, { tilt: -0.018, hipTilt: 0.02, turn: 0.02, near: [0.085, 0.105, 0.12], far: [-0.082, -0.1, -0.118], toe: [0.7, -0.6] }, BONE);
+  const { sy, hx, hy, hr } = R;
+  const bn = p.base, old = p.dark, murk = mix(old, INK, 0.9);
+  const rag = shade('#6b6353', p.tone), leather = shade('#4a3424', p.tone);
+  const u = h / 100;
+  const sw = p.breathe * h * 0.011;                                         // the upper body sways on the spine
   const jd = Math.pow(Math.max(0, Math.sin(p.frame / 19)), 14) * 0.3;       // the jaw drops now and then
+  const D = (v: number) => sy + v * h;                                      // dy below the shoulder line
+  const cx = x + h * 0.012 + sw;                                            // the spine's x through the chest
   groundShadow(ctx, x, y + 1, h * 0.5);
 
-  const cxr = X(1.5 + sw * 0.85);   // the spine's x through the chest
+  // Both arms hang; the sword carries on DOWN and forward from the near forearm. It used to rise
+  // from a hand at the hip, a 152 degree wrist, which is the same fault the bandits had.
+  const near: Arm = [R.sNear, { x: x + h * 0.24, y: D(0.193) }, { x: x + h * 0.211, y: D(0.35) }];
+  const far: Arm = [R.sFar, { x: x - h * 0.181, y: D(0.229) }, { x: x - h * 0.151, y: D(0.386) }];
 
   // The hollow inside the ribs, laid down first so the gaps between them read as space, not paint.
   hollow(ctx, [
-    X(-11.5 + sw * 0.85), Y(-71), cxr, Y(-72.5), X(14 + sw * 0.85), Y(-70), X(12.5 + sw * 0.85), Y(-57),
-    X(8.5), Y(-50), X(0), Y(-48.5), X(-8), Y(-50), X(-10.5 + sw * 0.85), Y(-56),
+    cx - h * 0.112, D(0.03), cx, D(0.016), cx + h * 0.118, D(0.034), cx + h * 0.104, D(0.1),
+    cx + h * 0.07, D(0.15), cx, D(0.168), cx - h * 0.068, D(0.152), cx - h * 0.098, D(0.1),
   ], murk, 0.04, 6);
 
-  // The far side: shoulder blades behind the cage, the arm left hanging back, the leg set behind.
+  // The far side: shoulder blade behind the cage, the far arm hanging back, the far leg behind.
   blob(ctx, B, old, [
-    { k: 'ell', x: X(-14.5 + sw * 0.8), y: Y(-70.5), rx: 4.4 * u, ry: 5.2 * u, rot: 0.3 },
-    { k: 'ell', x: X(14.5 + sw * 0.9), y: Y(-68.5), rx: 3.2 * u, ry: 4.6 * u, rot: -0.3 },
-    ...limb(X(-13.5 + sw * 0.9), Y(-74.5), X(-20.5 + sw * 0.7), Y(-62), X(-18 + sw * 0.5), Y(-48), 2.4 * u, 2.0 * u, 31),
+    { k: 'ell', x: R.sFar.x - h * 0.012, y: R.sFar.y - h * 0.01, rx: h * 0.044, ry: h * 0.05, rot: 0.3 },
+    ...limb(R.sFar.x, R.sFar.y, far[1].x, far[1].y, far[2].x, far[2].y, h * 0.023, h * 0.019, 31),
     { k: 'poly', pts: [
-      X(-20.4), Y(-49.6), X(-15.8), Y(-49.8), X(-14.9), Y(-47), X(-14.2), Y(-42.4), X(-16.0), Y(-45),
-      X(-15.8), Y(-40.2), X(-17.6), Y(-44.8), X(-18.6), Y(-40), X(-19.6), Y(-44.6), X(-21.6), Y(-41.8), X(-21.2), Y(-46.8),
+      far[2].x - h * 0.026, far[2].y - h * 0.012, far[2].x + h * 0.02, far[2].y - h * 0.014, far[2].x + h * 0.028, far[2].y + h * 0.012,
+      far[2].x + h * 0.032, far[2].y + h * 0.056, far[2].x + h * 0.014, far[2].y + h * 0.03,
+      far[2].x + h * 0.016, far[2].y + h * 0.078, far[2].x - h * 0.002, far[2].y + h * 0.032,
+      far[2].x - h * 0.012, far[2].y + h * 0.076, far[2].x - h * 0.022, far[2].y + h * 0.03,
+      far[2].x - h * 0.042, far[2].y + h * 0.058, far[2].x - h * 0.038, far[2].y + h * 0.008,
     ] },
-    ...limb(X(-7), Y(-37), X(-11.5), Y(-22.5), X(-13), Y(-7), 3.0 * u, 2.5 * u, 33),
-    { k: 'poly', pts: [X(-10), Y(-9), X(-15), Y(-9), X(-19.5), Y(-5), X(-19.5), Y(-3), X(-9.5), Y(-3)] },
   ], { h, formK: 0.5 });
-  gap(ctx, X(-14.2 + sw * 0.9), Y(-73.9), X(-20.5 + sw * 0.7), Y(-62), 2.4 * u, murk, 0.8);
-  gap(ctx, X(-20.5 + sw * 0.7), Y(-62), X(-13.5 + sw * 0.9), Y(-74.5), 2.3 * u, murk);
-  gap(ctx, X(-18 + sw * 0.5), Y(-48), X(-20.5 + sw * 0.7), Y(-62), 2.0 * u, murk);
-  gap(ctx, X(-11.5), Y(-22.5), X(-7), Y(-37), 2.9 * u, murk);
-  gap(ctx, X(-13), Y(-8), X(-11.5), Y(-22.5), 2.3 * u, murk);
-  softLine(ctx, B, [X(-16.5), Y(-44.8), X(-14.6), Y(-43)], murk, Math.max(1, 0.9 * u), 0.6);
-  softLine(ctx, B, [X(-18.4), Y(-44.6), X(-18.0), Y(-41.8)], murk, Math.max(1, 0.9 * u), 0.6);
-  softLine(ctx, B, [X(-20.2), Y(-44.4), X(-21.2), Y(-42.8)], murk, Math.max(1, 0.9 * u), 0.6);
+  blob(ctx, B, old, [
+    ...limb(R.legL[0].x, R.legL[0].y, R.legL[1].x, R.legL[1].y, R.legL[2].x, R.legL[2].y, h * 0.03, h * 0.025, 33),
+    { k: 'poly', pts: [R.legL[2].x + h * 0.03, R.legL[2].y + h * 0.01, R.legL[2].x - h * 0.02, R.legL[2].y + h * 0.01, R.legL[2].x - h * 0.065, R.legL[2].y + h * 0.05, R.legL[2].x - h * 0.065, R.legL[2].y + h * 0.07, R.legL[2].x + h * 0.035, R.legL[2].y + h * 0.07] },
+  ], { h, formK: 0.5 });
+  gap(ctx, far[1].x, far[1].y, R.sFar.x, R.sFar.y, h * 0.023, murk);
+  gap(ctx, far[2].x, far[2].y, far[1].x, far[1].y, h * 0.019, murk);
+  gap(ctx, R.legL[1].x, R.legL[1].y, R.legL[0].x, R.legL[0].y, h * 0.029, murk);
+  gap(ctx, R.legL[2].x, R.legL[2].y, R.legL[1].x, R.legL[1].y, h * 0.023, murk);
 
-  // A rusty, notched blade rising from the near hand; the fingers close over the grip after it.
-  const hx = X(23 + sw * 0.3), hy = Y(-45.2), bx = X(36 + sw * 0.1), by = Y(-83);
-  {
-    const dx = bx - hx, dy = by - hy, L = Math.hypot(dx, dy), nx = -dy / L, ny = dx / L, ex = dx / L, ey = dy / L;
-    const pt = (t: number, s: number): [number, number] => [hx + ex * L * t + nx * s * u, hy + ey * L * t + ny * s * u];
-    glossTaper(ctx, B, hx - ex * 6 * u, hy - ey * 6 * u, hx + ex * 2 * u, hy + ey * 2 * u, 1.4 * u, 1.4 * u, leather, { h });
-    glossPoly(ctx, B, [...pt(0.1, -4.5), ...pt(0.1, 4.5), ...pt(0.15, 4.5), ...pt(0.15, -4.5)], mix(leather, INK, 0.3), { h });
-    glossPoly(ctx, B, [
-      ...pt(0.145, 2.1), ...pt(0.4, 2.2), ...pt(0.45, 1), ...pt(0.5, 2.2), ...pt(0.78, 1.8), ...pt(1, -0.4),
-      ...pt(0.72, -2.4), ...pt(0.64, -1.2), ...pt(0.58, -2.6), ...pt(0.3, -2.7), ...pt(0.145, -2.1),
-    ], rust, { h, gloss: 0.15, spread: 0.6 });
-    ctx.strokeStyle = B.col(mix(rust, '#e8d8b0', 0.55)); ctx.lineWidth = 1; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(...pt(0.18, -2)); ctx.lineTo(...pt(0.56, -2.4)); ctx.moveTo(...pt(0.66, -1.2)); ctx.lineTo(...pt(0.98, -0.5)); ctx.stroke();
-  }
+  // A rusted blade hanging from the near fist, point down and forward past the leg.
+  const ga = blade(ctx, R, near[2], x + h * 0.37, y - h * 0.105, h * 0.017, h * 0.058);
 
-  // The axial bones and the near side: spine above and below the cage, four ribs, the near limbs.
+  // The axial bones and the near side: spine, ribs, clavicles, pelvis and the near limbs.
   const bones: Part[] = [
     // The lumbar column, with a knob per vertebra: below the last rib it stands against the
     // background rather than against the chest hollow, so it has to read as bone on its own.
-    { k: 'tube', pts: [X(0.5), Y(-39.5), X(1.2 + sw * 0.5), Y(-45), X(1.8 + sw * 0.8), Y(-51)], r0: 3.0 * u, r1: 2.7 * u },
-    { k: 'ball', x: X(0.9), y: Y(-42), r: 2.5 * u },
-    { k: 'ball', x: X(1.4 + sw * 0.4), y: Y(-46.5), r: 2.4 * u },
-    { k: 'ball', x: X(1.8 + sw * 0.7), y: Y(-50.5), r: 2.2 * u },
-    { k: 'tube', pts: [X(2 + sw * 0.9), Y(-71), X(3.4 + sw * 1.15), Y(-79)], r0: 2.1 * u, r1: 1.9 * u },
+    { k: 'tube', pts: [x + h * 0.006, D(0.215), cx - h * 0.002, D(0.19), cx, D(0.165)], r0: h * 0.028, r1: h * 0.025 },
+    { k: 'ball', x: x + h * 0.007, y: D(0.205), r: h * 0.024 },
+    { k: 'ball', x: cx - h * 0.002, y: D(0.186), r: h * 0.023 },
+    { k: 'ball', x: cx, y: D(0.168), r: h * 0.021 },
+    { k: 'tube', pts: [cx + sw * 0.2, D(0.01), hx - h * 0.004, hy + hr * 0.72], r0: h * 0.021, r1: h * 0.019 },
+    // The sternum down the front of the cage.
+    { k: 'tube', pts: [cx + h * 0.006, D(0.034), cx + h * 0.01, D(0.138)], r0: h * 0.015, r1: h * 0.012 },
   ];
   // Four ribs with the same sag, so the dark between them stays open right across the chest:
-  // widest at the middle of the cage and drawn in toward the waist.
-  const RW = [10.6, 12.6, 11.8, 8.2], RY = [-70.5, -65, -59.5, -54];
+  // widest at the middle of the cage and drawn in toward the waist. A finer pitch than this is
+  // mud at combat size — 0.04h between ribs is under 2px at h = 40.
+  const RW = [0.106, 0.126, 0.118, 0.082], RY = [0.03, 0.072, 0.112, 0.15];
+  const rr = Math.max(h * 0.012, Math.min(1, h * 0.026) * 0.75);
   for (let i = 0; i < 4; i++) {
-    const W = RW[i] * u, t = RY[i];
+    const W = RW[i] * h, t = RY[i];
     bones.push({ k: 'tube', pts: [
-      cxr - W, Y(t + 1.5), cxr - W * 0.5, Y(t + 2.8), cxr + 0.8 * u, Y(t + 3.0),
-      cxr + W * 0.55, Y(t + 2.6), cxr + W * 1.04, Y(t - 0.9),
-    ], r0: 1.2 * u, r1: 1.2 * u });
+      cx - W, D(t + 0.015), cx - W * 0.5, D(t + 0.028), cx + h * 0.008, D(t + 0.03),
+      cx + W * 0.55, D(t + 0.026), cx + W * 1.04, D(t - 0.009),
+    ], r0: rr, r1: rr });
   }
   bones.push(
     // Clavicles: the near shoulder sits lower than the far one, so the frame is not a diagram.
-    { k: 'tube', pts: [X(-14 + sw * 0.8), Y(-74.5), X(1.5 + sw), Y(-73), X(14 + sw * 0.9), Y(-71.2)], r0: 1.7 * u, r1: 1.9 * u },
-    // The pelvis: a wide girdle with a crest each side and the ischia below.
+    { k: 'tube', pts: [R.sFar.x + h * 0.004, R.sFar.y - h * 0.03, cx, D(-0.012), R.sNear.x - h * 0.004, R.sNear.y - h * 0.032], r0: h * 0.017, r1: h * 0.019 },
+    // The pelvis: a basin, two iliac blades flaring up and out from a narrow sacrum.
     { k: 'curve', pts: [
-      X(-13.5), Y(-41), X(-12), Y(-45), X(-6), Y(-46.5), X(0.5), Y(-44), X(7), Y(-46.5),
-      X(12.5), Y(-45), X(14), Y(-41), X(10), Y(-34.5), X(6), Y(-36), X(0.5), Y(-38),
-      X(-5), Y(-36), X(-9), Y(-34.5),
+      x - h * 0.118, D(0.245), x - h * 0.108, D(0.205), x - h * 0.052, D(0.19), x + h * 0.008, D(0.214),
+      x + h * 0.07, D(0.19), x + h * 0.118, D(0.205), x + h * 0.128, D(0.245),
+      x + h * 0.09, D(0.31), x + h * 0.05, D(0.295), x + h * 0.008, D(0.275),
+      x - h * 0.044, D(0.295), x - h * 0.08, D(0.31),
     ], wobble: 0.035, seed: 3, sub: 2 },
-    ...limb(X(7), Y(-37), X(10.5), Y(-21.5), X(11.5), Y(-5.5), 3.2 * u, 2.6 * u, 35),
-    { k: 'poly', pts: [X(8.5), Y(-7), X(14), Y(-7), X(18), Y(-2.4), X(18), Y(0.4), X(8), Y(0.4)] },
-    ...limb(X(14 + sw * 0.9), Y(-71.2), X(20.5 + sw * 0.6), Y(-59.5), X(22.5 + sw * 0.3), Y(-47.5), 2.6 * u, 2.2 * u, 37),
-    { k: 'poly', pts: [X(20.2), Y(-48.2), X(24.8), Y(-48.6), X(26.4), Y(-46.2), X(25.8), Y(-42.4), X(22.0), Y(-41.6), X(19.4), Y(-44.2)] },
+    ...limb(R.sNear.x, R.sNear.y, near[1].x, near[1].y, near[2].x, near[2].y, h * 0.026, h * 0.022, 37),
   );
   blob(ctx, B, bn, bones, { h, formK: 0.5, tex: 'cracks', seed: 8, amount: 0.4 });
+  blob(ctx, B, bn, [
+    ...limb(R.legR[0].x, R.legR[0].y, R.legR[1].x, R.legR[1].y, R.legR[2].x, R.legR[2].y, h * 0.032, h * 0.026, 35),
+    { k: 'poly', pts: [R.legR[2].x - h * 0.03, R.legR[2].y + h * 0.01, R.legR[2].x + h * 0.025, R.legR[2].y + h * 0.01, R.legR[2].x + h * 0.065, R.legR[2].y + h * 0.05, R.legR[2].x + h * 0.065, R.legR[2].y + h * 0.075, R.legR[2].x - h * 0.035, R.legR[2].y + h * 0.075] },
+  ], { h, formK: 0.5, tex: 'cracks', seed: 9, amount: 0.4 });
+  // The fist closes on the grip after the blade, so the fingers lie across it.
+  fist(ctx, R, near[2], ga, 42, { hex: bn, flip: -1, k: 0.92 });
 
   // Joints: a dark gap at every one, so the bones read as separate and the limbs as jointed.
-  gap(ctx, X(20.5 + sw * 0.6), Y(-59.5), X(14 + sw * 0.9), Y(-71.2), 2.5 * u, murk);
-  gap(ctx, X(22.5 + sw * 0.3), Y(-47.8), X(20.5 + sw * 0.6), Y(-59.5), 2.2 * u, murk);
-  gap(ctx, X(14.6 + sw * 0.9), Y(-70.6), X(20.5 + sw * 0.6), Y(-59.5), 2.6 * u, murk, 0.8);
-  // Between the lumbar vertebrae, so the waist reads as a stack of bones and not one bone.
-  gap(ctx, X(1.4), Y(-46.5), X(0.9), Y(-42), 2.5 * u, murk, 0.7);
-  gap(ctx, X(1.8), Y(-50.5), X(1.4), Y(-46.5), 2.4 * u, murk, 0.7);
-  gap(ctx, X(10.5), Y(-21.5), X(7), Y(-37), 3.1 * u, murk);
-  gap(ctx, X(11.5), Y(-6.5), X(10.5), Y(-21.5), 2.4 * u, murk);
-  gap(ctx, X(7), Y(-35.8), X(10.5), Y(-21.5), 3.0 * u, murk, 0.5);
-  // Toes, and the fingers curled over the grip.
-  softLine(ctx, B, [X(14.4), Y(-6), X(15.4), Y(0.2)], murk, Math.max(1, 0.9 * u), 0.5);
-  softLine(ctx, B, [X(-15.4), Y(-8.2), X(-16.4), Y(-3.2)], murk, Math.max(1, 0.9 * u), 0.5);
-  softLine(ctx, B, [X(20.6), Y(-46.8), X(25.9), Y(-47.2)], murk, Math.max(1, 0.9 * u), 0.55);
-  softLine(ctx, B, [X(20.2), Y(-44.6), X(25.9), Y(-44.8)], murk, Math.max(1, 0.9 * u), 0.55);
-  softLine(ctx, B, [X(20.6), Y(-42.6), X(25.4), Y(-42.6)], murk, Math.max(1, 0.9 * u), 0.55);
-  // Vertebrae in the lumbar column and up the neck.
-  for (let i = 0; i < 2; i++) softLine(ctx, B, [X(-1.4 + sw * 0.5), Y(-46.6 - i * 3.2), X(4.2 + sw * 0.6), Y(-47 - i * 3.2)], murk, Math.max(1, 0.9 * u), 0.6);
-  for (let i = 0; i < 2; i++) softLine(ctx, B, [X(0.2 + sw), Y(-73.4 - i * 3.1), X(5 + sw * 1.1), Y(-73.8 - i * 3.1)], murk, Math.max(1, 1.1 * u), 0.7);
+  gap(ctx, near[1].x, near[1].y, R.sNear.x, R.sNear.y, h * 0.025, murk);
+  gap(ctx, near[2].x, near[2].y, near[1].x, near[1].y, h * 0.022, murk);
+  gap(ctx, R.sNear.x, R.sNear.y, near[1].x, near[1].y, h * 0.026, murk, 0.8);
+  gap(ctx, cx - h * 0.002, D(0.186), x + h * 0.007, D(0.205), h * 0.025, murk, 0.7);
+  gap(ctx, cx, D(0.168), cx - h * 0.002, D(0.186), h * 0.024, murk, 0.7);
+  gap(ctx, R.legR[1].x, R.legR[1].y, R.legR[0].x, R.legR[0].y, h * 0.031, murk);
+  gap(ctx, R.legR[2].x, R.legR[2].y, R.legR[1].x, R.legR[1].y, h * 0.024, murk);
+  gap(ctx, R.legR[0].x, R.legR[0].y + h * 0.012, R.legR[1].x, R.legR[1].y, h * 0.03, murk, 0.5);
+  // Toes, and the vertebrae up the neck.
+  softLine(ctx, B, [R.legR[2].x + h * 0.03, R.legR[2].y + h * 0.03, R.legR[2].x + h * 0.04, R.legR[2].y + h * 0.072], murk, Math.max(1, 0.9 * u), 0.5);
+  softLine(ctx, B, [R.legL[2].x - h * 0.026, R.legL[2].y + h * 0.026, R.legL[2].x - h * 0.036, R.legL[2].y + h * 0.064], murk, Math.max(1, 0.9 * u), 0.5);
+  for (let i = 0; i < 2; i++) softLine(ctx, B, [cx - h * 0.022, D(0.18 + i * 0.03), cx + h * 0.026, D(0.183 + i * 0.03)], murk, Math.max(1, 0.9 * u), 0.6);
+  for (let i = 0; i < 2; i++) softLine(ctx, B, [cx - h * 0.018 + sw * 0.4, D(-0.02 - i * 0.031), cx + h * 0.03 + sw * 0.4, D(-0.024 - i * 0.031)], murk, Math.max(1, 1.1 * u), 0.7);
 
   // The pelvic hollow and the two smaller holes under it; a lit edge along each iliac crest.
   ctx.fillStyle = B.col(mix(murk, INK, 0.45));
-  pathEllipse(ctx, X(0.5), Y(-40.2), 3.2 * u, 2.1 * u); ctx.fill();
-  pathEllipse(ctx, X(-5.4), Y(-37.2), 1.9 * u, 1.4 * u, 0.4); ctx.fill();
-  pathEllipse(ctx, X(6.4), Y(-37.2), 1.9 * u, 1.4 * u, -0.4); ctx.fill();
+  pathEllipse(ctx, x + h * 0.008, D(0.256), h * 0.032, h * 0.021); ctx.fill();
+  pathEllipse(ctx, x - h * 0.05, D(0.286), h * 0.019, h * 0.014, 0.4); ctx.fill();
+  pathEllipse(ctx, x + h * 0.066, D(0.286), h * 0.019, h * 0.014, -0.4); ctx.fill();
   ctx.strokeStyle = B.col(rgba(mix(bn, '#ffffff', 0.5), 0.5)); ctx.lineWidth = Math.max(1, 1.1 * u); ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(X(-11.5), Y(-44.3)); ctx.quadraticCurveTo(X(-6.5), Y(-46.6), X(-1.5), Y(-44.7)); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(X(12), Y(-44.3)); ctx.quadraticCurveTo(X(7), Y(-46.6), X(2.5), Y(-44.7)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - h * 0.1, D(0.213)); ctx.quadraticCurveTo(x - h * 0.05, D(0.192), x - h * 0.006, D(0.21)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + h * 0.11, D(0.213)); ctx.quadraticCurveTo(x + h * 0.062, D(0.192), x + h * 0.02, D(0.21)); ctx.stroke();
 
   // One ragged scrap of rotted cloth off the far hip, in a dirty, washed-out tone.
   blob(ctx, B, rag, [{ k: 'curve', pts: [
-    X(-14), Y(-44), X(-8.5), Y(-43), X(-9), Y(-36), X(-11), Y(-29), X(-10), Y(-22),
-    X(-12.5), Y(-27), X(-14), Y(-18), X(-16.5), Y(-25.5), X(-19.5), Y(-21), X(-18.5), Y(-29.5), X(-18), Y(-40),
+    x - h * 0.125, D(0.215), x - h * 0.07, D(0.225), x - h * 0.075, D(0.295), x - h * 0.095, D(0.365), x - h * 0.085, D(0.435),
+    x - h * 0.11, D(0.385), x - h * 0.125, D(0.475), x - h * 0.15, D(0.4), x - h * 0.18, D(0.445), x - h * 0.17, D(0.36), x - h * 0.165, D(0.255),
   ], wobble: 0.05, seed: 5, sub: 2 }], { h, tex: 'folds', seed: 5, amount: 0.5, formK: 0.35, spread: 0.7 });
   ctx.strokeStyle = B.col(leather); ctx.lineWidth = Math.max(1, 1.7 * u); ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(X(12.5 + sw * 0.9), Y(-72)); ctx.quadraticCurveTo(X(2 + sw * 0.6), Y(-58), X(-9), Y(-44.5)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(R.sNear.x - h * 0.012, R.sNear.y - h * 0.02); ctx.quadraticCurveTo(cx, D(0.09), x - h * 0.08, D(0.215)); ctx.stroke();
 
   // The skull, tipped and turned a little off the spine, hung forward on the neck.
-  skull(ctx, X(5.2 + sw * 1.3), Y(-89), 8.4 * u, 0.16, bn, old, h, jd, murk);
+  skull(ctx, hx, hy, hr * 0.94, 0.16, bn, old, h, jd, murk);
+  void p.light;
 }
-
 
 function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
@@ -275,32 +282,32 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   const h0x = X(19 + sw * 0.4), h0y = Y(-10), h1x = X(28 + sw * 0.6), h1y = Y(-90);
   const hdx = h1x - h0x, hdy = h1y - h0y, hL = Math.hypot(hdx, hdy), hex2 = hdx / hL, hey = hdy / hL;
   const pt = (t: number, s: number): [number, number] => [h0x + hex2 * hL * t - hey * s * u, h0y + hey * hL * t + hex2 * s * u];
-  const nkx = X(22.8 + sw * 0.5), nky = Y(-43.6);   // the near hand on the haft
+  const nkx = X(22.8 + sw * 0.5), nky = Y(-40.5);   // the near hand on the haft, on the frame
 
   // The bones the plate leaves bare: the neck, both elbows, both knees. Each is its own small
   // object, lit on its own, so bone stays several steps brighter than the steel around it.
   glossTaper(ctx, B, X(3.2 + sw), Y(-81), X(2 + sw), Y(-70), 3.0 * u, 3.3 * u, bn, { h });
   for (let i = 0; i < 2; i++) softLine(ctx, B, [X(0.4 + sw), Y(-73.5 - i * 3), X(4.6 + sw), Y(-73.8 - i * 3)], murk, Math.max(1, 0.9 * u), 0.55);
-  glossBall(ctx, B, X(25 + sw * 0.8), Y(-56), 3.4 * u, bn, { h });
-  glossBall(ctx, B, X(-22 + sw * 0.8), Y(-56), 3.2 * u, old, { h });
-  glossBall(ctx, B, X(10), Y(-25.5), 3.7 * u, bn, { h });
-  glossBall(ctx, B, X(-11), Y(-25.5), 3.4 * u, old, { h });
-  gap(ctx, X(25 + sw * 0.8), Y(-56), X(18 + sw), Y(-67), 2.8 * u, murk, 0.55);
-  gap(ctx, X(-22 + sw * 0.8), Y(-56), X(-16 + sw), Y(-67), 2.6 * u, murk, 0.55);
-  gap(ctx, X(10), Y(-25.5), X(8), Y(-45), 3.2 * u, murk, 0.55);
-  gap(ctx, X(-11), Y(-25.5), X(-9), Y(-45), 3.0 * u, murk, 0.55);
+  glossBall(ctx, B, X(23.1 + sw * 0.8), Y(-56.5), 3.4 * u, bn, { h });
+  glossBall(ctx, B, X(-29.5 + sw * 0.8), Y(-60.3), 3.2 * u, old, { h });
+  glossBall(ctx, B, X(10), Y(-28.5), 3.7 * u, bn, { h });
+  glossBall(ctx, B, X(-11), Y(-28.5), 3.4 * u, old, { h });
+  gap(ctx, X(23.1 + sw * 0.8), Y(-56.5), X(17.4 + sw), Y(-74.1), 2.8 * u, murk, 0.55);
+  gap(ctx, X(-29.5 + sw * 0.8), Y(-60.3), X(-13.8 + sw), Y(-70.1), 2.6 * u, murk, 0.55);
+  gap(ctx, X(10), Y(-28.5), X(8), Y(-50), 3.2 * u, murk, 0.55);
+  gap(ctx, X(-11), Y(-28.5), X(-9), Y(-50), 3.0 * u, murk, 0.55);
 
   // The far side plate: darker still, behind. Cuisse, greave and sabaton; upper arm and vambrace.
   blob(ctx, B, steelD, [
-    { k: 'cap', x0: X(-8), y0: Y(-47), x1: X(-10.5), y1: Y(-30), r0: 4.4 * u, r1: 3.6 * u },
-    { k: 'cap', x0: X(-11.5), y0: Y(-20), x1: X(-12.5), y1: Y(-6.5), r0: 3.6 * u, r1: 3.2 * u },
+    { k: 'cap', x0: X(-8), y0: Y(-50), x1: X(-10.5), y1: Y(-32.5), r0: 4.4 * u, r1: 3.6 * u },
+    { k: 'cap', x0: X(-11.5), y0: Y(-23), x1: X(-12.5), y1: Y(-9), r0: 3.6 * u, r1: 3.2 * u },
     { k: 'curve', pts: [X(-18), Y(-6), X(-11), Y(-7.5), X(-7.5), Y(-4.5), X(-9), Y(-2.2), X(-19.5), Y(-2.5)], wobble: 0.04, seed: 12, sub: 2 },
-    { k: 'cap', x0: X(-16 + sw), y0: Y(-68), x1: X(-21.5 + sw * 0.8), y1: Y(-60.5), r0: 3.8 * u, r1: 3.2 * u },
-    { k: 'cap', x0: X(-22 + sw * 0.8), y0: Y(-51.5), x1: X(-18 + sw * 0.6), y1: Y(-43), r0: 3.2 * u, r1: 3 * u },
+    { k: 'cap', x0: X(-13.8 + sw), y0: Y(-70.1), x1: X(-28.6 + sw * 0.8), y1: Y(-61.2), r0: 3.8 * u, r1: 3.2 * u },
+    { k: 'cap', x0: X(-29.5 + sw * 0.8), y0: Y(-59.8), x1: X(-23.5 + sw * 0.6), y1: Y(-45.5), r0: 3.2 * u, r1: 3 * u },
   ], { h, formK: 0.45 });
 
   // The shield on the far forearm: battered plate with a faded device.
-  const shx = X(-22 + sw * 0.6), shy = Y(-50);
+  const shx = X(-24.7 + sw * 0.6), shy = Y(-48.5);
   blob(ctx, B, steelD, [
     { k: 'curve', pts: [shx - 10 * u, shy - 15 * u, shx + 1 * u, shy - 16 * u, shx + 10.5 * u, shy - 13 * u, shx + 9 * u, shy - 1 * u, shx + 3 * u, shy + 12 * u, shx - 2 * u, shy + 16 * u, shx - 8 * u, shy + 9 * u, shx - 12 * u, shy - 3 * u], wobble: 0.02, seed: 13, sub: 2 },
   ], { h, formK: 0.5, gloss: 0.2, tex: 'cracks', seed: 14, amount: 0.45, spread: 0.8 });
@@ -318,14 +325,14 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The near plate: greave and cuisse, fauld, breastplate, near arm and gauntlet cuff. One dented mass.
   const cy = Y(-58.5 - br), cx = X(1 + sw);
   const plate: Part[] = [
-    { k: 'cap', x0: X(8), y0: Y(-47), x1: X(9.5), y1: Y(-30), r0: 4.6 * u, r1: 3.8 * u },
-    { k: 'cap', x0: X(10.5), y0: Y(-20), x1: X(11.5), y1: Y(-6.5), r0: 3.8 * u, r1: 3.3 * u },
+    { k: 'cap', x0: X(8), y0: Y(-50), x1: X(9.5), y1: Y(-32.5), r0: 4.6 * u, r1: 3.8 * u },
+    { k: 'cap', x0: X(10.5), y0: Y(-23), x1: X(11.5), y1: Y(-9), r0: 3.8 * u, r1: 3.3 * u },
     { k: 'curve', pts: [X(6.5), Y(-6), X(13), Y(-7.5), X(19), Y(-4.5), X(18), Y(-2.2), X(8), Y(-2.5)], wobble: 0.04, seed: 15, sub: 2 },
     { k: 'poly', pts: [X(-14 + sw * 0.5), Y(-51), X(15 + sw * 0.5), Y(-51), X(17), Y(-41), X(9), Y(-38.5), X(-9), Y(-38.5), X(-16), Y(-41)] },
     { k: 'curve', pts: [cx - 15.5 * u, cy - 13.5 * u, cx - 5 * u, cy - 15.5 * u, cx + 5 * u, cy - 15.5 * u, cx + 15.5 * u, cy - 13.5 * u, cx + 17.5 * u, cy - 2 * u, cx + 13 * u, cy + 11 * u, cx + 1 * u, cy + 14 * u, cx - 12 * u, cy + 11 * u, cx - 17 * u, cy - 2 * u], wobble: 0.025, seed: 11, sub: 2, gloss: 0.22 },
-    { k: 'cap', x0: X(18 + sw), y0: Y(-67), x1: X(24.5 + sw * 0.8), y1: Y(-60.5), r0: 4 * u, r1: 3.4 * u },
-    { k: 'cap', x0: X(25 + sw * 0.8), y0: Y(-51.5), x1: nkx, y1: nky + 3 * u, r0: 3.4 * u, r1: 3.6 * u },
-    { k: 'cap', x0: X(-19 + sw * 0.6), y0: Y(-43), x1: X(-17.5 + sw * 0.6), y1: Y(-39.5), r0: 3.2 * u, r1: 3.5 * u },
+    { k: 'cap', x0: X(17.4 + sw), y0: Y(-74.1), x1: X(22.6 + sw * 0.8), y1: Y(-58), r0: 4 * u, r1: 3.4 * u },
+    { k: 'cap', x0: X(23.1 + sw * 0.8), y0: Y(-55.5), x1: nkx, y1: nky + 3 * u, r0: 3.4 * u, r1: 3.6 * u },
+    { k: 'cap', x0: X(-24.5 + sw * 0.6), y0: Y(-45.5), x1: X(-23 + sw * 0.6), y1: Y(-42), r0: 3.2 * u, r1: 3.5 * u },
   ];
   blob(ctx, B, steel, plate, { h, tex: 'cracks', seed: 20, amount: 0.9, formK: 0.55, gloss: 0.08, creases: [
     { x0: cx - 14 * u, y0: cy - 5 * u, x1: cx - 8 * u, y1: cy - 12 * u, r: 1.6 * u, a: 0.35 },
