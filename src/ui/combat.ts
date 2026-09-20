@@ -163,7 +163,7 @@ export class CombatScreen implements Screen {
     alive.forEach((mi, k) => {
       const m = s.monsters[mi];
       const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + v.h * 0.62 + 18 + m.group * 10;
-      const h = combatHeight(m.def.size, slot);
+      const h = combatHeight(m.def.size, n);
       if (m.flash > 0) m.flash--;
       if (m.hp < this.lastMonsterHp[mi]) { this.burst(x, y - h * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070'); this.lastMonsterHp[mi] = m.hp; }
       const asleep = m.conditions.includes('asleep');

@@ -66,9 +66,9 @@ const size = await page.evaluate(async (o: { only: string[]; family?: string; sc
   }
   const defs = (Object.values(M.MONSTERS) as any[]).filter((d) => (o.only.length ? o.only.includes(d.sprite) : true) && (kinds ? kinds.includes(d.sprite) : true));
   const s = o.scale;
-  // The combat screen's own sizing, so a gallery cell is exactly what a fight shows (a five-wide
-  // row, the usual slot); the viewport draws u * 2 * size with u = 134 * 0.9 / (d + 0.5).
-  const combat = (d: any) => S.combatHeight(d.size, 80);
+  // The combat screen's own sizing, so a gallery cell is exactly what a fight shows; a group of
+  // three is the common case. The viewport draws u * 2 * size with u = 134 * 0.9 / (d + 0.5).
+  const combat = (d: any) => S.combatHeight(d.size, 3);
   const view = (d: any, depth: number) => (134 * 0.9 / (depth + 0.5)) * 2 * d.size;
   const strip = o.frames > 0;
   const cols = strip ? 1 : Math.min(7, Math.max(1, defs.length));
