@@ -237,3 +237,192 @@ export function glow(ctx: CanvasRenderingContext2D, B: Brush, cx: number, cy: nu
   g.addColorStop(1, rgba(hex, 0));
   ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
 }
+
+// ------------------------------------------------------------------ organic ----
+// A creature is not a pile of outlined primitives. `blob` takes the parts of ONE material (a
+// wolf's fur, a robe, a hide) and paints them as a single mass: the outline is stroked once
+// around the union, the fill is one rendered gradient across the whole, then, clipped inside,
+// each part gets a soft translucent volume so limbs and heads still read as round, plus creases
+// where forms meet, a texture and a specular. Contours can be lumpy (wobble) or fur-edged
+// (spiky) so nothing is a clean ellipse unless it should be. Draw one blob per material,
+// back to front; the line between materials is the only interior line left.
+
+export type Part =
+  | { k: 'ball'; x: number; y: number; r: number; gloss?: number }
+  | { k: 'ell'; x: number; y: number; rx: number; ry: number; rot?: number; gloss?: number }
+  | { k: 'cap'; x0: number; y0: number; x1: number; y1: number; r0: number; r1?: number; gloss?: number }
+  | { k: 'poly'; pts: number[] }
+  | { k: 'curve'; pts: number[]; wobble?: number; spiky?: number; seed?: number; sub?: number; gloss?: number }
+  /** A bending tube along a spine polyline (a tentacle, a tail, a neck, a trunk), r0 at the start tapering to r1. */
+  | { k: 'tube'; pts: number[]; r0: number; r1: number; wobble?: number; seed?: number; gloss?: number };
+
+/** A soft dark capsule where one form meets another (neck, armpit, hip), drawn inside the mass. */
+export interface Crease { x0: number; y0: number; x1: number; y1: number; r: number; a?: number }
+
+export interface BlobOpts extends GlossOpts {
+  /** Per-part soft volume shading (default on). */
+  form?: boolean;
+  /** Strength of the per-part volume, 0..1 (default 0.5). */
+  formK?: number;
+  creases?: Crease[];
+  /** Stroke the union's outline (default on; off for a mass that sits inside another). */
+  outline?: boolean;
+}
+
+function signedArea(pts: readonly number[]): number {
+  let a = 0;
+  for (let i = 0, n = pts.length; i < n; i += 2) { const j = (i + 2) % n; a += pts[i] * pts[j + 1] - pts[j] * pts[i + 1]; }
+  return a;
+}
+/** Clockwise on screen (positive area), the orientation the arc-based parts use, so nonzero filling unions them. */
+function clockwise(pts: readonly number[]): number[] {
+  if (signedArea(pts) >= 0) return pts.slice();
+  const out: number[] = [];
+  for (let i = pts.length - 2; i >= 0; i -= 2) out.push(pts[i], pts[i + 1]);
+  return out;
+}
+
+/**
+ * Densify a closed polygon and push every point along its outward normal by stable noise, so the
+ * contour lumps; with `spiky`, every other new point becomes a tuft tip (fur, torn cloth, drips).
+ */
+export function lumpy(pts: readonly number[], wobble = 0.08, seed = 0, sub = 3, spiky = 0): number[] {
+  const p = clockwise(pts), n = p.length / 2, out: number[] = [];
+  let ext = 0; for (let i = 0; i < n; i++) ext = Math.max(ext, Math.hypot(p[i * 2] - p[0], p[i * 2 + 1] - p[1]));
+  const scale = ext * 0.5;
+  for (let i = 0; i < n; i++) {
+    const ax = p[i * 2], ay = p[i * 2 + 1], bx = p[((i + 1) % n) * 2], by = p[((i + 1) % n) * 2 + 1];
+    const dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1, nx = dy / len, ny = -dx / len;
+    for (let s = 0; s < sub; s++) {
+      const t = s / sub, idx = i * sub + s;
+      let d = (rnd(seed, idx, 1) - 0.5) * 2 * wobble * scale;
+      if (spiky && idx % 2 === 1) d += spiky * scale * (0.6 + rnd(seed, idx, 2) * 0.8);
+      out.push(ax + dx * t + nx * d, ay + dy * t + ny * d);
+    }
+  }
+  return out;
+}
+
+/** Append a closed Catmull-Rom spline through pts to the current path (no beginPath). */
+export function appendCurve(ctx: CanvasRenderingContext2D, pts: readonly number[], tension = 1): void {
+  const n = pts.length / 2;
+  if (n < 3) return;
+  const P = (i: number, c: 0 | 1) => pts[((i + n) % n) * 2 + c];
+  ctx.moveTo(P(0, 0), P(0, 1));
+  for (let i = 0; i < n; i++) {
+    const c1x = P(i, 0) + (P(i + 1, 0) - P(i - 1, 0)) / 6 * tension, c1y = P(i, 1) + (P(i + 1, 1) - P(i - 1, 1)) / 6 * tension;
+    const c2x = P(i + 1, 0) - (P(i + 2, 0) - P(i, 0)) / 6 * tension, c2y = P(i + 1, 1) - (P(i + 2, 1) - P(i, 1)) / 6 * tension;
+    ctx.bezierCurveTo(c1x, c1y, c2x, c2y, P(i + 1, 0), P(i + 1, 1));
+  }
+  ctx.closePath();
+}
+
+/** The closed outline of a tube: a smooth spine through pts, offset both ways by a tapering radius, round ends. */
+export function tubeOutline(pts: readonly number[], r0: number, r1: number, wobble = 0, seed = 0): number[] {
+  const n = pts.length / 2;
+  if (n < 2) return [];
+  const P = (i: number, c: 0 | 1) => pts[Math.max(0, Math.min(n - 1, i)) * 2 + c];
+  const spine: number[] = [];
+  const S = 5;
+  for (let i = 0; i < n - 1; i++) for (let s = 0; s < S; s++) {
+    const t = s / S, t2 = t * t, t3 = t2 * t;
+    for (const c of [0, 1] as const) {
+      const p0 = P(i - 1, c), p1 = P(i, c), p2 = P(i + 1, c), p3 = P(i + 2, c);
+      spine.push(0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t2 + (-p0 + 3 * p1 - 3 * p2 + p3) * t3));
+    }
+  }
+  spine.push(P(n - 1, 0), P(n - 1, 1));
+  const m = spine.length / 2, left: number[] = [], right: number[] = [];
+  for (let i = 0; i < m; i++) {
+    const ax = spine[Math.max(0, i - 1) * 2], ay = spine[Math.max(0, i - 1) * 2 + 1], bx = spine[Math.min(m - 1, i + 1) * 2], by = spine[Math.min(m - 1, i + 1) * 2 + 1];
+    const dx = bx - ax, dy = by - ay, len = Math.hypot(dx, dy) || 1, nx = -dy / len, ny = dx / len;
+    const u = i / (m - 1), r = (r0 + (r1 - r0) * u) * (1 + (wobble ? (rnd(seed, i, 1) - 0.5) * 2 * wobble : 0));
+    left.push(spine[i * 2] + nx * r, spine[i * 2 + 1] + ny * r);
+    right.push(spine[i * 2] - nx * r, spine[i * 2 + 1] - ny * r);
+  }
+  const cap = (cx: number, cy: number, r: number, a0: number, out: number[]) => { for (let k = 1; k < 6; k++) { const a = a0 + (k / 6) * Math.PI; out.push(cx + Math.cos(a) * r, cy + Math.sin(a) * r); } };
+  const out: number[] = [...left];
+  { const ex = spine[(m - 1) * 2], ey = spine[(m - 1) * 2 + 1], tx = ex - spine[(m - 2) * 2], ty = ey - spine[(m - 2) * 2 + 1]; cap(ex, ey, r1, Math.atan2(ty, tx) - Math.PI / 2, out); }
+  for (let i = m - 1; i >= 0; i--) out.push(right[i * 2], right[i * 2 + 1]);
+  { const sx = spine[0], sy = spine[1], tx = spine[2] - sx, ty = spine[3] - sy; cap(sx, sy, r0, Math.atan2(ty, tx) + Math.PI / 2, out); }
+  return out;
+}
+
+function appendPart(ctx: CanvasRenderingContext2D, q: Part): void {
+  switch (q.k) {
+    case 'ball': ctx.moveTo(q.x + q.r, q.y); ctx.arc(q.x, q.y, q.r, 0, Math.PI * 2); break;
+    case 'ell': { const rot = q.rot ?? 0; ctx.moveTo(q.x + Math.cos(rot) * q.rx, q.y + Math.sin(rot) * q.rx); ctx.ellipse(q.x, q.y, Math.max(0.01, q.rx), Math.max(0.01, q.ry), rot, 0, Math.PI * 2); break; }
+    case 'cap': pathTaperedCapsule(ctx, q.x0, q.y0, q.x1, q.y1, q.r0, q.r1 ?? q.r0, true); break;
+    case 'poly': { const p = clockwise(q.pts); ctx.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]); ctx.closePath(); break; }
+    case 'curve': appendCurve(ctx, lumpy(q.pts, q.wobble ?? 0.08, q.seed ?? 0, q.sub ?? 3, q.spiky ?? 0)); break;
+    case 'tube': { const p = clockwise(tubeOutline(q.pts, q.r0, q.r1, q.wobble ?? 0, q.seed ?? 0)); if (!p.length) return; ctx.moveTo(p[0], p[1]); for (let i = 2; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]); ctx.closePath(); break; }
+  }
+}
+
+function bounds(parts: readonly Part[]): { cx: number; cy: number; r: number } {
+  let minx = 1e9, miny = 1e9, maxx = -1e9, maxy = -1e9;
+  const add = (x: number, y: number, r: number) => { minx = Math.min(minx, x - r); maxx = Math.max(maxx, x + r); miny = Math.min(miny, y - r); maxy = Math.max(maxy, y + r); };
+  for (const q of parts) {
+    if (q.k === 'ball') add(q.x, q.y, q.r);
+    else if (q.k === 'ell') add(q.x, q.y, Math.max(q.rx, q.ry));
+    else if (q.k === 'cap') { add(q.x0, q.y0, q.r0); add(q.x1, q.y1, q.r1 ?? q.r0); }
+    else if (q.k === 'tube') { const r = Math.max(q.r0, q.r1); for (let i = 0; i < q.pts.length; i += 2) add(q.pts[i], q.pts[i + 1], r); }
+    else for (let i = 0; i < q.pts.length; i += 2) add(q.pts[i], q.pts[i + 1], 0);
+  }
+  return { cx: (minx + maxx) / 2, cy: (miny + maxy) / 2, r: Math.hypot(maxx - minx, maxy - miny) / 2 };
+}
+
+/** Soft translucent volume on one part: lit side pale, far side deep, transparent between. */
+function formPart(ctx: CanvasRenderingContext2D, B: Brush, hex: string, q: Part, k: number): void {
+  const t = tones(B, hex);
+  const lx = B.light.x, ly = B.light.y;
+  let g: CanvasGradient;
+  if (q.k === 'cap' || q.k === 'tube') {
+    const x0 = q.k === 'cap' ? q.x0 : q.pts[0], y0 = q.k === 'cap' ? q.y0 : q.pts[1];
+    const x1 = q.k === 'cap' ? q.x1 : q.pts[q.pts.length - 2], y1 = q.k === 'cap' ? q.y1 : q.pts[q.pts.length - 1];
+    const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy) || 1, r = q.k === 'cap' ? Math.max(q.r0, q.r1 ?? q.r0) : Math.max(q.r0, q.r1);
+    let nx = -dy / len, ny = dx / len;
+    if (nx * lx + ny * ly < 0) { nx = -nx; ny = -ny; }
+    const mx = (x0 + x1) / 2, my = (y0 + y1) / 2;
+    g = ctx.createLinearGradient(mx + nx * r, my + ny * r, mx - nx * r, my - ny * r);
+  } else {
+    const b = q.k === 'ball' ? { cx: q.x, cy: q.y, r: q.r } : q.k === 'ell' ? { cx: q.x, cy: q.y, r: Math.max(q.rx, q.ry) } : bounds([q]);
+    g = ctx.createRadialGradient(b.cx + lx * b.r * 0.4, b.cy + ly * b.r * 0.4, 0, b.cx, b.cy, b.r * 1.05);
+  }
+  g.addColorStop(0, rgba(mix(t.hi, '#ffffff', 0.2), 0.55 * k));
+  g.addColorStop(0.45, rgba(t.base, 0));
+  g.addColorStop(1, rgba(t.deep, 0.7 * k));
+  ctx.beginPath(); appendPart(ctx, q);
+  ctx.fillStyle = g; ctx.fill();
+}
+
+/** One material, many parts, one mass. See the note above. */
+export function blob(ctx: CanvasRenderingContext2D, B: Brush, hex: string, parts: readonly Part[], o: BlobOpts = {}): void {
+  if (!parts.length) return;
+  ctx.beginPath();
+  for (const q of parts) appendPart(ctx, q);
+  if (o.outline !== false) outlinePath(ctx, B);
+  if (B.override) { ctx.fillStyle = B.override; ctx.fill(); return; }
+  const b = bounds(parts);
+  fillRadial(ctx, B, hex, b.cx, b.cy, b.r, o.spread ?? 1);
+  ctx.save(); ctx.clip();
+  if (o.form !== false) for (const q of parts) formPart(ctx, B, hex, q, o.formK ?? 0.5);
+  const t = tones(B, hex);
+  if (o.creases) for (const c of o.creases) { pathCap(ctx, c.x0, c.y0, c.x1, c.y1, c.r); ctx.fillStyle = rgba(t.deep, c.a ?? 0.35); ctx.fill(); }
+  if (o.tex && (o.h ?? 0) >= TEX_MIN_H && b.r >= 5) texture(ctx, B, hex, o.tex, b.cx, b.cy, b.r, o.seed ?? 0, o.amount ?? 1);
+  for (const q of parts) {
+    if (q.k === 'poly' || !q.gloss) continue;
+    const c = q.k === 'ball' ? { x: q.x, y: q.y, r: q.r } : q.k === 'ell' ? { x: q.x, y: q.y, r: Math.min(q.rx, q.ry) } : q.k === 'cap' ? { x: (q.x0 + q.x1) / 2, y: (q.y0 + q.y1) / 2, r: Math.max(q.r0, q.r1 ?? q.r0) } : q.k === 'tube' ? { x: q.pts[q.pts.length - 2], y: q.pts[q.pts.length - 1], r: q.r1 * 1.5 } : (() => { const bb = bounds([q]); return { x: bb.cx, y: bb.cy, r: bb.r * 0.7 }; })();
+    specular(ctx, B, c.x, c.y, c.r, q.gloss);
+  }
+  if (o.gloss) specular(ctx, B, b.cx, b.cy, b.r * 0.8, o.gloss);
+  ctx.restore();
+}
+
+/** A soft interior line (a mouth, a brow, a fold): translucent deep tone, round caps, no ink. */
+export function softLine(ctx: CanvasRenderingContext2D, B: Brush, pts: readonly number[], hex: string, w = 1.5, a = 0.6): void {
+  ctx.strokeStyle = B.override ?? rgba(tones(B, hex).deep, a); ctx.lineWidth = w; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.moveTo(pts[0], pts[1]);
+  for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]);
+  ctx.stroke();
+}
