@@ -7,7 +7,7 @@
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
-import { shade } from '../../lib/art/palettes.ts';
+import { rgba, shade } from '../../lib/art/palettes.ts';
 import { blob, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 
@@ -59,7 +59,7 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   const sw = Math.sin(p.frame / 45) * h * 0.013;     // a slow sway of the club
   const tone = p.tone;
   const leather = shade('#6e4a2a', tone), wrap = shade('#40301f', tone), wood = shade('#5e3e22', tone);
-  const rope = shade('#a08c58', tone), ivory = shade('#efe6cf', tone), farHex = shade(p.dark, 0.82);
+  const rope = shade('#a08c58', tone), ivory = shade('#efe6cf', tone), farHex = shade(p.dark, 0.76);
   const Ys = Y(0.685) - b;                           // the shoulder line
   const hy = Y(0.885) - b, hr = h * 0.106;           // the head centre and radius
 
@@ -96,7 +96,7 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   blob(ctx, B, p.base, hide, { h, tex: 'stipple', seed: 11, amount: 0.5, formK: 0.55, creases: [
     { x0: X(-0.075), y0: Y(0.775) - b, x1: X(-0.13), y1: Y(0.685) - b, r: h * 0.022, a: 0.5 },  // far side of the neck
     { x0: X(0.075), y0: Y(0.775) - b, x1: X(0.13), y1: Y(0.685) - b, r: h * 0.022, a: 0.5 },    // near side
-    { x0: X(-0.095), y0: hy + h * 0.008, x1: X(0.095), y1: hy + h * 0.008, r: h * 0.018, a: 0.42 }, // under the brow
+    { x0: X(-0.09), y0: hy + h * 0.012, x1: X(0.09), y1: hy + h * 0.012, r: h * 0.016, a: 0.4 },   // under the brow
     { x0: X(-0.185), y0: Ys - h * 0.025, x1: X(-0.23), y1: Y(0.575), r: h * 0.022, a: 0.32 },   // far trapezius
     { x0: X(0.19), y0: Ys - h * 0.025, x1: X(0.235), y1: Y(0.575), r: h * 0.022, a: 0.32 },     // near trapezius
     { x0: X(-0.155), y0: Y(0.555), x1: X(0.175), y1: Y(0.545), r: h * 0.023, a: 0.3 },          // the gut fold
@@ -121,9 +121,11 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     { x0: X(-0.05), y0: Y(0.445), x1: X(-0.03), y1: Y(0.36), r: h * 0.015, a: 0.3 },
     { x0: X(0.14), y0: Y(0.445), x1: X(0.16), y1: Y(0.36), r: h * 0.015, a: 0.3 },
   ] });
-  blob(ctx, B, rope, [
-    { k: 'tube', pts: [X(-0.25), Y(0.462), X(0.0), Y(0.449), X(0.25), Y(0.462)], r0: h * 0.018, r1: h * 0.018, wobble: 0.22, seed: 15 },
-  ], { formK: 0.6 });
+  // The rope belt rolled along the kilt's top edge: lit cord over the leather, no second mass.
+  ctx.strokeStyle = B.col(rope); ctx.lineWidth = Math.max(1, h * 0.03); ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(X(-0.25), Y(0.458)); ctx.quadraticCurveTo(X(0.0), Y(0.442), X(0.25), Y(0.458)); ctx.stroke();
+  ctx.strokeStyle = B.col(rgba(shade(rope, 1.25), 0.7)); ctx.lineWidth = Math.max(1, h * 0.01);
+  ctx.beginPath(); ctx.moveTo(X(-0.24), Y(0.464)); ctx.quadraticCurveTo(X(0.0), Y(0.448), X(0.24), Y(0.464)); ctx.stroke();
   // Shin wraps: dark bands, no ink.
   for (let i = 0; i < 3; i++) {
     const yy = Y(0.135 - i * 0.04);
@@ -133,7 +135,7 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
 
   // 5. The near arm, its own mass crossing in front of the torso: a contact shadow under it first,
   //    then the upper arm swung out past the ribs, a bent elbow and a forearm angling back in.
-  softLine(ctx, B, [X(0.30), Y(0.455), X(0.11), Y(0.49), X(-0.02), Y(0.495)], p.base, h * 0.05, 0.42);
+  softLine(ctx, B, [X(0.30), Y(0.45), X(0.11), Y(0.485), X(-0.03), Y(0.492)], p.base, h * 0.052, 0.48);
   const fx = X(0.055), fy = Y(0.545), ux = 0.707, uy = -0.707, px2 = 0.707, py2 = 0.707;
   blob(ctx, B, p.base, [
     { k: 'tube', pts: [X(0.185), Ys - h * 0.005, X(0.305), Y(0.60), X(0.345), Y(0.495)], r0: h * 0.064, r1: h * 0.05, wobble: 0.06, seed: 30 },
@@ -172,11 +174,12 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   // 7. The face, on the lifted skull: brow ridge, deep-set eyes, a broad flat nose, a wide mouth
   //    with two up-tusks from the jutting jaw, and an ear crease each side.
   for (const sx of [X(-0.052), X(0.058)]) softLine(ctx, B, [sx - h * 0.022, hy + h * 0.008, sx + h * 0.022, hy + h * 0.008], p.base, h * 0.038, 0.6);
-  softLine(ctx, B, [X(-0.104), hy - h * 0.012, X(-0.04), hy - h * 0.032, X(0.046), hy - h * 0.032, X(0.108), hy - h * 0.008], p.base, h * 0.024, 0.7);
+  softLine(ctx, B, [X(-0.104), hy - h * 0.008, X(-0.04), hy - h * 0.028, X(0.046), hy - h * 0.028, X(0.108), hy - h * 0.004], p.base, h * 0.02, 0.6);
   eye(ctx, X(-0.052), hy + h * 0.01, h * 0.018, p.amber, false);
   eye(ctx, X(0.058), hy + h * 0.01, h * 0.018, p.amber, false);
   softLine(ctx, B, [X(0.002), hy + h * 0.014, X(0.004), hy + h * 0.05], p.base, h * 0.032, 0.35);   // the nose bridge
   softLine(ctx, B, [X(-0.034), hy + h * 0.056, X(0.044), hy + h * 0.056], p.base, h * 0.024, 0.8);  // its broad flat base
+  for (const nx of [X(-0.026), X(0.036)]) { ctx.fillStyle = B.col(shade('#20161a', tone)); ctx.beginPath(); ctx.ellipse(nx, hy + h * 0.058, h * 0.012, h * 0.008, 0, 0, Math.PI * 2); ctx.fill(); }
   softLine(ctx, B, [X(-0.08), hy + h * 0.092, X(0.004), hy + h * 0.11, X(0.085), hy + h * 0.088], p.base, h * 0.024, 0.85);
   ctx.fillStyle = B.col(ivory); ctx.strokeStyle = B.col(B.outline); ctx.lineWidth = 1; ctx.lineJoin = 'round';
   for (const tx of [X(-0.064), X(0.07)]) {

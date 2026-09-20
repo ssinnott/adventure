@@ -1,9 +1,11 @@
 // The Rift family: riftling, riftling elder, Rift Warden and Warden of the Cut. Things of crystal
-// shard and ember: a molten core wrapped in faceted stone. Each body is one blob of overlapping
-// angular shards (poly and low-wobble curve parts, a facets texture, a high gloss), so the silhouette
-// is jagged and irregular but the mass is painted as a whole; the core is a dark gap in the stone
-// with a glow behind it and a hot lump inside; seams between the shards are soft hot lines that
-// pulse with the frame; eyes are hot points.
+// shard and ember: a molten core wrapped in faceted stone. A body is built in depth layers rather
+// than as one flat card -- the dark far limbs, then the body mass, then one or two layers of paler
+// plates lying on it, each layer a blob of its own so it keeps an ink edge, and each plate given a
+// shadow cast under its far lip. The core is a dark gap in the stone with a glow behind it and a
+// hot lump inside, and it burns in the space the plates leave BETWEEN them, so its light leaks out
+// round their lips instead of sitting on a surface. Seams are soft hot lines that pulse with the
+// frame; eyes are hot points; wobble seeds are constants, never the frame, so no contour boils.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -200,7 +202,7 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
     { x0: ex, y0: ey, x1: wx, y1: wy, r: h * 0.02, a: 0.24 },
   ] });
 
-  // ---- first plate layer: the belly slab and the shoulder guard, lying on the body mass.
+  // ---- first plate layer: the belly slab, the shoulder guard and the brow shelf, on the mass.
   const mid = shade(p.light, elder ? 1.1 : 1.07);
   const belly = [x - h * 0.16 * W, y - h * 0.425, x - h * 0.19 * W, y - h * 0.53, x - h * 0.03, y - h * 0.585, x + h * 0.15 * W, y - h * 0.545, x + h * 0.195 * W, y - h * 0.45, x + h * 0.05, y - h * 0.4];
   const guard = [x + h * 0.095, y - h * 0.755 + b, x + h * 0.255 * W, y - h * 0.705 + b, x + h * 0.285 * W, y - h * 0.58, x + h * 0.15, y - h * 0.615];
@@ -214,7 +216,7 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   const cr = h * (elder ? 0.062 : 0.05), ccx = x + h * 0.005, ccy = y - h * 0.635 + b * 0.6;
   core(ctx, ccx, ccy, cr, p.dark, heat, pulse, 30, h);
 
-  // ---- second plate layer: the breastplate and the brow shelf, palest, lying on the first.
+  // ---- second plate layer: the breastplate, palest, lying on the belly slab and the mass.
   const top = shade(p.light, elder ? 1.26 : 1.2);
   const breast = [x - h * 0.155 * W, y - h * 0.575, x - h * 0.175 * W, y - h * 0.675 + b, x - h * 0.02, y - h * 0.742 + b, x + h * 0.135 * W, y - h * 0.71 + b, x + h * 0.15 * W, y - h * 0.635, x + h * 0.055, y - h * 0.648, x - h * 0.012, y - h * 0.698, x - h * 0.075, y - h * 0.628];
   const topSlabs: Part[] = [{ k: 'poly', pts: breast }];
