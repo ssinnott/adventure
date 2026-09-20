@@ -241,7 +241,7 @@ function hand(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, a: number | null, s
     const ux = Math.cos(a), uy = Math.sin(a), nx = -uy * flip, ny = ux * flip;
     // The palm, set back from the shaft on the knuckle side.
     parts.push({ k: 'curve', pts: ring(at.x - nx * h * 0.008 * k, at.y - ny * h * 0.008 * k, h * 0.042 * k, h * 0.038 * k, 9), wobble: 0.06, seed, sub: 2 });
-    if (o.plate) parts.push({ k: 'ell', x: at.x - nx * h * 0.016 * k, y: at.y - ny * h * 0.016 * k, rx: h * 0.038 * k, ry: h * 0.026 * k, rot: a + Math.PI / 2, gloss: o.gloss ?? 0.5 });
+    if (o.plate) parts.push({ k: 'ell', x: at.x - nx * h * 0.024 * k, y: at.y - ny * h * 0.024 * k, rx: h * 0.034 * k, ry: h * 0.02 * k, rot: a + Math.PI / 2, gloss: o.gloss ?? 0.5 });
     // Three fingers lying ACROSS the shaft, in front of it, the outer two a touch shorter.
     for (let i = -1; i <= 1; i++) {
       const cx = at.x + ux * i * h * 0.028 * k, cy = at.y + uy * i * h * 0.028 * k, s = 1 - Math.abs(i) * 0.14;
@@ -447,20 +447,52 @@ function face(ctx: CanvasRenderingContext2D, R: Rig, masked: boolean, scar = fal
  * A blade gripped at `at`: the grip runs THROUGH the hand — a pommel behind it, the crossguard just
  * clear of the knuckles — and the blade starts above the guard, so drawing the hand afterwards
  * closes it over the shaft. Returns the shaft angle for that hand.
+ *
+ * The blade is a TAPER, not a bar: full width at the ricasso, drawing in to about three fifths of
+ * it at the shoulder of the point, then two straight edges converging on the point itself. A fuller
+ * down the middle and a light line along whichever edge faces the light give it the two tone steps
+ * that read as steel at sprite size. A parallel-sided rectangle with a chamfered corner reads as a
+ * plank however carefully it is shaded, which is what all four of these were swinging.
+ *
+ * Everything is laid out in blade coordinates: u runs from the grip toward the point, n across it,
+ * so the same construction serves a dagger and a longsword by its w and `guard` alone.
  */
 function blade(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, tx: number, ty: number, w: number, guard: number): number {
   const { h } = R;
   const dx = tx - at.x, dy = ty - at.y, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
-  const px = at.x - ux * h * 0.072, py = at.y - uy * h * 0.072;
-  const qx = at.x + ux * h * 0.056, qy = at.y + uy * h * 0.056;
-  // Wrapped grip from the pommel to the guard, with the pommel on top of it.
-  blob(ctx, B, R.strap, [{ k: 'cap', x0: px, y0: py, x1: qx, y1: qy, r0: w * 0.9, r1: w * 0.82 }], { h, formK: 0.5, spread: 0.6 });
-  glossBall(ctx, B, px, py, w * 1.15, R.brass, { gloss: 0.4, spread: 0.6 });
-  // Crossguard, then the blade above it.
-  glossPoly(ctx, B, [qx + nx * guard, qy + ny * guard, qx + nx * guard + ux * w * 1.1, qy + ny * guard + uy * w * 1.1, qx - nx * guard + ux * w * 1.1, qy - ny * guard + uy * w * 1.1, qx - nx * guard, qy - ny * guard], R.brass, { spread: 0.6 });
-  const bx = qx + ux * w * 1.1, by = qy + uy * w * 1.1;
-  glossPoly(ctx, B, [bx + nx * w, by + ny * w, tx - ux * w * 0.5 + nx * w * 0.9, ty - uy * w * 0.5 + ny * w * 0.9, tx, ty, tx - ux * w * 0.5 - nx * w * 0.9, ty - uy * w * 0.5 - ny * w * 0.9, bx - nx * w, by - ny * w], R.steel, { gloss: 0.55, spread: 0.6 });
-  if (len > 20) softLine(ctx, B, [bx + ux * w * 2, by + uy * w * 2, tx - ux * len * 0.25, ty - uy * len * 0.25], R.steel, 1, 0.35);
+  const P = (u: number, n: number, out: number[]): number[] => { out.push(at.x + ux * u + nx * n, at.y + uy * u + ny * n); return out; };
+  const at2 = (u: number, n: number): Pt => ({ x: at.x + ux * u + nx * n, y: at.y + uy * u + ny * n });
+  const u0 = -(h * 0.034 + w * 1.7), u1 = h * 0.020 + w * 1.3;   // pommel, and the guard's near face
+  const gt = w * 1.25, u2 = u1 + gt;                              // the guard's far face
+  const pom = at2(u0, 0), top = at2(u1, 0);
+  // Wrapped grip from the pommel to the guard, then the pommel over its end.
+  blob(ctx, B, R.strap, [{ k: 'cap', x0: pom.x, y0: pom.y, x1: top.x, y1: top.y, r0: w * 0.95, r1: w * 0.82 }], { h, formK: 0.5, spread: 0.6 });
+  if (w >= 2) for (let i = 0; i < 3; i++) {
+    const a = at2(u0 + (u1 - u0) * (0.28 + i * 0.22), -w), b = at2(u0 + (u1 - u0) * (0.34 + i * 0.22), w);
+    softLine(ctx, B, [a.x, a.y, b.x, b.y], R.strap, Math.max(1, w * 0.45), 0.7);
+  }
+  glossEllipse(ctx, B, pom.x, pom.y, w * 1.4, w * 1.1, R.brass, Math.atan2(uy, ux), { gloss: 0.45, spread: 0.6 });
+  // Crossguard: a bar that swells over the grip and tapers out to quillons canted at the blade.
+  const g: number[] = [];
+  P(u2 + gt * 0.35, guard, g); P(u2, w * 1.8, g); P(u2 + gt * 0.18, 0, g); P(u2, -w * 1.8, g);
+  P(u2 + gt * 0.35, -guard, g); P(u1 + gt * 0.1, -guard * 0.96, g); P(u1, -w * 1.9, g);
+  P(u1 - gt * 0.28, 0, g); P(u1, w * 1.9, g); P(u1 + gt * 0.1, guard * 0.96, g);
+  glossPoly(ctx, B, g, R.brass, { spread: 0.6, gloss: 0.35 });
+  // The blade: a slow taper to the shoulder of the point, then two edges converging on the point.
+  const b0 = u2 + gt * 0.2, L = len - b0;
+  const bl: number[] = [];
+  P(b0, w, bl); P(b0 + L * 0.1, w, bl); P(b0 + L * 0.6, w * 0.86, bl); P(b0 + L * 0.87, w * 0.58, bl);
+  P(b0 + L, 0, bl);
+  P(b0 + L * 0.87, -w * 0.58, bl); P(b0 + L * 0.6, -w * 0.86, bl); P(b0 + L * 0.1, -w, bl); P(b0, -w, bl);
+  glossPoly(ctx, B, bl, R.steel, { gloss: 0.5, spread: 0.6 });
+  if (L > h * 0.12) {
+    // The fuller, and a light line down whichever edge faces the light: two steps, not one.
+    const f0 = at2(b0 + L * 0.07, 0), f1 = at2(b0 + L * 0.62, 0);
+    softLine(ctx, B, [f0.x, f0.y, f1.x, f1.y], R.steel, Math.max(1, w * 0.8), 0.4);
+    const lit = nx * B.light.x + ny * B.light.y >= 0 ? 1 : -1;
+    const e0 = at2(b0 + L * 0.1, lit * w * 0.88), e1 = at2(b0 + L * 0.85, lit * w * 0.52);
+    stroke(ctx, [e0.x, e0.y, e1.x, e1.y], shade(R.steel, 1.4), 1);
+  }
   return Math.atan2(uy, ux);
 }
 
@@ -496,26 +528,48 @@ function pauldronTrim(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, s: number):
   stroke(ctx, [at.x - s * h * 0.038, at.y - h * 0.028, at.x + s * h * 0.02, at.y + h * 0.052], R.strap, Math.max(1, h * 0.014));
 }
 
-/** A short bow held in the hand at `hand`, tilted, with its string and a nocked arrow pointing out. */
+/**
+ * A shortbow gripped at `at`. Drawn as a bow rather than an arc: the two limbs are tapered tubes in
+ * ONE wooden mass, thick at the riser under the hand and fining to the nocks, bowed away from the
+ * archer so the string stands off the grip by a brace height. The arrow is NOCKED — its shaft
+ * starts on the string, crosses the riser at the arrow pass and carries its head out past the bow —
+ * instead of floating across in front of it. Returns the bow's axis for the hand that holds it.
+ */
 function bow(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, sway: number): number {
   const { h } = R;
-  const top = { x: at.x + h * 0.095, y: at.y - h * 0.35 }, bot = { x: at.x - h * 0.05, y: at.y + h * 0.33 };
-  const cx = at.x - h * 0.095, cy = at.y - h * 0.01;
-  const lw = Math.max(1.5, h * 0.024);
-  const limbs = () => { ctx.beginPath(); ctx.moveTo(top.x, top.y); ctx.quadraticCurveTo(cx, cy, bot.x, bot.y); };
-  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-  limbs(); ctx.strokeStyle = B.col(B.outline); ctx.lineWidth = lw + 2; ctx.stroke();
-  limbs(); ctx.strokeStyle = B.col(R.wood); ctx.lineWidth = lw; ctx.stroke();
-  if (!B.override && lw >= 2.5) { limbs(); ctx.strokeStyle = B.col(shade(R.wood, 1.35)); ctx.lineWidth = 1; ctx.stroke(); }
+  const top = { x: at.x + h * 0.074, y: at.y - h * 0.325 }, bot = { x: at.x + h * 0.06, y: at.y + h * 0.3 };
+  const grip = { x: at.x - h * 0.006, y: at.y };
+  blob(ctx, B, R.wood, [
+    tube([top.x, top.y, at.x - h * 0.016, at.y - h * 0.165, grip.x, grip.y - h * 0.03], h * 0.0075, h * 0.017, 0, 61),
+    tube([grip.x, grip.y - h * 0.03, at.x - h * 0.014, at.y + h * 0.15, bot.x, bot.y], h * 0.017, h * 0.0075, 0, 62),
+  ], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 61, amount: 0.35 });
+  // The grip leather, and the string from nock to nock: it stands clear of the riser, which is what
+  // tells the eye the stave is bent rather than merely curved.
+  softLine(ctx, B, [grip.x - h * 0.004, grip.y - h * 0.05, grip.x - h * 0.004, grip.y + h * 0.05], R.wood, Math.max(1, h * 0.026), 0.55);
   stroke(ctx, [top.x, top.y, bot.x, bot.y], R.bone, 1);
-  const mx = (top.x + bot.x) / 2 + sway, my = (top.y + bot.y) / 2;
-  const ax = mx - h * 0.2, ay = my - h * 0.03;
-  stroke(ctx, [mx, my, ax, ay], R.wood, Math.max(1, h * 0.014));
-  const fx = mx - h * 0.02, fy = my - h * 0.003;
-  ctx.fillStyle = B.col(shade('#b04030', R.tone));
-  ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(fx - h * 0.035, fy - h * 0.03); ctx.lineTo(fx - h * 0.05, fy - h * 0.005); ctx.lineTo(fx - h * 0.035, fy + h * 0.02); ctx.closePath(); ctx.fill();
+  // The arrow, nocked on the string level with the grip and lying across the arrow pass.
+  const t = (grip.y - top.y) / (bot.y - top.y);
+  const nx = top.x + (bot.x - top.x) * t + sway * 0.4, ny = grip.y + sway;
+  const ax = nx - h * 0.235, ay = ny - h * 0.018;
+  stroke(ctx, [nx + h * 0.012, ny + h * 0.001, ax, ay], R.wood, Math.max(1, h * 0.013));
+  const ux = (ax - nx) / Math.hypot(ax - nx, ay - ny), uy = (ay - ny) / Math.hypot(ax - nx, ay - ny);
   ctx.fillStyle = B.col(R.steel);
-  ctx.beginPath(); ctx.moveTo(ax - h * 0.03, ay - h * 0.005); ctx.lineTo(ax + h * 0.01, ay - h * 0.015); ctx.lineTo(ax + h * 0.01, ay + h * 0.012); ctx.closePath(); ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(ax + ux * h * 0.03, ay + uy * h * 0.03);
+  ctx.lineTo(ax - uy * h * 0.016, ay + ux * h * 0.016);
+  ctx.lineTo(ax + uy * h * 0.016, ay - ux * h * 0.016);
+  ctx.closePath(); ctx.fill();
+  // Fletching, behind the nock on the far side of the string, so the arrow reads as seated on it.
+  if (h >= 46) for (let i = -1; i <= 1; i++) {
+    const fx = nx + h * 0.014 - i * h * 0.002, fy = ny + h * 0.001 + i * h * 0.0015;
+    ctx.fillStyle = B.col(shade(i === 0 ? '#c8c0a0' : '#8a3a30', R.tone));
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(fx + h * 0.042, fy - h * 0.004 + i * h * 0.021);
+    ctx.lineTo(fx + h * 0.05, fy + h * 0.004 + i * h * 0.021);
+    ctx.lineTo(fx + h * 0.012, fy + h * 0.006);
+    ctx.closePath(); ctx.fill();
+  }
   return Math.atan2(bot.y - top.y, bot.x - top.x);
 }
 
@@ -530,11 +584,13 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   const R = makeRig(x, y, h, p, { tilt: -0.03, hipTilt: 0.03, turn: 0.026, near: [0.072, 0.175, 0.225], far: [-0.07, -0.07, -0.06], toe: [1, -0.5], lift: [0, 0.05] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 19) * h * 0.012;
-  // Near arm: hangs long, the hand at mid-thigh with the sword up and out past the elbow.
-  const near: Arm = [R.sNear, { x: x + h * 0.257, y: sy + h * 0.165 }, { x: x + h * 0.281, y: sy + h * 0.34 }];
+  // Near arm: elbow tucked low at the waist, forearm out and up to a hand at chest height, and the
+  // sword carrying on up past it — 63 deg at the elbow, 32 at the wrist. It used to hang straight
+  // down with the blade coming back UP alongside the forearm, a 166 deg wrist no one has.
+  const near: Arm = [R.sNear, { x: x + h * 0.245, y: sy + h * 0.16 }, { x: x + h * 0.352, y: sy + h * 0.06 }];
   // Far arm: the upper arm swings clear of the ribs to a low elbow, then the forearm comes up in
   // front to carry the buckler, so the shield sits on an arm instead of floating.
-  const far: Arm = [R.sFar, { x: x - h * 0.241, y: sy + h * 0.208 }, { x: x - h * 0.298, y: sy + h * 0.045 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.203, y: sy + h * 0.196 }, { x: x - h * 0.318, y: sy + h * 0.085 }];
   const hemY = y - h * 0.42;
   groundShadow(ctx, x, y + 1, h * 0.72);
   blob(ctx, B, p.dark, armParts(R, far, 31, 0.9), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
@@ -561,7 +617,7 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   ], { h, formK: 0.45, spread: 0.6 });
   band(ctx, B, x - h * 0.024, hemY - h * 0.056, h * 0.044, h * 0.044, R.brass);
   // Short sword: the grip runs through the fist, the blade starts above the guard.
-  const ga = blade(ctx, R, near[2], x + h * 0.394, y - h * 0.87, h * 0.018, h * 0.055);
+  const ga = blade(ctx, R, near[2], x + h * 0.421, y - h * 1.089, h * 0.019, h * 0.072);
   hand(ctx, R, near[2], ga, 42, { flip: -1 });
   // Hair tufts at the far temple, the scarf over the lower face, the bandana over the crown.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 1.0, hy - hr * 0.3, hx - hr * 0.7, hy - hr * 0.2, hx - hr * 0.75, hy + hr * 0.5, hx - hr * 1.15, hy + hr * 0.3], wobble: 0.06, spiky: 0.15, seed: 9, sub: 2 }], { h, form: false });
@@ -575,7 +631,7 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The buckler, strapped across the far forearm: the arm runs out from under the body and the
   // shield's rim crosses it, so the join reads.
   stroke(ctx, [far[1].x - h * 0.012, far[1].y - h * 0.048, far[2].x - h * 0.01, far[2].y + h * 0.02], R.strap, Math.max(1, h * 0.012));
-  const bx = x - h * 0.317, by = sy + h * 0.005;
+  const bx = x - h * 0.297, by = sy + h * 0.105;
   glossBall(ctx, B, bx, by, h * 0.092, R.wood, { gloss: 0.1, spread: 0.7, h, tex: 'cracks', seed: 17, amount: 0.6 });
   ctx.strokeStyle = B.col(R.steel); ctx.lineWidth = Math.max(1, h * 0.014); ctx.beginPath(); ctx.arc(bx, by, h * 0.077, 0, Math.PI * 2); ctx.stroke();
   glossBall(ctx, B, bx, by, h * 0.031, R.steel, { gloss: 0.6 });
@@ -592,7 +648,7 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 23) * h * 0.006;
   const near: Arm = [R.sNear, { x: x + h * 0.237, y: sy + h * 0.175 }, { x: x + h * 0.164, y: sy + h * 0.335 }];
-  const far: Arm = [R.sFar, { x: x - h * 0.248, y: sy + h * 0.17 }, { x: x - h * 0.355, y: sy + h * 0.042 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.194, y: sy + h * 0.157 }, { x: x - h * 0.342, y: sy + h * 0.096 }];
   const hemY = y - h * 0.4;
   groundShadow(ctx, x, y + 1, h * 0.74);
   // Quiver over the near shoulder, behind the body: leather tube with fletched arrows above it.
@@ -618,7 +674,7 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The face inside the hood is smaller than a bare head: only the front of it shows.
   blob(ctx, B, R.skin, [{ k: 'curve', pts: [hx - hr * 0.72, hy - hr * 0.62, hx + hr * 0.72, hy - hr * 0.6, hx + hr * 0.86, hy + hr * 0.2, hx + hr * 0.45, hy + hr * 0.95, hx - hr * 0.4, hy + hr * 0.95, hx - hr * 0.82, hy + hr * 0.2], wobble: 0.03, seed: 28, sub: 2 }], { h, formK: 0.55, spread: 0.7 });
   // Dagger at the near hip, hilt up, the near hand closed on it at mid-thigh.
-  const da = blade(ctx, R, near[2], x + h * 0.214, y - h * 0.16, h * 0.013, h * 0.032);
+  const da = blade(ctx, R, near[2], x + h * 0.2, y - h * 0.227, h * 0.012, h * 0.036);
   hand(ctx, R, near[2], da, 29, { flip: 1 });
   // A short beard under the jaw.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.7, hy + hr * 0.45, hx - hr * 0.3, hy + hr * 0.62, hx + hr * 0.3, hy + hr * 0.62, hx + hr * 0.75, hy + hr * 0.42, hx + hr * 0.55, hy + hr * 1.05, hx, hy + hr * 1.2, hx - hr * 0.55, hy + hr * 1.05], wobble: 0.06, spiky: 0.1, seed: 30, sub: 2 }], { h, formK: 0.4 });
@@ -642,10 +698,13 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const R = makeRig(x, y, h, p, { tilt: -0.042, hipTilt: -0.03, turn: 0.014, near: [0.08, 0.185, 0.245], far: [-0.072, -0.125, -0.145], toe: [1, -0.8], lift: [0, 0.062] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 21) * h * 0.008;
-  // Near arm: the sword arm raised, the hand above the shoulder.
-  const near: Arm = [R.sNear, { x: x + h * 0.297, y: sy + h * 0.125 }, { x: x + h * 0.277, y: sy - h * 0.048 }];
-  // Far arm: hangs to a low elbow, the forearm out and up behind the shield.
-  const far: Arm = [R.sFar, { x: x - h * 0.195, y: sy + h * 0.235 }, { x: x - h * 0.281, y: sy + h * 0.165 }];
+  // Near arm: the sword arm raised — elbow out at the ribs, forearm steeply up and out, hand at
+  // shoulder height well clear of the body, blade vertical above it. 70 deg at the elbow. It used
+  // to measure 29 deg, past full flexion: the forearm was lying on the bicep.
+  const near: Arm = [R.sNear, { x: x + h * 0.305, y: sy + h * 0.11 }, { x: x + h * 0.382, y: sy - h * 0.022 }];
+  // Far arm: elbow at the waist, forearm across and down so the hand sits behind the shield's
+  // centre — the shield is strapped to that forearm and has to be ON it.
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.215 }, { x: x - h * 0.33, y: sy + h * 0.285 }];
   const hemY = y - h * 0.4;
   const mail = shade('#767d8c', p.tone);
   groundShadow(ctx, x, y + 1, h * 0.8);
@@ -672,7 +731,7 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   band(ctx, B, x - h * 0.018, hemY - h * 0.066, h * 0.042, h * 0.046, R.brass);
   // The longsword held up, the grip running through a steel gauntlet: cuff at the wrist, a plate
   // over the back of the hand catching the light, fingers closed across the hilt.
-  const ga = blade(ctx, R, near[2], x + h * 0.329, y - h * 1.09, h * 0.022, h * 0.072);
+  const ga = blade(ctx, R, near[2], x + h * 0.382, y - h * 1.205, h * 0.024, h * 0.085);
   const fa = Math.atan2(near[1].y - near[2].y, near[1].x - near[2].x);
   const cuff: Pt = { x: near[2].x + Math.cos(fa) * h * 0.085, y: near[2].y + Math.sin(fa) * h * 0.085 };
   hand(ctx, R, near[2], ga, 42, { hex: R.dull, cuff, plate: true, gloss: 0.5, flip: -1 });
@@ -692,7 +751,7 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   softLine(ctx, B, [hx - hr * 1.42, hy - hr * 0.22, hx, hy - hr * 0.5, hx + hr * 1.42, hy - hr * 0.2], R.dull, Math.max(1, hr * 0.12), 0.5);
   glossBall(ctx, B, hx - hr * 0.08, hy - hr * 1.56, hr * 0.13, R.brass, { gloss: 0.5 });
   // The heater shield on the far arm: steel rim, painted field with a pale chevron.
-  const cx = x - h * 0.315, cy = y - h * 0.44, sw = h * 0.118, sh = h * 0.182;
+  const cx = x - h * 0.311, cy = y - h * 0.48, sw = h * 0.118, sh = h * 0.182;
   const shieldPts = [cx - sw, cy - sh * 0.9, cx + sw, cy - sh * 0.9, cx + sw * 0.95, cy + sh * 0.15, cx + sw * 0.5, cy + sh * 0.75, cx, cy + sh, cx - sw * 0.5, cy + sh * 0.75, cx - sw * 0.95, cy + sh * 0.15];
   glossPoly(ctx, B, shieldPts, R.steel, { spread: 0.7 });
   const field = shade('#7a2c24', p.tone);
@@ -713,8 +772,13 @@ function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: n
   const R = makeRig(x, y, h, p, { tilt: 0.036, hipTilt: 0.028, turn: -0.024, near: [0.07, 0.105, 0.03], far: [-0.068, -0.165, -0.245], toe: [-0.3, -1], lift: [0.088, 0] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 21) * h * 0.007;
-  const near: Arm = [R.sNear, { x: x + h * 0.271, y: sy + h * 0.16 }, { x: x + h * 0.106, y: sy + h * 0.252 }];
-  const far: Arm = [R.sFar, { x: x - h * 0.255, y: sy + h * 0.172 }, { x: x - h * 0.211, y: sy + h * 0.018 }];
+  // Both elbows re-placed on the real segment lengths. The far elbow used to measure 6 deg — the
+  // forearm folded flat back along the upper arm — because the fore-end hand sat 0.07h from its own
+  // shoulder. The fix is not to fling that hand out into empty air: it is to bring the fore-end IN
+  // so the weapon crosses the chest, which is what port arms means, and let the ELBOW be the thing
+  // that stands out. The fists end up 0.28h apart, about the 49 cm a crossbow actually asks for.
+  const near: Arm = [R.sNear, { x: x + h * 0.242, y: sy + h * 0.19 }, { x: x + h * 0.09, y: sy + h * 0.24 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.31, y: sy + h * 0.082 }, { x: x - h * 0.183, y: sy + h * 0.172 }];
   const hemY = y - h * 0.41;
   groundShadow(ctx, x, y + 1, h * 0.74);
   // The short cloak, behind, fastened at the near shoulder and thrown back over the far one.
@@ -744,22 +808,44 @@ function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: n
   // The single steel pauldron on the near shoulder, two lames, where the arm begins.
   blob(ctx, B, R.dull, pauldronParts(R, R.sNear, 1), { h, formK: 0.6, spread: 0.55, gloss: 0.4 });
   pauldronTrim(ctx, R, R.sNear, 1);
-  // The crossbow at port arms: the stock from the near hand up across the chest to the far hand,
-  // the steel prod bowed across its fore-end so the tips stand clear of the body.
-  const gx = near[2].x, gy = near[2].y, fx = far[2].x - h * 0.022, fy = far[2].y - h * 0.012;
+  // The crossbow at port arms, spanned and loaded. Laid out in stock coordinates — u from the grip
+  // hand out to the fore-end hand, n across it — so the whole weapon is one straight description:
+  // a stock with a butt and a comb, a steel prod whose limbs TAPER to their tips, the string drawn
+  // back to the nut just ahead of the trigger, and a bolt in the groove with its head out past the
+  // prod. It was a uniform stroked arc with no string at all, which reads as a scythe, not a bow.
+  const gx = near[2].x, gy = near[2].y, fx = far[2].x, fy = far[2].y;
   const dx = fx - gx, dy = fy - gy, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len, nx = -uy, ny = ux;
-  const pw = h * 0.185, sw = h * 0.017;
-  const prod = () => { ctx.beginPath(); ctx.moveTo(fx + nx * pw - ux * h * 0.03, fy + ny * pw - uy * h * 0.03); ctx.quadraticCurveTo(fx + ux * h * 0.05, fy + uy * h * 0.05, fx - nx * pw - ux * h * 0.03, fy - ny * pw - uy * h * 0.03); };
-  ctx.lineCap = 'round';
-  prod(); ctx.strokeStyle = B.col(B.outline); ctx.lineWidth = Math.max(2, h * 0.03) + 2; ctx.stroke();
-  prod(); ctx.strokeStyle = B.col(R.steel); ctx.lineWidth = Math.max(2, h * 0.03); ctx.stroke();
-  if (!B.override && h >= 60) { prod(); ctx.strokeStyle = B.col(shade(R.steel, 1.3)); ctx.lineWidth = 1; ctx.stroke(); }
-  stroke(ctx, [fx + nx * pw - ux * h * 0.03, fy + ny * pw - uy * h * 0.03, fx - nx * pw - ux * h * 0.03, fy - ny * pw - uy * h * 0.03], R.bone, 1);
-  // Stock: wood, with a deeper butt, a bolt lying along its top and the trigger lever below.
-  glossPoly(ctx, B, [fx + nx * sw + ux * h * 0.04, fy + ny * sw + uy * h * 0.04, gx + nx * sw * 1.5 - ux * h * 0.09, gy + ny * sw * 1.5 - uy * h * 0.09, gx - nx * sw * 2.6 - ux * h * 0.1, gy - ny * sw * 2.6 - uy * h * 0.1, gx - nx * sw * 1.4 + ux * h * 0.02, gy - ny * sw * 1.4 + uy * h * 0.02, fx - nx * sw + ux * h * 0.04, fy - ny * sw + uy * h * 0.04], R.wood, { spread: 0.6, h, tex: 'cracks', seed: 81, amount: 0.4 });
-  stroke(ctx, [fx + nx * sw * 1.3 + ux * h * 0.08, fy + ny * sw * 1.3 + uy * h * 0.08, gx + nx * sw * 1.3 - ux * h * 0.02, gy + ny * sw * 1.3 - uy * h * 0.02], shade('#d8d0b0', p.tone), Math.max(1, h * 0.012));
-  ctx.fillStyle = B.col(R.steel); ctx.beginPath(); ctx.moveTo(fx + nx * sw * 1.3 + ux * h * 0.11, fy + ny * sw * 1.3 + uy * h * 0.11); ctx.lineTo(fx + nx * sw * 2.2 + ux * h * 0.075, fy + ny * sw * 2.2 + uy * h * 0.075); ctx.lineTo(fx + nx * sw * 0.5 + ux * h * 0.075, fy + ny * sw * 0.5 + uy * h * 0.075); ctx.closePath(); ctx.fill();
-  stroke(ctx, [gx - nx * sw * 1.5 - ux * h * 0.012, gy - ny * sw * 1.5 - uy * h * 0.012, gx - nx * sw * 3.2 - ux * h * 0.032, gy - ny * sw * 3.2 - uy * h * 0.032], R.steel, Math.max(1, h * 0.012));
+  const pw = h * 0.16, sw = h * 0.016;
+  const mz = len + h * 0.075;   // the muzzle: the prod stands forward of the supporting hand
+  const Q = (u: number, n: number): Pt => ({ x: gx + ux * u + nx * n, y: gy + uy * u + ny * n });
+  const QA = (u: number, n: number, out: number[]): number[] => { const q = Q(u, n); out.push(q.x, q.y); return out; };
+  // Stock: fore-end, underside past the grip swell, round the butt and back along the comb.
+  const st: number[] = [];
+  QA(mz + h * 0.05, sw * 0.85, st); QA(mz + h * 0.057, -sw * 0.85, st); QA(h * 0.03, -sw * 1.25, st);
+  QA(-h * 0.022, -sw * 3.3, st); QA(-h * 0.082, -sw * 2.9, st); QA(-h * 0.1, -sw * 0.1, st);
+  QA(-h * 0.07, sw * 1.7, st); QA(h * 0.05, sw * 1.35, st); QA(mz * 0.62, sw * 1.05, st);
+  blob(ctx, B, R.wood, [{ k: 'curve', pts: st, wobble: 0.02, seed: 81, sub: 2 }], { h, formK: 0.5, spread: 0.6, tex: 'cracks', seed: 81, amount: 0.45 });
+  // The prod: two tapered limbs in one steel mass, thick at the fore-end and fine at the nocks.
+  const lim = (sgn: number): Part => tube([
+    Q(mz - h * 0.03, sgn * pw).x, Q(mz - h * 0.03, sgn * pw).y,
+    Q(mz + h * 0.012, sgn * pw * 0.55).x, Q(mz + h * 0.012, sgn * pw * 0.55).y,
+    Q(mz + h * 0.016, 0).x, Q(mz + h * 0.016, 0).y,
+  ], h * 0.0105, h * 0.024, 0, 82 + sgn);
+  blob(ctx, B, R.steel, [lim(1), lim(-1)], { h, formK: 0.55, gloss: 0.4, spread: 0.6 });
+  // Stirrup at the nose, and the string drawn back to the nut: a loaded weapon, not a bent stick.
+  const s0 = Q(mz - h * 0.03, pw), s1 = Q(mz - h * 0.03, -pw), nut = Q(mz * 0.5, sw * 0.15);
+  stroke(ctx, [s0.x, s0.y, nut.x, nut.y, s1.x, s1.y], R.bone, Math.max(1, h * 0.011));
+  const k0 = Q(mz + h * 0.045, sw * 0.8), k1 = Q(mz + h * 0.082, 0), k2 = Q(mz + h * 0.045, -sw * 2.2);
+  stroke(ctx, [k0.x, k0.y, k1.x, k1.y, k2.x, k2.y], R.dull, Math.max(1, h * 0.013));
+  // The bolt in the groove, head out past the prod; then the nut and the trigger lever.
+  const b0 = Q(mz * 0.5, sw * 0.5), b1 = Q(mz + h * 0.03, sw * 0.5);
+  stroke(ctx, [b0.x, b0.y, b1.x, b1.y], shade('#d8d0b0', p.tone), Math.max(1.5, h * 0.016));
+  const t0 = Q(mz + h * 0.068, sw * 0.3), t1 = Q(mz + h * 0.028, sw * 1.5), t2 = Q(mz + h * 0.028, -sw * 0.9);
+  ctx.fillStyle = B.col(R.steel);
+  ctx.beginPath(); ctx.moveTo(t0.x, t0.y); ctx.lineTo(t1.x, t1.y); ctx.lineTo(t2.x, t2.y); ctx.closePath(); ctx.fill();
+  glossBall(ctx, B, nut.x, nut.y, Math.max(1.5, h * 0.018), R.dull, { gloss: 0.5, spread: 0.6 });
+  const v0 = Q(mz * 0.46, -sw * 1.2), v1 = Q(mz * 0.37, -sw * 3.2);
+  stroke(ctx, [v0.x, v0.y, v1.x, v1.y], R.steel, Math.max(1, h * 0.013));
   // Both hands closed on the stock: the far one at the fore-end, the near one at the grip.
   const sa = Math.atan2(uy, ux);
   hand(ctx, R, far[2], sa, 78, { far: true, flip: 1, k: 0.92 });
