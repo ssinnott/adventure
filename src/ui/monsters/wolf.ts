@@ -110,15 +110,18 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
   // Inner ear: a soft dark hollow along the pinned-back near ear.
   softLine(ctx, B, [hx - rH * 0.25, hy - rH * 0.85, hx - rH * 0.95, hy - rH * 1.4], base, Math.max(1, rH * 0.13), 0.45);
-  // Eyes and angry brows: near eye large, far eye small.
+  // ONE eye, and an angry brow over it. The head is a profile: the muzzle runs out to the right and
+  // the far cheek is turned away, so a second eye has nowhere to be. It used to sit back on the
+  // skull at two thirds the size, which read as a wall eye rather than as the far side of a face.
+  // (If this head is ever turned toward the party, the pair becomes two eyes of the SAME size, the
+  // far one only slightly narrowed by the turn; the rat and the boar are profiles too, and carry
+  // one eye each.)
   const eyeCol = v === 'wolf' ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : HOT;
-  const ex = hx + rH * 0.45, ey = hy - rH * 0.3, er = rH * 0.15, fx = hx - rH * 0.28, fy = hy - rH * 0.38, fr = rH * 0.11;
-  if (rift) { glow(ctx, B, ex, ey, er * 3, EMBER, 0.4 + 0.3 * pulse, HOT); glow(ctx, B, fx, fy, fr * 2.6, EMBER, 0.35 + 0.25 * pulse, HOT); }
+  const ex = hx + rH * 0.46, ey = hy - rH * 0.3, er = rH * 0.16;
+  if (rift) glow(ctx, B, ex, ey, er * 3, EMBER, 0.4 + 0.3 * pulse, HOT);
   eye(ctx, ex, ey, er, eyeCol, !rift);
-  eye(ctx, fx, fy, fr, eyeCol, !rift);
   const bw = Math.max(1, rH * 0.14);
-  softLine(ctx, B, [ex + er * 1.5, ey - er * 1.8, ex - er * 1.2, ey - er * 0.9], base, bw, 0.85);
-  softLine(ctx, B, [fx - fr * 1.4, fy - fr * 1.7, fx + fr * 1.2, fy - fr * 0.8], base, bw, 0.85);
+  softLine(ctx, B, [ex + er * 1.55, ey - er * 1.75, ex - er * 1.3, ey - er * 0.85], base, bw, 0.85);
 
   if (v === 'dire') scars(ctx, x, y, h, mx, my, rH, shade('#c0b0a4', p.tone));
   if (rift) riftFx(ctx, x, y, h, hx, hy, rH, f, light, pulse);
@@ -216,12 +219,27 @@ function fangs(ctx: CanvasRenderingContext2D, hx: number, hy: number, rH: number
 }
 
 /** Dire wolf: pale old claw scars across the muzzle and the flank, soft lines with no ink. */
+/**
+ * Old claw marks. A scar is a healed seam in the coat, so it is thin, a little crooked, and only a
+ * step off the fur around it: drawn long, straight, thick and near-white it reads as a rod laid
+ * across the animal, which is what the muzzle one did, apparently skewering the head.
+ */
 function scars(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, mx: number, my: number, rH: number, col: string): void {
-  const w = Math.max(1, h * 0.02);
-  ctx.strokeStyle = B.col(rgba(col, 0.75)); ctx.lineWidth = w; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(mx - rH * 0.9, my - rH * 0.7); ctx.lineTo(mx - rH * 0.5, my + rH * 0.25); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(x - h * 0.24, y - h * 0.66); ctx.lineTo(x - h * 0.13, y - h * 0.46); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(x - h * 0.17, y - h * 0.68); ctx.lineTo(x - h * 0.07, y - h * 0.47); ctx.stroke();
+  ctx.strokeStyle = B.col(rgba(col, 0.42)); ctx.lineWidth = Math.max(1, h * 0.011); ctx.lineCap = 'round';
+  // Across the bridge of the muzzle, short and clear of the eye.
+  ctx.beginPath();
+  ctx.moveTo(mx - rH * 0.72, my - rH * 0.34);
+  ctx.quadraticCurveTo(mx - rH * 0.55, my - rH * 0.06, mx - rH * 0.46, my + rH * 0.16);
+  ctx.stroke();
+  // Two on the flank, of different lengths and angles, so they are not a tally.
+  ctx.beginPath();
+  ctx.moveTo(x - h * 0.235, y - h * 0.645);
+  ctx.quadraticCurveTo(x - h * 0.19, y - h * 0.575, x - h * 0.155, y - h * 0.495);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x - h * 0.16, y - h * 0.66);
+  ctx.quadraticCurveTo(x - h * 0.128, y - h * 0.60, x - h * 0.108, y - h * 0.545);
+  ctx.stroke();
 }
 
 /** Rift hound: a row of crystal shards along the back, leaning back, one faceted glossy mass, hot at the root. */
