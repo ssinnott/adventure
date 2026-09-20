@@ -129,6 +129,10 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   ], { h, formK: 0.55 });
   softLine(ctx, B, [X(0.27), U(0.87), X(0.28), U(0.94)], hide, Math.max(1, h * 0.018), 0.45);
 
+  // The FAR tusk first, so the muzzle and the snout disc cut across it: in profile the far side of
+  // the jaw is on the other side of the head, and a pair both drawn in front reads as two tusks on
+  // the near side rather than one on each.
+  blob(ctx, B, shade(ivory, 0.74), [{ k: 'tube', pts: [X(0.545), U(0.315), X(0.605), U(0.40), X(0.588), U(0.535)], r0: h * 0.02, r1: h * 0.007, gloss: 0.25 }], { h, formK: 0.5 });
   // The pale muzzle ring, the wet snout disc and its nostrils.
   patch(ctx, B, pale, [{ k: 'cap', x0: X(0.56), y0: U(0.40), x1: sx + h * 0.02, y1: U(0.365), r0: h * 0.055, r1: h * 0.05 }], { alpha: 0.5, feather: 0.6 });
   glossBall(ctx, B, sx + h * 0.04, sy - h * 0.025, h * 0.068, snout, { gloss: 0.4 });
@@ -138,10 +142,10 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     ctx.fillRect(Math.round(sx + h * 0.025), Math.round(sy - h * 0.045), nr, nr + 1);
     ctx.fillRect(Math.round(sx + h * 0.065), Math.round(sy - h * 0.04), nr, nr + 1);
   }
-  // Tusks: the big pair sweeping up out of the LOWER jaw, and the smaller uppers behind them.
   softLine(ctx, B, [X(0.50), U(0.365), X(0.665), U(0.335)], hide, Math.max(1, h * 0.02), 0.5);
-  blob(ctx, B, shade(ivory, 0.8), [{ k: 'tube', pts: [X(0.535), U(0.325), X(0.575), U(0.365), X(0.578), U(0.44)], r0: h * 0.019, r1: h * 0.007, gloss: 0.3 }], { h, formK: 0.5 });
-  blob(ctx, B, ivory, [{ k: 'tube', pts: [X(0.585), U(0.315), X(0.635), U(0.36), X(0.64), U(0.455)], r0: h * 0.024, r1: h * 0.008, gloss: 0.5 }], { h, formK: 0.6 });
+  // The NEAR tusk over everything, longer and heavier. Both curve up and BACK toward the eye,
+  // which is the way they actually grow; swept forward the tips crossed over the snout disc.
+  blob(ctx, B, ivory, [{ k: 'tube', pts: [X(0.60), U(0.295), X(0.668), U(0.40), X(0.648), U(0.585)], r0: h * 0.027, r1: h * 0.008, gloss: 0.5 }], { h, formK: 0.6 });
   // A small dark eye set high and far back, under a heavy brow.
   const ex = X(0.42), ey = U(0.66);
   softLine(ctx, B, [ex - h * 0.03, ey + h * 0.018, ex + h * 0.04, ey - h * 0.004], shade(hide, 0.55), Math.max(1, h * 0.028), 0.55);
