@@ -114,9 +114,10 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const sx = X(0.72), sy = U(0.40);
   // The FAR tusk, drawn BEFORE the head so the muzzle occludes it: in profile that tusk is on the
   // other side of the animal's face, and the only part of it a viewer can see is the tip clearing
-  // the top line of the snout, behind and above the near one. Drawn after the head it just looked
-  // like a second tusk on this side.
-  blob(ctx, B, shade(ivory, 0.72), [{ k: 'tube', pts: [X(0.55), U(0.30), X(0.605), U(0.44), X(0.592), U(0.70)], r0: h * 0.02, r1: h * 0.008, gloss: 0.25 }], { h, formK: 0.5 });
+  // the top line of the snout. A head seen side on is thin, so the far tusk sits almost directly
+  // behind the near one -- a small offset, just enough to read as depth. Set further back up the
+  // muzzle it looked like a separate tooth growing out of the animal's cheek.
+  blob(ctx, B, shade(ivory, 0.72), [{ k: 'tube', pts: [X(0.578), U(0.30), X(0.644), U(0.40), X(0.624), U(0.62)], r0: h * 0.02, r1: h * 0.0075, gloss: 0.25 }], { h, formK: 0.5 });
   blob(ctx, B, shade(hide, 0.95), [
     { k: 'curve', pts: [
       X(0.22), U(0.86), X(0.40), U(0.80), X(0.55), U(0.63), X(0.68), U(0.48),
