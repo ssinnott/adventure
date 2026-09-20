@@ -58,7 +58,7 @@ function rig(x: number, y: number, h: number, frame: number, breathe: number, sp
     const d = L[i];
     // The right-hand legs (the side turned toward us) stand a touch wider and higher; a slow twitch per leg.
     const wide = s > 0 ? 1.06 : 0.94, tw = Math.sin(frame / 8 + i * 1.9 + s * 0.7) * h * 0.012;
-    const hx = cx + s * h * 0.15, hy = cy + (i - 1.5) * h * 0.028;
+    const hx = cx + s * h * 0.225, hy = cy + h * 0.03 + (i - 1.5) * h * 0.036;
     const kx = x + s * h * d.kx * spread * wide, ky = y - h * d.ky + tw;
     const mx = x + s * h * d.mx * spread * wide, my = y - h * d.my + tw * 0.5;
     const fx = x + s * h * d.fx * spread * wide, fy = y - h * d.fy;
@@ -184,33 +184,35 @@ function marsh(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   blob(ctx, B, hide, [{ k: 'curve', pts: ring(ax, ay, h * 0.32, h * 0.27, 11, 1), wobble: 0.05, seed: 3, sub: 3 }], { h, formK: 0.5, gloss: 0.5, spread: 0.7 });
   // The hourglass: a marking, but a crisp one. A spider's mark has an edge.
   const pale = shade(mix(p.light, '#d8d2c0', 0.75), p.tone);
-  const hx = ax + h * 0.04, hy = ay + h * 0.01, hw = h * 0.1, hl = h * 0.17, waist = h * 0.022;
+  const hx = ax + h * 0.02, hy = ay - h * 0.04, hw = h * 0.075, hl = h * 0.13, waist = h * 0.017;
   patch(ctx, B, pale, [
     { k: 'poly', pts: [hx - hw, hy - hl, hx + hw, hy - hl, hx + waist, hy, hx + hw, hy + hl, hx - hw, hy + hl, hx - waist, hy] },
-  ], { alpha: 0.85, feather: 0.14 });
+  ], { alpha: 0.7, feather: 0.2 });
   // The pedicel: the narrow stalk the two bulbs hang from, drawn under the front bulb.
   blob(ctx, B, shade(hide, 0.82), [{ k: 'tube', pts: [ax + h * 0.22, ay + h * 0.14, cx - h * 0.1, cy - h * 0.06], r0: h * 0.07, r1: h * 0.08 }], { h, form: false });
-  // The cephalothorax and its mouthparts: the front bulb, over the abdomen, so the join is a line.
+  blob(ctx, B, shade(hide, 0.94), near.flatMap((l) => legParts(l, h, 0.055, 0.015, 0.04)), { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.045) });
+  legMarks(ctx, near, h, shade(hide, 0.46));
+  // The cephalothorax and its mouthparts, drawn AFTER the near legs so it covers their roots: on
+  // the reference the legs disappear under the carapace's rim rather than crossing its face, which
+  // is what stops eight limbs converging on the eyes and reading as legs out of a head.
   const front: Part[] = [
-    { k: 'curve', pts: ring(cx, cy, h * 0.26, h * 0.21, 9, 2), wobble: 0.04, seed: 5, sub: 3, gloss: 0.3 },
+    { k: 'curve', pts: ring(cx, cy, h * 0.315, h * 0.255, 9, 2), wobble: 0.04, seed: 5, sub: 3, gloss: 0.12 },
     { k: 'tube', pts: [cx - h * 0.1, cy + h * 0.05, cx - h * 0.2, cy + h * 0.16, cx - h * 0.17, cy + h * 0.28], r0: h * 0.035, r1: h * 0.02, wobble: 0.05, seed: 11 },
     { k: 'tube', pts: [cx + h * 0.11, cy + h * 0.05, cx + h * 0.22, cy + h * 0.15, cx + h * 0.2, cy + h * 0.28], r0: h * 0.035, r1: h * 0.02, wobble: 0.05, seed: 12 },
     { k: 'tube', pts: [cx - h * 0.06, cy + h * 0.1, cx - h * 0.07, cy + h * 0.22], r0: h * 0.05, r1: h * 0.042, seed: 13 },
     { k: 'tube', pts: [cx + h * 0.07, cy + h * 0.1, cx + h * 0.075, cy + h * 0.22], r0: h * 0.05, r1: h * 0.042, seed: 14 },
   ];
-  blob(ctx, B, shade(hide, 1.06), front, { h, formK: 0.6, gloss: 0.2, spread: 0.7, creases: [
+  blob(ctx, B, shade(hide, 1.06), front, { h, formK: 0.38, gloss: 0.1, spread: 0.75, creases: [
     { x0: cx - h * 0.02, y0: cy + h * 0.1, x1: cx + h * 0.03, y1: cy + h * 0.1, r: h * 0.02, a: 0.35 },
   ] });
   // A fold over the eye cluster, then the near legs on top, each with its own contour against the body.
   softLine(ctx, B, [cx - h * 0.17, cy - h * 0.07, cx - h * 0.1, cy - h * 0.14, cx, cy - h * 0.17, cx + h * 0.1, cy - h * 0.15, cx + h * 0.17, cy - h * 0.08], hide, h * 0.028, 0.6);
-  blob(ctx, B, shade(hide, 0.94), near.flatMap((l) => legParts(l, h, 0.055, 0.015, 0.04)), { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.045) });
-  legMarks(ctx, near, h, shade(hide, 0.46));
   // Red eyes, lit from within.
-  glow(ctx, B, cx, cy - h * 0.05, h * 0.14, '#ff3020', 0.25, '#ff8060');
-  eyes(ctx, cx, cy, h, shade('#ff4a30', Math.max(0.6, p.tone)));
+  glow(ctx, B, cx, cy - h * 0.095, h * 0.15, '#ff3020', 0.25, '#ff8060');
+  eyes(ctx, cx, cy - h * 0.095, h, shade('#ff4a30', Math.max(0.6, p.tone)));
   // Wet fangs and a venom drip from the right one.
   const ivory = shade('#ece6d4', p.tone);
-  fangs(ctx, cx, cy, h, h * 0.03, h * 0.14, ivory);
+  fangs(ctx, cx, cy + h * 0.035, h, h * 0.03, h * 0.14, ivory);
   const drip = (Math.sin(p.frame / 23) + 1) * 0.5;
   const dx = cx + h * 0.02, dy = cy + h * 0.33;
   blob(ctx, B, shade('#b8e070', p.tone), [
@@ -244,8 +246,12 @@ function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   ], { alpha: 0.75, feather: 0.2 });
   // The pedicel, then the knobbly cephalothorax and its mouthparts over the abdomen.
   blob(ctx, B, shade(hide, 0.82), [{ k: 'tube', pts: [ax + h * 0.22, ay + h * 0.14, cx - h * 0.1, cy - h * 0.06], r0: h * 0.075, r1: h * 0.085 }], { h, form: false });
+  const nearParts: Part[] = near.flatMap((l) => legParts(l, h, 0.062, 0.018, 0.07));
+  for (const l of near) nearParts.push(...legThorns(l, h, 2));
+  blob(ctx, B, shade(hide, 0.92), nearParts, { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.05) });
+  legMarks(ctx, near, h, shade(hide, 0.48));
   const front: Part[] = [
-    { k: 'curve', pts: ring(cx, cy, h * 0.27, h * 0.215, 9, 7), wobble: 0.06, spiky: 0.04, seed: 9, sub: 2 },
+    { k: 'curve', pts: ring(cx, cy, h * 0.325, h * 0.26, 9, 7), wobble: 0.06, spiky: 0.04, seed: 9, sub: 2 },
     { k: 'tube', pts: [cx - h * 0.11, cy + h * 0.05, cx - h * 0.23, cy + h * 0.15, cx - h * 0.2, cy + h * 0.3], r0: h * 0.04, r1: h * 0.022, wobble: 0.08, seed: 15 },
     { k: 'tube', pts: [cx + h * 0.12, cy + h * 0.05, cx + h * 0.25, cy + h * 0.14, cx + h * 0.23, cy + h * 0.3], r0: h * 0.04, r1: h * 0.022, wobble: 0.08, seed: 16 },
     { k: 'tube', pts: [cx - h * 0.065, cy + h * 0.1, cx - h * 0.075, cy + h * 0.23], r0: h * 0.06, r1: h * 0.052, wobble: 0.05, seed: 17 },
@@ -255,12 +261,8 @@ function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
     { x0: cx - h * 0.02, y0: cy + h * 0.1, x1: cx + h * 0.03, y1: cy + h * 0.1, r: h * 0.022, a: 0.35 },
   ] });
   softLine(ctx, B, [cx - h * 0.19, cy - h * 0.07, cx - h * 0.11, cy - h * 0.15, cx, cy - h * 0.185, cx + h * 0.11, cy - h * 0.16, cx + h * 0.19, cy - h * 0.08], hide, h * 0.03, 0.6);
-  const nearParts: Part[] = near.flatMap((l) => legParts(l, h, 0.062, 0.018, 0.07));
-  for (const l of near) nearParts.push(...legThorns(l, h, 2));
-  blob(ctx, B, shade(hide, 0.92), nearParts, { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.05) });
-  legMarks(ctx, near, h, shade(hide, 0.48));
   // Amber-green eyes and heavy fangs.
-  glow(ctx, B, cx, cy - h * 0.05, h * 0.13, '#c0d040', 0.18, '#f0f090');
-  eyes(ctx, cx, cy, h, shade('#d8e048', Math.max(0.6, p.tone)));
-  fangs(ctx, cx, cy, h, h * 0.04, h * 0.17, shade('#e4dcc4', p.tone));
+  glow(ctx, B, cx, cy - h * 0.1, h * 0.14, '#c0d040', 0.18, '#f0f090');
+  eyes(ctx, cx, cy - h * 0.1, h, shade('#d8e048', Math.max(0.6, p.tone)));
+  fangs(ctx, cx, cy + h * 0.04, h, h * 0.04, h * 0.17, shade('#e4dcc4', p.tone));
 }

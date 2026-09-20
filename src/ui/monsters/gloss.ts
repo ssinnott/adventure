@@ -74,14 +74,31 @@ function fillAcross(ctx: CanvasRenderingContext2D, B: Brush, hex: string, x0: nu
   ctx.fillStyle = g; ctx.fill();
 }
 
-/** A soft white specular on the lit side, for wet, glossy or crystalline surfaces. */
+/**
+ * A soft white specular on the lit side, for wet, glossy or crystalline surfaces. The fall-off is a
+ * gradient: filled as a flat ellipse it has a hard rim, and on anything but a small bright dot that
+ * rim reads as a pale lens stuck to the surface rather than as light on it.
+ */
 function specular(ctx: CanvasRenderingContext2D, B: Brush, cx: number, cy: number, r: number, k: number): void {
   if (k <= 0 || r < 3) return;
   const lx = B.light.x, ly = B.light.y;
-  ctx.fillStyle = rgba('#ffffff', 0.18 + 0.5 * k);
-  pathEllipse(ctx, cx + lx * r * 0.5, cy + ly * r * 0.5, r * 0.28, r * 0.15, Math.atan2(ly, lx) + Math.PI / 2 + 0.3);
-  ctx.fill();
-  if (r >= 8) { ctx.fillStyle = rgba('#ffffff', 0.25 + 0.4 * k); pathEllipse(ctx, cx + lx * r * 0.6, cy + ly * r * 0.6, r * 0.1, r * 0.06); ctx.fill(); }
+  const sx = cx + lx * r * 0.5, sy = cy + ly * r * 0.5, sr = r * 0.3;
+  const g = ctx.createRadialGradient(sx, sy, 0, sx, sy, sr);
+  g.addColorStop(0, rgba('#ffffff', 0.2 + 0.55 * k));
+  g.addColorStop(0.45, rgba('#ffffff', 0.12 + 0.3 * k));
+  g.addColorStop(1, rgba('#ffffff', 0));
+  ctx.save();
+  ctx.translate(sx, sy); ctx.rotate(Math.atan2(ly, lx) + Math.PI / 2 + 0.3); ctx.scale(1, 0.55); ctx.translate(-sx, -sy);
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+  // The hot pinpoint at the middle of the highlight, which is what makes a surface look wet.
+  if (r >= 8) {
+    const hr = r * 0.085, hx = cx + lx * r * 0.58, hy = cy + ly * r * 0.58;
+    const g2 = ctx.createRadialGradient(hx, hy, 0, hx, hy, hr * 2);
+    g2.addColorStop(0, rgba('#ffffff', 0.3 + 0.55 * k));
+    g2.addColorStop(1, rgba('#ffffff', 0));
+    ctx.fillStyle = g2; ctx.beginPath(); ctx.arc(hx, hy, hr * 2, 0, Math.PI * 2); ctx.fill();
+  }
 }
 
 /** Draw `tex` inside the current clip, around (cx, cy) with extent r. */
