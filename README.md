@@ -21,6 +21,13 @@ npm run check      # typecheck + Node tests + headless Chromium smoke test
 Keys: arrows or WASD move and turn, Q/E strafe, Space acts, F searches the wall ahead, R rests,
 C casts, I opens the character sheet (1–6 jump to a member), M map info, F5/F9 save and load.
 
+## Deploying
+
+Every push to `main` runs [.github/workflows/pages.yml](.github/workflows/pages.yml): typecheck,
+tests, `npm run build`, then publish `dist/` to GitHub Pages at
+<https://ssinnott.github.io/adventure/>. Pages must be set to deploy from **GitHub Actions**
+(Settings → Pages → Source); the workflow enables that on its first run if it can.
+
 ## Layout
 
 ```
