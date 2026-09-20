@@ -111,7 +111,7 @@ function slime(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   // turns the whole front into one dark smear.
   const fx = x - w * 0.01;
   for (const s of [-1, 1]) {
-    const ex = fx + s * w * 0.115, ey = y - hh * 0.74 - s * hh * 0.025, rr = h * 0.05;
+    const ex = fx + s * w * 0.115, ey = y - hh * 0.74 - s * hh * 0.025, rr = h * 0.056;
     ctx.fillStyle = B.col(rgba(lip, 0.5)); ctx.beginPath(); ctx.arc(ex, ey, rr * 1.3, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = B.col(pit); ctx.beginPath(); ctx.arc(ex, ey, rr, 0, Math.PI * 2); ctx.fill();
     // Light bouncing up off the floor of the socket, then the wet catchlight on the lit side.
@@ -121,13 +121,13 @@ function slime(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   // The maw: a curved opening, corners up and the middle bowing down, thin enough that it can never
   // fuse with the eyes; a lit ridge on the upper lip and a brighter one on the lower.
   const gy = y - hh * 0.3 + wob * h * 0.01;
-  blob(ctx, B, mix(pit, dark, 0.3), [{ k: 'curve', pts: [
-    fx - w * 0.22, gy - h * 0.055, fx - w * 0.1, gy + h * 0.005, fx + w * 0.06, gy + h * 0.035, fx + w * 0.18, gy + h * 0.04,
-    fx + w * 0.12, gy + h * 0.105, fx - w * 0.04, gy + h * 0.095, fx - w * 0.15, gy + h * 0.04,
+  blob(ctx, B, mix(pit, dark, 0.12), [{ k: 'curve', pts: [
+    fx - w * 0.22, gy - h * 0.058, fx - w * 0.1, gy + h * 0.005, fx + w * 0.06, gy + h * 0.035, fx + w * 0.18, gy + h * 0.04,
+    fx + w * 0.12, gy + h * 0.115, fx - w * 0.04, gy + h * 0.115, fx - w * 0.15, gy + h * 0.045,
   ], wobble: 0.04, seed: 6, sub: 2 }], { outline: false, formK: 1, spread: 0.4 });
   const lw = Math.max(1, h * 0.026);
   paleLine(ctx, [fx - w * 0.22, gy - h * 0.06, fx - w * 0.09, gy, fx + w * 0.06, gy + h * 0.028, fx + w * 0.18, gy + h * 0.035], lip, lw, 0.38);
-  paleLine(ctx, [fx - w * 0.18, gy + h * 0.035, fx - w * 0.04, gy + h * 0.108, fx + w * 0.12, gy + h * 0.115, fx + w * 0.19, gy + h * 0.055], lip, lw * 1.15, 0.6);
+  paleLine(ctx, [fx - w * 0.18, gy + h * 0.042, fx - w * 0.04, gy + h * 0.128, fx + w * 0.12, gy + h * 0.128, fx + w * 0.19, gy + h * 0.058], lip, lw * 1.15, 0.62);
 
   // WET. Light passing through the thin base and back out: a lit rim where the body meets the floor.
   const thru = ctx.createLinearGradient(x, y - hh * 0.36, x, y + h * 0.02);
