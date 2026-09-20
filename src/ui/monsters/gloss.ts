@@ -249,13 +249,22 @@ export function glow(ctx: CanvasRenderingContext2D, B: Brush, cx: number, cy: nu
 }
 
 // ------------------------------------------------------------------ organic ----
-// A creature is not a pile of outlined primitives. `blob` takes the parts of ONE material (a
-// wolf's fur, a robe, a hide) and paints them as a single mass: the outline is stroked once
-// around the union, the fill is one rendered gradient across the whole, then, clipped inside,
-// each part gets a soft translucent volume so limbs and heads still read as round, plus creases
-// where forms meet, a texture and a specular. Contours can be lumpy (wobble) or fur-edged
-// (spiky) so nothing is a clean ellipse unless it should be. Draw one blob per material,
-// back to front; the line between materials is the only interior line left.
+// A creature is not a pile of outlined primitives. `blob` takes parts that belong to ONE surface (a
+// wolf's fur, a robe, a hide) and paints them as a single mass: the outline is stroked once around
+// the union, the fill is one rendered gradient across the whole, then, clipped inside, each part
+// gets a soft translucent volume so limbs and heads still read as round, plus creases where forms
+// meet, a texture and a specular. Contours can be lumpy (wobble) or fur-edged (spiky) so nothing is
+// a clean ellipse unless it should be. Draw back to front.
+//
+// One blob per material is the starting point, NOT the rule. A contour is what says "this is a
+// separate thing", so anything the eye must read as its own body section needs one, even when it
+// is the same material as its neighbour: a spider's abdomen and carapace are both chitin, and
+// unioned into one mass they are a blob with legs. The test is whether a viewer has to be able to
+// name the part. Sections that must read separately get their own blob and overlap a little; a
+// surface that is continuous (a torso and the shoulder on it) stays in one.
+
+// A marking is the opposite case, and takes `patch` rather than a blob of its own.
+
 
 export type Part =
   | { k: 'ball'; x: number; y: number; r: number; gloss?: number }

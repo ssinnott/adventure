@@ -1,8 +1,10 @@
-// The spider family: marsh spider and thorn spider, painted organically with blob(): a big lumpy
-// glossy abdomen, a smaller cephalothorax in front and lower, eight bending tube legs (the rear
-// pairs as their own darker mass behind the body), pedipalps, chelicerae with crisp pale fangs and
-// an eye cluster. Facing the party in a slight three-quarter, the head turned a little to the
-// right; idle is a leg twitch and an abdomen bob.
+// The spider family: marsh spider and thorn spider. An arachnid is two bulbs on a narrow waist,
+// and both are the same chitin, so unioning them into one mass the way a single material usually
+// wants leaves an undifferentiated blob with legs. Each body SECTION is therefore its own blob
+// with its own contour: the abdomen, then the cephalothorax and its mouthparts over it, then the
+// near legs over that; the rear legs are a darker mass behind everything. A leg reads as segmented
+// because the knee carries a swelling and a crease, and the shin is visibly thinner than the
+// thigh. Facing the party in a slight three-quarter; idle is a leg twitch and an abdomen bob.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -36,21 +38,23 @@ interface Rig { ax: number; ay: number; cx: number; cy: number; legs: Leg[] }
 
 function rig(x: number, y: number, h: number, frame: number, breathe: number, spread: number): Rig {
   const bob = breathe * h * 0.012;
-  const cx = x + h * 0.1, cy = y - h * 0.33 + bob * 0.4;
-  const ax = x - h * 0.13, ay = y - h * 0.67 + bob;
+  const cx = x + h * 0.17, cy = y - h * 0.36 + bob * 0.4;
+  const ax = x - h * 0.17, ay = y - h * 0.74 + bob;
   // Fanned: the front pair reaches forward (foot low and near), the rear pair back (foot higher, behind).
+  // The shin bows OUTWARD between knee and foot (mx sits wider than the midpoint of knee and foot),
+  // which is what stops a leg reading as two straight rods hinged in the middle.
   const L = [
-    { kx: 0.44, ky: 0.74, mx: 0.56, my: 0.42, fx: 0.5, fy: 0.02 },
-    { kx: 0.6, ky: 0.82, mx: 0.8, my: 0.46, fx: 0.86, fy: 0.03 },
-    { kx: 0.62, ky: 0.88, mx: 0.9, my: 0.52, fx: 0.98, fy: 0.08 },
-    { kx: 0.5, ky: 0.9, mx: 0.78, my: 0.58, fx: 0.84, fy: 0.15 },
+    { kx: 0.44, ky: 0.76, mx: 0.62, my: 0.38, fx: 0.52, fy: 0.02 },
+    { kx: 0.6, ky: 0.84, mx: 0.84, my: 0.43, fx: 0.76, fy: 0.03 },
+    { kx: 0.62, ky: 0.9, mx: 0.9, my: 0.49, fx: 0.84, fy: 0.08 },
+    { kx: 0.5, ky: 0.92, mx: 0.78, my: 0.55, fx: 0.72, fy: 0.15 },
   ];
   const legs: Leg[] = [];
   for (const s of [-1, 1]) for (let i = 0; i < 4; i++) {
     const d = L[i];
     // The right-hand legs (the side turned toward us) stand a touch wider and higher; a slow twitch per leg.
     const wide = s > 0 ? 1.06 : 0.94, tw = Math.sin(frame / 8 + i * 1.9 + s * 0.7) * h * 0.012;
-    const hx = cx + s * h * 0.12, hy = cy + (i - 1.5) * h * 0.025;
+    const hx = cx + s * h * 0.17, hy = cy + (i - 1.5) * h * 0.03;
     const kx = x + s * h * d.kx * spread * wide, ky = y - h * d.ky + tw;
     const mx = x + s * h * d.mx * spread * wide, my = y - h * d.my + tw * 0.5;
     const fx = x + s * h * d.fx * spread * wide, fy = y - h * d.fy;
@@ -61,8 +65,33 @@ function rig(x: number, y: number, h: number, frame: number, breathe: number, sp
   return { ax, ay, cx, cy, legs };
 }
 
-function legPart(l: Leg, h: number, r0: number, r1: number, wobble: number): Part {
-  return { k: 'tube', pts: l.pts, r0: h * r0, r1: h * r1, wobble, seed: 20 + l.i * 2 + (l.s > 0 ? 1 : 0) };
+/**
+ * One leg as three segments plus a knee: a thick thigh up to the raised knee, a swelling at the
+ * joint, then a clearly thinner shin and a thin foot. A single tapered tube from hip to toe reads
+ * as wire; the step in thickness and the knuckle at the bend are what say "jointed limb".
+ */
+function legParts(l: Leg, h: number, r0: number, r1: number, wobble: number): Part[] {
+  const p = l.pts, seed = 20 + l.i * 2 + (l.s > 0 ? 1 : 0);
+  const knee = [p[4], p[5]], mid = [p[8], p[9]], foot = [p[10], p[11]];
+  const rk = h * (r0 * 0.62 + r1 * 0.38);
+  return [
+    { k: 'tube', pts: [p[0], p[1], p[2], p[3], knee[0], knee[1]], r0: h * r0, r1: rk / h * h * 0.92, wobble, seed },
+    { k: 'ball', x: knee[0], y: knee[1], r: rk * 1.04 },
+    { k: 'tube', pts: [knee[0], knee[1], p[6], p[7], mid[0], mid[1]], r0: rk * 0.8, r1: h * (r0 * 0.3 + r1 * 0.7), wobble, seed: seed + 40 },
+    { k: 'tube', pts: [mid[0], mid[1], foot[0], foot[1]], r0: h * (r0 * 0.3 + r1 * 0.7), r1: h * r1, wobble, seed: seed + 80 },
+  ];
+}
+
+/**
+ * A crease ACROSS each knee, laid perpendicular to the shin so it reads as the fold of a joint.
+ * Laid horizontally it becomes a dark bar lying over a diagonal leg.
+ */
+function legCreases(legs: readonly Leg[], h: number, r: number): Crease[] {
+  return legs.map((l) => {
+    const kx = l.pts[4], ky = l.pts[5], dx = l.pts[8] - kx, dy = l.pts[9] - ky, len = Math.hypot(dx, dy) || 1;
+    const nx = -dy / len * h * r, ny = dx / len * h * r;
+    return { x0: kx - nx, y0: ky - ny, x1: kx + nx, y1: ky + ny, r: h * r * 0.32, a: 0.38 };
+  });
 }
 
 /** Thorn spines along a leg's shin, as polys that union into the leg's mass. */
@@ -111,34 +140,35 @@ function marsh(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   const R = rig(x, y, h, p.frame, p.breathe, 1);
   const { ax, ay, cx, cy } = R;
   // Slick near-black chitin with a bluish cast on the abdomen; the legs a hair darker.
-  const hide = mix(p.base, '#141a30', 0.35);
+  const hide = mix(p.base, '#2a3050', 0.3);
   groundShadow(ctx, x + h * 0.02, y + 1, h * 1.9);
-  // Rear pairs first: their own darker mass behind the body.
-  blob(ctx, B, shade(hide, 0.72), R.legs.filter((l) => l.i >= 2).map((l) => legPart(l, h, 0.05, 0.016, 0.05)), { h, formK: 0.4, spread: 0.8 });
-  // The body and the near legs: one mass. Abdomen a big lumpy glossy blob, cephalothorax lower in front,
-  // pedipalps and chelicerae hanging off its front.
-  const parts: Part[] = [
-    { k: 'curve', pts: ring(ax, ay, h * 0.35, h * 0.28, 11, 1), wobble: 0.05, seed: 3, sub: 3, gloss: 0.6 },
-    { k: 'curve', pts: ring(cx, cy, h * 0.19, h * 0.155, 9, 2), wobble: 0.04, seed: 5, sub: 3, gloss: 0.3 },
+  const rear = R.legs.filter((l) => l.i >= 2), near = R.legs.filter((l) => l.i < 2);
+  // Rear pairs first: their own darker mass behind everything.
+  blob(ctx, B, shade(hide, 0.7), rear.flatMap((l) => legParts(l, h, 0.05, 0.014, 0.04)), { h, formK: 0.4, spread: 0.8, creases: legCreases(rear, h, 0.04) });
+  // The abdomen: the big rear bulb, its own contour so the waist reads.
+  blob(ctx, B, hide, [{ k: 'curve', pts: ring(ax, ay, h * 0.32, h * 0.27, 11, 1), wobble: 0.05, seed: 3, sub: 3 }], { h, formK: 0.5, gloss: 0.5, spread: 0.7 });
+  // The hourglass: a marking, but a crisp one. A spider's mark has an edge.
+  const pale = shade(mix(p.light, '#d8d2c0', 0.75), p.tone);
+  const hx = ax + h * 0.04, hy = ay + h * 0.01, hw = h * 0.1, hl = h * 0.17, waist = h * 0.022;
+  patch(ctx, B, pale, [
+    { k: 'poly', pts: [hx - hw, hy - hl, hx + hw, hy - hl, hx + waist, hy, hx + hw, hy + hl, hx - hw, hy + hl, hx - waist, hy] },
+  ], { alpha: 0.85, feather: 0.14 });
+  // The pedicel: the narrow stalk the two bulbs hang from, drawn under the front bulb.
+  blob(ctx, B, shade(hide, 0.82), [{ k: 'tube', pts: [ax + h * 0.22, ay + h * 0.14, cx - h * 0.1, cy - h * 0.06], r0: h * 0.07, r1: h * 0.08 }], { h, form: false });
+  // The cephalothorax and its mouthparts: the front bulb, over the abdomen, so the join is a line.
+  const front: Part[] = [
+    { k: 'curve', pts: ring(cx, cy, h * 0.26, h * 0.21, 9, 2), wobble: 0.04, seed: 5, sub: 3, gloss: 0.3 },
     { k: 'tube', pts: [cx - h * 0.1, cy + h * 0.05, cx - h * 0.2, cy + h * 0.16, cx - h * 0.17, cy + h * 0.28], r0: h * 0.035, r1: h * 0.02, wobble: 0.05, seed: 11 },
     { k: 'tube', pts: [cx + h * 0.11, cy + h * 0.05, cx + h * 0.22, cy + h * 0.15, cx + h * 0.2, cy + h * 0.28], r0: h * 0.035, r1: h * 0.02, wobble: 0.05, seed: 12 },
-    { k: 'tube', pts: [cx - h * 0.06, cy + h * 0.1, cx - h * 0.07, cy + h * 0.22], r0: h * 0.048, r1: h * 0.04, seed: 13 },
-    { k: 'tube', pts: [cx + h * 0.07, cy + h * 0.1, cx + h * 0.075, cy + h * 0.22], r0: h * 0.048, r1: h * 0.04, seed: 14 },
+    { k: 'tube', pts: [cx - h * 0.06, cy + h * 0.1, cx - h * 0.07, cy + h * 0.22], r0: h * 0.05, r1: h * 0.042, seed: 13 },
+    { k: 'tube', pts: [cx + h * 0.07, cy + h * 0.1, cx + h * 0.075, cy + h * 0.22], r0: h * 0.05, r1: h * 0.042, seed: 14 },
   ];
-  for (const l of R.legs) if (l.i < 2) parts.push(legPart(l, h, 0.055, 0.017, 0.05));
-  const creases: Crease[] = [
-    { x0: cx - h * 0.14, y0: cy - h * 0.1, x1: cx + h * 0.1, y1: cy - h * 0.15, r: h * 0.035, a: 0.5 },
+  blob(ctx, B, shade(hide, 1.06), front, { h, formK: 0.6, gloss: 0.2, spread: 0.7, creases: [
     { x0: cx - h * 0.02, y0: cy + h * 0.1, x1: cx + h * 0.03, y1: cy + h * 0.1, r: h * 0.02, a: 0.35 },
-  ];
-  blob(ctx, B, hide, parts, { h, formK: 0.65, gloss: 0.1, spread: 0.7, creases });
-  // The pale hourglass on the abdomen: a mass inside, no line.
-  const pale = shade(mix(p.light, '#d8d2c0', 0.75), p.tone);
-  const hx = ax + h * 0.07, hy = ay + h * 0.03;
-  patch(ctx, B, pale, [
-    { k: 'curve', pts: [hx - h * 0.09, hy - h * 0.19, hx + h * 0.08, hy - h * 0.18, hx + h * 0.02, hy - h * 0.01, hx + h * 0.08, hy + h * 0.15, hx - h * 0.07, hy + h * 0.16, hx - h * 0.02, hy], wobble: 0.04, seed: 8, sub: 2 },
-  ], { alpha: 0.8, feather: 0.3 });
-  // The waist between the two body masses, and a fold over the eye cluster.
-  softLine(ctx, B, [cx - h * 0.17, cy - h * 0.06, cx - h * 0.1, cy - h * 0.13, cx, cy - h * 0.16, cx + h * 0.1, cy - h * 0.14, cx + h * 0.17, cy - h * 0.07], hide, h * 0.028, 0.6);
+  ] });
+  // A fold over the eye cluster, then the near legs on top, each with its own contour against the body.
+  softLine(ctx, B, [cx - h * 0.17, cy - h * 0.07, cx - h * 0.1, cy - h * 0.14, cx, cy - h * 0.17, cx + h * 0.1, cy - h * 0.15, cx + h * 0.17, cy - h * 0.08], hide, h * 0.028, 0.6);
+  blob(ctx, B, shade(hide, 0.94), near.flatMap((l) => legParts(l, h, 0.055, 0.015, 0.04)), { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.045) });
   // Red eyes, lit from within.
   glow(ctx, B, cx, cy - h * 0.05, h * 0.14, '#ff3020', 0.25, '#ff8060');
   eyes(ctx, cx, cy, h, shade('#ff4a30', Math.max(0.6, p.tone)));
@@ -159,36 +189,38 @@ function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   // Green-brown hide: the abdomen browner and matte, the legs the green of the thicket.
   const hide = mix(p.base, '#6a4a1c', 0.28);
   groundShadow(ctx, x + h * 0.02, y + 1, h * 1.95);
-  const rear = R.legs.filter((l) => l.i >= 2);
-  const rearParts: Part[] = rear.map((l) => legPart(l, h, 0.06, 0.02, 0.09));
+  const rear = R.legs.filter((l) => l.i >= 2), near = R.legs.filter((l) => l.i < 2);
+  const rearParts: Part[] = rear.flatMap((l) => legParts(l, h, 0.058, 0.017, 0.07));
   for (const l of rear) rearParts.push(...legThorns(l, h, 1));
-  blob(ctx, B, shade(hide, 0.72), rearParts, { h, formK: 0.4, spread: 0.8 });
-  // The abdomen with a ring of spikes, a knobbly cephalothorax, pedipalps, heavy chelicerae, the near legs with thorns.
-  const parts: Part[] = [
-    { k: 'curve', pts: ring(ax, ay, h * 0.35, h * 0.27, 10, 4), wobble: 0.06, spiky: 0.16, seed: 6, sub: 2, gloss: 0.15 },
-    { k: 'curve', pts: ring(cx, cy, h * 0.21, h * 0.165, 9, 7), wobble: 0.06, spiky: 0.04, seed: 9, sub: 2 },
-    { k: 'tube', pts: [cx - h * 0.11, cy + h * 0.05, cx - h * 0.23, cy + h * 0.15, cx - h * 0.2, cy + h * 0.3], r0: h * 0.04, r1: h * 0.022, wobble: 0.08, seed: 15 },
-    { k: 'tube', pts: [cx + h * 0.12, cy + h * 0.05, cx + h * 0.25, cy + h * 0.14, cx + h * 0.23, cy + h * 0.3], r0: h * 0.04, r1: h * 0.022, wobble: 0.08, seed: 16 },
-    { k: 'tube', pts: [cx - h * 0.065, cy + h * 0.1, cx - h * 0.075, cy + h * 0.23], r0: h * 0.058, r1: h * 0.05, wobble: 0.05, seed: 17 },
-    { k: 'tube', pts: [cx + h * 0.075, cy + h * 0.1, cx + h * 0.085, cy + h * 0.23], r0: h * 0.058, r1: h * 0.05, wobble: 0.05, seed: 18 },
-  ];
-  // Big thorns crowning the abdomen.
+  blob(ctx, B, shade(hide, 0.7), rearParts, { h, formK: 0.4, spread: 0.8, creases: legCreases(rear, h, 0.045) });
+  // The abdomen: the big rear bulb, spiked, its own contour so the waist reads.
+  const abdomen: Part[] = [{ k: 'curve', pts: ring(ax, ay, h * 0.33, h * 0.27, 10, 4), wobble: 0.06, spiky: 0.16, seed: 6, sub: 2 }];
   for (let i = 0; i < 4; i++) {
     const a = -2.7 + i * 0.62, bx = ax + Math.cos(a) * h * 0.3, by = ay + Math.sin(a) * h * 0.25, len = h * (0.11 + (i % 2) * 0.04);
-    parts.push({ k: 'poly', pts: [bx - h * 0.04, by + h * 0.02, bx + h * 0.04, by, bx + Math.cos(a) * len, by + Math.sin(a) * len] });
+    abdomen.push({ k: 'poly', pts: [bx - h * 0.04, by + h * 0.02, bx + h * 0.04, by, bx + Math.cos(a) * len, by + Math.sin(a) * len] });
   }
-  for (const l of R.legs) if (l.i < 2) { parts.push(legPart(l, h, 0.065, 0.02, 0.09)); parts.push(...legThorns(l, h, 2)); }
-  const creases: Crease[] = [
-    { x0: cx - h * 0.15, y0: cy - h * 0.11, x1: cx + h * 0.11, y1: cy - h * 0.16, r: h * 0.04, a: 0.5 },
-    { x0: cx - h * 0.02, y0: cy + h * 0.1, x1: cx + h * 0.03, y1: cy + h * 0.1, r: h * 0.022, a: 0.35 },
-  ];
-  blob(ctx, B, hide, parts, { h, formK: 0.6, tex: 'stipple', seed: 21, amount: 0.7, creases });
-  // Two pale streaks down the back of the abdomen, inside the mass, no line.
+  blob(ctx, B, hide, abdomen, { h, formK: 0.45, tex: 'stipple', seed: 21, amount: 0.7, gloss: 0.12, spread: 0.7 });
+  // Two pale streaks down the back: a marking with an edge, not a haze.
   patch(ctx, B, shade(mix(p.light, '#b0b068', 0.45), p.tone), [
     { k: 'curve', pts: [ax - h * 0.16, ay - h * 0.22, ax - h * 0.08, ay - h * 0.24, ax - h * 0.03, ay + h * 0.02, ax - h * 0.09, ay + h * 0.05], wobble: 0.06, seed: 19, sub: 2 },
     { k: 'curve', pts: [ax + h * 0.05, ay - h * 0.24, ax + h * 0.13, ay - h * 0.2, ax + h * 0.1, ay + h * 0.03, ax + h * 0.03, ay + h * 0.02], wobble: 0.06, seed: 23, sub: 2 },
-  ], { alpha: 0.7, feather: 0.5 });
-  softLine(ctx, B, [cx - h * 0.19, cy - h * 0.06, cx - h * 0.11, cy - h * 0.14, cx, cy - h * 0.175, cx + h * 0.11, cy - h * 0.15, cx + h * 0.19, cy - h * 0.07], hide, h * 0.03, 0.6);
+  ], { alpha: 0.75, feather: 0.2 });
+  // The pedicel, then the knobbly cephalothorax and its mouthparts over the abdomen.
+  blob(ctx, B, shade(hide, 0.82), [{ k: 'tube', pts: [ax + h * 0.22, ay + h * 0.14, cx - h * 0.1, cy - h * 0.06], r0: h * 0.075, r1: h * 0.085 }], { h, form: false });
+  const front: Part[] = [
+    { k: 'curve', pts: ring(cx, cy, h * 0.27, h * 0.215, 9, 7), wobble: 0.06, spiky: 0.04, seed: 9, sub: 2 },
+    { k: 'tube', pts: [cx - h * 0.11, cy + h * 0.05, cx - h * 0.23, cy + h * 0.15, cx - h * 0.2, cy + h * 0.3], r0: h * 0.04, r1: h * 0.022, wobble: 0.08, seed: 15 },
+    { k: 'tube', pts: [cx + h * 0.12, cy + h * 0.05, cx + h * 0.25, cy + h * 0.14, cx + h * 0.23, cy + h * 0.3], r0: h * 0.04, r1: h * 0.022, wobble: 0.08, seed: 16 },
+    { k: 'tube', pts: [cx - h * 0.065, cy + h * 0.1, cx - h * 0.075, cy + h * 0.23], r0: h * 0.06, r1: h * 0.052, wobble: 0.05, seed: 17 },
+    { k: 'tube', pts: [cx + h * 0.075, cy + h * 0.1, cx + h * 0.085, cy + h * 0.23], r0: h * 0.06, r1: h * 0.052, wobble: 0.05, seed: 18 },
+  ];
+  blob(ctx, B, shade(hide, 1.08), front, { h, formK: 0.55, tex: 'stipple', seed: 24, amount: 0.5, creases: [
+    { x0: cx - h * 0.02, y0: cy + h * 0.1, x1: cx + h * 0.03, y1: cy + h * 0.1, r: h * 0.022, a: 0.35 },
+  ] });
+  softLine(ctx, B, [cx - h * 0.19, cy - h * 0.07, cx - h * 0.11, cy - h * 0.15, cx, cy - h * 0.185, cx + h * 0.11, cy - h * 0.16, cx + h * 0.19, cy - h * 0.08], hide, h * 0.03, 0.6);
+  const nearParts: Part[] = near.flatMap((l) => legParts(l, h, 0.062, 0.018, 0.07));
+  for (const l of near) nearParts.push(...legThorns(l, h, 2));
+  blob(ctx, B, shade(hide, 0.92), nearParts, { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.05) });
   // Amber-green eyes and heavy fangs.
   glow(ctx, B, cx, cy - h * 0.05, h * 0.13, '#c0d040', 0.18, '#f0f090');
   eyes(ctx, cx, cy, h, shade('#d8e048', Math.max(0.6, p.tone)));
