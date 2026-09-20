@@ -1,7 +1,11 @@
-// The wolf family: wolf, dire wolf and rift hound on one stalking canine frame, seen three-quarter
-// on with the head nearest the viewer: head low and forward, ears pinned, hackles up, lip curled.
-// Layout (in units of h, y is the ground line, x the centre): tail at the left, hindquarters and
-// barrel behind, chest deeper than the belly, the neck arching down into the big head at the right.
+// The wolf family: wolf, dire wolf and rift hound on one canine frame, standing alert in profile.
+// The proportions are measured off a photograph of a grey wolf rather than invented: the legs are
+// two fifths of the height, the body a little under a half, the withers are the highest point of
+// the body, the back is level, the belly tucks up behind the ribs, and the head is carried so the
+// eye sits just below the withers with the skull and the erect ears above them. An earlier frame
+// had short legs, an arched back and the head hanging below the shoulder, which is most of why
+// the animal read as a bean on stumps. Coat is counter-shaded the way a wolf's is: a dark mantle
+// over the back and shoulders, near-cream legs, chest, belly, throat and muzzle.
 // Painted as masses, not parts: the far legs and far ear as one dark blob, then ALL the fur (tail,
 // body, hackles, neck, head, muzzle, jaw, near ear, near legs) as one blob with creases where the
 // forms meet and a fur texture, then the pale patches with no line, then the mouth as its own
@@ -34,165 +38,158 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
 /** Emissive ember colours for the rift hound: never toned, they are the light source. */
 const EMBER = '#ff7020', HOT = '#ffe0a0';
 
-/** TEMPORARY, for comparing de-blobbing treatments side by side. */
-export type Look = 'plain' | 'anatomy' | 'shaggy' | 'graphic';
-export const OPT: { look: Look } = { look: 'anatomy' };
 
 function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build, v: Variant): void {
   const br = p.breathe, f = p.frame, rift = v === 'rift';
   const base = p.base, dark = p.dark, light = p.light;
-  const pale = v === 'wolf' ? mix(light, shade('#e8e2d8', p.tone), 0.45) : mix(light, shade('#a8a4b0', p.tone), 0.4);
+  const pale = v === 'wolf' ? mix(light, shade('#efe8dc', p.tone), 0.6) : mix(light, shade('#a8a4b0', p.tone), 0.4);
   const ivory = shade('#f0ead8', p.tone);
   const mouth = shade('#4a1a26', p.tone);
   const pulse = 0.5 + 0.5 * Math.sin(f / 7);
   const sway = Math.sin(f / 22) * h * 0.02;
-  const bob = br * h * 0.008;
-  const belly = br * h * 0.006;
-  const X = (u: number) => x + u * h, Y = (u: number) => y + u * h;
+  const bob = br * h * 0.006;
+  const belly = br * h * 0.005;
+  /** x in units of h from the sprite's centre. */
+  const X = (u: number) => x + u * h;
+  /** HEIGHT ABOVE THE GROUND LINE, in units of h: the way the reference was measured. */
+  const U = (u: number) => y - u * h * b.body;
 
-  groundShadow(ctx, x + h * 0.02, y + 1, h * 1.15);
-  if (rift) glow(ctx, B, X(-0.06), Y(-0.12), h * 0.36, EMBER, 0.22 + 0.12 * pulse, '#ffb060');
+  groundShadow(ctx, x + h * 0.02, y + 1, h * 1.05);
+  if (rift) glow(ctx, B, X(-0.02), U(0.22), h * 0.36, EMBER, 0.22 + 0.12 * pulse, '#ffb060');
 
-  // Head centre and radius: the biggest single form after the body, low and forward.
-  const rH = h * 0.2 * b.head;
-  const hx = X(0.33), hy = Y(-0.5) + bob;
+  // The head rides high: on a standing wolf the eye sits just below the withers and the skull and
+  // ears rise above them. It used to hang below the shoulder in a stalk, which along with short
+  // legs and an arched back is what made the animal read as a bean on stumps.
+  const rH = h * 0.147 * b.head;
+  const hx = X(0.45), hy = U(0.80) + bob;
 
-  // Far side, in the shadow tone: the hind and fore legs as one mass behind.
+  // ---- far side, in shadow: the two off legs and the far ear, one mass behind everything.
   const far: Part[] = [];
-  leg(far, X(-0.4), Y(-0.5), h, b.leg * 0.9, true);
-  leg(far, X(-0.03), Y(-0.5), h, b.leg * 0.9, false);
+  legParts(far, [X(0.10), U(0.68), X(0.125), U(0.46), X(0.14), U(0.24), X(0.15), U(0.03)], h, b.leg * 0.92, 13);
+  legParts(far, [X(-0.36), U(0.64), X(-0.26), U(0.45), X(-0.38), U(0.255), X(-0.33), U(0.03)], h, b.leg * 0.92, 14);
+  earPart(far, hx - rH * 0.82, hy - rH * 0.72, rH * 0.92, false);
   blob(ctx, B, dark, far, { h, formK: 0.35 });
 
-  // Rift hound: crystal spines erupt from the back, hot at the root; drawn before the fur so the
-  // body covers their bases.
-  if (rift) spines(ctx, x, y, h, light, pulse);
-
-  const by = (u: number) => Y(-0.52 + (u + 0.52) * b.body);
-
-  // The tail, behind the rump and carrying its own contour. It used to be a short tube inside the
-  // body mass that grew THICKER toward its end, so it read as a club stuck on the back. A wolf's
-  // tail is a brush: long, hanging low, thickest a third of the way down and coming to a point.
-  // The swell is an ellipse laid along the spine and unioned with the taper; offsetting a width
-  // profile vertically instead of along the tail's own axis is what turned the first attempt into
-  // a zigzag.
+  // ---- the tail: its own mass behind the rump, a brush hanging low and coming to a point.
   {
     const k = b.tail;
-    const rx0 = X(-0.42), ry0 = Y(-0.60);
-    const rx1 = X(-0.60) + sway * 0.5, ry1 = Y(-0.50);
-    const rx2 = X(-0.78) + sway, ry2 = Y(-0.28);
-    const ax = rx1 - rx0, ay = ry1 - ry0;
-    blob(ctx, B, shade(base, 0.93), [
-      { k: 'tube', pts: [rx0, ry0, rx1, ry1, rx2, ry2], r0: h * 0.05 * k, r1: h * 0.016 * k, wobble: 0.07, seed: 31 },
-      { k: 'ell', x: rx0 + ax * 0.9, y: ry0 + ay * 0.9, rx: h * 0.105 * k, ry: h * 0.072 * k, rot: Math.atan2(ay, ax) },
+    const t0x = X(-0.35), t0y = U(0.82);
+    const t1x = X(-0.46) + sway * 0.3, t1y = U(0.56);
+    const t2x = X(-0.50) + sway, t2y = U(0.20);
+    // Two tapers rather than one plus a swell: a brush is thickest about a third of the way down
+    // and stays thick nearly to the tip. A single ellipse near the root made a comma.
+    blob(ctx, B, shade(base, 0.92), [
+      { k: 'tube', pts: [t0x, t0y, t0x + (t1x - t0x) * 0.6, t0y + (t1y - t0y) * 0.6, t1x, t1y], r0: h * 0.05 * k, r1: h * 0.082 * k, wobble: 0.07, seed: 31 },
+      { k: 'tube', pts: [t1x, t1y, t1x + (t2x - t1x) * 0.55, t1y + (t2y - t1y) * 0.55, t2x, t2y], r0: h * 0.082 * k, r1: h * 0.03 * k, wobble: 0.08, seed: 32 },
     ], { h, tex: 'fur', seed: 31, amount: 0.5, formK: 0.5, spread: 0.8 });
   }
 
-  // The fur: body, hackles, neck, head, muzzle, jaw, near ear, near legs, all ONE mass.
+  if (rift) spines(ctx, x, y, h, light, pulse);
+
+  // ---- the coat: body, neck, ruff, head, jaw, near ear and the two near legs, ONE mass.
+  // The outline carries the landmarks a wolf has: withers highest, a level back, a belly that
+  // tucks up behind the ribs, and a deep but narrow chest.
   const fur: Part[] = [
-    (OPT.look !== 'plain')
-      // A waist. The old outline ran from chest to rump in one smooth arc, which is most of why the
-      // animal read as a bean: a wolf is deep at the chest, drawn in behind the ribs, and swells
-      // again over the haunch.
-      ? { k: 'curve', pts: [
-          X(-0.46), by(-0.58), X(-0.28), by(-0.70), X(-0.04), by(-0.745), X(0.15), by(-0.70),
-          X(0.26), by(-0.53), X(0.23), by(-0.33), X(0.05), by(-0.295) + belly,
-          X(-0.14), by(-0.375) + belly, X(-0.30), by(-0.325) + belly, X(-0.45), by(-0.40), X(-0.55), by(-0.52),
-        ], wobble: OPT.look === 'shaggy' ? 0.06 : 0.035, spiky: OPT.look === 'shaggy' ? 0.11 : 0.03, seed: 1, sub: 3 }
-      : { k: 'curve', pts: [X(-0.44), by(-0.6), X(-0.26), by(-0.7), X(-0.02), by(-0.73), X(0.16), by(-0.66), X(0.25), by(-0.5), X(0.19), by(-0.35), X(-0.02), by(-0.29) + belly, X(-0.24), by(-0.32) + belly, X(-0.42), by(-0.4), X(-0.52), by(-0.5)], wobble: 0.035, spiky: 0.03, seed: 1, sub: 3 },
-    { k: 'curve', pts: ring(X(-0.05), by(-0.67), h * (0.11 + 0.045 * b.ruff), h * (0.08 + 0.035 * b.ruff), 10), wobble: 0.05, spiky: 0.12, seed: 3, sub: 2 },
-    { k: 'cap', x0: X(0.04), y0: by(-0.68), x1: hx - rH * 0.3, y1: hy - rH * 0.05, r0: h * 0.125 * b.neck, r1: h * 0.115 * b.neck },
-    // The head as one profile: skull, brow, stop, bridge of the nose, nose, curled lip, cheek, jowl.
-    { k: 'curve', pts: [hx - rH, hy - rH * 0.15, hx - rH * 0.7, hy - rH * 0.7, hx - rH * 0.2, hy - rH * 0.95, hx + rH * 0.35, hy - rH * 0.85, hx + rH * 0.75, hy - rH * 0.5, hx + rH * 1.15, hy - rH * 0.15, hx + rH * 1.5, hy + rH * 0.05, hx + rH * 1.58, hy + rH * 0.35, hx + rH * 1.35, hy + rH * 0.6, hx + rH * 0.8, hy + rH * 0.66, hx + rH * 0.2, hy + rH * 0.72, hx - rH * 0.4, hy + rH * 0.8, hx - rH * 0.9, hy + rH * 0.45], wobble: 0.03, spiky: 0.03, seed: 4, sub: 2 },
-    { k: 'cap', x0: hx + rH * 0.35, y0: hy + rH * 0.72, x1: hx + rH * 1.25, y1: hy + rH * 1.05 * b.jaw, r0: rH * 0.27, r1: rH * 0.2 },
+    { k: 'curve', pts: [
+      X(-0.33), U(0.855), X(-0.11), U(0.848), X(0.05), U(0.858), X(0.19), U(0.878),
+      X(0.285), U(0.805), X(0.315), U(0.62), X(0.275), U(0.465),
+      X(0.11), U(0.43) + belly, X(-0.05), U(0.425) + belly, X(-0.18), U(0.49) + belly,
+      X(-0.31), U(0.56), X(-0.41), U(0.72),
+    ], wobble: 0.03, spiky: 0.035, seed: 1, sub: 3 },
+    // Shoulder and haunch under the coat.
+    { k: 'ell', x: X(0.17), y: U(0.66), rx: h * 0.095, ry: h * 0.115, rot: 0.12 },
+    { k: 'ell', x: X(-0.27), y: U(0.66), rx: h * 0.125, ry: h * 0.135, rot: -0.12 },
+    // Neck: short and thick, sloping down and forward from the withers into the skull.
+    { k: 'cap', x0: X(0.20), y0: U(0.835), x1: hx - rH * 0.55, y1: hy - rH * 0.1, r0: h * 0.118 * b.neck, r1: h * 0.10 * b.neck },
+    // The ruff: the thick collar of fur behind the jaw.
+    { k: 'curve', pts: ring(X(0.30), U(0.755), h * (0.10 + 0.035 * b.ruff), h * (0.12 + 0.04 * b.ruff), 10), wobble: 0.06, spiky: 0.13, seed: 3, sub: 2 },
+    // The head in profile: back of skull, crown, brow, stop, bridge, nose, lip, jaw, throat.
+    { k: 'curve', pts: [
+      hx - rH * 0.98, hy - rH * 0.12, hx - rH * 0.55, hy - rH * 0.78, hx + rH * 0.1, hy - rH * 0.92,
+      hx + rH * 0.52, hy - rH * 0.62, hx + rH * 1.15, hy - rH * 0.46, hx + rH * 1.75, hy - rH * 0.3,
+      hx + rH * 1.92, hy - rH * 0.04, hx + rH * 1.76, hy + rH * 0.28, hx + rH * 1.2, hy + rH * 0.5,
+      hx + rH * 0.35, hy + rH * 0.72, hx - rH * 0.35, hy + rH * 0.8, hx - rH * 0.92, hy + rH * 0.42,
+    ], wobble: 0.025, spiky: 0.035, seed: 4, sub: 2 },
+    { k: 'cap', x0: hx + rH * 0.45, y0: hy + rH * 0.56, x1: hx + rH * 1.45, y1: hy + rH * 0.6 * b.jaw, r0: rH * 0.26, r1: rH * 0.18 },
   ];
-  if (OPT.look !== 'plain') {
-    fur.push({ k: 'ell', x: X(-0.31), y: by(-0.52), rx: h * 0.135, ry: h * 0.125, rot: -0.15 });   // haunch
-    fur.push({ k: 'ell', x: X(0.10), y: by(-0.575), rx: h * 0.10, ry: h * 0.105, rot: 0.2 });      // shoulder
-  }
-  if (OPT.look === 'shaggy') {
-    // Tufts of winter coat breaking the outline, where a wolf actually carries them: the elbow
-    // feather, the breeches over the thigh and the ruff under the jaw. A silhouette with nothing
-    // sticking out of it reads as a pebble however well it is shaded.
-    fur.push({ k: 'curve', pts: [X(0.02), by(-0.46), X(0.18), by(-0.43), X(0.15), by(-0.27), X(-0.02), by(-0.31)], wobble: 0.1, spiky: 0.3, seed: 41, sub: 2 });
-    fur.push({ k: 'curve', pts: [X(-0.50), by(-0.54), X(-0.28), by(-0.54), X(-0.26), by(-0.30), X(-0.48), by(-0.33)], wobble: 0.1, spiky: 0.32, seed: 42, sub: 2 });
-    fur.push({ k: 'curve', pts: [X(0.16), by(-0.66), X(0.30), by(-0.60), X(0.28), by(-0.42), X(0.14), by(-0.46)], wobble: 0.1, spiky: 0.28, seed: 43, sub: 2 });
-  }
-  ear(fur, hx - rH * 0.45, hy - rH * 0.85, rH, 1.0, false);
-  ear(fur, hx - rH * 0.02, hy - rH * 0.75, rH, 1.2, v === 'dire');
-  leg(fur, X(-0.26), Y(-0.5), h, b.leg, true);
-  leg(fur, X(0.1), Y(-0.5), h, b.leg, false);
-  const jx0 = hx + rH * 0.35, jy0 = hy + rH * 0.72, jx1 = hx + rH * 1.25, jy1 = hy + rH * 1.05 * b.jaw;
+  // Erect ears: two upright triangles on the crown, which is most of a wolf's head silhouette.
+  earPart(fur, hx - rH * 0.2, hy - rH * 0.82, rH, v === 'dire');
+  // The near legs: long, with an elbow and a carpus in front, a stifle and a hock behind.
+  legParts(fur, [X(0.21), U(0.70), X(0.235), U(0.455), X(0.25), U(0.24), X(0.26), U(0.02)], h, b.leg, 11);
+  legParts(fur, [X(-0.25), U(0.66), X(-0.13), U(0.46), X(-0.25), U(0.255), X(-0.195), U(0.02)], h, b.leg, 12);
   const creases: Crease[] = [
-    { x0: X(0.13), y0: by(-0.74), x1: X(0.21), y1: by(-0.5), r: h * 0.03, a: 0.3 },
-    { x0: hx - rH * 0.8, y0: hy - rH * 0.55, x1: hx - rH * 0.72, y1: hy + rH * 0.45, r: h * 0.03, a: 0.3 },
-    { x0: X(-0.17), y0: by(-0.56), x1: X(-0.13), y1: by(-0.37), r: h * 0.028, a: 0.28 },
-    { x0: X(-0.38), y0: by(-0.4), x1: X(0.08), y1: by(-0.33), r: h * 0.03, a: 0.22 },
-    { x0: X(-0.2), y0: by(-0.4), x1: X(-0.24), y1: by(-0.3), r: h * 0.025, a: 0.25 },
-    { x0: hx + rH * 0.6, y0: hy - rH * 0.2, x1: hx + rH * 0.7, y1: hy + rH * 0.55, r: rH * 0.12, a: 0.18 },
+    { x0: X(0.08), y0: U(0.84), x1: X(0.06), y1: U(0.50), r: h * 0.03, a: 0.3 },       // behind the shoulder
+    { x0: X(-0.17), y0: U(0.80), x1: X(-0.15), y1: U(0.50), r: h * 0.028, a: 0.26 },   // in front of the haunch
+    { x0: X(-0.10), y0: U(0.47), x1: X(0.10), y1: U(0.50), r: h * 0.026, a: 0.22 },    // the flank tuck
+    { x0: X(0.24), y0: U(0.80), x1: X(0.28), y1: U(0.66), r: h * 0.026, a: 0.26 },     // shoulder into the ruff
+    { x0: hx - rH * 0.9, y0: hy - rH * 0.5, x1: hx - rH * 0.8, y1: hy + rH * 0.4, r: rH * 0.16, a: 0.28 }, // cheek
+    { x0: hx + rH * 0.55, y0: hy - rH * 0.4, x1: hx + rH * 0.62, y1: hy + rH * 0.35, r: rH * 0.12, a: 0.18 }, // the stop
   ];
-  if (OPT.look !== 'plain') creases.push(
-    { x0: X(0.055), y0: by(-0.68), x1: X(0.03), y1: by(-0.36), r: h * 0.032, a: 0.34 },   // behind the shoulder
-    { x0: X(-0.20), y0: by(-0.64), x1: X(-0.17), y1: by(-0.38), r: h * 0.03, a: 0.3 },    // in front of the haunch
-    { x0: X(-0.12), y0: by(-0.40), x1: X(0.06), y1: by(-0.335), r: h * 0.028, a: 0.26 },  // the tuck of the flank
-  );
-  blob(ctx, B, base, fur, { h, tex: 'fur', seed: 1, amount: 0.55, formK: 0.55, creases });
-  if (OPT.look === 'graphic' || OPT.look === 'anatomy') {
-    // A darker saddle over the back and shoulders. A single flat value from ear to tail is the
-    // other half of the blob read; a wolf is counter-shaded, dark on top and pale underneath.
-    patch(ctx, B, shade(base, 0.6), [{ k: 'curve', pts: [
-      X(-0.42), by(-0.66), X(-0.18), by(-0.755), X(0.08), by(-0.75), X(0.22), by(-0.64),
-      X(0.14), by(-0.52), X(-0.10), by(-0.54), X(-0.34), by(-0.53),
-    ], wobble: 0.07, spiky: 0.05, seed: 44, sub: 2 }], OPT.look === 'graphic' ? { alpha: 0.85, feather: 0.12 } : { alpha: 0.5, feather: 0.65 });
+  blob(ctx, B, base, fur, { h, tex: 'fur', seed: 1, amount: 0.55, formK: 0.5, creases });
+
+  // ---- counter-shading, which is how a wolf is actually coloured: a dark mantle over the back and
+  // shoulders, and pale legs, belly, chest, throat and muzzle. A single flat value ear to tail is
+  // the other half of the blob read.
+  patch(ctx, B, shade(base, 0.58), [{ k: 'curve', pts: [
+    X(-0.36), U(0.80), X(-0.14), U(0.855), X(0.06), U(0.862), X(0.21), U(0.85),
+    X(0.235), U(0.72), X(0.12), U(0.63), X(-0.10), U(0.62), X(-0.28), U(0.66),
+  ], wobble: 0.08, spiky: 0.07, seed: 44, sub: 2 }], { alpha: 0.6, feather: 0.5 });
+  if (v !== 'rift') {
+    patch(ctx, B, mix(base, pale, 0.88), [
+      // Legs, from the elbow and the stifle down.
+      { k: 'tube', pts: [X(0.235), U(0.44), X(0.25), U(0.24), X(0.26), U(0.03)], r0: h * 0.05 * b.leg, r1: h * 0.038 * b.leg },
+      { k: 'tube', pts: [X(-0.14), U(0.44), X(-0.25), U(0.255), X(-0.195), U(0.03)], r0: h * 0.05 * b.leg, r1: h * 0.038 * b.leg },
+      // Brisket, belly and throat.
+      { k: 'curve', pts: [X(0.26), U(0.52), X(0.10), U(0.46), X(-0.10), U(0.44), X(-0.22), U(0.47), X(-0.16), U(0.40), X(0.10), U(0.40), X(0.27), U(0.44)], wobble: 0.07, spiky: 0.06, seed: 22, sub: 2 },
+      { k: 'cap', x0: hx - rH * 0.3, y0: hy + rH * 0.66, x1: X(0.27), y1: U(0.62), r0: rH * 0.3, r1: h * 0.055 },
+      // Muzzle sides and the cheek, which a wolf wears as a pale mask.
+      { k: 'cap', x0: hx + rH * 0.62, y0: hy + rH * 0.24, x1: hx + rH * 1.6, y1: hy + rH * 0.18, r0: rH * 0.26, r1: rH * 0.2 },
+      { k: 'ell', x: hx - rH * 0.05, y: hy + rH * 0.42, rx: rH * 0.42, ry: rH * 0.3, rot: 0.1 },
+    ], { alpha: 0.78, feather: 0.5 });
   }
 
-  if (OPT.look === 'graphic') {
-    // Hard-edged coat markings instead of modelled form: a dark mask across the face and pale
-    // stockings. Blocks of value, the way a printed illustration separates a shape.
-    patch(ctx, B, shade(base, 0.62), [{ k: 'curve', pts: [
-      hx + rH * 0.15, hy - rH * 0.6, hx + rH * 1.2, hy - rH * 0.2, hx + rH * 1.5, hy + rH * 0.3,
-      hx + rH * 1.1, hy + rH * 0.66, hx + rH * 0.2, hy + rH * 0.5,
-    ], wobble: 0.05, seed: 46, sub: 2 }], { alpha: 0.75, feather: 0.16 });
-    patch(ctx, B, mix(base, pale, 0.75), [
-      { k: 'cap', x0: X(0.12), y0: Y(-0.2), x1: X(0.12), y1: Y(-0.02), r0: h * 0.045 },
-      { k: 'cap', x0: X(-0.24), y0: Y(-0.2), x1: X(-0.24), y1: Y(-0.02), r0: h * 0.045 },
-    ], { alpha: 0.7, feather: 0.2 });
-  }
-  // Pale muzzle, throat, chest and belly, inside the fur, no line; fur-edged so they read as coat, not paint.
-  if (v !== 'rift') {
-    const patches: Part[] = [
-      { k: 'cap', x0: hx + rH * 0.7, y0: hy + rH * 0.4, x1: hx + rH * 1.35, y1: hy + rH * 0.48, r0: rH * 0.22, r1: rH * 0.2 },
-      tube([hx - rH * 0.3, hy + rH * 0.5, X(0.2), by(-0.52), X(0.16), by(-0.36)], rH * 0.26, h * 0.075, 0.18, 23),
-    ];
-    if (v === 'wolf') patches.push({ k: 'curve', pts: [X(-0.36), by(-0.4), X(-0.12), by(-0.38), X(0.1), by(-0.37), X(0.08), by(-0.3), X(-0.16), by(-0.29), X(-0.4), by(-0.34)], wobble: 0.06, spiky: 0.06, seed: 22, sub: 2 });
-    patch(ctx, B, mix(base, pale, v === 'wolf' ? 0.62 : 0.4), patches, { alpha: 0.7, feather: 0.5 });
-  }
-  // The open mouth: its own material, between the muzzle and the jaw; fangs on top.
-  blob(ctx, B, mouth, [{ k: 'poly', pts: [hx + rH * 0.5, hy + rH * 0.52, hx + rH * 1.32, hy + rH * 0.66, jx1 + rH * 0.05, jy1 - rH * 0.14, jx0, jy0 - rH * 0.12] }], { outline: false, form: false });
-  fangs(ctx, hx, hy, rH, b.fang, ivory);
-  // Nose, and the wrinkles of the curled lip where they survive.
-  const mx = hx + rH * 1.42, my = hy + rH * 0.28;
-  celBall(ctx, B, mx + rH * 0.08, my - rH * 0.06, rH * 0.19, shade('#221a20', p.tone), rH >= 8);
+  // ---- the open mouth, fangs, nose and eye.
+  const jx0 = hx + rH * 0.45, jy0 = hy + rH * 0.56, jx1 = hx + rH * 1.45, jy1 = hy + rH * 0.6 * b.jaw;
+  blob(ctx, B, mouth, [{ k: 'poly', pts: [hx + rH * 0.66, hy + rH * 0.34, hx + rH * 1.52, hy + rH * 0.42, jx1 + rH * 0.04, jy1 - rH * 0.12, jx0 + rH * 0.1, jy0 - rH * 0.1] }], { outline: false, form: false });
+  fangs(ctx, hx, hy - rH * 0.16, rH, b.fang, ivory);
+  const mx = hx + rH * 1.66, my = hy - rH * 0.08;
+  celBall(ctx, B, mx + rH * 0.12, my, rH * 0.2, shade('#221a20', p.tone), rH >= 8);
   if (rH >= 9) {
-    softLine(ctx, B, [mx - rH * 0.4, my - rH * 0.45, mx - rH * 0.26, my - rH * 0.1], base, Math.max(1, rH * 0.08), 0.5);
-    softLine(ctx, B, [mx - rH * 0.65, my - rH * 0.42, mx - rH * 0.5, my - rH * 0.05], base, Math.max(1, rH * 0.08), 0.5);
+    softLine(ctx, B, [mx - rH * 0.45, my - rH * 0.2, mx - rH * 0.3, my + rH * 0.12], base, Math.max(1, rH * 0.08), 0.45);
   }
-  // Inner ear: a soft dark hollow along the pinned-back near ear.
-  softLine(ctx, B, [hx - rH * 0.25, hy - rH * 0.85, hx - rH * 0.95, hy - rH * 1.4], base, Math.max(1, rH * 0.13), 0.45);
-  // ONE eye, and an angry brow over it. The head is a profile: the muzzle runs out to the right and
-  // the far cheek is turned away, so a second eye has nowhere to be. It used to sit back on the
-  // skull at two thirds the size, which read as a wall eye rather than as the far side of a face.
-  // (If this head is ever turned toward the party, the pair becomes two eyes of the SAME size, the
-  // far one only slightly narrowed by the turn; the rat and the boar are profiles too, and carry
-  // one eye each.)
+  // The inner ear, a dark hollow up the near ear.
+  softLine(ctx, B, [hx - rH * 0.16, hy - rH * 0.98, hx - rH * 0.1, hy - rH * 1.55], base, Math.max(1, rH * 0.15), 0.45);
+  // ONE eye: the head is a profile, so the far cheek is turned away and a second eye has nowhere to
+  // be. If this head is ever turned toward the party it becomes a matched PAIR of the same size,
+  // the far one only slightly narrowed by the turn; the rat and the boar are profiles with one eye.
   const eyeCol = v === 'wolf' ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : HOT;
-  const ex = hx + rH * 0.46, ey = hy - rH * 0.3, er = rH * 0.16;
+  const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * 0.15;
   if (rift) glow(ctx, B, ex, ey, er * 3, EMBER, 0.4 + 0.3 * pulse, HOT);
+  // The dark surround a wolf carries around the eye, which is what makes it read from across a room.
+  if (rH >= 9) softLine(ctx, B, [ex - er * 1.2, ey + er * 0.2, ex + er * 1.6, ey - er * 0.1], shade(base, 0.6), Math.max(1, er * 1.5), 0.5);
   eye(ctx, ex, ey, er, eyeCol, !rift);
-  const bw = Math.max(1, rH * 0.14);
-  softLine(ctx, B, [ex + er * 1.55, ey - er * 1.75, ex - er * 1.3, ey - er * 0.85], base, bw, 0.85);
+  softLine(ctx, B, [ex + er * 1.5, ey - er * 1.5, ex - er * 1.3, ey - er * 0.8], base, Math.max(1, rH * 0.13), 0.8);
 
   if (v === 'dire') scars(ctx, x, y, h, mx, my, rH, shade('#c0b0a4', p.tone));
   if (rift) riftFx(ctx, x, y, h, hx, hy, rH, f, light, pulse);
+}
+
+/**
+ * One leg from a four-point spine (shoulder or hip, elbow or stifle, carpus or hock, foot), with a
+ * paw at the end. Long: on the reference the legs are two fifths of the whole height.
+ */
+function legParts(out: Part[], pts: readonly number[], h: number, k: number, seed: number): void {
+  out.push(tube(pts, h * 0.072 * k, h * 0.034 * k, 0.05, seed));
+  out.push({ k: 'ell', x: pts[6] + h * 0.02, y: pts[7] + h * 0.008, rx: h * 0.052 * Math.sqrt(k), ry: h * 0.026 * Math.sqrt(k) });
+}
+
+/** One erect ear: a rounded triangle standing on the crown. `torn` bites a notch out of one edge. */
+function earPart(out: Part[], bx: number, by: number, r: number, torn: boolean): void {
+  const w = r * 0.34, tipX = bx + r * 0.1, tipY = by - r * 0.95;
+  const pts = [bx - w, by + r * 0.16, bx - w * 0.75, by - r * 0.45, tipX - w * 0.15, tipY];
+  if (torn) pts.push(tipX + w * 0.1, tipY + r * 0.16, tipX - w * 0.05, tipY + r * 0.3, tipX + w * 0.45, tipY + r * 0.34);
+  pts.push(bx + w * 1.05, by - r * 0.3, bx + w, by + r * 0.2);
+  out.push({ k: 'poly', pts });
 }
 
 /** Stable 0..1 noise for the tube wobble (the same mix as gloss.ts uses, kept local). */
@@ -249,26 +246,7 @@ function ring(cx: number, cy: number, rx: number, ry: number, n: number): number
   return o;
 }
 
-/**
- * One leg as a bending tube from the hip (or shoulder) to the pastern, plus a paw: the hind leg
- * has the stifle forward and the hock back, the front leg a straight forearm over a slight elbow.
- */
-function leg(out: Part[], x0: number, y0: number, h: number, k: number, hind: boolean): void {
-  const pts = hind
-    ? [x0, y0, x0 + h * 0.1, y0 + h * 0.2, x0 - h * 0.03, y0 + h * 0.36, x0 + h * 0.05, y0 + h * 0.46]
-    : [x0, y0, x0 + h * 0.03, y0 + h * 0.19, x0 + h * 0.035, y0 + h * 0.36, x0 + h * 0.07, y0 + h * 0.46];
-  out.push(tube(pts, h * 0.085 * k, h * 0.042 * k, 0.06, hind ? 11 : 12));
-  const px = pts[6] + h * 0.03, py = pts[7] + h * 0.012;
-  out.push({ k: 'ell', x: px, y: py, rx: h * 0.07 * Math.sqrt(k), ry: h * 0.032 * Math.sqrt(k) });
-}
 
-/** One pinned-back ear, lying along the neck. `torn` bites a notch out of its top edge. */
-function ear(out: Part[], bx: number, by: number, r: number, len: number, torn: boolean): void {
-  const pts = [bx + r * 0.4, by + r * 0.05, bx - r * 0.35, by + r * 0.4, bx - r * len, by - r * 0.8];
-  if (torn) pts.push(bx - r * (len * 0.84), by - r * 0.72, bx - r * (len * 0.6), by - r * 0.18, bx - r * (len * 0.42), by - r * 0.62);
-  pts.push(bx - r * 0.05, by - r * 0.55);
-  out.push({ k: 'poly', pts });
-}
 
 /** Upper fangs hanging from the muzzle and small lower teeth on the jaw, flat ivory, no ink. */
 function fangs(ctx: CanvasRenderingContext2D, hx: number, hy: number, rH: number, k: number, ivory: string): void {
@@ -312,28 +290,28 @@ function scars(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, m
 
 /** Rift hound: a row of crystal shards along the back, leaning back, one faceted glossy mass, hot at the root. */
 function spines(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, light: string, pulse: number): void {
-  const yb = y - h * 0.64, pts: number[] = [x - h * 0.5, yb + h * 0.06];
+  const yb = y - h * 0.845, pts: number[] = [x - h * 0.34, yb + h * 0.05];
   for (let i = 0; i < 4; i++) {
-    const t = i / 3, bx = x - h * 0.44 + t * h * 0.36, sh = h * (i === 1 ? 0.24 : i === 2 ? 0.28 : 0.18), sw = h * 0.045;
+    const t = i / 3, bx = x - h * 0.28 + t * h * 0.38, sh = h * (i === 1 ? 0.18 : i === 2 ? 0.21 : 0.13), sw = h * 0.042;
     glow(ctx, B, bx, yb - sh * 0.15, sh * 0.6, EMBER, 0.25 + 0.25 * pulse, '#ffb060');
     pts.push(bx - sw * 0.6, yb, bx - sw * 0.9, yb - sh, bx + sw * 0.5, yb - sh * 0.5, bx + sw, yb);
   }
-  pts.push(x - h * 0.02, yb + h * 0.06);
+  pts.push(x + h * 0.14, yb + h * 0.05);
   blob(ctx, B, mix(light, HOT, 0.35), [{ k: 'poly', pts }], { h, tex: 'facets', seed: 5, gloss: 0.8, form: false, spread: 0.6 });
 }
 
 /** Rift hound: ember seams splitting the hide, glowing eyes and embers drifting up off the back. */
 function riftFx(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, hx: number, hy: number, rH: number, f: number, light: string, pulse: number): void {
   const gw = Math.max(2, h * 0.05), sw = Math.max(1, h * 0.016);
-  seam(ctx, [x - h * 0.3, y - h * 0.6, x - h * 0.2, y - h * 0.5, x - h * 0.05, y - h * 0.54, x + h * 0.1, y - h * 0.42], light, gw, sw, pulse);
-  seam(ctx, [x - h * 0.42, y - h * 0.48, x - h * 0.34, y - h * 0.38, x - h * 0.3, y - h * 0.26], light, gw, sw, pulse);
-  seam(ctx, [x + h * 0.08, y - h * 0.72, x + h * 0.18, y - h * 0.6, hx - rH * 0.35, hy - rH * 0.35], light, gw, sw, pulse);
+  seam(ctx, [x - h * 0.26, y - h * 0.76, x - h * 0.16, y - h * 0.64, x - h * 0.02, y - h * 0.70, x + h * 0.12, y - h * 0.58], light, gw, sw, pulse);
+  seam(ctx, [x - h * 0.30, y - h * 0.64, x - h * 0.24, y - h * 0.54, x - h * 0.22, y - h * 0.44], light, gw, sw, pulse);
+  seam(ctx, [x + h * 0.10, y - h * 0.84, x + h * 0.20, y - h * 0.76, hx - rH * 0.5, hy - rH * 0.3], light, gw, sw, pulse);
   seam(ctx, [hx - rH * 0.15, hy + rH * 0.1, hx + rH * 0.2, hy + rH * 0.32, hx + rH * 0.7, hy + rH * 0.28], light, gw * 0.7, sw, pulse);
   if (B.override) return;
   // Embers rising off the back, four on a loop.
   for (let i = 0; i < 4; i++) {
     const t = ((f / 90) + i / 4) % 1;
-    const ex = x - h * 0.36 + i * h * 0.18 + Math.sin(f / 9 + i * 2) * h * 0.03, ey = y - h * 0.74 - t * h * 0.4;
+    const ex = x - h * 0.28 + i * h * 0.16 + Math.sin(f / 9 + i * 2) * h * 0.03, ey = y - h * 0.94 - t * h * 0.3;
     const r = Math.max(2, h * 0.04 * (1 - t * 0.5));
     ctx.fillStyle = rgba(i === 1 ? HOT : EMBER, 0.9 - t * 0.8);
     ctx.fillRect(Math.round(ex - r / 2), Math.round(ey - r / 2), Math.max(1, Math.round(r)), Math.max(1, Math.round(r)));
