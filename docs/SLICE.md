@@ -92,6 +92,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `tube` parts (a bending tapered tube for tails, necks, legs and tentacles); `glow()` is a real
   radial light for embers and halos; `softLine()` replaces interior ink. The hit flash still
   paints a flat white silhouette through all of it.
+- Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
+  monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
+  three and four taper down, five is the old flat size and six goes under it. The row's spacing is
+  fixed, so every extra monster is width its neighbours do not have.
 - `ui/viewport.ts` textures every surface procedurally: stone courses (front faces and receding
   side faces), timber-framed houses with gable roofs and windows lit at night, flagstones with
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
