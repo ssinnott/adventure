@@ -60,7 +60,7 @@ function tatters(x0: number, x1: number, ytop: number, ybase: number, n: number,
 function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const X = (k: number) => x + h * k, Y = (k: number) => y - h * k;
   const b = p.breathe * h * 0.011;                   // a heavy breath: the shoulders and head rise
-  const sw = Math.sin(p.frame / 45) * h * 0.006;     // a slow lean on the club
+  const sw = Math.sin(p.frame / 45) * 0.005;         // a slow roll of the club in the grip, in units of h
   const tone = p.tone;
   const leather = shade('#5a3c22', tone), wrap = shade('#3a2c1c', tone), wood = shade('#4e3a22', tone);
   const rope = shade('#8e7a4c', tone), ivory = shade('#efe6cf', tone), farHex = shade(p.dark, 0.74);
@@ -176,7 +176,7 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   // 5. The near arm, its own mass in front of the torso: a contact shadow under the shoulder first,
   //    then the upper arm swung out past the ribs and the forearm hanging down to the club.
   softLine(ctx, B, [X(0.272), Y(0.726), X(0.254), Y(0.6), X(0.258), Y(0.5)], p.dark, h * 0.042, 0.4);
-  const fx = X(0.294 + sw * 0.1), fy = Y(0.33);
+  const fx = X(0.294), fy = Y(0.33);
   blob(ctx, B, p.base, [
     { k: 'tube', pts: [X(0.23), Y(0.776) - b, X(0.334), Y(0.648), X(0.352), Y(0.542)], r0: h * 0.066, r1: h * 0.044, wobble: 0.06, seed: 30 },
     { k: 'tube', pts: [X(0.352), Y(0.546), X(0.328), Y(0.44), X(0.3), Y(0.34)], r0: h * 0.044, r1: h * 0.038, wobble: 0.06, seed: 31 },
@@ -185,32 +185,48 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     { x0: X(0.268), y0: Y(0.36), x1: X(0.322), y1: Y(0.36), r: h * 0.012, a: 0.4 },    // the wrist
   ] });
 
-  // 6. The club: a tree limb with its head on the ground and the ogre leaning on it. The head is
-  //    two and a half times the grip and lumpy with it, there are knots where branches were cut,
-  //    and iron is driven into the head -- spikes standing out of its edge, not studs on the shaft.
-  const bux = X(0.204 + sw), buy = Y(0.522), cxh = X(0.37 + sw * 0.25), cyh = Y(0.082);
+  // 6. The club, and which end of it reads as the head. It used to read upside down, and not
+  //    because the head was wrong: 0.24h of capped, knotted, fully lit wood projected above the
+  //    fist -- 41% of the length and 30% of the paint -- while the head cleared its own shank by
+  //    only 1.55x. Worse, the club's axis lay within 24 degrees of blob()'s gradient axis, so the
+  //    one ramp meant to model a single mass instead ran END TO END along the weapon and put the
+  //    butt at full highlight and the head in deep shadow: the head's brightest pixel was 0.64 of
+  //    the butt's average. Three fixes together, because each alone only reaches parity --
+  //    cut the butt back to a stub, make the swell an EVENT rather than a cone along the whole
+  //    shaft, and give the head its own blob so it gets its own ramp and a tone step up.
+  const bux = X(0.274 + sw), buy = Y(0.44), cxh = X(0.338 + sw * 0.05), cyh = Y(0.09);
   const kn = (t: number, s: number): [number, number] => [bux + (cxh - bux) * t + (cyh - buy) * -s, buy + (cyh - buy) * t + (cxh - bux) * s];
+  // The shank: near parallel, 0.032h to 0.040h. A cone from grip to head does 43% of the widening
+  // gradually, which is what let the eye read the taper instead of the burl.
   blob(ctx, B, wood, [
-    { k: 'tube', pts: [bux, buy, X(0.296 + sw * 0.6), Y(0.30), X(0.358 + sw * 0.3), Y(0.14)], r0: h * 0.034, r1: h * 0.058, wobble: 0.12, seed: 17 },
-    { k: 'ell', x: kn(0.3, 0.052)[0], y: kn(0.3, 0.052)[1], rx: h * 0.022, ry: h * 0.016, rot: 0.5 },
-    { k: 'ell', x: kn(0.58, -0.05)[0], y: kn(0.58, -0.05)[1], rx: h * 0.02, ry: h * 0.015, rot: -0.4 },
-    { k: 'curve', pts: ring(cxh, cyh, h * 0.084, 10, -0.12, 0.08), wobble: 0.16, spiky: 0.1, seed: 18, sub: 2 },
-  ], { h, tex: 'cracks', seed: 19, amount: 0.7, formK: 0.6, creases: [
-    { x0: kn(0.28, 0.03)[0], y0: kn(0.28, 0.03)[1], x1: kn(0.33, 0.055)[0], y1: kn(0.33, 0.055)[1], r: h * 0.012, a: 0.55 },
-    { x0: kn(0.56, -0.03)[0], y0: kn(0.56, -0.03)[1], x1: kn(0.61, -0.052)[0], y1: kn(0.61, -0.052)[1], r: h * 0.011, a: 0.5 },
-    { x0: X(0.325 + sw * 0.3), y0: Y(0.135), x1: X(0.402 + sw * 0.3), y1: Y(0.122), r: h * 0.014, a: 0.45 },
-    { x0: kn(0.18, -0.038)[0], y0: kn(0.18, -0.038)[1], x1: kn(0.185, 0.038)[0], y1: kn(0.185, 0.038)[1], r: h * 0.008, a: 0.45 },
-    { x0: kn(0.44, -0.044)[0], y0: kn(0.44, -0.044)[1], x1: kn(0.445, 0.044)[0], y1: kn(0.445, 0.044)[1], r: h * 0.008, a: 0.4 },
+    { k: 'tube', pts: [bux, buy, X(0.3014 + sw * 0.5), Y(0.29), X(0.327 + sw * 0.15), Y(0.15)], r0: h * 0.032, r1: h * 0.04, wobble: 0.1, seed: 17 },
+    { k: 'ell', x: kn(0.58, -0.1)[0], y: kn(0.58, -0.1)[1], rx: h * 0.019, ry: h * 0.014, rot: -0.35 },
+  ], { h, tex: 'cracks', seed: 19, amount: 0.5, formK: 0.6, creases: [
+    { x0: kn(0.55, -0.07)[0], y0: kn(0.55, -0.07)[1], x1: kn(0.63, -0.09)[0], y1: kn(0.63, -0.09)[1], r: h * 0.009, a: 0.5 },
   ] });
-  // Iron driven into the head, each spike a wedge standing out of its edge.
+  // The burl, its own mass and a tone step ABOVE the shank, so the heavy end is also the light one.
+  // Squat, because a knot bearing weight on the floor is squat, and because the fist is only 0.33h
+  // off the ground and the shank between them still has to read.
+  blob(ctx, B, shade(wood, 1.3), [
+    { k: 'curve', pts: ring(cxh, cyh, h * 0.084, 12, -0.22, -0.28), wobble: 0.13, spiky: 0.05, seed: 18, sub: 2 },
+    // A flat contact so the burl sits ON the ground: the ring's own wobble can pull its lowest
+    // point 0.035h up on an unlucky seed, which floats the club.
+    { k: 'ell', x: cxh, y: Y(0.034), rx: h * 0.044, ry: h * 0.024 },
+  ], { h, tex: 'cracks', seed: 21, amount: 0.4, formK: 0.62, creases: [
+    { x0: cxh - h * 0.045, y0: cyh + h * 0.028, x1: cxh + h * 0.05, y1: cyh + h * 0.022, r: h * 0.013, a: 0.45 },
+    { x0: cxh + h * 0.028, y0: cyh - h * 0.038, x1: cxh + h * 0.056, y1: cyh - h * 0.01, r: h * 0.011, a: 0.35 },
+  ] });
+  // Iron driven into the burl: a fan across its upper half, long and wide enough that there is
+  // still iron left after the 1px outline takes 0.5px off each edge. They used to be three 66-degree
+  // specks all firing up-LEFT into the ogre's own leg.
   ctx.fillStyle = B.col(iron); ctx.strokeStyle = B.col(B.outline); ctx.lineWidth = 1; ctx.lineJoin = 'round';
-  for (const [ang, len] of [[-2.5, 0.05], [-1.9, 0.042], [-3.05, 0.046]] as const) {
+  for (const [ang, len] of [[-2.4, 0.052], [-1.45, 0.055], [-0.5, 0.048]] as const) {
     const dx = Math.cos(ang), dy = Math.sin(ang);
-    const ox = cxh + dx * h * 0.07, oy = cyh + dy * h * 0.07;
+    const ox = cxh + dx * h * 0.054, oy = cyh + dy * h * 0.054;
     ctx.beginPath();
-    ctx.moveTo(ox + dy * h * 0.016, oy - dx * h * 0.016);
+    ctx.moveTo(ox + dy * h * 0.028, oy - dx * h * 0.028);
     ctx.lineTo(ox + dx * h * len, oy + dy * h * len);
-    ctx.lineTo(ox - dy * h * 0.016, oy + dx * h * 0.016);
+    ctx.lineTo(ox - dy * h * 0.028, oy + dx * h * 0.028);
     ctx.closePath(); ctx.fill(); ctx.stroke();
   }
 
@@ -219,7 +235,7 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   const creases: Crease[] = [];
   for (let i = 0; i < 3; i++) {
     const d = (i - 1) * h * 0.036;
-    grip.push({ k: 'tube', pts: [fx - h * 0.05, fy + d, fx + h * 0.032, fy + d + h * 0.004], r0: h * 0.019, r1: h * 0.016, wobble: 0.05, seed: 34 + i });
+    grip.push({ k: 'tube', pts: [fx - h * 0.044, fy + d, fx + h * 0.028, fy + d + h * 0.004], r0: h * 0.019, r1: h * 0.016, wobble: 0.05, seed: 34 + i });
     creases.push({ x0: fx - h * 0.042, y0: fy + d + h * 0.018, x1: fx + h * 0.028, y1: fy + d + h * 0.02, r: h * 0.005, a: 0.6 });
   }
   grip.push({ k: 'tube', pts: [fx - h * 0.022, fy + h * 0.056, fx - h * 0.03, fy - h * 0.012], r0: h * 0.021, r1: h * 0.016, wobble: 0.05, seed: 33 });
