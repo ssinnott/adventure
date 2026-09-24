@@ -1,4 +1,6 @@
-// The skeleton family: a skeleton and a bone knight, painted after the Xeen look. Bone is the one
+// The risen dead: a skeleton, a bone knight, a ghoul and a drowned man. The last two still carry
+// flesh, which is the whole of why they are here and not in the wraith module -- a wraith is a
+// spirit in a shroud, and these two are bodies. Painted after the Xeen look. Bone is the one
 // material whose parts are honestly separate objects, so each bone is its own small rendered mass
 // (a knobbed, waisted shaft, no flat tones), the joints are dark gaps rather than seams, the skull
 // is a cranium with a hanging jaw, and the ribcage is a real cage laid over a hollow so the gaps
@@ -23,10 +25,12 @@ const BONE = (t: number): Mats => ({
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight'];
+export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bone_knight') knight(ctx, x, y, h, p);
+  else if (kind === 'ghoul') ghoul(ctx, x, y, h, p);
+  else if (kind === 'drowned') drowned(ctx, x, y, h, p);
   else skeleton(ctx, x, y, h, p);
 };
 
@@ -493,4 +497,240 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 
   // The fist: bone fingers and a thumb closed round the haft, after it, so they lie across it.
   fist(ctx, R, nHand, Math.atan2(hdy, hdx), 42, { hex: old, flip: 1, k: 0.82 });
+}
+
+// ------------------------------------------------------------------ the ghoul ----
+/**
+ * The ghoul: a corpse that still has its flesh, which is what separates it from the two above. It
+ * is drawn as skin stretched over the same frame rather than as bare bone -- the ribs and the hip
+ * crests show THROUGH as creases, not as separate masses -- and it goes on its knuckles, hunched
+ * so far forward that its head sits out in front of its shoulders instead of on top of them.
+ */
+function ghoul(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.03, hipTilt: 0.026, turn: 0.03, near: [0.1, 0.19, 0.21], far: [-0.096, -0.15, -0.18], toe: [0.9, -0.7], lift: [0, 0.04] }, BONE);
+  const { sy } = R;
+  const hide = p.base, deep = shade(mix(p.dark, '#1a2418', 0.45), 1), nail = shade('#cfc6ae', p.tone);
+  const sw = p.breathe * h * 0.008;
+  const D = (v: number) => sy + v * h;
+  const cx = x + h * 0.02 + sw;
+  // Hunched: the head is carried forward and low, out past the shoulder line.
+  const hx = x + h * 0.2 + sw, hy = sy - h * 0.052, hr = h * 0.075;
+  groundShadow(ctx, x + h * 0.03, y + 1, h * 0.62);
+
+  // The far arm, long enough to reach the floor: it takes weight on its knuckles.
+  const farEl = { x: x - h * 0.23, y: D(0.2) }, farWr = { x: x - h * 0.2, y: D(0.44) };
+  blob(ctx, B, shade(hide, 0.74), [
+    ...limb(R.sFar.x, R.sFar.y, farEl.x, farEl.y, farWr.x, farWr.y, h * 0.044, h * 0.03, 71),
+  ], { h, formK: 0.5, spread: 0.7 });
+  // Legs: deeply bent, the heels off the ground.
+  blob(ctx, B, shade(hide, 0.86), [
+    ...limb(x - h * 0.07, D(0.28), x - h * 0.27, D(0.46), x - h * 0.145, D(0.71), h * 0.058, h * 0.034, 72),
+    ...limb(x + h * 0.08, D(0.28), x + h * 0.315, D(0.44), x + h * 0.185, D(0.71), h * 0.064, h * 0.036, 73),
+  ], { h, formK: 0.5, spread: 0.72 });
+  blob(ctx, B, shade(hide, 0.8), [
+    { k: 'curve', pts: [x - h * 0.21, y - h * 0.012, x - h * 0.13, y - h * 0.062, x - h * 0.07, y - h * 0.02, x - h * 0.18, y + h * 0.008], wobble: 0.06, seed: 74, sub: 2 },
+    { k: 'curve', pts: [x + h * 0.13, y - h * 0.012, x + h * 0.21, y - h * 0.066, x + h * 0.28, y - h * 0.02, x + h * 0.15, y + h * 0.008], wobble: 0.06, seed: 75, sub: 2 },
+  ], { h, formK: 0.45, spread: 0.7 });
+
+  // The trunk: a gaunt barrel with the ribs and the hip crests showing through it.
+  blob(ctx, B, hide, [
+    // the neck, carrying the head out and down in front of the shoulder line
+    { k: 'cap', x0: cx + h * 0.075, y0: D(0.0), x1: hx - hr * 0.5, y1: hy + hr * 0.55, r0: h * 0.044, r1: h * 0.038 },
+    { k: 'curve', pts: [
+      cx - h * 0.126, D(0.015), cx - h * 0.05, D(-0.036), cx + h * 0.06, D(-0.042), cx + h * 0.142, D(0.012),
+      cx + h * 0.118, D(0.085), cx + h * 0.086, D(0.17), cx + h * 0.112, D(0.245), cx + h * 0.122, D(0.31),
+      cx + h * 0.02, D(0.336), cx - h * 0.098, D(0.305), cx - h * 0.088, D(0.235), cx - h * 0.066, D(0.165),
+      cx - h * 0.096, D(0.08),
+    ], wobble: 0.03, seed: 76, sub: 3 },
+    // the shoulder caps, so the arms grow out of the body instead of beginning in mid air
+    { k: 'ball', x: R.sNear.x - h * 0.01, y: R.sNear.y + h * 0.012, r: h * 0.054 },
+    { k: 'ball', x: R.sFar.x + h * 0.01, y: R.sFar.y + h * 0.014, r: h * 0.048 },
+    // and the pelvis, bridging the trunk to the legs
+    { k: 'ell', x: cx + h * 0.006, y: D(0.3), rx: h * 0.116, ry: h * 0.062, rot: 0.04 },
+  ], { h, formK: 0.55, spread: 0.8, creases: [
+    { x0: cx - h * 0.09, y0: D(0.19), x1: cx + h * 0.1, y1: D(0.2), r: h * 0.03, a: 0.42 },
+  ] });
+  // The ribs, as creases in the skin rather than bones of their own.
+  if (!B.override) for (let i = 0; i < 4; i++) {
+    const v = 0.04 + i * 0.038, w = h * (0.092 - i * 0.01), sag = h * (0.022 + i * 0.004);
+    softLine(ctx, B, [cx - w, D(v), cx - w * 0.2, D(v + sag / h), cx + w * 0.62, D(v + sag / h * 0.86), cx + w, D(v + 0.004)], hide, Math.max(1, h * 0.011), 0.38);
+    softLine(ctx, B, [cx - w * 0.9, D(v - 0.011), cx + w * 0.2, D(v + sag / h * 0.5)], shade(hide, 1.2), Math.max(1, h * 0.007), 0.24);
+  }
+  // The hip crests, showing through the same way.
+  if (!B.override) for (const s2 of [-1, 1]) {
+    softLine(ctx, B, [cx + s2 * h * 0.03, D(0.262), cx + s2 * h * 0.092, D(0.288)], hide, Math.max(1, h * 0.012), 0.34);
+  }
+  // The near arm over the trunk, and the clawed hands.
+  const nearEl = { x: x + h * 0.27, y: D(0.19) }, nearWr = { x: x + h * 0.245, y: D(0.44) };
+  blob(ctx, B, shade(hide, 0.96), [
+    ...limb(R.sNear.x, R.sNear.y, nearEl.x, nearEl.y, nearWr.x, nearWr.y, h * 0.048, h * 0.032, 77),
+  ], { h, formK: 0.5, spread: 0.7 });
+  for (const [wx, wy, s, k] of [[farWr.x, farWr.y, -1, 0.9], [nearWr.x, nearWr.y, 1, 1]] as const) {
+    const parts: Part[] = [{ k: 'ell', x: wx, y: wy + h * 0.016, rx: h * 0.028 * k, ry: h * 0.024 * k, rot: 0.2 * s }];
+    for (let i = 0; i < 4; i++) {
+      const a = Math.PI / 2 - s * (i - 1.4) * 0.34, l = h * (0.058 + (i === 1 ? 0.014 : 0)) * k;
+      const bx = wx + s * (i - 1.4) * h * 0.016, by = wy + h * 0.024;
+      parts.push({ k: 'tube', pts: [bx, by, bx + Math.cos(a) * l * 0.6, by + Math.sin(a) * l * 0.6,
+        bx + Math.cos(a) * l * 0.6 + Math.cos(a + s * 0.8) * l * 0.5, by + Math.sin(a) * l * 0.6 + Math.sin(a + s * 0.8) * l * 0.5],
+        r0: h * 0.012 * k, r1: h * 0.004, wobble: 0.05, seed: 80 + i });
+    }
+    blob(ctx, B, shade(hide, s > 0 ? 1.04 : 0.82), parts, { h, formK: 0.5, spread: 0.75 });
+  }
+
+  // The head: a skull under skin, carried out in front. Wide jaw, sunken sockets, no lips left.
+  blob(ctx, B, shade(hide, 1.06), [
+    { k: 'curve', pts: [
+      hx - hr * 1.0, hy - hr * 0.1, hx - hr * 0.86, hy - hr * 0.86, hx - hr * 0.1, hy - hr * 1.16,
+      hx + hr * 0.7, hy - hr * 0.96, hx + hr * 1.02, hy - hr * 0.22, hx + hr * 0.98, hy + hr * 0.54,
+      hx + hr * 0.5, hy + hr * 1.0, hx - hr * 0.36, hy + hr * 0.98, hx - hr * 0.92, hy + hr * 0.48,
+    ], wobble: 0.04, seed: 82, sub: 3 },
+  ], { h, formK: 0.6, spread: 0.8, creases: [
+    { x0: hx - hr * 0.7, y0: hy - hr * 0.1, x1: hx + hr * 0.8, y1: hy - hr * 0.16, r: hr * 0.2, a: 0.3 },
+  ] });
+  if (!B.override) {
+    // Sockets: real holes, dark enough to be holes, with a point of light far back in each.
+    ctx.fillStyle = B.col(shade('#140f12', Math.max(0.5, p.tone)));
+    for (const s of [-1, 1]) {
+      ctx.beginPath();
+      ctx.ellipse(hx + s * hr * 0.42, hy - hr * 0.2, hr * 0.28, hr * 0.24, s * 0.3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    glow(ctx, B, hx - hr * 0.42, hy - hr * 0.2, hr * 0.4, '#d8e8a0', 0.3, '#f4ffd0');
+    glow(ctx, B, hx + hr * 0.42, hy - hr * 0.2, hr * 0.42, '#d8e8a0', 0.34, '#f4ffd0');
+    eye(ctx, hx - hr * 0.42, hy - hr * 0.18, Math.max(0.8, hr * 0.09), shade('#e8f4c0', p.tone), false);
+    eye(ctx, hx + hr * 0.44, hy - hr * 0.18, Math.max(0.8, hr * 0.1), shade('#e8f4c0', p.tone), false);
+    // The mouth: a wide dark gape with teeth top and bottom, drawn as a gap in the face.
+    ctx.fillStyle = B.col(deep);
+    ctx.beginPath();
+    ctx.moveTo(hx - hr * 0.68, hy + hr * 0.36);
+    ctx.quadraticCurveTo(hx + hr * 0.1, hy + hr * 0.24, hx + hr * 0.84, hy + hr * 0.42);
+    ctx.quadraticCurveTo(hx + hr * 0.2, hy + hr * 1.02, hx - hr * 0.68, hy + hr * 0.36);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = B.col(nail);
+    for (let i = 0; i < 6; i++) {
+      const t = i / 5, tx = hx + hr * (-0.58 + t * 1.3), ty = hy + hr * (0.4 + t * 0.06);
+      const w = hr * (0.1 - Math.abs(t - 0.5) * 0.05);
+      ctx.beginPath(); ctx.moveTo(tx - w, ty); ctx.lineTo(tx + w, ty); ctx.lineTo(tx, ty + hr * 0.24); ctx.closePath(); ctx.fill();
+      if (i % 2 === 0) { ctx.beginPath(); ctx.moveTo(tx - w, ty + hr * 0.5); ctx.lineTo(tx + w, ty + hr * 0.5); ctx.lineTo(tx, ty + hr * 0.26); ctx.closePath(); ctx.fill(); }
+    }
+  }
+  void p.light;
+}
+
+// ------------------------------------------------------------------ the drowned ----
+/**
+ * The drowned man: a body that has been in the water a long while, which is a different kind of
+ * dead from the ghoul's. Nothing about him is gaunt -- he is swollen, and he hangs rather than
+ * crouches: head lolled over, shoulders slack, arms straight down with the hands open. Weed in his
+ * hair and off his elbows, the rags of what he went in wearing, and water still coming off him.
+ */
+function drowned(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.022, hipTilt: -0.012, turn: -0.014, near: [0.078, 0.092, 0.11], far: [-0.086, -0.108, -0.132], toe: [0.5, -0.8] }, BONE);
+  const { sy } = R;
+  const flesh = p.base, deep = shade(mix(p.dark, '#0e1c1e', 0.5), 1);
+  const weed = shade(mix(p.dark, '#2a3a1c', 0.55), 1);
+  const rag = shade(mix(p.dark, '#3a3e34', 0.5), 1);
+  const roll = Math.sin(p.frame / 29) * h * 0.006;
+  const D = (v: number) => sy + v * h;
+  const cx = x - h * 0.004 + roll;
+  // The head lolls: over to the far side and tipped back, which is what a slack neck does.
+  const hx = x - h * 0.072 + roll * 1.6, hy = sy - h * 0.128, hr = h * 0.076;
+  groundShadow(ctx, x, y + 1, h * 0.66);
+
+  const farEl = { x: x - h * 0.2, y: D(0.21) }, farWr = { x: x - h * 0.216, y: D(0.44) };
+  blob(ctx, B, shade(flesh, 0.76), [
+    ...limb(R.sFar.x, R.sFar.y, farEl.x, farEl.y, farWr.x, farWr.y, h * 0.05, h * 0.034, 91),
+  ], { h, formK: 0.5, spread: 0.7 });
+  blob(ctx, B, shade(flesh, 0.88), [
+    ...limb(x - h * 0.078, D(0.3), x - h * 0.116, D(0.5), x - h * 0.132, D(0.72), h * 0.064, h * 0.042, 92),
+    ...limb(x + h * 0.08, D(0.3), x + h * 0.106, D(0.5), x + h * 0.116, D(0.72), h * 0.068, h * 0.044, 93),
+  ], { h, formK: 0.5, spread: 0.72 });
+  blob(ctx, B, shade(flesh, 0.8), [
+    { k: 'curve', pts: [x - h * 0.19, y - h * 0.01, x - h * 0.12, y - h * 0.058, x - h * 0.06, y - h * 0.018, x - h * 0.16, y + h * 0.008], wobble: 0.06, seed: 94, sub: 2 },
+    { k: 'curve', pts: [x + h * 0.07, y - h * 0.014, x + h * 0.13, y - h * 0.06, x + h * 0.2, y - h * 0.016, x + h * 0.09, y + h * 0.008], wobble: 0.06, seed: 95, sub: 2 },
+  ], { h, formK: 0.45, spread: 0.7 });
+
+  // The trunk: swollen, widest at the belly, with the neck slack and off to one side.
+  blob(ctx, B, flesh, [
+    { k: 'cap', x0: cx - h * 0.01, y0: D(-0.004), x1: hx + hr * 0.42, y1: hy + hr * 0.6, r0: h * 0.05, r1: h * 0.044 },
+    { k: 'curve', pts: [
+      cx - h * 0.136, D(0.02), cx - h * 0.05, D(-0.036), cx + h * 0.07, D(-0.032), cx + h * 0.144, D(0.026),
+      cx + h * 0.156, D(0.13), cx + h * 0.148, D(0.235), cx + h * 0.124, D(0.32),
+      cx + h * 0.016, D(0.348), cx - h * 0.112, D(0.318), cx - h * 0.14, D(0.225), cx - h * 0.148, D(0.12),
+    ], wobble: 0.04, seed: 96, sub: 3 },
+    { k: 'ball', x: R.sNear.x - h * 0.012, y: R.sNear.y + h * 0.016, r: h * 0.058 },
+    { k: 'ball', x: R.sFar.x + h * 0.012, y: R.sFar.y + h * 0.018, r: h * 0.052 },
+    { k: 'ell', x: cx + h * 0.004, y: D(0.31), rx: h * 0.126, ry: h * 0.066, rot: -0.03 },
+  ], { h, formK: 0.6, spread: 0.85, creases: [
+    { x0: cx - h * 0.1, y0: D(0.21), x1: cx + h * 0.11, y1: D(0.215), r: h * 0.032, a: 0.34 },
+    { x0: cx - h * 0.06, y0: D(0.06), x1: cx - h * 0.05, y1: D(0.2), r: h * 0.026, a: 0.24 },
+  ] });
+  const nearEl = { x: x + h * 0.214, y: D(0.2) }, nearWr = { x: x + h * 0.236, y: D(0.43) };
+  blob(ctx, B, shade(flesh, 0.98), [
+    ...limb(R.sNear.x, R.sNear.y, nearEl.x, nearEl.y, nearWr.x, nearWr.y, h * 0.054, h * 0.036, 97),
+  ], { h, formK: 0.5, spread: 0.7 });
+  // Slack open hands: the fingers hang, they do not reach.
+  for (const [wx, wy, s, k] of [[farWr.x, farWr.y, -1, 0.92], [nearWr.x, nearWr.y, 1, 1]] as const) {
+    const parts: Part[] = [{ k: 'ell', x: wx, y: wy + h * 0.018, rx: h * 0.03 * k, ry: h * 0.028 * k, rot: 0.1 * s }];
+    for (let i = 0; i < 4; i++) {
+      const bx = wx + s * (i - 1.4) * h * 0.017, by = wy + h * 0.03;
+      const l = h * (0.05 + (i === 1 ? 0.01 : 0)) * k;
+      parts.push({ k: 'tube', pts: [bx, by, bx + s * h * 0.004, by + l * 0.6, bx - s * h * 0.006, by + l], r0: h * 0.013 * k, r1: h * 0.007, wobble: 0.05, seed: 100 + i });
+    }
+    blob(ctx, B, shade(flesh, s > 0 ? 1.02 : 0.84), parts, { h, formK: 0.5, spread: 0.75 });
+  }
+  // What is left of his clothes: a shirt gone to rags across the chest and a skirt of it at the hip.
+  blob(ctx, B, rag, [
+    { k: 'curve', pts: [
+      cx - h * 0.14, D(0.03), cx - h * 0.06, D(0.008), cx + h * 0.05, D(0.014), cx + h * 0.146, D(0.04),
+      cx + h * 0.118, D(0.14), cx + h * 0.13, D(0.2), cx + h * 0.05, D(0.17), cx - h * 0.01, D(0.22),
+      cx - h * 0.07, D(0.16), cx - h * 0.126, D(0.19), cx - h * 0.134, D(0.1),
+    ], wobble: 0.08, spiky: 0.05, seed: 98, sub: 3 },
+    { k: 'curve', pts: [
+      cx - h * 0.132, D(0.27), cx - h * 0.02, D(0.252), cx + h * 0.128, D(0.274), cx + h * 0.112, D(0.4),
+      cx + h * 0.05, D(0.352), cx - h * 0.006, D(0.43), cx - h * 0.072, D(0.35), cx - h * 0.126, D(0.39),
+    ], wobble: 0.09, spiky: 0.06, seed: 99, sub: 3 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 98, amount: 0.5 });
+
+  // The head: bloated and tipped back, the jaw slack. The face is meat, not bone.
+  blob(ctx, B, shade(flesh, 1.05), [
+    { k: 'curve', pts: [
+      hx - hr * 1.0, hy - hr * 0.04, hx - hr * 0.8, hy - hr * 0.88, hx - hr * 0.02, hy - hr * 1.16,
+      hx + hr * 0.78, hy - hr * 0.9, hx + hr * 1.0, hy - hr * 0.06, hx + hr * 0.86, hy + hr * 0.72,
+      hx + hr * 0.24, hy + hr * 1.1, hx - hr * 0.48, hy + hr * 0.94,
+    ], wobble: 0.045, seed: 101, sub: 3 },
+  ], { h, formK: 0.6, spread: 0.8 });
+  if (!B.override) {
+    // Eyes gone white and blind, set in sockets the water has hollowed.
+    ctx.fillStyle = B.col(deep);
+    for (const s of [-1, 1]) {
+      ctx.beginPath(); ctx.ellipse(hx + s * hr * 0.38, hy - hr * 0.18, hr * 0.26, hr * 0.2, s * 0.22, 0, Math.PI * 2); ctx.fill();
+    }
+    eye(ctx, hx - hr * 0.38, hy - hr * 0.16, Math.max(0.8, hr * 0.14), shade('#e4ece0', p.tone), false);
+    eye(ctx, hx + hr * 0.38, hy - hr * 0.16, Math.max(0.8, hr * 0.14), shade('#e4ece0', p.tone), false);
+    // The mouth hanging open, full of water rather than teeth.
+    ctx.fillStyle = B.col(deep);
+    ctx.beginPath();
+    ctx.ellipse(hx + hr * 0.08, hy + hr * 0.54, hr * 0.32, hr * 0.28, 0.08, 0, Math.PI * 2);
+    ctx.fill();
+    softLine(ctx, B, [hx - hr * 0.6, hy + hr * 0.12, hx + hr * 0.62, hy + hr * 0.08], flesh, Math.max(1, h * 0.012), 0.3);
+  }
+  // Weed: off the crown, the far elbow and the hem, hanging straight down and heavy with water.
+  const strands: Part[] = [];
+  for (const [wx, wy, n, len] of [[hx - hr * 0.5, hy - hr * 0.9, 4, 0.2], [farEl.x - h * 0.02, farEl.y, 3, 0.16], [cx + h * 0.09, D(0.36), 3, 0.13]] as const) {
+    for (let i = 0; i < n; i++) {
+      const ox = wx + (i - (n - 1) / 2) * h * 0.026, l = h * len * (0.7 + ((i * 5) % 3) * 0.2);
+      strands.push({ k: 'tube', pts: [ox, wy, ox + roll * 0.6 + h * 0.008, wy + l * 0.55, ox + roll * 1.4, wy + l], r0: h * 0.012, r1: h * 0.004, wobble: 0.14, seed: 110 + i });
+    }
+  }
+  blob(ctx, B, weed, strands, { h, formK: 0.4, spread: 0.7 });
+  // Water still running off him.
+  if (!B.override) for (let i = 0; i < 4; i++) {
+    const t = ((p.frame * 0.02 + i * 0.27) % 1);
+    const dx2 = [hx + hr * 0.7, farWr.x, nearWr.x + h * 0.01, cx + h * 0.1][i];
+    const dy2 = [hy + hr * 0.9, farWr.y + h * 0.05, nearWr.y + h * 0.05, D(0.42)][i];
+    ctx.fillStyle = B.col(rgba(shade('#cfe4e0', p.tone), 0.5 * (1 - t)));
+    ctx.beginPath(); ctx.ellipse(dx2, dy2 + t * h * 0.11, Math.max(0.6, h * 0.008), Math.max(0.8, h * 0.014), 0, 0, Math.PI * 2); ctx.fill();
+  }
+  void p.light;
 }
