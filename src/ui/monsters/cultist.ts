@@ -1,4 +1,5 @@
-// The Ashen cult: cultist, zealot, adept and the Hand of Ash. Painted as masses, not parts: every
+// The Ashen cult: cultist, acolyte, zealot, adept, deacon and the Hand of Ash, six ranks in one
+// order. Painted as masses, not parts: every
 // robe is ONE blob in the def's tint (gown, cowl and near sleeve together, with creases under the
 // arm and at the belt and a folds texture), the far arm its own darker mass behind it, then the
 // other materials (skin, bone mask, mantle, rope, leather, steel) each as their own blob, then the
@@ -18,12 +19,14 @@ import type { Arm, Mats, Pt, Rig } from './figure.ts';
 import { armParts, elbowCrease, hand as fist, makeRig, trunkW, FAR } from './figure.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['cultist', 'zealot', 'adept', 'ashen_hand'];
+export const KINDS: readonly MonsterSprite[] = ['cultist', 'acolyte', 'zealot', 'adept', 'deacon', 'ashen_hand'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'zealot') zealot(ctx, x, y, h, p);
   else if (kind === 'adept') adept(ctx, x, y, h, p);
   else if (kind === 'ashen_hand') hand(ctx, x, y, h, p);
+  else if (kind === 'acolyte') acolyte(ctx, x, y, h, p);
+  else if (kind === 'deacon') deacon(ctx, x, y, h, p);
   else cultist(ctx, x, y, h, p);
 };
 
@@ -1069,4 +1072,193 @@ function footMarks(ctx: CanvasRenderingContext2D, R: Rig, ankle: Pt, out: number
   if (h < 42) return;
   softLine(ctx, B, [ankle.x + s * toe * 0.62, y - h * 0.018, ankle.x + s * toe * 0.72, y - h * 0.001], skin, Math.max(1, h * 0.008), 0.5);
   softLine(ctx, B, [ankle.x - s * h * 0.026, y - h * 0.056, ankle.x + s * h * 0.03, y - h * 0.05], skin, Math.max(1, h * 0.012), 0.45);
+}
+
+// ------------------------------------------------------------------ the acolyte ----
+/**
+ * A censer on its chain: a pierced bowl with embers in it, hanging from a hand. The holes are what
+ * make it a censer rather than a pot -- the light comes OUT of the vessel, which is the cult's whole
+ * visual argument -- so they are cut as hot points round its belly with a glow behind each.
+ */
+function censer(ctx: CanvasRenderingContext2D, hx: number, hy: number, bx: number, by: number,
+  h: number, brass: string, pulse: number): void {
+  // The chain: links, not a line, so it reads as bearing weight.
+  if (!B.override) {
+    const n = 5;
+    for (let i = 1; i <= n; i++) {
+      const t = i / (n + 1);
+      ctx.fillStyle = B.col(shade(brass, 0.85 + (i % 2) * 0.25));
+      ctx.beginPath(); ctx.arc(hx + (bx - hx) * t, hy + (by - hy) * t, Math.max(0.8, h * 0.009), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  glow(ctx, B, bx, by + h * 0.012, h * 0.11 * (1 + pulse * 0.2), '#ff8a30', 0.36 + pulse * 0.22, '#ffd070');
+  blob(ctx, B, brass, [
+    { k: 'curve', pts: [
+      bx - h * 0.044, by - h * 0.004, bx - h * 0.034, by + h * 0.042, bx, by + h * 0.062,
+      bx + h * 0.034, by + h * 0.042, bx + h * 0.044, by - h * 0.004,
+    ], wobble: 0.04, seed: 131, sub: 3 },
+    // the lid, a step brighter, with a finial on top
+    { k: 'curve', pts: [
+      bx - h * 0.046, by - h * 0.006, bx - h * 0.03, by - h * 0.034, bx, by - h * 0.046,
+      bx + h * 0.03, by - h * 0.034, bx + h * 0.046, by - h * 0.006,
+    ], wobble: 0.03, seed: 132, sub: 3 },
+    { k: 'ball', x: bx, y: by - h * 0.05, r: h * 0.011 },
+  ], { h, formK: 0.6, spread: 0.7, gloss: 0.4 });
+  if (B.override) return;
+  // The pierced holes, lit from inside.
+  for (const [ux, uy] of [[-0.026, 0.018], [0, 0.03], [0.026, 0.016], [-0.014, -0.014], [0.016, -0.016]] as const) {
+    glow(ctx, B, bx + h * ux, by + h * uy, h * 0.016, '#ff8a30', 0.55 + pulse * 0.3, '#fff0c8');
+    ctx.fillStyle = B.col(rgba(mix('#ff8a30', '#fff0c8', 0.3 + pulse * 0.4), 0.9));
+    ctx.beginPath(); ctx.arc(bx + h * ux, by + h * uy, Math.max(0.7, h * 0.007), 0, Math.PI * 2); ctx.fill();
+  }
+  // Embers coming off it and going up.
+  for (let i = 0; i < 3; i++) {
+    const t = ((pulse * 60 + i * 41) % 60) / 60;
+    const ex = bx + (i - 1) * h * 0.016 + Math.sin(t * 5 + i) * h * 0.012, ey = by - h * (0.05 + t * 0.2);
+    glow(ctx, B, ex, ey, h * 0.022, '#ff8a30', (1 - t) * 0.5, '#ffd070');
+  }
+}
+
+/**
+ * The Ashen acolyte: the rank that carries the fire rather than fighting with it. Leans forward off
+ * the back foot with the censer swung out on its chain from the near hand, and keeps a bone half
+ * mask under the cowl instead of the rank and file's empty void -- he is far enough up the order to
+ * have a face, and not far enough to have the Hand's.
+ */
+function acolyte(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const m = mats(p.tone);
+  const R = makeRig(x, y, h, p, { tilt: -0.024, hipTilt: 0.022, turn: 0.028, near: [0.07, 0.115, 0.16], far: [-0.062, -0.088, -0.12], toe: [0.9, -0.6], lift: [0, 0.03] }, CULT);
+  const { sy, hx, hy, hr } = R;
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6);
+  const swing = Math.sin(p.frame / 16);
+  const beltY = sy + h * 0.18, hemY = sy + h * 0.7;
+  const far: Arm = [R.sFar, { x: x - h * 0.168, y: sy + h * 0.21 }, { x: x - h * 0.132, y: sy + h * 0.35 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.246, y: sy + h * 0.13 }, { x: x + h * 0.276, y: sy + h * 0.03 }];
+  groundShadow(ctx, x + h * 0.02, y + 1, h * 0.68);
+  blob(ctx, B, m.skin, [
+    footPart(R, R.legL[2], R.toe[1], 133, R.lift[1]), footPart(R, R.legR[2], R.toe[0], 134, R.lift[0]),
+  ], { h, formK: 0.45, spread: 0.7 });
+  blob(ctx, B, p.dark, armParts(R, far, 135, 1.15), { h, formK: 0.55, creases: [elbowCrease(R, far)] });
+  fist(ctx, R, far[2], null, 136, { far: true, k: 0.92 });
+  blob(ctx, B, p.base, [
+    robePart(R, beltY, hemY, 0.17, 137, 0.026),
+    cowlPart(R, 1.2, 138),
+    ...armParts(R, near, 139, 1.2),
+  ], { h, tex: 'folds', seed: 137, amount: 0.7, formK: 0.6, creases: [
+    { x0: x + trunkW(R, sy + h * 0.06) - h * 0.01, y0: sy + h * 0.07, x1: x + trunkW(R, beltY), y1: beltY - h * 0.01, r: h * 0.022, a: 0.35 },
+    { x0: hx - hr * 1.1, y0: hy + hr * 1.25, x1: hx + hr * 1.1, y1: hy + hr * 1.3, r: h * 0.02, a: 0.35 },
+    elbowCrease(R, near),
+  ] });
+  sleeveEdge(ctx, h, p.base, near[0].x, near[0].y, near[1].x, near[1].y, h * 0.048);
+  sleeveEdge(ctx, h, p.base, near[1].x, near[1].y, near[2].x, near[2].y, h * 0.042);
+  drape(ctx, h, p.base, x, beltY + h * 0.01, h * 0.19, hemY - beltY - h * 0.03, 6, 140, 0.8, 0.28);
+  // The bone half mask: the cult's face, cut off at the cheekbone so the jaw stays in the dark.
+  faceVoid(ctx, hx, hy + h * 0.02, hr * 0.9, hr * 1.06, 141);
+  blob(ctx, B, m.bone, [{ k: 'curve', pts: [
+    hx - hr * 0.7, hy - hr * 0.38, hx - hr * 0.42, hy - hr * 0.6, hx + hr * 0.44, hy - hr * 0.58,
+    hx + hr * 0.72, hy - hr * 0.34, hx + hr * 0.6, hy + hr * 0.06, hx + hr * 0.24, hy + hr * 0.2,
+    hx - hr * 0.2, hy + hr * 0.18, hx - hr * 0.58, hy + hr * 0.04,
+  ], wobble: 0.04, seed: 142, sub: 3 }], { h, formK: 0.55, spread: 0.75 });
+  // Sockets cut through the bone, so the fire behind it shows rather than sitting on it.
+  if (!B.override) {
+    ctx.fillStyle = B.col(shade('#100a0e', Math.max(0.5, p.tone)));
+    for (const s2 of [-1, 1]) {
+      ctx.beginPath();
+      ctx.ellipse(hx + s2 * hr * 0.32, hy - hr * 0.16, hr * 0.22, hr * 0.15, s2 * 0.34, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  emberEyes(ctx, hx - hr * 0.32, hy - hr * 0.16, hx + hr * 0.32, hy - hr * 0.16, h * 0.011, pulse, true, 2.2);
+  softLine(ctx, B, [hx - hr * 0.34, hy + hr * 0.1, hx, hy + hr * 0.18, hx + hr * 0.34, hy + hr * 0.1], m.bone, Math.max(1, h * 0.009), 0.55);
+  // Rope belt, and a censer swinging from the raised near hand.
+  const bw = trunkW(R, beltY) + h * 0.012;
+  blob(ctx, B, m.rope, [
+    tube([x - bw, beltY + h * 0.012, x, beltY - h * 0.004, x + bw, beltY + h * 0.008], h * 0.013, h * 0.013, 0.1, 143),
+    { k: 'ball', x: x + h * 0.03, y: beltY + h * 0.006, r: h * 0.021 },
+  ], { h, formK: 0.5 });
+  const bowl = { x: near[2].x + swing * h * 0.07 + h * 0.012, y: near[2].y + h * 0.3 };
+  censer(ctx, near[2].x, near[2].y + h * 0.012, bowl.x, bowl.y, h, shade('#9a7a3a', p.tone), pulse);
+  fist(ctx, R, near[2], Math.PI / 2, 144, { flip: -1 });
+  void p.light;
+}
+
+// ------------------------------------------------------------------ the deacon ----
+/**
+ * The Ashen deacon: the rank that reads the fire. Taller than everything under it because of the
+ * mitre -- a horned headdress is the cheapest presence in this whole family and nothing else in
+ * the order wears one -- with a heavy mantle over the shoulders and the order's book held open in
+ * the far hand, embers standing off the page. Deliberately quieter than the Hand of Ash above him:
+ * no chisel, no crown of nails, and the robe stays the darkest tint in the cult.
+ */
+function deacon(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const m = mats(p.tone);
+  const R = makeRig(x, y, h, p, { tilt: -0.008, hipTilt: 0.012, turn: 0.012, near: [0.062, 0.08, 0.1], far: [-0.06, -0.076, -0.09], toe: [0.8, -0.5] }, CULT);
+  const { sy, hx, hy, hr } = R;
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6), flick = Math.sin(p.frame / 3.1) * 0.5 + 0.5;
+  const beltY = sy + h * 0.19, hemY = sy + h * 0.74;
+  const far: Arm = [R.sFar, { x: x - h * 0.194, y: sy + h * 0.2 }, { x: x - h * 0.13, y: sy + h * 0.24 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.216, y: sy + h * 0.196 }, { x: x + h * 0.14, y: sy + h * 0.26 }];
+  groundShadow(ctx, x + h * 0.02, y + 1, h * 0.76);
+  blob(ctx, B, m.skin, [
+    footPart(R, R.legL[2], R.toe[1], 151, R.lift[1]), footPart(R, R.legR[2], R.toe[0], 152, R.lift[0]),
+  ], { h, formK: 0.45, spread: 0.7 });
+  blob(ctx, B, p.dark, armParts(R, far, 153, 1.15), { h, formK: 0.55, creases: [elbowCrease(R, far)] });
+  blob(ctx, B, p.base, [
+    robePart(R, beltY, hemY, 0.22, 154, 0.018),
+    cowlPart(R, 1.16, 155),
+    ...armParts(R, near, 156, 1.22),
+  ], { h, tex: 'folds', seed: 154, amount: 0.75, formK: 0.6, creases: [
+    { x0: x + trunkW(R, sy + h * 0.06) - h * 0.01, y0: sy + h * 0.07, x1: x + trunkW(R, beltY), y1: beltY - h * 0.01, r: h * 0.022, a: 0.35 },
+    { x0: x - trunkW(R, sy + h * 0.06) * FAR + h * 0.01, y0: sy + h * 0.065, x1: x - trunkW(R, beltY) * FAR, y1: beltY - h * 0.01, r: h * 0.02, a: 0.3 },
+    elbowCrease(R, near),
+  ] });
+  sleeveEdge(ctx, h, p.base, near[0].x, near[0].y, near[1].x, near[1].y, h * 0.05);
+  sleeveEdge(ctx, h, p.base, near[1].x, near[1].y, near[2].x, near[2].y, h * 0.046);
+  drape(ctx, h, p.base, x, beltY + h * 0.012, h * 0.22, hemY - beltY - h * 0.02, 7, 157, 0.85, 0.3);
+  // The mantle: a heavy shoulder cape with a scalloped hem, one step off the robe.
+  blob(ctx, B, shade(mix(p.base, '#1a1018', 0.4), 1), [{ k: 'curve', pts: [
+    x - h * 0.2, sy + h * 0.02, x - h * 0.232, sy + h * 0.1, x - h * 0.216, sy + h * 0.2,
+    x - h * 0.12, sy + h * 0.24, x, sy + h * 0.26, x + h * 0.13, sy + h * 0.24,
+    x + h * 0.232, sy + h * 0.2, x + h * 0.25, sy + h * 0.1, x + h * 0.216, sy + h * 0.02,
+    x + h * 0.1, sy - h * 0.026, x - h * 0.08, sy - h * 0.026,
+  ], wobble: 0.03, spiky: 0.02, seed: 158, sub: 3 }],
+    { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: 158, amount: 0.5 });
+  sigil(ctx, x + h * 0.01, sy + h * 0.13, h * 0.056, m.ash, h);
+  // The mitre: two horns off a tall crown, which is where his height comes from.
+  blob(ctx, B, shade(mix(p.base, '#241a22', 0.3), 1), [
+    { k: 'curve', pts: [
+      hx - hr * 1.12, hy - hr * 0.5, hx - hr * 1.3, hy - hr * 1.46, hx - hr * 1.02, hy - hr * 2.3,
+      hx - hr * 0.74, hy - hr * 3.0, hx - hr * 0.3, hy - hr * 2.28, hx - hr * 0.04, hy - hr * 1.5,
+      hx + hr * 0.3, hy - hr * 2.2, hx + hr * 0.62, hy - hr * 2.76, hx + hr * 0.98, hy - hr * 2.12,
+      hx + hr * 1.32, hy - hr * 1.4, hx + hr * 1.14, hy - hr * 0.46,
+    ], wobble: 0.035, seed: 159, sub: 3 },
+  ], { h, formK: 0.55, spread: 0.75, tex: 'folds', seed: 159, amount: 0.45 });
+  // A band of ash-grey round the mitre's brow, and an ember set in it.
+  softLine(ctx, B, [hx - hr * 1.12, hy - hr * 0.62, hx, hy - hr * 0.78, hx + hr * 1.14, hy - hr * 0.58], m.ash, Math.max(1, h * 0.016), 0.6);
+  glow(ctx, B, hx - hr * 0.02, hy - hr * 1.18, h * 0.05 * (1 + pulse * 0.2), '#ff8a30', 0.4 + pulse * 0.25, '#ffd070');
+  eye(ctx, hx - hr * 0.02, hy - hr * 1.18, h * 0.014, mix('#ff8a30', '#fff0c8', 0.3 + pulse * 0.4), false);
+  faceVoid(ctx, hx, hy + h * 0.022, hr * 0.94, hr * 1.04, 160);
+  emberEyes(ctx, hx - hr * 0.46, hy, hx + hr * 0.46, hy - hr * 0.02, h * 0.016, pulse, true, 2.6);
+  // The book, open across the far hand, with the fire standing off the page.
+  const bx = x - h * 0.168, by = sy + h * 0.245;
+  blob(ctx, B, m.leather, [
+    { k: 'poly', pts: [bx - h * 0.1, by + h * 0.026, bx - h * 0.006, by - h * 0.012, bx - h * 0.006, by + h * 0.034, bx - h * 0.094, by + h * 0.07] },
+    { k: 'poly', pts: [bx + h * 0.094, by + h * 0.016, bx + h * 0.004, by - h * 0.016, bx + h * 0.004, by + h * 0.03, bx + h * 0.09, by + h * 0.06] },
+  ], { h, formK: 0.5, spread: 0.7 });
+  blob(ctx, B, m.bone, [
+    { k: 'poly', pts: [bx - h * 0.088, by + h * 0.026, bx - h * 0.008, by - h * 0.004, bx - h * 0.008, by + h * 0.03, bx - h * 0.082, by + h * 0.06] },
+    { k: 'poly', pts: [bx + h * 0.082, by + h * 0.018, bx + h * 0.006, by - h * 0.008, bx + h * 0.006, by + h * 0.026, bx + h * 0.078, by + h * 0.052] },
+  ], { h, formK: 0.4, spread: 0.8, outline: false });
+  if (!B.override) {
+    ctx.strokeStyle = B.col(rgba(m.ash, 0.5)); ctx.lineWidth = 1;
+    for (let i = 0; i < 3; i++) {
+      const ly = by + h * (0.012 + i * 0.012);
+      ctx.beginPath(); ctx.moveTo(bx - h * 0.072, ly + h * 0.014); ctx.lineTo(bx - h * 0.016, ly - h * 0.002); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx + h * 0.014, ly - h * 0.001); ctx.lineTo(bx + h * 0.068, ly + h * 0.012); ctx.stroke();
+    }
+  }
+  flame(ctx, bx, by - h * 0.03, h * (0.07 + 0.026 * flick), h, p.frame);
+  fist(ctx, R, far[2], 0.4, 161, { far: true, k: 0.95 });
+  fist(ctx, R, near[2], -0.5, 162, { flip: -1, k: 0.95 });
+  void p.light;
 }
