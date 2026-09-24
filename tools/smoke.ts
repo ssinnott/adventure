@@ -74,6 +74,37 @@ const thornFightColours = await colours();
 await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornhold', 7, 14, 0); g.enterCell(); });
 await page.waitForTimeout(150);
 const townColours = await colours();
+// The monster art unions many parts into one painted mass with the nonzero fill rule, so every
+// part kind has to wind the same way. One that winds the other way punches a hole wherever it
+// overlaps another, which is how the tube ends once cut a wedge out of every limb. Overlap each
+// pair of part kinds and look for background left showing in the middle.
+const windingHoles = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const G = await load('/src/ui/monsters/gloss.ts');
+  const C = await load('/src/ui/monsters/common.ts');
+  const mk = (kind: string, cx: number): any => {
+    if (kind === 'ball') return { k: 'ball', x: cx, y: 60, r: 34 };
+    if (kind === 'ell') return { k: 'ell', x: cx, y: 60, rx: 34, ry: 28, rot: 0.3 };
+    if (kind === 'cap') return { k: 'cap', x0: cx - 22, y0: 48, x1: cx + 22, y1: 72, r0: 24, r1: 18 };
+    if (kind === 'poly') return { k: 'poly', pts: [cx - 32, 30, cx + 32, 36, cx + 26, 88, cx - 30, 84] };
+    if (kind === 'curve') return { k: 'curve', pts: [cx - 30, 34, cx + 30, 30, cx + 28, 86, cx - 32, 84], wobble: 0.04, seed: 5, sub: 2 };
+    return { k: 'tube', pts: [cx - 30, 40, cx, 62, cx + 30, 46], r0: 22, r1: 16 };
+  };
+  const kinds = ['ball', 'ell', 'cap', 'poly', 'curve', 'tube'];
+  const c = document.createElement('canvas'); c.width = 170; c.height = 120;
+  const ctx = c.getContext('2d')!;
+  const bad: string[] = [];
+  for (const a of kinds) for (const b of kinds) {
+    ctx.fillStyle = '#ff00ff'; ctx.fillRect(0, 0, 170, 120);
+    G.blob(ctx, C.B, '#8a8a90', [mk(a, 62), mk(b, 104)], { h: 120, form: false });
+    const d = ctx.getImageData(74, 50, 18, 22).data;
+    let hole = 0;
+    for (let i = 0; i < d.length; i += 4) if (d[i] > 200 && d[i + 1] < 80 && d[i + 2] > 200) hole++;
+    if (hole > 0) bad.push(`${a}+${b} (${hole}px)`);
+  }
+  return bad;
+});
+
 if (process.env.SMOKE_SHOT) {
   await page.screenshot({ path: process.env.SMOKE_SHOT });
 }
@@ -92,5 +123,6 @@ ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
+ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

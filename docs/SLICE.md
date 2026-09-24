@@ -101,7 +101,27 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - `ui/portraits.ts` builds a front-facing portrait per character from the name, race and class
   (head shape, ears, skin, hair, beard, class headgear), with the expression following the
   character's state, cached to an offscreen canvas.
-- `ui/sprites.ts` holds the ten monster drawings and the trees, rocks, mountains and pillars.
+- `ui/sprites.ts` holds the trees, rocks, mountains and pillars and dispatches the monsters to
+  `ui/monsters/`, one module per family (rat, slime, wolf, boar, spider, bandit, cultist, skeleton,
+  riftling, ogre, wraith) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts` has
+  the brush, the small shape helpers and the humanoid frame. Every monster def names a distinct
+  sprite kind, so the variants that share a family (the archers and brigands, the cult's ranks,
+  the bone knight, the dire wolf and rift hound, the elder and the two wardens) are drawn with
+  their own gear, anatomy and glow rather than a recolour.
+- `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
+  look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
+  mass, with one ink outline around the union, one rendered gradient across the whole (a bright
+  core toward the light, a deep band at the far edge), then, clipped inside, a soft volume per
+  part, creases where forms meet, a surface texture (fur, bristle, stipple, scales, mail, cracks,
+  folds, facets; only above a minimum sprite height) and a specular where the surface is wet or
+  crystalline. Contours are `curve` parts (a spline through points, lumpy or fur-tufted) and
+  `tube` parts (a bending tapered tube for tails, necks, legs and tentacles); `glow()` is a real
+  radial light for embers and halos; `softLine()` replaces interior ink. The hit flash still
+  paints a flat white silhouette through all of it.
+- Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
+  monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
+  three and four taper down, five is the old flat size and six goes under it. The row's spacing is
+  fixed, so every extra monster is width its neighbours do not have.
 - `ui/viewport.ts` textures every surface procedurally: stone courses (front faces and receding
   side faces), timber-framed houses with gable roofs and windows lit at night, flagstones with
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
@@ -135,9 +155,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
 | `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes |
-| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, and asserts every screen painted with no page error |
+| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, and asserts every screen painted with no page error; also unions every pair of sprite part kinds and asserts none of them leaves a hole |
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing.
+`node tools/gallery.ts out.png [--only kinds] [--family wolf] [--scale 2] [--frames 6] [--flash] [--tone 0.6]`
+renders every monster (or one family) at the combat size with the viewport sizes underneath, or
+as a strip of idle frames ending in the hit flash, for judging an art pass.
 
 ## Code map
 
@@ -152,5 +175,6 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | `ui/frame.ts` | layout constants, status strip, automap, party cards, log, purse |
 | `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
+| `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
 | `content/maps/*.ts` | Harrow, the Shelf, the cellar, Greywater (two levels); Thornmark, Thornhold, the Grove Roots, the Cut Stone |
