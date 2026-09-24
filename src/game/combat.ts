@@ -9,7 +9,9 @@ import type { SpellDef } from './spells.ts';
 import { item } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain,
+  hasTrait, spellHeal, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
 } from './party.ts';
+import type { ItemDef } from './items.ts';
 import type { Party, Character, Condition } from './party.ts';
 
 export interface MonsterInst {
@@ -55,8 +57,24 @@ export const FRONT_ROW = 3;
 /** What the buffs are worth while they last. */
 export const BLESS_HIT = 2, HASTE_HIT = 1, HASTE_SPEED = 8, WARD_AC = 3;
 
-/** The party's current to-hit bonus from buffs. */
-export function buffHit(s: CombatState): number { return (s.bless > 0 ? BLESS_HIT : 0) + (s.haste > 0 ? HASTE_HIT : 0); }
+/** The party's current to-hit bonus from buffs, and from a bard still standing. */
+export function buffHit(s: CombatState, party: Party): number {
+  const song = party.members.some((m) => !isDown(m) && hasTrait(m, 'inspire')) ? INSPIRE_HIT : 0;
+  return (s.bless > 0 ? BLESS_HIT : 0) + (s.haste > 0 ? HASTE_HIT : 0) + song;
+}
+
+/** Extra weapon damage from the attacker's traits. */
+export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: MonsterInst): number {
+  let n = 0;
+  if (w.ranged) { if (hasTrait(c, 'marksman')) n += MARKSMAN_DMG; }
+  else {
+    if (hasTrait(c, 'weapon_master')) n += WEAPON_MASTER_DMG;
+    if (hasTrait(c, 'rage') && c.hp < c.maxHp / 2) n += RAGE_DMG;
+  }
+  if (hasTrait(c, 'holy_strike') && m.def.mindless) n += HOLY_STRIKE_DMG;
+  if (hasTrait(c, 'sneak_attack') && s.round === 1) n += SNEAK_ATTACK_DMG;
+  return n;
+}
 
 export function startCombat(party: Party, groups: { id: string; monsters: string[] }[], rng: RngInstance): CombatState {
   const monsters: MonsterInst[] = [];
@@ -158,9 +176,9 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       const m = s.monsters[action.target];
       if (!m || m.hp <= 0 || !canAttackFromRow(c, t.i)) return false;
       const w = weaponOf(c);
-      const hit = rng.chance(toHit(attackBonus(c) + buffHit(s), m.def.ac));
+      const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party), m.def.ac));
       if (hit) {
-        const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)));
+        const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m));
         hurtMonster(s, m, dmg);
         s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
       } else s.log.push(`${c.name} misses ${m.def.name}.`);
@@ -216,7 +234,7 @@ function hurtMonster(s: CombatState, m: MonsterInst, dmg: number): void {
 }
 
 function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number): void {
-  const dmgOf = () => roll(rng, (sp.dice ?? 1) * (sp.perLevel ? Math.max(1, Math.ceil(c.level / 2)) : 1), sp.sides ?? 4, 0);
+  const dmgOf = () => roll(rng, (sp.dice ?? 1) * (sp.perLevel ? Math.max(1, Math.ceil(c.level / 2)) : 1), sp.sides ?? 4, hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
   switch (sp.target) {
     case 'enemy': {
       const m = s.monsters[target];
@@ -257,7 +275,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       if (sp.buff === 'bless') { s.bless = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party is blessed.`); }
       else if (sp.buff === 'shield') { s.shield = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. A ward settles over the party.`); }
       else if (sp.buff === 'haste') { s.haste = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party quickens.`); }
-      else if (sp.heal) { for (const a of party.members) heal(a, sp.heal + bonus(c.stats.personality)); s.log.push(`${c.name} casts ${sp.name}. The party is healed.`); }
+      else if (sp.heal) { for (const a of party.members) heal(a, spellHeal(c, sp.heal)); s.log.push(`${c.name} casts ${sp.name}. The party is healed.`); }
       return;
     default:
       s.log.push(`${c.name} casts ${sp.name}.`);
@@ -266,7 +284,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
 
 /**
  * A healing, curing or raising spell on one ally, shared by combat and exploration. Returns the log
- * line. Raising brings the dead back at `heal` hp; other healing scales with the caster's Personality.
+ * line. Raising brings the dead back at `heal` hp; other healing scales with the caster (see spellHeal).
  */
 export function castOnAlly(c: Character, sp: SpellDef, a: Character): string {
   if (sp.raise) {
@@ -276,7 +294,7 @@ export function castOnAlly(c: Character, sp: SpellDef, a: Character): string {
     return `${c.name} casts ${sp.name}: ${a.name} draws breath again.`;
   }
   const parts: string[] = [];
-  if (sp.heal) parts.push(`${a.name} recovers ${heal(a, sp.heal + bonus(c.stats.personality))}`);
+  if (sp.heal) parts.push(`${a.name} recovers ${heal(a, spellHeal(c, sp.heal))}`);
   if (sp.cure) { for (const k of sp.cure) removeCondition(a, k as Condition); if (!sp.heal) parts.push(`${a.name} is cleansed`); }
   return `${c.name} casts ${sp.name}: ${parts.join(', ')}.`;
 }

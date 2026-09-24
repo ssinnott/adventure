@@ -4,8 +4,8 @@
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps, MAP_DEFS } from '../src/content/maps/index.ts';
 import { World } from '../src/game/world.ts';
-import { defaultParty, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, WARD_AC } from '../src/game/combat.ts';
+import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition } from '../src/game/party.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, buffHit, traitDamage, WARD_AC } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
 import { serialize, deserialize } from '../src/game/save.ts';
@@ -246,7 +246,7 @@ const suites: Record<string, () => void> = {
     ok(Object.values(SPELLS).every((sp) => sp.sp > 0), 'every spell costs something');
     // The road to level 10: tiers land at 1, 2, 4, 6, 8; levelling stops at the cap; nothing is left to train.
     ok([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join() === '1,2,2,3,3,4,4,5,5,5', `spell tiers by level are ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join()}`);
-    for (const list of ['cleric', 'sorcerer'] as const) for (let t = 1; t <= 5; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
+    for (const list of ['cleric', 'sorcerer', 'druid'] as const) for (let t = 1; t <= 5; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
     const c = p.members[4];
     c.xp = 1_000_000;
     const gained = levelUp(c, rng);
@@ -256,7 +256,57 @@ const suites: Record<string, () => void> = {
     ok(c.maxHp >= 9 * 1 + 8 && c.maxSp > 20, `hp and sp grew with the levels (hp ${c.maxHp}, sp ${c.maxSp})`);
     const k = p.members[0]; k.xp = xpForLevel(8);
     ok(levelUp(k, rng) === 7 && k.level === 8 && k.spells.length === 0, 'a knight levels to 8 on level-8 xp and learns no spells');
+    // Every class can wear its own starting kit, and every caster's list has spells to give.
+    for (const cd of Object.values(CLASSES)) {
+      const m = createCharacter('Test', 'human', cd.id, {}, makeRng(9));
+      ok(cd.kit.every((id) => !ITEMS[id].classes || ITEMS[id].classes!.includes(cd.id)) && !!m.equipment.weapon && !!m.equipment.armor, `a ${cd.name} may use its whole starting kit`);
+      ok(!cd.spells || m.spells.length > 0, `a ${cd.name} starts with ${cd.spells ? 'spells' : 'no spells'}`);
+    }
+    const r = p.members[2]; r.xp = xpForLevel(4); levelUp(r, rng);
+    ok(r.spells.includes('thorn') && r.spells.includes('barkskin') && !r.spells.includes('spark'), 'the ranger learns the druid list');
     ok(xpForLevel(MAX_LEVEL) === 13050, `level ${MAX_LEVEL} costs ${xpForLevel(MAX_LEVEL)} xp`);
+  },
+
+  traits() {
+    const mk = (cls: Parameters<typeof createCharacter>[2]) => createCharacter('T', 'human', cls, {}, makeRng(3));
+    for (const cd of Object.values(CLASSES)) ok(cd.traits.length >= 1 && cd.traits.length <= 2 && cd.traits.every((t) => t in TRAITS), `a ${cd.name} has one or two traits (${cd.traits.join(', ')})`);
+    // Stalwart: the knight's AC carries the bonus.
+    const k = mk('knight'); const ac = armorClass(k);
+    ok(ac === 10 + 5 + 1 + STALWART_AC, `a knight in scale and buckler is AC ${ac}`);
+    // Unarmoured Defence grows with level and goes away under real armour.
+    const monk = mk('monk'); const a1 = armorClass(monk); monk.level = 10;
+    ok(armorClass(monk) === a1 + 5, `a level-10 monk in a robe gains AC (${a1} -> ${armorClass(monk)})`);
+    const leatherMonk = mk('monk'); leatherMonk.equipment.armor = 'leather';
+    ok(armorClass(leatherMonk) === 10 + 3, 'a monk in leather loses unarmoured defence');
+    // Immunities come through addCondition.
+    const cases: [Parameters<typeof createCharacter>[2], 'diseased' | 'cursed' | 'asleep' | 'paralysed' | 'poisoned'][] = [['paladin', 'diseased'], ['cleric', 'cursed'], ['sorcerer', 'asleep'], ['monk', 'paralysed'], ['druid', 'poisoned']];
+    for (const [cls, cond] of cases) { const c = mk(cls); addCondition(c, cond); ok(!hasCondition(c, cond), `a ${cls} is immune to ${cond}`); }
+    const kn = mk('knight'); addCondition(kn, 'poisoned'); ok(hasCondition(kn, 'poisoned'), 'a knight is not');
+    // Die Hard: a barbarian at -15 is unconscious, not dead; a knight is dead.
+    const b = mk('barbarian'); damage(b, b.hp + 15);
+    ok(!hasCondition(b, 'dead') && hasCondition(b, 'unconscious'), 'a barbarian at -15 hp still lives');
+    const b2 = mk('barbarian'); damage(b2, b2.hp + 25); ok(hasCondition(b2, 'dead') && b2.hp === DIE_HARD_AT, `but a blow past ${DIE_HARD_AT} kills`);
+    const k2 = mk('knight'); damage(k2, k2.hp + 15); ok(hasCondition(k2, 'dead'), 'a knight at -15 hp is dead');
+    // Healing Hands: the cleric heals more than a paladin with the same Personality.
+    const cl = mk('cleric'), pa = mk('paladin'), hurtA = mk('knight'), hurtB = mk('knight');
+    hurtA.maxHp = hurtB.maxHp = 100; hurtA.hp = hurtB.hp = 1;
+    castOnAlly(cl, spell('heal'), hurtA); castOnAlly(pa, spell('heal'), hurtB);
+    ok(hurtA.hp > hurtB.hp, `a cleric's Mend heals more (${hurtA.hp - 1} vs ${hurtB.hp - 1})`);
+    // Damage traits, and the bard's song.
+    const party = defaultParty(makeRng(4));
+    const s = startCombat(party, [{ id: 'a', monsters: ['rat'] }], makeRng(4));
+    const rat = s.monsters[0];
+    const bow = ITEMS.shortbow, sword = ITEMS.longsword;
+    ok(traitDamage(s, mk('ranger'), bow, rat) > 0 && traitDamage(s, mk('ranger'), sword, rat) === 0, 'Marksman adds only to ranged attacks');
+    ok(traitDamage(s, mk('thief'), sword, rat) > 0, 'Sneak Attack adds in the first round');
+    s.round = 2; ok(traitDamage(s, mk('thief'), sword, rat) === 0, 'and not after');
+    const bb = mk('barbarian'); ok(traitDamage(s, bb, sword, rat) === 0, 'a healthy barbarian does not rage');
+    bb.hp = 1; ok(traitDamage(s, bb, sword, rat) > 0, 'a wounded one does');
+    const noBard = buffHit(s, party);
+    party.members[3] = mk('bard');
+    ok(buffHit(s, party) === noBard + INSPIRE_HIT, 'a standing bard inspires the party');
+    addCondition(party.members[3], 'unconscious'); ok(buffHit(s, party) === noBard, 'a fallen one does not');
+    ok(hasTrait(mk('thief'), 'keen_eyes') && hasTrait(mk('ranger'), 'keen_eyes'), 'thieves and rangers have Keen Eyes');
   },
 
   save() {

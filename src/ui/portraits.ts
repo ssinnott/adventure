@@ -22,8 +22,8 @@ const SKIN: Record<string, string[]> = {
 };
 const HAIR = ['#2a1a12', '#5a3418', '#8a5a2a', '#c08a40', '#d8c090', '#3a3a44', '#9a9aa4', '#b04a28', '#e8e0d0'];
 const EYES = ['#3a5a8a', '#4a7a3a', '#6a4a2a', '#2a2a30', '#8a6a2a'];
-const CLASS_BG: Record<string, string> = { knight: '#3a4a6a', paladin: '#6a5a2a', ranger: '#2f4a2a', cleric: '#5a5a70', sorcerer: '#3a2a5a', thief: '#2a2a2e' };
-const CLASS_CLOTH: Record<string, string> = { knight: '#8a8ea0', paladin: '#c9a34a', ranger: '#5a7a42', cleric: '#e8dcc0', sorcerer: '#5a4a9a', thief: '#4a4a52' };
+const CLASS_BG: Record<string, string> = { knight: '#3a4a6a', paladin: '#6a5a2a', ranger: '#2f4a2a', cleric: '#5a5a70', sorcerer: '#3a2a5a', thief: '#2a2a2e', barbarian: '#5a2e24', monk: '#6a4a2a', bard: '#4a2a4a', druid: '#2a4a3a' };
+const CLASS_CLOTH: Record<string, string> = { knight: '#8a8ea0', paladin: '#c9a34a', ranger: '#5a7a42', cleric: '#e8dcc0', sorcerer: '#5a4a9a', thief: '#4a4a52', barbarian: '#7a5a3a', monk: '#c07a2a', bard: '#8a3a6a', druid: '#6a8a4a' };
 
 const cache = new Map<string, HTMLCanvasElement>();
 
@@ -76,6 +76,8 @@ function paint(g: CanvasRenderingContext2D, c: Character, m: Mood): void {
   if (c.cls === 'paladin') band(g, b, cx - 8, 36, 16, 3, tint('#e8d090'));
   if (c.cls === 'thief') { celPoly(g, b, [6, 38, cx - 5, 30, cx + 5, 30, W - 6, 38, W - 6, H, 6, H], tint('#33333a'), 0.3, 0.2); }
   if (c.cls === 'sorcerer') band(g, b, 7, 37, W - 14, 2, tint('#c9a34a'));
+  if (c.cls === 'barbarian') band(g, b, 6, 36, W - 12, 3, tint('#9a7a5a'));
+  if (c.cls === 'bard') band(g, b, cx - 6, 35, 12, 2, tint('#e8d090'));
   if (c.cls === 'cleric') celPoly(g, b, [cx - 2, 33, cx + 2, 33, cx + 2, 44, cx - 2, 44], tint('#c9a34a'), 0.2, 0.2);
 
   // Neck.
@@ -148,9 +150,9 @@ function paint(g: CanvasRenderingContext2D, c: Character, m: Mood): void {
 
   // Hair and headgear.
   const style = Math.floor(hashStr(c.name + 'hair') * 4); // 0 short, 1 long, 2 bald/cropped, 3 topknot
-  const hooded = c.cls === 'sorcerer' || c.cls === 'thief' || c.cls === 'cleric';
+  const hooded = c.cls === 'sorcerer' || c.cls === 'thief' || c.cls === 'cleric' || c.cls === 'druid';
   if (hooded) {
-    const hc = c.cls === 'sorcerer' ? tint('#5a4a9a') : c.cls === 'thief' ? tint('#33333a') : tint('#d8ccb0');
+    const hc = c.cls === 'sorcerer' ? tint('#5a4a9a') : c.cls === 'thief' ? tint('#33333a') : c.cls === 'druid' ? tint('#4a6a3a') : tint('#d8ccb0');
     celPoly(g, b, [cx - headR - 2, cy + 4, cx - headR - 1, cy - headR + 1, cx - headR * 0.5, cy - headR - 4, cx + headR * 0.5, cy - headR - 4, cx + headR + 1, cy - headR + 1, cx + headR + 2, cy + 4, cx + headR - 1, cy - 2, cx + headR * 0.6, cy - headR + 1, cx - headR * 0.6, cy - headR + 1, cx - headR + 1, cy - 2], hc, 0.4, 0.25);
     if (c.cls === 'thief') { g.fillStyle = 'rgba(10,8,12,0.35)'; g.fillRect(cx - headR + 2, cy - headR + 2, headR * 2 - 4, 5); }
   } else {
@@ -165,6 +167,7 @@ function paint(g: CanvasRenderingContext2D, c: Character, m: Mood): void {
       celPoly(g, b, [cx - headR - 2, cy - 1, cx - headR - 1, cy - headR + 0.5, cx - headR * 0.5, cy - headR - 3, cx + headR * 0.5, cy - headR - 3, cx + headR + 1, cy - headR + 0.5, cx + headR + 2, cy - 1, cx + headR * 0.75, cy - headR * 0.35, cx - headR * 0.75, cy - headR * 0.35], tint('#b9c0cc'), 0.35, 0.3);
       band(g, b, cx - 1, cy - headR - 6, 2, 5, tint('#c6453c'));
     } else if (c.cls === 'paladin') band(g, b, cx - headR + 1, cy - headR + 2, headR * 2 - 2, 2, tint('#e8d090'));
+    else if (c.cls === 'monk') band(g, b, cx - headR + 1, cy - headR * 0.5, headR * 2 - 2, 2, tint('#c07a2a'));
     else if (c.cls === 'ranger') band(g, b, cx - headR + 1, cy - headR * 0.5, headR * 2 - 2, 2, tint('#3a5a2a'));
   }
   if (m === 'dead') { g.fillStyle = 'rgba(40,40,60,0.35)'; g.fillRect(0, 0, W, H); }

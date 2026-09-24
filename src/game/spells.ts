@@ -1,8 +1,8 @@
-// Spell definitions: five tiers per caster class, one per level band (tiers unlock at levels 1, 2,
+// Spell definitions: five tiers per spell list, one per level band (tiers unlock at levels 1, 2,
 // 4, 6 and 8; see party.ts spellTierAt). `list` is who can learn it; `sp` the cost; the effect
 // fields say what it does.
 
-export type SpellList = 'cleric' | 'sorcerer';
+export type SpellList = 'cleric' | 'sorcerer' | 'druid';
 export type SpellTarget = 'self' | 'ally' | 'party' | 'enemy' | 'group' | 'all';
 export type SpellContext = 'combat' | 'explore' | 'any';
 
@@ -51,6 +51,17 @@ export const SPELLS: Record<string, SpellDef> = Object.fromEntries(([
   { id: 'lightning', name: 'Chain Lightning', list: 'sorcerer', level: 4, sp: 9, target: 'all', context: 'combat', dice: 1, sides: 8, perLevel: true, text: 'Lightning leaps to every foe.' },
   { id: 'town_portal', name: 'Town Portal', list: 'sorcerer', level: 5, sp: 10, target: 'party', context: 'explore', explore: 'town_portal', text: 'Returns the party to the last town.' },
   { id: 'meteor', name: 'Meteor Swarm', list: 'sorcerer', level: 5, sp: 14, target: 'all', context: 'combat', dice: 2, sides: 10, perLevel: true, text: 'Stones of fire fall on every foe.' },
+  // ---- druid (and ranger) ----
+  { id: 'thorn', name: 'Thorn Lash', list: 'druid', level: 1, sp: 2, target: 'enemy', context: 'combat', dice: 2, sides: 4, text: 'Thorns whip one foe.' },
+  { id: 'foxfire', name: 'Foxfire', list: 'druid', level: 1, sp: 1, target: 'party', context: 'explore', explore: 'light', text: 'Pale fungus-light shows the way.' },
+  { id: 'barkskin', name: 'Barkskin', list: 'druid', level: 2, sp: 3, target: 'party', context: 'combat', buff: 'shield', turns: 5, text: 'The party is harder to hit.' },
+  { id: 'salve', name: 'Salve', list: 'druid', level: 2, sp: 3, target: 'ally', context: 'any', heal: 10, cure: ['poisoned'], text: 'Heals and draws out poison.' },
+  { id: 'hawk_eye', name: "Hawk's Eye", list: 'druid', level: 3, sp: 3, target: 'party', context: 'explore', explore: 'wizard_eye', text: 'Reveals the map around you.' },
+  { id: 'swarm', name: 'Stinging Swarm', list: 'druid', level: 3, sp: 5, target: 'group', context: 'combat', dice: 2, sides: 6, text: 'Insects fall on a whole group.' },
+  { id: 'regrowth', name: 'Regrowth', list: 'druid', level: 4, sp: 7, target: 'party', context: 'any', heal: 16, text: 'Heals everyone.' },
+  { id: 'hailstorm', name: 'Hailstorm', list: 'druid', level: 4, sp: 9, target: 'all', context: 'combat', dice: 1, sides: 6, perLevel: true, text: 'Hail batters every foe.' },
+  { id: 'stag_heart', name: 'Heart of the Stag', list: 'druid', level: 5, sp: 10, target: 'party', context: 'combat', buff: 'haste', turns: 5, text: 'The party moves first and strikes true.' },
+  { id: 'tempest', name: 'Tempest', list: 'druid', level: 5, sp: 13, target: 'all', context: 'combat', dice: 2, sides: 8, perLevel: true, text: 'Wind and lightning on every foe.' },
 ] satisfies SpellDef[]).map((s) => [s.id, s]));
 
 export function spell(id: string): SpellDef {

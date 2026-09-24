@@ -29,20 +29,21 @@ const W = (id: string, name: string, price: number, dice: number, sides: number,
 const A = (id: string, name: string, price: number, ac: number, extra: Partial<ItemDef> = {}): ItemDef =>
   ({ id, name, slot: 'armor', price, ac, ...extra });
 
-const MARTIAL = ['knight', 'paladin', 'ranger'] as const;
-const NO_CASTER_HEAVY = ['knight', 'paladin', 'ranger', 'thief'] as const;
+const MARTIAL = ['knight', 'paladin', 'ranger', 'barbarian'] as const;
+const MAIL = ['knight', 'paladin', 'ranger'] as const;
+const NO_CASTER_HEAVY = ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'bard', 'druid'] as const;
 
 export const ITEMS: Record<string, ItemDef> = Object.fromEntries(([
   W('club', 'Club', 5, 1, 6),
   W('dagger', 'Dagger', 12, 1, 4, { bonus: 1 }),
   W('staff', 'Quarterstaff', 8, 1, 6, { twoHanded: true }),
-  W('shortsword', 'Short Sword', 40, 1, 8, { classes: [...MARTIAL, 'thief'] }),
+  W('shortsword', 'Short Sword', 40, 1, 8, { classes: [...MARTIAL, 'thief', 'bard'] }),
   W('mace', 'Mace', 45, 1, 8, { bonus: 1, classes: [...MARTIAL, 'cleric'] }),
   W('longsword', 'Long Sword', 120, 1, 10, { bonus: 1, classes: MARTIAL }),
   W('axe', 'Hand Axe', 90, 1, 10, { classes: MARTIAL }),
-  W('spear', 'Spear', 60, 1, 8, { twoHanded: true, classes: MARTIAL }),
+  W('spear', 'Spear', 60, 1, 8, { twoHanded: true, classes: [...MARTIAL, 'monk', 'druid'] }),
   W('sling', 'Sling', 15, 1, 4, { ranged: true }),
-  W('shortbow', 'Short Bow', 80, 1, 6, { ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief'] }),
+  W('shortbow', 'Short Bow', 80, 1, 6, { ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] }),
   W('longbow', 'Long Bow', 200, 1, 8, { bonus: 1, ranged: true, twoHanded: true, classes: ['ranger', 'knight'] }),
   // Thornmark's tier: what a band 5-10 party buys and finds.
   W('warhammer', 'War Hammer', 300, 1, 10, { bonus: 2, classes: [...MARTIAL, 'cleric'] }),
@@ -54,14 +55,14 @@ export const ITEMS: Record<string, ItemDef> = Object.fromEntries(([
   W('grove_staff', 'Grove Staff', 280, 1, 8, { bonus: 2, twoHanded: true }),
   A('robe', 'Robe', 10, 1),
   A('leather', 'Leather Armour', 60, 3, { classes: NO_CASTER_HEAVY }),
-  A('scale', 'Scale Mail', 220, 5, { classes: MARTIAL }),
-  A('chain', 'Chain Mail', 500, 7, { classes: MARTIAL }),
+  A('scale', 'Scale Mail', 220, 5, { classes: MAIL }),
+  A('chain', 'Chain Mail', 500, 7, { classes: MAIL }),
   A('runed_robe', 'Runed Robe', 350, 3),
   A('brigandine', 'Brigandine', 400, 5, { classes: NO_CASTER_HEAVY }),
   A('plate', 'Plate Mail', 1200, 9, { classes: ['knight', 'paladin'] }),
   { id: 'buckler', name: 'Buckler', slot: 'shield', price: 40, ac: 1, classes: [...MARTIAL, 'cleric'] },
-  { id: 'shield', name: 'Kite Shield', slot: 'shield', price: 150, ac: 2, classes: MARTIAL },
-  { id: 'tower_shield', name: 'Tower Shield', slot: 'shield', price: 400, ac: 3, classes: MARTIAL },
+  { id: 'shield', name: 'Kite Shield', slot: 'shield', price: 150, ac: 2, classes: MAIL },
+  { id: 'tower_shield', name: 'Tower Shield', slot: 'shield', price: 400, ac: 3, classes: MAIL },
   { id: 'potion_heal', name: 'Healing Draught', slot: 'none', price: 30, use: { heal: 15 } },
   { id: 'elixir', name: 'Elixir', slot: 'none', price: 90, use: { heal: 40 } },
   { id: 'potion_sp', name: 'Blue Vial', slot: 'none', price: 45, use: { sp: 10 } },

@@ -6,7 +6,7 @@ import { GameMap } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
-import { partyCan, takeItem, isDown } from './party.ts';
+import { partyCan, takeItem, isDown, hasTrait } from './party.ts';
 import type { Party } from './party.ts';
 
 export const MINUTES_PER_DAY = 1440;
@@ -298,7 +298,7 @@ export class World {
     const a = this.map.ahead(this.state.x, this.state.y, this.state.facing);
     const c = this.map.at(a.x, a.y);
     if (c.door !== 'secret') return false;
-    const perceptive = this.party.members.some((m) => !isDown(m) && (m.race === 'elf' || m.race === 'gnome' || m.cls === 'thief'));
+    const perceptive = this.party.members.some((m) => !isDown(m) && (m.race === 'elf' || m.race === 'gnome' || hasTrait(m, 'keen_eyes')));
     if (perceptive || this.rng.chance(0.5)) { c.door = 'door'; this.mapState.doors[`${a.x},${a.y}`] = 'door'; return true; }
     return false;
   }
