@@ -183,13 +183,21 @@ function texture(ctx: CanvasRenderingContext2D, B: Brush, hex: string, tex: Text
       break;
     }
     case 'facets': {
-      // Crystal: wedges from an off-centre point to the rim, alternately lit and shadowed.
+      // Crystal: wedges from an off-centre point to the rim, alternately lit and shadowed. The
+      // break between two wedges fades out along its length, because a full-strength highlight
+      // hairline run all the way to the rim turns anything bigger than a single shard into a
+      // starburst of light rays crossing whatever else the shape contains.
       const n = 5 + Math.round(amount * 2), ox = cx + lx * r * 0.2, oy = cy + ly * r * 0.2, a0 = rnd(seed, 0, 1) * Math.PI * 2;
+      ctx.lineWidth = Math.max(1, r * 0.016); ctx.lineCap = 'butt';
       for (let i = 0; i < n; i++) {
         const a = a0 + (i / n) * Math.PI * 2, b = a0 + ((i + 1) / n) * Math.PI * 2, R = r * 1.6;
+        const ex = ox + Math.cos(a) * R, ey = oy + Math.sin(a) * R;
         ctx.fillStyle = rgba(i % 2 ? t.deep : t.hi, 0.28);
-        ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + Math.cos(a) * R, oy + Math.sin(a) * R); ctx.lineTo(ox + Math.cos(b) * R, oy + Math.sin(b) * R); ctx.closePath(); ctx.fill();
-        ctx.strokeStyle = t.hi; ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + Math.cos(a) * R, oy + Math.sin(a) * R); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ex, ey); ctx.lineTo(ox + Math.cos(b) * R, oy + Math.sin(b) * R); ctx.closePath(); ctx.fill();
+        const g = ctx.createLinearGradient(ox, oy, ex, ey);
+        g.addColorStop(0, rgba(t.hi, 0.55)); g.addColorStop(0.45, rgba(t.hi, 0.2)); g.addColorStop(1, rgba(t.hi, 0));
+        ctx.strokeStyle = g;
+        ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ex, ey); ctx.stroke();
       }
       break;
     }
