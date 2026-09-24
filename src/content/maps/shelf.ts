@@ -1,14 +1,15 @@
 // The Shelf: the starting coast. Harrow at the north, the Ashcombe farm to the south-east, woods
-// to the west, marsh and the sea at the south, and the pass east to Thornmark, which the Wardens
-// hold closed until Vask's contract is done. Difficulty band 1-8.
+// to the west, marsh and the sea at the south, the Greywater caves in the south-west cliffs, and
+// the pass east to Thornmark, which the Wardens hold closed until both Ashcombe and Greywater are
+// dealt with. Difficulty band 1-5.
 import type { MapDef } from '../../game/map.ts';
-import { EAST, NORTH } from '../../game/types.ts';
+import { EAST, NORTH, SOUTH } from '../../game/types.ts';
 
 export const SHELF: MapDef = {
   id: 'shelf',
   name: 'The Shelf',
   kind: 'outdoor',
-  band: [1, 8],
+  band: [1, 5],
   start: { x: 16, y: 4, facing: NORTH },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
@@ -38,7 +39,7 @@ export const SHELF: MapDef = {
     'M,,,,,www,,,,,,,,,,,,,,,,,,,,,,M',
     'M,,,,,,w,,,,,,,,,,,,,,,,,,,,,,,M',
     'M,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,M',
-    'M,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,M',
+    'MMMM,,,,,,,,,,,,,,,,,,,,,,,,,,,M',
     'M______________________________M',
     'M~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~M',
     'MWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWM',
@@ -48,15 +49,29 @@ export const SHELF: MapDef = {
     { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Harrow.' },
     { x: 24, y: 20, to: 'mill', tx: 1, ty: 1, tf: EAST, label: 'The farmhouse door hangs open. Stairs lead down into the cellar.' },
     { x: 31, y: 9, to: 'thornmark', tx: 1, ty: 9, tf: EAST, label: 'The pass opens onto old forest. Thornmark.',
-      needFlag: 'q_ashcombe_done', blockedText: 'A Warden checkpoint bars the pass. "Thornmark road is closed until the Regent-Warden says otherwise."' },
+      needFlag: ['q_ashcombe_done', 'q_greywater_done'], blockedText: 'A Warden checkpoint bars the pass. "Thornmark road stays shut until Ashcombe and Greywater are both dealt with. Regent-Warden\'s orders."' },
+    { x: 2, y: 28, to: 'greywater1', tx: 1, ty: 1, tf: SOUTH, label: 'A cave mouth in the cliff foot, half hidden by kelp. Greywater.' },
   ],
   features: [
     { kind: 'sign', x: 16, y: 4, text: 'North: Harrow. South and east along the road: Ashcombe farm.' },
-    { kind: 'sign', x: 13, y: 9, text: 'South: the coast and Ashcombe. East: the pass to Thornmark, Warden road.' },
+    { kind: 'sign', x: 13, y: 9, text: 'South: the coast and Ashcombe. West along the beach: the Greywater caves. East: the pass to Thornmark, Warden road.' },
     { kind: 'sign', x: 28, y: 9, text: 'Warden checkpoint. The pass east is closed by order of the Regent-Warden.' },
     { kind: 'sign', x: 18, y: 16, text: 'East: Ashcombe.' },
     { kind: 'event', x: 23, y: 20, id: 'ashcombe_gate', once: true, text: 'Ashcombe. The gate is off its hinges and the yard is silent. Something has scraped the earth in a wide ring around the house.' },
     { kind: 'event', x: 15, y: 28, id: 'coast', once: true, text: 'The sea. Out on the water, far off, the column of the Hearth stands against the sky. It flickers.' },
+    { kind: 'npc', x: 29, y: 8, name: 'Captain Hale, Warden of the Pass', lines: [
+      'A grizzled Warden with a bandaged arm sits on a crate by the checkpoint.',
+      '"Smugglers. They\'ve holed up in the Greywater caves at the west end of the beach, and I lost three men going in after them. There\'s worse than smugglers down there now, if the one who came back is to be believed."',
+      '"Clear them out and bring me their ledger. I want the names of everyone in Harrow who has been buying from them. Until Greywater and that Ashcombe business are settled, this pass stays shut."',
+    ], flag: 'q_greywater', quest: {
+      item: 'greywater_ledger', needFlag: 'q_greywater', reward: 400, setFlag: 'q_greywater_done',
+      done: [
+        'Hale leafs through the ledger, and his face goes grey. "These aren\'t just smugglers\' accounts. Names, dates, and a column headed CARGO BELOW. People."',
+        '"The Ash. Here, under our feet." He shuts the book. "You\'ve earned this, and more. I\'ll see the Regent-Warden gets a copy."',
+      ],
+      after: ['"Once the Regent-Warden\'s done with Ashcombe, the pass is yours. Mind yourselves in Thornmark: the wolves there are twice the size of ours."'],
+    } },
+    { kind: 'sign', x: 3, y: 28, text: 'Greywater. Chalked beneath, in Warden hand: CLOSED. DO NOT ENTER. ASK CAPT. HALE.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
   ],
   encounters: [
@@ -67,6 +82,8 @@ export const SHELF: MapDef = {
     { id: 'hill_wolves', x: 24, y: 11, monsters: ['wolf', 'wolf', 'wolf'], aware: 5, respawn: 1440 },
     { id: 'marsh_spiders', x: 7, y: 23, monsters: ['spider', 'spider', 'spider', 'spider'], aware: 4, respawn: 1440 },
     { id: 'farm_rats', x: 22, y: 20, monsters: ['rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: 720 },
+    { id: 'beach_crabs', x: 9, y: 28, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
+    { id: 'cliff_smugglers', x: 5, y: 26, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler_bowman'], aware: 5, respawn: 2880 },
     { id: 'coast_bandits', x: 20, y: 27, monsters: ['bandit', 'bandit', 'bandit', 'bandit_archer', 'bandit_archer'], aware: 5, respawn: 2880 },
   ],
 };

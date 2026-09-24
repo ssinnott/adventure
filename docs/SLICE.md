@@ -14,6 +14,17 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
   monster groups with respawn timers, the Ashcombe farm.
 - **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
   dead Lantern and her survey wand, the Rift and its Warden.
+- **Greywater** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
+  cliffs, reached from the beach. Level one, the Greywater Caves: smugglers, shore crabs and drowned
+  men, a secret stash, and the captain's den with the iron key to the stairs. Level two, the Drowned
+  Shrine: an Ashen cult's galleries around a sealed shrine; a secret vestry holds the key, and the
+  Ashen Deacon guards the Greywater Ledger. Captain Hale at the pass checkpoint gives the contract
+  and takes the ledger. Chests carry the Shelf's mid-tier gear (long sword, kite shield, scale,
+  chain, long bow).
+- **The ramp to Thornmark.** The pass needs both `q_ashcombe_done` and `q_greywater_done` (an exit's
+  `needFlag` may list several flags). The slice's early monsters give about double their old xp, so
+  one clear of the Shelf and the cellar is worth level 2 per member, and adding Greywater is worth
+  level 4 (tests pin both); respawns make up the step to Thornmark's band 5.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors,
   water and mountains gated by party abilities, a day/night clock with a hazed sky, automap with
   field-of-view reveal, rest with food, a search action, exploration spells (Light, Wizard Eye).
@@ -46,8 +57,8 @@ cap, which is 10 until promotions exist:
   bosses, the Hand of Ash and the Warden of the Cut. Two new drawings (ogre, wraith); the rest
   re-tint and re-scale the slice's ten.
 - **Thornmark** (outdoor, 32×32, band 5–10): reached through the mountain pass on the Shelf's
-  east edge, which a Warden checkpoint holds closed until Vask has the survey wand (exits can
-  carry a `needFlag`). Thornhold in the north-east, a ruined watchtower with an ogre's den, a
+  east edge, which a Warden checkpoint holds closed until Vask has the survey wand and Captain Hale
+  has the Greywater ledger. Thornhold in the north-east, a ruined watchtower with an ogre's den, a
   barrow with bone knights and wraiths, a river with one bridge, a dead survey marker in a lake,
   and the Grove at the end of a chisel-marked road in the south-west. Fourteen groups.
 - **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the
@@ -127,4 +138,4 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/create.ts` | party creation |
-| `content/maps/*.ts` | Harrow, the Shelf, the cellar; Thornmark, Thornhold, the Grove Roots, the Cut Stone |
+| `content/maps/*.ts` | Harrow, the Shelf, the cellar, Greywater (two levels); Thornmark, Thornhold, the Grove Roots, the Cut Stone |

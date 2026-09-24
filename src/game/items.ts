@@ -72,6 +72,7 @@ export const ITEMS: Record<string, ItemDef> = Object.fromEntries(([
   { id: 'torch', name: 'Torch', slot: 'none', price: 2 },
   { id: 'key_iron', name: 'Iron Key', slot: 'none', price: 0 },
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
+  { id: 'greywater_ledger', name: 'Greywater Ledger', slot: 'none', price: 0 },
   { id: 'ashen_chisel', name: 'Underdeep Chisel', slot: 'none', price: 0 },
   { id: 'meridian_journal', name: 'Meridian Journal, vol. I', slot: 'none', price: 0 },
 ] satisfies ItemDef[]).map((i) => [i.id, i]));
