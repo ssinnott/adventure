@@ -7,6 +7,7 @@ export type MonsterSprite =
   | 'wolf' | 'dire_wolf' | 'rift_hound'
   | 'spider' | 'thorn_spider'
   | 'bandit' | 'archer' | 'brigand' | 'brigand_archer'
+  | 'smuggler' | 'smuggler_bow' | 'smuggler_captain'
   | 'cultist' | 'zealot' | 'adept' | 'ashen_hand'
   | 'skeleton' | 'bone_knight'
   | 'riftling' | 'riftling_elder' | 'warden' | 'cut_warden';
@@ -54,9 +55,9 @@ export const MONSTERS: Record<string, MonsterDef> = Object.fromEntries([
   M({ id: 'rift_warden', name: 'Rift Warden', plural: 'Rift Wardens', sprite: 'warden', hp: 40, ac: 15, attack: 5, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 300, gold: [20, 40], tint: '#e07a3a', size: 1.0, mindless: true, drops: [{ item: 'survey_wand', chance: 1 }] }),
   // ---- Greywater: band 2-5, the caves between the cellar and the pass ----
   M({ id: 'shore_crab', name: 'Shore Crab', plural: 'Shore Crabs', sprite: 'spider', hp: 16, ac: 15, attack: 3, dice: 1, sides: 6, bonus: 1, speed: 8, xp: 60, gold: [0, 0], mindless: true, tint: '#b0603a', size: 0.5 }),
-  M({ id: 'smuggler', name: 'Smuggler', plural: 'Smugglers', sprite: 'bandit', hp: 18, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 1, speed: 11, xp: 70, gold: [6, 18], tint: '#4a5a7a', size: 0.9, drops: [{ item: 'potion_heal', chance: 0.15 }, { item: 'shortsword', chance: 0.05 }] }),
-  M({ id: 'smuggler_bowman', name: 'Smuggler Bowman', plural: 'Smuggler Bowmen', sprite: 'bandit', hp: 14, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 12, xp: 75, gold: [5, 15], ranged: true, tint: '#3a6a6a', size: 0.9, drops: [{ item: 'shortbow', chance: 0.05 }] }),
-  M({ id: 'smuggler_captain', name: 'Smuggler Captain', plural: 'Smuggler Captains', sprite: 'bandit', hp: 45, ac: 14, attack: 5, dice: 1, sides: 10, bonus: 2, speed: 12, xp: 400, gold: [40, 80], tint: '#2a3a5a', size: 1.0, drops: [{ item: 'axe', chance: 0.5 }] }),
+  M({ id: 'smuggler', name: 'Smuggler', plural: 'Smugglers', sprite: 'smuggler', hp: 18, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 1, speed: 11, xp: 70, gold: [6, 18], tint: '#4a5a7a', size: 0.9, drops: [{ item: 'potion_heal', chance: 0.15 }, { item: 'shortsword', chance: 0.05 }] }),
+  M({ id: 'smuggler_bowman', name: 'Smuggler Bowman', plural: 'Smuggler Bowmen', sprite: 'smuggler_bow', hp: 14, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 12, xp: 75, gold: [5, 15], ranged: true, tint: '#3a6a6a', size: 0.9, drops: [{ item: 'shortbow', chance: 0.05 }] }),
+  M({ id: 'smuggler_captain', name: 'Smuggler Captain', plural: 'Smuggler Captains', sprite: 'smuggler_captain', hp: 45, ac: 14, attack: 5, dice: 1, sides: 10, bonus: 2, speed: 12, xp: 400, gold: [40, 80], tint: '#2a3a5a', size: 1.0, drops: [{ item: 'axe', chance: 0.5 }] }),
   M({ id: 'drowned', name: 'Drowned Man', plural: 'Drowned Men', sprite: 'wraith', hp: 20, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 0, speed: 9, xp: 100, gold: [0, 8], mindless: true, tint: '#5a8a80', size: 0.85, inflict: { cond: 'diseased', chance: 0.15 } }),
   M({ id: 'ghoul', name: 'Ghoul', plural: 'Ghouls', sprite: 'skeleton', hp: 22, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 2, speed: 9, xp: 95, gold: [0, 6], mindless: true, tint: '#8aa070', size: 0.9, inflict: { cond: 'paralysed', chance: 0.1 } }),
   M({ id: 'ashen_acolyte', name: 'Ashen Acolyte', plural: 'Ashen Acolytes', sprite: 'cultist', hp: 20, ac: 13, attack: 5, dice: 2, sides: 4, bonus: 1, speed: 11, xp: 110, gold: [8, 20], ranged: true, tint: '#7a4a4a', size: 0.9, drops: [{ item: 'potion_sp', chance: 0.2 }] }),

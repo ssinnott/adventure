@@ -91,6 +91,7 @@ const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
   boar: boar.draw,
   spider: spider.draw, thorn_spider: spider.draw,
   bandit: bandit.draw, archer: bandit.draw, brigand: bandit.draw, brigand_archer: bandit.draw,
+  smuggler: bandit.draw, smuggler_bow: bandit.draw, smuggler_captain: bandit.draw,
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw,
   riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw,

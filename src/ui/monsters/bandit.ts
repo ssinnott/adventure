@@ -21,12 +21,15 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
+  else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
+  else if (kind === 'smuggler_bow') smugglerBow(ctx, x, y, h, p);
+  else if (kind === 'smuggler_captain') smugglerCaptain(ctx, x, y, h, p);
   else bandit(ctx, x, y, h, p);
 };
 
@@ -435,5 +438,260 @@ function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: n
   blob(ctx, B, R.leather, [
     { k: 'curve', pts: [hx - hr * 1.02, hy - hr * 0.25, hx - hr * 0.9, hy - hr * 0.8, hx - hr * 0.3, hy - hr * 1.1, hx + hr * 0.4, hy - hr * 1.08, hx + hr * 0.95, hy - hr * 0.75, hx + hr * 1.02, hy - hr * 0.25, hx + hr * 1.08, hy + hr * 0.35, hx + hr * 0.85, hy + hr * 0.4, hx + hr * 0.75, hy - hr * 0.35, hx, hy - hr * 0.42, hx - hr * 0.75, hy - hr * 0.35, hx - hr * 0.85, hy + hr * 0.4, hx - hr * 1.08, hy + hr * 0.35], wobble: 0.03, seed: 80, sub: 2 },
   ], { h, formK: 0.55, spread: 0.6, tex: 'stipple', seed: 80, amount: 0.3 });
+  void p.light;
+}
+
+// ------------------------------------------------------------------ the smugglers ----
+/**
+ * A gaff: a boat hook. A pole with an iron head at the top -- a spike forward and a hook back --
+ * held in both hands across the body. It is the one long two-handed thing in this family, which is
+ * most of what separates the smuggler from the road thug at a glance.
+ */
+function gaff(ctx: CanvasRenderingContext2D, R: Rig, lo: Pt, hi: Pt): void {
+  const { h } = R;
+  const dx = hi.x - lo.x, dy = hi.y - lo.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+  const nx = -uy, ny = ux;
+  blob(ctx, B, R.wood, [{ k: 'cap', x0: lo.x, y0: lo.y, x1: hi.x, y1: hi.y, r0: h * 0.016, r1: h * 0.013 }],
+    { h, formK: 0.5, spread: 0.6, tex: 'cracks', seed: 71, amount: 0.4 });
+  // The head: a ferrule, a spike carrying on up the shaft, and a hook curling back off it.
+  blob(ctx, B, R.steel, [
+    { k: 'cap', x0: hi.x - ux * h * 0.022, y0: hi.y - uy * h * 0.022, x1: hi.x + ux * h * 0.012, y1: hi.y + uy * h * 0.012, r0: h * 0.019, r1: h * 0.016 },
+    { k: 'poly', pts: [
+      hi.x + ux * h * 0.01 + nx * h * 0.016, hi.y + uy * h * 0.01 + ny * h * 0.016,
+      hi.x + ux * h * 0.105, hi.y + uy * h * 0.105,
+      hi.x + ux * h * 0.01 - nx * h * 0.016, hi.y + uy * h * 0.01 - ny * h * 0.016,
+    ] },
+    tube([
+      hi.x - nx * h * 0.014, hi.y - ny * h * 0.014,
+      hi.x + ux * h * 0.044 - nx * h * 0.07, hi.y + uy * h * 0.044 - ny * h * 0.07,
+      hi.x - ux * h * 0.03 - nx * h * 0.098, hi.y - uy * h * 0.03 - ny * h * 0.098,
+    ], h * 0.017, h * 0.008, 0, 72),
+  ], { h, formK: 0.6, spread: 0.6, gloss: 0.35 });
+}
+
+/**
+ * The smuggler: a boatman, not a road thug. Stands square and heavy on both feet with the weight
+ * back, the way a man holding a long pole does, and works the gaff in BOTH hands across the body --
+ * the only two-handed grip in the family. Oilskin cape off one shoulder, a knitted cap instead of
+ * a bandana, and no mask: he has no reason to hide his face down here.
+ */
+function smuggler(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.01, hipTilt: -0.014, turn: 0.014, near: [0.082, 0.15, 0.168], far: [-0.086, -0.115, -0.138], toe: [0.7, -0.7], lift: [0, 0] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 21) * h * 0.007;
+  // The gaff first, then the hands: both wrists are taken off the shaft's own line at a fraction of
+  // its length, so neither can end up gripping the air beside it.
+  const lo = { x: x + h * 0.15, y: y - h * 0.06 }, hi = { x: x - h * 0.05 + sway, y: sy - h * 0.09 };
+  const on = (t: number): Pt => ({ x: lo.x + (hi.x - lo.x) * t, y: lo.y + (hi.y - lo.y) * t });
+  const gripHi = on(0.72), gripLo = on(0.34);
+  const far: Arm = [R.sFar, { x: x - h * 0.198, y: sy + h * 0.135 }, gripHi];
+  const near: Arm = [R.sNear, { x: x + h * 0.216, y: sy + h * 0.17 }, gripLo];
+  const hemY = y - h * 0.4;
+  groundShadow(ctx, x, y + 1, h * 0.76);
+  blob(ctx, B, shade(p.dark, 0.82), armParts(R, far, 73, 0.92), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  legs(ctx, R, shade('#2e3640', p.tone), 74, [0.8, -0.8]);
+  // Sea boots: tall enough to read as a different man's footwear.
+  blob(ctx, B, shade('#2a2420', p.tone), [
+    { k: 'cap', x0: x + h * 0.15, y0: y - h * 0.185, x1: x + h * 0.162, y1: y - h * 0.055, r0: h * 0.044, r1: h * 0.042 },
+    { k: 'cap', x0: x - h * 0.118, y0: y - h * 0.175, x1: x - h * 0.126, y1: y - h * 0.055, r0: h * 0.041, r1: h * 0.039 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  blob(ctx, B, p.base, [{ k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 75, sub: 3 }, ...armParts(R, near, 76)],
+    { h, formK: 0.5, tex: 'folds', seed: 75, amount: 0.7, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The oilskin: one cape off the far shoulder, hanging to the hip, with a heavy collar.
+  blob(ctx, B, shade('#3a4a42', p.tone), [
+    { k: 'curve', pts: [
+      x - h * 0.2, sy - h * 0.01, x - h * 0.242, sy + h * 0.12, x - h * 0.216, sy + h * 0.29,
+      x - h * 0.13, sy + h * 0.33, x - h * 0.03, sy + h * 0.26, x - h * 0.02, sy + h * 0.02,
+      x - h * 0.09, sy - h * 0.05,
+    ], wobble: 0.04, seed: 77, sub: 3 },
+    { k: 'curve', pts: [hx - hr * 1.3, hy + hr * 1.5, hx - hr * 0.5, hy + hr * 1.1, hx + hr * 0.6, hy + hr * 1.15, hx + hr * 1.2, hy + hr * 1.6, hx + hr * 0.3, hy + hr * 1.9, hx - hr * 0.8, hy + hr * 1.85], wobble: 0.05, seed: 78, sub: 2 },
+  ], { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: 77, amount: 0.5 });
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.05, h * 0.044, 79)], { h, form: false });
+  band(ctx, B, x - h * 0.02, hemY - h * 0.054, h * 0.04, h * 0.042, R.brass);
+  // A knitted cap pulled down to the brow, and a fringe of hair under it.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.98, hy - hr * 0.5, hx - hr * 0.45, hy - hr * 0.34, hx + hr * 0.55, hy - hr * 0.36, hx + hr * 1.0, hy - hr * 0.52, hx + hr * 0.84, hy - hr * 0.1, hx, hy - hr * 0.2, hx - hr * 0.88, hy - hr * 0.08], wobble: 0.07, spiky: 0.1, seed: 80, sub: 2 }], { h, form: false });
+  const wool = shade('#7a5a3a', p.tone);
+  blob(ctx, B, wool, [
+    { k: 'curve', pts: [hx - hr * 1.1, hy - hr * 0.52, hx - hr * 1.04, hy - hr * 1.0, hx - hr * 0.3, hy - hr * 1.34, hx + hr * 0.5, hy - hr * 1.3, hx + hr * 1.06, hy - hr * 0.96, hx + hr * 1.12, hy - hr * 0.5], wobble: 0.05, seed: 81, sub: 3 },
+    { k: 'curve', pts: ring(hx + hr * 0.14, hy - hr * 1.34, hr * 0.22, hr * 0.19), wobble: 0.1, seed: 82, sub: 2 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 81, amount: 0.45 });
+  // The rolled brim: its own band, a step darker, so the cap reads as knitted and turned up.
+  blob(ctx, B, shade(wool, 0.78), [{ k: 'cap', x0: hx - hr * 1.06, y0: hy - hr * 0.56, x1: hx + hr * 1.08, y1: hy - hr * 0.52, r0: hr * 0.19, r1: hr * 0.18 }], { h, formK: 0.6, spread: 0.6 });
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.88, hy + hr * 0.36, hx - hr * 0.6, hy + hr * 0.82, hx, hy + hr * 1.02, hx + hr * 0.62, hy + hr * 0.8, hx + hr * 0.9, hy + hr * 0.34, hx + hr * 0.72, hy + hr * 0.98, hx, hy + hr * 1.2, hx - hr * 0.7, hy + hr * 0.96], wobble: 0.08, spiky: 0.1, seed: 85, sub: 2 }], { h, formK: 0.4 });
+  face(ctx, R, false);
+  // The gaff, and the two hands closed on it.
+  gaff(ctx, R, lo, hi);
+  const ga = Math.atan2(hi.y - lo.y, hi.x - lo.x);
+  hand(ctx, R, near[2], ga, 83, { flip: 1 });
+  hand(ctx, R, far[2], ga, 84, { flip: -1, k: 0.92 });
+  void p.light;
+}
+
+/**
+ * A shortbow at full draw. The two existing archers in this family HOLD a bow; this one is pulling
+ * it, which is a different arm configuration entirely -- the bow arm locked out forward, the string
+ * hand back at the jaw -- and reads as a bowman at any size without needing the bow itself to be
+ * legible. The string is a V through the anchor rather than a straight line nock to nock, because a
+ * drawn string is the whole tell.
+ */
+function bowDrawn(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, anchor: Pt): number {
+  const { h } = R;
+  // Limbs bent hard away from the archer: a drawn bow is a much deeper arc than a braced one.
+  const top = { x: at.x + h * 0.096, y: at.y - h * 0.3 }, bot = { x: at.x + h * 0.084, y: at.y + h * 0.28 };
+  const tipR = Math.max(h * 0.0075, Math.min(1, h * 0.026) * 0.6), midR = Math.max(h * 0.017, Math.min(1, h * 0.026) * 1.25);
+  blob(ctx, B, R.wood, [
+    tube([top.x, top.y, at.x + h * 0.004, at.y - h * 0.15, at.x - h * 0.008, at.y - h * 0.028], tipR, midR, 0, 91),
+    tube([at.x - h * 0.008, at.y - h * 0.028, at.x + h * 0.006, at.y + h * 0.14, bot.x, bot.y], midR, tipR, 0, 92),
+  ], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 91, amount: 0.35 });
+  stroke(ctx, [top.x, top.y, anchor.x, anchor.y, bot.x, bot.y], R.bone, 1);
+  // The arrow lies along the draw, from the anchor out past the riser.
+  const dx = at.x - anchor.x, dy = at.y - anchor.y, L = Math.hypot(dx, dy) || 1, ux = dx / L, uy = dy / L;
+  const tip = { x: at.x + ux * h * 0.09, y: at.y + uy * h * 0.09 };
+  stroke(ctx, [anchor.x, anchor.y, tip.x, tip.y], R.wood, Math.max(1, h * 0.013));
+  ctx.fillStyle = B.col(R.steel);
+  ctx.beginPath();
+  ctx.moveTo(tip.x + ux * h * 0.03, tip.y + uy * h * 0.03);
+  ctx.lineTo(tip.x - uy * h * 0.016, tip.y + ux * h * 0.016);
+  ctx.lineTo(tip.x + uy * h * 0.016, tip.y - ux * h * 0.016);
+  ctx.closePath(); ctx.fill();
+  if (h >= 46) for (let i = -1; i <= 1; i++) {
+    const fx = anchor.x + ux * h * 0.016, fy = anchor.y + uy * h * 0.016;
+    ctx.fillStyle = B.col(shade(i === 0 ? '#c8c0a0' : '#8a3a30', R.tone));
+    ctx.beginPath();
+    ctx.moveTo(fx, fy);
+    ctx.lineTo(fx - ux * h * 0.044 - uy * i * h * 0.021, fy - uy * h * 0.044 + ux * i * h * 0.021);
+    ctx.lineTo(fx - ux * h * 0.052 - uy * i * h * 0.021, fy - uy * h * 0.052 + ux * i * h * 0.021);
+    ctx.lineTo(fx - ux * h * 0.012, fy - uy * h * 0.012);
+    ctx.closePath(); ctx.fill();
+  }
+  return Math.atan2(bot.y - top.y, bot.x - top.x);
+}
+
+/**
+ * The smuggler bowman: at full draw, side-on with the NEAR foot forward -- the mirror of the two
+ * archers already in this family, who both lead with the far foot and merely hold their bows. Same
+ * oilskin and knitted cap as the rest of the gang, and the quiver rides on the hip rather than over
+ * the shoulder, because a man crouching in a boat cannot reach behind his own head.
+ */
+function smugglerBow(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.02, hipTilt: 0.024, turn: 0.03, near: [0.076, 0.17, 0.236], far: [-0.078, -0.118, -0.162], toe: [1, -0.35], lift: [0, 0.05] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 17) * h * 0.005;
+  // The bow arm locked out forward and slightly down; the string hand back level with the jaw.
+  const grip = { x: x + h * 0.296, y: sy + h * 0.056 + sway };
+  const anchor = { x: x + h * 0.064, y: sy + h * 0.006 + sway };
+  const near: Arm = [R.sNear, { x: x + h * 0.236, y: sy + h * 0.074 }, grip];
+  const far: Arm = [R.sFar, { x: x - h * 0.086, y: sy + h * 0.116 }, anchor];
+  const hemY = y - h * 0.41;
+  groundShadow(ctx, x, y + 1, h * 0.72);
+  blob(ctx, B, shade(p.dark, 0.8), armParts(R, far, 93, 0.92), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  legs(ctx, R, shade('#2e3640', p.tone), 94, [1, -0.35]);
+  blob(ctx, B, shade('#2a2420', p.tone), [
+    { k: 'cap', x0: x + h * 0.228, y0: y - h * 0.17, x1: x + h * 0.238, y1: y - h * 0.05, r0: h * 0.042, r1: h * 0.04 },
+    { k: 'cap', x0: x - h * 0.156, y0: y - h * 0.16, x1: x - h * 0.164, y1: y - h * 0.05, r0: h * 0.039, r1: h * 0.037 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  blob(ctx, B, p.base, [{ k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 95, sub: 3 }, ...armParts(R, near, 96)],
+    { h, formK: 0.5, tex: 'folds', seed: 95, amount: 0.7, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The gang's oilskin, shorter on him, and a quiver on the far hip.
+  blob(ctx, B, shade('#3a4a42', p.tone), [
+    { k: 'curve', pts: [x - h * 0.172, sy - h * 0.012, x - h * 0.206, sy + h * 0.1, x - h * 0.178, sy + h * 0.2, x - h * 0.06, sy + h * 0.2, x - h * 0.03, sy + h * 0.02, x - h * 0.09, sy - h * 0.05], wobble: 0.04, seed: 97, sub: 3 },
+    { k: 'curve', pts: [hx - hr * 1.2, hy + hr * 1.5, hx - hr * 0.4, hy + hr * 1.16, hx + hr * 0.7, hy + hr * 1.2, hx + hr * 1.1, hy + hr * 1.62, hx + hr * 0.2, hy + hr * 1.88, hx - hr * 0.8, hy + hr * 1.82], wobble: 0.05, seed: 98, sub: 2 },
+  ], { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: 97, amount: 0.5 });
+  blob(ctx, B, R.leather, [{ k: 'cap', x0: x - h * 0.2, y0: sy + h * 0.2, x1: x - h * 0.168, y1: sy + h * 0.33, r0: h * 0.026, r1: h * 0.023 }], { h, formK: 0.5, spread: 0.7 });
+  for (let i = 0; i < 3; i++) {
+    const qx = x - h * (0.208 - i * 0.016), qy = sy + h * (0.182 - i * 0.008);
+    stroke(ctx, [qx, qy, qx - h * 0.014, qy - h * 0.062], R.wood, 1);
+    ctx.fillStyle = B.col(shade(i === 1 ? '#c8c0a0' : '#8a3a30', p.tone));
+    ctx.beginPath(); ctx.moveTo(qx - h * 0.014, qy - h * 0.062); ctx.lineTo(qx - h * 0.034, qy - h * 0.07); ctx.lineTo(qx - h * 0.006, qy - h * 0.088); ctx.lineTo(qx + h * 0.002, qy - h * 0.058); ctx.closePath(); ctx.fill();
+  }
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.056, h * 0.04, 99)], { h, form: false });
+  band(ctx, B, x - h * 0.016, hemY - h * 0.06, h * 0.036, h * 0.04, R.brass);
+  // The gang's cap, and a fringe under it.
+  const wool2 = shade('#7a5a3a', p.tone);
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.96, hy - hr * 0.5, hx - hr * 0.4, hy - hr * 0.34, hx + hr * 0.58, hy - hr * 0.36, hx + hr * 0.98, hy - hr * 0.52, hx + hr * 0.82, hy - hr * 0.08, hx, hy - hr * 0.2, hx - hr * 0.86, hy - hr * 0.06], wobble: 0.07, spiky: 0.1, seed: 100, sub: 2 }], { h, form: false });
+  blob(ctx, B, wool2, [{ k: 'curve', pts: [hx - hr * 1.08, hy - hr * 0.52, hx - hr * 1.02, hy - hr * 1.0, hx - hr * 0.28, hy - hr * 1.32, hx + hr * 0.52, hy - hr * 1.28, hx + hr * 1.04, hy - hr * 0.94, hx + hr * 1.1, hy - hr * 0.5], wobble: 0.05, seed: 101, sub: 3 }], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 101, amount: 0.45 });
+  blob(ctx, B, shade(wool2, 0.78), [{ k: 'cap', x0: hx - hr * 1.04, y0: hy - hr * 0.56, x1: hx + hr * 1.06, y1: hy - hr * 0.52, r0: hr * 0.18, r1: hr * 0.17 }], { h, formK: 0.6, spread: 0.6 });
+  face(ctx, R, true);
+  // The bow, then the two hands: the string hand closed at the jaw, the bow hand out on the riser.
+  const ba = bowDrawn(ctx, R, grip, anchor);
+  hand(ctx, R, anchor, Math.atan2(grip.y - anchor.y, grip.x - anchor.x), 102, { flip: 1, k: 0.9 });
+  hand(ctx, R, grip, ba, 103, { flip: -1 });
+  void p.light;
+}
+/**
+ * A boarding axe: a short haft with a bearded head on one side and a spike on the other. Its bit
+ * hangs BELOW the haft line rather than sitting on it, which is what separates an axe from a
+ * hammer at two pixels. Returns the haft's axis for the fist that holds it.
+ */
+function axe(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, aim: number): number {
+  const { h } = R;
+  const ux = Math.cos(aim), uy = Math.sin(aim), nx = -uy, ny = ux;
+  const butt = { x: at.x - ux * h * 0.072, y: at.y - uy * h * 0.072 };
+  const head = { x: at.x + ux * h * 0.2, y: at.y + uy * h * 0.2 };
+  blob(ctx, B, R.wood, [{ k: 'cap', x0: butt.x, y0: butt.y, x1: head.x, y1: head.y, r0: h * 0.016, r1: h * 0.013 }],
+    { h, formK: 0.5, spread: 0.6, tex: 'cracks', seed: 111, amount: 0.4 });
+  const P = (u: number, v: number): number[] => [head.x + ux * h * u + nx * h * v, head.y + uy * h * u + ny * h * v];
+  glossPoly(ctx, B, [
+    ...P(-0.034, -0.026), ...P(0.03, -0.038), ...P(0.078, -0.062), ...P(0.05, -0.006),
+    ...P(0.042, 0.03), ...P(0.062, 0.098), ...P(0.01, 0.15), ...P(-0.062, 0.128), ...P(-0.05, 0.03),
+  ], R.steel, { gloss: 0.55, h, spread: 0.7 });
+  // The langets that strap the head to the haft.
+  stroke(ctx, [...P(-0.052, 0.01), ...P(-0.092, 0.006)], R.brass, Math.max(1, h * 0.009));
+  return aim;
+}
+
+/**
+ * The smuggler captain: the only man in this family under a wide brim, which is the whole of how he
+ * reads as the one in charge at the size a fight draws him. Planted square with the shoulders level
+ * and high, a long coat with a standing collar over the gang's oilskin green, and the boarding axe
+ * he drops held across the body in a full-length arm.
+ */
+function smugglerCaptain(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.006, hipTilt: 0.018, turn: 0.008, near: [0.1, 0.18, 0.228], far: [-0.098, -0.168, -0.212], toe: [0.9, -0.9], lift: [0, 0] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 25) * h * 0.006;
+  const near: Arm = [R.sNear, { x: x + h * 0.244, y: sy + h * 0.176 }, { x: x + h * 0.15, y: sy + h * 0.29 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.256, y: sy + h * 0.18 }, { x: x - h * 0.262, y: sy + h * 0.34 }];
+  const hemY = y - h * 0.42, skirtY = y - h * 0.235;         // tunic hem, then the coat skirt below it
+  groundShadow(ctx, x, y + 1, h * 0.8);
+  blob(ctx, B, shade(p.dark, 0.8), armParts(R, far, 112, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  legs(ctx, R, shade('#242a34', p.tone), 113, [0.9, -0.9]);
+  blob(ctx, B, shade('#22201c', p.tone), [
+    { k: 'cap', x0: x + h * 0.216, y0: y - h * 0.215, x1: x + h * 0.23, y1: y - h * 0.055, r0: h * 0.05, r1: h * 0.048 },
+    { k: 'cap', x0: x - h * 0.202, y0: y - h * 0.205, x1: x - h * 0.212, y1: y - h * 0.055, r0: h * 0.047, r1: h * 0.045 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The coat: body, near sleeve and a skirt that flares below the belt.
+  blob(ctx, B, p.base, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 114, sub: 3 },
+    { k: 'curve', pts: [
+      x - h * 0.126, hemY - h * 0.1, x - h * 0.156, hemY - h * 0.02, x - h * 0.166, skirtY,
+      x - h * 0.05, skirtY + h * 0.014, x + h * 0.08, skirtY - h * 0.008, x + h * 0.172, skirtY,
+      x + h * 0.162, hemY - h * 0.02, x + h * 0.134, hemY - h * 0.1,
+    ], wobble: 0.04, seed: 115, sub: 3 },
+    ...armParts(R, near, 116),
+  ], { h, formK: 0.5, tex: 'folds', seed: 114, amount: 0.75, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The standing collar, in the gang's oilskin green so he belongs to them.
+  blob(ctx, B, shade('#3a4a42', p.tone), [{ k: 'curve', pts: [hx - hr * 1.72, hy + hr * 2.24, hx - hr * 1.5, hy + hr * 1.14, hx - hr * 0.56, hy + hr * 1.32, hx + hr * 0.7, hy + hr * 1.28, hx + hr * 1.56, hy + hr * 1.08, hx + hr * 1.78, hy + hr * 2.24, hx + hr * 0.9, hy + hr * 2.0, hx - hr * 0.8, hy + hr * 2.04], wobble: 0.04, seed: 117, sub: 3 }],
+    { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: 117, amount: 0.5 });
+  // A wide belt and a baldric across the chest: the only man here wearing both.
+  blob(ctx, B, R.strap, [beltPart(R, sy + h * 0.2, h * 0.056, 118)], { h, formK: 0.4 });
+  band(ctx, B, x - h * 0.026, sy + h * 0.196, h * 0.05, h * 0.05, R.brass);
+  stroke(ctx, [x - h * 0.15, sy - h * 0.01, x + h * 0.11, sy + h * 0.23], R.strap, Math.max(1, h * 0.022));
+  // The hat: a deep crown and a brim wider than his own shoulders are tall.
+  blob(ctx, B, shade('#2c2620', p.tone), [
+    { k: 'curve', pts: [hx - hr * 1.0, hy - hr * 0.72, hx - hr * 0.9, hy - hr * 1.7, hx - hr * 0.2, hy - hr * 2.12, hx + hr * 0.56, hy - hr * 2.04, hx + hr * 1.04, hy - hr * 1.5, hx + hr * 1.08, hy - hr * 0.7], wobble: 0.04, seed: 119, sub: 3 },
+    { k: 'curve', pts: ring(hx + hr * 0.06, hy - hr * 0.72, hr * 1.92, hr * 0.42), wobble: 0.035, seed: 120, sub: 3 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 119, amount: 0.4 });
+  stroke(ctx, [hx - hr * 0.94, hy - hr * 1.12, hx + hr * 1.0, hy - hr * 1.1], R.brass, Math.max(1, hr * 0.18));
+  // A heavy beard under the brim's shadow.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.9, hy + hr * 0.24, hx - hr * 0.62, hy + hr * 0.84, hx, hy + hr * 1.1, hx + hr * 0.64, hy + hr * 0.82, hx + hr * 0.92, hy + hr * 0.22, hx + hr * 0.78, hy + hr * 1.12, hx, hy + hr * 1.36, hx - hr * 0.76, hy + hr * 1.1], wobble: 0.08, spiky: 0.12, seed: 121, sub: 2 }], { h, formK: 0.4 });
+  face(ctx, R, false, true);
+  // The axe, carried across the body with the head out and low.
+  const wrist = near[2];
+  const aa = axe(ctx, R, wrist, -0.72 + sway * 0.6);
+  hand(ctx, R, wrist, aa, 122, { flip: -1 });
   void p.light;
 }
