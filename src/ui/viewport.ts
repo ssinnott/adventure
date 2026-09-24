@@ -400,6 +400,17 @@ function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
   drawWallDecor(ctx, map, cell, mx, my, x0, x1, top, bottom, d, seed, dark, haze, daylight, house, isDoor);
 }
 
+/**
+ * Whether a wall carries any dressing. Its hash has to beat those of the four cells around it, so
+ * about one wall in five is dressed and two side by side never both are. Nothing past the edge of
+ * the map is: outdoors that is the backdrop behind the ring of mountains.
+ */
+function isDressed(map: GameMap, x: number, y: number): boolean {
+  if (!map.inBounds(x, y)) return false;
+  const k = map.id.length, v = hash(x, y, k, 78);
+  return v > hash(x - 1, y, k, 78) && v > hash(x + 1, y, k, 78) && v > hash(x, y - 1, k, 78) && v > hash(x, y + 1, k, 78);
+}
+
 /** What hangs on, grows on, or is scratched into a wall: chosen per cell by hash, so it is stable. */
 function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number, house: boolean, isDoor: boolean): void {
   const w = x1 - x0, h = bottom - top;
@@ -407,8 +418,9 @@ function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
   const roll = hash(seed, 77);
   const feature = map.featuresAt(mx, my)[0];
   const cx = (x0 + x1) / 2;
+  const dressed = isDressed(map, mx, my);
   if (house) {
-    // A shop sign for service doors, a lantern by every door, flower boxes and ivy elsewhere.
+    // A shop sign for service doors and a lantern by every door; a flower box or ivy on the odd wall.
     if (isDoor && feature) {
       const sw = w * 0.34, sh = h * 0.14, sx = x1 - sw - w * 0.06, sy = top + h * 0.1;
       ctx.strokeStyle = fog('#3a2a20', d, dark, haze); ctx.lineWidth = Math.max(1, w * 0.02);
@@ -421,12 +433,12 @@ function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
       const lx = x0 + w * 0.16, ly = top + h * 0.42;
       ctx.fillStyle = fog('#3a3a40', d, dark, haze); ctx.fillRect(Math.round(lx - w * 0.03), Math.round(ly), Math.max(2, Math.round(w * 0.06)), Math.max(3, Math.round(h * 0.1)));
       if (daylight < 0.5) flames.push({ x: lx, y: ly + h * 0.06, s: Math.max(2, w * 0.05) });
-    } else if (roll < 0.35) {
+    } else if (dressed && roll < 0.64) {
       // Flower box under the window.
       const bw = w * 0.3, bx = cx - bw / 2 + (hash(seed, 3) - 0.5) * w * 0.3, by = top + h * 0.43;
       ctx.fillStyle = fog('#5a3a24', d, dark, haze); ctx.fillRect(Math.round(bx), Math.round(by), Math.round(bw), Math.max(2, Math.round(h * 0.05)));
       for (let i = 0; i < 5; i++) { ctx.fillStyle = fog(['#e05a6a', '#f0e060', '#ffffff', '#c080e0'][i % 4], d, dark, haze); ctx.fillRect(Math.round(bx + bw * (i + 0.5) / 5) - 1, Math.round(by) - 2, 2, 2); }
-    } else if (roll < 0.55) {
+    } else if (dressed) {
       // Ivy climbing a corner.
       const side = hash(seed, 4) > 0.5 ? x0 + w * 0.08 : x1 - w * 0.08;
       ctx.fillStyle = fog('#3f8a3a', d, dark, haze);
@@ -434,8 +446,11 @@ function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
     }
     return;
   }
-  // Stone walls: sconces, banners, cobwebs, cracks, drips, rings, grates, carvings.
-  if (roll < 0.22) {
+  // Stone walls: mostly bare, and a door is dressing enough. Nearly half of what is dressed is a
+  // sconce, so dungeons stay lit; banners, cobwebs, cracks, drips, rings, grates and carvings share
+  // the rest.
+  if (!dressed || isDoor) return;
+  if (roll < 0.45) {
     // Torch sconce: iron bracket, then a flame drawn per frame.
     const sx = cx + (hash(seed, 5) - 0.5) * w * 0.4, sy = top + h * 0.38;
     ctx.fillStyle = fog('#2a2a30', d, dark, null);
@@ -444,7 +459,7 @@ function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
     // Torch head.
     ctx.fillStyle = fog('#6a4a2a', d, dark, null); ctx.fillRect(Math.round(sx - w * 0.02), Math.round(sy - h * 0.06), Math.max(2, Math.round(w * 0.04)), Math.max(2, Math.round(h * 0.08)));
     flames.push({ x: sx, y: sy - h * 0.06, s: Math.max(3, w * 0.07) });
-  } else if (roll < 0.32) {
+  } else if (roll < 0.53) {
     // A banner hung from a rod.
     const bw = w * 0.28, bx = cx - bw / 2 + (hash(seed, 6) - 0.5) * w * 0.3, by = top + h * 0.12, bh = h * 0.5;
     const col = fog(map.palette.banner, d, dark, haze);
@@ -454,38 +469,38 @@ function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
     ctx.fillStyle = fog(shade(map.palette.banner, 0.6), d, dark, haze); ctx.fillRect(Math.round(bx + bw * 0.15), Math.round(by + bh * 0.2), Math.max(1, Math.round(bw * 0.7)), Math.max(1, Math.round(h * 0.02)));
     // The Lantern emblem: a ring.
     if (bw > 10) { ctx.strokeStyle = fog('#e8d090', d, dark, haze); ctx.lineWidth = Math.max(1, bw * 0.08); ctx.beginPath(); ctx.arc(bx + bw / 2, by + bh * 0.5, bw * 0.2, 0, Math.PI * 2); ctx.stroke(); }
-  } else if (roll < 0.40) {
+  } else if (roll < 0.61) {
     // Cobweb in a top corner.
     const left = hash(seed, 8) > 0.5, ox = left ? x0 : x1, s = left ? 1 : -1, r = Math.min(w, h) * 0.28;
     ctx.strokeStyle = fog('#d8d8e0', d, dark, haze); ctx.lineWidth = 1; ctx.globalAlpha = 0.55;
     for (let i = 0; i <= 4; i++) { const a = (i / 4) * Math.PI / 2; ctx.beginPath(); ctx.moveTo(ox, top); ctx.lineTo(ox + s * Math.cos(a) * r, top + Math.sin(a) * r); ctx.stroke(); }
     for (let k = 1; k <= 3; k++) { ctx.beginPath(); ctx.arc(ox, top, r * k / 3, left ? 0 : Math.PI / 2, left ? Math.PI / 2 : Math.PI); ctx.stroke(); }
     ctx.globalAlpha = 1;
-  } else if (roll < 0.52) {
+  } else if (roll < 0.69) {
     // A crack running down.
     const sx = x0 + w * (0.2 + hash(seed, 9) * 0.6);
     ctx.strokeStyle = fog(shade(map.palette.wallDark, 0.5), d, dark, haze); ctx.lineWidth = Math.max(1, w * 0.012);
     ctx.beginPath(); ctx.moveTo(sx, top + h * 0.1);
     for (let i = 1; i <= 5; i++) ctx.lineTo(sx + (hash(seed, 10, i) - 0.5) * w * 0.14, top + h * (0.1 + i * 0.13));
     ctx.stroke();
-  } else if (roll < 0.62) {
+  } else if (roll < 0.76) {
     // Damp streak with moss at the foot.
     const sx = x0 + w * (0.25 + hash(seed, 11) * 0.5), sw = w * 0.08;
     ctx.fillStyle = rgba('#000000', 0.22); ctx.fillRect(Math.round(sx), Math.round(top), Math.round(sw), Math.round(h * 0.8));
     ctx.fillStyle = fog('#4f8a3a', d, dark, haze); ctx.beginPath(); ctx.ellipse(sx + sw / 2, bottom - h * 0.06, sw * 1.4, h * 0.05, 0, 0, Math.PI * 2); ctx.fill();
-  } else if (roll < 0.70) {
+  } else if (roll < 0.84) {
     // Iron ring on a plate.
     const rx = cx + (hash(seed, 12) - 0.5) * w * 0.5, ry = top + h * 0.5, r = Math.max(2, w * 0.05);
     ctx.fillStyle = fog('#3a3a40', d, dark, haze); ctx.fillRect(Math.round(rx - r * 0.8), Math.round(ry - r * 1.2), Math.round(r * 1.6), Math.round(r * 0.8));
     ctx.strokeStyle = fog('#6a6a74', d, dark, haze); ctx.lineWidth = Math.max(1, r * 0.3); ctx.beginPath(); ctx.arc(rx, ry, r, 0, Math.PI * 2); ctx.stroke();
-  } else if (roll < 0.78) {
+  } else if (roll < 0.92) {
     // A barred grate into the dark.
     const gw = w * 0.26, gh = h * 0.2, gx = cx - gw / 2 + (hash(seed, 13) - 0.5) * w * 0.3, gy = top + h * 0.25;
     ctx.fillStyle = '#0c0a10'; ctx.fillRect(Math.round(gx), Math.round(gy), Math.round(gw), Math.round(gh));
     ctx.fillStyle = fog('#5a5a64', d, dark, haze);
     for (let i = 1; i < 4; i++) ctx.fillRect(Math.round(gx + gw * i / 4), Math.round(gy), Math.max(1, Math.round(w * 0.012)), Math.round(gh));
     ctx.strokeStyle = fog('#3a3a40', d, dark, haze); ctx.lineWidth = 1; ctx.strokeRect(Math.round(gx) + 0.5, Math.round(gy) + 0.5, Math.round(gw), Math.round(gh));
-  } else if (roll < 0.86 && cell.door === 'none') {
+  } else if (cell.door === 'none') {
     // A carved panel of old glyphs.
     const pw = w * 0.36, ph = h * 0.26, px = cx - pw / 2, py = top + h * 0.3;
     ctx.fillStyle = fog(shade(map.palette.wall, 0.85), d, dark, haze); ctx.fillRect(Math.round(px), Math.round(py), Math.round(pw), Math.round(ph));
