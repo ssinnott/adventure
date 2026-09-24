@@ -34,7 +34,7 @@ tests, `npm run build`, then publish `dist/` to GitHub Pages at
 src/main.ts        boot: canvas, input, loop
 src/input.ts       keyboard -> queued actions (plus a text mode for names)
 src/game/          the model: map, world, party, items, spells, monsters, combat, save, game
-src/content/maps/  the authored maps: Harrow, the Shelf, the cellar, Thornmark, Thornhold, the Grove
+src/content/maps/  the authored maps: Harrow, the Shelf, the cellar, Greywater, Thornmark, Thornhold, the Grove
 src/ui/            viewport, frame, sprites, screens, combat screen, title, party creation
 src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
 tools/             dev server, bundler, tests, smoke test, screenshot helper

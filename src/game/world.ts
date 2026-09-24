@@ -120,7 +120,7 @@ export class World {
     const pass = this.map.passable(nx, ny, partyCan(this.party));
     if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: BLOCK_TEXT[pass] };
     const gate = this.map.exitAt(nx, ny);
-    if (gate?.needFlag && !this.party.flags[gate.needFlag]) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
+    if (gate?.needFlag && ![gate.needFlag].flat().every((k) => this.party.flags[k])) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
     const messages: string[] = [];
     if (pass === 'unlock') {
       const c = this.map.at(nx, ny);

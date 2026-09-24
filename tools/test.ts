@@ -39,7 +39,7 @@ const suites: Record<string, () => void> = {
         if (f.kind === 'shop') for (const id of f.stock) ok(id in ITEMS, `${def.id}: shop stock '${id}' exists`);
         if (f.kind === 'npc' && f.quest) ok(f.quest.item in ITEMS, `${def.id}: quest item '${f.quest.item}' exists`);
       }
-      for (const e of m.exits) if (e.needFlag) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && f.quest?.setFlag === e.needFlag)), `${def.id}: gated exit flag '${e.needFlag}' is set by some quest`);
+      for (const e of m.exits) for (const flag of [e.needFlag ?? []].flat()) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && f.quest?.setFlag === flag)), `${def.id}: gated exit flag '${flag}' is set by some quest`);
     }
     // Every quest item is dropped or found somewhere; every monster is placed on some map.
     const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
@@ -55,6 +55,14 @@ const suites: Record<string, () => void> = {
       let total = 0; for (const d of MAP_DEFS) for (const e of d.encounters ?? []) for (const id of e.monsters) total += MONSTERS[id].xp;
       const each = Math.floor(total / 6);
       ok(each >= xpForLevel(7), `one clear of every map is worth level 7 or more per member (${each} xp each; level 10 needs ${xpForLevel(10)})`);
+    }
+    { // The Shelf ramp: Ashcombe alone reaches level 2, and both of the dungeons the pass waits on reach
+      // level 4 before Thornmark's band 5 (respawns and a second sweep make up the rest).
+      const perMember = (ids: string[]): number => Math.floor(MAP_DEFS.filter((d) => ids.includes(d.id))
+        .flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)).reduce((t, id) => t + MONSTERS[id].xp, 0) / 6);
+      const ashcombe = perMember(['shelf', 'mill']), shelf = perMember(['shelf', 'mill', 'greywater1', 'greywater2']);
+      ok(ashcombe >= xpForLevel(2), `one clear of the Shelf and the cellar is worth level 2 per member (${ashcombe} xp each)`);
+      ok(shelf >= xpForLevel(4), `one clear of the Shelf, the cellar and Greywater is worth level 4 per member (${shelf} xp each)`);
     }
     // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
     for (const def of MAP_DEFS) {
@@ -112,6 +120,8 @@ const suites: Record<string, () => void> = {
     const closed = world.move('forward');
     ok(closed.kind === 'blocked' && /checkpoint/.test(closed.reason) && world.map.id === 'shelf', 'the Thornmark pass is closed before the Ashcombe hand-in');
     party.flags.q_ashcombe_done = 1;
+    ok(world.move('forward').kind === 'blocked' && world.map.id === 'shelf', 'the pass stays closed until Greywater is cleared as well');
+    party.flags.q_greywater_done = 1;
     const opened = world.move('forward');
     ok(opened.kind === 'moved' && world.map.id === 'thornmark' && world.state.x === 1 && world.state.y === 9, `the pass opens once the flag is set (${world.map.id} ${world.state.x},${world.state.y})`);
     // Town Portal returns to the last town stood in.
@@ -122,6 +132,9 @@ const suites: Record<string, () => void> = {
     world.travel('grove1', 11, 11, 0);
     const down = world.move('forward');
     ok(down.kind === 'moved' && world.map.id === 'grove2' && world.state.x === 1 && world.state.y === 1, 'the Grove Roots stairs go down to the Cut Stone');
+    world.travel('greywater1', 14, 13, 2);
+    const shrine = world.move('forward');
+    ok(shrine.kind === 'moved' && world.map.id === 'greywater2' && world.state.x === 1 && world.state.y === 1, 'the Greywater stairs go down to the Drowned Shrine');
   },
 
   monsters() {
@@ -168,8 +181,9 @@ const suites: Record<string, () => void> = {
     ok(a.log.join('|') === b.log.join('|'), 'the same seed replays the same fight');
     ok(a.log.join('|') !== c.log.join('|'), 'a different seed is a different fight');
     ok(a.state.outcome === 'victory', `the default party beats three rats and a wolf (${a.rounds} rounds, ${a.state.outcome})`);
-    ok(a.state.loot !== null && a.state.loot.xp === 6 * 3 + 14, `xp is the sum of the monsters' (${a.state.loot?.xp})`);
-    ok(a.party.members.every((m) => m.xp === Math.floor(32 / 6)), 'xp is split evenly among the living');
+    const xp = MONSTERS.rat.xp * 3 + MONSTERS.wolf.xp;
+    ok(a.state.loot !== null && a.state.loot.xp === xp, `xp is the sum of the monsters' (${a.state.loot?.xp})`);
+    ok(a.party.members.every((m) => m.xp === Math.floor(xp / 6)), 'xp is split evenly among the living');
     ok(a.party.gold >= 200, 'gold is added to the party');
     // The cap.
     const rng = makeRng(1);

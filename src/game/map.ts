@@ -32,8 +32,8 @@ export interface Exit {
   tf?: Facing;
   /** Shown in the log on arrival. */
   label?: string;
-  /** A party flag that must be set before the exit opens; `blockedText` says why not. */
-  needFlag?: string;
+  /** Party flags that must all be set before the exit opens; `blockedText` says why not. */
+  needFlag?: string | readonly string[];
   blockedText?: string;
 }
 
