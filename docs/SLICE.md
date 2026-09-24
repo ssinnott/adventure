@@ -14,6 +14,17 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
   monster groups with respawn timers, the Ashcombe farm.
 - **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
   dead Lantern and her survey wand, the Rift and its Warden.
+- **Greywater** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
+  cliffs, reached from the beach. Level one, the Greywater Caves: smugglers, shore crabs and drowned
+  men, a secret stash, and the captain's den with the iron key to the stairs. Level two, the Drowned
+  Shrine: an Ashen cult's galleries around a sealed shrine; a secret vestry holds the key, and the
+  Ashen Deacon guards the Greywater Ledger. Captain Hale at the pass checkpoint gives the contract
+  and takes the ledger. Chests carry the Shelf's mid-tier gear (long sword, kite shield, scale,
+  chain, long bow).
+- **The ramp to Thornmark.** The pass needs both `q_ashcombe_done` and `q_greywater_done` (an exit's
+  `needFlag` may list several flags). The slice's early monsters give about double their old xp, so
+  one clear of the Shelf and the cellar is worth level 2 per member, and adding Greywater is worth
+  level 4 (tests pin both); respawns make up the step to Thornmark's band 5.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors,
   water and mountains gated by party abilities, a day/night clock with a hazed sky, automap with
   field-of-view reveal, rest with food, a search action, exploration spells (Light, Wizard Eye).
@@ -38,6 +49,21 @@ cap, which is 10 until promotions exist:
   Sorcerer: Haste (party speed and to-hit), Chain Lightning and Meteor Swarm (every foe, scaling
   with level), Town Portal (back to the last town stood in; `lastTown` in the world state).
   Combat carries Bless, Ward and Haste timers side by side.
+- **Classes.** Ten: Knight, Paladin, Ranger, Cleric, Sorcerer, Thief, plus Barbarian (d12 hp, martial
+  weapons, leather and brigandine only), Monk (staff and robe, levels into Speed), Bard (a
+  half-caster on the cleric list) and Druid (a full caster on the new druid list: Thorn Lash,
+  Foxfire, Barkskin, Salve, Hawk's Eye, Stinging Swarm, Regrowth, Hailstorm, Heart of the Stag,
+  Tempest). The Ranger now draws on the druid list, not the sorcerer's. Both Lantern guilds teach
+  bards and druids.
+- **Class traits.** Every class has one or two passives (`TRAITS` in `party.ts`), listed on the
+  class picker and the character sheet. Knight: Stalwart (+2 AC), Weapon Master (+1 melee).
+  Paladin: Holy Strike (+3 on the mindless dead), Divine Health (no disease). Ranger: Marksman (+2
+  ranged), Keen Eyes (always finds secret doors). Cleric: Healing Hands (+3 on heals), Faith (no
+  curses). Sorcerer: Spellfire (+2 per foe on damage spells), Iron Will (no sleep). Thief: Sneak
+  Attack (+4 in round one), Keen Eyes. Barbarian: Rage (+3 melee below half hp), Die Hard (dies at
+  -20). Monk: Unarmoured Defence (robe or less: +1 AC, +1 per two levels), Stillness (no
+  paralysis). Bard: Inspiring Song (+1 to-hit for the party while standing). Druid: Nature's Ward
+  (no poison), Healing Hands.
 - **Gear.** A Thornmark tier in the Armoury: war hammer, battle axe, great sword, crossbow, the
   Thornmark bow, rune dagger, grove staff, runed robe, brigandine, plate, tower shield, elixirs,
   sapphire vials, lantern oil.
@@ -46,8 +72,8 @@ cap, which is 10 until promotions exist:
   bosses, the Hand of Ash and the Warden of the Cut. Two new drawings (ogre, wraith); the rest
   re-tint and re-scale the slice's ten.
 - **Thornmark** (outdoor, 32×32, band 5–10): reached through the mountain pass on the Shelf's
-  east edge, which a Warden checkpoint holds closed until Vask has the survey wand (exits can
-  carry a `needFlag`). Thornhold in the north-east, a ruined watchtower with an ogre's den, a
+  east edge, which a Warden checkpoint holds closed until Vask has the survey wand and Captain Hale
+  has the Greywater ledger. Thornhold in the north-east, a ruined watchtower with an ogre's den, a
   barrow with bone knights and wraiths, a river with one bridge, a dead survey marker in a lake,
   and the Grove at the end of a chisel-marked road in the south-west. Fourteen groups.
 - **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the
@@ -151,4 +177,4 @@ as a strip of idle frames ending in the hit flash, for judging an art pass.
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
-| `content/maps/*.ts` | Harrow, the Shelf, the cellar; Thornmark, Thornhold, the Grove Roots, the Cut Stone |
+| `content/maps/*.ts` | Harrow, the Shelf, the cellar, Greywater (two levels); Thornmark, Thornhold, the Grove Roots, the Cut Stone |

@@ -4,8 +4,8 @@
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps, MAP_DEFS } from '../src/content/maps/index.ts';
 import { World } from '../src/game/world.ts';
-import { defaultParty, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, WARD_AC } from '../src/game/combat.ts';
+import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition } from '../src/game/party.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, buffHit, traitDamage, WARD_AC } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
 import { serialize, deserialize } from '../src/game/save.ts';
@@ -39,7 +39,7 @@ const suites: Record<string, () => void> = {
         if (f.kind === 'shop') for (const id of f.stock) ok(id in ITEMS, `${def.id}: shop stock '${id}' exists`);
         if (f.kind === 'npc' && f.quest) ok(f.quest.item in ITEMS, `${def.id}: quest item '${f.quest.item}' exists`);
       }
-      for (const e of m.exits) if (e.needFlag) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && f.quest?.setFlag === e.needFlag)), `${def.id}: gated exit flag '${e.needFlag}' is set by some quest`);
+      for (const e of m.exits) for (const flag of [e.needFlag ?? []].flat()) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && f.quest?.setFlag === flag)), `${def.id}: gated exit flag '${flag}' is set by some quest`);
     }
     // Every quest item is dropped or found somewhere; every monster is placed on some map.
     const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
@@ -55,6 +55,14 @@ const suites: Record<string, () => void> = {
       let total = 0; for (const d of MAP_DEFS) for (const e of d.encounters ?? []) for (const id of e.monsters) total += MONSTERS[id].xp;
       const each = Math.floor(total / 6);
       ok(each >= xpForLevel(7), `one clear of every map is worth level 7 or more per member (${each} xp each; level 10 needs ${xpForLevel(10)})`);
+    }
+    { // The Shelf ramp: Ashcombe alone reaches level 2, and both of the dungeons the pass waits on reach
+      // level 4 before Thornmark's band 5 (respawns and a second sweep make up the rest).
+      const perMember = (ids: string[]): number => Math.floor(MAP_DEFS.filter((d) => ids.includes(d.id))
+        .flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)).reduce((t, id) => t + MONSTERS[id].xp, 0) / 6);
+      const ashcombe = perMember(['shelf', 'mill']), shelf = perMember(['shelf', 'mill', 'greywater1', 'greywater2']);
+      ok(ashcombe >= xpForLevel(2), `one clear of the Shelf and the cellar is worth level 2 per member (${ashcombe} xp each)`);
+      ok(shelf >= xpForLevel(4), `one clear of the Shelf, the cellar and Greywater is worth level 4 per member (${shelf} xp each)`);
     }
     // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
     for (const def of MAP_DEFS) {
@@ -112,6 +120,8 @@ const suites: Record<string, () => void> = {
     const closed = world.move('forward');
     ok(closed.kind === 'blocked' && /checkpoint/.test(closed.reason) && world.map.id === 'shelf', 'the Thornmark pass is closed before the Ashcombe hand-in');
     party.flags.q_ashcombe_done = 1;
+    ok(world.move('forward').kind === 'blocked' && world.map.id === 'shelf', 'the pass stays closed until Greywater is cleared as well');
+    party.flags.q_greywater_done = 1;
     const opened = world.move('forward');
     ok(opened.kind === 'moved' && world.map.id === 'thornmark' && world.state.x === 1 && world.state.y === 9, `the pass opens once the flag is set (${world.map.id} ${world.state.x},${world.state.y})`);
     // Town Portal returns to the last town stood in.
@@ -122,6 +132,9 @@ const suites: Record<string, () => void> = {
     world.travel('grove1', 11, 11, 0);
     const down = world.move('forward');
     ok(down.kind === 'moved' && world.map.id === 'grove2' && world.state.x === 1 && world.state.y === 1, 'the Grove Roots stairs go down to the Cut Stone');
+    world.travel('greywater1', 14, 13, 2);
+    const shrine = world.move('forward');
+    ok(shrine.kind === 'moved' && world.map.id === 'greywater2' && world.state.x === 1 && world.state.y === 1, 'the Greywater stairs go down to the Drowned Shrine');
   },
 
   monsters() {
@@ -168,8 +181,9 @@ const suites: Record<string, () => void> = {
     ok(a.log.join('|') === b.log.join('|'), 'the same seed replays the same fight');
     ok(a.log.join('|') !== c.log.join('|'), 'a different seed is a different fight');
     ok(a.state.outcome === 'victory', `the default party beats three rats and a wolf (${a.rounds} rounds, ${a.state.outcome})`);
-    ok(a.state.loot !== null && a.state.loot.xp === 6 * 3 + 14, `xp is the sum of the monsters' (${a.state.loot?.xp})`);
-    ok(a.party.members.every((m) => m.xp === Math.floor(32 / 6)), 'xp is split evenly among the living');
+    const xp = MONSTERS.rat.xp * 3 + MONSTERS.wolf.xp;
+    ok(a.state.loot !== null && a.state.loot.xp === xp, `xp is the sum of the monsters' (${a.state.loot?.xp})`);
+    ok(a.party.members.every((m) => m.xp === Math.floor(xp / 6)), 'xp is split evenly among the living');
     ok(a.party.gold >= 200, 'gold is added to the party');
     // The cap.
     const rng = makeRng(1);
@@ -232,7 +246,7 @@ const suites: Record<string, () => void> = {
     ok(Object.values(SPELLS).every((sp) => sp.sp > 0), 'every spell costs something');
     // The road to level 10: tiers land at 1, 2, 4, 6, 8; levelling stops at the cap; nothing is left to train.
     ok([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join() === '1,2,2,3,3,4,4,5,5,5', `spell tiers by level are ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join()}`);
-    for (const list of ['cleric', 'sorcerer'] as const) for (let t = 1; t <= 5; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
+    for (const list of ['cleric', 'sorcerer', 'druid'] as const) for (let t = 1; t <= 5; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
     const c = p.members[4];
     c.xp = 1_000_000;
     const gained = levelUp(c, rng);
@@ -242,7 +256,57 @@ const suites: Record<string, () => void> = {
     ok(c.maxHp >= 9 * 1 + 8 && c.maxSp > 20, `hp and sp grew with the levels (hp ${c.maxHp}, sp ${c.maxSp})`);
     const k = p.members[0]; k.xp = xpForLevel(8);
     ok(levelUp(k, rng) === 7 && k.level === 8 && k.spells.length === 0, 'a knight levels to 8 on level-8 xp and learns no spells');
+    // Every class can wear its own starting kit, and every caster's list has spells to give.
+    for (const cd of Object.values(CLASSES)) {
+      const m = createCharacter('Test', 'human', cd.id, {}, makeRng(9));
+      ok(cd.kit.every((id) => !ITEMS[id].classes || ITEMS[id].classes!.includes(cd.id)) && !!m.equipment.weapon && !!m.equipment.armor, `a ${cd.name} may use its whole starting kit`);
+      ok(!cd.spells || m.spells.length > 0, `a ${cd.name} starts with ${cd.spells ? 'spells' : 'no spells'}`);
+    }
+    const r = p.members[2]; r.xp = xpForLevel(4); levelUp(r, rng);
+    ok(r.spells.includes('thorn') && r.spells.includes('barkskin') && !r.spells.includes('spark'), 'the ranger learns the druid list');
     ok(xpForLevel(MAX_LEVEL) === 13050, `level ${MAX_LEVEL} costs ${xpForLevel(MAX_LEVEL)} xp`);
+  },
+
+  traits() {
+    const mk = (cls: Parameters<typeof createCharacter>[2]) => createCharacter('T', 'human', cls, {}, makeRng(3));
+    for (const cd of Object.values(CLASSES)) ok(cd.traits.length >= 1 && cd.traits.length <= 2 && cd.traits.every((t) => t in TRAITS), `a ${cd.name} has one or two traits (${cd.traits.join(', ')})`);
+    // Stalwart: the knight's AC carries the bonus.
+    const k = mk('knight'); const ac = armorClass(k);
+    ok(ac === 10 + 5 + 1 + STALWART_AC, `a knight in scale and buckler is AC ${ac}`);
+    // Unarmoured Defence grows with level and goes away under real armour.
+    const monk = mk('monk'); const a1 = armorClass(monk); monk.level = 10;
+    ok(armorClass(monk) === a1 + 5, `a level-10 monk in a robe gains AC (${a1} -> ${armorClass(monk)})`);
+    const leatherMonk = mk('monk'); leatherMonk.equipment.armor = 'leather';
+    ok(armorClass(leatherMonk) === 10 + 3, 'a monk in leather loses unarmoured defence');
+    // Immunities come through addCondition.
+    const cases: [Parameters<typeof createCharacter>[2], 'diseased' | 'cursed' | 'asleep' | 'paralysed' | 'poisoned'][] = [['paladin', 'diseased'], ['cleric', 'cursed'], ['sorcerer', 'asleep'], ['monk', 'paralysed'], ['druid', 'poisoned']];
+    for (const [cls, cond] of cases) { const c = mk(cls); addCondition(c, cond); ok(!hasCondition(c, cond), `a ${cls} is immune to ${cond}`); }
+    const kn = mk('knight'); addCondition(kn, 'poisoned'); ok(hasCondition(kn, 'poisoned'), 'a knight is not');
+    // Die Hard: a barbarian at -15 is unconscious, not dead; a knight is dead.
+    const b = mk('barbarian'); damage(b, b.hp + 15);
+    ok(!hasCondition(b, 'dead') && hasCondition(b, 'unconscious'), 'a barbarian at -15 hp still lives');
+    const b2 = mk('barbarian'); damage(b2, b2.hp + 25); ok(hasCondition(b2, 'dead') && b2.hp === DIE_HARD_AT, `but a blow past ${DIE_HARD_AT} kills`);
+    const k2 = mk('knight'); damage(k2, k2.hp + 15); ok(hasCondition(k2, 'dead'), 'a knight at -15 hp is dead');
+    // Healing Hands: the cleric heals more than a paladin with the same Personality.
+    const cl = mk('cleric'), pa = mk('paladin'), hurtA = mk('knight'), hurtB = mk('knight');
+    hurtA.maxHp = hurtB.maxHp = 100; hurtA.hp = hurtB.hp = 1;
+    castOnAlly(cl, spell('heal'), hurtA); castOnAlly(pa, spell('heal'), hurtB);
+    ok(hurtA.hp > hurtB.hp, `a cleric's Mend heals more (${hurtA.hp - 1} vs ${hurtB.hp - 1})`);
+    // Damage traits, and the bard's song.
+    const party = defaultParty(makeRng(4));
+    const s = startCombat(party, [{ id: 'a', monsters: ['rat'] }], makeRng(4));
+    const rat = s.monsters[0];
+    const bow = ITEMS.shortbow, sword = ITEMS.longsword;
+    ok(traitDamage(s, mk('ranger'), bow, rat) > 0 && traitDamage(s, mk('ranger'), sword, rat) === 0, 'Marksman adds only to ranged attacks');
+    ok(traitDamage(s, mk('thief'), sword, rat) > 0, 'Sneak Attack adds in the first round');
+    s.round = 2; ok(traitDamage(s, mk('thief'), sword, rat) === 0, 'and not after');
+    const bb = mk('barbarian'); ok(traitDamage(s, bb, sword, rat) === 0, 'a healthy barbarian does not rage');
+    bb.hp = 1; ok(traitDamage(s, bb, sword, rat) > 0, 'a wounded one does');
+    const noBard = buffHit(s, party);
+    party.members[3] = mk('bard');
+    ok(buffHit(s, party) === noBard + INSPIRE_HIT, 'a standing bard inspires the party');
+    addCondition(party.members[3], 'unconscious'); ok(buffHit(s, party) === noBard, 'a fallen one does not');
+    ok(hasTrait(mk('thief'), 'keen_eyes') && hasTrait(mk('ranger'), 'keen_eyes'), 'thieves and rangers have Keen Eyes');
   },
 
   save() {

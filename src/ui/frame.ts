@@ -123,7 +123,7 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
   // HP and SP to the right of the portrait.
   const bx = r.x + 44, bw = r.w - 48;
   drawText(ctx, 'HP', bx, r.y + 16, { size: 1, color: TEXT_DIM });
-  drawText(ctx, `${Math.max(c.hp, -10)}/${c.maxHp}`, bx + bw, r.y + 16, { size: 1, color: c.hp < c.maxHp / 3 ? RED : TEXT, align: 'right' });
+  drawText(ctx, `${c.hp}/${c.maxHp}`, bx + bw, r.y + 16, { size: 1, color: c.hp < c.maxHp / 3 ? RED : TEXT, align: 'right' });
   bar(ctx, bx, r.y + 25, bw, 5, c.hp / c.maxHp, c.hp < c.maxHp / 3 ? RED : GREEN);
   if (c.maxSp > 0) {
     drawText(ctx, 'SP', bx, r.y + 34, { size: 1, color: TEXT_DIM });

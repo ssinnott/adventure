@@ -11,7 +11,7 @@ import { BRASS, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
 import type { Feature } from '../game/map.ts';
 import { item, ITEMS } from '../game/items.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, MAX_LEVEL } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, MAX_LEVEL } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 
@@ -115,6 +115,7 @@ export class SheetScreen implements Screen {
     drawText(ctx, 'WEAPON ' + (c.equipment.weapon ? item(c.equipment.weapon).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, 'ARMOUR ' + (c.equipment.armor ? item(c.equipment.armor).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, 'SHIELD ' + (c.equipment.shield ? item(c.equipment.shield).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
+    drawText(ctx, 'TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '), 20, y, { size: 1, color: TEXT }); y += 10;
     if (c.spells.length) { drawText(ctx, 'SPELLS ' + c.spells.map((s) => spell(s).name).join(', '), 20, y, { size: 1, color: TEXT }); }
     // Items column
     const items = this.items(g);

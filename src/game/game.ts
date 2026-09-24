@@ -5,7 +5,7 @@ import { rng } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
 import { World } from './world.ts';
 import type { WorldState } from './world.ts';
-import { defaultParty, isDown, allDown, countItem, takeItem, heal, bonus } from './party.ts';
+import { defaultParty, isDown, allDown, countItem, takeItem, heal, spellHeal } from './party.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps/index.ts';
 import type { GameMap, Feature } from './map.ts';
@@ -175,7 +175,7 @@ export class Game {
       case 'wizard_eye': this.world.revealAll(6); this.say(`${c.name} casts ${sp.name}. The map fills in around you.`); break;
       case 'town_portal': { const name = this.world.townPortal(); this.say(`${c.name} casts ${sp.name}. The world folds, and you stand in ${name}.`); this.enterCell(); break; }
       default:
-        if (sp.target === 'party' && sp.heal) { for (const t of this.party.members) heal(t, sp.heal + bonus(c.stats.personality)); this.say(`${c.name} casts ${sp.name}. The party is healed.`); }
+        if (sp.target === 'party' && sp.heal) { for (const t of this.party.members) heal(t, spellHeal(c, sp.heal)); this.say(`${c.name} casts ${sp.name}. The party is healed.`); }
         else this.say(`${c.name} casts ${sp.name}.`);
     }
   }
