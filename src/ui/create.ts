@@ -8,7 +8,7 @@ import { makeRng } from '../lib/engine/rng.ts';
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { panel, menu, paragraph } from './draw.ts';
 import { INK, BRASS, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';
-import { RACES, CLASSES, STATS, createCharacter, createParty, defaultParty, bonus } from '../game/party.ts';
+import { RACES, CLASSES, TRAITS, STATS, createCharacter, createParty, defaultParty, bonus } from '../game/party.ts';
 import type { Character, RaceId, ClassId, Stats } from '../game/party.ts';
 
 type Step = 'intro' | 'name' | 'race' | 'class' | 'stats' | 'review';
@@ -130,7 +130,8 @@ export class CreateScreen implements Screen {
       case 'class':
         drawText(ctx, `${this.name.toUpperCase()} THE ${RACES[this.race].name.toUpperCase()}  -  CLASS`, x, y, { size: 1, color: BRASS }); y += 14;
         y = menu(ctx, CLASS_IDS.map((c) => CLASSES[c].name), x, y, this.sel) + 6;
-        paragraph(ctx, CLASSES[CLASS_IDS[this.sel]].blurb + `  Kit: ${CLASSES[CLASS_IDS[this.sel]].kit.join(', ')}.`, x, y, 360, { color: TEXT });
+        y = paragraph(ctx, CLASSES[CLASS_IDS[this.sel]].blurb + `  Kit: ${CLASSES[CLASS_IDS[this.sel]].kit.join(', ')}.`, x, y, 360, { color: TEXT }) + 6;
+        for (const t of CLASSES[CLASS_IDS[this.sel]].traits) y = paragraph(ctx, `${TRAITS[t].name.toUpperCase()}: ${TRAITS[t].text}`, x, y, 360, { color: TEXT_DIM }) + 2;
         break;
       case 'stats': {
         drawText(ctx, `${this.name.toUpperCase()}, ${RACES[this.race].name.toUpperCase()} ${CLASSES[this.cls].name.toUpperCase()}  -  STATS`, x, y, { size: 1, color: BRASS }); y += 14;

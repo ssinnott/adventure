@@ -35,8 +35,45 @@ export interface ClassDef {
   attack: number;
   /** Starting kit. */
   kit: readonly string[];
+  /** Passive traits, always on. */
+  traits: readonly TraitId[];
   blurb: string;
 }
+
+export type TraitId =
+  | 'stalwart' | 'weapon_master' | 'holy_strike' | 'divine_health' | 'marksman' | 'keen_eyes' | 'healing_hands'
+  | 'faith' | 'spellfire' | 'iron_will' | 'sneak_attack' | 'rage' | 'die_hard' | 'unarmoured' | 'stillness'
+  | 'inspire' | 'natures_ward';
+
+export interface TraitDef {
+  id: TraitId; name: string; text: string;
+  /** Conditions the trait makes its holder immune to. */
+  immune?: readonly Condition[];
+}
+
+/** What the numeric traits are worth; combat.ts and armorClass read these. */
+export const STALWART_AC = 2, WEAPON_MASTER_DMG = 1, HOLY_STRIKE_DMG = 3, MARKSMAN_DMG = 2, HEALING_HANDS = 3,
+  SPELLFIRE_DMG = 2, SNEAK_ATTACK_DMG = 4, RAGE_DMG = 3, DIE_HARD_AT = -20, INSPIRE_HIT = 1;
+
+export const TRAITS: Record<TraitId, TraitDef> = {
+  stalwart:      { id: 'stalwart', name: 'Stalwart', text: `+${STALWART_AC} AC.` },
+  weapon_master: { id: 'weapon_master', name: 'Weapon Master', text: `+${WEAPON_MASTER_DMG} melee damage.` },
+  holy_strike:   { id: 'holy_strike', name: 'Holy Strike', text: `+${HOLY_STRIKE_DMG} damage to the mindless dead.` },
+  divine_health: { id: 'divine_health', name: 'Divine Health', text: 'Immune to disease.', immune: ['diseased'] },
+  marksman:      { id: 'marksman', name: 'Marksman', text: `+${MARKSMAN_DMG} damage with ranged weapons.` },
+  keen_eyes:     { id: 'keen_eyes', name: 'Keen Eyes', text: 'Always finds a secret door when searching.' },
+  healing_hands: { id: 'healing_hands', name: 'Healing Hands', text: `Healing spells restore ${HEALING_HANDS} more.` },
+  faith:         { id: 'faith', name: 'Faith', text: 'Immune to curses.', immune: ['cursed'] },
+  spellfire:     { id: 'spellfire', name: 'Spellfire', text: `Damage spells deal +${SPELLFIRE_DMG} to each foe.` },
+  iron_will:     { id: 'iron_will', name: 'Iron Will', text: 'Immune to sleep.', immune: ['asleep'] },
+  sneak_attack:  { id: 'sneak_attack', name: 'Sneak Attack', text: `+${SNEAK_ATTACK_DMG} damage in a fight's first round.` },
+  rage:          { id: 'rage', name: 'Rage', text: `+${RAGE_DMG} melee damage while below half hp.` },
+  die_hard:      { id: 'die_hard', name: 'Die Hard', text: `Dies only at ${DIE_HARD_AT} hp, not -10.` },
+  unarmoured:    { id: 'unarmoured', name: 'Unarmoured Defence', text: 'In a robe or less, no shield: +1 AC, +1 more every two levels.' },
+  stillness:     { id: 'stillness', name: 'Stillness', text: 'Immune to paralysis.', immune: ['paralysed'] },
+  inspire:       { id: 'inspire', name: 'Inspiring Song', text: `While standing, the party hits +${INSPIRE_HIT} more often.` },
+  natures_ward:  { id: 'natures_ward', name: "Nature's Ward", text: 'Immune to poison.', immune: ['poisoned'] },
+};
 
 export const RACES: Record<RaceId, RaceDef> = {
   human:    { id: 'human', name: 'Human', mods: {}, blurb: 'Balanced. Standing rises fastest.' },
@@ -48,16 +85,16 @@ export const RACES: Record<RaceId, RaceDef> = {
 };
 
 export const CLASSES: Record<ClassId, ClassDef> = {
-  knight:   { id: 'knight', name: 'Knight', hpDie: 10, spDie: 0, attack: 3, kit: ['longsword', 'scale', 'buckler'], blurb: 'The wall. Best weapons and armour.' },
-  paladin:  { id: 'paladin', name: 'Paladin', hpDie: 8, spDie: 3, spStat: 'personality', spells: 'cleric', attack: 2, kit: ['mace', 'leather', 'buckler'], blurb: 'Fights and heals a little.' },
-  ranger:   { id: 'ranger', name: 'Ranger', hpDie: 8, spDie: 2, spStat: 'intellect', spells: 'druid', attack: 2, kit: ['shortsword', 'leather', 'shortbow'], blurb: 'Bows and a little druid magic. Pathfinder.' },
-  cleric:   { id: 'cleric', name: 'Cleric', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['mace', 'robe'], blurb: 'Heals, cures, protects.' },
-  sorcerer: { id: 'sorcerer', name: 'Sorcerer', hpDie: 4, spDie: 8, spStat: 'intellect', spells: 'sorcerer', attack: 0, kit: ['dagger', 'robe'], blurb: 'Damage and the spells that open the map.' },
-  thief:    { id: 'thief', name: 'Thief', hpDie: 6, spDie: 0, attack: 2, kit: ['shortsword', 'leather', 'sling'], blurb: 'Locks, traps, and hitting first.' },
-  barbarian: { id: 'barbarian', name: 'Barbarian', hpDie: 12, spDie: 0, attack: 3, kit: ['axe', 'leather'], blurb: 'Most hp of all. Big weapons, light armour.' },
-  monk:     { id: 'monk', name: 'Monk', hpDie: 8, spDie: 0, attack: 3, kit: ['staff', 'robe'], blurb: 'Staff and robe, no steel. Quick.' },
-  bard:     { id: 'bard', name: 'Bard', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['shortsword', 'leather', 'sling'], blurb: 'A blade, a song, and some healing.' },
-  druid:    { id: 'druid', name: 'Druid', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, kit: ['staff', 'leather'], blurb: 'Thorn, storm and mending. Wears leather.' },
+  knight:   { id: 'knight', name: 'Knight', hpDie: 10, spDie: 0, attack: 3, kit: ['longsword', 'scale', 'buckler'], traits: ['stalwart', 'weapon_master'], blurb: 'The wall. Best weapons and armour.' },
+  paladin:  { id: 'paladin', name: 'Paladin', hpDie: 8, spDie: 3, spStat: 'personality', spells: 'cleric', attack: 2, kit: ['mace', 'leather', 'buckler'], traits: ['holy_strike', 'divine_health'], blurb: 'Fights and heals a little.' },
+  ranger:   { id: 'ranger', name: 'Ranger', hpDie: 8, spDie: 2, spStat: 'intellect', spells: 'druid', attack: 2, kit: ['shortsword', 'leather', 'shortbow'], traits: ['marksman', 'keen_eyes'], blurb: 'Bows and a little druid magic. Pathfinder.' },
+  cleric:   { id: 'cleric', name: 'Cleric', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['mace', 'robe'], traits: ['healing_hands', 'faith'], blurb: 'Heals, cures, protects.' },
+  sorcerer: { id: 'sorcerer', name: 'Sorcerer', hpDie: 4, spDie: 8, spStat: 'intellect', spells: 'sorcerer', attack: 0, kit: ['dagger', 'robe'], traits: ['spellfire', 'iron_will'], blurb: 'Damage and the spells that open the map.' },
+  thief:    { id: 'thief', name: 'Thief', hpDie: 6, spDie: 0, attack: 2, kit: ['shortsword', 'leather', 'sling'], traits: ['sneak_attack', 'keen_eyes'], blurb: 'Locks, traps, and hitting first.' },
+  barbarian: { id: 'barbarian', name: 'Barbarian', hpDie: 12, spDie: 0, attack: 3, kit: ['axe', 'leather'], traits: ['rage', 'die_hard'], blurb: 'Most hp of all. Big weapons, light armour.' },
+  monk:     { id: 'monk', name: 'Monk', hpDie: 8, spDie: 0, attack: 3, kit: ['staff', 'robe'], traits: ['unarmoured', 'stillness'], blurb: 'Staff and robe, no steel. Quick.' },
+  bard:     { id: 'bard', name: 'Bard', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['shortsword', 'leather', 'sling'], traits: ['inspire'], blurb: 'A blade, a song, and some healing.' },
+  druid:    { id: 'druid', name: 'Druid', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, kit: ['staff', 'leather'], traits: ['natures_ward', 'healing_hands'], blurb: 'Thorn, storm and mending. Wears leather.' },
 };
 
 export type Condition = 'asleep' | 'poisoned' | 'diseased' | 'paralysed' | 'cursed' | 'stoned' | 'unconscious' | 'dead';
@@ -144,6 +181,8 @@ export function equip(c: Character, id: string): boolean {
 export function armorClass(c: Character): number {
   let ac = 10 + bonus(c.stats.speed);
   for (const slot of ['armor', 'shield'] as const) { const id = c.equipment[slot]; if (id) ac += ITEMS[id].ac ?? 0; }
+  if (hasTrait(c, 'stalwart')) ac += STALWART_AC;
+  if (hasTrait(c, 'unarmoured') && !c.equipment.shield && (ITEMS[c.equipment.armor ?? '']?.ac ?? 0) <= 1) ac += 1 + Math.floor(c.level / 2);
   return ac;
 }
 
@@ -160,8 +199,13 @@ export function canAct(c: Character): boolean {
   return !isDown(c) && !c.conditions.some((k) => k === 'asleep' || k === 'paralysed');
 }
 export function hasCondition(c: Character, k: Condition): boolean { return c.conditions.includes(k); }
+export function hasTrait(c: Character, t: TraitId): boolean { return CLASSES[c.cls].traits.includes(t); }
+/** Whether race or class keeps the condition off entirely. */
+export function immuneTo(c: Character, k: Condition): boolean {
+  return !!RACES[c.race].resist?.includes(k) || CLASSES[c.cls].traits.some((t) => TRAITS[t].immune?.includes(k));
+}
 export function addCondition(c: Character, k: Condition): void {
-  if (RACES[c.race].resist?.includes(k)) return;
+  if (immuneTo(c, k)) return;
   if (!c.conditions.includes(k)) c.conditions.push(k);
 }
 export function removeCondition(c: Character, k: Condition): void { c.conditions = c.conditions.filter((x) => x !== k); }
@@ -175,9 +219,15 @@ export function worstCondition(c: Character): Condition | null {
 export function damage(c: Character, n: number): void {
   if (isDown(c)) return;
   c.hp -= n;
-  if (c.hp <= -10) { c.hp = -10; removeCondition(c, 'unconscious'); addCondition(c, 'dead'); }
+  const deadAt = hasTrait(c, 'die_hard') ? DIE_HARD_AT : -10;
+  if (c.hp <= deadAt) { c.hp = deadAt; removeCondition(c, 'unconscious'); addCondition(c, 'dead'); }
   else if (c.hp <= 0) addCondition(c, 'unconscious');
   if (c.hp <= 0) { removeCondition(c, 'asleep'); }
+}
+
+/** What a healing spell of `base` restores when this caster casts it. */
+export function spellHeal(caster: Character, base: number): number {
+  return base + bonus(caster.stats.personality) + (hasTrait(caster, 'healing_hands') ? HEALING_HANDS : 0);
 }
 
 export function heal(c: Character, n: number): number {

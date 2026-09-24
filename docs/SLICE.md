@@ -55,6 +55,15 @@ cap, which is 10 until promotions exist:
   Foxfire, Barkskin, Salve, Hawk's Eye, Stinging Swarm, Regrowth, Hailstorm, Heart of the Stag,
   Tempest). The Ranger now draws on the druid list, not the sorcerer's. Both Lantern guilds teach
   bards and druids.
+- **Class traits.** Every class has one or two passives (`TRAITS` in `party.ts`), listed on the
+  class picker and the character sheet. Knight: Stalwart (+2 AC), Weapon Master (+1 melee).
+  Paladin: Holy Strike (+3 on the mindless dead), Divine Health (no disease). Ranger: Marksman (+2
+  ranged), Keen Eyes (always finds secret doors). Cleric: Healing Hands (+3 on heals), Faith (no
+  curses). Sorcerer: Spellfire (+2 per foe on damage spells), Iron Will (no sleep). Thief: Sneak
+  Attack (+4 in round one), Keen Eyes. Barbarian: Rage (+3 melee below half hp), Die Hard (dies at
+  -20). Monk: Unarmoured Defence (robe or less: +1 AC, +1 per two levels), Stillness (no
+  paralysis). Bard: Inspiring Song (+1 to-hit for the party while standing). Druid: Nature's Ward
+  (no poison), Healing Hands.
 - **Gear.** A Thornmark tier in the Armoury: war hammer, battle axe, great sword, crossbow, the
   Thornmark bow, rune dagger, grove staff, runed robe, brigandine, plate, tower shield, elixirs,
   sapphire vials, lantern oil.
