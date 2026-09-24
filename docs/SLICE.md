@@ -49,6 +49,12 @@ cap, which is 10 until promotions exist:
   Sorcerer: Haste (party speed and to-hit), Chain Lightning and Meteor Swarm (every foe, scaling
   with level), Town Portal (back to the last town stood in; `lastTown` in the world state).
   Combat carries Bless, Ward and Haste timers side by side.
+- **Classes.** Ten: Knight, Paladin, Ranger, Cleric, Sorcerer, Thief, plus Barbarian (d12 hp, martial
+  weapons, leather and brigandine only), Monk (staff and robe, levels into Speed), Bard (a
+  half-caster on the cleric list) and Druid (a full caster on the new druid list: Thorn Lash,
+  Foxfire, Barkskin, Salve, Hawk's Eye, Stinging Swarm, Regrowth, Hailstorm, Heart of the Stag,
+  Tempest). The Ranger now draws on the druid list, not the sorcerer's. Both Lantern guilds teach
+  bards and druids.
 - **Gear.** A Thornmark tier in the Armoury: war hammer, battle axe, great sword, crossbow, the
   Thornmark bow, rune dagger, grove staff, runed robe, brigandine, plate, tower shield, elixirs,
   sapphire vials, lantern oil.

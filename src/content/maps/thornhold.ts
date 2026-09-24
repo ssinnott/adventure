@@ -37,7 +37,7 @@ export const THORNHOLD: MapDef = {
     { kind: 'inn', x: 4, y: 4, name: 'The Green Man', price: 20 },
     { kind: 'temple', x: 11, y: 4, name: 'Lantern Chapterhouse' },
     { kind: 'shop', x: 4, y: 10, name: 'Thornhold Armoury', stock: ['longsword', 'warhammer', 'battleaxe', 'greatsword', 'crossbow', 'elfbow', 'rune_dagger', 'grove_staff', 'chain', 'runed_robe', 'brigandine', 'plate', 'tower_shield', 'elixir', 'potion_sp_great', 'lantern_oil', 'rations'] },
-    { kind: 'guild', x: 11, y: 10, name: 'Thornhold Lantern Hall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger'], fee: 200, maxTier: 4 },
+    { kind: 'guild', x: 11, y: 10, name: 'Thornhold Lantern Hall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 200, maxTier: 4 },
     { kind: 'trainer', x: 3, y: 13, name: "The Elder's Yard", maxLevel: 10 },
     { kind: 'npc', x: 12, y: 13, name: 'The Split Oak', lines: [
       'A tavern built around a living oak. The elves drink slowly and watch the door.',

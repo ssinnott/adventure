@@ -11,7 +11,7 @@ export const STATS: readonly Stat[] = ['might', 'intellect', 'personality', 'end
 export type Stats = Record<Stat, number>;
 
 export type RaceId = 'human' | 'dwarf' | 'elf' | 'gnome' | 'tidefolk' | 'orcblood';
-export type ClassId = 'knight' | 'paladin' | 'ranger' | 'cleric' | 'sorcerer' | 'thief';
+export type ClassId = 'knight' | 'paladin' | 'ranger' | 'cleric' | 'sorcerer' | 'thief' | 'barbarian' | 'monk' | 'bard' | 'druid';
 
 export interface RaceDef {
   id: RaceId; name: string;
@@ -50,10 +50,14 @@ export const RACES: Record<RaceId, RaceDef> = {
 export const CLASSES: Record<ClassId, ClassDef> = {
   knight:   { id: 'knight', name: 'Knight', hpDie: 10, spDie: 0, attack: 3, kit: ['longsword', 'scale', 'buckler'], blurb: 'The wall. Best weapons and armour.' },
   paladin:  { id: 'paladin', name: 'Paladin', hpDie: 8, spDie: 3, spStat: 'personality', spells: 'cleric', attack: 2, kit: ['mace', 'leather', 'buckler'], blurb: 'Fights and heals a little.' },
-  ranger:   { id: 'ranger', name: 'Ranger', hpDie: 8, spDie: 2, spStat: 'intellect', spells: 'sorcerer', attack: 2, kit: ['shortsword', 'leather', 'shortbow'], blurb: 'Bows and a little magic. Pathfinder.' },
+  ranger:   { id: 'ranger', name: 'Ranger', hpDie: 8, spDie: 2, spStat: 'intellect', spells: 'druid', attack: 2, kit: ['shortsword', 'leather', 'shortbow'], blurb: 'Bows and a little druid magic. Pathfinder.' },
   cleric:   { id: 'cleric', name: 'Cleric', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['mace', 'robe'], blurb: 'Heals, cures, protects.' },
   sorcerer: { id: 'sorcerer', name: 'Sorcerer', hpDie: 4, spDie: 8, spStat: 'intellect', spells: 'sorcerer', attack: 0, kit: ['dagger', 'robe'], blurb: 'Damage and the spells that open the map.' },
   thief:    { id: 'thief', name: 'Thief', hpDie: 6, spDie: 0, attack: 2, kit: ['shortsword', 'leather', 'sling'], blurb: 'Locks, traps, and hitting first.' },
+  barbarian: { id: 'barbarian', name: 'Barbarian', hpDie: 12, spDie: 0, attack: 3, kit: ['axe', 'leather'], blurb: 'Most hp of all. Big weapons, light armour.' },
+  monk:     { id: 'monk', name: 'Monk', hpDie: 8, spDie: 0, attack: 3, kit: ['staff', 'robe'], blurb: 'Staff and robe, no steel. Quick.' },
+  bard:     { id: 'bard', name: 'Bard', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['shortsword', 'leather', 'sling'], blurb: 'A blade, a song, and some healing.' },
+  druid:    { id: 'druid', name: 'Druid', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, kit: ['staff', 'leather'], blurb: 'Thorn, storm and mending. Wears leather.' },
 };
 
 export type Condition = 'asleep' | 'poisoned' | 'diseased' | 'paralysed' | 'cursed' | 'stoned' | 'unconscious' | 'dead';
@@ -208,7 +212,7 @@ export function levelUp(c: Character, rng: RngInstance): number {
     }
     // One stat point in the class's leaning, every other level.
     if (c.level % 2 === 0) {
-      const s: Stat = cd.spStat ?? (c.cls === 'thief' ? 'speed' : 'might');
+      const s: Stat = cd.spStat ?? (c.cls === 'thief' || c.cls === 'monk' ? 'speed' : 'might');
       c.stats[s]++;
     }
   }

@@ -35,7 +35,7 @@ export const HARROW: MapDef = {
     { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12 },
     { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns' },
     { kind: 'shop', x: 4, y: 10, name: 'Harrow Provisioner', stock: ['club', 'dagger', 'staff', 'shortsword', 'mace', 'spear', 'sling', 'shortbow', 'robe', 'leather', 'buckler', 'potion_heal', 'antidote', 'rations', 'torch'] },
-    { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger'], fee: 50 },
+    { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50 },
     { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6 },
     { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', lines: [
       'The tavern is loud and smells of eel.',

@@ -4,7 +4,7 @@
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps, MAP_DEFS } from '../src/content/maps/index.ts';
 import { World } from '../src/game/world.ts';
-import { defaultParty, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition } from '../src/game/party.ts';
+import { defaultParty, createCharacter, CLASSES, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, WARD_AC } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
@@ -246,7 +246,7 @@ const suites: Record<string, () => void> = {
     ok(Object.values(SPELLS).every((sp) => sp.sp > 0), 'every spell costs something');
     // The road to level 10: tiers land at 1, 2, 4, 6, 8; levelling stops at the cap; nothing is left to train.
     ok([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join() === '1,2,2,3,3,4,4,5,5,5', `spell tiers by level are ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join()}`);
-    for (const list of ['cleric', 'sorcerer'] as const) for (let t = 1; t <= 5; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
+    for (const list of ['cleric', 'sorcerer', 'druid'] as const) for (let t = 1; t <= 5; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
     const c = p.members[4];
     c.xp = 1_000_000;
     const gained = levelUp(c, rng);
@@ -256,6 +256,14 @@ const suites: Record<string, () => void> = {
     ok(c.maxHp >= 9 * 1 + 8 && c.maxSp > 20, `hp and sp grew with the levels (hp ${c.maxHp}, sp ${c.maxSp})`);
     const k = p.members[0]; k.xp = xpForLevel(8);
     ok(levelUp(k, rng) === 7 && k.level === 8 && k.spells.length === 0, 'a knight levels to 8 on level-8 xp and learns no spells');
+    // Every class can wear its own starting kit, and every caster's list has spells to give.
+    for (const cd of Object.values(CLASSES)) {
+      const m = createCharacter('Test', 'human', cd.id, {}, makeRng(9));
+      ok(cd.kit.every((id) => !ITEMS[id].classes || ITEMS[id].classes!.includes(cd.id)) && !!m.equipment.weapon && !!m.equipment.armor, `a ${cd.name} may use its whole starting kit`);
+      ok(!cd.spells || m.spells.length > 0, `a ${cd.name} starts with ${cd.spells ? 'spells' : 'no spells'}`);
+    }
+    const r = p.members[2]; r.xp = xpForLevel(4); levelUp(r, rng);
+    ok(r.spells.includes('thorn') && r.spells.includes('barkskin') && !r.spells.includes('spark'), 'the ranger learns the druid list');
     ok(xpForLevel(MAX_LEVEL) === 13050, `level ${MAX_LEVEL} costs ${xpForLevel(MAX_LEVEL)} xp`);
   },
 
