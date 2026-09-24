@@ -1,4 +1,7 @@
-// The spider family: marsh spider and thorn spider. An arachnid is two bulbs on a narrow waist,
+// The spider family: marsh spider, thorn spider, rift crawler -- and the shore crab, which is not
+// an arachnid and does not use the eight-legged rig the other three share: a crab is one wide flat
+// carapace, eyes up on stalks, two chelae held forward and only six walking legs, all of it low.
+// The spider family proper: An arachnid is two bulbs on a narrow waist,
 // and both are the same chitin, so unioning them into one mass the way a single material usually
 // wants leaves an undifferentiated blob with legs. Each body SECTION is therefore its own blob
 // with its own contour: the abdomen, then the cephalothorax and its mouthparts over it, then the
@@ -13,10 +16,12 @@ import type { Part, Crease } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider'];
+export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'thorn_spider') thorn(ctx, x, y, h, p);
+  else if (kind === 'crab') crab(ctx, x, y, h, p);
+  else if (kind === 'rift_crawler') crawler(ctx, x, y, h, p);
   else marsh(ctx, x, y, h, p);
 };
 
@@ -265,4 +270,174 @@ function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   glow(ctx, B, cx, cy - h * 0.1, h * 0.14, '#c0d040', 0.18, '#f0f090');
   eyes(ctx, cx, cy - h * 0.1, h, shade('#d8e048', Math.max(0.6, p.tone)));
   fangs(ctx, cx, cy + h * 0.04, h, h * 0.04, h * 0.17, shade('#e4dcc4', p.tone));
+}
+
+// ------------------------------------------------------------------ the crab ----
+/**
+ * One chela: an upper arm, a forearm, then a hand of two jaws -- a fixed lower one carrying on
+ * from the forearm and a hinged upper one that closes onto it. The gape between them is the whole
+ * of what makes a claw a claw, so it is drawn as a gap in the silhouette rather than as a crease.
+ */
+function chela(ctx: CanvasRenderingContext2D, sh: Pt2, el: Pt2, wr: Pt2, aim: number, s: number,
+  h: number, hex: string, seed: number, k: number): void {
+  const ux = Math.cos(aim), uy = Math.sin(aim), nx = -uy, ny = ux;
+  const P = (u: number, v: number): number[] => [wr.x + ux * h * u + nx * h * v * s, wr.y + uy * h * u + ny * h * v * s];
+  blob(ctx, B, hex, [
+    { k: 'cap', x0: sh.x, y0: sh.y, x1: el.x, y1: el.y, r0: h * 0.038 * k, r1: h * 0.03 * k },
+    { k: 'cap', x0: el.x, y0: el.y, x1: wr.x, y1: wr.y, r0: h * 0.031 * k, r1: h * 0.036 * k },
+    // the palm, and the fixed lower jaw tapering off it to a point
+    { k: 'ell', x: P(0.04 * k, 0.004 * k)[0], y: P(0.04 * k, 0.004 * k)[1], rx: h * 0.084 * k, ry: h * 0.066 * k, rot: aim },
+    { k: 'cap', x0: P(0.07 * k, 0.03 * k)[0], y0: P(0.07 * k, 0.03 * k)[1],
+      x1: P(0.204 * k, 0.046 * k)[0], y1: P(0.204 * k, 0.046 * k)[1], r0: h * 0.038 * k, r1: h * 0.013 * k },
+  ], { h, formK: 0.55, spread: 0.8, tex: 'stipple', seed: seed + 1, amount: 0.35 });
+  // The hinged jaw, its own mass and angled UP off the lower one, so the gape is a wedge of
+  // background rather than a crease -- which is the whole of what makes a claw a claw.
+  blob(ctx, B, shade(hex, 1.08), [
+    { k: 'cap', x0: P(0.06 * k, -0.03 * k)[0], y0: P(0.06 * k, -0.03 * k)[1],
+      x1: P(0.192 * k, -0.074 * k)[0], y1: P(0.192 * k, -0.074 * k)[1], r0: h * 0.034 * k, r1: h * 0.012 * k },
+  ], { h, formK: 0.6, spread: 0.7 });
+}
+
+/** Where a crab's parts sit. Its own layout: nothing here is shaped like the spiders' rig. */
+interface Pt2 { x: number; y: number }
+
+/**
+ * The shore crab. It shipped reusing the marsh spider at a red tint, which is not a tint problem
+ * but a wrong-animal problem: a crab has no waist, no eight legs and no cephalothorax. This one is
+ * a single wide flat carapace sat low with its eyes on stalks, two chelae held forward with the
+ * near one the larger, and three pairs of short walking legs stepping out from under the shell.
+ */
+function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const bob = p.breathe * h * 0.01;
+  const shell = shade(p.base, 1), rim = shade(p.light, 1.02), dark = shade(p.dark, 0.85);
+  const cy = y - h * 0.325 + bob, cw = h * 0.35, ch = h * 0.135;
+  groundShadow(ctx, x, y + 1, h * 0.86);
+
+  // The walking legs, behind the shell: three pairs, each a thigh and a pointed dactyl, stepping
+  // shorter as they go back so the animal reads as facing us rather than standing side on.
+  const legs: Part[] = [];
+  for (const s of [-1, 1] as const) for (let i = 0; i < 3; i++) {
+    const tw = Math.sin(p.frame / 9 + i * 2.1 + s * 0.8) * h * 0.011;
+    const out = 0.34 + i * 0.05, drop = 0.03 + i * 0.012;
+    const hipx = x + s * cw * 0.72, hipy = cy + h * (0.03 + i * 0.03);
+    const kx = x + s * h * out, ky = y - h * (0.33 - i * 0.02) + tw;
+    const fx = x + s * h * (out + 0.085), fy = y - h * drop;
+    legs.push({ k: 'cap', x0: hipx, y0: hipy, x1: kx, y1: ky, r0: h * 0.034, r1: h * 0.024 });
+    legs.push({ k: 'tube', pts: [kx, ky, (kx + fx) / 2 + s * h * 0.016, (ky + fy) / 2, fx, fy], r0: h * 0.022, r1: h * 0.005, wobble: 0.05, seed: 70 + i * 2 + (s > 0 ? 1 : 0) });
+  }
+  blob(ctx, B, dark, legs, { h, formK: 0.45, spread: 0.7 });
+
+  // The carapace: one wide flat shell, notched along the front edge the way a crab's is, and
+  // clearly wider than it is tall -- the single thing that says crab and not spider.
+  blob(ctx, B, shell, [{ k: 'curve', pts: [
+    x - cw, cy + ch * 0.1, x - cw * 0.92, cy - ch * 0.5, x - cw * 0.58, cy - ch * 0.88,
+    x - cw * 0.2, cy - ch * 1.0, x + cw * 0.24, cy - ch * 0.98, x + cw * 0.62, cy - ch * 0.84,
+    x + cw * 0.94, cy - ch * 0.46, x + cw, cy + ch * 0.14, x + cw * 0.66, cy + ch * 0.8,
+    x + cw * 0.2, cy + ch * 1.0, x - cw * 0.26, cy + ch * 0.98, x - cw * 0.7, cy + ch * 0.76,
+  ], wobble: 0.035, spiky: 0.02, seed: 60, sub: 3 }],
+    { h, formK: 0.6, spread: 0.85, tex: 'stipple', seed: 61, amount: 0.5, creases: [
+      { x0: x - cw * 0.5, y0: cy - ch * 0.1, x1: x + cw * 0.52, y1: cy - ch * 0.06, r: h * 0.02, a: 0.3 },
+      { x0: x - cw * 0.16, y0: cy - ch * 0.5, x1: x - cw * 0.12, y1: cy + ch * 0.7, r: h * 0.018, a: 0.26 },
+    ] });
+  // The lit ridge along the shell's front, and the granulation on it.
+  softLine(ctx, B, [x - cw * 0.76, cy + ch * 0.62, x, cy + ch * 0.84, x + cw * 0.72, cy + ch * 0.62], rim, Math.max(1, h * 0.012), 0.45);
+  if (!B.override && h >= 34) for (let i = 0; i < 7; i++) {
+    const a = (i / 7) * Math.PI * 2, gx = x + Math.cos(a) * cw * 0.5, gy = cy + Math.sin(a) * ch * 0.46;
+    patch(ctx, B, rim, [{ k: 'ell', x: gx, y: gy, rx: h * 0.014, ry: h * 0.01 }], { alpha: 0.2, feather: 0.9 });
+  }
+
+  // Eyes up on their stalks, out of the shell's front edge: the crab's other signature.
+  for (const s of [-1, 1] as const) {
+    const ex = x + s * cw * 0.3, ey = cy - ch * 0.8;
+    const tx = ex + s * h * 0.016, ty = ey - h * 0.072 - bob * 0.5;
+    blob(ctx, B, shade(shell, 1.06), [{ k: 'cap', x0: ex, y0: ey + h * 0.014, x1: tx, y1: ty, r0: h * 0.019, r1: h * 0.017 }], { h, formK: 0.5, spread: 0.6 });
+    eye(ctx, tx, ty - h * 0.004, h * 0.022, shade('#161014', Math.max(0.6, p.tone)), false);
+    if (!B.override) { ctx.fillStyle = B.col(rgba('#ffffff', 0.7)); ctx.beginPath(); ctx.arc(tx - h * 0.008, ty - h * 0.012, Math.max(0.7, h * 0.008), 0, Math.PI * 2); ctx.fill(); }
+  }
+  // The mouthparts, a dark plate low on the front of the shell.
+  blob(ctx, B, dark, [{ k: 'curve', pts: ring(x + cw * 0.02, cy + ch * 0.82, cw * 0.17, ch * 0.2, 7, 63), wobble: 0.08, seed: 64, sub: 2 }], { h, formK: 0.5, spread: 0.6, outline: false });
+
+  // The chelae, both in front of the shell where a crab actually carries them: the far one smaller
+  // and a step darker, the near one the big crusher. The gape runs across the silhouette, so the
+  // claw reads as a claw rather than as a paddle folded against the flank.
+  chela(ctx, { x: x - cw * 0.62, y: cy + h * 0.05 }, { x: x - h * 0.31, y: cy + h * 0.13 },
+    { x: x - h * 0.205, y: y - h * 0.135 }, Math.PI + 0.26, -1, h, dark, 74, 0.94);
+  chela(ctx, { x: x + cw * 0.64, y: cy + h * 0.06 }, { x: x + h * 0.33, y: cy + h * 0.14 },
+    { x: x + h * 0.215, y: y - h * 0.15 }, -0.26, 1, h, shell, 77, 1.3);
+  void p.light;
+}
+
+// ------------------------------------------------------------------ rift crawler ----
+/**
+ * The rift crawler: the one of these four that IS an arachnid corrupted, so it keeps the eight-leg
+ * rig and changes its material instead. Chitin gone to crystal shard, a molten core burning in the
+ * abdomen and leaking out of the seams between the plates, and every leg tipped in a hot point.
+ * It borrows the Rift family's language -- a dark gap in the stone with a glow behind it -- rather
+ * than the marsh spider's, because that is what says what has happened to it.
+ */
+function crawler(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = rig(x, y, h, p.frame, p.breathe, 0.98);
+  const { ax, ay, cx, cy } = R;
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 7);
+  const shard = mix(p.base, '#5a2418', 0.22);
+  const hot = '#ff8a30', heart = '#fff0c8';
+  groundShadow(ctx, x + h * 0.02, y + 1, h * 1.85);
+  glow(ctx, B, ax, ay, h * 0.46, hot, 0.16 + pulse * 0.08, hot);
+
+  const rear = R.legs.filter((l) => l.i >= 2), near = R.legs.filter((l) => l.i < 2);
+  blob(ctx, B, shade(shard, 0.62), rear.flatMap((l) => legParts(l, h, 0.052, 0.014, 0.05)),
+    { h, formK: 0.4, spread: 0.8, creases: legCreases(rear, h, 0.045) });
+  // The abdomen: a faceted lump rather than a bulb, with shards standing off its back.
+  const abdomen: Part[] = [{ k: 'curve', pts: ring(ax, ay, h * 0.3, h * 0.25, 9, 4), wobble: 0.05, spiky: 0.12, seed: 86, sub: 2 }];
+  for (let i = 0; i < 5; i++) {
+    const a = -2.85 + i * 0.55, len = h * (0.1 + ((i * 3) % 4) * 0.028);
+    const bx = ax + Math.cos(a) * h * 0.27, by = ay + Math.sin(a) * h * 0.22;
+    abdomen.push({ k: 'poly', pts: [bx - h * 0.036, by + h * 0.022, bx + h * 0.036, by - h * 0.004, bx + Math.cos(a) * len, by + Math.sin(a) * len] });
+  }
+  blob(ctx, B, shard, abdomen, { h, formK: 0.5, spread: 0.72, gloss: 0.3 });
+  // The core burning inside it, and the seams its light escapes along.
+  if (!B.override) {
+    glow(ctx, B, ax + h * 0.02, ay + h * 0.03, h * 0.17 * (1 + pulse * 0.16), hot, 0.5 + pulse * 0.3, heart);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const seam of [
+      [ax - h * 0.2, ay - h * 0.06, ax - h * 0.04, ay + h * 0.03, ax + h * 0.02, ay + h * 0.16],
+      [ax + h * 0.02, ay + h * 0.03, ax + h * 0.16, ay - h * 0.09, ax + h * 0.25, ay - h * 0.06],
+      [ax - h * 0.05, ay + h * 0.02, ax - h * 0.12, ay + h * 0.16],
+    ]) {
+      for (const [w, a] of [[h * 0.028, 0.18], [h * 0.011, 0.55 + pulse * 0.3]] as const) {
+        ctx.strokeStyle = B.col(rgba(hot, a)); ctx.lineWidth = Math.max(1, w);
+        ctx.beginPath(); ctx.moveTo(seam[0], seam[1]);
+        for (let i = 2; i < seam.length; i += 2) ctx.lineTo(seam[i], seam[i + 1]);
+        ctx.stroke();
+      }
+    }
+  }
+  blob(ctx, B, shade(shard, 0.8), [{ k: 'tube', pts: [ax + h * 0.2, ay + h * 0.13, cx - h * 0.1, cy - h * 0.06], r0: h * 0.07, r1: h * 0.08 }], { h, form: false });
+  blob(ctx, B, shade(shard, 0.94), near.flatMap((l) => legParts(l, h, 0.056, 0.015, 0.05)),
+    { h, formK: 0.5, spread: 0.75, creases: legCreases(near, h, 0.05) });
+  // The cephalothorax, faceted, with the fangs under it.
+  blob(ctx, B, shade(shard, 1.1), [
+    { k: 'curve', pts: ring(cx, cy, h * 0.3, h * 0.24, 8, 7), wobble: 0.05, spiky: 0.05, seed: 87, sub: 2 },
+    { k: 'tube', pts: [cx - h * 0.1, cy + h * 0.05, cx - h * 0.22, cy + h * 0.14, cx - h * 0.19, cy + h * 0.28], r0: h * 0.038, r1: h * 0.02, wobble: 0.06, seed: 88 },
+    { k: 'tube', pts: [cx + h * 0.11, cy + h * 0.05, cx + h * 0.24, cy + h * 0.13, cx + h * 0.22, cy + h * 0.28], r0: h * 0.038, r1: h * 0.02, wobble: 0.06, seed: 89 },
+  ], { h, formK: 0.55, spread: 0.7, gloss: 0.35 });
+  // Hot points at every foot: the light gets out where the shell is thinnest.
+  if (!B.override) for (const l of R.legs) {
+    glow(ctx, B, l.pts[10], l.pts[11], h * 0.05, hot, 0.3 + pulse * 0.18, heart);
+  }
+  fangs(ctx, cx, cy, h, 0.055, 0.14, shade(mix('#e8d8b8', hot, 0.25), Math.max(0.6, p.tone)));
+  // Eight eyes, burning rather than reflecting.
+  const EYES = [
+    [-0.13, -0.07, 0.030], [0.135, -0.075, 0.030], [-0.05, -0.115, 0.019], [0.055, -0.115, 0.019],
+    [-0.205, -0.012, 0.014], [0.205, -0.018, 0.014], [-0.095, 0.012, 0.011], [0.1, 0.01, 0.011],
+  ] as const;
+  if (!B.override) for (const [ex, ey, er] of EYES) {
+    ctx.fillStyle = rgba(shade('#1a0c08', Math.max(0.5, p.tone)), 0.9);
+    ctx.beginPath(); ctx.ellipse(cx + h * ex, cy + h * ey, h * er * 1.9, h * er * 1.7, -0.3, 0, Math.PI * 2); ctx.fill();
+  }
+  for (const [ex, ey, er] of EYES) {
+    glow(ctx, B, cx + h * ex, cy + h * ey, h * er * 1.8, hot, 0.26 + pulse * 0.2, hot);
+    eye(ctx, cx + h * ex, cy + h * ey, h * er, mix('#ff5a14', heart, 0.06 + pulse * 0.26), false);
+  }
+  void p.light;
 }
