@@ -109,16 +109,23 @@ Around the sea, six regions, each an outdoor map with towns, dungeons, and one *
 | **Thornmark** | Old forest, elf holds, ruined watchtowers. | 5–14 | The Grove Stone |
 | **The Kilns** | Dwarven mining country, lava tubes, forges. | 8–18 | The Anvil Stone |
 | **Saltreach** | Marsh delta, smuggler ports, drowned temples. | 10–20 | The Tide Stone |
-| **The Whitespine** | High passes, monasteries, giants. Needs Mountaineer. | 14–26 | The Peak Stone |
-| **Ashfall** | Volcanic waste on the far side of the sea. Needs a ship. | 20–32 | The Ember Stone |
+| **The Whitespine** | High passes, monasteries, giants. | 14–26 | The Peak Stone |
+| **Ashfall** | Volcanic waste on the far side of the sea. | 20–32 | The Ember Stone |
+
+*The atlas (`src/content/atlas.ts`) has since grown these six into twelve areas on one road of
+levels to 32, and §9 follows it. Nothing on the road is locked by a skill or a flag
+(docs/EXPANSION.md §2.2): a mountaineer or a ship is a shortcut, never a key.*
 
 Below all of it is **the Underdeep**: not a region but a layer. Every region has at least one
 dungeon that drops into it. Geometry becomes too regular, materials become too smooth, and the
 monsters stop being animals. This is where the secret lives (§7).
 
-The **Hearth Isle** in the centre is reachable only by ship, only after Act 2.
+The **Hearth Isle** in the centre is reachable only by ship.
 
 ### Scale targets (v1)
+
+*The first sketch; the atlas has outgrown it, and the v1 scale is decided in docs/EXPANSION.md
+§2.1.*
 
 | Thing | Count | Grid |
 |---|---|---|
@@ -214,7 +221,8 @@ Caldera is the inside of a hollowed body in space: a generation habitat. The Hea
 reactor and beacon. The Wardstones are field emitters that keep the habitat's ecology sealed. The
 "gods" of every religion in Caldera are fragments of the **Custodian**, the vessel's steward,
 which has been degrading for centuries and now speaks through different voices in different
-regions. The Underdeep is the hull's service layer.
+regions. The Underdeep is the hull's service layer. The Custodian answers to the captain's line,
+and Queen Isaure was the last of it (§9).
 
 The player is never told this. They **find** it: Kiln-script that turns out to be a maintenance
 language, a monastery whose bells ring in a pattern that matches the Hearth's flicker, an
@@ -240,7 +248,33 @@ Standing with one lowers Standing with its rival.
 
 ## 9. Main plot: *The Dimming*
 
-### Prologue — The Shelf
+One quest, from level 1 to the cap, in five acts down the atlas's road of levels. Nothing on the
+road is locked: what turns a company back is the monsters, and the quest spends only a few story
+locks (docs/EXPANSION.md §2.2 and §2.3). Each act asks a question and ends on a revelation that
+changes what the quest is about, so the long climb never becomes a list of stones to fetch. Every
+zone on the road holds at least one step of the quest; two areas are kept off it on purpose, as
+the reach.
+
+| Act | Levels | Areas | The question | Ends on |
+|---|---|---|---|---|
+| I. Ashes on the Road | 1–10 | the Shelf, Thornmark | Why are the Stones failing? | They are not failing. They are being cut, with Underdeep tools |
+| II. The Salt Road | 10–16 | Saltreach, Wrackholm, Sunderwood | Who profits? | Vask is behind the Ashen Hand, and under the world stands a wall no one built |
+| III. The Deep Script | 16–22 | the Kilns, Cairnmoor, Rimewater | What are the Stones? | Machines, and people came here with them |
+| IV. Beyond the Sky | 22–28 | the Whitespine, Ashfall | What is Caldera? | A vessel. The sky is a ceiling |
+| V. The Hearth | 28–32 | Hearth Isle, the Underdeep, the Core | What do we do? | The choice |
+
+The Hearth is the quest's measure. Each restored Stone brightens it, in the night sky and on the
+title's horizon. It moves only with the story, never with the clock.
+
+### The captain's line
+
+Queen Isaure was the last of the captain's line. The Custodian answers to the line, and the Hearth
+first flickered the night she died because the vessel had lost its captain. That is why Vask needs
+the throne empty (§10.1): with nobody to command it, the vessel can be shut down. It is why the
+Ashen Hand ships people below: it is finding out whose hands the doors will open for. The line runs
+through the whole quest and is never told, only found.
+
+### Act I — Ashes on the Road (levels 1–10: the Shelf, Thornmark)
 
 Queen Isaure of Harrow dies the night the Hearth first flickers. The party, a freshly chartered
 company, is on the road when it happens and watches the light stutter across the sea. In the
@@ -251,41 +285,87 @@ Harrow is in interregnum. The Regent-Warden, **Lord Aumery Vask**, holds the cit
 succession is settled." He offers the party a Crown contract: find out why the stones are
 failing.
 
-### Act 1 — Ashes on the road (regions 1–2)
-
 The party reaches Thornmark and finds the Grove Stone not failed but **cut**: worked stone, fresh
 chisel marks, and a sigil the Lanterns recognise as the **Ashen Hand**, a sect that preaches the
 Hearth is a prison and its dimming is the door opening. Restoring the stone is the first real
 dungeon. Restoring it closes Thornmark's Rifts.
 
-Turn: the Ashen Hand's cutting tools are Underdeep-made. Somebody is arming them.
+- **The Shelf** (built): Ashcombe's Rift and the dead Lantern; Greywater, where the smugglers'
+  cargo below was people, and the Ashen Deacon was prising the staples from a glowing seam.
+- **Harrow Downs:** the Queen's barrow has been opened, and only her signet is gone. Harrow Light's
+  keeper logged the flicker on the night she died. The coast road west, into Act II, starts here.
+- **Thornmark** (built): Thornhold and Elder Sylvane, the Grove Roots and the Cut Stone, the Hand of
+  Ash, and the Warden of the Cut with the first Meridian journal.
+- **The Deepthorn:** the oldest elf-hold keeps the two-hundred-year-old treaty behind the elves'
+  claim to the throne. Its seal is the chisel's maintenance mark: the royal line is written in the
+  machine's script.
 
-### Act 2 — Five stones (regions 2–6, any order)
+Turn: the Ashen Hand's cutting tools are Underdeep-made. Somebody is arming them. The Hand's creed
+is on the walls from the cellar to the Grove (THE HEARTH IS A CAGE; THE HAND OPENS WHAT THE HEARTH
+SHUTS; THE STONE IS A LOCK. WE HAVE THE KEY.). It gains a line in every act, and its last is
+carved on the core's door.
 
-The spine of the game. Each region has a Wardstone under threat, a distinct way it is
-threatened, and a regional dungeon to fix it:
+Acts II to IV each restore at least one Stone, each under threat in its own way. With each stone
+restored, the Hearth steadies. With each stone restored the party also hears the
+Custodian's voice more clearly, and it is not saying the same thing in every region: each region's
+god is one of its fragments.
 
-- **Kilns:** the dwarves cut their own stone to sell the shards; buying it back or seizing it.
-- **Saltreach:** the Tide Stone was stolen and is on a smuggler's ship (Salt Compact subplot
-  crosses here).
-- **Whitespine:** the Peak Stone is fine; the monastery guarding it has been replaced by
-  something wearing the monks.
-- **Ashfall:** the Ember Stone was never finished. The party completes it with parts from the
-  Underdeep, and the Underdeep notices.
+### Act II — The Salt Road (levels 10–16: Saltreach, Wrackholm, Sunderwood)
 
-With each stone restored, the Hearth steadies. With each stone restored the party also hears
-the Custodian's voice more clearly, and it is not saying the same thing in every region.
+- **The Upper Water:** the way in, down the Ledge from the Downs. The Salt Compact's river barges
+  carry shards and people downriver, and the folk of Reedholm saw the Tide Stone go by one night.
+- **The Delta:** the Tide Stone's plinth stands empty, and the Drowned Temples, where the
+  Tidefolk's god spoke, have gone dark.
+- **The Saltings:** Saltmouth, the free port, is the Compact's home and the dockmaster claimant's
+  seat (§10.1, §10.2). His forged lineage convinces because it was copied from a real crew record,
+  below. The crossing to Wrackholm leaves from here.
+- **Wrackholm:** Smugglers' Cove and the Tide Ship, whose hold carries Wardstone shards and people
+  bound for a dead-drop in the Underdeep. The Compact's orders come from below. The Tide Stone
+  comes home.
+- **The Eaves and Lanternwood:** the Sunder, a Rift that split a whole wood, which is what a
+  Stone's failure looks like at full size. At its floor stands a wall too smooth to be stone. On
+  its rim is Lantern Watch, where the Lanterns begin to split.
 
-Midpoint reveal: Vask is the Ashen Hand's patron. He has read the Underdeep's writing and
-believes it: that the Hearth is a cage and there is a world beyond the sky. He is not wrong
-about the facts. He is wrong about what "beyond" means.
+Midpoint, at level 16: the Tide Ship's log names Vask. He is the Ashen Hand's patron. He has read
+the Underdeep's writing and believes it: that the Hearth is a cage and there is a world beyond the
+sky. He is not wrong about the facts. He is wrong about what "beyond" means.
 
-### Act 3 — The Hearth
+### Act III — The Deep Script (levels 16–22: the Kilns, Cairnmoor, Rimewater)
 
-With a ship (Navigator skill or a Salt Compact favour) the party crosses to the Hearth Isle. The
-final dungeon descends from a temple, through the Underdeep, into the reactor core. Vask is
-there with the Ashen Hand, halfway through the shutdown sequence, and the Custodian, whole for
-the first time, speaks with one voice:
+- **The Iron Fells and the Kilns:** the dwarves cut their own Anvil Stone to sell the shards; the
+  party buys it back or seizes it. Kiln-script, which dwarves read, turns out to be a maintenance
+  language, and reading it is the act's own mechanic: each inscription read opens more of the map.
+  The Deep Mines have broken into the service layer, where the cargo below was taken.
+- **Kilnmouth:** Kilnhaven, the ore port, whose ship crosses the sea in Act IV.
+- **High Moor and the Cairnfield:** a ring of stones older than the Wardstones, the first emitters,
+  dead for centuries, with the cairns around it. The Custodian's oldest voice still speaks there.
+- **Longmere:** some of Greywater's cargo come back up through the ice at Rime Lodge. The doors
+  below opened for some of them and not for others: the captain's line, tested on its victims.
+- **Glacier Foot and Coldmere:** the Ice Caves lead down to a sealed bay under Coldmere's frozen
+  lake, where rows of sleepers who never woke have faces like the party's own.
+
+### Act IV — Beyond the Sky (levels 22–28: the Whitespine, Ashfall)
+
+- **Monks' Vale and the High Spine:** the Peak Stone is fine, but something wears the monks who
+  guard it, and the monastery's bells ring the Hearth's flicker. Promotion II's dungeon is here.
+- **Sheer Point:** its tip reaches toward the Hearth, and the Ashen Hand is building its crossing
+  there. The party sees where the end will come, an act early.
+- **The crossing:** Kilnhaven's ship carries the party over the sea to the far side.
+- **Cindercoast:** Cinderport, the far side's port. A Wold Rider trader tells of the day the sky
+  opened and the land burned: the warning against arriving, and the way to the Glasswold (the
+  reach, below).
+- **Fire Mountain:** the volcano's vents are the Underdeep's exhaust and the way down for the Ember
+  Stone's parts. They lead to the Meridian Company's last camp and to a room with a window.
+- **The Ember Waste:** the Ember Stone was never finished. The party completes it with parts from
+  the Underdeep, and the Underdeep notices.
+
+### Act V — The Hearth (levels 28–32: Hearth Isle, the Underdeep, the Core)
+
+From Cinderport the party crosses to the Hearth Isle. The final dungeon descends from a temple,
+through the Underdeep, into the reactor core, whose door opens only for the company that has
+restored the stones: the one story lock the road is sure to spend. Vask is there with the Ashen
+Hand, halfway through the shutdown sequence, and the Custodian, whole for the first time, speaks
+with one voice:
 
 *The voyage is over. It has been over for four hundred years. The vessel is in orbit around the
 world it was sent to. Arrival was never triggered because the crew who could trigger it forgot
@@ -302,6 +382,29 @@ they were crew.*
 - **Hidden third:** if the player completed *The Lost Expedition* (§10.3), they know the
   Custodian is lying about one thing: the vessel is not in orbit yet. They can force it to
   finish the voyage, and the ending is a promise instead of a result.
+
+A clean three-way choice: nothing else on the road changes what is offered. The throne and the
+Compact change who stands with the party at the core, not what it may choose.
+
+### The reach
+
+Two areas are kept off the quest on purpose: country at the very top of the game, for the company
+that wants more than the story asks, around complex super dungeons of many levels. The quest never
+needs them, and no ending depends on them. The monsters are their only gate, and they spend no
+story locks.
+
+- **The Glasswold:** the far west, over the Scarp from Saltreach or on from Ashfall. The Wold
+  Riders keep the steppe and the memory of the day the sky opened; the Glass is what that day
+  left. Its super dungeon is the Buried Tower, the mast of a lander that tried to arrive, sunk in
+  the glass it made, its decks running down into the ground it melted.
+- **The second, still to choose:** the Vault, the inside of the sky, climbed to up the Hearth's
+  column by a company that knows the sky is a ceiling; or the Deep, the Underdeep's far decks
+  beyond the road to the core, reached through every region's deepest dungeon.
+
+The reach sits at the cap and is harder than the Core. Its power comes from what it holds
+(artifacts, some of the hidden Master trainers of §5, the richest shrines and fountains) rather
+than from more levels, so the quest still runs from level 1 to the cap. The reach is open before
+the choice: the Core waits.
 
 ---
 
@@ -320,10 +423,16 @@ with a forged lineage and the only navy (backed by the Compact). Vask needs the 
 
 The party gathers evidence across four regions, can be bribed by any side, and eventually
 presents a case to the Council of Harrow. Whoever wins changes Harrow's shops, trainers, prices
-and guard behaviour for the rest of the game, and decides who is at the Hearth in Act 3 to help
+and guard behaviour for the rest of the game, and decides who is at the Hearth in Act V to help
 or hinder.
 
-**Payoff:** the throne subplot is the only way to remove Vask from Harrow *before* Act 3, which
+The captain's line (§9) makes the throne more than Harrow's: whoever carries the line is who the
+Custodian answers to. Every claim touches the machine: the dockmaster's forgery convinces because
+it was copied from a real crew record, the elf-hold's treaty carries the maintenance mark, and the
+cousin's claim is blood, which is what the doors below test. The Queen's missing signet is evidence
+all three sides want.
+
+**Payoff:** the throne subplot is the only way to remove Vask from Harrow *before* Act V, which
 weakens the Ashen Hand's presence in the final dungeon.
 
 ### 10.2 The Salt Compact
@@ -336,7 +445,7 @@ a decade and its "orders" now come from a dead-drop in the Underdeep. Somebody d
 been running the smugglers, and what they have been smuggling is Wardstone shards.
 
 Ends with a choice: take over the Compact and redirect it (it becomes your ferry, fence and spy
-network for Act 3), or hand it to the Wardens (the Wardens siege becomes winnable, the sea lanes
+network for Act V), or hand it to the Wardens (the Wardens siege becomes winnable, the sea lanes
 close, the Ashfall crossing gets harder).
 
 ### 10.3 The Lost Expedition
@@ -350,7 +459,7 @@ at night, a monastery bell that opens a door).
 
 Following the trail finds the Meridian Company's last camp in the Underdeep beneath Ashfall,
 their cartographer still alive and very old, and their real map: the hull. The map shows what the
-Custodian will not say in Act 3 (§9, hidden third ending), and finishing this line is the
+Custodian will not say in Act V (§9, hidden third ending), and finishing this line is the
 Cartographer Promotion II.
 
 ---
@@ -374,9 +483,10 @@ Cartographer Promotion II.
 | Tier | Contents | Purpose |
 |---|---|---|
 | **M0 — Vertical slice** | Harrow, one Shelf outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
-| **M1 — Act 1** | The Shelf and Thornmark complete; Wardens and Lanterns Charter lines to rank 3; the Grove Stone dungeon; hirelings. | First real playthrough. |
-| **M2 — Act 2** | All six regions and Wardstones; all four Charters; promotions I; the Underdeep entrances; the ship. | The open world. |
-| **M3 — Act 3 + subplots** | Hearth Isle, all endings, all three subplots, promotions II, Master trainers. | Content complete. |
+| **M1 — Act I** | The Shelf and Thornmark complete, the Downs and the Deepthorn with them; Wardens and Lanterns Charter lines to rank 3; the Grove Stone dungeon; hirelings. | First real playthrough. |
+| **M2 — Acts II to IV** | Saltreach to Ashfall and their Wardstones; all four Charters; promotions I; the Underdeep entrances; the ship. | The open world. |
+| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, promotions II, Master trainers. | Content complete. |
+| **The reach** | The Glasswold and the second reach area, with their super dungeons (§9). | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 
 ---
@@ -408,4 +518,6 @@ Cartographer Promotion II.
 3. Permadeath option at character creation? Cheap to add, changes the temple economy.
 4. How much of the secret is discoverable in Act 1 for a player who goes straight down?
    The design says "all of it, if you can survive," but we should check that this does not
-   deflate Act 3.
+   deflate Act 3. *Answered by the road (§9): the deep truths lie in dangerous country, so a
+   company that pushes ahead early finds a mystery, not a spoiler. The gate check
+   (docs/EXPANSION.md §5.2) keeps it so.*

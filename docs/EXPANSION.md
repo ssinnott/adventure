@@ -67,8 +67,9 @@ Nothing checks any of these, so the next session that does not know them will br
 **Where the build and the design have parted.** DESIGN.md §13 says content is data under
 `content/` and code never holds a monster's hit points; the monster, item and spell tables are in
 `src/game/`. Pillar 1 says every region is open from the first hour and difficulty is geographic,
-not gated by quest flags, and Act 2's five stones go in any order; the atlas has one road of levels
-whose roads open on quest flags, and the pass to Thornmark already works that way. §2.2 settles it.
+not gated by quest flags, and DESIGN.md's old Act 2 had its five stones in any order; the atlas has
+one road of levels whose roads open on quest flags, and the pass to Thornmark already works that
+way. §2.2 settles it, and DESIGN.md §9 now follows the road in five acts.
 
 ---
 
@@ -94,7 +95,9 @@ are worth building under (b) as well: they let an area's core be played before t
 it and the last area is built, they are Might and Magic VI's stables, and they spend the clock
 (pillar 4).
 
-Whichever is chosen, DESIGN.md §4's scale table and §12's tiers are rewritten to say so.
+Whichever is chosen, DESIGN.md §4's scale table and §12's tiers are rewritten to say so. Whatever
+v1 is, the reach (DESIGN.md §9) is optional by design, so it is the first thing v1 can leave for
+later.
 
 ### 2.2 One road, lightly held (decided)
 
@@ -196,6 +199,8 @@ place.
 - Its gate holds (§5.2): a company at its band's floor gets through, and one well under it turns
   back.
 - The story lock it spends, if it spends one, is declared with its reason (§2.3).
+- For a reach area: it has no chapter, its gate is set at the cap (§5.2), and every riddle in its
+  super dungeons has its hint chain (§5.4).
 - Its monsters are drawn, each def a drawing of its own, each through the silhouette checks, each
   placed.
 - Its xp and gold sit on the curve (§5.2).
@@ -257,6 +262,8 @@ play in the pilot):
 - **A warning, not a wall.** The first groups past a border are the area's gentlest, and the
   crossing line tells a company under the band how the land feels to it, so the party learns it is
   early from a fight it can survive or run from, not from a wipe.
+- **The reach asks the most.** In a reach area, a company at the cap that has walked the road wins
+  about half its first fights; what it finds there is what makes the rest winnable.
 - **The bot improves with the game.** It learns to sleep, bless, drink and flee as the party can,
   and to wear the gear the curve says a company has at each level, so the check keeps up.
 
@@ -352,6 +359,10 @@ secret found and never told, restraint), reads the text and the code.
   in it, so re-cutting it is safe for old saves.
 - **A long journal reads by chapter.** A quest from level 1 to the cap makes a long journal, so the
   log pages it by chapter (§7).
+- **Every zone on the road.** Each zone the road crosses holds at least one step of the quest,
+  found from what the quest's steps name; the reach areas (DESIGN.md §9) are declared as such, and
+  are the only ones exempt. A first draft of the five acts left nine of the 27 zones without a
+  step, 39% of the land; this check is what stops that happening unnoticed.
 
 ---
 
@@ -401,8 +412,9 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | The Kilns | 16–18 | ash; Kiln-script and Linguist |
 | Cairnmoor, Rimewater | 18–22 | heather, ice and lying snow as terrain; the rest of what they are, which DESIGN.md has yet to say |
 | The Whitespine | 22–24 | cliffs and peaks, with the road through them |
-| Ashfall, the Glasswold | 24–28 | the crossing by ship, open from the start; volcano, lava fields, glass and dunes |
+| Ashfall | 24–28 | the crossing by ship, open from the start; volcano and lava fields |
 | Hearth Isle, the Underdeep | 28–32 | promotion II; the Underdeep's look; the endings |
+| The reach: the Glasswold, and a second (DESIGN.md §9) | the cap | glass and dunes; the atlas marking reach areas beside the road, not on it (its test holds the bands rising along the road, and a reach area's would not); super dungeons of many levels; artifacts |
 
 The skills that open the map (Swimmer, Mountaineer, Navigator and the rest) come when there are
 shortcuts and secrets for them; none is needed to follow the road. Along the whole road the systems
@@ -496,14 +508,17 @@ on and the world now ends), then the Deepthorn. Meanwhile, in the systems lane, 
 the Wardens' and Lanterns' lines to rank 3, Standing, hirelings, and the terrain the pilot asks for.
 Measure how long a zone map takes and what the owner still finds by hand, and tune the thresholds.
 
-**Phase 2: the systems for Act 2**, one at a time: the level cap and promotion I, the Rift
+**Phase 2: the systems for Acts II to IV**, one at a time: the level cap and promotion I, the Rift
 generator, the next regions' climates, the crossings, and the danger made legible; the skills that
 open shortcuts as the areas that have them come up.
 
-**Phase 3: Act 2, area by area** (Saltreach, Wrackholm, Sunderwood, the Kilns, …), no more than two
-in flight, each to its definition of done, with the lanes running in parallel inside each.
+**Phase 3: Acts II to IV, area by area** (Saltreach, Wrackholm, Sunderwood, the Kilns, …), no more
+than two in flight, each to its definition of done, with the lanes running in parallel inside each.
 
-**Phase 4: Act 3 and the subplots** (M3).
+**Phase 4: Act V and the subplots** (M3).
+
+**Phase 5: the reach** (DESIGN.md §9). Optional by design, so it comes last, and v1 can ship
+without it.
 
 ---
 
