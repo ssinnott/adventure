@@ -675,6 +675,11 @@ function smugglerCaptain(ctx: CanvasRenderingContext2D, x: number, y: number, h:
   const hemY = y - h * 0.42, skirtY = y - h * 0.235;         // tunic hem, then the coat skirt below it
   groundShadow(ctx, x, y + 1, h * 0.8);
   blob(ctx, B, shade(p.dark, 0.8), armParts(R, far, 112, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  // No hand at the end of the far arm: a leather cuff and an iron hook, curled in toward the body.
+  const cw = far[2];
+  blob(ctx, B, R.leather, [{ k: 'cap', x0: cw.x, y0: cw.y - h * 0.012, x1: cw.x + h * 0.002, y1: cw.y + h * 0.034, r0: h * 0.027, r1: h * 0.022 }], { h, formK: 0.45, spread: 0.7 });
+  band(ctx, B, cw.x - h * 0.024, cw.y + h * 0.026, h * 0.048, h * 0.012, R.brass);
+  blob(ctx, B, R.steel, [{ k: 'tube', pts: [cw.x + h * 0.002, cw.y + h * 0.036, cw.x + h * 0.002, cw.y + h * 0.086, cw.x + h * 0.012, cw.y + h * 0.112, cw.x + h * 0.036, cw.y + h * 0.114, cw.x + h * 0.046, cw.y + h * 0.092], r0: h * 0.011, r1: h * 0.005, gloss: 0.6 }], { h, formK: 0.5, spread: 0.7 });
   legs(ctx, R, shade('#242a34', p.tone), 113, [0.9, -0.9]);
   blob(ctx, B, shade('#22201c', p.tone), [
     { k: 'cap', x0: x + h * 0.216, y0: y - h * 0.215, x1: x + h * 0.23, y1: y - h * 0.055, r0: h * 0.05, r1: h * 0.048 },
