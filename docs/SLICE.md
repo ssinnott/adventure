@@ -33,6 +33,14 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
   drops; readiness to train reported.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload.
+- **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
+  journal of what the party has found: The Quiet Farm (Vask), The Greywater Ledger (Hale), The
+  Grove Stone (Vask's lead, Sylvane's chisel), and The Lost Expedition, which the first Meridian
+  journal opens and which stays open until the rest of its trail is built. Nothing new is saved.
+  Every entry is keyed to something the save already holds (a flag, a carried item, a once-only
+  event, a guardian killed, a map set foot on), so an old save opens with its log whole. A quest
+  begun, advanced or finished is announced once in the message log, and J opens on the one that
+  changed last.
 
 ## The road to level 10
 
@@ -85,7 +93,8 @@ cap, which is 10 until promotions exist:
   secret door opens the second ring, a door the third, the key the chamber. The Hand of Ash and
   two adepts wait at the Stone; kill them and the Warden of the Cut, two cells on, is the
   hardest fight in the game. The chisel goes to Sylvane; the Warden drops the first Meridian
-  journal.
+  journal. The tear closes when the Warden dies: an encounter's `slainText` is said on the kill, so
+  it comes after the fight from whichever side the party fought.
 
 One clear of every map is worth a little over level 7 per member (a test pins this); the
 dungeons respawn in one to two days, and two more sweeps of the Grove reach 10. Levels are still
@@ -143,9 +152,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 - Only one Charter (Lanterns) has any presence; no Standing.
 - No promotions, so no sixth spell tier; no Master trainers; no secondary skills yet beyond race
-  innate ones. The Meridian journal is an item with no reader yet.
+  innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
+  yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Hirelings, promotions, the succession, the Salt Compact, the Lost Expedition: design only.
+- Hirelings, promotions, the succession, the Salt Compact, the Lost Expedition past its first
+  journal: design only.
 
 ## Checks
 
@@ -154,8 +165,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | | |
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
-| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes |
-| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, and asserts every screen painted with no page error; also unions every pair of sprite part kinds and asserts none of them leaves a hole |
+| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, no entry vanishes when an item leaves the party, and the quests walk through end to end with each change announced once and the Lost Expedition left open |
+| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, talks to Vask and opens the quest log, and asserts every screen painted with no page error; also unions every pair of sprite part kinds and asserts none of them leaves a hole |
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing.
 `node tools/gallery.ts out.png [--only kinds] [--family wolf] [--scale 2] [--frames 6] [--flash] [--tone 0.6]`
@@ -170,11 +181,14 @@ as a strip of idle frames ending in the hit flash, for judging an art pass.
 | `game/world.ts` | `WorldState` (position, clock, per-map state), movement, reveal, roaming groups, encounter triggers, rest, search |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling, the premade party |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
+| `game/quests.ts` | `questLog` (the quests known, their entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions) and `ExploreScreen` |
 | `ui/viewport.ts` | the depth-layered first-person compositor |
 | `ui/frame.ts` | layout constants, status strip, automap, party cards, log, purse |
 | `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
+| `ui/quests.ts` | the quest log screen, and `questPage`, its pure page layout |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
 | `content/maps/*.ts` | Harrow, the Shelf, the cellar, Greywater (two levels); Thornmark, Thornhold, the Grove Roots, the Cut Stone |
+| `content/quests.ts` | the quests' journal entries and goals, and what each is keyed to |
