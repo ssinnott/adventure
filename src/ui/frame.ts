@@ -8,7 +8,7 @@ import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
 import { viewCells } from './viewport.ts';
 import { drawPortrait } from './portraits.ts';
-import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, PARCHMENT, WOOD, WOOD_DARK } from './palette.ts';
+import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
 import { shade, rgba, mix } from '../lib/art/palettes.ts';
 const PARCHMENT_DARK = '#d8c8a0';
 import { hash } from './brush.ts';
@@ -35,14 +35,14 @@ const COND_COLOR: Record<string, string> = {
   dead: RED, stoned: TEXT_DIM, unconscious: RED, paralysed: YELLOW, asleep: BLUE, poisoned: GREEN, diseased: PURPLE, cursed: PURPLE,
 };
 
-/** Two lines: the facing, the time and the map; then the date, and the sky with its glyph (not underground). */
+/** Two lines: the facing, the time and the place (the map, or outdoors the zone); then the date, and the sky with its glyph (not underground). */
 export function drawStatus(ctx: CanvasRenderingContext2D, world: World): void {
   const r = LAYOUT.status;
   panel(ctx, r.x, r.y, r.w, r.h);
   const hh = String(world.hour).padStart(2, '0'), mm = String(world.minute).padStart(2, '0');
   drawText(ctx, `${FACING_NAMES[world.state.facing]}`, r.x + 6, r.y + 6, { size: 1, color: BRASS });
   drawText(ctx, `${hh}:${mm}`, r.x + 18, r.y + 6, { size: 1, color: TEXT });
-  drawText(ctx, world.map.name, r.x + r.w - 6, r.y + 6, { size: 1, color: TEXT_DIM, align: 'right' });
+  drawText(ctx, world.here.name, r.x + r.w - 6, r.y + 6, { size: 1, color: TEXT_DIM, align: 'right' });
   drawText(ctx, shortDate(world.date), r.x + 6, r.y + 17, { size: 1, color: TEXT });
   if (!world.underSky) return;
   const sky = (world.sky ?? classify(world.weather)).sky;
@@ -85,6 +85,9 @@ function drawSkyGlyph(ctx: CanvasRenderingContext2D, sky: Sky, x: number, y: num
   });
 }
 
+/** The smallest a map square is drawn on the automap, in pixels. */
+const AUTOMAP_MIN = 6;
+
 export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: number): void {
   const r = LAYOUT.map;
   panel(ctx, r.x, r.y, r.w, r.h, PARCHMENT_DARK);
@@ -101,15 +104,26 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   edge.addColorStop(0, 'rgba(60,30,10,0.25)'); edge.addColorStop(0.15, 'rgba(60,30,10,0)'); edge.addColorStop(0.85, 'rgba(60,30,10,0)'); edge.addColorStop(1, 'rgba(60,30,10,0.25)');
   ctx.fillStyle = edge; ctx.fillRect(r.x + 2, r.y + 2, r.w - 4, r.h - 4);
   const m = world.map;
-  const cell = Math.max(3, Math.floor((Math.min(r.w, r.h) - 8) / Math.max(m.width, m.height)));
-  const ox = r.x + Math.floor((r.w - cell * m.width) / 2), oy = r.y + Math.floor((r.h - cell * m.height) / 2);
+  // A map that fits is drawn whole; one too big for that (the outdoors) shows the cells round the
+  // party, as many as fit at the size a 32-square map is drawn, an odd number so it stands mid-panel.
+  const room = Math.min(r.w, r.h) - 8, fits = Math.floor(room / Math.max(m.width, m.height)) >= AUTOMAP_MIN;
+  const cell = fits ? Math.floor(room / Math.max(m.width, m.height)) : AUTOMAP_MIN;
+  const span = fits ? 0 : Math.floor(room / cell) - 1 + (Math.floor(room / cell) % 2);
+  const x0 = fits ? 0 : Math.max(0, Math.min(m.width - span, world.state.x - (span >> 1)));
+  const y0 = fits ? 0 : Math.max(0, Math.min(m.height - span, world.state.y - (span >> 1)));
+  const cols = fits ? m.width : span, rows = fits ? m.height : span;
+  const ox = r.x + Math.floor((r.w - cell * cols) / 2) - x0 * cell, oy = r.y + Math.floor((r.h - cell * rows) / 2) - y0 * cell;
+  const within = (x: number, y: number): boolean => x >= x0 && y >= y0 && x < x0 + cols && y < y0 + rows;
+  const shown = (x: number, y: number): boolean => within(x, y) && world.explored(x, y);
   const inView = new Set(viewCells(m, world.state.x, world.state.y, world.state.facing, world.sight).map((c) => c.y * m.width + c.x));
-  for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
+  for (let y = y0; y < y0 + rows; y++) for (let x = x0; x < x0 + cols; x++) {
     if (!world.explored(x, y)) continue;
     const c = m.at(x, y);
-    // Inked onto parchment: walls dark, open ground a light wash in the terrain's hue.
+    // Inked onto parchment: walls dark, open ground a light wash in the terrain's hue, and where
+    // the world ends, the same pink as in the view.
     let col: string;
-    if (c.solid === 'wall' || c.solid === 'building') col = '#4a3a30';
+    if (c.solid === 'void') col = VOID_PINK;
+    else if (c.solid === 'wall' || c.solid === 'building') col = '#4a3a30';
     else if (c.door !== 'none') col = c.door === 'secret' ? '#4a3a30' : '#a0602a';
     else if (c.solid === 'tree') col = '#4f7a3a';
     else if (c.solid === 'mountain') col = '#6a6058';
@@ -121,16 +135,17 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   }
   // Features the party has stood next to.
   for (const f of m.features) {
-    if (!world.explored(f.x, f.y) || f.kind === 'event') continue;
+    if (!shown(f.x, f.y) || f.kind === 'event') continue;
     if (f.kind === 'chest' && world.used(f.id)) continue;
     ctx.fillStyle = f.kind === 'chest' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
     const s = Math.max(1, cell - 2);
     ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s);
   }
-  for (const e of m.exits) if (world.explored(e.x, e.y)) { ctx.fillStyle = GREEN; ctx.fillRect(ox + e.x * cell + 1, oy + e.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2)); }
+  for (const e of m.exits) if (shown(e.x, e.y)) { ctx.fillStyle = GREEN; ctx.fillRect(ox + e.x * cell + 1, oy + e.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2)); }
   // Monsters in view.
   for (const g of world.liveGroups()) {
     const k = g.state.y * m.width + g.state.x;
+    if (!within(g.state.x, g.state.y)) continue;
     if (!inView.has(k) && !(world.explored(g.state.x, g.state.y) && Math.abs(g.state.x - world.state.x) + Math.abs(g.state.y - world.state.y) <= 2)) continue;
     ctx.fillStyle = (frame >> 4) & 1 ? RED : '#ff8a7a';
     ctx.fillRect(ox + g.state.x * cell + 1, oy + g.state.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2));

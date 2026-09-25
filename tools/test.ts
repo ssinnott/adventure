@@ -2,8 +2,11 @@
 //   node tools/test.ts            run everything
 //   node tools/test.ts maps combat  run selected suites
 import { makeRng } from '../src/lib/engine/rng.ts';
-import { buildMaps, MAP_DEFS } from '../src/content/maps/index.ts';
-import { World } from '../src/game/world.ts';
+import { buildMaps, MAP_DEFS, PLAYED_DEFS } from '../src/content/maps/index.ts';
+import { GameMap } from '../src/game/map.ts';
+import type { MapDef } from '../src/game/map.ts';
+import { World, seen } from '../src/game/world.ts';
+import { layOutdoors, OUTDOORS } from '../src/game/outdoors.ts';
 import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition, takeItem } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, buffHit, traitDamage, WARD_AC } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
@@ -13,9 +16,9 @@ import { ITEMS } from '../src/game/items.ts';
 import { MONSTERS } from '../src/game/monsters.ts';
 import { SPELLS, spell, spellsFor } from '../src/game/spells.ts';
 import { ATLAS } from '../src/content/atlas.ts';
-import { worldGrid, worldPoint, progression, reachable, isWater, TI } from '../src/game/atlas.ts';
+import { worldGrid, worldPoint, progression, reachable, isWater, zoneOfMap, TI } from '../src/game/atlas.ts';
 import { QUESTS } from '../src/content/quests.ts';
-import { questLog, questMarks, questNews } from '../src/game/quests.ts';
+import { questLog, questMarks, questNews, holds } from '../src/game/quests.ts';
 import type { QuestCond, QuestView, When } from '../src/game/quests.ts';
 import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
@@ -25,14 +28,21 @@ import type { Season } from '../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
 import type { Climate, Sky, Weather } from '../src/game/weather.ts';
 import { START_MINUTES, LEGACY_WEATHER_SEED } from '../src/game/world.ts';
-import type { WorldState } from '../src/game/world.ts';
+import type { WorldState, MapState } from '../src/game/world.ts';
 
 let failures = 0;
 const ok = (cond: boolean, msg: string): void => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) failures++; };
 
+/** Where the party stands on the maps as written: outdoors, its zone map and the cell on it. */
+const local = (w: World): { map: string; x: number; y: number } => {
+  const z = w.zone;
+  return z ? { map: z.id, x: w.state.x - z.x, y: w.state.y - z.y } : { map: w.state.mapId, x: w.state.x, y: w.state.y };
+};
+
 const suites: Record<string, () => void> = {
   maps() {
-    const maps = buildMaps();
+    // The maps as written, each on its own, the Shelf and Thornmark included (see `outdoors` for how they are played).
+    const maps = Object.fromEntries(MAP_DEFS.map((d) => [d.id, new GameMap(d)]));
     for (const def of MAP_DEFS) {
       const m = maps[def.id];
       ok(def.rows.every((r) => r.length === m.width), `${def.id}: every row is ${m.width} wide`);
@@ -118,9 +128,11 @@ const suites: Record<string, () => void> = {
     world.turn('left'); world.turn('left');
     ok(world.state.facing === 2, 'two left turns face south');
     const r2 = world.move('forward'); const r3 = world.move('forward');
-    ok(r2.kind === 'moved' && r3.kind === 'moved' && world.map.id === 'shelf' && world.state.x === 16 && world.state.y === 4 && world.state.facing === 2,
-      `walking through the south gate arrives on the Shelf facing south (${world.map.id} ${world.state.x},${world.state.y})`);
-    ok(world.explored(16, 4) && world.explored(16, 6), 'arrival reveals the cells around and ahead');
+    const out = local(world);
+    ok(r2.kind === 'moved' && r3.kind === 'moved' && world.map.id === OUTDOORS && out.map === 'shelf' && out.x === 16 && out.y === 4 && world.state.facing === 2,
+      `walking through the south gate arrives outdoors on the Shelf, facing south (${world.map.id}: ${out.map} ${out.x},${out.y})`);
+    ok(world.explored(world.state.x, world.state.y) && world.explored(world.state.x, world.state.y + 2), 'arrival reveals the cells around and ahead');
+    ok(world.here.name === 'The Shelf' && world.state.zones!.includes('shelf'), `outdoors the place is the zone (${world.here.name}), and the party has set foot in it`);
     // Leaving a business: back out of the doorway into the street, facing the door, no time passing.
     world.travel('harrow', 4, 4, 0);
     const at = world.state.minutes;
@@ -146,17 +158,35 @@ const suites: Record<string, () => void> = {
     // Water and mountains.
     world.travel('shelf', 5, 28, 2);
     ok(world.move('forward').kind === 'blocked' === !partyCan(party).swim, 'water is passable only with a swimmer (Tidefolk in the party)');
-    world.travel('shelf', 1, 1, 3);
-    ok(world.move('forward').kind === 'blocked', 'mountains block without a mountaineer');
-    // The pass to Thornmark is a flag-gated exit: closed until Vask's contract is done.
+    world.travel('shelf', 30, 2, 1);
+    const steep = world.move('forward');
+    ok(steep.kind === 'blocked' && /steep/.test(steep.reason), 'mountains (the ridge between the Shelf and Thornmark) block without a mountaineer');
+    // Where nothing is built yet the world ends, and nothing crosses into it, a mountaineer included.
+    world.travel('shelf', 1, 12, 3);
+    const edge = world.move('forward');
+    ok(edge.kind === 'blocked' && edge.reason === 'The world ends here.' && local(world).x === 1, `west of the Shelf the world ends, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
+    party.flags.skill_mountaineer = 1;
+    world.travel('shelf', 10, 1, 0);
+    ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Shelf in to the north');
+    delete party.flags.skill_mountaineer;
+    // The pass to Thornmark is a gate on the road through the ridge: closed until Vask's contract is done.
     world.travel('shelf', 30, 9, 1);
     const closed = world.move('forward');
-    ok(closed.kind === 'blocked' && /checkpoint/.test(closed.reason) && world.map.id === 'shelf', 'the Thornmark pass is closed before the Ashcombe hand-in');
+    ok(closed.kind === 'blocked' && /checkpoint/.test(closed.reason) && local(world).x === 30, 'the Thornmark pass is closed before the Ashcombe hand-in');
     party.flags.q_ashcombe_done = 1;
-    ok(world.move('forward').kind === 'blocked' && world.map.id === 'shelf', 'the pass stays closed until Greywater is cleared as well');
+    ok(world.move('forward').kind === 'blocked' && local(world).x === 30, 'the pass stays closed until Greywater is cleared as well');
     party.flags.q_greywater_done = 1;
-    const opened = world.move('forward');
-    ok(opened.kind === 'moved' && world.map.id === 'thornmark' && world.state.x === 1 && world.state.y === 9, `the pass opens once the flag is set (${world.map.id} ${world.state.x},${world.state.y})`);
+    // Open, it is walked, not jumped: the road runs on through the ridge into Thornmark, and the log
+    // says where the Shelf ends, then Thornmark greets the party as it always has.
+    const said: string[] = [];
+    for (let i = 0; i < 3; i++) { const step = world.move('forward'); if (step.kind === 'moved') said.push(...step.messages); }
+    const there = local(world);
+    ok(world.map.id === OUTDOORS && there.map === 'thornmark' && there.x === 1 && there.y === 9, `the pass opens once the flags are set, and three steps on the road reach Thornmark (${there.map} ${there.x},${there.y})`);
+    ok(said[0] === 'The pass opens onto old forest. Thornmark.' && said.some((m) => /older than Harrow/.test(m)), `crossing into Thornmark says so (${said.join(' / ')})`);
+    ok(world.here.name === 'Thornmark' && world.region === 'thornmark' && world.state.zones!.includes('thornmark'), 'the party has set foot in Thornmark, and its weather is Thornmark\'s');
+    world.turn('back');
+    const back = [world.move('forward'), world.move('forward')];
+    ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Shelf.') && world.region === 'shelf', 'back west through the gate it is the Shelf again');
     // Town Portal returns to the last town stood in.
     ok(world.townPortal() === 'Harrow' && world.map.id === 'harrow', 'Town Portal goes to Harrow before any other town is visited');
     world.travel('thornhold', 7, 14, 0); world.travel('grove2', 8, 8, 0);
@@ -175,10 +205,11 @@ const suites: Record<string, () => void> = {
     const party = defaultParty(rng);
     const world = new World(buildMaps(), party, rng);
     world.travel('shelf', 16, 4, 2);
+    const shelf = world.zone!;
     const rats = world.liveGroups().find((g) => g.def.id === 'road_rats')!;
-    ok(rats.state.y === 7, 'the road rats start where the map puts them');
+    ok(rats.state.x === shelf.x + 16 && rats.state.y === shelf.y + 7, 'the road rats start where the Shelf puts them, on the outdoors');
     const r = world.move('forward');
-    ok(rats.state.y === 6, `an aware group steps toward the party (${rats.state.x},${rats.state.y})`);
+    ok(rats.state.y === shelf.y + 6, `an aware group steps toward the party (${rats.state.x - shelf.x},${rats.state.y - shelf.y} on the Shelf)`);
     ok(r.kind === 'moved' && !!r.encounter && r.encounter.includes('road_rats'), 'a group that reaches the party triggers an encounter');
     world.killGroups(['road_rats']);
     ok(!world.liveGroups().some((g) => g.def.id === 'road_rats'), 'a killed group is gone');
@@ -551,6 +582,69 @@ const suites: Record<string, () => void> = {
     ok(banded.length === steps.length && banded.every((st, i) => i === 0 || st.band![0] >= banded[i - 1].band![0]), 'every step has a level band, and the bands rise along the road');
   },
 
+  outdoors() {
+    // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
+    const zoneMaps = MAP_DEFS.filter((d) => d.kind === 'outdoor');
+    const played = PLAYED_DEFS.filter((d) => d.kind === 'outdoor');
+    ok(played.length === 1 && played[0].id === OUTDOORS, `the outdoors is played as one map (${played.map((d) => d.id).join(', ')})`);
+    ok(PLAYED_DEFS[0].id === MAP_DEFS[0].id && PLAYED_DEFS.length === MAP_DEFS.length - zoneMaps.length + 1, 'Harrow is still the first map, and the towns and dungeons are played as they are written');
+    const out = new GameMap(played[0]);
+    ok(out.width === ATLAS.width && out.height === ATLAS.height, `the outdoors is the world's size, square for square with the painted map (${out.width}x${out.height})`);
+    for (const d of zoneMaps) {
+      const z = out.zones.find((q) => q.id === d.id), at = zoneOfMap(ATLAS, d.id)?.at;
+      ok(!!z && !!at && z.x === at[0] && z.y === at[1] && z.w === d.rows[0].length && z.h === d.rows.length && z.name === d.name, `${d.id}: laid where the atlas puts it, and called ${d.name}`);
+      if (!z) continue;
+      let same = 0;
+      for (let y = 1; y < z.h - 1; y++) for (let x = 1; x < z.w - 1; x++) if (out.at(z.x + x, z.y + y).ch === d.rows[y][x]) same++;
+      ok(same === (z.w - 2) * (z.h - 2), `${d.id}: every square inside its ring is the map's own (${same} of ${(z.w - 2) * (z.h - 2)})`);
+    }
+    let outside = 0, blank = 0;
+    for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) if (!out.zoneAt(x, y)) { outside++; if (out.at(x, y).solid === 'void') blank++; }
+    ok(outside > 0 && blank === outside, `every square no zone map covers is void: the world ends there for now (${blank} of ${outside})`);
+    ok(out.at(0, 0) === out.at(out.width - 1, out.height - 1) && Object.isFrozen(out.at(0, 0)), 'the void is one frozen cell, however much of it there is');
+    // The mountains that closed each zone map in are, where they face nothing built, the end of the
+    // world too; between the two zones they are the ridge, as they were, with the pass through it.
+    const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
+    const line = (x: number, y: number, dx: number, dy: number, n: number): string => Array.from({ length: n }, (_, i) => out.at(x + dx * i, y + dy * i).ch).join('');
+    const faces = [line(sh.x, sh.y, 1, 0, sh.w), line(sh.x, sh.y + sh.h - 1, 1, 0, sh.w), line(sh.x, sh.y, 0, 1, sh.h), line(th.x, th.y, 1, 0, th.w), line(th.x, th.y + th.h - 1, 1, 0, th.w), line(th.x + th.w - 1, th.y, 0, 1, th.h)];
+    ok(faces.every((s) => /^%+$/.test(s)), 'the Shelf\'s north, west and south edges and Thornmark\'s north, east and south edges are the end of the world');
+    const ridge = '%' + 'M'.repeat(8) + '=' + 'M'.repeat(21) + '%';
+    ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge, 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at both ends');
+    // The ways: every one lands on open ground; none joins one zone to the next, which is walked; the
+    // checkpoint's flags close the road instead; and the towns and dungeons open onto the outdoors.
+    const maps = buildMaps();
+    for (const d of PLAYED_DEFS) for (const e of d.exits ?? []) ok(maps[e.to]?.passable(e.tx, e.ty) === 'ok', `${d.id} -> ${e.to}: lands on an open square (${e.tx},${e.ty})`);
+    ok(!out.exits.some((e) => e.to === OUTDOORS), 'no exit joins one zone to the next: the way between them is walked');
+    const g = out.gates;
+    ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'q_ashcombe_done,q_greywater_done' && /checkpoint/.test(g[0].blockedText ?? ''),
+      'the Warden checkpoint is a gate on the road through the pass, with the old exit\'s flags and words');
+    ok(PLAYED_DEFS.find((d) => d.id === 'harrow')!.exits!.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Harrow\'s south gate opens onto the Shelf road, where it always did');
+    ok(sh.enter?.thornmark === 'Back through the pass to the Shelf.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
+    { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void.
+      const can = { swim: true, climb: true, keys: 1 }, reached = new Uint8Array(out.width * out.height);
+      const stack = [[out.def.start.x, out.def.start.y]];
+      while (stack.length) {
+        const [x, y] = stack.pop()!, k = y * out.width + x, p = out.passable(x, y, can), c = out.at(x, y);
+        if (reached[k] || p === 'wall' || p === 'void' || c.solid === 'tree' || c.solid === 'rock') continue;
+        reached[k] = 1;
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (out.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
+      }
+      let open = 0, got = 0;
+      for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) {
+        const p = out.passable(x, y, can);
+        if (p === 'wall' || p === 'void' || out.at(x, y).solid !== 'none') continue;
+        open++; if (reached[y * out.width + x]) got++;
+      }
+      ok(open > 1500 && got === open, `every open square of the outdoors is reachable from its start (${got} of ${open})`);
+    }
+    // The composer refuses what the outdoors cannot hold: two zones keeping state under one id, or two zone maps on one square.
+    const refusal = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } };
+    const clash: MapDef[] = MAP_DEFS.map((d) => (d.id === 'thornmark' ? { ...d, features: [...(d.features ?? []), { kind: 'event', x: 2, y: 2, id: 'coast', text: '' }] } : d));
+    ok(/'coast'/.test(refusal(() => layOutdoors(ATLAS, clash))), 'two zones may not share a feature id: the outdoors keeps one record for both');
+    const heaped = { ...ATLAS, zones: ATLAS.zones.map((z) => (z.id === 'thornmark' ? { ...z, at: [220, 30] as const } : z)) };
+    ok(/laid over/.test(refusal(() => layOutdoors(heaped, MAP_DEFS))), 'nor may two zone maps be laid on the same squares');
+  },
+
   save() {
     const rng = makeRng(9);
     const party = defaultParty(rng);
@@ -563,13 +657,47 @@ const suites: Record<string, () => void> = {
     ok(JSON.stringify(data.world) === JSON.stringify(world.state) && JSON.stringify(data.party) === JSON.stringify(party) && data.rng === 12345, 'a save round-trips the world, the party and the rng');
     const world2 = new World(buildMaps(), data.party, makeRng(1), data.world);
     ok(world2.map.at(7, 11).door === 'door', 'loading re-applies the unlocked door to fresh map content');
-    ok(world2.state.maps.harrow.explored[14 * 16 + 7] === 1 && world2.state.mapId === 'mill' && world2.state.x === 7, 'loading keeps the explored cells and the position');
+    ok(seen(world2.state.maps.harrow.explored, 14 * 16 + 7) && world2.state.mapId === 'mill' && world2.state.x === 7, 'loading keeps the explored cells and the position');
+    { // The outdoors saves small: its cells seen are kept a bit apiece.
+      world.travel('shelf', 16, 8, 2);
+      const outdoors = JSON.stringify(world.state.maps[OUTDOORS]).length;
+      ok(outdoors < 20_000 && seen(world.state.maps[OUTDOORS].explored, world.state.y * world.map.width + world.state.x), `the whole outdoors' state saves in ${outdoors} characters, and it knows where the party has been`);
+    }
     ok(data.world.weatherSeed === world.state.weatherSeed && JSON.stringify(world2.weather) === JSON.stringify(world.weather), 'the weather seed round-trips, and with it the weather');
     // A save from before there was weather has no seed: it loads with the legacy one and keeps it.
     const old = JSON.parse(text) as { world: WorldState };
     delete old.world.weatherSeed;
     const world3 = new World(buildMaps(), data.party, makeRng(1), old.world);
     ok(world3.state.weatherSeed === LEGACY_WEATHER_SEED && world3.weather.precip >= 0 && world3.date.gameDay === world.date.gameDay, 'a save from before the weather loads, on the same date, with the legacy weather seed');
+    { // A version 1 save, from when the Shelf and Thornmark were maps of their own, each cell seen a
+      // number apiece: it loads onto the outdoors, everything where it was.
+      const cells = (w: number, h: number, at: [number, number][]): number[] => { const a = new Array(w * h).fill(0); for (const [x, y] of at) a[y * w + x] = 1; return a; };
+      const v1 = {
+        version: 1, savedAt: 0, rng: 7, party: defaultParty(makeRng(2)),
+        world: {
+          mapId: 'thornmark', x: 13, y: 12, facing: 2, minutes: 3000, light: 0, truce: 2, truceGroups: ['tm_spiders1'], steps: 40, lastTown: 'harrow', weatherSeed: 99,
+          maps: {
+            harrow: { explored: cells(16, 16, [[7, 14]]), used: {}, groups: {}, doors: {} },
+            shelf: { explored: cells(32, 32, [[16, 4], [30, 9]]), used: { coast: 1 }, groups: { road_rats: { x: 16, y: 6, dead: 2000 }, hill_wolves: { x: 20, y: 10, dead: -1 } }, doors: {} },
+            thornmark: { explored: cells(32, 32, [[13, 12]]), used: { tm_tower: 1 }, groups: { tm_ogre: { x: 5, y: 7, dead: 2500 } }, doors: {} },
+          },
+        },
+      };
+      const loaded = deserialize(JSON.stringify(v1));
+      const up = new World(buildMaps(), loaded.party, makeRng(1), loaded.world);
+      const at = local(up), ms = up.state.maps[OUTDOORS], z = (id: string) => up.map.zones.find((q) => q.id === id)!;
+      const sh = z('shelf'), th = z('thornmark');
+      ok(up.state.mapId === OUTDOORS && at.map === 'thornmark' && at.x === 13 && at.y === 12, `the party stands where it stood, on the outdoors now (${at.map} ${at.x},${at.y})`);
+      ok(!('shelf' in up.state.maps) && !('thornmark' in up.state.maps) && JSON.stringify(up.state.zones) === '["shelf","thornmark"]', 'the Shelf and Thornmark keep no state of their own, and count as set foot in');
+      ok(up.explored(sh.x + 16, sh.y + 4) && up.explored(sh.x + 30, sh.y + 9) && up.explored(th.x + 13, th.y + 12) && !up.explored(sh.x + 17, sh.y + 4), 'what was seen on each is seen where it now lies');
+      ok(seen(up.state.maps.harrow.explored, 14 * 16 + 7) && !seen(up.state.maps.harrow.explored, 14 * 16 + 8), 'and Harrow\'s cells seen are packed into bits');
+      ok(ms.used.coast === 1 && ms.used.tm_tower === 1, 'the Shelf\'s event and Thornmark\'s chest stay used');
+      ok(ms.groups.road_rats.dead === 2000 && ms.groups.tm_ogre.dead === 2500 && ms.groups.hill_wolves.x === sh.x + 20 && ms.groups.hill_wolves.y === sh.y + 10 && ms.groups.tm_wolves1.dead === -1, 'the dead stay dead, the living stand where they stood, and groups never met are where their maps put them');
+      ok(holds({ visited: 'thornmark' }, up.state, up.party) && !holds({ visited: 'grove1' }, up.state, up.party) && up.region === 'thornmark', 'the quest log still knows the party has been to Thornmark, and the weather is Thornmark\'s');
+      const again = new World(buildMaps(), loaded.party, makeRng(1), deserialize(serialize(up.state, up.party, 1)).world);
+      ok(JSON.stringify(again.state) === JSON.stringify(up.state), 'saved again, it loads as it is');
+      ok((() => { try { deserialize(JSON.stringify({ ...v1, version: 99 })); return false; } catch { return true; } })(), 'a save from a newer build is refused');
+    }
   },
 
   quests() {
@@ -607,12 +735,18 @@ const suites: Record<string, () => void> = {
     // Each way in starts the quest with a goal; each entry can be written; each goal can be the one
     // shown (not hidden behind an earlier one); and an entry keyed to an item outlasts the hand-in.
     const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(rng); return { party, world: new World(buildMaps(), party, rng) }; };
+    // A zone map's ids are kept in the outdoors' state, and the party has to have walked into it.
+    const stateFor = (w: World, map: string): MapState => {
+      const on = w.locate(map, 0, 0).mapId;
+      if (on !== map && !w.state.zones!.includes(map)) w.state.zones!.push(map);
+      return w.ensureMapState(on);
+    };
     const satisfy = (s: { party: Party; world: World }, c: QuestCond): void => {
       for (const f of [c.flag ?? []].flat()) s.party.flags[f] = 1;
       if (c.item) s.party.bag.push(c.item);
-      if (c.seen) { const [m, id] = c.seen.split(':'); s.world.ensureMapState(m).used[id] = 1; }
-      if (c.slain) { const [m, id] = c.slain.split(':'); s.world.ensureMapState(m).groups[id].dead = s.world.state.minutes; }
-      if (c.visited) s.world.ensureMapState(c.visited);
+      if (c.seen) { const [m, id] = c.seen.split(':'); stateFor(s.world, m).used[id] = 1; }
+      if (c.slain) { const [m, id] = c.slain.split(':'); stateFor(s.world, m).groups[id].dead = s.world.state.minutes; }
+      if (c.visited) stateFor(s.world, c.visited);
     };
     const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
     const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && f.quest ? [f.quest.item] : [])));

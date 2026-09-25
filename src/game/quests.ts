@@ -3,9 +3,10 @@
 // reads something the save already holds, so the log comes back whole from any save, old ones
 // included. The Game compares one look with the next to announce what changed. The words are in
 // content/quests.ts.
-import type { WorldState } from './world.ts';
+import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem } from './party.ts';
+import { OUTDOORS } from './outdoors.ts';
 import { QUESTS } from '../content/quests.ts';
 
 /** Something the save records. Every part given must hold. */
@@ -18,8 +19,16 @@ export interface QuestCond {
   seen?: string;
   /** A group killed on a map: 'map:id'. Guardians only; a group that respawns comes back to life. */
   slain?: string;
-  /** A map the party has set foot on. */
+  /** A map the party has set foot on, or a zone map of the outdoors it has walked into. */
   visited?: string;
+}
+
+/**
+ * The state a map's feature and group ids are kept in: its own, or for a zone map laid into the
+ * outdoors (and so one the party has trodden, if anything there is to have happened), the outdoors'.
+ */
+function stateOf(w: WorldState, map: string): MapState | undefined {
+  return w.maps[map] ?? (w.zones?.includes(map) ? w.maps[OUTDOORS] : undefined);
 }
 
 /** A condition, or a list of them of which any one will do. */
@@ -62,9 +71,9 @@ export function holds(when: When, world: WorldState, party: Party): boolean {
 function condHolds(c: QuestCond, w: WorldState, p: Party): boolean {
   if (c.flag !== undefined && ![c.flag].flat().every((k) => p.flags[k])) return false;
   if (c.item !== undefined && countItem(p, c.item) === 0) return false;
-  if (c.seen !== undefined) { const [map, id] = c.seen.split(':'); if (!w.maps[map]?.used[id]) return false; }
-  if (c.slain !== undefined) { const [map, id] = c.slain.split(':'); if ((w.maps[map]?.groups[id]?.dead ?? -1) < 0) return false; }
-  if (c.visited !== undefined && !w.maps[c.visited]) return false;
+  if (c.seen !== undefined) { const [map, id] = c.seen.split(':'); if (!stateOf(w, map)?.used[id]) return false; }
+  if (c.slain !== undefined) { const [map, id] = c.slain.split(':'); if ((stateOf(w, map)?.groups[id]?.dead ?? -1) < 0) return false; }
+  if (c.visited !== undefined && !w.maps[c.visited] && !w.zones?.includes(c.visited)) return false;
   return true;
 }
 

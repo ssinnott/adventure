@@ -57,7 +57,7 @@ await page.keyboard.press('Space'); await page.waitForTimeout(150);
 const screen1 = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
 for (const k of ['ArrowDown', 'ArrowDown', 'ArrowDown']) { await page.keyboard.press(k); await page.waitForTimeout(40); }
 await page.waitForTimeout(100);
-const state = await page.evaluate(() => { const g = (window as any).__game.game; return { map: g.world.state.mapId, x: g.world.state.x, y: g.world.state.y, steps: g.world.state.steps }; });
+const state = await page.evaluate(() => { const g = (window as any).__game.game; return { map: g.world.state.mapId, zone: g.world.zone?.id, x: g.world.state.x, y: g.world.state.y, steps: g.world.state.steps }; });
 const exploreColours = await colours();
 await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['road_rats']); });
 await page.waitForTimeout(150);
@@ -151,6 +151,37 @@ await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 const almanacClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 await page.keyboard.press('KeyM'); await page.waitForTimeout(150);
 const afterMap = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+// The end of the world: nothing is built west of the Shelf yet. On a clear noon, facing it from the
+// last square before it, the view is pink empty space and the automap marks it pink; a step into it
+// is refused and the log says why.
+await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts');
+  const g = (window as any).__game.game, w = g.world;
+  g.screens = [g.screens[0]]; w.travel('shelf', 1, 12, 3); w.sky = null;
+  const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => wx.precip < 0.02 && wx.fog < 0.2 && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480);
+  if (at >= 0) w.state.minutes = at;
+});
+await page.waitForTimeout(150);
+const pinkIn = async (r: { x: number; y: number; w: number; h: number }): Promise<number> => page.evaluate((b: { x: number; y: number; w: number; h: number }) => {
+  const c = document.getElementById('stage') as HTMLCanvasElement;
+  const d = c.getContext('2d')!.getImageData(b.x, b.y, b.w, b.h).data;
+  let n = 0;
+  for (let i = 0; i < d.length; i += 4) if (Math.abs(d[i] - 0xff) < 5 && Math.abs(d[i + 1] - 0x5f) < 5 && Math.abs(d[i + 2] - 0xbf) < 5) n++;
+  return n;
+}, r);
+const edgeView = await pinkIn({ x: 8, y: 8, w: 400, h: 200 }), edgeMap = await pinkIn({ x: 416, y: 42, w: 216, h: 214 });
+await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100);
+const edgeBump = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { log: g.log.at(-1), x: g.world.state.x - z.x, zone: z.id }; });
+// The pass, once open, is a road walked straight through into Thornmark, no transition between.
+await page.evaluate(() => {
+  const g = (window as any).__game.game;
+  g.party.flags.q_ashcombe_done = 1; g.party.flags.q_greywater_done = 1;
+  g.world.travel('shelf', 29, 9, 1); g.world.killGroups(['tm_wolves1']);
+});
+for (let i = 0; i < 4; i++) { await page.keyboard.press('ArrowUp'); await page.waitForTimeout(60); }
+const pass = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { map: g.world.state.mapId, zone: z?.id, x: g.world.state.x - z?.x, y: g.world.state.y - z?.y, screen: g.top.constructor.name, said: g.log.slice(-3).join(' / ') }; });
+const passColours = await colours();
 // The monster art unions many parts into one painted mass with the nonzero fill rule, so every
 // part kind has to wind the same way. One that winds the other way punches a hole wherever it
 // overlaps another, which is how the tube ends once cut a wedge out of every limb. Overlap each
@@ -232,7 +263,7 @@ const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : ' 
 ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
 ok(titleColours > 6, `the title painted (${titleColours} colours)`);
 ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the title opens creation, Space again takes the premade company (${screen0}, ${screen1})`);
-ok(state.map === 'shelf' && state.steps === 3, `three steps back through the gate reach the Shelf (${JSON.stringify(state)})`);
+ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Shelf, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
@@ -250,6 +281,10 @@ ok(mapScreen === 'WorldMapScreen' && mapColours > 200, `M opens the world map an
 ok(zonesColours > 200 && wholeColours > 200, `Tab lays the zones over it and Z shows it whole (${zonesColours}, ${wholeColours} colours)`);
 ok(almanacScreen === 'MessageScreen' && almanacClosed === 'WorldMapScreen', `Space opens the almanac over the map and Esc goes back to it (${almanacScreen}, then ${almanacClosed})`);
 ok(afterMap === 'ExploreScreen', `M closes it again (${afterMap})`);
+ok(edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Shelf, the view is pink empty space and the automap marks it (${edgeView} pink pixels in the view, ${edgeMap} on the automap)`);
+ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeBump.x === 1, `a step into it is refused, and the log says why (${JSON.stringify(edgeBump)})`);
+ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /The pass opens onto old forest/.test(pass.said) && passColours > 20,
+  `the open pass is walked straight through into Thornmark, which says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 ok(cracks.length === 0, `the walls meet without a crack in the cellar and in Harrow, and the walls beside the party are drawn${cracks.length ? ` -> ${cracks.length} views, ` + cracks.slice(0, 4).join(', ') : ''}`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
