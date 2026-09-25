@@ -158,7 +158,10 @@ function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect): v
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
       const cell = map.at(c.x, c.y);
-      const nearK = d - 0.5, farK = d + 0.5;
+      // The party's own cell starts at k = -0.5, where u is infinite and the walls beside the party
+      // would come out as NaN and not draw at all. Clip them at k = 0 instead: its edges already
+      // project past the viewport (u(0) = 241 against a half-width of 200).
+      const nearK = Math.max(0, d - 0.5), farK = d + 0.5;
       const uN = unit(nearK, r.h), uF = unit(farK, r.h);
       const xl = (u: number) => cx + (l - 0.5) * 2 * u, xr = (u: number) => cx + (l + 0.5) * 2 * u;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
