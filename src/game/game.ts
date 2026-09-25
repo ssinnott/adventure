@@ -180,7 +180,7 @@ export class Game {
   /** Called by the combat screen when the fight ends. */
   afterCombat(groupIds: string[], outcome: 'victory' | 'defeat' | 'fled'): void {
     this.pop();
-    if (outcome === 'victory') { this.world.killGroups(groupIds); this.enterCell(); }
+    if (outcome === 'victory') { for (const m of this.world.killGroups(groupIds)) this.say(m); this.enterCell(); }
     else if (outcome === 'fled') this.world.flee(groupIds);
     else this.gameOver();
   }

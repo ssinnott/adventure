@@ -91,7 +91,8 @@ cap, which is 10 until promotions exist:
   secret door opens the second ring, a door the third, the key the chamber. The Hand of Ash and
   two adepts wait at the Stone; kill them and the Warden of the Cut, two cells on, is the
   hardest fight in the game. The chisel goes to Sylvane; the Warden drops the first Meridian
-  journal.
+  journal. The tear closes when the Warden dies: an encounter's `slainText` is said on the kill, so
+  it comes after the fight from whichever side the party fought.
 
 One clear of every map is worth a little over level 7 per member (a test pins this); the
 dungeons respawn in one to two days, and two more sweeps of the Grove reach 10. Levels are still
@@ -160,7 +161,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | | |
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
-| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, and the three quests walk through end to end with each change announced once |
+| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, and the three quests walk through end to end with each change announced once |
 | `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, talks to Vask and opens the quest log, and asserts every screen painted with no page error; also unions every pair of sprite part kinds and asserts none of them leaves a hole |
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing.

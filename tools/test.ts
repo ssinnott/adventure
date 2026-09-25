@@ -162,6 +162,12 @@ const suites: Record<string, () => void> = {
     world.flee(['road_rats']);
     ok(world.state.truce === 4 && world.state.y === back - 1, 'fleeing steps the party back and grants a truce');
     ok(world.adjacentGroups().length === 0, 'the fled group does not re-engage during the truce');
+    // The Cut Stone: the tear closes when the Warden of the Cut dies, not as the party walks up to it.
+    const cut = new World(buildMaps(), defaultParty(makeRng(6)), makeRng(6));
+    cut.travel('grove2', 7, 8, 1); cut.killGroups(['g2_hand']);
+    const up = cut.move('forward');
+    ok(up.kind === 'moved' && !!up.encounter?.includes('g2_warden') && !up.messages.some((m) => /tear closes/.test(m)), 'stepping up to the Warden of the Cut starts the fight, and nothing yet says the tear has closed');
+    ok(cut.killGroups(['g2_warden']).some((m) => /tear closes/.test(m)) && cut.killGroups(['g2_hand']).length === 0, 'beating the Warden is what closes the tear, and a group with nothing to say says nothing');
   },
 
   combat() {

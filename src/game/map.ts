@@ -74,6 +74,8 @@ export interface EncounterDef {
   roams?: boolean;
   /** In-game minutes before a killed group returns; 0 or absent = never. */
   respawn?: number;
+  /** Said in the log when the party beats the group: what its death changes. */
+  slainText?: string;
 }
 
 export interface MapDef {
