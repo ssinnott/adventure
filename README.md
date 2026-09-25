@@ -19,7 +19,8 @@ npm run check      # typecheck + Node tests + headless Chromium smoke test
 ```
 
 Keys: arrows or WASD move and turn, Q/E strafe, Space acts, F searches the wall ahead, R rests,
-C casts, I opens the character sheet (1–6 jump to a member), M map info, F5/F9 save and load.
+C casts, I opens the character sheet (1–6 jump to a member), M the world map (arrows scroll it, Tab shows the
+zones), F5/F9 save and load.
 
 ## Deploying
 
@@ -38,7 +39,7 @@ src/content/maps/  the authored maps: Harrow, the Shelf, the cellar, Greywater, 
 src/ui/            viewport, frame, sprites, screens, combat screen, title, party creation
 src/ui/monsters/   the enemy drawings, one module per family, dispatched by sprites.ts
 src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
-tools/             dev server, bundler, tests, smoke test, screenshot and monster gallery helpers
+tools/             dev server, bundler, tests, smoke test, screenshot, monster gallery and world map helpers
 ```
 
 ## The engine

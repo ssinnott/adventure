@@ -22,6 +22,7 @@ import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBack
 import { CombatScreen } from '../ui/combat.ts';
 import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen } from '../ui/screens.ts';
 import { TitleScreen } from '../ui/title.ts';
+import { WorldMapScreen } from '../ui/worldmap.ts';
 import { drawText } from '../lib/engine/text.ts';
 
 export interface Screen {
@@ -221,7 +222,7 @@ export class ExploreScreen implements Screen {
     else if (is(a, 'inventory')) g.push(new SheetScreen(g.selected));
     else if (is(a, 'save')) g.saveGame();
     else if (is(a, 'load')) { if (!g.loadGame()) g.say('No save to load.'); }
-    else if (is(a, 'map')) g.push(new MessageScreen(`${w.map.name}\n\nBand: levels ${w.map.def.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.`));
+    else if (is(a, 'map')) g.push(new WorldMapScreen());
     else if (/^n[1-6]$/.test(a)) { g.selected = Number(a[1]) - 1; g.push(new SheetScreen(g.selected)); }
     if (!res) return;
     if (res.kind === 'blocked') { g.say(res.reason); return; }
