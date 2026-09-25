@@ -346,7 +346,7 @@ const suites: Record<string, () => void> = {
     ok(new Set(QUESTS.map((q) => q.id)).size === QUESTS.length, `the ${QUESTS.length} quests have distinct ids`);
     for (const q of QUESTS) {
       const bad: string[] = [];
-      for (const c of [q.start, q.done, ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds)) {
+      for (const c of [q.start, ...(q.done ? [q.done] : []), ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds)) {
         for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f)) bad.push(`flag ${f}`);
         if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
         if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => ((f.kind === 'event' && f.once) || f.kind === 'chest') && f.id === id)) bad.push(`seen ${c.seen}`); }
@@ -379,14 +379,23 @@ const suites: Record<string, () => void> = {
       if (c.visited) s.world.ensureMapState(c.visited);
     };
     const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
+    const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && f.quest ? [f.quest.item] : [])));
     for (const q of QUESTS) {
       const bad: string[] = [];
       for (const c of conds(q.start)) { const s = fresh(); satisfy(s, c); const v = view(s, q.id); if (!v || v.done || !v.goal) bad.push(`start ${JSON.stringify(c)}`); }
       const start = conds(q.start)[0];
       for (const e of q.entries) for (const c of conds(e.when)) { const s = fresh(); satisfy(s, start); satisfy(s, c); if (!view(s, q.id)?.entries.includes(e)) bad.push(`entry ${e.id}`); }
       q.goals.forEach((g, i) => { const s = fresh(); satisfy(s, start); satisfy(s, conds(g.when)[0]); if (view(s, q.id)?.goal !== g.text) bad.push(`goal ${i + 1}`); });
-      for (const e of q.entries) if (conds(e.when).some((c) => c.item)) { const s = fresh(); satisfy(s, start); satisfy(s, conds(q.done)[0]); if (!view(s, q.id)?.entries.includes(e)) bad.push(`entry ${e.id} lost at the hand-in`); }
       ok(!bad.length, `${q.id}: starts with a goal, and every entry and goal can come up${bad.length ? ' -> ' + bad.join(', ') : ''}`);
+      // An entry keyed to an item has to outlast losing it: at the hand-in that ends the quest, or,
+      // for a quest with no end yet, never, so no hand-in may want the item and no shop buy it.
+      const lost = new Set<string>();
+      if (q.done) {
+        for (const e of q.entries) if (conds(e.when).some((c) => c.item)) { const s = fresh(); satisfy(s, start); satisfy(s, conds(q.done)[0]); if (!view(s, q.id)?.entries.includes(e)) lost.add(`entry ${e.id}, at the hand-in`); }
+      } else {
+        for (const c of [q.start, ...q.entries.map((e) => e.when)].flatMap(conds)) if (c.item && (handedIn.has(c.item) || Math.floor(ITEMS[c.item].price / 2) > 0)) lost.add(`${c.item}, which can be taken`);
+      }
+      ok(!lost.size, `${q.id}: nothing in the log vanishes when an item leaves the party${lost.size ? ' -> ' + [...lost].join(', ') : ''}`);
     }
     { // The slice's quests end to end, from the real flags and triggers: the log fills in, the goal
       // moves on, and each change is announced once and in story order.
@@ -421,10 +430,14 @@ const suites: Record<string, () => void> = {
       world.travel('thornmark', 1, 9, 1);
       party.flags.q_grove = 1;
       ok(news() === 'Quest log updated: The Grove Stone.' && /under the Grove/.test(quest('grove').goal ?? ''), 'Sylvane sends the party under the Grove');
-      party.bag.push('ashen_chisel'); world.ensureMapState('grove2').groups.g2_warden.dead = world.state.minutes;
+      party.bag.push('ashen_chisel');
+      world.travel('grove2', 8, 8, 0); world.killGroups(['g2_warden']); party.bag.push('meridian_journal'); // the Warden dies and drops its journal
       ok(/Sylvane/.test(quest('grove').goal ?? '') && ['chisel', 'tear'].every((id) => quest('grove').entries.some((e) => e.id === id)), 'the chisel goes to Sylvane, and the Warden\'s death is written');
+      ok(news() === 'Quest log updated: The Grove Stone. New quest: The Lost Expedition.', 'the journal the Warden drops begins the Lost Expedition');
       takeItem(party, 'ashen_chisel'); party.flags.q_grove_done = 1;
-      ok(news() === 'Quest complete: The Grove Stone.' && log().length === 3 && log().every((v) => v.done), 'every quest in the slice can be finished');
+      ok(news() === 'Quest complete: The Grove Stone.' && log().filter((v) => v.done).length === 3, 'the three quests of the slice can all be finished');
+      const expedition = quest('meridian');
+      ok(!expedition.done && /Meridian/.test(expedition.goal ?? '') && expedition.entries.length === 1, `and the Lost Expedition stays open with a goal, its trail not built yet (${expedition.goal})`);
     }
   },
 };

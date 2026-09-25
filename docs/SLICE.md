@@ -34,11 +34,13 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
-  journal of what the party has found: The Quiet Farm (Vask), The Greywater Ledger (Hale) and The
-  Grove Stone (Vask's lead, Sylvane's chisel). Nothing new is saved. Every entry is keyed to
-  something the save already holds (a flag, a carried item, a once-only event, a guardian killed, a
-  map set foot on), so an old save opens with its log whole. A quest begun, advanced or finished is
-  announced once in the message log, and J opens on the one that changed last.
+  journal of what the party has found: The Quiet Farm (Vask), The Greywater Ledger (Hale), The
+  Grove Stone (Vask's lead, Sylvane's chisel), and The Lost Expedition, which the first Meridian
+  journal opens and which stays open until the rest of its trail is built. Nothing new is saved.
+  Every entry is keyed to something the save already holds (a flag, a carried item, a once-only
+  event, a guardian killed, a map set foot on), so an old save opens with its log whole. A quest
+  begun, advanced or finished is announced once in the message log, and J opens on the one that
+  changed last.
 
 ## The road to level 10
 
@@ -150,9 +152,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 - Only one Charter (Lanterns) has any presence; no Standing.
 - No promotions, so no sixth spell tier; no Master trainers; no secondary skills yet beyond race
-  innate ones. The Meridian journal is an item with no reader yet.
+  innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
+  yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Hirelings, promotions, the succession, the Salt Compact, the Lost Expedition: design only.
+- Hirelings, promotions, the succession, the Salt Compact, the Lost Expedition past its first
+  journal: design only.
 
 ## Checks
 
@@ -161,7 +165,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | | |
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
-| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, and the three quests walk through end to end with each change announced once |
+| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, no entry vanishes when an item leaves the party, and the quests walk through end to end with each change announced once and the Lost Expedition left open |
 | `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, talks to Vask and opens the quest log, and asserts every screen painted with no page error; also unions every pair of sprite part kinds and asserts none of them leaves a hole |
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing.

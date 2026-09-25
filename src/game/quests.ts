@@ -39,8 +39,8 @@ export interface QuestDef {
   title: string;
   /** In the log once this holds. */
   start: When;
-  /** Finished once this holds. */
-  done: When;
+  /** Finished once this holds. Absent while the quest's end is not built yet: it stays open. */
+  done?: When;
   /** In story order. */
   entries: readonly QuestEntry[];
   goals: readonly QuestGoal[];
@@ -72,7 +72,7 @@ function condHolds(c: QuestCond, w: WorldState, p: Party): boolean {
 export function questLog(world: WorldState, party: Party, quests: readonly QuestDef[] = QUESTS): QuestView[] {
   const out: QuestView[] = [];
   for (const q of quests) {
-    const done = holds(q.done, world, party);
+    const done = q.done !== undefined && holds(q.done, world, party);
     if (!done && !holds(q.start, world, party)) continue;
     const entries = q.entries.filter((e) => holds(e.when, world, party));
     const goal = done ? null : q.goals.find((g) => holds(g.when, world, party))?.text ?? null;
