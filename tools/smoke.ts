@@ -74,6 +74,16 @@ const thornFightColours = await colours();
 await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornhold', 7, 14, 0); g.enterCell(); });
 await page.waitForTimeout(150);
 const townColours = await colours();
+// The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it.
+await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 9, 6, 0); g.interact(g.world.featureHere()); });
+await page.waitForTimeout(100);
+await page.keyboard.press('Space'); await page.waitForTimeout(100);
+const questLine = await page.evaluate(() => (window as any).__game.game.log.at(-1));
+await page.keyboard.press('KeyJ'); await page.waitForTimeout(150);
+const questScreen = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const questColours = await colours();
+await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+const questClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 // The weather: the Shelf in a downpour, a fight in it, and Thornmark under falling snow with snow
 // lying deep. Each moves the clock to the first such hour of daylight for this game's seed.
 const weatherAt = async (map: string, x: number, y: number, f: number, want: string): Promise<{ found: boolean; sky: string; log: string }> => {
@@ -146,6 +156,8 @@ ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
+ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
+ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
 ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Shelf paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);
 ok(rainFight.screen === 'CombatScreen' && rainFight.rangedPenalty > 0 && rainFightColours > 20, `a fight in the downpour paints, with the archers' penalty (${rainFightColours} colours)`);
 ok(snow.found && /snow|blizzard|flurries/.test(snow.sky) && /snow|blizzard/i.test(snow.log) && snowColours > 20, `Thornmark paints under falling snow with snow lying (${snow.sky}: "${snow.log}", ${snowColours} colours)`);

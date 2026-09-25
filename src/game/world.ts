@@ -327,8 +327,15 @@ export class World {
     return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters }; });
   }
 
-  killGroups(ids: string[]): void {
-    for (const id of ids) { const st = this.mapState.groups[id]; if (st) st.dead = this.state.minutes; }
+  /** Mark the groups dead; returns what the log says about it (each group's `slainText`). */
+  killGroups(ids: string[]): string[] {
+    const said: string[] = [];
+    for (const id of ids) {
+      const st = this.mapState.groups[id]; if (st) st.dead = this.state.minutes;
+      const text = this.map.encounters.find((e) => e.id === id)?.slainText;
+      if (text) said.push(text);
+    }
+    return said;
   }
 
   /** After a successful flight: step back if possible and grant a truce with those groups. */
