@@ -116,6 +116,8 @@ What changes:
   east road after the Tide Stone) are open from the start.
 - Skills and boats open shortcuts and secrets off the road, which keeps pillar 2's skills that open
   the map, but never the road itself. Where the road crosses water there is a crossing to pay for.
+  The atlas's road from Coldmere into Monks' Vale, marked "Mountaineer", becomes a road through
+  the range.
 - A few story beats may wait on the quest (§2.3); a way between areas never does.
 - A step can be taken early. A company that reaches an area before the quest sends it can do
   everything there, and the journal reads true in either order.
@@ -363,6 +365,11 @@ secret found and never told, restraint), reads the text and the code.
   found from what the quest's steps name; the reach areas (DESIGN.md §9) are declared as such, and
   are the only ones exempt. A first draft of the five acts left nine of the 27 zones without a
   step, 39% of the land; this check is what stops that happening unnoticed.
+- **The reach is out of the way.** Each reach area is a dead end with a single way in, no step of
+  the quest lies in it, and cutting the reach off the map leaves the road whole. The check reads
+  the atlas's zones as the party walks them: borders over walkable land, and the road and sea
+  links. On today's atlas the only dead ends are Glacier Foot, Monks' Vale and the Hearth Isle, and
+  the Wold borders four zones on the road, so the Glass needs its lava flow before it passes.
 
 ---
 
@@ -414,7 +421,7 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | The Whitespine | 22–24 | cliffs and peaks, with the road through them |
 | Ashfall | 24–28 | the crossing by ship, open from the start; volcano and lava fields |
 | Hearth Isle, the Underdeep | 28–32 | promotion II; the Underdeep's look; the endings |
-| The reach: the Glasswold, and a second (DESIGN.md §9) | the cap | glass and dunes; the atlas marking reach areas beside the road, not on it (its test holds the bands rising along the road, and a reach area's would not); super dungeons of many levels; artifacts |
+| The reach: the Glass, and Glacier Foot with the Vault (DESIGN.md §9) | the cap | glass and dunes; a lava flow sealing the Glass from the Ember Waste; the Vault's new kind of map, the inside of the sky; the atlas marking reach areas beside the road, not on it (its test holds the bands rising along the road, and a reach area's would not); super dungeons of many levels; artifacts |
 
 The skills that open the map (Swimmer, Mountaineer, Navigator and the rest) come when there are
 shortcuts and secrets for them; none is needed to follow the road. Along the whole road the systems

@@ -260,7 +260,7 @@ the reach.
 | I. Ashes on the Road | 1–10 | the Shelf, Thornmark | Why are the Stones failing? | They are not failing. They are being cut, with Underdeep tools |
 | II. The Salt Road | 10–16 | Saltreach, Wrackholm, Sunderwood | Who profits? | Vask is behind the Ashen Hand, and under the world stands a wall no one built |
 | III. The Deep Script | 16–22 | the Kilns, Cairnmoor, Rimewater | What are the Stones? | Machines, and people came here with them |
-| IV. Beyond the Sky | 22–28 | the Whitespine, Ashfall | What is Caldera? | A vessel. The sky is a ceiling |
+| IV. Beyond the Sky | 22–28 | the Whitespine, Ashfall, the Wold | What is Caldera? | A vessel. The sky is a ceiling |
 | V. The Hearth | 28–32 | Hearth Isle, the Underdeep, the Core | What do we do? | The choice |
 
 The Hearth is the quest's measure. Each restored Stone brightens it, in the night sky and on the
@@ -340,20 +340,21 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
 - **High Moor and the Cairnfield:** a ring of stones older than the Wardstones, the first emitters,
   dead for centuries, with the cairns around it. The Custodian's oldest voice still speaks there.
 - **Longmere:** some of Greywater's cargo come back up through the ice at Rime Lodge. The doors
-  below opened for some of them and not for others: the captain's line, tested on its victims.
-- **Glacier Foot and Coldmere:** the Ice Caves lead down to a sealed bay under Coldmere's frozen
-  lake, where rows of sleepers who never woke have faces like the party's own.
+  below opened for some of them and not for others: the captain's line, tested on its victims. The
+  way they came up is the way down.
+- **Coldmere:** a sealed bay under the frozen lake, where rows of sleepers who never woke have
+  faces like the party's own.
 
-### Act IV — Beyond the Sky (levels 22–28: the Whitespine, Ashfall)
+### Act IV — Beyond the Sky (levels 22–28: the Whitespine, Ashfall, the Wold)
 
 - **Monks' Vale and the High Spine:** the Peak Stone is fine, but something wears the monks who
   guard it, and the monastery's bells ring the Hearth's flicker. Promotion II's dungeon is here.
 - **Sheer Point:** its tip reaches toward the Hearth, and the Ashen Hand is building its crossing
   there. The party sees where the end will come, an act early.
 - **The crossing:** Kilnhaven's ship carries the party over the sea to the far side.
-- **Cindercoast:** Cinderport, the far side's port. A Wold Rider trader tells of the day the sky
-  opened and the land burned: the warning against arriving, and the way to the Glasswold (the
-  reach, below).
+- **Cindercoast:** Cinderport, the far side's port, where the last crossing leaves.
+- **The Wold:** the Riders remember the day the sky opened and the land burned, and they keep the
+  only way into the Glass (the reach, below). They are the warning against arriving, in person.
 - **Fire Mountain:** the volcano's vents are the Underdeep's exhaust and the way down for the Ember
   Stone's parts. They lead to the Meridian Company's last camp and to a room with a window.
 - **The Ember Waste:** the Ember Stone was never finished. The party completes it with parts from
@@ -393,13 +394,21 @@ that wants more than the story asks, around complex super dungeons of many level
 needs them, and no ending depends on them. The monsters are their only gate, and they spend no
 story locks.
 
-- **The Glasswold:** the far west, over the Scarp from Saltreach or on from Ashfall. The Wold
-  Riders keep the steppe and the memory of the day the sky opened; the Glass is what that day
-  left. Its super dungeon is the Buried Tower, the mast of a lander that tried to arrive, sunk in
-  the glass it made, its decks running down into the ground it melted.
-- **The second, still to choose:** the Vault, the inside of the sky, climbed to up the Hearth's
-  column by a company that knows the sky is a ceiling; or the Deep, the Underdeep's far decks
-  beyond the road to the core, reached through every region's deepest dungeon.
+They are out of the way as well as off the quest. Each is a dead end with a single way in, so the
+road never runs through one, and a company is only ever in the reach because it went there. The
+converse holds too: everything on the road belongs to the quest.
+
+- **The Glass:** the desert behind the Wold, in the far west. A lava flow closes it off from the
+  Ember Waste, so the Wold Riders keep its only way in. The Glass is what the day the sky opened
+  left, and its super dungeon is the Buried Tower: the mast of a lander that tried to arrive, sunk
+  in the glass it made, its decks running down into the ground it melted.
+- **Glacier Foot and the Vault:** Rimewater's south-eastern lobe, off Longmere, where the glacier
+  comes down from the rim. At its head the sky comes down to meet the ice, the one place a company
+  can climb into the Vault, the inside of the sky. The Ice Caves are the first of its dungeons.
+  Its way in lies in country of band 20, so it is the reach a company sees long before it can take
+  it.
+
+The two go opposite ways: the Buried Tower down into the ground, the Vault up into the sky.
 
 The reach sits at the cap and is harder than the Core. Its power comes from what it holds
 (artifacts, some of the hidden Master trainers of §5, the richest shrines and fountains) rather
@@ -486,7 +495,7 @@ Cartographer Promotion II.
 | **M1 — Act I** | The Shelf and Thornmark complete, the Downs and the Deepthorn with them; Wardens and Lanterns Charter lines to rank 3; the Grove Stone dungeon; hirelings. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to Ashfall and their Wardstones; all four Charters; promotions I; the Underdeep entrances; the ship. | The open world. |
 | **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, promotions II, Master trainers. | Content complete. |
-| **The reach** | The Glasswold and the second reach area, with their super dungeons (§9). | Optional by design: the game is whole without it. |
+| **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9). | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 
 ---
