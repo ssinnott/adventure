@@ -261,6 +261,10 @@ play in the pilot):
 - **Well under, back.** Two levels under the floor, it wins no more than one fight in four.
 - **The boss asks.** The area's boss is won about half the time at the floor, and nearly always two
   levels above it.
+- **A fight at the company's level costs 15%.** A standard encounter at the company's own level
+  costs it about 15% of its hit points and spell points together, six or seven fights between rests.
+  `tools/harness.ts` measures any encounter or map against it, with a test monster for every role
+  and level to build from (docs/MONSTERS.md §4.4).
 - **A warning, not a wall.** The first groups past a border are the area's gentlest, and the
   crossing line tells a company under the band how the land feels to it, so the party learns it is
   early from a fight it can survive or run from, not from a wipe.

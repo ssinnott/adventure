@@ -292,6 +292,10 @@ renders every monster (or one family) at the combat size with the viewport sizes
 as a strip of idle frames ending in the hit flash, for judging an art pass.
 `node tools/interiors.ts out.png [--only hearthlight_inn,split_oak] [--scale 2] [--hour 21]` renders
 the businesses' interiors as the viewport shows them, at an hour of the day.
+`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--under 2] [--map thornmark --level 5] [--day] [--stats] [--calibrate --write]`
+fights the premade company at a level against standard encounters of the test monster, or a map's
+own groups, and says what each fight cost it against the 15% an encounter at its level should
+(docs/MONSTERS.md §4.4).
 
 ## Code map
 

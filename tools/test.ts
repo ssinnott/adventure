@@ -8,7 +8,7 @@ import type { MapDef } from '../src/game/map.ts';
 import { World, seen } from '../src/game/world.ts';
 import { layOutdoors, OUTDOORS } from '../src/game/outdoors.ts';
 import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition, takeItem } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, buffHit, traitDamage, WARD_AC } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, buffHit, traitDamage, describeGroups, WARD_AC } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
 import { serialize, deserialize } from '../src/game/save.ts';
@@ -23,6 +23,8 @@ import type { QuestCond, QuestView, When } from '../src/game/quests.ts';
 import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
 import { NORTH } from '../src/game/types.ts';
+import { testMonster, standardEncounter, line, ROLES, ROLE_IDS } from './testmonster.ts';
+import { measure, spent, bossFloor, TARGET, CAP } from './harness.ts';
 import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
 import type { Season } from '../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
@@ -316,6 +318,40 @@ const suites: Record<string, () => void> = {
     const noted = startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4), { rangedPenalty: RANGED_PENALTY, note: 'The downpour spoils every archer\'s aim.' });
     ok(noted.rangedPenalty === RANGED_PENALTY && noted.log[1] === 'The downpour spoils every archer\'s aim.', 'a fight in the weather carries the penalty and says why');
     ok(startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4)).rangedPenalty === 0, 'and a fight with no word of the weather has none');
+  },
+
+  harness() {
+    // The resolver fights defs that no map places, which is what the combat harness hands it.
+    const soldier = testMonster('soldier', 3), rng = makeRng(31);
+    const s = startCombat(defaultParty(rng), [{ id: 'test', monsters: [soldier, soldier] }], rng);
+    ok(s.monsters.length === 2 && s.monsters.every((m) => m.def === soldier && m.hp === soldier.hp) && describeGroups(s) === '2 Test Soldiers', `a fight takes a def as well as an id, and names it (${describeGroups(s)})`);
+    // Training past today's cap is for tools only.
+    const c = defaultParty(makeRng(32)).members[0];
+    c.xp = xpForLevel(20); levelUp(c, makeRng(32));
+    ok(c.level === MAX_LEVEL, `levelUp stops at MAX_LEVEL in play (${c.level})`);
+    levelUp(c, makeRng(32), 20);
+    ok(c.level === 20, `and trains on when a tool asks it to (${c.level})`);
+    // What a fight costs: all of a fallen member's hit points, and every spell point cast.
+    const p = defaultParty(makeRng(33)), fallen = p.members[5];
+    const pool = p.members.reduce((a, m) => a + m.maxHp + m.maxSp, 0);
+    fallen.hp = -1; addCondition(fallen, 'unconscious'); p.members[4].sp -= 3;
+    const cost = spent(p).cost;
+    ok(Math.abs(cost - (fallen.maxHp + 3) / pool) < 1e-9, `a fallen member costs all of their hit points, a spell its points (${(cost * 100).toFixed(1)}% of the company)`);
+    // From 1 to the road's cap, a test monster's hit points never fall with level, and it never hits
+    // under its role's share of the line (below 8 its damage moves with the spell tiers; docs/MONSTERS.md §4.4).
+    for (const r of ROLE_IDS) {
+      const levels = Array.from({ length: CAP }, (_, k) => k + 1), m = levels.map((l) => testMonster(r, l));
+      const falls = levels.filter((l) => l > 1 && m[l - 1].hp < m[l - 2].hp);
+      const under = levels.filter((l) => (m[l - 1].dice * (m[l - 1].sides + 1)) / 2 + m[l - 1].bonus < line(l).dmg * ROLES[r].dmg - 0.75);
+      ok(!falls.length && !under.length, `the test ${r} gains hit points with every level and never hits under the line${falls.length || under.length ? ` (falls at ${falls.join(', ')}; under at ${under.join(', ')})` : ''}`);
+    }
+    // The calibration holds on seeds it was not made on: 15% at a company's own level, and the boss a coin flip from two under.
+    for (const [r, l] of [['fodder', 2], ['brute', 4], ['soldier', 6], ['caster', 10]] as const) {
+      const t = measure(l, standardEncounter(r, l), 80, 5001);
+      ok(Math.abs(t.cost - TARGET) <= 0.03, `${ROLES[r].group} test ${r}s cost a company of level ${l} ${(t.cost * 100).toFixed(0)}% (${(TARGET * 100).toFixed(0)}% asked)`);
+    }
+    const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
+    ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
   },
 
   party() {

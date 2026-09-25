@@ -81,10 +81,11 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
   return n;
 }
 
-export function startCombat(party: Party, groups: { id: string; monsters: string[] }[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
+/** A group names its monsters by id; a tool may hand in defs that no map places (tools/harness.ts). */
+export function startCombat(party: Party, groups: readonly { id: string; monsters: readonly (string | MonsterDef)[] }[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
   const monsters: MonsterInst[] = [];
   groups.forEach((g, gi) => {
-    for (const id of g.monsters) if (monsters.length < 12) monsters.push({ def: monster(id), hp: monster(id).hp, group: gi, conditions: [], flash: 0 });
+    for (const m of g.monsters) if (monsters.length < 12) { const def = typeof m === 'string' ? monster(m) : m; monsters.push({ def, hp: def.hp, group: gi, conditions: [], flash: 0 }); }
   });
   const s: CombatState = {
     monsters, groupIds: groups.map((g) => g.id), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
@@ -97,9 +98,9 @@ export function startCombat(party: Party, groups: { id: string; monsters: string
 }
 
 export function describeGroups(s: CombatState): string {
-  const counts = new Map<string, number>();
-  for (const m of s.monsters) if (m.hp > 0) counts.set(m.def.id, (counts.get(m.def.id) ?? 0) + 1);
-  return [...counts].map(([id, n]) => n === 1 ? monster(id).name : `${n} ${monster(id).plural}`).join(', ');
+  const counts = new Map<string, { def: MonsterDef; n: number }>();
+  for (const m of s.monsters) if (m.hp > 0) { const c = counts.get(m.def.id); if (c) c.n++; else counts.set(m.def.id, { def: m.def, n: 1 }); }
+  return [...counts.values()].map(({ def, n }) => n === 1 ? def.name : `${n} ${def.plural}`).join(', ');
 }
 
 function newRound(s: CombatState, party: Party, rng: RngInstance): void {
@@ -150,7 +151,8 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   checkOutcome(s, party, rng);
 }
 
-function toHit(bonusValue: number, targetAc: number): number {
+/** The chance a to-hit bonus has against an armour class, for either side. */
+export function toHit(bonusValue: number, targetAc: number): number {
   const p = 0.65 + (bonusValue - (targetAc - 10)) * 0.05;
   return Math.max(0.05, Math.min(0.95, p));
 }
@@ -257,7 +259,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       if (sp.inflict) {
         let n = 0;
         for (const m of members) if (!m.def.mindless && rng.chance(0.7)) { m.conditions = [sp.inflict]; n++; }
-        s.log.push(`${c.name} casts ${sp.name}: ${n} of the ${monster(m0.def.id).plural} fall ${sp.inflict}.`);
+        s.log.push(`${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} fall ${sp.inflict}.`);
       } else {
         let total = 0, killed = 0;
         for (const m of members) { const d = dmgOf(); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
