@@ -9,16 +9,26 @@
 //
 // Everything is vector, textured procedurally (stone courses, timber frames, flagstones, tufts of
 // grass) with a stable hash so the same wall always has the same darker block. The static scene
-// is cached in an offscreen canvas keyed by the world state; monsters and the light flicker are
-// drawn over it every frame.
+// is cached in two offscreen canvases keyed by the world state, the sky and everything in front of
+// it, so a lightning bolt can be drawn between them; monsters, the light flicker and the weather
+// (rain, snow, fog, the flash of a strike) are drawn over it every frame.
+//
+// The weather and the time of year also reach into the cached scene: an overcast sky greys the
+// light, fog and driving rain or snow swallow far faces into the haze, rain darkens the ground and
+// leaves puddles, snow lies on the ground, the roofs and the trees, the grass goes from spring
+// green to tawny, and the leaves turn and fall (see game/weather.ts and game/calendar.ts).
 import type { World } from '../game/world.ts';
 import type { GameMap, Cell, Terrain, MapPalette } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS } from './palette.ts';
-import { drawMonsterSprite, drawTreeSprite, drawRockSprite, drawMountainSprite, drawPillarSprite } from './sprites.ts';
+import { drawMonsterSprite, drawTreeSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
+import type { TreeSeason } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
+import type { Weather } from '../game/weather.ts';
+import { mixHash } from '../game/weather.ts';
+import { sunTimes } from '../game/calendar.ts';
 import { hash } from './brush.ts';
 
 export const VIEW_W = 400, VIEW_H = 268;
@@ -39,18 +49,58 @@ function cellAt(px: number, py: number, f: Facing, d: number, l: number): { x: n
   return { x: px + FACING_DX[f] * d + FACING_DX[rf] * l, y: py + FACING_DY[f] * d + FACING_DY[rf] * l };
 }
 
+/**
+ * The weather and the season as the scene painter sees them, set at the top of each paint like
+ * `flames`: murk is fog or driving rain or snow closing in (0 .. 1), cover the snow lying, wet the
+ * rain standing, `day` the day of the year for the grass, `trees` how the year dresses them.
+ */
+interface Env { murk: number; cover: number; wet: number; day: number; trees: TreeSeason; }
+const CLEAR: Env = { murk: 0, cover: 0, wet: 0, day: 45, trees: HIGH_SUMMER };
+let env: Env = CLEAR;
+
+/** How much the weather closes the view: fog, or rain and (more so) snow coming down hard. */
+function murkOf(w: Weather): number { return Math.min(1, Math.max(w.fog, w.precip * (0.45 + 0.45 * w.snow) - 0.1)); }
+
 /** Distance fog: nearer is truer. `haze` is the colour far things fade toward. */
 function fog(color: string, d: number, dark: boolean, haze: string | null = null): string {
   // Outdoors (haze given) keeps its colour with distance, as Xeen does; dungeons fall off into dark.
   const f = dark ? Math.max(0.12, 1 - d * 0.3) : haze ? Math.max(0.7, 1 - d * 0.07) : Math.max(0.5, 1 - d * 0.12);
   const c = shade(color, f);
-  return haze && !dark ? mix(c, haze, Math.min(0.3, d * 0.06)) : c;
+  if (!haze) return c;
+  // Murk swallows far faces into the haze by night as by day; clear air only tints them by day.
+  if (env.murk > 0) return mix(c, haze, Math.min(0.3 + env.murk * 0.6, d * (0.06 + env.murk * 0.24)));
+  return dark ? c : mix(c, haze, Math.min(0.3, d * 0.06));
+}
+
+const SNOW = '#eef2f7';
+/** How white each terrain goes under lying snow: cobbles and sand show through, water never takes it. */
+const SNOW_HOLD: Partial<Record<Terrain, number>> = { grass: 0.92, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1 };
+/** The grass through the year: dull after winter, fresh in Sowing, deep in summer, tawny by Mistfall. */
+const GRASS: readonly [number, string][] = [[0, '#6a7650'], [10, '#6a8a4a'], [22, '#58ae40'], [40, '#4c9a3a'], [62, '#5a9a3a'], [80, '#7a8a44'], [94, '#6e7650'], [120, '#6a7650']];
+function grassColor(day: number): string {
+  let i = 0;
+  while (i < GRASS.length - 2 && day >= GRASS[i + 1][0]) i++;
+  const [d0, c0] = GRASS[i], [d1, c1] = GRASS[i + 1];
+  return mix(c0, c1, Math.max(0, Math.min(1, (day - d0) / (d1 - d0))));
+}
+/** How many flowers are out: none before Sowing or after Leafturn. */
+function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 12) / 8, (72 - day) / 10)); }
+/** The colour of the ground: the terrain's, the grass by season, darker when wet, whitened by snow. */
+function groundColor(terrain: Terrain, kind: string, floorPal: string): string {
+  if (kind === 'dungeon') return floorPal;
+  let c = terrain === 'grass' ? grassColor(env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
+  if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava') c = shade(c, 1 - 0.18 * env.wet);
+  const s = env.cover * (SNOW_HOLD[terrain] ?? 0);
+  return s > 0 ? mix(c, SNOW, s) : c;
 }
 
 interface Flame { x: number; y: number; s: number; }
 interface Scene {
   key: string;
+  /** Everything but the sky, which shows through where nothing was painted. */
   canvas: HTMLCanvasElement;
+  /** The sky, sun, moon, stars and clouds, behind it. */
+  sky: HTMLCanvasElement;
   flames: Flame[];
 }
 let scene: Scene | null = null;
@@ -59,26 +109,40 @@ let flames: Flame[] = [];
 
 function isSolidWall(c: Cell): boolean { return c.solid === 'wall' || c.solid === 'building' || c.door !== 'none'; }
 
+/**
+ * The first-person view at `r`. `weather` draws the rain, snow, fog and lightning over it; a fight
+ * passes false and draws them over its monsters instead (see drawWeather).
+ */
 export function drawViewport(
   ctx: CanvasRenderingContext2D, world: World, r: ViewRect,
-  monstersAt: (x: number, y: number) => ViewMonster | null, frame: number,
+  monstersAt: (x: number, y: number) => ViewMonster | null, frame: number, weather = true,
 ): void {
-  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, Math.round(world.daylight * 20), world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, r.w, r.h].join('|');
+  // The minute and the weather seed pin down the weather, so they key the scene with the place.
+  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, r.w, r.h].join('|');
   if (!scene || scene.key !== key) {
-    const canvas = scene?.canvas ?? document.createElement('canvas');
-    canvas.width = r.w; canvas.height = r.h;
+    const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
+    canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
     flames = [];
-    paintScene(canvas.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
-    scene = { key, canvas, flames };
+    paintScene(canvas.getContext('2d')!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
+    scene = { key, canvas, sky, flames };
+  }
+  ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
+  // The sky, a lightning bolt in it, then the scene in front with the sky showing through.
+  const wx = world.underSky ? world.weather : null;
+  if (wx) {
+    ctx.drawImage(scene.sky, r.x, r.y);
+    const flash = strike(wx.storm, frame);
+    if (flash) drawBolt(ctx, r, flash);
   }
   ctx.drawImage(scene.canvas, r.x, r.y);
 
   // Monsters, every frame, with a line-of-sight check against the cached walls.
-  ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
   const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
   const dark = world.isDark && map.kind !== 'dungeon';
+  // Grey days dim them, and murk fades the far ones.
+  const dim = wx ? 1 - 0.18 * wx.cloud : 1, murk = wx ? murkOf(wx) : 0;
   for (let d = Math.min(DEPTH, world.sight); d >= 1; d--) {
     for (let l = -LATERAL; l <= LATERAL; l++) {
       const c = cellAt(px, py, f, d, l);
@@ -86,7 +150,7 @@ export function drawViewport(
       const m = monstersAt(c.x, c.y);
       if (!m) continue;
       const u = unit(d, r.h);
-      const tone = dark ? 0.5 : Math.max(0.55, 1 - d * 0.12);
+      const tone = (dark ? 0.5 : Math.max(0.55, 1 - d * 0.12)) * dim * (1 - murk * 0.12 * d);
       const n = Math.min(m.count, 3);
       for (let i = 0; i < n; i++) {
         const off = (i - (n - 1) / 2) * u * 0.8;
@@ -104,6 +168,7 @@ export function drawViewport(
   // Flames on the sconces and lanterns, animated over the cached scene.
   for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
   ctx.restore();
+  if (weather) drawWeather(ctx, world, r, frame);
 }
 
 /** Whether the cell at (d, l) can be seen from the eye: walk the straight line and stop at walls. */
@@ -125,17 +190,24 @@ function lineOfSight(map: GameMap, px: number, py: number, f: Facing, d: number,
 // ------------------------------------------------------------------ the scene ----
 
 /**
- * The static scene. `backdrop` replaces the sky, ground, ceiling and floor fills behind everything
- * with one flat colour, so the smoke test can look for it showing through between the walls.
+ * Paint the scene into `ctx` and, under an open sky, the sky behind it into `skyCtx`. `backdrop`
+ * replaces the sky, ground, ceiling and floor fills behind everything with one flat colour, so the
+ * smoke test can look for it showing through between the walls.
  */
-export function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, backdrop?: string): void {
+export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderingContext2D, world: World, r: ViewRect, backdrop?: string): void {
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
   const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
   const dark = world.isDark && map.kind !== 'dungeon';
   const daylight = world.daylight;
   const sight = world.sight;
-  const skyBottom = mix('#1a1428', '#c9d6e6', daylight);
+  const wx = world.underSky ? world.weather : null, day = world.date.dayOfYear;
+  env = wx ? { murk: murkOf(wx), cover: wx.cover, wet: wx.cover < 0.3 ? wx.wet : 0, day, trees: treeSeason(day, wx.cover) } : CLEAR;
+  const cloud = wx?.cloud ?? 0;
+  // A dark day lights the lamps early.
+  const gloom = daylight * (1 - 0.3 * cloud - 0.25 * (wx?.precip ?? 0));
+  // Far things fade toward the sky's foot, greyed by cloud and by murk.
+  const skyBottom = mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk));
   const haze = map.kind === 'dungeon' ? null : skyBottom;
 
   ctx.save();
@@ -146,9 +218,12 @@ export function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewR
     ctx.fillStyle = shade(map.palette.ceiling, 0.7); ctx.fillRect(r.x, r.y, r.w, r.h / 2);
     ctx.fillStyle = shade(map.palette.floor, 0.5); ctx.fillRect(r.x, horizon, r.w, r.h / 2);
   } else {
-    drawSkyBand(ctx, r, { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark });
+    const { dawn, dusk } = sunTimes(day);
+    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day };
+    drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
+    drawSkyBand(ctx, r, { ...sky, part: 'hills' });
     const farCell = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1));
-    const ground = shade(TERRAIN_COLORS[farCell.terrain] ?? map.palette.floor, dark ? 0.2 : 0.55);
+    const ground = shade(groundColor(farCell.terrain, map.kind, map.palette.floor), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
     gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
     ctx.fillStyle = gg; ctx.fillRect(r.x, horizon, r.w, r.h / 2);
@@ -193,7 +268,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewR
         // no outline between them; outlines are for corners and for where a wall ends.
         if (d > 0 && !solidAt(d - 1, l)) {
           const joinL = solidAt(d, l - 1) && !solidAt(d - 1, l - 1), joinR = solidAt(d, l + 1) && !solidAt(d - 1, l + 1);
-          drawFrontFace(ctx, map, cell, c.x, c.y, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, daylight, joinL, joinR, across);
+          drawFrontFace(ctx, map, cell, c.x, c.y, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, gloom, joinL, joinR, across);
         }
         const s = Math.sign(l);
         if (l !== 0 && !solidAt(d, l - s)) {
@@ -205,13 +280,20 @@ export function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewR
       } else if (d > 0 && cell.solid !== 'none') {
         const u = unit(d, r.h);
         const bx = cx + l * 2 * u, by = horizon + u;
-        const tone = dark ? 0.3 : Math.max(0.5, 1 - d * 0.12);
-        if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5));
-        else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone);
+        const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
+        if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5), env.trees);
+        else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
       }
     }
+  }
+  // An overcast day's flat grey light over everything painted; the sky has its own greys.
+  const veil = cloud * 0.2 + env.murk * 0.12;
+  if (veil > 0.01) {
+    ctx.globalCompositeOperation = 'source-atop';
+    ctx.fillStyle = rgba(mix('#0a0c12', '#56606e', daylight), veil); ctx.fillRect(r.x, r.y, r.w, r.h);
+    ctx.globalCompositeOperation = 'source-over';
   }
   ctx.restore();
 }
@@ -220,64 +302,258 @@ function toPair(p: { x: number; y: number }): [number, number] { return [p.x, p.
 
 // ------------------------------------------------------------------ sky ----
 
-export interface SkyOpts { facing: number; hour: number; daylight: number; dark: boolean; }
+export interface SkyOpts {
+  facing: number; hour: number; daylight: number; dark: boolean;
+  /** Dawn and dusk, the hours in the middle of each twilight, for the arcs of the sun and moon: 6.5 and 18.5 when absent. */
+  dawn?: number; dusk?: number;
+  /** Cloud cover, murk (fog, rain, snow) and how hard it is raining or snowing, 0 .. 1: a clear sky when absent. */
+  cloud?: number; murk?: number; heavy?: number;
+  /** How far the clouds have blown east, in pixels of the panorama: they move as the hours pass. */
+  drift?: number;
+  /** Snow lying on the hills, 0 .. 1, and the day of the year for their green. */
+  cover?: number; day?: number;
+  /** Paint only the sky behind everything, or only the hills in front of it; both when absent. */
+  part?: 'back' | 'hills';
+}
 
 /** The sky, sun or moon, clouds, stars and distant hills for the top half of `r`. Also used by the title. */
 export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOpts): void {
   const { facing: f, hour, daylight, dark } = o;
+  const cloud = o.cloud ?? 0, murk = o.murk ?? 0, heavy = o.heavy ?? 0;
   const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
-  const top = mix('#07091a', '#2f7ad8', daylight), bottom = mix('#1a1428', '#bcd8f0', daylight);
-  const dusk = daylight > 0.05 && daylight < 0.6 ? 1 - Math.abs(daylight - 0.3) / 0.3 : 0;
-  const g = ctx.createLinearGradient(0, r.y, 0, horizon);
-  g.addColorStop(0, top); g.addColorStop(0.7, mix(bottom, '#e8905a', dusk * 0.35)); g.addColorStop(1, mix(bottom, '#f0b070', dusk * 0.6));
-  ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h / 2);
-  // Stars, fixed to the compass so they turn with the party.
-  if (daylight < 0.5) {
-    const a = 0.9 * (1 - daylight / 0.5);
-    for (let i = 0; i < 70; i++) {
-      const sx = ((hash(i, 1) * 4 * r.w - f * r.w) % (4 * r.w) + 4 * r.w) % (4 * r.w);
-      if (sx > r.w) continue;
-      const sy = r.y + hash(i, 2) * (r.h / 2 - 30);
-      ctx.fillStyle = rgba('#ffffff', a * (0.4 + 0.6 * hash(i, 3)));
-      ctx.fillRect(Math.round(r.x + sx), Math.round(sy), hash(i, 4) > 0.8 ? 2 : 1, 1);
+  // A clear sky's blues greyed toward an overcast lid, darkened by a downpour; murk pales the foot
+  // of it, and fog washes the whole of it out.
+  const bottom = mix(mix('#1a1428', '#bcd8f0', daylight), mix('#181a20', '#b0b8c2', daylight), Math.min(1, cloud * 0.8 + murk * 0.6));
+  if (o.part !== 'hills') {
+    const top = mix(mix(mix(mix('#07091a', '#2f7ad8', daylight), mix('#0c0e14', '#7a8490', daylight), cloud), mix('#06070a', '#3c424c', daylight), 0.55 * heavy), bottom, murk * 0.7);
+    const dusk = (daylight > 0.05 && daylight < 0.6 ? 1 - Math.abs(daylight - 0.3) / 0.3 : 0) * (1 - 0.8 * cloud);
+    const g = ctx.createLinearGradient(0, r.y, 0, horizon);
+    g.addColorStop(0, top); g.addColorStop(0.7, mix(bottom, '#e8905a', dusk * 0.35)); g.addColorStop(1, mix(bottom, '#f0b070', dusk * 0.6));
+    ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h / 2);
+    // Stars, fixed to the compass so they turn with the party; cloud and murk hide them.
+    const starLight = 0.9 * (1 - daylight / 0.5) * (1 - cloud) * (1 - murk);
+    if (daylight < 0.5 && starLight > 0.02) {
+      for (let i = 0; i < 70; i++) {
+        const sx = ((hash(i, 1) * 4 * r.w - f * r.w) % (4 * r.w) + 4 * r.w) % (4 * r.w);
+        if (sx > r.w) continue;
+        const sy = r.y + hash(i, 2) * (r.h / 2 - 30);
+        ctx.fillStyle = rgba('#ffffff', starLight * (0.4 + 0.6 * hash(i, 3)));
+        ctx.fillRect(Math.round(r.x + sx), Math.round(sy), hash(i, 4) > 0.8 ? 2 : 1, 1);
+      }
+    }
+    // Sun by day, moon by night: east at dawn, overhead at noon, west at dusk. Dim through thin cloud.
+    const drawOrb = (t: number, color: string, glow: string, rad: number) => {
+      // t: 0 rising in the east .. 1 setting in the west. Compass bearing from east (90) to west (270).
+      const bearing = 90 + t * 180;
+      let rel = ((bearing - f * 90) % 360 + 360) % 360; if (rel > 180) rel -= 360;
+      if (Math.abs(rel) > 100) return;
+      const ox = cx + (rel / 90) * r.w * 0.55, oy = r.y + 24 + (1 - Math.sin(t * Math.PI)) * (r.h / 2 - 40);
+      const gg = ctx.createRadialGradient(ox, oy, rad * 0.5, ox, oy, rad * 4);
+      gg.addColorStop(0, rgba(glow, 0.35)); gg.addColorStop(1, rgba(glow, 0));
+      ctx.fillStyle = gg; ctx.fillRect(ox - rad * 4, oy - rad * 4, rad * 8, rad * 8);
+      ctx.beginPath(); ctx.arc(ox, oy, rad, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
+    };
+    const dawn = o.dawn ?? 6.5, dusk2 = o.dusk ?? 18.5, seen = 1 - Math.min(1, cloud * 1.05 + murk * 0.5);
+    if (seen > 0.05) {
+      ctx.globalAlpha = seen;
+      if (hour >= dawn - 1 && hour <= dusk2 + 1) drawOrb((hour - dawn + 1) / (dusk2 - dawn + 2), '#fff4c0', '#ffd080', 9);
+      const night = 24 - (dusk2 - dawn), since = ((hour - dusk2) % 24 + 24) % 24;
+      if (since <= night) drawOrb(since / night, '#e8ecf4', '#b0c0e0', 6);
+      ctx.globalAlpha = 1;
+    }
+    // Clouds: soft blobs with a lit top, fixed to the compass and blown east as the hours pass; more
+    // of them, bigger and darker as the sky closes over, their undersides merging into one mass, and
+    // lost in fog.
+    const drift = o.drift ?? 0;
+    const lit = mix(mix(mix('#2a2a44', '#ffffff', daylight), mix('#22242c', '#9aa2ae', daylight), cloud), mix('#0a0b0e', '#4a505a', daylight), 0.5 * heavy);
+    const under = mix(mix(mix('#20203a', '#a8bcd8', daylight), mix('#16181e', '#6a7280', daylight), cloud), lit, 0.55 * cloud);
+    ctx.globalAlpha = 1 - 0.85 * murk;
+    for (let i = 0; i < 7 + Math.round(cloud * 9); i++) {
+      const cxp = ((hash(i, 11) * 4 * r.w + drift - f * r.w) % (4 * r.w) + 4 * r.w) % (4 * r.w);
+      if (cxp < -80 || cxp > r.w + 80) continue;
+      const cy = r.y + 18 + hash(i, 12) * (r.h / 2 - 70) * (1 - 0.4 * cloud), w = (40 + hash(i, 13) * 60) * (1 + cloud * 0.8), h = (8 + hash(i, 14) * 8) * (1 + cloud * 0.6);
+      for (let j = 0; j < 4; j++) {
+        const bx = r.x + cxp + (j - 1.5) * w * 0.22, by = cy + (j % 2) * h * 0.3, br = h * (0.7 + hash(i, j) * 0.6);
+        ctx.beginPath(); ctx.arc(bx, by + br * 0.3, br, 0, Math.PI * 2); ctx.fillStyle = rgba(under, 0.85); ctx.fill();
+        ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fillStyle = rgba(lit, 0.9); ctx.fill();
+      }
+    }
+    // An overcast sky is a deck of cloud: ragged grey bands hung across the top.
+    if (cloud > 0.55) {
+      const a = (cloud - 0.55) / 0.45;
+      for (let k = 0; k < 3; k++) {
+        const y0 = r.y + k * r.h * 0.07;
+        ctx.beginPath(); ctx.moveTo(r.x, r.y);
+        for (let x = 0; x <= r.w; x += 10) {
+          const px = (x + f * r.w + drift * (1 + k * 0.3) + k * 137) / (4 * r.w);
+          ctx.lineTo(r.x + x, y0 + r.h * (0.07 + 0.035 * Math.sin(px * Math.PI * 2 * 7 + k * 2)) + 5 * hash(Math.floor(px * 90), k, 5));
+        }
+        ctx.lineTo(r.x + r.w, r.y); ctx.closePath();
+        ctx.fillStyle = rgba(k === 1 ? lit : under, 0.45 * a); ctx.fill();
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+  if (o.part !== 'back') {
+    // Distant hills: two silhouette bands with a profile fixed to the compass, green by the season,
+    // white under snow, and lost in the murk, the far band first.
+    const cover = o.cover ?? 0, green = o.day === undefined ? '#3f8a4a' : mix('#3f8a4a', grassColor(o.day), 0.6);
+    const far = mix(mix('#101426', mix('#6a8ab8', '#b4c2d6', cover * 0.8), daylight), bottom, Math.min(1, murk * 1.3));
+    const near = mix(mix('#0c101e', mix(green, '#dfe6ee', cover * 0.85), daylight), bottom, Math.min(1, murk * 0.8));
+    for (const [layer, col, amp, base] of [[0, far, 26, 30], [1, near, 16, 14]] as [number, string, number, number][]) {
+      ctx.beginPath(); ctx.moveTo(r.x, horizon + 1);
+      for (let x = 0; x <= r.w; x += 8) {
+        const wx = (x + f * r.w * 1.0 + layer * 137) / (4 * r.w);
+        const hgt = base + amp * (0.5 + 0.5 * Math.sin(wx * Math.PI * 2 * 3 + layer)) * (0.6 + 0.4 * hash(Math.floor(wx * 40), layer));
+        ctx.lineTo(r.x + x, horizon - hgt);
+      }
+      ctx.lineTo(r.x + r.w, horizon + 1); ctx.closePath();
+      ctx.fillStyle = dark ? shade(col, 0.5) : col; ctx.fill();
     }
   }
-  // Sun by day, moon by night: east at dawn, overhead at noon, west at dusk.
-  const drawOrb = (t: number, color: string, glow: string, rad: number) => {
-    // t: 0 rising in the east .. 1 setting in the west. Compass bearing from east (90) to west (270).
-    const bearing = 90 + t * 180;
-    let rel = ((bearing - f * 90) % 360 + 360) % 360; if (rel > 180) rel -= 360;
-    if (Math.abs(rel) > 100) return;
-    const ox = cx + (rel / 90) * r.w * 0.55, oy = r.y + 24 + (1 - Math.sin(t * Math.PI)) * (r.h / 2 - 40);
-    const gg = ctx.createRadialGradient(ox, oy, rad * 0.5, ox, oy, rad * 4);
-    gg.addColorStop(0, rgba(glow, 0.35)); gg.addColorStop(1, rgba(glow, 0));
-    ctx.fillStyle = gg; ctx.fillRect(ox - rad * 4, oy - rad * 4, rad * 8, rad * 8);
-    ctx.beginPath(); ctx.arc(ox, oy, rad, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
-  };
-  if (hour >= 5.5 && hour <= 19.5) drawOrb((hour - 5.5) / 14, '#fff4c0', '#ffd080', 9);
-  if (hour >= 18.5 || hour <= 6.5) drawOrb(((hour + 5.5) % 24) / 12, '#e8ecf4', '#b0c0e0', 6);
-  // Clouds: soft blobs with a lit top, fixed to the compass.
-  for (let i = 0; i < 7; i++) {
-    const cxp = ((hash(i, 11) * 4 * r.w - f * r.w) % (4 * r.w) + 4 * r.w) % (4 * r.w);
-    if (cxp < -80 || cxp > r.w + 80) continue;
-    const cy = r.y + 18 + hash(i, 12) * (r.h / 2 - 70), w = 40 + hash(i, 13) * 60, h = 8 + hash(i, 14) * 8;
-    const cloud = mix('#2a2a44', '#ffffff', daylight), under = mix('#20203a', '#a8bcd8', daylight);
-    for (let j = 0; j < 4; j++) {
-      const bx = r.x + cxp + (j - 1.5) * w * 0.22, by = cy + (j % 2) * h * 0.3, br = h * (0.7 + hash(i, j) * 0.6);
-      ctx.beginPath(); ctx.arc(bx, by + br * 0.3, br, 0, Math.PI * 2); ctx.fillStyle = rgba(under, 0.85); ctx.fill();
-      ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fillStyle = rgba(cloud, 0.9); ctx.fill();
+}
+
+// ------------------------------------------------------------------ weather, every frame ----
+
+/**
+ * The weather between the eye and the scene, every frame: fog drifting, rain streaking down with
+ * splashes where it lands, snow blowing across, and the flash of a lightning strike. Nothing
+ * underground. The explore view draws it over everything; a fight draws it over its monsters.
+ */
+export function drawWeather(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, frame: number): void {
+  if (!world.underSky) return;
+  const wx = world.weather, rf = ((world.state.facing + 1) & 3) as Facing;
+  // The wind across the view: how hard it blows toward the party's right hand (negative: the left).
+  const across = (Math.cos(wx.windDir) * FACING_DX[rf] + Math.sin(wx.windDir) * FACING_DY[rf]) * wx.wind;
+  const light = world.daylight * (1 - 0.35 * wx.cloud);
+  const rain = wx.precip * (1 - wx.snow), snow = wx.precip * wx.snow, murk = murkOf(wx);
+  ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
+  if (wx.fog > 0.05 || murk > 0.05) drawMurk(ctx, r, Math.max(wx.fog, murk * 0.6), wx.fog, frame, light);
+  if (rain > 0.02) { drawSplashes(ctx, world, r, rain, frame, light); drawRain(ctx, r, rain, across * 0.9, frame, light); }
+  if (snow > 0.02) drawSnow(ctx, r, snow, across * (0.3 + 2.5 * wx.wind), frame, light);
+  const flash = strike(wx.storm, frame);
+  if (flash) { ctx.fillStyle = rgba('#e8ecff', 0.2 * flash.glow); ctx.fillRect(r.x, r.y, r.w, r.h); }
+  ctx.restore();
+}
+
+/** The two flickers of a lightning strike, frame by frame. */
+const FLASH = [1, 0.75, 0.2, 0.05, 0.85, 0.55, 0.3, 0.15, 0.06];
+
+/**
+ * Lightning in a storm: in each spell of 140 frames (a little over two seconds) a strike may come at
+ * a random moment, more often the fiercer the storm. Which strike (it shapes the bolt) and how
+ * bright it is this frame; null between strikes.
+ */
+function strike(storm: number, frame: number): { n: number; glow: number } | null {
+  if (storm < 0.05) return null;
+  const n = Math.floor(frame / 140), t = frame - n * 140 - Math.floor(mixHash(n, 71) * 120);
+  if (t < 0 || t >= FLASH.length || mixHash(n, 72) > 0.15 + 0.55 * storm) return null;
+  return { n, glow: FLASH[t] };
+}
+
+/** A strike seen between the sky and the scene: the whole sky lit behind every roof and tree, and the bolt while it is brightest. */
+function drawBolt(ctx: CanvasRenderingContext2D, r: ViewRect, s: { n: number; glow: number }): void {
+  ctx.fillStyle = rgba('#dfe6ff', 0.55 * s.glow); ctx.fillRect(r.x, r.y, r.w, r.h / 2);
+  if (s.glow < 0.5) return;
+  const y0 = r.y + 4, y1 = r.y + r.h / 2 - 12, step = (y1 - y0) / 9;
+  let x = r.x + r.w * (0.1 + 0.8 * mixHash(s.n, 73));
+  const bolt: number[] = [];
+  for (let i = 0; i <= 9; i++) { bolt.push(x, y0 + step * i); x += (mixHash(s.n, 74, i) - 0.5) * r.w * 0.07; }
+  // A fork off the middle.
+  const k = 2 * (3 + Math.floor(mixHash(s.n, 75) * 3)), fork = [bolt[k], bolt[k + 1]];
+  for (let i = 1; i <= 3; i++) fork.push(fork[fork.length - 2] + (mixHash(s.n, 76, i) - 0.3) * r.w * 0.05, fork[fork.length - 1] + step);
+  for (const [w, col] of [[5, rgba('#a8b8ff', 0.35 * s.glow)], [2, rgba('#ffffff', s.glow)]] as [number, string][]) {
+    ctx.strokeStyle = col; ctx.lineJoin = 'round';
+    for (const pts of [bolt, fork]) {
+      ctx.lineWidth = pts === fork ? Math.max(1, w * 0.6) : w;
+      ctx.beginPath(); ctx.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]); ctx.stroke();
     }
   }
-  // Distant hills: two silhouette bands with a profile fixed to the compass.
-  for (const [layer, col, amp, base] of [[0, mix('#101426', '#6a8ab8', daylight), 26, 30], [1, mix('#0c101e', '#3f8a4a', daylight), 16, 14]] as [number, string, number, number][]) {
-    ctx.beginPath(); ctx.moveTo(r.x, horizon + 1);
-    for (let x = 0; x <= r.w; x += 8) {
-      const wx = (x + f * r.w * 1.0 + layer * 137) / (4 * r.w);
-      const hgt = base + amp * (0.5 + 0.5 * Math.sin(wx * Math.PI * 2 * 3 + layer)) * (0.6 + 0.4 * hash(Math.floor(wx * 40), layer));
-      ctx.lineTo(r.x + x, horizon - hgt);
+}
+
+/** Murk over the distance, thickest at the horizon where the far cells are; in fog, banks of it drift past low down. */
+function drawMurk(ctx: CanvasRenderingContext2D, r: ViewRect, amount: number, fogAmount: number, frame: number, light: number): void {
+  const col = mix('#2a2e36', '#d4d8de', light), cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
+  const g = ctx.createRadialGradient(cx, horizon, r.h * 0.04, cx, horizon, r.h * 0.8);
+  g.addColorStop(0, rgba(col, 0.7 * amount)); g.addColorStop(0.5, rgba(col, 0.35 * amount)); g.addColorStop(1, rgba(col, 0.08 * amount));
+  ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h);
+  if (fogAmount < 0.1) return;
+  for (let i = 0; i < 4; i++) {
+    const w = r.w * (0.7 + 0.4 * mixHash(i, 81)), h = r.h * (0.1 + 0.08 * mixHash(i, 82));
+    const x = r.x - w / 2 + (mixHash(i, 83) * (r.w + w) + frame * (0.1 + 0.12 * mixHash(i, 84))) % (r.w + w);
+    const y = horizon + r.h * (0.02 + 0.3 * mixHash(i, 85));
+    ctx.save(); ctx.translate(x, y); ctx.scale(1, h / w);
+    const bank = ctx.createRadialGradient(0, 0, 0, 0, 0, w / 2);
+    bank.addColorStop(0, rgba(col, 0.45 * fogAmount)); bank.addColorStop(1, rgba(col, 0));
+    ctx.fillStyle = bank; ctx.fillRect(-w / 2, -w / 2, w, w); ctx.restore();
+  }
+}
+
+/** Rain in three depths: share of the drops, alpha, speed (px a frame), streak length, line width. Far drops faint, short and slow. */
+const RAIN_LAYERS: readonly [number, number, number, number, number][] = [[0.55, 0.18, 6, 6, 1], [0.3, 0.3, 9, 10, 1], [0.15, 0.45, 13, 16, 1.5]];
+
+/** Rain as streaks, more and longer the harder it falls, slanting with the wind across the view. */
+function drawRain(ctx: CanvasRenderingContext2D, r: ViewRect, amount: number, slant: number, frame: number, light: number): void {
+  const n = Math.round(24 + 340 * amount), col = mix('#56607a', '#d4deec', light), wrap = r.w + 80;
+  let i0 = 0;
+  for (const [share, alpha, speed, len0, lw] of RAIN_LAYERS) {
+    const k = Math.round(n * share), len = len0 * (0.6 + 0.6 * amount), fall = r.h + len;
+    ctx.strokeStyle = rgba(col, alpha * (0.55 + 0.45 * amount)); ctx.lineWidth = lw;
+    ctx.beginPath();
+    for (let i = i0; i < i0 + k; i++) {
+      const y = (mixHash(i, 1) * fall + frame * speed * (0.85 + 0.3 * mixHash(i, 2))) % fall - len;
+      const x = ((mixHash(i, 3) * wrap + slant * y) % wrap + wrap) % wrap - 40;
+      ctx.moveTo(r.x + x, r.y + y); ctx.lineTo(r.x + x + slant * len, r.y + y + len);
     }
-    ctx.lineTo(r.x + r.w, horizon + 1); ctx.closePath();
-    ctx.fillStyle = dark ? shade(col, 0.5) : col; ctx.fill();
+    ctx.stroke();
+    i0 += k;
+  }
+}
+
+/** How many frames a splash lasts. */
+const SPLASH_LIFE = 8;
+
+/** Where the rain lands: little crowns thrown up from the ground, only on floor the party can see. */
+function drawSplashes(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, amount: number, frame: number, light: number): void {
+  const map = world.map, { x: px, y: py, facing: f } = world.state;
+  const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
+  ctx.strokeStyle = rgba(mix('#6a7488', '#e0e8f4', light), 0.6); ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let j = 0; j < Math.round(amount * 30); j++) {
+    const tick = frame + j * 5, cycle = Math.floor(tick / SPLASH_LIFE), age = tick % SPLASH_LIFE;
+    // A spot on the ground: how far ahead (in cells, from the eye) and how far to the side.
+    const k = 0.6 + mixHash(j, cycle, 1) * 2.6, lat = (mixHash(j, cycle, 2) - 0.5) * 5;
+    const d = Math.round(k), l = Math.round(lat);
+    if (d > world.sight) continue;
+    const c = cellAt(px, py, f, d, l), cell = map.at(c.x, c.y);
+    if (isSolidWall(cell) || cell.solid !== 'none' || cell.terrain === 'water' || cell.terrain === 'deep' || !lineOfSight(map, px, py, f, d, l)) continue;
+    const u = unit(k, r.h), x = cx + lat * 2 * u, y = horizon + u, s = Math.max(1, u * 0.045) * (0.6 + age / SPLASH_LIFE);
+    ctx.moveTo(x - s * 1.6, y); ctx.quadraticCurveTo(x - s * 1.2, y - s * 1.6, x - s * 0.3, y - s * 0.4);
+    ctx.moveTo(x + s * 1.6, y); ctx.quadraticCurveTo(x + s * 1.2, y - s * 1.6, x + s * 0.3, y - s * 0.4);
+  }
+  ctx.stroke();
+}
+
+/** Snow in three depths: share of the flakes, size, speed (px a frame), sway (px), alpha. */
+const SNOW_LAYERS: readonly [number, number, number, number, number][] = [[0.5, 1, 0.45, 2, 0.6], [0.35, 2, 0.8, 4, 0.8], [0.15, 3, 1.3, 7, 0.95]];
+
+/** Snow as flakes, swaying as they fall and blown across the view by the wind: a blizzard drives them nearly flat. */
+function drawSnow(ctx: CanvasRenderingContext2D, r: ViewRect, amount: number, across: number, frame: number, light: number): void {
+  const n = Math.round(20 + 300 * amount), col = mix('#7a8498', '#ffffff', light), wrap = r.w + 40;
+  let i0 = 0;
+  for (const [share, size, speed, sway, alpha] of SNOW_LAYERS) {
+    const k = Math.round(n * share);
+    // One path a layer: the flakes are all one colour, so a single fill paints them all.
+    ctx.fillStyle = rgba(col, alpha); ctx.beginPath();
+    for (let i = i0; i < i0 + k; i++) {
+      const t = frame * speed * (0.8 + 0.4 * mixHash(i, 2)) * (1 + amount * 0.5);
+      const y = r.y + Math.round((mixHash(i, 1) * r.h + t) % r.h);
+      const x = r.x + Math.round(((mixHash(i, 3) * wrap + t * across + Math.sin(frame / 40 + mixHash(i, 4) * 6.3) * sway) % wrap + wrap) % wrap) - 20;
+      if (size < 3) ctx.rect(x, y, size, size);
+      else { ctx.rect(x - 1, y, 3, 1); ctx.rect(x, y - 1, 1, 1); ctx.rect(x, y + 1, 1, 1); }
+    }
+    ctx.fill();
+    i0 += k;
   }
 }
 
@@ -293,7 +569,7 @@ function floorPt(cx: number, horizon: number, h: number, d: number, l: number, s
 }
 
 function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string): void {
-  const base = kind === 'dungeon' ? floorPal : (TERRAIN_COLORS[terrain] ?? floorPal);
+  const base = groundColor(terrain, kind, floorPal);
   const n = d <= 2 ? 3 : 2;
   const flag = kind === 'dungeon' && terrain === 'floor';
   const mortar = fog(shade(base, 0.55), d, dark, haze);
@@ -301,7 +577,8 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
   quad(ctx, floorPt(cx, horizon, h, d, l, 0, 0), floorPt(cx, horizon, h, d, l, 0, 1), floorPt(cx, horizon, h, d, l, 1, 1), floorPt(cx, horizon, h, d, l, 1, 0), flag ? mortar : fog(base, d, dark, haze));
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
     const v = hash(seed, i, j) - 0.5;
-    let col = shade(base, 1 + v * (flag ? 0.16 : terrain === 'grass' ? 0.12 : 0.08));
+    // Tiles vary a little; lying snow evens them out.
+    let col = shade(base, 1 + v * (flag ? 0.16 : terrain === 'grass' ? 0.12 : 0.08) * (1 - 0.75 * env.cover));
     if (terrain === 'water' || terrain === 'deep') col = shade(base, 1 + v * 0.1 + ((i + j) % 2) * 0.05);
     col = fog(col, d, dark, haze);
     // Flagstones sit inside a mortar gap; other terrains overlap a little so no seam shows.
@@ -333,13 +610,15 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
     const sc = unitIn(d, s, h) / u;
     if (terrain === 'grass') {
       if (i >= 5) {
-        // A flower or two.
-        if (hash(seed, 41, i) > 0.45) continue;
+        // A flower or two, from Sowing into Leafturn, and none under snow.
+        if (hash(seed, 41, i) > 0.45 * flowering(env.day) || env.cover > 0.1) continue;
         ctx.fillStyle = fog(['#f0e060', '#ffffff', '#e05a6a', '#c080e0'][Math.floor(hash(seed, 42, i) * 4)], d, dark, haze);
         ctx.fillRect(Math.round(x), Math.round(y - 2 * sc), Math.max(1, Math.round(2 * sc)), Math.max(1, Math.round(2 * sc)));
         continue;
       }
-      const tuft = fog(shade(base, 1.3), d, dark, haze);
+      // Tufts poke up through a light snow and are buried by a deep one.
+      if (env.cover > 0.55) continue;
+      const tuft = fog(env.cover > 0.05 ? shade(grassColor(env.day), 0.85) : shade(base, 1.3), d, dark, haze);
       ctx.strokeStyle = tuft; ctx.lineWidth = Math.max(1, sc);
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 1.5 * sc, y - 4 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1 * sc, y - 4.5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 2.5 * sc, y - 3 * sc); ctx.stroke();
     } else if (flag) {
@@ -366,6 +645,23 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
       ctx.beginPath(); ctx.moveTo(x - 4 * sc, y); ctx.quadraticCurveTo(x, y - 1.5 * sc, x + 4 * sc, y); ctx.stroke();
     } else if (terrain === 'snow') {
       ctx.fillStyle = fog('#ffffff', d, dark, haze); ctx.fillRect(Math.round(x), Math.round(y), 1, 1);
+    }
+  }
+  // After rain, puddles stand on the roads and the dirt, holding a little of the sky.
+  if (env.wet > 0.3 && (terrain === 'road' || terrain === 'dirt') && d <= 3) {
+    for (let i = 0; i < 3; i++) {
+      if (hash(seed, 91, i) > env.wet - 0.2) continue;
+      const s = 0.2 + hash(seed, 92, i) * 0.6, [x, y] = floorPt(cx, horizon, h, d, l, s, 0.15 + hash(seed, 93, i) * 0.7);
+      const pw = unitIn(d, s, h) * (0.22 + 0.2 * hash(seed, 94, i)), ph = pw * 0.2;
+      ctx.beginPath(); ctx.ellipse(x, y, pw, ph, 0, 0, Math.PI * 2); ctx.fillStyle = fog(shade(base, 0.6), d, dark, haze); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(x - pw * 0.15, y - ph * 0.2, pw * 0.6, ph * 0.4, 0, 0, Math.PI * 2); ctx.fillStyle = rgba(fog(haze ?? '#8a94a4', d, dark, haze), 0.55); ctx.fill();
+    }
+  }
+  // Lying snow glitters.
+  if (env.cover > 0.5 && (SNOW_HOLD[terrain] ?? 0) > 0.7) {
+    for (let i = 0; i < 4; i++) {
+      const [x, y] = floorPt(cx, horizon, h, d, l, hash(seed, 95, i), hash(seed, 96, i));
+      ctx.fillStyle = fog(i % 2 ? '#ffffff' : '#c8d8f0', d, dark, haze); ctx.fillRect(Math.round(x), Math.round(y), 1, 1);
     }
   }
   if (terrain === 'lava') {
@@ -639,10 +935,10 @@ function building(map: GameMap, mx: number, my: number): Building {
   return b;
 }
 
-/** The roof colour for a house: terracotta, slate or thatch, fixed per building. */
+/** The roof colour for a house: terracotta, slate or thatch, fixed per building; white under lying snow. */
 function roofColor(bseed: number): string {
-  const r = hash(bseed, 2);
-  return r < 0.55 ? '#a8503a' : r < 0.8 ? '#5a6070' : '#b89050';
+  const r = hash(bseed, 2), c = r < 0.55 ? '#a8503a' : r < 0.8 ? '#5a6070' : '#b89050';
+  return env.cover > 0.1 ? mix(c, SNOW, Math.min(0.85, env.cover)) : c;
 }
 
 /** A timber-framed house front with a window; its roof is the building's, drawn by drawRoof. */

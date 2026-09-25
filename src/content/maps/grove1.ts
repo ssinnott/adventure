@@ -8,6 +8,7 @@ export const GROVE1: MapDef = {
   name: 'The Grove Roots',
   kind: 'dungeon',
   band: [6, 9],
+  region: 'thornmark',
   start: { x: 1, y: 1, facing: SOUTH },
   palette: { wall: '#6a5a3a', wallDark: '#463a26', floor: '#3a3628', ceiling: '#2c2418', wallStyle: 'stone', ceilingStyle: 'beams', banner: '#2a6a3a' },
   rows: [

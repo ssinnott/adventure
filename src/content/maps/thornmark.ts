@@ -10,6 +10,7 @@ export const THORNMARK: MapDef = {
   name: 'Thornmark',
   kind: 'outdoor',
   band: [5, 10],
+  region: 'thornmark',
   start: { x: 1, y: 9, facing: EAST },
   palette: { floor: '#3f8a34', banner: '#2a6a3a' },
   rows: [

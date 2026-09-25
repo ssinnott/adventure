@@ -204,8 +204,8 @@ function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {
         if (g.party.gold < cost) { g.say('You cannot afford a room.'); return; }
         g.party.gold -= cost;
         for (const m of g.party.members) rest(m);
-        // Sleep until 07:00.
-        const w = g.world; const mins = ((7 * 60) - (w.state.minutes % 1440) + 1440) % 1440 || 1440; w.advance(mins);
+        // Sleep until 07:00, or first light in the depth of winter.
+        g.world.sleepUntilMorning();
         g.say('You sleep well. Morning.');
       } else if (i === 1) {
         if (g.party.gold < 20) { g.say('Not enough gold.'); return; }
