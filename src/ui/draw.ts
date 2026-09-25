@@ -47,10 +47,55 @@ export function paragraph(ctx: CanvasRenderingContext2D, text: string, x: number
 export function menu(ctx: CanvasRenderingContext2D, items: readonly string[], x: number, y: number, selected: number, opts: { size?: number; color?: string; dim?: string; hi?: string; disabled?: readonly boolean[] } = {}): number {
   const size = opts.size ?? 1;
   items.forEach((it, i) => {
-    const dis = opts.disabled?.[i];
-    const color = dis ? (opts.dim ?? '#6a6270') : i === selected ? (opts.hi ?? '#ffe08a') : (opts.color ?? '#e8dcc0');
-    drawText(ctx, (i === selected ? '▶ ' : '  ') + it, x, y, { size, color });
+    drawText(ctx, (i === selected ? '▶ ' : '  ') + flatOption(it), x, y, { size, color: optionColor(i, selected, opts.disabled, opts) });
     y += lineHeight(size) + 1;
   });
   return y;
+}
+
+function optionColor(i: number, selected: number, disabled: readonly boolean[] | undefined, o: { color?: string; dim?: string; hi?: string } = {}): string {
+  return disabled?.[i] ? (o.dim ?? '#6a6270') : i === selected ? (o.hi ?? '#ffe08a') : (o.color ?? '#e8dcc0');
+}
+
+/**
+ * An option can carry columns, tab-separated: 'label\tvalue\tnote'. A narrow panel sets the value
+ * flush right and shows the selected option's note under the list; anywhere else they run on in
+ * one line, two spaces apart.
+ */
+export function optionParts(opt: string): { label: string; value: string; note: string } {
+  const [label, value = '', note = ''] = opt.split('\t');
+  return { label, value, note };
+}
+export function flatOption(opt: string): string { return opt.split('\t').filter(Boolean).join('  '); }
+
+/** `text` cut to `width` px, ending '..' when it had to be cut. */
+export function fit(text: string, width: number, size = 1): string {
+  if (measureText(text, size) <= width) return text;
+  let t = text;
+  while (t.length && measureText(t.trimEnd() + '..', size) > width) t = t.slice(0, -1);
+  return t.trimEnd() + '..';
+}
+
+/** Room for an option's label in a `columnMenu` row `w` wide: less the marker, the value, and the arrows' margin when it scrolls. */
+export function columnLabelWidth(w: number, value: string, scrolls: boolean): number {
+  return w - (scrolls ? 8 : 0) - 12 - (value ? measureText(value) + 6 : 0);
+}
+
+/**
+ * A menu in columns for a narrow panel: `rows` options from `top`, each label cut to fit beside its
+ * value, which sits flush with the right edge. Arrows in the right margin say the list runs on.
+ */
+export function columnMenu(ctx: CanvasRenderingContext2D, items: readonly string[], x: number, y: number, w: number, selected: number, top: number, rows: number, opts: { disabled?: readonly boolean[] } = {}): void {
+  const lh = lineHeight(1) + 1;
+  const scrolls = items.length > rows, right = x + w - (scrolls ? 8 : 0);
+  for (let i = top; i < Math.min(items.length, top + rows); i++) {
+    const { label, value } = optionParts(items[i]);
+    const color = optionColor(i, selected, opts.disabled);
+    const yy = y + (i - top) * lh;
+    drawText(ctx, (i === selected ? '▶ ' : '  ') + fit(label, columnLabelWidth(w, value, scrolls)), x, yy, { size: 1, color });
+    if (value) drawText(ctx, value, right, yy, { size: 1, color, align: 'right' });
+  }
+  if (!scrolls) return;
+  if (top > 0) drawText(ctx, '↑', x + w - 5, y, { size: 1, color: '#8f8677' });
+  if (top + rows < items.length) drawText(ctx, '↓', x + w - 5, y + (rows - 1) * lh, { size: 1, color: '#8f8677' });
 }

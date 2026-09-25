@@ -37,8 +37,9 @@ src/game/          the model: map, world, party, items, spells, monsters, combat
 src/content/maps/  the authored maps: Harrow, the Shelf, the cellar, Greywater, Thornmark, Thornhold, the Grove
 src/ui/            viewport, frame, sprites, screens, combat screen, title, party creation
 src/ui/monsters/   the enemy drawings, one module per family, dispatched by sprites.ts
+src/ui/interiors/  the businesses' interiors, one module per trade, dispatched by interior.ts
 src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
-tools/             dev server, bundler, tests, smoke test, screenshot and monster gallery helpers
+tools/             dev server, bundler, tests, smoke test, screenshot, monster and interior gallery helpers
 ```
 
 ## The engine

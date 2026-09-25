@@ -271,6 +271,25 @@ export class World {
     if (this.map.passable(nx, ny, partyCan(this.party)) === 'ok' && !this.groupAt(nx, ny)) { this.state.x = nx; this.state.y = ny; }
   }
 
+  /**
+   * Leaving a business: out of its doorway onto the open cell beside it (the one behind the party
+   * if that is open), turned to face the door again. Not a step: no time passes and nothing moves.
+   * False, and nothing changes, when there is no street to step into.
+   */
+  stepOut(): boolean {
+    const { x, y, facing } = this.state;
+    const street = (f: Facing): boolean => {
+      const nx = x + FACING_DX[f], ny = y + FACING_DY[f];
+      return this.map.passable(nx, ny) === 'ok' && this.map.at(nx, ny).door === 'none' && !this.map.exitAt(nx, ny) && !this.groupAt(nx, ny);
+    };
+    const out = ([turnBack(facing), 0, 1, 2, 3] as Facing[]).find(street);
+    if (out === undefined) return false;
+    this.state.x = x + FACING_DX[out]; this.state.y = y + FACING_DY[out];
+    this.state.facing = turnBack(out);
+    this.reveal();
+    return true;
+  }
+
   // ---- features ----
   /** The interactable in the party's cell, else the one directly ahead. */
   featureHere(): Feature | undefined {

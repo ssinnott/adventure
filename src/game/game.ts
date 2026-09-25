@@ -8,7 +8,7 @@ import type { WorldState } from './world.ts';
 import { defaultParty, isDown, allDown, countItem, takeItem, heal, spellHeal } from './party.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps/index.ts';
-import type { GameMap, Feature } from './map.ts';
+import type { GameMap, Feature, Interior } from './map.ts';
 import { startCombat } from './combat.ts';
 import { spell } from './spells.ts';
 import { save as saveTo, load as loadFrom, browserStore, hasSave } from './save.ts';
@@ -20,7 +20,7 @@ import { drawViewport } from '../ui/viewport.ts';
 import type { ViewMonster } from '../ui/viewport.ts';
 import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBackground, drawPurse, drawViewportFrame } from '../ui/frame.ts';
 import { CombatScreen } from '../ui/combat.ts';
-import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen } from '../ui/screens.ts';
+import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, InteriorScreen } from '../ui/screens.ts';
 import { TitleScreen } from '../ui/title.ts';
 import { drawText } from '../lib/engine/text.ts';
 
@@ -40,6 +40,8 @@ export class Game {
   /** Set by main.ts; screens that take typed text need it. */
   input: { textMode: boolean; drainText(current: string, max?: number): string } | null = null;
   log: string[] = [];
+  /** Lines ever said. The log keeps only the last 60, so a screen that wants what was said since it opened counts from this. */
+  said = 0;
   screens: Screen[] = [];
   frame = 0;
   /** The party member the sheet opens on. */
@@ -87,12 +89,14 @@ export class Game {
   get top(): Screen { return this.screens[this.screens.length - 1]; }
   push(s: Screen): void { this.screens.push(s); }
   pop(): void { if (this.screens.length > 1) this.screens.pop(); }
-  say(line: string): void { this.log.push(line); if (this.log.length > 60) this.log.shift(); }
+  say(line: string): void { this.log.push(line); this.said++; if (this.log.length > 60) this.log.shift(); }
   message(text: string, then?: () => void): void { this.push(new MessageScreen(text, then)); }
 
   update(a: Action | null): void {
     this.frame++;
     this.top.update(this, a);
+    // A visit ends the moment the last of its menus closes, so no frame shows the room without one.
+    if (this.top instanceof InteriorScreen) this.top.close(this);
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -117,16 +121,19 @@ export class Game {
       case 'well': this.say(f.text); if (f.heal) { for (const m of this.party.members) if (!isDown(m)) m.hp = m.maxHp; this.say('The party drinks and feels restored.'); } return;
       case 'npc': {
         const q = f.quest;
-        if (q && this.party.flags[q.setFlag]) { this.push(new MessageScreen(q.after.join('\n\n'), undefined, f.name)); return; }
-        if (q && countItem(this.party, q.item) > 0 && (!q.needFlag || this.party.flags[q.needFlag])) {
+        let text: string;
+        if (q && this.party.flags[q.setFlag]) text = q.after.join('\n\n');
+        else if (q && countItem(this.party, q.item) > 0 && (!q.needFlag || this.party.flags[q.needFlag])) {
           takeItem(this.party, q.item);
           this.party.gold += q.reward;
           this.party.flags[q.setFlag] = 1;
-          this.push(new MessageScreen(q.done.join('\n\n') + `\n\n(${q.reward} gold.)`, undefined, f.name));
-          return;
+          text = q.done.join('\n\n') + `\n\n(${q.reward} gold.)`;
+        } else {
+          if (f.flag && !this.party.flags[f.flag]) this.party.flags[f.flag] = 1;
+          text = f.lines.join('\n\n');
         }
-        if (f.flag && !this.party.flags[f.flag]) this.party.flags[f.flag] = 1;
-        this.push(new MessageScreen(f.lines.join('\n\n'), undefined, f.name));
+        const said = new MessageScreen(text, undefined, f.name);
+        if (f.interior) this.visit(f, f.interior, said); else this.push(said);
         return;
       }
       case 'chest': {
@@ -140,10 +147,24 @@ export class Game {
         return;
       }
       case 'inn': case 'temple': case 'shop': case 'guild': case 'trainer':
-        this.push(serviceScreen(this, f));
+        this.visit(f, f.interior, serviceScreen(this, f));
         return;
       case 'rift': case 'event': return;
     }
+  }
+
+  /**
+   * Go into a business. Its interior fills the viewport, under `first` (the service's opening menu)
+   * and every menu that follows from it, until the last of them closes; then the party leaves.
+   */
+  visit(at: { x: number; y: number }, interior: Interior, first: Screen): void {
+    this.push(new InteriorScreen(this, at, interior));
+    this.push(first);
+  }
+
+  /** The end of a visit: back out of the doorway into the street, if that is where the party stands. */
+  leave(at: { x: number; y: number }): void {
+    if (this.world.state.x === at.x && this.world.state.y === at.y) this.world.stepOut();
   }
 
   /** Start a fight with the given groups; the combat screen calls back on resolution. */

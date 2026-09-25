@@ -46,6 +46,18 @@ const suites: Record<string, () => void> = {
     for (const id of Object.keys(MONSTERS)) ok(placed.has(id), `monster '${id}' appears on a map`);
     const found = new Set([...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'chest' ? f.items : [])), ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
     for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc' && f.quest) ok(found.has(f.quest.item), `${d.id}: quest item '${f.quest.item}' can be found`);
+    // A business is a feature in a town's doorway: you walk into it, so it has a room to show, and
+    // no two businesses share one.
+    const interiors: string[] = [];
+    for (const def of MAP_DEFS) {
+      const m = maps[def.id];
+      for (const f of m.features) {
+        const interior = 'interior' in f ? f.interior : undefined;
+        if (m.kind === 'town' && m.at(f.x, f.y).door !== 'none') ok(!!interior, `${def.id}: the business in the doorway at ${f.x},${f.y} has an interior`);
+        if (interior) { interiors.push(interior); ok(m.at(f.x, f.y).door !== 'none', `${def.id}: ${interior} is entered through a door`); }
+      }
+    }
+    ok(interiors.length === 12 && new Set(interiors).size === interiors.length, `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
     // The trainer ladder: some trainer teaches to the cap, and the cap is what levelUp stops at.
     const trainers = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'trainer'));
     ok(Math.max(...trainers.map((t) => t.kind === 'trainer' ? t.maxLevel : 0)) === MAX_LEVEL, `a trainer teaches to level ${MAX_LEVEL}`);
@@ -95,6 +107,13 @@ const suites: Record<string, () => void> = {
     ok(r2.kind === 'moved' && r3.kind === 'moved' && world.map.id === 'shelf' && world.state.x === 16 && world.state.y === 4 && world.state.facing === 2,
       `walking through the south gate arrives on the Shelf facing south (${world.map.id} ${world.state.x},${world.state.y})`);
     ok(world.explored(16, 4) && world.explored(16, 6), 'arrival reveals the cells around and ahead');
+    // Leaving a business: back out of the doorway into the street, facing the door, no time passing.
+    world.travel('harrow', 4, 4, 0);
+    const at = world.state.minutes;
+    ok(world.stepOut() && world.state.x === 4 && world.state.y === 5 && world.state.facing === 0 && world.state.minutes === at, 'leaving the inn steps back into the street, facing its door');
+    world.travel('harrow', 12, 13, 1);
+    ok(world.stepOut() && world.state.x === 12 && world.state.y === 14 && world.state.facing === 0, 'a party that strafed into the tavern leaves by its only open side, turned to the door');
+    world.travel('shelf', 16, 4, 2);
     // Walls block.
     world.travel('mill', 1, 1, 0);
     const r4 = world.move('forward');
