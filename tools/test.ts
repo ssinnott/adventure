@@ -1,10 +1,10 @@
-// Pure-Node tests for the game model: maps, movement, combat determinism, saves. No browser.
+// Pure-Node tests for the game model: maps, movement, combat determinism, saves, the quest log. No browser.
 //   node tools/test.ts            run everything
 //   node tools/test.ts maps combat  run selected suites
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps, MAP_DEFS } from '../src/content/maps/index.ts';
 import { World } from '../src/game/world.ts';
-import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition } from '../src/game/party.ts';
+import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition, takeItem } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, buffHit, traitDamage, WARD_AC } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
@@ -14,6 +14,18 @@ import { MONSTERS } from '../src/game/monsters.ts';
 import { SPELLS, spell, spellsFor } from '../src/game/spells.ts';
 import { ATLAS } from '../src/content/atlas.ts';
 import { worldGrid, worldPoint, progression, reachable, isWater, TI } from '../src/game/atlas.ts';
+import { QUESTS } from '../src/content/quests.ts';
+import { questLog, questMarks, questNews } from '../src/game/quests.ts';
+import type { QuestCond, QuestView, When } from '../src/game/quests.ts';
+import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
+import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
+import { NORTH } from '../src/game/types.ts';
+import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
+import type { Season } from '../src/game/calendar.ts';
+import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
+import type { Climate, Sky, Weather } from '../src/game/weather.ts';
+import { START_MINUTES, LEGACY_WEATHER_SEED } from '../src/game/world.ts';
+import type { WorldState } from '../src/game/world.ts';
 
 let failures = 0;
 const ok = (cond: boolean, msg: string): void => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) failures++; };
@@ -158,6 +170,12 @@ const suites: Record<string, () => void> = {
     world.flee(['road_rats']);
     ok(world.state.truce === 4 && world.state.y === back - 1, 'fleeing steps the party back and grants a truce');
     ok(world.adjacentGroups().length === 0, 'the fled group does not re-engage during the truce');
+    // The Cut Stone: the tear closes when the Warden of the Cut dies, not as the party walks up to it.
+    const cut = new World(buildMaps(), defaultParty(makeRng(6)), makeRng(6));
+    cut.travel('grove2', 7, 8, 1); cut.killGroups(['g2_hand']);
+    const up = cut.move('forward');
+    ok(up.kind === 'moved' && !!up.encounter?.includes('g2_warden') && !up.messages.some((m) => /tear closes/.test(m)), 'stepping up to the Warden of the Cut starts the fight, and nothing yet says the tear has closed');
+    ok(cut.killGroups(['g2_warden']).some((m) => /tear closes/.test(m)) && cut.killGroups(['g2_hand']).length === 0, 'beating the Warden is what closes the tear, and a group with nothing to say says nothing');
   },
 
   combat() {
@@ -196,6 +214,7 @@ const suites: Record<string, () => void> = {
     ok(!canAttackFromRow(p.members[3], 3) === !ITEMS[p.members[3].equipment.weapon!].ranged, 'back row melee is refused, back row ranged allowed');
     equip(p.members[3], 'sling');
     ok(canAttackFromRow(p.members[3], 3), 'a sling lets the thief attack from the back row');
+    ok(canAttackFromRow(p.members[5], 5), 'the sorcerer starts with a sling, so it has a shot from the back row');
     // Fleeing eventually works and ends the fight.
     let fled = false;
     for (let seed = 1; seed < 20 && !fled; seed++) {
@@ -228,6 +247,25 @@ const suites: Record<string, () => void> = {
       ok(/not dead/.test(castOnAlly(cler, spell('revive'), dead)), 'Revive on the living does nothing');
       ok(spell('haste').buff === 'haste' && spell('town_portal').explore === 'town_portal', 'Haste and Town Portal exist at tier 4 and 5');
     }
+    // Weather: bows lose to-hit on both sides; the Ashen casters, ranged but not archers, do not.
+    ok(!!MONSTERS.bandit_archer.missile && !!MONSTERS.smuggler_bowman.missile && !!MONSTERS.brigand_archer.missile && !!MONSTERS.ashen_adept.ranged && !MONSTERS.ashen_adept.missile, 'archers shoot; Ashen adepts cast');
+    {
+      const rate = (penalty: number): number => {
+        let hit = 0, miss = 0;
+        for (let seed = 1; seed <= 60; seed++) {
+          const r = makeRng(seed), pp = defaultParty(r);
+          const s = startCombat(pp, [{ id: 'a', monsters: new Array(6).fill('bandit_archer') }], r, { rangedPenalty: penalty });
+          for (let i = 0; i < 60 && s.outcome === 'ongoing'; i++) { const t = currentTurn(s, pp, r); if (!t) break; if (t.side === 'monster') monsterAct(s, pp, r); else partyAct(s, pp, r, { type: 'defend' }); }
+          hit += s.log.filter((l) => l.startsWith('Bandit Archer hits')).length; miss += s.log.filter((l) => l.startsWith('Bandit Archer misses')).length;
+        }
+        return hit / (hit + miss);
+      };
+      const dry = rate(0), wet = rate(RANGED_PENALTY);
+      ok(wet < dry - 0.05, `archers hit less often in a downpour (${(wet * 100).toFixed(0)}% against ${(dry * 100).toFixed(0)}%)`);
+    }
+    const noted = startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4), { rangedPenalty: RANGED_PENALTY, note: 'The downpour spoils every archer\'s aim.' });
+    ok(noted.rangedPenalty === RANGED_PENALTY && noted.log[1] === 'The downpour spoils every archer\'s aim.', 'a fight in the weather carries the penalty and says why');
+    ok(startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4)).rangedPenalty === 0, 'and a fight with no word of the weather has none');
   },
 
   party() {
@@ -237,6 +275,7 @@ const suites: Record<string, () => void> = {
     ok(p.members.every((m) => m.hp === m.maxHp && m.hp > 0), 'everyone starts at full health');
     ok(p.members[0].equipment.weapon === 'longsword' && p.members[0].equipment.armor === 'scale', 'the knight starts in scale with a long sword');
     ok(p.members[5].spells.includes('spark') && p.members[5].spells.includes('light'), 'the sorcerer knows the tier-1 spells');
+    ok(p.members[5].equipment.weapon === 'sling' && p.members[5].pack.includes('dagger'), 'the sorcerer starts with a sling in hand and the dagger packed');
     ok(!p.members[5].spells.includes('sleep'), 'but not tier 2');
     ok(xpForLevel(2) > 0 && xpForLevel(3) > xpForLevel(2), 'xp thresholds rise');
     const s = p.members[5];
@@ -309,6 +348,120 @@ const suites: Record<string, () => void> = {
     ok(buffHit(s, party) === noBard + INSPIRE_HIT, 'a standing bard inspires the party');
     addCondition(party.members[3], 'unconscious'); ok(buffHit(s, party) === noBard, 'a fallen one does not');
     ok(hasTrait(mk('thief'), 'keen_eyes') && hasTrait(mk('ranger'), 'keen_eyes'), 'thieves and rangers have Keen Eyes');
+  },
+
+  calendar() {
+    const d1 = dateAt(START_MINUTES);
+    ok(shortDate(d1) === '1 Mistfall 1016' && d1.season === 'autumn' && d1.gameDay === 1, `game day 1 is the 1st of Mistfall, 1016, in the autumn (${shortDate(d1)}, ${d1.season})`);
+    ok(MONTHS.length === 8 && DAYS_PER_YEAR === 120, 'the year is eight months of fifteen days');
+    ok(shortDate(dateAt(14 * 1440)) === '15 Mistfall 1016' && shortDate(dateAt(15 * 1440)) === '1 Frost 1016' && dateAt(15 * 1440).season === 'winter', 'Mistfall has fifteen days, then Frost begins the winter');
+    const newYear = (DAYS_PER_YEAR - EPOCH_DAY) * 1440;
+    ok(shortDate(dateAt(newYear - 1)) === '15 Longnight 1016' && shortDate(dateAt(newYear)) === '1 Thaw 1017' && dateAt(newYear).season === 'spring', `the year turns after Longnight (${shortDate(dateAt(newYear))})`);
+    ok(dateAt(newYear).gameDay === DAYS_PER_YEAR - EPOCH_DAY + 1, 'and the game-day count carries on through it');
+    ok(longDate(dateAt(0)) === 'the 1st of Mistfall, 1016' && longDate(dateAt(1440)) === 'the 2nd of Mistfall, 1016' && longDate(dateAt(10 * 1440)) === 'the 11th of Mistfall, 1016', 'long dates take their ordinals (1st, 2nd, 11th)');
+    // The days lengthen and shorten. `at` is the minute of a day of the year and an hour.
+    const at = (doy: number, hour: number): number => ((doy - EPOCH_DAY + DAYS_PER_YEAR) % DAYS_PER_YEAR) * 1440 + hour * 60;
+    const winter = MIDSUMMER + DAYS_PER_YEAR / 2;
+    ok([0, 30, 60, 90].every((doy) => daylightAt(at(doy, 12)) === 1), 'noon is full daylight in every season');
+    ok(daylightAt(at(MIDSUMMER, 18.5)) === 1 && daylightAt(at(winter, 18.5)) === 0, 'at half past six in the evening it is day at midsummer and night at midwinter');
+    ok(daylightAt(at(winter, 7)) < 0.25 && daylightAt(at(MIDSUMMER, 5)) >= 0.5, 'a midwinter morning is still dark at seven; a midsummer one light at five');
+    const { dawn, dusk } = sunTimes(EPOCH_DAY);
+    const near = (a: number, b: number): boolean => Math.abs(a - b) < 1e-9;
+    // The day length moves through the day, not in a step at midnight, so the old clock holds to within minutes.
+    ok(near(dawn, 6.5) && near(dusk, 18.5) && daylightAt(at(EPOCH_DAY, 4.9)) === 0 && daylightAt(at(EPOCH_DAY, 8)) > 0.97 && daylightAt(at(EPOCH_DAY, 20)) < 0.03, '1 Mistfall is an equinox, with the old fixed clock: dark before 05:00, full light by 08:00, dark again by 20:00');
+  },
+
+  weather() {
+    const shelf = CLIMATES.shelf, thorn = CLIMATES.thornmark;
+    ok(JSON.stringify(weatherAt(7, 5000, shelf)) === JSON.stringify(weatherAt(7, 5000, shelf)), 'the weather is a pure function of the seed and the minute');
+    let differ = 0; for (let h = 0; h < 240; h++) if (classify(weatherAt(7, h * 60, shelf)).sky !== classify(weatherAt(8, h * 60, shelf)).sky) differ++;
+    ok(differ > 40, `another seed brings other weather (${differ} of 240 hours differ)`);
+    // Three years of hours in each region, one seed a year.
+    const sim = (c: Climate): { sky: Record<Season, Partial<Record<Sky, number>>>; warmestSnow: number; summerCover: number; winterDeep: number; maxCover: number; maxWet: number; spells: number[] } => {
+      const out = { sky: { spring: {}, summer: {}, autumn: {}, winter: {} } as Record<Season, Partial<Record<Sky, number>>>, warmestSnow: -99, summerCover: 0, winterDeep: 0, maxCover: 0, maxWet: 0, spells: [] as number[] };
+      for (const seed of [11, 777, 4242]) {
+        let spell = 0, winterHours = 0, deep = 0;
+        for (let h = 0; h < DAYS_PER_YEAR * 24; h++) {
+          const m = h * 60, w = weatherAt(seed, m, c), s = dateAt(m).season, k = classify(w).sky;
+          out.sky[s][k] = (out.sky[s][k] ?? 0) + 1;
+          if (w.precip >= 0.08 && w.snow >= 0.7) out.warmestSnow = Math.max(out.warmestSnow, w.temp);
+          if (s === 'summer') out.summerCover = Math.max(out.summerCover, w.cover);
+          if (s === 'winter') { winterHours++; if (w.cover >= 0.5) deep++; }
+          out.maxCover = Math.max(out.maxCover, w.cover); out.maxWet = Math.max(out.maxWet, w.wet);
+          if (w.precip >= 0.08) spell++; else if (spell) { out.spells.push(spell); spell = 0; }
+        }
+        out.winterDeep += deep / winterHours / 3;
+      }
+      return out;
+    };
+    const count = (r: Partial<Record<Sky, number>>, pick: (s: Sky) => boolean): number => Object.entries(r).reduce((n, [k, v]) => n + (pick(k as Sky) ? v! : 0), 0);
+    const sh = sim(shelf), tm = sim(thorn);
+    for (const s of ['spring', 'summer', 'autumn', 'winter'] as Season[]) ok(count(sh.sky[s], isRainy) > 0, `it rains on the Shelf in the ${s}`);
+    const year = (r: typeof sh, k: Sky): number => (['spring', 'summer', 'autumn', 'winter'] as Season[]).reduce((n, s) => n + (r.sky[s][k] ?? 0), 0);
+    ok(year(sh, 'drizzle') > 0 && year(sh, 'rain') > 0 && year(sh, 'downpour') > 0 && year(sh, 'storm') > 0, `the rain comes in every strength: drizzle ${year(sh, 'drizzle')}h, rain ${year(sh, 'rain')}h, downpour ${year(sh, 'downpour')}h, thunderstorms ${year(sh, 'storm')}h`);
+    ok(year(sh, 'downpour') < year(sh, 'rain') + year(sh, 'drizzle'), 'and downpours are the rarer kind');
+    ok((sh.sky.autumn.fog ?? 0) > (sh.sky.summer.fog ?? 0), `the Shelf's fogs come in the autumn (${sh.sky.autumn.fog ?? 0}h against ${sh.sky.summer.fog ?? 0}h in summer)`);
+    ok(sh.warmestSnow < 0 && tm.warmestSnow < 0, `snow falls only below freezing (warmest snowfall ${Math.max(sh.warmestSnow, tm.warmestSnow).toFixed(1)} degrees)`);
+    ok(count(sh.sky.summer, isSnowy) + count(tm.sky.summer, isSnowy) === 0 && sh.summerCover === 0 && tm.summerCover === 0, 'no snow falls or lies in the summer');
+    ok(count(tm.sky.winter, isSnowy) > count(sh.sky.winter, isSnowy) * 2, `Thornmark's winter snows far more than the Shelf's (${count(tm.sky.winter, isSnowy)}h against ${count(sh.sky.winter, isSnowy)}h)`);
+    ok(year(tm, 'blizzard') > 0 && (year(tm, 'sleet') + year(sh, 'sleet')) > 0, `blizzards blow in Thornmark (${year(tm, 'blizzard')}h) and sleet falls somewhere (${year(tm, 'sleet') + year(sh, 'sleet')}h)`);
+    ok(tm.winterDeep > 0.3 && sh.winterDeep < tm.winterDeep, `snow lies deep over the pass for much of the winter (${(tm.winterDeep * 100).toFixed(0)}% of hours; the Shelf ${(sh.winterDeep * 100).toFixed(0)}%)`);
+    ok(tm.maxCover === 1 && sh.maxWet > 0.9, 'the ground can be buried in snow and stand in water');
+    const meanSpell = sh.spells.reduce((a, b) => a + b, 0) / sh.spells.length;
+    ok(meanSpell >= 3, `a wet spell lasts hours, not minutes (mean ${meanSpell.toFixed(1)} hours)`);
+    // The log: hysteresis keeps a shower on a boundary from flickering, and the news reads right.
+    const edge: Weather = { ...weatherAt(1, 0, shelf), precip: 0.28, snow: 0, fog: 0, storm: 0 };
+    ok(classify(edge).sky === 'drizzle' && classify(edge, { sky: 'rain', band: 2 }).sky === 'rain', 'rain easing just under the threshold stays rain until it clearly eases');
+    ok(skyNews(null, 'rain', shelf) === 'It is raining.' && skyNews(null, 'clear', shelf) === null, 'first sight of the sky reports rain and says nothing of a clear day');
+    ok(skyNews('clear', 'rain', shelf) === 'Rain begins to fall.' && skyNews('rain', 'overcast', shelf) === 'The rain stops.' && skyNews('rain', 'snow', thorn) === 'The rain turns to snow.', 'changes read as changes');
+    ok(skyNews('clear', 'fog', shelf) === shelf.fogText && skyNews('clear', 'fog', thorn) === thorn.fogText && skyNews('cloudy', 'overcast', shelf) === null, 'fog comes in its region\'s own words; cloud is left to the eye');
+    // A new world opens on a fair morning and never draws on the gameplay rng again.
+    for (const seed of [1, 2, 3, 4, 5]) {
+      const r = makeRng(seed), w = new World(buildMaps(), defaultParty(r), r);
+      ok(fairStart(w.state.weatherSeed!, START_MINUTES, shelf) && w.weather.precip < 0.05 && w.weather.fog < 0.3, `a new game (seed ${seed}) opens dry and clear of fog`);
+    }
+    {
+      const a = makeRng(3), b = makeRng(3);
+      const wa = new World(buildMaps(), defaultParty(a), a), wb = new World(buildMaps(), defaultParty(b), b);
+      for (let i = 0; i < 50; i++) { wa.advance(97); void wa.weather; wa.weatherNews(); void wa.sight; }
+      ok(a.next() === b.next() && a.next() === b.next(), 'reading the weather draws nothing from the gameplay rng');
+    }
+    // What it does: fog and downpours close the view outdoors (a Light spell does not cut fog), not underground.
+    const r = makeRng(5), world = new World(buildMaps(), defaultParty(r), r), seed = world.state.weatherSeed!;
+    const daylit = (m: number): boolean => daylightAt(m) === 1;
+    const fogAt = findWeather(seed, START_MINUTES, shelf, (w, m) => w.fog >= 0.6 && daylit(m));
+    world.travel('shelf', 16, 8, 2); world.state.minutes = fogAt;
+    ok(fogAt > 0 && world.sight === 2, `thick fog by day leaves two squares of sight on the Shelf (${world.sight})`);
+    world.state.light = 50;
+    ok(world.sight === 2, 'and a Light spell does not cut through it');
+    world.travel('mill', 1, 1, 2);
+    ok(world.sight === 4 && world.weatherNews() === null && world.combatWeather().rangedPenalty === 0, 'underground the weather neither blinds, nor speaks, nor spoils a shot');
+    world.state.light = 0;
+    const pourAt = findWeather(seed, START_MINUTES, shelf, (w, m) => w.precip >= 0.7 && w.snow === 0 && w.fog < 0.35 && daylit(m));
+    world.travel('shelf', 16, 8, 2); world.state.minutes = pourAt; world.sky = null;
+    ok(pourAt > 0 && world.sight === 3 && world.combatWeather().rangedPenalty === RANGED_PENALTY && !!world.combatWeather().note, `a downpour by day leaves three squares of sight and spoils bows (sight ${world.sight})`);
+    ok(/pouring|heavens|sheets|thunder/i.test(world.weatherNews() ?? ''), 'and the log says it is pouring when the party looks up');
+    ok(/Bows and slings will shoot poorly/.test(world.almanac()) && /three squares/.test(world.almanac()), 'the almanac says so too');
+    // Deep snow slows a step outdoors, not in town.
+    const snowAt = findWeather(seed, START_MINUTES, thorn, (w) => w.cover >= 0.5);
+    world.travel('thornmark', 13, 12, 2); world.state.minutes = snowAt;
+    const before = world.state.minutes, stepped = world.move('forward');
+    ok(snowAt > 0 && stepped.kind === 'moved' && world.state.minutes - before === 6 + SNOW_DRAG && snowDrag(weatherAt(seed, before, thorn)) === SNOW_DRAG, `a step through deep snow takes ${world.state.minutes - before} minutes`);
+    ok(/Snow lies deep/.test(world.almanac()), 'the almanac warns of it');
+    const clearAt = findWeather(seed, START_MINUTES, shelf, (w) => w.cover === 0 && w.precip === 0);
+    world.travel('shelf', 16, 8, 2); world.state.minutes = clearAt;
+    const b2 = world.state.minutes; world.move('forward');
+    ok(world.state.minutes - b2 === 6 && weatherSight(world.weather) === 4 && rangedPenalty(world.weather) === 0, 'a dry step on bare ground takes the usual six');
+    // The inn wakes the party at 07:00, or at first light in the depth of winter.
+    world.state.minutes = 0; world.sleepUntilMorning();
+    ok(world.state.minutes === 7 * 60, 'in the autumn the inn wakes the party at 07:00');
+    world.state.minutes = (MIDSUMMER + DAYS_PER_YEAR / 2 - EPOCH_DAY) * 1440 + 22 * 60; world.sleepUntilMorning();
+    ok(world.hour === 8 && world.daylight >= 0.5, `at midwinter it waits for the light (${world.hour}:${String(world.minute).padStart(2, '0')})`);
+    // Towns and dungeons share their region's weather; only the open road crosses from one to the next.
+    for (const def of MAP_DEFS) for (const e of def.exits ?? []) {
+      const to = MAP_DEFS.find((d) => d.id === e.to)!;
+      if (def.kind !== 'outdoor' || to.kind !== 'outdoor') ok((def.region ?? 'shelf') === (to.region ?? 'shelf'), `${def.id} and ${to.id} share a region`);
+    }
   },
 
   atlas() {
@@ -392,6 +545,117 @@ const suites: Record<string, () => void> = {
     const world2 = new World(buildMaps(), data.party, makeRng(1), data.world);
     ok(world2.map.at(7, 11).door === 'door', 'loading re-applies the unlocked door to fresh map content');
     ok(world2.state.maps.harrow.explored[14 * 16 + 7] === 1 && world2.state.mapId === 'mill' && world2.state.x === 7, 'loading keeps the explored cells and the position');
+    ok(data.world.weatherSeed === world.state.weatherSeed && JSON.stringify(world2.weather) === JSON.stringify(world.weather), 'the weather seed round-trips, and with it the weather');
+    // A save from before there was weather has no seed: it loads with the legacy one and keeps it.
+    const old = JSON.parse(text) as { world: WorldState };
+    delete old.world.weatherSeed;
+    const world3 = new World(buildMaps(), data.party, makeRng(1), old.world);
+    ok(world3.state.weatherSeed === LEGACY_WEATHER_SEED && world3.weather.precip >= 0 && world3.date.gameDay === world.date.gameDay, 'a save from before the weather loads, on the same date, with the legacy weather seed');
+  },
+
+  quests() {
+    const conds = (w: When): QuestCond[] => [w].flat();
+    // Every condition names something real: a flag an NPC sets, an item, a once-only event or a
+    // chest, a guardian that never respawns (one that does comes back to life and would take its
+    // entry with it), a map.
+    const npcFlags = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [f.flag, f.quest?.setFlag] : [])));
+    const onMap = (ref: string): { map: (typeof MAP_DEFS)[number] | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: MAP_DEFS.find((d) => d.id === m), id }; };
+    ok(new Set(QUESTS.map((q) => q.id)).size === QUESTS.length, `the ${QUESTS.length} quests have distinct ids`);
+    for (const q of QUESTS) {
+      const bad: string[] = [];
+      for (const c of [q.start, ...(q.done ? [q.done] : []), ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds)) {
+        for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f)) bad.push(`flag ${f}`);
+        if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
+        if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => ((f.kind === 'event' && f.once) || f.kind === 'chest') && f.id === id)) bad.push(`seen ${c.seen}`); }
+        if (c.slain !== undefined) { const { map, id } = onMap(c.slain); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${c.slain}`); }
+        if (c.visited !== undefined && !MAP_DEFS.some((d) => d.id === c.visited)) bad.push(`visited ${c.visited}`);
+      }
+      ok(!bad.length, `${q.id}: every condition names a real flag, item, event, guardian or map${bad.length ? ' -> ' + bad.join(', ') : ''}`);
+      ok(new Set(q.entries.map((e) => e.id)).size === q.entries.length, `${q.id}: entry ids are distinct`);
+      const missing = [...new Set([q.title, ...q.entries.map((e) => e.text), ...q.goals.map((g) => g.text)].join('').toUpperCase())].filter((ch) => !FONT_CHARS.includes(ch));
+      ok(!missing.length, `${q.id}: every character has a glyph in the pixel font${missing.length ? ' -> ' + missing.join(' ') : ''}`);
+      ok(measureText('▶ ' + q.title) <= LIST.w, `${q.id}: the title fits the list (${measureText('▶ ' + q.title)} of ${LIST.w}px)`);
+      const all = (goal: string | null): QuestView => ({ def: q, done: goal === null, entries: q.entries, goal });
+      ok([...q.goals.map((g) => g.text), null].every((goal) => questPage(all(goal), PAGE.w, PAGE.h).dropped === 0), `${q.id}: the whole journal fits its page under any goal`);
+    }
+    { // A page too long for the box gives up its oldest entries and keeps the newest.
+      const q = QUESTS[0];
+      const long = { ...q, entries: Array.from({ length: 14 }, (_, i) => ({ id: `e${i}`, when: q.start, text: `${i}: ${q.entries[0].text}` })) };
+      const p = questPage({ def: long, done: false, entries: long.entries, goal: q.goals[0].text }, PAGE.w, PAGE.h);
+      ok(p.dropped > 0 && p.rows.every((r) => r.y + 7 <= PAGE.h) && p.rows.some((r) => r.text.startsWith('13: ')) && !p.rows.some((r) => r.text.startsWith('0: ')),
+        `a journal too long for its page drops the oldest ${p.dropped} entries and keeps the newest`);
+    }
+    // Each way in starts the quest with a goal; each entry can be written; each goal can be the one
+    // shown (not hidden behind an earlier one); and an entry keyed to an item outlasts the hand-in.
+    const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(rng); return { party, world: new World(buildMaps(), party, rng) }; };
+    const satisfy = (s: { party: Party; world: World }, c: QuestCond): void => {
+      for (const f of [c.flag ?? []].flat()) s.party.flags[f] = 1;
+      if (c.item) s.party.bag.push(c.item);
+      if (c.seen) { const [m, id] = c.seen.split(':'); s.world.ensureMapState(m).used[id] = 1; }
+      if (c.slain) { const [m, id] = c.slain.split(':'); s.world.ensureMapState(m).groups[id].dead = s.world.state.minutes; }
+      if (c.visited) s.world.ensureMapState(c.visited);
+    };
+    const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
+    const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && f.quest ? [f.quest.item] : [])));
+    for (const q of QUESTS) {
+      const bad: string[] = [];
+      for (const c of conds(q.start)) { const s = fresh(); satisfy(s, c); const v = view(s, q.id); if (!v || v.done || !v.goal) bad.push(`start ${JSON.stringify(c)}`); }
+      const start = conds(q.start)[0];
+      for (const e of q.entries) for (const c of conds(e.when)) { const s = fresh(); satisfy(s, start); satisfy(s, c); if (!view(s, q.id)?.entries.includes(e)) bad.push(`entry ${e.id}`); }
+      q.goals.forEach((g, i) => { const s = fresh(); satisfy(s, start); satisfy(s, conds(g.when)[0]); if (view(s, q.id)?.goal !== g.text) bad.push(`goal ${i + 1}`); });
+      ok(!bad.length, `${q.id}: starts with a goal, and every entry and goal can come up${bad.length ? ' -> ' + bad.join(', ') : ''}`);
+      // An entry keyed to an item has to outlast losing it: at the hand-in that ends the quest, or,
+      // for a quest with no end yet, never, so no hand-in may want the item and no shop buy it.
+      const lost = new Set<string>();
+      if (q.done) {
+        for (const e of q.entries) if (conds(e.when).some((c) => c.item)) { const s = fresh(); satisfy(s, start); satisfy(s, conds(q.done)[0]); if (!view(s, q.id)?.entries.includes(e)) lost.add(`entry ${e.id}, at the hand-in`); }
+      } else {
+        for (const c of [q.start, ...q.entries.map((e) => e.when)].flatMap(conds)) if (c.item && (handedIn.has(c.item) || Math.floor(ITEMS[c.item].price / 2) > 0)) lost.add(`${c.item}, which can be taken`);
+      }
+      ok(!lost.size, `${q.id}: nothing in the log vanishes when an item leaves the party${lost.size ? ' -> ' + [...lost].join(', ') : ''}`);
+    }
+    { // The slice's quests end to end, from the real flags and triggers: the log fills in, the goal
+      // moves on, and each change is announced once and in story order.
+      const rng = makeRng(4);
+      const party = defaultParty(rng);
+      const world = new World(buildMaps(), party, rng);
+      const log = (): QuestView[] => questLog(world.state, party);
+      const quest = (id: string): QuestView => log().find((v) => v.def.id === id)!;
+      let marks = questMarks(log());
+      const news = (): string => { const l = log(); const n = questNews(marks, l).map((x) => x.text).join(' '); marks = questMarks(l); return n; };
+      ok(log().length === 0 && news() === '', 'a new game starts with an empty quest log');
+      party.flags.q_ashcombe = 1;
+      ok(news() === 'New quest: The Quiet Farm.' && /Ashcombe/.test(quest('ashcombe').goal ?? ''), `Vask's contract begins The Quiet Farm, and says where to go (${quest('ashcombe').goal})`);
+      world.travel('mill', 1, 1, 2);
+      ok(/cellar/.test(quest('ashcombe').goal ?? '') && news() === '', 'in the cellar the goal moves on, which is not news');
+      world.travel('mill', 10, 4, NORTH); world.move('forward');
+      ok(quest('ashcombe').entries.some((e) => e.id === 'lantern') && news() === 'Quest log updated: The Quiet Farm.', "stepping on the dead Lantern writes her note into the log");
+      party.bag.push('survey_wand');
+      ok(/Vask/.test(quest('ashcombe').goal ?? '') && news() === 'Quest log updated: The Quiet Farm.', 'with the wand in hand, the goal is Vask');
+      takeItem(party, 'survey_wand'); party.flags.q_ashcombe_done = 1; // what Vask's hand-in does
+      ok(news() === 'Quest complete: The Quiet Farm. New quest: The Grove Stone.', 'the hand-in finishes the farm and, after it, begins the Grove Stone');
+      const farm = quest('ashcombe');
+      ok(farm.done && farm.goal === null && farm.entries.some((e) => e.id === 'wand'), 'a finished quest has no goal and keeps the wand it handed over');
+      ok(/Greywater/.test(quest('grove').goal ?? ''), `while Greywater holds out, the Grove Stone waits on the pass (${quest('grove').goal})`);
+      party.flags.q_greywater = 1; party.bag.push('greywater_ledger');
+      ok(news() === 'New quest: The Greywater Ledger.' && /Hale/.test(quest('greywater').goal ?? ''), 'Hale\'s contract and his ledger arrive together as one line');
+      takeItem(party, 'greywater_ledger'); party.flags.q_greywater_done = 1;
+      ok(news() === 'Quest complete: The Greywater Ledger. Quest log updated: The Grove Stone.' && /pass/.test(quest('grove').goal ?? ''), 'the second hand-in opens the pass, and the Grove Stone says so');
+      const data = deserialize(serialize(world.state, party, 1));
+      const reloaded = questLog(data.world, data.party);
+      ok(JSON.stringify(reloaded) === JSON.stringify(log()) && questNews(marks, reloaded).length === 0, 'a save carries the quest log without storing it, and a reload is not news');
+      world.travel('thornmark', 1, 9, 1);
+      party.flags.q_grove = 1;
+      ok(news() === 'Quest log updated: The Grove Stone.' && /under the Grove/.test(quest('grove').goal ?? ''), 'Sylvane sends the party under the Grove');
+      party.bag.push('ashen_chisel');
+      world.travel('grove2', 8, 8, 0); world.killGroups(['g2_warden']); party.bag.push('meridian_journal'); // the Warden dies and drops its journal
+      ok(/Sylvane/.test(quest('grove').goal ?? '') && ['chisel', 'tear'].every((id) => quest('grove').entries.some((e) => e.id === id)), 'the chisel goes to Sylvane, and the Warden\'s death is written');
+      ok(news() === 'Quest log updated: The Grove Stone. New quest: The Lost Expedition.', 'the journal the Warden drops begins the Lost Expedition');
+      takeItem(party, 'ashen_chisel'); party.flags.q_grove_done = 1;
+      ok(news() === 'Quest complete: The Grove Stone.' && log().filter((v) => v.done).length === 3, 'the three quests of the slice can all be finished');
+      const expedition = quest('meridian');
+      ok(!expedition.done && /Meridian/.test(expedition.goal ?? '') && expedition.entries.length === 1, `and the Lost Expedition stays open with a goal, its trail not built yet (${expedition.goal})`);
+    }
   },
 };
 

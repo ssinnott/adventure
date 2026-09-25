@@ -9,6 +9,7 @@ export const GROVE2: MapDef = {
   name: 'The Cut Stone',
   kind: 'dungeon',
   band: [8, 10],
+  region: 'thornmark',
   start: { x: 1, y: 1, facing: SOUTH },
   palette: { wall: '#7a8290', wallDark: '#4e5460', floor: '#3a3e48', ceiling: '#2a2c34', door: '#5a5a66', wallStyle: 'brick', ceilingStyle: 'vault', banner: '#8a2a22' },
   rows: [
@@ -41,7 +42,6 @@ export const GROVE2: MapDef = {
     { kind: 'event', x: 10, y: 10, id: 'g2_inner', once: true, text: 'Beyond the door the hum is a pressure in the teeth. Ember-light leaks under the innermost wall.' },
     { kind: 'sign', x: 7, y: 10, text: 'Cut into the lintel of the iron door, in a hand you recognise from Ashcombe: THE HEARTH IS A CAGE. THIS IS A BAR OF IT.' },
     { kind: 'event', x: 7, y: 8, id: 'g2_stone', once: true, text: 'The Grove Stone: a standing stone the height of two men, and a hand-span of it cut clean away. Where the cut is, the air is torn. In the tear, something turns to look at you.' },
-    { kind: 'event', x: 8, y: 8, id: 'g2_after', once: true, text: 'With the Warden gone the tear closes like a mouth. The cut in the Stone stays; it will need a Lantern to mend. But nothing more comes through tonight.' },
     { kind: 'chest', x: 8, y: 8, id: 'g2_hoard', gold: 600, items: ['plate', 'potion_sp_great', 'elixir'] },
   ],
   encounters: [
@@ -55,6 +55,8 @@ export const GROVE2: MapDef = {
     { id: 'g2_ring3', x: 5, y: 7, monsters: ['wraith', 'wraith', 'wraith'], aware: 5, respawn: 2880 },
     { id: 'g2_ring3b', x: 10, y: 6, monsters: ['riftling_elder', 'riftling_elder', 'riftling_elder', 'riftling_elder'], aware: 5, respawn: 2880 },
     { id: 'g2_hand', x: 7, y: 7, monsters: ['ashen_hand', 'ashen_adept', 'ashen_adept'], aware: 2, roams: false },
-    { id: 'g2_warden', x: 8, y: 7, monsters: ['cut_warden', 'riftling_elder', 'riftling_elder'], aware: 1, roams: false },
+    // Said when it dies, not on a cell: whichever side of it the party fights from, this comes after.
+    { id: 'g2_warden', x: 8, y: 7, monsters: ['cut_warden', 'riftling_elder', 'riftling_elder'], aware: 1, roams: false,
+      slainText: 'With the Warden gone the tear closes like a mouth. The cut in the Stone stays; it will need a Lantern to mend. But nothing more comes through tonight.' },
   ],
 };

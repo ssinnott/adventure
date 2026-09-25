@@ -16,6 +16,7 @@ import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, areaOf, areaBand,
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
 import { drawFrameBackground } from './frame.ts';
+import { MessageScreen } from './screens.ts';
 import { BRASS, TEXT, TEXT_DIM, PANEL } from './palette.ts';
 import { rgba, hexToRgb } from '../lib/art/palettes.ts';
 
@@ -1474,8 +1475,9 @@ const WHOLE = (() => {
 
 /**
  * M opens it on the party; the arrows scroll the cloth; Tab turns the zone overlay on and off; Z
- * shows the whole cloth at once, where the arrows move the frame of what Z goes back to; M or Esc
- * closes it. The first time it opens the cloth is painted behind a progress bar.
+ * shows the whole cloth at once, where the arrows move the frame of what Z goes back to; Space
+ * opens the almanac (where the party is, the date, the season and the weather); M or Esc closes it.
+ * The first time it opens the cloth is painted behind a progress bar.
  */
 export class WorldMapScreen implements Screen {
   private vx = 0; private vy = 0; private tx = 0; private ty = 0;
@@ -1511,7 +1513,12 @@ export class WorldMapScreen implements Screen {
     if (!painted) return;
     if (a) {
       if (is(a, 'next')) this.mode = this.mode === 'art' ? 'zones' : 'art';
-      if (is(a, 'zoom') || is(a, 'interact')) this.whole = !this.whole;
+      if (is(a, 'zoom')) this.whole = !this.whole;
+      if (is(a, 'interact') && g.world) {
+        const w = g.world;
+        g.push(new MessageScreen(`${w.map.name}\n\nBand: levels ${w.map.def.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.\n\n${w.almanac()}`, undefined, 'ALMANAC'));
+        return;
+      }
       const step = this.whole ? 160 : 96;
       let moved = true;
       if (is(a, 'up')) this.ty -= step;
@@ -1560,7 +1567,7 @@ export class WorldMapScreen implements Screen {
       if (m.def.band) where += `  LEVELS ${m.def.band[0]}-${m.def.band[1]}`;
     }
     if (this.mode === 'zones') drawLegend(ctx, 331);
-    drawText(ctx, `ARROWS SCROLL  TAB ${this.mode === 'art' ? 'ZONES' : 'MAP ONLY'}  Z ${this.whole ? 'CLOSER' : 'WHOLE MAP'}  M CLOSE`, 14, yy, { color: BRASS });
+    drawText(ctx, `ARROWS SCROLL  TAB ${this.mode === 'art' ? 'ZONES' : 'MAP ONLY'}  Z ${this.whole ? 'CLOSER' : 'WHOLE MAP'}  SPACE ALMANAC  M CLOSE`, 14, yy, { color: BRASS });
     if (where) drawText(ctx, where.toUpperCase(), 626, yy, { color: TEXT_DIM, align: 'right' });
   }
 

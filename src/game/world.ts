@@ -1,6 +1,7 @@
 // The world: which map the party is on, where it stands, what time it is, and what has changed on
-// each map. Movement, the clock, automap reveal, roaming monster groups and encounter triggers live
-// here. Pure with respect to rendering and input; the Game drives it and reads the results.
+// each map. Movement, the clock, the weather's reach into play, automap reveal, roaming monster
+// groups and encounter triggers live here. Pure with respect to rendering and input; the Game
+// drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door } from './map.ts';
@@ -8,9 +9,15 @@ import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait } from './party.ts';
 import type { Party } from './party.ts';
+import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock } from './calendar.ts';
+import type { CalendarDate } from './calendar.ts';
+import { CLIMATES, weatherAt, classify, skyNews, weatherSight, snowDrag, rangedPenalty, rangedNote, fairStart, tempWord, SKY_NAMES } from './weather.ts';
+import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
 
-export const MINUTES_PER_DAY = 1440;
+export { MINUTES_PER_DAY };
 export const START_MINUTES = 7 * 60;
+/** The weather seed of a save made before there was weather. */
+export const LEGACY_WEATHER_SEED = 0x5ca1d;
 
 export interface GroupState { x: number; y: number; /** Minute the group was killed, or -1 while alive. */ dead: number; }
 
@@ -37,6 +44,8 @@ export interface WorldState {
   steps: number;
   /** The town map last stood in; Town Portal returns here. Absent in older saves: Harrow. */
   lastTown?: string;
+  /** What the weather is made from: the same seed brings the same skies. Absent in older saves. */
+  weatherSeed?: number;
 }
 
 export type MoveResult =
@@ -52,13 +61,22 @@ export class World {
   party: Party;
   rng: RngInstance;
 
+  /** The sky as the party last saw it, for the log; null underground or before the first look. Not saved. */
+  sky: SkyState | null = null;
+  private cached: { seed: number; minutes: number; region: RegionId; weather: Weather } | null = null;
+
   constructor(maps: Record<string, GameMap>, party: Party, rng: RngInstance, state?: WorldState) {
     this.maps = maps; this.party = party; this.rng = rng;
     if (state) this.state = state;
     else {
       const first = Object.values(maps)[0];
       this.state = { mapId: first.id, x: first.def.start.x, y: first.def.start.y, facing: first.def.start.facing, minutes: START_MINUTES, maps: {}, light: 0, truce: 0, truceGroups: [], steps: 0 };
+      // The company sets out on a dry, clear morning: draw seeds until the first hours are fair.
+      let seed = 0;
+      for (let i = 0; i < 64; i++) { seed = rng.int(1, 0x7ffffffe); if (fairStart(seed, START_MINUTES, CLIMATES[first.def.region ?? 'shelf'])) break; }
+      this.state.weatherSeed = seed;
     }
+    this.state.weatherSeed ??= LEGACY_WEATHER_SEED;
     for (const id of Object.keys(this.state.maps)) this.ensureMapState(id);
     this.ensureMapState(this.state.mapId);
     this.reveal();
@@ -84,25 +102,74 @@ export class World {
   get day(): number { return Math.floor(this.state.minutes / MINUTES_PER_DAY) + 1; }
   get hour(): number { return Math.floor((this.state.minutes % MINUTES_PER_DAY) / 60); }
   get minute(): number { return this.state.minutes % 60; }
-  /** 0 at midnight, 1 at noon: a triangle wave the sky and lighting read. */
-  get daylight(): number {
-    const h = (this.state.minutes % MINUTES_PER_DAY) / 60;
-    // Dark 20:00-05:00, full light 08:00-17:00, dawn and dusk between.
-    if (h < 5 || h >= 20) return 0;
-    if (h < 8) return (h - 5) / 3;
-    if (h < 17) return 1;
-    return 1 - (h - 17) / 3;
-  }
+  get date(): CalendarDate { return dateAt(this.state.minutes); }
+  /** 0 at night, 1 in full day, through a dawn and a dusk that move with the season (see calendar.ts). */
+  get daylight(): number { return daylightAt(this.state.minutes); }
   get isDark(): boolean { return this.daylight < 0.25 && this.map.kind !== 'dungeon'; }
-  /** How far the party can see: 4 by day or with light, 1 in a dark dungeon without a torch. */
+  /** Whether the sky is overhead: everywhere but the dungeons. */
+  get underSky(): boolean { return this.map.kind !== 'dungeon'; }
+  /** How far the party can see: 4 by day or with light, 2 by night or in a dungeon without it; fog, driving rain and snow close in on that. */
   get sight(): number {
-    if (this.state.light > 0) return 4;
-    if (this.map.kind === 'dungeon') return 2;
-    return this.isDark ? 2 : 4;
+    const s = this.state.light > 0 ? 4 : this.map.kind === 'dungeon' || this.isDark ? 2 : 4;
+    return this.underSky ? Math.min(s, weatherSight(this.weather)) : s;
+  }
+
+  // ---- weather ----
+  get region(): RegionId { return this.map.def.region ?? 'shelf'; }
+  get climate(): Climate { return CLIMATES[this.region]; }
+  /** The weather in this map's region now; also the weather over a dungeon, though nobody there sees it. */
+  get weather(): Weather {
+    const c = this.cached, seed = this.state.weatherSeed!, minutes = this.state.minutes, region = this.region;
+    if (c && c.seed === seed && c.minutes === minutes && c.region === region) return c.weather;
+    const weather = weatherAt(seed, minutes, CLIMATES[region]);
+    this.cached = { seed, minutes, region, weather };
+    return weather;
+  }
+
+  /**
+   * A log line when the sky has changed since the party last looked, or on first seeing it (a new
+   * game, a load, the way out of a dungeon); null when there is nothing to say. Underground the sky
+   * is forgotten, so coming up says what it is doing now rather than what changed.
+   */
+  weatherNews(): string | null {
+    if (!this.underSky) { this.sky = null; return null; }
+    const prev = this.sky;
+    this.sky = classify(this.weather, prev);
+    return skyNews(prev?.sky ?? null, this.sky.sky, this.climate);
+  }
+
+  /** The M screen's almanac: the date and the season, the hours of light, the sky and what it is doing to the party. */
+  almanac(): string {
+    const d = this.date, sun = sunTimes(d.dayOfYear), date = longDate(d);
+    const lines = [`${date[0].toUpperCase()}${date.slice(1)}: ${seasonName(d)}. Day ${d.gameDay} since the Hearth flickered.`, `Dawn ${clock(sun.dawn)}, dusk ${clock(sun.dusk)}.`];
+    if (!this.underSky) return [...lines, 'Underground, there is no telling the weather.'].join('\n');
+    const wx = this.weather, sky = classify(wx, this.sky).sky, seen = weatherSight(wx);
+    const cause = wx.fog >= 0.35 ? 'fog' : wx.snow >= 0.7 ? 'snow' : wx.snow > 0.3 ? 'sleet' : 'rain';
+    const effects = [
+      seen < 4 ? `The ${cause} hides all but ${seen === 2 ? 'two squares' : 'three squares'} ahead.` : '',
+      rangedPenalty(wx) ? 'Bows and slings will shoot poorly.' : '',
+      snowDrag(wx) ? 'Snow lies deep, and the going is slow.' : wx.cover >= 0.15 ? 'Snow lies on the ground.' : '',
+    ].filter(Boolean);
+    return [...lines, `${SKY_NAMES[sky]}, and ${tempWord(wx.temp)}.${effects.length ? ' ' + effects.join(' ') : ''}`].join('\n');
+  }
+
+  /** What the weather does to a fight here: a to-hit loss for bows on both sides, and a line for the log. */
+  combatWeather(): { rangedPenalty: number; note?: string } {
+    if (!this.underSky) return { rangedPenalty: 0 };
+    return { rangedPenalty: rangedPenalty(this.weather), note: rangedNote(this.weather) };
   }
 
   advance(minutes: number): void {
     this.state.minutes += minutes;
+  }
+
+  /** Sleep through to the next morning: 07:00, or first light where the day breaks later, deep in winter. */
+  sleepUntilMorning(): void {
+    const now = this.state.minutes;
+    let wake = Math.floor(now / MINUTES_PER_DAY) * MINUTES_PER_DAY + 7 * 60;
+    if (wake <= now) wake += MINUTES_PER_DAY;
+    const dawn = Math.floor(wake / MINUTES_PER_DAY) * MINUTES_PER_DAY + Math.ceil(sunTimes(dateAt(wake).dayOfYear).dawn * 60);
+    this.advance(Math.max(wake, dawn) - now);
   }
 
   // ---- movement ----
@@ -131,7 +198,8 @@ export class World {
     }
     this.state.x = nx; this.state.y = ny;
     this.state.steps++;
-    this.advance(this.map.kind === 'outdoor' ? 6 : 2);
+    // Six minutes a step in the open, more through deep snow; two in the streets and underground.
+    this.advance(this.map.kind === 'outdoor' ? 6 + snowDrag(this.weather) : 2);
     if (this.state.light > 0) this.state.light--;
     if (this.state.truce > 0 && --this.state.truce === 0) this.state.truceGroups = [];
     this.reveal();
@@ -167,7 +235,7 @@ export class World {
   /** Mark cells around the party seen: the four neighbours always, more with sight. */
   reveal(radius = 1): void {
     const ms = this.mapState, m = this.map;
-    const r = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark ? 2 : 1);
+    const r = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1);
     for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
       const x = this.state.x + dx, y = this.state.y + dy;
       if (m.inBounds(x, y)) ms.explored[y * m.width + x] = 1;
@@ -259,8 +327,15 @@ export class World {
     return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters }; });
   }
 
-  killGroups(ids: string[]): void {
-    for (const id of ids) { const st = this.mapState.groups[id]; if (st) st.dead = this.state.minutes; }
+  /** Mark the groups dead; returns what the log says about it (each group's `slainText`). */
+  killGroups(ids: string[]): string[] {
+    const said: string[] = [];
+    for (const id of ids) {
+      const st = this.mapState.groups[id]; if (st) st.dead = this.state.minutes;
+      const text = this.map.encounters.find((e) => e.id === id)?.slainText;
+      if (text) said.push(text);
+    }
+    return said;
   }
 
   /** After a successful flight: step back if possible and grant a truce with those groups. */

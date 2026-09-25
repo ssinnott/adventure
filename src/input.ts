@@ -4,7 +4,7 @@
 
 export type Action =
   | 'forward' | 'back' | 'turnLeft' | 'turnRight' | 'strafeLeft' | 'strafeRight'
-  | 'interact' | 'cancel' | 'map' | 'rest' | 'search' | 'cast' | 'inventory'
+  | 'interact' | 'cancel' | 'map' | 'rest' | 'search' | 'cast' | 'inventory' | 'journal'
   | 'up' | 'down' | 'left' | 'right'
   | 'n1' | 'n2' | 'n3' | 'n4' | 'n5' | 'n6' | 'n7' | 'n8' | 'n9' | 'n0'
   | 'save' | 'load' | 'next' | 'zoom';
@@ -17,7 +17,7 @@ const KEYS: Record<string, Action[]> = {
   KeyQ: ['strafeLeft'], KeyE: ['strafeRight'],
   Space: ['interact'], Enter: ['interact'], NumpadEnter: ['interact'],
   Escape: ['cancel'], Backspace: ['cancel'], Tab: ['next'],
-  KeyM: ['map'], KeyR: ['rest'], KeyF: ['search'], KeyC: ['cast'], KeyI: ['inventory'],
+  KeyM: ['map'], KeyR: ['rest'], KeyF: ['search'], KeyC: ['cast'], KeyI: ['inventory'], KeyJ: ['journal'],
   Digit1: ['n1'], Digit2: ['n2'], Digit3: ['n3'], Digit4: ['n4'], Digit5: ['n5'], Digit6: ['n6'], Digit7: ['n7'], Digit8: ['n8'], Digit9: ['n9'], Digit0: ['n0'],
   F5: ['save'], F9: ['load'], KeyZ: ['zoom'],
 };
