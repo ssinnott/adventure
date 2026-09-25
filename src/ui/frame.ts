@@ -12,11 +12,14 @@ import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, 
 import { shade, rgba, mix } from '../lib/art/palettes.ts';
 const PARCHMENT_DARK = '#d8c8a0';
 import { hash } from './brush.ts';
+import { shortDate } from '../game/calendar.ts';
+import { classify, isRainy, isSnowy, SKY_NAMES } from '../game/weather.ts';
+import type { Sky } from '../game/weather.ts';
 
 export const LAYOUT = {
   view: { x: 8, y: 8, w: 400, h: 268 },
-  status: { x: 416, y: 8, w: 216, h: 20 },
-  map: { x: 416, y: 32, w: 216, h: 224 },
+  status: { x: 416, y: 8, w: 216, h: 30 },
+  map: { x: 416, y: 42, w: 216, h: 214 },
   purse: { x: 416, y: 260, w: 216, h: 16 },
   party: { x: 8, y: 284, w: 624, h: 68 },
   log: { x: 8, y: 8, w: 400, h: 268 },
@@ -32,13 +35,54 @@ const COND_COLOR: Record<string, string> = {
   dead: RED, stoned: TEXT_DIM, unconscious: RED, paralysed: YELLOW, asleep: BLUE, poisoned: GREEN, diseased: PURPLE, cursed: PURPLE,
 };
 
+/** Two lines: the facing, the time and the map; then the date, and the sky with its glyph (not underground). */
 export function drawStatus(ctx: CanvasRenderingContext2D, world: World): void {
   const r = LAYOUT.status;
   panel(ctx, r.x, r.y, r.w, r.h);
   const hh = String(world.hour).padStart(2, '0'), mm = String(world.minute).padStart(2, '0');
   drawText(ctx, `${FACING_NAMES[world.state.facing]}`, r.x + 6, r.y + 6, { size: 1, color: BRASS });
-  drawText(ctx, `DAY ${world.day}  ${hh}:${mm}`, r.x + 24, r.y + 6, { size: 1, color: TEXT });
+  drawText(ctx, `${hh}:${mm}`, r.x + 18, r.y + 6, { size: 1, color: TEXT });
   drawText(ctx, world.map.name, r.x + r.w - 6, r.y + 6, { size: 1, color: TEXT_DIM, align: 'right' });
+  drawText(ctx, shortDate(world.date), r.x + 6, r.y + 17, { size: 1, color: TEXT });
+  if (!world.underSky) return;
+  const sky = (world.sky ?? classify(world.weather)).sky;
+  const w = drawText(ctx, SKY_NAMES[sky], r.x + r.w - 6, r.y + 17, { size: 1, color: TEXT_DIM, align: 'right' });
+  drawSkyGlyph(ctx, sky, r.x + r.w - 6 - w - 12, r.y + 17, world.daylight < 0.25);
+}
+
+/**
+ * The sky's glyphs, 9 by 7 like the font: '#' the body (the sun, the moon, a cloud), 'o' what falls
+ * or strikes from it. A clear or cloudy sky shows the sun by day and the moon by night.
+ */
+const SKY_GLYPHS: Record<string, string> = {
+  sun: '....#....|.#.....#.|...###...|#.#####.#|...###...|.#.....#.|....#....',
+  moon: '...###...|..##.....|.##......|.##......|.##......|..##.....|...###...',
+  cloud: '.........|...##....|..####.#.|.#######.|#########|.#######.|.........',
+  cloudy: '....o....|.o.o##...|...####.#|.#######.|#########|.#######.|.........',
+  fog: '.........|#######..|.........|..#######|.........|#######..|.........',
+  light: '...##....|..####.#.|#########|.#######.|.........|..o...o..|.o...o...',
+  steady: '...##....|..####.#.|#########|.#######.|.........|.o.o.o.o.|o.o.o.o..',
+  heavy: '...##....|..####.#.|#########|.#######.|o.o.o.o.o|.o.o.o.o.|o.o.o.o.o',
+  storm: '...##....|..####.#.|#########|.#######.|....oo...|...oo....|..o......',
+};
+const GLYPH_OF: Record<Sky, string> = {
+  clear: 'sun', cloudy: 'cloudy', overcast: 'cloud', fog: 'fog', drizzle: 'light', rain: 'steady', downpour: 'heavy', storm: 'storm',
+  sleet: 'steady', flurries: 'light', snow: 'steady', heavy_snow: 'heavy', blizzard: 'heavy',
+};
+
+function drawSkyGlyph(ctx: CanvasRenderingContext2D, sky: Sky, x: number, y: number, night: boolean): void {
+  let name = GLYPH_OF[sky];
+  if (night && name === 'sun') name = 'moon';
+  const body = name === 'sun' ? YELLOW : name === 'moon' ? '#d8dce8' : name === 'fog' ? '#b8bcc4' : sky === 'overcast' || isRainy(sky) || sky === 'sleet' ? '#9aa2ae' : '#c8ced8';
+  // Rain falls blue, snow white, sleet both; a bolt is yellow, and the sun behind a cloud gold.
+  const fall = sky === 'storm' ? YELLOW : isSnowy(sky) ? '#f4f6fa' : name === 'cloudy' ? (night ? '#d8dce8' : YELLOW) : BLUE;
+  SKY_GLYPHS[name].split('|').forEach((row, j) => {
+    for (let i = 0; i < row.length; i++) {
+      if (row[i] === '.') continue;
+      ctx.fillStyle = row[i] === 'o' ? (sky === 'sleet' && (i + j) % 2 ? '#f4f6fa' : fall) : body;
+      ctx.fillRect(x + i, y + j, 1, 1);
+    }
+  });
 }
 
 export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: number): void {
@@ -57,7 +101,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   edge.addColorStop(0, 'rgba(60,30,10,0.25)'); edge.addColorStop(0.15, 'rgba(60,30,10,0)'); edge.addColorStop(0.85, 'rgba(60,30,10,0)'); edge.addColorStop(1, 'rgba(60,30,10,0.25)');
   ctx.fillStyle = edge; ctx.fillRect(r.x + 2, r.y + 2, r.w - 4, r.h - 4);
   const m = world.map;
-  const cell = Math.max(3, Math.floor((r.w - 8) / Math.max(m.width, m.height)));
+  const cell = Math.max(3, Math.floor((Math.min(r.w, r.h) - 8) / Math.max(m.width, m.height)));
   const ox = r.x + Math.floor((r.w - cell * m.width) / 2), oy = r.y + Math.floor((r.h - cell * m.height) / 2);
   const inView = new Set(viewCells(m, world.state.x, world.state.y, world.state.facing, world.sight).map((c) => c.y * m.width + c.x));
   for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
