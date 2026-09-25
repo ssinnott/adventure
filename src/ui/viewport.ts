@@ -152,6 +152,11 @@ function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect): v
   const order: number[] = [];
   for (let l = -LATERAL; l <= LATERAL; l++) order.push(l);
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
+  const solidAt = (d: number, l: number): boolean => isSolidWall(map.at(...toPair(cellAt(px, py, f, d, l))));
+  // What a cell's seed steps by to the next cell across and ahead, so a block shared by two faces
+  // can take one colour from both sides.
+  const rf = ((f + 1) & 3) as Facing;
+  const across = FACING_DX[rf] * 131 + FACING_DY[rf] * 17, ahead = FACING_DX[f] * 131 + FACING_DY[f] * 17;
 
   for (let d = DEPTH; d >= 0; d--) {
     if (d > sight) continue;
@@ -166,22 +171,23 @@ function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect): v
       const xl = (u: number) => cx + (l - 0.5) * 2 * u, xr = (u: number) => cx + (l + 0.5) * 2 * u;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
 
-      if (!isSolidWall(cell) && d > 0) {
+      if (!isSolidWall(cell)) {
         drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, map.palette.floor);
         if (map.kind === 'dungeon') drawCeiling(ctx, map.palette, cx, horizon, r.h, d, l, seed, f);
       }
 
       if (isSolidWall(cell)) {
-        const before = d > 0 ? map.at(...toPair(cellAt(px, py, f, d - 1, l))) : null;
-        if (d > 0 && before && !isSolidWall(before)) {
-          drawFrontFace(ctx, map, cell, c.x, c.y, f, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, daylight);
+        // Where a face runs on into the next face of the same wall, the two join with no seam and
+        // no outline between them; outlines are for corners and for where a wall ends.
+        if (d > 0 && !solidAt(d - 1, l)) {
+          const joinL = solidAt(d, l - 1) && !solidAt(d - 1, l - 1), joinR = solidAt(d, l + 1) && !solidAt(d - 1, l + 1);
+          drawFrontFace(ctx, map, cell, c.x, c.y, f, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, daylight, joinL, joinR, across);
         }
-        if (l !== 0) {
-          const inward = map.at(...toPair(cellAt(px, py, f, d, l - Math.sign(l))));
-          if (!isSolidWall(inward)) {
-            const xIn = l > 0 ? xl : xr;
-            drawSideFace(ctx, map, cell, c.x, c.y, xIn(uN), uN, xIn(uF), uF, horizon, d, seed, dark, haze, l > 0);
-          }
+        const s = Math.sign(l);
+        if (l !== 0 && !solidAt(d, l - s)) {
+          const joinNear = d === 0 || (solidAt(d - 1, l) && !solidAt(d - 1, l - s)), joinFar = solidAt(d + 1, l) && !solidAt(d + 1, l - s);
+          const xIn = l > 0 ? xl : xr;
+          drawSideFace(ctx, map, cell, c.x, c.y, xIn(uN), uN, xIn(uF), uF, horizon, d, seed, dark, haze, l > 0, joinNear, joinFar, !solidAt(d + 1, l), ahead);
         }
       } else if (d > 0 && cell.solid !== 'none') {
         const u = unit(d, r.h);
@@ -264,9 +270,12 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
 
 // ------------------------------------------------------------------ floors ----
 
+/** The unit at depth fraction s (0 near .. 1 far) through cell d; the party's own cell is clipped at k = 0, as its walls are. */
+function unitIn(d: number, s: number, h: number): number { return unit(Math.max(0, d - 0.5 + s), h); }
+
 /** Corner of the floor sub-grid: depth fraction s (0 near .. 1 far) and lateral fraction t (0 left .. 1 right). */
 function floorPt(cx: number, horizon: number, h: number, d: number, l: number, s: number, t: number): [number, number] {
-  const u = unit(d - 0.5 + s, h);
+  const u = unitIn(d, s, h);
   return [cx + (l - 0.5 + t) * 2 * u, horizon + u];
 }
 
@@ -296,7 +305,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
     for (let i = 0; i < rows; i++) for (let j = 0; j < cols; j++) {
       const s = (i + 0.5 + (hash(seed, 31, i, j) - 0.5) * 0.4) / rows, t = (j + 0.5 + (hash(seed, 32, i, j) - 0.5) * 0.4) / cols;
       const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
-      const sc = unit(d - 0.5 + s, h) / u;
+      const sc = unitIn(d, s, h) / u;
       const rx = (u / cols) * 0.8 * sc * 0.9, ry = rx * 0.45;
       const col = fog(shade(base, 0.85 + hash(seed, 33, i, j) * 0.35), d, dark, haze);
       ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill();
@@ -308,7 +317,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
-    const sc = unit(d - 0.5 + s, h) / u;
+    const sc = unitIn(d, s, h) / u;
     if (terrain === 'grass') {
       if (i >= 5) {
         // A flower or two.
@@ -355,7 +364,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
 
 function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number, horizon: number, h: number, d: number, l: number, seed: number, facing: number): void {
   const ceiling = pal.ceiling;
-  const P = (s: number, t: number): [number, number] => { const u = unit(d - 0.5 + s, h); return [cx + (l - 0.5 + t) * 2 * u, horizon - u]; };
+  const P = (s: number, t: number): [number, number] => { const u = unitIn(d, s, h); return [cx + (l - 0.5 + t) * 2 * u, horizon - u]; };
   if (pal.ceilingStyle === 'beams') {
     // Planks running away from the eye, with a heavy beam across every cell.
     const plank = fog(shade(ceiling, 1.1), d, false), gapCol = fog(shade(ceiling, 0.55), d, false), beam = fog(shade(ceiling, 0.7), d, false);
@@ -387,7 +396,7 @@ function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number,
 
 function isHouse(c: Cell): boolean { return c.solid === 'building' || c.door === 'door' || c.door === 'locked'; }
 
-function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, f: Facing, x0: number, x1: number, horizon: number, u: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number): void {
+function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, f: Facing, x0: number, x1: number, horizon: number, u: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number, joinL: boolean, joinR: boolean, across: number): void {
   const top = horizon - u, bottom = horizon + u;
   const isDoor = cell.door === 'door' || cell.door === 'locked';
   const house = map.kind === 'town' && isHouse(cell);
@@ -396,9 +405,9 @@ function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
     const rf = ((f + 1) & 3) as Facing;
     const leftOn = isHouse(map.at(mx - FACING_DX[rf], my - FACING_DY[rf]));
     const rightOn = isHouse(map.at(mx + FACING_DX[rf], my + FACING_DY[rf]));
-    drawHouseFront(ctx, x0, x1, top, bottom, d, seed, buildingSeed(map, mx, my), dark, haze, daylight, leftOn, rightOn);
+    drawHouseFront(ctx, x0, x1, top, bottom, d, seed, buildingSeed(map, mx, my), dark, haze, daylight, leftOn, rightOn, joinL, joinR);
   }
-  else drawStoneFront(ctx, map.palette, x0, x1, top, bottom, d, seed, dark, haze, map.kind === 'outdoor');
+  else drawStoneFront(ctx, map.palette, x0, x1, top, bottom, d, seed, dark, haze, map.kind === 'outdoor', joinL, joinR, across);
   if (isDoor) drawDoor(ctx, x0, x1, horizon, u, map.palette.door, d, dark, cell.door === 'locked', map.kind === 'town');
   drawWallDecor(ctx, map, cell, mx, my, x0, x1, top, bottom, d, seed, dark, haze, daylight, house, isDoor);
 }
@@ -548,31 +557,51 @@ function drawFlame(ctx: CanvasRenderingContext2D, x: number, y: number, s: numbe
   ctx.fillStyle = '#ffe090'; ctx.fill();
 }
 
-/** Stone block courses on an axis-aligned face. */
-function drawStoneFront(ctx: CanvasRenderingContext2D, pal: MapPalette, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, dark: boolean, haze: string | null, mossy: boolean): void {
+/**
+ * Stone block courses on an axis-aligned face. The face fills whole pixels from round(x0) to
+ * round(x1), the same columns its neighbours and side faces round to, so no column of background
+ * is left between them. Where the wall runs on into the next face (joinL, joinR) the half blocks of
+ * the offset courses are halves of one block: no joint at the join, and one colour from a seed the
+ * two faces share (`across` is what a seed steps by from one cell to the next on the right).
+ */
+function drawStoneFront(ctx: CanvasRenderingContext2D, pal: MapPalette, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, dark: boolean, haze: string | null, mossy: boolean, joinL: boolean, joinR: boolean, across: number): void {
   const wall = pal.wall, wallDark = pal.wallDark;
   const w = x1 - x0, h = bottom - top;
-  ctx.fillStyle = fog(wallDark, d, dark, haze); ctx.fillRect(Math.round(x0), Math.round(top), Math.round(w), Math.round(h));
+  const X0 = Math.round(x0), X1 = Math.round(x1), T = Math.round(top), B = Math.round(bottom);
+  ctx.fillStyle = fog(wallDark, d, dark, haze); ctx.fillRect(X0, T, X1 - X0, B - T);
   const brick = pal.wallStyle === 'brick';
   const rows = brick ? 9 : 6, cols = brick ? 4 : 3;
   const rh = h / rows, cw = w / cols;
   const gap = rh > 6 ? 1 : 0;
   for (let i = 0; i < rows; i++) {
     const off = (i % 2) * cw * 0.5;
+    const y0 = Math.round(top + i * rh) + gap, y1 = Math.round(top + (i + 1) * rh);
     for (let j = -1; j < cols; j++) {
       const bx = x0 + j * cw + off, bw = cw;
       const cx0 = Math.max(x0, bx), cx1 = Math.min(x1, bx + bw);
       if (cx1 - cx0 < 1) continue;
-      const v = hash(seed, i, j) - 0.5;
+      const shareL = joinL && bx < x0 - 0.01, shareR = joinR && bx + bw > x1 + 0.01;
+      const k = shareL ? seed * 2 - across : shareR ? seed * 2 + across : seed, jj = shareL || shareR ? cols : j;
+      const v = hash(k, i, jj) - 0.5;
       let col = shade(wall, 1 + v * (brick ? 0.3 : 0.22));
-      if (brick && hash(seed, i, j, 6) > 0.85) col = mix(col, '#7a3a2a', 0.5);
-      if (mossy && hash(seed, i, j, 5) > 0.8) col = mix(col, '#4a6a3a', 0.4);
+      if (brick && hash(k, i, jj, 6) > 0.85) col = mix(col, '#7a3a2a', 0.5);
+      if (mossy && hash(k, i, jj, 5) > 0.8) col = mix(col, '#4a6a3a', 0.4);
       ctx.fillStyle = fog(col, d, dark, haze);
-      ctx.fillRect(Math.round(cx0) + gap, Math.round(top + i * rh) + gap, Math.round(cx1 - cx0) - gap, Math.round(rh) - gap);
-      if (rh > 10) { ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(Math.round(cx0) + gap, Math.round(top + i * rh) + gap, Math.round(cx1 - cx0) - gap, 1); }
+      const bx0 = Math.round(cx0) + (shareL ? 0 : gap), bx1 = Math.round(cx1);
+      ctx.fillRect(bx0, y0, bx1 - bx0, y1 - y0);
+      if (rh > 10) { ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(bx0, y0, bx1 - bx0, 1); }
     }
   }
-  ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; ctx.strokeRect(Math.round(x0) + 0.5, Math.round(top) + 0.5, Math.round(w) - 1, Math.round(h) - 1);
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; outlineRect(ctx, X0, T, X1, B, !joinL, !joinR);
+}
+
+/** A face's 1px outline inside its pixel rect, leaving open the sides where the wall runs on. */
+function outlineRect(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, left: boolean, right: boolean): void {
+  ctx.lineCap = 'butt'; ctx.beginPath();
+  ctx.moveTo(x0, y0 + 0.5); ctx.lineTo(x1, y0 + 0.5); ctx.moveTo(x0, y1 - 0.5); ctx.lineTo(x1, y1 - 0.5);
+  if (left) { ctx.moveTo(x0 + 0.5, y0); ctx.lineTo(x0 + 0.5, y1); }
+  if (right) { ctx.moveTo(x1 - 0.5, y0); ctx.lineTo(x1 - 0.5, y1); }
+  ctx.stroke();
 }
 
 /** A timber-framed house front with a window and a gable roof above. */
@@ -590,21 +619,23 @@ function roofColor(bseed: number): string {
   return r < 0.55 ? '#a8503a' : r < 0.8 ? '#5a6070' : '#b89050';
 }
 
-function drawHouseFront(ctx: CanvasRenderingContext2D, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, bseed: number, dark: boolean, haze: string | null, daylight: number, leftOn: boolean, rightOn: boolean): void {
+function drawHouseFront(ctx: CanvasRenderingContext2D, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, bseed: number, dark: boolean, haze: string | null, daylight: number, leftOn: boolean, rightOn: boolean, joinL: boolean, joinR: boolean): void {
   const w = x1 - x0, h = bottom - top;
+  const X0 = Math.round(x0), X1 = Math.round(x1), T = Math.round(top), B = Math.round(bottom);
   const plaster = fog(shade('#d8c8a8', 1 + (hash(bseed, 1) - 0.5) * 0.15), d, dark, haze), beam = fog('#4a3020', d, dark, haze);
-  ctx.fillStyle = plaster; ctx.fillRect(Math.round(x0), Math.round(top), Math.round(w), Math.round(h));
+  ctx.fillStyle = plaster; ctx.fillRect(X0, T, X1 - X0, B - T);
   drawRoofFront(ctx, x0, x1, top, w, h, d, seed, bseed, dark, haze, leftOn, rightOn);
-  // Timber frame: posts, a sill beam, a mid beam and braces.
-  const bw = Math.max(1, Math.round(w * 0.035));
+  // Timber frame: posts, a sill beam, a mid beam and braces. Where the front runs on into the next
+  // one, that one's post on the join is this one's, so the join is one post and not two.
+  const bw = Math.max(1, Math.round(w * 0.035)), pl = joinL ? 0 : bw;
   ctx.fillStyle = beam;
-  ctx.fillRect(Math.round(x0), Math.round(top), bw, Math.round(h));
-  ctx.fillRect(Math.round(x1) - bw, Math.round(top), bw, Math.round(h));
-  ctx.fillRect(Math.round(x0), Math.round(top), Math.round(w), bw);
-  ctx.fillRect(Math.round(x0), Math.round(top + h * 0.55), Math.round(w), bw);
+  if (!joinL) ctx.fillRect(X0, T, bw, B - T);
+  ctx.fillRect(X1 - bw, T, bw, B - T);
+  ctx.fillRect(X0, T, X1 - X0, bw);
+  ctx.fillRect(X0, Math.round(top + h * 0.55), X1 - X0, bw);
   if (w > 30) {
     ctx.strokeStyle = beam; ctx.lineWidth = bw;
-    ctx.beginPath(); ctx.moveTo(x0 + bw, top + h * 0.55); ctx.lineTo(x0 + w * 0.25, top + bw); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x0 + pl, top + h * 0.55); ctx.lineTo(x0 + w * 0.25, top + bw); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(x1 - bw, top + h * 0.55); ctx.lineTo(x1 - w * 0.25, top + bw); ctx.stroke();
   }
   // Window: frame, four panes, warm at night.
@@ -614,7 +645,7 @@ function drawHouseFront(ctx: CanvasRenderingContext2D, x0: number, x1: number, t
   ctx.fillStyle = lit ? fog('#f0b860', d, false, null) : fog('#2a3040', d, dark, haze); ctx.fillRect(Math.round(wx), Math.round(wy), Math.round(ww), Math.round(wh));
   if (ww > 8) { ctx.fillStyle = beam; ctx.fillRect(Math.round(wx + ww / 2), Math.round(wy), 1, Math.round(wh)); ctx.fillRect(Math.round(wx), Math.round(wy + wh / 2), Math.round(ww), 1); }
   if (lit) { const gg = ctx.createRadialGradient(wx + ww / 2, wy + wh / 2, 1, wx + ww / 2, wy + wh / 2, ww); gg.addColorStop(0, 'rgba(255,190,100,0.25)'); gg.addColorStop(1, 'rgba(255,190,100,0)'); ctx.fillStyle = gg; ctx.fillRect(wx - ww, wy - ww, ww * 3, ww * 3); }
-  ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.strokeRect(Math.round(x0) + 0.5, Math.round(top) + 0.5, Math.round(w) - 1, Math.round(h) - 1);
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; outlineRect(ctx, X0, T, X1, B, !joinL, !joinR);
 }
 
 /**
@@ -677,16 +708,23 @@ function drawRoofFront(ctx: CanvasRenderingContext2D, x0: number, x1: number, to
   }
 }
 
-/** A side face in perspective: stone courses that converge, or a plain plastered wall for houses. */
-function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, xN: number, uN: number, xF: number, uF: number, horizon: number, d: number, seed: number, dark: boolean, haze: string | null, onRight: boolean): void {
+/**
+ * A side face in perspective: stone courses that converge, or a plain plastered wall for houses.
+ * Its near and far edges sit on whole pixels, as the front faces' do, so it meets them and the next
+ * side face along without a seam. Where the wall runs on into the next face (joinNear, joinFar) the
+ * half blocks at the join are halves of one block (`ahead` is what a seed steps by one cell on).
+ */
+function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, xN: number, uN: number, xF: number, uF: number, horizon: number, d: number, seed: number, dark: boolean, haze: string | null, onRight: boolean, joinNear: boolean, joinFar: boolean, openFar: boolean, ahead: number): void {
   const house = map.kind === 'town' && isHouse(cell);
   const bseed = house ? buildingSeed(map, mx, my) : 0;
   const baseCol = house ? shade('#d8c8a8', 0.8 * (1 + (hash(bseed, 1) - 0.5) * 0.15)) : map.palette.wallDark;
   const shadeSide = onRight ? 0.85 : 0.75;
+  xN = Math.round(xN); xF = Math.round(xF);
   const P = (s: number, t: number): [number, number] => {
-    // s along depth (0 near .. 1 far), t along height (0 top .. 1 bottom); x follows the true projection.
-    const u = uN + (uF - uN) * s; // straight edge in screen space
-    const x = xN + (xF - xN) * s;
+    // s along depth (0 near .. 1 far), t along height (0 top .. 1 bottom). 1/u is linear in depth, so
+    // stepping it evenly spaces the courses' joints as the true projection does.
+    const u = 1 / (1 / uN + (1 / uF - 1 / uN) * s);
+    const x = xN + (xF - xN) * (u - uN) / (uF - uN);
     return [x, horizon - u + 2 * u * t];
   };
   quad(ctx, P(0, 0), P(1, 0), P(1, 1), P(0, 1), fog(shade(baseCol, shadeSide), d, dark, haze));
@@ -729,22 +767,32 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, m
   const brick = map.palette.wallStyle === 'brick';
   const rows = brick ? 9 : 6;
   const cols = brick ? 4 : 3;
-  const mortar = fog(shade(map.palette.wallDark, 0.55), d, dark, haze);
+  // The planes the face spans, as paintScene clips them. Each block is fogged by its own depth, not
+  // the cell's, so a wall darkens along its length instead of in a band per cell.
+  const kN = Math.max(0, d - 0.5), kF = d + 0.5;
   for (let i = 0; i < rows; i++) {
     const t0 = i / rows, t1 = (i + 1) / rows;
     const off = (i % 2) * 0.5 / cols;
     for (let j = -1; j <= cols; j++) {
       const s0 = Math.max(0, j / cols + off), s1 = Math.min(1, (j + 1) / cols + off);
       if (s1 - s0 <= 0.01) continue;
-      const v = hash(seed, i, j, 2) - 0.5;
-      const col = fog(shade(map.palette.wallDark, shadeSide * (1 + v * 0.22)), d, dark, haze);
-      quad(ctx, P(s0, t0), P(s1, t0), P(s1, t1), P(s0, t1), mortar);
+      const shareN = joinNear && j / cols + off < -0.01, shareF = joinFar && (j + 1) / cols + off > 1.01;
+      const k = shareN ? seed * 2 - ahead : shareF ? seed * 2 + ahead : seed, jj = shareN || shareF ? cols + 1 : j;
+      const v = hash(k, i, jj, 2) - 0.5, fd = kN + (kF - kN) * (s0 + s1) / 2;
+      const col = fog(shade(map.palette.wallDark, shadeSide * (1 + v * 0.22)), fd, dark, haze);
+      quad(ctx, P(s0, t0), P(s1, t0), P(s1, t1), P(s0, t1), fog(shade(map.palette.wallDark, 0.55), fd, dark, haze));
       const g = uN > 40 ? 0.04 : 0.02;
-      quad(ctx, P(s0 + g / cols, t0 + g / rows), P(s1 - g / cols, t0 + g / rows), P(s1 - g / cols, t1 - g / rows), P(s0 + g / cols, t1 - g / rows), col);
+      const gN = shareN ? 0 : g, gF = shareF ? 0 : g;
+      quad(ctx, P(s0 + gN / cols, t0 + g / rows), P(s1 - gF / cols, t0 + g / rows), P(s1 - gF / cols, t1 - g / rows), P(s0 + gN / cols, t1 - g / rows), col);
     }
   }
-  ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1;
-  ctx.beginPath(); const a = P(0, 0), b = P(1, 0), c = P(1, 1), e = P(0, 1); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(e[0], e[1]); ctx.closePath(); ctx.stroke();
+  // Outlined along the top and the foot, and at the far end only where the wall ends there. The near
+  // end is a join, or the corner the cell's own front face outlines, or behind the wall in front.
+  ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; ctx.lineCap = 'butt';
+  ctx.beginPath(); const a = P(0, 0), b = P(1, 0), c = P(1, 1), e = P(0, 1);
+  ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.moveTo(e[0], e[1]); ctx.lineTo(c[0], c[1]);
+  if (openFar) { const i = xF > xN ? -0.5 : 0.5; ctx.moveTo(b[0] + i, b[1]); ctx.lineTo(c[0] + i, c[1]); }
+  ctx.stroke();
 }
 
 function drawDoor(ctx: CanvasRenderingContext2D, xl: number, xr: number, horizon: number, u: number, color: string, d: number, dark: boolean, locked: boolean, arched: boolean): void {
