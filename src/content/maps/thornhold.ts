@@ -9,6 +9,7 @@ export const THORNHOLD: MapDef = {
   name: 'Thornhold',
   kind: 'town',
   band: [5, 10],
+  region: 'thornmark',
   start: { x: 7, y: 14, facing: NORTH },
   palette: { wall: '#c8b890', wallDark: '#8a7a58', floor: '#7a8a50', banner: '#2a6a3a' },
   rows: [

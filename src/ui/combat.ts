@@ -7,7 +7,7 @@ import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect } from './frame.ts';
 import { drawMonsterSprite, combatHeight } from './sprites.ts';
-import { drawViewport } from './viewport.ts';
+import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../game/combat.ts';
 import type { CombatState, PartyAction } from '../game/combat.ts';
@@ -152,8 +152,9 @@ export class CombatScreen implements Screen {
     // Detect damage since the last frame for the flashes and sparks.
     if (!this.lastHp.length) this.lastHp = g.party.members.map((m) => m.hp);
     g.party.members.forEach((m, i) => { if (m.hp < this.lastHp[i]) { this.cardFlash[i] = 10; const c = cardRect(i); this.burst(c.x + 22, c.y + 38, '#ff6a4a', 6); } this.lastHp[i] = m.hp; });
-    // Backdrop: the place the fight happens in, as the viewport shows it, dimmed a touch.
-    drawViewport(ctx, g.world, v, () => null, frame);
+    // Backdrop: the place the fight happens in, as the viewport shows it, dimmed a touch. The
+    // weather falls in front of the monsters, below.
+    drawViewport(ctx, g.world, v, () => null, frame, false);
     ctx.fillStyle = 'rgba(10,8,12,0.28)'; ctx.fillRect(v.x, v.y, v.w, v.h);
     // Monsters in a row, grouped, with a marker on the targeted one.
     const alive = aliveMonsters(s);
@@ -179,6 +180,7 @@ export class CombatScreen implements Screen {
     for (const p of this.sparks) { ctx.fillStyle = p.col; ctx.globalAlpha = Math.min(1, p.life / 8); ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 2); p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life--; }
     ctx.globalAlpha = 1;
     this.sparks = this.sparks.filter((p) => p.life > 0);
+    drawWeather(ctx, g.world, v, frame);
     // Group labels
     const groups = new Map<number, number>();
     for (const mi of alive) groups.set(s.monsters[mi].group, (groups.get(s.monsters[mi].group) ?? 0) + 1);

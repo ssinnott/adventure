@@ -99,6 +99,39 @@ const interiors = await page.evaluate(async () => {
   }
   return { n, thin };
 });
+// The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it.
+await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 9, 6, 0); g.interact(g.world.featureHere()); });
+await page.waitForTimeout(100);
+await page.keyboard.press('Space'); await page.waitForTimeout(100);
+const questLine = await page.evaluate(() => (window as any).__game.game.log.at(-1));
+await page.keyboard.press('KeyJ'); await page.waitForTimeout(150);
+const questScreen = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const questColours = await colours();
+await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+const questClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+// The weather: the Shelf in a downpour, a fight in it, and Thornmark under falling snow with snow
+// lying deep. Each moves the clock to the first such hour of daylight for this game's seed.
+const weatherAt = async (map: string, x: number, y: number, f: number, want: string): Promise<{ found: boolean; sky: string; log: string }> => {
+  const r = await page.evaluate(async ([m, xx, yy, ff, kind]: [string, number, number, number, string]) => {
+    const load = (p: string): Promise<any> => import(p);
+    const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts');
+    const g = (window as any).__game.game, w = g.world;
+    g.screens = [g.screens[0]]; w.travel(m, xx, yy, ff); w.sky = null;
+    const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => (kind === 'downpour' ? wx.precip >= 0.7 && wx.snow === 0 : wx.snow >= 0.7 && wx.precip >= 0.3 && wx.cover >= 0.5) && C.daylightAt(min) >= 0.8, 24 * 480);
+    if (at >= 0) w.state.minutes = at;
+    return at >= 0;
+  }, [map, x, y, f, want] as [string, number, number, number, string]);
+  await page.waitForTimeout(150);
+  return page.evaluate((found: boolean) => { const g = (window as any).__game.game; return { found, sky: g.world.sky?.sky ?? '', log: g.log[g.log.length - 1] ?? '' }; }, r);
+};
+const rain = await weatherAt('shelf', 16, 8, 2, 'downpour');
+const rainColours = await colours();
+await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['road_rats']); });
+await page.waitForTimeout(150);
+const rainFight = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, rangedPenalty: g.top.state.rangedPenalty }; });
+const rainFightColours = await colours();
+const snow = await weatherAt('thornmark', 7, 26, 2, 'snow');
+const snowColours = await colours();
 // The monster art unions many parts into one painted mass with the nonzero fill rule, so every
 // part kind has to wind the same way. One that winds the other way punches a hole wherever it
 // overlaps another, which is how the tube ends once cut a wedge out of every limb. Overlap each
@@ -151,6 +184,11 @@ ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
 ok(interiors.n === 24 && interiors.thin.length === 0, `all twelve interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
+ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
+ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
+ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Shelf paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);
+ok(rainFight.screen === 'CombatScreen' && rainFight.rangedPenalty > 0 && rainFightColours > 20, `a fight in the downpour paints, with the archers' penalty (${rainFightColours} colours)`);
+ok(snow.found && /snow|blizzard|flurries/.test(snow.sky) && /snow|blizzard/i.test(snow.log) && snowColours > 20, `Thornmark paints under falling snow with snow lying (${snow.sky}: "${snow.log}", ${snowColours} colours)`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

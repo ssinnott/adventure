@@ -21,6 +21,8 @@ import type { ViewMonster } from '../ui/viewport.ts';
 import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBackground, drawPurse, drawViewportFrame } from '../ui/frame.ts';
 import { CombatScreen } from '../ui/combat.ts';
 import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, InteriorScreen } from '../ui/screens.ts';
+import { QuestScreen } from '../ui/quests.ts';
+import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
 import { drawText } from '../lib/engine/text.ts';
 
@@ -46,6 +48,10 @@ export class Game {
   frame = 0;
   /** The party member the sheet opens on. */
   selected = 0;
+  /** The quest the log opens on: the last one to change, or the last one looked at. */
+  questFocus = '';
+  /** What the quest log held at the last look, so each change to it is announced once. */
+  private questMarked = new Set<string>();
   maps: Record<string, GameMap> = buildMaps();
 
   constructor(store: Store | null = browserStore()) {
@@ -61,9 +67,10 @@ export class Game {
     this.world = new World(this.maps, this.party, this.rng);
     this.log = [];
     this.screens = [new ExploreScreen()];
-    this.say('Arrows move. Space acts. R rests, F searches, C casts, I inventory, F5/F9 save/load.');
+    this.say('Arrows move. Space acts. R rests, F searches, C casts, I inventory, J quests, F5/F9 save/load.');
     for (const m of this.world.eventsHere()) this.say(m);
     this.enterCell();
+    this.markQuests();
   }
 
   loadGame(): boolean {
@@ -77,6 +84,8 @@ export class Game {
     this.log = [];
     this.screens = [new ExploreScreen()];
     this.say('Loaded.');
+    // A save carries its quest log implicitly; take it as read rather than announcing it all again.
+    this.markQuests();
     return true;
   }
 
@@ -95,8 +104,16 @@ export class Game {
   update(a: Action | null): void {
     this.frame++;
     this.top.update(this, a);
-    // A visit ends the moment the last of its menus closes, so no frame shows the room without one.
+    // A visit ends the moment the last of its menus closes, so no frame shows the room without one,
+    // and leaving a business is a return to exploring like any other.
     if (this.top instanceof InteriorScreen) this.top.close(this);
+    if (!(this.top instanceof ExploreScreen)) return;
+    // Whatever moved the clock (a step, a rest, the inn), the log says so once the party is back
+    // to exploring and the sky has turned. The sky goes first, so a quest's news is the last word.
+    const news = this.world.weatherNews(); if (news) this.say(news);
+    // Back to exploring after any action (a step, a chest, a closed dialogue or fight): say what
+    // the quest log gained, under whatever the action itself said.
+    if (a) this.checkQuests();
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -104,6 +121,19 @@ export class Game {
     // Draw the exploration frame under any overlay screen.
     const base = this.screens.findIndex((s) => !s.overlay);
     for (let i = Math.max(0, base); i < this.screens.length; i++) this.screens[i].render(this, ctx, this.frame);
+  }
+
+  // ---- quests ----
+  /** Announce each quest begun, advanced or finished since the last look. */
+  private checkQuests(): void {
+    const log = questLog(this.world.state, this.party);
+    for (const n of questNews(this.questMarked, log)) { this.say(n.text); this.questFocus = n.quest; }
+    this.questMarked = questMarks(log);
+  }
+
+  private markQuests(): void {
+    this.questMarked = questMarks(questLog(this.world.state, this.party));
+    this.questFocus = '';
   }
 
   // ---- exploration events ----
@@ -169,14 +199,14 @@ export class Game {
 
   /** Start a fight with the given groups; the combat screen calls back on resolution. */
   fight(groupIds: string[]): void {
-    const state = startCombat(this.party, this.world.groupDefs(groupIds), this.rng);
+    const state = startCombat(this.party, this.world.groupDefs(groupIds), this.rng, this.world.combatWeather());
     this.push(new CombatScreen(state, groupIds));
   }
 
   /** Called by the combat screen when the fight ends. */
   afterCombat(groupIds: string[], outcome: 'victory' | 'defeat' | 'fled'): void {
     this.pop();
-    if (outcome === 'victory') { this.world.killGroups(groupIds); this.enterCell(); }
+    if (outcome === 'victory') { for (const m of this.world.killGroups(groupIds)) this.say(m); this.enterCell(); }
     else if (outcome === 'fled') this.world.flee(groupIds);
     else this.gameOver();
   }
@@ -240,9 +270,10 @@ export class ExploreScreen implements Screen {
     else if (is(a, 'rest')) this.rest(g);
     else if (is(a, 'cast')) g.push(new SpellScreen('explore'));
     else if (is(a, 'inventory')) g.push(new SheetScreen(g.selected));
+    else if (is(a, 'journal')) g.push(new QuestScreen(g));
     else if (is(a, 'save')) g.saveGame();
     else if (is(a, 'load')) { if (!g.loadGame()) g.say('No save to load.'); }
-    else if (is(a, 'map')) g.push(new MessageScreen(`${w.map.name}\n\nBand: levels ${w.map.def.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.`));
+    else if (is(a, 'map')) g.push(new MessageScreen(`${w.map.name}\n\nBand: levels ${w.map.def.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.\n\n${w.almanac()}`));
     else if (/^n[1-6]$/.test(a)) { g.selected = Number(a[1]) - 1; g.push(new SheetScreen(g.selected)); }
     if (!res) return;
     if (res.kind === 'blocked') { g.say(res.reason); return; }
