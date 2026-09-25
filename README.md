@@ -20,7 +20,7 @@ npm run check      # typecheck + Node tests + headless Chromium smoke test
 
 Keys: arrows or WASD move and turn, Q/E strafe, Space acts, F searches the wall ahead, R rests,
 C casts, I opens the character sheet (1–6 jump to a member), M the world map (arrows scroll it, Tab shows the
-zones), F5/F9 save and load.
+areas and zones, Z the whole map at once), F5/F9 save and load.
 
 ## Deploying
 

@@ -74,6 +74,21 @@ const thornFightColours = await colours();
 await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornhold', 7, 14, 0); g.enterCell(); });
 await page.waitForTimeout(150);
 const townColours = await colours();
+// The world map: M paints the cloth behind a progress bar, Tab lays the zones over it, Z shows it
+// whole, M closes it again.
+await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('shelf', 16, 9, 2); g.enterCell(); });
+await page.waitForTimeout(100);
+await page.keyboard.press('KeyM');
+await page.waitForFunction(() => (window as any).__game.game.top.ready === true, null, { timeout: 60000 });
+await page.waitForTimeout(150);
+const mapScreen = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const mapColours = await colours();
+await page.keyboard.press('Tab'); await page.waitForTimeout(150);
+const zonesColours = await colours();
+await page.keyboard.press('KeyZ'); await page.waitForTimeout(150);
+const wholeColours = await colours();
+await page.keyboard.press('KeyM'); await page.waitForTimeout(150);
+const afterMap = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 // The monster art unions many parts into one painted mass with the nonzero fill rule, so every
 // part kind has to wind the same way. One that winds the other way punches a hole wherever it
 // overlaps another, which is how the tube ends once cut a wedge out of every limb. Overlap each
@@ -123,6 +138,9 @@ ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
+ok(mapScreen === 'WorldMapScreen' && mapColours > 200, `M opens the world map and it paints (${mapScreen}, ${mapColours} colours)`);
+ok(zonesColours > 200 && wholeColours > 200, `Tab lays the zones over it and Z shows it whole (${zonesColours}, ${wholeColours} colours)`);
+ok(afterMap === 'ExploreScreen', `M closes it again (${afterMap})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);
