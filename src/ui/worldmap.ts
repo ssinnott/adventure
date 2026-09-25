@@ -1453,9 +1453,13 @@ function drawLocator(ctx: CanvasRenderingContext2D, thumb: HTMLCanvasElement, vx
 
 export type WorldMapMode = 'art' | 'zones';
 
-/** Where on the cloth the party is: its cell on a built map, else its town or dungeon's plate, else its home map's middle. */
+/**
+ * Where on the cloth the party is: its cell outdoors (the outdoors' cells are the world's, square for
+ * square), else its town or dungeon's plate, else its home map's middle.
+ */
 function partyOnCloth(world: World | null): [number, number] | null {
   if (!world) return null;
+  if (world.map.zones.length) return [px(world.state.x + 0.5), py(world.state.y + 0.5)];
   const pt = worldPoint(ATLAS, world.state.mapId, world.state.x, world.state.y);
   if (pt) return [px(pt[0]), py(pt[1])];
   const pl = ATLAS.places.find((q) => q.id === world.state.mapId);
@@ -1515,8 +1519,8 @@ export class WorldMapScreen implements Screen {
       if (is(a, 'next')) this.mode = this.mode === 'art' ? 'zones' : 'art';
       if (is(a, 'zoom')) this.whole = !this.whole;
       if (is(a, 'interact') && g.world) {
-        const w = g.world;
-        g.push(new MessageScreen(`${w.map.name}\n\nBand: levels ${w.map.def.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.\n\n${w.almanac()}`, undefined, 'ALMANAC'));
+        const w = g.world, here = w.here;
+        g.push(new MessageScreen(`${here.name}\n\nBand: levels ${here.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.\n\n${w.almanac()}`, undefined, 'ALMANAC'));
         return;
       }
       const step = this.whole ? 160 : 96;
@@ -1560,11 +1564,12 @@ export class WorldMapScreen implements Screen {
     const yy = 343;
     let where = '';
     if (world) {
-      const m = world.map, home = homeMap(MAP_DEFS, m.id);
-      const area = areaOf(ATLAS, m.kind === 'outdoor' ? m.id : home?.id ?? m.id);
-      where = m.kind === 'outdoor' || !home ? m.name : `${m.name}, ${home.name}`;
+      // Outdoors, the zone; in a town or dungeon, the map and the zone it opens onto.
+      const m = world.map, here = world.here, home = m.kind === 'outdoor' ? undefined : homeMap(MAP_DEFS, m.id);
+      const area = areaOf(ATLAS, world.zone?.id ?? home?.id ?? m.id);
+      where = home ? `${here.name}, ${home.name}` : here.name;
       if (area) where = `${roman(area.order)} ${where}`;
-      if (m.def.band) where += `  LEVELS ${m.def.band[0]}-${m.def.band[1]}`;
+      if (here.band) where += `  LEVELS ${here.band[0]}-${here.band[1]}`;
     }
     if (this.mode === 'zones') drawLegend(ctx, 331);
     drawText(ctx, `ARROWS SCROLL  TAB ${this.mode === 'art' ? 'ZONES' : 'MAP ONLY'}  Z ${this.whole ? 'CLOSER' : 'WHOLE MAP'}  SPACE ALMANAC  M CLOSE`, 14, yy, { color: BRASS });

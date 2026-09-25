@@ -11,8 +11,11 @@ export type MapKind = 'town' | 'dungeon' | 'outdoor';
 export type Terrain =
   | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow';
 
-/** What stands in a cell. `wall` blocks movement and sight; billboards block movement, not sight. */
-export type Solid = 'none' | 'wall' | 'tree' | 'rock' | 'mountain' | 'pillar' | 'building';
+/**
+ * What stands in a cell. `wall` blocks movement and sight; billboards block movement, not sight;
+ * `void` is where the world ends for now: no ground, no sky, nothing to cross or see through.
+ */
+export type Solid = 'none' | 'wall' | 'tree' | 'rock' | 'mountain' | 'pillar' | 'building' | 'void';
 
 export type Door = 'none' | 'door' | 'locked' | 'secret';
 
@@ -61,6 +64,33 @@ export type Feature =
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
   | { kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean };
 
+/**
+ * A cell the party may not step onto until every flag is set: a gated exit whose way on is simply
+ * the next cell. The outdoors has these where an exit used to join one zone map to the next.
+ */
+export interface Gate {
+  x: number; y: number;
+  needFlag: string | readonly string[];
+  blockedText?: string;
+}
+
+/**
+ * A zone map laid into the outdoors (see game/outdoors.ts): the rectangle of cells it covers, and
+ * what those cells take from it.
+ */
+export interface MapZone {
+  /** The zone map's id, which is what quests, tools and the atlas know the zone by. */
+  id: string;
+  name: string;
+  /** Where the zone map's top-left cell sits, and its size. */
+  x: number; y: number; w: number; h: number;
+  band?: [number, number];
+  region?: RegionId;
+  palette?: Partial<MapPalette>;
+  /** What the log says on crossing into the zone, by the id of the zone left: the old exit's arrival line. */
+  enter?: Record<string, string>;
+}
+
 /** A hand-in: when the party carries `item` and `needFlag` is set, the NPC says `done`, pays, and sets `setFlag`. */
 export interface NpcQuest {
   item: string;
@@ -105,6 +135,10 @@ export interface MapDef {
   band?: [number, number];
   /** The region whose climate and weather the map shares; the Shelf when absent. */
   region?: RegionId;
+  /** Cells closed until flags are set. Written by game/outdoors.ts; a map as authored gates an exit instead. */
+  gates?: Gate[];
+  /** The outdoors only: the zone maps laid into it. Its cells take their name, band, region and palette from these. */
+  zones?: MapZone[];
 }
 
 export interface MapPalette {
@@ -129,6 +163,9 @@ export const DEFAULT_PALETTES: Record<MapKind, MapPalette> = {
 
 const cell = (terrain: Terrain, solid: Solid = 'none', door: Door = 'none'): Cell => ({ terrain, solid, door, ch: '' });
 
+/** The legend character for the void: the outdoors is made of it wherever no zone map is laid yet. */
+export const VOID_CH = '%';
+
 /** The shared legend. A map's `legend` may override or add characters. */
 export const LEGEND: Record<string, Cell> = {
   '#': cell('floor', 'wall'),
@@ -152,7 +189,11 @@ export const LEGEND: Record<string, Cell> = {
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),
   '"': cell('stone'),
+  [VOID_CH]: cell('floor', 'void'),
 };
+
+/** Every void cell of a map is this one: nothing in the void ever changes. */
+const VOID_CELL: Cell = Object.freeze({ ...LEGEND[VOID_CH], ch: VOID_CH });
 
 export class GameMap {
   readonly id: string;
@@ -164,8 +205,12 @@ export class GameMap {
   readonly exits: readonly Exit[];
   readonly features: readonly Feature[];
   readonly encounters: readonly EncounterDef[];
+  readonly gates: readonly Gate[];
+  readonly zones: readonly MapZone[];
   readonly palette: MapPalette;
   readonly def: MapDef;
+  /** Each zone's palette over the map's, in the zones' order. */
+  private readonly zonePalettes: readonly MapPalette[];
 
   constructor(def: MapDef) {
     this.def = def;
@@ -181,13 +226,17 @@ export class GameMap {
         const ch = x < row.length ? row[x] : '#';
         const base = legend[ch];
         if (!base) throw new Error(`map ${def.id}: unknown legend char '${ch}' at ${x},${y}`);
-        this.cells[y * this.width + x] = { ...base, ch };
+        // Most of the outdoors is void, so its cells share one rather than taking one apiece.
+        this.cells[y * this.width + x] = ch === VOID_CH && base.solid === 'void' ? VOID_CELL : { ...base, ch };
       }
     }
     this.exits = def.exits ?? [];
     this.features = def.features ?? [];
     this.encounters = def.encounters ?? [];
+    this.gates = def.gates ?? [];
+    this.zones = def.zones ?? [];
     this.palette = { ...DEFAULT_PALETTES[def.kind], ...(def.palette ?? {}) };
+    this.zonePalettes = this.zones.map((z) => ({ ...this.palette, ...(z.palette ?? {}) }));
     for (const e of this.encounters) if (e.monsters.length > 12) throw new Error(`map ${def.id}: encounter ${e.id} has more than 12 monsters`);
   }
 
@@ -199,15 +248,27 @@ export class GameMap {
     return this.cells[y * this.width + x];
   }
 
+  /** The zone a cell lies in, on the outdoors; undefined anywhere else. */
+  zoneAt(x: number, y: number): MapZone | undefined {
+    return this.zones.find((z) => x >= z.x && y >= z.y && x < z.x + z.w && y < z.y + z.h);
+  }
+
+  /** The colours a cell is painted in: its zone's, on the outdoors. */
+  paletteAt(x: number, y: number): MapPalette {
+    const z = this.zoneAt(x, y);
+    return z ? this.zonePalettes[this.zones.indexOf(z)] : this.palette;
+  }
+
   /** Whether sight passes through the cell (billboards like trees do not stop the view). */
   blocksView(x: number, y: number): boolean {
     const c = this.at(x, y);
-    return c.solid === 'wall' || c.solid === 'building' || c.solid === 'mountain' || c.door !== 'none';
+    return c.solid === 'wall' || c.solid === 'building' || c.solid === 'mountain' || c.solid === 'void' || c.door !== 'none';
   }
 
   /** Whether walking is possible, given the party's terrain abilities. */
   passable(x: number, y: number, can: { swim?: boolean; climb?: boolean; keys?: number } = {}): PassResult {
     const c = this.at(x, y);
+    if (c.solid === 'void') return 'void';
     if (c.solid === 'wall' || c.solid === 'building' || c.solid === 'pillar') return 'wall';
     if (c.solid === 'tree' || c.solid === 'rock') return 'blocked';
     if (c.solid === 'mountain') return can.climb ? 'ok' : 'mountain';
@@ -218,6 +279,7 @@ export class GameMap {
   }
 
   exitAt(x: number, y: number): Exit | undefined { return this.exits.find((e) => e.x === x && e.y === y); }
+  gateAt(x: number, y: number): Gate | undefined { return this.gates.find((g) => g.x === x && g.y === y); }
   featuresAt(x: number, y: number): Feature[] { return this.features.filter((f) => f.x === x && f.y === y); }
 
   /** The cell ahead of x,y in the given facing, at the given distance. */
@@ -226,6 +288,6 @@ export class GameMap {
   }
 }
 
-export type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'locked' | 'unlock';
+export type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'locked' | 'unlock' | 'void';
 
 const OUT_OF_BOUNDS: Cell = Object.freeze({ terrain: 'floor', solid: 'wall', door: 'none', ch: '#' }) as Cell;

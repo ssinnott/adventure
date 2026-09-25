@@ -4,7 +4,11 @@
 import type { WorldState } from './world.ts';
 import type { Party } from './party.ts';
 
-export const SAVE_VERSION = 1;
+/**
+ * 2: the outdoors is one map and exploration is kept in bits. A version 1 save, from before, still
+ * loads: the World brings its state up to date (see World's `upgrade`).
+ */
+export const SAVE_VERSION = 2;
 export const SAVE_KEY = 'hearth-of-caldera.save';
 
 export interface SaveData {
@@ -24,7 +28,7 @@ export function serialize(world: WorldState, party: Party, rngState: number): st
 
 export function deserialize(text: string): SaveData {
   const data = JSON.parse(text) as SaveData;
-  if (data.version !== SAVE_VERSION) throw new Error(`save version ${data.version} is not ${SAVE_VERSION}`);
+  if (!(data.version >= 1 && data.version <= SAVE_VERSION)) throw new Error(`save version ${data.version} is not one this build reads (1 to ${SAVE_VERSION})`);
   return data;
 }
 

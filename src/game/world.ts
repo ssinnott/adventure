@@ -1,10 +1,11 @@
 // The world: which map the party is on, where it stands, what time it is, and what has changed on
 // each map. Movement, the clock, the weather's reach into play, automap reveal, roaming monster
-// groups and encounter triggers live here. Pure with respect to rendering and input; the Game
-// drives it and reads the results.
+// groups and encounter triggers live here. The outdoors is one map (game/outdoors.ts), so outdoors
+// the party's zone, not its map, says where it is, what the weather does and what the log calls
+// the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door } from './map.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait } from './party.ts';
@@ -22,7 +23,7 @@ export const LEGACY_WEATHER_SEED = 0x5ca1d;
 export interface GroupState { x: number; y: number; /** Minute the group was killed, or -1 while alive. */ dead: number; }
 
 export interface MapState {
-  /** One entry per cell, 1 once seen. */
+  /** A bit per cell, set once seen, 32 cells to a number (see `seen`), so the whole outdoors saves small. */
   explored: number[];
   /** Feature and event ids used up. */
   used: Record<string, 1>;
@@ -46,7 +47,14 @@ export interface WorldState {
   lastTown?: string;
   /** What the weather is made from: the same seed brings the same skies. Absent in older saves. */
   weatherSeed?: number;
+  /** The zones of the outdoors the party has set foot in, first first. Absent in older saves. */
+  zones?: string[];
 }
+
+/** Whether cell `i` is set in a map's explored bits. */
+export const seen = (bits: readonly number[], i: number): boolean => (((bits[i >> 5] ?? 0) >>> (i & 31)) & 1) === 1;
+const see = (bits: number[], i: number): void => { bits[i >> 5] = (bits[i >> 5] ?? 0) | (1 << (i & 31)); };
+const bitsFor = (cells: number): number[] => new Array(Math.ceil(cells / 32)).fill(0);
 
 export type MoveResult =
   | { kind: 'moved'; messages: string[]; encounter?: string[]; arrived?: Exit }
@@ -70,15 +78,17 @@ export class World {
     if (state) this.state = state;
     else {
       const first = Object.values(maps)[0];
-      this.state = { mapId: first.id, x: first.def.start.x, y: first.def.start.y, facing: first.def.start.facing, minutes: START_MINUTES, maps: {}, light: 0, truce: 0, truceGroups: [], steps: 0 };
+      this.state = { mapId: first.id, x: first.def.start.x, y: first.def.start.y, facing: first.def.start.facing, minutes: START_MINUTES, maps: {}, light: 0, truce: 0, truceGroups: [], steps: 0, zones: [] };
       // The company sets out on a dry, clear morning: draw seeds until the first hours are fair.
       let seed = 0;
       for (let i = 0; i < 64; i++) { seed = rng.int(1, 0x7ffffffe); if (fairStart(seed, START_MINUTES, CLIMATES[first.def.region ?? 'shelf'])) break; }
       this.state.weatherSeed = seed;
     }
     this.state.weatherSeed ??= LEGACY_WEATHER_SEED;
+    this.upgrade();
     for (const id of Object.keys(this.state.maps)) this.ensureMapState(id);
     this.ensureMapState(this.state.mapId);
+    this.tread();
     this.reveal();
   }
 
@@ -90,12 +100,75 @@ export class World {
     if (!m) throw new Error(`unknown map '${id}'`);
     let ms = this.state.maps[id];
     if (!ms) {
-      ms = { explored: new Array(m.width * m.height).fill(0), used: {}, groups: {}, doors: {} };
+      ms = { explored: bitsFor(m.width * m.height), used: {}, groups: {}, doors: {} };
       for (const e of m.encounters) ms.groups[e.id] = { x: e.x, y: e.y, dead: -1 };
       this.state.maps[id] = ms;
     }
     for (const [k, d] of Object.entries(ms.doors)) { const [x, y] = k.split(',').map(Number); m.at(x, y).door = d; }
     return ms;
+  }
+
+  /**
+   * Where a cell of a map as written is played: a zone map's cells are the outdoors', where the
+   * zone sits; any other map's are its own. Lets tools, tests and old saves name the Shelf.
+   */
+  locate(mapId: string, x: number, y: number): { mapId: string; x: number; y: number } {
+    if (!this.maps[mapId]) {
+      for (const m of Object.values(this.maps)) {
+        const z = m.zones.find((q) => q.id === mapId);
+        if (z) return { mapId: m.id, x: x + z.x, y: y + z.y };
+      }
+    }
+    return { mapId, x, y };
+  }
+
+  /**
+   * A state saved before the outdoors was one map, or before exploration was kept in bits: pack
+   * each map's cells seen into bits, and fold what each zone map kept on its own (what the party
+   * saw and used there, its groups, its doors, the party itself if it stood there) into the
+   * outdoors, where the zone now sits. A zone map with state of its own is one the party trod.
+   */
+  private upgrade(): void {
+    const s = this.state;
+    s.zones ??= [];
+    for (const [id, ms] of Object.entries(s.maps)) {
+      const m = this.maps[id];
+      if (m && ms.explored.length === m.width * m.height) {
+        const bits = bitsFor(ms.explored.length);
+        ms.explored.forEach((v, i) => { if (v) see(bits, i); });
+        ms.explored = bits;
+      }
+    }
+    for (const [id, old] of Object.entries(s.maps)) {
+      if (this.maps[id]) continue;
+      const at = this.locate(id, 0, 0);
+      const m = this.maps[at.mapId], z = m?.zones.find((q) => q.id === id);
+      if (!m || !z) continue;
+      const ms = this.ensureMapState(m.id);
+      old.explored.forEach((v, i) => { if (v) see(ms.explored, (z.y + Math.floor(i / z.w)) * m.width + z.x + (i % z.w)); });
+      Object.assign(ms.used, old.used);
+      for (const [g, st] of Object.entries(old.groups)) ms.groups[g] = { ...st, x: st.x + z.x, y: st.y + z.y };
+      for (const [k, d] of Object.entries(old.doors)) { const [x, y] = k.split(',').map(Number); ms.doors[`${x + z.x},${y + z.y}`] = d; }
+      if (!s.zones.includes(id)) s.zones.push(id);
+      delete s.maps[id];
+    }
+    Object.assign(s, this.locate(s.mapId, s.x, s.y));
+  }
+
+  /** The zone of the outdoors the party stands in; undefined in a town or a dungeon. */
+  get zone(): MapZone | undefined { return this.map.zoneAt(this.state.x, this.state.y); }
+
+  /** What the party's whereabouts are called, and the levels they are tuned for: its zone outdoors, its map anywhere else. */
+  get here(): { name: string; band?: readonly [number, number] } {
+    const z = this.zone;
+    return z ? { name: z.name, band: z.band } : { name: this.map.name, band: this.map.def.band };
+  }
+
+  /** Remember the zone the party stands in as one it has set foot in. */
+  private tread(): MapZone | undefined {
+    const z = this.zone, trod = (this.state.zones ??= []);
+    if (z && !trod.includes(z.id)) trod.push(z.id);
+    return z;
   }
 
   // ---- time ----
@@ -115,7 +188,7 @@ export class World {
   }
 
   // ---- weather ----
-  get region(): RegionId { return this.map.def.region ?? 'shelf'; }
+  get region(): RegionId { return this.zone?.region ?? this.map.def.region ?? 'shelf'; }
   get climate(): Climate { return CLIMATES[this.region]; }
   /** The weather in this map's region now; also the weather over a dungeon, though nobody there sees it. */
   get weather(): Weather {
@@ -186,8 +259,9 @@ export class World {
     const nx = this.state.x + FACING_DX[mf], ny = this.state.y + FACING_DY[mf];
     const pass = this.map.passable(nx, ny, partyCan(this.party));
     if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: BLOCK_TEXT[pass] };
-    const gate = this.map.exitAt(nx, ny);
+    const gate = this.map.gateAt(nx, ny) ?? this.map.exitAt(nx, ny);
     if (gate?.needFlag && ![gate.needFlag].flat().every((k) => this.party.flags[k])) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
+    const left = this.zone;
     const messages: string[] = [];
     if (pass === 'unlock') {
       const c = this.map.at(nx, ny);
@@ -203,23 +277,30 @@ export class World {
     if (this.state.light > 0) this.state.light--;
     if (this.state.truce > 0 && --this.state.truce === 0) this.state.truceGroups = [];
     this.reveal();
+    const zone = this.tread();
     const arrived = this.map.exitAt(nx, ny);
     if (arrived) {
       this.travel(arrived.to, arrived.tx, arrived.ty, arrived.tf);
       if (arrived.label) messages.push(arrived.label);
       return { kind: 'moved', messages, arrived };
     }
+    // Over the line into the next zone of the outdoors: what the way between them says, if anything.
+    const crossed = zone && left && zone !== left ? zone.enter?.[left.id] : undefined;
+    if (crossed) messages.push(crossed);
     messages.push(...this.eventsHere());
     this.moveMonsters();
     const encounter = this.adjacentGroups();
     return { kind: 'moved', messages, encounter: encounter.length ? encounter : undefined };
   }
 
+  /** Put the party on a map (a zone map's cells count: see `locate`), facing on as it was unless told. */
   travel(to: string, x: number, y: number, facing?: Facing): void {
-    this.ensureMapState(to);
-    this.state.mapId = to; this.state.x = x; this.state.y = y;
+    const at = this.locate(to, x, y);
+    this.ensureMapState(at.mapId);
+    this.state.mapId = at.mapId; this.state.x = at.x; this.state.y = at.y;
     if (facing !== undefined) this.state.facing = facing;
-    if (this.map.kind === 'town') this.state.lastTown = to;
+    if (this.map.kind === 'town') this.state.lastTown = at.mapId;
+    this.tread();
     this.reveal();
   }
 
@@ -238,7 +319,7 @@ export class World {
     const r = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1);
     for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
       const x = this.state.x + dx, y = this.state.y + dy;
-      if (m.inBounds(x, y)) ms.explored[y * m.width + x] = 1;
+      if (m.inBounds(x, y)) see(ms.explored, y * m.width + x);
     }
     // And the corridor ahead, as far as the eye sees, so the automap matches the viewport.
     const f = this.state.facing;
@@ -247,7 +328,7 @@ export class World {
       if (!m.inBounds(x, y)) break;
       for (let s = -1; s <= 1; s++) {
         const sx = x + (f === 0 || f === 2 ? s : 0), sy = y + (f === 1 || f === 3 ? s : 0);
-        if (m.inBounds(sx, sy)) ms.explored[sy * m.width + sx] = 1;
+        if (m.inBounds(sx, sy)) see(ms.explored, sy * m.width + sx);
       }
       if (m.blocksView(x, y)) break;
     }
@@ -257,11 +338,11 @@ export class World {
     const ms = this.mapState, m = this.map;
     for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) {
       const x = this.state.x + dx, y = this.state.y + dy;
-      if (m.inBounds(x, y)) ms.explored[y * m.width + x] = 1;
+      if (m.inBounds(x, y)) see(ms.explored, y * m.width + x);
     }
   }
 
-  explored(x: number, y: number): boolean { return !!this.mapState.explored[y * this.map.width + x]; }
+  explored(x: number, y: number): boolean { return this.map.inBounds(x, y) && seen(this.mapState.explored, y * this.map.width + x); }
 
   // ---- monsters ----
   /** Live groups on the current map. */
@@ -408,6 +489,7 @@ export class World {
 }
 
 const BLOCK_TEXT: Record<string, string> = {
+  void: 'The world ends here.',
   wall: 'A wall blocks the way.',
   blocked: 'Something blocks the way.',
   mountain: 'Too steep to climb without a Mountaineer.',

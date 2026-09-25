@@ -23,6 +23,10 @@ C casts, I opens the character sheet (1–6 jump to a member), J the quest log, 
 scroll it, Tab shows the areas and zones, Z the whole map at once, Space the almanac: date, season and
 weather), F5/F9 save and load.
 
+The outdoors is one map, laid out square for square as the world map charts it: the Shelf and
+Thornmark are zones of it, walked between without a seam. Where nothing is built yet the world ends,
+and it looks it: pink empty space (see docs/SLICE.md, "The outdoors as one map").
+
 ## Deploying
 
 Every push to `main` runs [.github/workflows/pages.yml](.github/workflows/pages.yml): typecheck,
@@ -35,7 +39,7 @@ tests, `npm run build`, then publish `dist/` to GitHub Pages at
 ```
 src/main.ts        boot: canvas, input, loop
 src/input.ts       keyboard -> queued actions (plus a text mode for names)
-src/game/          the model: map, world, calendar, weather, party, items, spells, monsters, combat, quests, save, game
+src/game/          the model: map, outdoors, world, calendar, weather, party, items, spells, monsters, combat, quests, save, game
 src/content/       the authored content; quests.ts is the quest log's words
 src/content/maps/  the authored maps: Harrow, the Shelf, the cellar, Greywater, Thornmark, Thornhold, the Grove
 src/ui/            viewport, frame, sprites, screens, combat screen, quest log, title, party creation
