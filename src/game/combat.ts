@@ -48,10 +48,15 @@ export interface CombatState {
   shield: number;
   haste: number;
   defending: boolean[];
+  /** To-hit lost by bows, slings and crossbows on both sides: the weather (see weather.ts). */
+  rangedPenalty: number;
   log: string[];
   outcome: Outcome;
   loot: Loot | null;
 }
+
+/** Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line for the log. */
+export interface CombatOpts { rangedPenalty?: number; note?: string; }
 
 export const FRONT_ROW = 3;
 /** What the buffs are worth while they last. */
@@ -76,16 +81,17 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
   return n;
 }
 
-export function startCombat(party: Party, groups: { id: string; monsters: string[] }[], rng: RngInstance): CombatState {
+export function startCombat(party: Party, groups: { id: string; monsters: string[] }[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
   const monsters: MonsterInst[] = [];
   groups.forEach((g, gi) => {
     for (const id of g.monsters) if (monsters.length < 12) monsters.push({ def: monster(id), hp: monster(id).hp, group: gi, conditions: [], flash: 0 });
   });
   const s: CombatState = {
     monsters, groupIds: groups.map((g) => g.id), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
-    defending: party.members.map(() => false), log: [], outcome: 'ongoing', loot: null,
+    defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,
   };
   s.log.push(describeGroups(s) + ' attack!');
+  if (opts.note) s.log.push(opts.note);
   newRound(s, party, rng);
   return s;
 }
@@ -176,7 +182,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       const m = s.monsters[action.target];
       if (!m || m.hp <= 0 || !canAttackFromRow(c, t.i)) return false;
       const w = weaponOf(c);
-      const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party), m.def.ac));
+      const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party) - (w.ranged ? s.rangedPenalty : 0), m.def.ac));
       if (hit) {
         const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m));
         hurtMonster(s, m, dmg);
@@ -310,7 +316,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const pick = rng.pick(pool);
   if (!pick) { s.turn++; checkOutcome(s, party, rng); return true; }
   const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0);
-  if (rng.chance(toHit(m.def.attack, ac))) {
+  if (rng.chance(toHit(m.def.attack - (m.def.missile ? s.rangedPenalty : 0), ac))) {
     let dmg = roll(rng, m.def.dice, m.def.sides, m.def.bonus);
     if (s.defending[pick.i]) dmg = Math.ceil(dmg / 2);
     damage(pick.c, dmg);

@@ -93,6 +93,9 @@ export class Game {
   update(a: Action | null): void {
     this.frame++;
     this.top.update(this, a);
+    // Whatever moved the clock (a step, a rest, the inn), the log says so once the party is back
+    // to exploring and the sky has turned.
+    if (this.top instanceof ExploreScreen) { const news = this.world.weatherNews(); if (news) this.say(news); }
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -148,7 +151,7 @@ export class Game {
 
   /** Start a fight with the given groups; the combat screen calls back on resolution. */
   fight(groupIds: string[]): void {
-    const state = startCombat(this.party, this.world.groupDefs(groupIds), this.rng);
+    const state = startCombat(this.party, this.world.groupDefs(groupIds), this.rng, this.world.combatWeather());
     this.push(new CombatScreen(state, groupIds));
   }
 
@@ -221,7 +224,7 @@ export class ExploreScreen implements Screen {
     else if (is(a, 'inventory')) g.push(new SheetScreen(g.selected));
     else if (is(a, 'save')) g.saveGame();
     else if (is(a, 'load')) { if (!g.loadGame()) g.say('No save to load.'); }
-    else if (is(a, 'map')) g.push(new MessageScreen(`${w.map.name}\n\nBand: levels ${w.map.def.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.`));
+    else if (is(a, 'map')) g.push(new MessageScreen(`${w.map.name}\n\nBand: levels ${w.map.def.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.\n\n${w.almanac()}`));
     else if (/^n[1-6]$/.test(a)) { g.selected = Number(a[1]) - 1; g.push(new SheetScreen(g.selected)); }
     if (!res) return;
     if (res.kind === 'blocked') { g.say(res.reason); return; }

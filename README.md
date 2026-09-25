@@ -19,7 +19,8 @@ npm run check      # typecheck + Node tests + headless Chromium smoke test
 ```
 
 Keys: arrows or WASD move and turn, Q/E strafe, Space acts, F searches the wall ahead, R rests,
-C casts, I opens the character sheet (1–6 jump to a member), M map info, F5/F9 save and load.
+C casts, I opens the character sheet (1–6 jump to a member), M the map and the almanac (date, season,
+weather), F5/F9 save and load.
 
 ## Deploying
 

@@ -3,6 +3,7 @@
 // on a map (opened chests, dead groups, revealed automap) is in world.ts's MapState.
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';
+import type { RegionId } from './weather.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
 
@@ -91,6 +92,8 @@ export interface MapDef {
   palette?: Partial<MapPalette>;
   /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */
   band?: [number, number];
+  /** The region whose climate and weather the map shares; the Shelf when absent. */
+  region?: RegionId;
 }
 
 export interface MapPalette {

@@ -9,6 +9,7 @@ export const GROVE2: MapDef = {
   name: 'The Cut Stone',
   kind: 'dungeon',
   band: [8, 10],
+  region: 'thornmark',
   start: { x: 1, y: 1, facing: SOUTH },
   palette: { wall: '#7a8290', wallDark: '#4e5460', floor: '#3a3e48', ceiling: '#2a2c34', door: '#5a5a66', wallStyle: 'brick', ceilingStyle: 'vault', banner: '#8a2a22' },
   rows: [
