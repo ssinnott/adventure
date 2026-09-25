@@ -231,6 +231,7 @@ const suites: Record<string, () => void> = {
     ok(!canAttackFromRow(p.members[3], 3) === !ITEMS[p.members[3].equipment.weapon!].ranged, 'back row melee is refused, back row ranged allowed');
     equip(p.members[3], 'sling');
     ok(canAttackFromRow(p.members[3], 3), 'a sling lets the thief attack from the back row');
+    ok(canAttackFromRow(p.members[5], 5), 'the sorcerer starts with a sling, so it has a shot from the back row');
     // Fleeing eventually works and ends the fight.
     let fled = false;
     for (let seed = 1; seed < 20 && !fled; seed++) {
@@ -291,6 +292,7 @@ const suites: Record<string, () => void> = {
     ok(p.members.every((m) => m.hp === m.maxHp && m.hp > 0), 'everyone starts at full health');
     ok(p.members[0].equipment.weapon === 'longsword' && p.members[0].equipment.armor === 'scale', 'the knight starts in scale with a long sword');
     ok(p.members[5].spells.includes('spark') && p.members[5].spells.includes('light'), 'the sorcerer knows the tier-1 spells');
+    ok(p.members[5].equipment.weapon === 'sling' && p.members[5].pack.includes('dagger'), 'the sorcerer starts with a sling in hand and the dagger packed');
     ok(!p.members[5].spells.includes('sleep'), 'but not tier 2');
     ok(xpForLevel(2) > 0 && xpForLevel(3) > xpForLevel(2), 'xp thresholds rise');
     const s = p.members[5];
