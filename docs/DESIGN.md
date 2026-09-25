@@ -222,7 +222,7 @@ reactor and beacon. The Wardstones are field emitters that keep the habitat's ec
 "gods" of every religion in Caldera are fragments of the **Custodian**, the vessel's steward,
 which has been degrading for centuries and now speaks through different voices in different
 regions. The Underdeep is the hull's service layer. The Custodian answers to the captain's line,
-and Queen Isaure was the last of it (§9).
+and Queen Isaure was the last of it (§9). Every people of Caldera came in the ship.
 
 The player is never told this. They **find** it: Kiln-script that turns out to be a maintenance
 language, a monastery whose bells ring in a pattern that matches the Hearth's flicker, an
@@ -274,6 +274,17 @@ the throne empty (§10.1): with nobody to command it, the vessel can be shut dow
 Ashen Hand ships people below: it is finding out whose hands the doors will open for. The line runs
 through the whole quest and is never told, only found.
 
+**Wenna of Gullwick** gives the line a face. She is a fisher's daughter taken as cargo, and her name
+is in the Greywater ledger's CARGO BELOW column. The doors below open for her. She leads the others
+up through the ice at Rime Lodge (Act III), is taken again at Sheer Point (Act IV), and at the core
+the Hand holds her palm to the panel that answers to the line. Freed, she hands the choice to the
+company:
+*You walked all of it. Every road. You choose.* She is the heir nobody claimed (§10.1), and she
+walks the main road, not only the subplot.
+
+Harrow changes between acts, under Vask's hand, and never for the better: Wardens on the walls, a
+curfew bell, the Lantern chapel shut.
+
 ### Act I — Ashes on the Road (levels 1–10: the Shelf, Thornmark)
 
 Queen Isaure of Harrow dies the night the Hearth first flickers. The party, a freshly chartered
@@ -290,20 +301,26 @@ chisel marks, and a sigil the Lanterns recognise as the **Ashen Hand**, a sect t
 Hearth is a prison and its dimming is the door opening. Restoring the stone is the first real
 dungeon. Restoring it closes Thornmark's Rifts.
 
-- **The Shelf** (built): Ashcombe's Rift and the dead Lantern; Greywater, where the smugglers'
-  cargo below was people, and the Ashen Deacon was prising the staples from a glowing seam.
-- **Harrow Downs:** the Queen's barrow has been opened, and only her signet is gone. Harrow Light's
-  keeper logged the flicker on the night she died. The coast road west, into Act II, starts here.
+- **The Shelf** (built): Ashcombe's Rift and the dead Lantern, whose note says *Tell Vask
+  nothing*; the party hands Vask her wand anyway. Greywater, whose crates carry the Harrow customs
+  seal, where the smugglers' cargo below was people and the Ashen Deacon was prising the staples
+  from a glowing seam. Captain Hale sends the Regent a copy of the smugglers' ledger.
+- **Harrow Downs:** the Queen's barrow has been opened, and only her signet is gone. In Gullwick,
+  Wenna's mother asks the party to find her. Harrow Light's keeper logged the night the Queen died:
+  the Hearth went out eleven times, and he wrote down the gaps between. The coast road west, into
+  Act II, starts here.
 - **Thornmark** (built): Thornhold and Elder Sylvane, the Grove Roots and the Cut Stone, the Hand of
   Ash, and the Warden of the Cut with the first Meridian journal.
 - **The Deepthorn:** the oldest elf-hold keeps the two-hundred-year-old treaty behind the elves'
-  claim to the throne. Its seal is the chisel's maintenance mark: the royal line is written in the
-  machine's script.
+  claim to the throne, which says the elves' line and Harrow's were once one. Its seal is the
+  chisel's maintenance mark: the royal line is written in the machine's script.
 
 Turn: the Ashen Hand's cutting tools are Underdeep-made. Somebody is arming them. The Hand's creed
 is on the walls from the cellar to the Grove (THE HEARTH IS A CAGE; THE HAND OPENS WHAT THE HEARTH
-SHUTS; THE STONE IS A LOCK. WE HAVE THE KEY.). It gains a line in every act, and its last is
-carved on the core's door.
+SHUTS; THE STONE IS A LOCK. WE HAVE THE KEY.), and it gains a line in every act: EVERY SHARD IS A
+STEP in the Tide Ship's hold, THE BLOOD OPENS THE DOOR on the sleepers' bay, THE SKY IS A LID on
+the Hand's causeway, and the last, carved on the core's door, PUT OUT THE LIGHT, AND THE DOOR WILL
+OPEN.
 
 Acts II to IV each restore at least one Stone, each under threat in its own way. With each stone
 restored, the Hearth steadies. With each stone restored the party also hears the
@@ -314,19 +331,25 @@ god is one of its fragments.
 
 - **The Upper Water:** the way in, down the Ledge from the Downs. The Salt Compact's river barges
   carry shards and people downriver, and the folk of Reedholm saw the Tide Stone go by one night.
-- **The Delta:** the Tide Stone's plinth stands empty, and the Drowned Temples, where the
-  Tidefolk's god spoke, have gone dark.
-- **The Saltings:** Saltmouth, the free port, is the Compact's home and the dockmaster claimant's
-  seat (§10.1, §10.2). His forged lineage convinces because it was copied from a real crew record,
-  below. The crossing to Wrackholm leaves from here.
+- **The Delta:** the Tide Stone's plinth stands empty, and the Drowned Temples have gone dark. The
+  Tidefolk's god used to sing the tides; now it only counts, until its Stone comes home and it
+  sings again.
+- **The Saltings:** Saltmouth, the free port, is the Compact's home and the seat of Jory Tallis,
+  the dockmaster claimant (§10.1, §10.2). His forged lineage convinces because it was copied from a
+  real crew record, below. The crossing to Wrackholm leaves from here.
 - **Wrackholm:** Smugglers' Cove and the Tide Ship, whose hold carries Wardstone shards and people
   bound for a dead-drop in the Underdeep. The Compact's orders come from below. The Tide Stone
   comes home.
 - **The Eaves and Lanternwood:** the Sunder, a Rift that split a whole wood, which is what a
-  Stone's failure looks like at full size. At its floor stands a wall too smooth to be stone. On
-  its rim is Lantern Watch, where the Lanterns begin to split.
+  Stone's failure looks like at full size. At its floor stands a wall too smooth to be stone.
+  Across the gorge, by a rope bridge, is Lantern Watch, where the Lanterns begin to split.
 
-Midpoint, at level 16: the Tide Ship's log names Vask. He is the Ashen Hand's patron. He has read
+By now word has come down the coast: Hale's copy of the ledger reached the Regent, and Hale has
+vanished, his post at the pass held by men nobody knows.
+
+Midpoint, at level 16: the Tide Ship's log names Vask. Every cargo in it went below under the
+Harrow customs seal from the Greywater crates, countersigned by the Regent. He is the Ashen Hand's
+patron. He has read
 the Underdeep's writing and believes it: that the Hearth is a cage and there is a world beyond the
 sky. He is not wrong about the facts. He is wrong about what "beyond" means.
 
@@ -335,43 +358,55 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
 - **The Iron Fells and the Kilns:** the dwarves cut their own Anvil Stone to sell the shards; the
   party buys it back or seizes it. Kiln-script, which dwarves read, turns out to be a maintenance
   language, and reading it is the act's own mechanic: each inscription read opens more of the map.
-  The Deep Mines have broken into the service layer, where the cargo below was taken.
+  Anvilhall's holiest verse, THE FIRE IS KEPT BELOW AND NOT ABOVE, is a warning painted on a boiler,
+  and the lowest door of the Deep Mines says CREW ONLY. The Deep Mines have broken into the service
+  layer, where the cargo below was taken.
 - **Kilnmouth:** Kilnhaven, the ore port, whose ship is one way to the far side of the sea.
 - **High Moor and the Cairnfield:** a ring of stones older than the Wardstones, the first emitters,
-  dead for centuries, with the cairns around it. The Custodian's oldest voice still speaks there.
+  dead for centuries, with the cairns around it. The Custodian's oldest voice still speaks there,
+  in the dark inside the ring, and asks the crew to report.
 - **Longmere:** some of Greywater's cargo come back up through the ice at Rime Lodge. The doors
-  below opened for some of them and not for others: the captain's line, tested on its victims. The
-  way they came up is the way down.
-- **Coldmere:** a sealed bay under the frozen lake, where rows of sleepers who never woke have
-  faces like the party's own.
+  below opened for some of them and not for others: the captain's line, tested on its victims.
+  Wenna, whom the doors know, led them up. The way they came up is the way down.
+- **Coldmere:** a sealed bay under the frozen lake, opened by Wenna's hand, where rows of sleepers
+  who never woke have faces like the party's own. Every people of Caldera lies there: the races
+  came in the ship.
 
 ### Act IV — Beyond the Sky (levels 22–28: the Whitespine, Ashfall, the Wold)
 
 - **Monks' Vale and the High Spine:** the Peak Stone is fine, but something wears the monks who
-  guard it, and the monastery's bells ring the Hearth's flicker. Promotion II's dungeon is here.
+  guard it. The monks died long ago, and the Custodian's own hands keep the monastery in their
+  robes. Its bells ring the eleven flickers of Harrow Light's log, the Hearth's pulse, rung by a
+  machine that was told to ring them and never told to stop. Promotion II's dungeon is here.
 - **Sheer Point:** its tip reaches toward the Hearth, and the Ashen Hand is building its crossing
-  there. The party sees where the end will come, an act early.
+  there: a causeway out over the water, built from the smuggled shards. The party sees where the
+  end will come, an act early, and watches the Hand take Wenna out along it.
 - **The Giants' Stair:** the road over the High Spine and down the far side of the range into
   Ashfall, past the giants who gave it its name. Kilnhaven's ship over the sea is the other way.
 - **Cindercoast:** Cinderport, the far side's port, where the last crossing leaves.
 - **The Wold:** the Riders remember the day the sky opened and the land burned, and they keep the
   only way into the Glass (the reach, below). They are the warning against arriving, in person.
 - **Fire Mountain:** the volcano's vents are the Underdeep's exhaust and the way down for the Ember
-  Stone's parts. They lead to the Meridian Company's last camp and to a room with a window.
+  Stone's parts. They lead to the Meridian Company's last camp, where their cartographer, Oriel
+  Fane, is still alive, and to a room with a window.
 - **The Ember Waste:** the Ember Stone was never finished. The party completes it with parts from
   the Underdeep, and the Underdeep notices.
 
 ### Act V — The Hearth (levels 28–32: Hearth Isle, the Underdeep, the Core)
 
 From Cinderport the party crosses to the Hearth Isle. The final dungeon descends from a temple,
-through the Underdeep, into the reactor core, whose door opens only for the company that has
-restored the stones: the one story lock the road is sure to spend. Vask is there with the Ashen
-Hand, halfway through the shutdown sequence, and the Custodian, whole for the first time, speaks
-with one voice:
+through the Underdeep, into the reactor core. There are two ways in. The Hand came by its causeway
+and the service ways, through doors that know a hand of the line, because it had Wenna's. The
+company comes through the core's door, which opens only for whoever restored the stones: the one
+story lock the road is sure to spend. Vask is there with the Ashen Hand, halfway through the
+shutdown sequence, the Queen's signet on his finger and Wenna's palm held flat to the panel. When
+the Hand is broken, the Custodian, whole for the first time, speaks with one voice:
 
 *The voyage is over. It has been over for four hundred years. The vessel is in orbit around the
 world it was sent to. Arrival was never triggered because the crew who could trigger it forgot
 they were crew.*
+
+Wenna takes the signet from Vask's hand, and gives the choice to the company.
 
 ### The choice
 
@@ -405,7 +440,8 @@ converse holds too: everything on the road belongs to the quest.
   in the glass it made, its decks running down into the ground it melted.
 - **Glacier Foot and the Vault:** Rimewater's south-eastern lobe, off Longmere, where the glacier
   comes down from the rim. At its head the sky comes down to meet the ice, the one place a company
-  can climb into the Vault, the inside of the sky. The Ice Caves are the first of its dungeons.
+  can climb into the Vault, the inside of the sky, where the lights that make the sun and the moon
+  hang in the dark. The Ice Caves are the first of its dungeons.
   Its way in lies in country of band 20, so it is the reach a company sees long before it can take
   it.
 
@@ -428,8 +464,9 @@ main plot's texture rather than its rails.
 *Oblivion's "find the heir," inverted: everyone claims to be one.*
 
 Three claimants to Harrow: the Queen's cousin (backed by the Wardens), a Thornmark elf-hold
-that holds a two-hundred-year-old treaty (backed by the Lanterns), and a Saltreach dockmaster
-with a forged lineage and the only navy (backed by the Compact). Vask needs the throne empty.
+that holds a two-hundred-year-old treaty saying the elves' line and Harrow's were once one (backed
+by the Lanterns), and Jory Tallis, a Saltreach dockmaster with a forged lineage and the only navy
+(backed by the Compact). Vask needs the throne empty.
 
 The party gathers evidence across four regions, can be bribed by any side, and eventually
 presents a case to the Council of Harrow. Whoever wins changes Harrow's shops, trainers, prices
@@ -440,7 +477,9 @@ The captain's line (§9) makes the throne more than Harrow's: whoever carries th
 Custodian answers to. Every claim touches the machine: the dockmaster's forgery convinces because
 it was copied from a real crew record, the elf-hold's treaty carries the maintenance mark, and the
 cousin's claim is blood, which is what the doors below test. The Queen's missing signet is evidence
-all three sides want.
+all three sides want. And there is a fourth, who claims nothing: Wenna of Gullwick, whose hand the
+doors know (§9). The case before the Council can be made for her, for any of the three, or for
+nobody.
 
 **Payoff:** the throne subplot is the only way to remove Vask from Harrow *before* Act V, which
 weakens the Ashen Hand's presence in the final dungeon.
@@ -468,9 +507,9 @@ one is a hint to a secret square somewhere else (a wall that isn't, a lake that 
 at night, a monastery bell that opens a door).
 
 Following the trail finds the Meridian Company's last camp in the Underdeep beneath Ashfall,
-their cartographer still alive and very old, and their real map: the hull. The map shows what the
-Custodian will not say in Act V (§9, hidden third ending), and finishing this line is the
-Cartographer Promotion II.
+their cartographer, Oriel Fane, still alive and very old, and their real map: the hull. The map
+shows what the Custodian will not say in Act V (§9, hidden third ending), and finishing this line
+is the Cartographer Promotion II.
 
 ---
 

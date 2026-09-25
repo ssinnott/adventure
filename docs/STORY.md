@@ -1,8 +1,7 @@
 # The Dimming
 
 *The one quest of DESIGN.md §9, told as a story: the chronicle a company might write of it,
-afterwards. The design says what happens; this is how it should feel. Where the telling needs
-something the design does not have yet, it is listed at the end, to keep or to cut.*
+afterwards. The design says what happens; this is how it should feel.*
 
 ---
 
@@ -330,31 +329,10 @@ the winter we spent at Rime Lodge.
 
 ---
 
-## Added in the telling
+## What the telling added
 
-The story needs some things DESIGN.md does not have yet. Keep them or cut them:
-
-- **Wenna of Gullwick:** a fisher's daughter taken as cargo, whose name is in the Greywater ledger.
-  The doors below open for her, because she carries the captain's line. She leads the others up
-  through the ice at Rime Lodge, is taken again at Sheer Point, and at the core hands the choice to
-  the company. She is the heir nobody claimed, beside the three who claim the throne (§10.1), and
-  she is on the main road, not only in the subplot.
-- **Hale's fate:** his copy of the ledger reached Vask, and Hale vanished.
-- **The Deepthorn treaty** says the elves' line and Harrow's were once one.
-- **The eleven flickers:** Harrow Light's keeper logged them the night the Queen died, and the
-  monastery's bells ring the same pattern.
-- **The creed's other lines:** EVERY SHARD IS A STEP (the Tide Ship), THE BLOOD OPENS THE DOOR (the
-  sleepers' bay), THE SKY IS A LID (the causeway), and PUT OUT THE LIGHT, AND THE DOOR WILL OPEN
-  (the core's door).
-- **What the gods say:** the Tidefolk's god counts until its Stone comes home, then sings again; the
-  voice in Cairnmoor's ring asks the crew to report; the Custodian runs the monastery in the dead
-  monks' robes.
-- **Kiln-script read plainly:** the holiest verse is a boiler warning, and the Deep Mines' lowest
-  door says CREW ONLY.
-- **The Hand's crossing** at Sheer Point is built from the smuggled shards.
-- **Two ways into the core:** the Hand's, through doors that know a hand of the line, and the
-  company's, through the core's door, which opens for whoever restored the Stones.
-- **The sleepers** are every people of Caldera: the races came in the ship.
-- **The Vault** holds the lights that make the sun and the moon.
-- **Names:** Jory Tallis, the Compact's dockmaster claimant; Oriel Fane, the Meridian Company's
-  cartographer.
+Wenna of Gullwick, Hale's fate, the eleven flickers, the creed's later lines, what the gods say,
+Kiln-script read plainly, the causeway of shards, the two ways into the core, the sleepers as every
+people of Caldera, the Vault's lights, and the names Jory Tallis and Oriel Fane all began in this
+telling, and are now part of the design (DESIGN.md §7, §9 and §10). Where the two disagree, the
+design wins.
