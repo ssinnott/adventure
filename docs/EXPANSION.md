@@ -72,7 +72,7 @@ whose roads open on quest flags, and the pass to Thornmark already works that wa
 
 ---
 
-## 2. Two decisions
+## 2. Decisions
 
 ### 2.1 How much of the atlas is v1 (open)
 
@@ -113,8 +113,7 @@ What changes:
   east road after the Tide Stone) are open from the start.
 - Skills and boats open shortcuts and secrets off the road, which keeps pillar 2's skills that open
   the map, but never the road itself. Where the road crosses water there is a crossing to pay for.
-- A story beat may still wait on the quest (the core's door opens for the company that restored the
-  stones); a way between areas never does.
+- A few story beats may wait on the quest (§2.3); a way between areas never does.
 - A step can be taken early. A company that reaches an area before the quest sends it can do
   everything there, and the journal reads true in either order.
 
@@ -145,6 +144,29 @@ holds either way, and the owner's play is the test of it. Taking the flag off th
 means making Thornmark hard enough to be the gate itself, and the gate check (§5.2) is how each
 area is held to that.
 
+### 2.3 Story locks: a few, and in the world (decided)
+
+Some story locks are fine; many break the spell. A lock is anything the quest's progress opens
+rather than the company's level or its feet: a door that opens only once the story has reached it, a
+service withheld, a way shut.
+
+- **Few, and spent on purpose.** No area has more than one, and the road about one to an act (four,
+  to start). Each is declared with its reason, in the area's doc and in `content/locks.ts`, which the
+  check reads (§5.4): a lock not in the list, or one over the count, fails until the owner signs it
+  in. The first one spent is the core's door, which opens for the company that has restored the
+  stones; Hearth Isle itself is reached like anywhere else.
+- **In the world.** Each lock is a thing in plain sight with its reason on it: a sealed door, a
+  drowned stair, a captain who will not sail into the storm. Never an invisible wall, never "not
+  yet".
+- **Never between areas** (§2.2).
+- **No false "not yet".** Today's three hand-ins (Vask's wand, Hale's ledger, Sylvane's chisel) take
+  their item only from a company already hired. A company that arrives early carrying it is first
+  sent to go and find it, and must talk again to hand it over. A hand-in takes its item at the first
+  meeting, and its words know the company came early.
+
+Today the road has one lock, the flag on the pass, and it goes (§2.2); there are none inside any
+place.
+
 ---
 
 ## 3. Principles
@@ -173,6 +195,7 @@ area is held to that.
   log, with every key real.
 - Its gate holds (§5.2): a company at its band's floor gets through, and one well under it turns
   back.
+- The story lock it spends, if it spends one, is declared with its reason (§2.3).
 - Its monsters are drawn, each def a drawing of its own, each through the silhouette checks, each
   placed.
 - Its xp and gold sit on the curve (§5.2).
@@ -269,6 +292,9 @@ with a rumour. Each is cheap to place and worth the walk.
   from being empty.
 - **The land agrees with the map.** Where a zone map's edge meets unbuilt atlas land, its rivers,
   roads and coast carry on across the edge.
+- **Story locks.** Every flag that closes something (an exit, a gate, a door, a service) is in
+  `content/locks.ts` with its reason; the list keeps to §2.3's count, and no lock stands between
+  areas. Every hand-in takes its item at the first meeting.
 
 ### 5.5 Saves
 
@@ -337,6 +363,7 @@ Where the content moves to, in one refactor, in a single pull request while noth
 src/content/
   index.ts                  the areas in road order; the merged tables; the one quest, joined
   progression.ts            the curve (§5.2)
+  locks.ts                  the story locks, each with its reason (§2.3)
   shipped.json              what saves may refer to (§5.5)
   areas/<area>/
     index.ts                the area: maps, monsters, items, quests, climate, palette, what is new
@@ -380,8 +407,8 @@ docs/areas/<area>.md                    the area's brief, and what was built
 The skills that open the map (Swimmer, Mountaineer, Navigator and the rest) come when there are
 shortcuts and secrets for them; none is needed to follow the road. Along the whole road the systems
 lane also owes the danger made legible (the band said on crossing, and in how a group is
-described), the log paging the one quest by chapter, and a bot that plays as well as the party can
-(§5.2).
+described), the log paging the one quest by chapter, hand-ins that take their item at the first
+meeting (§2.3), and a bot that plays as well as the party can (§5.2).
 
 Rifts are where DESIGN.md itself asks for generated content: eight 12×12 templates, seeded, a pure
 function of state and seed. Build the generator early, in the systems lane, and let generation scale
@@ -462,7 +489,8 @@ the rest run in parallel.
 comes off the pass and Hale's checkpoint becomes a warning; Thornmark, the Grove Roots and the Cut
 Stone are retuned until the gate check holds at their floors; the tests that pin the flag gate (the
 movement and outdoors suites, and the smoke test's walk through the pass) follow it; The Quiet Farm
-and The Grove Stone become the one quest's first chapters. Then the rest of the Shelf and Thornmark
+and The Grove Stone become the one quest's first chapters; the three hand-ins take their items at
+the first meeting. Then the rest of the Shelf and Thornmark
 through the new pipeline: one zone map of the Downs west of the Shelf (band 2–5, where the land runs
 on and the world now ends), then the Deepthorn. Meanwhile, in the systems lane, what M1 still lacks:
 the Wardens' and Lanterns' lines to rank 3, Standing, hirelings, and the terrain the pilot asks for.
@@ -490,6 +518,7 @@ in flight, each to its definition of done, with the lanes running in parallel in
 | Maps inside the density floor (§5.3) | unchecked | all |
 | Areas on the curve (§5.2) | the slice, pinned | all |
 | Areas whose gate holds (§5.2) | none: fights give way two to four levels under the band | all |
+| Story locks (§2.3) | 1, the pass, which goes | within the count, each declared with its reason |
 
 ---
 
