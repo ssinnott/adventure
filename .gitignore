@@ -1,6 +1,7 @@
 node_modules/
 dist/
 
-# Scratch renders from tools/gallery.ts, which defaults to ./gallery.png
+# Scratch renders from tools/gallery.ts and tools/interiors.ts, which default to ./gallery.png and ./interiors.png
 gallery.png
 *.gallery.png
+interiors.png

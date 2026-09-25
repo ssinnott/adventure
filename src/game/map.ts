@@ -38,16 +38,25 @@ export interface Exit {
   blockedText?: string;
 }
 
+/**
+ * The painted room a business shows in the viewport while the party is inside it (ui/interiors/).
+ * One per business, so no two shops share a picture.
+ */
+export type Interior =
+  | 'hearthlight_inn' | 'lantern_chapel' | 'harrow_provisioner' | 'lantern_guildhall' | 'warden_drillyard' | 'gilded_eel'
+  | 'green_man' | 'lantern_chapterhouse' | 'thornhold_armoury' | 'lantern_hall' | 'elders_yard' | 'split_oak';
+
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
   | { kind: 'sign'; x: number; y: number; text: string }
-  | { kind: 'inn'; x: number; y: number; name: string; price: number }
-  | { kind: 'temple'; x: number; y: number; name: string }
-  | { kind: 'shop'; x: number; y: number; name: string; stock: string[] }
-  | { kind: 'guild'; x: number; y: number; name: string; classes: string[]; fee: number; maxTier?: number }
-  | { kind: 'trainer'; x: number; y: number; name: string; maxLevel: number }
+  | { kind: 'inn'; x: number; y: number; name: string; price: number; interior: Interior }
+  | { kind: 'temple'; x: number; y: number; name: string; interior: Interior }
+  | { kind: 'shop'; x: number; y: number; name: string; stock: string[]; interior: Interior }
+  | { kind: 'guild'; x: number; y: number; name: string; classes: string[]; fee: number; maxTier?: number; interior: Interior }
+  | { kind: 'trainer'; x: number; y: number; name: string; maxLevel: number; interior: Interior }
   | { kind: 'chest'; x: number; y: number; id: string; gold: number; items: string[]; trapped?: boolean }
-  | { kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string; quest?: NpcQuest }
+  /** `interior` makes the NPC a business you walk into (a tavern); a person in the street has none. */
+  | { kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string; quest?: NpcQuest; interior?: Interior }
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
   | { kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean };

@@ -1,6 +1,6 @@
 // Headless proof that the game RENDERS IN A BROWSER through the dev server with nothing compiled to
 // disk: load index.html, start a new game through the title screen, walk a few steps, open a fight,
-// and assert that every frame painted and no page error fired.
+// walk into a business and out again, and assert that every frame painted and no page error fired.
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -74,6 +74,31 @@ const thornFightColours = await colours();
 await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornhold', 7, 14, 0); g.enterCell(); });
 await page.waitForTimeout(150);
 const townColours = await colours();
+// A business: walking into the Hearthlight's doorway opens its interior under the inn's menu, and
+// leaving puts the party back in the street, facing the door.
+await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 4, 5, 0); });
+await page.keyboard.press('ArrowUp'); await page.waitForTimeout(150);
+const inside = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+const innColours = await colours();
+await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+const outside = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), x: g.world.state.x, y: g.world.state.y, facing: g.world.state.facing }; });
+// Every interior paints, at noon and at midnight, and each is a picture rather than a flat fill.
+const interiors = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const I = await load('/src/ui/interior.ts');
+  const c = document.createElement('canvas'); c.width = 400; c.height = 268;
+  const ctx = c.getContext('2d')!;
+  const thin: string[] = [];
+  let n = 0;
+  for (const kind of Object.keys(I.SCENES)) for (const daylight of [0, 1]) {
+    I.drawInterior(ctx, kind, { x: 0, y: 0, w: 400, h: 268 }, daylight, 30);
+    const d = ctx.getImageData(0, 0, 400, 268).data, seen = new Set<number>();
+    for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+    if (seen.size < 400) thin.push(`${kind}@${daylight} (${seen.size})`);
+    n++;
+  }
+  return { n, thin };
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 9, 6, 0); g.interact(g.world.featureHere()); });
 await page.waitForTimeout(100);
@@ -194,6 +219,9 @@ ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
+ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
+ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
+ok(interiors.n === 24 && interiors.thin.length === 0, `all twelve interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
 ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Shelf paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);

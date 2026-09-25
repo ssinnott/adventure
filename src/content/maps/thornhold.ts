@@ -35,12 +35,12 @@ export const THORNHOLD: MapDef = {
     { x: 8, y: 15, to: 'thornmark', tx: 23, ty: 5, tf: SOUTH, label: 'You leave Thornhold by the oak gate.' },
   ],
   features: [
-    { kind: 'inn', x: 4, y: 4, name: 'The Green Man', price: 20 },
-    { kind: 'temple', x: 11, y: 4, name: 'Lantern Chapterhouse' },
-    { kind: 'shop', x: 4, y: 10, name: 'Thornhold Armoury', stock: ['longsword', 'warhammer', 'battleaxe', 'greatsword', 'crossbow', 'elfbow', 'rune_dagger', 'grove_staff', 'chain', 'runed_robe', 'brigandine', 'plate', 'tower_shield', 'elixir', 'potion_sp_great', 'lantern_oil', 'rations'] },
-    { kind: 'guild', x: 11, y: 10, name: 'Thornhold Lantern Hall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 200, maxTier: 4 },
-    { kind: 'trainer', x: 3, y: 13, name: "The Elder's Yard", maxLevel: 10 },
-    { kind: 'npc', x: 12, y: 13, name: 'The Split Oak', lines: [
+    { kind: 'inn', x: 4, y: 4, name: 'The Green Man', price: 20, interior: 'green_man' },
+    { kind: 'temple', x: 11, y: 4, name: 'Lantern Chapterhouse', interior: 'lantern_chapterhouse' },
+    { kind: 'shop', x: 4, y: 10, name: 'Thornhold Armoury', stock: ['longsword', 'warhammer', 'battleaxe', 'greatsword', 'crossbow', 'elfbow', 'rune_dagger', 'grove_staff', 'chain', 'runed_robe', 'brigandine', 'plate', 'tower_shield', 'elixir', 'potion_sp_great', 'lantern_oil', 'rations'], interior: 'thornhold_armoury' },
+    { kind: 'guild', x: 11, y: 10, name: 'Thornhold Lantern Hall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 200, maxTier: 4, interior: 'lantern_hall' },
+    { kind: 'trainer', x: 3, y: 13, name: "The Elder's Yard", maxLevel: 10, interior: 'elders_yard' },
+    { kind: 'npc', x: 12, y: 13, name: 'The Split Oak', interior: 'split_oak', lines: [
       'A tavern built around a living oak. The elves drink slowly and watch the door.',
       'A forester says: "The Stone went quiet a month back. Then the wolves got big. Then the wolves got strange."',
       'A Lantern in travel-grey, not drunk: "Vask sent a survey team south before the Stone even failed. How did he know?"',

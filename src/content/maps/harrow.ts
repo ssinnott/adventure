@@ -32,12 +32,12 @@ export const HARROW: MapDef = {
     { x: 8, y: 15, to: 'shelf', tx: 16, ty: 4, tf: SOUTH, label: 'You leave Harrow by the south gate.' },
   ],
   features: [
-    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12 },
-    { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns' },
-    { kind: 'shop', x: 4, y: 10, name: 'Harrow Provisioner', stock: ['club', 'dagger', 'staff', 'shortsword', 'mace', 'spear', 'sling', 'shortbow', 'robe', 'leather', 'buckler', 'potion_heal', 'antidote', 'rations', 'torch'] },
-    { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50 },
-    { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6 },
-    { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', lines: [
+    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn' },
+    { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel' },
+    { kind: 'shop', x: 4, y: 10, name: 'Harrow Provisioner', stock: ['club', 'dagger', 'staff', 'shortsword', 'mace', 'spear', 'sling', 'shortbow', 'robe', 'leather', 'buckler', 'potion_heal', 'antidote', 'rations', 'torch'], interior: 'harrow_provisioner' },
+    { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50, interior: 'lantern_guildhall' },
+    { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6, interior: 'warden_drillyard' },
+    { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', interior: 'gilded_eel', lines: [
       'The tavern is loud and smells of eel.',
       'A fisherman says: "The Hearth stuttered the night the Queen died. I saw it from the boats."',
       'A Warden mutters: "Something came up out of the Ashcombe farm. Rats first, then worse. Nobody has gone to look."',
