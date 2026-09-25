@@ -253,7 +253,7 @@ road is locked: what turns a company back is the monsters, and the quest spends 
 locks (docs/EXPANSION.md §2.2 and §2.3). Each act asks a question and ends on a revelation that
 changes what the quest is about, so the long climb never becomes a list of stones to fetch. Every
 zone on the road holds at least one step of the quest; two areas are kept off it on purpose, as
-the reach.
+the reach. docs/STORY.md tells the whole quest as a story.
 
 | Act | Levels | Areas | The question | Ends on |
 |---|---|---|---|---|
@@ -336,7 +336,7 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
   party buys it back or seizes it. Kiln-script, which dwarves read, turns out to be a maintenance
   language, and reading it is the act's own mechanic: each inscription read opens more of the map.
   The Deep Mines have broken into the service layer, where the cargo below was taken.
-- **Kilnmouth:** Kilnhaven, the ore port, whose ship crosses the sea in Act IV.
+- **Kilnmouth:** Kilnhaven, the ore port, whose ship is one way to the far side of the sea.
 - **High Moor and the Cairnfield:** a ring of stones older than the Wardstones, the first emitters,
   dead for centuries, with the cairns around it. The Custodian's oldest voice still speaks there.
 - **Longmere:** some of Greywater's cargo come back up through the ice at Rime Lodge. The doors
@@ -351,7 +351,8 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
   guard it, and the monastery's bells ring the Hearth's flicker. Promotion II's dungeon is here.
 - **Sheer Point:** its tip reaches toward the Hearth, and the Ashen Hand is building its crossing
   there. The party sees where the end will come, an act early.
-- **The crossing:** Kilnhaven's ship carries the party over the sea to the far side.
+- **The Giants' Stair:** the road over the High Spine and down the far side of the range into
+  Ashfall, past the giants who gave it its name. Kilnhaven's ship over the sea is the other way.
 - **Cindercoast:** Cinderport, the far side's port, where the last crossing leaves.
 - **The Wold:** the Riders remember the day the sky opened and the land burned, and they keep the
   only way into the Glass (the reach, below). They are the warning against arriving, in person.
