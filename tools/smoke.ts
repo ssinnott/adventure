@@ -142,6 +142,44 @@ if (process.env.SMOKE_SHOT) {
   await page.screenshot({ path: process.env.SMOKE_SHOT });
 }
 
+// The walls meet without a crack. Paint a view from every open cell of the Ashcombe cellar and of
+// Harrow twice, over two flat backdrops, and wherever the two differ the backdrop shows through.
+// Along the horizon only walls can be (the floor starts 24px below it at the far end of the view),
+// so there backdrop with solid wall either side of it is a crack between two faces. And where
+// walls stand on both hands of the party the edges of the view are wall: those once went undrawn.
+const cracks = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts');
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, band = 16, bad: string[] = [];
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  // The sky goes to a canvas of its own and is never composited, so only the backdrop is behind the walls.
+  const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
+  const skyCtx = sky.getContext('2d')!;
+  const paint = (backdrop: string) => { V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
+  for (const id of ['mill', 'harrow']) {
+    w.travel(id, 1, 1, 0);
+    const m = w.map;
+    for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
+      if (m.at(x, y).solid !== 'none' || m.at(x, y).door !== 'none') continue;
+      const f = (x + y) % 4, rf = (f + 1) % 4;
+      w.travel(id, x, y, f); w.state.light = 1;
+      const a = paint('#ff00ff'), b = paint('#00ff00');
+      const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
+      const walled = (s: number) => m.blocksView(x + s * T.FACING_DX[rf], y + s * T.FACING_DY[rf]);
+      let at = '';
+      for (let py = 0; py < band * 2 && !at; py++) for (let px = 0; px < W && !at; px++) {
+        if (!shows(px, py)) continue;
+        const crack = [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
+        if (crack || (px < 6 && walled(-1)) || (px >= W - 6 && walled(1))) at = `${px},${H / 2 - band + py}`;
+      }
+      if (at) bad.push(`${id} ${x},${y} facing ${f} at ${at}`);
+    }
+  }
+  return bad;
+});
+
 await browser.close();
 server.close();
 
@@ -162,5 +200,6 @@ ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder
 ok(rainFight.screen === 'CombatScreen' && rainFight.rangedPenalty > 0 && rainFightColours > 20, `a fight in the downpour paints, with the archers' penalty (${rainFightColours} colours)`);
 ok(snow.found && /snow|blizzard|flurries/.test(snow.sky) && /snow|blizzard/i.test(snow.log) && snowColours > 20, `Thornmark paints under falling snow with snow lying (${snow.sky}: "${snow.log}", ${snowColours} colours)`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
+ok(cracks.length === 0, `the walls meet without a crack in the cellar and in Harrow, and the walls beside the party are drawn${cracks.length ? ` -> ${cracks.length} views, ` + cracks.slice(0, 4).join(', ') : ''}`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

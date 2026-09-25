@@ -241,11 +241,25 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
   blob(ctx, B, shade(p.dark, 0.78), armParts(R, far, 21, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
   legs(ctx, R, shade('#363a42', p.tone), 22, [0.4, -1]);
-  // The hooded tunic: hood, body and near sleeve, one mass in the tint.
+  // The hooded tunic: hood, cowl, body and near sleeve, one mass in the tint. The hood is cut round
+  // the head, so it ends under the chin, a neck's length above the collar, and he is the one man in
+  // this family with no bare neck to fill that; the cowl carries the cloth on down, in round the
+  // neck and out over the trapezius onto both shoulders. Its top is measured off the head and its
+  // hem off the shoulder line, so the breath, which lifts the head further than the shoulders,
+  // cannot open the gap again.
   const hood: Part = { k: 'curve', pts: [hx - hr * 1.26, hy + hr * 1.12, hx - hr * 1.32, hy - hr * 0.1, hx - hr * 1.0, hy - hr * 1.16, hx - hr * 0.2, hy - hr * 1.52, hx + hr * 0.7, hy - hr * 1.32, hx + hr * 1.24, hy - hr * 0.5, hx + hr * 1.28, hy + hr * 1.12], wobble: 0.035, seed: 23, sub: 3 };
-  blob(ctx, B, p.base, [hood, { k: 'curve', pts: torsoPts(R, hemY, 0.0), wobble: 0.03, seed: 24, sub: 3 }, ...armParts(R, near, 25)],
+  const cowl: Part = { k: 'curve', pts: [
+    hx - hr * 1.2, hy + hr * 0.4, hx + hr * 1.18, hy + hr * 0.4,
+    hx + hr * 1.02, hy + hr * 1.42, x + h * 0.1, sy - h * 0.028, R.sNear.x + h * 0.006, sy + h * 0.012,
+    x + h * 0.12, sy + h * 0.06, x + h * 0.01, sy + h * 0.085, x - h * 0.13, sy + h * 0.055,
+    R.sFar.x + h * 0.004, sy - h * 0.02, x - h * 0.128, sy - h * 0.036, hx - hr * 1.04, hy + hr * 1.42,
+  ], wobble: 0.03, seed: 20, sub: 3 };
+  blob(ctx, B, p.base, [hood, cowl, { k: 'curve', pts: torsoPts(R, hemY, 0.0), wobble: 0.03, seed: 24, sub: 3 }, ...armParts(R, near, 25)],
     { h, formK: 0.5, tex: 'folds', seed: 24, amount: 0.8, creases: [...torsoCreases(R, hemY), elbowCrease(R, near),
       { x0: hx - hr * 1.15, y0: hy + hr * 0.9, x1: hx + hr * 1.15, y1: hy + hr * 0.95, r: hr * 0.2, a: 0.3 }] });
+  // The cowl's hem across the chest, as one soft line (three creases darken where they overlap):
+  // without it the cowl reads as a neck as thick as the hood, growing out of the tunic.
+  softLine(ctx, B, [x - h * 0.1, sy + h * 0.05, x - h * 0.045, sy + h * 0.074, x + h * 0.05, sy + h * 0.076, x + h * 0.1, sy + h * 0.052], p.base, Math.max(1, h * 0.022), 0.28);
   // Inside the hood: shadow, then the face.
   blob(ctx, B, shade(p.dark, 0.55), [{ k: 'curve', pts: [hx - hr * 0.95, hy - hr * 0.85, hx + hr * 0.95, hy - hr * 0.8, hx + hr * 1.0, hy + hr * 0.3, hx + hr * 0.5, hy + hr * 1.05, hx - hr * 0.5, hy + hr * 1.05, hx - hr * 1.0, hy + hr * 0.3], wobble: 0.04, seed: 26, sub: 2 }], { h, form: false, outline: false });
   // Belt over the tunic.
@@ -585,7 +599,6 @@ function smugglerBow(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
   const far: Arm = [R.sFar, { x: x - h * 0.086, y: sy + h * 0.116 }, anchor];
   const hemY = y - h * 0.41;
   groundShadow(ctx, x, y + 1, h * 0.72);
-  blob(ctx, B, shade(p.dark, 0.8), armParts(R, far, 93, 0.92), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
   legs(ctx, R, shade('#2e3640', p.tone), 94, [1, -0.35]);
   blob(ctx, B, shade('#2a2420', p.tone), [
     { k: 'cap', x0: x + h * 0.228, y0: y - h * 0.17, x1: x + h * 0.238, y1: y - h * 0.05, r0: h * 0.042, r1: h * 0.04 },
@@ -594,6 +607,11 @@ function smugglerBow(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
   headNeck(ctx, R);
   blob(ctx, B, p.base, [{ k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 95, sub: 3 }, ...armParts(R, near, 96)],
     { h, formK: 0.5, tex: 'folds', seed: 95, amount: 0.7, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The draw arm goes OVER the tunic: at full draw its forearm crosses in front of the chest, and
+  // painted behind the body like every other far arm it left the string hand on his chest with no
+  // arm at all. The oilskin still covers the shoulder and upper arm, so the forearm comes out from
+  // under its edge.
+  blob(ctx, B, shade(p.dark, 0.8), armParts(R, far, 93, 0.92), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
   // The gang's oilskin, shorter on him, and a quiver on the far hip.
   blob(ctx, B, shade('#3a4a42', p.tone), [
     { k: 'curve', pts: [x - h * 0.172, sy - h * 0.012, x - h * 0.206, sy + h * 0.1, x - h * 0.178, sy + h * 0.2, x - h * 0.06, sy + h * 0.2, x - h * 0.03, sy + h * 0.02, x - h * 0.09, sy - h * 0.05], wobble: 0.04, seed: 97, sub: 3 },
@@ -657,6 +675,11 @@ function smugglerCaptain(ctx: CanvasRenderingContext2D, x: number, y: number, h:
   const hemY = y - h * 0.42, skirtY = y - h * 0.235;         // tunic hem, then the coat skirt below it
   groundShadow(ctx, x, y + 1, h * 0.8);
   blob(ctx, B, shade(p.dark, 0.8), armParts(R, far, 112, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  // No hand at the end of the far arm: a leather cuff and an iron hook, curled in toward the body.
+  const cw = far[2];
+  blob(ctx, B, R.leather, [{ k: 'cap', x0: cw.x, y0: cw.y - h * 0.012, x1: cw.x + h * 0.002, y1: cw.y + h * 0.034, r0: h * 0.027, r1: h * 0.022 }], { h, formK: 0.45, spread: 0.7 });
+  band(ctx, B, cw.x - h * 0.024, cw.y + h * 0.026, h * 0.048, h * 0.012, R.brass);
+  blob(ctx, B, R.steel, [{ k: 'tube', pts: [cw.x + h * 0.002, cw.y + h * 0.036, cw.x + h * 0.002, cw.y + h * 0.086, cw.x + h * 0.012, cw.y + h * 0.112, cw.x + h * 0.036, cw.y + h * 0.114, cw.x + h * 0.046, cw.y + h * 0.092], r0: h * 0.011, r1: h * 0.005, gloss: 0.6 }], { h, formK: 0.5, spread: 0.7 });
   legs(ctx, R, shade('#242a34', p.tone), 113, [0.9, -0.9]);
   blob(ctx, B, shade('#22201c', p.tone), [
     { k: 'cap', x0: x + h * 0.216, y0: y - h * 0.215, x1: x + h * 0.23, y1: y - h * 0.055, r0: h * 0.05, r1: h * 0.048 },

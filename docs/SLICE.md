@@ -171,7 +171,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   three and four taper down, five is the old flat size and six goes under it. The row's spacing is
   fixed, so every extra monster is width its neighbours do not have.
 - `ui/viewport.ts` textures every surface procedurally: stone courses (front faces and receding
-  side faces), timber-framed houses with gable roofs and windows lit at night, flagstones with
+  side faces), timber-framed houses with hipped roofs and windows lit at night, flagstones with
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
   two bands of distant hills that turn with the party. The static scene is cached per world state
   and monsters are drawn over it each frame with a line-of-sight check.
@@ -183,8 +183,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   flowers in the grass, cracks and puddles on flagstones; a carved plank frame with brass fittings
   and rivets; a painted title looking west over the sea at the Hearth.
 - Final polish: pitched, hipped, tiled roofs that run across adjoining cells with eaves, ridge caps
-  and chimneys, keyed per building; timber bracing and a window on house side faces; a birch tree
-  variant; a parchment automap with inked walls and a compass rose; hit sparks and a red card
+  and a chimney, keyed per building (one roof per building, projected like the walls, so its front
+  and side slopes meet along their hips); timber bracing and a window on house side faces; a birch
+  tree variant; a parchment automap with inked walls and a compass rose; hit sparks and a red card
   flash in combat when someone takes damage.
 - Weather and seasons: the cached scene is two canvases now, the sky and everything in front of
   it, so a lightning strike can light the whole sky behind the roofs and trees and fork down
@@ -222,7 +223,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
 | `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, no entry vanishes when an item leaves the party, and the quests walk through end to end with each change announced once and the Lost Expedition left open; the calendar's months, seasons, new year and ordinals, and days that lengthen and shorten; the weather is a pure function of its seed, and three years of it in each region bring rain in every season and at every strength, autumn fogs, snow only below freezing and never in summer, far more snow over the pass, deep snow lying there much of the winter, and wet spells that last hours; the log's hysteresis and wording; a new game opens fair; reading the weather draws nothing from the gameplay rng; fog and downpours cut sight (not underground, and Light does not cut fog), deep snow slows a step, archers shoot worse in a downpour and casters do not; the inn waits for winter light; towns and dungeons share their region; an old save without a weather seed loads |
-| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, talks to Vask and opens the quest log, paints the Shelf in a downpour and a fight in it and Thornmark under falling snow, and asserts every screen painted with no page error and the log reported the quest and the weather; also unions every pair of sprite part kinds and asserts none of them leaves a hole |
+| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, talks to Vask and opens the quest log, paints the Shelf in a downpour and a fight in it and Thornmark under falling snow, and asserts every screen painted with no page error and the log reported the quest and the weather; also unions every pair of sprite part kinds and asserts none of them leaves a hole; and paints a view from every open cell of the cellar and of Harrow over two backdrops and asserts the backdrop never shows through a crack between walls, nor at the edges of the view beside the party |
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing. Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
