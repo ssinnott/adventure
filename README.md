@@ -19,8 +19,9 @@ npm run check      # typecheck + Node tests + headless Chromium smoke test
 ```
 
 Keys: arrows or WASD move and turn, Q/E strafe, Space acts, F searches the wall ahead, R rests,
-C casts, I opens the character sheet (1–6 jump to a member), J the quest log, M the map and the
-almanac (date, season, weather), F5/F9 save and load.
+C casts, I opens the character sheet (1–6 jump to a member), J the quest log, M the world map (arrows
+scroll it, Tab shows the areas and zones, Z the whole map at once, Space the almanac: date, season and
+weather), F5/F9 save and load.
 
 ## Deploying
 
@@ -41,7 +42,7 @@ src/ui/            viewport, frame, sprites, screens, combat screen, quest log, 
 src/ui/monsters/   the enemy drawings, one module per family, dispatched by sprites.ts
 src/ui/interiors/  the businesses' interiors, one module per trade, dispatched by interior.ts
 src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
-tools/             dev server, bundler, tests, smoke test, screenshot, monster and interior gallery helpers
+tools/             dev server, bundler, tests, smoke test, screenshot, monster and interior galleries, world map export
 ```
 
 ## The engine

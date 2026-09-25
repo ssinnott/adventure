@@ -24,6 +24,7 @@ import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, I
 import { QuestScreen } from '../ui/quests.ts';
 import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
+import { WorldMapScreen } from '../ui/worldmap.ts';
 import { drawText } from '../lib/engine/text.ts';
 
 export interface Screen {
@@ -273,7 +274,7 @@ export class ExploreScreen implements Screen {
     else if (is(a, 'journal')) g.push(new QuestScreen(g));
     else if (is(a, 'save')) g.saveGame();
     else if (is(a, 'load')) { if (!g.loadGame()) g.say('No save to load.'); }
-    else if (is(a, 'map')) g.push(new MessageScreen(`${w.map.name}\n\nBand: levels ${w.map.def.band?.join('-') ?? '?'}.\nSteps taken: ${w.state.steps}.\n\n${w.almanac()}`));
+    else if (is(a, 'map')) g.push(new WorldMapScreen());
     else if (/^n[1-6]$/.test(a)) { g.selected = Number(a[1]) - 1; g.push(new SheetScreen(g.selected)); }
     if (!res) return;
     if (res.kind === 'blocked') { g.say(res.reason); return; }
