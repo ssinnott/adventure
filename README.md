@@ -10,6 +10,9 @@ dependencies, and nothing compiled to disk during development.
   that takes the party to level 10, and how the code is laid out.
 - [docs/STORY.md](docs/STORY.md) — the main quest told as a story, the company's own chronicle of
   it: how the five acts of DESIGN.md §9 should feel.
+- [docs/MONSTERS.md](docs/MONSTERS.md) — what the company fights down the road, area by area: the
+  five kinds of monster, what each area's monsters carry of the story, the numbers they start from,
+  and what the combat resolver has yet to learn.
 - [docs/EXPANSION.md](docs/EXPANSION.md) — how the rest of Caldera gets built: the decisions v1
   waits on, the checks every map, monster and quest must pass, how the work splits so sessions do
   not collide, and the order of work.
