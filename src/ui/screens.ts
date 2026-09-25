@@ -1,14 +1,15 @@
 // Modal screens over the exploration frame: messages, choices, the character sheet, the spell
-// picker, and the town services (inn, temple, shop, guild, trainer).
+// picker, and the town services (inn, temple, shop, guild, trainer) with the visit that frames them.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
-import { drawText, lineHeight } from '../lib/engine/text.ts';
-import { panel, paragraph, menu } from './draw.ts';
-import { LAYOUT, drawPartyCards } from './frame.ts';
+import { drawText, lineHeight, measureText } from '../lib/engine/text.ts';
+import { panel, paragraph, menu, wrap, columnMenu, optionParts, fit, columnLabelWidth } from './draw.ts';
+import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame } from './frame.ts';
 import { drawPortraitLarge } from './portraits.ts';
-import { BRASS, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
-import type { Feature } from '../game/map.ts';
+import { drawInterior } from './interior.ts';
+import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
+import type { Feature, Interior } from '../game/map.ts';
 import { item, ITEMS } from '../game/items.ts';
 import { spell, spellsFor } from '../game/spells.ts';
 import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, MAX_LEVEL } from '../game/party.ts';
@@ -17,24 +18,98 @@ import type { Character } from '../game/party.ts';
 
 const BOX = { x: 40, y: 40, w: 560, h: 220 };
 
+// ---- a visit to a business ----
+
+/**
+ * Inside a business. Game.visit pushes this under the service's first menu, and it paints the
+ * business's interior over the viewport for as long as any of that service's menus are open above
+ * it. They find it in the stack and lay themselves out in the side panel (where the automap is,
+ * as in combat), so the room stays in view. It is never the top screen for long: the moment the
+ * last menu closes, Game.update closes the visit.
+ */
+export class InteriorScreen implements Screen {
+  readonly overlay = true;
+  /** What the game had said when the party came in: the room's log shows only what is said inside. */
+  private readonly from: number;
+  constructor(g: Game, readonly at: { x: number; y: number }, readonly interior: Interior) { this.from = g.said; }
+  /** Never reached with a menu open, and closed before the next step without one. */
+  update(): void {}
+  /** The visit is over: out of the business, and out of its doorway into the street. */
+  close(g: Game): void {
+    g.pop();
+    g.leave(this.at);
+  }
+  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+    drawInterior(ctx, this.interior, LAYOUT.view, g.world.daylight, frame);
+    const n = Math.min(g.said - this.from, g.log.length);
+    drawLog(ctx, n > 0 ? g.log.slice(-n) : []);
+    drawViewportFrame(ctx);
+  }
+}
+
+/** Whether the party is inside a business, where messages and menus take the side panel. */
+function visiting(g: Game): boolean { return g.screens.some((s) => s instanceof InteriorScreen); }
+
+const SIDE = LAYOUT.map, PAD = 8, TEXT_W = SIDE.w - PAD * 2, HINT_Y = SIDE.y + SIDE.h - PAD - 7;
+
+/** The side panel and its title; returns the y the body starts at. */
+function sidePanel(ctx: CanvasRenderingContext2D, title: string): number {
+  panel(ctx, SIDE.x, SIDE.y, SIDE.w, SIDE.h);
+  return title ? paragraph(ctx, title, SIDE.x + PAD, SIDE.y + PAD, TEXT_W, { color: BRASS }) + 4 : SIDE.y + PAD;
+}
+function sideTitleH(title: string): number { return title ? wrap(title, TEXT_W).length * lineHeight(1) + 4 : 0; }
+function sideHint(ctx: CanvasRenderingContext2D, hint: string): void {
+  drawText(ctx, hint, SIDE.x + SIDE.w - PAD, HINT_Y, { size: 1, color: TEXT_DIM, align: 'right' });
+}
+
 export class MessageScreen implements Screen {
   readonly overlay = true;
+  /** In the side panel a long message is read a page at a time. */
+  private page = 0;
   constructor(private text: string, private then?: () => void, private title = '') {}
   update(g: Game, a: Action | null): void {
+    if (is(a, 'interact') && visiting(g) && this.page < this.pages().length - 1) { this.page++; return; }
     if (is(a, 'interact', 'cancel')) { g.pop(); this.then?.(); }
   }
   render(g: Game, ctx: CanvasRenderingContext2D): void {
+    if (visiting(g)) { this.renderSide(ctx); return; }
     panel(ctx, BOX.x, BOX.y, BOX.w, BOX.h);
     let y = BOX.y + 10;
     if (this.title) { drawText(ctx, this.title, BOX.x + 12, y, { size: 1, color: BRASS }); y += 14; }
     paragraph(ctx, this.text, BOX.x + 12, y, BOX.w - 24, { color: TEXT, maxLines: 14 });
     drawText(ctx, 'SPACE', BOX.x + BOX.w - 12, BOX.y + BOX.h - 12, { size: 1, color: TEXT_DIM, align: 'right' });
   }
+  /**
+   * The text in pages that fit the side panel under the title. A paragraph (one speaker, in a
+   * tavern) moves whole to the next page rather than breaking, unless it is longer than a page.
+   */
+  private pages(): string[][] {
+    const per = Math.max(1, Math.floor((HINT_Y - 4 - SIDE.y - PAD - sideTitleH(this.title)) / lineHeight(1)));
+    const out: string[][] = [];
+    let cur: string[] = [];
+    for (const para of this.text.split('\n\n')) {
+      const lines = wrap(para, TEXT_W);
+      if (cur.length && cur.length + 1 + lines.length > per) { out.push(cur); cur = []; }
+      if (cur.length) cur.push('');
+      for (const l of lines) { if (cur.length === per) { out.push(cur); cur = []; } cur.push(l); }
+    }
+    if (cur.length) out.push(cur);
+    return out.length ? out : [[]];
+  }
+  private renderSide(ctx: CanvasRenderingContext2D): void {
+    const y = sidePanel(ctx, this.title);
+    const pages = this.pages(), at = Math.min(this.page, pages.length - 1);
+    pages[at].forEach((l, i) => drawText(ctx, l, SIDE.x + PAD, y + i * lineHeight(1), { size: 1, color: TEXT }));
+    if (pages.length > 1) drawText(ctx, `${at + 1}/${pages.length}`, SIDE.x + PAD, HINT_Y, { size: 1, color: TEXT_DIM });
+    sideHint(ctx, at < pages.length - 1 ? 'SPACE: MORE' : 'SPACE');
+  }
 }
 
 export class ChoiceScreen implements Screen {
   readonly overlay = true;
   sel = 0;
+  /** The first option in view when the list is longer than the side panel. */
+  private top = 0;
   constructor(private text: string, private options: string[], private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
   update(g: Game, a: Action | null): void {
     if (!a) return;
@@ -45,12 +120,47 @@ export class ChoiceScreen implements Screen {
     else if (/^n[1-9]$/.test(a)) { const i = Number(a[1]) - 1; if (i < this.options.length && !this.disabled[i]) { g.pop(); this.then(i); } }
   }
   render(g: Game, ctx: CanvasRenderingContext2D): void {
+    if (visiting(g)) { this.renderSide(ctx); return; }
     const h = Math.min(300, 40 + this.options.length * 11 + 40);
     panel(ctx, BOX.x, BOX.y, BOX.w, h);
     let y = BOX.y + 10;
     if (this.title) { drawText(ctx, this.title, BOX.x + 12, y, { size: 1, color: BRASS }); y += 14; }
     y = paragraph(ctx, this.text, BOX.x + 12, y, BOX.w - 24, { color: TEXT, maxLines: 6 }) + 6;
     menu(ctx, this.options, BOX.x + 12, y, this.sel, { disabled: this.disabled });
+  }
+  /**
+   * The narrow layout: the prompt, a rule, then the options in columns, scrolling when there are
+   * more than fit. Under them, the selected option's note, or its label in full where it was cut.
+   */
+  private renderSide(ctx: CanvasRenderingContext2D): void {
+    const x = SIDE.x + PAD;
+    let y = sidePanel(ctx, this.title);
+    y = paragraph(ctx, this.text, x, y, TEXT_W, { color: TEXT, maxLines: 7 }) + 3;
+    ctx.fillStyle = BRASS_DARK; ctx.fillRect(x, y, TEXT_W, 1);
+    y += 5;
+    const lh = lineHeight(1) + 1, n = this.options.length;
+    const noteOf = (i: number, scrolls: boolean): string => {
+      const { label, value, note } = optionParts(this.options[i]);
+      const cut = measureText(label) > columnLabelWidth(TEXT_W, value, scrolls);
+      return cut && note ? `${label}. ${note}` : cut ? label : note;
+    };
+    // Room for two lines of note is kept under the list if any option will want it, judged at the
+    // widths the list will have with that room taken.
+    const rowsIn = (noteH: number): number => Math.max(1, Math.floor((HINT_Y - 4 - noteH - y) / lh));
+    const NOTE_H = lineHeight(1) * 2 + 4, scrollsWithNotes = n > rowsIn(NOTE_H);
+    const noteH = this.options.some((_, i) => noteOf(i, scrollsWithNotes) !== '') ? NOTE_H : 0;
+    const rows = rowsIn(noteH);
+    if (this.sel < this.top) this.top = this.sel;
+    if (this.sel >= this.top + rows) this.top = this.sel - rows + 1;
+    this.top = Math.max(0, Math.min(this.top, n - rows));
+    columnMenu(ctx, this.options, x, y, TEXT_W, this.sel, this.top, rows, { disabled: this.disabled });
+    const note = noteOf(this.sel, n > rows);
+    if (note) {
+      // Two lines at most: the second takes the rest, cut to fit.
+      const lines = wrap(note, TEXT_W), shown = lines.length > 2 ? [lines[0], fit(lines.slice(1).join(' '), TEXT_W)] : lines;
+      shown.forEach((l, i) => drawText(ctx, l, x, HINT_Y - 4 - noteH + 2 + i * lineHeight(1), { size: 1, color: TEXT_DIM }));
+    }
+    sideHint(ctx, 'ESC LEAVE');
   }
 }
 
@@ -216,7 +326,7 @@ function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {
 
 function temple(g: Game, f: Extract<Feature, { kind: 'temple' }>): Screen {
   const priceOf = (c: Character): number => hasCondition(c, 'dead') ? 100 * c.level : hasCondition(c, 'stoned') ? 80 * c.level : c.conditions.length ? 25 : 0;
-  const names = g.party.members.map((m) => `${m.name}: ${m.conditions.length ? m.conditions.join(', ') : 'well'}${priceOf(m) ? ` (${priceOf(m)} gold)` : ''}`);
+  const names = g.party.members.map((m) => `${m.name}: ${m.conditions.length ? m.conditions.join(', ') : 'well'}\t${priceOf(m) ? `${priceOf(m)}g` : ''}`);
   return new ChoiceScreen(`The Lanterns keep the chapel lit day and night. "Who needs the light?" (${g.party.gold} gold.)`,
     [...names, 'Donate 10 gold', 'Leave'], (i) => {
       if (i < 0 || i === names.length + 1) return;
@@ -240,7 +350,7 @@ function shop(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 }
 
 function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
-  const names = f.stock.map((id) => `${item(id).name}  ${item(id).price}g${describe(id)}`);
+  const names = f.stock.map((id) => `${item(id).name}\t${item(id).price}g\t${describe(id)}`);
   const s: ChoiceScreen = new ChoiceScreen(`What will it be? (${g.party.gold} gold.)`, [...names, 'Done'], (i) => {
     if (i < 0 || i === names.length) return;
     const id = f.stock[i], d = item(id);
@@ -255,8 +365,8 @@ function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 
 function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   const entries: { id: string; owner: string[]; label: string }[] = [];
-  for (const id of g.party.bag) entries.push({ id, owner: g.party.bag, label: `${item(id).name} (bag)  ${sellPrice(id)}g` });
-  for (const m of g.party.members) for (const id of m.pack) entries.push({ id, owner: m.pack, label: `${item(id).name} (${m.name})  ${sellPrice(id)}g` });
+  for (const id of g.party.bag) entries.push({ id, owner: g.party.bag, label: `${item(id).name} (bag)\t${sellPrice(id)}g` });
+  for (const m of g.party.members) for (const id of m.pack) entries.push({ id, owner: m.pack, label: `${item(id).name} (${m.name})\t${sellPrice(id)}g` });
   if (!entries.length) return new MessageScreen('"You have nothing I want."', undefined, f.name);
   return new ChoiceScreen('"Let me see it."', [...entries.map((e) => e.label), 'Done'], (i) => {
     if (i < 0 || i === entries.length) return;
@@ -273,11 +383,11 @@ function sellPrice(id: string): number { return Math.floor(item(id).price / 2); 
 
 function describe(id: string): string {
   const d = ITEMS[id];
-  if (d.slot === 'weapon') return `  ${d.dice}d${d.sides}${d.bonus ? '+' + d.bonus : ''}${d.ranged ? ' ranged' : ''}${d.twoHanded ? ' 2h' : ''}`;
-  if (d.ac) return `  AC+${d.ac}`;
-  if (d.use?.heal) return `  heals ${d.use.heal}`;
-  if (d.use?.sp) return `  ${d.use.sp} SP`;
-  if (d.use?.food) return `  ${d.use.food} food`;
+  if (d.slot === 'weapon') return `${d.dice}d${d.sides}${d.bonus ? '+' + d.bonus : ''}${d.ranged ? ' ranged' : ''}${d.twoHanded ? ' 2h' : ''}`;
+  if (d.ac) return `AC+${d.ac}`;
+  if (d.use?.heal) return `heals ${d.use.heal}`;
+  if (d.use?.sp) return `${d.use.sp} SP`;
+  if (d.use?.food) return `${d.use.food} food`;
   return '';
 }
 
@@ -299,7 +409,7 @@ function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
     for (const sp of spellsFor(list, f.maxTier ?? 2)) if (!m.spells.includes(sp.id)) offers.push({ who: i, id: sp.id, price: spellPrice(sp.level) });
   }
   if (!offers.length) return new MessageScreen('"We have taught you all we can for now. Come back when you have grown."', undefined, f.name);
-  return new ChoiceScreen(`"What would you learn?" (${g.party.gold} gold.)`, [...offers.map((o) => `${g.party.members[o.who].name}: ${spell(o.id).name}  ${o.price}g`), 'Leave'], (i) => {
+  return new ChoiceScreen(`"What would you learn?" (${g.party.gold} gold.)`, [...offers.map((o) => `${g.party.members[o.who].name}: ${spell(o.id).name}\t${o.price}g\t${spell(o.id).text}`), 'Leave'], (i) => {
     if (i < 0 || i === offers.length) return;
     const o = offers[i];
     if (g.party.gold < o.price) { g.say('Not enough gold.'); g.push(guild(g, f)); return; }
@@ -318,7 +428,7 @@ export function trainPrice(c: Character): number { return c.level < 5 ? c.level 
 function trainer(g: Game, f: Extract<Feature, { kind: 'trainer' }>): Screen {
   const cost = trainPrice;
   const can = g.party.members.map((c) => c.level < f.maxLevel && canTrain(c) && !isDown(c));
-  const names = g.party.members.map((c, i) => `${c.name}  L${c.level}  ${can[i] ? `train (${cost(c)}g)` : c.level >= f.maxLevel ? 'beyond me' : `needs ${xpForLevel(c.level + 1) - c.xp} xp`}`);
+  const names = g.party.members.map((c, i) => `${c.name}  L${c.level}\t${can[i] ? `train ${cost(c)}g` : c.level >= f.maxLevel ? 'beyond me' : `needs ${xpForLevel(c.level + 1) - c.xp} xp`}`);
   return new ChoiceScreen(`"${f.name}. I train to level ${f.maxLevel}. Who is ready?" (${g.party.gold} gold.)`, [...names, 'Leave'], (i) => {
     if (i < 0 || i === names.length) return;
     const c = g.party.members[i];

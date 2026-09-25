@@ -10,6 +10,12 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
   (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
   when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
   (the contract and the hand-in), a well, a sign.
+- **Businesses:** stepping into a business's doorway goes inside. The viewport shows its own painted
+  room (see Art) while its menus sit in the right-hand panel, where the automap is, as combat's do:
+  columns with the price flush right, a note under the list (an item's dice, a spell's effect),
+  scrolling for a long stock, a tavern's rumours a page at a time. The log over the room shows only
+  what was said inside. Leaving (the last menu closed) steps the party back into the street, facing
+  the door.
 - **The Shelf** (outdoor, 32×32): road, woods, hills, marsh, the coast, eight roaming or lurking
   monster groups with respawn timers, the Ashcombe farm.
 - **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
@@ -175,6 +181,17 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
   two bands of distant hills that turn with the party. The static scene is cached per world state
   and monsters are drawn over it each frame with a line-of-sight check.
+- `ui/interior.ts` and `ui/interiors/` paint the twelve businesses' interiors, one per business
+  (`interior` on the map feature names it): the Hearthlight's common room round its fire and the
+  Green Man's under a carved face of leaves; the Chapel's stained-glass apse and the Chapterhouse's
+  grove; the Provisioner's pigeonholes and the Armoury's forge; the Guildhall's map of Caldera and
+  the Lantern Hall's copy of the Grove Stone; the Drillyard inside Harrow's wall and the Elder's
+  ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak. No people: the
+  rooms are backdrops. `kit.ts` has the walls, floors, windows and light, `props.ts` the furniture
+  and goods, one module per trade the scenes. A scene is painted once into an offscreen canvas and
+  multiplied by a light map (the ambient for the hour plus a pool round every lamp, fire and
+  window it put down), so the corners fall dark on their own; flames, glows and drifting motes are
+  drawn over it every frame. Windows and the two yards follow the clock.
 - The Xeen pass: saturated palette with no distance fog outdoors; per-cell wall dressing chosen by
   hash (torch sconces with flames animated over the cached scene, banners in the map's colour,
   cobwebs, cracks, damp streaks, iron rings, barred grates, carved glyph panels; on houses a shop
@@ -222,8 +239,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | | |
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
-| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, no entry vanishes when an item leaves the party, and the quests walk through end to end with each change announced once and the Lost Expedition left open; the calendar's months, seasons, new year and ordinals, and days that lengthen and shorten; the weather is a pure function of its seed, and three years of it in each region bring rain in every season and at every strength, autumn fogs, snow only below freezing and never in summer, far more snow over the pass, deep snow lying there much of the winter, and wet spells that last hours; the log's hysteresis and wording; a new game opens fair; reading the weather draws nothing from the gameplay rng; fog and downpours cut sight (not underground, and Light does not cut fog), deep snow slows a step, archers shoot worse in a downpour and casters do not; the inn waits for winter light; towns and dungeons share their region; an old save without a weather seed loads |
-| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, talks to Vask and opens the quest log, paints the Shelf in a downpour and a fight in it and Thornmark under falling snow, and asserts every screen painted with no page error and the log reported the quest and the weather; also unions every pair of sprite part kinds and asserts none of them leaves a hole; and paints a view from every open cell of the cellar and of Harrow over two backdrops and asserts the backdrop never shows through a crack between walls, nor at the edges of the view beside the party |
+| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, every doorway business has an interior of its own, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass, Town Portal, the stairs, leaving a business into the street; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; a save round-trips and re-applies door changes; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, no entry vanishes when an item leaves the party, and the quests walk through end to end with each change announced once and the Lost Expedition left open; the calendar's months, seasons, new year and ordinals, and days that lengthen and shorten; the weather is a pure function of its seed, and three years of it in each region bring rain in every season and at every strength, autumn fogs, snow only below freezing and never in summer, far more snow over the pass, deep snow lying there much of the winter, and wet spells that last hours; the log's hysteresis and wording; a new game opens fair; reading the weather draws nothing from the gameplay rng; fog and downpours cut sight (not underground, and Light does not cut fog), deep snow slows a step, archers shoot worse in a downpour and casters do not; the inn waits for winter light; towns and dungeons share their region; an old save without a weather seed loads |
+| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, walks into the Hearthlight and out again, paints all twelve interiors by day and by night, talks to Vask and opens the quest log, paints the Shelf in a downpour and a fight in it and Thornmark under falling snow, and asserts every screen painted with no page error and the log reported the quest and the weather; also unions every pair of sprite part kinds and asserts none of them leaves a hole; and paints a view from every open cell of the cellar and of Harrow over two backdrops and asserts the backdrop never shows through a crack between walls, nor at the edges of the view beside the party |
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing. Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -233,6 +250,8 @@ daylight (or night) with that sky in the current region, e.g.
 `node tools/gallery.ts out.png [--only kinds] [--family wolf] [--scale 2] [--frames 6] [--flash] [--tone 0.6]`
 renders every monster (or one family) at the combat size with the viewport sizes underneath, or
 as a strip of idle frames ending in the hit flash, for judging an art pass.
+`node tools/interiors.ts out.png [--only hearthlight_inn,split_oak] [--scale 2] [--hour 21]` renders
+the businesses' interiors as the viewport shows them, at an hour of the day.
 
 ## Code map
 
@@ -248,7 +267,8 @@ as a strip of idle frames ending in the hit flash, for judging an art pass.
 | `game/game.ts` | `Game` (screen stack, save/load, interactions) and `ExploreScreen` |
 | `ui/viewport.ts` | the depth-layered first-person compositor, the sky, and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap, party cards, log, purse |
-| `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer |
+| `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
+| `ui/interior.ts`, `ui/interiors/*.ts` | the businesses' interiors: the painting kit, the props, one module per trade |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/quests.ts` | the quest log screen, and `questPage`, its pure page layout |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
