@@ -68,13 +68,13 @@ Nothing checks any of these, so the next session that does not know them will br
 `content/` and code never holds a monster's hit points; the monster, item and spell tables are in
 `src/game/`. Pillar 1 says every region is open from the first hour and difficulty is geographic,
 not gated by quest flags, and Act 2's five stones go in any order; the atlas has one road of levels
-whose roads open on quest flags, and the pass to Thornmark already works that way.
+whose roads open on quest flags, and the pass to Thornmark already works that way. §2.2 settles it.
 
 ---
 
-## 2. Two decisions for the owner
+## 2. Two decisions
 
-### 2.1 How much of the atlas is v1
+### 2.1 How much of the atlas is v1 (open)
 
 At the density the owner has approved outdoors (about 1.2 features and 1.5 groups per 100 open
 squares), the rest of the atlas is about 1,000 more features and 1,300 more monster groups before
@@ -88,6 +88,7 @@ rules out filling it with generated land.
 | (c) Cores only | the cores, joined by travel from town to town (a coach, a boat) that costs gold and days; unbuilt land turned to real mountain, cliff or sea | about three zone maps per area | one continuous land, walked |
 
 Under (b) the order is the cores, then the country along the roads between them, then the rest.
+With one quest down one road (§2.2), that is the quest's own order: the road it walks comes first.
 Land not built yet stays void, so the game is playable and honest at every step. Coaches and boats
 are worth building under (b) as well: they let an area's core be played before the country between
 it and the last area is built, they are Might and Magic VI's stables, and they spend the clock
@@ -95,13 +96,54 @@ it and the last area is built, they are Might and Magic VI's stables, and they s
 
 Whichever is chosen, DESIGN.md §4's scale table and §12's tiers are rewritten to say so.
 
-### 2.2 The road or the open world
+### 2.2 One road, lightly held (decided)
 
-If the atlas's road holds, each area is balanced against the one before it, and areas are built in
-order. If pillar 1 holds, each area stands alone at its band and can be built alongside its
-neighbours, and the ways between areas close only for geography (a ship, a mountaineer), never for
-a flag. The plan below works either way; the curve (§5.2), and how many areas can be in flight at
-once, depend on the answer.
+One road, and one quest down it. A single long quest runs from level 1 to the level cap and leads
+the company along the road of levels, area by area. Nothing on the road is locked: the ways between
+areas are open from the first hour, and what turns a company back is the monsters. An area beyond
+the party is too hard, not out of reach. That keeps pillar 1 (every region open, difficulty
+geographic, never a quest flag), and takes the atlas's order as the order the quest leads in, not an
+order the map enforces.
+
+What changes:
+
+- The pass to Thornmark stops being a flag gate (today it waits on `q_ashcombe_done` and
+  `q_greywater_done`). Hale's checkpoint warns; Thornmark's monsters decide.
+- The atlas's planned ways that open only after a later step (the coast road after Thornmark, the
+  east road after the Tide Stone) are open from the start.
+- Skills and boats open shortcuts and secrets off the road, which keeps pillar 2's skills that open
+  the map, but never the road itself. Where the road crosses water there is a crossing to pay for.
+- A story beat may still wait on the quest (the core's door opens for the company that restored the
+  stones); a way between areas never does.
+- A step can be taken early. A company that reaches an area before the quest sends it can do
+  everything there, and the journal reads true in either order.
+
+What it asks of the numbers: if the monsters are the gate, a company well under an area's band must
+lose its fights, and a company at the band must win them. Measured with `tools/gate.ts` (the premade
+company trained to each level in its starting gear, 100 seeded fights for each group, played by a
+bot that mends, casts its best damage spell or strikes, and never flees):
+
+| Fights won (%), each from full health | Band | L1 | L2 | L3 | L4 | L5 |
+|---|---|---|---|---|---|---|
+| The Shelf | 1–5 | 100 | 100 | 100 | 100 | 100 |
+| The Drowned Shrine (Greywater's second level) | 3–5 | 66 | 95 | 100 | 100 | 100 |
+| Thornmark | 5–10 | 16 | 62 | 92 | 100 | 100 |
+| The Grove Roots | 6–9 | 15 | 49 | 79 | 100 | 100 |
+| The Cut Stone | 8–10 | 2 | 10 | 37 | 95 | 100 |
+| The Warden of the Cut and its two elders | 8–10 | 0 | 0 | 0 | 62 | 97 |
+
+From level 6 up every fight on every map is won. Walked in a row with no rest, Thornmark's road from
+the pass to the Grove leaves 13% of level 3 companies standing after the third fight, and 78% of
+level 4 companies after the fourth.
+
+So today a company wins nine fights in ten two to four levels under the band on the sign (Thornmark
+at level 3, the Grove Roots and the Cut Stone at 4), the gap widens down the road, and past the
+floor every fight is won: the difficulty plain the anti-pillars warn of. The flag on the pass is
+what holds the road now. The bot is weaker than a player (it never sleeps, blesses or drinks, and
+has no gear past the start), and single groups at full health are kinder than play; the picture
+holds either way, and the owner's play is the test of it. Taking the flag off the pass therefore
+means making Thornmark hard enough to be the gate itself, and the gate check (§5.2) is how each
+area is held to that.
 
 ---
 
@@ -127,8 +169,10 @@ once, depend on the answer.
 - Its zone maps, towns and dungeons pass the contract (§5).
 - Its towns sell and teach what its band needs (rest, cures, the band's gear, the band's spell
   tier, training to the top of the band), each business with an interior of its own.
-- Its step on the road, its Stone where it has one, is walked end to end in a test, and its quests
-  are in the log with every key real.
+- Its chapter of the one quest (§5.8) is walked end to end in a test, and its side quests are in the
+  log, with every key real.
+- Its gate holds (§5.2): a company at its band's floor gets through, and one well under it turns
+  back.
 - Its monsters are drawn, each def a drawing of its own, each through the silhouette checks, each
   placed.
 - Its xp and gold sit on the curve (§5.2).
@@ -163,10 +207,12 @@ Added:
 - **Encounter shape.** At most 12 monsters to a group; respawns in the range in use, 720 to 2880
   minutes.
 
-### 5.2 The curve
+### 5.2 The curve, and the gate
 
 The pinned "level 2, level 4, level 7" checks give way to one curve in `content/progression.ts`:
-for each area, its band, and the xp and gold a clear should give. Checked for each area:
+for each area, its band, and the xp and gold a clear should give. Since the monsters are the only
+gate on the road (§2.2), the curve says how hard each area is as well as what it pays. Checked for
+each area:
 
 - a clear, and at most two sweeps of what respawns, reaches the next area's band floor;
 - a clear's gold pays for training the party through the band;
@@ -176,6 +222,20 @@ for each area, its band, and the xp and gold a clear should give. Checked for ea
 Its first rows are the slice's own figures from SLICE.md: level 2 from the Shelf and the cellar,
 level 4 with Greywater, a little over level 7 from one clear of everything, two more sweeps of the
 Grove to 10, and about 8,400 gold for six members from 5 to 10.
+
+The gate, checked with the bot of `tools/gate.ts` (starting thresholds, set against the owner's own
+play in the pilot):
+
+- **At the floor, through.** A company at the band's floor wins nine in ten of the area's fights,
+  and walks its road, resting where the road lets it (an inn, a camp), eight times in ten.
+- **Well under, back.** Two levels under the floor, it wins no more than one fight in four.
+- **The boss asks.** The area's boss is won about half the time at the floor, and nearly always two
+  levels above it.
+- **A warning, not a wall.** The first groups past a border are the area's gentlest, and the
+  crossing line tells a company under the band how the land feels to it, so the party learns it is
+  early from a fight it can survive or run from, not from a wipe.
+- **The bot improves with the game.** It learns to sleep, bless, drink and flee as the party can,
+  and to wear the gear the curve says a company has at each level, so the check keeps up.
 
 ### 5.3 Density: the map is the reward
 
@@ -248,6 +308,25 @@ The owner reviews the sheet on the pull request, and plays the area once it is w
 bot, reading a `REVIEW.md` that holds the parts of this contract that need judgment (the voice, the
 secret found and never told, restraint), reads the text and the code.
 
+### 5.8 The one quest
+
+- **Joined from chapters.** Each area writes its chapter of the quest (`areas/<area>/chapter.ts`:
+  its entries and its goals), and `content/index.ts` joins them in road order into one quest, with
+  the goals furthest along first, as the log tries them. No area edits another's chapter, so one
+  quest is not one file that everyone edits.
+- **The road's own test.** The quest's walkthrough plays the chapters in order with a company at
+  the curve's level for each step, and checks at every step that the goal names a place that
+  exists, that the company's level sits in that place's band, and that the step can be finished.
+  Each area's walkthrough is its chapter; the whole is the chain.
+- **Early is fine.** It is played again with an area taken before the quest sends the company
+  there, and the log must still read true.
+- **Today's quests.** The Quiet Farm and The Grove Stone become its first chapters. The Greywater
+  Ledger can stay a quest of its own, on the road but off the spine, now that the pass does not wait
+  on it; The Lost Expedition stays a subplot. The log is worked out from the save and never stored
+  in it, so re-cutting it is safe for old saves.
+- **A long journal reads by chapter.** A quest from level 1 to the cap makes a long journal, so the
+  log pages it by chapter (§7).
+
 ---
 
 ## 6. Layout
@@ -256,13 +335,15 @@ Where the content moves to, in one refactor, in a single pull request while noth
 
 ```
 src/content/
-  index.ts                  the areas in road order, and the merged tables the systems read
+  index.ts                  the areas in road order; the merged tables; the one quest, joined
   progression.ts            the curve (§5.2)
   shipped.json              what saves may refer to (§5.5)
   areas/<area>/
     index.ts                the area: maps, monsters, items, quests, climate, palette, what is new
     maps/*.ts               its zone maps, towns and dungeons
-    monsters.ts, items.ts, quests.ts
+    monsters.ts, items.ts
+    chapter.ts              its chapter of the one quest (§5.8)
+    quests.ts               its side quests
     walkthrough.ts          its end-to-end test
 src/ui/monsters/<family>.ts             each exports its sprite kinds
 src/ui/interiors/<area>/<business>.ts   a scene to a file; the trade helpers shared
@@ -286,15 +367,21 @@ docs/areas/<area>.md                    the area's brief, and what was built
 
 | Area | Band | Systems first |
 |---|---|---|
-| The Shelf, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; for M1, the Wardens' and Lanterns' lines to rank 3, Standing, hirelings |
-| Saltreach | 10–12 | the level cap past 10, and promotion I (the next spell tier lands on it); salt flats and tidal ground; the Salt Compact; Swimmer |
-| Wrackholm | 12–14 | boats |
+| The Shelf, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; the flag off the pass, with Thornmark retuned to be the gate (§9); for M1, the Wardens' and Lanterns' lines to rank 3, Standing, hirelings |
+| Saltreach | 10–12 | the level cap past 10, and promotion I (the next spell tier lands on it); salt flats and tidal ground; the Salt Compact |
+| Wrackholm | 12–14 | a crossing from the mainland, open from the start |
 | Sunderwood | 14–16 | chasm, crystal and dead wood as terrain; the Rift generator |
 | The Kilns | 16–18 | ash; Kiln-script and Linguist |
 | Cairnmoor, Rimewater | 18–22 | heather, ice and lying snow as terrain; the rest of what they are, which DESIGN.md has yet to say |
-| The Whitespine | 22–24 | Mountaineer as a skill; cliffs and peaks |
-| Ashfall, the Glasswold | 24–28 | the ship; volcano, lava fields, glass and dunes |
+| The Whitespine | 22–24 | cliffs and peaks, with the road through them |
+| Ashfall, the Glasswold | 24–28 | the crossing by ship, open from the start; volcano, lava fields, glass and dunes |
 | Hearth Isle, the Underdeep | 28–32 | promotion II; the Underdeep's look; the endings |
+
+The skills that open the map (Swimmer, Mountaineer, Navigator and the rest) come when there are
+shortcuts and secrets for them; none is needed to follow the road. Along the whole road the systems
+lane also owes the danger made legible (the band said on crossing, and in how a group is
+described), the log paging the one quest by chapter, and a bot that plays as well as the party can
+(§5.2).
 
 Rifts are where DESIGN.md itself asks for generated content: eight 12×12 templates, seeded, a pure
 function of state and seed. Build the generator early, in the systems lane, and let generation scale
@@ -365,19 +452,25 @@ the rest run in parallel.
 3. The layout refactor (§6), alone.
 4. The contract's checks (§5), each run first against today's content; what they find is fixed, or
    waived by the owner (the Shelf's two unhinted secrets; the seven three-line texts, if the limit
-   is set at DESIGN.md's two).
-5. The scaffold and contact-sheet tools.
-6. DESIGN.md §4, §12 and §13 brought into line with the decisions in §2.
+   is set at DESIGN.md's two). The gate check is the exception: it fails from Thornmark on (§2.2),
+   and that is the pilot's work, not a waiver.
+5. The scaffold and contact-sheet tools; the bot of `tools/gate.ts` made into the gate check.
+6. DESIGN.md §4, §9, §12 and §13 brought into line with §2: the scale, the one road and its one
+   quest, the tiers, content as TypeScript.
 
-**Phase 1: the pilot, finishing M1.** Build the rest of the Shelf and Thornmark through the new
-pipeline: first one zone map of the Downs west of the Shelf (band 2–5, where the land runs on and
-the world now ends), then the Deepthorn. Meanwhile, in the systems lane, what M1
-still lacks: the Wardens' and Lanterns' lines to rank 3, Standing, hirelings, and the terrain the
-pilot asks for. Measure how long a zone map takes and what the owner still finds by hand, and tune
-the thresholds.
+**Phase 1: the pilot, finishing M1.** First the road that exists, made to follow §2.2: the flag
+comes off the pass and Hale's checkpoint becomes a warning; Thornmark, the Grove Roots and the Cut
+Stone are retuned until the gate check holds at their floors; the tests that pin the flag gate (the
+movement and outdoors suites, and the smoke test's walk through the pass) follow it; The Quiet Farm
+and The Grove Stone become the one quest's first chapters. Then the rest of the Shelf and Thornmark
+through the new pipeline: one zone map of the Downs west of the Shelf (band 2–5, where the land runs
+on and the world now ends), then the Deepthorn. Meanwhile, in the systems lane, what M1 still lacks:
+the Wardens' and Lanterns' lines to rank 3, Standing, hirelings, and the terrain the pilot asks for.
+Measure how long a zone map takes and what the owner still finds by hand, and tune the thresholds.
 
-**Phase 2: the systems for Act 2**, one at a time: the level cap and promotion I, the skills that
-open the map, the Rift generator, the next regions' climates, boats.
+**Phase 2: the systems for Act 2**, one at a time: the level cap and promotion I, the Rift
+generator, the next regions' climates, the crossings, and the danger made legible; the skills that
+open shortcuts as the areas that have them come up.
 
 **Phase 3: Act 2, area by area** (Saltreach, Wrackholm, Sunderwood, the Kilns, …), no more than two
 in flight, each to its definition of done, with the lanes running in parallel inside each.
@@ -396,6 +489,7 @@ in flight, each to its definition of done, with the lanes running in parallel in
 | `npm run check` | 22 seconds | under 3 minutes: full sweeps of what a pull request touches, the rest sampled or on release |
 | Maps inside the density floor (§5.3) | unchecked | all |
 | Areas on the curve (§5.2) | the slice, pinned | all |
+| Areas whose gate holds (§5.2) | none: fights give way two to four levels under the band | all |
 
 ---
 
@@ -409,4 +503,11 @@ in flight, each to its definition of done, with the lanes running in parallel in
 - **Art is the bottleneck.** Monster families are the costliest content: 150 to 1,264 lines each,
   and the art pass took about forty commits. Each area's brief budgets it: two or three new
   families, and variants on the frames that exist.
+- **A gate that is a wall, or a speed bump.** Too hard, and the border kills a company that wandered
+  over it; too soft, and it is no gate. The check runs both ways, and the first groups past a
+  border are the area's gentlest.
+- **The bot flatters or slanders the party.** A bot that plays worse than people sets the gate too
+  low. Grow its play with the party's, and let the owner's play overrule it.
+- **One quest, one hotspot.** A quest from level 1 to the cap would be a file every area edits; it
+  is joined from chapters instead (§5.8).
 - **Scale creep.** Once §2.1 is decided it is the target; land past it waits in the void.
