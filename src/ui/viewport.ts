@@ -124,7 +124,11 @@ function lineOfSight(map: GameMap, px: number, py: number, f: Facing, d: number,
 
 // ------------------------------------------------------------------ the scene ----
 
-function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect): void {
+/**
+ * The static scene. `backdrop` replaces the sky, ground, ceiling and floor fills behind everything
+ * with one flat colour, so the smoke test can look for it showing through between the walls.
+ */
+export function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, backdrop?: string): void {
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
   const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
@@ -137,7 +141,8 @@ function paintScene(ctx: CanvasRenderingContext2D, world: World, r: ViewRect): v
   ctx.save();
   ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
 
-  if (map.kind === 'dungeon') {
+  if (backdrop) { ctx.fillStyle = backdrop; ctx.fillRect(r.x, r.y, r.w, r.h); }
+  else if (map.kind === 'dungeon') {
     ctx.fillStyle = shade(map.palette.ceiling, 0.7); ctx.fillRect(r.x, r.y, r.w, r.h / 2);
     ctx.fillStyle = shade(map.palette.floor, 0.5); ctx.fillRect(r.x, horizon, r.w, r.h / 2);
   } else {
