@@ -1,5 +1,6 @@
 [
   { "name": "epic", "color": "7057ff", "description": "A parent issue: its sub-issues are the work" },
+  { "name": "approved", "color": "3fb950", "description": "The owner has personally approved it; only the owner's word puts it on" },
   { "name": "needs decision", "color": "fbca04", "description": "Waiting on the owner's call; its Dependencies section says which" },
   { "name": "parked", "color": "cfd3d7", "description": "Deliberately later: not to be picked up until this comes off" },
   { "name": "lane: systems", "color": "1d76db", "description": "src/game, src/ui outside the art modules, the save format, the registries" },
