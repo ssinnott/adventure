@@ -76,7 +76,7 @@ export const TRAITS: Record<TraitId, TraitDef> = {
 };
 
 export const RACES: Record<RaceId, RaceDef> = {
-  human:    { id: 'human', name: 'Human', mods: {}, blurb: 'Balanced. Standing rises fastest.' },
+  human:    { id: 'human', name: 'Human', mods: {}, blurb: 'Balanced.' },
   dwarf:    { id: 'dwarf', name: 'Dwarf', mods: { might: 2, endurance: 3, speed: -1, personality: -1 }, resist: ['poisoned'], blurb: 'Hardy. Resists poison. Reads Kiln-script.' },
   elf:      { id: 'elf', name: 'Elf', mods: { intellect: 3, accuracy: 2, might: -2, endurance: -1 }, perceptive: true, blurb: 'Keen. Innate perception.' },
   gnome:    { id: 'gnome', name: 'Gnome', mods: { luck: 3, personality: 1, might: -2 }, perceptive: true, blurb: 'Lucky. Finds secrets sooner.' },

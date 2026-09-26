@@ -264,7 +264,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Stubbed or absent
 
-- No guilds but the two Lantern spell guilds, so no guild quests; no Standing.
+- No guilds but the two Lantern spell guilds, so no guild quests.
 - No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.

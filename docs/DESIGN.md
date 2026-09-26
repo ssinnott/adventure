@@ -72,7 +72,7 @@ and the scope tiers. Systems get their own docs once the vertical slice exists.
 | Oblivion gates spawning across the world | **Rifts** open near dead Wardstones and spread. Repeatable, template-built mini-dungeons that stop when the region's Wardstone is restored. |
 | Emperor dies in the prologue; find the heir | The Queen dies in the prologue; **the succession is a subplot**, not the main plot. |
 | Fighters/Mages/Thieves/Dark Brotherhood questlines | **Guilds** (§8): a company can join any or all of them, and each is a hub of side quests. |
-| Fame / Infamy, faction disposition | **Standing** per faction and region, gating trainers, prices, and who will talk to you. Whether it survives without rival factions is open (§8). |
+| Fame / Infamy, faction disposition | *Not taken.* Standing, our first take on it, went with the Charters (§8). Something like it may come back, but it will look different. |
 | NPC schedules, shop hours | Towns have a clock. The smith is not at the forge at 3am. |
 | Skill-by-use | *Not taken directly.* We use level-up points plus trainer mastery, but a third prestige's quest acts like "use it to earn it" (§5). |
 | Lockpicking / persuasion minigames | Tiny, optional, skill-skippable. A 10-second grid puzzle, not a wheel. |
@@ -148,7 +148,7 @@ The **Hearth Isle** in the centre is reachable only by ship.
 
 | Race | Lean | Hook |
 |---|---|---|
-| Human | Balanced | Fastest Standing gains. |
+| Human | Balanced | None yet: it was the fastest Standing gains, and Standing is gone (§8). |
 | Dwarf | STR, END | Resists poison; can read Kiln-script. |
 | Elf | INT, ACC | Innate Perception; Thornmark trusts them. |
 | Gnome | LCK, PER | Finds secrets a square earlier; cheaper training. |
@@ -182,7 +182,7 @@ quest reveals where the trainer is. The titles, trainers, perks, levels and ques
 ### Stats, skills, mastery
 
 - Seven stats: Might, Intellect, Personality, Endurance, Accuracy, Speed, Luck.
-- **Secondary skills** bought from trainers, most gated by Standing:
+- **Secondary skills** bought from trainers:
   *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
   Perception, Arms Master, Spirit Sense, Navigator.*
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
@@ -253,8 +253,11 @@ progression, which is the prestiges' (§5).
 The guilds replace the four rival Charters this section first described (the Wardens, the
 Lanterns, the Cartographers' Guild and the Salt Compact), each a questline and the promotion path
 for a pair of classes. Which guilds there are and where, whether they are the spell guilds of §7,
-what joining costs and the quests pay, what becomes of Standing and of the Charters' storylines,
-and what gives a company its start are open, in #21.
+what joining costs and the quests pay, what becomes of the Charters' storylines, and what gives a
+company its start are open, in #21.
+
+Standing, a company's name with each faction and region, went with the Charters. Something like it
+may come back, but it will look different.
 
 ---
 
