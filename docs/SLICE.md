@@ -269,8 +269,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Hirelings, promotions, the succession, the Salt Compact, the Lost Expedition past its first
-  journal: design only.
+- Promotions, the succession, the Salt Compact, the Lost Expedition past its first journal: design
+  only.
 
 ## Checks
 

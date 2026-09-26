@@ -419,7 +419,7 @@ docs/areas/<area>.md                    the area's brief, and what was built
 
 | Area | Band | Systems first |
 |---|---|---|
-| The Shelf, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; the flag off the pass, with Thornmark retuned to be the gate (§9); for M1, the Wardens' and Lanterns' lines to rank 3, Standing, hirelings |
+| The Shelf, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; the flag off the pass, with Thornmark retuned to be the gate (§9); for M1, the Wardens' and Lanterns' lines to rank 3, and Standing |
 | Saltreach | 10–12 | the level cap past 10, and promotion I (the next spell tier lands on it); salt flats and tidal ground; the Salt Compact |
 | Wrackholm | 12–14 | a crossing from the mainland, open from the start |
 | Sunderwood | 14–16 | chasm, crystal and dead wood as terrain; the Rift generator |
@@ -519,7 +519,7 @@ and The Grove Stone become the one quest's first chapters; the three hand-ins ta
 the first meeting. Then the rest of the Shelf and Thornmark
 through the new pipeline: one zone map of the Downs west of the Shelf (band 2–5, where the land runs
 on and the world now ends), then the Deepthorn. Meanwhile, in the systems lane, what M1 still lacks:
-the Wardens' and Lanterns' lines to rank 3, Standing, hirelings, and the terrain the pilot asks for.
+the Wardens' and Lanterns' lines to rank 3, Standing, and the terrain the pilot asks for.
 Measure how long a zone map takes and what the owner still finds by hand, and tune the thresholds.
 
 **Phase 2: the systems for Acts II to IV**, one at a time: the level cap and promotion I, the Rift

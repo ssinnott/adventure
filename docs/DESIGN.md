@@ -49,7 +49,6 @@ and the scope tiers. Systems get their own docs once the vertical slice exists.
 | Six-character party, first-person grid, 90° turns | The feel the player remembers. Non-negotiable. |
 | Open world with geographic difficulty | The series' most-loved trait across all entries. |
 | Secondary skills (Mountaineer, Pathfinder, Swimmer, Cartographer…) | Skills that *open the map* are the best skills. |
-| Hirelings / temporary party members | Cheap variety, story hooks, and a use for gold. |
 | Spell guilds, spell purchase, per-class spell lists | Makes towns matter and gold meaningful. |
 | Day/night, food, conditions (poison, disease, stone…) | Attrition that makes town trips a decision. |
 | Class promotion quests (VII) | Direction inside an open world. |
@@ -63,6 +62,7 @@ and the scope tiers. Systems get their own docs once the vertical slice exists.
 - Real-time toggles and free movement (VI–IX). Wrong branch of the family for this game.
 - Playable dragons and recruited-only parties (VIII). Fun once; hollow as a foundation.
 - Always-online DRM and a small world (X).
+- Hirelings and temporary party members (VI–VIII). The party is the six you made (§5).
 
 ### From Oblivion (take, adapted to the grid)
 
@@ -139,8 +139,7 @@ The **Hearth Isle** in the centre is reachable only by ship.
 
 ## 5. The party
 
-**Six slots.** Created at the start, or hired later. Two extra **hireling** slots for NPCs with
-fixed builds and their own reasons for tagging along.
+**Six slots,** filled at the start. There are no hirelings: the party is the six you made.
 
 ### Races
 
@@ -532,7 +531,7 @@ is the Cartographer Promotion II.
 | Tier | Contents | Purpose |
 |---|---|---|
 | **M0 — Vertical slice** | Harrow, one Shelf outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
-| **M1 — Act I** | The Shelf and Thornmark complete, the Downs and the Deepthorn with them; Wardens and Lanterns Charter lines to rank 3; the Grove Stone dungeon; hirelings. | First real playthrough. |
+| **M1 — Act I** | The Shelf and Thornmark complete, the Downs and the Deepthorn with them; Wardens and Lanterns Charter lines to rank 3; the Grove Stone dungeon. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to Ashfall and their Wardstones; all four Charters; promotions I; the Underdeep entrances; the ship. | The open world. |
 | **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, promotions II, Master trainers. | Content complete. |
 | **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9). | Optional by design: the game is whole without it. |
