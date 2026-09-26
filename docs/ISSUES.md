@@ -122,8 +122,13 @@ drift, so say what is there as well, and it can be found again.
 
 ## 6. Filing one
 
+**Nothing is filed without the owner's approval.** A session that finds work to file puts it to the
+owner first and files it once they agree; it never files on its own.
+
 1. Search the open issues first; one may already hold it.
-2. Start from the template for its type, or from §5 through the API.
-3. Set the type, the lanes, and `parked` or `needs decision` if either applies.
-4. Make it a sub-issue of its epic.
-5. Write its Dependencies, and the other end of each (§4).
+2. Put it to the owner: its title, its epic, and what it waits on and blocks. File it only once
+   they agree.
+3. Start from the template for its type, or from §5 through the API.
+4. Set the type, the lanes, and `parked` or `needs decision` if either applies.
+5. Make it a sub-issue of its epic.
+6. Write its Dependencies, and the other end of each (§4).
