@@ -357,6 +357,7 @@ export const ATLAS: Atlas = {
     { name: 'Giants', icon: 'label', at: [300, 296], planned: true },
     { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right', planned: true }, // over the Giants' Stair: the Knight's third prestige
     { name: 'Spine Summit', icon: 'camp', at: [300, 328], label: 'right', planned: true }, // the Monk's third prestige
+    { name: 'Rook\'s Nest', icon: 'cave', at: [286, 230], label: 'right', planned: true }, // on Sheer Point, over the Hand's causeway: the Thief's third prestige
     // X. Ashfall.
     { name: 'Cinderport', icon: 'port', at: [206, 277], label: 'right', planned: true },
     { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none', planned: true },
@@ -364,9 +365,11 @@ export const ATLAS: Atlas = {
     { name: 'Ember Stone', icon: 'stone', at: [176, 342], label: 'below', planned: true },
     { name: 'Hot Springs', icon: 'springs', at: [240, 300], label: 'below', planned: true },
     { name: 'Meridian Camp', icon: 'cave', at: [226, 334], label: 'below', planned: true }, // the vents' mouth: the Lost Expedition's last camp lies below
+    { name: 'Warlord\'s Forge', icon: 'forge', at: [230, 330], label: 'right', planned: true }, // by the vents' mouth: the Barbarian's third prestige
     // XI. The Glasswold.
     { name: 'Buried Tower', icon: 'obelisk', at: [84, 280], label: 'below', planned: true },
     { name: 'Wold Riders', icon: 'camp', at: [120, 250], label: 'below', planned: true },
+    { name: 'The Eyrie', icon: 'camp', at: [132, 289], label: 'below', planned: true }, // a scout's lookout on a mesa: the Ranger's third prestige
     // XII. The middle of the world, and the names of waters and walls.
     { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none', planned: true },
     { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right', planned: true }, // on Hearth Isle: the Cleric's third prestige
