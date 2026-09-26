@@ -1,0 +1,11 @@
+[
+  { "name": "epic", "color": "7057ff", "description": "A parent issue: its sub-issues are the work" },
+  { "name": "needs decision", "color": "fbca04", "description": "Waiting on the owner's call; its Dependencies section says which" },
+  { "name": "parked", "color": "cfd3d7", "description": "Deliberately later: not to be picked up until this comes off" },
+  { "name": "lane: systems", "color": "1d76db", "description": "src/game, src/ui outside the art modules, the save format, the registries" },
+  { "name": "lane: area", "color": "0e8a16", "description": "An area's maps, monsters, items and quests, and its doc" },
+  { "name": "lane: creatures", "color": "d93f0b", "description": "The monster drawings: src/ui/monsters" },
+  { "name": "lane: interiors", "color": "d876e3", "description": "The businesses' rooms: src/ui/interiors" },
+  { "name": "lane: quality", "color": "006b75", "description": "tools/, CI and the content contract (EXPANSION §5)" },
+  { "name": "lane: design", "color": "c5def5", "description": "Settling questions in docs/: DESIGN, STORY, MONSTERS, EXPANSION" }
+]

@@ -1,0 +1,37 @@
+# Keep the repository's labels in step with .github/labels.json (docs/ISSUES.md §2).
+#
+# Creates a label the file has and GitHub doesn't, and sets the colour and description of one that
+# has drifted. It never deletes: a label that is not in the file is left alone.
+name: Labels
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/labels.json, .github/workflows/labels.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const want = JSON.parse(fs.readFileSync('.github/labels.json', 'utf8'));
+            const have = await github.paginate(github.rest.issues.listLabelsForRepo, { ...context.repo, per_page: 100 });
+            for (const l of want) {
+              const cur = have.find((h) => h.name.toLowerCase() === l.name.toLowerCase());
+              if (!cur) {
+                await github.rest.issues.createLabel({ ...context.repo, name: l.name, color: l.color, description: l.description });
+                core.info(`created ${l.name}`);
+              } else if (cur.name !== l.name || cur.color.toLowerCase() !== l.color || (cur.description ?? '') !== l.description) {
+                await github.rest.issues.updateLabel({ ...context.repo, name: cur.name, new_name: l.name, color: l.color, description: l.description });
+                core.info(`updated ${l.name}`);
+              }
+            }

@@ -16,6 +16,8 @@ dependencies, and nothing compiled to disk during development.
 - [docs/EXPANSION.md](docs/EXPANSION.md) — how the rest of Caldera gets built: the decisions v1
   waits on, the checks every map, monster and quest must pass, how the work splits so sessions do
   not collide, and the order of work.
+- [docs/ISSUES.md](docs/ISSUES.md) — how that work is filed: issue types, labels, epics, the
+  Dependencies section every issue carries, and the sections of an issue.
 
 ## Running
 
