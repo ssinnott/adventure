@@ -314,16 +314,19 @@ export const ATLAS: Atlas = {
     { name: 'Warden Pass', icon: 'gate', map: 'shelf', at: [31.5, 8.6], label: 'none' },
     { name: 'Gullwick', icon: 'village', at: [172, 70], label: 'below', planned: true },
     { name: 'Harrow Light', icon: 'lighthouse', at: [140, 88], label: 'below', planned: true },
-    // II. Thornmark, from its map.
+    { name: 'Captain\'s Farm', icon: 'farm', at: [176, 42], label: 'right', planned: true }, // the Knight's second prestige
+    // II. Thornmark, from its map, and the Deepthorn.
     { name: 'Thornhold', icon: 'hold', map: 'thornmark', at: [23, 3.2], label: 'below' },
     { name: 'Old Tower', icon: 'tower', map: 'thornmark', at: [4.8, 5], label: 'below' },
     { name: 'Barrow', icon: 'barrow', map: 'thornmark', at: [27.8, 8.4], label: 'below' },
     { name: 'The Grove', icon: 'grove', map: 'thornmark', at: [7.5, 28.6], label: 'right' },
+    { name: 'Deepthorn Lodge', icon: 'lodge', at: [278, 112], label: 'below', planned: true }, // the Ranger's second prestige
     // III. Saltreach.
     { name: 'Reedholm', icon: 'village', at: [80, 80], label: 'right', planned: true },
     { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
     { name: 'Tide Stone', icon: 'stone', at: [48, 140], label: 'below', planned: true },
     { name: 'Drowned Temples', icon: 'sunken', at: [56, 170], label: 'below', planned: true },
+    { name: 'Wind Cave', icon: 'cave', at: [104, 76], label: 'right', planned: true }, // in the Ledge's cliffs: the Monk's second prestige
     // IV. Wrackholm.
     { name: 'Smugglers\' Cove', icon: 'cave', at: [154, 170], label: 'left', planned: true },
     { name: 'Tide Ship', icon: 'wreck', at: [182, 188], label: 'right', planned: true },
@@ -338,9 +341,11 @@ export const ATLAS: Atlas = {
     { name: 'Anvil Stone', icon: 'stone', at: [468, 142], label: 'below', planned: true },
     { name: 'Lava Tubes', icon: 'cave', at: [478, 178], label: 'below', planned: true },
     { name: 'Kilnhaven', icon: 'port', at: [391, 162], label: 'right', planned: true },
+    { name: 'Iron Crag', icon: 'cave', at: [432, 44], label: 'below', planned: true }, // the Barbarian's second prestige
     // VII. Cairnmoor.
     { name: 'Stone Ring', icon: 'ring', at: [462, 214], label: 'below', planned: true },
     { name: 'The Cairns', icon: 'barrow', at: [430, 240], label: 'below', planned: true },
+    { name: 'Watcher\'s Hut', icon: 'lodge', at: [466, 208], label: 'right', planned: true }, // the Sorcerer's second prestige
     // VIII. Rimewater.
     { name: 'Rime Lodge', icon: 'lodge', at: [410, 262], label: 'right', planned: true },
     { name: 'Ice Caves', icon: 'cave', at: [452, 326], label: 'below', planned: true },
@@ -348,6 +353,8 @@ export const ATLAS: Atlas = {
     { name: 'Monastery', icon: 'monastery', at: [322, 342], label: 'right', planned: true },
     { name: 'Peak Stone', icon: 'stone', at: [292, 318], label: 'below', planned: true },
     { name: 'Giants', icon: 'label', at: [300, 296], planned: true },
+    { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right', planned: true }, // over the Giants' Stair: the Knight's third prestige
+    { name: 'Spine Summit', icon: 'camp', at: [300, 328], label: 'right', planned: true }, // the Monk's third prestige
     // X. Ashfall.
     { name: 'Cinderport', icon: 'port', at: [206, 277], label: 'right', planned: true },
     { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none', planned: true },
@@ -359,6 +366,7 @@ export const ATLAS: Atlas = {
     { name: 'Wold Riders', icon: 'camp', at: [120, 250], label: 'below', planned: true },
     // XII. The middle of the world, and the names of waters and walls.
     { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none', planned: true },
+    { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right', planned: true }, // on Hearth Isle: the Cleric's third prestige
     { name: 'The Inland Sea', icon: 'water', at: [214, 230], size: 2 },
     { name: 'Harrow Bay', icon: 'water', at: [216, 84] },
     { name: 'Salt Gulf', icon: 'water', at: [124, 150] },
