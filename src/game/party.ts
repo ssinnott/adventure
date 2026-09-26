@@ -76,7 +76,7 @@ export const TRAITS: Record<TraitId, TraitDef> = {
 };
 
 export const RACES: Record<RaceId, RaceDef> = {
-  human:    { id: 'human', name: 'Human', mods: {}, blurb: 'Balanced. Standing rises fastest.' },
+  human:    { id: 'human', name: 'Human', mods: {}, blurb: 'Balanced.' },
   dwarf:    { id: 'dwarf', name: 'Dwarf', mods: { might: 2, endurance: 3, speed: -1, personality: -1 }, resist: ['poisoned'], blurb: 'Hardy. Resists poison. Reads Kiln-script.' },
   elf:      { id: 'elf', name: 'Elf', mods: { intellect: 3, accuracy: 2, might: -2, endurance: -1 }, perceptive: true, blurb: 'Keen. Innate perception.' },
   gnome:    { id: 'gnome', name: 'Gnome', mods: { luck: 3, personality: 1, might: -2 }, perceptive: true, blurb: 'Lucky. Finds secrets sooner.' },
@@ -245,10 +245,13 @@ export function rest(c: Character): void {
   c.conditions = c.conditions.filter((k) => k === 'poisoned' || k === 'diseased' || k === 'cursed');
 }
 
-/** Level up as many times as the xp allows, up to MAX_LEVEL; returns how many levels were gained. */
-export function levelUp(c: Character, rng: RngInstance): number {
+/**
+ * Level up as many times as the xp allows, up to `cap` (MAX_LEVEL in play; tools that look past today's
+ * cap pass their own); returns how many levels were gained.
+ */
+export function levelUp(c: Character, rng: RngInstance, cap = MAX_LEVEL): number {
   let gained = 0;
-  while (c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1)) {
+  while (c.level < cap && c.xp >= xpForLevel(c.level + 1)) {
     c.level++; gained++;
     const cd = CLASSES[c.cls];
     const hp = Math.max(1, rng.int(1, cd.hpDie) + bonus(c.stats.endurance));

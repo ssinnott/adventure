@@ -130,7 +130,7 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
 ## The road to level 10
 
 The slice's content ends around level 4. The Thornmark extension carries a party to the level
-cap, which is 10 until promotions exist:
+cap, which is 10 until the road past it is built:
 
 - **Progression.** `MAX_LEVEL` is 10; `levelUp` stops there and the sheet says so. Five spell
   tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`). Trainers charge 25 a level to 5 and
@@ -264,13 +264,13 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Stubbed or absent
 
-- Only one Charter (Lanterns) has any presence; no Standing.
-- No promotions, so no sixth spell tier; no Master trainers; no secondary skills yet beyond race
+- No guilds but the two Lantern spell guilds, so no guild quests.
+- No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Hirelings, promotions, the succession, the Salt Compact, the Lost Expedition past its first
-  journal: design only.
+- Prestiges, guilds, the succession, the Salt Compact, the Lost Expedition past its first journal:
+  design only.
 
 ## Checks
 
@@ -292,6 +292,14 @@ renders every monster (or one family) at the combat size with the viewport sizes
 as a strip of idle frames ending in the hit flash, for judging an art pass.
 `node tools/interiors.ts out.png [--only hearthlight_inn,split_oak] [--scale 2] [--hour 21]` renders
 the businesses' interiors as the viewport shows them, at an hour of the day.
+`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits]`
+fights the premade company at a level against standard encounters of the test monster, or a map's
+own groups, one after another until it must rest, and says how many it managed against the six or
+seven an encounter at its level should allow (docs/MONSTERS.md §4.4). `--spell-cap` tries a world
+where damage spells stop growing at that level, `--gear-grows` one where the company's gear keeps
+growing past Thornmark's, `--level-bonus` one where every member gains a point of damage and of
+armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
+from 11 and again from 29, and sneak attacks grow.
 
 ## Code map
 

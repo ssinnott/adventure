@@ -73,3 +73,12 @@ export function spell(id: string): SpellDef {
 export function spellsFor(list: SpellList, maxLevel: number): SpellDef[] {
   return Object.values(SPELLS).filter((s) => s.list === list && s.level <= maxLevel).sort((a, b) => a.level - b.level);
 }
+
+/**
+ * How many dice a damage spell rolls for a caster of `level`: its own, and for the spells that grow
+ * with their caster, that many again for every two levels. They grow without end in play; a tool
+ * trying a ceiling passes the level they stop growing at (tools/harness.ts).
+ */
+export function spellDice(sp: SpellDef, level: number, grows = Infinity): number {
+  return (sp.dice ?? 1) * (sp.perLevel ? Math.max(1, Math.ceil(Math.min(level, grows) / 2)) : 1);
+}

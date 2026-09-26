@@ -287,6 +287,7 @@ export const ATLAS: Atlas = {
     { id: 'drowned_temples', name: 'Drowned Temples', kind: 'dungeon', planned: true, band: [10, 12], at: [56, 160] },
     { id: 'smugglers_cove', name: 'Smugglers\' Cove', kind: 'dungeon', planned: true, band: [12, 14], at: [150, 158] },
     { id: 'tide_ship', name: 'The Tide Ship', kind: 'dungeon', planned: true, band: [12, 14], at: [208, 192] },
+    { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
     { id: 'lantern_watch', name: 'Lantern Watch', kind: 'town', planned: true, band: [14, 16], at: [372, 36] },
     { id: 'the_sunder', name: 'The Sunder', kind: 'dungeon', planned: true, band: [14, 16], at: [320, 62] },
     { id: 'anvilhall', name: 'Anvilhall', kind: 'town', planned: true, band: [16, 18], at: [452, 70] },
@@ -301,6 +302,7 @@ export const ATLAS: Atlas = {
     { id: 'cinderport', name: 'Cinderport', kind: 'town', planned: true, band: [24, 26], at: [206, 288] },
     { id: 'old_cinder', name: 'Old Cinder', kind: 'dungeon', planned: true, band: [24, 26], at: [190, 324] },
     { id: 'ember_stone', name: 'The Ember Stone', kind: 'dungeon', planned: true, band: [24, 26], at: [176, 348] },
+    { id: 'meridian_camp', name: 'Meridian Camp', kind: 'dungeon', planned: true, band: [26, 28], at: [226, 340] }, // down Fire Mountain's vents
     { id: 'buried_tower', name: 'Buried Tower', kind: 'dungeon', planned: true, band: [26, 28], at: [84, 286] },
     { id: 'underdeep', name: 'The Underdeep', kind: 'deep', planned: true, order: 13, band: [30, 31], at: [216, 168] },
     { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
@@ -314,16 +316,19 @@ export const ATLAS: Atlas = {
     { name: 'Warden Pass', icon: 'gate', map: 'shelf', at: [31.5, 8.6], label: 'none' },
     { name: 'Gullwick', icon: 'village', at: [172, 70], label: 'below', planned: true },
     { name: 'Harrow Light', icon: 'lighthouse', at: [140, 88], label: 'below', planned: true },
-    // II. Thornmark, from its map.
+    { name: 'Captain\'s Farm', icon: 'farm', at: [176, 42], label: 'right', planned: true }, // the Knight's second prestige
+    // II. Thornmark, from its map, and the Deepthorn.
     { name: 'Thornhold', icon: 'hold', map: 'thornmark', at: [23, 3.2], label: 'below' },
     { name: 'Old Tower', icon: 'tower', map: 'thornmark', at: [4.8, 5], label: 'below' },
     { name: 'Barrow', icon: 'barrow', map: 'thornmark', at: [27.8, 8.4], label: 'below' },
     { name: 'The Grove', icon: 'grove', map: 'thornmark', at: [7.5, 28.6], label: 'right' },
+    { name: 'Deepthorn Lodge', icon: 'lodge', at: [278, 112], label: 'below', planned: true }, // the Ranger's second prestige
     // III. Saltreach.
     { name: 'Reedholm', icon: 'village', at: [80, 80], label: 'right', planned: true },
     { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
     { name: 'Tide Stone', icon: 'stone', at: [48, 140], label: 'below', planned: true },
     { name: 'Drowned Temples', icon: 'sunken', at: [56, 170], label: 'below', planned: true },
+    { name: 'Wind Cave', icon: 'cave', at: [104, 76], label: 'right', planned: true }, // in the Ledge's cliffs: the Monk's second prestige
     // IV. Wrackholm.
     { name: 'Smugglers\' Cove', icon: 'cave', at: [154, 170], label: 'left', planned: true },
     { name: 'Tide Ship', icon: 'wreck', at: [182, 188], label: 'right', planned: true },
@@ -338,9 +343,11 @@ export const ATLAS: Atlas = {
     { name: 'Anvil Stone', icon: 'stone', at: [468, 142], label: 'below', planned: true },
     { name: 'Lava Tubes', icon: 'cave', at: [478, 178], label: 'below', planned: true },
     { name: 'Kilnhaven', icon: 'port', at: [391, 162], label: 'right', planned: true },
+    { name: 'Iron Crag', icon: 'cave', at: [432, 44], label: 'below', planned: true }, // the Barbarian's second prestige
     // VII. Cairnmoor.
     { name: 'Stone Ring', icon: 'ring', at: [462, 214], label: 'below', planned: true },
     { name: 'The Cairns', icon: 'barrow', at: [430, 240], label: 'below', planned: true },
+    { name: 'Watcher\'s Hut', icon: 'lodge', at: [466, 208], label: 'right', planned: true }, // the Sorcerer's second prestige
     // VIII. Rimewater.
     { name: 'Rime Lodge', icon: 'lodge', at: [410, 262], label: 'right', planned: true },
     { name: 'Ice Caves', icon: 'cave', at: [452, 326], label: 'below', planned: true },
@@ -348,17 +355,24 @@ export const ATLAS: Atlas = {
     { name: 'Monastery', icon: 'monastery', at: [322, 342], label: 'right', planned: true },
     { name: 'Peak Stone', icon: 'stone', at: [292, 318], label: 'below', planned: true },
     { name: 'Giants', icon: 'label', at: [300, 296], planned: true },
+    { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right', planned: true }, // over the Giants' Stair: the Knight's third prestige
+    { name: 'Spine Summit', icon: 'camp', at: [300, 328], label: 'right', planned: true }, // the Monk's third prestige
+    { name: 'Rook\'s Nest', icon: 'cave', at: [286, 230], label: 'right', planned: true }, // on Sheer Point, over the Hand's causeway: the Thief's third prestige
     // X. Ashfall.
     { name: 'Cinderport', icon: 'port', at: [206, 277], label: 'right', planned: true },
     { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none', planned: true },
     { name: 'Old Cinder', icon: 'ruin', at: [190, 318], label: 'below', planned: true },
     { name: 'Ember Stone', icon: 'stone', at: [176, 342], label: 'below', planned: true },
     { name: 'Hot Springs', icon: 'springs', at: [240, 300], label: 'below', planned: true },
+    { name: 'Meridian Camp', icon: 'cave', at: [226, 334], label: 'below', planned: true }, // the vents' mouth: the Lost Expedition's last camp lies below
+    { name: 'Warlord\'s Forge', icon: 'forge', at: [230, 330], label: 'right', planned: true }, // by the vents' mouth: the Barbarian's third prestige
     // XI. The Glasswold.
     { name: 'Buried Tower', icon: 'obelisk', at: [84, 280], label: 'below', planned: true },
     { name: 'Wold Riders', icon: 'camp', at: [120, 250], label: 'below', planned: true },
+    { name: 'The Eyrie', icon: 'camp', at: [132, 289], label: 'below', planned: true }, // a scout's lookout on a mesa: the Ranger's third prestige
     // XII. The middle of the world, and the names of waters and walls.
     { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none', planned: true },
+    { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right', planned: true }, // on Hearth Isle: the Cleric's third prestige
     { name: 'The Inland Sea', icon: 'water', at: [214, 230], size: 2 },
     { name: 'Harrow Bay', icon: 'water', at: [216, 84] },
     { name: 'Salt Gulf', icon: 'water', at: [124, 150] },
@@ -374,6 +388,7 @@ export const ATLAS: Atlas = {
     { from: 'saltmouth', to: 'wrackholm', kind: 'sea', b: [152, 172], note: 'smuggler boat' },
     { from: 'wrackholm', to: 'smugglers_cove', kind: 'enter', a: [154, 170] },
     { from: 'wrackholm', to: 'tide_ship', kind: 'enter', a: [182, 188] },
+    { from: 'tide_ship', to: 'dead_drop', kind: 'stairs' },
     { from: 'thornmark', to: 'deepthorn', kind: 'road', a: [240, 60.5], b: [242, 66] },
     { from: 'thornmark', to: 'eaves', kind: 'road', opens: 4, a: [263.5, 39.5], b: [272, 39.5], note: 'the east road', noteAt: [290, 30] },
     { from: 'eaves', to: 'lanternwood', kind: 'road', a: [330, 56], b: [346, 56], note: 'rope bridge' },
@@ -396,6 +411,7 @@ export const ATLAS: Atlas = {
     { from: 'kilnhaven', to: 'cinderport', kind: 'sea', opens: 9, via: [[352, 162], [316, 168], [298, 198], [264, 220], [240, 254]], note: 'Compact ship', noteAt: [300, 210] },
     { from: 'cindercoast', to: 'cinderport', kind: 'enter', a: [206, 277] },
     { from: 'firemount', to: 'old_cinder', kind: 'enter', a: [190, 318] },
+    { from: 'firemount', to: 'meridian_camp', kind: 'enter', a: [226, 334] },
     { from: 'emberwaste', to: 'ember_stone', kind: 'enter', a: [176, 342] },
     { from: 'emberwaste', to: 'wold', kind: 'road', a: [156, 312], b: [144, 300] },
     { from: 'theglass', to: 'buried_tower', kind: 'enter', a: [84, 280] },

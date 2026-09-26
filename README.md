@@ -8,6 +8,14 @@ dependencies, and nothing compiled to disk during development.
   plot and three subplots, scope tiers and technical notes.
 - [docs/SLICE.md](docs/SLICE.md) — what the vertical slice (M0) contains, the Thornmark extension
   that takes the party to level 10, and how the code is laid out.
+- [docs/STORY.md](docs/STORY.md) — the main quest told as a story, the company's own chronicle of
+  it: how the five acts of DESIGN.md §9 should feel.
+- [docs/MONSTERS.md](docs/MONSTERS.md) — what the company fights down the road, area by area: the
+  five kinds of monster, what each area's monsters carry of the story, the numbers they start from,
+  and what the combat resolver has yet to learn.
+- [docs/EXPANSION.md](docs/EXPANSION.md) — how the rest of Caldera gets built: the decisions v1
+  waits on, the checks every map, monster and quest must pass, how the work splits so sessions do
+  not collide, and the order of work.
 
 ## Running
 
@@ -46,7 +54,7 @@ src/ui/            viewport, frame, sprites, screens, combat screen, quest log, 
 src/ui/monsters/   the enemy drawings, one module per family, dispatched by sprites.ts
 src/ui/interiors/  the businesses' interiors, one module per trade, dispatched by interior.ts
 src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
-tools/             dev server, bundler, tests, smoke test, screenshot, monster and interior galleries, world map export
+tools/             dev server, bundler, tests, smoke test, screenshot, monster and interior galleries, world map export, the level gates' fight simulation, the combat harness and its test monster
 ```
 
 ## The engine

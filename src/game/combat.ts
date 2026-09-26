@@ -4,7 +4,7 @@
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { monster } from './monsters.ts';
 import type { MonsterDef } from './monsters.ts';
-import { spell } from './spells.ts';
+import { spell, spellDice } from './spells.ts';
 import type { SpellDef } from './spells.ts';
 import { item } from './items.ts';
 import {
@@ -50,13 +50,27 @@ export interface CombatState {
   defending: boolean[];
   /** To-hit lost by bows, slings and crossbows on both sides: the weather (see weather.ts). */
   rangedPenalty: number;
+  /** The level damage spells stop growing at: none in play (see `spellDice`). */
+  spellsGrowTo?: number;
+  /** What a tool trying new powers gives each member: none in play (see `Edge`). */
+  edge?: (c: Character, s: CombatState) => Edge;
   log: string[];
   outcome: Outcome;
   loot: Loot | null;
 }
 
-/** Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line for the log. */
-export interface CombatOpts { rangedPenalty?: number; note?: string; }
+/**
+ * Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line
+ * for the log. A tool trying a ceiling on spells may also say where they stop growing, and one trying
+ * new powers for the company what each member gains.
+ */
+export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; edge?: (c: Character, s: CombatState) => Edge; }
+
+/**
+ * What a tool trying new powers gives a member in a fight (tools/harness.ts): blows a turn with a
+ * weapon, damage added to each, and armour. Play gives none: one blow, nothing added.
+ */
+export interface Edge { blows: number; damage: number; ac: number }
 
 export const FRONT_ROW = 3;
 /** What the buffs are worth while they last. */
@@ -81,14 +95,17 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
   return n;
 }
 
-export function startCombat(party: Party, groups: { id: string; monsters: string[] }[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
+/** A group names its monsters by id; a tool may hand in defs that no map places (tools/harness.ts). */
+export function startCombat(party: Party, groups: readonly { id: string; monsters: readonly (string | MonsterDef)[] }[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
   const monsters: MonsterInst[] = [];
   groups.forEach((g, gi) => {
-    for (const id of g.monsters) if (monsters.length < 12) monsters.push({ def: monster(id), hp: monster(id).hp, group: gi, conditions: [], flash: 0 });
+    for (const m of g.monsters) if (monsters.length < 12) { const def = typeof m === 'string' ? monster(m) : m; monsters.push({ def, hp: def.hp, group: gi, conditions: [], flash: 0 }); }
   });
   const s: CombatState = {
     monsters, groupIds: groups.map((g) => g.id), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,
+    ...(opts.spellsGrowTo !== undefined ? { spellsGrowTo: opts.spellsGrowTo } : {}),
+    ...(opts.edge ? { edge: opts.edge } : {}),
   };
   s.log.push(describeGroups(s) + ' attack!');
   if (opts.note) s.log.push(opts.note);
@@ -97,9 +114,9 @@ export function startCombat(party: Party, groups: { id: string; monsters: string
 }
 
 export function describeGroups(s: CombatState): string {
-  const counts = new Map<string, number>();
-  for (const m of s.monsters) if (m.hp > 0) counts.set(m.def.id, (counts.get(m.def.id) ?? 0) + 1);
-  return [...counts].map(([id, n]) => n === 1 ? monster(id).name : `${n} ${monster(id).plural}`).join(', ');
+  const counts = new Map<string, { def: MonsterDef; n: number }>();
+  for (const m of s.monsters) if (m.hp > 0) { const c = counts.get(m.def.id); if (c) c.n++; else counts.set(m.def.id, { def: m.def, n: 1 }); }
+  return [...counts.values()].map(({ def, n }) => n === 1 ? def.name : `${n} ${def.plural}`).join(', ');
 }
 
 function newRound(s: CombatState, party: Party, rng: RngInstance): void {
@@ -150,7 +167,8 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   checkOutcome(s, party, rng);
 }
 
-function toHit(bonusValue: number, targetAc: number): number {
+/** The chance a to-hit bonus has against an armour class, for either side. */
+export function toHit(bonusValue: number, targetAc: number): number {
   const p = 0.65 + (bonusValue - (targetAc - 10)) * 0.05;
   return Math.max(0.05, Math.min(0.95, p));
 }
@@ -179,15 +197,19 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
   const c = party.members[t.i];
   switch (action.type) {
     case 'attack': {
-      const m = s.monsters[action.target];
+      let m = s.monsters[action.target];
       if (!m || m.hp <= 0 || !canAttackFromRow(c, t.i)) return false;
-      const w = weaponOf(c);
-      const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party) - (w.ranged ? s.rangedPenalty : 0), m.def.ac));
-      if (hit) {
-        const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m));
-        hurtMonster(s, m, dmg);
-        s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
-      } else s.log.push(`${c.name} misses ${m.def.name}.`);
+      const w = weaponOf(c), edge = s.edge?.(c, s);
+      for (let blow = 0; blow < (edge?.blows ?? 1); blow++) {
+        // A later blow, where a tool gives more than one, falls on the weakest foe still standing.
+        if (m.hp <= 0) { const left = aliveMonsters(s); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
+        const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party) - (w.ranged ? s.rangedPenalty : 0), m.def.ac));
+        if (hit) {
+          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + (edge?.damage ?? 0));
+          hurtMonster(s, m, dmg);
+          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
+        } else s.log.push(`${c.name} misses ${m.def.name}.`);
+      }
       break;
     }
     case 'cast': {
@@ -240,7 +262,7 @@ function hurtMonster(s: CombatState, m: MonsterInst, dmg: number): void {
 }
 
 function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number): void {
-  const dmgOf = () => roll(rng, (sp.dice ?? 1) * (sp.perLevel ? Math.max(1, Math.ceil(c.level / 2)) : 1), sp.sides ?? 4, hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
+  const dmgOf = () => roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
   switch (sp.target) {
     case 'enemy': {
       const m = s.monsters[target];
@@ -257,7 +279,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       if (sp.inflict) {
         let n = 0;
         for (const m of members) if (!m.def.mindless && rng.chance(0.7)) { m.conditions = [sp.inflict]; n++; }
-        s.log.push(`${c.name} casts ${sp.name}: ${n} of the ${monster(m0.def.id).plural} fall ${sp.inflict}.`);
+        s.log.push(`${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} fall ${sp.inflict}.`);
       } else {
         let total = 0, killed = 0;
         for (const m of members) { const d = dmgOf(); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
@@ -315,7 +337,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const pool = m.def.ranged || front.length === 0 ? any : front;
   const pick = rng.pick(pool);
   if (!pick) { s.turn++; checkOutcome(s, party, rng); return true; }
-  const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0);
+  const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0) + (s.edge?.(pick.c, s).ac ?? 0);
   if (rng.chance(toHit(m.def.attack - (m.def.missile ? s.rangedPenalty : 0), ac))) {
     let dmg = roll(rng, m.def.dice, m.def.sides, m.def.bonus);
     if (s.defending[pick.i]) dmg = Math.ceil(dmg / 2);
