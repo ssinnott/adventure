@@ -36,15 +36,15 @@ check's tolerance. It fails about one run in five (#23). As a required check, th
 blocked for nothing, or a habit of running it again until it passes.
 
 **What is missing.** Nothing stands between a branch and main. CI runs only on a push to main, and
-without the smoke test. Seven of the twelve pull requests were merged within half a minute of being
+without the smoke test. Nine of the fourteen pull requests were merged within half a minute of being
 opened.
 
 **Where parallel work collides.** The most-edited files are `docs/SLICE.md` (17 commits),
 `tools/test.ts` (14), `README.md` (14), `tools/smoke.ts` (11), `src/game/monsters.ts` (10) and
 `src/ui/sprites.ts` (10). Adding an area edits `MAP_DEFS`, `MONSTERS`, `ITEMS`, the `MonsterSprite`,
-`Interior` and `RegionId` unions, `SCENES`, `CLIMATES`, the atlas, the quest list, the tests,
-SLICE.md and the README. Four of the last six pull requests needed main merged into them before they
-could land.
+`Interior` and `RegionId` unions, `SCENES`, `FAMILY`, `CLIMATES`, the atlas, the quest list, the
+tests, SLICE.md and the README. Three of the last six pull requests needed main merged into them
+before they could land.
 
 **Tests that pin today's content.** Beside checks that hold for any content (every square
 reachable, every reference real), the suite pins facts about this content: `interiors.length ===
@@ -232,9 +232,9 @@ Added:
   already reached and spending it; every locked door opens. The reachability check today floods
   with a key in hand, so it cannot see this.
 - **Guardians stay dead.** A group that drops a quest item, has a `slainText` or is named by a quest
-  has no `respawn` (DESIGN.md §6).
-- **Encounter shape.** At most 12 monsters to a group; respawns in the range in use, 720 to 2880
-  minutes.
+  has no `respawn` (DESIGN.md §6). Only the last is checked today.
+- **Encounter shape.** Respawns in the range in use, 720 to 2880 minutes. At most 12 monsters to a
+  group is held already: a map with more does not load.
 
 ### 5.2 The curve, and the gate
 
@@ -296,11 +296,13 @@ Walking steps from an open square to the nearest point of interest:
 | Town | 7 | 10 |
 | Dungeon | 7 | 10 |
 
-Points of interest are counted by kind, so a row of bare signs does not pass. Country meets its
-looser floor with wilderness features in the Might and Magic manner, each a feature kind rather than
-new art: a shrine or a fountain that gives a stat or a resistance once, a cairn with a cache, a
-statue with a riddle whose hint lies elsewhere, a camp where the party can rest safely, a hermit
-with a rumour. Each is cheap to place and worth the walk.
+Steps are four-way, walked from every point of interest at once over the squares a party can stand
+on, and a point's own square is 0. Every point counts, but no more than one in four on a map may be
+a sign, so a row of bare signs does not pass (#32). Country meets its looser floor with wilderness
+features in the Might and Magic manner, each a feature kind rather than new art: a shrine or a
+fountain that gives a stat or a resistance once, a cairn with a cache, a statue with a riddle whose
+hint lies elsewhere, a camp where the party can rest safely, a hermit with a rumour. Each is cheap
+to place and worth the walk.
 
 ### 5.4 The pillars, where they can be checked
 
@@ -342,8 +344,8 @@ are all off. Every push to main is deployed, so these are players' saves.
   cellar and Harrow; the rest are swept on release.
 - **Restraint.** The share of wall faces dressed, per kind of map, stays at or under its level after
   #9; a new kind of dressing comes with its rate.
-- **Distinct.** Every business its own interior and every monster def its own sprite kind; both are
-  checked today.
+- **Distinct.** Every business its own interior, which is checked today, and every monster def its
+  own sprite kind, which is not yet (#35).
 
 ### 5.7 What people look at
 
@@ -513,12 +515,13 @@ the rest run in parallel.
 2. CLAUDE.md.
 3. The layout refactor (§6), alone.
 4. The contract's checks (§5), each run first against today's content; what they find is fixed, or
-   waived by the owner (the Shelf's two unhinted secrets; the seven three-line texts, if the limit
-   is set at DESIGN.md's two). The gate check is the exception: it fails from Thornmark on (§2.2),
-   and that is the pilot's work, not a waiver.
-5. The scaffold and contact-sheet tools; the bot of `tools/gate.ts` made into the gate check.
-6. DESIGN.md §4, §9, §12 and §13 brought into line with §2: the scale, the one road and its one
-   quest, the tiers, content as TypeScript.
+   waived by the owner (the Shelf's two unhinted secrets are given hints, #51). The gate check is
+   the exception: its starting thresholds fail from Thornmark on (§2.2), which is the pilot's work,
+   not a waiver, and on the Shelf too, which the pilot settles by retuning or by moving them (#38).
+5. The scaffold and contact-sheet tools, and the hills and farmland the scaffold cuts to (#44); the
+   bot of `tools/gate.ts` made into the gate check.
+6. DESIGN.md §4, §12 and §13 brought into line with §2: the scale, the tiers, content as TypeScript.
+   §9 already follows the one road and its one quest.
 
 **Phase 1: the pilot, finishing M1.** First the road that exists, made to follow §2.2: the flag
 comes off the pass and Hale's checkpoint becomes a warning; Thornmark, the Grove Roots and the Cut
@@ -527,8 +530,8 @@ movement and outdoors suites, and the smoke test's walk through the pass) follow
 and The Grove Stone become the one quest's first chapters; the three hand-ins take their items at
 the first meeting. Then the rest of the Shelf and Thornmark
 through the new pipeline: one zone map of the Downs west of the Shelf (band 2–5, where the land runs
-on and the world now ends), then the Deepthorn. Meanwhile, in the systems lane, what M1 still lacks:
-the first guilds (DESIGN.md §8) and the terrain the pilot asks for.
+on and the world now ends), then the Deepthorn's core. Meanwhile, in the systems lane, what M1 still
+lacks: the first guilds (DESIGN.md §8). The terrain the pilot asks for comes in Phase 0 (#44).
 Measure how long a zone map takes and what the owner still finds by hand, and tune the thresholds.
 
 **Phase 2: the systems for Acts II to IV**, one at a time: the level cap past 10, with the xp

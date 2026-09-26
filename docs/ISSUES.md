@@ -62,8 +62,8 @@ nothing still open under Blocked by, is ready to pick up.
 ## 3. Epics
 
 An epic is an issue whose sub-issues are the work: one for each phase of EXPANSION §9 (#25, #26),
-and one for a body of work that runs across phases, as levels 11–32 do (#18). GitHub shows its
-progress from its sub-issues.
+one for a body of work that runs across phases, as levels 11–32 do (#18), and a last one for the
+finishing touches that nothing else waits on (#54). GitHub shows its progress from its sub-issues.
 
 - **Its Work section lists everything in it,** as a checklist. An item not filed yet is a line of
   words; once filed, it is a sub-issue of the epic and the line is its number.
