@@ -24,7 +24,7 @@ import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
 import { NORTH } from '../src/game/types.ts';
 import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from './testmonster.ts';
-import { measure, days, spent, mustRest, bossFloor, longest, slowest, FIGHTS, REST_AT, WORST, CAP } from './harness.ts';
+import { measure, days, fight, companyAt, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP } from './harness.ts';
 import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
 import type { Season } from '../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
@@ -329,9 +329,14 @@ const suites: Record<string, () => void> = {
     const meteor = spell('meteor'), smite = spell('smite');
     ok(spellDice(meteor, 10) === 10 && spellDice(meteor, 20) === 20 && spellDice(meteor, 20, 10) === 10 && spellDice(smite, 20, 10) === 3, 'Meteor Swarm rolls 2d10 for every two levels, and stops growing only where a tool says');
     ok(startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 10 }).spellsGrowTo === 10, 'a fight has no ceiling on spells unless it is given one');
-    // Fights may run longer as both sides grow, and never to fifteen rounds.
+    // Fights may run longer as both sides grow, and never to the cap; a fight that would is broken off.
     const allowed = Array.from({ length: CAP }, (_, k) => [longest(k + 1), slowest(k + 1)]);
-    ok(longest(1) === 4 && slowest(1) === 6 && allowed.every(([a, b], k) => a <= b && b < 15 && (k === 0 || a >= allowed[k - 1][0])), `a fight's rounds run from ${longest(1)} (${slowest(1)} at most) at level 1 to ${longest(CAP).toFixed(1)} (${slowest(CAP).toFixed(1)}) at ${CAP}`);
+    ok(longest(1) === 4 && slowest(1) === 6 && allowed.every(([a, b], k) => a <= b && b < ROUND_CAP && (k === 0 || a >= allowed[k - 1][0])), `a fight's rounds run from ${longest(1)} (${slowest(1)} at most) at level 1 to ${longest(CAP).toFixed(1)} (${slowest(CAP).toFixed(1)}) at ${CAP}`);
+    const wall = fight(companyAt(1, 36), [testMonster('soldier', 1, 2000, 0.01)], 36);
+    ok(ROUND_CAP === 15 && wall.broken && !wall.won && wall.rounds === ROUND_CAP, `a fight nobody can finish is broken off after ${ROUND_CAP} rounds (${wall.rounds})`);
+    // Six or seven fights between rests to level 10, a fight more every four levels after, and never fifteen.
+    const perRest = Array.from({ length: CAP }, (_, k) => fightsPerRest(k + 1));
+    ok(perRest[0] === 6.5 && perRest[9] === 6.5 && perRest[CAP - 1] === 12 && perRest.every((f, k) => f < 15 && (k === 0 || f >= perRest[k - 1])), `fights between rests run from ${perRest[0]} at level 1 and ${perRest[9]} at 10 to ${perRest[CAP - 1]} at ${CAP}`);
     // Training past today's cap is for tools only.
     const c = defaultParty(makeRng(32)).members[0];
     c.xp = xpForLevel(20); levelUp(c, makeRng(32));
@@ -362,9 +367,12 @@ const suites: Record<string, () => void> = {
     // own level, few of its days ending in a death or a lost fight, and the boss a coin flip from two
     // under. Two brutes at 4 are the worst of it: six rounds a fight is as safe as they get (docs/MONSTERS.md §4.4).
     for (const [r, l, worst] of [['fodder', 2, 2 * WORST], ['brute', 4, 3.5 * WORST], ['soldier', 6, 2 * WORST], ['caster', 10, 2 * WORST]] as const) {
-      const d = days(l, [standardEncounter(r, l)], 60, 5001), bad = d.why.dead + d.why.lost;
-      ok(Math.abs(d.fights - FIGHTS) <= 1 && bad <= worst, `a company of level ${l} fights ${d.fights.toFixed(1)} encounters of ${ROLES[r].group} ${ROLES[r].plural} between rests (six or seven asked), and ${(bad * 100).toFixed(0)}% of its days end in a death or a lost fight (${(worst * 100).toFixed(0)}% at most)`);
+      const d = days(l, [standardEncounter(r, l)], 60, 5001), bad = d.why.dead + d.why.lost + d.why.long;
+      ok(Math.abs(d.fights - fightsPerRest(l)) <= 1 && bad <= worst, `a company of level ${l} fights ${d.fights.toFixed(1)} encounters of ${ROLES[r].group} ${ROLES[r].plural} between rests (${fightsPerRest(l)} asked), and ${(bad * 100).toFixed(0)}% of its days end badly (${(worst * 100).toFixed(0)}% at most)`);
     }
+    // Past 10 the target grows: a company of 24 fights about ten between rests.
+    const late = days(24, [standardEncounter('soldier', 24)], 40, 5001);
+    ok(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`);
     const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
     ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
   },

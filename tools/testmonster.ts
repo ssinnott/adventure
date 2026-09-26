@@ -1,9 +1,9 @@
 // The test monster: one generic monster for each role of docs/MONSTERS.md §4.2, statted at any level
 // from 1 to the road's cap, so that a company of that level can fight six or seven of its standard
-// encounter between rests, its spell points counted with its hit points (§4.4). tools/harness.ts
-// measures that and re-derives HP and DAMAGE below. None of this is content: no map places a test
-// monster, and none has a drawing of its own (each borrows an existing kind, so a gallery can still
-// show one).
+// encounter between rests (more past level 10), its spell points counted with its hit points (§4.4).
+// tools/harness.ts measures that and re-derives HP and DAMAGE below. None of this is content: no map
+// places a test monster, and none has a drawing of its own (each borrows an existing kind, so a
+// gallery can still show one).
 import type { MonsterDef, MonsterSprite } from '../src/game/monsters.ts';
 import { xpForLevel } from '../src/game/party.ts';
 
@@ -52,38 +52,39 @@ export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32] as
 /**
  * The calibration, two factors on each role's shape at each of LEVELS: HP on its hit points, DAMAGE on
  * its damage. A regular role hits as today's monsters do (damage 1, on the line) and has the hit points
- * that let a company of its level fight six or seven of its standard encounter between rests. Where
- * those fights would run too long (four rounds at level 1, a round more every eight levels), hit
- * points hold them there and damage rises instead; where blows that hard end more than one day in ten
- * in a death or a lost fight, fights run up to half as long again to end fewer; where the line itself
- * is too much, both come down together; and no monster has fewer hit points than the one a level
- * under it. The boss takes one factor for both, set so that a company two levels under it wins half
- * the time, as EXPANSION.md §5.2 asks. Written by `node tools/harness.ts --calibrate --write`; do not
- * tune by hand.
+ * that let a company of its level fight its standard encounter six or seven times between rests (a
+ * fight more every four levels past 10, twelve at 32). Where those fights would run too long (four
+ * rounds at level 1, a round more every eight levels), hit points hold them there and damage rises
+ * instead; where the days then end badly more than one in ten (a death, a lost fight, or one broken
+ * off at fifteen rounds), fights run longer and softer or shorter and harder, whichever ends fewer;
+ * where the line itself is too much, both come down together; and no monster has fewer hit points
+ * than the one a level under it. The boss takes one factor for both, set so that a company two levels
+ * under it wins half the time, as EXPANSION.md §5.2 asks. Written by `node tools/harness.ts
+ * --calibrate --write`; do not tune by hand.
  */
 export const HP: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.08, 0.83, 1.4, 1.53, 1.63, 1.83, 2.77, 3.14, 3.17, 3.52, 5.18, 6.2, 7.7, 9, 10.99],
-  skirmisher: [0.83, 1.25, 1.27, 1.47, 1.4, 1.43, 1.54, 2.05, 2.34, 2.33, 2.56, 3.44, 4.01, 4.88, 5.64, 6.75],
-  soldier:    [1.07, 1.45, 1.27, 1.41, 1.35, 1.34, 1.38, 2.09, 2.34, 2.3, 2.71, 3.5, 4.03, 5.04, 6.08, 7.02],
-  archer:     [0.93, 1.59, 1.49, 1.73, 1.64, 1.57, 1.82, 2.37, 2.78, 2.75, 3.3, 4.11, 5.29, 6.27, 7.72, 8.96],
-  caster:     [1.13, 2.16, 1.91, 2.01, 1.85, 1.84, 1.88, 2.61, 2.76, 2.93, 3.3, 3.85, 4.83, 6.12, 6.77, 8.07],
-  controller: [0.98, 1.25, 1.11, 1.28, 1.29, 1.3, 1.34, 2.02, 2.25, 2.3, 2.55, 3.36, 3.95, 4.99, 6.04, 7.1],
-  armoured:   [1.54, 1.4, 1.26, 1.45, 1.45, 1.22, 1.32, 1.99, 1.95, 2, 2.34, 2.84, 3.71, 4.02, 5.02, 5.71],
-  elite:      [1.23, 1.82, 1.68, 2.14, 1.82, 1.57, 1.59, 2.15, 2.26, 2.07, 2.28, 2.82, 3.45, 3.8, 4.41, 5.04],
-  brute:      [1.99, 1.82, 1.64, 2.2, 2.21, 1.92, 1.69, 2.23, 2.31, 2.21, 1.96, 2.36, 2.78, 3.13, 3.6, 4.01],
-  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.89, 3.03, 3.22, 3.27, 3.59, 3.81, 4.5, 4.5, 4.37, 4.22, 4.21],
+  fodder:     [0.83, 1.08, 0.88, 1.4, 1.53, 1.63, 1.83, 2.77, 2.71, 2.69, 2.86, 3.2, 3.56, 5.06, 5.46, 5.57],
+  skirmisher: [0.83, 1.25, 1.27, 1.47, 1.4, 1.43, 1.54, 2.05, 2.34, 2.31, 2.28, 2.08, 2.06, 2.43, 2.76, 3.41],
+  soldier:    [1.07, 1.45, 1.27, 1.41, 1.35, 1.34, 1.38, 2.09, 2.34, 2.31, 2.1, 2.05, 2.25, 2.43, 3.17, 3.63],
+  archer:     [0.93, 1.59, 1.49, 1.73, 1.64, 1.57, 1.82, 2.37, 2.75, 2.78, 2.45, 2.38, 2.6, 3.17, 3.77, 4.06],
+  caster:     [1.13, 2.16, 1.91, 2.01, 1.85, 1.84, 1.88, 2.62, 2.76, 2.92, 3.09, 2.54, 2.57, 2.62, 3.38, 3.6],
+  controller: [0.98, 1.25, 1.11, 1.28, 1.29, 1.3, 1.34, 2.02, 2.24, 2.25, 2.06, 2, 2, 2.4, 3.11, 3.33],
+  armoured:   [1.54, 1.4, 1.26, 1.45, 1.45, 1.28, 1.32, 1.99, 2.14, 1.98, 1.96, 1.78, 2.06, 2.65, 2.82, 2.7],
+  elite:      [1.23, 1.82, 1.68, 2.16, 1.87, 1.65, 1.59, 2.16, 2.27, 2.09, 2.09, 1.81, 2.03, 1.96, 1.73, 2.37],
+  brute:      [1.99, 1.82, 1.64, 2.19, 2.21, 1.95, 1.75, 2.23, 2.31, 2.21, 1.93, 2, 1.93, 1.92, 1.8, 1.92],
+  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.46, 3.79, 4.5, 4.5, 4.37, 4.22, 4.21],
 };
 export const DAMAGE: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.15, 1.39, 1.42, 1.44, 1.04, 1, 1.13, 1.39, 1.1, 1, 1, 1, 1, 1, 1],
-  skirmisher: [0.83, 1, 1.11, 1.38, 1.44, 1.32, 1.06, 1.28, 1.05, 1.11, 1, 1, 1.01, 1, 1, 1],
-  soldier:    [1, 1.06, 1.17, 1.5, 1.55, 1.42, 1.31, 1.22, 1.13, 1.19, 1.05, 1.02, 1.13, 1.09, 1, 1],
-  archer:     [0.93, 1, 1.11, 1.11, 1.34, 1.29, 1.04, 1.43, 1.18, 1.11, 1.11, 1.21, 1.06, 1.06, 1.02, 1],
-  caster:     [1, 1, 1, 1.25, 1.3, 1.35, 1.1, 1.3, 1.08, 1.01, 1, 1.24, 1.23, 1.03, 1.26, 1.18],
-  controller: [0.98, 1.33, 1.46, 1.87, 1.93, 1.56, 1.44, 1.52, 1.42, 1.33, 1.32, 1.42, 1.3, 1.17, 1.04, 1],
-  armoured:   [1, 1.79, 1.58, 2, 1.81, 1.79, 1.65, 1.43, 1.58, 1.49, 1.43, 1.45, 1.08, 1.36, 1.15, 1.13],
-  elite:      [1, 1.15, 1.33, 1.67, 1.71, 1.5, 1.45, 1.43, 1.44, 1.42, 1.31, 1.07, 1.06, 1.2, 1.19, 1.17],
-  brute:      [1, 1.3, 1.45, 1.55, 1.42, 1.21, 1.25, 1.24, 1.25, 1.16, 1.29, 1.11, 1.09, 1.19, 1.19, 1.12],
-  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.89, 3.03, 3.22, 3.27, 3.59, 3.81, 4.5, 4.5, 4.37, 4.22, 4.21],
+  fodder:     [0.83, 1.15, 1.39, 1.42, 1.44, 1.04, 1, 1.13, 2.11, 2.18, 2.18, 1.7, 1.35, 1, 1, 1],
+  skirmisher: [0.83, 1, 1.11, 1.38, 1.44, 1.32, 1.06, 1.28, 1.05, 1, 1, 1.6, 1.56, 1.21, 1.13, 1],
+  soldier:    [1, 1.06, 1.17, 1.5, 1.55, 1.42, 1.31, 1.22, 1.13, 1.19, 1.58, 1.95, 1.81, 1.64, 1.51, 1],
+  archer:     [0.93, 1, 1.11, 1.11, 1.34, 1.29, 1.04, 1.43, 1.18, 1.11, 1.64, 1.95, 1.86, 1.61, 1.7, 1.52],
+  caster:     [1, 1, 1, 1.25, 1.3, 1.35, 1.1, 1.16, 1.08, 1.13, 1, 1.53, 1.8, 1.83, 1.69, 1.58],
+  controller: [0.98, 1.33, 1.46, 1.87, 1.93, 1.56, 1.64, 1.7, 1.58, 1.17, 1.87, 2.32, 2.25, 1.7, 1.65, 1.42],
+  armoured:   [1, 1.79, 1.58, 2, 1.81, 1.66, 1.65, 1.43, 1.33, 1.49, 1.61, 2.32, 1, 1, 1, 2.06],
+  elite:      [1, 1.15, 1.33, 1.67, 1.64, 1.4, 1.45, 1.43, 1.44, 1.42, 1.2, 1.43, 1.38, 1.49, 1.53, 1.42],
+  brute:      [1, 1.3, 1.45, 1.55, 1.42, 1.21, 1.19, 1.24, 1.25, 1.16, 1.13, 1, 1, 1, 1.64, 1.37],
+  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.46, 3.79, 4.5, 4.5, 4.37, 4.22, 4.21],
 };
 
 /** A role's factor from a table at a level, straight between the levels it was made at. */
@@ -113,8 +114,8 @@ export function diceFor(avg: number): { dice: number; sides: number; bonus: numb
 
 /**
  * How many standard encounters at their own level a company fights for a level. The curve's to set
- * (EXPANSION.md §5.2); 20 is three rests' worth at six or seven fights a rest. A boss pays four
- * encounters.
+ * (EXPANSION.md §5.2); 20 is three rests' worth at six or seven fights a rest, and under two at 32,
+ * where a rest comes every twelve. A boss pays four encounters.
  */
 export const FIGHTS_PER_LEVEL = 20;
 const BOSS_ENCOUNTERS = 4;

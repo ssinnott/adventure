@@ -164,10 +164,11 @@ monsters that one spell does not answer: kinds and elements that make the compan
 ranks that shield a back row, abilities that make the order of the kills matter, and more hit
 points on the few (the elites, the brutes, the bosses) than a single casting takes. Whether a
 spell's dice should stop growing somewhere is the systems lane's to weigh. The combat harness puts
-numbers on it (§4.4): for a company to fight six or seven standard encounters of its own level
-between rests, a monster needs about twice the line's hit points from level 8, and on today's rules
-seven times by 32, and the days turn deadly on the way. Stop the spells growing at 10 and it holds
-at about two and a half, and the days stay safe.
+numbers on it (§4.4): for a company to fight its standard encounters between rests, a monster of
+its level needs about twice the line's hit points from level 8. Past 16, on today's rules, no split
+of hit points and damage keeps the days safe: fights the weapons can finish once the spells are
+spent kill, and fights that do not kill stall. Stop the spells growing at 10 and most days are safe
+again.
 
 ### 3.3 What the road asks
 
@@ -263,15 +264,17 @@ pixels (`combatHeight`) in a view 268 high: the ogre 149, a size of 2 about 218,
 view, and 2.5 fills it. A pair stands as tall as one. That is room for the bigger monsters of
 DESIGN.md §6: the heartwood, the giants, the drakes, the crawlers below.
 
-### 4.4 The test monster, and six or seven fights to a rest
+### 4.4 The test monster, and the fights between rests
 
 The yardstick: **a company can fight six or seven standard encounters at its own level between
-rests**, and its spell points count as much as its hit points. It must rest once it has lost
-someone, once anyone is still under a quarter of their hit points after it has mended what it can,
-or once it is under a quarter of its spell points. A standard encounter is eight fodder; four
-skirmishers, soldiers, archers or controllers; three casters or armoured; two elites or brutes; or
-the boss alone. A mix is one encounter when its shares add to one: two soldiers and four fodder,
-say.
+rests**, to level 10, and a fight more every four levels after as its power grows: eight at 16,
+twelve at 32, never fifteen. Its spell points count as much as its hit points. It must rest once it
+has lost someone, once anyone is still under a quarter of their hit points after it has mended what
+it can, or once it is under a quarter of its spell points. No fight goes on for ever: one still
+running after fifteen rounds is broken off, and the company rests. A standard encounter is eight
+fodder; four skirmishers, soldiers, archers or controllers; three casters or armoured; two elites or
+brutes; or the boss alone. A mix is one encounter when its shares add to one: two soldiers and four
+fodder, say.
 
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
@@ -284,17 +287,19 @@ what they would mend. So the bot spends on what hurts while it is fresh, and hol
 spell points run down. The calibration:
 
 - Every role keeps its shape (§4.2) and hits as today's monsters hit, on the line; its hit points
-  are whatever makes six or seven fights.
+  are whatever makes the day's fights.
 - Where those fights would run too long on average, hit points hold them there and damage rises
   instead. Too long is four rounds at level 1 and a round more every eight levels, as both sides
   grow: five at 9, eight at 32.
-- Where blows that hard end more than one day in ten in a death or a lost fight, the fights run
-  longer and hit softer, up to half as long again (six rounds at level 1, twelve at 32, never
-  fifteen): the first step that ends no more than one day in ten badly, or else the step that ends
-  fewest.
-- Where a role on the line already leaves the company short of six or seven, it comes down whole,
-  hit points and damage together.
-- No monster has fewer hit points than the one a level under it.
+- Where the days then end badly more than one day in ten, in a death, a lost fight or one broken
+  off, the calibration steps the way that helps. Where members die or fights are lost, the fights
+  run longer and hit softer, up to half as long again (six rounds at level 1, twelve at 32). Where
+  fights are broken off, they run shorter and hit harder, never past two and a half times the
+  line's damage. It takes the first step that ends no more than one day in ten badly, or else the
+  step that ends fewest.
+- Where a role on the line already leaves the company short of its fights, it comes down whole, hit
+  points and damage together.
+- No monster has fewer hit points than the one a level under it, at the levels made or between.
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
 - It is made at every level to 10 and every fourth level to 32, 300 seeds a point, with the levels
@@ -307,19 +312,19 @@ Hit points / average damage a hit, by role and level:
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | 3 / 1.5 | 6 / 3 | 7 / 3.5 | 6 / 3 | 8 / 3.5 | 7 / 2.5 | 13 / 3.5 | 12 / 4.5 | 26 / 5 | none |
 | 2 | 6 / 3 | 13 / 4 | 15 / 4 | 14 / 3.5 | 21 / 4 | 13 / 4.5 | 18 / 8 | 26 / 5.5 | 35 / 8 | none |
-| 3 | 6 / 4 | 17 / 4.5 | 17 / 5.5 | 16 / 4 | 24 / 4.5 | 14 / 5.5 | 20 / 7 | 32 / 7 | 41 / 9 | 111 / 18.5 |
+| 3 | 7 / 4 | 17 / 4.5 | 17 / 5.5 | 16 / 4 | 24 / 4.5 | 14 / 5.5 | 20 / 7 | 32 / 7 | 41 / 9 | 111 / 18.5 |
 | 4 | 13 / 4.5 | 24 / 6.5 | 23 / 8 | 24 / 4.5 | 31 / 7 | 20 / 7 | 29 / 11 | 50 / 10 | 67 / 11 | 138 / 21 |
-| 5 | 17 / 5 | 27 / 8 | 26 / 9 | 26 / 6.5 | 33 / 8 | 25 / 8 | 34 / 10 | 50 / 12 | 80 / 11.5 | 174 / 24 |
-| 6 | 22 / 3.5 | 31 / 8 | 29 / 9 | 29 / 7 | 38 / 9 | 29 / 7 | 34 / 11.5 | 50 / 11.5 | 80 / 11 | 223 / 29.5 |
-| 7 | 27 / 4 | 39 / 6.5 | 35 / 9 | 39 / 5.5 | 45 / 8 | 34 / 7 | 41 / 11.5 | 58 / 12 | 80 / 12 | 265 / 33 |
-| 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 69 / 10 | 57 / 9 | 70 / 11 | 87 / 13 | 119 / 13 | 316 / 38.5 |
-| 10 | 65 / 5.5 | 79 / 8 | 78 / 10 | 79 / 8 | 95 / 8 | 78 / 9 | 85 / 13 | 102 / 14 | 143 / 13 | 427 / 49 |
-| 12 | 84 / 5.5 | 102 / 9 | 108 / 9 | 112 / 8 | 125 / 9 | 102 / 10 | 117 / 14 | 132 / 14.5 | 149 / 17 | 533 / 58 |
-| 16 | 162 / 7 | 179 / 10 | 182 / 11 | 182 / 11.5 | 190 / 14.5 | 175 / 12 | 185 / 16.5 | 213 / 14.5 | 233 / 17.5 | 819 / 84 |
-| 20 | 238 / 8 | 257 / 12 | 258 / 14.5 | 288 / 11.5 | 294 / 17 | 253 / 14 | 297 / 14.5 | 320 / 17 | 338 / 21 | 1008 / 99 |
-| 24 | 351 / 9 | 371 / 14.5 | 383 / 16.5 | 405 / 14 | 442 / 16 | 379 / 14 | 382 / 21 | 419 / 23 | 452 / 26 | 1162 / 111 |
-| 28 | 475 / 10 | 496 / 16 | 535 / 17 | 577 / 14.5 | 566 / 22 | 532 / 14 | 552 / 21 | 563 / 25 | 602 / 29.5 | 1300 / 122 |
-| 32 | 659 / 11.5 | 675 / 18 | 702 / 19 | 762 / 16 | 767 / 24 | 710 / 15 | 714 / 23 | 731 / 28 | 762 / 31 | 1474 / 136 |
+| 5 | 17 / 5 | 27 / 8 | 26 / 9 | 26 / 6.5 | 33 / 8 | 25 / 8 | 34 / 10 | 52 / 11.5 | 80 / 11.5 | 174 / 24 |
+| 6 | 22 / 3.5 | 31 / 8 | 29 / 9 | 29 / 7 | 38 / 9 | 29 / 7 | 35 / 10 | 53 / 11 | 82 / 11 | 222 / 29.5 |
+| 7 | 27 / 4 | 39 / 6.5 | 35 / 9 | 39 / 5.5 | 45 / 8 | 34 / 9 | 41 / 11.5 | 58 / 12 | 83 / 11 | 265 / 33 |
+| 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 70 / 9 | 57 / 10 | 70 / 11 | 88 / 13 | 119 / 13 | 311 / 37.5 |
+| 10 | 55 / 10 | 79 / 8 | 79 / 10 | 80 / 8 | 94 / 9 | 77 / 7 | 84 / 13 | 103 / 14 | 143 / 13 | 412 / 47 |
+| 12 | 69 / 12 | 91 / 9 | 84 / 14 | 83 / 13 | 117 / 9 | 82 / 13 | 98 / 15 | 121 / 14 | 147 / 14.5 | 531 / 58 |
+| 16 | 100 / 11 | 108 / 16.5 | 107 / 21 | 105 / 18 | 125 / 17.5 | 104 / 20 | 116 / 27 | 136 / 19.5 | 198 / 16 | 819 / 84 |
+| 20 | 137 / 11 | 132 / 19.5 | 144 / 24 | 141 / 21 | 156 / 25 | 128 / 23 | 165 / 14 | 188 / 22 | 235 / 19 | 1008 / 99 |
+| 24 | 231 / 9 | 185 / 17 | 185 / 25 | 205 / 21 | 189 / 29 | 182 / 20 | 252 / 15.5 | 216 / 28 | 277 / 22 | 1162 / 111 |
+| 28 | 288 / 10 | 243 / 18 | 279 / 25.5 | 282 / 25 | 283 / 30 | 274 / 22 | 310 / 18 | 221 / 33 | 301 / 40.5 | 1300 / 122 |
+| 32 | 334 / 11.5 | 341 / 18 | 363 / 19 | 345 / 25 | 342 / 32 | 333 / 22 | 338 / 41 | 344 / 34 | 365 / 37.5 | 1474 / 136 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -340,43 +345,53 @@ What it shows:
   controllers, on the line leave a company of 1 short of six or seven fights, so they come down
   whole, to between 0.8 and 1 of the line.
 - **Held to short fights, monsters hit harder than today's.** From level 3 to 12 most roles have 1.1
-  to 3.3 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
+  to 3.1 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
   company that husbands its spells through the day kills slowly, and a fight that must end in four
   or five rounds has to take its share of the day in them.
+- **Some fights cannot be finished.** A fight still going at fifteen rounds is broken off, and it
+  happens when the spells are spent and the monsters have more hit points than weapons get through.
+  At 9–12, where fodder need a lot of hit points to live through a spell that takes the whole group,
+  eight of them would stall one day in two; so there they carry fewer and hit twice as hard.
 - **The heavy hitters are slower.** Held to four rounds, brutes, elites and the armoured hit hard
   enough to take a member from standing to −10 in one blow, and a death ended up to half their days
   at 4–12 (two brutes at 4, nearly half). Given half as long again, a death or a lost fight ends
-  4–9% of the armoured's days, 5–15% of the elites' and 4–21% of the brutes', in fights of 4.6 to
+  4–9% of the armoured's days, 4–15% of the elites' and 2–21% of the brutes', in fights of 4.4 to
   7.5 rounds. Two brutes at 4 are the worst of it, a fifth of the days even so.
 - **Hit points jump where tier 5 lands.** At 8, where Meteor Swarm, Tempest and Wrath reach every
   foe, every role needs nearly half as many hit points again as at 7, or more (the soldier 35 to
-  59). Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole group of them: 6
+  59). Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole group of them: 7
   hit points at 3, 13 at 4.
 - **Today's maps are close, and a little hard low down.** Their own groups, dealt in a new order
   each day, give a company at its band's floor four to eight fights before a rest: the Shelf 4.6 at
   level 1 and the Ashcombe cellar 5.9, Greywater's caves and the Drowned Shrine 4.1 at 2 and 3,
-  Thornmark 5.7 at 5, the Grove Roots 6.0 at 6 and the Cut Stone 7.8 at 8. On the Shelf the cliff
+  Thornmark 5.7 at 5, the Grove Roots 6.0 at 6 and the Cut Stone 7.7 at 8. On the Shelf the cliff
   smugglers are a day's work on their own for a company of 1 (1.6 fights); at the Cut Stone, Meteor
-  Swarm ends most fights in a round or two.
-- **One fight from a fresh start costs about a tenth.** A standard encounter costs a fresh company
-  6–15% of its hit points and spell points, 8–13% at most points. So 15% a fight, the first
-  yardstick, was near; but a rest at a quarter, and a company that saves its spells, make the day
-  shorter than a hundred over fifteen.
-- **A lone boss has to kill with a blow.** At level 8 it hits for 38.5 against a company whose
+  Swarm ends most fights in a round or two. The round cap barely touches them: no more than one day
+  in fifty ends with a fight broken off.
+- **One fight from a fresh start costs about a tenth.** To level 12 a standard encounter costs a
+  fresh company 6–15% of its hit points and spell points, 7–13% at most points, and past it, where
+  rests come further apart, 3–9%. So 15% a fight, the first yardstick, was near; but a rest at a
+  quarter, and a company that saves its spells, make the day shorter than a hundred over fifteen.
+- **A lone boss has to kill with a blow.** At level 8 it hits for 37.5 against a company whose
   sorcerer has about 24. Real bosses want an escort, as the Hand of Ash and the Warden of the Cut
   have, or the sweep of §3.3.
-- **Past 12, on today's rules, deaths end days.** Hit points keep outgrowing the line, the soldier's
-  from 2.7 times it at 12 to 7 at 32, because the company's spells grow with its level and nothing
-  else does. From 20 a death or a lost fight ends between a seventh and three-fifths of the days for
-  every role but fodder. Longer fights do not help: they trade deaths for lost fights.
+- **Past 12, on today's rules, no monster makes a good day.** With rests further apart, monsters
+  there need only 1.7 to 4 times the line's hit points (fodder up to 5.6), where six or seven fights
+  a rest asked up to seven. But the company's spells grow with its level and nothing else does, so
+  once they are spent its weapons cannot finish a fight, and blows hard enough to end fights sooner
+  kill. From 16 a sixth to two-fifths of the days end badly for most roles, half for elites by 28,
+  nine in ten for brutes at 28, and nearly all for the armoured at 20–28, whom weapons barely
+  scratch.
 - **Weaker spells, not stronger monsters.** Past 10 the balance is one or the other, and the harness
-  can try both. Buffed to meet spells that keep growing, the monsters above make the days lethal.
-  Stop damage spells growing at level 10 (`--spell-cap 10`) and the monsters from 12 to 32 hold at
-  1.7 to 3.7 times the line's hit points, hitting on it or near, in fights of three to eight rounds;
-  a death or a lost fight ends under one day in ten at every level to 32. A ceiling at 16 comes too
-  late: 1–45%. How much growth spells can keep past 10 turns on what the company's weapons gain
-  there, which the curve's gear decides; today the harness gives it none past Thornmark's, and
-  re-runs when that changes.
+  can try both. Buffed to meet spells that keep growing, the monsters above make bad days. Stop
+  damage spells growing at level 10 (`--spell-cap 10`) and the monsters from 12 to 32 fall toward
+  the line, to 1–2.8 times its hit points, most hitting on it or up to half as hard again. A death,
+  a lost fight or one broken off then ends about a sixth of the days at most for every role but the
+  armoured (12–45%) and casters at 32 (22%). A ceiling at 16 comes too late: 1–33%, and the
+  armoured 58–83%. How much growth spells can keep past 10 turns on what the company's weapons gain
+  there, which the curve's gear decides; today the harness gives them none past Thornmark's, and
+  re-runs when that changes. The armoured want weapons that grow, or a way through armour, either
+  way.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -1015,5 +1030,5 @@ Where this and DESIGN.md disagree, the design wins.
    features (EXPANSION.md §5.3).
 5. **Spells without a ceiling.** §3.2's gap is the systems lane's as much as the monsters': a
    ceiling on a spell's dice would do some of what resistances do, more bluntly. On today's gear the
-   harness says a ceiling at 10 keeps the road's days safe to 32 and one at 16 does not (§4.4); gear
-   that grows past Thornmark moves that line.
+   harness says a ceiling at 10 keeps most of the road's days safe to 32 and one at 16 does not
+   (§4.4); gear that grows past Thornmark moves that line, and the armoured need it either way.

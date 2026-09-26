@@ -262,10 +262,12 @@ play in the pilot):
 - **The boss asks.** The area's boss is won about half the time at the floor, and nearly always two
   levels above it.
 - **Six or seven fights to a rest.** A company can fight six or seven standard encounters at its own
-  level between rests, and its spell points count as much as its hit points: it rests once it has
-  lost someone, once anyone is still under a quarter of their hit points after mending, or once it
-  is under a quarter of its spell points. `tools/harness.ts` measures any encounter or map against
-  it, with a test monster for every role and level to build from (docs/MONSTERS.md §4.4).
+  level between rests to level 10, and a fight more every four levels after as its power grows
+  (twelve at 32, never fifteen). Its spell points count as much as its hit points: it rests once it
+  has lost someone, once anyone is still under a quarter of their hit points after mending, or once
+  it is under a quarter of its spell points. No fight runs past fifteen rounds. `tools/harness.ts`
+  measures any encounter or map against it, with a test monster for every role and level to build
+  from (docs/MONSTERS.md §4.4).
 - **A warning, not a wall.** The first groups past a border are the area's gentlest, and the
   crossing line tells a company under the band how the land feels to it, so the party learns it is
   early from a fight it can survive or run from, not from a wipe.

@@ -1,8 +1,9 @@
 // The combat test harness (docs/MONSTERS.md §4.4): a company of a given level fights encounters in a
 // row from a fresh start, once per seed, and the harness says how many it managed before it had to
 // rest. The yardstick is the design's: six or seven standard encounters at the company's own level
-// between rests, where a company must rest once it has lost someone, once anyone is still under a
-// quarter of their hit points after mending, or once it is under a quarter of its spell points.
+// between rests, more past level 10 as its power grows but never fifteen, where a company must rest
+// once it has lost someone, once anyone is still under a quarter of their hit points after mending,
+// or once it is under a quarter of its spell points. No fight runs past fifteen rounds.
 //   node tools/harness.ts                              each role's standard encounter, at every level made
 //   node tools/harness.ts --roles soldier,brute --levels 2,6,10 --seeds 400
 //   node tools/harness.ts --under 2                    the company two levels under the monsters
@@ -35,8 +36,14 @@ import { MAP_DEFS } from '../src/content/maps/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster } from './testmonster.ts';
 import type { Role } from './testmonster.ts';
 
-/** How many standard encounters at its own level a company should manage between rests: six or seven. */
-export const FIGHTS = 6.5;
+/**
+ * How many standard encounters at its own level a company should manage between rests: six or seven
+ * through level 10, then a fight more every four levels as its power grows, twelve at 32. Never
+ * fifteen.
+ */
+export const fightsPerRest = (level: number): number => Math.min(14, 6.5 + Math.max(0, level - 10) / 4);
+/** No fight goes on for ever: one still running after this many rounds is broken off, and the company must rest. */
+export const ROUND_CAP = 15;
 /**
  * A company must rest once anyone in it is under this share of their hit points after mending, or it
  * is under this share of its spell points.
@@ -196,17 +203,17 @@ export function spent(p: Party): { cost: number; hp: number; sp: number } {
 }
 
 export type Encounter = readonly (string | MonsterDef)[];
-export interface Outcome { won: boolean; cost: number; hp: number; sp: number; rounds: number; down: boolean }
+export interface Outcome { won: boolean; cost: number; hp: number; sp: number; rounds: number; down: boolean; broken: boolean }
 
 /** One fight to its end from however the company stands: what it cost, read from what it has left. */
 export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
   const rng = makeRng(seed), s = startCombat(p, [{ id: 'harness', monsters }], rng, { spellsGrowTo: RULES.spellsGrowTo });
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
     const t = currentTurn(s, p, rng);
-    if (!t) break;
+    if (!t || s.round > ROUND_CAP) break;
     if (t.side === 'monster') monsterAct(s, p, rng); else bot(s, p, rng, t.i);
   }
-  return { won: s.outcome === 'victory', ...spent(p), rounds: s.round, down: p.members.some(isDown) };
+  return { won: s.outcome === 'victory', ...spent(p), rounds: Math.min(s.round, ROUND_CAP), down: p.members.some(isDown), broken: s.outcome === 'ongoing' };
 }
 
 export interface Tally { cost: number; p90: number; hp: number; sp: number; won: number; rounds: number; down: number }
@@ -237,8 +244,11 @@ export function mendBetween(p: Party): void {
   }
 }
 
-/** What ends a day: a lost fight, someone dead, too few hit points or spell points, or no end in sight. */
-export type Why = 'lost' | 'dead' | 'hp' | 'sp' | 'none';
+/**
+ * What ends a day: a lost fight, a fight broken off at ROUND_CAP, someone dead, too few hit points or
+ * spell points, or no end in sight.
+ */
+export type Why = 'lost' | 'long' | 'dead' | 'hp' | 'sp' | 'none';
 
 /**
  * Whether the company must rest before its next fight, and why: someone is dead, someone is still
@@ -259,13 +269,13 @@ export interface Day { fights: number; rounds: number; why: Why }
  * Encounters in a row from a fresh company, in turn from `encounters`, mending between them, until it
  * loses one or must rest. The fights it won, the rounds they took on average, and what ended the day.
  */
-export function day(level: number, encounters: readonly Encounter[], seed: number, most = 20): Day {
+export function day(level: number, encounters: readonly Encounter[], seed: number, most = 30): Day {
   const p = companyAt(level, seed);
   let rounds = 0;
   for (let n = 0; n < most; n++) {
     const o = fight(p, encounters[n % encounters.length], seed * 104729 + n);
     rounds += o.rounds;
-    if (!o.won) return { fights: n, rounds: rounds / (n + 1), why: 'lost' };
+    if (!o.won) return { fights: n, rounds: rounds / (n + 1), why: o.broken ? 'long' : 'lost' };
     mendBetween(p);
     const why = mustRest(p);
     if (why) return { fights: n + 1, rounds: rounds / (n + 1), why };
@@ -277,7 +287,7 @@ export interface DayTally { fights: number; rounds: number; why: Record<Why, num
 
 /** Seeds `from` to `from + seeds - 1` of `day`; with `deal`, the encounters come in a new order each seed. */
 export function days(level: number, encounters: readonly Encounter[], seeds: number, from = 1, deal = false): DayTally {
-  const why: Record<Why, number> = { lost: 0, dead: 0, hp: 0, sp: 0, none: 0 };
+  const why: Record<Why, number> = { lost: 0, long: 0, dead: 0, hp: 0, sp: 0, none: 0 };
   let fights = 0, rounds = 0;
   for (let k = from; k < from + seeds; k++) {
     const order = [...encounters];
@@ -303,8 +313,10 @@ function solve(f: (x: number) => number, target: number, rising: boolean, lo = 0
  * four rounds at level 1, and a round more every eight levels as both sides grow, to eight at 32.
  */
 export const longest = (level: number): number => 4 + (level - 1) / 8;
-/** The most days a standard encounter at the company's level should end in a death or a lost fight. */
+/** The most days a standard encounter at the company's level should end in a death, a lost fight or one broken off. */
 export const WORST = 0.1;
+/** The hardest a regular monster hits, as a share of the line's damage: two and a half times. */
+export const HARDEST = 2.5;
 /**
  * How long a standard encounter may run instead, where blows hard enough for `longest` end too many
  * days badly: half as long again, six rounds at level 1 and twelve at 32, and never fifteen.
@@ -313,52 +325,54 @@ export const slowest = (level: number): number => Math.min(14, 1.5 * longest(lev
 
 /**
  * A role's two factors at a level. A regular role hits as today's monsters hit (damage 1, on the
- * line) and takes the hit points that let a company of its level fight FIGHTS of its standard
- * encounter between rests; where the day's fights would run past `longest` rounds, hit points hold
- * them to that and damage rises to FIGHTS instead. Where blows that hard end more than WORST of the
- * days in a death or a lost fight, the fights run longer and hit softer, up to `slowest` rounds: the
- * first that ends no more than WORST badly, or else the one that ends fewest. A role that on the line
- * already leaves the company short of FIGHTS comes down whole, hit points and damage together. A lone
- * boss acts once a round against six, so it takes one factor for both, set so that a company two
- * levels under it wins half the time.
+ * line) and takes the hit points that let a company of its level fight `fightsPerRest` of its
+ * standard encounter between rests; where the day's fights would run past `longest` rounds, hit points
+ * hold them to that and damage rises instead. Where the days then end in a death, a lost fight or one
+ * broken off more than WORST of the time, it steps along the same curve the way that helps: shorter
+ * fights and harder blows where fights are broken off (never past HARDEST), longer and softer ones
+ * where members die or fights are lost (never under the line's damage, nor past `slowest` rounds);
+ * the first step that ends no more than WORST badly, or else the one that ends fewest. A role that on the line already leaves
+ * the company short comes down whole, hit points and damage together. A lone boss acts once a round
+ * against six, so it takes one factor for both, set so that a company two levels under it wins half
+ * the time.
  */
 export function calibrate(role: Role, level: number, seeds: number): [number, number] {
   if (role === 'boss') {
     const s = solve((x) => measure(bossFloor(level), standardEncounter(role, level, x, x), seeds).won, 0.5, false);
     return [s, s];
   }
-  const run = (h: number, d: number): DayTally => days(level, [standardEncounter(role, level, h, d)], seeds);
-  if (run(1, 1).fights < FIGHTS) { const whole = solve((x) => run(x, x).fights, FIGHTS, false, 0.05, 1, 10); return [whole, whole]; }
-  const most = solve((x) => run(x, 1).fights, FIGHTS, false, 1, 60, 10);
-  if (run(most, 1).rounds <= longest(level)) return [most, 1];
-  // Fewer hit points, and for each the damage that brings the day back to FIGHTS: the hit points at
-  // which those fights last `longest` rounds.
+  const run = (h: number, d: number): DayTally => days(level, [standardEncounter(role, level, h, d)], seeds), target = fightsPerRest(level);
+  if (run(1, 1).fights < target) { const whole = solve((x) => run(x, x).fights, target, false, 0.05, 1, 10); return [whole, whole]; }
+  const most = solve((x) => run(x, 1).fights, target, false, 1, 60, 10);
+  // For hit points under `most`, the damage that brings the day back to its fights.
   const made = new Map<number, number>();
   const damageFor = (h: number): number => {
+    if (h >= most) return 1;
     let d = made.get(h);
-    if (d === undefined) made.set(h, (d = Math.max(1, solve((x) => run(h, x).fights, FIGHTS, false, 1, 60, 9))));
+    if (d === undefined) made.set(h, (d = Math.max(1, solve((x) => run(h, x).fights, target, false, 1, 60, 9))));
     return d;
   };
-  const quick = solve((x) => run(x, damageFor(x)).rounds, longest(level), true, 0.05, most, 9);
-  // Where their blows end too many days badly, a tenth more hit points a step and softer blows, while
-  // the fights stay within `slowest` rounds and until a step ends no more than WORST of the days badly.
-  const bad = (t: DayTally): number => t.why.dead + t.why.lost;
-  let pick = quick, least = bad(run(quick, damageFor(quick)));
-  for (let h = quick * 1.1; least > WORST && h < most; h *= 1.1) {
+  const start = run(most, 1).rounds <= longest(level) ? most : solve((x) => run(x, damageFor(x)).rounds, longest(level), true, 0.05, most, 9);
+  const bad = (t: DayTally): number => t.why.dead + t.why.lost + t.why.long;
+  const first = run(start, damageFor(start)), shorter = first.why.long > first.why.dead + first.why.lost;
+  let pick = start, least = bad(first);
+  for (let k = 1, h = start; k <= 8 && least > WORST; k++) {
+    h = shorter ? h / 1.1 : h * 1.1;
+    if (shorter ? damageFor(h) > HARDEST : h > most) break;
     const t = run(h, damageFor(h));
-    if (t.rounds > slowest(level)) break;
+    if (!shorter && t.rounds > slowest(level)) break;
     if (bad(t) < least) { pick = h; least = bad(t); }
   }
   return [pick, damageFor(pick)];
 }
 
 /**
- * A point's damage again with its hit points held at `h`: what brings the day to FIGHTS, or the
+ * A point's damage again with its hit points held at `h`: what brings the day to its fights, or the
  * line's if even that leaves the company short.
  */
 export function refit(role: Role, level: number, h: number, seeds: number): [number, number] {
-  const run = (d: number): number => days(level, [standardEncounter(role, level, h, d)], seeds).fights;
-  return [h, run(1) <= FIGHTS ? 1 : solve(run, FIGHTS, false, 1, 60, 10)];
+  const run = (d: number): number => days(level, [standardEncounter(role, level, h, d)], seeds).fights, target = fightsPerRest(level);
+  return [h, run(1) <= target ? 1 : solve(run, target, false, 1, 60, 10)];
 }
 
 /** One cell of the report: a role's standard encounter at a level, against a company `under` levels below it. */
@@ -428,8 +442,8 @@ async function main(): Promise<void> {
       console.log(g.id.padEnd(20) + d.fights.toFixed(1).padStart(7) + `${pct(t.cost)}%`.padStart(6) + `${pct(t.won)}%`.padStart(6) + t.rounds.toFixed(1).padStart(8) + '  ' + g.monsters.join(' '));
     }
     const all = days(level, def.encounters.map((g) => g.monsters), seeds, 1, true);
-    const why = (Object.entries(all.why) as [Why, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).map(([w, n]) => `${{ lost: 'a lost fight', dead: 'a death', hp: 'hit points', sp: 'spell points', none: 'none' }[w]} ${pct(n)}%`);
-    console.log(`\nIts groups in a new order each seed: ${all.fights.toFixed(1)} fights before a rest, against ${FIGHTS} at the company's own level. What ended the day: ${why.join(', ')}.`);
+    const why = (Object.entries(all.why) as [Why, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).map(([w, n]) => `${{ lost: 'a lost fight', long: 'a fight broken off', dead: 'a death', hp: 'hit points', sp: 'spell points', none: 'none' }[w]} ${pct(n)}%`);
+    console.log(`\nIts groups in a new order each seed: ${all.fights.toFixed(1)} fights before a rest, against ${fightsPerRest(level)} at the company's own level. What ended the day: ${why.join(', ')}.`);
     return;
   }
 
@@ -460,15 +474,19 @@ async function main(): Promise<void> {
     for (const r of ROLE_IDS) { next.hp[r] = [...HP[r]]; next.dmg[r] = [...DAMAGE[r]]; }
     const put = (j: Job, [h, d]: [number, number]): void => { next.hp[j.role][at(j.level)] = Number(fmt(h)); next.dmg[j.role][at(j.level)] = Number(fmt(d)); };
     jobs.forEach((j, k) => put(j, made[k]));
-    // A monster never has fewer hit points than the one a level under it: where a point just made has
-    // fewer, it keeps that level's, and its damage is solved again (`refit`).
+    // A monster never has fewer hit points than the one a level under it, at the levels made or any
+    // between: where a point's factor falls so fast from the one before that the hit points drawn
+    // between them would dip, it is raised until they would not, and its damage is solved again.
     const held: Job[] = [];
     for (const r of roles.filter((x) => x !== 'boss')) {
-      let most = 0;
-      LEVELS.forEach((l, k) => {
-        const hp = testMonster(r, l, next.hp[r][k], next.dmg[r][k]).hp;
-        if (hp < most && levels.includes(l)) held.push({ kind: 'refit', role: r, level: l, seeds, under: 0, hp: Math.ceil((most / (line(l).hp * ROLES[r].hp)) * 100) / 100, rules });
-        most = Math.max(most, hp);
+      LEVELS.forEach((b, k) => {
+        if (k === 0) return;
+        const a = LEVELS[k - 1], grow = line(b).hp - line(b - 1).hp;
+        const least = (next.hp[r][k - 1] * line(b).hp) / (line(b).hp + grow * (b - a));
+        if (next.hp[r][k] < least - 1e-9 && levels.includes(b)) {
+          next.hp[r][k] = Math.ceil(least * 100) / 100;
+          held.push({ kind: 'refit', role: r, level: b, seeds, under: 0, hp: next.hp[r][k], rules });
+        }
       });
     }
     if (held.length) {
@@ -496,19 +514,22 @@ async function main(): Promise<void> {
   console.log(`Standard encounters against a company ${under ? `${under} level${under > 1 ? 's' : ''} under them` : 'of their own level'}, ${seeds} seeds.`);
   console.log(`Fights before a rest: encounters in a row from fresh, mending between them, until the company loses one or must rest:`);
   console.log(`someone dead, anyone under ${pct(REST_AT)}% of their hit points after mending, or the company under ${pct(REST_AT)}% of its spell points.`);
-  console.log(`Target ${FIGHTS}: six or seven, with no more than ${pct(WORST)}% of days ending in a death or a lost fight, in fights of`);
-  console.log(`${longest(1)} rounds at level 1 to ${longest(CAP).toFixed(1)} at ${CAP} (up to ${slowest(1)} and ${slowest(CAP).toFixed(1)} where blows that hard kill too often).`);
+  console.log(`A fight still going after ${ROUND_CAP} rounds is broken off, and the company rests.`);
+  console.log(`Target: six or seven fights to level 10, a fight more every four levels after (${fightsPerRest(CAP)} at ${CAP}), with no more than ${pct(WORST)}% of days`);
+  console.log(`ending in a death, a lost fight or one broken off, in fights of ${longest(1)} rounds at level 1 to ${longest(CAP).toFixed(1)} at ${CAP}`);
+  console.log(`(up to ${slowest(1)} and ${slowest(CAP).toFixed(1)} where blows that hard kill too often).`);
   console.log(`The boss is fought alone, from ${under ? 'the same company' : 'two levels under it'}: won (target 50%).`);
   const cells = await onCores<Cell>(roles.flatMap((role) => levels.map((level): Job => ({ kind: 'cell', role, level, seeds, under, rules }))));
   const block = (title: string, show: (c: Cell, r: Role) => string, dayOnly = false): void => {
     console.log(`\n${title}`);
     row('', levels.map((l) => `L${l}`));
+    if (title.startsWith('fights')) row('target', levels.map((l) => fightsPerRest(l).toFixed(1)));
     roles.forEach((r, i) => { if (!dayOnly || r !== 'boss') row(`${r} ×${ROLES[r].group}`, levels.map((_, k) => show(cells[i * levels.length + k], r))); });
   };
   block('fights before a rest  (boss: won %)', (c) => (c.day ? c.day.fights.toFixed(1) : pct(c.fresh.won)));
   block('rested for spell points %', (c) => pct(c.day!.why.sp), true);
   block('rested for hit points %', (c) => pct(c.day!.why.hp), true);
-  block('ended by a death or a lost fight %', (c) => pct(c.day!.why.dead + c.day!.why.lost), true);
+  block('ended by a death, a lost fight or one broken off %', (c) => pct(c.day!.why.dead + c.day!.why.lost + c.day!.why.long), true);
   block('rounds a fight, over the day', (c) => c.day!.rounds.toFixed(1), true);
   block('one fight from fresh: cost %', (c) => pct(c.fresh.cost));
   block('one fight from fresh: someone down at the end %', (c) => pct(c.fresh.down));
