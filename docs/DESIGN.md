@@ -21,7 +21,8 @@ and the scope tiers. Systems get their own docs once the vertical slice exists.
 1. **Exploration is the game.** The map is the reward. Every region is open from the first hour;
    difficulty is geographic, not gated by quest flags. Secrets are found by walking into walls.
 2. **The party is the character.** Six people you built, with real class and race
-   differentiation, secondary skills that open the map, and promotions earned through factions.
+   differentiation, secondary skills that open the map, and prestiges taught by trainers you have
+   to find.
 3. **Turn-based, tactical, quick.** Combat is turn-based on the grid, resolves fast, and never
    pads the game with swarms. Twelve enemies is a big fight, not a Tuesday.
 4. **The world has a clock.** Day and night, shop hours, NPC schedules, rifts that spread while
@@ -51,7 +52,7 @@ and the scope tiers. Systems get their own docs once the vertical slice exists.
 | Secondary skills (Mountaineer, Pathfinder, Swimmer, Cartographer…) | Skills that *open the map* are the best skills. |
 | Spell guilds, spell purchase, per-class spell lists | Makes towns matter and gold meaningful. |
 | Day/night, food, conditions (poison, disease, stone…) | Attrition that makes town trips a decision. |
-| Class promotion quests (VII) | Direction inside an open world. |
+| Class promotion quests (VII) | Direction inside an open world. Ours are prestiges (§5). |
 | The sci-fi reveal | The franchise's identity. |
 | Timed respawn of cleared areas | Keeps the world alive without infinite grind. |
 
@@ -70,10 +71,10 @@ and the scope tiers. Systems get their own docs once the vertical slice exists.
 |---|---|
 | Oblivion gates spawning across the world | **Rifts** open near dead Wardstones and spread. Repeatable, template-built mini-dungeons that stop when the region's Wardstone is restored. |
 | Emperor dies in the prologue; find the heir | The Queen dies in the prologue; **the succession is a subplot**, not the main plot. |
-| Fighters/Mages/Thieves/Dark Brotherhood questlines | **Four Charters** (§8), each a full questline with its own arc and reward, and each the promotion path for a class pair. |
-| Fame / Infamy, faction disposition | **Standing** per faction and region. Gates trainers, prices, and who will talk to you. |
+| Fighters/Mages/Thieves/Dark Brotherhood questlines | **Guilds** (§8): a company can join any or all of them, and each is a hub of side quests. |
+| Fame / Infamy, faction disposition | **Standing** per faction and region, gating trainers, prices, and who will talk to you. Whether it survives without rival factions is open (§8). |
 | NPC schedules, shop hours | Towns have a clock. The smith is not at the forge at 3am. |
-| Skill-by-use | *Not taken directly.* We use level-up points plus trainer mastery, but Charter tasks act like "use it to earn it." |
+| Skill-by-use | *Not taken directly.* We use level-up points plus trainer mastery, but a third prestige's quest acts like "use it to earn it" (§5). |
 | Lockpicking / persuasion minigames | Tiny, optional, skill-skippable. A 10-second grid puzzle, not a wheel. |
 | Shivering Isles-style "strange region" | The **Underdeep** (§4) is our tonal break. |
 
@@ -84,15 +85,15 @@ and the scope tiers. Systems get their own docs once the vertical slice exists.
 ```
 Town ──► Outdoors ──► Dungeon ──► Town
   │          │           │
-  │          │           └─ loot, keys, journals, a Wardstone, a promotion token
+  │          │           └─ loot, keys, journals, a Wardstone, what a trainer asked for
   │          └─ encounters, rifts, secrets, hidden entrances, terrain skills
-  └─ rest, train, buy spells, take contracts, turn in quests, hear rumours
+  └─ rest, train, buy spells, take a guild's quests, turn in quests, hear rumours
 ```
 
 Minute to minute: walk a square, read the viewport, decide (fight / avoid / search / cast).
 Hour to hour: push a little further than is safe, retreat, grow, return.
-Session to session: a region's Wardstone falls, a Charter rank rises, a promotion lands, the
-story turns.
+Session to session: a region's Wardstone falls, a guild's quest ends, a prestige lands, the story
+turns.
 
 ---
 
@@ -116,9 +117,12 @@ Around the sea, six regions, each an outdoor map with towns, dungeons, and one *
 levels to 32, and §9 follows it. Nothing on the road is locked by a skill or a flag
 (docs/EXPANSION.md §2.2): a mountaineer or a ship is a shortcut, never a key.*
 
-Below all of it is **the Underdeep**: not a region but a layer. Every region has at least one
-dungeon that drops into it. Geometry becomes too regular, materials become too smooth, and the
-monsters stop being animals. This is where the secret lives (§7).
+Below all of it is **the Underdeep**, the hull's service layer, where geometry becomes too
+regular, materials become too smooth, and the monsters stop being animals. This is where the secret
+lives (§7). It is not a map beneath the world: a company walks it only in the final dungeon, from
+the Hearth Isle down to the Core (§9). Elsewhere the hull shows only at the foot of a few deep
+dungeons, among them two large ones built around it: Meridian Camp, down Fire Mountain's vents,
+and the Dead-Drop, below the Tide Ship's hold (§10.2, §10.3).
 
 The **Hearth Isle** in the centre is reachable only by ship.
 
@@ -132,7 +136,6 @@ The **Hearth Isle** in the centre is reachable only by ship.
 | Outdoor regions | 6 | 32×32 each |
 | Towns | 9 | 16×16 |
 | Dungeons | 22 | 16×16 to 32×32, 1–4 levels |
-| Underdeep segments | 6 + the core | 32×32 |
 | Rift templates | 8 | 12×12, seeded |
 
 ---
@@ -152,21 +155,29 @@ The **Hearth Isle** in the centre is reachable only by ship.
 | Tidefolk | SPD, END | Swim without the skill; Saltreach kin. |
 | Orcblood | STR, SPD | Cheap intimidation; distrusted in Harrow. |
 
-### Classes and promotions
+### Classes and prestiges
 
-Base classes map to Might and Magic's six, with two promotion tiers earned through Charters (§8).
+Ten classes: Might and Magic's six (Knight, Paladin, Ranger, Cleric, Sorcerer, Thief), and the
+Barbarian, Monk, Bard and Druid.
 
-| Base | Promotion I | Promotion II | Charter |
-|---|---|---|---|
-| Knight | Cavalier | Champion | Wardens |
-| Paladin | Crusader | Hierophant | Wardens / Lanterns |
-| Ranger | Warden of the Wild | Pathwarden | Cartographers |
-| Cleric | Priest | Oracle | Lanterns |
-| Sorcerer | Wizard | Archmage | Lanterns |
-| Thief | Rogue | Shadow | Salt Compact |
+Each class has three **prestiges**, which replace the two promotions this section first planned.
+Each prestige has a title of its own for each class, and the title becomes the class's name: a
+Knight who takes the first is a Knight-Errant from then on. A prestige raises the hit points and
+spell points each level brings. Casters (Cleric, Sorcerer, Druid) gain spell ranks, which make the
+spells they know stronger (§7); hybrids (Paladin, Ranger, Bard) gain a rank and a perk; the classes
+that don't cast (Knight, Thief, Barbarian, Monk) gain perks. New spells come with levels, not
+prestiges.
 
-Promotions raise HP/SP per level, unlock the next spell tier, and add a class-specific ability.
-Promotion II always requires a dungeon, not just Standing.
+Each prestige is taught by a trainer of its own, and every trainer lives on the surface:
+
+- **The first,** at about level 11, in a city that suits the class, by someone who may have another
+  job there, like a ranger who is Thornhold's fletcher. It costs gold.
+- **The second,** somewhere off the beaten path and relatively safe. It costs gold.
+- **The third,** somewhere hard to find and dangerous. It asks for a quest instead.
+
+When a character reaches a prestige's level, they get a quest to seek out its trainer, and the
+quest reveals where the trainer is. The titles, trainers, perks, levels and quests are drafted in
+#19.
 
 ### Stats, skills, mastery
 
@@ -212,7 +223,10 @@ dark), not because of numbers.
   Detect Secrets, Jump.*
 - Spells are **bought** at guilds after paying a membership fee; the fee is the region's toll for
   making you stronger there.
-- About 40 spells at v1. Every spell tier lands on a promotion.
+- About 40 spells at v1. Spells grow two ways: levels unlock new spells, and prestiges bring spell
+  ranks, which make the spells a caster already knows stronger (§5). In the combat harness, damage
+  spells that go on growing with level break the road past 10 (MONSTERS.md §4.4), so the spells
+  past 10, their ranks and their elements are to be designed around that (#20).
 
 ### The secret, in brief
 
@@ -224,24 +238,23 @@ regions. The Underdeep is the hull's service layer. The Custodian answers to the
 and Queen Isaure was the last of it (§9). Every people of Caldera came in the ship.
 
 The player is never told this. They **find** it: Kiln-script that turns out to be a maintenance
-language, a monastery whose bells ring in a pattern that matches the Hearth's flicker, an
-Underdeep room with a window.
+language, a monastery whose bells ring in a pattern that matches the Hearth's flicker, a room with
+a window below Fire Mountain.
 
 ---
 
-## 8. Factions: the four Charters
+## 8. Guilds
 
-Every adventuring company in Caldera works under a Charter. The player picks one at start (it
-gives a starting contract and a home base) but can join others. Each is an Oblivion-style
-questline of six to eight quests with a rank ladder, a climax dungeon, and a unique reward.
-Standing with one lowers Standing with its rival.
+Some of the cities have guilds. A company can join any of them, and every one at once, and each
+is a hub of side quests. There are no rivals, and joining one never costs anything with another: a
+company is six mixed classes, and rival guilds would pull it apart. Nor do guilds carry class
+progression, which is the prestiges' (§5).
 
-| Charter | Who | Line in one sentence | Rival |
-|---|---|---|---|
-| **The Wardens** | Soldiers, road guards | Hold the roads while the Rifts spread; ends with a siege you may or may not win. | Salt Compact |
-| **The Lanterns** | Clergy and mages who tend the Wardstones | Learn what the Wardstones actually are; ends in a schism you resolve. | — |
-| **The Cartographers' Guild** | Explorers, surveyors | Map the unmapped; ends in the Underdeep. Rewards are the map itself. | — |
-| **The Salt Compact** | Smugglers, fences, and the honest poor | Keep the sea lanes open under the table; ends with you either running it or hanging it. | Wardens |
+The guilds replace the four rival Charters this section first described (the Wardens, the
+Lanterns, the Cartographers' Guild and the Salt Compact), each a questline and the promotion path
+for a pair of classes. Which guilds there are and where, whether they are the spell guilds of §7,
+what joining costs and the quests pay, what becomes of Standing and of the Charters' storylines,
+and what gives a company its start are open, in #21.
 
 ---
 
@@ -337,8 +350,8 @@ god is one of its fragments.
   the dockmaster claimant (§10.1, §10.2). His forged lineage convinces because it was copied from a
   real crew record, below. The crossing to Wrackholm leaves from here.
 - **Wrackholm:** Smugglers' Cove and the Tide Ship, whose hold carries Wardstone shards and people
-  bound for a dead-drop in the Underdeep. The Compact's orders come from below. The Tide Stone
-  comes home.
+  bound for the Dead-Drop, a large dungeon down a stair from the hold. The Compact's orders come
+  from there. The Tide Stone comes home.
 - **The Eaves and Lanternwood:** the Sunder, a Rift that split a whole wood, which is what a
   Stone's failure looks like at full size. At its floor stands a wall too smooth to be stone.
   Across the gorge, by a rope bridge, is Lantern Watch, where the Lanterns begin to split.
@@ -358,8 +371,8 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
   party buys it back or seizes it. Kiln-script, which dwarves read, turns out to be a maintenance
   language, and reading it is the act's own mechanic: each inscription read opens more of the map.
   Anvilhall's holiest verse, THE FIRE IS KEPT BELOW AND NOT ABOVE, is a warning painted on a boiler,
-  and the lowest door of the Deep Mines says CREW ONLY. The Deep Mines have broken into the service
-  layer, where the cargo below was taken.
+  and the lowest door of the Deep Mines says CREW ONLY. The Deep Mines have broken into the hull's
+  service ways.
 - **Kilnmouth:** Kilnhaven, the ore port, whose ship is one way to the far side of the sea.
 - **High Moor and the Cairnfield:** a ring of stones older than the Wardstones, the first emitters,
   dead for centuries, with the cairns around it. The Custodian's oldest voice still speaks there,
@@ -376,7 +389,7 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
 - **Monks' Vale and the High Spine:** the Peak Stone is fine, but something wears the monks who
   guard it. The monks died long ago, and the Custodian's own hands keep the monastery in their
   robes. Its bells ring the eleven flickers of Harrow Light's log, the Hearth's pulse, rung by a
-  machine that was told to ring them and never told to stop. Promotion II's dungeon is here.
+  machine that was told to ring them and never told to stop.
 - **Sheer Point:** its tip reaches toward the Hearth, and the Ashen Hand is building its crossing
   there: a causeway out over the water, built from the smuggled shards. The party sees where the
   end will come, an act early, and watches the Hand take Wenna out along it.
@@ -386,8 +399,9 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
 - **The Wold:** the Riders remember the day the sky opened and the land burned, and they keep the
   only way into the Glass (the reach, below). They are the warning against arriving, in person.
 - **Fire Mountain:** the volcano's vents are the Underdeep's exhaust and the way down for the Ember
-  Stone's parts. They lead to the Meridian Company's last camp, where their cartographer, Oriel
-  Fane, is still alive, and to a room with a window.
+  Stone's parts. They lead down to Meridian Camp, the Meridian Company's last camp and a large
+  dungeon of its own, where their cartographer, Oriel Fane, is still alive, and to a room with a
+  window.
 - **The Ember Waste:** the Ember Stone was never finished. The party completes it with parts from
   the Underdeep, and the Underdeep notices.
 
@@ -487,10 +501,10 @@ weakens the Ashen Hand's presence in the final dungeon.
 
 *The thieves' guild line. A Light/Dark path without a morality meter.*
 
-The Compact runs Saltreach's smuggling and quietly feeds half of Caldera. Joining it is the
-Thief promotion path. The questline is a slow reveal that the Compact's founder has been dead for
-a decade and its "orders" now come from a dead-drop in the Underdeep. Somebody down there has
-been running the smugglers, and what they have been smuggling is Wardstone shards.
+The Compact runs Saltreach's smuggling and quietly feeds half of Caldera. The questline is a slow
+reveal that the Compact's founder has been dead for a decade and its "orders" now come from the
+Dead-Drop, a large dungeon below the Tide Ship's hold. Somebody down there has been running the
+smugglers, and what they have been smuggling is Wardstone shards.
 
 Ends with a choice: take over the Compact and redirect it (it becomes your ferry, fence and spy
 network for Act V), or hand it to the Wardens (the Wardens siege becomes winnable, the sea lanes
@@ -505,10 +519,10 @@ never came back. Their journals are scattered through every region's deepest dun
 one is a hint to a secret square somewhere else (a wall that isn't, a lake that can be walked on
 at night, a monastery bell that opens a door).
 
-Following the trail finds the Meridian Company's last camp in the Underdeep beneath Ashfall,
-their cartographer, Oriel Fane, still alive and very old, and their real map: the hull. The map
-shows what the Custodian will not say in Act V (§9, hidden third ending), and finishing this line
-is the Cartographer Promotion II.
+Following the trail leads down Fire Mountain's vents to Meridian Camp, the Meridian Company's
+last camp and a large dungeon of its own, where their cartographer, Oriel Fane, is still alive and
+very old, with their real map: the hull. The map shows what the Custodian will not say in Act V
+(§9, hidden third ending), and bringing it out is the Ranger's third prestige quest (§5).
 
 ---
 
@@ -531,9 +545,9 @@ is the Cartographer Promotion II.
 | Tier | Contents | Purpose |
 |---|---|---|
 | **M0 — Vertical slice** | Harrow, one Shelf outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
-| **M1 — Act I** | The Shelf and Thornmark complete, the Downs and the Deepthorn with them; Wardens and Lanterns Charter lines to rank 3; the Grove Stone dungeon. | First real playthrough. |
-| **M2 — Acts II to IV** | Saltreach to Ashfall and their Wardstones; all four Charters; promotions I; the Underdeep entrances; the ship. | The open world. |
-| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, promotions II, Master trainers. | Content complete. |
+| **M1 — Act I** | The Shelf and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
+| **M2 — Acts II to IV** | Saltreach to Ashfall and their Wardstones; the rest of the guilds; the first and second prestiges; Meridian Camp and the Dead-Drop; the ship. | The open world. |
+| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, the third prestiges, Master trainers. | Content complete. |
 | **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9). | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 

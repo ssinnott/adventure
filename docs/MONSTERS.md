@@ -51,8 +51,9 @@ The rules that follow from them:
 - **Found, never told.** No monster explains itself, and no fight's text names the machine. What a
   thing does and what it carries are the clue.
 - **Plain names.** English words a listener could spell, as STORY.md is written for the ear, in
-  British spelling. *Warden* is taken: the Charter, the Wardstones and the Rift's bosses (the Rift
-  Warden, the Warden of the Cut) keep it, and nothing else gets it. No name says ship, hull or crew.
+  British spelling. *Warden* is taken: Harrow's Wardens, the Wardstones and the Rift's bosses (the
+  Rift Warden, the Warden of the Cut) keep it, and nothing else gets it. No name says ship, hull or
+  crew.
 
 ---
 
@@ -168,8 +169,9 @@ numbers on it (§4.4): for a company to fight its standard encounters between re
 its level needs about twice the line's hit points from level 8. Past 16, on today's rules, no split
 of hit points and damage keeps the days safe: fights the weapons can finish once the spells are
 spent kill, and fights that do not kill stall. Stop the spells growing at 10 and let something else
-grow past it, the gear, a bonus every two levels or a blow more a turn with each promotion, and the
-days are safe again; the blows keep them safest.
+grow past it, the gear, a bonus every two levels or a blow more a turn at 11 and another at 29, and
+the days are safe again; the blows keep them safest. Where spells stop, and what grows in their
+place, are for the spells past 10 and the prestiges to settle (#20, #19).
 
 ### 3.3 What the road asks
 
@@ -305,7 +307,7 @@ spell points run down. The calibration:
   two levels under it wins half the time (EXPANSION.md §5.2).
 - It is made at every level to 10 and every fourth level to 32, 300 seeds a point, with the levels
   between interpolated. Past 10 the company runs on today's rules extended, with no new spells,
-  promotions or gear, so that stretch is provisional.
+  prestiges or gear, so that stretch is provisional.
 
 Hit points / average damage a hit, by role and level:
 
@@ -389,8 +391,8 @@ What it shows:
   the line's hit points do and armour gains a point every two levels, as the line's to-hit does.
   `--level-bonus` gives every member a point of weapon damage and of armour every two levels
   instead. `--level-traits` gives the fighters (in the premade six the knight, paladin, ranger and
-  thief) a blow more a turn with each promotion, at 11 and 29, where Saltreach and Hearth Isle bring
-  promotions I and II (EXPANSION.md §7), and grows the thief's sneak attack by 2 every two levels.
+  thief) a blow more a turn at 11 and another at 29, where the promotions the prestiges replaced
+  were to come (DESIGN.md §5), and grows the thief's sneak attack by 2 every two levels.
   Days that end in a death, a lost fight or one broken off, from 12 to 32:
 
   | Spells | What else grows past 10 | Most roles | The armoured |
@@ -398,14 +400,14 @@ What it shows:
   | keep growing | nothing (today) | a sixth to two-fifths | nearly all |
   | keep growing | gear | a fifth to five in six from 24 | nearly all |
   | keep growing | a bonus every two levels | up to six in seven by 28 | nearly all from 24 |
-  | keep growing | a blow a promotion | a fifth at most to 16, up to two-thirds from 24 | a tenth at most to 16, up to nine in ten from 24 |
+  | keep growing | a blow at 11 and 29 | a fifth at most to 16, up to two-thirds from 24 | a tenth at most to 16, up to nine in ten from 24 |
   | stop at 16 | nothing | 1–33% | 58–83% |
   | stop at 16 | gear | 9–42% | 27–39% |
   | stop at 10 | nothing | a sixth at most (casters at 32, 22%) | 12–45% |
   | stop at 10 | gear | a sixth at most (fodder up to a third) | 4–12% |
   | stop at 10 | a bonus every two levels | a fifth at most (fodder up to a third) | 5–15% |
-  | stop at 10 | a blow a promotion | a tenth at most, 8% past 12 | 12% at 12, then 4% at most |
-  | stop at 10 | a blow a promotion and a bonus | a sixth at most (brutes 23% at 20) | 3–10% |
+  | stop at 10 | a blow at 11 and 29 | a tenth at most, 8% past 12 | 12% at 12, then 4% at most |
+  | stop at 10 | a blow at 11 and 29, and a bonus | a sixth at most (brutes 23% at 20) | 3–10% |
 
   While spells keep growing, none of them keeps the days safe. Past 16 or 20 the bad days are, as
   today, fights broken off once the spells are spent and deaths where monsters hit harder to end
@@ -418,17 +420,19 @@ What it shows:
   matter against good armour, still end up to a third of their days badly. Which to give is a
   matter of feel, loot or levels, not of balance.
 
-  A blow more with each promotion does best. Monsters carry 1.6 to 3.7 times the line's hit points
+  A blow more at 11 and at 29 does best. Monsters carry 1.6 to 3.7 times the line's hit points
   and hit on it from 24 (up to 1.6 times as hard at 12), in fights of three to seven rounds: the
   blows add no armour, so monsters need not hit harder to take their share of the day. The first
   blow has to come early. Given at 21 and 32 instead, the blows leave 11 to 20 with nothing new, and
   at 20 a quarter of the controllers' days and over a third of the armoured's end badly. Between
-  promotions the company gains little, and from 16 the calibration would give five roles in nine
+  11 and 29 the company gains little, and from 16 the calibration would give five roles in nine
   fewer hit points than the level under them at one level or more; held at the level under's,
   brutes at 24 and 28 leave the company a fight or two short of its day (8.6 of 10, 9.2 of 11). The
   bonus on top is worse, not better: monsters hit up to 1.6 times the line, fights run to twelve
-  rounds, and brutes end up to a quarter of their days badly. Promotions bring a spell tier each as
-  well (DESIGN.md §5), which the harness cannot try until the spells exist.
+  rounds, and brutes end up to a quarter of their days badly. The prestiges that replace the
+  promotions are drafted at 11, 19 and 27, with perks and spell ranks rather than spell tiers
+  (DESIGN.md §5, §7; #19, #20); the harness runs them in place of `--level-traits` once they are
+  settled.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -777,8 +781,8 @@ the outside of everything. There are no Rifts in this act: its Stones are whole,
 
 ### 8.1 The Whitespine (band 22–24)
 
-*Monks' Vale (the monastery, Promotion II's dungeon), the High Spine (the snows and the Peak Stone),
-Sheer Point (the Hand's causeway), and the Giants' Stair, over the range and down into Ashfall.*
+*Monks' Vale (the monastery), the High Spine (the snows and the Peak Stone), Sheer Point (the Hand's
+causeway), and the Giants' Stair, over the range and down into Ashfall.*
 
 The Whitespine's Stone is whole, so its danger is the mountain, its giants and the monastery. The
 monks died long ago, and the Custodian's hands keep their hours in their robes: they walk like the
@@ -813,8 +817,8 @@ nothing new of the resolver; a company that pays walks up the Stair.
 ### 8.2 Ashfall (band 24–26)
 
 *Cindercoast (Cinderport, black sand, hanging vines, the hot springs), Fire Mountain (the vents, Old
-Cinder, the Meridian Company's camp and the window), and the Ember Waste, round the unfinished Ember
-Stone.*
+Cinder, and Meridian Camp below them, with the window), and the Ember Waste, round the unfinished
+Ember Stone.*
 
 The Ember Stone was never finished, so the far side of the sea was never sealed, and the machine is
 near the surface: the mountain's vents are the Underdeep's exhaust, and the stokers that tend them
@@ -1050,10 +1054,10 @@ Where this and DESIGN.md disagree, the design wins.
 
 ### Open questions
 
-1. **The Compact's crews.** The bargemen and the Wrack smugglers work for the Compact, and the
-   Compact is the Thief's promotion path (DESIGN.md §8). Either killing them costs Standing, or the
-   crews who carry the Hand's cargo have left the Compact for the Hand's coin. The Compact's line
-   should say which.
+1. **The Compact's crews.** The bargemen and the Wrack smugglers work for the Compact, whose line
+   the company can take up (DESIGN.md §10.2). Either killing them sets the Compact against the
+   company, or the crews who carry the Hand's cargo have left the Compact for the Hand's coin. The
+   Compact's line should say which.
 2. **What the giants are.** They are not among the sleepers, and every people came in the ship
    (DESIGN.md §7). Either they came awake, or they are something else. The monsters need only the
    surface; the design may want the rest.
@@ -1063,15 +1067,7 @@ Where this and DESIGN.md disagree, the design wins.
 4. **What a fight is worth.** From Saltreach on, an area spans two levels over as much as fifteen
    zone maps of land, where Thornmark spans five levels over fewer than six. At the slice's density
    of groups a clear would pay several bands, unless each fight pays far less of a level than
-   Thornmark's do.
-   The curve settles it (EXPANSION.md §2.1, §5.2), but it decides whether a fight on the road is
-   worth having, and the country's floor of groups may want to sit looser than its floor of
-   features (EXPANSION.md §5.3).
-5. **Spells without a ceiling.** §3.2's gap is the systems lane's as much as the monsters': a
-   ceiling on a spell's dice would do some of what resistances do, more bluntly. The harness says a
-   ceiling at 10 keeps the road's days safe to 32 so long as the company gains something else as it
-   levels: gear that keeps growing past Thornmark's, a bonus every two levels, or, safest, a blow
-   more a turn for the fighters with each promotion. A ceiling at 16 does not, and nor does any of
-   them while spells keep growing (§4.4). Where exactly spells stop, and what grows in their place,
-   are the curve's to settle with the promotions' abilities (DESIGN.md §5), and the harness re-runs
-   when they are.
+   Thornmark's do. The xp budget settles how much (EXPANSION.md §2.1, §5.2: however many fights an
+   area holds, they share one budget, set so that three quarters of it reach the next floor), but it
+   decides whether a fight on the road is worth having, and the country's floor of groups may want
+   to sit looser than its floor of features (EXPANSION.md §5.3).

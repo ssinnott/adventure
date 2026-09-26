@@ -30,11 +30,10 @@ much on the walls, #9; cracks and roof seams, #10). Two of the four became check
 sling and #10's cracks); the floating head and the wall dressing did not.
 
 **A check that passes by chance.** The smoke test starts each new game from `Math.random()`, so
-every run checks a different world. Its end-of-the-world check wants a clear noon but asks for no
-snow lying (`cover`) where it means no cloud (`cloud`); on a cloudy noon the cloud light moves the
-pink out of the check's tolerance, and it fails. It failed for two of eight seeds tried, and once in
-seven ordinary runs. As a required check, that is a pull request blocked for nothing, or a habit of
-running it again until it passes.
+every run checks a different world. Its end-of-the-world check wants a clear noon but lets fog
+through, and once fog passes 0.05 the view draws a haze over the pink that takes it out of the
+check's tolerance. It fails about one run in five (#23). As a required check, that is a pull request
+blocked for nothing, or a habit of running it again until it passes.
 
 **What is missing.** Nothing stands between a branch and main. CI runs only on a push to main, and
 without the smoke test. Seven of the twelve pull requests were merged within half a minute of being
@@ -244,14 +243,24 @@ for each area, its band, and the xp and gold a clear should give. Since the mons
 gate on the road (§2.2), the curve says how hard each area is as well as what it pays. Checked for
 each area:
 
-- a clear, and at most two sweeps of what respawns, reaches the next area's band floor;
+- three quarters of an area's xp reaches the next area's band floor: its budget is what the climb
+  from its floor to the next floor costs, divided by 0.75;
 - a clear's gold pays for training the party through the band;
-- every monster's level (a new field on `MonsterDef`) sits in its map's band, give or take two;
+- every monster's level (a new field on `MonsterDef`) sits in its map's band, give or take two,
+  rising from the floor near the area's way in to the band's top at the far end;
 - chest and drop items sit in the band's price window, so a band 1–4 cellar holds no plate.
+
+A kill pays each member by the monster's level against theirs: ×0.1 at three or more under, ×0.4
+at two under, ×0.7 at one under, ×1 at their level, ×1.15 at one over, ×1.3 at two over, and ×1.5
+at three or more over. Simulated from Saltreach on, that kept companies that clear anything from
+65% of each area to all of it within about a level of the road, where fixed xp left a full clear
+nearly four levels over by the Glasswold. Each town's trainers teach to its band's top plus one.
+Gold and loot stay fixed, so a full clear still pays, in gear, gold and secrets.
 
 Its first rows are the slice's own figures from SLICE.md: level 2 from the Shelf and the cellar,
 level 4 with Greywater, a little over level 7 from one clear of everything, two more sweeps of the
-Grove to 10, and about 8,400 gold for six members from 5 to 10.
+Grove to 10, and about 8,400 gold for six members from 5 to 10. Act I falls short of the budget:
+three quarters of it should reach 10, where a clear of everything reaches a little over 7.
 
 The gate, checked with the bot of `tools/gate.ts` (starting thresholds, set against the owner's own
 play in the pilot):
@@ -419,15 +428,15 @@ docs/areas/<area>.md                    the area's brief, and what was built
 
 | Area | Band | Systems first |
 |---|---|---|
-| The Shelf, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; the flag off the pass, with Thornmark retuned to be the gate (§9); for M1, the Wardens' and Lanterns' lines to rank 3, and Standing |
-| Saltreach | 10–12 | the level cap past 10, and promotion I (the next spell tier lands on it); salt flats and tidal ground; the Salt Compact |
+| The Shelf, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; the flag off the pass, with Thornmark retuned to be the gate (§9); for M1, the first guilds (DESIGN.md §8) |
+| Saltreach | 10–12 | the level cap past 10 and the xp budget (§5.2), with the first prestiges (DESIGN.md §5) and the spells past 10 (DESIGN.md §7); salt flats and tidal ground; the Salt Compact |
 | Wrackholm | 12–14 | a crossing from the mainland, open from the start |
 | Sunderwood | 14–16 | chasm, crystal and dead wood as terrain; the Rift generator |
 | The Kilns | 16–18 | ash; Kiln-script and Linguist |
 | Cairnmoor, Rimewater | 18–22 | heather, ice and lying snow as terrain; the rest of what they are, which DESIGN.md has yet to say |
 | The Whitespine | 22–24 | cliffs and peaks, with the road through them |
 | Ashfall | 24–28 | the crossing by ship, open from the start; volcano and lava fields |
-| Hearth Isle, the Underdeep | 28–32 | promotion II; the Underdeep's look; the endings |
+| Hearth Isle, the Underdeep | 28–32 | the Underdeep's look; the endings |
 | The reach: the Glass, and Glacier Foot with the Vault (DESIGN.md §9) | the cap | glass and dunes; a lava flow sealing the Glass from the Ember Waste; the Vault's new kind of map, the inside of the sky; the atlas marking reach areas beside the road, not on it (its test holds the bands rising along the road, and a reach area's would not); super dungeons of many levels; artifacts |
 
 The skills that open the map (Swimmer, Mountaineer, Navigator and the rest) come when there are
@@ -500,7 +509,7 @@ vendored, and fixed upstream.
 the rest run in parallel.
 
 1. The pull request workflow and branch protection, on checks that cannot pass by chance: the smoke
-   test pins its seed, and its clear noon asks for no cloud.
+   test pins its seed, and its clear noon asks for no fog (#23).
 2. CLAUDE.md.
 3. The layout refactor (§6), alone.
 4. The contract's checks (§5), each run first against today's content; what they find is fixed, or
@@ -519,12 +528,12 @@ and The Grove Stone become the one quest's first chapters; the three hand-ins ta
 the first meeting. Then the rest of the Shelf and Thornmark
 through the new pipeline: one zone map of the Downs west of the Shelf (band 2–5, where the land runs
 on and the world now ends), then the Deepthorn. Meanwhile, in the systems lane, what M1 still lacks:
-the Wardens' and Lanterns' lines to rank 3, Standing, and the terrain the pilot asks for.
+the first guilds (DESIGN.md §8) and the terrain the pilot asks for.
 Measure how long a zone map takes and what the owner still finds by hand, and tune the thresholds.
 
-**Phase 2: the systems for Acts II to IV**, one at a time: the level cap and promotion I, the Rift
-generator, the next regions' climates, the crossings, and the danger made legible; the skills that
-open shortcuts as the areas that have them come up.
+**Phase 2: the systems for Acts II to IV**, one at a time: the level cap past 10, with the xp
+budget (§5.2) and the prestiges; the Rift generator, the next regions' climates, the crossings, and
+the danger made legible; the skills that open shortcuts as the areas that have them come up.
 
 **Phase 3: Acts II to IV, area by area** (Saltreach, Wrackholm, Sunderwood, the Kilns, …), no more
 than two in flight, each to its definition of done, with the lanes running in parallel inside each.

@@ -130,7 +130,7 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
 ## The road to level 10
 
 The slice's content ends around level 4. The Thornmark extension carries a party to the level
-cap, which is 10 until promotions exist:
+cap, which is 10 until the road past it is built:
 
 - **Progression.** `MAX_LEVEL` is 10; `levelUp` stops there and the sheet says so. Five spell
   tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`). Trainers charge 25 a level to 5 and
@@ -264,13 +264,13 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Stubbed or absent
 
-- Only one Charter (Lanterns) has any presence; no Standing.
-- No promotions, so no sixth spell tier; no Master trainers; no secondary skills yet beyond race
+- No guilds but the two Lantern spell guilds, so no guild quests; no Standing.
+- No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Promotions, the succession, the Salt Compact, the Lost Expedition past its first journal: design
-  only.
+- Prestiges, guilds, the succession, the Salt Compact, the Lost Expedition past its first journal:
+  design only.
 
 ## Checks
 
@@ -299,7 +299,7 @@ seven an encounter at its level should allow (docs/MONSTERS.md §4.4). `--spell-
 where damage spells stop growing at that level, `--gear-grows` one where the company's gear keeps
 growing past Thornmark's, `--level-bonus` one where every member gains a point of damage and of
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
-with each promotion and sneak attacks grow.
+from 11 and again from 29, and sneak attacks grow.
 
 ## Code map
 
