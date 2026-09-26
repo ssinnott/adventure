@@ -23,8 +23,8 @@ import type { QuestCond, QuestView, When } from '../src/game/quests.ts';
 import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
 import { NORTH } from '../src/game/types.ts';
-import { testMonster, standardEncounter, line, ROLES, ROLE_IDS } from './testmonster.ts';
-import { measure, spent, bossFloor, TARGET, CAP } from './harness.ts';
+import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from './testmonster.ts';
+import { measure, days, spent, mustRest, bossFloor, FIGHTS, REST_AT, WORST, CAP } from './harness.ts';
 import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
 import type { Season } from '../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
@@ -337,18 +337,26 @@ const suites: Record<string, () => void> = {
     fallen.hp = -1; addCondition(fallen, 'unconscious'); p.members[4].sp -= 3;
     const cost = spent(p).cost;
     ok(Math.abs(cost - (fallen.maxHp + 3) / pool) < 1e-9, `a fallen member costs all of their hit points, a spell its points (${(cost * 100).toFixed(1)}% of the company)`);
-    // From 1 to the road's cap, a test monster's hit points never fall with level, and it never hits
-    // under its role's share of the line (below 8 its damage moves with the spell tiers; docs/MONSTERS.md §4.4).
+    // A company rests once anyone is under a quarter of their hit points, or it is under a quarter of its spell points.
+    const whole = defaultParty(makeRng(34)), hurt = structuredClone(whole), dry = structuredClone(whole);
+    hurt.members[0].hp = Math.ceil(hurt.members[0].maxHp * REST_AT) - 1;
+    for (const m of dry.members) m.sp = Math.floor(m.maxSp * (REST_AT - 0.05));
+    ok(mustRest(whole) === null && mustRest(hurt) === 'hp' && mustRest(dry) === 'sp', `a whole company fights on, and rests for one member's wounds or for its spell points (${mustRest(whole)}, ${mustRest(hurt)}, ${mustRest(dry)})`);
+    // From 1 to the road's cap, a test monster's hit points never fall with level, and it hits under
+    // its role's share of the line only where its hit points came down with it (docs/MONSTERS.md §4.4).
     for (const r of ROLE_IDS) {
       const levels = Array.from({ length: CAP }, (_, k) => k + 1), m = levels.map((l) => testMonster(r, l));
       const falls = levels.filter((l) => l > 1 && m[l - 1].hp < m[l - 2].hp);
-      const under = levels.filter((l) => (m[l - 1].dice * (m[l - 1].sides + 1)) / 2 + m[l - 1].bonus < line(l).dmg * ROLES[r].dmg - 0.75);
-      ok(!falls.length && !under.length, `the test ${r} gains hit points with every level and never hits under the line${falls.length || under.length ? ` (falls at ${falls.join(', ')}; under at ${under.join(', ')})` : ''}`);
+      const under = levels.filter((l) => scaleAt(DAMAGE, r, l) < 1 - 1e-9 && scaleAt(HP, r, l) > scaleAt(DAMAGE, r, l) + 1e-9);
+      const off = levels.filter((l) => Math.abs((m[l - 1].dice * (m[l - 1].sides + 1)) / 2 + m[l - 1].bonus - Math.max(1, line(l).dmg * ROLES[r].dmg * scaleAt(DAMAGE, r, l))) > 0.5);
+      ok(!falls.length && !under.length && !off.length, `the test ${r} gains hit points with every level, hits under the line only where it comes down whole, and its dice roll what it should${falls.length || under.length || off.length ? ` (falls at ${falls.join(', ')}; under at ${under.join(', ')}; dice off at ${off.join(', ')})` : ''}`);
     }
-    // The calibration holds on seeds it was not made on: 15% at a company's own level, and the boss a coin flip from two under.
-    for (const [r, l] of [['fodder', 2], ['brute', 4], ['soldier', 6], ['caster', 10]] as const) {
-      const t = measure(l, standardEncounter(r, l), 80, 5001);
-      ok(Math.abs(t.cost - TARGET) <= 0.03, `${ROLES[r].group} test ${r}s cost a company of level ${l} ${(t.cost * 100).toFixed(0)}% (${(TARGET * 100).toFixed(0)}% asked)`);
+    // The calibration holds on seeds it was not made on: six or seven fights between rests at a company's
+    // own level, few of its days ending in a death or a lost fight, and the boss a coin flip from two
+    // under. Two brutes at 4 are the worst of it: six rounds a fight is as safe as they get (docs/MONSTERS.md §4.4).
+    for (const [r, l, worst] of [['fodder', 2, 2 * WORST], ['brute', 4, 3.5 * WORST], ['soldier', 6, 2 * WORST], ['caster', 10, 2 * WORST]] as const) {
+      const d = days(l, [standardEncounter(r, l)], 60, 5001), bad = d.why.dead + d.why.lost;
+      ok(Math.abs(d.fights - FIGHTS) <= 1 && bad <= worst, `a company of level ${l} fights ${d.fights.toFixed(1)} encounters of ${ROLES[r].group} ${ROLES[r].plural} between rests (six or seven asked), and ${(bad * 100).toFixed(0)}% of its days end in a death or a lost fight (${(worst * 100).toFixed(0)}% at most)`);
     }
     const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
     ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
