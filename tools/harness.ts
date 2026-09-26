@@ -9,6 +9,7 @@
 //   node tools/harness.ts --map thornmark --level 5    a map's own groups, against a company of 5
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
+//   node tools/harness.ts --spell-cap 10 [...]         any of the above as if spells stopped growing at 10
 // The company is the premade six, trained to the level (past today's cap if asked) and dressed in what
 // the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
@@ -25,7 +26,7 @@ import { defaultParty, xpForLevel, levelUp, isDown, hasCondition, heal, equip, w
 import type { Character, Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, toHit, buffHit, traitDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction } from '../src/game/combat.ts';
-import { spell } from '../src/game/spells.ts';
+import { spell, spellDice } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
 import { item } from '../src/game/items.ts';
 import type { ItemDef } from '../src/game/items.ts';
@@ -43,6 +44,12 @@ export const FIGHTS = 6.5;
 export const REST_AT = 0.25;
 /** How far the harness will train a company: the road's cap, past today's MAX_LEVEL. */
 export const CAP = 32;
+
+/**
+ * What-ifs on the rules, for weighing a change before it is made; play has none of them. `spellsGrowTo`
+ * is the level damage spells stop growing at (`--spell-cap`).
+ */
+export const RULES: { spellsGrowTo?: number } = {};
 
 /**
  * What the item tables put in a company's hands by a level: its kit, then the Shelf's mid-tier (the
@@ -94,7 +101,7 @@ export function pools(p: Party): { hp: number; maxHp: number; sp: number; maxSp:
 }
 
 const spellDamage = (c: Character, sp: SpellDef): number =>
-  ((sp.dice ?? 1) * (sp.perLevel ? Math.max(1, Math.ceil(c.level / 2)) : 1) * ((sp.sides ?? 4) + 1)) / 2 + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
+  (spellDice(sp, c.level, RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2 + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
 
 /** A weapon blow's expected damage on a monster; `capped` counts no more than the monster has left. */
 function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, capped = true): number {
@@ -193,7 +200,7 @@ export interface Outcome { won: boolean; cost: number; hp: number; sp: number; r
 
 /** One fight to its end from however the company stands: what it cost, read from what it has left. */
 export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
-  const rng = makeRng(seed), s = startCombat(p, [{ id: 'harness', monsters }], rng);
+  const rng = makeRng(seed), s = startCombat(p, [{ id: 'harness', monsters }], rng, { spellsGrowTo: RULES.spellsGrowTo });
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t) break;
@@ -291,20 +298,26 @@ function solve(f: (x: number) => number, target: number, rising: boolean, lo = 0
   return Math.sqrt(lo * hi);
 }
 
-/** The longest a standard encounter runs before its monsters hit harder instead (DESIGN.md §1: quick). */
-export const LONGEST = 4;
+/**
+ * The longest a standard encounter runs before its monsters hit harder instead (DESIGN.md §1: quick):
+ * four rounds at level 1, and a round more every eight levels as both sides grow, to eight at 32.
+ */
+export const longest = (level: number): number => 4 + (level - 1) / 8;
 /** The most days a standard encounter at the company's level should end in a death or a lost fight. */
 export const WORST = 0.1;
-/** How long a standard encounter may run instead, where blows hard enough for LONGEST end too many days badly. */
-export const SLOWEST = 6;
+/**
+ * How long a standard encounter may run instead, where blows hard enough for `longest` end too many
+ * days badly: half as long again, six rounds at level 1 and twelve at 32, and never fifteen.
+ */
+export const slowest = (level: number): number => Math.min(14, 1.5 * longest(level));
 
 /**
  * A role's two factors at a level. A regular role hits as today's monsters hit (damage 1, on the
  * line) and takes the hit points that let a company of its level fight FIGHTS of its standard
- * encounter between rests; where the day's fights would run past LONGEST rounds, hit points hold them
- * to LONGEST and damage rises to FIGHTS instead. Where blows that hard end more than WORST of the days
- * in a death or a lost fight, the fights run longer and hit softer, up to SLOWEST rounds: the first
- * that ends no more than WORST badly, or else the one that ends fewest. A role that on the line
+ * encounter between rests; where the day's fights would run past `longest` rounds, hit points hold
+ * them to that and damage rises to FIGHTS instead. Where blows that hard end more than WORST of the
+ * days in a death or a lost fight, the fights run longer and hit softer, up to `slowest` rounds: the
+ * first that ends no more than WORST badly, or else the one that ends fewest. A role that on the line
  * already leaves the company short of FIGHTS comes down whole, hit points and damage together. A lone
  * boss acts once a round against six, so it takes one factor for both, set so that a company two
  * levels under it wins half the time.
@@ -317,23 +330,23 @@ export function calibrate(role: Role, level: number, seeds: number): [number, nu
   const run = (h: number, d: number): DayTally => days(level, [standardEncounter(role, level, h, d)], seeds);
   if (run(1, 1).fights < FIGHTS) { const whole = solve((x) => run(x, x).fights, FIGHTS, false, 0.05, 1, 10); return [whole, whole]; }
   const most = solve((x) => run(x, 1).fights, FIGHTS, false, 1, 60, 10);
-  if (run(most, 1).rounds <= LONGEST) return [most, 1];
+  if (run(most, 1).rounds <= longest(level)) return [most, 1];
   // Fewer hit points, and for each the damage that brings the day back to FIGHTS: the hit points at
-  // which those fights last LONGEST rounds.
+  // which those fights last `longest` rounds.
   const made = new Map<number, number>();
   const damageFor = (h: number): number => {
     let d = made.get(h);
     if (d === undefined) made.set(h, (d = Math.max(1, solve((x) => run(h, x).fights, FIGHTS, false, 1, 60, 9))));
     return d;
   };
-  const quick = solve((x) => run(x, damageFor(x)).rounds, LONGEST, true, 0.05, most, 9);
+  const quick = solve((x) => run(x, damageFor(x)).rounds, longest(level), true, 0.05, most, 9);
   // Where their blows end too many days badly, a tenth more hit points a step and softer blows, while
-  // the fights stay within SLOWEST rounds and until a step ends no more than WORST of the days badly.
+  // the fights stay within `slowest` rounds and until a step ends no more than WORST of the days badly.
   const bad = (t: DayTally): number => t.why.dead + t.why.lost;
   let pick = quick, least = bad(run(quick, damageFor(quick)));
   for (let h = quick * 1.1; least > WORST && h < most; h *= 1.1) {
     const t = run(h, damageFor(h));
-    if (t.rounds > SLOWEST) break;
+    if (t.rounds > slowest(level)) break;
     if (bad(t) < least) { pick = h; least = bad(t); }
   }
   return [pick, damageFor(pick)];
@@ -359,7 +372,7 @@ export function cell(role: Role, level: number, seeds: number, under = 0): Cell 
 
 // ---- every core ------------------------------------------------------------------------------
 
-interface Job { kind: 'calibrate' | 'refit' | 'cell'; role: Role; level: number; seeds: number; under: number; hp?: number }
+interface Job { kind: 'calibrate' | 'refit' | 'cell'; role: Role; level: number; seeds: number; under: number; hp?: number; rules: typeof RULES }
 const work = (j: Job): [number, number] | Cell =>
   j.kind === 'calibrate' ? calibrate(j.role, j.level, j.seeds) : j.kind === 'refit' ? refit(j.role, j.level, j.hp ?? 1, j.seeds) : cell(j.role, j.level, j.seeds, j.under);
 
@@ -380,7 +393,7 @@ function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void): Promis
   });
 }
 
-if (!isMainThread) parentPort?.on('message', (j: Job) => parentPort?.postMessage(work(j)));
+if (!isMainThread) parentPort?.on('message', (j: Job) => { RULES.spellsGrowTo = j.rules.spellsGrowTo; parentPort?.postMessage(work(j)); });
 
 // ---- the command line ------------------------------------------------------------------------
 
@@ -391,6 +404,13 @@ async function main(): Promise<void> {
   const levels = (opt('levels')?.split(',').map(Number) ?? [...LEVELS]);
   const roles = (opt('roles')?.split(',') ?? ROLE_IDS) as Role[];
   const under = Number(opt('under') ?? 0);
+  const cap = opt('spell-cap');
+  if (cap !== undefined) {
+    RULES.spellsGrowTo = Number(cap);
+    if (!(RULES.spellsGrowTo >= 1)) throw new Error('--spell-cap takes the level damage spells stop growing at');
+    console.log(`What if: damage spells stop growing at level ${RULES.spellsGrowTo}.`);
+  }
+  const rules = { ...RULES };
   const pct = (x: number): string => `${Math.round(x * 100)}`;
   const row = (label: string, cells: readonly string[]): void => console.log(label.padEnd(14) + cells.map((c) => c.padStart(6)).join(''));
   if (levels.some((l) => !(l >= 1 && l <= CAP)) || roles.some((r) => !ROLES[r])) throw new Error(`levels run from 1 to ${CAP}; roles are ${ROLE_IDS.join(', ')}`);
@@ -432,7 +452,8 @@ async function main(): Promise<void> {
     const at = (l: number): number => { const k = LEVELS.indexOf(l as (typeof LEVELS)[number]); if (k < 0) throw new Error(`level ${l} is not one of LEVELS`); return k; };
     levels.forEach(at);
     const say = (j: Job, [h, d]: [number, number]): void => console.log(`  ${j.role} ${j.level}: hp ${fmt(h)}, damage ${fmt(d)} (${secs()})`);
-    const jobs = roles.flatMap((role) => levels.map((level): Job => ({ kind: 'calibrate', role, level, seeds, under: 0 })));
+    if (args.includes('--write') && RULES.spellsGrowTo !== undefined) throw new Error('a what-if is for weighing, not for writing: drop --write or --spell-cap');
+    const jobs = roles.flatMap((role) => levels.map((level): Job => ({ kind: 'calibrate', role, level, seeds, under: 0, rules })));
     const made = await onCores<[number, number]>(jobs, say);
     // The tables with the points just made, as they will be written; the rest stay as they were.
     const next = { hp: {} as Record<Role, number[]>, dmg: {} as Record<Role, number[]> };
@@ -446,7 +467,7 @@ async function main(): Promise<void> {
       let most = 0;
       LEVELS.forEach((l, k) => {
         const hp = testMonster(r, l, next.hp[r][k], next.dmg[r][k]).hp;
-        if (hp < most && levels.includes(l)) held.push({ kind: 'refit', role: r, level: l, seeds, under: 0, hp: Math.ceil((most / (line(l).hp * ROLES[r].hp)) * 100) / 100 });
+        if (hp < most && levels.includes(l)) held.push({ kind: 'refit', role: r, level: l, seeds, under: 0, hp: Math.ceil((most / (line(l).hp * ROLES[r].hp)) * 100) / 100, rules });
         most = Math.max(most, hp);
       });
     }
@@ -475,9 +496,10 @@ async function main(): Promise<void> {
   console.log(`Standard encounters against a company ${under ? `${under} level${under > 1 ? 's' : ''} under them` : 'of their own level'}, ${seeds} seeds.`);
   console.log(`Fights before a rest: encounters in a row from fresh, mending between them, until the company loses one or must rest:`);
   console.log(`someone dead, anyone under ${pct(REST_AT)}% of their hit points after mending, or the company under ${pct(REST_AT)}% of its spell points.`);
-  console.log(`Target ${FIGHTS}: six or seven, with no more than ${pct(WORST)}% of days ending in a death or a lost fight.`);
+  console.log(`Target ${FIGHTS}: six or seven, with no more than ${pct(WORST)}% of days ending in a death or a lost fight, in fights of`);
+  console.log(`${longest(1)} rounds at level 1 to ${longest(CAP).toFixed(1)} at ${CAP} (up to ${slowest(1)} and ${slowest(CAP).toFixed(1)} where blows that hard kill too often).`);
   console.log(`The boss is fought alone, from ${under ? 'the same company' : 'two levels under it'}: won (target 50%).`);
-  const cells = await onCores<Cell>(roles.flatMap((role) => levels.map((level): Job => ({ kind: 'cell', role, level, seeds, under }))));
+  const cells = await onCores<Cell>(roles.flatMap((role) => levels.map((level): Job => ({ kind: 'cell', role, level, seeds, under, rules }))));
   const block = (title: string, show: (c: Cell, r: Role) => string, dayOnly = false): void => {
     console.log(`\n${title}`);
     row('', levels.map((l) => `L${l}`));

@@ -53,35 +53,36 @@ export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32] as
  * The calibration, two factors on each role's shape at each of LEVELS: HP on its hit points, DAMAGE on
  * its damage. A regular role hits as today's monsters do (damage 1, on the line) and has the hit points
  * that let a company of its level fight six or seven of its standard encounter between rests. Where
- * those fights would run past four rounds, hit points hold them to four and damage rises instead;
- * where blows that hard end more than one day in ten in a death or a lost fight, fights run up to six
- * rounds to end fewer; where the line itself is too much, both come down together; and no monster has
- * fewer hit points than the one a level under it. The boss takes one factor for both, set so that a
- * company two levels under it wins half the time, as EXPANSION.md §5.2 asks. Written by
- * `node tools/harness.ts --calibrate --write`; do not tune by hand.
+ * those fights would run too long (four rounds at level 1, a round more every eight levels), hit
+ * points hold them there and damage rises instead; where blows that hard end more than one day in ten
+ * in a death or a lost fight, fights run up to half as long again to end fewer; where the line itself
+ * is too much, both come down together; and no monster has fewer hit points than the one a level
+ * under it. The boss takes one factor for both, set so that a company two levels under it wins half
+ * the time, as EXPANSION.md §5.2 asks. Written by `node tools/harness.ts --calibrate --write`; do not
+ * tune by hand.
  */
 export const HP: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 0.91, 0.71, 1.4, 1.45, 1.48, 1.7, 2.54, 2.98, 3.02, 3.44, 4.84, 6.2, 7.7, 9, 10.99],
-  skirmisher: [0.83, 1.25, 1.11, 1.35, 1.18, 1.2, 1.3, 1.87, 2.11, 2.1, 2.33, 3.4, 3.64, 4.52, 5.36, 6.16],
-  soldier:    [1.07, 1.35, 1.11, 1.28, 1.24, 1.2, 1.34, 1.88, 2.11, 2.07, 2.39, 3.43, 3.73, 4.86, 5.67, 6.86],
-  archer:     [0.93, 1.59, 1.4, 1.58, 1.52, 1.53, 1.57, 2.16, 2.49, 2.44, 2.71, 3.83, 4.69, 6.04, 7, 8.14],
-  caster:     [1.13, 2.15, 1.83, 1.81, 1.69, 1.65, 1.67, 2.24, 2.47, 2.43, 2.73, 3.85, 4.55, 5.26, 5.91, 7.16],
-  controller: [0.98, 1.15, 1.04, 1.22, 1.19, 1.16, 1.34, 1.81, 2.08, 2.02, 2.27, 3.34, 3.72, 4.73, 5.55, 6.57],
-  armoured:   [1.54, 1.32, 1.14, 1.42, 1.35, 1.3, 1.17, 1.91, 1.97, 1.92, 2.36, 2.75, 3.22, 3.95, 4.34, 5.15],
-  elite:      [1.23, 1.76, 1.56, 2.17, 1.82, 1.57, 1.54, 2.25, 2.12, 2, 2.2, 2.67, 3.06, 3.64, 3.35, 4.07],
-  brute:      [1.99, 1.76, 1.68, 1.82, 1.92, 1.66, 1.59, 1.91, 1.94, 1.77, 1.93, 2.18, 2.51, 2.83, 3.1, 3.43],
+  fodder:     [0.83, 1.08, 0.83, 1.4, 1.53, 1.63, 1.83, 2.77, 3.14, 3.17, 3.52, 5.18, 6.2, 7.7, 9, 10.99],
+  skirmisher: [0.83, 1.25, 1.27, 1.47, 1.4, 1.43, 1.54, 2.05, 2.34, 2.33, 2.56, 3.44, 4.01, 4.88, 5.64, 6.75],
+  soldier:    [1.07, 1.45, 1.27, 1.41, 1.35, 1.34, 1.38, 2.09, 2.34, 2.3, 2.71, 3.5, 4.03, 5.04, 6.08, 7.02],
+  archer:     [0.93, 1.59, 1.49, 1.73, 1.64, 1.57, 1.82, 2.37, 2.78, 2.75, 3.3, 4.11, 5.29, 6.27, 7.72, 8.96],
+  caster:     [1.13, 2.16, 1.91, 2.01, 1.85, 1.84, 1.88, 2.61, 2.76, 2.93, 3.3, 3.85, 4.83, 6.12, 6.77, 8.07],
+  controller: [0.98, 1.25, 1.11, 1.28, 1.29, 1.3, 1.34, 2.02, 2.25, 2.3, 2.55, 3.36, 3.95, 4.99, 6.04, 7.1],
+  armoured:   [1.54, 1.4, 1.26, 1.45, 1.45, 1.22, 1.32, 1.99, 1.95, 2, 2.34, 2.84, 3.71, 4.02, 5.02, 5.71],
+  elite:      [1.23, 1.82, 1.68, 2.14, 1.82, 1.57, 1.59, 2.15, 2.26, 2.07, 2.28, 2.82, 3.45, 3.8, 4.41, 5.04],
+  brute:      [1.99, 1.82, 1.64, 2.2, 2.21, 1.92, 1.69, 2.23, 2.31, 2.21, 1.96, 2.36, 2.78, 3.13, 3.6, 4.01],
   boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.89, 3.03, 3.22, 3.27, 3.59, 3.81, 4.5, 4.5, 4.37, 4.22, 4.21],
 };
 export const DAMAGE: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.15, 1.57, 1.42, 1.44, 1.18, 1.22, 1.37, 1.66, 1.37, 1.16, 1.13, 1, 1, 1, 1],
-  skirmisher: [0.83, 1, 1.23, 1.58, 1.62, 1.49, 1.37, 1.58, 1.47, 1.38, 1.32, 1.08, 1.36, 1.14, 1.13, 1.07],
-  soldier:    [1, 1.19, 1.39, 1.7, 1.73, 1.58, 1.31, 1.61, 1.6, 1.5, 1.33, 1.23, 1.44, 1.25, 1.13, 1.08],
-  archer:     [0.93, 1, 1.11, 1.24, 1.34, 1.29, 1.36, 1.6, 1.33, 1.55, 1.47, 1.64, 1.47, 1.28, 1.3, 1.39],
-  caster:     [1, 1.01, 1, 1.43, 1.3, 1.35, 1.25, 1.43, 1.33, 1.43, 1.32, 1.24, 1.44, 1.56, 1.52, 1.52],
-  controller: [0.98, 1.49, 1.6, 1.87, 1.93, 1.77, 1.44, 1.87, 1.87, 1.76, 1.64, 1.42, 1.66, 1.47, 1.34, 1.3],
-  armoured:   [1, 1.79, 1.8, 2, 1.89, 1.66, 1.83, 1.6, 1.58, 1.61, 1.43, 1.66, 1.57, 1.5, 1.56, 1.44],
-  elite:      [1, 1.15, 1.51, 1.67, 1.71, 1.5, 1.45, 1.43, 1.62, 1.47, 1.36, 1.29, 1.33, 1.31, 1.57, 1.45],
-  brute:      [1, 1.46, 1.45, 1.86, 1.57, 1.35, 1.33, 1.45, 1.45, 1.44, 1.32, 1.29, 1.37, 1.39, 1.36, 1.4],
+  fodder:     [0.83, 1.15, 1.39, 1.42, 1.44, 1.04, 1, 1.13, 1.39, 1.1, 1, 1, 1, 1, 1, 1],
+  skirmisher: [0.83, 1, 1.11, 1.38, 1.44, 1.32, 1.06, 1.28, 1.05, 1.11, 1, 1, 1.01, 1, 1, 1],
+  soldier:    [1, 1.06, 1.17, 1.5, 1.55, 1.42, 1.31, 1.22, 1.13, 1.19, 1.05, 1.02, 1.13, 1.09, 1, 1],
+  archer:     [0.93, 1, 1.11, 1.11, 1.34, 1.29, 1.04, 1.43, 1.18, 1.11, 1.11, 1.21, 1.06, 1.06, 1.02, 1],
+  caster:     [1, 1, 1, 1.25, 1.3, 1.35, 1.1, 1.3, 1.08, 1.01, 1, 1.24, 1.23, 1.03, 1.26, 1.18],
+  controller: [0.98, 1.33, 1.46, 1.87, 1.93, 1.56, 1.44, 1.52, 1.42, 1.33, 1.32, 1.42, 1.3, 1.17, 1.04, 1],
+  armoured:   [1, 1.79, 1.58, 2, 1.81, 1.79, 1.65, 1.43, 1.58, 1.49, 1.43, 1.45, 1.08, 1.36, 1.15, 1.13],
+  elite:      [1, 1.15, 1.33, 1.67, 1.71, 1.5, 1.45, 1.43, 1.44, 1.42, 1.31, 1.07, 1.06, 1.2, 1.19, 1.17],
+  brute:      [1, 1.3, 1.45, 1.55, 1.42, 1.21, 1.25, 1.24, 1.25, 1.16, 1.29, 1.11, 1.09, 1.19, 1.19, 1.12],
   boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.89, 3.03, 3.22, 3.27, 3.59, 3.81, 4.5, 4.5, 4.37, 4.22, 4.21],
 };
 

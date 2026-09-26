@@ -4,7 +4,7 @@
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { monster } from './monsters.ts';
 import type { MonsterDef } from './monsters.ts';
-import { spell } from './spells.ts';
+import { spell, spellDice } from './spells.ts';
 import type { SpellDef } from './spells.ts';
 import { item } from './items.ts';
 import {
@@ -50,13 +50,18 @@ export interface CombatState {
   defending: boolean[];
   /** To-hit lost by bows, slings and crossbows on both sides: the weather (see weather.ts). */
   rangedPenalty: number;
+  /** The level damage spells stop growing at: none in play (see `spellDice`). */
+  spellsGrowTo?: number;
   log: string[];
   outcome: Outcome;
   loot: Loot | null;
 }
 
-/** Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line for the log. */
-export interface CombatOpts { rangedPenalty?: number; note?: string; }
+/**
+ * Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line
+ * for the log. A tool trying a ceiling on spells may also say where they stop growing.
+ */
+export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; }
 
 export const FRONT_ROW = 3;
 /** What the buffs are worth while they last. */
@@ -90,6 +95,7 @@ export function startCombat(party: Party, groups: readonly { id: string; monster
   const s: CombatState = {
     monsters, groupIds: groups.map((g) => g.id), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,
+    ...(opts.spellsGrowTo !== undefined ? { spellsGrowTo: opts.spellsGrowTo } : {}),
   };
   s.log.push(describeGroups(s) + ' attack!');
   if (opts.note) s.log.push(opts.note);
@@ -242,7 +248,7 @@ function hurtMonster(s: CombatState, m: MonsterInst, dmg: number): void {
 }
 
 function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number): void {
-  const dmgOf = () => roll(rng, (sp.dice ?? 1) * (sp.perLevel ? Math.max(1, Math.ceil(c.level / 2)) : 1), sp.sides ?? 4, hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
+  const dmgOf = () => roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
   switch (sp.target) {
     case 'enemy': {
       const m = s.monsters[target];

@@ -166,7 +166,8 @@ points on the few (the elites, the brutes, the bosses) than a single casting tak
 spell's dice should stop growing somewhere is the systems lane's to weigh. The combat harness puts
 numbers on it (§4.4): for a company to fight six or seven standard encounters of its own level
 between rests, a monster needs about twice the line's hit points from level 8, and on today's rules
-nearly seven times by 32.
+seven times by 32, and the days turn deadly on the way. Stop the spells growing at 10 and it holds
+at about two and a half, and the days stay safe.
 
 ### 3.3 What the road asks
 
@@ -284,11 +285,13 @@ spell points run down. The calibration:
 
 - Every role keeps its shape (§4.2) and hits as today's monsters hit, on the line; its hit points
   are whatever makes six or seven fights.
-- Where those fights would run past four rounds on average, hit points hold them to four and damage
-  rises instead.
+- Where those fights would run too long on average, hit points hold them there and damage rises
+  instead. Too long is four rounds at level 1 and a round more every eight levels, as both sides
+  grow: five at 9, eight at 32.
 - Where blows that hard end more than one day in ten in a death or a lost fight, the fights run
-  longer and hit softer, up to six rounds: the first step that ends no more than one day in ten
-  badly, or else the step that ends fewest.
+  longer and hit softer, up to half as long again (six rounds at level 1, twelve at 32, never
+  fifteen): the first step that ends no more than one day in ten badly, or else the step that ends
+  fewest.
 - Where a role on the line already leaves the company short of six or seven, it comes down whole,
   hit points and damage together.
 - No monster has fewer hit points than the one a level under it.
@@ -303,20 +306,20 @@ Hit points / average damage a hit, by role and level:
 | Level | Fodder | Skirmisher | Soldier | Archer | Caster | Controller | Armoured | Elite | Brute | Boss |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | 3 / 1.5 | 6 / 3 | 7 / 3.5 | 6 / 3 | 8 / 3.5 | 7 / 2.5 | 13 / 3.5 | 12 / 4.5 | 26 / 5 | none |
-| 2 | 5 / 3 | 13 / 4 | 14 / 5 | 14 / 3.5 | 20 / 4 | 12 / 5 | 17 / 8 | 26 / 5.5 | 33 / 8 | none |
-| 3 | 6 / 4 | 14 / 5.5 | 14 / 6.5 | 15 / 4 | 23 / 4.5 | 14 / 6 | 19 / 9 | 29 / 8 | 41 / 9 | 111 / 18.5 |
-| 4 | 13 / 4.5 | 22 / 8 | 20 / 9 | 21 / 5.5 | 28 / 8 | 20 / 7 | 28 / 11 | 50 / 10 | 55 / 13 | 138 / 21 |
-| 5 | 17 / 5 | 22 / 8 | 24 / 10 | 25 / 6.5 | 31 / 8 | 23 / 8 | 32 / 11 | 50 / 12 | 69 / 13 | 174 / 24 |
-| 6 | 20 / 4 | 26 / 8 | 26 / 9 | 29 / 7 | 34 / 9 | 26 / 8 | 36 / 10 | 50 / 11.5 | 69 / 11.5 | 223 / 29.5 |
-| 7 | 26 / 5 | 33 / 8 | 34 / 9 | 33 / 8 | 40 / 9 | 34 / 7 | 37 / 12 | 56 / 12 | 76 / 13 | 265 / 33 |
-| 8 | 43 / 6 | 52 / 11 | 53 / 11.5 | 51 / 10 | 60 / 11 | 51 / 10 | 67 / 12 | 91 / 13 | 102 / 14.5 | 316 / 38.5 |
-| 10 | 62 / 7 | 71 / 10 | 70 / 12 | 71 / 11 | 78 / 12 | 69 / 11.5 | 82 / 14 | 99 / 14.5 | 114 / 16.5 | 427 / 49 |
-| 12 | 83 / 6.5 | 93 / 11.5 | 96 / 12 | 92 / 11 | 104 / 12 | 91 / 12 | 118 / 14 | 128 / 15.5 | 147 / 17 | 533 / 58 |
-| 16 | 151 / 7 | 177 / 11.5 | 178 / 14 | 169 / 15.5 | 190 / 14.5 | 174 / 12 | 179 / 19 | 201 / 17.5 | 215 / 21 | 819 / 84 |
-| 20 | 238 / 8 | 233 / 17 | 239 / 18.5 | 255 / 16 | 277 / 19.5 | 238 / 17.5 | 258 / 21 | 284 / 22 | 305 / 26 | 1008 / 99 |
-| 24 | 351 / 9 | 344 / 16 | 369 / 18.5 | 390 / 16.5 | 380 / 25 | 359 / 17.5 | 375 / 24 | 401 / 25 | 409 / 30 | 1162 / 111 |
-| 28 | 475 / 10 | 472 / 18 | 499 / 19 | 524 / 19 | 494 / 27 | 488 / 18 | 477 / 28 | 427 / 33 | 518 / 34 | 1300 / 122 |
-| 32 | 659 / 11.5 | 616 / 19.5 | 686 / 21 | 692 / 22 | 680 / 30.5 | 657 / 20 | 644 / 28.5 | 590 / 34 | 652 / 38.5 | 1474 / 136 |
+| 2 | 6 / 3 | 13 / 4 | 15 / 4 | 14 / 3.5 | 21 / 4 | 13 / 4.5 | 18 / 8 | 26 / 5.5 | 35 / 8 | none |
+| 3 | 6 / 4 | 17 / 4.5 | 17 / 5.5 | 16 / 4 | 24 / 4.5 | 14 / 5.5 | 20 / 7 | 32 / 7 | 41 / 9 | 111 / 18.5 |
+| 4 | 13 / 4.5 | 24 / 6.5 | 23 / 8 | 24 / 4.5 | 31 / 7 | 20 / 7 | 29 / 11 | 50 / 10 | 67 / 11 | 138 / 21 |
+| 5 | 17 / 5 | 27 / 8 | 26 / 9 | 26 / 6.5 | 33 / 8 | 25 / 8 | 34 / 10 | 50 / 12 | 80 / 11.5 | 174 / 24 |
+| 6 | 22 / 3.5 | 31 / 8 | 29 / 9 | 29 / 7 | 38 / 9 | 29 / 7 | 34 / 11.5 | 50 / 11.5 | 80 / 11 | 223 / 29.5 |
+| 7 | 27 / 4 | 39 / 6.5 | 35 / 9 | 39 / 5.5 | 45 / 8 | 34 / 7 | 41 / 11.5 | 58 / 12 | 80 / 12 | 265 / 33 |
+| 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 69 / 10 | 57 / 9 | 70 / 11 | 87 / 13 | 119 / 13 | 316 / 38.5 |
+| 10 | 65 / 5.5 | 79 / 8 | 78 / 10 | 79 / 8 | 95 / 8 | 78 / 9 | 85 / 13 | 102 / 14 | 143 / 13 | 427 / 49 |
+| 12 | 84 / 5.5 | 102 / 9 | 108 / 9 | 112 / 8 | 125 / 9 | 102 / 10 | 117 / 14 | 132 / 14.5 | 149 / 17 | 533 / 58 |
+| 16 | 162 / 7 | 179 / 10 | 182 / 11 | 182 / 11.5 | 190 / 14.5 | 175 / 12 | 185 / 16.5 | 213 / 14.5 | 233 / 17.5 | 819 / 84 |
+| 20 | 238 / 8 | 257 / 12 | 258 / 14.5 | 288 / 11.5 | 294 / 17 | 253 / 14 | 297 / 14.5 | 320 / 17 | 338 / 21 | 1008 / 99 |
+| 24 | 351 / 9 | 371 / 14.5 | 383 / 16.5 | 405 / 14 | 442 / 16 | 379 / 14 | 382 / 21 | 419 / 23 | 452 / 26 | 1162 / 111 |
+| 28 | 475 / 10 | 496 / 16 | 535 / 17 | 577 / 14.5 | 566 / 22 | 532 / 14 | 552 / 21 | 563 / 25 | 602 / 29.5 | 1300 / 122 |
+| 32 | 659 / 11.5 | 675 / 18 | 702 / 19 | 762 / 16 | 767 / 24 | 710 / 15 | 714 / 23 | 731 / 28 | 762 / 31 | 1474 / 136 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -336,19 +339,19 @@ What it shows:
 - **The line is already a day's fighting at level 1.** Eight fodder, or four skirmishers, archers or
   controllers, on the line leave a company of 1 short of six or seven fights, so they come down
   whole, to between 0.8 and 1 of the line.
-- **Held to four rounds, monsters hit harder than today's.** From level 3 to 12 most roles have 1.1
-  to 2.7 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
+- **Held to short fights, monsters hit harder than today's.** From level 3 to 12 most roles have 1.1
+  to 3.3 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
   company that husbands its spells through the day kills slowly, and a fight that must end in four
-  rounds has to take its share of the day in them.
+  or five rounds has to take its share of the day in them.
 - **The heavy hitters are slower.** Held to four rounds, brutes, elites and the armoured hit hard
   enough to take a member from standing to −10 in one blow, and a death ended up to half their days
-  at 4–12 (two brutes at 4, nearly half). With up to six rounds a fight, a death or a lost fight
-  ends 4–10% of the armoured's days, 6–15% of the elites' and 3–24% of the brutes', in fights of 4.6
-  to 5.9 rounds. Two brutes at 4 are the worst of it, nearly a quarter of the days even so.
+  at 4–12 (two brutes at 4, nearly half). Given half as long again, a death or a lost fight ends
+  4–9% of the armoured's days, 5–15% of the elites' and 4–21% of the brutes', in fights of 4.6 to
+  7.5 rounds. Two brutes at 4 are the worst of it, a fifth of the days even so.
 - **Hit points jump where tier 5 lands.** At 8, where Meteor Swarm, Tempest and Wrath reach every
-  foe, most roles need half as many hit points again as at 7 or more (the soldier 34 to 53), and
-  brutes a third more. Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole
-  group of them: 6 hit points at 3, 13 at 4.
+  foe, every role needs nearly half as many hit points again as at 7, or more (the soldier 35 to
+  59). Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole group of them: 6
+  hit points at 3, 13 at 4.
 - **Today's maps are close, and a little hard low down.** Their own groups, dealt in a new order
   each day, give a company at its band's floor four to eight fights before a rest: the Shelf 4.6 at
   level 1 and the Ashcombe cellar 5.9, Greywater's caves and the Drowned Shrine 4.1 at 2 and 3,
@@ -362,21 +365,25 @@ What it shows:
 - **A lone boss has to kill with a blow.** At level 8 it hits for 38.5 against a company whose
   sorcerer has about 24. Real bosses want an escort, as the Hand of Ash and the Warden of the Cut
   have, or the sweep of §3.3.
-- **Past 12, deaths end days.** Blows grow with level and the −10 at which a member dies does not,
-  so from 16 one blow can take a member from standing to dead. Longer fights do not help there: they
-  trade deaths for lost fights as the spell points run out. A death or a lost fight ends 2–44% of
-  the days at 16–32 for the lighter roles, and up to three in four for the brutes, elites and the
-  armoured. Whether death should come at a share of a member's hit points instead is the systems
-  lane's to weigh.
-- **Past 10, on today's rules, hit points keep outgrowing the line**: the soldier from 2.4 times it
-  at 12 to 6.9 at 32. The company's spells grow with its level and nothing else does; the
-  promotions, spell tiers and gear still to come change that, and the harness re-runs.
+- **Past 12, on today's rules, deaths end days.** Hit points keep outgrowing the line, the soldier's
+  from 2.7 times it at 12 to 7 at 32, because the company's spells grow with its level and nothing
+  else does. From 20 a death or a lost fight ends between a seventh and three-fifths of the days for
+  every role but fodder. Longer fights do not help: they trade deaths for lost fights.
+- **Weaker spells, not stronger monsters.** Past 10 the balance is one or the other, and the harness
+  can try both. Buffed to meet spells that keep growing, the monsters above make the days lethal.
+  Stop damage spells growing at level 10 (`--spell-cap 10`) and the monsters from 12 to 32 hold at
+  1.7 to 3.7 times the line's hit points, hitting on it or near, in fights of three to eight rounds;
+  a death or a lost fight ends under one day in ten at every level to 32. A ceiling at 16 comes too
+  late: 1–45%. How much growth spells can keep past 10 turns on what the company's weapons gain
+  there, which the curve's gear decides; today the harness gives it none past Thornmark's, and
+  re-runs when that changes.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
 costs, and the boss's odds. `--map thornmark --level 5` puts a map's own groups against a company
 of that level, each on its own and then all of them dealt in a new order. `--stats` prints the stat
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
+`--spell-cap 10` runs any of it as if damage spells stopped growing at 10, which play does not do.
 
 ---
 
@@ -1007,4 +1014,6 @@ Where this and DESIGN.md disagree, the design wins.
    worth having, and the country's floor of groups may want to sit looser than its floor of
    features (EXPANSION.md §5.3).
 5. **Spells without a ceiling.** §3.2's gap is the systems lane's as much as the monsters': a
-   ceiling on a spell's dice would do some of what resistances do, more bluntly.
+   ceiling on a spell's dice would do some of what resistances do, more bluntly. On today's gear the
+   harness says a ceiling at 10 keeps the road's days safe to 32 and one at 16 does not (§4.4); gear
+   that grows past Thornmark moves that line.

@@ -14,7 +14,7 @@ import type { Party } from '../src/game/party.ts';
 import { serialize, deserialize } from '../src/game/save.ts';
 import { ITEMS } from '../src/game/items.ts';
 import { MONSTERS } from '../src/game/monsters.ts';
-import { SPELLS, spell, spellsFor } from '../src/game/spells.ts';
+import { SPELLS, spell, spellsFor, spellDice } from '../src/game/spells.ts';
 import { ATLAS } from '../src/content/atlas.ts';
 import { worldGrid, worldPoint, progression, reachable, isWater, zoneOfMap, TI } from '../src/game/atlas.ts';
 import { QUESTS } from '../src/content/quests.ts';
@@ -24,7 +24,7 @@ import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
 import { NORTH } from '../src/game/types.ts';
 import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from './testmonster.ts';
-import { measure, days, spent, mustRest, bossFloor, FIGHTS, REST_AT, WORST, CAP } from './harness.ts';
+import { measure, days, spent, mustRest, bossFloor, longest, slowest, FIGHTS, REST_AT, WORST, CAP } from './harness.ts';
 import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
 import type { Season } from '../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
@@ -325,6 +325,13 @@ const suites: Record<string, () => void> = {
     const soldier = testMonster('soldier', 3), rng = makeRng(31);
     const s = startCombat(defaultParty(rng), [{ id: 'test', monsters: [soldier, soldier] }], rng);
     ok(s.monsters.length === 2 && s.monsters.every((m) => m.def === soldier && m.hp === soldier.hp) && describeGroups(s) === '2 Test Soldiers', `a fight takes a def as well as an id, and names it (${describeGroups(s)})`);
+    // Spells that grow with their caster grow without end in play; a tool may try a ceiling.
+    const meteor = spell('meteor'), smite = spell('smite');
+    ok(spellDice(meteor, 10) === 10 && spellDice(meteor, 20) === 20 && spellDice(meteor, 20, 10) === 10 && spellDice(smite, 20, 10) === 3, 'Meteor Swarm rolls 2d10 for every two levels, and stops growing only where a tool says');
+    ok(startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 10 }).spellsGrowTo === 10, 'a fight has no ceiling on spells unless it is given one');
+    // Fights may run longer as both sides grow, and never to fifteen rounds.
+    const allowed = Array.from({ length: CAP }, (_, k) => [longest(k + 1), slowest(k + 1)]);
+    ok(longest(1) === 4 && slowest(1) === 6 && allowed.every(([a, b], k) => a <= b && b < 15 && (k === 0 || a >= allowed[k - 1][0])), `a fight's rounds run from ${longest(1)} (${slowest(1)} at most) at level 1 to ${longest(CAP).toFixed(1)} (${slowest(CAP).toFixed(1)}) at ${CAP}`);
     // Training past today's cap is for tools only.
     const c = defaultParty(makeRng(32)).members[0];
     c.xp = xpForLevel(20); levelUp(c, makeRng(32));
