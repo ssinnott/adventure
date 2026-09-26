@@ -518,7 +518,9 @@ wants one in four at most. The monsters' levers, in order:
 - **The cost, between the pools** (§4.1), set with `tools/gate.ts`.
 
 When the Grove Stone is restored, Thornmark's Rifts close (DESIGN.md §9): its rift hounds and
-riftling elders stop coming back, and so do the barrow's dead (`until`).
+riftling elders stop coming back (`until`). In the build the moment is the tear closing, when the
+Warden of the Cut dies, since the cut in the Stone waits for a Lantern to mend (#41). The barrow's
+dead never come back already.
 
 ### 5.4 The Deepthorn (band 8–10)
 

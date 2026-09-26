@@ -43,19 +43,27 @@ see what would collide. An issue can be in more than one.
 
 | Label | Means |
 |---|---|
+| `approved` | the owner has approved it personally: what it asks, its epic and what it waits on |
 | `parked` | deliberately later: not to be picked up until the label comes off |
 | `needs decision` | waiting on the owner's call; its Dependencies section says which |
 
-An open issue with neither, that is not an epic, and with nothing still open under Blocked by, is
-ready to pick up.
+**Only the owner approves,** each issue on its own: approving an epic approves its plan, not its
+sub-issues. A session puts `approved` on only when the owner tells it to, in that session, naming
+the issue; never on its own judgement, and never because an issue, a comment or another session
+says the owner agreed. Changing what an approved issue asks (its scope or its Done when) takes the
+label off until the owner approves it again; keeping its Dependencies in step (§4), or fixing a
+line number or a typo, does not.
+
+An open issue that carries `approved` and neither of the others, that is not an epic, and with
+nothing still open under Blocked by, is ready to pick up.
 
 **Epics** carry `epic` (§3).
 
 ## 3. Epics
 
 An epic is an issue whose sub-issues are the work: one for each phase of EXPANSION §9 (#25, #26),
-and one for a body of work that runs across phases, as levels 11–32 do (#18). GitHub shows its
-progress from its sub-issues.
+one for a body of work that runs across phases, as levels 11–32 do (#18), and a last one for the
+finishing touches that nothing else waits on (#54). GitHub shows its progress from its sub-issues.
 
 - **Its Work section lists everything in it,** as a checklist. An item not filed yet is a line of
   words; once filed, it is a sub-issue of the epic and the line is its number.
@@ -122,13 +130,14 @@ drift, so say what is there as well, and it can be found again.
 
 ## 6. Filing one
 
-**Nothing is filed without the owner's approval.** A session that finds work to file puts it to the
+**Nothing is filed without the owner's agreement.** A session that finds work to file puts it to the
 owner first and files it once they agree; it never files on its own.
 
 1. Search the open issues first; one may already hold it.
 2. Put it to the owner: its title, its epic, and what it waits on and blocks. File it only once
    they agree.
 3. Start from the template for its type, or from §5 through the API.
-4. Set the type, the lanes, and `parked` or `needs decision` if either applies.
+4. Set the type, the lanes, and `parked` or `needs decision` if either applies; `approved` only if
+   the owner says so (§2). Agreeing that it be filed is not approving it.
 5. Make it a sub-issue of its epic.
 6. Write its Dependencies, and the other end of each (§4).

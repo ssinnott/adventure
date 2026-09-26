@@ -539,7 +539,8 @@ very old, with their real map: the hull. The map shows what the Custodian will n
 - **Monsters:** cel-shaded, rigged, animated (idle / attack / hurt / die) using the shared
   paper-doll rig. A few dozen base rigs, recoloured and re-proportioned per variant.
 - **Audio:** synth music per region and time of day, procedural SFX. No recorded assets.
-- **Text:** terse. Two lines per event. Journals and books are the long-form exception.
+- **Text:** terse. Two lines per event is the aim, three the most (docs/EXPANSION.md §5.4). Journals
+  and books are the long-form exception.
 
 ---
 
