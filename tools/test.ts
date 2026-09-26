@@ -7,7 +7,7 @@ import { GameMap } from '../src/game/map.ts';
 import type { MapDef } from '../src/game/map.ts';
 import { World, seen } from '../src/game/world.ts';
 import { layOutdoors, OUTDOORS } from '../src/game/outdoors.ts';
-import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, partyCan, xpForLevel, levelUp, equip, armorClass, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition, takeItem } from '../src/game/party.ts';
+import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, partyCan, xpForLevel, levelUp, equip, armorClass, weaponOf, canTrain, spellTierAt, MAX_LEVEL, addCondition, hasCondition, takeItem } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, buffHit, traitDamage, describeGroups, WARD_AC } from '../src/game/combat.ts';
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
@@ -24,7 +24,7 @@ import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
 import { NORTH } from '../src/game/types.ts';
 import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from './testmonster.ts';
-import { measure, days, fight, companyAt, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP } from './harness.ts';
+import { measure, days, fight, companyAt, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES } from './harness.ts';
 import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
 import type { Season } from '../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
@@ -329,6 +329,13 @@ const suites: Record<string, () => void> = {
     const meteor = spell('meteor'), smite = spell('smite');
     ok(spellDice(meteor, 10) === 10 && spellDice(meteor, 20) === 20 && spellDice(meteor, 20, 10) === 10 && spellDice(smite, 20, 10) === 3, 'Meteor Swarm rolls 2d10 for every two levels, and stops growing only where a tool says');
     ok(startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 10 }).spellsGrowTo === 10, 'a fight has no ceiling on spells unless it is given one');
+    // The curve's gear, as a what-if: past level 10 weapons and armour keep growing; play has none of it.
+    const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
+    const flat = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];
+    RULES.gearGrows = true;
+    const grown = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];
+    RULES.gearGrows = undefined;
+    ok(grown[0].join() === flat[0].join() && grown[1][0] > flat[1][0] && grown[1][1] === flat[1][1] + 5, `gear grows past 10 only where a what-if asks: at 20 the knight's war hammer gains ${grown[1][0] - flat[1][0]} and the knight's armour 5`);
     // Fights may run longer as both sides grow, and never to the cap; a fight that would is broken off.
     const allowed = Array.from({ length: CAP }, (_, k) => [longest(k + 1), slowest(k + 1)]);
     ok(longest(1) === 4 && slowest(1) === 6 && allowed.every(([a, b], k) => a <= b && b < ROUND_CAP && (k === 0 || a >= allowed[k - 1][0])), `a fight's rounds run from ${longest(1)} (${slowest(1)} at most) at level 1 to ${longest(CAP).toFixed(1)} (${slowest(CAP).toFixed(1)}) at ${CAP}`);

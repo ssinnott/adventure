@@ -11,6 +11,7 @@
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 10 [...]         any of the above as if spells stopped growing at 10
+//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 10
 // The company is the premade six, trained to the level (past today's cap if asked) and dressed in what
 // the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
@@ -29,7 +30,7 @@ import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttac
 import type { CombatState, MonsterInst, PartyAction } from '../src/game/combat.ts';
 import { spell, spellDice } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
-import { item } from '../src/game/items.ts';
+import { item, ITEMS } from '../src/game/items.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS } from '../src/content/maps/index.ts';
@@ -54,9 +55,10 @@ export const CAP = 32;
 
 /**
  * What-ifs on the rules, for weighing a change before it is made; play has none of them. `spellsGrowTo`
- * is the level damage spells stop growing at (`--spell-cap`).
+ * is the level damage spells stop growing at (`--spell-cap`); `gearGrows` keeps the company's gear
+ * growing past Thornmark's (`--gear-grows`, see `outfit`).
  */
-export const RULES: { spellsGrowTo?: number } = {};
+export const RULES: { spellsGrowTo?: number; gearGrows?: boolean } = {};
 
 /**
  * What the item tables put in a company's hands by a level: its kit, then the Shelf's mid-tier (the
@@ -71,6 +73,22 @@ export const GEAR: readonly (readonly [number, readonly string[]])[] = [
 
 const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
 
+/** A copy of an item with more to it, for a what-if: kept in the item table under its own id. */
+function forge(base: ItemDef, more: { bonus?: number; ac?: number }, plus: number): string {
+  const id = `${base.id}+${plus}`;
+  if (!ITEMS[id]) {
+    ITEMS[id] = { ...base, id, name: `${base.name} +${plus}` };
+    if (more.bonus !== undefined) ITEMS[id].bonus = (base.bonus ?? 0) + more.bonus;
+    if (more.ac !== undefined) ITEMS[id].ac = (base.ac ?? 0) + more.ac;
+  }
+  return id;
+}
+
+/**
+ * Dresses a member in the best of GEAR it can use by `level`. With `RULES.gearGrows`, past level 10
+ * its weapon and armour are enchanted as the curve's gear would be: the weapon's blow grows as the
+ * line's hit points do, and the armour a point every two levels, as the line's to-hit does.
+ */
 function outfit(c: Character, level: number): void {
   const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map(item).filter((d) => !d.classes || d.classes.includes(c.cls));
   const w = weaponOf(c), shielded = !!c.equipment.shield;
@@ -84,12 +102,18 @@ function outfit(c: Character, level: number): void {
     const shield = pool.filter((d) => d.slot === 'shield' && (d.ac ?? 0) > held).sort((a, b) => (b.ac ?? 0) - (a.ac ?? 0))[0];
     if (shield) equip(c, shield.id);
   }
+  if (RULES.gearGrows && level > 10) {
+    const held = weaponOf(c), blow = Math.round(hits(held) * (line(level).hp / line(10).hp - 1));
+    if (blow > 0) equip(c, forge(held, { bonus: blow }, blow));
+    const worn = c.equipment.armor ? item(c.equipment.armor) : null, ac = Math.floor((level - 10) / 2);
+    if (worn && ac > 0) equip(c, forge(worn, { ac }, ac));
+  }
 }
 
 const companies = new Map<string, Party>();
 /** The premade six trained to `level` and outfitted for it, whole; a fresh copy every call. */
 export function companyAt(level: number, seed: number): Party {
-  const key = `${level}:${seed}`;
+  const key = `${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}`;
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
@@ -407,7 +431,7 @@ function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void): Promis
   });
 }
 
-if (!isMainThread) parentPort?.on('message', (j: Job) => { RULES.spellsGrowTo = j.rules.spellsGrowTo; parentPort?.postMessage(work(j)); });
+if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, { spellsGrowTo: undefined, gearGrows: undefined }, j.rules); parentPort?.postMessage(work(j)); });
 
 // ---- the command line ------------------------------------------------------------------------
 
@@ -423,6 +447,10 @@ async function main(): Promise<void> {
     RULES.spellsGrowTo = Number(cap);
     if (!(RULES.spellsGrowTo >= 1)) throw new Error('--spell-cap takes the level damage spells stop growing at');
     console.log(`What if: damage spells stop growing at level ${RULES.spellsGrowTo}.`);
+  }
+  if (args.includes('--gear-grows')) {
+    RULES.gearGrows = true;
+    console.log(`What if: past level 10 the company's weapons hit harder as the line's hit points grow, and its armour gains a point every two levels.`);
   }
   const rules = { ...RULES };
   const pct = (x: number): string => `${Math.round(x * 100)}`;
@@ -466,7 +494,7 @@ async function main(): Promise<void> {
     const at = (l: number): number => { const k = LEVELS.indexOf(l as (typeof LEVELS)[number]); if (k < 0) throw new Error(`level ${l} is not one of LEVELS`); return k; };
     levels.forEach(at);
     const say = (j: Job, [h, d]: [number, number]): void => console.log(`  ${j.role} ${j.level}: hp ${fmt(h)}, damage ${fmt(d)} (${secs()})`);
-    if (args.includes('--write') && RULES.spellsGrowTo !== undefined) throw new Error('a what-if is for weighing, not for writing: drop --write or --spell-cap');
+    if (args.includes('--write') && (RULES.spellsGrowTo !== undefined || RULES.gearGrows)) throw new Error('a what-if is for weighing, not for writing: drop --write, or --spell-cap and --gear-grows');
     const jobs = roles.flatMap((role) => levels.map((level): Job => ({ kind: 'calibrate', role, level, seeds, under: 0, rules })));
     const made = await onCores<[number, number]>(jobs, say);
     // The tables with the points just made, as they will be written; the rest stay as they were.

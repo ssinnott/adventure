@@ -167,8 +167,8 @@ spell's dice should stop growing somewhere is the systems lane's to weigh. The c
 numbers on it (§4.4): for a company to fight its standard encounters between rests, a monster of
 its level needs about twice the line's hit points from level 8. Past 16, on today's rules, no split
 of hit points and damage keeps the days safe: fights the weapons can finish once the spells are
-spent kill, and fights that do not kill stall. Stop the spells growing at 10 and most days are safe
-again.
+spent kill, and fights that do not kill stall. Stop the spells growing at 10 and let the gear keep
+growing, and the days are safe again for every role but fodder.
 
 ### 3.3 What the road asks
 
@@ -382,23 +382,35 @@ What it shows:
   kill. From 16 a sixth to two-fifths of the days end badly for most roles, half for elites by 28,
   nine in ten for brutes at 28, and nearly all for the armoured at 20–28, whom weapons barely
   scratch.
-- **Weaker spells, not stronger monsters.** Past 10 the balance is one or the other, and the harness
-  can try both. Buffed to meet spells that keep growing, the monsters above make bad days. Stop
-  damage spells growing at level 10 (`--spell-cap 10`) and the monsters from 12 to 32 fall toward
-  the line, to 1–2.8 times its hit points, most hitting on it or up to half as hard again. A death,
-  a lost fight or one broken off then ends about a sixth of the days at most for every role but the
-  armoured (12–45%) and casters at 32 (22%). A ceiling at 16 comes too late: 1–33%, and the
-  armoured 58–83%. How much growth spells can keep past 10 turns on what the company's weapons gain
-  there, which the curve's gear decides; today the harness gives them none past Thornmark's, and
-  re-runs when that changes. The armoured want weapons that grow, or a way through armour, either
-  way.
+- **Weaker spells and growing gear, not stronger monsters.** Past 10 the balance can come from the
+  monsters, the spells or the gear, and the harness tries each: `--spell-cap 10` stops damage spells
+  growing at 10, and `--gear-grows` enchants Thornmark's gear past 10, so that a weapon's blow grows
+  as the line's hit points do and armour gains a point every two levels, as the line's to-hit does.
+  Days that end in a death, a lost fight or one broken off, from 12 to 32:
+
+  | Spells | Gear | Most roles | The armoured |
+  |---|---|---|---|
+  | keep growing | stops at Thornmark's (today) | a sixth to two-fifths | nearly all |
+  | keep growing | grows | a fifth to five in six from 24 | nearly all |
+  | stop at 16 | stops | 1–33% | 58–83% |
+  | stop at 16 | grows | 9–42% | 27–39% |
+  | stop at 10 | stops | a sixth at most (casters at 32, 22%) | 12–45% |
+  | stop at 10 | grows | a sixth at most (fodder up to a third) | 4–12% |
+
+  Gear alone makes it worse: armour that keeps up means monsters must hit harder to take their share
+  of the day, and blows that big kill. With spells stopped at 10 and gear growing, every role holds
+  at 1.8 to 2.9 times the line's hit points from 12 to 32, hitting on it or up to 1.6 times as hard,
+  in fights of two to nine rounds: the steadiest the late road has looked, and the line times a
+  constant would build it. Only fodder, which must hit twice as hard to matter against good armour,
+  still end up to a third of their days badly.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
 costs, and the boss's odds. `--map thornmark --level 5` puts a map's own groups against a company
 of that level, each on its own and then all of them dealt in a new order. `--stats` prints the stat
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
-`--spell-cap 10` runs any of it as if damage spells stopped growing at 10, which play does not do.
+`--spell-cap 10` and `--gear-grows` run any of it as if damage spells stopped growing at 10, or the
+company's gear kept growing past it; play does neither.
 
 ---
 
@@ -1029,6 +1041,7 @@ Where this and DESIGN.md disagree, the design wins.
    worth having, and the country's floor of groups may want to sit looser than its floor of
    features (EXPANSION.md §5.3).
 5. **Spells without a ceiling.** §3.2's gap is the systems lane's as much as the monsters': a
-   ceiling on a spell's dice would do some of what resistances do, more bluntly. On today's gear the
-   harness says a ceiling at 10 keeps most of the road's days safe to 32 and one at 16 does not
-   (§4.4); gear that grows past Thornmark moves that line, and the armoured need it either way.
+   ceiling on a spell's dice would do some of what resistances do, more bluntly. The harness says a
+   ceiling at 10, with gear that keeps growing past Thornmark's, keeps the road's days safe to 32;
+   a ceiling at 16 does not, and nor does gear alone (§4.4). Where exactly spells stop, and how fast
+   gear grows, are the curve's to settle, and the harness re-runs when they are.
