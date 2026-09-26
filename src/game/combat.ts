@@ -52,6 +52,8 @@ export interface CombatState {
   rangedPenalty: number;
   /** The level damage spells stop growing at: none in play (see `spellDice`). */
   spellsGrowTo?: number;
+  /** What a tool trying new powers gives each member: none in play (see `Edge`). */
+  edge?: (c: Character, s: CombatState) => Edge;
   log: string[];
   outcome: Outcome;
   loot: Loot | null;
@@ -59,9 +61,16 @@ export interface CombatState {
 
 /**
  * Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line
- * for the log. A tool trying a ceiling on spells may also say where they stop growing.
+ * for the log. A tool trying a ceiling on spells may also say where they stop growing, and one trying
+ * new powers for the company what each member gains.
  */
-export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; }
+export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; edge?: (c: Character, s: CombatState) => Edge; }
+
+/**
+ * What a tool trying new powers gives a member in a fight (tools/harness.ts): blows a turn with a
+ * weapon, damage added to each, and armour. Play gives none: one blow, nothing added.
+ */
+export interface Edge { blows: number; damage: number; ac: number }
 
 export const FRONT_ROW = 3;
 /** What the buffs are worth while they last. */
@@ -96,6 +105,7 @@ export function startCombat(party: Party, groups: readonly { id: string; monster
     monsters, groupIds: groups.map((g) => g.id), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,
     ...(opts.spellsGrowTo !== undefined ? { spellsGrowTo: opts.spellsGrowTo } : {}),
+    ...(opts.edge ? { edge: opts.edge } : {}),
   };
   s.log.push(describeGroups(s) + ' attack!');
   if (opts.note) s.log.push(opts.note);
@@ -187,15 +197,19 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
   const c = party.members[t.i];
   switch (action.type) {
     case 'attack': {
-      const m = s.monsters[action.target];
+      let m = s.monsters[action.target];
       if (!m || m.hp <= 0 || !canAttackFromRow(c, t.i)) return false;
-      const w = weaponOf(c);
-      const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party) - (w.ranged ? s.rangedPenalty : 0), m.def.ac));
-      if (hit) {
-        const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m));
-        hurtMonster(s, m, dmg);
-        s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
-      } else s.log.push(`${c.name} misses ${m.def.name}.`);
+      const w = weaponOf(c), edge = s.edge?.(c, s);
+      for (let blow = 0; blow < (edge?.blows ?? 1); blow++) {
+        // A later blow, where a tool gives more than one, falls on the weakest foe still standing.
+        if (m.hp <= 0) { const left = aliveMonsters(s); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
+        const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party) - (w.ranged ? s.rangedPenalty : 0), m.def.ac));
+        if (hit) {
+          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + (edge?.damage ?? 0));
+          hurtMonster(s, m, dmg);
+          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
+        } else s.log.push(`${c.name} misses ${m.def.name}.`);
+      }
       break;
     }
     case 'cast': {
@@ -323,7 +337,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const pool = m.def.ranged || front.length === 0 ? any : front;
   const pick = rng.pick(pool);
   if (!pick) { s.turn++; checkOutcome(s, party, rng); return true; }
-  const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0);
+  const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0) + (s.edge?.(pick.c, s).ac ?? 0);
   if (rng.chance(toHit(m.def.attack - (m.def.missile ? s.rangedPenalty : 0), ac))) {
     let dmg = roll(rng, m.def.dice, m.def.sides, m.def.bonus);
     if (s.defending[pick.i]) dmg = Math.ceil(dmg / 2);

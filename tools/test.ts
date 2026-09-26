@@ -24,7 +24,7 @@ import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
 import { NORTH } from '../src/game/types.ts';
 import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from './testmonster.ts';
-import { measure, days, fight, companyAt, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES } from './harness.ts';
+import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES } from './harness.ts';
 import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
 import type { Season } from '../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
@@ -329,6 +329,25 @@ const suites: Record<string, () => void> = {
     const meteor = spell('meteor'), smite = spell('smite');
     ok(spellDice(meteor, 10) === 10 && spellDice(meteor, 20) === 20 && spellDice(meteor, 20, 10) === 10 && spellDice(smite, 20, 10) === 3, 'Meteor Swarm rolls 2d10 for every two levels, and stops growing only where a tool says');
     ok(startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 10 }).spellsGrowTo === 10, 'a fight has no ceiling on spells unless it is given one');
+    // New powers, as a what-if: a member the resolver is told strikes twice does, and play gives none.
+    const twice = defaultParty(makeRng(38)), duel = startCombat(twice, [{ id: 'a', monsters: [testMonster('soldier', 1, 60, 1)] }], makeRng(38), { edge: () => ({ blows: 2, damage: 0, ac: 0 }) });
+    let turn: string[] = [];
+    for (let k = 0; k < 20 && !turn.length; k++) {
+      const t = currentTurn(duel, twice, makeRng(38 + k));
+      if (!t) break;
+      if (t.side === 'monster') { monsterAct(duel, twice, makeRng(38 + k)); continue; }
+      const before = duel.log.length;
+      partyAct(duel, twice, makeRng(38 + k), { type: 'attack', target: 0 });
+      turn = duel.log.slice(before);
+    }
+    ok(turn.length === 2 && startCombat(defaultParty(makeRng(39)), [{ id: 'a', monsters: ['rat'] }], makeRng(39)).edge === undefined, `a member told to strike twice strikes twice (${turn.join(' ')}), and a fight gives no such power unless told`);
+    RULES.levelTraits = true;
+    const blows = [10, 11, 28, 29].map((l) => edgeOf(companyAt(l, 37).members[0], 1).blows), traits = companyAt(24, 37).members.map((m) => edgeOf(m, 1));
+    const later = edgeOf(companyAt(24, 37).members[3], 2).damage;
+    RULES.levelTraits = undefined; RULES.levelBonus = true;
+    const perks = companyAt(24, 37).members.map((m) => edgeOf(m, 1));
+    RULES.levelBonus = undefined;
+    ok(blows.join() === '1,2,2,3' && traits[5].blows === 1 && traits[3].damage === 14 && later === 0 && perks.every((e) => e.damage === 7 && e.ac === 7) && edgeOf(companyAt(24, 37).members[0], 1).blows === 1, `with --level-traits the knight strikes once more a turn with each promotion (${blows.join(', ')} blows at 10, 11, 28 and 29) and at 24 a sneak attack adds 14 in the first round only; with --level-bonus every member gains 7 at 24; without, none`);
     // The curve's gear, as a what-if: past level 10 weapons and armour keep growing; play has none of it.
     const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
     const flat = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];

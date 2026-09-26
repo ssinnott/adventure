@@ -12,6 +12,7 @@
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 10 [...]         any of the above as if spells stopped growing at 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 10
+//   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 // The company is the premade six, trained to the level (past today's cap if asked) and dressed in what
 // the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
@@ -27,7 +28,7 @@ import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, isDown, hasCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, SPELLFIRE_DMG, MAX_LEVEL } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, toHit, buffHit, traitDamage, FRONT_ROW } from '../src/game/combat.ts';
-import type { CombatState, MonsterInst, PartyAction } from '../src/game/combat.ts';
+import type { CombatState, MonsterInst, PartyAction, Edge } from '../src/game/combat.ts';
 import { spell, spellDice } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
 import { item, ITEMS } from '../src/game/items.ts';
@@ -56,9 +57,34 @@ export const CAP = 32;
 /**
  * What-ifs on the rules, for weighing a change before it is made; play has none of them. `spellsGrowTo`
  * is the level damage spells stop growing at (`--spell-cap`); `gearGrows` keeps the company's gear
- * growing past Thornmark's (`--gear-grows`, see `outfit`).
+ * growing past Thornmark's (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
+ * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`).
  */
-export const RULES: { spellsGrowTo?: number; gearGrows?: boolean } = {};
+export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean } = {};
+
+/** The classes whose first work is a weapon: the ones `--level-traits` gives more blows. */
+export const FIGHTERS: readonly string[] = ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'monk'];
+
+/**
+ * The levels the what-ifs put promotions I and II at: 11, the first past today's cap, where Saltreach
+ * brings the first, and 29, on Hearth Isle (EXPANSION.md §7).
+ */
+export const PROMOTIONS: readonly number[] = [11, 29];
+
+/**
+ * What the what-ifs give a member in a fight's `round`, past level 10. With `levelTraits` a fighter
+ * strikes once more a turn with each promotion, and a sneak attack grows by 2 every two levels. With
+ * `levelBonus` every member gains a point of damage and of armour every two levels. Play gives none.
+ */
+export function edgeOf(c: Character, round: number): Edge {
+  const e: Edge = { blows: 1, damage: 0, ac: 0 }, steps = Math.floor(Math.max(0, c.level - 10) / 2);
+  if (RULES.levelTraits) {
+    if (FIGHTERS.includes(c.cls)) e.blows += PROMOTIONS.filter((l) => c.level >= l).length;
+    if (hasTrait(c, 'sneak_attack') && round === 1) e.damage += 2 * steps;
+  }
+  if (RULES.levelBonus) { e.damage += steps; e.ac += steps; }
+  return e;
+}
 
 /**
  * What the item tables put in a company's hands by a level: its kit, then the Shelf's mid-tier (the
@@ -134,12 +160,12 @@ export function pools(p: Party): { hp: number; maxHp: number; sp: number; maxSp:
 const spellDamage = (c: Character, sp: SpellDef): number =>
   (spellDice(sp, c.level, RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2 + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
 
-/** A weapon blow's expected damage on a monster; `capped` counts no more than the monster has left. */
+/** A turn's weapon blows' expected damage on a monster; `capped` counts no more than the monster has left. */
 function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, capped = true): number {
-  const w = weaponOf(c);
+  const w = weaponOf(c), e = edgeOf(c, s.round);
   const chance = toHit(attackBonus(c) + buffHit(s, p) - (w.ranged ? s.rangedPenalty : 0), m.def.ac);
-  const blow = Math.max(0, hits(w) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m));
-  return chance * (capped ? Math.min(m.hp, blow) : blow);
+  const blow = Math.max(0, hits(w) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + e.damage);
+  return e.blows * chance * (capped ? Math.min(m.hp, blow) : blow);
 }
 
 /** What the monsters still standing deal the company in a round, on average. */
@@ -149,7 +175,7 @@ function incoming(s: CombatState, p: Party): number {
   for (const f of aliveMonsters(s)) {
     const d = s.monsters[f].def, reach = d.ranged || !front.length ? up : front;
     if (!reach.length) continue;
-    const ac = reach.reduce((a, { c }) => a + armorClass(c), 0) / reach.length;
+    const ac = reach.reduce((a, { c }) => a + armorClass(c) + edgeOf(c, s.round).ac, 0) / reach.length;
     total += toHit(d.attack - (d.missile ? s.rangedPenalty : 0), ac) * Math.max(0, (d.dice * (d.sides + 1)) / 2 + d.bonus);
   }
   return total;
@@ -231,7 +257,8 @@ export interface Outcome { won: boolean; cost: number; hp: number; sp: number; r
 
 /** One fight to its end from however the company stands: what it cost, read from what it has left. */
 export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
-  const rng = makeRng(seed), s = startCombat(p, [{ id: 'harness', monsters }], rng, { spellsGrowTo: RULES.spellsGrowTo });
+  const edge = RULES.levelTraits || RULES.levelBonus ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round) : undefined;
+  const rng = makeRng(seed), s = startCombat(p, [{ id: 'harness', monsters }], rng, { spellsGrowTo: RULES.spellsGrowTo, edge });
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > ROUND_CAP) break;
@@ -431,7 +458,7 @@ function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void): Promis
   });
 }
 
-if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, { spellsGrowTo: undefined, gearGrows: undefined }, j.rules); parentPort?.postMessage(work(j)); });
+if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined }, j.rules); parentPort?.postMessage(work(j)); });
 
 // ---- the command line ------------------------------------------------------------------------
 
@@ -451,6 +478,14 @@ async function main(): Promise<void> {
   if (args.includes('--gear-grows')) {
     RULES.gearGrows = true;
     console.log(`What if: past level 10 the company's weapons hit harder as the line's hit points grow, and its armour gains a point every two levels.`);
+  }
+  if (args.includes('--level-traits')) {
+    RULES.levelTraits = true;
+    console.log(`What if: fighters strike once more a turn with each promotion, at ${PROMOTIONS.join(' and ')}, and past level 10 sneak attacks grow 2 every two levels.`);
+  }
+  if (args.includes('--level-bonus')) {
+    RULES.levelBonus = true;
+    console.log(`What if: past level 10 every member gains a point of weapon damage and of armour every two levels.`);
   }
   const rules = { ...RULES };
   const pct = (x: number): string => `${Math.round(x * 100)}`;
@@ -494,7 +529,7 @@ async function main(): Promise<void> {
     const at = (l: number): number => { const k = LEVELS.indexOf(l as (typeof LEVELS)[number]); if (k < 0) throw new Error(`level ${l} is not one of LEVELS`); return k; };
     levels.forEach(at);
     const say = (j: Job, [h, d]: [number, number]): void => console.log(`  ${j.role} ${j.level}: hp ${fmt(h)}, damage ${fmt(d)} (${secs()})`);
-    if (args.includes('--write') && (RULES.spellsGrowTo !== undefined || RULES.gearGrows)) throw new Error('a what-if is for weighing, not for writing: drop --write, or --spell-cap and --gear-grows');
+    if (args.includes('--write') && (RULES.spellsGrowTo !== undefined || RULES.gearGrows || RULES.levelTraits || RULES.levelBonus)) throw new Error('a what-if is for weighing, not for writing: drop --write, or the what-ifs');
     const jobs = roles.flatMap((role) => levels.map((level): Job => ({ kind: 'calibrate', role, level, seeds, under: 0, rules })));
     const made = await onCores<[number, number]>(jobs, say);
     // The tables with the points just made, as they will be written; the rest stay as they were.

@@ -292,12 +292,14 @@ renders every monster (or one family) at the combat size with the viewport sizes
 as a strip of idle frames ending in the hit flash, for judging an art pass.
 `node tools/interiors.ts out.png [--only hearthlight_inn,split_oak] [--scale 2] [--hour 21]` renders
 the businesses' interiors as the viewport shows them, at an hour of the day.
-`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows]`
+`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
 seven an encounter at its level should allow (docs/MONSTERS.md §4.4). `--spell-cap` tries a world
-where damage spells stop growing at that level, and `--gear-grows` one where the company's gear
-keeps growing past Thornmark's.
+where damage spells stop growing at that level, `--gear-grows` one where the company's gear keeps
+growing past Thornmark's, `--level-bonus` one where every member gains a point of damage and of
+armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
+with each promotion and sneak attacks grow.
 
 ## Code map
 
