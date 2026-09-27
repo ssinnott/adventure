@@ -1,4 +1,5 @@
-// The Shelf's businesses, all in Harrow: a scene to each, keyed by the interior its map feature names.
+// The Foreland's businesses, all in Helmstow: a scene to each, keyed by the interior its map feature
+// names.
 import type { Scene } from '../kit.ts';
 import { HEARTHLIGHT } from './hearthlight_inn.ts';
 import { LANTERN_CHAPEL } from './lantern_chapel.ts';

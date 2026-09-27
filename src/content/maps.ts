@@ -6,8 +6,8 @@ import { layOutdoors } from '../game/outdoors.ts';
 import { ATLAS, MAP_DEFS } from './index.ts';
 
 /**
- * The maps as played: the outdoors as one map with the Shelf and Thornmark laid into it where the
- * atlas puts them (game/outdoors.ts), and the towns and dungeons, whose ways out lead onto it.
+ * The maps as played: the outdoors as one map with the Foreland and Thornmark laid into it where
+ * the atlas puts them (game/outdoors.ts), and the towns and dungeons, whose ways out lead onto it.
  */
 export const PLAYED_DEFS: readonly MapDef[] = layOutdoors(ATLAS, MAP_DEFS);
 

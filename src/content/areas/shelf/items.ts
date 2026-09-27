@@ -1,4 +1,4 @@
-// The Shelf's items: what Harrow sells past the kits, what Greywater's chests hold, and the
+// The Foreland's items: what Helmstow sells past the kits, what Brandy Hole's chests hold, and the
 // wand and the ledger the pass waits on.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL } from '../../items.ts';
@@ -13,5 +13,5 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'antidote', name: 'Antidote', slot: 'none', price: 25, use: { cure: ['poisoned'] } },
   { id: 'rations', name: 'Rations', slot: 'none', price: 4, use: { food: 5 } },
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
-  { id: 'greywater_ledger', name: 'Greywater Ledger', slot: 'none', price: 0 },
+  { id: 'greywater_ledger', name: 'Cargo Ledger', slot: 'none', price: 0 },
 ];

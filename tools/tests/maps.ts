@@ -7,7 +7,7 @@ import { xpForLevel, MAX_LEVEL } from '../../src/game/party.ts';
 import { ok } from './lib.ts';
 
 export function maps(): void {
-  // The maps as written, each on its own, the Shelf and Thornmark included (see `outdoors` for how they are played).
+  // The maps as written, each on its own, the Foreland and Thornmark included (see `outdoors` for how they are played).
   const maps = Object.fromEntries(MAP_DEFS.map((d) => [d.id, new GameMap(d)]));
   for (const def of MAP_DEFS) {
     const m = maps[def.id];
@@ -58,13 +58,13 @@ export function maps(): void {
     const each = Math.floor(total / 6);
     ok(each >= xpForLevel(7), `one clear of every map is worth level 7 or more per member (${each} xp each; level 10 needs ${xpForLevel(10)})`);
   }
-  { // The Shelf ramp: Ashcombe alone reaches level 2, and both of the dungeons the pass waits on reach
+  { // The Foreland ramp: Ashcombe alone reaches level 2, and both of the dungeons the pass waits on reach
     // level 4 before Thornmark's band 5 (respawns and a second sweep make up the rest).
     const perMember = (ids: string[]): number => Math.floor(MAP_DEFS.filter((d) => ids.includes(d.id))
       .flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)).reduce((t, id) => t + MONSTERS[id].xp, 0) / 6);
     const ashcombe = perMember(['shelf', 'mill']), shelf = perMember(['shelf', 'mill', 'greywater1', 'greywater2']);
-    ok(ashcombe >= xpForLevel(2), `one clear of the Shelf and the cellar is worth level 2 per member (${ashcombe} xp each)`);
-    ok(shelf >= xpForLevel(4), `one clear of the Shelf, the cellar and Greywater is worth level 4 per member (${shelf} xp each)`);
+    ok(ashcombe >= xpForLevel(2), `one clear of the Foreland and the cellar is worth level 2 per member (${ashcombe} xp each)`);
+    ok(shelf >= xpForLevel(4), `one clear of the Foreland, the cellar and Brandy Hole is worth level 4 per member (${shelf} xp each)`);
   }
   // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
   for (const def of MAP_DEFS) {

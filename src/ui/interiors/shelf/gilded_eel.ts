@@ -1,5 +1,5 @@
-// The Gilded Eel on Harrow's waterfront, where the rumours are: tarred planks and nets, the gilt eel
-// over the bar, the harbour and the Hearth out of its window.
+// The Gilded Eel on Helmstow's waterfront, where the rumours are: tarred planks and nets, the gilt
+// eel over the bar, the harbour and the Hearth out of its window.
 import { shade, rgba, mix } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
 import { STAGE_W, STAGE_H, rnd, planks, beam, floorboards, windowIn, skyFill, line, smudge, fillPoly, slab, trunk, pool } from '../kit.ts';

@@ -21,7 +21,7 @@ export interface Climate {
   wettest: number;
   /** How readily fog lies, 0 .. 1. */
   fog: number;
-  /** Hours a front takes to reach here after crossing the Shelf: the regions share their weather, a little apart. */
+  /** Hours a front takes to reach here after crossing the Foreland: the regions share their weather, a little apart. */
   lag: number;
   /** Log lines for fog coming in and thunder starting. */
   fogText: string; thunderText: string;

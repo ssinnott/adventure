@@ -1,4 +1,4 @@
-// The Lantern Guildhall in Harrow: a scholars' room of books, instruments and the great map of
+// The Lantern Guildhall in Helmstow: a scholars' room of books, instruments and the great map of
 // Caldera.
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Stage, Scene } from '../kit.ts';
@@ -11,8 +11,8 @@ import { SPINES, bookcase, lectern } from '../guilds.ts';
 const GOLD = '#d8b050';
 
 /**
- * The great map of Caldera: a ring of land round the inland sea, the Hearth burning at the heart
- * of it, the Shelf and Thornmark marked, a compass rose in the corner. Painted into (x, y, w, h).
+ * The great map of Caldera: a ring of land round the inland sea, the Hearth burning at the heart of
+ * it, the Foreland and Thornmark marked, a compass rose in the corner. Painted into (x, y, w, h).
  */
 function calderaMap(x: number, y: number, w: number, h: number) {
   return (ctx: CanvasRenderingContext2D): void => {
@@ -20,7 +20,7 @@ function calderaMap(x: number, y: number, w: number, h: number) {
     g.addColorStop(0, '#efe2c0'); g.addColorStop(1, '#c8b088');
     ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
     const cx = x + w / 2, cy = y + h / 2, R = Math.min(w, h) * 0.42;
-    // The land: a lumpy ring, green on the Shelf, dark forest in Thornmark, grey in the north.
+    // The land: a lumpy ring, green on the Foreland, dark forest in Thornmark, grey in the north.
     const ring: number[] = [];
     for (let i = 0; i < 40; i++) { const a = (i / 40) * Math.PI * 2, r = R * (1 + (rnd(7, i) - 0.5) * 0.14); ring.push(cx + Math.cos(a) * r * 1.25, cy + Math.sin(a) * r); }
     fillPoly(ctx, ring, '#9ab070');

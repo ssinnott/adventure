@@ -11,7 +11,7 @@ export function movement(): void {
   const rng = makeRng(7);
   const party = defaultParty(rng);
   const world = new World(buildMaps(), party, rng);
-  ok(world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14, 'a new world starts in Harrow at the gate');
+  ok(world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14, 'a new world starts in Helmstow at the gate');
   ok(world.hour === 7 && world.day === 1, `the clock starts on day 1 at 07:00 (${world.hour}:${world.minute})`);
   const r1 = world.move('forward');
   ok(r1.kind === 'moved' && world.state.y === 13, 'stepping forward moves north one cell');
@@ -21,9 +21,9 @@ export function movement(): void {
   const r2 = world.move('forward'); const r3 = world.move('forward');
   const out = local(world);
   ok(r2.kind === 'moved' && r3.kind === 'moved' && world.map.id === OUTDOORS && out.map === 'shelf' && out.x === 16 && out.y === 4 && world.state.facing === 2,
-    `walking through the south gate arrives outdoors on the Shelf, facing south (${world.map.id}: ${out.map} ${out.x},${out.y})`);
+    `walking through the south gate arrives outdoors on the Foreland, facing south (${world.map.id}: ${out.map} ${out.x},${out.y})`);
   ok(world.explored(world.state.x, world.state.y) && world.explored(world.state.x, world.state.y + 2), 'arrival reveals the cells around and ahead');
-  ok(world.here.name === 'The Shelf' && world.state.zones!.includes('shelf'), `outdoors the place is the zone (${world.here.name}), and the party has set foot in it`);
+  ok(world.here.name === 'The Foreland' && world.state.zones!.includes('shelf'), `outdoors the place is the zone (${world.here.name}), and the party has set foot in it`);
   // Leaving a business: back out of the doorway into the street, facing the door, no time passing.
   world.travel('harrow', 4, 4, 0);
   const at = world.state.minutes;
@@ -51,35 +51,35 @@ export function movement(): void {
   ok(world.move('forward').kind === 'blocked' === !partyCan(party).swim, 'water is passable only with a swimmer (Tidefolk in the party)');
   world.travel('shelf', 30, 2, 1);
   const steep = world.move('forward');
-  ok(steep.kind === 'blocked' && /steep/.test(steep.reason), 'mountains (the ridge between the Shelf and Thornmark) block without a mountaineer');
+  ok(steep.kind === 'blocked' && /steep/.test(steep.reason), 'mountains (the ridge between the Foreland and Thornmark) block without a mountaineer');
   // Where nothing is built yet the world ends, and nothing crosses into it, a mountaineer included.
   world.travel('shelf', 1, 12, 3);
   const edge = world.move('forward');
-  ok(edge.kind === 'blocked' && edge.reason === 'The world ends here.' && local(world).x === 1, `west of the Shelf the world ends, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
+  ok(edge.kind === 'blocked' && edge.reason === 'The world ends here.' && local(world).x === 1, `west of the Foreland the world ends, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
   party.flags.skill_mountaineer = 1;
   world.travel('shelf', 10, 1, 0);
-  ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Shelf in to the north');
+  ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Foreland in to the north');
   delete party.flags.skill_mountaineer;
   // The pass to Thornmark is a gate on the road through the ridge: closed until Vask's contract is done.
   world.travel('shelf', 30, 9, 1);
   const closed = world.move('forward');
   ok(closed.kind === 'blocked' && /checkpoint/.test(closed.reason) && local(world).x === 30, 'the Thornmark pass is closed before the Ashcombe hand-in');
   party.flags.q_ashcombe_done = 1;
-  ok(world.move('forward').kind === 'blocked' && local(world).x === 30, 'the pass stays closed until Greywater is cleared as well');
+  ok(world.move('forward').kind === 'blocked' && local(world).x === 30, 'the pass stays closed until Brandy Hole is cleared as well');
   party.flags.q_greywater_done = 1;
   // Open, it is walked, not jumped: the road runs on through the ridge into Thornmark, and the log
-  // says where the Shelf ends, then Thornmark greets the party as it always has.
+  // says where the Foreland ends, then Thornmark greets the party as it always has.
   const said: string[] = [];
   for (let i = 0; i < 3; i++) { const step = world.move('forward'); if (step.kind === 'moved') said.push(...step.messages); }
   const there = local(world);
   ok(world.map.id === OUTDOORS && there.map === 'thornmark' && there.x === 1 && there.y === 9, `the pass opens once the flags are set, and three steps on the road reach Thornmark (${there.map} ${there.x},${there.y})`);
-  ok(said[0] === 'The pass opens onto old forest. Thornmark.' && said.some((m) => /older than Harrow/.test(m)), `crossing into Thornmark says so (${said.join(' / ')})`);
+  ok(said[0] === 'The pass opens onto old forest. Thornmark.' && said.some((m) => /older than Helmstow/.test(m)), `crossing into Thornmark says so (${said.join(' / ')})`);
   ok(world.here.name === 'Thornmark' && world.region === 'thornmark' && world.state.zones!.includes('thornmark'), 'the party has set foot in Thornmark, and its weather is Thornmark\'s');
   world.turn('back');
   const back = [world.move('forward'), world.move('forward')];
-  ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Shelf.') && world.region === 'shelf', 'back west through the gate it is the Shelf again');
+  ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the gate it is the Foreland again');
   // Town Portal returns to the last town stood in.
-  ok(world.townPortal() === 'Harrow' && world.map.id === 'harrow', 'Town Portal goes to Harrow before any other town is visited');
+  ok(world.townPortal() === 'Helmstow' && world.map.id === 'harrow', 'Town Portal goes to Helmstow before any other town is visited');
   world.travel('thornhold', 7, 14, 0); world.travel('grove2', 8, 8, 0);
   ok(world.townPortal() === 'Thornhold' && world.map.id === 'thornhold' && world.state.x === 7 && world.state.y === 14, 'Town Portal returns to the last town visited');
   // Dungeon stairs go down and come back up.
@@ -88,5 +88,5 @@ export function movement(): void {
   ok(down.kind === 'moved' && world.map.id === 'grove2' && world.state.x === 1 && world.state.y === 1, 'the Grove Roots stairs go down to the Cut Stone');
   world.travel('greywater1', 14, 13, 2);
   const shrine = world.move('forward');
-  ok(shrine.kind === 'moved' && world.map.id === 'greywater2' && world.state.x === 1 && world.state.y === 1, 'the Greywater stairs go down to the Drowned Shrine');
+  ok(shrine.kind === 'moved' && world.map.id === 'greywater2' && world.state.x === 1 && world.state.y === 1, 'the Brandy Hole stairs go down to the Seam');
 }

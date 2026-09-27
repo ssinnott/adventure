@@ -1,9 +1,9 @@
-// The Shelf's monsters, band 1-5: the road, the woods and the cellar, then Greywater's caves. `sprite`
-// names the drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a map is a
-// list of these ids, and any area's maps may place them.
+// The Foreland's monsters, band 1-5: the road, the woods and the cellar, then Brandy Hole's caves.
+// `sprite` names the drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a
+// map is a list of these ids, and any area's maps may place them.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
-/** The drawings the Shelf's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+/** The drawings the Foreland's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
 export const SPRITES = [
   'rat', 'slime', 'wolf', 'boar', 'spider', 'bandit', 'archer', 'cultist', 'skeleton', 'riftling',
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
@@ -22,7 +22,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'skeleton', name: 'Skeleton', plural: 'Skeletons', sprite: 'skeleton', hp: 13, ac: 13, attack: 3, dice: 1, sides: 8, bonus: 1, speed: 8, xp: 55, gold: [0, 6], mindless: true, tint: '#d8d0c0', size: 0.9 },
   { id: 'riftling', name: 'Riftling', plural: 'Riftlings', sprite: 'riftling', hp: 11, ac: 14, attack: 3, dice: 2, sides: 4, bonus: 0, speed: 15, xp: 60, gold: [0, 0], tint: '#c05a3a', size: 0.7, inflict: { cond: 'paralysed', chance: 0.1 } },
   { id: 'rift_warden', name: 'Rift Warden', plural: 'Rift Wardens', sprite: 'warden', hp: 40, ac: 15, attack: 5, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 300, gold: [20, 40], tint: '#e07a3a', size: 1.0, mindless: true, drops: [{ item: 'survey_wand', chance: 1 }] },
-  // ---- Greywater: band 2-5, the caves between the cellar and the pass ----
+  // ---- Brandy Hole: band 2-5, the caves between the cellar and the pass ----
   { id: 'shore_crab', name: 'Shore Crab', plural: 'Shore Crabs', sprite: 'crab', hp: 16, ac: 15, attack: 3, dice: 1, sides: 6, bonus: 1, speed: 8, xp: 60, gold: [0, 0], mindless: true, tint: '#b0603a', size: 0.5 },
   { id: 'smuggler', name: 'Smuggler', plural: 'Smugglers', sprite: 'smuggler', hp: 18, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 1, speed: 11, xp: 70, gold: [6, 18], tint: '#4a5a7a', size: 0.9, drops: [{ item: 'potion_heal', chance: 0.15 }, { item: 'shortsword', chance: 0.05 }] },
   { id: 'smuggler_bowman', name: 'Smuggler Bowman', plural: 'Smuggler Bowmen', sprite: 'smuggler_bow', hp: 14, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 12, xp: 75, gold: [5, 15], ranged: true, missile: true, tint: '#3a6a6a', size: 0.9, drops: [{ item: 'shortbow', chance: 0.05 }] },

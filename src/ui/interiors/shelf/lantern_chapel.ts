@@ -1,4 +1,4 @@
-// The Chapel of the Lanterns in Harrow: a stone apse lit through stained glass and by the
+// The Chapel of the Lanterns in Helmstow: a stone apse lit through stained glass and by the
 // lanterns the order is named for.
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';

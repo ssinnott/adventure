@@ -50,7 +50,8 @@ const colours = async (): Promise<number> => page.evaluate(() => {
 });
 const titleColours = await colours();
 
-// Title -> new game -> premade company -> walk out of the gate and into the Shelf -> force a fight.
+// Title -> new game -> premade company -> walk out of the gate and into the Foreland -> force a
+// fight.
 await page.keyboard.press('Space'); await page.waitForTimeout(100);
 const screen0 = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 await page.keyboard.press('Space'); await page.waitForTimeout(150);
@@ -109,8 +110,8 @@ const questScreen = await page.evaluate(() => (window as any).__game.game.top.co
 const questColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 const questClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
-// The weather: the Shelf in a downpour, a fight in it, and Thornmark under falling snow with snow
-// lying deep. Each moves the clock to the first such hour of daylight for this game's seed.
+// The weather: the Foreland in a downpour, a fight in it, and Thornmark under falling snow with
+// snow lying deep. Each moves the clock to the first such hour of daylight for this game's seed.
 const weatherAt = async (map: string, x: number, y: number, f: number, want: string): Promise<{ found: boolean; sky: string; log: string }> => {
   const r = await page.evaluate(async ([m, xx, yy, ff, kind]: [string, number, number, number, string]) => {
     const load = (p: string): Promise<any> => import(p);
@@ -151,9 +152,9 @@ await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 const almanacClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 await page.keyboard.press('KeyM'); await page.waitForTimeout(150);
 const afterMap = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
-// The end of the world: nothing is built west of the Shelf yet. On a clear noon, facing it from the
-// last square before it, the view is pink empty space and the automap marks it pink; a step into it
-// is refused and the log says why.
+// The end of the world: nothing is built west of the Foreland yet. On a clear noon, facing it from
+// the last square before it, the view is pink empty space and the automap marks it pink; a step
+// into it is refused and the log says why.
 await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts');
@@ -218,7 +219,7 @@ if (process.env.SMOKE_SHOT) {
 }
 
 // The walls meet without a crack. Paint a view from every open cell of the Ashcombe cellar and of
-// Harrow twice, over two flat backdrops, and wherever the two differ the backdrop shows through.
+// Helmstow twice, over two flat backdrops, and wherever the two differ the backdrop shows through.
 // Along the horizon only walls can be (the floor starts 24px below it at the far end of the view),
 // so there backdrop with solid wall either side of it is a crack between two faces. And where
 // walls stand on both hands of the party the edges of the view are wall: those once went undrawn.
@@ -263,7 +264,7 @@ const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : ' 
 ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
 ok(titleColours > 6, `the title painted (${titleColours} colours)`);
 ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the title opens creation, Space again takes the premade company (${screen0}, ${screen1})`);
-ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Shelf, outdoors (${JSON.stringify(state)})`);
+ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
@@ -274,18 +275,18 @@ ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && 
 ok(interiors.kinds >= 12 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
-ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Shelf paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);
+ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Foreland paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);
 ok(rainFight.screen === 'CombatScreen' && rainFight.rangedPenalty > 0 && rainFightColours > 20, `a fight in the downpour paints, with the archers' penalty (${rainFightColours} colours)`);
 ok(snow.found && /snow|blizzard|flurries/.test(snow.sky) && /snow|blizzard/i.test(snow.log) && snowColours > 20, `Thornmark paints under falling snow with snow lying (${snow.sky}: "${snow.log}", ${snowColours} colours)`);
 ok(mapScreen === 'WorldMapScreen' && mapColours > 200, `M opens the world map and it paints (${mapScreen}, ${mapColours} colours)`);
 ok(zonesColours > 200 && wholeColours > 200, `Tab lays the zones over it and Z shows it whole (${zonesColours}, ${wholeColours} colours)`);
 ok(almanacScreen === 'MessageScreen' && almanacClosed === 'WorldMapScreen', `Space opens the almanac over the map and Esc goes back to it (${almanacScreen}, then ${almanacClosed})`);
 ok(afterMap === 'ExploreScreen', `M closes it again (${afterMap})`);
-ok(edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Shelf, the view is pink empty space and the automap marks it (${edgeView} pink pixels in the view, ${edgeMap} on the automap)`);
+ok(edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Foreland, the view is pink empty space and the automap marks it (${edgeView} pink pixels in the view, ${edgeMap} on the automap)`);
 ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeBump.x === 1, `a step into it is refused, and the log says why (${JSON.stringify(edgeBump)})`);
 ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /The pass opens onto old forest/.test(pass.said) && passColours > 20,
   `the open pass is walked straight through into Thornmark, which says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
-ok(cracks.length === 0, `the walls meet without a crack in the cellar and in Harrow, and the walls beside the party are drawn${cracks.length ? ` -> ${cracks.length} views, ` + cracks.slice(0, 4).join(', ') : ''}`);
+ok(cracks.length === 0, `the walls meet without a crack in the cellar and in Helmstow, and the walls beside the party are drawn${cracks.length ? ` -> ${cracks.length} views, ` + cracks.slice(0, 4).join(', ') : ''}`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

@@ -51,7 +51,7 @@ function once<T>(what: string, rows: readonly T[], key: (r: T) => string): reado
 
 once('area', AREAS, (a) => a.id);
 
-/** The maps as written, in road order, Harrow first. The outdoor ones are zones the atlas places. */
+/** The maps as written, in road order, Helmstow first. The outdoor ones are zones the atlas places. */
 export const MAP_DEFS: readonly MapDef[] = once('map', AREAS.flatMap((a) => a.maps), (d) => d.id);
 
 export const MONSTERS: Record<string, MonsterDef> = byId('monster', AREAS.flatMap((a) => a.monsters));

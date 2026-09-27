@@ -1,13 +1,13 @@
-// The outdoors as one map. Every outdoor map the atlas places is a zone of it, laid in 1:1 where the
-// atlas puts it, so the party walks from the Shelf into Thornmark without a seam, and the painted map
-// and the played one agree square for square. Where no zone map is laid yet the world simply ends:
-// its cells are void, which nothing crosses and the viewport paints as pink empty space. Building a
-// zone is how the world grows: a map of its own in its area's folder (content/areas/<area>/maps/),
-// placed by the atlas.
+// The outdoors as one map. Every outdoor map the atlas places is a zone of it, laid in 1:1 where
+// the atlas puts it, so the party walks from the Foreland into Thornmark without a seam, and the
+// painted map and the played one agree square for square. Where no zone map is laid yet the world
+// simply ends: its cells are void, which nothing crosses and the viewport paints as pink empty
+// space. Building a zone is how the world grows: a map of its own in its area's folder
+// (content/areas/<area>/maps/), placed by the atlas.
 //
 // The zone maps are still written as maps of their own, each closed in by its ring of mountains.
 // Laid in, the stretch of that ring which faces unbuilt world is the end of the world as well, and
-// the stretch between two zones (the ridge the Warden Pass cuts) stays mountains. The maps' ways
+// the stretch between two zones (the ridge the Scarth cuts) stays mountains. The maps' ways
 // out become the outdoors': a way into the next zone is walked, not jumped, so an exit from one
 // zone map into another is dropped, its flags kept as a gate on its cell and its arrival line said
 // on crossing into the zone. Every other exit, feature and monster group moves to where its zone

@@ -1,6 +1,6 @@
-// Thornmark's part of the world map: its zones (the built one, where the atlas lays its map, and the
-// planned), the plates of its towns and dungeons, and its sites. src/content/index.ts merges them into
-// ATLAS with the rest of the world, which is planned (src/content/atlas.ts).
+// Thornmark's part of the world map: its zones (the built one, where the atlas lays its map, and
+// the planned), the plates of its towns and dungeons, and its sites. src/content/index.ts merges
+// them into ATLAS with the rest of the world, which is planned (src/content/atlas.ts).
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [

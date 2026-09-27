@@ -1,5 +1,6 @@
-// The Shelf, the first step of the road (band 1-5): Harrow, the Shelf's coast and woods, the
-// Ashcombe cellar and Greywater's two levels. docs/areas/shelf.md is its brief.
+// The Foreland, the first step of the road (band 1-5): Helmstow, the Foreland's coast and woods,
+// the Ashcombe cellar and Brandy Hole's two levels. Its id is still 'shelf', as saves hold it.
+// docs/areas/shelf.md is its brief.
 import type { Area } from '../../area.ts';
 import { HARROW } from './maps/harrow.ts';
 import { SHELF } from './maps/shelf.ts';
@@ -13,7 +14,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'shelf' as const,
-  // Harrow first: a new game starts on it.
+  // Helmstow first: a new game starts on it.
   maps: [HARROW, SHELF, MILL, GREYWATER1, GREYWATER2],
   monsters: MONSTERS,
   sprites: SPRITES,

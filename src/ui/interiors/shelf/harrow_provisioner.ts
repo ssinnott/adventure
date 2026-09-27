@@ -1,4 +1,4 @@
-// The Harrow Provisioner, where a party buys its first clubs and rations and torches.
+// Mottram's Stores in Helmstow, where a party buys its first clubs and rations and torches.
 import { rgba } from '../../../lib/art/palettes.ts';
 import { rnd, STAGE_W, STAGE_H, plaster, beam, planks, floorboards, windowIn, line, fillPoly, inkRect, slab } from '../kit.ts';
 import { K, counter, bottle, jar, sack, crate, barrel, candle, lantern, herbs, sword, spear, mace, club, staff, bow, shield } from '../props.ts';

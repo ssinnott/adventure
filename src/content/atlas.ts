@@ -1,7 +1,7 @@
 // Caldera as the Cartographers' Guild charts it: one land, a ring of country round the inland sea
 // inside the rim, with two islands in the sea and the Underdeep beneath. It is drawn in strokes (see
 // game/atlas.ts): the rim, the coast, the ranges, the rivers from the rim to the sea, woods, fens and
-// fields; the Shelf and Thornmark are their own maps, stamped in 1:1, so the art and the zone
+// fields; the Foreland and Thornmark are their own maps, stamped in 1:1, so the art and the zone
 // overlay agree with what is playable. Everything else is planned, and is the design's to change.
 //
 // Scale: 512 by 384 squares, the border lettered A-P by 1-12 in squares of 32 (one outdoor map's
@@ -9,12 +9,12 @@
 // Darkside of Xeen (48 maps of 16 by 16), six times both sides of Xeen together. An area is some 8
 // to 15 of today's 32 by 32 outdoor maps.
 //
-// There is one road of levels, numbered I to XIV, and it winds. The coast road west from the Shelf
-// down the Ledge opens only after Thornmark; the east road out of Thornmark only once the Tide
-// Stone is back from Wrackholm; the far side of the sea is reached by ship from Kilnhaven after
-// the Whitespine, and the Hearth from Cinderport after the Glasswold. Three port cities, Saltmouth,
-// Kilnhaven and Cinderport, carry the crossings. Areas are made of zones, the named country inside
-// them; their borders follow the ridges, rivers and cliffs between them.
+// There is one road of levels, numbered I to XIV, and it winds. The coast road west from the
+// Foreland down Kestrel Edge opens only after Thornmark; the east road out of Thornmark only once
+// the Tide Stone is back from Wrackholm; the far side of the sea is reached by ship from Kilnhaven
+// after the Whitespine, and the Hearth from Cinderport after the Glasswold. Three port cities,
+// Saltmouth, Kilnhaven and Cinderport, carry the crossings. Areas are made of zones, the named
+// country inside them; their borders follow the ridges, rivers and cliffs between them.
 //
 // This is the plan: the land, the areas of the road and what is not built yet. Each built area
 // charts its own zones, plates and sites in its folder (areas/<area>/atlas.ts), and
@@ -31,7 +31,7 @@ export const PLAN: Atlas = {
     width: 9,
     rough: 4,
     pts: [
-      // North, over the Shelf; the Sunderwood lobe; a notch where the Iron Fells leave the rim.
+      // North, over the Foreland; the Sunderwood lobe; a notch where the Iron Fells leave the rim.
       [232, 19], [258, 16], [286, 11], [316, 6], [346, 5], [374, 8], [398, 14], [416, 22], [428, 34],
       // The Kilns bulge east; a notch; Cairnmoor.
       [446, 38], [466, 50], [482, 68], [494, 92], [502, 120], [506, 148], [504, 176], [496, 194],
@@ -51,7 +51,7 @@ export const PLAN: Atlas = {
     {
       rough: 5,
       pts: [
-        // Harrow Bay, from the Shelf's beach; its east shore, then round Thorn Head.
+        // The Wyke, from the Foreland's beach; its east shore, then round Thorn Head.
         [199, 61], [216, 59.5], [232, 61], [236, 70], [240, 82], [248, 92], [258, 100], [266, 112], [276, 126],
         [286, 140], [294, 150], [302, 146], [304, 132], [308, 118],
         // Sunder Bay under Sunderwood and the Iron Fells' cliffs; Kiln Bight; round the Anvil.
@@ -72,7 +72,7 @@ export const PLAN: Atlas = {
     },
   ],
   isles: [
-    // Hearth Isle, Wrackholm, Gull Isle in the mouth of Harrow Bay.
+    // Hearth Isle, Wrackholm, the Mewstone in the mouth of the Wyke.
     { pts: [[242, 160], [256, 155], [270, 160], [277, 172], [270, 185], [256, 189], [242, 185], [236, 172]] },
     { pts: [[146, 170], [152, 158], [164, 152], [178, 154], [190, 160], [198, 170], [196, 182], [188, 190], [176, 194], [166, 188], [158, 194], [148, 188]] },
     { rough: 1, pts: [[213, 96], [221, 93], [226, 99], [219, 104], [212, 101]] },
@@ -93,12 +93,12 @@ export const PLAN: Atlas = {
     { pts: [[456, 230], [462, 228], [464, 234], [458, 236]] },
   ],
   ridges: [
-    // Between the Shelf and Thornmark, the Warden Pass through it.
+    // Between the Foreland and Thornmark, the Scarth through it.
     { pts: [[231.5, 20], [231.5, 40], [231.5, 61]], width: 3, foot: 0 },
     // The Hoarhills, between Thornmark and Sunderwood.
     { pts: [[266, 14], [268, 40], [276, 64], [292, 86], [308, 110]], width: 5, foot: 2 },
-    // The Ledge: the Downs end in cliffs above the Upper Water and the gulf. A cliff's face is on the
-    // right of the way its line runs.
+    // Kestrel Edge: the Downs end in cliffs above the Upper Water and the gulf. A cliff's face is
+    // on the right of the way its line runs.
     { pts: [[86, 28], [96, 50], [104, 74], [114, 96], [122, 112]], kind: 'cliff', width: 2 },
     // The Scarp between Saltreach and the Glasswold.
     { pts: [[128, 216], [114, 210], [94, 212], [70, 214], [46, 210], [22, 206]], kind: 'cliff', width: 2.5 },
@@ -133,7 +133,7 @@ export const PLAN: Atlas = {
     { name: 'The Long Water', pts: [[30, 44], [40, 64], [50, 84], [58, 98], [66, 110], [70, 128], [80, 146], [92, 160], [100, 170]], width: [1, 3] },
     { pts: [[70, 128], [58, 146], [62, 168], [80, 186], [100, 190]], width: [2, 2] },
     { pts: [[80, 146], [84, 164], [98, 178]], width: [1.5, 1.5] },
-    { pts: [[150, 20], [154, 40], [164, 60], [172, 72]], width: [1, 1.5] },
+    { name: 'The Wend', pts: [[150, 20], [154, 40], [164, 60], [172, 72]], width: [1, 1.5] },
     { name: 'The Thornwater', pts: [[268, 58], [266, 72], [258, 86], [252, 94]], width: [1.5, 2.5] },
     { pts: [[360, 10], [354, 28], [346, 46], [338, 58]], width: [1, 2] },
     { pts: [[398, 24], [394, 52], [384, 84], [372, 110], [364, 122]], width: [1, 2] },
@@ -145,7 +145,7 @@ export const PLAN: Atlas = {
     { pts: [[250, 352], [242, 328], [230, 304], [214, 284]], width: [1, 2] },
   ],
   patches: [
-    // I. The Downs west of the Shelf: chalk hills, fields round Gullwick, a copse.
+    // I. The Downs west of the Foreland: chalk hills, fields round Gullwick, a copse.
     { t: 'hills', pts: [[104, 34], [132, 26], [150, 36], [140, 56], [120, 70], [108, 56]] },
     { t: 'farm', pts: [[140, 40], [170, 34], [190, 44], [186, 62], [164, 72], [146, 62]] },
     { t: 'forest', pts: [[176, 24], [192, 26], [196, 40], [184, 44], [174, 36]] },
@@ -223,7 +223,7 @@ export const PLAN: Atlas = {
     { t: 'grass', pts: [[248, 168], [262, 166], [266, 176], [254, 180], [246, 176]] },
   ],
   trails: [
-    // The coast road west from the Shelf, along the Downs and down the Ledge to Saltmouth.
+    // The coast road west from the Foreland, along the Downs and down Kestrel Edge to Saltmouth.
     { pts: [[200, 58], [186, 62], [172, 70], [150, 84], [132, 96], [120, 108], [108, 120], [100, 140], [98, 156], [102, 176]] },
     // Upriver to Reedholm.
     { pts: [[98, 156], [84, 136], [74, 104], [80, 80]] },
@@ -238,7 +238,7 @@ export const PLAN: Atlas = {
     { pts: [[206, 280], [196, 300], [180, 318], [160, 312], [140, 296], [116, 280], [92, 272]] },
   ],
   areas: [
-    { id: 'shelf', name: 'The Shelf', order: 1, stone: 'Harrow Stone', label: [152, 44], note: 'The starting coast: Harrow, farms, the Downs' },
+    { id: 'shelf', name: 'The Foreland', order: 1, stone: 'Lodestone', label: [152, 44], note: 'The starting coast: Helmstow, farms, the Downs' },
     { id: 'thornmark', name: 'Thornmark', order: 2, stone: 'Grove Stone', label: [272, 84], tint: '#94ac62', note: 'Old forest, the elf hold, the Grove' },
     { id: 'saltreach', name: 'Saltreach', order: 3, band: [10, 12], stone: 'Tide Stone', label: [62, 150], tint: '#b0b874', note: 'The Long Water\'s delta and the free port' },
     { id: 'wrackholm', name: 'Wrackholm', order: 4, band: [12, 14], label: [166, 204], note: 'The smugglers\' isle, where the stolen Tide Stone lies' },
@@ -307,7 +307,7 @@ export const PLAN: Atlas = {
     { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
     { name: 'Tide Stone', icon: 'stone', at: [48, 140], label: 'below', planned: true },
     { name: 'Drowned Temples', icon: 'sunken', at: [56, 170], label: 'below', planned: true },
-    { name: 'Wind Cave', icon: 'cave', at: [104, 76], label: 'right', planned: true }, // in the Ledge's cliffs: the Monk's second prestige
+    { name: 'Wind Cave', icon: 'cave', at: [104, 76], label: 'right', planned: true }, // in Kestrel Edge's cliffs: the Monk's second prestige
     // IV. Wrackholm.
     { name: 'Smugglers\' Cove', icon: 'cave', at: [154, 170], label: 'left', planned: true },
     { name: 'Tide Ship', icon: 'wreck', at: [182, 188], label: 'right', planned: true },
@@ -353,15 +353,16 @@ export const PLAN: Atlas = {
     { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none', planned: true },
     { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right', planned: true }, // on Hearth Isle: the Cleric's third prestige
     { name: 'The Inland Sea', icon: 'water', at: [214, 230], size: 2 },
-    { name: 'Harrow Bay', icon: 'water', at: [216, 84] },
+    { name: 'The Wyke', icon: 'water', at: [216, 84] },
     { name: 'Salt Gulf', icon: 'water', at: [124, 150] },
+    { name: 'Kestrel Edge', icon: 'label', at: [101, 92] },
     { name: 'The Scarp', icon: 'label', at: [70, 208] },
     { name: 'The Sheer', icon: 'label', at: [262, 300] },
     { name: 'The Iron Fells', icon: 'label', at: [420, 70] },
   ],
   links: [
     { from: 'shelf', to: 'downs', kind: 'road', a: [201.5, 57.5], b: [192, 60] },
-    { from: 'downs', to: 'delta', kind: 'road', opens: 2, a: [126, 100], b: [114, 116], note: 'down the Ledge' },
+    { from: 'downs', to: 'delta', kind: 'road', opens: 2, a: [126, 100], b: [114, 116], note: 'down Kestrel Edge' },
     { from: 'saltings', to: 'saltmouth', kind: 'enter', a: [102, 178] },
     { from: 'delta', to: 'drowned_temples', kind: 'enter', a: [56, 170] },
     { from: 'saltmouth', to: 'wrackholm', kind: 'sea', b: [152, 172], note: 'smuggler boat' },

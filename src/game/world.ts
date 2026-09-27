@@ -44,7 +44,7 @@ export interface WorldState {
   truce: number;
   truceGroups: string[];
   steps: number;
-  /** The town map last stood in; Town Portal returns here. Absent in older saves: Harrow. */
+  /** The town map last stood in; Town Portal returns here. Absent in older saves: Helmstow. */
   lastTown?: string;
   /** What the weather is made from: the same seed brings the same skies. Absent in older saves. */
   weatherSeed?: number;
@@ -111,7 +111,7 @@ export class World {
 
   /**
    * Where a cell of a map as written is played: a zone map's cells are the outdoors', where the
-   * zone sits; any other map's are its own. Lets tools, tests and old saves name the Shelf.
+   * zone sits; any other map's are its own. Lets tools, tests and old saves name the Foreland.
    */
   locate(mapId: string, x: number, y: number): { mapId: string; x: number; y: number } {
     if (!this.maps[mapId]) {
@@ -305,7 +305,7 @@ export class World {
     this.reveal();
   }
 
-  /** Town Portal: back to the start cell of the last town visited (Harrow before any). */
+  /** Town Portal: back to the start cell of the last town visited (Helmstow before any). */
   townPortal(): string {
     const id = this.state.lastTown && this.maps[this.state.lastTown] ? this.state.lastTown : Object.values(this.maps).find((m) => m.kind === 'town')!.id;
     const m = this.maps[id];

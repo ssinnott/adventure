@@ -14,7 +14,7 @@ export function outdoors(): void {
   const zoneMaps = MAP_DEFS.filter((d) => d.kind === 'outdoor');
   const played = PLAYED_DEFS.filter((d) => d.kind === 'outdoor');
   ok(played.length === 1 && played[0].id === OUTDOORS, `the outdoors is played as one map (${played.map((d) => d.id).join(', ')})`);
-  ok(PLAYED_DEFS[0].id === MAP_DEFS[0].id && PLAYED_DEFS.length === MAP_DEFS.length - zoneMaps.length + 1, 'Harrow is still the first map, and the towns and dungeons are played as they are written');
+  ok(PLAYED_DEFS[0].id === MAP_DEFS[0].id && PLAYED_DEFS.length === MAP_DEFS.length - zoneMaps.length + 1, 'Helmstow is still the first map, and the towns and dungeons are played as they are written');
   const out = new GameMap(played[0]);
   ok(out.width === ATLAS.width && out.height === ATLAS.height, `the outdoors is the world's size, square for square with the painted map (${out.width}x${out.height})`);
   for (const d of zoneMaps) {
@@ -34,7 +34,7 @@ export function outdoors(): void {
   const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
   const line = (x: number, y: number, dx: number, dy: number, n: number): string => Array.from({ length: n }, (_, i) => out.at(x + dx * i, y + dy * i).ch).join('');
   const faces = [line(sh.x, sh.y, 1, 0, sh.w), line(sh.x, sh.y + sh.h - 1, 1, 0, sh.w), line(sh.x, sh.y, 0, 1, sh.h), line(th.x, th.y, 1, 0, th.w), line(th.x, th.y + th.h - 1, 1, 0, th.w), line(th.x + th.w - 1, th.y, 0, 1, th.h)];
-  ok(faces.every((s) => /^%+$/.test(s)), 'the Shelf\'s north, west and south edges and Thornmark\'s north, east and south edges are the end of the world');
+  ok(faces.every((s) => /^%+$/.test(s)), 'the Foreland\'s north, west and south edges and Thornmark\'s north, east and south edges are the end of the world');
   const ridge = '%' + 'M'.repeat(8) + '=' + 'M'.repeat(21) + '%';
   ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge, 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at both ends');
   // The ways: every one lands on open ground; none joins one zone to the next, which is walked; the
@@ -45,8 +45,8 @@ export function outdoors(): void {
   const g = out.gates;
   ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'q_ashcombe_done,q_greywater_done' && /checkpoint/.test(g[0].blockedText ?? ''),
     'the Warden checkpoint is a gate on the road through the pass, with the old exit\'s flags and words');
-  ok(PLAYED_DEFS.find((d) => d.id === 'harrow')!.exits!.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Harrow\'s south gate opens onto the Shelf road, where it always did');
-  ok(sh.enter?.thornmark === 'Back through the pass to the Shelf.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
+  ok(PLAYED_DEFS.find((d) => d.id === 'harrow')!.exits!.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Helmstow\'s south gate opens onto the Foreland road, where it always did');
+  ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void.
     const can = { swim: true, climb: true, keys: 1 }, reached = new Uint8Array(out.width * out.height);
     const stack = [[out.def.start.x, out.def.start.y]];

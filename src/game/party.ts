@@ -82,7 +82,7 @@ export const RACES: Record<RaceId, RaceDef> = {
   elf:      { id: 'elf', name: 'Elf', mods: { intellect: 3, accuracy: 2, might: -2, endurance: -1 }, perceptive: true, blurb: 'Keen. Innate perception.' },
   gnome:    { id: 'gnome', name: 'Gnome', mods: { luck: 3, personality: 1, might: -2 }, perceptive: true, blurb: 'Lucky. Finds secrets sooner.' },
   tidefolk: { id: 'tidefolk', name: 'Tidefolk', mods: { speed: 2, endurance: 2, intellect: -1, luck: -1 }, swim: true, blurb: 'Swims without the skill.' },
-  orcblood: { id: 'orcblood', name: 'Orcblood', mods: { might: 3, speed: 1, intellect: -2, personality: -2 }, blurb: 'Strong. Distrusted in Harrow.' },
+  orcblood: { id: 'orcblood', name: 'Orcblood', mods: { might: 3, speed: 1, intellect: -2, personality: -2 }, blurb: 'Strong. Distrusted in Helmstow.' },
 };
 
 export const CLASSES: Record<ClassId, ClassDef> = {

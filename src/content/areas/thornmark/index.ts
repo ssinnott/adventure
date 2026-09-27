@@ -12,7 +12,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'thornmark' as const,
-  // The zone before its town, unlike the Shelf: the order the outdoors is laid in is kept.
+  // The zone before its town, unlike the Foreland: the order the outdoors is laid in is kept.
   maps: [THORNMARK, THORNHOLD, GROVE1, GROVE2],
   monsters: MONSTERS,
   sprites: SPRITES,

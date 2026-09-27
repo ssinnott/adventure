@@ -106,7 +106,7 @@ Around the sea, six regions, each an outdoor map with towns, dungeons, and one *
 
 | Region | Character | Difficulty band | Wardstone |
 |---|---|---|---|
-| **The Shelf** | Starting coast. Fishing towns, farmland, the capital *Harrow*. | 1–8 | Harrow Stone (already intact; tutorial) |
+| **The Foreland** | Starting coast. Fishing towns, farmland, the capital *Helmstow*. | 1–8 | The Lodestone (already intact; tutorial) |
 | **Thornmark** | Old forest, elf holds, ruined watchtowers. | 5–14 | The Grove Stone |
 | **The Kilns** | Dwarven mining country, lava tubes, forges. | 8–18 | The Anvil Stone |
 | **Saltreach** | Marsh delta, smuggler ports, drowned temples. | 10–20 | The Tide Stone |
@@ -153,7 +153,7 @@ The **Hearth Isle** in the centre is reachable only by ship.
 | Elf | INT, ACC | Innate Perception; Thornmark trusts them. |
 | Gnome | LCK, PER | Finds secrets a square earlier; cheaper training. |
 | Tidefolk | SPD, END | Swim without the skill; Saltreach kin. |
-| Orcblood | STR, SPD | Cheap intimidation; distrusted in Harrow. |
+| Orcblood | STR, SPD | Cheap intimidation; distrusted in Helmstow. |
 
 ### Classes and prestiges
 
@@ -272,7 +272,7 @@ the reach. docs/STORY.md tells the whole quest as a story.
 
 | Act | Levels | Areas | The question | Ends on |
 |---|---|---|---|---|
-| I. Ashes on the Road | 1–10 | the Shelf, Thornmark | Why are the Stones failing? | They are not failing. They are being cut, with Underdeep tools |
+| I. Ashes on the Road | 1–10 | the Foreland, Thornmark | Why are the Stones failing? | They are not failing. They are being cut, with Underdeep tools |
 | II. The Salt Road | 10–16 | Saltreach, Wrackholm, Sunderwood | Who profits? | Vask is behind the Ashen Hand, and under the world stands a wall no one built |
 | III. The Deep Script | 16–22 | the Kilns, Cairnmoor, Rimewater | What are the Stones? | Machines, and people came here with them |
 | IV. Beyond the Sky | 22–28 | the Whitespine, Ashfall, the Wold | What is Caldera? | A vessel. The sky is a ceiling |
@@ -290,24 +290,24 @@ Ashen Hand ships people below: it is finding out whose hands the doors will open
 through the whole quest and is never told, only found.
 
 **Wenna of Gullwick** gives the line a face. She is a fisher's daughter taken as cargo, and her name
-is in the Greywater ledger's CARGO BELOW column. The doors below open for her. She leads the others
+is in the Cargo Ledger's CARGO BELOW column. The doors below open for her. She leads the others
 up through the ice at Rime Lodge (Act III), is taken again at Sheer Point (Act IV), and at the core
 the Hand holds her palm to the panel that answers to the line. Freed, she hands the choice to the
 company:
 *You walked all of it. Every road. You choose.* She is the heir nobody claimed (§10.1), and she
 walks the main road, not only the subplot.
 
-Harrow changes between acts, under Vask's hand, and never for the better: Wardens on the walls, a
+Helmstow changes between acts, under Vask's hand, and never for the better: Wardens on the walls, a
 curfew bell, the Lantern chapel shut.
 
-### Act I — Ashes on the Road (levels 1–10: the Shelf, Thornmark)
+### Act I — Ashes on the Road (levels 1–10: the Foreland, Thornmark)
 
-Queen Isaure of Harrow dies the night the Hearth first flickers. The party, a freshly chartered
+Queen Isaure of Helmstow dies the night the Hearth first flickers. The party, a freshly chartered
 company, is on the road when it happens and watches the light stutter across the sea. In the
-morning a Rift has opened in a Shelf farmstead. Clearing it is the tutorial. Inside is a dead
+morning a Rift has opened in a Foreland farmstead. Clearing it is the tutorial. Inside is a dead
 Lantern with a cracked survey wand and a note: *the Grove Stone is next.*
 
-Harrow is in interregnum. The Regent-Warden, **Lord Aumery Vask**, holds the city "until the
+Helmstow is in interregnum. The Regent-Warden, **Lord Aumery Vask**, holds the city "until the
 succession is settled." He offers the party a Crown contract: find out why the stones are
 failing.
 
@@ -316,18 +316,18 @@ chisel marks, and a sigil the Lanterns recognise as the **Ashen Hand**, a sect t
 Hearth is a prison and its dimming is the door opening. Restoring the stone is the first real
 dungeon. Restoring it closes Thornmark's Rifts.
 
-- **The Shelf** (built): Ashcombe's Rift and the dead Lantern, whose note says *Tell Vask
-  nothing*; the party hands Vask her wand anyway. Greywater, whose crates carry the Harrow customs
-  seal, where the smugglers' cargo below was people and the Ashen Deacon was prising the staples
-  from a glowing seam. Captain Hale sends the Regent a copy of the smugglers' ledger.
-- **Harrow Downs:** the Queen's barrow has been opened, and only her signet is gone. In Gullwick,
-  Wenna's mother asks the party to find her. Harrow Light's keeper logged the night the Queen died:
-  the Hearth went out eleven times, and he wrote down the gaps between. The coast road west, into
-  Act II, starts here.
+- **The Foreland** (built): Ashcombe's Rift and the dead Lantern, whose note says *Tell Vask
+  nothing*; the party hands Vask her wand anyway. Brandy Hole, whose crates carry the Helmstow
+  customs seal, where the smugglers' cargo below was people and the Ashen Deacon was prising the
+  staples from a glowing seam. Captain Hale sends the Regent a copy of the smugglers' ledger.
+- **Callow Downs:** the Queen's barrow, the Berth, has been opened, and only her signet is gone. In
+  Gullwick, Wenna's mother asks the party to find her. Crowness Light's keeper logged the night the
+  Queen died: the Hearth went out eleven times, and he wrote down the gaps between. The coast road
+  west, into Act II, starts here.
 - **Thornmark** (built): Thornhold and Elder Sylvane, the Grove Roots and the Cut Stone, the Hand of
   Ash, and the Warden of the Cut with the first Meridian journal.
 - **The Deepthorn:** the oldest elf-hold keeps the two-hundred-year-old treaty behind the elves'
-  claim to the throne, which says the elves' line and Harrow's were once one. Its seal is the
+  claim to the throne, which says the elves' line and Helmstow's were once one. Its seal is the
   chisel's maintenance mark: the royal line is written in the machine's script.
 
 Turn: the Ashen Hand's cutting tools are Underdeep-made. Somebody is arming them. The Hand's creed
@@ -344,7 +344,7 @@ god is one of its fragments.
 
 ### Act II — The Salt Road (levels 10–16: Saltreach, Wrackholm, Sunderwood)
 
-- **The Upper Water:** the way in, down the Ledge from the Downs. The Salt Compact's river barges
+- **The Upper Water:** the way in, down Kestrel Edge from the Downs. The Salt Compact's river barges
   carry shards and people downriver, and the folk of Reedholm saw the Tide Stone go by one night.
 - **The Delta:** the Tide Stone's plinth stands empty, and the Drowned Temples have gone dark. The
   Tidefolk's god used to sing the tides; now it only counts, until its Stone comes home and it
@@ -363,10 +363,10 @@ By now word has come down the coast: Hale's copy of the ledger reached the Regen
 vanished, his post at the pass held by men nobody knows.
 
 Midpoint, at level 16: the Tide Ship's log names Vask. Every cargo in it went below under the
-Harrow customs seal from the Greywater crates, countersigned by the Regent. He is the Ashen Hand's
-patron. He has read
-the Underdeep's writing and believes it: that the Hearth is a cage and there is a world beyond the
-sky. He is not wrong about the facts. He is wrong about what "beyond" means.
+Helmstow customs seal from the Brandy Hole crates, countersigned by the Regent. He is the Ashen
+Hand's patron. He has read the Underdeep's writing and believes it: that the Hearth is a cage and
+there is a world beyond the sky. He is not wrong about the facts. He is wrong about what "beyond"
+means.
 
 ### Act III — The Deep Script (levels 16–22: the Kilns, Cairnmoor, Rimewater)
 
@@ -380,7 +380,7 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
 - **High Moor and the Cairnfield:** a ring of stones older than the Wardstones, the first emitters,
   dead for centuries, with the cairns around it. The Custodian's oldest voice still speaks there,
   in the dark inside the ring, and asks the crew to report.
-- **Longmere:** some of Greywater's cargo come back up through the ice at Rime Lodge. The doors
+- **Longmere:** some of Brandy Hole's cargo come back up through the ice at Rime Lodge. The doors
   below opened for some of them and not for others: the captain's line, tested on its victims.
   Wenna, whom the doors know, led them up. The way they came up is the way down.
 - **Coldmere:** a sealed bay under the frozen lake, opened by Wenna's hand, where rows of sleepers
@@ -391,7 +391,7 @@ sky. He is not wrong about the facts. He is wrong about what "beyond" means.
 
 - **Monks' Vale and the High Spine:** the Peak Stone is fine, but something wears the monks who
   guard it. The monks died long ago, and the Custodian's own hands keep the monastery in their
-  robes. Its bells ring the eleven flickers of Harrow Light's log, the Hearth's pulse, rung by a
+  robes. Its bells ring the eleven flickers of Crowness Light's log, the Hearth's pulse, rung by a
   machine that was told to ring them and never told to stop.
 - **Sheer Point:** its tip reaches toward the Hearth, and the Ashen Hand is building its crossing
   there: a causeway out over the water, built from the smuggled shards. The party sees where the
@@ -479,17 +479,17 @@ main plot's texture rather than its rails.
 
 *Oblivion's "find the heir," inverted: everyone claims to be one.*
 
-Three claimants to Harrow: the Queen's cousin (backed by the Wardens), a Thornmark elf-hold
-that holds a two-hundred-year-old treaty saying the elves' line and Harrow's were once one (backed
+Three claimants to Helmstow: the Queen's cousin (backed by the Wardens), a Thornmark elf-hold
+that holds a two-hundred-year-old treaty saying the elves' line and Helmstow's were once one (backed
 by the Lanterns), and Jory Tallis, a Saltreach dockmaster with a forged lineage and the only navy
 (backed by the Compact). Vask needs the throne empty.
 
 The party gathers evidence across four regions, can be bribed by any side, and eventually
-presents a case to the Council of Harrow. Whoever wins changes Harrow's shops, trainers, prices
+presents a case to the Council of Helmstow. Whoever wins changes Helmstow's shops, trainers, prices
 and guard behaviour for the rest of the game, and decides who is at the Hearth in Act V to help
 or hinder.
 
-The captain's line (§9) makes the throne more than Harrow's: whoever carries the line is who the
+The captain's line (§9) makes the throne more than Helmstow's: whoever carries the line is who the
 Custodian answers to. Every claim touches the machine: the dockmaster's forgery convinces because
 it was copied from a real crew record, the elf-hold's treaty carries the maintenance mark, and the
 cousin's claim is blood, which is what the doors below test. The Queen's missing signet is evidence
@@ -497,7 +497,7 @@ all three sides want. And there is a fourth, who claims nothing: Wenna of Gullwi
 doors know (§9). The case before the Council can be made for her, for any of the three, or for
 nobody.
 
-**Payoff:** the throne subplot is the only way to remove Vask from Harrow *before* Act V, which
+**Payoff:** the throne subplot is the only way to remove Vask from Helmstow *before* Act V, which
 weakens the Ashen Hand's presence in the final dungeon.
 
 ### 10.2 The Salt Compact
@@ -548,8 +548,8 @@ very old, with their real map: the hull. The map shows what the Custodian will n
 
 | Tier | Contents | Purpose |
 |---|---|---|
-| **M0 — Vertical slice** | Harrow, one Shelf outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
-| **M1 — Act I** | The Shelf and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
+| **M0 — Vertical slice** | Helmstow, one Foreland outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
+| **M1 — Act I** | The Foreland and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
 | **M2 — Acts II to IV** | Saltreach to Ashfall and their Wardstones; the rest of the guilds; the first and second prestiges; Meridian Camp and the Dead-Drop; the ship. | The open world. |
 | **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, the third prestiges, Master trainers. | Content complete. |
 | **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9). | Optional by design: the game is whole without it. |

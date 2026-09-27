@@ -132,7 +132,7 @@ export interface MapDef {
   palette?: Partial<MapPalette>;
   /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */
   band?: [number, number];
-  /** The region whose climate and weather the map shares; the Shelf when absent. */
+  /** The region whose climate and weather the map shares; the Foreland when absent. */
   region?: RegionId;
   /** Cells closed until flags are set. Written by game/outdoors.ts; a map as authored gates an exit instead. */
   gates?: Gate[];

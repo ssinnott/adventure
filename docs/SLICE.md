@@ -1,7 +1,7 @@
 # The vertical slice (M0) and the road to level 10
 
 What is playable now, what is stubbed, and where things live: the systems. What each area holds is
-in its own doc, [the Shelf](areas/shelf.md) (Harrow, the cellar, Greywater, band 1-5) and
+in its own doc, [the Foreland](areas/shelf.md) (Helmstow, the cellar, Brandy Hole, band 1-5) and
 [Thornmark](areas/thornmark.md) (Thornhold, the Grove Roots, the Cut Stone, band 5-10). Read
 DESIGN.md first for the why.
 
@@ -24,9 +24,9 @@ DESIGN.md first for the why.
   drops; readiness to train reported.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
-  version 1 save loads, its Shelf and Thornmark state folded into the outdoors where they now lie.
+  version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
-  journal of what the party has found: The Quiet Farm (Vask), The Greywater Ledger (Hale), The
+  journal of what the party has found: The Quiet Farm (Vask), The Cargo Ledger (Hale), The
   Grove Stone (Vask's lead, Sylvane's chisel), and The Lost Expedition, which the first Meridian
   journal opens and which stays open until the rest of its trail is built. Nothing new is saved.
   Every entry is keyed to something the save already holds (a flag, a carried item, a once-only
@@ -43,20 +43,20 @@ with the painted map (`game/outdoors.ts`, which `content/maps.ts` runs once to m
 `PLAYED_DEFS`, the maps as played).
 
 - **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 where the atlas puts it: the
-  Shelf at 200,30 and Thornmark beside it at 232,30. The zone maps are still written as maps of their
-  own in their areas' `maps/` folders, in their own coordinates; laying them in moves their
+  Foreland at 200,30 and Thornmark beside it at 232,30. The zone maps are still written as maps of
+  their own in their areas' `maps/` folders, in their own coordinates; laying them in moves their
   features, monster groups and exits to where they sit, and leads every town's and dungeon's way
-  out onto the outdoors. Outdoors, the party's zone says where it is: the name on the status strip and the
-  almanac, the level band, the region whose weather it has, the palette it is painted in.
+  out onto the outdoors. Outdoors, the party's zone says where it is: the name on the status strip
+  and the almanac, the level band, the region whose weather it has, the palette it is painted in.
 - **Walked, not jumped.** An exit from one zone map into the next is dropped: the road through the
-  pass runs straight on into Thornmark, and the view looks down it. The Shelf's exit kept its flags
+  pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its flags
   as a gate on its square (`MapDef.gates`) and its arrival line as what the log says on crossing into
   Thornmark ("The pass opens onto old forest. Thornmark."; the way back says "Back through the pass
-  to the Shelf."). Monster groups may follow the party over a zone's edge.
+  to the Foreland."). Monster groups may follow the party over a zone's edge.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the
   `void` solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
-  well: the Shelf's north, west and south edges and Thornmark's north, east and south. Between the two
+  well: the Foreland's north, west and south edges and Thornmark's north, east and south. Between the two
   the ridge stands as it was, two squares thick with the pass through it. The viewport paints the
   void as pink empty space, flat, unlit and untextured, standing up past the top of the view so it
   hides the sky as well as the ground; no weather greys it (it is cut out of the scene as it is
@@ -78,7 +78,7 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
 - **The calendar** (`game/calendar.ts`). Eight months of fifteen days, two to a season: Thaw and
   Sowing (spring), Longlight and Harvest (summer), Leafturn and Mistfall (autumn), Frost and
   Longnight (winter), 120 days in the Lanterns' year. Game day 1 is the 1st of Mistfall, 1016, late
-  in the autumn, so the first winter comes on while the party is still on the Shelf or just over
+  in the autumn, so the first winter comes on while the party is still on the Foreland or just over
   the pass. The days lengthen and shorten: dawn and dusk are 12 hours apart at the equinoxes (the
   old fixed clock), 15½ at midsummer, 8½ at midwinter, and the sun and moon follow them. The status
   strip is two lines now: the facing, the time and the map; then the date and the sky with a glyph.
@@ -92,10 +92,10 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
   temperature, and the temperature picks rain, sleet or snow. Snow lying and standing water are the
   same function run over the ten days before, so snow builds through a fall, lasts in the cold and
   melts in a thaw or a rain. A new game draws seeds until its first morning is dry and clear.
-- **Regions.** Each map names its region (`MapDef.region`, the Shelf when absent); towns and
-  dungeons share their region's weather, and a test holds them to it. The Shelf is mild and wet,
+- **Regions.** Each map names its region (`MapDef.region`, the Foreland when absent); towns and
+  dungeons share their region's weather, and a test holds them to it. The Foreland is mild and wet,
   foggy off the sea in the autumn, with snow only in a cold snap; Thornmark is colder, and its
-  winter snow lies deep for weeks. Fronts reach Thornmark five hours after they cross the Shelf.
+  winter snow lies deep for weeks. Fronts reach Thornmark five hours after they cross the Foreland.
 - **What the sky does:** clear, cloudy, overcast, fog, drizzle, rain, downpour, thunderstorm,
   sleet, flurries, snow, heavy snow and blizzard. A shower on a threshold does not flicker: each
   strength is entered above one line and left below a lower one. The log reports changes as the
@@ -116,8 +116,8 @@ cap, which is 10 until the road past it is built:
 
 - **Progression.** `MAX_LEVEL` is 10; `levelUp` stops there and the sheet says so. Five spell
   tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`). Trainers charge 25 a level to 5 and
-  40 a level after; the Warden Drillyard in Harrow teaches to 6, the Elder's Yard in Thornhold to
-  10. Guilds sell up to a tier of their own (`maxTier`: Harrow 2, Thornhold 4) at 40, 80, 160, 320
+  40 a level after; the Warden Drillyard in Helmstow teaches to 6, the Elder's Yard in Thornhold to
+  10. Guilds sell up to a tier of their own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320
   gold; tier 5 comes only with level 8.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
@@ -180,7 +180,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   (`interior` on the map feature names it): the Hearthlight's common room round its fire and the
   Green Man's under a carved face of leaves; the Chapel's stained-glass apse and the Chapterhouse's
   grove; the Provisioner's pigeonholes and the Armoury's forge; the Guildhall's map of Caldera and
-  the Lantern Hall's copy of the Grove Stone; the Drillyard inside Harrow's wall and the Elder's
+  the Lantern Hall's copy of the Grove Stone; the Drillyard inside Helmstow's wall and the Elder's
   ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak. No people: the
   rooms are backdrops. `kit.ts` has the walls, floors, windows and light, `props.ts` the furniture
   and goods; each scene is a file in `ui/interiors/<area>/`, and what both towns' scenes of a trade
@@ -283,7 +283,7 @@ from 11 and again from 29, and sneak attacks grow.
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
 | `content/index.ts` | the areas in road order, the tables merged from them (maps, monsters, items, spells, quests, climates), and the `MonsterSprite`, `Interior` and `RegionId` unions made from them |
-| `content/areas/<area>/` | an area: its maps, monsters, items, quests and climate, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
+| `content/areas/<area>/` | an area: its maps, monsters, items, quests, climate and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
-| `content/atlas.ts` | the world map: areas, zones, places and the road of levels, built and planned |
+| `content/atlas.ts` | the world map's plan: the land, the areas of the road, and the zones, places and sites not built yet; each area charts its own in `areas/<area>/atlas.ts`, and `content/index.ts` merges them into `ATLAS` |

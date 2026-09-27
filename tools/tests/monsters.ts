@@ -13,9 +13,9 @@ export function monsters(): void {
   world.travel('shelf', 16, 4, 2);
   const shelf = world.zone!;
   const rats = world.liveGroups().find((g) => g.def.id === 'road_rats')!;
-  ok(rats.state.x === shelf.x + 16 && rats.state.y === shelf.y + 7, 'the road rats start where the Shelf puts them, on the outdoors');
+  ok(rats.state.x === shelf.x + 16 && rats.state.y === shelf.y + 7, 'the road rats start where the Foreland puts them, on the outdoors');
   const r = world.move('forward');
-  ok(rats.state.y === shelf.y + 6, `an aware group steps toward the party (${rats.state.x - shelf.x},${rats.state.y - shelf.y} on the Shelf)`);
+  ok(rats.state.y === shelf.y + 6, `an aware group steps toward the party (${rats.state.x - shelf.x},${rats.state.y - shelf.y} on the Foreland)`);
   ok(r.kind === 'moved' && !!r.encounter && r.encounter.includes('road_rats'), 'a group that reaches the party triggers an encounter');
   world.killGroups(['road_rats']);
   ok(!world.liveGroups().some((g) => g.def.id === 'road_rats'), 'a killed group is gone');

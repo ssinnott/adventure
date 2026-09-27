@@ -1,4 +1,5 @@
-// Thornmark's businesses, all in Thornhold: a scene to each, keyed by the interior its map feature names.
+// Thornmark's businesses, all in Thornhold: a scene to each, keyed by the interior its map feature
+// names.
 import type { Scene } from '../kit.ts';
 import { GREEN_MAN } from './green_man.ts';
 import { CHAPTERHOUSE } from './lantern_chapterhouse.ts';
