@@ -82,3 +82,18 @@ Every earlier fix proven by breaking it on purpose. After #64's renames were mer
   bounded: forcing one crop fails in 12 s with a plain message instead of hanging (0c1fbf0). Unbroken,
   `npm run check` is green.
 - #29: the pointer fixes in #64's docs hold against the code (7c6d6f0). Waits for the other six to merge.
+
+## #29 after it merged (PR #78, main 79b1265), 22:30
+
+Merged at 20:50, five minutes after it opened and before the orchestrator's review; most likely by its own session. Verified after the fact by two reviewers against 2798b2f:
+
+- **proofs** (sound: True): Main at 79b1265 is sound. Nothing players or the next sessions would hit has regressed. I compared it with 2798b2f in two detached worktrees, which I have since removed. /home/user/adventure's own branch and working tree were not touched.
+  - nit: EXPANSION §1 still says the suite pins interiors.length === 12
+  - nit: EXPANSION §1 still says nothing gates main and the smoke test fails 1 run in 5
+  - nit: A new area's first dungeon can't exit into another region's map
+- **diff** (sound: True): I found no player-visible bug and no weakened check in PR #78 (79b1265 against 2798b2f). Everything the game reads comes out the same before and after. JSON dumps of MAP_DEFS, PLAYED_DEFS (the layOutdoors output), MONSTERS, SPELLS, QUESTS, CLIMATES, ATLAS and OUTDOORS are byte-identical, and MAP_DEFS keeps the order harrow, shelf, mill, greywater1, greywater2, thornmark, thornhold, grove1, grove2. ITEMS has the same entries in a new key order, and nothing iterates it: every use is a lookup, or the harness adding items. The world map renders pixel-identical in both art and --zones modes, and so does the monster gallery. All 12 interiors render pixel-identical one by one at noon and at 21:00, and their scene objects (including function sources) match. There are no runtime import cycles in the src graph or the tools graphs. Every src module imports on its own in Node, from the dev server in a fresh Chromium page, and bundled on its own as an IIFE in Chromium. The built dist/index.html boots to Helmstow as before. A tsc run with --verbatimModuleSyntax finds no type-only import missing `import type`; a probe confirmed the flag catches one. The derived MonsterSprite, Interior and RegionId unions stay narrow: a probe listing an undrawn sprite and an unpainted room failed the typecheck in ui/sprites.ts and ui/interior.ts. Test output matches the old single-file run line for line (1323 checks), plus 6 new per-area checks. Every suite makes assertions and passes when run alone, and the split suite bodies match the old ones apart from the generalised interiors check. Every tool that loads '/src/...' inside page.evaluate points at a file that exists and runs. gate, harness (default, --map and --stats) and the gallery gave identical output. Shot and smoke colour counts differ from run to run on both commits, so they were not compared. The build bundles no tools or walkthroughs. What I did find is in the new walkthrough runner and in untested merge code, none of it hit by today's content. Both of my worktrees are removed; /home/user/adventure was not touched.
+  - should-fix: An async walkthrough passes the typecheck and loses its failures: npm test says ALL OK
+  - nit: The usage line `node tools/test.ts walkthrough:shelf` runs nothing and prints ALL OK
+  - nit: Walkthroughs are found in alphabetical folder order, not road order, and without regard to AREAS
+  - nit: No test covers the ATLAS merge's replace path (a charted row taking a planned row's place)
+  - nit: A new tools/tests/<suite>.ts has to be registered by hand, or it silently never runs
