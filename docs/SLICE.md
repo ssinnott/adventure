@@ -239,10 +239,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 - `typecheck`: `tsc --noEmit`, strict, zero suppressions. It is the first content check: a monster
   with no drawing, a business with no room or a map in a region no area has fails it.
-- `test`: `node tools/test.ts`, the suites in `tools/tests/`, one file each (maps, movement,
-  monsters, combat, harness, party, traits, calendar, terrain, weather, atlas, outdoors, save,
-  quests), then each area's walkthrough where it has one. Every check prints a line saying what it
-  holds, so the output is the list; `node tools/test.ts maps combat` runs a few suites.
+- `test`: `node tools/test.ts`, the suites in `tools/tests/`, one file each, which the runner finds
+  (maps, movement, monsters, combat, harness, party, traits, calendar, terrain, weather, atlas,
+  outdoors, save, quests, then any other in name order), then each area's walkthrough where it has
+  one, in road order. Every check prints a line saying what it holds, so the output is the list;
+  `node tools/test.ts maps combat` runs a few suites.
 - `smoke`: `node tools/smoke.ts`, headless Chromium playing the game through the dev server: every
   screen painted with no page error, and a line for each check as well. Every run plays the same
   world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it).
