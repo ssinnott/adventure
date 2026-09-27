@@ -481,12 +481,14 @@ Decided by the owner on 27 September 2026:
 7. **The names** (§10).
 8. **The side quests:** #56's eight for the Foreland are pulled into the build, each built where its
    places are (§6): with their boxes, or in #77, on the systems of #76.
+9. **Ashcombe moves past Gullwick,** so that the first job is a journey (on #85). Where past
+   Gullwick, whether it stays the first job and what the Foreland map keeps where it stood are open
+   in #87; until they are settled, the briefs here keep the farm on the Foreland map.
 
 Proposed, for the owner, each in the issue that would build it:
 
 - **The briefs** of §4.2 to §4.9: each box's landmarks, points of interest, encounters, secret and
   hint, and share of the pay.
-
 - **The core** is F3, E3 and D2, the boxes that hold a step of the quest; the other four are
   country (§4).
 - **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
@@ -495,8 +497,8 @@ Proposed, for the owner, each in the issue that would build it:
 - **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across
   E2 (#68 and #69). #56's Riders in the Dark rides it.
-- **The Wind Cave** (`src/content/atlas.ts:310`), Saltreach's cave in the face of Kestrel Edge, moves a square
-  west into C3, so that D3 does not hold it (#71).
+- **The Wind Cave** (`src/content/atlas.ts:310`), Saltreach's cave in the face of Kestrel Edge,
+  moves a square west into C3, so that D3 does not hold it (#71).
 - **The chalk figure** below the Berth, a ship that only the Berth's mouth shows as one (§4.6).
 - **The Queen on her bier,** her hand bare, as STORY has the tomb, where MONSTERS §5.2 has the bier
   empty (§4.7).
