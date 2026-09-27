@@ -4,12 +4,20 @@
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';
 import type { RegionId } from './weather.ts';
+import type { Interior } from '../content/index.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
 
-/** What the floor of a cell is. Drives the floor colour outdoors and the passability rules. */
+/**
+ * What the floor of a cell is. Drives the floor colour outdoors and the passability rules. Hills and
+ * farm are named as the atlas names them (WorldTerrain), so the two agree square for square.
+ */
 export type Terrain =
-  | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow';
+  | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
+  | 'hills' | 'farm';
+
+/** Minutes a step onto hills costs over the usual six in the open. */
+export const HILL_DRAG = 2;
 
 /**
  * What stands in a cell. `wall` blocks movement and sight; billboards block movement, not sight;
@@ -43,11 +51,9 @@ export interface Exit {
 
 /**
  * The painted room a business shows in the viewport while the party is inside it (ui/interiors/).
- * One per business, so no two shops share a picture.
+ * One per business, so no two shops share a picture. Each area lists its own (src/content/).
  */
-export type Interior =
-  | 'hearthlight_inn' | 'lantern_chapel' | 'harrow_provisioner' | 'lantern_guildhall' | 'warden_drillyard' | 'gilded_eel'
-  | 'green_man' | 'lantern_chapterhouse' | 'thornhold_armoury' | 'lantern_hall' | 'elders_yard' | 'split_oak';
+export type { Interior };
 
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
@@ -185,6 +191,8 @@ export const LEGEND: Record<string, Cell> = {
   'w': cell('swamp'),
   '!': cell('lava'),
   '*': cell('snow'),
+  '^': cell('hills'),
+  'f': cell('farm'),
   'T': cell('grass', 'tree'),
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),

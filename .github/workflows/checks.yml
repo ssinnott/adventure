@@ -1,0 +1,65 @@
+# The checks every pull request must pass before it merges: the typecheck, the tests and the smoke
+# test, each its own job so the pull request shows each. Branch protection on main requires all three
+# and a branch up to date with main. No path filters: a pull request that touches only docs must
+# still report, or it waits on checks that never come.
+name: Checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A new push to a pull request cancels the run on the push before it.
+concurrency:
+  group: checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Headless runs need only Chromium's headless shell. It is not cached: with the shell cached,
+      # its system libraries alone took as long to install as shell and libraries together (19 s).
+      - run: npx playwright install --with-deps --only-shell chromium
+      - run: npm run smoke
+        env:
+          SMOKE_SHOT: smoke.png
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-screenshot
+          path: smoke.png
+          if-no-files-found: ignore

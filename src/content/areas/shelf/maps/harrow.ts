@@ -1,7 +1,7 @@
 // Helmstow, capital of the Foreland. The party's home town for the slice: inn, temple, shop, guild,
 // trainer and tavern, with the gate south onto the Foreland road.
-import type { MapDef } from '../../game/map.ts';
-import { NORTH, SOUTH } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const HARROW: MapDef = {
   id: 'harrow',

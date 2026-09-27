@@ -7,7 +7,7 @@ import { World } from './world.ts';
 import type { WorldState } from './world.ts';
 import { defaultParty, isDown, allDown, countItem, takeItem, heal, spellHeal } from './party.ts';
 import type { Party } from './party.ts';
-import { buildMaps } from '../content/maps/index.ts';
+import { buildMaps } from '../content/maps.ts';
 import type { GameMap, Feature, Interior } from './map.ts';
 import { startCombat } from './combat.ts';
 import { spell } from './spells.ts';

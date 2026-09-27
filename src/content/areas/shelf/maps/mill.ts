@@ -1,7 +1,7 @@
 // The Ashcombe cellar: the first dungeon and the tutorial Rift. Four rings of corridor around
 // four rooms; a locked door and a secret door decide the order the rings open in.
-import type { MapDef } from '../../game/map.ts';
-import { SOUTH } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 
 export const MILL: MapDef = {
   id: 'mill',
@@ -33,6 +33,7 @@ export const MILL: MapDef = {
   ],
   features: [
     { kind: 'event', x: 1, y: 2, id: 'mill_in', once: true, text: 'The cellar is far larger than the house above it. The walls are older than the farm.' },
+    { kind: 'event', x: 4, y: 6, id: 'mill_draught', once: true, text: 'A cold draught at your ankles, from the foot of the south wall. The mortar there is newer than the rest.' },
     { kind: 'chest', x: 3, y: 3, id: 'mill_c1', gold: 35, items: ['key_iron', 'potion_heal'] },
     { kind: 'event', x: 10, y: 3, id: 'mill_lantern', once: true, text: 'A dead Lantern in grey robes lies against the wall, a cracked survey wand beside her. A note in her hand: "Not failing. CUT. The Grove Stone is next. Tell Vask nothing."' },
     { kind: 'chest', x: 12, y: 4, id: 'mill_c2', gold: 20, items: ['survey_wand', 'potion_sp', 'antidote'] },

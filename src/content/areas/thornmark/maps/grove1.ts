@@ -1,7 +1,7 @@
 // Beneath the Grove, level one: the roots. Two halves joined only by a locked door; the key is in
 // a room behind a secret door on the west side. The stairs down are in the south-east room.
-import type { MapDef } from '../../game/map.ts';
-import { NORTH, SOUTH } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const GROVE1: MapDef = {
   id: 'grove1',
@@ -37,9 +37,9 @@ export const GROVE1: MapDef = {
     { kind: 'event', x: 1, y: 2, id: 'g1_in', once: true, text: 'Roots as thick as pillars hold the earth up. Someone has cut steps into them. Recent work.' },
     { kind: 'chest', x: 3, y: 3, id: 'g1_c1', gold: 120, items: ['elixir', 'potion_sp'] },
     { kind: 'event', x: 6, y: 6, id: 'g1_marks', once: true, text: 'Chisel marks on the root-wall, fresh and white. A trail of stone grit leads south.' },
-    { kind: 'event', x: 3, y: 13, id: 'g1_grit', once: true, text: 'The grit trail ends at a blank stretch of root-wall to the north. The roots here have been trained around something.' },
     { kind: 'chest', x: 3, y: 10, id: 'g1_key', gold: 80, items: ['key_iron', 'lantern_oil'] },
     { kind: 'sign', x: 6, y: 11, text: 'Scratched beside the iron door: THE STONE IS A LOCK. WE HAVE THE KEY.' },
+    { kind: 'event', x: 6, y: 11, id: 'g1_grit', once: true, text: 'The grit trail ends here, heaped against the root-wall to the west. The roots there have been trained around something.' },
     { kind: 'event', x: 8, y: 11, id: 'g1_east', once: true, text: 'The air is warmer past the door, and the roots here are dead and grey.' },
     { kind: 'chest', x: 10, y: 3, id: 'g1_c2', gold: 150, items: ['crossbow', 'potion_heal', 'potion_heal'] },
     { kind: 'chest', x: 12, y: 11, id: 'g1_c3', gold: 200, items: ['brigandine', 'elixir'] },

@@ -5,9 +5,10 @@
 // the ground (snow, puddles) is the same function run over the days before. Nothing here draws from
 // the gameplay rng, so a seed brings the same fights in any weather.
 import { MINUTES_PER_DAY, DAYS_PER_YEAR, yearPhase } from './calendar.ts';
+import type { RegionId } from '../content/index.ts';
 
-/** The regions with maps so far. Each map names its region; towns and dungeons share their region's sky. */
-export type RegionId = 'shelf' | 'thornmark';
+/** The regions with maps so far, one to an area. Each map names its region; towns and dungeons share their region's sky. */
+export type { RegionId };
 
 export interface Climate {
   /** Mean temperature at the height of summer and in the depth of winter, in degrees. */
@@ -25,15 +26,6 @@ export interface Climate {
   /** Log lines for fog coming in and thunder starting. */
   fogText: string; thunderText: string;
 }
-
-export const CLIMATES: Record<RegionId, Climate> = {
-  // The coast: mild, wet in the autumn, fog off the sea. Snow only in a cold snap.
-  shelf: { summer: 18, winter: 2, daily: 4, damp: [0.01, 0.07], wettest: 85, fog: 0.8, lag: 0,
-    fogText: 'Fog rolls in off the sea.', thunderText: 'Thunder rolls in off the sea.' },
-  // Over the pass: colder, with hard winters that keep their snow, and mist under the trees.
-  thornmark: { summer: 17, winter: -4, daily: 5, damp: [0, 0.06], wettest: 80, fog: 0.5, lag: 5,
-    fogText: 'Mist rises between the trees.', thunderText: 'Thunder rolls over the forest.' },
-};
 
 export interface Weather {
   /** Cloud cover: 0 a clear sky .. 1 a lid of grey. */

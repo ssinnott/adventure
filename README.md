@@ -27,6 +27,7 @@ dependencies, and nothing compiled to disk during development.
 
 ```
 npm install
+npx playwright install chromium   # once, for the smoke test (the session containers have it already)
 npm run dev        # http://localhost:8080/ — .ts served through esbuild per request, no build step
 npm run build      # dist/index.html, a single self-contained file
 npm run check      # typecheck + Node tests + headless Chromium smoke test
@@ -48,19 +49,23 @@ tests, `npm run build`, then publish `dist/` to GitHub Pages at
 <https://ssinnott.github.io/adventure/>. Pages must be set to deploy from **GitHub Actions**
 (Settings → Pages → Source); the workflow enables that on its first run if it can.
 
+Every pull request runs [.github/workflows/checks.yml](.github/workflows/checks.yml): the typecheck,
+the tests and the smoke test, as three checks. Once the owner protects main, it takes a pull request
+only when all three pass and it is up to date with main.
+
 ## Layout
 
 ```
 src/main.ts        boot: canvas, input, loop
 src/input.ts       keyboard -> queued actions (plus a text mode for names)
 src/game/          the model: map, outdoors, world, calendar, weather, party, items, spells, monsters, combat, quests, save, game
-src/content/       the authored content; quests.ts is the quest log's words
-src/content/maps/  the authored maps: Helmstow, the Foreland, the cellar, Brandy Hole, Thornmark, Thornhold, the Grove
+src/content/       the content, in TypeScript: index.ts lists the areas in road order and merges their tables
+src/content/areas/ one folder per area: its maps, monsters, items, quests and climate (docs/areas/ has each one's doc)
 src/ui/            viewport, frame, sprites, screens, combat screen, quest log, title, party creation
 src/ui/monsters/   the enemy drawings, one module per family, dispatched by sprites.ts
-src/ui/interiors/  the businesses' interiors, one module per trade, dispatched by interior.ts
+src/ui/interiors/  the businesses' interiors, a folder per area and a scene to a file, dispatched by interior.ts
 src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
-tools/             dev server, bundler, tests, smoke test, screenshot, monster and interior galleries, world map export, the level gates' fight simulation, the combat harness and its test monster
+tools/             dev server, bundler, tests (tools/tests/, a file per suite), smoke test, screenshot, monster and interior galleries, world map export, the level gates' fight simulation, the combat harness and its test monster
 ```
 
 ## The engine

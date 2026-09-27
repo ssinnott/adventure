@@ -2,8 +2,8 @@
 // woods to the west, marsh and the sea at the south, the caves at Brandy Hole in the south-west
 // cliffs, and the pass east to Thornmark, which the Wardens hold closed until both Ashcombe and
 // Brandy Hole are dealt with. Difficulty band 1-5.
-import type { MapDef } from '../../game/map.ts';
-import { EAST, NORTH, SOUTH } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const SHELF: MapDef = {
   id: 'shelf',

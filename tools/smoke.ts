@@ -5,6 +5,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { randomInt } from 'node:crypto';
 import { createServer } from './server.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -26,6 +27,14 @@ async function launch(chromium: any): Promise<any> {
   }
 }
 
+// Every run plays the same world: the page's Math.random is pinned, so the new game's seed is SMOKE_SEED
+// (the first draw floors to it in freshSeed) and every draw after it follows from it. SMOKE_SEED=random
+// picks one and prints it; SMOKE_SEED=<n> replays that world.
+const DEFAULT_SEED = 1;
+const SEED = process.env.SMOKE_SEED === 'random' ? randomInt(1, 0x7fffffff) : Number(process.env.SMOKE_SEED || DEFAULT_SEED);
+if (!Number.isInteger(SEED) || SEED < 1 || SEED >= 0x7fffffff) throw new Error(`SMOKE_SEED must be random or a whole number from 1 to ${0x7fffffff - 1}`);
+if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
+
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
 const port = (server.address() as { port: number }).port;
@@ -33,6 +42,17 @@ const port = (server.address() as { port: number }).port;
 const { chromium } = loadPlaywright();
 const browser = await launch(chromium);
 const page = await browser.newPage();
+await page.addInitScript((seed: number) => {
+  let s = seed >>> 0, first = true;
+  Math.random = () => {
+    if (first) { first = false; return (seed + 0.5) / 0x7fffffff; }
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}, SEED);
 const errors: string[] = [];
 page.on('pageerror', (e: Error) => errors.push('pageerror: ' + e.message));
 page.on('console', (m: any) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
@@ -54,6 +74,7 @@ const titleColours = await colours();
 // fight.
 await page.keyboard.press('Space'); await page.waitForTimeout(100);
 const screen0 = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const gameSeed = await page.evaluate(() => (window as any).__game.game.top.seed);
 await page.keyboard.press('Space'); await page.waitForTimeout(150);
 const screen1 = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
 for (const k of ['ArrowDown', 'ArrowDown', 'ArrowDown']) { await page.keyboard.press(k); await page.waitForTimeout(40); }
@@ -98,7 +119,92 @@ const interiors = await page.evaluate(async () => {
     if (seen.size < 400) thin.push(`${kind}@${daylight} (${seen.size})`);
     n++;
   }
-  return { n, thin };
+  // Held to the content's own list of rooms, so a scene missing from SCENES is caught here too.
+  const C = await load('/src/content/index.ts');
+  return { n, thin, kinds: C.INTERIORS.length as number, missing: (C.INTERIORS as string[]).filter((k) => !(k in I.SCENES)) };
+});
+// Hills and farmland: a patch of each laid on the Foreland, painted at noon and at midnight on a day of
+// each season and under deep snow. Every view is a picture; a hill rises and a field has rows or
+// hedges where grass is flat; the fields turn from Sowing to Harvest, and snow lies white on both.
+// Samples are taken inside the square ahead, clear of its edges. The patch is taken up again after.
+const terrains = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const V = await load('/src/ui/viewport.ts');
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, thin: string[] = [], mean: Record<string, number[]> = {}, form: Record<string, { tones: number; edges: number }> = {};
+  const c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const minutes = w.state.minutes;
+  // Face north with a field of grain ahead, which greens in Sowing and goes gold by Harvest. The
+  // square ahead is its band's first row, so a hedge runs along its far edge into the next field;
+  // and the squares in view hold more than one crop.
+  w.travel('shelf', 16, 16, 0);
+  if ((w.state.y - 1) % 2) w.state.y--;
+  const crops = (x: number, y: number): Set<number> => new Set([[-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2]].map(([l, d]) => V.cropColor(V.fieldAt(x + l, y - d).crop, 50)));
+  // The search is bounded: a view it cannot find fails the check plainly rather than hanging.
+  const fits = (): boolean => V.fieldAt(w.state.x, w.state.y - 1).crop <= 1 && crops(w.state.x, w.state.y).size >= 2;
+  for (let tries = 0; tries < 200 && !fits(); tries++) w.state.x++;
+  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[] };
+  const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
+  let hedge = { off: 999, apart: 0 }, patchwork = 0;
+  // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
+  const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
+  const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
+  for (const terrain of ['grass', 'hills', 'farm']) {
+    for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
+    for (const [name, doy] of days) for (const hour of [12, 0]) {
+      if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
+      w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
+      const snow = name === 'snow';
+      w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
+      V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+      const d = ctx.getImageData(0, 0, W, H).data, seen = new Set<number>();
+      for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+      if (seen.size < 20) thin.push(`${terrain} ${name}@${hour} (${seen.size})`);
+      if (hour !== 12) continue;
+      const g = ctx.getImageData(x0, y0, sw, sh).data, sum = [0, 0, 0];
+      for (let i = 0; i < g.length; i += 4) { sum[0] += g[i]; sum[1] += g[i + 1]; sum[2] += g[i + 2]; }
+      mean[`${terrain} ${name}`] = sum.map((v) => v / (g.length / 4));
+      if (name !== 'summer') continue;
+      // Form: the tones down the middle of the square (a hill's flank shades), and the hard edges
+      // across it and down it (a field's rows and hedges); flat grass has few of either.
+      const px = (x: number, y: number): number => (y * W + x) * 4;
+      const tones = new Set<number>();
+      let across = 0, down = 0;
+      for (let y = y0; y < y0 + sh; y++) { const i = px(W / 2, y); tones.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]); }
+      for (let x = x0; x < x0 + sw; x++) { const a = px(x, y0 + sh / 2), b = px(x + 1, y0 + sh / 2); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) across++; }
+      for (let y = y0; y < y0 + sh; y++) { const a = px(W / 2, y), b = px(W / 2, y + 1); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) down++; }
+      form[terrain] = { tones: tones.size, edges: Math.max(across, down) };
+      if (terrain !== 'farm') continue;
+      // The hedge along the far edge of the square ahead (rows 193 to 196 down the middle) is near
+      // the hedge's colour, and far from the crop just inside it.
+      const avg = (x: number, y: number, bw: number, bh: number): number[] => {
+        const q = ctx.getImageData(x, y, bw, bh).data, t = [0, 0, 0];
+        for (let i = 0; i < q.length; i += 4) { t[0] += q[i]; t[1] += q[i + 1]; t[2] += q[i + 2]; }
+        return t.map((v) => v / (q.length / 4));
+      };
+      const rgb = (hex: string): number[] => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) * 0.93);
+      const far = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+      const strip = avg(W / 2 - 30, 194, 60, 2);
+      hedge = { off: Math.round(far(strip, rgb(V.hedgeColor(doy)))), apart: Math.round(far(strip, avg(W / 2 - 30, 204, 60, 4))) };
+      // Patchwork: the middles of the squares in view (the square ahead and those beside it, and
+      // five across the next row) are not all one crop.
+      const middles = [[-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2]].map(([l, dd]) => {
+        const u = 120.6 / (dd + 0.5);
+        return avg(Math.round(W / 2 + l * 2 * u) - 3, Math.round(H / 2 + u) - 3, 6, 6);
+      }).filter((p) => p.every((v) => !Number.isNaN(v)));
+      for (const a of middles) for (const b of middles) patchwork = Math.max(patchwork, Math.round(far(a, b)));
+    }
+  }
+  for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
+  w.state.minutes = minutes; w.cached = undefined;
+  const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  const light = (a: number[]): number => (a[0] + a[1] + a[2]) / 3;
+  return {
+    missing: '', thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
+    whiten: ['hills', 'farm'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
+  };
 });
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 9, 6, 0); g.interact(g.world.featureHere()); });
@@ -152,16 +258,18 @@ await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 const almanacClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 await page.keyboard.press('KeyM'); await page.waitForTimeout(150);
 const afterMap = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
-// The end of the world: nothing is built west of the Foreland yet. On a clear noon, facing it from
-// the last square before it, the view is pink empty space and the automap marks it pink; a step
-// into it is refused and the log says why.
-await page.evaluate(async () => {
+const weatherSeed = await page.evaluate(() => (window as any).__game.game.world.state.weatherSeed);
+// The end of the world: nothing is built west of the Foreland yet. On a clear noon, with nothing the
+// view would wash over it, facing it from the last square before it, the view is pink empty space and
+// the automap marks it pink; a step into it is refused and the log says why. No such noon fails the check.
+const edgeAt: number = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
-  const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts');
+  const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts'), V = await load('/src/ui/viewport.ts');
   const g = (window as any).__game.game, w = g.world;
   g.screens = [g.screens[0]]; w.travel('shelf', 1, 12, 3); w.sky = null;
-  const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => wx.precip < 0.02 && wx.fog < 0.2 && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480);
+  const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => wx.precip < 0.02 && !V.washes(wx) && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480);
   if (at >= 0) w.state.minutes = at;
+  return at;
 });
 await page.waitForTimeout(150);
 const pinkIn = async (r: { x: number; y: number; w: number; h: number }): Promise<number> => page.evaluate((b: { x: number; y: number; w: number; h: number }) => {
@@ -171,7 +279,7 @@ const pinkIn = async (r: { x: number; y: number; w: number; h: number }): Promis
   for (let i = 0; i < d.length; i += 4) if (Math.abs(d[i] - 0xff) < 5 && Math.abs(d[i + 1] - 0x5f) < 5 && Math.abs(d[i + 2] - 0xbf) < 5) n++;
   return n;
 }, r);
-const edgeView = await pinkIn({ x: 8, y: 8, w: 400, h: 200 }), edgeMap = await pinkIn({ x: 416, y: 42, w: 216, h: 214 });
+const edgeView = edgeAt >= 0 ? await pinkIn({ x: 8, y: 8, w: 400, h: 200 }) : 0, edgeMap = edgeAt >= 0 ? await pinkIn({ x: 416, y: 42, w: 216, h: 214 }) : 0;
 await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100);
 const edgeBump = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { log: g.log.at(-1), x: g.world.state.x - z.x, zone: z.id }; });
 // The pass, once open, is a road walked straight through into Thornmark, no transition between.
@@ -180,8 +288,10 @@ await page.evaluate(() => {
   g.party.flags.q_ashcombe_done = 1; g.party.flags.q_greywater_done = 1;
   g.world.travel('shelf', 29, 9, 1); g.world.killGroups(['tm_wolves1']);
 });
+// Everything said on the walk, however the sky changes on the way.
+const said0: number = await page.evaluate(() => (window as any).__game.game.said);
 for (let i = 0; i < 4; i++) { await page.keyboard.press('ArrowUp'); await page.waitForTimeout(60); }
-const pass = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { map: g.world.state.mapId, zone: z?.id, x: g.world.state.x - z?.x, y: g.world.state.y - z?.y, screen: g.top.constructor.name, said: g.log.slice(-3).join(' / ') }; });
+const pass = await page.evaluate((s0: number) => { const g = (window as any).__game.game, z = g.world.zone; return { map: g.world.state.mapId, zone: z?.id, x: g.world.state.x - z?.x, y: g.world.state.y - z?.y, screen: g.top.constructor.name, said: g.log.slice(Math.max(0, g.log.length - (g.said - s0))).join(' / ') }; }, said0);
 const passColours = await colours();
 // The monster art unions many parts into one painted mass with the nonzero fill rule, so every
 // part kind has to wind the same way. One that winds the other way punches a hole wherever it
@@ -264,6 +374,7 @@ const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : ' 
 ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
 ok(titleColours > 6, `the title painted (${titleColours} colours)`);
 ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the title opens creation, Space again takes the premade company (${screen0}, ${screen1})`);
+ok(gameSeed === SEED, `the new game starts from the pinned seed (${gameSeed}, weather seed ${weatherSeed})`);
 ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
@@ -272,7 +383,17 @@ ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
-ok(interiors.n === 24 && interiors.thin.length === 0, `all twelve interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
+ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
+ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
+if (!terrains.missing) {
+  ok(terrains.thin.length === 0, `hills and farmland paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+  {
+    const { grass, hills, farm } = terrains.form;
+    ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
+    ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
+  }
+  ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills and the fields (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
+}
 ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
 ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Foreland paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);
@@ -282,11 +403,13 @@ ok(mapScreen === 'WorldMapScreen' && mapColours > 200, `M opens the world map an
 ok(zonesColours > 200 && wholeColours > 200, `Tab lays the zones over it and Z shows it whole (${zonesColours}, ${wholeColours} colours)`);
 ok(almanacScreen === 'MessageScreen' && almanacClosed === 'WorldMapScreen', `Space opens the almanac over the map and Esc goes back to it (${almanacScreen}, then ${almanacClosed})`);
 ok(afterMap === 'ExploreScreen', `M closes it again (${afterMap})`);
-ok(edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Foreland, the view is pink empty space and the automap marks it (${edgeView} pink pixels in the view, ${edgeMap} on the automap)`);
+ok(edgeAt >= 0, `the weather has a clear noon with no wash within 480 days, to face the end of the world in (${edgeAt >= 0 ? `minute ${edgeAt}` : `none for weather seed ${weatherSeed}`})`);
+ok(edgeAt >= 0 && edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Foreland, the view is pink empty space and the automap marks it (${edgeAt >= 0 ? `${edgeView} pink pixels in the view, ${edgeMap} on the automap` : 'not looked at: no clear noon'})`);
 ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeBump.x === 1, `a step into it is refused, and the log says why (${JSON.stringify(edgeBump)})`);
 ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /The pass opens onto old forest/.test(pass.said) && passColours > 20,
   `the open pass is walked straight through into Thornmark, which says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 ok(cracks.length === 0, `the walls meet without a crack in the cellar and in Helmstow, and the walls beside the party are drawn${cracks.length ? ` -> ${cracks.length} views, ` + cracks.slice(0, 4).join(', ') : ''}`);
+if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

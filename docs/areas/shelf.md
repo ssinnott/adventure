@@ -13,7 +13,8 @@ map are `shelf`, the Downs `downs`, the city `harrow`.
 
 ## 1. Where it is
 
-The atlas (`src/content/atlas.ts`) makes the Foreland two zones:
+The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` by
+`src/content/index.ts`) makes the Foreland two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
@@ -44,11 +45,13 @@ Its edges:
   atlas gives it to the Deepthorn (110 of its 116 squares), since an islet goes to the nearest zone
   across the water. It is off the road, and waits for boats.
 - **West: Kestrel Edge,** a cliff from the rim to the Salt Gulf, above Saltreach's Upper Water
-  (10–12). The atlas's border keeps to the cliff's lip except at its two ends: in the rim it drops
-  straight down through the mountains at x 94, and at the south end it takes in a strip of low
-  ground at the cliff's foot (x 109–120, y 99–121), so that the road down Kestrel Edge
-  (`atlas.ts:387`) ends on the Downs. Once D3 and D4 are built the border there is their edges: the
-  cliff runs through both boxes, and D4 holds the road's last squares down it.
+  (10–12). The area's border keeps to the cliff's lip except at its two ends. In the rim it drops
+  straight down through the mountains at x 94, a few squares east of the cliff, where there is
+  nothing to follow. At the south end it leaves the cliff and takes a strip of low ground at the
+  cliff's foot, about eight squares wide (x 109–120, y 99–121), so the road down Kestrel Edge
+  (`src/content/atlas.ts:365`) ends on the Downs and not in the Delta. Once D3 and D4 are built the
+  border there is their edges: the cliff runs through both boxes, and D4 holds the road's last
+  squares down it.
 - **South-west: the Salt Road down Kestrel Edge** into the Delta (10–12). The atlas opens it only
   after step II (`opens: 2`); under one road, lightly held, it is open from the start (#40).
 
@@ -82,8 +85,39 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
 
 The quests are The Quiet Farm (Vask) and The Cargo Ledger (Hale); the monsters are MONSTERS §5.1's.
-Of the secret doors, the cellar's (mill 4,7) and Brandy Hole's (greywater1 10,11) have no hint on
-the near side yet (#51); the Seam's has the carving over a blank stretch of wall.
+Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
+(`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`) and the Seam's
+the carving over a blank stretch of wall.
+
+In more detail, as SLICE.md had it before the area docs:
+
+- **Helmstow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
+  (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
+  when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
+  (the contract and the hand-in), a well, a sign.
+- **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or lurking
+  monster groups with respawn timers, the Ashcombe farm. It and Thornmark are played as one
+  outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
+- **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
+  dead Lantern and her survey wand, the Rift and its Warden.
+- **Brandy Hole** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
+  cliffs, reached from the beach. Level one, the caves: smugglers, shore crabs and drowned
+  men, a secret stash, and the captain's den with the iron key to the stairs. Level two, the
+  Seam: an Ashen cult's galleries around a sealed shrine; a secret vestry holds the key, and the
+  Ashen Deacon guards the Cargo Ledger. Captain Hale at the pass checkpoint gives the contract
+  and takes the ledger. Chests carry the Foreland's mid-tier gear (long sword, kite shield, scale,
+  chain, long bow).
+- **The ramp to Thornmark.** The pass needs both `q_ashcombe_done` and `q_greywater_done` (an exit's
+  `needFlag` may list several flags; on the outdoors the Foreland's exit into Thornmark became a gate
+  on the road through the pass, with the same flags and words). The slice's early monsters give about double their old xp, so
+  one clear of the Foreland and the cellar is worth level 2 per member, and adding Brandy Hole is worth
+  level 4 (tests pin both); respawns make up the step to Thornmark's band 5.
+
+Its content is in `src/content/areas/shelf/` (maps, monsters, items, quests, climate and its part
+of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. It has no walkthrough of
+its own yet: the end-to-end tests of today (the pass, the stairs, the quests walked through) cross
+into Thornmark, so they stay in `tools/tests/`; an area's `walkthrough.ts`, which `tools/test.ts`
+finds and runs, comes with its chapter of the one quest (#42).
 
 ## 4. What is still to build
 
@@ -418,9 +452,9 @@ place every group, box by box.
   should be won about half the time. The Seam is won 66% of the time two levels under its floor,
   where the gate wants a quarter. The area as one is won about 89% of the time at level 1. The
   pilot settles them, by retuning or by moving the thresholds (#47).
-- **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`, `src/game/party.ts:143`), and
-  Helmstow's Lantern Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:409`).
-  EXPANSION §4 has an area's towns sell its band's tier.
+- **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`), and Helmstow's Lantern
+  Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:410`). EXPANSION §4 has an
+  area's towns sell its band's tier.
 
 ## 9. Decisions
 
@@ -460,7 +494,7 @@ Proposed, for the owner, each in the issue that would build it:
 - **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across
   E2 (#68 and #69). #56's Riders in the Dark rides it.
-- **The Wind Cave** (`atlas.ts:332`), Saltreach's cave in the face of Kestrel Edge, moves a square
+- **The Wind Cave** (`src/content/atlas.ts:310`), Saltreach's cave in the face of Kestrel Edge, moves a square
   west into C3, so that D3 does not hold it (#71).
 - **The chalk figure** below the Berth, a ship that only the Berth's mouth shows as one (§4.6).
 - **The Queen on her bier,** her hand bare, as STORY has the tomb, where MONSTERS §5.2 has the bier
