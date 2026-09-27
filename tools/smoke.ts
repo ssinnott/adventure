@@ -113,10 +113,15 @@ const terrains = await page.evaluate(async () => {
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
   const minutes = w.state.minutes;
-  // Face north with a field of grain ahead, which greens in Sowing and goes gold by Harvest.
+  // Face north with a field of grain ahead, which greens in Sowing and goes gold by Harvest. The
+  // square ahead is its band's first row, so a hedge runs along its far edge into the next field;
+  // and the squares in view hold more than one crop.
   w.travel('shelf', 16, 16, 0);
-  while (V.fieldAt(w.state.x, w.state.y - 1).crop > 1) w.state.x++;
+  if ((w.state.y - 1) % 2) w.state.y--;
+  const crops = (x: number, y: number): Set<number> => new Set([[-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2]].map(([l, d]) => V.cropColor(V.fieldAt(x + l, y - d).crop, 50)));
+  while (V.fieldAt(w.state.x, w.state.y - 1).crop > 1 || crops(w.state.x, w.state.y).size < 2) w.state.x++;
   const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
+  let hedge = { off: 999, apart: 0 }, patchwork = 0;
   // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
   const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
@@ -145,6 +150,25 @@ const terrains = await page.evaluate(async () => {
       for (let x = x0; x < x0 + sw; x++) { const a = px(x, y0 + sh / 2), b = px(x + 1, y0 + sh / 2); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) across++; }
       for (let y = y0; y < y0 + sh; y++) { const a = px(W / 2, y), b = px(W / 2, y + 1); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) down++; }
       form[terrain] = { tones: tones.size, edges: Math.max(across, down) };
+      if (terrain !== 'farm') continue;
+      // The hedge along the far edge of the square ahead (rows 193 to 196 down the middle) is near
+      // the hedge's colour, and far from the crop just inside it.
+      const avg = (x: number, y: number, bw: number, bh: number): number[] => {
+        const q = ctx.getImageData(x, y, bw, bh).data, t = [0, 0, 0];
+        for (let i = 0; i < q.length; i += 4) { t[0] += q[i]; t[1] += q[i + 1]; t[2] += q[i + 2]; }
+        return t.map((v) => v / (q.length / 4));
+      };
+      const rgb = (hex: string): number[] => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) * 0.93);
+      const far = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+      const strip = avg(W / 2 - 30, 194, 60, 2);
+      hedge = { off: Math.round(far(strip, rgb(V.hedgeColor(doy)))), apart: Math.round(far(strip, avg(W / 2 - 30, 204, 60, 4))) };
+      // Patchwork: the middles of the squares in view (the square ahead and those beside it, and
+      // five across the next row) are not all one crop.
+      const middles = [[-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2]].map(([l, dd]) => {
+        const u = 120.6 / (dd + 0.5);
+        return avg(Math.round(W / 2 + l * 2 * u) - 3, Math.round(H / 2 + u) - 3, 6, 6);
+      }).filter((p) => p.every((v) => !Number.isNaN(v)));
+      for (const a of middles) for (const b of middles) patchwork = Math.max(patchwork, Math.round(far(a, b)));
     }
   }
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
@@ -152,7 +176,7 @@ const terrains = await page.evaluate(async () => {
   const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
   const light = (a: number[]): number => (a[0] + a[1] + a[2]) / 3;
   return {
-    thin, form, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
+    thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
     whiten: ['hills', 'farm'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
   };
 });
@@ -332,7 +356,8 @@ ok(interiors.n === 24 && interiors.thin.length === 0, `all twelve interiors pain
 ok(terrains.thin.length === 0, `hills and farmland paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
 {
   const { grass, hills, farm } = terrains.form;
-  ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows or hedges (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
+  ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
+  ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
 }
 ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills and the fields (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
 ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);

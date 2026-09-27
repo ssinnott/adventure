@@ -683,11 +683,13 @@ function drawFarm(ctx: CanvasRenderingContext2D, base: string, plot: Plot, cx: n
   const [near, far, left, right] = plot.hedge;
   if (!(near || far || left || right)) return;
   const hedge = fog(mix(hedgeColor(env.day), SNOW, env.cover * 0.7), d, dark, haze);
-  const w = 0.07;
-  if (near) quad(ctx, P(0, 0), P(0, 1), P(w, 1), P(w, 0), hedge);
-  if (far) quad(ctx, P(1 - w, 0), P(1 - w, 1), P(1, 1), P(1, 0), hedge);
-  if (left) quad(ctx, P(0, 0), P(0, w), P(1, w), P(1, 0), hedge);
-  if (right) quad(ctx, P(0, 1 - w), P(0, 1), P(1, 1), P(1, 1 - w), hedge);
+  // Each strip runs a little past the square's ends, as the floor tiles overlap, so a hedge along
+  // two squares shows no hairline where they meet.
+  const w = 0.07, a = -0.01, b = 1.01;
+  if (near) quad(ctx, P(0, a), P(0, b), P(w, b), P(w, a), hedge);
+  if (far) quad(ctx, P(1 - w, a), P(1 - w, b), P(1, b), P(1, a), hedge);
+  if (left) quad(ctx, P(a, 0), P(a, w), P(b, w), P(b, 0), hedge);
+  if (right) quad(ctx, P(a, 1 - w), P(a, 1), P(b, 1), P(b, 1 - w), hedge);
 }
 
 /**
