@@ -35,3 +35,6 @@ stop ("Give the ogre a stoop, a face and a club that is a tree limb").
 - Only issues the owner has marked `approved` are picked up, and a session never puts that label on
   of its own accord (ISSUES §2).
 - A session never merges its own pull request: the owner merges.
+- The session that opens a pull request adding or changing a map, a monster or an interior makes its
+  contact sheet (`node tools/sheet.ts sheet.png --area <area>`, or the ids with `--maps`, `--monsters`
+  and `--interiors`) and sends it to the owner in the Claude app. The checks attach one too.
