@@ -57,3 +57,11 @@ settle some before they start.
 | 1 | #51 | session_01CsfL1TrnSXkh3LmXXdWs83 | `claude/m0-51-secret-door-hints` |
 | 1 | #44 | session_01E3g6QHFXcVvAs2Cdy97hxy | `claude/m0-44-hills-farmland` |
 | 1 | #29 | session_01VNqdcJMTGWfa2LumbzPFko | `claude/m0-29-layout-refactor` (pull request held) |
+
+## Reaching a session
+
+SendMessage doesn't reach cloud sessions. What works: `create_trigger` with `persistent_session_id`
+set to the session and `run_once_at` a minute or two ahead; the run's `session_id` comes back as the
+same id with a `cse_` prefix. Never `fire_trigger` a trigger bound to another session: it starts a new,
+empty session instead (six such strays, "⚡ M0 orchestrator → …", were interrupted at 16:21 on
+2026-09-27 and are left for the owner to archive).
