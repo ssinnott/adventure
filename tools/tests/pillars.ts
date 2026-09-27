@@ -1,11 +1,14 @@
 // The pillars, where a machine can check them (EXPANSION §5.4): every secret door has a hint on its
 // near side; no event or sign runs past three lines of the log, every glyph is in the font and the
 // spelling is British; each area's claim of what is new in it holds; a zone map's water and roads
-// carry on into the atlas land beyond its edge. Each check is a function of the content it reads, so it runs over every area and over
+// carry on into the atlas land beyond its edge; every story lock is signed in, none stands between
+// areas, and every hand-in takes its item at the first meeting. Each check is a function of the content it reads, so it runs over every area and over
 // fixtures broken on purpose, which it must refuse.
 import { readdirSync } from 'node:fs';
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS } from '../../src/content/index.ts';
 import type { Area, Novelty } from '../../src/content/area.ts';
+import { LOCKS, MOST_AN_AREA, MOST_ON_THE_ROAD } from '../../src/content/locks.ts';
+import type { StoryLock } from '../../src/content/locks.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import type { Atlas } from '../../src/game/atlas.ts';
@@ -224,6 +227,69 @@ const EDGES_OWED: Record<string, readonly string[]> = {
   thornmark: ['31,9', '31,14', '31,15', '31,16', '31,17', '31,19', '31,24', '31,25', '31,26', '31,27', '31,28', '1,31', '2,31'],
 };
 
+/** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */
+export interface FoundLock { kind: 'exit' | 'hand-in' | 'other'; flags: string[]; map: string; x: number; y: number; area: string; to?: string; key: string }
+
+/**
+ * Every `needFlag` in the maps, wherever it sits, so a door or a service given one later is found
+ * without this check being told. An exit's lock stands between areas when it leads into another's
+ * map.
+ */
+export function findLocks(areas: readonly Pick<Area, 'id' | 'maps'>[]): FoundLock[] {
+  const areaOf = new Map(areas.flatMap((a) => a.maps.map((d) => [d.id, a.id] as const)));
+  const out: FoundLock[] = [];
+  for (const a of areas) for (const def of a.maps) {
+    const walk = (v: unknown, path: string[], at: { x: number; y: number } | undefined): void => {
+      if (Array.isArray(v)) { v.forEach((x, i) => walk(x, [...path, String(i)], at)); return; }
+      if (!v || typeof v !== 'object') return;
+      const o = v as Record<string, unknown>;
+      const here = typeof o.x === 'number' && typeof o.y === 'number' ? { x: o.x, y: o.y } : at;
+      if (o.needFlag !== undefined && here) {
+        const kind = path[0] === 'exits' ? 'exit' : path.at(-1) === 'quest' ? 'hand-in' : 'other';
+        const to = kind === 'exit' ? areaOf.get(o.to as string) : undefined;
+        out.push({ kind, flags: [o.needFlag as string | string[]].flat(), map: def.id, x: here.x, y: here.y, area: a.id, to, key: `${kind} ${def.id} ${here.x},${here.y}` });
+      }
+      for (const [k, x] of Object.entries(o)) if (k !== 'needFlag') walk(x, [...path, k], here);
+    };
+    walk(def, [], undefined);
+  }
+  return out;
+}
+
+/**
+ * What is wrong with the locks: one found that is not signed in, one between areas, a hand-in that
+ * withholds its item on a flag (the game takes it only once the flag is set, game.ts's interact),
+ * a signed-in row that names nothing, and more than the counts allow. `owing` are keys reported
+ * elsewhere, as someone's to fix. If #43 keeps `needFlag` on a hand-in with new meaning rather than
+ * removing it, the hand-in rule here gives way to #43's pure function.
+ */
+export function lockFaults(found: readonly FoundLock[], locks: readonly StoryLock[], areaOf: (map: string) => string | undefined, owing: readonly string[] = []): { area?: string; text: string }[] {
+  const out: { area?: string; text: string }[] = [];
+  const signed = (f: FoundLock): boolean => locks.some((l) => l.map === f.map && l.x === f.x && l.y === f.y && f.flags.includes(l.flag));
+  for (const f of found) {
+    if (owing.includes(f.key)) continue;
+    if (f.to && f.to !== f.area) out.push({ area: f.area, text: `${f.key}: a lock between ${f.area} and ${f.to}` });
+    else if (!signed(f)) out.push({ area: f.area, text: f.kind === 'hand-in' ? `${f.key}: withholds its item until ${f.flags.join(', ')}, and no lock is signed in for it` : `${f.key}: closed on ${f.flags.join(', ')}, and not signed in to src/content/locks.ts` });
+  }
+  const perArea = new Map<string, number>();
+  for (const l of locks) {
+    const area = areaOf(l.map);
+    const f = found.find((f) => f.map === l.map && f.x === l.x && f.y === l.y && f.flags.includes(l.flag));
+    if (!f) out.push({ area, text: `the lock '${l.flag}' at ${l.map} ${l.x},${l.y} closes nothing there` });
+    if (area) perArea.set(area, (perArea.get(area) ?? 0) + 1);
+  }
+  for (const [area, n] of perArea) if (n > MOST_AN_AREA) out.push({ area, text: `${area} spends ${n} locks, more than ${MOST_AN_AREA}` });
+  if (locks.length > MOST_ON_THE_ROAD) out.push({ text: `the road spends ${locks.length} locks, more than ${MOST_ON_THE_ROAD}` });
+  return out;
+}
+
+/** What #40 and #43 fix, reported as theirs until they land: the pass, the atlas's ways that open on the story, the three hand-ins. */
+const LOCKS_OWED: Record<string, readonly string[]> = {
+  '#40': ['exit shelf 31,9'],
+  '#43': ['hand-in harrow 9,5', 'hand-in shelf 29,8', 'hand-in thornhold 9,5'],
+};
+const OPENS_OWED = ['downs-delta', 'thornmark-eaves', 'kilnhaven-saltmouth', 'kilnhaven-cinderport', 'wold-saltings', 'firemount-highspine', 'cinderport-hearthisle'];
+
 export async function pillars(): Promise<void> {
   // Hints: every secret door names one, on its near side.
   for (const area of AREAS) {
@@ -323,5 +389,48 @@ export async function pillars(): Promise<void> {
     ok(lay(['MMMMMM', 'M,,,,M', 'M====M', 'M,,,,M', 'MMMMMM']).length === 2, 'a road that runs into its ring against atlas land fails, at both ends');
     ok(lay(['MMMMMM', 'M,,,,M', 'MW,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and so does sea at its edge');
     ok(lay(['MMMMMM', 'M,,,,M', '=,,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and a road through a gap in the ring');
+  }
+
+  // Story locks: every one signed in, within the counts, none between areas; every hand-in takes
+  // its item at the first meeting.
+  const found = findLocks(AREAS);
+  const areaOf = (map: string): string | undefined => AREAS.find((a) => a.maps.some((d) => d.id === map))?.id;
+  const owing = Object.values(LOCKS_OWED).flat();
+  const lockBad = lockFaults(found, LOCKS, areaOf, owing);
+  for (const area of AREAS) {
+    const mine = lockBad.filter((f) => f.area === area.id).map((f) => f.text);
+    ok(!mine.length, `${area.id}: every flag that closes something is signed in, and no hand-in withholds its item${mine.length ? ' -> ' + mine.join('; ') : ''}`);
+  }
+  const road = lockBad.filter((f) => !f.area || !AREAS.some((a) => a.id === f.area)).map((f) => f.text);
+  ok(!road.length, `the road's ${LOCKS.length} story lock(s) keep to ${MOST_AN_AREA} an area and ${MOST_ON_THE_ROAD} in all${road.length ? ' -> ' + road.join('; ') : ''}`);
+  for (const [whose, keys] of Object.entries(LOCKS_OWED)) for (const key of keys) {
+    const f = found.find((l) => l.key === key);
+    owed(!f, key.startsWith('hand-in') ? `${key}: takes its item at the first meeting${f ? ` (today not before ${f.flags.join(', ')})` : ''}` : `${key}: no lock between areas${f ? ` (today ${f.flags.join(' and ')})` : ''}`, whose);
+  }
+  const opens = ATLAS.links.filter((l) => l.opens !== undefined);
+  const stray = opens.filter((l) => !OPENS_OWED.includes(`${l.from}-${l.to}`));
+  ok(!stray.length, `no way on the atlas opens on the story but the ${OPENS_OWED.length} #40 opens${stray.length ? ' -> ' + stray.map((l) => `${l.from}-${l.to}`).join(', ') : ''}`);
+  for (const key of OPENS_OWED) {
+    const l = opens.find((l) => `${l.from}-${l.to}` === key);
+    owed(!l, `the atlas's way ${key} is no lock between areas${l ? ` (today it opens after step ${l.opens})` : ''}`, '#40');
+  }
+  {
+    const room = (exits: MapDef['exits'], features: MapDef['features'] = []): MapDef => ({ id: 'fixture_lock', name: 'Lock fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits, features });
+    const [first, second] = AREAS;
+    const areas = (def: MapDef): Pick<Area, 'id' | 'maps'>[] => [{ id: first.id, maps: [...first.maps, def] }, { id: second.id, maps: second.maps }];
+    const within = (def: MapDef): FoundLock[] => findLocks(areas(def)).filter((f) => f.map === def.id);
+    const of = (map: string): string | undefined => map === 'fixture_lock' ? first.id : areaOf(map);
+    const sealed = room([{ x: 3, y: 1, to: first.maps[0].id, tx: 1, ty: 1, needFlag: 'q_seal' }]);
+    const lock = (l: Partial<StoryLock> = {}): StoryLock => ({ flag: 'q_seal', map: 'fixture_lock', x: 3, y: 1, what: 'A sealed door.', reason: 'The fixture.', ...l });
+    ok(lockFaults(within(sealed), [], of).length === 1, 'an exit closed on a flag not signed in fails');
+    ok(!lockFaults(within(sealed), [lock()], of).length, 'and passes once it is signed in');
+    ok(lockFaults(within(sealed), [lock(), lock({ flag: 'q_other', x: 2 })], of).length === 2, 'a second lock in one area fails, and so does a lock that closes nothing');
+    ok(lockFaults([], [0, 1, 2, 3, 4].map((i) => lock({ map: `m${i}` })), () => undefined).some((f) => f.text.startsWith('the road')), `more than ${MOST_ON_THE_ROAD} on the road fails`);
+    const across = room([{ x: 3, y: 1, to: second.maps[0].id, tx: 1, ty: 1, needFlag: 'q_seal' }]);
+    ok(lockFaults(within(across), [lock()], of).some((f) => f.text.includes('between')), 'a lock between areas fails, even signed in');
+    const door = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx', after: ['Ta.'] } }]);
+    ok(within(door)[0]?.kind === 'hand-in' && lockFaults(within(door), [], of).length === 1, 'a hand-in that withholds its item on a flag fails');
+    const service = { ...room([]), features: [{ kind: 'temple', x: 2, y: 1, name: 'Fixture', interior: first.interiors[0], needFlag: 'q_blessed' }] } as unknown as MapDef;
+    ok(within(service)[0]?.kind === 'other' && lockFaults(within(service), [], of).length === 1, 'and so does a service closed on a flag no type knows yet');
   }
 }
