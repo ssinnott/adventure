@@ -31,7 +31,7 @@ async function launch(chromium: any): Promise<any> {
 // (the first draw floors to it in freshSeed) and every draw after it follows from it. SMOKE_SEED=random
 // picks one and prints it; SMOKE_SEED=<n> replays that world.
 const DEFAULT_SEED = 1;
-const SEED = process.env.SMOKE_SEED === 'random' ? randomInt(1, 0x7fffffff) : Number(process.env.SMOKE_SEED ?? DEFAULT_SEED);
+const SEED = process.env.SMOKE_SEED === 'random' ? randomInt(1, 0x7fffffff) : Number(process.env.SMOKE_SEED || DEFAULT_SEED);
 if (!Number.isInteger(SEED) || SEED < 1 || SEED >= 0x7fffffff) throw new Error(`SMOKE_SEED must be random or a whole number from 1 to ${0x7fffffff - 1}`);
 if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
 
@@ -307,7 +307,7 @@ ok(mapScreen === 'WorldMapScreen' && mapColours > 200, `M opens the world map an
 ok(zonesColours > 200 && wholeColours > 200, `Tab lays the zones over it and Z shows it whole (${zonesColours}, ${wholeColours} colours)`);
 ok(almanacScreen === 'MessageScreen' && almanacClosed === 'WorldMapScreen', `Space opens the almanac over the map and Esc goes back to it (${almanacScreen}, then ${almanacClosed})`);
 ok(afterMap === 'ExploreScreen', `M closes it again (${afterMap})`);
-ok(edgeAt >= 0, `the weather has a clear noon with no wash in twenty days, to face the end of the world in (${edgeAt >= 0 ? `minute ${edgeAt}` : `none for weather seed ${weatherSeed}`})`);
+ok(edgeAt >= 0, `the weather has a clear noon with no wash within 480 days, to face the end of the world in (${edgeAt >= 0 ? `minute ${edgeAt}` : `none for weather seed ${weatherSeed}`})`);
 ok(edgeAt >= 0 && edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Shelf, the view is pink empty space and the automap marks it (${edgeAt >= 0 ? `${edgeView} pink pixels in the view, ${edgeMap} on the automap` : 'not looked at: no clear noon'})`);
 ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeBump.x === 1, `a step into it is refused, and the log says why (${JSON.stringify(edgeBump)})`);
 ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /The pass opens onto old forest/.test(pass.said) && passColours > 20,
