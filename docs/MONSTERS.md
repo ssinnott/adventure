@@ -20,7 +20,7 @@ Three jobs. Where they pull apart, the earlier one wins.
    nobody tells the company why. Each act shows a little more: the first thing that does not bleed,
    the first to carry the chisel's mark, a monk who walks like the keepers of the sleepers' bay.
    DESIGN.md §4 says that in the Underdeep the monsters stop being animals; that is the foot of a
-   slope that starts on the Shelf.
+   slope that starts on the Foreland.
 3. **They are the land.** Each area's monsters come out of its ground, its weather and its hours:
    crows in the stubble, wreckers in the fog, pike under the ice, trolls that stand on the tors all
    day as stone.
@@ -28,7 +28,7 @@ Three jobs. Where they pull apart, the earlier one wins.
 The rules that follow from them:
 
 - **Every monster is something.** Each is one of five kinds (§2), and its kind says what works on
-  it. A company learns the rules on the Shelf and spends them all the way to the Core.
+  it. A company learns the rules on the Foreland and spends them all the way to the Core.
 - **Meet it gentle first.** A family's first group on the road is its smallest and weakest, near
   the way in, so a company learns what the family does from a fight it can survive or run from.
   This is EXPANSION.md §5.2's warning, not a wall, for every family as well as every border.
@@ -51,7 +51,7 @@ The rules that follow from them:
 - **Found, never told.** No monster explains itself, and no fight's text names the machine. What a
   thing does and what it carries are the clue.
 - **Plain names.** English words a listener could spell, as STORY.md is written for the ear, in
-  British spelling. *Warden* is taken: Harrow's Wardens, the Wardstones and the Rift's bosses (the
+  British spelling. *Warden* is taken: Helmstow's Wardens, the Wardstones and the Rift's bosses (the
   Rift Warden, the Warden of the Cut) keep it, and nothing else gets it. No name says ship, hull or
   crew.
 
@@ -63,12 +63,12 @@ The rules that follow from them:
 spiders, the old wood, eels, bears, drakes. Sleep takes them, and they run when most of their group
 is down. They carry no gold. Each has its own resistances rather than its kind's: the fire beetle
 shrugs off fire because it lives in it. *Underneath:* they came in the ship, as the people did.
-First on the Shelf; the last are the rats of the Underdeep, which nobody brought.
+First on the Foreland; the last are the rats of the Underdeep, which nobody brought.
 
 **People.** Brigands, smugglers, wreckers, the Compact's crews, the dwarves if the company crosses
 them, the giants of the Stair, and the Ashen Hand. Sleep takes them; they carry gold and gear; most
 break when their leader falls, and the Hand never does. *Underneath:* the crew's descendants, like
-the company. First on the Shelf; the last is Vask.
+the company. First on the Foreland; the last is Vask.
 
 **The dead.** Skeletons, barrow guards, drowned men, wights, the ash-cast dead of Old Cinder. Holy
 light and Holy Strike bite; sleep and the druid's swarm do nothing, and they never run.
@@ -101,7 +101,7 @@ table: a Rift in the Kilns is slag, and a Rift in the Delta is brine.
 
 | The Stone | Its Rifts | Material and light | What bites | Its things |
 |---|---|---|---|---|
-| The cellar's tear | the Shelf, under Ashcombe | ember and crystal, orange | cold | Riftling, Rift Crawler, the Rift Warden (built) |
+| The cellar's tear | the Foreland, under Ashcombe | ember and crystal, orange | cold | Riftling, Rift Crawler, the Rift Warden (built) |
 | The Grove Stone, cut | Thornmark | ember and crystal; the Warden of the Cut burns blue | cold; fire on the Warden | Riftling Elder, Rift Hound, the Warden of the Cut (built) |
 | The Tide Stone, stolen | the Delta, and the Tide Ship's hold | brine glass, sea green | lightning | Brineling, Tide Elder, the Warden of the Tide |
 | The Sunder, a Stone that failed long ago | Sunderwood | black glass and dead wood, white | fire | Sunderling, Sunder Hound, the Warden of the Sunder |
@@ -281,12 +281,12 @@ fodder, say.
 
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
-(the kits, the Shelf's mid-tier from 4, Thornmark's armoury from 8). It fights the encounter again
-and again from a fresh start, mending between fights with spells as a player would, until it loses
-one or must rest. A bot plays it that mends whoever is in danger and strikes, and casts a damage
-spell only when the hit points it saves are worth the spell points. Each is counted against what
-the company has left of that pool before it must rest, and a healer's spell points are priced at
-what they would mend. So the bot spends on what hurts while it is fresh, and holds back as its
+(the kits, the Foreland's mid-tier from 4, Thornmark's armoury from 8). It fights the encounter
+again and again from a fresh start, mending between fights with spells as a player would, until it
+loses one or must rest. A bot plays it that mends whoever is in danger and strikes, and casts a
+damage spell only when the hit points it saves are worth the spell points. Each is counted against
+what the company has left of that pool before it must rest, and a healer's spell points are priced
+at what they would mend. So the bot spends on what hurts while it is fresh, and holds back as its
 spell points run down. The calibration:
 
 - Every role keeps its shape (§4.2) and hits as today's monsters hit, on the line; its hit points
@@ -365,12 +365,12 @@ What it shows:
   59). Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole group of them: 7
   hit points at 3, 13 at 4.
 - **Today's maps are close, and a little hard low down.** Their own groups, dealt in a new order
-  each day, give a company at its band's floor four to eight fights before a rest: the Shelf 4.6 at
-  level 1 and the Ashcombe cellar 5.9, Greywater's caves and the Drowned Shrine 4.1 at 2 and 3,
-  Thornmark 5.7 at 5, the Grove Roots 6.0 at 6 and the Cut Stone 7.7 at 8. On the Shelf the cliff
-  smugglers are a day's work on their own for a company of 1 (1.6 fights); at the Cut Stone, Meteor
-  Swarm ends most fights in a round or two. The round cap barely touches them: no more than one day
-  in fifty ends with a fight broken off.
+  each day, give a company at its band's floor four to eight fights before a rest: the Foreland 4.6
+  at level 1 and the Ashcombe cellar 5.9, Brandy Hole's caves and the Seam 4.1 at 2 and 3, Thornmark
+  5.7 at 5, the Grove Roots 6.0 at 6 and the Cut Stone 7.7 at 8. On the Foreland the cliff smugglers
+  are a day's work on their own for a company of 1 (1.6 fights); at the Cut Stone, Meteor Swarm ends
+  most fights in a round or two. The round cap barely touches them: no more than one day in fifty
+  ends with a fight broken off.
 - **One fight from a fresh start costs about a tenth.** To level 12 a standard encounter costs a
   fresh company 6–15% of its hit points and spell points, 7–13% at most points, and past it, where
   rests come further apart, 3–9%. So 15% a fight, the first yardstick, was near; but a rest at a
@@ -450,9 +450,9 @@ they combine, and play has none of them.
 *Why are the Stones failing?* Every kind but the machine is met here, each at its gentlest, and the
 act ends on a Stone cut with tools from below.
 
-### 5.1 The Shelf (band 1–5; built)
+### 5.1 The Foreland (band 1–5; built)
 
-| Kind | On the Shelf, in the cellar and at Greywater |
+| Kind | On the Foreland, in the cellar and at Brandy Hole |
 |---|---|
 | Beasts | Giant Rat, Cellar Slime, Wolf, Wild Boar, Marsh Spider, Shore Crab |
 | People | Bandit, Bandit Archer, Smuggler, Smuggler Bowman, the Smuggler Captain; and the Hand's first ranks, the Ashen Cultist, the Ashen Acolyte and the Ashen Deacon |
@@ -468,27 +468,27 @@ It stays as built. What this asks of it:
 - The rats are the first thing most companies kill. The road brings them back twice, aboard the
   Tide Ship and at the bottom of the world (§9.2).
 
-### 5.2 Harrow Downs (band 2–5; the pilot)
+### 5.2 Callow Downs (band 2–5; the pilot)
 
-*The chalk hills west of the Shelf, the fields round Gullwick, and the coast past Harrow Light to
-the Ledge. The Shelf's weather: mild, wet, and foggy off the sea in the autumn.*
+*The chalk hills west of the Foreland, the fields round Gullwick, and the coast past Crowness Light
+to Kestrel Edge. The Foreland's weather: mild, wet, and foggy off the sea in the autumn.*
 
 The Downs are the night the light went out, seen from the shore. The fishermen steer by the Hearth;
 with it failing the coast is dark, and the dark has people in it who were waiting for it (STORY.md,
-Act One). Up on the hills the Queen's barrow stands open, and her guard is up. The Downs are the
-pilot's zone map (EXPANSION.md §9, Phase 1), so their monsters test the pipeline and not the
+Act One). Up on the hills the Queen's barrow, the Berth, stands open, and her guard is up. The Downs
+are the pilot's zone map (EXPANSION.md §9, Phase 1), so their monsters test the pipeline and not the
 resolver: one new family, variants on the frames that exist, and two small fields.
 
 **New:** birds, the frame the road reuses for owls, herons, gulls, ravens, eagles and vultures.
 **Back:** the Wolf on the hills, bandits and their archers on the coast road, the Shore Crab under
-Harrow Light.
+Crowness Light.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
 | Carrion Crow | birds, new | fodder, 2 | the stubble fields; the gibbet on the coast road | *Crows, too many to count, and all of them watching.* Flies, so it reaches the back row (`ranged` without `missile`); six to eight to a group |
-| Wrecker | bandit | soldier, 3 | the coast from Gullwick to Harrow Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Harrow customs seal, as the Greywater crates are |
+| Wrecker | bandit | soldier, 3 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
 | Lampman | bandit | archer, 3 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
-| Barrow Guard | skeleton | armoured, 4 | the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
+| Barrow Guard | skeleton | armoured, 4 | the Berth, the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
 | Black Dog | wolf | skirmisher, 4 | the hills round the barrow, by night | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
 | Barrow Captain | skeleton | boss, 5 | at the Queen's empty bier | *Her captain, at his post beside an empty bier.* |
 
@@ -496,7 +496,7 @@ Harrow Light.
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
   nuisance: the lamp is what the company sees first.
 - **Crows over wolves** in the stubble: the back row learns it can be reached.
-- **The barrow**: guards two by two down the passage, then the captain at the bier. It is the
+- **The Berth**: guards two by two down the passage, then the captain at the bier. It is the
   Downs' hardest place, band 4–5, and its boss asks there.
 
 **Asks:** `look` and `when`. Flyers are `ranged` without `missile`, which exists.
@@ -505,7 +505,7 @@ Harrow Light.
 
 *The old forest over the pass: Thornhold, the old tower, the barrow, the river, and the Grove.*
 
-Thornmark is where the Stone is cut, and every kind the Shelf showed is here at full strength:
+Thornmark is where the Stone is cut, and every kind the Foreland showed is here at full strength:
 packs of dire wolves, spiders that poison, brigands with archers, the Hand in numbers, the barrow's
 knights and wraiths, and the Rift the cut let through. The roster stays. What the pilot changes is
 the gate: today a company wins nine fights in ten here at level 3 (EXPANSION.md §2.2), and the gate
@@ -527,7 +527,7 @@ dead never come back already.
 *The oldest of the forest, south of Thornmark down to Thorn Head, and the oldest elf-hold, which
 keeps the treaty. Thornmark's winter: cold, and snow that lies for weeks.*
 
-The Deepthorn is age: trees older than Harrow in a wood older than the elves' memory, and a treaty
+The Deepthorn is age: trees older than Helmstow in a wood older than the elves' memory, and a treaty
 sealed with the chisel's mark, the first time the machine's script is seen on something that is not
 a tool. Its monsters are the wood. The old wood woke when the Grove Stone was cut, and it does not
 know friends from cutters; when the Stone is restored it sleeps again (`until`), and the elves can
@@ -617,7 +617,7 @@ warden in the hold.
 |---|---|---|---|---|
 | Wrack Gull | birds | fodder, 12 | the cliffs | *A thousand gulls, and all of them angry.* Flies; eight to a group |
 | Bilge Rat | rat | fodder, 12 | the Tide Ship's lower decks | *The rats aboard have been eating well.* Disease (0.15); eight to a group |
-| Wrack Smuggler | bandit | soldier, 12 | the cove, and the ship's deck | *A Compact knife in a Harrow coat.* |
+| Wrack Smuggler | bandit | soldier, 12 | the cove, and the ship's deck | *A Compact knife in a Helmstow coat.* |
 | Wrack Bowman | bandit | archer, 12 | with the smugglers | *A bow, and the high ground.* |
 | Ashen Overseer | cultist | controller, 13 | the hold, among the chained rows | *Grey to the wrist, and a chain in each hand.* The chain holds (paralysis, 0.25) |
 | Devilfish | devilfish, new | controller, 13 | the cove's pools; under the ship | *Arms, coming up over the side.* Reaches the back row; holds (paralysis, 0.2) |
@@ -804,7 +804,7 @@ eagles from the birds; the Hand as its masons.
 | Stair Giant | giants, new | brute, 23 | the Giants' Stair | *A man as tall as a house, holding out his hand.* Size 2; sweeps the front row; asks a toll before it fights |
 | Ashen Mason | cultist | soldier, 23 | Sheer Point, on the causeway | *A hammer from below, and a shard to set.* |
 | The Abbot | keepers | boss, 24 | the monastery's chapter house | *The abbot keeps the hours, and it is time.* Its robe falls open as it falls |
-| The Stair-king | giants, new | boss, 24 | the top of the Stair | *He has taken the toll here since before Harrow.* |
+| The Stair-king | giants, new | boss, 24 | the top of the Stair | *He has taken the toll here since before Helmstow.* |
 
 - **The chapter house**: brothers in front of two bell-ringers, the bells holding the front row
   while the brothers close, and the cleric's light doing nothing.
@@ -991,12 +991,12 @@ the pilot.
 
 | Family | First met | Then |
 |---|---|---|
-| rat | the Shelf (built) | the bilge rat (Wrackholm), the deep rat (the Underdeep) |
+| rat | the Foreland (built) | the bilge rat (Wrackholm), the deep rat (the Underdeep) |
 | slime | the cellar (built) | none |
-| boar | the Shelf (built) | none |
-| wolf | the Shelf (built) | the black dog (the Downs), the sunder hound (Sunderwood), the moor hound (Cairnmoor) |
-| spider | the Shelf (built) | the salt crab (Saltreach), the glass spider (Sunderwood), the fire beetle (the Kilns), the cinder beetle (Ashfall), the glass scorpion (the Wold) |
-| bandit | the Shelf (built) | the wreckers and their lampman (the Downs), the bargemen (Saltreach), the Wrack smugglers (Wrackholm), the anvil guard (the Kilns) |
+| boar | the Foreland (built) | none |
+| wolf | the Foreland (built) | the black dog (the Downs), the sunder hound (Sunderwood), the moor hound (Cairnmoor) |
+| spider | the Foreland (built) | the salt crab (Saltreach), the glass spider (Sunderwood), the fire beetle (the Kilns), the cinder beetle (Ashfall), the glass scorpion (the Wold) |
+| bandit | the Foreland (built) | the wreckers and their lampman (the Downs), the bargemen (Saltreach), the Wrack smugglers (Wrackholm), the anvil guard (the Kilns) |
 | cultist | the cellar (built) | the overseer (Wrackholm), the gleaner (Sunderwood), the mason (the Whitespine), the champion and the preacher (Hearth Isle), the Grey Hand (the Core) |
 | skeleton | the cellar (built) | the barrow guard and captain (the Downs), the chanter and the Choirmaster (Saltreach), the bog body and the Cairn King (Cairnmoor), the ash husk (Ashfall), the glassbound and the Pilot (the Glass) |
 | riftling | the cellar (built) | brine (Saltreach, Wrackholm), black glass (Sunderwood), slag (the Kilns): §2.1 |
