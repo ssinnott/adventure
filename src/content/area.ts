@@ -24,3 +24,10 @@ export interface Area {
   /** Its businesses' painted rooms: the Interior union is made of these, and src/ui/interior.ts paints each. */
   interiors: readonly string[];
 }
+
+/**
+ * An area's end-to-end test, in src/content/areas/<area>/walkthrough.ts as `walkthrough`: it plays the
+ * area through from outside and checks each step with `ok`. tools/test.ts finds and runs it; nothing
+ * in the game imports it, so it stays out of the build.
+ */
+export type Walkthrough = (ok: (cond: boolean, msg: string) => void) => void;

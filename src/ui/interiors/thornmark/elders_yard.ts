@@ -2,7 +2,7 @@
 // the bow and the staff.
 import { rgba, mix } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, rnd, stones, skyFill, line, contact, pool, trunk } from '../kit.ts';
+import { STAGE_W, STAGE_H, rnd, skyFill, line, contact, pool, trunk } from '../kit.ts';
 import { K, staff, bow, lantern } from '../props.ts';
 import { glossPoly, glossEllipse } from '../../monsters/gloss.ts';
 import { clouds, ground, target, armsRack } from '../yards.ts';

@@ -3,7 +3,7 @@
 import { shade, rgba } from '../../lib/art/palettes.ts';
 import type { Stage } from './kit.ts';
 import { STAGE_H, rnd, line, flame } from './kit.ts';
-import { K, bottle, candle } from './props.ts';
+import { K, bottle } from './props.ts';
 import { glossPoly, glossEllipse } from '../monsters/gloss.ts';
 
 /**

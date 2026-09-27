@@ -3,7 +3,7 @@
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
 import { STAGE_W, STAGE_H, rnd, stones, block, forestFill, line, smudge, fillPoly, ink, path, trunk, pool } from '../kit.ts';
-import { K, altar, candle, lantern, lanternRing, books } from '../props.ts';
+import { K, candle, lantern, lanternRing, books } from '../props.ts';
 import { glossPoly, glossEllipse } from '../../monsters/gloss.ts';
 
 const BARK = '#5e4a36', MOSS = '#5a7a3a';

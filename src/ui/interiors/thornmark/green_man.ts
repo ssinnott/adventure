@@ -2,7 +2,7 @@
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
 import { STAGE_W, STAGE_H, rnd, plaster, floorboards, windowIn, forestFill, line, fillPoly, trunk } from '../kit.ts';
-import { K, counter, logCounter, shelf, bottle, jar, jug, cup, candle, lantern, kegEnd, herbs, hearth } from '../props.ts';
+import { K, logCounter, shelf, bottle, jar, jug, cup, candle, lantern, kegEnd, herbs, hearth } from '../props.ts';
 import { glossPoly, glossBall, blob, softLine } from '../../monsters/gloss.ts';
 
 const BARK = '#5a4632', GOLDWOOD = '#a8844e', DAUB = '#b8ae84', LEAF = '#4a7a3a';

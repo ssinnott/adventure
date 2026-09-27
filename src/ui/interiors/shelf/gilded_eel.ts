@@ -2,8 +2,8 @@
 // over the bar, the harbour and the Hearth out of its window.
 import { shade, rgba, mix } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, rnd, planks, beam, floorboards, windowIn, skyFill, line, smudge, fillPoly, path, slab, trunk, pool } from '../kit.ts';
-import { K, counter, shelf, bottle, tankard, candle, lantern, kegEnd, barrel, stool } from '../props.ts';
+import { STAGE_W, STAGE_H, rnd, planks, beam, floorboards, windowIn, skyFill, line, smudge, fillPoly, slab, trunk, pool } from '../kit.ts';
+import { K, counter, shelf, bottle, tankard, lantern, kegEnd, barrel, stool } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
 import { table, bottleCandle } from '../taverns.ts';
 

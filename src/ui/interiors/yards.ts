@@ -2,7 +2,7 @@
 // arms rack and a torch on a post. The scenes are in ./<area>/, one to a business.
 import { shade, rgba, mix } from '../../lib/art/palettes.ts';
 import type { Stage } from './kit.ts';
-import { STAGE_W, STAGE_H, rnd, stones, line, fillPoly, contact, beam, flame } from './kit.ts';
+import { STAGE_W, STAGE_H, rnd, line, fillPoly, contact, beam, flame } from './kit.ts';
 import { K } from './props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../monsters/gloss.ts';
 

@@ -2,7 +2,7 @@
 // still burn.
 import type { Scene, Stage } from '../kit.ts';
 import { STAGE_W, STAGE_H, flagstones, windowIn, forestFill, line, smudge, pool, trunk } from '../kit.ts';
-import { K, books, candle, lantern, counter, jar } from '../props.ts';
+import { K, books, candle, counter, jar } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
 import { SPINES, bookcase, lectern } from '../guilds.ts';
 
