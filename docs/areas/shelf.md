@@ -29,7 +29,7 @@ and from the rim down to y 120.
 a side, with its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges (EXPANSION
 §8.2). A box is named as the old maps were, by its column's letter and its row's number: the
 Foreland is G2 and Thornmark H2. The world map's border letters squares 8 columns west and 2 rows
-south of these, since the first two maps were not laid on it (§9).
+south of these, since the first two maps were not laid on it (§9, #66).
 
 On the grid the Foreland's map is G2, and the Downs are seven boxes: F2 and F3 beside it, E2 and
 E3, and D2, D3 and D4 (§4). The row above, C1 to G1, is the rim. C2 and C3 hold a strip of the
@@ -91,26 +91,27 @@ About 7,700 squares of land, all of it void in play: some 6,400 a company could 
 the rim and Kestrel Edge. On the grid (§1) the Downs are seven boxes and a dungeon, and the boxes
 hold 5,654 of those squares and 5,570 of the walkable ones:
 
-| Box | Name | Kind | Band | Land | What is there | Its step of the quest |
-|---|---|---|---|---|---|---|
-| F2 | The road west | country | 2–3 | 1,024: fields, Brockholt's wood | Coldharbour; Brockholt; the Salt Road west from Brandy Hole's beach | none |
-| F3 | Gullwick | core | 2–3 | 300, and 724 of sea | the village at the Wend's mouth, its boats and a camp; wreckers on the shore by night; crows in the stubble | Wenna's mother |
-| E3 | Crowness | core | 3–4 | 857, and 167 of sea | Crowness Light and its keeper; the Salt Road west; a lampman and four wreckers in fog; the gibbet and its crows; shore crabs under the light | the keeper's log of the eleven |
-| E2 | The Wend's fields | country | 3–4 | 1,024: fields, the Wend | crows over wolves in the stubble; the track from Coldharbour up to the Berth | none |
-| D2 | The chalk hills | core | 4–5 | 1,024: the chalk | wolves by day and the Black Dog by night; the Berth's mouth | in the Berth, below it |
-| D3 | The west downs | country | 4–5 | 944 | open down to the lip of Kestrel Edge | none |
-| D4 | Kestrel Edge | country | 4–5 | 481, and the cliff's foot | the Salt Road down the cliff, and bandits with their archers on it | none |
+| Box | Name | Kind | Band | Land | What is there | Its step of the quest | Issue |
+|---|---|---|---|---|---|---|---|
+| F2 | The road west | country | 2–3 | 1,024: fields, Brockholt's wood | Coldharbour; Brockholt; the Salt Road west from Brandy Hole's beach | none | #47 |
+| F3 | Gullwick | core | 2–3 | 300, and 724 of sea | the village at the Wend's mouth, its boats and a camp; wreckers on the shore by night; crows in the stubble | Wenna's mother | #47 |
+| E3 | Crowness | core | 3–4 | 857, and 167 of sea | Crowness Light and its keeper; the Salt Road west; a lampman and four wreckers in fog; the gibbet and its crows; shore crabs under the light | the keeper's log of the eleven | #67 |
+| E2 | The Wend's fields | country | 3–4 | 1,024: fields, the Wend | crows over wolves in the stubble; the track from Coldharbour up to the Berth | none | #68 |
+| D2 | The chalk hills | core | 4–5 | 1,024: the chalk | wolves by day and the Black Dog by night; the Berth's mouth | in the Berth, below it | #69 |
+| D3 | The west downs | country | 4–5 | 944 | open down to the lip of Kestrel Edge | none | #71 |
+| D4 | Kestrel Edge | country | 4–5 | 481, and the cliff's foot | the Salt Road down the cliff, and bandits with their archers on it | none | #72 |
 
 **The Berth** is a dungeon of its own, one level of 16 by 16, band 4–5, entered from D2: the Queen's
 guard two by two down the passage, and her captain at the empty bier (MONSTERS §5.2). Its step is
-the barrow opened, and only her signet gone.
+the barrow opened, and only her signet gone (#70).
 
 The core is the three boxes that hold a step of the quest, built at full density; the rest is
 country, built to the looser floor with the wilderness features (EXPANSION §2.1 (b) and §5.3, #45).
 The bands rise from the way in to the far end, as the gate asks (EXPANSION §5.2).
 
 **The order** is the Salt Road's, and the quest's: F2 and F3, the pilot (#47); then E3, E2, D2 and
-the Berth, D3 and D4. F2 is first because it is the only box that meets the Foreland, and the road
+the Berth, D3 and D4. They are the epic #65, with the grid (#66), the Lodestone (#73) and tier 3
+(#74). F2 is first because it is the only box that meets the Foreland, and the road
 west runs into it. The steps come in the order the road reaches them: Gullwick, Crowness, the Berth.
 D3 comes before D4 because the Salt Road cuts a corner of D3 on its way down, and the way into Act
 II comes last.
@@ -194,29 +195,29 @@ Decided by the owner on 27 September 2026:
    about 1.3 maps of land, and between them they measure a country box and a core box, the two
    floors the pilot tunes (EXPANSION §5.3).
 3. **Zones hold several maps.** The Downs are one zone of seven boxes, F2 and F3 from the pilot on;
-   today a zone holds one (`AtlasZone.map`, `src/game/atlas.ts:82`). A zone to a box would ask a
-   step of the quest of every box the road crosses (EXPANSION §5.8), bare country included.
+   today a zone holds one (`AtlasZone.map`, `src/game/atlas.ts:82`; #66). A zone to a box would ask
+   a step of the quest of every box the road crosses (EXPANSION §5.8), bare country included.
 4. **Gullwick** is a village on F3: its houses, its boats and Wenna's mother as features, as the
    Ashcombe farm is on the Foreland map, and a camp to rest at (#45). No businesses, so no new
    interiors.
-5. **The Berth** is a dungeon of its own: one level of 16 by 16, entered from D2.
+5. **The Berth** is a dungeon of its own: one level of 16 by 16, entered from D2 (#70).
 6. **The Lodestone** is a stone to see, beside Helmstow on the Foreland map, with a Lantern who
    tells a new company what a Stone is, so that the cut Grove Stone reads as wrong when the company
-   finds it.
+   finds it (#73).
 7. **The names** (§10).
 
-Proposed, for the owner:
+Proposed, for the owner, each in the issue that would build it:
 
 - **The core** is F3, E3 and D2, the boxes that hold a step of the quest; the other four are
   country (§4).
 - **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
-  sold in the band (§8).
-- **The world map's lettering** moves onto the grid, so that the border names each box (§1).
-- **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88.
+  sold in the band (§8; #74).
+- **The world map's lettering** moves onto the grid, so that the border names each box (§1; #66).
+- **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across
-  E2. #56's Riders in the Dark rides it.
+  E2 (#68 and #69). #56's Riders in the Dark rides it.
 - **The Wind Cave** (`atlas.ts:332`), Saltreach's cave in the face of Kestrel Edge, moves a square
-  west into C3, so that D3 does not hold it.
+  west into C3, so that D3 does not hold it (#71).
 
 ## 10. Names
 
