@@ -3,7 +3,7 @@
 //   node tools/test.ts maps combat  run selected suites
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps, MAP_DEFS, PLAYED_DEFS } from '../src/content/maps/index.ts';
-import { GameMap } from '../src/game/map.ts';
+import { GameMap, LEGEND, HILL_DRAG } from '../src/game/map.ts';
 import type { MapDef } from '../src/game/map.ts';
 import { World, seen } from '../src/game/world.ts';
 import { layOutdoors, OUTDOORS } from '../src/game/outdoors.ts';
@@ -16,13 +16,16 @@ import { ITEMS } from '../src/game/items.ts';
 import { MONSTERS } from '../src/game/monsters.ts';
 import { SPELLS, spell, spellsFor, spellDice } from '../src/game/spells.ts';
 import { ATLAS } from '../src/content/atlas.ts';
-import { worldGrid, worldPoint, progression, reachable, isWater, zoneOfMap, TI } from '../src/game/atlas.ts';
+import { worldGrid, worldPoint, progression, reachable, isWater, zoneOfMap, TI, MAP_TERRAIN } from '../src/game/atlas.ts';
+import { SNOW_HOLD, cropColor, fieldAt, hedgeColor } from '../src/ui/viewport.ts';
+import { TERRAIN_COLORS, PARCHMENT, AUTOMAP_WASH } from '../src/ui/palette.ts';
+import { mix, hexToRgb } from '../src/lib/art/palettes.ts';
 import { QUESTS } from '../src/content/quests.ts';
 import { questLog, questMarks, questNews, holds } from '../src/game/quests.ts';
 import type { QuestCond, QuestView, When } from '../src/game/quests.ts';
 import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../src/lib/engine/text.ts';
-import { NORTH } from '../src/game/types.ts';
+import { NORTH, SOUTH } from '../src/game/types.ts';
 import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from './testmonster.ts';
 import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES } from './harness.ts';
 import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
@@ -506,6 +509,28 @@ const suites: Record<string, () => void> = {
     ok(near(dawn, 6.5) && near(dusk, 18.5) && daylightAt(at(EPOCH_DAY, 4.9)) === 0 && daylightAt(at(EPOCH_DAY, 8)) > 0.97 && daylightAt(at(EPOCH_DAY, 20)) < 0.03, '1 Mistfall is an equinox, with the old fixed clock: dark before 05:00, full light by 08:00, dark again by 20:00');
   },
 
+  terrain() {
+    // Hills and farmland: their legend characters, open ground both.
+    const m = new GameMap({ id: 'fixture_fields', name: 'Fields fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'M^fM', 'MMMM'] });
+    ok(m.at(1, 1).terrain === 'hills' && m.at(2, 1).terrain === 'farm', `'^' is hills and 'f' farmland (${m.at(1, 1).terrain}, ${m.at(2, 1).terrain})`);
+    ok(m.passable(1, 1) === 'ok' && m.passable(2, 1) === 'ok' && !m.blocksView(1, 1) && !m.blocksView(2, 1), 'both can be walked, and neither hides what lies behind it');
+    // Snow lies on both; the grain greens in Sowing and goes gold by Harvest, and fields span squares.
+    ok(SNOW_HOLD.hills >= 0.85 && SNOW_HOLD.farm >= 0.85, `snow lies white on hills and fields (${SNOW_HOLD.hills}, ${SNOW_HOLD.farm})`);
+    ok([0, 1].every((crop) => cropColor(crop, 20) !== cropColor(crop, 50) && cropColor(crop, 50) !== cropColor(crop, 100)), 'the grain turns from Sowing to Harvest to Frost');
+    let spans = 0, crops = new Set<number>();
+    for (let y = 0; y < 12; y++) for (let x = 0; x < 12; x++) { if (fieldAt(x, y).id === fieldAt(x + 1, y).id) spans++; crops.add(fieldAt(x, y).crop); }
+    ok(hedgeColor(45) === '#3e5e2a' && hedgeColor(100) === '#5a4a38' && hedgeColor(5) !== hedgeColor(45), `the hedges are in leaf at Harvest and bare in Frost (${hedgeColor(45)}, ${hedgeColor(100)})`);
+    // On the automap each open ground is its own colour after the parchment wash: farmland is not road.
+    const washed = Object.entries(TERRAIN_COLORS).map(([t, c]) => [t, hexToRgb(mix(c, PARCHMENT, AUTOMAP_WASH))] as const);
+    let closest = { d: Infinity, pair: '' };
+    for (const [a, ca] of washed) for (const [b, cb] of washed) {
+      const d = Math.hypot(ca[0] - cb[0], ca[1] - cb[1], ca[2] - cb[2]);
+      if (a < b && d < closest.d) closest = { d, pair: `${a} and ${b}` };
+    }
+    ok(closest.d >= 15, `every terrain's automap colour stands apart from every other (closest ${closest.pair}, ${closest.d.toFixed(1)})`);
+    ok(spans >= 60 && crops.size >= 3, `the fields lie in patchwork, each over several squares (${spans} of 144 run on east, ${crops.size} crops)`);
+  },
+
   weather() {
     const shelf = CLIMATES.shelf, thorn = CLIMATES.thornmark;
     ok(JSON.stringify(weatherAt(7, 5000, shelf)) === JSON.stringify(weatherAt(7, 5000, shelf)), 'the weather is a pure function of the seed and the minute');
@@ -587,6 +612,25 @@ const suites: Record<string, () => void> = {
     world.travel('shelf', 16, 8, 2); world.state.minutes = clearAt;
     const b2 = world.state.minutes; world.move('forward');
     ok(world.state.minutes - b2 === 6 && weatherSight(world.weather) === 4 && rangedPenalty(world.weather) === 0, 'a dry step on bare ground takes the usual six');
+    // Hills slow a step by the square stepped onto, outdoors only, and deep snow on them adds its own.
+    const hillStep = (map: string, x: number, y: number, at: number, onto: boolean): number => {
+      world.travel(map, x, y, SOUTH); world.state.minutes = at;
+      const c = world.map.at(world.state.x, world.state.y + (onto ? 1 : 0)), was = c.terrain;
+      c.terrain = 'hills';
+      const b = world.state.minutes, moved = world.move('forward').kind === 'moved';
+      c.terrain = was;
+      return moved ? world.state.minutes - b : -1;
+    };
+    ok(HILL_DRAG === 2 && hillStep('shelf', 16, 8, clearAt, true) === 8, `a dry step onto hills takes eight minutes (${hillStep('shelf', 16, 8, clearAt, true)})`);
+    ok(hillStep('thornmark', 13, 12, snowAt, true) === 10, `and ten with deep snow lying (${hillStep('thornmark', 13, 12, snowAt, true)})`);
+    ok(hillStep('shelf', 16, 8, clearAt, false) === 6, 'a step down off the hills takes the usual six');
+    const street = MAP_DEFS.find((d) => d.id === 'harrow')!, streets = new GameMap(street);
+    let sx = -1, sy = -1;
+    for (let y = 1; y < streets.height - 1 && sx < 0; y++) for (let x = 1; x < streets.width - 1; x++) {
+      if (streets.passable(x, y) !== 'ok' || streets.passable(x, y + 1) !== 'ok' || streets.exitAt(x, y + 1) || streets.featuresAt(x, y + 1).length) continue;
+      sx = x; sy = y; break;
+    }
+    ok(sx >= 0 && hillStep('harrow', sx, sy, clearAt, true) === 2, `in a town a step onto hills takes the usual two (Helmstow ${sx},${sy})`);
     // The inn wakes the party at 07:00, or at first light in the depth of winter.
     world.state.minutes = 0; world.sleepUntilMorning();
     ok(world.state.minutes === 7 * 60, 'in the autumn the inn wakes the party at 07:00');
@@ -600,6 +644,13 @@ const suites: Record<string, () => void> = {
   },
 
   atlas() {
+    // A built map's hills and farmland are hills and farmland on the world map, square for square.
+    const fixture: MapDef = { id: 'fixture_downs', name: 'Downs fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMMMM', 'M^^ffM', 'M^,ffM', 'MMMMMM'] };
+    const withFixture = { ...ATLAS, zones: [...ATLAS.zones, { id: 'fixture_downs', name: 'Downs fixture', area: ATLAS.zones[0].area, map: 'fixture_downs', at: [168, 30] as const }] };
+    const fg = worldGrid(withFixture, [...MAP_DEFS, fixture]), fw = (x: number, y: number): number => fg.t(168 + x, 30 + y);
+    ok(fw(1, 1) === TI.hills && fw(2, 1) === TI.hills && fw(1, 2) === TI.hills && fw(2, 2) === TI.grass, 'a map\'s hills are hills on the world map');
+    ok(fw(3, 1) === TI.farm && fw(4, 1) === TI.farm && fw(3, 2) === TI.farm && fw(4, 2) === TI.farm, 'and its farmland is farmland');
+    ok(Object.entries(LEGEND).every(([ch, c]) => c.solid !== 'none' || c.door !== 'none' || ch in MAP_TERRAIN), 'every open ground in the legend has its world-map terrain');
     const grid = worldGrid(ATLAS, MAP_DEFS);
     const W = grid.width, H = grid.height;
     ok(W === ATLAS.width && H === ATLAS.height && W % ATLAS.square === 0 && H % ATLAS.square === 0, `the world is ${W}x${H} squares, in whole lettered squares of ${ATLAS.square}`);

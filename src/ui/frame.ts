@@ -8,7 +8,7 @@ import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
 import { viewCells } from './viewport.ts';
 import { drawPortrait } from './portraits.ts';
-import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
+import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, AUTOMAP_WASH, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
 import { shade, rgba, mix } from '../lib/art/palettes.ts';
 const PARCHMENT_DARK = '#d8c8a0';
 import { hash } from './brush.ts';
@@ -128,7 +128,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
     else if (c.solid === 'tree') col = '#4f7a3a';
     else if (c.solid === 'mountain') col = '#6a6058';
     else if (c.solid === 'rock' || c.solid === 'pillar') col = '#8a7a6a';
-    else col = mix(TERRAIN_COLORS[c.terrain] ?? '#3c3a40', PARCHMENT, 0.55);
+    else col = mix(TERRAIN_COLORS[c.terrain] ?? '#3c3a40', PARCHMENT, AUTOMAP_WASH);
     ctx.fillStyle = col;
     ctx.fillRect(ox + x * cell, oy + y * cell, cell, cell);
     if ((c.solid === 'wall' || c.solid === 'building') && cell >= 6) { ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(ox + x * cell, oy + y * cell + cell - 1, cell, 1); }

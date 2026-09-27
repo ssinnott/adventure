@@ -121,6 +121,89 @@ const interiors = await page.evaluate(async () => {
   }
   return { n, thin };
 });
+// Hills and farmland: a patch of each laid on the Foreland, painted at noon and at midnight on a day of
+// each season and under deep snow. Every view is a picture; a hill rises and a field has rows or
+// hedges where grass is flat; the fields turn from Sowing to Harvest, and snow lies white on both.
+// Samples are taken inside the square ahead, clear of its edges. The patch is taken up again after.
+const terrains = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const V = await load('/src/ui/viewport.ts');
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, thin: string[] = [], mean: Record<string, number[]> = {}, form: Record<string, { tones: number; edges: number }> = {};
+  const c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const minutes = w.state.minutes;
+  // Face north with a field of grain ahead, which greens in Sowing and goes gold by Harvest. The
+  // square ahead is its band's first row, so a hedge runs along its far edge into the next field;
+  // and the squares in view hold more than one crop.
+  w.travel('shelf', 16, 16, 0);
+  if ((w.state.y - 1) % 2) w.state.y--;
+  const crops = (x: number, y: number): Set<number> => new Set([[-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2]].map(([l, d]) => V.cropColor(V.fieldAt(x + l, y - d).crop, 50)));
+  // The search is bounded: a view it cannot find fails the check plainly rather than hanging.
+  const fits = (): boolean => V.fieldAt(w.state.x, w.state.y - 1).crop <= 1 && crops(w.state.x, w.state.y).size >= 2;
+  for (let tries = 0; tries < 200 && !fits(); tries++) w.state.x++;
+  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[] };
+  const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
+  let hedge = { off: 999, apart: 0 }, patchwork = 0;
+  // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
+  const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
+  const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
+  for (const terrain of ['grass', 'hills', 'farm']) {
+    for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
+    for (const [name, doy] of days) for (const hour of [12, 0]) {
+      if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
+      w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
+      const snow = name === 'snow';
+      w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
+      V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+      const d = ctx.getImageData(0, 0, W, H).data, seen = new Set<number>();
+      for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+      if (seen.size < 20) thin.push(`${terrain} ${name}@${hour} (${seen.size})`);
+      if (hour !== 12) continue;
+      const g = ctx.getImageData(x0, y0, sw, sh).data, sum = [0, 0, 0];
+      for (let i = 0; i < g.length; i += 4) { sum[0] += g[i]; sum[1] += g[i + 1]; sum[2] += g[i + 2]; }
+      mean[`${terrain} ${name}`] = sum.map((v) => v / (g.length / 4));
+      if (name !== 'summer') continue;
+      // Form: the tones down the middle of the square (a hill's flank shades), and the hard edges
+      // across it and down it (a field's rows and hedges); flat grass has few of either.
+      const px = (x: number, y: number): number => (y * W + x) * 4;
+      const tones = new Set<number>();
+      let across = 0, down = 0;
+      for (let y = y0; y < y0 + sh; y++) { const i = px(W / 2, y); tones.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]); }
+      for (let x = x0; x < x0 + sw; x++) { const a = px(x, y0 + sh / 2), b = px(x + 1, y0 + sh / 2); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) across++; }
+      for (let y = y0; y < y0 + sh; y++) { const a = px(W / 2, y), b = px(W / 2, y + 1); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) down++; }
+      form[terrain] = { tones: tones.size, edges: Math.max(across, down) };
+      if (terrain !== 'farm') continue;
+      // The hedge along the far edge of the square ahead (rows 193 to 196 down the middle) is near
+      // the hedge's colour, and far from the crop just inside it.
+      const avg = (x: number, y: number, bw: number, bh: number): number[] => {
+        const q = ctx.getImageData(x, y, bw, bh).data, t = [0, 0, 0];
+        for (let i = 0; i < q.length; i += 4) { t[0] += q[i]; t[1] += q[i + 1]; t[2] += q[i + 2]; }
+        return t.map((v) => v / (q.length / 4));
+      };
+      const rgb = (hex: string): number[] => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) * 0.93);
+      const far = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+      const strip = avg(W / 2 - 30, 194, 60, 2);
+      hedge = { off: Math.round(far(strip, rgb(V.hedgeColor(doy)))), apart: Math.round(far(strip, avg(W / 2 - 30, 204, 60, 4))) };
+      // Patchwork: the middles of the squares in view (the square ahead and those beside it, and
+      // five across the next row) are not all one crop.
+      const middles = [[-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2]].map(([l, dd]) => {
+        const u = 120.6 / (dd + 0.5);
+        return avg(Math.round(W / 2 + l * 2 * u) - 3, Math.round(H / 2 + u) - 3, 6, 6);
+      }).filter((p) => p.every((v) => !Number.isNaN(v)));
+      for (const a of middles) for (const b of middles) patchwork = Math.max(patchwork, Math.round(far(a, b)));
+    }
+  }
+  for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
+  w.state.minutes = minutes; w.cached = undefined;
+  const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  const light = (a: number[]): number => (a[0] + a[1] + a[2]) / 3;
+  return {
+    missing: '', thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
+    whiten: ['hills', 'farm'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
+  };
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 9, 6, 0); g.interact(g.world.featureHere()); });
 await page.waitForTimeout(100);
@@ -299,6 +382,16 @@ ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
 ok(interiors.n === 24 && interiors.thin.length === 0, `all twelve interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
+ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
+if (!terrains.missing) {
+  ok(terrains.thin.length === 0, `hills and farmland paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+  {
+    const { grass, hills, farm } = terrains.form;
+    ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
+    ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
+  }
+  ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills and the fields (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
+}
 ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
 ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Foreland paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);
