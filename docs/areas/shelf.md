@@ -132,6 +132,217 @@ The places, as the atlas and the docs have them:
 | The Lodestone | G2, the built map (21.5,4) | "already intact; tutorial" (DESIGN §4) | a planned site; nothing in the game |
 | The Mewstone | G4 | nothing yet | an isle, the Deepthorn's |
 
+### 4.1 The briefs
+
+Each box's brief is what EXPANSION §8.2 asks of one: its purpose, band, landmarks, the secret and
+its hint, the encounters and what is new, with its points of interest and a first share of the pay
+beside them. They are drafts for the owner, written before the pilot has measured a box; each is
+settled in its issue, and what the pilot teaches changes the ones after it.
+
+- **Points of interest** (EXPANSION §5.3). A core box is held to the Foreland map's density: nine
+  features, ten groups and four ways in or out to 868 open squares. A country box has about half,
+  and the wilderness features (#45) do most of the work. No more than one point in four is a sign.
+- **Encounters** are MONSTERS §5.2's roster and fights, with the Foreland's own monsters (§5.1)
+  where its land runs on. A group is about one of MONSTERS §4.4's standard encounters.
+- **Pay.** The Downs owe about 2,070 xp a member (§8). The shares below add up to that, for the
+  curve to settle (#31) and the gate to check (#38).
+- **Side quests** are #56's, placed as §6 has them.
+
+### 4.2 F2, the road west (#47): country, band 2–3
+
+- **Purpose.** The first land off the built map: the fields and wood between Helmstow and Gullwick,
+  walked on the Salt Road. Quiet country, where a company meets the wilderness features and its
+  first crows.
+- **Landmarks.** The Salt Road, out of the Foreland by Brandy Hole's beach and bending south-west
+  into F3; Coldharbour at 176,42, a steading with a barn and a lamp kept lit in the window;
+  Brockholt in the north-east, beeches over the badgers' setts; stubble fields between.
+- **Points of interest,** about six features and five groups:
+  - the captain at Coldharbour, retired from the Wardens, and his lamp;
+  - Coldharbour's well;
+  - a wayside shrine where the farm track leaves the road, its candle out (#45);
+  - a woodcutter's camp in Brockholt, to rest at (#45), and the woodcutter, with a rumour;
+  - a cairn on the rise at the box's west edge (#45);
+  - a milestone where the road leaves the Foreland: GULLWICK 2, CROWNESS 4.
+- **Encounters.** Wolves in Brockholt (three), a boar in the wood, bandits with an archer on the
+  road, as on the Foreland map; crows in the stubble (six); rats in Coldharbour's barn (five).
+- **Quests.** No step of the one quest (§9). Riders in the Dark is the captain's (§6).
+- **The secret and its hint.** Under the holly at Brockholt's heart one sett runs deeper than
+  badgers dig: a smugglers' cache from before Brandy Hole was cleared, brandy and a crate with the
+  customs seal. The woodcutter's rumour is the hint: the badgers never go near the holly.
+- **New here.** Farmland and hills underfoot (#44), the wilderness features (#45), the Carrion Crow
+  (#46).
+- **Pay.** About 130 xp a member.
+
+### 4.3 F3, Gullwick (#47): core, band 2–3
+
+- **Purpose.** The Downs' first step, and where STORY begins: the village that stood in the surf
+  with lanterns the night the light went out.
+- **Landmarks.** Gullwick at the Wend's mouth, 172,70: a dozen cottages, the net loft, and boats on
+  the shingle with a loop inside a loop painted on their bows (STORY). The Salt Road along the
+  shore. The rise above the village where the company camped that night. The wreckers' beach at the
+  box's south-west end, towards Crowness.
+- **Points of interest,** about seven features and three groups:
+  - Wenna's mother, who asks the company to find her daughter: the step (§5). A company that has
+    already read the Cargo Ledger has seen Wenna's name, and she hears it in their faces;
+  - the boats, and the mark on them;
+  - the net loft, a camp to rest at (#45);
+  - an old man mending nets who sings the shanty, with a rumour (the Bard's second prestige, later:
+    #19);
+  - the family whose boat never came in, and the Compact's man on the road west (The Boat With No
+    Name-Board, §6);
+  - the ashes of a camp on the rise, and the whole bay below it;
+  - the village well.
+- **Encounters.** Two wreckers and their lampman on the beach by night (`when`); crows in the fields
+  above the village (six); shore crabs on the shingle (three).
+- **Quests.** The step. The Boat With No Name-Board starts and ends here, and Who Lived at
+  Ashcombe's tenant starts over here if Hale sends him (§6).
+- **The secret and its hint.** A cave in the rock at the far end of the wreckers' beach, where they
+  keep the boat they were expecting. The shanty's last verse is the hint: where the lamp goes out,
+  the cave goes in.
+- **New here.** Groups that walk by night (`when`, #41), and a village drawn on its box.
+- **Pay.** About 110 xp a member.
+
+### 4.4 E3, Crowness (#67): core, band 3–4
+
+- **Purpose.** The Downs' second step and their fight in fog: the light that kept the count, on a
+  coast where wreckers wait for the dark.
+- **Landmarks.** Crowness Light on the point, about 152,89, with the keeper's cottage under it. The
+  Salt Road along the coast to the corner of D3. A gibbet at the roadside above the rocks. The last
+  of the stubble to the north, and the Wend's last bend in the north-east corner.
+- **Points of interest,** about nine features and eight groups:
+  - the keeper who counted the eleven, and his log: the step (§5);
+  - the lamp room at the top of the stair, dark until Oil for the Lamp is done (§6);
+  - the gibbet, and who hangs from it;
+  - a wreck on the rocks below the point, with its salvage (a chest);
+  - a shrine where the path leaves the road for the light (#45);
+  - a cairn on the point (#45);
+  - a camp in the lee of the headland (#45);
+  - the keeper's well;
+  - a sign at the fork: CROWNESS LIGHT.
+- **Encounters.** A lampman and four wreckers on the road in fog, the lamp the first thing the
+  company sees (MONSTERS §5.2); wreckers on the rocks by night (two groups); crows at the gibbet
+  (eight); shore crabs under the light (four); bandits with an archer on the road.
+- **Quests.** The step. Oil for the Lamp (§6).
+- **The secret and its hint.** The wreckers' false light: a niche in the rocks below the point, with
+  their lamp and a chart of the reef. The keeper's hint: some nights there is a second light on the
+  rocks, lower than his.
+- **New here.** The weather as a warning: fog that leaves two squares of sight, and a fight that
+  begins in it.
+- **Pay.** About 340 xp a member.
+
+### 4.5 E2, the Wend's fields (#68): country, band 3–4
+
+- **Purpose.** The middle of the Downs: the fields either side of the Wend, and the way up to the
+  chalk.
+- **Landmarks.** The Wend, from the rim down through the box towards Gullwick, with a ford where the
+  track to the Berth crosses it; the stubble; a drowned mill on the river; the hills rising at the
+  west edge.
+- **Points of interest,** about six features and five groups:
+  - the ford, with hoofprints going west and coming back (Riders in the Dark, §6);
+  - a boundary stone with a riddle cut in it, answered with the shanty's first word (#45's statue);
+  - a spring above the river (#45's fountain);
+  - a cairn (#45);
+  - a shepherd's camp (#45), and the shepherd, who has heard the Black Dog on the hill;
+  - a sign at the ford: THE BERTH, and something scratched under it.
+- **Encounters.** Crows over wolves in the stubble (six crows and two wolves: MONSTERS §5.2's
+  fight); wolves where the fields meet the hills (three); a boar in the willows.
+- **Quests.** Riders in the Dark's night watch at the ford (§6).
+- **The secret and its hint.** The drowned mill's wheel-pit, with the miller's hoard behind it. The
+  shepherd's hint: the miller never trusted a bank, nor the river.
+- **New here.** The first riddle, answered with a word the company heard somewhere else.
+- **Pay.** About 190 xp a member.
+
+### 4.6 D2, the chalk hills (#69): core, band 4–5
+
+- **Purpose.** The way into the Berth, and the hills by night.
+- **Landmarks.** The chalk ridge; the Berth's mouth on the crest, about 118,42, its stones pulled
+  aside; smaller barrows along the ridge; a dew pond; the track up from the ford in E2. Proposed: a
+  figure cut in the chalk below the ridge, older than the Crown, which the shepherds call the
+  Cradle; seen from the Berth's mouth, it is a ship. Nothing says so (NAMES §1).
+- **Points of interest,** about nine features and nine groups:
+  - the Berth's mouth, the way in;
+  - the pulled stones: fresh chisel marks, and the hoofprints of shod horses;
+  - a shepherd's hut, and a shepherd who has heard the Black Dog every night since the barrow was
+    opened (#45's hermit);
+  - the dew pond (#45's fountain);
+  - a shrine on the crest (#45);
+  - a cairn on the highest barrow (#45);
+  - a camp in an old chalk pit (#45);
+  - a sign where the track tops the ridge;
+  - the chalk figure, if it is kept.
+- **Encounters.** Wolves on the chalk by day (three groups of three); the Black Dog by night round
+  the barrow (one, and then two; `when`); crows (six).
+- **Quests.** The way to the step, which is in the Berth. Riders in the Dark's hoofprints lead here.
+- **The secret and its hint.** One of the small barrows is hollow: a cist with a guardsman's grave
+  goods, a halberd and a ring of office. The shepherd's hint: nine barrows on the ridge, and one of
+  them rings when the sheep run over it.
+- **New here.** The Black Dog, whose bite holds (paralysis), and a group that walks only by night,
+  round one place.
+- **Pay.** About 420 xp a member.
+
+### 4.7 The Berth (#70): dungeon, 16 by 16, band 4–5
+
+- **Purpose.** The Downs' hardest place, their third step and their boss.
+- **Shape.** A long barrow: a forecourt behind the pulled stones; a passage with side chambers,
+  where the Queens of the line lie in their niches; and the bier chamber at the end.
+- **Points of interest,** about seven features and five groups, the dungeons' floor (EXPANSION
+  §5.3):
+  - the forecourt, where the stones were pulled from outside, by many hands;
+  - four side chambers: the old Queens, each with a name over her niche worn past reading, and grave
+    goods nobody has touched (chests);
+  - the bier, with the Queen on it and her hand bare where her signet was: the step (§5);
+  - the captain's post beside it.
+- **Encounters.** The guard two by two down the passage (four pairs of Barrow Guards, which hold
+  their ground and never roam); the Barrow Captain at the bier, the boss. None of them comes back.
+- **The secret and its hint.** A niche behind the bier, which the captain guards: his own arms, in
+  the Queen's colours (deep blue and gold, #17). The hint is cut in the forecourt: HER CAPTAIN LIES
+  BEHIND HER.
+- **New here.** The Barrow Guard and the Barrow Captain, in the Queen's colours, and a boss that
+  asks: won about half the time at the band's floor (EXPANSION §5.2).
+- **For the owner.** MONSTERS §5.2 puts the captain beside an empty bier; STORY has the tomb robbed
+  of the ring alone, "not the gold, not the jewels". The brief follows STORY.
+- **Pay.** About 420 xp a member.
+
+### 4.8 D3, the west downs (#71): country, band 4–5
+
+- **Purpose.** The open downs to the lip of Kestrel Edge, and the first sight of Act II: the Upper
+  Water below.
+- **Landmarks.** The lip of the cliff, with the Upper Water under it and Reedholm's smoke far off;
+  the chalk's last slopes; the Salt Road cutting the south-east corner.
+- **Points of interest,** about six features and five groups:
+  - a lookout on the lip, over the Upper Water;
+  - a falconer who flies kestrels along the edge, with a rumour of the road down (#45's hermit);
+  - a shrine to the travellers who went down the Edge (#45);
+  - a cairn (#45);
+  - a camp (#45);
+  - a sign where the Salt Road crosses: SALTMOUTH, DOWN THE EDGE.
+- **Encounters.** Wolves (two groups), bandits with an archer near the road, crows along the lip, a
+  boar.
+- **Quests.** None.
+- **The secret and its hint.** A cleft in the lip, and a ledge below it with a kestrels' nest and
+  what they have carried there: a lost climber's pack. The falconer's hint: his birds bring back
+  bright things from the ledge by the cleft.
+- **New here.** The next area, seen from the last one's edge.
+- **Pay.** About 260 xp a member.
+
+### 4.9 D4, Kestrel Edge (#72): country, band 4–5
+
+- **Purpose.** The Downs' way out west: the Salt Road down the cliff into the Delta, where Act II
+  begins.
+- **Landmarks.** The road's hairpins, cut into the cliff; the cliff's foot, and the reeds of the
+  Delta beyond the box's edge.
+- **Points of interest,** about four features and three groups:
+  - the top of the descent, and a sign: THE DELTA, SALTMOUTH;
+  - a shrine at the top, where travellers leave a coin for the road (#45);
+  - a waystation at the foot, a camp to rest at (#45);
+  - a cairn on the seventh hairpin (#45).
+- **Encounters.** Bandits and their archers on the road (two groups), crows on the cliff.
+- **Quests.** None.
+- **The secret and its hint.** A cave behind one hairpin, where runners coming up from Saltreach
+  leave what they carry for the Downs. The cairn's hint: count seven bends.
+- **New here.** The road into Act II.
+- **Pay.** About 200 xp a member.
+
 ## 5. The one quest here
 
 DESIGN §9 gives the Downs three steps, and none is built. The plan puts one in each of the core's
@@ -150,12 +361,35 @@ Helmstow in the morning; a new game opens in Helmstow.
 
 ## 6. Side quests
 
-#56 drafts eight for the Foreland, levels 1 to 4, for the owner to take or leave: The Bell That Rang
-Twice and The Well That Tastes of Iron in Helmstow, Who Lived at Ashcombe, The Boat With No
-Name-Board at Gullwick and on the coast below Crowness Light (F3 and E3), Oil for the Lamp at
-Crowness Light (E3), Riders in the Dark at Coldharbour and on the road to the Berth (F2 and E2), The
-Clerk's Seal at Brandy Hole and The Rest of the Survey Team in the coast woods. The three in the
-Downs wait on their boxes, and the Well waits on Helmstow's keep (#17).
+#56 drafts eight for the Foreland, levels 1 to 4. The owner asked for the ones that fit to be pulled
+into the build (27 September 2026), and all eight fit: each is set in the Foreland's own country at
+its level, turns on a person and a choice, and spends no story lock. Each is built where its places
+are:
+
+| # | Quest | Level | Where | What it needs | Built in |
+|---|---|---|---|---|---|
+| 1 | The Bell That Rang Twice | 1 | Helmstow: the Chapel, the Gilded Eel | a choice put by a person; a person who moves | the side quests' issue |
+| 2 | Who Lived at Ashcombe | 1 | the Hearthlight Inn and Ashcombe; the tenant to Gullwick (F3) | hand-ins at the first meeting (#43); a person who moves | the side quests' issue |
+| 3 | The Well That Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | the side quests' issue |
+| 4 | The Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 |
+| 5 | Oil for the Lamp | 3 | Crowness Light (E3); Mottram's Stores and Vask, in Helmstow | a choice put by a person | #67 |
+| 6 | Riders in the Dark | 3 | Coldharbour (F2) and the ford (E2) | `when` (#41); a choice put by a person | #68 |
+| 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | the side quests' issue |
+| 8 | The Rest of the Survey Team | 4 | the Foreland map's south-west woods; the Chapel, or Thornhold | a choice put by a person; a person who moves | the side quests' issue |
+
+Three changes to #56's drafts, for the owner:
+
+- **The Boat With No Name-Board keeps to F3.** The hoard is on Gullwick's own wreckers' beach and
+  the Compact's man waits on the road west, so that a level 2 quest is not finished in country
+  banded 3–4.
+- **Oil for the Lamp's chandler is Mottram,** whose stores are built, rather than a chandler of his
+  own.
+- **3 and 6 could be the Wardens' and 5 the Lanterns',** given from their halls (#21). They are
+  built as plain quests unless #21 takes them.
+
+A choice put by a person, a person who moves once a flag is set and a letter to read from the pack
+are systems the game lacks (#56, "What they ask of the systems"); the side quests' systems issue
+builds them.
 
 ## 7. Encounters, and what is new
 
@@ -165,13 +399,16 @@ four wreckers on the Salt Road on a foggy night; the Berth, the Downs' hardest p
 are #46.
 
 New in the Downs, for the novelty check (EXPANSION §5.4): the birds, a new family; hills and
-farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41).
+farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41). §4.2 to §4.9
+place every group, box by box.
 
 ## 8. The numbers
 
 - **Experience.** One clear of the area pays 1,660 xp a member today, just past level 4 (1,650).
   The curve (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor,
-  divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from.
+  divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from,
+  shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3
+  260 and D4 200.
 - **Gold.** A clear pays about 2,530: 1,065 in chests, about 765 in drops and 700 in rewards.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** #38 reports the Foreland outside the starting thresholds. The Rift Warden, the
@@ -205,8 +442,13 @@ Decided by the owner on 27 September 2026:
    tells a new company what a Stone is, so that the cut Grove Stone reads as wrong when the company
    finds it (#73).
 7. **The names** (§10).
+8. **The side quests:** #56's eight for the Foreland are pulled into the build, each built where its
+   places are (§6).
 
 Proposed, for the owner, each in the issue that would build it:
+
+- **The briefs** of §4.2 to §4.9: each box's landmarks, points of interest, encounters, secret and
+  hint, and share of the pay.
 
 - **The core** is F3, E3 and D2, the boxes that hold a step of the quest; the other four are
   country (§4).
@@ -218,6 +460,10 @@ Proposed, for the owner, each in the issue that would build it:
   E2 (#68 and #69). #56's Riders in the Dark rides it.
 - **The Wind Cave** (`atlas.ts:332`), Saltreach's cave in the face of Kestrel Edge, moves a square
   west into C3, so that D3 does not hold it (#71).
+- **The chalk figure** below the Berth, a ship that only the Berth's mouth shows as one (§4.6).
+- **The Queen on her bier,** her hand bare, as STORY has the tomb, where MONSTERS §5.2 has the bier
+  empty (§4.7).
+- **Three changes to #56's side quests** (§6).
 
 ## 10. Names
 
