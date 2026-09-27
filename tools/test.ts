@@ -2,7 +2,8 @@
 //   node tools/test.ts            run everything
 //   node tools/test.ts maps combat  run selected suites
 import { makeRng } from '../src/lib/engine/rng.ts';
-import { buildMaps, MAP_DEFS, PLAYED_DEFS } from '../src/content/maps/index.ts';
+import { buildMaps, PLAYED_DEFS } from '../src/content/maps.ts';
+import { MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, CLIMATES, INTERIORS } from '../src/content/index.ts';
 import { GameMap } from '../src/game/map.ts';
 import type { MapDef } from '../src/game/map.ts';
 import { World, seen } from '../src/game/world.ts';
@@ -12,12 +13,9 @@ import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttac
 import type { CombatState } from '../src/game/combat.ts';
 import type { Party } from '../src/game/party.ts';
 import { serialize, deserialize } from '../src/game/save.ts';
-import { ITEMS } from '../src/game/items.ts';
-import { MONSTERS } from '../src/game/monsters.ts';
-import { SPELLS, spell, spellsFor, spellDice } from '../src/game/spells.ts';
+import { spell, spellsFor, spellDice } from '../src/game/spells.ts';
 import { ATLAS } from '../src/content/atlas.ts';
 import { worldGrid, worldPoint, progression, reachable, isWater, zoneOfMap, TI } from '../src/game/atlas.ts';
-import { QUESTS } from '../src/content/quests.ts';
 import { questLog, questMarks, questNews, holds } from '../src/game/quests.ts';
 import type { QuestCond, QuestView, When } from '../src/game/quests.ts';
 import { questPage, PAGE, LIST } from '../src/ui/quests.ts';
@@ -27,7 +25,7 @@ import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_
 import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES } from './harness.ts';
 import { dateAt, shortDate, longDate, daylightAt, sunTimes, MONTHS, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../src/game/calendar.ts';
 import type { Season } from '../src/game/calendar.ts';
-import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, CLIMATES, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
+import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../src/game/weather.ts';
 import type { Climate, Sky, Weather } from '../src/game/weather.ts';
 import { START_MINUTES, LEGACY_WEATHER_SEED } from '../src/game/world.ts';
 import type { WorldState, MapState } from '../src/game/world.ts';
@@ -83,7 +81,7 @@ const suites: Record<string, () => void> = {
         if (interior) { interiors.push(interior); ok(m.at(f.x, f.y).door !== 'none', `${def.id}: ${interior} is entered through a door`); }
       }
     }
-    ok(interiors.length === 12 && new Set(interiors).size === interiors.length, `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
+    ok(interiors.length === INTERIORS.length && new Set(interiors).size === interiors.length && INTERIORS.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
     // The trainer ladder: some trainer teaches to the cap, and the cap is what levelUp stops at.
     const trainers = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'trainer'));
     ok(Math.max(...trainers.map((t) => t.kind === 'trainer' ? t.maxLevel : 0)) === MAX_LEVEL, `a trainer teaches to level ${MAX_LEVEL}`);

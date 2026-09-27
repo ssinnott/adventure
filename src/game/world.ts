@@ -12,8 +12,9 @@ import { partyCan, takeItem, isDown, hasTrait } from './party.ts';
 import type { Party } from './party.ts';
 import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock } from './calendar.ts';
 import type { CalendarDate } from './calendar.ts';
-import { CLIMATES, weatherAt, classify, skyNews, weatherSight, snowDrag, rangedPenalty, rangedNote, fairStart, tempWord, SKY_NAMES } from './weather.ts';
+import { weatherAt, classify, skyNews, weatherSight, snowDrag, rangedPenalty, rangedNote, fairStart, tempWord, SKY_NAMES } from './weather.ts';
 import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
+import { CLIMATES } from '../content/index.ts';
 
 export { MINUTES_PER_DAY };
 export const START_MINUTES = 7 * 60;

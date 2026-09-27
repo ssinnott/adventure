@@ -50,7 +50,7 @@ await page.waitForFunction(() => (window as any).__game?.ready === true, null, {
 const size = await page.evaluate(async (o: { only: string[]; family?: string; scale: number; frames: number; flash: boolean; tone: number }) => {
   // Served by the dev server, resolved by the browser: opaque to the typechecker on purpose.
   const load = (p: string): Promise<any> => import(p);
-  const M = await load('/src/game/monsters.ts');
+  const M = await load('/src/content/index.ts');
   const T = await load('/src/lib/engine/text.ts');
   const S = await load('/src/ui/sprites.ts');
   // Through the dispatcher normally; straight into one family module when asked.

@@ -16,7 +16,7 @@ import type { Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../src/game/combat.ts';
 import { spell } from '../src/game/spells.ts';
 import type { SpellTarget } from '../src/game/spells.ts';
-import { MAP_DEFS } from '../src/content/maps/index.ts';
+import { MAP_DEFS } from '../src/content/index.ts';
 import type { EncounterDef } from '../src/game/map.ts';
 
 const args = process.argv.slice(2);

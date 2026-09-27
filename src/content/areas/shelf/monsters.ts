@@ -1,0 +1,35 @@
+// The Shelf's monsters, band 1-5: the road, the woods and the cellar, then Greywater's caves. `sprite`
+// names the drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a map is a
+// list of these ids, and any area's maps may place them.
+import type { MonsterDef } from '../../../game/monsters.ts';
+
+/** The drawings the Shelf's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+export const SPRITES = [
+  'rat', 'slime', 'wolf', 'boar', 'spider', 'bandit', 'archer', 'cultist', 'skeleton', 'riftling',
+  'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
+  'rift_crawler', 'deacon',
+] as const;
+
+export const MONSTERS: readonly MonsterDef[] = [
+  { id: 'rat', name: 'Giant Rat', plural: 'Giant Rats', sprite: 'rat', hp: 4, ac: 11, attack: 1, dice: 1, sides: 3, bonus: 0, speed: 12, xp: 10, gold: [0, 2], tint: '#7a6a5a', size: 0.35, inflict: { cond: 'diseased', chance: 0.1 } },
+  { id: 'slime', name: 'Cellar Slime', plural: 'Cellar Slimes', sprite: 'slime', hp: 7, ac: 9, attack: 1, dice: 1, sides: 4, bonus: 0, speed: 6, xp: 14, gold: [0, 0], mindless: true, tint: '#6fbf6f', size: 0.4 },
+  { id: 'wolf', name: 'Wolf', plural: 'Wolves', sprite: 'wolf', hp: 9, ac: 12, attack: 2, dice: 1, sides: 6, bonus: 0, speed: 14, xp: 25, gold: [0, 0], tint: '#8a8a90', size: 0.55 },
+  { id: 'boar', name: 'Wild Boar', plural: 'Wild Boars', sprite: 'boar', hp: 14, ac: 12, attack: 3, dice: 1, sides: 8, bonus: 1, speed: 10, xp: 40, gold: [0, 0], tint: '#6a4a3a', size: 0.55 },
+  { id: 'spider', name: 'Marsh Spider', plural: 'Marsh Spiders', sprite: 'spider', hp: 8, ac: 13, attack: 2, dice: 1, sides: 4, bonus: 0, speed: 13, xp: 28, gold: [0, 0], tint: '#3a3a44', size: 0.45, inflict: { cond: 'poisoned', chance: 0.3 } },
+  { id: 'bandit', name: 'Bandit', plural: 'Bandits', sprite: 'bandit', hp: 10, ac: 13, attack: 2, dice: 1, sides: 8, bonus: 0, speed: 10, xp: 32, gold: [3, 12], tint: '#8a6a4a', size: 0.9, drops: [{ item: 'dagger', chance: 0.1 }, { item: 'potion_heal', chance: 0.1 }] },
+  { id: 'bandit_archer', name: 'Bandit Archer', plural: 'Bandit Archers', sprite: 'archer', hp: 8, ac: 12, attack: 3, dice: 1, sides: 6, bonus: 0, speed: 11, xp: 35, gold: [3, 10], ranged: true, missile: true, tint: '#6a7a4a', size: 0.9 },
+  { id: 'cultist', name: 'Ashen Cultist', plural: 'Ashen Cultists', sprite: 'cultist', hp: 12, ac: 12, attack: 3, dice: 1, sides: 6, bonus: 2, speed: 10, xp: 50, gold: [5, 20], tint: '#5a4a5a', size: 0.9, drops: [{ item: 'potion_sp', chance: 0.15 }] },
+  { id: 'skeleton', name: 'Skeleton', plural: 'Skeletons', sprite: 'skeleton', hp: 13, ac: 13, attack: 3, dice: 1, sides: 8, bonus: 1, speed: 8, xp: 55, gold: [0, 6], mindless: true, tint: '#d8d0c0', size: 0.9 },
+  { id: 'riftling', name: 'Riftling', plural: 'Riftlings', sprite: 'riftling', hp: 11, ac: 14, attack: 3, dice: 2, sides: 4, bonus: 0, speed: 15, xp: 60, gold: [0, 0], tint: '#c05a3a', size: 0.7, inflict: { cond: 'paralysed', chance: 0.1 } },
+  { id: 'rift_warden', name: 'Rift Warden', plural: 'Rift Wardens', sprite: 'warden', hp: 40, ac: 15, attack: 5, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 300, gold: [20, 40], tint: '#e07a3a', size: 1.0, mindless: true, drops: [{ item: 'survey_wand', chance: 1 }] },
+  // ---- Greywater: band 2-5, the caves between the cellar and the pass ----
+  { id: 'shore_crab', name: 'Shore Crab', plural: 'Shore Crabs', sprite: 'crab', hp: 16, ac: 15, attack: 3, dice: 1, sides: 6, bonus: 1, speed: 8, xp: 60, gold: [0, 0], mindless: true, tint: '#b0603a', size: 0.5 },
+  { id: 'smuggler', name: 'Smuggler', plural: 'Smugglers', sprite: 'smuggler', hp: 18, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 1, speed: 11, xp: 70, gold: [6, 18], tint: '#4a5a7a', size: 0.9, drops: [{ item: 'potion_heal', chance: 0.15 }, { item: 'shortsword', chance: 0.05 }] },
+  { id: 'smuggler_bowman', name: 'Smuggler Bowman', plural: 'Smuggler Bowmen', sprite: 'smuggler_bow', hp: 14, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 12, xp: 75, gold: [5, 15], ranged: true, missile: true, tint: '#3a6a6a', size: 0.9, drops: [{ item: 'shortbow', chance: 0.05 }] },
+  { id: 'smuggler_captain', name: 'Smuggler Captain', plural: 'Smuggler Captains', sprite: 'smuggler_captain', hp: 45, ac: 14, attack: 5, dice: 1, sides: 10, bonus: 2, speed: 12, xp: 400, gold: [40, 80], tint: '#2a3a5a', size: 1.0, drops: [{ item: 'axe', chance: 0.5 }] },
+  { id: 'drowned', name: 'Drowned Man', plural: 'Drowned Men', sprite: 'drowned', hp: 20, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 0, speed: 9, xp: 100, gold: [0, 8], mindless: true, tint: '#5a8a80', size: 0.85, inflict: { cond: 'diseased', chance: 0.15 } },
+  { id: 'ghoul', name: 'Ghoul', plural: 'Ghouls', sprite: 'ghoul', hp: 22, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 2, speed: 9, xp: 95, gold: [0, 6], mindless: true, tint: '#8aa070', size: 0.9, inflict: { cond: 'paralysed', chance: 0.1 } },
+  { id: 'ashen_acolyte', name: 'Ashen Acolyte', plural: 'Ashen Acolytes', sprite: 'acolyte', hp: 20, ac: 13, attack: 5, dice: 2, sides: 4, bonus: 1, speed: 11, xp: 110, gold: [8, 20], ranged: true, tint: '#7a4a4a', size: 0.9, drops: [{ item: 'potion_sp', chance: 0.2 }] },
+  { id: 'rift_crawler', name: 'Rift Crawler', plural: 'Rift Crawlers', sprite: 'rift_crawler', hp: 20, ac: 14, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 14, xp: 115, gold: [0, 0], tint: '#c0503a', size: 0.55, inflict: { cond: 'poisoned', chance: 0.25 } },
+  { id: 'ashen_deacon', name: 'Ashen Deacon', plural: 'Ashen Deacons', sprite: 'deacon', hp: 80, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 1000, gold: [60, 120], tint: '#3a2a3a', size: 1.0, drops: [{ item: 'elixir', chance: 1 }] },
+];

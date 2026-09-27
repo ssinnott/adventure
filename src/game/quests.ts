@@ -7,7 +7,7 @@ import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem } from './party.ts';
 import { OUTDOORS } from './outdoors.ts';
-import { QUESTS } from '../content/quests.ts';
+import { QUESTS } from '../content/index.ts';
 
 /** Something the save records. Every part given must hold. */
 export interface QuestCond {
