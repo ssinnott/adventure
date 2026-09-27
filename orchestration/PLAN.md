@@ -80,3 +80,13 @@ and #62; each session was told at 16:59 to merge main and take the new names. #2
 merged locally and checked together: `npm run check` green, five smoke runs green, `npm run build`
 fine. Main's tree matched the tested tree exactly. #23, #27, #28, #39, #44 and #51 closed. Branch
 protection is still the owner's to turn on. #29 was released at 20:39 to merge main and open its PR.
+
+## #29 landed; Wave 2 next
+
+#29 merged as PR #78 at 20:50 (main 79b1265) before the orchestrator's review, most likely by its own
+session. Verified after the fact: sound (REVIEW-wave1.md). The Wave 2 footprints were re-scouted on the
+new layout (footprints-w2/). Every Wave 2 suite would have edited one line of tools/test.ts, and #31,
+#33 and #38 each needed a "reported, not failing" line, so a prep PR goes first (session
+session_018eYejS5iiPqx6QLoSrZnbB, branch `claude/m0-prep-runner`): the runner finds tools/tests/*.ts,
+awaits async suites and walkthroughs, and lib.ts gains `owed(cond, msg, whose)`. Wave 2 starts once
+it has merged, with COMMON-wave2.md as every session's rules.
