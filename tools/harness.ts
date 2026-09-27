@@ -87,10 +87,10 @@ export function edgeOf(c: Character, round: number): Edge {
 }
 
 /**
- * What the item tables put in a company's hands by a level: its kit, then the Shelf's mid-tier (the
- * Greywater chests and Harrow's shop) from 4, then Thornmark's armoury from 8, where plate is dear.
- * Each member takes the best its class can use of the kind it already carries, which flatters the
- * company a little. The curve's gear (EXPANSION.md §5.2) replaces this when it exists.
+ * What the item tables put in a company's hands by a level: its kit, then the Foreland's mid-tier
+ * (the Brandy Hole chests and Helmstow's shop) from 4, then Thornmark's armoury from 8, where plate
+ * is dear. Each member takes the best its class can use of the kind it already carries, which
+ * flatters the company a little. The curve's gear (EXPANSION.md §5.2) replaces this when it exists.
  */
 export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [4, ['longsword', 'axe', 'longbow', 'shield', 'scale', 'chain']],

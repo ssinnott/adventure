@@ -1,5 +1,5 @@
 // The trainers' yards, the two businesses under the open sky: the Wardens' Drillyard inside
-// Harrow's wall, all packed sand and battered dummies, and the Elder's Yard in a clearing of
+// Helmstow's wall, all packed sand and battered dummies, and the Elder's Yard in a clearing of
 // Thornhold's forest, a ring of old stones where the elves teach the bow and the staff.
 import { shade, rgba, mix } from '../../lib/art/palettes.ts';
 import type { Scene, Stage } from './kit.ts';
@@ -91,7 +91,7 @@ export const DRILLYARD: Scene = {
     const WALL_TOP = 92, FOOT = 176;
     skyFill(ctx, 0, 0, STAGE_W, 130, s.daylight, 121);
     clouds(ctx, s.daylight, 10, 122);
-    // Harrow's roofs over the wall, and a watchtower with the Wardens' flag.
+    // Helmstow's roofs over the wall, and a watchtower with the Wardens' flag.
     for (let i = 0; i < 6; i++) {
       const rx = 10 + i * 70 + rnd(123, i) * 20, rw = 40 + rnd(124, i) * 30, rh = 16 + rnd(125, i) * 12, roof = rnd(126, i) < 0.6 ? '#a8503a' : '#5a6070';
       fillPoly(ctx, [rx, WALL_TOP + 2, rx + rw * 0.2, WALL_TOP - rh, rx + rw * 0.8, WALL_TOP - rh, rx + rw, WALL_TOP + 2], mix(roof, '#8a9ab8', 0.25));

@@ -1,4 +1,4 @@
-// The taverns, where the rumours are: the Gilded Eel on Harrow's waterfront, tarred planks and
+// The taverns, where the rumours are: the Gilded Eel on Helmstow's waterfront, tarred planks and
 // nets and the gilt eel over the bar, the harbour and the Hearth out of its window; and the Split
 // Oak in Thornhold, built round a living oak whose trunk parts over the bar.
 import { shade, rgba, mix } from '../../lib/art/palettes.ts';

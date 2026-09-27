@@ -12,12 +12,12 @@ import { THORNHOLD } from './thornhold.ts';
 import { GROVE1 } from './grove1.ts';
 import { GROVE2 } from './grove2.ts';
 
-/** The maps as written, Harrow first: a new game starts on the first map. The outdoor ones are zones the atlas places. */
+/** The maps as written, Helmstow first: a new game starts on the first map. The outdoor ones are zones the atlas places. */
 export const MAP_DEFS: readonly MapDef[] = [HARROW, SHELF, MILL, GREYWATER1, GREYWATER2, THORNMARK, THORNHOLD, GROVE1, GROVE2];
 
 /**
- * The maps as played: the outdoors as one map with the Shelf and Thornmark laid into it where the
- * atlas puts them (game/outdoors.ts), and the towns and dungeons, whose ways out lead onto it.
+ * The maps as played: the outdoors as one map with the Foreland and Thornmark laid into it where
+ * the atlas puts them (game/outdoors.ts), and the towns and dungeons, whose ways out lead onto it.
  */
 export const PLAYED_DEFS: readonly MapDef[] = layOutdoors(ATLAS, MAP_DEFS);
 
