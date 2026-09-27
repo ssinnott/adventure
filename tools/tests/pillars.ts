@@ -1,18 +1,21 @@
 // The pillars, where a machine can check them (EXPANSION §5.4): every secret door has a hint on its
 // near side; no event or sign runs past three lines of the log, every glyph is in the font and the
-// spelling is British; each area's claim of what is new in it holds. Each check is a function of the content it reads, so it runs over every area and over
+// spelling is British; each area's claim of what is new in it holds; a zone map's water and roads
+// carry on into the atlas land beyond its edge. Each check is a function of the content it reads, so it runs over every area and over
 // fixtures broken on purpose, which it must refuse.
 import { readdirSync } from 'node:fs';
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS } from '../../src/content/index.ts';
 import type { Area, Novelty } from '../../src/content/area.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
+import type { Atlas } from '../../src/game/atlas.ts';
+import { worldGrid, isWater, TI, MAP_TERRAIN, TERRAINS } from '../../src/game/atlas.ts';
 import { CLASSES, RACES, TRAITS } from '../../src/game/party.ts';
 import { signLine } from '../../src/game/world.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { FONT_CHARS } from '../../src/lib/engine/text.ts';
 import { logLines, LOG_LINES } from '../../src/ui/frame.ts';
-import { ok } from './lib.ts';
+import { ok, owed } from './lib.ts';
 
 /**
  * What is wrong with a map's secret doors and their hints: a secret door with no hint declared, a
@@ -176,6 +179,51 @@ export function noveltyFaults(areas: readonly Pick<Area, 'id' | 'maps' | 'atlas'
   return out;
 }
 
+/** Where a zone map's edge and the atlas beyond it disagree: the square on the map, and why. */
+export interface EdgeFault { map: string; x: number; y: number; why: string }
+
+/**
+ * Where a zone map's water and roads stop at its edge though the atlas land beyond goes on, or the
+ * atlas's water and roads stop at the map. A map's ring of mountains is its closed border and keeps
+ * the atlas's ground, so behind a ring square the map's side is the square inside it. Land beyond
+ * the edge that another zone map covers, or the void, is no atlas land; sand counts as land. The
+ * atlas's roads are its trails (a planned road) and its built road.
+ */
+export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
+  const grid = worldGrid(atlas, defs), out: EdgeFault[] = [];
+  const laid = atlas.zones.flatMap((z) => {
+    const def = defs.find((d) => d.id === z.map);
+    return def && z.at ? [{ def, x: z.at[0], y: z.at[1], w: Math.max(...def.rows.map((r) => r.length)), h: def.rows.length }] : [];
+  });
+  for (const z of laid) {
+    for (let my = 0; my < z.h; my++) for (let mx = 0; mx < z.w; mx++) {
+      for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+        const ox = mx + dx, oy = my + dy;
+        if (ox >= 0 && oy >= 0 && ox < z.w && oy < z.h) continue;
+        const ax = z.x + ox, ay = z.y + oy, t = grid.t(ax, ay);
+        if (t === TI.void || laid.some((o) => o !== z && ax >= o.x && ay >= o.y && ax < o.x + o.w && ay < o.y + o.h)) continue;
+        const ring = z.def.rows[my][mx] ?? 'M', ch = ring === 'M' ? z.def.rows[my - dy]?.[mx - dx] : ring;
+        if (ch === undefined || ch === 'M') continue; // a corner of the ring
+        const mine = MAP_TERRAIN[ch] ?? 'grass', road = !!grid.road[ay * grid.width + ax] || t === TI.road;
+        const theirs = road ? 'road' : TERRAINS[t];
+        const wet = mine === 'sea' || mine === 'shallow';
+        if (wet !== isWater(t) || (mine === 'road') !== road) out.push({ map: z.def.id, x: mx, y: my, why: `${mine} against the atlas's ${theirs} at ${ax},${ay}` });
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * The squares where map and atlas disagree today, which the owner is to settle (the atlas's coast
+ * and trail ends, or the maps): each is reported, and fails once it agrees, so it is dropped here.
+ * The Foreland's west (shelf 0,28-30) is where #47 opens the Salt Road.
+ */
+const EDGES_OWED: Record<string, readonly string[]> = {
+  shelf: ['0,28', '0,29', '0,30', '1,31', '2,31', '3,31', '4,31', '5,31', '6,31', '7,31', '8,31'],
+  thornmark: ['31,9', '31,14', '31,15', '31,16', '31,17', '31,19', '31,24', '31,25', '31,26', '31,27', '31,28', '1,31', '2,31'],
+};
+
 export async function pillars(): Promise<void> {
   // Hints: every secret door names one, on its near side.
   for (const area of AREAS) {
@@ -251,5 +299,29 @@ export async function pillars(): Promise<void> {
     ok(claim({ landmarks: ['city'] }).length === 1, `a landmark ${first.id} already has fails`);
     ok(claim({ mechanics: ['feature:sign'] }).length === 1, `a mechanic ${first.id} already has fails`);
     ok(claim({}).length === 1, 'an area after the first that claims nothing fails');
+  }
+
+  // The land agrees with the map: water and roads carry on across a zone map's edge.
+  const edges = edgeFaults(ATLAS, MAP_DEFS);
+  for (const area of AREAS) for (const def of area.maps.filter((d) => d.kind === 'outdoor')) {
+    const mine = edges.filter((e) => e.map === def.id), known = EDGES_OWED[def.id] ?? [];
+    const fresh = mine.filter((e) => !known.includes(`${e.x},${e.y}`));
+    ok(!fresh.length, `${area.id}/${def.id}: its water and roads carry on into the atlas beyond its edge${known.length ? `, but for ${known.length} square(s) owed` : ''}${fresh.length ? ' -> ' + fresh.map((e) => `${e.x},${e.y} ${e.why}`).join('; ') : ''}`);
+    for (const at of known) {
+      const e = mine.find((f) => `${f.x},${f.y}` === at);
+      owed(!e, `${def.id} ${at}: map and atlas agree at the edge${e ? ` (today ${e.why})` : ''}; the atlas or the map to change`, 'owner');
+    }
+  }
+  {
+    // A fixture zone laid on open atlas grass, as tools/tests/atlas.ts lays one.
+    const lay = (rows: string[]): EdgeFault[] => {
+      const fixture: MapDef = { id: 'fixture_edge', name: 'Edge fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
+      const zone = { id: 'fixture_edge', name: 'Edge fixture', area: ATLAS.zones[0].area, map: 'fixture_edge', at: [168, 30] as const };
+      return edgeFaults({ ...ATLAS, zones: [...ATLAS.zones, zone] }, [...MAP_DEFS, fixture]).filter((e) => e.map === 'fixture_edge');
+    };
+    ok(!lay(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'a fixture zone of grass on atlas grass agrees at its edges');
+    ok(lay(['MMMMMM', 'M,,,,M', 'M====M', 'M,,,,M', 'MMMMMM']).length === 2, 'a road that runs into its ring against atlas land fails, at both ends');
+    ok(lay(['MMMMMM', 'M,,,,M', 'MW,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and so does sea at its edge');
+    ok(lay(['MMMMMM', 'M,,,,M', '=,,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and a road through a gap in the ring');
   }
 }
