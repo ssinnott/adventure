@@ -1,38 +1,20 @@
 # The vertical slice (M0) and the road to level 10
 
-What is playable now, what is stubbed, and where things live. Read DESIGN.md first for the why.
+What is playable now, what is stubbed, and where things live: the systems. What each area holds is
+in its own doc, [the Shelf](areas/shelf.md) (Harrow, the cellar, Greywater, band 1-5) and
+[Thornmark](areas/thornmark.md) (Thornhold, the Grove Roots, the Cut Stone, band 5-10). Read
+DESIGN.md first for the why.
 
 ## Playable
 
 - **Title and party creation.** Take the premade six or muster your own: name, race, class, rolled
   stats with reroll. Front row is slots 1–3, back row 4–6.
-- **Harrow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
-  (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
-  when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
-  (the contract and the hand-in), a well, a sign.
 - **Businesses:** stepping into a business's doorway goes inside. The viewport shows its own painted
   room (see Art) while its menus sit in the right-hand panel, where the automap is, as combat's do:
   columns with the price flush right, a note under the list (an item's dice, a spell's effect),
   scrolling for a long stock, a tavern's rumours a page at a time. The log over the room shows only
   what was said inside. Leaving (the last menu closed) steps the party back into the street, facing
   the door.
-- **The Shelf** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, eight roaming or lurking
-  monster groups with respawn timers, the Ashcombe farm. It and Thornmark are played as one
-  outdoors (below).
-- **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
-  dead Lantern and her survey wand, the Rift and its Warden.
-- **Greywater** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
-  cliffs, reached from the beach. Level one, the Greywater Caves: smugglers, shore crabs and drowned
-  men, a secret stash, and the captain's den with the iron key to the stairs. Level two, the Drowned
-  Shrine: an Ashen cult's galleries around a sealed shrine; a secret vestry holds the key, and the
-  Ashen Deacon guards the Greywater Ledger. Captain Hale at the pass checkpoint gives the contract
-  and takes the ledger. Chests carry the Shelf's mid-tier gear (long sword, kite shield, scale,
-  chain, long bow).
-- **The ramp to Thornmark.** The pass needs both `q_ashcombe_done` and `q_greywater_done` (an exit's
-  `needFlag` may list several flags; on the outdoors the Shelf's exit into Thornmark became a gate
-  on the road through the pass, with the same flags and words). The slice's early monsters give about double their old xp, so
-  one clear of the Shelf and the cellar is worth level 2 per member, and adding Greywater is worth
-  level 4 (tests pin both); respawns make up the step to Thornmark's band 5.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors,
   water and mountains gated by party abilities, a calendar and weather over a day/night clock (below),
   automap with field-of-view reveal, rest with food, a search action, exploration spells (Light,
@@ -57,14 +39,14 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
 The world map (M) charts Caldera as one land of 512 by 384 squares, divided into areas (the steps
 of the road of levels) and the zones inside them (`content/atlas.ts`, `game/atlas.ts`). The game now
 walks it that way too: the outdoors is one map, `caldera`, the size of the world, square for square
-with the painted map (`game/outdoors.ts`, which `content/maps/index.ts` runs once to make
+with the painted map (`game/outdoors.ts`, which `content/maps.ts` runs once to make
 `PLAYED_DEFS`, the maps as played).
 
 - **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 where the atlas puts it: the
   Shelf at 200,30 and Thornmark beside it at 232,30. The zone maps are still written as maps of their
-  own in `content/maps/`, in their own coordinates; laying them in moves their features, monster
-  groups and exits to where they sit, and leads every town's and dungeon's way out onto the
-  outdoors. Outdoors, the party's zone says where it is: the name on the status strip and the
+  own in their areas' `maps/` folders, in their own coordinates; laying them in moves their
+  features, monster groups and exits to where they sit, and leads every town's and dungeon's way
+  out onto the outdoors. Outdoors, the party's zone says where it is: the name on the status strip and the
   almanac, the level band, the region whose weather it has, the palette it is painted in.
 - **Walked, not jumped.** An exit from one zone map into the next is dropped: the road through the
   pass runs straight on into Thornmark, and the view looks down it. The Shelf's exit kept its flags
@@ -80,8 +62,8 @@ with the painted map (`game/outdoors.ts`, which `content/maps/index.ts` runs onc
   hides the sky as well as the ground; no weather greys it (it is cut out of the scene as it is
   painted, so anything nearer still covers it, and filled pink from behind at the end). The automap
   marks it the same pink.
-- **Building more.** A new zone is a map in `content/maps/` and a zone in the atlas with a `map` and
-  an `at`; laid in, it opens the void where it stands. Where it meets a built zone, the two maps'
+- **Building more.** A new zone is a map in its area's `maps/` and a zone in the atlas with a `map`
+  and an `at`; laid in, it opens the void where it stands. Where it meets a built zone, the two maps'
   rings are the border between them, to open or keep as each map's author likes.
 - **Around it.** The automap draws a map that fits the panel whole, as before, and for the outdoors
   a window of 33 by 33 squares round the party at the size a 32-square map is drawn. Quests still
@@ -157,33 +139,6 @@ cap, which is 10 until the road past it is built:
   -20). Monk: Unarmoured Defence (robe or less: +1 AC, +1 per two levels), Stillness (no
   paralysis). Bard: Inspiring Song (+1 to-hit for the party while standing). Druid: Nature's Ward
   (no poison), Healing Hands.
-- **Gear.** A Thornmark tier in the Armoury: war hammer, battle axe, great sword, crossbow, the
-  Thornmark bow, rune dagger, grove staff, runed robe, brigandine, plate, tower shield, elixirs,
-  sapphire vials, lantern oil.
-- **Monsters.** Thirteen for band 5–10: dire wolves, thorn spiders, brigands and their archers,
-  Ashen zealots and adepts, rift hounds, bone knights, wraiths, riftling elders, ogres, and two
-  bosses, the Hand of Ash and the Warden of the Cut. Two new drawings (ogre, wraith); the rest
-  re-tint and re-scale the slice's ten.
-- **Thornmark** (outdoor zone, 32×32, band 5–10): reached through the mountain pass on the Shelf's
-  east edge, which a Warden checkpoint holds closed until Vask has the survey wand and Captain Hale
-  has the Greywater ledger. Thornhold in the north-east, a ruined watchtower with an ogre's den, a
-  barrow with bone knights and wraiths, a river with one bridge, a dead survey marker in a lake,
-  and the Grove at the end of a chisel-marked road in the south-west. Fourteen groups.
-- **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the
-  Lantern Hall (tier 4), the Elder's Yard, the Split Oak tavern (rumours about Vask's timing),
-  a healing spring, and Elder Sylvane, who pays 1500 gold for the Underdeep chisel.
-- **The Grove Roots** (dungeon, 16×16, band 6–9): two halves joined by a locked door; the iron
-  key is behind a secret door on the west side; the stairs down are guarded.
-- **The Cut Stone** (dungeon, 16×16, band 8–10): three square rings of Underdeep corridor. A
-  secret door opens the second ring, a door the third, the key the chamber. The Hand of Ash and
-  two adepts wait at the Stone; kill them and the Warden of the Cut, two cells on, is the
-  hardest fight in the game. The chisel goes to Sylvane; the Warden drops the first Meridian
-  journal. The tear closes when the Warden dies: an encounter's `slainText` is said on the kill, so
-  it comes after the fight from whichever side the party fought.
-
-One clear of every map is worth a little over level 7 per member (a test pins this); the
-dungeons respawn in one to two days, and two more sweeps of the Grove reach 10. Levels are still
-bought, so the gold matters: about 8,400 for six members from 5 to 10.
 
 ## Art
 
@@ -228,7 +183,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   the Lantern Hall's copy of the Grove Stone; the Drillyard inside Harrow's wall and the Elder's
   ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak. No people: the
   rooms are backdrops. `kit.ts` has the walls, floors, windows and light, `props.ts` the furniture
-  and goods, one module per trade the scenes. A scene is painted once into an offscreen canvas and
+  and goods; each scene is a file in `ui/interiors/<area>/`, and what both towns' scenes of a trade
+  use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`. A scene is painted once into an
+  offscreen canvas and
   multiplied by a light map (the ambient for the hour plus a pool round every lamp, fire and
   window it put down), so the corners fall dark on their own; flames, glows and drifting motes are
   drawn over it every frame. Windows and the two yards follow the clock.
@@ -276,11 +233,14 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 `npm run check` runs three gates, each verified to be able to fail:
 
-| | |
-|---|---|
-| `typecheck` | `tsc --noEmit`, strict, zero suppressions |
-| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, every doorway business has an interior of its own, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass walked straight through into Thornmark and back with the crossing said each way, the end of the world refusing a step (a mountaineer's too), Town Portal, the stairs, leaving a business into the street; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; the outdoors is one map the size of the world with each zone map laid 1:1 where the atlas puts it and every other square void, the zone maps' rings the end of the world where they face nothing built and the ridge between them left standing with its pass, no exit joining two zones, the checkpoint a gate with the old exit's flags, every exit landing on open ground and every open square of the outdoors reachable, and the composer refusing two zones that share an id or a square; a save round-trips and re-applies door changes, and the outdoors' state saves small; a version 1 save, from when the Shelf and Thornmark were maps of their own, loads onto the outdoors with the party, what was seen and used, the groups, the zones set foot in and the quest log's `visited` where they were; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, no entry vanishes when an item leaves the party, and the quests walk through end to end with each change announced once and the Lost Expedition left open; the calendar's months, seasons, new year and ordinals, and days that lengthen and shorten; the weather is a pure function of its seed, and three years of it in each region bring rain in every season and at every strength, autumn fogs, snow only below freezing and never in summer, far more snow over the pass, deep snow lying there much of the winter, and wet spells that last hours; the log's hysteresis and wording; a new game opens fair; reading the weather draws nothing from the gameplay rng; fog and downpours cut sight (not underground, and Light does not cut fog), deep snow slows a step, archers shoot worse in a downpour and casters do not; the inn waits for winter light; towns and dungeons share their region; an old save without a weather seed loads |
-| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, walks into the Hearthlight and out again, paints all twelve interiors by day and by night, talks to Vask and opens the quest log, paints the Shelf in a downpour and a fight in it and Thornmark under falling snow, opens the world map, faces the end of the world west of the Shelf on a clear noon and finds the view pink and the automap marking it, is refused a step into it, walks the open pass straight into Thornmark, and asserts every screen painted with no page error and the log reported the quest, the weather and the crossing; also unions every pair of sprite part kinds and asserts none of them leaves a hole; and paints a view from every open cell of the cellar and of Harrow over two backdrops and asserts the backdrop never shows through a crack between walls, nor at the edges of the view beside the party |
+- `typecheck`: `tsc --noEmit`, strict, zero suppressions. It is the first content check: a monster
+  with no drawing, a business with no room or a map in no region fails it.
+- `test`: `node tools/test.ts`, the suites in `tools/tests/`, one file each (maps, movement,
+  monsters, combat, harness, party, traits, calendar, weather, atlas, outdoors, save, quests), then
+  each area's walkthrough where it has one. Every check prints a line saying what it holds, so the
+  output is the list; `node tools/test.ts maps combat` runs a few suites.
+- `smoke`: `node tools/smoke.ts`, headless Chromium playing the game through the dev server: every
+  screen painted with no page error, and a line for each check as well.
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -317,10 +277,13 @@ from 11 and again from 29, and sneak attacks grow.
 | `ui/viewport.ts` | the depth-layered first-person compositor, the sky, the end of the world in pink, and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors), party cards, log, purse |
 | `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
-| `ui/interior.ts`, `ui/interiors/*.ts` | the businesses' interiors: the painting kit, the props, one module per trade |
+| `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/quests.ts` | the quest log screen, and `questPage`, its pure page layout |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
-| `content/maps/*.ts` | Harrow, the Shelf, the cellar, Greywater (two levels); Thornmark, Thornhold, the Grove Roots, the Cut Stone; `index.ts` lays them out as played |
-| `content/quests.ts` | the quests' journal entries and goals, and what each is keyed to |
+| `content/index.ts` | the areas in road order, the tables merged from them (maps, monsters, items, spells, quests, climates), and the `MonsterSprite`, `Interior` and `RegionId` unions made from them |
+| `content/areas/<area>/` | an area: its maps, monsters, items, quests and climate, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
+| `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
+| `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
+| `content/atlas.ts` | the world map: areas, zones, places and the road of levels, built and planned |

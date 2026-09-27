@@ -567,9 +567,13 @@ very old, with their real map: the hull. The map shows what the Custodian will n
   and portraits, the synth and sequencer for music.
 - **Not from the engine:** netcode. This is single-player; `src/net/` is not vendored.
 - **New, game-owned:** the grid viewport compositor, map format, turn-based combat resolver,
-  spell and item tables, quest state machine, save format, Rift generator.
-- **Data-driven:** maps, monsters, spells, items, quests and dialogue are JSON under `content/`.
-  Code never contains a monster's hit points.
+  quest state machine, save format, Rift generator, and the shape of the content: what a map, a
+  monster, an item, a spell and a quest are.
+- **Content is TypeScript, in `src/content/`:** maps, monsters, spells, items, quests and dialogue,
+  one folder per area (`src/content/areas/<area>/`), merged in road order by
+  `src/content/index.ts`. Not JSON: the type checker is the best content check there is, so a
+  monster with no drawing, a business with no room or a map in no region fails it. The model in
+  `src/game/` holds no content of its own, a monster's hit points included.
 - **Determinism:** combat and Rift generation are pure functions of (state, seed). This gives us
   replayable bug reports and a golden-fingerprint check like the sibling games' `tools/golden.js`.
 
