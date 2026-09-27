@@ -11,15 +11,15 @@ on main at `b92a412` (25 September 2026).
 
 | | Built | Planned |
 |---|---|---|
-| Outdoor land | 1,701 of 111,315 land squares (1.5%): the Shelf and Thornmark | the atlas: about 107 zone maps' worth in 12 areas. DESIGN.md §4 still says 6 regions of 32×32 |
+| Outdoor land | 1,701 of 111,315 land squares (1.5%): the Foreland and Thornmark | the atlas: about 107 zone maps' worth in 12 areas. DESIGN.md §4 still says 6 regions of 32×32 |
 | Towns | 2 | 9 in DESIGN.md; the atlas places 6 more |
 | Dungeons | 3, five levels in all | 22 in DESIGN.md; the atlas places 13 more, the Underdeep and the Core |
 | Levels | 1–10 (`MAX_LEVEL`) | bands to 32 on the atlas |
 | Monsters | 33, each its own drawing, in 11 families | about ten new per area at the rate so far |
 | Interiors | 12, one per business | about six per town |
 
-Land still to build in each area, in 32×32 zone maps' worth (from `worldGrid`): the Shelf 8.3 (one
-built), Thornmark 4.6 (one built), Saltreach 13.8, Wrackholm 1.7, Sunderwood 13.1, the Kilns
+Land still to build in each area, in 32×32 zone maps' worth (from `worldGrid`): the Foreland 8.3
+(one built), Thornmark 4.6 (one built), Saltreach 13.8, Wrackholm 1.7, Sunderwood 13.1, the Kilns
 14.6, Cairnmoor 7.5, Rimewater 12.9, the Whitespine 7.7, Ashfall 10.5, the Glasswold 12.9, Hearth
 Isle 1.1.
 
@@ -46,18 +46,18 @@ opened.
 tests, SLICE.md and the README. Three of the last six pull requests needed main merged into them
 before they could land.
 
-**Tests that pin today's content.** Beside checks that hold for any content (every square
-reachable, every reference real), the suite pins facts about this content: `interiors.length ===
-12`, "one clear of every map is worth level 7", squares on the Shelf. Two branches that each add a
-business both change the 12 to 13, both pass, and main is wrong once the second is merged.
+**Tests that pin today's content.** Beside checks that hold for any content (every square reachable,
+every reference real), the suite pins facts about this content: `interiors.length === 12`, "one
+clear of every map is worth level 7", squares on the Foreland. Two branches that each add a business
+both change the 12 to 13, both pass, and main is wrong once the second is merged.
 
 **Rules that live only in the content.** Measured on what the owner has approved:
 
 - Outdoors, 90% of open squares are within 8 steps of something to find (a feature, a group, a way
   in or out), and none is further than 15. In towns, 6–7 and 10; in dungeons, 3–7 and 10.
-- Three of the five secret doors have a written hint on the near side. The two on the Shelf do not:
-  the Ashcombe cellar's (mill 4,7) has none, and the text beside Greywater's (greywater1 10,11) is
-  the stash behind it.
+- Three of the five secret doors have a written hint on the near side. The two on the Foreland do
+  not: the Ashcombe cellar's (mill 4,7) has none, and the text beside Brandy Hole's (greywater1
+  10,11) is the stash behind it.
 - 42 of the 49 event and sign texts wrap to two lines of the log or fewer, as DESIGN.md §11 asks;
   seven run to three.
 
@@ -128,8 +128,8 @@ bot that mends, casts its best damage spell or strikes, and never flees):
 
 | Fights won (%), each from full health | Band | L1 | L2 | L3 | L4 | L5 |
 |---|---|---|---|---|---|---|
-| The Shelf | 1–5 | 100 | 100 | 100 | 100 | 100 |
-| The Drowned Shrine (Greywater's second level) | 3–5 | 66 | 95 | 100 | 100 | 100 |
+| The Foreland | 1–5 | 100 | 100 | 100 | 100 | 100 |
+| The Seam (Brandy Hole's second level) | 3–5 | 66 | 95 | 100 | 100 | 100 |
 | Thornmark | 5–10 | 16 | 62 | 92 | 100 | 100 |
 | The Grove Roots | 6–9 | 15 | 49 | 79 | 100 | 100 |
 | The Cut Stone | 8–10 | 2 | 10 | 37 | 95 | 100 |
@@ -257,8 +257,8 @@ at three or more over. Simulated from Saltreach on, that kept companies that cle
 nearly four levels over by the Glasswold. Each town's trainers teach to its band's top plus one.
 Gold and loot stay fixed, so a full clear still pays, in gear, gold and secrets.
 
-Its first rows are the slice's own figures from SLICE.md: level 2 from the Shelf and the cellar,
-level 4 with Greywater, a little over level 7 from one clear of everything, two more sweeps of the
+Its first rows are the slice's own figures from SLICE.md: level 2 from the Foreland and the cellar,
+level 4 with Brandy Hole, a little over level 7 from one clear of everything, two more sweeps of the
 Grove to 10, and about 8,400 gold for six members from 5 to 10. Act I falls short of the budget:
 three quarters of it should reach 10, where a clear of everything reaches a little over 7.
 
@@ -306,10 +306,10 @@ to place and worth the walk.
 
 ### 5.4 The pillars, where they can be checked
 
-- **Hints.** If every secret door is to have a hint (the later dungeons all give one; the Shelf's
+- **Hints.** If every secret door is to have a hint (the later dungeons all give one; the Foreland's
   two do not), each names its hint (`hint: '<event id>'`), and the check proves the hint can be
   reached from the start without passing through that door. A check by distance alone would count
-  Greywater's stash, which lies behind its door.
+  Brandy Hole's stash, which lies behind its door.
 - **Text.** No event or sign wraps past three lines of the log, measured with the log's own `wrap`
   (four fill it; two is the aim). Every glyph is in the font, for all text and not only the quest
   log's. British spelling, as the game has it (colour, armour).
@@ -341,7 +341,7 @@ are all off. Every push to main is deployed, so these are players' saves.
   an alpha threshold, ignoring specks), apart from parts it declares detached: glows, sparks,
   something thrown. This is #7 as a check.
 - **No cracks.** The per-square crack sweep runs on every map a pull request changes, not only the
-  cellar and Harrow; the rest are swept on release.
+  cellar and Helmstow; the rest are swept on release.
 - **Restraint.** The share of wall faces dressed, per kind of map, stays at or under its level after
   #9; a new kind of dressing comes with its rate.
 - **Distinct.** Every business its own interior, which is checked today, and every monster def its
@@ -373,7 +373,7 @@ secret found and never told, restraint), reads the text and the code.
   Each area's walkthrough is its chapter; the whole is the chain.
 - **Early is fine.** It is played again with an area taken before the quest sends the company
   there, and the log must still read true.
-- **Today's quests.** The Quiet Farm and The Grove Stone become its first chapters. The Greywater
+- **Today's quests.** The Quiet Farm and The Grove Stone become its first chapters. The Cargo
   Ledger can stay a quest of its own, on the road but off the spine, now that the pass does not wait
   on it; The Lost Expedition stays a subplot. The log is worked out from the save and never stored
   in it, so re-cutting it is safe for old saves.
@@ -430,7 +430,7 @@ docs/areas/<area>.md                    the area's brief, and what was built
 
 | Area | Band | Systems first |
 |---|---|---|
-| The Shelf, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; the flag off the pass, with Thornmark retuned to be the gate (§9); for M1, the first guilds (DESIGN.md §8) |
+| The Foreland, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; the flag off the pass, with Thornmark retuned to be the gate (§9); for M1, the first guilds (DESIGN.md §8) |
 | Saltreach | 10–12 | the level cap past 10 and the xp budget (§5.2), with the first prestiges (DESIGN.md §5) and the spells past 10 (DESIGN.md §7); salt flats and tidal ground; the Salt Compact |
 | Wrackholm | 12–14 | a crossing from the mainland, open from the start |
 | Sunderwood | 14–16 | chasm, crystal and dead wood as terrain; the Rift generator |
@@ -472,10 +472,10 @@ request first; it never edits shared files on the side.
 
 1. **Brief**, in `docs/areas/<area>.md`: purpose, band, landmarks, the secret and its hint, the
    encounters, what is new.
-2. **Scaffold.** `tools/scaffold.ts <zone> <x> <y>`, built in Phase 0, cuts the atlas's terrain
-   for those squares into a draft map, so the land walked matches the land painted. A prototype,
-   tried on the Downs west of the Shelf, gave in a second a wood, the hills and the road, and 14 of
-   its 32 rows nothing but grass: the part to be authored.
+2. **Scaffold.** `tools/scaffold.ts <zone> <x> <y>`, built in Phase 0, cuts the atlas's terrain for
+   those squares into a draft map, so the land walked matches the land painted. A prototype, tried
+   on the Downs west of the Foreland, gave in a second a wood, the hills and the road, and 14 of its
+   32 rows nothing but grass: the part to be authored.
 3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain.
 4. **Check**: `npm run check`, then the contact sheet.
 5. **Review**: a pull request, CI green, the owner's look at the sheet, merge.
@@ -515,9 +515,10 @@ the rest run in parallel.
 2. CLAUDE.md.
 3. The layout refactor (§6), alone.
 4. The contract's checks (§5), each run first against today's content; what they find is fixed, or
-   waived by the owner (the Shelf's two unhinted secrets are given hints, #51). The gate check is
+   waived by the owner (the Foreland's two unhinted secrets are given hints, #51). The gate check is
    the exception: its starting thresholds fail from Thornmark on (§2.2), which is the pilot's work,
-   not a waiver, and on the Shelf too, which the pilot settles by retuning or by moving them (#38).
+   not a waiver, and on the Foreland too, which the pilot settles by retuning or by moving them
+   (#38).
 5. The scaffold and contact-sheet tools, and the hills and farmland the scaffold cuts to (#44); the
    bot of `tools/gate.ts` made into the gate check.
 6. DESIGN.md §4, §12 and §13 brought into line with §2: the scale, the tiers, content as TypeScript.
@@ -528,11 +529,11 @@ comes off the pass and Hale's checkpoint becomes a warning; Thornmark, the Grove
 Stone are retuned until the gate check holds at their floors; the tests that pin the flag gate (the
 movement and outdoors suites, and the smoke test's walk through the pass) follow it; The Quiet Farm
 and The Grove Stone become the one quest's first chapters; the three hand-ins take their items at
-the first meeting. Then the rest of the Shelf and Thornmark
-through the new pipeline: one zone map of the Downs west of the Shelf (band 2–5, where the land runs
-on and the world now ends), then the Deepthorn's core. Meanwhile, in the systems lane, what M1 still
-lacks: the first guilds (DESIGN.md §8). The terrain the pilot asks for comes in Phase 0 (#44).
-Measure how long a zone map takes and what the owner still finds by hand, and tune the thresholds.
+the first meeting. Then the rest of the Foreland and Thornmark through the new pipeline: one zone
+map of the Downs west of the Foreland (band 2–5, where the land runs on and the world now ends),
+then the Deepthorn's core. Meanwhile, in the systems lane, what M1 still lacks: the first guilds
+(DESIGN.md §8). The terrain the pilot asks for comes in Phase 0 (#44). Measure how long a zone map
+takes and what the owner still finds by hand, and tune the thresholds.
 
 **Phase 2: the systems for Acts II to IV**, one at a time: the level cap past 10, with the xp
 budget (§5.2) and the prestiges; the Rift generator, the next regions' climates, the crossings, and
