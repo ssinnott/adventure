@@ -102,20 +102,28 @@ turns.
 Caldera is a ring of land around an inland sea. In the centre of the sea burns **the Hearth**, a
 column of light that has never gone out in recorded history. It has begun to dim.
 
-Around the sea, six regions, each an outdoor map with towns, dungeons, and one **Wardstone**:
+Around the sea, and on two islands in it, twelve areas on one road of levels to 32, six of them
+with a **Wardstone**. In the road's order, as the atlas (`src/content/atlas.ts`) has them:
 
-| Region | Character | Difficulty band | Wardstone |
+| Area | Character | Band | Wardstone |
 |---|---|---|---|
-| **The Foreland** | Starting coast. Fishing towns, farmland, the capital *Helmstow*. | 1–8 | The Lodestone (already intact; tutorial) |
-| **Thornmark** | Old forest, elf holds, ruined watchtowers. | 5–14 | The Grove Stone |
-| **The Kilns** | Dwarven mining country, lava tubes, forges. | 8–18 | The Anvil Stone |
-| **Saltreach** | Marsh delta, smuggler ports, drowned temples. | 10–20 | The Tide Stone |
-| **The Whitespine** | High passes, monasteries, giants. | 14–26 | The Peak Stone |
-| **Ashfall** | Volcanic waste on the far side of the sea. | 20–32 | The Ember Stone |
+| **The Foreland** | The starting coast: the capital *Helmstow*, farms, the Downs. | 1–5 | The Lodestone (already intact; tutorial) |
+| **Thornmark** | Old forest, the elf hold, the Grove, the Deepthorn. | 5–10 | The Grove Stone |
+| **Saltreach** | The Long Water's delta and the free port. | 10–12 | The Tide Stone |
+| **Wrackholm** | The smugglers' isle, where the stolen Tide Stone lies. | 12–14 | |
+| **Sunderwood** | The old wood the rift split. | 14–16 | |
+| **The Kilns** | Dwarf country: mines, forges, the ore port. | 16–18 | The Anvil Stone |
+| **Cairnmoor** | Heather moor, cairns and a ring of stones. | 18–20 | |
+| **Rimewater** | Long lakes under the glacier. | 20–22 | |
+| **The Whitespine** | The great southern range and its monks. | 22–24 | The Peak Stone |
+| **Ashfall** | Fire Mountain, black sand and vines. | 24–26 | The Ember Stone |
+| **The Glasswold** | Steppe round a desert of fused glass. | 26–28 | |
+| **Hearth Isle** | The temple over the Core. | 28–30 | |
 
-*The atlas (`src/content/atlas.ts`) has since grown these six into twelve areas on one road of
-levels to 32, and §9 follows it. Nothing on the road is locked by a skill or a flag
-(docs/EXPANSION.md §2.2): a mountaineer or a ship is a shortcut, never a key.*
+The bands are the atlas's (`areaBand` in `src/game/atlas.ts`), the Foreland's and Thornmark's from
+their maps. Two zones are not on the road: the Glass in the Glasswold and Glacier Foot in
+Rimewater are the reach (§9), off the quest and optional by design. Nothing on the road is locked
+by a skill or a flag (docs/EXPANSION.md §2.2): a mountaineer or a ship is a shortcut, never a key.
 
 Below all of it is **the Underdeep**, the hull's service layer, where geometry becomes too
 regular, materials become too smooth, and the monsters stop being animals. This is where the secret
@@ -128,15 +136,25 @@ The **Hearth Isle** in the centre is reachable only by ship.
 
 ### Scale targets (v1)
 
-*The first sketch; the atlas has outgrown it, and the v1 scale is decided in docs/EXPANSION.md
-§2.1.*
+v1 is **cores and country** (docs/EXPANSION.md §2.1). In each area, a core of hand-built zone maps
+at full density: its towns, its Stone, its dungeons' approaches. The rest of the area is country,
+built to a looser floor (docs/EXPANSION.md §5.3) from the atlas's terrain, the wilderness features
+and per-zone encounter tables. The outdoors is one map, laid out by the atlas and built from 32×32
+zone maps; land not built yet stays void. Coaches and boats come later: travel between towns that
+costs gold and days, so an area's core can be played before the country behind it is built.
 
 | Thing | Count | Grid |
 |---|---|---|
-| Outdoor regions | 6 | 32×32 each |
-| Towns | 9 | 16×16 |
-| Dungeons | 22 | 16×16 to 32×32, 1–4 levels |
+| The outdoors | 12 areas, one map | 512×384 squares |
+| Core zone maps | about 3 an area | 32×32 each, full density |
+| Country | the rest, about 70 zone maps' worth | 32×32 each, the country's floor |
+| Towns | 8 | 16×16 |
+| Dungeons | 18, and the Underdeep and the Core | 16×16 to 32×32, 1–4 levels |
 | Rift templates | 8 | 12×12, seeded |
+
+The towns and dungeons are the atlas's places, built and planned. The reach's dungeons among them
+(the Ice Caves and the Buried Tower; the Vault is not placed yet) are the first thing v1 can leave
+for later.
 
 ---
 
@@ -555,6 +573,9 @@ very old, with their real map: the hull. The map shows what the Custodian will n
 | **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9). | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 
+From M1 on, each area is built as a core and country (§4, docs/EXPANSION.md §2.1): its core
+first, then the country along the road from the last area's core, then the rest of its land.
+
 ---
 
 ## 13. Technical notes
@@ -584,7 +605,9 @@ very old, with their real map: the hull. The map shows what the Custodian will n
 ## 14. Open questions
 
 1. Grid size: 16×16 dungeons feel right; are 32×32 outdoor maps big enough to feel like
-   Xeen, or do we want 64×64 with sparser content?
+   Xeen, or do we want 64×64 with sparser content? *Answered by the zone maps: the outdoors is one
+   map of 512×384 squares, built from 32×32 zone maps, dense in each area's core and sparser in its
+   country (§4, docs/EXPANSION.md §2.1).*
 2. Real-time monster approach on the map versus fully turn-based movement outdoors.
    Xeen does the former; it is tenser. Needs the slice to decide.
 3. Permadeath option at character creation? Cheap to add, changes the temple economy.

@@ -8,9 +8,16 @@ import type { Interior } from '../content/index.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
 
-/** What the floor of a cell is. Drives the floor colour outdoors and the passability rules. */
+/**
+ * What the floor of a cell is. Drives the floor colour outdoors and the passability rules. Hills and
+ * farm are named as the atlas names them (WorldTerrain), so the two agree square for square.
+ */
 export type Terrain =
-  | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow';
+  | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
+  | 'hills' | 'farm';
+
+/** Minutes a step onto hills costs over the usual six in the open. */
+export const HILL_DRAG = 2;
 
 /**
  * What stands in a cell. `wall` blocks movement and sight; billboards block movement, not sight;
@@ -184,6 +191,8 @@ export const LEGEND: Record<string, Cell> = {
   'w': cell('swamp'),
   '!': cell('lava'),
   '*': cell('snow'),
+  '^': cell('hills'),
+  'f': cell('farm'),
   'T': cell('grass', 'tree'),
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),

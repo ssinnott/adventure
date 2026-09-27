@@ -15,13 +15,14 @@ import { harness } from './tests/harness.ts';
 import { party } from './tests/party.ts';
 import { traits } from './tests/traits.ts';
 import { calendar } from './tests/calendar.ts';
+import { terrain } from './tests/terrain.ts';
 import { weather } from './tests/weather.ts';
 import { atlas } from './tests/atlas.ts';
 import { outdoors } from './tests/outdoors.ts';
 import { save } from './tests/save.ts';
 import { quests } from './tests/quests.ts';
 
-const suites: Record<string, () => void> = { maps, movement, monsters, combat, harness, party, traits, calendar, weather, atlas, outdoors, save, quests };
+const suites: Record<string, () => void> = { maps, movement, monsters, combat, harness, party, traits, calendar, terrain, weather, atlas, outdoors, save, quests };
 
 // Each area's walkthrough, found by its file: an area adds one without touching this runner.
 const areas = new URL('../src/content/areas/', import.meta.url);

@@ -4,7 +4,7 @@
 // the party's zone, not its map, says where it is, what the weather does and what the log calls
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
-import { GameMap } from './map.ts';
+import { GameMap, HILL_DRAG } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door, MapZone } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
@@ -273,8 +273,10 @@ export class World {
     }
     this.state.x = nx; this.state.y = ny;
     this.state.steps++;
-    // Six minutes a step in the open, more through deep snow; two in the streets and underground.
-    this.advance(this.map.kind === 'outdoor' ? 6 + snowDrag(this.weather) : 2);
+    // Six minutes a step in the open, more onto hills and more through deep snow, the two adding up;
+    // two in the streets and underground.
+    const hills = this.map.at(nx, ny).terrain === 'hills' ? HILL_DRAG : 0;
+    this.advance(this.map.kind === 'outdoor' ? 6 + hills + snowDrag(this.weather) : 2);
     if (this.state.light > 0) this.state.light--;
     if (this.state.truce > 0 && --this.state.truce === 0) this.state.truceGroups = [];
     this.reveal();

@@ -208,7 +208,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   everything, murk (fog, or rain or snow coming down hard) swallows far faces into the haze, rain
   darkens the ground and leaves puddles holding the sky on the roads, and lying snow whitens the
   ground, the cobbles, the roofs, the hills, the rocks and the conifers' boughs. The grass runs
-  from spring green to tawny through the year; broadleaf trees bud in Thaw, blossom in Sowing,
+  from spring green to tawny through the year. Hills rise as round-shouldered mounds of drier
+  grass that run on into one another (drawn only: they hide nothing yet); farmland lies in fields
+  three squares long in bands two deep, each with its crop (wheat, barley, pasture, roots) green in
+  Sowing, gold or cut by Harvest and ploughed through the winter, its rows or furrows and the
+  hedges between fields showing under snow. Broadleaf trees bud in Thaw, blossom in Sowing,
   turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the winter
   (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn. Lamps
   and windows light early on a dark day. Every frame, over the scene (and over the monsters in a
@@ -236,11 +240,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - `typecheck`: `tsc --noEmit`, strict, zero suppressions. It is the first content check: a monster
   with no drawing, a business with no room or a map in a region no area has fails it.
 - `test`: `node tools/test.ts`, the suites in `tools/tests/`, one file each (maps, movement,
-  monsters, combat, harness, party, traits, calendar, weather, atlas, outdoors, save, quests), then
-  each area's walkthrough where it has one. Every check prints a line saying what it holds, so the
-  output is the list; `node tools/test.ts maps combat` runs a few suites.
+  monsters, combat, harness, party, traits, calendar, terrain, weather, atlas, outdoors, save,
+  quests), then each area's walkthrough where it has one. Every check prints a line saying what it
+  holds, so the output is the list; `node tools/test.ts maps combat` runs a few suites.
 - `smoke`: `node tools/smoke.ts`, headless Chromium playing the game through the dev server: every
-  screen painted with no page error, and a line for each check as well.
+  screen painted with no page error, and a line for each check as well. Every run plays the same
+  world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it).
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -265,7 +270,7 @@ from 11 and again from 29, and sneak attacks grow.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | `MapDef` (rows + legend + features + encounters, and on the outdoors its gates and zones), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void |
+| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, and on the outdoors its gates and zones), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in), older saves brought up to date, the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |

@@ -1,10 +1,20 @@
 // The atlas: the world map's grid, its zones, places and road of levels.
 import { MAP_DEFS } from '../../src/content/index.ts';
 import { ATLAS } from '../../src/content/index.ts';
-import { worldGrid, worldPoint, progression, reachable, isWater, TI } from '../../src/game/atlas.ts';
+import { LEGEND } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/map.ts';
+import { NORTH } from '../../src/game/types.ts';
+import { worldGrid, worldPoint, progression, reachable, isWater, TI, MAP_TERRAIN } from '../../src/game/atlas.ts';
 import { ok } from './lib.ts';
 
 export function atlas(): void {
+  // A built map's hills and farmland are hills and farmland on the world map, square for square.
+  const fixture: MapDef = { id: 'fixture_downs', name: 'Downs fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMMMM', 'M^^ffM', 'M^,ffM', 'MMMMMM'] };
+  const withFixture = { ...ATLAS, zones: [...ATLAS.zones, { id: 'fixture_downs', name: 'Downs fixture', area: ATLAS.zones[0].area, map: 'fixture_downs', at: [168, 30] as const }] };
+  const fg = worldGrid(withFixture, [...MAP_DEFS, fixture]), fw = (x: number, y: number): number => fg.t(168 + x, 30 + y);
+  ok(fw(1, 1) === TI.hills && fw(2, 1) === TI.hills && fw(1, 2) === TI.hills && fw(2, 2) === TI.grass, 'a map\'s hills are hills on the world map');
+  ok(fw(3, 1) === TI.farm && fw(4, 1) === TI.farm && fw(3, 2) === TI.farm && fw(4, 2) === TI.farm, 'and its farmland is farmland');
+  ok(Object.entries(LEGEND).every(([ch, c]) => c.solid !== 'none' || c.door !== 'none' || ch in MAP_TERRAIN), 'every open ground in the legend has its world-map terrain');
   const grid = worldGrid(ATLAS, MAP_DEFS);
   const W = grid.width, H = grid.height;
   ok(W === ATLAS.width && H === ATLAS.height && W % ATLAS.square === 0 && H % ATLAS.square === 0, `the world is ${W}x${H} squares, in whole lettered squares of ${ATLAS.square}`);

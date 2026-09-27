@@ -40,6 +40,7 @@ export const GREYWATER1: MapDef = {
     { kind: 'sign', x: 7, y: 3, text: 'Chalked on the rock: SHIP DUE DARK OF THE MOON. CARGO GOES BELOW, NOT TO HELMSTOW.' },
     { kind: 'chest', x: 14, y: 1, id: 'gw1_c2', gold: 60, items: ['buckler', 'antidote', 'potion_heal'] },
     { kind: 'event', x: 8, y: 8, id: 'gw1_pool', once: true, text: 'A tide pool fills the middle cavern. Things float in it face down, in Helmstow clothes. One of them turns its head.' },
+    { kind: 'event', x: 9, y: 11, id: 'gw1_drag', once: true, text: 'Drag marks in the wet rock run off to the east, into the wall. Whatever made them did not turn back.' },
     { kind: 'event', x: 11, y: 11, id: 'gw1_stash', once: true, text: 'The smugglers\' stash: the good stock, oiled and wrapped in sailcloth.' },
     { kind: 'chest', x: 12, y: 11, id: 'gw1_stash_c', gold: 120, items: ['longsword', 'shield', 'potion_heal'] },
     { kind: 'event', x: 7, y: 13, id: 'gw1_den', once: true, text: 'The captain\'s den: a hammock, a strongbox, and a letter on grey Ashen paper. "The Deacon wants the cargo below by the dark of the moon. Keep the iron key on you."' },

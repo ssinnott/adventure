@@ -10,6 +10,8 @@ import type { Season } from '../../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../../src/game/weather.ts';
 import type { Climate, Sky, Weather } from '../../src/game/weather.ts';
 import { START_MINUTES } from '../../src/game/world.ts';
+import { GameMap, HILL_DRAG } from '../../src/game/map.ts';
+import { SOUTH } from '../../src/game/types.ts';
 import { ok } from './lib.ts';
 
 export function weather(): void {
@@ -93,6 +95,25 @@ export function weather(): void {
   world.travel('shelf', 16, 8, 2); world.state.minutes = clearAt;
   const b2 = world.state.minutes; world.move('forward');
   ok(world.state.minutes - b2 === 6 && weatherSight(world.weather) === 4 && rangedPenalty(world.weather) === 0, 'a dry step on bare ground takes the usual six');
+  // Hills slow a step by the square stepped onto, outdoors only, and deep snow on them adds its own.
+  const hillStep = (map: string, x: number, y: number, at: number, onto: boolean): number => {
+    world.travel(map, x, y, SOUTH); world.state.minutes = at;
+    const c = world.map.at(world.state.x, world.state.y + (onto ? 1 : 0)), was = c.terrain;
+    c.terrain = 'hills';
+    const b = world.state.minutes, moved = world.move('forward').kind === 'moved';
+    c.terrain = was;
+    return moved ? world.state.minutes - b : -1;
+  };
+  ok(HILL_DRAG === 2 && hillStep('shelf', 16, 8, clearAt, true) === 8, `a dry step onto hills takes eight minutes (${hillStep('shelf', 16, 8, clearAt, true)})`);
+  ok(hillStep('thornmark', 13, 12, snowAt, true) === 10, `and ten with deep snow lying (${hillStep('thornmark', 13, 12, snowAt, true)})`);
+  ok(hillStep('shelf', 16, 8, clearAt, false) === 6, 'a step down off the hills takes the usual six');
+  const street = MAP_DEFS.find((d) => d.id === 'harrow')!, streets = new GameMap(street);
+  let sx = -1, sy = -1;
+  for (let y = 1; y < streets.height - 1 && sx < 0; y++) for (let x = 1; x < streets.width - 1; x++) {
+    if (streets.passable(x, y) !== 'ok' || streets.passable(x, y + 1) !== 'ok' || streets.exitAt(x, y + 1) || streets.featuresAt(x, y + 1).length) continue;
+    sx = x; sy = y; break;
+  }
+  ok(sx >= 0 && hillStep('harrow', sx, sy, clearAt, true) === 2, `in a town a step onto hills takes the usual two (Helmstow ${sx},${sy})`);
   // The inn wakes the party at 07:00, or at first light in the depth of winter.
   world.state.minutes = 0; world.sleepUntilMorning();
   ok(world.state.minutes === 7 * 60, 'in the autumn the inn wakes the party at 07:00');

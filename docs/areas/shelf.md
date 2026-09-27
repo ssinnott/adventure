@@ -72,8 +72,9 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
 
 The quests are The Quiet Farm (Vask) and The Cargo Ledger (Hale); the monsters are MONSTERS §5.1's.
-Of the secret doors, the cellar's (mill 4,7) and Brandy Hole's (greywater1 10,11) have no hint on
-the near side yet (#51); the Seam's has the carving over a blank stretch of wall.
+Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
+(`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`) and the Seam's
+the carving over a blank stretch of wall.
 
 In more detail, as SLICE.md had it before the area docs:
 
