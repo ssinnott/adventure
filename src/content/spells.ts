@@ -3,7 +3,7 @@
 // cost; the effect fields say what it does. The order is the order they are taught in.
 import type { SpellDef } from '../game/spells.ts';
 
-export const SPELLS: Record<string, SpellDef> = Object.fromEntries(([
+export const SPELLS: readonly SpellDef[] = [
   // ---- cleric ----
   { id: 'heal', name: 'Mend', list: 'cleric', level: 1, sp: 2, target: 'ally', context: 'any', heal: 8, text: 'Heals a little.' },
   { id: 'bless', name: 'Bless', list: 'cleric', level: 2, sp: 3, target: 'party', context: 'combat', buff: 'bless', turns: 5, text: 'The party hits more often.' },
@@ -35,4 +35,4 @@ export const SPELLS: Record<string, SpellDef> = Object.fromEntries(([
   { id: 'hailstorm', name: 'Hailstorm', list: 'druid', level: 4, sp: 9, target: 'all', context: 'combat', dice: 1, sides: 6, perLevel: true, text: 'Hail batters every foe.' },
   { id: 'stag_heart', name: 'Heart of the Stag', list: 'druid', level: 5, sp: 10, target: 'party', context: 'combat', buff: 'haste', turns: 5, text: 'The party moves first and strikes true.' },
   { id: 'tempest', name: 'Tempest', list: 'druid', level: 5, sp: 13, target: 'all', context: 'combat', dice: 2, sides: 8, perLevel: true, text: 'Wind and lightning on every foe.' },
-] satisfies SpellDef[]).map((s) => [s.id, s]));
+];

@@ -3,8 +3,7 @@
 import { GameMap } from '../game/map.ts';
 import type { MapDef } from '../game/map.ts';
 import { layOutdoors } from '../game/outdoors.ts';
-import { ATLAS } from './atlas.ts';
-import { MAP_DEFS } from './index.ts';
+import { ATLAS, MAP_DEFS } from './index.ts';
 
 /**
  * The maps as played: the outdoors as one map with the Shelf and Thornmark laid into it where the

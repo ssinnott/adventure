@@ -8,6 +8,7 @@ import { GROVE2 } from './maps/grove2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
+import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'thornmark' as const,
@@ -21,4 +22,5 @@ export const AREA = {
   climate: { summer: 17, winter: -4, daily: 5, damp: [0, 0.06], wettest: 80, fog: 0.5, lag: 5,
     fogText: 'Mist rises between the trees.', thunderText: 'Thunder rolls over the forest.' },
   interiors: ['green_man', 'lantern_chapterhouse', 'thornhold_armoury', 'lantern_hall', 'elders_yard', 'split_oak'] as const,
+  atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

@@ -5,6 +5,7 @@ import type { MonsterDef } from '../game/monsters.ts';
 import type { ItemDef } from '../game/items.ts';
 import type { QuestDef } from '../game/quests.ts';
 import type { Climate } from '../game/weather.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite } from '../game/atlas.ts';
 
 export interface Area {
   /** Also the region its maps name for their weather (`MapDef.region`). */
@@ -23,6 +24,11 @@ export interface Area {
   climate: Climate;
   /** Its businesses' painted rooms: the Interior union is made of these, and src/ui/interior.ts paints each. */
   interiors: readonly string[];
+  /**
+   * Its part of the world map: its zones (a built one names its map and where it is laid), the
+   * plates of its towns and dungeons, and its sites. Merged into ATLAS with the plan (atlas.ts).
+   */
+  atlas: { zones: readonly AtlasZone[]; places: readonly AtlasPlace[]; sites: readonly AtlasSite[] };
 }
 
 /**

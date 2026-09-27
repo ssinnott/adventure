@@ -9,6 +9,7 @@ import { GREYWATER2 } from './maps/greywater2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
+import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'shelf' as const,
@@ -22,4 +23,5 @@ export const AREA = {
   climate: { summer: 18, winter: 2, daily: 4, damp: [0.01, 0.07], wettest: 85, fog: 0.8, lag: 0,
     fogText: 'Fog rolls in off the sea.', thunderText: 'Thunder rolls in off the sea.' },
   interiors: ['hearthlight_inn', 'lantern_chapel', 'harrow_provisioner', 'lantern_guildhall', 'warden_drillyard', 'gilded_eel'] as const,
+  atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

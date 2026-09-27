@@ -10,7 +10,7 @@ import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
-import { ATLAS } from '../content/atlas.ts';
+import { ATLAS } from '../content/index.ts';
 import { MAP_DEFS } from '../content/index.ts';
 import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';

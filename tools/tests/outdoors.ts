@@ -5,7 +5,7 @@ import { MAP_DEFS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
-import { ATLAS } from '../../src/content/atlas.ts';
+import { ATLAS } from '../../src/content/index.ts';
 import { zoneOfMap } from '../../src/game/atlas.ts';
 import { ok } from './lib.ts';
 

@@ -1,6 +1,6 @@
 // The atlas: the world map's grid, its zones, places and road of levels.
 import { MAP_DEFS } from '../../src/content/index.ts';
-import { ATLAS } from '../../src/content/atlas.ts';
+import { ATLAS } from '../../src/content/index.ts';
 import { worldGrid, worldPoint, progression, reachable, isWater, TI } from '../../src/game/atlas.ts';
 import { ok } from './lib.ts';
 

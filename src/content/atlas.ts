@@ -15,9 +15,14 @@
 // the Whitespine, and the Hearth from Cinderport after the Glasswold. Three port cities, Saltmouth,
 // Kilnhaven and Cinderport, carry the crossings. Areas are made of zones, the named country inside
 // them; their borders follow the ridges, rivers and cliffs between them.
+//
+// This is the plan: the land, the areas of the road and what is not built yet. Each built area
+// charts its own zones, plates and sites in its folder (areas/<area>/atlas.ts), and
+// src/content/index.ts merges the two into ATLAS, which is what everything reads; a row an area
+// charts replaces the plan's row of the same id.
 import type { Atlas } from '../game/atlas.ts';
 
-export const ATLAS: Atlas = {
+export const PLAN: Atlas = {
   width: 512,
   height: 384,
   square: 32,
@@ -247,10 +252,6 @@ export const ATLAS: Atlas = {
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
   ],
   zones: [
-    { id: 'shelf', name: 'The Shelf', area: 'shelf', map: 'shelf', at: [200, 30] },
-    { id: 'downs', name: 'Harrow Downs', area: 'shelf', band: [2, 5], seeds: [[160, 48], [128, 66], [180, 30]], label: [132, 60] },
-    { id: 'thornmark', name: 'Thornmark', area: 'thornmark', map: 'thornmark', at: [232, 30] },
-    { id: 'deepthorn', name: 'The Deepthorn', area: 'thornmark', band: [8, 10], seeds: [[262, 80], [250, 70], [284, 128]], label: [270, 98] },
     { id: 'upperwater', name: 'The Upper Water', area: 'saltreach', seeds: [[56, 76], [80, 56], [36, 110]] },
     { id: 'delta', name: 'The Delta', area: 'saltreach', seeds: [[62, 150], [84, 136]], label: [76, 128] },
     { id: 'saltings', name: 'The Saltings', area: 'saltreach', seeds: [[98, 194], [70, 194]] },
@@ -276,13 +277,6 @@ export const ATLAS: Atlas = {
     { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
   ],
   places: [
-    { id: 'harrow', kind: 'town', at: [216, 22] },
-    { id: 'mill', kind: 'dungeon', at: [224, 84] },
-    { id: 'greywater1', kind: 'dungeon', at: [196, 68] },
-    { id: 'greywater2', kind: 'dungeon', at: [196, 74] },
-    { id: 'thornhold', kind: 'town', at: [256, 22] },
-    { id: 'grove1', kind: 'dungeon', at: [254, 72] },
-    { id: 'grove2', kind: 'dungeon', at: [254, 78] },
     { id: 'saltmouth', name: 'Saltmouth', kind: 'town', planned: true, band: [10, 12], at: [118, 172] },
     { id: 'drowned_temples', name: 'Drowned Temples', kind: 'dungeon', planned: true, band: [10, 12], at: [56, 160] },
     { id: 'smugglers_cove', name: 'Smugglers\' Cove', kind: 'dungeon', planned: true, band: [12, 14], at: [150, 158] },
@@ -308,21 +302,6 @@ export const ATLAS: Atlas = {
     { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
   ],
   sites: [
-    // I. The Shelf, from its map: Harrow's walls at 14-18,1-3, the Ashcombe farm, the Greywater cliffs.
-    { name: 'Harrow', icon: 'city', map: 'shelf', at: [16.5, 2.4], label: 'right' },
-    { name: 'Harrow Stone', icon: 'stone', map: 'shelf', at: [21.5, 4], label: 'none', planned: true },
-    { name: 'Ashcombe', icon: 'farm', map: 'shelf', at: [26.5, 20.2], label: 'below' },
-    { name: 'Greywater', icon: 'cave', map: 'shelf', at: [2.5, 27.4], label: 'below' },
-    { name: 'Warden Pass', icon: 'gate', map: 'shelf', at: [31.5, 8.6], label: 'none' },
-    { name: 'Gullwick', icon: 'village', at: [172, 70], label: 'below', planned: true },
-    { name: 'Harrow Light', icon: 'lighthouse', at: [140, 88], label: 'below', planned: true },
-    { name: 'Captain\'s Farm', icon: 'farm', at: [176, 42], label: 'right', planned: true }, // the Knight's second prestige
-    // II. Thornmark, from its map, and the Deepthorn.
-    { name: 'Thornhold', icon: 'hold', map: 'thornmark', at: [23, 3.2], label: 'below' },
-    { name: 'Old Tower', icon: 'tower', map: 'thornmark', at: [4.8, 5], label: 'below' },
-    { name: 'Barrow', icon: 'barrow', map: 'thornmark', at: [27.8, 8.4], label: 'below' },
-    { name: 'The Grove', icon: 'grove', map: 'thornmark', at: [7.5, 28.6], label: 'right' },
-    { name: 'Deepthorn Lodge', icon: 'lodge', at: [278, 112], label: 'below', planned: true }, // the Ranger's second prestige
     // III. Saltreach.
     { name: 'Reedholm', icon: 'village', at: [80, 80], label: 'right', planned: true },
     { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
