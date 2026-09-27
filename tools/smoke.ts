@@ -119,7 +119,9 @@ const interiors = await page.evaluate(async () => {
     if (seen.size < 400) thin.push(`${kind}@${daylight} (${seen.size})`);
     n++;
   }
-  return { n, thin };
+  // Held to the content's own list of rooms, so a scene missing from SCENES is caught here too.
+  const C = await load('/src/content/index.ts');
+  return { n, thin, kinds: C.INTERIORS.length as number, missing: (C.INTERIORS as string[]).filter((k) => !(k in I.SCENES)) };
 });
 // Hills and farmland: a patch of each laid on the Foreland, painted at noon and at midnight on a day of
 // each season and under deep snow. Every view is a picture; a hill rises and a field has rows or
@@ -381,7 +383,7 @@ ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
-ok(interiors.n === 24 && interiors.thin.length === 0, `all twelve interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
+ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
   ok(terrains.thin.length === 0, `hills and farmland paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);

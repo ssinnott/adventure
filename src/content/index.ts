@@ -1,0 +1,88 @@
+// The content: the areas in road order, and the tables the game reads, merged from them. Adding an
+// area is its folder under areas/ and its line in AREAS (with the import above it); its drawings
+// and rooms are src/ui's (FAMILY in ui/sprites.ts, SCENES in ui/interior.ts), which the typecheck
+// holds to the lists here. The unions the game types its content with (MonsterSprite, Interior,
+// RegionId) are made from the areas, so nobody edits them by hand. The maps as played, with the
+// outdoors laid out, are in ./maps.ts.
+import type { MapDef } from '../game/map.ts';
+import type { MonsterDef } from '../game/monsters.ts';
+import type { ItemDef } from '../game/items.ts';
+import type { SpellDef } from '../game/spells.ts';
+import type { QuestDef } from '../game/quests.ts';
+import type { Climate } from '../game/weather.ts';
+import type { Atlas } from '../game/atlas.ts';
+import { AREA as shelf } from './areas/shelf/index.ts';
+import { AREA as thornmark } from './areas/thornmark/index.ts';
+import { ITEMS as CORE_ITEMS } from './items.ts';
+import { SPELLS as ALL_SPELLS } from './spells.ts';
+import { PLAN } from './atlas.ts';
+
+/** The areas in road order. The order is behaviour: a new game starts on the first area's first map. */
+export const AREAS = [shelf, thornmark] as const;
+
+type AnyArea = (typeof AREAS)[number];
+/** The regions, one to an area; each map names its region and shares its sky. */
+export type RegionId = AnyArea['id'];
+/** One kind per distinct drawing; kinds that share a family module share a frame but not a look. */
+export type MonsterSprite = AnyArea['sprites'][number];
+/** The painted room a business shows while the party is inside it, one per business. */
+export type Interior = AnyArea['interiors'][number];
+
+// The unions stay lists of names only while every area keeps its literals (`satisfies Area`, not
+// `: Area`). Widened to string, FAMILY and SCENES would stop catching a missing drawing or room,
+// so a widened union fails the typecheck here.
+type Narrow<T extends string> = string extends T ? false : true;
+export const NARROW: [Narrow<RegionId>, Narrow<MonsterSprite>, Narrow<Interior>] = [true, true, true];
+
+/** Rows keyed by id, in order, refusing an id given twice: two areas' 'wolf' would otherwise quietly become one. */
+function byId<T extends { id: string }>(what: string, rows: readonly T[]): Record<string, T> {
+  const out: Record<string, T> = {};
+  for (const r of rows) {
+    if (Object.hasOwn(out, r.id)) throw new Error(`${what} '${r.id}' is defined twice`);
+    out[r.id] = r;
+  }
+  return out;
+}
+/** The same check where the table stays a list. */
+function once<T>(what: string, rows: readonly T[], key: (r: T) => string): readonly T[] {
+  byId(what, rows.map((r) => ({ id: key(r) })));
+  return rows;
+}
+
+once('area', AREAS, (a) => a.id);
+
+/** The maps as written, in road order, Helmstow first. The outdoor ones are zones the atlas places. */
+export const MAP_DEFS: readonly MapDef[] = once('map', AREAS.flatMap((a) => a.maps), (d) => d.id);
+
+export const MONSTERS: Record<string, MonsterDef> = byId('monster', AREAS.flatMap((a) => a.monsters));
+
+/** The items no area owns first, then each area's. */
+export const ITEMS: Record<string, ItemDef> = byId('item', [...CORE_ITEMS, ...AREAS.flatMap((a) => a.items)]);
+
+export const SPELLS: Record<string, SpellDef> = byId('spell', ALL_SPELLS);
+
+/** The quest log's quests, each area's in road order: the log lists them so. */
+export const QUESTS: readonly QuestDef[] = once('quest', AREAS.flatMap((a) => a.quests), (q) => q.id);
+
+export const CLIMATES = Object.fromEntries(AREAS.map((a) => [a.id, a.climate])) as Record<RegionId, Climate>;
+
+/** Every business's interior, in road order. */
+export const INTERIORS: readonly Interior[] = once('interior', AREAS.flatMap((a) => a.interiors), (i) => i);
+
+/**
+ * What the areas chart, then the plan: a row an area charts that the plan has too (a planned place
+ * now built) takes the plan's row's place.
+ */
+function chart<T>(what: string, plan: readonly T[], built: readonly T[], key: (r: T) => string): readonly T[] {
+  const mine = new Map(once(what, built, key).map((r) => [key(r), r]));
+  const planned = new Set(plan.map(key));
+  return [...built.filter((r) => !planned.has(key(r))), ...plan.map((r) => mine.get(key(r)) ?? r)];
+}
+
+/** The world map: the plan (./atlas.ts) with each area's own zones, plates and sites. Everything reads this one. */
+export const ATLAS: Atlas = {
+  ...PLAN,
+  zones: chart('zone', PLAN.zones, AREAS.flatMap((a) => a.atlas.zones), (z) => z.id),
+  places: chart('place', PLAN.places, AREAS.flatMap((a) => a.atlas.places), (p) => p.id),
+  sites: chart('site', PLAN.sites, AREAS.flatMap((a) => a.atlas.sites), (s) => s.name),
+};

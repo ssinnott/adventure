@@ -2,8 +2,8 @@
 // the atlas puts it, so the party walks from the Foreland into Thornmark without a seam, and the
 // painted map and the played one agree square for square. Where no zone map is laid yet the world
 // simply ends: its cells are void, which nothing crosses and the viewport paints as pink empty
-// space. Building a zone is how the world grows: a map of its own in content/maps/, placed by the
-// atlas.
+// space. Building a zone is how the world grows: a map of its own in its area's folder
+// (content/areas/<area>/maps/), placed by the atlas.
 //
 // The zone maps are still written as maps of their own, each closed in by its ring of mountains.
 // Laid in, the stretch of that ring which faces unbuilt world is the end of the world as well, and

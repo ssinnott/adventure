@@ -1,13 +1,13 @@
 // The quest log: which quests the party knows of, what the journal says about each, and what to do
 // next, all worked out from the world state and the party. Nothing here is saved: every condition
 // reads something the save already holds, so the log comes back whole from any save, old ones
-// included. The Game compares one look with the next to announce what changed. The words are in
-// content/quests.ts.
+// included. The Game compares one look with the next to announce what changed. The words are each
+// area's, in content/areas/<area>/quests.ts.
 import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem } from './party.ts';
 import { OUTDOORS } from './outdoors.ts';
-import { QUESTS } from '../content/quests.ts';
+import { QUESTS } from '../content/index.ts';
 
 /** Something the save records. Every part given must hold. */
 export interface QuestCond {

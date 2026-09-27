@@ -1,7 +1,8 @@
 // The party: races, classes, characters, levelling, conditions. Pure data and pure functions; the
 // rng is passed in so tests can pin it.
 import type { RngInstance } from '../lib/engine/rng.ts';
-import { ITEMS, item } from './items.ts';
+import { item } from './items.ts';
+import { ITEMS } from '../content/index.ts';
 import type { ItemDef } from './items.ts';
 import { spellsFor } from './spells.ts';
 import type { SpellList } from './spells.ts';

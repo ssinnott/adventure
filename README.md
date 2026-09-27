@@ -59,13 +59,13 @@ only when all three pass and it is up to date with main.
 src/main.ts        boot: canvas, input, loop
 src/input.ts       keyboard -> queued actions (plus a text mode for names)
 src/game/          the model: map, outdoors, world, calendar, weather, party, items, spells, monsters, combat, quests, save, game
-src/content/       the authored content; quests.ts is the quest log's words
-src/content/maps/  the authored maps: Helmstow, the Foreland, the cellar, Brandy Hole, Thornmark, Thornhold, the Grove
+src/content/       the content, in TypeScript: index.ts lists the areas in road order and merges their tables
+src/content/areas/ one folder per area: its maps, monsters, items, quests and climate (docs/areas/ has each one's doc)
 src/ui/            viewport, frame, sprites, screens, combat screen, quest log, title, party creation
 src/ui/monsters/   the enemy drawings, one module per family, dispatched by sprites.ts
-src/ui/interiors/  the businesses' interiors, one module per trade, dispatched by interior.ts
+src/ui/interiors/  the businesses' interiors, a folder per area and a scene to a file, dispatched by interior.ts
 src/lib/           game-engine, vendored with git subtree (do not edit here; fix upstream)
-tools/             dev server, bundler, tests, smoke test, screenshot, monster and interior galleries, world map export, the level gates' fight simulation, the combat harness and its test monster
+tools/             dev server, bundler, tests (tools/tests/, a file per suite), smoke test, screenshot, monster and interior galleries, world map export, the level gates' fight simulation, the combat harness and its test monster
 ```
 
 ## The engine

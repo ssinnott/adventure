@@ -1,7 +1,7 @@
 // Beneath the Grove, level one: the roots. Two halves joined only by a locked door; the key is in
 // a room behind a secret door on the west side. The stairs down are in the south-east room.
-import type { MapDef } from '../../game/map.ts';
-import { NORTH, SOUTH } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const GROVE1: MapDef = {
   id: 'grove1',

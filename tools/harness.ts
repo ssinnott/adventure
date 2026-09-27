@@ -31,10 +31,11 @@ import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttac
 import type { CombatState, MonsterInst, PartyAction, Edge } from '../src/game/combat.ts';
 import { spell, spellDice } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
-import { item, ITEMS } from '../src/game/items.ts';
+import { item } from '../src/game/items.ts';
+import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
-import { MAP_DEFS } from '../src/content/maps/index.ts';
+import { MAP_DEFS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster } from './testmonster.ts';
 import type { Role } from './testmonster.ts';
 

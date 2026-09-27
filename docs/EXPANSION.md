@@ -55,9 +55,9 @@ both change the 12 to 13, both pass, and main is wrong once the second is merged
 
 - Outdoors, 90% of open squares are within 8 steps of something to find (a feature, a group, a way
   in or out), and none is further than 15. In towns, 6–7 and 10; in dungeons, 3–7 and 10.
-- Three of the five secret doors have a written hint on the near side. The two on the Foreland do
-  not: the Ashcombe cellar's (mill 4,7) has none, and the text beside Brandy Hole's (greywater1
-  10,11) is the stash behind it.
+- All five secret doors have a written hint on the near side. The Foreland's two were given
+  theirs by #51: a cold draught beside the Ashcombe cellar's (mill 4,7), and drag marks beside
+  Brandy Hole's (greywater1 10,11), whose old text was the stash behind it.
 - 42 of the 49 event and sign texts wrap to two lines of the log or fewer, as DESIGN.md §11 asks;
   seven run to three.
 
@@ -308,8 +308,8 @@ to place and worth the walk.
 
 ### 5.4 The pillars, where they can be checked
 
-- **Hints.** If every secret door is to have a hint (the later dungeons all give one; the Foreland's
-  two do not), each names its hint (`hint: '<event id>'`), and the check proves the hint can be
+- **Hints.** If every secret door is to have a hint (today all five give one, the Foreland's two
+  since #51), each names its hint (`hint: '<event id>'`), and the check proves the hint can be
   reached from the start without passing through that door. A check by distance alone would count
   Brandy Hole's stash, which lies behind its door.
 - **Text.** No event or sign wraps past three lines of the log, measured with the log's own `wrap`
@@ -488,8 +488,8 @@ the checks, the sheet.
 ### 8.3 Pull requests
 
 - A `pull_request` workflow runs the typecheck, the tests and the smoke test. The smoke test needs
-  Playwright and Chromium on the runner; today it is not a dependency, and finds Playwright only on
-  a machine that already has it. Branch protection requires the workflow, and requires a branch to
+  Playwright and Chromium on the runner; Playwright is a pinned dev dependency, and the workflow is
+  `.github/workflows/checks.yml` (#27). Branch protection requires the workflow, and requires a branch to
   be up to date with main (or a merge queue): that is what catches two green branches that are red
   together.
 - Small pull requests: a zone map, a dungeon level, a monster family, a town's interiors; not an
@@ -499,11 +499,11 @@ the checks, the sheet.
 
 ### 8.4 CLAUDE.md
 
-There is none, and it is the first thing every session reads. It says: read DESIGN.md, then this,
-then the area's doc; the lanes; the recipe; run `npm run check` before pushing; the voice (terse,
-two lines to an event, British spelling, the secret found and never told); commit subjects as the
-history writes them ("Give the ogre a stoop, a face and a club that is a tree limb"); `src/lib/` is
-vendored, and fixed upstream.
+`CLAUDE.md` at the root (#28) is the first thing every session reads. It says: read DESIGN.md, then
+this, then the area's doc; the lanes; the recipe; run `npm run check` before pushing; the voice
+(terse, two lines to an event, British spelling, the secret found and never told); commit subjects
+as the history writes them ("Give the ogre a stoop, a face and a club that is a tree limb");
+`src/lib/` is vendored, and fixed upstream.
 
 ---
 
