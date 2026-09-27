@@ -86,14 +86,14 @@ export function density(): void {
   const fails = (d: MapDef, what: string, msg: string): void => { const w = judge(d).why; ok(w.includes(what), `${msg}: ${w || 'passes'}`); };
   const passes = (d: MapDef, msg: string): void => { const w = judge(d).why; ok(!w, `${msg}${w ? ': ' + w : ''}`); };
   const thornmark = find('thornmark'), shelf = find('shelf'), harrow = find('harrow');
-  fails(bare(thornmark), 'under 90%', 'Thornmark stripped of its features fails core');
+  fails(bare(thornmark, { density: 'core' }), 'under 90%', 'Thornmark stripped of its features fails core');
   passes({ ...thornmark, density: 'country' }, 'Thornmark marked country passes the looser floor');
   fails(bare(harrow), 'past 10', 'Harrow stripped of its features fails the town floor');
-  fails(bare(shelf), 'under 90%', 'the Foreland stripped of its features fails core');
+  fails(bare(shelf, { density: 'core' }), 'under 90%', 'the Foreland stripped of its features fails core');
   passes(bare(shelf, { density: 'country' }), 'and passes country: the mark switches the floor');
   const sign = (n: number): MapDef['features'] => [...shelf.features!, ...Array.from({ length: n }, () => ({ kind: 'sign' as const, x: shelf.start.x, y: shelf.start.y, text: '' }))];
-  passes({ ...shelf, features: sign(1) }, 'the Foreland with one more sign (6 of 24) passes');
-  fails({ ...shelf, features: sign(2) }, 'a sign', 'and with two more (7 of 25) fails');
+  passes({ ...shelf, density: 'core', features: sign(1) }, 'the Foreland with one more sign (6 of 24) passes');
+  fails({ ...shelf, density: 'core', features: sign(2) }, 'a sign', 'and with two more (7 of 25) fails');
   fails({ ...shelf, density: undefined }, 'neither core nor country', 'an outdoor map with no mark fails');
   fails({ ...harrow, density: 'core' }, 'only an outdoor map', 'a town with a mark fails');
   const island: MapDef = { id: 'island', name: 'Island', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#.#.#', '#####'], exits: [] };
