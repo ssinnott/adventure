@@ -387,8 +387,11 @@ Three changes to #56's drafts, for the owner:
 - **3 and 6 could be the Wardens' and 5 the Lanterns',** given from their halls (#21). They are
   built as plain quests unless #21 takes them.
 
-A choice put by a person, a person who moves once a flag is set and a letter to read from the pack
-are systems the game lacks (#56, "What they ask of the systems"), built in #76.
+A choice put by a person, words that change with a flag, a person who moves once a flag is set, a
+person who takes more than one item and a letter to read from the pack are systems the game lacks
+(#56, "What they ask of the systems"), built in #76. Every line these quests and the three steps put
+on screen is written in the issue that builds them (#47, #67, #68, #70 and #77), in a Dialogue
+section measured against the game's box and log.
 
 ## 7. Encounters, and what is new
 
