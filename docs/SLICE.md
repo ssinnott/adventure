@@ -266,6 +266,12 @@ where damage spells stop growing at that level, `--gear-grows` one where the com
 growing past Thornmark's, `--level-bonus` one where every member gains a point of damage and of
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow.
+`node tools/scaffold.ts <zone> <x> <y> [--id <map id>] [--out <file> [--force]]` cuts the atlas's
+32 by 32 squares from x,y into a zone map's first draft (EXPANSION §8.2): the ground, the woods, the
+hills, the water and the road square for square, with no ring, and the zone's name and band; its
+header notes the seams, where the road leaves and the sites inside. It prints the draft, or writes
+it and never overwrites without `--force`, and refuses a cut outside the world, over a laid zone map
+or holding ground no map character is. It registers nothing: the area does.
 
 ## Code map
 
