@@ -1,5 +1,5 @@
 // The interiors of the town's businesses, which the viewport shows while the party is inside one
-// (the visit is screens.ts's InteriorScreen). Each Interior names a Scene in ./interiors/: a room
+// (the visit is screens.ts's InteriorScreen). Each Interior names a Scene in ./interiors/<area>/: a room
 // painted once into an offscreen canvas and multiplied by its light map (see ./interiors/kit.ts),
 // with its flames, glows and drifting motes drawn over it every frame.
 import type { Interior } from '../game/map.ts';
@@ -7,21 +7,11 @@ import type { ViewRect } from './viewport.ts';
 import type { Light, Scene, Stage } from './interiors/kit.ts';
 import { STAGE_W, STAGE_H, drawLights, lightMap } from './interiors/kit.ts';
 import { mix } from '../lib/art/palettes.ts';
-import { HEARTHLIGHT, GREEN_MAN } from './interiors/inns.ts';
-import { LANTERN_CHAPEL, CHAPTERHOUSE } from './interiors/temples.ts';
-import { PROVISIONER, ARMOURY } from './interiors/shops.ts';
-import { GUILDHALL, LANTERN_HALL } from './interiors/guilds.ts';
-import { DRILLYARD, ELDERS_YARD } from './interiors/yards.ts';
-import { GILDED_EEL, SPLIT_OAK } from './interiors/taverns.ts';
+import { SCENES as SHELF } from './interiors/shelf/index.ts';
+import { SCENES as THORNMARK } from './interiors/thornmark/index.ts';
 
-export const SCENES: Record<Interior, Scene> = {
-  hearthlight_inn: HEARTHLIGHT, green_man: GREEN_MAN,
-  lantern_chapel: LANTERN_CHAPEL, lantern_chapterhouse: CHAPTERHOUSE,
-  harrow_provisioner: PROVISIONER, thornhold_armoury: ARMOURY,
-  lantern_guildhall: GUILDHALL, lantern_hall: LANTERN_HALL,
-  warden_drillyard: DRILLYARD, elders_yard: ELDERS_YARD,
-  gilded_eel: GILDED_EEL, split_oak: SPLIT_OAK,
-};
+/** Every business's scene, an area's at a time: an interior with no scene fails the typecheck here. */
+export const SCENES: Record<Interior, Scene> = { ...SHELF, ...THORNMARK };
 
 /** The last room painted: repainted when the business, the size or the hour (to an eighth of a day's light) changes. */
 let painted: { key: string; room: HTMLCanvasElement; lights: Light[] } | null = null;
