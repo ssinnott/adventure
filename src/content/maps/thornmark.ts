@@ -1,4 +1,4 @@
-// Thornmark: old forest east of the Shelf, reached through the mountain pass once Vask opens it.
+// Thornmark: old forest east of the Foreland, reached through the mountain pass once Vask opens it.
 // Thornhold in the north-east, a ruined Warden watchtower in the north-west, a barrow on the
 // eastern hills, a river with one bridge, and the Grove in the deep woods to the south-west.
 // Difficulty band 5-10.
@@ -48,12 +48,12 @@ export const THORNMARK: MapDef = {
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
   ],
   exits: [
-    { x: 0, y: 9, to: 'shelf', tx: 30, ty: 9, tf: WEST, label: 'Back through the pass to the Shelf.' },
+    { x: 0, y: 9, to: 'shelf', tx: 30, ty: 9, tf: WEST, label: 'Back through the pass to the Foreland.' },
     { x: 23, y: 4, to: 'thornhold', tx: 7, ty: 14, tf: NORTH, label: 'You pass under the oak gate of Thornhold.' },
     { x: 7, y: 29, to: 'grove1', tx: 1, ty: 1, tf: SOUTH, label: 'Steps cut into the roots lead down beneath the Grove.' },
   ],
   features: [
-    { kind: 'event', x: 1, y: 9, id: 'thornmark_in', once: true, text: 'Thornmark. The trees here are older than Harrow, and the Warden road under them has not been swept in weeks.' },
+    { kind: 'event', x: 1, y: 9, id: 'thornmark_in', once: true, text: 'Thornmark. The trees here are older than Helmstow, and the Warden road under them has not been swept in weeks.' },
     { kind: 'sign', x: 13, y: 9, text: 'North-east: Thornhold. South, over the bridge: the Grove. Wardens turn back here.' },
     { kind: 'sign', x: 13, y: 19, text: 'The Grove. By order of the Elder, none but Lanterns past this bridge.' },
     { kind: 'sign', x: 23, y: 5, text: 'Thornhold. Elves and honest folk welcome. Leave the trees standing.' },

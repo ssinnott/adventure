@@ -18,6 +18,10 @@ dependencies, and nothing compiled to disk during development.
   not collide, and the order of work.
 - [docs/ISSUES.md](docs/ISSUES.md) — how that work is filed: issue types, labels, epics, the
   Dependencies section every issue carries, and the sections of an issue.
+- [docs/areas/](docs/areas/) — each area's own doc: where the atlas puts it, what is built, what
+  is still to build and what is left to decide. The Foreland's is the first.
+- [docs/NAMES.md](docs/NAMES.md) — how places are named: each people's tongue, the few old names
+  the first crew left, and the rules a rename follows.
 
 ## Running
 
@@ -34,7 +38,7 @@ C casts, I opens the character sheet (1–6 jump to a member), J the quest log, 
 scroll it, Tab shows the areas and zones, Z the whole map at once, Space the almanac: date, season and
 weather), F5/F9 save and load.
 
-The outdoors is one map, laid out square for square as the world map charts it: the Shelf and
+The outdoors is one map, laid out square for square as the world map charts it: the Foreland and
 Thornmark are zones of it, walked between without a seam. Where nothing is built yet the world ends,
 and it looks it: pink empty space (see docs/SLICE.md, "The outdoors as one map").
 
@@ -56,7 +60,7 @@ src/main.ts        boot: canvas, input, loop
 src/input.ts       keyboard -> queued actions (plus a text mode for names)
 src/game/          the model: map, outdoors, world, calendar, weather, party, items, spells, monsters, combat, quests, save, game
 src/content/       the authored content; quests.ts is the quest log's words
-src/content/maps/  the authored maps: Harrow, the Shelf, the cellar, Greywater, Thornmark, Thornhold, the Grove
+src/content/maps/  the authored maps: Helmstow, the Foreland, the cellar, Brandy Hole, Thornmark, Thornhold, the Grove
 src/ui/            viewport, frame, sprites, screens, combat screen, quest log, title, party creation
 src/ui/monsters/   the enemy drawings, one module per family, dispatched by sprites.ts
 src/ui/interiors/  the businesses' interiors, one module per trade, dispatched by interior.ts
