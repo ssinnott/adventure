@@ -13,7 +13,8 @@ map are `shelf`, the Downs `downs`, the city `harrow`.
 
 ## 1. Where it is
 
-The atlas (`src/content/atlas.ts`) makes the Foreland two zones:
+The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` by
+`src/content/index.ts`) makes the Foreland two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
@@ -38,7 +39,7 @@ Its edges:
   straight down through the mountains at x 94, a few squares east of the cliff, where there is
   nothing to follow. At the south end it leaves the cliff and takes a strip of low ground at the
   cliff's foot, about eight squares wide (x 109–120, y 99–121), so the road down Kestrel Edge
-  (`atlas.ts:387`) ends on the Downs and not in the Delta.
+  (`src/content/atlas.ts:365`) ends on the Downs and not in the Delta.
 - **South-west: the Salt Road down Kestrel Edge** into the Delta (10–12). The atlas opens it only
   after step II (`opens: 2`); under one road, lightly held, it is open from the start (#40).
 
@@ -80,7 +81,7 @@ In more detail, as SLICE.md had it before the area docs:
   (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
   when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
   (the contract and the hand-in), a well, a sign.
-- **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, eight roaming or lurking
+- **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or lurking
   monster groups with respawn timers, the Ashcombe farm. It and Thornmark are played as one
   outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
 - **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
@@ -172,7 +173,7 @@ farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41
   where the gate wants a quarter. The area as one is won about 89% of the time at level 1. The
   pilot settles them, by retuning or by moving the thresholds (#47).
 - **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`), and Helmstow's Lantern
-  Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:409`). EXPANSION §4 has an
+  Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:410`). EXPANSION §4 has an
   area's towns sell its band's tier.
 
 ## 9. What the owner has to decide

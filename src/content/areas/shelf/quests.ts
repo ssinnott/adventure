@@ -1,5 +1,6 @@
 // The Foreland's quests, in the journal's words: The Quiet Farm (Vask) and The Cargo Ledger (Hale).
-// How the words are keyed is in src/content/index.ts; tools/tests/quests.ts checks every key.
+// How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every
+// key.
 import type { QuestDef } from '../../../game/quests.ts';
 
 export const QUESTS: readonly QuestDef[] = [

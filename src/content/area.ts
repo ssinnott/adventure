@@ -18,7 +18,13 @@ export interface Area {
   sprites: readonly string[];
   /** Its items; any area's chests, shops and monsters may hold them. */
   items: readonly ItemDef[];
-  /** Its side of the quest log, joined in road order. */
+  /**
+   * Its side of the quest log, joined in road order: what the company's journal says about each
+   * quest as it moves, and what to do next. Every entry is keyed to something the save already
+   * records (a flag an NPC sets, an item carried, a once-only event, a guardian killed, a map set
+   * foot on), so the log needs no state of its own; tools/tests/quests.ts checks every key points at
+   * something real and every page fits the screen.
+   */
   quests: readonly QuestDef[];
   /** The weather its maps share. */
   climate: Climate;

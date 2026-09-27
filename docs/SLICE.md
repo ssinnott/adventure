@@ -234,7 +234,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 `npm run check` runs three gates, each verified to be able to fail:
 
 - `typecheck`: `tsc --noEmit`, strict, zero suppressions. It is the first content check: a monster
-  with no drawing, a business with no room or a map in no region fails it.
+  with no drawing, a business with no room or a map in a region no area has fails it.
 - `test`: `node tools/test.ts`, the suites in `tools/tests/`, one file each (maps, movement,
   monsters, combat, harness, party, traits, calendar, weather, atlas, outdoors, save, quests), then
   each area's walkthrough where it has one. Every check prints a line saying what it holds, so the
@@ -269,7 +269,7 @@ from 11 and again from 29, and sneak attacks grow.
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in), older saves brought up to date, the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
-| `game/weather.ts` | region climates, `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
+| `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling, the premade party |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
 | `game/quests.ts` | `questLog` (the quests known, their entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
