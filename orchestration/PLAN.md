@@ -41,7 +41,9 @@ settle some before they start.
 
 ## What only the owner does
 
-- Merge each pull request (sessions never merge). Pull requests merge with merge commits.
+- Merge each pull request. Sessions never merge their own. At 20:35 on 2026-09-27 the owner asked the
+  orchestrator to merge the milestone's pull requests once verified; it merges with merge commits,
+  after checking the combined tree locally.
 - #27: turn on branch protection for main once the workflow has run once: require the checks,
   require branches to be up to date, no required approvals. A merge queue is not available on a
   user-owned repository.
@@ -71,3 +73,10 @@ empty session instead (six such strays, "⚡ M0 orchestrator → …", were inte
 #64 (4129f47, merged 16:37) renamed places in text only, ids unchanged: the Shelf is the Foreland,
 Harrow is Helmstow, Greywater is Brandy Hole and so on (docs/NAMES.md). It conflicts with #59, #60, #61
 and #62; each session was told at 16:59 to merge main and take the new names. #29 had merged it already.
+
+## Wave 1 landed
+
+#62, #63, #58, #59, #60 and #61 merged at 20:36 (main 2798b2f), in that order, after the six were
+merged locally and checked together: `npm run check` green, five smoke runs green, `npm run build`
+fine. Main's tree matched the tested tree exactly. #23, #27, #28, #39, #44 and #51 closed. Branch
+protection is still the owner's to turn on. #29 was released at 20:39 to merge main and open its PR.
