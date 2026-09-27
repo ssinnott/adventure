@@ -23,8 +23,10 @@ export const VOID_PINK = '#ff5fbf';
 export const TERRAIN_COLORS: Record<Terrain, string> = {
   floor: '#4a4650', grass: '#4c9a3a', dirt: '#8a6a42', road: '#a89068', sand: '#e0c888',
   water: '#3a7ac0', deep: '#24508e', swamp: '#5a7a3a', lava: '#d85a1a', stone: '#7a7a7a', snow: '#eef2f6',
-  hills: '#7a8e48', farm: '#b0a060',
+  hills: '#7a8e48', farm: '#b8b030',
 };
+/** How far the automap washes a terrain's colour toward the parchment. */
+export const AUTOMAP_WASH = 0.55;
 /** The wood the frame is carved from, and its brass fittings. */
 export const WOOD = '#4a2e1c';
 export const WOOD_LIGHT = '#6a4430';

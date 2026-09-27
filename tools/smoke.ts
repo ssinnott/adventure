@@ -100,25 +100,29 @@ const interiors = await page.evaluate(async () => {
   return { n, thin };
 });
 // Hills and farmland: a patch of each laid on the Shelf, painted at noon and at midnight on a day of
-// each season and under deep snow. Every view is a picture; the fields turn from Sowing to Harvest,
-// and snow lies white on both. The patch is taken up again after.
+// each season and under deep snow. Every view is a picture; a hill rises and a field has rows or
+// hedges where grass is flat; the fields turn from Sowing to Harvest, and snow lies white on both.
+// Samples are taken inside the square ahead, clear of its edges. The patch is taken up again after.
 const terrains = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const V = await load('/src/ui/viewport.ts');
   const w = (window as any).__game.game.world;
-  const W = 400, H = 268, thin: string[] = [], mean: Record<string, number[]> = {};
+  const W = 400, H = 268, thin: string[] = [], mean: Record<string, number[]> = {}, form: Record<string, { tones: number; edges: number }> = {};
   const c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
   const minutes = w.state.minutes;
-  // Stand in a field of grain, which greens in Sowing and goes gold by Harvest.
+  // Face north with a field of grain ahead, which greens in Sowing and goes gold by Harvest.
   w.travel('shelf', 16, 16, 0);
-  while (V.fieldAt(w.state.x, w.state.y).crop > 1) w.state.x++;
+  while (V.fieldAt(w.state.x, w.state.y - 1).crop > 1) w.state.x++;
   const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
+  // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
+  const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
-  for (const terrain of ['hills', 'farm']) {
+  for (const terrain of ['grass', 'hills', 'farm']) {
     for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
     for (const [name, doy] of days) for (const hour of [12, 0]) {
+      if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
       w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
       const snow = name === 'snow';
       w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
@@ -126,12 +130,20 @@ const terrains = await page.evaluate(async () => {
       const d = ctx.getImageData(0, 0, W, H).data, seen = new Set<number>();
       for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
       if (seen.size < 20) thin.push(`${terrain} ${name}@${hour} (${seen.size})`);
-      // The mean colour of the ground the party stands on, by noon: one field, whose crop is 0 or 1.
-      if (hour === 12) {
-        const g = ctx.getImageData(W / 2 - 40, H - 12, 80, 12).data, sum = [0, 0, 0];
-        for (let i = 0; i < g.length; i += 4) { sum[0] += g[i]; sum[1] += g[i + 1]; sum[2] += g[i + 2]; }
-        mean[`${terrain} ${name}`] = sum.map((v) => v / (g.length / 4));
-      }
+      if (hour !== 12) continue;
+      const g = ctx.getImageData(x0, y0, sw, sh).data, sum = [0, 0, 0];
+      for (let i = 0; i < g.length; i += 4) { sum[0] += g[i]; sum[1] += g[i + 1]; sum[2] += g[i + 2]; }
+      mean[`${terrain} ${name}`] = sum.map((v) => v / (g.length / 4));
+      if (name !== 'summer') continue;
+      // Form: the tones down the middle of the square (a hill's flank shades), and the hard edges
+      // across it and down it (a field's rows and hedges); flat grass has few of either.
+      const px = (x: number, y: number): number => (y * W + x) * 4;
+      const tones = new Set<number>();
+      let across = 0, down = 0;
+      for (let y = y0; y < y0 + sh; y++) { const i = px(W / 2, y); tones.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]); }
+      for (let x = x0; x < x0 + sw; x++) { const a = px(x, y0 + sh / 2), b = px(x + 1, y0 + sh / 2); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) across++; }
+      for (let y = y0; y < y0 + sh; y++) { const a = px(W / 2, y), b = px(W / 2, y + 1); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) down++; }
+      form[terrain] = { tones: tones.size, edges: Math.max(across, down) };
     }
   }
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
@@ -139,7 +151,7 @@ const terrains = await page.evaluate(async () => {
   const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
   const light = (a: number[]): number => (a[0] + a[1] + a[2]) / 3;
   return {
-    thin, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
+    thin, form, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
     whiten: ['hills', 'farm'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
   };
 });
@@ -317,6 +329,10 @@ ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
 ok(interiors.n === 24 && interiors.thin.length === 0, `all twelve interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(terrains.thin.length === 0, `hills and farmland paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+{
+  const { grass, hills, farm } = terrains.form;
+  ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows or hedges (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
+}
 ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills and the fields (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
 ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);

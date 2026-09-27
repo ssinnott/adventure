@@ -309,7 +309,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const c = cellAt(px, py, f, d, l);
       if (map.at(c.x, c.y).terrain !== 'hills' || isSolidWall(map.at(c.x, c.y))) continue;
       const hillAt = (dl: number): boolean => { const n = map.at(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n); };
-      drawHill(ctx, groundColor('hills', map.kind, ''), cx, horizon, r.h, d, l, c.x * 131 + c.y * 17, dark, haze, hillAt(-1), hillAt(1));
+      drawHill(ctx, groundColor('hills', map.kind, map.paletteAt(c.x, c.y).floor), cx, horizon, r.h, d, l, c.x * 131 + c.y * 17, dark, haze, hillAt(-1), hillAt(1));
     }
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
@@ -655,7 +655,7 @@ function farmPlot(map: GameMap, x: number, y: number, f: Facing): Plot {
 }
 
 /** The hedges through the year: in leaf from Sowing to Mistfall, bare twigs through the winter. */
-function hedgeColor(day: number): string { return mix('#3e5e2a', '#5a4a38', Math.max(0, Math.min(1, (day - 76) / 12, (16 - day) / 12))); }
+export function hedgeColor(day: number): string { return mix('#3e5e2a', '#5a4a38', Math.max(0, Math.min(1, Math.max((day - 76) / 12, (16 - day) / 12)))); }
 
 /**
  * How plainly a crop's rows show on a day: furrows plain while the field lies ploughed, rows softer
@@ -701,7 +701,9 @@ function drawHill(ctx: CanvasRenderingContext2D, base: string, cx: number, horiz
   const top = ly - rise / 0.75;
   const c1: [number, number] = [lx + w * 0.3 + lean, top], c2: [number, number] = [rx - w * 0.3 + lean, top];
   const g = ctx.createLinearGradient(0, ly - rise, 0, ly);
-  g.addColorStop(0, fog(shade(base, 1.1), d, dark, haze)); g.addColorStop(1, fog(shade(base, 0.8), d, dark, haze));
+  // Lit on the crest, shadowed down the flank, and at the foot the ground again, so no seam shows
+  // where the hill meets the floor in front of it.
+  g.addColorStop(0, fog(shade(base, 1.1), d, dark, haze)); g.addColorStop(0.6, fog(shade(base, 0.86), d, dark, haze)); g.addColorStop(1, fog(base, d - 0.5, dark, haze));
   ctx.beginPath(); ctx.moveTo(lx, ly); ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], rx, ly); ctx.closePath();
   ctx.fillStyle = g; ctx.fill();
   ctx.strokeStyle = fog(shade(base, 1.14), d, dark, haze); ctx.lineWidth = 1;
