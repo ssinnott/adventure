@@ -35,9 +35,11 @@ traits that carry a company to it included, are in [SLICE.md](../SLICE.md) ("The
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
-One clear of every map is worth a little over level 7 per member (a test pins this); the
+One clear of every map is worth a little over level 7 per member; the
 dungeons respawn in one to two days, and two more sweeps of the Grove reach 10. Levels are still
-bought, so the gold matters: about 8,400 for six members from 5 to 10.
+bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays
+6,039 xp a member of the 13,667 its curve asks, and 4,932 gold of the 8,400: the curve
+(`src/content/progression.ts`) reports both as owed to the pilot (#26).
 
 ## Tests
 

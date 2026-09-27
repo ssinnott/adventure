@@ -98,7 +98,8 @@ In more detail, as SLICE.md had it before the area docs:
   `needFlag` may list several flags; on the outdoors the Foreland's exit into Thornmark became a gate
   on the road through the pass, with the same flags and words). The slice's early monsters give about double their old xp, so
   one clear of the Foreland and the cellar is worth level 2 per member, and adding Brandy Hole is worth
-  level 4 (tests pin both); respawns make up the step to Thornmark's band 5.
+  level 4; respawns make up the step to Thornmark's band 5. The curve (`src/content/progression.ts`)
+  checks what the area pays, in place of the tests that pinned both.
 
 Its content is in `src/content/areas/shelf/` (maps, monsters, items, quests, climate and its part
 of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. It has no walkthrough of
@@ -165,7 +166,8 @@ farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41
 
 - **Experience.** One clear of the area pays 1,660 xp a member today, just past level 4 (1,650).
   The curve (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor,
-  divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from.
+  divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from;
+  until then the curve reports the shortfall as owed to the pilot (#26).
 - **Gold.** A clear pays about 2,530: 1,065 in chests, about 765 in drops and 700 in rewards.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** #38 reports the Foreland outside the starting thresholds. The Rift Warden, the
