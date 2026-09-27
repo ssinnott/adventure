@@ -1,8 +1,8 @@
 // Greywater, level one: the smugglers' caves in the sea cliffs at the Shelf's south-west corner.
 // Wet rock and tide pools. The smugglers hold the western caves; their captain keeps the iron key
 // in the south, and the locked door east of it is the only way to the stairs down. Band 2-4.
-import type { MapDef } from '../../game/map.ts';
-import { EAST, SOUTH } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { EAST, SOUTH } from '../../../../game/types.ts';
 
 export const GREYWATER1: MapDef = {
   id: 'greywater1',

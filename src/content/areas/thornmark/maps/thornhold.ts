@@ -1,8 +1,8 @@
 // Thornhold, the elf-hold of Thornmark. The second town: an inn, the Lantern chapterhouse (temple
 // and guild, spells to tier 4), an armoury with the Thornmark tier of gear, the Elder's training
 // yard (to level 10), the Split Oak tavern, and Elder Sylvane, who wants proof of who cut the Stone.
-import type { MapDef } from '../../game/map.ts';
-import { NORTH, SOUTH } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const THORNHOLD: MapDef = {
   id: 'thornhold',

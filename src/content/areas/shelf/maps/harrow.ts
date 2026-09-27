@@ -1,7 +1,7 @@
 // Harrow, capital of the Shelf. The party's home town for the slice: inn, temple, shop, guild,
 // trainer and tavern, with the gate south onto the Shelf road.
-import type { MapDef } from '../../game/map.ts';
-import { NORTH, SOUTH } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const HARROW: MapDef = {
   id: 'harrow',

@@ -2,8 +2,8 @@
 // Thornhold in the north-east, a ruined Warden watchtower in the north-west, a barrow on the
 // eastern hills, a river with one bridge, and the Grove in the deep woods to the south-west.
 // Difficulty band 5-10.
-import type { MapDef } from '../../game/map.ts';
-import { EAST, NORTH, SOUTH, WEST } from '../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 
 export const THORNMARK: MapDef = {
   id: 'thornmark',
