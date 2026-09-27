@@ -128,6 +128,7 @@ export interface MapDef {
   id: string;
   name: string;
   kind: MapKind;
+  /** Outdoors only: the floor tools/tests/density.ts holds it to. */ density?: 'core' | 'country';
   rows: readonly string[];
   /** Extra legend entries for this map; merged over the kind's default legend. */
   legend?: Record<string, Partial<Cell>>;
