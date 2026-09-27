@@ -368,14 +368,14 @@ are:
 
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
-| 1 | The Bell That Rang Twice | 1 | Helmstow: the Chapel, the Gilded Eel | a choice put by a person; a person who moves | the side quests' issue |
-| 2 | Who Lived at Ashcombe | 1 | the Hearthlight Inn and Ashcombe; the tenant to Gullwick (F3) | hand-ins at the first meeting (#43); a person who moves | the side quests' issue |
-| 3 | The Well That Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | the side quests' issue |
+| 1 | The Bell That Rang Twice | 1 | Helmstow: the Chapel, the Gilded Eel | a choice put by a person; a person who moves | #77 |
+| 2 | Who Lived at Ashcombe | 1 | the Hearthlight Inn and Ashcombe; the tenant to Gullwick (F3) | hand-ins at the first meeting (#43); a person who moves | #77 |
+| 3 | The Well That Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | #77 |
 | 4 | The Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 |
 | 5 | Oil for the Lamp | 3 | Crowness Light (E3); Mottram's Stores and Vask, in Helmstow | a choice put by a person | #67 |
 | 6 | Riders in the Dark | 3 | Coldharbour (F2) and the ford (E2) | `when` (#41); a choice put by a person | #68 |
-| 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | the side quests' issue |
-| 8 | The Rest of the Survey Team | 4 | the Foreland map's south-west woods; the Chapel, or Thornhold | a choice put by a person; a person who moves | the side quests' issue |
+| 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | #77 |
+| 8 | The Rest of the Survey Team | 4 | the Foreland map's south-west woods; the Chapel, or Thornhold | a choice put by a person; a person who moves | #77 |
 
 Three changes to #56's drafts, for the owner:
 
@@ -388,8 +388,7 @@ Three changes to #56's drafts, for the owner:
   built as plain quests unless #21 takes them.
 
 A choice put by a person, a person who moves once a flag is set and a letter to read from the pack
-are systems the game lacks (#56, "What they ask of the systems"); the side quests' systems issue
-builds them.
+are systems the game lacks (#56, "What they ask of the systems"), built in #76.
 
 ## 7. Encounters, and what is new
 
@@ -443,7 +442,7 @@ Decided by the owner on 27 September 2026:
    finds it (#73).
 7. **The names** (§10).
 8. **The side quests:** #56's eight for the Foreland are pulled into the build, each built where its
-   places are (§6).
+   places are (§6): with their boxes, or in #77, on the systems of #76.
 
 Proposed, for the owner, each in the issue that would build it:
 
