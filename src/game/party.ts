@@ -130,6 +130,9 @@ export interface Party {
   flags: Record<string, number>;
 }
 
+/** The flag a party holds once it has joined a guild: made from the hall's name, so renaming a hall forgets its members. */
+export const guildFlag = (hall: string): string => `guild_${hall}`;
+
 export const BASE_STATS: Stats = { might: 10, intellect: 10, personality: 10, endurance: 10, accuracy: 10, speed: 10, luck: 10 };
 
 /** Stat bonus in the +/-4 range that the tables use. */
