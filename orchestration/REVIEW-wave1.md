@@ -63,3 +63,13 @@ claude/m0-29-layout-refactor (#29) is ready after fixes. As a refactor it holds 
 - **nit** #29-branch: Smoke interiors check is half tautology. Fix: Drop the tautological clause, or compare kinds to a count taken from content (the number of INTERIORS).
 - **nit** #29-branch: A broken walkthrough aborts every suite, even unrelated ones. Fix: Import each walkthrough inside its suite function, so it is loaded lazily, filtered by name and wrapped in the same try/catch.
 - **nit** #29-branch: Stale doc pointers. Fix: Restore the keying explanation to index.ts (or game/quests.ts) and point the headers at it; update the SLICE code-map row.
+
+## Re-verification, 18:15
+
+Every earlier fix proven by breaking it on purpose. After #64's renames were merged in:
+
+- #62, #63, #58, #59: ready to merge. #62's smoke test is deterministic: 12 of 12 on the pinned seed, 5 of 5 random. #63's three checks are green on its head.
+- #60: one fix sent at 18:20, the Foreland's area doc still says its doors have no hint.
+- #61: one fix sent at 18:20, the smoke check never sees hedges or the patchwork.
+- #29: every Done-when line holds. The dry-run area touches only its folder and two lines of index.ts; the tables and ATLAS are identical to main's; a v2 save loads the same; duplicates throw; `: Area` fails the typecheck. Doc pointers in #64's shelf.md and NAMES.md went stale in the move, and five nits remain; sent at 18:20.
+- For the owner: CLAUDE.md's "no Oxford comma" sits beside the game-text rule, but shipped texts use serial commas. Scope it to docs and issues, or keep it for texts too?
