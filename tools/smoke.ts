@@ -5,6 +5,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { randomInt } from 'node:crypto';
 import { createServer } from './server.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -26,6 +27,14 @@ async function launch(chromium: any): Promise<any> {
   }
 }
 
+// Every run plays the same world: the page's Math.random is pinned, so the new game's seed is SMOKE_SEED
+// (the first draw floors to it in freshSeed) and every draw after it follows from it. SMOKE_SEED=random
+// picks one and prints it; SMOKE_SEED=<n> replays that world.
+const DEFAULT_SEED = 1;
+const SEED = process.env.SMOKE_SEED === 'random' ? randomInt(1, 0x7fffffff) : Number(process.env.SMOKE_SEED || DEFAULT_SEED);
+if (!Number.isInteger(SEED) || SEED < 1 || SEED >= 0x7fffffff) throw new Error(`SMOKE_SEED must be random or a whole number from 1 to ${0x7fffffff - 1}`);
+if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
+
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
 const port = (server.address() as { port: number }).port;
@@ -33,6 +42,17 @@ const port = (server.address() as { port: number }).port;
 const { chromium } = loadPlaywright();
 const browser = await launch(chromium);
 const page = await browser.newPage();
+await page.addInitScript((seed: number) => {
+  let s = seed >>> 0, first = true;
+  Math.random = () => {
+    if (first) { first = false; return (seed + 0.5) / 0x7fffffff; }
+    s = (s + 0x6d2b79f5) >>> 0;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}, SEED);
 const errors: string[] = [];
 page.on('pageerror', (e: Error) => errors.push('pageerror: ' + e.message));
 page.on('console', (m: any) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
@@ -54,6 +74,7 @@ const titleColours = await colours();
 // fight.
 await page.keyboard.press('Space'); await page.waitForTimeout(100);
 const screen0 = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const gameSeed = await page.evaluate(() => (window as any).__game.game.top.seed);
 await page.keyboard.press('Space'); await page.waitForTimeout(150);
 const screen1 = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
 for (const k of ['ArrowDown', 'ArrowDown', 'ArrowDown']) { await page.keyboard.press(k); await page.waitForTimeout(40); }
@@ -152,16 +173,18 @@ await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 const almanacClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 await page.keyboard.press('KeyM'); await page.waitForTimeout(150);
 const afterMap = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
-// The end of the world: nothing is built west of the Foreland yet. On a clear noon, facing it from
-// the last square before it, the view is pink empty space and the automap marks it pink; a step
-// into it is refused and the log says why.
-await page.evaluate(async () => {
+const weatherSeed = await page.evaluate(() => (window as any).__game.game.world.state.weatherSeed);
+// The end of the world: nothing is built west of the Foreland yet. On a clear noon, with nothing the
+// view would wash over it, facing it from the last square before it, the view is pink empty space and
+// the automap marks it pink; a step into it is refused and the log says why. No such noon fails the check.
+const edgeAt: number = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
-  const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts');
+  const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts'), V = await load('/src/ui/viewport.ts');
   const g = (window as any).__game.game, w = g.world;
   g.screens = [g.screens[0]]; w.travel('shelf', 1, 12, 3); w.sky = null;
-  const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => wx.precip < 0.02 && wx.fog < 0.2 && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480);
+  const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => wx.precip < 0.02 && !V.washes(wx) && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480);
   if (at >= 0) w.state.minutes = at;
+  return at;
 });
 await page.waitForTimeout(150);
 const pinkIn = async (r: { x: number; y: number; w: number; h: number }): Promise<number> => page.evaluate((b: { x: number; y: number; w: number; h: number }) => {
@@ -171,7 +194,7 @@ const pinkIn = async (r: { x: number; y: number; w: number; h: number }): Promis
   for (let i = 0; i < d.length; i += 4) if (Math.abs(d[i] - 0xff) < 5 && Math.abs(d[i + 1] - 0x5f) < 5 && Math.abs(d[i + 2] - 0xbf) < 5) n++;
   return n;
 }, r);
-const edgeView = await pinkIn({ x: 8, y: 8, w: 400, h: 200 }), edgeMap = await pinkIn({ x: 416, y: 42, w: 216, h: 214 });
+const edgeView = edgeAt >= 0 ? await pinkIn({ x: 8, y: 8, w: 400, h: 200 }) : 0, edgeMap = edgeAt >= 0 ? await pinkIn({ x: 416, y: 42, w: 216, h: 214 }) : 0;
 await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100);
 const edgeBump = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { log: g.log.at(-1), x: g.world.state.x - z.x, zone: z.id }; });
 // The pass, once open, is a road walked straight through into Thornmark, no transition between.
@@ -180,8 +203,10 @@ await page.evaluate(() => {
   g.party.flags.q_ashcombe_done = 1; g.party.flags.q_greywater_done = 1;
   g.world.travel('shelf', 29, 9, 1); g.world.killGroups(['tm_wolves1']);
 });
+// Everything said on the walk, however the sky changes on the way.
+const said0: number = await page.evaluate(() => (window as any).__game.game.said);
 for (let i = 0; i < 4; i++) { await page.keyboard.press('ArrowUp'); await page.waitForTimeout(60); }
-const pass = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { map: g.world.state.mapId, zone: z?.id, x: g.world.state.x - z?.x, y: g.world.state.y - z?.y, screen: g.top.constructor.name, said: g.log.slice(-3).join(' / ') }; });
+const pass = await page.evaluate((s0: number) => { const g = (window as any).__game.game, z = g.world.zone; return { map: g.world.state.mapId, zone: z?.id, x: g.world.state.x - z?.x, y: g.world.state.y - z?.y, screen: g.top.constructor.name, said: g.log.slice(Math.max(0, g.log.length - (g.said - s0))).join(' / ') }; }, said0);
 const passColours = await colours();
 // The monster art unions many parts into one painted mass with the nonzero fill rule, so every
 // part kind has to wind the same way. One that winds the other way punches a hole wherever it
@@ -264,6 +289,7 @@ const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : ' 
 ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
 ok(titleColours > 6, `the title painted (${titleColours} colours)`);
 ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the title opens creation, Space again takes the premade company (${screen0}, ${screen1})`);
+ok(gameSeed === SEED, `the new game starts from the pinned seed (${gameSeed}, weather seed ${weatherSeed})`);
 ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
@@ -282,11 +308,13 @@ ok(mapScreen === 'WorldMapScreen' && mapColours > 200, `M opens the world map an
 ok(zonesColours > 200 && wholeColours > 200, `Tab lays the zones over it and Z shows it whole (${zonesColours}, ${wholeColours} colours)`);
 ok(almanacScreen === 'MessageScreen' && almanacClosed === 'WorldMapScreen', `Space opens the almanac over the map and Esc goes back to it (${almanacScreen}, then ${almanacClosed})`);
 ok(afterMap === 'ExploreScreen', `M closes it again (${afterMap})`);
-ok(edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Foreland, the view is pink empty space and the automap marks it (${edgeView} pink pixels in the view, ${edgeMap} on the automap)`);
+ok(edgeAt >= 0, `the weather has a clear noon with no wash within 480 days, to face the end of the world in (${edgeAt >= 0 ? `minute ${edgeAt}` : `none for weather seed ${weatherSeed}`})`);
+ok(edgeAt >= 0 && edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Foreland, the view is pink empty space and the automap marks it (${edgeAt >= 0 ? `${edgeView} pink pixels in the view, ${edgeMap} on the automap` : 'not looked at: no clear noon'})`);
 ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeBump.x === 1, `a step into it is refused, and the log says why (${JSON.stringify(edgeBump)})`);
 ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /The pass opens onto old forest/.test(pass.said) && passColours > 20,
   `the open pass is walked straight through into Thornmark, which says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 ok(cracks.length === 0, `the walls meet without a crack in the cellar and in Helmstow, and the walls beside the party are drawn${cracks.length ? ` -> ${cracks.length} views, ` + cracks.slice(0, 4).join(', ') : ''}`);
+if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);
