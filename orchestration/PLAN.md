@@ -46,3 +46,14 @@ settle some before they start.
   require branches to be up to date, no required approvals. A merge queue is not available on a
   user-owned repository.
 - Hold the window for #29: merge nothing else while it is open, and merge it promptly.
+
+## Sessions
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 1 | #23, #27 | session_019XPasNJsyLRkoBnxBdzfmA | `claude/m0-23-smoke-seed`, `claude/m0-27-pr-checks` |
+| 1 | #28 | session_01T1SdrKXT57sQerWqy5JV4Z | `claude/m0-28-claude-md` |
+| 1 | #39 | session_01DkebomFuau14EF21iuWFsm | `claude/m0-39-design-cores-country` |
+| 1 | #51 | session_01CsfL1TrnSXkh3LmXXdWs83 | `claude/m0-51-secret-door-hints` |
+| 1 | #44 | session_01E3g6QHFXcVvAs2Cdy97hxy | `claude/m0-44-hills-farmland` |
+| 1 | #29 | session_01VNqdcJMTGWfa2LumbzPFko | `claude/m0-29-layout-refactor` (pull request held) |
