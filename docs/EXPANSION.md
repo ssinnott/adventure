@@ -74,7 +74,7 @@ way. §2.2 settles it, and DESIGN.md §9 now follows the road in five acts.
 
 ## 2. Decisions
 
-### 2.1 How much of the atlas is v1 (open)
+### 2.1 How much of the atlas is v1 (decided)
 
 At the density the owner has approved outdoors (about 1.2 features and 1.5 groups per 100 open
 squares), the rest of the atlas is about 1,000 more features and 1,300 more monster groups before
@@ -84,7 +84,7 @@ rules out filling it with generated land.
 | | What v1 is | Build | Gives up |
 |---|---|---|---|
 | (a) Everything by hand | every square at the slice's density | about 107 zone maps at full density | nothing, if the throughput holds; this is where the quality line is most at risk |
-| **(b) Cores and country** (recommended) | per area, a core of hand-built zone maps at full density (its towns, its Stone, its dungeons' approaches); the rest built as country, to a looser floor (§5.3), from the atlas's terrain, a library of wilderness features and per-zone encounter tables | about three core zone maps per area; the country, the bulk of the land, at a fraction of the effort each | uniform density; the country has to be made good, not merely present |
+| **(b) Cores and country** (the owner's choice) | per area, a core of hand-built zone maps at full density (its towns, its Stone, its dungeons' approaches); the rest built as country, to a looser floor (§5.3), from the atlas's terrain, a library of wilderness features and per-zone encounter tables | about three core zone maps per area; the country, the bulk of the land, at a fraction of the effort each | uniform density; the country has to be made good, not merely present |
 | (c) Cores only | the cores, joined by travel from town to town (a coach, a boat) that costs gold and days; unbuilt land turned to real mountain, cliff or sea | about three zone maps per area | one continuous land, walked |
 
 Under (b) the order is the cores, then the country along the roads between them, then the rest.
@@ -94,9 +94,11 @@ are worth building under (b) as well: they let an area's core be played before t
 it and the last area is built, they are Might and Magic VI's stables, and they spend the clock
 (pillar 4).
 
-Whichever is chosen, DESIGN.md §4's scale table and §12's tiers are rewritten to say so. Whatever
-v1 is, the reach (DESIGN.md §9) is optional by design, so it is the first thing v1 can leave for
-later.
+**Decided: (b), cores and country**, not (a) or (c). Coaches and boats as well, later: to be filed,
+with the owner's agreement, when the second area's core comes up.
+
+DESIGN.md §4's scale table and §12's tiers were rewritten to say so. The reach (DESIGN.md §9) is
+optional by design, so it is the first thing v1 can leave for later.
 
 ### 2.2 One road, lightly held (decided)
 
@@ -580,4 +582,4 @@ without it.
   low. Grow its play with the party's, and let the owner's play overrule it.
 - **One quest, one hotspot.** A quest from level 1 to the cap would be a file every area edits; it
   is joined from chapters instead (§5.8).
-- **Scale creep.** Once §2.1 is decided it is the target; land past it waits in the void.
+- **Scale creep.** §2.1 is the target; land past it waits in the void.
