@@ -29,15 +29,16 @@ all four issues filed so far were found that way, three of them visual (a floati
 much on the walls, #9; cracks and roof seams, #10). Two of the four became checks afterwards (#8's
 sling and #10's cracks); the floating head and the wall dressing did not.
 
-**A check that passes by chance.** The smoke test starts each new game from `Math.random()`, so
-every run checks a different world. Its end-of-the-world check wants a clear noon but lets fog
-through, and once fog passes 0.05 the view draws a haze over the pink that takes it out of the
-check's tolerance. It fails about one run in five (#23). As a required check, that is a pull request
-blocked for nothing, or a habit of running it again until it passes.
+**A check that passed by chance.** The smoke test started each new game from `Math.random()`, so
+every run checked a different world. Its end-of-the-world check wanted a clear noon but let fog
+through, and once fog passed 0.05 the view drew a haze over the pink that took it out of the
+check's tolerance. It failed about one run in five: as a required check, a pull request blocked for
+nothing, or a habit of running it again until it passed. Every run now plays one seeded world (#23).
 
-**What is missing.** Nothing stands between a branch and main. CI runs only on a push to main, and
+**What was missing.** Nothing stood between a branch and main. CI ran only on a push to main, and
 without the smoke test. Nine of the fourteen pull requests were merged within half a minute of being
-opened.
+opened. Every pull request now runs the typecheck, the tests and the smoke test (#27); main
+requires them once the owner turns branch protection on.
 
 **Where parallel work collides.** The most-edited files are `docs/SLICE.md` (17 commits),
 `tools/test.ts` (14), `README.md` (14), `tools/smoke.ts` (11), `src/game/monsters.ts` (10) and
@@ -47,9 +48,10 @@ tests, SLICE.md and the README. Three of the last six pull requests needed main 
 before they could land.
 
 **Tests that pin today's content.** Beside checks that hold for any content (every square reachable,
-every reference real), the suite pins facts about this content: `interiors.length === 12`, "one
-clear of every map is worth level 7", squares on the Foreland. Two branches that each add a business
-both change the 12 to 13, both pass, and main is wrong once the second is merged.
+every reference real), the suite pins facts about this content: "one clear of every map is worth
+level 7", squares on the Foreland. It pinned `interiors.length === 12` too, so two branches that
+each added a business would both change the 12 to 13, both pass, and leave main wrong once the
+second was merged; each business is now held to the rooms its area lists (#29).
 
 **Rules that live only in the content.** Measured on what the owner has approved:
 
@@ -484,6 +486,9 @@ request first; it never edits shared files on the side.
 
 A monster or an interior goes the same way: a brief, the drawing, the gallery or interiors render,
 the checks, the sheet.
+
+An area's dungeons may exit only to its own region's maps, or to the outdoors once its zone is laid,
+so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).
 
 ### 8.3 Pull requests
 

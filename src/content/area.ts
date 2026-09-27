@@ -39,7 +39,7 @@ export interface Area {
 
 /**
  * An area's end-to-end test, in src/content/areas/<area>/walkthrough.ts as `walkthrough`: it plays the
- * area through from outside and checks each step with `ok`. tools/test.ts finds and runs it; nothing
- * in the game imports it, so it stays out of the build.
+ * area through from outside and checks each step with `ok`. tools/test.ts finds and runs it, and
+ * awaits it if it is async; nothing in the game imports it, so it stays out of the build.
  */
-export type Walkthrough = (ok: (cond: boolean, msg: string) => void) => void;
+export type Walkthrough = (ok: (cond: boolean, msg: string) => void) => void | Promise<void>;
