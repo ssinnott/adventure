@@ -59,11 +59,11 @@ For the first time, the man with the grey hands smiled. "Well," he said. "There 
 
 ### Wren
 
-In the morning, the bells of Harrow were ringing. The Queen had died in the night, and nobody could
-tell us of what.
+In the morning, the bells of Helmstow were ringing. The Queen had died in the night, and nobody
+could tell us of what.
 
 With the Queen dead, the city belonged, for now, to her Regent, Lord Vask. He was a tall man with a
-quiet voice, who said he would hold Harrow "until the succession is settled", and looked like
+quiet voice, who said he would hold Helmstow "until the succession is settled", and looked like
 someone who meant to hold it for a very long time. We went to him because we had a promise to keep
 and no money to keep it with.
 
@@ -81,7 +81,7 @@ Past her, the floor had torn open into a glowing wound the size of a door, breat
 oven, and something came up out of it at us. When it was dead, we found a lump of carved stone lying
 by the tear. It hummed so hard you could feel it in your teeth. A piece of one of the great Stones.
 
-We argued about that note all the way back to Harrow. Cassian wanted to keep the wand. Bram said a
+We argued about that note all the way back to Helmstow. Cassian wanted to keep the wand. Bram said a
 job is a job. In the end we were hungry, and Vask was paying, and we handed it over. He turned the
 wand over in his long fingers, and put it in his pocket, and if he knew what it was, his face didn't
 say.
@@ -94,11 +94,11 @@ We should have read the note twice.
 * * *
 
 Captain Hale held the Warden post on the road east, and Bram had served under him once, years
-before. Hale had smugglers in the sea caves at Greywater, and no men to spare, and a list of missing
-fishing boats as long as his arm. That was enough for us. If anyone knew where a stolen boat went,
-it would be smugglers.
+before. Hale had smugglers in the sea caves at Brandy Hole, and no men to spare, and a list of
+missing fishing boats as long as his arm. That was enough for us. If anyone knew where a stolen boat
+went, it would be smugglers.
 
-The caves stank of salt and lamp oil. Crates were stacked along the walls, stamped with the Harrow
+The caves stank of salt and lamp oil. Crates were stacked along the walls, stamped with the Helmstow
 customs seal, which smugglers are not supposed to have. In the middle cavern was a tide pool, and
 things floated in it face down, and one of them turned its head.
 
@@ -121,7 +121,7 @@ the old forest, to get to the Grove before whoever was cutting the Stones.
 * * *
 
 The Wardens at the pass told us the forest would kill us. They were nearly right. Thornmark's trees
-are older than Harrow, and there are wolves under them the size of ponies.
+are older than Helmstow, and there are wolves under them the size of ponies.
 
 The elves of Thornmark are my people, more or less. Their elder, Sylvane, didn't rise when we came
 in. "The Grove Stone has been cut," she said. "Not failed. Cut, by hands, with tools. Vask will tell
@@ -141,7 +141,7 @@ heart opens for whoever makes it whole."
 We brought Sylvane the chisel. She turned it over in her fingers for a long time. The marks on it
 weren't prayers, she said. They were the kind of marks a smith puts on a tool, to say what it's for.
 And she had seen them once before, on the seal of an old treaty her people keep, which says that the
-elves' royal line and Harrow's were once the same.
+elves' royal line and Helmstow's were once the same.
 
 "Whoever armed these people can reach the world beneath this one," she said. "Keep this from Vask."
 
@@ -233,8 +233,8 @@ under the soil and the rock, there was a wall. Flat and seamless, smoother than 
 down further than our light could reach. I put my hand on it. It was warm.
 
 The Lanterns keep a watchtower on the far side of the gorge, and there, they read the smugglers'
-papers for us. Every cargo, the shards and the people, had gone below under the Harrow customs seal,
-the same seal as on the crates in the caves. And every page was countersigned by the Regent.
+papers for us. Every cargo, the shards and the people, had gone below under the Helmstow customs
+seal, the same seal as on the crates in the caves. And every page was countersigned by the Regent.
 
 Vask came himself, the next morning. He rode up to the watchtower with two Wardens and no fear at
 all, and asked for us by name.
@@ -249,14 +249,14 @@ He wasn't wrong about the wall. We told him no anyway. He didn't seem surprised.
 
 "Then stay out of my way," he said. "I don't need you. I have the girl."
 
-When we got back to Harrow, there were Wardens on the walls, and a curfew bell, and the Lanterns'
+When we got back to Helmstow, there were Wardens on the walls, and a curfew bell, and the Lanterns'
 chapel was boarded shut. At the gate, a sergeant stepped in front of Idris. Idris is our paladin,
-and orcblood, and he's been spat at in better cities than Harrow.
+and orcblood, and he's been spat at in better cities than Helmstow.
 
 "No orcblood past the gate," the sergeant said. "Regent's orders."
 
 Idris just nodded, as if he'd been expecting it all his life. We turned around and walked away with
-him, all of us. Harrow wasn't our city any more.
+him, all of us. Helmstow wasn't our city any more.
 
 ---
 
@@ -490,8 +490,8 @@ chooses its own.
 
 If you reignite the Hearth, it stands up out of the sea brighter than anyone living has seen it, and
 the Rifts close all across the world, one by one, like doors in a house at night. The sky stays
-blue. The world you spent your life mapping is the world you keep. Vask stands trial in Harrow, and
-never once looks up.
+blue. The world you spent your life mapping is the world you keep. Vask stands trial in Helmstow,
+and never once looks up.
 
 If you choose to arrive, you open the hull. The Rifts stop for good, because there's nothing left
 for them to hold out. You walk up out of the dark into daylight that's the wrong colour, under a sky
@@ -505,8 +505,8 @@ ever burned, and somewhere far below, engines wake. You won't see the landing. Y
 will, if you tell them the truth.
 
 But one thing is the same on every page. In the spring, we walked Wenna home to Gullwick, along the
-coast road. Harrow's gate stood open when we passed, and nobody said a word to Idris. And her mother
-was standing on the shore, right where we'd left her, as if she'd never moved.
+coast road. Helmstow's gate stood open when we passed, and nobody said a word to Idris. And her
+mother was standing on the shore, right where we'd left her, as if she'd never moved.
 
 This time, she cried.
 
@@ -523,7 +523,7 @@ naming, and the two reach areas it leaves out, are all still in DESIGN.md.
 It adds these to the design, to take in or leave:
 
 - Wren, the premade elf ranger, tells it, and each of the other five has a moment of their own: Bram
-  with Hale, Maren with the drowned god, Ottilie with the smugglers' boat, Idris at Harrow's gate,
+  with Hale, Maren with the drowned god, Ottilie with the smugglers' boat, Idris at Helmstow's gate,
   Cassian with the dwarves' script.
 - The Hearth is the fishermen's lighthouse, and Wenna's boat is taken in the dark the night it goes
   out. The lighthouse keeper counts the eleven from the shore.
@@ -533,7 +533,7 @@ It adds these to the design, to take in or leave:
 - Hale is found chained in the Tide Ship's hold.
 - Vask comes to the Lanterns' watchtower to recruit the company: "I don't need you. I have the
   girl."
-- Harrow turns Idris away at its gate.
+- Helmstow turns Idris away at its gate.
 - The explorers' journal ends "The heart opens for whoever makes it whole", which is why the company
   finishes the last Stone.
 - Wenna goes back below for the others, and the Ashen Hand take her from the shore by the causeway.

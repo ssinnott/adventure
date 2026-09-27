@@ -1,4 +1,4 @@
-// The inns: the Hearthlight in Harrow, a timbered common room round a great fire, and the Green
+// The inns: the Hearthlight in Helmstow, a timbered common room round a great fire, and the Green
 // Man in Thornhold, grown rather than built, where the fire burns under a face of leaves.
 import { shade, rgba } from '../../lib/art/palettes.ts';
 import type { Scene, Stage } from './kit.ts';
@@ -10,7 +10,7 @@ import { glossPoly, glossEllipse, glossBall, blob, softLine } from '../monsters/
 
 const OAK = '#6a4428', OAK_DARK = '#4a2e1c', PLASTER = '#e2d2b0', STONE = '#9a8a78', COPPER = '#c0703a';
 
-/** The Hearth over the inland sea at dusk, as a painter in Harrow would have it: a column of light on the horizon. */
+/** The Hearth over the inland sea at dusk, as a painter in Helmstow would have it: a column of light on the horizon. */
 function hearthPicture(x: number, y: number, w: number, h: number) {
   return (ctx: CanvasRenderingContext2D): void => {
     const g = ctx.createLinearGradient(0, y, 0, y + h * 0.6);

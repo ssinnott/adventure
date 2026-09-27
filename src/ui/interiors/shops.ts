@@ -1,4 +1,4 @@
-// The shops: the Harrow Provisioner, where a party buys its first clubs and rations and torches,
+// The shops: Mottram's Stores, where a party buys its first clubs and rations and torches,
 // and the Thornhold Armoury, where the forge is always lit and the steel is Thornmark's own.
 import { shade, rgba } from '../../lib/art/palettes.ts';
 import type { Scene, Stage } from './kit.ts';
@@ -22,7 +22,7 @@ function coins(ctx: CanvasRenderingContext2D, x: number, y: number, n: number, m
   for (let i = 0; i < n; i++) glossEllipse(ctx, K, x + (rnd(3, i) - 0.5) * 2, y - 1 - i * 2, 4.5, 1.8, metal, 0, { gloss: 0.7 });
 }
 
-// ------------------------------------------------------------------ the Harrow Provisioner ----
+// ------------------------------------------------------------------ Mottram's Stores ----
 
 const PINE = '#8a6038', PINE_DARK = '#5a3a22', WALL = '#e6d8b8';
 

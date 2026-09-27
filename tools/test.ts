@@ -46,7 +46,7 @@ const local = (w: World): { map: string; x: number; y: number } => {
 
 const suites: Record<string, () => void> = {
   maps() {
-    // The maps as written, each on its own, the Shelf and Thornmark included (see `outdoors` for how they are played).
+    // The maps as written, each on its own, the Foreland and Thornmark included (see `outdoors` for how they are played).
     const maps = Object.fromEntries(MAP_DEFS.map((d) => [d.id, new GameMap(d)]));
     for (const def of MAP_DEFS) {
       const m = maps[def.id];
@@ -97,13 +97,13 @@ const suites: Record<string, () => void> = {
       const each = Math.floor(total / 6);
       ok(each >= xpForLevel(7), `one clear of every map is worth level 7 or more per member (${each} xp each; level 10 needs ${xpForLevel(10)})`);
     }
-    { // The Shelf ramp: Ashcombe alone reaches level 2, and both of the dungeons the pass waits on reach
+    { // The Foreland ramp: Ashcombe alone reaches level 2, and both of the dungeons the pass waits on reach
       // level 4 before Thornmark's band 5 (respawns and a second sweep make up the rest).
       const perMember = (ids: string[]): number => Math.floor(MAP_DEFS.filter((d) => ids.includes(d.id))
         .flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)).reduce((t, id) => t + MONSTERS[id].xp, 0) / 6);
       const ashcombe = perMember(['shelf', 'mill']), shelf = perMember(['shelf', 'mill', 'greywater1', 'greywater2']);
-      ok(ashcombe >= xpForLevel(2), `one clear of the Shelf and the cellar is worth level 2 per member (${ashcombe} xp each)`);
-      ok(shelf >= xpForLevel(4), `one clear of the Shelf, the cellar and Greywater is worth level 4 per member (${shelf} xp each)`);
+      ok(ashcombe >= xpForLevel(2), `one clear of the Foreland and the cellar is worth level 2 per member (${ashcombe} xp each)`);
+      ok(shelf >= xpForLevel(4), `one clear of the Foreland, the cellar and Brandy Hole is worth level 4 per member (${shelf} xp each)`);
     }
     // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
     for (const def of MAP_DEFS) {
@@ -125,7 +125,7 @@ const suites: Record<string, () => void> = {
     const rng = makeRng(7);
     const party = defaultParty(rng);
     const world = new World(buildMaps(), party, rng);
-    ok(world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14, 'a new world starts in Harrow at the gate');
+    ok(world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14, 'a new world starts in Helmstow at the gate');
     ok(world.hour === 7 && world.day === 1, `the clock starts on day 1 at 07:00 (${world.hour}:${world.minute})`);
     const r1 = world.move('forward');
     ok(r1.kind === 'moved' && world.state.y === 13, 'stepping forward moves north one cell');
@@ -135,9 +135,9 @@ const suites: Record<string, () => void> = {
     const r2 = world.move('forward'); const r3 = world.move('forward');
     const out = local(world);
     ok(r2.kind === 'moved' && r3.kind === 'moved' && world.map.id === OUTDOORS && out.map === 'shelf' && out.x === 16 && out.y === 4 && world.state.facing === 2,
-      `walking through the south gate arrives outdoors on the Shelf, facing south (${world.map.id}: ${out.map} ${out.x},${out.y})`);
+      `walking through the south gate arrives outdoors on the Foreland, facing south (${world.map.id}: ${out.map} ${out.x},${out.y})`);
     ok(world.explored(world.state.x, world.state.y) && world.explored(world.state.x, world.state.y + 2), 'arrival reveals the cells around and ahead');
-    ok(world.here.name === 'The Shelf' && world.state.zones!.includes('shelf'), `outdoors the place is the zone (${world.here.name}), and the party has set foot in it`);
+    ok(world.here.name === 'The Foreland' && world.state.zones!.includes('shelf'), `outdoors the place is the zone (${world.here.name}), and the party has set foot in it`);
     // Leaving a business: back out of the doorway into the street, facing the door, no time passing.
     world.travel('harrow', 4, 4, 0);
     const at = world.state.minutes;
@@ -165,35 +165,35 @@ const suites: Record<string, () => void> = {
     ok(world.move('forward').kind === 'blocked' === !partyCan(party).swim, 'water is passable only with a swimmer (Tidefolk in the party)');
     world.travel('shelf', 30, 2, 1);
     const steep = world.move('forward');
-    ok(steep.kind === 'blocked' && /steep/.test(steep.reason), 'mountains (the ridge between the Shelf and Thornmark) block without a mountaineer');
+    ok(steep.kind === 'blocked' && /steep/.test(steep.reason), 'mountains (the ridge between the Foreland and Thornmark) block without a mountaineer');
     // Where nothing is built yet the world ends, and nothing crosses into it, a mountaineer included.
     world.travel('shelf', 1, 12, 3);
     const edge = world.move('forward');
-    ok(edge.kind === 'blocked' && edge.reason === 'The world ends here.' && local(world).x === 1, `west of the Shelf the world ends, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
+    ok(edge.kind === 'blocked' && edge.reason === 'The world ends here.' && local(world).x === 1, `west of the Foreland the world ends, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
     party.flags.skill_mountaineer = 1;
     world.travel('shelf', 10, 1, 0);
-    ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Shelf in to the north');
+    ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Foreland in to the north');
     delete party.flags.skill_mountaineer;
     // The pass to Thornmark is a gate on the road through the ridge: closed until Vask's contract is done.
     world.travel('shelf', 30, 9, 1);
     const closed = world.move('forward');
     ok(closed.kind === 'blocked' && /checkpoint/.test(closed.reason) && local(world).x === 30, 'the Thornmark pass is closed before the Ashcombe hand-in');
     party.flags.q_ashcombe_done = 1;
-    ok(world.move('forward').kind === 'blocked' && local(world).x === 30, 'the pass stays closed until Greywater is cleared as well');
+    ok(world.move('forward').kind === 'blocked' && local(world).x === 30, 'the pass stays closed until Brandy Hole is cleared as well');
     party.flags.q_greywater_done = 1;
     // Open, it is walked, not jumped: the road runs on through the ridge into Thornmark, and the log
-    // says where the Shelf ends, then Thornmark greets the party as it always has.
+    // says where the Foreland ends, then Thornmark greets the party as it always has.
     const said: string[] = [];
     for (let i = 0; i < 3; i++) { const step = world.move('forward'); if (step.kind === 'moved') said.push(...step.messages); }
     const there = local(world);
     ok(world.map.id === OUTDOORS && there.map === 'thornmark' && there.x === 1 && there.y === 9, `the pass opens once the flags are set, and three steps on the road reach Thornmark (${there.map} ${there.x},${there.y})`);
-    ok(said[0] === 'The pass opens onto old forest. Thornmark.' && said.some((m) => /older than Harrow/.test(m)), `crossing into Thornmark says so (${said.join(' / ')})`);
+    ok(said[0] === 'The pass opens onto old forest. Thornmark.' && said.some((m) => /older than Helmstow/.test(m)), `crossing into Thornmark says so (${said.join(' / ')})`);
     ok(world.here.name === 'Thornmark' && world.region === 'thornmark' && world.state.zones!.includes('thornmark'), 'the party has set foot in Thornmark, and its weather is Thornmark\'s');
     world.turn('back');
     const back = [world.move('forward'), world.move('forward')];
-    ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Shelf.') && world.region === 'shelf', 'back west through the gate it is the Shelf again');
+    ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the gate it is the Foreland again');
     // Town Portal returns to the last town stood in.
-    ok(world.townPortal() === 'Harrow' && world.map.id === 'harrow', 'Town Portal goes to Harrow before any other town is visited');
+    ok(world.townPortal() === 'Helmstow' && world.map.id === 'harrow', 'Town Portal goes to Helmstow before any other town is visited');
     world.travel('thornhold', 7, 14, 0); world.travel('grove2', 8, 8, 0);
     ok(world.townPortal() === 'Thornhold' && world.map.id === 'thornhold' && world.state.x === 7 && world.state.y === 14, 'Town Portal returns to the last town visited');
     // Dungeon stairs go down and come back up.
@@ -202,7 +202,7 @@ const suites: Record<string, () => void> = {
     ok(down.kind === 'moved' && world.map.id === 'grove2' && world.state.x === 1 && world.state.y === 1, 'the Grove Roots stairs go down to the Cut Stone');
     world.travel('greywater1', 14, 13, 2);
     const shrine = world.move('forward');
-    ok(shrine.kind === 'moved' && world.map.id === 'greywater2' && world.state.x === 1 && world.state.y === 1, 'the Greywater stairs go down to the Drowned Shrine');
+    ok(shrine.kind === 'moved' && world.map.id === 'greywater2' && world.state.x === 1 && world.state.y === 1, 'the Brandy Hole stairs go down to the Seam');
   },
 
   monsters() {
@@ -212,9 +212,9 @@ const suites: Record<string, () => void> = {
     world.travel('shelf', 16, 4, 2);
     const shelf = world.zone!;
     const rats = world.liveGroups().find((g) => g.def.id === 'road_rats')!;
-    ok(rats.state.x === shelf.x + 16 && rats.state.y === shelf.y + 7, 'the road rats start where the Shelf puts them, on the outdoors');
+    ok(rats.state.x === shelf.x + 16 && rats.state.y === shelf.y + 7, 'the road rats start where the Foreland puts them, on the outdoors');
     const r = world.move('forward');
-    ok(rats.state.y === shelf.y + 6, `an aware group steps toward the party (${rats.state.x - shelf.x},${rats.state.y - shelf.y} on the Shelf)`);
+    ok(rats.state.y === shelf.y + 6, `an aware group steps toward the party (${rats.state.x - shelf.x},${rats.state.y - shelf.y} on the Foreland)`);
     ok(r.kind === 'moved' && !!r.encounter && r.encounter.includes('road_rats'), 'a group that reaches the party triggers an encounter');
     world.killGroups(['road_rats']);
     ok(!world.liveGroups().some((g) => g.def.id === 'road_rats'), 'a killed group is gone');
@@ -556,16 +556,16 @@ const suites: Record<string, () => void> = {
     };
     const count = (r: Partial<Record<Sky, number>>, pick: (s: Sky) => boolean): number => Object.entries(r).reduce((n, [k, v]) => n + (pick(k as Sky) ? v! : 0), 0);
     const sh = sim(shelf), tm = sim(thorn);
-    for (const s of ['spring', 'summer', 'autumn', 'winter'] as Season[]) ok(count(sh.sky[s], isRainy) > 0, `it rains on the Shelf in the ${s}`);
+    for (const s of ['spring', 'summer', 'autumn', 'winter'] as Season[]) ok(count(sh.sky[s], isRainy) > 0, `it rains on the Foreland in the ${s}`);
     const year = (r: typeof sh, k: Sky): number => (['spring', 'summer', 'autumn', 'winter'] as Season[]).reduce((n, s) => n + (r.sky[s][k] ?? 0), 0);
     ok(year(sh, 'drizzle') > 0 && year(sh, 'rain') > 0 && year(sh, 'downpour') > 0 && year(sh, 'storm') > 0, `the rain comes in every strength: drizzle ${year(sh, 'drizzle')}h, rain ${year(sh, 'rain')}h, downpour ${year(sh, 'downpour')}h, thunderstorms ${year(sh, 'storm')}h`);
     ok(year(sh, 'downpour') < year(sh, 'rain') + year(sh, 'drizzle'), 'and downpours are the rarer kind');
-    ok((sh.sky.autumn.fog ?? 0) > (sh.sky.summer.fog ?? 0), `the Shelf's fogs come in the autumn (${sh.sky.autumn.fog ?? 0}h against ${sh.sky.summer.fog ?? 0}h in summer)`);
+    ok((sh.sky.autumn.fog ?? 0) > (sh.sky.summer.fog ?? 0), `the Foreland's fogs come in the autumn (${sh.sky.autumn.fog ?? 0}h against ${sh.sky.summer.fog ?? 0}h in summer)`);
     ok(sh.warmestSnow < 0 && tm.warmestSnow < 0, `snow falls only below freezing (warmest snowfall ${Math.max(sh.warmestSnow, tm.warmestSnow).toFixed(1)} degrees)`);
     ok(count(sh.sky.summer, isSnowy) + count(tm.sky.summer, isSnowy) === 0 && sh.summerCover === 0 && tm.summerCover === 0, 'no snow falls or lies in the summer');
-    ok(count(tm.sky.winter, isSnowy) > count(sh.sky.winter, isSnowy) * 2, `Thornmark's winter snows far more than the Shelf's (${count(tm.sky.winter, isSnowy)}h against ${count(sh.sky.winter, isSnowy)}h)`);
+    ok(count(tm.sky.winter, isSnowy) > count(sh.sky.winter, isSnowy) * 2, `Thornmark's winter snows far more than the Foreland's (${count(tm.sky.winter, isSnowy)}h against ${count(sh.sky.winter, isSnowy)}h)`);
     ok(year(tm, 'blizzard') > 0 && (year(tm, 'sleet') + year(sh, 'sleet')) > 0, `blizzards blow in Thornmark (${year(tm, 'blizzard')}h) and sleet falls somewhere (${year(tm, 'sleet') + year(sh, 'sleet')}h)`);
-    ok(tm.winterDeep > 0.3 && sh.winterDeep < tm.winterDeep, `snow lies deep over the pass for much of the winter (${(tm.winterDeep * 100).toFixed(0)}% of hours; the Shelf ${(sh.winterDeep * 100).toFixed(0)}%)`);
+    ok(tm.winterDeep > 0.3 && sh.winterDeep < tm.winterDeep, `snow lies deep over the pass for much of the winter (${(tm.winterDeep * 100).toFixed(0)}% of hours; the Foreland ${(sh.winterDeep * 100).toFixed(0)}%)`);
     ok(tm.maxCover === 1 && sh.maxWet > 0.9, 'the ground can be buried in snow and stand in water');
     const meanSpell = sh.spells.reduce((a, b) => a + b, 0) / sh.spells.length;
     ok(meanSpell >= 3, `a wet spell lasts hours, not minutes (mean ${meanSpell.toFixed(1)} hours)`);
@@ -591,7 +591,7 @@ const suites: Record<string, () => void> = {
     const daylit = (m: number): boolean => daylightAt(m) === 1;
     const fogAt = findWeather(seed, START_MINUTES, shelf, (w, m) => w.fog >= 0.6 && daylit(m));
     world.travel('shelf', 16, 8, 2); world.state.minutes = fogAt;
-    ok(fogAt > 0 && world.sight === 2, `thick fog by day leaves two squares of sight on the Shelf (${world.sight})`);
+    ok(fogAt > 0 && world.sight === 2, `thick fog by day leaves two squares of sight on the Foreland (${world.sight})`);
     world.state.light = 50;
     ok(world.sight === 2, 'and a Light spell does not cut through it');
     world.travel('mill', 1, 1, 2);
@@ -630,7 +630,7 @@ const suites: Record<string, () => void> = {
       if (streets.passable(x, y) !== 'ok' || streets.passable(x, y + 1) !== 'ok' || streets.exitAt(x, y + 1) || streets.featuresAt(x, y + 1).length) continue;
       sx = x; sy = y; break;
     }
-    ok(sx >= 0 && hillStep('harrow', sx, sy, clearAt, true) === 2, `in a town a step onto hills takes the usual two (Harrow ${sx},${sy})`);
+    ok(sx >= 0 && hillStep('harrow', sx, sy, clearAt, true) === 2, `in a town a step onto hills takes the usual two (Helmstow ${sx},${sy})`);
     // The inn wakes the party at 07:00, or at first light in the depth of winter.
     world.state.minutes = 0; world.sleepUntilMorning();
     ok(world.state.minutes === 7 * 60, 'in the autumn the inn wakes the party at 07:00');
@@ -723,7 +723,7 @@ const suites: Record<string, () => void> = {
     const zoneMaps = MAP_DEFS.filter((d) => d.kind === 'outdoor');
     const played = PLAYED_DEFS.filter((d) => d.kind === 'outdoor');
     ok(played.length === 1 && played[0].id === OUTDOORS, `the outdoors is played as one map (${played.map((d) => d.id).join(', ')})`);
-    ok(PLAYED_DEFS[0].id === MAP_DEFS[0].id && PLAYED_DEFS.length === MAP_DEFS.length - zoneMaps.length + 1, 'Harrow is still the first map, and the towns and dungeons are played as they are written');
+    ok(PLAYED_DEFS[0].id === MAP_DEFS[0].id && PLAYED_DEFS.length === MAP_DEFS.length - zoneMaps.length + 1, 'Helmstow is still the first map, and the towns and dungeons are played as they are written');
     const out = new GameMap(played[0]);
     ok(out.width === ATLAS.width && out.height === ATLAS.height, `the outdoors is the world's size, square for square with the painted map (${out.width}x${out.height})`);
     for (const d of zoneMaps) {
@@ -743,7 +743,7 @@ const suites: Record<string, () => void> = {
     const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
     const line = (x: number, y: number, dx: number, dy: number, n: number): string => Array.from({ length: n }, (_, i) => out.at(x + dx * i, y + dy * i).ch).join('');
     const faces = [line(sh.x, sh.y, 1, 0, sh.w), line(sh.x, sh.y + sh.h - 1, 1, 0, sh.w), line(sh.x, sh.y, 0, 1, sh.h), line(th.x, th.y, 1, 0, th.w), line(th.x, th.y + th.h - 1, 1, 0, th.w), line(th.x + th.w - 1, th.y, 0, 1, th.h)];
-    ok(faces.every((s) => /^%+$/.test(s)), 'the Shelf\'s north, west and south edges and Thornmark\'s north, east and south edges are the end of the world');
+    ok(faces.every((s) => /^%+$/.test(s)), 'the Foreland\'s north, west and south edges and Thornmark\'s north, east and south edges are the end of the world');
     const ridge = '%' + 'M'.repeat(8) + '=' + 'M'.repeat(21) + '%';
     ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge, 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at both ends');
     // The ways: every one lands on open ground; none joins one zone to the next, which is walked; the
@@ -754,8 +754,8 @@ const suites: Record<string, () => void> = {
     const g = out.gates;
     ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'q_ashcombe_done,q_greywater_done' && /checkpoint/.test(g[0].blockedText ?? ''),
       'the Warden checkpoint is a gate on the road through the pass, with the old exit\'s flags and words');
-    ok(PLAYED_DEFS.find((d) => d.id === 'harrow')!.exits!.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Harrow\'s south gate opens onto the Shelf road, where it always did');
-    ok(sh.enter?.thornmark === 'Back through the pass to the Shelf.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
+    ok(PLAYED_DEFS.find((d) => d.id === 'harrow')!.exits!.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Helmstow\'s south gate opens onto the Foreland road, where it always did');
+    ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
     { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void.
       const can = { swim: true, climb: true, keys: 1 }, reached = new Uint8Array(out.width * out.height);
       const stack = [[out.def.start.x, out.def.start.y]];
@@ -805,7 +805,7 @@ const suites: Record<string, () => void> = {
     delete old.world.weatherSeed;
     const world3 = new World(buildMaps(), data.party, makeRng(1), old.world);
     ok(world3.state.weatherSeed === LEGACY_WEATHER_SEED && world3.weather.precip >= 0 && world3.date.gameDay === world.date.gameDay, 'a save from before the weather loads, on the same date, with the legacy weather seed');
-    { // A version 1 save, from when the Shelf and Thornmark were maps of their own, each cell seen a
+    { // A version 1 save, from when the Foreland and Thornmark were maps of their own, each cell seen a
       // number apiece: it loads onto the outdoors, everything where it was.
       const cells = (w: number, h: number, at: [number, number][]): number[] => { const a = new Array(w * h).fill(0); for (const [x, y] of at) a[y * w + x] = 1; return a; };
       const v1 = {
@@ -824,10 +824,10 @@ const suites: Record<string, () => void> = {
       const at = local(up), ms = up.state.maps[OUTDOORS], z = (id: string) => up.map.zones.find((q) => q.id === id)!;
       const sh = z('shelf'), th = z('thornmark');
       ok(up.state.mapId === OUTDOORS && at.map === 'thornmark' && at.x === 13 && at.y === 12, `the party stands where it stood, on the outdoors now (${at.map} ${at.x},${at.y})`);
-      ok(!('shelf' in up.state.maps) && !('thornmark' in up.state.maps) && JSON.stringify(up.state.zones) === '["shelf","thornmark"]', 'the Shelf and Thornmark keep no state of their own, and count as set foot in');
+      ok(!('shelf' in up.state.maps) && !('thornmark' in up.state.maps) && JSON.stringify(up.state.zones) === '["shelf","thornmark"]', 'the Foreland and Thornmark keep no state of their own, and count as set foot in');
       ok(up.explored(sh.x + 16, sh.y + 4) && up.explored(sh.x + 30, sh.y + 9) && up.explored(th.x + 13, th.y + 12) && !up.explored(sh.x + 17, sh.y + 4), 'what was seen on each is seen where it now lies');
-      ok(seen(up.state.maps.harrow.explored, 14 * 16 + 7) && !seen(up.state.maps.harrow.explored, 14 * 16 + 8), 'and Harrow\'s cells seen are packed into bits');
-      ok(ms.used.coast === 1 && ms.used.tm_tower === 1, 'the Shelf\'s event and Thornmark\'s chest stay used');
+      ok(seen(up.state.maps.harrow.explored, 14 * 16 + 7) && !seen(up.state.maps.harrow.explored, 14 * 16 + 8), 'and Helmstow\'s cells seen are packed into bits');
+      ok(ms.used.coast === 1 && ms.used.tm_tower === 1, 'the Foreland\'s event and Thornmark\'s chest stay used');
       ok(ms.groups.road_rats.dead === 2000 && ms.groups.tm_ogre.dead === 2500 && ms.groups.hill_wolves.x === sh.x + 20 && ms.groups.hill_wolves.y === sh.y + 10 && ms.groups.tm_wolves1.dead === -1, 'the dead stay dead, the living stand where they stood, and groups never met are where their maps put them');
       ok(holds({ visited: 'thornmark' }, up.state, up.party) && !holds({ visited: 'grove1' }, up.state, up.party) && up.region === 'thornmark', 'the quest log still knows the party has been to Thornmark, and the weather is Thornmark\'s');
       const again = new World(buildMaps(), loaded.party, makeRng(1), deserialize(serialize(up.state, up.party, 1)).world);
@@ -925,11 +925,11 @@ const suites: Record<string, () => void> = {
       ok(news() === 'Quest complete: The Quiet Farm. New quest: The Grove Stone.', 'the hand-in finishes the farm and, after it, begins the Grove Stone');
       const farm = quest('ashcombe');
       ok(farm.done && farm.goal === null && farm.entries.some((e) => e.id === 'wand'), 'a finished quest has no goal and keeps the wand it handed over');
-      ok(/Greywater/.test(quest('grove').goal ?? ''), `while Greywater holds out, the Grove Stone waits on the pass (${quest('grove').goal})`);
+      ok(/Brandy Hole/.test(quest('grove').goal ?? ''), `while Brandy Hole holds out, the Grove Stone waits on the pass (${quest('grove').goal})`);
       party.flags.q_greywater = 1; party.bag.push('greywater_ledger');
-      ok(news() === 'New quest: The Greywater Ledger.' && /Hale/.test(quest('greywater').goal ?? ''), 'Hale\'s contract and his ledger arrive together as one line');
+      ok(news() === 'New quest: The Cargo Ledger.' && /Hale/.test(quest('greywater').goal ?? ''), 'Hale\'s contract and his ledger arrive together as one line');
       takeItem(party, 'greywater_ledger'); party.flags.q_greywater_done = 1;
-      ok(news() === 'Quest complete: The Greywater Ledger. Quest log updated: The Grove Stone.' && /pass/.test(quest('grove').goal ?? ''), 'the second hand-in opens the pass, and the Grove Stone says so');
+      ok(news() === 'Quest complete: The Cargo Ledger. Quest log updated: The Grove Stone.' && /pass/.test(quest('grove').goal ?? ''), 'the second hand-in opens the pass, and the Grove Stone says so');
       const data = deserialize(serialize(world.state, party, 1));
       const reloaded = questLog(data.world, data.party);
       ok(JSON.stringify(reloaded) === JSON.stringify(log()) && questNews(marks, reloaded).length === 0, 'a save carries the quest log without storing it, and a reload is not news');

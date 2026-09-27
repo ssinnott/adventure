@@ -6,7 +6,7 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
 
 - **Title and party creation.** Take the premade six or muster your own: name, race, class, rolled
   stats with reroll. Front row is slots 1–3, back row 4–6.
-- **Harrow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
+- **Helmstow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
   (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
   when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
   (the contract and the hand-in), a well, a sign.
@@ -16,22 +16,22 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
   scrolling for a long stock, a tavern's rumours a page at a time. The log over the room shows only
   what was said inside. Leaving (the last menu closed) steps the party back into the street, facing
   the door.
-- **The Shelf** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, eight roaming or lurking
+- **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, eight roaming or lurking
   monster groups with respawn timers, the Ashcombe farm. It and Thornmark are played as one
   outdoors (below).
 - **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
   dead Lantern and her survey wand, the Rift and its Warden.
-- **Greywater** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
-  cliffs, reached from the beach. Level one, the Greywater Caves: smugglers, shore crabs and drowned
-  men, a secret stash, and the captain's den with the iron key to the stairs. Level two, the Drowned
-  Shrine: an Ashen cult's galleries around a sealed shrine; a secret vestry holds the key, and the
-  Ashen Deacon guards the Greywater Ledger. Captain Hale at the pass checkpoint gives the contract
-  and takes the ledger. Chests carry the Shelf's mid-tier gear (long sword, kite shield, scale,
+- **Brandy Hole** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
+  cliffs, reached from the beach. Level one, the caves: smugglers, shore crabs and drowned
+  men, a secret stash, and the captain's den with the iron key to the stairs. Level two, the
+  Seam: an Ashen cult's galleries around a sealed shrine; a secret vestry holds the key, and the
+  Ashen Deacon guards the Cargo Ledger. Captain Hale at the pass checkpoint gives the contract
+  and takes the ledger. Chests carry the Foreland's mid-tier gear (long sword, kite shield, scale,
   chain, long bow).
 - **The ramp to Thornmark.** The pass needs both `q_ashcombe_done` and `q_greywater_done` (an exit's
-  `needFlag` may list several flags; on the outdoors the Shelf's exit into Thornmark became a gate
+  `needFlag` may list several flags; on the outdoors the Foreland's exit into Thornmark became a gate
   on the road through the pass, with the same flags and words). The slice's early monsters give about double their old xp, so
-  one clear of the Shelf and the cellar is worth level 2 per member, and adding Greywater is worth
+  one clear of the Foreland and the cellar is worth level 2 per member, and adding Brandy Hole is worth
   level 4 (tests pin both); respawns make up the step to Thornmark's band 5.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors,
   water and mountains gated by party abilities, a calendar and weather over a day/night clock (below),
@@ -42,9 +42,9 @@ What is playable now, what is stubbed, and where things live. Read DESIGN.md fir
   drops; readiness to train reported.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
-  version 1 save loads, its Shelf and Thornmark state folded into the outdoors where they now lie.
+  version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
-  journal of what the party has found: The Quiet Farm (Vask), The Greywater Ledger (Hale), The
+  journal of what the party has found: The Quiet Farm (Vask), The Cargo Ledger (Hale), The
   Grove Stone (Vask's lead, Sylvane's chisel), and The Lost Expedition, which the first Meridian
   journal opens and which stays open until the rest of its trail is built. Nothing new is saved.
   Every entry is keyed to something the save already holds (a flag, a carried item, a once-only
@@ -61,20 +61,20 @@ with the painted map (`game/outdoors.ts`, which `content/maps/index.ts` runs onc
 `PLAYED_DEFS`, the maps as played).
 
 - **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 where the atlas puts it: the
-  Shelf at 200,30 and Thornmark beside it at 232,30. The zone maps are still written as maps of their
+  Foreland at 200,30 and Thornmark beside it at 232,30. The zone maps are still written as maps of their
   own in `content/maps/`, in their own coordinates; laying them in moves their features, monster
   groups and exits to where they sit, and leads every town's and dungeon's way out onto the
   outdoors. Outdoors, the party's zone says where it is: the name on the status strip and the
   almanac, the level band, the region whose weather it has, the palette it is painted in.
 - **Walked, not jumped.** An exit from one zone map into the next is dropped: the road through the
-  pass runs straight on into Thornmark, and the view looks down it. The Shelf's exit kept its flags
+  pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its flags
   as a gate on its square (`MapDef.gates`) and its arrival line as what the log says on crossing into
   Thornmark ("The pass opens onto old forest. Thornmark."; the way back says "Back through the pass
-  to the Shelf."). Monster groups may follow the party over a zone's edge.
+  to the Foreland."). Monster groups may follow the party over a zone's edge.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the
   `void` solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
-  well: the Shelf's north, west and south edges and Thornmark's north, east and south. Between the two
+  well: the Foreland's north, west and south edges and Thornmark's north, east and south. Between the two
   the ridge stands as it was, two squares thick with the pass through it. The viewport paints the
   void as pink empty space, flat, unlit and untextured, standing up past the top of the view so it
   hides the sky as well as the ground; no weather greys it (it is cut out of the scene as it is
@@ -96,7 +96,7 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
 - **The calendar** (`game/calendar.ts`). Eight months of fifteen days, two to a season: Thaw and
   Sowing (spring), Longlight and Harvest (summer), Leafturn and Mistfall (autumn), Frost and
   Longnight (winter), 120 days in the Lanterns' year. Game day 1 is the 1st of Mistfall, 1016, late
-  in the autumn, so the first winter comes on while the party is still on the Shelf or just over
+  in the autumn, so the first winter comes on while the party is still on the Foreland or just over
   the pass. The days lengthen and shorten: dawn and dusk are 12 hours apart at the equinoxes (the
   old fixed clock), 15½ at midsummer, 8½ at midwinter, and the sun and moon follow them. The status
   strip is two lines now: the facing, the time and the map; then the date and the sky with a glyph.
@@ -110,10 +110,10 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
   temperature, and the temperature picks rain, sleet or snow. Snow lying and standing water are the
   same function run over the ten days before, so snow builds through a fall, lasts in the cold and
   melts in a thaw or a rain. A new game draws seeds until its first morning is dry and clear.
-- **Regions.** Each map names its region (`MapDef.region`, the Shelf when absent); towns and
-  dungeons share their region's weather, and a test holds them to it. The Shelf is mild and wet,
+- **Regions.** Each map names its region (`MapDef.region`, the Foreland when absent); towns and
+  dungeons share their region's weather, and a test holds them to it. The Foreland is mild and wet,
   foggy off the sea in the autumn, with snow only in a cold snap; Thornmark is colder, and its
-  winter snow lies deep for weeks. Fronts reach Thornmark five hours after they cross the Shelf.
+  winter snow lies deep for weeks. Fronts reach Thornmark five hours after they cross the Foreland.
 - **What the sky does:** clear, cloudy, overcast, fog, drizzle, rain, downpour, thunderstorm,
   sleet, flurries, snow, heavy snow and blizzard. A shower on a threshold does not flicker: each
   strength is entered above one line and left below a lower one. The log reports changes as the
@@ -134,8 +134,8 @@ cap, which is 10 until the road past it is built:
 
 - **Progression.** `MAX_LEVEL` is 10; `levelUp` stops there and the sheet says so. Five spell
   tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`). Trainers charge 25 a level to 5 and
-  40 a level after; the Warden Drillyard in Harrow teaches to 6, the Elder's Yard in Thornhold to
-  10. Guilds sell up to a tier of their own (`maxTier`: Harrow 2, Thornhold 4) at 40, 80, 160, 320
+  40 a level after; the Warden Drillyard in Helmstow teaches to 6, the Elder's Yard in Thornhold to
+  10. Guilds sell up to a tier of their own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320
   gold; tier 5 comes only with level 8.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
@@ -164,9 +164,9 @@ cap, which is 10 until the road past it is built:
   Ashen zealots and adepts, rift hounds, bone knights, wraiths, riftling elders, ogres, and two
   bosses, the Hand of Ash and the Warden of the Cut. Two new drawings (ogre, wraith); the rest
   re-tint and re-scale the slice's ten.
-- **Thornmark** (outdoor zone, 32×32, band 5–10): reached through the mountain pass on the Shelf's
+- **Thornmark** (outdoor zone, 32×32, band 5–10): reached through the mountain pass on the Foreland's
   east edge, which a Warden checkpoint holds closed until Vask has the survey wand and Captain Hale
-  has the Greywater ledger. Thornhold in the north-east, a ruined watchtower with an ogre's den, a
+  has the Cargo Ledger. Thornhold in the north-east, a ruined watchtower with an ogre's den, a
   barrow with bone knights and wraiths, a river with one bridge, a dead survey marker in a lake,
   and the Grove at the end of a chisel-marked road in the south-west. Fourteen groups.
 - **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the
@@ -225,7 +225,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   (`interior` on the map feature names it): the Hearthlight's common room round its fire and the
   Green Man's under a carved face of leaves; the Chapel's stained-glass apse and the Chapterhouse's
   grove; the Provisioner's pigeonholes and the Armoury's forge; the Guildhall's map of Caldera and
-  the Lantern Hall's copy of the Grove Stone; the Drillyard inside Harrow's wall and the Elder's
+  the Lantern Hall's copy of the Grove Stone; the Drillyard inside Helmstow's wall and the Elder's
   ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak. No people: the
   rooms are backdrops. `kit.ts` has the walls, floors, windows and light, `props.ts` the furniture
   and goods, one module per trade the scenes. A scene is painted once into an offscreen canvas and
@@ -283,8 +283,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 | | |
 |---|---|
 | `typecheck` | `tsc --noEmit`, strict, zero suppressions |
-| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, every doorway business has an interior of its own, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass walked straight through into Thornmark and back with the crossing said each way, the end of the world refusing a step (a mountaineer's too), Town Portal, the stairs, leaving a business into the street; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; the outdoors is one map the size of the world with each zone map laid 1:1 where the atlas puts it and every other square void, the zone maps' rings the end of the world where they face nothing built and the ridge between them left standing with its pass, no exit joining two zones, the checkpoint a gate with the old exit's flags, every exit landing on open ground and every open square of the outdoors reachable, and the composer refusing two zones that share an id or a square; a save round-trips and re-applies door changes, and the outdoors' state saves small; a version 1 save, from when the Shelf and Thornmark were maps of their own, loads onto the outdoors with the party, what was seen and used, the groups, the zones set foot in and the quest log's `visited` where they were; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, no entry vanishes when an item leaves the party, and the quests walk through end to end with each change announced once and the Lost Expedition left open; the calendar's months, seasons, new year and ordinals, and days that lengthen and shorten; the weather is a pure function of its seed, and three years of it in each region bring rain in every season and at every strength, autumn fogs, snow only below freezing and never in summer, far more snow over the pass, deep snow lying there much of the winter, and wet spells that last hours; the log's hysteresis and wording; a new game opens fair; reading the weather draws nothing from the gameplay rng; fog and downpours cut sight (not underground, and Light does not cut fog), deep snow slows a step, a step onto hills takes eight minutes and ten in deep snow (two in a town, six off them), archers shoot worse in a downpour and casters do not; the inn waits for winter light; towns and dungeons share their region; an old save without a weather seed loads; hills (`^`) and farmland (`f`) are open ground that hides nothing, a map's hills and farmland are hills and farmland on the world map, snow lies on both, the grain turns through the year, the hedges go bare in winter, the fields lie in patchwork over several squares, and every terrain's automap colour stands apart from the rest |
-| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, walks into the Hearthlight and out again, paints all twelve interiors by day and by night, paints a patch of hills and of farmland at noon and at midnight in each season and under snow and finds a hill rising where grass lies flat, a field's rows or hedges, the fields turning and the snow lying white, talks to Vask and opens the quest log, paints the Shelf in a downpour and a fight in it and Thornmark under falling snow, opens the world map, faces the end of the world west of the Shelf on a clear noon and finds the view pink and the automap marking it, is refused a step into it, walks the open pass straight into Thornmark, and asserts every screen painted with no page error and the log reported the quest, the weather and the crossing; also unions every pair of sprite part kinds and asserts none of them leaves a hole; and paints a view from every open cell of the cellar and of Harrow over two backdrops and asserts the backdrop never shows through a crack between walls, nor at the edges of the view beside the party |
+| `test` | Node: every map's rows are rectangular, exits land on passable cells, every open cell is reachable, every monster is placed and every quest item findable, every doorway business has an interior of its own, a trainer reaches the cap and a clear of everything is worth level 7; movement, doors, keys, secrets, the gated pass walked straight through into Thornmark and back with the crossing said each way, the end of the world refusing a step (a mountaineer's too), Town Portal, the stairs, leaving a business into the street; roaming groups, encounters, respawn, truce, the Cut Stone's tear closing on the Warden's death and not its approach; combat replays byte-for-byte from a seed, the cap, row rules, fleeing, all-target spells, Ward, Revive; party creation and levelling to exactly 10 with every tier learned; the outdoors is one map the size of the world with each zone map laid 1:1 where the atlas puts it and every other square void, the zone maps' rings the end of the world where they face nothing built and the ridge between them left standing with its pass, no exit joining two zones, the checkpoint a gate with the old exit's flags, every exit landing on open ground and every open square of the outdoors reachable, and the composer refusing two zones that share an id or a square; a save round-trips and re-applies door changes, and the outdoors' state saves small; a version 1 save, from when the Foreland and Thornmark were maps of their own, loads onto the outdoors with the party, what was seen and used, the groups, the zones set foot in and the quest log's `visited` where they were; every quest-log key names a real flag, item, event, guardian or map, every page fits and every glyph is in the font, no entry vanishes when an item leaves the party, and the quests walk through end to end with each change announced once and the Lost Expedition left open; the calendar's months, seasons, new year and ordinals, and days that lengthen and shorten; the weather is a pure function of its seed, and three years of it in each region bring rain in every season and at every strength, autumn fogs, snow only below freezing and never in summer, far more snow over the pass, deep snow lying there much of the winter, and wet spells that last hours; the log's hysteresis and wording; a new game opens fair; reading the weather draws nothing from the gameplay rng; fog and downpours cut sight (not underground, and Light does not cut fog), deep snow slows a step, a step onto hills takes eight minutes and ten in deep snow (two in a town, six off them), archers shoot worse in a downpour and casters do not; the inn waits for winter light; towns and dungeons share their region; an old save without a weather seed loads; hills (`^`) and farmland (`f`) are open ground that hides nothing, a map's hills and farmland are hills and farmland on the world map, snow lies on both, the grain turns through the year, the hedges go bare in winter, the fields lie in patchwork over several squares, and every terrain's automap colour stands apart from the rest |
+| `smoke` | headless Chromium loads index.html through the dev server, starts a game, walks through the gate, opens a fight, then paints Thornmark, an ogre-and-wraith fight and Thornhold, walks into the Hearthlight and out again, paints all twelve interiors by day and by night, paints a patch of hills and of farmland at noon and at midnight in each season and under snow and finds a hill rising where grass lies flat, a field's rows or hedges, the fields turning and the snow lying white, talks to Vask and opens the quest log, paints the Foreland in a downpour and a fight in it and Thornmark under falling snow, opens the world map, faces the end of the world west of the Foreland on a clear noon and finds the view pink and the automap marking it, is refused a step into it, walks the open pass straight into Thornmark, and asserts every screen painted with no page error and the log reported the quest, the weather and the crossing; also unions every pair of sprite part kinds and asserts none of them leaves a hole; and paints a view from every open cell of the cellar and of Helmstow over two backdrops and asserts the backdrop never shows through a crack between walls, nor at the edges of the view beside the party |
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -326,5 +326,5 @@ from 11 and again from 29, and sneak attacks grow.
 | `ui/quests.ts` | the quest log screen, and `questPage`, its pure page layout |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
-| `content/maps/*.ts` | Harrow, the Shelf, the cellar, Greywater (two levels); Thornmark, Thornhold, the Grove Roots, the Cut Stone; `index.ts` lays them out as played |
+| `content/maps/*.ts` | Helmstow, the Foreland, the cellar, Brandy Hole (two levels); Thornmark, Thornhold, the Grove Roots, the Cut Stone; `index.ts` lays them out as played |
 | `content/quests.ts` | the quests' journal entries and goals, and what each is keyed to |
