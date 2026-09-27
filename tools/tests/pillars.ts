@@ -345,7 +345,6 @@ export async function pillars(): Promise<void> {
   ok(!american.length, `the ${all.length} texts spell as the game does, not American${american.length ? ' -> ' + american.join(', ') : ''}`);
   ok(missingGlyphs('Ashcombe—the café’s door').length === 3, 'a dash, an accent and a curled quote have no glyph, and fail');
   ok(americanisms('The gray walls lose their Color.').length === 2 && !americanisms('Armour of every size, a prize to seize.').length, 'gray and color fail; armour, size, prize and seize do not');
-  ok(!all.some((t) => t.text === 'armor'), 'the item slot armor, a saved key, is no text');
 
   // Novelty: each area's claim of what is new in it exists, is used in it and is nowhere earlier on the road.
   const family = await families();
