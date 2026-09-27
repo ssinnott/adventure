@@ -18,6 +18,8 @@ dependencies, and nothing compiled to disk during development.
   not collide, and the order of work.
 - [docs/ISSUES.md](docs/ISSUES.md) — how that work is filed: issue types, labels, epics, the
   Dependencies section every issue carries, and the sections of an issue.
+- [docs/areas/](docs/areas/) — each area's own doc: where the atlas puts it, what is built, what
+  is still to build and what is left to decide. The Shelf's is the first.
 
 ## Running
 
