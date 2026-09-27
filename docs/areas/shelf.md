@@ -277,13 +277,16 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - a spring above the river (#45's fountain);
   - a cairn (#45);
   - a shepherd's camp (#45), and the shepherd, who has heard the Black Dog on the hill;
-  - a sign at the ford: THE BERTH, and something scratched under it.
+  - a sign at the ford: THE BERTH, and something scratched under it;
+  - a rookery in the willows by the drowned mill, a den (#88), with its hoard.
 - **Encounters.** Crows over wolves in the stubble (six crows and two wolves: MONSTERS §5.2's
-  fight); wolves where the fields meet the hills (three); a boar in the willows.
+  fight), the crows the rookery breeds; the rookery's keepers, which never leave it; wolves where
+  the fields meet the hills (three); a boar in the willows.
 - **Quests.** Riders in the Dark's night watch at the ford (§6).
 - **The secret and its hint.** The drowned mill's wheel-pit, with the miller's hoard behind it. The
   shepherd's hint: the miller never trusted a bank, nor the river.
-- **New here.** The first riddle, answered with a word the company heard somewhere else.
+- **New here.** The first riddle, answered with a word the company heard somewhere else, and the
+  first den.
 - **Pay.** About 190 xp a member.
 
 ### 4.6 D2, the chalk hills (#69): core, band 4–5
@@ -301,11 +304,13 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - the dew pond (#45's fountain);
   - a shrine on the crest (#45);
   - a cairn on the highest barrow (#45);
-  - a camp in an old chalk pit (#45);
+  - a camp in the lee of the ridge (#45);
   - a sign where the track tops the ridge;
-  - the chalk figure, if it is kept.
-- **Encounters.** Wolves on the chalk by day (three groups of three); the Black Dog by night round
-  the barrow (one, and then two; `when`); crows (six).
+  - the chalk figure, if it is kept;
+  - a wolves' den dug into an old chalk pit, a den (#88), with its hoard.
+- **Encounters.** Wolves on the chalk by day (three groups of three), the wolves the den breeds; the
+  den's pack, which never leaves it; the Black Dog by night round the barrow (one, and then two;
+  `when`); crows (six).
 - **Quests.** The way to the step, which is in the Berth. Riders in the Dark's hoofprints lead here.
 - **The secret and its hint.** One of the small barrows is hollow: a cist with a guardsman's grave
   goods, a halberd and a ring of office. The shepherd's hint: nine barrows on the ridge, and one of
@@ -349,9 +354,11 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - a shrine to the travellers who went down the Edge (#45);
   - a cairn (#45);
   - a camp (#45);
-  - a sign where the Salt Road crosses: SALTMOUTH, DOWN THE EDGE.
-- **Encounters.** Wolves (two groups), bandits with an archer near the road, crows along the lip, a
-  boar.
+  - a sign where the Salt Road crosses: SALTMOUTH, DOWN THE EDGE;
+  - a bandit camp by the Salt Road, its hut of stolen planks a den (#88), with the road's takings
+    for its hoard.
+- **Encounters.** Wolves (two groups), bandits with an archer on the road, the bandits the camp
+  breeds; the camp's keepers, which never leave it; crows along the lip; a boar.
 - **Quests.** None.
 - **The secret and its hint.** A cleft in the lip, and a ledge below it with a kestrels' nest and
   what they have carried there: a lost climber's pack. The falconer's hint: his birds bring back
@@ -436,16 +443,18 @@ four wreckers on the Salt Road on a foggy night; the Berth, the Downs' hardest p
 are #46.
 
 New in the Downs, for the novelty check (EXPANSION §5.4): the birds, a new family; hills and
-farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41). §4.2 to §4.9
-place every group, box by box.
+farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41); and dens, camps
+that breed one kind of monster until a company beats their keepers and burns them (#88): a rookery
+in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every group, box by box.
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 1,660 xp a member today, just past level 4 (1,650).
-  The curve (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor,
+- **Experience.** One clear of the area pays 1,660 xp a member today, just past level 4 (1,650). The
+  curve (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor,
   divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from,
   shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3
-  260 and D4 200.
+  260 and D4 200. A den's keepers pay once, and its brood as a group that respawns does; the figures
+  count the brood once.
 - **Gold.** A clear pays about 2,530: 1,065 in chests, about 765 in drops and 700 in rewards.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** #38 reports the Foreland outside the starting thresholds. The Rift Warden, the
@@ -484,6 +493,9 @@ Decided by the owner on 27 September 2026:
 9. **Ashcombe moves past Gullwick,** so that the first job is further and a bit harder (#85). Where
    past Gullwick, how it is made harder and what the Foreland map keeps where it stood are open in
    #87; until they are settled, the briefs here keep the farm on the Foreland map.
+10. **Dens** (#88): a camp that breeds one kind of monster until a company beats its keepers and
+    burns it; its hoard is theirs, and it stands as a ruin after. The first three are a rookery in
+    E2, a wolves' den in D2 and a bandit camp in D3.
 
 Proposed, for the owner, each in the issue that would build it:
 
