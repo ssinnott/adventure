@@ -23,6 +23,7 @@ dependencies, and nothing compiled to disk during development.
 
 ```
 npm install
+npx playwright install chromium   # once, for the smoke test (the session containers have it already)
 npm run dev        # http://localhost:8080/ — .ts served through esbuild per request, no build step
 npm run build      # dist/index.html, a single self-contained file
 npm run check      # typecheck + Node tests + headless Chromium smoke test
@@ -45,8 +46,8 @@ tests, `npm run build`, then publish `dist/` to GitHub Pages at
 (Settings → Pages → Source); the workflow enables that on its first run if it can.
 
 Every pull request runs [.github/workflows/checks.yml](.github/workflows/checks.yml): the typecheck,
-the tests and the smoke test, as three checks. Main takes a pull request only when all three pass
-and it is up to date with main.
+the tests and the smoke test, as three checks. Once the owner protects main, it takes a pull request
+only when all three pass and it is up to date with main.
 
 ## Layout
 

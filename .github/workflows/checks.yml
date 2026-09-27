@@ -51,19 +51,20 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      # The browser is keyed on the Playwright version package-lock.json pins; the system libraries
-      # it needs are not cached, so they are installed either way.
+      # Headless runs need only Chromium's headless shell, cached under the Playwright version
+      # package-lock.json pins. The system libraries it needs are not cached, so they are
+      # installed either way.
       - id: playwright
         run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
       - id: browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+          key: playwright-shell-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - if: steps.browsers.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install --with-deps --only-shell chromium
       - if: steps.browsers.outputs.cache-hit == 'true'
-        run: npx playwright install-deps chromium
+        run: npx playwright install-deps chromium-headless-shell
       - run: npm run smoke
         env:
           SMOKE_SHOT: smoke.png
