@@ -1,4 +1,5 @@
 // The game's colour values. The engine ships colour helpers; the values are the game's.
+import type { Terrain } from '../game/map.ts';
 export const INK = '#0e0c10';
 export const PANEL = '#1c1720';
 export const PANEL_LIGHT = '#2a2430';
@@ -18,9 +19,11 @@ export const PURPLE = '#8a5ac6';
 /** The void, where the world ends until it is built further: pink empty space, unlit and untextured. */
 export const VOID_PINK = '#ff5fbf';
 
-export const TERRAIN_COLORS: Record<string, string> = {
+/** Each terrain's colour, on the automap and in the view; a terrain left out fails the typecheck. */
+export const TERRAIN_COLORS: Record<Terrain, string> = {
   floor: '#4a4650', grass: '#4c9a3a', dirt: '#8a6a42', road: '#a89068', sand: '#e0c888',
   water: '#3a7ac0', deep: '#24508e', swamp: '#5a7a3a', lava: '#d85a1a', stone: '#7a7a7a', snow: '#eef2f6',
+  hills: '#7a8e48', farm: '#b0a060',
 };
 /** The wood the frame is carved from, and its brass fittings. */
 export const WOOD = '#4a2e1c';

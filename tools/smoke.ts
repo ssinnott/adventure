@@ -99,6 +99,50 @@ const interiors = await page.evaluate(async () => {
   }
   return { n, thin };
 });
+// Hills and farmland: a patch of each laid on the Shelf, painted at noon and at midnight on a day of
+// each season and under deep snow. Every view is a picture; the fields turn from Sowing to Harvest,
+// and snow lies white on both. The patch is taken up again after.
+const terrains = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const V = await load('/src/ui/viewport.ts');
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, thin: string[] = [], mean: Record<string, number[]> = {};
+  const c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const minutes = w.state.minutes;
+  // Stand in a field of grain, which greens in Sowing and goes gold by Harvest.
+  w.travel('shelf', 16, 16, 0);
+  while (V.fieldAt(w.state.x, w.state.y).crop > 1) w.state.x++;
+  const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
+  const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
+  for (const terrain of ['hills', 'farm']) {
+    for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
+    for (const [name, doy] of days) for (const hour of [12, 0]) {
+      w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
+      const snow = name === 'snow';
+      w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
+      V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+      const d = ctx.getImageData(0, 0, W, H).data, seen = new Set<number>();
+      for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+      if (seen.size < 20) thin.push(`${terrain} ${name}@${hour} (${seen.size})`);
+      // The mean colour of the ground the party stands on, by noon: one field, whose crop is 0 or 1.
+      if (hour === 12) {
+        const g = ctx.getImageData(W / 2 - 40, H - 12, 80, 12).data, sum = [0, 0, 0];
+        for (let i = 0; i < g.length; i += 4) { sum[0] += g[i]; sum[1] += g[i + 1]; sum[2] += g[i + 2]; }
+        mean[`${terrain} ${name}`] = sum.map((v) => v / (g.length / 4));
+      }
+    }
+  }
+  for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
+  w.state.minutes = minutes; w.cached = undefined;
+  const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  const light = (a: number[]): number => (a[0] + a[1] + a[2]) / 3;
+  return {
+    thin, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
+    whiten: ['hills', 'farm'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
+  };
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 9, 6, 0); g.interact(g.world.featureHere()); });
 await page.waitForTimeout(100);
@@ -272,6 +316,8 @@ ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
 ok(interiors.n === 24 && interiors.thin.length === 0, `all twelve interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
+ok(terrains.thin.length === 0, `hills and farmland paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills and the fields (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
 ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
 ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Shelf paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);

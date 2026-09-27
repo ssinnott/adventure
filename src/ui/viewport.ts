@@ -77,24 +77,63 @@ function fog(color: string, d: number, dark: boolean, haze: string | null = null
 }
 
 const SNOW = '#eef2f7';
-/** How white each terrain goes under lying snow: cobbles and sand show through, water never takes it. */
-const SNOW_HOLD: Partial<Record<Terrain, number>> = { grass: 0.92, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1 };
-/** The grass through the year: dull after winter, fresh in Sowing, deep in summer, tawny by Mistfall. */
-const GRASS: readonly [number, string][] = [[0, '#6a7650'], [10, '#6a8a4a'], [22, '#58ae40'], [40, '#4c9a3a'], [62, '#5a9a3a'], [80, '#7a8a44'], [94, '#6e7650'], [120, '#6a7650']];
-function grassColor(day: number): string {
+/**
+ * How white each terrain goes under lying snow: cobbles and sand show through, water never takes it.
+ * Every terrain has its entry, so one left out fails the typecheck rather than never taking snow.
+ */
+export const SNOW_HOLD: Record<Terrain, number> = {
+  grass: 0.92, hills: 0.92, farm: 0.9, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
+  water: 0, deep: 0, lava: 0,
+};
+type Ramp = readonly [number, string][];
+/** A colour through the year: the ramp's stops by day of the year, mixed between. */
+function rampColor(ramp: Ramp, day: number): string {
   let i = 0;
-  while (i < GRASS.length - 2 && day >= GRASS[i + 1][0]) i++;
-  const [d0, c0] = GRASS[i], [d1, c1] = GRASS[i + 1];
+  while (i < ramp.length - 2 && day >= ramp[i + 1][0]) i++;
+  const [d0, c0] = ramp[i], [d1, c1] = ramp[i + 1];
   return mix(c0, c1, Math.max(0, Math.min(1, (day - d0) / (d1 - d0))));
+}
+/** The grass through the year: dull after winter, fresh in Sowing, deep in summer, tawny by Mistfall. */
+const GRASS: Ramp = [[0, '#6a7650'], [10, '#6a8a4a'], [22, '#58ae40'], [40, '#4c9a3a'], [62, '#5a9a3a'], [80, '#7a8a44'], [94, '#6e7650'], [120, '#6a7650']];
+function grassColor(day: number): string { return rampColor(GRASS, day); }
+/** Hill grass: the grass of the year, thinner and drier on the rise. */
+function hillColor(day: number): string { return mix(grassColor(day), '#8a8450', 0.3); }
+
+/**
+ * The crops of the fields through the year (Thaw is day 0, Harvest 45, Mistfall 75): wheat and
+ * barley green in Sowing, gold by Harvest and stubble after; pasture cut for hay in Harvest; roots
+ * dark and leafy through the summer. Out of season the fields lie ploughed.
+ */
+const CROPS: readonly Ramp[] = [
+  [[0, '#6e5638'], [18, '#6a6a3a'], [30, '#6e9a3a'], [44, '#a8a848'], [52, '#d4b454'], [60, '#c8b078'], [78, '#7a5e3e'], [120, '#6e5638']],
+  [[0, '#6e5638'], [20, '#6a7a3a'], [32, '#7aa044'], [46, '#c8c070'], [56, '#d8c890'], [62, '#b8a880'], [80, '#7a5e3e'], [120, '#6e5638']],
+  [[0, '#6a7650'], [16, '#6a9a44'], [30, '#5aa840'], [48, '#6aa044'], [54, '#b0a860'], [64, '#7a9a48'], [94, '#6e7a50'], [120, '#6a7650']],
+  [[0, '#6a5236'], [22, '#6a5a38'], [34, '#4e8a3a'], [58, '#4a7e34'], [70, '#7a6a3e'], [84, '#6a5236'], [120, '#6a5236']],
+];
+/** A crop's colour on a day of the year. */
+export function cropColor(crop: number, day: number): string { return rampColor(CROPS[crop % CROPS.length], day); }
+
+/** A field of the farmland: which one it is, its crop, and whether its rows run east and west. */
+export interface Field { id: number; crop: number; rowsEW: boolean; }
+/**
+ * The field a farm square lies in. Fields are three squares long in bands two deep, staggered band
+ * to band, so the patchwork spans squares as the world map's does and no two maps differ.
+ */
+export function fieldAt(x: number, y: number): Field {
+  const band = Math.floor(y / 2), fx = Math.floor((x + Math.floor(hash(band, 71) * 3)) / 3);
+  return { id: band * 4099 + fx, crop: Math.floor(hash(fx, band, 73) * CROPS.length), rowsEW: hash(fx, band, 79) < 0.5 };
 }
 /** How many flowers are out: none before Sowing or after Leafturn. */
 function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 12) / 8, (72 - day) / 10)); }
-/** The colour of the ground: the terrain's, the grass by season, darker when wet, whitened by snow. */
-function groundColor(terrain: Terrain, kind: string, floorPal: string): string {
+/**
+ * The colour of the ground: the terrain's, the grass, the hills and the crop by season, darker when
+ * wet, whitened by snow.
+ */
+function groundColor(terrain: Terrain, kind: string, floorPal: string, crop = 0): string {
   if (kind === 'dungeon') return floorPal;
-  let c = terrain === 'grass' ? grassColor(env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
+  let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
   if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava') c = shade(c, 1 - 0.18 * env.wet);
-  const s = env.cover * (SNOW_HOLD[terrain] ?? 0);
+  const s = env.cover * SNOW_HOLD[terrain];
   return s > 0 ? mix(c, SNOW, s) : c;
 }
 
@@ -254,6 +293,24 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
 
   for (let d = DEPTH; d >= 0; d--) {
     if (d > sight) continue;
+    // The floors of a row go down before anything stands on them, so a hill can run on over the
+    // next square's floor into the next hill; walls and sprites follow.
+    for (const l of order) {
+      const c = cellAt(px, py, f, d, l);
+      const cell = map.at(c.x, c.y);
+      if (isSolidWall(cell)) continue;
+      const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
+      const cellPal = map.paletteAt(c.x, c.y);
+      const plot = cell.terrain === 'farm' ? farmPlot(map, c.x, c.y, f) : undefined;
+      drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, cellPal.floor, plot);
+      if (map.kind === 'dungeon') drawCeiling(ctx, cellPal, cx, horizon, r.h, d, l, seed, f);
+    }
+    if (d > 0) for (const l of order) {
+      const c = cellAt(px, py, f, d, l);
+      if (map.at(c.x, c.y).terrain !== 'hills' || isSolidWall(map.at(c.x, c.y))) continue;
+      const hillAt = (dl: number): boolean => { const n = map.at(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n); };
+      drawHill(ctx, groundColor('hills', map.kind, ''), cx, horizon, r.h, d, l, c.x * 131 + c.y * 17, dark, haze, hillAt(-1), hillAt(1));
+    }
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
       const cell = map.at(c.x, c.y);
@@ -264,12 +321,6 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const uN = unit(nearK, r.h), uF = unit(farK, r.h);
       const xl = (u: number) => cx + (l - 0.5) * 2 * u, xr = (u: number) => cx + (l + 0.5) * 2 * u;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
-
-      if (!isSolidWall(cell)) {
-        const cellPal = map.paletteAt(c.x, c.y);
-        drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, cellPal.floor);
-        if (map.kind === 'dungeon') drawCeiling(ctx, cellPal, cx, horizon, r.h, d, l, seed, f);
-      }
 
       if (cell.solid === 'void') {
         // The end of the world: a face wherever the cell toward the eye is not void too. A wall
@@ -591,8 +642,84 @@ function floorPt(cx: number, horizon: number, h: number, d: number, l: number, s
   return [cx + (l - 0.5 + t) * 2 * u, horizon + u];
 }
 
-function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string): void {
-  const base = groundColor(terrain, kind, floorPal);
+/**
+ * A farm square as the view sees it: its field's crop, whether the rows run away from the eye or
+ * across it, and where a hedge parts it from the next field, near, far, left and right.
+ */
+interface Plot { crop: number; away: boolean; hedge: readonly [boolean, boolean, boolean, boolean]; }
+function farmPlot(map: GameMap, x: number, y: number, f: Facing): Plot {
+  const here = fieldAt(x, y), rf = ((f + 1) & 3) as Facing;
+  const parted = (dx: number, dy: number): boolean => map.at(x + dx, y + dy).terrain === 'farm' && fieldAt(x + dx, y + dy).id !== here.id;
+  const fx = FACING_DX[f], fy = FACING_DY[f], rx = FACING_DX[rf], ry = FACING_DY[rf];
+  return { crop: here.crop, away: here.rowsEW === (fx !== 0), hedge: [parted(-fx, -fy), parted(fx, fy), parted(-rx, -ry), parted(rx, ry)] };
+}
+
+/** The hedges through the year: in leaf from Sowing to Mistfall, bare twigs through the winter. */
+function hedgeColor(day: number): string { return mix('#3e5e2a', '#5a4a38', Math.max(0, Math.min(1, (day - 76) / 12, (16 - day) / 12))); }
+
+/**
+ * How plainly a crop's rows show on a day: furrows plain while the field lies ploughed, rows softer
+ * as the crop grows over them. Pasture (crop 2) has none.
+ */
+function rowDepth(crop: number, day: number): number {
+  if (crop % CROPS.length === 2) return 0;
+  const [sown, cut, ploughed] = crop % CROPS.length === 3 ? [22, 70, 84] : [18, 60, 78];
+  return day < sown || day >= ploughed ? 0.2 : day >= cut ? 0.12 : 0.08;
+}
+
+/** Rows of a crop, or furrows, and the hedges round the field. */
+function drawFarm(ctx: CanvasRenderingContext2D, base: string, plot: Plot, cx: number, horizon: number, h: number, d: number, l: number, dark: boolean, haze: string | null): void {
+  const P = (s: number, t: number): [number, number] => floorPt(cx, horizon, h, d, l, s, t);
+  const depth = rowDepth(plot.crop, env.day) * (1 - 0.5 * env.cover);
+  if (d <= 3 && depth > 0) {
+    // Four rows a square, centred so they meet the next square's whichever way the eye faces.
+    const row = fog(shade(base, 1 - depth), d, dark, haze);
+    for (let k = 0; k < 4; k++) {
+      const a = k / 4 + 1 / 16, b = k / 4 + 3 / 16;
+      if (plot.away) quad(ctx, P(0, a), P(0, b), P(1, b), P(1, a), row);
+      else quad(ctx, P(a, 0), P(a, 1), P(b, 1), P(b, 0), row);
+    }
+  }
+  const [near, far, left, right] = plot.hedge;
+  if (!(near || far || left || right)) return;
+  const hedge = fog(mix(hedgeColor(env.day), SNOW, env.cover * 0.7), d, dark, haze);
+  const w = 0.07;
+  if (near) quad(ctx, P(0, 0), P(0, 1), P(w, 1), P(w, 0), hedge);
+  if (far) quad(ctx, P(1 - w, 0), P(1 - w, 1), P(1, 1), P(1, 0), hedge);
+  if (left) quad(ctx, P(0, 0), P(0, w), P(1, w), P(1, 0), hedge);
+  if (right) quad(ctx, P(0, 1 - w), P(0, 1), P(1, 1), P(1, 1 - w), hedge);
+}
+
+/**
+ * Rising ground: a round-shouldered mound on the square, lit on its crest, running on into the next
+ * hill beside it. It is drawn only: it hides nothing from the party (line of sight is its own work).
+ */
+function drawHill(ctx: CanvasRenderingContext2D, base: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, hillL: boolean, hillR: boolean): void {
+  const [lx, ly] = floorPt(cx, horizon, h, d, l, 0.02, hillL ? -0.25 : 0.02);
+  const [rx] = floorPt(cx, horizon, h, d, l, 0.02, hillR ? 1.25 : 0.98);
+  const w = rx - lx, rise = unitIn(d, 0.5, h) * (0.4 + 0.5 * hash(seed, 61)), lean = (hash(seed, 62) - 0.5) * 0.4 * w;
+  const top = ly - rise / 0.75;
+  const c1: [number, number] = [lx + w * 0.3 + lean, top], c2: [number, number] = [rx - w * 0.3 + lean, top];
+  const g = ctx.createLinearGradient(0, ly - rise, 0, ly);
+  g.addColorStop(0, fog(shade(base, 1.1), d, dark, haze)); g.addColorStop(1, fog(shade(base, 0.8), d, dark, haze));
+  ctx.beginPath(); ctx.moveTo(lx, ly); ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], rx, ly); ctx.closePath();
+  ctx.fillStyle = g; ctx.fill();
+  ctx.strokeStyle = fog(shade(base, 1.14), d, dark, haze); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(lx + w * 0.12, ly - rise * 0.45); ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], rx - w * 0.12, ly - rise * 0.45); ctx.stroke();
+  // Tufts on the crest, buried by a deep snow.
+  if (d > 2 || env.cover > 0.55) return;
+  const u = unit(d, h), sc = u / unit(1, h);
+  ctx.strokeStyle = fog(shade(hillColor(env.day), env.cover > 0.05 ? 0.85 : 1.25), d, dark, haze); ctx.lineWidth = Math.max(1, sc);
+  for (let i = 0; i < 5; i++) {
+    const t = 0.2 + 0.6 * hash(seed, 63, i), m = 1 - t;
+    const x = m * m * m * lx + 3 * m * m * t * c1[0] + 3 * m * t * t * c2[0] + t * t * t * rx;
+    const y = m * m * m * ly + 3 * m * m * t * top + 3 * m * t * t * top + t * t * t * ly + 2 * sc;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 1.5 * sc, y - 4 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1.5 * sc, y - 3.5 * sc); ctx.stroke();
+  }
+}
+
+function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string, plot?: Plot): void {
+  const base = groundColor(terrain, kind, floorPal, plot?.crop);
   const n = d <= 2 ? 3 : 2;
   const flag = kind === 'dungeon' && terrain === 'floor';
   const mortar = fog(shade(base, 0.55), d, dark, haze);
@@ -601,7 +728,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
     const v = hash(seed, i, j) - 0.5;
     // Tiles vary a little; lying snow evens them out.
-    let col = shade(base, 1 + v * (flag ? 0.16 : terrain === 'grass' ? 0.12 : 0.08) * (1 - 0.75 * env.cover));
+    let col = shade(base, 1 + v * (flag ? 0.16 : terrain === 'grass' ? 0.12 : terrain === 'farm' ? 0.04 : 0.08) * (1 - 0.75 * env.cover));
     if (terrain === 'water' || terrain === 'deep') col = shade(base, 1 + v * 0.1 + ((i + j) % 2) * 0.05);
     col = fog(col, d, dark, haze);
     // Flagstones sit inside a mortar gap; other terrains overlap a little so no seam shows.
@@ -610,6 +737,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
     const c = floorPt(cx, horizon, h, d, l, (i + 1) / n - inset / n, (j + 1) / n - inset / n), e = floorPt(cx, horizon, h, d, l, (i + 1) / n - inset / n, j / n + inset / n);
     quad(ctx, a, b, c, e, col);
   }
+  if (plot) drawFarm(ctx, base, plot, cx, horizon, h, d, l, dark, haze);
   // Decorations: a few per cell, placed by hash, scaled by depth.
   const u = unit(d, h);
   // Cobbled roads: rounded stones packed in a jittered grid, each with a lit top edge.
@@ -681,7 +809,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
     }
   }
   // Lying snow glitters.
-  if (env.cover > 0.5 && (SNOW_HOLD[terrain] ?? 0) > 0.7) {
+  if (env.cover > 0.5 && SNOW_HOLD[terrain] > 0.7) {
     for (let i = 0; i < 4; i++) {
       const [x, y] = floorPt(cx, horizon, h, d, l, hash(seed, 95, i), hash(seed, 96, i));
       ctx.fillStyle = fog(i % 2 ? '#ffffff' : '#c8d8f0', d, dark, haze); ctx.fillRect(Math.round(x), Math.round(y), 1, 1);
