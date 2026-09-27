@@ -26,8 +26,7 @@ never told.
 ## Commits
 
 Subjects as the history writes them: imperative, sentence case, no prefix, no issue number, no full
-stop ("Give the ogre a stoop, a face and a club that is a tree limb"). Bodies are short prose
-paragraphs naming the issue.
+stop ("Give the ogre a stoop, a face and a club that is a tree limb").
 
 ## Issues and pull requests
 
