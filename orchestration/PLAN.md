@@ -90,3 +90,24 @@ new layout (footprints-w2/). Every Wave 2 suite would have edited one line of to
 session_018eYejS5iiPqx6QLoSrZnbB, branch `claude/m0-prep-runner`): the runner finds tools/tests/*.ts,
 awaits async suites and walkthroughs, and lib.ts gains `owed(cond, msg, whose)`. Wave 2 starts once
 it has merged, with COMMON-wave2.md as every session's rules.
+
+## Wave 2 started
+
+The prep PR #86 merged at 23:11 (main 09afbf1), after a local check: the same 1,329 ok lines in
+order, a dropped-in suite runs, a file with no suite fails, a failing async walkthrough fails. Wave 2
+started at 23:13, every session with COMMON-wave2.md as its rules. Each check goes in a suite of its
+own (structure, curve, density, pillars, shipped, art, scaffold), so none edits tools/test.ts and #30,
+#31 and #35 keep out of maps.ts. #35 lands before #37's CI half (tools/changed.ts); #38 starts once
+#31 has merged.
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 2 | prep | session_018eYejS5iiPqx6QLoSrZnbB | `claude/m0-prep-runner` (merged, #86) |
+| 2 | #30 | session_01JD8Se5AXVbg17dim3mhajM | `claude/m0-30-structure-checks` |
+| 2 | #31 | session_011Rt5HgwjA5HiDvY53Q9VxD | `claude/m0-31-curve` |
+| 2 | #32 | session_01YSXV6mz5mvKyX5uARvwcQY | `claude/m0-32-density` |
+| 2 | #33 | session_01LnwrgPPFLbaRt4VhhH4aNm | `claude/m0-33-pillars` |
+| 2 | #34 | session_018CdiTSyJCRb1Cv3Am9nLnU | `claude/m0-34-shipped` |
+| 2 | #35 | session_01KrrmbGnXxUTGXFwRt2Zjmb | `claude/m0-35-art-checks` |
+| 2 | #36 | session_01XeNVnJchDpX3uYZo383dHd | `claude/m0-36-scaffold` |
+| 2 | #37 | session_01MjnrqGhXmsccZAggSgevxE | `claude/m0-37-contact-sheet` |
