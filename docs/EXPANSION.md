@@ -11,9 +11,9 @@ on main at `b92a412` (25 September 2026).
 
 | | Built | Planned |
 |---|---|---|
-| Outdoor land | 1,701 of 111,315 land squares (1.5%): the Shelf and Thornmark | the atlas: about 107 zone maps' worth in 12 areas. DESIGN.md §4 still says 6 regions of 32×32 |
-| Towns | 2 | 9 in DESIGN.md; the atlas places 6 more |
-| Dungeons | 3, five levels in all | 22 in DESIGN.md; the atlas places 13 more, the Underdeep and the Core |
+| Outdoor land | 1,701 of 111,315 land squares (1.5%): the Shelf and Thornmark | the atlas: about 107 zone maps' worth in 12 areas. DESIGN.md §4 said 6 regions of 32×32 until #39 |
+| Towns | 2 | 9 in DESIGN.md until #39; the atlas places 6 more |
+| Dungeons | 3, five levels in all | 22 in DESIGN.md until #39; the atlas places 13 more, the Underdeep and the Core |
 | Levels | 1–10 (`MAX_LEVEL`) | bands to 32 on the atlas |
 | Monsters | 33, each its own drawing, in 11 families | about ten new per area at the rate so far |
 | Interiors | 12, one per business | about six per town |
@@ -97,7 +97,7 @@ it and the last area is built, they are Might and Magic VI's stables, and they s
 **Decided: (b), cores and country**, not (a) or (c). Coaches and boats as well, later: to be filed,
 with the owner's agreement, when the second area's core comes up.
 
-DESIGN.md §4's scale table and §12's tiers were rewritten to say so. The reach (DESIGN.md §9) is
+DESIGN.md §4's scale table was rewritten to say so, and §12 says so under its tiers. The reach (DESIGN.md §9) is
 optional by design, so it is the first thing v1 can leave for later.
 
 ### 2.2 One road, lightly held (decided)

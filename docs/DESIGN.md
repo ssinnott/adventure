@@ -102,8 +102,8 @@ turns.
 Caldera is a ring of land around an inland sea. In the centre of the sea burns **the Hearth**, a
 column of light that has never gone out in recorded history. It has begun to dim.
 
-Around the sea, twelve areas on one road of levels to 32, each with its towns and dungeons, and six
-of them with a **Wardstone**. In the road's order, as the atlas (`src/content/atlas.ts`) has them:
+Around the sea, and on two islands in it, twelve areas on one road of levels to 32, six of them
+with a **Wardstone**. In the road's order, as the atlas (`src/content/atlas.ts`) has them:
 
 | Area | Character | Band | Wardstone |
 |---|---|---|---|
@@ -118,7 +118,7 @@ of them with a **Wardstone**. In the road's order, as the atlas (`src/content/at
 | **The Whitespine** | The great southern range and its monks. | 22–24 | The Peak Stone |
 | **Ashfall** | Fire Mountain, black sand and vines. | 24–26 | The Ember Stone |
 | **The Glasswold** | Steppe round a desert of fused glass. | 26–28 | |
-| **Hearth Isle** | The temple over the core. | 28–30 | |
+| **Hearth Isle** | The temple over the Core. | 28–30 | |
 
 The bands are the atlas's (`areaBand` in `src/game/atlas.ts`), the Shelf's and Thornmark's from
 their maps. Two zones are not on the road: the Glass in the Glasswold and Glacier Foot in
@@ -574,7 +574,7 @@ very old, with their real map: the hull. The map shows what the Custodian will n
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 
 From M1 on, each area is built as a core and country (§4, docs/EXPANSION.md §2.1): its core
-first, then the country along the road from the last area's, then the rest of its land.
+first, then the country along the road from the last area's core, then the rest of its land.
 
 ---
 
