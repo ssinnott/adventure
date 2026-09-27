@@ -1,8 +1,8 @@
 // The whole world map in one PNG, for judging the art and the zone layout without scrolling it:
-//   node tools/worldmap.ts out.png [--zones] [--scale 1] [--at map,x,y,facing]
-// Paints the cloth exactly as the M screen does, then the zone overlay over it with --zones. A new
-// game is started so the overlay has a party to mark; --at moves it first (default: the Shelf road
-// south of Harrow).
+// node tools/worldmap.ts out.png [--zones] [--scale 1] [--at map,x,y,facing] Paints the cloth
+// exactly as the M screen does, then the zone overlay over it with --zones. A new game is started
+// so the overlay has a party to mark; --at moves it first (default: the Foreland road south of
+// Helmstow).
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { createServer } from './server.ts';

@@ -1,4 +1,4 @@
-// Greywater, level two: the drowned shrine the Ashen cult has dug beneath the smugglers' caves.
+// Brandy Hole, level two: the drowned shrine the Ashen cult has dug beneath the smugglers' caves.
 // A ring of galleries around a sealed inner shrine. The iron key is in a vestry behind a secret
 // door in the north-east; the Deacon waits in the shrine with the cult's ledger. Band 3-5.
 import type { MapDef } from '../../game/map.ts';
@@ -6,7 +6,7 @@ import { NORTH, SOUTH } from '../../game/types.ts';
 
 export const GREYWATER2: MapDef = {
   id: 'greywater2',
-  name: 'The Drowned Shrine',
+  name: 'The Seam',
   kind: 'dungeon',
   band: [3, 5],
   start: { x: 1, y: 1, facing: SOUTH },

@@ -119,7 +119,7 @@ apply.
 6. **Done when:** what a reviewer can check. A bug's includes the check that would have caught it,
    or why none can (EXPANSION §3, principle 6). The last line is always "`npm run check` is green."
 
-**Titles** name the change in a plain sentence, as the history writes commits: "Make Harrow a
+**Titles** name the change in a plain sentence, as the history writes commits: "Make Helmstow a
 castle city: the keep as a small zone with colour of its own". A bug's names the fault: "Smoke
 test: the end-of-the-world check fails about one run in five". An epic's starts with its phase,
 where it has one.

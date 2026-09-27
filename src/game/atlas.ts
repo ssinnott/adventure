@@ -2,8 +2,8 @@
 // outdoors is a single map. The atlas content draws the land the way a cartographer would, in
 // strokes: the rim, the coasts, ranges of mountains, rivers running from the rim to the sea, woods,
 // fens and fields, roads. worldGrid turns that into cells, one per square the party walks, and
-// stamps every built outdoor map into it 1:1 where it sits, so the painted map shows the real Shelf
-// and the real Thornmark.
+// stamps every built outdoor map into it 1:1 where it sits, so the painted map shows the real
+// Foreland and the real Thornmark.
 //
 // The land is divided two ways. Areas are the steps of the one road of levels (I, II, III...), each
 // with its level band, and every area is made of zones, the named country inside it. Which zone a
@@ -334,13 +334,13 @@ const CROSS: Partial<Record<WorldTerrain, number>> = {
 const SOFT = new Set<number>([TI.grass, TI.farm, TI.steppe, TI.heather, TI.dirt, TI.woods]);
 
 /**
- * The world as cells. In order: the rim (nothing beyond it, a band of mountains inside it), the seas
- * and the isles raised from them, the patches of country, the lakes, the ranges with their
- * foothills, shallows along every shore, the rivers, beaches, and last the built maps, whose ring of
- * edge mountains is only their closed border, so edge cells that are mountain keep the atlas's
- * terrain (the sea south of the Shelf, the ridge between the Shelf and Thornmark) and any other edge
- * cell, like the road through the pass, is the map's. Then every land cell is given to a zone, and
- * the planned roads are marked over it all.
+ * The world as cells. In order: the rim (nothing beyond it, a band of mountains inside it), the
+ * seas and the isles raised from them, the patches of country, the lakes, the ranges with their
+ * foothills, shallows along every shore, the rivers, beaches, and last the built maps, whose ring
+ * of edge mountains is only their closed border, so edge cells that are mountain keep the atlas's
+ * terrain (the sea south of the Foreland, the ridge between the Foreland and Thornmark) and any
+ * other edge cell, like the road through the pass, is the map's. Then every land cell is given to a
+ * zone, and the planned roads are marked over it all.
  */
 export function worldGrid(atlas: Atlas, defs: readonly MapDef[]): WorldGrid {
   const W = atlas.width, H = atlas.height, N = W * H, seed = atlas.seed;

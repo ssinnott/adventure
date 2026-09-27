@@ -51,7 +51,7 @@ export class TitleScreen implements Screen {
       const y = horizon + 4 + i * 4, w = 12 + i * 3.5 * (0.7 + 0.3 * Math.sin(frame / 9 + i));
       ctx.fillStyle = `rgba(255,220,150,${(0.35 - i * 0.008) * flick})`; ctx.fillRect(cx - w / 2, y, w, 2);
     }
-    // Far shore silhouette with Harrow's towers.
+    // Far shore silhouette with Helmstow's towers.
     ctx.fillStyle = '#0e1224';
     ctx.fillRect(v.x, horizon - 6, v.w, 8);
     for (const [tx, th, tw] of [[60, 26, 10], [110, 18, 8], [500, 30, 12], [560, 20, 8], [600, 14, 6]]) ctx.fillRect(v.x + tx, horizon - th, tw, th);

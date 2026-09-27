@@ -1,12 +1,13 @@
-// Greywater, level one: the smugglers' caves in the sea cliffs at the Shelf's south-west corner.
-// Wet rock and tide pools. The smugglers hold the western caves; their captain keeps the iron key
-// in the south, and the locked door east of it is the only way to the stairs down. Band 2-4.
+// Brandy Hole, level one: the smugglers' caves in the sea cliffs at the Foreland's south-west
+// corner. Wet rock and tide pools. The smugglers hold the western caves; their captain keeps the
+// iron key in the south, and the locked door east of it is the only way to the stairs down. Band
+// 2-4.
 import type { MapDef } from '../../game/map.ts';
 import { EAST, SOUTH } from '../../game/types.ts';
 
 export const GREYWATER1: MapDef = {
   id: 'greywater1',
-  name: 'Greywater Caves',
+  name: 'Brandy Hole',
   kind: 'dungeon',
   band: [2, 4],
   start: { x: 1, y: 1, facing: SOUTH },
@@ -34,11 +35,11 @@ export const GREYWATER1: MapDef = {
     { x: 14, y: 14, to: 'greywater2', tx: 1, ty: 1, tf: SOUTH, label: 'Steps cut into the rock lead down. Someone has chiselled a hand into every one.' },
   ],
   features: [
-    { kind: 'event', x: 1, y: 2, id: 'gw1_in', once: true, text: 'The caves smell of salt and lamp oil. Crates stamped with the Harrow customs seal lie broken open along the walls.' },
+    { kind: 'event', x: 1, y: 2, id: 'gw1_in', once: true, text: 'The caves smell of salt and lamp oil. Crates stamped with the Helmstow customs seal lie broken open along the walls.' },
     { kind: 'chest', x: 3, y: 3, id: 'gw1_c1', gold: 40, items: ['potion_heal', 'rations', 'rations'] },
-    { kind: 'sign', x: 7, y: 3, text: 'Chalked on the rock: SHIP DUE DARK OF THE MOON. CARGO GOES BELOW, NOT TO HARROW.' },
+    { kind: 'sign', x: 7, y: 3, text: 'Chalked on the rock: SHIP DUE DARK OF THE MOON. CARGO GOES BELOW, NOT TO HELMSTOW.' },
     { kind: 'chest', x: 14, y: 1, id: 'gw1_c2', gold: 60, items: ['buckler', 'antidote', 'potion_heal'] },
-    { kind: 'event', x: 8, y: 8, id: 'gw1_pool', once: true, text: 'A tide pool fills the middle cavern. Things float in it face down, in Harrow clothes. One of them turns its head.' },
+    { kind: 'event', x: 8, y: 8, id: 'gw1_pool', once: true, text: 'A tide pool fills the middle cavern. Things float in it face down, in Helmstow clothes. One of them turns its head.' },
     { kind: 'event', x: 9, y: 11, id: 'gw1_drag', once: true, text: 'Drag marks in the wet rock run off to the east, into the wall. Whatever made them did not turn back.' },
     { kind: 'event', x: 11, y: 11, id: 'gw1_stash', once: true, text: 'The smugglers\' stash: the good stock, oiled and wrapped in sailcloth.' },
     { kind: 'chest', x: 12, y: 11, id: 'gw1_stash_c', gold: 120, items: ['longsword', 'shield', 'potion_heal'] },
