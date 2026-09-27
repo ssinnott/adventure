@@ -19,9 +19,9 @@ area has one). README.md lists the rest of the docs.
 
 ## The voice
 
-Terse, British spelling as the game has it (colour, armour), no Oxford comma. In a game text, two
-lines to an event is the aim, three the most (DESIGN §11, EXPANSION §5.4). The secret is found,
-never told.
+Terse, British spelling as the game has it (colour, armour). In a game text, two lines to an event
+is the aim, three the most (DESIGN §11, EXPANSION §5.4). The secret is found, never told. The docs,
+issues and pull requests take no Oxford comma (ISSUES §5).
 
 ## Commits
 
