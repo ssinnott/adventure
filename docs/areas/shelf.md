@@ -481,9 +481,9 @@ Decided by the owner on 27 September 2026:
 7. **The names** (§10).
 8. **The side quests:** #56's eight for the Foreland are pulled into the build, each built where its
    places are (§6): with their boxes, or in #77, on the systems of #76.
-9. **Ashcombe moves past Gullwick,** so that the first job is a journey (on #85). Where past
-   Gullwick, whether it stays the first job and what the Foreland map keeps where it stood are open
-   in #87; until they are settled, the briefs here keep the farm on the Foreland map.
+9. **Ashcombe moves past Gullwick,** so that the first job is further and a bit harder (#85). Where
+   past Gullwick, how it is made harder and what the Foreland map keeps where it stood are open in
+   #87; until they are settled, the briefs here keep the farm on the Foreland map.
 
 Proposed, for the owner, each in the issue that would build it:
 
