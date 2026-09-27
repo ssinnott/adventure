@@ -343,13 +343,16 @@ are all off. Every push to main is deployed, so these are players' saves.
 
 - **One silhouette.** Each sprite kind, drawn at combat size, is one connected piece of ink (above
   an alpha threshold, ignoring specks), apart from parts it declares detached: glows, sparks,
-  something thrown. This is #7 as a check.
-- **No cracks.** The per-square crack sweep runs on every map a pull request changes, not only the
-  cellar and Helmstow; the rest are swept on release.
-- **Restraint.** The share of wall faces dressed, per kind of map, stays at or under its level after
-  #9; a new kind of dressing comes with its rate.
-- **Distinct.** Every business its own interior, which is checked today, and every monster def its
-  own sprite kind, which is not yet (#35).
+  something thrown. This is #7 as a check, in `tools/smoke.ts`, which declares the parts.
+- **No cracks.** The per-square crack sweep runs all four ways on every map a pull request changes,
+  and one way on the cellar and Helmstow; the rest are swept on release, a run of the checks
+  started by hand (`tools/smoke.ts`, `tools/changed.ts`).
+- **Restraint.** The share of wall faces dressed, per kind of map and per map, stays near its level
+  after #9, under caps set above it so an honest new map does not fail by chance; a new kind of
+  dressing comes with its rate (`DRESSING_RATES` in `src/ui/viewport.ts`, checked in
+  `tools/tests/art.ts`).
+- **Distinct.** Every business its own interior, and every monster def its own sprite kind
+  (`tools/tests/art.ts`).
 
 ### 5.7 What people look at
 
