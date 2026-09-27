@@ -63,7 +63,9 @@ const CLEAR: Env = { murk: 0, cover: 0, wet: 0, day: 45, trees: HIGH_SUMMER };
 let env: Env = CLEAR;
 
 /** How much the weather closes the view: fog, or rain and (more so) snow coming down hard. */
-function murkOf(w: Weather): number { return Math.min(1, Math.max(w.fog, w.precip * (0.45 + 0.45 * w.snow) - 0.1)); }
+export function murkOf(w: Weather): number { return Math.min(1, Math.max(w.fog, w.precip * (0.45 + 0.45 * w.snow) - 0.1)); }
+/** Whether the view draws a murk wash over everything, the void included. The smoke test asks for none. */
+export function washes(w: Weather): boolean { return w.fog > 0.05 || murkOf(w) > 0.05; }
 
 /** Distance fog: nearer is truer. `haze` is the colour far things fade toward. */
 function fog(color: string, d: number, dark: boolean, haze: string | null = null): string {
@@ -451,7 +453,7 @@ export function drawWeather(ctx: CanvasRenderingContext2D, world: World, r: View
   const light = world.daylight * (1 - 0.35 * wx.cloud);
   const rain = wx.precip * (1 - wx.snow), snow = wx.precip * wx.snow, murk = murkOf(wx);
   ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
-  if (wx.fog > 0.05 || murk > 0.05) drawMurk(ctx, r, Math.max(wx.fog, murk * 0.6), wx.fog, frame, light);
+  if (washes(wx)) drawMurk(ctx, r, Math.max(wx.fog, murk * 0.6), wx.fog, frame, light);
   if (rain > 0.02) { drawSplashes(ctx, world, r, rain, frame, light); drawRain(ctx, r, rain, across * 0.9, frame, light); }
   if (snow > 0.02) drawSnow(ctx, r, snow, across * (0.3 + 2.5 * wx.wind), frame, light);
   const flash = strike(wx.storm, frame);
