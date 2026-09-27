@@ -44,6 +44,10 @@ tests, `npm run build`, then publish `dist/` to GitHub Pages at
 <https://ssinnott.github.io/adventure/>. Pages must be set to deploy from **GitHub Actions**
 (Settings → Pages → Source); the workflow enables that on its first run if it can.
 
+Every pull request runs [.github/workflows/checks.yml](.github/workflows/checks.yml): the typecheck,
+the tests and the smoke test, as three checks. Main takes a pull request only when all three pass
+and it is up to date with main.
+
 ## Layout
 
 ```
