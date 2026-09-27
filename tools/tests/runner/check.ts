@@ -1,5 +1,5 @@
-// The runner's own check: tools/test.ts run in a child process against ./fixture/, a folder the real
-// run never reads, so the owed lines and failures here stay out of its output.
+// The runner's own check: tools/test.ts run in a child process against ./fixture/, a folder the
+// real run never reads, so the owed lines and failures here stay out of its output.
 //   node tools/tests/runner/check.ts
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';

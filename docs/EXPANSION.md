@@ -37,8 +37,8 @@ nothing, or a habit of running it again until it passed. Every run now plays one
 
 **What was missing.** Nothing stood between a branch and main. CI ran only on a push to main, and
 without the smoke test. Nine of the fourteen pull requests were merged within half a minute of being
-opened. Every pull request now runs the typecheck, the tests and the smoke test, and main requires
-them (#27).
+opened. Every pull request now runs the typecheck, the tests and the smoke test (#27); main
+requires them once the owner turns branch protection on.
 
 **Where parallel work collides.** The most-edited files are `docs/SLICE.md` (17 commits),
 `tools/test.ts` (14), `README.md` (14), `tools/smoke.ts` (11), `src/game/monsters.ts` (10) and

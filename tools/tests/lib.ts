@@ -1,6 +1,6 @@
 // What every suite shares: the check that prints a line and counts a failure, the line for a check
-// that is owed, and where the party stands on the maps as written. The count lives here, as a module's own binding can only be
-// changed by the module.
+// that is owed, and where the party stands on the maps as written. The count lives here, as a
+// module's own binding can only be changed by the module.
 import type { World } from '../../src/game/world.ts';
 
 let failures = 0;

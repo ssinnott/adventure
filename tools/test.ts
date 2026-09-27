@@ -1,8 +1,9 @@
 // Pure-Node tests for the game model: maps, movement, combat determinism, saves, the quest log. No
-// browser. The runner finds its suites: every tools/tests/*.ts but lib.ts, each exporting a function
-// named after its file, which may be async. Today's suites run first in the order below, then any
-// other in name order, then each area's walkthrough (src/content/areas/<area>/walkthrough.ts) where
-// it has one, in road order. A suite is added by its file alone.
+// browser. The runner finds its suites: every tools/tests/*.ts but lib.ts, each exporting a
+// function named after its file, which may be async. Today's suites run first in the order below,
+// then any other in name order, then each area's walkthrough
+// (src/content/areas/<area>/walkthrough.ts) where it has one, in road order. A suite is added by
+// its file alone.
 //   node tools/test.ts                  run everything
 //   node tools/test.ts maps combat      run selected suites
 //   node tools/test.ts walkthrough:shelf  run one area's walkthrough
@@ -17,7 +18,10 @@ import type { Walkthrough } from '../src/content/area.ts';
 const FIRST = ['maps', 'movement', 'monsters', 'combat', 'harness', 'party', 'traits', 'calendar', 'terrain', 'weather', 'atlas', 'outdoors', 'save', 'quests'];
 
 type Suite = () => void | Promise<void>;
-/** Each suite by name, loaded only if it runs. One that will not load, or exports no suite, fails as its own suite. */
+/**
+ * Each suite by name, loaded only if it runs. One that will not load, or exports no suite, fails as
+ * its own suite.
+ */
 const suites = new Map<string, () => Promise<Suite>>();
 
 const args = process.argv.slice(2);
@@ -38,7 +42,8 @@ for (const name of order) {
   });
 }
 
-// Each area's walkthrough, found by its file, in the order of AREAS: an area adds one without touching this runner.
+// Each area's walkthrough, found by its file, in the order of AREAS: an area adds one without
+// touching this runner.
 if (at < 0) {
   const areas = new URL('../src/content/areas/', import.meta.url);
   const ids: string[] = await import('../src/content/index.ts').then((m) => m.AREAS.map((a) => a.id), (e: unknown) => {
