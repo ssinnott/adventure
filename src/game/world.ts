@@ -64,6 +64,9 @@ export type MoveResult =
 
 export interface LiveGroup { def: EncounterDef; state: GroupState; }
 
+/** A sign as the log shows it. */
+export const signLine = (text: string): string => `A sign reads: "${text}"`;
+
 export class World {
   readonly maps: Record<string, GameMap>;
   state: WorldState;
@@ -463,7 +466,7 @@ export class World {
     const out: string[] = [];
     for (const f of this.map.featuresAt(this.state.x, this.state.y)) {
       if (f.kind === 'event' && !(f.once && this.mapState.used[f.id])) { out.push(f.text); if (f.once) this.mapState.used[f.id] = 1; }
-      if (f.kind === 'sign') out.push(`A sign reads: "${f.text}"`);
+      if (f.kind === 'sign') out.push(signLine(f.text));
     }
     return out;
   }
