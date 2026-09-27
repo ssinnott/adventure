@@ -1,8 +1,10 @@
 // The pillars, where a machine can check them (EXPANSION §5.4): every secret door has a hint on its
 // near side; no event or sign runs past three lines of the log, every glyph is in the font and the
-// spelling is British. Each check is a function of the content it reads, so it runs over every area and over
+// spelling is British; each area's claim of what is new in it holds. Each check is a function of the content it reads, so it runs over every area and over
 // fixtures broken on purpose, which it must refuse.
+import { readdirSync } from 'node:fs';
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS } from '../../src/content/index.ts';
+import type { Area, Novelty } from '../../src/content/area.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { CLASSES, RACES, TRAITS } from '../../src/game/party.ts';
@@ -115,7 +117,66 @@ export const AMERICAN = [
 const AMERICAN_RE = new RegExp(`\\b(${AMERICAN.join('|')})\\b`, 'gi');
 export const americanisms = (text: string): string[] => [...new Set(text.match(AMERICAN_RE) ?? [])];
 
-export function pillars(): void {
+/** Each monster family, the module in src/ui/monsters/ that draws it, and the kinds it draws. */
+export async function families(): Promise<Map<string, readonly string[]>> {
+  const dir = new URL('../../src/ui/monsters/', import.meta.url), out = new Map<string, readonly string[]>();
+  for (const f of readdirSync(dir).filter((f) => f.endsWith('.ts')).sort()) {
+    const kinds = ((await import(new URL(f, dir).href)) as { KINDS?: readonly string[] }).KINDS;
+    if (kinds) out.set(f.slice(0, -3), kinds);
+  }
+  return out;
+}
+
+type Uses = { [K in keyof Novelty]: Set<string> };
+/** What an area uses, in the words of its claim: the families it places, the ground of its maps, its mechanics, its built sites. */
+export function uses(area: Pick<Area, 'maps' | 'atlas'>, family: Map<string, readonly string[]>): Uses {
+  const out: Uses = { families: new Set(), terrain: new Set(), mechanics: new Set(), landmarks: new Set() };
+  const familyOf = (sprite: string): string | undefined => [...family].find(([, kinds]) => kinds.includes(sprite))?.[0];
+  for (const def of area.maps) {
+    const map = new GameMap(def);
+    for (const c of map.cells) {
+      if (c.solid !== 'void') out.terrain.add(c.terrain);
+      if (c.door !== 'none') out.mechanics.add(`door:${c.door}`);
+    }
+    for (const f of def.features ?? []) out.mechanics.add(`feature:${f.kind}`);
+    for (const e of def.encounters ?? []) {
+      for (const k of Object.keys(e)) if (!['id', 'x', 'y', 'monsters'].includes(k)) out.mechanics.add(`encounter:${k}`);
+      for (const id of e.monsters) {
+        const m = MONSTERS[id];
+        if (!m) continue;
+        const fam = familyOf(m.sprite);
+        if (fam) out.families.add(fam);
+        for (const flag of ['ranged', 'missile', 'mindless'] as const) if (m[flag]) out.mechanics.add(`monster:${flag}`);
+        if (m.inflict) out.mechanics.add(`inflict:${m.inflict.cond}`);
+      }
+    }
+  }
+  for (const s of area.atlas.sites) if (!s.planned && s.icon !== 'label' && s.icon !== 'water') out.landmarks.add(s.icon);
+  return out;
+}
+
+/**
+ * What is wrong with the areas' claims, in road order: a family with no module, a claim the area
+ * does not use or an area earlier on the road already did, or an area after the first that claims
+ * nothing new at all.
+ */
+export function noveltyFaults(areas: readonly Pick<Area, 'id' | 'maps' | 'atlas' | 'novel'>[], family: Map<string, readonly string[]>): string[] {
+  const out: string[] = [], before: Uses = { families: new Set(), terrain: new Set(), mechanics: new Set(), landmarks: new Set() };
+  areas.forEach((area, i) => {
+    const here = uses(area, family);
+    const kinds = Object.keys(before) as (keyof Novelty)[];
+    for (const k of kinds) for (const thing of area.novel[k]) {
+      if (k === 'families' && !family.has(thing)) out.push(`${area.id}: the family '${thing}' has no module in src/ui/monsters/`);
+      else if (!here[k].has(thing)) out.push(`${area.id}: claims ${k} '${thing}', which it does not use`);
+      else if (before[k].has(thing)) out.push(`${area.id}: claims ${k} '${thing}', which is on the road before it`);
+    }
+    if (i > 0 && kinds.every((k) => !area.novel[k].length)) out.push(`${area.id}: claims nothing new`);
+    for (const k of kinds) for (const thing of here[k]) before[k].add(thing);
+  });
+  return out;
+}
+
+export async function pillars(): Promise<void> {
   // Hints: every secret door names one, on its near side.
   for (const area of AREAS) {
     let doors = 0, bad = 0;
@@ -171,4 +232,24 @@ export function pillars(): void {
   ok(missingGlyphs('Ashcombe—the café’s door').length === 3, 'a dash, an accent and a curled quote have no glyph, and fail');
   ok(americanisms('The gray walls lose their Color.').length === 2 && !americanisms('Armour of every size, a prize to seize.').length, 'gray and color fail; armour, size, prize and seize do not');
   ok(!all.some((t) => t.text === 'armor'), 'the item slot armor, a saved key, is no text');
+
+  // Novelty: each area's claim of what is new in it exists, is used in it and is nowhere earlier on the road.
+  const family = await families();
+  ok(family.size > 0, `the monster families: ${[...family.keys()].join(', ')}`);
+  const faults = noveltyFaults(AREAS, family);
+  for (const area of AREAS) {
+    const mine = faults.filter((f) => f.startsWith(area.id + ':'));
+    const claim = (Object.entries(area.novel) as [string, readonly string[]][]).filter(([, v]) => v.length).map(([k, v]) => `${k} ${v.join(', ')}`).join('; ');
+    ok(!mine.length, `${area.id}: what it claims is new holds${claim ? ` (${claim})` : ' (nothing, as the first on the road)'}${mine.length ? ' -> ' + mine.join('; ') : ''}`);
+  }
+  {
+    const [first, second] = AREAS;
+    const claim = (novel: Partial<Novelty>): string[] => noveltyFaults([first, { ...second, novel: { families: [], terrain: [], mechanics: [], landmarks: [], ...novel } }], family);
+    ok(claim({ families: ['wolf'] }).length === 1, `${second.id} claiming wolves, which ${first.id} places, fails`);
+    ok(claim({ families: ['dragon'] }).length === 1, 'a family with no module fails');
+    ok(claim({ terrain: ['hills'] }).length === 1, 'terrain no map of the area uses fails');
+    ok(claim({ landmarks: ['city'] }).length === 1, `a landmark ${first.id} already has fails`);
+    ok(claim({ mechanics: ['feature:sign'] }).length === 1, `a mechanic ${first.id} already has fails`);
+    ok(claim({}).length === 1, 'an area after the first that claims nothing fails');
+  }
 }
