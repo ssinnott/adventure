@@ -38,7 +38,7 @@ Its edges:
   straight down through the mountains at x 94, a few squares east of the cliff, where there is
   nothing to follow. At the south end it leaves the cliff and takes a strip of low ground at the
   cliff's foot, about eight squares wide (x 109–120, y 99–121), so the road down Kestrel Edge
-  (`atlas.ts:385`) ends on the Downs and not in the Delta.
+  (`atlas.ts:387`) ends on the Downs and not in the Delta.
 - **South-west: the Salt Road down Kestrel Edge** into the Delta (10–12). The atlas opens it only
   after step II (`opens: 2`); under one road, lightly held, it is open from the start (#40).
 
