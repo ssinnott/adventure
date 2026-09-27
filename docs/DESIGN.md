@@ -572,8 +572,9 @@ very old, with their real map: the hull. The map shows what the Custodian will n
 - **Content is TypeScript, in `src/content/`:** maps, monsters, spells, items, quests and dialogue,
   one folder per area (`src/content/areas/<area>/`), merged in road order by
   `src/content/index.ts`. Not JSON: the type checker is the best content check there is, so a
-  monster with no drawing, a business with no room or a map in no region fails it. The model in
-  `src/game/` holds no content of its own, a monster's hit points included.
+  monster with no drawing, a business with no room or a map in no region fails it. The monster,
+  item, spell and quest tables and the climates have moved out of `src/game/`; the races and
+  classes, with their traits and starting kits, are still in `src/game/party.ts`.
 - **Determinism:** combat and Rift generation are pure functions of (state, seed). This gives us
   replayable bug reports and a golden-fingerprint check like the sibling games' `tools/golden.js`.
 

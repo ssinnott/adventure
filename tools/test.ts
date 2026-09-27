@@ -28,8 +28,11 @@ const areas = new URL('../src/content/areas/', import.meta.url);
 for (const area of readdirSync(areas, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name).sort()) {
   const file = new URL(`${area}/walkthrough.ts`, areas);
   if (!existsSync(file)) continue;
-  const { walkthrough } = (await import(file.href)) as { walkthrough: Walkthrough };
-  suites[`walkthrough:${area}`] = () => walkthrough(ok);
+  // One that will not load fails as its own suite, and the rest still run.
+  const loaded = await import(file.href).then((m: { walkthrough: Walkthrough }) => m.walkthrough, (e: unknown) => e);
+  suites[`walkthrough:${area}`] = typeof loaded === 'function'
+    ? () => (loaded as Walkthrough)(ok)
+    : () => { throw loaded; };
 }
 
 const wanted = process.argv.slice(2);

@@ -1,11 +1,18 @@
 // The Harrow Provisioner, where a party buys its first clubs and rations and torches.
 import { rgba } from '../../../lib/art/palettes.ts';
-import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, plaster, beam, planks, floorboards, windowIn, line, fillPoly, inkRect, slab } from '../kit.ts';
+import { rnd, STAGE_W, STAGE_H, plaster, beam, planks, floorboards, windowIn, line, fillPoly, inkRect, slab } from '../kit.ts';
 import { K, counter, bottle, jar, sack, crate, barrel, candle, lantern, herbs, sword, spear, mace, club, staff, bow, shield } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
+import type { Scene, Stage } from '../kit.ts';
 import { drawText } from '../../../lib/engine/text.ts';
-import { BRASS, flask, coins } from '../shops.ts';
+import { flask } from '../shops.ts';
+
+const BRASS = '#c9a34a';
+
+/** A little stack of coins on y. */
+function coins(ctx: CanvasRenderingContext2D, x: number, y: number, n: number, metal = '#e0b840'): void {
+  for (let i = 0; i < n; i++) glossEllipse(ctx, K, x + (rnd(3, i) - 0.5) * 2, y - 1 - i * 2, 4.5, 1.8, metal, 0, { gloss: 0.7 });
+}
 
 const PINE = '#8a6038', PINE_DARK = '#5a3a22', WALL = '#e6d8b8';
 
