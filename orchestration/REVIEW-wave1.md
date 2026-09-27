@@ -73,3 +73,12 @@ Every earlier fix proven by breaking it on purpose. After #64's renames were mer
 - #61: one fix sent at 18:20, the smoke check never sees hedges or the patchwork.
 - #29: every Done-when line holds. The dry-run area touches only its folder and two lines of index.ts; the tables and ATLAS are identical to main's; a v2 save loads the same; duplicates throw; `: Area` fails the typecheck. Doc pointers in #64's shelf.md and NAMES.md went stale in the move, and five nits remain; sent at 18:20.
 - For the owner: CLAUDE.md's "no Oxford comma" sits beside the game-text rule, but shipped texts use serial commas. Scope it to docs and issues, or keep it for texts too?
+
+## All six ready, 20:00
+
+- #58: the comma rule scoped to docs, issues and pull requests at the owner's word (b2db37e).
+- #60: the Foreland's area doc names both hints (7d3919b).
+- #61: the smoke test now sees hedges and patchwork; skipping the hedges fails it. Its field search is
+  bounded: forcing one crop fails in 12 s with a plain message instead of hanging (0c1fbf0). Unbroken,
+  `npm run check` is green.
+- #29: the pointer fixes in #64's docs hold against the code (7c6d6f0). Waits for the other six to merge.
