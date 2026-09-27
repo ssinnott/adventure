@@ -12,6 +12,7 @@ import { is } from '../input.ts';
 import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
 import { ATLAS } from '../content/atlas.ts';
 import { MAP_DEFS } from '../content/maps/index.ts';
+import { QUESTS } from '../content/quests.ts';
 import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
@@ -1148,6 +1149,15 @@ function centreOf(id: string): [number, number] | undefined {
   return a ? [px(a.label[0]), py(a.label[1])] : undefined;
 }
 
+/**
+ * A gate's flag as the overlay letters it: the title of the quest it finishes. A flag keeps the
+ * name it was saved under, so its own words can be a place's old name.
+ */
+function gateName(flag: string): string {
+  const q = QUESTS.find((d) => [d.done ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)));
+  return q ? q.title.replace(/^The /, '') : flag.replace(/^q_/, '').replace(/_done$/, '');
+}
+
 function drawEdge(ctx: CanvasRenderingContext2D, e: ZoneEdge, find: (id: string) => Plate | undefined): void {
   const endAt = (id: string, p: Pt | undefined): { pt: [number, number]; plate?: Plate } | null => {
     if (p) return { pt: [px(p[0]), py(p[1])] };
@@ -1194,7 +1204,7 @@ function drawEdge(ctx: CanvasRenderingContext2D, e: ZoneEdge, find: (id: string)
   if (e.kind === 'sea') boat(ctx, qx, qy - 2);
   // What the way waits on: a padlock and the quests for a built gate, the step for a planned one.
   const lines: { text: string; color: string }[] = [];
-  if (e.gate.length) lines.push({ text: e.gate.map((f) => f.replace(/^q_/, '').replace(/_done$/, '')).join(' + ').toUpperCase(), color: '#ff8a7a' });
+  if (e.gate.length) lines.push({ text: e.gate.map(gateName).join(' + ').toUpperCase(), color: '#ff8a7a' });
   if (e.note) lines.push({ text: e.note.toUpperCase(), color: e.kind === 'sea' ? '#a8dcf8' : e.kind === 'deep' ? '#d8b0ff' : '#e8e0f4' });
   if (e.opens) lines.push({ text: `OPENS AFTER ${roman(e.opens)}`, color: '#ffb86a' });
   if (e.gate.length || e.opens) {

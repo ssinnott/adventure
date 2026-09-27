@@ -1,4 +1,4 @@
-// The Lanterns' two houses: the Chapel in Harrow, a stone apse lit through stained glass and by
+// The Lanterns' two houses: the Chapel in Helmstow, a stone apse lit through stained glass and by
 // the lanterns the order is named for, and the Chapterhouse in Thornhold, a nave of living trees
 // with the chapter's lamp burning in the hollow of the oldest of them.
 import { shade, rgba } from '../../lib/art/palettes.ts';
