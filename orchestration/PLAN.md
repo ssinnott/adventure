@@ -64,4 +64,10 @@ SendMessage doesn't reach cloud sessions. What works: `create_trigger` with `per
 set to the session and `run_once_at` a minute or two ahead; the run's `session_id` comes back as the
 same id with a `cse_` prefix. Never `fire_trigger` a trigger bound to another session: it starts a new,
 empty session instead (six such strays, "⚡ M0 orchestrator → …", were interrupted at 16:21 on
-2026-09-27 and are left for the owner to archive).
+2026-09-27; they changed nothing, and as routine runs they are not in the session list).
+
+## Main moved under Wave 1
+
+#64 (4129f47, merged 16:37) renamed places in text only, ids unchanged: the Shelf is the Foreland,
+Harrow is Helmstow, Greywater is Brandy Hole and so on (docs/NAMES.md). It conflicts with #59, #60, #61
+and #62; each session was told at 16:59 to merge main and take the new names. #29 had merged it already.
