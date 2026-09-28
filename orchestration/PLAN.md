@@ -631,3 +631,20 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (quest 3) after #135. Two titles are too wide for the log's list: default the shorter ones.
 - Started #77's A in the #76 session (`claude/m1-77-bell`). The guilds session is told that its
   Lantern words must agree with #77's Ebba and Ailith (read #77's Dialogue).
+
+### 23:17: #135 merged; #40's dungeons started; #145, #146 and #147 in review
+
+- The owner (23:10): #40's decisions 1 and 2 as recommended ((b); bosses out of the day), and the
+  redrawn throne OK ("the chair looks better"). Nothing yet on #140's track: asked again.
+- #135 (#17's B) merged at 23:13 (main 54ae56d) after its main merge (§3's Helmstow row with the
+  Wardens' hall): on its head a082058, ALL OK (47 owed), SMOKE OK, "Nothing new."; CI green; main's
+  tree is the head's (c02eb7e). #17 closes; the keep's session is done for Phase 1.
+- #140 merged main d1f661c (2c1954a); told at 23:16 to merge 54ae56d once more (§3 keeps the Keep
+  row; shipped.json by the tool). It waits on the owner's OK of the track.
+- #40's session told at 23:14 to start the dungeons (`claude/m1-40-dungeons`) on the owner's two
+  decisions; the pilot told the same (its bosses take the change from main).
+- Opened: #145 (#47's A, F2; 42 owed, #47 16 → 10; changes the Foreland to the eye), #146 (#21's D,
+  the Lanterns; `Closes #21`), #147 (#77's A, the Bell and the Survey). Reviewers at 23:12
+  (`reviews/145.md` to `147.md`). #145's sheet went to the owner at 23:17. The pink beside the
+  Brandy Hole beach is main's too; Coldharbour's walls at three squares are past the night's reach.
+- Nothing else can start yet: #67 to #72 and #87 wait on the pilot, #49 on #47 and #48.
