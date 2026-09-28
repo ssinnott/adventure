@@ -480,10 +480,14 @@ request first; it never edits shared files on the side.
 
 1. **Brief**, in `docs/areas/<area>.md`: purpose, band, landmarks, the secret and its hint, the
    encounters, what is new.
-2. **Scaffold.** `tools/scaffold.ts <zone> <x> <y>`, built in Phase 0, cuts the atlas's terrain for
-   those squares into a draft map, so the land walked matches the land painted. A prototype, tried
-   on the Downs west of the Foreland, gave in a second a wood, the hills and the road, and 14 of its
-   32 rows nothing but grass: the part to be authored.
+2. **Scaffold.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32
+   squares a side, its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges, and
+   named as the old maps were, by its column's letter and its row's number (the Foreland is G2). A
+   map's place is its box, so what is not built is always whole boxes, and no area leaves another a
+   strip no map fits. `tools/scaffold.ts <zone> <x> <y>`, built in Phase 0, cuts the atlas's
+   terrain for a box into a draft map, so the land walked matches the land painted. A prototype,
+   tried on the Downs west of the Foreland, gave in a second a wood, the hills and the road, and 14
+   of its 32 rows nothing but grass: the part to be authored.
 3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain.
 4. **Check**: `npm run check`, then the contact sheet.
 5. **Review**: a pull request, CI green, the owner's look at the sheet, merge.
@@ -540,11 +544,12 @@ comes off the pass and Hale's checkpoint becomes a warning; Thornmark, the Grove
 Stone are retuned until the gate check holds at their floors; the tests that pin the flag gate (the
 movement and outdoors suites, and the smoke test's walk through the pass) follow it; The Quiet Farm
 and The Grove Stone become the one quest's first chapters; the three hand-ins take their items at
-the first meeting. Then the rest of the Foreland and Thornmark through the new pipeline: one zone
-map of the Downs west of the Foreland (band 2–5, where the land runs on and the world now ends),
-then the Deepthorn's core. Meanwhile, in the systems lane, what M1 still lacks: the first guilds
-(DESIGN.md §8). The terrain the pilot asks for comes in Phase 0 (#44). Measure how long a zone map
-takes and what the owner still finds by hand, and tune the thresholds.
+the first meeting. Then the rest of the Foreland and Thornmark through the new pipeline: the first
+two boxes of the Downs, west of the Foreland where the land runs on and the world now ends (F2 and
+F3, the road to Gullwick; band 2–5, docs/areas/shelf.md), then the Deepthorn's core. Meanwhile, in
+the systems lane, what M1 still lacks: the first guilds (DESIGN.md §8). The terrain the pilot asks
+for comes in Phase 0 (#44). Measure how long a zone map takes and what the owner still finds by
+hand, and tune the thresholds.
 
 **Phase 2: the systems for Acts II to IV**, one at a time: the level cap past 10, with the xp
 budget (§5.2) and the prestiges; the Rift generator, the next regions' climates, the crossings, and
