@@ -20,8 +20,9 @@ DESIGN.md first for the why.
   first menu, its own trade, the guild's work and Leave, which each choice returns to; a business
   with its trade alone opens straight on it. The guild's work pays what is done, then offers the
   quests at or under the company's rank. Membership and rank are worked out from the guild quests'
-  done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). No hall is marked yet: the Wardens' and the Lanterns' come with
-  their quests. A spell hall's fee buys the right to study, not membership.
+  done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). The Warden Drillyard
+  is the Wardens' hall; the Lanterns' halls come with their quests. A spell hall's fee buys the
+  right to study, not membership.
 - **People in a business:** a person with no room of their own on a business's doorway, listed after
   it, is in the business while present, and its first menu offers "Talk to <name to its first
   comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
@@ -187,8 +188,8 @@ cap, which is 10 until the road past it is built:
   window: the Foreland 1-5 and 500 gold, Thornmark 5-10 and 1,200. Three quarters of a clear's xp
   should take a member to the next floor, and its gold train the six there; every monster has a
   `level` within two of its maps' bands, rising from the way in (it changes no combat yet), and no
-  chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,660 a
-  member of 3,734, Thornmark 7,849 of 13,667), nor Thornmark's the gold (5,330 of 8,400):
+  chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,710 a
+  member of 3,734, Thornmark 8,249 of 13,667), nor Thornmark's the gold (5,800 of 8,400):
   `tools/tests/curve.ts` reports them as #26's.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
@@ -273,7 +274,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   cobwebs, cracks, damp streaks, iron rings, barred grates, carved glyph panels; on houses flower
   boxes and ivy); on every house door a lantern lit after dark, and on a business's a sign with a
   glyph for the service (a door is a house's where a building stands beside it; a door set in stone
-  is an arched doorway in the wall, with neither); a town or a dungeon may place its banners
+  is an arched doorway in the wall, with neither; outdoors, a secret door set among mountain, rock or
+  trees is drawn and inked on the automap as most of its neighbours are, so a sett or a cave is found
+  and never seen, and once found it is a door); a town or a dungeon may place its banners
   (`MapDef.banners`), which hang whatever the hash says; map palettes choose `wallStyle` (stone or
   brick) and `ceilingStyle` (vault or timber beams); cobbled roads, flowers in the grass, cracks and
   puddles on flagstones; a carved plank frame with brass fittings and rivets; a painted title
@@ -314,8 +317,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Stubbed or absent
 
-- No guild quests yet: the guilds' rules and the hall's menu are built, the Wardens' and the
-  Lanterns' quests are not.
+- The Lanterns' guild quests are not built yet; the Wardens' are.
 - No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
@@ -417,7 +419,8 @@ over content broken on purpose too, and two tools to theirs:
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
-  kind at its rate.
+  kind at its rate; a secret door outdoors among mountain, rock or trees drawn as they are
+  (`drawnCell`), and any other door, or one in a wall or a town, left a door.
 - `changed`: which files count every map, monster or interior for the crack sweep and the sheet,
   and which only their own.
 - `scaffold` (§8.2): the Downs' draft, laid back into the atlas, is the atlas square for square.
@@ -483,7 +486,7 @@ does.
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
-| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags; what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
+| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
@@ -491,7 +494,7 @@ does.
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the farmland's fields and hedges, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world in pink and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the farmland's fields and hedges, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |
