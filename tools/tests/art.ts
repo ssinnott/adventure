@@ -18,10 +18,10 @@ export function sharedKinds(defs: readonly { id: string; sprite: string }[]): st
 }
 
 /**
- * The caps. A map of 100 faces or more has at most 35% of them dressed, a smaller one at most half;
- * a kind of map has at most 25% once its maps have 200 faces between them. Set above today's levels
- * (about a fifth: one wall in five is dressed by construction), so an honest new map does not fail
- * by chance, and far below the three in four and more dressed before #9.
+ * The caps. A map of 100 faces or more has at most 35% of them dressed, a smaller one at most
+ * half; a kind of map has at most 25% once its maps have 200 faces between them. Set above today's
+ * levels (about a fifth: one wall in five is dressed by construction), so an honest new map seldom
+ * fails by chance, and far below the three in four and more dressed before #9.
  */
 export const MAP_CAP = 0.35, SMALL_MAP_CAP = 0.5, SMALL_MAP = 100, KIND_CAP = 0.25, KIND_FLOOR = 200;
 
@@ -81,12 +81,14 @@ export const BEFORE_9: Rule = (m, x, y) => {
 };
 
 export function art(): void {
-  // A drawing of its own: the typecheck holds each kind to a drawing, but nothing held two defs off one.
+  // A drawing of its own: the typecheck holds each kind to a drawing, but nothing held two defs
+  // off one.
   const clash = sharedKinds(Object.values(MONSTERS).map((d) => ({ id: d.id, sprite: d.sprite })));
   ok(clash.length === 0, `every monster def has a sprite kind no other def uses (${Object.keys(MONSTERS).length} defs)${clash.length ? ' -> ' + clash.join('; ') : ''}`);
   ok(sharedKinds([{ id: 'wolf', sprite: 'wolf' }, { id: 'dire_wolf', sprite: 'wolf' }, { id: 'rat', sprite: 'rat' }]).join() === 'wolf: wolf, dire_wolf', 'a def given another\'s sprite kind is caught');
 
-  // Each kind of dressing has its rate, and a wall's rates leave room for bare stone at most, not more.
+  // Each kind of dressing has its rate, and a wall's rates add up to 1 at most: what is left is
+  // bare.
   for (const [wall, kinds] of Object.entries(DRESSINGS)) {
     const sum = kinds.reduce((n, k) => n + DRESSING_RATES[k], 0);
     ok(kinds.every((k) => DRESSING_RATES[k] > 0) && sum <= 1 + 1e-9, `each kind of ${wall} dressing has a rate, and they add up to 1 at most (${kinds.map((k) => `${k} ${DRESSING_RATES[k]}`).join(', ')}; ${sum.toFixed(2)})`);
@@ -95,12 +97,19 @@ export function art(): void {
   // Restraint, on the maps as played.
   const maps = Object.values(buildMaps());
   const now = tallyWalls(maps, (m, x, y) => wallDressing(m, x, y) !== null);
-  for (const t of byKind(now)) ok(!kindOver(t), `${t.kind}: ${pct(t)} wall faces dressed, at most ${100 * KIND_CAP}%`);
+  for (const t of byKind(now)) {
+    if (t.faces >= KIND_FLOOR) ok(!kindOver(t), `${t.kind}: ${pct(t)} wall faces dressed, at most ${100 * KIND_CAP}%`);
+    else console.log(`  (${t.kind}: ${pct(t)} wall faces dressed, not held to ${100 * KIND_CAP}% under ${KIND_FLOOR} faces)`);
+  }
   const over = now.filter(mapOver);
   ok(over.length === 0, `every map dresses at most ${100 * MAP_CAP}% of its wall faces (${100 * SMALL_MAP_CAP}% under ${SMALL_MAP}): ${now.map((t) => `${t.id} ${(100 * share(t)).toFixed(1)}%`).join(', ')}${over.length ? ' -> over: ' + over.map((t) => t.id).join(', ') : ''}`);
-  // A door's lantern and sign are its furniture, reported, not capped: every house door has a lantern.
-  const doors = maps.filter((m) => m.kind === 'town').flatMap((m) => m.cells.filter((c) => c.door === 'door' || c.door === 'locked'));
-  console.log(`  (door furniture: ${doors.length} house doors, each with a lantern; ${maps.flatMap((m) => m.features.filter((f) => m.kind === 'town' && m.at(f.x, f.y).door !== 'none')).length} with a sign)`);
+  // A door's lantern and sign are its furniture, reported, not capped: every house door has a
+  // lantern, and one with a business in it a sign.
+  const isDoor = (d: string): boolean => d === 'door' || d === 'locked';
+  const towns = maps.filter((m) => m.kind === 'town');
+  const doors = towns.flatMap((m) => m.cells.filter((c) => isDoor(c.door)));
+  const signs = towns.flatMap((m) => [...new Set(m.features.filter((f) => isDoor(m.at(f.x, f.y).door)).map((f) => `${f.x},${f.y}`))]);
+  console.log(`  (door furniture: ${doors.length} house doors, each with a lantern; ${signs.length} with a sign)`);
 
   // The check fails the walls as they were dressed before #9: every map, and every kind of map with
   // faces enough to be held to its cap.

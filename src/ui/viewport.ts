@@ -917,12 +917,16 @@ function isDressed(map: GameMap, x: number, y: number): boolean {
   return v > hash(x - 1, y, k, 78) && v > hash(x + 1, y, k, 78) && v > hash(x, y - 1, k, 78) && v > hash(x, y + 1, k, 78);
 }
 
-/** What a house front carries, and what a stone wall does, in the order a wall's roll picks them. */
+/** What a house front carries, and what a stone wall does, in the order a wall's roll picks them.
+ */
 export const DRESSINGS = {
   house: ['flowers', 'ivy'],
   stone: ['sconce', 'banner', 'cobweb', 'crack', 'damp', 'ring', 'grate', 'carving'],
 } as const;
-/** What hangs on, grows on, or is scratched into a wall. A door's lantern and sign are its furniture, not dressing. */
+/**
+ * What hangs on, grows on, or is scratched into a wall. A door's lantern and sign are its
+ * furniture, not dressing.
+ */
 export type Dressing = (typeof DRESSINGS)[keyof typeof DRESSINGS][number];
 /**
  * The share of a dressed wall each kind takes, among the kinds of its wall; each wall's add up to 1
@@ -950,7 +954,10 @@ export function wallDressing(map: GameMap, x: number, y: number): Dressing | nul
   return null;
 }
 
-/** Draw a wall's dressing (see wallDressing), and a house door's lantern and, for a business, its sign. */
+/**
+ * Draw a wall's dressing (see wallDressing), and a house door's lantern and, for a business, its
+ * sign.
+ */
 function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, x0: number, x1: number, top: number, bottom: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number, house: boolean, isDoor: boolean): void {
   const w = x1 - x0, h = bottom - top;
   if (w < 14) return;

@@ -24,8 +24,8 @@ export function changedFiles(base: string): string[] {
  * re-laid into the outdoors and its walls re-rolled, so the atlases count too.
  */
 const EVERY_MAP = [
-  /^src\/ui\/(viewport|brush|palette|sprites)\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world)\.ts$/,
-  /^src\/content\/(index|maps|atlas)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed)\.ts$/,
+  /^src\/ui\/(viewport|brush|palette|sprites)\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types)\.ts$/,
+  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed)\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
 

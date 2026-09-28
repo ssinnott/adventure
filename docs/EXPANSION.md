@@ -348,11 +348,11 @@ are all off. Every push to main is deployed, so these are players' saves.
   and one way on the cellar and Helmstow; the rest are swept on release, a run of the checks
   started by hand (`tools/smoke.ts`, `tools/changed.ts`).
 - **Restraint.** The share of wall faces dressed, per kind of map and per map, stays near its level
-  after #9, under caps set above it so an honest new map does not fail by chance; a new kind of
+  after #9, under caps set above it so an honest new map seldom fails by chance; a new kind of
   dressing comes with its rate (`DRESSING_RATES` in `src/ui/viewport.ts`, checked in
   `tools/tests/art.ts`).
-- **Distinct.** Every business its own interior, and every monster def its own sprite kind
-  (`tools/tests/art.ts`).
+- **Distinct.** Every monster def its own sprite kind (`tools/tests/art.ts`), and every business
+  its own interior (`tools/tests/maps.ts`).
 
 ### 5.7 What people look at
 
