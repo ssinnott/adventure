@@ -567,3 +567,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   opens it twice (Hob answered away: the inn twice; the Eel after Ebba: the keeper twice). Nits:
   hold `featureHere`'s and the automap's presence; refuse a business wearing a presence; the walk
   asks `present`; Oxford commas. Sent 21:42.
+
+### 21:43: #140 and #144 reviewed
+
+- #140 (#73, the Lodestone) reviewed (`reviews/140.md`): ready; the owner's 13 texts word for word,
+  every box fits, "Nothing new." but `lodestone` and `q_lodestone`. Its track changes the Foreland to
+  the eye: it waits on the owner's OK of the sheet. A nit sent 21:45.
+- #144 (#21's C, the Wardens) reviewed (`reviews/144.md`): ready after fixes: the docs quote the
+  curve's old pay (1,710 xp and 2,610 gold now for the Foreland; 8,249 and 5,800 for Thornmark);
+  nothing walks the real ladder to Sergeant. Sent 21:45. Its 29 texts are the owner's call.
+- The order in the Foreland's files: #143, then #144 (they meet in SLICE and `tools/smoke.ts`);
+  #140, #135 and #144 meet in `docs/areas/shelf.md` §3 and shipped.json (the second keeps both and
+  reruns the tool).
