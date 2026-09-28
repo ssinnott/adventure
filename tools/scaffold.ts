@@ -4,9 +4,11 @@
 // <zone> is an atlas zone (its name, area and band go to the draft); <x> <y> is the world square of
 // the draft's top-left. Every one of its 32 by 32 squares is the atlas's, the road included, with no
 // ring: the ways in and out, the landmarks and the groups are the author's. It prints the draft as a
-// map module, or writes it with --out, and never overwrites a file without --force. It refuses a cut
-// that falls outside the world, lies over a laid zone map, or holds a terrain no map character is,
-// and says how many squares of each. It registers nothing: that is the area's work.
+// map module, or writes it with --out, and never overwrites a file without --force. The draft takes
+// its area's region where the area has one; the Foreland's sky otherwise, and says so. It refuses an
+// unknown zone, an id a built map has or no map id could be, and a cut that falls outside the world,
+// lies over a laid zone map, or holds a terrain no map character is, saying how many squares of
+// each. It registers nothing: that is the area's work.
 import { writeFileSync, existsSync } from 'node:fs';
 import { relative, dirname, resolve } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
