@@ -168,7 +168,7 @@ const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
   ogre: ogre.draw,
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw,
   wraith: wraith.draw,
-  crow: birds.draw,
+  crow: birds.draw, owl: birds.draw,
 };
 
 /**
