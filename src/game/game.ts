@@ -5,7 +5,7 @@ import { rng } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
 import { World, signLine } from './world.ts';
 import type { WorldState } from './world.ts';
-import { defaultParty, isDown, allDown, countItem, takeItem, heal, spellHeal } from './party.ts';
+import { defaultParty, isDown, allDown, heal, spellHeal } from './party.ts';
 import { meet } from './people.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps.ts';

@@ -116,7 +116,7 @@ export interface MapZone {
 
 /**
  * A hand-in: the first time the party meets the NPC carrying `item`, the NPC takes it, says `done`
- * (or `early`, to a company they never hired), pays, and sets `setFlag`. See game/people.ts.
+ * (or `early`, to a company they never hired), pays and sets `setFlag`. See game/people.ts.
  */
 export interface NpcQuest {
   item: string;
