@@ -1,0 +1,70 @@
+// The keep's ward, behind Helmstow's north gatehouse: grey stone and the Queen's blue and gold, the
+// keep's great door at the head of the road, the chapel where she lay in state, a walled garden, a
+// rookery on the west tower. Vask holds court in the throne room behind the keep's door.
+import type { MapDef } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
+
+export const KEEP: MapDef = {
+  id: 'keep',
+  name: 'The Keep',
+  kind: 'town',
+  band: [1, 4],
+  start: { x: 7, y: 8, facing: NORTH },
+  rows: [
+    '################',
+    '###,,######,,###',
+    '###,,######,,###',
+    '#,,,,######,,,,#',
+    '#BBB.##D###.,,,#',
+    '#BBB...==...,,,#',
+    '#,,,...==..#,,,#',
+    '#BBB...==..#,,,#',
+    '#BBB,..==..#,,,#',
+    '#######==#######',
+  ],
+  // The Queen's colours: deep blue and gold (the banner's ring), on cool grey stone.
+  palette: { wall: '#9aa0a8', wallDark: '#62686f', door: '#3a2a22', banner: '#1f3a7a' },
+  // Either side of the keep's door, and either side of the gate as you come in.
+  banners: [{ x: 6, y: 4 }, { x: 8, y: 4 }, { x: 6, y: 9 }, { x: 9, y: 9 }],
+  exits: [
+    { x: 7, y: 9, to: 'harrow', tx: 7, ty: 1, tf: SOUTH, label: 'You pass back under the gatehouse into Helmstow.' },
+    { x: 8, y: 9, to: 'harrow', tx: 8, ty: 1, tf: SOUTH, label: 'You pass back under the gatehouse into Helmstow.' },
+  ],
+  features: [
+    { kind: 'sign', x: 8, y: 8, text: 'A proclamation on the gatehouse: the Regent-Warden holds Helmstow in the Crown\'s name until the succession is settled.' },
+    { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', lines: [
+      'A tall man in Warden grey, flanked by guards. He does not wait for you to bow.',
+      '"The Crown has need of a chartered company and the Wardens are stretched thin. There is a farm south of here, Ashcombe, that has gone quiet. Find out why. Clear whatever is there."',
+      '"Bring me anything you find that is not a rat. Especially anything that glows."',
+    ], flag: 'q_ashcombe', quest: {
+      item: 'survey_wand', reward: 300, setFlag: 'q_ashcombe_done',
+      early: [
+        'A tall man in Warden grey, flanked by guards. His eyes go to the cracked survey wand before they go to you.',
+        '"Ashcombe. I meant to hire a company for that." He turns the wand over for a long moment. If he recognises it, nothing in his face says so.',
+        '"A Lantern tool. So the Lanterns were there before us. Interesting." He drops it into a pocket. "The Crown pays for work it did not have to ask for."',
+        '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
+      ],
+      done: [
+        'Vask turns the cracked survey wand over in his hands for a long moment. If he recognises it, nothing in his face says so.',
+        '"A Lantern tool. So the Lanterns were there before us. Interesting." He drops it into a pocket. "You have done what I asked. The Crown pays its debts."',
+        '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
+      ],
+      after: ['"Thornmark next, and the Grove Stone: go and see why it has gone quiet, and bring me what you find. The road east runs through the Scarth; Captain Hale holds it, and will tell you the forest is dangerous, which it is. Thornhold will train you further than my drillyard can."'],
+    } },
+    { kind: 'npc', x: 6, y: 5, name: 'Petitioners', lines: [
+      'Petitioners wait on the keep\'s steps, caps in hand.',
+      'A farmer\'s wife: "Ashcombe has gone quiet. No smoke, no carts. My sister is out there."',
+      'A fisherman from Gullwick: "Wreckers on the shore road again, and the Regent says the shore is not his."',
+    ] },
+    { kind: 'event', x: 4, y: 4, id: 'keep_chapel', text: 'The keep\'s chapel, where the Queen lay in state. Its door is shut and still hung with black.' },
+    { kind: 'npc', x: 2, y: 6, name: 'A mourner', lines: [
+      'An old woman in black sits by the chapel wall.',
+      '"I dressed her for the chapel. Forty years I served her, and she never once looked at the Hearth without frowning."',
+    ] },
+    { kind: 'npc', x: 3, y: 2, name: 'The rookery keeper', lines: [
+      'A woman with feathers on her sleeves feeds the rooks at the foot of the west tower.',
+      '"They come in off the Downs with barrow earth on their feet. The ones I send over the Scarth have stopped coming back."',
+    ] },
+    { kind: 'well', x: 13, y: 6, text: 'The garden well, walled in with the Queen\'s roses. The water tastes of iron, as the town\'s does.' },
+  ],
+};

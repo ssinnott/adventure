@@ -171,6 +171,12 @@
       "groups": [],
       "doors": []
     },
+    "keep": {
+      "size": "16x10",
+      "used": [],
+      "groups": [],
+      "doors": []
+    },
     "mill": {
       "size": "16x16",
       "used": [
