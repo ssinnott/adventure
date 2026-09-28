@@ -4,6 +4,7 @@
 // Difficulty band 5-10.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { TEAR_CLOSED } from './grove2.ts';
 
 export const THORNMARK: MapDef = {
   id: 'thornmark',
@@ -76,10 +77,10 @@ export const THORNMARK: MapDef = {
     { id: 'tm_brigands2', x: 13, y: 15, monsters: ['brigand', 'brigand', 'brigand', 'brigand_archer', 'brigand_archer'], aware: 5, respawn: 2880 },
     { id: 'tm_wolves2', x: 20, y: 16, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
     { id: 'tm_wolves3', x: 26, y: 14, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'boar', 'boar'], aware: 5, respawn: 1440 },
-    { id: 'tm_hounds', x: 13, y: 21, monsters: ['rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 2880 },
+    { id: 'tm_hounds', x: 13, y: 21, monsters: ['rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 2880, until: TEAR_CLOSED },
     { id: 'tm_spiders2', x: 10, y: 22, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440 },
     { id: 'tm_zealots', x: 7, y: 26, monsters: ['zealot', 'zealot', 'zealot', 'ashen_adept'], aware: 5, respawn: 2880 },
-    { id: 'tm_elders', x: 12, y: 27, monsters: ['riftling_elder', 'riftling_elder', 'riftling', 'riftling', 'riftling'], aware: 5, respawn: 2880 },
-    { id: 'tm_lake', x: 24, y: 21, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'rift_hound', 'rift_hound'], aware: 5, respawn: 1440 },
+    { id: 'tm_elders', x: 12, y: 27, monsters: ['riftling_elder', 'riftling_elder', 'riftling', 'riftling', 'riftling'], aware: 5, respawn: 2880, until: TEAR_CLOSED },
+    { id: 'tm_lake', x: 24, y: 21, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'rift_hound', 'rift_hound'], aware: 5, respawn: 1440, until: TEAR_CLOSED },
   ],
 };
