@@ -22,7 +22,8 @@ DESIGN.md first for the why.
   reveal, rest with food, a search action, exploration spells (Light, Wizard Eye).
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
-  drops; readiness to train reported.
+  drops; readiness to train reported. Gear may carry a plus: a point is +1 to hit and damage on a
+  weapon, +1 armour class on armour or a shield (`P`, `src/content/items.ts`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
