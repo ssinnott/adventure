@@ -198,14 +198,14 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   character's state, cached to an offscreen canvas.
 - `ui/sprites.ts` holds the trees, rocks, mountains and pillars and dispatches the monsters to
   `ui/monsters/`, one module per family (rat, slime, wolf, boar, spider, bandit, cultist, skeleton,
-  riftling, ogre, wraith, birds) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts`
-  has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
-  the cult and the skeletons stand on. Every monster def names a sprite kind no other def uses
-  (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
+  riftling, ogre, wraith, birds, old wood) behind one `draw(ctx, kind, x, y, h, paint)` signature;
+  `common.ts` has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame
+  the bandits, the cult and the skeletons stand on. Every monster def names a sprite kind no other
+  def uses (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
   smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
   and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
-  crab and rift crawler, the elder and the two wardens) are drawn with their own gear, anatomy and
-  glow rather than a recolour.
+  crab and rift crawler, the elder and the two wardens, the bramble, rootwalker and heartwood) are
+  drawn with their own gear, anatomy and glow rather than a recolour.
 - `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
   look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
   mass, with one ink outline around the union, one rendered gradient across the whole (a bright
