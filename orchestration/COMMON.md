@@ -65,8 +65,9 @@ work settles an owed entry, drop it. Never write a second mechanism for this.
 - The checks workflow (typecheck, tests, smoke, and the contact sheet) runs on every pull request;
   see it green.
 - NEVER merge a pull request, yours or another's, and never enable auto-merge or call any merge
-  tool. The owner has asked the orchestrator to review and merge; a pull request that adds or
-  changes a monster, a map or an interior also waits for the owner's OK on its contact sheet.
+  tool. The owner has asked the orchestrator to review and merge. A pull request that adds a
+  monster, a map or an interior, or changes one to the eye, also waits for the owner's OK on its
+  contact sheet; one whose sheet shows nothing changed says so in its body.
 - After opening it, subscribe to its activity (subscribe_pr_activity) and see it through: answer
   review comments and the orchestrator's messages, fix red checks, and when main moves (other Phase
   1 pull requests land often) merge main in (never rebase or force-push once it is open) and re-run

@@ -21,9 +21,10 @@ request is open.
 ## The owner's calls (12:37)
 
 - **Merging.** As in Phase 0, the orchestrator reviews each pull request against its issue, merges
-  main into it, checks the combined tree and merges with a merge commit. A pull request that adds or
-  changes a monster, a map or an interior waits for the owner's OK on its contact sheet first
-  (EXPANSION §8.2, step 5). Sessions never merge.
+  main into it, checks the combined tree and merges with a merge commit. Art waits on the owner: a
+  pull request that adds a monster, a map or an interior, or whose contact sheet shows one changed to
+  the eye, waits for the owner's OK on the sheet first (EXPANSION §8.2, step 5). One whose sheet shows
+  nothing changed (fields, numbers, words) says so and does not wait. Sessions never merge.
 - **Wave 1 is eleven sessions.** Five touch `src/game/` at once, against EXPANSION §8.1's one
   systems session; each shared file gets an owner and a landing order, as Phase 0 did with eight
   quality sessions. #43 and #17 follow once #40 lands, since they edit the same lines of Vask and
