@@ -265,6 +265,12 @@ renders every monster (or one family) at the combat size with the viewport sizes
 as a strip of idle frames ending in the hit flash, for judging an art pass.
 `node tools/interiors.ts out.png [--only hearthlight_inn,split_oak] [--scale 2] [--hour 21]` renders
 the businesses' interiors as the viewport shows them, at an hour of the day.
+`node tools/sheet.ts out.png --area thornmark` (or `--maps`, `--monsters` and `--interiors` with ids)
+makes a pull request's contact sheet: each map from its arrivals and its sites by day and by night,
+with the automap revealed and its crop of the world map, each monster as a strip ending in the hit
+flash, and each interior at noon and at night. The world is pinned, so the same tree makes the same
+PNG; an unknown id is refused. `--changed <base>` draws what changed since the base (tools/changed.ts),
+which is how the checks attach a sheet to every pull request that changes a map, a monster or an interior.
 `node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
@@ -273,6 +279,14 @@ where damage spells stop growing at that level, `--gear-grows` one where the com
 growing past Thornmark's, `--level-bonus` one where every member gains a point of damage and of
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow.
+`node tools/scaffold.ts <zone> <x> <y> [--id <map id>] [--out <file> [--force]]` cuts the atlas's
+32 by 32 squares from x,y into a zone map's first draft (EXPANSION §8.2): the ground, the woods, the
+hills, the water and the road square for square, with no ring, and the zone's name and band; its
+header notes the seams, where the road leaves and the sites inside, and it takes its area's region
+where the area has one. It prints the draft, or writes it and never overwrites without `--force`,
+and refuses an unknown zone, an id a built map has or no map id could be, and a cut outside the
+world, over a laid zone map or holding ground no map character is. It registers nothing: the area
+does.
 
 ## Code map
 
