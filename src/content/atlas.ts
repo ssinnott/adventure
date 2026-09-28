@@ -9,12 +9,10 @@
 // 113,000 squares are land, a sixth of them mountain: nine times the whole outdoors of Darkside of
 // Xeen (48 maps of 16 by 16), six times both sides of Xeen together. An area is some 8 to 15 boxes.
 //
-// There is one road of levels, numbered I to XIV, and it winds. The coast road west from the
-// Foreland down Kestrel Edge opens only after Thornmark; the east road out of Thornmark only once
-// the Tide Stone is back from Wrackholm; the far side of the sea is reached by ship from Kilnhaven
-// after the Whitespine, and the Hearth from Cinderport after the Glasswold. Three port cities,
-// Saltmouth, Kilnhaven and Cinderport, carry the crossings. Areas are made of zones, the named
-// country inside them; their borders follow the ridges, rivers and cliffs between them.
+// There is one road of levels, numbered I to XIV, and it winds, but no way on it is shut: each is
+// open from the start, and the country's danger is what holds a company to the road. Three port
+// cities, Saltmouth, Kilnhaven and Cinderport, carry the crossings. Areas are made of zones, the
+// named country inside them; their borders follow the ridges, rivers and cliffs between them.
 //
 // This is the plan: the land, the areas of the road and what is not built yet. Each built area
 // charts its own zones, plates and sites in its folder (areas/<area>/atlas.ts), and
@@ -247,7 +245,7 @@ export const PLAN: Atlas = {
     { id: 'kilns', name: 'The Kilns', order: 6, band: [16, 18], stone: 'Anvil Stone', label: [452, 150], tint: '#b8b276', note: 'Dwarf country: mines, forges, the ore port' },
     { id: 'cairnmoor', name: 'Cairnmoor', order: 7, band: [18, 20], label: [464, 246], note: 'Heather moor, cairns and a ring of stones' },
     { id: 'rimewater', name: 'Rimewater', order: 8, band: [20, 22], label: [400, 330], tint: '#a2b884', note: 'Long lakes under the glacier' },
-    { id: 'whitespine', name: 'The Whitespine', order: 9, band: [22, 24], stone: 'Peak Stone', label: [300, 368], note: 'The great southern range and its monks. Mountaineer' },
+    { id: 'whitespine', name: 'The Whitespine', order: 9, band: [22, 24], stone: 'Peak Stone', label: [300, 368], note: 'The great southern range and its monks.' },
     { id: 'ashfall', name: 'Ashfall', order: 10, band: [24, 26], stone: 'Ember Stone', label: [210, 350], tint: '#a8a874', note: 'Fire Mountain, black sand and vines. By ship' },
     { id: 'glasswold', name: 'The Glasswold', order: 11, band: [26, 28], label: [84, 250], tint: '#c8bc7c', note: 'Steppe round a desert of fused glass' },
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
@@ -363,7 +361,7 @@ export const PLAN: Atlas = {
   ],
   links: [
     { from: 'shelf', to: 'downs', kind: 'road', a: [201.5, 57.5], b: [192, 60] },
-    { from: 'downs', to: 'delta', kind: 'road', opens: 2, a: [126, 100], b: [114, 116], note: 'down Kestrel Edge' },
+    { from: 'downs', to: 'delta', kind: 'road', a: [126, 100], b: [114, 116], note: 'down Kestrel Edge' },
     { from: 'saltings', to: 'saltmouth', kind: 'enter', a: [102, 178] },
     { from: 'delta', to: 'drowned_temples', kind: 'enter', a: [56, 170] },
     { from: 'saltmouth', to: 'wrackholm', kind: 'sea', b: [152, 172], note: 'smuggler boat' },
@@ -371,7 +369,7 @@ export const PLAN: Atlas = {
     { from: 'wrackholm', to: 'tide_ship', kind: 'enter', a: [182, 188] },
     { from: 'tide_ship', to: 'dead_drop', kind: 'stairs' },
     { from: 'thornmark', to: 'deepthorn', kind: 'road', a: [240, 60.5], b: [242, 66] },
-    { from: 'thornmark', to: 'eaves', kind: 'road', opens: 4, a: [263.5, 40.5], b: [272, 39.5], note: 'the east road', noteAt: [290, 30] },
+    { from: 'thornmark', to: 'eaves', kind: 'road', a: [263.5, 40.5], b: [272, 39.5], note: 'the east road', noteAt: [290, 30] },
     { from: 'eaves', to: 'lanternwood', kind: 'road', a: [330, 56], b: [346, 56], note: 'rope bridge' },
     { from: 'eaves', to: 'the_sunder', kind: 'enter', a: [338, 70] },
     { from: 'lanternwood', to: 'lantern_watch', kind: 'enter', a: [372, 46] },
@@ -386,19 +384,19 @@ export const PLAN: Atlas = {
     { from: 'cairnfield', to: 'longmere', kind: 'road', a: [424, 250], b: [414, 262] },
     { from: 'longmere', to: 'rime_lodge', kind: 'enter', a: [410, 262] },
     { from: 'glacierfoot', to: 'ice_caves', kind: 'enter', a: [452, 326] },
-    { from: 'coldmere', to: 'monksvale', kind: 'road', a: [334, 302], b: [318, 318], note: 'Mountaineer' },
+    { from: 'coldmere', to: 'monksvale', kind: 'road', a: [334, 302], b: [318, 318], note: 'the high pass' },
     { from: 'monksvale', to: 'monastery', kind: 'enter', a: [322, 342] },
-    { from: 'kilnhaven', to: 'saltmouth', kind: 'sea', opens: 6, via: [[340, 150], [296, 160], [230, 146], [160, 150]], note: 'the ferry', noteAt: [230, 140] },
-    { from: 'kilnhaven', to: 'cinderport', kind: 'sea', opens: 9, via: [[352, 162], [316, 168], [298, 198], [264, 220], [240, 254]], note: 'Compact ship', noteAt: [300, 210] },
+    { from: 'kilnhaven', to: 'saltmouth', kind: 'sea', via: [[340, 150], [296, 160], [230, 146], [160, 150]], note: 'the ferry', noteAt: [230, 140] },
+    { from: 'kilnhaven', to: 'cinderport', kind: 'sea', via: [[352, 162], [316, 168], [298, 198], [264, 220], [240, 254]], note: 'Compact ship', noteAt: [300, 210] },
     { from: 'cindercoast', to: 'cinderport', kind: 'enter', a: [206, 277] },
     { from: 'firemount', to: 'old_cinder', kind: 'enter', a: [190, 318] },
     { from: 'firemount', to: 'meridian_camp', kind: 'enter', a: [226, 334] },
     { from: 'emberwaste', to: 'ember_stone', kind: 'enter', a: [176, 342] },
     { from: 'emberwaste', to: 'wold', kind: 'road', a: [156, 312], b: [144, 300] },
     { from: 'theglass', to: 'buried_tower', kind: 'enter', a: [84, 280] },
-    { from: 'wold', to: 'saltings', kind: 'road', opens: 11, a: [80, 216], b: [80, 206], note: 'the Scarp stair' },
-    { from: 'firemount', to: 'highspine', kind: 'road', opens: 10, a: [258, 306], b: [272, 306], note: 'the Giants\' Stair' },
-    { from: 'cinderport', to: 'hearthisle', kind: 'sea', opens: 11, via: [[228, 236]], b: [252, 188], note: 'the last crossing' },
+    { from: 'wold', to: 'saltings', kind: 'road', a: [80, 216], b: [80, 206], note: 'the Scarp stair' },
+    { from: 'firemount', to: 'highspine', kind: 'road', a: [258, 306], b: [272, 306], note: 'the Giants\' Stair' },
+    { from: 'cinderport', to: 'hearthisle', kind: 'sea', via: [[228, 236]], b: [252, 188], note: 'the last crossing' },
     { from: 'hearthisle', to: 'underdeep', kind: 'deep', a: [250, 172] },
     { from: 'underdeep', to: 'core', kind: 'deep' },
   ],

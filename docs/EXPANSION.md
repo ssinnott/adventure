@@ -70,8 +70,7 @@ first, so the next session that does not know it will break it.
 `content/` and code never holds a monster's hit points; the monster, item and spell tables are in
 `src/game/`. Pillar 1 says every region is open from the first hour and difficulty is geographic,
 not gated by quest flags, and DESIGN.md's old Act 2 had its five stones in any order; the atlas has
-one road of levels whose roads open on quest flags, and the pass to Thornmark already works that
-way. §2.2 settles it, and DESIGN.md §9 now follows the road in five acts.
+one road of levels whose roads opened on quest flags, and the pass to Thornmark worked that way. §2.2 settles it, and DESIGN.md §9 now follows the road in five acts.
 
 ---
 
@@ -114,7 +113,7 @@ order the map enforces.
 
 What changes:
 
-- The pass to Thornmark stops being a flag gate (today it waits on `q_ashcombe_done` and
+- The pass to Thornmark stopped being a flag gate (it waited on `q_ashcombe_done` and
   `q_greywater_done`). Hale's checkpoint warns; Thornmark's monsters decide.
 - The atlas's planned ways that open only after a later step (the coast road after Thornmark, the
   east road after the Tide Stone) are open from the start.
@@ -140,14 +139,14 @@ bot that mends, casts its best damage spell or strikes, and never flees):
 | The Cut Stone | 8–10 | 2 | 10 | 37 | 95 | 100 |
 | The Warden of the Cut and its two elders | 8–10 | 0 | 0 | 0 | 62 | 97 |
 
-From level 6 up every fight on every map is won. Walked in a row with no rest, Thornmark's road from
-the pass to the Grove leaves 13% of level 3 companies standing after the third fight, and 78% of
+From level 6 up every fight on every map was won. Walked in a row with no rest, Thornmark's road
+from the pass to the Grove left 13% of level 3 companies standing after the third fight, and 78% of
 level 4 companies after the fourth.
 
-So today a company wins nine fights in ten two to four levels under the band on the sign (Thornmark
-at level 3, the Grove Roots and the Cut Stone at 4), the gap widens down the road, and past the
-floor every fight is won: the difficulty plain the anti-pillars warn of. The flag on the pass is
-what holds the road now. The bot is weaker than a player (it never sleeps, blesses or drinks, and
+So a company won nine fights in ten two to four levels under the band on the sign (Thornmark at
+level 3, the Grove Roots and the Cut Stone at 4), the gap widened down the road, and past the floor
+every fight was won: the difficulty plain the anti-pillars warn of. The flag on the pass was what
+held the road. The bot is weaker than a player (it never sleeps, blesses or drinks, and
 has no gear past the start), and single groups at full health are kinder than play; the picture
 holds either way, and the owner's play is the test of it. Taking the flag off the pass therefore
 means making Thornmark hard enough to be the gate itself, and the gate check (§5.2) is how each
@@ -173,8 +172,7 @@ service withheld, a way shut.
   sent to go and find it, and must talk again to hand it over. A hand-in takes its item at the first
   meeting, and its words know the company came early.
 
-Today the road has one lock, the flag on the pass, and it goes (§2.2); there are none inside any
-place.
+The road had one lock, the flag on the pass, and it went (§2.2); there are none inside any place.
 
 ---
 
@@ -576,7 +574,7 @@ without it.
 | Maps inside the density floor (§5.3) | unchecked | all |
 | Areas on the curve (§5.2) | the slice, pinned | all |
 | Areas whose gate holds (§5.2) | none: fights give way two to four levels under the band | all |
-| Story locks (§2.3) | 1, the pass, which goes | within the count, each declared with its reason |
+| Story locks (§2.3) | none: the pass's went with #40 | within the count, each declared with its reason |
 
 ---
 
