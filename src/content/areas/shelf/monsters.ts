@@ -8,7 +8,7 @@ export const SPRITES = [
   'rat', 'slime', 'wolf', 'boar', 'spider', 'bandit', 'archer', 'cultist', 'skeleton', 'riftling',
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
   'rift_crawler', 'deacon', 'crow', 'wrecker', 'lampman', 'black_dog',
-  'barrow_guard',
+  'barrow_guard', 'barrow_captain',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -42,4 +42,6 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'black_dog', name: 'Black Dog', plural: 'Black Dogs', sprite: 'black_dog', kind: 'beast', look: 'A black dog the size of a calf, with eyes like coals.', level: 4, hp: 16, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 0, speed: 15, xp: 80, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.1 }, tint: '#1c1a20', size: 0.75 },
   // the Queen's guard (#70): the Berth's passage, two by two
   { id: 'barrow_guard', name: 'Barrow Guard', plural: 'Barrow Guards', sprite: 'barrow_guard', kind: 'dead', level: 4, hp: 20, ac: 15, attack: 4, dice: 1, sides: 10, bonus: 0, speed: 8, xp: 110, gold: [0, 6], tint: '#7a8088', size: 0.95 },
+  // the Queen's captain (#70): at her bier
+  { id: 'barrow_captain', name: 'Barrow Captain', plural: 'Barrow Captains', sprite: 'barrow_captain', kind: 'dead', level: 5, hp: 60, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 800, gold: [40, 80], tint: '#8a8e96', size: 1.1 },
 ];
