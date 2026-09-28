@@ -3,6 +3,8 @@
 // reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
+import type { Feature } from '../../src/game/map.ts';
+import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, personFlags, personGives } from '../../src/game/people.ts';
@@ -17,6 +19,23 @@ const UNPLACED: Record<string, string> = {
   carrion_crow: '#47', wrecker: '#47', lampman: '#47', black_dog: '#69', barrow_guard: '#70', barrow_captain: '#70',
   farm_kitchen: '#87',
 };
+
+/**
+ * What is wrong with a town's doorways: the business must come first on its square (the game
+ * opens the first feature there, and the door's sign is drawn from it), and after it only people
+ * with no room of their own and events.
+ */
+export function doorwayFaults(m: GameMap): string[] {
+  if (m.kind !== 'town') return [];
+  const out: string[] = [];
+  const squares = new Map<string, Feature[]>();
+  for (const f of m.features) if (m.at(f.x, f.y).door !== 'none') squares.set(`${f.x},${f.y}`, [...(squares.get(`${f.x},${f.y}`) ?? []), f]);
+  for (const [at, [first, ...rest]] of squares) {
+    if (!('interior' in first && first.interior)) out.push(`the doorway at ${at} opens on the ${first.kind} there, which has no room`);
+    for (const f of rest) if (!(f.kind === 'event' || (f.kind === 'npc' && !f.interior))) out.push(`the doorway at ${at} holds the ${f.kind}${'interior' in f && f.interior ? ' with a room' : ''} after its business`);
+  }
+  return out;
+}
 
 export function maps(): void {
   // The maps as written, each on its own, the Foreland and Thornmark included (see `outdoors` for how they are played).
@@ -52,15 +71,25 @@ export function maps(): void {
   const found = new Set([...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => [...(giftOf(f)?.items ?? []), ...(f.kind === 'npc' ? personGives(f) : [])])), ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
   for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc') for (const q of handIns(f)) ok(found.has(q.item), `${d.id}: quest item '${q.item}' can be found`);
   // A business is a feature in a town's doorway: you walk into it, so it has a room to show, and
-  // no two businesses share one.
+  // no two businesses share one. People in it stand on its doorway after it.
   const interiors: string[] = [];
   for (const def of MAP_DEFS) {
-    const m = maps[def.id];
+    const m = maps[def.id], bad = doorwayFaults(m);
+    ok(!bad.length, `${def.id}: every doorway opens into its business first, with only people and events after it${bad.length ? ' -> ' + bad.join('; ') : ''}`);
     for (const f of m.features) {
       const interior = 'interior' in f ? f.interior : undefined;
-      if (m.kind === 'town' && m.at(f.x, f.y).door !== 'none') ok(!!interior, `${def.id}: the business in the doorway at ${f.x},${f.y} has an interior`);
       if (interior) { interiors.push(interior); ok(m.at(f.x, f.y).door !== 'none', `${def.id}: ${interior} is entered through a door`); }
     }
+  }
+  { // The doorway rule, on a fixture town with an inn: a person after it passes, and so do an event
+    // and a tavern keeper who is the business; a person before it, or a second business, fails.
+    const inn: Feature = { kind: 'inn', x: 2, y: 1, name: 'The Fixture', price: 1, interior: INTERIORS[0] };
+    const person: Feature = { kind: 'npc', x: 2, y: 1, name: 'Hob', lines: ['Hm.'] };
+    const event: Feature = { kind: 'event', x: 2, y: 1, id: 'fx_chair', text: 'An empty chair.' };
+    const keeper: Feature = { ...person, name: 'The Keeper', interior: INTERIORS[1] };
+    const town = (features: Feature[]): GameMap => new GameMap({ id: 'fx_town', name: 'Fixture', kind: 'town', start: { x: 1, y: 2, facing: NORTH }, rows: ['#####', '#,D,#', '#,,,#', '#####'], features });
+    ok(!doorwayFaults(town([inn, person, event])).length && !doorwayFaults(town([keeper, person])).length, 'a person or an event after the business on its doorway passes, a tavern keeper who is the business too');
+    ok(doorwayFaults(town([person, inn])).length > 0 && doorwayFaults(town([inn, keeper])).length === 1 && doorwayFaults(town([person])).length === 1, 'a person before the business, a second business and a doorway with no business each fail');
   }
   const opened = INTERIORS.filter((i) => !Object.hasOwn(UNPLACED, i));
   ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);

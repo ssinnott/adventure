@@ -13,6 +13,7 @@ import { questLog } from '../../src/game/quests.ts';
 import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
+import { GameMap } from '../../src/game/map.ts';
 import { CONTENT, collect } from '../shipped.ts';
 import { condFaults } from './quests.ts';
 import { wrap, columnLabelWidth } from '../../src/ui/draw.ts';
@@ -221,4 +222,40 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
   } finally {
     delete ITEMS[LETTER.id];
   }
+  presence();
+}
+
+/** People who come and go and events by night or by flag, on a fixture town, as `World` finds them. */
+function presence(): void {
+  const def: MapDef = {
+    id: 'fx_town', name: 'Fixture', kind: 'town', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#,,,#', '#####'],
+    features: [
+      { kind: 'npc', x: 1, y: 1, name: 'Ebba, at the Eel', lines: ['"The Eel."'], until: { flag: 'fx_moved' } },
+      { kind: 'npc', x: 3, y: 1, name: 'Ebba, at the Chapel', lines: ['"The Chapel."'], after: { flag: 'fx_moved' } },
+      { kind: 'npc', x: 2, y: 1, name: 'Alwin', lines: ['"By night."'], when: { hours: 'night' } },
+      { kind: 'event', x: 1, y: 2, id: 'fx_dark', text: 'Dark.', until: { flag: 'fx_lit' } },
+      { kind: 'event', x: 1, y: 2, id: 'fx_bright', text: 'Lit.', after: { flag: 'fx_lit' } },
+      { kind: 'event', x: 3, y: 2, id: 'fx_riders', text: 'Riders.', once: true, when: { hours: 'night' } },
+    ],
+  };
+  const rng = makeRng(8), party = defaultParty(rng), world = new World({ fx_town: new GameMap(def) }, party, rng);
+  const at = (x: number, y: number): string | undefined => { world.travel('fx_town', x, y, NORTH); const f = world.featureHere(); return f && f.x === x && f.y === y ? (f as Person).name : undefined; };
+  const heardAt = (x: number, y: number): string => { world.travel('fx_town', x, y, NORTH); return world.eventsHere().join(' '); };
+  const day = Math.floor(world.state.minutes / 1440) * 1440, noon = day + 12 * 60, midnight = day + 24 * 60;
+  world.state.minutes = noon;
+  const before = [at(1, 1), at(3, 1)].join();
+  party.flags.fx_moved = 1;
+  const after = [at(1, 1), at(3, 1)].join();
+  ok(before === 'Ebba, at the Eel,' && after === ',Ebba, at the Chapel', `a person gone from one place once a flag is set is found in another (${before}; then ${after})`);
+  const noonAlwin = at(2, 1);
+  world.state.minutes = midnight;
+  ok(noonAlwin === undefined && at(2, 1) === 'Alwin', 'a person by night is not there at noon, and is at midnight');
+  const dark = heardAt(1, 2);
+  party.flags.fx_lit = 1;
+  ok(dark === 'Dark.' && heardAt(1, 2) === 'Lit.', 'an event until a flag, then the one after it: the lamp room dark, then lit');
+  world.state.minutes = midnight + 12 * 60;
+  const byDay = heardAt(3, 2), spentByDay = world.used('fx_riders');
+  world.state.minutes = midnight + 24 * 60;
+  const byNight = heardAt(3, 2);
+  ok(byDay === '' && !spentByDay && byNight === 'Riders.' && heardAt(3, 2) === '', 'a once-event by night is not heard or spent by day, and is heard once by night');
 }

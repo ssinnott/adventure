@@ -11,7 +11,7 @@ import type { Area, Novelty } from '../../src/content/area.ts';
 import { LOCKS, MOST_AN_AREA, MOST_ON_THE_ROAD } from '../../src/content/locks.ts';
 import type { StoryLock } from '../../src/content/locks.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef, Presence } from '../../src/game/map.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS } from '../../src/game/atlas.ts';
 import { CLASSES, RACES, TRAITS } from '../../src/game/party.ts';
@@ -40,6 +40,8 @@ export function hintFaults(def: MapDef): string[] {
     if (map.at(s.x, s.y).door !== 'secret') { out.push(`${s.x},${s.y} has a hint but no secret door`); continue; }
     const hint = map.features.find((f) => 'id' in f && f.id === s.hint && (f.kind === 'event' || f.kind === 'sign'));
     if (!hint) { out.push(`the door at ${s.x},${s.y} names '${s.hint}', which is no event or sign on the map`); continue; }
+    // A hint is there for as long as the door is: never by night alone, nor once or until a flag.
+    if (hint.kind === 'event' && (hint.when || hint.after || hint.until)) out.push(`'${s.hint}' at ${hint.x},${hint.y} is not always there`);
     const seen = new Set([def.start.y * map.width + def.start.x]), todo = [[def.start.x, def.start.y]];
     while (todo.length) {
       const [x, y] = todo.pop()!;
@@ -61,12 +63,23 @@ export const MOST_LINES = 3;
 const shown = (f: { kind: string; text: string }): string => (f.kind === 'sign' ? signLine(f.text) : f.text);
 
 /**
+ * Whether two texts on a square are never shown together: one by day and the other by night, or
+ * one until what the other waits for (`until` X against `after` X).
+ */
+function apart(a: Partial<Presence>, b: Partial<Presence>): boolean {
+  const hours = (p: Partial<Presence>): string | undefined => { const h = [p.when ?? []].flat(); return h.length === 1 && !h[0].sky && !h[0].season ? h[0].hours : undefined; };
+  const ha = hours(a), hb = hours(b);
+  const same = (x: unknown, y: unknown): boolean => x !== undefined && JSON.stringify(x) === JSON.stringify(y);
+  return (!!ha && !!hb && ha !== hb) || same(a.until, b.after) || same(b.until, a.after);
+}
+
+/**
  * What is wrong with a map's events and signs as the log shows them: one that wraps past
- * MOST_LINES, or a square whose texts together are more than the log shows at once, so the first is
- * pushed off it.
+ * MOST_LINES, or a square whose texts that can show together are more than the log shows at once,
+ * so the first is pushed off it.
  */
 export function lineFaults(def: MapDef): string[] {
-  const out: string[] = [], squares = new Map<string, number>();
+  const out: string[] = [], squares = new Map<string, { n: number; p: Partial<Presence> }[]>();
   for (const f of def.features ?? []) {
     // A wilderness feature's lines are said on Space, one event at a time, each held to the most.
     if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'cairn' || f.kind === 'statue' || f.kind === 'camp') {
@@ -89,9 +102,17 @@ export function lineFaults(def: MapDef): string[] {
     if (f.kind !== 'event' && f.kind !== 'sign') continue;
     const n = logLines(shown(f)).length, at = `${f.x},${f.y}`;
     if (n > MOST_LINES) out.push(`the ${f.kind} at ${at} takes ${n} lines`);
-    squares.set(at, (squares.get(at) ?? 0) + n);
+    squares.set(at, [...(squares.get(at) ?? []), { n, p: f.kind === 'event' ? f : {} }]);
   }
-  for (const [at, n] of squares) if (n > LOG_LINES) out.push(`the texts at ${at} take ${n} lines together, more than the log's ${LOG_LINES}`);
+  for (const [at, texts] of squares) {
+    // The most lines the texts that can be said together take: every set of them no two of which are apart.
+    let most = 0;
+    for (let mask = 1; mask < 1 << texts.length; mask++) {
+      const set = texts.filter((_, i) => mask & (1 << i));
+      if (set.every((a, i) => set.every((b, j) => i === j || !apart(a.p, b.p)))) most = Math.max(most, set.reduce((t, x) => t + x.n, 0));
+    }
+    if (most > LOG_LINES) out.push(`the texts at ${at} take ${most} lines together, more than the log's ${LOG_LINES}`);
+  }
   return out;
 }
 
@@ -372,6 +393,7 @@ export async function pillars(): Promise<void> {
     ok(hintFaults(room([{ x: 3, y: 1, hint: 'far' }])).length === 1, 'a hint that lies behind its own door fails');
     ok(hintFaults(room([{ x: 3, y: 1, hint: 'far_sign' }])).length === 1, 'and so does a sign behind it');
     ok(hintFaults(room([{ x: 3, y: 1, hint: 'nowhere' }])).length === 1, 'a hint that names nothing fails');
+    ok(hintFaults({ ...room([{ x: 3, y: 1, hint: 'near' }]), features: room([]).features!.map((f) => (f.kind === 'event' && f.id === 'near' ? { ...f, when: { hours: 'night' as const } } : f)) }).length === 1, 'a hint there only by night fails');
     ok(hintFaults(room([{ x: 3, y: 1, hint: 'near' }, { x: 2, y: 1, hint: 'near' }])).length === 1, 'a hint on a square with no secret door fails');
   }
 
@@ -395,6 +417,13 @@ export async function pillars(): Promise<void> {
     ok(logLines(sign).length === 3 && lineFaults(at([{ kind: 'sign', x: 1, y: 1, text: sign }])).length > 0, 'a sign of three lines by its words and four as the log shows it fails');
     const two = 'A cold draught at your ankles, from the foot of the south wall. The mortar there is newer.';
     ok(logLines(two).length === 2 && lineFaults(at([{ kind: 'event', x: 1, y: 1, id: 'a', text: two }, { kind: 'event', x: 1, y: 1, id: 'b', text: two + ' ' + two }])).length === 1, 'two texts on one square that fill more than the log together fail');
+    // A ford by day, its sign and the ford by night: six lines, never more than four at once.
+    const trio = (night: Partial<Presence>): MapDef => at([{ kind: 'event', x: 1, y: 1, id: 'day', text: two, when: { hours: 'day' } }, { kind: 'sign', x: 1, y: 1, text: 'The ford.' }, { kind: 'event', x: 1, y: 1, id: 'night', text: two, ...night }]);
+    ok(logLines(signLine('The ford.')).length + 2 * logLines(two).length > LOG_LINES && !lineFaults(trio({ when: { hours: 'night' } })).length && lineFaults(trio({})).length === 1,
+      'a text by day and one by night on a square are not added together, but three that can all be said are');
+    const lamp = (lit: Partial<Presence>): MapDef => at([{ kind: 'event', x: 1, y: 1, id: 'dark', text: two + ' ' + two, until: { flag: 'q_lit' } }, { kind: 'event', x: 1, y: 1, id: 'lit', text: two + ' ' + two, ...lit }]);
+    ok(2 * logLines(two + ' ' + two).length > LOG_LINES && !lineFaults(lamp({ after: { flag: 'q_lit' } })).length && lineFaults(lamp({})).length === 1,
+      'a text until a flag and one after it are not added together, but one with no presence is');
   }
 
   // A monster's look fits two lines of the log; the looks go through the glyph and spelling checks below with every text.

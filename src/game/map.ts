@@ -76,8 +76,9 @@ export type Feature =
    * A person (game/people.ts). `lines` are the first meeting's, which sets `flag` (the hire) and
    * ends in `choice`; `quest` is the hand-ins, one or several; `says` the words once they hold.
    * `interior` makes the NPC a business you walk into (a tavern); a person in the street has none.
+   * Where a person stands they stand only in their `when`, once `after` holds and until `until` does.
    */
-  | { kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior }
+  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior } & Presence)
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
   | ({ kind: 'shrine' } & Blessing)
@@ -97,7 +98,7 @@ export type Feature =
    */
   | { kind: 'den'; x: number; y: number; id: string; name?: string; text: string; breeds: readonly string[]; keepers: string; brood: readonly string[]; ask: string; burn: string; leave?: string; burnt: string; ruin?: string; gold: number; items: string[] }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
-  | { kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean };
+  | ({ kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean } & Presence);
 
 /**
  * A cell the party may not step onto until every flag is set: a gated exit whose way on is simply

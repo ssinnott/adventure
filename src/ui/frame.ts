@@ -138,7 +138,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   }
   // Features the party has stood next to.
   for (const f of m.features) {
-    if (!shown(f.x, f.y) || f.kind === 'event') continue;
+    if (!shown(f.x, f.y) || f.kind === 'event' || !world.present(f)) continue;
     const s = Math.max(1, cell - 2);
     // A den shows standing and, burnt, as a ruin: before the spent skip, which would hide it.
     if (f.kind === 'den') { ctx.fillStyle = world.used(f.id) ? DEN_ASH : DEN; ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s); continue; }

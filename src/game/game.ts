@@ -50,6 +50,8 @@ export class Game {
   log: string[] = [];
   /** Lines ever said. The log keeps only the last 60, so a screen that wants what was said since it opened counts from this. */
   said = 0;
+  /** What had been said when the party's last action began: a visit that action opens shows the lines it said, a doorway's event among them. */
+  actionFrom = 0;
   screens: Screen[] = [];
   frame = 0;
   /** The party member the sheet opens on. */
@@ -296,6 +298,7 @@ export class ExploreScreen implements Screen {
   update(g: Game, a: Action | null): void {
     if (!a) return;
     const w = g.world;
+    g.actionFrom = g.said;
     if (allDown(g.party)) { g.gameOver(); return; }
     let res: ReturnType<World['move']> | null = null;
     if (is(a, 'forward')) res = w.move('forward');

@@ -124,11 +124,14 @@ await page.waitForTimeout(150);
 const townColours = await colours();
 // A business: walking into the Hearthlight's doorway opens its interior under the inn's menu, and
 // leaving puts the party back in the street, facing the door.
-await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 4, 5, 0); });
+// An event on its doorway, put there at run time, is said by the step in and shows in the room's log.
+await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 4, 5, 0); g.world.map.features.push({ kind: 'event', x: 4, y: 4, id: 'fx_chair', text: 'An empty chair by the fire.' }); });
 await page.keyboard.press('ArrowUp'); await page.waitForTimeout(150);
 const inside = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+const roomLog = await page.evaluate(() => { const g = (window as any).__game.game, v = g.screens.find((s: any) => s.constructor.name === 'InteriorScreen'); return v ? v.roomLog(g) : []; });
 const innColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+await page.evaluate(() => { const m = (window as any).__game.game.world.map; m.features.splice(m.features.findIndex((f: any) => f.id === 'fx_chair'), 1); });
 const outside = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), x: g.world.state.x, y: g.world.state.y, facing: g.world.state.facing }; });
 // Every interior paints, at noon and at midnight, and each is a picture rather than a flat fill.
 const interiors = await page.evaluate(async () => {
@@ -505,6 +508,7 @@ ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
+ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);

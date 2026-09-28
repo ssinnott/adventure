@@ -31,9 +31,12 @@ const BOX = { x: 40, y: 40, w: SAY_W + 24, h: 220 };
  */
 export class InteriorScreen implements Screen {
   readonly overlay = true;
-  /** What the game had said when the party came in: the room's log shows only what is said inside. */
+  /**
+   * What the game had said when the step that brought the party in began: the room's log shows
+   * what that step said (a doorway's event) and what is said inside.
+   */
   private readonly from: number;
-  constructor(g: Game, readonly at: { x: number; y: number }, readonly interior: Interior) { this.from = g.said; }
+  constructor(g: Game, readonly at: { x: number; y: number }, readonly interior: Interior) { this.from = Math.min(g.actionFrom, g.said); }
   /** Never reached with a menu open, and closed before the next step without one. */
   update(): void {}
   /** The visit is over: out of the business, and out of its doorway into the street. */
@@ -41,10 +44,14 @@ export class InteriorScreen implements Screen {
     g.pop();
     g.leave(this.at);
   }
+  /** The room's log: what was said since the step in began. */
+  roomLog(g: Game): string[] {
+    const n = Math.min(g.said - this.from, g.log.length);
+    return n > 0 ? g.log.slice(-n) : [];
+  }
   render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
     drawInterior(ctx, this.interior, LAYOUT.view, g.world.daylight, frame);
-    const n = Math.min(g.said - this.from, g.log.length);
-    drawLog(ctx, n > 0 ? g.log.slice(-n) : []);
+    drawLog(ctx, this.roomLog(g));
     drawViewportFrame(ctx);
   }
 }
