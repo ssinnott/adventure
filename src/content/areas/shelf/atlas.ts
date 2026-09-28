@@ -1,10 +1,10 @@
-// The Foreland's part of the world map: its zones (the built one, where the atlas lays its map, and
-// the planned), the plates of its towns and dungeons, and its sites. src/content/index.ts merges
-// them into ATLAS with the rest of the world, which is planned (src/content/atlas.ts).
+// The Foreland's part of the world map: its zones (a built one listing its maps, each at its box of the
+// grid, and the planned), the plates of its towns and dungeons, and its sites. src/content/index.ts
+// merges them into ATLAS with the rest of the world, which is planned (src/content/atlas.ts).
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'shelf', name: 'The Foreland', area: 'shelf', map: 'shelf', at: [200, 30] },
+  { id: 'shelf', name: 'The Foreland', area: 'shelf', maps: [{ map: 'shelf', at: [200, 30] }] },
   { id: 'downs', name: 'Callow Downs', area: 'shelf', band: [2, 5], seeds: [[160, 48], [128, 66], [180, 30]], label: [132, 60] },
 ];
 

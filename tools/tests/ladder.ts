@@ -37,7 +37,7 @@ export const FINDS: Record<string, string> = {
   'shield+1': '#72',
 };
 
-/** Thornmark's step (#101): the plus each class finds there, in its chests or on the Hand of Ash. */
+/** Thornmark's step (#101): the plus each class finds there, in its chests or on the Hand of Ash, and in the ladder by 9. */
 export const THORNMARK: Record<ClassId, readonly string[]> = {
   knight: ['greatsword+1'],
   paladin: ['warhammer+1'],
@@ -108,6 +108,7 @@ export function ladder(): void {
       const d = ITEMS[id];
       if (!d?.plus) return [`${id} is no item with a plus`];
       if (!inTm.has(id)) return [`${id} is in no chest or drop there`];
+      if (!by(9).includes(id)) return [`${id} is not in the ladder by 9`];
       return usable(d, cls) ? [] : [`${id} is not for a ${cls}`];
     });
     ok(pluses.length > 0 && !faults.length, `the ${CLASSES[cls].name} finds a plus in Thornmark: ${pluses.join(', ')}${faults.length ? ` (${faults.join('; ')})` : ''}`);

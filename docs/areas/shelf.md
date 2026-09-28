@@ -29,8 +29,8 @@ and from the rim down to y 120.
 **The grid.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32 squares
 a side, with its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges (EXPANSION
 §8.2). A box is named as the old maps were, by its column's letter and its row's number: the
-Foreland is G2 and Thornmark H2. The world map's border letters squares 8 columns west and 2 rows
-south of these, since the first two maps were not laid on it (§9, #66).
+Foreland is G2 and Thornmark H2. The world map's border letters these boxes, the strips at the
+world's west and south edges unlettered (#66).
 
 On the grid the Foreland's map is G2, and the Downs are seven boxes, by column: F2 and F3 beside it;
 E2 and E3; D2, D3 and D4 (§4). The row above, C1 to G1, is the rim. C2 and C3 hold a strip of the
@@ -517,8 +517,8 @@ Decided by the owner on 27 and 28 September 2026:
    about 1.3 maps of land, and between them they measure a country box and a core box, the two
    floors the pilot tunes (EXPANSION §5.3).
 3. **Zones hold several maps.** The Downs are one zone of seven boxes, F2 and F3 from the pilot on;
-   today a zone holds one (`AtlasZone.map`, `src/game/atlas.ts:82`; #66). A zone to a box would ask
-   a step of the quest of every box the road crosses (EXPANSION §5.8), bare country included.
+   an atlas zone lists its maps (`AtlasZone.maps`; #66). A zone to a box would ask a step of the
+   quest of every box the road crosses (EXPANSION §5.8), bare country included.
 4. **Gullwick** is a village on F3: its houses, its boats and Wenna's mother as features, as the
    Ashcombe farm is on the Foreland map, and a camp to rest at (#45). No businesses, so no new
    interiors.
@@ -544,6 +544,8 @@ Decided by the owner on 27 and 28 September 2026:
     captain's mail is Scale Mail +1 and Thornmark has no plate with a plus. The ladder (§8): every
     class betters its kit by level 3 and again by level 5, from Mottram's and then the Downs' finds,
     the named ones at the top.
+12. **The world map's lettering** is on the grid: the border names each box, and the strips at the
+    world's edges go unlettered (§1; #66).
 
 Proposed, for the owner, each in the issue that would build it:
 
@@ -553,7 +555,6 @@ Proposed, for the owner, each in the issue that would build it:
   country (§4).
 - **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
   sold in the band (§8; #74).
-- **The world map's lettering** moves onto the grid, so that the border names each box (§1; #66).
 - **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across
   E2 (#68 and #69). #56's Riders in the Dark rides it.

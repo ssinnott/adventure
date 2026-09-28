@@ -53,8 +53,8 @@ game now walks it that way too: the outdoors is one map, `caldera`, the size of 
 for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` runs once to make
 `PLAYED_DEFS`, the maps as played).
 
-- **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 where the atlas puts it: the
-  Foreland at 200,30 and Thornmark beside it at 232,30. The zone maps are still written as maps of
+- **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 at its box of the grid: the
+  Foreland at 200,30 (G2) and Thornmark at 232,30 (H2). The zone maps are still written as maps of
   their own in their areas' `maps/` folders, in their own coordinates; laying them in moves their
   features, monster groups and exits to where they sit, and leads every town's and dungeon's way
   out onto the outdoors. Outdoors, the party's zone says where it is: the name on the status strip
@@ -75,12 +75,12 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   hides the sky as well as the ground; no weather greys it (it is cut out of the scene as it is
   painted, so anything nearer still covers it, and filled pink from behind at the end). The automap
   marks it the same pink.
-- **Building more.** A new zone is a map in its area's `maps/` and `index.ts`, marked `density`
-  core or country, and a zone in its area's `atlas.ts` with a `map` and an `at`;
-  `node tools/scaffold.ts` cuts its first draft from the atlas. Laid in, it opens the void where it
-  stands. Where it meets a built zone, the two maps' rings are the border between them, to open or
-  keep as each map's author likes; where it meets the atlas, its water and roads carry on into the
-  land beyond its edge (`tools/tests/pillars.ts`).
+- **Building more.** A new box is a map in its area's `maps/` and `index.ts`, marked `density`
+  core or country, and a line in its zone's `maps` in its area's `atlas.ts`, the map at its box's
+  corner; `node tools/scaffold.ts` cuts its first draft from the atlas and names its box. Laid in, it
+  opens the void where it stands. Where it meets a built zone, the two maps' rings are the border
+  between them, to open or keep as each map's author likes; where it meets the atlas, its water and
+  roads carry on into the land beyond its edge (`tools/tests/pillars.ts`).
 - **Around it.** The automap draws a map that fits the panel whole, as before, and for the outdoors
   a window of 33 by 33 squares round the party at the size a 32-square map is drawn. Quests still
   name zone maps: `visited: 'thornmark'` holds once the party has set foot in the zone
@@ -324,8 +324,8 @@ over content broken on purpose too, and two tools to theirs:
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
-- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear
-  ladder, against every group alone; each map is held to its band and each area to its band on the curve:
+- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder,
+  against every group alone; each map is held to its band and each area to its band on the curve:
   nine fights in ten won at the floor, a quarter at most two under it, a boss three to seven times
   in ten, 6.5 fights to a rest give or take one and the area's road walked eight times in ten. A
   group that walks only in fog is fought with the bows' toll; one that waits on an `after` is no
@@ -346,9 +346,9 @@ over content broken on purpose too, and two tools to theirs:
 - `scaffold` (§8.2): the Downs' draft, laid back into the atlas, is the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
-  a chest or a hoard holds it, Mottram's sells the band's gear, and the gate check's company wears
-  what harness's does; every class finds a plus it can use in Thornmark, and no chest there holds
-  the Armoury's gear.
+  a chest or a hoard holds it, Mottram's sells the band's gear and the gate check's company wears
+  what harness's does; every class finds a plus it can use in Thornmark, each in the ladder by 9,
+  and no chest there holds the Armoury's gear.
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -381,9 +381,10 @@ growing past Thornmark's, `--level-bonus` one where every member gains a point o
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
-premade company, trained to each level and dressed by the gear ladder, wins each map's groups alone from full
-health; `--road thornmark:tm_wolves1,tm_brigands2` fights the groups named in a row with no rest and
-counts the companies still standing. `tools/tests/gate.ts` holds the maps and areas to it.
+premade company, trained to each level and dressed by the gear ladder, wins each map's groups alone
+from full health; `--road thornmark:tm_wolves1,tm_brigands2` fights the groups named in a row with
+no rest and counts the companies still standing. `tools/tests/gate.ts` holds the maps and areas to
+it.
 `node tools/scaffold.ts <zone> <x> <y> [--id <map id>] [--out <file> [--force]]` cuts the atlas's
 32 by 32 squares from x,y into a zone map's first draft (EXPANSION §8.2): the ground, the woods, the
 hills, the water and the road square for square, with no ring, and the zone's name and band; its
