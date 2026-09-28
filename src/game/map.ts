@@ -72,8 +72,12 @@ export type Feature =
   | { kind: 'guild'; x: number; y: number; name: string; classes: string[]; fee: number; maxTier?: number; interior: Interior }
   | { kind: 'trainer'; x: number; y: number; name: string; maxLevel: number; interior: Interior }
   | { kind: 'chest'; x: number; y: number; id: string; gold: number; items: string[]; trapped?: boolean }
-  /** `interior` makes the NPC a business you walk into (a tavern); a person in the street has none. */
-  | { kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string; quest?: NpcQuest; interior?: Interior }
+  /**
+   * A person (game/people.ts). `lines` are the first meeting's, which sets `flag` (the hire) and
+   * ends in `choice`; `quest` is the hand-ins, one or several; `says` the words once they hold.
+   * `interior` makes the NPC a business you walk into (a tavern); a person in the street has none.
+   */
+  | { kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior }
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
   | ({ kind: 'shrine' } & Blessing)
@@ -128,13 +132,39 @@ export interface MapZone {
  */
 export interface NpcQuest {
   item: string;
+  /** Gold paid; 0 pays nothing and says no gold line. */
   reward: number;
   /** What the NPC says taking the item from a company they never hired; `done` if not given. */
   early?: string[];
   done: string[];
   setFlag: string;
-  /** What the NPC says once the quest is complete. */
-  after: string[];
+  /** What the NPC says once the quest is complete; of several hand-ins, the last done that has any. */
+  after?: string[];
+}
+
+/**
+ * What a person says once it holds, in place of their first meeting's lines: `after` and `until`
+ * are the quest log's conditions and `when` the hours, as a group wears them. The first that holds
+ * is said; it sets `sets` and may end in `choice`.
+ */
+export interface Words extends Presence {
+  lines: readonly string[];
+  sets?: string | readonly string[];
+  choice?: Choice;
+}
+
+/** A question a person puts after their words, answered through the choice screen. Put until one answer's flags are set. */
+export interface Choice {
+  ask: string;
+  answers: readonly Answer[];
+}
+
+/** An answer: it sets its flags, hands the company `gives` if it has an item, and the person `says` it. */
+export interface Answer {
+  label: string;
+  sets?: string | readonly string[];
+  gives?: string;
+  says: readonly string[];
 }
 
 /** A monster group placed on the map. `id` keys its instance state (dead, respawn) in MapState. */

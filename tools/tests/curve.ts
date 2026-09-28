@@ -12,6 +12,7 @@ import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { areaBand } from '../../src/game/atlas.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
+import { handIns } from '../../src/game/people.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -83,8 +84,11 @@ export function curve(): void {
     const placed = groups.flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
     const xp = Math.floor(placed.reduce((t, m) => t + m.xp, 0) / MEMBERS);
     const features = area.maps.flatMap((d) => d.features ?? []);
+    // A hand-in's reward, once an item: of two people who take it, the larger.
+    const rewards = new Map<string, number>();
+    for (const f of features) if (f.kind === 'npc') for (const q of handIns(f)) rewards.set(q.item, Math.max(rewards.get(q.item) ?? 0, q.reward));
     const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
-      + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0) + (f.kind === 'npc' && f.quest ? f.quest.reward : 0), 0);
+      + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0);
     budget(id, 'xp a member', xp, xpBudget(row), row.owed, row.owed?.xp);
     budget(id, 'gold', Math.floor(gold), goldBudget(row), row.owed, row.owed?.gold);
 
