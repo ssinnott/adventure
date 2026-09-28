@@ -230,7 +230,11 @@
     "q_greywater_done",
     "q_grove",
     "q_grove_done",
-    "q_lodestone"
+    "q_lodestone",
+    "rank_cartographers",
+    "rank_compact",
+    "rank_lanterns",
+    "rank_wardens"
   ],
   "items": [
     "antidote",
@@ -342,6 +346,7 @@
     "black_dog",
     "boar",
     "bone_knight",
+    "bramble",
     "brigand",
     "brigand_archer",
     "carrion_crow",
@@ -350,6 +355,8 @@
     "dire_wolf",
     "drowned",
     "ghoul",
+    "great_owl",
+    "heartwood",
     "lampman",
     "ogre",
     "rat",
@@ -358,6 +365,7 @@
     "rift_warden",
     "riftling",
     "riftling_elder",
+    "rootwalker",
     "shore_crab",
     "skeleton",
     "slime",

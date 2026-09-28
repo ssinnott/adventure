@@ -20,6 +20,7 @@ import * as riftling from './monsters/riftling.ts';
 import * as ogre from './monsters/ogre.ts';
 import * as wraith from './monsters/wraith.ts';
 import * as birds from './monsters/birds.ts';
+import * as oldwood from './monsters/oldwood.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -165,8 +166,9 @@ const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
   barrow_guard: skeleton.draw, barrow_captain: skeleton.draw,
   riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw,
   ogre: ogre.draw,
+  bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw,
   wraith: wraith.draw,
-  crow: birds.draw,
+  crow: birds.draw, owl: birds.draw,
 };
 
 /**
