@@ -170,11 +170,13 @@ farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41
   until then the curve reports the shortfall as owed to the pilot (#26).
 - **Gold.** A clear pays about 2,530: 1,065 in chests, about 765 in drops and 700 in rewards.
   Training six members from 1 to 5 costs 1,500, so gold holds.
-- **The gate.** #38 reports the Foreland outside the starting thresholds. The Rift Warden, the
-  Smuggler Captain and the Deacon are won 93 to 99% of the time at their maps' floors, where a boss
-  should be won about half the time. The Seam is won 66% of the time two levels under its floor,
-  where the gate wants a quarter. The area as one is won about 89% of the time at level 1. The
-  pilot settles them, by retuning or by moving the thresholds (#47).
+- **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
+  starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
+  Deacon are won 98, 99 and 98% of the time at their maps' floors, where a boss should be won about
+  half the time. The Seam is won 66% of the time two levels under its floor, where the gate wants a
+  quarter. The area as one is won 88.6% of the time at level 1, against nine in ten. The Foreland
+  map, Brandy Hole and the Seam give 4.6, 4.1 and 4.1 fights to a rest, against six or seven. The
+  pilot settles them, by retuning or by moving the thresholds.
 - **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`), and Helmstow's Lantern
   Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:410`). EXPANSION §4 has an
   area's towns sell its band's tier.
