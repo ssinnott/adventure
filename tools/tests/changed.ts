@@ -30,5 +30,6 @@ export async function changed(): Promise<void> {
   const room = await changedInteriors(['src/ui/interiors/thornmark/split_oak.ts']);
   ok(!room.all && room.interiors.join() === 'split_oak', 'a scene file counts its own interior');
   ok((await changedInteriors(['src/ui/interiors/kit.ts'])).all, 'the kit counts every interior');
+  ok((await changedInteriors(['src/lib/engine/text.ts'])).all, 'the pixel font, which letters signs in some rooms, counts every interior');
   ok(!(await changedInteriors(['src/ui/monsters/wolf.ts'])).all, 'a monster drawing counts no interior');
 }

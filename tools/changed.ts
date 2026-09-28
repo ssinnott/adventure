@@ -93,8 +93,8 @@ export async function changedMonsters(files: readonly string[], base?: string): 
   return { all, monsters: [...out] };
 }
 
-/** What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the brushes they borrow (ui/brush.ts, ui/monsters/gloss.ts) and the art library. */
-const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//];
+/** What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the brushes they borrow (ui/brush.ts, ui/monsters/gloss.ts), the art library and the pixel font (some rooms letter their signs). */
+const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//, /^src\/lib\/engine\/text\.ts$/];
 const SCENE_FILE = /^src\/ui\/interiors\/[^/]+\/([^/]+)\.ts$/;
 const AREA_INDEX = /^src\/content\/areas\/([^/]+)\/index\.ts$/;
 
