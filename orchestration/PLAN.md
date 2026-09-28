@@ -379,3 +379,28 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #130's fix (b496bc6): no outdoor map may place a banner (broken on Thornmark, it fails); the SLICE
   nits; a Done-when section. It now conflicts with main in SLICE's code map row for `game/map.ts`
   (#129's den beside its banners): told at 18:36 to merge main keeping both.
+
+### 18:55: #130 merged; #85 started; four reviews in; the order set
+
+- #130 (#17's A) merged at 18:51 (main db1fe2a) after its main merge (SLICE's `game/map.ts` row:
+  #129's den beside its banners): on the head, ALL OK (41 owed), SMOKE OK, "Nothing new."; CI green.
+  Main's tree is the head's. #17's B (`claude/m1-17-ward`) cut now; it lands after #85.
+- #85's footprint (`footprints/85.md`): S, one pull request; every text of the owner's fits its box;
+  one log entry reworded (The Quiet Farm's `paid`); the gap: a company that hands the ledger in early
+  never hears Wenna's name (a proposed line, 14 of 14, goes to the owner). Started at 18:54 in the
+  #99/#101 session (`claude/m1-85-words`), to land before #17's B, which then carries Vask's words
+  into `keep.ts`.
+- Reviews: #131 (#76's words), #132 (#21's B), #133 (#42's B) and #134 (#40's zone): all ready after
+  fixes (`reviews/131.md` to `134.md`). Sent 18:50-18:58:
+  - #133: every goal walked (an in-order run through the pass, the Stone and the chisel; "Find
+    someone in Thornhold" never shows today). Lands first.
+  - #131: one helper for the words check that `talk`, the suite and the walk call; `holds` required;
+    `personFlags` proven on words' `sets` and lists of hire flags; `condFaults` over words'
+    conditions. Lands second, carrying `walk.ts`'s port.
+  - #132: the hall menu's rank built when drawn; a rank never falls when content grows (the
+    orchestrator's should-fix: a quest added at a held rank lowered it); `collect(CONTENT)` checked.
+    Lands third, carrying its collisions with #131 and #133.
+  - #134: the body says the wall at 3 is the gate bot's (it never casts Slumber: with it the zone at
+    3 is 55%; a mixed group led by its most numerous monster gives 27%, failing), and that the look
+    changed (two wolf groups now drawn as thorn spiders; three wraiths at 27,10). It waits on the
+    owner's OK on the sheet, and lands after #133.
