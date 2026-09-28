@@ -525,3 +525,21 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   The orchestrator rendered the owl, the old wood and the keep from their current heads and sent them
   to the owner at 20:30 in one message.
 - In progress: #76's second pull request, #73 and #47's 0b (pushed), 0a and A (not yet pushed).
+
+### 20:42: the owner OKs the art but the throne; #132 and #139 merged
+
+- 20:37, the owner: "So everything looks good except for the throne in the throne room that looks
+  weird". Taken as the OK on the owl (#139), the old wood (#137, #138), the keep's ward and room but
+  the throne (#135) and #134's look. The gate-bot point on #134 was not answered: its default stands
+  (the bot stays the test; no rule changes), and the owner was told so.
+- #132 (#21's B) second round (`reviews/132-2.md`): ready; a rank is now saved once reached
+  (`rank_<guild>`, recorded by `node tools/shipped.ts`), so it never falls when content grows.
+  Merged at 20:40 (main cb4c33a): on the head (main db02d4f in), ALL OK (43 owed), SMOKE OK, "Nothing
+  new."; CI green. Main's tree is the head's. Its nits (comments that say nothing else is saved;
+  Oxford commas) ride #21's C.
+- #139 (the owl) merged at 20:42 (main 5a18f83) after a local merge with cb4c33a: ALL OK (44 owed:
+  #49 ×2), SMOKE OK (40 drawn), "Nothing new."; CI green. Main's tree matches.
+- Sent 20:43: #135 redraws the throne (read as a throne: back, arms, seat, legs; the mourning a cloth,
+  not a shroud) and sends the owner a before-and-after; #76's second pull request adds "Talk to" to
+  #132's `businessEntries`, built when drawn; #134 merges main to land; #137 and #138 merge main
+  after the owl, dropping their copy of the five `UNPLACED` lines.
