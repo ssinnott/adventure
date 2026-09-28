@@ -1,15 +1,19 @@
-// The quest log: every key names something real, every goal is placed, every journal is shown
-// whole, nothing vanishes when an item leaves, the one quest is paged by chapter and reads true out
-// of order, and the quests walk through end to end, each change announced once.
+// The quest log: every key names something real, every goal is placed, every zone on the road of
+// the built areas holds a step, every journal is shown whole, nothing vanishes when an item leaves,
+// the one quest is paged by chapter and reads true out of order, and the quests walk through end to
+// end, each change announced once.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { AREAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, GUILD_QUESTS } from '../../src/content/index.ts';
+import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, GUILD_QUESTS } from '../../src/content/index.ts';
+import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
+import { existsSync } from 'node:fs';
 import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, takeItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { questLog, questMarks, questNews } from '../../src/game/quests.ts';
+import { handIns, personFlags } from '../../src/game/people.ts';
 import type { Chapter, LogQuest, PageView, QuestCond, QuestDef, QuestView, When } from '../../src/game/quests.ts';
 import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src/ui/quests.ts';
 import { wrap } from '../../src/ui/draw.ts';
@@ -18,7 +22,7 @@ import { NORTH } from '../../src/game/types.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { spentId } from '../../src/game/wilds.ts';
 import type { MapState } from '../../src/game/world.ts';
-import { ok } from './lib.ts';
+import { ok, owed } from './lib.ts';
 
 /**
  * What in a condition names nothing real: a flag no NPC or guild quest sets, an item, something spent once and kept
@@ -29,7 +33,7 @@ import { ok } from './lib.ts';
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
   // The flags people set, and the guild quests' own (a hall sets them: game/guilds.ts).
   const npcFlags = new Set([
-    ...maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [f.flag, f.quest?.setFlag] : [])),
+    ...maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])),
     ...GUILD_QUESTS.flatMap((q) => [takenFlag(q.id), doneFlag(q.id)]),
   ]);
   const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };
@@ -78,6 +82,21 @@ export function quests(): void {
     const most = Math.max(...[...c.goals.map((g) => g.text), null].map((goal) => questSheets(all(goal), PAGE.w, PAGE.h).length));
     console.log(`  info: ${id}: its journal takes ${most} ${most === 1 ? 'page' : 'pages'} at most`);
   }
+  { // Every zone on the road of the built areas holds a step of the one quest, found from where
+    // its steps are done (a dungeon or a town by the outdoor map it opens onto). A zone not built
+    // yet is owed by whoever builds its step.
+    const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
+    const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
+    const PLANNED: Record<string, string> = { downs: '#47', deepthorn: '#49' };
+    const built = new Set(AREAS.map((a) => a.id as string));
+    for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
+      const msg = `zone ${z.id} holds a step of the one quest`;
+      if (PLANNED[z.id]) owed(held.has(z.id), msg, PLANNED[z.id]);
+      else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
+    }
+    const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
+    ok(AREAS.every((a) => a.chapter) && !walks.length, `every area has a chapter of the one quest and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
+  }
   { // A chapter too long for one page goes on over the next, and keeps every entry.
     const c = THE_QUEST.chapters[0];
     const long: Chapter = { ...c, entries: Array.from({ length: 14 }, (_, i) => ({ id: `e${i}`, when: c.start, text: `${i}: ${c.entries[0].text}` })) };
@@ -104,7 +123,7 @@ export function quests(): void {
   };
   const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
   const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);
-  const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && f.quest ? [f.quest.item] : [])));
+  const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? handIns(f).map((q) => q.item) : [])));
   for (const q of QUESTS) steps(q).forEach((c, ci) => {
     const id = q.chapters ? `${q.id}/${c.id}` : q.id;
     const bad: string[] = [];

@@ -16,6 +16,7 @@ import { questLog } from '../../src/game/quests.ts';
 import { rankOf, rankName, offered, inHand, report, take } from '../../src/game/guilds.ts';
 import type { GuildQuest } from '../../src/game/guilds.ts';
 import { giftOf } from '../../src/game/wilds.ts';
+import { personFlags, personGives } from '../../src/game/people.ts';
 import { CONTENT, collect } from '../shipped.ts';
 import { condFaults } from './quests.ts';
 import { ok } from './lib.ts';
@@ -117,9 +118,9 @@ export function guilds(): void {
   // names real things, has a deed, one first task a guild and no gap in its ranks, and flags its own.
   const halls = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => ('hall' in f && f.hall ? [f.hall] : []))));
   for (const h of halls) ok(h in GUILDS, `a hall's guild, ${h}, is a guild`);
-  const npcFlags = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' ? [f.flag, f.quest?.setFlag] : []))));
+  const npcFlags = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' ? personFlags(f) : []))));
   const findable = new Set([
-    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => [...(giftOf(f)?.items ?? []), ...(f.kind === 'shop' ? f.stock : [])])),
+    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => [...(giftOf(f)?.items ?? []), ...(f.kind === 'shop' ? f.stock : []), ...(f.kind === 'npc' ? personGives(f) : [])])),
     ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)),
   ]);
   const saved = collect(CONTENT).flags;
