@@ -72,7 +72,7 @@ export const FARM_KITCHEN: Scene = {
     beam(ctx, 0, 22, STAGE_W, 16, ELM, 971);
     beam(ctx, 150, 38, 10, FLOOR - 38, ELM, 972);
     beam(ctx, 270, 38, 10, FLOOR - 38, ELM, 973);
-    // The hearth, left: a pot on its hook, the kettle on the hob, the farm's jugs on the mantel.
+    // The hearth, left: a pot on its hook, and a jug, plates, a jar and a candle on the mantel.
     const fb = hearth(ctx, s, 10, 38, 128, FLOOR + 4, STONE, 97, { mantel: ELM, reach: 280 });
     line(ctx, [fb.x + fb.w * 0.5, fb.y + 2, fb.x + fb.w * 0.5, fb.y + 16], '#2a2226', 2);
     glossEllipse(ctx, K, fb.x + fb.w * 0.5, fb.y + 24, 14, 10, '#2e2a30', 0, { gloss: 0.4, spread: 0.7 });
@@ -111,7 +111,7 @@ export const FARM_KITCHEN: Scene = {
     cup(ctx, 282, 216, 10, '#7a5a34');
     candle(ctx, s, 224, 218, 12, '#efe4c8', 130);
     stool(ctx, 94, 266, 30, '#7a5236');
-    // By the door, bottom right: the sacks, a crock and the churn.
+    // By the door, bottom right, the sacks and the churn; bottom left, the crock.
     sack(ctx, 344, 266, 42, 50, '#c0a47a', { seed: 5 });
     sack(ctx, 384, 268, 36, 44, '#b0946a', { open: '#e8d8a8', seed: 6 });
     crock(ctx, 30, 264, 38);
