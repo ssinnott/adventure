@@ -1,8 +1,9 @@
 // The people the party talks to: what a person says, what a hand-in takes and pays, and the
-// questions they put. It depends on the person and the party alone, so the tests can meet anyone
-// without a Game; where words wear a presence, the caller says which hold.
+// questions they put. It depends on the person, the party and which of their words hold (`heard`),
+// so the tests meet anyone as the game does, without a Game.
 import type { Feature, NpcQuest, Words, Choice, Answer } from './map.ts';
 import type { Party } from './party.ts';
+import type { World } from './world.ts';
 import { countItem, takeItem } from './party.ts';
 import { item } from './items.ts';
 
@@ -27,6 +28,12 @@ export function personFlags(p: Person): string[] {
 /** Every item a person hands the company, by an answer. */
 export const personGives = (p: Person): string[] => choices(p).flatMap((c) => c.answers.flatMap((a) => (a.gives ? [a.gives] : [])));
 
+/**
+ * Which of a person's words hold, as the game, the tests and the walkthrough all ask it: in their
+ * hours, once their `after` holds and not once their `until` does, read as a group's presence is.
+ */
+export const heard = (world: Pick<World, 'walks' | 'ended'>, p: Person) => (w: Words): boolean => world.walks(w, p.x, p.y) && !world.ended(w);
+
 /** An item's words to read, if it has any: a letter. */
 export const readText = (id: string): readonly string[] | undefined => item(id).text;
 
@@ -37,12 +44,13 @@ const open = (c: Choice | undefined, party: Party): Choice | undefined =>
 
 /**
  * Meet a person: change the party as the meeting does and return the words. In order: a hand-in
- * the company can make (one a meeting, in list order); the first of their words that `holds`; the
+ * the company can make (one a meeting, in list order); the first of their words that `holds` (the
+ * game passes `heard`); the
  * after-lines of the last hand-in done that has any; the first meeting, which hires. A company the
  * person never hired hears a hand-in's `early` words, and is not hired by it, so the log never says
  * it was.
  */
-export function meet(p: Person, party: Party, holds: (w: Words) => boolean = () => true): Meeting {
+export function meet(p: Person, party: Party, holds: (w: Words) => boolean): Meeting {
   const hires = list(p.flag), quests = handIns(p);
   const q = quests.find((x) => !party.flags[x.setFlag] && countItem(party, x.item) > 0);
   if (q) {

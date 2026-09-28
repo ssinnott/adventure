@@ -251,7 +251,8 @@ const asked = await (async () => {
     C.ITEMS.fx_letter = { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none', price: 0, text: ['To Captain Hale, at the pass.', '"The riders cross the ford by night."'] };
     const g = (window as any).__game.game;
     g.world.travel('harrow', 9, 6, 0);
-    g.talk({ kind: 'npc', x: 9, y: 5, name: 'Captain Fixture', lines: ['"Riders, by night."'],
+    // Words after a flag nobody has set are not said: the first lines are.
+    g.talk({ kind: 'npc', x: 9, y: 5, name: 'Captain Fixture', lines: ['"Riders, by night."'], says: [{ after: { flag: 'fx_never' }, lines: ['"Not yet."'] }],
       choice: { ask: 'Shall I write to Hale?', answers: [{ label: 'Write to him', sets: 'fx_write', gives: 'fx_letter', says: ['He writes, and seals it.'] }, { label: 'Keep it quiet', sets: 'fx_keep', says: ['He shrugs.'] }] } });
   });
   await page.waitForTimeout(80);
@@ -264,15 +265,19 @@ const asked = await (async () => {
   await page.keyboard.press('Space'); await page.waitForTimeout(80);
   const after = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, flag: !!g.party.flags.fx_write, bag: g.party.bag.includes('fx_letter') }; });
   await page.keyboard.press('KeyI'); await page.waitForTimeout(80);
-  await page.evaluate(() => { const g = (window as any).__game.game, t = g.top, c = g.party.members[g.selected]; t.sel = c.pack.length + g.party.bag.indexOf('fx_letter'); });
-  await page.keyboard.press('Space'); await page.waitForTimeout(80);
-  const letter = await top();
+  const has = await page.evaluate(() => { const g = (window as any).__game.game, t = g.top, c = g.party.members[g.selected], i = g.party.bag.indexOf('fx_letter'); if (i >= 0 && t.constructor.name === 'SheetScreen') t.sel = c.pack.length + i; return i >= 0; });
+  if (has) { await page.keyboard.press('Space'); await page.waitForTimeout(80); }
+  const letter = has ? await top() : { screen: 'no letter', text: '', title: '' };
   await page.keyboard.press('Escape'); await page.waitForTimeout(60);
   await page.keyboard.press('Escape'); await page.waitForTimeout(60);
   const closed = await page.evaluate(async () => {
     const g = (window as any).__game.game, C = await import('/src/content/index.ts' as string);
-    g.party.bag.splice(g.party.bag.indexOf('fx_letter'), 1); delete g.party.flags.fx_write; delete C.ITEMS.fx_letter;
-    return g.top.constructor.name;
+    const top = g.top.constructor.name;
+    // Whatever went wrong above, the rest of the run starts in the street.
+    while (g.screens.length > 1) g.pop();
+    if (g.party.bag.includes('fx_letter')) g.party.bag.splice(g.party.bag.indexOf('fx_letter'), 1);
+    delete g.party.flags.fx_write; delete C.ITEMS.fx_letter;
+    return top;
   });
   return { words, question, choiceColours, said, after, letter, closed };
 })();
@@ -514,7 +519,7 @@ if (!terrains.missing) {
 }
 ok(questLine === 'New quest: The Dimming.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(asked.words.screen === 'MessageScreen' && asked.words.text === '"Riders, by night."' && asked.question.screen === 'ChoiceScreen' && asked.question.text === 'Shall I write to Hale?' && asked.choiceColours > 20,
-  `a person's words close onto their question, which paints (${asked.words.screen}, then ${asked.question.screen}, ${asked.choiceColours} colours)`);
+  `a person's first words (not words whose flag is unset) close onto their question, which paints (${asked.words.screen}, then ${asked.question.screen}, ${asked.choiceColours} colours)`);
 ok(asked.said.text === 'He writes, and seals it.\n\n(A Sealed Letter.)' && asked.said.title === 'Captain Fixture' && asked.after.flag && asked.after.bag && asked.after.screen === 'ExploreScreen',
   `the answer is said, sets its flag and hands over the letter (${JSON.stringify(asked.said.text)})`);
 ok(asked.letter.screen === 'MessageScreen' && asked.letter.title === 'A Sealed Letter' && asked.letter.text.startsWith('To Captain Hale') && asked.closed === 'ExploreScreen', `the letter is read from the pack, in a box titled with its name, and Esc closes it (${asked.letter.screen} '${asked.letter.title}', then ${asked.closed})`);

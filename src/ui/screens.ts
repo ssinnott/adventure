@@ -5,12 +5,13 @@ import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText, lineHeight, measureText } from '../lib/engine/text.ts';
 import { panel, paragraph, menu, wrap, columnMenu, optionParts, fit, columnLabelWidth } from './draw.ts';
-import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame, SAY_W, SAY_LINES, SIDE_W } from './frame.ts';
+import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame, SAY_W, SAY_LINES, SIDE_W, ASK_LINES, ASK_SIDE_LINES } from './frame.ts';
 import { drawPortraitLarge } from './portraits.ts';
 import { drawInterior } from './interior.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
 import type { Feature, Interior } from '../game/map.ts';
 import { item, priceIn, buy } from '../game/items.ts';
+import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
 import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, trainPrice, MAX_LEVEL, guildFlag } from '../game/party.ts';
@@ -122,11 +123,13 @@ export class ChoiceScreen implements Screen {
   }
   render(g: Game, ctx: CanvasRenderingContext2D): void {
     if (visiting(g)) { this.renderSide(ctx); return; }
-    const h = Math.min(300, 40 + this.options.length * 11 + 40);
+    // One line of question was always allowed for; each more takes its height.
+    const asked = Math.min(wrap(this.text, SAY_W).length, ASK_LINES);
+    const h = Math.min(300, 40 + (asked - 1) * lineHeight(1) + this.options.length * 11 + 40);
     panel(ctx, BOX.x, BOX.y, BOX.w, h);
     let y = BOX.y + 10;
     if (this.title) { drawText(ctx, this.title, BOX.x + 12, y, { size: 1, color: BRASS }); y += 14; }
-    y = paragraph(ctx, this.text, BOX.x + 12, y, BOX.w - 24, { color: TEXT, maxLines: 6 }) + 6;
+    y = paragraph(ctx, this.text, BOX.x + 12, y, SAY_W, { color: TEXT, maxLines: ASK_LINES }) + 6;
     menu(ctx, this.options, BOX.x + 12, y, this.sel, { disabled: this.disabled });
   }
   /**
@@ -136,7 +139,7 @@ export class ChoiceScreen implements Screen {
   private renderSide(ctx: CanvasRenderingContext2D): void {
     const x = SIDE.x + PAD;
     let y = sidePanel(ctx, this.title);
-    y = paragraph(ctx, this.text, x, y, TEXT_W, { color: TEXT, maxLines: 7 }) + 3;
+    y = paragraph(ctx, this.text, x, y, TEXT_W, { color: TEXT, maxLines: ASK_SIDE_LINES }) + 3;
     ctx.fillStyle = BRASS_DARK; ctx.fillRect(x, y, TEXT_W, 1);
     y += 5;
     const lh = lineHeight(1) + 1, n = this.options.length;
@@ -203,7 +206,7 @@ export class SheetScreen implements Screen {
           if (d.use!.cure) { for (const k of d.use!.cure) removeCondition(t, k as never); g.say(`${t.name} is cleansed.`); }
           if (d.use!.food) { g.party.food += d.use!.food; g.say(`The party's food grows by ${d.use!.food}.`); }
         });
-      } else if (d.text) g.push(new MessageScreen(d.text.join('\n\n'), undefined, d.name));
+      } else if (readText(it.id)) g.push(new MessageScreen(readText(it.id)!.join('\n\n'), undefined, d.name));
       else g.say(`${d.name}: nothing to do with it here.`);
       if (this.sel >= this.items(g).length) this.sel = Math.max(0, this.items(g).length - 1);
     }

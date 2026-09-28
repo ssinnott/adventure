@@ -6,7 +6,7 @@ import type { Rng } from '../lib/engine/rng.ts';
 import { World, signLine } from './world.ts';
 import type { WorldState } from './world.ts';
 import { defaultParty, isDown, allDown, heal, spellHeal } from './party.ts';
-import { meet, answer } from './people.ts';
+import { meet, answer, heard } from './people.ts';
 import type { Person } from './people.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps.ts';
@@ -210,8 +210,7 @@ export class Game {
 
   /** Talk to a person: their words in a box, then their question, if they put one. */
   talk(p: Person): void {
-    const w = this.world;
-    const m = meet(p, this.party, (x) => w.walks(x, p.x, p.y) && !w.ended(x));
+    const m = meet(p, this.party, heard(this.world, p));
     const then = m.choice ? (): void => this.ask(m.choice!, p.name) : undefined;
     const said = new MessageScreen(m.text, then, p.name);
     if (p.interior) this.visit(p, p.interior, said); else this.push(said);
