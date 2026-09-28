@@ -89,7 +89,7 @@ export type Feature =
    * `keepers`, a group beside it that never leaves, guard it. `text` is its look, said when it is
    * first seen. Once the keepers are dead a step or Space puts `ask`, answered `burn` or `leave`;
    * burnt, it says `burnt`, gives its hoard (`gold`, `items`) and breeds no more, and `ruin` is said
-   * there after. Groups are named by id, never by square, as the outdoors moves only the den.
+   * thereafter. Groups are named by id, never by square, as the outdoors moves only the den.
    */
   | { kind: 'den'; x: number; y: number; id: string; name?: string; text: string; breeds: readonly string[]; keepers: string; brood: readonly string[]; ask: string; burn: string; leave?: string; burnt: string; ruin?: string; gold: number; items: string[] }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
@@ -122,11 +122,15 @@ export interface MapZone {
   enter?: Record<string, string>;
 }
 
-/** A hand-in: when the party carries `item` and `needFlag` is set, the NPC says `done`, pays, and sets `setFlag`. */
+/**
+ * A hand-in: the first time the party meets the NPC carrying `item`, the NPC takes it, says `done`
+ * (or `early`, to a company they never hired), pays and sets `setFlag`. See game/people.ts.
+ */
 export interface NpcQuest {
   item: string;
-  needFlag?: string;
   reward: number;
+  /** What the NPC says taking the item from a company they never hired; `done` if not given. */
+  early?: string[];
   done: string[];
   setFlag: string;
   /** What the NPC says once the quest is complete. */

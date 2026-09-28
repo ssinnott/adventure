@@ -1,5 +1,5 @@
 // The gate check (EXPANSION §2.2, §5.2): with one road and no flags on it, the monsters are what
-// turn a company back. tools/gate.ts's bot plays the premade company, in its starting gear, against
+// turn a company back. tools/gate.ts's bot plays the premade company, dressed by the ladder, against
 // every group of a map alone from full health; each map is held to its sign's band and each area to
 // its band on the curve (src/content/progression.ts). Every margin is printed. A miss the owners
 // below are owed is reported, not failed, until it holds: Thornmark's are #40's to retune, the
@@ -73,17 +73,16 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'greywater1: rest': { whose: '#47', at: 4.08 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2: under': { whose: '#47', at: 0.658 },
-  'greywater2: rest': { whose: '#47', at: 4.05 },
-  'greywater2:gw2_deacon: floor': { whose: '#47', at: 0.98 },
+  'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
   'the Foreland: floor': { whose: '#47', at: 0.886 },
   // Thornmark, the Grove Roots and the Cut Stone: retuned until they hold.
-  'thornmark: under': { whose: '#40', at: 0.912 },
+  'thornmark: under': { whose: '#40', at: 0.977 },
   'grove1: under': { whose: '#40', at: 0.999 },
   'grove2: under': { whose: '#40', at: 1 },
-  'grove2: rest': { whose: '#40', at: 7.75 },
+  'grove2: rest': { whose: '#40', at: 7.95 },
   'grove2:g2_hand: floor': { whose: '#40', at: 1 },
   'grove2:g2_warden: floor': { whose: '#40', at: 1 },
-  'Thornmark: under': { whose: '#40', at: 0.696 },
+  'Thornmark: under': { whose: '#40', at: 0.844 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;

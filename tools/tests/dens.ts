@@ -43,7 +43,7 @@ const FIXTURE: MapDef = {
 
 /**
  * What is wrong with a map's dens: a kind that is no monster; keepers that are no group of the map,
- * stand on it or away from it, or leave it (they roam, come back, walk by the hours or after a step,
+ * stand on it or away from it or leave it (they roam, come back, walk by the hours or after a step
  * or have an end); brood that is no group of the map, is the keepers or another den's, never comes
  * back, stops at anything but the den's burning or holds a stranger to its kind.
  */
@@ -150,7 +150,7 @@ export function dens(): void {
     ok(!burn(loaded, data.party, DEN).length && data.party.gold === lgold, 'and its hoard is not given again');
   }
 
-  // Its look: said on first sight, once, and never for a ruin.
+  // Its look: said on first sight, once and never for a ruin.
   {
     const { world, party } = fresh();
     world.state.x = DEN.x; world.state.y = DEN.y + 3; world.state.facing = NORTH;

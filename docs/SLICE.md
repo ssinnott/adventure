@@ -46,13 +46,18 @@ DESIGN.md first for the why.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (the group's
   first monster, in line of sight), or meets one in a fight unseen, the log says its `look`, once.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
-  journal of what the party has found: The Quiet Farm (Vask), The Cargo Ledger (Hale), The
-  Grove Stone (Vask's lead, Sylvane's chisel), and The Lost Expedition, which the first Meridian
-  journal opens and which stays open until the rest of its trail is built. Nothing new is saved.
+  journal of what the party has found. The main quest is one, The Dimming, joined from each area's
+  chapter in road order (EXPANSION §5.8): The Quiet Farm (Vask) and The Grove Stone (Vask's lead,
+  Sylvane's chisel). A chapter is begun once its start or its end holds, and the quest is done once
+  every one is; its goal is tried from the last chapter back, over those begun and the ones before
+  them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
+  Beside it are the side quests: The Cargo Ledger (Hale), and The Lost Expedition, which the first
+  Meridian journal opens and which stays open until the rest of its trail is built. Left and right
+  page the one quest by chapter, and a page too long goes on over the next. Nothing new is saved.
   Every entry is keyed to something the save already holds (a flag, a carried item, a once-only
-  event, a guardian killed, a map set foot on), so an old save opens with its log whole. A quest
-  begun, advanced or finished is announced once in the message log, and J opens on the one that
-  changed last.
+  event, a guardian killed, a map set foot on), so an old save opens with its log whole. A quest or
+  chapter begun, advanced or finished is announced once in the message log, and J opens on the one
+  that changed last, at its goal's chapter.
 
 ## The outdoors as one map, and the end of the world
 
@@ -193,8 +198,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   character's state, cached to an offscreen canvas.
 - `ui/sprites.ts` holds the trees, rocks, mountains and pillars and dispatches the monsters to
   `ui/monsters/`, one module per family (rat, slime, wolf, boar, spider, bandit, cultist, skeleton,
-  riftling, ogre, wraith) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts` has
-  the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
+  riftling, ogre, wraith, birds) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts`
+  has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
   the cult and the skeletons stand on. Every monster def names a sprite kind no other def uses
   (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands and
   smugglers, the cult's ranks, the bone knight, the ghoul and the drowned man, the dire wolf and
@@ -211,9 +216,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   radial light for embers and halos; `softLine()` replaces interior ink. The hit flash still
   paints a flat white silhouette through all of it. Each monster is one piece of ink at combat
   size, alone, three and six abreast, through its idle, but for the parts `DETACHED` in
-  `tools/smoke.ts` declares apart (the wardens' shards, the acolyte's censer, the adept's hand
-  flame, the rift hound's and the Hand of Ash's embers, the wraith's fading cloth); the smoke test
-  holds it.
+  `tools/smoke.ts` declares apart (the wardens' shards, the acolyte's censer, the lampman's
+  lantern, the adept's hand flame, the rift hound's and the Hand of Ash's embers, the wraith's
+  fading cloth); the smoke test holds it.
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
   three and four taper down, five is the old flat size and six goes under it. The row's spacing is
@@ -289,8 +294,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
   Thornmark's less gold (#26); the gate's marks for a boss's odds, a company two under the floor
   and fights to a rest are missed on the Foreland (#47) and in Thornmark (#40), and the Foreland
-  misses its floor too (#47); three hand-ins wait on a quest before taking their item (#43); and
-  the Foreland's west edge disagrees with the atlas on one square (#47's).
+  misses its floor too (#47); and the Foreland's west edge disagrees with the atlas on one square
+  (#47's).
 
 ## Checks
 
@@ -335,7 +340,7 @@ over content broken on purpose too, and two tools to theirs:
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
-- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, in its starting gear,
+- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder,
   against every group alone; each map is held to its band and each area to its band on the curve:
   nine fights in ten won at the floor, a quarter at most two under it, a boss three to seven times
   in ten, 6.5 fights to a rest give or take one and the area's road walked eight times in ten. A
@@ -359,6 +364,8 @@ over content broken on purpose too, and two tools to theirs:
   log and no monster's look past two, every glyph in the font, British spelling; each `Area.novel`
   holds; water and roads carry on into the atlas; story locks (`content/locks.ts`) signed in, none
   between areas and every hand-in taking its item at the first meeting.
+- `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
+  each played hired first and early, the words, the pay and the log true either way round.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
@@ -366,6 +373,10 @@ over content broken on purpose too, and two tools to theirs:
 - `changed`: which files count every map, monster or interior for the crack sweep and the sheet,
   and which only their own.
 - `scaffold` (§8.2): the Downs' draft, laid back into the atlas, is the atlas square for square.
+- `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
+  `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
+  a chest or a hoard holds it, Mottram's sells the band's gear and the gate check's company wears
+  what harness's does.
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -398,9 +409,10 @@ growing past Thornmark's, `--level-bonus` one where every member gains a point o
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
-premade company, trained to each level in its starting gear, wins each map's groups alone from full
-health; `--road thornmark:tm_wolves1,tm_brigands2` fights the groups named in a row with no rest and
-counts the companies still standing. `tools/tests/gate.ts` holds the maps and areas to it.
+premade company, trained to each level and dressed by the gear ladder, wins each map's groups alone
+from full health; `--road thornmark:tm_wolves1,tm_brigands2` fights the groups named in a row with
+no rest and counts the companies still standing. `tools/tests/gate.ts` holds the maps and areas to
+it.
 `node tools/scaffold.ts <zone> <x> <y> [--id <map id>] [--out <file> [--force]]` cuts the atlas's
 32 by 32 squares from x,y into a zone map's first draft (EXPANSION §8.2): the ground, the woods, the
 hills, the water and the road square for square, with no ring, and the zone's name and band; its
@@ -421,10 +433,11 @@ does.
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
+| `game/people.ts` | `meet`: what a person says, and a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
-| `game/quests.ts` | `questLog` (the quests known, their entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
+| `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
@@ -435,12 +448,12 @@ does.
 | `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
-| `ui/quests.ts` | the quest log screen, and `questPage`, its pure page layout |
+| `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
-| `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests, climates, rooms) and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
+| `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests, climates, rooms), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |
-| `content/areas/<area>/` | an area: its maps, monsters, items, quests, climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
+| `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |
