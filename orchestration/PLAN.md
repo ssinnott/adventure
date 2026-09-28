@@ -460,3 +460,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   lines are in `keep.ts` alone; the Eel's stay in `harrow.ts`. Sent 19:56: the proclamation moved off
   the arrival squares; `keep_chapel` once; nits; the owner's choice (Vask's hand-in pages 19 lines and
   the gold line alone).
+
+### 19:58: #131 back for a second round; the owl opened
+
+- #131 (#76's words) merged main bdbaba9 and pushed its fix round and the walk's port (ecf517c):
+  a second-round reviewer on it (`reviews/131-2.md`); it lands once that says ready, then #132.
+- #139 (#48's A, the Great Owl) opened at 19:26: a reviewer on it (`reviews/139.md`).
