@@ -58,7 +58,7 @@ only when all three pass and it is up to date with main.
 ```
 src/main.ts        boot: canvas, input, loop
 src/input.ts       keyboard -> queued actions (plus a text mode for names)
-src/game/          the model: map, outdoors, world, calendar, weather, party, items, spells, monsters, combat, quests, save, game
+src/game/          the model: map, outdoors, world, calendar, weather, party, people, items, spells, monsters, combat, quests, save, game
 src/content/       the content, in TypeScript: index.ts lists the areas in road order and merges their tables
 src/content/areas/ one folder per area: its maps, monsters, items, quests and climate (docs/areas/ has each one's doc)
 src/ui/            viewport, frame, sprites, screens, combat screen, quest log, title, party creation

@@ -7,8 +7,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'rat', 'slime', 'wolf', 'boar', 'spider', 'bandit', 'archer', 'cultist', 'skeleton', 'riftling',
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
-  'rift_crawler', 'deacon',
-  'black_dog',
+  'rift_crawler', 'deacon', 'crow', 'wrecker', 'lampman', 'black_dog',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -33,6 +32,11 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'ashen_acolyte', name: 'Ashen Acolyte', plural: 'Ashen Acolytes', sprite: 'acolyte', kind: 'person', level: 4, hp: 20, ac: 13, attack: 5, dice: 2, sides: 4, bonus: 1, speed: 11, xp: 110, gold: [8, 20], ranged: true, tint: '#7a4a4a', size: 0.9, drops: [{ item: 'potion_sp', chance: 0.2 }] },
   { id: 'rift_crawler', name: 'Rift Crawler', plural: 'Rift Crawlers', sprite: 'rift_crawler', kind: 'rift', level: 4, hp: 20, ac: 14, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 14, xp: 115, gold: [0, 0], tint: '#c0503a', size: 0.55, inflict: { cond: 'poisoned', chance: 0.25 } },
   { id: 'ashen_deacon', name: 'Ashen Deacon', plural: 'Ashen Deacons', sprite: 'deacon', kind: 'person', level: 5, hp: 80, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 1000, gold: [60, 120], tint: '#3a2a3a', size: 1.0, drops: [{ item: 'elixir', chance: 1 }] },
-  // ---- the Downs (#69 places and tunes them) ----
+  { id: 'carrion_crow', name: 'Carrion Crow', plural: 'Carrion Crows', sprite: 'crow', kind: 'beast', level: 2, hp: 6, ac: 11, attack: 1, dice: 1, sides: 4, bonus: 0, speed: 14, xp: 12, gold: [0, 0], ranged: true, tint: '#26242c', size: 0.3 },
+  // ---- the Downs: unplaced until their issues place them ----
+  // the wreckers (#47): Gullwick's beach and the Salt Road
+  { id: 'wrecker', name: 'Wrecker', plural: 'Wreckers', sprite: 'wrecker', kind: 'person', level: 3, hp: 13, ac: 13, attack: 3, dice: 1, sides: 8, bonus: 0, speed: 10, xp: 60, gold: [4, 14], tint: '#8c7a36', size: 0.9 },
+  { id: 'lampman', name: 'Lampman', plural: 'Lampmen', sprite: 'lampman', kind: 'person', level: 3, hp: 11, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 0, speed: 11, xp: 65, gold: [3, 12], ranged: true, missile: true, tint: '#4e4638', size: 1.0 },
+  // the Black Dog (#69): the chalk hills round the Berth, by night
   { id: 'black_dog', name: 'Black Dog', plural: 'Black Dogs', sprite: 'black_dog', kind: 'beast', look: 'A black dog the size of a calf, with eyes like coals.', level: 4, hp: 16, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 0, speed: 15, xp: 80, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.1 }, tint: '#1c1a20', size: 0.75 },
 ];

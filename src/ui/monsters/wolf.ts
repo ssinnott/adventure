@@ -1,4 +1,5 @@
-// The wolf family: wolf, dire wolf, rift hound and black dog on one canine frame, standing alert in profile.
+// The wolf family: wolf, dire wolf, rift hound and black dog on one canine frame, standing alert
+// in profile.
 // The proportions are measured off a photograph of a grey wolf rather than invented: the legs are
 // two fifths of the height, the body a little under a half, the withers are the highest point of
 // the body, the back is level, the belly tucks up behind the ribs, and the head is carried so the
@@ -172,9 +173,10 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
   // The inner ear, a dark hollow up the near ear.
   softLine(ctx, B, [hx - rH * 0.16, hy - rH * 0.98, hx - rH * 0.1, hy - rH * 1.55], base, Math.max(1, rH * 0.15), 0.45);
-  // ONE eye, but for the black dog's: the head is a profile, so the far cheek is turned away and a second eye has nowhere to
-  // be. If this head is ever turned toward the party it becomes a matched PAIR of the same size,
-  // the far one only slightly narrowed by the turn; the rat and the boar are profiles with one eye.
+  // ONE eye, but for the black dog's: the head is a profile, so the far cheek is turned away and a
+  // second eye has nowhere to be. If this head is ever turned toward the party it becomes a matched
+  // PAIR of the same size, the far one only slightly narrowed by the turn, as the black dog's is
+  // (coals()); the rat and the boar are profiles with one eye.
   const eyeCol = v === 'wolf' ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : HOT;
   const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * (dog ? 0.17 : 0.15);
   if (rift) glow(ctx, B, ex, ey, er * 3, EMBER, 0.4 + 0.3 * pulse, HOT);
