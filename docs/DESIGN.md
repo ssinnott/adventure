@@ -335,7 +335,8 @@ A first task and three quests a guild, on the built maps, with no new monster gr
 off the main quest's road and Hale's where the built maps allow: in the Foreland band only the
 cellar and Brandy Hole hold a deed, so each guild has one there, which most companies will have
 done before they take it and are paid for when they report it. Thornmark's barrow is left alone,
-since it echoes the Berth, so two deeds are new once-events: First Watch's and the second marker's.
+since it echoes the Berth, so two deeds are new once-events, First Watch's and the second marker's,
+and one a new chest, the garrison's, set apart from the tower so that its two ranks are two trips.
 Each quest's words, pay and level come with its build.
 
 | Guild | Rank | Quest | Where | The deed |
@@ -343,7 +344,7 @@ Each quest's words, pay and level come with its build.
 | Wardens | first task | First Watch | the Foreland, Hale's checkpoint at the Scarth | walk the road to the checkpoint and back; one new once-event there |
 | Wardens | 1 | the cellar's cult | Ashcombe Cellar | the two cultist bands that hold it |
 | Wardens | 1 | the old watchtower | Thornmark | the ogre denned in the tower's base |
-| Wardens | 2 | the tower's store | Thornmark, the old watchtower | the Wardens' store there, opened |
+| Wardens | 2 | the garrison's strongbox | Thornmark, by Thornhold's north wall, across the map from the tower | the chest the tower's garrison buried when it fled, opened; one new chest there |
 | Lanterns | first task | First Light | the Foreland's shore | look at the Hearth from the shore and say what was seen |
 | Lanterns | 1 | the drowned stair | Brandy Hole | the dead at the stair down, laid |
 | Lanterns | 1 | the dark marker | Thornmark's lake | the survey marker with its glass gone dark |

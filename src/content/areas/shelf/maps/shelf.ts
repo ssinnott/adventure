@@ -58,6 +58,7 @@ export const SHELF: MapDef = {
     { kind: 'sign', x: 30, y: 9, text: 'Warden checkpoint. The road east is open. Past it lies Thornmark, and the Wardens will not come in after you.' },
     { kind: 'sign', x: 18, y: 16, text: 'East: Ashcombe.' },
     { kind: 'event', x: 23, y: 20, id: 'ashcombe_gate', once: true, text: 'Ashcombe. The gate is off its hinges and the yard is silent. Something has scraped the earth in a wide ring around the house.' },
+    { kind: 'event', x: 28, y: 9, id: 'scarth_watch', once: true, text: 'The Scarth. A pole across the road, a brazier and two Wardens with nothing to do but watch the pole.' },
     { kind: 'event', x: 15, y: 28, id: 'coast', once: true, text: 'The sea. Out on the water, far off, the column of the Hearth stands against the sky. It flickers.' },
     { kind: 'npc', x: 29, y: 8, name: 'Captain Hale, Warden of the Scarth', lines: [
       'A grizzled Warden with a bandaged arm sits on a crate by the checkpoint, and gets up when he sees you, which costs him something.',
