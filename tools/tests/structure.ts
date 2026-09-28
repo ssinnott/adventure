@@ -2,11 +2,14 @@
 // the party spends its keys; no guardian that comes back (a group that drops a quest item or says
 // something when it dies, beside the quests suite's check for groups a quest names); every respawn
 // within 720 to 2,880 minutes; a group's `until` and `after` naming something real, and no sky
-// underground; Thornmark's Rift stopping with the tear. Each is first run on the content as it is,
-// then on a map broken on purpose, to show it can fail.
-import { AREAS, MAP_DEFS, MONSTERS, QUESTS } from '../../src/content/index.ts';
+// underground; Thornmark's Rift stopping with the tear; every outdoor map one box of the atlas's
+// grid. Each is first run on the content as it is, then on a map broken on purpose, to show it can
+// fail.
+import { AREAS, MAP_DEFS, MONSTERS, QUESTS, ATLAS } from '../../src/content/index.ts';
 import { TEAR_CLOSED } from '../../src/content/areas/thornmark/maps/grove2.ts';
 import { condFaults } from './quests.ts';
+import { gridFaults } from '../../src/game/atlas.ts';
+import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { EncounterDef, MapDef } from '../../src/game/map.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
@@ -114,6 +117,27 @@ export function structure(): void {
   for (const def of thornmark) {
     const rift = riftStillComing(def);
     ok(!rift.length, `${def.id}: every Rift group that comes back stops once the Warden of the Cut is dead${list(rift)}`);
+  }
+
+  // Every outdoor map is one box of the grid, laid once: 32 by 32, or a box cut to the world at its edge.
+  const grid = gridFaults(ATLAS, MAP_DEFS);
+  for (const def of MAP_DEFS.filter((d) => d.kind === 'outdoor')) {
+    const mine = grid.filter((f) => f.startsWith(`map ${def.id} `));
+    ok(!mine.length, `${def.id}: one box of the atlas's grid, laid once${list(mine)}`);
+  }
+  { // Off the grid on purpose: the Foreland a square east, a small map at a box's corner, a map laid
+    // twice; and a map the height of row 1, which the world's edge cuts, on it.
+    const moved = (id: string, at: readonly [number, number], extra: AtlasZone[] = []): Atlas => ({ ...ATLAS, zones: [...ATLAS.zones.map((z) => (z.maps?.some((m) => m.map === id) ? { ...z, maps: z.maps.map((m) => (m.map === id ? { map: id, at } : m)) } : z)), ...extra] });
+    const fixture = (w: number, h: number): MapDef => ({ id: 'fixture_box', name: 'Box fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: SOUTH }, rows: Array(h).fill(','.repeat(w)) });
+    const laid = (w: number, h: number, at: readonly [number, number]): string[] => gridFaults({ ...ATLAS, zones: [...ATLAS.zones, { id: 'fixture_box', name: 'Box fixture', area: 'shelf', maps: [{ map: 'fixture_box', at }] }] }, [...MAP_DEFS, fixture(w, h)]);
+    const east = gridFaults(moved('shelf', [201, 30]), MAP_DEFS);
+    ok(east.length === 1 && /shelf/.test(east[0]) && /G2/.test(east[0]), `the Foreland's map laid a square east, at 201,30, fails, naming it and G2${list(east)}`);
+    const small = laid(16, 16, [168, 30]);
+    ok(small.length === 1 && /F2/.test(small[0]), `a 16 by 16 map at F2's corner fails${list(small)}`);
+    const edge = laid(32, 30, [72, 0]);
+    ok(!edge.length, `a 32 by 30 map at C1, a box of row 1, passes${list(edge)}`);
+    const twice = gridFaults(moved('shelf', [200, 30], [{ id: 'fixture_twice', name: 'Twice', area: 'shelf', maps: [{ map: 'shelf', at: [168, 30] }] }]), MAP_DEFS);
+    ok(twice.length === 1 && /laid twice/.test(twice[0]), `a map two zones lay fails${list(twice)}`);
   }
 
   // Broken on purpose, each a copy of a real map, kept out of MAP_DEFS.
