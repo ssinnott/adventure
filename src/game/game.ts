@@ -5,7 +5,8 @@ import { rng } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
 import { World, signLine } from './world.ts';
 import type { WorldState } from './world.ts';
-import { defaultParty, isDown, allDown, countItem, takeItem, heal, spellHeal } from './party.ts';
+import { defaultParty, isDown, allDown, heal, spellHeal } from './party.ts';
+import { meet } from './people.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps.ts';
 import type { GameMap, Feature, Interior } from './map.ts';
@@ -155,19 +156,7 @@ export class Game {
       case 'sign': if (!stepped) this.say(signLine(f.text)); return;
       case 'well': this.say(f.text); if (f.heal) { for (const m of this.party.members) if (!isDown(m)) m.hp = m.maxHp; this.say('The party drinks and feels restored.'); } return;
       case 'npc': {
-        const q = f.quest;
-        let text: string;
-        if (q && this.party.flags[q.setFlag]) text = q.after.join('\n\n');
-        else if (q && countItem(this.party, q.item) > 0 && (!q.needFlag || this.party.flags[q.needFlag])) {
-          takeItem(this.party, q.item);
-          this.party.gold += q.reward;
-          this.party.flags[q.setFlag] = 1;
-          text = q.done.join('\n\n') + `\n\n(${q.reward} gold.)`;
-        } else {
-          if (f.flag && !this.party.flags[f.flag]) this.party.flags[f.flag] = 1;
-          text = f.lines.join('\n\n');
-        }
-        const said = new MessageScreen(text, undefined, f.name);
+        const said = new MessageScreen(meet(f, this.party), undefined, f.name);
         if (f.interior) this.visit(f, f.interior, said); else this.push(said);
         return;
       }
