@@ -1,6 +1,6 @@
 // The Foreland: the starting coast. Helmstow at the north, the Lodestone on a track outside its
 // south gate, the Ashcombe farm to the south-east, woods to the west, marsh and the sea at the
-// south, the caves at Brandy Hole in the south-west cliffs, and the pass east to Thornmark, open,
+// south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
