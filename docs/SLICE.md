@@ -270,8 +270,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   Thornmark's less gold (#26); the gate's marks for a boss's odds, a company two under the floor
   and fights to a rest are missed on the Foreland (#47) and in Thornmark (#40), and the Foreland
   misses its floor too (#47); the pass's gate and the atlas's later ways are locks between areas
-  (#40); three hand-ins wait on a quest before taking their item (#43); and the zone maps' edges
-  disagree with the atlas on a dozen squares (#104, one #47's).
+  (#40); three hand-ins wait on a quest before taking their item (#43); and the Foreland's west
+  edge disagrees with the atlas on one square (#47's).
 
 ## Checks
 
