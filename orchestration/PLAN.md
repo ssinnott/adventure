@@ -170,3 +170,13 @@ builds. Of #25's sixteen sub-issues fifteen are closed. Left: #33, whose PR #95 
 waits only on the owner's edge issue (draft in the orchestrator's scratchpad, sent to the owner):
 once it has a number, #95 re-keys its 12 'owner' squares (shelf 0,28 to #47, the other eleven to the
 new issue) and merges. Branch protection is still the owner's to turn on.
+
+## The edge issue filed
+
+At 09:50 on 2026-09-28 the owner agreed to file it as drafted. The draft was re-checked against main
+781064b first (line numbers moved by #90's density lines, 13,10 is road already, §4's farmland added)
+and filed as #104 (Bug, lane: area and lane: quality, a sub-issue of #25, no `approved`). Other ends:
+#25's Work lists #104; #33 Blocks #104, names #47's and #104's in Related, records the narrowing under
+Decided and names them in Done when; #47's Related names #33 and #104 and its Work moves the pillars
+fixture off 168,30. #33 and #47 changed what they ask, so `approved` came off both until the owner
+approves again (ISSUES §2). #95 was sent the number at 09:59 to re-key EDGES_OWED.
