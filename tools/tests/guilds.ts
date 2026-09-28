@@ -6,7 +6,7 @@
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { MAP_DEFS, ITEMS, GUILD_QUESTS, MONSTERS } from '../../src/content/index.ts';
-import { GUILDS, takenFlag, doneFlag, guildQuestDef } from '../../src/content/guilds.ts';
+import { GUILDS, takenFlag, doneFlag, rankFlag, guildQuestDef } from '../../src/content/guilds.ts';
 import type { GuildId } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
@@ -83,6 +83,10 @@ export function guilds(): void {
     take(FIXTURE[3], world.state, party, FIXTURE); stateFor(world, 'thornmark');
     report('wardens', world.state, party, FIXTURE);
     ok(rankOf('wardens', party, FIXTURE) === 3 && !offered('wardens', party, FIXTURE).length, 'the last rank built done, the rank stops there, with nothing more offered');
+    // Content grows: a quest added later at a rank the company holds is offered, and the rank holds.
+    const grown = [...FIXTURE, quest('fx_later', 1, { goal: { visited: 'thornmark' } })];
+    ok(party.flags[rankFlag('wardens')] === 3 && rankOf('wardens', party, grown) === 3 && ids(offered('wardens', party, grown)) === 'fx_later',
+      `a quest added later at a rank held is offered, and never lowers the rank (${rankOf('wardens', party, grown)}, offered ${ids(offered('wardens', party, grown))})`);
   }
 
   { // An item is taken at the first meeting, whatever the rank, and pays with the early words.
@@ -94,6 +98,14 @@ export function guilds(): void {
     ok(rankOf('wardens', party, FIXTURE) === 0 && ids(offered('wardens', party, FIXTURE)) === 'fx_first', 'and is still a stranger, offered the first task');
     const log = questLog(world.state, party, defs);
     ok(log.length === 1 && log[0].def.id === 'fx_oil' && log[0].done, 'the log shows the item quest finished');
+  }
+
+  { // xp that makes a member ready to train says so, as a fight's does.
+    const { party, world } = fresh();
+    const q = quest('fx_ready', 0, { goal: { flag: 'fx_ready_deed' }, pay: { xp: 6 * 1000 } });
+    party.flags.fx_ready_deed = 1;
+    const said = take(q, world.state, party, [q]).join(' ');
+    ok(/Ready to train: Bram, Idris, Wren, Ottilie, Maren, Cassian\./.test(said), `pay that makes the living ready to train names them (${said.replace(/\n+/g, ' ')})`);
   }
 
   { // A save holds a guild quest's flags.
@@ -110,7 +122,10 @@ export function guilds(): void {
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => [...(giftOf(f)?.items ?? []), ...(f.kind === 'shop' ? f.stock : [])])),
     ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)),
   ]);
+  const saved = collect(CONTENT).flags;
+  ok((Object.keys(GUILDS) as GuildId[]).every((g) => saved.includes(rankFlag(g))), 'the saves list records every guild\'s rank flag');
   for (const q of GUILD_QUESTS) {
+    ok(saved.includes(takenFlag(q.id)) && saved.includes(doneFlag(q.id)), `${q.id}: the saves list records its flags`);
     const bad = [...(q.goal ? condFaults(q.goal) : []), ...(q.item && !(q.item in ITEMS) ? [`item ${q.item}`] : []), ...(q.pay.items ?? []).filter((i) => !(i in ITEMS)).map((i) => `pay ${i}`)];
     ok(!bad.length, `${q.id}: its deed and pay name real things${bad.length ? ' -> ' + bad.join(', ') : ''}`);
     ok(halls.has(q.guild), `${q.id}: ${q.guild} has a hall on the maps`);

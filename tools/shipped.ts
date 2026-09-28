@@ -17,7 +17,8 @@ import { spentId } from '../src/game/wilds.ts';
 import { UPGRADES } from '../src/game/upgrades.ts';
 import type { Upgrade } from '../src/game/upgrades.ts';
 import { ATLAS, MAP_DEFS, AREAS, GUILD_QUESTS } from '../src/content/index.ts';
-import { takenFlag, doneFlag } from '../src/content/guilds.ts';
+import { GUILDS, takenFlag, doneFlag, rankFlag } from '../src/content/guilds.ts';
+import type { GuildId } from '../src/content/guilds.ts';
 import { ITEMS } from '../src/content/items.ts';
 import { SPELLS } from '../src/content/spells.ts';
 
@@ -92,6 +93,7 @@ export function collect(c: Content): Ids {
     for (const z of m.zones) zones[z.id] = { at: `${z.x},${z.y}`, size: `${z.w}x${z.h}` };
   }
   for (const q of c.guildQuests) flags.add(takenFlag(q)).add(doneFlag(q));
+  for (const g of Object.keys(GUILDS) as GuildId[]) flags.add(rankFlag(g));
   return {
     maps: byKey(maps), zones: byKey(zones), flags: sorted(flags),
     items: sorted(c.items), spells: sorted(c.spells), monsters: sorted(c.monsters), classes: sorted(c.classes), races: sorted(c.races), conditions: sorted(c.conditions),

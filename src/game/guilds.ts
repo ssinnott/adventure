@@ -5,11 +5,11 @@
 // the guild's own quests a hall offers, so it is no story lock. It depends on the world state and
 // the party alone, so the tests can walk a ladder without a Game; the hall's menu is ui/screens.ts.
 import type { GuildId } from '../content/guilds.ts';
-import { GUILDS, takenFlag, doneFlag } from '../content/guilds.ts';
+import { GUILDS, takenFlag, doneFlag, rankFlag } from '../content/guilds.ts';
 import { GUILD_QUESTS, ITEMS } from '../content/index.ts';
 import type { WorldState } from './world.ts';
 import type { Party } from './party.ts';
-import { countItem, takeItem, hasCondition } from './party.ts';
+import { countItem, takeItem, hasCondition, canTrain } from './party.ts';
 import type { QuestDef, When } from './quests.ts';
 import { holds } from './quests.ts';
 
@@ -42,12 +42,14 @@ const isDone = (q: GuildQuest, party: Party): boolean => !!party.flags[doneFlag(
 const isTaken = (q: GuildQuest, party: Party): boolean => !!party.flags[takenFlag(q.id)];
 
 /**
- * The company's rank in a guild: 0 a stranger, 1 once the first task is done, and one more for each
- * rank all of whose quests are done. It stops at the first rank with no quests built yet.
+ * The company's rank in a guild: 0 a stranger, 1 once the first task is done and one more for each
+ * rank all of whose quests are done. It stops at the first rank with no quests built yet. A rank
+ * once reached is kept (its flag, `rankFlag`), so a quest added later at a rank the company holds is
+ * offered to it and never lowers it: a save loads as it did (EXPANSION §5.5).
  */
 export function rankOf(guild: GuildId, party: Party, quests: readonly GuildQuest[] = GUILD_QUESTS): number {
   const mine = ofGuild(guild, quests);
-  let r = 0;
+  let r = party.flags[rankFlag(guild)] ?? 0;
   while (r < GUILDS[guild].ranks.length) {
     const at = mine.filter((q) => q.rank === r);
     if (!at.length || !at.every((q) => isDone(q, party))) break;
@@ -79,28 +81,32 @@ function met(q: GuildQuest, world: WorldState, party: Party): boolean {
   return (!q.goal || holds(q.goal, world, party)) && (!q.item || countItem(party, q.item) > 0);
 }
 
-/** Split xp among the living, as a fight's is. */
-export function payXp(party: Party, xp: number): void {
+/** Split xp among the living, as a fight's is; returns who it makes ready to train. */
+export function payXp(party: Party, xp: number): string[] {
   const alive = party.members.filter((c) => !hasCondition(c, 'dead'));
-  const each = Math.floor(xp / Math.max(1, alive.length));
-  for (const c of alive) c.xp += each;
+  const each = Math.floor(xp / Math.max(1, alive.length)), ready: string[] = [];
+  for (const c of alive) { const before = canTrain(c); c.xp += each; if (!before && canTrain(c)) ready.push(c.name); }
+  return ready;
 }
 
 function payOut(q: GuildQuest, party: Party, early: boolean): string {
   if (q.item) takeItem(party, q.item);
   const { gold = 0, xp = 0, items = [] } = q.pay;
   party.gold += gold;
-  payXp(party, xp);
+  const ready = payXp(party, xp);
   party.bag.push(...items);
   party.flags[doneFlag(q.id)] = 1;
   const what = [gold ? `${gold} gold` : '', xp ? `${xp} experience` : '', ...items.map((id) => ITEMS[id].name)].filter(Boolean);
-  return (early && q.early ? q.early : q.paid).join('\n\n') + (what.length ? `\n\n(${what.join(', ')}.)` : '');
+  return (early && q.early ? q.early : q.paid).join('\n\n') + (what.length ? `\n\n(${what.join(', ')}.)` : '')
+    + (ready.length ? `\n\nReady to train: ${ready.join(', ')}.` : '');
 }
 
-/** What a rise in rank says, if the rank rose. */
+/** Keep a rise in rank, and say it, if the rank rose. */
 function rose(guild: GuildId, before: number, party: Party, quests: readonly GuildQuest[]): string[] {
   const now = rankOf(guild, party, quests);
-  return now > before ? [`Your rank with ${guildName(guild)} is now ${rankName(guild, now)}.`] : [];
+  if (now <= before) return [];
+  party.flags[rankFlag(guild)] = now;
+  return [`Your rank with ${guildName(guild)} is now ${rankName(guild, now)}.`];
 }
 
 /**

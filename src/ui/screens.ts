@@ -113,7 +113,10 @@ export class ChoiceScreen implements Screen {
   sel = 0;
   /** The first option in view when the list is longer than the side panel. */
   private top = 0;
-  constructor(private text: string, private options: string[], private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
+  /** `text` may be made when drawn, for words that change while the menu waits under another. */
+  constructor(private text: string | (() => string), private options: string[], private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
+  /** The prompt as it reads now. */
+  get words(): string { return typeof this.text === 'function' ? this.text() : this.text; }
   update(g: Game, a: Action | null): void {
     if (!a) return;
     if (is(a, 'up')) this.sel = (this.sel + this.options.length - 1) % this.options.length;
@@ -128,7 +131,7 @@ export class ChoiceScreen implements Screen {
     panel(ctx, BOX.x, BOX.y, BOX.w, h);
     let y = BOX.y + 10;
     if (this.title) { drawText(ctx, this.title, BOX.x + 12, y, { size: 1, color: BRASS }); y += 14; }
-    y = paragraph(ctx, this.text, BOX.x + 12, y, BOX.w - 24, { color: TEXT, maxLines: 6 }) + 6;
+    y = paragraph(ctx, this.words, BOX.x + 12, y, BOX.w - 24, { color: TEXT, maxLines: 6 }) + 6;
     menu(ctx, this.options, BOX.x + 12, y, this.sel, { disabled: this.disabled });
   }
   /**
@@ -138,7 +141,7 @@ export class ChoiceScreen implements Screen {
   private renderSide(ctx: CanvasRenderingContext2D): void {
     const x = SIDE.x + PAD;
     let y = sidePanel(ctx, this.title);
-    y = paragraph(ctx, this.text, x, y, TEXT_W, { color: TEXT, maxLines: 7 }) + 3;
+    y = paragraph(ctx, this.words, x, y, TEXT_W, { color: TEXT, maxLines: 7 }) + 3;
     ctx.fillStyle = BRASS_DARK; ctx.fillRect(x, y, TEXT_W, 1);
     y += 5;
     const lh = lineHeight(1) + 1, n = this.options.length;
@@ -325,8 +328,9 @@ export function serviceScreen(g: Game, f: Feature): Screen {
   if (f.kind !== 'inn' && f.kind !== 'temple' && f.kind !== 'shop' && f.kind !== 'guild' && f.kind !== 'trainer') return new MessageScreen('...');
   const entries = businessEntries(g, f);
   if (entries.length === 1) return entries[0].open();
-  const text = f.hall ? standing(g, f.hall) : `${f.name}.`;
-  return new ChoiceScreen(text, [...entries.map((e) => e.label), 'Leave'], (i) => {
+  // Made when drawn: the guild's work, open above it, can raise the company's rank.
+  const hall = f.hall;
+  return new ChoiceScreen(hall ? () => standing(g, hall) : `${f.name}.`, [...entries.map((e) => e.label), 'Leave'], (i) => {
     if (i < 0 || i === entries.length) return;
     g.push(serviceScreen(g, f));
     g.push(entries[i].open());

@@ -20,7 +20,7 @@ DESIGN.md first for the why.
   first menu, its own trade, the guild's work and Leave, which each choice returns to; a business
   with its trade alone opens straight on it. The guild's work pays what is done, then offers the
   quests at or under the company's rank. Membership and rank are worked out from the guild quests'
-  done flags (`game/guilds.ts`). No hall is marked yet: the Wardens' and the Lanterns' come with
+  done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). No hall is marked yet: the Wardens' and the Lanterns' come with
   their quests. A spell hall's fee buys the right to study, not membership.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
@@ -291,8 +291,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Prestiges, the Cartographers' and the Compact's halls, the succession, the Salt Compact, the Lost Expedition past its first journal:
-  design only.
+- Prestiges, the Cartographers' and the Compact's halls, the succession, the Salt Compact, the
+  Lost Expedition past its first journal: design only.
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
   Thornmark's less gold (#26); the gate's marks for a boss's odds, a company two under the floor
