@@ -123,3 +123,8 @@ squash-merged, as its body asks, so the deliberate wall break stays off main. #9
 owner for its 24 edge findings, owed to 'owner' where the issue allows only fixed or #40's/#43's.
 Known conflicts: #93 and #94 in src/ui/screens.ts (one import line); #91 and #92 in README.md.
 #90 and #92: whoever lands second makes the scaffold emit `density: 'country'`.
+
+The owner's call on #95's edges (01:25): narrow the rule to #33's wording, so an edge square whose
+atlas cell beyond is water is skipped and the 12 Thornmark coast squares drop; owe the 12 left
+(shelf 0,28-30 and 1-8,31, thornmark 31,9) to a new issue the owner files, drafted by the
+orchestrator. Sent to #95 at 01:31. Its entries are re-keyed once the issue has a number.
