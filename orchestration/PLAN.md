@@ -559,3 +559,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   crack sweep), #143 (#76's second pull request, presence and "Talk to"), #144 (#21's C, the
   Wardens). Reviewers at 21:16 (`reviews/140.md` to `144.md`). #47's A is pushed on
   `claude/m1-47-f2`, not yet a pull request.
+
+### 21:40: #143 reviewed
+
+- #143 (#76's second pull request) reviewed (`reviews/143.md`): ready after one fix: once everyone
+  listed in a business has gone, a choice re-pushes the menu, which collapses to the lone trade and
+  opens it twice (Hob answered away: the inn twice; the Eel after Ebba: the keeper twice). Nits:
+  hold `featureHere`'s and the automap's presence; refuse a business wearing a presence; the walk
+  asks `present`; Oxford commas. Sent 21:42.
