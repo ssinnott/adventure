@@ -36,7 +36,7 @@ export const QUESTS: readonly QuestDef[] = [
     done: { flag: 'q_greywater_done' },
     entries: [
       { id: 'hale', when: { flag: 'q_greywater' },
-        text: 'Captain Hale wants the smugglers in the caves at Brandy Hole cleared out, and their ledger. Until Brandy Hole and Ashcombe are both dealt with, his pass east stays shut.' },
+        text: 'Captain Hale wants the smugglers in the caves at Brandy Hole cleared out, and their ledger. His pass east to Thornmark is open, and he warns every company through it.' },
       { id: 'den', when: { seen: 'greywater1:gw1_den' },
         text: 'In the captain\'s den, a letter on grey Ashen paper: "The Deacon wants the cargo below by the dark of the moon."' },
       { id: 'cells', when: { seen: 'greywater2:gw2_east' },

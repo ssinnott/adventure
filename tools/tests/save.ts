@@ -84,6 +84,14 @@ export function save(): void {
     ok(three.version === SAVE_VERSION + 1 && three.world.steps === 41 && OUTDOORS in three.world.maps, `a version 1 save goes through every upgrade in turn, to version ${SAVE_VERSION + 1}`);
     ok((() => { try { upgrade(JSON.parse(JSON.stringify(v1)) as SaveData, UPGRADES, SAVE_VERSION + 1); return false; } catch { return true; } })(), 'and is refused where a version has no upgrade');
   }
+  { // The kinds met: kept by a save, and empty in one made before there was a record of them.
+    const rng = makeRng(5), p = defaultParty(rng), w = new World(buildMaps(), p, rng);
+    w.state.met = ['rat', 'wolf'];
+    const kept = deserialize(serialize(w.state, p, 1));
+    ok(new World(buildMaps(), kept.party, makeRng(1), kept.world).state.met!.join() === 'rat,wolf', 'a save keeps the kinds the company has met');
+    const old = deserialize(serialize(w.state, p, 1)); delete old.world.met;
+    ok(JSON.stringify(new World(buildMaps(), old.party, makeRng(1), old.world).state.met) === '[]', 'and one with no record of them loads having met none');
+  }
   { // A group a visited map has gained since the save stands where the map puts it.
     const rng = makeRng(3), p = defaultParty(rng), w = new World(buildMaps(), p, rng);
     const data = deserialize(serialize(w.state, p, 1));
