@@ -239,8 +239,8 @@ dark), not because of numbers.
 - **Sorcerer list** (Fire, Air, Water, Earth): damage, control, and the utility spells that make
   the world bigger: *Light, Levitate, Wizard Eye, Walk on Water, Town Portal, Waymark / Recall,
   Detect Secrets, Jump.*
-- Spells are **bought** at the Lanterns' halls after paying the hall's fee to study; the fee is the
-  region's toll for making you stronger there, and buys no membership (§8).
+- Spells are **bought** at the spell halls (in Act I, the Lanterns' two) after paying the hall's fee
+  to study; the fee is the region's toll for making you stronger there, and buys no membership (§8).
 - About 40 spells at v1. Spells grow two ways: levels unlock new spells, and prestiges bring spell
   ranks, which make the spells a caster already knows stronger (§5). In the combat harness, damage
   spells that go on growing with level break the road past 10 (MONSTERS.md §4.4), so the spells
@@ -263,8 +263,8 @@ a window below Fire Mountain.
 
 ## 8. Guilds
 
-Some of the cities have guilds. A company can join any of them, and every one at once, and each
-is a hub of side quests. There are no rivals, and joining one never costs anything with another: a
+Some of the cities have guilds. A company can join any of them or every one at once, and each is a
+hub of side quests. There are no rivals, and joining one never costs anything with another: a
 company is six mixed classes, and rival guilds would pull it apart. Nor do guilds carry class
 progression, which is the prestiges' (§5). They replace the four rival Charters this section first
 described, and Standing went with those: a company's rank in a guild is its place in that guild,
@@ -283,9 +283,10 @@ New guilds may come with later areas. M1 builds the two in Act I's cities, the W
 Lanterns; the Cartographers' and the Compact's halls go in with Saltreach (docs/EXPANSION.md §7).
 
 - **The Wardens** keep Helmstow's roads, its checkpoints and its walls. Their hall is the Warden
-  Drillyard, which goes on training levels. The Regent-Warden, Lord Vask, commands them, and in
-  Act I that means the roads: Captain Hale's checkpoint, a lost watchtower in Thornmark. What they
-  become under his hand, the Wardens on the walls between acts (§9), is set with Act II.
+  Drillyard, which goes on training levels. Lord Vask commands them as Regent-Warden, though some
+  of their captains back the Queen's cousin (§10.1). In Act I their work is the roads: Captain
+  Hale's checkpoint and a lost watchtower in Thornmark. What they become under Vask's hand, the
+  Wardens on the walls between acts (§9), is set with Act II.
 - **The Lanterns' halls are both.** The Lantern Guildhall in Helmstow and the Thornhold Lantern
   Hall (not the Lantern Chapterhouse, Thornhold's temple) go on selling spells, and give the
   Lanterns' quests to a company that has done the first task. The fee to study is the hall's, §7's
@@ -300,23 +301,26 @@ Lanterns; the Cartographers' and the Compact's halls go in with Saltreach (docs/
 
   | Guild | 1 | 2 | 3 | 4 |
   |---|---|---|---|---|
-  | The Wardens | Recruit | Warden | Sergeant | Captain |
-  | The Lanterns | Novice | Adjunct | Keeper | Lamp-Master |
-  | The Cartographers | Chainman | Surveyor | Mapmaker | Meridian |
+  | The Wardens | Recruit | Corporal | Sergeant | Captain |
+  | The Lanterns | Taper | Adjunct | Reader | Luminary |
+  | The Cartographers | Chainman | Surveyor | Mapmaker | Geographer |
   | The Compact | Runner | Fence | Factor | Partner |
 
 - **One ladder a guild.** Every hall of a guild offers the next quest on it and takes reports for
-  any, so a Lantern met first at Thornhold is sent back a short way for the first task.
-- **A rank is no story lock.** It decides only what a hall offers, and opens or shuts no way on the
-  map (docs/EXPANSION.md §2.3). A deed done or an item found before its quest was taken is paid
-  when it is reported, with words for a company that came early, as a hand-in is.
+  any, so a company that meets the Lanterns first at Thornhold is sent back a short way for the
+  first task.
+- **A rank is no story lock.** A rank follows the guild's own quests, not the one quest, and it
+  shuts no way on the map: it only decides which of the guild's quests a hall offers. A deed done
+  or an item found before its quest was taken is paid when it is reported, with words for a
+  company that came early, as a hand-in is.
 
 ### What a guild gives
 
 - **Its quests pay gold, items and xp,** the xp split among the living as a fight's is.
-- **Its skills,** taught to members for a price (§5), three to a guild, once the skills are built.
+- **Its skills,** three to a guild, taught to members for a price (§5) once the skills are built
+  (#18). The Lanterns' Linguist reads Kiln-script, so it matters from the Kilns on.
 - **Its line.** The Charters' storylines are the guilds' lines: the Wardens' siege, the Lanterns'
-  split at Lantern Watch (§9, Act II), the Compact's line (§10.2), with its ending kept, and the
+  split at Lantern Watch (§9, Act II), the Compact's line with its ending kept (§10.2) and the
   Cartographers' Lost Expedition (§10.3).
 
 ### The company's charter
@@ -327,20 +331,22 @@ charter makes the company no member of any guild.
 
 ### Act I's guild quests
 
-On the built maps, with no new monster group: a deed is a guardian, an event or a chest already
-there, and the main quest's steps and Hale's are left alone. Each quest's words, pay and level come
-with its build.
+A first task and three quests a guild, on the built maps, with no new monster group. The deeds keep
+off the main quest's road and Hale's where the built maps allow: in the Foreland band only the
+cellar and Brandy Hole hold a deed, so each guild has one there, which most companies will have
+done before they take it and are paid for when they report it. Each quest's words, pay and level
+come with its build.
 
 | Guild | Rank | Quest | Where | The deed |
 |---|---|---|---|---|
-| Wardens | first task | First Watch | the Foreland, Hale's checkpoint at the Scarth | walk the road to the checkpoint and back |
+| Wardens | first task | First Watch | the Foreland, Hale's checkpoint at the Scarth | walk the road to the checkpoint and back; one new once-event there |
 | Wardens | 1 | the cellar's cult | Ashcombe Cellar | the two cultist bands that hold it |
-| Wardens | 1 | the drowned stair | Brandy Hole | the dead at the stair down |
-| Wardens | 2 | the old watchtower | Thornmark | the ogre denned in the tower's base |
-| Lanterns | first task | First Light | the Foreland's shore | look at the Hearth from the sea and say what was seen |
-| Lanterns | 1 | the tide pool | Brandy Hole | find who floats in the pool |
+| Wardens | 1 | the old watchtower | Thornmark | the ogre denned in the tower's base |
+| Wardens | 2 | the lost garrison | Thornmark, east of the road | the wraiths |
+| Lanterns | first task | First Light | the Foreland's shore | look at the Hearth from the shore and say what was seen |
 | Lanterns | 1 | the dark marker | Thornmark's lake | the survey marker with its glass gone dark |
-| Lanterns | 2 | the open barrow | Thornmark | the barrow's dead, laid |
+| Lanterns | 1 | the tower's store | Thornmark, the old Warden watchtower | the store the Lanterns left there, opened |
+| Lanterns | 2 | the drowned stair | Brandy Hole | the dead at the stair down, laid |
 
 ---
 
