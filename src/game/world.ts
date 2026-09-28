@@ -86,7 +86,7 @@ export class World {
       this.state.weatherSeed = seed;
     }
     this.state.weatherSeed ??= LEGACY_WEATHER_SEED;
-    this.upgrade();
+    this.state.zones ??= [];
     for (const id of Object.keys(this.state.maps)) this.ensureMapState(id);
     this.ensureMapState(this.state.mapId);
     this.tread();
@@ -99,19 +99,21 @@ export class World {
   ensureMapState(id: string): MapState {
     const m = this.maps[id];
     if (!m) throw new Error(`unknown map '${id}'`);
-    let ms = this.state.maps[id];
-    if (!ms) {
-      ms = { explored: bitsFor(m.width * m.height), used: {}, groups: {}, doors: {} };
-      for (const e of m.encounters) ms.groups[e.id] = { x: e.x, y: e.y, dead: -1 };
-      this.state.maps[id] = ms;
+    const ms = (this.state.maps[id] ??= { explored: bitsFor(m.width * m.height), used: {}, groups: {}, doors: {} });
+    // A group the map has gained since the save was made stands where the map puts it.
+    for (const e of m.encounters) ms.groups[e.id] ??= { x: e.x, y: e.y, dead: -1 };
+    // A door changed by play goes back only where the map still has a locked or secret door; one that
+    // has moved is left in the save, not applied to a wall, a void or off the map.
+    for (const [k, d] of Object.entries(ms.doors)) {
+      const [x, y] = k.split(',').map(Number), c = m.at(x, y);
+      if (c.door === 'locked' || c.door === 'secret') c.door = d;
     }
-    for (const [k, d] of Object.entries(ms.doors)) { const [x, y] = k.split(',').map(Number); m.at(x, y).door = d; }
     return ms;
   }
 
   /**
    * Where a cell of a map as written is played: a zone map's cells are the outdoors', where the
-   * zone sits; any other map's are its own. Lets tools, tests and old saves name the Foreland.
+   * zone sits; any other map's are its own. Lets tools and tests name the Foreland.
    */
   locate(mapId: string, x: number, y: number): { mapId: string; x: number; y: number } {
     if (!this.maps[mapId]) {
@@ -121,39 +123,6 @@ export class World {
       }
     }
     return { mapId, x, y };
-  }
-
-  /**
-   * A state saved before the outdoors was one map, or before exploration was kept in bits: pack
-   * each map's cells seen into bits, and fold what each zone map kept on its own (what the party
-   * saw and used there, its groups, its doors, the party itself if it stood there) into the
-   * outdoors, where the zone now sits. A zone map with state of its own is one the party trod.
-   */
-  private upgrade(): void {
-    const s = this.state;
-    s.zones ??= [];
-    for (const [id, ms] of Object.entries(s.maps)) {
-      const m = this.maps[id];
-      if (m && ms.explored.length === m.width * m.height) {
-        const bits = bitsFor(ms.explored.length);
-        ms.explored.forEach((v, i) => { if (v) see(bits, i); });
-        ms.explored = bits;
-      }
-    }
-    for (const [id, old] of Object.entries(s.maps)) {
-      if (this.maps[id]) continue;
-      const at = this.locate(id, 0, 0);
-      const m = this.maps[at.mapId], z = m?.zones.find((q) => q.id === id);
-      if (!m || !z) continue;
-      const ms = this.ensureMapState(m.id);
-      old.explored.forEach((v, i) => { if (v) see(ms.explored, (z.y + Math.floor(i / z.w)) * m.width + z.x + (i % z.w)); });
-      Object.assign(ms.used, old.used);
-      for (const [g, st] of Object.entries(old.groups)) ms.groups[g] = { ...st, x: st.x + z.x, y: st.y + z.y };
-      for (const [k, d] of Object.entries(old.doors)) { const [x, y] = k.split(',').map(Number); ms.doors[`${x + z.x},${y + z.y}`] = d; }
-      if (!s.zones.includes(id)) s.zones.push(id);
-      delete s.maps[id];
-    }
-    Object.assign(s, this.locate(s.mapId, s.x, s.y));
   }
 
   /** The zone of the outdoors the party stands in; undefined in a town or a dungeon. */

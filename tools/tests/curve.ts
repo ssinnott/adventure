@@ -1,7 +1,8 @@
 // The curve (EXPANSION §5.2), area by area, against its row in src/content/progression.ts: its band
 // is the atlas's, three quarters of a clear's xp reaches the next area's floor, a clear's gold
-// trains the party through the band, every monster's level sits in its maps' bands and rises from
-// the way in to the far end, and no chest or drop is dearer than the area's window. What a row
+// trains the party through the band, every monster's level sits in its maps' bands, on each map
+// the groups' levels rise with walking steps from the way in, the nearest group is near the floor
+// and the hardest near the top, and no chest or drop is dearer than the area's window. What a row
 // says is owed is reported, not failed, until it holds.
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
@@ -101,12 +102,18 @@ export function curve(): void {
       const lost = at.filter((g) => !Number.isFinite(g.steps));
       ok(!lost.length, `${d.id}: its ${at.length} groups can be walked to from the way in${lost.length ? `; not ${lost.map((g) => g.id).join(', ')}` : ''}`);
       const walked = at.filter((g) => Number.isFinite(g.steps));
-      const rho = rankCorrelation(walked.map((g) => g.steps), walked.map((g) => g.level));
-      ok(rho > 0, `${d.id}: its groups' levels rise from the way in (rank correlation ${rho.toFixed(2)})`);
+      if (!walked.length) continue;
+      // A rise needs two groups at different distances; the nearest and hardest cover the rest.
+      if (new Set(walked.map((g) => g.steps)).size > 1) {
+        const rho = rankCorrelation(walked.map((g) => g.steps), walked.map((g) => g.level));
+        ok(rho > 0, `${d.id}: its groups' levels rise from the way in (rank correlation ${rho.toFixed(2)})`);
+      }
       const nearest = walked.reduce((p, g) => (g.steps < p.steps ? g : p));
       ok(nearest.level <= a + 2, `${d.id}: the nearest group, ${nearest.id} at ${nearest.steps} steps, is near the floor ${a} (level ${nearest.level.toFixed(1)})`);
       const hardest = walked.reduce((p, g) => (g.level > p.level ? g : p));
-      ok(hardest.level >= b - 2, `${d.id}: the hardest group, ${hardest.id} at ${hardest.steps} steps, is near the top ${b} (level ${hardest.level.toFixed(1)})`);
+      // Near the top is within two of it, but above the floor however narrow the band.
+      const top = Math.max(a + 1, b - 2);
+      ok(hardest.level >= top, `${d.id}: the hardest group, ${hardest.id} at ${hardest.steps} steps, is near the top ${b} (level ${hardest.level.toFixed(1)}, at least ${top})`);
     }
 
     // The price window: no weapon, armour or shield in its chests or its monsters' drops dearer

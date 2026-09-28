@@ -13,7 +13,7 @@ import type { Feature, Interior } from '../game/map.ts';
 import { item } from '../game/items.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, trainPrice, MAX_LEVEL } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, trainPrice, MAX_LEVEL, guildFlag } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 
@@ -394,12 +394,12 @@ function describe(id: string): string {
 
 function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
   const members = g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => f.classes.includes(m.cls));
-  const joined = !!g.party.flags[`guild_${f.name}`];
+  const joined = !!g.party.flags[guildFlag(f.name)];
   if (!joined) {
     return new ChoiceScreen(`"${f.name}. Membership is ${f.fee} gold, and buys the right to study our spells." (${g.party.gold} gold.)`, [`Join (${f.fee} gold)`, 'Leave'], (i) => {
       if (i !== 0) return;
       if (g.party.gold < f.fee) { g.say('Not enough gold.'); return; }
-      g.party.gold -= f.fee; g.party.flags[`guild_${f.name}`] = 1; g.say('You are members of the guild.');
+      g.party.gold -= f.fee; g.party.flags[guildFlag(f.name)] = 1; g.say('You are members of the guild.');
       g.push(guild(g, f));
     }, f.name);
   }
