@@ -1,4 +1,5 @@
-// The risen dead: a skeleton, a bone knight, a ghoul, a drowned man and the Queen's barrow guard.
+// The risen dead: a skeleton, a bone knight, a ghoul, a drowned man and the Queen's barrow guard
+// and her captain.
 // The ghoul and the drowned man still carry flesh, which is the whole of why they are here and not
 // in the wraith module -- a wraith is a spirit in a shroud, and these two are bodies. Painted after
 // the Xeen look. Bone is the one material whose parts are honestly separate objects, so each bone
@@ -7,7 +8,7 @@
 // laid over a hollow so the gaps between the ribs read as space. The knight is the same bones
 // inside dull steel plate, several steps darker and cooler than bone, with raw bone at the neck,
 // elbows, knees and hands. The barrow guard keeps less plate and wears the Queen's livery over it,
-// in her blue and gold.
+// in her blue and gold; her captain wears it under a cloak of her blue gone nearly black.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow, eye } from './common.ts';
