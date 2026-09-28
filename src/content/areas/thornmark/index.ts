@@ -8,6 +8,7 @@ import { GROVE2 } from './maps/grove2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
+import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -18,6 +19,7 @@ export const AREA = {
   sprites: SPRITES,
   items: ITEMS,
   quests: QUESTS,
+  chapter: CHAPTER,
   // Over the pass: colder, with hard winters that keep their snow, and mist under the trees.
   climate: { summer: 17, winter: -4, daily: 5, damp: [0, 0.06], wettest: 80, fog: 0.5, lag: 5,
     fogText: 'Mist rises between the trees.', thunderText: 'Thunder rolls over the forest.' },

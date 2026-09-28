@@ -53,7 +53,12 @@ export const THORNHOLD: MapDef = {
       '"The Grove Stone has been cut. Not failed: cut, by hands, with tools. My people will not go under the roots; what has come through has already taken four of them."',
       '"Vask will tell you the Stones are failing. Bring me the tool that cut ours, and we will both know better."',
     ], flag: 'q_grove', quest: {
-      item: 'ashen_chisel', needFlag: 'q_grove', reward: 1500, setFlag: 'q_grove_done',
+      item: 'ashen_chisel', reward: 1500, setFlag: 'q_grove_done',
+      early: [
+        'An elf in a robe the colour of bark, older than any human you have met. She sees what you carry and rises, and takes the chisel in both hands.',
+        '"This cut our Stone. Not forged anywhere in Caldera: the edge does not blunt. The runes are Underdeep, and they are a maintenance mark, not a prayer." She sets it down as if it were hot.',
+        '"Whoever arms the Ashen Hand can reach the Underdeep. Keep this from the Regent-Warden until you know which side of it he stands on. The Lanterns will pay for what you have done here, and pay well."',
+      ],
       done: [
         'Sylvane takes the chisel in both hands and is silent for a long time.',
         '"This was not forged anywhere in Caldera. The edge does not blunt. The runes are Underdeep, and they are a maintenance mark, not a prayer." She sets it down as if it were hot.',
