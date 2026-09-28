@@ -349,3 +349,22 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   thirteen interiors render byte-identical to main's; every break fails. One should-fix: an outdoor
   zone's `banners` are dropped by `layOutdoors`, unchecked (place them, or fail any outdoor map that
   places one); nits in SLICE; the body lacks a Done-when section. Sent 18:23.
+
+### 18:28: #126, #123, #124 and #129 merged; scouts on #85 and #48
+
+- #126 (#101) merged at 18:22 (main 2ccfc56): its fix round (the docs say cairns and statues count,
+  #125's leftover included; the Oxford comma) on a head that held main 46fe292. On the head: ALL OK
+  (39 owed), SMOKE OK, "Nothing new."; CI green. Main's tree is the head's. #101 closes; the
+  #99/#101 session is free. #40's dungeon pull request may now follow its zone.
+- #123 (#83, the Barrow Guard) merged at 18:24 (main 4f6bf27), then #124 (#84, the Barrow Captain,
+  with SLICE's variants sentence brought up to date) at 18:25 (main d6c14bb). Their fix commits
+  changed only comments and dead code, so the drawings are as the owner OK'd them. Tested in turn on
+  main: ALL OK (40, then 41 owed: #70 ×4, ×5), SMOKE OK (38, then 39 drawn), "Nothing new."; CI green.
+  Main's tree matches each. All six of epic #46's issues are closed; the epic is the owner's to close.
+- #129 (#88, dens) merged at 18:27 (main 18a8235) after its main merge and nits: tested on main
+  d6c14bb, ALL OK (41 owed), SMOKE OK, "Nothing new."; CI green. Main's tree matches. #88 closes. Its
+  Found in passing: facing north from the Foreland's top rows shows the world's-end pink as the sky.
+- Main 18a8235: ALL OK (41 owed: #26 ×3, #40 ×7, #47 ×15, #67 ×1, #68 ×3, #69 ×4, #70 ×5, #71 ×1,
+  #72 ×1, #87 ×1).
+- Unblocked: #85 (its blocker #40 was the pass, open since #117) and #48 (its blocker #79, the birds'
+  frame, in). Scouts on both at 18:28 (`footprints/85.md`, `48.md`); free sessions take them after.
