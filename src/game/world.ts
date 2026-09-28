@@ -5,16 +5,17 @@
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, HILL_DRAG } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door, MapZone } from './map.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone, Hours, Presence } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait } from './party.ts';
 import type { Party } from './party.ts';
 import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock } from './calendar.ts';
 import type { CalendarDate } from './calendar.ts';
-import { weatherAt, classify, skyNews, weatherSight, snowDrag, rangedPenalty, rangedNote, fairStart, tempWord, SKY_NAMES } from './weather.ts';
+import { weatherAt, classify, isSnowy, skyNews, weatherSight, snowDrag, rangedPenalty, rangedNote, fairStart, tempWord, SKY_NAMES } from './weather.ts';
 import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
 import { CLIMATES } from '../content/index.ts';
+import { holds } from './quests.ts';
 
 export { MINUTES_PER_DAY };
 export const START_MINUTES = 7 * 60;
@@ -64,6 +65,23 @@ export type MoveResult =
 
 export interface LiveGroup { def: EncounterDef; state: GroupState; }
 
+/** Fog as the almanac reads it, and snow lying as it does. */
+export const FOG = 0.35, SNOW_LYING = 0.15;
+
+/**
+ * Whether a time to walk holds at a minute, under a sky (null underground, where there is none).
+ * Of a list any one will do, and an entry's parts all hold.
+ */
+export function hoursHold(when: Hours | readonly Hours[], minutes: number, weather: Weather | null): boolean {
+  return [when].flat().some((h) => {
+    if (h.hours && (daylightAt(minutes) < 0.25 ? 'night' : 'day') !== h.hours) return false;
+    if (h.season && ![h.season].flat().includes(dateAt(minutes).season)) return false;
+    if (h.sky === 'fog' && !(weather && weather.fog >= FOG)) return false;
+    if (h.sky === 'snow' && !(weather && (isSnowy(classify(weather).sky) || weather.cover >= SNOW_LYING))) return false;
+    return true;
+  });
+}
+
 /** A sign as the log shows it. */
 export const signLine = (text: string): string => `A sign reads: "${text}"`;
 
@@ -76,6 +94,8 @@ export class World {
   /** The sky as the party last saw it, for the log; null underground or before the first look. Not saved. */
   sky: SkyState | null = null;
   private cached: { seed: number; minutes: number; region: RegionId; weather: Weather } | null = null;
+  /** The weather of every region a group has asked after, this minute: liveGroups runs every frame. */
+  private skies: { seed: number; minutes: number; by: Map<RegionId, Weather> } | null = null;
 
   constructor(maps: Record<string, GameMap>, party: Party, rng: RngInstance, state?: WorldState) {
     this.maps = maps; this.party = party; this.rng = rng;
@@ -170,6 +190,32 @@ export class World {
     const weather = weatherAt(seed, minutes, CLIMATES[region]);
     this.cached = { seed, minutes, region, weather };
     return weather;
+  }
+
+  /** The weather in a region now, whoever stands in it. */
+  weatherIn(region: RegionId): Weather {
+    if (region === this.region) return this.weather;
+    const seed = this.state.weatherSeed!, minutes = this.state.minutes;
+    if (!this.skies || this.skies.seed !== seed || this.skies.minutes !== minutes) this.skies = { seed, minutes, by: new Map() };
+    let w = this.skies.by.get(region);
+    if (!w) { w = weatherAt(seed, minutes, CLIMATES[region]); this.skies.by.set(region, w); }
+    return w;
+  }
+
+  /**
+   * Whether a thing with a time to walk is in the world now, at a square of this map: in its hours
+   * (under the sky of that square's region) and past its `after`. `until` is `ended`'s.
+   */
+  walks(p: Presence, x: number, y: number): boolean {
+    if (p.after && !holds(p.after, this.state, this.party)) return false;
+    if (!p.when) return true;
+    const m = this.map, region = m.zoneAt(x, y)?.region ?? m.def.region ?? 'shelf';
+    return hoursHold(p.when, this.state.minutes, m.kind === 'dungeon' ? null : this.weatherIn(region));
+  }
+
+  /** Whether a thing's `until` holds: a group stops coming back, a person or an event is gone. */
+  ended(p: Presence): boolean {
+    return !!p.until && holds(p.until, this.state, this.party);
   }
 
   /**
@@ -320,7 +366,10 @@ export class World {
   explored(x: number, y: number): boolean { return this.map.inBounds(x, y) && seen(this.mapState.explored, y * this.map.width + x); }
 
   // ---- monsters ----
-  /** Live groups on the current map. */
+  /**
+   * Live groups on the current map: a killed one back once its respawn is up and its `until` does
+   * not hold, and none out of its hours or before its `after`.
+   */
   liveGroups(): LiveGroup[] {
     const out: LiveGroup[] = [];
     const ms = this.mapState;
@@ -328,9 +377,10 @@ export class World {
       const st = ms.groups[def.id];
       if (!st) continue;
       if (st.dead >= 0) {
-        if (def.respawn && this.state.minutes - st.dead >= def.respawn) { st.dead = -1; st.x = def.x; st.y = def.y; }
+        if (def.respawn && this.state.minutes - st.dead >= def.respawn && !this.ended(def)) { st.dead = -1; st.x = def.x; st.y = def.y; }
         else continue;
       }
+      if ((def.when || def.after) && !this.walks(def, def.x, def.y)) continue;
       out.push({ def, state: st });
     }
     return out;

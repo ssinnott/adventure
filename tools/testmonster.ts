@@ -132,7 +132,7 @@ export function testMonster(role: Role, level: number, hp = scaleAt(HP, role, le
   const r = ROLES[role], l = line(level);
   const d = diceFor(Math.max(1, l.dmg * r.dmg * damage));
   return {
-    id: `test_${role}_${level}`, name: r.name, plural: r.plural, sprite: r.sprite, level,
+    id: `test_${role}_${level}`, name: r.name, plural: r.plural, sprite: r.sprite, kind: 'person', level,
     hp: Math.max(1, Math.round(l.hp * r.hp * hp)), ac: Math.round(l.ac + r.ac), attack: Math.round(l.hit + r.hit),
     dice: d.dice, sides: d.sides, bonus: d.bonus, speed: r.speed,
     xp: xpFor(role, level), gold: [0, 0],
