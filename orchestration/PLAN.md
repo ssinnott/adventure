@@ -310,3 +310,18 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 
   #17's B depends on #40 only through the pass (#117, in): #40's zone and dungeon pull requests touch
   Thornmark alone. Its throne room goes in B, and B's sheet waits on the owner.
+
+### 18:02: #120 and #128 merged; #42's B started
+
+- #120 (#82, the Black Dog) merged at 18:00 (main 0196e32): its head had merged main with one Downs
+  header over the wreckers and the dog; the nits in; the drawing unchanged since the owner's OK (only
+  comments moved in `wolf.ts`). On the head: ALL OK (24 owed: #26 ×3, #40 ×7, #47 ×12, #69 ×1,
+  #87 ×1), SMOKE OK (37 drawn), "Nothing new."; CI green. Main's tree is the head's.
+- #123 and #124 (the barrow) told at 18:00 to merge main, the guard and the captain under the one
+  Downs header, #123's three nits, and SLICE's variants sentence in #124, the last drawing to land.
+- #128 (#42's A) merged at 18:01 (main 59e2936) after merging main and porting the people suite to
+  the log's begun pages (its break still bites); its body no longer closes #42 or says the owner took
+  its defaults. Tested with main 0196e32: ALL OK (24 owed), SMOKE OK, "Nothing new."; CI green.
+  Main's tree matches. #42 stays open.
+- #42's B (`claude/m1-42-walk`, `Closes #42`) started at 18:05 in the same session: people met
+  through `meet`, found by what they set or take (Vask moves with #17).
