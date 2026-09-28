@@ -38,11 +38,11 @@ const SEED = process.env.SMOKE_SEED === 'random' ? randomInt(1, 0x7fffffff) : Nu
 if (!Number.isInteger(SEED) || SEED < 1 || SEED >= 0x7fffffff) throw new Error(`SMOKE_SEED must be random or a whole number from 1 to ${0x7fffffff - 1}`);
 if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
 
-// The crack sweep looks one way from every square of the cellar and Helmstow on every run, and all
-// four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref> sweeps what
-// changed since that ref (CI passes the pull request's base); SMOKE_SWEEP=all or <id>,<id> names
-// the maps instead.
-const FLOOR = ['mill', 'harrow'];
+// The crack sweep looks one way from every square of the cellar, Helmstow and its keep on every
+// run, and all four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref>
+// sweeps what changed since that ref (CI passes the pull request's base); SMOKE_SWEEP=all or
+// <id>,<id> names the maps instead.
+const FLOOR = ['mill', 'harrow', 'keep'];
 const sweepAsked: string = process.env.SMOKE_SWEEP || (process.env.SMOKE_BASE ? await changedMaps(changedFiles(process.env.SMOKE_BASE)).then((c) => (c.all ? 'all' : c.maps.join(','))) : '');
 const SWEEP = sweepAsked === 'all' ? MAP_DEFS.map((d) => d.id) : sweepAsked.split(',').filter(Boolean);
 for (const id of SWEEP) if (!MAP_DEFS.some((d) => d.id === id)) throw new Error(`SMOKE_SWEEP names no map '${id}'`);
@@ -299,8 +299,9 @@ const terrains = await page.evaluate(async () => {
     whiten: ['hills', 'farm'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
   };
 });
-// The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it.
-await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 9, 6, 0); g.interact(g.world.featureHere()); });
+// The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
+// holds court on the keep's door, in the throne room.
+await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
 await page.waitForTimeout(100);
 await page.keyboard.press('Space'); await page.waitForTimeout(100);
 const questLine = await page.evaluate(() => (window as any).__game.game.log.at(-1));

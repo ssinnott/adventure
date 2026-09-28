@@ -254,19 +254,20 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
   two bands of distant hills that turn with the party. The static scene is cached per world state
   and monsters are drawn over it each frame with a line-of-sight check.
-- `ui/interior.ts` and `ui/interiors/` paint the twelve businesses' interiors, one per business
+- `ui/interior.ts` and `ui/interiors/` paint the thirteen businesses' interiors, one per business
   (`interior` on the map feature names it): the Hearthlight's common room round its fire and the
   Green Man's under a carved face of leaves; the Chapel's stained-glass apse and the Chapterhouse's
   grove; the Provisioner's pigeonholes and the Armoury's forge; the Guildhall's map of Caldera and
   the Lantern Hall's copy of the Grove Stone; the Drillyard inside Helmstow's wall and the Elder's
-  ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak. No people: the
-  rooms are backdrops. `kit.ts` has the walls, floors, windows and light, `props.ts` the furniture
-  and goods; each scene is a file in `ui/interiors/<area>/`, and what both towns' scenes of a trade
-  use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`. A scene is painted once into an
-  offscreen canvas and
-  multiplied by a light map (the ambient for the hour plus a pool round every lamp, fire and
-  window it put down), so the corners fall dark on their own; flames, glows and drifting motes are
-  drawn over it every frame. Windows and the two yards follow the clock.
+  ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak; the throne room
+  behind the keep's door, its throne under black cloth. The farm kitchen is painted for the store
+  #87 opens into it. No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
+  light, `props.ts` the furniture and goods; each scene is a file in `ui/interiors/<area>/`, and
+  what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
+  A scene is painted once into an offscreen canvas and multiplied by a light map (the ambient for
+  the hour plus a pool round every lamp, fire and window it put down), so the corners fall dark on
+  their own; flames, glows and drifting motes are drawn over it every frame. Windows and the two
+  yards follow the clock.
 - The Xeen pass: saturated palette with no distance fog outdoors; per-cell wall dressing chosen by
   hash (torch sconces with flames animated over the cached scene, banners in the map's colour,
   cobwebs, cracks, damp streaks, iron rings, barred grates, carved glyph panels; on houses flower
@@ -352,8 +353,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   screen painted with no page error, and a line for each check as well. Every run plays the same
   world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it). It holds every monster to
   one silhouette and every pair of sprite part kinds to a union with no hole, and sweeps for cracks
-  between walls: one way from every square of the cellar and Helmstow each run, all four ways on
-  the maps changed since `SMOKE_BASE=<ref>` (CI passes the pull request's base;
+  between walls: one way from every square of the cellar, Helmstow and its keep each run, all four
+  ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the pull request's base;
   `node tools/changed.ts <ref> maps` names them, and `monsters` or `interiors` the sheet's), or on
   those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_SHOT=<png>` saves a screenshot of the play, which
   CI keeps when the smoke test fails.
