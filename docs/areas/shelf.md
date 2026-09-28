@@ -184,6 +184,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 - **Pay.** The Downs owe about 2,070 xp a member (§8). The shares below add up to that, for the
   curve to settle (#31) and the gate to check (#38).
 - **Side quests** are #56's, placed as §6 has them.
+- **Finds** are the gear ladder's (§8, #99): each is an item already, and its box's issue places it.
 
 ### 4.2 F2, the road west (#47): country, band 2–3
 
@@ -208,6 +209,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   customs seal. The woodcutter's rumour is the hint: the badgers never go near the holly.
 - **New here.** Farmland and hills underfoot (#44), the wilderness features (#45), the Carrion Crow
   (#46).
+- **Finds.** Brockholt's cache holds a Short Sword +1 and a Dagger +1.
 - **Pay.** About 130 xp a member.
 
 ### 4.3 F3, Gullwick (#47): core, band 2–3
@@ -237,6 +239,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   keep the boat they were expecting. The shanty's last verse is the hint: where the lamp goes out,
   the cave goes in.
 - **New here.** Groups that walk by night (`when`, #41), and a village drawn on its box.
+- **Finds.** The wreckers' cave holds a Mace +1 and a Quarterstaff +1.
 - **Pay.** About 110 xp a member.
 
 ### 4.4 E3, Crowness (#67): core, band 3–4
@@ -266,6 +269,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   rocks, lower than his.
 - **New here.** The weather as a warning: fog that leaves two squares of sight, and a fight that
   begins in it.
+- **Finds.** The wreck's salvage holds a Buckler +1.
 - **Pay.** About 340 xp a member.
 
 ### 4.5 E2, the Wend's fields (#68): country, band 3–4
@@ -291,6 +295,8 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   shepherd's hint: the miller never trusted a bank, nor the river.
 - **New here.** The first riddle, answered with a word the company heard somewhere else, and the
   first den.
+- **Finds.** The miller's hoard holds a Robe +1 and Leather Armour +1; the rookery's hoard, the
+  bright things a crow would carry, a Silver Locket, a keepsake.
 - **Pay.** About 190 xp a member.
 
 ### 4.6 D2, the chalk hills (#69): core, band 4–5
@@ -321,6 +327,8 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   them rings when the sheep run over it.
 - **New here.** The Black Dog, whose bite holds (paralysis), and a group that walks only by night,
   round one place.
+- **Finds.** The hollow barrow's cist holds the guardsman's Halberd +1 and his Ring of Office, a
+  keepsake that sells well; the wolves' den's hoard, a dead traveller's Spear +1.
 - **Pay.** About 420 xp a member.
 
 ### 4.7 The Berth (#70): dungeon, 16 by 16, band 4–5
@@ -344,6 +352,8 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   asks: won about half the time at the band's floor (EXPANSION §5.2).
 - **For the owner.** MONSTERS §5.2 puts the captain beside an empty bier; STORY has the tomb robbed
   of the ring alone, "not the gold, not the jewels". The brief follows STORY.
+- **Finds.** The niche behind the bier holds the captain's arms, the Captain's Sword +1 and the
+  Captain's Mail +1 (a Long Sword and Scale Mail); the first side chamber a Queen's Long Sword +1.
 - **Pay.** About 420 xp a member.
 
 ### 4.8 D3, the west downs (#71): country, band 4–5
@@ -368,6 +378,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   what they have carried there: a lost climber's pack. The falconer's hint: his birds bring back
   bright things from the ledge by the cleft.
 - **New here.** The next area, seen from the last one's edge.
+- **Finds.** The bandit camp's hoard holds a Long Bow +1, the best bow on the road.
 - **Pay.** About 260 xp a member.
 
 ### 4.9 D4, Kestrel Edge (#72): country, band 4–5
@@ -386,6 +397,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 - **The secret and its hint.** A cave behind one hairpin, where runners coming up from Saltreach
   leave what they carry for the Downs. The cairn's hint: count seven bends.
 - **New here.** The road into Act II.
+- **Finds.** The runners' cave holds a Kite Shield +1.
 - **Pay.** About 200 xp a member.
 
 ## 5. The one quest here
@@ -464,11 +476,33 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
-  Deacon are won 98, 99 and 98% of the time at their maps' floors, where a boss should be won about
+  Deacon are won 98, 99 and 100% of the time at their maps' floors, where a boss should be won about
   half the time. The Seam is won 66% of the time two levels under its floor, where the gate wants a
   quarter. The area as one is won 88.6% of the time at level 1, against nine in ten. The Foreland
-  map, Brandy Hole and the Seam give 4.6, 4.1 and 4.1 fights to a rest, against six or seven. The
-  pilot settles them, by retuning or by moving the thresholds.
+  map and Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; the Seam 6.3, now
+  that the company at 3 wears the band's gear. The pilot settles them, by retuning or by moving the
+  thresholds.
+- **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the
+  band's gear: the Long Sword, the Hand Axe, the Long Bow, Scale Mail, Chain Mail and the Kite
+  Shield. The Downs hold the kits with a plus and the band's gear with one, box by box as §4.2 to
+  §4.9 have it, the named finds at the top; the Halberd is neither sold nor placed, the base of the
+  guardsman's. Every class betters its kit by level 3 and again by level 5:
+
+  | Class | By level 3 | By level 5 |
+  |---|---|---|
+  | Knight | Chain Mail, Kite Shield | the Captain's Sword +1, Kite Shield +1 |
+  | Paladin | Long Sword, Chain Mail | a Queen's Long Sword +1, Kite Shield +1 |
+  | Ranger | Long Bow, Chain Mail | Long Bow +1 |
+  | Barbarian | Long Sword | Halberd +1, Leather Armour +1 |
+  | Cleric | Mace +1 | Robe +1, Buckler +1 |
+  | Sorcerer | Dagger +1 | Robe +1 |
+  | Thief, Bard | Short Sword +1 | Leather Armour +1 |
+  | Monk | Quarterstaff +1 | Robe +1, Spear +1 |
+  | Druid | Quarterstaff +1 | Leather Armour +1, Spear +1 |
+
+  The harness and the gate check dress their company from it (`GEAR`, `tools/harness.ts`), at 3 and
+  at 5; `tools/tests/ladder.ts` walks it class by class, and owes each find to its box until a
+  chest, cairn or statue gives it or a monster drops it.
 - **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`), and Helmstow's Lantern
   Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:410`). EXPANSION §4 has an
   area's towns sell its band's tier.
@@ -509,7 +543,9 @@ Decided by the owner on 27 and 28 September 2026:
 11. **Gear.** A plus is +1 to hit and damage on a weapon and +1 armour class on armour (#100).
     Mottram's sells the band's gear, and in Act I pluses are found, not sold (#99 and #101). No
     find is dearer than its band's window on the curve (`src/content/progression.ts`), so the
-    captain's mail is Scale Mail +1 and Thornmark has no plate with a plus.
+    captain's mail is Scale Mail +1 and Thornmark has no plate with a plus. The ladder (§8): every
+    class betters its kit by level 3 and again by level 5, from Mottram's and then the Downs' finds,
+    the named ones at the top.
 12. **The world map's lettering** is on the grid: the border names each box, and the strips at the
     world's edges go unlettered (§1; #66).
 
@@ -529,8 +565,6 @@ Proposed, for the owner, each in the issue that would build it:
 - **The chalk figure** below the Berth, a ship that only the Berth's mouth shows as one (§4.6).
 - **The Queen on her bier,** her hand bare, as STORY has the tomb, where MONSTERS §5.2 has the bier
   empty (§4.7).
-- **A gear ladder** (#99): every class betters its kit by level 3 and again by level 5, from
-  Mottram's and then the Downs' finds, the named ones at the top.
 - **Three changes to #56's side quests** (§6).
 
 ## 10. Names

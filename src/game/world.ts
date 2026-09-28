@@ -17,6 +17,7 @@ import { weatherAt, classify, isSnowy, skyNews, weatherSight, snowDrag, rangedPe
 import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
 import { CLIMATES } from '../content/index.ts';
 import { holds } from './quests.ts';
+import { pace, denLooks, densOf } from './dens.ts';
 
 export { MINUTES_PER_DAY };
 export const START_MINUTES = 7 * 60;
@@ -407,6 +408,8 @@ export class World {
   liveGroups(): LiveGroup[] {
     const out: LiveGroup[] = [];
     const ms = this.mapState;
+    // A standing den's brood come back one a pace (game/dens.ts).
+    pace(this);
     for (const def of this.map.encounters) {
       const st = ms.groups[def.id];
       if (!st) continue;
@@ -450,7 +453,18 @@ export class World {
 
   /** The looks of the groups now in sight that the company has not met: each group as it is drawn, by its first monster. */
   sightings(): string[] {
-    return this.meet(this.groupsInSight().map((g) => g.def.monsters[0]));
+    // A den's look first: the place, then what guards it.
+    const dens = densOf(this.map).length ? denLooks(this, (x, y) => this.sees(x, y)) : [];
+    return [...dens, ...this.meet(this.groupsInSight().map((g) => g.def.monsters[0]))];
+  }
+
+  /** Whether the party sees a square: its own, or one the viewport draws, by the same rule. */
+  sees(x: number, y: number): boolean {
+    const { x: px, y: py, facing: f } = this.state, rf = ((f + 1) & 3) as Facing, m = this.map;
+    if (x === px && y === py) return true;
+    const d = (x - px) * FACING_DX[f] + (y - py) * FACING_DY[f], l = (x - px) * FACING_DX[rf] + (y - py) * FACING_DY[rf];
+    if (d < 1 || d > Math.min(VIEW_DEPTH, this.sight) || Math.abs(l) > VIEW_LATERAL) return false;
+    return m.inBounds(x, y) && !isSolidWall(m.at(x, y)) && lineOfSight(m, px, py, f, d, l);
   }
 
   groupAt(x: number, y: number): LiveGroup | undefined {
