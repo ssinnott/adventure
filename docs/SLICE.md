@@ -347,7 +347,8 @@ over content broken on purpose too, and two tools to theirs:
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
   a chest or a hoard holds it, Mottram's sells the band's gear, and the gate check's company wears
-  what harness's does.
+  what harness's does; every class finds a plus it can use in Thornmark, and no chest there holds
+  the Armoury's gear.
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),

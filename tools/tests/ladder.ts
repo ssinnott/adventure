@@ -1,8 +1,9 @@
 // The gear ladder (#99, EXPANSION §5.2): every class betters its kit by level 3 and again by level 5,
 // from what Mottram's sells and what the Downs hold; each find is an item within the Foreland's
 // window, owed to the box that places it until a chest or a drop holds it; Mottram's sells the
-// ladder's plain step; and the gate check's company wears what harness's does.
-import { MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
+// ladder's plain step; and the gate check's company wears what harness's does. Past them, Thornmark
+// (#101): every class finds a plus it can use there, and no chest there holds the Armoury's gear.
+import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { CLASSES } from '../../src/game/party.ts';
 import type { ClassId } from '../../src/game/party.ts';
@@ -34,6 +35,20 @@ export const FINDS: Record<string, string> = {
   captains_sword: '#70', captains_mail: '#70', queens_sword: '#70',
   'longbow+1': '#71',
   'shield+1': '#72',
+};
+
+/** Thornmark's step (#101): the plus each class finds there, in its chests or on the Hand of Ash. */
+export const THORNMARK: Record<ClassId, readonly string[]> = {
+  knight: ['greatsword+1'],
+  paladin: ['warhammer+1'],
+  ranger: ['elfbow+1'],
+  barbarian: ['greatsword+1', 'brigandine+1', 'brigandine+2'],
+  cleric: ['warhammer+1', 'runed_robe+1'],
+  sorcerer: ['rune_dagger+1', 'runed_robe+1'],
+  thief: ['rune_dagger+1', 'brigandine+1', 'brigandine+2'],
+  bard: ['rune_dagger+1', 'brigandine+1', 'brigandine+2'],
+  monk: ['grove_staff+1'],
+  druid: ['grove_staff+1', 'brigandine+1', 'brigandine+2'],
 };
 
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
@@ -81,6 +96,25 @@ export function ladder(): void {
   const plain = GEAR.find(([at]) => at === 3)![1].filter((id) => !ITEMS[id].plus);
   const unsold = plain.filter((id) => !(shop?.kind === 'shop' && shop.stock.includes(id)));
   ok(!!shop && plain.length > 0 && !unsold.length, `${shop?.name} sells the band's gear, ${plain.join(', ')}${unsold.length ? ` (not: ${unsold.join(', ')})` : ''}`);
+
+  // Thornmark: every class finds a plus it can use in its chests or its monsters' drops, and no chest
+  // there holds gear the Armoury sells; its potions, oil and rations are no gear, as in the curve's
+  // window.
+  const tm = AREAS.find((a) => a.id === 'thornmark')!;
+  const chests = tm.maps.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'chest' ? [{ map: d.id, id: f.id, items: f.items }] : [])));
+  const inTm = new Set([...chests.flatMap((c) => c.items), ...tm.monsters.flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
+  for (const [cls, pluses] of Object.entries(THORNMARK) as [ClassId, readonly string[]][]) {
+    const faults = pluses.flatMap((id) => {
+      const d = ITEMS[id];
+      if (!d?.plus) return [`${id} is no item with a plus`];
+      if (!inTm.has(id)) return [`${id} is in no chest or drop there`];
+      return usable(d, cls) ? [] : [`${id} is not for a ${cls}`];
+    });
+    ok(pluses.length > 0 && !faults.length, `the ${CLASSES[cls].name} finds a plus in Thornmark: ${pluses.join(', ')}${faults.length ? ` (${faults.join('; ')})` : ''}`);
+  }
+  const armoury = tm.maps.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : [])));
+  const sold = chests.flatMap((c) => c.items.filter((id) => ITEMS[id].slot !== 'none' && armoury.includes(id)).map((id) => `${c.map}'s ${c.id} holds ${id}`));
+  ok(armoury.length > 0 && !sold.length, `no chest in Thornmark holds gear its Armoury sells${sold.length ? ` (${sold.join('; ')})` : ''}`);
 
   // The gate check's company wears what harness's does, level by level.
   const worn = (p: ReturnType<typeof companyAt>): string => JSON.stringify(p.members.map((m) => m.equipment));
