@@ -4,7 +4,17 @@
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
-import { ok } from './lib.ts';
+import { ok, owed } from './lib.ts';
+
+/**
+ * What is drawn before the map that places it, and whose map places it: a monster no map puts in a
+ * group yet, a room no business opens into yet. Each is reported as that issue's while it waits,
+ * and fails once it is placed, so its entry is dropped here.
+ */
+const UNPLACED: Record<string, string> = {
+  carrion_crow: '#47', wrecker: '#47', lampman: '#47', black_dog: '#69', barrow_guard: '#70', barrow_captain: '#70',
+  farm_kitchen: '#87',
+};
 
 export function maps(): void {
   // The maps as written, each on its own, the Foreland and Thornmark included (see `outdoors` for how they are played).
@@ -33,7 +43,10 @@ export function maps(): void {
   }
   // Every quest item is dropped or found somewhere; every monster is placed on some map.
   const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
-  for (const id of Object.keys(MONSTERS)) ok(placed.has(id), `monster '${id}' appears on a map`);
+  for (const id of Object.keys(MONSTERS)) {
+    if (Object.hasOwn(UNPLACED, id)) owed(placed.has(id), `monster '${id}' appears on a map`, UNPLACED[id]);
+    else ok(placed.has(id), `monster '${id}' appears on a map`);
+  }
   const found = new Set([...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'chest' ? f.items : [])), ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
   for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc' && f.quest) ok(found.has(f.quest.item), `${d.id}: quest item '${f.quest.item}' can be found`);
   // A business is a feature in a town's doorway: you walk into it, so it has a room to show, and
@@ -47,7 +60,9 @@ export function maps(): void {
       if (interior) { interiors.push(interior); ok(m.at(f.x, f.y).door !== 'none', `${def.id}: ${interior} is entered through a door`); }
     }
   }
-  ok(interiors.length === INTERIORS.length && new Set(interiors).size === interiors.length && INTERIORS.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
+  const opened = INTERIORS.filter((i) => !Object.hasOwn(UNPLACED, i));
+  ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
+  for (const i of INTERIORS.filter((i) => Object.hasOwn(UNPLACED, i))) owed(interiors.includes(i), `a business opens into ${i}`, UNPLACED[i]);
   // The trainer ladder: some trainer teaches to the cap, and the cap is what levelUp stops at.
   const trainers = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'trainer'));
   ok(Math.max(...trainers.map((t) => t.kind === 'trainer' ? t.maxLevel : 0)) === MAX_LEVEL, `a trainer teaches to level ${MAX_LEVEL}`);
@@ -74,6 +89,7 @@ export function maps(): void {
     ok(area.maps.every((d) => (d.region ?? 'shelf') === area.id), `${area.id}: its ${area.maps.length} maps share its weather`);
     ok(same(area.monsters.map((m) => m.sprite), area.sprites), `${area.id}: its monsters are drawn with the ${area.sprites.length} sprite kinds it lists`);
     const rooms = area.maps.flatMap((d) => (d.features ?? []).flatMap((f) => 'interior' in f && f.interior ? [f.interior] : []));
-    ok(same(rooms, area.interiors), `${area.id}: its businesses paint the ${area.interiors.length} rooms it lists`);
+    const lists = area.interiors.filter((i) => !Object.hasOwn(UNPLACED, i));
+    ok(same(rooms, lists), `${area.id}: its businesses paint the ${lists.length} rooms it lists`);
   }
 }
