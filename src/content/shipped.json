@@ -15,6 +15,12 @@
         "f2_scarecrow",
         "f2_sett",
         "f2_shrine",
+        "f3_boats",
+        "f3_cave",
+        "f3_gullwick",
+        "f3_rise",
+        "f3_sea",
+        "f3_soot",
         "grove_edge",
         "grove_road",
         "lake",
@@ -33,6 +39,9 @@
         "f2_crows_east",
         "f2_rats",
         "f2_wolves",
+        "f3_crabs",
+        "f3_crows",
+        "f3_wreckers",
         "farm_rats",
         "hill_wolves",
         "marsh_spiders",
@@ -56,6 +65,7 @@
         "wood_wolves"
       ],
       "doors": [
+        "168,78",
         "180,33"
       ]
     },
@@ -228,6 +238,10 @@
   "zones": {
     "downs_f2": {
       "at": "168,30",
+      "size": "32x32"
+    },
+    "downs_f3": {
+      "at": "168,62",
       "size": "32x32"
     },
     "shelf": {

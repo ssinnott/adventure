@@ -1,0 +1,70 @@
+// Callow Downs, box F3: Gullwick. Core, band 2-3: the village at the Wend's mouth, its cottages,
+// net loft and boats on the shingle, the rise above it where the company camped the night the light
+// went out, and across the mouth the far beach, the wreckers', with their cave at its end. The Salt
+// Road comes down from F2 and leaves west for Crowness. Cut from the atlas by tools/scaffold.ts;
+// docs/areas/shelf.md §4.3 is its brief.
+import type { MapDef } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
+
+export const DOWNS_F3: MapDef = {
+  id: 'downs_f3',
+  name: 'Callow Downs',
+  kind: 'outdoor',
+  density: 'core',
+  band: [2, 3],
+  start: { x: 16, y: 0, facing: SOUTH },
+  rows: [
+    'fffffffffffffff===,,,,,,,,,,,,,,',
+    'fffffffffffff===,,,^,,,,,,,,,,__',
+    'fffffffffff===f,,,^^,,,_,_____~~',
+    '~ffffffff===ff^,,,,,,,_~_~~~~~~~',
+    '~~fffff===ff^f^^,,,___~~~~~~~~WW',
+    'f~ffff==ffff^^^^^^_~~~~W~WWWWWWW',
+    'f~fff==fff^^^^^^^^~~~~WWWWWWWWWW',
+    'f~ff==ffff^^^^^^~~~WWWWWWWWWWWWW',
+    'f~f==fff^^^^^^^f~~WWWWWWWWWWWWWW',
+    ',~==,BfBf^^^^^^,~WWWWWWWWWWWWWWW',
+    '===,,,f^^B^^^^^,~WWWWWWWWWWWWWWW',
+    '=~~,,B,^^^^^^^,,WWWWWWWWWWWWWWWW',
+    ',,~~,,,,B,B^^^,,WWWWWWWWWWWWWWWW',
+    '__,~~,B,,,_^^~~WWWWWWWWWWWWWWWWW',
+    '____~~______~~WWWWWWWWWWWWWWWWWW',
+    '_____~_______WWWWWWWWWWWWWWWWWWW',
+    'Sr~~~~~~~~WWWWWWWWWWWWWWWWWWWWWW',
+    '_rWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    '~WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+  ],
+  features: [
+    { kind: 'event', x: 16, y: 2, id: 'f3_sea', once: true, text: 'The road tops a rise, and there is the sea: Gullwick below, at the river\'s mouth.' },
+    { kind: 'event', x: 4, y: 10, id: 'f3_gullwick', once: true, text: 'Gullwick. Cottages turned from the wind, and nets drying on every wall.' },
+    { kind: 'well', x: 6, y: 10, text: 'The village well. A rope of plaited net-cord.' },
+    { kind: 'camp', x: 7, y: 13, name: 'The net loft', text: 'The net loft, warm and smelling of tar.' },
+    { kind: 'event', x: 8, y: 14, id: 'f3_boats', once: true, text: 'Boats drawn up on the shingle. On every bow a loop inside a loop, fresh paint on old.' },
+    { kind: 'npc', x: 9, y: 13, name: 'An old man mending nets', lines: [
+      'An old man mends a net across his knees, and sings to it under his breath.',
+      '"Ten for the Hearth and one for the Queen, and the lamp on the rocks for the boats unseen. Where the lamp goes out, the cave goes in, and nobody asks where the cargo\'s been."',
+    ] },
+    { kind: 'event', x: 11, y: 7, id: 'f3_rise', once: true, text: 'The ashes of a camp, cold, on the rise. Below it the whole bay, and Gullwick\'s boats.' },
+    { kind: 'event', x: 0, y: 15, id: 'f3_soot', once: true, text: 'Where the beach ends, a lamp\'s worth of soot on the rock, and the sand trodden flat before it.' },
+    { kind: 'chest', x: 0, y: 17, id: 'f3_cave', gold: 60, items: ['mace+1', 'staff+1', 'elixir'] },
+  ],
+  secrets: [{ x: 0, y: 16, hint: 'f3_soot' }],
+  encounters: [
+    { id: 'f3_crabs', x: 27, y: 2, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
+    { id: 'f3_crows', x: 4, y: 3, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
+    { id: 'f3_wreckers', x: 2, y: 15, when: { hours: 'night' }, monsters: ['wrecker', 'wrecker', 'wrecker', 'lampman'], aware: 5, respawn: 2880 },
+  ],
+};
