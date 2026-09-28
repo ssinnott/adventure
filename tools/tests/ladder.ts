@@ -1,7 +1,7 @@
 // The gear ladder (#99, EXPANSION §5.2): every class betters its kit by level 3 and again by level 5,
 // from what Mottram's sells and what the Downs hold; each find is an item within the Foreland's
-// window, owed to the box that places it until a chest or a drop holds it; Mottram's sells the
-// ladder's plain step; and the gate check's company wears what harness's does.
+// window, owed to the box that places it until a chest, cairn, statue or drop gives it; Mottram's
+// sells the ladder's plain step; and the gate check's company wears what harness's does.
 import { MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { CLASSES } from '../../src/game/party.ts';
@@ -9,6 +9,7 @@ import type { ClassId } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { GEAR, companyAt } from '../harness.ts';
 import { gateCompany } from '../gate.ts';
+import { giftOf } from '../../src/game/wilds.ts';
 import { ok, owed } from './lib.ts';
 
 /** The issue's table: what each class betters its kit with, by level 3 and by level 5. */
@@ -67,13 +68,13 @@ export function ladder(): void {
   const missing = GEAR.flatMap(([, ids]) => ids).filter((id) => !ITEMS[id]);
   ok(!missing.length, `every rung of the ladder is an item${missing.length ? ` (not: ${missing.join(', ')})` : ''}`);
   const found = new Set([
-    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'chest' ? f.items : []))),
+    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => giftOf(f)?.items ?? [])),
     ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)),
   ]);
   for (const [id, whose] of Object.entries(FINDS)) {
     const d = ITEMS[id];
     ok(!!d && d.price > 0 && d.price <= CURVE.shelf.price, `find ${id} is an item within the Foreland's window (${d?.price} of ${CURVE.shelf.price} gold)`);
-    owed(found.has(id), `find ${id} lies in a chest or a hoard`, whose);
+    owed(found.has(id), `find ${id} lies in a chest, a cairn, a statue's gift or a hoard`, whose);
   }
 
   // Mottram's sells the ladder's plain step: the band's gear.
