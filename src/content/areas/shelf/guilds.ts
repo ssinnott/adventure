@@ -36,7 +36,7 @@ export const GUILDS: readonly GuildQuest[] = [
     id: 'lanterns_light', guild: 'lanterns', rank: 0,
     offer: ['A Lantern in grey marks her place in a ledger. "We take nobody on who has not looked at it. Go down to the Foreland\'s shore, look at the Hearth across the water and come back and tell us what it did."'],
     goal: { seen: 'shelf:coast' },
-    paid: ['"It flickered. Everyone who looks says so, and nobody in Helmstow looks. You have, and that makes you one of us."'],
+    paid: ['"It flickered. Everyone who looks says so, and fewer look every night. You have, and that makes you one of us."'],
     early: ['"You have stood on the shore and watched it already. Then you know why we keep the lamps lit."'],
     pay: { gold: 20, xp: 60 },
     title: 'First Light',
