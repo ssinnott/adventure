@@ -6,7 +6,8 @@ import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
 import { ATLAS } from '../../src/content/index.ts';
-import { zoneOfMap } from '../../src/game/atlas.ts';
+import { mapAt } from '../../src/game/atlas.ts';
+import type { AtlasZone } from '../../src/game/atlas.ts';
 import { ok } from './lib.ts';
 
 export function outdoors(): void {
@@ -18,7 +19,7 @@ export function outdoors(): void {
   const out = new GameMap(played[0]);
   ok(out.width === ATLAS.width && out.height === ATLAS.height, `the outdoors is the world's size, square for square with the painted map (${out.width}x${out.height})`);
   for (const d of zoneMaps) {
-    const z = out.zones.find((q) => q.id === d.id), at = zoneOfMap(ATLAS, d.id)?.at;
+    const z = out.zones.find((q) => q.id === d.id), at = mapAt(ATLAS, d.id);
     ok(!!z && !!at && z.x === at[0] && z.y === at[1] && z.w === d.rows[0].length && z.h === d.rows.length && z.name === d.name, `${d.id}: laid where the atlas puts it, and called ${d.name}`);
     if (!z) continue;
     let same = 0;
@@ -68,6 +69,6 @@ export function outdoors(): void {
   const refusal = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } };
   const clash: MapDef[] = MAP_DEFS.map((d) => (d.id === 'thornmark' ? { ...d, features: [...(d.features ?? []), { kind: 'event', x: 2, y: 2, id: 'coast', text: '' }] } : d));
   ok(/'coast'/.test(refusal(() => layOutdoors(ATLAS, clash))), 'two zones may not share a feature id: the outdoors keeps one record for both');
-  const heaped = { ...ATLAS, zones: ATLAS.zones.map((z) => (z.id === 'thornmark' ? { ...z, at: [220, 30] as const } : z)) };
+  const heaped = { ...ATLAS, zones: ATLAS.zones.map((z): AtlasZone => (z.id === 'thornmark' ? { ...z, maps: [{ map: 'thornmark', at: [220, 30] }] } : z)) };
   ok(/laid over/.test(refusal(() => layOutdoors(heaped, MAP_DEFS))), 'nor may two zone maps be laid on the same squares');
 }
