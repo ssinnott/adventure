@@ -591,3 +591,17 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   automap still colours a secret door as a door. Also: plain and locked doors outdoors are disguised
   but ask no hint (disguise only secret doors, or hold every disguised door to the hint rule); the
   art fixture's count. Sent 21:51 to both.
+
+### 22:20: #142 and #143 merged; #76 closed; a scout on #77
+
+- #142 (#47's 0a) merged at 22:18 (main 598ae50) after its fix: a hill's body held to its outline
+  in the smoke test (main's floating crest light, put back, fails it). On the head: ALL OK (47 owed),
+  SMOKE OK, "Nothing new."; CI green; main's tree is the head's.
+- #143 (#76's second pull request) merged at 22:19 (main 6283b51) after its fix round (the trade
+  reopened only while the menu offers more; a business may not come and go; presence held ahead and
+  on the automap; the walk asks `present`): tested with main 598ae50, ALL OK (47 owed), SMOKE OK,
+  "Nothing new."; CI green; main's tree matches. #76 closes; its session is free.
+- #141 (#47's 0b) told at 22:21 to merge main and read `V.drawnCell` in the sweep's edge rule; it
+  lands next, then the pilot's A opens. #144 told at 22:23 to merge main (SLICE and `tools/smoke.ts`
+  beside #143: keep both); it lands after the owner has seen the Wardens' words.
+- A scout on #77 (the side quests on the built maps; `footprints/77.md`), unblocked by #76.
