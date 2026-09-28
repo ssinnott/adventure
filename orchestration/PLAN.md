@@ -153,3 +153,9 @@ smoke seeds, `npm run build` fine; the only conflicts were README's tools line, 
 to Thornmark's monster count and the two shared painting modules its sweep missed; #103 keys its
 win-rate cache on the monsters, not the id, and bounds its owed misses. #95 waits on the owner's
 edge issue.
+
+#92 (#36) merged at 05:06 (main 6a2f0bd) with the density hand-off in. #91 (#37) verified; told to
+merge main for README and fix a stale body line, then it merges. #103 (#38): its round held, and a
+fresh review found three more (Thornmark's rest figure passes by 0.01 on seed noise; a line in
+thornmark.md quotes the maps at the wrong level; gateCompany gives a stronger company under level 1),
+sent at 05:08.
