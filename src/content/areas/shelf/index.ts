@@ -25,7 +25,7 @@ export const AREA = {
   // The coast: mild, wet in the autumn, fog off the sea. Snow only in a cold snap.
   climate: { summer: 18, winter: 2, daily: 4, damp: [0.01, 0.07], wettest: 85, fog: 0.8, lag: 0,
     fogText: 'Fog rolls in off the sea.', thunderText: 'Thunder rolls in off the sea.' },
-  interiors: ['hearthlight_inn', 'lantern_chapel', 'harrow_provisioner', 'lantern_guildhall', 'warden_drillyard', 'gilded_eel'] as const,
+  interiors: ['hearthlight_inn', 'lantern_chapel', 'harrow_provisioner', 'lantern_guildhall', 'warden_drillyard', 'gilded_eel', 'farm_kitchen'] as const,
   // The first on the road: everything in it is new, so it claims nothing.
   novel: { families: [], terrain: [], mechanics: [], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
