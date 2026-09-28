@@ -493,3 +493,24 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #139 (#48's A, the owl) reviewed (`reviews/139.md`): ready; the crow and every old monster
   byte-identical; one comment nit. It lands first of the Deepthorn's three once the owner OKs it;
   #137 and #138 then drop their copy of the five `UNPLACED` lines.
+
+### 20:19: the pilot (#47) started
+
+- #47's footprint (`footprints/47.md`): XL, seven pull requests, from a scratch prototype of both
+  boxes. Two blockers before any map passes: hills fail the smoke test's crack sweep (402 of 6,830
+  views on the drafts; 22 on the Foreland beside them), and an outdoor secret door draws as a block
+  of masonry (it gives the Brockholt sett and the wreckers' cave away). The briefs' groups are far too
+  soft for the gate's rest rule (19.6 and 10.7 fights to a rest at level 2 against 6.5 ± 1; doubled,
+  6.0 and 4.8, which also matches the briefs' pay): the owner's call, in A's body. Before C the owner
+  decides how the Foreland's chapter leads a company to Gullwick.
+- Started at 20:19:
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 3 | #47's 0a (hills and the crack sweep, quality) | session_01V987PdPPKAHiPfKnj2Zx3j (the #66 session) | `claude/m1-47-hills` |
+| 3 | #47's 0b (outdoor doors in rock, systems) | session_01KQC92fBp7Bg9WK9VYCHypE (the #45 session) | `claude/m1-47-rock-doors` |
+| 3 | #47's A to D (F2, F3, the people, the night) | session_017gmKkkiPWxH5PB61L1M1mr (the #99/#85 session) | `claude/m1-47-f2`, `-f3`, `-people`, `-night` |
+| 3 | #73 (the Lodestone) | session_01Uzk1jKfKNQrxZAhfNcPuxP (the #42 session) | `claude/m1-73-lodestone` |
+| 3 | #76's second pull request (presence) | session_015eA3U3nfug5hverH1thjvm | `claude/m1-76-presence` |
+
+  E (the thresholds) waits until the owner has played A to D.
