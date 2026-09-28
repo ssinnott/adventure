@@ -1,6 +1,7 @@
 // What an item is. Content, not state: a character's inventory holds item ids and the tables say
 // what those ids do (src/content/items.ts, and each area's items.ts). Weapons roll `dice` d`sides` +
-// `bonus`; armour adds `ac`.
+// `bonus`; armour adds `ac`. A +N item's plus is counted in its `bonus` or `ac` already; a weapon's
+// adds to to-hit too (`attackBonus`).
 import { ITEMS } from '../content/index.ts';
 
 export type ItemSlot = 'weapon' | 'armor' | 'shield' | 'none';
@@ -20,6 +21,8 @@ export interface ItemDef {
   ranged?: boolean;
   /** Armour class contribution. */
   ac?: number;
+  /** A +N item's plus, counted in `bonus` or `ac` already; a weapon's also adds to to-hit (`attackBonus`). */
+  plus?: number;
   /** Classes that may equip it; absent = anyone. */
   classes?: readonly string[];
   /** Consumable effect. */

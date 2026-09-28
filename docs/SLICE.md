@@ -24,6 +24,8 @@ DESIGN.md first for the why.
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
   machine: the dead and machines never sleep, and a def may shrug off more of its own (`immune`).
+  Gear may carry a plus: a point is +1 to hit and damage on a weapon, +1 armour class on armour or
+  a shield (`P`, `src/content/items.ts`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
