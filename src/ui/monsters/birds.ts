@@ -10,6 +10,11 @@
 // Painted as masses: the far wing and leg in shadow, the tail, the near leg, the plumage (body,
 // breast, neck, head, throat hackles) as one, the near wing over it, then the bill as its own
 // material, the sheen, the eye.
+// The Great Owl is the same frame turned to the party (`face` from 0.5, the `facing` pose): upright,
+// the head as wide as the shoulders and sunk in them, ear tufts, a pale facial disc and two big
+// orange eyes over a small hooked bill, short legs feathered to the talons, and the wings raised
+// wide in threat, their pale undersides barred. Tawny and matte, the breast pale, streaked above
+// and barred below. Idle: the wings lift and settle slowly, and now and then the eyes close.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -18,7 +23,7 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['crow'];
+export const KINDS: readonly MonsterSprite[] = ['crow', 'owl'];
 
 /**
  * The frame's parts, as proportions of the crow's (1 = the crow, 0 = none). Each is named for the
@@ -31,7 +36,10 @@ interface Build {
   neck: number;
   /** Size of the head: the owl's is the biggest for its body. */
   head: number;
-  /** 0 a profile; toward 1 the head turns to the party behind a pale facial disc with both eyes (the owl). */
+  /**
+   * 0 a profile; toward 1 the head turns to the party behind a pale facial disc with both eyes. From
+   * 0.5 the whole bird turns to the party, upright with its wings raised wide: the owl's pose.
+   */
   face: number;
   /** Length of the bill: the heron's dagger, the raven's heavy one. */
   bill: number;
@@ -51,12 +59,37 @@ interface Build {
   ruff: number;
   /** Bare skin on the head and neck, 0..1: the vulture's. */
   bare: number;
+  /** The gloss the black catches (the crow's blue-violet), or null for a matte bird (the owl). */
+  sheen: string | null;
+  /** How glossy the plumage is, 0 matte (the owl) to 1 (the crow). */
+  gloss: number;
+  /** 0 bare scaled legs (the crow, the heron), 1 feathered to the talons (the owl, the eagle). */
+  feathered: number;
+  /** The body's lean in profile, radians: the crow's forward tilt; toward 0 the heron's level back. */
+  lean: number;
+  /** How far the idle hops, 0 not at all (the heron stalks, the owl stands). */
+  hop: number;
+  /** Ear tufts, 0 none: the great owl's. */
+  tufts: number;
+  /** Barring and streaks on a pale breast, 0 none: the owl's, the eagle's. */
+  bars: number;
 }
-const CROW: Build = { body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0 };
+const CROW: Build = {
+  body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
+  sheen: '#5a68b0', gloss: 1, feathered: 0, lean: -0.36, hop: 1, tufts: 0, bars: 0,
+};
+/** Upright and turned to the party, wings raised wide: a big round head sunk in the shoulders, a small hooked bill, short feathered legs. */
+const OWL: Build = {
+  body: 1.1, neck: 0, head: 1.6, face: 1, bill: 0.35, hook: 0.8, leg: 0.6, wing: 1.4, broad: 1.3, tail: 0.6, wedge: 0, ruff: 0, bare: 0,
+  sheen: null, gloss: 0, feathered: 1, lean: -1.2, hop: 0, tufts: 1, bars: 1,
+};
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  bird(ctx, x, y, h, p, CROW);
+  // The owl's raised wings reach higher than the crow's hop: drawn inside 0.85 of its height, as the
+  // lampman is, the tips keep clear of the top of the combat canvas (at full height and wing 1.6 they
+  // run off it), and the wings as much as the body make its size.
+  if (kind === 'owl') facing(ctx, x, y, h * 0.85, p, OWL);
+  else bird(ctx, x, y, h, p, CROW);
 };
 
 /** A direction back and up from the bird, `a` radians above the horizontal (the bird faces +x). */
@@ -104,13 +137,14 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // The hop, every 120 frames: the body springs up and the feet just leave the ground. The wing
   // flick comes between hops.
-  const ht = f % 120, hop = ht < 20 ? Math.sin(ht / 20 * Math.PI) : 0;
+  const ht = f % 120, hop = ht < 20 ? Math.sin(ht / 20 * Math.PI) * b.hop : 0;
   const ft = (f + 64) % 96, flick = ft < 16 ? Math.sin(ft / 16 * Math.PI) : 0;
   const L = 0.2 * b.leg, by = L + hop * 0.07 + p.breathe * 0.004, feet = hop * 0.03;
 
   const plume = p.base, far = p.dark;
-  const sheen = shade('#5a68b0', tone);
+  const sheen = b.sheen ? shade(b.sheen, tone) : null;
   const horn = shade('#1c1a20', tone);
+  const shank = b.feathered ? plume : horn;
   const skin = shade('#c8807a', tone);
   const eyeCol = shade('#f0d890', Math.max(0.7, tone));
 
@@ -138,7 +172,7 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   // ---- far side, in shadow: the far wing raised a little higher than the near, and the far leg.
   const farLeg: Part[] = [];
   leg(-0.09, farLeg);
-  blob(ctx, B, shade(horn, 0.85), farLeg, { h, formK: 0.3 });
+  blob(ctx, B, shade(shank, 0.85), farLeg, { h, formK: 0.3 });
   const fw = wingOutline(sx - 0.05, sy + 0.02, th + 0.15, W, b.broad, ax, ay + 0.04);
   blob(ctx, B, far, [{ k: 'poly', pts: px(fw.pts) }], { h, formK: 0.3 });
 
@@ -152,24 +186,24 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
       tx + d[0] * w, ty + d[1] * w,
       tx + d[0] * w * 0.5 - n[0] * r1 * 0.5, ty + d[1] * w * 0.5 - n[1] * r1 * 0.5,
       tx - n[0] * r1, ty - n[1] * r1, rx - n[0] * r0, ry - n[1] * r0,
-    ]) }], { h, formK: 0.3, gloss: 0.15 });
+    ]) }], { h, formK: 0.3, gloss: 0.15 * b.gloss });
     if (h >= 40) softLine(ctx, B, px([rx + d[0] * tl * 0.2, ry + d[1] * tl * 0.2, tx + d[0] * w * 0.8, ty + d[1] * w * 0.8]), plume, Math.max(1, h * 0.008), 0.5);
   }
 
   // ---- the near leg, scaled horn, under the belly feathers.
   const nearLeg: Part[] = [];
   leg(0, nearLeg);
-  blob(ctx, B, horn, nearLeg, { h, formK: 0.3 });
+  blob(ctx, B, shank, nearLeg, { h, formK: 0.3 });
 
   // ---- the plumage: body, breast, belly, the feathered thigh, neck and head, ONE mass.
   const bare = b.bare > 0;
   const body: Part[] = [
-    { k: 'ell', x: X(-0.04), y: U(by + 0.22 * bs), rx: h * 0.32 * bs, ry: h * 0.16 * bs, rot: -0.36 },
+    { k: 'ell', x: X(-0.04), y: U(by + 0.22 * bs), rx: h * 0.32 * bs, ry: h * 0.16 * bs, rot: b.lean },
     { k: 'ell', x: X(0.12), y: U(by + 0.3 * bs), rx: h * 0.14 * bs, ry: h * 0.15 * bs },
     { k: 'ell', x: X(0.0), y: U(by + 0.1), rx: h * 0.07, ry: h * 0.06 },
     { k: 'cap', x0: X(0.15), y0: U(by + 0.36 * bs), x1: X(hx - rH * 0.2), y1: U(hy - rH * 0.3), r0: h * 0.12 * bs, r1: h * rH * 0.78 },
   ];
-  if (!bare) body.push({ k: 'ball', x: X(hx), y: U(hy), r: h * rH, gloss: 0.3 });
+  if (!bare) body.push({ k: 'ball', x: X(hx), y: U(hy), r: h * rH, gloss: 0.3 * b.gloss });
   // Hackles: the loose feathers of the throat, a ragged edge under the chin.
   if (b.ruff > 0) {
     const rr = rH * (0.4 + 0.5 * b.ruff), cx = hx - rH * 0.15, cy = hy - rH * 1.05;
@@ -185,12 +219,12 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // ---- the near wing, half open over the body.
   const nw = wingOutline(sx, sy, th, W, b.broad, ax, ay);
-  blob(ctx, B, mix(plume, far, 0.15), [{ k: 'poly', pts: px(nw.pts) }], { h, formK: 0.35, spread: 0.8, gloss: 0.2 });
+  blob(ctx, B, mix(plume, far, 0.15), [{ k: 'poly', pts: px(nw.pts) }], { h, formK: 0.35, spread: 0.8, gloss: 0.2 * b.gloss });
   // The sheen: blue-violet on the coverts and the nape, where a crow's black catches the light.
-  patch(ctx, B, sheen, [
+  if (sheen) patch(ctx, B, sheen, [
     { k: 'ell', x: X((sx + nw.wrist[0] + ax) / 3), y: U((sy + nw.wrist[1] + ay) / 3), rx: h * 0.1 * W, ry: h * 0.07 * W, rot: -0.9 },
   ], { alpha: 0.3, feather: 0.7 });
-  if (!bare) patch(ctx, B, sheen, [{ k: 'ell', x: X(hx - rH * 0.35), y: U(hy + rH * 0.3), rx: h * rH * 0.55, ry: h * rH * 0.4, rot: -0.4 }], { alpha: 0.26, feather: 0.6 });
+  if (sheen && !bare) patch(ctx, B, sheen, [{ k: 'ell', x: X(hx - rH * 0.35), y: U(hy + rH * 0.3), rx: h * rH * 0.55, ry: h * rH * 0.4, rot: -0.4 }], { alpha: 0.26, feather: 0.6 });
   // The primaries' separations, and the edge of the coverts over them.
   if (h >= 36) {
     const lw = Math.max(1, h * 0.008);
@@ -208,7 +242,7 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     const pts = [bx0 - rH * 0.2, byb + dp * 0.6, bx0 + bl * 0.45, byb + dp * 0.45 - bl * 0.05, tip[0], tip[1]];
     if (b.hook > 0) pts.push(tip[0] - b.hook * bl * 0.12, tip[1] - b.hook * bl * 0.25);
     pts.push(bx0 + bl * 0.5, byb - dp * 0.35 - bl * 0.12, bx0 - rH * 0.15, byb - dp * 0.6);
-    blob(ctx, B, horn, [{ k: 'poly', pts: px(pts) }], { h, form: false, gloss: 0.35 });
+    blob(ctx, B, horn, [{ k: 'poly', pts: px(pts) }], { h, form: false, gloss: 0.35 * b.gloss });
     // The gape, and the bristles that cover a crow's nostrils.
     if (h >= 30) softLine(ctx, B, px([bx0 - rH * 0.1, byb - dp * 0.05, bx0 + bl * 0.7, byb - bl * 0.13]), horn, Math.max(1, h * 0.007), 0.7);
     if (!bare) patch(ctx, B, plume, [{ k: 'ell', x: X(bx0 + bl * 0.12), y: U(byb + dp * 0.25), rx: h * bl * 0.2, ry: h * dp * 0.35 }], { alpha: 0.8, feather: 0.4 });
@@ -221,4 +255,132 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const er = rH * 0.2 * h;
   if (b.face >= 0.5) for (const s of [-1, 1]) eye(ctx, X(hx + rH * 0.1 + s * rH * 0.42), U(hy + rH * 0.15), er * 1.4, eyeCol);
   else eye(ctx, X(hx + rH * 0.22), U(hy + rH * 0.18), er, eyeCol);
+}
+
+/**
+ * The frame turned to the party, upright, both wings raised wide: the owl's threat, and the pose a
+ * bird that faces the company takes. The same Build and parts as the profile: the wings are the
+ * profile's wing outline, one of them mirrored; the eyes, bill and colours are the same. Painted
+ * back to front: both wings (their undersides, barred), the tail, the feathered legs and talons, the
+ * plumage (body, head and ear tufts) as one, the pale breast and its bars, the facial disc, the bill,
+ * the eyes. Idle: the wings lift and settle slowly, and now and then the eyes close.
+ */
+function facing(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build): void {
+  const f = p.frame, tone = p.tone, bs = b.body;
+  const X = (u: number) => x + u * h;
+  const U = (u: number) => y - u * h;
+  const px = (u: readonly number[]): number[] => u.map((v, i) => (i % 2 ? U(v) : X(v)));
+  /** The same points on the bird's other side. */
+  const mirror = (u: readonly number[]): number[] => u.map((v, i) => (i % 2 ? v : -v));
+
+  const lift = 0.5 + 0.5 * Math.sin(f / 30);
+  const blink = (f + 75) % 150 < 7;
+  const L = 0.2 * b.leg, by = L + p.breathe * 0.004;
+
+  const plume = p.base, far = p.dark;
+  const pale = mix(p.light, shade('#efe2c4', tone), 0.55);
+  const under = mix(plume, pale, 0.4);
+  const horn = shade('#2a2420', tone);
+  const bar = shade(plume, 0.5);
+  const eyeCol = shade('#ff9a2a', Math.max(0.75, tone));
+
+  groundShadow(ctx, X(0), y + 1, h * 0.9);
+
+  const nl = 0.06 * b.neck, rH = 0.115 * b.head;
+  const hy = by + 0.6 * bs + rH * 0.5 + nl;
+  const sx = -0.2 * bs, sy = by + 0.48 * bs;
+  const ax = -0.16 * bs, ay = by + 0.2 * bs;
+  const th = 0.85 + 0.2 * lift;
+  const W = b.wing;
+
+  // ---- the wings, raised wide to either side: the undersides show, pale, the flight feathers barred.
+  const wing = wingOutline(sx, sy, th, W, b.broad, ax, ay);
+  for (const side of [-1, 1]) {
+    const u = side < 0 ? wing.pts : mirror(wing.pts);
+    blob(ctx, B, side < 0 ? under : shade(under, 0.9), [{ k: 'poly', pts: px(u) }], { h, formK: 0.35, spread: 0.8 });
+    // Dark coverts along the leading edge.
+    const [wx, wy] = wing.wrist;
+    patch(ctx, B, far, [{ k: 'cap', x0: X(side * -sx), y0: U(sy + 0.02), x1: X(side * -wx), y1: U(wy + 0.01), r0: h * 0.06 * W, r1: h * 0.04 * W }], { alpha: 0.45, feather: 0.65 });
+    if (h >= 30 && b.bars > 0) {
+      // Bars across the primaries: arcs about the wrist, one feather's width apart.
+      const lw = Math.max(1, h * 0.01);
+      const phi = th - 0.5, spread = 0.15 * b.broad, len = 0.4 * W;
+      for (const r of [0.45, 0.68, 0.9]) {
+        const arc: number[] = [];
+        for (let i = 0; i <= 4; i++) { const [tx, ty] = back(phi - i * spread); const l = len * r * (1 - i * 0.08); arc.push(side * -(wx + tx * l), wy + ty * l); }
+        softLine(ctx, B, px(arc), bar, lw, 0.55 * b.bars);
+      }
+      for (let i = 0; i < wing.notches.length; i += 2) {
+        const nx = wing.notches[i], ny = wing.notches[i + 1];
+        softLine(ctx, B, px([side * -(wx + (nx - wx) * 0.4), wy + (ny - wy) * 0.4, side * -nx, ny]), plume, lw, 0.5);
+      }
+    }
+  }
+
+  // ---- the tail: a short fan behind the legs.
+  {
+    const t = 0.12 * b.tail, w = 0.07 * b.broad;
+    blob(ctx, B, far, [{ k: 'poly', pts: px([-w * 0.6, by + 0.12, w * 0.6, by + 0.12, w, by + 0.1 - t, 0, by + 0.08 - t - b.wedge * 0.05, -w, by + 0.1 - t]) }], { h, formK: 0.3 });
+  }
+
+  // ---- the legs, feathered to the talons (or bare), and the talons, hooked, horn.
+  for (const s of [-1, 1]) {
+    const fx = s * 0.085 * bs;
+    blob(ctx, B, horn, [
+      { k: 'tube', pts: px([fx, 0.02, fx + s * 0.03, 0.012, fx + s * 0.06, -0.008]), r0: 0.014 * h, r1: 0.008 * h },
+      { k: 'tube', pts: px([fx, 0.02, fx + s * 0.005, 0.01, fx + s * 0.01, -0.012]), r0: 0.014 * h, r1: 0.008 * h },
+      { k: 'tube', pts: px([fx, 0.02, fx - s * 0.03, 0.012, fx - s * 0.05, -0.006]), r0: 0.013 * h, r1: 0.008 * h },
+    ], { h, form: false });
+    blob(ctx, B, b.feathered ? mix(plume, pale, 0.4) : horn, [{ k: 'tube', pts: px([s * 0.07 * bs, by + 0.12, fx, 0.03]), r0: 0.06 * h * (0.5 + 0.5 * b.feathered), r1: 0.035 * h }], { h, formK: 0.35 });
+  }
+
+  // ---- the plumage: body, head and ear tufts, ONE mass. The head sits in the shoulders.
+  const body: Part[] = [
+    { k: 'ell', x: X(0), y: U(by + 0.3 * bs), rx: h * 0.25 * bs, ry: h * 0.3 * bs },
+    { k: 'ell', x: X(0), y: U(by + 0.48 * bs), rx: h * 0.22 * bs, ry: h * 0.14 * bs },
+    { k: 'ell', x: X(0), y: U(hy), rx: h * rH * 1.12, ry: h * rH * 0.96 },
+  ];
+  if (b.tufts > 0) for (const s of [-1, 1]) {
+    const t = b.tufts;
+    body.push({ k: 'poly', pts: px([s * rH * 0.3, hy + rH * 0.8, s * rH * 0.95, hy + rH * 0.55, s * rH * 0.98, hy + rH * (0.75 + 0.75 * t), s * rH * 0.72, hy + rH * (0.8 + 0.45 * t)]) });
+  }
+  blob(ctx, B, plume, body, { h, formK: 0.4, spread: 0.8, creases: [
+    { x0: X(-rH * 0.8), y0: U(hy - rH * 0.85), x1: X(rH * 0.8), y1: U(hy - rH * 0.85), r: h * 0.02, a: 0.2 },   // the head into the shoulders
+  ] });
+
+  // ---- the breast: pale, streaked above and barred below.
+  patch(ctx, B, pale, [{ k: 'ell', x: X(0), y: U(by + 0.28 * bs), rx: h * 0.17 * bs, ry: h * 0.25 * bs }], { alpha: 0.75, feather: 0.45 });
+  if (b.bars > 0) {
+    if (h >= 30) {
+      const lw = Math.max(1, h * 0.01);
+      for (let i = -2; i <= 2; i++) softLine(ctx, B, px([i * 0.055 * bs, by + 0.46 * bs, i * 0.06 * bs, by + 0.36 * bs]), bar, lw, 0.6 * b.bars);
+      for (let k = 0; k < 4; k++) {
+        const yy = by + (0.28 - k * 0.065) * bs, w = 0.13 * bs * (1 - k * 0.12);
+        softLine(ctx, B, px([-w, yy + 0.01, -w * 0.4, yy - 0.008, w * 0.1, yy + 0.008, w * 0.6, yy - 0.006, w, yy + 0.01]), bar, lw, 0.5 * b.bars);
+      }
+    } else patch(ctx, B, bar, [{ k: 'ell', x: X(0), y: U(by + 0.2 * bs), rx: h * 0.12 * bs, ry: h * 0.1 * bs }], { alpha: 0.3 * b.bars, feather: 0.6 });
+  }
+
+  // ---- the facial disc: two pale lobes about the eyes, rimmed dark, a dark V between them.
+  const ey = hy + rH * 0.05, ex = rH * 0.42;
+  patch(ctx, B, mix(pale, shade('#f4ead4', tone), 0.4), [
+    { k: 'ell', x: X(-ex), y: U(ey), rx: h * rH * 0.52 * b.face, ry: h * rH * 0.56 * b.face },
+    { k: 'ell', x: X(ex), y: U(ey), rx: h * rH * 0.52 * b.face, ry: h * rH * 0.56 * b.face },
+  ], { alpha: 0.8 * b.face, feather: 0.3 });
+  if (h >= 30) softLine(ctx, B, px([-rH * 0.95, hy + rH * 0.2, -rH * 0.85, hy - rH * 0.5, -rH * 0.3, hy - rH * 0.75, 0, hy - rH * 0.55, rH * 0.3, hy - rH * 0.75, rH * 0.85, hy - rH * 0.5, rH * 0.95, hy + rH * 0.2]), far, Math.max(1, h * 0.012), 0.6);
+  softLine(ctx, B, px([-rH * 0.62, hy + rH * 0.52, 0, hy + rH * 0.12, rH * 0.62, hy + rH * 0.52]), far, Math.max(1, h * 0.016), 0.65);
+
+  // ---- the bill: small, hooked, pointing down between the eyes.
+  {
+    const bl = 0.17 * b.bill, bw = 0.035 * Math.sqrt(b.bill) + 0.012, top = hy - rH * 0.05;
+    const pts = [-bw, top, bw, top, bw * 0.4, top - bl * 0.8, 0, top - bl - b.hook * bl * 0.3, -bw * 0.4, top - bl * 0.8];
+    blob(ctx, B, horn, [{ k: 'poly', pts: px(pts) }], { h, form: false });
+  }
+
+  // ---- the eyes: big, orange and staring; shut for a moment now and then.
+  const er = rH * 0.24 * h;
+  for (const s of [-1, 1]) {
+    if (blink) softLine(ctx, B, px([s * ex - rH * 0.22, ey, s * ex + rH * 0.22, ey]), plume, Math.max(1, er * 0.5), 0.9);
+    else eye(ctx, X(s * ex), U(ey), er, eyeCol);
+  }
 }

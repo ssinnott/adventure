@@ -204,8 +204,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
   smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
   and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
-  crab and rift crawler, the elder and the two wardens) are drawn with their own gear, anatomy and
-  glow rather than a recolour.
+  crab and rift crawler, the crow and the great owl, the elder and the two wardens) are drawn with
+  their own gear, anatomy and glow rather than a recolour.
 - `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
   look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
   mass, with one ink outline around the union, one rendered gradient across the whole (a bright
