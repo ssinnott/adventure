@@ -321,7 +321,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   run. The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
-  then each area's walkthrough where it has one (none has yet), in road order. Every check prints a
+  then each area's walkthrough (the Foreland's and Thornmark's), in road order. Every check prints a
   line saying what it holds, so the output is the list; `node tools/test.ts maps combat` runs a few
   suites, `walkthrough:<area>` one walkthrough. A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
@@ -382,6 +382,16 @@ over content broken on purpose too, and two tools to theirs:
   answers and an answer that hands over an item sets a flag. A fixture town holds the rest: a
   question and its two roads read by the log and the save list, words by flag and by night,
   several hand-ins, a letter.
+- The walkthroughs (EXPANSION §5.8): `walkthrough:shelf` plays The Quiet Farm from a new game,
+  `walkthrough:thornmark` the chain and then Thornmark taken early, before Vask's hire and after it
+  but before the wand. Each step, by the game's own moves (`tools/walk.ts`): the goal is the
+  chapter's, placed at a built map its words name, at the curve's level for it, which sits in the
+  place's band; its fights are won once in ten by the gate's bot at that level; the play moves the
+  goal on; a person who takes an item stands at the step's place; and nothing a person says is
+  written into a chapter already done. Early, the goal comes from no chapter past the last begun,
+  each end is said once and the log ends with the entries of the order played. The quests suite
+  holds every zone on the road of the built areas to a step of the quest; the Downs' is owed to
+  #47 and the Deepthorn's to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
