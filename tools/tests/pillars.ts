@@ -6,6 +6,7 @@
 // fixtures broken on purpose, which it must refuse.
 import { readdirSync } from 'node:fs';
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS } from '../../src/content/index.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { Area, Novelty } from '../../src/content/area.ts';
 import { LOCKS, MOST_AN_AREA, MOST_ON_THE_ROAD } from '../../src/content/locks.ts';
 import type { StoryLock } from '../../src/content/locks.ts';
@@ -73,6 +74,14 @@ export function lineFaults(def: MapDef): string[] {
   return out;
 }
 
+/** The most lines of the log a monster's look may take: it is said with the step that sees it. */
+export const LOOK_LINES = 2;
+
+/** The monsters whose look takes more than LOOK_LINES of the log. */
+export function lookFaults(monsters: readonly MonsterDef[]): string[] {
+  return monsters.flatMap((m) => { const n = m.look ? logLines(m.look).length : 0; return n > LOOK_LINES ? [`${m.id}'s look takes ${n} lines`] : []; });
+}
+
 /** Every text the company reads, by where it is: names, lines, events, notes. Ids, rows, legends and palettes are not text. */
 export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text: string }[] {
   const out: { where: string; text: string }[] = [];
@@ -89,7 +98,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
     for (const e of d.encounters ?? []) add(`${d.id} ${e.id}`, e.slainText);
   }
   for (const i of Object.values(ITEMS)) add(`item ${i.id}`, i.name);
-  for (const m of Object.values(MONSTERS)) add(`monster ${m.id}`, m.name, m.plural);
+  for (const m of Object.values(MONSTERS)) add(`monster ${m.id}`, m.name, m.plural, m.look);
   for (const sp of Object.values(SPELLS)) add(`spell ${sp.id}`, sp.name, sp.text);
   for (const c of Object.values(CLASSES)) add(`class ${c.id}`, c.name, c.blurb);
   for (const r of Object.values(RACES)) add(`race ${r.id}`, r.name, r.blurb);
@@ -360,6 +369,18 @@ export async function pillars(): Promise<void> {
     ok(logLines(sign).length === 3 && lineFaults(at([{ kind: 'sign', x: 1, y: 1, text: sign }])).length > 0, 'a sign of three lines by its words and four as the log shows it fails');
     const two = 'A cold draught at your ankles, from the foot of the south wall. The mortar there is newer.';
     ok(logLines(two).length === 2 && lineFaults(at([{ kind: 'event', x: 1, y: 1, id: 'a', text: two }, { kind: 'event', x: 1, y: 1, id: 'b', text: two + ' ' + two }])).length === 1, 'two texts on one square that fill more than the log together fail');
+  }
+
+  // A monster's look fits two lines of the log; the looks go through the glyph and spelling checks below with every text.
+  {
+    const faults = lookFaults(Object.values(MONSTERS)), looks = Object.values(MONSTERS).filter((m) => m.look).length;
+    ok(!faults.length, `every monster's look fits ${LOOK_LINES} lines of the log (${looks} of ${Object.keys(MONSTERS).length} have one)${faults.length ? ' -> ' + faults.join('; ') : ''}`);
+    const long = 'A heap of wet rope and weed the size of a cart, that heaves itself up the shingle on a hundred pale arms, each ending in a hand.';
+    ok(logLines(long).length === 3 && lookFaults([{ ...MONSTERS.rat, look: long }]).length === 1, 'a look of three lines fails');
+    ok(!lookFaults([{ ...MONSTERS.rat, look: 'A rat the size of a dog, grey and scabbed.' }]).length, 'and one of a line passes');
+    const odd = texts().length, withLook = (() => { const r = MONSTERS.rat; (MONSTERS as Record<string, MonsterDef>).rat = { ...r, look: 'A gray rat—big as a dog.' }; try { return texts(); } finally { (MONSTERS as Record<string, MonsterDef>).rat = r; } })();
+    const bad = withLook.filter((t) => t.where === 'monster rat');
+    ok(withLook.length === odd + 1 && bad.some((t) => missingGlyphs(t.text).length === 1 && americanisms(t.text).length === 1), 'a look is read with every text: a dash and gray in one are caught');
   }
 
   // Every glyph is in the font, and the spelling is British, in every text.

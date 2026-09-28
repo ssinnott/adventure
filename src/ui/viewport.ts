@@ -22,6 +22,7 @@
 // is, nothing: flat pink, unlit and untextured, standing up past the top of the view so that it
 // hides the sky behind it as well as the ground.
 import type { World } from '../game/world.ts';
+import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight } from '../game/world.ts';
 import type { GameMap, Cell, Terrain, MapPalette } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
@@ -37,8 +38,8 @@ import { hash } from './brush.ts';
 
 export const VIEW_W = 400, VIEW_H = 268;
 const NEAR = 0.9;
-const DEPTH = 4;
-const LATERAL = 3;
+const DEPTH = VIEW_DEPTH;
+const LATERAL = VIEW_LATERAL;
 
 export interface ViewRect { x: number; y: number; w: number; h: number; }
 
@@ -47,11 +48,6 @@ export interface ViewMonster { sprite: MonsterSprite; tint: string; size: number
 
 function unit(k: number, h: number): number { return (h / 2) * NEAR / (k + 0.5); }
 
-/** Map coordinates of the cell at depth d, lateral l relative to the party. */
-function cellAt(px: number, py: number, f: Facing, d: number, l: number): { x: number; y: number } {
-  const rf = ((f + 1) & 3) as Facing;
-  return { x: px + FACING_DX[f] * d + FACING_DX[rf] * l, y: py + FACING_DY[f] * d + FACING_DY[rf] * l };
-}
 
 /**
  * The weather and the season as the scene painter sees them, set at the top of each paint like
@@ -152,8 +148,7 @@ let scene: Scene | null = null;
 /** Filled while a scene is painted: where the torches and lanterns are, for the per-frame flames. */
 let flames: Flame[] = [];
 
-/** What is drawn as faces rather than as a floor and a sprite: walls, buildings, doors, and the void. */
-export function isSolidWall(c: Cell): boolean { return c.solid === 'wall' || c.solid === 'building' || c.solid === 'void' || c.door !== 'none'; }
+export { isSolidWall };
 
 /**
  * The first-person view at `r`. `weather` draws the rain, snow, fog and lightning over it; a fight
@@ -217,21 +212,6 @@ export function drawViewport(
   if (weather) drawWeather(ctx, world, r, frame);
 }
 
-/** Whether the cell at (d, l) can be seen from the eye: walk the straight line and stop at walls. */
-function lineOfSight(map: GameMap, px: number, py: number, f: Facing, d: number, l: number): boolean {
-  const steps = Math.max(d, Math.abs(l)) * 2;
-  let lastD = 0, lastL = 0;
-  for (let i = 1; i < steps; i++) {
-    const t = i / steps;
-    const dd = Math.round(d * t), ll = Math.round(l * t);
-    if (dd === lastD && ll === lastL) continue;
-    if (dd === d && ll === l) break;
-    lastD = dd; lastL = ll;
-    const c = cellAt(px, py, f, dd, ll);
-    if (map.blocksView(c.x, c.y)) return false;
-  }
-  return true;
-}
 
 // ------------------------------------------------------------------ the scene ----
 

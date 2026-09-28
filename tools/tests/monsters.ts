@@ -1,6 +1,7 @@
 // Monster groups on the map: stepping toward the party, encounters, respawn, the truce after
 // fleeing, the Cut Stone's tear closing on the Warden's death and the Rift that stops coming back
-// with it, and the groups that walk only in their hours or only after a step.
+// with it, the groups that walk only in their hours or only after a step, and a kind's look said the
+// first time it is seen or fought, and never again.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, FOG } from '../../src/game/world.ts';
@@ -10,7 +11,9 @@ import type { EncounterDef } from '../../src/game/map.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { MINUTES_PER_DAY, dateAt } from '../../src/game/calendar.ts';
 import { findWeather } from '../../src/game/weather.ts';
-import { CLIMATES } from '../../src/content/index.ts';
+import { serialize, deserialize } from '../../src/game/save.ts';
+import { CLIMATES, MONSTERS } from '../../src/content/index.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import { ok } from './lib.ts';
 
 export function monsters(): void {
@@ -98,4 +101,23 @@ export function monsters(): void {
     const g = w.liveGroups().find((x) => x.def.id === 'test_rats');
     ok(!!g && g.state.dead === -1 && g.state.x === w.state.x && g.state.y === w.state.y - 1, 'and stands alive at its square once it does');
   }
+  // A look: said once, the first time a group of the kind comes into sight or into a fight. The
+  // content has none yet, so the rat and the wolf are given one for the while.
+  const table = MONSTERS as Record<string, MonsterDef>, rat = table.rat, wolf = table.wolf;
+  table.rat = { ...rat, look: 'A rat the size of a dog.' }; table.wolf = { ...wolf, look: 'A grey wolf, lean with hunger.' };
+  try {
+    const fresh = (facing: 0 | 2): World => { const r = makeRng(3), w = new World(buildMaps(), defaultParty(r), r); w.travel('shelf', 16, 4, facing); return w; };
+    const behind = fresh(0);
+    ok(!behind.sightings().length && !behind.state.met!.includes('rat'), 'the road rats behind the party are not seen, nor met');
+    const w = fresh(2);
+    const first = w.sightings();
+    ok(first.join() === 'A rat the size of a dog.' && w.state.met!.join() === 'rat', `the road rats three squares ahead are seen, and said (${first.join() || 'nothing'})`);
+    ok(!w.sightings().length && fresh(2).sightings().length === 1, 'and not said again, though a new company sees them anew');
+    const again = new World(buildMaps(), w.party, makeRng(1), deserialize(serialize(w.state, w.party, 1)).world);
+    ok(!again.sightings().length && again.state.met!.includes('rat'), 'nor after a save and a load');
+    ok(w.meet(['rat', 'rat', 'wolf']).join() === 'A grey wolf, lean with hunger.' && !w.meet(['wolf']).length, 'a fight says the kinds in it not met before, once');
+    const step = fresh(2), moved = step.move('forward');
+    const at = moved.kind === 'moved' ? moved.messages.indexOf('A rat the size of a dog.') : -1;
+    ok(at >= 0 && moved.kind === 'moved' && !!moved.encounter, 'a step that brings a group into sight and into a fight says its look with the step, before the fight');
+  } finally { table.rat = rat; table.wolf = wolf; }
 }
