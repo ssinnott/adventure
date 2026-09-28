@@ -779,32 +779,14 @@ function pauldron(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: numb
 }
 
 /**
- * The Barrow Guard: the Queen's guard, still standing to. Lighter than the bone knight — bare bone
- * at the arms and thighs, plate only in pieces (a kettle hat, a gorget, pauldrons, greaves) — and
- * a whole tabard in her blue and gold, faded but hers. The halberd stands grounded by the near
- * foot, held upright in both hands: he holds his ground and never roams.
+ * The Queen's livery on a frame, from the belt up: a whole tabard in her blue from shoulder to
+ * mid-thigh, a gold band at the hem and her crown on the breast, the belt with its gold buckle,
+ * then the gorget and the bare neck above it. `lift` is the breath the upper body rides.
  */
-function guard(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
-  const R = makeRig(x, y, h, p, { tilt: -0.012, hipTilt: 0.01, turn: 0.012, near: [0.09, 0.1, 0.11], far: [-0.086, -0.098, -0.108], toe: [0.7, -0.6] }, BONE);
-  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
-  const lift = p.breathe * h * 0.007, BY = (v: number) => y + v * u - lift;
-  const { st, stD, stM, stL } = plate(p);
-  const q = queens(p.tone, 0.33);
-  const bn = shade('#ece2cc', p.tone), old = shade('#cfc3a8', p.tone), murk = mix(old, INK, 0.7);
-  const leather = shade('#3e2c1e', p.tone);
-  const jd = Math.pow(Math.max(0, Math.sin(p.frame / 23)), 16) * 0.2;
-  groundShadow(ctx, x, y + 1, h * 0.55);
-
-  // The legs, the far one a step darker; the tabard hangs over both tops.
-  guardLeg(ctx, R.legL, h, -1, old, stD, murk, 61);
-  guardLeg(ctx, R.legR, h, 1, bn, stM, murk, 63);
-
-  // The far arm goes behind the tabard's edge at the shoulder and crosses in front of it lower
-  // down, so it is drawn after; the far pauldron first, behind the gorget.
-  pauldron(ctx, R.sFar.x + 1 * u, R.sFar.y - 1.5 * u, 5 * u, stD, h, 71);
-
+function livery(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, lift: number, tone: number, q: ReturnType<typeof queens>, stM: string, old: string, murk: string): void {
+  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u, T = (v: number) => y + v * u - lift;
+  const leather = shade('#3e2c1e', tone);
   // The tabard, whole: shoulder to mid-thigh, drawn in at the belt, a gold band round the hem.
-  const T = (v: number) => BY(v);
   const tab = [
     X(-12.4), T(-75.6), X(-4), T(-76.6), X(5), T(-76.6), X(14.6), T(-75.4),
     X(14.2), T(-66), X(12), T(-58), X(12.6), T(-48), X(13.2), Y(-39),
@@ -835,17 +817,44 @@ function guard(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   blob(ctx, B, stM, [{ k: 'ell', x: X(1.6), y: T(-75.6), rx: 6.8 * u, ry: 3.2 * u }], { h, formK: 0.5, gloss: 0.2 });
   glossTaper(ctx, B, X(2.6), T(-84), X(1.8), T(-76.5), 2.4 * u, 2.8 * u, old, { h });
   for (let i = 0; i < 2; i++) softLine(ctx, B, [X(0.2), T(-82 + i * 2.6), X(4.2), T(-82.4 + i * 2.6)], murk, Math.max(1, 0.9 * u), 0.55);
+}
+
+/**
+ * The Barrow Guard: the Queen's guard, still standing to. Lighter than the bone knight — bare bone
+ * at the arms and thighs, plate only in pieces (a kettle hat, a gorget, pauldrons, greaves) — and
+ * a whole tabard in her blue and gold, faded but hers. The halberd stands grounded by the near
+ * foot, held upright in both hands: he holds his ground and never roams.
+ */
+function guard(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.012, hipTilt: 0.01, turn: 0.012, near: [0.09, 0.1, 0.11], far: [-0.086, -0.098, -0.108], toe: [0.7, -0.6] }, BONE);
+  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
+  const lift = p.breathe * h * 0.007, BY = (v: number) => y + v * u - lift;
+  const { st, stD, stM, stL } = plate(p);
+  const q = queens(p.tone, 0.33);
+  const bn = shade('#ece2cc', p.tone), old = shade('#cfc3a8', p.tone), murk = mix(old, INK, 0.7);
+  const jd = Math.pow(Math.max(0, Math.sin(p.frame / 23)), 16) * 0.2;
+  groundShadow(ctx, x, y + 1, h * 0.55);
+
+  // The legs, the far one a step darker; the tabard hangs over both tops.
+  guardLeg(ctx, R.legL, h, -1, old, stD, murk, 61);
+  guardLeg(ctx, R.legR, h, 1, bn, stM, murk, 63);
+
+  // The far arm goes behind the tabard's edge at the shoulder and crosses in front of it lower
+  // down, so it is drawn after; the far pauldron first, behind the gorget.
+  pauldron(ctx, R.sFar.x + 1 * u, R.sFar.y - 1.5 * u, 5 * u, stD, h, 71);
+
+  livery(ctx, x, y, h, lift, p.tone, q, stM, old, murk);
 
   // The arms, bone: the near one hangs to the haft at the hip, the far one crosses the belly to
   // take it higher. A vambrace on the near forearm, the only plate either arm has kept.
   const hx0 = X(19.5);                                                        // the haft's line
-  const nElb = { x: X(23.4), y: T(-59.6) }, nHand = { x: hx0, y: T(-47) };
-  const fElb = { x: X(-5), y: T(-57) }, fHand = { x: hx0, y: T(-61) };
+  const nElb = { x: X(23.4), y: BY(-59.6) }, nHand = { x: hx0, y: BY(-47) };
+  const fElb = { x: X(-5), y: BY(-57) }, fHand = { x: hx0, y: BY(-61) };
   blob(ctx, B, old, [...limb(R.sFar.x, R.sFar.y, fElb.x, fElb.y, fHand.x - 2 * u, fHand.y, 2.3 * u, 2 * u, 75)], { h, formK: 0.5 });
   gap(ctx, fElb.x, fElb.y, R.sFar.x, R.sFar.y, 2.6 * u, murk, 0.6);
   blob(ctx, B, bn, [...limb(R.sNear.x, R.sNear.y, nElb.x, nElb.y, nHand.x + 1 * u, nHand.y, 2.6 * u, 2.3 * u, 77)], { h, formK: 0.5 });
   gap(ctx, nElb.x, nElb.y, R.sNear.x, R.sNear.y, 2.8 * u, murk, 0.6);
-  blob(ctx, B, st, [{ k: 'cap', x0: X(22.6), y0: T(-56.4), x1: X(20.8), y1: T(-49.6), r0: 3.1 * u, r1: 3.3 * u }], { h, formK: 0.5, gloss: 0.12 });
+  blob(ctx, B, st, [{ k: 'cap', x0: X(22.6), y0: BY(-56.4), x1: X(20.8), y1: BY(-49.6), r0: 3.1 * u, r1: 3.3 * u }], { h, formK: 0.5, gloss: 0.12 });
   pauldron(ctx, R.sNear.x, R.sNear.y - 1.8 * u, 5.8 * u, st, h, 79);
 
   // The halberd, grounded by the near foot and upright: an ash haft, langets, an axe blade facing
