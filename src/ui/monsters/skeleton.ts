@@ -1,11 +1,13 @@
-// The risen dead: a skeleton, a bone knight, a ghoul and a drowned man. The last two still carry
-// flesh, which is the whole of why they are here and not in the wraith module -- a wraith is a
-// spirit in a shroud, and these two are bodies. Painted after the Xeen look. Bone is the one
-// material whose parts are honestly separate objects, so each bone is its own small rendered mass
-// (a knobbed, waisted shaft, no flat tones), the joints are dark gaps rather than seams, the skull
-// is a cranium with a hanging jaw, and the ribcage is a real cage laid over a hollow so the gaps
-// between the ribs read as space. The knight is the same bones inside dull steel plate, several
-// steps darker and cooler than bone, with raw bone at the neck, elbows, knees and hands.
+// The risen dead: a skeleton, a bone knight, a ghoul, a drowned man and the Queen's barrow guard.
+// The ghoul and the drowned man still carry flesh, which is the whole of why they are here and not
+// in the wraith module -- a wraith is a spirit in a shroud, and these two are bodies. Painted after
+// the Xeen look. Bone is the one material whose parts are honestly separate objects, so each bone
+// is its own small rendered mass (a knobbed, waisted shaft, no flat tones), the joints are dark
+// gaps rather than seams, the skull is a cranium with a hanging jaw, and the ribcage is a real cage
+// laid over a hollow so the gaps between the ribs read as space. The knight is the same bones
+// inside dull steel plate, several steps darker and cooler than bone, with raw bone at the neck,
+// elbows, knees and hands. The barrow guard keeps less plate and wears the Queen's livery over it,
+// in her blue and gold.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow, eye } from './common.ts';
@@ -25,12 +27,13 @@ const BONE = (t: number): Mats => ({
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned'];
+export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bone_knight') knight(ctx, x, y, h, p);
   else if (kind === 'ghoul') ghoul(ctx, x, y, h, p);
   else if (kind === 'drowned') drowned(ctx, x, y, h, p);
+  else if (kind === 'barrow_guard') guard(ctx, x, y, h, p);
   else skeleton(ctx, x, y, h, p);
 };
 
@@ -733,4 +736,155 @@ function drowned(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
     ctx.beginPath(); ctx.ellipse(dx2, dy2 + t * h * 0.11, Math.max(0.6, h * 0.008), Math.max(0.8, h * 0.014), 0, 0, Math.PI * 2); ctx.fill();
   }
   void p.light;
+}
+
+// ------------------------------------------------------------ the Queen's guard ----
+/**
+ * The Queen's colours (#17): one deep blue and one gold, fixed rather than taken from the def's
+ * tint, since a tint recolours and these must stay hers. The barrow has faded them: `fade` is how
+ * far each is taken toward its own dark, a third for the guard's tabard and further for the
+ * captain's cloak, which has gone nearly black.
+ */
+const QUEEN_BLUE = '#1f3a7a', QUEEN_GOLD = '#d4a83a';
+function queens(tone: number, fade: number): { blue: string; gold: string; goldD: string } {
+  const blue = shade(mix(QUEEN_BLUE, '#080a14', fade), tone), gold = shade(mix(QUEEN_GOLD, '#2a1c0c', fade * 0.8), tone);
+  return { blue, gold, goldD: mix(gold, INK, 0.4) };
+}
+
+/** Old plate: the def's tint taken down and cool, as the bone knight's is, in four steps. */
+function plate(p: Paint): { st: string; stD: string; stM: string; stL: string } {
+  const st = mix(p.dark, '#303c4a', 0.45);
+  return { st, stD: mix(st, '#10151c', 0.44), stM: mix(st, '#10151c', 0.22), stL: mix(st, '#e4eef8', 0.3) };
+}
+
+/**
+ * A leg of the Queen's dead: the bare thigh bone, a knee cop, a greave down the shin and the bone
+ * foot. `s` is +1 for the near leg (toes out to the right) and -1 for the far one.
+ */
+function guardLeg(ctx: CanvasRenderingContext2D, leg: readonly { x: number; y: number }[], h: number, s: number, bone: string, st: string, murk: string, seed: number): void {
+  const u = h / 100, [hip, knee, ank] = leg;
+  blob(ctx, B, bone, [shaft(hip.x, hip.y, knee.x, knee.y, 3.4 * u, seed)], { h, formK: 0.55 });
+  blob(ctx, B, bone, [{ k: 'poly', pts: [
+    ank.x - s * 3 * u, ank.y + u, ank.x + s * 2.5 * u, ank.y + u, ank.x + s * 6.5 * u, ank.y + 5 * u,
+    ank.x + s * 6.5 * u, ank.y + 7.5 * u, ank.x - s * 3.5 * u, ank.y + 7.5 * u,
+  ] }], { h, formK: 0.5 });
+  gap(ctx, knee.x, knee.y, hip.x, hip.y, 3.2 * u, murk, 0.6);
+  blob(ctx, B, st, [{ k: 'cap', x0: knee.x, y0: knee.y + 3 * u, x1: ank.x, y1: ank.y - 1 * u, r0: 3.1 * u, r1: 2.6 * u }], { h, formK: 0.5, gloss: 0.12 });
+  blob(ctx, B, mix(st, '#e4eef8', 0.12), [{ k: 'ell', x: knee.x + s * 0.4 * u, y: knee.y + 0.6 * u, rx: 3.2 * u, ry: 2.6 * u }], { h, formK: 0.6, gloss: 0.3 });
+}
+
+/** A pauldron: a domed steel cap on the shoulder, with its lame's crease. */
+function pauldron(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, hex: string, h: number, seed: number): void {
+  blob(ctx, B, hex, [{ k: 'curve', pts: ring(cx, cy, r, r * 0.86, 11, -0.1), wobble: 0.035, seed, sub: 2, gloss: 0.2 }], { h, formK: 0.6, creases: [
+    { x0: cx - r, y0: cy + r * 0.28, x1: cx + r, y1: cy + r * 0.2, r: r * 0.22, a: 0.4 },
+  ] });
+}
+
+/**
+ * The Queen's livery on a frame, from the belt up: a whole tabard in her blue from shoulder to
+ * mid-thigh, a gold band at the hem and her crown on the breast, the belt with its gold buckle,
+ * then the gorget and the bare neck above it. `lift` is the breath the upper body rides.
+ */
+function livery(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, lift: number, tone: number, q: ReturnType<typeof queens>, stM: string, old: string, murk: string): void {
+  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u, T = (v: number) => y + v * u - lift;
+  const leather = shade('#3e2c1e', tone);
+  // The tabard, whole: shoulder to mid-thigh, drawn in at the belt, a gold band round the hem.
+  const tab = [
+    X(-12.4), T(-75.6), X(-4), T(-76.6), X(5), T(-76.6), X(14.6), T(-75.4),
+    X(14.2), T(-66), X(12), T(-58), X(12.6), T(-48), X(13.2), Y(-39),
+    X(9.5), Y(-37.6), X(7), Y(-38.8), X(1), Y(-38), X(-4), Y(-39), X(-7), Y(-37.8), X(-12), Y(-39),
+    X(-11.4), Y(-48), X(-10.6), T(-58), X(-12.6), T(-66),
+  ];
+  blob(ctx, B, q.blue, [{ k: 'curve', pts: tab, wobble: 0.025, seed: 73, sub: 2 }], { h, tex: 'folds', seed: 73, amount: 0.55, formK: 0.45, spread: 0.75, creases: [
+    { x0: X(-4), y0: Y(-54), x1: X(-5), y1: Y(-40), r: 1.4 * u, a: 0.35 },
+    { x0: X(6), y0: Y(-54), x1: X(7), y1: Y(-40), r: 1.4 * u, a: 0.35 },
+  ] });
+  // The hem band and the edges in gold, and her crown on the breast.
+  ctx.strokeStyle = B.col(q.gold); ctx.lineWidth = Math.max(1, 1.6 * u); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.beginPath(); ctx.moveTo(X(-11.4), Y(-41)); ctx.lineTo(X(-4), Y(-40.8)); ctx.lineTo(X(1), Y(-40.2)); ctx.lineTo(X(7), Y(-40.8)); ctx.lineTo(X(12.6), Y(-41)); ctx.stroke();
+  ctx.fillStyle = B.col(q.gold);
+  const kx = X(1.4), ky = T(-66);
+  ctx.beginPath();
+  ctx.moveTo(kx - 4.4 * u, ky + 2.4 * u); ctx.lineTo(kx - 4.6 * u, ky - 2.8 * u); ctx.lineTo(kx - 2.2 * u, ky - 0.4 * u);
+  ctx.lineTo(kx, ky - 3.8 * u); ctx.lineTo(kx + 2.2 * u, ky - 0.4 * u); ctx.lineTo(kx + 4.6 * u, ky - 2.8 * u); ctx.lineTo(kx + 4.4 * u, ky + 2.4 * u);
+  ctx.closePath(); ctx.fill();
+  softLine(ctx, B, [kx - 4.2 * u, ky + 2.6 * u, kx + 4.2 * u, ky + 2.6 * u], q.gold, Math.max(1, u), 0.5);
+
+  // The belt at the waist, a gold buckle on it.
+  ctx.strokeStyle = B.col(leather); ctx.lineWidth = Math.max(1, 2.2 * u);
+  ctx.beginPath(); ctx.moveTo(X(-10.8), T(-58.4)); ctx.quadraticCurveTo(X(1), T(-56.6), X(12.2), T(-58.4)); ctx.stroke();
+  glossPoly(ctx, B, [X(-1.2), T(-59.6), X(3), T(-59.6), X(3), T(-56.2), X(-1.2), T(-56.2)], q.gold, { h, gloss: 0.4 });
+
+  // The gorget round the neck.
+  blob(ctx, B, stM, [{ k: 'ell', x: X(1.6), y: T(-75.6), rx: 6.8 * u, ry: 3.2 * u }], { h, formK: 0.5, gloss: 0.2 });
+  glossTaper(ctx, B, X(2.6), T(-84), X(1.8), T(-76.5), 2.4 * u, 2.8 * u, old, { h });
+  for (let i = 0; i < 2; i++) softLine(ctx, B, [X(0.2), T(-82 + i * 2.6), X(4.2), T(-82.4 + i * 2.6)], murk, Math.max(1, 0.9 * u), 0.55);
+}
+
+/**
+ * The Barrow Guard: the Queen's guard, still standing to. Lighter than the bone knight — bare bone
+ * at the arms and thighs, plate only in pieces (a kettle hat, a gorget, pauldrons, greaves) — and
+ * a whole tabard in her blue and gold, faded but hers. The halberd stands grounded by the near
+ * foot, held upright in both hands: he holds his ground and never roams.
+ */
+function guard(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.012, hipTilt: 0.01, turn: 0.012, near: [0.09, 0.1, 0.11], far: [-0.086, -0.098, -0.108], toe: [0.7, -0.6] }, BONE);
+  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
+  const lift = p.breathe * h * 0.007, BY = (v: number) => y + v * u - lift;
+  const { st, stD, stM, stL } = plate(p);
+  const q = queens(p.tone, 0.33);
+  const bn = shade('#ece2cc', p.tone), old = shade('#cfc3a8', p.tone), murk = mix(old, INK, 0.7);
+  const jd = Math.pow(Math.max(0, Math.sin(p.frame / 23)), 16) * 0.2;
+  groundShadow(ctx, x, y + 1, h * 0.55);
+
+  // The legs, the far one a step darker; the tabard hangs over both tops.
+  guardLeg(ctx, R.legL, h, -1, old, stD, murk, 61);
+  guardLeg(ctx, R.legR, h, 1, bn, stM, murk, 63);
+
+  // The far arm goes behind the tabard's edge at the shoulder and crosses in front of it lower
+  // down, so it is drawn after; the far pauldron first, behind the gorget.
+  pauldron(ctx, R.sFar.x + 1 * u, R.sFar.y - 1.5 * u, 5 * u, stD, h, 71);
+
+  livery(ctx, x, y, h, lift, p.tone, q, stM, old, murk);
+
+  // The arms, bone: the near one hangs to the haft at the hip, the far one crosses the belly to
+  // take it higher. A vambrace on the near forearm, the only plate either arm has kept.
+  const hx0 = X(19.5);                                                        // the haft's line
+  const nElb = { x: X(23.4), y: BY(-59.6) }, nHand = { x: hx0, y: BY(-47) };
+  const fElb = { x: X(-5), y: BY(-57) }, fHand = { x: hx0, y: BY(-61) };
+  blob(ctx, B, old, [...limb(R.sFar.x, R.sFar.y, fElb.x, fElb.y, fHand.x - 2 * u, fHand.y, 2.3 * u, 2 * u, 75)], { h, formK: 0.5 });
+  gap(ctx, fElb.x, fElb.y, R.sFar.x, R.sFar.y, 2.6 * u, murk, 0.6);
+  blob(ctx, B, bn, [...limb(R.sNear.x, R.sNear.y, nElb.x, nElb.y, nHand.x + 1 * u, nHand.y, 2.6 * u, 2.3 * u, 77)], { h, formK: 0.5 });
+  gap(ctx, nElb.x, nElb.y, R.sNear.x, R.sNear.y, 2.8 * u, murk, 0.6);
+  blob(ctx, B, st, [{ k: 'cap', x0: X(22.6), y0: BY(-56.4), x1: X(20.8), y1: BY(-49.6), r0: 3.1 * u, r1: 3.3 * u }], { h, formK: 0.5, gloss: 0.12 });
+  pauldron(ctx, R.sNear.x, R.sNear.y - 1.8 * u, 5.8 * u, st, h, 79);
+
+  // The halberd, grounded by the near foot and upright: an ash haft, langets, an axe blade facing
+  // out, a beak behind it and a spike on top.
+  const top = Y(-121), hy0 = Y(-102);
+  glossTaper(ctx, B, hx0, Y(0.5), hx0, Y(-104), 1.5 * u, 1.4 * u, R.wood, { h });
+  softLine(ctx, B, [hx0, Y(-92), hx0, Y(-100)], stD, Math.max(1, 1.8 * u), 0.8);
+  glossPoly(ctx, B, [
+    hx0 + 1 * u, hy0 - 8 * u, hx0 + 4.5 * u, hy0 - 8.5 * u, hx0 + 8 * u, hy0 - 12 * u, hx0 + 10.5 * u, hy0 - 8 * u,
+    hx0 + 11 * u, hy0 - 3 * u, hx0 + 10 * u, hy0 + 2 * u, hx0 + 7.5 * u, hy0 + 6 * u, hx0 + 4.5 * u, hy0 + 1.5 * u, hx0 + 1 * u, hy0 + 1 * u,
+  ], st, { h, gloss: 0.35, spread: 0.6 });
+  glossPoly(ctx, B, [hx0 - 1 * u, hy0 - 7 * u, hx0 - 7.5 * u, hy0 - 4.5 * u, hx0 - 1 * u, hy0 - 3 * u], stM, { h, gloss: 0.25 });
+  glossPoly(ctx, B, [hx0 - 1.4 * u, hy0 - 9 * u, hx0, top, hx0 + 1.4 * u, hy0 - 9 * u], st, { h, gloss: 0.35 });
+  ctx.strokeStyle = B.col(rgba(mix(stL, '#ffffff', 0.5), 0.55)); ctx.lineWidth = 1; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(hx0 + 9.8 * u, hy0 - 8 * u); ctx.quadraticCurveTo(hx0 + 10.8 * u, hy0 - 3 * u, hx0 + 9.4 * u, hy0 + 2 * u); ctx.stroke();
+
+  // The fists close on the haft after it, so the finger bones lie across it.
+  fist(ctx, R, fHand, -Math.PI / 2, 42, { hex: old, flip: -1, k: 0.8 });
+  fist(ctx, R, nHand, -Math.PI / 2, 44, { hex: bn, flip: 1, k: 0.85 });
+
+  // The skull under a kettle hat: the brim shades the sockets, and the jaw still hangs.
+  skull(ctx, R.hx, R.hy + 1 * u, R.hr * 0.92, 0.08, bn, old, h, jd, murk);
+  const kx0 = R.hx + 0.6 * u, ky0 = R.hy - 2.4 * u;
+  blob(ctx, B, st, [
+    { k: 'ell', x: kx0, y: ky0 + 0.8 * u, rx: 11 * u, ry: 2.4 * u },
+    { k: 'curve', pts: [kx0 - 7 * u, ky0, kx0 - 6.4 * u, ky0 - 5 * u, kx0 - 3 * u, ky0 - 8.2 * u, kx0 + 1 * u, ky0 - 9 * u, kx0 + 5 * u, ky0 - 7.6 * u, kx0 + 7.4 * u, ky0 - 4 * u, kx0 + 7.6 * u, ky0], wobble: 0.02, seed: 81, sub: 2, gloss: 0.3 },
+  ], { h, formK: 0.5, tex: 'cracks', seed: 81, amount: 0.4, creases: [{ x0: kx0 - 7 * u, y0: ky0 - 0.6 * u, x1: kx0 + 7.4 * u, y1: ky0 - 0.6 * u, r: 1.2 * u, a: 0.45 }] });
+  softLine(ctx, B, [kx0 - 9.6 * u, ky0 + 2.8 * u, kx0 + 9.8 * u, ky0 + 2.8 * u], stD, Math.max(1, 1.6 * u), 0.5);
+  ctx.strokeStyle = B.col(rgba(mix(stL, '#ffffff', 0.45), 0.5)); ctx.lineWidth = Math.max(1, u);
+  ctx.beginPath(); ctx.moveTo(kx0 - 5.8 * u, ky0 - 3.6 * u); ctx.quadraticCurveTo(kx0 - 4 * u, ky0 - 7.2 * u, kx0 - 0.4 * u, ky0 - 8 * u); ctx.stroke();
 }

@@ -162,6 +162,7 @@ const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
   acolyte: cultist.draw, deacon: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
+  barrow_guard: skeleton.draw,
   riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw,
   ogre: ogre.draw,
   wraith: wraith.draw,
