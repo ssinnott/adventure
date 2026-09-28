@@ -338,9 +338,9 @@ over content broken on purpose too, and two tools to theirs:
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
 - `pillars` (§5.4): a hint on the near side of every secret door; no text past three lines of the
-  log and no monster's look past two, every glyph in the font, British spelling; each `Area.novel` holds; water and roads carry on
-  into the atlas; story locks (`content/locks.ts`) signed in, none between areas and every hand-in
-  taking its item at the first meeting.
+  log and no monster's look past two, every glyph in the font, British spelling; each `Area.novel`
+  holds; water and roads carry on into the atlas; story locks (`content/locks.ts`) signed in, none
+  between areas and every hand-in taking its item at the first meeting.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each

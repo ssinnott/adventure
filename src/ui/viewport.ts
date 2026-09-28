@@ -48,7 +48,6 @@ export interface ViewMonster { sprite: MonsterSprite; tint: string; size: number
 
 function unit(k: number, h: number): number { return (h / 2) * NEAR / (k + 0.5); }
 
-
 /**
  * The weather and the season as the scene painter sees them, set at the top of each paint like
  * `flames`: murk is fog or driving rain or snow closing in (0 .. 1), cover the snow lying, wet the
@@ -211,7 +210,6 @@ export function drawViewport(
   ctx.restore();
   if (weather) drawWeather(ctx, world, r, frame);
 }
-
 
 // ------------------------------------------------------------------ the scene ----
 

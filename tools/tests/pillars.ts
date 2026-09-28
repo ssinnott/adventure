@@ -17,8 +17,8 @@ import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS } from '../../src/
 import { CLASSES, RACES, TRAITS } from '../../src/game/party.ts';
 import { signLine } from '../../src/game/world.ts';
 import { NORTH } from '../../src/game/types.ts';
-import { FONT_CHARS } from '../../src/lib/engine/text.ts';
-import { logLines, LOG_LINES } from '../../src/ui/frame.ts';
+import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
+import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../src/ui/frame.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -378,9 +378,14 @@ export async function pillars(): Promise<void> {
     const long = 'A heap of wet rope and weed the size of a cart, that heaves itself up the shingle on a hundred pale arms, each ending in a hand.';
     ok(logLines(long).length === 3 && lookFaults([{ ...MONSTERS.rat, look: long }]).length === 1, 'a look of three lines fails');
     ok(!lookFaults([{ ...MONSTERS.rat, look: 'A rat the size of a dog, grey and scabbed.' }]).length, 'and one of a line passes');
-    const odd = texts().length, withLook = (() => { const r = MONSTERS.rat; (MONSTERS as Record<string, MonsterDef>).rat = { ...r, look: 'A gray rat—big as a dog.' }; try { return texts(); } finally { (MONSTERS as Record<string, MonsterDef>).rat = r; } })();
+    // A fight's log wraps as the exploring log does, so a look of two lines, said as it opens, shows whole.
+    const two = 'A man in a leather coat matted with salt, a lantern held high on a pole and a knife in the other hand.';
+    const shown = logTail(['2 Wreckers appear!', 'The fog spoils every archer\'s aim.', two], COMBAT_LOG_LINES);
+    ok(logLines(two).length === 2 && LAYOUT.view.w === LAYOUT.log.w && shown.slice(-2).map((l) => l.text).join(' ') === two && shown.every((l) => measureText(l.text) <= LAYOUT.log.w - 12) && shown.slice(-2).every((l) => l.latest),
+      `a fight's log shows a two-line look whole, each line inside the view (${shown.map((l) => measureText(l.text)).join(', ')} of ${LAYOUT.log.w - 12}px)`);
+    const withLook = (() => { const r = MONSTERS.rat; (MONSTERS as Record<string, MonsterDef>).rat = { ...r, look: 'A gray rat—big as a dog.' }; try { return texts(); } finally { (MONSTERS as Record<string, MonsterDef>).rat = r; } })();
     const bad = withLook.filter((t) => t.where === 'monster rat');
-    ok(withLook.length === odd + 1 && bad.some((t) => missingGlyphs(t.text).length === 1 && americanisms(t.text).length === 1), 'a look is read with every text: a dash and gray in one are caught');
+    ok(bad.some((t) => missingGlyphs(t.text).length === 1 && americanisms(t.text).length === 1), 'a look is read with every text: a dash and gray in one are caught');
   }
 
   // Every glyph is in the font, and the spelling is British, in every text.

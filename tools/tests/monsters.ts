@@ -113,6 +113,13 @@ export function monsters(): void {
     const first = w.sightings();
     ok(first.join() === 'A rat the size of a dog.' && w.state.met!.join() === 'rat', `the road rats three squares ahead are seen, and said (${first.join() || 'nothing'})`);
     ok(!w.sightings().length && fresh(2).sightings().length === 1, 'and not said again, though a new company sees them anew');
+    const sees = (x: World): string[] => x.groupsInSight().map((g) => g.def.id);
+    const night = fresh(2); night.state.minutes = 10 * 1440;
+    ok(night.sight === 2 && !sees(night).includes('road_rats') && !night.sightings().length, 'at midnight the same rats, three squares off in two of sight, are not seen');
+    const mill = fresh(2); mill.travel('mill', 8, 1, 1); mill.state.light = 50;
+    ok(sees(mill).includes('m_cult1'), 'the mill\'s cultists are seen from the square beside them, lit');
+    mill.travel('mill', 6, 1, 1);
+    ok(mill.sight === 4 && !sees(mill).includes('m_cult1'), 'and not through the wall between, from 6,1 facing east, lit though it is');
     const again = new World(buildMaps(), w.party, makeRng(1), deserialize(serialize(w.state, w.party, 1)).world);
     ok(!again.sightings().length && again.state.met!.includes('rat'), 'nor after a save and a load');
     ok(w.meet(['rat', 'rat', 'wolf']).join() === 'A grey wolf, lean with hunger.' && !w.meet(['wolf']).length, 'a fight says the kinds in it not met before, once');
