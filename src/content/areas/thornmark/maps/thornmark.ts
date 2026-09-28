@@ -66,6 +66,7 @@ export const THORNMARK: MapDef = {
     { kind: 'chest', x: 30, y: 9, id: 'tm_barrow', gold: 260, items: ['rune_dagger+1', 'potion_sp_great'] },
     { kind: 'event', x: 13, y: 24, id: 'grove_road', once: true, text: 'The road narrows and the oaks lean in over it. Every trunk on this stretch carries a chisel mark at shoulder height.' },
     { kind: 'event', x: 7, y: 25, id: 'grove_edge', once: true, text: 'The trees close in. Ahead the road ends in a hollow ringed with oaks: the Grove. The air hums, faintly, the way the cellar under Ashcombe did.' },
+    { kind: 'event', x: 21, y: 27, id: 'second_marker', once: true, text: 'A Lantern survey marker, half-sunk in the grass among the rocks. Its glass is lit, and warm to the touch.' },
     { kind: 'event', x: 20, y: 23, id: 'lake', once: true, text: 'A still lake. On the far shore, half-sunk, a Lantern survey marker with its glass gone dark.' },
   ],
   encounters: [

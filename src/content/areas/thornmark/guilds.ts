@@ -1,5 +1,6 @@
 // Thornmark's guild quests (DESIGN §8; game/guilds.ts): the Wardens' lost watchtower and the
-// garrison's strongbox, given out at the Warden Drillyard in Helmstow.
+// garrison's strongbox, given out at the Warden Drillyard in Helmstow; the Lanterns' two survey
+// markers, given out at either Lantern hall.
 import type { GuildQuest } from '../../../game/guilds.ts';
 
 export const GUILDS: readonly GuildQuest[] = [
@@ -29,6 +30,34 @@ export const GUILDS: readonly GuildQuest[] = [
     goals: [
       { when: { seen: 'thornmark:tm_strongbox' }, text: 'Report to the Warden Drillyard in Helmstow.' },
       { when: { flag: 'q_wardens_strongbox' }, text: 'Find the garrison\'s chest by Thornhold\'s north wall.' },
+    ],
+  },
+  {
+    id: 'lanterns_marker', guild: 'lanterns', rank: 1,
+    offer: ['"One of our survey markers stands in a lake in Thornmark. It went dark in the spring. Go and look at it, and tell us whether the glass is broken or only out."'],
+    goal: { seen: 'thornmark:lake' },
+    paid: ['"Dark, with the glass whole. That is worse than broken. Thank you for looking."'],
+    early: ['"You have seen the marker in the lake already. Dark, then. We were afraid of that."'],
+    pay: { gold: 150, xp: 900 },
+    title: 'The Dark Marker',
+    entries: [{ id: 'sent', when: { flag: 'q_lanterns_marker' }, text: 'The Lanterns\' survey marker in a Thornmark lake has gone dark. They want to know whether its glass is broken.' }],
+    goals: [
+      { when: { seen: 'thornmark:lake' }, text: 'Report to a Lantern hall, in Helmstow or Thornhold.' },
+      { when: { flag: 'q_lanterns_marker' }, text: 'Find the dark survey marker in Thornmark\'s lake.' },
+    ],
+  },
+  {
+    id: 'lanterns_second', guild: 'lanterns', rank: 2,
+    offer: ['"There is a second marker on the hills south-east of the river, and it is still lit. Nobody can tell us why one burns and the other does not. Go and stand by it."'],
+    goal: { seen: 'thornmark:second_marker' },
+    paid: ['"Still burning. We will have a Reader up on those hills before the month is out."'],
+    early: ['"You found the lit marker before we asked. Then you have seen what we cannot explain."'],
+    pay: { gold: 200, xp: 1500 },
+    title: 'The Second Marker',
+    entries: [{ id: 'sent', when: { flag: 'q_lanterns_second' }, text: 'A second Lantern survey marker stands on the hills south-east of Thornmark\'s river, still lit.' }],
+    goals: [
+      { when: { seen: 'thornmark:second_marker' }, text: 'Report to a Lantern hall, in Helmstow or Thornhold.' },
+      { when: { flag: 'q_lanterns_second' }, text: 'Find the lit marker on the hills south-east of the river.' },
     ],
   },
 ];
