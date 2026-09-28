@@ -34,7 +34,10 @@ DESIGN.md first for the why.
   `content/shipped.json` lists every id and placement a save may hold, so a check fails when one
   goes or moves without a bump and its upgrade (`node tools/shipped.ts` records what is new). A
   map edited since the save still takes it: a group the map has gained stands where the map puts
-  it, and a saved door goes back only where the map still has a locked or secret door.
+  it, and a saved door goes back only where the map still has a locked or secret door. A save
+  keeps the kinds of monster the company has met (`met`); one made before has met none.
+- **A monster's look.** The first time a company sees a kind, as the viewport draws it (the group's
+  first monster, in line of sight), or meets one in a fight unseen, the log says its `look`, once.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
   journal of what the party has found: The Quiet Farm (Vask), The Cargo Ledger (Hale), The
   Grove Stone (Vask's lead, Sylvane's chisel), and The Lost Expedition, which the first Meridian
@@ -60,12 +63,13 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   out onto the outdoors. Outdoors, the party's zone says where it is: the name on the status strip
   and the almanac, the level band, the region whose weather it has, the palette it is painted in.
 - **Walked, not jumped.** An exit from one zone map into the next is dropped: the road through the
-  pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its flags
-  as a gate on its square (`MapDef.gates`) and its arrival line as what the log says on crossing into
-  Thornmark ("The pass opens onto old forest. Thornmark."; the way back says "Back through the pass
-  to the Foreland."). Monster groups may follow the party over a zone's edge. The gate is the
-  road's one story lock, and a lock between areas: `tools/tests/pillars.ts` reports it as #40's to
-  take away.
+  pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its
+  arrival line as what the log says on crossing into Thornmark ("The pass opens onto old forest.
+  Thornmark."; the way back says "Back through the pass to the Foreland."). The pass is open to any
+  company: a sign at the Warden checkpoint, on the one square the pass is entered from, warns it,
+  and Thornmark's monsters decide. Monster groups may follow the party over a zone's edge. An exit
+  with flags still becomes a gate on its square (`MapDef.gates`; the outdoors suite holds a fixture
+  to it), but none is left between the zones.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the
   `void` solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
@@ -161,13 +165,14 @@ cap, which is 10 until the road past it is built:
   Tempest). The Ranger now draws on the druid list, not the sorcerer's. Both Lantern guilds teach
   bards and druids.
 - **Class traits.** Every class has one or two passives (`TRAITS` in `party.ts`), listed on the
-  class picker and the character sheet. Knight: Stalwart (+2 AC), Weapon Master (+1 melee).
-  Paladin: Holy Strike (+3 on the dead), Divine Health (no disease). Ranger: Marksman (+2
-  ranged), Keen Eyes (always finds secret doors). Cleric: Healing Hands (+3 on heals), Faith (no
-  curses). Sorcerer: Spellfire (+2 per foe on damage spells), Iron Will (no sleep). Thief: Sneak Attack (+4 in round one), Keen
-  Eyes. Barbarian: Rage (+3 melee below half hp), Die Hard (dies at -20). Monk: Unarmoured Defence
-  (robe or less: +1 AC, +1 per two levels), Stillness (no paralysis). Bard: Inspiring Song (+1
-  to-hit for the party while standing). Druid: Nature's Ward (no poison), Healing Hands.
+  class picker and the character sheet. Knight: Stalwart (+2 AC), Weapon Master (+1 melee). Paladin:
+  Holy Strike (+3 on the dead), Divine Health (no disease). Ranger: Marksman (+2 ranged), Keen Eyes
+  (always finds secret doors). Cleric: Healing Hands (+3 on heals), Faith (no curses). Sorcerer:
+  Spellfire (+2 per foe on damage spells), Iron Will (no sleep). Thief: Sneak Attack (+4 in round
+  one), Keen Eyes. Barbarian: Rage (+3 melee below half hp), Die Hard (dies at -20). Monk:
+  Unarmoured Defence (robe or less: +1 AC, +1 per two levels), Stillness (no paralysis). Bard:
+  Inspiring Song (+1 to-hit for the party while standing). Druid: Nature's Ward (no poison), Healing
+  Hands.
 
 ## Art
 
@@ -277,9 +282,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
   Thornmark's less gold (#26); the gate's marks for a boss's odds, a company two under the floor
   and fights to a rest are missed on the Foreland (#47) and in Thornmark (#40), and the Foreland
-  misses its floor too (#47); the pass's gate and the atlas's later ways are locks between areas
-  (#40); three hand-ins wait on a quest before taking their item (#43); and the Foreland's west
-  edge disagrees with the atlas on one square (#47's).
+  misses its floor too (#47); three hand-ins wait on a quest before taking their item (#43); and
+  the Foreland's west edge disagrees with the atlas on one square (#47's).
 
 ## Checks
 
@@ -334,9 +338,9 @@ over content broken on purpose too, and two tools to theirs:
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
 - `pillars` (§5.4): a hint on the near side of every secret door; no text past three lines of the
-  log, every glyph in the font, British spelling; each `Area.novel` holds; water and roads carry on
-  into the atlas; story locks (`content/locks.ts`) signed in, none between areas and every hand-in
-  taking its item at the first meeting.
+  log and no monster's look past two, every glyph in the font, British spelling; each `Area.novel`
+  holds; water and roads carry on into the atlas; story locks (`content/locks.ts`) signed in, none
+  between areas and every hand-in taking its item at the first meeting.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
@@ -400,7 +404,7 @@ does.
 | `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, an outdoor map's `density` and, on the outdoors, its gates and zones), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group wears |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), encounter triggers, rest, search |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`), encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
@@ -423,7 +427,7 @@ does.
 | `content/areas/<area>/` | an area: its maps, monsters, items, quests, climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
-| `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty, as the road's one lock, the pass's flag, is to go (#40) |
+| `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
-| `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, groups and door squares, the zones' places, the flags, items, spells, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
+| `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
 | `content/atlas.ts` | the world map's plan: the land, the areas of the road, and the zones, places and sites not built yet; each area charts its own in `areas/<area>/atlas.ts`, and `content/index.ts` merges them into `ATLAS` |

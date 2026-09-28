@@ -1,5 +1,5 @@
 // Moving about: steps and the clock, doors, keys and secrets, water and mountains, the end of the
-// world, the gated pass walked into Thornmark and back, Town Portal and the stairs.
+// world, the open pass walked into Thornmark and back, Town Portal and the stairs.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
@@ -60,24 +60,21 @@ export function movement(): void {
   world.travel('shelf', 10, 1, 0);
   ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Foreland in to the north');
   delete party.flags.skill_mountaineer;
-  // The pass to Thornmark is a gate on the road through the ridge: closed until Vask's contract is done.
-  world.travel('shelf', 30, 9, 1);
-  const closed = world.move('forward');
-  ok(closed.kind === 'blocked' && /checkpoint/.test(closed.reason) && local(world).x === 30, 'the Thornmark pass is closed before the Ashcombe hand-in');
-  party.flags.q_ashcombe_done = 1;
-  ok(world.move('forward').kind === 'blocked' && local(world).x === 30, 'the pass stays closed until Brandy Hole is cleared as well');
-  party.flags.q_greywater_done = 1;
-  // Open, it is walked, not jumped: the road runs on through the ridge into Thornmark, and the log
-  // says where the Foreland ends, then Thornmark greets the party as it always has.
-  const said: string[] = [];
-  for (let i = 0; i < 3; i++) { const step = world.move('forward'); if (step.kind === 'moved') said.push(...step.messages); }
+  // The pass to Thornmark is open to any company, a level-1 one with no flags among them, and the
+  // Warden checkpoint on the road warns it on the way: walked, not jumped, the road runs on through
+  // the ridge, the log says where the Foreland ends, then Thornmark greets the party as it always has.
+  ok(party.members.every((m) => m.level === 1) && !Object.keys(party.flags).some((f) => f.startsWith('q_')), 'the company at the pass is level 1 and has done nothing for anyone');
+  world.travel('shelf', 29, 9, 1);
+  const said: string[] = [], steps: string[] = [];
+  for (let i = 0; i < 4; i++) { const step = world.move('forward'); steps.push(step.kind); if (step.kind === 'moved') said.push(...step.messages); }
   const there = local(world);
-  ok(world.map.id === OUTDOORS && there.map === 'thornmark' && there.x === 1 && there.y === 9, `the pass opens once the flags are set, and three steps on the road reach Thornmark (${there.map} ${there.x},${there.y})`);
-  ok(said[0] === 'The pass opens onto old forest. Thornmark.' && said.some((m) => /older than Helmstow/.test(m)), `crossing into Thornmark says so (${said.join(' / ')})`);
+  ok(steps.every((k) => k === 'moved') && world.map.id === OUTDOORS && there.map === 'thornmark' && there.x === 1 && there.y === 9, `four steps on the road reach Thornmark (${steps.join(', ')}; ${there.map} ${there.x},${there.y})`);
+  const warn = said.findIndex((m) => /Warden checkpoint/.test(m) && /Thornmark/.test(m)), cross = said.indexOf('The pass opens onto old forest. Thornmark.');
+  ok(warn >= 0 && cross > warn && said.some((m) => /older than Helmstow/.test(m)), `the checkpoint warns the company before it crosses, and crossing into Thornmark says so (${said.join(' / ')})`);
   ok(world.here.name === 'Thornmark' && world.region === 'thornmark' && world.state.zones!.includes('thornmark'), 'the party has set foot in Thornmark, and its weather is Thornmark\'s');
   world.turn('back');
   const back = [world.move('forward'), world.move('forward')];
-  ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the gate it is the Foreland again');
+  ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the pass it is the Foreland again');
   // Town Portal returns to the last town stood in.
   ok(world.townPortal() === 'Helmstow' && world.map.id === 'harrow', 'Town Portal goes to Helmstow before any other town is visited');
   world.travel('thornhold', 7, 14, 0); world.travel('grove2', 8, 8, 0);

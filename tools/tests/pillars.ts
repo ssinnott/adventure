@@ -6,6 +6,7 @@
 // fixtures broken on purpose, which it must refuse.
 import { readdirSync } from 'node:fs';
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS } from '../../src/content/index.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { Area, Novelty } from '../../src/content/area.ts';
 import { LOCKS, MOST_AN_AREA, MOST_ON_THE_ROAD } from '../../src/content/locks.ts';
 import type { StoryLock } from '../../src/content/locks.ts';
@@ -16,8 +17,8 @@ import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS } from '../../src/
 import { CLASSES, RACES, TRAITS } from '../../src/game/party.ts';
 import { signLine } from '../../src/game/world.ts';
 import { NORTH } from '../../src/game/types.ts';
-import { FONT_CHARS } from '../../src/lib/engine/text.ts';
-import { logLines, LOG_LINES } from '../../src/ui/frame.ts';
+import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
+import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../src/ui/frame.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -73,6 +74,14 @@ export function lineFaults(def: MapDef): string[] {
   return out;
 }
 
+/** The most lines of the log a monster's look may take: it is said with the step that sees it. */
+export const LOOK_LINES = 2;
+
+/** The monsters whose look takes more than LOOK_LINES of the log. */
+export function lookFaults(monsters: readonly MonsterDef[]): string[] {
+  return monsters.flatMap((m) => { const n = m.look ? logLines(m.look).length : 0; return n > LOOK_LINES ? [`${m.id}'s look takes ${n} lines`] : []; });
+}
+
 /** Every text the company reads, by where it is: names, lines, events, notes. Ids, rows, legends and palettes are not text. */
 export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text: string }[] {
   const out: { where: string; text: string }[] = [];
@@ -89,7 +98,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
     for (const e of d.encounters ?? []) add(`${d.id} ${e.id}`, e.slainText);
   }
   for (const i of Object.values(ITEMS)) add(`item ${i.id}`, i.name);
-  for (const m of Object.values(MONSTERS)) add(`monster ${m.id}`, m.name, m.plural);
+  for (const m of Object.values(MONSTERS)) add(`monster ${m.id}`, m.name, m.plural, m.look);
   for (const sp of Object.values(SPELLS)) add(`spell ${sp.id}`, sp.name, sp.text);
   for (const c of Object.values(CLASSES)) add(`class ${c.id}`, c.name, c.blurb);
   for (const r of Object.values(RACES)) add(`race ${r.id}`, r.name, r.blurb);
@@ -308,12 +317,10 @@ export function lockFaults(found: readonly FoundLock[], locks: readonly StoryLoc
   return out;
 }
 
-/** What #40 and #43 fix, reported as theirs until they land: the pass, the atlas's ways that open on the story, the three hand-ins. */
+/** What #43 fixes, reported as its own until it lands: the three hand-ins. */
 const LOCKS_OWED: Record<string, readonly string[]> = {
-  '#40': ['exit shelf 31,9'],
   '#43': ['hand-in harrow 9,5', 'hand-in shelf 29,8', 'hand-in thornhold 9,5'],
 };
-const OPENS_OWED = ['downs-delta', 'thornmark-eaves', 'kilnhaven-saltmouth', 'kilnhaven-cinderport', 'wold-saltings', 'firemount-highspine', 'cinderport-hearthisle'];
 
 export async function pillars(): Promise<void> {
   // Hints: every secret door names one, on its near side.
@@ -360,6 +367,23 @@ export async function pillars(): Promise<void> {
     ok(logLines(sign).length === 3 && lineFaults(at([{ kind: 'sign', x: 1, y: 1, text: sign }])).length > 0, 'a sign of three lines by its words and four as the log shows it fails');
     const two = 'A cold draught at your ankles, from the foot of the south wall. The mortar there is newer.';
     ok(logLines(two).length === 2 && lineFaults(at([{ kind: 'event', x: 1, y: 1, id: 'a', text: two }, { kind: 'event', x: 1, y: 1, id: 'b', text: two + ' ' + two }])).length === 1, 'two texts on one square that fill more than the log together fail');
+  }
+
+  // A monster's look fits two lines of the log; the looks go through the glyph and spelling checks below with every text.
+  {
+    const faults = lookFaults(Object.values(MONSTERS)), looks = Object.values(MONSTERS).filter((m) => m.look).length;
+    ok(!faults.length, `every monster's look fits ${LOOK_LINES} lines of the log (${looks} of ${Object.keys(MONSTERS).length} have one)${faults.length ? ' -> ' + faults.join('; ') : ''}`);
+    const long = 'A heap of wet rope and weed the size of a cart, that heaves itself up the shingle on a hundred pale arms, each ending in a hand.';
+    ok(logLines(long).length === 3 && lookFaults([{ ...MONSTERS.rat, look: long }]).length === 1, 'a look of three lines fails');
+    ok(!lookFaults([{ ...MONSTERS.rat, look: 'A rat the size of a dog, grey and scabbed.' }]).length, 'and one of a line passes');
+    // A fight's log wraps as the exploring log does, so a look of two lines, said as it opens, shows whole.
+    const two = 'A man in a leather coat matted with salt, a lantern held high on a pole and a knife in the other hand.';
+    const shown = logTail(['2 Wreckers appear!', 'The fog spoils every archer\'s aim.', two], COMBAT_LOG_LINES);
+    ok(logLines(two).length === 2 && LAYOUT.view.w === LAYOUT.log.w && shown.slice(-2).map((l) => l.text).join(' ') === two && shown.every((l) => measureText(l.text) <= LAYOUT.log.w - 12) && shown.slice(-2).every((l) => l.latest),
+      `a fight's log shows a two-line look whole, each line inside the view (${shown.map((l) => measureText(l.text)).join(', ')} of ${LAYOUT.log.w - 12}px)`);
+    const withLook = (() => { const r = MONSTERS.rat; (MONSTERS as Record<string, MonsterDef>).rat = { ...r, look: 'A gray rat—big as a dog.' }; try { return texts(); } finally { (MONSTERS as Record<string, MonsterDef>).rat = r; } })();
+    const bad = withLook.filter((t) => t.where === 'monster rat');
+    ok(bad.some((t) => missingGlyphs(t.text).length === 1 && americanisms(t.text).length === 1), 'a look is read with every text: a dash and gray in one are caught');
   }
 
   // Every glyph is in the font, and the spelling is British, in every text.
@@ -456,12 +480,7 @@ export async function pillars(): Promise<void> {
     owed(!f, key.startsWith('hand-in') ? `${key}: takes its item at the first meeting${f ? ` (today not before ${f.flags.join(', ')})` : ''}` : `${key}: no lock between areas${f ? ` (today ${f.flags.join(' and ')})` : ''}`, whose);
   }
   const opens = ATLAS.links.filter((l) => l.opens !== undefined);
-  const stray = opens.filter((l) => !OPENS_OWED.includes(`${l.from}-${l.to}`));
-  ok(!stray.length, `no way on the atlas opens on the story but the ${OPENS_OWED.length} #40 opens${stray.length ? ' -> ' + stray.map((l) => `${l.from}-${l.to}`).join(', ') : ''}`);
-  for (const key of OPENS_OWED) {
-    const l = opens.find((l) => `${l.from}-${l.to}` === key);
-    owed(!l, `the atlas's way ${key} is no lock between areas${l ? ` (today it opens after step ${l.opens})` : ''}`, '#40');
-  }
+  ok(!opens.length, `no way on the atlas opens on the story${opens.length ? ' -> ' + opens.map((l) => `${l.from}-${l.to} after step ${l.opens}`).join(', ') : ''}`);
   {
     const room = (exits: MapDef['exits'], features: MapDef['features'] = []): MapDef => ({ id: 'fixture_lock', name: 'Lock fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits, features });
     const [first, second] = AREAS;

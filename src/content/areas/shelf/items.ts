@@ -1,6 +1,6 @@
 // The Foreland's items: what Helmstow sells past the kits, what Brandy Hole's chests hold, the finds
 // of the Downs (the kits' gear and the band's with a plus, the named finds and two keepsakes) and the
-// wand and the ledger the pass waits on.
+// wand and the ledger Vask and Hale want.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, core, MARTIAL, MAIL } from '../../items.ts';
 

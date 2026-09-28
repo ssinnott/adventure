@@ -111,12 +111,12 @@ export function atlas(): void {
   // Places: a built one is a map, a planned one is not yet; every town and dungeon has one.
   for (const q of ATLAS.places) ok(q.planned ? !MAP_DEFS.some((d) => d.id === q.id) : MAP_DEFS.some((d) => d.id === q.id), `place ${q.id}: ${q.planned ? 'planned and not built yet' : 'a built map'}`);
   for (const d of MAP_DEFS.filter((q) => q.kind !== 'outdoor')) ok(ATLAS.places.some((q) => q.id === d.id), `${d.id}: has a plate on the world map`);
-  // The road of levels: numbered once each, every step reachable once the ones before it are done,
-  // the gates that make it wind shutting their step out until then, and the bands rising along it.
+  // The road of levels: numbered once each, every step reachable from the start, since no way on it
+  // is shut, and the bands rising along it.
   const steps = progression(ATLAS, MAP_DEFS);
   ok(steps.every((st, i) => st.order === i + 1), `the steps are numbered 1 to ${steps.length}, once each`);
-  for (const st of steps) ok(reachable(ATLAS, MAP_DEFS, st.order - 1).has(st.id), `step ${st.order} (${st.name}) can be reached once the steps before it are done`);
-  for (const [id, done] of [['saltreach', 1], ['sunderwood', 3], ['ashfall', 8], ['hearth', 10]] as const) ok(!reachable(ATLAS, MAP_DEFS, done).has(id), `${id} is shut until step ${done + 1}'s way opens`);
+  const open = reachable(ATLAS, MAP_DEFS, 0);
+  for (const st of steps) ok(open.has(st.id), `step ${st.order} (${st.name}) can be reached from the start`);
   const banded = steps.filter((st) => st.band);
   ok(banded.length === steps.length && banded.every((st, i) => i === 0 || st.band![0] >= banded[i - 1].band![0]), 'every step has a level band, and the bands rise along the road');
 }
