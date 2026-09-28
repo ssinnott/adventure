@@ -1,5 +1,5 @@
 // Thornmark's items: the tier a band 5-10 party buys in the Armoury, the same with a plus that it
-// finds, and the chisel and the journal the Cut Stone gives up.
+// finds and the chisel and the journal the Cut Stone gives up.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 
