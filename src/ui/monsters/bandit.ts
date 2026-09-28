@@ -21,7 +21,7 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
@@ -30,6 +30,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
   else if (kind === 'smuggler_bow') smugglerBow(ctx, x, y, h, p);
   else if (kind === 'smuggler_captain') smugglerCaptain(ctx, x, y, h, p);
+  else if (kind === 'wrecker') wrecker(ctx, x, y, h, p);
   else bandit(ctx, x, y, h, p);
 };
 
@@ -718,3 +719,67 @@ function smugglerCaptain(ctx: CanvasRenderingContext2D, x: number, y: number, h:
   hand(ctx, R, wrist, aa, 122, { flip: -1 });
   void p.light;
 }
+
+// ------------------------------------------------------------------ the wreckers ----
+/**
+ * The wrecker: a man of the Downs' coast in a hooded oilskin coat to the knee, yellow gone dirty
+ * with tar and salt, standing by the boathook he has planted upright in the shingle. The smuggler
+ * works his gaff across the body in both hands; the wrecker leans on his like a staff, one fist high
+ * on the shaft and the hook and spike standing over his head, which is what tells them apart.
+ */
+function wrecker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.02, hipTilt: 0.022, turn: 0.02, near: [0.074, 0.14, 0.16], far: [-0.072, -0.1, -0.12], toe: [0.8, -0.6], lift: [0, 0.03] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 23) * h * 0.006;
+  // The boathook planted beside the near boot, and the near fist high on it: the wrist sits on the
+  // shaft's own line, so the hand grips it and not the air beside it.
+  const lo = { x: x + h * 0.31, y: y - h * 0.004 }, hi = { x: x + h * 0.286 + sway, y: y - h * 1.07 };
+  const on = (t: number): Pt => ({ x: lo.x + (hi.x - lo.x) * t, y: lo.y + (hi.y - lo.y) * t });
+  const grip = on((y - (sy + h * 0.03)) / (y - hi.y));
+  const near: Arm = [R.sNear, { x: x + h * 0.258, y: sy + h * 0.17 }, grip];
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.19 }, { x: x - h * 0.198, y: sy + h * 0.35 }];
+  const hemY = y - h * 0.42, skirtY = y - h * 0.26;
+  const coat = p.base;
+  groundShadow(ctx, x, y + 1, h * 0.8);
+  gaff(ctx, R, lo, hi);
+  blob(ctx, B, shade(p.dark, 0.86), armParts(R, far, 131, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  hand(ctx, R, far[2], null, 132, { far: true, k: 0.92 });
+  legs(ctx, R, shade('#2e2a26', p.tone), 133, [0.8, -0.6]);
+  blob(ctx, B, shade('#221e1a', p.tone), [
+    { k: 'cap', x0: x + h * 0.154, y0: y - h * 0.2, x1: x + h * 0.16, y1: y - h * 0.055, r0: h * 0.046, r1: h * 0.043 },
+    { k: 'cap', x0: x - h * 0.116, y0: y - h * 0.19, x1: x - h * 0.12, y1: y - h * 0.06, r0: h * 0.043, r1: h * 0.04 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The coat: body, near sleeve and a skirt to the knee, wet enough to shine.
+  blob(ctx, B, coat, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 134, sub: 3 },
+    { k: 'curve', pts: [
+      x - h * 0.128, hemY - h * 0.1, x - h * 0.16, hemY - h * 0.02, x - h * 0.184, skirtY,
+      x - h * 0.06, skirtY + h * 0.018, x + h * 0.07, skirtY + h * 0.006, x + h * 0.19, skirtY - h * 0.012,
+      x + h * 0.166, hemY - h * 0.02, x + h * 0.136, hemY - h * 0.1,
+    ], wobble: 0.05, seed: 135, sub: 3 },
+    ...armParts(R, near, 136),
+  ], { h, formK: 0.55, tex: 'folds', seed: 134, amount: 0.8, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The front edge and its toggles, and a rope belt knotted at the hip.
+  softLine(ctx, B, [x + h * 0.012, sy + h * 0.05, x + h * 0.02, hemY, x + h * 0.03, skirtY + h * 0.01], shade(coat, 0.6), Math.max(1, h * 0.012), 0.7);
+  for (let i = 0; i < 3; i++) band(ctx, B, x + h * 0.022, sy + h * (0.07 + i * 0.07), h * 0.026, h * 0.014, R.wood);
+  const rope = shade('#8a7a5a', p.tone);
+  blob(ctx, B, rope, [
+    beltPart(R, hemY - h * 0.05, h * 0.03, 137),
+    { k: 'cap', x0: x - h * 0.07, y0: hemY - h * 0.036, x1: x - h * 0.086, y1: hemY + h * 0.05, r0: h * 0.013, r1: h * 0.011 },
+  ], { h, formK: 0.4, tex: 'cracks', seed: 137, amount: 0.3 });
+  // A stubbled jaw, the face, then the hood round it, peaked at the back.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.8, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.58, hx + hr * 0.3, hy + hr * 0.58, hx + hr * 0.84, hy + hr * 0.3, hx + hr * 0.6, hy + hr * 0.92, hx, hy + hr * 1.06, hx - hr * 0.6, hy + hr * 0.92], wobble: 0.06, spiky: 0.06, seed: 138, sub: 2 }], { h, form: false, outline: false });
+  face(ctx, R, false);
+  blob(ctx, B, coat, [{ k: 'curve', pts: [
+    hx - hr * 1.3, hy + hr * 1.3, hx - hr * 1.42, hy - hr * 0.2, hx - hr * 1.3, hy - hr * 1.12, hx - hr * 0.5, hy - hr * 1.62,
+    hx + hr * 0.4, hy - hr * 1.5, hx + hr * 1.12, hy - hr * 1.08, hx + hr * 1.38, hy - hr * 0.2, hx + hr * 1.3, hy + hr * 1.3,
+    hx + hr * 0.84, hy + hr * 0.8, hx + hr * 0.9, hy - hr * 0.16, hx + hr * 0.56, hy - hr * 0.56, hx, hy - hr * 0.64,
+    hx - hr * 0.56, hy - hr * 0.56, hx - hr * 0.88, hy - hr * 0.16, hx - hr * 0.82, hy + hr * 0.8,
+  ], wobble: 0.04, seed: 139, sub: 3 }], { h, formK: 0.55, spread: 0.7, gloss: 0.3, tex: 'folds', seed: 139, amount: 0.5 });
+  // The shadow the hood throws on the face inside it.
+  softLine(ctx, B, [hx - hr * 0.74, hy + hr * 0.7, hx - hr * 0.78, hy - hr * 0.14, hx - hr * 0.46, hy - hr * 0.46, hx + hr * 0.02, hy - hr * 0.52, hx + hr * 0.48, hy - hr * 0.46, hx + hr * 0.8, hy - hr * 0.14, hx + hr * 0.76, hy + hr * 0.7], shade('#1a1410', p.tone), Math.max(1, hr * 0.26), 0.6);
+  hand(ctx, R, grip, Math.atan2(hi.y - lo.y, hi.x - lo.x), 140, { flip: 1 });
+  void p.light;
+}
+
