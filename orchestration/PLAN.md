@@ -421,3 +421,21 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 | 3 | #85 | session_017gmKkkiPWxH5PB61L1M1mr (the #99/#101 session) | `claude/m1-85-words` |
 
   Each drawing waits on the owner's OK on its sheet.
+
+### 19:30: #133 merged, #42 closed; four more pull requests in review
+
+- #133 (#42's B) merged at 19:27 (main 0a4ef3b) after its fix round (7a9c27e): a run that goes to
+  the Stone before Thornhold, and `everyGoalWalked` (dropping that run fails it with "Find someone in
+  Thornhold who knows the Grove Stone."); choice 3 corrected; the pass break said. On the head (main
+  db1fe2a in): ALL OK (43 owed: #47 ×16 and #49 ×1 with the zone check's two), SMOKE OK, "Nothing
+  new."; CI green. Main's tree is the head's. #42 closes; its session is free.
+- #131 told at 19:31 to merge main and port `tools/walk.ts` onto its API (one words helper for
+  `talk`, the suite and the walk); then it lands, then #132 (its fix round 5418f05 is in: a rank kept
+  once reached, the menu read fresh, who is ready to train; a second round after it merges #131).
+- #134's fix round (e232c37): the body says how much of the wall at 3 is the gate bot's (Slumber
+  never cast: 55%; the first monster struck: 27%), and that the look changed; the sheet and a
+  before-and-after of tm_wolves2 went to the owner. It waits on the owner's OK.
+- New: #135 (#17's B, the ward and the throne room; waits on #85 and the owner's sheet OK), #136
+  (#85, the owner's words), #137 and #138 (#48's B and C, the old wood and the Eldest; wait on the
+  owner's sheet OK). Reviewers at 19:29 (`reviews/135.md`, `136.md`, `137.md`, `138.md`). #48's A
+  (the owl) is pushed on `claude/m1-48-owl`, not yet a pull request.
