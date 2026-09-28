@@ -12,6 +12,7 @@ import { createRequire } from 'node:module';
 import { createServer } from './server.ts';
 import { AREAS, MAP_DEFS, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
 import { GameMap } from '../src/game/map.ts';
+import { worldPoint } from '../src/game/atlas.ts';
 import type { MapDef } from '../src/game/map.ts';
 import { FACING_DX, FACING_DY } from '../src/game/types.ts';
 import type { Facing } from '../src/game/types.ts';
@@ -20,12 +21,28 @@ import type { RegionId } from '../src/game/weather.ts';
 import { daylightAt, MINUTES_PER_DAY, MIDSUMMER, EPOCH_DAY, DAYS_PER_YEAR } from '../src/game/calendar.ts';
 
 const require = createRequire(import.meta.url);
-const args = process.argv.slice(2);
-const opt = (name: string): string | undefined => { const i = args.indexOf('--' + name); return i >= 0 ? args[i + 1] : undefined; };
-const list = (name: string): string[] => opt(name)?.split(',').filter(Boolean) ?? [];
-const out = args.find((a, i) => !a.startsWith('--') && !(i > 0 && args[i - 1].startsWith('--')));
+const USAGE = 'usage: node tools/sheet.ts out.png --area <id> | [--maps a,b] [--monsters x,y] [--interiors p,q]';
 const fail = (msg: string): never => { console.error(msg); process.exit(2); };
-if (!out) fail('usage: node tools/sheet.ts out.png --area <id> | [--maps a,b] [--monsters x,y] [--interiors p,q]');
+// Strict: one output path, and each known flag once with a value. Anything else is refused, so a
+// misspelt flag never makes an empty sheet that looks like nothing changed.
+const FLAGS = ['area', 'maps', 'monsters', 'interiors'];
+const opts: Record<string, string> = {};
+let out: string | undefined;
+for (let i = 2; i < process.argv.length; i++) {
+  const a = process.argv[i];
+  if (a.startsWith('--')) {
+    const name = a.slice(2), v = process.argv[i + 1];
+    if (!FLAGS.includes(name)) fail(`unknown flag ${a}\n${USAGE}`);
+    if (name in opts) fail(`${a} given twice\n${USAGE}`);
+    if (v === undefined || v.startsWith('--') || v === '') fail(`${a} needs a value\n${USAGE}`);
+    opts[name] = v; i++;
+  } else if (out === undefined) out = a;
+  else fail(`one output path only, not '${out}' and '${a}'\n${USAGE}`);
+}
+if (!out || !out.endsWith('.png')) fail(USAGE);
+if (!Object.keys(opts).length) fail(`nothing to draw\n${USAGE}`);
+const opt = (name: string): string | undefined => opts[name];
+const list = (name: string): string[] => opt(name)?.split(',').filter(Boolean) ?? [];
 
 // ---------------------------------------------------------------- what goes on it
 
@@ -44,7 +61,6 @@ const unknown = [
   ...interiors.filter((id) => !(INTERIORS as readonly string[]).includes(id)).map((id) => `interior '${id}'`),
 ];
 if (unknown.length) fail(`unknown ${unknown.join(', ')}`);
-if (!maps.length && !monsters.length && !interiors.length) { console.log('nothing new: no sheet'); process.exit(0); }
 
 interface View { label: string; x: number; y: number; facing: Facing }
 interface MapPlan { id: string; name: string; kind: string; region: RegionId; views: View[]; world: { x: number; y: number; w: number; h: number; mark: [number, number] } }
@@ -85,6 +101,17 @@ function siteView(m: GameMap, name: string, at: readonly [number, number]): View
   return null;
 }
 
+/** The outdoor square, as a world point, that leads to a map, through as many maps as it takes. */
+function entrance(id: string, seen = new Set<string>()): [number, number] | null {
+  seen.add(id);
+  for (const d of MAP_DEFS) for (const e of d.exits ?? []) {
+    if (e.to !== id || seen.has(d.id)) continue;
+    const p = worldPoint(ATLAS, d.id, e.x, e.y) ?? entrance(d.id, seen);
+    if (p) return p;
+  }
+  return null;
+}
+
 function planMap(id: string): MapPlan {
   const def = MAP_DEFS.find((d) => d.id === id)!;
   const m = new GameMap(def);
@@ -94,15 +121,19 @@ function planMap(id: string): MapPlan {
     const v = siteView(m, s.name, s.at);
     if (v) views.push(v); else fail(`site '${s.name}' on ${id} has no open square within four`);
   }
-  // Its crop of the world map, in world cells: the zone with a margin, or round a town's or a
-  // dungeon's plate; `mark` is where the party stands on the cloth, the first view.
+  // Its crop of the world map, in world cells, with `mark` ringed: outdoors, the zone with a
+  // margin and the first view's square; a town or a dungeon, round the outdoor square it is
+  // entered from (through the maps that lead to it), which the art cloth draws where the plate
+  // centre is not.
   const zone = ATLAS.zones.find((z) => z.map === id && z.at);
-  const place = ATLAS.places.find((p) => p.id === id);
-  let world: MapPlan['world'];
+  let world: MapPlan['world'] | undefined;
   if (zone?.at) world = { x: zone.at[0] - 8, y: zone.at[1] - 8, w: m.width + 16, h: m.height + 16, mark: [zone.at[0] + views[0].x + 0.5, zone.at[1] + views[0].y + 0.5] };
-  else if (place) world = { x: place.at[0] - 20, y: place.at[1] - 20, w: 40, h: 40, mark: [place.at[0], place.at[1]] };
-  else fail(`map '${id}' is neither a zone nor a place on the atlas`);
-  return { id, name: def.name, kind: def.kind, region: def.region ?? 'shelf', views, world: world! };
+  else {
+    const door = entrance(id);
+    if (door) world = { x: Math.floor(door[0]) - 20, y: Math.floor(door[1]) - 20, w: 40, h: 40, mark: door };
+  }
+  if (!world) return fail(`map '${id}' has no zone and no way in from the outdoors`);
+  return { id, name: def.name, kind: def.kind, region: def.region ?? 'shelf', views, world };
 }
 
 const mapPlans = maps.map(planMap);
@@ -227,7 +258,10 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
         g.log = [];
         g.frame = 0;
         sctx.clearRect(0, 0, 640, 360);
-        g.render(sctx);
+        // No 'A sign: Space' hint over the view: the sheet shows the place, not what is to hand in
+        // it. A group ahead keeps its 'Space to attack', since the same lookup draws the group.
+        w.featureHere = () => undefined;
+        try { g.render(sctx); } finally { delete w.featureHere; }
         return snapshot();
       };
       shots.push({ label: v.label, day: one(t.noon), night: dungeon ? null : one(t.night) });
