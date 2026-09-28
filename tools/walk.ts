@@ -4,10 +4,10 @@
 // the chain, and again with Thornmark taken early. Nothing in the game imports this.
 //
 // A step is checked as it comes up: the goal the log shows is one of the chapter's, placed at a
-// built map, and its words name the place; the company's level, the curve's for the step, sits in
-// that map's band; the play finishes it (every fight it needs is won at least once in ten by the
-// gate's bot at that level, and the goal moves on); and a person who takes an item stands at the
-// step's place.
+// built map and named in its words; the company's level, the curve's for the step, sits in that
+// map's band; the play finishes it (every fight it needs is won at least once in ten by the gate's
+// bot at that level, and the goal moves on); and a person who takes an item stands at the step's
+// place. Every goal of every chapter has to come up in some run (`everyGoalWalked`).
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { buildMaps } from '../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST } from '../src/content/index.ts';
@@ -25,7 +25,7 @@ import { winRate, gateOpts } from './gate.ts';
 
 type Ok = (cond: boolean, msg: string) => void;
 
-/** A game being walked: the world, the party, the news said so far, and the level the curve gives the step. */
+/** A game being walked: the world, the party, the news said so far and the level the curve gives the step. */
 export interface Walk {
   world: World;
   party: Party;
@@ -126,7 +126,9 @@ function goalOf(text: string): { chapter: Chapter; at: string } | undefined {
 export function placeNames(map: string): string[] {
   const d = def(map);
   const home = d?.kind === 'outdoor' ? d : homeMap(MAP_DEFS, map);
-  const own = [d?.name, ...ATLAS.sites.filter((s) => !s.planned && (s.map === map || (d?.kind !== 'outdoor' && s.map === home?.id) || (d?.kind === 'outdoor' && s.map === map))).map((s) => s.name)];
+  // A map with no outdoor map to open onto takes no site's name but its own.
+  const on = new Set([map, ...(home ? [home.id] : [])]);
+  const own = [d?.name, ...ATLAS.sites.filter((s) => !s.planned && s.map !== undefined && on.has(s.map)).map((s) => s.name)];
   return [...new Set(own.filter((n): n is string => !!n).map((n) => n.replace(/^The /, '').toLowerCase()))];
 }
 
@@ -135,7 +137,7 @@ export const namesPlace = (text: string, map: string): boolean => placeNames(map
 
 /**
  * The curve's level for a step (the footprint's default): the chapter's area floor, raised to the
- * step's place's floor, capped at the area's next floor, and never falling within the chapter.
+ * step's place's floor, capped at the area's next floor and never falling within the chapter.
  */
 export function levelFor(chapter: Chapter, at: string, before: number): number {
   const area = AREAS.find((a) => a.chapter === chapter);
@@ -158,6 +160,7 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
   for (const s of steps) {
     const v = quest(w), goal = v?.goal ?? null;
     const g = goal ? goalOf(goal) : undefined;
+    if (goal) WALKED.add(goal);
     const tag = `${how}, ${chapter.title}, ${s.name}`;
     w.ok(!!g && g.chapter === chapter, `${tag}: the goal is the chapter's (${goal})`);
     if (!g || g.chapter !== chapter) return;
@@ -178,6 +181,15 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
     const late = (after?.pages ?? []).flatMap((p) => closed.has(p.def.id) ? p.entries.filter((e) => !closed.get(p.def.id)!.has(e.id) && personal(e)).map((e) => `${p.def.id}.${e.id}`) : []);
     w.ok(!late.length, `${tag}: nothing a person says is written into a chapter already done${late.length ? ' -> ' + late.join(', ') : ''}`);
   }
+}
+
+/** Every goal a run of `playChapter` has come to, in this process. */
+const WALKED = new Set<string>();
+
+/** Every goal of every chapter came up in some run: none is words no company is ever shown. */
+export function everyGoalWalked(ok: Ok): void {
+  const missed = THE_QUEST.chapters.flatMap((c) => c.goals.filter((g) => !WALKED.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
+  ok(!missed.length, `every goal of the one quest comes up in a run${missed.length ? ' -> ' + missed.join('; ') : ''}`);
 }
 
 /** The quest's goal comes only from a chapter begun, or one before a chapter begun. */

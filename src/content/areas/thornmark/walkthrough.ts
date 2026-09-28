@@ -6,7 +6,7 @@ import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
 import { HIRE, STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
-import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, quest, listen } from '../../../../tools/walk.ts';
+import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH } from '../../../game/types.ts';
 
@@ -17,7 +17,7 @@ const sylvane = (w: Walk): void => { walkThrough(w, 'thornmark', 23, 5, NORTH, '
 /** Under the Grove: the Stone seen, the Hand of Ash and the Warden of the Cut fought. */
 const stone = (w: Walk): void => { see(w, 'grove2:g2_stone'); fight(w, 'grove2:g2_hand'); fight(w, 'grove2:g2_warden'); };
 
-/** The chapter in order: through the pass, to Sylvane, under the Grove, and the chisel back. */
+/** The chapter in order: through the pass, to Sylvane, under the Grove and the chisel back. */
 export const STEPS: readonly Step[] = [
   { name: 'the pass', play: pass },
   { name: 'to Thornhold', play: sylvane },
@@ -26,6 +26,15 @@ export const STEPS: readonly Step[] = [
 ];
 /** The chapter for a company Sylvane has already hired. */
 const FROM_SYLVANE = STEPS.slice(2);
+/**
+ * The chapter for a company that goes straight to the Stone and never meets Sylvane till it has
+ * the chisel: she takes it at the first meeting, and never hires.
+ */
+const STONE_FIRST: readonly Step[] = [
+  STEPS[0],
+  { name: 'the Stone, unsent', play: stone },
+  { name: 'the chisel, to someone who knows', play: (w) => { walkThrough(w, 'thornmark', 23, 5, NORTH, 'thornhold'); meetWho(w, 'ashen_chisel'); } },
+];
 
 export const walkthrough: Walkthrough = (ok) => {
   // The chain, in order.
@@ -37,7 +46,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(chain.news.slice(-2).join(' ') === 'Chapter complete: The Grove Stone. Quest complete: The Dimming.', `in order, the chisel ends the Grove and the quest (${chain.news.slice(-2).join(' ')})`);
   const want = ending(chain, 'in order');
 
-  // Thornmark before Vask's hire: through the pass with no quest, to Sylvane, and the Grove done
+  // Thornmark before Vask's hire: through the pass with no quest, to Sylvane and the Grove done
   // before anyone in Helmstow has spoken of it.
   const early = newWalk(ok);
   listen(early);
@@ -64,4 +73,14 @@ export const walkthrough: Walkthrough = (ok) => {
   goalFromBegun(hiredEarly, 'hired, early, the Grove done');
   playChapter(hiredEarly, FORELAND, FORELAND_STEPS, 'hired, early');
   ok(JSON.stringify(ending(hiredEarly, 'hired, early')) === JSON.stringify(want), 'hired, early: the log ends with the same entries as in order');
+
+  // In order, but to the Stone before Thornhold: the chisel goes to Sylvane at the first meeting.
+  // She never hires, so her own entry is never written, and the entries are not compared.
+  const unsent = newWalk(ok);
+  hired(unsent);
+  playChapter(unsent, FORELAND, FORELAND_STEPS, 'in order, the Stone first');
+  playChapter(unsent, CHAPTER, STONE_FIRST, 'in order, the Stone first');
+  ending(unsent, 'in order, the Stone first');
+
+  everyGoalWalked(ok);
 };
