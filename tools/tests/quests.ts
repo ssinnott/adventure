@@ -87,7 +87,7 @@ export function quests(): void {
     // yet is owed by whoever builds its step.
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
-    const PLANNED: Record<string, string> = { downs: '#47', deepthorn: '#49' };
+    const PLANNED: Record<string, string> = { deepthorn: '#49' };
     const built = new Set(AREAS.map((a) => a.id as string));
     for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
       const msg = `zone ${z.id} holds a step of the one quest`;
@@ -146,7 +146,7 @@ export function quests(): void {
   });
   { // The one quest in two chapters, with the side quests beside it as quests of their own.
     const s = fresh();
-    for (const f of ['q_ashcombe_done', 'q_grove', 'q_greywater']) s.party.flags[f] = 1;
+    for (const f of ['q_ashcombe_done', 'q_wenna', 'q_grove', 'q_greywater']) s.party.flags[f] = 1;
     s.party.bag.push('meridian_journal');
     const log = questLog(s.world.state, s.party);
     const one = log.find((v) => v.def === THE_QUEST);
@@ -189,7 +189,9 @@ export function quests(): void {
     const news = (): string => { const l = log(); const n = questNews(marks, l).map((x) => x.text).join(' '); marks = questMarks(l); return n; };
     ok(log().length === 0 && news() === '', 'a new game starts with an empty quest log');
     party.flags.q_ashcombe = 1;
-    ok(news() === 'New quest: The Dimming.' && /Ashcombe/.test(goal()), `Vask's contract begins the one quest at its first chapter, and says where to go (${goal()})`);
+    ok(news() === 'New quest: The Dimming.' && /Gullwick/.test(goal()), `Vask's contract begins the one quest at its first chapter, and says where to go (${goal()})`);
+    party.flags.q_wenna = 1; // what Hild's first meeting does
+    ok(news() === 'Quest log updated: The Dimming.' && /Ashcombe/.test(goal()), `Hild at Gullwick writes Wenna into the log, and the goal moves on to the farm (${goal()})`);
     world.travel('mill', 1, 1, 2);
     ok(/cellar/.test(goal()) && news() === '', 'in the cellar the goal moves on, which is not news');
     world.travel('mill', 10, 4, NORTH); world.move('forward');

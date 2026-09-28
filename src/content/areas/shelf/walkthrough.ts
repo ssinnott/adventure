@@ -9,12 +9,16 @@ import { EAST } from '../../../game/types.ts';
 /** Vask hires the company: before the chapter, or its last step for a company that came early. */
 export const HIRE: Step = { name: 'the hire', play: (w) => meetWho(w, 'q_ashcombe') };
 
-/** The chapter once hired: the farm, the cellar and the wand taken back. */
+/** The chapter once hired: Gullwick, the farm, the cellar and the wand taken back. */
 export const STEPS: readonly Step[] = [
+  { name: 'to Gullwick', play: (w) => meetWho(w, 'q_wenna') },
   { name: 'to Ashcombe', play: (w) => walkThrough(w, 'shelf', 23, 20, EAST, 'mill') },
   { name: 'the cellar', play: (w) => { see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core'); } },
   { name: 'the wand', play: (w) => meetWho(w, 'survey_wand') },
 ];
+
+/** The farm first and Gullwick last: the chapter's goal sends a company that did it so to Hild. */
+export const FARM_FIRST: readonly Step[] = [...STEPS.slice(1), STEPS[0]];
 
 /** A new game hired by Vask, the way the chapter begins in order. */
 export function hired(w: Walk): void {

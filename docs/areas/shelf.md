@@ -265,14 +265,18 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     comes in at 0,3–4, passes under the road's bridge at 1,10 and meets the sea at 5,15. Both meet
     the atlas at the west edge, where the raw cut did not.
   - Gullwick east of the mouth: seven cottages, the net loft (the camp), the well, the boats on the
-    shingle and the old man with the shanty; the rise above it, on the hills. Room is left on the
-    shingle for Hild and Wat, and on the road west of the bridge for Hamo (C).
+    shingle and the old man with the shanty; the rise above it, on the hills. On the shingle, Hild at
+    the tideline (the step, §5) and Wat on his upturned hull; Hamo on the road west of the bridge,
+    off the way from the far beach to Wat, so boards carried home are never sold by stepping on him.
   - The far beach, west of the mouth, is reached only by the bridge: the wreckers by night, the soot
     at its end, and the cave behind a secret door in the rock at 0,16.
   - Groups: eight crows in the fields, four crabs on the north-east sand, three wreckers and their
     lampman by night: 6.4 fights to a rest at level 2, every fight won. They pay about 97 xp a
     member.
-  - Density: 99.7% of its 289 squares within 8 steps, the furthest 9.
+  - A Boat With No Name-Board (§6): the hoard in the rocks at the far beach's north end, the chit
+    beside the boards, and the night's footprints as a presence event on its first square. Wat pays
+    60 from the loft jar and Hamo 140 by the plank; the curve counts the larger once.
+  - Density: every one of its 289 squares within 8 steps, the furthest 8.
 
 ### 4.4 E3, Crowness (#67): core, band 3–4
 
@@ -434,10 +438,13 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 
 ## 5. The one quest here
 
-DESIGN §9 gives the Downs three steps, and none is built. The plan puts one in each of the core's
-boxes, in the order the Salt Road reaches them:
+DESIGN §9 gives the Downs three steps, and the first is built. The plan puts one in each of the
+core's boxes, in the order the Salt Road reaches them:
 
-- in Gullwick (F3), Wenna's mother, asking the company to find her;
+- in Gullwick (F3), Wenna's mother, Hild, asking the company to find her: built (#47), a step of
+  The Quiet Farm between Vask's hire and the farm, and the chapter done on both the wand and her
+  word (`done`: `q_ashcombe_done` and `q_wenna`), as the owner agreed on 28 September 2026. A
+  company that did the farm first is sent to her by the chapter's first goal;
 - at Crowness Light (E3), the keeper who logged the night the Queen died: the Hearth went out eleven
   times, and he wrote down the gaps between;
 - in the Berth, below D2, the barrow opened, and only the Queen's signet gone.

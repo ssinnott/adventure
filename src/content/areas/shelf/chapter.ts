@@ -7,10 +7,13 @@ export const CHAPTER: Chapter = {
   id: 'ashcombe',
   title: 'The Quiet Farm',
   start: { flag: 'q_ashcombe' },
-  done: { flag: 'q_ashcombe_done' },
+  // Done once the wand is back and Hild has asked after her daughter at Gullwick.
+  done: { flag: ['q_ashcombe_done', 'q_wenna'] },
   entries: [
     { id: 'hired', when: { flag: 'q_ashcombe' },
       text: 'Lord Vask, the Regent-Warden, has hired us: the Ashcombe farm south of Helmstow has gone quiet. He wants anything we find there that is not a rat.' },
+    { id: 'wenna', when: { flag: 'q_wenna' },
+      text: 'At Gullwick, Hild asked us to find her daughter, Wenna, gone with the boat the night the light failed. She wants the name said wherever we go.' },
     { id: 'lantern', when: { seen: 'mill:mill_lantern' },
       text: 'A dead Lantern in the cellar under Ashcombe, a note in her hand: "Not failing. CUT. The Grove Stone is next. Tell Vask nothing."' },
     { id: 'wand', when: [{ item: 'survey_wand' }, { flag: 'q_ashcombe_done' }],
@@ -27,9 +30,13 @@ export const CHAPTER: Chapter = {
       text: 'He spoke of the Grove Stone in Thornmark: gone quiet too, he said, and he wants to know why.' },
   ],
   goals: [
+    // A company that did the farm first: Gullwick is still to come.
+    { when: { flag: 'q_ashcombe_done' }, at: 'downs_f3', text: 'Gullwick, west on the Salt Road: a mother asks for her daughter.' },
     { when: { item: 'survey_wand' }, at: 'harrow', text: 'Take the survey wand to Lord Vask in Helmstow.' },
     { when: { visited: 'mill' }, at: 'mill', text: 'Search the cellar under the Ashcombe farmhouse.' },
-    { when: { flag: 'q_ashcombe' }, at: 'shelf', text: 'Find out why Ashcombe has gone quiet: south of Helmstow, then east along the Foreland road.' },
+    { when: { flag: ['q_ashcombe', 'q_wenna'] }, at: 'shelf', text: 'Find out why Ashcombe has gone quiet: south of Helmstow, then east along the Foreland road.' },
+    // Hired: Gullwick first, where the road west goes, and then the farm.
+    { when: { flag: 'q_ashcombe' }, at: 'downs_f3', text: 'Before Ashcombe, Gullwick: west on the Salt Road from Brandy Hole\'s beach, a mother asks every company for her daughter.' },
     // Shown only to a company that began a later chapter before Vask hired it.
     { when: {}, at: 'harrow', text: 'The Regent-Warden is hiring in Helmstow.' },
   ],
