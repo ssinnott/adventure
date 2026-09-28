@@ -466,3 +466,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #131 (#76's words) merged main bdbaba9 and pushed its fix round and the walk's port (ecf517c):
   a second-round reviewer on it (`reviews/131-2.md`); it lands once that says ready, then #132.
 - #139 (#48's A, the Great Owl) opened at 19:26: a reviewer on it (`reviews/139.md`).
+
+### 20:05: #137 and #138 reviewed; #73's footprint in
+
+- #137 and #138 (#48's B and C) reviewed (`reviews/137.md`, `138.md`): ready after one fix each, then
+  the owner's OK: the heartwood's and the Eldest's feet hang 30 and 51 px below their roots (the
+  trunk tube starts at the ground point); `barkL` unused. And a merge trap with #139: both add the
+  same five `UNPLACED` entries on either side of `farm_kitchen`, which git merges cleanly and tsc then
+  fails (TS1117 ×5): the second to land drops its copy. Sent 20:07 to both sessions.
+- #73's footprint (`footprints/73.md`): S, one pull request, needs #131 alone (`says` and `heard`);
+  the Lodestone event and Gytha on the Foreland map, a track at 17-20 on row 4 (the owner's sheet),
+  the site un-planned. Starts in a free session once #131 lands.
