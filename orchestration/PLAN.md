@@ -163,3 +163,19 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   request; it and #21's build both change what a business opens on, so decide who builds that menu
   before both start), #42 (L, two pull requests: the join and the log after #117; the walkthroughs
   before #47). #99 and #101's is being written.
+
+### 16:00: #110 and #112 merged; Wave 2 begins with #99
+
+- #110 (#100) and #112 (#98) merged at 15:58 (main 1104e08, then 611c5de) after their second round
+  (`reviews/110-2.md`, `112-2.md`): each fix proven by breaking what it guards; both heads and main
+  merged cleanly and passed `npm run check` together (ALL OK, 30 owed); CI green on both heads.
+  Main's tree matches the merge the reviewer tested exactly. #100 and #98 close; the session is done.
+- The #99 and #101 footprints: #99 does the dressing once (`GEAR` the ladder, `gateCompany` wearing
+  it), re-records four owed figures that move past their slack and settles #47's greywater2 rest;
+  #101 after it, before #40's dungeon PR. The orchestrator's call: the 16 finds no box places yet
+  are owed to the box issue that places each, as the owner agreed for drawings.
+- Started at 15:59:
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 2 | #99, #101 | session_017gmKkkiPWxH5PB61L1M1mr | `claude/m1-99-gear-ladder`, `claude/m1-101-thornmark-chests` |
