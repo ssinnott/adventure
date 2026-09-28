@@ -11,7 +11,7 @@ on main at `b92a412` (25 September 2026).
 
 | | Built | Planned |
 |---|---|---|
-| Outdoor land | 1,701 of 111,315 land squares (1.5%): the Foreland and Thornmark | the atlas: about 107 zone maps' worth in 12 areas. DESIGN.md §4 said 6 regions of 32×32 until #39 |
+| Outdoor land | 1,717 of 111,331 land squares (1.5%): the Foreland and Thornmark | the atlas: about 107 zone maps' worth in 12 areas. DESIGN.md §4 said 6 regions of 32×32 until #39 |
 | Towns | 2 | 9 in DESIGN.md until #39; the atlas places 6 more |
 | Dungeons | 3, five levels in all | 22 in DESIGN.md until #39; the atlas places 13 more, the Underdeep and the Core |
 | Levels | 1–10 (`MAX_LEVEL`) | bands to 32 on the atlas |

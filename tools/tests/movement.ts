@@ -47,7 +47,7 @@ export function movement(): void {
   world.travel('mill', 4, 6, 2);
   ok(world.map.at(4, 7).door === 'secret' && world.search() && world.map.at(4, 7).door === 'door', 'searching finds the secret door');
   // Water and mountains.
-  world.travel('shelf', 5, 28, 2);
+  world.travel('shelf', 12, 28, 2);
   ok(world.move('forward').kind === 'blocked' === !partyCan(party).swim, 'water is passable only with a swimmer (Tidefolk in the party)');
   world.travel('shelf', 30, 2, 1);
   const steep = world.move('forward');

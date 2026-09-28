@@ -228,7 +228,7 @@ export const PLAN: Atlas = {
     // Upriver to Reedholm.
     { pts: [[98, 156], [84, 136], [74, 104], [80, 80]] },
     // The east road out of Thornmark, over the Sunder by the rope bridge, and on to the Kilns.
-    { pts: [[264, 39], [290, 40], [316, 48], [336, 56], [360, 52], [384, 56], [410, 76], [430, 96], [446, 118]] },
+    { pts: [[264, 40.5], [290, 40], [316, 48], [336, 56], [360, 52], [384, 56], [410, 76], [430, 96], [446, 118]] },
     // The drove road south: the Kilns, Cairnmoor, Rimewater.
     { pts: [[446, 118], [440, 150], [428, 180], [430, 210], [432, 240], [420, 256], [408, 266]] },
     { pts: [[428, 180], [412, 162], [398, 164]] },
@@ -370,7 +370,7 @@ export const PLAN: Atlas = {
     { from: 'wrackholm', to: 'tide_ship', kind: 'enter', a: [182, 188] },
     { from: 'tide_ship', to: 'dead_drop', kind: 'stairs' },
     { from: 'thornmark', to: 'deepthorn', kind: 'road', a: [240, 60.5], b: [242, 66] },
-    { from: 'thornmark', to: 'eaves', kind: 'road', opens: 4, a: [263.5, 39.5], b: [272, 39.5], note: 'the east road', noteAt: [290, 30] },
+    { from: 'thornmark', to: 'eaves', kind: 'road', opens: 4, a: [263.5, 40.5], b: [272, 39.5], note: 'the east road', noteAt: [290, 30] },
     { from: 'eaves', to: 'lanternwood', kind: 'road', a: [330, 56], b: [346, 56], note: 'rope bridge' },
     { from: 'eaves', to: 'the_sunder', kind: 'enter', a: [338, 70] },
     { from: 'lanternwood', to: 'lantern_watch', kind: 'enter', a: [372, 46] },
