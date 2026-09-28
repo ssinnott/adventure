@@ -12,8 +12,9 @@ import { gridFaults } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { EncounterDef, MapDef } from '../../src/game/map.ts';
-import type { QuestCond } from '../../src/game/quests.ts';
+import type { QuestCond, QuestDef } from '../../src/game/quests.ts';
 import { SOUTH } from '../../src/game/types.ts';
+import { giftOf } from '../../src/game/wilds.ts';
 import { ok } from './lib.ts';
 
 /** Respawns in the range in use, in minutes, both ends included. */
@@ -30,7 +31,7 @@ export function strandedLocks(def: MapDef): string[] {
   const key = (x: number, y: number): string => `${x},${y}`;
   const keysAt = new Map<string, number>();
   const add = (x: number, y: number, n: number): void => { if (n) keysAt.set(key(x, y), (keysAt.get(key(x, y)) ?? 0) + n); };
-  for (const f of m.features) if (f.kind === 'chest') add(f.x, f.y, f.items.filter((i) => i === 'key_iron').length);
+  for (const f of m.features) add(f.x, f.y, (giftOf(f)?.items ?? []).filter((i) => i === 'key_iron').length);
   for (const e of m.encounters) add(e.x, e.y, e.monsters.filter((id) => MONSTERS[id]?.drops?.some((d) => d.item === 'key_iron' && d.chance >= 1)).length);
   const locks: string[] = [];
   for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) if (m.at(x, y).door === 'locked') locks.push(key(x, y));
@@ -63,7 +64,7 @@ export function questItems(): Set<string> {
   const conds = (w: QuestCond | readonly QuestCond[]): QuestCond[] => [w].flat();
   return new Set([
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && f.quest ? [f.quest.item] : [])),
-    ...QUESTS.flatMap((q) => [q.start, ...(q.done ? [q.done] : []), ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds).flatMap((c) => c.item ? [c.item] : [])),
+    ...QUESTS.flatMap((q): readonly QuestDef[] => q.chapters ?? [q]).flatMap((q) => [q.start, ...(q.done ? [q.done] : []), ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds).flatMap((c) => c.item ? [c.item] : [])),
   ]);
 }
 

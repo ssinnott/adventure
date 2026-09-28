@@ -19,6 +19,7 @@ import * as skeleton from './monsters/skeleton.ts';
 import * as riftling from './monsters/riftling.ts';
 import * as ogre from './monsters/ogre.ts';
 import * as wraith from './monsters/wraith.ts';
+import * as birds from './monsters/birds.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -152,11 +153,12 @@ export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horiz
 const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
   rat: rat.draw,
   slime: slime.draw,
-  wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw,
+  wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw,
   boar: boar.draw,
   spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw,
   bandit: bandit.draw, archer: bandit.draw, brigand: bandit.draw, brigand_archer: bandit.draw,
   smuggler: bandit.draw, smuggler_bow: bandit.draw, smuggler_captain: bandit.draw,
+  wrecker: bandit.draw, lampman: bandit.draw,
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
   acolyte: cultist.draw, deacon: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
@@ -164,6 +166,7 @@ const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
   riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw,
   ogre: ogre.draw,
   wraith: wraith.draw,
+  crow: birds.draw,
 };
 
 /**
