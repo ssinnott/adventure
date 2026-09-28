@@ -188,11 +188,12 @@ export function noveltyFaults(areas: readonly Pick<Area, 'id' | 'maps' | 'atlas'
 export interface EdgeFault { map: string; x: number; y: number; why: string }
 
 /**
- * Where a zone map's water and roads stop at its edge though the atlas land beyond goes on, or the
- * atlas's water and roads stop at the map. A map's ring of mountains is its closed border and keeps
- * the atlas's ground, so behind a ring square the map's side is the square inside it. Land beyond
- * the edge that another zone map covers, or the void, is no atlas land; sand counts as land. The
- * atlas's roads are its trails (a planned road) and its built road.
+ * Where a zone map's edge meets unbuilt atlas land and its water and roads stop there, or the
+ * atlas's rivers and roads stop at the map. A map's ring of mountains is its closed border and keeps
+ * the atlas's ground, so behind a ring square the map's side is the square inside it. What lies
+ * beyond the edge is no unbuilt land where another zone map covers it, or it is the void, or the
+ * sea (so a coast may run along an edge); a river or a road over water is still checked. Sand counts
+ * as land. The atlas's roads are its trails (a planned road) and its built road.
  */
 export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
   const grid = worldGrid(atlas, defs), out: EdgeFault[] = [];
@@ -209,7 +210,8 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
         if (t === TI.void || laid.some((o) => o !== z && ax >= o.x && ay >= o.y && ax < o.x + o.w && ay < o.y + o.h)) continue;
         const ring = z.def.rows[my][mx] ?? 'M', ch = ring === 'M' ? z.def.rows[my - dy]?.[mx - dx] : ring;
         if (ch === undefined || ch === 'M') continue; // a corner of the ring
-        const mine = MAP_TERRAIN[ch] ?? 'grass', road = !!grid.road[ay * grid.width + ax] || t === TI.road;
+        const i = ay * grid.width + ax, mine = MAP_TERRAIN[ch] ?? 'grass', road = !!grid.road[i] || t === TI.road;
+        if (isWater(t) && !grid.river[i] && !road) continue; // the sea beyond
         const theirs = road ? 'road' : TERRAINS[t];
         const wet = mine === 'sea' || mine === 'shallow';
         if (wet !== isWater(t) || (mine === 'road') !== road) out.push({ map: z.def.id, x: mx, y: my, why: `${mine} against the atlas's ${theirs} at ${ax},${ay}` });
@@ -226,7 +228,7 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  */
 const EDGES_OWED: Record<string, readonly string[]> = {
   shelf: ['0,28', '0,29', '0,30', '1,31', '2,31', '3,31', '4,31', '5,31', '6,31', '7,31', '8,31'],
-  thornmark: ['31,9', '31,14', '31,15', '31,16', '31,17', '31,19', '31,24', '31,25', '31,26', '31,27', '31,28', '1,31', '2,31'],
+  thornmark: ['31,9'],
 };
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */
@@ -400,6 +402,14 @@ export async function pillars(): Promise<void> {
     ok(lay(['MMMMMM', 'M,,,,M', 'M====M', 'M,,,,M', 'MMMMMM']).length === 2, 'a road that runs into its ring against atlas land fails, at both ends');
     ok(lay(['MMMMMM', 'M,,,,M', 'MW,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and so does sea at its edge');
     ok(lay(['MMMMMM', 'M,,,,M', '=,,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and a road through a gap in the ring');
+    // Land against the sea along an edge: a coast, not water cut short.
+    const coast = (rows: string[]): EdgeFault[] => {
+      const fixture: MapDef = { id: 'fixture_coast', name: 'Coast fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
+      const w = rows[0].length, zone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', map: 'fixture_coast', at: [264 - w, 42] as const };
+      const others = ATLAS.zones.filter((z) => z.id !== 'thornmark');
+      return edgeFaults({ ...ATLAS, zones: [...others, zone] }, [...MAP_DEFS.filter((d) => d.id !== 'thornmark'), fixture]).filter((e) => e.map === 'fixture_coast' && e.x === w - 1);
+    };
+    ok(!coast(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'map land against the atlas sea along an edge passes, a coast');
   }
 
   // Story locks: every one signed in, within the counts, none between areas; every hand-in takes
