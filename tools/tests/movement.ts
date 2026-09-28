@@ -1,5 +1,6 @@
 // Moving about: steps and the clock, doors, keys and secrets, water and mountains, the end of the
-// world, the open pass walked into Thornmark and back, Town Portal and the stairs.
+// world, the open pass walked into Thornmark and back, Town Portal, the stairs, and Helmstow's two
+// gates.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
@@ -63,8 +64,8 @@ export function movement(): void {
   ok(ridge.kind === 'blocked' && /steep/.test(ridge.reason), `west of the Foreland the ridge stands against the Downs (${ridge.kind === 'blocked' ? ridge.reason : ridge.kind})`);
   world.travel('shelf', 1, 29, 3);
   world.move('forward');
-  const into = world.move('forward');
-  ok(local(world).map === 'downs_f2' && local(world).x === 31 && into.kind === 'moved' && into.messages.includes('The Salt Road climbs off the beach onto the Downs.'), `the Salt Road walks west through the gap onto the Downs, and says so (${into.kind === 'moved' ? into.messages.join(' / ') : into.kind})`);
+  const downs = world.move('forward');
+  ok(local(world).map === 'downs_f2' && local(world).x === 31 && downs.kind === 'moved' && downs.messages.includes('The Salt Road climbs off the beach onto the Downs.'), `the Salt Road walks west through the gap onto the Downs, and says so (${downs.kind === 'moved' ? downs.messages.join(' / ') : downs.kind})`);
   party.flags.skill_mountaineer = 1;
   world.travel('shelf', 10, 1, 0);
   ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Foreland in to the north');
@@ -95,4 +96,17 @@ export function movement(): void {
   world.travel('greywater1', 14, 13, 2);
   const shrine = world.move('forward');
   ok(shrine.kind === 'moved' && world.map.id === 'greywater2' && world.state.x === 1 && world.state.y === 1, 'the Brandy Hole stairs go down to the Seam');
+  // Helmstow's north gatehouse into the keep's ward and back, saying so and naming where the party
+  // stands; and in from the Foreland road by the south gate.
+  world.travel('harrow', 7, 1, 0);
+  const into = world.move('forward');
+  ok(into.kind === 'moved' && world.map.id === 'keep' && world.state.x === 7 && world.state.y === 8 && world.state.facing === 0 && into.messages.includes('You pass under the gatehouse into the keep\'s ward.') && world.here.name === 'The Keep',
+    `the north gatehouse leads into the keep's ward, and says so (${world.map.id} ${world.state.x},${world.state.y}: ${world.here.name})`);
+  world.turn('back');
+  const outOf = world.move('forward');
+  ok(outOf.kind === 'moved' && world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 1 && world.state.facing === 2 && outOf.messages.includes('You pass back under the gatehouse into Helmstow.') && world.here.name === 'Helmstow',
+    `and back out into Helmstow, facing south (${world.map.id} ${world.state.x},${world.state.y}: ${world.here.name})`);
+  world.travel('shelf', 16, 4, 0);
+  const home = world.move('forward');
+  ok(home.kind === 'moved' && world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14 && home.messages.includes('You enter Helmstow.'), `from the Foreland road the south gate leads back into Helmstow (${world.map.id} ${world.state.x},${world.state.y})`);
 }

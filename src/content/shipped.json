@@ -201,6 +201,14 @@
       "groups": [],
       "doors": []
     },
+    "keep": {
+      "size": "16x10",
+      "used": [
+        "keep_chapel"
+      ],
+      "groups": [],
+      "doors": []
+    },
     "mill": {
       "size": "16x16",
       "used": [

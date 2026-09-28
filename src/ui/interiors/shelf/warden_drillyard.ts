@@ -32,7 +32,7 @@ function torchPost(ctx: CanvasRenderingContext2D, s: Stage, x: number, y: number
 const WALL = '#b8ac94', SAND = '#c8a878', GREY = '#6a6e76';
 
 /** The Wardens' banner: grey, with the black tower of the road watch on it. */
-function towerDevice(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number): void {
+export function towerDevice(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number): void {
   const pts = [cx - r * 0.5, cy + r, cx - r * 0.4, cy - r * 0.5, cx - r * 0.6, cy - r * 0.5, cx - r * 0.6, cy - r, cx - r * 0.3, cy - r, cx - r * 0.3, cy - r * 0.8, cx - r * 0.1, cy - r * 0.8, cx - r * 0.1, cy - r, cx + r * 0.1, cy - r, cx + r * 0.1, cy - r * 0.8, cx + r * 0.3, cy - r * 0.8, cx + r * 0.3, cy - r, cx + r * 0.6, cy - r, cx + r * 0.6, cy - r * 0.5, cx + r * 0.4, cy - r * 0.5, cx + r * 0.5, cy + r];
   fillPoly(ctx, pts, '#1a1a20');
   ctx.fillStyle = '#e8d890'; ctx.fillRect(Math.round(cx) - 1, Math.round(cy - r * 0.2), 2, 3);

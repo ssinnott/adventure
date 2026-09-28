@@ -32,12 +32,12 @@ export const CHAPTER: Chapter = {
   goals: [
     // A company that did the farm first: Gullwick is still to come.
     { when: { flag: 'q_ashcombe_done' }, at: 'downs_f3', text: 'Gullwick, west on the Salt Road: a mother asks for her daughter.' },
-    { when: { item: 'survey_wand' }, at: 'harrow', text: 'Take the survey wand to Lord Vask in Helmstow.' },
+    { when: { item: 'survey_wand' }, at: 'keep', text: 'Take the survey wand to Lord Vask in Helmstow.' },
     { when: { visited: 'mill' }, at: 'mill', text: 'Search the cellar under the Ashcombe farmhouse.' },
     { when: { flag: ['q_ashcombe', 'q_wenna'] }, at: 'shelf', text: 'Find out why Ashcombe has gone quiet: south of Helmstow, then east along the Foreland road.' },
     // Hired: Gullwick first, where the road west goes, and then the farm.
     { when: { flag: 'q_ashcombe' }, at: 'downs_f3', text: 'Before Ashcombe, Gullwick: west on the Salt Road from Brandy Hole\'s beach, a mother asks every company for her daughter.' },
     // Shown only to a company that began a later chapter before Vask hired it.
-    { when: {}, at: 'harrow', text: 'The Regent-Warden is hiring in Helmstow.' },
+    { when: {}, at: 'keep', text: 'The Regent-Warden is hiring in Helmstow.' },
   ],
 };
