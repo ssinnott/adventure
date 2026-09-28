@@ -319,6 +319,7 @@
     "dire_wolf",
     "drowned",
     "ghoul",
+    "lampman",
     "ogre",
     "rat",
     "rift_crawler",
@@ -336,6 +337,7 @@
     "thorn_spider",
     "wolf",
     "wraith",
+    "wrecker",
     "zealot"
   ],
   "classes": [
