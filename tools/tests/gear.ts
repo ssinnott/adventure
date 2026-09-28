@@ -3,7 +3,7 @@
 // made here with the helper and added only where absent: every suite shares the one ITEMS.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS } from '../../src/content/index.ts';
-import { P, PLUS_PRICE } from '../../src/content/items.ts';
+import { P, PLUS_PRICE, core } from '../../src/content/items.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { defaultParty, createCharacter, attackBonus, armorClass } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct } from '../../src/game/combat.ts';
@@ -23,6 +23,7 @@ export function gear(): void {
   ok(brig.id === 'scale+2' && brig.ac === ITEMS.scale.ac! + 2 && brig.price === ITEMS.scale.price + 300, `a plus of 2 is two points (${brig.name}, ac ${brig.ac}, ${brig.price} gold)`);
   const named = P(ITEMS.longsword, 1, { id: 'queens_sword', name: "Queen's Long Sword +1" });
   ok(named.id === 'queens_sword' && named.bonus === 2 && named.plus === 1, 'a named find keeps the plus under its own id');
+  ok(core('scale') === ITEMS.scale && throws(() => core('shield')), 'an area finds a core base by id, and only a core one');
   ok(throws(() => P(ITEMS.torch, 1)) && throws(() => P(sword, 1)) && throws(() => P(ITEMS.dagger, 0)), 'no plus on a torch, on a plus or of 0');
 
   // To-hit, exactly one better.
