@@ -20,7 +20,7 @@ export const CHAPTER: Chapter = {
     { id: 'warden', when: { slain: 'mill:m_warden' },
       text: 'We killed the Rift Warden that kept the tear.' },
     { id: 'paid', when: { flag: 'q_ashcombe_done' },
-      text: 'Vask turned the wand over for a long moment and pocketed it. If he knew it, his face did not say. He paid 300 gold.' },
+      text: 'Vask turned the wand over in his fingers and pocketed it. If he knew what he held, nothing in his face admitted it. He paid 300 gold.' },
     // His lead, here and not in Thornmark's chapter, so it is written when he gives it, whichever
     // chapter the company did first.
     { id: 'lead', when: { flag: 'q_ashcombe_done' },
