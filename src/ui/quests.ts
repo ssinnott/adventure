@@ -65,6 +65,12 @@ export function questSheets(v: QuestView, w: number, h: number): Sheet[] {
   return out;
 }
 
+/** The sheet the log opens a quest on: the last of the page the goal is from, its newest entries. */
+export function openingSheet(v: QuestView, sheets: readonly Sheet[]): number {
+  for (let i = sheets.length - 1; i > 0; i--) if (sheets[i].page === v.focus) return i;
+  return 0;
+}
+
 export class QuestScreen implements Screen {
   readonly overlay = true;
   private sel = 0;
@@ -76,13 +82,7 @@ export class QuestScreen implements Screen {
   }
   private list(g: Game): QuestView[] { return questOrder(questLog(g.world.state, g.party)); }
   private sheets(g: Game): Sheet[] { const v = this.list(g)[this.sel]; return v ? questSheets(v, PAGE.w, PAGE.h) : []; }
-  /** The last sheet of the page the goal is from: its newest entries. */
-  private opening(g: Game): number {
-    const v = this.list(g)[this.sel];
-    const sheets = this.sheets(g);
-    for (let i = sheets.length - 1; i > 0; i--) if (sheets[i].page === v?.focus) return i;
-    return 0;
-  }
+  private opening(g: Game): number { const v = this.list(g)[this.sel]; return v ? openingSheet(v, this.sheets(g)) : 0; }
   update(g: Game, a: Action | null): void {
     if (!a) return;
     if (is(a, 'cancel', 'journal')) { g.pop(); return; }

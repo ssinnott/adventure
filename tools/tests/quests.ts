@@ -10,7 +10,7 @@ import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { questLog, questMarks, questNews } from '../../src/game/quests.ts';
 import type { Chapter, LogQuest, PageView, QuestCond, QuestDef, QuestView, When } from '../../src/game/quests.ts';
-import { questSheets, chapterHeading, PAGE, LIST } from '../../src/ui/quests.ts';
+import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src/ui/quests.ts';
 import { wrap } from '../../src/ui/draw.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
@@ -69,7 +69,9 @@ export function quests(): void {
     const head = chapterHeading(all(null), all(null).pages[0]);
     if (q.chapters) ok(head !== null && measureText(head) <= PAGE.w, `${id}: the chapter's heading fits its page (${head})`);
     ok([...c.goals.map((g) => g.text), null].every((goal) => whole(all(goal))), `${id}: the whole journal is shown on its pages under any goal`);
-    ok([...c.goals.map((g) => g.text), null].every((goal) => questSheets(all(goal), PAGE.w, PAGE.h).length === 1), `${id}: and on one page, today`);
+    // Not held: a chapter may go on over the next page. Said, so a chapter's growth shows.
+    const most = Math.max(...[...c.goals.map((g) => g.text), null].map((goal) => questSheets(all(goal), PAGE.w, PAGE.h).length));
+    console.log(`  info: ${id}: its journal takes ${most} ${most === 1 ? 'page' : 'pages'} at most`);
   }
   { // A chapter too long for one page goes on over the next, and keeps every entry.
     const c = THE_QUEST.chapters[0];
@@ -130,6 +132,10 @@ export function quests(): void {
     const sheets = questSheets(one!, PAGE.w, PAGE.h);
     ok(sheets.length === 2 && sheets[0].rows.some((r) => r.text === 'I. The Quiet Farm') && sheets[0].rows.some((r) => r.text === 'Done.') && sheets[1].rows.some((r) => r.text === 'II. The Grove Stone'),
       'the log pages it by chapter, each headed with its number, the farm\'s page done');
+    ok(openingSheet(one!, sheets) === 1 && openingSheet({ ...one!, focus: 0 }, sheets) === 0, 'J opens it on the goal\'s chapter, the Grove\'s page');
+    const marks = questMarks(log);
+    ok(['dimming/ashcombe.paid', 'dimming/grove.sylvane', 'dimming/ashcombe!', 'dimming/grove'].every((k) => marks.has(k)) && !marks.has('dimming/grove!') && !marks.has('dimming.paid'),
+      'the log\'s marks key each chapter\'s entries under it, so the two chapters\' paid stay apart');
   }
   { // Out of order: the goal comes only from a chapter begun, or one before it.
     const s = fresh();
