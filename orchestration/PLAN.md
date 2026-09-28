@@ -342,3 +342,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #40's zone pull request (`claude/m1-40-zone`) started at 18:11 on the dressed company, the zone
   only; 'grove1: under' and 'grove2: under' stay owed until the owner answers decisions 1 and 2
   (put to the owner at 18:03: (b), and bosses out of the rest day, recommended).
+
+### 18:21: #130 reviewed
+
+- #130 (#17's A) reviewed at 5bcef1c (`reviews/130.md`): ready after fixes. All nine maps and the
+  thirteen interiors render byte-identical to main's; every break fails. One should-fix: an outdoor
+  zone's `banners` are dropped by `layOutdoors`, unchecked (place them, or fail any outdoor map that
+  places one); nits in SLICE; the body lacks a Done-when section. Sent 18:23.
