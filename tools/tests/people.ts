@@ -10,7 +10,7 @@ import type { Party } from '../../src/game/party.ts';
 import { meet, answer, handIns, personFlags, personGives, readText, choices } from '../../src/game/people.ts';
 import type { Person } from '../../src/game/people.ts';
 import { questLog } from '../../src/game/quests.ts';
-import type { QuestCond, QuestDef } from '../../src/game/quests.ts';
+import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
 import type { MapDef, Words } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { CONTENT, collect } from '../shipped.ts';
@@ -27,7 +27,10 @@ export function people(): void {
   const all: { map: string; p: Person }[] = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [{ map: d.id, p: f }] : []));
   const givers = all.filter((x) => handIns(x.p).length);
   const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(rng); return { party, world: new World(buildMaps(), party, rng) }; };
-  const logKeys = (s: { party: Party; world: World }): string[] => questLog(s.world.state, s.party).flatMap((v) => [`${v.def.id}${v.done ? ' done' : ''}`, ...v.entries.map((e) => `${v.def.id}:${e.id}`)]);
+  // The log's pages begun, a side quest or a chapter of the one quest each, keyed by their ids.
+  const pages = (s: { party: Party; world: World }): { id: string; page: PageView }[] =>
+    questLog(s.world.state, s.party).flatMap((v) => v.pages.filter((p) => p.begun).map((page) => ({ id: v.def.chapters ? `${v.def.id}/${page.def.id}` : v.def.id, page })));
+  const logKeys = (s: { party: Party; world: World }): string[] => pages(s).flatMap(({ id, page }) => [`${id}${page.done ? ' done' : ''}`, ...page.entries.map((e) => `${id}:${e.id}`)]);
 
   // Every hand-in, carried at the first meeting, is taken there.
   for (const { map, p } of givers) for (const q of handIns(p)) {
@@ -70,12 +73,13 @@ export function people(): void {
       `${who}, early: takes it at the first meeting, with the early words and ${q.reward} gold, and does not hire`);
     ok(meet(p, early.party).text === q.after?.join('\n\n') && meet(p, hired.party).text === q.after?.join('\n\n'), `${who}: the next meeting says the after words, either way round`);
 
-    // The log, either way round: the quest done with no goal; early, nothing keyed to the hiring
-    // alone, and nothing the hired order does not write too.
-    const quest = questLog(early.world.state, early.party).find((v) => v.done && [v.def.done].flat().some((c) => [(c as QuestCond).flag ?? []].flat().includes(q.setFlag)));
-    const questH = questLog(hired.world.state, hired.party).find((v) => v.def.id === quest?.def.id);
-    ok(!!quest && quest.goal === null && !!questH?.done && questH.goal === null, `${who}: the log has ${quest?.def.title ?? 'the quest'} done, with no goal, either way round`);
-    const hiring = questLog(early.world.state, early.party).flatMap((v) => v.entries.filter((e) => [e.when].flat().every((c) => [(c as QuestCond).flag ?? []].flat().includes(hire))).map((e) => `${v.def.id}:${e.id}`));
+    // The log, either way round: the quest or chapter done with no goal; early, nothing keyed to
+    // the hiring alone, and nothing the hired order does not write too.
+    const ends = (x: { id: string; page: PageView }): boolean => x.page.done && [x.page.def.done ?? []].flat().some((c) => [(c as QuestCond).flag ?? []].flat().includes(q.setFlag));
+    const quest = pages(early).find(ends);
+    const questH = pages(hired).find((x) => x.id === quest?.id);
+    ok(!!quest && quest.page.goal === null && !!questH?.page.done && questH.page.goal === null, `${who}: the log has ${quest?.page.def.title ?? 'the quest'} done, with no goal, either way round`);
+    const hiring = pages(early).flatMap(({ id, page }) => page.entries.filter((e) => [e.when].flat().every((c) => [(c as QuestCond).flag ?? []].flat().includes(hire))).map((e) => `${id}:${e.id}`));
     const extra = logKeys(early).filter((k) => !logKeys(hired).includes(k));
     ok(!hiring.length && !extra.length, `${who}, early: the log writes no hiring and nothing the hired order does not${hiring.length || extra.length ? ' -> ' + [...hiring, ...extra].join(', ') : ''}`);
   }
@@ -147,7 +151,7 @@ function fixtures(fresh: () => { party: Party; world: World }): void {
       goals: [{ when: { flag: 'fx_met' }, text: 'Answer the captain.' }],
     };
     const log = (x: { world: World; party: Party }) => questLog(x.world.state, x.party, [quest])[0];
-    ok(log(s)?.done && log(s).entries.map((e) => e.id).join() === 'wrote' && log(kept)?.done && log(kept).entries.map((e) => e.id).join() === 'kept', 'the quest log reads the answer: done either way, with the entry of the road taken');
+    ok(log(s)?.done && log(s).pages[0].entries.map((e) => e.id).join() === 'wrote' && log(kept)?.done && log(kept).pages[0].entries.map((e) => e.id).join() === 'kept', 'the quest log reads the answer: done either way, with the entry of the road taken');
     const town: MapDef = { id: 'fx_town', name: 'Fixture', kind: 'town', start: { ...at, facing: NORTH }, rows: ['###', '#.#', '###'], features: [captain] };
     ok(!condFaults(quest.done!, [town]).length && !!condFaults(quest.done!, [{ ...town, features: [{ ...captain, choice: undefined, says: undefined }] }]).length, "the answers' flags are flags a person sets (and are not without them)");
     ok(personGives(captain).join() === LETTER.id, "the letter is an item a person hands over");

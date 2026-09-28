@@ -49,13 +49,18 @@ DESIGN.md first for the why.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (the group's
   first monster, in line of sight), or meets one in a fight unseen, the log says its `look`, once.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
-  journal of what the party has found: The Quiet Farm (Vask), The Cargo Ledger (Hale), The
-  Grove Stone (Vask's lead, Sylvane's chisel), and The Lost Expedition, which the first Meridian
-  journal opens and which stays open until the rest of its trail is built. Nothing new is saved.
+  journal of what the party has found. The main quest is one, The Dimming, joined from each area's
+  chapter in road order (EXPANSION §5.8): The Quiet Farm (Vask) and The Grove Stone (Vask's lead,
+  Sylvane's chisel). A chapter is begun once its start or its end holds, and the quest is done once
+  every one is; its goal is tried from the last chapter back, over those begun and the ones before
+  them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
+  Beside it are the side quests: The Cargo Ledger (Hale), and The Lost Expedition, which the first
+  Meridian journal opens and which stays open until the rest of its trail is built. Left and right
+  page the one quest by chapter, and a page too long goes on over the next. Nothing new is saved.
   Every entry is keyed to something the save already holds (a flag, a carried item, a once-only
-  event, a guardian killed, a map set foot on), so an old save opens with its log whole. A quest
-  begun, advanced or finished is announced once in the message log, and J opens on the one that
-  changed last.
+  event, a guardian killed, a map set foot on), so an old save opens with its log whole. A quest or
+  chapter begun, advanced or finished is announced once in the message log, and J opens on the one
+  that changed last, at its goal's chapter.
 
 ## The outdoors as one map, and the end of the world
 
@@ -428,7 +433,7 @@ does.
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
-| `game/quests.ts` | `questLog` (the quests known, their entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
+| `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the farmland's fields and hedges, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world in pink and the weather drawn over it |
@@ -438,12 +443,12 @@ does.
 | `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it), spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
-| `ui/quests.ts` | the quest log screen, and `questPage`, its pure page layout |
+| `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
-| `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests, climates, rooms) and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
+| `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests, climates, rooms), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |
-| `content/areas/<area>/` | an area: its maps, monsters, items, quests, climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
+| `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |

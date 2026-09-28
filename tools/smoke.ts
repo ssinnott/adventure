@@ -512,7 +512,7 @@ if (!terrains.missing) {
   }
   ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills and the fields (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
 }
-ok(questLine === 'New quest: The Quiet Farm.', `closing Vask's dialogue announces his quest (${questLine})`);
+ok(questLine === 'New quest: The Dimming.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(asked.words.screen === 'MessageScreen' && asked.words.text === '"Riders, by night."' && asked.question.screen === 'ChoiceScreen' && asked.question.text === 'Shall I write to Hale?' && asked.choiceColours > 20,
   `a person's words close onto their question, which paints (${asked.words.screen}, then ${asked.question.screen}, ${asked.choiceColours} colours)`);
 ok(asked.said.text === 'He writes, and seals it.\n\n(A Sealed Letter.)' && asked.said.title === 'Captain Fixture' && asked.after.flag && asked.after.bag && asked.after.screen === 'ExploreScreen',
