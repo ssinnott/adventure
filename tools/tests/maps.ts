@@ -1,9 +1,9 @@
 // The maps as written, each on its own: every row the same width, exits and features on open
-// ground, every monster and item real and placed, every business with a room, every open cell
-// reachable, and the xp a clear of them is worth.
+// ground, every monster and item real and placed, every business with a room, and every open cell
+// reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
-import { xpForLevel, MAX_LEVEL } from '../../src/game/party.ts';
+import { MAX_LEVEL } from '../../src/game/party.ts';
 import { ok } from './lib.ts';
 
 export function maps(): void {
@@ -53,19 +53,6 @@ export function maps(): void {
   ok(Math.max(...trainers.map((t) => t.kind === 'trainer' ? t.maxLevel : 0)) === MAX_LEVEL, `a trainer teaches to level ${MAX_LEVEL}`);
   const bands = MAP_DEFS.map((d) => d.band?.[1] ?? 0);
   ok(Math.max(...bands) >= MAX_LEVEL, `some map is tuned for level ${MAX_LEVEL}`);
-  { // The level 10 party: total first-pass xp from every non-respawning and respawning group, once, per member.
-    let total = 0; for (const d of MAP_DEFS) for (const e of d.encounters ?? []) for (const id of e.monsters) total += MONSTERS[id].xp;
-    const each = Math.floor(total / 6);
-    ok(each >= xpForLevel(7), `one clear of every map is worth level 7 or more per member (${each} xp each; level 10 needs ${xpForLevel(10)})`);
-  }
-  { // The Foreland ramp: Ashcombe alone reaches level 2, and both of the dungeons the pass waits on reach
-    // level 4 before Thornmark's band 5 (respawns and a second sweep make up the rest).
-    const perMember = (ids: string[]): number => Math.floor(MAP_DEFS.filter((d) => ids.includes(d.id))
-      .flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)).reduce((t, id) => t + MONSTERS[id].xp, 0) / 6);
-    const ashcombe = perMember(['shelf', 'mill']), shelf = perMember(['shelf', 'mill', 'greywater1', 'greywater2']);
-    ok(ashcombe >= xpForLevel(2), `one clear of the Foreland and the cellar is worth level 2 per member (${ashcombe} xp each)`);
-    ok(shelf >= xpForLevel(4), `one clear of the Foreland, the cellar and Brandy Hole is worth level 4 per member (${shelf} xp each)`);
-  }
   // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
   for (const def of MAP_DEFS) {
     const m = maps[def.id];

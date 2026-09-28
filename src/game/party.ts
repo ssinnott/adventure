@@ -144,6 +144,8 @@ export const MAX_SPELL_TIER = 5;
 export function spellTierAt(level: number): number { return Math.min(MAX_SPELL_TIER, 1 + Math.floor(level / 2)); }
 /** Whether the character has the experience for the next level (and is not at the cap). */
 export function canTrain(c: Character): boolean { return c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1); }
+/** What a trainer charges to teach the next level: 25 a level to 5, 40 a level after. */
+export function trainPrice(c: Pick<Character, 'level'>): number { return c.level < 5 ? c.level * 25 : c.level * 40; }
 
 export function createCharacter(name: string, race: RaceId, cls: ClassId, base: Partial<Stats>, rng: RngInstance): Character {
   const stats = { ...BASE_STATS, ...base };
