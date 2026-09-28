@@ -14,7 +14,8 @@ DESIGN.md first for the why.
   columns with the price flush right, a note under the list (an item's dice, a spell's effect),
   scrolling for a long stock, a tavern's rumours a page at a time. The log over the room shows only
   what was said inside. Leaving (the last menu closed) steps the party back into the street, facing
-  the door.
+  the door. A shop may name its own price for an item it stocks (`prices`); the rest sell at
+  their own, and anything sells back for half its own price.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
   mountains gated by party abilities, hills (`^`) and farmland (`f`) open to all but on no built
