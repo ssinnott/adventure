@@ -12,7 +12,24 @@ to level 10").
 
 - **Gear.** A Thornmark tier in the Armoury: war hammer, battle axe, great sword, crossbow, the
   Thornmark bow, rune dagger, grove staff, runed robe, brigandine, plate, tower shield, elixirs,
-  sapphire vials, lantern oil.
+  sapphire vials, lantern oil. The Armoury sells it plain; the chests hold it with a plus (#101),
+  the step of the gear ladder past the Foreland's: a War Hammer +1 in the ruined watchtower, a
+  Rune Dagger +1 in the barrow, a Grove Staff +1, a Thornmark Bow +1 and Brigandine +1 in the Grove
+  Roots, a Great Sword +1 and, in the hoard, Brigandine +2 in the Cut Stone; the Hand of Ash drops
+  a Runed Robe +1. No plate with a plus: it would pass the window's 1,200 gold. Every class finds
+  one, and the harness and the gate check dress their company from them at 9 (`GEAR`):
+
+  | Class | Its plus in Thornmark |
+  |---|---|
+  | Knight | Great Sword +1 |
+  | Paladin | War Hammer +1 |
+  | Ranger | Thornmark Bow +1 |
+  | Barbarian | Great Sword +1, Brigandine +1 and +2 |
+  | Cleric | War Hammer +1, Runed Robe +1 |
+  | Sorcerer | Rune Dagger +1, Runed Robe +1 |
+  | Thief, Bard | Rune Dagger +1, Brigandine +1 and +2 |
+  | Monk | Grove Staff +1 |
+  | Druid | Grove Staff +1, Brigandine +1 and +2 |
 - **Monsters.** Thirteen for band 5–10: dire wolves, thorn spiders, brigands and their archers,
   Ashen zealots and adepts, rift hounds, bone knights, wraiths, riftling elders, ogres, and two
   bosses, the Hand of Ash and the Warden of the Cut. Two new drawings (ogre, wraith); the rest
@@ -44,12 +61,13 @@ bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear o
 6,039 xp a member of the 13,667 its curve asks, and 4,932 gold of the 8,400: the curve
 (`src/content/progression.ts`) reports both as owed to the pilot (#26).
 
-The gate check (`tools/tests/gate.ts`) reports Thornmark's misses as #40's. Two levels under each
-map's own floor a company wins 91% of the zone's fights (at 3), 99.9% of the Grove Roots' (at 4)
-and all of the Cut Stone's (at 6); two under the area's floor, at 3, it wins 70% of the area's. The
-gate wants a quarter. The Hand of Ash and the Warden of the Cut are won every time at level 8, where
-a boss should be won about half the time, and the Cut Stone gives 7.75 fights to a rest, against
-six or seven.
+The gate check (`tools/tests/gate.ts`) reports Thornmark's misses as #40's. Its company is dressed
+by the Foreland's gear ladder (#99), so at 3 it wears the band's gear. Two levels under each map's
+own floor it wins 98% of the zone's fights (at 3) and all of the Grove Roots' (at 4) and the Cut
+Stone's (at 6); two under the area's floor, at 3, it wins 84% of the area's. The gate wants a
+quarter. The Hand of Ash and the Warden of the Cut are won every time at level 8, where a boss
+should be won about half the time, and the Cut Stone gives 7.95 fights to a rest, against six or
+seven.
 
 ## Tests
 
