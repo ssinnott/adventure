@@ -56,8 +56,8 @@ function atBase(base: string, file: string): string {
 }
 const now = (file: string): string => (existsSync(path.join(ROOT, file)) ? readFileSync(path.join(ROOT, file), 'utf8') : '');
 
-/** What paints every monster: the dispatcher, the shared brushes (any module in ui/monsters/ with no KINDS of its own) and the art library. */
-const EVERY_MONSTER = [/^src\/ui\/sprites\.ts$/, /^src\/lib\/art\//];
+/** What paints every monster: the dispatcher, ui/brush.ts, the shared brushes (any module in ui/monsters/ with no KINDS of its own) and the art library. */
+const EVERY_MONSTER = [/^src\/ui\/(sprites|brush)\.ts$/, /^src\/lib\/art\//];
 const FAMILY_FILE = /^src\/ui\/monsters\/[^/]+\.ts$/;
 const AREA_MONSTERS = /^src\/content\/areas\/([^/]+)\/monsters\.ts$/;
 /** The sprite kinds a family module draws, as its KINDS lists them; null for a shared module. */
@@ -93,8 +93,8 @@ export async function changedMonsters(files: readonly string[], base?: string): 
   return { all, monsters: [...out] };
 }
 
-/** What paints every room: the dispatcher, the kit and the shared props and rooms beside it, and the art library. */
-const EVERY_INTERIOR = [/^src\/ui\/interior\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/lib\/art\//];
+/** What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the brushes they borrow (ui/brush.ts, ui/monsters/gloss.ts) and the art library. */
+const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//];
 const SCENE_FILE = /^src\/ui\/interiors\/[^/]+\/([^/]+)\.ts$/;
 const AREA_INDEX = /^src\/content\/areas\/([^/]+)\/index\.ts$/;
 
