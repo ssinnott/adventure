@@ -8,6 +8,7 @@
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature } from '../../src/game/map.ts';
 import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
+import type { ZoneMap } from '../../src/game/atlas.ts';
 import { guildFlag } from '../../src/game/party.ts';
 import { SAVE_VERSION } from '../../src/game/save.ts';
 import { UPGRADES } from '../../src/game/upgrades.ts';
@@ -69,22 +70,29 @@ function door(was: Shipped): Case {
   }
   throw new Error('no recorded locked or secret door of a town or dungeon has floor beside it');
 }
-/** The first recorded zone the atlas lays, a square along, wherever it still fits. */
+/** The first recorded zone map the atlas lays, a square along, wherever it still fits: the list keys it by the map's id. */
 function zone(was: Shipped): Case {
-  const z = CONTENT.atlas.zones.find((q) => q.at && was.zones[q.id]);
-  if (!z) throw new Error('no zone the list records');
+  const m = CONTENT.atlas.zones.flatMap((q) => q.maps ?? []).find((q) => was.zones[q.map]);
+  if (!m) throw new Error('no zone the list records');
   for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-    const atlas = { ...CONTENT.atlas, zones: CONTENT.atlas.zones.map((q) => (q === z ? { ...q, at: [z.at![0] + dx, z.at![1] + dy] as [number, number] } : q)) };
+    const moved = (q: ZoneMap): ZoneMap => (q === m ? { map: m.map, at: [m.at[0] + dx, m.at[1] + dy] } : q);
+    const atlas = { ...CONTENT.atlas, zones: CONTENT.atlas.zones.map((q) => (q.maps ? { ...q, maps: q.maps.map(moved) } : q)) };
     try { layOutdoors(atlas, CONTENT.defs); } catch { continue; }
-    return { what: 'a zone moved', names: `zone ${z.id}`, needle: `zone ${z.id} is`, content: { ...CONTENT, atlas } };
+    return { what: 'a zone moved', names: `zone ${m.map}`, needle: `zone ${m.map} is`, content: { ...CONTENT, atlas } };
   }
-  throw new Error(`zone ${z.id} cannot move a square without overlapping another`);
+  throw new Error(`zone ${m.map} cannot move a square without overlapping another`);
 }
 /** The first recorded spell, renamed. */
 function spell(was: Shipped): Case {
   const id = was.spells.find((q) => CONTENT.spells.includes(q));
   if (!id) throw new Error('no spell the list records');
   return { what: 'a spell renamed', names: id, needle: `spell ${id} is gone`, content: { ...CONTENT, spells: CONTENT.spells.map((q) => (q === id ? id + '_renamed' : q)) } };
+}
+/** The first recorded monster, renamed: a company's `met` names it. */
+function monster(was: Shipped): Case {
+  const id = (was.monsters ?? []).find((q) => CONTENT.monsters.includes(q));
+  if (!id) throw new Error('no monster the list records');
+  return { what: 'a monster renamed', names: id, needle: `monster ${id} is gone`, content: { ...CONTENT, monsters: CONTENT.monsters.map((q) => (q === id ? id + '_renamed' : q)) } };
 }
 /** The first recorded town or dungeon, a row taller. */
 function taller(was: Shipped): Case {
@@ -103,7 +111,7 @@ export function shipped(): void {
   // Broken on purpose: each edit is caught, names what it broke, and passes once SAVE_VERSION goes
   // up with an upgrade for the new version. A bump without one is still caught.
   const next = SAVE_VERSION + 1, bumped: Record<number, Upgrade> = { ...UPGRADES, [next]: (d) => d };
-  for (const { what, names, needle, content } of [chest, spell, guild, door, zone, taller].map((c) => c(was))) {
+  for (const { what, names, needle, content } of [chest, spell, monster, guild, door, zone, taller].map((c) => c(was))) {
     const ids = collect(content), same = compare(was, ids).problems;
     okList(same.some((p) => p.includes(needle)), `${what} is caught (${names})`, same);
     const up = compare(was, ids, next, bumped);

@@ -113,7 +113,7 @@ export class CreateScreen implements Screen {
     const x = 32; let y = 60;
     switch (this.step) {
       case 'intro':
-        y = paragraph(ctx, 'Every adventuring company in Caldera works under a Charter. Yours is fresh ink. Six of you, three in front to take the blows and three behind to deliver them.', x, y, 360, { color: TEXT }) + 10;
+        y = paragraph(ctx, 'The Crown charters adventuring companies, and the Regent has signed yours. The ink is still wet. Six of you, three in front to take the blows and three behind to deliver them.', x, y, 360, { color: TEXT }) + 10;
         menu(ctx, ['Take the premade company (a balanced six)', 'Muster your own'], x, y, this.sel);
         break;
       case 'name':
@@ -150,7 +150,7 @@ export class CreateScreen implements Screen {
       }
       case 'review':
         y = paragraph(ctx, 'The company is mustered. The Regent-Warden is hiring, the Hearth is flickering, and the road south is open.', x, y, 360, { color: TEXT }) + 10;
-        menu(ctx, ['Sign the Charter', 'Start over'], x, y, this.sel);
+        menu(ctx, ['Sign the charter', 'Start over'], x, y, this.sel);
         break;
     }
     drawText(ctx, 'ARROWS CHOOSE   SPACE CONFIRM   ESC BACK', 608, 328, { size: 1, color: TEXT_DIM, align: 'right' });
