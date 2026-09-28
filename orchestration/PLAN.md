@@ -579,3 +579,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - The order in the Foreland's files: #143, then #144 (they meet in SLICE and `tools/smoke.ts`);
   #140, #135 and #144 meet in `docs/areas/shelf.md` §3 and shipped.json (the second keeps both and
   reruns the tool).
+
+### 21:50: the pilot's two prerequisites reviewed
+
+- #142 (#47's 0a, hills) reviewed (`reviews/142.md`): ready after one sentence: say that the clip to
+  the hill's outline is what guards a crest light (or add a check); a Done-when section. On the laid
+  drafts main fails 396 views, this 0; a real crack among hills still fails. It lands first.
+- #141 (#47's 0b, doors in rock) reviewed (`reviews/141.md`): ready after fixes, two of them before
+  the pilot's A: the smoke's edge rule reads `m.at` and takes a disguised door for a wall (4 views
+  fail beside Brockholt's door with #142 and A in: read `V.drawnCell`, after #142 lands); the
+  automap still colours a secret door as a door. Also: plain and locked doors outdoors are disguised
+  but ask no hint (disguise only secret doors, or hold every disguised door to the hint rule); the
+  art fixture's count. Sent 21:51 to both.
