@@ -1,9 +1,12 @@
 // The maps' structure, the rules any content has to keep: no iron key behind its own lock, however
 // the party spends its keys; no guardian that comes back (a group that drops a quest item or says
 // something when it dies, beside the quests suite's check for groups a quest names); every respawn
-// within 720 to 2,880 minutes. Each is first run on the content as it is, then on a map broken on
-// purpose, to show it can fail.
-import { MAP_DEFS, MONSTERS, QUESTS } from '../../src/content/index.ts';
+// within 720 to 2,880 minutes; a group's `until` and `after` naming something real, and no sky
+// underground; Thornmark's Rift stopping with the tear. Each is first run on the content as it is,
+// then on a map broken on purpose, to show it can fail.
+import { AREAS, MAP_DEFS, MONSTERS, QUESTS } from '../../src/content/index.ts';
+import { TEAR_CLOSED } from '../../src/content/areas/thornmark/maps/grove2.ts';
+import { condFaults } from './quests.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { EncounterDef, MapDef } from '../../src/game/map.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
@@ -75,6 +78,25 @@ export function respawnsOutOfRange(def: MapDef): string[] {
   return (def.encounters ?? []).flatMap((e) => (e.respawn && (e.respawn < RESPAWN[0] || e.respawn > RESPAWN[1]) ? [`${e.id} (${e.respawn})`] : []));
 }
 
+/**
+ * What is wrong with a map's groups' times to walk: an `until` or an `after` that names nothing real
+ * (or a group that respawns, which would flicker as it dies and returns), an `until` on a group that
+ * never comes back anyway, and a sky asked of a group underground.
+ */
+export function presenceFaults(def: MapDef, maps: readonly MapDef[] = MAP_DEFS): string[] {
+  return (def.encounters ?? []).flatMap((e) => [
+    ...(e.until ? condFaults(e.until, maps).map((f) => `${e.id} until: ${f}`) : []),
+    ...(e.after ? condFaults(e.after, maps).map((f) => `${e.id} after: ${f}`) : []),
+    ...(e.until && !e.respawn ? [`${e.id}: until, but it never comes back`] : []),
+    ...(def.kind === 'dungeon' && [e.when ?? []].flat().some((h) => h.sky) ? [`${e.id}: a sky underground`] : []),
+  ]);
+}
+
+/** The respawning groups of a map with a Rift monster in them that do not stop coming back when the tear closes. */
+export function riftStillComing(def: MapDef): string[] {
+  return (def.encounters ?? []).filter((e) => e.respawn && e.monsters.some((id) => MONSTERS[id]?.kind === 'rift') && JSON.stringify(e.until) !== JSON.stringify(TEAR_CLOSED)).map((e) => e.id);
+}
+
 export function structure(): void {
   const items = questItems();
   const list = (xs: string[]): string => (xs.length ? ' -> ' + xs.join(', ') : '');
@@ -85,6 +107,13 @@ export function structure(): void {
     ok(!back.length, `${def.id}: no guardian respawns (a group that drops a quest item or has a slainText)${list(back)}`);
     const out = respawnsOutOfRange(def);
     ok(!out.length, `${def.id}: every respawn is ${RESPAWN[0]} to ${RESPAWN[1]} minutes${list(out)}`);
+    const when = presenceFaults(def);
+    ok(!when.length, `${def.id}: every group's until and after names something real, and none asks for a sky underground${list(when)}`);
+  }
+  const thornmark = AREAS.find((a) => a.id === 'thornmark')!.maps;
+  for (const def of thornmark) {
+    const rift = riftStillComing(def);
+    ok(!rift.length, `${def.id}: every Rift group that comes back stops once the Warden of the Cut is dead${list(rift)}`);
   }
 
   // Broken on purpose, each a copy of a real map, kept out of MAP_DEFS.
@@ -113,6 +142,16 @@ export function structure(): void {
     ok(hand.join() === 'g2_hand (drops ashen_chisel)', `grove2's Hand of Ash given a respawn: it drops a quest item, and no quest names it${list(hand)}`);
     const cult = returningGuardians(group(map('mill'), 'm_cult1', { respawn: 1440, slainText: 'The chanting stops.' }), items);
     ok(cult.join() === 'm_cult1 (has a slainText)', `the mill's cultists given a slainText and a respawn${list(cult)}`);
+  }
+  { // Times to walk that name nothing, or that cannot mean anything.
+    const faults = (d: MapDef): string => presenceFaults(d).join();
+    ok(faults(group(map('mill'), 'm_rats', { respawn: 1440, until: { slain: 'shelf:road_rats' } })) === 'm_rats until: slain shelf:road_rats', 'an until naming a group that respawns is refused');
+    ok(faults(group(map('mill'), 'm_rats', { respawn: 1440, after: { flag: 'no_such_flag' }, until: { slain: 'grove2:no_such_group' } })) === 'm_rats until: slain grove2:no_such_group,m_rats after: flag no_such_flag', 'and one naming nothing real, and an after');
+    ok(faults(group(map('mill'), 'm_rats', { respawn: undefined, until: TEAR_CLOSED })) === 'm_rats: until, but it never comes back', 'an until on a group that never comes back is refused');
+    ok(faults(group(map('mill'), 'm_rats', { when: [{ hours: 'night' }, { sky: 'fog' }] })) === 'm_rats: a sky underground', 'and fog asked of a group underground; night is not');
+    const tm = map('thornmark');
+    ok(riftStillComing(group(tm, 'tm_hounds', { until: undefined })).join() === 'tm_hounds', 'thornmark with tm_hounds coming back past the tear is refused');
+    ok(!riftStillComing(group(tm, 'tm_wolves1', { until: undefined })).length, 'and its wolves, no Rift, need no until');
   }
   { // Respawns at the edges of the range and just past them.
     const at = (respawn: number | undefined): string[] => respawnsOutOfRange(group(map('mill'), 'm_rats', { respawn }));

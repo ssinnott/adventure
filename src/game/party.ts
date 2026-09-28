@@ -59,7 +59,7 @@ export const STALWART_AC = 2, WEAPON_MASTER_DMG = 1, HOLY_STRIKE_DMG = 3, MARKSM
 export const TRAITS: Record<TraitId, TraitDef> = {
   stalwart:      { id: 'stalwart', name: 'Stalwart', text: `+${STALWART_AC} AC.` },
   weapon_master: { id: 'weapon_master', name: 'Weapon Master', text: `+${WEAPON_MASTER_DMG} melee damage.` },
-  holy_strike:   { id: 'holy_strike', name: 'Holy Strike', text: `+${HOLY_STRIKE_DMG} damage to the mindless dead.` },
+  holy_strike:   { id: 'holy_strike', name: 'Holy Strike', text: `+${HOLY_STRIKE_DMG} damage to the dead.` },
   divine_health: { id: 'divine_health', name: 'Divine Health', text: 'Immune to disease.', immune: ['diseased'] },
   marksman:      { id: 'marksman', name: 'Marksman', text: `+${MARKSMAN_DMG} damage with ranged weapons.` },
   keen_eyes:     { id: 'keen_eyes', name: 'Keen Eyes', text: 'Always finds a secret door when searching.' },
