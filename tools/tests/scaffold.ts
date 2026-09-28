@@ -57,7 +57,7 @@ export async function scaffold(): Promise<void> {
   const def = await written(d, 'downs', AT[0], AT[1]);
   ok(def.rows.length === SIZE && def.rows.every((r) => r.length === SIZE), `the draft as written is ${SIZE} by ${SIZE}`);
   const band = zone.band ?? atlas.areas.find((a) => a.id === zone.area)?.band;
-  ok(def.id === zone.id && def.name === zone.name && def.kind === 'outdoor' && def.band?.join('-') === band?.join('-') && def.region === undefined, `it takes the zone's id, name and band, and the Foreland's sky (${def.name}, ${def.band?.join('-')})`);
+  ok(def.id === zone.id && def.name === zone.name && def.kind === 'outdoor' && def.density === 'country' && def.band?.join('-') === band?.join('-') && def.region === undefined, `it takes the zone's id, name and band, the Foreland's sky, and is country (${def.name}, ${def.band?.join('-')}, ${def.density})`);
   const has = (t: 'hills' | 'farm' | 'forest' | 'road'): boolean => (d.counts[t] ?? 0) > 0;
   ok(has('hills') && has('farm') && has('forest') && has('road'), `its hills, farmland, woods and road come through (${['hills', 'farm', 'forest', 'road'].map((t) => `${t} ${d.counts[t as 'hills'] ?? 0}`).join(', ')})`);
 
@@ -101,14 +101,14 @@ export async function scaffold(): Promise<void> {
   // --id names the map and its export.
   const named = cut(atlas, defs, g0, REGIONS, 'downs', AT[0], AT[1], 'callow_f2');
   const mod = 'refused' in named ? {} : await exported(named, 'downs', AT[0], AT[1]);
-  ok(Object.keys(mod).join() === 'CALLOW_F2' && mod.CALLOW_F2?.id === 'callow_f2', `--id callow_f2 is the id written, exported as CALLOW_F2 (${Object.keys(mod).join()})`);
+  ok(Object.keys(mod).join() === 'CALLOW_F2' && mod.CALLOW_F2?.id === 'callow_f2', `a draft cut with the id callow_f2 is written as it, exported as CALLOW_F2 (${Object.keys(mod).join()})`);
 
   // A zone of another area with a region of its own shares that area's sky; one with none yet shares
   // the Foreland's, and the header says so. The rule, not today's paint: the Downs moved to Thornmark.
   const moved: Atlas = { ...atlas, zones: atlas.zones.map((z) => (z.id === 'downs' ? { ...z, area: 'thornmark' } : z)) };
   const sky = async (regions: readonly string[]): Promise<{ region?: string; told: boolean }> => {
     const r = cut(moved, defs, g0, regions, 'downs', AT[0], AT[1]);
-    return 'refused' in r ? { told: false } : { region: (await written(r, 'downs', AT[0], AT[1])).region, told: r.notes.some((n) => /has no region yet/.test(n)) };
+    return 'refused' in r ? { told: false } : { region: (await written(r, 'downs', AT[0], AT[1])).region, told: /has no region yet/.test(emit(r, 'downs', AT[0], AT[1], 'map.ts', 'types.ts')) };
   };
   const own = await sky(REGIONS), none = await sky(['shelf']);
   ok(own.region === 'thornmark' && !own.told, `a Thornmark zone's draft is written in Thornmark's region (${own.region})`);

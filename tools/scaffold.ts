@@ -100,7 +100,8 @@ export function cut(atlas: Atlas, defs: readonly MapDef[], grid: WorldGrid, regi
   const area = atlas.areas.find((a) => a.id === zone.area);
   const band = zone.band ?? area?.band;
   const def: MapDef = {
-    id, name: zone.name, kind: 'outdoor', rows,
+    // Country until the author says it is core: the floor tools/tests/density.ts holds it to.
+    id, name: zone.name, kind: 'outdoor', density: 'country', rows,
     start: start(rows, laid, x, y),
     ...(band ? { band: [band[0], band[1]] as [number, number] } : {}),
     // The Foreland's sky is the default; another area's zone shares its own.
@@ -222,6 +223,7 @@ export function emit(d: Draft, zoneId: string, x: number, y: number, mapImport: 
     `  id: '${def.id}',`,
     `  name: '${def.name.replace(/'/g, "\\'")}',`,
     `  kind: 'outdoor',`,
+    ...(def.density ? [`  density: '${def.density}',`] : []),
     ...(def.band ? [`  band: [${def.band[0]}, ${def.band[1]}],`] : []),
     ...(def.region ? [`  region: '${def.region}',`] : []),
     `  start: { x: ${def.start.x}, y: ${def.start.y}, facing: ${facing} },`,
