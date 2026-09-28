@@ -17,6 +17,8 @@ import { makeRng } from '../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, isDown, MAX_LEVEL } from '../src/game/party.ts';
 import type { Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../src/game/combat.ts';
+import type { CombatOpts } from '../src/game/combat.ts';
+import { RANGED_PENALTY } from '../src/game/weather.ts';
 import { spell } from '../src/game/spells.ts';
 import type { SpellTarget } from '../src/game/spells.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
@@ -35,11 +37,21 @@ export function gateCompany(level: number, seed: number): Party {
 const REACH: Partial<Record<SpellTarget, number>> = { all: 3, group: 2, enemy: 1 };
 
 /**
- * One fight to its end with the bot playing the party, which carries its wounds out. True if won. With
- * `cap`, a fight still running after that many rounds is broken off, and not won.
+ * What a group's time to walk does to its fights: one that walks only in fog is fought with the
+ * bows' toll. By night, by day, in snow or in a season it is fought dry, as every other group.
  */
-export function gateFight(p: Party, monsters: readonly (string | MonsterDef)[], seed: number, cap = Infinity): boolean {
-  const rng = makeRng(seed), s = startCombat(p, [{ id: 'gate', monsters }], rng);
+export function gateOpts(g: Pick<EncounterDef, 'when'>): CombatOpts {
+  const when = g.when === undefined ? [] : [g.when].flat();
+  return when.length && when.every((h) => h.sky === 'fog') ? { rangedPenalty: RANGED_PENALTY } : {};
+}
+
+/**
+ * One fight to its end with the bot playing the party, which carries its wounds out. True if won. With
+ * `cap`, a fight still running after that many rounds is broken off, and not won; `opts` is the
+ * fight's weather (see `gateOpts`).
+ */
+export function gateFight(p: Party, monsters: readonly (string | MonsterDef)[], seed: number, cap = Infinity, opts: CombatOpts = {}): boolean {
+  const rng = makeRng(seed), s = startCombat(p, [{ id: 'gate', monsters }], rng, opts);
   for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > cap) break;
@@ -62,9 +74,9 @@ export function gateFight(p: Party, monsters: readonly (string | MonsterDef)[], 
 export const fightSeed = (k: number): number => k * 7919 + 13;
 
 /** The share of a group's fights a company of `level` wins, each alone from full health, over seeds 1 to `seeds`. */
-export function winRate(level: number, monsters: readonly (string | MonsterDef)[], seeds: number, cap = Infinity): number {
+export function winRate(level: number, monsters: readonly (string | MonsterDef)[], seeds: number, cap = Infinity, opts: CombatOpts = {}): number {
   let won = 0;
-  for (let k = 1; k <= seeds; k++) if (gateFight(gateCompany(level, k), monsters, fightSeed(k), cap)) won++;
+  for (let k = 1; k <= seeds; k++) if (gateFight(gateCompany(level, k), monsters, fightSeed(k), cap, opts)) won++;
   return won / seeds;
 }
 
@@ -94,7 +106,7 @@ function main(): void {
     levels.forEach((l, li) => {
       for (let k = 1; k <= seeds; k++) {
         const p = gateCompany(l, k);
-        for (let f = 0; f < groups.length && gateFight(p, groups[f].monsters, k * 104729 + f); f++) standing[f][li]++;
+        for (let f = 0; f < groups.length && gateFight(p, groups[f].monsters, k * 104729 + f, Infinity, gateOpts(groups[f])); f++) standing[f][li]++;
       }
     });
     groups.forEach((g, f) => line(`${f + 1}: ${g.id} [${g.monsters.length}]`, standing[f].map((n) => pct(n, seeds))));
@@ -105,7 +117,7 @@ function main(): void {
       const groups = d.encounters ?? [];
       if (!groups.length || (only && !only.includes(d.id))) continue;
       line(`${d.id} (${d.band?.join('-') ?? '-'})`, levels.map((l) => {
-        const won = groups.reduce((n, g) => n + Math.round(winRate(l, g.monsters, seeds) * seeds), 0);
+        const won = groups.reduce((n, g) => n + Math.round(winRate(l, g.monsters, seeds, Infinity, gateOpts(g)) * seeds), 0);
         return pct(won, groups.length * seeds);
       }));
     }
