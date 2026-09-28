@@ -180,3 +180,16 @@ and filed as #104 (Bug, lane: area and lane: quality, a sub-issue of #25, no `ap
 Decided and names them in Done when; #47's Related names #33 and #104 and its Work moves the pillars
 fixture off 168,30. #33 and #47 changed what they ask, so `approved` came off both until the owner
 approves again (ISSUES §2). #95 was sent the number at 09:59 to re-key EDGES_OWED.
+
+## Phase 0's sixteen closed
+
+#95 re-keyed its edge squares to #47 (1) and #104 (11) and merged at 10:04 (main fabf08a), after
+both breaks were seen to fail (a square dropped from #104's list fails fresh; a square made to agree
+fails as stale) and CI was green. #33 closed. Main: `npm run check` ALL OK (41 owed: #26 ×3,
+#40 ×15, #43 ×3, #47 ×9, #104 ×11), builds. All sixteen of #25's original sub-issues are closed.
+
+#25 stays open for two things only the owner can move: #104, filed into it and not yet approved,
+and its Done-when line "a pull request cannot merge unless the workflow is green and the branch is
+up to date with main", which is #27's branch protection. #33 (closed) and #47 lost `approved` when
+their text changed; #47 needs it back before it is picked up. Owed by the orchestrator: the
+docs/SLICE.md suite list, left by every Wave 2 session for a sweep after Phase 0.
