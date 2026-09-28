@@ -110,6 +110,7 @@ export function meetWho(w: Walk, what: string): void {
   if (found.length !== 1) return;
   const { map, p } = found[0];
   w.world.travel(map, p.x, p.y);
+  w.ok(w.world.present(p), `${p.name.split(',')[0]} is there to meet`);
   const bag = w.party.bag.length;
   meet(p, w.party, heard(w.world, p));
   if (w.party.bag.length < bag) w.handedIn = map;

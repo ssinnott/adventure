@@ -124,12 +124,60 @@ await page.waitForTimeout(150);
 const townColours = await colours();
 // A business: walking into the Hearthlight's doorway opens its interior under the inn's menu, and
 // leaving puts the party back in the street, facing the door.
-await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 4, 5, 0); });
+// An event on its doorway, put there at run time, is said by the step in and shows in the room's log.
+await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 4, 5, 0); g.world.map.features.push({ kind: 'event', x: 4, y: 4, id: 'fx_chair', text: 'An empty chair by the fire.' }); });
 await page.keyboard.press('ArrowUp'); await page.waitForTimeout(150);
 const inside = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+const roomLog = await page.evaluate(() => { const g = (window as any).__game.game, v = g.screens.find((s: any) => s.constructor.name === 'InteriorScreen'); return v ? v.roomLog(g) : []; });
 const innColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+await page.evaluate(() => { const m = (window as any).__game.game.world.map; m.features.splice(m.features.findIndex((f: any) => f.id === 'fx_chair'), 1); });
 const outside = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), x: g.world.state.x, y: g.world.state.y, facing: g.world.state.facing }; });
+// A person in a business (game/people.ts, World.peopleAt): Hob, put in the Hearthlight at run time,
+// makes its first menu list him; his answer sends him away, and the menu no longer lists him.
+const inn = await (async () => {
+  const state = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  await page.evaluate(() => {
+    const g = (window as any).__game.game;
+    g.world.travel('harrow', 4, 5, 0);
+    g.world.map.features.push({ kind: 'npc', x: 4, y: 4, name: 'Hob, once tenant of Ashcombe', lines: ['"A stranger, and armed."'], until: { flag: 'fx_hob_gone' },
+      choice: { ask: '"Should I go to Gullwick?"', answers: [{ label: 'Go', sets: 'fx_hob_gone', says: ['"Then I go."'] }, { label: 'Stay', sets: 'fx_hob_stays', says: ['"Then I stay."'] }] } });
+  });
+  await page.keyboard.press('ArrowUp'); await page.waitForTimeout(150);
+  const menu = await state();
+  await page.keyboard.press('ArrowDown'); await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const words = await state();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const question = await state();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const said = await state();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const back = await state();
+  const backColours = await colours();
+  // With him gone the trade is all the menu offers: choosing it opens it once, with nothing under it to come back to.
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const traded = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+  const left = await page.evaluate(() => {
+    const g = (window as any).__game.game, top = g.top.constructor.name, m = g.world.map;
+    while (g.screens.length > 1) g.pop();
+    const i = m.features.findIndex((f: any) => f.kind === 'npc' && f.name.startsWith('Hob'));
+    if (i >= 0) m.features.splice(i, 1);
+    delete g.party.flags.fx_hob_gone; delete g.party.flags.fx_hob_stays;
+    return top;
+  });
+  // The Gilded Eel is its keeper: with Ebba in it, the room says itself over a menu that lists them both.
+  const eel = await page.evaluate(() => {
+    const g = (window as any).__game.game, m = g.world.map, eel = m.features.find((f: any) => f.kind === 'npc' && f.interior === 'gilded_eel');
+    m.features.push({ kind: 'npc', x: eel.x, y: eel.y, name: 'Ebba, a fixture', lines: ['"Not here."'] });
+    g.interact(eel);
+    const out = g.screens.map((s: any) => s.constructor.name).join(','), under = g.screens[g.screens.length - 2]?.options ?? [];
+    while (g.screens.length > 1) g.pop();
+    m.features.splice(m.features.findIndex((f: any) => f.name === 'Ebba, a fixture'), 1);
+    return { screens: out, options: under };
+  });
+  return { menu, words, question, said, back, backColours, traded, left, eel };
+})();
 // A guild's hall, on a fixture (no hall is marked yet): the Drillyard as the Wardens' with one first
 // task already done, so taking it pays at once. Back on the hall's first menu, the rank it reads is
 // the new one: its words are made when drawn, not when the menu was first opened.
@@ -422,10 +470,14 @@ if (process.env.SMOKE_SHOT) {
 
 // The walls meet without a crack. Paint a view from every open cell of a map twice, over two flat
 // backdrops, and wherever the two differ the backdrop shows through. Along the horizon only walls
-// can be (the floor starts 24px below it at the far end of the view, and the billboards stay out
-// over a backdrop), so there backdrop with solid wall either side of it is a crack between two
-// faces. And where walls stand on both hands of the party the edges of the view are wall: those
-// once went undrawn. A zone of the outdoors is walked over its own squares.
+// and hills can be (the floor starts 24px below it at the far end of the view, and the billboards
+// stay out over a backdrop), so there backdrop with solid wall either side of it is a crack between
+// two faces. The sky between two hills' crests narrows to a point where they cross, a notch and not
+// a crack, so a crack is kept only if the view painted with its hills laid flat shows it too: a
+// crack between two faces does not depend on the hills. That passes anything drawn as part of a
+// hill, so the check after the sweep holds a hill's body to its outline. And where walls stand on
+// both hands of the party the edges of the view are wall: those once went undrawn. A zone of the
+// outdoors is walked over its own squares.
 const sweeps = [...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
 const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
@@ -439,6 +491,13 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
   const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
   const skyCtx = sky.getContext('2d')!;
   const paint = (backdrop: string) => { V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
+  // The same view with the hills laid flat: each hill square read as grass while it is painted.
+  const flat = (m: any, backdrop: string) => {
+    const at = m.at;
+    m.at = (x: number, y: number) => { const c = at.call(m, x, y); return c.terrain === 'hills' ? { ...c, terrain: 'grass' } : c; };
+    try { return paint(backdrop); } finally { delete m.at; }
+  };
+  const crackAt = (shows: (px: number, py: number) => boolean, px: number, py: number) => shows(px, py) && [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
   for (const { id, all } of maps) {
     const at = w.locate(id, 0, 0), m = w.maps[at.mapId], z = m.zones.find((q: any) => q.id === id);
     const mw = z ? z.w : m.width, mh = z ? z.h : m.height;
@@ -452,10 +511,14 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
         const walled = (s: number) => V.isSolidWall(m.at(ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
-        let spot = '';
+        let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;
-          const crack = [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
+          let crack = crackAt(shows, px, py);
+          if (crack) {
+            if (!level) { const fa = flat(m, '#ff00ff'), fb = flat(m, '#00ff00'); level = (qx, qy) => { const i = (qy * W + qx) * 4; return Math.abs(fa[i] - fb[i]) > 8 || Math.abs(fa[i + 1] - fb[i + 1]) > 8; }; }
+            crack = crackAt(level, px, py);
+          }
           if (crack || (px < 6 && walled(-1)) || (px >= W - 6 && walled(1))) spot = `${px},${H / 2 - band + py}`;
         }
         if (spot) bad.push(`${id} ${x},${y} facing ${f} at ${spot}`);
@@ -464,6 +527,29 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
   }
   return { bad, views };
 }, sweeps);
+// A hill's body stays inside its outline. The sweep lays hills flat, so it cannot see a crest
+// light drawn off its hill, floating clear of it with sky beneath; this can. Each hill is painted alone, near and far, left, ahead and right, and every inked
+// pixel lies within a pixel of its outline.
+const hillSpill: string[] = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const V = await load('/src/ui/viewport.ts');
+  const W = 400, H = 268, out: string[] = [];
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  for (const d of [1, 2, 3, 5]) for (const l of [-1, 0, 1]) for (const seed of [3, 71, 409]) {
+    ctx.clearRect(0, 0, W, H);
+    const { outline } = V.hillBody(ctx, '#6a8a4a', W / 2, H / 2, H, d, l, seed, false, null, false, false);
+    const px = ctx.getImageData(0, 0, W, H).data;
+    const inside = (x: number, y: number): boolean => ctx.isPointInPath(outline, x + 0.5, y + 0.5);
+    let n = 0;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      if (px[(y * W + x) * 4 + 3] < 128 || inside(x, y)) continue;
+      if (![[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]].some(([dx, dy]) => inside(x + dx, y + dy))) n++;
+    }
+    if (n) out.push(`d ${d} l ${l} seed ${seed}: ${n}px`);
+  }
+  return out;
+});
 
 // One silhouette: every monster drawn at combat size, alone, three abreast and six abreast, through
 // its idle motion, is one piece of ink. Ink is alpha 128 and up (a ground shadow is under it), a
@@ -532,6 +618,12 @@ ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
+ok(inn.menu.screen === 'ChoiceScreen' && inn.menu.options.join() === 'A room and rations,Talk to Hob,Leave', `a person in the inn joins its first menu, by name to the first comma (${inn.menu.options.join(', ')})`);
+ok(inn.words.text === '"A stranger, and armed."' && inn.question.text === '"Should I go to Gullwick?"' && inn.said.text === '"Then I go."', `talking to him says his words and puts his question in the side panel (${inn.words.screen}, ${inn.question.screen}, ${inn.said.screen})`);
+ok(inn.back.screen === 'ChoiceScreen' && inn.back.options.join() === 'A room and rations,Leave' && inn.backColours > 20, `his answer sends him away: back on the first menu, which no longer lists him (${inn.back.options.join(', ')})`);
+ok(inn.traded === 'ExploreScreen,InteriorScreen,ChoiceScreen' && inn.left === 'ExploreScreen', `with him gone, the trade opens once, and Esc leaves (${inn.traded}, then ${inn.left})`);
+ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Leave', `a tavern with a person in it says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
+ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
   `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
@@ -566,6 +658,7 @@ ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeB
 ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /Warden checkpoint.*The pass opens onto old forest/.test(pass.said) && passColours > 20,
   `the open pass is walked straight through into Thornmark, warned at the checkpoint, and Thornmark says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
+ok(!hillSpill.length, `a hill's body, its crest light with it, is drawn inside its outline, near and far${hillSpill.length ? ` -> ${hillSpill.slice(0, 4).join(', ')}` : ''}`);
 ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls beside the party are drawn, in ${cracks.views} views (${sweeps.map((m) => m.id + (m.all ? ' four ways' : '')).join(', ')})${cracks.bad.length ? ` -> ${cracks.bad.length} views, ` + cracks.bad.slice(0, 4).join(', ') : ''}`);
 ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
 if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
