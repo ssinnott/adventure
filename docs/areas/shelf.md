@@ -84,7 +84,8 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
 
-The quests are The Quiet Farm (Vask) and The Cargo Ledger (Hale); the monsters are MONSTERS §5.1's.
+Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quest The Cargo
+Ledger (Hale, `quests.ts`); the monsters are MONSTERS §5.1's.
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
 (`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`) and the Seam's
 the carving over a blank stretch of wall.
@@ -115,11 +116,11 @@ In more detail, as SLICE.md had it before the area docs:
   The curve (`src/content/progression.ts`) checks what the area pays, in place of the tests that
   pinned both.
 
-Its content is in `src/content/areas/shelf/` (maps, monsters, items, quests, climate and its part
-of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. It has no walkthrough of
-its own yet: the end-to-end tests of today (the pass, the stairs, the quests walked through) cross
-into Thornmark, so they stay in `tools/tests/`; an area's `walkthrough.ts`, which `tools/test.ts`
-finds and runs, comes with its chapter of the one quest (#42).
+Its content is in `src/content/areas/shelf/` (maps, monsters, items, chapter, quests, climate and
+its part of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. It has no
+walkthrough of its own yet: the end-to-end tests of today (the pass, the stairs, the quests walked
+through) cross into Thornmark, so they stay in `tools/tests/`; an area's `walkthrough.ts`, which
+`tools/test.ts` finds and runs, comes with its chapter's walk (#42).
 
 ## 4. What is still to build
 
