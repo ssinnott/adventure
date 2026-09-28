@@ -25,7 +25,8 @@ DESIGN.md first for the why.
   rest with monsters two squares off; a hermit is a person.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
-  drops; readiness to train reported.
+  drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
+  machine: the dead and machines never sleep, and a def may shrug off more of its own (`immune`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
@@ -125,6 +126,11 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
   thick fog, bows, slings and crossbows lose 2 to-hit on both sides of a fight
   (`MonsterDef.missile` marks the archers; the Ashen casters are ranged without it), and the
   fight's log says so. The inn wakes the party at 07:00, or at first light in the depth of winter.
+- **A time to walk.** A group may walk only by night or by day, in fog or snow, or in a season
+  (`EncounterDef.when`), only after a step (`after`), or stop coming back once something holds
+  (`until`, the quest log's conditions). Out of its hours it is not there, not drawn, fought or in
+  the way, and comes back where it stood. Nothing new is saved: the clock, the weather and the save
+  already hold all they read. Thornmark's Rift stops coming back once the Warden of the Cut is dead.
 
 ## The road to level 10
 
@@ -156,10 +162,9 @@ cap, which is 10 until the road past it is built:
   bards and druids.
 - **Class traits.** Every class has one or two passives (`TRAITS` in `party.ts`), listed on the
   class picker and the character sheet. Knight: Stalwart (+2 AC), Weapon Master (+1 melee).
-  Paladin: Holy Strike (+3 on anything mindless, not only the dead its text names: slimes, crabs,
-  the wardens), Divine Health (no disease). Ranger: Marksman (+2 ranged), Keen Eyes (always finds
-  secret doors). Cleric: Healing Hands (+3 on heals), Faith (no curses). Sorcerer: Spellfire (+2
-  per foe on damage spells), Iron Will (no sleep). Thief: Sneak Attack (+4 in round one), Keen
+  Paladin: Holy Strike (+3 on the dead), Divine Health (no disease). Ranger: Marksman (+2
+  ranged), Keen Eyes (always finds secret doors). Cleric: Healing Hands (+3 on heals), Faith (no
+  curses). Sorcerer: Spellfire (+2 per foe on damage spells), Iron Will (no sleep). Thief: Sneak Attack (+4 in round one), Keen
   Eyes. Barbarian: Rage (+3 melee below half hp), Die Hard (dies at -20). Monk: Unarmoured Defence
   (robe or less: +1 AC, +1 per two levels), Stillness (no paralysis). Bard: Inspiring Song (+1
   to-hit for the party while standing). Druid: Nature's Ward (no poison), Healing Hands.
@@ -313,14 +318,18 @@ The suites after `quests` hold the content to its contract (EXPANSION §5), over
 over content broken on purpose too, and two tools to theirs:
 
 - `structure` (§5.1): no iron key behind its own lock however the keys are spent, no guardian that
-  comes back, every respawn 720 to 2,880 minutes.
+  comes back, every respawn 720 to 2,880 minutes, every group's `until` and `after` naming something
+  real (an `until` only on a group that comes back), no sky asked underground, and every Rift group
+  of Thornmark's that comes back stopping with the tear.
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
 - `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, in its starting gear,
   against every group alone; each map is held to its band and each area to its band on the curve:
   nine fights in ten won at the floor, a quarter at most two under it, a boss three to seven times
-  in ten, 6.5 fights to a rest give or take one and the area's road walked eight times in ten.
+  in ten, 6.5 fights to a rest give or take one and the area's road walked eight times in ten. A
+  group that walks only in fog is fought with the bows' toll; one that waits on an `after` is no
+  warning at the way in.
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
@@ -387,14 +396,14 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void |
+| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group wears |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups, encounter triggers, rest, search |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
-| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, `MonsterDef`, `SpellDef`) and their lookups; the tables are content's |
+| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
 | `game/quests.ts` | `questLog` (the quests known, their entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |

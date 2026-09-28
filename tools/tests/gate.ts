@@ -9,7 +9,7 @@ import type { RegionId } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, MapDef } from '../../src/game/map.ts';
 import { rest } from '../../src/game/party.ts';
-import { gateCompany, gateFight, winRate } from '../gate.ts';
+import { gateCompany, gateFight, gateOpts, winRate } from '../gate.ts';
 import { days, fightsPerRest, mendBetween, mustRest, ROUND_CAP } from '../harness.ts';
 import { testMonster } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
@@ -105,13 +105,19 @@ function check(key: string, v: number, miss: (v: number) => number, msg: string,
 }
 
 const rates = new Map<string, number>();
-/** A group's win rate at a level, keyed on its monsters, each computed once: the maps and their areas share them. */
-function rate(g: EncounterDef, level: number): number {
-  const key = `${g.monsters.join(',')}@${level}`;
+/**
+ * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters and
+ * that weather, each computed once: the maps and their areas share them.
+ */
+export function rate(g: Pick<EncounterDef, 'monsters' | 'when'>, level: number): number {
+  const opts = gateOpts(g), key = `${g.monsters.join(',')}@${level}~${opts.rangedPenalty ?? 0}`;
   let r = rates.get(key);
-  if (r === undefined) { r = winRate(level, g.monsters, SEEDS, ROUND_CAP); rates.set(key, r); }
+  if (r === undefined) { r = winRate(level, g.monsters, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
 }
+/** The two groups nearest an area's way in, as a company first finds it: none that waits on an `after`. */
+export const nearestWayIn = (groups: readonly EncounterDef[], steps: (x: number, y: number) => number): EncounterDef[] =>
+  groups.filter((g) => !g.after).sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
 const pooled = (groups: readonly EncounterDef[], level: number): number => groups.reduce((t, g) => t + rate(g, level), 0) / groups.length;
 const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 
@@ -132,7 +138,7 @@ function road(groups: readonly EncounterDef[], level: number): number {
   for (let k = 1; k <= SEEDS; k++) {
     const p = gateCompany(level, k);
     const won = groups.every((g, f) => {
-      if (!gateFight(p, g.monsters, k * 104729 + f, ROUND_CAP)) return false;
+      if (!gateFight(p, g.monsters, k * 104729 + f, ROUND_CAP, gateOpts(g))) return false;
       mendBetween(p);
       if (mustRest(p)) for (const m of p.members) rest(m);
       return true;
@@ -146,6 +152,15 @@ export function gate(): void {
   // A fight nobody finishes in fifteen rounds is broken off, and counted as not won.
   const slow = [testMonster('soldier', 1, 400, 0.01)];
   ok(gateFight(gateCompany(3, 36), slow, 36) && !gateFight(gateCompany(3, 36), slow, 36, ROUND_CAP), `a fight won only past ${ROUND_CAP} rounds is broken off at ${ROUND_CAP}, and not won`);
+  // A group's time to walk: fog brings the bows' toll to its fights, and nothing else does; an
+  // `until` changes no fight; a group that waits on an `after` is no warning at the way in.
+  {
+    const bows = new Array(6).fill('smuggler_bowman'), dry = rate({ monsters: bows }, 1), fog = rate({ monsters: bows, when: { sky: 'fog' } }, 1);
+    ok(fog !== dry && rate({ monsters: bows, when: [{ hours: 'night' }, { season: 'winter' }] }, 1) === dry, `six smuggler bowmen that walk only in fog are fought in it (${pc(fog)} won at 1, against ${pc(dry)} dry), and by night or in winter dry`);
+    ok(rate({ monsters: bows, when: [{ sky: 'fog' }, { hours: 'night' }] }, 1) === dry, 'and one that walks in fog or by night is fought dry too');
+    const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
+    ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
+  }
 
   for (const area of AREAS) {
     const id: RegionId = area.id, band = CURVE[id].band;
@@ -186,10 +201,11 @@ export function gate(): void {
 
     // A warning, not a wall: the two groups nearest the way in are among the gentlest, a point's
     // grace below the median so that where most groups are always won one loss in a hundred is not a wall.
+    // A group that comes only after a step is not there when a company first walks in.
     const outdoors = area.maps.find((d) => d.kind === 'outdoor' && d.encounters?.length);
     if (outdoors && all.length) {
       const steps = stepsFrom(outdoors), level = band[0] - GATE.under >= 1 ? band[0] - GATE.under : band[0];
-      const first = [...outdoors.encounters!].sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
+      const first = nearestWayIn(outdoors.encounters!, steps);
       const mid = median(all.map((g) => rate(g, level)));
       const least = Math.min(...first.map((g) => rate(g, level)));
       check(`${name}: warning`, least, (v) => mid - GATE.warning - v, `${name}: the groups nearest the way in, ${first.map((g) => `${g.id} ${pc(rate(g, level))}`).join(' and ')}, are won at ${level} about as often as its median group or more (${pc(mid)}, less ${pc(GATE.warning)})`);

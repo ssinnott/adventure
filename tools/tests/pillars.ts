@@ -164,7 +164,8 @@ export function uses(area: Pick<Area, 'maps' | 'atlas'>, family: Map<string, rea
         if (!m) continue;
         const fam = familyOf(m.sprite);
         if (fam) out.families.add(fam);
-        for (const flag of ['ranged', 'missile', 'mindless'] as const) if (m[flag]) out.mechanics.add(`monster:${flag}`);
+        for (const flag of ['ranged', 'missile'] as const) if (m[flag]) out.mechanics.add(`monster:${flag}`);
+        for (const k of m.immune ?? []) out.mechanics.add(`immune:${k}`);
         if (m.inflict) out.mechanics.add(`inflict:${m.inflict.cond}`);
       }
     }

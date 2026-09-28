@@ -79,6 +79,32 @@ export function combat(): void {
     ok(/not dead/.test(castOnAlly(cler, spell('revive'), dead)), 'Revive on the living does nothing');
     ok(spell('haste').buff === 'haste' && spell('town_portal').explore === 'town_portal', 'Haste and Town Portal exist at tier 4 and 5');
   }
+  // Slumber: the dead never sleep, nor what shrugs it off of its own nature (the slime, the crab, the
+  // wardens); beasts and people do.
+  {
+    const slept = (d: typeof MONSTERS[string]): number => {
+      let n = 0;
+      for (let seed = 1; seed <= 8; seed++) {
+        const r = makeRng(seed), pp = defaultParty(r), sorc = pp.members.find((m) => m.cls === 'sorcerer')!;
+        sorc.spells = [...sorc.spells, 'sleep']; sorc.sp = sorc.maxSp = 99;
+        const s = startCombat(pp, [{ id: 'a', monsters: new Array(6).fill(d) }], r);
+        for (let i = 0; i < 40 && s.outcome === 'ongoing'; i++) {
+          const t = currentTurn(s, pp, r); if (!t) break;
+          if (t.side === 'monster') monsterAct(s, pp, r);
+          else if (pp.members[t.i] === sorc) { partyAct(s, pp, r, { type: 'cast', spellId: 'sleep', target: 0 }); break; }
+          else partyAct(s, pp, r, { type: 'defend' });
+        }
+        n += s.monsters.filter((m) => m.conditions.includes('asleep')).length;
+      }
+      return n;
+    };
+    const never = ['skeleton', 'drowned', 'ghoul', 'bone_knight', 'wraith', 'slime', 'shore_crab', 'rift_warden', 'cut_warden'];
+    const woke = never.filter((id) => slept(MONSTERS[id]) > 0);
+    ok(!woke.length, `Slumber takes none of the dead, the slime, the crab or the wardens (${woke.join(', ') || 'none slept'})`);
+    ok(slept(MONSTERS.rat) > 0 && slept(MONSTERS.bandit) > 0 && slept(MONSTERS.riftling) > 0, 'but rats, bandits and riftlings it does');
+    ok(slept({ ...MONSTERS.rat, immune: ['asleep'] }) === 0, 'a beast that shrugs off sleep of its own stays awake');
+    ok(slept({ ...MONSTERS.rat, kind: 'dead' }) === 0 && slept({ ...MONSTERS.rat, kind: 'machine' }) === 0, 'and a rat made dead or a machine, with no flag of its own, never sleeps');
+  }
   // Weather: bows lose to-hit on both sides; the Ashen casters, ranged but not archers, do not.
   ok(!!MONSTERS.bandit_archer.missile && !!MONSTERS.smuggler_bowman.missile && !!MONSTERS.brigand_archer.missile && !!MONSTERS.ashen_adept.ranged && !MONSTERS.ashen_adept.missile, 'archers shoot; Ashen adepts cast');
   {

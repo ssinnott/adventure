@@ -4,6 +4,8 @@
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';
 import type { RegionId } from './weather.ts';
+import type { Season } from './calendar.ts';
+import type { When } from './quests.ts';
 import type { Interior } from '../content/index.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
@@ -124,7 +126,7 @@ export interface NpcQuest {
 }
 
 /** A monster group placed on the map. `id` keys its instance state (dead, respawn) in MapState. */
-export interface EncounterDef {
+export interface EncounterDef extends Presence {
   id: string;
   x: number; y: number;
   /** Monster def ids; up to 12. */
@@ -137,6 +139,34 @@ export interface EncounterDef {
   respawn?: number;
   /** Said in the log when the party beats the group: what its death changes. */
   slainText?: string;
+}
+
+/**
+ * A time to walk: the hours, the sky or the season. The parts given all hold; of a list, any one
+ * will do. Read from the clock and the weather, so nothing is saved.
+ */
+export interface Hours {
+  /** Night is daylight under a quarter, underground too; day the rest. */
+  hours?: 'day' | 'night';
+  /** Fog as the almanac reads it (0.35 and over), or snow falling or lying. Never underground. */
+  sky?: 'fog' | 'snow';
+  season?: Season | readonly Season[];
+}
+
+/**
+ * When a thing is in the world, for groups now and for events and people to wear as well; World's
+ * `walks` and `ended` read it. `until` and `after` are the quest log's conditions.
+ */
+export interface Presence {
+  /** Only in these hours; out of them it is not there, and comes back where it was. */
+  when?: Hours | readonly Hours[];
+  /**
+   * Once this holds it is over. A group stops coming back: one standing stays until it is killed.
+   * A person or an event is gone.
+   */
+  until?: When;
+  /** Not there until this holds. */
+  after?: When;
 }
 
 export interface MapDef {
