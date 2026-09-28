@@ -96,7 +96,7 @@ In more detail, as SLICE.md had it before the area docs:
 - **Helmstow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
   (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
   when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), a well, a
-  sign, and the gatehouse in the north wall.
+  sign and the gatehouse in the north wall.
 - **The Keep** (town, 16×10): the keep's ward behind the gatehouse, with a palette of its own and
   the Queen's banners placed (`banners`); Lord Vask on the keep's door, holding court in the throne
   room (the contract and the hand-in); people and a well. A building on its west side stands empty

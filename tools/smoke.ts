@@ -38,10 +38,10 @@ const SEED = process.env.SMOKE_SEED === 'random' ? randomInt(1, 0x7fffffff) : Nu
 if (!Number.isInteger(SEED) || SEED < 1 || SEED >= 0x7fffffff) throw new Error(`SMOKE_SEED must be random or a whole number from 1 to ${0x7fffffff - 1}`);
 if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
 
-// The crack sweep looks one way from every square of the cellar, Helmstow and its keep on every run, and all
-// four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref> sweeps what
-// changed since that ref (CI passes the pull request's base); SMOKE_SWEEP=all or <id>,<id> names
-// the maps instead.
+// The crack sweep looks one way from every square of the cellar, Helmstow and its keep on every
+// run, and all four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref>
+// sweeps what changed since that ref (CI passes the pull request's base); SMOKE_SWEEP=all or
+// <id>,<id> names the maps instead.
 const FLOOR = ['mill', 'harrow', 'keep'];
 const sweepAsked: string = process.env.SMOKE_SWEEP || (process.env.SMOKE_BASE ? await changedMaps(changedFiles(process.env.SMOKE_BASE)).then((c) => (c.all ? 'all' : c.maps.join(','))) : '');
 const SWEEP = sweepAsked === 'all' ? MAP_DEFS.map((d) => d.id) : sweepAsked.split(',').filter(Boolean);

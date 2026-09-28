@@ -173,7 +173,9 @@
     },
     "keep": {
       "size": "16x10",
-      "used": [],
+      "used": [
+        "keep_chapel"
+      ],
       "groups": [],
       "doors": []
     },

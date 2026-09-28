@@ -1,6 +1,6 @@
-// The throne room behind the keep's great door, where the Regent-Warden holds court: grey stone, the
-// empty throne on its dais under black cloth, the Wardens' banners either side of it, and a tall
-// window west over the sea to the Hearth.
+// The throne room behind the keep's great door, where the Regent-Warden holds court: grey stone,
+// the empty throne on its dais under black cloth, the Wardens' banners either side of it and a
+// tall window south over the sea to the Hearth.
 import { shade, rgba, mix } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
 import { STAGE_W, STAGE_H, rnd, stones, flagstones, windowIn, line, fillPoly, path, ink, smudge, contact, slab, flame, pool } from '../kit.ts';
@@ -67,7 +67,7 @@ export const THRONE_ROOM: Scene = {
     const FLOOR = 204;
     stones(ctx, 0, 0, STAGE_W, FLOOR, STONE, 12, 171, { long: 2 });
     flagstones(ctx, FLOOR, 200, 110, FLAG, 6, 172);
-    // The window west, over the sea to the Hearth.
+    // The window south, over the sea to the Hearth.
     windowIn(ctx, s, 306, 34, 48, 110, shade(STONE, 0.7), { arched: true, panes: [2, 4], view: hearthView(306, 34, 48, 110, s.daylight) });
     // By night the Hearth's light still comes in, faint and gold.
     if (s.daylight < 0.5) pool(s, 330, 110, 120, '#ffe0a0', 0.35 * (1 - s.daylight * 2));
@@ -88,7 +88,7 @@ export const THRONE_ROOM: Scene = {
     line(ctx, [153, 176, 126, STAGE_H], GOLD, 2); line(ctx, [189, 176, 216, STAGE_H], GOLD, 2);
     path(ctx, carpet); ink(ctx);
     throne(ctx, 171, 176, 96);
-    // Candles either side of the throne, lit for the dead; their light is most of the room's by night.
+    // Candles either side of the throne, lit for the dead: by night, most of the room's light.
     candleStand(ctx, s, 110, 176, 58);
     candleStand(ctx, s, 232, 176, 58);
     smudge(ctx, 171, 150, 90, '#ffb060', 0.12);

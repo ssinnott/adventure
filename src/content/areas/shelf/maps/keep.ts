@@ -31,7 +31,7 @@ export const KEEP: MapDef = {
     { x: 8, y: 9, to: 'harrow', tx: 8, ty: 1, tf: SOUTH, label: 'You pass back under the gatehouse into Helmstow.' },
   ],
   features: [
-    { kind: 'sign', x: 8, y: 8, text: 'A proclamation on the gatehouse: the Regent-Warden holds Helmstow in the Crown\'s name until the succession is settled.' },
+    { kind: 'sign', x: 9, y: 8, text: 'A proclamation on the gatehouse: the Regent-Warden holds Helmstow in the Crown\'s name until the succession is settled.' },
     { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', lines: [
       'A tall man in Warden grey, his guards a step behind him. He does not wait for you to bow, and does not appear to notice that you did not.',
       '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm south of here, Ashcombe, on the Foreland road, has gone quiet. Find out why. Clear whatever is there."',
@@ -56,7 +56,7 @@ export const KEEP: MapDef = {
       'A farmer\'s wife: "Ashcombe has gone quiet. No smoke, no carts. My sister is out there."',
       'A fisherman from Gullwick: "Wreckers on the shore road again, and the Regent says the shore is not his."',
     ] },
-    { kind: 'event', x: 4, y: 4, id: 'keep_chapel', text: 'The keep\'s chapel, where the Queen lay in state. Its door is shut and still hung with black.' },
+    { kind: 'event', x: 4, y: 4, id: 'keep_chapel', once: true, text: 'The keep\'s chapel, where the Queen lay in state. Its door is shut and still hung with black.' },
     { kind: 'npc', x: 2, y: 6, name: 'A mourner', lines: [
       'An old woman in black sits by the chapel wall.',
       '"I dressed her for the chapel. Forty years I served her, and she never once looked at the Hearth without frowning."',
