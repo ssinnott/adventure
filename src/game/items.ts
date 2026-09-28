@@ -29,6 +29,8 @@ export interface ItemDef {
   classes?: readonly string[];
   /** Consumable effect. */
   use?: { heal?: number; sp?: number; cure?: readonly string[]; food?: number };
+  /** Words to read: a letter, read from the pack. */
+  text?: readonly string[];
 }
 
 export function item(id: string): ItemDef {
