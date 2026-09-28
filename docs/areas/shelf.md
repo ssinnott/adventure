@@ -78,7 +78,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6), the Gilded Eel and its four rumours, Vask and his contract |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 3), the Warden Drillyard (training to 6), the Gilded Eel and its four rumours, Vask and his contract |
 | The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
@@ -92,7 +92,7 @@ the carving over a blank stretch of wall.
 In more detail, as SLICE.md had it before the area docs:
 
 - **Helmstow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
-  (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
+  (buy and sell), Lantern Guildhall (join, then buy tier-3 spells), Warden Drillyard (train a level
   when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
   (the contract and the hand-in), a well, a sign.
 - **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or lurking
@@ -467,9 +467,9 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
   quarter. The area as one is won 88.6% of the time at level 1, against nine in ten. The Foreland
   map, Brandy Hole and the Seam give 4.6, 4.1 and 4.1 fights to a rest, against six or seven. The
   pilot settles them, by retuning or by moving the thresholds.
-- **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`), and Helmstow's Lantern
-  Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:410`). EXPANSION §4 has an
-  area's towns sell its band's tier.
+- **Spells.** Tier 3 comes free at level 4, inside the band (`spellTierAt`, `levelUp`), and
+  Helmstow's Lantern Guildhall sells it (`maxTier: 3`) ahead of that, at 160 gold a spell, as
+  EXPANSION §4 has an area's towns sell its band's tier (#74).
 
 ## 9. Decisions
 
@@ -508,6 +508,8 @@ Decided by the owner on 27 and 28 September 2026:
     Mottram's sells the band's gear, and in Act I pluses are found, not sold (#99 and #101). No
     find is dearer than its band's window on the curve (`src/content/progression.ts`), so the
     captain's mail is Scale Mail +1 and Thornmark has no plate with a plus.
+12. **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
+    sold in the band (§8; #74).
 
 Proposed, for the owner, each in the issue that would build it:
 
@@ -515,8 +517,6 @@ Proposed, for the owner, each in the issue that would build it:
   hint, share of the pay.
 - **The core** is F3, E3 and D2, the boxes that hold a step of the quest; the other four are
   country (§4).
-- **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
-  sold in the band (§8; #74).
 - **The world map's lettering** moves onto the grid, so that the border names each box (§1; #66).
 - **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across

@@ -132,7 +132,7 @@ cap, which is 10 until the road past it is built:
   tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`). Trainers charge 25 a level to 5 and
   40 a level after (`trainPrice` in `party.ts`, which the curve's gold reads); the Warden Drillyard
   in Helmstow teaches to 6, the Elder's Yard in Thornhold to 10. Guilds sell up to a tier of their
-  own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320 gold; tier 5 comes only with level 8.
+  own (`maxTier`: Helmstow 3, Thornhold 4) at 40, 80, 160, 320 gold; tier 5 comes only with level 8.
 - **The curve** (`content/progression.ts`). Each area has a band, the floor of the next and a price
   window: the Foreland 1-5 and 500 gold, Thornmark 5-10 and 1,200. Three quarters of a clear's xp
   should take a member to the next floor, and its gold train the six there; every monster has a
