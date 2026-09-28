@@ -188,14 +188,17 @@ export function armorClass(c: Character): number {
   let ac = 10 + bonus(c.stats.speed);
   for (const slot of ['armor', 'shield'] as const) { const id = c.equipment[slot]; if (id) ac += ITEMS[id].ac ?? 0; }
   if (hasTrait(c, 'stalwart')) ac += STALWART_AC;
-  if (hasTrait(c, 'unarmoured') && !c.equipment.shield && (ITEMS[c.equipment.armor ?? '']?.ac ?? 0) <= 1) ac += 1 + Math.floor(c.level / 2);
+  if (hasTrait(c, 'unarmoured') && !c.equipment.shield && robeLike(ITEMS[c.equipment.armor ?? ''])) ac += 1 + Math.floor(c.level / 2);
   return ac;
 }
+
+/** Nothing, or armour of a robe's own armour class: a plus does not make a robe armour. */
+const robeLike = (d: ItemDef | undefined): boolean => (d?.ac ?? 0) - (d?.plus ?? 0) <= 1;
 
 export function weaponOf(c: Character): ItemDef { return c.equipment.weapon ? item(c.equipment.weapon) : ITEMS.club; }
 
 export function attackBonus(c: Character): number {
-  return CLASSES[c.cls].attack + Math.floor(c.level / 2) + bonus(c.stats.accuracy);
+  return CLASSES[c.cls].attack + Math.floor(c.level / 2) + bonus(c.stats.accuracy) + (weaponOf(c).plus ?? 0);
 }
 
 export function isDown(c: Character): boolean {
