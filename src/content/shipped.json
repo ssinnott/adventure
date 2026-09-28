@@ -10,6 +10,7 @@
         "grove_edge",
         "grove_road",
         "lake",
+        "lodestone",
         "thornmark_in",
         "tm_barrow",
         "tm_tower",
@@ -228,7 +229,8 @@
     "q_greywater",
     "q_greywater_done",
     "q_grove",
-    "q_grove_done"
+    "q_grove_done",
+    "q_lodestone"
   ],
   "items": [
     "antidote",

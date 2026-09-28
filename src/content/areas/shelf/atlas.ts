@@ -19,7 +19,7 @@ export const SITES: readonly AtlasSite[] = [
   // I. The Foreland, from its map: Helmstow's walls at 14-18,1-3, the Ashcombe farm, the Brandy
   // Hole cliffs.
   { name: 'Helmstow', icon: 'city', map: 'shelf', at: [16.5, 2.4], label: 'right' },
-  { name: 'Lodestone', icon: 'stone', map: 'shelf', at: [21.5, 4], label: 'none', planned: true },
+  { name: 'Lodestone', icon: 'stone', map: 'shelf', at: [21.5, 4], label: 'none' },
   { name: 'Ashcombe', icon: 'farm', map: 'shelf', at: [26.5, 20.2], label: 'below' },
   { name: 'Brandy Hole', icon: 'cave', map: 'shelf', at: [2.5, 27.4], label: 'below' },
   { name: 'The Scarth', icon: 'gate', map: 'shelf', at: [31.5, 8.6], label: 'none' },
