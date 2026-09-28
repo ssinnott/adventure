@@ -42,11 +42,11 @@ export const GROVE2: MapDef = {
     { kind: 'event', x: 6, y: 14, id: 'g2_hint', once: true, text: 'Fresh chisel marks score the north wall here, and there is grit on the floor. Something was opened.' },
     { kind: 'event', x: 12, y: 12, id: 'g2_ring2', once: true, text: 'Inside the second wall the floor is warm. Glyph panels along the corridor flicker, one in three still lit.' },
     { kind: 'chest', x: 12, y: 3, id: 'g2_key', gold: 200, items: ['key_iron', 'potion_sp_great'] },
-    { kind: 'chest', x: 3, y: 12, id: 'g2_c1', gold: 300, items: ['greatsword', 'elixir', 'elixir'] },
+    { kind: 'chest', x: 3, y: 12, id: 'g2_c1', gold: 300, items: ['greatsword+1', 'elixir', 'elixir'] },
     { kind: 'event', x: 10, y: 10, id: 'g2_inner', once: true, text: 'Beyond the door the hum is a pressure in the teeth. Ember-light leaks under the innermost wall.' },
     { kind: 'sign', x: 7, y: 10, text: 'Cut into the lintel of the iron door, in a hand you recognise from Ashcombe: THE HEARTH IS A CAGE. THIS IS A BAR OF IT.' },
     { kind: 'event', x: 7, y: 8, id: 'g2_stone', once: true, text: 'The Grove Stone: a standing stone the height of two men, and a hand-span of it cut clean away. Where the cut is, the air is torn. In the tear, something turns to look at you.' },
-    { kind: 'chest', x: 8, y: 8, id: 'g2_hoard', gold: 600, items: ['plate', 'potion_sp_great', 'elixir'] },
+    { kind: 'chest', x: 8, y: 8, id: 'g2_hoard', gold: 600, items: ['brigandine+2', 'potion_sp_great', 'elixir'] },
   ],
   secrets: [{ x: 6, y: 13, hint: 'g2_hint' }],
   encounters: [
