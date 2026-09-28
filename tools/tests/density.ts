@@ -1,9 +1,11 @@
 // Density: something to find within a few steps of every square (EXPANSION §1, §5.3). Walked in
 // four-way steps from every point of interest at once (a feature, a group's start, a way in or out)
 // over the squares a party can stand on; a point's own square is 0 steps and a locked door is open.
+// Points are counted by square, and a sign, well or event that says nothing is no point, so neither a
+// stack of points on one square nor a scatter of empty ones meets the floor or dilutes the sign cap.
 // The maps as written, not as played: the played outdoors joins the zones and makes their exits gates.
 import { AREAS } from '../../src/content/index.ts';
-import { GameMap, type MapDef } from '../../src/game/map.ts';
+import { GameMap, type Feature, type MapDef } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { ok } from './lib.ts';
 
@@ -28,7 +30,7 @@ export interface Measure {
   steps: number[];
   /** The furthest step; Infinity if any square is unreached. */
   max: number;
-  /** Points of interest, and how many of them are signs. */
+  /** Squares holding a point of interest, and how many of them hold a sign. */
   points: number;
   signs: number;
 }
@@ -37,10 +39,13 @@ export interface Measure {
 export function measure(def: MapDef): Measure {
   const m = new GameMap(def);
   const stand = (x: number, y: number): boolean => { const p = m.passable(x, y, { keys: 1 }); return p === 'ok' || p === 'unlock'; };
-  const pts = [...m.features, ...m.encounters, ...m.exits];
+  const said = m.features.filter((f) => !('text' in f) || f.text.trim() !== '');
+  const square = (p: { x: number; y: number }): number => p.y * m.width + p.x;
+  const pts = new Set([...said, ...m.encounters, ...m.exits].map(square));
+  const signs = new Set(said.filter((f) => f.kind === 'sign').map(square));
   const dist = new Array<number>(m.width * m.height).fill(Infinity);
   let queue: number[] = [];
-  for (const p of pts) if (stand(p.x, p.y) && dist[p.y * m.width + p.x] !== 0) { dist[p.y * m.width + p.x] = 0; queue.push(p.y * m.width + p.x); }
+  for (const i of pts) if (stand(i % m.width, Math.floor(i / m.width))) { dist[i] = 0; queue.push(i); }
   for (let d = 1; queue.length; d++) {
     const next: number[] = [];
     for (const i of queue) {
@@ -54,7 +59,7 @@ export function measure(def: MapDef): Measure {
   }
   const steps: number[] = [];
   for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) if (stand(x, y)) steps.push(dist[y * m.width + x]);
-  return { total: steps.length, steps, max: Math.max(0, ...steps), points: pts.length, signs: m.features.filter((f) => f.kind === 'sign').length };
+  return { total: steps.length, steps, max: steps.reduce((a, b) => Math.max(a, b), 0), points: pts.size, signs: signs.size };
 }
 
 /** Why a map misses its floor, or '' if it is inside it; and the line it is reported with. */
@@ -80,22 +85,38 @@ export function density(): void {
     ok(!why, `${a.id}/${line}${why ? ': ' + why : ''}`);
   }
 
-  // The check catches what it is for: each fixture is a copy of a real map, never the map itself.
+  // The check catches what it is for. Stripped copies of maps far below their floor; everything
+  // else on fields built here, so no edit to the maps can turn a fixture red.
   const find = (id: string): MapDef => AREAS.flatMap((a) => a.maps).find((d) => d.id === id)!;
-  const bare = (d: MapDef, extra: Partial<MapDef> = {}): MapDef => ({ ...d, features: [], ...extra });
   const fails = (d: MapDef, what: string, msg: string): void => { const w = judge(d).why; ok(w.includes(what), `${msg}: ${w || 'passes'}`); };
   const passes = (d: MapDef, msg: string): void => { const w = judge(d).why; ok(!w, `${msg}${w ? ': ' + w : ''}`); };
-  const thornmark = find('thornmark'), shelf = find('shelf'), harrow = find('harrow');
-  fails(bare(thornmark, { density: 'core' }), 'under 90%', 'Thornmark stripped of its features fails core');
-  passes({ ...thornmark, density: 'country' }, 'Thornmark marked country passes the looser floor');
-  fails(bare(harrow), 'past 10', 'Harrow stripped of its features fails the town floor');
-  fails(bare(shelf, { density: 'core' }), 'under 90%', 'the Foreland stripped of its features fails core');
-  passes(bare(shelf, { density: 'country' }), 'and passes country: the mark switches the floor');
-  const sign = (n: number): MapDef['features'] => [...shelf.features!, ...Array.from({ length: n }, () => ({ kind: 'sign' as const, x: shelf.start.x, y: shelf.start.y, text: '' }))];
-  passes({ ...shelf, density: 'core', features: sign(1) }, 'the Foreland with one more sign (6 of 24) passes');
-  fails({ ...shelf, density: 'core', features: sign(2) }, 'a sign', 'and with two more (7 of 25) fails');
-  fails({ ...shelf, density: undefined }, 'neither core nor country', 'an outdoor map with no mark fails');
+  const thornmark = find('thornmark'), harrow = find('harrow');
+  fails({ ...thornmark, density: 'core', features: [] }, 'under 90%', 'Thornmark stripped of its features fails core');
+  fails({ ...harrow, features: [] }, 'past 10', 'Harrow stripped of its features fails the town floor');
+
+  // A road of grass 73 squares long with a chest every 24: all within 12, a quarter past 8.
+  const chest = (x: number, y = 0): Feature => ({ kind: 'chest', x, y, id: `c${x}_${y}`, gold: 1, items: [] });
+  const road = (features: Feature[], density?: 'core' | 'country'): MapDef =>
+    ({ id: 'road', name: 'Road', kind: 'outdoor', density, start: { x: 0, y: 0, facing: NORTH }, rows: [','.repeat(73)], features });
+  const every24 = [0, 24, 48, 72].map((x) => chest(x));
+  passes(road(every24, 'country'), 'a chest every 24 squares passes country');
+  fails(road(every24, 'core'), 'under 90% within 8', 'and fails core: the mark switches the floor');
+  const empty = (x: number, text = ''): Feature => ({ kind: 'event', x, y: 0, id: `e${x}`, text });
+  const between = [4, 8, 12, 16, 20, 28, 32, 36, 40, 44, 52, 56, 60, 64, 68];
+  fails(road([...every24, ...between.map((x) => empty(x))], 'core'), 'under 90% within 8', 'events that say nothing do not meet the floor');
+  passes(road([...every24, ...between.map((x) => empty(x, 'A stone.'))], 'core'), 'the same events with something to say do');
+  fails(road(every24, undefined), 'neither core nor country', 'an outdoor map with no mark fails');
   fails({ ...harrow, density: 'core' }, 'only an outdoor map', 'a town with a mark fails');
+
+  // The sign cap on a hall of stone: one square in four a sign passes, one more fails.
+  const hall = (features: Feature[]): MapDef =>
+    ({ id: 'hall', name: 'Hall', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#########', '#.......#', '#########'], features });
+  const sign = (x: number): Feature => ({ kind: 'sign', x, y: 1, text: 'Hall.' });
+  passes(hall([chest(1, 1), chest(3, 1), chest(5, 1), sign(7)]), 'three chests and a sign pass (1 of 4)');
+  fails(hall([chest(1, 1), chest(3, 1), chest(5, 1), sign(6), sign(7)]), 'a sign', 'three chests and two signs fail (2 of 5)');
+  const stack = Array.from({ length: 30 }, (_, i) => ({ kind: 'event' as const, x: 1, y: 1, id: `s${i}`, text: 'Here.' }));
+  fails(hall([chest(3, 1), sign(7), ...stack]), 'a sign', 'thirty events on one square are one point (1 sign of 3)');
+  fails(hall([chest(3, 1), chest(5, 1), sign(7), ...[1, 2, 4, 6].map((x) => ({ ...empty(x), y: 1 }))]), 'a sign', 'and empty ones are none (1 sign of 3)');
   const island: MapDef = { id: 'island', name: 'Island', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#.#.#', '#####'], exits: [] };
   fails(island, 'nothing reaches', 'a square nothing reaches fails');
 }
