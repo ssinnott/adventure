@@ -60,7 +60,7 @@ src/main.ts        boot: canvas, input, loop
 src/input.ts       keyboard -> queued actions (plus a text mode for names)
 src/game/          the model: map, outdoors, world, calendar, weather, party, people, guilds, items, spells, monsters, combat, quests, save, game
 src/content/       the content, in TypeScript: index.ts lists the areas in road order and merges their tables; guilds.ts the guilds
-src/content/areas/ one folder per area: its maps, monsters, items, quests, guild quests and climate (docs/areas/ has each one's doc)
+src/content/areas/ one folder per area: its maps, monsters, items, chapter of the one quest, side quests, guild quests and climate (docs/areas/ has each one's doc)
 src/ui/            viewport, frame, sprites, screens, combat screen, quest log, title, party creation
 src/ui/monsters/   the enemy drawings, one module per family, dispatched by sprites.ts
 src/ui/interiors/  the businesses' interiors, a folder per area and a scene to a file, dispatched by interior.ts

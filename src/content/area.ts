@@ -4,7 +4,7 @@ import type { MapDef, Terrain, Feature, Door, EncounterDef } from '../game/map.t
 import type { MonsterDef } from '../game/monsters.ts';
 import type { Condition } from '../game/party.ts';
 import type { ItemDef } from '../game/items.ts';
-import type { QuestDef } from '../game/quests.ts';
+import type { QuestDef, Chapter } from '../game/quests.ts';
 import type { GuildQuest } from '../game/guilds.ts';
 import type { Climate } from '../game/weather.ts';
 import type { AtlasZone, AtlasPlace, AtlasSite, SiteIcon } from '../game/atlas.ts';
@@ -21,13 +21,18 @@ export interface Area {
   /** Its items; any area's chests, shops and monsters may hold them. */
   items: readonly ItemDef[];
   /**
-   * Its side of the quest log, joined in road order: what the company's journal says about each
-   * quest as it moves, and what to do next. Every entry is keyed to something the save already
+   * Its side quests, joined in road order after the one quest: what the company's journal says
+   * about each quest as it moves, and what to do next. Every entry is keyed to something the save already
    * records (a flag an NPC sets, an item carried, a once-only event, a guardian killed, a map set
    * foot on), so the log needs no state of its own; tools/tests/quests.ts checks every key points at
    * something real and every page fits the screen.
    */
   quests: readonly QuestDef[];
+  /**
+   * Its chapter of the one quest (EXPANSION §5.8), keyed as `quests` is, each goal placed with `at`.
+   * content/index.ts joins the chapters in road order. A reach area has none.
+   */
+  chapter?: Chapter;
   /**
    * Its guild quests, given out at the guilds' halls (game/guilds.ts). Each is in the quest log from
    * its taking, keyed to its own flags, so the same check holds it as the quests above.
@@ -69,7 +74,7 @@ export type Mechanic =
 
 /**
  * An area's end-to-end test, in src/content/areas/<area>/walkthrough.ts as `walkthrough`: it plays the
- * area through from outside and checks each step with `ok`. tools/test.ts finds and runs it, and
+ * one quest's chapters up to its own, and its own, and checks each step with `ok`. tools/test.ts finds and runs it, and
  * awaits it if it is async; nothing in the game imports it, so it stays out of the build.
  */
 export type Walkthrough = (ok: (cond: boolean, msg: string) => void) => void | Promise<void>;

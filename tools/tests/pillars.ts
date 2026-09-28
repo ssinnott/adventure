@@ -117,7 +117,10 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
   for (const c of Object.values(CLASSES)) add(`class ${c.id}`, c.name, c.blurb);
   for (const r of Object.values(RACES)) add(`race ${r.id}`, r.name, r.blurb);
   for (const t of Object.values(TRAITS)) add(`trait ${t.id}`, t.name, t.text);
-  for (const q of QUESTS) add(`quest ${q.id}`, q.title, q.entries.map((e) => e.text), q.goals.map((g) => g.text));
+  for (const q of QUESTS) {
+    add(`quest ${q.id}`, q.title);
+    for (const c of q.chapters ?? [q]) add(`quest ${q.id}/${c.id}`, c.title, c.entries.map((e) => e.text), c.goals.map((g) => g.text));
+  }
   for (const q of GUILD_QUESTS) add(`guild quest ${q.id}`, q.offer, q.paid, q.early);
   for (const gd of Object.values(GUILDS)) add(`guild ${gd.id}`, gd.name, gd.ranks);
   for (const a of AREAS) add(`${a.id} climate`, a.climate.fogText, a.climate.thunderText);

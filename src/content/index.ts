@@ -2,13 +2,13 @@
 // area is its folder under areas/ and its line in AREAS (with the import above it); its drawings
 // and rooms are src/ui's (FAMILY in ui/sprites.ts, SCENES in ui/interior.ts), which the typecheck
 // holds to the lists here. The unions the game types its content with (MonsterSprite, Interior,
-// RegionId) are made from the areas, so nobody edits them by hand. The maps as played, with the
-// outdoors laid out, are in ./maps.ts.
+// RegionId) are made from the areas, so nobody edits them by hand. The one quest is joined here
+// from the areas' chapters. The maps as played, with the outdoors laid out, are in ./maps.ts.
 import type { MapDef } from '../game/map.ts';
 import type { MonsterDef } from '../game/monsters.ts';
 import type { ItemDef } from '../game/items.ts';
 import type { SpellDef } from '../game/spells.ts';
-import type { QuestDef } from '../game/quests.ts';
+import type { LogQuest, ChapteredQuest } from '../game/quests.ts';
 import type { GuildQuest } from '../game/guilds.ts';
 import type { Area } from './area.ts';
 import { guildQuestDef } from './guilds.ts';
@@ -64,17 +64,22 @@ export const ITEMS: Record<string, ItemDef> = byId('item', [...CORE_ITEMS, ...AR
 
 export const SPELLS: Record<string, SpellDef> = byId('spell', ALL_SPELLS);
 
+/** The one quest (EXPANSION §5.8), joined from each area's chapter in road order. */
+export const THE_QUEST: ChapteredQuest = {
+  id: 'dimming', title: 'The Dimming',
+  chapters: once('chapter', AREAS.flatMap((a) => a.chapter ? [a.chapter] : []), (c) => c.id),
+};
+
 /** The guild quests, each area's in road order (game/guilds.ts). */
 export const GUILD_QUESTS: readonly GuildQuest[] = AREAS.flatMap((a: Area) => a.guilds ?? []);
 
 /**
- * The quest log's quests, each area's in road order: the log lists them so. A guild quest is in it
- * from its taking to its pay, by its own flags.
+ * The quest log's quests: the one quest, then each area's side quests in road order, then the guild
+ * quests, each in the log from its taking to its pay by its own flags. The log lists them so.
  */
-export const QUESTS: readonly QuestDef[] = once('quest', [
-  ...AREAS.flatMap((a) => a.quests),
-  ...GUILD_QUESTS.map(guildQuestDef),
-], (q) => q.id);
+export const QUESTS: readonly LogQuest[] = once('quest', [THE_QUEST, ...AREAS.flatMap((a) => a.quests), ...GUILD_QUESTS.map(guildQuestDef)], (q) => q.id);
+// A chapter's page is keyed under the quest's, and the log opens on a quest by its id: keep the two apart.
+once('quest or chapter', [...QUESTS, ...THE_QUEST.chapters], (q) => q.id);
 
 export const CLIMATES = Object.fromEntries(AREAS.map((a) => [a.id, a.climate])) as Record<RegionId, Climate>;
 
