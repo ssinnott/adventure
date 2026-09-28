@@ -508,7 +508,7 @@ Crowness Light.
 Thornmark is where the Stone is cut, and every kind the Foreland showed is here at full strength:
 packs of dire wolves, spiders that poison, brigands with archers, the Hand in numbers, the barrow's
 knights and wraiths, and the Rift the cut let through. The roster stays. What the pilot changes is
-the gate: today a company wins nine fights in ten here at level 3 (EXPANSION.md §2.2), and the gate
+the gate: a company won nine fights in ten here at level 3 (EXPANSION.md §2.2), and the gate
 wants one in four at most. The monsters' levers, in order:
 
 - **The gentlest first.** The first groups past the pass are wolves and brigands, and the crossing

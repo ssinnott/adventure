@@ -4,9 +4,10 @@
 // end, each change announced once.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST } from '../../src/content/index.ts';
+import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, GUILD_QUESTS } from '../../src/content/index.ts';
 import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
 import { existsSync } from 'node:fs';
+import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, takeItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -24,13 +25,17 @@ import type { MapState } from '../../src/game/world.ts';
 import { ok, owed } from './lib.ts';
 
 /**
- * What in a condition names nothing real: a flag no NPC sets, an item, something spent once and kept
+ * What in a condition names nothing real: a flag no NPC or guild quest sets, an item, something spent once and kept
  * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue), a guardian that
  * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
  * maps are the game's unless given.
  */
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
-  const npcFlags = new Set(maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])));
+  // The flags people set, and the guild quests' own (a hall sets them: game/guilds.ts).
+  const npcFlags = new Set([
+    ...maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])),
+    ...GUILD_QUESTS.flatMap((q) => [takenFlag(q.id), doneFlag(q.id)]),
+  ]);
   const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };
   const bad: string[] = [];
   for (const c of [w].flat() as QuestCond[]) {
