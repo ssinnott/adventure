@@ -50,6 +50,7 @@ function who(map: string, x: number, y: number, name: string): Person {
   return p;
 }
 const EBBA_EEL = (): Person => who('harrow', 12, 13, 'Ebba'), EBBA_CHAPEL = (): Person => who('harrow', 11, 4, 'Ebba');
+const FISHERMAN = (): Person => who('harrow', 12, 13, 'the fisherman'), WALL = (): Person => who('harrow', 14, 3, 'a Warden on the wall');
 const OSMUND = (): Person => who('harrow', 11, 4, 'Osmund'), AILITH_WOOD = (): Person => who('shelf', 2, 14, 'Ailith'), AILITH_HOLD = (): Person => who('thornhold', 11, 4, 'Ailith');
 
 /** Whether a person stands where they are listed now. */
@@ -85,6 +86,7 @@ function reads(w: Walk, id: string, title: string, want: readonly string[], not:
 
 /** The Bell That Rang Twice to its choice: Osmund hires, the boats and the wall, Ebba confesses. */
 function bellAsked(w: Walk): void {
+  w.ok(!there(w, FISHERMAN(), 'harrow') && !there(w, WALL(), 'harrow'), 'before the bell is asked after, neither the fisherman nor the Warden on the wall is there');
   meetWho(w, 'q_bell');
   w.ok(w.news.at(-1) === 'New quest: The Bell That Rang Twice.' && !!page(w, 'bell')?.goal, `Osmund's first meeting begins The Bell That Rang Twice, with a goal (${w.news.at(-1)})`);
   meetWho(w, 'q_bell_boats');
@@ -101,6 +103,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(said.startsWith('"A Lantern. Under my own roof."'), 'the name given, Osmund writes it');
     reads(w, 'bell', 'The Bell That Rang Twice', ['osmund', 'boats', 'wall', 'ebba', 'named'], ['kept'], 'the name given');
     w.ok(!there(w, EBBA_EEL(), 'harrow') && !there(w, EBBA_CHAPEL(), 'harrow'), 'the name given, Ebba is gone from the Eel and is not in the Chapel');
+    w.ok(!there(w, FISHERMAN(), 'harrow') && !there(w, WALL(), 'harrow'), 'the name given, the fisherman and the Warden on the wall are gone');
     w.ok(hear(w, 'harrow', OSMUND()).startsWith('"They took her to the keep'), "and Osmund's after-lines are the name given's");
   }
   { // The bell: the name kept. Ebba moves to the Chapel, says what she saw of Vask, then asks after the survey.
@@ -109,6 +112,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     answerWho(w, 'q_bell', "We couldn't find out.");
     reads(w, 'bell', 'The Bell That Rang Twice', ['osmund', 'boats', 'wall', 'ebba', 'kept'], ['named'], 'the name kept');
     w.ok(!there(w, EBBA_EEL(), 'harrow') && there(w, EBBA_CHAPEL(), 'harrow'), 'the name kept, Ebba is gone from the Eel and in the Chapel');
+    w.ok(!there(w, FISHERMAN(), 'harrow') && !there(w, WALL(), 'harrow'), 'the name kept, the fisherman and the Warden on the wall are gone');
     w.ok(hear(w, 'harrow', OSMUND()).startsWith('"Rang itself. It\'s in the book'), "Osmund's after-lines are the name kept's");
     w.ok(hear(w, 'harrow', EBBA_CHAPEL()).startsWith('Ebba is in the Chapel, sober') && !!w.party.flags.q_ebba_chapel, 'in the Chapel Ebba first says what she saw of Vask');
     const survey = hear(w, 'harrow', EBBA_CHAPEL());
@@ -126,7 +130,9 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     const survey = hear(w, 'harrow', EBBA_EEL());
     w.ok(survey.startsWith('"The survey team.') && w.news.at(-1) === 'New quest: The Rest of the Survey.', `Ebba at the Eel, at a first meeting, asks after the survey and begins The Rest of the Survey (${w.news.at(-1)})`);
     answerWho(w, 'q_ailith', 'The Chapel, in Helmstow.');
-    reads(w, 'survey', 'The Rest of the Survey', ['ebba', 'ailith', 'chapel'], ['thornhold', 'ring'], 'Ailith sent to the Chapel, from the Eel');
+    // The fire-ring stepped on after she is sent writes nothing into a finished journal.
+    see(w, 'shelf:survey_ring');
+    reads(w, 'survey', 'The Rest of the Survey', ['ebba', 'ailith', 'chapel'], ['thornhold', 'ring'], 'Ailith sent to the Chapel, from the Eel, the fire-ring seen after');
     w.ok(!there(w, AILITH_WOOD(), 'shelf') && !there(w, AILITH_HOLD(), 'thornhold'), 'then Ailith is not seen again');
     w.ok(hear(w, 'harrow', EBBA_EEL()).startsWith('"She came home, and then the Wardens came."'), 'and Ebba at the Eel has heard');
     // Osmund, never met, hires for the bell first, then says his line about her, once.
@@ -138,7 +144,8 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     bellAsked(w);
     answerWho(w, 'q_bell', 'The adjunct, Ebba.');
     see(w, 'shelf:survey_ring');
-    w.ok(w.news.at(-1) === 'New quest: The Rest of the Survey.' && !!page(w, 'survey')?.goal, `with Ebba gone, the woods alone begin The Rest of the Survey (${w.news.at(-1)})`);
+    const goal = page(w, 'survey')?.goal ?? '';
+    w.ok(w.news.at(-1) === 'New quest: The Rest of the Survey.' && goal.startsWith('Find whoever lit the fire-ring') && !goal.includes('Ailith'), `with Ebba gone, the woods alone begin The Rest of the Survey, with a goal that does not name her (${goal})`);
     answerWho(w, 'q_ailith', 'Thornhold, over the Scarth.');
     reads(w, 'survey', 'The Rest of the Survey', ['ring', 'ailith', 'thornhold'], ['ebba', 'chapel'], 'Ailith sent to Thornhold, from the woods');
   }

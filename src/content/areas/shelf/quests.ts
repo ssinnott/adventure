@@ -62,7 +62,7 @@ export const QUESTS: readonly QuestDef[] = [
     // show where she is; she goes to the Chapel, or to Thornhold.
     id: 'survey',
     title: 'The Rest of the Survey',
-    start: [{ flag: 'q_survey' }, { seen: 'shelf:survey_ring' }, { flag: 'q_ailith' }],
+    start: [{ seen: 'shelf:survey_ring' }, { flag: 'q_survey' }, { flag: 'q_ailith' }],
     done: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }],
     entries: [
       { id: 'ebba', when: { flag: 'q_survey' },
@@ -78,7 +78,8 @@ export const QUESTS: readonly QuestDef[] = [
     ],
     goals: [
       { when: { flag: 'q_ailith' }, text: 'Tell Ailith where to go: the Chapel in Helmstow, or Thornhold over the Scarth.' },
-      { when: [{ flag: 'q_survey' }, { seen: 'shelf:survey_ring' }], text: 'Look for Ailith in the woods south-west of Helmstow, off the road.' },
+      { when: { flag: 'q_survey' }, text: 'Look for Ailith in the woods south-west of Helmstow, off the road.' },
+      { when: { seen: 'shelf:survey_ring' }, text: 'Find whoever lit the fire-ring in the woods south-west of Helmstow, and hid from its smoke.' },
     ],
   },
 ];

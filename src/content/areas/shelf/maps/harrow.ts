@@ -53,8 +53,9 @@ export const HARROW: MapDef = {
     // The Bell That Rang Twice and The Rest of the Survey (#77, from #56): Osmund in the Chapel, the
     // two who saw the bell rung, and Ebba, at the Eel from a new game or, her name kept, in the Chapel.
     // A words entry keyed to another quest's flag names its person's own hire as well, so it never
-    // stands before their first meeting (at the Eel, Ebba's first meeting is the survey's own start);
-    // the open question comes first, then what is said once, then what is said after.
+    // stands before their first meeting, but for two of Ebba's at the Eel, whose first meeting there
+    // is the survey's own start: her confession, which comes before it by design, and her word of
+    // Ailith once she is sent. The open question comes first, then what is said once, then after.
     { kind: 'npc', x: 11, y: 4, name: 'Osmund, sexton of the Chapel', lines: [
       'A thin man in a leather apron is greasing the bell wheel, and looks at you the way he might look at a bell that had rung out of turn.',
       '"Sexton. Thirty years, and I\'ve rung every hour of them: the dawn, the noon, the dusk, the deaths. A death bell is rung when the Chapel has seen the body. That is the rule, and it is a good one."',

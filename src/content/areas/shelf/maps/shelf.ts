@@ -85,7 +85,7 @@ export const SHELF: MapDef = {
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
     // The Rest of the Survey (#77): Ailith behind the west wood, hiding from the Wardens, until the
     // company tells her where to go.
-    { kind: 'event', x: 2, y: 13, id: 'survey_ring', once: true, text: 'A scrap of Lantern grey on a thorn. Beyond it, a fire-ring so small and hidden that its maker feared smoke more than cold.' },
+    { kind: 'event', x: 2, y: 13, id: 'survey_ring', once: true, until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }], text: 'A scrap of Lantern grey on a thorn. Beyond it, a fire-ring so small and hidden that its maker feared smoke more than cold.' },
     { kind: 'npc', x: 2, y: 14, name: 'Ailith, adjunct of the survey', lines: [
       'A young woman in torn Lantern grey has her back to an oak and a survey stake held like a spear; her leg is bound in her own hem. "You\'re not Wardens. Wardens don\'t come off the road." The stake comes down an inch. "Adjunct Ailith, of the survey. What\'s left of it."',
       '"It wasn\'t rats. I got out of the cellar when the floor opened and walked into a Warden patrol, and they weren\'t looking for survivors. They wanted our orders. The orders are at our camp over the Deepthorn\'s edge, and the other two went east to reach them first. I went west, and I didn\'t stop to pack."',
