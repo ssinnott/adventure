@@ -16,16 +16,17 @@ will hit. You build nothing.
 
 ## Rules
 
+- **Never use `git stash`:** the stash is shared by every worktree, and other agents use it.
 - **Never modify anything under `/home/user/adventure`** except your footprint file(s) in
   `/home/user/adventure/orchestration/footprints/`. Other scouts are reading the same checkout at
   the same time. To experiment (a scratch edit, a doctored copy, a measurement), make your own copy:
-  `git -C /home/user/adventure worktree add <your scratch dir>/wt b2f7322` and
+  `git -C /home/user/adventure worktree add --detach <your scratch dir>/wt origin/main` (after `git -C /home/user/adventure fetch -q origin`) and
   `ln -s /home/user/adventure/node_modules <your scratch dir>/wt/node_modules`, and work there.
   Your scratch dir is `/tmp/claude-0/-home-user-adventure/546d91ba-3a33-5eb4-b569-11da53248d30/scratchpad/scout-<issue>/`.
   Remove the worktree when done (`git -C /home/user/adventure worktree remove --force <path>`).
 - No git commits, no pushes, no GitHub writes of any kind (no comments, labels, issues or pull
   requests).
-- Verify every path and line you cite on main at b2f7322. Cite code as `path:line`, and say what is
+- Verify every path and line you cite on the main you checked out (say its sha). Cite code as `path:line`, and say what is
   there, since lines drift.
 - Measure rather than guess where it matters (the gate check's figures, a test's count, how long a
   suite takes): `node tools/test.ts <suite>`, `node tools/gate.ts`, `node tools/harness.ts` work.
@@ -35,7 +36,7 @@ will hit. You build nothing.
 Write `orchestration/footprints/<issue>.md` in this shape (terse, British spelling, no Oxford comma):
 
 ```
-### Scout's footprint for #N on main b2f7322 (size S, M, L or XL)
+### Scout's footprint for #N on main <sha> (size S, M, L or XL)
 
 **One line:** what the issue asks, in a sentence.
 

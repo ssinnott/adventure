@@ -107,3 +107,39 @@ What the footprints changed in the plan:
   gatehouse, the throne room, Vask), after #40 and #43.
 - Art rule: a pull request whose contact sheet shows nothing changed to the eye (fields, numbers,
   words) says so and does not wait on the owner.
+
+### 14:04 to 15:15: Wave 1's first pull requests, the owner's calls, the second half of Wave 1
+
+The five sessions opened eight pull requests within fifteen minutes of starting: #108 (#74), #109
+and #114 (#41's first two), #110 (#100), #111 (#21's design), #112 (#98), #113 (#66) and, after a
+nudge at 14:08, #115 (#45). Two container restarts on this side delayed the review; four reviewers
+(REVIEW.md, reports in `reviews/`) read seven of them.
+
+The owner's calls at 15:10, taking every default put to them:
+- #74: no. Tier 3 stays at level 4 (`levelUp` teaches it; the hall would only sell it early). #108
+  closed unmerged, #74 closed as not planned, both with a comment.
+- #111: the seven proposals accepted, with the reviewer's fixes (sent 15:14).
+- The `UNPLACED` owed table: yes. Each drawing lands before the map that places it, owed to the
+  issue that places it (#47, #69, #70, #87).
+- #115's camp: the default (a camp relaxes the rest refusal to a group right next to the party).
+- #41's defaults (the ogre a person; only the Rift stops when the tear closes; a sweep after the
+  Warden pays 38% less, which #40 corrects in the docs).
+
+Merged at 15:14: #109 (85e97f4) and #114 (main 7bbef2e), after CI green on both heads; main's tree
+is exactly #114's tested head. Fixes sent at 15:14 to #110, #112, #113, #111 and #115 (merge main).
+
+Started at 15:12, with prompts in `prompts/`:
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 1 | #40 | session_01N6AUT2r2pg7zbiY2CXyjzz | `claude/m1-40-pass`, then `-zone` and `-dungeons` |
+| 1 | the `UNPLACED` table, then #97 | session_01UaCWFTv18dPudY5PWNQ4Zh | `claude/m1-unplaced`, `claude/m1-97-farm-kitchen` |
+| 1 | #79 | session_016Toj1jd4bCGps8LiF14hJ3 | `claude/m1-79-birds` |
+| 1 | #80, #81 | session_018hxmJuVbbEpixrS9dTFHWg | `claude/m1-80-81-wreckers` |
+| 1 | #82 | session_01RXpYjWfafLBSascHWRi73h | `claude/m1-82-black-dog` |
+| 1 | #83, #84 | session_01Ge45ZQ7zivyvVdxtrsjGc1 | `claude/m1-83-84-barrow`, `claude/m1-84-barrow-captain` |
+
+#40 runs in three pull requests: the road now; the zone once #109 (in) and #99's dressing of the
+gate's company are in; the dungeons once the owner answers its open decisions 1 and 2 (how the gate
+judges the dungeons; bosses out of the day) and #101 is in. The orchestrator decided its decision 3:
+the road opens before the zone holds.
