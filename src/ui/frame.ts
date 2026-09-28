@@ -210,6 +210,13 @@ export const COMBAT_LOG_LINES = 5;
 /** One log entry as the log wraps it. */
 export const logLines = (text: string): string[] => wrap(text, LAYOUT.log.w - 12);
 
+/**
+ * A person's box (ui/screens.ts): words wrap at `SAY_W` and it shows `SAY_LINES`, cutting the rest
+ * without a word; a question shows `ASK_LINES` before its answers run off it. In a business the
+ * side panel takes them, `SIDE_W` wide.
+ */
+export const SAY_W = 536, SAY_LINES = 14, ASK_LINES = 5, SIDE_W = LAYOUT.map.w - 16;
+
 /** The last `max` lines of a log as shown: each entry wrapped to the viewport, the newest kept, the latest entry's lines marked. */
 export function logTail(lines: readonly string[], max = LOG_LINES): { text: string; latest: boolean }[] {
   const wrapped: { text: string; latest: boolean }[] = [];

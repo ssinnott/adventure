@@ -5,7 +5,7 @@ import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText, lineHeight, measureText } from '../lib/engine/text.ts';
 import { panel, paragraph, menu, wrap, columnMenu, optionParts, fit, columnLabelWidth } from './draw.ts';
-import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame } from './frame.ts';
+import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame, SAY_W, SAY_LINES, SIDE_W } from './frame.ts';
 import { drawPortraitLarge } from './portraits.ts';
 import { drawInterior } from './interior.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
@@ -17,7 +17,7 @@ import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, re
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 
-const BOX = { x: 40, y: 40, w: 560, h: 220 };
+const BOX = { x: 40, y: 40, w: SAY_W + 24, h: 220 };
 
 // ---- a visit to a business ----
 
@@ -51,7 +51,7 @@ export class InteriorScreen implements Screen {
 /** Whether the party is inside a business, where messages and menus take the side panel. */
 function visiting(g: Game): boolean { return g.screens.some((s) => s instanceof InteriorScreen); }
 
-const SIDE = LAYOUT.map, PAD = 8, TEXT_W = SIDE.w - PAD * 2, HINT_Y = SIDE.y + SIDE.h - PAD - 7;
+const SIDE = LAYOUT.map, PAD = 8, TEXT_W = SIDE_W, HINT_Y = SIDE.y + SIDE.h - PAD - 7;
 
 /** The side panel and its title; returns the y the body starts at. */
 function sidePanel(ctx: CanvasRenderingContext2D, title: string): number {
@@ -77,7 +77,7 @@ export class MessageScreen implements Screen {
     panel(ctx, BOX.x, BOX.y, BOX.w, BOX.h);
     let y = BOX.y + 10;
     if (this.title) { drawText(ctx, this.title, BOX.x + 12, y, { size: 1, color: BRASS }); y += 14; }
-    paragraph(ctx, this.text, BOX.x + 12, y, BOX.w - 24, { color: TEXT, maxLines: 14 });
+    paragraph(ctx, this.text, BOX.x + 12, y, SAY_W, { color: TEXT, maxLines: SAY_LINES });
     drawText(ctx, 'SPACE', BOX.x + BOX.w - 12, BOX.y + BOX.h - 12, { size: 1, color: TEXT_DIM, align: 'right' });
   }
   /**
@@ -203,7 +203,8 @@ export class SheetScreen implements Screen {
           if (d.use!.cure) { for (const k of d.use!.cure) removeCondition(t, k as never); g.say(`${t.name} is cleansed.`); }
           if (d.use!.food) { g.party.food += d.use!.food; g.say(`The party's food grows by ${d.use!.food}.`); }
         });
-      } else g.say(`${d.name}: nothing to do with it here.`);
+      } else if (d.text) g.push(new MessageScreen(d.text.join('\n\n'), undefined, d.name));
+      else g.say(`${d.name}: nothing to do with it here.`);
       if (this.sel >= this.items(g).length) this.sel = Math.max(0, this.items(g).length - 1);
     }
   }

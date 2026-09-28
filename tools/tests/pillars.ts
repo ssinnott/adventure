@@ -20,6 +20,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../src/ui/frame.ts';
 import { lookLine } from '../../src/game/wilds.ts';
+import { handIns, choices } from '../../src/game/people.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -105,12 +106,16 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
       if ('name' in f) add(where, f.name);
       if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'statue') add(where, f.done);
       if (f.kind === 'statue') add(where, f.riddle, f.answer);
-      if (f.kind === 'npc') add(where, f.lines, f.quest?.early, f.quest?.done, f.quest?.after);
+      if (f.kind === 'npc') {
+        add(where, f.lines, ...handIns(f).flatMap((q) => [q.early, q.done, q.after]), ...(f.says ?? []).map((w) => w.lines));
+        for (const c of choices(f)) add(where, c.ask, ...c.answers.flatMap((a) => [a.label, a.says]));
+      }
     }
     for (const e of d.exits ?? []) add(`${d.id} exit ${e.x},${e.y}`, e.label, e.blockedText);
     for (const e of d.encounters ?? []) add(`${d.id} ${e.id}`, e.slainText);
   }
   for (const i of Object.values(ITEMS)) add(`item ${i.id}`, i.name);
+  for (const i of Object.values(ITEMS)) add(`item ${i.id}`, i.text);
   for (const m of Object.values(MONSTERS)) add(`monster ${m.id}`, m.name, m.plural, m.look);
   for (const sp of Object.values(SPELLS)) add(`spell ${sp.id}`, sp.name, sp.text);
   for (const c of Object.values(CLASSES)) add(`class ${c.id}`, c.name, c.blurb);
@@ -281,7 +286,7 @@ export function findLocks(areas: readonly Pick<Area, 'id' | 'maps'>[]): FoundLoc
       const o = v as Record<string, unknown>;
       const here = typeof o.x === 'number' && typeof o.y === 'number' ? { x: o.x, y: o.y } : at;
       if (o.needFlag !== undefined) {
-        const kind = path[0] === 'exits' ? 'exit' : path.at(-1) === 'quest' ? 'hand-in' : 'other';
+        const kind = path[0] === 'exits' ? 'exit' : path.includes('quest') ? 'hand-in' : 'other';
         const to = kind === 'exit' ? areaOf.get(o.to as string) : undefined;
         const flags = [o.needFlag as string | string[]].flat();
         // A legend entry is one lock however many squares are drawn with its character (a gate two
@@ -507,6 +512,8 @@ export async function pillars(): Promise<void> {
     ok(lockFaults(within(across), [lock()], of).some((f) => f.text.includes('between')), 'a lock between areas fails, even signed in');
     const door = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx', after: ['Ta.'] } }] as unknown as MapDef['features']);
     ok(within(door)[0]?.kind === 'hand-in' && lockFaults(within(door), [], of).length === 1, 'a hand-in that withholds its item on a flag fails');
+    const listed = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: [{ item: 'rations', reward: 1, done: ['Ta.'], setFlag: 'q_fx' }, { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx2' }] }] as unknown as MapDef['features']);
+    ok(within(listed)[0]?.kind === 'hand-in' && lockFaults(within(listed), [], of).length === 1, 'and so does one of a list of hand-ins');
     ok(lockFaults(within(door), [lock({ flag: 'q_hired', x: 2 })], of).some((f) => f.text.includes('first meeting')), 'and still fails with a lock signed in for it');
     const legend = { ...room([]), rows: ['#####', '#.X.#', '#####'], legend: { X: { door: 'door', needFlag: 'q_sealed' } } } as unknown as MapDef;
     ok(within(legend).length === 1 && within(legend)[0].x === 2 && lockFaults(within(legend), [], of).length === 1, 'a legend door closed on a flag is found on its square, and fails unsigned');

@@ -15,6 +15,7 @@ import type { EncounterDef, MapDef } from '../../src/game/map.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
 import { SOUTH } from '../../src/game/types.ts';
 import { giftOf } from '../../src/game/wilds.ts';
+import { handIns } from '../../src/game/people.ts';
 import { ok } from './lib.ts';
 
 /** Respawns in the range in use, in minutes, both ends included. */
@@ -63,7 +64,7 @@ export function strandedLocks(def: MapDef): string[] {
 export function questItems(): Set<string> {
   const conds = (w: QuestCond | readonly QuestCond[]): QuestCond[] => [w].flat();
   return new Set([
-    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && f.quest ? [f.quest.item] : [])),
+    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? handIns(f).map((q) => q.item) : [])),
     ...QUESTS.flatMap((q) => [q.start, ...(q.done ? [q.done] : []), ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds).flatMap((c) => c.item ? [c.item] : [])),
   ]);
 }
