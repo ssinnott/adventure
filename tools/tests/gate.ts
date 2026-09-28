@@ -74,11 +74,6 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
   'the Foreland: floor': { whose: '#47', at: 0.886 },
-  // The Grove Roots and the Cut Stone: retuned until they hold; the area with them.
-  'grove2: rest': { whose: '#40', at: 7.95 },
-  'grove2:g2_hand: floor': { whose: '#40', at: 1 },
-  'grove2:g2_warden: floor': { whose: '#40', at: 1 },
-  'Thornmark: under': { whose: '#40', at: 0.536 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;

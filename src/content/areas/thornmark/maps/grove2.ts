@@ -53,7 +53,7 @@ export const GROVE2: MapDef = {
     { id: 'g2_ring1', x: 8, y: 1, monsters: ['wraith', 'wraith', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight'], aware: 5, respawn: 2880 },
     { id: 'g2_ring1b', x: 14, y: 8, monsters: ['rift_hound', 'rift_hound', 'rift_hound', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling'], aware: 6, respawn: 1440, until: TEAR_CLOSED },
     { id: 'g2_ring1c', x: 5, y: 14, monsters: ['zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'ashen_adept', 'ashen_adept'], aware: 5, respawn: 2880 },
-    { id: 'g2_ring2', x: 8, y: 3, monsters: ['bone_knight', 'bone_knight', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton'], aware: 4, respawn: 2880 },
+    { id: 'g2_ring2', x: 8, y: 3, monsters: ['bone_knight', 'bone_knight', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot'], aware: 4, respawn: 2880 },
     { id: 'g2_keyguard', x: 12, y: 4, monsters: ['ashen_adept', 'ashen_adept', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot'], aware: 3, roams: false },
     { id: 'g2_ring2b', x: 3, y: 8, monsters: ['riftling_elder', 'riftling_elder', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling'], aware: 5, respawn: 2880, until: TEAR_CLOSED },
     { id: 'g2_ring2c', x: 8, y: 12, monsters: ['ogre', 'ogre', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot'], aware: 4, respawn: 2880 },
