@@ -119,8 +119,8 @@ export const AMERICAN = [
   'plow', 'plowed', 'mold', 'moldy', 'ax', 'realize', 'realized', 'recognize', 'recognized', 'organize', 'organized',
   'apologize', 'civilization', 'fiber', 'meter', 'meters', 'liter', 'sulfur', 'molt', 'smolder', 'smoldering',
   'splendor', 'clamor', 'rancor', 'ardor', 'savior', 'glamor', 'endeavor', 'fervor', 'tumor', 'luster', 'saber', 'caliber',
-  'specter', 'specters', 'sepulcher', 'draft', 'drafts', 'paralyze', 'paralyzed', 'favorite', 'behavior', 'humor', 'vigor',
-  'meager', 'grayish', 'colorful',
+  'specter', 'specters', 'sepulcher', 'sepulchers', 'paralyze', 'paralyzed', 'paralyzes', 'paralyzing', 'favorite', 'favorites',
+  'behavior', 'behaviors', 'humor', 'humors', 'vigor', 'meager', 'grayish', 'grayer', 'grayest', 'colorful',
 ];
 const AMERICAN_RE = new RegExp(`\\b(${AMERICAN.join('|')})\\b`, 'gi');
 export const americanisms = (text: string): string[] => [...new Set(text.match(AMERICAN_RE) ?? [])];
@@ -188,12 +188,25 @@ export function noveltyFaults(areas: readonly Pick<Area, 'id' | 'maps' | 'atlas'
 export interface EdgeFault { map: string; x: number; y: number; why: string }
 
 /**
+ * Whether a map square at the edge agrees with the atlas square beyond it: 'skip' where the atlas
+ * beyond is open water no river or road crosses. Where the atlas beyond is a road (a ford or a
+ * bridge over water included) the map square must be a road; otherwise the two must be wet or dry
+ * alike, and the map may have no road there.
+ */
+export function edgeAgrees(mine: string, beyond: { t: number; road: boolean; river: boolean }): boolean | 'skip' {
+  if (isWater(beyond.t) && !beyond.river && !beyond.road) return 'skip';
+  const wet = mine === 'sea' || mine === 'shallow';
+  return beyond.road ? mine === 'road' : wet === isWater(beyond.t) && mine !== 'road';
+}
+
+/**
  * Where a zone map's edge meets unbuilt atlas land and its water and roads stop there, or the
  * atlas's rivers and roads stop at the map. A map's ring of mountains is its closed border and keeps
  * the atlas's ground, so behind a ring square the map's side is the square inside it. What lies
- * beyond the edge is no unbuilt land where another zone map covers it, or it is the void, or the
- * sea (so a coast may run along an edge); a river or a road over water is still checked. Sand counts
- * as land. The atlas's roads are its trails (a planned road) and its built road.
+ * beyond the edge is no unbuilt land where another zone map covers it, or it is the void, or open
+ * water, the sea or a lake (so a shore may run along an edge); a river or a road over water is still
+ * checked. Sand counts as land. The atlas's roads are its trails (a planned road) and its built road.
+ * The ring square's own atlas ground is not compared.
  */
 export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
   const grid = worldGrid(atlas, defs), out: EdgeFault[] = [];
@@ -211,10 +224,8 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
         const ring = z.def.rows[my][mx] ?? 'M', ch = ring === 'M' ? z.def.rows[my - dy]?.[mx - dx] : ring;
         if (ch === undefined || ch === 'M') continue; // a corner of the ring
         const i = ay * grid.width + ax, mine = MAP_TERRAIN[ch] ?? 'grass', road = !!grid.road[i] || t === TI.road;
-        if (isWater(t) && !grid.river[i] && !road) continue; // the sea beyond
-        const theirs = road ? 'road' : TERRAINS[t];
-        const wet = mine === 'sea' || mine === 'shallow';
-        if (wet !== isWater(t) || (mine === 'road') !== road) out.push({ map: z.def.id, x: mx, y: my, why: `${mine} against the atlas's ${theirs} at ${ax},${ay}` });
+        const verdict = edgeAgrees(mine, { t, road, river: !!grid.river[i] });
+        if (verdict === false) out.push({ map: z.def.id, x: mx, y: my, why: `${mine} against the atlas's ${road ? 'road' : TERRAINS[t]} at ${ax},${ay}` });
       }
     }
   }
@@ -252,10 +263,12 @@ export function findLocks(areas: readonly Pick<Area, 'id' | 'maps'>[]): FoundLoc
         const kind = path[0] === 'exits' ? 'exit' : path.at(-1) === 'quest' ? 'hand-in' : 'other';
         const to = kind === 'exit' ? areaOf.get(o.to as string) : undefined;
         const flags = [o.needFlag as string | string[]].flat();
-        // A legend entry closes every square drawn with its character; a flag with no square at all
-        // is kept at NaN, where no lock can be signed in, so it fails.
+        // A legend entry is one lock however many squares are drawn with its character (a gate two
+        // wide), found and signed in at the first of them; a flag with no square at all is kept at
+        // NaN, where no lock can be signed in, so it fails. The game does not honour a legend's
+        // needFlag yet: this finds one before it does.
         const squares = here ? [here] : path[0] === 'legend' && path.length === 2
-          ? def.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === path[1] ? [{ x, y }] : [])))
+          ? def.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === path[1] ? [{ x, y }] : []))).slice(0, 1)
           : [];
         if (!squares.length) squares.push({ x: NaN, y: NaN });
         for (const q of squares) out.push({ kind, flags, map: def.id, x: q.x, y: q.y, area: a.id, to, key: `${kind} ${def.id} ${Number.isNaN(q.x) ? path.join('.') || 'itself' : `${q.x},${q.y}`}` });
@@ -402,14 +415,24 @@ export async function pillars(): Promise<void> {
     ok(lay(['MMMMMM', 'M,,,,M', 'M====M', 'M,,,,M', 'MMMMMM']).length === 2, 'a road that runs into its ring against atlas land fails, at both ends');
     ok(lay(['MMMMMM', 'M,,,,M', 'MW,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and so does sea at its edge');
     ok(lay(['MMMMMM', 'M,,,,M', '=,,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and a road through a gap in the ring');
-    // Land against the sea along an edge: a coast, not water cut short.
+    // Land against open water along an edge: a shore, not water cut short. Laid in Thornmark's place,
+    // its east edge faces Thornmere at 264,44-46; the premise is checked first.
     const coast = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_coast', name: 'Coast fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
-      const w = rows[0].length, zone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', map: 'fixture_coast', at: [264 - w, 42] as const };
+      const w = rows[0].length, zone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', map: 'fixture_coast', at: [264 - w, 43] as const };
       const others = ATLAS.zones.filter((z) => z.id !== 'thornmark');
       return edgeFaults({ ...ATLAS, zones: [...others, zone] }, [...MAP_DEFS.filter((d) => d.id !== 'thornmark'), fixture]).filter((e) => e.map === 'fixture_coast' && e.x === w - 1);
     };
-    ok(!coast(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'map land against the atlas sea along an edge passes, a coast');
+    const shore = worldGrid(ATLAS, MAP_DEFS), open = [44, 45, 46].every((y) => {
+      const i = y * shore.width + 264;
+      return isWater(shore.t(264, y)) && !shore.river[i] && !shore.road[i] && !shore.built[i];
+    });
+    ok(open, 'the atlas at 264,44-46 is open water, no river, road or zone map');
+    ok(open && !coast(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'map land against open atlas water along an edge passes, a shore');
+    // A ford: the atlas's road crosses a river beyond the edge, and only a road on the map meets it.
+    const ford = { t: TI.shallow, road: true, river: true };
+    ok(edgeAgrees('road', ford) === true && ['shallow', 'sea', 'grass'].every((m) => edgeAgrees(m, ford) === false), 'at a ford beyond the edge a road passes, and shallows, sea and grass fail');
+    ok(edgeAgrees('grass', { t: TI.shallow, road: false, river: true }) === false && edgeAgrees('shallow', { t: TI.shallow, road: false, river: true }) === true, 'a river beyond the edge wants water on the map');
   }
 
   // Story locks: every one signed in, within the counts, none between areas; every hand-in takes
@@ -455,7 +478,10 @@ export async function pillars(): Promise<void> {
     const legend = { ...room([]), rows: ['#####', '#.X.#', '#####'], legend: { X: { door: 'door', needFlag: 'q_sealed' } } } as unknown as MapDef;
     ok(within(legend).length === 1 && within(legend)[0].x === 2 && lockFaults(within(legend), [], of).length === 1, 'a legend door closed on a flag is found on its square, and fails unsigned');
     const nowhere = { ...room([]), needFlag: 'q_sealed' } as unknown as MapDef;
-    ok(within(nowhere).length === 1 && lockFaults(within(nowhere), [lock({ flag: 'q_sealed', x: NaN, y: NaN })], of).length > 0, 'a flag with no square fails, and cannot be signed in');
+    const lost = within(nowhere)[0];
+    ok(within(nowhere).length === 1 && !!lost && lockFaults(within(nowhere), [lock({ flag: 'q_sealed', x: lost.x, y: lost.y })], of).some((f) => f.text.startsWith(lost.key + ':')), 'a flag with no square fails, and cannot be signed in');
+    const gate = { ...room([]), rows: ['#####', '#XX.#', '#####'], legend: { X: { door: 'door', needFlag: 'q_sealed' } } } as unknown as MapDef;
+    ok(within(gate).length === 1 && !lockFaults(within(gate), [lock({ flag: 'q_sealed', x: 1 })], of).length, 'a legend gate two wide is one lock, signed in at its first square');
     const service = { ...room([]), features: [{ kind: 'temple', x: 2, y: 1, name: 'Fixture', interior: first.interiors[0], needFlag: 'q_blessed' }] } as unknown as MapDef;
     ok(within(service)[0]?.kind === 'other' && lockFaults(within(service), [], of).length === 1, 'and so does a service closed on a flag no type knows yet');
   }
