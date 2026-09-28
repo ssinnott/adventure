@@ -439,3 +439,16 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (#85, the owner's words), #137 and #138 (#48's B and C, the old wood and the Eldest; wait on the
   owner's sheet OK). Reviewers at 19:29 (`reviews/135.md`, `136.md`, `137.md`, `138.md`). #48's A
   (the owl) is pushed on `claude/m1-48-owl`, not yet a pull request.
+
+### 19:45: #136 merged, #85 closed
+
+- #136 (#85) reviewed (`reviews/136.md`): ready. The owner's seven texts are in to the character;
+  every text fits its box; #43's early words untouched; the Wenna line (14 of 14) passes #131's box
+  check. Merged at 19:44 (main bdbaba9) after a local merge with 0a4ef3b: ALL OK (43 owed), SMOKE OK,
+  "Nothing new."; CI green. Main's tree matches. #85 closes; the #99/#101/#85 session is free (it drops
+  a serial comma from the closed body). The owner's choice 1 (Wenna for an early company) stays open;
+  #47 closes it either way.
+- #135 (#17's B) told at 19:48 to merge main and carry Vask's words into `keep.ts` as #85 left them:
+  git conflicts only at `harrow.ts` (resolve the hunk, not the file: the Eel's new words live there
+  too), and `keep.ts` would silently keep his old `lines`, `done` and `after`.
+- Scouts on #47 (the pilot) and #73 (the Lodestone) since 19:30 (`footprints/47.md`, `73.md`).
