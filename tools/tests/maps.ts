@@ -5,6 +5,7 @@ import { AREAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/i
 import { GameMap } from '../../src/game/map.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
+import { handIns, personFlags, personGives } from '../../src/game/people.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -39,9 +40,9 @@ export function maps(): void {
     for (const f of m.features) {
       for (const id of giftOf(f)?.items ?? []) ok(id in ITEMS, `${def.id}: ${f.kind} ${spentId(f)} item '${id}' exists`);
       if (f.kind === 'shop') for (const id of f.stock) ok(id in ITEMS, `${def.id}: shop stock '${id}' exists`);
-      if (f.kind === 'npc' && f.quest) ok(f.quest.item in ITEMS, `${def.id}: quest item '${f.quest.item}' exists`);
+      if (f.kind === 'npc') for (const id of [...handIns(f).map((q) => q.item), ...personGives(f)]) ok(id in ITEMS, `${def.id}: ${f.name.split(',')[0]}'s item '${id}' exists`);
     }
-    for (const e of m.exits) for (const flag of [e.needFlag ?? []].flat()) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && f.quest?.setFlag === flag)), `${def.id}: gated exit flag '${flag}' is set by some quest`);
+    for (const e of m.exits) for (const flag of [e.needFlag ?? []].flat()) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && personFlags(f).includes(flag))), `${def.id}: gated exit flag '${flag}' is set by some person`);
   }
   // Every quest item is dropped or found somewhere; every monster is placed on some map.
   const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
@@ -49,8 +50,8 @@ export function maps(): void {
     if (Object.hasOwn(UNPLACED, id)) owed(placed.has(id), `monster '${id}' appears on a map`, UNPLACED[id]);
     else ok(placed.has(id), `monster '${id}' appears on a map`);
   }
-  const found = new Set([...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => giftOf(f)?.items ?? [])), ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
-  for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc' && f.quest) ok(found.has(f.quest.item), `${d.id}: quest item '${f.quest.item}' can be found`);
+  const found = new Set([...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => [...(giftOf(f)?.items ?? []), ...(f.kind === 'npc' ? personGives(f) : [])])), ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
+  for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc') for (const q of handIns(f)) ok(found.has(q.item), `${d.id}: quest item '${q.item}' can be found`);
   // A business is a feature in a town's doorway: you walk into it, so it has a room to show, and
   // no two businesses share one.
   const interiors: string[] = [];

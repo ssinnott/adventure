@@ -43,6 +43,13 @@ DESIGN.md first for the why.
   map edited since the save still takes it: a group the map has gained stands where the map puts
   it, and a saved door goes back only where the map still has a locked or secret door. A save
   keeps the kinds of monster the company has met (`met`); one made before has met none.
+- **People** (`game/people.ts`): a person's first meeting may hire (one flag or several) and end in
+  a question put through the choice screen, whose answer sets flags, may hand over an item and has
+  its own words; a question once answered is not put again, and Esc answers nothing. A person may
+  say other words once a flag holds, by night or until a flag (`says`, wearing `Presence`, the
+  first that holds said, furthest along first), and take several items (`quest` one or a list, one
+  a meeting, in order; one paying nothing says no gold line). An item with `text` is a letter,
+  read from the pack in a box. On nobody yet: the areas place them.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (the group's
   first monster, in line of sight), or meets one in a fight unseen, the log says its `look`, once.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
@@ -314,7 +321,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   run. The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
-  then each area's walkthrough where it has one (none has yet), in road order. Every check prints a
+  then each area's walkthrough (the Foreland's and Thornmark's), in road order. Every check prints a
   line saying what it holds, so the output is the list; `node tools/test.ts maps combat` runs a few
   suites, `walkthrough:<area>` one walkthrough. A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
@@ -370,7 +377,21 @@ over content broken on purpose too, and two tools to theirs:
   holds; water and roads carry on into the atlas; story locks (`content/locks.ts`) signed in, none
   between areas and every hand-in taking its item at the first meeting.
 - `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
-  each played hired first and early, the words, the pay and the log true either way round.
+  each played hired first and early, the words, the pay and the log true either way round; every
+  person's words fit the box (a hand-in's with its gold line), a question leaves room for its
+  answers and an answer that hands over an item sets a flag. A fixture town holds the rest: a
+  question and its two roads read by the log and the save list, words by flag and by night,
+  several hand-ins, a letter.
+- The walkthroughs (EXPANSION §5.8): `walkthrough:shelf` plays The Quiet Farm from a new game,
+  `walkthrough:thornmark` the chain and then Thornmark taken early, before Vask's hire and after it
+  but before the wand. Each step, by the game's own moves (`tools/walk.ts`): the goal is the
+  chapter's, placed at a built map its words name, at the curve's level for it, which sits in the
+  place's band; its fights are won once in ten by the gate's bot at that level; the play moves the
+  goal on; a person who takes an item stands at the step's place; and nothing a person says is
+  written into a chapter already done. Early, the goal comes from no chapter past the last begun,
+  each end is said once and the log ends with the entries of the order played. The quests suite
+  holds every zone on the road of the built areas to a step of the quest; the Downs' is owed to
+  #47 and the Deepthorn's to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
@@ -432,15 +453,15 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group wears |
+| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
-| `game/people.ts` | `meet`: what a person says, and a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired |
-| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
+| `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
+| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
@@ -451,7 +472,7 @@ does.
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |
-| `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
+| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it), spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |

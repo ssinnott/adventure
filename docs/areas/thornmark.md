@@ -71,6 +71,8 @@ seven.
 
 ## Tests
 
-No walkthrough of its own yet. The end-to-end tests of today (the pass, the stairs, the quests
-walked through) cross between the Foreland and Thornmark, so they stay in `tools/tests/`; an area's
-`walkthrough.ts`, which `tools/test.ts` finds and runs, comes with its chapter of the one quest.
+Its `walkthrough.ts` plays the chain of the one quest, the Foreland's chapter and then its own,
+The Grove Stone, a step at a time (`tools/walk.ts`); then again with Thornmark taken before Vask's
+hire, and after it but before the wand, where the log must read true and end the same. A step added
+to the chapter adds its play there. The other end-to-end tests (the pass, the stairs) cross between
+the Foreland and Thornmark, so they stay in `tools/tests/`.
