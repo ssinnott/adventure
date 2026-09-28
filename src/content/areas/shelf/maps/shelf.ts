@@ -42,8 +42,8 @@ export const SHELF: MapDef = {
     'M,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,M',
     'MMMM,,,,,,,,,,,,,,,,,,,,,,,,,,,M',
     'M______________________________M',
-    'M~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~M',
-    'MWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWM',
+    'M________~~~~~~~~~~~~~~~~~~~~~~M',
+    'M________WWWWWWWWWWWWWWWWWWWWWWM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
   ],
   exits: [
