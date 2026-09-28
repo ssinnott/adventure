@@ -119,6 +119,8 @@ export const AMERICAN = [
   'plow', 'plowed', 'mold', 'moldy', 'ax', 'realize', 'realized', 'recognize', 'recognized', 'organize', 'organized',
   'apologize', 'civilization', 'fiber', 'meter', 'meters', 'liter', 'sulfur', 'molt', 'smolder', 'smoldering',
   'splendor', 'clamor', 'rancor', 'ardor', 'savior', 'glamor', 'endeavor', 'fervor', 'tumor', 'luster', 'saber', 'caliber',
+  'specter', 'specters', 'sepulcher', 'draft', 'drafts', 'paralyze', 'paralyzed', 'favorite', 'behavior', 'humor', 'vigor',
+  'meager', 'grayish', 'colorful',
 ];
 const AMERICAN_RE = new RegExp(`\\b(${AMERICAN.join('|')})\\b`, 'gi');
 export const americanisms = (text: string): string[] => [...new Set(text.match(AMERICAN_RE) ?? [])];
@@ -244,10 +246,17 @@ export function findLocks(areas: readonly Pick<Area, 'id' | 'maps'>[]): FoundLoc
       if (!v || typeof v !== 'object') return;
       const o = v as Record<string, unknown>;
       const here = typeof o.x === 'number' && typeof o.y === 'number' ? { x: o.x, y: o.y } : at;
-      if (o.needFlag !== undefined && here) {
+      if (o.needFlag !== undefined) {
         const kind = path[0] === 'exits' ? 'exit' : path.at(-1) === 'quest' ? 'hand-in' : 'other';
         const to = kind === 'exit' ? areaOf.get(o.to as string) : undefined;
-        out.push({ kind, flags: [o.needFlag as string | string[]].flat(), map: def.id, x: here.x, y: here.y, area: a.id, to, key: `${kind} ${def.id} ${here.x},${here.y}` });
+        const flags = [o.needFlag as string | string[]].flat();
+        // A legend entry closes every square drawn with its character; a flag with no square at all
+        // is kept at NaN, where no lock can be signed in, so it fails.
+        const squares = here ? [here] : path[0] === 'legend' && path.length === 2
+          ? def.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === path[1] ? [{ x, y }] : [])))
+          : [];
+        if (!squares.length) squares.push({ x: NaN, y: NaN });
+        for (const q of squares) out.push({ kind, flags, map: def.id, x: q.x, y: q.y, area: a.id, to, key: `${kind} ${def.id} ${Number.isNaN(q.x) ? path.join('.') || 'itself' : `${q.x},${q.y}`}` });
       }
       for (const [k, x] of Object.entries(o)) if (k !== 'needFlag') walk(x, [...path, k], here);
     };
@@ -258,7 +267,8 @@ export function findLocks(areas: readonly Pick<Area, 'id' | 'maps'>[]): FoundLoc
 
 /**
  * What is wrong with the locks: one found that is not signed in, one between areas, a hand-in that
- * withholds its item on a flag (the game takes it only once the flag is set, game.ts's interact),
+ * withholds its item on a flag, signed in or not (the game takes it only once the flag is set,
+ * game.ts's interact; EXPANSION §2.3 has every hand-in take it at the first meeting),
  * a signed-in row that names nothing, and more than the counts allow. `owing` are keys reported
  * elsewhere, as someone's to fix. If #43 keeps `needFlag` on a hand-in with new meaning rather than
  * removing it, the hand-in rule here gives way to #43's pure function.
@@ -269,7 +279,8 @@ export function lockFaults(found: readonly FoundLock[], locks: readonly StoryLoc
   for (const f of found) {
     if (owing.includes(f.key)) continue;
     if (f.to && f.to !== f.area) out.push({ area: f.area, text: `${f.key}: a lock between ${f.area} and ${f.to}` });
-    else if (!signed(f)) out.push({ area: f.area, text: f.kind === 'hand-in' ? `${f.key}: withholds its item until ${f.flags.join(', ')}, and no lock is signed in for it` : `${f.key}: closed on ${f.flags.join(', ')}, and not signed in to src/content/locks.ts` });
+    else if (f.kind === 'hand-in') out.push({ area: f.area, text: `${f.key}: withholds its item until ${f.flags.join(', ')}; a hand-in takes it at the first meeting` });
+    else if (!signed(f)) out.push({ area: f.area, text: `${f.key}: closed on ${f.flags.join(', ')}, and not signed in to src/content/locks.ts` });
   }
   const perArea = new Map<string, number>();
   for (const l of locks) {
@@ -378,7 +389,8 @@ export async function pillars(): Promise<void> {
     }
   }
   {
-    // A fixture zone laid on open atlas grass, as tools/tests/atlas.ts lays one.
+    // A fixture zone laid on open atlas grass, as tools/tests/atlas.ts lays one. 168,30 is the corner
+    // of F2, planned; #47, which builds it, moves the fixture to land no zone map covers.
     const lay = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_edge', name: 'Edge fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
       const zone = { id: 'fixture_edge', name: 'Edge fixture', area: ATLAS.zones[0].area, map: 'fixture_edge', at: [168, 30] as const };
@@ -429,6 +441,11 @@ export async function pillars(): Promise<void> {
     ok(lockFaults(within(across), [lock()], of).some((f) => f.text.includes('between')), 'a lock between areas fails, even signed in');
     const door = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx', after: ['Ta.'] } }]);
     ok(within(door)[0]?.kind === 'hand-in' && lockFaults(within(door), [], of).length === 1, 'a hand-in that withholds its item on a flag fails');
+    ok(lockFaults(within(door), [lock({ flag: 'q_hired', x: 2 })], of).some((f) => f.text.includes('first meeting')), 'and still fails with a lock signed in for it');
+    const legend = { ...room([]), rows: ['#####', '#.X.#', '#####'], legend: { X: { door: 'door', needFlag: 'q_sealed' } } } as unknown as MapDef;
+    ok(within(legend).length === 1 && within(legend)[0].x === 2 && lockFaults(within(legend), [], of).length === 1, 'a legend door closed on a flag is found on its square, and fails unsigned');
+    const nowhere = { ...room([]), needFlag: 'q_sealed' } as unknown as MapDef;
+    ok(within(nowhere).length === 1 && lockFaults(within(nowhere), [lock({ flag: 'q_sealed', x: NaN, y: NaN })], of).length > 0, 'a flag with no square fails, and cannot be signed in');
     const service = { ...room([]), features: [{ kind: 'temple', x: 2, y: 1, name: 'Fixture', interior: first.interiors[0], needFlag: 'q_blessed' }] } as unknown as MapDef;
     ok(within(service)[0]?.kind === 'other' && lockFaults(within(service), [], of).length === 1, 'and so does a service closed on a flag no type knows yet');
   }
