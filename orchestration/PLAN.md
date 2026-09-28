@@ -204,3 +204,20 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   on #123), #125 (#99) and #126 (#101). The orchestrator rendered the five contact sheets itself from
   the branches and sent them to the owner at 16:14 for the OKs art waits on. Three reviewers on the
   code (`reviews/119.md` to `126.md`).
+
+### 16:40: the drawings reviewed; #99's fixes sent
+
+- The six drawings are ready on their code (`reviews/119.md` to `124.md`): each def has its `kind`,
+  is owed through `UNPLACED` to the issue that places it, fails its silhouette break, and leaves every
+  old monster or room pixel-identical to main. Together they conflict only in
+  `src/content/areas/shelf/monsters.ts` (SPRITES and the end of MONSTERS; keep both), and all six pass
+  `npm run check` together (36 owed). They wait on the owner's OK on the sheets sent at 16:14.
+- Landing order once the owner OKs: #118 first (it adds a `monsters` list to shipped.json; every
+  drawing after it merges main and reruns `node tools/shipped.ts`); #119 any time (no conflicts);
+  then #122, #121, #120, #123 and #124, one at a time, the rest merging main after each. The last of
+  #120, #121 and #123/#124 brings SLICE's variants sentence up to date. Nits ride those merges.
+- For #48 (the Great Owl, on the crow's frame): at the hop's peak the far wing reaches 1.24h of
+  1.3h; an owl, eagle or heron must be drawn inside a smaller h, as the lampman is.
+- #125 and #126 (#99, #101) reviewed (`reviews/125.md`, `126.md`): ready after fixes (merge main; the
+  ladder suite must count finds given through `giftOf`, cairns and statues, once #115 is in; a check
+  to hold `GEAR`'s step at 9). Sent 16:39.
