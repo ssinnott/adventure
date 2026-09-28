@@ -42,7 +42,7 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
     for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f)) bad.push(`flag ${f}`);
     if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
     if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => id !== undefined && spentId(f) === id)) bad.push(`seen ${c.seen}`); }
-    if (c.slain !== undefined) { const { map, id } = onMap(c.slain); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${c.slain}`); }
+    for (const ref of [c.slain ?? []].flat()) { const { map, id } = onMap(ref); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${ref}`); }
     if (c.visited !== undefined && !maps.some((d) => d.id === c.visited)) bad.push(`visited ${c.visited}`);
   }
   return bad;
@@ -118,7 +118,7 @@ export function quests(): void {
     for (const f of [c.flag ?? []].flat()) s.party.flags[f] = 1;
     if (c.item) s.party.bag.push(c.item);
     if (c.seen) { const [m, id] = c.seen.split(':'); stateFor(s.world, m).used[id] = 1; }
-    if (c.slain) { const [m, id] = c.slain.split(':'); stateFor(s.world, m).groups[id].dead = s.world.state.minutes; }
+    for (const ref of [c.slain ?? []].flat()) { const [m, id] = ref.split(':'); stateFor(s.world, m).groups[id].dead = s.world.state.minutes; }
     if (c.visited) stateFor(s.world, c.visited);
   };
   const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);

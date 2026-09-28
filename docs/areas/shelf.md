@@ -78,7 +78,8 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6), the Gilded Eel and its four rumours, Vask and his contract |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward |
+| The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask and his contract in the throne room behind the keep's door |
 | The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
@@ -94,8 +95,12 @@ In more detail, as SLICE.md had it before the area docs:
 
 - **Helmstow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
   (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
-  when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
-  (the contract and the hand-in), a well, a sign.
+  when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), a well, a
+  sign and the gatehouse in the north wall.
+- **The Keep** (town, 16×10): the keep's ward behind the gatehouse, with a palette of its own and
+  the Queen's banners placed (`banners`); Lord Vask on the keep's door, holding court in the throne
+  room (the contract and the hand-in); people and a well. A building on its west side stands empty
+  for the armourer (#19).
 - **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or lurking
   monster groups with respawn timers, the Ashcombe farm. It and Thornmark are played as one
   outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
@@ -452,6 +457,22 @@ on screen is written in the issue that builds them (#47, #67, #68, #70 and #77),
 keeper's in #73, each in a Dialogue section measured against the game's box and log. The built
 quests' words, Vask's, Hale's and the Gilded Eel's, were rewritten to the same bar in #85.
 
+### The Wardens' quests
+
+The Warden Drillyard is the Wardens' hall (DESIGN §8; `hall: 'wardens'`), its trade still training.
+Its drillmaster gives their quests, two here and two in Thornmark (`src/content/areas/shelf/guilds.ts`
+and Thornmark's):
+
+| Rank | Quest | Deed | Pay |
+|---|---|---|---|
+| first task | First Watch | the Scarth: a once-event on the road at the checkpoint (`scarth_watch`, 28,9) | 20 gold, 60 xp |
+| 1 | The Cellar's Cult | both cultist bands in the Ashcombe cellar (`m_cult1`, `m_cult2`) | 60 gold, 240 xp |
+| 1 | The Old Watchtower | Thornmark's ogre (`tm_ogre`) | 150 gold, 900 xp |
+| 2 | The Garrison's Strongbox | a chest by Thornhold's north wall (`tm_strongbox`, 23,1) | 200 gold, 1,500 xp |
+
+A company that did a deed before taking its quest is paid when it takes it. The Wardens' quests
+take none of #56's: quests 3 and 6 stay plain quests (DESIGN §8).
+
 ## 7. Encounters, and what is new
 
 MONSTERS §5.2 has the Downs' roster and fights: the Carrion Crow, the Wrecker and the Lampman, the
@@ -466,14 +487,15 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 1,660 xp a member today, just past level 4 (1,650). The
-  curve (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor,
-  divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from,
-  shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3
-  260 and D4 200. Until they are built the curve reports the shortfall as owed to the pilot (#26). A
-  den's keepers pay once, and its brood as a group that respawns does; the figures count the brood
-  once.
-- **Gold.** A clear pays about 2,530: 1,065 in chests, about 765 in drops and 700 in rewards.
+- **Experience.** One clear of the area pays 1,710 xp a member today, 50 of it the Wardens' pay,
+  just past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area the climb from its floor
+  to the next area's floor, divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the
+  other 2,070 or so come from, shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2
+  190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the curve reports the
+  shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood as a group that
+  respawns does; the figures count the brood once.
+- **Gold.** A clear pays about 2,610: 1,065 in chests, about 765 in drops, 700 in rewards and 80
+  in the Wardens' pay.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
@@ -577,6 +599,7 @@ of the old names the first crew left (marked *old*).
 |---|---|---|---|
 | the Shelf | the Foreland | the land in front of the mountains, facing the sea; *old*, faintly | |
 | Harrow | Helmstow | *old*: "the helm's place", the Crown's seat in the old word for a crown | |
+| | the Keep | the ward behind Helmstow's north gate, and the keep at its head; short, as the map's frame wants | the Keep's Ward |
 | Harrow Downs | Callow Downs | the bare downs; and callow, like the companies that meet them first | Chaldon Downs |
 | Harrow Bay | the Wyke | the bay, in the old word Gullwick's wick comes from | Mewstone Bay |
 | Harrow Light | Crowness Light | the light on Crowness, the crows' headland; *old* | |

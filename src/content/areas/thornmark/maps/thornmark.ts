@@ -62,6 +62,7 @@ export const THORNMARK: MapDef = {
     { kind: 'event', x: 5, y: 6, id: 'tower', once: true, text: 'The old Warden watchtower, roofless. Something large has made a den in its base; the bones outside are not all animal.' },
     { kind: 'chest', x: 6, y: 5, id: 'tm_tower', gold: 180, items: ['warhammer+1', 'elixir', 'lantern_oil'] },
     { kind: 'event', x: 26, y: 8, id: 'barrow', once: true, text: 'A barrow, its door-stone rolled aside from within. The grass around it is dead in a ring.' },
+    { kind: 'chest', x: 23, y: 1, id: 'tm_strongbox', gold: 120, items: ['potion_heal', 'potion_heal'] },
     { kind: 'chest', x: 30, y: 9, id: 'tm_barrow', gold: 260, items: ['rune_dagger+1', 'potion_sp_great'] },
     { kind: 'event', x: 13, y: 24, id: 'grove_road', once: true, text: 'The road narrows and the oaks lean in over it. Every trunk on this stretch carries a chisel mark at shoulder height.' },
     { kind: 'event', x: 7, y: 25, id: 'grove_edge', once: true, text: 'The trees close in. Ahead the road ends in a hollow ringed with oaks: the Grove. The air hums, faintly, the way the cellar under Ashcombe did.' },

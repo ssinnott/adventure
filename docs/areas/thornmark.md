@@ -102,7 +102,9 @@ Foreland, hard winters whose snow lies for weeks, mist under the trees.
   Foreland's east edge, open to any company; a Warden checkpoint warns it on the way. Thornhold in
   the north-east, a ruined watchtower with an ogre's den, a barrow with bone knights and wraiths, a
   river with one bridge, a dead survey marker in a lake, and the Grove at the end of a chisel-marked
-  road in the south-west. Fourteen groups.
+  road in the south-west. Fourteen groups. By Thornhold's north wall, the chest the watchtower's
+  garrison buried when the elves shut the gate (`tm_strongbox`), the Wardens' rank 2 quest; their
+  rank 1 quest is the tower's ogre (docs/areas/shelf.md §6, the Wardens' quests).
 - **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the
   Lantern Hall (tier 4), the Elder's Yard, the Split Oak tavern (rumours about Vask's timing),
   a healing spring, and Elder Sylvane, who pays 1500 gold for the Underdeep chisel.
@@ -122,8 +124,9 @@ Foreland, hard winters whose snow lies for weeks, mist under the trees.
 One clear of every map is worth a little over level 8 per member; the dungeons respawn in one to
 two days, and a little over two more sweeps of the Grove reach 10 (a sweep pays 38% less once the
 Warden of the Cut is dead and the Rift's groups stop coming). Levels are still bought, so the gold
-matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays 7,849 xp a member of
-the 13,667 its curve asks, and 5,330 gold of the 8,400: the curve (`src/content/progression.ts`)
+matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays 8,249 xp a member of
+the 13,667 its curve asks, and 5,800 gold of the 8,400 (the Wardens' two quests and their chest
+give 400 xp a member and 470 gold of it): the curve (`src/content/progression.ts`)
 reports both as owed to the pilot (#26).
 
 The gate check (`tools/tests/gate.ts`) reports Thornmark's misses as #40's. Its company is dressed

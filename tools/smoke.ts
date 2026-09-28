@@ -38,11 +38,11 @@ const SEED = process.env.SMOKE_SEED === 'random' ? randomInt(1, 0x7fffffff) : Nu
 if (!Number.isInteger(SEED) || SEED < 1 || SEED >= 0x7fffffff) throw new Error(`SMOKE_SEED must be random or a whole number from 1 to ${0x7fffffff - 1}`);
 if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
 
-// The crack sweep looks one way from every square of the cellar and Helmstow on every run, and all
-// four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref> sweeps what
-// changed since that ref (CI passes the pull request's base); SMOKE_SWEEP=all or <id>,<id> names
-// the maps instead.
-const FLOOR = ['mill', 'harrow'];
+// The crack sweep looks one way from every square of the cellar, Helmstow and its keep on every
+// run, and all four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref>
+// sweeps what changed since that ref (CI passes the pull request's base); SMOKE_SWEEP=all or
+// <id>,<id> names the maps instead.
+const FLOOR = ['mill', 'harrow', 'keep'];
 const sweepAsked: string = process.env.SMOKE_SWEEP || (process.env.SMOKE_BASE ? await changedMaps(changedFiles(process.env.SMOKE_BASE)).then((c) => (c.all ? 'all' : c.maps.join(','))) : '');
 const SWEEP = sweepAsked === 'all' ? MAP_DEFS.map((d) => d.id) : sweepAsked.split(',').filter(Boolean);
 for (const id of SWEEP) if (!MAP_DEFS.some((d) => d.id === id)) throw new Error(`SMOKE_SWEEP names no map '${id}'`);
@@ -178,31 +178,24 @@ const inn = await (async () => {
   });
   return { menu, words, question, said, back, backColours, traded, left, eel };
 })();
-// A guild's hall, on a fixture (no hall is marked yet): the Drillyard as the Wardens' with one first
-// task already done, so taking it pays at once. Back on the hall's first menu, the rank it reads is
-// the new one: its words are made when drawn, not when the menu was first opened.
-await page.evaluate(async () => {
+// The Wardens' hall, the Drillyard, with First Watch's walk already made, so taking it pays at once.
+// Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
+// when the menu was first opened.
+await page.evaluate(() => {
   const g = (window as any).__game.game;
-  const load = (p: string): Promise<any> => import(p);
-  const { GUILD_QUESTS } = await load('/src/content/index.ts');
-  GUILD_QUESTS.push({ id: 'smoke_watch', guild: 'wardens', rank: 0, offer: ['A watch.'], paid: ['Paid.'], pay: { gold: 1 }, goal: { flag: 'smoke_deed' }, title: 'Smoke Watch', entries: [], goals: [] });
-  g.maps.harrow.features.find((f: any) => f.kind === 'trainer').hall = 'wardens';
-  g.party.flags.smoke_deed = 1;
+  g.world.ensureMapState(g.world.locate('shelf', 0, 0).mapId).used.scarth_watch = 1;
   g.world.travel('harrow', 3, 13, 0); g.enterCell();
 });
 await page.waitForTimeout(100);
 const hallBefore = await page.evaluate(() => (window as any).__game.game.top.words);
-// Down to the guild's work, the task, its offer, Take it, the pay, and "no more work" back to the menu.
-for (const k of ['ArrowDown', 'Space', 'Space', 'Space', 'Space', 'Space', 'Space']) { await page.keyboard.press(k); await page.waitForTimeout(60); }
+// Down to the guild's work, First Watch, its offer, Take it and the pay; then back from the rank 1 offers to the menu.
+for (const k of ['ArrowDown', 'Space', 'Space', 'Space', 'Space', 'Space', 'Escape']) { await page.keyboard.press(k); await page.waitForTimeout(60); }
 const hallAfter = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), words: g.top.words }; });
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-const hallLeft = await page.evaluate(async () => {
+const hallLeft = await page.evaluate(() => {
   const g = (window as any).__game.game;
-  const load = (p: string): Promise<any> => import(p);
-  const { GUILD_QUESTS } = await load('/src/content/index.ts');
-  GUILD_QUESTS.splice(GUILD_QUESTS.findIndex((q: any) => q.id === 'smoke_watch'), 1);
-  delete g.maps.harrow.features.find((f: any) => f.kind === 'trainer').hall;
-  for (const k of ['smoke_deed', 'q_smoke_watch', 'q_smoke_watch_done', 'rank_wardens']) delete g.party.flags[k];
+  delete g.world.ensureMapState(g.world.locate('shelf', 0, 0).mapId).used.scarth_watch;
+  for (const k of ['q_wardens_watch', 'q_wardens_watch_done', 'rank_wardens']) delete g.party.flags[k];
   return g.screens.map((s: any) => s.constructor.name).join(',');
 });
 // Every interior paints, at noon and at midnight, and each is a picture rather than a flat fill.
@@ -307,8 +300,9 @@ const terrains = await page.evaluate(async () => {
     whiten: ['hills', 'farm'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
   };
 });
-// The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it.
-await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 9, 6, 0); g.interact(g.world.featureHere()); });
+// The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
+// holds court on the keep's door, in the throne room.
+await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
 await page.waitForTimeout(100);
 await page.keyboard.press('Space'); await page.waitForTimeout(100);
 const questLine = await page.evaluate(() => (window as any).__game.game.log.at(-1));
@@ -510,7 +504,8 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
         const a = paint('#ff00ff'), b = paint('#00ff00');
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
-        const walled = (s: number) => V.isSolidWall(m.at(ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
+        // Beside the party a wall, as it is drawn: a secret door among the peaks is a peak, not a wall.
+        const walled = (s: number) => V.isSolidWall(V.drawnCell(m, ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
         let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;
