@@ -161,3 +161,12 @@ thornmark.md quotes the maps at the wrong level; gateCompany gives a stronger co
 sent at 05:08.
 #91 (#37) merged at 05:14 (main 8806854) after its head, which carried main, was green in CI (sheet
 job included) and locally. Left: #103 (#38) and #95 (#33, waiting on the owner's edge issue).
+
+## Phase 0 all but done
+
+#103 (#38) merged at 06:05 (main 781064b) after its last items were proven and its head, carrying
+main, was green in CI; main is green (`npm run check`: ALL OK, 18 owed: #26 ×3, #40 ×7, #47 ×8) and
+builds. Of #25's sixteen sub-issues fifteen are closed. Left: #33, whose PR #95 is verified and
+waits only on the owner's edge issue (draft in the orchestrator's scratchpad, sent to the owner):
+once it has a number, #95 re-keys its 12 'owner' squares (shelf 0,28 to #47, the other eleven to the
+new issue) and merges. Branch protection is still the owner's to turn on.
