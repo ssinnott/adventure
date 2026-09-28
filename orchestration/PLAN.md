@@ -477,3 +477,19 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #73's footprint (`footprints/73.md`): S, one pull request, needs #131 alone (`says` and `heard`);
   the Lodestone event and Gytha on the Foreland map, a track at 17-20 on row 4 (the owner's sheet),
   the site un-planned. Starts in a free session once #131 lands.
+
+### 20:15: #131 merged; #76's second half, #132's merge and #73 started; the owl reviewed
+
+- #131's second round (`reviews/131-2.md`): ready; every first-round fix holds, every break
+  reproduced; the walk's port green. Merged at 20:11 (main db02d4f): on the head (main bdbaba9 in),
+  ALL OK (43 owed), SMOKE OK, "Nothing new."; CI green. Main's tree is the head's. #76 stays open.
+- Sent 20:15:
+  - #76's second pull request (`claude/m1-76-presence`, `Closes #76`) started; "Talk to" goes on
+    #132's `businessEntries` once #132 lands; the comment nits ride it.
+  - #132 merges main and carries its collisions with #131 (the reviewer's recipe); then a second
+    round.
+  - #73 (the Lodestone) started in the #42 session (`claude/m1-73-lodestone`): it needs #131 alone.
+    Its map changes: the sheet goes to the owner.
+- #139 (#48's A, the owl) reviewed (`reviews/139.md`): ready; the crow and every old monster
+  byte-identical; one comment nit. It lands first of the Deepthorn's three once the owner OKs it;
+  #137 and #138 then drop their copy of the five `UNPLACED` lines.
