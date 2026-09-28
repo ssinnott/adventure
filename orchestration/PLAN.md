@@ -179,3 +179,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 | Wave | Issues | Session | Branch |
 |---|---|---|---|
 | 2 | #99, #101 | session_017gmKkkiPWxH5PB61L1M1mr | `claude/m1-99-gear-ladder`, `claude/m1-101-thornmark-chests` |
+
+### 16:10: #113 merged; #115 and #111 sent their last fixes
+
+- #113 (#66) merged at 16:07 (main 244812a) after its second round (`reviews/113-2.md`): the seeding
+  test now fails its break (1714 of 2048), HELMSTOW shows whole on the overlay. Main's tree matches
+  the tested merge; `npm run check` on main: ALL OK (30 owed), SMOKE OK. #66 closes; its session is
+  done.
+- #115 (#45) reviewed (`reviews/115.md`): ready after two should-fixes (the merged `seen` rule passes
+  a key with no id; the hint chain passes an empty, over-long or shared answer) and three nits. Sent
+  16:09, with a main merge (maps.ts against #116: keep both).
+- #111 (#21 A) second round (`reviews/111-2.md`): six of seven fixes hold; the new "lost garrison"
+  row is still the open barrow. Sent 16:09: choose another deed; no need to ask the owner.
