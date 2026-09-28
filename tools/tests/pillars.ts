@@ -19,6 +19,7 @@ import { signLine } from '../../src/game/world.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../src/ui/frame.ts';
+import { lookLine } from '../../src/game/wilds.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -65,6 +66,16 @@ const shown = (f: { kind: string; text: string }): string => (f.kind === 'sign' 
 export function lineFaults(def: MapDef): string[] {
   const out: string[] = [], squares = new Map<string, number>();
   for (const f of def.features ?? []) {
+    // A wilderness feature's lines are said on Space, one event at a time, each held to the most.
+    if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'cairn' || f.kind === 'statue' || f.kind === 'camp') {
+      // A statue's and a camp's text is logged inside the look (game/wilds.ts), so it is measured so.
+      const text = f.kind === 'statue' || f.kind === 'camp' ? lookLine(f) : f.text;
+      for (const [what, t] of [['text', text], ['done', 'done' in f ? f.done : undefined]] as const) {
+        const n = t === undefined ? 0 : logLines(t).length;
+        if (n > MOST_LINES) out.push(`the ${f.kind}'s ${what} at ${f.x},${f.y} takes ${n} lines`);
+      }
+      continue;
+    }
     if (f.kind !== 'event' && f.kind !== 'sign') continue;
     const n = logLines(shown(f)).length, at = `${f.x},${f.y}`;
     if (n > MOST_LINES) out.push(`the ${f.kind} at ${at} takes ${n} lines`);
@@ -92,6 +103,8 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
       const where = `${d.id} ${f.kind} ${f.x},${f.y}`;
       if ('text' in f) add(where, f.text);
       if ('name' in f) add(where, f.name);
+      if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'statue') add(where, f.done);
+      if (f.kind === 'statue') add(where, f.riddle, f.answer);
       if (f.kind === 'npc') add(where, f.lines, f.quest?.done, f.quest?.after);
     }
     for (const e of d.exits ?? []) add(`${d.id} exit ${e.x},${e.y}`, e.label, e.blockedText);

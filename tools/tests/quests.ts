@@ -15,13 +15,15 @@ import { wrap } from '../../src/ui/draw.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
 import type { MapDef } from '../../src/game/map.ts';
+import { spentId } from '../../src/game/wilds.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok } from './lib.ts';
 
 /**
- * What in a condition names nothing real: a flag no NPC sets, an item, a once-only event or a chest,
- * a guardian that never respawns (one that does comes back to life, and what turns on its death
- * with it), a map. The maps are the game's unless given.
+ * What in a condition names nothing real: a flag no NPC sets, an item, something spent once and kept
+ * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue), a guardian that
+ * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
+ * maps are the game's unless given.
  */
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
   const npcFlags = new Set(maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [f.flag, f.quest?.setFlag] : [])));
@@ -30,7 +32,7 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
   for (const c of [w].flat() as QuestCond[]) {
     for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f)) bad.push(`flag ${f}`);
     if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
-    if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => ((f.kind === 'event' && f.once) || f.kind === 'chest') && f.id === id)) bad.push(`seen ${c.seen}`); }
+    if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => id !== undefined && spentId(f) === id)) bad.push(`seen ${c.seen}`); }
     if (c.slain !== undefined) { const { map, id } = onMap(c.slain); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${c.slain}`); }
     if (c.visited !== undefined && !maps.some((d) => d.id === c.visited)) bad.push(`visited ${c.visited}`);
   }
