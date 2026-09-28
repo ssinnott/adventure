@@ -8,7 +8,7 @@ import { K, pillar, banner } from '../props.ts';
 import { glossPoly, glossBall } from '../../monsters/gloss.ts';
 import { towerDevice } from './warden_drillyard.ts';
 
-const STONE = '#8e929a', FLAG = '#5a5c64', BLUE = '#1f3a7a', GOLD = '#d8b050', GREY = '#6a6e76', BLACK = '#1a181e';
+const STONE = '#8e929a', FLAG = '#5a5c64', BLUE = '#1f3a7a', GOLD = '#d4a83a', GREY = '#6a6e76', BLACK = '#1a181e';
 
 /** The sea at the window, and the Hearth on it: a column of light on the horizon, brighter as the day goes. */
 function hearthView(x: number, y: number, w: number, h: number, daylight: number) {
