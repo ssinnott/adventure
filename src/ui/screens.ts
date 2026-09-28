@@ -13,7 +13,7 @@ import type { Feature, Interior } from '../game/map.ts';
 import { item } from '../game/items.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, MAX_LEVEL, guildFlag } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, trainPrice, MAX_LEVEL, guildFlag } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 
@@ -422,9 +422,6 @@ function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
 
 /** What a guild charges for a spell of the given tier: 40, 80, 160, 320. */
 export function spellPrice(tier: number): number { return 40 * Math.pow(2, tier - 1); }
-
-/** What a trainer charges to teach the next level: 25 a level to 5, 40 a level after. */
-export function trainPrice(c: Character): number { return c.level < 5 ? c.level * 25 : c.level * 40; }
 
 function trainer(g: Game, f: Extract<Feature, { kind: 'trainer' }>): Screen {
   const cost = trainPrice;

@@ -7,6 +7,9 @@ import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { randomInt } from 'node:crypto';
 import { createServer } from './server.ts';
+import { changedFiles, changedMaps } from './changed.ts';
+import { MAP_DEFS } from '../src/content/index.ts';
+import type { MonsterSprite } from '../src/content/index.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -34,6 +37,28 @@ const DEFAULT_SEED = 1;
 const SEED = process.env.SMOKE_SEED === 'random' ? randomInt(1, 0x7fffffff) : Number(process.env.SMOKE_SEED || DEFAULT_SEED);
 if (!Number.isInteger(SEED) || SEED < 1 || SEED >= 0x7fffffff) throw new Error(`SMOKE_SEED must be random or a whole number from 1 to ${0x7fffffff - 1}`);
 if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
+
+// The crack sweep looks one way from every square of the cellar and Helmstow on every run, and all
+// four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref> sweeps what
+// changed since that ref (CI passes the pull request's base); SMOKE_SWEEP=all or <id>,<id> names
+// the maps instead.
+const FLOOR = ['mill', 'harrow'];
+const sweepAsked: string = process.env.SMOKE_SWEEP || (process.env.SMOKE_BASE ? await changedMaps(changedFiles(process.env.SMOKE_BASE)).then((c) => (c.all ? 'all' : c.maps.join(','))) : '');
+const SWEEP = sweepAsked === 'all' ? MAP_DEFS.map((d) => d.id) : sweepAsked.split(',').filter(Boolean);
+for (const id of SWEEP) if (!MAP_DEFS.some((d) => d.id === id)) throw new Error(`SMOKE_SWEEP names no map '${id}'`);
+
+// The parts of a drawing that stand apart from its body by design, each with the most pieces it
+// comes to and the largest share of the drawing's ink they take between them. Anything else apart
+// is a part that has come loose, as the archer's head once did (#7).
+const DETACHED: Partial<Record<MonsterSprite, { what: string; pieces: number; share: number }>> = {
+  warden: { what: 'shard', pieces: 1, share: 0.01 },
+  cut_warden: { what: 'shards', pieces: 2, share: 0.01 },
+  acolyte: { what: 'censer', pieces: 1, share: 0.05 },
+  adept: { what: 'hand flame', pieces: 1, share: 0.03 },
+  rift_hound: { what: 'embers', pieces: 3, share: 0.01 },
+  ashen_hand: { what: 'embers', pieces: 5, share: 0.01 },
+  wraith: { what: 'fading tongue of cloth', pieces: 1, share: 0.01 },
+};
 
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
@@ -328,43 +353,101 @@ if (process.env.SMOKE_SHOT) {
   await page.screenshot({ path: process.env.SMOKE_SHOT });
 }
 
-// The walls meet without a crack. Paint a view from every open cell of the Ashcombe cellar and of
-// Helmstow twice, over two flat backdrops, and wherever the two differ the backdrop shows through.
-// Along the horizon only walls can be (the floor starts 24px below it at the far end of the view),
-// so there backdrop with solid wall either side of it is a crack between two faces. And where
-// walls stand on both hands of the party the edges of the view are wall: those once went undrawn.
-const cracks = await page.evaluate(async () => {
+// The walls meet without a crack. Paint a view from every open cell of a map twice, over two flat
+// backdrops, and wherever the two differ the backdrop shows through. Along the horizon only walls
+// can be (the floor starts 24px below it at the far end of the view, and the billboards stay out
+// over a backdrop), so there backdrop with solid wall either side of it is a crack between two
+// faces. And where walls stand on both hands of the party the edges of the view are wall: those
+// once went undrawn. A zone of the outdoors is walked over its own squares.
+const sweeps = [...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
+const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
   const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts');
   const w = (window as any).__game.game.world;
   const W = 400, H = 268, band = 16, bad: string[] = [];
+  let views = 0;
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
   // The sky goes to a canvas of its own and is never composited, so only the backdrop is behind the walls.
   const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
   const skyCtx = sky.getContext('2d')!;
   const paint = (backdrop: string) => { V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
-  for (const id of ['mill', 'harrow']) {
-    w.travel(id, 1, 1, 0);
-    const m = w.map;
-    for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
-      if (m.at(x, y).solid !== 'none' || m.at(x, y).door !== 'none') continue;
-      const f = (x + y) % 4, rf = (f + 1) % 4;
-      w.travel(id, x, y, f); w.state.light = 1;
-      const a = paint('#ff00ff'), b = paint('#00ff00');
-      const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
-      const walled = (s: number) => m.blocksView(x + s * T.FACING_DX[rf], y + s * T.FACING_DY[rf]);
-      let at = '';
-      for (let py = 0; py < band * 2 && !at; py++) for (let px = 0; px < W && !at; px++) {
-        if (!shows(px, py)) continue;
-        const crack = [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
-        if (crack || (px < 6 && walled(-1)) || (px >= W - 6 && walled(1))) at = `${px},${H / 2 - band + py}`;
+  for (const { id, all } of maps) {
+    const at = w.locate(id, 0, 0), m = w.maps[at.mapId], z = m.zones.find((q: any) => q.id === id);
+    const mw = z ? z.w : m.width, mh = z ? z.h : m.height;
+    for (let y = 0; y < mh; y++) for (let x = 0; x < mw; x++) {
+      const ax = at.x + x, ay = at.y + y;
+      if (m.at(ax, ay).solid !== 'none' || m.at(ax, ay).door !== 'none') continue;
+      for (const f of all ? [0, 1, 2, 3] : [(x + y) % 4]) {
+        const rf = (f + 1) % 4;
+        w.travel(id, x, y, f); w.state.light = 1;
+        const a = paint('#ff00ff'), b = paint('#00ff00');
+        views++;
+        const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
+        const walled = (s: number) => V.isSolidWall(m.at(ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
+        let spot = '';
+        for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
+          if (!shows(px, py)) continue;
+          const crack = [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
+          if (crack || (px < 6 && walled(-1)) || (px >= W - 6 && walled(1))) spot = `${px},${H / 2 - band + py}`;
+        }
+        if (spot) bad.push(`${id} ${x},${y} facing ${f} at ${spot}`);
       }
-      if (at) bad.push(`${id} ${x},${y} facing ${f} at ${at}`);
     }
   }
-  return bad;
+  return { bad, views };
+}, sweeps);
+
+// One silhouette: every monster drawn at combat size, alone, three abreast and six abreast, through
+// its idle motion, is one piece of ink. Ink is alpha 128 and up (a ground shadow is under it), a
+// piece is 8-connected, and specks under 6 px are left out. What stands apart must be declared.
+interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: boolean }
+const silhouettes: Silhouette[] = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const S = await load('/src/ui/sprites.ts'), C = await load('/src/content/index.ts');
+  const out: Silhouette[] = [];
+  const c = document.createElement('canvas');
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  for (const def of Object.values(C.MONSTERS) as any[]) {
+    const worst = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: false };
+    for (const n of [1, 3, 6]) {
+      const h = S.combatHeight(def.size, n), cw = Math.ceil(h * 3), ch = Math.ceil(h * 1.6);
+      c.width = cw; c.height = ch;
+      const seen = new Int32Array(cw * ch), stack = new Int32Array(cw * ch);
+      for (let frame = 0; frame <= 176; frame += 4) {
+        ctx.clearRect(0, 0, cw, ch);
+        S.drawMonsterSprite(ctx, def.sprite, cw / 2, Math.round(h * 1.3), h, def.tint, 1, frame);
+        const d = ctx.getImageData(0, 0, cw, ch).data;
+        seen.fill(0);
+        const sizes: number[] = [];
+        for (let i = 0; i < cw * ch; i++) {
+          if (seen[i] || d[i * 4 + 3] < 128) continue;
+          let top = 0, size = 0;
+          stack[top++] = i; seen[i] = 1;
+          while (top) {
+            const p = stack[--top], px = p % cw, py = (p - px) / cw;
+            size++;
+            if (px === 0 || py === 0 || px === cw - 1 || py === ch - 1) worst.clipped = true;
+            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+              const qx = px + dx, qy = py + dy, q = qy * cw + qx;
+              if (qx < 0 || qy < 0 || qx >= cw || qy >= ch || seen[q] || d[q * 4 + 3] < 128) continue;
+              seen[q] = 1; stack[top++] = q;
+            }
+          }
+          if (size >= 6) sizes.push(size);
+        }
+        sizes.sort((a, b) => b - a);
+        const ink = sizes.reduce((a, b) => a + b, 0), apart = ink - (sizes[0] ?? 0);
+        if (sizes.length - 1 > worst.pieces) { worst.pieces = sizes.length - 1; worst.at = `${n} abreast, frame ${frame}: ${sizes.slice(1).join('+')} px apart of ${ink}`; }
+        if (ink && apart / ink > worst.share) worst.share = apart / ink;
+      }
+    }
+    out.push(worst);
+  }
+  return out;
 });
+const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
+const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
 
 await browser.close();
 server.close();
@@ -409,7 +492,8 @@ ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeB
 ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /The pass opens onto old forest/.test(pass.said) && passColours > 20,
   `the open pass is walked straight through into Thornmark, which says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
-ok(cracks.length === 0, `the walls meet without a crack in the cellar and in Helmstow, and the walls beside the party are drawn${cracks.length ? ` -> ${cracks.length} views, ` + cracks.slice(0, 4).join(', ') : ''}`);
+ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls beside the party are drawn, in ${cracks.views} views (${sweeps.map((m) => m.id + (m.all ? ' four ways' : '')).join(', ')})${cracks.bad.length ? ` -> ${cracks.bad.length} views, ` + cracks.bad.slice(0, 4).join(', ') : ''}`);
+ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
 if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

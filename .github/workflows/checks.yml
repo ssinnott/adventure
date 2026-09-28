@@ -45,7 +45,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      # A pull request is checked out as its merge into the base: the commit before is the base, and
+      # what changed since is what the crack sweep looks at (tools/changed.ts).
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -54,9 +58,13 @@ jobs:
       # Headless runs need only Chromium's headless shell. It is not cached: with the shell cached,
       # its system libraries alone took as long to install as shell and libraries together (19 s).
       - run: npx playwright install --with-deps --only-shell chromium
+      # The crack sweep looks all four ways from every square of the maps a pull request changes; a
+      # run started by hand sweeps every map, which is the sweep a release gets.
       - run: npm run smoke
         env:
           SMOKE_SHOT: smoke.png
+          SMOKE_BASE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || '' }}
+          SMOKE_SWEEP: ${{ github.event_name == 'workflow_dispatch' && 'all' || '' }}
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
