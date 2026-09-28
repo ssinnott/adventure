@@ -191,3 +191,16 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   16:09, with a main merge (maps.ts against #116: keep both).
 - #111 (#21 A) second round (`reviews/111-2.md`): six of seven fixes hold; the new "lost garrison"
   row is still the open barrow. Sent 16:09: choose another deed; no need to ask the owner.
+
+### 16:15: the drawings and #99's pull requests are up
+
+- #117 (#40's road) reviewed (`reviews/117.md`): ready after three should-fixes (a stray "the ledger
+  the pass waits on"; the kept gate machinery untested; the world map's padlocks and "Mountaineer"
+  gone unsaid, to be shown to the owner). Sent 16:13.
+- #118 (#41's look) reviewed (`reviews/118.md`): ready after three should-fixes (the combat log cuts
+  a two-line look; nothing holds `groupsInSight` to sight and walls; a count that fails once any def
+  has a look). Sent 16:17.
+- Opened: #119 (#97's room), #120 (#82), #121 (#80, #81), #122 (#79), #123 (#83), #124 (#84, stacked
+  on #123), #125 (#99) and #126 (#101). The orchestrator rendered the five contact sheets itself from
+  the branches and sent them to the owner at 16:14 for the OKs art waits on. Three reviewers on the
+  code (`reviews/119.md` to `126.md`).
