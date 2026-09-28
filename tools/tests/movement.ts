@@ -74,7 +74,7 @@ export function movement(): void {
   ok(world.here.name === 'Thornmark' && world.region === 'thornmark' && world.state.zones!.includes('thornmark'), 'the party has set foot in Thornmark, and its weather is Thornmark\'s');
   world.turn('back');
   const back = [world.move('forward'), world.move('forward')];
-  ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the gate it is the Foreland again');
+  ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the pass it is the Foreland again');
   // Town Portal returns to the last town stood in.
   ok(world.townPortal() === 'Helmstow' && world.map.id === 'harrow', 'Town Portal goes to Helmstow before any other town is visited');
   world.travel('thornhold', 7, 14, 0); world.travel('grove2', 8, 8, 0);

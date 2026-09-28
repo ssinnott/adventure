@@ -63,9 +63,10 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its
   arrival line as what the log says on crossing into Thornmark ("The pass opens onto old forest.
   Thornmark."; the way back says "Back through the pass to the Foreland."). The pass is open to any
-  company: a sign at the Warden checkpoint on the last square of the road warns it, and Thornmark's
-  monsters decide. Monster groups may follow the party over a zone's edge. An exit with flags still
-  becomes a gate on its square (`MapDef.gates`), but none is left between the zones.
+  company: a sign at the Warden checkpoint, on the one square the pass is entered from, warns it,
+  and Thornmark's monsters decide. Monster groups may follow the party over a zone's edge. An exit
+  with flags still becomes a gate on its square (`MapDef.gates`; the outdoors suite holds a fixture
+  to it), but none is left between the zones.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the
   `void` solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
