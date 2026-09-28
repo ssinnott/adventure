@@ -4,6 +4,7 @@
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
+import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { ok } from './lib.ts';
 
 export function maps(): void {
@@ -25,7 +26,7 @@ export function maps(): void {
       for (const id of e.monsters) ok(id in MONSTERS, `${def.id}: encounter ${e.id} monster '${id}' exists`);
     }
     for (const f of m.features) {
-      if (f.kind === 'chest') for (const id of f.items) ok(id in ITEMS, `${def.id}: chest ${f.id} item '${id}' exists`);
+      for (const id of giftOf(f)?.items ?? []) ok(id in ITEMS, `${def.id}: ${f.kind} ${spentId(f)} item '${id}' exists`);
       if (f.kind === 'shop') for (const id of f.stock) ok(id in ITEMS, `${def.id}: shop stock '${id}' exists`);
       if (f.kind === 'npc' && f.quest) ok(f.quest.item in ITEMS, `${def.id}: quest item '${f.quest.item}' exists`);
     }
@@ -34,7 +35,7 @@ export function maps(): void {
   // Every quest item is dropped or found somewhere; every monster is placed on some map.
   const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
   for (const id of Object.keys(MONSTERS)) ok(placed.has(id), `monster '${id}' appears on a map`);
-  const found = new Set([...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'chest' ? f.items : [])), ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
+  const found = new Set([...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => giftOf(f)?.items ?? [])), ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
   for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc' && f.quest) ok(found.has(f.quest.item), `${d.id}: quest item '${f.quest.item}' can be found`);
   // A business is a feature in a town's doorway: you walk into it, so it has a room to show, and
   // no two businesses share one.

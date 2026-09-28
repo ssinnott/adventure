@@ -55,6 +55,12 @@ export interface Exit {
  */
 export type { Interior };
 
+/** What a statue gives for its riddle's answer: gold, items or a stat point to every member (game/wilds.ts). */
+export interface Gift { gold?: number; items?: string[]; stat?: import('./party.ts').Stat; amount?: number }
+
+/** A shrine's or a fountain's: `amount` (1) of `stat` to every member, once; `done` is said after. */
+interface Blessing { x: number; y: number; id: string; name?: string; text: string; stat: import('./party.ts').Stat; amount?: number; done: string }
+
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
   | { kind: 'sign'; x: number; y: number; text: string; id?: string }
@@ -67,6 +73,15 @@ export type Feature =
   /** `interior` makes the NPC a business you walk into (a tavern); a person in the street has none. */
   | { kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string; quest?: NpcQuest; interior?: Interior }
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number }
+  /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
+  | ({ kind: 'shrine' } & Blessing)
+  | ({ kind: 'fountain' } & Blessing)
+  /** A cache under stones, given once, as a chest is. */
+  | { kind: 'cairn'; x: number; y: number; id: string; name?: string; text?: string; gold: number; items: string[] }
+  /** `text` is its look; the word `answer`, typed to its `riddle`, gives `gift` once, and `done` is said then and after. */
+  | { kind: 'statue'; x: number; y: number; id: string; name?: string; text: string; riddle: string; answer: string; gift: Gift; done: string }
+  /** Where the party may rest though monsters are about, as often as it likes. */
+  | { kind: 'camp'; x: number; y: number; name?: string; text: string }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
   | { kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean };
 

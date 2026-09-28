@@ -13,6 +13,7 @@ import type { Atlas } from '../src/game/atlas.ts';
 import { layOutdoors } from '../src/game/outdoors.ts';
 import { CLASSES, RACES, CONDITION_ORDER, guildFlag } from '../src/game/party.ts';
 import { SAVE_VERSION } from '../src/game/save.ts';
+import { spentId } from '../src/game/wilds.ts';
 import { UPGRADES } from '../src/game/upgrades.ts';
 import type { Upgrade } from '../src/game/upgrades.ts';
 import { ATLAS, MAP_DEFS, AREAS } from '../src/content/index.ts';
@@ -75,7 +76,7 @@ export function collect(c: Content): Ids {
     }
     const used: string[] = [];
     for (const f of m.features) {
-      if (f.kind === 'chest' || (f.kind === 'event' && f.once)) used.push(f.id);
+      const spent = spentId(f); if (spent) used.push(spent);
       if (f.kind === 'guild') flags.add(guildFlag(f.name));
       if (f.kind === 'npc') { if (f.flag) flags.add(f.flag); if (f.quest) flags.add(f.quest.setFlag); }
     }

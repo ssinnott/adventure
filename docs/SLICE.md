@@ -19,7 +19,10 @@ DESIGN.md first for the why.
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
   mountains gated by party abilities, hills (`^`) and farmland (`f`) open to all but on no built
   map yet, a calendar and weather over a day/night clock (below), automap with field-of-view
-  reveal, rest with food, a search action, exploration spells (Light, Wizard Eye).
+  reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The wilderness
+  features, on no built map yet: a shrine or fountain that gives every member a stat point once, a
+  cairn with a cache, a statue whose riddle takes its answer typed, and a camp where the party may
+  rest with monsters two squares off; a hermit is a person.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported.
@@ -321,6 +324,10 @@ over content broken on purpose too, and two tools to theirs:
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
+- `wilds` (§5.3): the wilderness features on a fixture field: each a point and none a sign, the
+  shrine, fountain, cairn and statue giving once and kept through a save and by the shipped list,
+  the camp rested at twice, the riddle typed through the real keyboard and only the right word
+  taken, and every statue's answer said somewhere else in the game.
 - `pillars` (§5.4): a hint on the near side of every secret door; no text past three lines of the
   log, every glyph in the font, British spelling; each `Area.novel` holds; water and roads carry on
   into the atlas; story locks (`content/locks.ts`) signed in, none between areas and every hand-in
@@ -380,7 +387,7 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, an outdoor map's `density` and, on the outdoors, its gates and zones), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void |
+| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups, encounter triggers, rest, search |
@@ -391,9 +398,11 @@ does.
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
 | `game/quests.ts` | `questLog` (the quests known, their entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
-| `game/game.ts` | `Game` (screen stack, save/load, interactions) and `ExploreScreen` |
+| `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest) and `ExploreScreen` |
+| `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the farmland's fields and hedges, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world in pink and the weather drawn over it |
-| `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors), party cards, log, purse |
+| `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it), party cards, log, purse |
+| `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |
 | `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
@@ -408,5 +417,5 @@ does.
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty, as the road's one lock, the pass's flag, is to go (#40) |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
-| `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, groups and door squares, the zones' places, the flags, items, spells, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
+| `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, groups and door squares, the zones' places, the flags, items, spells, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
 | `content/atlas.ts` | the world map's plan: the land, the areas of the road, and the zones, places and sites not built yet; each area charts its own in `areas/<area>/atlas.ts`, and `content/index.ts` merges them into `ATLAS` |

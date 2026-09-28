@@ -15,6 +15,7 @@ import { hash } from './brush.ts';
 import { shortDate } from '../game/calendar.ts';
 import { classify, isRainy, isSnowy, SKY_NAMES } from '../game/weather.ts';
 import type { Sky } from '../game/weather.ts';
+import { spentId } from '../game/wilds.ts';
 
 export const LAYOUT = {
   view: { x: 8, y: 8, w: 400, h: 268 },
@@ -136,8 +137,10 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   // Features the party has stood next to.
   for (const f of m.features) {
     if (!shown(f.x, f.y) || f.kind === 'event') continue;
-    if (f.kind === 'chest' && world.used(f.id)) continue;
-    ctx.fillStyle = f.kind === 'chest' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
+    // A spent chest, cairn, shrine, fountain or statue is gone from the map; a camp always shows.
+    const spent = spentId(f);
+    if (spent && world.used(spent)) continue;
+    ctx.fillStyle = f.kind === 'chest' || f.kind === 'cairn' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
     const s = Math.max(1, cell - 2);
     ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s);
   }

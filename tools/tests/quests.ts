@@ -12,6 +12,7 @@ import type { QuestCond, QuestView, When } from '../../src/game/quests.ts';
 import { questPage, PAGE, LIST } from '../../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
+import { spentId } from '../../src/game/wilds.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok } from './lib.ts';
 
@@ -28,7 +29,7 @@ export function quests(): void {
     for (const c of [q.start, ...(q.done ? [q.done] : []), ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds)) {
       for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f)) bad.push(`flag ${f}`);
       if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
-      if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => ((f.kind === 'event' && f.once) || f.kind === 'chest') && f.id === id)) bad.push(`seen ${c.seen}`); }
+      if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => spentId(f) === id)) bad.push(`seen ${c.seen}`); }
       if (c.slain !== undefined) { const { map, id } = onMap(c.slain); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${c.slain}`); }
       if (c.visited !== undefined && !MAP_DEFS.some((d) => d.id === c.visited)) bad.push(`visited ${c.visited}`);
     }
