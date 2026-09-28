@@ -18,7 +18,7 @@ import type { Part } from './gloss.ts';
 import { shade, mix } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['boar'];
+export const KINDS: readonly MonsterSprite[] = ['boar', 'tusker'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   void kind;

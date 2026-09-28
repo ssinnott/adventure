@@ -20,7 +20,7 @@ import { celBall } from '../../lib/art/shading.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog'];
+export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf'];
 
 /** Proportions that tell the kinds apart on the shared frame (1 = the lean grey wolf). */
 interface Build { neck: number; head: number; jaw: number; ruff: number; leg: number; body: number; fang: number; tail: number }

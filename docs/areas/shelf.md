@@ -75,7 +75,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6), the Gilded Eel and its four rumours, Vask and his contract |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, Vask and his contract |
 | The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
@@ -221,14 +221,14 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - Coldharbour at 5–11,9–13: the farmhouse and the barn about a yard, the lamp (an event), the
     well, the rats in the barn and a track down to the road; a square by the gate is left for the
     captain (#68). The shrine stands where the track meets the road, the milestone by the gap.
-  - Brockholt: a woodcutter's path in from the east to his camp, then on to the beeches at its heart
-    and the holly; the sett is a secret door under it, the cache two squares behind. A glade on its
-    west side for the boar. A scarecrow in the south-west fields and a view back over the Foreland
-    from the north-east rise make up the country's floor.
-  - Groups about twice the brief's, to hold the gate's six or seven fights to a rest (§8): eight
-    crows twice, six wolves, three boars, ten rats, four bandits and two archers. At level 2 the
-    company wins every fight and manages 6.3 fights to a rest; the brief's own lines gave 19.6. They
-    pay about 126 xp a member.
+  - Brockholt: a woodcutter's path in from the east to his camp, then on to the beeches at its
+    heart and the holly; the sett is a secret door under it, the cache two squares behind. A glade
+    on its west side for the boar. A scarecrow in the south-west fields and a view back over the
+    Foreland from the north-east rise make up the country's floor.
+  - The brief's groups, of the Downs' own monsters (§7): three Chalk Wolves, a Tusker, five Barn
+    Rats, two Footpads and a Hedge Archer, and eight crows twice. At level 2 the company wins every
+    fight and manages 6.8 fights to a rest; with the Foreland's own wolves, boar, rats and bandits
+    the same lines gave 19.6. They pay about 151 xp a member.
   - Density: 99% of its 777 squares within 12 steps of something, the furthest 14.
 
 ### 4.3 F3, Gullwick (#47): core, band 2–3
@@ -483,12 +483,33 @@ on screen is written in the issue that builds them (#47, #67, #68, #70 and #77),
 keeper's in #73, each in a Dialogue section measured against the game's box and log. The built
 quests' words, Vask's, Hale's and the Gilded Eel's, were rewritten to the same bar in #85.
 
+### The Wardens' quests
+
+The Warden Drillyard is the Wardens' hall (DESIGN §8; `hall: 'wardens'`), its trade still training.
+Its drillmaster gives their quests, two here and two in Thornmark (`src/content/areas/shelf/guilds.ts`
+and Thornmark's):
+
+| Rank | Quest | Deed | Pay |
+|---|---|---|---|
+| first task | First Watch | the Scarth: a once-event on the road at the checkpoint (`scarth_watch`, 28,9) | 20 gold, 60 xp |
+| 1 | The Cellar's Cult | both cultist bands in the Ashcombe cellar (`m_cult1`, `m_cult2`) | 60 gold, 240 xp |
+| 1 | The Old Watchtower | Thornmark's ogre (`tm_ogre`) | 150 gold, 900 xp |
+| 2 | The Garrison's Strongbox | a chest by Thornhold's north wall (`tm_strongbox`, 23,1) | 200 gold, 1,500 xp |
+
+A company that did a deed before taking its quest is paid when it takes it. The Wardens' quests
+take none of #56's: quests 3 and 6 stay plain quests (DESIGN §8).
+
 ## 7. Encounters, and what is new
 
 MONSTERS §5.2 has the Downs' roster and fights: the Carrion Crow, the Wrecker and the Lampman, the
 Barrow Guard, the Black Dog and the Barrow Captain; crows over wolves in the stubble; a lampman and
 four wreckers on the Salt Road on a foggy night; the Berth, the Downs' hardest place. Their drawings
 are #46.
+
+The Downs' wolves, boars, rats and road bandits are their own: the Chalk Wolf, the Tusker, the Barn
+Rat, the Footpad and the Hedge Archer, variants on the Foreland's frames statted on MONSTERS §4.4's
+line (§5.2's table), so a group of the brief's size holds the gate. The Foreland's own stay as they
+are, and every later box uses these where its brief says wolves, a boar, rats, bandits or archers.
 
 New in the Downs, for the novelty check (EXPANSION §5.4): the birds, a new family; hills and
 farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41); and dens, camps
@@ -497,14 +518,15 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 1,660 xp a member today, just past level 4 (1,650). The
-  curve (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor,
-  divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from,
-  shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3
-  260 and D4 200. Until they are built the curve reports the shortfall as owed to the pilot (#26). A
-  den's keepers pay once, and its brood as a group that respawns does; the figures count the brood
-  once.
-- **Gold.** A clear pays about 2,530: 1,065 in chests, about 765 in drops and 700 in rewards.
+- **Experience.** One clear of the area pays 1,710 xp a member today, 50 of it the Wardens' pay,
+  just past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area the climb from its floor
+  to the next area's floor, divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the
+  other 2,070 or so come from, shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2
+  190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the curve reports the
+  shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood as a group that
+  respawns does; the figures count the brood once.
+- **Gold.** A clear pays about 2,610: 1,065 in chests, about 765 in drops, 700 in rewards and 80
+  in the Wardens' pay.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the

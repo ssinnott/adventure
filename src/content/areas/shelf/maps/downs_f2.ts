@@ -70,9 +70,9 @@ export const DOWNS_F2: MapDef = {
   encounters: [
     { id: 'f2_crows', x: 8, y: 25, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
     { id: 'f2_crows_east', x: 26, y: 22, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
-    { id: 'f2_wolves', x: 15, y: 6, monsters: ['wolf', 'wolf', 'wolf', 'wolf', 'wolf', 'wolf'], aware: 5, respawn: 1440 },
-    { id: 'f2_boar', x: 9, y: 7, monsters: ['boar', 'boar', 'boar'], aware: 3, respawn: 2880 },
-    { id: 'f2_rats', x: 11, y: 11, monsters: ['rat', 'rat', 'rat', 'rat', 'rat', 'rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: 720 },
-    { id: 'f2_bandits', x: 17, y: 30, monsters: ['bandit', 'bandit', 'bandit', 'bandit', 'bandit_archer', 'bandit_archer'], aware: 5, respawn: 2880 },
+    { id: 'f2_wolves', x: 15, y: 6, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: 1440 },
+    { id: 'f2_boar', x: 9, y: 7, monsters: ['tusker'], aware: 3, respawn: 2880 },
+    { id: 'f2_rats', x: 11, y: 11, monsters: ['barn_rat', 'barn_rat', 'barn_rat', 'barn_rat', 'barn_rat'], aware: 4, respawn: 720 },
+    { id: 'f2_bandits', x: 17, y: 30, monsters: ['footpad', 'footpad', 'hedge_archer'], aware: 5, respawn: 2880 },
   ],
 };

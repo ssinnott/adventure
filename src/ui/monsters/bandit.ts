@@ -21,10 +21,10 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'hedge_archer'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  if (kind === 'archer') archer(ctx, x, y, h, p);
+  if (kind === 'archer' || kind === 'hedge_archer') archer(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);

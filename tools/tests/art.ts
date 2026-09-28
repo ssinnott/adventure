@@ -4,7 +4,7 @@
 // the cracks need a canvas, so they are the smoke test's (tools/smoke.ts).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { wallDressing, isSolidWall, isHouse, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
+import { wallDressing, isSolidWall, isHouse, drawnCell, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
 import { hash } from '../../src/ui/brush.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
@@ -128,6 +128,25 @@ export function art(): void {
   ok(astray.length === 0, `every placed banner hangs on stone wall (${placed.length})${astray.length ? ' -> not hung: ' + astray.join(', ') : ''}`);
   const outdoors = MAP_DEFS.filter((d) => d.kind === 'outdoor' && d.banners?.length).map((d) => d.id);
   ok(outdoors.length === 0, `no outdoor map places a banner: the outdoors is laid without them${outdoors.length ? ' -> ' + outdoors.join(', ') : ''}`);
+
+  // A secret door outdoors set among mountain, rock or trees is drawn as they are, so a sett or a
+  // cave is found and never seen; in a wall, or in a town, it stays a door, and a door the map shows
+  // (found, plain or locked) is never hidden, since only a secret door has a hint. The painter and
+  // the automap draw each cell as drawnCell says, so this holds what they draw.
+  const field = (row: string, kind: 'outdoor' | 'town' = 'outdoor', below = ',,,,,'): GameMap =>
+    new GameMap({ id: 'field', name: 'Field', kind, density: kind === 'outdoor' ? 'country' : undefined, start: { x: 0, y: 1, facing: 0 }, rows: [row, below] });
+  const guise = (row: string, kind?: 'outdoor' | 'town', below?: string): string => { const c = drawnCell(field(row, kind, below), 2, 0); return isSolidWall(c) ? (c.door === 'secret' ? 'a secret door' : 'a door') : c.solid; };
+  const cases: [string, string, string, string?][] = [
+    ['MMSMM', 'mountain', 'a secret door among mountain'], ['rrSrr', 'rock', 'a secret door among rock'], ['TTSTT', 'tree', 'a secret door among trees'],
+    ['rTSTr', 'tree', 'a secret door with more trees than rock about it', ',,r,,'],
+    ['TMSrT', 'mountain', 'a secret door between mountain and rock (a tie goes to the mountain)'],
+    ['MMDMM', 'a door', 'a found or plain door among mountain'], ['MMLMM', 'a door', 'a locked door among mountain'],
+    ['##S##', 'a secret door', 'a secret door in a wall'], ['MBSMM', 'a secret door', 'a secret door beside a building'],
+  ];
+  for (const [row, want, what, below] of cases) { const got = guise(row, 'outdoor', below); ok(got === want, `outdoors, ${what} draws as ${want} (${row}${below ? ' over ' + below : ''}: ${got})`); }
+  ok(guise('MMSMM', 'town') === 'a secret door', `in a town, a door among mountain stays a door (${guise('MMSMM', 'town')})`);
+  const guised = maps.flatMap((m) => m.cells.flatMap((c, i) => (drawnCell(m, i % m.width, Math.floor(i / m.width)) !== c ? [`${m.id} ${i % m.width},${Math.floor(i / m.width)}`] : [])));
+  console.log(`  (doors drawn as their neighbours on the maps as played: ${guised.length}${guised.length ? ': ' + guised.join(', ') : ''})`);
 
   // The check fails the walls as they were dressed before #9: every map, and every kind of map with
   // faces enough to be held to its cap.

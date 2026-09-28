@@ -480,8 +480,10 @@ are the pilot's zone map (EXPANSION.md §9, Phase 1), so their monsters test the
 resolver: one new family, variants on the frames that exist, and two small fields.
 
 **New:** birds, the frame the road reuses for owls, herons, gulls, ravens, eagles and vultures.
-**Back:** the Wolf on the hills, bandits and their archers on the coast road, the Shore Crab under
-Crowness Light.
+**Back,** as the Downs' own: the wolf, the boar, the rat, the bandit and his archer, each a variant
+on its frame with a name and tint of its own and statted on §4.4's line for its role, so a Downs
+group of the brief's size holds the gate's six or seven fights to a rest (#47). The Foreland's own
+defs stay as they are. The Shore Crab under Crowness Light.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
@@ -491,6 +493,11 @@ Crowness Light.
 | Barrow Guard | skeleton | armoured, 4 | the Berth, the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
 | Black Dog | wolf | skirmisher, 4 | the hills round the barrow, by night | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
 | Barrow Captain | skeleton | boss, 5 | at the Queen's empty bier | *Her captain, at his post beside an empty bier.* |
+| Chalk Wolf | wolf | skirmisher, 3 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
+| Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
+| Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
+| Footpad | bandit | soldier, 3 | the Salt Road, two with a hedge archer | *A short blade, and a coat taken off someone better dressed.* |
+| Hedge Archer | bandit | archer, 3 | beside the footpads | *A bow in the hedge, and the hedge moves.* |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a

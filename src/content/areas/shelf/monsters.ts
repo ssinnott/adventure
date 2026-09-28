@@ -9,6 +9,7 @@ export const SPRITES = [
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
   'rift_crawler', 'deacon', 'crow', 'wrecker', 'lampman', 'black_dog',
   'barrow_guard', 'barrow_captain',
+  'chalk_wolf', 'tusker', 'barn_rat', 'footpad', 'hedge_archer',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -34,6 +35,12 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'rift_crawler', name: 'Rift Crawler', plural: 'Rift Crawlers', sprite: 'rift_crawler', kind: 'rift', level: 4, hp: 20, ac: 14, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 14, xp: 115, gold: [0, 0], tint: '#c0503a', size: 0.55, inflict: { cond: 'poisoned', chance: 0.25 } },
   { id: 'ashen_deacon', name: 'Ashen Deacon', plural: 'Ashen Deacons', sprite: 'deacon', kind: 'person', level: 5, hp: 80, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 1000, gold: [60, 120], tint: '#3a2a3a', size: 1.0, drops: [{ item: 'elixir', chance: 1 }] },
   { id: 'carrion_crow', name: 'Carrion Crow', plural: 'Carrion Crows', sprite: 'crow', kind: 'beast', look: 'Crows, too many to count, and all of them watching.', level: 2, hp: 6, ac: 11, attack: 1, dice: 1, sides: 4, bonus: 0, speed: 14, xp: 12, gold: [0, 0], ranged: true, tint: '#26242c', size: 0.3 },
+  // ---- the Downs' own, on the Foreland's frames: statted on MONSTERS §4.4's line for their roles ----
+  { id: 'chalk_wolf', name: 'Chalk Wolf', plural: 'Chalk Wolves', sprite: 'chalk_wolf', kind: 'beast', look: 'Pale as the chalk it runs on, and leaner than the Foreland\'s.', level: 3, hp: 17, ac: 13, attack: 3, dice: 1, sides: 6, bonus: 1, speed: 15, xp: 64, gold: [0, 0], tint: '#c8c2b0', size: 0.6 },
+  { id: 'tusker', name: 'Tusker', plural: 'Tuskers', sprite: 'tusker', kind: 'beast', look: 'A boar grown old and huge on beech mast.', level: 4, hp: 67, ac: 12, attack: 5, dice: 3, sides: 5, bonus: 2, speed: 8, xp: 173, gold: [0, 0], tint: '#3e2e26', size: 0.75 },
+  { id: 'barn_rat', name: 'Barn Rat', plural: 'Barn Rats', sprite: 'barn_rat', kind: 'beast', look: 'Rats, fat on someone\'s grain.', level: 3, hp: 7, ac: 12, attack: 2, dice: 1, sides: 7, bonus: 0, speed: 12, xp: 32, gold: [0, 0], tint: '#5c4c3c', size: 0.38, inflict: { cond: 'diseased', chance: 0.1 } },
+  { id: 'footpad', name: 'Footpad', plural: 'Footpads', sprite: 'footpad', kind: 'person', look: 'A short blade, and a coat taken off someone better dressed.', level: 3, hp: 17, ac: 13, attack: 3, dice: 1, sides: 6, bonus: 2, speed: 11, xp: 64, gold: [4, 14], tint: '#6e5a3a', size: 0.9 },
+  { id: 'hedge_archer', name: 'Hedge Archer', plural: 'Hedge Archers', sprite: 'hedge_archer', kind: 'person', look: 'A bow in the hedge, and the hedge moves.', level: 3, hp: 16, ac: 13, attack: 4, dice: 1, sides: 5, bonus: 1, speed: 12, xp: 64, gold: [3, 12], ranged: true, missile: true, tint: '#55663a', size: 0.9 },
   // ---- the Downs: unplaced until their issues place them ----
   // the wreckers: Gullwick's far beach, by night
   { id: 'wrecker', name: 'Wrecker', plural: 'Wreckers', sprite: 'wrecker', kind: 'person', look: 'Oilskins, a boathook, and a boat they were expecting.', level: 3, hp: 13, ac: 13, attack: 3, dice: 1, sides: 8, bonus: 0, speed: 10, xp: 60, gold: [4, 14], tint: '#8c7a36', size: 0.9 },
