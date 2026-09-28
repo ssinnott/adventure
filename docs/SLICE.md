@@ -189,8 +189,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   character's state, cached to an offscreen canvas.
 - `ui/sprites.ts` holds the trees, rocks, mountains and pillars and dispatches the monsters to
   `ui/monsters/`, one module per family (rat, slime, wolf, boar, spider, bandit, cultist, skeleton,
-  riftling, ogre, wraith) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts` has
-  the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
+  riftling, ogre, wraith, birds) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts`
+  has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
   the cult and the skeletons stand on. Every monster def names a sprite kind no other def uses
   (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands and
   smugglers, the cult's ranks, the bone knight, the ghoul and the drowned man, the dire wolf and
