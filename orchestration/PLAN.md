@@ -514,3 +514,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 | 3 | #76's second pull request (presence) | session_015eA3U3nfug5hverH1thjvm | `claude/m1-76-presence` |
 
   E (the thresholds) waits until the owner has played A to D.
+
+### 20:30: fix rounds in on the art; #132 back for a second round
+
+- #132 (#21's B) merged main db02d4f with #131's collisions carried (c8eb5ee): a second-round
+  reviewer on its fix round and the merge (`reviews/132-2.md`).
+- The art's fix rounds are in: #135 (the proclamation moved, the chapel once, the words tidied; main
+  merged), #137 and #138 (the feet stand on their roots), #139 (the pose picked by its face; the
+  crow's sheet byte-identical to main's, checked here). All four, and #134, wait on the owner's OK.
+  The orchestrator rendered the owl, the old wood and the keep from their current heads and sent them
+  to the owner at 20:30 in one message.
+- In progress: #76's second pull request, #73 and #47's 0b (pushed), 0a and A (not yet pushed).
