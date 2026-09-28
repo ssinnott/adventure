@@ -422,10 +422,14 @@ if (process.env.SMOKE_SHOT) {
 
 // The walls meet without a crack. Paint a view from every open cell of a map twice, over two flat
 // backdrops, and wherever the two differ the backdrop shows through. Along the horizon only walls
-// can be (the floor starts 24px below it at the far end of the view, and the billboards stay out
-// over a backdrop), so there backdrop with solid wall either side of it is a crack between two
-// faces. And where walls stand on both hands of the party the edges of the view are wall: those
-// once went undrawn. A zone of the outdoors is walked over its own squares.
+// and hills can be (the floor starts 24px below it at the far end of the view, and the billboards
+// stay out over a backdrop), so there backdrop with solid wall either side of it is a crack between
+// two faces. The sky between two hills' crests narrows to a point where they cross, a notch and not
+// a crack, so a crack is kept only if the view painted with its hills laid flat shows it too: a
+// crack between two faces does not depend on the hills. That passes anything drawn as part of a
+// hill, so the check after the sweep holds a hill's body to its outline. And where walls stand on
+// both hands of the party the edges of the view are wall: those once went undrawn. A zone of the
+// outdoors is walked over its own squares.
 const sweeps = [...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
 const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
@@ -439,6 +443,13 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
   const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
   const skyCtx = sky.getContext('2d')!;
   const paint = (backdrop: string) => { V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
+  // The same view with the hills laid flat: each hill square read as grass while it is painted.
+  const flat = (m: any, backdrop: string) => {
+    const at = m.at;
+    m.at = (x: number, y: number) => { const c = at.call(m, x, y); return c.terrain === 'hills' ? { ...c, terrain: 'grass' } : c; };
+    try { return paint(backdrop); } finally { delete m.at; }
+  };
+  const crackAt = (shows: (px: number, py: number) => boolean, px: number, py: number) => shows(px, py) && [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
   for (const { id, all } of maps) {
     const at = w.locate(id, 0, 0), m = w.maps[at.mapId], z = m.zones.find((q: any) => q.id === id);
     const mw = z ? z.w : m.width, mh = z ? z.h : m.height;
@@ -452,10 +463,14 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
         const walled = (s: number) => V.isSolidWall(m.at(ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
-        let spot = '';
+        let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;
-          const crack = [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
+          let crack = crackAt(shows, px, py);
+          if (crack) {
+            if (!level) { const fa = flat(m, '#ff00ff'), fb = flat(m, '#00ff00'); level = (qx, qy) => { const i = (qy * W + qx) * 4; return Math.abs(fa[i] - fb[i]) > 8 || Math.abs(fa[i + 1] - fb[i + 1]) > 8; }; }
+            crack = crackAt(level, px, py);
+          }
           if (crack || (px < 6 && walled(-1)) || (px >= W - 6 && walled(1))) spot = `${px},${H / 2 - band + py}`;
         }
         if (spot) bad.push(`${id} ${x},${y} facing ${f} at ${spot}`);
@@ -464,6 +479,29 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
   }
   return { bad, views };
 }, sweeps);
+// A hill's body stays inside its outline. The sweep lays hills flat, so it cannot see a crest
+// light drawn off its hill, floating clear of it with sky beneath; this can. Each hill is painted alone, near and far, left, ahead and right, and every inked
+// pixel lies within a pixel of its outline.
+const hillSpill: string[] = await page.evaluate(async () => {
+  const load = (p: string): Promise<any> => import(p);
+  const V = await load('/src/ui/viewport.ts');
+  const W = 400, H = 268, out: string[] = [];
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  for (const d of [1, 2, 3, 5]) for (const l of [-1, 0, 1]) for (const seed of [3, 71, 409]) {
+    ctx.clearRect(0, 0, W, H);
+    const { outline } = V.hillBody(ctx, '#6a8a4a', W / 2, H / 2, H, d, l, seed, false, null, false, false);
+    const px = ctx.getImageData(0, 0, W, H).data;
+    const inside = (x: number, y: number): boolean => ctx.isPointInPath(outline, x + 0.5, y + 0.5);
+    let n = 0;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      if (px[(y * W + x) * 4 + 3] < 128 || inside(x, y)) continue;
+      if (![[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]].some(([dx, dy]) => inside(x + dx, y + dy))) n++;
+    }
+    if (n) out.push(`d ${d} l ${l} seed ${seed}: ${n}px`);
+  }
+  return out;
+});
 
 // One silhouette: every monster drawn at combat size, alone, three abreast and six abreast, through
 // its idle motion, is one piece of ink. Ink is alpha 128 and up (a ground shadow is under it), a
@@ -566,6 +604,7 @@ ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeB
 ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /Warden checkpoint.*The pass opens onto old forest/.test(pass.said) && passColours > 20,
   `the open pass is walked straight through into Thornmark, warned at the checkpoint, and Thornmark says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
+ok(!hillSpill.length, `a hill's body, its crest light with it, is drawn inside its outline, near and far${hillSpill.length ? ` -> ${hillSpill.slice(0, 4).join(', ')}` : ''}`);
 ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls beside the party are drawn, in ${cracks.views} views (${sweeps.map((m) => m.id + (m.all ? ' four ways' : '')).join(', ')})${cracks.bad.length ? ` -> ${cracks.bad.length} views, ` + cracks.bad.slice(0, 4).join(', ') : ''}`);
 ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
 if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
