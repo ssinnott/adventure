@@ -246,7 +246,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `node tools/test.ts maps combat` runs a few suites.
 - `smoke`: `node tools/smoke.ts`, headless Chromium playing the game through the dev server: every
   screen painted with no page error, and a line for each check as well. Every run plays the same
-  world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it).
+  world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it). It holds every monster to
+  one silhouette, and sweeps for cracks between walls: one way from every square of the cellar and
+  Helmstow each run, all four ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the
+  pull request's base; `node tools/changed.ts <ref> maps` names them), or on those
+  `SMOKE_SWEEP=all|<id>,<id>` names.
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
