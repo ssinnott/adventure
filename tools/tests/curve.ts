@@ -11,6 +11,7 @@ import type { AreaCurve } from '../../src/content/progression.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { areaBand } from '../../src/game/atlas.ts';
+import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -83,7 +84,7 @@ export function curve(): void {
     const xp = Math.floor(placed.reduce((t, m) => t + m.xp, 0) / MEMBERS);
     const features = area.maps.flatMap((d) => d.features ?? []);
     const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
-      + features.reduce((t, f) => t + (f.kind === 'chest' ? f.gold : f.kind === 'npc' && f.quest ? f.quest.reward : 0), 0);
+      + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0) + (f.kind === 'npc' && f.quest ? f.quest.reward : 0), 0);
     budget(id, 'xp a member', xp, xpBudget(row), row.owed, row.owed?.xp);
     budget(id, 'gold', Math.floor(gold), goldBudget(row), row.owed, row.owed?.gold);
 
@@ -119,7 +120,7 @@ export function curve(): void {
     // The price window: no weapon, armour or shield in its chests or its monsters' drops dearer
     // than the row allows. Keys, quest items and consumables are exempt.
     const found = [
-      ...features.flatMap((f) => (f.kind === 'chest' ? f.items.map((it) => ({ it, from: `chest ${f.id}` })) : [])),
+      ...features.flatMap((f) => (giftOf(f)?.items ?? []).map((it) => ({ it, from: `${f.kind} ${spentId(f)}` }))),
       ...[...new Set(placed)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
     ].filter(({ it }) => ITEMS[it].slot !== 'none' && ITEMS[it].price > 0);
     const dearer = found.filter((x) => ITEMS[x.it].price > row.price);
