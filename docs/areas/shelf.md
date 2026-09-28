@@ -505,7 +505,9 @@ Decided by the owner on 27 and 28 September 2026:
     burns it; its hoard is theirs, and it stands as a ruin after. The first three are a rookery in
     E2, a wolves' den in D2 and a bandit camp in D3.
 11. **Gear.** A plus is +1 to hit and damage on a weapon and +1 armour class on armour (#100).
-    Mottram's sells the band's gear, and in Act I pluses are found, not sold (#99 and #101).
+    Mottram's sells the band's gear, and in Act I pluses are found, not sold (#99 and #101). No
+    find is dearer than its band's window on the curve (`src/content/progression.ts`), so the
+    captain's mail is Scale Mail +1 and Thornmark has no plate with a plus.
 
 Proposed, for the owner, each in the issue that would build it:
 
