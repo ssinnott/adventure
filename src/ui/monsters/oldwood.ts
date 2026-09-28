@@ -35,11 +35,11 @@ function nz(a: number, b: number): number {
 }
 
 /** The wood's colours: bark from the def's tint, the leaves and the moss fixed, the sap-light pale. */
-interface Wood { bark: string; barkD: string; barkL: string; leaf: string; leafD: string; moss: string; hole: string; sap: string }
+interface Wood { bark: string; barkD: string; leaf: string; leafD: string; moss: string; hole: string; sap: string }
 function wood(p: Paint): Wood {
   const bark = p.base;
   return {
-    bark, barkD: shade(p.dark, 0.8), barkL: mix(bark, '#d8ccb0', 0.25),
+    bark, barkD: shade(p.dark, 0.8),
     leaf: shade('#7e5430', p.tone), leafD: shade('#4c3220', p.tone), moss: shade('#6a7a3a', p.tone),
     hole: shade('#140e0a', p.tone), sap: '#d8f08a',
   };
@@ -249,7 +249,7 @@ function heartwood(ctx: CanvasRenderingContext2D, x: number, y: number, h: numbe
   // The crown's back, then the trunk up into it, then its front: the crown sits on the limbs.
   crown(ctx, f, w, -2, 77, 42, 18, 14, 70, sway);
   bark(ctx, f, w.bark, [
-    [[0, 0, 1, 22, -1, 44, 1 + sway * 0.2, 62, 3 + sway * 0.4, 74], 17, 9],
+    [[0, 14, 1, 26, -1, 44, 1 + sway * 0.2, 62, 3 + sway * 0.4, 74], 17, 9],
     [[4, 62, 14, 72, 22, 78 + sway * 0.5], 5, 2.6],
     [[-6, 18, -16, 8, -24, 2, -28, 0], 7, 2.4],
     [[6, 16, 16, 6, 24, 1, 28, 0], 7, 2.4],
