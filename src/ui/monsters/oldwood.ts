@@ -33,7 +33,7 @@ function nz(a: number, b: number): number {
   return ((v ^ (v >>> 16)) >>> 0) / 4294967296;
 }
 
-/** The wood's colours: bark from the def's tint, the leaves and the moss fixed, the sap-light pale. */
+/** The wood's colours: bark from the def's tint, the leaves and moss fixed, the sap-light pale. */
 interface Wood { bark: string; barkD: string; leaf: string; leafD: string; moss: string; hole: string; sap: string }
 function wood(p: Paint): Wood {
   const bark = p.base;
