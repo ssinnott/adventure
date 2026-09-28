@@ -15,7 +15,7 @@ import { CURVE } from '../src/content/progression.ts';
 import { World } from '../src/game/world.ts';
 import { defaultParty } from '../src/game/party.ts';
 import type { Party } from '../src/game/party.ts';
-import { meet } from '../src/game/people.ts';
+import { meet, heard, handIns, personFlags } from '../src/game/people.ts';
 import type { Person } from '../src/game/people.ts';
 import { questLog, questMarks, questNews } from '../src/game/quests.ts';
 import type { Chapter, QuestCond, QuestView } from '../src/game/quests.ts';
@@ -105,13 +105,13 @@ export function fight(w: Walk, at: string): void {
  * and never by their square, and go through the meeting as the game does.
  */
 export function meetWho(w: Walk, what: string): void {
-  const found = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && (f.flag === what || f.quest?.setFlag === what || f.quest?.item === what) ? [{ map: d.id, p: f as Person }] : []));
+  const found = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && ([f.flag ?? []].flat().includes(what) || handIns(f).some((q) => q.setFlag === what || q.item === what)) ? [{ map: d.id, p: f as Person }] : []));
   w.ok(found.length === 1, `one person hires, finishes or takes ${what}${found.length === 1 ? ` (${found[0].p.name.split(',')[0]})` : ` -> ${found.length}`}`);
   if (found.length !== 1) return;
   const { map, p } = found[0];
   w.world.travel(map, p.x, p.y);
   const bag = w.party.bag.length;
-  meet(p, w.party);
+  meet(p, w.party, heard(w.world, p));
   if (w.party.bag.length < bag) w.handedIn = map;
   listen(w);
 }
@@ -147,8 +147,8 @@ export function levelFor(chapter: Chapter, at: string, before: number): number {
   return Math.max(before, curve.band[0], Math.min(curve.next, floor));
 }
 
-/** The flags a person sets: hire flags and hand-in flags. An entry keyed to one alone is the person's words. */
-const PERSON_FLAGS = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [f.flag, f.quest?.setFlag].filter((x): x is string => !!x) : [])));
+/** The flags a person sets: hires, hand-ins, words and answers. An entry keyed to one alone is the person's words. */
+const PERSON_FLAGS = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])));
 const personal = (e: { when: QuestCond | readonly QuestCond[] }): boolean => [e.when].flat().every((c) => Object.keys(c).length === 1 && [c.flag ?? []].flat().some((f) => PERSON_FLAGS.has(f)));
 
 /**

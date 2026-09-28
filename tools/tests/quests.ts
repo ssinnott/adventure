@@ -12,6 +12,7 @@ import { defaultParty, takeItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { questLog, questMarks, questNews } from '../../src/game/quests.ts';
+import { handIns, personFlags } from '../../src/game/people.ts';
 import type { Chapter, LogQuest, PageView, QuestCond, QuestDef, QuestView, When } from '../../src/game/quests.ts';
 import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src/ui/quests.ts';
 import { wrap } from '../../src/ui/draw.ts';
@@ -29,7 +30,7 @@ import { ok, owed } from './lib.ts';
  * maps are the game's unless given.
  */
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
-  const npcFlags = new Set(maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [f.flag, f.quest?.setFlag] : [])));
+  const npcFlags = new Set(maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])));
   const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };
   const bad: string[] = [];
   for (const c of [w].flat() as QuestCond[]) {
@@ -117,7 +118,7 @@ export function quests(): void {
   };
   const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
   const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);
-  const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && f.quest ? [f.quest.item] : [])));
+  const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? handIns(f).map((q) => q.item) : [])));
   for (const q of QUESTS) steps(q).forEach((c, ci) => {
     const id = q.chapters ? `${q.id}/${c.id}` : q.id;
     const bad: string[] = [];

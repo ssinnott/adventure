@@ -242,6 +242,45 @@ const questScreen = await page.evaluate(() => (window as any).__game.game.top.co
 const questColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 const questClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+// A person's question (game/people.ts): a fixture captain, put in the street at run time, asks; the
+// first answer hands over a letter, which is read from the pack. Nothing of it stays.
+const asked = await (async () => {
+  const top = (): Promise<{ screen: string; text: string; title: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, text: t.text ?? '', title: t.title ?? '' }; });
+  await page.evaluate(async () => {
+    const C = await import('/src/content/index.ts' as string);
+    C.ITEMS.fx_letter = { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none', price: 0, text: ['To Captain Hale, at the pass.', '"The riders cross the ford by night."'] };
+    const g = (window as any).__game.game;
+    g.world.travel('harrow', 9, 6, 0);
+    // Words after a flag nobody has set are not said: the first lines are.
+    g.talk({ kind: 'npc', x: 9, y: 5, name: 'Captain Fixture', lines: ['"Riders, by night."'], says: [{ after: { flag: 'fx_never' }, lines: ['"Not yet."'] }],
+      choice: { ask: 'Shall I write to Hale?', answers: [{ label: 'Write to him', sets: 'fx_write', gives: 'fx_letter', says: ['He writes, and seals it.'] }, { label: 'Keep it quiet', sets: 'fx_keep', says: ['He shrugs.'] }] } });
+  });
+  await page.waitForTimeout(80);
+  const words = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const question = await top();
+  const choiceColours = await colours();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const said = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const after = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, flag: !!g.party.flags.fx_write, bag: g.party.bag.includes('fx_letter') }; });
+  await page.keyboard.press('KeyI'); await page.waitForTimeout(80);
+  const has = await page.evaluate(() => { const g = (window as any).__game.game, t = g.top, c = g.party.members[g.selected], i = g.party.bag.indexOf('fx_letter'); if (i >= 0 && t.constructor.name === 'SheetScreen') t.sel = c.pack.length + i; return i >= 0; });
+  if (has) { await page.keyboard.press('Space'); await page.waitForTimeout(80); }
+  const letter = has ? await top() : { screen: 'no letter', text: '', title: '' };
+  await page.keyboard.press('Escape'); await page.waitForTimeout(60);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(60);
+  const closed = await page.evaluate(async () => {
+    const g = (window as any).__game.game, C = await import('/src/content/index.ts' as string);
+    const top = g.top.constructor.name;
+    // Whatever went wrong above, the rest of the run starts in the street.
+    while (g.screens.length > 1) g.pop();
+    if (g.party.bag.includes('fx_letter')) g.party.bag.splice(g.party.bag.indexOf('fx_letter'), 1);
+    delete g.party.flags.fx_write; delete C.ITEMS.fx_letter;
+    return top;
+  });
+  return { words, question, choiceColours, said, after, letter, closed };
+})();
 // The weather: the Foreland in a downpour, a fight in it, and Thornmark under falling snow with
 // snow lying deep. Each moves the clock to the first such hour of daylight for this game's seed.
 const weatherAt = async (map: string, x: number, y: number, f: number, want: string): Promise<{ found: boolean; sky: string; log: string }> => {
@@ -479,6 +518,11 @@ if (!terrains.missing) {
   ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills and the fields (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
 }
 ok(questLine === 'New quest: The Dimming.', `closing Vask's dialogue announces his quest (${questLine})`);
+ok(asked.words.screen === 'MessageScreen' && asked.words.text === '"Riders, by night."' && asked.question.screen === 'ChoiceScreen' && asked.question.text === 'Shall I write to Hale?' && asked.choiceColours > 20,
+  `a person's first words (not words whose flag is unset) close onto their question, which paints (${asked.words.screen}, then ${asked.question.screen}, ${asked.choiceColours} colours)`);
+ok(asked.said.text === 'He writes, and seals it.\n\n(A Sealed Letter.)' && asked.said.title === 'Captain Fixture' && asked.after.flag && asked.after.bag && asked.after.screen === 'ExploreScreen',
+  `the answer is said, sets its flag and hands over the letter (${JSON.stringify(asked.said.text)})`);
+ok(asked.letter.screen === 'MessageScreen' && asked.letter.title === 'A Sealed Letter' && asked.letter.text.startsWith('To Captain Hale') && asked.closed === 'ExploreScreen', `the letter is read from the pack, in a box titled with its name, and Esc closes it (${asked.letter.screen} '${asked.letter.title}', then ${asked.closed})`);
 ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
 ok(rain.found && /downpour|storm/.test(rain.sky) && /pour|heavens|sheets|thunder/i.test(rain.log) && rainColours > 20, `the Foreland paints in a downpour and the log says so (${rain.sky}: "${rain.log}", ${rainColours} colours)`);
 ok(rainFight.screen === 'CombatScreen' && rainFight.rangedPenalty > 0 && rainFightColours > 20, `a fight in the downpour paints, with the archers' penalty (${rainFightColours} colours)`);
