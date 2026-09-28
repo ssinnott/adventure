@@ -33,8 +33,8 @@ export const KEEP: MapDef = {
   features: [
     { kind: 'sign', x: 8, y: 8, text: 'A proclamation on the gatehouse: the Regent-Warden holds Helmstow in the Crown\'s name until the succession is settled.' },
     { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', lines: [
-      'A tall man in Warden grey, flanked by guards. He does not wait for you to bow.',
-      '"The Crown has need of a chartered company and the Wardens are stretched thin. There is a farm south of here, Ashcombe, that has gone quiet. Find out why. Clear whatever is there."',
+      'A tall man in Warden grey, his guards a step behind him. He does not wait for you to bow, and does not appear to notice that you did not.',
+      '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm south of here, Ashcombe, on the Foreland road, has gone quiet. Find out why. Clear whatever is there."',
       '"Bring me anything you find that is not a rat. Especially anything that glows."',
     ], flag: 'q_ashcombe', quest: {
       item: 'survey_wand', reward: 300, setFlag: 'q_ashcombe_done',
@@ -45,11 +45,11 @@ export const KEEP: MapDef = {
         '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
       ],
       done: [
-        'Vask turns the cracked survey wand over in his hands for a long moment. If he recognises it, nothing in his face says so.',
-        '"A Lantern tool. So the Lanterns were there before us. Interesting." He drops it into a pocket. "You have done what I asked. The Crown pays its debts."',
+        'Vask turns the cracked survey wand over in his long fingers, once, and then again. If he knows what he is holding, nothing in his face admits it.',
+        '"A Lantern tool. So the Lanterns were at Ashcombe before the Crown was. Interesting." The wand goes into a pocket as if it had always lived there. "You have done what I asked. The Crown pays its debts; you\'ll find it does little else so reliably."',
         '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
       ],
-      after: ['"Thornmark next, and the Grove Stone: go and see why it has gone quiet, and bring me what you find. The road east runs through the Scarth; Captain Hale holds it, and will tell you the forest is dangerous, which it is. Thornhold will train you further than my drillyard can."'],
+      after: ['"Thornmark, and the Grove Stone. Go and see why it has gone quiet, and bring me what you find. The road east runs through the Scarth; Captain Hale holds it, and will tell you the forest is dangerous, which it is. Thornhold will train you further than my drillyard can."'],
     } },
     { kind: 'npc', x: 6, y: 5, name: 'Petitioners', lines: [
       'Petitioners wait on the keep\'s steps, caps in hand.',

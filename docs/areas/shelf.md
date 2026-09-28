@@ -122,10 +122,11 @@ In more detail, as SLICE.md had it before the area docs:
   pinned both.
 
 Its content is in `src/content/areas/shelf/` (maps, monsters, items, chapter, quests, climate and
-its part of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. It has no
-walkthrough of its own yet: the end-to-end tests of today (the pass, the stairs, the quests walked
-through) cross into Thornmark, so they stay in `tools/tests/`; an area's `walkthrough.ts`, which
-`tools/test.ts` finds and runs, comes with its chapter's walk (#42).
+its part of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. Its
+`walkthrough.ts` plays its chapter, The Quiet Farm, from a new game, a step at a time
+(`tools/walk.ts`); Thornmark's plays the chain on from it. A step added to the chapter adds its
+play there. The other end-to-end tests (the pass, the stairs) cross into Thornmark, so they stay in
+`tools/tests/`.
 
 ## 4. What is still to build
 
@@ -454,7 +455,7 @@ person who takes more than one item and a letter to read from the pack are syste
 (#56, "What they ask of the systems"), built in #76. Every line these quests and the three steps put
 on screen is written in the issue that builds them (#47, #67, #68, #70 and #77), and the Lodestone's
 keeper's in #73, each in a Dialogue section measured against the game's box and log. The built
-quests' words, Vask's, Hale's and the Gilded Eel's, are rewritten to the same bar in #85.
+quests' words, Vask's, Hale's and the Gilded Eel's, were rewritten to the same bar in #85.
 
 ## 7. Encounters, and what is new
 
