@@ -395,10 +395,13 @@ if (process.env.SMOKE_SHOT) {
 
 // The walls meet without a crack. Paint a view from every open cell of a map twice, over two flat
 // backdrops, and wherever the two differ the backdrop shows through. Along the horizon only walls
-// can be (the floor starts 24px below it at the far end of the view, and the billboards stay out
-// over a backdrop), so there backdrop with solid wall either side of it is a crack between two
-// faces. And where walls stand on both hands of the party the edges of the view are wall: those
-// once went undrawn. A zone of the outdoors is walked over its own squares.
+// and hills can be (the floor starts 24px below it at the far end of the view, and the billboards
+// stay out over a backdrop), so there backdrop with solid wall either side of it is a crack between
+// two faces. The sky between two hills' crests narrows to a point where they cross, a notch and not
+// a crack, so a crack is kept only if the view painted with its hills laid flat shows it too: a
+// crack between two faces does not depend on the hills. And where walls stand on both hands of the
+// party the edges of the view are wall: those once went undrawn. A zone of the outdoors is walked
+// over its own squares.
 const sweeps = [...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
 const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
@@ -412,6 +415,13 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
   const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
   const skyCtx = sky.getContext('2d')!;
   const paint = (backdrop: string) => { V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
+  // The same view with the hills laid flat: each hill square read as grass while it is painted.
+  const flat = (m: any, backdrop: string) => {
+    const at = m.at;
+    m.at = (x: number, y: number) => { const c = at.call(m, x, y); return c.terrain === 'hills' ? { ...c, terrain: 'grass' } : c; };
+    try { return paint(backdrop); } finally { delete m.at; }
+  };
+  const crackAt = (shows: (px: number, py: number) => boolean, px: number, py: number) => shows(px, py) && [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
   for (const { id, all } of maps) {
     const at = w.locate(id, 0, 0), m = w.maps[at.mapId], z = m.zones.find((q: any) => q.id === id);
     const mw = z ? z.w : m.width, mh = z ? z.h : m.height;
@@ -425,10 +435,14 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
         views++;
         const shows = (px: number, py: number) => { const i = (py * W + px) * 4; return Math.abs(a[i] - b[i]) > 8 || Math.abs(a[i + 1] - b[i + 1]) > 8; };
         const walled = (s: number) => V.isSolidWall(m.at(ax + s * T.FACING_DX[rf], ay + s * T.FACING_DY[rf]));
-        let spot = '';
+        let spot = '', level: ((px: number, py: number) => boolean) | undefined;
         for (let py = 0; py < band * 2 && !spot; py++) for (let px = 0; px < W && !spot; px++) {
           if (!shows(px, py)) continue;
-          const crack = [2, 3].some((s) => px >= s && px < W - s && !shows(px - s, py) && !shows(px + s, py));
+          let crack = crackAt(shows, px, py);
+          if (crack) {
+            if (!level) { const fa = flat(m, '#ff00ff'), fb = flat(m, '#00ff00'); level = (qx, qy) => { const i = (qy * W + qx) * 4; return Math.abs(fa[i] - fb[i]) > 8 || Math.abs(fa[i + 1] - fb[i + 1]) > 8; }; }
+            crack = crackAt(level, px, py);
+          }
           if (crack || (px < 6 && walled(-1)) || (px >= W - 6 && walled(1))) spot = `${px},${H / 2 - band + py}`;
         }
         if (spot) bad.push(`${id} ${x},${y} facing ${f} at ${spot}`);
