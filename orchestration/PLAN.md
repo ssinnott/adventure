@@ -368,3 +368,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   #72 ×1, #87 ×1).
 - Unblocked: #85 (its blocker #40 was the pass, open since #117) and #48 (its blocker #79, the birds'
   frame, in). Scouts on both at 18:28 (`footprints/85.md`, `48.md`); free sessions take them after.
+
+### 18:35: four more pull requests open; #130's fix in
+
+- Opened: #131 (#76's words, 18:06), #132 (#21's B, 18:08), #133 (#42's B, 18:13) and #134 (#40's
+  zone, 18:28). Each came within about fifteen minutes of its session starting, so each reviewer is
+  told to read it closely. Reviewers at 18:30 (`reviews/131.md` to `134.md`), each trial-merging with
+  the others it meets: #131 with #132 and #133 (`meet`, the flags a feature sets), #133 with #134
+  (the walkthrough fights Thornmark's retuned groups).
+- #130's fix (b496bc6): no outdoor map may place a banner (broken on Thornmark, it fails); the SLICE
+  nits; a Done-when section. It now conflicts with main in SLICE's code map row for `game/map.ts`
+  (#129's den beside its banners): told at 18:36 to merge main keeping both.
