@@ -1,7 +1,7 @@
 // The class traits.
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ITEMS } from '../../src/content/index.ts';
-import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, DIE_HARD_AT, INSPIRE_HIT, armorClass, addCondition, hasCondition } from '../../src/game/party.ts';
+import { ITEMS, MONSTERS } from '../../src/content/index.ts';
+import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, HOLY_STRIKE_DMG, DIE_HARD_AT, INSPIRE_HIT, armorClass, addCondition, hasCondition } from '../../src/game/party.ts';
 import { startCombat, castOnAlly, buffHit, traitDamage } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
 import { ok } from './lib.ts';
@@ -41,6 +41,14 @@ export function traits(): void {
   s.round = 2; ok(traitDamage(s, mk('thief'), sword, rat) === 0, 'and not after');
   const bb = mk('barbarian'); ok(traitDamage(s, bb, sword, rat) === 0, 'a healthy barbarian does not rage');
   bb.hp = 1; ok(traitDamage(s, bb, sword, rat) > 0, 'a wounded one does');
+  // Holy Strike: the dead and nothing else, whatever else shrugs off sleep.
+  s.round = 2;
+  const pal = mk('paladin'), holy = (d: typeof MONSTERS[string]): number => traitDamage(s, pal, sword, { ...rat, def: d });
+  const struck = Object.values(MONSTERS).filter((d) => holy(d) === HOLY_STRIKE_DMG).map((d) => d.id).sort();
+  ok(struck.join() === 'barrow_captain,barrow_guard,bone_knight,drowned,ghoul,skeleton,wraith', `Holy Strike lands on the seven dead (${struck.join(', ')})`);
+  ok(Object.values(MONSTERS).every((d) => d.kind === 'dead' || holy(d) === 0), 'and on nothing else: not the slime, the crab or the wardens');
+  ok(holy({ ...MONSTERS.slime, kind: 'dead' }) === HOLY_STRIKE_DMG && holy({ ...MONSTERS.skeleton, kind: 'beast' }) === 0, 'it follows the kind: a dead slime takes it, a skeleton made a beast does not');
+  s.round = 1;
   const noBard = buffHit(s, party);
   party.members[3] = mk('bard');
   ok(buffHit(s, party) === noBard + INSPIRE_HIT, 'a standing bard inspires the party');
