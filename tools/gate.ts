@@ -23,8 +23,9 @@ import { MAP_DEFS } from '../src/content/index.ts';
 import type { EncounterDef } from '../src/game/map.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 
-/** The premade company, every member trained to `level`, whole. Under level 1 it is no company. */
+/** The premade company, every member trained to `level`, whole. Under level 1 it is no company, and throws. */
 export function gateCompany(level: number, seed: number): Party {
+  if (!(level >= 1)) throw new Error(`no company at level ${level}: levels start at 1`);
   const rng = makeRng(seed), p = defaultParty(rng);
   for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); c.hp = c.maxHp; c.sp = c.maxSp; }
   return p;

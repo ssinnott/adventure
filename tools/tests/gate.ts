@@ -37,6 +37,11 @@ export const GATE = {
 
 /** Seeds a cell, as tools/gate.ts's table has it. */
 const SEEDS = 100;
+/**
+ * Seeds for fights to a rest: a day is a long run of fights, and over a hundred its mean moves by
+ * a fifth of a fight with the seeds alone.
+ */
+const DAYS = 300;
 
 /**
  * Each area's boss groups, as the game names a group, 'map:id': each is judged at its own map's floor
@@ -63,19 +68,19 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
   // The Foreland: the pilot settles these, by retuning it or by moving the thresholds.
-  'shelf: rest': { whose: '#47', at: 4.4 },
+  'shelf: rest': { whose: '#47', at: 4.58 },
   'mill:m_warden: floor': { whose: '#47', at: 0.98 },
-  'greywater1: rest': { whose: '#47', at: 4.0 },
+  'greywater1: rest': { whose: '#47', at: 4.08 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2: under': { whose: '#47', at: 0.658 },
-  'greywater2: rest': { whose: '#47', at: 3.88 },
+  'greywater2: rest': { whose: '#47', at: 4.05 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 0.98 },
   'the Foreland: floor': { whose: '#47', at: 0.886 },
   // Thornmark, the Grove Roots and the Cut Stone: retuned until they hold.
   'thornmark: under': { whose: '#40', at: 0.912 },
   'grove1: under': { whose: '#40', at: 0.999 },
   'grove2: under': { whose: '#40', at: 1 },
-  'grove2: rest': { whose: '#40', at: 7.6 },
+  'grove2: rest': { whose: '#40', at: 7.75 },
   'grove2:g2_hand: floor': { whose: '#40', at: 1 },
   'grove2:g2_warden: floor': { whose: '#40', at: 1 },
   'Thornmark: under': { whose: '#40', at: 0.696 },
@@ -93,8 +98,10 @@ function check(key: string, v: number, miss: (v: number) => number, msg: string,
   used.add(key);
   if (!o) { ok(miss(v) <= 0, msg); return; }
   owed(miss(v) <= 0, msg, o.whose);
-  const show = (x: number): string => (fights ? x.toFixed(2) : pc(x));
-  ok(miss(v) <= miss(o.at) + (fights ? 0.1 : 0.01) + 1e-9, `${key}: ${show(v)}, no further from the threshold than the ${show(o.at)} it was owed at`);
+  const show = (x: number): string => (fights ? x.toFixed(2) : pc(x)), slack = fights ? 0.1 : 0.01;
+  const held = miss(v) <= miss(o.at) + slack + 1e-9;
+  const redo = held ? '' : `; if the change is meant, re-record it in OWED: '${key}': { whose: '${o.whose}', at: ${fights ? v.toFixed(2) : v.toFixed(3).replace(/\.?0+$/, '')} }`;
+  ok(held, `${key}: ${show(v)}, no more than ${fights ? 'a tenth of a fight' : 'a point'} further from the threshold than the ${show(o.at)} it was owed at${redo}`);
 }
 
 const rates = new Map<string, number>();
@@ -110,6 +117,7 @@ const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) 
 
 /** At the floor through, two levels under it back (or n/a, where that is under level 1). */
 function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly [number, number]): void {
+  if (!groups.length) { console.log(`  n/a:  ${id} has no groups yet`); return; }
   const at = pooled(groups, floor);
   check(`${id}: floor`, at, (v) => GATE.through - v, `${id} at its floor, ${floor}: ${pc(at)} of fights won (${pc(GATE.through)} asked)`);
   const low = floor - GATE.under;
@@ -161,7 +169,7 @@ export function gate(): void {
         check(`${b}: above`, above, (v) => GATE.bossAbove - v, `${d.id}'s boss ${boss.id} at ${d.band[0] + GATE.under}: ${pc(above)} won (${pc(GATE.bossAbove)} asked)`);
       }
       // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
-      const day = days(d.band[0], groups.map((g) => g.monsters), SEEDS, 1, true), want = fightsPerRest(d.band[0]);
+      const day = days(d.band[0], groups.map((g) => g.monsters), DAYS, 1, true), want = fightsPerRest(d.band[0]);
       check(`${d.id}: rest`, day.fights, (v) => Math.abs(v - want) - GATE.perRest, `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${want} asked, ±${GATE.perRest}); ${pc(day.why.long)} of days end in a fight broken off`, true);
     }
 
@@ -179,7 +187,7 @@ export function gate(): void {
     // A warning, not a wall: the two groups nearest the way in are among the gentlest, a point's
     // grace below the median so that where most groups are always won one loss in a hundred is not a wall.
     const outdoors = area.maps.find((d) => d.kind === 'outdoor' && d.encounters?.length);
-    if (outdoors) {
+    if (outdoors && all.length) {
       const steps = stepsFrom(outdoors), level = band[0] - GATE.under >= 1 ? band[0] - GATE.under : band[0];
       const first = [...outdoors.encounters!].sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
       const mid = median(all.map((g) => rate(g, level)));
