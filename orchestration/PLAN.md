@@ -222,3 +222,8 @@ map looked at; it merged main, fixed SLICE's owed line and a stale comment, and 
 closed. All seventeen of #25's sub-issues are closed and no pull request is open. #25 itself stays
 open for the owner: its Done-when's branch protection is left off by their choice, so closing it is
 theirs. #47 still waits for `approved` again.
+
+At 12:09 the owner approved #47 again (label put back at their word) and asked for #25 to close
+along with the branch-protection issue. That issue is #27, closed already in Wave 1. #25 closed as
+completed, with a comment recording that its branch-protection line is left unmet by the owner's
+choice. Phase 0 is closed.
