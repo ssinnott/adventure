@@ -242,7 +242,8 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   coast where wreckers wait for the dark.
 - **Landmarks.** Crowness Light on the point, about 152,89, with the keeper's cottage under it. The
   Salt Road along the coast to the corner of D3. A gibbet at the roadside above the rocks. The last
-  of the stubble to the north, and the Wend's last bend in the north-east corner.
+  of the stubble to the north, and the Wend's last bend in the north-east corner. That corner,
+  across the Wend from Gullwick, is left free for Ashcombe, which #87 moves there.
 - **Points of interest,** about nine features and eight groups:
   - the keeper who counted the eleven, and his log: the step (§5);
   - the lamp room at the top of the stair, dark until Oil for the Lamp is done (§6);
@@ -468,7 +469,7 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 
 ## 9. Decisions
 
-Decided by the owner on 27 September 2026:
+Decided by the owner on 27 and 28 September 2026:
 
 1. **The grid.** Every outdoor map is one box of the grid the built maps sit on (§1), so a map's
    place is its box, and whatever is not built is whole boxes. Borders become box edges as boxes
@@ -490,9 +491,12 @@ Decided by the owner on 27 September 2026:
 7. **The names** (§10).
 8. **The side quests:** #56's eight for the Foreland are pulled into the build, each built where its
    places are (§6): with their boxes, or in #77, on the systems of #76.
-9. **Ashcombe moves past Gullwick,** so that the first job is further and a bit harder (#85). Where
-   past Gullwick, how it is made harder and what the Foreland map keeps where it stood are open in
-   #87; until they are settled, the briefs here keep the farm on the Foreland map.
+9. **Ashcombe moves past Gullwick,** so that the first job is further and a bit harder (#85 and
+   #87): into E3's north-east corner, across the Wend from Gullwick, with its cellar starting at
+   level 2 and its Rift Warden held to the gate's rule for a boss there. The Foreland map keeps a
+   farm where it stood, under a name of its own, with a small store that sells rations at 3 gold, a
+   quarter under Mottram's. #87 recuts the briefs when it is built; until then the Foreland map's
+   keeps the farm, and E3's leaves the corner free.
 10. **Dens** (#88): a camp that breeds one kind of monster until a company beats its keepers and
     burns it; its hoard is theirs, and it stands as a ruin after. The first three are a rookery in
     E2, a wolves' den in D2 and a bandit camp in D3.
