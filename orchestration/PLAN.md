@@ -605,3 +605,16 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   lands next, then the pilot's A opens. #144 told at 22:23 to merge main (SLICE and `tools/smoke.ts`
   beside #143: keep both); it lands after the owner has seen the Wardens' words.
 - A scout on #77 (the side quests on the built maps; `footprints/77.md`), unblocked by #76.
+
+### 22:55: #141 and #144 merged; the pilot's A opens; #21's D started
+
+- #141 (#47's 0b) merged at 22:52 (main 37fbfff) after its fixes (only a secret door disguised
+  outdoors; the automap inks it as drawn; the sweep's edge rule reads `V.drawnCell`; the fixture's
+  count): on the head (main 6283b51 in), ALL OK (47 owed), SMOKE OK, "Nothing new."; CI green; main's
+  tree is the head's.
+- #144 (#21's C) merged at 22:53 (main d1f661c) after its fixes (the curve's figures; the Wardens'
+  ladder walked to Sergeant) and its main merge beside #143: tested on main 37fbfff, ALL OK (47 owed),
+  SMOKE OK, "Nothing new."; CI green; main's tree matches. The owner raised nothing on its words.
+- Sent 22:56: the pilot's session opens A (F2); the guilds session starts D (`claude/m1-21-lanterns`,
+  the Lanterns, closing #21).
+- #140 (the Lodestone's track) and #135 (the redrawn throne) still wait on the owner's OKs.
