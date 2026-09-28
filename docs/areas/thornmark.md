@@ -60,8 +60,9 @@ to level 10").
 One clear of every map is worth a little over level 8 per member; the dungeons respawn in one to
 two days, and a little over two more sweeps of the Grove reach 10 (a sweep pays 38% less once the
 Warden of the Cut is dead and the Rift's groups stop coming). Levels are still bought, so the gold
-matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays 7,849 xp a member of
-the 13,667 its curve asks, and 5,330 gold of the 8,400: the curve (`src/content/progression.ts`)
+matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays 8,249 xp a member of
+the 13,667 its curve asks, and 5,800 gold of the 8,400 (the Wardens' two quests and their chest
+give 400 xp a member and 470 gold of it): the curve (`src/content/progression.ts`)
 reports both as owed to the pilot (#26).
 
 The gate check (`tools/tests/gate.ts`) reports Thornmark's misses as #40's. Its company is dressed

@@ -176,8 +176,8 @@ cap, which is 10 until the road past it is built:
   window: the Foreland 1-5 and 500 gold, Thornmark 5-10 and 1,200. Three quarters of a clear's xp
   should take a member to the next floor, and its gold train the six there; every monster has a
   `level` within two of its maps' bands, rising from the way in (it changes no combat yet), and no
-  chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,660 a
-  member of 3,734, Thornmark 7,849 of 13,667), nor Thornmark's the gold (5,330 of 8,400):
+  chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,710 a
+  member of 3,734, Thornmark 8,249 of 13,667), nor Thornmark's the gold (5,800 of 8,400):
   `tools/tests/curve.ts` reports them as #26's.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).

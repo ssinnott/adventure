@@ -142,9 +142,18 @@ export function guilds(): void {
     ok(!bad.length, `${q.id}: its deed and pay name real things${bad.length ? ' -> ' + bad.join(', ') : ''}`);
     ok(halls.has(q.guild), `${q.id}: ${q.guild} has a hall on the maps`);
     ok(!!q.goal || !!q.item, `${q.id}: has a deed`);
-    ok(!q.item || findable.has(q.item), `${q.id}: its item ${q.item} is found, bought or dropped somewhere`);
+    if (q.item) ok(findable.has(q.item), `${q.id}: its item ${q.item} is found, bought, dropped or given somewhere`);
     ok(Number.isInteger(q.rank) && q.rank >= 0 && q.rank < GUILDS[q.guild].ranks.length, `${q.id}: its rank, ${q.rank}, is one of the guild's`);
     ok(![takenFlag(q.id), doneFlag(q.id)].some((f) => npcFlags.has(f)), `${q.id}: its flags are its own, set by no person`);
+  }
+  // Act I takes a guild with quests to its third rank (DESIGN §8): its quests, done in the order a
+  // hall offers them, raise a new company that far.
+  const ACT_I_RANK = 3;
+  for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
+    const { party } = fresh();
+    for (let offers = offered(g, party); offers.length; offers = offered(g, party)) for (const q of offers) party.flags[takenFlag(q.id)] = party.flags[doneFlag(q.id)] = 1;
+    const r = rankOf(g, party);
+    ok(r === ACT_I_RANK, `${g}: its quests, done as the hall offers them, raise a company to rank ${ACT_I_RANK}, ${rankName(g, ACT_I_RANK)} (${rankName(g, r) ?? 'none'})`);
   }
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const ranks = GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank);

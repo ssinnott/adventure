@@ -482,14 +482,15 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 1,660 xp a member today, just past level 4 (1,650). The
-  curve (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor,
-  divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from,
-  shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3
-  260 and D4 200. Until they are built the curve reports the shortfall as owed to the pilot (#26). A
-  den's keepers pay once, and its brood as a group that respawns does; the figures count the brood
-  once.
-- **Gold.** A clear pays about 2,530: 1,065 in chests, about 765 in drops and 700 in rewards.
+- **Experience.** One clear of the area pays 1,710 xp a member today, 50 of it the Wardens' pay,
+  just past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area the climb from its floor
+  to the next area's floor, divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the
+  other 2,070 or so come from, shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2
+  190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the curve reports the
+  shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood as a group that
+  respawns does; the figures count the brood once.
+- **Gold.** A clear pays about 2,610: 1,065 in chests, about 765 in drops, 700 in rewards and 80
+  in the Wardens' pay.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
