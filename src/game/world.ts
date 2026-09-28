@@ -555,17 +555,32 @@ export class World {
   // ---- features ----
   /** The interactable in the party's cell, else the one directly ahead. */
   featureHere(): Feature | undefined {
-    const here = this.map.featuresAt(this.state.x, this.state.y).filter((f) => f.kind !== 'event');
+    const here = this.map.featuresAt(this.state.x, this.state.y).filter((f) => f.kind !== 'event' && this.present(f));
     if (here.length) return here[0];
     const a = this.map.ahead(this.state.x, this.state.y, this.state.facing);
-    return this.map.featuresAt(a.x, a.y).filter((f) => f.kind !== 'event' && f.kind !== 'sign')[0];
+    return this.map.featuresAt(a.x, a.y).filter((f) => f.kind !== 'event' && f.kind !== 'sign' && this.present(f))[0];
+  }
+
+  /** The people standing on a square now with no room of their own: those in the business there. */
+  peopleAt(x: number, y: number): Extract<Feature, { kind: 'npc' }>[] {
+    return this.map.featuresAt(x, y).filter((f): f is Extract<Feature, { kind: 'npc' }> => f.kind === 'npc' && !f.interior && this.present(f));
+  }
+
+  /**
+   * Whether a feature is there now. A person or an event wears a presence, as a group does: there
+   * only in its `when`, once its `after` holds and until its `until` does. Everything else always is.
+   */
+  present(f: Feature): boolean {
+    if (f.kind !== 'npc' && f.kind !== 'event') return true;
+    return this.walks(f, f.x, f.y) && !this.ended(f);
   }
 
   /** Event and sign texts for the party's cell; once-only events are marked used. */
   eventsHere(): string[] {
     const out: string[] = [];
     for (const f of this.map.featuresAt(this.state.x, this.state.y)) {
-      if (f.kind === 'event' && !(f.once && this.mapState.used[f.id])) { out.push(f.text); if (f.once) this.mapState.used[f.id] = 1; }
+      // An event out of its presence is not spent: a night's event waits for the night.
+      if (f.kind === 'event' && this.present(f) && !(f.once && this.mapState.used[f.id])) { out.push(f.text); if (f.once) this.mapState.used[f.id] = 1; }
       if (f.kind === 'sign') out.push(signLine(f.text));
     }
     return out;
