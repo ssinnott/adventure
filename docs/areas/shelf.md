@@ -117,10 +117,11 @@ In more detail, as SLICE.md had it before the area docs:
   pinned both.
 
 Its content is in `src/content/areas/shelf/` (maps, monsters, items, chapter, quests, climate and
-its part of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. It has no
-walkthrough of its own yet: the end-to-end tests of today (the pass, the stairs, the quests walked
-through) cross into Thornmark, so they stay in `tools/tests/`; an area's `walkthrough.ts`, which
-`tools/test.ts` finds and runs, comes with its chapter's walk (#42).
+its part of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. Its
+`walkthrough.ts` plays its chapter, The Quiet Farm, from a new game, a step at a time
+(`tools/walk.ts`); Thornmark's plays the chain on from it. A step added to the chapter adds its
+play there. The other end-to-end tests (the pass, the stairs) cross into Thornmark, so they stay in
+`tools/tests/`.
 
 ## 4. What is still to build
 
