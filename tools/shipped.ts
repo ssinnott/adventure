@@ -91,11 +91,12 @@ export function collect(c: Content): Ids {
 export interface Comparison {
   /** What has gone or moved without a bump and its upgrade, or an upgrade missing: a fix to the content or a bump. */
   problems: string[];
-  /** What the list has yet to record: new content, or a bump. `node tools/shipped.ts` records it. */
+  /** What the list has yet to record: new content, or a bump and what went with it. `node tools/shipped.ts` records it. */
   unrecorded: string[];
 }
 
-const LISTS = ['flags', 'items', 'spells', 'classes', 'races', 'conditions'] as const;
+/** Each list, by the word for one of it. */
+const LISTS = { flags: 'flag', items: 'item', spells: 'spell', classes: 'class', races: 'race', conditions: 'condition' } as const;
 
 /**
  * The content now against the list as shipped. Something gone or moved is a problem at the same
@@ -126,9 +127,9 @@ export function compare(shipped: Shipped, now: Ids, version = SAVE_VERSION, upgr
     else if (is.at !== was.at || is.size !== was.size) gone.push(`zone ${id} is ${is.size} at ${is.at}, was ${was.size} at ${was.at}`);
   }
   for (const id of Object.keys(now.zones)) if (!shipped.zones[id]) unrecorded.push(`zone ${id} is new`);
-  for (const k of LISTS) ids(k.replace(/s$/, ''), shipped[k], now[k]);
+  for (const [k, one] of Object.entries(LISTS) as [keyof typeof LISTS, string][]) ids(one, shipped[k], now[k]);
   const bumped = version > shipped.version && problems.length === 0;
-  if (bumped) unrecorded.push(`SAVE_VERSION is ${version}, shipped.json ${shipped.version}`);
+  if (bumped) unrecorded.push(`SAVE_VERSION is ${version}, shipped.json ${shipped.version}`, ...gone.map((g) => `${g}: the upgrade to ${version} must deal with it`));
   else problems.push(...gone.map((g) => `${g}: a save may hold it, so bring it back, or bump SAVE_VERSION with an upgrade`));
   return { problems, unrecorded };
 }
