@@ -5,3 +5,7 @@ dist/
 gallery.png
 *.gallery.png
 interiors.png
+
+# The contact sheet, from tools/sheet.ts
+sheet.png
+*.sheet.png
