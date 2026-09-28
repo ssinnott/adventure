@@ -307,12 +307,10 @@ export function lockFaults(found: readonly FoundLock[], locks: readonly StoryLoc
   return out;
 }
 
-/** What #40 and #43 fix, reported as theirs until they land: the pass, the atlas's ways that open on the story, the three hand-ins. */
+/** What #43 fixes, reported as its own until it lands: the three hand-ins. */
 const LOCKS_OWED: Record<string, readonly string[]> = {
-  '#40': ['exit shelf 31,9'],
   '#43': ['hand-in harrow 9,5', 'hand-in shelf 29,8', 'hand-in thornhold 9,5'],
 };
-const OPENS_OWED = ['downs-delta', 'thornmark-eaves', 'kilnhaven-saltmouth', 'kilnhaven-cinderport', 'wold-saltings', 'firemount-highspine', 'cinderport-hearthisle'];
 
 export async function pillars(): Promise<void> {
   // Hints: every secret door names one, on its near side.
@@ -451,12 +449,7 @@ export async function pillars(): Promise<void> {
     owed(!f, key.startsWith('hand-in') ? `${key}: takes its item at the first meeting${f ? ` (today not before ${f.flags.join(', ')})` : ''}` : `${key}: no lock between areas${f ? ` (today ${f.flags.join(' and ')})` : ''}`, whose);
   }
   const opens = ATLAS.links.filter((l) => l.opens !== undefined);
-  const stray = opens.filter((l) => !OPENS_OWED.includes(`${l.from}-${l.to}`));
-  ok(!stray.length, `no way on the atlas opens on the story but the ${OPENS_OWED.length} #40 opens${stray.length ? ' -> ' + stray.map((l) => `${l.from}-${l.to}`).join(', ') : ''}`);
-  for (const key of OPENS_OWED) {
-    const l = opens.find((l) => `${l.from}-${l.to}` === key);
-    owed(!l, `the atlas's way ${key} is no lock between areas${l ? ` (today it opens after step ${l.opens})` : ''}`, '#40');
-  }
+  ok(!opens.length, `no way on the atlas opens on the story${opens.length ? ' -> ' + opens.map((l) => `${l.from}-${l.to} after step ${l.opens}`).join(', ') : ''}`);
   {
     const room = (exits: MapDef['exits'], features: MapDef['features'] = []): MapDef => ({ id: 'fixture_lock', name: 'Lock fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits, features });
     const [first, second] = AREAS;
