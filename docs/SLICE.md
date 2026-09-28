@@ -14,7 +14,8 @@ DESIGN.md first for the why.
   columns with the price flush right, a note under the list (an item's dice, a spell's effect),
   scrolling for a long stock, a tavern's rumours a page at a time. The log over the room shows only
   what was said inside. Leaving (the last menu closed) steps the party back into the street, facing
-  the door.
+  the door. A shop may name its own price for an item it stocks (`prices`); the rest sell at
+  their own, and anything sells back for half its own price.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
   mountains gated by party abilities, hills (`^`) and farmland (`f`) open to all but on no built
@@ -24,6 +25,8 @@ DESIGN.md first for the why.
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
   machine: the dead and machines never sleep, and a def may shrug off more of its own (`immune`).
+  Gear may carry a plus: a point is +1 to hit and damage on a weapon, +1 armour class on armour or
+  a shield (`P`, `src/content/items.ts`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
@@ -50,8 +53,8 @@ game now walks it that way too: the outdoors is one map, `caldera`, the size of 
 for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` runs once to make
 `PLAYED_DEFS`, the maps as played).
 
-- **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 where the atlas puts it: the
-  Foreland at 200,30 and Thornmark beside it at 232,30. The zone maps are still written as maps of
+- **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 at its box of the grid: the
+  Foreland at 200,30 (G2) and Thornmark at 232,30 (H2). The zone maps are still written as maps of
   their own in their areas' `maps/` folders, in their own coordinates; laying them in moves their
   features, monster groups and exits to where they sit, and leads every town's and dungeon's way
   out onto the outdoors. Outdoors, the party's zone says where it is: the name on the status strip
@@ -72,12 +75,12 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   hides the sky as well as the ground; no weather greys it (it is cut out of the scene as it is
   painted, so anything nearer still covers it, and filled pink from behind at the end). The automap
   marks it the same pink.
-- **Building more.** A new zone is a map in its area's `maps/` and `index.ts`, marked `density`
-  core or country, and a zone in its area's `atlas.ts` with a `map` and an `at`;
-  `node tools/scaffold.ts` cuts its first draft from the atlas. Laid in, it opens the void where it
-  stands. Where it meets a built zone, the two maps' rings are the border between them, to open or
-  keep as each map's author likes; where it meets the atlas, its water and roads carry on into the
-  land beyond its edge (`tools/tests/pillars.ts`).
+- **Building more.** A new box is a map in its area's `maps/` and `index.ts`, marked `density`
+  core or country, and a line in its zone's `maps` in its area's `atlas.ts`, the map at its box's
+  corner; `node tools/scaffold.ts` cuts its first draft from the atlas and names its box. Laid in, it
+  opens the void where it stands. Where it meets a built zone, the two maps' rings are the border
+  between them, to open or keep as each map's author likes; where it meets the atlas, its water and
+  roads carry on into the land beyond its edge (`tools/tests/pillars.ts`).
 - **Around it.** The automap draws a map that fits the panel whole, as before, and for the outdoors
   a window of 33 by 33 squares round the party at the size a 32-square map is drawn. Quests still
   name zone maps: `visited: 'thornmark'` holds once the party has set foot in the zone

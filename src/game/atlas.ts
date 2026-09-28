@@ -3,7 +3,8 @@
 // strokes: the rim, the coasts, ranges of mountains, rivers running from the rim to the sea, woods,
 // fens and fields, roads. worldGrid turns that into cells, one per square the party walks, and
 // stamps every built outdoor map into it 1:1 where it sits, so the painted map shows the real
-// Foreland and the real Thornmark.
+// Foreland and the real Thornmark. Every built outdoor map is one box of a grid, lettered A1, B2...
+// from the atlas's corner, and a zone lists its maps, one box or several.
 //
 // The land is divided two ways. Areas are the steps of the one road of levels (I, II, III...), each
 // with its level band, and every area is made of zones, the named country inside it. Which zone a
@@ -71,16 +72,18 @@ export interface AtlasArea {
   note?: string;
 }
 
-/** A zone: a named part of an area. A built zone is an outdoor map, placed with its top-left at `at`. */
+/** A built outdoor map of a zone, placed with its top-left cell at `at`: one box of the grid. */
+export interface ZoneMap { map: string; at: Pt }
+
+/** A zone: a named part of an area. Its built outdoor maps are boxes of the grid, one or several. */
 export interface AtlasZone {
   id: string;
   name: string;
   area: string;
-  /** Where the zone is: the walk that settles borders starts from these. A built zone uses its map's footprint. */
+  /** Where the zone is: the walk that settles borders starts from these, and from all its maps' footprints. */
   seeds?: readonly Pt[];
-  /** The outdoor map this zone is, once built, and where its top-left cell sits. */
-  map?: string;
-  at?: Pt;
+  /** The outdoor maps built of this zone, each where its top-left cell sits. */
+  maps?: readonly ZoneMap[];
   /** Planned zones only; the area's band when absent. */
   band?: readonly [number, number];
   /** Where the overlay letters the zone's name; its first seed when absent. */
@@ -142,8 +145,10 @@ export interface Atlas {
   /** World size in cells. */
   width: number;
   height: number;
-  /** Cells per lettered square of the border, the way the old maps were cut into A1, B2... */
+  /** Cells a side of a box of the grid, the way the old maps were cut into A1, B2...: one outdoor map. */
   square: number;
+  /** Where box A1's top-left corner is, world cells; the grid runs from it both ways. */
+  corner: Pt;
   seed: number;
   /** The world's edge; beyond it is nothing. `width` is the band of mountains inside it. */
   rim: Outline & { width: number };
@@ -448,10 +453,10 @@ export function worldGrid(atlas: Atlas, defs: readonly MapDef[]): WorldGrid {
     if (shore && noise(x / 11, y / 11, seed + 5) > 0.36) terrain[i] = TI.sand;
   }
   // The built maps, stamped 1:1.
-  for (const z of atlas.zones) {
-    const def = z.map ? defs.find((d) => d.id === z.map) : undefined;
-    if (!def || !z.at) continue;
-    const [ax, ay] = z.at;
+  for (const z of atlas.zones) for (const { map, at } of z.maps ?? []) {
+    const def = defs.find((d) => d.id === map);
+    if (!def) continue;
+    const [ax, ay] = at;
     const mh = def.rows.length, mw = Math.max(...def.rows.map((s) => s.length));
     for (let my = 0; my < mh; my++) for (let mx = 0; mx < mw; mx++) {
       const ch = def.rows[my][mx] ?? 'M';
@@ -537,7 +542,7 @@ function chamfer(W: number, H: number, from: (i: number) => boolean, edge: boole
 /**
  * Which zone every land cell is in: the cheapest walk to it from any zone's seeds, where a range, a
  * river or a cliff costs far more to cross than open country, so two zones meet along the ridge or
- * the river between them. A built zone starts from its whole map.
+ * the river between them. A built zone starts from all its maps.
  */
 function settleZones(atlas: Atlas, defs: readonly MapDef[], terrain: Uint8Array, W: number, H: number): Int16Array {
   const N = W * H;
@@ -551,10 +556,11 @@ function settleZones(atlas: Atlas, defs: readonly MapDef[], terrain: Uint8Array,
     dist[i] = 0; zone[i] = z; heap.push(i, 0);
   };
   atlas.zones.forEach((z, k) => {
-    const def = z.map ? defs.find((d) => d.id === z.map) : undefined;
-    if (def && z.at) {
+    for (const { map, at } of z.maps ?? []) {
+      const def = defs.find((d) => d.id === map);
+      if (!def) continue;
       for (let my = 0; my < def.rows.length; my++) for (let mx = 0; mx < def.rows[my].length; mx++) {
-        const x = z.at[0] + mx, y = z.at[1] + my;
+        const x = at[0] + mx, y = at[1] + my;
         if (x >= 0 && y >= 0 && x < W && y < H) seedAt(y * W + x, k);
       }
     }
@@ -636,35 +642,120 @@ class Heap {
   }
 }
 
+// ---------------------------------------------------------------- the boxes
+
+/**
+ * The world is cut into boxes of `square` cells a side, from A1's corner at `corner` and on both
+ * ways from it; a box cut by the world's edge to under half a box is a strip of rim, unlettered, and
+ * the rest are lettered by column (A, B...) and row (1, 2...). Every outdoor map is one box.
+ */
+export interface Box { name: string; x: number; y: number; w: number; h: number }
+
+/** One way's cuts: where each lettered column or row starts in world cells, and how many cells it spans. */
+function cuts(corner: number, square: number, extent: number): { at: number; len: number }[] {
+  const out: { at: number; len: number }[] = [];
+  const first = Math.floor(-corner / square), last = Math.floor((extent - 1 - corner) / square);
+  for (let k = first; k <= last; k++) {
+    const start = corner + k * square;
+    const lo = Math.max(0, start), hi = Math.min(extent, start + square);
+    if (hi - lo >= square / 2) out.push({ at: lo, len: hi - lo });
+  }
+  return out;
+}
+
+/** A column or a row of the grid: its name (a letter or a number), where it starts and how many cells it spans. */
+export interface Cut { name: string; at: number; len: number }
+
+/** A column's letters: A to Z, then AA on. */
+const colName = (k: number): string => (k >= 26 ? colName(Math.floor(k / 26) - 1) : '') + String.fromCharCode(65 + (k % 26));
+
+/** The grid's columns and rows as cut to the world, A and 1 first. */
+export function gridCuts(atlas: Atlas): { cols: Cut[]; rows: Cut[] } {
+  return {
+    cols: cuts(atlas.corner[0], atlas.square, atlas.width).map((c, k) => ({ name: colName(k), ...c })),
+    rows: cuts(atlas.corner[1], atlas.square, atlas.height).map((c, k) => ({ name: String(k + 1), ...c })),
+  };
+}
+
+/** The name of the box a world cell is in (`G2`); undefined in a strip or off the world. */
+export function boxAt(atlas: Atlas, x: number, y: number): string | undefined {
+  const { cols, rows } = gridCuts(atlas);
+  const c = cols.find((q) => x >= q.at && x < q.at + q.len), r = rows.find((q) => y >= q.at && y < q.at + q.len);
+  return c && r ? c.name + r.name : undefined;
+}
+
+/** A box by its name, as cut to the world; undefined if the grid has no such box. */
+export function box(atlas: Atlas, name: string): Box | undefined {
+  const { cols, rows } = gridCuts(atlas);
+  const m = /^([A-Z]+)(\d+)$/.exec(name);
+  const c = cols.find((q) => q.name === m?.[1]), r = rows.find((q) => q.name === m?.[2]);
+  return c && r ? { name, x: c.at, y: r.at, w: c.len, h: r.len } : undefined;
+}
+
+/**
+ * How the atlas lays its outdoor maps against the grid, one line a fault: a map laid twice, or one
+ * that is not one whole box (a box of `square` a side, or one the world's edge cuts). Empty when
+ * every laid map is a box. A check for the tests: fixtures lay off the grid on purpose.
+ */
+export function gridFaults(atlas: Atlas, defs: readonly MapDef[]): string[] {
+  const faults: string[] = [];
+  const seen = new Map<string, string>();
+  for (const z of atlas.zones) for (const { map, at } of z.maps ?? []) {
+    const was = seen.get(map);
+    if (was) { faults.push(`map ${map} is laid twice, by ${was} and by ${z.id}`); continue; }
+    seen.set(map, z.id);
+    const def = defs.find((d) => d.id === map);
+    if (!def) continue;
+    const w = Math.max(...def.rows.map((r) => r.length)), h = def.rows.length;
+    const name = boxAt(atlas, at[0], at[1]);
+    const b = name ? box(atlas, name) : undefined;
+    if (!b) { faults.push(`map ${map} at ${at[0]},${at[1]} lies in no box of the grid`); continue; }
+    if (b.x !== at[0] || b.y !== at[1] || b.w !== w || b.h !== h) {
+      faults.push(`map ${map} at ${at[0]},${at[1]} (${w}x${h}) is not one box: it starts in ${b.name}, which is ${b.x},${b.y} (${b.w}x${b.h})`);
+    }
+  }
+  return faults;
+}
+
 // ---------------------------------------------------------------- lookups
 
-/** The zone a built outdoor map is, if the atlas places it. */
+/** The zone a built outdoor map is part of, if the atlas places it. */
 export function zoneOfMap(atlas: Atlas, mapId: string): AtlasZone | undefined {
-  return atlas.zones.find((z) => z.map === mapId && z.at);
+  return atlas.zones.find((z) => z.maps?.some((m) => m.map === mapId));
+}
+
+/** Where the atlas lays a built outdoor map: its top-left cell on the world grid. */
+export function mapAt(atlas: Atlas, mapId: string): Pt | undefined {
+  for (const z of atlas.zones) for (const m of z.maps ?? []) if (m.map === mapId) return m.at;
+  return undefined;
 }
 
 /** The area an id belongs to: an area itself, a zone's area, or a built map's zone's area. */
 export function areaOf(atlas: Atlas, id: string): AtlasArea | undefined {
   const direct = atlas.areas.find((a) => a.id === id);
   if (direct) return direct;
-  const z = atlas.zones.find((q) => q.id === id || q.map === id);
+  const z = atlas.zones.find((q) => q.id === id) ?? zoneOfMap(atlas, id);
   return z ? atlas.areas.find((a) => a.id === z.area) : undefined;
 }
 
 /** A map cell's centre on the world grid, for maps the atlas places. */
 export function worldPoint(atlas: Atlas, mapId: string, x: number, y: number): [number, number] | null {
-  const z = zoneOfMap(atlas, mapId);
-  return z?.at ? [z.at[0] + x + 0.5, z.at[1] + y + 0.5] : null;
+  const at = mapAt(atlas, mapId);
+  return at ? [at[0] + x + 0.5, at[1] + y + 0.5] : null;
 }
 
-/** An area's level band: its built maps' bands and its planned zones', together. */
+/**
+ * An area's level band: its built maps' bands and its planned zones', together. A zone with maps
+ * built reads their bands; one with none built yet, its planned band.
+ */
 export function areaBand(atlas: Atlas, defs: readonly MapDef[], areaId: string): [number, number] | undefined {
   const area = atlas.areas.find((a) => a.id === areaId);
   let lo = Infinity, hi = -Infinity;
   for (const z of atlas.zones) {
     if (z.area !== areaId) continue;
-    const b = (z.map ? defs.find((d) => d.id === z.map)?.band : undefined) ?? z.band ?? area?.band;
-    if (b) { lo = Math.min(lo, b[0]); hi = Math.max(hi, b[1]); }
+    const built = (z.maps ?? []).map((m) => defs.find((d) => d.id === m.map)?.band).filter((b) => !!b);
+    const bands = built.length ? built : [z.band ?? area?.band].filter((b) => !!b);
+    for (const b of bands) { lo = Math.min(lo, b[0]); hi = Math.max(hi, b[1]); }
   }
   if (Number.isFinite(lo)) return [lo, hi];
   return area?.band ? [area.band[0], area.band[1]] : undefined;
@@ -734,7 +825,7 @@ export interface Step { order: number; id: string; name: string; band?: readonly
 export function progression(atlas: Atlas, defs: readonly MapDef[]): Step[] {
   const steps: Step[] = [];
   for (const a of atlas.areas) {
-    const built = atlas.zones.some((z) => z.area === a.id && !!z.map && defs.some((d) => d.id === z.map));
+    const built = atlas.zones.some((z) => z.area === a.id && !!z.maps?.some((m) => defs.some((d) => d.id === m.map)));
     steps.push({ order: a.order, id: a.id, name: a.name, band: areaBand(atlas, defs, a.id), built });
   }
   for (const p of atlas.places) if (p.order != null) steps.push({ order: p.order, id: p.id, name: p.name ?? p.id, band: p.band, built: !p.planned });

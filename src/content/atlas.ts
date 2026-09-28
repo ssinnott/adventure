@@ -4,10 +4,10 @@
 // fields; the Foreland and Thornmark are their own maps, stamped in 1:1, so the art and the zone
 // overlay agree with what is playable. Everything else is planned, and is the design's to change.
 //
-// Scale: 512 by 384 squares, the border lettered A-P by 1-12 in squares of 32 (one outdoor map's
-// worth). About 113,000 squares are land, a sixth of them mountain: nine times the whole outdoors of
-// Darkside of Xeen (48 maps of 16 by 16), six times both sides of Xeen together. An area is some 8
-// to 15 of today's 32 by 32 outdoor maps.
+// Scale: 512 by 384 squares, the border lettered A-P by 1-12 by boxes of 32 (an outdoor map each)
+// from A1's corner at 8,-2; the strips left at the west and south edges are rim, unlettered. About
+// 113,000 squares are land, a sixth of them mountain: nine times the whole outdoors of Darkside of
+// Xeen (48 maps of 16 by 16), six times both sides of Xeen together. An area is some 8 to 15 boxes.
 //
 // There is one road of levels, numbered I to XIV, and it winds, but no way on it is shut: each is
 // open from the start, and the country's danger is what holds a company to the road. Three port
@@ -24,6 +24,7 @@ export const PLAN: Atlas = {
   width: 512,
   height: 384,
   square: 32,
+  corner: [8, -2],
   seed: 1187,
   rim: {
     width: 9,

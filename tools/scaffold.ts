@@ -12,14 +12,14 @@
 import { writeFileSync, existsSync } from 'node:fs';
 import { relative, dirname, resolve } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
-import { worldGrid, TERRAINS, TI, MAP_TERRAIN } from '../src/game/atlas.ts';
+import { worldGrid, mapAt, boxAt, box, TERRAINS, TI, MAP_TERRAIN } from '../src/game/atlas.ts';
 import type { Atlas, AtlasZone, WorldGrid, WorldTerrain, Pt } from '../src/game/atlas.ts';
 import { GameMap } from '../src/game/map.ts';
 import type { MapDef } from '../src/game/map.ts';
 import { NORTH, EAST, SOUTH, WEST, FACING_NAMES } from '../src/game/types.ts';
 import type { Facing } from '../src/game/types.ts';
 
-/** A draft is one lettered square of the atlas. */
+/** A draft is one lettered box of the atlas's grid. */
 export const SIZE = 32;
 
 /** Where a terrain has more than one character, the one a draft writes. */
@@ -33,10 +33,10 @@ for (const [t, ch] of Object.entries(CHAR_OF)) if (MAP_TERRAIN[ch!] !== t) throw
 /** An atlas square as a draft reads it: the road where one is marked, else the terrain (a river is shallows). */
 export const squareOf = (g: WorldGrid, i: number): number => (g.road[i] ? TI.road : g.terrain[i]);
 
-/** The atlas with a map laid at a place, as the area will lay it: the one place a draft is put back. */
+/** The atlas with a map laid at a place in its zone's list, as the area will lay it: the one place a draft is put back. */
 export function layBack(atlas: Atlas, defs: readonly MapDef[], def: MapDef, zone: AtlasZone, at: Pt): { atlas: Atlas; defs: MapDef[] } {
-  const laid: AtlasZone = { id: `draft:${def.id}`, name: def.name, area: zone.area, map: def.id, at };
-  return { atlas: { ...atlas, zones: [...atlas.zones, laid] }, defs: [...defs, def] };
+  const zones = atlas.zones.map((z) => (z.id === zone.id ? { ...z, maps: [...(z.maps ?? []), { map: def.id, at }] } : z));
+  return { atlas: { ...atlas, zones }, defs: [...defs, def] };
 }
 
 /** The squares of the cut where the draft, laid back, is not the atlas: 0 is a faithful draft. */
@@ -107,7 +107,7 @@ export function cut(atlas: Atlas, defs: readonly MapDef[], grid: WorldGrid, regi
     // The Foreland's sky is the default; another area's zone shares its own.
     ...(zone.area !== 'shelf' && regions.includes(zone.area) ? { region: zone.area as MapDef['region'] } : {}),
   };
-  const said = notes(atlas, grid, laid, def, x, y);
+  const said = notes(atlas, laid, def, x, y);
   if (!regions.includes(zone.area)) said.unshift(`area ${zone.area} has no region yet, so the draft shares the Foreland's sky until it has`);
   return { def, counts, zones, notes: said };
 }
@@ -115,9 +115,9 @@ export function cut(atlas: Atlas, defs: readonly MapDef[], grid: WorldGrid, regi
 interface Laid { id: string; x: number; y: number; w: number; h: number }
 function laidMaps(atlas: Atlas, defs: readonly MapDef[]): Laid[] {
   const out: Laid[] = [];
-  for (const z of atlas.zones) {
-    const def = z.map && z.at ? defs.find((d) => d.id === z.map && d.kind === 'outdoor') : undefined;
-    if (def && z.at) out.push({ id: def.id, x: z.at[0], y: z.at[1], w: Math.max(...def.rows.map((r) => r.length)), h: def.rows.length });
+  for (const z of atlas.zones) for (const { map, at } of z.maps ?? []) {
+    const def = defs.find((d) => d.id === map && d.kind === 'outdoor');
+    if (def) out.push({ id: def.id, x: at[0], y: at[1], w: Math.max(...def.rows.map((r) => r.length)), h: def.rows.length });
   }
   return out;
 }
@@ -163,11 +163,13 @@ function start(rows: readonly string[], laid: readonly Laid[], x: number, y: num
 }
 
 /** The author's notes: the box grid, each edge's neighbour and where the road crosses it, the plates and sites inside. */
-function notes(atlas: Atlas, grid: WorldGrid, laid: readonly Laid[], def: MapDef, x: number, y: number): string[] {
+function notes(atlas: Atlas, laid: readonly Laid[], def: MapDef, x: number, y: number): string[] {
   const out: string[] = [];
-  // The built maps sit on one grid of lettered squares; a draft off it is allowed, and said.
-  const gx = laid[0] ? ((laid[0].x % SIZE) + SIZE) % SIZE : 0, gy = laid[0] ? ((laid[0].y % SIZE) + SIZE) % SIZE : 0;
-  if (((x - gx) % SIZE + SIZE) % SIZE || ((y - gy) % SIZE + SIZE) % SIZE) out.push(`off the grid the built maps sit on (x ${gx}, y ${gy}, every ${SIZE})`);
+  // Every outdoor map is one box of the atlas's grid; a draft off it is allowed, and said.
+  const name = boxAt(atlas, x, y), b = name ? box(atlas, name) : undefined;
+  if (!b) out.push(`off the grid: ${x},${y} lies in no box`);
+  else if (b.x !== x || b.y !== y || b.w !== SIZE || b.h !== SIZE) out.push(`off the grid: ${x},${y} starts in ${b.name}, which is ${b.x},${b.y} (${b.w}x${b.h})`);
+  else out.push(`box ${b.name}`);
   const edges: { name: string; sq: (n: number) => [number, number]; out: (n: number) => [number, number] }[] = [
     { name: 'north', sq: (n) => [n, 0], out: (n) => [x + n, y - 1] },
     { name: 'east', sq: (n) => [SIZE - 1, n], out: (n) => [x + SIZE, y + n] },
@@ -194,9 +196,9 @@ function notes(atlas: Atlas, grid: WorldGrid, laid: readonly Laid[], def: MapDef
   const inCut = (p: Pt): boolean => p[0] >= x && p[0] < x + SIZE && p[1] >= y && p[1] < y + SIZE;
   const local = (p: Pt): string => `${Math.floor(p[0] - x)},${Math.floor(p[1] - y)}`;
   for (const s of atlas.sites) {
-    const z = s.map ? atlas.zones.find((q) => q.map === s.map && q.at) : undefined;
-    if (s.map && !z) continue;
-    const p: Pt = z?.at ? [s.at[0] + z.at[0], s.at[1] + z.at[1]] : s.at;
+    const at = s.map ? mapAt(atlas, s.map) : undefined;
+    if (s.map && !at) continue;
+    const p: Pt = at ? [s.at[0] + at[0], s.at[1] + at[1]] : s.at;
     if (inCut(p)) out.push(`site ${s.name} (${s.icon}${s.planned ? ', planned' : ''}) at ${local(p)}`);
   }
   for (const p of atlas.places) if (inCut(p.at)) out.push(`place ${p.id} (${p.kind}${p.planned ? ', planned' : ''}) plated at ${local(p.at)}`);
