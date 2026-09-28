@@ -211,3 +211,14 @@ opens its PR at 10:49. Its 'What the checks owe' bullet names #104's squares: wh
 lands second fixes it.
 
 | 4 | SLICE sweep | session_01SMHvCyJAL7CSMHTJwBTrRL | `claude/m0-slice-sweep` |
+
+## Done
+
+#106 (the SLICE sweep, byte for byte the audited file) merged at 11:26 (main 195eaad). #105 (#104)
+was reviewed against its Done-when with every break seen to fail (main's maps back fail the edge
+check; swimming broken fails the moved water step), the figures recomputed exactly and the world
+map looked at; it merged main, fixed SLICE's owed line and a stale comment, and merged at 11:49
+(main 4599c7f): `npm run check` ALL OK (30 owed: #26 ×3, #40 ×15, #43 ×3, #47 ×9), builds. #104
+closed. All seventeen of #25's sub-issues are closed and no pull request is open. #25 itself stays
+open for the owner: its Done-when's branch protection is left off by their choice, so closing it is
+theirs. #47 still waits for `approved` again.
