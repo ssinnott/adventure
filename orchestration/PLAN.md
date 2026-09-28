@@ -268,3 +268,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (sent 17:28), then #120, then #123 and #124; #119 (no monster conflict) sent its two comment nits
   and a main merge at 17:28. The last of #120, #121 and #123/#124 brings SLICE's variants sentence
   up to date.
+
+### 17:40: #127 and #128 reviewed, fixes sent
+
+- #127 (#43) reviewed (`reviews/127.md`): ready after a main merge (pillars.ts against #115: keep
+  both) and nits (unused imports; EXPANSION :170-172 into the past tense; Oxford commas; say the sheet
+  is unchanged). Sent 17:38. Its three early texts are new dialogue: shown to the owner; #85 can
+  still rework them with the rest of Vask's and Hale's words.
+- #128 (#42's A) reviewed (`reviews/128.md`): ready after its body stops saying "closes #42" (merging
+  would close #42 before B) and three test nits. Sent 17:41. The log's pictures sent to the owner.
+- Whichever of #127 and #128 lands second ports the people suite to the paged log (five lines).
