@@ -18,6 +18,7 @@ import { signLine } from '../../src/game/world.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { FONT_CHARS } from '../../src/lib/engine/text.ts';
 import { logLines, LOG_LINES } from '../../src/ui/frame.ts';
+import { lookLine } from '../../src/game/wilds.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -66,7 +67,9 @@ export function lineFaults(def: MapDef): string[] {
   for (const f of def.features ?? []) {
     // A wilderness feature's lines are said on Space, one event at a time, each held to the most.
     if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'cairn' || f.kind === 'statue' || f.kind === 'camp') {
-      for (const [what, t] of [['text', f.text], ['done', 'done' in f ? f.done : undefined]] as const) {
+      // A statue's and a camp's text is logged inside the look (game/wilds.ts), so it is measured so.
+      const text = f.kind === 'statue' || f.kind === 'camp' ? lookLine(f) : f.text;
+      for (const [what, t] of [['text', text], ['done', 'done' in f ? f.done : undefined]] as const) {
         const n = t === undefined ? 0 : logLines(t).length;
         if (n > MOST_LINES) out.push(`the ${f.kind}'s ${what} at ${f.x},${f.y} takes ${n} lines`);
       }

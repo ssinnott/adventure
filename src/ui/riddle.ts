@@ -8,9 +8,8 @@ import { is } from '../input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, paragraph } from './draw.ts';
 import { BRASS, TEXT, TEXT_DIM } from './palette.ts';
+import { ANSWER_MAX } from '../game/wilds.ts';
 
-/** The longest answer the box takes. */
-const MAX = 16;
 const BOX = { x: 40, y: 40, w: 560, h: 150 };
 
 export class RiddleScreen implements Screen {
@@ -27,7 +26,7 @@ export class RiddleScreen implements Screen {
 
   update(g: Game, a: Action | null): void {
     // Text entry runs every step, action or not; only letters and spaces are kept.
-    if (g.input) this.word = g.input.drainText(this.word, MAX).replace(/[^A-Za-z ]/g, '');
+    if (g.input) this.word = g.input.drainText(this.word, ANSWER_MAX).replace(/[^A-Za-z ]/g, '');
     if (!a) return;
     if (is(a, 'cancel')) this.close(g);
     else if (is(a, 'interact') && this.word.trim()) { this.close(g); this.answer(this.word); }

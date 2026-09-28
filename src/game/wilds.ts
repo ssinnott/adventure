@@ -49,16 +49,19 @@ export function give(party: Party, gift: Gift): string[] {
   return words;
 }
 
-/** What the log says as the party steps onto one, before Space; '' for one spent. */
-export function stepLine(world: World, f: Wild): string {
+/** What the log says as the party steps onto one, before Space. */
+export function lookLine(f: Wild): string {
   switch (f.kind) {
-    case 'shrine': return world.used(f.id) ? '' : 'A shrine. Space kneels.';
-    case 'fountain': return world.used(f.id) ? '' : 'A fountain. Space drinks.';
-    case 'cairn': return world.used(f.id) ? '' : 'A cairn. Space lifts its stones.';
-    case 'statue': return world.used(f.id) ? '' : `${f.text} Space reads the plinth.`;
+    case 'shrine': return 'A shrine. Space kneels.';
+    case 'fountain': return 'A fountain. Space drinks.';
+    case 'cairn': return 'A cairn. Space lifts its stones.';
+    case 'statue': return `${f.text} Space reads the plinth.`;
     case 'camp': return `${f.text} R rests here.`;
   }
 }
+
+/** The look as the party steps onto one; '' for one spent. */
+export const stepLine = (world: World, f: Wild): string => (f.kind !== 'camp' && world.used(f.id) ? '' : lookLine(f));
 
 /** Kneel at a shrine or drink at a fountain: its stat to every member the first time, its `done` after. */
 export function useShrine(world: World, party: Party, f: Extract<Wild, { kind: 'shrine' | 'fountain' }>): string[] {
@@ -74,6 +77,9 @@ export function openCairn(world: World, party: Party, f: Extract<Wild, { kind: '
   const got = give(party, giftOf(f)!);
   return [...(f.text ? [f.text] : []), got.length ? `Under the stones: ${got.join(', ')}.` : 'Under the stones: nothing.'];
 }
+
+/** The longest answer the riddle's box takes, as typed. */
+export const ANSWER_MAX = 16;
 
 /** A typed word as it is compared: letters and spaces only, case-blind, trimmed, spaces single. */
 export const normalWord = (s: string): string => s.toLowerCase().replace(/[^a-z ]/g, '').trim().replace(/ +/g, ' ');

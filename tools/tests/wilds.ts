@@ -11,7 +11,7 @@ import { defaultParty } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { NORTH } from '../../src/game/types.ts';
-import { useShrine, openCairn, answerRiddle, restRefused, restParty, stepLine, normalWord, spentId } from '../../src/game/wilds.ts';
+import { useShrine, openCairn, answerRiddle, restRefused, restParty, stepLine, normalWord, spentId, ANSWER_MAX } from '../../src/game/wilds.ts';
 import { Input } from '../../src/input.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import type { Game } from '../../src/game/game.ts';
@@ -19,6 +19,7 @@ import { MAP_DEFS } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../shipped.ts';
 import { judge, measure } from './density.ts';
 import { texts, lineFaults } from './pillars.ts';
+import { condFaults } from './quests.ts';
 import { ok } from './lib.ts';
 
 const FIXTURE: MapDef = {
@@ -40,13 +41,20 @@ function pick<K extends Feature['kind']>(def: MapDef, kind: K): Extract<Feature,
   return def.features!.find((f) => f.kind === kind) as Extract<Feature, { kind: K }>;
 }
 
-/** Each statue whose answer no other text of the game says as a whole word: the hint chain (DESIGN §1). */
+/**
+ * Each statue whose answer cannot be given or is not hinted: one with no letters, or longer than the
+ * riddle's box takes, or that no other text of the game says as a whole word (DESIGN §1). No
+ * statue's answer is a hint, or two statues sharing one would hint each other.
+ */
 export function hintless(defs: readonly MapDef[]): string[] {
-  const all = texts(defs), out: string[] = [];
+  const answers = new Set(defs.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'statue' ? [`${d.id} statue ${f.x},${f.y}\n${f.answer}`] : []))));
+  const all = texts(defs).filter((t) => !answers.has(`${t.where}\n${t.text}`)), out: string[] = [];
   for (const d of defs) for (const f of d.features ?? []) {
     if (f.kind !== 'statue') continue;
-    const own = `${d.id} statue ${f.x},${f.y}`;
-    const word = new RegExp(`(^|[^a-z])${normalWord(f.answer).replace(/ /g, '[^a-z]+')}($|[^a-z])`, 'i');
+    const own = `${d.id} statue ${f.x},${f.y}`, answer = normalWord(f.answer);
+    if (!answer) { out.push(`${own}: its answer "${f.answer}" has no letters to type`); continue; }
+    if (answer.length > ANSWER_MAX) { out.push(`${own}: its answer "${f.answer}" is longer than the ${ANSWER_MAX} letters the box takes`); continue; }
+    const word = new RegExp(`(^|[^a-z])${answer.replace(/ /g, '[^a-z]+')}($|[^a-z])`, 'i');
     if (!all.some((t) => t.where !== own && word.test(t.text))) out.push(`${own}: its answer "${f.answer}" is said nowhere else`);
   }
   return out;
@@ -71,6 +79,9 @@ export function wilds(): void {
   ok(lineFaults(FIXTURE).length === 0, `their lines fit the log${lineFaults(FIXTURE).map((l) => '; ' + l).join('')}`);
   const long: MapDef = { ...FIXTURE, features: [{ ...shrine, done: 'The shrine is quiet. '.repeat(12) }] };
   ok(lineFaults(long).some((l) => l.includes("shrine's done")), 'and a shrine that says too much is caught');
+  // Three lines bare, four as the step logs it, with the look after it.
+  const keeper = 'A stone keeper stands here with one hand raised toward the pass and the sea beyond, its face worn smooth by the wind of many long winters on the coast, gulls nesting in its hood.';
+  ok(lineFaults({ ...FIXTURE, features: [{ ...statue, text: keeper }] }).some((l) => l.includes("statue's text")), 'and a statue whose look, as the step logs it, takes four lines is caught');
 
   // Used: each gives once.
   const { world, party } = fresh();
@@ -164,6 +175,20 @@ export function wilds(): void {
   const bare: MapDef = { ...FIXTURE, features: FIXTURE.features!.filter((f) => f.kind !== 'npc') };
   ok(hintless([FIXTURE]).length === 0, 'a statue whose answer a hermit says has its hint');
   ok(hintless([bare]).length === 1, `and without the hermit it has none (${hintless([bare]).join('')})`);
+  const statueAt = (x: number, answer: string): Feature => ({ ...statue, x, id: `w_statue${x}`, answer });
+  const withStatues = (...more: Feature[]): MapDef => ({ ...FIXTURE, features: [...FIXTURE.features!, ...more] });
+  for (const [answer, why] of [['', 'no letters'], ['42', 'no letters'], ['the salt marrow keeper', 'longer than']] as const) {
+    // Hinted, so only the answer itself is at fault.
+    const lost = hintless([withStatues(statueAt(12, answer), { kind: 'npc', x: 12, y: 3, name: 'A pilgrim', lines: [`Some say ${answer}.`] })]);
+    ok(lost.some((l) => l.includes(why)), `a statue answered "${answer}" is caught (${lost.join('; ') || 'passes'})`);
+  }
+  const twins = hintless([{ ...bare, features: [...bare.features!, statueAt(12, 'saltmarrow')] }]);
+  ok(twins.length === 2, `two statues sharing an answer do not hint each other (${twins.length} caught)`);
+  const two = fresh();
+  ok(answerRiddle(two.world, two.party, { ...statue, answer: 'old keeper' }, ' Old  KEEPER ').right, 'a two-word answer is taken typed with two spaces between');
+  // The quests may name a spent feature by its map and id, and never by the map alone.
+  ok(condFaults({ seen: 'wilds:w_cairn' }, [FIXTURE]).length === 0 && condFaults({ seen: 'wilds' }, [FIXTURE]).length === 1, 'a quest sees a cairn by its id, and not by its map alone');
+  ok(condFaults({ seen: 'greywater2' }).join() === 'seen greywater2', 'nor Brandy Hole by its map alone');
   const statues = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'statue'));
   const lost = hintless(MAP_DEFS);
   ok(!lost.length, `every statue in the content has its answer said elsewhere (${statues.length} placed)${lost.map((l) => '; ' + l).join('')}`);

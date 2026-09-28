@@ -22,7 +22,7 @@ DESIGN.md first for the why.
   map yet, a calendar and weather over a day/night clock (below), automap with field-of-view
   reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The wilderness
   features, on no built map yet: a shrine or fountain that gives every member a stat point once, a
-  cairn with a cache, a statue whose riddle takes its answer typed, and a camp where the party may
+  cairn with a cache, a statue whose riddle takes its answer typed and a camp where the party may
   rest with monsters two squares off; a hermit is a person.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
@@ -336,10 +336,11 @@ over content broken on purpose too, and two tools to theirs:
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
-- `wilds` (§5.3): the wilderness features on a fixture field: each a point and none a sign, the
-  shrine, fountain, cairn and statue giving once and kept through a save and by the shipped list,
-  the camp rested at twice, the riddle typed through the real keyboard and only the right word
-  taken, and every statue's answer said somewhere else in the game.
+- `wilds` (§5.3): the wilderness features on a fixture field. Each is a point and none a sign; the
+  shrine, fountain, cairn and statue give once and are kept through a save and by the shipped list;
+  the camp is rested at twice; the riddle is typed through the real keyboard and takes only the
+  right word. Every statue's answer is one to sixteen letters long, and some other text of the
+  game says it, never another statue's answer.
 - `pillars` (§5.4): a hint on the near side of every secret door; no text past three lines of the
   log, every glyph in the font, British spelling; each `Area.novel` holds; water and roads carry on
   into the atlas; story locks (`content/locks.ts`) signed in, none between areas and every hand-in
