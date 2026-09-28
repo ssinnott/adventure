@@ -8,7 +8,7 @@ import { K, pillar, banner } from '../props.ts';
 import { glossPoly, glossBall } from '../../monsters/gloss.ts';
 import { towerDevice } from './warden_drillyard.ts';
 
-const STONE = '#8e929a', FLAG = '#5a5c64', BLUE = '#1f3a7a', GOLD = '#d4a83a', GREY = '#6a6e76', BLACK = '#1a181e';
+const OAK = '#4a2e1c', STONE = '#8e929a', FLAG = '#5a5c64', BLUE = '#1f3a7a', GOLD = '#d4a83a', GREY = '#6a6e76', BLACK = '#1a181e';
 
 /** The sea at the window, and the Hearth on it: a column of light on the horizon, brighter as the day goes. */
 function hearthView(x: number, y: number, w: number, h: number, daylight: number) {
@@ -27,25 +27,49 @@ function hearthView(x: number, y: number, w: number, h: number, daylight: number
   };
 }
 
-/** The throne, high-backed, with black cloth thrown over it and falling to the dais; foot on y. */
+/**
+ * The Queen's throne, empty, foot on y: a tall carved back in dark oak and gilt with her blue in its
+ * panel, arms, a blue cushion on the seat, turned legs on the dais. A black cloth thrown over one
+ * corner of the back falls down its side and across the arm: mourning, not a shroud.
+ */
 function throne(ctx: CanvasRenderingContext2D, x: number, y: number, h: number): void {
-  const w = h * 0.5;
-  contact(ctx, x, y, w * 1.3, 0.5);
-  // The carved crest shows above the cloth: gilt, and the Queen's blue in it.
-  glossPoly(ctx, K, [x - w * 0.34, y - h * 0.9, x - w * 0.2, y - h * 1.02, x, y - h * 1.08, x + w * 0.2, y - h * 1.02, x + w * 0.34, y - h * 0.9], GOLD, { gloss: 0.7, spread: 0.7 });
-  glossBall(ctx, K, x, y - h * 0.99, w * 0.08, BLUE, { gloss: 0.8 });
-  // The cloth over the back, the seat and the arms, pooling on the step.
-  const cloth = [x - w * 0.4, y - h * 0.9, x + w * 0.4, y - h * 0.9, x + w * 0.46, y - h * 0.5, x + w * 0.62, y - h * 0.46, x + w * 0.66, y - h * 0.12, x + w * 0.78, y,
-    x - w * 0.78, y, x - w * 0.66, y - h * 0.12, x - w * 0.62, y - h * 0.46, x - w * 0.46, y - h * 0.5];
-  glossPoly(ctx, K, cloth, BLACK, { gloss: 0.25, spread: 0.8 });
-  for (const [fx0, fy0, fx1, fy1] of [[-0.2, 0.86, -0.3, 0.52], [0.18, 0.86, 0.26, 0.5], [-0.5, 0.42, -0.64, 0.04], [0.52, 0.42, 0.7, 0.04], [0, 0.46, -0.08, 0.02]]) {
-    line(ctx, [x + w * fx0, y - h * fy0, x + w * fx1, y - h * fy1], rgba('#4a4656', 0.7), 1.5);
-  }
-  // The seat's edge under the cloth, the gilt ends of its arms and its feet under the hem.
-  line(ctx, [x - w * 0.5, y - h * 0.3, x + w * 0.5, y - h * 0.3], rgba('#4a4656', 0.9), 2);
+  const w = h * 0.5, seat = y - h * 0.4, arm = y - h * 0.56, top = y - h;
+  contact(ctx, x, y, w * 1.5, 0.5);
+  // The back: two posts with gilt finials, the panel between them and its carved, peaked crest.
+  const back = [x - w * 0.36, seat, x - w * 0.36, top + h * 0.16, x - w * 0.18, top + h * 0.08, x, top, x + w * 0.18, top + h * 0.08, x + w * 0.36, top + h * 0.16, x + w * 0.36, seat];
+  glossPoly(ctx, K, back, OAK, { gloss: 0.3, spread: 0.7 });
+  const panel = [x - w * 0.24, seat - h * 0.04, x - w * 0.24, top + h * 0.2, x, top + h * 0.12, x + w * 0.24, top + h * 0.2, x + w * 0.24, seat - h * 0.04];
+  glossPoly(ctx, K, panel, BLUE, { gloss: 0.2, spread: 0.8 });
+  line(ctx, panel.concat(panel.slice(0, 2)), GOLD, 1.5);
+  ctx.strokeStyle = GOLD; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, top + h * 0.36, w * 0.1, 0, Math.PI * 2); ctx.stroke();
   for (const s of [-1, 1]) {
-    glossBall(ctx, K, x + s * w * 0.66, y - h * 0.46, w * 0.09, GOLD, { gloss: 0.7 });
-    glossBall(ctx, K, x + s * w * 0.56, y - 2, w * 0.07, GOLD, { gloss: 0.7 });
+    glossPoly(ctx, K, [x + s * w * 0.44, seat, x + s * w * 0.44, top + h * 0.14, x + s * w * 0.34, top + h * 0.14, x + s * w * 0.34, seat], shade(OAK, 0.85), { gloss: 0.3 });
+    glossBall(ctx, K, x + s * w * 0.39, top + h * 0.1, w * 0.08, GOLD, { gloss: 0.8 });
+  }
+  glossBall(ctx, K, x, top - h * 0.02, w * 0.07, GOLD, { gloss: 0.8 });
+  // The seat, its blue cushion, and the rail under it.
+  glossPoly(ctx, K, [x - w * 0.62, seat, x - w * 0.5, seat - h * 0.05, x + w * 0.5, seat - h * 0.05, x + w * 0.62, seat, x + w * 0.62, seat + h * 0.07, x - w * 0.62, seat + h * 0.07], OAK, { gloss: 0.3 });
+  glossPoly(ctx, K, [x - w * 0.5, seat - h * 0.04, x - w * 0.42, seat - h * 0.1, x + w * 0.42, seat - h * 0.1, x + w * 0.5, seat - h * 0.04], BLUE, { gloss: 0.4, spread: 0.7 });
+  line(ctx, [x - w * 0.6, seat + h * 0.07, x + w * 0.6, seat + h * 0.07], GOLD, 1.5);
+  // Turned legs on the dais, gilt at the foot.
+  for (const s of [-1, 1]) {
+    glossPoly(ctx, K, [x + s * w * 0.6, seat + h * 0.07, x + s * w * 0.6, y - 3, x + s * w * 0.48, y - 3, x + s * w * 0.48, seat + h * 0.07], shade(OAK, 0.8), { gloss: 0.3 });
+    glossBall(ctx, K, x + s * w * 0.54, seat + h * 0.2, w * 0.07, shade(OAK, 0.9), { gloss: 0.4 });
+    glossBall(ctx, K, x + s * w * 0.54, y - 3, w * 0.08, GOLD, { gloss: 0.7 });
+  }
+  // The arms: a rail from each post out over the seat, on a turned upright, a gilt scroll at the end.
+  for (const s of [-1, 1]) {
+    glossPoly(ctx, K, [x + s * w * 0.62, seat - h * 0.04, x + s * w * 0.62, arm, x + s * w * 0.54, arm, x + s * w * 0.54, seat - h * 0.04], shade(OAK, 0.9), { gloss: 0.3 });
+    glossPoly(ctx, K, [x + s * w * 0.4, arm - h * 0.03, x + s * w * 0.66, arm - h * 0.03, x + s * w * 0.66, arm + h * 0.02, x + s * w * 0.4, arm + h * 0.02], OAK, { gloss: 0.4 });
+    glossBall(ctx, K, x + s * w * 0.68, arm - h * 0.005, w * 0.07, GOLD, { gloss: 0.8 });
+  }
+  // The black cloth, thrown over the left post, falling in folds past the arm to a ragged hem.
+  const cloth = [x - w * 0.08, top + h * 0.12, x - w * 0.28, top + h * 0.02, x - w * 0.5, top + h * 0.08, x - w * 0.64, top + h * 0.36,
+    x - w * 0.76, seat, x - w * 0.84, seat + h * 0.2, x - w * 0.7, seat + h * 0.16, x - w * 0.6, seat + h * 0.22, x - w * 0.48, seat + h * 0.14,
+    x - w * 0.36, seat + h * 0.18, x - w * 0.3, seat - h * 0.08, x - w * 0.22, top + h * 0.42, x - w * 0.1, top + h * 0.26];
+  glossPoly(ctx, K, cloth, BLACK, { gloss: 0.35, spread: 0.8 });
+  for (const [a, b, c, d] of [[-0.42, 0.1, -0.56, 0.9], [-0.3, 0.12, -0.44, 0.7], [-0.2, 0.3, -0.34, 1.0], [-0.64, 0.5, -0.74, 1.1]]) {
+    line(ctx, [x + w * a, top + h * b, x + w * c, top + h * d], rgba('#5a5668', 0.8), 1.2);
   }
 }
 
