@@ -185,7 +185,7 @@ cap, which is 10 until the road past it is built:
   should take a member to the next floor, and its gold train the six there; every monster has a
   `level` within two of its maps' bands, rising from the way in (it changes no combat yet), and no
   chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,660 a
-  member of 3,734, Thornmark 6,039 of 13,667), nor Thornmark's the gold (4,932 of 8,400):
+  member of 3,734, Thornmark 7,849 of 13,667), nor Thornmark's the gold (5,330 of 8,400):
   `tools/tests/curve.ts` reports them as #26's.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
@@ -220,14 +220,15 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   character's state, cached to an offscreen canvas.
 - `ui/sprites.ts` holds the trees, rocks, mountains and pillars and dispatches the monsters to
   `ui/monsters/`, one module per family (rat, slime, wolf, boar, spider, bandit, cultist, skeleton,
-  riftling, ogre, wraith, birds) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts`
-  has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
-  the cult and the skeletons stand on. Every monster def names a sprite kind no other def uses
-  (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
+  riftling, ogre, wraith, birds, old wood) behind one `draw(ctx, kind, x, y, h, paint)` signature;
+  `common.ts` has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame
+  the bandits, the cult and the skeletons stand on. Every monster def names a sprite kind no other
+  def uses (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
   smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
   and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
-  crab and rift crawler, the crow and the great owl, the elder and the two wardens) are drawn with
-  their own gear, anatomy and glow rather than a recolour.
+  crab and rift crawler, the crow and the great owl, the elder and the two wardens, the bramble,
+  rootwalker, heartwood and the Eldest) are drawn with their own gear, anatomy and glow rather than
+  a recolour.
 - `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
   look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
   mass, with one ink outline around the union, one rendered gradient across the whole (a bright
