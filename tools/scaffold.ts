@@ -60,13 +60,18 @@ export interface Draft {
 /** The world laid out once: a draft cut from it, then laid back, is compared with it. */
 export const baseline = (atlas: Atlas, defs: readonly MapDef[]): WorldGrid => worldGrid(atlas, defs);
 
+/** What a map id may be: the save keeps state under it. */
+const MAP_ID = /^[a-z][a-z0-9_]*$/;
+
 /**
  * The draft of `zoneId`'s map at world square x,y, or the reason there is none. Pure: `grid` is the
- * atlas as laid out with `defs`.
+ * atlas as laid out with `defs`, and `regions` the areas built far enough to have a sky of their own.
  */
-export function cut(atlas: Atlas, defs: readonly MapDef[], grid: WorldGrid, zoneId: string, x: number, y: number, id = zoneId): Draft | { refused: string } {
+export function cut(atlas: Atlas, defs: readonly MapDef[], grid: WorldGrid, regions: readonly string[], zoneId: string, x: number, y: number, id = zoneId): Draft | { refused: string } {
   const zone = atlas.zones.find((z) => z.id === zoneId);
   if (!zone) return { refused: `no zone '${zoneId}' in the atlas` };
+  if (!MAP_ID.test(id)) return { refused: `'${id}' is no map id: lower case letters, digits and _, a letter first` };
+  if (defs.some((d) => d.id === id)) return { refused: `a map '${id}' is built already; --id names the draft another` };
   if (!Number.isInteger(x) || !Number.isInteger(y)) return { refused: `${x},${y} is not a square` };
   const W = grid.width, H = grid.height;
   if (x < 0 || y < 0 || x + SIZE > W || y + SIZE > H) return { refused: `${x},${y} to ${x + SIZE - 1},${y + SIZE - 1} falls outside the world (${W} by ${H})` };
@@ -96,8 +101,12 @@ export function cut(atlas: Atlas, defs: readonly MapDef[], grid: WorldGrid, zone
     id, name: zone.name, kind: 'outdoor', rows,
     start: start(rows, laid, x, y),
     ...(band ? { band: [band[0], band[1]] as [number, number] } : {}),
+    // The Foreland's sky is the default; another area's zone shares its own.
+    ...(zone.area !== 'shelf' && regions.includes(zone.area) ? { region: zone.area as MapDef['region'] } : {}),
   };
-  return { def, counts, zones, notes: notes(atlas, grid, laid, def, x, y) };
+  const said = notes(atlas, grid, laid, def, x, y);
+  if (!regions.includes(zone.area)) said.unshift(`area ${zone.area} has no region yet, so the draft shares the Foreland's sky until it has`);
+  return { def, counts, zones, notes: said };
 }
 
 interface Laid { id: string; x: number; y: number; w: number; h: number }
@@ -212,6 +221,7 @@ export function emit(d: Draft, zoneId: string, x: number, y: number, mapImport: 
     `  name: '${def.name.replace(/'/g, "\\'")}',`,
     `  kind: 'outdoor',`,
     ...(def.band ? [`  band: [${def.band[0]}, ${def.band[1]}],`] : []),
+    ...(def.region ? [`  region: '${def.region}',`] : []),
     `  start: { x: ${def.start.x}, y: ${def.start.y}, facing: ${facing} },`,
     '  rows: [',
     ...def.rows.map((r) => `    '${r}',`),
@@ -231,16 +241,22 @@ const importFrom = (out: string | undefined, file: string): string => {
 
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
-  const opt = (name: string): string | undefined => { const i = args.indexOf('--' + name); return i >= 0 ? args.splice(i, 2)[1] : undefined; };
+  const refuse = (why: string): never => { console.error(`scaffold: ${why}`); process.exit(1); };
+  const opt = (name: string): string | undefined => {
+    const i = args.indexOf('--' + name);
+    if (i < 0) return undefined;
+    const v = args.splice(i, 2)[1];
+    if (v === undefined || v.startsWith('--')) refuse(`--${name} wants a value`);
+    return v;
+  };
   const flag = (name: string): boolean => { const i = args.indexOf('--' + name); if (i >= 0) args.splice(i, 1); return i >= 0; };
   const out = opt('out'), id = opt('id'), force = flag('force');
   const [zoneId, sx, sy] = args;
-  const refuse = (why: string): never => { console.error(`scaffold: ${why}`); process.exit(1); };
   if (!zoneId || sx === undefined || sy === undefined || args.length > 3) refuse('usage: node tools/scaffold.ts <zone> <x> <y> [--id <map id>] [--out <file> [--force]]');
   if (out && existsSync(out) && !force) refuse(`${out} exists; --force to overwrite it`);
-  const { ATLAS, MAP_DEFS } = await import('../src/content/index.ts');
+  const { ATLAS, MAP_DEFS, AREAS } = await import('../src/content/index.ts');
   const x = Number(sx), y = Number(sy);
-  const d = cut(ATLAS, MAP_DEFS, baseline(ATLAS, MAP_DEFS), zoneId, x, y, id);
+  const d = cut(ATLAS, MAP_DEFS, baseline(ATLAS, MAP_DEFS), AREAS.map((a) => a.id), zoneId, x, y, id);
   if ('refused' in d) return refuse(d.refused);
   const text = emit(d, zoneId, x, y, importFrom(out, 'map.ts'), importFrom(out, 'types.ts'));
   if (out) { writeFileSync(out, text); console.log(`scaffold: wrote ${def(d)} to ${out}`); }
