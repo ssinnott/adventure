@@ -2,6 +2,7 @@
 // in src/content/areas/<area>/ and is listed once, in road order, in src/content/index.ts.
 import type { MapDef, Terrain, Feature, Door, EncounterDef } from '../game/map.ts';
 import type { MonsterDef } from '../game/monsters.ts';
+import type { Condition } from '../game/party.ts';
 import type { ItemDef } from '../game/items.ts';
 import type { QuestDef } from '../game/quests.ts';
 import type { Climate } from '../game/weather.ts';
@@ -52,12 +53,12 @@ export interface Novelty {
 
 /**
  * The mechanics an area can claim, all named in its data: a kind of feature or door, a monster that
- * shoots, is mindless or inflicts a condition, a field an encounter uses. The list grows with the
+ * shoots, shrugs off a condition or inflicts a condition, a field an encounter uses. The list grows with the
  * systems.
  */
 export type Mechanic =
   | `feature:${Feature['kind']}` | `door:${Exclude<Door, 'none'>}`
-  | 'monster:ranged' | 'monster:missile' | 'monster:mindless' | `inflict:${NonNullable<MonsterDef['inflict']>['cond']}`
+  | 'monster:ranged' | 'monster:missile' | `immune:${Condition}` | `inflict:${NonNullable<MonsterDef['inflict']>['cond']}`
   | `encounter:${Exclude<keyof EncounterDef, 'id' | 'x' | 'y' | 'monsters'>}`;
 
 /**
