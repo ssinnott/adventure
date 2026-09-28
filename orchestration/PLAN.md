@@ -452,3 +452,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   git conflicts only at `harrow.ts` (resolve the hunk, not the file: the Eel's new words live there
   too), and `keep.ts` would silently keep his old `lines`, `done` and `after`.
 - Scouts on #47 (the pilot) and #73 (the Lodestone) since 19:30 (`footprints/47.md`, `73.md`).
+
+### 19:53: #135 reviewed
+
+- #135 (#17's B) reviewed (`reviews/135.md`): ready after fixes, then the owner's OK on its sheet.
+  Its blocker (carrying #85's words) was already done in its main merge a2a0716 (19:49): Vask's new
+  lines are in `keep.ts` alone; the Eel's stay in `harrow.ts`. Sent 19:56: the proclamation moved off
+  the arrival squares; `keep_chapel` once; nits; the owner's choice (Vask's hand-in pages 19 lines and
+  the gold line alone).
