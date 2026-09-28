@@ -14,6 +14,7 @@ import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
 import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
+import type { QuestDef } from '../game/quests.ts';
 import { drawFrameBackground } from './frame.ts';
 import { MessageScreen } from './screens.ts';
 import { BRASS, TEXT, TEXT_DIM, PANEL } from './palette.ts';
@@ -1161,11 +1162,11 @@ function centreOf(id: string): [number, number] | undefined {
 }
 
 /**
- * A gate's flag as the overlay letters it: the title of the quest it finishes. A flag keeps the
- * name it was saved under, so its own words can be a place's old name.
+ * A gate's flag as the overlay letters it: the title of the quest or chapter it finishes. A flag
+ * keeps the name it was saved under, so its own words can be a place's old name.
  */
 function gateName(flag: string): string {
-  const q = QUESTS.find((d) => [d.done ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)));
+  const q = QUESTS.flatMap((d): readonly QuestDef[] => d.chapters ?? [d]).find((d) => [d.done ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)));
   return q ? q.title.replace(/^The /, '') : flag.replace(/^q_/, '').replace(/_done$/, '');
 }
 

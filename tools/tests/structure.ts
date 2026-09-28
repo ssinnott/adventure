@@ -12,7 +12,7 @@ import { gridFaults } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { EncounterDef, MapDef } from '../../src/game/map.ts';
-import type { QuestCond } from '../../src/game/quests.ts';
+import type { QuestCond, QuestDef } from '../../src/game/quests.ts';
 import { SOUTH } from '../../src/game/types.ts';
 import { ok } from './lib.ts';
 
@@ -63,7 +63,7 @@ export function questItems(): Set<string> {
   const conds = (w: QuestCond | readonly QuestCond[]): QuestCond[] => [w].flat();
   return new Set([
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && f.quest ? [f.quest.item] : [])),
-    ...QUESTS.flatMap((q) => [q.start, ...(q.done ? [q.done] : []), ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds).flatMap((c) => c.item ? [c.item] : [])),
+    ...QUESTS.flatMap((q): readonly QuestDef[] => q.chapters ?? [q]).flatMap((q) => [q.start, ...(q.done ? [q.done] : []), ...q.entries.map((e) => e.when), ...q.goals.map((g) => g.when)].flatMap(conds).flatMap((c) => c.item ? [c.item] : [])),
   ]);
 }
 

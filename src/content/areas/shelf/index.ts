@@ -10,6 +10,7 @@ import { GREYWATER2 } from './maps/greywater2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
+import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -20,6 +21,7 @@ export const AREA = {
   sprites: SPRITES,
   items: ITEMS,
   quests: QUESTS,
+  chapter: CHAPTER,
   // The coast: mild, wet in the autumn, fog off the sea. Snow only in a cold snap.
   climate: { summer: 18, winter: 2, daily: 4, damp: [0.01, 0.07], wettest: 85, fog: 0.8, lag: 0,
     fogText: 'Fog rolls in off the sea.', thunderText: 'Thunder rolls in off the sea.' },
