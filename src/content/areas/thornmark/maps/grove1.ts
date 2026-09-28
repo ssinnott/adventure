@@ -2,6 +2,7 @@
 // a room behind a secret door on the west side. The stairs down are in the south-east room.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { TEAR_CLOSED } from './grove2.ts';
 
 export const GROVE1: MapDef = {
   id: 'grove1',
@@ -51,10 +52,10 @@ export const GROVE1: MapDef = {
     { id: 'g1_wolves', x: 6, y: 3, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
     { id: 'g1_zealots', x: 2, y: 6, monsters: ['zealot', 'zealot', 'zealot', 'ashen_adept'], aware: 5, respawn: 2880 },
     { id: 'g1_knights', x: 4, y: 8, monsters: ['bone_knight', 'bone_knight', 'skeleton', 'skeleton', 'skeleton'], aware: 4, respawn: 2880 },
-    { id: 'g1_hounds', x: 6, y: 13, monsters: ['rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 2880 },
+    { id: 'g1_hounds', x: 6, y: 13, monsters: ['rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 2880, until: TEAR_CLOSED },
     { id: 'g1_keeper', x: 3, y: 11, monsters: ['wraith', 'bone_knight', 'bone_knight'], aware: 2, roams: false },
     { id: 'g1_zealots2', x: 13, y: 1, monsters: ['zealot', 'zealot', 'zealot', 'zealot', 'ashen_adept', 'ashen_adept'], aware: 5, respawn: 2880 },
-    { id: 'g1_elders', x: 13, y: 13, monsters: ['riftling_elder', 'riftling_elder', 'riftling', 'riftling', 'riftling', 'riftling'], aware: 5, respawn: 2880 },
+    { id: 'g1_elders', x: 13, y: 13, monsters: ['riftling_elder', 'riftling_elder', 'riftling', 'riftling', 'riftling', 'riftling'], aware: 5, respawn: 2880, until: TEAR_CLOSED },
     { id: 'g1_stairguard', x: 10, y: 11, monsters: ['bone_knight', 'bone_knight', 'bone_knight', 'wraith'], aware: 3, roams: false },
   ],
 };
