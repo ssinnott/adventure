@@ -2,6 +2,9 @@
 // to judge from pictures rather than a checkout (EXPANSION §5.7).
 //   node tools/sheet.ts out.png --area thornmark
 //   node tools/sheet.ts out.png [--maps thornhold,grove1] [--monsters tm_ogre] [--interiors green_man]
+//   node tools/sheet.ts out.png --changed origin/main
+// --changed draws what changed since the base, as tools/changed.ts reads it; with nothing changed
+// it says so, writes nothing and exits 0. A change to this tool draws everything.
 // Each map from its arrivals and, outdoors, from each of its sites on the world map, by day and by
 // night, with its automap revealed whole and its crop of the world map; a dungeon once, lit, since
 // it has no day or night. Each monster as a strip of idle frames ending on the hit flash. Each
@@ -10,6 +13,7 @@
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { createServer } from './server.ts';
+import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './changed.ts';
 import { AREAS, MAP_DEFS, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
 import { GameMap } from '../src/game/map.ts';
 import { worldPoint } from '../src/game/atlas.ts';
@@ -21,11 +25,11 @@ import type { RegionId } from '../src/game/weather.ts';
 import { daylightAt, MINUTES_PER_DAY, MIDSUMMER, EPOCH_DAY, DAYS_PER_YEAR } from '../src/game/calendar.ts';
 
 const require = createRequire(import.meta.url);
-const USAGE = 'usage: node tools/sheet.ts out.png --area <id> | [--maps a,b] [--monsters x,y] [--interiors p,q]';
+const USAGE = 'usage: node tools/sheet.ts out.png [--area <id>] [--maps a,b] [--monsters x,y] [--interiors p,q] [--changed <base>]';
 const fail = (msg: string): never => { console.error(msg); process.exit(2); };
 // Strict: one output path, and each known flag once with a value. Anything else is refused, so a
 // misspelt flag never makes an empty sheet that looks like nothing changed.
-const FLAGS = ['area', 'maps', 'monsters', 'interiors'];
+const FLAGS = ['area', 'maps', 'monsters', 'interiors', 'changed'];
 const opts: Record<string, string> = {};
 let out: string | undefined;
 for (let i = 2; i < process.argv.length; i++) {
@@ -39,7 +43,8 @@ for (let i = 2; i < process.argv.length; i++) {
   } else if (out === undefined) out = a;
   else fail(`one output path only, not '${out}' and '${a}'\n${USAGE}`);
 }
-if (!out || !out.endsWith('.png')) fail(USAGE);
+if (!out) fail(USAGE);
+if (!/\.png$/i.test(out!)) fail(`'${out}' is not a .png: the sheet is written as a PNG\n${USAGE}`);
 if (!Object.keys(opts).length) fail(`nothing to draw\n${USAGE}`);
 const opt = (name: string): string | undefined => opts[name];
 const list = (name: string): string[] => opt(name)?.split(',').filter(Boolean) ?? [];
@@ -54,6 +59,15 @@ if (areaId) {
   monsters = [...monsters, ...area.monsters.map((d) => d.id)];
   interiors = [...interiors, ...area.interiors];
 }
+const base = opt('changed');
+if (base) {
+  const files = changedFiles(base);
+  const everything = files.includes('tools/sheet.ts');
+  const m = await changedMaps(files), mo = await changedMonsters(files, base), i = await changedInteriors(files, base);
+  maps = [...maps, ...(everything || m.all ? MAP_DEFS.map((d) => d.id) : m.maps)];
+  monsters = [...monsters, ...(everything || mo.all ? Object.keys(MONSTERS) : mo.monsters)];
+  interiors = [...interiors, ...(everything || i.all ? INTERIORS : i.interiors)];
+}
 maps = [...new Set(maps)]; monsters = [...new Set(monsters)]; interiors = [...new Set(interiors)];
 const unknown = [
   ...maps.filter((id) => !MAP_DEFS.some((d) => d.id === id)).map((id) => `map '${id}'`),
@@ -61,6 +75,10 @@ const unknown = [
   ...interiors.filter((id) => !(INTERIORS as readonly string[]).includes(id)).map((id) => `interior '${id}'`),
 ];
 if (unknown.length) fail(`unknown ${unknown.join(', ')}`);
+if (!maps.length && !monsters.length && !interiors.length) {
+  if (base) { console.log(`nothing new since ${base}: no sheet`); process.exit(0); }
+  fail(`nothing to draw\n${USAGE}`);
+}
 
 interface View { label: string; x: number; y: number; facing: Facing }
 interface MapPlan { id: string; name: string; kind: string; region: RegionId; views: View[]; world: { x: number; y: number; w: number; h: number; mark: [number, number] } }

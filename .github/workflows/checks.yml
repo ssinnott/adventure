@@ -1,7 +1,8 @@
 # The checks every pull request must pass before it merges: the typecheck, the tests and the smoke
 # test, each its own job so the pull request shows each. Branch protection on main requires all three
 # and a branch up to date with main. No path filters: a pull request that touches only docs must
-# still report, or it waits on checks that never come.
+# still report, or it waits on checks that never come. The contact sheet's job, last, is not one of
+# the three: it attaches pictures for the owner and is not required.
 name: Checks
 
 on:
@@ -71,3 +72,34 @@ jobs:
           name: smoke-screenshot
           path: smoke.png
           if-no-files-found: ignore
+
+  # The contact sheet (tools/sheet.ts): the maps, monsters and interiors the pull request changed, on
+  # one page for the owner to judge. Attached to the run, not a required check; a pull request that
+  # changes none of them gets no sheet and a line saying so.
+  sheet:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps --only-shell chromium
+      - run: node tools/sheet.ts sheet.png --changed HEAD^1
+      - id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: contact-sheet
+          path: sheet.png
+          if-no-files-found: ignore
+      - run: |
+          if [ -f sheet.png ]; then
+            echo "Contact sheet: [contact-sheet](${{ steps.upload.outputs.artifact-url }}) (a zip holding sheet.png)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No map, monster or interior changed: no contact sheet." >> "$GITHUB_STEP_SUMMARY"
+          fi
