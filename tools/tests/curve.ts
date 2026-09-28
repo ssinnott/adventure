@@ -13,8 +13,9 @@ import { areaBand } from '../../src/game/atlas.ts';
 import { ok, owed } from './lib.ts';
 
 /**
- * Walking steps from a map's way in (its start) to every cell, given keys and secrets, through no
- * tree or rock: Infinity where the party cannot walk.
+ * Walking steps from a map's way in (its start) to every cell, given keys and secrets, swimming and
+ * climbing: never through a wall, tree, rock, deep water or the void. Infinity where the party
+ * cannot walk.
  */
 export function stepsFrom(def: MapDef): (x: number, y: number) => number {
   const m = new GameMap(def);
@@ -24,8 +25,9 @@ export function stepsFrom(def: MapDef): (x: number, y: number) => number {
     const [x, y] = queue[i]; const n = steps.get(y * m.width + x)!;
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
       const [nx, ny] = [x + dx, y + dy]; const k = ny * m.width + nx;
-      if (!m.inBounds(nx, ny) || steps.has(k) || m.passable(nx, ny, { swim: true, climb: true, keys: 1 }) === 'wall') continue;
-      if (m.at(nx, ny).solid === 'tree' || m.at(nx, ny).solid === 'rock') continue;
+      if (!m.inBounds(nx, ny) || steps.has(k)) continue;
+      const pass = m.passable(nx, ny, { swim: true, climb: true, keys: 1 });
+      if (pass !== 'ok' && pass !== 'unlock') continue;
       steps.set(k, n + 1); queue.push([nx, ny]);
     }
   }
@@ -92,16 +94,19 @@ export function curve(): void {
       const astray = kinds.filter((mid) => { const l = MONSTERS[mid].level; return !(Number.isInteger(l) && l >= 1 && l >= a - 2 && l <= b + 2); });
       ok(!astray.length, `${d.id}: its ${kinds.length} monsters' levels sit in ${a}-${b}, give or take two${astray.length ? `; not ${astray.map((m) => `${m} (${MONSTERS[m].level})`).join(', ')}` : ''}`);
       // Rising: a group's level (its monsters' mean) goes with its walking steps from the way in,
-      // and the nearest group is near the floor.
+      // the nearest group is near the floor, and the hardest near the top. The hardest need not be
+      // the farthest: Thornmark's farthest, the lake, is a middling group.
       const steps = stepsFrom(d);
       const at = d.encounters.map((e) => ({ id: e.id, steps: steps(e.x, e.y), level: e.monsters.reduce((t, m) => t + MONSTERS[m].level, 0) / e.monsters.length }));
       const lost = at.filter((g) => !Number.isFinite(g.steps));
       ok(!lost.length, `${d.id}: its ${at.length} groups can be walked to from the way in${lost.length ? `; not ${lost.map((g) => g.id).join(', ')}` : ''}`);
       const walked = at.filter((g) => Number.isFinite(g.steps));
       const rho = rankCorrelation(walked.map((g) => g.steps), walked.map((g) => g.level));
-      ok(rho >= 0, `${d.id}: its groups' levels rise from the way in (rank correlation ${rho.toFixed(2)})`);
+      ok(rho > 0, `${d.id}: its groups' levels rise from the way in (rank correlation ${rho.toFixed(2)})`);
       const nearest = walked.reduce((p, g) => (g.steps < p.steps ? g : p));
       ok(nearest.level <= a + 2, `${d.id}: the nearest group, ${nearest.id} at ${nearest.steps} steps, is near the floor ${a} (level ${nearest.level.toFixed(1)})`);
+      const hardest = walked.reduce((p, g) => (g.level > p.level ? g : p));
+      ok(hardest.level >= b - 2, `${d.id}: the hardest group, ${hardest.id} at ${hardest.steps} steps, is near the top ${b} (level ${hardest.level.toFixed(1)})`);
     }
 
     // The price window: no weapon, armour or shield in its chests or its monsters' drops dearer
@@ -110,8 +115,12 @@ export function curve(): void {
       ...features.flatMap((f) => (f.kind === 'chest' ? f.items.map((it) => ({ it, from: `chest ${f.id}` })) : [])),
       ...[...new Set(placed)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
     ].filter(({ it }) => ITEMS[it].slot !== 'none' && ITEMS[it].price > 0);
+    const dearer = found.filter((x) => ITEMS[x.it].price > row.price);
+    for (const x of dearer) ok(false, `${id}: ${x.it} (${ITEMS[x.it].price} gold, ${x.from}) is dearer than its window's ${row.price}`);
     const dearest = found.reduce((p, x) => (ITEMS[x.it].price > ITEMS[p.it].price ? x : p), found[0]);
-    for (const x of found) if (ITEMS[x.it].price > row.price) ok(false, `${id}: ${x.it} (${ITEMS[x.it].price} gold, ${x.from}) is dearer than its window's ${row.price}`);
-    if (dearest) ok(ITEMS[dearest.it].price <= row.price, `${id}: its dearest find, ${dearest.it} at ${ITEMS[dearest.it].price} gold, sits in its window (${row.price})`);
+    if (!dearer.length && dearest) ok(true, `${id}: its dearest find, ${dearest.it} at ${ITEMS[dearest.it].price} gold, sits in its window (${row.price})`);
+    // The window never narrows along the road.
+    const before = AREAS[i - 1];
+    if (before) ok(row.price >= CURVE[before.id].price, `${id}: its window, ${row.price}, is no narrower than ${before.id}'s (${CURVE[before.id].price})`);
   });
 }
