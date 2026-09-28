@@ -65,7 +65,8 @@ function lodestone(w: Walk, how: string): void {
   const stone = said.find((m) => m.startsWith('The Lodestone.'));
   ok(!!stone && logLines(stone).length <= 2, `${how}: four steps east of the south gate the Lodestone is said, in ${stone ? logLines(stone).length : 0} lines of the log`);
   w.world.move('forward');
-  const g = gytha(), here = w.world.featureHere();
+  // Stepping onto her square is meeting her, as it is in the game.
+  const g = gytha(), here = w.world.map.featuresAt(w.world.state.x, w.world.state.y).find((f) => f.kind === 'npc');
   ok(!!g && here?.kind === 'npc' && here.name === g.name, `${how}: at the track's end, at the stone's foot, is Gytha (${here && 'name' in here ? here.name : 'nobody'})`);
   if (!g) return;
   const talk = (): string => meet(g, w.party, heard(w.world, g)).text;
