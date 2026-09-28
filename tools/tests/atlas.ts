@@ -13,9 +13,13 @@ import { ok } from './lib.ts';
 export function atlas(): void {
   // A built map's hills and farmland are hills and farmland on the world map, square for square.
   const fixture: MapDef = { id: 'fixture_downs', name: 'Downs fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMMMM', 'M^^ffM', 'M^,ffM', 'MMMMMM'] };
-  const fixtureZone: AtlasZone = { id: 'fixture_downs', name: 'Downs fixture', area: ATLAS.zones[0].area, maps: [{ map: 'fixture_downs', at: [168, 30] }] };
+  // Laid where no zone map is: a map built there moves it.
+  const [fx, fy] = [64, 52];
+  const under = MAP_DEFS.find((d) => { const m = mapAt(ATLAS, d.id); return m && fx + 6 > m[0] && fx < m[0] + d.rows[0].length && fy + 4 > m[1] && fy < m[1] + d.rows.length; });
+  if (under) throw new Error(`the hills fixture lies on ${under.id}: move it to land no zone map covers`);
+  const fixtureZone: AtlasZone = { id: 'fixture_downs', name: 'Downs fixture', area: ATLAS.zones[0].area, maps: [{ map: 'fixture_downs', at: [fx, fy] }] };
   const withFixture = { ...ATLAS, zones: [...ATLAS.zones, fixtureZone] };
-  const fg = worldGrid(withFixture, [...MAP_DEFS, fixture]), fw = (x: number, y: number): number => fg.t(168 + x, 30 + y);
+  const fg = worldGrid(withFixture, [...MAP_DEFS, fixture]), fw = (x: number, y: number): number => fg.t(fx + x, fy + y);
   ok(fw(1, 1) === TI.hills && fw(2, 1) === TI.hills && fw(1, 2) === TI.hills && fw(2, 2) === TI.grass, 'a map\'s hills are hills on the world map');
   ok(fw(3, 1) === TI.farm && fw(4, 1) === TI.farm && fw(3, 2) === TI.farm && fw(4, 2) === TI.farm, 'and its farmland is farmland');
   ok(Object.entries(LEGEND).every(([ch, c]) => c.solid !== 'none' || c.door !== 'none' || ch in MAP_TERRAIN), 'every open ground in the legend has its world-map terrain');

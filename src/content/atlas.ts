@@ -360,7 +360,6 @@ export const PLAN: Atlas = {
     { name: 'The Iron Fells', icon: 'label', at: [420, 70] },
   ],
   links: [
-    { from: 'shelf', to: 'downs', kind: 'road', a: [201.5, 57.5], b: [192, 60] },
     { from: 'downs', to: 'delta', kind: 'road', a: [126, 100], b: [114, 116], note: 'down Kestrel Edge' },
     { from: 'saltings', to: 'saltmouth', kind: 'enter', a: [102, 178] },
     { from: 'delta', to: 'drowned_temples', kind: 'enter', a: [56, 170] },

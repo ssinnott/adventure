@@ -19,8 +19,8 @@ The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` b
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Foreland | 1–5, its map's | 2,296 | 879: the Foreland map, laid at 200,30 |
-| Callow Downs | 2–5 | 6,569 | none |
-| The area | 1–5 | 8,865 | a tenth |
+| Callow Downs | 2–5 | 6,569 | 1,024: F2, laid at 168,30 |
+| The area | 1–5 | 8,865 | a fifth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 8,594 squares, about 8.4 zone maps (EXPANSION §1 has 8.3). It runs from x 94 to x 231
@@ -55,13 +55,10 @@ Its edges:
 - **South-west: the Salt Road down Kestrel Edge** into the Delta (10–12), open from the start: one
   road, lightly held (EXPANSION §2.2).
 
-Between the two zones the area map (M, then Tab) draws a dotted line from the rim down through
-Brockholt and the fields to Gullwick. It follows nothing on the ground. It is where the walk out
-from the Foreland map meets the walk from the Downs' seed in Brockholt (180,30), and it moves as
-soon as a Downs map is laid, since a built zone starts its walk from its whole map: once F2 is
-built, the Foreland zone is its map and no more, and the line is the map's west edge. Until then
-the Foreland zone holds about 780 walkable squares of field and wood west of its map that are void
-in play.
+Between the two zones the area map (M, then Tab) draws a dotted line. With F2 built it is the
+Foreland map's west edge: a built zone starts its walk from its whole map, so the Foreland zone is
+its map and no more. The Foreland's ring stands there against F2, with the Salt Road through a gap
+at 0,29, on the sand beside Brandy Hole's mouth.
 
 `node tools/worldmap.ts out.png --zones` paints it.
 
@@ -83,12 +80,14 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
+| Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour; Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quest The Cargo
 Ledger (Hale, `quests.ts`); the monsters are MONSTERS §5.1's.
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
-(`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`) and the Seam's
-the carving over a blank stretch of wall.
+(`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's
+the carving over a blank stretch of wall, and Brockholt's (downs_f2 12,3) the bare ground under
+the holly at 12,4 (`f2_holly`), beside the woodcutter's word.
 
 In more detail, as SLICE.md had it before the area docs:
 
@@ -212,6 +211,23 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   (#46).
 - **Finds.** Brockholt's cache holds a Short Sword +1 and a Dagger +1.
 - **Pay.** About 130 xp a member.
+- **As built** (`maps/downs_f2.ts`, cut by `tools/scaffold.ts downs 168 30`):
+  - The Salt Road comes off the Foreland's beach through a gap at its 0,29, a square south of
+    Brandy Hole's mouth so the road does not walk a company into the caves, and leaves by the
+    south edge at 15–17 into F3. The rim is F2's north edge; west and south are open land that ends
+    in the void until E2 and F3 are built.
+  - Coldharbour at 5–11,9–13: the farmhouse and the barn about a yard, the lamp (an event), the well,
+    the rats in the barn and a track down to the road; a square by the gate is left for the
+    captain (#68). The shrine stands where the track meets the road, the milestone by the gap.
+  - Brockholt: a woodcutter's path in from the east to his camp, then on to the beeches at its
+    heart and the holly; the sett is a secret door under it, the cache two squares behind. A glade
+    on its west side for the boar. A scarecrow in the south-west fields and a view back over the
+    Foreland from the north-east rise make up the country's floor.
+  - Groups about twice the brief's, to hold the gate's six or seven fights to a rest (§8): eight
+    crows twice, six wolves, three boars, ten rats, four bandits and two archers. At level 2 the
+    company wins every fight and manages 6.3 fights to a rest; the brief's own lines gave 19.6.
+    They pay about 126 xp a member.
+  - Density: 99% of its 777 squares within 12 steps of something, the furthest 14.
 
 ### 4.3 F3, Gullwick (#47): core, band 2–3
 

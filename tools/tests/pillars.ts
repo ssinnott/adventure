@@ -275,11 +275,9 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
 
 /**
  * The squares where map and atlas disagree today, by whose fix they wait on: each is reported, and
- * fails once it agrees, so it is dropped here. Shelf 0,28 is where #47 opens the Salt Road.
+ * fails once it agrees, so it is dropped here.
  */
-const EDGES_OWED: Record<string, readonly string[]> = {
-  '#47': ['shelf 0,28'],
-};
+const EDGES_OWED: Record<string, readonly string[]> = {};
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */
 export interface FoundLock { kind: 'exit' | 'hand-in' | 'other'; flags: string[]; map: string; x: number; y: number; area: string; to?: string; key: string }
@@ -456,13 +454,16 @@ export async function pillars(): Promise<void> {
     }
   }
   {
-    // A fixture zone laid on open atlas grass, as tools/tests/atlas.ts lays one. 168,30 is the corner
-    // of F2, planned; #47, which builds it, moves the fixture to land no zone map covers.
+    // A fixture zone laid on open atlas grass, as tools/tests/atlas.ts lays one, where no zone map is
+    // laid: a map built there moves it.
     const lay = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_edge', name: 'Edge fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
-      const zone: AtlasZone = { id: 'fixture_edge', name: 'Edge fixture', area: ATLAS.zones[0].area, maps: [{ map: 'fixture_edge', at: [168, 30] }] };
+      const at: [number, number] = [64, 52];
+      const zone: AtlasZone = { id: 'fixture_edge', name: 'Edge fixture', area: ATLAS.zones[0].area, maps: [{ map: 'fixture_edge', at }] };
       const atlas = { ...ATLAS, zones: [...ATLAS.zones, zone] };
       if (!mapAt(atlas, fixture.id)) throw new Error('the edge fixture is not laid: its checks would pass on nothing');
+      const under = MAP_DEFS.find((d) => { const m = mapAt(ATLAS, d.id); return m && at[0] + 7 > m[0] && at[0] - 1 < m[0] + d.rows[0].length && at[1] + 6 > m[1] && at[1] - 1 < m[1] + d.rows.length; });
+      if (under) throw new Error(`the edge fixture lies on or beside ${under.id}: move it to land no zone map covers`);
       return edgeFaults(atlas, [...MAP_DEFS, fixture]).filter((e) => e.map === 'fixture_edge');
     };
     ok(!lay(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'a fixture zone of grass on atlas grass agrees at its edges');
