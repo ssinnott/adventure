@@ -78,7 +78,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6), the Gilded Eel and its four rumours, Vask and his contract |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, Vask and his contract |
 | The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
@@ -451,6 +451,22 @@ person who takes more than one item and a letter to read from the pack are syste
 on screen is written in the issue that builds them (#47, #67, #68, #70 and #77), and the Lodestone's
 keeper's in #73, each in a Dialogue section measured against the game's box and log. The built
 quests' words, Vask's, Hale's and the Gilded Eel's, were rewritten to the same bar in #85.
+
+### The Wardens' quests
+
+The Warden Drillyard is the Wardens' hall (DESIGN §8; `hall: 'wardens'`), its trade still training.
+Its drillmaster gives their quests, two here and two in Thornmark (`src/content/areas/shelf/guilds.ts`
+and Thornmark's):
+
+| Rank | Quest | Deed | Pay |
+|---|---|---|---|
+| first task | First Watch | the Scarth: a once-event on the road at the checkpoint (`scarth_watch`, 28,9) | 20 gold, 60 xp |
+| 1 | The Cellar's Cult | both cultist bands in the Ashcombe cellar (`m_cult1`, `m_cult2`) | 60 gold, 240 xp |
+| 1 | The Old Watchtower | Thornmark's ogre (`tm_ogre`) | 150 gold, 900 xp |
+| 2 | The Garrison's Strongbox | a chest by Thornhold's north wall (`tm_strongbox`, 23,1) | 200 gold, 1,500 xp |
+
+A company that did a deed before taking its quest is paid when it takes it. The Wardens' quests
+take none of #56's: quests 3 and 6 stay plain quests (DESIGN §8).
 
 ## 7. Encounters, and what is new
 

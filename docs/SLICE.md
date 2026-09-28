@@ -20,8 +20,9 @@ DESIGN.md first for the why.
   first menu, its own trade, the guild's work and Leave, which each choice returns to; a business
   with its trade alone opens straight on it. The guild's work pays what is done, then offers the
   quests at or under the company's rank. Membership and rank are worked out from the guild quests'
-  done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). No hall is marked yet: the Wardens' and the Lanterns' come with
-  their quests. A spell hall's fee buys the right to study, not membership.
+  done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). The Warden Drillyard
+  is the Wardens' hall; the Lanterns' halls come with their quests. A spell hall's fee buys the
+  right to study, not membership.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
   mountains gated by party abilities, hills (`^`) and farmland (`f`) open to all but on no built
@@ -301,8 +302,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Stubbed or absent
 
-- No guild quests yet: the guilds' rules and the hall's menu are built, the Wardens' and the
-  Lanterns' quests are not.
+- The Lanterns' guild quests are not built yet; the Wardens' are.
 - No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
@@ -468,7 +468,7 @@ does.
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
-| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags; what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
+| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |

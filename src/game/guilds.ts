@@ -1,7 +1,7 @@
 // The guilds' rules (DESIGN §8): a guild's quests, what its hall offers a company, taking a quest
 // and the report that pays it. A company joins by its first task and rises a rank when all of a
-// rank's quests are done, so membership and rank are worked out from the quests' done flags and
-// nothing else is saved. Every hall of a guild keeps the one ladder. A rank decides only which of
+// rank's quests are done, so membership and rank are worked out from the quests' done flags; a rank
+// once reached is kept by its own flag, so that quests added later never lower it. Every hall of a guild keeps the one ladder. A rank decides only which of
 // the guild's own quests a hall offers, so it is no story lock. It depends on the world state and
 // the party alone, so the tests can walk a ladder without a Game; the hall's menu is ui/screens.ts.
 import type { GuildId } from '../content/guilds.ts';
