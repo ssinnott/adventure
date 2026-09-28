@@ -152,7 +152,7 @@ export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horiz
 const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
   rat: rat.draw,
   slime: slime.draw,
-  wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw,
+  wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw,
   boar: boar.draw,
   spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw,
   bandit: bandit.draw, archer: bandit.draw, brigand: bandit.draw, brigand_archer: bandit.draw,
