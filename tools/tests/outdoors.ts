@@ -8,7 +8,11 @@ import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
 import { ATLAS } from '../../src/content/index.ts';
 import { mapAt } from '../../src/game/atlas.ts';
 import type { AtlasZone } from '../../src/game/atlas.ts';
-import { ok } from './lib.ts';
+import { World } from '../../src/game/world.ts';
+import { defaultParty } from '../../src/game/party.ts';
+import { makeRng } from '../../src/lib/engine/rng.ts';
+import { EAST } from '../../src/game/types.ts';
+import { ok, local } from './lib.ts';
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
@@ -44,6 +48,23 @@ export function outdoors(): void {
   for (const d of PLAYED_DEFS) for (const e of d.exits ?? []) ok(maps[e.to]?.passable(e.tx, e.ty) === 'ok', `${d.id} -> ${e.to}: lands on an open square (${e.tx},${e.ty})`);
   ok(!out.exits.some((e) => e.to === OUTDOORS), 'no exit joins one zone to the next: the way between them is walked');
   ok(out.gates.length === 0, `no gate closes the road through the outdoors${out.gates.length ? ' -> ' + out.gates.map((g) => `${g.x},${g.y}`).join(', ') : ''}`);
+  { // The machinery stays for the story's own locks (EXPANSION §2.3): an exit into the zone next door
+    // that asks for flags is laid as a gate on its square, and refuses the party until they are set.
+    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, needFlag: ['fixture_a', 'fixture_b'], blockedText: 'Fixture gate.' }) });
+    const laid = layOutdoors(ATLAS, defs), fx = new GameMap(laid.find((d) => d.id === OUTDOORS)!);
+    const g = fx.gates;
+    ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'fixture_a,fixture_b' && g[0].blockedText === 'Fixture gate.', `an exit with flags into the zone next door is laid as a gate on its square, with its words (${g.map((q) => `${q.x},${q.y}`).join(', ')})`);
+    const rng = makeRng(3), party = defaultParty(rng);
+    const world = new World(Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
+    world.travel('shelf', 30, 9, EAST);
+    const shut = world.move('forward');
+    party.flags.fixture_a = 1;
+    const half = world.move('forward');
+    party.flags.fixture_b = 1;
+    const open = world.move('forward');
+    ok(shut.kind === 'blocked' && shut.reason === 'Fixture gate.' && half.kind === 'blocked' && open.kind === 'moved' && local(world).x === 31,
+      `the gate refuses the party with its words until every flag is set, then lets it through (${shut.kind}, ${half.kind}, ${open.kind})`);
+  }
   ok(PLAYED_DEFS.find((d) => d.id === 'harrow')!.exits!.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Helmstow\'s south gate opens onto the Foreland road, where it always did');
   ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void.
