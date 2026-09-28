@@ -3,14 +3,14 @@
 //   node tools/gate.ts                                 every map with monsters, levels 1-8 and 10
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots
-// The premade company is trained to each level in its starting gear, and fights every group of a map
-// alone from full health, once per seed. --road instead fights the groups named, in order, with no
-// rest between, and counts the companies still standing after each; one group is one fight. A plain
-// bot plays the party: mend the weakest when someone is under 40%, else the strongest damage spell it
-// can afford, else a weapon, else brace. It never sleeps, blesses, drinks or flees, and nobody has
-// gear past the start, so it is weaker than a player; single fights at full health are kinder than
-// play. Read the numbers as where the fights bite, not as a promise. tools/tests/gate.ts holds every
-// map and area to them (the gate check); it imports this file, whose table runs only from the command
+// The premade company is trained to each level and dressed by the ladder (GEAR, tools/harness.ts),
+// and fights every group of a map alone from full health, once per seed. --road instead fights the
+// groups named, in order, with no rest between, and counts the companies still standing after each;
+// one group is one fight. A plain bot plays the party: mend the weakest when someone is under 40%,
+// else the strongest damage spell it can afford, else a weapon, else brace. It never sleeps, blesses,
+// drinks or flees, so it is weaker than a player; single fights at full health are kinder than play.
+// Read the numbers as where the fights bite, not as a promise. tools/tests/gate.ts holds every map
+// and area to them (the gate check); it imports this file, whose table runs only from the command
 // line.
 import { pathToFileURL } from 'node:url';
 import { makeRng } from '../src/lib/engine/rng.ts';
@@ -22,14 +22,18 @@ import { RANGED_PENALTY } from '../src/game/weather.ts';
 import { spell } from '../src/game/spells.ts';
 import type { SpellTarget } from '../src/game/spells.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
+import { outfit } from './harness.ts';
 import type { EncounterDef } from '../src/game/map.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 
-/** The premade company, every member trained to `level`, whole. Under level 1 it is no company, and throws. */
+/**
+ * The premade company, every member trained to `level` and dressed by the ladder, as harness's is,
+ * whole. Under level 1 it is no company, and throws.
+ */
 export function gateCompany(level: number, seed: number): Party {
   if (!(level >= 1)) throw new Error(`no company at level ${level}: levels start at 1`);
   const rng = makeRng(seed), p = defaultParty(rng);
-  for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); c.hp = c.maxHp; c.sp = c.maxSp; }
+  for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); outfit(c, level); c.hp = c.maxHp; c.sp = c.maxSp; }
   return p;
 }
 
