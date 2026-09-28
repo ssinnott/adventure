@@ -11,7 +11,7 @@ import { condFaults } from './quests.ts';
 import { gridFaults } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { EncounterDef, MapDef } from '../../src/game/map.ts';
+import type { EncounterDef, MapDef, Presence } from '../../src/game/map.ts';
 import type { QuestCond, QuestDef } from '../../src/game/quests.ts';
 import { SOUTH } from '../../src/game/types.ts';
 import { giftOf } from '../../src/game/wilds.ts';
@@ -89,12 +89,16 @@ export function respawnsOutOfRange(def: MapDef): string[] {
  * never comes back anyway, and a sky asked of a group underground.
  */
 export function presenceFaults(def: MapDef, maps: readonly MapDef[] = MAP_DEFS): string[] {
-  return (def.encounters ?? []).flatMap((e) => [
-    ...(e.until ? condFaults(e.until, maps).map((f) => `${e.id} until: ${f}`) : []),
-    ...(e.after ? condFaults(e.after, maps).map((f) => `${e.id} after: ${f}`) : []),
-    ...(e.until && !e.respawn ? [`${e.id}: until, but it never comes back`] : []),
-    ...(def.kind === 'dungeon' && [e.when ?? []].flat().some((h) => h.sky) ? [`${e.id}: a sky underground`] : []),
-  ]);
+  const worn = (id: string, p: Presence): string[] => [
+    ...(p.until ? condFaults(p.until, maps).map((f) => `${id} until: ${f}`) : []),
+    ...(p.after ? condFaults(p.after, maps).map((f) => `${id} after: ${f}`) : []),
+    ...(def.kind === 'dungeon' && [p.when ?? []].flat().some((h) => h.sky) ? [`${id}: a sky underground`] : []),
+  ];
+  return [
+    ...(def.encounters ?? []).flatMap((e) => [...worn(e.id, e), ...(e.until && !e.respawn ? [`${e.id}: until, but it never comes back`] : [])]),
+    // A person or an event wears the same: gone once its until holds, there once its after does.
+    ...(def.features ?? []).flatMap((f) => (f.kind === 'npc' ? worn(`${f.name.split(',')[0]} at ${f.x},${f.y}`, f) : f.kind === 'event' ? worn(f.id, f) : [])),
+  ];
 }
 
 /** The respawning groups of a map with a Rift monster in them that do not stop coming back when the tear closes. */
@@ -113,7 +117,7 @@ export function structure(): void {
     const out = respawnsOutOfRange(def);
     ok(!out.length, `${def.id}: every respawn is ${RESPAWN[0]} to ${RESPAWN[1]} minutes${list(out)}`);
     const when = presenceFaults(def);
-    ok(!when.length, `${def.id}: every group's until and after names something real, and none asks for a sky underground${list(when)}`);
+    ok(!when.length, `${def.id}: every group's, person's and event's until and after names something real, and none asks for a sky underground${list(when)}`);
   }
   const thornmark = AREAS.find((a) => a.id === 'thornmark')!.maps;
   for (const def of thornmark) {
@@ -175,6 +179,9 @@ export function structure(): void {
     ok(faults(group(map('mill'), 'm_rats', { respawn: 1440, after: { flag: 'no_such_flag' }, until: { slain: 'grove2:no_such_group' } })) === 'm_rats until: slain grove2:no_such_group,m_rats after: flag no_such_flag', 'and one naming nothing real, and an after');
     ok(faults(group(map('mill'), 'm_rats', { respawn: undefined, until: TEAR_CLOSED })) === 'm_rats: until, but it never comes back', 'an until on a group that never comes back is refused');
     ok(faults(group(map('mill'), 'm_rats', { when: [{ hours: 'night' }, { sky: 'fog' }] })) === 'm_rats: a sky underground', 'and fog asked of a group underground; night is not');
+    const worn = (f: MapDef['features']): string => presenceFaults({ ...map('mill'), features: f }).join();
+    ok(worn([{ kind: 'event', x: 1, y: 1, id: 'fx_lamp', text: 'Dark.', until: { flag: 'no_such_flag' } }, { kind: 'npc', x: 1, y: 1, name: 'Alwin, a fixture', lines: ['Hm.'], after: { seen: 'mill:no_such_event' }, when: { sky: 'fog' } }])
+      === 'fx_lamp until: flag no_such_flag,Alwin at 1,1 after: seen mill:no_such_event,Alwin at 1,1: a sky underground', "an event's until and a person's after naming nothing real are refused, and a person's fog underground");
     const tm = map('thornmark');
     ok(riftStillComing(group(tm, 'tm_hounds', { until: undefined })).join() === 'tm_hounds', 'thornmark with tm_hounds coming back past the tear is refused');
     ok(!riftStillComing(group(tm, 'tm_wolves1', { until: undefined })).length, 'and its wolves, no Rift, need no until');
