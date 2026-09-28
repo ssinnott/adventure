@@ -543,3 +543,19 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   not a shroud) and sends the owner a before-and-after; #76's second pull request adds "Talk to" to
   #132's `businessEntries`, built when drawn; #134 merges main to land; #137 and #138 merge main
   after the owl, dropping their copy of the five `UNPLACED` lines.
+
+### 21:15: the Deepthorn's five and the zone merged; five new pull requests in review
+
+- #137 (#48's B) merged at 21:12 (main 97715f9) and #138 (#48's C, the Eldest) at 21:13 (main
+  49489e8), each after merging main behind the owl with one Deepthorn header and one copy of the five
+  `UNPLACED` lines: on each, ALL OK (47, then 48 owed: #49 ×5, ×6), SMOKE OK (43, then 44 drawn),
+  "Nothing new."; CI green; main's tree matches each. #48 closes.
+- #134 (#40's zone) merged at 21:15 (main 825fd35) after its main merge: tested on main 49489e8, ALL
+  OK (47 owed: #40 ×6), SMOKE OK, "Nothing new."; CI green. Main's tree matches. #40 stays open for
+  its dungeons, which wait on the owner's decisions 1 and 2.
+- #135 (#17's B): the throne redrawn (0790f8f, "the mourning cloth thrown over one corner"); it waits
+  on the owner's OK of the throne.
+- New: #140 (#73, the Lodestone), #141 (#47's 0b, doors in rock), #142 (#47's 0a, hills and the
+  crack sweep), #143 (#76's second pull request, presence and "Talk to"), #144 (#21's C, the
+  Wardens). Reviewers at 21:16 (`reviews/140.md` to `144.md`). #47's A is pushed on
+  `claude/m1-47-f2`, not yet a pull request.
