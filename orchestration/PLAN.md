@@ -128,3 +128,17 @@ The owner's call on #95's edges (01:25): narrow the rule to #33's wording, so an
 atlas cell beyond is water is skipped and the 12 Thornmark coast squares drop; owe the 12 left
 (shelf 0,28-30 and 1-8,31, thornmark 31,9) to a new issue the owner files, drafted by the
 orchestrator. Sent to #95 at 01:31. Its entries are re-keyed once the issue has a number.
+
+## Wave 2 merging; Wave 3 started
+
+A second workflow re-checked each fix (breaking each on purpose) and merged the six branches
+together on main: `npm run check` green, five smoke seeds, `npm run build` fine. #96 (#35) was
+squash-merged at 02:30 (15ec217), #93 (#31) merged at 02:33 (741fff3), main green after it. #90, #92,
+#94 and #95 got a last round at 02:37; #91 its CI half (the sheet job, now #96 is in, and `atlas` in
+tools/changed.ts's EVERY_MAP); #31's session a small follow-up PR on curve.ts. #38 started at 02:36:
+session_01VXBgDwSsKr5WWLbrDdgSLo, branch `claude/m0-38-gate-check`. The edge issue's draft waits
+on the owner.
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 3 | #38 | session_01VXBgDwSsKr5WWLbrDdgSLo | `claude/m0-38-gate-check` |
