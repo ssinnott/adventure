@@ -1,4 +1,4 @@
-// The people the party talks to: what a person says, what a hand-in takes and pays, and the
+// The people the party talks to: what a person says, what a hand-in takes and pays and the
 // questions they put. It depends on the person, the party and which of their words hold (`heard`),
 // so the tests meet anyone as the game does, without a Game.
 import type { Feature, NpcQuest, Words, Choice, Answer } from './map.ts';
@@ -68,7 +68,7 @@ export function meet(p: Person, party: Party, holds: (w: Words) => boolean): Mee
   return { text: p.lines.join('\n\n'), choice: open(p.choice, party) };
 }
 
-/** Answer a person's question: set its flags, hand over its item, and return what the person says. */
+/** Answer a person's question: set its flags, hand over its item and return what the person says. */
 export function answer(a: Answer, party: Party): string {
   set(party, a.sets);
   if (a.gives) party.bag.push(a.gives);
