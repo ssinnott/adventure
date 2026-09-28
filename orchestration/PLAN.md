@@ -618,3 +618,16 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - Sent 22:56: the pilot's session opens A (F2); the guilds session starts D (`claude/m1-21-lanterns`,
   the Lanterns, closing #21).
 - #140 (the Lodestone's track) and #135 (the redrawn throne) still wait on the owner's OKs.
+
+### 23:00: #77's footprint in; #135 and #140 to merge main; #77's A started
+
+- The owner was sent #135's redrawn throne (noon and 21:00) and #140's track and Gytha's first
+  meeting (22:57), for their OK.
+- Both test-merged onto main d1f661c conflict: #135 on §3's Helmstow row (#144 added "the Wardens'
+  hall"), #140 on §3's Helmstow and Foreland rows and on shipped.json. Each session merges main now
+  (shipped.json by the tool, never by hand); the second of the two to land merges again.
+- footprints/77.md (size L, four PRs, no owed entries): A (quests 1 and 8, the Bell and the Survey
+  Team, sharing Ebba) and B (quest 7, the Seal) now, A first; C (quest 2) after #135 and #47's B; D
+  (quest 3) after #135. Two titles are too wide for the log's list: default the shorter ones.
+- Started #77's A in the #76 session (`claude/m1-77-bell`). The guilds session is told that its
+  Lantern words must agree with #77's Ebba and Ailith (read #77's Dialogue).
