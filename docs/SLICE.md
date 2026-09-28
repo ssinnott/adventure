@@ -23,7 +23,11 @@ DESIGN.md first for the why.
   reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The wilderness
   features, on no built map yet: a shrine or fountain that gives every member a stat point once, a
   cairn with a cache, a statue whose riddle takes its answer typed and a camp where the party may
-  rest with monsters two squares off; a hermit is a person.
+  rest with monsters two squares off; a hermit is a person. Dens, on no built map yet (#68, #69 and
+  #71 place them): a camp that breeds one kind of monster, its brood back one a pace at their
+  posts while it stands, guarded by keepers beside it that never leave. Its look is said when first
+  seen; its keepers dead, a step or Space asks to burn it, and burnt it gives its hoard, breeds no
+  more and shows as ash on the automap.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
@@ -197,10 +201,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   riftling, ogre, wraith, birds) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts`
   has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
   the cult and the skeletons stand on. Every monster def names a sprite kind no other def uses
-  (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands and
-  smugglers, the cult's ranks, the bone knight, the ghoul and the drowned man, the dire wolf and
-  rift hound, the thorn spider, shore crab and rift crawler, the elder and the two wardens) are
-  drawn with their own gear, anatomy and glow rather than a recolour.
+  (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
+  smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
+  and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
+  crab and rift crawler, the elder and the two wardens) are drawn with their own gear, anatomy and
+  glow rather than a recolour.
 - `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
   look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
   mass, with one ink outline around the union, one rendered gradient across the whole (a bright
@@ -345,7 +350,8 @@ over content broken on purpose too, and two tools to theirs:
   nine fights in ten won at the floor, a quarter at most two under it, a boss three to seven times
   in ten, 6.5 fights to a rest give or take one and the area's road walked eight times in ten. A
   group that walks only in fog is fought with the bows' toll; one that waits on an `after` is no
-  warning at the way in.
+  warning at the way in. A den's keepers are its camp's hardest fight, won no more often than any
+  of its brood; its brood's number and pace are printed.
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
@@ -354,6 +360,11 @@ over content broken on purpose too, and two tools to theirs:
   the camp is rested at twice; the riddle is typed through the real keyboard and takes only the
   right word. Every statue's answer is one to sixteen characters long, and some other text of the
   game says it, never another statue's answer.
+- `dens` (#88): a den on a fixture field, a point and no sign. Its brood killed together come back
+  one a pace, and all after five days away; its keepers alive it neither asks nor burns; burnt, it
+  gives its hoard once and none of its brood comes back in thirty days, through a save and a load.
+  Its look is said once, on first sight, never for a ruin. Every den keeps its rules: keepers
+  beside it that never leave, brood of its kind that come back until it burns.
 - `pillars` (§5.4): a hint on the near side of every secret door; no text past three lines of the
   log and no monster's look past two, every glyph in the font, British spelling; each `Area.novel`
   holds; water and roads carry on into the atlas; story locks (`content/locks.ts`) signed in, none
@@ -421,10 +432,10 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group wears |
+| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group wears |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`), encounter triggers, rest, search |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
@@ -433,10 +444,11 @@ does.
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
-| `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest) and `ExploreScreen` |
+| `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
+| `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
 | `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the farmland's fields and hedges, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world in pink and the weather drawn over it |
-| `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it), party cards, log, purse |
+| `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |
 | `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
