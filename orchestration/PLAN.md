@@ -205,3 +205,9 @@ workflow, which writes and checks the new file; a session then opens its pull re
 | Wave | Issues | Session | Branch |
 |---|---|---|---|
 | 4 | #104 | session_011WemzicoqEy67tP84Neu2j | `claude/m0-104-edges` |
+The SLICE audit (four auditors, a writer, a verifier; 43 findings folded into 26 edits and 15 fixes)
+is at orchestration/SLICE.new.md; session_01SMHvCyJAL7CSMHTJwBTrRL (branch `claude/m0-slice-sweep`)
+opens its PR at 10:49. Its 'What the checks owe' bullet names #104's squares: whichever of the two
+lands second fixes it.
+
+| 4 | SLICE sweep | session_01SMHvCyJAL7CSMHTJwBTrRL | `claude/m0-slice-sweep` |
