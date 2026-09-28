@@ -1,0 +1,8 @@
+Your task: #100, "Let gear carry a plus: +1 to hit and damage on a weapon, +1 armour class on armour", and then #98, "Let a shop sell an item at its own price". Two pull requests, #100's first.
+
+- Rules: orchestration/COMMON.md on origin/claude/phase-1-orchestration-w0egtw. Read it first.
+- Footprints: orchestration/footprints/100.md and orchestration/footprints/98.md on the same branch.
+- Branches: claude/m1-100-plus for #100, from the latest main. Once #100's pull request is open, cut claude/m1-98-shop-price from the latest main (not from #100's branch) for #98. The orchestrator, for the owner, gives you leave to push to both.
+- #100 is on the critical path: #99 (the Foreland's gear ladder) and #101 (Thornmark's chests) wait on it, and #47, the pilot, on #99. Open its pull request as soon as its Done-when holds; don't hold it for #98.
+- The helper is the API #99 and #101 will build on (`extra` for named finds, `n` of 2 for Brigandine +2): keep it as the footprint shapes it, and put it in src/content/items.ts, never src/game/items.ts (the footprint's first pitfall). No plus goes into any table in this pull request.
+- Beside you in Wave 1: #40 (the pass and Thornmark), #41 (monster fields), #66 (the grid), #45 (wilderness features), #74 then #21 (Helmstow's guildhall and the guilds), and five art sessions. Your footprints find no shared file with them but these: #98 changes map.ts's shop line (:63) in place, and #45 appends its new feature kinds after the event line, so the two merge cleanly; #21 may edit the guild line after yours (a one-line conflict for whoever lands second). Merge main in when it moves.
