@@ -233,13 +233,13 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
 }
 
 /**
- * The squares where map and atlas disagree today, which the owner is to settle (the atlas's coast
- * and trail ends, or the maps): each is reported, and fails once it agrees, so it is dropped here.
- * The Foreland's west (shelf 0,28-30) is where #47 opens the Salt Road.
+ * The squares where map and atlas disagree today, by whose fix they wait on: each is reported, and
+ * fails once it agrees, so it is dropped here. Shelf 0,28 is where #47 opens the Salt Road; the rest
+ * are #104's (the Foreland's sea cut back, the east road laid to Thornmark's edge).
  */
 const EDGES_OWED: Record<string, readonly string[]> = {
-  shelf: ['0,28', '0,29', '0,30', '1,31', '2,31', '3,31', '4,31', '5,31', '6,31', '7,31', '8,31'],
-  thornmark: ['31,9'],
+  '#47': ['shelf 0,28'],
+  '#104': ['shelf 0,29', 'shelf 0,30', 'shelf 1,31', 'shelf 2,31', 'shelf 3,31', 'shelf 4,31', 'shelf 5,31', 'shelf 6,31', 'shelf 7,31', 'shelf 8,31', 'thornmark 31,9'],
 };
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */
@@ -395,12 +395,13 @@ export async function pillars(): Promise<void> {
   // The land agrees with the map: water and roads carry on across a zone map's edge.
   const edges = edgeFaults(ATLAS, MAP_DEFS);
   for (const area of AREAS) for (const def of area.maps.filter((d) => d.kind === 'outdoor')) {
-    const mine = edges.filter((e) => e.map === def.id), known = EDGES_OWED[def.id] ?? [];
-    const fresh = mine.filter((e) => !known.includes(`${e.x},${e.y}`));
+    const mine = edges.filter((e) => e.map === def.id);
+    const known = Object.entries(EDGES_OWED).flatMap(([whose, keys]) => keys.filter((k) => k.startsWith(def.id + ' ')).map((k) => ({ whose, at: k.slice(def.id.length + 1) })));
+    const fresh = mine.filter((e) => !known.some((k) => k.at === `${e.x},${e.y}`));
     ok(!fresh.length, `${area.id}/${def.id}: its water and roads carry on into the atlas beyond its edge${known.length ? `, but for ${known.length} square(s) owed` : ''}${fresh.length ? ' -> ' + fresh.map((e) => `${e.x},${e.y} ${e.why}`).join('; ') : ''}`);
-    for (const at of known) {
+    for (const { whose, at } of known) {
       const e = mine.find((f) => `${f.x},${f.y}` === at);
-      owed(!e, `${def.id} ${at}: map and atlas agree at the edge${e ? ` (today ${e.why})` : ''}; the atlas or the map to change`, 'owner');
+      owed(!e, `${def.id} ${at}: map and atlas agree at the edge${e ? ` (today ${e.why})` : ''}`, whose);
     }
   }
   {
