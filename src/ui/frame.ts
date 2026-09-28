@@ -2,11 +2,12 @@
 // log. Layout for the 640x360 canvas is fixed here in LAYOUT so every screen agrees on it.
 import { drawText } from '../lib/engine/text.ts';
 import type { World } from '../game/world.ts';
+import type { Feature } from '../game/map.ts';
 import type { Party, Character } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
 import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
-import { viewCells } from './viewport.ts';
+import { viewCells, drawnCell } from './viewport.ts';
 import { drawPortrait } from './portraits.ts';
 import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, AUTOMAP_WASH, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
 import { shade, rgba, mix } from '../lib/art/palettes.ts';
@@ -121,7 +122,8 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   const inView = new Set(viewCells(m, world.state.x, world.state.y, world.state.facing, world.sight).map((c) => c.y * m.width + c.x));
   for (let y = y0; y < y0 + rows; y++) for (let x = x0; x < x0 + cols; x++) {
     if (!world.explored(x, y)) continue;
-    const c = m.at(x, y);
+    // A secret door outdoors among mountain, rock or trees is inked as they are, as it is drawn.
+    const c = drawnCell(m, x, y);
     // Inked onto parchment: walls dark, open ground a light wash in the terrain's hue, and where
     // the world ends, the same pink as in the view.
     let col: string;
@@ -138,7 +140,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   }
   // Features the party has stood next to.
   for (const f of m.features) {
-    if (!shown(f.x, f.y) || f.kind === 'event') continue;
+    if (!shown(f.x, f.y) || !onAutomap(world, f)) continue;
     const s = Math.max(1, cell - 2);
     // A den shows standing and, burnt, as a ruin: before the spent skip, which would hide it.
     if (f.kind === 'den') { ctx.fillStyle = world.used(f.id) ? DEN_ASH : DEN; ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s); continue; }
@@ -206,6 +208,9 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
 }
 
 import { armorClass as armorClassOf } from '../game/party.ts';
+
+/** Whether the automap marks a feature: not an event, and not a person who is not there now. */
+export const onAutomap = (world: Pick<World, 'present'>, f: Feature): boolean => f.kind !== 'event' && world.present(f);
 
 /** How many lines the log shows. */
 export const LOG_LINES = 4;

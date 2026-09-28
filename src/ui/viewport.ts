@@ -23,7 +23,7 @@
 // hides the sky behind it as well as the ground.
 import type { World } from '../game/world.ts';
 import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight } from '../game/world.ts';
-import type { GameMap, Cell, Terrain, MapPalette } from '../game/map.ts';
+import type { GameMap, Cell, Solid, Terrain, MapPalette } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
@@ -260,7 +260,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const order: number[] = [];
   for (let l = -LATERAL; l <= LATERAL; l++) order.push(l);
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
-  const solidAt = (d: number, l: number): boolean => isSolidWall(map.at(...toPair(cellAt(px, py, f, d, l))));
+  // A door outdoors among mountain, rock or trees is drawn as they are (drawnCell).
+  const drawn = (x: number, y: number): Cell => drawnCell(map, x, y);
+  const solidAt = (d: number, l: number): boolean => isSolidWall(drawn(...toPair(cellAt(px, py, f, d, l))));
   const houseAt = (d: number, l: number): boolean => isHouse(map, ...toPair(cellAt(px, py, f, d, l)));
   const voidAt = (d: number, l: number): boolean => map.at(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
   const voids = new Path2D();
@@ -277,7 +279,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     // next square's floor into the next hill; walls and sprites follow.
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      const cell = map.at(c.x, c.y);
+      const cell = drawn(c.x, c.y);
       if (isSolidWall(cell)) continue;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
@@ -287,13 +289,13 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     }
     if (d > 0) for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      if (map.at(c.x, c.y).terrain !== 'hills' || isSolidWall(map.at(c.x, c.y))) continue;
-      const hillAt = (dl: number): boolean => { const n = map.at(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n); };
+      if (drawn(c.x, c.y).terrain !== 'hills' || isSolidWall(drawn(c.x, c.y))) continue;
+      const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n); };
       drawHill(ctx, groundColor('hills', map.kind, map.paletteAt(c.x, c.y).floor), cx, horizon, r.h, d, l, c.x * 131 + c.y * 17, dark, haze, hillAt(-1), hillAt(1));
     }
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      const cell = map.at(c.x, c.y);
+      const cell = drawn(c.x, c.y);
       // The party's own cell starts at k = -0.5, where u is infinite and the walls beside the party
       // would come out as NaN and not draw at all. Clip them at k = 0 instead: its edges already
       // project past the viewport (u(0) = 241 against a half-width of 200).
@@ -673,25 +675,55 @@ function drawFarm(ctx: CanvasRenderingContext2D, base: string, plot: Plot, cx: n
   if (right) quad(ctx, P(a, 1 - w), P(a, 1), P(b, 1), P(b, 1 - w), hedge);
 }
 
+/** The part of a cubic Bézier from t = a to t = b, as a cubic of its own (de Casteljau). */
+function subCubic(p0: [number, number], p1: [number, number], p2: [number, number], p3: [number, number], a: number, b: number): [number, number][] {
+  const at = (t: number, q: [number, number][]): [number, number][] => {
+    const lerp = (u: [number, number], v: [number, number]): [number, number] => [u[0] + (v[0] - u[0]) * t, u[1] + (v[1] - u[1]) * t];
+    const [q0, q1, q2, q3] = q, r0 = lerp(q0, q1), r1 = lerp(q1, q2), r2 = lerp(q2, q3), s0 = lerp(r0, r1), s1 = lerp(r1, r2);
+    return [q0, r0, s0, lerp(s0, s1), s1, r2, q3];
+  };
+  // Split at b, keep the first part; split that at a / b, keep the second.
+  const first = at(b, [p0, p1, p2, p3]).slice(0, 4);
+  return at(a / b, first).slice(3);
+}
+
+/** A hill's outline on the screen: its foot from lx to rx at ly, and the curve over its crest. */
+interface HillShape { outline: Path2D; lx: number; ly: number; rx: number; top: number; c1: [number, number]; c2: [number, number] }
+
 /**
- * Rising ground: a round-shouldered mound on the square, lit on its crest, running on into the next
- * hill beside it. It is drawn only: it hides nothing from the party (line of sight is its own work).
+ * A hill's body: the mound and the light on its crest, and nothing outside its outline, which is
+ * returned for the tufts and for the smoke test to hold it to. The crest light is clipped to the
+ * outline, so it cannot float clear of the hill with a sliver of sky beneath, as a line drawn off
+ * the outline does.
  */
-function drawHill(ctx: CanvasRenderingContext2D, base: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, hillL: boolean, hillR: boolean): void {
+export function hillBody(ctx: CanvasRenderingContext2D, base: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, hillL: boolean, hillR: boolean): HillShape {
   const [lx, ly] = floorPt(cx, horizon, h, d, l, 0.02, hillL ? -0.25 : 0.02);
   const [rx] = floorPt(cx, horizon, h, d, l, 0.02, hillR ? 1.25 : 0.98);
   const w = rx - lx, rise = unitIn(d, 0.5, h) * (0.4 + 0.5 * hash(seed, 61)), lean = (hash(seed, 62) - 0.5) * 0.4 * w;
   const top = ly - rise / 0.75;
   const c1: [number, number] = [lx + w * 0.3 + lean, top], c2: [number, number] = [rx - w * 0.3 + lean, top];
+  const outline = new Path2D();
+  outline.moveTo(lx, ly); outline.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], rx, ly); outline.closePath();
   const g = ctx.createLinearGradient(0, ly - rise, 0, ly);
   // Lit on the crest, shadowed down the flank, and at the foot the ground again, so no seam shows
   // where the hill meets the floor in front of it.
   g.addColorStop(0, fog(shade(base, 1.1), d, dark, haze)); g.addColorStop(0.6, fog(shade(base, 0.86), d, dark, haze)); g.addColorStop(1, fog(base, d - 0.5, dark, haze));
-  ctx.beginPath(); ctx.moveTo(lx, ly); ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], rx, ly); ctx.closePath();
-  ctx.fillStyle = g; ctx.fill();
-  ctx.strokeStyle = fog(shade(base, 1.14), d, dark, haze); ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(lx + w * 0.12, ly - rise * 0.45); ctx.bezierCurveTo(c1[0], c1[1], c2[0], c2[1], rx - w * 0.12, ly - rise * 0.45); ctx.stroke();
-  // Tufts on the crest, buried by a deep snow.
+  ctx.fillStyle = g; ctx.fill(outline);
+  const crest = subCubic([lx, ly], c1, c2, [rx, ly], 0.15, 0.85);
+  ctx.save(); ctx.clip(outline);
+  ctx.strokeStyle = fog(shade(base, 1.14), d, dark, haze); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(...crest[0]); ctx.bezierCurveTo(...crest[1], ...crest[2], ...crest[3]); ctx.stroke();
+  ctx.restore();
+  return { outline, lx, ly, rx, top, c1, c2 };
+}
+
+/**
+ * Rising ground: a round-shouldered mound on the square, lit on its crest, running on into the next
+ * hill beside it. It is drawn only: it hides nothing from the party (line of sight is its own work).
+ */
+function drawHill(ctx: CanvasRenderingContext2D, base: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, hillL: boolean, hillR: boolean): void {
+  const { lx, ly, rx, top, c1, c2 } = hillBody(ctx, base, cx, horizon, h, d, l, seed, dark, haze, hillL, hillR);
+  // Tufts on the crest, buried by a deep snow: grass, which stands above the outline.
   if (d > 2 || env.cover > 0.55) return;
   const u = unit(d, h), sc = u / unit(1, h);
   ctx.strokeStyle = fog(shade(hillColor(env.day), env.cover > 0.05 ? 0.85 : 1.25), d, dark, haze); ctx.lineWidth = Math.max(1, sc);
@@ -838,6 +870,28 @@ function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number,
 }
 
 // ------------------------------------------------------------------ walls ----
+
+/** The billboards a door outdoors may be set among, in the order a tie goes. */
+const GUISES: readonly Solid[] = ['mountain', 'rock', 'tree'];
+
+/**
+ * What a cell is drawn as. Outdoors a secret door set among mountain, rock or trees (a sett in the
+ * fells, a cave in a crag) is drawn as most of its neighbours are, so it is found and never seen;
+ * beside a wall or a building it stays a door in the wall. Once found it is a door, and so is every
+ * door the map shows: no door is hidden that has no hint. Anywhere else, the cell itself.
+ */
+export function drawnCell(map: GameMap, x: number, y: number): Cell {
+  const c = map.at(x, y);
+  if (map.kind !== 'outdoor' || c.door !== 'secret') return c;
+  const around = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].filter(([nx, ny]) => map.inBounds(nx, ny)).map(([nx, ny]) => map.at(nx, ny));
+  if (around.some((n) => n.solid === 'wall' || n.solid === 'building')) return c;
+  let best = c, most = 0;
+  for (const g of GUISES) {
+    const of = around.filter((n) => n.solid === g);
+    if (of.length > most) { most = of.length; best = of[0]; }
+  }
+  return best;
+}
 
 /**
  * A house's cell: a building, or a door with a building beside it. A door set in stone (a keep's, a
