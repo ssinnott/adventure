@@ -111,3 +111,15 @@ own (structure, curve, density, pillars, shipped, art, scaffold), so none edits 
 | 2 | #35 | session_01KrrmbGnXxUTGXFwRt2Zjmb | `claude/m0-35-art-checks` |
 | 2 | #36 | session_01XeNVnJchDpX3uYZo383dHd | `claude/m0-36-scaffold` |
 | 2 | #37 | session_01MjnrqGhXmsccZAggSgevxE | `claude/m0-37-contact-sheet` |
+
+## Wave 2 reviewed
+
+A review workflow read all eight pull requests against their issues, each finding checked by a
+second agent that tried to refute it (scratchpad notes, not kept). #89 (#30) merged at 01:12 on
+2026-09-28 (main 83736a1): green and level with main; its nits (the key flood walks through exit
+squares, the flood isn't exported) are left for later. The other seven were sent their fixes at
+01:16. #91 (#37) holds until #96 (#35) lands its tools/changed.ts, then adds the sheet job. #96 is
+squash-merged, as its body asks, so the deliberate wall break stays off main. #95 (#33) waits on the
+owner for its 24 edge findings, owed to 'owner' where the issue allows only fixed or #40's/#43's.
+Known conflicts: #93 and #94 in src/ui/screens.ts (one import line); #91 and #92 in README.md.
+#90 and #92: whoever lands second makes the scaffold emit `density: 'country'`.
