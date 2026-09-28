@@ -281,13 +281,13 @@ fodder, say.
 
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
-(the kits, the Foreland's mid-tier from 4, Thornmark's armoury from 8). It fights the encounter
-again and again from a fresh start, mending between fights with spells as a player would, until it
-loses one or must rest. A bot plays it that mends whoever is in danger and strikes, and casts a
-damage spell only when the hit points it saves are worth the spell points. Each is counted against
-what the company has left of that pool before it must rest, and a healer's spell points are priced
-at what they would mend. So the bot spends on what hurts while it is fresh, and holds back as its
-spell points run down. The calibration:
+(the gear ladder, `GEAR`: the kits, the Foreland's band gear and its finds with a plus by 3 and 5,
+then Thornmark's past them). It fights the encounter again and again from a fresh start, mending
+between fights with spells as a player would, until it loses one or must rest. A bot plays it that
+mends whoever is in danger and strikes, and casts a damage spell only when the hit points it saves
+are worth the spell points. Each is counted against what the company has left of that pool before it
+must rest, and a healer's spell points are priced at what they would mend. So the bot spends on what
+hurts while it is fresh, and holds back as its spell points run down. The calibration:
 
 - Every role keeps its shape (§4.2) and hits as today's monsters hit, on the line; its hit points
   are whatever makes the day's fights.
