@@ -500,6 +500,8 @@ Decided by the owner on 27 and 28 September 2026:
 10. **Dens** (#88): a camp that breeds one kind of monster until a company beats its keepers and
     burns it; its hoard is theirs, and it stands as a ruin after. The first three are a rookery in
     E2, a wolves' den in D2 and a bandit camp in D3.
+11. **Gear.** A plus is +1 to hit and damage on a weapon and +1 armour class on armour (#100).
+    Mottram's sells the band's gear, and in Act I pluses are found, not sold (#99 and #101).
 
 Proposed, for the owner, each in the issue that would build it:
 
@@ -518,8 +520,8 @@ Proposed, for the owner, each in the issue that would build it:
 - **The chalk figure** below the Berth, a ship that only the Berth's mouth shows as one (§4.6).
 - **The Queen on her bier,** her hand bare, as STORY has the tomb, where MONSTERS §5.2 has the bier
   empty (§4.7).
-- **The Downs' finds,** items of their own priced in the band's window: the Barrow Captain's arms,
-  the guardsman's halberd, his ring of office and a find in each den's hoard (#99).
+- **A gear ladder** (#99): every class betters its kit by level 3 and again by level 5, from
+  Mottram's and then the Downs' finds, the named ones at the top.
 - **Three changes to #56's side quests** (§6).
 
 ## 10. Names
