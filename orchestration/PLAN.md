@@ -221,3 +221,21 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #125 and #126 (#99, #101) reviewed (`reviews/125.md`, `126.md`): ready after fixes (merge main; the
   ladder suite must count finds given through `giftOf`, cairns and statues, once #115 is in; a check
   to hold `GEAR`'s step at 9). Sent 16:39.
+
+### 16:50: #117, #118 and #111 merged; #43 and #42 started
+
+- The fix rounds verified (`reviews/117-2.md`, `118-2.md`, `115-2.md`, `111-3.md`): all four ready.
+- Merged at 16:46 in order: #117 (#40's road, 74a2670), #118 (#41's look, 39e1b32; #41 closes) and
+  #111 (#21's design, e192f7f). Main's tree matches the tested merge exactly; `npm run check` on
+  main: ALL OK (22 owed: #26 ×3, #40 ×7, #43 ×3, #47 ×9), SMOKE OK.
+- #115 conflicts with #118 (SLICE's shipped.json row, pillars.ts's imports): its session merges main
+  and reruns `node tools/shipped.ts`, then it merges.
+- Started at 16:47:
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 2 | #43 | session_015eA3U3nfug5hverH1thjvm | `claude/m1-43-hand-ins` |
+| 2 | #42 | session_01Uzk1jKfKNQrxZAhfNcPuxP | `claude/m1-42-chapters`, then `claude/m1-42-walk` |
+
+- The #41 session is done; #40's waits on #99 for its zone pull request; the guilds session waits on
+  #43 and #45 for #21's build.
