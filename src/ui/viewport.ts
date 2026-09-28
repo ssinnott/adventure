@@ -23,7 +23,7 @@
 // hides the sky behind it as well as the ground.
 import type { World } from '../game/world.ts';
 import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight } from '../game/world.ts';
-import type { GameMap, Cell, Terrain, MapPalette } from '../game/map.ts';
+import type { GameMap, Cell, Solid, Terrain, MapPalette } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
@@ -260,7 +260,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const order: number[] = [];
   for (let l = -LATERAL; l <= LATERAL; l++) order.push(l);
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
-  const solidAt = (d: number, l: number): boolean => isSolidWall(map.at(...toPair(cellAt(px, py, f, d, l))));
+  // A door outdoors among mountain, rock or trees is drawn as they are (drawnCell).
+  const drawn = (x: number, y: number): Cell => drawnCell(map, x, y);
+  const solidAt = (d: number, l: number): boolean => isSolidWall(drawn(...toPair(cellAt(px, py, f, d, l))));
   const houseAt = (d: number, l: number): boolean => isHouse(map, ...toPair(cellAt(px, py, f, d, l)));
   const voidAt = (d: number, l: number): boolean => map.at(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
   const voids = new Path2D();
@@ -277,7 +279,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     // next square's floor into the next hill; walls and sprites follow.
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      const cell = map.at(c.x, c.y);
+      const cell = drawn(c.x, c.y);
       if (isSolidWall(cell)) continue;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
@@ -287,13 +289,13 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     }
     if (d > 0) for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      if (map.at(c.x, c.y).terrain !== 'hills' || isSolidWall(map.at(c.x, c.y))) continue;
-      const hillAt = (dl: number): boolean => { const n = map.at(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n); };
+      if (drawn(c.x, c.y).terrain !== 'hills' || isSolidWall(drawn(c.x, c.y))) continue;
+      const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n); };
       drawHill(ctx, groundColor('hills', map.kind, map.paletteAt(c.x, c.y).floor), cx, horizon, r.h, d, l, c.x * 131 + c.y * 17, dark, haze, hillAt(-1), hillAt(1));
     }
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      const cell = map.at(c.x, c.y);
+      const cell = drawn(c.x, c.y);
       // The party's own cell starts at k = -0.5, where u is infinite and the walls beside the party
       // would come out as NaN and not draw at all. Clip them at k = 0 instead: its edges already
       // project past the viewport (u(0) = 241 against a half-width of 200).
@@ -838,6 +840,27 @@ function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number,
 }
 
 // ------------------------------------------------------------------ walls ----
+
+/** The billboards a door outdoors may be set among, in the order a tie goes. */
+const GUISES: readonly Solid[] = ['mountain', 'rock', 'tree'];
+
+/**
+ * What a cell is drawn as. Outdoors a door set among mountain, rock or trees (a sett in the fells, a
+ * cave in a crag) is drawn as most of its neighbours are, so it is found and never seen; beside a
+ * wall or a building it stays a door in the wall. Anywhere else, the cell itself.
+ */
+export function drawnCell(map: GameMap, x: number, y: number): Cell {
+  const c = map.at(x, y);
+  if (map.kind !== 'outdoor' || c.door === 'none') return c;
+  const around = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].filter(([nx, ny]) => map.inBounds(nx, ny)).map(([nx, ny]) => map.at(nx, ny));
+  if (around.some((n) => n.solid === 'wall' || n.solid === 'building')) return c;
+  let best = c, most = 0;
+  for (const g of GUISES) {
+    const of = around.filter((n) => n.solid === g);
+    if (of.length > most) { most = of.length; best = of[0]; }
+  }
+  return best;
+}
 
 /**
  * A house's cell: a building, or a door with a building beside it. A door set in stone (a keep's, a

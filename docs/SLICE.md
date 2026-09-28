@@ -254,9 +254,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   cobwebs, cracks, damp streaks, iron rings, barred grates, carved glyph panels; on houses flower
   boxes and ivy); on every house door a lantern lit after dark, and on a business's a sign with a
   glyph for the service (a door is a house's where a building stands beside it; a door set in stone
-  is an arched doorway in the wall, with neither); a town or a dungeon may place its banners
-  (`MapDef.banners`), which hang whatever the hash says; map palettes choose `wallStyle` (stone or
-  brick) and `ceilingStyle` (vault or timber beams); cobbled roads, flowers in the grass, cracks and
+  is an arched doorway in the wall, with neither; outdoors, a door set among mountain, rock or trees
+  is drawn as most of its neighbours are, so a sett or a cave is found and never seen); a town or a
+  dungeon may place its banners (`MapDef.banners`), which hang whatever the hash says; map palettes
+  choose `wallStyle` (stone or brick) and `ceilingStyle` (vault or timber beams); cobbled roads, flowers in the grass, cracks and
   puddles on flagstones; a carved plank frame with brass fittings and rivets; a painted title
   looking west over the sea at the Hearth. The dressing is restrained (`wallDressing()` in
   `ui/viewport.ts`): a wall is dressed only where its hash beats the four round it, so about one in
@@ -395,7 +396,8 @@ over content broken on purpose too, and two tools to theirs:
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
-  kind at its rate.
+  kind at its rate; a door outdoors among mountain, rock or trees drawn as they are (`drawnCell`),
+  and one in a wall or a town left a door.
 - `changed`: which files count every map, monster or interior for the crack sweep and the sheet,
   and which only their own.
 - `scaffold` (§8.2): the Downs' draft, laid back into the atlas, is the atlas square for square.
@@ -468,7 +470,7 @@ does.
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the farmland's fields and hedges, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world in pink and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the farmland's fields and hedges, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |
