@@ -845,13 +845,14 @@ function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number,
 const GUISES: readonly Solid[] = ['mountain', 'rock', 'tree'];
 
 /**
- * What a cell is drawn as. Outdoors a door set among mountain, rock or trees (a sett in the fells, a
- * cave in a crag) is drawn as most of its neighbours are, so it is found and never seen; beside a
- * wall or a building it stays a door in the wall. Anywhere else, the cell itself.
+ * What a cell is drawn as. Outdoors a secret door set among mountain, rock or trees (a sett in the
+ * fells, a cave in a crag) is drawn as most of its neighbours are, so it is found and never seen;
+ * beside a wall or a building it stays a door in the wall. Once found it is a door, and so is every
+ * door the map shows: no door is hidden that has no hint. Anywhere else, the cell itself.
  */
 export function drawnCell(map: GameMap, x: number, y: number): Cell {
   const c = map.at(x, y);
-  if (map.kind !== 'outdoor' || c.door === 'none') return c;
+  if (map.kind !== 'outdoor' || c.door !== 'secret') return c;
   const around = [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].filter(([nx, ny]) => map.inBounds(nx, ny)).map(([nx, ny]) => map.at(nx, ny));
   if (around.some((n) => n.solid === 'wall' || n.solid === 'building')) return c;
   let best = c, most = 0;

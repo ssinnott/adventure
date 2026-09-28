@@ -129,19 +129,21 @@ export function art(): void {
   const outdoors = MAP_DEFS.filter((d) => d.kind === 'outdoor' && d.banners?.length).map((d) => d.id);
   ok(outdoors.length === 0, `no outdoor map places a banner: the outdoors is laid without them${outdoors.length ? ' -> ' + outdoors.join(', ') : ''}`);
 
-  // A door outdoors set among mountain, rock or trees is drawn as they are, so a sett or a cave is
-  // found and never seen; in a wall, or in a town, it stays a door. The painter draws each cell as
-  // drawnCell says, so this holds what it draws.
-  const field = (row: string, kind: 'outdoor' | 'town' = 'outdoor'): GameMap =>
-    new GameMap({ id: 'field', name: 'Field', kind, density: kind === 'outdoor' ? 'country' : undefined, start: { x: 0, y: 1, facing: 0 }, rows: [row, ',,,,,'] });
-  const guise = (row: string, kind?: 'outdoor' | 'town'): string => { const c = drawnCell(field(row, kind), 2, 0); return isSolidWall(c) ? (c.door === 'secret' ? 'a secret door' : 'a door') : c.solid; };
-  const cases: [string, string, string][] = [
+  // A secret door outdoors set among mountain, rock or trees is drawn as they are, so a sett or a
+  // cave is found and never seen; in a wall, or in a town, it stays a door, and a door the map shows
+  // (found, plain or locked) is never hidden, since only a secret door has a hint. The painter and
+  // the automap draw each cell as drawnCell says, so this holds what they draw.
+  const field = (row: string, kind: 'outdoor' | 'town' = 'outdoor', below = ',,,,,'): GameMap =>
+    new GameMap({ id: 'field', name: 'Field', kind, density: kind === 'outdoor' ? 'country' : undefined, start: { x: 0, y: 1, facing: 0 }, rows: [row, below] });
+  const guise = (row: string, kind?: 'outdoor' | 'town', below?: string): string => { const c = drawnCell(field(row, kind, below), 2, 0); return isSolidWall(c) ? (c.door === 'secret' ? 'a secret door' : 'a door') : c.solid; };
+  const cases: [string, string, string, string?][] = [
     ['MMSMM', 'mountain', 'a secret door among mountain'], ['rrSrr', 'rock', 'a secret door among rock'], ['TTSTT', 'tree', 'a secret door among trees'],
-    ['MMDMM', 'mountain', 'a found door among mountain'], ['TrSrT', 'rock', 'a door with more rock than trees about it'],
-    ['TMSrT', 'mountain', 'a door between mountain and rock (a tie goes to the mountain)'],
-    ['##S##', 'a secret door', 'a door in a wall'], ['MBSMM', 'a secret door', 'a door beside a building'],
+    ['rTSTr', 'tree', 'a secret door with more trees than rock about it', ',,r,,'],
+    ['TMSrT', 'mountain', 'a secret door between mountain and rock (a tie goes to the mountain)'],
+    ['MMDMM', 'a door', 'a found or plain door among mountain'], ['MMLMM', 'a door', 'a locked door among mountain'],
+    ['##S##', 'a secret door', 'a secret door in a wall'], ['MBSMM', 'a secret door', 'a secret door beside a building'],
   ];
-  for (const [row, want, what] of cases) { const got = guise(row); ok(got === want, `outdoors, ${what} draws as ${want} (${row}: ${got})`); }
+  for (const [row, want, what, below] of cases) { const got = guise(row, 'outdoor', below); ok(got === want, `outdoors, ${what} draws as ${want} (${row}${below ? ' over ' + below : ''}: ${got})`); }
   ok(guise('MMSMM', 'town') === 'a secret door', `in a town, a door among mountain stays a door (${guise('MMSMM', 'town')})`);
   const guised = maps.flatMap((m) => m.cells.flatMap((c, i) => (drawnCell(m, i % m.width, Math.floor(i / m.width)) !== c ? [`${m.id} ${i % m.width},${Math.floor(i / m.width)}`] : [])));
   console.log(`  (doors drawn as their neighbours on the maps as played: ${guised.length}${guised.length ? ': ' + guised.join(', ') : ''})`);

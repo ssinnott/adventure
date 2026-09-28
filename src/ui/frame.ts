@@ -6,7 +6,7 @@ import type { Party, Character } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
 import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
-import { viewCells } from './viewport.ts';
+import { viewCells, drawnCell } from './viewport.ts';
 import { drawPortrait } from './portraits.ts';
 import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, AUTOMAP_WASH, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
 import { shade, rgba, mix } from '../lib/art/palettes.ts';
@@ -121,7 +121,8 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   const inView = new Set(viewCells(m, world.state.x, world.state.y, world.state.facing, world.sight).map((c) => c.y * m.width + c.x));
   for (let y = y0; y < y0 + rows; y++) for (let x = x0; x < x0 + cols; x++) {
     if (!world.explored(x, y)) continue;
-    const c = m.at(x, y);
+    // A secret door outdoors among mountain, rock or trees is inked as they are, as it is drawn.
+    const c = drawnCell(m, x, y);
     // Inked onto parchment: walls dark, open ground a light wash in the terrain's hue, and where
     // the world ends, the same pink as in the view.
     let col: string;
