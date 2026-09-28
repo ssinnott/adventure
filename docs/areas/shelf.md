@@ -495,8 +495,8 @@ Decided by the owner on 27 and 28 September 2026:
    #87): into E3's north-east corner, across the Wend from Gullwick, with its cellar starting at
    level 2 and its Rift Warden held to the gate's rule for a boss there. The Foreland map keeps a
    farm where it stood, under a name of its own, with a small store that sells rations at 3 gold, a
-   quarter under Mottram's. #87 recuts the briefs when it is built; until then the Foreland map's
-   keeps the farm, and E3's leaves the corner free.
+   quarter under Mottram's, in a farm kitchen drawn in #97. #87 recuts the briefs when it is built;
+   until then the Foreland map's keeps the farm, and E3's leaves the corner free.
 10. **Dens** (#88): a camp that breeds one kind of monster until a company beats its keepers and
     burns it; its hoard is theirs, and it stands as a ruin after. The first three are a rookery in
     E2, a wolves' den in D2 and a bandit camp in D3.
