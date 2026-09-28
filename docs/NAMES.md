@@ -38,9 +38,9 @@ built or given a naming pass of its own.
 - **One place, one name.** A place may lend its name to one near it, the way a light takes its
   headland's, but no name runs through five places the way Harrow did.
 - **Ids stay.** Saves hold ids, not names (EXPANSION §5.5), so a map, zone, item or quest keeps its
-  id when its name changes: `harrow` is Helmstow, `shelf` the Foreland. A guild hall's name is its
-  membership flag (`guild_<hall name>`, `src/ui/screens.ts:397`, #34), so a hall is renamed only
-  with a save upgrade.
+  id when its name changes: `harrow` is Helmstow, `shelf` the Foreland. A spell hall's name is the
+  flag of the fee paid to study there (`guild_<hall name>`, `guildFlag` in `src/game/party.ts`,
+  #34), so a hall is renamed only with a save upgrade.
 - **A rename is one sweep.** Every use of the name in `src/`, `tools/` and `docs/`, the texts
   included, in one change. The issues keep the old names until they are edited.
 

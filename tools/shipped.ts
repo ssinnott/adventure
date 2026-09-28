@@ -17,7 +17,9 @@ import { spentId } from '../src/game/wilds.ts';
 import { personFlags } from '../src/game/people.ts';
 import { UPGRADES } from '../src/game/upgrades.ts';
 import type { Upgrade } from '../src/game/upgrades.ts';
-import { ATLAS, MAP_DEFS, AREAS } from '../src/content/index.ts';
+import { ATLAS, MAP_DEFS, AREAS, GUILD_QUESTS } from '../src/content/index.ts';
+import { GUILDS, takenFlag, doneFlag, rankFlag } from '../src/content/guilds.ts';
+import type { GuildId } from '../src/content/guilds.ts';
 import { ITEMS } from '../src/content/items.ts';
 import { SPELLS } from '../src/content/spells.ts';
 
@@ -37,6 +39,8 @@ export interface Content {
   classes: readonly string[];
   races: readonly string[];
   conditions: readonly string[];
+  /** The guild quests, whose taken and done flags a save holds (game/guilds.ts). */
+  guildQuests: readonly string[];
 }
 
 /** A played map's size (explored bits are indexed by it), and the ids and door squares its state is kept by. */
@@ -65,6 +69,7 @@ export const CONTENT: Content = {
   items: [...ITEMS, ...AREAS.flatMap((a) => a.items)].map((i) => i.id), spells: SPELLS.map((s) => s.id),
   monsters: AREAS.flatMap((a) => a.monsters).map((m) => m.id),
   classes: Object.keys(CLASSES), races: Object.keys(RACES), conditions: [...CONDITION_ORDER],
+  guildQuests: GUILD_QUESTS.map((q) => q.id),
 };
 
 const sorted = (xs: Iterable<string>): string[] => [...new Set(xs)].sort();
@@ -88,6 +93,8 @@ export function collect(c: Content): Ids {
     maps[m.id] = { size: `${m.width}x${m.height}`, used: sorted(used), groups: sorted(m.encounters.map((e) => e.id)), doors: sorted(doors) };
     for (const z of m.zones) zones[z.id] = { at: `${z.x},${z.y}`, size: `${z.w}x${z.h}` };
   }
+  for (const q of c.guildQuests) flags.add(takenFlag(q)).add(doneFlag(q));
+  for (const g of Object.keys(GUILDS) as GuildId[]) flags.add(rankFlag(g));
   return {
     maps: byKey(maps), zones: byKey(zones), flags: sorted(flags),
     items: sorted(c.items), spells: sorted(c.spells), monsters: sorted(c.monsters), classes: sorted(c.classes), races: sorted(c.races), conditions: sorted(c.conditions),

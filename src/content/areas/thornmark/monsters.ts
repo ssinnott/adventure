@@ -6,7 +6,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 /** The drawings Thornmark's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
 export const SPRITES = [
   'dire_wolf', 'thorn_spider', 'brigand', 'brigand_archer', 'zealot', 'adept', 'rift_hound',
-  'bone_knight', 'wraith', 'riftling_elder', 'ogre', 'ashen_hand', 'cut_warden',
+  'bone_knight', 'wraith', 'riftling_elder', 'ogre', 'ashen_hand', 'cut_warden', 'owl',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -24,4 +24,6 @@ export const MONSTERS: readonly MonsterDef[] = [
   // The Grove Stone's cutters and what their cut let through.
   { id: 'ashen_hand', name: 'Hand of Ash', plural: 'Hands of Ash', sprite: 'ashen_hand', kind: 'person', level: 10, hp: 110, ac: 17, attack: 9, dice: 2, sides: 8, bonus: 4, speed: 13, xp: 2000, gold: [100, 200], tint: '#2a1a2a', size: 1.1, drops: [{ item: 'ashen_chisel', chance: 1 }, { item: 'runed_robe+1', chance: 1 }] },
   { id: 'cut_warden', name: 'Warden of the Cut', plural: 'Wardens of the Cut', sprite: 'cut_warden', kind: 'rift', level: 10, hp: 140, ac: 18, attack: 9, dice: 3, sides: 6, bonus: 3, speed: 12, xp: 3000, gold: [50, 100], tint: '#8a8aa0', size: 1.15, immune: ['asleep'], drops: [{ item: 'meridian_journal', chance: 1 }] },
+  // ---- the Deepthorn: unplaced until #49 places them ----
+  { id: 'great_owl', name: 'Great Owl', plural: 'Great Owls', sprite: 'owl', kind: 'beast', look: 'Wings as wide as a cart, and not a sound.', level: 8, hp: 28, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 0, speed: 15, xp: 250, gold: [0, 0], ranged: true, tint: '#8a6a40', size: 0.8 },
 ];
