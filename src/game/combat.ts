@@ -2,7 +2,7 @@
 // only randomness is the rng handed in, so a fight replays byte-for-byte from a seed. The UI in
 // ui/combat.ts reads CombatState and calls `partyAct` / `monsterAct`; nothing here draws.
 import type { RngInstance } from '../lib/engine/rng.ts';
-import { monster } from './monsters.ts';
+import { monster, monsterImmune, KINDS } from './monsters.ts';
 import type { MonsterDef } from './monsters.ts';
 import { spell, spellDice } from './spells.ts';
 import type { SpellDef } from './spells.ts';
@@ -90,7 +90,7 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
     if (hasTrait(c, 'weapon_master')) n += WEAPON_MASTER_DMG;
     if (hasTrait(c, 'rage') && c.hp < c.maxHp / 2) n += RAGE_DMG;
   }
-  if (hasTrait(c, 'holy_strike') && m.def.mindless) n += HOLY_STRIKE_DMG;
+  if (hasTrait(c, 'holy_strike') && KINDS[m.def.kind].holy) n += HOLY_STRIKE_DMG;
   if (hasTrait(c, 'sneak_attack') && s.round === 1) n += SNEAK_ATTACK_DMG;
   return n;
 }
@@ -278,7 +278,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       const members = s.monsters.filter((m) => m.group === m0.group && m.hp > 0);
       if (sp.inflict) {
         let n = 0;
-        for (const m of members) if (!m.def.mindless && rng.chance(0.7)) { m.conditions = [sp.inflict]; n++; }
+        for (const m of members) if (!monsterImmune(m.def, sp.inflict) && rng.chance(0.7)) { m.conditions = [sp.inflict]; n++; }
         s.log.push(`${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} fall ${sp.inflict}.`);
       } else {
         let total = 0, killed = 0;

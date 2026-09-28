@@ -22,7 +22,8 @@ DESIGN.md first for the why.
   reveal, rest with food, a search action, exploration spells (Light, Wizard Eye).
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
-  drops; readiness to train reported.
+  drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
+  machine: the dead and machines never sleep, and a def may shrug off more of its own (`immune`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
@@ -153,10 +154,9 @@ cap, which is 10 until the road past it is built:
   bards and druids.
 - **Class traits.** Every class has one or two passives (`TRAITS` in `party.ts`), listed on the
   class picker and the character sheet. Knight: Stalwart (+2 AC), Weapon Master (+1 melee).
-  Paladin: Holy Strike (+3 on anything mindless, not only the dead its text names: slimes, crabs,
-  the wardens), Divine Health (no disease). Ranger: Marksman (+2 ranged), Keen Eyes (always finds
-  secret doors). Cleric: Healing Hands (+3 on heals), Faith (no curses). Sorcerer: Spellfire (+2
-  per foe on damage spells), Iron Will (no sleep). Thief: Sneak Attack (+4 in round one), Keen
+  Paladin: Holy Strike (+3 on the dead), Divine Health (no disease). Ranger: Marksman (+2
+  ranged), Keen Eyes (always finds secret doors). Cleric: Healing Hands (+3 on heals), Faith (no
+  curses). Sorcerer: Spellfire (+2 per foe on damage spells), Iron Will (no sleep). Thief: Sneak Attack (+4 in round one), Keen
   Eyes. Barbarian: Rage (+3 melee below half hp), Die Hard (dies at -20). Monk: Unarmoured Defence
   (robe or less: +1 AC, +1 per two levels), Stillness (no paralysis). Bard: Inspiring Song (+1
   to-hit for the party while standing). Druid: Nature's Ward (no poison), Healing Hands.
@@ -387,7 +387,7 @@ does.
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
-| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, `MonsterDef`, `SpellDef`) and their lookups; the tables are content's |
+| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
 | `game/quests.ts` | `questLog` (the quests known, their entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
