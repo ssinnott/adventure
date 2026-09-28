@@ -2,7 +2,7 @@
 
 The Foreland is the first step on the road of levels (DESIGN §9, EXPANSION §2.2): Helmstow, its
 coast and Callow Downs, band 1–5. This is its area doc (EXPANSION §4, §6 and §8.2): where the atlas
-puts it, what is built, what the atlas and the docs put in it that is not, and the plan for building
+puts it, what is built, what the atlas and the docs put in it that is not, the plan for building
 the rest, box by box. Figures are measured on main at `4129f47` (27 September 2026) with `worldGrid`
 (`src/game/atlas.ts`).
 
@@ -32,8 +32,8 @@ a side, with its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at i
 Foreland is G2 and Thornmark H2. The world map's border letters squares 8 columns west and 2 rows
 south of these, since the first two maps were not laid on it (§9, #66).
 
-On the grid the Foreland's map is G2, and the Downs are seven boxes: F2 and F3 beside it, E2 and
-E3, and D2, D3 and D4 (§4). The row above, C1 to G1, is the rim. C2 and C3 hold a strip of the
+On the grid the Foreland's map is G2, and the Downs are seven boxes, by column: F2 and F3 beside it;
+E2 and E3; D2, D3 and D4 (§4). The row above, C1 to G1, is the rim. C2 and C3 hold a strip of the
 Downs' cliff top among Saltreach's land, and E4, G3 and G4 a few squares of shore in the sea.
 
 Its edges:
@@ -405,7 +405,7 @@ Helmstow in the morning; a new game opens in Helmstow.
 
 #56 drafts eight for the Foreland, levels 1 to 4. The owner asked for the ones that fit to be pulled
 into the build (27 September 2026), and all eight fit: each is set in the Foreland's own country at
-its level, turns on a person and a choice, and spends no story lock. Each is built where its places
+its level, spends no story lock and turns on a person and a choice. Each is built where its places
 are:
 
 | # | Quest | Level | Where | What it needs | Built in |
@@ -494,9 +494,9 @@ Decided by the owner on 27 and 28 September 2026:
 9. **Ashcombe moves past Gullwick,** so that the first job is further and a bit harder (#85 and
    #87): into E3's north-east corner, across the Wend from Gullwick, with its cellar starting at
    level 2 and its Rift Warden held to the gate's rule for a boss there. The Foreland map keeps a
-   farm where it stood, under a name of its own, with a small store that sells rations at 3 gold, a
-   quarter under Mottram's, in a farm kitchen drawn in #97. #87 recuts the briefs when it is built;
-   until then the Foreland map's keeps the farm, and E3's leaves the corner free.
+   farm where it stood, under a name of its own, with a small store in a farm kitchen (#97) that
+   sells rations at its own price (#98): 3 gold, a quarter under Mottram's. #87 recuts the briefs
+   when it is built; until then the Foreland map's keeps the farm, and E3's leaves the corner free.
 10. **Dens** (#88): a camp that breeds one kind of monster until a company beats its keepers and
     burns it; its hoard is theirs, and it stands as a ruin after. The first three are a rookery in
     E2, a wolves' den in D2 and a bandit camp in D3.
@@ -504,7 +504,7 @@ Decided by the owner on 27 and 28 September 2026:
 Proposed, for the owner, each in the issue that would build it:
 
 - **The briefs** of §4.2 to §4.9: each box's landmarks, points of interest, encounters, secret and
-  hint, and share of the pay.
+  hint, share of the pay.
 - **The core** is F3, E3 and D2, the boxes that hold a step of the quest; the other four are
   country (§4).
 - **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
@@ -518,6 +518,8 @@ Proposed, for the owner, each in the issue that would build it:
 - **The chalk figure** below the Berth, a ship that only the Berth's mouth shows as one (§4.6).
 - **The Queen on her bier,** her hand bare, as STORY has the tomb, where MONSTERS §5.2 has the bier
   empty (§4.7).
+- **The Downs' finds,** items of their own priced in the band's window: the Barrow Captain's arms,
+  the guardsman's halberd, his ring of office and a find in each den's hoard (#99).
 - **Three changes to #56's side quests** (§6).
 
 ## 10. Names
