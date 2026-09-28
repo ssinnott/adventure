@@ -1,4 +1,4 @@
-// Thornmark: old forest east of the Foreland, reached through the mountain pass once Vask opens it.
+// Thornmark: old forest east of the Foreland, reached through the mountain pass.
 // Thornhold in the north-east, a ruined Warden watchtower in the north-west, a barrow on the
 // eastern hills, a river with one bridge, and the Grove in the deep woods to the south-west.
 // Difficulty band 5-10.

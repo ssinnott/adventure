@@ -57,7 +57,7 @@ export const HARROW: MapDef = {
         '"A Lantern tool. So the Lanterns were there before us. Interesting." He drops it into a pocket. "You have done what I asked. The Crown pays its debts."',
         '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
       ],
-      after: ['"Thornmark next, and the Grove Stone: go and see why it has gone quiet, and bring me what you find. Captain Hale holds the pass; he opens it once his smugglers at Brandy Hole are dealt with. Thornhold will train you further than my drillyard can."'],
+      after: ['"Thornmark next, and the Grove Stone: go and see why it has gone quiet, and bring me what you find. The road east runs through the Scarth; Captain Hale holds it, and will tell you the forest is dangerous, which it is. Thornhold will train you further than my drillyard can."'],
     } },
     { kind: 'event', x: 7, y: 14, id: 'harrow_intro', once: true, text: 'Helmstow. The Hearth flickered last night and the Queen is dead. The Regent-Warden is hiring.' },
   ],
