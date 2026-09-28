@@ -223,10 +223,10 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     heart and the holly; the sett is a secret door under it, the cache two squares behind. A glade
     on its west side for the boar. A scarecrow in the south-west fields and a view back over the
     Foreland from the north-east rise make up the country's floor.
-  - Groups about twice the brief's, to hold the gate's six or seven fights to a rest (§8): eight
-    crows twice, six wolves, three boars, ten rats, four bandits and two archers. At level 2 the
-    company wins every fight and manages 6.3 fights to a rest; the brief's own lines gave 19.6.
-    They pay about 126 xp a member.
+  - The brief's groups, of the Downs' own monsters (§7): three Chalk Wolves, a Tusker, five Barn
+    Rats, two Footpads and a Hedge Archer, and eight crows twice. At level 2 the company wins every
+    fight and manages 6.8 fights to a rest; with the Foreland's own wolves, boar, rats and bandits
+    the same lines gave 19.6. They pay about 151 xp a member.
   - Density: 99% of its 777 squares within 12 steps of something, the furthest 14.
 
 ### 4.3 F3, Gullwick (#47): core, band 2–3
@@ -490,6 +490,11 @@ MONSTERS §5.2 has the Downs' roster and fights: the Carrion Crow, the Wrecker a
 Barrow Guard, the Black Dog and the Barrow Captain; crows over wolves in the stubble; a lampman and
 four wreckers on the Salt Road on a foggy night; the Berth, the Downs' hardest place. Their drawings
 are #46.
+
+The Downs' wolves, boars, rats and road bandits are their own: the Chalk Wolf, the Tusker, the Barn
+Rat, the Footpad and the Hedge Archer, variants on the Foreland's frames statted on MONSTERS §4.4's
+line (§5.2's table), so a group of the brief's size holds the gate. The Foreland's own stay as they
+are, and every later box uses these where its brief says wolves, a boar, rats, bandits or archers.
 
 New in the Downs, for the novelty check (EXPANSION §5.4): the birds, a new family; hills and
 farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41); and dens, camps
