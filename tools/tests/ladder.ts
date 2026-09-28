@@ -37,7 +37,10 @@ export const FINDS: Record<string, string> = {
   'shield+1': '#72',
 };
 
-/** Thornmark's step (#101): the plus each class finds there, in its chests or on the Hand of Ash, and in the ladder by 9. */
+/**
+ * Thornmark's step (#101): the plus each class finds there, in its chests or on the Hand of Ash, and
+ * in the ladder by 9.
+ */
 export const THORNMARK: Record<ClassId, readonly string[]> = {
   knight: ['greatsword+1'],
   paladin: ['warhammer+1'],
