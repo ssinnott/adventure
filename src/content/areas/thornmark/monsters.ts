@@ -7,7 +7,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'dire_wolf', 'thorn_spider', 'brigand', 'brigand_archer', 'zealot', 'adept', 'rift_hound',
   'bone_knight', 'wraith', 'riftling_elder', 'ogre', 'ashen_hand', 'cut_warden',
-  'bramble', 'rootwalker', 'heartwood',
+  'bramble', 'rootwalker', 'heartwood', 'eldest',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -29,4 +29,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'bramble', name: 'Bramble', plural: 'Brambles', sprite: 'bramble', kind: 'beast', look: 'A thicket that closes behind you.', level: 8, hp: 28, ac: 15, attack: 6, dice: 1, sides: 8, bonus: 0, speed: 6, xp: 250, gold: [0, 0], tint: '#4c4a30', size: 0.9, inflict: { cond: 'paralysed', chance: 0.3 } },
   { id: 'rootwalker', name: 'Rootwalker', plural: 'Rootwalkers', sprite: 'rootwalker', kind: 'beast', look: 'A stump walking on its roots, its bark like plate.', level: 9, hp: 39, ac: 18, attack: 6, dice: 2, sides: 6, bonus: 1, speed: 8, xp: 320, gold: [0, 0], tint: '#6a5842', size: 1.0 },
   { id: 'heartwood', name: 'Heartwood', plural: 'Heartwoods', sprite: 'heartwood', kind: 'beast', look: 'An oak that has decided to move.', level: 10, hp: 65, ac: 15, attack: 8, dice: 2, sides: 8, bonus: 3, speed: 8, xp: 700, gold: [0, 0], tint: '#5e4c38', size: 1.8 },
+  { id: 'eldest', name: 'The Eldest', plural: 'Eldest', sprite: 'eldest', kind: 'beast', look: 'The oldest tree in Caldera, and it is awake.', level: 10, hp: 140, ac: 18, attack: 9, dice: 3, sides: 6, bonus: 3, speed: 12, xp: 3000, gold: [0, 0], immune: ['asleep'], tint: '#54463a', size: 2.0 },
 ];

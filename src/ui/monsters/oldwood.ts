@@ -18,12 +18,13 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bramble', 'rootwalker', 'heartwood'];
+export const KINDS: readonly MonsterSprite[] = ['bramble', 'rootwalker', 'heartwood', 'eldest'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bramble') bramble(ctx, x, y, h, p);
   else if (kind === 'rootwalker') rootwalker(ctx, x, y, h, p);
-  else heartwood(ctx, x, y, h * 0.9, p);
+  else if (kind === 'heartwood') heartwood(ctx, x, y, h * 0.9, p);
+  else eldest(ctx, x, y, h * 0.84, p);
 };
 
 /** Stable 0..1 noise; never seeded from the frame, or the contour would boil. */
@@ -266,4 +267,62 @@ function heartwood(ctx: CanvasRenderingContext2D, x: number, y: number, h: numbe
   ctx.fillStyle = B.col(w.hole); ctx.beginPath(); ctx.ellipse(f.X(31.6), f.Y(40 + creak * 0.3), 1.4 * f.u, 1 * f.u, 0, 0, Math.PI * 2); ctx.fill();
   for (const [dx, dy] of [[4, -6], [0, -9], [-4, -6]] as const) softLine(ctx, B, at(f, [32, 12, 32 + dx, 12 + dy]), w.barkD, Math.max(1, 1.8 * f.u), 0.9);
   crown(ctx, f, w, 4, 82, 30, 10, 8, 80, sway * 1.2);
+}
+
+// ------------------------------------------------------------------- the Eldest ----
+/**
+ * The Eldest: the oldest tree in Caldera, and it is awake. Bigger than the heartwood by breadth
+ * and bulk rather than height, so it fits the combat view with no change to it: drawn inside 0.84
+ * of its height, a trunk twice the heartwood's girth split down its middle and buttressed on roots
+ * like walls, limbs thrown out to either side as far as the view is wide, and a crown on them
+ * broader than it is tall, grey beard-moss hanging from every limb. The face is sunk deeper and
+ * lit brighter, and the sap shows in the split. It heaves, slowly, as if breathing.
+ */
+function eldest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const f = frame(x, y, h), w = wood(p);
+  const heave = p.breathe * 1.2, sway = Math.sin(p.frame / 41) * 1.6;
+  const beard = shade('#6c7660', p.tone), beardD = shade('#48503e', p.tone);
+  groundShadow(ctx, x, y + 1, h * 1.3);
+
+  // The far limbs and roots, darker, behind everything.
+  bark(ctx, f, w.barkD, [
+    [[-14, 22, -36, 12, -58, 4, -72, 0], 9, 2.4],
+    [[12, 20, 34, 10, 56, 3, 70, 0], 8.6, 2.4],
+    [[-12, 60, -36, 66 + heave, -56, 70 + sway, -72, 68 + sway], 8, 2.6],
+    [[10, 62, 34, 70 + heave, 56, 74 - sway, 72, 72 - sway], 8, 2.6],
+  ], 91, 0.7);
+  crown(ctx, f, w, -40, 74 + heave, 46, 13, 13, 92, sway);
+  crown(ctx, f, w, 40, 76 + heave, 46, 13, 13, 94, -sway);
+
+  // The trunk: a vast bole split down its middle, flaring into buttress roots at the foot.
+  bark(ctx, f, w.bark, [
+    [[0, 0, -2, 24, 1, 48, -1 + heave * 0.2, 70], 28, 18],
+    [[-10, 16, -28, 8, -42, 2, -48, 0], 11, 3],
+    [[10, 16, 28, 7, 42, 2, 50, 0], 11, 3],
+    [[-4, 10, -12, 3, -18, 0], 10, 4],
+    [[4, 10, 12, 3, 18, 0], 10, 4],
+    [[-8, 64, -26, 72 + heave, -46, 76 + sway], 9, 4],
+    [[8, 64, 26, 74 + heave, 46, 78 - sway], 9, 4],
+  ], 95, 1.2);
+  // The split: a dark seam from the roots to the face, the sap-light showing in it.
+  ctx.fillStyle = B.col(w.hole);
+  ctx.beginPath();
+  const split = at(f, [-2, 2, -4, 12, -1, 22, -3, 28, 0, 30, 2, 22, -1, 12, 1, 2]);
+  ctx.moveTo(split[0], split[1]); for (let i = 2; i < split.length; i += 2) ctx.lineTo(split[i], split[i + 1]);
+  ctx.closePath(); ctx.fill();
+  glow(ctx, B, f.X(-1), f.Y(14), 6 * f.u, w.sap, 0.2 + 0.1 * Math.sin(p.frame / 23), '#f4ffd0');
+  for (const [x0, x1] of [[-22, -18], [-14, -16], [14, 16], [21, 18]] as const) softLine(ctx, B, at(f, [x0, 6, x0 + 1, 22, (x0 + x1) / 2, 36, x1, 62]), w.barkD, Math.max(1, 1.6 * f.u), 0.55);
+  patch(ctx, B, w.moss, [{ k: 'ell', x: f.X(-10), y: f.Y(3), rx: 16 * f.u, ry: 2.2 * f.u }], { alpha: 0.35 });
+
+  face(ctx, f, w, 0, 48, 9, 3.8, p, 7);
+
+  // The near crown over the limbs, the middle of it low on the bole, then the beard-moss.
+  crown(ctx, f, w, 0, 80 + heave, 38, 10, 10, 96, sway * 0.5);
+  const strands: Part[] = [];
+  for (const [i, [sx, sy, len]] of ([[-60, 66, 12], [-50, 66, 17], [-40, 67, 10], [-26, 68, 14], [26, 69, 14], [40, 69, 11], [52, 68, 17], [62, 67, 10]] as const).entries()) {
+    const d = (i % 2 ? sway : -sway) * 0.4 + heave * 0.2;
+    strands.push({ k: 'curve', pts: at(f, [sx - 2.4, sy + 2 + heave, sx + 2.4, sy + 2 + heave, sx + 1.2 + d, sy - len * 0.6, sx + d * 1.6, sy - len, sx - 1.4 + d, sy - len * 0.55]), wobble: 0.18, spiky: 0.12, seed: 120 + i, sub: 3 });
+  }
+  blob(ctx, B, beard, strands, { h, formK: 0.3, spread: 0.7 });
+  for (const [sx, sy] of [[-50, 66], [52, 68]] as const) softLine(ctx, B, at(f, [sx - 0.5, sy - 2 + heave, sx - 0.5, sy - 12]), beardD, Math.max(1, f.u), 0.5);
 }
