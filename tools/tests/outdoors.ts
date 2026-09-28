@@ -1,5 +1,5 @@
 // The outdoors as one map: the zone maps laid in 1:1 where the atlas puts them, the void round them,
-// the ridge and its gate, and every open square reachable.
+// the ridge and its open pass, and every open square reachable.
 import { buildMaps, PLAYED_DEFS } from '../../src/content/maps.ts';
 import { MAP_DEFS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
@@ -37,14 +37,12 @@ export function outdoors(): void {
   ok(faces.every((s) => /^%+$/.test(s)), 'the Foreland\'s north, west and south edges and Thornmark\'s north, east and south edges are the end of the world');
   const ridge = '%' + 'M'.repeat(8) + '=' + 'M'.repeat(21) + '%';
   ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge, 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at both ends');
-  // The ways: every one lands on open ground; none joins one zone to the next, which is walked; the
-  // checkpoint's flags close the road instead; and the towns and dungeons open onto the outdoors.
+  // The ways: every one lands on open ground; none joins one zone to the next, which is walked; no
+  // gate closes the road; and the towns and dungeons open onto the outdoors.
   const maps = buildMaps();
   for (const d of PLAYED_DEFS) for (const e of d.exits ?? []) ok(maps[e.to]?.passable(e.tx, e.ty) === 'ok', `${d.id} -> ${e.to}: lands on an open square (${e.tx},${e.ty})`);
   ok(!out.exits.some((e) => e.to === OUTDOORS), 'no exit joins one zone to the next: the way between them is walked');
-  const g = out.gates;
-  ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'q_ashcombe_done,q_greywater_done' && /checkpoint/.test(g[0].blockedText ?? ''),
-    'the Warden checkpoint is a gate on the road through the pass, with the old exit\'s flags and words');
+  ok(out.gates.length === 0, `no gate closes the road through the outdoors${out.gates.length ? ' -> ' + out.gates.map((g) => `${g.x},${g.y}`).join(', ') : ''}`);
   ok(PLAYED_DEFS.find((d) => d.id === 'harrow')!.exits!.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Helmstow\'s south gate opens onto the Foreland road, where it always did');
   ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void.

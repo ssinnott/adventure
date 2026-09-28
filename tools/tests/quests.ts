@@ -104,11 +104,11 @@ export function quests(): void {
     ok(news() === 'Quest complete: The Quiet Farm. New quest: The Grove Stone.', 'the hand-in finishes the farm and, after it, begins the Grove Stone');
     const farm = quest('ashcombe');
     ok(farm.done && farm.goal === null && farm.entries.some((e) => e.id === 'wand'), 'a finished quest has no goal and keeps the wand it handed over');
-    ok(/Brandy Hole/.test(quest('grove').goal ?? ''), `while Brandy Hole holds out, the Grove Stone waits on the pass (${quest('grove').goal})`);
+    ok(/pass/.test(quest('grove').goal ?? '') && !/Brandy Hole/.test(quest('grove').goal ?? ''), `with the farm done the Grove Stone sends the company through the pass, Brandy Hole or no (${quest('grove').goal})`);
     party.flags.q_greywater = 1; party.bag.push('greywater_ledger');
     ok(news() === 'New quest: The Cargo Ledger.' && /Hale/.test(quest('greywater').goal ?? ''), 'Hale\'s contract and his ledger arrive together as one line');
     takeItem(party, 'greywater_ledger'); party.flags.q_greywater_done = 1;
-    ok(news() === 'Quest complete: The Cargo Ledger. Quest log updated: The Grove Stone.' && /pass/.test(quest('grove').goal ?? ''), 'the second hand-in opens the pass, and the Grove Stone says so');
+    ok(news() === 'Quest complete: The Cargo Ledger.' && /pass/.test(quest('grove').goal ?? ''), 'the second hand-in finishes the ledger and leaves the Grove Stone as it was');
     const data = deserialize(serialize(world.state, party, 1));
     const reloaded = questLog(data.world, data.party);
     ok(JSON.stringify(reloaded) === JSON.stringify(log()) && questNews(marks, reloaded).length === 0, 'a save carries the quest log without storing it, and a reload is not news');
