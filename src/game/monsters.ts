@@ -11,6 +11,12 @@ export interface MonsterDef {
   name: string;
   plural: string;
   sprite: MonsterSprite;
+  /**
+   * The party level it is met at: within two of the band of every map that places it, and rising
+   * from a map's way in to its far end (src/content/progression.ts, tools/tests/curve.ts). It
+   * changes no combat yet; paying a kill by it is #18's.
+   */
+  level: number;
   hp: number;
   ac: number;
   /** To-hit bonus. */
