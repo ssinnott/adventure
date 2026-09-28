@@ -167,9 +167,9 @@ service withheld, a way shut.
   drowned stair, a captain who will not sail into the storm. Never an invisible wall, never "not
   yet".
 - **Never between areas** (§2.2).
-- **No false "not yet".** Today's three hand-ins (Vask's wand, Hale's ledger, Sylvane's chisel) take
-  their item only from a company already hired. A company that arrives early carrying it is first
-  sent to go and find it, and must talk again to hand it over. A hand-in takes its item at the first
+- **No false "not yet".** The three hand-ins (Vask's wand, Hale's ledger, Sylvane's chisel) once took
+  their item only from a company already hired: one that arrived early carrying it was first sent to
+  go and find it, and had to talk again to hand it over. A hand-in takes its item at the first
   meeting, and its words know the company came early.
 
 The road had one lock, the flag on the pass, and it went (§2.2); there are none inside any place.
