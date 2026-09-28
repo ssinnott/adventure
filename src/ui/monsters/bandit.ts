@@ -13,7 +13,7 @@
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
-import { blob, glossBall, glossEllipse, glossPoly, softLine } from './gloss.ts';
+import { blob, glossBall, glossEllipse, glossPoly, glow, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 import { shade } from '../../lib/art/palettes.ts';
 import type { Arm, Pt, Rig } from './figure.ts';
@@ -21,7 +21,7 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
@@ -31,6 +31,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'smuggler_bow') smugglerBow(ctx, x, y, h, p);
   else if (kind === 'smuggler_captain') smugglerCaptain(ctx, x, y, h, p);
   else if (kind === 'wrecker') wrecker(ctx, x, y, h, p);
+  else if (kind === 'lampman') lampman(ctx, x, y, h, p);
   else bandit(ctx, x, y, h, p);
 };
 
@@ -783,3 +784,103 @@ function wrecker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   void p.light;
 }
 
+/** The lamp's colours: never toned, it is the light the wreckers show. */
+const LAMP = '#ff9a30', FLAME = '#ffd878', WHITE = '#fff4d0';
+
+/**
+ * A lantern hanging on links from the crook at `top`: an iron cap and base with a glass between
+ * them, lit from inside. The links are dots, as the censer's chain is, so the lamp swings free of
+ * the pole it hangs from.
+ */
+function lantern(ctx: CanvasRenderingContext2D, R: Rig, top: Pt, lx: number, ly: number, pulse: number): void {
+  const h = R.h * 1.5;
+  const iron = shade('#3a3632', R.tone);
+  if (!B.override) {
+    const n = 4;
+    for (let i = 1; i <= n; i++) {
+      const t = i / n;
+      ctx.fillStyle = B.col(shade(iron, 0.9 + (i % 2) * 0.3));
+      ctx.beginPath(); ctx.arc(top.x + (lx - top.x) * t, top.y + (ly - h * 0.07 - top.y) * t, Math.max(0.8, h * 0.006), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  glow(ctx, B, lx, ly, h * 0.12 * (1 + pulse * 0.12), LAMP, 0.5 + pulse * 0.16, WHITE);
+  // The glass, then the iron over it: a peaked cap with its ring, the base, and two bars.
+  blob(ctx, B, FLAME, [{ k: 'curve', pts: [lx - h * 0.028, ly - h * 0.042, lx + h * 0.028, ly - h * 0.042, lx + h * 0.032, ly + h * 0.036, lx - h * 0.032, ly + h * 0.036], wobble: 0.02, seed: 151, sub: 2 }],
+    { h, form: false, outline: false });
+  blob(ctx, B, iron, [
+    { k: 'poly', pts: [lx - h * 0.036, ly - h * 0.04, lx + h * 0.036, ly - h * 0.04, lx + h * 0.012, ly - h * 0.062, lx - h * 0.012, ly - h * 0.062] },
+    { k: 'ball', x: lx, y: ly - h * 0.064, r: h * 0.009 },
+    { k: 'cap', x0: lx - h * 0.034, y0: ly + h * 0.04, x1: lx + h * 0.034, y1: ly + h * 0.04, r0: h * 0.008 },
+  ], { h, formK: 0.5, spread: 0.7, gloss: 0.3 });
+  stroke(ctx, [lx - h * 0.012, ly - h * 0.04, lx - h * 0.012, ly + h * 0.036], iron, Math.max(1, h * 0.007));
+  stroke(ctx, [lx + h * 0.012, ly - h * 0.04, lx + h * 0.012, ly + h * 0.036], iron, Math.max(1, h * 0.007));
+  glow(ctx, B, lx, ly + h * 0.004, h * 0.03, FLAME, 0.8, WHITE);
+}
+
+/**
+ * The lampman: the one the wreckers follow, a smaller man in a long dark coat and a sou'wester in
+ * their yellow, holding a pole up in the near fist with a lantern swinging from its crook over his
+ * head. His other hand hangs with a sling in it. He is drawn a tenth under the def's height, so the
+ * pole and the light stand clear above him inside the frame.
+ */
+function lampman(ctx: CanvasRenderingContext2D, x: number, y: number, h0: number, p: Paint): void {
+  const h = h0 * 0.9;
+  const R = makeRig(x, y, h, p, { tilt: -0.024, hipTilt: -0.02, turn: 0.03, near: [0.078, 0.16, 0.2], far: [-0.07, -0.09, -0.1], toe: [1, -0.4], lift: [0, 0.04] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 29) * h0 * 0.008, pulse = 0.5 + 0.5 * Math.sin(p.frame / 6);
+  // The pole: from below the hip, up through the near fist raised to the shoulder, to a crook that
+  // holds the lamp out in front of him at the height of the rest of the pole.
+  const lo = { x: x + h * 0.2, y: y - h * 0.36 }, hi = { x: x + h * 0.33 + sway, y: y - h0 * 1.2 };
+  const crook = { x: hi.x + h0 * 0.11, y: hi.y + h0 * 0.02 };
+  const on = (t: number): Pt => ({ x: lo.x + (hi.x - lo.x) * t, y: lo.y + (hi.y - lo.y) * t });
+  const grip = on((lo.y - (sy - h * 0.06)) / (lo.y - hi.y));
+  const near: Arm = [R.sNear, { x: x + h * 0.27, y: sy + h * 0.1 }, grip];
+  const far: Arm = [R.sFar, { x: x - h * 0.206, y: sy + h * 0.18 }, { x: x - h * 0.22, y: sy + h * 0.34 }];
+  const hemY = y - h * 0.42, skirtY = y - h * 0.3;
+  groundShadow(ctx, x, y + 1, h * 0.76);
+  // The pole and its crook, one length of wood with an iron hook at the end.
+  blob(ctx, B, R.wood, [
+    { k: 'cap', x0: lo.x, y0: lo.y, x1: hi.x, y1: hi.y, r0: h0 * 0.014, r1: h0 * 0.012 },
+    { k: 'cap', x0: hi.x, y0: hi.y, x1: crook.x - h0 * 0.01, y1: crook.y - h0 * 0.004, r0: h0 * 0.012, r1: h0 * 0.01 },
+  ], { h, formK: 0.5, spread: 0.6, tex: 'cracks', seed: 152, amount: 0.4 });
+  stroke(ctx, [crook.x - h0 * 0.014, crook.y - h0 * 0.004, crook.x, crook.y + h0 * 0.002, crook.x + h0 * 0.004, crook.y + h0 * 0.016], R.dull, Math.max(1, h0 * 0.01));
+  // The sling hand behind: the cords hang from the fist to the pouch.
+  blob(ctx, B, shade(p.dark, 0.86), armParts(R, far, 153, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  const fw = far[2], pouch = { x: fw.x + h * 0.012, y: fw.y + h * 0.12 };
+  stroke(ctx, [fw.x - h * 0.008, fw.y, pouch.x - h * 0.012, pouch.y], R.leather, Math.max(1, h * 0.012));
+  stroke(ctx, [fw.x + h * 0.01, fw.y, pouch.x + h * 0.012, pouch.y], R.leather, Math.max(1, h * 0.012));
+  blob(ctx, B, R.leather, [{ k: 'curve', pts: ring(pouch.x, pouch.y + h * 0.008, h * 0.026, h * 0.02), wobble: 0.08, seed: 154, sub: 2 }], { h, formK: 0.5, spread: 0.7 });
+  hand(ctx, R, fw, Math.PI / 2, 155, { far: true, flip: 1, k: 0.9 });
+  legs(ctx, R, shade('#34302a', p.tone), 156, [1, -0.4]);
+  blob(ctx, B, shade('#221e1a', p.tone), [
+    { k: 'cap', x0: x + h * 0.196, y0: y - h * 0.19, x1: x + h * 0.2, y1: y - h * 0.055, r0: h * 0.044, r1: h * 0.042 },
+    { k: 'cap', x0: x - h * 0.098, y0: y - h * 0.18, x1: x - h * 0.1, y1: y - h * 0.07, r0: h * 0.041, r1: h * 0.039 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The long coat, to below the knee, and its near sleeve raised with the pole.
+  blob(ctx, B, p.base, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 157, sub: 3 },
+    { k: 'curve', pts: [
+      x - h * 0.124, hemY - h * 0.1, x - h * 0.15, hemY - h * 0.02, x - h * 0.17, skirtY,
+      x - h * 0.05, skirtY + h * 0.016, x + h * 0.08, skirtY + h * 0.004, x + h * 0.176, skirtY - h * 0.014,
+      x + h * 0.16, hemY - h * 0.02, x + h * 0.132, hemY - h * 0.1,
+    ], wobble: 0.05, seed: 158, sub: 3 },
+    ...armParts(R, near, 159),
+  ], { h, formK: 0.5, tex: 'folds', seed: 157, amount: 0.75, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.05, h * 0.042, 160)], { h, form: false });
+  band(ctx, B, x - h * 0.02, hemY - h * 0.054, h * 0.04, h * 0.04, R.dull);
+  // A muffler wound at the throat, a thin beard, and the sou'wester: short at the brow, long behind.
+  blob(ctx, B, shade('#6a3a30', p.tone), [{ k: 'curve', pts: [hx - hr * 1.2, hy + hr * 1.3, hx - hr * 0.4, hy + hr * 1.0, hx + hr * 0.6, hy + hr * 1.06, hx + hr * 1.2, hy + hr * 1.4, hx + hr * 0.4, hy + hr * 1.8, hx - hr * 0.8, hy + hr * 1.72], wobble: 0.06, seed: 161, sub: 2 }],
+    { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 161, amount: 0.5 });
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.84, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.6, hx + hr * 0.3, hy + hr * 0.6, hx + hr * 0.86, hy + hr * 0.3, hx + hr * 0.5, hy + hr * 1.0, hx, hy + hr * 1.14, hx - hr * 0.5, hy + hr * 1.0], wobble: 0.08, spiky: 0.12, seed: 162, sub: 2 }], { h, formK: 0.4 });
+  face(ctx, R, false);
+  const oil = shade('#8c7a36', p.tone);
+  blob(ctx, B, oil, [
+    { k: 'curve', pts: [hx - hr * 0.98, hy - hr * 0.5, hx - hr * 0.86, hy - hr * 1.2, hx - hr * 0.2, hy - hr * 1.5, hx + hr * 0.5, hy - hr * 1.42, hx + hr * 0.98, hy - hr * 1.06, hx + hr * 1.04, hy - hr * 0.5], wobble: 0.04, seed: 163, sub: 3 },
+    { k: 'curve', pts: [hx - hr * 1.66, hy + hr * 0.16, hx - hr * 1.3, hy - hr * 0.6, hx, hy - hr * 0.72, hx + hr * 1.3, hy - hr * 0.62, hx + hr * 1.5, hy - hr * 0.3, hx + hr * 0.8, hy - hr * 0.38, hx - hr * 0.6, hy - hr * 0.32, hx - hr * 1.2, hy + hr * 0.02], wobble: 0.04, seed: 164, sub: 3 },
+  ], { h, formK: 0.55, spread: 0.7, gloss: 0.3, tex: 'folds', seed: 163, amount: 0.4 });
+  hand(ctx, R, grip, Math.atan2(hi.y - lo.y, hi.x - lo.x), 165, { flip: 1 });
+  // The lamp swings a little on its links, against the pole's own sway.
+  lantern(ctx, R, { x: crook.x + h0 * 0.004, y: crook.y + h0 * 0.034 }, crook.x - sway * 0.6, crook.y + h0 * 0.17, pulse);
+  void p.light;
+}

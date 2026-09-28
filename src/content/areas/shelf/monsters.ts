@@ -7,7 +7,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'rat', 'slime', 'wolf', 'boar', 'spider', 'bandit', 'archer', 'cultist', 'skeleton', 'riftling',
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
-  'rift_crawler', 'deacon', 'wrecker',
+  'rift_crawler', 'deacon', 'wrecker', 'lampman',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -34,4 +34,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'ashen_deacon', name: 'Ashen Deacon', plural: 'Ashen Deacons', sprite: 'deacon', level: 5, hp: 80, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 1000, gold: [60, 120], tint: '#3a2a3a', size: 1.0, drops: [{ item: 'elixir', chance: 1 }] },
   // ---- the Downs' wreckers: unplaced until #47 puts them on Gullwick's beach and the Salt Road ----
   { id: 'wrecker', name: 'Wrecker', plural: 'Wreckers', sprite: 'wrecker', level: 3, hp: 13, ac: 13, attack: 3, dice: 1, sides: 8, bonus: 0, speed: 10, xp: 60, gold: [4, 14], tint: '#8c7a36', size: 0.9 },
+  { id: 'lampman', name: 'Lampman', plural: 'Lampmen', sprite: 'lampman', level: 3, hp: 11, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 0, speed: 11, xp: 65, gold: [3, 12], ranged: true, missile: true, tint: '#4e4638', size: 1.0 },
 ];
