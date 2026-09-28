@@ -2,12 +2,12 @@
 // (EXPANSION §5.6), and the walls are dressed with restraint: the share of wall faces that carry
 // dressing stays near where #9 put it, and each kind of dressing has its rate. The silhouettes and
 // the cracks need a canvas, so they are the smoke test's (tools/smoke.ts).
-import { MONSTERS } from '../../src/content/index.ts';
+import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { wallDressing, isSolidWall, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
+import { wallDressing, isSolidWall, isHouse, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
 import { hash } from '../../src/ui/brush.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
-import type { GameMap } from '../../src/game/map.ts';
+import { GameMap } from '../../src/game/map.ts';
 import { ok } from './lib.ts';
 
 /** The defs that draw with a kind another def draws with too, as 'kind: a, b'. */
@@ -105,11 +105,29 @@ export function art(): void {
   ok(over.length === 0, `every map dresses at most ${100 * MAP_CAP}% of its wall faces (${100 * SMALL_MAP_CAP}% under ${SMALL_MAP}): ${now.map((t) => `${t.id} ${(100 * share(t)).toFixed(1)}%`).join(', ')}${over.length ? ' -> over: ' + over.map((t) => t.id).join(', ') : ''}`);
   // A door's lantern and sign are its furniture, reported, not capped: every house door has a
   // lantern, and one with a business in it a sign.
+  // A door set in stone is the stone's: no lantern, no sign.
   const isDoor = (d: string): boolean => d === 'door' || d === 'locked';
   const towns = maps.filter((m) => m.kind === 'town');
-  const doors = towns.flatMap((m) => m.cells.filter((c) => isDoor(c.door)));
-  const signs = towns.flatMap((m) => [...new Set(m.features.filter((f) => isDoor(m.at(f.x, f.y).door)).map((f) => `${f.x},${f.y}`))]);
-  console.log(`  (door furniture: ${doors.length} house doors, each with a lantern; ${signs.length} with a sign)`);
+  const doorsOf = (m: GameMap): [number, number][] => m.cells.flatMap((c, i) => isDoor(c.door) ? [[i % m.width, Math.floor(i / m.width)] as [number, number]] : []);
+  const houseDoors = towns.flatMap((m) => doorsOf(m).filter(([x, y]) => isHouse(m, x, y)));
+  const stoneDoors = towns.flatMap((m) => doorsOf(m).filter(([x, y]) => !isHouse(m, x, y)).map(([x, y]) => `${m.id} ${x},${y}`));
+  const signs = towns.flatMap((m) => [...new Set(m.features.filter((f) => isDoor(m.at(f.x, f.y).door) && isHouse(m, f.x, f.y)).map((f) => `${f.x},${f.y}`))]);
+  console.log(`  (door furniture: ${houseDoors.length} house doors, each with a lantern; ${signs.length} with a sign; ${stoneDoors.length} set in stone${stoneDoors.length ? ': ' + stoneDoors.join(', ') : ''})`);
+
+  // A door is a house's where a building stands beside it, and the stone's where none does; a
+  // banner the map places hangs on stone wall, and only there.
+  const yard = new GameMap({
+    id: 'yard', name: 'Yard', kind: 'town', start: { x: 1, y: 2, facing: 0 },
+    rows: ['#####', '#BDB#', '#...#', '#D###', '#####'],
+    banners: [{ x: 3, y: 3 }, { x: 1, y: 2 }, { x: 1, y: 1 }],
+  });
+  ok(isHouse(yard, 2, 1) && !isHouse(yard, 1, 3), 'a door beside a building is a house\'s; a door in stone is not');
+  ok(wallDressing(yard, 3, 3) === 'banner' && wallDressing(yard, 1, 2) === null && wallDressing(yard, 1, 1) !== 'banner', 'a placed banner hangs on stone wall, not on open ground or a house');
+  const placed = maps.flatMap((m) => (m.def.banners ?? []).map((b) => ({ m, ...b })));
+  const astray = placed.filter(({ m, x, y }) => wallDressing(m, x, y) !== 'banner').map(({ m, x, y }) => `${m.id} ${x},${y}`);
+  ok(astray.length === 0, `every placed banner hangs on stone wall (${placed.length})${astray.length ? ' -> not hung: ' + astray.join(', ') : ''}`);
+  const outdoors = MAP_DEFS.filter((d) => d.kind === 'outdoor' && d.banners?.length).map((d) => d.id);
+  ok(outdoors.length === 0, `no outdoor map places a banner: the outdoors is laid without them${outdoors.length ? ' -> ' + outdoors.join(', ') : ''}`);
 
   // The check fails the walls as they were dressed before #9: every map, and every kind of map with
   // faces enough to be held to its cap.

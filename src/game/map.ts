@@ -84,6 +84,14 @@ export type Feature =
   | { kind: 'statue'; x: number; y: number; id: string; name?: string; text: string; riddle: string; answer: string; gift: Gift; done: string }
   /** Where the party may rest though monsters are about, as often as it likes. */
   | { kind: 'camp'; x: number; y: number; name?: string; text: string }
+  /**
+   * A den (game/dens.ts): it breeds `breeds`, its `brood` groups, back one a pace while it stands;
+   * `keepers`, a group beside it that never leaves, guard it. `text` is its look, said when it is
+   * first seen. Once the keepers are dead a step or Space puts `ask`, answered `burn` or `leave`;
+   * burnt, it says `burnt`, gives its hoard (`gold`, `items`) and breeds no more, and `ruin` is said
+   * thereafter. Groups are named by id, never by square, as the outdoors moves only the den.
+   */
+  | { kind: 'den'; x: number; y: number; id: string; name?: string; text: string; breeds: readonly string[]; keepers: string; brood: readonly string[]; ask: string; burn: string; leave?: string; burnt: string; ruin?: string; gold: number; items: string[] }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
   | { kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean };
 
@@ -190,6 +198,12 @@ export interface MapDef {
   encounters?: EncounterDef[];
   /** Wall and floor tints. */
   palette?: Partial<MapPalette>;
+  /**
+   * A town's or a dungeon's: stone wall squares that always hang the map's banner (`palette.banner`),
+   * wherever else they fall by chance. The outdoors is laid from its zone maps without them, so an
+   * outdoor map places none (tools/tests/art.ts).
+   */
+  banners?: readonly { x: number; y: number }[];
   /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */
   band?: [number, number];
   /** The region whose climate and weather the map shares; the Foreland when absent. */
@@ -272,6 +286,8 @@ export class GameMap {
   readonly def: MapDef;
   /** Each zone's palette over the map's, in the zones' order. */
   private readonly zonePalettes: readonly MapPalette[];
+  /** The squares the map places a banner on, as y * width + x. */
+  private readonly banners: ReadonlySet<number>;
 
   constructor(def: MapDef) {
     this.def = def;
@@ -298,6 +314,7 @@ export class GameMap {
     this.zones = def.zones ?? [];
     this.palette = { ...DEFAULT_PALETTES[def.kind], ...(def.palette ?? {}) };
     this.zonePalettes = this.zones.map((z) => ({ ...this.palette, ...(z.palette ?? {}) }));
+    this.banners = new Set((def.banners ?? []).map((b) => b.y * this.width + b.x));
     for (const e of this.encounters) if (e.monsters.length > 12) throw new Error(`map ${def.id}: encounter ${e.id} has more than 12 monsters`);
   }
 
@@ -308,6 +325,9 @@ export class GameMap {
     if (!this.inBounds(x, y)) return OUT_OF_BOUNDS;
     return this.cells[y * this.width + x];
   }
+
+  /** Whether the map places a banner on x,y (`MapDef.banners`). */
+  bannerAt(x: number, y: number): boolean { return this.inBounds(x, y) && this.banners.has(y * this.width + x); }
 
   /** The zone a cell lies in, on the outdoors; undefined anywhere else. */
   zoneAt(x: number, y: number): MapZone | undefined {
