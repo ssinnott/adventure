@@ -160,7 +160,7 @@ export interface Choice {
   answers: readonly Answer[];
 }
 
-/** An answer: it sets its flags, hands the company `gives` if it has an item, and the person `says` it. */
+/** An answer: it sets its flags, hands the company `gives` if it has an item and the person `says` it. */
 export interface Answer {
   label: string;
   sets?: string | readonly string[];

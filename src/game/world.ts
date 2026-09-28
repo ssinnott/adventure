@@ -561,6 +561,11 @@ export class World {
     return this.map.featuresAt(a.x, a.y).filter((f) => f.kind !== 'event' && f.kind !== 'sign' && this.present(f))[0];
   }
 
+  /** The people standing on a square now with no room of their own: those in the business there. */
+  peopleAt(x: number, y: number): Extract<Feature, { kind: 'npc' }>[] {
+    return this.map.featuresAt(x, y).filter((f): f is Extract<Feature, { kind: 'npc' }> => f.kind === 'npc' && !f.interior && this.present(f));
+  }
+
   /**
    * Whether a feature is there now. A person or an event wears a presence, as a group does: there
    * only in its `when`, once its `after` holds and until its `until` does. Everything else always is.

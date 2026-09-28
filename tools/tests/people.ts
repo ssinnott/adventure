@@ -243,9 +243,10 @@ function presence(): void {
   const heardAt = (x: number, y: number): string => { world.travel('fx_town', x, y, NORTH); return world.eventsHere().join(' '); };
   const day = Math.floor(world.state.minutes / 1440) * 1440, noon = day + 12 * 60, midnight = day + 24 * 60;
   world.state.minutes = noon;
-  const before = [at(1, 1), at(3, 1)].join();
+  const before = [at(1, 1), at(3, 1)].join(), there = [world.peopleAt(1, 1).length, world.peopleAt(3, 1).length].join();
   party.flags.fx_moved = 1;
-  const after = [at(1, 1), at(3, 1)].join();
+  const after = [at(1, 1), at(3, 1)].join(), moved = [world.peopleAt(1, 1).length, world.peopleAt(3, 1).length].join();
+  ok(there === '1,0' && moved === '0,1', `the people on a square are those there now (${there}; then ${moved})`);
   ok(before === 'Ebba, at the Eel,' && after === ',Ebba, at the Chapel', `a person gone from one place once a flag is set is found in another (${before}; then ${after})`);
   const noonAlwin = at(2, 1);
   world.state.minutes = midnight;
