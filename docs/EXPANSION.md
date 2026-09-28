@@ -439,7 +439,7 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | Area | Band | Systems first |
 |---|---|---|
 | The Foreland, Thornmark (the rest) | 1–10 | hills and farmland as terrain (the scaffold of the Downs asks for both); the wilderness features; the flag off the pass, with Thornmark retuned to be the gate (§9); for M1, the first guilds (DESIGN.md §8) |
-| Saltreach | 10–12 | the level cap past 10 and the xp budget (§5.2), with the first prestiges (DESIGN.md §5) and the spells past 10 (DESIGN.md §7); salt flats and tidal ground; the Salt Compact |
+| Saltreach | 10–12 | the level cap past 10 and the xp budget (§5.2), with the first prestiges (DESIGN.md §5) and the spells past 10 (DESIGN.md §7); salt flats and tidal ground; the Cartographers' Guild's and the Salt Compact's halls (DESIGN.md §8) |
 | Wrackholm | 12–14 | a crossing from the mainland, open from the start |
 | Sunderwood | 14–16 | chasm, crystal and dead wood as terrain; the Rift generator |
 | The Kilns | 16–18 | ash; Kiln-script and Linguist |

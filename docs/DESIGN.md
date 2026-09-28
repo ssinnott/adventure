@@ -200,7 +200,7 @@ quest reveals where the trainer is. The titles, trainers, perks, levels and ques
 ### Stats, skills, mastery
 
 - Seven stats: Might, Intellect, Personality, Endurance, Accuracy, Speed, Luck.
-- **Secondary skills** bought from trainers:
+- **Secondary skills,** three to a guild, taught to its members for a price (§8):
   *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
   Perception, Arms Master, Spirit Sense, Navigator.*
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
@@ -239,8 +239,8 @@ dark), not because of numbers.
 - **Sorcerer list** (Fire, Air, Water, Earth): damage, control, and the utility spells that make
   the world bigger: *Light, Levitate, Wizard Eye, Walk on Water, Town Portal, Waymark / Recall,
   Detect Secrets, Jump.*
-- Spells are **bought** at guilds after paying a membership fee; the fee is the region's toll for
-  making you stronger there.
+- Spells are **bought** at the Lanterns' halls after paying the hall's fee to study; the fee is the
+  region's toll for making you stronger there, and buys no membership (§8).
 - About 40 spells at v1. Spells grow two ways: levels unlock new spells, and prestiges bring spell
   ranks, which make the spells a caster already knows stronger (§5). In the combat harness, damage
   spells that go on growing with level break the road past 10 (MONSTERS.md §4.4), so the spells
@@ -266,16 +266,81 @@ a window below Fire Mountain.
 Some of the cities have guilds. A company can join any of them, and every one at once, and each
 is a hub of side quests. There are no rivals, and joining one never costs anything with another: a
 company is six mixed classes, and rival guilds would pull it apart. Nor do guilds carry class
-progression, which is the prestiges' (§5).
+progression, which is the prestiges' (§5). They replace the four rival Charters this section first
+described, and Standing went with those: a company's rank in a guild is its place in that guild,
+not its name in the world. Something like Standing may come back, but it will look different.
 
-The guilds replace the four rival Charters this section first described (the Wardens, the
-Lanterns, the Cartographers' Guild and the Salt Compact), each a questline and the promotion path
-for a pair of classes. Which guilds there are and where, whether they are the spell guilds of §7,
-what joining costs and the quests pay, what becomes of the Charters' storylines, and what gives a
-company its start are open, in #21.
+### The four
 
-Standing, a company's name with each faction and region, went with the Charters. Something like it
-may come back, but it will look different.
+| Guild | Who they are | Halls | Skills they teach |
+|---|---|---|---|
+| **The Wardens** | soldiers and road guards | Helmstow | Arms Master, Danger Sense, Mountaineer |
+| **The Lanterns** | clergy and scholars of the Stones | Helmstow, Thornhold | Spirit Sense, Linguist, Perception |
+| **The Cartographers' Guild** | explorers and surveyors | Saltreach | Cartographer, Pathfinder, Swimmer |
+| **The Salt Compact** | smugglers and fences | Saltreach | Lockpick, Merchant, Navigator |
+
+New guilds may come with later areas. M1 builds the two in Act I's cities, the Wardens and the
+Lanterns; the Cartographers' and the Compact's halls go in with Saltreach (docs/EXPANSION.md §7).
+
+- **The Wardens** keep Helmstow's roads, its checkpoints and its walls. Their hall is the Warden
+  Drillyard, which goes on training levels. The Regent-Warden, Lord Vask, commands them, and in
+  Act I that means the roads: Captain Hale's checkpoint, a lost watchtower in Thornmark. What they
+  become under his hand, the Wardens on the walls between acts (§9), is set with Act II.
+- **The Lanterns' halls are both.** The Lantern Guildhall in Helmstow and the Thornhold Lantern
+  Hall (not the Lantern Chapterhouse, Thornhold's temple) go on selling spells, and give the
+  Lanterns' quests to a company that has done the first task. The fee to study is the hall's, §7's
+  regional toll; any company may pay it, and a Lantern pays it too. It is not membership.
+
+### Joining and ranks
+
+- **Joining is a first task,** a small quest any hall of the guild offers a stranger. There is no
+  fee to join. The first task done, the company is a member at the first rank.
+- **Four ranks a guild.** All of a rank's quests done raise the company to the next, and each rank
+  opens the next quests. Act I takes the Wardens and the Lanterns to their third rank.
+
+  | Guild | 1 | 2 | 3 | 4 |
+  |---|---|---|---|---|
+  | The Wardens | Recruit | Warden | Sergeant | Captain |
+  | The Lanterns | Novice | Adjunct | Keeper | Lamp-Master |
+  | The Cartographers | Chainman | Surveyor | Mapmaker | Meridian |
+  | The Compact | Runner | Fence | Factor | Partner |
+
+- **One ladder a guild.** Every hall of a guild offers the next quest on it and takes reports for
+  any, so a Lantern met first at Thornhold is sent back a short way for the first task.
+- **A rank is no story lock.** It decides only what a hall offers, and opens or shuts no way on the
+  map (docs/EXPANSION.md §2.3). A deed done or an item found before its quest was taken is paid
+  when it is reported, with words for a company that came early, as a hand-in is.
+
+### What a guild gives
+
+- **Its quests pay gold, items and xp,** the xp split among the living as a fight's is.
+- **Its skills,** taught to members for a price (§5), three to a guild, once the skills are built.
+- **Its line.** The Charters' storylines are the guilds' lines: the Wardens' siege, the Lanterns'
+  split at Lantern Watch (§9, Act II), the Compact's line (§10.2), with its ending kept, and the
+  Cartographers' Lost Expedition (§10.3).
+
+### The company's charter
+
+A company's start is a charter from the Crown, the plain word for its licence, granted by the
+Regent. Vask's commission, The Quiet Farm, is its first contract, and Helmstow its home. The
+charter makes the company no member of any guild.
+
+### Act I's guild quests
+
+On the built maps, with no new monster group: a deed is a guardian, an event or a chest already
+there, and the main quest's steps and Hale's are left alone. Each quest's words, pay and level come
+with its build.
+
+| Guild | Rank | Quest | Where | The deed |
+|---|---|---|---|---|
+| Wardens | first task | First Watch | the Foreland, Hale's checkpoint at the Scarth | walk the road to the checkpoint and back |
+| Wardens | 1 | the cellar's cult | Ashcombe Cellar | the two cultist bands that hold it |
+| Wardens | 1 | the drowned stair | Brandy Hole | the dead at the stair down |
+| Wardens | 2 | the old watchtower | Thornmark | the ogre denned in the tower's base |
+| Lanterns | first task | First Light | the Foreland's shore | look at the Hearth from the sea and say what was seen |
+| Lanterns | 1 | the tide pool | Brandy Hole | find who floats in the pool |
+| Lanterns | 1 | the dark marker | Thornmark's lake | the survey marker with its glass gone dark |
+| Lanterns | 2 | the open barrow | Thornmark | the barrow's dead, laid |
 
 ---
 
