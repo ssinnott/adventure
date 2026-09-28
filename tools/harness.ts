@@ -88,13 +88,15 @@ export function edgeOf(c: Character, round: number): Edge {
 }
 
 /**
- * What the item tables put in a company's hands by a level: its kit, then the Foreland's mid-tier
- * (the Brandy Hole chests and Helmstow's shop) from 4, then Thornmark's armoury from 8, where plate
- * is dear. Each member takes the best its class can use of the kind it already carries, which
- * flatters the company a little. The curve's gear (EXPANSION.md §5.2) replaces this when it exists.
+ * The ladder: what a company has in its hands by a level (EXPANSION.md §5.2). Its kit, then by 3 the
+ * band's gear from Mottram's and the kits' weapons with a plus from the Downs' first boxes, by 5 the
+ * kits' armour with a plus and the Downs' last finds, then Thornmark's armoury from 8, where plate is
+ * dear. Each member takes the best its class can use of the kind it already carries, which flatters
+ * the company a little. The harness and the gate check both dress their company from it.
  */
 export const GEAR: readonly (readonly [number, readonly string[]])[] = [
-  [4, ['longsword', 'axe', 'longbow', 'shield', 'scale', 'chain']],
+  [3, ['longsword', 'axe', 'longbow', 'shield', 'scale', 'chain', 'dagger+1', 'mace+1', 'shortsword+1', 'staff+1']],
+  [5, ['robe+1', 'leather+1', 'buckler+1', 'captains_sword', 'queens_sword', 'captains_mail', 'halberd+1', 'spear+1', 'longbow+1', 'shield+1']],
   [8, ['warhammer', 'battleaxe', 'greatsword', 'crossbow', 'elfbow', 'rune_dagger', 'grove_staff', 'runed_robe', 'brigandine', 'plate', 'tower_shield']],
 ];
 
@@ -116,7 +118,7 @@ function forge(base: ItemDef, more: { bonus?: number; ac?: number }, plus: numbe
  * its weapon and armour are enchanted as the curve's gear would be: the weapon's blow grows as the
  * line's hit points do, and the armour a point every two levels, as the line's to-hit does.
  */
-function outfit(c: Character, level: number): void {
+export function outfit(c: Character, level: number): void {
   const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map(item).filter((d) => !d.classes || d.classes.includes(c.cls));
   const w = weaponOf(c), shielded = !!c.equipment.shield;
   const weapon = pool.filter((d) => d.slot === 'weapon' && !!d.ranged === !!w.ranged && !(shielded && d.twoHanded) && hits(d) > hits(w)).sort((a, b) => hits(b) - hits(a))[0];
