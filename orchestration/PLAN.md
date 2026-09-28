@@ -143,3 +143,23 @@ Started at 15:12, with prompts in `prompts/`:
 gate's company are in; the dungeons once the owner answers its open decisions 1 and 2 (how the gate
 judges the dungeons; bosses out of the day) and #101 is in. The orchestrator decided its decision 3:
 the road opens before the zone holds.
+
+### 15:48 to 16:00: the owed table in; second-round and first reviews under way
+
+State at the 15:47 check-in: every Wave 1 session had answered. Fixes pushed on #110, #111, #112
+and #113; #115 merged main after #114; new pull requests #116 (the `UNPLACED` table), #117 (#40's
+road) and #118 (#41's `look`, which closes #41). The four drawing sessions waited on #116.
+
+- #116 merged at 15:49 (main 36c2e3c): the diff was exactly the footprint's verified text; the
+  tests on main with it: ALL OK, 30 owed (no drawing is in yet, so no new owed line); CI green.
+- 15:56: the drawing sessions told to merge main and open their pull requests; the barrow's hexes
+  and sizes are the owner's to judge on the sheets, so #83 and #84 open together (#84 stacked on
+  #83, saying so). The farm kitchen session went on to #97.
+- Reviewers at 15:55: second rounds on #110 and #112, #113 and #111; first reviews of #115, #117
+  and #118. Reports in `reviews/`.
+- Footprints in for Wave 2: #88 (after #45; its burn goes through the existing choice screen, not
+  #76's, so it need not wait for #76: the orchestrator's call), #76 (L, two pull requests, after
+  #43; seven drafted people stand inside a business, a shape to put to the owner in its pull
+  request; it and #21's build both change what a business opens on, so decide who builds that menu
+  before both start), #42 (L, two pull requests: the join and the log after #117; the walkthroughs
+  before #47). #99 and #101's is being written.
