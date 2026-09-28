@@ -501,8 +501,8 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
   | Druid | Quarterstaff +1 | Leather Armour +1, Spear +1 |
 
   The harness and the gate check dress their company from it (`GEAR`, `tools/harness.ts`), at 3 and
-  at 5; `tools/tests/ladder.ts` walks it class by class, and owes each find to its box until a chest
-  or a hoard holds it.
+  at 5; `tools/tests/ladder.ts` walks it class by class, and owes each find to its box until a
+  chest, cairn or statue gives it or a monster drops it.
 - **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`), and Helmstow's Lantern
   Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:410`). EXPANSION §4 has an
   area's towns sell its band's tier.

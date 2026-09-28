@@ -197,10 +197,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   riftling, ogre, wraith, birds) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts`
   has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
   the cult and the skeletons stand on. Every monster def names a sprite kind no other def uses
-  (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands and
-  smugglers, the cult's ranks, the bone knight, the ghoul and the drowned man, the dire wolf and
-  rift hound, the thorn spider, shore crab and rift crawler, the elder and the two wardens) are
-  drawn with their own gear, anatomy and glow rather than a recolour.
+  (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
+  smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
+  and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
+  crab and rift crawler, the elder and the two wardens) are drawn with their own gear, anatomy and
+  glow rather than a recolour.
 - `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
   look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
   mass, with one ink outline around the union, one rendered gradient across the whole (a bright
@@ -365,8 +366,9 @@ over content broken on purpose too, and two tools to theirs:
 - `scaffold` (§8.2): the Downs' draft, laid back into the atlas, is the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
-  a chest or a hoard holds it, Mottram's sells the band's gear and the gate check's company wears
-  what harness's does.
+  a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
+  gate check's company wears what harness's does; every class finds a plus it can use in Thornmark,
+  each in the ladder by 9, and nothing there gives the Armoury's gear.
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
