@@ -57,7 +57,7 @@ export type { Interior };
 
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
-  | { kind: 'sign'; x: number; y: number; text: string }
+  | { kind: 'sign'; x: number; y: number; text: string; id?: string }
   | { kind: 'inn'; x: number; y: number; name: string; price: number; interior: Interior }
   | { kind: 'temple'; x: number; y: number; name: string; interior: Interior }
   | { kind: 'shop'; x: number; y: number; name: string; stock: string[]; interior: Interior }
@@ -136,6 +136,8 @@ export interface MapDef {
   start: { x: number; y: number; facing: Facing };
   exits?: Exit[];
   features?: Feature[];
+  /** Each secret door and the id of the event or sign on its near side that hints at it (tools/tests/pillars.ts). */
+  secrets?: { x: number; y: number; hint: string }[];
   encounters?: EncounterDef[];
   /** Wall and floor tints. */
   palette?: Partial<MapPalette>;

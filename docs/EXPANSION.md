@@ -60,10 +60,11 @@ second was merged; each business is now held to the rooms its area lists (#29).
 - All five secret doors have a written hint on the near side. The Foreland's two were given
   theirs by #51: a cold draught beside the Ashcombe cellar's (mill 4,7), and drag marks beside
   Brandy Hole's (greywater1 10,11), whose old text was the stash behind it.
-- 42 of the 49 event and sign texts wrap to two lines of the log or fewer, as DESIGN.md §11 asks;
-  seven run to three.
+- 43 of the 51 event and sign texts wrap to two lines of the log or fewer as it shows them, as
+  DESIGN.md §11 asks; eight run to three.
 
-Nothing checks any of these, so the next session that does not know them will break them.
+`tools/tests/pillars.ts` now holds the hints and the three-line cap (#33); nothing yet checks the
+first, so the next session that does not know it will break it.
 
 **Where the build and the design have parted.** DESIGN.md §13 says content is data under
 `content/` and code never holds a monster's hit points; the monster, item and spell tables are in

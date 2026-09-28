@@ -22,5 +22,6 @@ export const AREA = {
   climate: { summer: 17, winter: -4, daily: 5, damp: [0, 0.06], wettest: 80, fog: 0.5, lag: 5,
     fogText: 'Mist rises between the trees.', thunderText: 'Thunder rolls over the forest.' },
   interiors: ['green_man', 'lantern_chapterhouse', 'thornhold_armoury', 'lantern_hall', 'elders_yard', 'split_oak'] as const,
+  novel: { families: ['ogre', 'wraith'], terrain: [], mechanics: ['encounter:slainText'], landmarks: ['hold', 'tower', 'barrow', 'grove'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

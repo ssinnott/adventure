@@ -89,7 +89,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
       if (e.label) enter.set(e.to, { ...enter.get(e.to), [l.def.id]: e.label });
     }
     for (const f of l.def.features ?? []) {
-      if ('id' in f) {
+      if ('id' in f && f.id !== undefined) {
         if (used.has(f.id)) throw new Error(`${l.def.id}: feature id '${f.id}' is another zone's too, and the outdoors keeps one record of both`);
         used.add(f.id);
       }

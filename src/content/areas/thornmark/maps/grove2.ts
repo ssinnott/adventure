@@ -44,6 +44,7 @@ export const GROVE2: MapDef = {
     { kind: 'event', x: 7, y: 8, id: 'g2_stone', once: true, text: 'The Grove Stone: a standing stone the height of two men, and a hand-span of it cut clean away. Where the cut is, the air is torn. In the tear, something turns to look at you.' },
     { kind: 'chest', x: 8, y: 8, id: 'g2_hoard', gold: 600, items: ['plate', 'potion_sp_great', 'elixir'] },
   ],
+  secrets: [{ x: 6, y: 13, hint: 'g2_hint' }],
   encounters: [
     { id: 'g2_ring1', x: 8, y: 1, monsters: ['wraith', 'wraith', 'bone_knight', 'bone_knight', 'bone_knight'], aware: 5, respawn: 2880 },
     { id: 'g2_ring1b', x: 14, y: 8, monsters: ['rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 1440 },

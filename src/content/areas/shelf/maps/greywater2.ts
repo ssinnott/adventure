@@ -36,7 +36,7 @@ export const GREYWATER2: MapDef = {
     { kind: 'event', x: 1, y: 2, id: 'gw2_in', once: true, text: 'Dressed stone under the sea cliffs, old as the Ashcombe cellar. Water runs down the walls and the floor is ankle-deep in it.' },
     { kind: 'chest', x: 3, y: 3, id: 'gw2_c1', gold: 80, items: ['potion_heal', 'potion_heal', 'antidote'] },
     { kind: 'event', x: 8, y: 6, id: 'gw2_east', once: true, text: 'Cells line this passage, their bars rusted through. The cargo the smugglers brought down was people.' },
-    { kind: 'sign', x: 11, y: 6, text: 'Carved deep over a blank stretch of wall: THE HAND OPENS WHAT THE HEARTH SHUTS.' },
+    { kind: 'sign', x: 11, y: 6, id: 'gw2_carving', text: 'Carved deep over a blank stretch of wall: THE HAND OPENS WHAT THE HEARTH SHUTS.' },
     { kind: 'event', x: 11, y: 4, id: 'gw2_vestry', once: true, text: 'A vestry. Grey robes on pegs, and a key on a nail by the door.' },
     { kind: 'chest', x: 12, y: 3, id: 'gw2_key', gold: 100, items: ['key_iron', 'potion_sp'] },
     { kind: 'chest', x: 14, y: 14, id: 'gw2_c2', gold: 90, items: ['chain', 'potion_heal'] },
@@ -45,6 +45,7 @@ export const GREYWATER2: MapDef = {
     { kind: 'event', x: 9, y: 11, id: 'gw2_shrine', once: true, text: 'The shrine. A seam in the floor glows red, stitched shut with iron staples. Someone has been prising the staples out, one at a time.' },
     { kind: 'chest', x: 5, y: 11, id: 'gw2_ledger', gold: 250, items: ['greywater_ledger', 'elixir'] },
   ],
+  secrets: [{ x: 11, y: 5, hint: 'gw2_carving' }],
   encounters: [
     { id: 'gw2_ghouls', x: 6, y: 1, monsters: ['ghoul', 'ghoul', 'ghoul'], aware: 4, respawn: 1440 },
     { id: 'gw2_drowned', x: 1, y: 6, monsters: ['drowned', 'drowned', 'drowned', 'drowned'], aware: 4, respawn: 2880 },

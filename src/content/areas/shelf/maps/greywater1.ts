@@ -48,6 +48,7 @@ export const GREYWATER1: MapDef = {
     { kind: 'event', x: 13, y: 9, id: 'gw1_door', once: true, text: 'Past the iron door the rock is carved, not worn by water. Hands are chiselled into it, palm out, everywhere.' },
     { kind: 'chest', x: 13, y: 13, id: 'gw1_c3', gold: 50, items: ['potion_heal', 'potion_sp'] },
   ],
+  secrets: [{ x: 10, y: 11, hint: 'gw1_drag' }],
   encounters: [
     { id: 'gw1_crabs', x: 5, y: 1, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
     { id: 'gw1_rats', x: 8, y: 3, monsters: ['rat', 'rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: 720 },

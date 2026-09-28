@@ -45,6 +45,7 @@ export const GROVE1: MapDef = {
     { kind: 'chest', x: 12, y: 11, id: 'g1_c3', gold: 200, items: ['brigandine', 'elixir'] },
     { kind: 'event', x: 11, y: 11, id: 'g1_stairs', once: true, text: 'A stair, and beside it a dead elf in Thornhold green, a week gone. Her hands are burned to the wrist.' },
   ],
+  secrets: [{ x: 5, y: 11, hint: 'g1_grit' }],
   encounters: [
     { id: 'g1_spiders', x: 3, y: 1, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440 },
     { id: 'g1_wolves', x: 6, y: 3, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },

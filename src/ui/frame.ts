@@ -200,12 +200,17 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
 
 import { armorClass as armorClassOf } from '../game/party.ts';
 
+/** How many lines the log shows. */
+export const LOG_LINES = 4;
+/** One log entry as the log wraps it. */
+export const logLines = (text: string): string[] => wrap(text, LAYOUT.log.w - 12);
+
 /** The last few log lines, over the bottom of the viewport. */
-export function drawLog(ctx: CanvasRenderingContext2D, lines: readonly string[], max = 4): void {
+export function drawLog(ctx: CanvasRenderingContext2D, lines: readonly string[], max = LOG_LINES): void {
   const r = LAYOUT.log;
   // Wrap each entry to the viewport, keep the newest, and highlight the latest entry's lines.
   const wrapped: { text: string; latest: boolean }[] = [];
-  lines.slice(-max).forEach((l, i, arr) => { for (const w of wrap(l, r.w - 12)) wrapped.push({ text: w, latest: i === arr.length - 1 }); });
+  lines.slice(-max).forEach((l, i, arr) => { for (const w of logLines(l)) wrapped.push({ text: w, latest: i === arr.length - 1 }); });
   const shown = wrapped.slice(-max);
   if (!shown.length) return;
   const h = shown.length * 10 + 6;
