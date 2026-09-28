@@ -1,0 +1,336 @@
+{
+  "version": 2,
+  "maps": {
+    "caldera": {
+      "size": "512x384",
+      "used": [
+        "ashcombe_gate",
+        "barrow",
+        "coast",
+        "grove_edge",
+        "grove_road",
+        "lake",
+        "thornmark_in",
+        "tm_barrow",
+        "tm_tower",
+        "tower"
+      ],
+      "groups": [
+        "beach_crabs",
+        "cliff_smugglers",
+        "coast_bandits",
+        "farm_rats",
+        "hill_wolves",
+        "marsh_spiders",
+        "road_bandits",
+        "road_rats",
+        "tm_barrow",
+        "tm_brigands1",
+        "tm_brigands2",
+        "tm_elders",
+        "tm_hounds",
+        "tm_lake",
+        "tm_ogre",
+        "tm_spiders1",
+        "tm_spiders2",
+        "tm_wolves1",
+        "tm_wolves2",
+        "tm_wolves3",
+        "tm_wraiths",
+        "tm_zealots",
+        "wood_boar",
+        "wood_wolves"
+      ],
+      "doors": []
+    },
+    "greywater1": {
+      "size": "16x16",
+      "used": [
+        "gw1_c1",
+        "gw1_c2",
+        "gw1_c3",
+        "gw1_den",
+        "gw1_door",
+        "gw1_drag",
+        "gw1_in",
+        "gw1_key",
+        "gw1_pool",
+        "gw1_stash",
+        "gw1_stash_c"
+      ],
+      "groups": [
+        "gw1_captain",
+        "gw1_crabs",
+        "gw1_crabs2",
+        "gw1_drowned",
+        "gw1_rats",
+        "gw1_smug1",
+        "gw1_smug2",
+        "gw1_smug3",
+        "gw1_stairs"
+      ],
+      "doors": [
+        "10,11",
+        "13,8"
+      ]
+    },
+    "greywater2": {
+      "size": "16x16",
+      "used": [
+        "gw2_c1",
+        "gw2_c2",
+        "gw2_c3",
+        "gw2_east",
+        "gw2_gallery",
+        "gw2_in",
+        "gw2_key",
+        "gw2_ledger",
+        "gw2_shrine",
+        "gw2_vestry"
+      ],
+      "groups": [
+        "gw2_acolytes",
+        "gw2_crawlers",
+        "gw2_crawlers2",
+        "gw2_deacon",
+        "gw2_dead",
+        "gw2_doorguard",
+        "gw2_drowned",
+        "gw2_ghouls",
+        "gw2_mixed"
+      ],
+      "doors": [
+        "10,11",
+        "11,5"
+      ]
+    },
+    "grove1": {
+      "size": "16x16",
+      "used": [
+        "g1_c1",
+        "g1_c2",
+        "g1_c3",
+        "g1_east",
+        "g1_grit",
+        "g1_in",
+        "g1_key",
+        "g1_marks",
+        "g1_stairs"
+      ],
+      "groups": [
+        "g1_elders",
+        "g1_hounds",
+        "g1_keeper",
+        "g1_knights",
+        "g1_spiders",
+        "g1_stairguard",
+        "g1_wolves",
+        "g1_zealots",
+        "g1_zealots2"
+      ],
+      "doors": [
+        "5,11",
+        "7,11"
+      ]
+    },
+    "grove2": {
+      "size": "16x16",
+      "used": [
+        "g2_c1",
+        "g2_hint",
+        "g2_hoard",
+        "g2_in",
+        "g2_inner",
+        "g2_key",
+        "g2_ring2",
+        "g2_stone"
+      ],
+      "groups": [
+        "g2_hand",
+        "g2_keyguard",
+        "g2_ring1",
+        "g2_ring1b",
+        "g2_ring1c",
+        "g2_ring2",
+        "g2_ring2b",
+        "g2_ring2c",
+        "g2_ring3",
+        "g2_ring3b",
+        "g2_warden"
+      ],
+      "doors": [
+        "6,13",
+        "7,9"
+      ]
+    },
+    "harrow": {
+      "size": "16x16",
+      "used": [
+        "harrow_intro"
+      ],
+      "groups": [],
+      "doors": []
+    },
+    "mill": {
+      "size": "16x16",
+      "used": [
+        "mill_c1",
+        "mill_c2",
+        "mill_c3",
+        "mill_core",
+        "mill_draught",
+        "mill_in",
+        "mill_lantern",
+        "mill_rift",
+        "mill_shard"
+      ],
+      "groups": [
+        "m_cult1",
+        "m_cult2",
+        "m_rats",
+        "m_rift1",
+        "m_rift2",
+        "m_skel",
+        "m_skel2",
+        "m_slime",
+        "m_warden"
+      ],
+      "doors": [
+        "4,7",
+        "7,11"
+      ]
+    },
+    "thornhold": {
+      "size": "16x16",
+      "used": [
+        "thornhold_intro"
+      ],
+      "groups": [],
+      "doors": []
+    }
+  },
+  "zones": {
+    "shelf": {
+      "at": "200,30",
+      "size": "32x32"
+    },
+    "thornmark": {
+      "at": "232,30",
+      "size": "32x32"
+    }
+  },
+  "flags": [
+    "donations",
+    "guild_Lantern Guildhall",
+    "guild_Thornhold Lantern Hall",
+    "q_ashcombe",
+    "q_ashcombe_done",
+    "q_greywater",
+    "q_greywater_done",
+    "q_grove",
+    "q_grove_done"
+  ],
+  "items": [
+    "antidote",
+    "ashen_chisel",
+    "axe",
+    "battleaxe",
+    "brigandine",
+    "buckler",
+    "chain",
+    "club",
+    "crossbow",
+    "dagger",
+    "elfbow",
+    "elixir",
+    "greatsword",
+    "greywater_ledger",
+    "grove_staff",
+    "key_iron",
+    "lantern_oil",
+    "leather",
+    "longbow",
+    "longsword",
+    "mace",
+    "meridian_journal",
+    "plate",
+    "potion_heal",
+    "potion_sp",
+    "potion_sp_great",
+    "rations",
+    "robe",
+    "rune_dagger",
+    "runed_robe",
+    "scale",
+    "shield",
+    "shortbow",
+    "shortsword",
+    "sling",
+    "spear",
+    "staff",
+    "survey_wand",
+    "torch",
+    "tower_shield",
+    "warhammer"
+  ],
+  "spells": [
+    "barkskin",
+    "bless",
+    "cure",
+    "firebolt",
+    "foxfire",
+    "hailstorm",
+    "haste",
+    "hawk_eye",
+    "heal",
+    "light",
+    "lightning",
+    "mend_all",
+    "meteor",
+    "regrowth",
+    "restore",
+    "revive",
+    "salve",
+    "sleep",
+    "smite",
+    "spark",
+    "stag_heart",
+    "swarm",
+    "tempest",
+    "thorn",
+    "town_portal",
+    "ward",
+    "wizard_eye",
+    "wrath"
+  ],
+  "classes": [
+    "barbarian",
+    "bard",
+    "cleric",
+    "druid",
+    "knight",
+    "monk",
+    "paladin",
+    "ranger",
+    "sorcerer",
+    "thief"
+  ],
+  "races": [
+    "dwarf",
+    "elf",
+    "gnome",
+    "human",
+    "orcblood",
+    "tidefolk"
+  ],
+  "conditions": [
+    "asleep",
+    "cursed",
+    "dead",
+    "diseased",
+    "paralysed",
+    "poisoned",
+    "stoned",
+    "unconscious"
+  ]
+}

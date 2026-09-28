@@ -111,7 +111,8 @@ In more detail, as SLICE.md had it before the area docs:
   `needFlag` may list several flags; on the outdoors the Foreland's exit into Thornmark became a gate
   on the road through the pass, with the same flags and words). The slice's early monsters give about double their old xp, so
   one clear of the Foreland and the cellar is worth level 2 per member, and adding Brandy Hole is worth
-  level 4 (tests pin both); respawns make up the step to Thornmark's band 5.
+  level 4; respawns make up the step to Thornmark's band 5. The curve (`src/content/progression.ts`)
+  checks what the area pays, in place of the tests that pinned both.
 
 Its content is in `src/content/areas/shelf/` (maps, monsters, items, quests, climate and its part
 of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. It has no walkthrough of
@@ -454,15 +455,18 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
   curve (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor,
   divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the other 2,070 or so come from,
   shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3
-  260 and D4 200. A den's keepers pay once, and its brood as a group that respawns does; the figures
-  count the brood once.
+  260 and D4 200. Until they are built the curve reports the shortfall as owed to the pilot (#26). A
+  den's keepers pay once, and its brood as a group that respawns does; the figures count the brood
+  once.
 - **Gold.** A clear pays about 2,530: 1,065 in chests, about 765 in drops and 700 in rewards.
   Training six members from 1 to 5 costs 1,500, so gold holds.
-- **The gate.** #38 reports the Foreland outside the starting thresholds. The Rift Warden, the
-  Smuggler Captain and the Deacon are won 93 to 99% of the time at their maps' floors, where a boss
-  should be won about half the time. The Seam is won 66% of the time two levels under its floor,
-  where the gate wants a quarter. The area as one is won about 89% of the time at level 1. The
-  pilot settles them, by retuning or by moving the thresholds (#47).
+- **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
+  starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
+  Deacon are won 98, 99 and 98% of the time at their maps' floors, where a boss should be won about
+  half the time. The Seam is won 66% of the time two levels under its floor, where the gate wants a
+  quarter. The area as one is won 88.6% of the time at level 1, against nine in ten. The Foreland
+  map, Brandy Hole and the Seam give 4.6, 4.1 and 4.1 fights to a rest, against six or seven. The
+  pilot settles them, by retuning or by moving the thresholds.
 - **Spells.** Tier 3 comes at level 4, inside the band (`spellTierAt`), and Helmstow's Lantern
   Guildhall sells to tier 2 (it sets no `maxTier`; `src/ui/screens.ts:410`). EXPANSION §4 has an
   area's towns sell its band's tier.

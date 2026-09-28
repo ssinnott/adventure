@@ -25,6 +25,9 @@ DESIGN.md first for the why.
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
+  An old save is brought up to date by version, one registered upgrade a step, and
+  `content/shipped.json` lists every id and placement a save may hold, so a check fails when one
+  goes or moves without a bump and its upgrade (`node tools/shipped.ts` records what is new).
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
   journal of what the party has found: The Quiet Farm (Vask), The Cargo Ledger (Hale), The
   Grove Stone (Vask's lead, Sylvane's chisel), and The Lost Expedition, which the first Meridian
@@ -239,13 +242,18 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 - `typecheck`: `tsc --noEmit`, strict, zero suppressions. It is the first content check: a monster
   with no drawing, a business with no room or a map in a region no area has fails it.
-- `test`: `node tools/test.ts`, the suites in `tools/tests/`, one file each (maps, movement,
-  monsters, combat, harness, party, traits, calendar, terrain, weather, atlas, outdoors, save,
-  quests), then each area's walkthrough where it has one. Every check prints a line saying what it
-  holds, so the output is the list; `node tools/test.ts maps combat` runs a few suites.
+- `test`: `node tools/test.ts`, the suites in `tools/tests/`, one file each, which the runner finds
+  (maps, movement, monsters, combat, harness, party, traits, calendar, terrain, weather, atlas,
+  outdoors, save, quests, then any other in name order), then each area's walkthrough where it has
+  one, in road order. Every check prints a line saying what it holds, so the output is the list;
+  `node tools/test.ts maps combat` runs a few suites.
 - `smoke`: `node tools/smoke.ts`, headless Chromium playing the game through the dev server: every
   screen painted with no page error, and a line for each check as well. Every run plays the same
-  world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it).
+  world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it). It holds every monster to
+  one silhouette, and sweeps for cracks between walls: one way from every square of the cellar and
+  Helmstow each run, all four ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the
+  pull request's base; `node tools/changed.ts <ref> maps` names them), or on those
+  `SMOKE_SWEEP=all|<id>,<id>` names.
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 1 12 3` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -257,6 +265,12 @@ renders every monster (or one family) at the combat size with the viewport sizes
 as a strip of idle frames ending in the hit flash, for judging an art pass.
 `node tools/interiors.ts out.png [--only hearthlight_inn,split_oak] [--scale 2] [--hour 21]` renders
 the businesses' interiors as the viewport shows them, at an hour of the day.
+`node tools/sheet.ts out.png --area thornmark` (or `--maps`, `--monsters` and `--interiors` with ids)
+makes a pull request's contact sheet: each map from its arrivals and its sites by day and by night,
+with the automap revealed and its crop of the world map, each monster as a strip ending in the hit
+flash, and each interior at noon and at night. The world is pinned, so the same tree makes the same
+PNG; an unknown id is refused. `--changed <base>` draws what changed since the base (tools/changed.ts),
+which is how the checks attach a sheet to every pull request that changes a map, a monster or an interior.
 `node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
@@ -265,6 +279,14 @@ where damage spells stop growing at that level, `--gear-grows` one where the com
 growing past Thornmark's, `--level-bonus` one where every member gains a point of damage and of
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow.
+`node tools/scaffold.ts <zone> <x> <y> [--id <map id>] [--out <file> [--force]]` cuts the atlas's
+32 by 32 squares from x,y into a zone map's first draft (EXPANSION §8.2): the ground, the woods, the
+hills, the water and the road square for square, with no ring, and the zone's name and band; its
+header notes the seams, where the road leaves and the sites inside, and it takes its area's region
+where the area has one. It prints the draft, or writes it and never overwrites without `--force`,
+and refuses an unknown zone, an id a built map has or no map id could be, and a cut outside the
+world, over a laid zone map or holding ground no map character is. It registers nothing: the area
+does.
 
 ## Code map
 
@@ -272,10 +294,11 @@ from 11 and again from 29, and sneak attacks grow.
 |---|---|
 | `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, and on the outdoors its gates and zones), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in), older saves brought up to date, the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups, encounter triggers, rest, search |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
-| `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling, the premade party |
+| `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
+| `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
 | `game/quests.ts` | `questLog` (the quests known, their entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions) and `ExploreScreen` |
@@ -290,5 +313,7 @@ from 11 and again from 29, and sneak attacks grow.
 | `content/index.ts` | the areas in road order, the tables merged from them (maps, monsters, items, spells, quests, climates), and the `MonsterSprite`, `Interior` and `RegionId` unions made from them |
 | `content/areas/<area>/` | an area: its maps, monsters, items, quests, climate and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
+| `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
+| `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, groups and door squares, the zones' places, the flags, items, spells, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
 | `content/atlas.ts` | the world map's plan: the land, the areas of the road, and the zones, places and sites not built yet; each area charts its own in `areas/<area>/atlas.ts`, and `content/index.ts` merges them into `ATLAS` |

@@ -35,9 +35,18 @@ traits that carry a company to it included, are in [SLICE.md](../SLICE.md) ("The
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
-One clear of every map is worth a little over level 7 per member (a test pins this); the
+One clear of every map is worth a little over level 7 per member; the
 dungeons respawn in one to two days, and two more sweeps of the Grove reach 10. Levels are still
-bought, so the gold matters: about 8,400 for six members from 5 to 10.
+bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays
+6,039 xp a member of the 13,667 its curve asks, and 4,932 gold of the 8,400: the curve
+(`src/content/progression.ts`) reports both as owed to the pilot (#26).
+
+The gate check (`tools/tests/gate.ts`) reports Thornmark's misses as #40's. Two levels under each
+map's own floor a company wins 91% of the zone's fights (at 3), 99.9% of the Grove Roots' (at 4)
+and all of the Cut Stone's (at 6); two under the area's floor, at 3, it wins 70% of the area's. The
+gate wants a quarter. The Hand of Ash and the Warden of the Cut are won every time at level 8, where
+a boss should be won about half the time, and the Cut Stone gives 7.75 fights to a rest, against
+six or seven.
 
 ## Tests
 

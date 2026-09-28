@@ -3,7 +3,7 @@
 // exploration screen is here because it is the game's spine, the others live in ui/.
 import { rng } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
-import { World } from './world.ts';
+import { World, signLine } from './world.ts';
 import type { WorldState } from './world.ts';
 import { defaultParty, isDown, allDown, countItem, takeItem, heal, spellHeal } from './party.ts';
 import type { Party } from './party.ts';
@@ -148,7 +148,7 @@ export class Game {
   interact(f: Feature, stepped = false): void {
     const w = this.world;
     switch (f.kind) {
-      case 'sign': if (!stepped) this.say(`A sign reads: "${f.text}"`); return;
+      case 'sign': if (!stepped) this.say(signLine(f.text)); return;
       case 'well': this.say(f.text); if (f.heal) { for (const m of this.party.members) if (!isDown(m)) m.hp = m.maxHp; this.say('The party drinks and feels restored.'); } return;
       case 'npc': {
         const q = f.quest;

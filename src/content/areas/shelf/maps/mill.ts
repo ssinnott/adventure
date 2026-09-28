@@ -43,6 +43,7 @@ export const MILL: MapDef = {
     { kind: 'event', x: 3, y: 10, id: 'mill_core', once: true, text: 'The Rift. A tear in the floor the size of a door, breathing heat. Beside it, a fist-sized shard of worked stone that hums against your teeth. A Wardstone shard.' },
     { kind: 'chest', x: 4, y: 10, id: 'mill_shard', gold: 0, items: ['potion_heal', 'potion_heal'] },
   ],
+  secrets: [{ x: 4, y: 7, hint: 'mill_draught' }],
   encounters: [
     { id: 'm_rats', x: 5, y: 1, monsters: ['rat', 'rat', 'rat', 'rat'], aware: 5, respawn: 1440 },
     { id: 'm_slime', x: 1, y: 6, monsters: ['slime', 'slime'], aware: 3, respawn: 1440 },
