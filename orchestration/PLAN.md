@@ -159,3 +159,5 @@ merge main for README and fix a stale body line, then it merges. #103 (#38): its
 fresh review found three more (Thornmark's rest figure passes by 0.01 on seed noise; a line in
 thornmark.md quotes the maps at the wrong level; gateCompany gives a stronger company under level 1),
 sent at 05:08.
+#91 (#37) merged at 05:14 (main 8806854) after its head, which carried main, was green in CI (sheet
+job included) and locally. Left: #103 (#38) and #95 (#33, waiting on the owner's edge issue).
