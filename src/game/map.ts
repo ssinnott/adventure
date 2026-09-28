@@ -62,7 +62,7 @@ export type Feature =
   | { kind: 'sign'; x: number; y: number; text: string; id?: string }
   | { kind: 'inn'; x: number; y: number; name: string; price: number; interior: Interior }
   | { kind: 'temple'; x: number; y: number; name: string; interior: Interior }
-  | { kind: 'shop'; x: number; y: number; name: string; stock: string[]; interior: Interior }
+  | { kind: 'shop'; x: number; y: number; name: string; stock: string[]; prices?: Readonly<Record<string, number>>; interior: Interior }
   | { kind: 'guild'; x: number; y: number; name: string; classes: string[]; fee: number; maxTier?: number; interior: Interior }
   | { kind: 'trainer'; x: number; y: number; name: string; maxLevel: number; interior: Interior }
   | { kind: 'chest'; x: number; y: number; id: string; gold: number; items: string[]; trapped?: boolean }

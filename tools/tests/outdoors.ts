@@ -1,13 +1,18 @@
 // The outdoors as one map: the zone maps laid in 1:1 where the atlas puts them, the void round them,
-// the ridge and its gate, and every open square reachable.
+// the ridge and its open pass, and every open square reachable.
 import { buildMaps, PLAYED_DEFS } from '../../src/content/maps.ts';
 import { MAP_DEFS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
 import { ATLAS } from '../../src/content/index.ts';
-import { zoneOfMap } from '../../src/game/atlas.ts';
-import { ok } from './lib.ts';
+import { mapAt } from '../../src/game/atlas.ts';
+import type { AtlasZone } from '../../src/game/atlas.ts';
+import { World } from '../../src/game/world.ts';
+import { defaultParty } from '../../src/game/party.ts';
+import { makeRng } from '../../src/lib/engine/rng.ts';
+import { EAST } from '../../src/game/types.ts';
+import { ok, local } from './lib.ts';
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
@@ -18,7 +23,7 @@ export function outdoors(): void {
   const out = new GameMap(played[0]);
   ok(out.width === ATLAS.width && out.height === ATLAS.height, `the outdoors is the world's size, square for square with the painted map (${out.width}x${out.height})`);
   for (const d of zoneMaps) {
-    const z = out.zones.find((q) => q.id === d.id), at = zoneOfMap(ATLAS, d.id)?.at;
+    const z = out.zones.find((q) => q.id === d.id), at = mapAt(ATLAS, d.id);
     ok(!!z && !!at && z.x === at[0] && z.y === at[1] && z.w === d.rows[0].length && z.h === d.rows.length && z.name === d.name, `${d.id}: laid where the atlas puts it, and called ${d.name}`);
     if (!z) continue;
     let same = 0;
@@ -37,14 +42,29 @@ export function outdoors(): void {
   ok(faces.every((s) => /^%+$/.test(s)), 'the Foreland\'s north, west and south edges and Thornmark\'s north, east and south edges are the end of the world');
   const ridge = '%' + 'M'.repeat(8) + '=' + 'M'.repeat(21) + '%';
   ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge, 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at both ends');
-  // The ways: every one lands on open ground; none joins one zone to the next, which is walked; the
-  // checkpoint's flags close the road instead; and the towns and dungeons open onto the outdoors.
+  // The ways: every one lands on open ground; none joins one zone to the next, which is walked; no
+  // gate closes the road; and the towns and dungeons open onto the outdoors.
   const maps = buildMaps();
   for (const d of PLAYED_DEFS) for (const e of d.exits ?? []) ok(maps[e.to]?.passable(e.tx, e.ty) === 'ok', `${d.id} -> ${e.to}: lands on an open square (${e.tx},${e.ty})`);
   ok(!out.exits.some((e) => e.to === OUTDOORS), 'no exit joins one zone to the next: the way between them is walked');
-  const g = out.gates;
-  ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'q_ashcombe_done,q_greywater_done' && /checkpoint/.test(g[0].blockedText ?? ''),
-    'the Warden checkpoint is a gate on the road through the pass, with the old exit\'s flags and words');
+  ok(out.gates.length === 0, `no gate closes the road through the outdoors${out.gates.length ? ' -> ' + out.gates.map((g) => `${g.x},${g.y}`).join(', ') : ''}`);
+  { // The machinery stays for the story's own locks (EXPANSION §2.3): an exit into the zone next door
+    // that asks for flags is laid as a gate on its square, and refuses the party until they are set.
+    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, needFlag: ['fixture_a', 'fixture_b'], blockedText: 'Fixture gate.' }) });
+    const laid = layOutdoors(ATLAS, defs), fx = new GameMap(laid.find((d) => d.id === OUTDOORS)!);
+    const g = fx.gates;
+    ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'fixture_a,fixture_b' && g[0].blockedText === 'Fixture gate.', `an exit with flags into the zone next door is laid as a gate on its square, with its words (${g.map((q) => `${q.x},${q.y}`).join(', ')})`);
+    const rng = makeRng(3), party = defaultParty(rng);
+    const world = new World(Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
+    world.travel('shelf', 30, 9, EAST);
+    const shut = world.move('forward');
+    party.flags.fixture_a = 1;
+    const half = world.move('forward');
+    party.flags.fixture_b = 1;
+    const open = world.move('forward');
+    ok(shut.kind === 'blocked' && shut.reason === 'Fixture gate.' && half.kind === 'blocked' && open.kind === 'moved' && local(world).x === 31,
+      `the gate refuses the party with its words until every flag is set, then lets it through (${shut.kind}, ${half.kind}, ${open.kind})`);
+  }
   ok(PLAYED_DEFS.find((d) => d.id === 'harrow')!.exits!.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Helmstow\'s south gate opens onto the Foreland road, where it always did');
   ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void.
@@ -68,6 +88,6 @@ export function outdoors(): void {
   const refusal = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } };
   const clash: MapDef[] = MAP_DEFS.map((d) => (d.id === 'thornmark' ? { ...d, features: [...(d.features ?? []), { kind: 'event', x: 2, y: 2, id: 'coast', text: '' }] } : d));
   ok(/'coast'/.test(refusal(() => layOutdoors(ATLAS, clash))), 'two zones may not share a feature id: the outdoors keeps one record for both');
-  const heaped = { ...ATLAS, zones: ATLAS.zones.map((z) => (z.id === 'thornmark' ? { ...z, at: [220, 30] as const } : z)) };
+  const heaped = { ...ATLAS, zones: ATLAS.zones.map((z): AtlasZone => (z.id === 'thornmark' ? { ...z, maps: [{ map: 'thornmark', at: [220, 30] }] } : z)) };
   ok(/laid over/.test(refusal(() => layOutdoors(heaped, MAP_DEFS))), 'nor may two zone maps be laid on the same squares');
 }

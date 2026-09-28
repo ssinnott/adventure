@@ -11,7 +11,7 @@ import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
 import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
-import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
+import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
 import { drawFrameBackground } from './frame.ts';
@@ -893,8 +893,8 @@ function drawSite(ctx: CanvasRenderingContext2D, icon: AtlasSite['icon'], x: num
 
 /** Cloth position of a site: map-relative sites are placed from their built map's corner. */
 function sitePos(s: AtlasSite): [number, number] {
-  const z = s.map ? zoneOfMap(ATLAS, s.map) : undefined;
-  const wx = (z?.at?.[0] ?? 0) + s.at[0], wy = (z?.at?.[1] ?? 0) + s.at[1];
+  const at = s.map ? mapAt(ATLAS, s.map) : undefined;
+  const wx = (at?.[0] ?? 0) + s.at[0], wy = (at?.[1] ?? 0) + s.at[1];
   return [px(wx), py(wy)];
 }
 
@@ -995,7 +995,7 @@ function paintSea(ctx: CanvasRenderingContext2D, grid: WorldGrid): void {
 
 // ---------------------------------------------------------------- the border, the title, the rose
 
-/** The cloth's border: two rules with a band between, lettered by square like the old box maps. */
+/** The cloth's border: two rules with a band between, lettered by box like the old box maps; the strips at the edges go unlettered. */
 function paintBorder(ctx: CanvasRenderingContext2D): void {
   const w = CLOTH.w, h = CLOTH.h, B = PAD - 3;
   ctx.fillStyle = rgba('#b89a64', 0.22);
@@ -1005,21 +1005,25 @@ function paintBorder(ctx: CanvasRenderingContext2D): void {
   ctx.strokeRect(2.5, 2.5, w - 5, h - 5);
   ctx.strokeRect(B + 0.5, B + 0.5, w - B * 2 - 1, h - B * 2 - 1);
   ctx.strokeStyle = rgba(INK, 0.5); ctx.strokeRect(B - 1.5, B - 1.5, w - B * 2 + 3, h - B * 2 + 3);
-  const cols = Math.round(ATLAS.width / ATLAS.square), rows = Math.round(ATLAS.height / ATLAS.square), cw = ATLAS.square * S;
+  const { cols, rows } = gridCuts(ATLAS);
+  // Where one box meets the next or a strip: every cut's edges inside the world.
+  const xs = [...new Set(cols.flatMap((c) => [c.at, c.at + c.len]))].filter((x) => x > 0 && x < ATLAS.width);
+  const ys = [...new Set(rows.flatMap((c) => [c.at, c.at + c.len]))].filter((y) => y > 0 && y < ATLAS.height);
   ctx.fillStyle = rgba(INK, 0.1);
-  for (let i = 1; i < cols; i++) { const gx = PAD + i * cw; for (let yy = B + 2; yy < h - B - 2; yy += 3) ctx.fillRect(gx, yy, 1, 1); }
-  for (let j = 1; j < rows; j++) { const gy = PAD + j * cw; for (let xx = B + 2; xx < w - B - 2; xx += 3) ctx.fillRect(xx, gy, 1, 1); }
-  for (let i = 0; i < cols; i++) {
-    const cx = PAD + (i + 0.5) * cw, ch = String.fromCharCode(65 + i);
-    drawText(ctx, ch, cx, 4, { color: INK, align: 'center', shadow: false });
-    drawText(ctx, ch, cx, h - B + 2, { color: INK, align: 'center', shadow: false });
-    ctx.fillStyle = INK; ctx.fillRect(PAD + i * cw, 3, 1, B - 2); ctx.fillRect(PAD + i * cw, h - B + 1, 1, B - 2);
+  for (const x of xs) { const gx = px(x); for (let yy = B + 2; yy < h - B - 2; yy += 3) ctx.fillRect(gx, yy, 1, 1); }
+  for (const y of ys) { const gy = py(y); for (let xx = B + 2; xx < w - B - 2; xx += 3) ctx.fillRect(xx, gy, 1, 1); }
+  ctx.fillStyle = INK;
+  for (const x of xs) { ctx.fillRect(px(x), 3, 1, B - 2); ctx.fillRect(px(x), h - B + 1, 1, B - 2); }
+  for (const y of ys) { ctx.fillRect(3, py(y), B - 2, 1); ctx.fillRect(w - B + 1, py(y), B - 2, 1); }
+  for (const c of cols) {
+    const cx = px(c.at + c.len / 2);
+    drawText(ctx, c.name, cx, 4, { color: INK, align: 'center', shadow: false });
+    drawText(ctx, c.name, cx, h - B + 2, { color: INK, align: 'center', shadow: false });
   }
-  for (let j = 0; j < rows; j++) {
-    const cy = PAD + (j + 0.5) * cw, n = String(j + 1);
-    drawText(ctx, n, 3 + (B - 2) / 2, cy - 3, { color: INK, shadow: false, align: 'center', spacing: 0 });
-    drawText(ctx, n, w - B + 1 + (B - 2) / 2, cy - 3, { color: INK, shadow: false, align: 'center', spacing: 0 });
-    ctx.fillStyle = INK; ctx.fillRect(3, PAD + j * cw, B - 2, 1); ctx.fillRect(w - B + 1, PAD + j * cw, B - 2, 1);
+  for (const c of rows) {
+    const cy = py(c.at + c.len / 2);
+    drawText(ctx, c.name, 3 + (B - 2) / 2, cy - 3, { color: INK, shadow: false, align: 'center', spacing: 0 });
+    drawText(ctx, c.name, w - B + 1 + (B - 2) / 2, cy - 3, { color: INK, shadow: false, align: 'center', spacing: 0 });
   }
   for (const [cx, cy] of [[3, 3], [w - B + 1, 3], [3, h - B + 1], [w - B + 1, h - B + 1]]) {
     ctx.fillStyle = '#8a2c1a'; ctx.fillRect(cx, cy, B - 2, B - 2);
@@ -1135,13 +1139,22 @@ function boat(ctx: CanvasRenderingContext2D, x: number, y: number): void {
   poly(ctx, [x + 1, y - 8, x + 5, y - 3, x + 1, y - 2], '#f2ead6', '#120c14');
 }
 
+/** A built outdoor map's middle on the cloth, if the atlas lays it. */
+function mapMiddle(mapId: string): [number, number] | undefined {
+  const at = mapAt(ATLAS, mapId), def = MAP_DEFS.find((q) => q.id === mapId);
+  if (!at || !def) return undefined;
+  return [px(at[0] + Math.max(...def.rows.map((s) => s.length)) / 2), py(at[1] + def.rows.length / 2)];
+}
+
 /** Where a zone's or an area's arrows start when the atlas gives no point: its label, else its first seed, else its map's middle. */
 function centreOf(id: string): [number, number] | undefined {
-  const z = ATLAS.zones.find((q) => q.id === id || q.map === id);
+  const z = ATLAS.zones.find((q) => q.id === id) ?? zoneOfMap(ATLAS, id);
   if (z) {
     const p = z.label ?? z.seeds?.[0];
     if (p) return [px(p[0]), py(p[1])];
-    if (z.at) return [px(z.at[0] + 16), py(z.at[1] + 16)];
+    const m = z.maps?.find((q) => q.map === id) ?? z.maps?.[0];
+    const mid = m ? mapMiddle(m.map) : undefined;
+    if (mid) return mid;
   }
   const a = ATLAS.areas.find((q) => q.id === id);
   return a ? [px(a.label[0]), py(a.label[1])] : undefined;
@@ -1291,21 +1304,23 @@ function* paintOverlay(ctx: CanvasRenderingContext2D, grid: WorldGrid, kind: Uin
     if ((Y & 127) === 127) yield 0.93 + 0.03 * (Y / SH);
   }
   ctx.putImageData(img, 0, 0);
-  // The built maps' own footprints: square, because a map is.
-  for (const z of ATLAS.zones) {
-    const def = z.map ? MAP_DEFS.find((q) => q.id === z.map) : undefined;
-    if (!def || !z.at) continue;
-    const X = px(z.at[0]), Y = py(z.at[1]), w = def.rows[0].length * S, h = def.rows.length * S;
+  // The built maps' own footprints, a box each: square, because a map is.
+  for (const z of ATLAS.zones) for (const { map, at } of z.maps ?? []) {
+    const def = MAP_DEFS.find((q) => q.id === map);
+    if (!def) continue;
+    const X = px(at[0]), Y = py(at[1]), w = def.rows[0].length * S, h = def.rows.length * S;
     ctx.strokeStyle = '#120c14'; ctx.lineWidth = 3; ctx.strokeRect(X + 0.5, Y + 0.5, w - 1, h - 1);
     ctx.strokeStyle = BRASS; ctx.lineWidth = 1; ctx.strokeRect(X + 0.5, Y + 0.5, w - 1, h - 1);
-    const tag = `BUILT ${def.rows[0].length}X${def.rows.length}`;
+    const box = boxAt(ATLAS, at[0], at[1]);
+    // The box and the size only: the brass rule says it is built, and a longer tag covers the town's name.
+    const tag = `${box ? `${box} ` : 'BUILT '}${def.rows[0].length}X${def.rows.length}`;
     ctx.fillStyle = 'rgba(14,10,16,0.8)'; ctx.fillRect(X + 1, Y + 1, measureText(tag) + 6, 10);
     drawText(ctx, tag, X + 4, Y + 2, { color: BRASS });
   }
   // Zones' names, small; then the areas' badges over them.
   for (const z of ATLAS.zones) {
-    // A built zone is named by its map; a zone that is its whole area is named by the area's badge.
-    if (z.map || ATLAS.areas.find((a) => a.id === z.area)?.name === z.name) continue;
+    // A zone that bears its area's name is named by the area's badge.
+    if (ATLAS.areas.find((a) => a.id === z.area)?.name === z.name) continue;
     const p = z.label ?? z.seeds?.[0];
     if (!p) continue;
     const t = z.name.toUpperCase(), tw = measureText(t);
@@ -1473,9 +1488,7 @@ function partyOnCloth(world: World | null): [number, number] | null {
   const pl = ATLAS.places.find((q) => q.id === world.state.mapId);
   if (pl) return [px(pl.at[0]), py(pl.at[1])];
   const home = homeMap(MAP_DEFS, world.state.mapId);
-  const z = home ? zoneOfMap(ATLAS, home.id) : undefined;
-  if (z?.at) return [px(z.at[0] + 16), py(z.at[1] + 16)];
-  return null;
+  return (home && mapMiddle(home.id)) ?? null;
 }
 
 /** The whole cloth fitted to the view, for Z. */
