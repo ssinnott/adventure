@@ -38,19 +38,25 @@ to level 10").
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
-One clear of every map is worth a little over level 7 per member; the
-dungeons respawn in one to two days, and two more sweeps of the Grove reach 10. Levels are still
-bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays
-6,039 xp a member of the 13,667 its curve asks, and 4,932 gold of the 8,400: the curve
-(`src/content/progression.ts`) reports both as owed to the pilot (#26).
+One clear of every map is worth a little over level 8 per member; the dungeons respawn in one to
+two days, and a little over two more sweeps of the Grove reach 10 (a sweep pays 38% less once the
+Warden of the Cut is dead and the Rift's groups stop coming). Levels are still bought, so the gold
+matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays 7,849 xp a member of
+the 13,667 its curve asks, and 5,330 gold of the 8,400: the curve (`src/content/progression.ts`)
+reports both as owed to the pilot (#26).
 
 The gate check (`tools/tests/gate.ts`) reports Thornmark's misses as #40's. Its company is dressed
-by the Foreland's gear ladder (#99), so at 3 it wears the band's gear. Two levels under each map's
-own floor it wins 98% of the zone's fights (at 3) and all of the Grove Roots' (at 4) and the Cut
-Stone's (at 6); two under the area's floor, at 3, it wins 84% of the area's. The gate wants a
-quarter. The Hand of Ash and the Warden of the Cut are won every time at level 8, where a boss
-should be won about half the time, and the Cut Stone gives 7.95 fights to a rest, against six or
-seven.
+by the Foreland's gear ladder (#99), so at 3 it wears the band's gear. The zone holds: the company
+wins 23% of its fights at 3, 7% at 2 and 2% at 1, and all of them from 4, where the group spells
+come; at 5 it gives 5.84 fights to a rest. It does so with swarms: past the two gentle groups at
+the way in (the dire wolves, and the ogre with his brigands and an archer), most groups are twelve
+strong, of thorn spiders or brigands that die to one group spell but bite hard, with the area's
+own heavier monsters among them, and the barrow's dead and the wraiths in their own bands. The
+dungeons do not yet hold: two under their floors the company wins all of the Grove Roots' fights
+(at 4) and the Cut Stone's (at 6), and two under the area's floor, at 3, 54% of the area's. The
+gate wants a quarter. The Hand of Ash and the Warden of the Cut are won every time at level 8,
+where a boss should be won about half the time, and the Cut Stone gives 7.95 fights to a rest,
+against six or seven.
 
 ## Tests
 
