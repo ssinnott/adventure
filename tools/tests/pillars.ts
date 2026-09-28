@@ -234,8 +234,7 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
 
 /**
  * The squares where map and atlas disagree today, by whose fix they wait on: each is reported, and
- * fails once it agrees, so it is dropped here. Shelf 0,28 is where #47 opens the Salt Road; the rest
- * are #104's (the Foreland's sea cut back, the east road laid to Thornmark's edge).
+ * fails once it agrees, so it is dropped here. Shelf 0,28 is where #47 opens the Salt Road.
  */
 const EDGES_OWED: Record<string, readonly string[]> = {
   '#47': ['shelf 0,28'],
