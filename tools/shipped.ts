@@ -14,6 +14,7 @@ import { layOutdoors } from '../src/game/outdoors.ts';
 import { CLASSES, RACES, CONDITION_ORDER, guildFlag } from '../src/game/party.ts';
 import { SAVE_VERSION } from '../src/game/save.ts';
 import { spentId } from '../src/game/wilds.ts';
+import { personFlags } from '../src/game/people.ts';
 import { UPGRADES } from '../src/game/upgrades.ts';
 import type { Upgrade } from '../src/game/upgrades.ts';
 import { ATLAS, MAP_DEFS, AREAS } from '../src/content/index.ts';
@@ -82,7 +83,7 @@ export function collect(c: Content): Ids {
     for (const f of m.features) {
       const spent = spentId(f); if (spent) used.push(spent);
       if (f.kind === 'guild') flags.add(guildFlag(f.name));
-      if (f.kind === 'npc') { if (f.flag) flags.add(f.flag); if (f.quest) flags.add(f.quest.setFlag); }
+      if (f.kind === 'npc') for (const x of personFlags(f)) flags.add(x);
     }
     maps[m.id] = { size: `${m.width}x${m.height}`, used: sorted(used), groups: sorted(m.encounters.map((e) => e.id)), doors: sorted(doors) };
     for (const z of m.zones) zones[z.id] = { at: `${z.x},${z.y}`, size: `${z.w}x${z.h}` };

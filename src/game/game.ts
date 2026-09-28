@@ -6,10 +6,11 @@ import type { Rng } from '../lib/engine/rng.ts';
 import { World, signLine } from './world.ts';
 import type { WorldState } from './world.ts';
 import { defaultParty, isDown, allDown, heal, spellHeal } from './party.ts';
-import { meet } from './people.ts';
+import { meet, answer, heard } from './people.ts';
+import type { Person } from './people.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps.ts';
-import type { GameMap, Feature, Interior } from './map.ts';
+import type { GameMap, Feature, Interior, Choice } from './map.ts';
 import { startCombat } from './combat.ts';
 import { spell } from './spells.ts';
 import { save as saveTo, load as loadFrom, browserStore, hasSave } from './save.ts';
@@ -156,11 +157,7 @@ export class Game {
     switch (f.kind) {
       case 'sign': if (!stepped) this.say(signLine(f.text)); return;
       case 'well': this.say(f.text); if (f.heal) { for (const m of this.party.members) if (!isDown(m)) m.hp = m.maxHp; this.say('The party drinks and feels restored.'); } return;
-      case 'npc': {
-        const said = new MessageScreen(meet(f, this.party), undefined, f.name);
-        if (f.interior) this.visit(f, f.interior, said); else this.push(said);
-        return;
-      }
+      case 'npc': this.talk(f); return;
       case 'chest': {
         if (stepped) { if (!w.used(f.id)) this.say('A chest. Space opens it.'); return; }
         if (w.used(f.id)) { this.say('The chest is empty.'); return; }
@@ -209,6 +206,26 @@ export class Game {
       if (!restParty(this.world, this.party)) { this.say('There is not enough food to rest.'); return; }
       this.say('The party rests. Morning comes.');
     }));
+  }
+
+  /** Talk to a person: their words in a box, then their question, if they put one. */
+  talk(p: Person): void {
+    const m = meet(p, this.party, heard(this.world, p));
+    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : undefined;
+    const said = new MessageScreen(m.text, then, p.name);
+    if (p.interior) this.visit(p, p.interior, said); else this.push(said);
+  }
+
+  /**
+   * Put a question: its answers through the choice screen, and the answer's words in a box titled
+   * `title`, or to `said` (words for the log). Esc answers nothing, and the question comes again.
+   */
+  ask(c: Choice, title: string, said?: (text: string) => void): void {
+    this.push(new ChoiceScreen(c.ask, c.answers.map((a) => a.label), (i) => {
+      if (i < 0) return;
+      const text = answer(c.answers[i], this.party);
+      if (said) said(text); else this.push(new MessageScreen(text, undefined, title));
+    }, title));
   }
 
   /**
