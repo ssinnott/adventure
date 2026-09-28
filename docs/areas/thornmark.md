@@ -16,11 +16,11 @@ traits that carry a company to it included, are in [SLICE.md](../SLICE.md) ("The
   Ashen zealots and adepts, rift hounds, bone knights, wraiths, riftling elders, ogres, and two
   bosses, the Hand of Ash and the Warden of the Cut. Two new drawings (ogre, wraith); the rest
   re-tint and re-scale the slice's ten.
-- **Thornmark** (outdoor zone, 32×32, band 5–10): reached through the mountain pass on the Foreland's
-  east edge, which a Warden checkpoint holds closed until Vask has the survey wand and Captain Hale
-  has the Cargo Ledger. Thornhold in the north-east, a ruined watchtower with an ogre's den, a
-  barrow with bone knights and wraiths, a river with one bridge, a dead survey marker in a lake,
-  and the Grove at the end of a chisel-marked road in the south-west. Fourteen groups.
+- **Thornmark** (outdoor zone, 32×32, band 5–10): reached through the mountain pass on the
+  Foreland's east edge, open to any company; a Warden checkpoint warns it on the way. Thornhold in
+  the north-east, a ruined watchtower with an ogre's den, a barrow with bone knights and wraiths, a
+  river with one bridge, a dead survey marker in a lake, and the Grove at the end of a chisel-marked
+  road in the south-west. Fourteen groups.
 - **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the
   Lantern Hall (tier 4), the Elder's Yard, the Split Oak tavern (rumours about Vask's timing),
   a healing spring, and Elder Sylvane, who pays 1500 gold for the Underdeep chisel.

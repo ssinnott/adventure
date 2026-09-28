@@ -56,12 +56,12 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   out onto the outdoors. Outdoors, the party's zone says where it is: the name on the status strip
   and the almanac, the level band, the region whose weather it has, the palette it is painted in.
 - **Walked, not jumped.** An exit from one zone map into the next is dropped: the road through the
-  pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its flags
-  as a gate on its square (`MapDef.gates`) and its arrival line as what the log says on crossing into
-  Thornmark ("The pass opens onto old forest. Thornmark."; the way back says "Back through the pass
-  to the Foreland."). Monster groups may follow the party over a zone's edge. The gate is the
-  road's one story lock, and a lock between areas: `tools/tests/pillars.ts` reports it as #40's to
-  take away.
+  pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its
+  arrival line as what the log says on crossing into Thornmark ("The pass opens onto old forest.
+  Thornmark."; the way back says "Back through the pass to the Foreland."). The pass is open to any
+  company: a sign at the Warden checkpoint on the last square of the road warns it, and Thornmark's
+  monsters decide. Monster groups may follow the party over a zone's edge. An exit with flags still
+  becomes a gate on its square (`MapDef.gates`), but none is left between the zones.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the
   `void` solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
@@ -269,9 +269,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
   Thornmark's less gold (#26); the gate's marks for a boss's odds, a company two under the floor
   and fights to a rest are missed on the Foreland (#47) and in Thornmark (#40), and the Foreland
-  misses its floor too (#47); the pass's gate and the atlas's later ways are locks between areas
-  (#40); three hand-ins wait on a quest before taking their item (#43); and the Foreland's west
-  edge disagrees with the atlas on one square (#47's).
+  misses its floor too (#47); three hand-ins wait on a quest before taking their item (#43); and
+  the Foreland's west edge disagrees with the atlas on one square (#47's).
 
 ## Checks
 
@@ -406,7 +405,7 @@ does.
 | `content/areas/<area>/` | an area: its maps, monsters, items, quests, climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
-| `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty, as the road's one lock, the pass's flag, is to go (#40) |
+| `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
 | `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, groups and door squares, the zones' places, the flags, items, spells, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
 | `content/atlas.ts` | the world map's plan: the land, the areas of the road, and the zones, places and sites not built yet; each area charts its own in `areas/<area>/atlas.ts`, and `content/index.ts` merges them into `ATLAS` |

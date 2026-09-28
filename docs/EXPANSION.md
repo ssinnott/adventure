@@ -114,7 +114,7 @@ order the map enforces.
 
 What changes:
 
-- The pass to Thornmark stops being a flag gate (today it waits on `q_ashcombe_done` and
+- The pass to Thornmark stopped being a flag gate (it waited on `q_ashcombe_done` and
   `q_greywater_done`). Hale's checkpoint warns; Thornmark's monsters decide.
 - The atlas's planned ways that open only after a later step (the coast road after Thornmark, the
   east road after the Tide Stone) are open from the start.
@@ -173,8 +173,7 @@ service withheld, a way shut.
   sent to go and find it, and must talk again to hand it over. A hand-in takes its item at the first
   meeting, and its words know the company came early.
 
-Today the road has one lock, the flag on the pass, and it goes (§2.2); there are none inside any
-place.
+The road had one lock, the flag on the pass, and it went (§2.2); there are none inside any place.
 
 ---
 
@@ -576,7 +575,7 @@ without it.
 | Maps inside the density floor (§5.3) | unchecked | all |
 | Areas on the curve (§5.2) | the slice, pinned | all |
 | Areas whose gate holds (§5.2) | none: fights give way two to four levels under the band | all |
-| Story locks (§2.3) | 1, the pass, which goes | within the count, each declared with its reason |
+| Story locks (§2.3) | none: the pass's went with #40 | within the count, each declared with its reason |
 
 ---
 
