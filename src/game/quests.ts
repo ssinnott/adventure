@@ -18,8 +18,8 @@ export interface QuestCond {
   item?: string;
   /** A once-only event triggered, or a chest opened, on a map: 'map:id'. */
   seen?: string;
-  /** A group killed on a map: 'map:id'. Guardians only; a group that respawns comes back to life. */
-  slain?: string;
+  /** Groups killed on a map, 'map:id', all of them. Guardians only; a group that respawns comes back to life. */
+  slain?: string | readonly string[];
   /** A map the party has set foot on, or a zone map of the outdoors it has walked into. */
   visited?: string;
 }
@@ -110,7 +110,7 @@ function condHolds(c: QuestCond, w: WorldState, p: Party): boolean {
   if (c.flag !== undefined && ![c.flag].flat().every((k) => p.flags[k])) return false;
   if (c.item !== undefined && countItem(p, c.item) === 0) return false;
   if (c.seen !== undefined) { const [map, id] = c.seen.split(':'); if (!stateOf(w, map)?.used[id]) return false; }
-  if (c.slain !== undefined) { const [map, id] = c.slain.split(':'); if ((stateOf(w, map)?.groups[id]?.dead ?? -1) < 0) return false; }
+  if (c.slain !== undefined && ![c.slain].flat().every((ref) => { const [map, id] = ref.split(':'); return (stateOf(w, map)?.groups[id]?.dead ?? -1) >= 0; })) return false;
   if (c.visited !== undefined && !w.maps[c.visited] && !w.zones?.includes(c.visited)) return false;
   return true;
 }
