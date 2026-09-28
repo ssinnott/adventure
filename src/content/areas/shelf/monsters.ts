@@ -7,7 +7,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'rat', 'slime', 'wolf', 'boar', 'spider', 'bandit', 'archer', 'cultist', 'skeleton', 'riftling',
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
-  'rift_crawler', 'deacon',
+  'rift_crawler', 'deacon', 'crow',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -32,4 +32,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'ashen_acolyte', name: 'Ashen Acolyte', plural: 'Ashen Acolytes', sprite: 'acolyte', kind: 'person', level: 4, hp: 20, ac: 13, attack: 5, dice: 2, sides: 4, bonus: 1, speed: 11, xp: 110, gold: [8, 20], ranged: true, tint: '#7a4a4a', size: 0.9, drops: [{ item: 'potion_sp', chance: 0.2 }] },
   { id: 'rift_crawler', name: 'Rift Crawler', plural: 'Rift Crawlers', sprite: 'rift_crawler', kind: 'rift', level: 4, hp: 20, ac: 14, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 14, xp: 115, gold: [0, 0], tint: '#c0503a', size: 0.55, inflict: { cond: 'poisoned', chance: 0.25 } },
   { id: 'ashen_deacon', name: 'Ashen Deacon', plural: 'Ashen Deacons', sprite: 'deacon', kind: 'person', level: 5, hp: 80, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 1000, gold: [60, 120], tint: '#3a2a3a', size: 1.0, drops: [{ item: 'elixir', chance: 1 }] },
+  { id: 'carrion_crow', name: 'Carrion Crow', plural: 'Carrion Crows', sprite: 'crow', kind: 'beast', level: 2, hp: 6, ac: 11, attack: 1, dice: 1, sides: 4, bonus: 0, speed: 14, xp: 12, gold: [0, 0], ranged: true, tint: '#26242c', size: 0.3 },
 ];
