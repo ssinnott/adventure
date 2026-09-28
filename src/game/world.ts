@@ -5,10 +5,11 @@
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, HILL_DRAG } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door, MapZone, Hours, Presence } from './map.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
 import { partyCan, takeItem, isDown, hasTrait } from './party.ts';
+import { monster } from './monsters.ts';
 import type { Party } from './party.ts';
 import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock } from './calendar.ts';
 import type { CalendarDate } from './calendar.ts';
@@ -51,6 +52,8 @@ export interface WorldState {
   weatherSeed?: number;
   /** The zones of the outdoors the party has set foot in, first first. Absent in older saves. */
   zones?: string[];
+  /** The monster defs the company has seen or fought, first first, so each look is said once. Absent in older saves. */
+  met?: string[];
 }
 
 /** Whether cell `i` is set in a map's explored bits. */
@@ -82,6 +85,34 @@ export function hoursHold(when: Hours | readonly Hours[], minutes: number, weath
   });
 }
 
+/** How deep and how wide the first-person view reaches: what the viewport draws, and what is seen. */
+export const VIEW_DEPTH = 4, VIEW_LATERAL = 3;
+
+/** Map coordinates of the cell at depth d, lateral l relative to the party. */
+export function viewCell(px: number, py: number, f: Facing, d: number, l: number): { x: number; y: number } {
+  const rf = ((f + 1) & 3) as Facing;
+  return { x: px + FACING_DX[f] * d + FACING_DX[rf] * l, y: py + FACING_DY[f] * d + FACING_DY[rf] * l };
+}
+
+/** What is drawn as faces rather than as a floor and a sprite: walls, buildings, doors, and the void. */
+export function isSolidWall(c: Cell): boolean { return c.solid === 'wall' || c.solid === 'building' || c.solid === 'void' || c.door !== 'none'; }
+
+/** Whether the cell at (d, l) can be seen from the eye: walk the straight line and stop at walls. */
+export function lineOfSight(map: GameMap, px: number, py: number, f: Facing, d: number, l: number): boolean {
+  const steps = Math.max(d, Math.abs(l)) * 2;
+  let lastD = 0, lastL = 0;
+  for (let i = 1; i < steps; i++) {
+    const t = i / steps;
+    const dd = Math.round(d * t), ll = Math.round(l * t);
+    if (dd === lastD && ll === lastL) continue;
+    if (dd === d && ll === l) break;
+    lastD = dd; lastL = ll;
+    const c = viewCell(px, py, f, dd, ll);
+    if (map.blocksView(c.x, c.y)) return false;
+  }
+  return true;
+}
+
 /** A sign as the log shows it. */
 export const signLine = (text: string): string => `A sign reads: "${text}"`;
 
@@ -110,6 +141,7 @@ export class World {
     }
     this.state.weatherSeed ??= LEGACY_WEATHER_SEED;
     this.state.zones ??= [];
+    this.state.met ??= [];
     for (const id of Object.keys(this.state.maps)) this.ensureMapState(id);
     this.ensureMapState(this.state.mapId);
     this.tread();
@@ -310,6 +342,8 @@ export class World {
     if (crossed) messages.push(crossed);
     messages.push(...this.eventsHere());
     this.moveMonsters();
+    // What comes into sight is said before the fight it may start.
+    messages.push(...this.sightings());
     const encounter = this.adjacentGroups();
     return { kind: 'moved', messages, encounter: encounter.length ? encounter : undefined };
   }
@@ -384,6 +418,39 @@ export class World {
       out.push({ def, state: st });
     }
     return out;
+  }
+
+  /** The live groups the party can see, nearest first: the ones the viewport draws. */
+  groupsInSight(): LiveGroup[] {
+    const { x: px, y: py, facing: f } = this.state, m = this.map, out: LiveGroup[] = [];
+    const live = this.liveGroups();
+    for (let d = 1; d <= Math.min(VIEW_DEPTH, this.sight); d++) for (let l = -VIEW_LATERAL; l <= VIEW_LATERAL; l++) {
+      const c = viewCell(px, py, f, d, l);
+      if (!m.inBounds(c.x, c.y) || isSolidWall(m.at(c.x, c.y)) || !lineOfSight(m, px, py, f, d, l)) continue;
+      const g = live.find((q) => q.state.x === c.x && q.state.y === c.y);
+      if (g) out.push(g);
+    }
+    return out;
+  }
+
+  /**
+   * Record the defs as met, and return the looks of those met for the first time, once each. What
+   * has no look is recorded all the same.
+   */
+  meet(ids: readonly string[]): string[] {
+    const met = (this.state.met ??= []), said: string[] = [];
+    for (const id of ids) {
+      if (met.includes(id)) continue;
+      met.push(id);
+      const look = monster(id).look;
+      if (look) said.push(look);
+    }
+    return said;
+  }
+
+  /** The looks of the groups now in sight that the company has not met: each group as it is drawn, by its first monster. */
+  sightings(): string[] {
+    return this.meet(this.groupsInSight().map((g) => g.def.monsters[0]));
   }
 
   groupAt(x: number, y: number): LiveGroup | undefined {

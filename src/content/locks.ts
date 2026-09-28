@@ -22,5 +22,5 @@ export const MOST_AN_AREA = 1;
 /** The road spends about one an act: four, to start. */
 export const MOST_ON_THE_ROAD = 4;
 
-/** Empty today: the one lock the road has, the flag on the pass, goes (#40). */
+/** Empty: the one lock the road had, the flag on the pass, went with #40. */
 export const LOCKS: readonly StoryLock[] = [];

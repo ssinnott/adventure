@@ -53,7 +53,7 @@ export function hintless(defs: readonly MapDef[]): string[] {
     if (f.kind !== 'statue') continue;
     const own = `${d.id} statue ${f.x},${f.y}`, answer = normalWord(f.answer);
     if (!answer) { out.push(`${own}: its answer "${f.answer}" has no letters to type`); continue; }
-    if (answer.length > ANSWER_MAX) { out.push(`${own}: its answer "${f.answer}" is longer than the ${ANSWER_MAX} letters the box takes`); continue; }
+    if (answer.length > ANSWER_MAX) { out.push(`${own}: its answer "${f.answer}" is longer than the ${ANSWER_MAX} characters the box takes`); continue; }
     const word = new RegExp(`(^|[^a-z])${answer.replace(/ /g, '[^a-z]+')}($|[^a-z])`, 'i');
     if (!all.some((t) => t.where !== own && word.test(t.text))) out.push(`${own}: its answer "${f.answer}" is said nowhere else`);
   }

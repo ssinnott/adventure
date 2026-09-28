@@ -88,6 +88,12 @@ function spell(was: Shipped): Case {
   if (!id) throw new Error('no spell the list records');
   return { what: 'a spell renamed', names: id, needle: `spell ${id} is gone`, content: { ...CONTENT, spells: CONTENT.spells.map((q) => (q === id ? id + '_renamed' : q)) } };
 }
+/** The first recorded monster, renamed: a company's `met` names it. */
+function monster(was: Shipped): Case {
+  const id = (was.monsters ?? []).find((q) => CONTENT.monsters.includes(q));
+  if (!id) throw new Error('no monster the list records');
+  return { what: 'a monster renamed', names: id, needle: `monster ${id} is gone`, content: { ...CONTENT, monsters: CONTENT.monsters.map((q) => (q === id ? id + '_renamed' : q)) } };
+}
 /** The first recorded town or dungeon, a row taller. */
 function taller(was: Shipped): Case {
   const d = indoors.find((q) => was.maps[q.id]);
@@ -105,7 +111,7 @@ export function shipped(): void {
   // Broken on purpose: each edit is caught, names what it broke, and passes once SAVE_VERSION goes
   // up with an upgrade for the new version. A bump without one is still caught.
   const next = SAVE_VERSION + 1, bumped: Record<number, Upgrade> = { ...UPGRADES, [next]: (d) => d };
-  for (const { what, names, needle, content } of [chest, spell, guild, door, zone, taller].map((c) => c(was))) {
+  for (const { what, names, needle, content } of [chest, spell, monster, guild, door, zone, taller].map((c) => c(was))) {
     const ids = collect(content), same = compare(was, ids).problems;
     okList(same.some((p) => p.includes(needle)), `${what} is caught (${names})`, same);
     const up = compare(was, ids, next, bumped);

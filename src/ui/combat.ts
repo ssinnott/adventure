@@ -5,7 +5,7 @@ import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
-import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect } from './frame.ts';
+import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect, logTail, COMBAT_LOG_LINES } from './frame.ts';
 import { drawMonsterSprite, combatHeight } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
@@ -186,11 +186,11 @@ export class CombatScreen implements Screen {
     for (const mi of alive) groups.set(s.monsters[mi].group, (groups.get(s.monsters[mi].group) ?? 0) + 1);
     let gx = v.x + 6;
     for (const [gi, count] of groups) { const name = s.monsters.find((m) => m.group === gi)!.def; drawText(ctx, `${count} ${count === 1 ? name.name : name.plural}`, gx, v.y + 6, { size: 1, color: TEXT_DIM }); gx += 110; }
-    // Log
-    const lines = s.log.slice(-5);
+    // Log: wrapped as the exploring log is, so a look of two lines shows whole.
+    const lines = logTail(s.log, COMBAT_LOG_LINES);
     const lh = lines.length * 10 + 6;
     ctx.fillStyle = 'rgba(10,8,12,0.75)'; ctx.fillRect(v.x, v.y + v.h - lh, v.w, lh);
-    lines.forEach((l, i) => drawText(ctx, l, v.x + 6, v.y + v.h - lh + 4 + i * 10, { size: 1, color: i === lines.length - 1 ? TEXT : TEXT_DIM }));
+    lines.forEach((l, i) => drawText(ctx, l.text, v.x + 6, v.y + v.h - lh + 4 + i * 10, { size: 1, color: l.latest ? TEXT : TEXT_DIM }));
 
     drawViewportFrame(ctx);
     drawStatus(ctx, g.world);

@@ -1,7 +1,7 @@
 // What a save can refer to, as shipped: src/content/shipped.json lists every id and placement a
 // save may hold (EXPANSION §5.5). A content edit reaches every old save, so what is in the list
 // stays: a map keeps its size, a zone its place, a door its square, and no chest, event, group,
-// flag, item, spell, class, race or condition goes, unless SAVE_VERSION goes up with an upgrade
+// flag, item, spell, monster, class, race or condition goes, unless SAVE_VERSION goes up with an upgrade
 // (src/game/upgrades.ts). New content only adds. tools/tests/shipped.ts holds the content to it.
 //   node tools/shipped.ts    record what the content adds; refuses while something has gone or
 //                            moved without a bump and its upgrade
@@ -31,6 +31,8 @@ export interface Content {
   defs: readonly MapDef[];
   items: readonly string[];
   spells: readonly string[];
+  /** The monster defs, which a company's `met` record names. */
+  monsters: readonly string[];
   classes: readonly string[];
   races: readonly string[];
   conditions: readonly string[];
@@ -47,6 +49,7 @@ export interface Ids {
   flags: string[];
   items: string[];
   spells: string[];
+  monsters: string[];
   classes: string[];
   races: string[];
   conditions: string[];
@@ -59,6 +62,7 @@ export const CONTENT: Content = {
   // From the lists as written: the merged tables are open to a tool's additions (tools/harness.ts's
   // enchanted items), which no save holds.
   items: [...ITEMS, ...AREAS.flatMap((a) => a.items)].map((i) => i.id), spells: SPELLS.map((s) => s.id),
+  monsters: AREAS.flatMap((a) => a.monsters).map((m) => m.id),
   classes: Object.keys(CLASSES), races: Object.keys(RACES), conditions: [...CONDITION_ORDER],
 };
 
@@ -85,7 +89,7 @@ export function collect(c: Content): Ids {
   }
   return {
     maps: byKey(maps), zones: byKey(zones), flags: sorted(flags),
-    items: sorted(c.items), spells: sorted(c.spells), classes: sorted(c.classes), races: sorted(c.races), conditions: sorted(c.conditions),
+    items: sorted(c.items), spells: sorted(c.spells), monsters: sorted(c.monsters), classes: sorted(c.classes), races: sorted(c.races), conditions: sorted(c.conditions),
   };
 }
 
@@ -97,7 +101,7 @@ export interface Comparison {
 }
 
 /** Each list, by the word for one of it. */
-const LISTS = { flags: 'flag', items: 'item', spells: 'spell', classes: 'class', races: 'race', conditions: 'condition' } as const;
+const LISTS = { flags: 'flag', items: 'item', spells: 'spell', monsters: 'monster', classes: 'class', races: 'race', conditions: 'condition' } as const;
 
 /**
  * The content now against the list as shipped. Something gone or moved is a problem at the same
@@ -128,7 +132,7 @@ export function compare(shipped: Shipped, now: Ids, version = SAVE_VERSION, upgr
     else if (is.at !== was.at || is.size !== was.size) gone.push(`zone ${id} is ${is.size} at ${is.at}, was ${was.size} at ${was.at}`);
   }
   for (const id of Object.keys(now.zones)) if (!shipped.zones[id]) unrecorded.push(`zone ${id} is new`);
-  for (const [k, one] of Object.entries(LISTS) as [keyof typeof LISTS, string][]) ids(one, shipped[k], now[k]);
+  for (const [k, one] of Object.entries(LISTS) as [keyof typeof LISTS, string][]) ids(one, shipped[k] ?? [], now[k]);
   const bumped = version > shipped.version && problems.length === 0;
   if (bumped) unrecorded.push(`SAVE_VERSION is ${version}, shipped.json ${shipped.version}`, ...gone.map((g) => `${g}: the upgrade to ${version} must deal with it`));
   else problems.push(...gone.map((g) => `${g}: a save may hold it, so bring it back, or bump SAVE_VERSION with an upgrade`));

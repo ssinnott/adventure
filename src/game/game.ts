@@ -114,6 +114,8 @@ export class Game {
     // Whatever moved the clock (a step, a rest, the inn), the log says so once the party is back
     // to exploring and the sky has turned. The sky goes first, so a quest's news is the last word.
     const news = this.world.weatherNews(); if (news) this.say(news);
+    // What a turn, an arrival, a load or a light has brought into sight, the first time it is seen.
+    if (a) for (const look of this.world.sightings()) this.say(look);
     // Back to exploring after any action (a step, a chest, a closed dialogue or fight): say what
     // the quest log gained, under whatever the action itself said.
     if (a) this.checkQuests();
@@ -228,7 +230,10 @@ export class Game {
 
   /** Start a fight with the given groups; the combat screen calls back on resolution. */
   fight(groupIds: string[]): void {
-    const state = startCombat(this.party, this.world.groupDefs(groupIds), this.rng, this.world.combatWeather());
+    const groups = this.world.groupDefs(groupIds);
+    const state = startCombat(this.party, groups, this.rng, this.world.combatWeather());
+    // A kind not met before, one unseen beside or behind the party or in the ranks, says what it is as the fight opens.
+    state.log.push(...this.world.meet(groups.flatMap((x) => x.monsters)));
     this.push(new CombatScreen(state, groupIds));
   }
 
