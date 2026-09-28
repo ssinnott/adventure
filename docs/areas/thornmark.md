@@ -31,7 +31,9 @@ traits that carry a company to it included, are in [SLICE.md](../SLICE.md) ("The
   two adepts wait at the Stone; kill them and the Warden of the Cut, two cells on, is the
   hardest fight in the game. The chisel goes to Sylvane; the Warden drops the first Meridian
   journal. The tear closes when the Warden dies: an encounter's `slainText` is said on the kill, so
-  it comes after the fight from whichever side the party fought.
+  it comes after the fight from whichever side the party fought. From then on the rift hounds and
+  the riftling elders stop coming back, in the forest and under the Grove alike (`until:
+  TEAR_CLOSED`, in `grove2.ts`); a group still standing stays until it is killed.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
