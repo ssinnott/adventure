@@ -28,6 +28,7 @@ import { WorldMapScreen } from '../ui/worldmap.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
 import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restParty } from './wilds.ts';
+import { approach, burn } from './dens.ts';
 
 export interface Screen {
   /** Called once per fixed step with the next queued action (or null). */
@@ -198,6 +199,13 @@ export class Game {
         }
         return;
       }
+      // A den (game/dens.ts): stepped into or faced, its keepers dead, it puts the choice to burn it.
+      case 'den': {
+        const { lines, ask } = approach(w, f);
+        for (const l of lines) this.say(l);
+        if (ask) this.push(new ChoiceScreen(f.ask, [f.burn, f.leave ?? 'Leave it.'], (i) => { if (i === 0) for (const l of burn(w, this.party, f)) this.say(l); }));
+        return;
+      }
       case 'rift': case 'event': return;
       default: { const unhandled: never = f; return unhandled; }
     }
@@ -347,6 +355,7 @@ export function featureLabel(f: Feature): string {
     case 'cairn': return f.name ?? 'A cairn';
     case 'statue': return f.name ?? 'A statue';
     case 'camp': return f.name ?? 'A camp';
+    case 'den': return f.name ?? 'A den';
     case 'event': return '';
   }
 }

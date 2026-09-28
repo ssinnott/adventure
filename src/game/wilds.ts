@@ -12,10 +12,10 @@ import { item } from './items.ts';
 /** The features this module plays. */
 export type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' | 'cairn' | 'statue' | 'camp' }>;
 
-/** What a feature gives when it is used: a chest's or cairn's gold and items, a shrine's stat, a statue's gift. */
+/** What a feature gives when it is used: a chest's, cairn's or den's gold and items, a shrine's stat, a statue's gift. */
 export function giftOf(f: Feature): Gift | undefined {
   switch (f.kind) {
-    case 'chest': case 'cairn': return { gold: f.gold, items: f.items };
+    case 'chest': case 'cairn': case 'den': return { gold: f.gold, items: f.items };
     case 'shrine': case 'fountain': return { stat: f.stat, amount: f.amount ?? 1 };
     case 'statue': return f.gift;
     default: return undefined;
@@ -25,7 +25,7 @@ export function giftOf(f: Feature): Gift | undefined {
 /** The id a feature is kept by in `used` once spent, or undefined for one that is never spent. */
 export function spentId(f: Feature): string | undefined {
   switch (f.kind) {
-    case 'chest': case 'cairn': case 'shrine': case 'fountain': case 'statue': return f.id;
+    case 'chest': case 'cairn': case 'shrine': case 'fountain': case 'statue': case 'den': return f.id;
     case 'event': return f.once ? f.id : undefined;
     default: return undefined;
   }
