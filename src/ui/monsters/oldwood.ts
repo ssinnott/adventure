@@ -296,7 +296,7 @@ function eldest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 
   // The trunk: a vast bole split down its middle, flaring into buttress roots at the foot.
   bark(ctx, f, w.bark, [
-    [[0, 0, -2, 24, 1, 48, -1 + heave * 0.2, 70], 28, 18],
+    [[0, 24, -2, 34, 1, 50, -1 + heave * 0.2, 70], 28, 18],
     [[-10, 16, -28, 8, -42, 2, -48, 0], 11, 3],
     [[10, 16, 28, 7, 42, 2, 50, 0], 11, 3],
     [[-4, 10, -12, 3, -18, 0], 10, 4],
