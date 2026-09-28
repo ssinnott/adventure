@@ -239,3 +239,22 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 
 - The #41 session is done; #40's waits on #99 for its zone pull request; the guilds session waits on
   #43 and #45 for #21's build.
+
+### 17:20: #115 merged; #88 started; #43's and #42's first pull requests in review
+
+- #115 (#45) merged at 17:15 (main 5b3e589) after its main merge was checked: main an ancestor of
+  its head, both conflicts kept both sides, `npm run check` on the head ALL OK (22 owed) with SMOKE
+  OK, "Nothing new.", CI green. #45 closes; its session is done.
+- Started at 17:16:
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 2 | #88 | session_018nPhLL3EgGCQ1q9zdqrLC1 | `claude/m1-88-dens` |
+
+  The burn goes through the existing ChoiceScreen (the orchestrator's call); #76 moves it later.
+- #125 (#99) told to count finds given through `giftOf` now that #115 is in, then #126 on top.
+- Opened: #127 (#43, the hand-ins) and #128 (#42's A, the one quest joined from chapters). Reviewers
+  on both (`reviews/127.md`, `128.md`).
+- The drawings (#119 to #124) merged main themselves; they still wait on the owner's OK. At 17:03
+  the owner asked to see them all: the orchestrator sent each one's combat strip and a gallery by day
+  and by night, close up and at the viewport's sizes.
