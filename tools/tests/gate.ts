@@ -1,5 +1,5 @@
 // The gate check (EXPANSION §2.2, §5.2): with one road and no flags on it, the monsters are what
-// turn a company back. tools/gate.ts's bot plays the premade company, in its starting gear, against
+// turn a company back. tools/gate.ts's bot plays the premade company, dressed by the ladder, against
 // every group of a map alone from full health; each map is held to its sign's band and each area to
 // its band on the curve (src/content/progression.ts). Every margin is printed. A miss the owners
 // below are owed is reported, not failed, until it holds: Thornmark's are #40's to retune, the
@@ -7,7 +7,7 @@
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
-import type { EncounterDef, MapDef } from '../../src/game/map.ts';
+import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
 import { rest } from '../../src/game/party.ts';
 import { gateCompany, gateFight, gateOpts, winRate } from '../gate.ts';
 import { days, fightsPerRest, mendBetween, mustRest, ROUND_CAP } from '../harness.ts';
@@ -73,17 +73,16 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'greywater1: rest': { whose: '#47', at: 4.08 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2: under': { whose: '#47', at: 0.658 },
-  'greywater2: rest': { whose: '#47', at: 4.05 },
-  'greywater2:gw2_deacon: floor': { whose: '#47', at: 0.98 },
+  'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
   'the Foreland: floor': { whose: '#47', at: 0.886 },
   // Thornmark, the Grove Roots and the Cut Stone: retuned until they hold.
-  'thornmark: under': { whose: '#40', at: 0.912 },
+  'thornmark: under': { whose: '#40', at: 0.977 },
   'grove1: under': { whose: '#40', at: 0.999 },
   'grove2: under': { whose: '#40', at: 1 },
-  'grove2: rest': { whose: '#40', at: 7.75 },
+  'grove2: rest': { whose: '#40', at: 7.95 },
   'grove2:g2_hand: floor': { whose: '#40', at: 1 },
   'grove2:g2_warden: floor': { whose: '#40', at: 1 },
-  'Thornmark: under': { whose: '#40', at: 0.696 },
+  'Thornmark: under': { whose: '#40', at: 0.844 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
@@ -118,6 +117,21 @@ export function rate(g: Pick<EncounterDef, 'monsters' | 'when'>, level: number):
 /** The two groups nearest an area's way in, as a company first finds it: none that waits on an `after`. */
 export const nearestWayIn = (groups: readonly EncounterDef[], steps: (x: number, y: number) => number): EncounterDef[] =>
   groups.filter((g) => !g.after).sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
+/**
+ * A den's reading at a level: its keepers' win rate against each of its brood groups', how many
+ * brood it keeps abroad and at what pace. Its fault, if any: keepers won more often than a brood
+ * group, when they are to be the camp's hardest fight. The gate has no clock, so the pace is shown,
+ * never judged; each brood group is one of the map's fights already.
+ */
+export function denReading(def: MapDef, den: Extract<Feature, { kind: 'den' }>, level: number): { line: string; fault: string } {
+  const group = (id: string): EncounterDef | undefined => def.encounters?.find((e) => e.id === id);
+  const keepers = group(den.keepers), brood = den.brood.map(group).filter((e): e is EncounterDef => !!e);
+  if (!keepers) return { line: `${def.id}'s den ${den.id}: no keepers`, fault: 'no keepers' };
+  const k = rate(keepers, level), harder = brood.filter((b) => rate(b, level) < k);
+  const paces = [...new Set(brood.map((b) => b.respawn ?? 0))].join('/');
+  const line = `${def.id}'s den ${den.id} at ${level}: its keepers won ${pc(k)}, its ${brood.length} brood ${brood.map((b) => pc(rate(b, level))).join(', ')}, one back each ${paces} minutes`;
+  return { line, fault: harder.length ? `brood harder than the keepers: ${harder.map((b) => b.id).join(', ')}` : '' };
+}
 const pooled = (groups: readonly EncounterDef[], level: number): number => groups.reduce((t, g) => t + rate(g, level), 0) / groups.length;
 const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 
@@ -160,6 +174,11 @@ export function gate(): void {
     ok(rate({ monsters: bows, when: [{ sky: 'fog' }, { hours: 'night' }] }, 1) === dry, 'and one that walks in fog or by night is fought dry too');
     const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
     ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
+    // A den's keepers are its camp's hardest fight: won no more often than any of its brood.
+    const den: Extract<Feature, { kind: 'den' }> = { kind: 'den', x: 1, y: 1, id: 'd', text: '', breeds: ['rat'], keepers: 'k', brood: ['b'], ask: '', burn: '', burnt: '', gold: 0, items: [] };
+    const camp = (keep: string[], brood: string[]): MapDef => ({ id: 'dens', name: '', kind: 'outdoor', start: { x: 0, y: 0, facing: 0 }, rows: [], features: [den], encounters: [{ id: 'k', x: 2, y: 1, monsters: keep, roams: false }, { id: 'b', x: 5, y: 1, monsters: brood, respawn: 1440 }] });
+    const three = ['smuggler_captain', 'smuggler_captain', 'smuggler_captain'], fair = denReading(camp(three, ['rat']), den, 1), wrong = denReading(camp(['rat'], three), den, 1);
+    ok(!fair.fault && wrong.fault.includes('b'), `a den whose brood is harder than its keepers is caught (${fair.line}; ${wrong.fault})`);
   }
 
   for (const area of AREAS) {
@@ -183,6 +202,8 @@ export function gate(): void {
         check(`${b}: floor`, at, (v) => Math.max(GATE.boss[0] - v, v - GATE.boss[1]), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${pc(GATE.boss[0])} to ${pc(GATE.boss[1])} asked)`);
         check(`${b}: above`, above, (v) => GATE.bossAbove - v, `${d.id}'s boss ${boss.id} at ${d.band[0] + GATE.under}: ${pc(above)} won (${pc(GATE.bossAbove)} asked)`);
       }
+      // Its dens: the keepers the camp's hardest fight, and its brood's number and pace.
+      for (const f of d.features ?? []) if (f.kind === 'den') { const r = denReading(d, f, d.band[0]); ok(!r.fault, `${r.line}${r.fault ? ` (${r.fault})` : ''}`); }
       // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
       const day = days(d.band[0], groups.map((g) => g.monsters), DAYS, 1, true), want = fightsPerRest(d.band[0]);
       check(`${d.id}: rest`, day.fights, (v) => Math.abs(v - want) - GATE.perRest, `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${want} asked, ±${GATE.perRest}); ${pc(day.why.long)} of days end in a fight broken off`, true);

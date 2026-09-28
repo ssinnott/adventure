@@ -88,6 +88,8 @@ function drawSkyGlyph(ctx: CanvasRenderingContext2D, sky: Sky, x: number, y: num
 
 /** The smallest a map square is drawn on the automap, in pixels. */
 const AUTOMAP_MIN = 6;
+/** A den on the automap: a smoky red while it stands, ash once burnt. */
+const DEN = '#6a2a1a', DEN_ASH = '#9a948a';
 
 export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: number): void {
   const r = LAYOUT.map;
@@ -137,11 +139,13 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   // Features the party has stood next to.
   for (const f of m.features) {
     if (!shown(f.x, f.y) || f.kind === 'event') continue;
+    const s = Math.max(1, cell - 2);
+    // A den shows standing and, burnt, as a ruin: before the spent skip, which would hide it.
+    if (f.kind === 'den') { ctx.fillStyle = world.used(f.id) ? DEN_ASH : DEN; ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s); continue; }
     // A spent chest, cairn, shrine, fountain or statue is gone from the map; a camp always shows.
     const spent = spentId(f);
     if (spent && world.used(spent)) continue;
     ctx.fillStyle = f.kind === 'chest' || f.kind === 'cairn' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
-    const s = Math.max(1, cell - 2);
     ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s);
   }
   for (const e of m.exits) if (shown(e.x, e.y)) { ctx.fillStyle = GREEN; ctx.fillRect(ox + e.x * cell + 1, oy + e.y * cell + 1, Math.max(1, cell - 2), Math.max(1, cell - 2)); }

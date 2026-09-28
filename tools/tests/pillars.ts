@@ -21,6 +21,7 @@ import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../src/ui/frame.ts';
 import { lookLine } from '../../src/game/wilds.ts';
 import { handIns, choices } from '../../src/game/people.ts';
+import { hoardLine } from '../../src/game/dens.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -77,6 +78,14 @@ export function lineFaults(def: MapDef): string[] {
       }
       continue;
     }
+    // A den's look is said as a monster's is, held to its lines; its burning and its hoard together, and its ruin, to the most.
+    if (f.kind === 'den') {
+      const look = logLines(f.text).length, burning = logLines(f.burnt).length + (hoardLine(f) ? logLines(hoardLine(f)).length : 0), ruin = f.ruin ? logLines(f.ruin).length : 0;
+      if (look > LOOK_LINES) out.push(`the den's look at ${f.x},${f.y} takes ${look} lines`);
+      if (burning > MOST_LINES) out.push(`the den's burning at ${f.x},${f.y} takes ${burning} lines with its hoard`);
+      if (ruin > MOST_LINES) out.push(`the den's ruin at ${f.x},${f.y} takes ${ruin} lines`);
+      continue;
+    }
     if (f.kind !== 'event' && f.kind !== 'sign') continue;
     const n = logLines(shown(f)).length, at = `${f.x},${f.y}`;
     if (n > MOST_LINES) out.push(`the ${f.kind} at ${at} takes ${n} lines`);
@@ -106,6 +115,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
       if ('name' in f) add(where, f.name);
       if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'statue') add(where, f.done);
       if (f.kind === 'statue') add(where, f.riddle, f.answer);
+      if (f.kind === 'den') add(where, f.ask, f.burn, f.leave, f.burnt, f.ruin);
       if (f.kind === 'npc') {
         add(where, f.lines, ...handIns(f).flatMap((q) => [q.early, q.done, q.after]), ...(f.says ?? []).map((w) => w.lines));
         for (const c of choices(f)) add(where, c.ask, ...c.answers.flatMap((a) => [a.label, a.says]));

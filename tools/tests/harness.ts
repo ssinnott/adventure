@@ -41,7 +41,7 @@ export function harness(): void {
   RULES.gearGrows = true;
   const grown = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];
   RULES.gearGrows = undefined;
-  ok(grown[0].join() === flat[0].join() && grown[1][0] > flat[1][0] && grown[1][1] === flat[1][1] + 5, `gear grows past 10 only where a what-if asks: at 20 the knight's war hammer gains ${grown[1][0] - flat[1][0]} and the knight's armour 5`);
+  ok(grown[0].join() === flat[0].join() && grown[1][0] > flat[1][0] && grown[1][1] === flat[1][1] + 5, `gear grows past 10 only where a what-if asks: at 20 the knight's weapon gains ${grown[1][0] - flat[1][0]} and the knight's armour 5`);
   // Fights may run longer as both sides grow, and never to the cap; a fight that would is broken off.
   const allowed = Array.from({ length: CAP }, (_, k) => [longest(k + 1), slowest(k + 1)]);
   ok(longest(1) === 4 && slowest(1) === 6 && allowed.every(([a, b], k) => a <= b && b < ROUND_CAP && (k === 0 || a >= allowed[k - 1][0])), `a fight's rounds run from ${longest(1)} (${slowest(1)} at most) at level 1 to ${longest(CAP).toFixed(1)} (${slowest(CAP).toFixed(1)}) at ${CAP}`);

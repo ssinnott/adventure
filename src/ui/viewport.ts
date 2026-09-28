@@ -261,7 +261,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   for (let l = -LATERAL; l <= LATERAL; l++) order.push(l);
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
   const solidAt = (d: number, l: number): boolean => isSolidWall(map.at(...toPair(cellAt(px, py, f, d, l))));
-  const houseAt = (d: number, l: number): boolean => isHouse(map.at(...toPair(cellAt(px, py, f, d, l))));
+  const houseAt = (d: number, l: number): boolean => isHouse(map, ...toPair(cellAt(px, py, f, d, l)));
   const voidAt = (d: number, l: number): boolean => map.at(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
   const voids = new Path2D();
   // What a cell's seed steps by to the next cell across and ahead, so a block shared by two faces
@@ -311,7 +311,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         if (l !== 0 && !voidAt(d, l - s)) { const xIn = l > 0 ? xl : xr; drawVoidSide(ctx, voids, xIn(uN), horizon + uN, xIn(uF), horizon + uF, r.y); }
       } else if (isSolidWall(cell)) {
         // A house's chimney stands on the roof behind its slopes, so it goes down before them.
-        const b = map.kind === 'town' && isHouse(cell) ? building(map, c.x, c.y) : null;
+        const b = map.kind === 'town' && isHouse(map, c.x, c.y) ? building(map, c.x, c.y) : null;
         if (b && d > 0 && b.chimney === c.y * map.width + c.x) drawChimney(ctx, at, d, l, dark, haze);
         if (b) drawRoof(ctx, at, d, l, houseAt, b.seed, dark, haze, true);
         // Where a face runs on into the next face of the same wall, the two join with no seam and
@@ -839,7 +839,17 @@ function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number,
 
 // ------------------------------------------------------------------ walls ----
 
-function isHouse(c: Cell): boolean { return c.solid === 'building' || c.door === 'door' || c.door === 'locked'; }
+/**
+ * A house's cell: a building, or a door with a building beside it. A door set in stone (a keep's, a
+ * gatehouse's) is the stone's, drawn as an arched doorway in the wall with no plaster, roof, lantern
+ * or sign.
+ */
+export function isHouse(map: GameMap, x: number, y: number): boolean {
+  const c = map.at(x, y);
+  if (c.solid === 'building') return true;
+  if (c.door !== 'door' && c.door !== 'locked') return false;
+  return [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].some(([nx, ny]) => map.inBounds(nx, ny) && map.at(nx, ny).solid === 'building');
+}
 
 /**
  * The void's face toward the eye, from its foot on the floor up past the top of the view. Its edges
@@ -877,7 +887,7 @@ function cutVoid(ctx: CanvasRenderingContext2D, voids: Path2D, pts: [number, num
 function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, x0: number, x1: number, horizon: number, u: number, d: number, seed: number, dark: boolean, haze: string | null, daylight: number, joinL: boolean, joinR: boolean, across: number): void {
   const top = horizon - u, bottom = horizon + u;
   const isDoor = cell.door === 'door' || cell.door === 'locked';
-  const house = map.kind === 'town' && isHouse(cell), pal = map.paletteAt(mx, my);
+  const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my);
   if (house) drawHouseFront(ctx, x0, x1, top, bottom, d, seed, building(map, mx, my).seed, dark, haze, daylight, joinL, joinR);
   else drawStoneFront(ctx, pal, x0, x1, top, bottom, d, seed, dark, haze, map.kind === 'outdoor', joinL, joinR, across);
   if (isDoor) drawDoor(ctx, x0, x1, horizon, u, pal.door, d, dark, cell.door === 'locked', map.kind === 'town');
@@ -918,14 +928,18 @@ export const DRESSING_RATES: Record<Dressing, number> = {
 
 /**
  * The dressing on the wall at x,y, chosen by hash, so it is stable; null where it is bare. A door
- * is dressing enough, and only a plain wall is carved (a secret door is a wall that is not).
+ * is dressing enough, and only a plain wall is carved (a secret door is a wall that is not). A stone
+ * wall the map places a banner on (`MapDef.banners`) always hangs one.
  */
 export function wallDressing(map: GameMap, x: number, y: number): Dressing | null {
   const cell = map.at(x, y);
-  if (!isSolidWall(cell) || cell.solid === 'void' || cell.door === 'door' || cell.door === 'locked' || !isDressed(map, x, y)) return null;
+  if (!isSolidWall(cell) || cell.solid === 'void' || cell.door === 'door' || cell.door === 'locked') return null;
+  const house = map.kind === 'town' && isHouse(map, x, y);
+  if (!house && map.bannerAt(x, y)) return 'banner';
+  if (!isDressed(map, x, y)) return null;
   const roll = hash(x * 131 + y * 17 + map.id.length * 7, 77);
   let top = 0;
-  for (const kind of DRESSINGS[map.kind === 'town' && isHouse(cell) ? 'house' : 'stone']) {
+  for (const kind of DRESSINGS[house ? 'house' : 'stone']) {
     top += DRESSING_RATES[kind];
     if (roll < top) return kind === 'carving' && cell.door !== 'none' ? null : kind;
   }
@@ -1129,7 +1143,7 @@ function building(map: GameMap, mx: number, my: number): Building {
   for (const c of cells) {
     const x = c % map.width, y = Math.floor(c / map.width);
     for (const [nx, ny] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]) {
-      if (map.inBounds(nx, ny) && isHouse(map.at(nx, ny))) cells.add(ny * map.width + nx);
+      if (map.inBounds(nx, ny) && isHouse(map, nx, ny)) cells.add(ny * map.width + nx);
     }
   }
   const all = [...cells].sort((a, b) => a - b);
@@ -1318,7 +1332,7 @@ function drawChimney(ctx: CanvasRenderingContext2D, at: At, d: number, l: number
  * half blocks at the join are halves of one block (`ahead` is what a seed steps by one cell on).
  */
 function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, mx: number, my: number, xN: number, uN: number, xF: number, uF: number, horizon: number, d: number, seed: number, dark: boolean, haze: string | null, onRight: boolean, joinNear: boolean, joinFar: boolean, openFar: boolean, ahead: number): void {
-  const house = map.kind === 'town' && isHouse(cell), pal = map.paletteAt(mx, my);
+  const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my);
   const bseed = house ? building(map, mx, my).seed : 0;
   const baseCol = house ? shade('#d8c8a8', 0.8 * (1 + (hash(bseed, 1) - 0.5) * 0.15)) : pal.wallDark;
   const shadeSide = onRight ? 0.85 : 0.75;
