@@ -2,6 +2,7 @@
 // log. Layout for the 640x360 canvas is fixed here in LAYOUT so every screen agrees on it.
 import { drawText } from '../lib/engine/text.ts';
 import type { World } from '../game/world.ts';
+import type { Feature } from '../game/map.ts';
 import type { Party, Character } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
 import { FACING_NAMES } from '../game/types.ts';
@@ -139,7 +140,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   }
   // Features the party has stood next to.
   for (const f of m.features) {
-    if (!shown(f.x, f.y) || f.kind === 'event') continue;
+    if (!shown(f.x, f.y) || !onAutomap(world, f)) continue;
     const s = Math.max(1, cell - 2);
     // A den shows standing and, burnt, as a ruin: before the spent skip, which would hide it.
     if (f.kind === 'den') { ctx.fillStyle = world.used(f.id) ? DEN_ASH : DEN; ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s); continue; }
@@ -207,6 +208,9 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
 }
 
 import { armorClass as armorClassOf } from '../game/party.ts';
+
+/** Whether the automap marks a feature: not an event, and not a person who is not there now. */
+export const onAutomap = (world: Pick<World, 'present'>, f: Feature): boolean => f.kind !== 'event' && world.present(f);
 
 /** How many lines the log shows. */
 export const LOG_LINES = 4;

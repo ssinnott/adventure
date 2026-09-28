@@ -12,16 +12,22 @@ DESIGN.md first for the why.
 - **Businesses:** stepping into a business's doorway goes inside. The viewport shows its own painted
   room (see Art) while its menus sit in the right-hand panel, where the automap is, as combat's do:
   columns with the price flush right, a note under the list (an item's dice, a spell's effect),
-  scrolling for a long stock, a tavern's rumours a page at a time. The log over the room shows only
-  what was said inside. Leaving (the last menu closed) steps the party back into the street, facing
-  the door. A shop may name its own price for an item it stocks (`prices`); the rest sell at
-  their own, and anything sells back for half its own price.
+  scrolling for a long stock, a tavern's rumours a page at a time. The log over the room shows what
+  the step in said (an event on the doorway) and what is said inside. Leaving (the last menu closed)
+  steps the party back into the street, facing the door. A shop may name its own price for an item
+  it stocks (`prices`); the rest sell at their own, and anything sells back for half its own price.
 - **Guild halls:** a business may also be a guild's hall (`hall`, DESIGN §8). It then opens on a
   first menu, its own trade, the guild's work and Leave, which each choice returns to; a business
   with its trade alone opens straight on it. The guild's work pays what is done, then offers the
   quests at or under the company's rank. Membership and rank are worked out from the guild quests'
   done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). No hall is marked yet: the Wardens' and the Lanterns' come with
   their quests. A spell hall's fee buys the right to study, not membership.
+- **People in a business:** a person with no room of their own on a business's doorway, listed after
+  it, is in the business while present, and its first menu offers "Talk to <name to its first
+  comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
+  sends away is gone from it. A tavern (the Gilded Eel, a person with a room) with people in it says
+  its room first, over a menu of "The talk of the room" and them. With nobody there, a business
+  opens as before.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
   mountains gated by party abilities, hills (`^`) and farmland (`f`) open to all but on no built
@@ -52,10 +58,13 @@ DESIGN.md first for the why.
 - **People** (`game/people.ts`): a person's first meeting may hire (one flag or several) and end in
   a question put through the choice screen, whose answer sets flags, may hand over an item and has
   its own words; a question once answered is not put again, and Esc answers nothing. A person may
-  say other words once a flag holds, by night or until a flag (`says`, wearing `Presence`, the
-  first that holds said, furthest along first), and take several items (`quest` one or a list, one
-  a meeting, in order; one paying nothing says no gold line). An item with `text` is a letter,
-  read from the pack in a box. On nobody yet: the areas place them.
+  say other words once a flag holds, by night or until a flag (`says`, wearing `Presence`, the first
+  that holds said, furthest along first), and take several items (`quest` one or a list, one a
+  meeting, in order; one paying nothing says no gold line). An item with `text` is a letter, read
+  from the pack in a box. A person and an event wear `Presence` as a group does: there only in their
+  hours (by night), once their `after` holds and until their `until` does, so one person can stand
+  in two places, one at a time, and a once-event by night is not spent by day (`World.present`; the
+  automap shows only who is there). On nobody yet: the areas place them.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (the group's
   first monster, in line of sight), or meets one in a fight unseen, the log says its `look`, once.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
@@ -356,9 +365,9 @@ The suites after `quests` hold the content to its contract (EXPANSION §5), over
 over content broken on purpose too, and two tools to theirs:
 
 - `structure` (§5.1): no iron key behind its own lock however the keys are spent, no guardian that
-  comes back, every respawn 720 to 2,880 minutes, every group's `until` and `after` naming something
-  real (an `until` only on a group that comes back), no sky asked underground, and every Rift group
-  of Thornmark's that comes back stopping with the tear.
+  comes back, every respawn 720 to 2,880 minutes, every group's, person's and event's `until` and
+  `after` naming something real (an `until` only on a group that comes back), no sky asked
+  underground, and every Rift group of Thornmark's that comes back stopping with the tear.
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
@@ -382,16 +391,19 @@ over content broken on purpose too, and two tools to theirs:
   gives its hoard once and none of its brood comes back in thirty days, through a save and a load.
   Its look is said once, on first sight, never for a ruin. Every den keeps its rules: keepers
   beside it that never leave, brood of its kind that come back until it burns.
-- `pillars` (§5.4): a hint on the near side of every secret door; no text past three lines of the
-  log and no monster's look past two, every glyph in the font, British spelling; each `Area.novel`
-  holds; water and roads carry on into the atlas; story locks (`content/locks.ts`) signed in, none
-  between areas and every hand-in taking its item at the first meeting.
+- `pillars` (§5.4): a hint on the near side of every secret door, there always; no text past three
+  lines of the log, nor a square's texts that can show together (day and night, or `until` and
+  `after` the same thing, never do) past the log's four; no monster's look past two, every glyph in
+  the font, British spelling; each `Area.novel` holds; water and roads carry on into the atlas;
+  story locks (`content/locks.ts`) signed in, none between areas and every hand-in taking its item
+  at the first meeting.
 - `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
   each played hired first and early, the words, the pay and the log true either way round; every
   person's words fit the box (a hand-in's with its gold line), a question leaves room for its
   answers and an answer that hands over an item sets a flag. A fixture town holds the rest: a
   question and its two roads read by the log and the save list, words by flag and by night,
-  several hand-ins, a letter.
+  several hand-ins, a letter, a person gone from one place and found in another, one by night and
+  events by night or by flag.
 - The walkthroughs (EXPANSION §5.8): `walkthrough:shelf` plays The Quiet Farm from a new game,
   `walkthrough:thornmark` the chain and then Thornmark taken early, before Vask's hire and after it
   but before the wand. Each step, by the game's own moves (`tools/walk.ts`): the goal is the
@@ -467,7 +479,7 @@ does.
 | `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
