@@ -58,7 +58,7 @@ export class TitleScreen implements Screen {
     ctx.restore();
     panel(ctx, 150, 40, 340, 80, 'rgba(14,12,16,0.75)');
     drawTextOutlined(ctx, 'THE HEARTH OF CALDERA', 320, 58, { size: 3, color: BRASS, align: 'center', outline: INK, thickness: 1 });
-    drawText(ctx, 'A CHARTER COMPANY, ONE SQUARE AT A TIME', 320, 94, { size: 1, color: TEXT, align: 'center' });
+    drawText(ctx, 'A CHARTERED COMPANY, ONE SQUARE AT A TIME', 320, 94, { size: 1, color: TEXT, align: 'center' });
     panel(ctx, 230, 212, 180, 24 + this.items.length * 20, 'rgba(14,12,16,0.8)');
     menu(ctx, this.items, 250, 224, this.sel, { size: 2 });
     if (this.note) { panel(ctx, 120, 300, 400, 34, 'rgba(14,12,16,0.8)'); paragraph(ctx, this.note, 130, 308, 380, { color: TEXT }); }

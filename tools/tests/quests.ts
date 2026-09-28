@@ -13,13 +13,15 @@ import { questPage, PAGE, LIST } from '../../src/ui/quests.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
 import type { MapDef } from '../../src/game/map.ts';
+import { spentId } from '../../src/game/wilds.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok } from './lib.ts';
 
 /**
- * What in a condition names nothing real: a flag no NPC sets, an item, a once-only event or a chest,
- * a guardian that never respawns (one that does comes back to life, and what turns on its death
- * with it), a map. The maps are the game's unless given.
+ * What in a condition names nothing real: a flag no NPC sets, an item, something spent once and kept
+ * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue), a guardian that
+ * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
+ * maps are the game's unless given.
  */
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
   const npcFlags = new Set(maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [f.flag, f.quest?.setFlag] : [])));
@@ -28,7 +30,7 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
   for (const c of [w].flat() as QuestCond[]) {
     for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f)) bad.push(`flag ${f}`);
     if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
-    if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => ((f.kind === 'event' && f.once) || f.kind === 'chest') && f.id === id)) bad.push(`seen ${c.seen}`); }
+    if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => id !== undefined && spentId(f) === id)) bad.push(`seen ${c.seen}`); }
     if (c.slain !== undefined) { const { map, id } = onMap(c.slain); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${c.slain}`); }
     if (c.visited !== undefined && !maps.some((d) => d.id === c.visited)) bad.push(`visited ${c.visited}`);
   }
@@ -113,11 +115,11 @@ export function quests(): void {
     ok(news() === 'Quest complete: The Quiet Farm. New quest: The Grove Stone.', 'the hand-in finishes the farm and, after it, begins the Grove Stone');
     const farm = quest('ashcombe');
     ok(farm.done && farm.goal === null && farm.entries.some((e) => e.id === 'wand'), 'a finished quest has no goal and keeps the wand it handed over');
-    ok(/Brandy Hole/.test(quest('grove').goal ?? ''), `while Brandy Hole holds out, the Grove Stone waits on the pass (${quest('grove').goal})`);
+    ok(/pass/.test(quest('grove').goal ?? '') && !/Brandy Hole/.test(quest('grove').goal ?? ''), `with the farm done the Grove Stone sends the company through the pass, Brandy Hole or no (${quest('grove').goal})`);
     party.flags.q_greywater = 1; party.bag.push('greywater_ledger');
     ok(news() === 'New quest: The Cargo Ledger.' && /Hale/.test(quest('greywater').goal ?? ''), 'Hale\'s contract and his ledger arrive together as one line');
     takeItem(party, 'greywater_ledger'); party.flags.q_greywater_done = 1;
-    ok(news() === 'Quest complete: The Cargo Ledger. Quest log updated: The Grove Stone.' && /pass/.test(quest('grove').goal ?? ''), 'the second hand-in opens the pass, and the Grove Stone says so');
+    ok(news() === 'Quest complete: The Cargo Ledger.' && /pass/.test(quest('grove').goal ?? ''), 'the second hand-in finishes the ledger and leaves the Grove Stone as it was');
     const data = deserialize(serialize(world.state, party, 1));
     const reloaded = questLog(data.world, data.party);
     ok(JSON.stringify(reloaded) === JSON.stringify(log()) && questNews(marks, reloaded).length === 0, 'a save carries the quest log without storing it, and a reload is not news');

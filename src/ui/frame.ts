@@ -15,6 +15,7 @@ import { hash } from './brush.ts';
 import { shortDate } from '../game/calendar.ts';
 import { classify, isRainy, isSnowy, SKY_NAMES } from '../game/weather.ts';
 import type { Sky } from '../game/weather.ts';
+import { spentId } from '../game/wilds.ts';
 
 export const LAYOUT = {
   view: { x: 8, y: 8, w: 400, h: 268 },
@@ -136,8 +137,10 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   // Features the party has stood next to.
   for (const f of m.features) {
     if (!shown(f.x, f.y) || f.kind === 'event') continue;
-    if (f.kind === 'chest' && world.used(f.id)) continue;
-    ctx.fillStyle = f.kind === 'chest' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
+    // A spent chest, cairn, shrine, fountain or statue is gone from the map; a camp always shows.
+    const spent = spentId(f);
+    if (spent && world.used(spent)) continue;
+    ctx.fillStyle = f.kind === 'chest' || f.kind === 'cairn' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
     const s = Math.max(1, cell - 2);
     ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s);
   }
@@ -202,16 +205,22 @@ import { armorClass as armorClassOf } from '../game/party.ts';
 
 /** How many lines the log shows. */
 export const LOG_LINES = 4;
+/** And a fight's, over its own view (the same width): one more. */
+export const COMBAT_LOG_LINES = 5;
 /** One log entry as the log wraps it. */
 export const logLines = (text: string): string[] => wrap(text, LAYOUT.log.w - 12);
+
+/** The last `max` lines of a log as shown: each entry wrapped to the viewport, the newest kept, the latest entry's lines marked. */
+export function logTail(lines: readonly string[], max = LOG_LINES): { text: string; latest: boolean }[] {
+  const wrapped: { text: string; latest: boolean }[] = [];
+  lines.slice(-max).forEach((l, i, arr) => { for (const w of logLines(l)) wrapped.push({ text: w, latest: i === arr.length - 1 }); });
+  return wrapped.slice(-max);
+}
 
 /** The last few log lines, over the bottom of the viewport. */
 export function drawLog(ctx: CanvasRenderingContext2D, lines: readonly string[], max = LOG_LINES): void {
   const r = LAYOUT.log;
-  // Wrap each entry to the viewport, keep the newest, and highlight the latest entry's lines.
-  const wrapped: { text: string; latest: boolean }[] = [];
-  lines.slice(-max).forEach((l, i, arr) => { for (const w of logLines(l)) wrapped.push({ text: w, latest: i === arr.length - 1 }); });
-  const shown = wrapped.slice(-max);
+  const shown = logTail(lines, max);
   if (!shown.length) return;
   const h = shown.length * 10 + 6;
   ctx.fillStyle = 'rgba(10,8,12,0.72)';

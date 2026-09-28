@@ -307,10 +307,10 @@ const pinkIn = async (r: { x: number; y: number; w: number; h: number }): Promis
 const edgeView = edgeAt >= 0 ? await pinkIn({ x: 8, y: 8, w: 400, h: 200 }) : 0, edgeMap = edgeAt >= 0 ? await pinkIn({ x: 416, y: 42, w: 216, h: 214 }) : 0;
 await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100);
 const edgeBump = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { log: g.log.at(-1), x: g.world.state.x - z.x, zone: z.id }; });
-// The pass, once open, is a road walked straight through into Thornmark, no transition between.
+// The pass is open, a road walked straight through into Thornmark past the checkpoint's warning,
+// no transition between.
 await page.evaluate(() => {
   const g = (window as any).__game.game;
-  g.party.flags.q_ashcombe_done = 1; g.party.flags.q_greywater_done = 1;
   g.world.travel('shelf', 29, 9, 1); g.world.killGroups(['tm_wolves1']);
 });
 // Everything said on the walk, however the sky changes on the way.
@@ -489,8 +489,8 @@ ok(afterMap === 'ExploreScreen', `M closes it again (${afterMap})`);
 ok(edgeAt >= 0, `the weather has a clear noon with no wash within 480 days, to face the end of the world in (${edgeAt >= 0 ? `minute ${edgeAt}` : `none for weather seed ${weatherSeed}`})`);
 ok(edgeAt >= 0 && edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Foreland, the view is pink empty space and the automap marks it (${edgeAt >= 0 ? `${edgeView} pink pixels in the view, ${edgeMap} on the automap` : 'not looked at: no clear noon'})`);
 ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeBump.x === 1, `a step into it is refused, and the log says why (${JSON.stringify(edgeBump)})`);
-ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /The pass opens onto old forest/.test(pass.said) && passColours > 20,
-  `the open pass is walked straight through into Thornmark, which says so (${JSON.stringify(pass)})`);
+ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /Warden checkpoint.*The pass opens onto old forest/.test(pass.said) && passColours > 20,
+  `the open pass is walked straight through into Thornmark, warned at the checkpoint, and Thornmark says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls beside the party are drawn, in ${cracks.views} views (${sweeps.map((m) => m.id + (m.all ? ' four ways' : '')).join(', ')})${cracks.bad.length ? ` -> ${cracks.bad.length} views, ` + cracks.bad.slice(0, 4).join(', ') : ''}`);
 ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
