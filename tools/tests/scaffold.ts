@@ -36,12 +36,12 @@ const written = async (d: Draft, zone: string, x: number, y: number): Promise<Ma
  */
 function unbuilt(x: number, y: number): { atlas: Atlas; defs: readonly MapDef[] } {
   const over = new Set<string>();
-  for (const z of ATLAS.zones) {
-    const def = z.map && z.at ? MAP_DEFS.find((m) => m.id === z.map) : undefined;
-    if (def && z.at && z.at[0] < x + SIZE && x < z.at[0] + def.rows[0].length && z.at[1] < y + SIZE && y < z.at[1] + def.rows.length) over.add(def.id);
+  for (const z of ATLAS.zones) for (const { map, at } of z.maps ?? []) {
+    const def = MAP_DEFS.find((m) => m.id === map);
+    if (def && at[0] < x + SIZE && x < at[0] + def.rows[0].length && at[1] < y + SIZE && y < at[1] + def.rows.length) over.add(def.id);
   }
   return {
-    atlas: { ...ATLAS, zones: ATLAS.zones.map((z) => (z.map && over.has(z.map) ? { ...z, map: undefined, at: undefined } : z)) },
+    atlas: { ...ATLAS, zones: ATLAS.zones.map((z) => ({ ...z, maps: z.maps?.filter((m) => !over.has(m.map)) })) },
     defs: MAP_DEFS.filter((m) => !over.has(m.id)),
   };
 }

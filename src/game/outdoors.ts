@@ -1,9 +1,10 @@
-// The outdoors as one map. Every outdoor map the atlas places is a zone of it, laid in 1:1 where
-// the atlas puts it, so the party walks from the Foreland into Thornmark without a seam, and the
-// painted map and the played one agree square for square. Where no zone map is laid yet the world
-// simply ends: its cells are void, which nothing crosses and the viewport paints as pink empty
-// space. Building a zone is how the world grows: a map of its own in its area's folder
-// (content/areas/<area>/maps/), placed by the atlas.
+// The outdoors as one map. Every outdoor map the atlas places, at its box of the grid, is a zone of
+// it under its own name (an atlas zone may list several), laid in 1:1 where the atlas puts it, so
+// the party walks from the Foreland into Thornmark without a seam, and the painted map and the
+// played one agree square for square. Where no zone map is laid yet the world simply ends: its
+// cells are void, which nothing crosses and the viewport paints as pink empty space. Building a
+// box is how the world grows: a map of its own in its area's folder (content/areas/<area>/maps/),
+// placed by the atlas.
 //
 // The zone maps are still written as maps of their own, each closed in by its ring of mountains.
 // Laid in, the stretch of that ring which faces unbuilt world is the end of the world as well, and
@@ -13,7 +14,7 @@
 // on crossing into the zone. Every other exit, feature and monster group moves to where its zone
 // sits, and the towns' and dungeons' ways out lead onto the outdoors instead. Pure.
 import type { Atlas } from './atlas.ts';
-import { zoneOfMap } from './atlas.ts';
+import { mapAt } from './atlas.ts';
 import { VOID_CH } from './map.ts';
 import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell } from './map.ts';
 
@@ -35,7 +36,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
   const W = atlas.width, H = atlas.height;
   const laid: Laid[] = [];
   for (const def of defs) {
-    const at = def.kind === 'outdoor' ? zoneOfMap(atlas, def.id)?.at : undefined;
+    const at = def.kind === 'outdoor' ? mapAt(atlas, def.id) : undefined;
     if (at) laid.push({ def, x: at[0], y: at[1], w: Math.max(...def.rows.map((r) => r.length)), h: def.rows.length });
   }
   if (!laid.length) return defs.slice();

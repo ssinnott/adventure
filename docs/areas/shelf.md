@@ -29,8 +29,8 @@ and from the rim down to y 120.
 **The grid.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32 squares
 a side, with its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges (EXPANSION
 §8.2). A box is named as the old maps were, by its column's letter and its row's number: the
-Foreland is G2 and Thornmark H2. The world map's border letters squares 8 columns west and 2 rows
-south of these, since the first two maps were not laid on it (§9, #66).
+Foreland is G2 and Thornmark H2. The world map's border letters these boxes, the strips at the
+world's west and south edges unlettered (#66).
 
 On the grid the Foreland's map is G2, and the Downs are seven boxes, by column: F2 and F3 beside it;
 E2 and E3; D2, D3 and D4 (§4). The row above, C1 to G1, is the rim. C2 and C3 hold a strip of the
@@ -49,11 +49,11 @@ Its edges:
   straight down through the mountains at x 94, a few squares east of the cliff, where there is
   nothing to follow. At the south end it leaves the cliff and takes a strip of low ground at the
   cliff's foot, about eight squares wide (x 109–120, y 99–121), so the road down Kestrel Edge
-  (`src/content/atlas.ts:365`) ends on the Downs and not in the Delta. Once D3 and D4 are built the
+  (`src/content/atlas.ts:364`) ends on the Downs and not in the Delta. Once D3 and D4 are built the
   border there is their edges: the cliff runs through both boxes, and D4 holds the road's last
   squares down it.
-- **South-west: the Salt Road down Kestrel Edge** into the Delta (10–12). The atlas opens it only
-  after step II (`opens: 2`); under one road, lightly held, it is open from the start (#40).
+- **South-west: the Salt Road down Kestrel Edge** into the Delta (10–12), open from the start: one
+  road, lightly held (EXPANSION §2.2).
 
 Between the two zones the area map (M, then Tab) draws a dotted line from the rim down through
 Brockholt and the fields to Gullwick. It follows nothing on the ground. It is where the walk out
@@ -107,12 +107,13 @@ In more detail, as SLICE.md had it before the area docs:
   Ashen Deacon guards the Cargo Ledger. Captain Hale at the pass checkpoint gives the contract
   and takes the ledger. Chests carry the Foreland's mid-tier gear (long sword, kite shield, scale,
   chain, long bow).
-- **The ramp to Thornmark.** The pass needs both `q_ashcombe_done` and `q_greywater_done` (an exit's
-  `needFlag` may list several flags; on the outdoors the Foreland's exit into Thornmark became a gate
-  on the road through the pass, with the same flags and words). The slice's early monsters give about double their old xp, so
-  one clear of the Foreland and the cellar is worth level 2 per member, and adding Brandy Hole is worth
-  level 4; respawns make up the step to Thornmark's band 5. The curve (`src/content/progression.ts`)
-  checks what the area pays, in place of the tests that pinned both.
+- **The ramp to Thornmark.** The pass is open from the start. The sign at the Warden checkpoint
+  (30,9), on the one square the road into the pass is entered from, warns every company that goes
+  through, and Hale warns in his lines; Thornmark's monsters decide. The slice's early monsters give
+  about double their old xp, so one clear of the Foreland and the cellar is worth level 2 per
+  member, and adding Brandy Hole is worth level 4; respawns make up the step to Thornmark's band 5.
+  The curve (`src/content/progression.ts`) checks what the area pays, in place of the tests that
+  pinned both.
 
 Its content is in `src/content/areas/shelf/` (maps, monsters, items, quests, climate and its part
 of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. It has no walkthrough of
@@ -483,8 +484,8 @@ Decided by the owner on 27 and 28 September 2026:
    about 1.3 maps of land, and between them they measure a country box and a core box, the two
    floors the pilot tunes (EXPANSION §5.3).
 3. **Zones hold several maps.** The Downs are one zone of seven boxes, F2 and F3 from the pilot on;
-   today a zone holds one (`AtlasZone.map`, `src/game/atlas.ts:82`; #66). A zone to a box would ask
-   a step of the quest of every box the road crosses (EXPANSION §5.8), bare country included.
+   an atlas zone lists its maps (`AtlasZone.maps`; #66). A zone to a box would ask a step of the
+   quest of every box the road crosses (EXPANSION §5.8), bare country included.
 4. **Gullwick** is a village on F3: its houses, its boats and Wenna's mother as features, as the
    Ashcombe farm is on the Foreland map, and a camp to rest at (#45). No businesses, so no new
    interiors.
@@ -508,6 +509,8 @@ Decided by the owner on 27 and 28 September 2026:
     Mottram's sells the band's gear, and in Act I pluses are found, not sold (#99 and #101). No
     find is dearer than its band's window on the curve (`src/content/progression.ts`), so the
     captain's mail is Scale Mail +1 and Thornmark has no plate with a plus.
+12. **The world map's lettering** is on the grid: the border names each box, and the strips at the
+    world's edges go unlettered (§1; #66).
 
 Proposed, for the owner, each in the issue that would build it:
 
@@ -517,11 +520,10 @@ Proposed, for the owner, each in the issue that would build it:
   country (§4).
 - **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
   sold in the band (§8; #74).
-- **The world map's lettering** moves onto the grid, so that the border names each box (§1; #66).
 - **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across
   E2 (#68 and #69). #56's Riders in the Dark rides it.
-- **The Wind Cave** (`src/content/atlas.ts:310`), Saltreach's cave in the face of Kestrel Edge,
+- **The Wind Cave** (`src/content/atlas.ts:309`), Saltreach's cave in the face of Kestrel Edge,
   moves a square west into C3, so that D3 does not hold it (#71).
 - **The chalk figure** below the Berth, a ship that only the Berth's mouth shows as one (§4.6).
 - **The Queen on her bier,** her hand bare, as STORY has the tomb, where MONSTERS §5.2 has the bier

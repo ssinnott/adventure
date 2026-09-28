@@ -10,7 +10,7 @@ import { drawPortraitLarge } from './portraits.ts';
 import { drawInterior } from './interior.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
 import type { Feature, Interior } from '../game/map.ts';
-import { item } from '../game/items.ts';
+import { item, priceIn, buy } from '../game/items.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
 import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, trainPrice, MAX_LEVEL, guildFlag } from '../game/party.ts';
@@ -351,16 +351,15 @@ function shop(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 }
 
 function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
-  const names = f.stock.map((id) => `${item(id).name}\t${item(id).price}g\t${describe(id)}`);
+  const names = f.stock.map((id) => `${item(id).name}\t${priceIn(f, id)}g\t${describe(id)}`);
   const s: ChoiceScreen = new ChoiceScreen(`What will it be? (${g.party.gold} gold.)`, [...names, 'Done'], (i) => {
     if (i < 0 || i === names.length) return;
-    const id = f.stock[i], d = item(id);
-    if (g.party.gold < d.price) { g.say('Not enough gold.'); g.push(buyScreen(g, f)); return; }
-    g.party.gold -= d.price;
-    if (d.use?.food) { g.party.food += d.use.food; g.say(`Bought ${d.name}: food is now ${g.party.food}.`); }
-    else { g.party.bag.push(id); g.say(`Bought ${d.name}.`); }
+    const d = buy(g.party, f, f.stock[i]);
+    if (!d) { g.say('Not enough gold.'); g.push(buyScreen(g, f)); return; }
+    if (d.use?.food) g.say(`Bought ${d.name}: food is now ${g.party.food}.`);
+    else g.say(`Bought ${d.name}.`);
     const next = buyScreen(g, f); (next as ChoiceScreen).sel = i; g.push(next);
-  }, f.name, [...f.stock.map((id) => item(id).price > g.party.gold), false]);
+  }, f.name, [...f.stock.map((id) => priceIn(f, id) > g.party.gold), false]);
   return s;
 }
 

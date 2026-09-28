@@ -202,16 +202,22 @@ import { armorClass as armorClassOf } from '../game/party.ts';
 
 /** How many lines the log shows. */
 export const LOG_LINES = 4;
+/** And a fight's, over its own view (the same width): one more. */
+export const COMBAT_LOG_LINES = 5;
 /** One log entry as the log wraps it. */
 export const logLines = (text: string): string[] => wrap(text, LAYOUT.log.w - 12);
+
+/** The last `max` lines of a log as shown: each entry wrapped to the viewport, the newest kept, the latest entry's lines marked. */
+export function logTail(lines: readonly string[], max = LOG_LINES): { text: string; latest: boolean }[] {
+  const wrapped: { text: string; latest: boolean }[] = [];
+  lines.slice(-max).forEach((l, i, arr) => { for (const w of logLines(l)) wrapped.push({ text: w, latest: i === arr.length - 1 }); });
+  return wrapped.slice(-max);
+}
 
 /** The last few log lines, over the bottom of the viewport. */
 export function drawLog(ctx: CanvasRenderingContext2D, lines: readonly string[], max = LOG_LINES): void {
   const r = LAYOUT.log;
-  // Wrap each entry to the viewport, keep the newest, and highlight the latest entry's lines.
-  const wrapped: { text: string; latest: boolean }[] = [];
-  lines.slice(-max).forEach((l, i, arr) => { for (const w of logLines(l)) wrapped.push({ text: w, latest: i === arr.length - 1 }); });
-  const shown = wrapped.slice(-max);
+  const shown = logTail(lines, max);
   if (!shown.length) return;
   const h = shown.length * 10 + 6;
   ctx.fillStyle = 'rgba(10,8,12,0.72)';

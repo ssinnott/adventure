@@ -16,7 +16,7 @@ import { createServer } from './server.ts';
 import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './changed.ts';
 import { AREAS, MAP_DEFS, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
 import { GameMap } from '../src/game/map.ts';
-import { worldPoint } from '../src/game/atlas.ts';
+import { worldPoint, mapAt } from '../src/game/atlas.ts';
 import type { MapDef } from '../src/game/map.ts';
 import { FACING_DX, FACING_DY } from '../src/game/types.ts';
 import type { Facing } from '../src/game/types.ts';
@@ -143,9 +143,9 @@ function planMap(id: string): MapPlan {
   // margin and the first view's square; a town or a dungeon, round the outdoor square it is
   // entered from (through the maps that lead to it), which the art cloth draws where the plate
   // centre is not.
-  const zone = ATLAS.zones.find((z) => z.map === id && z.at);
+  const at = mapAt(ATLAS, id);
   let world: MapPlan['world'] | undefined;
-  if (zone?.at) world = { x: zone.at[0] - 8, y: zone.at[1] - 8, w: m.width + 16, h: m.height + 16, mark: [zone.at[0] + views[0].x + 0.5, zone.at[1] + views[0].y + 0.5] };
+  if (at) world = { x: at[0] - 8, y: at[1] - 8, w: m.width + 16, h: m.height + 16, mark: [at[0] + views[0].x + 0.5, at[1] + views[0].y + 0.5] };
   else {
     const door = entrance(id);
     if (door) world = { x: Math.floor(door[0]) - 20, y: Math.floor(door[1]) - 20, w: 40, h: 40, mark: door };
