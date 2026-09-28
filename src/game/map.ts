@@ -84,6 +84,14 @@ export type Feature =
   | { kind: 'statue'; x: number; y: number; id: string; name?: string; text: string; riddle: string; answer: string; gift: Gift; done: string }
   /** Where the party may rest though monsters are about, as often as it likes. */
   | { kind: 'camp'; x: number; y: number; name?: string; text: string }
+  /**
+   * A den (game/dens.ts): it breeds `breeds`, its `brood` groups, back one a pace while it stands;
+   * `keepers`, a group beside it that never leaves, guard it. `text` is its look, said when it is
+   * first seen. Once the keepers are dead a step or Space puts `ask`, answered `burn` or `leave`;
+   * burnt, it says `burnt`, gives its hoard (`gold`, `items`) and breeds no more, and `ruin` is said
+   * thereafter. Groups are named by id, never by square, as the outdoors moves only the den.
+   */
+  | { kind: 'den'; x: number; y: number; id: string; name?: string; text: string; breeds: readonly string[]; keepers: string; brood: readonly string[]; ask: string; burn: string; leave?: string; burnt: string; ruin?: string; gold: number; items: string[] }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
   | { kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean };
 
