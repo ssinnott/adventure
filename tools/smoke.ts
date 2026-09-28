@@ -154,6 +154,9 @@ const inn = await (async () => {
   await page.keyboard.press('Space'); await page.waitForTimeout(80);
   const back = await state();
   const backColours = await colours();
+  // With him gone the trade is all the menu offers: choosing it opens it once, with nothing under it to come back to.
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const traded = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
   await page.keyboard.press('Escape'); await page.waitForTimeout(100);
   const left = await page.evaluate(() => {
     const g = (window as any).__game.game, top = g.top.constructor.name, m = g.world.map;
@@ -173,7 +176,7 @@ const inn = await (async () => {
     m.features.splice(m.features.findIndex((f: any) => f.name === 'Ebba, a fixture'), 1);
     return { screens: out, options: under };
   });
-  return { menu, words, question, said, back, backColours, left, eel };
+  return { menu, words, question, said, back, backColours, traded, left, eel };
 })();
 // A guild's hall, on a fixture (no hall is marked yet): the Drillyard as the Wardens' with one first
 // task already done, so taking it pays at once. Back on the hall's first menu, the rank it reads is
@@ -579,7 +582,8 @@ ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
 ok(inn.menu.screen === 'ChoiceScreen' && inn.menu.options.join() === 'A room and rations,Talk to Hob,Leave', `a person in the inn joins its first menu, by name to the first comma (${inn.menu.options.join(', ')})`);
 ok(inn.words.text === '"A stranger, and armed."' && inn.question.text === '"Should I go to Gullwick?"' && inn.said.text === '"Then I go."', `talking to him says his words and puts his question in the side panel (${inn.words.screen}, ${inn.question.screen}, ${inn.said.screen})`);
-ok(inn.back.screen === 'ChoiceScreen' && inn.back.options.join() === 'A room and rations,Leave' && inn.backColours > 20 && inn.left === 'ExploreScreen', `his answer sends him away: back on the first menu, which no longer lists him, and Esc leaves (${inn.back.options.join(', ')}, then ${inn.left})`);
+ok(inn.back.screen === 'ChoiceScreen' && inn.back.options.join() === 'A room and rations,Leave' && inn.backColours > 20, `his answer sends him away: back on the first menu, which no longer lists him (${inn.back.options.join(', ')})`);
+ok(inn.traded === 'ExploreScreen,InteriorScreen,ChoiceScreen' && inn.left === 'ExploreScreen', `with him gone, the trade opens once, and Esc leaves (${inn.traded}, then ${inn.left})`);
 ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Leave', `a tavern with a person in it says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
 ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);

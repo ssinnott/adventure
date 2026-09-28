@@ -33,6 +33,8 @@ export function doorwayFaults(m: GameMap): string[] {
   for (const f of m.features) if (m.at(f.x, f.y).door !== 'none') squares.set(`${f.x},${f.y}`, [...(squares.get(`${f.x},${f.y}`) ?? []), f]);
   for (const [at, [first, ...rest]] of squares) {
     if (!('interior' in first && first.interior)) out.push(`the doorway at ${at} opens on the ${first.kind} there, which has no room`);
+    // A business is always there: gone, its doorway would open on the person after it.
+    else if ('when' in first || 'after' in first || 'until' in first) out.push(`the business at ${at} comes and goes`);
     for (const f of rest) if (!(f.kind === 'event' || (f.kind === 'npc' && !f.interior))) out.push(`the doorway at ${at} holds the ${f.kind}${'interior' in f && f.interior ? ' with a room' : ''} after its business`);
   }
   return out;
@@ -90,7 +92,8 @@ export function maps(): void {
     const keeper: Feature = { ...person, name: 'The Keeper', interior: INTERIORS[1] };
     const town = (features: Feature[]): GameMap => new GameMap({ id: 'fx_town', name: 'Fixture', kind: 'town', start: { x: 1, y: 2, facing: NORTH }, rows: ['#####', '#,D,#', '#,,,#', '#####'], features });
     ok(!doorwayFaults(town([inn, person, event])).length && !doorwayFaults(town([keeper, person])).length, 'a person or an event after the business on its doorway passes, a tavern keeper who is the business too');
-    ok(doorwayFaults(town([person, inn])).length > 0 && doorwayFaults(town([inn, keeper])).length === 1 && doorwayFaults(town([person])).length === 1, 'a person before the business, a second business and a doorway with no business each fail');
+    ok(doorwayFaults(town([person, inn])).length > 0 && doorwayFaults(town([inn, keeper])).length === 1 && doorwayFaults(town([person])).length === 1 && doorwayFaults(town([{ ...keeper, until: { flag: 'fx_gone' } }, person])).length === 1,
+      'a person before the business, a second business, a doorway with no business and a business that comes and goes each fail');
   }
   const opened = INTERIORS.filter((i) => !Object.hasOwn(UNPLACED, i));
   ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);

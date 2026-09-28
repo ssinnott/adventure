@@ -18,7 +18,7 @@ import { CONTENT, collect } from '../shipped.ts';
 import { condFaults } from './quests.ts';
 import { wrap, columnLabelWidth } from '../../src/ui/draw.ts';
 import { measureText as measure } from '../../src/lib/engine/text.ts';
-import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W } from '../../src/ui/frame.ts';
+import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W, onAutomap } from '../../src/ui/frame.ts';
 import { ok } from './lib.ts';
 
 /** The three hand-ins of Act I, by the item each takes. */
@@ -251,6 +251,14 @@ function presence(): void {
   const noonAlwin = at(2, 1);
   world.state.minutes = midnight;
   ok(noonAlwin === undefined && at(2, 1) === 'Alwin', 'a person by night is not there at noon, and is at midnight');
+  // Met from the square below, facing him, and marked on the automap, only by night.
+  const alwin = def.features!.find((f) => f.kind === 'npc' && f.name === 'Alwin')!;
+  const facing = (): string | undefined => { world.travel('fx_town', 2, 2, NORTH); return (world.featureHere() as Person | undefined)?.name; };
+  const nightAhead = facing(), nightMapped = onAutomap(world, alwin);
+  world.state.minutes = noon;
+  const noonAhead = facing(), noonMapped = onAutomap(world, alwin);
+  world.state.minutes = midnight;
+  ok(nightAhead === 'Alwin' && nightMapped && noonAhead === undefined && !noonMapped, 'a person by night is met ahead and marked on the automap by night, and not at noon');
   const dark = heardAt(1, 2);
   party.flags.fx_lit = 1;
   ok(dark === 'Dark.' && heardAt(1, 2) === 'Lit.', 'an event until a flag, then the one after it: the lamp room dark, then lit');

@@ -358,7 +358,9 @@ export function serviceScreen(g: Game, f: Feature): Screen {
   return new ChoiceScreen(hall ? () => standing(g, hall) : `${b.name}.`, () => [...businessEntries(g, b).map((e) => e.label), 'Leave'], (i) => {
     const now = businessEntries(g, b);
     if (i < 0 || i >= now.length) return;
-    g.push(serviceScreen(g, b));
+    // Back to the menu after, while it offers more than the trade: once everyone listed has gone,
+    // the trade is all there is, and opening it again under itself would open it twice.
+    if (now.length > 1) g.push(serviceScreen(g, b));
     g.push(now[i].open());
   }, b.name);
 }

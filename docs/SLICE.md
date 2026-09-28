@@ -391,8 +391,8 @@ over content broken on purpose too, and two tools to theirs:
   beside it that never leave, brood of its kind that come back until it burns.
 - `pillars` (§5.4): a hint on the near side of every secret door, there always; no text past three
   lines of the log, nor a square's texts that can show together (day and night, or `until` and
-  `after` the same thing, never do) past the log's four, and no monster's look past two, every glyph
-  in the font, British spelling; each `Area.novel` holds; water and roads carry on into the atlas;
+  `after` the same thing, never do) past the log's four; no monster's look past two, every glyph in
+  the font, British spelling; each `Area.novel` holds; water and roads carry on into the atlas;
   story locks (`content/locks.ts`) signed in, none between areas and every hand-in taking its item
   at the first meeting.
 - `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
@@ -400,7 +400,7 @@ over content broken on purpose too, and two tools to theirs:
   person's words fit the box (a hand-in's with its gold line), a question leaves room for its
   answers and an answer that hands over an item sets a flag. A fixture town holds the rest: a
   question and its two roads read by the log and the save list, words by flag and by night,
-  several hand-ins, a letter, a person gone from one place and found in another, one by night, and
+  several hand-ins, a letter, a person gone from one place and found in another, one by night and
   events by night or by flag.
 - The walkthroughs (EXPANSION §5.8): `walkthrough:shelf` plays The Quiet Farm from a new game,
   `walkthrough:thornmark` the chain and then Thornmark taken early, before Vask's hire and after it
