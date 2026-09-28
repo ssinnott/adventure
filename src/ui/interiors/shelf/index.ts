@@ -7,6 +7,7 @@ import { PROVISIONER } from './harrow_provisioner.ts';
 import { GUILDHALL } from './lantern_guildhall.ts';
 import { DRILLYARD } from './warden_drillyard.ts';
 import { GILDED_EEL } from './gilded_eel.ts';
+import { FARM_KITCHEN } from './farm_kitchen.ts';
 
 export const SCENES = {
   hearthlight_inn: HEARTHLIGHT,
@@ -15,4 +16,5 @@ export const SCENES = {
   lantern_guildhall: GUILDHALL,
   warden_drillyard: DRILLYARD,
   gilded_eel: GILDED_EEL,
+  farm_kitchen: FARM_KITCHEN,
 } satisfies Record<string, Scene>;
