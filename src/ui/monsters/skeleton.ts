@@ -1,11 +1,13 @@
-// The risen dead: a skeleton, a bone knight, a ghoul and a drowned man. The last two still carry
-// flesh, which is the whole of why they are here and not in the wraith module -- a wraith is a
-// spirit in a shroud, and these two are bodies. Painted after the Xeen look. Bone is the one
-// material whose parts are honestly separate objects, so each bone is its own small rendered mass
-// (a knobbed, waisted shaft, no flat tones), the joints are dark gaps rather than seams, the skull
-// is a cranium with a hanging jaw, and the ribcage is a real cage laid over a hollow so the gaps
-// between the ribs read as space. The knight is the same bones inside dull steel plate, several
-// steps darker and cooler than bone, with raw bone at the neck, elbows, knees and hands.
+// The risen dead: a skeleton, a bone knight, a ghoul, a drowned man and the Queen's barrow guard.
+// The ghoul and the drowned man still carry flesh, which is the whole of why they are here and not
+// in the wraith module -- a wraith is a spirit in a shroud, and these two are bodies. Painted after
+// the Xeen look. Bone is the one material whose parts are honestly separate objects, so each bone
+// is its own small rendered mass (a knobbed, waisted shaft, no flat tones), the joints are dark
+// gaps rather than seams, the skull is a cranium with a hanging jaw, and the ribcage is a real cage
+// laid over a hollow so the gaps between the ribs read as space. The knight is the same bones
+// inside dull steel plate, several steps darker and cooler than bone, with raw bone at the neck,
+// elbows, knees and hands. The barrow guard keeps less plate and wears the Queen's livery over it,
+// in her blue and gold.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow, eye } from './common.ts';
@@ -744,9 +746,9 @@ function drowned(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
  * captain's cloak, which has gone nearly black.
  */
 const QUEEN_BLUE = '#1f3a7a', QUEEN_GOLD = '#d4a83a';
-function queens(tone: number, fade: number): { blue: string; blueD: string; gold: string; goldD: string } {
+function queens(tone: number, fade: number): { blue: string; gold: string; goldD: string } {
   const blue = shade(mix(QUEEN_BLUE, '#080a14', fade), tone), gold = shade(mix(QUEEN_GOLD, '#2a1c0c', fade * 0.8), tone);
-  return { blue, blueD: mix(blue, INK, 0.45), gold, goldD: mix(gold, INK, 0.4) };
+  return { blue, gold, goldD: mix(gold, INK, 0.4) };
 }
 
 /** Old plate: the def's tint taken down and cool, as the bone knight's is, in four steps. */
@@ -813,7 +815,7 @@ function livery(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   ctx.beginPath(); ctx.moveTo(X(-10.8), T(-58.4)); ctx.quadraticCurveTo(X(1), T(-56.6), X(12.2), T(-58.4)); ctx.stroke();
   glossPoly(ctx, B, [X(-1.2), T(-59.6), X(3), T(-59.6), X(3), T(-56.2), X(-1.2), T(-56.2)], q.gold, { h, gloss: 0.4 });
 
-  // The gorget round the neck, and the near pauldron over the tabard's shoulder.
+  // The gorget round the neck.
   blob(ctx, B, stM, [{ k: 'ell', x: X(1.6), y: T(-75.6), rx: 6.8 * u, ry: 3.2 * u }], { h, formK: 0.5, gloss: 0.2 });
   glossTaper(ctx, B, X(2.6), T(-84), X(1.8), T(-76.5), 2.4 * u, 2.8 * u, old, { h });
   for (let i = 0; i < 2; i++) softLine(ctx, B, [X(0.2), T(-82 + i * 2.6), X(4.2), T(-82.4 + i * 2.6)], murk, Math.max(1, 0.9 * u), 0.55);
@@ -885,5 +887,4 @@ function guard(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   softLine(ctx, B, [kx0 - 9.6 * u, ky0 + 2.8 * u, kx0 + 9.8 * u, ky0 + 2.8 * u], stD, Math.max(1, 1.6 * u), 0.5);
   ctx.strokeStyle = B.col(rgba(mix(stL, '#ffffff', 0.45), 0.5)); ctx.lineWidth = Math.max(1, u);
   ctx.beginPath(); ctx.moveTo(kx0 - 5.8 * u, ky0 - 3.6 * u); ctx.quadraticCurveTo(kx0 - 4 * u, ky0 - 7.2 * u, kx0 - 0.4 * u, ky0 - 8 * u); ctx.stroke();
-  void stL;
 }
