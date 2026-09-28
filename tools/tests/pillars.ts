@@ -5,7 +5,8 @@
 // areas, and every hand-in takes its item at the first meeting. Each check is a function of the content it reads, so it runs over every area and over
 // fixtures broken on purpose, which it must refuse.
 import { readdirSync } from 'node:fs';
-import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS } from '../../src/content/index.ts';
+import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS, GUILD_QUESTS } from '../../src/content/index.ts';
+import { GUILDS } from '../../src/content/guilds.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { Area, Novelty } from '../../src/content/area.ts';
 import { LOCKS, MOST_AN_AREA, MOST_ON_THE_ROAD } from '../../src/content/locks.ts';
@@ -135,6 +136,8 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
     add(`quest ${q.id}`, q.title);
     for (const c of q.chapters ?? [q]) add(`quest ${q.id}/${c.id}`, c.title, c.entries.map((e) => e.text), c.goals.map((g) => g.text));
   }
+  for (const q of GUILD_QUESTS) add(`guild quest ${q.id}`, q.offer, q.paid, q.early);
+  for (const gd of Object.values(GUILDS)) add(`guild ${gd.id}`, gd.name, gd.ranks);
   for (const a of AREAS) add(`${a.id} climate`, a.climate.fogText, a.climate.thunderText);
   for (const a of ATLAS.areas) add(`atlas ${a.id}`, a.name, a.note);
   for (const z of ATLAS.zones) add(`atlas ${z.id}`, z.name);

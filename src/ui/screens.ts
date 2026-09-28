@@ -17,6 +17,8 @@ import { spell, spellsFor } from '../game/spells.ts';
 import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, trainPrice, MAX_LEVEL, guildFlag } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
+import type { GuildId } from '../content/guilds.ts';
+import { rankOf, rankName, offered, inHand, report, take, guildName } from '../game/guilds.ts';
 
 const BOX = { x: 40, y: 40, w: SAY_W + 24, h: 220 };
 
@@ -112,7 +114,10 @@ export class ChoiceScreen implements Screen {
   sel = 0;
   /** The first option in view when the list is longer than the side panel. */
   private top = 0;
-  constructor(private text: string, private options: string[], private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
+  /** `text` may be made when drawn, for words that change while the menu waits under another. */
+  constructor(private text: string | (() => string), private options: string[], private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
+  /** The prompt as it reads now. */
+  get words(): string { return typeof this.text === 'function' ? this.text() : this.text; }
   update(g: Game, a: Action | null): void {
     if (!a) return;
     if (is(a, 'up')) this.sel = (this.sel + this.options.length - 1) % this.options.length;
@@ -124,12 +129,12 @@ export class ChoiceScreen implements Screen {
   render(g: Game, ctx: CanvasRenderingContext2D): void {
     if (visiting(g)) { this.renderSide(ctx); return; }
     // One line of question was always allowed for; each more takes its height.
-    const asked = Math.min(wrap(this.text, SAY_W).length, ASK_LINES);
+    const asked = Math.min(wrap(this.words, SAY_W).length, ASK_LINES);
     const h = Math.min(300, 40 + (asked - 1) * lineHeight(1) + this.options.length * 11 + 40);
     panel(ctx, BOX.x, BOX.y, BOX.w, h);
     let y = BOX.y + 10;
     if (this.title) { drawText(ctx, this.title, BOX.x + 12, y, { size: 1, color: BRASS }); y += 14; }
-    y = paragraph(ctx, this.text, BOX.x + 12, y, SAY_W, { color: TEXT, maxLines: ASK_LINES }) + 6;
+    y = paragraph(ctx, this.words, BOX.x + 12, y, SAY_W, { color: TEXT, maxLines: ASK_LINES }) + 6;
     menu(ctx, this.options, BOX.x + 12, y, this.sel, { disabled: this.disabled });
   }
   /**
@@ -139,7 +144,7 @@ export class ChoiceScreen implements Screen {
   private renderSide(ctx: CanvasRenderingContext2D): void {
     const x = SIDE.x + PAD;
     let y = sidePanel(ctx, this.title);
-    y = paragraph(ctx, this.text, x, y, TEXT_W, { color: TEXT, maxLines: ASK_SIDE_LINES }) + 3;
+    y = paragraph(ctx, this.words, x, y, TEXT_W, { color: TEXT, maxLines: ASK_SIDE_LINES }) + 3;
     ctx.fillStyle = BRASS_DARK; ctx.fillRect(x, y, TEXT_W, 1);
     y += 5;
     const lh = lineHeight(1) + 1, n = this.options.length;
@@ -300,15 +305,83 @@ export class SpellScreen implements Screen {
 
 // ---- town services ----
 
+type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'guild' | 'trainer' }>;
+
+/** One line of a business's first menu, and the screen it opens. */
+export interface BusinessEntry { label: string; open: () => Screen }
+
+/** What each kind of business trades in, as its first menu names it. */
+const TRADE: Record<Business['kind'], string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
+
+/**
+ * What a business offers the party on the way in, in order: its own trade, then a guild's work
+ * where it is a hall. People found inside (#76) join the list after these, as "Talk to <name>";
+ * Leave is always last. This is the one place the list is made.
+ */
+export function businessEntries(g: Game, f: Business): BusinessEntry[] {
+  const out: BusinessEntry[] = [{ label: TRADE[f.kind], open: () => trade(g, f) }];
+  if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
+  return out;
+}
+
+/**
+ * The screen a business opens on: its trade alone, as ever, or where it offers more, a first menu
+ * that each choice returns to (it is pushed again under the screen the choice opens), until Leave.
+ */
 export function serviceScreen(g: Game, f: Feature): Screen {
+  if (f.kind !== 'inn' && f.kind !== 'temple' && f.kind !== 'shop' && f.kind !== 'guild' && f.kind !== 'trainer') return new MessageScreen('...');
+  const entries = businessEntries(g, f);
+  if (entries.length === 1) return entries[0].open();
+  // Made when drawn: the guild's work, open above it, can raise the company's rank.
+  const hall = f.hall;
+  return new ChoiceScreen(hall ? () => standing(g, hall) : `${f.name}.`, [...entries.map((e) => e.label), 'Leave'], (i) => {
+    if (i < 0 || i === entries.length) return;
+    g.push(serviceScreen(g, f));
+    g.push(entries[i].open());
+  }, f.name);
+}
+
+function trade(g: Game, f: Business): Screen {
   switch (f.kind) {
     case 'inn': return inn(g, f);
     case 'temple': return temple(g, f);
     case 'shop': return shop(g, f);
     case 'guild': return guild(g, f);
     case 'trainer': return trainer(g, f);
-    default: return new MessageScreen('...');
   }
+}
+
+// ---- a guild's work, at any of its halls (game/guilds.ts) ----
+
+/** The company's place in a guild, as its hall's first menu says it. */
+function standing(g: Game, id: GuildId): string {
+  const r = rankName(id, rankOf(id, g.party)), name = guildName(id);
+  return r ? `Your rank with ${name}: ${r}.` : `You have no rank with ${name} yet.`;
+}
+
+/** The guild's work: first the report, which pays what is done, then what the hall offers. */
+function guildWork(g: Game, id: GuildId, hallName: string): Screen {
+  const paid = report(id, g.world.state, g.party);
+  if (paid.length) return new MessageScreen(paid.join('\n\n'), () => g.push(guildOffers(g, id, hallName)), hallName);
+  return guildOffers(g, id, hallName);
+}
+
+function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
+  const offers = offered(id, g.party), held = inHand(id, g.party);
+  const doing = held.length ? ` In hand: ${held.map((q) => q.title).join('; ')}.` : '';
+  if (!offers.length) return new MessageScreen(`"We have no more work for you now."${doing}`, undefined, hallName);
+  return new ChoiceScreen(`${standing(g, id)}${doing}`, [...offers.map((q) => q.title), 'Back'], (i) => {
+    if (i < 0 || i === offers.length) return;
+    const q = offers[i];
+    g.push(new MessageScreen(q.offer.join('\n\n'), () => g.push(new ChoiceScreen(q.title, ['Take it', 'Not now'], (j) => {
+      if (j === 0) {
+        const said = take(q, g.world.state, g.party);
+        g.say(`You take the work: ${q.title}.`);
+        if (said.length) { g.push(new MessageScreen(said.join('\n\n'), () => g.push(guildOffers(g, id, hallName)), hallName)); return; }
+      }
+      g.push(guildOffers(g, id, hallName));
+    }, hallName)), hallName));
+  }, hallName);
 }
 
 function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {
@@ -399,10 +472,10 @@ function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
   const members = g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => f.classes.includes(m.cls));
   const joined = !!g.party.flags[guildFlag(f.name)];
   if (!joined) {
-    return new ChoiceScreen(`"${f.name}. Membership is ${f.fee} gold, and buys the right to study our spells." (${g.party.gold} gold.)`, [`Join (${f.fee} gold)`, 'Leave'], (i) => {
+    return new ChoiceScreen(`"${f.name}. The fee to study here is ${f.fee} gold, paid once." (${g.party.gold} gold.)`, [`Pay the fee (${f.fee} gold)`, 'Leave'], (i) => {
       if (i !== 0) return;
       if (g.party.gold < f.fee) { g.say('Not enough gold.'); return; }
-      g.party.gold -= f.fee; g.party.flags[guildFlag(f.name)] = 1; g.say('You are members of the guild.');
+      g.party.gold -= f.fee; g.party.flags[guildFlag(f.name)] = 1; g.say('You may study here.');
       g.push(guild(g, f));
     }, f.name);
   }
