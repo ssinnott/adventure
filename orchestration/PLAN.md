@@ -258,3 +258,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - The drawings (#119 to #124) merged main themselves; they still wait on the owner's OK. At 17:03
   the owner asked to see them all: the orchestrator sent each one's combat strip and a gallery by day
   and by night, close up and at the viewport's sizes.
+
+### 17:25: the owner OKs the drawings; #122 merged
+
+- 17:24: the owner OK'd all six drawings ("All those look good!").
+- #122 (#79, the crow) merged at 17:26 (main be9f4e9) after a local merge with main 5b3e589: ALL OK
+  (23 owed, the crow's to #47), SMOKE OK (34 drawn), "Nothing new."; CI green. Main's tree matches.
+- The rest go one at a time, each merging main first (they all append to shelf/monsters.ts): #121
+  (sent 17:28), then #120, then #123 and #124; #119 (no monster conflict) sent its two comment nits
+  and a main merge at 17:28. The last of #120, #121 and #123/#124 brings SLICE's variants sentence
+  up to date.
