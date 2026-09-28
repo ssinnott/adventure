@@ -15,16 +15,18 @@ const sellBack = (id: string): number => Math.floor(ITEMS[id].price / 2);
 function faults(shop: Shop): string[] {
   const out: string[] = [];
   for (const [id, p] of Object.entries(shop.prices ?? {})) {
-    if (!shop.stock.includes(id)) out.push(`prices '${id}', which it does not stock`);
-    else if (!Number.isInteger(p) || p < 1) out.push(`prices '${id}' at ${p}, not a whole number of gold`);
-    else if (p < sellBack(id)) out.push(`prices '${id}' at ${p}, under its sell-back of ${sellBack(id)}`);
+    if (!shop.stock.includes(id)) out.push(`'${id}' is not stocked`);
+    else if (!Number.isInteger(p) || p < 1) out.push(`'${id}' at ${p} is not a whole number of gold`);
+    else if (p < sellBack(id)) out.push(`'${id}' at ${p} is under its sell-back of ${sellBack(id)}`);
   }
   return out;
 }
+/** The one fault a shop's prices raise, or what they raise instead. */
+const fault = (shop: Shop): string => faults(shop).join('; ');
 
 export function shops(): void {
   const fixture = (prices: Record<string, number>): Shop =>
-    ({ kind: 'shop', x: 0, y: 0, name: 'Farm Store', stock: ['rations', 'torch'], prices, interior: 'harrow_provisioner' } as unknown as Shop);
+    ({ kind: 'shop', x: 0, y: 0, name: 'Farm Store', stock: ['rations', 'torch'], prices, interior: 'harrow_provisioner' });
 
   // A shop with a price of its own shows and charges it; what it does not price is the item's own.
   const farm = fixture({ rations: 3 });
@@ -36,13 +38,17 @@ export function shops(): void {
   ok(party.gold === gold - 3 - ITEMS.torch.price && party.bag.length === bag + 1 && party.bag.at(-1) === 'torch', 'a torch there costs its own price, into the bag');
   party.gold = 2;
   ok(buy(party, farm, 'rations') === null && party.gold === 2 && party.bag.length === bag + 1, 'short of gold, nothing is bought');
-  ok(sellBack('rations') === Math.floor(ITEMS.rations.price / 2), `rations sell back for ${sellBack('rations')} whatever the shop`);
 
   // The checks, each caught on a fixture.
   ok(faults(farm).length === 0, 'the farm store\'s prices are sound');
-  ok(faults(fixture({ lantern: 5 })).length === 1, 'a price for an item not stocked is caught');
-  ok(faults(fixture({ rations: 0 })).length === 1 && faults(fixture({ rations: 1.5 })).length === 1, 'a price of 0 or of a part of a gold is caught');
-  ok(faults(fixture({ rations: 1 })).length === 1, 'a price under the sell-back is caught');
+  const caught = (prices: Record<string, number>, want: string, what: string): void => {
+    const got = fault(fixture(prices));
+    ok(got === want, `${what} is caught (${got || 'nothing'})`);
+  };
+  caught({ lantern: 5 }, "'lantern' is not stocked", 'a price for an item not stocked');
+  caught({ rations: 0 }, "'rations' at 0 is not a whole number of gold", 'a price of 0');
+  caught({ torch: 1.5 }, "'torch' at 1.5 is not a whole number of gold", 'a price of 1.5 gold, over the sell-back');
+  caught({ rations: 1 }, "'rations' at 1 is under its sell-back of 2", 'a price under the sell-back');
 
   // Every built shop: its prices sound, and each item it does not price at the item's own.
   let n = 0;
