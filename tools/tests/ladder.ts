@@ -1,8 +1,9 @@
 // The gear ladder (#99, EXPANSION §5.2): every class betters its kit by level 3 and again by level 5,
 // from what Mottram's sells and what the Downs hold; each find is an item within the Foreland's
-// window, owed to the box that places it until a chest or a drop holds it; Mottram's sells the
-// ladder's plain step; and the gate check's company wears what harness's does. Past them, Thornmark
-// (#101): every class finds a plus it can use there, and no chest there holds the Armoury's gear.
+// window, owed to the box that places it until a chest, cairn, statue or drop gives it; Mottram's
+// sells the ladder's plain step; and the gate check's company wears what harness's does. Past them,
+// Thornmark (#101): every class finds a plus it can use there, and nothing there gives the Armoury's
+// gear.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { CLASSES } from '../../src/game/party.ts';
@@ -10,6 +11,7 @@ import type { ClassId } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { GEAR, companyAt } from '../harness.ts';
 import { gateCompany } from '../gate.ts';
+import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { ok, owed } from './lib.ts';
 
 /** The issue's table: what each class betters its kit with, by level 3 and by level 5. */
@@ -85,13 +87,13 @@ export function ladder(): void {
   const missing = GEAR.flatMap(([, ids]) => ids).filter((id) => !ITEMS[id]);
   ok(!missing.length, `every rung of the ladder is an item${missing.length ? ` (not: ${missing.join(', ')})` : ''}`);
   const found = new Set([
-    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'chest' ? f.items : []))),
+    ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => giftOf(f)?.items ?? [])),
     ...Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)),
   ]);
   for (const [id, whose] of Object.entries(FINDS)) {
     const d = ITEMS[id];
     ok(!!d && d.price > 0 && d.price <= CURVE.shelf.price, `find ${id} is an item within the Foreland's window (${d?.price} of ${CURVE.shelf.price} gold)`);
-    owed(found.has(id), `find ${id} lies in a chest or a hoard`, whose);
+    owed(found.has(id), `find ${id} lies in a chest, a cairn, a statue's gift or a hoard`, whose);
   }
 
   // Mottram's sells the ladder's plain step: the band's gear.
@@ -100,17 +102,20 @@ export function ladder(): void {
   const unsold = plain.filter((id) => !(shop?.kind === 'shop' && shop.stock.includes(id)));
   ok(!!shop && plain.length > 0 && !unsold.length, `${shop?.name} sells the band's gear, ${plain.join(', ')}${unsold.length ? ` (not: ${unsold.join(', ')})` : ''}`);
 
-  // Thornmark: every class finds a plus it can use in its chests or its monsters' drops, and no chest
-  // there holds gear the Armoury sells; its potions, oil and rations are no gear, as in the curve's
-  // window.
+  // Thornmark: every class finds a plus it can use in what its chests, cairns and statues give or its
+  // monsters drop, and none of them gives gear the Armoury sells; its potions, oil and rations are no
+  // gear, as in the curve's window.
   const tm = AREAS.find((a) => a.id === 'thornmark')!;
-  const chests = tm.maps.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'chest' ? [{ map: d.id, id: f.id, items: f.items }] : [])));
+  const chests = tm.maps.flatMap((d) => (d.features ?? []).flatMap((f) => {
+    const items = giftOf(f)?.items ?? [];
+    return items.length ? [{ map: d.id, id: `${f.kind} ${spentId(f) ?? ''}`.trim(), items }] : [];
+  }));
   const inTm = new Set([...chests.flatMap((c) => c.items), ...tm.monsters.flatMap((m) => (m.drops ?? []).map((x) => x.item))]);
   for (const [cls, pluses] of Object.entries(THORNMARK) as [ClassId, readonly string[]][]) {
     const faults = pluses.flatMap((id) => {
       const d = ITEMS[id];
       if (!d?.plus) return [`${id} is no item with a plus`];
-      if (!inTm.has(id)) return [`${id} is in no chest or drop there`];
+      if (!inTm.has(id)) return [`${id} is given or dropped nowhere there`];
       if (!by(9).includes(id)) return [`${id} is not in the ladder by 9`];
       return usable(d, cls) ? [] : [`${id} is not for a ${cls}`];
     });
@@ -118,7 +123,7 @@ export function ladder(): void {
   }
   const armoury = tm.maps.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : [])));
   const sold = chests.flatMap((c) => c.items.filter((id) => ITEMS[id].slot !== 'none' && armoury.includes(id)).map((id) => `${c.map}'s ${c.id} holds ${id}`));
-  ok(armoury.length > 0 && !sold.length, `no chest in Thornmark holds gear its Armoury sells${sold.length ? ` (${sold.join('; ')})` : ''}`);
+  ok(armoury.length > 0 && !sold.length, `nothing in Thornmark gives gear its Armoury sells${sold.length ? ` (${sold.join('; ')})` : ''}`);
 
   // The gate check's company wears what harness's does, level by level.
   const worn = (p: ReturnType<typeof companyAt>): string => JSON.stringify(p.members.map((m) => m.equipment));
