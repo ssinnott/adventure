@@ -33,6 +33,11 @@ export interface MonsterDef {
   sprite: MonsterSprite;
   kind: MonsterKind;
   /**
+   * What it is, in one sentence: the line the log says the first time a company sees one, and the
+   * brief its drawing answers (docs/MONSTERS.md §1).
+   */
+  look?: string;
+  /**
    * The party level it is met at: within two of the band of every map that places it, and rising
    * from a map's way in to its far end (src/content/progression.ts, tools/tests/curve.ts). It
    * changes no combat yet; paying a kill by it is #18's.
