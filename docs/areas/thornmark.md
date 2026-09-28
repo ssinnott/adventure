@@ -4,7 +4,7 @@ The second step of the road of levels (DESIGN §9, EXPANSION §2.2), band 5–10
 pass from the Foreland, where the Ashen cut the Grove Stone, and the Deepthorn south of it down to
 Thorn Head. This is its area doc (EXPANSION §4, §6 and §8.2): where the atlas puts it, what is
 built, what the atlas and the docs put in it that is not, the plan for building the rest, box by
-box. Figures are measured on main at `825fd35` (28 September 2026) with `worldGrid`
+box. Figures are measured on main at `54ae56d` (28 September 2026) with `worldGrid`
 (`src/game/atlas.ts`).
 
 Its content is in `src/content/areas/thornmark/` (maps, monsters, items, its chapter of the one
@@ -34,7 +34,7 @@ and from the rim down to y 151, the tip of Thorn Head.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Thornmark map is H2, and the Deepthorn is
 six boxes: H3 below the Grove; I3, I4 and I5 down the wood; J4 and J5, the Hoarhills' end and Thorn
-Head. The rest is scraps (§11): the rim above (H1, I1); Thornmere's east shore under the Hoarhills
+Head. The rest is scraps (§11): the rim above (H1, I1); the still lake's east shore under the Hoarhills
 (I2) and a strip of Sunder Bay's shore by the dead wood (K4), which go with Sunderwood's boxes; the
 Thornwater's mouth (H4); and the Mewstone in the Wyke (G3, G4).
 
@@ -180,9 +180,10 @@ the head. Each box holds a group at 9 or more for the curve.
 Sunderwood's first zone, over the Hoarhills and round their end, and I5 holds a corner of the Hearth
 Isle's rocks across deep water. A map is its whole box (EXPANSION §8.2), as D4 takes the cliff's
 foot from the Delta (docs/areas/shelf.md §1): built, each is the Deepthorn's to its edges, the
-ridge and its end the border inside it. J4's 30 squares of dead wood are the Eaves' too; its map
-paints them over, so that dead wood is still new when Sunderwood is built (§7). Whether to build
-them so is the owner's call (§9).
+ridge and its end the border inside it, and J4's Eaves' forest is drawn closed, with few paths and
+nothing to find, so that the Eaves' own look is kept for Sunderwood. J4's 30 squares of dead wood
+are the Eaves' too; its map paints them over, so that dead wood is still new when Sunderwood is
+built (§7). Both are built so (§9, 7).
 
 **The order** is the road's: H3 first, the only box that meets the built map and the Deepthorn's
 way in; then I4, which holds the step, and I3 beside it; then J4, the glade road on to the head,
@@ -197,8 +198,8 @@ The places, as the atlas and the docs have them:
 | The oldest elf-hold | I4 | keeps the two-hundred-year-old treaty behind the elves' claim to the throne, sealed with the chisel's mark (DESIGN §9, §10.1) | not on the atlas |
 | Deepthorn Lodge | I3 | a hunting lodge; the Ranger's second prestige (#19); its hunters took the cutters' pay (#56's 15) | a planned lodge at 278,112, in I4 (`src/content/areas/thornmark/atlas.ts:23`) |
 | Thorn Head | J5, and I5 beside it | the Eldest (MONSTERS §5.4); a standing stone older than the elves (#56's 16); a fire for the boats (#56's 19) | the tip the sea goes round, about 300,148; no site |
-| The Thornwater | I3, H3 and H4 | nothing yet | a river from Thornmere to the Wyke, lettered |
-| Thornmere | H2 and I2 | the still lake and its dark survey marker (built) | a lake, half on the built map |
+| The Thornwater | I3, H3 and H4 | nothing yet | a river from the still lake to the Wyke, lettered |
+| The still lake | H2 and I2 | its dark survey marker (built), and the Lanterns' Dark Marker (#146) | a lake, half on the built map, called Thornmere only in a comment (`src/content/atlas.ts:86`) |
 | The Hoarhills | I2, I3 and J4 | nothing yet | the ridge between Thornmark and Sunderwood, ending in Sunder Bay |
 | The long glade | I4 and J4 | nothing yet | a strip of grass down the wood's east side, to the head |
 | The Mewstone | G4 | nothing yet | an isle in the Wyke's mouth, the Deepthorn's |
@@ -214,13 +215,13 @@ settled in its issue, and what the pilot teaches changes them.
   walked by their paths: the elves' roads, game trails and glades, cut from the scaffold's wood, and
   the brambles close them (§7).
 - **Points of interest** (EXPANSION §5.3). A core box is held to the Thornmark map's density:
-  eleven features, fourteen groups and three ways in or out to 769 open squares, 90.5% of them
+  twelve features, fourteen groups and three ways in or out to 769 open squares, 91.7% of them
   within eight steps of one and none past fifteen. A country box has about half, and the
   wilderness features (#45) do most of the work. No more than one point in four is a sign.
 - **Encounters** are MONSTERS §5.4's roster and fights, with Thornmark's own monsters (§5.3) where
   its forest runs on. A group is about one of MONSTERS §4.4's standard encounters. The old wood's
   numbers came with its drawings (#48) and are drafts: the gate sets them (§8).
-- **Pay.** The Deepthorn owes about 5,820 xp a member (§8). The shares below add up to that, for the
+- **Pay.** The Deepthorn owes about 5,420 xp a member (§8). The shares below add up to that, for the
   curve to settle (#31) and the gate to check (#38).
 - **Side quests** are #56's, placed as §6 has them.
 - **Finds** are the top of Act I's gear ladder (§8): each is an item already or a named one, and its
@@ -258,14 +259,14 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** Woods underfoot (§7); the old wood, at its gentlest; a wood walked by its paths.
 - **Finds.** The ford-keeper's strongbox holds a Tower Shield +1; the nest's hoard, a dead
   traveller's Rune Dagger +2.
-- **Pay.** About 700 xp a member.
+- **Pay.** About 650 xp a member.
 
 ### 4.3 I3, Deepthorn Lodge: country, band 8–10
 
 - **Purpose.** The Deepthorn's north-east: the upper Thornwater under the Hoarhills, and the
   hunters' lodge the cutters came through, over the hills, on their way to the Grove.
 - **Landmarks.** The Hoarhills, bare above the trees, crossing the box from its north-west corner to
-  its south-east, with the Eaves' forest over them (§4); the Thornwater, out of Thornmere at the
+  its south-east, with the Eaves' forest over them (§4); the Thornwater, out of the still lake at the
   north-west corner and down the box's west side; Deepthorn Lodge on a rise above the river, about
   272,76, its yard grown shut with brambles; a game trail up the ridge's foot to a saddle.
 - **Points of interest,** about six features and five groups:
@@ -287,7 +288,7 @@ settled in its issue, and what the pilot teaches changes them.
   company that keeps the lodge's secret (§6); a company that reads the blaze finds it anyway.
 - **New here.** A lodge in the deep, and a rest there.
 - **Finds.** The den's hoard, what the pack dragged in: a dead Lantern's Runed Robe +2.
-- **Pay.** About 800 xp a member.
+- **Pay.** About 740 xp a member.
 
 ### 4.4 I4, the oldest hold (#49): core, band 8–10
 
@@ -303,7 +304,7 @@ settled in its issue, and what the pilot teaches changes them.
   - the hold's elder, who keeps the elves' claim to Helmstow's throne (DESIGN §10.1) and does not
     speak of it to strangers;
   - the hold's spring, a well that heals;
-  - a camp inside the gate, the one safe rest in the deep (#45);
+  - a camp inside the gate, to rest at within the hold's walls (#45);
   - the old groves, where the rootwalkers stand in rings;
   - a statue of the hold's first elder at the glade's head, with a riddle answered by the last word
     of Thornhold's gate sign (#45's statue);
@@ -321,7 +322,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** The rootwalker and the heartwood; a hold besieged by its own wood.
 - **Finds.** The first grove holds a Thornmark Bow +2; the statue gives Brigandine +3 for its
   answer.
-- **Pay.** About 1,500 xp a member.
+- **Pay.** About 1,400 xp a member.
 
 ### 4.5 J4, the Hoarhills' end: country, band 8–10
 
@@ -329,10 +330,11 @@ settled in its issue, and what the pilot teaches changes them.
   Bay. From the last crag, the first sight of Sunderwood's dead wood across the water: Act II, seen
   from the edge of Act I, as D3 shows the Upper Water (docs/areas/shelf.md §4.8).
 - **Landmarks.** The long glade down the box's west side; the Hoarhills' last crags going down into
-  the bay; the Eaves' forest north-east of them, built as the Deepthorn's (§4), with its dead wood
-  painted over; the bay shore round the ridge's foot, east to the box's edge, where Sunderwood's
-  dead wood begins and the world ends until Sunderwood is built; across the bay, dead trees white
-  against the Eaves' green.
+  the bay; the Eaves' forest north-east of them, built as the Deepthorn's (§4) but drawn as closed
+  forest with few paths and nothing to find, so that the Eaves' own look is kept for Sunderwood, and
+  its dead wood painted over; the bay shore round the ridge's foot, east to the box's edge, where
+  Sunderwood's dead wood begins and the world ends until Sunderwood is built; across the bay, dead
+  trees white against the Eaves' green.
 - **Points of interest,** about five features and four groups:
   - a lookout on the last crag, over the bay and the dead wood;
   - a hermit on the shore who watches the dead wood, with a rumour of what split it (#45's hermit);
@@ -345,10 +347,11 @@ settled in its issue, and what the pilot teaches changes them.
 - **Quests.** None.
 - **The secret and its hint.** A cleft in the last crag where the Hand's carriers rest their loads
   on the way to the head's landing: rope, sacking and a Compact knife. The hint: boot prints on the
-  shore path, many and deep, of people carrying weight, all going south.
+  glade road, many and deep, of people carrying weight: all going south, with a few turning off
+  towards the crag.
 - **New here.** Sunderwood, across the water.
 - **Finds.** The carriers' cleft holds a War Hammer +2.
-- **Pay.** About 800 xp a member.
+- **Pay.** About 740 xp a member.
 
 ### 4.6 I5, the wood to the head: country, band 8–10
 
@@ -365,10 +368,10 @@ settled in its issue, and what the pilot teaches changes them.
 - **The secret and its hint.** A hollow under an oak's roots at the water's edge, where the hold's
   youths keep their boat and the oil for the fire on the head (§4.7). The hint: a rope's groove worn
   into a root at the shore.
-- **New here.** Nothing of its own: the deep's last paths, at the country's floor.
+- **New here.** The first den whose brood walks only by night: the owls' roost.
 - **Finds.** The roost's hoard, the bright things an owl would carry: a silver torc, a keepsake that
   sells well.
-- **Pay.** About 600 xp a member.
+- **Pay.** About 560 xp a member.
 
 ### 4.7 J5, Thorn Head: core, band 8–10
 
@@ -394,12 +397,12 @@ settled in its issue, and what the pilot teaches changes them.
   (`when`), zealots with an adept; great owls by night.
 - **Quests.** The Older Mark ends here, and The Light on Thorn Head is here (#56's 16 and 19).
 - **The secret and its hint.** A sea cave under the head, where the Hand stacks what it ships: crates
-  packed in straw, and in the straw, pieces of cut Stone. The hint: the fire on the head is built
-  where no boat needs it, over the cave's mouth.
+  packed in straw, and in the straw, pieces of cut Stone. The hint: keel marks on the beach under
+  the head, which run up to the rock and stop.
 - **New here.** A boss outdoors: the Eldest. The Hearth, close.
 - **Finds.** The Eldest, beaten, drops the Eldest's Bough, a Grove Staff +2 of its own; the Hand's
   cave holds a Great Sword +2.
-- **Pay.** About 1,420 xp a member.
+- **Pay.** About 1,310 xp a member.
 
 ## 5. The one quest here
 
@@ -411,13 +414,18 @@ chisel's mark.
 Every zone on the road holds at least one step (EXPANSION §5.8); this is the Deepthorn's, owed to
 #49 (`tools/tests/quests.ts:90`). Sylvane gives the lead: STORY has her know the chisel's marks from
 the seal of an old treaty her people keep, and her done words gain the line that sends the company
-south to see it. The chapter ends on the seal seen, where today it ends on her pay. A company that
-reaches the hold early sees a treaty with a seal it does not know yet, and the chisel, found after,
-makes the match, so the log reads true in either order.
+south to see it. The chapter ends on the seal seen, where today it ends on her pay, and the log
+says of the seal that it is the chisel's mark and no more. A company that reaches the hold early
+sees a treaty with a seal it does not know yet, and the chisel, found after, makes the match, so the
+log reads true in either order.
 
-The treaty is also the elves' claim to Helmstow's throne, which the Lanterns back (DESIGN §10.1).
-Whether seeing it opens The Empty Throne in the log, as the Meridian journal opens The Lost
-Expedition, is the owner's call (§9).
+The treaty is also the elves' claim to Helmstow's throne, which the Lanterns back (DESIGN §10.1), and
+seeing it opens The Empty Throne in the log, as the Meridian journal opens The Lost Expedition: a
+subplot with no end yet, whose first entry says only what was seen, a treaty the elves keep and
+their elder keeps close. Its start is a list, so that a claim met first opens it too; the cousin's
+and Tallis's claims add their entries when they are built, and #56's 64 ends it. It lives in
+Thornmark's `quests.ts`, as The Lost Expedition does, until subplots that span areas have a home of
+their own (§9).
 
 ## 6. Side quests
 
@@ -429,9 +437,9 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 |---|---|---|---|---|---|
 | 9 | A Coin Not From Caldera | 5 | the Split Oak; a deserter's camp off the Warden road | an item no shop buys; a choice put by a person | the built maps |
 | 10 | Leave the Trees Standing | 5 | the Grove road; Thornhold | a choice put by a person; a person who moves | the built maps |
-| 11 | The Dark Glass | 6 | the still lake; the Chapterhouse | a hand-in; words that change with a flag; a choice | the built maps, or the Lanterns' (#21) |
+| 11 | The Dark Glass | 6 | the still lake; the Chapterhouse | a hand-in; words that change with a flag; a choice | the built maps, after the Lanterns' Dark Marker (#146) |
 | 12 | The Elder's Four | 6 | the Grove Roots; Thornhold | a person found below; a choice; an event that comes with a flag | the built maps |
-| 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | later (below) |
+| 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a choice | H3 |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 |
 | 16 | The Older Mark | 8 | the oldest hold (I4) and Thorn Head (J5) | a rubbing, an item made at the stone; a choice | I4 and J5 |
@@ -440,26 +448,27 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 19 | The Light on Thorn Head | 10 | Thorn Head (J5), by night | people and groups by night (`when`); a choice | J5 |
 | 20 | Hale's Sergeant | 10 | Thornhold; the Deepthorn's shore | Hale gone from the Scarth | Act II (below) |
 
-Changes to #56's drafts, for the owner:
+Taken: 9 to 12 and 14 to 19. The changes to #56's drafts:
 
-- **13 waits.** The Wardens' rank 1 quest is the same ogre, killed (DESIGN §8), and 13's bargain
-  leaves it alive in the tower, which asks for a group that talks before it fights: the toll the
-  giants take on their Stair (MONSTERS §8.1). It is built with that system, not before.
-- **20 waits for Act II.** Hale's vanishing is Act II's news (DESIGN §9, STORY) and his checkpoint is
+- **13 is held.** The Wardens' rank 1 quest (#144) kills the tower's ogre, and 13's bargain leaves it
+  alive, which asks for a group that talks before it fights: the toll the giants take on their Stair
+  (MONSTERS §8.1), first needed in the Whitespine. It is built with that system, not before.
+- **20 goes to Act II.** Hale's vanishing is Act II's news (DESIGN §9, STORY) and his checkpoint is
   the Wardens' first task (DESIGN §8); the quest would take him off the Foreland map at level 10. It
-  goes with Saltreach, where the news reaches the company.
+  goes with Saltreach's plan, where the news reaches the company.
+- **11 follows the Lanterns' Dark Marker.** #146 builds the Lanterns' rank 1 quest at the same
+  marker as a look and a report (DESIGN §8). 11 stays a plain quest, given at the Chapterhouse as #56
+  has it, which asks for the glass once the marker is known dark.
 - **16's stone stands clear of the Eldest.** #56 has the rubbing taken "before the Eldest takes the
   head": the stone is on the head's crown and the Eldest's roots are creeping towards it, so a
   company of 8 takes the rubbing at J5's floor without fighting the boss.
 - **14's camp is at the Deepthorn's very edge,** a few squares past the Grove and short of the first
   group, so that a company of 7 reaches it without a fight in country banded 8–10.
-- **11 is the Lanterns' dark marker.** DESIGN §8 gives the Lanterns a rank 1 quest at the same
-  marker: #21 builds the two as one, or 11 is built here and the Lanterns' quest points at it.
 - **17 keeps its prices.** Its cheaper Armoury is a shop whose prices change with a flag, which the
   game lacks; the brigands stopping (`until`) is the consequence, and the Armoury's smith says so.
-- **18 stays a side quest.** DESIGN §9 has each Stone restored as the act's work, and the build
-  closes the tear at the Warden of the Cut's death and leaves the cut for a Lantern to mend (#41).
-  The mending stays #56's side quest unless the owner wants it the chapter's last step (§9).
+- **18 stays a side quest.** The build closes the tear at the Warden of the Cut's death and leaves
+  the cut for a Lantern to mend (#41), and DESIGN §9's act ends on its revelation, not on the mend.
+- **10's woodwarden is a woodward:** *Warden* is taken (MONSTERS §1).
 
 What they ask of the systems is #76's: choices put by a person, words that change with a flag,
 people and events that come and go with a flag or the hours, several items to one person and
@@ -471,50 +480,53 @@ them, measured against the game's box and log, as the Foreland's are (#47, #77).
 MONSTERS §5.4 has the Deepthorn's roster and fights: the Bramble, the Great Owl, the Rootwalker,
 the Heartwood and the Eldest, drawn in #48; brambles and an owl on a path at night; the oak behind
 the thicket. Back from Thornmark, as MONSTERS §5.4 has them: the Dire Wolf in bigger packs, the
-Thorn Spider and the Ogre, alone in the deep. Two more are this plan's, for the owner: rift hounds
-strayed south from the Grove into H3, which stop with the Grove's own; and the Hand at the head's
-landing, zealots with an adept. §4.2 to §4.7 place every group, box by box; the Deepthorn's five
-are unplaced until then (`tools/tests/maps.ts:21`).
+Thorn Spider and the Ogre, alone in the deep. Two more are this plan's: rift hounds strayed south
+from the Grove into H3, which stop with the Grove's own; and the Hand at the head's landing, zealots
+with an adept. §4.2 to §4.7 place every group, box by box; the Deepthorn's five are unplaced until
+then (`tools/tests/maps.ts:21`), and each box drops the entries of those it places first: H3 the
+Bramble and the Rootwalker, I4 the Heartwood and the Great Owl, J5 the Eldest.
 
 The old wood woke when the Stone was cut and sleeps when it is restored (MONSTERS §5.4): in the
 build, when the tear closes at the Warden of the Cut's death (#41, #49), its groups stop coming back
-(`until`). A group still standing stays until it is killed, and so the Eldest, which never comes
-back anyway, would stand at the head whichever the company does first. MONSTERS §5.4 and #49 have it
-asleep once the Stone is restored; for a group that is a new thing, a group that stands down once
-a flag holds, and the quest's own order closes the tear before the Deepthorn, so most companies
-would never fight the Deepthorn's boss. Proposed: the Eldest stays awake until it is beaten, and
-beaten, is put back to sleep rather than felled, as its `slainText` says (§9).
+(`until`). A group still standing stays until it is killed, and the Eldest, which never comes back
+anyway, stands at the head whichever the company does first: the last of the wood awake. Beaten, it
+is put back to sleep rather than felled, as its `slainText` says, and MONSTERS §5.4's line for it
+says so. Asleep once the tear closes would ask for a group that stands down on a flag, and leave a
+company that follows the quest's order with no boss in the Deepthorn and no Eldest's Bough.
 
 New in the Deepthorn, for the novelty check (EXPANSION §5.4):
 
 - **The old wood,** a new family.
 - **Woods,** as terrain: the Deepthorn's own light woods along the Wyke, in H3 (243 squares), and 62
   in I3, 15 of them on the Deepthorn's side of the ridge and 47 on the Eaves'. The atlas's woods
-  have no map character, so the scaffold refuses both boxes. J4 holds 30 squares of dead wood,
-  Sunderwood's ground (EXPANSION §7), all of them the Eaves', which the scaffold refuses too. Both
-  are given a character, as hills and farmland were for the Downs (#44); woods are walked in the
-  Deepthorn, and dead wood only lets the scaffold cut J4, whose map paints it over, so that it stays
-  new in Sunderwood.
+  have no map character, so the scaffold refuses both boxes. Woods are given one and walked, as hills
+  and farmland were for the Downs (#44).
 - **Deepthorn Lodge,** the first lodge on the road, a landmark.
 
-New but not for the check: a wood walked by its paths, which the brambles close; and a boss
-outdoors, the Eldest. Brambles that never roam and wake at one square are the Warden of the Cut's
-rule already (`grove2.ts`), not a new one.
+Dead wood is not given a character. J4 holds 30 squares of it, all the Eaves', and it is
+Sunderwood's ground (EXPANSION §7), which no Deepthorn map uses: the scaffold learns instead to
+paint over a ground that a brief says its map paints over, J4's dead wood to forest, so that dead
+wood is still new when Sunderwood is built.
 
-Dens (#88) come back: a thorn spiders' nest in H3, a dire wolves' den in I3 and an owls' roost in
-I5, whose brood walks by night.
+New but not for the check: a wood walked by its paths, which the brambles close; a boss outdoors,
+the Eldest; and the first den whose brood walks only by night, I5's owls' roost. Brambles that never
+roam and wake at one square are the Warden of the Cut's rule already (`grove2.ts`), not a new one.
+
+Dens (#88) come back: a thorn spiders' nest in H3, a dire wolves' den in I3 and the owls' roost in
+I5.
 
 ## 8. The numbers
 
-- **Experience.** A clear of Thornmark pays 7,849 xp a member today. The curve (EXPANSION §5.2,
+- **Experience.** A clear of Thornmark pays 8,249 xp a member on main. The curve (EXPANSION §5.2,
   #31) asks the climb from 5 to 10 over 0.75, 13,667 (`src/content/progression.ts:38`). The
-  Deepthorn is where the other 5,820 or so come from, shared among the boxes as §4.1 has it: H3
-  700, I3 800, I4 1,500, J4 800, I5 600 and J5 1,420. Until they are built the curve reports the
-  shortfall as owed to #26. A den's keepers pay once, and its brood as a group that respawns does;
-  the figures count the brood once.
-- **Gold.** A clear pays 5,330 of the 8,400 that training six members from 5 to 10 costs. The
-  Deepthorn's share of the rest, about 3,070: H3 400, I3 450, I4 700, J4 400, I5 250 and J5 870, in
-  its chests, cairns and hoards, the Hand's drops at the landing and the side quests' pay.
+  Deepthorn is where the other 5,420 or so come from, shared among the boxes as §4.1 has it: H3 650,
+  I3 740, I4 1,400, J4 740, I5 560 and J5 1,310. The Lanterns' quests (#146) add 400 a member, and
+  the Deepthorn's shares shrink to match when they land. Until the boxes are built the curve reports
+  the shortfall as owed to #26. A den's keepers pay once, and its brood as a group that respawns
+  does; the figures count the brood once.
+- **Gold.** A clear pays 5,800 of the 8,400 that training six members from 5 to 10 costs; #146 adds
+  350. The Deepthorn's share of the rest, about 2,600: H3 340, I3 380, I4 590, J4 340, I5 210 and J5
+  740, in its chests, cairns and hoards, the Hand's drops at the landing and the side quests' pay.
 - **The gate.** Each box is held to its band as it is built (`tools/tests/gate.ts`): at 8 a box's
   groups are won nine fights in ten and at 6 no more than one in four, and the Eldest about half the
   time at 8 and nearly always at 10. The area as one is judged differently: every group of every
@@ -558,55 +570,63 @@ Decided by the owner already, and followed here:
    zone of several boxes.
 2. **The Deepthorn's core** is the oldest elf-hold and Thorn Head (#49).
 3. **The old wood sleeps with the Grove Stone,** which in the build is the tear closing at the
-   Warden of the Cut's death (#41, #49).
+   Warden of the Cut's death (#41, #49); all but the Eldest, below.
 
-Proposed, for the owner, each in the issue that would build it:
+Settled on 28 September 2026 by an agent the owner asked to make the calls, for the owner to confirm
+when the issues are filed:
 
-- **The briefs** of §4.2 to §4.7: each box's landmarks, points of interest, encounters, secret and
-  hint, finds and share of the pay.
-- **Six boxes, one band.** The Deepthorn is H3, I3, I4, J4, I5 and J5, each banded 8–10, the zone's,
-  with the rise in the groups (§4).
-- **The core** is I4 and J5; H3, I3, J4 and I5 are country (§4).
-- **I3 and J4 are built whole,** the Eaves' squares in them the Deepthorn's, the Hoarhills and their
-  end the border inside them, and J4's dead wood painted over (§4). The other ways: give J4 to
-  Sunderwood, which leaves the glade road to the head through band 14–16 or the void; or cut the
-  Eaves out of both, against EXPANSION §8.2.
-- **The Eldest stays awake** until it is beaten, whichever the company does first; beaten, it is put
-  back to sleep, not felled (§7). The other way, asleep once the tear closes, asks for a group that
-  stands down, and leaves the quest's own order with no boss in the Deepthorn.
-- **#49 becomes the oldest hold's box,** I4, with the step; Thorn Head, J5, is filed on its own, and
-  the other boxes an issue each, as the Downs' are. Its line on Thornmark's south edge moves to H3,
-  the way in.
-- **The oldest hold is drawn on its box,** as Gullwick is on F3: its halls, its gate and its people
-  as features, and a camp to rest at. No businesses, so no new interiors.
-- **Deepthorn Lodge moves** from 278,112 in I4 to I3, on the cutters' way over the Hoarhills.
-- **The step:** the treaty's seal, in the oldest hold; the chapter ends on it (§5).
-- **The Empty Throne** begins at the treaty in the log, or waits for its other claims (§5).
-- **The side quests:** #56's 9 to 19 are pulled into the build, less 13, which waits for a group
-  that talks before it fights, with the changes in §6; 20 goes to Act II.
-- **The Mender** stays a side quest, not the chapter's last step (§6).
-- **Woods and dead wood** given map characters: woods walked in the Deepthorn, dead wood only so
-  that the scaffold can cut J4 (§7).
-- **The gate pools each group at its own map's floor,** so that the Deepthorn is held at 8 and the
-  Downs' boxes at theirs, not at their areas' floors; it is #65's, which needs it first (§8).
-- **The ladder's top:** a +2 or better for every class in the Deepthorn, the Eldest's Bough and a
-  Silver Torc (§8).
-- **Tier 5** sold at Thornhold's Lantern Hall (§8).
-- **The cuts** of §11, the Thornwater's mouth among them.
-- **The names** (§10).
+4. **The briefs** of §4.2 to §4.7 stand as drafts, each settled in its issue.
+5. **Six boxes, one band.** The Deepthorn is H3, I3, I4, J4, I5 and J5, each banded 8–10, the
+   zone's, with the rise in the groups (§4).
+6. **The core** is I4 and J5; H3, I3, J4 and I5 are country (§4).
+7. **I3 and J4 are built whole,** the Eaves' squares in them the Deepthorn's and the Hoarhills and
+   their end the border inside them (EXPANSION §8.2, as D4 takes the cliff's foot). J4's Eaves'
+   forest is closed, with few paths and nothing to find, so that the Eaves' own look is kept for
+   Sunderwood.
+8. **The Eldest stays awake** until it is beaten, whichever the company does first; beaten, it is
+   put back to sleep, not felled (§7), as MONSTERS §5.4 now says.
+9. **#49 becomes the oldest hold's box,** I4, with the step; Thorn Head, J5, is filed on its own, and
+   the other boxes an issue each, as the Downs' are. Its line on Thornmark's south edge moves to H3,
+   the way in.
+10. **The oldest hold is drawn on its box,** as Gullwick is on F3: its halls, its gate and its people
+    as features, and a camp to rest at. No businesses, so no new interiors.
+11. **Deepthorn Lodge moves** from 278,112 in I4 to about 272,76 in I3, on the cutters' way over the
+    Hoarhills and off the road, as #19's second prestige asks.
+12. **The step** is the treaty's seal, in the oldest hold; the chapter ends on it (§5).
+13. **The Empty Throne** opens at the treaty (§5).
+14. **The side quests:** #56's 9 to 12 and 14 to 19 are taken, with the changes in §6; 13 is held for
+    a group that talks before it fights, and 20 goes to Act II.
+15. **The Mender** stays a side quest, not the chapter's last step (§6).
+16. **Woods are walked,** with a map character; dead wood gets none, and the scaffold paints it over
+    in J4 (§7).
+17. **The gate pools each group at its own map's floor,** so that the Deepthorn is held at 8 and the
+    Downs' boxes at theirs; it is #65's, which needs it first (§8).
+18. **The ladder's top:** a +2 or better for every class in the Deepthorn, the Eldest's Bough and a
+    Silver Torc (§8).
+19. **Tier 5** sold at Thornhold's Lantern Hall (§8).
+20. **The cuts** of §11, the Thornwater's mouth among them.
+21. **The names** of §10.
+22. **The epic** is Phase 1's, as #65 is: the second half of its build-out, which the owner called
+    phase 1.1.
+
+Left for later: a home for the subplots that span areas. The Lost Expedition and The Empty Throne
+live in Thornmark's `quests.ts`, and Saltreach adding Tallis's claim would edit another area's file
+(EXPANSION §5.8); a home joined as the chapters are is a systems ask, to file before Saltreach.
 
 ## 10. Names
 
-Thornmark's naming pass is still to make (NAMES §4): the elves' tongue is to choose (NAMES §2).
-Two things ask for it now: the Deepthorn's new places need names, and *thorn* runs through six
-places (Thornmark, Thornhold, the Deepthorn, Deepthorn Lodge, the Thornwater and Thorn Head), as
-Harrow ran through the Foreland's (NAMES §3). A first draft, for the owner, which leaves four, each
-pair a place and the one it lends its name to:
+Thornmark's naming pass, by the rules of `docs/NAMES.md`: the elves' tongue was left to it (NAMES
+§2). Two things asked for it: the Deepthorn's new places need names, and *thorn* runs through six
+places (Thornmark, Thornhold, the Deepthorn, Deepthorn Lodge, the Thornwater and Thorn Head), seven
+with the still lake, which the atlas's comment calls Thornmere, as Harrow ran through the
+Foreland's (NAMES §3). Settled for the owner to confirm (§9), leaving four, each pair a place and the
+one it lends its name to:
 
 - **The tongue.** The elves' names Cornish in shape, the older British of the far west beside the
   Foreland's English: short parts, spelled as they are said. *Pen* head, *hen* old, *lys* court,
   *coos* wood, *dar* oak, *spern* thorns, *kelli* grove, *lyn* pool, *dowr* water, *rid* ford, *hir*
-  long, *du* dark, *gwyn* white.
+  long, *du* dark, *gwyn* white. It goes into NAMES §2's row for Thornmark's elves, with a line that
+  a few of the Foreland's oldest people carry names of it.
 - **The names:**
 
   | Was | Now | What it means | Also thought of |
@@ -614,22 +634,23 @@ pair a place and the one it lends its name to:
   | the oldest elf-hold | Henlys | the old court | Lysdar, the court of oaks |
   | Thorn Head | Penspern | the head of thorns: the Crown's name, in the elves' tongue | Thorn Head, kept |
   | the Thornwater | the Dowrdu | the dark water | the Blackwater, a Foreland name |
+  | the still lake, Thornmere in a comment | Lyngwyn | the white pool: mist under the trees, and a marker gone dark in it | Lynhir, the long pool |
 
 - **Kept:** Thornmark and Thornhold, which the story leans on; the Deepthorn, the Crown's name for
   the old wood; Deepthorn Lodge, which the Crown's hunters named; the Hoarhills, the Foreland folk's
   grey hills. The people keep theirs: Sylvane.
 - **Wenna** is a name of the tongue's shape, a Cornish saint's. With a treaty that says the elves'
   line and Helmstow's were once one, and the line under all of it (DESIGN §9), that is more than
-  chance, and nothing says so. It is the owner's to keep or to break.
+  chance, and nothing says so. It is kept: a thing found, never told.
 
 ## 11. What was cut
 
 - **The rim,** H1 and I1: 436 squares, nearly all mountain, and 102 a company could walk. The maps
   of row 2 end in it.
-- **The scraps** of Thornmark's land in boxes that are others' or the sea's: Thornmere's east shore
-  and the Hoarhills' west face in I2 (128 squares, 22 of them walkable) and a strip of Sunder Bay's
-  shore by the dead wood in K4 (76, 55 walkable), which go with Sunderwood's boxes; and the Mewstone
-  (G3 and G4, 170 squares), an isle off the road, which waits for boats (EXPANSION §2.1).
-- **The Thornwater's mouth,** H4: 128 squares, 81 of them dry, in a box of sea. H3 carries the river
-  to its south edge, where the world ends until the mouth is built; it is a seventh box, if the
-  owner would rather the river reach the sea.
+- **The scraps** of Thornmark's land in boxes that are others' or the sea's: the still lake's east
+  shore and the Hoarhills' west face in I2 (128 squares, 22 of them walkable) and a strip of Sunder
+  Bay's shore by the dead wood in K4 (76, 55 walkable), which go with Sunderwood's boxes; and the
+  Mewstone (G3 and G4, 170 squares), an isle off the road, which waits for boats (EXPANSION §2.1).
+- **The Thornwater's mouth,** H4: 128 squares, 81 of them dry, in a box of sea, with nothing new to
+  do or see (DESIGN §1). H3 carries the river to its south edge, where the world ends; the mouth goes
+  with the Mewstone if boats come.
