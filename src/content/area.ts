@@ -34,8 +34,8 @@ export interface Area {
   /** What is new in it, which no area earlier on the road has (EXPANSION §5.4; tools/tests/pillars.ts). */
   novel: Novelty;
   /**
-   * Its part of the world map: its zones (a built one names its map and where it is laid), the
-   * plates of its towns and dungeons, and its sites. Merged into ATLAS with the plan (atlas.ts).
+   * Its part of the world map: its zones (a built one lists its maps, each at its box of the
+   * grid), the plates of its towns and dungeons, and its sites. Merged into ATLAS with the plan (atlas.ts).
    */
   atlas: { zones: readonly AtlasZone[]; places: readonly AtlasPlace[]; sites: readonly AtlasSite[] };
 }

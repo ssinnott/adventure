@@ -11,8 +11,8 @@ import { LOCKS, MOST_AN_AREA, MOST_ON_THE_ROAD } from '../../src/content/locks.t
 import type { StoryLock } from '../../src/content/locks.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
-import type { Atlas } from '../../src/game/atlas.ts';
-import { worldGrid, isWater, TI, MAP_TERRAIN, TERRAINS } from '../../src/game/atlas.ts';
+import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
+import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS } from '../../src/game/atlas.ts';
 import { CLASSES, RACES, TRAITS } from '../../src/game/party.ts';
 import { signLine } from '../../src/game/world.ts';
 import { NORTH } from '../../src/game/types.ts';
@@ -221,10 +221,10 @@ export function edgeAgrees(mine: string, beyond: { t: number; road: boolean; riv
  */
 export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
   const grid = worldGrid(atlas, defs), out: EdgeFault[] = [];
-  const laid = atlas.zones.flatMap((z) => {
-    const def = defs.find((d) => d.id === z.map);
-    return def && z.at ? [{ def, x: z.at[0], y: z.at[1], w: Math.max(...def.rows.map((r) => r.length)), h: def.rows.length }] : [];
-  });
+  const laid = atlas.zones.flatMap((z) => (z.maps ?? []).flatMap(({ map, at }) => {
+    const def = defs.find((d) => d.id === map);
+    return def ? [{ def, x: at[0], y: at[1], w: Math.max(...def.rows.map((r) => r.length)), h: def.rows.length }] : [];
+  }));
   for (const z of laid) {
     for (let my = 0; my < z.h; my++) for (let mx = 0; mx < z.w; mx++) {
       for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
@@ -418,8 +418,10 @@ export async function pillars(): Promise<void> {
     // of F2, planned; #47, which builds it, moves the fixture to land no zone map covers.
     const lay = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_edge', name: 'Edge fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
-      const zone = { id: 'fixture_edge', name: 'Edge fixture', area: ATLAS.zones[0].area, map: 'fixture_edge', at: [168, 30] as const };
-      return edgeFaults({ ...ATLAS, zones: [...ATLAS.zones, zone] }, [...MAP_DEFS, fixture]).filter((e) => e.map === 'fixture_edge');
+      const zone: AtlasZone = { id: 'fixture_edge', name: 'Edge fixture', area: ATLAS.zones[0].area, maps: [{ map: 'fixture_edge', at: [168, 30] }] };
+      const atlas = { ...ATLAS, zones: [...ATLAS.zones, zone] };
+      if (!mapAt(atlas, fixture.id)) throw new Error('the edge fixture is not laid: its checks would pass on nothing');
+      return edgeFaults(atlas, [...MAP_DEFS, fixture]).filter((e) => e.map === 'fixture_edge');
     };
     ok(!lay(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'a fixture zone of grass on atlas grass agrees at its edges');
     ok(lay(['MMMMMM', 'M,,,,M', 'M====M', 'M,,,,M', 'MMMMMM']).length === 2, 'a road that runs into its ring against atlas land fails, at both ends');
@@ -429,9 +431,11 @@ export async function pillars(): Promise<void> {
     // its east edge faces Thornmere at 264,44-46; the premise is checked first.
     const coast = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_coast', name: 'Coast fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
-      const w = rows[0].length, zone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', map: 'fixture_coast', at: [264 - w, 43] as const };
+      const w = rows[0].length, zone: AtlasZone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', maps: [{ map: 'fixture_coast', at: [264 - w, 43] }] };
       const others = ATLAS.zones.filter((z) => z.id !== 'thornmark');
-      return edgeFaults({ ...ATLAS, zones: [...others, zone] }, [...MAP_DEFS.filter((d) => d.id !== 'thornmark'), fixture]).filter((e) => e.map === 'fixture_coast' && e.x === w - 1);
+      const atlas = { ...ATLAS, zones: [...others, zone] };
+      if (!mapAt(atlas, fixture.id)) throw new Error('the coast fixture is not laid: its checks would pass on nothing');
+      return edgeFaults(atlas, [...MAP_DEFS.filter((d) => d.id !== 'thornmark'), fixture]).filter((e) => e.map === 'fixture_coast' && e.x === w - 1);
     };
     const shore = worldGrid(ATLAS, MAP_DEFS), open = [44, 45, 46].every((y) => {
       const i = y * shore.width + 264;
