@@ -236,7 +236,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   hash (torch sconces with flames animated over the cached scene, banners in the map's colour,
   cobwebs, cracks, damp streaks, iron rings, barred grates, carved glyph panels; on houses flower
   boxes and ivy); on every house door a lantern lit after dark, and on a business's a sign with a
-  glyph for the service; map palettes choose `wallStyle` (stone or brick) and `ceilingStyle` (vault
+  glyph for the service (a door is a house's where a building stands beside it; a door set in stone
+  is an arched doorway in the wall, with neither); a map may place its banners (`MapDef.banners`),
+  which hang whatever the hash says; map palettes choose `wallStyle` (stone or brick) and `ceilingStyle` (vault
   or timber beams); cobbled roads, flowers in the grass, cracks and puddles on flagstones; a carved
   plank frame with brass fittings and rivets; a painted title looking west over the sea at the
   Hearth. The dressing is restrained (`wallDressing()` in `ui/viewport.ts`): a wall is dressed only
@@ -244,7 +246,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   kind at its rate in `DRESSING_RATES` (nearly half the dressed stone walls a sconce, so dungeons
   stay lit); a door's lantern and sign are its furniture, not dressing. `tools/tests/art.ts` caps a
   map at 35% of its wall faces dressed (half under 100 faces) and a kind of map at 25% (from 200
-  faces), and fails the walls as they were dressed before #9.
+  faces), placed banners among them, holds every placed banner to stone wall, and fails the walls
+  as they were dressed before #9.
 - Final polish: pitched, hipped, tiled roofs that run across adjoining cells with eaves, ridge caps
   and a chimney, keyed per building (one roof per building, projected like the walls, so its front
   and side slopes meet along their hips); timber bracing and a window on house side faces; a birch

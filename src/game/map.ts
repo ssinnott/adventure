@@ -190,6 +190,8 @@ export interface MapDef {
   encounters?: EncounterDef[];
   /** Wall and floor tints. */
   palette?: Partial<MapPalette>;
+  /** Stone wall squares that always hang the map's banner (`palette.banner`), wherever else they fall by chance. */
+  banners?: readonly { x: number; y: number }[];
   /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */
   band?: [number, number];
   /** The region whose climate and weather the map shares; the Foreland when absent. */
@@ -272,6 +274,8 @@ export class GameMap {
   readonly def: MapDef;
   /** Each zone's palette over the map's, in the zones' order. */
   private readonly zonePalettes: readonly MapPalette[];
+  /** The squares the map places a banner on, as y * width + x. */
+  private readonly banners: ReadonlySet<number>;
 
   constructor(def: MapDef) {
     this.def = def;
@@ -298,6 +302,7 @@ export class GameMap {
     this.zones = def.zones ?? [];
     this.palette = { ...DEFAULT_PALETTES[def.kind], ...(def.palette ?? {}) };
     this.zonePalettes = this.zones.map((z) => ({ ...this.palette, ...(z.palette ?? {}) }));
+    this.banners = new Set((def.banners ?? []).map((b) => b.y * this.width + b.x));
     for (const e of this.encounters) if (e.monsters.length > 12) throw new Error(`map ${def.id}: encounter ${e.id} has more than 12 monsters`);
   }
 
@@ -308,6 +313,9 @@ export class GameMap {
     if (!this.inBounds(x, y)) return OUT_OF_BOUNDS;
     return this.cells[y * this.width + x];
   }
+
+  /** Whether the map places a banner on x,y (`MapDef.banners`). */
+  bannerAt(x: number, y: number): boolean { return this.inBounds(x, y) && this.banners.has(y * this.width + x); }
 
   /** The zone a cell lies in, on the outdoors; undefined anywhere else. */
   zoneAt(x: number, y: number): MapZone | undefined {
