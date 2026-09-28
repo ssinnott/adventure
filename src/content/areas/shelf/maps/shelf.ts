@@ -65,7 +65,13 @@ export const SHELF: MapDef = {
       '"Clear them out and bring me their ledger. I want the names of everyone in Helmstow who has been buying from them."',
       '"The pass is open. I\'ll not shut a road because I can\'t hold a cave. But it\'s mine to warn you about, and I\'m warning you: Thornmark\'s wolves are twice the size of ours."',
     ], flag: 'q_greywater', quest: {
-      item: 'greywater_ledger', needFlag: 'q_greywater', reward: 400, setFlag: 'q_greywater_done',
+      item: 'greywater_ledger', reward: 400, setFlag: 'q_greywater_done',
+      early: [
+        'A grizzled Warden with a bandaged arm gets up off a crate by the checkpoint. "That\'s the Brandy Hole ledger. I lost three men going in after it."',
+        'He leafs through it, and his face goes grey. "Names, dates, and a column headed CARGO BELOW. People. The Ash, here, under our feet."',
+        'He shuts the book. "Nobody sent you, and you went. You\'ve earned this. I\'ll see the Regent-Warden gets a copy."',
+        '"The pass is open, and it\'s mine to warn you: Thornmark\'s wolves are twice the size of ours."',
+      ],
       done: [
         'Hale leafs through the ledger, and his face goes grey. "These aren\'t just smugglers\' accounts. Names, dates, and a column headed CARGO BELOW. People."',
         '"The Ash. Here, under our feet." He shuts the book. "You\'ve earned this, and more. I\'ll see the Regent-Warden gets a copy."',
