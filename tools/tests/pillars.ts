@@ -239,7 +239,6 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  */
 const EDGES_OWED: Record<string, readonly string[]> = {
   '#47': ['shelf 0,28'],
-  '#104': ['shelf 0,29', 'shelf 0,30', 'shelf 1,31', 'shelf 2,31', 'shelf 3,31', 'shelf 4,31', 'shelf 5,31', 'shelf 6,31', 'shelf 7,31', 'shelf 8,31', 'thornmark 31,9'],
 };
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */

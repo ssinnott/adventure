@@ -18,12 +18,12 @@ The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` b
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Foreland | 1–5, its map's | 2,284 | 871: the Foreland map, laid at 200,30 |
-| Callow Downs | 2–5 | 6,577 | none |
-| The area | 1–5 | 8,861 | a tenth |
+| The Foreland | 1–5, its map's | 2,296 | 879: the Foreland map, laid at 200,30 |
+| Callow Downs | 2–5 | 6,569 | none |
+| The area | 1–5 | 8,865 | a tenth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
-the area is 8,582 squares, about 8.4 zone maps (EXPANSION §1 has 8.3). It runs from x 94 to x 231
+the area is 8,594 squares, about 8.4 zone maps (EXPANSION §1 has 8.3). It runs from x 94 to x 231
 and from the rim down to y 120, in the border's lettered squares C1 to H4.
 
 Its edges:
@@ -118,7 +118,7 @@ The places, as the atlas and the docs have them:
 | Place | Where | What the docs say | On the atlas |
 |---|---|---|---|
 | The chalk hills | the north-west of the Downs | wolves, and the Black Dog round the Berth by night (MONSTERS §5.2) | hills, 1,824 squares of the Downs |
-| The fields round Gullwick | the middle of the Downs | crows over wolves in the stubble | farmland, 1,127 squares |
+| The fields round Gullwick | the middle of the Downs | crows over wolves in the stubble | farmland, 1,123 squares |
 | Brockholt | a wood astride the two zones, west of Helmstow | nothing yet | a wood |
 | The Wend | a river from the rim down to Gullwick | nothing yet | a river |
 | Gullwick | 172,70, at the Wend's mouth | Wenna's village, where her mother asks the company to find her (DESIGN §9) and where STORY opens; an old shanty singer who teaches the Bard's second prestige (#19) | a planned village |
