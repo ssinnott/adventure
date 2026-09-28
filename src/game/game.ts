@@ -26,6 +26,8 @@ import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
 import { WorldMapScreen } from '../ui/worldmap.ts';
 import { drawText } from '../lib/engine/text.ts';
+import { RiddleScreen } from '../ui/riddle.ts';
+import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restParty } from './wilds.ts';
 
 export interface Screen {
   /** Called once per fixed step with the next queued action (or null). */
@@ -182,8 +184,34 @@ export class Game {
       case 'inn': case 'temple': case 'shop': case 'guild': case 'trainer':
         this.visit(f, f.interior, serviceScreen(this, f));
         return;
+      // The wilderness features (game/wilds.ts): each says its look when stepped on, and acts on Space.
+      case 'shrine': case 'fountain': case 'cairn': case 'statue': case 'camp': {
+        if (stepped) { const l = stepLine(w, f); if (l) this.say(l); return; }
+        switch (f.kind) {
+          case 'shrine': case 'fountain': for (const l of useShrine(w, this.party, f)) this.say(l); return;
+          case 'cairn': for (const l of openCairn(w, this.party, f)) this.say(l); return;
+          case 'statue':
+            if (w.used(f.id)) { this.say(f.done); return; }
+            this.push(new RiddleScreen(this, f.name ?? 'A statue', f.riddle, (word) => { for (const l of answerRiddle(w, this.party, f, word).lines) this.say(l); }));
+            return;
+          case 'camp': this.offerRest(); return;
+        }
+        return;
+      }
       case 'rift': case 'event': return;
+      default: { const unhandled: never = f; return unhandled; }
     }
+  }
+
+  /** Offer eight hours' rest, unless monsters are too near (game/wilds.ts: a camp lets them nearer). */
+  offerRest(): void {
+    const refused = restRefused(this.world);
+    if (refused) { this.say(refused); return; }
+    this.push(new ChoiceScreen('Rest for eight hours? The party eats one ration each.', ['Rest', 'Not now'], (i) => {
+      if (i !== 0) return;
+      if (!restParty(this.world, this.party)) { this.say('There is not enough food to rest.'); return; }
+      this.say('The party rests. Morning comes.');
+    }));
   }
 
   /**
@@ -273,7 +301,7 @@ export class ExploreScreen implements Screen {
       }
     }
     else if (is(a, 'search')) { w.advance(10); g.say(w.search() ? 'You find a hidden door!' : 'You search the wall ahead and find nothing.'); }
-    else if (is(a, 'rest')) this.rest(g);
+    else if (is(a, 'rest')) g.offerRest();
     else if (is(a, 'cast')) g.push(new SpellScreen('explore'));
     else if (is(a, 'inventory')) g.push(new SheetScreen(g.selected));
     else if (is(a, 'journal')) g.push(new QuestScreen(g));
@@ -289,17 +317,6 @@ export class ExploreScreen implements Screen {
     // Hunger: a day without food costs the party.
     if (res.encounter) { g.fight(res.encounter); return; }
     g.enterCell();
-  }
-
-  private rest(g: Game): void {
-    const w = g.world;
-    if (w.adjacentGroups().length || w.liveGroups().some((x) => Math.abs(x.state.x - w.state.x) + Math.abs(x.state.y - w.state.y) <= 2)) { g.say('Too dangerous to rest here.'); return; }
-    g.push(new ChoiceScreen('Rest for eight hours? The party eats one ration each.', ['Rest', 'Not now'], (i) => {
-      if (i !== 0) return;
-      if (!w.rest()) { g.say('There is not enough food to rest.'); return; }
-      for (const m of g.party.members) restMember(m);
-      g.say('The party rests. Morning comes.');
-    }));
   }
 
   render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
@@ -318,8 +335,6 @@ export class ExploreScreen implements Screen {
   }
 }
 
-import { rest as restMember } from './party.ts';
-
 export function featureLabel(f: Feature): string {
   switch (f.kind) {
     case 'inn': case 'temple': case 'shop': case 'guild': case 'trainer': case 'npc': return f.name;
@@ -327,6 +342,11 @@ export function featureLabel(f: Feature): string {
     case 'sign': return 'A sign';
     case 'well': return 'A well';
     case 'rift': return 'A rift';
+    case 'shrine': return f.name ?? 'A shrine';
+    case 'fountain': return f.name ?? 'A fountain';
+    case 'cairn': return f.name ?? 'A cairn';
+    case 'statue': return f.name ?? 'A statue';
+    case 'camp': return f.name ?? 'A camp';
     case 'event': return '';
   }
 }
