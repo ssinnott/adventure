@@ -339,11 +339,13 @@
     "bone_knight",
     "brigand",
     "brigand_archer",
+    "carrion_crow",
     "cultist",
     "cut_warden",
     "dire_wolf",
     "drowned",
     "ghoul",
+    "lampman",
     "ogre",
     "rat",
     "rift_crawler",
@@ -361,6 +363,7 @@
     "thorn_spider",
     "wolf",
     "wraith",
+    "wrecker",
     "zealot"
   ],
   "classes": [

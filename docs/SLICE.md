@@ -189,8 +189,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   character's state, cached to an offscreen canvas.
 - `ui/sprites.ts` holds the trees, rocks, mountains and pillars and dispatches the monsters to
   `ui/monsters/`, one module per family (rat, slime, wolf, boar, spider, bandit, cultist, skeleton,
-  riftling, ogre, wraith) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts` has
-  the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
+  riftling, ogre, wraith, birds) behind one `draw(ctx, kind, x, y, h, paint)` signature; `common.ts`
+  has the brush and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits,
   the cult and the skeletons stand on. Every monster def names a sprite kind no other def uses
   (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands and
   smugglers, the cult's ranks, the bone knight, the ghoul and the drowned man, the dire wolf and
@@ -207,9 +207,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   radial light for embers and halos; `softLine()` replaces interior ink. The hit flash still
   paints a flat white silhouette through all of it. Each monster is one piece of ink at combat
   size, alone, three and six abreast, through its idle, but for the parts `DETACHED` in
-  `tools/smoke.ts` declares apart (the wardens' shards, the acolyte's censer, the adept's hand
-  flame, the rift hound's and the Hand of Ash's embers, the wraith's fading cloth); the smoke test
-  holds it.
+  `tools/smoke.ts` declares apart (the wardens' shards, the acolyte's censer, the lampman's
+  lantern, the adept's hand flame, the rift hound's and the Hand of Ash's embers, the wraith's
+  fading cloth); the smoke test holds it.
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
   three and four taper down, five is the old flat size and six goes under it. The row's spacing is
@@ -285,8 +285,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
   Thornmark's less gold (#26); the gate's marks for a boss's odds, a company two under the floor
   and fights to a rest are missed on the Foreland (#47) and in Thornmark (#40), and the Foreland
-  misses its floor too (#47); three hand-ins wait on a quest before taking their item (#43); and
-  the Foreland's west edge disagrees with the atlas on one square (#47's).
+  misses its floor too (#47); and the Foreland's west edge disagrees with the atlas on one square
+  (#47's).
 
 ## Checks
 
@@ -349,6 +349,8 @@ over content broken on purpose too, and two tools to theirs:
   log and no monster's look past two, every glyph in the font, British spelling; each `Area.novel`
   holds; water and roads carry on into the atlas; story locks (`content/locks.ts`) signed in, none
   between areas and every hand-in taking its item at the first meeting.
+- `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
+  each played hired first and early, the words, the pay and the log true either way round.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
@@ -417,6 +419,7 @@ does.
 | `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
+| `game/people.ts` | `meet`: what a person says, and a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
