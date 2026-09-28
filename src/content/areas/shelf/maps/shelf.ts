@@ -9,6 +9,7 @@ export const SHELF: MapDef = {
   id: 'shelf',
   name: 'The Foreland',
   kind: 'outdoor',
+  density: 'core',
   band: [1, 5],
   start: { x: 16, y: 4, facing: NORTH },
   rows: [

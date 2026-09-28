@@ -3,10 +3,13 @@
 // tests pass their own store.
 import type { WorldState } from './world.ts';
 import type { Party } from './party.ts';
+import { UPGRADES } from './upgrades.ts';
+import type { Upgrade } from './upgrades.ts';
 
 /**
- * 2: the outdoors is one map and exploration is kept in bits. A version 1 save, from before, still
- * loads: the World brings its state up to date (see World's `upgrade`).
+ * 2: the outdoors is one map and exploration is kept in bits. An older save still loads: deserialize
+ * brings it up to date, one registered upgrade a version (game/upgrades.ts). A bump comes with its
+ * upgrade, and with src/content/shipped.json regenerated (tools/shipped.ts).
  */
 export const SAVE_VERSION = 2;
 export const SAVE_KEY = 'hearth-of-caldera.save';
@@ -29,6 +32,16 @@ export function serialize(world: WorldState, party: Party, rngState: number): st
 export function deserialize(text: string): SaveData {
   const data = JSON.parse(text) as SaveData;
   if (!(data.version >= 1 && data.version <= SAVE_VERSION)) throw new Error(`save version ${data.version} is not one this build reads (1 to ${SAVE_VERSION})`);
+  return upgrade(data);
+}
+
+/** Bring a save up to version `to`, running each upgrade in turn by the version it brings the save to. */
+export function upgrade(data: SaveData, upgrades: Readonly<Record<number, Upgrade>> = UPGRADES, to = SAVE_VERSION): SaveData {
+  for (let v = data.version + 1; v <= to; v++) {
+    const up = upgrades[v];
+    if (!up) throw new Error(`no upgrade brings a save to version ${v}`);
+    data = { ...up(data), version: v };
+  }
   return data;
 }
 
