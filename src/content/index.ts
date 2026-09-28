@@ -9,6 +9,9 @@ import type { MonsterDef } from '../game/monsters.ts';
 import type { ItemDef } from '../game/items.ts';
 import type { SpellDef } from '../game/spells.ts';
 import type { LogQuest, ChapteredQuest } from '../game/quests.ts';
+import type { GuildQuest } from '../game/guilds.ts';
+import type { Area } from './area.ts';
+import { guildQuestDef } from './guilds.ts';
 import type { Climate } from '../game/weather.ts';
 import type { Atlas } from '../game/atlas.ts';
 import { AREA as shelf } from './areas/shelf/index.ts';
@@ -67,8 +70,14 @@ export const THE_QUEST: ChapteredQuest = {
   chapters: once('chapter', AREAS.flatMap((a) => a.chapter ? [a.chapter] : []), (c) => c.id),
 };
 
-/** The quest log's quests: the one quest, then each area's side quests in road order. The log lists them so. */
-export const QUESTS: readonly LogQuest[] = once('quest', [THE_QUEST, ...AREAS.flatMap((a) => a.quests)], (q) => q.id);
+/** The guild quests, each area's in road order (game/guilds.ts). */
+export const GUILD_QUESTS: readonly GuildQuest[] = AREAS.flatMap((a: Area) => a.guilds ?? []);
+
+/**
+ * The quest log's quests: the one quest, then each area's side quests in road order, then the guild
+ * quests, each in the log from its taking to its pay by its own flags. The log lists them so.
+ */
+export const QUESTS: readonly LogQuest[] = once('quest', [THE_QUEST, ...AREAS.flatMap((a) => a.quests), ...GUILD_QUESTS.map(guildQuestDef)], (q) => q.id);
 // A chapter's page is keyed under the quest's, and the log opens on a quest by its id: keep the two apart.
 once('quest or chapter', [...QUESTS, ...THE_QUEST.chapters], (q) => q.id);
 
