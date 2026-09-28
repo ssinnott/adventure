@@ -325,3 +325,20 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Main's tree matches. #42 stays open.
 - #42's B (`claude/m1-42-walk`, `Closes #42`) started at 18:05 in the same session: people met
   through `meet`, found by what they set or take (Vask moves with #17).
+
+### 18:10: #125 merged; #40's zone started; #129 and #130 in review
+
+- #129 (#88, dens) reviewed (`reviews/129.md`): ready after a main merge (pillars.ts against #127,
+  SLICE's code map against #128: keep both) and nits (Oxford commas, "thereafter"). Every break
+  fails; a 20-seed fuzz never has more than the three brood abroad; no save changes. Sent 18:08.
+- #130 (#17's A, the stone doorway and placed banners) opened at 17:59: a reviewer on it
+  (`reviews/130.md`), above all that nothing changes to the eye.
+- #125 and #126 second round (`reviews/125-2.md`, `126-2.md`): #125 ready; #126 ready once #125 is
+  in, with docs nits. #125 (#99) merged at 18:07 (main 46fe292) after a local merge with 59e2936:
+  ALL OK (39 owed: #26 ×3, #40 ×7, #47 ×15, #67 ×1, #68 ×3, #69 ×4, #70 ×3, #71 ×1, #72 ×1, #87 ×1;
+  the sixteen finds owed to the boxes that place them), SMOKE OK, "Nothing new."; CI green. Main's
+  tree matches. #99 closes. #126 told at 18:11: merge main, the docs nits (its own and #125's
+  leftover), the body's credits.
+- #40's zone pull request (`claude/m1-40-zone`) started at 18:11 on the dressed company, the zone
+  only; 'grove1: under' and 'grove2: under' stay owed until the owner answers decisions 1 and 2
+  (put to the owner at 18:03: (b), and bosses out of the rest day, recommended).
