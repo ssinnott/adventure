@@ -7,6 +7,7 @@ import type { RegionId } from './weather.ts';
 import type { Season } from './calendar.ts';
 import type { When } from './quests.ts';
 import type { Interior } from '../content/index.ts';
+import type { GuildId } from '../content/guilds.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
 
@@ -63,14 +64,20 @@ export interface Gift { gold?: number; items?: string[]; stat?: import('./party.
 /** A shrine's or a fountain's: `amount` (1) of `stat` to every member, once; `done` is said after. */
 interface Blessing { x: number; y: number; id: string; name?: string; text: string; stat: import('./party.ts').Stat; amount?: number; done: string }
 
+/**
+ * What every business has: its room, and `hall` where it is also a guild's hall, which gives out
+ * that guild's quests beside its own trade (game/guilds.ts; DESIGN §8).
+ */
+interface Business { x: number; y: number; name: string; interior: Interior; hall?: GuildId }
+
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
   | { kind: 'sign'; x: number; y: number; text: string; id?: string }
-  | { kind: 'inn'; x: number; y: number; name: string; price: number; interior: Interior }
-  | { kind: 'temple'; x: number; y: number; name: string; interior: Interior }
-  | { kind: 'shop'; x: number; y: number; name: string; stock: string[]; prices?: Readonly<Record<string, number>>; interior: Interior }
-  | { kind: 'guild'; x: number; y: number; name: string; classes: string[]; fee: number; maxTier?: number; interior: Interior }
-  | { kind: 'trainer'; x: number; y: number; name: string; maxLevel: number; interior: Interior }
+  | ({ kind: 'inn'; price: number } & Business)
+  | ({ kind: 'temple' } & Business)
+  | ({ kind: 'shop'; stock: string[]; prices?: Readonly<Record<string, number>> } & Business)
+  | ({ kind: 'guild'; classes: string[]; fee: number; maxTier?: number } & Business)
+  | ({ kind: 'trainer'; maxLevel: number } & Business)
   | { kind: 'chest'; x: number; y: number; id: string; gold: number; items: string[]; trapped?: boolean }
   /** `interior` makes the NPC a business you walk into (a tavern); a person in the street has none. */
   | { kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string; quest?: NpcQuest; interior?: Interior }

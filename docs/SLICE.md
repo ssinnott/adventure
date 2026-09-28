@@ -16,6 +16,12 @@ DESIGN.md first for the why.
   what was said inside. Leaving (the last menu closed) steps the party back into the street, facing
   the door. A shop may name its own price for an item it stocks (`prices`); the rest sell at
   their own, and anything sells back for half its own price.
+- **Guild halls:** a business may also be a guild's hall (`hall`, DESIGN §8). It then opens on a
+  first menu, its own trade, the guild's work and Leave, which each choice returns to; a business
+  with its trade alone opens straight on it. The guild's work pays what is done, then offers the
+  quests at or under the company's rank. Membership and rank are worked out from the guild quests'
+  done flags (`game/guilds.ts`). No hall is marked yet: the Wardens' and the Lanterns' come with
+  their quests. A spell hall's fee buys the right to study, not membership.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
   mountains gated by party abilities, hills (`^`) and farmland (`f`) open to all but on no built
@@ -274,12 +280,13 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Stubbed or absent
 
-- No guilds but the two Lantern spell guilds, so no guild quests.
+- No guild quests yet: the guilds' rules and the hall's menu are built, the Wardens' and the
+  Lanterns' quests are not.
 - No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Prestiges, guilds, the succession, the Salt Compact, the Lost Expedition past its first journal:
+- Prestiges, the Cartographers' and the Compact's halls, the succession, the Salt Compact, the Lost Expedition past its first journal:
   design only.
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
@@ -414,6 +421,7 @@ does.
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
 | `game/people.ts` | `meet`: what a person says, and a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired |
+| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags; what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
@@ -424,13 +432,14 @@ does.
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |
-| `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer, and the visit that frames them (`InteriorScreen`) |
+| `ui/screens.ts` | message, choice, character sheet, spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`) and a guild's work at its hall, and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/quests.ts` | the quest log screen, and `questPage`, its pure page layout |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
-| `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests, climates, rooms) and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
+| `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms) and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
+| `content/guilds.ts` | the four guilds (`GUILDS`: names and ranks), a guild quest's flags and its side of the quest log |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |
 | `content/areas/<area>/` | an area: its maps, monsters, items, quests, climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |

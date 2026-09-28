@@ -9,6 +9,9 @@ import type { MonsterDef } from '../game/monsters.ts';
 import type { ItemDef } from '../game/items.ts';
 import type { SpellDef } from '../game/spells.ts';
 import type { QuestDef } from '../game/quests.ts';
+import type { GuildQuest } from '../game/guilds.ts';
+import type { Area } from './area.ts';
+import { guildQuestDef } from './guilds.ts';
 import type { Climate } from '../game/weather.ts';
 import type { Atlas } from '../game/atlas.ts';
 import { AREA as shelf } from './areas/shelf/index.ts';
@@ -61,8 +64,17 @@ export const ITEMS: Record<string, ItemDef> = byId('item', [...CORE_ITEMS, ...AR
 
 export const SPELLS: Record<string, SpellDef> = byId('spell', ALL_SPELLS);
 
-/** The quest log's quests, each area's in road order: the log lists them so. */
-export const QUESTS: readonly QuestDef[] = once('quest', AREAS.flatMap((a) => a.quests), (q) => q.id);
+/** The guild quests, each area's in road order (game/guilds.ts). */
+export const GUILD_QUESTS: readonly GuildQuest[] = AREAS.flatMap((a: Area) => a.guilds ?? []);
+
+/**
+ * The quest log's quests, each area's in road order: the log lists them so. A guild quest is in it
+ * from its taking to its pay, by its own flags.
+ */
+export const QUESTS: readonly QuestDef[] = once('quest', [
+  ...AREAS.flatMap((a) => a.quests),
+  ...GUILD_QUESTS.map(guildQuestDef),
+], (q) => q.id);
 
 export const CLIMATES = Object.fromEntries(AREAS.map((a) => [a.id, a.climate])) as Record<RegionId, Climate>;
 

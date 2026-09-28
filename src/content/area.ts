@@ -5,6 +5,7 @@ import type { MonsterDef } from '../game/monsters.ts';
 import type { Condition } from '../game/party.ts';
 import type { ItemDef } from '../game/items.ts';
 import type { QuestDef } from '../game/quests.ts';
+import type { GuildQuest } from '../game/guilds.ts';
 import type { Climate } from '../game/weather.ts';
 import type { AtlasZone, AtlasPlace, AtlasSite, SiteIcon } from '../game/atlas.ts';
 
@@ -27,6 +28,11 @@ export interface Area {
    * something real and every page fits the screen.
    */
   quests: readonly QuestDef[];
+  /**
+   * Its guild quests, given out at the guilds' halls (game/guilds.ts). Each is in the quest log from
+   * its taking, keyed to its own flags, so the same check holds it as the quests above.
+   */
+  guilds?: readonly GuildQuest[];
   /** The weather its maps share. */
   climate: Climate;
   /** Its businesses' painted rooms: the Interior union is made of these, and src/ui/interior.ts paints each. */
