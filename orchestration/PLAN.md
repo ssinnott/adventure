@@ -142,3 +142,14 @@ on the owner.
 | Wave | Issues | Session | Branch |
 |---|---|---|---|
 | 3 | #38 | session_01VXBgDwSsKr5WWLbrDdgSLo | `claude/m0-38-gate-check` |
+
+## Last round checked; #94, #90 and #102 merged
+
+A third workflow proved the last round's items, reviewed #103 (#38) in full with a refuter, and
+merged all seven open branches together on main: `npm run check` green (1,594 ok, 41 owed), five
+smoke seeds, `npm run build` fine; the only conflicts were README's tools line, which #92, #91 and
+#103 all edit. #94 (#34), #90 (#32) and #102 (#31's follow-up) merged at 03:55 (main d0bc9f0). At
+03:58: #92 takes the density hand-off (its drafts get `density: 'country'`); #91 fixes a check tied
+to Thornmark's monster count and the two shared painting modules its sweep missed; #103 keys its
+win-rate cache on the monsters, not the id, and bounds its owed misses. #95 waits on the owner's
+edge issue.
