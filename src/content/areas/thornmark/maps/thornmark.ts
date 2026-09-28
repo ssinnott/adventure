@@ -9,6 +9,7 @@ export const THORNMARK: MapDef = {
   id: 'thornmark',
   name: 'Thornmark',
   kind: 'outdoor',
+  density: 'core',
   band: [5, 10],
   region: 'thornmark',
   start: { x: 1, y: 9, facing: EAST },
