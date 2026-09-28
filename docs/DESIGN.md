@@ -334,19 +334,22 @@ charter makes the company no member of any guild.
 A first task and three quests a guild, on the built maps, with no new monster group. The deeds keep
 off the main quest's road and Hale's where the built maps allow: in the Foreland band only the
 cellar and Brandy Hole hold a deed, so each guild has one there, which most companies will have
-done before they take it and are paid for when they report it. Each quest's words, pay and level
-come with its build.
+done before they take it and are paid for when they report it. Thornmark's barrow is left alone,
+since it echoes the Berth, so two deeds are new once-events: First Watch's and the second marker's.
+Each quest's words, pay and level come with its build.
 
 | Guild | Rank | Quest | Where | The deed |
 |---|---|---|---|---|
 | Wardens | first task | First Watch | the Foreland, Hale's checkpoint at the Scarth | walk the road to the checkpoint and back; one new once-event there |
 | Wardens | 1 | the cellar's cult | Ashcombe Cellar | the two cultist bands that hold it |
 | Wardens | 1 | the old watchtower | Thornmark | the ogre denned in the tower's base |
-| Wardens | 2 | the lost garrison | Thornmark, east of the road | the wraiths |
+| Wardens | 2 | the tower's store | Thornmark, the old watchtower | the Wardens' store there, opened |
 | Lanterns | first task | First Light | the Foreland's shore | look at the Hearth from the shore and say what was seen |
+| Lanterns | 1 | the drowned stair | Brandy Hole | the dead at the stair down, laid |
 | Lanterns | 1 | the dark marker | Thornmark's lake | the survey marker with its glass gone dark |
-| Lanterns | 1 | the tower's store | Thornmark, the old Warden watchtower | the store the Lanterns left there, opened |
-| Lanterns | 2 | the drowned stair | Brandy Hole | the dead at the stair down, laid |
+| Lanterns | 2 | the second marker | Thornmark's south-eastern hills | a marker still lit; one new once-event there |
+
+Each guild's ladder climbs: a rank's quests are in the band of the last's or above.
 
 ---
 
