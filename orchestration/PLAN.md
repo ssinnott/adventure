@@ -661,3 +661,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - The owner (23:25) OKs #145's choice 5, the Gullwick lead for C: "The way to Gullwick sounds fine".
   The pilot told at 23:28 (Hild's step after Vask's hire and before the farm; `done`
   `['q_ashcombe_done', 'q_wenna']`; the title stays "The Quiet Farm").
+
+### 23:33: #147 reviewed
+
+- `reviews/147.md`: ready after fixes. Main 54ae56d merges with one doc conflict (§3's Helmstow
+  row), then ALL OK (47 owed), SMOKE OK, "Nothing new."; CI green. The 38 texts verbatim; a state
+  explorer (176 states) strands nobody. Sent 23:35: merge main; assert the witnesses gone after
+  the answer and absent at a new game; nits (the ring's `until`, a ring-only goal that doesn't name
+  Ailith, a comment, an Oxford comma). All ten owner's choices: take the defaults.
