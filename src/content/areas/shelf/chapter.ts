@@ -27,10 +27,10 @@ export const CHAPTER: Chapter = {
       text: 'He spoke of the Grove Stone in Thornmark: gone quiet too, he said, and he wants to know why.' },
   ],
   goals: [
-    { when: { item: 'survey_wand' }, at: 'harrow', text: 'Take the survey wand to Lord Vask in Helmstow.' },
+    { when: { item: 'survey_wand' }, at: 'keep', text: 'Take the survey wand to Lord Vask in Helmstow.' },
     { when: { visited: 'mill' }, at: 'mill', text: 'Search the cellar under the Ashcombe farmhouse.' },
     { when: { flag: 'q_ashcombe' }, at: 'shelf', text: 'Find out why Ashcombe has gone quiet: south of Helmstow, then east along the Foreland road.' },
     // Shown only to a company that began a later chapter before Vask hired it.
-    { when: {}, at: 'harrow', text: 'The Regent-Warden is hiring in Helmstow.' },
+    { when: {}, at: 'keep', text: 'The Regent-Warden is hiring in Helmstow.' },
   ],
 };

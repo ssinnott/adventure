@@ -10,6 +10,7 @@ export const ZONES: readonly AtlasZone[] = [
 
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'harrow', kind: 'town', at: [216, 22] },
+  { id: 'keep', kind: 'town', at: [216, 16] },
   { id: 'mill', kind: 'dungeon', at: [224, 84] },
   { id: 'greywater1', kind: 'dungeon', at: [196, 68] },
   { id: 'greywater2', kind: 'dungeon', at: [196, 74] },
