@@ -51,7 +51,13 @@ export const HARROW: MapDef = {
       '"The Crown has need of a chartered company and the Wardens are stretched thin. There is a farm south of here, Ashcombe, that has gone quiet. Find out why. Clear whatever is there."',
       '"Bring me anything you find that is not a rat. Especially anything that glows."',
     ], flag: 'q_ashcombe', quest: {
-      item: 'survey_wand', needFlag: 'q_ashcombe', reward: 300, setFlag: 'q_ashcombe_done',
+      item: 'survey_wand', reward: 300, setFlag: 'q_ashcombe_done',
+      early: [
+        'A tall man in Warden grey, flanked by guards. His eyes go to the cracked survey wand before they go to you.',
+        '"Ashcombe. I meant to hire a company for that." He turns the wand over for a long moment. If he recognises it, nothing in his face says so.',
+        '"A Lantern tool. So the Lanterns were there before us. Interesting." He drops it into a pocket. "The Crown pays for work it did not have to ask for."',
+        '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
+      ],
       done: [
         'Vask turns the cracked survey wand over in his hands for a long moment. If he recognises it, nothing in his face says so.',
         '"A Lantern tool. So the Lanterns were there before us. Interesting." He drops it into a pocket. "You have done what I asked. The Crown pays its debts."',

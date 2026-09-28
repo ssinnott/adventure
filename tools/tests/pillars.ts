@@ -92,7 +92,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
       const where = `${d.id} ${f.kind} ${f.x},${f.y}`;
       if ('text' in f) add(where, f.text);
       if ('name' in f) add(where, f.name);
-      if (f.kind === 'npc') add(where, f.lines, f.quest?.done, f.quest?.after);
+      if (f.kind === 'npc') add(where, f.lines, f.quest?.early, f.quest?.done, f.quest?.after);
     }
     for (const e of d.exits ?? []) add(`${d.id} exit ${e.x},${e.y}`, e.label, e.blockedText);
     for (const e of d.encounters ?? []) add(`${d.id} ${e.id}`, e.slainText);
@@ -290,11 +290,10 @@ export function findLocks(areas: readonly Pick<Area, 'id' | 'maps'>[]): FoundLoc
 
 /**
  * What is wrong with the locks: one found that is not signed in, one between areas, a hand-in that
- * withholds its item on a flag, signed in or not (the game takes it only once the flag is set,
- * game.ts's interact; EXPANSION §2.3 has every hand-in take it at the first meeting),
- * a signed-in row that names nothing, and more than the counts allow. `owing` are keys reported
- * elsewhere, as someone's to fix. If #43 keeps `needFlag` on a hand-in with new meaning rather than
- * removing it, the hand-in rule here gives way to #43's pure function.
+ * withholds its item on a flag, signed in or not (EXPANSION §2.3 has every hand-in take it at the
+ * first meeting, as game/people.ts's `meet` does; `NpcQuest` has no `needFlag`, so this catches one
+ * that grows it again), a signed-in row that names nothing, and more than the counts allow.
+ * `owing` are keys reported elsewhere, as someone's to fix.
  */
 export function lockFaults(found: readonly FoundLock[], locks: readonly StoryLock[], areaOf: (map: string) => string | undefined, owing: readonly string[] = []): { area?: string; text: string }[] {
   const out: { area?: string; text: string }[] = [];
@@ -317,10 +316,8 @@ export function lockFaults(found: readonly FoundLock[], locks: readonly StoryLoc
   return out;
 }
 
-/** What #43 fixes, reported as its own until it lands: the three hand-ins. */
-const LOCKS_OWED: Record<string, readonly string[]> = {
-  '#43': ['hand-in harrow 9,5', 'hand-in shelf 29,8', 'hand-in thornhold 9,5'],
-};
+/** Locks someone else fixes, reported as theirs until it lands: none today. */
+const LOCKS_OWED: Record<string, readonly string[]> = {};
 
 export async function pillars(): Promise<void> {
   // Hints: every secret door names one, on its near side.
@@ -495,7 +492,7 @@ export async function pillars(): Promise<void> {
     ok(lockFaults([], [0, 1, 2, 3, 4].map((i) => lock({ map: `m${i}` })), () => undefined).some((f) => f.text.startsWith('the road')), `more than ${MOST_ON_THE_ROAD} on the road fails`);
     const across = room([{ x: 3, y: 1, to: second.maps[0].id, tx: 1, ty: 1, needFlag: 'q_seal' }]);
     ok(lockFaults(within(across), [lock()], of).some((f) => f.text.includes('between')), 'a lock between areas fails, even signed in');
-    const door = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx', after: ['Ta.'] } }]);
+    const door = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx', after: ['Ta.'] } }] as unknown as MapDef['features']);
     ok(within(door)[0]?.kind === 'hand-in' && lockFaults(within(door), [], of).length === 1, 'a hand-in that withholds its item on a flag fails');
     ok(lockFaults(within(door), [lock({ flag: 'q_hired', x: 2 })], of).some((f) => f.text.includes('first meeting')), 'and still fails with a lock signed in for it');
     const legend = { ...room([]), rows: ['#####', '#.X.#', '#####'], legend: { X: { door: 'door', needFlag: 'q_sealed' } } } as unknown as MapDef;

@@ -99,11 +99,15 @@ export interface MapZone {
   enter?: Record<string, string>;
 }
 
-/** A hand-in: when the party carries `item` and `needFlag` is set, the NPC says `done`, pays, and sets `setFlag`. */
+/**
+ * A hand-in: the first time the party meets the NPC carrying `item`, the NPC takes it, says `done`
+ * (or `early`, to a company they never hired), pays, and sets `setFlag`. See game/people.ts.
+ */
 export interface NpcQuest {
   item: string;
-  needFlag?: string;
   reward: number;
+  /** What the NPC says taking the item from a company they never hired; `done` if not given. */
+  early?: string[];
   done: string[];
   setFlag: string;
   /** What the NPC says once the quest is complete. */
