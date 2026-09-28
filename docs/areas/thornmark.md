@@ -2,10 +2,11 @@
 
 The second step of the road of levels, band 5–10: old forest over the pass from the Foreland,
 where the Ashen cut the Grove Stone. Its content is in `src/content/areas/thornmark/` (maps,
-monsters, items, quests, climate and its part of the world map) and its businesses' rooms in
-`src/ui/interiors/thornmark/`. The systems it runs on, the level cap and the spells, classes and
-traits that carry a company to it included, are in [SLICE.md](../SLICE.md) ("The road to level
-10").
+monsters, items, its chapter of the one quest, The Grove Stone, in `chapter.ts`, its side quest
+The Lost Expedition in `quests.ts`, climate and its part of the world map) and its businesses'
+rooms in `src/ui/interiors/thornmark/`. The systems it runs on, the level cap and the spells,
+classes and traits that carry a company to it included, are in [SLICE.md](../SLICE.md) ("The road
+to level 10").
 
 ## What is built
 

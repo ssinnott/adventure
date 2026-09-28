@@ -1,4 +1,5 @@
-// The wolf family: wolf, dire wolf and rift hound on one canine frame, standing alert in profile.
+// The wolf family: wolf, dire wolf, rift hound and black dog on one canine frame, standing alert
+// in profile.
 // The proportions are measured off a photograph of a grey wolf rather than invented: the legs are
 // two fifths of the height, the body a little under a half, the withers are the highest point of
 // the body, the back is level, the belly tucks up behind the ribs, and the head is carried so the
@@ -19,28 +20,33 @@ import { celBall } from '../../lib/art/shading.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound'];
+export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog'];
 
-/** Proportions that tell the three kinds apart on the shared frame (1 = the lean grey wolf). */
+/** Proportions that tell the kinds apart on the shared frame (1 = the lean grey wolf). */
 interface Build { neck: number; head: number; jaw: number; ruff: number; leg: number; body: number; fang: number; tail: number }
 const LEAN: Build = { neck: 1, head: 1, jaw: 1, ruff: 1, leg: 1, body: 1, fang: 1, tail: 1 };
 const DIRE: Build = { neck: 1.3, head: 1.18, jaw: 1.2, ruff: 1.6, leg: 1.25, body: 1.12, fang: 1.7, tail: 1.2 };
 const HOUND: Build = { neck: 1.1, head: 1.06, jaw: 1.1, ruff: 0.8, leg: 1.1, body: 1.02, fang: 1.35, tail: 0.78 };
+/** The black dog: a calf's height, deep in the chest, the head low and heavy, the coat rough. */
+const DOG: Build = { neck: 1.4, head: 1.22, jaw: 1.15, ruff: 1.9, leg: 1.18, body: 1.14, fang: 1.25, tail: 1.1 };
 
-type Variant = 'wolf' | 'dire' | 'rift';
+type Variant = 'wolf' | 'dire' | 'rift' | 'dog';
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'dire_wolf') canine(ctx, x, y, h, p, DIRE, 'dire');
   else if (kind === 'rift_hound') canine(ctx, x, y, h, p, HOUND, 'rift');
+  else if (kind === 'black_dog') canine(ctx, x, y, h, p, DOG, 'dog');
   else canine(ctx, x, y, h, p, LEAN, 'wolf');
 };
 
 /** Emissive ember colours for the rift hound: never toned, they are the light source. */
 const EMBER = '#ff7020', HOT = '#ffe0a0';
+/** The black dog's eyes, coals in the dark: never toned either, so they are what night leaves. */
+const COAL = '#ff4a14', COAL_HOT = '#ffc060';
 
 
 function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build, v: Variant): void {
-  const br = p.breathe, f = p.frame, rift = v === 'rift';
+  const br = p.breathe, f = p.frame, rift = v === 'rift', dog = v === 'dog';
   const base = p.base, dark = p.dark, light = p.light;
   const pale = v === 'wolf' ? mix(light, shade('#efe8dc', p.tone), 0.6) : mix(light, shade('#a8a4b0', p.tone), 0.4);
   const ivory = shade('#f0ead8', p.tone);
@@ -61,13 +67,14 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // ears rise above them. It used to hang below the shoulder in a stalk, which along with short
   // legs and an arched back is what made the animal read as a bean on stumps.
   const rH = h * 0.147 * b.head;
-  const hx = X(0.45), hy = U(0.80) + bob;
+  // The black dog carries it lower, level with the withers, and heavier.
+  const hx = X(dog ? 0.47 : 0.45), hy = U(dog ? 0.74 : 0.80) + bob;
 
   // ---- far side, in shadow: the two off legs and the far ear, one mass behind everything.
   const far: Part[] = [];
   legParts(far, [X(0.10), U(0.68), X(0.125), U(0.46), X(0.14), U(0.24), X(0.15), U(0.03)], h, b.leg * 0.92, 13);
   legParts(far, [X(-0.36), U(0.64), X(-0.26), U(0.45), X(-0.38), U(0.255), X(-0.33), U(0.03)], h, b.leg * 0.92, 14);
-  earPart(far, hx - rH * 0.82, hy - rH * 0.72, rH * 0.92, false);
+  earPart(far, hx - rH * 0.82, hy - rH * 0.72, rH * (dog ? 0.72 : 0.92), false);
   blob(ctx, B, dark, far, { h, formK: 0.35 });
 
   // ---- the tail: its own mass behind the rump, a brush hanging low and coming to a point.
@@ -95,25 +102,31 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
       X(0.285), U(0.805), X(0.315), U(0.62), X(0.275), U(0.465),
       X(0.11), U(0.43) + belly, X(-0.05), U(0.425) + belly, X(-0.18), U(0.49) + belly,
       X(-0.31), U(0.56), X(-0.41), U(0.72),
-    ], wobble: 0.03, spiky: 0.035, seed: 1, sub: 3 },
+    ], wobble: 0.03, spiky: dog ? 0.1 : 0.035, seed: 1, sub: 3 },
     // Shoulder and haunch under the coat.
     { k: 'ell', x: X(0.17), y: U(0.66), rx: h * 0.095, ry: h * 0.115, rot: 0.12 },
     { k: 'ell', x: X(-0.27), y: U(0.66), rx: h * 0.125, ry: h * 0.135, rot: -0.12 },
     // Neck: short and thick, sloping down and forward from the withers into the skull.
     { k: 'cap', x0: X(0.20), y0: U(0.835), x1: hx - rH * 0.55, y1: hy - rH * 0.1, r0: h * 0.118 * b.neck, r1: h * 0.10 * b.neck },
     // The ruff: the thick collar of fur behind the jaw.
-    { k: 'curve', pts: ring(X(0.30), U(0.755), h * (0.10 + 0.035 * b.ruff), h * (0.12 + 0.04 * b.ruff), 10), wobble: 0.06, spiky: 0.13, seed: 3, sub: 2 },
+    { k: 'curve', pts: ring(X(0.30), U(0.755), h * (0.10 + 0.035 * b.ruff), h * (0.12 + 0.04 * b.ruff), 10), wobble: 0.06, spiky: dog ? 0.24 : 0.13, seed: 3, sub: 2 },
     // The head in profile: back of skull, crown, brow, stop, bridge, nose, lip, jaw, throat.
     { k: 'curve', pts: [
       hx - rH * 0.98, hy - rH * 0.12, hx - rH * 0.55, hy - rH * 0.78, hx + rH * 0.1, hy - rH * 0.92,
       hx + rH * 0.52, hy - rH * 0.62, hx + rH * 1.15, hy - rH * 0.46, hx + rH * 1.75, hy - rH * 0.3,
       hx + rH * 1.92, hy - rH * 0.04, hx + rH * 1.76, hy + rH * 0.28, hx + rH * 1.2, hy + rH * 0.5,
       hx + rH * 0.35, hy + rH * 0.72, hx - rH * 0.35, hy + rH * 0.8, hx - rH * 0.92, hy + rH * 0.42,
-    ], wobble: 0.025, spiky: 0.035, seed: 4, sub: 2 },
+    ], wobble: 0.025, spiky: dog ? 0.07 : 0.035, seed: 4, sub: 2 },
     { k: 'cap', x0: hx + rH * 0.45, y0: hy + rH * 0.56, x1: hx + rH * 1.45, y1: hy + rH * 0.6 * b.jaw, r0: rH * 0.26, r1: rH * 0.18 },
   ];
   // Erect ears: two upright triangles on the crown, which is most of a wolf's head silhouette.
-  earPart(fur, hx - rH * 0.2, hy - rH * 0.82, rH, v === 'dire');
+  earPart(fur, hx - rH * 0.2, hy - rH * 0.82, rH * (dog ? 0.78 : 1), v === 'dire');
+  if (dog) {
+    // A calf's chest: deep and broad, the brisket hanging below the elbow.
+    fur.push({ k: 'ell', x: X(0.22), y: U(0.56), rx: h * 0.11, ry: h * 0.14, rot: 0.2 });
+    // The head is turned a little toward the company, so the far brow rises over the bridge.
+    fur.push({ k: 'ell', x: hx + rH * 0.78, y: hy - rH * 0.52, rx: rH * 0.34, ry: rH * 0.24, rot: -0.2 });
+  }
   // The near legs: long, with an elbow and a carpus in front, a stifle and a hock behind.
   legParts(fur, [X(0.21), U(0.70), X(0.235), U(0.455), X(0.25), U(0.24), X(0.26), U(0.02)], h, b.leg, 11);
   legParts(fur, [X(-0.25), U(0.66), X(-0.13), U(0.46), X(-0.25), U(0.255), X(-0.195), U(0.02)], h, b.leg, 12);
@@ -125,7 +138,7 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     { x0: hx - rH * 0.9, y0: hy - rH * 0.5, x1: hx - rH * 0.8, y1: hy + rH * 0.4, r: rH * 0.16, a: 0.28 }, // cheek
     { x0: hx + rH * 0.55, y0: hy - rH * 0.4, x1: hx + rH * 0.62, y1: hy + rH * 0.35, r: rH * 0.12, a: 0.18 }, // the stop
   ];
-  blob(ctx, B, base, fur, { h, tex: 'fur', seed: 1, amount: 0.55, formK: 0.5, creases });
+  blob(ctx, B, base, fur, { h, tex: 'fur', seed: 1, amount: dog ? 0.75 : 0.55, formK: 0.5, creases });
 
   // ---- counter-shading, which is how a wolf is actually coloured: a dark mantle over the back and
   // shoulders, and pale legs, belly, chest, throat and muzzle. A single flat value ear to tail is
@@ -134,7 +147,8 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     X(-0.36), U(0.80), X(-0.14), U(0.855), X(0.06), U(0.862), X(0.21), U(0.85),
     X(0.235), U(0.72), X(0.12), U(0.63), X(-0.10), U(0.62), X(-0.28), U(0.66),
   ], wobble: 0.08, spiky: 0.07, seed: 44, sub: 2 }], { alpha: 0.6, feather: 0.5 });
-  if (v !== 'rift') {
+  // The black dog has none: black on black.
+  if (v === 'wolf' || v === 'dire') {
     patch(ctx, B, mix(base, pale, 0.88), [
       // Legs, from the elbow and the stifle down.
       { k: 'tube', pts: [X(0.235), U(0.44), X(0.25), U(0.24), X(0.26), U(0.03)], r0: h * 0.05 * b.leg, r1: h * 0.038 * b.leg },
@@ -159,19 +173,37 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
   // The inner ear, a dark hollow up the near ear.
   softLine(ctx, B, [hx - rH * 0.16, hy - rH * 0.98, hx - rH * 0.1, hy - rH * 1.55], base, Math.max(1, rH * 0.15), 0.45);
-  // ONE eye: the head is a profile, so the far cheek is turned away and a second eye has nowhere to
-  // be. If this head is ever turned toward the party it becomes a matched PAIR of the same size,
-  // the far one only slightly narrowed by the turn; the rat and the boar are profiles with one eye.
-  const eyeCol = v === 'wolf' ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : HOT;
-  const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * 0.15;
+  // ONE eye, but for the black dog's: the head is a profile, so the far cheek is turned away and a
+  // second eye has nowhere to be. If this head is ever turned toward the party it becomes a matched
+  // PAIR of the same size, the far one only slightly narrowed by the turn, as the black dog's is
+  // (coals()); the rat and the boar are profiles with one eye.
+  const eyeCol = v === 'wolf' ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : HOT;
+  const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * (dog ? 0.17 : 0.15);
   if (rift) glow(ctx, B, ex, ey, er * 3, EMBER, 0.4 + 0.3 * pulse, HOT);
+  if (dog) coals(ctx, hx, hy, rH, ex, ey, er, pulse);
   // The dark surround a wolf carries around the eye, which is what makes it read from across a room.
-  if (rH >= 9) softLine(ctx, B, [ex - er * 1.2, ey + er * 0.2, ex + er * 1.6, ey - er * 0.1], shade(base, 0.6), Math.max(1, er * 1.5), 0.5);
-  eye(ctx, ex, ey, er, eyeCol, !rift);
-  softLine(ctx, B, [ex + er * 1.5, ey - er * 1.5, ex - er * 1.3, ey - er * 0.8], base, Math.max(1, rH * 0.13), 0.8);
+  if (rH >= 9 && !dog) softLine(ctx, B, [ex - er * 1.2, ey + er * 0.2, ex + er * 1.6, ey - er * 0.1], shade(base, 0.6), Math.max(1, er * 1.5), 0.5);
+  eye(ctx, ex, ey, er, eyeCol, !rift && !dog);
+  if (dog && !B.override) eye(ctx, ex + er * 0.15, ey - er * 0.1, er * 0.5, COAL_HOT, false);
+  // The brow; the black dog's sits clear of the coals, low over them, so they glower.
+  const bl = dog ? er * 0.9 : 0;
+  softLine(ctx, B, [ex + er * 1.5, ey - er * 1.5 - bl, ex - er * 1.3, ey - er * 0.8 - bl], base, Math.max(1, rH * 0.13), 0.8);
 
   if (v === 'dire') scars(ctx, x, y, h, mx, my, rH, shade('#c0b0a4', p.tone));
   if (rift) riftFx(ctx, x, y, h, hx, hy, rH, f, light, pulse);
+}
+
+/**
+ * The black dog's far eye and the glow of both: the head is turned toward the company, so the far
+ * eye shows over the bridge as a matched pair, a little narrowed. The glow never leaves the head.
+ */
+function coals(ctx: CanvasRenderingContext2D, hx: number, hy: number, rH: number, ex: number, ey: number, er: number, pulse: number): void {
+  const fx = hx + rH * 0.86, fy = hy - rH * 0.5;
+  glow(ctx, B, ex, ey, er * 3.4, COAL, 0.5 + 0.2 * pulse, COAL_HOT);
+  glow(ctx, B, fx, fy, er * 3, COAL, 0.45 + 0.2 * pulse, COAL_HOT);
+  ctx.fillStyle = B.col(COAL);
+  ctx.beginPath(); ctx.ellipse(fx, fy, Math.max(0.8, er * 0.72), Math.max(0.8, er * 0.9), -0.2, 0, Math.PI * 2); ctx.fill();
+  if (!B.override) eye(ctx, fx + er * 0.1, fy - er * 0.1, er * 0.38, COAL_HOT, false);
 }
 
 /**
