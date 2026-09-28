@@ -212,10 +212,19 @@ export class Game {
 
   /** Talk to a person: their words in a box, then their question, if they put one. */
   talk(p: Person): void {
+    if (!p.interior) { this.push(this.talkScreen(p)); return; }
+    // A tavern: its keeper's words, as ever, or with people in it, those words over the menu that
+    // lists them, which the words close onto.
+    const menu = serviceScreen(this, p);
+    this.visit(p, p.interior, menu);
+    if (!(menu instanceof MessageScreen)) this.push(this.talkScreen(p));
+  }
+
+  /** What talking to a person opens: their words in a box, which close onto their question, if they put one. */
+  talkScreen(p: Person): Screen {
     const m = meet(p, this.party, heard(this.world, p));
     const then = m.choice ? (): void => this.ask(m.choice!, p.name) : undefined;
-    const said = new MessageScreen(m.text, then, p.name);
-    if (p.interior) this.visit(p, p.interior, said); else this.push(said);
+    return new MessageScreen(m.text, then, p.name);
   }
 
   /**

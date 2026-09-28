@@ -22,6 +22,12 @@ DESIGN.md first for the why.
   quests at or under the company's rank. Membership and rank are worked out from the guild quests'
   done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). No hall is marked yet: the Wardens' and the Lanterns' come with
   their quests. A spell hall's fee buys the right to study, not membership.
+- **People in a business:** a person with no room of their own on a business's doorway, listed after
+  it, is in the business while present, and its first menu offers "Talk to <name to its first
+  comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
+  sends away is gone from it. A tavern (the Gilded Eel, a person with a room) with people in it says
+  its room first, over a menu of "The talk of the room" and them. With nobody there, a business
+  opens as before.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
   mountains gated by party abilities, hills (`^`) and farmland (`f`) open to all but on no built

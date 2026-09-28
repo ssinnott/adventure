@@ -121,12 +121,18 @@ export class ChoiceScreen implements Screen {
   sel = 0;
   /** The first option in view when the list is longer than the side panel. */
   private top = 0;
-  /** `text` may be made when drawn, for words that change while the menu waits under another. */
-  constructor(private text: string | (() => string), private options: string[], private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
+  /**
+   * `text` and `choices` may be made when drawn, for words and options that change while the menu
+   * waits under another (a person an answer sends away is gone from a business's menu).
+   */
+  constructor(private text: string | (() => string), private choices: string[] | (() => string[]), private then: (i: number) => void, private title = '', private disabled: boolean[] = []) {}
   /** The prompt as it reads now. */
   get words(): string { return typeof this.text === 'function' ? this.text() : this.text; }
+  /** The options as they read now. */
+  get options(): string[] { return typeof this.choices === 'function' ? this.choices() : this.choices; }
   update(g: Game, a: Action | null): void {
     if (!a) return;
+    this.sel = Math.min(this.sel, this.options.length - 1);
     if (is(a, 'up')) this.sel = (this.sel + this.options.length - 1) % this.options.length;
     else if (is(a, 'down')) this.sel = (this.sel + 1) % this.options.length;
     else if (is(a, 'cancel')) { g.pop(); this.then(-1); }
@@ -312,22 +318,28 @@ export class SpellScreen implements Screen {
 
 // ---- town services ----
 
-type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'guild' | 'trainer' }>;
+/** A business: a trade in a doorway, or a tavern, whose keeper is a person with a room of their own. */
+type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'guild' | 'trainer' }> | (Extract<Feature, { kind: 'npc' }> & { interior: Interior });
 
 /** One line of a business's first menu, and the screen it opens. */
 export interface BusinessEntry { label: string; open: () => Screen }
 
 /** What each kind of business trades in, as its first menu names it. */
-const TRADE: Record<Business['kind'], string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
+const TRADE: Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
+
+/** A person as a menu names them: to the first comma ("Hob", not "Hob, once tenant of Ashcombe"). */
+export const shortName = (name: string): string => name.split(',')[0];
 
 /**
- * What a business offers the party on the way in, in order: its own trade, then a guild's work
- * where it is a hall. People found inside (#76) join the list after these, as "Talk to <name>";
- * Leave is always last. This is the one place the list is made.
+ * What a business offers the party on the way in, in order: its own trade (a tavern's is its
+ * keeper's words), then a guild's work where it is a hall, then "Talk to <name>" for each person
+ * there now (`World.peopleAt`); Leave is always last. This is the one place the list is made, and
+ * it is made afresh each time it is read, so the people are those there now.
  */
 export function businessEntries(g: Game, f: Business): BusinessEntry[] {
-  const out: BusinessEntry[] = [{ label: TRADE[f.kind], open: () => trade(g, f) }];
-  if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
+  const out: BusinessEntry[] = [f.kind === 'npc' ? { label: 'The talk of the room', open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
+  if (f.kind !== 'npc' && f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
+  for (const p of g.world.peopleAt(f.x, f.y)) out.push({ label: `Talk to ${shortName(p.name)}`, open: () => g.talkScreen(p) });
   return out;
 }
 
@@ -336,19 +348,22 @@ export function businessEntries(g: Game, f: Business): BusinessEntry[] {
  * that each choice returns to (it is pushed again under the screen the choice opens), until Leave.
  */
 export function serviceScreen(g: Game, f: Feature): Screen {
-  if (f.kind !== 'inn' && f.kind !== 'temple' && f.kind !== 'shop' && f.kind !== 'guild' && f.kind !== 'trainer') return new MessageScreen('...');
-  const entries = businessEntries(g, f);
+  if (f.kind !== 'inn' && f.kind !== 'temple' && f.kind !== 'shop' && f.kind !== 'guild' && f.kind !== 'trainer' && !(f.kind === 'npc' && f.interior)) return new MessageScreen('...');
+  const b = f as Business;
+  const entries = businessEntries(g, b);
   if (entries.length === 1) return entries[0].open();
-  // Made when drawn: the guild's work, open above it, can raise the company's rank.
-  const hall = f.hall;
-  return new ChoiceScreen(hall ? () => standing(g, hall) : `${f.name}.`, [...entries.map((e) => e.label), 'Leave'], (i) => {
-    if (i < 0 || i === entries.length) return;
-    g.push(serviceScreen(g, f));
-    g.push(entries[i].open());
-  }, f.name);
+  // Made when drawn: the guild's work, open above it, can raise the company's rank, and a person's
+  // answer can send them away.
+  const hall = b.kind !== 'npc' ? b.hall : undefined;
+  return new ChoiceScreen(hall ? () => standing(g, hall) : `${b.name}.`, () => [...businessEntries(g, b).map((e) => e.label), 'Leave'], (i) => {
+    const now = businessEntries(g, b);
+    if (i < 0 || i >= now.length) return;
+    g.push(serviceScreen(g, b));
+    g.push(now[i].open());
+  }, b.name);
 }
 
-function trade(g: Game, f: Business): Screen {
+function trade(g: Game, f: Exclude<Business, { kind: 'npc' }>): Screen {
   switch (f.kind) {
     case 'inn': return inn(g, f);
     case 'temple': return temple(g, f);
