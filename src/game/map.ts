@@ -190,7 +190,11 @@ export interface MapDef {
   encounters?: EncounterDef[];
   /** Wall and floor tints. */
   palette?: Partial<MapPalette>;
-  /** Stone wall squares that always hang the map's banner (`palette.banner`), wherever else they fall by chance. */
+  /**
+   * A town's or a dungeon's: stone wall squares that always hang the map's banner (`palette.banner`),
+   * wherever else they fall by chance. The outdoors is laid from its zone maps without them, so an
+   * outdoor map places none (tools/tests/art.ts).
+   */
   banners?: readonly { x: number; y: number }[];
   /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */
   band?: [number, number];

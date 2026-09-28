@@ -242,17 +242,18 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   cobwebs, cracks, damp streaks, iron rings, barred grates, carved glyph panels; on houses flower
   boxes and ivy); on every house door a lantern lit after dark, and on a business's a sign with a
   glyph for the service (a door is a house's where a building stands beside it; a door set in stone
-  is an arched doorway in the wall, with neither); a map may place its banners (`MapDef.banners`),
-  which hang whatever the hash says; map palettes choose `wallStyle` (stone or brick) and `ceilingStyle` (vault
-  or timber beams); cobbled roads, flowers in the grass, cracks and puddles on flagstones; a carved
-  plank frame with brass fittings and rivets; a painted title looking west over the sea at the
-  Hearth. The dressing is restrained (`wallDressing()` in `ui/viewport.ts`): a wall is dressed only
-  where its hash beats the four round it, so about one in five and never two side by side, each
-  kind at its rate in `DRESSING_RATES` (nearly half the dressed stone walls a sconce, so dungeons
-  stay lit); a door's lantern and sign are its furniture, not dressing. `tools/tests/art.ts` caps a
-  map at 35% of its wall faces dressed (half under 100 faces) and a kind of map at 25% (from 200
-  faces), placed banners among them, holds every placed banner to stone wall, and fails the walls
-  as they were dressed before #9.
+  is an arched doorway in the wall, with neither); a town or a dungeon may place its banners
+  (`MapDef.banners`), which hang whatever the hash says; map palettes choose `wallStyle` (stone or
+  brick) and `ceilingStyle` (vault or timber beams); cobbled roads, flowers in the grass, cracks and
+  puddles on flagstones; a carved plank frame with brass fittings and rivets; a painted title
+  looking west over the sea at the Hearth. The dressing is restrained (`wallDressing()` in
+  `ui/viewport.ts`): a wall is dressed only where its hash beats the four round it, so about one in
+  five and never two side by side, each kind at its rate in `DRESSING_RATES` (nearly half the
+  dressed stone walls a sconce, so dungeons stay lit); a door's lantern and sign are its furniture,
+  not dressing. `tools/tests/art.ts` caps a map at 35% of its wall faces dressed (half under 100
+  faces) and a kind of map at 25% (from 200 faces), placed banners among them, holds every placed
+  banner to stone wall and none to an outdoor map, and fails the walls as they were dressed before
+  #9.
 - Final polish: pitched, hipped, tiled roofs that run across adjoining cells with eaves, ridge caps
   and a chimney, keyed per building (one roof per building, projected like the walls, so its front
   and side slopes meet along their hips); timber bracing and a window on house side faces; a birch
@@ -420,7 +421,7 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`), `GameMap` queries (passable, blocksView, the zone and palette at a cell); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group wears |
+| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group wears |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`), encounter triggers, rest, search |

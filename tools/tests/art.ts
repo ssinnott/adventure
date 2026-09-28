@@ -2,7 +2,7 @@
 // (EXPANSION §5.6), and the walls are dressed with restraint: the share of wall faces that carry
 // dressing stays near where #9 put it, and each kind of dressing has its rate. The silhouettes and
 // the cracks need a canvas, so they are the smoke test's (tools/smoke.ts).
-import { MONSTERS } from '../../src/content/index.ts';
+import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { wallDressing, isSolidWall, isHouse, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
 import { hash } from '../../src/ui/brush.ts';
@@ -126,6 +126,8 @@ export function art(): void {
   const placed = maps.flatMap((m) => (m.def.banners ?? []).map((b) => ({ m, ...b })));
   const astray = placed.filter(({ m, x, y }) => wallDressing(m, x, y) !== 'banner').map(({ m, x, y }) => `${m.id} ${x},${y}`);
   ok(astray.length === 0, `every placed banner hangs on stone wall (${placed.length})${astray.length ? ' -> not hung: ' + astray.join(', ') : ''}`);
+  const outdoors = MAP_DEFS.filter((d) => d.kind === 'outdoor' && d.banners?.length).map((d) => d.id);
+  ok(outdoors.length === 0, `no outdoor map places a banner: the outdoors is laid without them${outdoors.length ? ' -> ' + outdoors.join(', ') : ''}`);
 
   // The check fails the walls as they were dressed before #9: every map, and every kind of map with
   // faces enough to be held to its cap.
