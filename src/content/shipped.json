@@ -228,7 +228,11 @@
     "q_greywater",
     "q_greywater_done",
     "q_grove",
-    "q_grove_done"
+    "q_grove_done",
+    "rank_cartographers",
+    "rank_compact",
+    "rank_lanterns",
+    "rank_wardens"
   ],
   "items": [
     "antidote",
@@ -350,6 +354,7 @@
     "drowned",
     "eldest",
     "ghoul",
+    "great_owl",
     "heartwood",
     "lampman",
     "ogre",
