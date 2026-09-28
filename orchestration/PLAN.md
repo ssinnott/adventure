@@ -193,3 +193,15 @@ and its Done-when line "a pull request cannot merge unless the workflow is green
 up to date with main", which is #27's branch protection. #33 (closed) and #47 lost `approved` when
 their text changed; #47 needs it back before it is picked up. Owed by the orchestrator: the
 docs/SLICE.md suite list, left by every Wave 2 session for a sweep after Phase 0.
+
+## Wave 4: #104 and the SLICE sweep
+
+At 10:07 the owner approved #104 (the label put on at their word), said to leave branch protection
+off, and asked for docs/SLICE.md to be brought up to date. #104 started at 10:10:
+session_011WemzicoqEy67tP84Neu2j, branch `claude/m0-104-edges`, with COMMON-final.md (the Wave 2
+rules without the footprint step) as its rules. The SLICE sweep is audited section by section by a
+workflow, which writes and checks the new file; a session then opens its pull request.
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 4 | #104 | session_011WemzicoqEy67tP84Neu2j | `claude/m0-104-edges` |
