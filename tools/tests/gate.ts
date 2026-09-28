@@ -2,8 +2,8 @@
 // turn a company back. tools/gate.ts's bot plays the premade company, dressed by the ladder, against
 // every group of a map alone from full health; each map is held to its sign's band and each area to
 // its band on the curve (src/content/progression.ts). Every margin is printed. A miss the owners
-// below are owed is reported, not failed, until it holds: Thornmark's are #40's to retune, the
-// Foreland's the pilot's to settle (#47).
+// below are owed is reported, not failed, until it holds: the Foreland's are the pilot's to settle
+// (#47).
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
