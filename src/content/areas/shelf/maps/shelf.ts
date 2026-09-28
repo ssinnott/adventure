@@ -60,9 +60,9 @@ export const SHELF: MapDef = {
     { kind: 'event', x: 23, y: 20, id: 'ashcombe_gate', once: true, text: 'Ashcombe. The gate is off its hinges and the yard is silent. Something has scraped the earth in a wide ring around the house.' },
     { kind: 'event', x: 15, y: 28, id: 'coast', once: true, text: 'The sea. Out on the water, far off, the column of the Hearth stands against the sky. It flickers.' },
     { kind: 'npc', x: 29, y: 8, name: 'Captain Hale, Warden of the Scarth', lines: [
-      'A grizzled Warden with a bandaged arm sits on a crate by the checkpoint.',
-      '"Smugglers. They\'ve holed up in Brandy Hole, the caves at the west end of the beach, and I lost three men going in after them. There\'s worse than smugglers down there now, if the one who came back is to be believed."',
-      '"Clear them out and bring me their ledger. I want the names of everyone in Helmstow who has been buying from them."',
+      'A grizzled Warden with a bandaged arm sits on a crate by the checkpoint, and gets up when he sees you, which costs him something.',
+      '"Smugglers. They\'ve holed up in Brandy Hole, the caves at the west end of the beach. I lost three men going in after them, and the one who came back talks about worse than smugglers. I believe him. I\'ve an arm that believes him."',
+      '"Clear them out and bring me their ledger. I want the names of everyone in Helmstow who has been buying from them. Not the brandy; the names."',
       '"The pass is open. I\'ll not shut a road because I can\'t hold a cave. But it\'s mine to warn you about, and I\'m warning you: Thornmark\'s wolves are twice the size of ours."',
     ], flag: 'q_greywater', quest: {
       item: 'greywater_ledger', reward: 400, setFlag: 'q_greywater_done',
@@ -73,10 +73,12 @@ export const SHELF: MapDef = {
         '"The pass is open, and it\'s mine to warn you: Thornmark\'s wolves are twice the size of ours."',
       ],
       done: [
-        'Hale leafs through the ledger, and his face goes grey. "These aren\'t just smugglers\' accounts. Names, dates, and a column headed CARGO BELOW. People."',
-        '"The Ash. Here, under our feet." He shuts the book. "You\'ve earned this, and more. I\'ll see the Regent-Warden gets a copy."',
+        'Hale leafs through the ledger, and his face goes grey by the page.',
+        '"These aren\'t smugglers\' accounts. Names. Dates. A column headed CARGO BELOW." His finger stops halfway down it. "Wenna, of Gullwick. In a neat clerk\'s hand, like a cask of brandy."',
+        'He shuts the book. "People. The Ash, here, under our feet, and I\'ve been sitting on a crate on top of it."',
+        '"You\'ve earned this, and more than I\'ve got. The Regent-Warden gets a copy. It\'s the sort of thing a Regent wants."',
       ],
-      after: ['"The pass is yours; it always was. Mind yourselves in Thornmark: the wolves there are twice the size of ours."'],
+      after: ['"The pass is yours; it always was. Mind yourselves in Thornmark. The wolves are twice the size of ours and the trees are older than Helmstow, and the elves will thank you for neither observation."'],
     } },
     { kind: 'sign', x: 3, y: 28, text: 'Brandy Hole. Chalked beneath, in Warden hand: CLOSED. DO NOT ENTER. ASK CAPT. HALE.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
