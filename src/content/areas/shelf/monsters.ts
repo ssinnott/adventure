@@ -8,7 +8,7 @@ export const SPRITES = [
   'rat', 'slime', 'wolf', 'boar', 'spider', 'bandit', 'archer', 'cultist', 'skeleton', 'riftling',
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
   'rift_crawler', 'deacon',
-  'barrow_guard',
+  'barrow_guard', 'barrow_captain',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -34,4 +34,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'rift_crawler', name: 'Rift Crawler', plural: 'Rift Crawlers', sprite: 'rift_crawler', level: 4, hp: 20, ac: 14, attack: 4, dice: 1, sides: 6, bonus: 1, speed: 14, xp: 115, gold: [0, 0], tint: '#c0503a', size: 0.55, inflict: { cond: 'poisoned', chance: 0.25 } },
   { id: 'ashen_deacon', name: 'Ashen Deacon', plural: 'Ashen Deacons', sprite: 'deacon', level: 5, hp: 80, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 1000, gold: [60, 120], tint: '#3a2a3a', size: 1.0, drops: [{ item: 'elixir', chance: 1 }] },
   { id: 'barrow_guard', name: 'Barrow Guard', plural: 'Barrow Guards', sprite: 'barrow_guard', level: 4, hp: 20, ac: 15, attack: 4, dice: 1, sides: 10, bonus: 0, speed: 8, xp: 110, gold: [0, 6], mindless: true, tint: '#7a8088', size: 0.95 },
+  { id: 'barrow_captain', name: 'Barrow Captain', plural: 'Barrow Captains', sprite: 'barrow_captain', level: 5, hp: 60, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 800, gold: [40, 80], mindless: true, tint: '#8a8e96', size: 1.1 },
 ];

@@ -25,13 +25,14 @@ const BONE = (t: number): Mats => ({
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard'];
+export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard', 'barrow_captain'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bone_knight') knight(ctx, x, y, h, p);
   else if (kind === 'ghoul') ghoul(ctx, x, y, h, p);
   else if (kind === 'drowned') drowned(ctx, x, y, h, p);
   else if (kind === 'barrow_guard') guard(ctx, x, y, h, p);
+  else if (kind === 'barrow_captain') captain(ctx, x, y, h, p);
   else skeleton(ctx, x, y, h, p);
 };
 
@@ -886,4 +887,89 @@ function guard(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   ctx.strokeStyle = B.col(rgba(mix(stL, '#ffffff', 0.45), 0.5)); ctx.lineWidth = Math.max(1, u);
   ctx.beginPath(); ctx.moveTo(kx0 - 5.8 * u, ky0 - 3.6 * u); ctx.quadraticCurveTo(kx0 - 4 * u, ky0 - 7.2 * u, kx0 - 0.4 * u, ky0 - 8 * u); ctx.stroke();
   void stL;
+}
+
+/**
+ * The Barrow Captain: the guard's kit made a captain's, at his post beside the bier. A cloak in the
+ * Queen's blue gone nearly black hangs from a mantle over both shoulders, closed at the throat in
+ * gold; the helm is crested and whole, where the bone knight's is broken; and a longsword stands
+ * grounded point-down before him, both bone hands on the pommel.
+ */
+function captain(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.006, hipTilt: 0.006, turn: 0.008, near: [0.1, 0.11, 0.12], far: [-0.094, -0.106, -0.116], toe: [0.7, -0.6] }, BONE);
+  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
+  const lift = p.breathe * h * 0.007, BY = (v: number) => y + v * u - lift;
+  const { st, stD, stM, stL } = plate(p);
+  const q = queens(p.tone, 0.33), dusk = queens(p.tone, 0.74);
+  const bn = shade('#ece2cc', p.tone), old = shade('#cfc3a8', p.tone), murk = mix(old, INK, 0.7);
+  const jd = Math.pow(Math.max(0, Math.sin(p.frame / 29)), 18) * 0.15;
+  const sway = p.breathe * 0.8;                                               // the cloak's hem stirs
+  groundShadow(ctx, x, y + 1, h * 0.62);
+
+  // The cloak behind him, wider than he is, its hem torn a little and stirring.
+  blob(ctx, B, dusk.blue, [{ k: 'curve', pts: [
+    X(-15), BY(-78), X(1), BY(-80), X(18), BY(-78), X(23), BY(-62), X(25), Y(-36), X(27 + sway), Y(-8),
+    X(21 + sway), Y(-5), X(16 + sway), Y(-9), X(9 + sway), Y(-5.5), X(0 + sway), Y(-8), X(-8 + sway), Y(-5),
+    X(-15 + sway), Y(-9), X(-20 + sway), Y(-5.5), X(-24 + sway), Y(-9), X(-22), Y(-36), X(-20), BY(-62),
+  ], wobble: 0.03, seed: 91, sub: 2 }], { h, tex: 'folds', seed: 91, amount: 0.8, formK: 0.4, spread: 0.8, creases: [
+    { x0: X(-17), y0: BY(-56), x1: X(-19), y1: Y(-12), r: 1.6 * u, a: 0.4 },
+    { x0: X(20), y0: BY(-56), x1: X(22), y1: Y(-12), r: 1.6 * u, a: 0.4 },
+  ] });
+
+  guardLeg(ctx, R.legL, h, -1, old, stD, murk, 93);
+  guardLeg(ctx, R.legR, h, 1, bn, stM, murk, 95);
+  livery(ctx, x, y, h, lift, p.tone, q, stM, old, murk);
+
+  // The arms come forward from under the mantle to the pommel, the far one behind the near.
+  const hilt = { x: X(2.4), y: BY(-52) };
+  const nElb = { x: X(19.5), y: BY(-58.5) }, fElb = { x: X(-14), y: BY(-58) };
+  const nHand = { x: hilt.x + 1 * u, y: hilt.y + 1.5 * u }, fHand = { x: hilt.x - 0.6 * u, y: hilt.y - 2.6 * u };
+  blob(ctx, B, old, [...limb(R.sFar.x, R.sFar.y, fElb.x, fElb.y, fHand.x, fHand.y, 2.4 * u, 2.1 * u, 97)], { h, formK: 0.5 });
+  gap(ctx, fElb.x, fElb.y, R.sFar.x, R.sFar.y, 2.6 * u, murk, 0.6);
+  blob(ctx, B, stD, [{ k: 'cap', x0: X(-12.4), y0: BY(-56.4), x1: X(-5), y1: BY(-54.6), r0: 3 * u, r1: 3.1 * u }], { h, formK: 0.5, gloss: 0.1 });
+
+  // The longsword, grounded before him: blade(), as the skeleton's, run from the hands to the floor.
+  const ga = blade(ctx, R, hilt, hilt.x + 0.4 * u, Y(-0.5), 1.8 * u, 7 * u);
+  fist(ctx, R, fHand, ga, 46, { hex: old, flip: 1, k: 0.82 });
+  blob(ctx, B, bn, [...limb(R.sNear.x, R.sNear.y, nElb.x, nElb.y, nHand.x + 1.5 * u, nHand.y, 2.7 * u, 2.3 * u, 99)], { h, formK: 0.5 });
+  gap(ctx, nElb.x, nElb.y, R.sNear.x, R.sNear.y, 2.8 * u, murk, 0.6);
+  blob(ctx, B, st, [{ k: 'cap', x0: X(17.6), y0: BY(-56.8), x1: X(9.5), y1: BY(-52.2), r0: 3.2 * u, r1: 3.3 * u }], { h, formK: 0.5, gloss: 0.12 });
+  fist(ctx, R, nHand, ga, 48, { hex: bn, flip: -1, k: 0.86 });
+
+  // The mantle over both shoulders, closed at the throat by a gold clasp and chain.
+  blob(ctx, B, dusk.blue, [
+    { k: 'curve', pts: ring(R.sFar.x + 0.5 * u, R.sFar.y - 0.5 * u, 7.4 * u, 6 * u, 11, -0.2), wobble: 0.03, seed: 101, sub: 2 },
+    { k: 'curve', pts: ring(R.sNear.x, R.sNear.y - 0.8 * u, 7.8 * u, 6.2 * u, 11, -0.2), wobble: 0.03, seed: 103, sub: 2 },
+    { k: 'ell', x: X(1.5), y: BY(-77), rx: 11 * u, ry: 3.6 * u },
+  ], { h, tex: 'folds', seed: 105, amount: 0.5, formK: 0.5, spread: 0.8 });
+  ctx.strokeStyle = B.col(q.gold); ctx.lineWidth = Math.max(1, 1.2 * u); ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(X(-5), BY(-75.4)); ctx.quadraticCurveTo(X(1.5), BY(-72.4), X(8), BY(-75.4)); ctx.stroke();
+  for (const cx of [-5, 8]) blob(ctx, B, q.gold, [{ k: 'ell', x: X(cx), y: BY(-75.6), rx: 2.2 * u, ry: 2 * u }], { h, formK: 0.6, gloss: 0.5 });
+
+  // The skull in a close helm, the face left open under the brow; the crest whole, sweeping back.
+  const hx = R.hx + 0.4 * u, hy = R.hy + 0.8 * u;
+  const crest = mix(dusk.blue, q.blue, 0.4);
+  blob(ctx, B, crest, [{ k: 'curve', pts: [
+    hx + 4.6 * u, hy - 9.4 * u, hx + 3 * u, hy - 15 * u, hx - 2 * u, hy - 17.4 * u, hx - 8 * u, hy - 16.6 * u, hx - 13 * u, hy - 12.6 * u,
+    hx - 15.6 * u, hy - 5 * u, hx - 14.4 * u, hy + 1.6 * u, hx - 12 * u, hy - 4.4 * u, hx - 9.6 * u, hy - 9.4 * u, hx - 4 * u, hy - 11.6 * u, hx + 1 * u, hy - 10.8 * u,
+  ], wobble: 0.05, spiky: 0.1, seed: 107, sub: 2 }], { h, tex: 'folds', seed: 107, amount: 0.5, formK: 0.4, spread: 0.7 });
+  softLine(ctx, B, [hx + 2.6 * u, hy - 14.6 * u, hx - 2 * u, hy - 16.4 * u, hx - 7.6 * u, hy - 15.6 * u], mix(crest, '#ffffff', 0.5), Math.max(1, u), 0.35);
+  skull(ctx, hx, hy + 0.6 * u, R.hr * 0.9, 0.04, bn, old, h, jd, murk);
+  blob(ctx, B, st, [
+    { k: 'curve', pts: [
+      hx - 8.2 * u, hy + 4.8 * u, hx - 8.8 * u, hy - 3 * u, hx - 6 * u, hy - 8.6 * u, hx + 0.5 * u, hy - 10.6 * u, hx + 6.6 * u, hy - 8.4 * u,
+      hx + 9 * u, hy - 3 * u, hx + 8.4 * u, hy + 4.8 * u, hx + 5.6 * u, hy + 5.4 * u, hx + 6.4 * u, hy - 1.8 * u,
+      hx + 0.4 * u, hy - 3.8 * u, hx - 5.8 * u, hy - 1.8 * u, hx - 5.2 * u, hy + 5.4 * u,
+    ], wobble: 0.02, seed: 109, sub: 2, gloss: 0.3 },
+  ], { h, formK: 0.5, tex: 'cracks', seed: 109, amount: 0.35 });
+  // The comb the crest is set in, and a gold band over the brow.
+  blob(ctx, B, stM, [{ k: 'curve', pts: [hx - 6 * u, hy - 8.4 * u, hx + 0.5 * u, hy - 12.6 * u, hx + 5 * u, hy - 9.8 * u, hx + 0.5 * u, hy - 10 * u], wobble: 0.02, seed: 111, sub: 2 }], { h, formK: 0.5 });
+  ctx.strokeStyle = B.col(q.goldD); ctx.lineWidth = Math.max(1, 1.2 * u);
+  ctx.beginPath(); ctx.moveTo(hx - 6.4 * u, hy - 2.6 * u); ctx.quadraticCurveTo(hx + 0.4 * u, hy - 5.2 * u, hx + 7 * u, hy - 2.6 * u); ctx.stroke();
+  ctx.strokeStyle = B.col(rgba(mix(stL, '#ffffff', 0.45), 0.5)); ctx.lineWidth = Math.max(1, u);
+  ctx.beginPath(); ctx.moveTo(hx - 7.4 * u, hy - 3.4 * u); ctx.quadraticCurveTo(hx - 5.8 * u, hy - 8 * u, hx - 1.4 * u, hy - 9.6 * u); ctx.stroke();
+  // Two cold points far back in the sockets: he is still at his post.
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 11);
+  eye(ctx, hx - R.hr * 0.4, hy + 0.6 * u, Math.max(0.8, 0.8 * u), mix(q.gold, '#fff4d0', 0.3 + 0.3 * pulse), false);
+  eye(ctx, hx + R.hr * 0.38, hy + 0.2 * u, Math.max(0.8, 0.9 * u), mix(q.gold, '#fff4d0', 0.3 + 0.3 * pulse), false);
 }
