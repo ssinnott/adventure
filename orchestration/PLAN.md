@@ -278,3 +278,35 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #128 (#42's A) reviewed (`reviews/128.md`): ready after its body stops saying "closes #42" (merging
   would close #42 before B) and three test nits. Sent 17:41. The log's pictures sent to the owner.
 - Whichever of #127 and #128 lands second ports the people suite to the paged log (five lines).
+
+### 17:50: #121, #119 and #127 merged; #76, #17 and #21's B started
+
+- #121 (#80, #81, the Wrecker and the Lampman) merged at 17:45 (main 6c2b8db), then #119 (#97, the
+  farm kitchen; its two comment nits in) at 17:45 (main 56c4b55). Both heads had merged be9f4e9; the
+  two tested together on main: ALL OK (26 owed: #26 ×3, #40 ×7, #43 ×3, #47 ×12, #87 ×1), SMOKE OK
+  (36 drawn), "Nothing new."; CI green on both. Main's tree after each matches the tested one.
+- #127 (#43) merged at 17:49 (main b580939) after its fix round (unused imports, EXPANSION §2.3 in
+  the past tense, the Oxford commas, the sheet unchanged) and a main merge whose tree is exactly the
+  one tested: ALL OK (23 owed: #26 ×3, #40 ×7, #47 ×12, #87 ×1), SMOKE OK, "Nothing new."; CI green.
+  #43 closes.
+- #120 (the Black Dog) told at 17:46 to merge main with one Downs header and its two nits; #123 and
+  #124 follow it.
+- #128 (#42's A): its fix round reads right (no closing keyword; marks held; pages printed;
+  `openingSheet` tested). Told at 17:49 to merge main and port the people suite to the paged log,
+  and to stop saying the owner took #42's defaults (the owner never ruled on them).
+- #129 (#88, the dens) opened at 17:26: a reviewer on it (`reviews/129.md`).
+- #125 and #126: the `giftOf` count (8acfeb8) and the step at 9 (dc1c629) are in. Told at 17:52 to
+  merge main into both; a reviewer on the second round (`reviews/125-2.md`, `126-2.md`).
+- The menu a business opens on (#76's PR 2 against #21's B): the orchestrator's call. B builds the
+  one top menu, its entries a list made in one place (the trade, the guild's work, Leave; a business
+  with only its trade opens straight on it as today); #76's PR 2 adds "Talk to <name>" to it.
+- Started at 17:54, reusing sessions that know the code:
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 2 | #21's B | session_017b6Ze7q42YLoTkFWntD7BT (the guilds session) | `claude/m1-21-guilds-b` |
+| 2 | #76 | session_015eA3U3nfug5hverH1thjvm (the #43 session) | `claude/m1-76-words`, then `claude/m1-76-presence` |
+| 2 | #17 | session_01UaCWFTv18dPudY5PWNQ4Zh (the #97 session) | `claude/m1-17-stone`, then `claude/m1-17-ward` |
+
+  #17's B depends on #40 only through the pass (#117, in): #40's zone and dungeon pull requests touch
+  Thornmark alone. Its throne room goes in B, and B's sheet waits on the owner.
