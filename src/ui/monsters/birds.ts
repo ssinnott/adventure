@@ -85,11 +85,13 @@ const OWL: Build = {
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  // The owl's raised wings reach higher than the crow's hop: drawn inside 0.85 of its height, as the
-  // lampman is, the tips keep clear of the top of the combat canvas (at full height and wing 1.6 they
-  // run off it), and the wings as much as the body make its size.
-  if (kind === 'owl') facing(ctx, x, y, h * 0.85, p, OWL);
-  else bird(ctx, x, y, h, p, CROW);
+  const b = kind === 'owl' ? OWL : CROW;
+  // The pose is the Build's `face`. Turned to the party, the raised wings reach higher than the
+  // crow's hop: drawn inside 0.85 of its height, as the lampman is, the owl's tips keep clear of the
+  // top of the combat canvas (at full height and wing 1.6 they run off it), and the wings as much
+  // as the body make its size.
+  if (b.face >= 0.5) facing(ctx, x, y, h * 0.85, p, b);
+  else bird(ctx, x, y, h, p, b);
 };
 
 /** A direction back and up from the bird, `a` radians above the horizontal (the bird faces +x). */
@@ -248,13 +250,12 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     if (!bare) patch(ctx, B, plume, [{ k: 'ell', x: X(bx0 + bl * 0.12), y: U(byb + dp * 0.25), rx: h * bl * 0.2, ry: h * dp * 0.35 }], { alpha: 0.8, feather: 0.4 });
   }
 
-  // ---- the owl's face: a pale disc, the head turned to the party with both eyes on it.
+  // ---- a face half turned to the party: a pale disc about the eye (a full turn is the `facing` pose).
   if (b.face > 0) patch(ctx, B, mix(p.light, shade('#e8dcc0', tone), 0.5), [{ k: 'ell', x: X(hx + rH * 0.1), y: U(hy), rx: h * rH * 0.85 * b.face, ry: h * rH * 0.95 * b.face }], { alpha: 0.6 * b.face, feather: 0.35 });
 
-  // ---- the eye: bright and watching. In profile one; turned to the party, a pair.
+  // ---- the eye: bright and watching. In profile only the one (a bird turned to the party is `facing`).
   const er = rH * 0.2 * h;
-  if (b.face >= 0.5) for (const s of [-1, 1]) eye(ctx, X(hx + rH * 0.1 + s * rH * 0.42), U(hy + rH * 0.15), er * 1.4, eyeCol);
-  else eye(ctx, X(hx + rH * 0.22), U(hy + rH * 0.18), er, eyeCol);
+  eye(ctx, X(hx + rH * 0.22), U(hy + rH * 0.18), er, eyeCol);
 }
 
 /**
