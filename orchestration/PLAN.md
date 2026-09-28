@@ -76,3 +76,34 @@ From Phase 0: SendMessage doesn't reach cloud sessions. What works is `create_tr
 `fire_trigger` a trigger bound to another session: it starts a new, empty session instead.
 
 ## Log
+
+### 13:15, five Wave 1 sessions started
+
+The scouts' footprints for #100, #98, #66, #45, #43, #74, #21, #41 and #17 are in
+(`footprints/`); #40's and the art sessions' are still being written. The five whose footprints
+are final started at 13:15, each with COMMON.md as its rules (also in its system prompt, SYSTEM.md)
+and its prompt in `prompts/`:
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 1 | #41 | session_01HX96vEeA8wjtSKCDYnV7SH | `claude/m1-41-monster-fields`, then `-when` and `-look` |
+| 1 | #100, #98 | session_01JbyZsPz1NTc8cTjfQn9Grs | `claude/m1-100-plus`, `claude/m1-98-shop-price` |
+| 1 | #66 | session_01V987PdPPKAHiPfKnj2Zx3j | `claude/m1-66-grid` |
+| 1 | #45 | session_01KQC92fBp7Bg9WK9VYCHypE | `claude/m1-45-wilderness` |
+| 1 | #74, #21 | session_017b6Ze7q42YLoTkFWntD7BT | `claude/m1-74-tier3`, `claude/m1-21-guilds` |
+
+What the footprints changed in the plan:
+
+- #41 splits in three (kind and Holy Strike; when, until and after; look). Its first lands before
+  #40 touches Thornmark's monster rows, and moves no owed figure past its slack.
+- #43 could run beside #40 (no shared lines if `early` sits before `done`), but stays after it as
+  the owner's plan has it: Hale's early words carry #40's warning, and it costs nothing on the
+  critical path. #17 lands after #43, or it re-keys the owed hand-in.
+- #74's finding goes to the owner before merge: tier 3 is taught free at level 4, so the change sells
+  it early, at levels 1 to 3, for 160 a spell.
+- #21 is four pull requests: A (DESIGN §8 and two strings) now; B (systems) after #43, #45 and #98
+  and the owner's review of A; then C (the Wardens) and D (the Lanterns).
+- #17 is two: A (systems: the keep's door drawn in stone, banners placed) and B (the ward, the
+  gatehouse, the throne room, Vask), after #40 and #43.
+- Art rule: a pull request whose contact sheet shows nothing changed to the eye (fields, numbers,
+  words) says so and does not wait on the owner.
