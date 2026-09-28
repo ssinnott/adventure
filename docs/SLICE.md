@@ -218,7 +218,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
   and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
   crab and rift crawler, the crow and the great owl, the elder and the two wardens, the bramble,
-  rootwalker and heartwood) are drawn with their own gear, anatomy and glow rather than a recolour.
+  rootwalker, heartwood and the Eldest) are drawn with their own gear, anatomy and glow rather than
+  a recolour.
 - `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
   look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
   mass, with one ink outline around the union, one rendered gradient across the whole (a bright
