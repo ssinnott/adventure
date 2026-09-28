@@ -130,6 +130,33 @@ const inside = await page.evaluate(() => (window as any).__game.game.screens.map
 const innColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 const outside = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), x: g.world.state.x, y: g.world.state.y, facing: g.world.state.facing }; });
+// A guild's hall, on a fixture (no hall is marked yet): the Drillyard as the Wardens' with one first
+// task already done, so taking it pays at once. Back on the hall's first menu, the rank it reads is
+// the new one: its words are made when drawn, not when the menu was first opened.
+await page.evaluate(async () => {
+  const g = (window as any).__game.game;
+  const load = (p: string): Promise<any> => import(p);
+  const { GUILD_QUESTS } = await load('/src/content/index.ts');
+  GUILD_QUESTS.push({ id: 'smoke_watch', guild: 'wardens', rank: 0, offer: ['A watch.'], paid: ['Paid.'], pay: { gold: 1 }, goal: { flag: 'smoke_deed' }, title: 'Smoke Watch', entries: [], goals: [] });
+  g.maps.harrow.features.find((f: any) => f.kind === 'trainer').hall = 'wardens';
+  g.party.flags.smoke_deed = 1;
+  g.world.travel('harrow', 3, 13, 0); g.enterCell();
+});
+await page.waitForTimeout(100);
+const hallBefore = await page.evaluate(() => (window as any).__game.game.top.words);
+// Down to the guild's work, the task, its offer, Take it, the pay, and "no more work" back to the menu.
+for (const k of ['ArrowDown', 'Space', 'Space', 'Space', 'Space', 'Space', 'Space']) { await page.keyboard.press(k); await page.waitForTimeout(60); }
+const hallAfter = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), words: g.top.words }; });
+await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+const hallLeft = await page.evaluate(async () => {
+  const g = (window as any).__game.game;
+  const load = (p: string): Promise<any> => import(p);
+  const { GUILD_QUESTS } = await load('/src/content/index.ts');
+  GUILD_QUESTS.splice(GUILD_QUESTS.findIndex((q: any) => q.id === 'smoke_watch'), 1);
+  delete g.maps.harrow.features.find((f: any) => f.kind === 'trainer').hall;
+  for (const k of ['smoke_deed', 'q_smoke_watch', 'q_smoke_watch_done', 'rank_wardens']) delete g.party.flags[k];
+  return g.screens.map((s: any) => s.constructor.name).join(',');
+});
 // Every interior paints, at noon and at midnight, and each is a picture rather than a flat fill.
 const interiors = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
@@ -507,6 +534,8 @@ ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
 ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
+ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
+  `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {

@@ -6,6 +6,7 @@
 // says is owed is reported, not failed, until it holds.
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
+import type { Area } from '../../src/content/area.ts';
 import { CURVE, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
 import type { AreaCurve } from '../../src/content/progression.ts';
 import { GameMap } from '../../src/game/map.ts';
@@ -82,13 +83,16 @@ export function curve(): void {
     // What a clear gives: every group once, a member's share of the xp summed; the gold in cash.
     const groups = area.maps.flatMap((d) => d.encounters ?? []);
     const placed = groups.flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
-    const xp = Math.floor(placed.reduce((t, m) => t + m.xp, 0) / MEMBERS);
+    // The area's guild quests pay too, counted with the area whose file holds them.
+    const guild = (area as Area).guilds ?? [];
+    const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0)) / MEMBERS);
     const features = area.maps.flatMap((d) => d.features ?? []);
     // A hand-in's reward, once an item: of two people who take it, the larger.
     const rewards = new Map<string, number>();
     for (const f of features) if (f.kind === 'npc') for (const q of handIns(f)) rewards.set(q.item, Math.max(rewards.get(q.item) ?? 0, q.reward));
     const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
-      + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0);
+      + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0)
+      + guild.reduce((t, q) => t + (q.pay.gold ?? 0), 0);
     budget(id, 'xp a member', xp, xpBudget(row), row.owed, row.owed?.xp);
     budget(id, 'gold', Math.floor(gold), goldBudget(row), row.owed, row.owed?.gold);
 
