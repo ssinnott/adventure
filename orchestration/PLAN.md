@@ -648,3 +648,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (`reviews/145.md` to `147.md`). #145's sheet went to the owner at 23:17. The pink beside the
   Brandy Hole beach is main's too; Coldharbour's walls at three squares are past the night's reach.
 - Nothing else can start yet: #67 to #72 and #87 wait on the pilot, #49 on #47 and #48.
+
+### 23:25: the owner on #145's groups: harder monsters, not bigger groups
+
+- The owner (23:22): "I think group sizes feel off. We maybe need better harder monsters?" The pilot
+  is told (23:27) to keep the brief's sizes (§4.2: three wolves, a boar, bandits with an archer, six
+  crows, five rats) and make F2 harder through Downs variants on the frames that exist (new ids,
+  names and tints), statted on MONSTERS §4.4's line for band 2–3 to 6.5 ± 1 fights to a rest; the
+  Foreland's own monsters untouched; the pay the curve's; the variants the Downs' from now on (B
+  and the later boxes), in MONSTERS §5.2 and the area doc; 'the Foreland: floor' recomputed; the
+  new monsters' sheet to the owner. The #145 reviewer is told to skip the doubled groups' figures.
