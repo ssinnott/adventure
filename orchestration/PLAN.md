@@ -404,3 +404,20 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
     3 is 55%; a mixed group led by its most numerous monster gives 27%, failing), and that the look
     changed (two wolf groups now drawn as thorn spiders; three wraiths at 27,10). It waits on the
     owner's OK on the sheet, and lands after #133.
+
+### 19:07: #48 started in two sessions
+
+- #48's footprint (`footprints/48.md`): XL, three pull requests. The Deepthorn is Thornmark's zone,
+  so the defs go in `thornmark/monsters.ts`; all five are beasts, the Eldest sleep-proof; each owed
+  to #49 through `UNPLACED`; #49 claims the family. The owl fits the check's canvas only drawn inside
+  0.85h; the heartwood inside 0.9h; the Eldest inside the view is bigger by breadth only, unless a
+  systems pull request clips the combat row (the owner's one call; work need not wait).
+- Started at 19:09, reusing the creatures sessions:
+
+| Wave | Issues | Session | Branch |
+|---|---|---|---|
+| 3 | #48 A (the Great Owl) | session_016Toj1jd4bCGps8LiF14hJ3 (the birds session) | `claude/m1-48-owl` |
+| 3 | #48 B, then C (the old wood; the Eldest) | session_01Ge45ZQ7zivyvVdxtrsjGc1 (the barrow session) | `claude/m1-48-oldwood`, then `claude/m1-48-eldest` |
+| 3 | #85 | session_017gmKkkiPWxH5PB61L1M1mr (the #99/#101 session) | `claude/m1-85-words` |
+
+  Each drawing waits on the owner's OK on its sheet.
