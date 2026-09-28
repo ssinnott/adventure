@@ -508,6 +508,8 @@ Decided by the owner on 27 and 28 September 2026:
     Mottram's sells the band's gear, and in Act I pluses are found, not sold (#99 and #101). No
     find is dearer than its band's window on the curve (`src/content/progression.ts`), so the
     captain's mail is Scale Mail +1 and Thornmark has no plate with a plus.
+12. **The world map's lettering** is on the grid: the border names each box, and the strips at the
+    world's edges go unlettered (§1; #66).
 
 Proposed, for the owner, each in the issue that would build it:
 
@@ -517,7 +519,6 @@ Proposed, for the owner, each in the issue that would build it:
   country (§4).
 - **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
   sold in the band (§8; #74).
-- **The world map's lettering** moves onto the grid, so that the border names each box (§1; #66).
 - **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across
   E2 (#68 and #69). #56's Riders in the Dark rides it.

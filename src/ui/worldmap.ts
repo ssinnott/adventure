@@ -1312,7 +1312,8 @@ function* paintOverlay(ctx: CanvasRenderingContext2D, grid: WorldGrid, kind: Uin
     ctx.strokeStyle = '#120c14'; ctx.lineWidth = 3; ctx.strokeRect(X + 0.5, Y + 0.5, w - 1, h - 1);
     ctx.strokeStyle = BRASS; ctx.lineWidth = 1; ctx.strokeRect(X + 0.5, Y + 0.5, w - 1, h - 1);
     const box = boxAt(ATLAS, at[0], at[1]);
-    const tag = `${box ? `${box} ` : ''}BUILT ${def.rows[0].length}X${def.rows.length}`;
+    // The box and the size only: the brass rule says it is built, and a longer tag covers the town's name.
+    const tag = `${box ? `${box} ` : 'BUILT '}${def.rows[0].length}X${def.rows.length}`;
     ctx.fillStyle = 'rgba(14,10,16,0.8)'; ctx.fillRect(X + 1, Y + 1, measureText(tag) + 6, 10);
     drawText(ctx, tag, X + 4, Y + 2, { color: BRASS });
   }

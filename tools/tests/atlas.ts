@@ -60,10 +60,11 @@ export function atlas(): void {
   for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (!boxAt(ATLAS, x, y)) { strip++; if (land(x, y)) stripLand++; }
   ok(strip === 8 * H + 2 * (W - 8) && stripLand === 0, `the strips, x 0-7 and y 382-383, are in no box and hold no land (${stripLand} of ${strip} squares)`);
   ok(boxAt(ATLAS, ...mapAt(ATLAS, 'shelf')!) === 'G2' && boxAt(ATLAS, ...mapAt(ATLAS, 'thornmark')!) === 'H2', 'the Foreland\'s map is G2 and Thornmark\'s H2');
-  { // A zone of two maps: two grass boxes of the Downs, F2 and F3, laid and drawn as one zone.
+  { // A zone of two maps: two grass boxes of the Downs, F2 and F3, laid and drawn as one zone. A
+    // rival zone seeded beside F3 would take it, were F3 not a seed of the Downs in its own right.
     const grass = (id: string, name: string): MapDef => ({ id, name, kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: Array(32).fill(','.repeat(32)) });
     const f2 = grass('fixture_f2', 'Downs F2'), f3 = grass('fixture_f3', 'Downs F3'), defs = [...MAP_DEFS, f2, f3];
-    const two = (third?: AtlasZone): typeof ATLAS => ({ ...ATLAS, zones: [...ATLAS.zones.map((z): AtlasZone => (z.id !== 'downs' ? z : { ...z, maps: third ? [{ map: 'fixture_f2', at: [168, 30] }] : [{ map: 'fixture_f2', at: [168, 30] }, { map: 'fixture_f3', at: [168, 62] }] })), ...(third ? [third] : [])] });
+    const two = (third?: AtlasZone): typeof ATLAS => ({ ...ATLAS, zones: [...ATLAS.zones.map((z): AtlasZone => (z.id !== 'downs' ? z : { ...z, maps: third ? [{ map: 'fixture_f2', at: [168, 30] }] : [{ map: 'fixture_f2', at: [168, 30] }, { map: 'fixture_f3', at: [168, 62] }] })), { id: 'fixture_rival', name: 'Rival', area: 'shelf', seeds: [[167, 78]] }, ...(third ? [third] : [])] });
     const inDowns = (atlas: typeof ATLAS): number => {
       const g = worldGrid(atlas, defs), k = atlas.zones.findIndex((z) => z.id === 'downs');
       let n = 0;
