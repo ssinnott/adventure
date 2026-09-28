@@ -29,6 +29,8 @@ export const GATE = {
   bossAbove: 0.9,
   /** Fights to a rest may miss harness's fightsPerRest by this many. */
   perRest: 1,
+  /** How far under the area's median group the groups nearest its way in may be won. */
+  warning: 0.01,
   /** How far below its floor a company is held back. */
   under: 2,
 };
@@ -36,56 +38,69 @@ export const GATE = {
 /** Seeds a cell, as tools/gate.ts's table has it. */
 const SEEDS = 100;
 
-/** Each area's boss groups, by id: they are judged at their map's floor and two levels above it. */
+/**
+ * Each area's boss groups, as the game names a group, 'map:id': each is judged at its own map's floor
+ * and two levels above it, so an area may have several.
+ */
 export const BOSSES: Record<RegionId, readonly string[]> = {
-  shelf: ['m_warden', 'gw1_captain', 'gw2_deacon'],
-  thornmark: ['g2_hand', 'g2_warden'],
+  shelf: ['mill:m_warden', 'greywater1:gw1_captain', 'greywater2:gw2_deacon'],
+  thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
 };
 
 /** Each area's road: the groups met on it, in order, from the way in. */
 export const ROADS: Record<RegionId, readonly string[]> = {
-  shelf: ['road_rats', 'hill_wolves'],
-  thornmark: ['tm_wolves1', 'tm_brigands2', 'tm_hounds', 'tm_zealots'],
+  shelf: ['shelf:road_rats', 'shelf:hill_wolves'],
+  thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
 const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark' };
 
-/** The misses someone owes, by check: reported, and failed once they hold. */
-export const OWED: Record<string, string> = {
+/**
+ * The misses someone owes, by check: who owes each, and the figure it stood at when it was owed. It
+ * is reported, not failed, and fails once it holds; it fails too if it moves further from the
+ * threshold than that figure, by more than a point (a tenth of a fight to a rest).
+ */
+export const OWED: Record<string, { whose: string; at: number }> = {
   // The Foreland: the pilot settles these, by retuning it or by moving the thresholds.
-  'shelf: rest': '#47',
-  'm_warden: floor': '#47',
-  'greywater1: rest': '#47',
-  'gw1_captain: floor': '#47',
-  'greywater2: under': '#47',
-  'greywater2: rest': '#47',
-  'gw2_deacon: floor': '#47',
-  'the Foreland: floor': '#47',
+  'shelf: rest': { whose: '#47', at: 4.4 },
+  'mill:m_warden: floor': { whose: '#47', at: 0.98 },
+  'greywater1: rest': { whose: '#47', at: 4.0 },
+  'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
+  'greywater2: under': { whose: '#47', at: 0.658 },
+  'greywater2: rest': { whose: '#47', at: 3.88 },
+  'greywater2:gw2_deacon: floor': { whose: '#47', at: 0.98 },
+  'the Foreland: floor': { whose: '#47', at: 0.886 },
   // Thornmark, the Grove Roots and the Cut Stone: retuned until they hold.
-  'thornmark: under': '#40',
-  'grove1: under': '#40',
-  'grove2: under': '#40',
-  'grove2: rest': '#40',
-  'g2_hand: floor': '#40',
-  'g2_warden: floor': '#40',
-  'Thornmark: under': '#40',
+  'thornmark: under': { whose: '#40', at: 0.912 },
+  'grove1: under': { whose: '#40', at: 0.999 },
+  'grove2: under': { whose: '#40', at: 1 },
+  'grove2: rest': { whose: '#40', at: 7.6 },
+  'grove2:g2_hand: floor': { whose: '#40', at: 1 },
+  'grove2:g2_warden: floor': { whose: '#40', at: 1 },
+  'Thornmark: under': { whose: '#40', at: 0.696 },
 };
-
-const used = new Set<string>();
-/** A check, or its owed line where OWED names who owes it. */
-function check(key: string, cond: boolean, msg: string): void {
-  const whose = OWED[key];
-  used.add(key);
-  if (whose) owed(cond, msg, whose); else ok(cond, msg);
-}
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
 
+const used = new Set<string>();
+/**
+ * A check on a figure: `miss` says how far it is from the threshold, nothing or less where it holds.
+ * Where OWED names who owes it, the owed line, and the check that it has got no worse.
+ */
+function check(key: string, v: number, miss: (v: number) => number, msg: string, fights = false): void {
+  const o = OWED[key];
+  used.add(key);
+  if (!o) { ok(miss(v) <= 0, msg); return; }
+  owed(miss(v) <= 0, msg, o.whose);
+  const show = (x: number): string => (fights ? x.toFixed(2) : pc(x));
+  ok(miss(v) <= miss(o.at) + (fights ? 0.1 : 0.01) + 1e-9, `${key}: ${show(v)}, no further from the threshold than the ${show(o.at)} it was owed at`);
+}
+
 const rates = new Map<string, number>();
-/** A group's win rate at a level, each computed once: the maps and their areas share them. */
+/** A group's win rate at a level, keyed on its monsters, each computed once: the maps and their areas share them. */
 function rate(g: EncounterDef, level: number): number {
-  const key = `${g.id}@${level}`;
+  const key = `${g.monsters.join(',')}@${level}`;
   let r = rates.get(key);
   if (r === undefined) { r = winRate(level, g.monsters, SEEDS, ROUND_CAP); rates.set(key, r); }
   return r;
@@ -96,11 +111,11 @@ const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) 
 /** At the floor through, two levels under it back (or n/a, where that is under level 1). */
 function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly [number, number]): void {
   const at = pooled(groups, floor);
-  check(`${id}: floor`, at >= GATE.through, `${id} at its floor, ${floor}: ${pc(at)} of fights won (${pc(GATE.through)} asked)`);
+  check(`${id}: floor`, at, (v) => GATE.through - v, `${id} at its floor, ${floor}: ${pc(at)} of fights won (${pc(GATE.through)} asked)`);
   const low = floor - GATE.under;
   if (low < 1) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: level ${low} is no company`); return; }
   const under = pooled(groups, low);
-  check(`${id}: under`, under <= GATE.back, `${id} ${GATE.under} under its floor, at ${low}: ${pc(under)} won (${pc(GATE.back)} at most)`);
+  check(`${id}: under`, under, (v) => v - GATE.back, `${id} ${GATE.under} under its floor, at ${low}: ${pc(under)} won (${pc(GATE.back)} at most)`);
 }
 
 /** The road from the way in: every fight won, mending between and resting whole where the company must. */
@@ -128,36 +143,48 @@ export function gate(): void {
     const id: RegionId = area.id, band = CURVE[id].band;
     const fought = area.maps.filter((d): d is MapDef & { band: [number, number] } => !!d.encounters?.length && !!d.band);
     const all = fought.flatMap((d) => d.encounters!);
-    const find = (g: string): EncounterDef | undefined => all.find((e) => e.id === g);
+    /** A group by the game's name for it, 'map:id'. */
+    const find = (ref: string): EncounterDef | undefined => {
+      const [map, g] = ref.split(':');
+      return fought.find((d) => d.id === map)?.encounters!.find((e) => e.id === g);
+    };
 
     // Each map against its sign.
     for (const d of fought) {
       const groups = d.encounters!;
       margins(d.id, groups, d.band);
-      for (const b of BOSSES[id].filter((g) => groups.some((e) => e.id === g))) {
-        const boss = find(b)!, at = rate(boss, d.band[0]), above = rate(boss, d.band[0] + GATE.under);
-        check(`${b}: floor`, at >= GATE.boss[0] && at <= GATE.boss[1], `${d.id}'s boss ${b} at ${d.band[0]}: ${pc(at)} won (${pc(GATE.boss[0])} to ${pc(GATE.boss[1])} asked)`);
-        check(`${b}: above`, above >= GATE.bossAbove, `${d.id}'s boss ${b} at ${d.band[0] + GATE.under}: ${pc(above)} won (${pc(GATE.bossAbove)} asked)`);
+      for (const b of BOSSES[id].filter((ref) => ref.startsWith(`${d.id}:`))) {
+        const boss = groups.find((e) => `${d.id}:${e.id}` === b);
+        if (!boss) continue;
+        const at = rate(boss, d.band[0]), above = rate(boss, d.band[0] + GATE.under);
+        check(`${b}: floor`, at, (v) => Math.max(GATE.boss[0] - v, v - GATE.boss[1]), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${pc(GATE.boss[0])} to ${pc(GATE.boss[1])} asked)`);
+        check(`${b}: above`, above, (v) => GATE.bossAbove - v, `${d.id}'s boss ${boss.id} at ${d.band[0] + GATE.under}: ${pc(above)} won (${pc(GATE.bossAbove)} asked)`);
       }
       // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
       const day = days(d.band[0], groups.map((g) => g.monsters), SEEDS, 1, true), want = fightsPerRest(d.band[0]);
-      check(`${d.id}: rest`, Math.abs(day.fights - want) <= GATE.perRest, `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${want} asked, ±${GATE.perRest}); ${pc(day.why.long)} of days end in a fight broken off`);
+      check(`${d.id}: rest`, day.fights, (v) => Math.abs(v - want) - GATE.perRest, `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${want} asked, ±${GATE.perRest}); ${pc(day.why.long)} of days end in a fight broken off`, true);
     }
 
     // The area against the curve.
     const name = NAMES[id];
-    ok(BOSSES[id].every(find) && ROADS[id].every(find), `${name}: its bosses and its road are groups of its maps`);
+    const lost = [...BOSSES[id], ...ROADS[id]].filter((ref) => !find(ref));
+    ok(!lost.length, `${name}: its bosses and its road are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
     margins(name, all, band);
-    const walked = road(ROADS[id].map((g) => find(g)!), band[0]);
-    check(`${name}: road`, walked >= GATE.road, `${name} at ${band[0]}: its road (${ROADS[id].join(', ')}) walked ${pc(walked)} of the time (${pc(GATE.road)} asked)`);
+    const way = ROADS[id].map(find);
+    if (way.every((g) => g)) {
+      const walked = road(way as EncounterDef[], band[0]);
+      check(`${name}: road`, walked, (v) => GATE.road - v, `${name} at ${band[0]}: its road (${ROADS[id].join(', ')}) walked ${pc(walked)} of the time (${pc(GATE.road)} asked)`);
+    }
 
-    // A warning, not a wall: the two groups nearest the way in are among the gentlest.
+    // A warning, not a wall: the two groups nearest the way in are among the gentlest, a point's
+    // grace below the median so that where most groups are always won one loss in a hundred is not a wall.
     const outdoors = area.maps.find((d) => d.kind === 'outdoor' && d.encounters?.length);
     if (outdoors) {
       const steps = stepsFrom(outdoors), level = band[0] - GATE.under >= 1 ? band[0] - GATE.under : band[0];
       const first = [...outdoors.encounters!].sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
       const mid = median(all.map((g) => rate(g, level)));
-      check(`${name}: warning`, first.every((g) => rate(g, level) >= mid), `${name}: the groups nearest the way in, ${first.map((g) => `${g.id} ${pc(rate(g, level))}`).join(' and ')}, are won at ${level} at least as often as its median group (${pc(mid)})`);
+      const least = Math.min(...first.map((g) => rate(g, level)));
+      check(`${name}: warning`, least, (v) => mid - GATE.warning - v, `${name}: the groups nearest the way in, ${first.map((g) => `${g.id} ${pc(rate(g, level))}`).join(' and ')}, are won at ${level} about as often as its median group or more (${pc(mid)}, less ${pc(GATE.warning)})`);
     }
   }
   const stale = Object.keys(OWED).filter((k) => !used.has(k));
