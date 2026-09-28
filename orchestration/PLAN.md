@@ -658,3 +658,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Foreland's own monsters untouched; the pay the curve's; the variants the Downs' from now on (B
   and the later boxes), in MONSTERS §5.2 and the area doc; 'the Foreland: floor' recomputed; the
   new monsters' sheet to the owner. The #145 reviewer is told to skip the doubled groups' figures.
+- The owner (23:25) OKs #145's choice 5, the Gullwick lead for C: "The way to Gullwick sounds fine".
+  The pilot told at 23:28 (Hild's step after Vask's hire and before the farm; `done`
+  `['q_ashcombe_done', 'q_wenna']`; the title stays "The Quiet Farm").
