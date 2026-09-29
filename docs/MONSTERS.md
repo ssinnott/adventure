@@ -13,7 +13,7 @@ are measured on this branch at `5092f9c`.*
 Three jobs. Where they pull apart, the earlier one wins.
 
 1. **They are the gate.** Nothing on the road is locked (EXPANSION.md §2.2): what turns a company
-   back is the monsters. An area's monsters let a company at its band's floor through and turn one
+   back is the monsters. An area's monsters let a company at each map's floor through and turn one
    two levels under it back (EXPANSION.md §5.2), and they do it by what they are and who they stand
    with, not by their numbers alone (DESIGN.md §6).
 2. **They carry the secret.** The road starts among beasts and people and ends among machines, and
@@ -286,6 +286,10 @@ does Thornmark's 3, its groups may be many and thin to hold the gate: ten or twe
 heavier is both lost at 3 and cheap at 6. Elsewhere they are fewer and harder, as in the Cut Stone
 (the owner, on #40).
 
+The gate holds each of these figures to an aim and a limit beyond it (EXPANSION.md §5.2, #273): six
+or seven fights to a rest is the aim; a map outside it but between four and ten passes, and is listed
+as off its aim; only past its limit does it fail. Tune to the aim, not to the decimal.
+
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
 (the gear ladder, `GEAR`: the kits, the Foreland's band gear and its finds with a plus by 3 and 5,
@@ -493,8 +497,8 @@ Crowness Light.
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
 | Carrion Crow | birds, new | fodder, 2 | the stubble fields; the gibbet on the coast road | *Crows, too many to count, and all of them watching.* Flies, so it reaches the back row (`ranged` without `missile`); six to eight to a group |
-| Wrecker | bandit | soldier, 3 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
-| Lampman | bandit | archer, 3 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
+| Wrecker | bandit | soldier, 4 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
+| Lampman | bandit | archer, 4 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
 | Barrow Guard | skeleton | armoured, 4 | the Berth, the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
 | Black Dog | wolf | skirmisher, 4 | the hills round the barrow, by night | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
 | Barrow Captain | skeleton | boss, 5 | at the Queen's empty bier | *Her captain, at his post beside an empty bier.* |
@@ -503,6 +507,10 @@ Crowness Light.
 | Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
 | Footpad | bandit | soldier, 3 | the Salt Road, two with a poacher | *A short blade, and a coat taken off someone better dressed.* |
 | Poacher | bandit | archer, 3 | the field edges, beside the footpads | *A longbow taller than he is, and one of the Queen's hares at his belt.* |
+| Barnacle Crab | spider | armoured, 4 | under Crowness Light | *A rock with barnacles on it, until it stands up.* Shrugs off sleep, as the shore crab does |
+| Billman | bandit | soldier, 4 | the Salt Road west of Gullwick | *A bill on a pole, and a man who knows which end to hold.* |
+| Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
+| Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
@@ -1014,7 +1022,7 @@ the pilot.
 | riftling | the cellar (built) | brine (Saltreach, Wrackholm), black glass (Sunderwood), slag (the Kilns): §2.1 |
 | ogre | Thornmark (built) | the tor troll (Cairnmoor), the snow troll (the Whitespine) |
 | wraith | Thornmark (built) | the cairn wight (Cairnmoor) |
-| **birds** | the Downs | the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
+| **birds** | the Downs | the old rook (the Downs), the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
 | **old wood** | the Deepthorn | the strangler vine (Ashfall) |
 | **long bodies** | Saltreach | the rock worm (the Kilns), the ice pike (Rimewater), the glass worm and the ice worm (the reach) |
 | **toads** | Saltreach | none: the first to cut if the art budget bites |

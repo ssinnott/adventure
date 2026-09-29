@@ -33,7 +33,7 @@ export const LADDER: Record<ClassId, { 3: readonly string[]; 5: readonly string[
  * Berth (#70), D3 (#71), D4 (#72); '' once placed, when it must be found.
  */
 export const FINDS: Record<string, string> = {
-  'shortsword+1': '', 'dagger+1': '', 'mace+1': '#47', 'staff+1': '#47',
+  'shortsword+1': '', 'dagger+1': '', 'mace+1': '', 'staff+1': '',
   'buckler+1': '#67',
   'robe+1': '#68', 'leather+1': '#68', silver_locket: '#68',
   'halberd+1': '#69', ring_of_office: '#69', 'spear+1': '#69',

@@ -155,7 +155,8 @@ anything else: a heavier group lost at 3 costs a company at 6 three or four figh
 rest. The Cut Stone, with its floor at 8, holds with fewer, harder groups of eight at most: six bone
 knights, seven rift hounds, four ogres, five wraiths, the zealots with their adepts. The Hand of Ash
 is won 63% of the time at level 8 and the Warden of the Cut 43%, both nearly always at 9 and every
-time at 10.
+time at 10. The area as one pools every group at its own map's floor, and wins 97.2% of them; two
+under, the zone's groups at 3 and the dungeons' at the area's 3 too, it wins 21.5% (#209).
 
 ### Tests
 
@@ -558,14 +559,13 @@ I5.
   about 1,900: H3 250, I3 270, I4 430, J4 250, I5 150 and J5 530, in its chests, cairns and hoards,
   the Hand's drops at the landing and the side quests' pay.
 - **The gate.** Each box is held to its band as it is built (`tools/tests/gate.ts`): at 8 a box's
-  groups are won nine fights in ten and at 6 no more than one in four, and the Eldest about half the
-  time at 8 and nearly always at 10. The area as one is judged differently: every group of every
-  map, pooled, at Thornmark's floor of 5 (`tools/tests/gate.ts:215`). That sets the Deepthorn's
-  groups, tuned for 8, against a company of 5, and fails however they are tuned. Judging each zone
-  at its own floor would not cure it where a zone's maps rise, as the Downs' do (2–3 to 4–5, and the
-  Berth); what does is to pool each group at its own map's floor. The Downs need it first, since
-  every Downs box banded over 1 pulls down the Foreland's figure, owed with a point of grace, so it
-  belongs with #65 (#209). Thornmark's own gate holds, as §3 has it.
+  groups are won nine fights in ten, and the Eldest about half the time at 8 and nearly always at
+  10. The area as one pools each group at its own map's floor (#209), so the Deepthorn's groups
+  count at 8 and the Downs' boxes at theirs. Two under, a box's groups count at 6, two under its own
+  floor, in Thornmark's pool, with the zone's at 3 and the dungeons' at 3, the area's floor less
+  two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
+  of its own, with its road walked at 8 and its warning at its way in from the Grove
+  (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their
@@ -637,7 +637,8 @@ owner when the issues were filed on 29 September, under #208:
 16. **Woods are walked,** with a map character. Dead wood's is #163's, Sunderwood's, and J4 paints
     its 30 squares over as forest (§7).
 17. **The gate pools each group at its own map's floor,** so that the Deepthorn is held at 8 and the
-    Downs' boxes at theirs; it is #65's, which needs it first (§8).
+    Downs' boxes at theirs: built (#209), a box's groups two under its own floor in the area's pool
+    (§8).
 18. **The ladder's top:** a +2 or better for every class in the Deepthorn, the Eldest's Bough and a
     Silver Torc (§8).
 19. **Tier 5** comes with level 8, and Thornhold's Lantern Hall stays at tier 4: a hall can only sell
