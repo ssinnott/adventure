@@ -1067,7 +1067,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   two-lists branch; an ok that drawers are distinct; an Oxford comma (SLICE.md:427); `familyModules`
   repeats `families` (pillars.ts:193-200). Sent to the #97 session (15:19).
 
-### 15:25: #277 reviewed
+### 15:19: #277 reviewed
 - `reviews/277.md` (reviewed over #276's head): ready once #276 lands; nits only. With main (f438644
   is the base): ALL OK (33 owed; #276 alone 35, `shelf: rest` and `greywater1: rest` go), SMOKE OK;
   every figure takes the table's aim and limit, every edge right, each dropped entry put back fails.
