@@ -1,5 +1,5 @@
 // Thornmark's items: the tier a band 5-10 party buys in the Armoury, the same with a plus that it
-// finds, the Deepthorn's next step and the chisel and the journal the Cut Stone gives up.
+// finds, the Deepthorn's next step, the chisel and the journal the Cut Stone gives up and the side quests' things.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 
@@ -48,4 +48,10 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'lantern_oil', name: 'Lantern Oil', slot: 'none', price: 40, use: { cure: ['poisoned', 'diseased', 'paralysed'] } },
   { id: 'ashen_chisel', name: 'Underdeep Chisel', slot: 'none', price: 0 },
   { id: 'meridian_journal', name: 'Meridian Journal, vol. I', slot: 'none', price: 0 },
+  // The side quests' (#219): no shop buys them. The coin stays in the pack whichever way A Coin Not
+  // From Caldera goes; the Reader takes the glass, and Edith the kit; the sliver is Edith's gift.
+  { id: 'faceless_coin', name: 'Faceless Coin', slot: 'none', price: 0 },
+  { id: 'marker_glass', name: 'Marker Glass', slot: 'none', price: 0 },
+  { id: 'mending_kit', name: 'Mending Kit', slot: 'none', price: 0 },
+  { id: 'grove_sliver', name: 'Sliver of the Grove Stone', slot: 'none', price: 0 },
 ];
