@@ -108,6 +108,21 @@ export const SHELF: MapDef = {
     } },
     { kind: 'sign', x: 3, y: 28, text: 'Brandy Hole. Chalked beneath, in Warden hand: CLOSED. DO NOT ENTER. ASK CAPT. HALE.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
+    // The Rest of the Survey (#77): Ailith behind the west wood, hiding from the Wardens, until the
+    // company tells her where to go.
+    { kind: 'event', x: 2, y: 13, id: 'survey_ring', once: true, until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }], text: 'A scrap of Lantern grey on a thorn. Beyond it, a fire-ring so small and hidden that its maker feared smoke more than cold.' },
+    { kind: 'npc', x: 2, y: 14, name: 'Ailith, adjunct of the survey', lines: [
+      'A young woman in torn Lantern grey has her back to an oak and a survey stake held like a spear; her leg is bound in her own hem. "You\'re not Wardens. Wardens don\'t come off the road." The stake comes down an inch. "Adjunct Ailith, of the survey. What\'s left of it."',
+      '"It wasn\'t rats. I got out of the cellar when the floor opened and walked into a Warden patrol, and they weren\'t looking for survivors. They wanted our orders. The orders are at our camp over the Deepthorn\'s edge, and the other two went east to reach them first. I went west, and I didn\'t stop to pack."',
+      '"The Regent sent us, under his seal: survey the ground under Ashcombe, report to him alone. That was before the Queen died, and before the floor opened. Ask how a man knows where to send a survey before there\'s anything to find. I\'ve asked. I don\'t like the answer, so I\'m hiding from it under a tree."',
+    ], flag: 'q_ailith', until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }], choice: { ask: '"I can\'t stay under this tree. Where do I go? The Chapel in Helmstow is mine by right, and the Wardens know it. Thornhold is a long walk on this leg, and nobody\'s looking for me there."', answers: [
+      { label: 'The Chapel, in Helmstow.', sets: 'q_survey_chapel', says: [
+        '"Home, then. Lamps and quiet and my own cell." She tests the leg, and it holds. "If you come asking after me at the Chapel and they say I\'m resting, I\'m resting. Don\'t ask a second time. That\'s not a warning. It\'s advice, from someone who was given it."',
+      ] },
+      { label: 'Thornhold, over the Scarth.', sets: 'q_survey_thornhold', says: [
+        '"Thornhold. Elves and trees and nobody in grey." She takes the stake for a crutch. "Elder Sylvane knows a Lantern\'s word when she hears one. I\'ll tell her about you. She\'ll pretend not to have listened, and then she\'ll have listened. That\'s how the Chapterhouse works."',
+      ] },
+    ] } },
   ],
   encounters: [
     { id: 'road_rats', x: 16, y: 7, monsters: ['rat', 'rat', 'rat'], aware: 4, respawn: 1440 },

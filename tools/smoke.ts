@@ -166,14 +166,13 @@ const inn = await (async () => {
     delete g.party.flags.fx_hob_gone; delete g.party.flags.fx_hob_stays;
     return top;
   });
-  // The Gilded Eel is its keeper: with Ebba in it, the room says itself over a menu that lists them both.
+  // The Gilded Eel is its keeper: with Ebba in it from a new game (#77), the room says itself over a
+  // menu that lists them both.
   const eel = await page.evaluate(() => {
     const g = (window as any).__game.game, m = g.world.map, eel = m.features.find((f: any) => f.kind === 'npc' && f.interior === 'gilded_eel');
-    m.features.push({ kind: 'npc', x: eel.x, y: eel.y, name: 'Ebba, a fixture', lines: ['"Not here."'] });
     g.interact(eel);
     const out = g.screens.map((s: any) => s.constructor.name).join(','), under = g.screens[g.screens.length - 2]?.options ?? [];
     while (g.screens.length > 1) g.pop();
-    m.features.splice(m.features.findIndex((f: any) => f.name === 'Ebba, a fixture'), 1);
     return { screens: out, options: under };
   });
   return { menu, words, question, said, back, backColours, traded, left, eel };
@@ -617,7 +616,7 @@ ok(inn.menu.screen === 'ChoiceScreen' && inn.menu.options.join() === 'A room and
 ok(inn.words.text === '"A stranger, and armed."' && inn.question.text === '"Should I go to Gullwick?"' && inn.said.text === '"Then I go."', `talking to him says his words and puts his question in the side panel (${inn.words.screen}, ${inn.question.screen}, ${inn.said.screen})`);
 ok(inn.back.screen === 'ChoiceScreen' && inn.back.options.join() === 'A room and rations,Leave' && inn.backColours > 20, `his answer sends him away: back on the first menu, which no longer lists him (${inn.back.options.join(', ')})`);
 ok(inn.traded === 'ExploreScreen,InteriorScreen,ChoiceScreen' && inn.left === 'ExploreScreen', `with him gone, the trade opens once, and Esc leaves (${inn.traded}, then ${inn.left})`);
-ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Leave', `a tavern with a person in it says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
+ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Leave', `the Gilded Eel, with Ebba in it from a new game, says its room over a menu that lists its keeper and her (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
 ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
