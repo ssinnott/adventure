@@ -577,7 +577,7 @@ I5.
   With them, a Silver Torc, I5's keepsake. §3's table gives the Knight a Great Sword +1, but a
   Knight with a shield does not take it: the harness's takes the War Hammer +1.
 - **Spells** come with levels (`spellTierAt`), tier 5 at 8, inside the band. Thornhold's Lantern
-  Hall sells to tier 4 (`src/content/areas/thornmark/maps/thornhold.ts:41`), and EXPANSION §4 asks an
+  Hall sells to tier 4 (`src/content/areas/thornmark/maps/thornhold.ts:42`), and EXPANSION §4 asks an
   area's towns to sell its band's tier, as #74 did for the Foreland: the hall to tier 5 (#213). Act II's
   next tier is sold at Lantern Watch and none at Saltmouth (#151, call 9), so tier 5 is bought here.
 
