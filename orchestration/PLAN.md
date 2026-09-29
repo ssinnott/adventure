@@ -720,3 +720,16 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   spiders, skeletons). The owner's OK of #134's look could not show it (a group draws as its first
   monster). Put to the owner: keep the swarms where only they hold (the Grove Roots, the zone), or
   a shorter day, a higher floor or a changed rule.
+
+### 01:20: #146 merged, #21 closed; #140 OK'd; #264 filed
+
+- The owner (01:15): "Yeah loadstone approved file issues for bug".
+- #146 (#21's D, the Lanterns) merged at 01:16 (main 7395a12) after its fixes and main b48f459:
+  on its head 090f6c8, ALL OK (47 owed), SMOKE OK, "Nothing new."; CI green; main's tree is the
+  head's (0d9649f). #21 closes (#111, #132, #144, #146). The guilds session is done for Phase 1.
+- #140: its track OK'd. A test merge onto 7395a12 clashes only in shipped.json; its session told at
+  01:19 to merge main and rerun the tool. It lands when CI is green on that head.
+- Filed #264 (Bug, `lane: systems`, a sub-issue of #26, not approved): a mixed group in a fight
+  is labelled with its first monster's name and the whole group's count (`src/ui/combat.ts:188`;
+  "5 Ogres" for `tm_ogre`, "12 Bone Knights" for `tm_barrow`). Its line added to #26's Work.
+- Still with the owner: the swarms where only they hold (the Grove Roots, Thornmark's zone).
