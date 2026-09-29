@@ -501,7 +501,7 @@ Crowness Light.
 | Chalk Wolf | wolf | skirmisher, 4 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
 | Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
 | Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
-| Footpad | bandit | soldier, 3 | the Salt Road, two with a hedge archer | *A short blade, and a coat taken off someone better dressed.* |
+| Footpad | bandit | soldier, 3 | the Salt Road, two with a poacher | *A short blade, and a coat taken off someone better dressed.* |
 | Poacher | bandit | archer, 3 | the field edges, beside the footpads | *A longbow taller than he is, and one of the Queen's hares at his belt.* |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
