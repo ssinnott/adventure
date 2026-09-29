@@ -1077,3 +1077,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   "fails" at 60.5% two under; "threshold" at `:83-84`, `:87`); Oxford commas (EXPANSION.md:275,
   `gate.ts:22`, `:44`, `:48`, `:204`, `:210`). Choices: all three taken. greywater1 sits 0.05 inside
   its limit. Sent with #276's round when its review is in.
+
+### 15:20: #274 reviewed
+- `reviews/274.md`: ready, four nits. With main (its parent) ALL OK (36 owed), SMOKE OK, "Nothing
+  new."; no id moves; old names left only in §10's record; #213's two lines right. Nits: HENLYS's
+  label (`above`, `thornmark/atlas.ts:24`) breaks under THE DEEPTHORN on the zones overlay (Tab):
+  `label: 'below'`; thornmark.md:681 "letters the Dowrdu" (nothing letters a river: "names"); the
+  body credits `labels.ts` for the sites (it is `atlas.ts`); thornmark.md:215 puts Penspern at the
+  tip, where it stands on the crown (296,142). With the delegate's two (§4 "lettered"; DESIGN.md:425
+  and thornmark.md:76 over the wrap), sent to the Thornmark session. For #219: its Dialogue's "the
+  oldest hold" and "the still lake" may be written as Henlys and Lyngwyn where they read better.
