@@ -236,8 +236,9 @@ settled in its issue, and what the pilot teaches changes them.
 - **Encounters** are MONSTERS §5.4's roster and fights, with Thornmark's own monsters (§5.3) where
   its forest runs on. A group is about one of MONSTERS §4.4's standard encounters. The old wood's
   numbers came with its drawings (#48) and are drafts: the gate sets them (§8).
-- **Pay.** The Deepthorn owes about 5,420 xp a member (§8). The shares below add up to that, for the
-  curve to settle (#31) and the gate to check (#38).
+- **Pay.** The Deepthorn owes about 3,440 xp a member (§8). The shares below add up to that, for
+  the curve to settle (#31) and the gate to check (#38); they were cut against 5,420 and scaled
+  down when the Cut Stone's retune (#148) raised Thornmark's clear.
 - **Side quests** are #56's, placed as §6 has them.
 - **Finds** are the top of Act I's gear ladder (§8): each is an item already or a named one, and its
   box's issue places it.
@@ -274,7 +275,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** Woods underfoot (§7); the old wood, at its gentlest; a wood walked by its paths.
 - **Finds.** The ford-keeper's strongbox holds a Tower Shield +1; the nest's hoard, a dead
   traveller's Rune Dagger +2.
-- **Pay.** About 650 xp a member.
+- **Pay.** About 410 xp a member.
 
 ### 4.3 I3, Deepthorn Lodge (#215): country, band 8–10
 
@@ -303,7 +304,7 @@ settled in its issue, and what the pilot teaches changes them.
   company that keeps the lodge's secret (§6); a company that reads the blaze finds it anyway.
 - **New here.** A lodge in the deep, and a rest there.
 - **Finds.** The den's hoard, what the pack dragged in: a dead Lantern's Runed Robe +2.
-- **Pay.** About 740 xp a member.
+- **Pay.** About 470 xp a member.
 
 ### 4.4 I4, the oldest hold (#49): core, band 8–10
 
@@ -337,7 +338,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** The rootwalker and the heartwood; a hold besieged by its own wood.
 - **Finds.** The first grove holds a Thornmark Bow +2; the statue gives Brigandine +3 for its
   answer.
-- **Pay.** About 1,400 xp a member.
+- **Pay.** About 890 xp a member.
 
 ### 4.5 J4, the Hoarhills' end (#216): country, band 8–10
 
@@ -366,7 +367,7 @@ settled in its issue, and what the pilot teaches changes them.
   towards the crag.
 - **New here.** Sunderwood, across the water.
 - **Finds.** The carriers' cleft holds a War Hammer +2.
-- **Pay.** About 740 xp a member.
+- **Pay.** About 470 xp a member.
 
 ### 4.6 I5, the wood to the head (#217): country, band 8–10
 
@@ -386,7 +387,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** The first den whose brood walks only by night: the owls' roost.
 - **Finds.** The roost's hoard, the bright things an owl would carry: a silver torc, a keepsake that
   sells well.
-- **Pay.** About 560 xp a member.
+- **Pay.** About 360 xp a member.
 
 ### 4.7 J5, Thorn Head (#218): core, band 8–10
 
@@ -417,7 +418,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** A boss outdoors: the Eldest. The Hearth, close.
 - **Finds.** The Eldest, beaten, drops the Eldest's Bough, a Grove Staff +2 of its own; the Hand's
   cave holds a Great Sword +2.
-- **Pay.** About 1,310 xp a member.
+- **Pay.** About 830 xp a member.
 
 ## 5. The one quest here
 
@@ -455,9 +456,9 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 11 | The Dark Glass | 6 | the still lake; the Chapterhouse | a hand-in; words that change with a flag; a choice | the built maps (#219), after the Lanterns' Dark Marker (#146) |
 | 12 | The Elder's Four | 6 | the Grove Roots; Thornhold | a person found below; a choice; an event that comes with a flag | the built maps (#219) |
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
-| 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a choice | H3 (#214) |
+| 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214) |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215) |
-| 16 | The Older Mark | 8 | the oldest hold (I4) and Thorn Head (J5) | a rubbing, an item made at the stone; a choice | I4 and J5 (#49, #218) |
+| 16 | The Older Mark | 8 | the oldest hold (I4) and Thorn Head (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218) |
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219) |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219) |
 | 19 | The Light on Thorn Head | 10 | Thorn Head (J5), by night | people and groups by night (`when`); a choice | J5 (#218) |
@@ -485,6 +486,13 @@ Taken: 9 to 12 and 14 to 19. The changes to #56's drafts:
 - **18 stays a side quest.** The build closes the tear at the Warden of the Cut's death and leaves
   the cut for a Lantern to mend (#41), and DESIGN §9's act ends on its revelation, not on the mend.
 - **10's woodwarden is a woodward:** *Warden* is taken (MONSTERS §1).
+- **14's orders and 16's rubbing are taken, then asked about.** #56 has the company give each or
+  keep it; an answer cannot take an item (#76), so Idony and Senara take theirs at the first
+  meeting (#43) and put the question at the next, and "keep" hands it back.
+- **11's second payment is a Sapphire Vial.** #56 has the Reader pay double for silence; an answer
+  cannot pay gold, so it hands over the vial instead.
+- **10's burner ends at the pass's Thornmark end,** not the Hearthlight, which is the Foreland's
+  file.
 
 What they ask of the systems is #76's: choices put by a person, words that change with a flag,
 people and events that come and go with a flag or the hours, several items to one person and
@@ -534,18 +542,19 @@ I5.
 
 ## 8. The numbers
 
-- **Experience.** A clear of Thornmark pays 8,249 xp a member on main. The curve (EXPANSION §5.2,
-  #31) asks the climb from 5 to 10 over 0.75, 13,667 (`src/content/progression.ts:38`). The
-  Deepthorn is where the other 5,420 or so come from, shared among the boxes as §4.1 has it: H3 650,
-  I3 740, I4 1,400, J4 740, I5 560 and J5 1,310. The Lanterns' quests (#146) add 400 a member, and
-  the Deepthorn's shares shrink to match when they land. Until the boxes are built the curve reports
-  the shortfall as owed to #26. A den's keepers pay once, and its brood as a group that respawns
-  does; the figures count the brood once. Act II's cap and curve (#159) are to pay a kill by the
-  monster's level against the member's, which re-prices every figure here if they land first; each
-  box is measured when it is built.
-- **Gold.** A clear pays 5,800 of the 8,400 that training six members from 5 to 10 costs; #146 adds
-  350. The Deepthorn's share of the rest, about 2,600: H3 340, I3 380, I4 590, J4 340, I5 210 and J5
-  740, in its chests, cairns and hoards, the Hand's drops at the landing and the side quests' pay.
+- **Experience.** A clear of Thornmark pays 10,227 xp a member on main (§3), the Lanterns' quests
+  (#146) in it. The curve (EXPANSION §5.2, #31) asks the climb from 5 to 10 over 0.75, 13,667
+  (`src/content/progression.ts:38`). The Deepthorn is where the other 3,440 or so come from, shared
+  among the boxes as §4.1 has it: H3 410, I3 470, I4 890, J4 470, I5 360 and J5 830, the first
+  shares scaled down by the same fraction when #148 raised the clear. Until the boxes are built the
+  curve reports the shortfall as owed to #26. A den's keepers pay once, and its brood as a group
+  that respawns does; the figures count the brood once. Act II's cap and curve (#159) are to pay a
+  kill by the monster's level against the member's, which re-prices every figure here if they land
+  first; each box is measured when it is built.
+- **Gold.** A clear pays 6,518 of the 8,400 that training six members from 5 to 10 costs (§3), the
+  Lanterns' quests in it. The Deepthorn's share of the rest, about 1,900: H3 250, I3 270, I4 430, J4
+  250, I5 150 and J5 530, in its chests, cairns and hoards, the Hand's drops at the landing and the
+  side quests' pay.
 - **The gate.** Each box is held to its band as it is built (`tools/tests/gate.ts`): at 8 a box's
   groups are won nine fights in ten and at 6 no more than one in four, and the Eldest about half the
   time at 8 and nearly always at 10. The area as one is judged differently: every group of every
@@ -554,7 +563,7 @@ I5.
   at its own floor would not cure it where a zone's maps rise, as the Downs' do (2–3 to 4–5, and the
   Berth); what does is to pool each group at its own map's floor. The Downs need it first, since
   every Downs box banded over 1 pulls down the Foreland's figure, owed with a point of grace, so it
-  belongs with #65 (#209). Thornmark's own misses stay #40's (§3).
+  belongs with #65 (#209). Thornmark's own gate holds, as §3 has it.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their
@@ -580,9 +589,10 @@ I5.
   With them, a Silver Torc, I5's keepsake. §3's table gives the Knight a Great Sword +1, but a
   Knight with a shield does not take it: the harness's takes the War Hammer +1.
 - **Spells** come with levels (`spellTierAt`), tier 5 at 8, inside the band. Thornhold's Lantern
-  Hall sells to tier 4 (`src/content/areas/thornmark/maps/thornhold.ts:41`), and EXPANSION §4 asks an
-  area's towns to sell its band's tier, as #74 did for the Foreland: the hall to tier 5 (#213). Act II's
-  next tier is sold at Lantern Watch and none at Saltmouth (#151, call 9), so tier 5 is bought here.
+  Hall sells to tier 4 (`src/content/areas/thornmark/maps/thornhold.ts:42`), and EXPANSION §4 asks
+  an area's towns to sell its band's tier, as #74 did for the Foreland: the hall to tier 5 (#213).
+  Act II's next tier is sold at Lantern Watch and none at Saltmouth (#151, call 9), so tier 5 is
+  bought here.
 
 ## 9. Decisions
 

@@ -98,7 +98,7 @@ it and the last area is built, they are Might and Magic VI's stables, and they s
 (pillar 4).
 
 **Decided: (b), cores and country**, not (a) or (c). Coaches and boats as well, later: to be filed,
-with the owner's agreement, when the second area's core comes up.
+with the owner's agreement, when the second area's core comes up (#164).
 
 DESIGN.md §4's scale table was rewritten to say so, and §12 says so under its tiers. The reach (DESIGN.md §9) is
 optional by design, so it is the first thing v1 can leave for later.
@@ -542,29 +542,40 @@ the rest run in parallel.
 6. DESIGN.md §4, §12 and §13 brought into line with §2: the scale, the tiers, content as TypeScript.
    §9 already follows the one road and its one quest.
 
-**Phase 1: the pilot, finishing M1.** First the road that exists, made to follow §2.2: the flag
+**Phase 1: the road, act by act.** Numbered 1.x by the owner, an epic to each part (#151, call
+11). Each part holds the systems its act waits on, built one at a time in the systems lane before
+its areas need them (§7), and then its areas, no more than two in flight, each to its definition
+of done (§4).
+
+**1.1, the pilot, finishing M1** (#26). First the road that exists, made to follow §2.2: the flag
 comes off the pass and Hale's checkpoint becomes a warning; Thornmark, the Grove Roots and the Cut
 Stone are retuned until the gate check holds at their floors; the tests that pin the flag gate (the
 movement and outdoors suites, and the smoke test's walk through the pass) follow it; The Quiet Farm
 and The Grove Stone become the one quest's first chapters; the three hand-ins take their items at
 the first meeting. Then the rest of the Foreland and Thornmark through the new pipeline: the first
 two boxes of the Downs, west of the Foreland where the land runs on and the world now ends (F2 and
-F3, the road to Gullwick; band 2–5, docs/areas/shelf.md), then the Deepthorn's core. Meanwhile, in
-the systems lane, what M1 still lacks: the first guilds (DESIGN.md §8). The terrain the pilot asks
-for comes in Phase 0 (#44). Measure how long a zone map takes and what the owner still finds by
-hand, and tune the thresholds.
+F3, the road to Gullwick; band 2–5, docs/areas/shelf.md), then the Deepthorn's core; the Foreland
+to its edges (#65) and Thornmark to its (#208). Meanwhile, in the systems lane, what M1 still
+lacks: the first guilds (DESIGN.md §8). The terrain the pilot asks for comes in Phase 0 (#44).
+Measure how long a zone map takes and what the owner still finds by hand, and tune the thresholds.
 
-**Phase 2: the systems for Acts II to IV**, one at a time: the level cap past 10, with the xp
-budget (§5.2) and the prestiges; the Rift generator, the next regions' climates, the crossings, and
-the danger made legible; the skills that open shortcuts as the areas that have them come up.
+**1.2, Act II, the Salt Road** (#149). First its systems (#150): the level cap past 10, with the xp
+budget (§5.2), the kill multiplier and the first prestiges (#19); what monsters can do, ranks and
+morale, casting, drain and elements (MONSTERS.md §3.3); the ground underfoot, salt, tidal ground and
+heather, dead wood, crystal and the chasm; coaches and boats, and the crossing to Wrackholm; the
+Rift generator, for the small Rifts; the danger made legible, the band said on crossing; the log
+paged by chapter; the Hearth brightening with each Stone. Then Saltreach (#153), Wrackholm (#154)
+and Sunderwood (#155) in road order, each from its doc in docs/areas/.
 
-**Phase 3: Acts II to IV, area by area** (Saltreach, Wrackholm, Sunderwood, the Kilns, …), no more
-than two in flight, each to its definition of done, with the lanes running in parallel inside each.
+**1.3, Act III,** and **1.4, Act IV** (not filed yet): the Kilns, Cairnmoor and Rimewater; the
+Whitespine, Ashfall and the Wold. Each the same way: its systems first (§7: the next regions'
+climates and terrain, the skills that open shortcuts as the areas that have them come up), then its
+areas. 1.4 ends M2.
 
-**Phase 4: Act V and the subplots** (M3).
+**1.5, Act V and the subplots** (M3).
 
-**Phase 5: the reach** (DESIGN.md §9). Optional by design, so it comes last, and v1 can ship
-without it.
+**1.6, the reach** (DESIGN.md §9). Optional by design, so it comes last, and v1 can ship without
+it.
 
 ---
 
