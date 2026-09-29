@@ -733,3 +733,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   is labelled with its first monster's name and the whole group's count (`src/ui/combat.ts:188`;
   "5 Ogres" for `tm_ogre`, "12 Bone Knights" for `tm_barrow`). Its line added to #26's Work.
 - Still with the owner: the swarms where only they hold (the Grove Roots, Thornmark's zone).
+- The owner (01:20) chose 1 of three: keep the swarms where only they hold (the Grove Roots; the zone
+  as #134 left it). #148 lands as it stands, the Cut Stone harder and the Grove Roots swarms; the
+  defaults stand (bosses in the floor pool, greywater2 unjudged two under, the bot). Told at 01:24:
+  merge main 136c3c6 (the Lanterns move Thornmark's clear: the four places; `thornmark.md` meets
+  #265), and write the owner's call into MONSTERS §4.4 with §4.2's row for the thin fodder.
+- Main took #265 at about 01:20 (not ours: the Deepthorn's plan for #208, docs only, `thornmark.md`
+  and MONSTERS.md), so main is 136c3c6.
+- #140 merged main 7395a12 (b4fafa1; CI green). Test-merged onto 136c3c6 cleanly (tree e3e4f58);
+  the landing check started 01:22.
