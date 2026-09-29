@@ -48,7 +48,7 @@ export const GUILDS: readonly GuildQuest[] = [
   },
   {
     id: 'lanterns_stair', guild: 'lanterns', rank: 1,
-    offer: ['"There are dead at the foot of the stair in Brandy Hole that will not lie down. They were Helmstow people once. Lay them, and we will see to the rest."'],
+    offer: ['"There are dead by the stair down in Brandy Hole that will not lie down. They were Helmstow people once. Lay them, and we will see to the rest."'],
     goal: { slain: 'greywater1:gw1_stairs' },
     paid: ['"Laid. We will go down with the words when the Wardens let us in."'],
     early: ['"The stair in Brandy Hole is quiet? Then someone has done the hard part already. Thank you."'],

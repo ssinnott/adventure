@@ -34,9 +34,9 @@ export const GUILDS: readonly GuildQuest[] = [
   },
   {
     id: 'lanterns_marker', guild: 'lanterns', rank: 1,
-    offer: ['"One of our survey markers stands in a lake in Thornmark. It went dark in the spring. Go and look at it, and tell us whether the glass is broken or only out."'],
+    offer: ['"One of our survey markers stands in a lake in Thornmark. It has gone dark. Go and look at it, and tell us whether the glass is broken or only out."'],
     goal: { seen: 'thornmark:lake' },
-    paid: ['"Dark, with the glass whole. That is worse than broken. Thank you for looking."'],
+    paid: ['"Dark, and no break in the glass you could see from the shore. That is worse than broken. Thank you for looking."'],
     early: ['"You have seen the marker in the lake already. Dark, then. We were afraid of that."'],
     pay: { gold: 150, xp: 900 },
     title: 'The Dark Marker',
@@ -48,16 +48,16 @@ export const GUILDS: readonly GuildQuest[] = [
   },
   {
     id: 'lanterns_second', guild: 'lanterns', rank: 2,
-    offer: ['"There is a second marker on the hills south-east of the river, and it is still lit. Nobody can tell us why one burns and the other does not. Go and stand by it."'],
+    offer: ['"There is a second marker by the boulders south of the river, and it is still lit. Nobody can tell us why one burns and the other does not. Go and stand by it."'],
     goal: { seen: 'thornmark:second_marker' },
-    paid: ['"Still burning. We will have a Reader up on those hills before the month is out."'],
+    paid: ['"Still burning. We will have a Reader out by those stones before the month is out."'],
     early: ['"You found the lit marker before we asked. Then you have seen what we cannot explain."'],
     pay: { gold: 200, xp: 1500 },
     title: 'The Second Marker',
-    entries: [{ id: 'sent', when: { flag: 'q_lanterns_second' }, text: 'A second Lantern survey marker stands on the hills south-east of Thornmark\'s river, still lit.' }],
+    entries: [{ id: 'sent', when: { flag: 'q_lanterns_second' }, text: 'A second Lantern survey marker stands by the boulders south of Thornmark\'s river, still lit.' }],
     goals: [
       { when: { seen: 'thornmark:second_marker' }, text: 'Report to a Lantern hall, in Helmstow or Thornhold.' },
-      { when: { flag: 'q_lanterns_second' }, text: 'Find the lit marker on the hills south-east of the river.' },
+      { when: { flag: 'q_lanterns_second' }, text: 'Find the lit marker by the boulders south of the river.' },
     ],
   },
 ];

@@ -41,11 +41,12 @@ to level 10").
   road in the south-west. Fourteen groups. By Thornhold's north wall, the chest the watchtower's
   garrison buried when the elves shut the gate (`tm_strongbox`), the Wardens' rank 2 quest; their
   rank 1 quest is the tower's ogre (docs/areas/shelf.md §6, the Wardens' quests).
-  On the hills south-east of the river, a Lantern survey marker still lit (`second_marker`), the
-  Lanterns' rank 2 quest; their rank 1 quest is the dark marker in the lake (the Lanterns' quests).
+  By the boulders south of the river, a Lantern survey marker still lit (`second_marker`), the
+  Lanterns' rank 2 quest; their rank 1 quest is the dark marker in the lake, seen from its west
+  shore (docs/areas/shelf.md §6, the Lanterns' quests).
 - **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the Lantern
   Hall (tier 4; the Lanterns' hall), the Elder's Yard, the Split Oak tavern (rumours about Vask's
-  timing), a healing spring, and Elder Sylvane, who pays 1500 gold for the Underdeep chisel.
+  timing), a healing spring and Elder Sylvane, who pays 1500 gold for the Underdeep chisel.
 - **The Grove Roots** (dungeon, 16×16, band 6–9): two halves joined by a locked door; the iron
   key is behind a secret door on the west side; the stairs down are guarded.
 - **The Cut Stone** (dungeon, 16×16, band 8–10): three square rings of Underdeep corridor. A

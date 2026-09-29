@@ -447,8 +447,8 @@ Three changes to #56's drafts, for the owner:
   banded 3–4.
 - **Oil for the Lamp's chandler is Mottram,** whose stores are built, rather than a chandler of his
   own.
-- **3 and 6 could be the Wardens' and 5 the Lanterns',** given from their halls (#21). They are
-  built as plain quests unless #21 takes them.
+- **3, 5 and 6 stay plain quests,** not the Wardens' or the Lanterns', as DESIGN §8 settles it
+  (#21).
 
 A choice put by a person, words that change with a flag, a person who moves once a flag is set, a
 person who takes more than one item and a letter to read from the pack are systems the game lacks
@@ -480,8 +480,8 @@ two here and two in Thornmark:
 |---|---|---|---|
 | first task | First Light | the Hearth seen from the shore (`coast`, 15,28) | 20 gold, 60 xp |
 | 1 | The Drowned Stair | the dead at the stair down in Brandy Hole (`gw1_stairs`) | 80 gold, 300 xp |
-| 1 | The Dark Marker | the survey marker in Thornmark's lake (`lake`) | 150 gold, 900 xp |
-| 2 | The Second Marker | a lit marker on Thornmark's south-eastern hills (`second_marker`, 21,27) | 200 gold, 1,500 xp |
+| 1 | The Dark Marker | the survey marker in Thornmark's lake, seen from its west shore (`lake`, 26,22) | 150 gold, 900 xp |
+| 2 | The Second Marker | a lit marker by the boulders south of Thornmark's river (`second_marker`, 21,27) | 200 gold, 1,500 xp |
 
 A company that did a deed before taking its quest is paid when it takes it. The guilds' quests
 take none of #56's: quests 3, 5 and 6 stay plain quests (DESIGN §8).
@@ -503,7 +503,7 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 - **Experience.** One clear of the area pays 1,770 xp a member today, 110 of it the guilds' pay,
   just past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area the climb from its floor
   to the next area's floor, divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the
-  other 2,070 or so come from, shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2
+  other 1,960 or so come from, shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2
   190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the curve reports the
   shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood as a group that
   respawns does; the figures count the brood once.
