@@ -695,3 +695,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   one group of six, as the brief), the lamp by day, nits, #148's side of the `OWED` hunk.
 - #140 told at 00:30 to merge b48f459 (the walkthrough's three places, §3, shipped.json); it still
   waits on the owner's OK of the track.
+- 00:33: #148's session told to try the owner's way first: fewer, harder groups from Thornmark's
+  existing kinds (heavier roles, near one standard encounter, 8 at most, the zealot kept a soldier
+  if it can be), an hour or two; if it holds it becomes the PR, else both shapes go to the owner
+  with their figures and the swarm is the fallback.
+- Put to the owner at 00:35: the Lodestone's track (#140) again, and whether to file the combat
+  header's "12 Ogres" as a systems issue.
