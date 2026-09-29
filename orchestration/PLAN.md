@@ -1211,3 +1211,30 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - Scouts on #71 (D3, after #67) and #87 (Ashcombe past Gullwick, after #47 and #67), so both can
   start as E3 lands. An agent reads the Deepthorn's Dependencies (#49, #214 to #218, #163) for what
   can run beside #214.
+
+### 16:40: the delegate's decisions; four bugs filed; #284 open
+- **#281's choices** (the delegate, 16:30): all four defaults taken (the Bough "Eldest's Bough +2";
+  the Silver Torc at 400; re-deriving 10 to 32; the Ranger's brigandine in the harness, the bow alone
+  in the table), and the found-in-passing level-9 row added in #281 (an oversight since 7f9a410).
+  Relayed (16:32).
+- **#282's choices and sheet** (the delegate, 16:34): pay, Sylvane's order, the three lines and the
+  places (with the review's three moves) taken; the curve counts both bands, but only the
+  Deepthorn's gold shares shrink, by the hand-ins' sure 700 (1,900 → about 1,200), its xp shares
+  left at 3,440, since the 567 xp are the two bands' and a company meets one at most. Sheet OK
+  (856 pixels of automap marks differ, none else). Relayed (16:37).
+- **The four found in passing** (the delegate, 16:31): all four filed as Bugs under #26 and
+  approved, at its word (marked so on each): #285 (a mixed group drawn as its first monster while
+  exploring), #286 (a sconce's flame through a nearer tree), #287 (the silhouette check blind above
+  1.3 heights), #288 ("1 The Eldest"; blocks #218, said on #218). #26's Work gains them and #271
+  and #273. #285, #286 and #288 to the #45 session (systems), in turn; #287 to the #97 session
+  (quality). Sent 16:37.
+- **The Deepthorn's order** (an agent read the Dependencies): #212 (#281), #214, #49, #216, #218;
+  #215 beside #49, #217 beside #216. #163 (Sunderwood's terrain; #216 needs its dead wood) is
+  unblocked and not approved: put to the delegate now rather than when #49 lands, so it is on main
+  before #216.
+- **#284** (#67's A, E3 Crowness; head 2d0bc57) opened at 16:34: 99.3% won at 3, 6.41 fights to a
+  rest, the Foreland two under 72.2% (listed). A reviewer on it; its ten choices and its sheet
+  (`scratchpad/render/sheet284.png`), with #283's four and F3's sheet (`sheet283.png`), and #163,
+  to a delegate (16:40).
+- The #214 scout still out; the #71 and #87 scouts started 16:29. #77's C (Who Lived at Ashcombe)
+  sent to its session (16:32): its branch was never pushed, so it may rebuild.
