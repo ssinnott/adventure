@@ -65,7 +65,7 @@ DESIGN.md first for the why.
   from the pack in a box. A person and an event wear `Presence` as a group does: there only in their
   hours (by night), once their `after` holds and until their `until` does, so one person can stand
   in two places, one at a time, and a once-event by night is not spent by day (`World.present`; the
-  automap shows only who is there). On nobody yet: the areas place them.
+  automap shows only who is there). The Foreland's side quests are built on them (#77).
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (the group's
   first monster, in line of sight), or meets one in a fight unseen, the log says its `look`, once.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
@@ -74,13 +74,14 @@ DESIGN.md first for the why.
   Sylvane's chisel). A chapter is begun once its start or its end holds, and the quest is done once
   every one is; its goal is tried from the last chapter back, over those begun and the ones before
   them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
-  Beside it are the side quests: The Cargo Ledger (Hale), and The Lost Expedition, which the first
-  Meridian journal opens and which stays open until the rest of its trail is built. Left and right
-  page the one quest by chapter, and a page too long goes on over the next. Nothing new is saved.
-  Every entry is keyed to something the save already holds (a flag, a carried item, a once-only
-  event, a guardian killed, a map set foot on), so an old save opens with its log whole. A quest or
-  chapter begun, advanced or finished is announced once in the message log, and J opens on the one
-  that changed last, at its goal's chapter.
+  Beside it are the side quests: The Cargo Ledger (Hale), The Bell That Rang Twice (Osmund), The
+  Rest of the Survey (Ebba, Ailith) and The Lost Expedition, which the first Meridian journal opens
+  and which stays open until the rest of its trail is built. Left and right page the one quest by
+  chapter, and a page too long goes on over the next. Nothing new is saved. Every entry is keyed to
+  something the save already holds (a flag, a carried item, a once-only event, a guardian killed, a
+  map set foot on), so an old save opens with its log whole. A quest or chapter begun, advanced or
+  finished is announced once in the message log, and J opens on the one that changed last, at its
+  goal's chapter.
 
 ## The outdoors as one map, and the end of the world
 

@@ -68,5 +68,10 @@ export const THORNHOLD: MapDef = {
       after: ['"The Grove is quiet again. The cut will need a Lantern to mend, and we have sent for one. Rest here as long as you need; Thornhold owes you."'],
     } },
     { kind: 'event', x: 7, y: 14, id: 'thornhold_intro', once: true, text: 'Thornhold. Houses grown around living trees, and a hush that is not peace.' },
+    // The Rest of the Survey (#77): Ailith, once the company sent her here.
+    { kind: 'npc', x: 11, y: 4, name: 'Ailith, adjunct of the survey', lines: [
+      'Ailith is in the Chapterhouse with her leg in a proper splint and her arms full of somebody else\'s charts.',
+      '"You got me here. The Elder heard me out and didn\'t rise, which is her way of standing up. I\'ve told her the company that found me is to be trusted. She said she\'d decide that for herself." A small smile. "She will. She\'ll decide it my way."',
+    ], after: { flag: 'q_survey_thornhold' } },
   ],
 };
