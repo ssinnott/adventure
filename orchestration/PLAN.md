@@ -1274,3 +1274,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - Sessions: the pilot on E; #67's A (#284) and #68's A (#291) in review; #214 (Thornmark session)
   and #49 (#100 session) authoring; #45 session on #286; #97 session free after #292; #76 session
   after #289. Scouts out: #214, #71, #87, #49.
+- 16:56: `reviews/283.md` (the pilot's C with D): ready after fixes. Blocker: merge main
+  (shipped.json with #282's flags). Should-fix: nothing tests the Boat or the farm-first goal (Hamo
+  on the road with the after-words swapped passes); the night footprints at 0,13 miss the beach's
+  east way in (to 0,12); SLICE.md and shelf.md left behind. Nits: "either" for "both"; the
+  boards-first goal names Wat; `quests.ts:194` passes on a word; commas. For #284: E3's 31,5-9 farm
+  makes Hamo (F3 0,9) a shortest way home from its fields (rock at 31,9 at least). Diff read. Round
+  sent to the pilot with the delegate's four decisions (16:58); the reviewer's Boat walk sketch
+  committed as `reviews/283-boatwalk.ts` for it.
