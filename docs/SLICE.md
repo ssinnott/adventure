@@ -329,8 +329,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   Lost Expedition past its first journal: design only.
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
-  Thornmark's less gold (#26); the gate's marks for a boss's odds, fights to a rest and the floor
-  are missed on the Foreland (#47, the Rift Warden's odds #87's).
+  Thornmark's less gold (#26); the gate's limits for a boss's odds are missed on the Foreland
+  (#47, the Rift Warden's odds #87's), and its fights to a rest are off their aim.
 
 ## Checks
 
@@ -376,13 +376,17 @@ over content broken on purpose too, and two tools to theirs:
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
 - `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder,
-  against every group alone; each map is held to its band and each area to its band on the curve:
-  nine fights in ten won at the floor, a quarter at most two under it (of an area, and of a map
-  whose floor is its area's), a boss three to seven times in ten, 6.5 fights to a rest give or
-  take one, its bosses left out of the day and the area's road walked eight times in ten. A
-  group that walks only in fog is fought with the bows' toll; one that waits on an `after` is no
-  warning at the way in. A den's keepers are its camp's hardest fight, won no more often than any
-  of its brood; its brood's number and pace are printed.
+  against every group alone; each map is held to its band, and each area pools its groups, each
+  fought at its own map's floor: nine fights in ten won at the floor, a quarter at most two under it
+  (of a map whose floor is its area's, and of the area, a zone map's groups two under its own floor
+  and a town's or dungeon's two under the area's), a boss three to seven times in ten, 6.5 fights to
+  a rest give or take one, its bosses left out of the day and each zone's road walked at its floor
+  eight times in ten, its nearest groups at its way in among its gentlest. A group that walks only
+  in fog is fought with the bows' toll; one that waits on an `after` is no warning at the way in.
+  Each figure has an aim (these) and a limit beyond it (#273): between the two it passes and is
+  listed at the end of the suite as off its aim, and only past its limit does it fail or go into
+  `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its brood; its
+  brood's number and pace are printed.
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
@@ -421,15 +425,19 @@ over content broken on purpose too, and two tools to theirs:
   #47 and the Deepthorn's to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
+- `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
+  font, so none is painted as nothing.
 - `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
   together, labelled with each kind and its count of the living. A kind leaves the label when its
   last one falls; every line stays inside the view and above the monsters' markers, running into
   no other.
-- `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
-  kind at its rate; a secret door outdoors among mountain, rock or trees drawn as they are
-  (`drawnCell`), and any other door, or one in a wall or a town, left a door.
-- `changed`: which files count every map, monster or interior for the crack sweep and the sheet,
-  and which only their own.
+- `art` (§5.6): every monster def its own sprite kind, each family module's `KINDS` the kinds
+  `FAMILY` sends it and the walls dressed under their caps, each kind at its rate; a secret door
+  outdoors among mountain, rock or trees drawn as they are (`drawnCell`), and any other door, or one
+  in a wall or a town, left a door.
+- `changed`: which files count every map, monster or interior for the crack sweep and the sheet, and
+  which only their own; and that it reads each family module's `KINDS` from the module's text as the
+  module lists them.
 - `scaffold` (§8.2): the Downs' draft and the Deepthorn's first, its light woods and all, laid back
   into the atlas, are the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in

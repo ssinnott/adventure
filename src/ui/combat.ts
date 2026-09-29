@@ -176,7 +176,7 @@ export class CombatScreen implements Screen {
       const hpFrac = m.hp / m.def.hp;
       ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(Math.round(x - 14), Math.round(y + 3), 28, 3);
       ctx.fillStyle = hpFrac > 0.5 ? GREEN : hpFrac > 0.25 ? YELLOW : RED; ctx.fillRect(Math.round(x - 14), Math.round(y + 3), Math.round(28 * hpFrac), 3);
-      if (targeting && k === this.sub) drawText(ctx, '▼', x, y - h - MARKER_RISE, { size: 1, color: YELLOW, align: 'center' });
+      if (targeting && k === this.sub) drawText(ctx, '↓', x, y - h - MARKER_RISE, { size: 1, color: YELLOW, align: 'center' });
       if (t && t.side === 'monster' && t.i === mi) drawText(ctx, '*', x, y - h - MARKER_RISE, { size: 1, color: RED, align: 'center' });
       if (asleep) drawText(ctx, 'z', x + 10, y - h - 2, { size: 1, color: TEXT_DIM });
     });

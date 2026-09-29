@@ -55,7 +55,7 @@ Its edges:
   and round its end, and open no way into the Eaves' boxes; their forest is drawn closed so that the
   Eaves' own look is kept for here (docs/areas/thornmark.md §9, 7).
 - **South: Sunder Bay,** and the Deepthorn's shore running on into the dead wood at K4 (15
-  squares of border); Thorn Head across the water.
+  squares of border); Penspern across the water.
 - **East: the Iron Fells,** the Kilns' first zone (16–18, Act III), 84 squares of border, with the
   east road running on into them at 404,70 (`src/content/atlas.ts:377`), open from the start: the
   world's end there until Act III's first box; and south of the Fells, Kilnmouth (69 squares) over

@@ -18,6 +18,7 @@ import { ok, owed } from './lib.ts';
 const UNPLACED: Record<string, string> = {
   wrecker: '#47', lampman: '#47', black_dog: '#69', barrow_guard: '#70', barrow_captain: '#70',
   farm_kitchen: '#87',
+  barnacle_crab: '#67', billman: '#67', slinger: '#67', old_rook: '#68',
   great_owl: '#49', bramble: '#49', rootwalker: '#49', heartwood: '#49', eldest: '#49',
 };
 
