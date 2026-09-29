@@ -759,3 +759,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - For #145 once #263 lands: take main's side for the five (bandit.ts's dispatch line conflicts),
   delete its own defs block (it merges silently as a second definition), drop the five from
   `UNPLACED`.
+
+### 01:36: #262 reviewed
+
+- `reviews/262.md` (#77's B, the Seal): ready after fixes. The 7 texts verbatim; a state explorer
+  (264 states) strands nobody, the seal given and paid once. Sent 01:40: merge main 0ced6cf (§3's
+  Helmstow row, §8's gold line, shipped.json by the tool); nits: `gw1_coat` `until` the done flags,
+  assert the strongbox's words. All six owner's choices: the defaults. Found in passing: an unhired
+  company that hands Hale the seal is greeted afresh next time (#43's rule, as designed).
