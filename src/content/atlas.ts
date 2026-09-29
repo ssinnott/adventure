@@ -50,7 +50,7 @@ export const PLAN: Atlas = {
     {
       rough: 5,
       pts: [
-        // The Wyke, from the Foreland's beach; its east shore, then round Thorn Head.
+        // The Wyke, from the Foreland's beach; its east shore, then round Penspern.
         [199, 61], [216, 59.5], [232, 61], [236, 70], [240, 82], [248, 92], [258, 100], [266, 112], [276, 126],
         [286, 140], [294, 150], [302, 146], [304, 132], [308, 118],
         // Sunder Bay under Sunderwood and the Iron Fells' cliffs; Kiln Bight; round the Anvil.
@@ -83,7 +83,7 @@ export const PLAN: Atlas = {
     { rough: 1, pts: [[118, 146], [122, 144], [124, 149], [119, 150]] },
   ],
   lakes: [
-    // Thornmere, Reedmere, Longmere, Coldmere, Stillmere, a tarn on the moor.
+    // Lyngwyn, Reedmere, Longmere, Coldmere, Stillmere, a tarn on the moor.
     { pts: [[258, 47], [266, 45], [274, 48], [278, 55], [272, 60], [262, 58], [258, 54]] },
     { pts: [[58, 104], [68, 100], [76, 106], [72, 116], [60, 114]] },
     { pts: [[398, 270], [404, 268], [408, 284], [406, 302], [400, 310], [396, 296], [394, 282]] },
@@ -133,7 +133,7 @@ export const PLAN: Atlas = {
     { pts: [[70, 128], [58, 146], [62, 168], [80, 186], [100, 190]], width: [2, 2] },
     { pts: [[80, 146], [84, 164], [98, 178]], width: [1.5, 1.5] },
     { name: 'The Wend', pts: [[150, 20], [154, 40], [164, 60], [172, 72]], width: [1, 1.5] },
-    { name: 'The Thornwater', pts: [[268, 58], [266, 72], [258, 86], [252, 94]], width: [1.5, 2.5] },
+    { name: 'The Dowrdu', pts: [[268, 58], [266, 72], [258, 86], [252, 94]], width: [1.5, 2.5] },
     { pts: [[360, 10], [354, 28], [346, 46], [338, 58]], width: [1, 2] },
     { pts: [[398, 24], [394, 52], [384, 84], [372, 110], [364, 122]], width: [1, 2] },
     { name: 'The Kilnwater', pts: [[494, 96], [474, 112], [452, 130], [430, 148], [408, 162], [390, 164]], width: [1, 2.5] },
@@ -148,7 +148,7 @@ export const PLAN: Atlas = {
     { t: 'hills', pts: [[104, 34], [132, 26], [150, 36], [140, 56], [120, 70], [108, 56]] },
     { t: 'farm', pts: [[140, 40], [170, 34], [190, 44], [186, 62], [164, 72], [146, 62]] },
     { t: 'forest', pts: [[176, 24], [192, 26], [196, 40], [184, 44], [174, 36]] },
-    // II. The Deepthorn south of Thornmark, down to Thorn Head.
+    // II. The Deepthorn south of Thornmark, down to Penspern.
     { t: 'forest', pts: [[236, 62], [262, 60], [276, 70], [286, 90], [296, 118], [300, 142], [290, 146], [276, 128], [262, 106], [250, 92], [238, 78]] },
     { t: 'woods', rough: 4, pts: [[234, 62], [246, 62], [250, 74], [244, 86], [236, 76]] },
     // V. Sunderwood: pines under the rim, dead wood and crystal along the rift.

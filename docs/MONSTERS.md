@@ -13,7 +13,7 @@ are measured on this branch at `5092f9c`.*
 Three jobs. Where they pull apart, the earlier one wins.
 
 1. **They are the gate.** Nothing on the road is locked (EXPANSION.md §2.2): what turns a company
-   back is the monsters. An area's monsters let a company at its band's floor through and turn one
+   back is the monsters. An area's monsters let a company at each map's floor through and turn one
    two levels under it back (EXPANSION.md §5.2), and they do it by what they are and who they stand
    with, not by their numbers alone (DESIGN.md §6).
 2. **They carry the secret.** The road starts among beasts and people and ends among machines, and
@@ -286,6 +286,10 @@ does Thornmark's 3, its groups may be many and thin to hold the gate: ten or twe
 heavier is both lost at 3 and cheap at 6. Elsewhere they are fewer and harder, as in the Cut Stone
 (the owner, on #40).
 
+The gate holds each of these figures to an aim and a limit beyond it (EXPANSION.md §5.2, #273): six
+or seven fights to a rest is the aim; a map outside it but between four and ten passes, and is listed
+as off its aim; only past its limit does it fail. Tune to the aim, not to the decimal.
+
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
 (the gear ladder, `GEAR`: the kits, the Foreland's band gear and its finds with a plus by 3 and 5,
@@ -540,8 +544,8 @@ dead never come back already.
 
 ### 5.4 The Deepthorn (band 8–10)
 
-*The oldest of the forest, south of Thornmark down to Thorn Head, and the oldest elf-hold, which
-keeps the treaty. Thornmark's winter: cold, and snow that lies for weeks.*
+*The oldest of the forest, south of Thornmark down to Penspern, and Henlys, the oldest elf-hold,
+which keeps the treaty. Thornmark's winter: cold, and snow that lies for weeks.*
 
 The Deepthorn is age: trees older than Helmstow in a wood older than the elves' memory, and a treaty
 sealed with the chisel's mark, the first time the machine's script is seen on something that is not
@@ -558,7 +562,7 @@ the deep; the Great Owl from the birds.
 | Great Owl | birds | skirmisher, 8 | the deep, by night | *Wings as wide as a cart, and not a sound.* Flies, and hunts the back row |
 | Rootwalker | old wood, new | armoured, 9 | the old groves | *A stump walking on its roots, its bark like plate.* Slow and hard to hit; fire bites, once there are elements |
 | Heartwood | old wood, new | brute, 10 | alone, or over a thicket of brambles | *An oak that has decided to move.* Size 1.8 |
-| The Eldest | old wood, new | boss, 10 | Thorn Head | *The oldest tree in Caldera, and it is awake.* The last of the wood awake: it stays so until it is beaten, and beaten is put back to sleep, not felled |
+| The Eldest | old wood, new | boss, 10 | Penspern | *The oldest tree in Caldera, and it is awake.* The last of the wood awake: it stays so until it is beaten, and beaten is put back to sleep, not felled |
 
 - **Brambles and an owl** on a path at night: members held in the thorns while the owl takes the
   back row.
