@@ -867,3 +867,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   each group at its own map's floor). For the owner: as written, #209 judges every group two under
   its own map's floor, which undoes #148's (b) for dungeons (Thornmark 62.4%, the Foreland 65.8% on
   main). The scout's default keeps (b) for dungeons and changes no figure today.
+- The owner (12:00) on #209: keep #148's rule for dungeons (the footprint's default); zone maps
+  judged at their own floor and two under it. Recorded on #209 in a comment. Order: F2 (#145), then
+  #209 in a free quality session (the #40 session, which knows the gate), then the pilot's B (F3),
+  #67, #68, #214.
