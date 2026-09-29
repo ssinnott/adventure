@@ -30,17 +30,17 @@ DESIGN.md first for the why.
   its room first, over a menu of "The talk of the room" and them. With nobody there, a business
   opens as before.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
-  (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
-  mountains gated by party abilities, hills (`^`), farmland (`f`) and light woods (`t`) open to all
-  but on no built map yet, a calendar and weather over a day/night clock (below), automap with field-of-view
+  (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and mountains
+  gated by party abilities, hills (`^`), farmland (`f`) and light woods (`t`) open to all but on no
+  built map yet, a calendar and weather over a day/night clock (below), automap with field-of-view
   reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The wilderness
   features, on no built map yet: a shrine or fountain that gives every member a stat point once, a
   cairn with a cache, a statue whose riddle takes its answer typed and a camp where the party may
   rest with monsters two squares off; a hermit is a person. Dens, on no built map yet (#68, #69 and
-  #71 place them): a camp that breeds one kind of monster, its brood back one a pace at their
-  posts while it stands, guarded by keepers beside it that never leave. Its look is said when first
-  seen; its keepers dead, a step or Space asks to burn it, and burnt it gives its hoard, breeds no
-  more and shows as ash on the automap.
+  #71 place them): a camp that breeds one kind of monster, its brood back one a pace at their posts
+  while it stands, guarded by keepers beside it that never leave. Its look is said when first seen;
+  its keepers dead, a step or Space asks to burn it, and burnt it gives its hoard, breeds no more
+  and shows as ash on the automap.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
@@ -510,7 +510,7 @@ does.
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the farmland's fields and hedges, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |

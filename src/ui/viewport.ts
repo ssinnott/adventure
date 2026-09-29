@@ -342,10 +342,11 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
       } else if (d > 0 && cell.terrain === 'woods' && !backdrop) {
         // Light woods: a tree or two stand to the sides of the square, leaving the way through it open.
+        // None stands on a side a wall or the void closes: drawn after them, it would stand in front.
         const u = unit(d, r.h);
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
         for (const side of [-1, 1]) {
-          if (hash(c.x, c.y, 60 + side) < 0.3) continue;
+          if (hash(c.x, c.y, 60 + side) < 0.3 || solidAt(d, l + side)) continue;
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
           drawTreeSprite(ctx, bx, by, u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side)), tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
         }

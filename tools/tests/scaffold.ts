@@ -1,6 +1,6 @@
 // The scaffold (tools/scaffold.ts): the Downs' first zone map, as the tool writes it, cut at its
 // atlas square and laid back into the atlas, is the atlas square for square. It pins that the Downs'
-// hills, farmland, woods and road come through, not how many of each, so the owner may repaint the
+// hills, farmland, forest and road come through, not how many of each, so the owner may repaint the
 // Downs. Then the Deepthorn's first box, for the light woods no map could hold before #210.
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -61,7 +61,7 @@ export async function scaffold(): Promise<void> {
   const band = zone.band ?? atlas.areas.find((a) => a.id === zone.area)?.band;
   ok(def.id === zone.id && def.name === zone.name && def.kind === 'outdoor' && def.density === 'country' && def.band?.join('-') === band?.join('-') && def.region === undefined, `it takes the zone's id, name and band, the Foreland's sky, and is country (${def.name}, ${def.band?.join('-')}, ${def.density})`);
   const has = (t: 'hills' | 'farm' | 'forest' | 'road'): boolean => (d.counts[t] ?? 0) > 0;
-  ok(has('hills') && has('farm') && has('forest') && has('road'), `its hills, farmland, woods and road come through (${['hills', 'farm', 'forest', 'road'].map((t) => `${t} ${d.counts[t as 'hills'] ?? 0}`).join(', ')})`);
+  ok(has('hills') && has('farm') && has('forest') && has('road'), `its hills, farmland, forest and road come through (${['hills', 'farm', 'forest', 'road'].map((t) => `${t} ${d.counts[t as 'hills'] ?? 0}`).join(', ')})`);
 
   // Laid back where it was cut, the atlas is unchanged under it, square for square.
   const back = (draft: MapDef): number => {
