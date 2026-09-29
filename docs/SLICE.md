@@ -75,7 +75,7 @@ DESIGN.md first for the why.
   every one is; its goal is tried from the last chapter back, over those begun and the ones before
   them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
   Beside it are the side quests: The Cargo Ledger (Hale), The Bell That Rang Twice (Osmund), The
-  Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud) and The Lost Expedition, which the
+  Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud), The Well Tastes of Iron (Mottram) and The Lost Expedition, which the
   first Meridian journal opens and which stays open until the rest of its trail is built. Left and
   right page the one quest by chapter, and a page too long goes on over the next. Nothing new is
   saved. Every entry is keyed to something the save already holds (a flag, a carried item, a

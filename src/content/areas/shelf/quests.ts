@@ -107,4 +107,27 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { flag: 'q_seal' }, text: 'Find Edwin, or find out what became of him, in the caves at Brandy Hole, west along the beach.' },
     ],
   },
+  {
+    // #56's third: grit in Helmstow's well, and a Warden mason carting stone dust out of the Regent's
+    // works under the keep by night. Mottram asks who the company will tell: the Wardens or the Lanterns.
+    id: 'well',
+    title: 'The Well Tastes of Iron',
+    start: { flag: 'q_well' },
+    done: [{ flag: 'q_well_wardens' }, { flag: 'q_well_lanterns' }],
+    entries: [
+      { id: 'mottram', when: { flag: 'q_well' },
+        text: 'Helmstow\'s well has tasted of iron since the week the Queen died. Mottram says the grit in it is stone dust, and none he knows; the cistern behind Ashcombe is sweet.' },
+      { id: 'alwin', when: { flag: 'q_well_alwin' },
+        text: 'Alwin, a Warden mason, carts the dust out of the gatehouse by night. The Regent is opening an old way under the keep, and the old cut runs under the well.' },
+      { id: 'wardens', when: { flag: 'q_well_wardens' },
+        text: 'We said we would tell the Wardens. Their mason, their works and their well: they will see to it.' },
+      { id: 'lanterns', when: { flag: 'q_well_lanterns' },
+        text: 'We said we would tell the Lanterns. The Chapel will write it down, with the hours and the bells.' },
+    ],
+    goals: [
+      { when: { flag: ['q_well', 'q_well_alwin'] }, text: 'Take what the mason said back to Mottram\'s Stores.' },
+      { when: { flag: 'q_well', seen: 'harrow:well_cart' }, text: 'Find who drives the cart with no lamp that leaves the gatehouse by night.' },
+      { when: { flag: 'q_well' }, text: 'Find where the stone dust in Helmstow\'s well comes from.' },
+    ],
+  },
 ];
