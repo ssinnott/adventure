@@ -547,7 +547,7 @@ the deep; the Great Owl from the birds.
 | Great Owl | birds | skirmisher, 8 | the deep, by night | *Wings as wide as a cart, and not a sound.* Flies, and hunts the back row |
 | Rootwalker | old wood, new | armoured, 9 | the old groves | *A stump walking on its roots, its bark like plate.* Slow and hard to hit; fire bites, once there are elements |
 | Heartwood | old wood, new | brute, 10 | alone, or over a thicket of brambles | *An oak that has decided to move.* Size 1.8 |
-| The Eldest | old wood, new | boss, 10 | Thorn Head | *The oldest tree in Caldera, and it is awake.* Asleep with the rest of the wood once the Grove Stone is restored |
+| The Eldest | old wood, new | boss, 10 | Thorn Head | *The oldest tree in Caldera, and it is awake.* The last of the wood awake: it stays so until it is beaten, and beaten is put back to sleep, not felled |
 
 - **Brambles and an owl** on a path at night: members held in the thorns while the owl takes the
   back row.

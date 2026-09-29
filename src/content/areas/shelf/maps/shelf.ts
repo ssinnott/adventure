@@ -1,7 +1,7 @@
-// The Foreland: the starting coast. Helmstow at the north, the Ashcombe farm to the south-east,
-// woods to the west, marsh and the sea at the south, the caves at Brandy Hole in the south-west
-// cliffs, and the pass east to Thornmark, open, where a Warden checkpoint warns every company that
-// goes through. Difficulty band 1-5.
+// The Foreland: the starting coast. Helmstow at the north, the Lodestone on a track outside its
+// south gate, the Ashcombe farm to the south-east, woods to the west, marsh and the sea at the
+// south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
+// where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 
@@ -17,7 +17,7 @@ export const SHELF: MapDef = {
     'M,,,,,,,,,,,,,BBBBB,,,,,,,,,,,,M',
     'M,,T,,,,,,,,,,BBBBB,,,,,T,,,,,,M',
     'M,,,,,T,,,,,,,BB=BB,,,,,,,,T,,,M',
-    'M,,,,,,,,,,,,,,,=,,,,,,,,,,,,,,M',
+    'M,,,,,,,,,,,,,,,=====,,,,,,,,,,M',
     'M,,,,TT,,,,,,,,,=,,,,,,TT,,,,,,M',
     'M,,,TTT,,,,,,,,,=,,,,,TTTT,,,,,M',
     'M,,,,T,,,,,,,,,,=,,,,,,TT,,,,,,M',
@@ -60,6 +60,31 @@ export const SHELF: MapDef = {
     { kind: 'event', x: 23, y: 20, id: 'ashcombe_gate', once: true, text: 'Ashcombe. The gate is off its hinges and the yard is silent. Something has scraped the earth in a wide ring around the house.' },
     { kind: 'event', x: 28, y: 9, id: 'scarth_watch', once: true, text: 'The Scarth. A pole across the road, a brazier and two Wardens with nothing to do but watch the pole.' },
     { kind: 'event', x: 15, y: 28, id: 'coast', once: true, text: 'The sea. Out on the water, far off, the column of the Hearth stands against the sky. It flickers.' },
+    // The Lodestone, the Foreland's own Stone, whole: its words, not a drawing, as the Grove Stone
+    // is. The track from the gate road ends at it, and Gytha keeps it. Her later words wait on her
+    // lesson, so it always comes first, and the chisel's take the cut's place.
+    { kind: 'event', x: 20, y: 4, id: 'lodestone', once: true, text: 'The Lodestone. Grey, the height of two men, not a mark on it. It hums: one low note, held, that you feel in your teeth.' },
+    { kind: 'npc', x: 21, y: 4, name: 'Gytha, Lantern of the Lodestone', flag: 'q_lodestone', lines: [
+      'A woman in Lantern grey sits at the foot of the stone with a hand flat on it, the way you might rest a hand on a dog. Her eyes come round to you. The hand stays.',
+      '"Gytha. I keep the Lodestone, which is to say I sit by it. You\'re a company, and new; I can smell the wax on the charter. So you get the lesson. Every company does, once, and none has needed it yet. Hand here. Go on."',
+      '"That\'s a Stone, whole. It hums. Rain hasn\'t marked it and lichen won\'t take on it. Every spring some boy comes out with a knife for a chip of it to carry for luck, and goes home with a broken knife. A Stone doesn\'t wear, doesn\'t tire and doesn\'t go quiet of itself."',
+      '"The Chapel says the Hearth keeps Caldera, a Stone keeps its country and a Lantern carries light from the one to the other. What we do is listen, and write down what we hear. Fourteen thousand mornings I\'ve written one word, and never yet a different one."',
+    ], says: [
+      { after: { flag: ['q_lodestone', 'q_grove_done'] }, lines: [
+        'Gytha is on her stool, and there is a second stool beside her with nobody on it.',
+        '"Word came over the Scarth: the tear under the Grove is shut and the man with the chisel is dead. Good. Then it\'s only a Stone that\'s hurt, and stone is patient. Thornhold has sent for a Lantern to mend it, and the Guildhall came to me, since I\'ve had a Stone under my hand longer than anyone, and asked how."',
+        '"I told them the truth: I\'ve never mended one, and I\'ve never met a Lantern who had. There\'s a book. The last hand in it is older than the Chapel roof." She looks at the empty stool. "I asked them to send a keeper; a keeper knows a Stone by the hand. They said keepers keep."',
+      ] },
+      { after: { flag: ['q_lodestone', 'q_grove'] }, lines: [
+        'Gytha hears you out with her hand on the stone, and at the word cut the hand goes flat and hard, as if the stone might have heard it too.',
+        '"Cut. With tools." She is quiet a while. "Forty years I\'ve told Guildhall boys a Stone can\'t fail, and I was right, and I\'d give a good deal to have been wrong. A failing is nobody\'s fault. A cut has a hand on the other end of it."',
+        '"You\'d stood by a whole one. So you knew what was missing before anyone told you what was wrong; that\'s what the lesson is for, and I never thought to see it used. Don\'t say cut in the town. Helmstow walks past this stone every day of its life without a look. I used to mind that. I\'ve stopped."',
+      ] },
+      { after: { flag: 'q_lodestone' }, lines: [
+        'Gytha\'s hand is on the stone. "Still whole. It\'ll be whole when you\'re back, and the time after. Same news every day, and I\'ve not once been sorry to give it."',
+        '"Got a needle? Lay it flat on your palm and hold it close." The needle turns, slow, and settles pointing out over the sea, at the Hearth. "Every one of them does that. Don\'t ask me why. Go and earn your charter; this one wants no help."',
+      ] },
+    ] },
     { kind: 'npc', x: 29, y: 8, name: 'Captain Hale, Warden of the Scarth', lines: [
       'A grizzled Warden with a bandaged arm sits on a crate by the checkpoint, and gets up when he sees you, which costs him something.',
       '"Smugglers. They\'ve holed up in Brandy Hole, the caves at the west end of the beach. I lost three men going in after them, and the one who came back talks about worse than smugglers. I believe him. I\'ve an arm that believes him."',
