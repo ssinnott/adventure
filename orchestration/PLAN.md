@@ -1115,3 +1115,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 15:31: #212 (the Deepthorn's gear ladder) sent to the #100 session (session_01JbyZsPz1NTc8cTjfQn9Grs,
   idle since #100 and #98): plan at the top of its PR, the items, `GEAR` at 10, the Knight's
   Thornmark row, each find owed to its box; lands after #277. The #97 session told it's done.
+- 15:38: #274 (#211) landed: the round (c388ef2: HENLYS below its hold; "named" for the Dowrdu; two
+  lines rewrapped; Penspern's site). Landing check on c388ef2 merged onto main 466ca5c: ALL OK (39
+  owed), SMOKE OK, "Nothing new."; CI green. Merged as f92d356. #211 closes with it. The Thornmark
+  session goes on with #219 on its names.
