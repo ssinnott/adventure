@@ -43,10 +43,14 @@ Its edges:
 - **North: the rim,** about nine squares deep, behind Thornhold.
 - **West: the ridge,** with the Scarth through it into the Foreland (1–5); south of the ridge's
   foot, the Wyke.
-- **East: the Hoarhills,** between Thornmark and Sunderwood (14–16), with the east road over them
-  from the Thornmark map's east edge (`src/content/atlas.ts:372`), open from the start: the world's
-  end there until Sunderwood is built. The hills run south-east and end in Sunder Bay, in J4; round
-  their foot the Deepthorn's shore runs on east into Sunderwood's dead wood.
+- **East: the Hoarhills,** between Thornmark and Sunderwood (14–16, #155), with the east road over
+  them from the Thornmark map's east edge (`src/content/atlas.ts:372`), open from the start: the
+  world's end there until Sunderwood's first box is built (#195). The hills run south-east and end in
+  Sunder Bay, in J4; round their foot the Deepthorn's shore runs on east into Sunderwood's dead wood.
+  Sunderwood's plan cuts its land in I3, I4 and J4, which the Deepthorn builds (§9, 7). The atlas's
+  forest runs on over those boxes' north and east edges into Sunderwood's I2, J3 and K4, and no way is
+  opened there: the ring between two zones stays mountain (`src/game/outdoors.ts:63`), so the only
+  way from Thornmark into Sunderwood is the east road.
 - **South: the sea,** the Wyke and Sunder Bay meeting round Thorn Head, with the Hearth Isle across
   the water to the south-west.
 - **The Deepthorn's way in** is the Grove: the atlas's road south out of its hollow
@@ -582,7 +586,8 @@ when the issues are filed:
 7. **I3 and J4 are built whole,** the Eaves' squares in them the Deepthorn's and the Hoarhills and
    their end the border inside them (EXPANSION §8.2, as D4 takes the cliff's foot). J4's Eaves'
    forest is closed, with few paths and nothing to find, so that the Eaves' own look is kept for
-   Sunderwood.
+   Sunderwood. Sunderwood's plan (#155) cuts the same land, so the two agree; the boxes' edges that
+   face the Eaves' boxes open no way into them (§1).
 8. **The Eldest stays awake** until it is beaten, whichever the company does first; beaten, it is
    put back to sleep, not felled (§7), as MONSTERS §5.4 now says.
 9. **#49 becomes the oldest hold's box,** I4, with the step; Thorn Head, J5, is filed on its own, and
@@ -606,8 +611,8 @@ when the issues are filed:
 19. **Tier 5** sold at Thornhold's Lantern Hall (§8).
 20. **The cuts** of §11, the Thornwater's mouth among them.
 21. **The names** of §10.
-22. **The epic** is Phase 1's, as #65 is: the second half of its build-out, which the owner called
-    phase 1.1.
+22. **The epic** is Phase 1.1, as the owner called it, under #26 as #65 is: the second half of Phase
+    1's build-out, before Act II's Phase 1.2 (#149).
 
 Left for later: a home for the subplots that span areas. The Lost Expedition and The Empty Throne
 live in Thornmark's `quests.ts`, and Saltreach adding Tallis's claim would edit another area's file
