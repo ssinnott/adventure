@@ -136,7 +136,7 @@ function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly 
   if (!groups.length) { console.log(`  n/a:  ${id} has no groups yet`); return; }
   const at = pooled(groups, floor);
   check(`${id}: floor`, at, (v) => GATE.through - v, `${id} at its floor, ${floor}: ${pc(at)} of fights won (${pc(GATE.through)} asked)`);
-  if (!judgeUnder) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups are judged two under in the area's`); return; }
+  if (!judgeUnder) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups count two under only in the area's, where there is one`); return; }
   const low = floor - GATE.under;
   if (low < 1) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: level ${low} is no company`); return; }
   const under = pooled(groups, low);

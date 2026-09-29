@@ -58,25 +58,25 @@ to level 10").
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
 One clear of every map is worth level 9 per member and most of the way to 10; the dungeons respawn
-in one to two days, and a quarter of one more sweep of the Grove reaches 10 (3,503 xp a member a
+in one to two days, and a fifth of one more sweep of the Grove reaches 10 (3,503 xp a member a
 sweep once the Warden of the Cut is dead and the Rift's groups stop coming, 28% less than before).
 Levels are still bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear of
-Thornmark pays 10,383 xp a member of the 13,667 its curve asks, and 6,531 gold of the 8,400 (the Wardens' two quests and their chest
-give 400 xp a member and 470 gold of it): the curve (`src/content/progression.ts`)
-reports both as owed to the pilot (#26).
+Thornmark pays 10,608 xp a member of the 13,667 its curve asks, and 6,701 gold of the 8,400 (the
+Wardens' two quests and their chest give 400 xp a member and 470 gold of it): the curve
+(`src/content/progression.ts`) reports both as owed to the pilot (#26).
 
-The gate check (`tools/tests/gate.ts`) holds for Thornmark. Its company is dressed by the
-Foreland's gear ladder (#99), so at 3 it wears the band's gear. The zone is judged two under its
-floor, and the Grove Roots and the Cut Stone at their own floors only, their groups judged two
-under in the area's; a boss is judged on its odds and left out of its map's day (the owner's
-decisions on #40). The company wins 24% of the zone's fights at 3 and 19% of the whole area's, and
-all of them from 4, where the damaging group spells come; at the floors it gives 5.87 fights to a
-rest in the zone, 5.90 in the Grove Roots and 7.16 in the Cut Stone. It does so with swarms: past
-the two gentle groups at the way in (the dire wolves, and the ogre with his brigands and an
-archer), most groups are twelve strong, of thorn spiders, brigands or Ashen zealots that die to one
-group spell but bite hard, with the area's heavier monsters among them, and the barrow's dead, the
-wraiths and the elders in their own bands. The Hand of Ash is won 63% of the time at level 8 and
-the Warden of the Cut 43%, both every time at 10.
+The gate check (`tools/tests/gate.ts`) holds for Thornmark. Its company is dressed by the Foreland's
+gear ladder (#99), so at 3 it wears the band's gear. The zone is judged two under its floor, and the
+Grove Roots and the Cut Stone at their own floors only, their groups judged two under in the area's;
+a boss is judged on its odds and left out of its map's day (the owner's decisions on #40). The
+company wins 24% of the zone's fights at 3 and 19% of the whole area's, and all of the zone's from
+4, where the damaging group spells come; at the floors it gives 5.87 fights to a rest in the zone,
+5.90 in the Grove Roots and 7.16 in the Cut Stone. It does so with swarms: past the two gentle
+groups at the way in (the dire wolves, and the ogre with his brigands and an archer), most groups
+are twelve strong, of thorn spiders, brigands or Ashen zealots that die to one group spell but bite
+hard, with the area's heavier monsters among them, and the barrow's dead, the wraiths and the elders
+in their own bands. The Hand of Ash is won 63% of the time at level 8 and the Warden of the Cut 43%,
+both every time at 10.
 
 ## Tests
 

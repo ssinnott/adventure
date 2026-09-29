@@ -186,7 +186,7 @@ cap, which is 10 until the road past it is built:
   should take a member to the next floor, and its gold train the six there; every monster has a
   `level` within two of its maps' bands, rising from the way in (it changes no combat yet), and no
   chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,710 a
-  member of 3,734, Thornmark 10,383 of 13,667), nor Thornmark's the gold (6,531 of 8,400):
+  member of 3,734, Thornmark 10,608 of 13,667), nor Thornmark's the gold (6,701 of 8,400):
   `tools/tests/curve.ts` reports them as #26's.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
@@ -375,7 +375,7 @@ over content broken on purpose too, and two tools to theirs:
   against every group alone; each map is held to its band and each area to its band on the curve:
   nine fights in ten won at the floor, a quarter at most two under it (of an area, and of a map
   whose floor is its area's), a boss three to seven times in ten, 6.5 fights to a rest give or
-  take one, its bosses left out of the day, and the area's road walked eight times in ten. A
+  take one, its bosses left out of the day and the area's road walked eight times in ten. A
   group that walks only in fog is fought with the bows' toll; one that waits on an `after` is no
   warning at the way in. A den's keepers are its camp's hardest fight, won no more often than any
   of its brood; its brood's number and pace are printed.
