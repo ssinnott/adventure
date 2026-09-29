@@ -174,7 +174,9 @@
     "harrow": {
       "size": "16x16",
       "used": [
-        "harrow_intro"
+        "harrow_intro",
+        "well_cart",
+        "well_swept"
       ],
       "groups": [],
       "doors": []
@@ -264,6 +266,7 @@
     "q_lodestone",
     "q_maud_gone",
     "q_osmund_ailith",
+    "q_osmund_well",
     "q_seal",
     "q_seal_hale",
     "q_seal_maud",
@@ -278,6 +281,10 @@
     "q_wardens_tower_done",
     "q_wardens_watch",
     "q_wardens_watch_done",
+    "q_well",
+    "q_well_alwin",
+    "q_well_lanterns",
+    "q_well_wardens",
     "rank_cartographers",
     "rank_compact",
     "rank_lanterns",

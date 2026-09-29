@@ -103,6 +103,7 @@ function who(map: string, x: number, y: number, name: string): Person {
 const MAUD = (): Person => who('harrow', 12, 13, 'Maud');
 const EBBA_EEL = (): Person => who('harrow', 12, 13, 'Ebba'), EBBA_CHAPEL = (): Person => who('harrow', 11, 4, 'Ebba');
 const FISHERMAN = (): Person => who('harrow', 12, 13, 'the fisherman'), WALL = (): Person => who('harrow', 14, 3, 'a Warden on the wall');
+const MOTTRAM = (): Person => who('harrow', 4, 10, 'Mottram'), ALWIN = (): Person => who('harrow', 9, 1, 'Alwin');
 const OSMUND = (): Person => who('harrow', 11, 4, 'Osmund'), AILITH_WOOD = (): Person => who('shelf', 2, 14, 'Ailith'), AILITH_HOLD = (): Person => who('thornhold', 11, 4, 'Ailith');
 
 /** Whether a person stands where they are listed now. */
@@ -167,6 +168,29 @@ function bellAsked(w: Walk): void {
   meetWho(w, 'q_bell_wall');
   const confession = hear(w, 'harrow', EBBA_EEL());
   w.ok(confession.startsWith('The Lantern adjunct at the corner table') && !!w.party.flags.q_bell_ebba && !w.party.flags.q_survey, 'with the boats and the wall heard, Ebba at the Eel confesses, and does not ask after the survey');
+}
+
+/** The clock to the next midnight, or the next noon. */
+const at = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
+
+/** Whether an event of Helmstow's is there to be seen now. */
+const shows = (w: Walk, id: string): boolean => { const e = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f) => f.kind === 'event' && f.id === id)!; return w.world.present(e); };
+
+/** The Well Tastes of Iron to its question: Mottram hires, and by night the cart and Alwin at the gatehouse. */
+function wellAsked(w: Walk, alwinFirst: boolean): void {
+  at(w, 12);
+  w.ok(!there(w, ALWIN(), 'harrow') && !shows(w, 'well_cart'), 'by day neither Alwin nor the cart is at the gatehouse');
+  const hire = (): void => {
+    w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('Mottram sets a bucket') && w.news.at(-1) === 'New quest: The Well Tastes of Iron.' && !!page(w, 'well')?.goal,
+      `Mottram's first meeting begins The Well Tastes of Iron, with a goal (${w.news.at(-1)})`);
+  };
+  if (!alwinFirst) hire();
+  at(w, 0);
+  see(w, 'harrow:well_cart');
+  w.ok(w.world.used('well_cart'), 'by night the cart leaves the gatehouse');
+  w.ok(there(w, ALWIN(), 'harrow') && hear(w, 'harrow', ALWIN()).startsWith('A big man in Warden grey') && !!w.party.flags.q_well_alwin, 'by night Alwin stands by the cart, and says what is under the keep');
+  if (alwinFirst) hire();
+  w.ok(page(w, 'well')?.goal === 'Take what the mason said back to Mottram\'s Stores.', `the mason heard, the goal is Mottram (${page(w, 'well')?.goal})`);
 }
 
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
@@ -261,6 +285,33 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     reads(w, 'seal', 'The Clerk\'s Seal', ['coat', 'seal', 'hale'], ['maud', 'sold'], 'the seal to Hale, Maud never met');
     const first = hear(w, 'harrow', MAUD()), last = hear(w, 'harrow', MAUD());
     w.ok(first.startsWith('A woman in a good plain dress') && last.startsWith('"You gave it to the Warden."') && !there(w, MAUD(), 'harrow'), 'Maud met after asks after Edwin first, then says her last words, and is gone');
+  }
+  { // The well: the Wardens told. Alwin and the cart are gone, and the gatehouse is swept.
+    const w = newWalk(ok);
+    wellAsked(w, false);
+    const said = answerWho(w, 'q_well', 'The Wardens.');
+    w.ok(said.startsWith('"The Wardens. Good. Yes."'), 'the Wardens told, Mottram breathes out');
+    reads(w, 'well', 'The Well Tastes of Iron', ['mottram', 'alwin', 'wardens'], ['lanterns'], 'the Wardens told');
+    at(w, 12);
+    w.ok(!shows(w, 'well_swept'), 'the Wardens told, by day the gatehouse is not swept');
+    at(w, 0);
+    w.ok(!there(w, ALWIN(), 'harrow') && !shows(w, 'well_cart'), 'the Wardens told, by night Alwin and the cart are gone');
+    see(w, 'harrow:well_swept');
+    w.ok(w.world.used('well_swept'), 'and the gatehouse is swept');
+    w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('"Still iron." He does not offer'), "Mottram's after-lines are the Wardens'");
+    const first = hear(w, 'harrow', OSMUND()), then = hear(w, 'harrow', OSMUND());
+    w.ok(first.startsWith('A thin man in a leather apron') && then.startsWith('A thin man in a leather apron') && !w.party.flags.q_osmund_well, 'and Osmund, met twice, has nothing written');
+  }
+  { // The well: Alwin met before Mottram, the Lanterns told. Mottram hires first; Osmund writes it down.
+    const w = newWalk(ok);
+    wellAsked(w, true);
+    answerWho(w, 'q_well', 'The Lanterns.');
+    reads(w, 'well', 'The Well Tastes of Iron', ['mottram', 'alwin', 'lanterns'], ['wardens'], 'the Lanterns told');
+    at(w, 0);
+    w.ok(there(w, ALWIN(), 'harrow') && shows(w, 'well_cart') && !shows(w, 'well_swept'), 'the Lanterns told, by night Alwin and the cart are still there, and nothing is swept');
+    w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('"Still iron. It\'s in a book now'), "Mottram's after-lines are the Lanterns'");
+    const first = hear(w, 'harrow', OSMUND()), record = hear(w, 'harrow', OSMUND()), then = hear(w, 'harrow', OSMUND());
+    w.ok(first.startsWith('A thin man in a leather apron') && record.startsWith('"Written. Stone dust') && then.startsWith('A thin man in a leather apron'), "Osmund's first meeting comes first, then his record, once");
   }
   { // Ailith met first, with no word from anyone: her meeting begins the quest; Esc puts her question again.
     const w = newWalk(ok);
