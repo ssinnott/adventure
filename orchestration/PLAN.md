@@ -1179,3 +1179,23 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   on #281 now; the Thornmark session builds it after #219. A delegate on four things found in
   passing: the exploring view draws a mixed group as its first monster; sconce flames through a
   nearer tree; the silhouette check blind to a part wholly off its canvas; "1 The Eldest".
+
+### 16:26: #281 and #282 reviewed; their rounds sent; their choices to the delegate
+- `reviews/281.md` (#212, the Deepthorn's gear ladder; the #100 session): ready, nits only. The
+  ladder check holds neither of #212's rules for the table (a shield beside a two-handed weapon; the
+  Monk's step a weapon alone); `docs/MONSTERS.md:369-370` and `:389-395` quote the old tables'
+  figures; the body's counts (the harness's bad days 0% → 3%, the pillars 909 → 917); the one line
+  both it and #282 rewrite (`thornmark/items.ts:2`); commas. Read the diff myself: the nine items at
+  their base's price and 150 a plus, `GEAR` at 10, `DEEPTHORN` and `DEEP_FINDS` owed to their boxes;
+  the test monsters from 10 to 32 re-derived with the harness's own `--calibrate` (reproduced). The
+  round sent (16:25). Its four choices and its found-in-passing level-9 row are with a delegate.
+- `reviews/282.md` (#219, Thornmark's six side quests; the Thornmark session): ready after fixes.
+  Should-fix: The Dark Glass brought unasked never shows until done (start on `q_glass_read` too);
+  Ruan and Mylor off every way to Meva (move them to 4,8 and 11,8); the Mender's camp one square off
+  the Grove road (12,20 → 13,20). Nits: events trodden after "Quest complete"; Sylvane's words not
+  waiting on her first meeting (#77's rule); Tegen's fight key untested; thornmark.md's stale shares
+  and Henlys line. Read the diff myself: the Dialogue's words (117 texts, the reviewer's diff), the
+  journal keyed to the save, the two new bands of twelve as Thornmark's zone has them. The round sent
+  (16:26), with the sheet to send the owner. Its choices and its sheet (`scratchpad/sheet282.png`
+  beside main's) are with a delegate.
+- Whichever of the two lands second merges `items.ts:2`.
