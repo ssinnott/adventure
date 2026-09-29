@@ -137,6 +137,7 @@ function open(w: Walk, at: string): void {
 function sealFound(w: Walk): void {
   see(w, 'greywater1:gw1_coat');
   see(w, 'greywater1:gw1_strongbox');
+  w.ok(w.world.used('gw1_strongbox'), 'the strongbox is opened and its words said');
   open(w, 'greywater1:gw1_seal');
   w.ok(w.party.bag.includes('clerks_seal'), "the strongbox holds the clerk's seal");
 }

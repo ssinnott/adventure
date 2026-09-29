@@ -49,7 +49,7 @@ export const GREYWATER1: MapDef = {
     { kind: 'chest', x: 13, y: 13, id: 'gw1_c3', gold: 50, items: ['potion_heal', 'potion_sp'] },
     // The Clerk's Seal (#77): Edwin's coat among the drowned, on their own square, and his seal in a
     // strongbox of the captain's den, a chest of its own.
-    { kind: 'event', x: 8, y: 10, id: 'gw1_coat', once: true, text: 'Among the drowned, a clerk\'s black coat, salt-stiff, the customs badge at its collar. The thong where a seal would hang is cut.' },
+    { kind: 'event', x: 8, y: 10, id: 'gw1_coat', once: true, until: [{ flag: 'q_seal_maud' }, { flag: 'q_seal_hale' }], text: 'Among the drowned, a clerk\'s black coat, salt-stiff, the customs badge at its collar. The thong where a seal would hang is cut.' },
     { kind: 'event', x: 7, y: 14, id: 'gw1_strongbox', once: true, text: 'In the strongbox, a customs seal, brass on boxwood, worn bright. It has stamped more crates than a clerk sees in a year.' },
     { kind: 'chest', x: 7, y: 14, id: 'gw1_seal', gold: 0, items: ['clerks_seal'] },
   ],
