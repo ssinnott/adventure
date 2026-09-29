@@ -1163,3 +1163,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   groups (all inside their aims). CI green. Merged as ccc4c92.
 - Next for the pilot: C (the people and quests, `claude/m1-47-people`), D beside it, then E. #67's
   and #68's A (E3, E2) are unblocked but for C: area sessions to start once C lands (or on C's branch).
+- 16:17: #67 (E3, Crowness) started in a new area session, session_01VfvW8C6cR3vLWx4a5GkCVz: A now on
+  `claude/m1-67-e3` (landing after the pilot's C), then B. Two area sessions in the Foreland's area
+  at once (EXPANSION §8.1 says one per area), as #77's did beside the pilot: they merge main behind
+  each other and never rewrite each other's lines. Its brief carries what changed since 67.md (#273's
+  gate settles decision 1; #272's monsters to place; F3's cave moved in; 31,12-15 rock; 31,5-9 off
+  paths). The pilot told to start C (16:19). #68 (E2) follows #67, as its footprint orders.
