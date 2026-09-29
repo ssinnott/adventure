@@ -75,6 +75,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2: under': { whose: '#47', at: 0.658 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
+  'the Foreland: floor': { whose: '#47', at: 0.886 },
   // The Grove Roots and the Cut Stone: retuned until they hold; the area with them.
   'grove1: under': { whose: '#40', at: 0.999 },
   'grove2: under': { whose: '#40', at: 1 },

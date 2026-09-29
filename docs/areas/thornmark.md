@@ -43,7 +43,8 @@ to level 10").
   rank 1 quest is the tower's ogre (docs/areas/shelf.md §6, the Wardens' quests).
 - **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the
   Lantern Hall (tier 4), the Elder's Yard, the Split Oak tavern (rumours about Vask's timing),
-  a healing spring, and Elder Sylvane, who pays 1500 gold for the Underdeep chisel.
+  a healing spring, and Elder Sylvane, who pays 1500 gold for the Underdeep chisel. Ailith of the
+  survey is in the Chapterhouse once the company sends her there (docs/areas/shelf.md §6, 8).
 - **The Grove Roots** (dungeon, 16×16, band 6–9): two halves joined by a locked door; the iron
   key is behind a secret door on the west side; the stairs down are guarded.
 - **The Cut Stone** (dungeon, 16×16, band 8–10): three square rings of Underdeep corridor. A

@@ -75,21 +75,22 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel |
 | The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask and his contract in the throne room behind the keep's door |
-| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups |
+| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
 | Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour; Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
 | Callow Downs, F3 | outdoor zone, 32×32 | 2–3 | Gullwick at the Wend's mouth, its net loft and boats; the rise; the wreckers' far beach and their cave; three groups (§4.3) |
 
-Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quest The Cargo
-Ledger (Hale, `quests.ts`); the monsters are MONSTERS §5.1's.
+Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
+Ledger (Hale), The Bell That Rang Twice (Osmund) and The Rest of the Survey (Ebba and Ailith,
+`quests.ts`); the monsters are MONSTERS §5.1's.
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
 (`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's
-the carving over a blank stretch of wall, and Brockholt's (downs_f2 12,3) the bare ground under
-the holly at 12,4 (`f2_holly`), beside the woodcutter's word, and the wreckers' cave (downs_f3 0,16)
+the carving over a blank stretch of wall; Brockholt's (downs_f2 12,3) the bare ground under the
+holly at 12,4 (`f2_holly`), beside the woodcutter's word; and the wreckers' cave's (downs_f3 0,16)
 the soot where the far beach ends at 0,15 (`f3_soot`), beside the shanty's last verse.
 
 In more detail, as SLICE.md had it before the area docs:
@@ -230,11 +231,14 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     heart and the holly; the sett is a secret door under it, the cache two squares behind. A glade
     on its west side for the boar. A scarecrow in the south-west fields and a view back over the
     Foreland from the north-east rise make up the country's floor.
-  - The brief's groups, of the Downs' own monsters (§7): three Chalk Wolves, a Tusker, five Barn
-    Rats, two Footpads and a Hedge Archer, and eight crows twice. At level 2 the company wins every
-    fight and manages 6.8 fights to a rest; with the Foreland's own wolves, boar, rats and bandits
-    the same lines gave 19.6. They pay about 151 xp a member.
-  - Density: 99% of its 777 squares within 12 steps of something, the furthest 14.
+  - The brief's groups, of the Downs' own monsters (§7): six crows, three Chalk Wolves, a Tusker,
+    five Barn Rats, two Footpads and a Hedge Archer. At level 2 the company wins every fight and
+    manages 6.4 fights to a rest; with the Foreland's own wolves, boar, rats and bandits the same
+    lines gave 19.6. They pay about 142 xp a member.
+  - Density: 94% of its 777 squares within 12 steps of something, the furthest 15.
+  - Time: about three session-hours to author and check, the rework to the owner's harder
+    monsters included; waiting on the hills and outdoor doors (#142, #141) and the owner's rounds
+    came on top.
 
 ### 4.3 F3, Gullwick (#47): core, band 2–3
 
@@ -274,9 +278,10 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     shingle for Hild and Wat, and on the road west of the bridge for Hamo (C).
   - The far beach, west of the mouth, is reached only by the bridge: the wreckers by night, the soot
     at its end, and the cave behind a secret door in the rock at 0,16.
-  - Groups: eight crows in the fields, four crabs on the north-east sand, three wreckers and their
-    lampman by night: 6.4 fights to a rest at level 2, every fight won. They pay about 97 xp a
-    member.
+  - The brief's groups: six crows in the fields, three crabs on the north-east sand, two wreckers and
+    their lampman by night, the wrecker and the lampman statted on MONSTERS §4.4's line at level 4
+    (soldier and archer) to hold the day: 7.0 fights to a rest at level 2, every fight won. They pay
+    about 85 xp a member, against the brief's 110.
   - Density: 99.7% of its 289 squares within 8 steps, the furthest 9.
 
 ### 4.4 E3, Crowness (#67): core, band 3–4
@@ -462,14 +467,14 @@ are:
 
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
-| 1 | The Bell That Rang Twice | 1 | Helmstow: the Chapel, the Gilded Eel | a choice put by a person; a person who moves | #77 |
+| 1 | The Bell That Rang Twice | 1 | Helmstow: the Chapel, the Gilded Eel | a choice put by a person; a person who moves | #77 (built) |
 | 2 | Who Lived at Ashcombe | 1 | the Hearthlight Inn and Ashcombe; the tenant to Gullwick (F3) | hand-ins at the first meeting (#43); a person who moves | #77 |
 | 3 | The Well That Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | #77 |
 | 4 | The Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 |
 | 5 | Oil for the Lamp | 3 | Crowness Light (E3); Mottram's Stores and Vask, in Helmstow | a choice put by a person | #67 |
 | 6 | Riders in the Dark | 3 | Coldharbour (F2) and the ford (E2) | `when` (#41); a choice put by a person | #68 |
 | 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | #77 |
-| 8 | The Rest of the Survey Team | 4 | the Foreland map's south-west woods; the Chapel, or Thornhold | a choice put by a person; a person who moves | #77 |
+| 8 | The Rest of the Survey | 4 | the Foreland map's south-west woods; the Chapel, or Thornhold | a choice put by a person; a person who moves | #77 (built) |
 
 Three changes to #56's drafts, for the owner:
 
@@ -523,21 +528,22 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 1,710 xp a member today, 50 of it the Wardens' pay,
-  just past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area the climb from its floor
+- **Experience.** One clear of the area pays 1,853 xp a member today, 50 of it the Wardens' pay and
+  about 140 F2's, past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area the climb from its floor
   to the next area's floor, divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the
   other 2,070 or so come from, shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2
   190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the curve reports the
   shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood as a group that
   respawns does; the figures count the brood once.
-- **Gold.** A clear pays about 2,610: 1,065 in chests, about 765 in drops, 700 in rewards and 80
-  in the Wardens' pay.
+- **Gold.** A clear pays about 2,700: the chests, the drops (F2's among them), 700 in rewards and
+  80 in the Wardens' pay.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
   Deacon are won 98, 99 and 100% of the time at their maps' floors, where a boss should be won about
-  half the time. The Seam is won 66% of the time two levels under its floor, where the gate wants a
-  quarter. The area as one is won 88.6% of the time at level 1, against nine in ten. The Foreland
+  half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The Seam is won 66% of
+  the time two levels under its floor, where the gate wants a quarter. The area as one is won 89.4%
+  of the time at level 1, F2's groups with it, against nine in ten. The Foreland
   map and Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; the Seam 6.3, now
   that the company at 3 wears the band's gear. The pilot settles them, by retuning or by moving the
   thresholds.

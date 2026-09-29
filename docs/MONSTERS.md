@@ -488,12 +488,12 @@ defs stay as they are. The Shore Crab under Crowness Light.
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
 | Carrion Crow | birds, new | fodder, 2 | the stubble fields; the gibbet on the coast road | *Crows, too many to count, and all of them watching.* Flies, so it reaches the back row (`ranged` without `missile`); six to eight to a group |
-| Wrecker | bandit | soldier, 3 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
-| Lampman | bandit | archer, 3 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
+| Wrecker | bandit | soldier, 4 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
+| Lampman | bandit | archer, 4 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
 | Barrow Guard | skeleton | armoured, 4 | the Berth, the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
 | Black Dog | wolf | skirmisher, 4 | the hills round the barrow, by night | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
 | Barrow Captain | skeleton | boss, 5 | at the Queen's empty bier | *Her captain, at his post beside an empty bier.* |
-| Chalk Wolf | wolf | skirmisher, 3 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
+| Chalk Wolf | wolf | skirmisher, 4 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
 | Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
 | Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
 | Footpad | bandit | soldier, 3 | the Salt Road, two with a hedge archer | *A short blade, and a coat taken off someone better dressed.* |
