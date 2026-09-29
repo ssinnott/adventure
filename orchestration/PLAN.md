@@ -1040,3 +1040,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   triggers, sessions or subscriptions from here until the owner re-authorises it. #272's round sent
   as a comment on the PR instead (its session watches it). The 14:40 check-in was set before the
   outage and fires server-side; re-arming it after needs the server back.
+
+### 15:10: the outage over; four new pull requests in review
+- The Claude Code Remote server came back by itself (15:04) with the container's restart; no sign-in
+  was needed. For next time: https://claude.ai/customize/connectors, sign in again, tools allowed.
+- The outage held two of my 14:01 messages: the #45 session (#271, then #210) and the pilot (F3)
+  never got them. Fired again at 15:05. The Thornmark session's own "start #219" reminder was held
+  too and would not fire; a fresh message sent (15:09). #272's round re-sent as a message (15:07),
+  its session not having acted on the PR comment.
+- Opened in the outage: #274 (#211, the names; session_01FvrT4W9tXZiXXhFgKCnCES, 14:06), #275 (#268;
+  the #97 session, 14:09), #276 (#209; the #40 session, 14:11), #277 (#273, stacked on #276, 14:17).
+  Reviewers started on all four (15:10), and a delegate on #274's names; all four watched.
