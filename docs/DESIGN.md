@@ -348,7 +348,7 @@ Each quest's words, pay and level come with its build.
 | Lanterns | first task | First Light | the Foreland's shore | look at the Hearth from the shore and say what was seen |
 | Lanterns | 1 | the drowned stair | Brandy Hole | the dead at the stair down, laid |
 | Lanterns | 1 | the dark marker | Thornmark's lake | the survey marker with its glass gone dark |
-| Lanterns | 2 | the second marker | Thornmark's south-eastern hills | a marker still lit; one new once-event there |
+| Lanterns | 2 | the second marker | Thornmark, by the boulders south of the river | a marker still lit; one new once-event there |
 
 Each guild's ladder climbs: a rank's quests are in the band of the last's or above.
 

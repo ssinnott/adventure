@@ -75,17 +75,18 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`) |
 | The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask and his contract in the throne room behind the keep's door |
-| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
+| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
-| Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
+| Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key; a clerk's coat among the drowned (`gw1_coat`) and his seal in the den's strongbox (`gw1_strongbox`, `gw1_seal`) |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
 | Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour; Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
-Ledger (Hale), The Bell That Rang Twice (Osmund) and The Rest of the Survey (Ebba and Ailith,
-`quests.ts`); the monsters are MONSTERS §5.1's.
+Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
+Clerk's Seal (Maud) and The Well Tastes of Iron (Mottram, `quests.ts`); the monsters are MONSTERS
+§5.1's.
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
 (`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's
 the carving over a blank stretch of wall and Brockholt's (downs_f2 12,3) the bare ground under
@@ -102,8 +103,12 @@ In more detail, as SLICE.md had it before the area docs:
   room (the contract and the hand-in); people and a well. A building on its west side stands empty
   for the armourer (#19).
 - **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or lurking
-  monster groups with respawn timers, the Ashcombe farm. It and Thornmark are played as one
-  outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
+  monster groups with respawn timers, the Ashcombe farm. The Lodestone, the Foreland's own Stone
+  and whole, stands at the end of a track east of the south gate (the stone said at 20,4), and
+  Gytha, its Lantern, sits at its foot (21,4): she gives a new company the lesson (`q_lodestone`),
+  and her words change once Sylvane has spoken (`q_grove`) and again once she has the chisel
+  (`q_grove_done`). The stone is its words and is not drawn, as the Grove Stone is. It and
+  Thornmark are played as one outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
 - **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
   dead Lantern and her survey wand, the Rift and its Warden.
 - **Brandy Hole** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
@@ -172,7 +177,7 @@ The places, as the atlas and the docs have them:
 | Coldharbour | F2 | a retired Warden captain's farm; the Knight's second prestige (#19) | a planned farm at 176,42 |
 | The Berth | a dungeon, entered from D2 | the Queen's barrow, opened, and only her signet gone (DESIGN §9); band 4–5, her guard two by two down the passage and her captain at the empty bier (MONSTERS §5.2) | not on the atlas |
 | The Salt Road | F2, F3, E3, a corner of D3, and D4 | the wreckers and their lampman in fog; crows at the gibbet (MONSTERS §5.2) | a planned road, and the way down the Edge |
-| The Lodestone | G2, the built map (21.5,4) | "already intact; tutorial" (DESIGN §4) | a planned site; nothing in the game |
+| The Lodestone | G2, the built map (21.5,4) | "already intact; tutorial" (DESIGN §4) | built (#73): the stone's words, Gytha and the track from the gate road |
 | The Mewstone | G4 | nothing yet | an isle, the Deepthorn's |
 
 ### 4.1 The briefs
@@ -453,11 +458,11 @@ are:
 |---|---|---|---|---|---|
 | 1 | The Bell That Rang Twice | 1 | Helmstow: the Chapel, the Gilded Eel | a choice put by a person; a person who moves | #77 (built) |
 | 2 | Who Lived at Ashcombe | 1 | the Hearthlight Inn and Ashcombe; the tenant to Gullwick (F3) | hand-ins at the first meeting (#43); a person who moves | #77 |
-| 3 | The Well That Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | #77 |
+| 3 | The Well Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | #77 (built) |
 | 4 | The Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 |
 | 5 | Oil for the Lamp | 3 | Crowness Light (E3); Mottram's Stores and Vask, in Helmstow | a choice put by a person | #67 |
 | 6 | Riders in the Dark | 3 | Coldharbour (F2) and the ford (E2) | `when` (#41); a choice put by a person | #68 |
-| 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | #77 |
+| 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | #77 (built) |
 | 8 | The Rest of the Survey | 4 | the Foreland map's south-west woods; the Chapel, or Thornhold | a choice put by a person; a person who moves | #77 (built) |
 
 Three changes to #56's drafts, for the owner:
@@ -467,8 +472,8 @@ Three changes to #56's drafts, for the owner:
   banded 3–4.
 - **Oil for the Lamp's chandler is Mottram,** whose stores are built, rather than a chandler of his
   own.
-- **3 and 6 could be the Wardens' and 5 the Lanterns',** given from their halls (#21). They are
-  built as plain quests unless #21 takes them.
+- **3, 5 and 6 stay plain quests,** not the Wardens' or the Lanterns', as DESIGN §8 settles it
+  (#21).
 
 A choice put by a person, words that change with a flag, a person who moves once a flag is set, a
 person who takes more than one item and a letter to read from the pack are systems the game lacks
@@ -490,8 +495,21 @@ and Thornmark's):
 | 1 | The Old Watchtower | Thornmark's ogre (`tm_ogre`) | 150 gold, 900 xp |
 | 2 | The Garrison's Strongbox | a chest by Thornhold's north wall (`tm_strongbox`, 23,1) | 200 gold, 1,500 xp |
 
-A company that did a deed before taking its quest is paid when it takes it. The Wardens' quests
-take none of #56's: quests 3 and 6 stay plain quests (DESIGN §8).
+### The Lanterns' quests
+
+The Lantern Guildhall and the Thornhold Lantern Hall are the Lanterns' halls (`hall: 'lanterns'`),
+their trade still spells for the hall's fee. Either gives their quests and takes reports for any,
+two here and two in Thornmark:
+
+| Rank | Quest | Deed | Pay |
+|---|---|---|---|
+| first task | First Light | the Hearth seen from the shore (`coast`, 15,28) | 20 gold, 60 xp |
+| 1 | The Drowned Stair | the dead at the stair down in Brandy Hole (`gw1_stairs`) | 80 gold, 300 xp |
+| 1 | The Dark Marker | the survey marker in Thornmark's lake, seen from its west shore (`lake`, 26,22) | 150 gold, 900 xp |
+| 2 | The Second Marker | a lit marker by the boulders south of Thornmark's river (`second_marker`, 21,27) | 200 gold, 1,500 xp |
+
+A company that did a deed before taking its quest is paid when it takes it. The guilds' quests
+take none of #56's: quests 3, 5 and 6 stay plain quests (DESIGN §8).
 
 ## 7. Encounters, and what is new
 
@@ -512,15 +530,15 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 1,853 xp a member today, 50 of it the Wardens' pay and
-  about 140 F2's, past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area the climb from its floor
-  to the next area's floor, divided by 0.75: 2,800 / 0.75, about 3,730. The Downs are where the
-  other 2,070 or so come from, shared among the boxes as §4.1 has it: F2 130, F3 110, E3 340, E2
-  190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the curve reports the
-  shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood as a group that
-  respawns does; the figures count the brood once.
-- **Gold.** A clear pays about 2,700: the chests, the drops (F2's among them), 700 in rewards and
-  80 in the Wardens' pay.
+- **Experience.** One clear of the area pays 1,913 xp a member today, 110 of it the guilds' pay
+  and about 140 F2's, past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area the
+  climb from its floor to the next area's floor, divided by 0.75: 2,800 / 0.75, about 3,730. The
+  Downs are where the other 1,820 or so come from, shared among the boxes as §4.1 has it: F2 130,
+  F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the
+  curve reports the shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood
+  as a group that respawns does; the figures count the brood once.
+- **Gold.** A clear pays about 2,950: 1,130 in chests, about 790 in drops (F2's among them), 850
+  in rewards (the clerk's seal once, whoever takes it) and 180 in the guilds' pay.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the

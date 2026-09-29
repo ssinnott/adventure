@@ -38,7 +38,7 @@ export const HARROW: MapDef = {
     { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn' },
     { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel' },
     { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'rations', 'torch'], interior: 'harrow_provisioner' },
-    { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50, interior: 'lantern_guildhall' },
+    { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50, interior: 'lantern_guildhall', hall: 'lanterns' },
     { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6, interior: 'warden_drillyard', hall: 'wardens' },
     { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', interior: 'gilded_eel', lines: [
       'The tavern is loud and smells of eel.',
@@ -76,6 +76,9 @@ export const HARROW: MapDef = {
       ] } },
       { after: { flag: ['q_bell', 'q_survey_chapel'] }, until: { flag: 'q_osmund_ailith' }, sets: 'q_osmund_ailith', lines: [
         '"The survey adjunct? She came in on a crutch, and two Wardens came for her within the hour." He goes on greasing the wheel. "I\'m told she\'s resting. Nobody has told me where."',
+      ] },
+      { after: { flag: ['q_bell', 'q_well_lanterns'] }, until: { flag: 'q_osmund_well' }, sets: 'q_osmund_well', lines: [
+        '"Written. Stone dust in the well, works under the keep, a Warden mason, the date and the hour, in the book with the bells." He blots it. "I don\'t know what a book does against a Regent. I know it outlasts one."',
       ] },
       { after: { flag: 'q_bell_named' }, lines: [
         '"They took her to the keep the same afternoon. Two Wardens, civil about it. Nobody has said since whether she\'s still there, and I\'ve stopped asking, which I\'m not proud of." He looks up at the wheel. "The bell\'s mine again. It\'s less comfort than I thought."',
@@ -123,5 +126,60 @@ export const HARROW: MapDef = {
         '"If she\'s alive she\'s hiding, and if she\'s hiding it\'s in a wood; she was raised in one. Look south-west along the coast, off the road. Find her, or find where she\'s buried, so I can stop looking at the door."',
       ] },
     ] },
+    // The Clerk's Seal (#77, from #56): Maud at the Eel's cleanest table, until her last words, said
+    // once the seal has gone to her or to Hale.
+    { kind: 'npc', x: 12, y: 13, name: 'Maud, a clerk\'s wife', lines: [
+      'A woman in a good plain dress sits at the Eel\'s cleanest table, with a cup she has not touched and a purse she keeps her hand on.',
+      '"You\'re the company that goes into places. My husband is Edwin, a clerk at the customs house. Nine days ago he went down the beach to Brandy Hole with the price of a bottle in his pocket, and he hasn\'t come home. The price of one bottle. I count what leaves this house, and I count it twice."',
+      '"The Wardens say the caves are closed and to wait. I\'ve waited nine days. Find him, or find out. If it\'s the second, I want whatever he had on him. There\'s his seal, which is the customs house\'s property, and I\'d sooner they asked me for it than asked the tide."',
+    ], flag: 'q_seal', until: { flag: 'q_maud_gone' },
+      quest: { item: 'clerks_seal', reward: 150, setFlag: 'q_seal_maud', done: [
+        'Maud turns the seal to the light and looks at its face, worn bright, for a long time.',
+        '"Nine months. That\'s how long a face wears like that." She puts it in the purse, and her hand over the purse. "There was money this winter a clerk doesn\'t earn. I counted it twice and didn\'t ask, because we ate. So I knew the sum and not the sale. Now I know the sale."',
+        '"The customs house will pay to have this back, and pay more not to ask where it\'s been, and I\'ll take both and say nothing. Edwin\'s name stays a clerk\'s name. That\'s what I\'m buying. Here\'s yours."',
+      ] },
+      says: [
+        { after: { flag: 'q_seal_maud' }, sets: 'q_maud_gone', lines: [
+          '"Sold. The customs house paid, and asked nothing, and I asked nothing, and Edwin is a clerk who drowned buying brandy, which is true as far as it goes." She stands. "I\'ll not be in here again. It\'s a filthy place. I only came because it was his."',
+        ] },
+        { after: { flag: ['q_seal', 'q_seal_hale'] }, sets: 'q_maud_gone', lines: [
+          '"You gave it to the Warden." She has finished the cup, for once. "So Edwin\'s name goes to the Regent in Hale\'s hand, beside the smugglers\' book, and the customs house will strike him off with a note in the margin." She stands. "A note in the margin. He\'d have hated that. He kept beautiful margins."',
+        ] },
+      ] },
+    // The Well Tastes of Iron (#77, from #56): Mottram in his shop, and by night a cart and Alwin, a
+    // Warden mason, at the gatehouse in the north wall, until the Wardens are told; then the gatehouse
+    // swept. Osmund's record, once the Lanterns are told, is among his words above.
+    { kind: 'npc', x: 4, y: 10, name: 'Mottram, of Mottram\'s Stores', lines: [
+      'Mottram sets a bucket on the counter between you and the goods, as if it were the day\'s most important stock. The water in it has a grey skin of grit.',
+      '"Taste that. Iron. The town well has tasted of iron since the week the Queen died. My customers taste it in the bread, and a provisioner who sells bad rations doesn\'t stay a provisioner."',
+      '"That grit is stone dust. I\'ve handled every stone that comes through this town, whetstones, millstones, the lime they whiten the Chapel with, and it\'s none of them. And the cistern behind Ashcombe, four miles off, is sweet as rain. Same rain falls on both, so it\'s not the sky. Find me what it is, and I\'ll pay for it, which from a shopkeeper is saying something."',
+    ], flag: 'q_well', says: [
+      { after: { flag: ['q_well', 'q_well_alwin'] }, until: [{ flag: 'q_well_wardens' }, { flag: 'q_well_lanterns' }], lines: [
+        'Mottram listens with the bucket between you, and does not taste it again.',
+        '"Under the keep. The Regent\'s works." He wipes a counter that is already clean. "I asked why my well tastes of iron. I didn\'t ask to know that. A shopkeeper who knows things about the keep is a shopkeeper with a short lease."',
+      ], choice: { ask: '"You\'ll tell someone; your sort always does. Tell me who, so I know which way to look when they come asking. The Wardens, or the Lanterns?"', answers: [
+        { label: 'The Wardens.', sets: 'q_well_wardens', says: [
+          '"The Wardens. Good. Yes." He lets out a breath. "Their mason, their works and their well, come to that. They\'ll see to it. They always see to things." He puts the bucket under the counter. "Just not always the thing you asked about."',
+        ] },
+        { label: 'The Lanterns.', sets: 'q_well_lanterns', says: [
+          '"The Chapel." He considers it the way he considers a price. "They\'ll write it down. It\'s what they do, write things down: hours and bells, and now my well. Nothing will change." He puts the bucket under the counter. "Someone should have it written, though. I\'ll say that. Someone should."',
+        ] },
+      ] } },
+      { after: { flag: 'q_well_wardens' }, lines: [
+        '"Still iron." He does not offer you the bucket. "The mason\'s gone; nobody has seen him since, nor the cart. The dust isn\'t gone. Whatever they\'re cutting down there, they\'re still cutting it."',
+      ] },
+      { after: { flag: 'q_well_lanterns' }, lines: [
+        '"Still iron. It\'s in a book now, the sexton tells me, in his best hand." A dry sound that might be a laugh. "I send a boy to the Ashcombe cistern with a barrel twice a week. Four miles for sweet water. There\'s a sum in that somewhere, and I\'d rather not do it."',
+      ] },
+    ] },
+    { kind: 'event', x: 7, y: 1, id: 'well_cart', once: true, when: { hours: 'night' }, until: { flag: 'q_well_wardens' },
+      text: 'A cart with no lamp leaves the gatehouse, its wheels muffled in sacking, trailing a grey dust that the dew turns to rust.' },
+    { kind: 'event', x: 7, y: 1, id: 'well_swept', once: true, when: { hours: 'night' }, after: { flag: 'q_well_wardens' },
+      text: 'The gatehouse by night. No cart. The grey line is swept from the cobbles, right up to the gate and not one step through it.' },
+    { kind: 'npc', x: 9, y: 1, name: 'Alwin, a Warden mason', lines: [
+      'A big man in Warden grey and a mason\'s leather apron stands by the cart. His hands and his hair are grey with the same dust.',
+      '"Move along. Regent\'s works." He follows your eyes to the dust on the cobbles. "Aye, that\'s mine. It gets in the water; the old cut runs under the well. I told them. They said cart it out at night, and it\'s not your concern where it goes."',
+      '"What\'s down there? An old way, older than the keep, and the Regent wants it opened. I cut where they chalk the line. Ask him what\'s at the bottom of it, if you\'re on speaking terms. I\'m not."',
+    ], flag: 'q_well_alwin', when: { hours: 'night' }, until: { flag: 'q_well_wardens' } },
   ],
 };
