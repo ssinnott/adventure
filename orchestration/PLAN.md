@@ -997,3 +997,20 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   after the aim-and-limit issue; #214 when #209, aim-and-limit, #210 and #212 are in; then #49,
   #215, #217, #216, #218 down their chains; #163 (Act II's dead wood, #216's blocker) to the delegate
   when #49 lands.
+- 13:58: the delegate on #213, asked again with #74's refusal in view: close it as not planned, as
+  #74 was (`levelUp` teaches the tier free at 8; a hall checks no level, so `maxTier: 5` sells only
+  early, against MONSTERS §4.4). Closed with a comment; #211's pull request corrects thornmark.md §8
+  and §9's decision 19. `approved` put on #268, #271, #208 and #49, #210, #211, #212, #214 to #219
+  (the delegate's word; a comment on #26 says so). Filed #273 (the gate's aims and limits; Task,
+  quality, approved, blocked by #209). The Dependencies of #47, #49, #67, #68, #209 and #214 kept in
+  step (a subagent writes them, each checked against the body read at 13:40).
+- 13:52: the delegate on F2 (#145): land it as it is (sheet, texts and choices 1 to 5 taken; the pink
+  is the void). Merged at 13:55 as f438644 (head 86777ac, main 92e14f5 in it, tested tree 224f968).
+  **The auto-mode classifier then refused my post-merge tree comparison as "Merge Without Review"**:
+  not retried, not worked around. Put to the owner: merges on the delegate's word may be refused the
+  same way; they decide how merging goes from here.
+- 13:59: the delegate on #272's drawings: OK, all four and every choice (nits for the code review:
+  three Oxford commas in comments, "the near forearm bare"). The code reviewer still runs.
+- 14:01, sessions sent new work: the #40 session #209 then #273; the #45 session #271 then #210; the
+  #97 session #268; the pilot B (F3) now, then C, D and E as the delegate settled. New session
+  session_01FvrT4W9tXZiXXhFgKCnCES (Thornmark's area lane): #211, then #219.
