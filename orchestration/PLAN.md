@@ -944,3 +944,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   boss 20-80%, two under 75% or 90%). At 75% E2 and E3 still need the scouts' harder monsters (about
   70% two under); at 90% the brief's groups pass with notes. To be filed as a quality issue if the
   owner agrees, built after #209 by the same session. The Downs' new monsters (0) wait on this.
+- 13:25: the owner: "if we're waiting on harder monsters to level it out, we're blocked on that, and
+  should fix that first". So #67's and #68's 0 starts now: the Black Dog session (13:29 trigger)
+  draws four level-4 variants on branch `claude/m1-downs-harder` ("Part of #67" and "Part of #68"):
+  a crab on the Shore Crab's frame (Crowness), the Salt Road's harder bandit and archer (the F3
+  wrecker's and lampman's numbers), and the rookery's keepers (`old_rook`, never `rook`; 68.md
+  decision 2's stats). Held in `UNPLACED`; names and looks the owner's on the sheet. The aim-and-limit
+  issue is still to be agreed (with the harder monsters E2 and E3 stand at about 70% two under, under
+  a 75% limit).
