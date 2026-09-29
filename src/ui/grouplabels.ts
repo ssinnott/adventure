@@ -1,8 +1,9 @@
 // The labels over a fight: each group's living monsters by kind, each kind with its own count
 // ("1 Ogre, 3 Brigands, 1 Brigand Archer"), a kind gone from the label when its last one falls.
-// Laid out left to right across the view, a group to the next row where it would run past the
-// edge, and one too long for a row broken between its kinds. Pure, so tools/tests/labels.ts holds
-// every group on the maps to it; ui/combat.ts draws what it returns.
+// They run left to right across the view: a group goes to the next row where it would run past the
+// edge, and one too long for a row breaks between its kinds. Where the fight seats its monsters is
+// here too, so the labels can be held above them. Pure, so tools/tests/labels.ts holds every group
+// on the maps to it; ui/combat.ts draws what it returns.
 import { measureText } from '../lib/engine/text.ts';
 
 /** What a label needs of a monster in the fight. */
@@ -11,8 +12,19 @@ export interface LabelMonster { group: number; hp: number; def: { id: string; na
 /** A line of a label, placed from the view's top left. */
 export interface LabelLine { text: string; x: number; y: number; group: number }
 
-/** The margin inside the view, the space between two labels on a row, and a row's height. */
-export const LABEL_PAD = 6, LABEL_GAP = 14, LABEL_ROW = 10;
+/** The margin inside the view at either side. */
+export const LABEL_PAD = 6;
+/** The space between two groups' labels on a row: wide against the ", " between kinds. */
+export const LABEL_GAP = 24;
+/** A row's height. */
+export const LABEL_ROW = 10;
+/** How far below the view's top the first row is painted. */
+export const LABEL_TOP = 6;
+
+/** Where a monster of `group` stands in a fight painted in a view `viewH` high: the foot of its sprite. */
+export const seatFoot = (group: number, viewH: number): number => viewH * 0.62 + 18 + group * 10;
+/** How far above a sprite's head its target and turn markers are painted. */
+export const MARKER_RISE = 12;
 
 /** A group's kinds among the living, in the order they stand, each with its count. */
 export function groupParts(monsters: readonly LabelMonster[], group: number): string[] {

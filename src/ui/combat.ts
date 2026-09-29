@@ -14,7 +14,7 @@ import type { CombatState, PartyAction } from '../game/combat.ts';
 import { spell } from '../game/spells.ts';
 import { item } from '../game/items.ts';
 import { weaponOf } from '../game/party.ts';
-import { groupLabels } from './grouplabels.ts';
+import { groupLabels, seatFoot, MARKER_RISE, LABEL_TOP } from './grouplabels.ts';
 import type { LabelLine } from './grouplabels.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'item' | 'itemTarget' | 'done';
@@ -167,7 +167,7 @@ export class CombatScreen implements Screen {
     const n = alive.length, slot = v.w / Math.max(5, n);
     alive.forEach((mi, k) => {
       const m = s.monsters[mi];
-      const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + v.h * 0.62 + 18 + m.group * 10;
+      const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + seatFoot(m.group, v.h);
       const h = combatHeight(m.def.size, n);
       if (m.flash > 0) m.flash--;
       if (m.hp < this.lastMonsterHp[mi]) { this.burst(x, y - h * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070'); this.lastMonsterHp[mi] = m.hp; }
@@ -176,8 +176,8 @@ export class CombatScreen implements Screen {
       const hpFrac = m.hp / m.def.hp;
       ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(Math.round(x - 14), Math.round(y + 3), 28, 3);
       ctx.fillStyle = hpFrac > 0.5 ? GREEN : hpFrac > 0.25 ? YELLOW : RED; ctx.fillRect(Math.round(x - 14), Math.round(y + 3), Math.round(28 * hpFrac), 3);
-      if (targeting && k === this.sub) drawText(ctx, '▼', x, y - h - 12, { size: 1, color: YELLOW, align: 'center' });
-      if (t && t.side === 'monster' && t.i === mi) drawText(ctx, '*', x, y - h - 12, { size: 1, color: RED, align: 'center' });
+      if (targeting && k === this.sub) drawText(ctx, '▼', x, y - h - MARKER_RISE, { size: 1, color: YELLOW, align: 'center' });
+      if (t && t.side === 'monster' && t.i === mi) drawText(ctx, '*', x, y - h - MARKER_RISE, { size: 1, color: RED, align: 'center' });
       if (asleep) drawText(ctx, 'z', x + 10, y - h - 2, { size: 1, color: TEXT_DIM });
     });
     // Sparks.
@@ -187,7 +187,7 @@ export class CombatScreen implements Screen {
     drawWeather(ctx, g.world, v, frame);
     // Group labels: each kind in a group with its count of the living (ui/grouplabels.ts).
     this.labels = groupLabels(s.monsters, v.w);
-    for (const l of this.labels) drawText(ctx, l.text, v.x + l.x, v.y + 6 + l.y, { size: 1, color: TEXT_DIM });
+    for (const l of this.labels) drawText(ctx, l.text, v.x + l.x, v.y + LABEL_TOP + l.y, { size: 1, color: TEXT_DIM });
     // Log: wrapped as the exploring log is, so a look of two lines shows whole.
     const lines = logTail(s.log, COMBAT_LOG_LINES);
     const lh = lines.length * 10 + 6;

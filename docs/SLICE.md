@@ -417,9 +417,10 @@ over content broken on purpose too, and two tools to theirs:
   #47 and the Deepthorn's to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
-- `labels`: every group on the maps, alone and in every fight of up to three a map brings together,
-  labelled with each kind and its count of the living, a kind gone when its last one falls, and
-  inside the view, no line running into another.
+- `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
+  together, labelled with each kind and its count of the living. A kind leaves the label when its
+  last one falls; every line stays inside the view and above the monsters' markers, running into
+  no other.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
   kind at its rate; a secret door outdoors among mountain, rock or trees drawn as they are
   (`drawnCell`), and any other door, or one in a wall or a town, left a door.
