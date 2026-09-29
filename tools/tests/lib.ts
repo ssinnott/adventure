@@ -1,6 +1,7 @@
 // What every suite shares: the check that prints a line and counts a failure, the line for a check
-// that is owed, and where the party stands on the maps as written. The count lives here, as a
-// module's own binding can only be changed by the module.
+// that is owed, where the party stands on the maps as written, and the monster family modules. The
+// count lives here, as a module's own binding can only be changed by the module.
+import { readdirSync } from 'node:fs';
 import type { World } from '../../src/game/world.ts';
 
 let failures = 0;
@@ -34,3 +35,16 @@ export const local = (w: World): { map: string; x: number; y: number } => {
   const z = w.zone;
   return z ? { map: z.id, x: w.state.x - z.x, y: w.state.y - z.y } : { map: w.state.mapId, x: w.state.x, y: w.state.y };
 };
+
+/** A monster family: its module in src/ui/monsters/ (by name, as 'boar'), the kinds it lists and the drawer it exports. */
+export interface Family { name: string; kinds: readonly string[]; draw: unknown }
+
+/** Every module in src/ui/monsters/ that lists its kinds, by name; a shared brush lists none. */
+export async function familyModules(): Promise<Family[]> {
+  const dir = new URL('../../src/ui/monsters/', import.meta.url), out: Family[] = [];
+  for (const f of readdirSync(dir).filter((f) => f.endsWith('.ts')).sort()) {
+    const m = (await import(new URL(f, dir).href)) as { KINDS?: readonly string[]; draw?: unknown };
+    if (m.KINDS) out.push({ name: f.slice(0, -3), kinds: m.KINDS, draw: m.draw });
+  }
+  return out;
+}

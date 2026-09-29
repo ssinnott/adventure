@@ -30,8 +30,8 @@ export const DOWNS_F3: MapDef = {
     '__,~~,B,,,_^^~~WWWWWWWWWWWWWWWWW',
     '____~~______~~WWWWWWWWWWWWWWWWWW',
     '_____~_______WWWWWWWWWWWWWWWWWWW',
-    'Sr~~~~~~~~WWWWWWWWWWWWWWWWWWWWWW',
-    '_rWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
+    'rS~~~~~~~~WWWWWWWWWWWWWWWWWWWWWW',
+    'r_WWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     '~WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
@@ -48,7 +48,7 @@ export const DOWNS_F3: MapDef = {
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
   ],
   features: [
-    { kind: 'event', x: 16, y: 2, id: 'f3_sea', once: true, text: 'The road tops a rise, and there is the sea: Gullwick below, at the river\'s mouth.' },
+    { kind: 'event', x: 15, y: 1, id: 'f3_sea', once: true, text: 'The road tops a rise, and there is the sea: Gullwick below, at the river\'s mouth.' },
     { kind: 'event', x: 4, y: 10, id: 'f3_gullwick', once: true, text: 'Gullwick. Cottages turned from the wind, and nets drying on every wall.' },
     { kind: 'well', x: 6, y: 10, text: 'The village well. A rope of plaited net-cord.' },
     { kind: 'camp', x: 7, y: 13, name: 'The net loft', text: 'The net loft, warm and smelling of tar.' },
@@ -78,7 +78,7 @@ export const DOWNS_F3: MapDef = {
         '"One knot a day. When she\'s home she can sit on that step and watch me untie them, every one, and I\'ll tell her what each day was. Go on. You\'ve a long way to walk and I\'ve knots to tie."',
       ] },
     ] },
-    // The Boat With No Name-Board: Wat on the shingle, the hoard on the far beach, Hamo on the road west.
+    // The Boat With No Name-Board: Wat on the shingle, the hoard on the far beach, Hamo beside the road west.
     { kind: 'npc', x: 11, y: 14, name: 'Wat, a boat-builder', lines: [
       'An old man sits on an upturned hull, planing a plank down to nothing. His hands know the work, so his eyes are free for the sea.',
       '"I built the Patience. Twenty-two feet, oak on elm, and I cut her name-board myself and gave it three coats, because paint is cheaper than a board. My two boys took her out the night the light went out."',
@@ -121,9 +121,9 @@ export const DOWNS_F3: MapDef = {
     { kind: 'event', x: 0, y: 13, id: 'f3_night', when: { hours: 'night' }, text: 'By night the rocks stand up black and the tide is out. Below the wrack line, fresh footprints, many, all going one way.' },
     { kind: 'event', x: 1, y: 13, id: 'f3_hoard', once: true, text: 'Under sailcloth in a cleft: name-boards stacked like slates, oars, a shuttered lamp. Halfway down, PATIENCE, in three coats.' },
     { kind: 'chest', x: 1, y: 14, id: 'f3_hoard_chest', gold: 0, items: ['name_boards', 'customs_chit'] },
-    { kind: 'chest', x: 0, y: 17, id: 'f3_cave', gold: 60, items: ['mace+1', 'staff+1', 'elixir'] },
+    { kind: 'chest', x: 1, y: 17, id: 'f3_cave', gold: 60, items: ['mace+1', 'staff+1', 'elixir'] },
   ],
-  secrets: [{ x: 0, y: 16, hint: 'f3_soot' }],
+  secrets: [{ x: 1, y: 16, hint: 'f3_soot' }],
   encounters: [
     { id: 'f3_crabs', x: 27, y: 2, monsters: ['shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
     { id: 'f3_crows', x: 4, y: 3, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },

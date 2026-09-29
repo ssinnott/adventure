@@ -91,7 +91,7 @@ Clerk's Seal (Maud), The Well Tastes of Iron (Mottram) and A Boat With No Name-B
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
 (`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's
 the carving over a blank stretch of wall; Brockholt's (downs_f2 12,3) the bare ground under the
-holly at 12,4 (`f2_holly`), beside the woodcutter's word; and the wreckers' cave's (downs_f3 0,16)
+holly at 12,4 (`f2_holly`), beside the woodcutter's word; and the wreckers' cave's (downs_f3 1,16)
 the soot where the far beach ends at 0,15 (`f3_soot`), beside the shanty's last verse.
 
 In more detail, as SLICE.md had it before the area docs:
@@ -237,7 +237,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     on its west side for the boar. A scarecrow in the south-west fields and a view back over the
     Foreland from the north-east rise make up the country's floor.
   - The brief's groups, of the Downs' own monsters (§7): six crows, three Chalk Wolves, a Tusker,
-    five Barn Rats, two Footpads and a Hedge Archer. At level 2 the company wins every fight and
+    five Barn Rats, two Footpads and a Poacher. At level 2 the company wins every fight and
     manages 6.4 fights to a rest; with the Foreland's own wolves, boar, rats and bandits the same
     lines gave 19.6. They pay about 142 xp a member.
   - Density: 94% of its 777 squares within 12 steps of something, the furthest 15.
@@ -280,10 +280,10 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     the atlas at the west edge, where the raw cut did not.
   - Gullwick east of the mouth: seven cottages, the net loft (the camp), the well, the boats on the
     shingle and the old man with the shanty; the rise above it, on the hills. On the shingle, Hild at
-    the tideline (the step, §5) and Wat on his upturned hull; Hamo on the road west of the bridge,
+    the tideline (the step, §5) and Wat on his upturned hull; Hamo beside the road west of the bridge,
     off the way from the far beach to Wat, so boards carried home are never sold by stepping on him.
   - The far beach, west of the mouth, is reached only by the bridge: the wreckers by night, the soot
-    at its end, and the cave behind a secret door in the rock at 0,16.
+    at its end and the cave behind a secret door in the rock at 1,16.
   - The brief's groups: six crows in the fields, three crabs on the north-east sand, two wreckers and
     their lampman by night, the wrecker and the lampman statted on MONSTERS §4.4's line at level 4
     (soldier and archer) to hold the day: 7.0 fights to a rest at level 2, every fight won. They pay
@@ -291,7 +291,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - A Boat With No Name-Board (§6): the hoard in the rocks at the far beach's north end, the chit
     beside the boards, and the night's footprints as a presence event on its first square. Wat pays
     60 from the loft jar and Hamo 140 by the plank; the curve counts the larger once.
-  - Density: 99.7% of its 289 squares within 8 steps, the furthest 9.
+  - Density: every one of its 289 squares within 8 steps, the furthest 8, with the people in.
 
 ### 4.4 E3, Crowness (#67): core, band 3–4
 
@@ -542,7 +542,7 @@ four wreckers on the Salt Road on a foggy night; the Berth, the Downs' hardest p
 are #46.
 
 The Downs' wolves, boars, rats and road bandits are their own: the Chalk Wolf, the Tusker, the Barn
-Rat, the Footpad and the Hedge Archer, variants on the Foreland's frames statted on MONSTERS §4.4's
+Rat, the Footpad and the Poacher, variants on the Foreland's frames statted on MONSTERS §4.4's
 line (§5.2's table), so a group of the brief's size holds the gate. The Foreland's own stay as they
 are, and every later box uses these where its brief says wolves, a boar, rats, bandits or archers.
 
@@ -566,12 +566,15 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
   Deacon are won 98, 99 and 100% of the time at their maps' floors, where a boss should be won about
-  half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The Seam is won 66% of
-  the time two levels under its floor, where the gate wants a quarter. The area as one is won 89.4%
-  of the time at level 1, F2's groups with it, against nine in ten. The Foreland
-  map and Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; the Seam 6.3, now
-  that the company at 3 wears the band's gear. The pilot settles them, by retuning or by moving the
-  thresholds.
+  half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The area as one pools
+  each group at its own map's floor (#209): 99.7% of its 45 groups' fights won, F2's and F3's at 2,
+  against nine in ten. Two under, the Foreland's floor is 1 and F2's and F3's 2, so no group has a
+  company there yet; the Seam, a dungeon, counts two under the area's floor since #148, and is no
+  longer judged alone. Each zone walks its own road and warns at its own way in: the Foreland's from
+  Helmstow, the Downs' from F2's east edge along the Salt Road (`ROADS.downs`, the footpads and the
+  Poacher), both walked every time. The Foreland map and Brandy Hole give 4.6 and 4.1 fights to a
+  rest, against six or seven; the Seam 6.7, now that the company at 3 wears the band's gear. The
+  pilot settles them, by retuning or by moving the thresholds.
 - **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the
   band's gear: the Long Sword, the Hand Axe, the Long Bow, Scale Mail, Chain Mail and the Kite
   Shield. The Downs hold the kits with a plus and the band's gear with one, box by box as §4.2 to

@@ -71,7 +71,7 @@
         "wood_wolves"
       ],
       "doors": [
-        "168,78",
+        "169,78",
         "180,33"
       ]
     },
@@ -438,8 +438,10 @@
     "bandit",
     "bandit_archer",
     "barn_rat",
+    "barnacle_crab",
     "barrow_captain",
     "barrow_guard",
+    "billman",
     "black_dog",
     "boar",
     "bone_knight",
@@ -457,9 +459,10 @@
     "ghoul",
     "great_owl",
     "heartwood",
-    "hedge_archer",
     "lampman",
     "ogre",
+    "old_rook",
+    "poacher",
     "rat",
     "rift_crawler",
     "rift_hound",
@@ -470,6 +473,7 @@
     "shore_crab",
     "skeleton",
     "slime",
+    "slinger",
     "smuggler",
     "smuggler_bowman",
     "smuggler_captain",
