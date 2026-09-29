@@ -1202,3 +1202,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 16:23: the pilot opened #283 (#47's C, with D folded in: Hild, Wat and Hamo on F3, A Boat With No
   Name-Board, the hoard and the far beach's night footprints; head 4a71362 on main c9abc79). A
   reviewer on it (16:27). #67's A (E3) lands after it.
+- 16:28: #68's A (E2, the Wend's fields) started in a new area session,
+  session_01LkeLXKnkAruhUcvD3kbsSf, on `claude/m1-68-e2`: authored now, landing after the pilot's C
+  and #67's A (the footprint's order), so E2 no longer waits for E3 to land before it starts. Its
+  brief: decision 1 settled by #273, the Old Rook on main (#272), F3's shanty final, #47's E not
+  waited on (the delegate's Q4). Three area sessions in the Foreland's area now (the pilot, #67 and
+  #68), on #77's precedent; the #67 session told (16:30).
+- Scouts on #71 (D3, after #67) and #87 (Ashcombe past Gullwick, after #47 and #67), so both can
+  start as E3 lands. An agent reads the Deepthorn's Dependencies (#49, #214 to #218, #163) for what
+  can run beside #214.
