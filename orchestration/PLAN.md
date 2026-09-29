@@ -1022,3 +1022,5 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   delegate still decides what was the owner's (design, art, filing, approval); it no longer stands
   in for the review.
 - F2's post-merge check, run now: main f438644's tree is 224f968, the tree tested at 13:45.
+- 14:10: the Dependencies of #47, #49, #67, #68, #209 and #214 written and read back (each body
+  byte for byte the 13:40 read before the write; #49's and #214's later `updated_at` was my labels).
