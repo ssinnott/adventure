@@ -1126,3 +1126,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   lines ok; CI green. Merged as ac64abb. #271 closes with it.
 - New: #279 (#210, walk woods; the #45 session, 15:33): a reviewer started. #277 still at 8175656
   (the #40 session's round due).
+- 15:41: #280 (F3, #47's B; the pilot, bf6d052 at 15:39) opened: a reviewer and a delegate on its sheet
+  (`sheet280.png`) started. #277's round message (15:24) had not fired; fired by hand at 15:40, with
+  main now ac64abb to merge.
