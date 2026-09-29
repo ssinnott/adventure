@@ -1199,3 +1199,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (16:26), with the sheet to send the owner. Its choices and its sheet (`scratchpad/sheet282.png`
   beside main's) are with a delegate.
 - Whichever of the two lands second merges `items.ts:2`.
+- 16:23: the pilot opened #283 (#47's C, with D folded in: Hild, Wat and Hamo on F3, A Boat With No
+  Name-Board, the hoard and the far beach's night footprints; head 4a71362 on main c9abc79). A
+  reviewer on it (16:27). #67's A (E3) lands after it.
