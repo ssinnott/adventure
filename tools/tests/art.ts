@@ -9,8 +9,7 @@ import { hash } from '../../src/ui/brush.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { FAMILY } from '../../src/ui/sprites.ts';
-import { readdirSync } from 'node:fs';
-import { ok } from './lib.ts';
+import { ok, familyModules, type Family } from './lib.ts';
 
 /** The defs that draw with a kind another def draws with too, as 'kind: a, b'. */
 export function sharedKinds(defs: readonly { id: string; sprite: string }[]): string[] {
@@ -82,19 +81,6 @@ export const BEFORE_9: Rule = (m, x, y) => {
   return house ? roll < 0.55 : roll < 0.78 || (roll < 0.86 && c.door === 'none');
 };
 
-/** A family module in src/ui/monsters/: its file, the kinds it lists and the drawer it exports. */
-export interface Family { name: string; kinds: readonly string[]; draw: unknown }
-
-/** Every module in src/ui/monsters/ that lists its kinds; a shared brush lists none. */
-export async function familyModules(): Promise<Family[]> {
-  const dir = new URL('../../src/ui/monsters/', import.meta.url), out: Family[] = [];
-  for (const f of readdirSync(dir).filter((f) => f.endsWith('.ts')).sort()) {
-    const m = (await import(new URL(f, dir).href)) as { KINDS?: readonly string[]; draw?: unknown };
-    if (m.KINDS) out.push({ name: f, kinds: m.KINDS, draw: m.draw });
-  }
-  return out;
-}
-
 /**
  * Where the kinds `family` sends to a drawer and the kinds each module lists part company, as
  * 'kind: why': a kind no module lists, or one listed by another module than the one that draws it,
@@ -102,14 +88,14 @@ export async function familyModules(): Promise<Family[]> {
  */
 export function kindsDrift(family: Readonly<Record<string, unknown>>, modules: readonly Family[]): string[] {
   const out: string[] = [];
-  const drawnBy = (fn: unknown): string => modules.find((m) => m.draw === fn)?.name ?? 'no family module';
+  const drawnBy = (fn: unknown): string => { const m = modules.find((m) => m.draw === fn); return m ? `${m.name}.ts` : 'no family module'; };
   for (const [kind, fn] of Object.entries(family)) {
     const listed = modules.filter((m) => m.kinds.includes(kind));
     if (!listed.length) out.push(`${kind}: drawn by ${drawnBy(fn)}, but listed in no module's KINDS`);
-    else if (listed.length > 1) out.push(`${kind}: listed in ${listed.map((m) => m.name).join(' and ')}`);
-    else if (listed[0].draw !== fn) out.push(`${kind}: listed in ${listed[0].name}, but drawn by ${drawnBy(fn)}`);
+    else if (listed.length > 1) out.push(`${kind}: listed in ${listed.map((m) => `${m.name}.ts`).join(' and ')}`);
+    else if (listed[0].draw !== fn) out.push(`${kind}: listed in ${listed[0].name}.ts, but drawn by ${drawnBy(fn)}`);
   }
-  for (const m of modules) for (const kind of m.kinds) if (!Object.hasOwn(family, kind)) out.push(`${kind}: listed in ${m.name}, but drawn by nothing`);
+  for (const m of modules) for (const kind of m.kinds) if (!Object.hasOwn(family, kind)) out.push(`${kind}: listed in ${m.name}.ts, but drawn by nothing`);
   return out;
 }
 
@@ -125,9 +111,13 @@ export async function art(): Promise<void> {
   const modules = await familyModules();
   const drift = kindsDrift(FAMILY, modules);
   ok(drift.length === 0, `each family module's KINDS are the kinds FAMILY sends it (${Object.keys(FAMILY).length} kinds, ${modules.length} modules)${drift.length ? ' -> ' + drift.join('; ') : ''}`);
-  const boar = (): void => {}, wolf = (): void => {}, fixture = [{ name: 'boar.ts', kinds: ['boar'], draw: boar }, { name: 'wolf.ts', kinds: ['wolf', 'tusker'], draw: wolf }];
-  ok(kindsDrift({ boar, tusker: boar, wolf }, fixture).join('; ') === 'tusker: listed in wolf.ts, but drawn by boar.ts' && kindsDrift({ boar, wolf }, fixture).join() === 'tusker: listed in wolf.ts, but drawn by nothing' && kindsDrift({ boar, tusker: boar, wolf }, [fixture[0], { ...fixture[1], kinds: ['wolf'] }]).join() === 'tusker: drawn by boar.ts, but listed in no module\'s KINDS',
-    'a kind left out of its module\'s KINDS, or listed by another module, is caught');
+  const boar = (): void => {}, wolf = (): void => {}, fixture: Family[] = [{ name: 'boar', kinds: ['boar'], draw: boar }, { name: 'wolf', kinds: ['wolf', 'tusker'], draw: wolf }];
+  ok(kindsDrift({ boar, tusker: boar, wolf }, fixture).join('; ') === 'tusker: listed in wolf.ts, but drawn by boar.ts' && kindsDrift({ boar, wolf }, fixture).join() === 'tusker: listed in wolf.ts, but drawn by nothing' && kindsDrift({ boar, tusker: boar, wolf }, [fixture[0], { ...fixture[1], kinds: ['wolf'] }]).join() === 'tusker: drawn by boar.ts, but listed in no module\'s KINDS'
+    && kindsDrift({ boar, tusker: boar, wolf }, [{ ...fixture[0], kinds: ['boar', 'tusker'] }, fixture[1]]).join() === 'tusker: listed in boar.ts and wolf.ts',
+    'a kind left out of its module\'s KINDS, or listed by another module or by two, is caught');
+  // Drawers are told apart by identity, so no two modules may export the same one.
+  const shared = modules.filter((m) => modules.some((n) => n !== m && n.draw === m.draw)).map((m) => `${m.name}.ts`);
+  ok(modules.every((m) => typeof m.draw === 'function') && !shared.length, `each family module exports a drawer of its own${shared.length ? ' -> shared: ' + shared.join(', ') : ''}`);
 
   // Each kind of dressing has its rate, and a wall's rates add up to 1 at most: what is left is
   // bare.
