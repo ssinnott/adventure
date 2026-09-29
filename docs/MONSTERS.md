@@ -487,10 +487,8 @@ are the pilot's zone map (EXPANSION.md §9, Phase 1.1), so their monsters test t
 the resolver: one new family, variants on the frames that exist, and two small fields.
 
 **New:** birds, the frame the road reuses for owls, herons, gulls, ravens, eagles and vultures.
-**Back,** as the Downs' own: the wolf, the boar, the rat, the bandit and his archer, each a variant
-on its frame with a name and tint of its own and statted on §4.4's line for its role, so a Downs
-group of the brief's size holds the gate's six or seven fights to a rest (#47). The Foreland's own
-defs stay as they are. The Shore Crab under Crowness Light.
+**Back:** the Wolf on the hills, bandits and their archers on the coast road, the Shore Crab under
+Crowness Light.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
@@ -503,8 +501,12 @@ defs stay as they are. The Shore Crab under Crowness Light.
 | Chalk Wolf | wolf | skirmisher, 4 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
 | Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
 | Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
-| Footpad | bandit | soldier, 3 | the Salt Road, two with a hedge archer | *A short blade, and a coat taken off someone better dressed.* |
-| Hedge Archer | bandit | archer, 3 | beside the footpads | *A bow in the hedge, and the hedge moves.* |
+| Footpad | bandit | soldier, 3 | the Salt Road, two with a poacher | *A short blade, and a coat taken off someone better dressed.* |
+| Poacher | bandit | archer, 3 | the field edges, beside the footpads | *A longbow taller than he is, and one of the Queen's hares at his belt.* |
+| Barnacle Crab | spider | armoured, 4 | under Crowness Light | *A rock with barnacles on it, until it stands up.* Shrugs off sleep, as the shore crab does |
+| Billman | bandit | soldier, 4 | the Salt Road west of Gullwick | *A bill on a pole, and a man who knows which end to hold.* |
+| Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
+| Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
@@ -1016,7 +1018,7 @@ the pilot.
 | riftling | the cellar (built) | brine (Saltreach, Wrackholm), black glass (Sunderwood), slag (the Kilns): §2.1 |
 | ogre | Thornmark (built) | the tor troll (Cairnmoor), the snow troll (the Whitespine) |
 | wraith | Thornmark (built) | the cairn wight (Cairnmoor) |
-| **birds** | the Downs | the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
+| **birds** | the Downs | the old rook (the Downs), the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
 | **old wood** | the Deepthorn | the strangler vine (Ashfall) |
 | **long bodies** | Saltreach | the rock worm (the Kilns), the ice pike (Rimewater), the glass worm and the ice worm (the reach) |
 | **toads** | Saltreach | none: the first to cut if the art budget bites |

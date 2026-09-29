@@ -4,7 +4,9 @@
 // body's length with the eye at 0.67 and the nose at 0.50; the ears are big, round and cupped,
 // reaching the full height; and the tail leaves the rump at 0.63 and ARCS UP and back over the
 // animal rather than trailing on the ground. Coarse agouti brown above, a sharply demarcated cream
-// belly, bare pink extremities. Idle: the nose and whiskers twitch, the tail sways.
+// belly, bare pink extremities. Idle: the nose and whiskers twitch, the tail sways. The Downs' barn
+// rat is the same animal fat on stolen grain: a barrel of a body sagging nearly to the floor, the
+// head small on it and an ear of wheat still in its teeth.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -16,8 +18,7 @@ import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 export const KINDS: readonly MonsterSprite[] = ['rat', 'barn_rat'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  rat(ctx, x, y, h, p);
+  rat(ctx, x, y, h, p, kind === 'barn_rat');
 };
 
 /** A lumpy ring of n points around (cx, cy), for skulls and ears. */
@@ -28,7 +29,7 @@ function ring(cx: number, cy: number, rx: number, ry: number, n: number, out: nu
 }
 const R1: number[] = [], R2: number[] = [], R3: number[] = [];
 
-function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint): void {
+function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint, fat = false): void {
   const br = p.breathe, tone = p.tone;
   const base = p.base, dark = p.dark, light = p.light;
   const fur = mix(base, light, 0.3);
@@ -77,6 +78,8 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
     { k: 'ell', x: X(-0.50), y: U(0.50), rx: h * 0.26, ry: h * 0.30, rot: -0.06 },   // the heavy hindquarters
     { k: 'ell', x: X(-0.02), y: U(0.48), rx: h * 0.19, ry: h * 0.24 },               // the shoulder
   ];
+  // Fat on grain: the gut sags nearly to the floor and bulges the flanks out past the legs.
+  if (fat) body.push({ k: 'ell', x: X(-0.26), y: U(0.37) + b, rx: h * 0.43, ry: h * 0.33, rot: 0.02 });
   // Near legs: short, the front paw tucked under the chest and the hind foot flat on the ground.
   body.push({ k: 'tube', pts: [X(0.22), U(0.24), X(0.245), U(0.12), X(0.25), U(0.03)], r0: h * 0.046, r1: h * 0.028 });
   body.push({ k: 'tube', pts: [X(-0.50), U(0.28), X(-0.415), U(0.13), X(-0.49), U(0.05)], r0: h * 0.06, r1: h * 0.034 });
@@ -116,7 +119,7 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
   // The cream belly, which on the reference meets the brown along a fairly SHARP line down the
   // flank rather than fading into it.
   patch(ctx, B, bellyHex, [
-    { k: 'curve', pts: [X(0.19), U(0.38), X(-0.02), U(0.315), X(-0.28), U(0.29), X(-0.52), U(0.31), X(-0.62), U(0.21), X(-0.26), U(0.155), X(0.12), U(0.21)], wobble: 0.035, spiky: 0.04, seed: 22, sub: 3 },
+    { k: 'curve', pts: [X(0.19), U(0.38), X(-0.02), U(0.315), X(-0.28), U(0.29), X(-0.52), U(0.31), X(-0.62), U(0.21), X(-0.26), U(fat ? 0.12 : 0.155), X(0.12), U(0.21)], wobble: 0.035, spiky: 0.04, seed: 22, sub: 3 },
     { k: 'cap', x0: hx - rH * 0.6, y0: hy + rH * 0.6, x1: hx + rH * 1.1, y1: hy + rH * 0.3, r0: rH * 0.26, r1: rH * 0.18 },
   ], { alpha: 0.72, feather: 0.28 });
 
@@ -140,6 +143,7 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
     }
   }
   softLine(ctx, B, [hx + rH * 0.55, hy + rH * 0.44, hx + rH * 1.24, hy + rH * 0.26], fur, Math.max(1, rH * 0.1), 0.4);
+  if (fat) wheat(ctx, nx, ny, rH, h, shade('#d8b460', tone), p.frame);
   const ex = hx + rH * 0.34, ey = hy - rH * 0.28;
   eye(ctx, ex, ey, rH * 0.16, shade('#150f12', Math.max(0.7, tone)), false);
   if (h >= 30 && !B.override) { ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.arc(ex - rH * 0.055, ey - rH * 0.055, Math.max(0.6, rH * 0.05), 0, Math.PI * 2); ctx.fill(); }
@@ -156,4 +160,20 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
     }
   }
   void R3;
+}
+
+/**
+ * An ear of wheat held crosswise in the teeth: the straw from behind the incisors out and down, the
+ * head of grain at its end as a row of kernels. One straw-coloured mass, so it outlines as one thing
+ * and never comes apart from the muzzle it starts inside.
+ */
+function wheat(ctx: CanvasRenderingContext2D, nx: number, ny: number, rH: number, h: number, straw: string, f: number): void {
+  const bob = Math.sin(f / 13) * rH * 0.05;
+  const x0 = nx - rH * 0.35, y0 = ny + rH * 0.22, x1 = nx + rH * 0.7, y1 = ny + rH * 0.75 + bob;
+  const parts: Part[] = [{ k: 'cap', x0, y0, x1, y1, r0: Math.max(h * 0.01, 0.8), r1: Math.max(h * 0.009, 0.8) }];
+  for (let i = 0; i < 6; i++) {
+    const t = i / 5, gx = x1 + rH * 0.3 * t, gy = y1 + rH * 0.5 * t, s = i % 2 ? 1 : -1;
+    parts.push({ k: 'ell', x: gx + s * rH * 0.06, y: gy, rx: rH * 0.16, ry: rH * 0.1, rot: 1.05 - s * 0.35 });
+  }
+  blob(ctx, B, straw, parts, { h, formK: 0.5, spread: 0.7 });
 }

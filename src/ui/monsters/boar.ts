@@ -9,7 +9,8 @@
 // far pair stands further back on the floor with its feet short of the ground line. The pale belly
 // is a fur marking, so it follows the belly line, pinches at the brisket and dies away under the
 // hind quarters with a ragged edge. Three-quarter view facing the party. Idle: the chest breathes,
-// an ear flicks.
+// an ear flicks. The Downs' tusker is the same animal grown old: heavier in the barrel and the
+// crest, grey at the muzzle and the brow, its tusks grown long enough to curl back toward the eye.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -21,8 +22,7 @@ import { shade, mix } from '../../lib/art/palettes.ts';
 export const KINDS: readonly MonsterSprite[] = ['boar', 'tusker'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  boar(ctx, x, y, h, p);
+  boar(ctx, x, y, h, p, kind === 'tusker');
 };
 
 /**
@@ -32,7 +32,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
  * near the ground. Legs are short and slender under a deep barrel. Measured in units of h with the
  * height taken up from the ground line, the way the reference photographs read.
  */
-function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint): void {
+function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint, old = false): void {
   const w = h * 1.5, br = p.breathe, tone = p.tone;
   // The head hangs out to the right; shift the mass left so the whole boar is centred on x0.
   const x = x0 - w * 0.08;
@@ -71,7 +71,7 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     { k: 'curve', pts: [
       X(-0.50), U(0.62), X(-0.45), U(0.735), X(-0.22), U(0.79) + b, X(0.02), U(0.905) + b,
       X(0.22), U(0.86) + b, X(0.33), U(0.62), X(0.27), U(0.44),
-      X(0.02), U(0.40), X(-0.24), U(0.42), X(-0.42), U(0.50),
+      X(0.02), U(old ? 0.35 : 0.40), X(-0.24), U(old ? 0.37 : 0.42), X(-0.42), U(0.50),
     ], wobble: 0.035, spiky: 0.05, seed: 1, sub: 3 },
     // The shoulder hump itself, and the smaller haunch.
     { k: 'ell', x: X(0.04), y: U(0.72) + b, rx: h * 0.20, ry: h * 0.19, rot: -0.1 },
@@ -83,7 +83,7 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     const n = 7, up: number[] = [], dn: number[] = [];
     for (let i = 0; i <= n; i++) {
       const t = i / n, cx = X(-0.44 + t * 0.66);
-      const back = 0.735 + t * 0.175, crest = back + 0.05 + 0.09 * Math.pow(t, 1.4);
+      const back = 0.735 + t * 0.175, crest = back + 0.05 + (old ? 0.13 : 0.09) * Math.pow(t, 1.4);
       up.push(cx, U(crest) + b); dn.unshift(cx, U(back - 0.03) + b);
     }
     body.push({ k: 'curve', pts: up.concat(dn), wobble: 0.09, spiky: 0.26, seed: 2, sub: 3 });
@@ -107,7 +107,7 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   patch(ctx, B, grizzle, [{ k: 'curve', pts: [
     X(-0.30), U(0.66), X(-0.10), U(0.76), X(0.08), U(0.82), X(0.22), U(0.74),
     X(0.16), U(0.56), X(-0.06), U(0.54), X(-0.26), U(0.55),
-  ], wobble: 0.1, spiky: 0.12, seed: 45, sub: 2 }], { alpha: 0.36, feather: 0.75 });
+  ], wobble: 0.1, spiky: 0.12, seed: 45, sub: 2 }], { alpha: old ? 0.5 : 0.36, feather: 0.75 });
   patch(ctx, B, pale, [{ k: 'ell', x: X(-0.04), y: U(0.45), rx: h * 0.24, ry: h * 0.055, rot: 0.02 }], { alpha: 0.4, feather: 0.7 });
 
   // The head: its own wedge, hung low off the shoulder with the snout near the ground.
@@ -117,7 +117,11 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   // the top line of the snout. A head seen side on is thin, so the far tusk sits almost directly
   // behind the near one -- a small offset, just enough to read as depth. Set further back up the
   // muzzle it looked like a separate tooth growing out of the animal's cheek.
-  blob(ctx, B, shade(ivory, 0.72), [{ k: 'tube', pts: [X(0.578), U(0.30), X(0.644), U(0.40), X(0.624), U(0.62)], r0: h * 0.02, r1: h * 0.0075, gloss: 0.25 }], { h, formK: 0.5 });
+  // An old boar's tusks keep growing, up and round until they curl back toward the eye.
+  const tusk = (dx: number): number[] => old
+    ? [X(0.578 + dx), U(0.30), X(0.655 + dx), U(0.41), X(0.645 + dx), U(0.575), X(0.60 + dx), U(0.645)]
+    : [X(0.578 + dx), U(0.30), X(0.644 + dx), U(0.40), X(0.624 + dx), U(0.62)];
+  blob(ctx, B, shade(ivory, 0.72), [{ k: 'tube', pts: tusk(0), r0: h * 0.02 * (old ? 1.2 : 1), r1: h * 0.0075, gloss: 0.25 }], { h, formK: 0.5 });
   blob(ctx, B, shade(hide, 0.95), [
     { k: 'curve', pts: [
       X(0.22), U(0.86), X(0.40), U(0.80), X(0.55), U(0.63), X(0.68), U(0.48),
@@ -137,6 +141,14 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // The pale muzzle ring, the wet snout disc and its nostrils.
   patch(ctx, B, pale, [{ k: 'cap', x0: X(0.56), y0: U(0.40), x1: sx + h * 0.02, y1: U(0.365), r0: h * 0.055, r1: h * 0.05 }], { alpha: 0.5, feather: 0.6 });
+  if (old) {
+    // Grey with age at the muzzle and over the brow, as an old boar goes.
+    const grey = shade('#b8b4ac', tone);
+    patch(ctx, B, grey, [
+      { k: 'ell', x: X(0.58), y: U(0.43), rx: h * 0.1, ry: h * 0.055, rot: 0.35 },
+      { k: 'ell', x: X(0.42), y: U(0.70), rx: h * 0.07, ry: h * 0.035, rot: -0.3 },
+    ], { alpha: 0.42, feather: 0.85 });
+  }
   glossBall(ctx, B, sx + h * 0.04, sy - h * 0.025, h * 0.068, snout, { gloss: 0.4 });
   if (!B.override) {
     ctx.fillStyle = B.col(shade('#20161a', tone));
@@ -147,7 +159,7 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   softLine(ctx, B, [X(0.50), U(0.365), X(0.665), U(0.335)], hide, Math.max(1, h * 0.02), 0.5);
   // The NEAR tusk over everything, longer and heavier. Both curve up and BACK toward the eye,
   // which is the way they actually grow; swept forward the tips crossed over the snout disc.
-  blob(ctx, B, ivory, [{ k: 'tube', pts: [X(0.60), U(0.295), X(0.668), U(0.40), X(0.648), U(0.585)], r0: h * 0.027, r1: h * 0.008, gloss: 0.5 }], { h, formK: 0.6 });
+  blob(ctx, B, ivory, [{ k: 'tube', pts: old ? tusk(0.024).map((v, i) => i % 2 ? v + h * 0.005 : v) : [X(0.60), U(0.295), X(0.668), U(0.40), X(0.648), U(0.585)], r0: h * 0.027 * (old ? 1.25 : 1), r1: h * 0.008, gloss: 0.5 }], { h, formK: 0.6 });
   // A small dark eye set high and far back, under a heavy brow.
   const ex = X(0.42), ey = U(0.66);
   softLine(ctx, B, [ex - h * 0.03, ey + h * 0.018, ex + h * 0.04, ey - h * 0.004], shade(hide, 0.55), Math.max(1, h * 0.028), 0.55);

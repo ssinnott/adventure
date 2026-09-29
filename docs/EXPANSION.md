@@ -201,7 +201,7 @@ The road had one lock, the flag on the pass, and it went (§2.2); there are none
   tier, training to the top of the band), each business with an interior of its own.
 - Its chapter of the one quest (§5.8) is walked end to end in a test, and its side quests are in the
   log, with every key real.
-- Its gate holds (§5.2): a company at its band's floor gets through, and one well under it turns
+- Its gate holds (§5.2): a company at each map's floor gets through, and one well under it turns
   back.
 - The story lock it spends, if it spends one, is declared with its reason (§2.3).
 - For a reach area: it has no chapter, its gate is set at the cap (§5.2), and every riddle in its
@@ -270,11 +270,12 @@ where a clear of everything reaches 9.
 The gate, checked with the bot of `tools/gate.ts` (starting thresholds, set against the owner's own
 play in the pilot):
 
-- **At the floor, through.** A company at the band's floor wins nine in ten of the area's fights,
-  and walks its road, resting where the road lets it (an inn, a camp), eight times in ten.
+- **At the floor, through.** A company at each map's own floor wins nine in ten of that map's
+  fights, and of the area's, each fought at its map's floor; each zone's road is walked at the
+  zone's floor, resting where the road lets it (an inn, a camp), eight times in ten.
 - **Well under, back.** Two levels under the floor, it wins no more than one fight in four: over
-  the area, and over each map whose floor is the area's. A dungeon deeper in, with a higher floor,
-  is held at its own floor, and its groups count two under in the area's (the owner, on #40).
+  each map whose floor is the area's, and over the area, where a zone map's groups count two under
+  its own floor and a town's or dungeon's two under the area's (the owner, on #40 and #209).
 - **The boss asks.** The area's boss is won about half the time at the floor, and nearly always two
   levels above it.
 - **Six or seven fights to a rest.** A company can fight six or seven standard encounters at its own
@@ -285,7 +286,7 @@ play in the pilot):
   its odds, not in the day (the owner, on #40). `tools/harness.ts`
   measures any encounter or map against it, with a test monster for every role and level to build
   from (docs/MONSTERS.md §4.4).
-- **A warning, not a wall.** The first groups past a border are the area's gentlest, and the
+- **A warning, not a wall.** The first groups past a border are the zone's gentlest, and the
   crossing line tells a company under the band how the land feels to it, so the party learns it is
   early from a fight it can survive or run from, not from a wipe.
 - **The reach asks the most.** In a reach area, a company at the cap that has walked the road wins

@@ -150,16 +150,19 @@ export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horiz
 
 // ---------------------------------------------------------------- monsters ----
 
-/** Which family module draws each sprite kind. */
-const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
+/**
+ * Which family module draws each sprite kind. A module lists the same kinds in its `KINDS`, which
+ * the gallery and `tools/changed.ts` read; tools/tests/art.ts holds the two to each other.
+ */
+export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   rat: rat.draw, barn_rat: rat.draw,
   slime: slime.draw,
   wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw, chalk_wolf: wolf.draw,
   boar: boar.draw, tusker: boar.draw,
-  spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw,
+  spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw, barnacle_crab: spider.draw,
   bandit: bandit.draw, archer: bandit.draw, brigand: bandit.draw, brigand_archer: bandit.draw,
   smuggler: bandit.draw, smuggler_bow: bandit.draw, smuggler_captain: bandit.draw,
-  wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, hedge_archer: bandit.draw,
+  wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, poacher: bandit.draw, billman: bandit.draw, slinger: bandit.draw,
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
   acolyte: cultist.draw, deacon: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
@@ -168,7 +171,7 @@ const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
   ogre: ogre.draw,
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw, eldest: oldwood.draw,
   wraith: wraith.draw,
-  crow: birds.draw, owl: birds.draw,
+  crow: birds.draw, owl: birds.draw, old_rook: birds.draw,
 };
 
 /**
