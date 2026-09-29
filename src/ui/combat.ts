@@ -14,6 +14,8 @@ import type { CombatState, PartyAction } from '../game/combat.ts';
 import { spell } from '../game/spells.ts';
 import { item } from '../game/items.ts';
 import { weaponOf } from '../game/party.ts';
+import { groupLabels } from './grouplabels.ts';
+import type { LabelLine } from './grouplabels.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'item' | 'itemTarget' | 'done';
 const MONSTER_DELAY = 22;
@@ -32,6 +34,8 @@ export class CombatScreen implements Screen {
   /** Sparks: position, velocity, life. */
   private sparks: { x: number; y: number; vx: number; vy: number; life: number; col: string }[] = [];
   private lastMonsterHp: number[] = [];
+  /** The group labels as last painted, for the smoke test to read. */
+  labels: LabelLine[] = [];
   constructor(readonly state: CombatState, readonly groupIds: string[]) {
     this.lastMonsterHp = state.monsters.map((m) => m.hp);
   }
@@ -181,11 +185,9 @@ export class CombatScreen implements Screen {
     ctx.globalAlpha = 1;
     this.sparks = this.sparks.filter((p) => p.life > 0);
     drawWeather(ctx, g.world, v, frame);
-    // Group labels
-    const groups = new Map<number, number>();
-    for (const mi of alive) groups.set(s.monsters[mi].group, (groups.get(s.monsters[mi].group) ?? 0) + 1);
-    let gx = v.x + 6;
-    for (const [gi, count] of groups) { const name = s.monsters.find((m) => m.group === gi)!.def; drawText(ctx, `${count} ${count === 1 ? name.name : name.plural}`, gx, v.y + 6, { size: 1, color: TEXT_DIM }); gx += 110; }
+    // Group labels: each kind in a group with its count of the living (ui/grouplabels.ts).
+    this.labels = groupLabels(s.monsters, v.w);
+    for (const l of this.labels) drawText(ctx, l.text, v.x + l.x, v.y + 6 + l.y, { size: 1, color: TEXT_DIM });
     // Log: wrapped as the exploring log is, so a look of two lines shows whole.
     const lines = logTail(s.log, COMBAT_LOG_LINES);
     const lh = lines.length * 10 + 6;
