@@ -795,3 +795,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #263 (the Downs' five) still waits on the owner's OK of its sheet (01:59); #145 waits on #263.
   The pilot has F3 on `claude/m1-47-f3` (on F2's branch, at the brief's sizes, the wreckers on the
   line), a branch only, as asked.
+
+### 03:05: #266 reviewed
+
+- `reviews/266.md` (#77's D, the Well): ready after fixes. The 13 texts verbatim; an explorer over
+  440 states finds no fault; the gate walks both lanes day and night. Sent 03:08: Osmund's record
+  test can't fail (hear him twice); nits (`well_swept`'s night held, a header, a comma, two long
+  lines). All seven owner's choices: the defaults (6: both events on the west lane only).
+- For #67's brief when it starts: key its Mottram words to `q_well` or say them once, so they never
+  hide the well's first meeting.
