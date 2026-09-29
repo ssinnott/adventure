@@ -103,7 +103,7 @@ function who(map: string, x: number, y: number, name: string): Person {
 const MAUD = (): Person => who('harrow', 12, 13, 'Maud');
 const EBBA_EEL = (): Person => who('harrow', 12, 13, 'Ebba'), EBBA_CHAPEL = (): Person => who('harrow', 11, 4, 'Ebba');
 const FISHERMAN = (): Person => who('harrow', 12, 13, 'the fisherman'), WALL = (): Person => who('harrow', 14, 3, 'a Warden on the wall');
-const HOB = (): Person => who('harrow', 4, 4, 'Hob');
+const HOB = (): Person => who('harrow', 4, 4, 'Hob'), HOB_GULLWICK = (): Person => who('downs_f3', 7, 14, 'Hob');
 const MOTTRAM = (): Person => who('harrow', 4, 10, 'Mottram'), ALWIN = (): Person => who('harrow', 9, 1, 'Alwin');
 const OSMUND = (): Person => who('harrow', 11, 4, 'Osmund'), AILITH_WOOD = (): Person => who('shelf', 2, 14, 'Ailith'), AILITH_HOLD = (): Person => who('thornhold', 11, 4, 'Ailith');
 
@@ -343,12 +343,13 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   }
   { // The paper to Vask: he pays; Hob is gone from the inn, and his empty chair is said once.
     const w = newWalk(ok);
+    w.ok(!there(w, HOB_GULLWICK(), 'downs_f3'), 'before the paper is given, Hob is not at Gullwick');
     tenantAsked(w);
     const gold = w.party.gold;
     meetWho(w, 'q_paper_vask');
     w.ok(w.party.gold === gold + 50 && !w.party.bag.includes('tenant_paper') && !w.party.flags.q_ashcombe_done, 'Vask takes the paper, without the wand, and pays 50');
     reads(w, 'tenant', 'Who Lived at Ashcombe', ['hob', 'kitchen', 'key', 'paper', 'vask'], ['hale'], 'the paper to Vask');
-    w.ok(!there(w, HOB(), 'harrow'), 'the paper to Vask, Hob is gone from the inn');
+    w.ok(!there(w, HOB(), 'harrow') && !there(w, HOB_GULLWICK(), 'downs_f3'), 'the paper to Vask, Hob is gone from the inn and not at Gullwick');
     see(w, 'harrow:hob_chair');
     const again = (w.world.travel('harrow', 4, 4), w.world.eventsHere());
     w.ok(w.world.used('hob_chair') && again.length === 0, 'and his empty chair is said once');
@@ -360,7 +361,8 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     meetWho(w, 'q_paper_hale');
     w.ok(w.party.gold === gold + 50 && !w.party.bag.includes('tenant_paper') && !w.party.flags.q_greywater_done, 'Hale takes the paper, without the ledger, and pays 50');
     reads(w, 'tenant', 'Who Lived at Ashcombe', ['hob', 'kitchen', 'key', 'paper', 'hale'], ['vask'], 'the paper to Hale');
-    w.ok(!there(w, HOB(), 'harrow'), 'the paper to Hale, Hob is gone from the inn');
+    w.ok(!there(w, HOB(), 'harrow') && there(w, HOB_GULLWICK(), 'downs_f3'), 'the paper to Hale, Hob is gone from the inn and on the shingle at Gullwick');
+    w.ok(hear(w, 'downs_f3', HOB_GULLWICK()).startsWith('Hob is on the shingle at Gullwick'), 'where he says he stayed');
     see(w, 'harrow:hob_chair');
     w.ok(!w.world.used('hob_chair'), 'and no empty chair is said');
   }
