@@ -814,3 +814,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #263's head moved to 33f13d4 (a main merge only; no drawing changed since the sheet sent 01:59).
   It waits on the owner's OK of the look; the chain behind it: #263, then #145 (F2), then the
   pilot's B (F3), then #77's C.
+
+### 04:31: check-in; waiting on the owner
+
+- No new PR. #263 merged main again (5f5608c; no drawing changed since the 01:59 sheet); the pilot
+  merged main into F2 (aafc250) and builds F3 (`claude/m1-47-f3`) and C (`claude/m1-47-people`) as
+  branches. Everything waits on the owner's OK of #263's look.
