@@ -767,3 +767,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Helmstow row, §8's gold line, shipped.json by the tool); nits: `gw1_coat` `until` the done flags,
   assert the strongbox's words. All six owner's choices: the defaults. Found in passing: an unhired
   company that hands Hale the seal is greeted afresh next time (#43's rule, as designed).
+
+### 01:58: check-in; #148, #262 and #263 fixed
+
+- #148 merged main 0ced6cf (a7a6369: the Lanterns' curve figures in the four places, #265's plan
+  kept) and wrote the owner's call into MONSTERS (§4.2 a Thin fodder row, the thorn spider and the
+  brigand; §4.4 many and thin where a map's floor sits within about three levels of its area's two
+  under, fewer and harder elsewhere). CI green; landing check started 01:57.
+- #262 merged main (2ec4c71) and pushed its nits (b3b8418: `gw1_coat` `until` the done flags; the
+  strongbox's words asserted). CI green. It lands after #148, tested on the new main.
+- #263 pushed its fixes (2f779c2: the Chalk Wolf lean and long in the leg, an amber eye, the pilot's
+  level-4 def) and merged main (b9e96f9). Its sheet (the five beside the Foreland's own) went to
+  the owner at 01:59; it waits on their OK of the look.
