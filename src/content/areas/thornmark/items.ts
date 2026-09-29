@@ -1,5 +1,5 @@
 // Thornmark's items: the tier a band 5-10 party buys in the Armoury, the same with a plus that it
-// finds, the chisel and the journal the Cut Stone gives up, and the side quests' things.
+// finds, the Deepthorn's next step, the chisel and the journal the Cut Stone gives up and the side quests' things.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 
@@ -10,6 +10,7 @@ const runeDagger = W('rune_dagger', 'Rune Dagger', 320, 1, 6, { bonus: 3 });
 const groveStaff = W('grove_staff', 'Grove Staff', 280, 1, 8, { bonus: 2, twoHanded: true });
 const runedRobe = A('runed_robe', 'Runed Robe', 350, 3);
 const brigandine = A('brigandine', 'Brigandine', 400, 5, { classes: NO_CASTER_HEAVY });
+const towerShield: ItemDef = { id: 'tower_shield', name: 'Tower Shield', slot: 'shield', price: 400, ac: 3, classes: MAIL };
 
 export const ITEMS: readonly ItemDef[] = [
   warhammer,
@@ -22,7 +23,7 @@ export const ITEMS: readonly ItemDef[] = [
   runedRobe,
   brigandine,
   A('plate', 'Plate Mail', 1200, 9, { classes: ['knight', 'paladin'] }),
-  { id: 'tower_shield', name: 'Tower Shield', slot: 'shield', price: 400, ac: 3, classes: MAIL },
+  towerShield,
   // Found, not sold: the chests' and the Hand of Ash's. No plate with a plus: it would pass 1,200.
   P(warhammer, 1),
   P(greatsword, 1),
@@ -32,6 +33,17 @@ export const ITEMS: readonly ItemDef[] = [
   P(runedRobe, 1),
   P(brigandine, 1),
   P(brigandine, 2),
+  // The Deepthorn's, the top of Act I's gear ladder: a +2 or better for every class by 10, inside
+  // the window's 1,200 gold. The Monk's is a staff of its own, and the torc a keepsake that sells.
+  P(warhammer, 2),
+  P(greatsword, 2),
+  P(elfbow, 2),
+  P(runeDagger, 2),
+  P(runedRobe, 2),
+  P(brigandine, 3),
+  P(towerShield, 1),
+  P(groveStaff, 2, { id: 'eldests_bough', name: "Eldest's Bough +2" }),
+  { id: 'silver_torc', name: 'Silver Torc', slot: 'none', price: 400 },
   { id: 'potion_sp_great', name: 'Sapphire Vial', slot: 'none', price: 120, use: { sp: 25 } },
   { id: 'lantern_oil', name: 'Lantern Oil', slot: 'none', price: 40, use: { cure: ['poisoned', 'diseased', 'paralysed'] } },
   { id: 'ashen_chisel', name: 'Underdeep Chisel', slot: 'none', price: 0 },

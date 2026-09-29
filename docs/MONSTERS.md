@@ -293,12 +293,13 @@ as off its aim; only past its limit does it fail. Tune to the aim, not to the de
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
 (the gear ladder, `GEAR`: the kits, the Foreland's band gear and its finds with a plus by 3 and 5,
-then Thornmark's past them). It fights the encounter again and again from a fresh start, mending
-between fights with spells as a player would, until it loses one or must rest. A bot plays it that
-mends whoever is in danger and strikes, and casts a damage spell only when the hit points it saves
-are worth the spell points. Each is counted against what the company has left of that pool before it
-must rest, and a healer's spell points are priced at what they would mend. So the bot spends on what
-hurts while it is fresh, and holds back as its spell points run down. The calibration:
+then Thornmark's past them, the Deepthorn's at 10). It fights the encounter again and again from a
+fresh start, mending between fights with spells as a player would, until it loses one or must rest.
+A bot plays it that mends whoever is in danger and strikes, and casts a damage spell only when the
+hit points it saves are worth the spell points. Each is counted against what the company has left of
+that pool before it must rest, and a healer's spell points are priced at what they would mend. So
+the bot spends on what hurts while it is fresh, and holds back as its spell points run down. The
+calibration:
 
 - Every role keeps its shape (§4.2) and hits as today's monsters hit, on the line; its hit points
   are whatever makes the day's fights.
@@ -332,13 +333,14 @@ Hit points / average damage a hit, by role and level:
 | 6 | 22 / 3.5 | 31 / 8 | 29 / 9 | 29 / 7 | 38 / 9 | 29 / 7 | 35 / 10 | 53 / 11 | 82 / 11 | 222 / 29.5 |
 | 7 | 27 / 4 | 39 / 6.5 | 35 / 9 | 39 / 5.5 | 45 / 8 | 34 / 9 | 41 / 11.5 | 58 / 12 | 83 / 11 | 265 / 33 |
 | 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 70 / 9 | 57 / 10 | 70 / 11 | 88 / 13 | 119 / 13 | 311 / 37.5 |
-| 10 | 55 / 10 | 79 / 8 | 79 / 10 | 80 / 8 | 94 / 9 | 77 / 7 | 84 / 13 | 103 / 14 | 143 / 13 | 412 / 47 |
-| 12 | 69 / 12 | 91 / 9 | 84 / 14 | 83 / 13 | 117 / 9 | 82 / 13 | 98 / 15 | 121 / 14 | 147 / 14.5 | 531 / 58 |
-| 16 | 100 / 11 | 108 / 16.5 | 107 / 21 | 105 / 18 | 125 / 17.5 | 104 / 20 | 116 / 27 | 136 / 19.5 | 198 / 16 | 819 / 84 |
-| 20 | 137 / 11 | 132 / 19.5 | 144 / 24 | 141 / 21 | 156 / 25 | 128 / 23 | 165 / 14 | 188 / 22 | 235 / 19 | 1008 / 99 |
-| 24 | 231 / 9 | 185 / 17 | 185 / 25 | 205 / 21 | 189 / 29 | 182 / 20 | 252 / 15.5 | 216 / 28 | 277 / 22 | 1162 / 111 |
-| 28 | 288 / 10 | 243 / 18 | 279 / 25.5 | 282 / 25 | 283 / 30 | 274 / 22 | 310 / 18 | 221 / 33 | 301 / 40.5 | 1300 / 122 |
-| 32 | 334 / 11.5 | 341 / 18 | 363 / 19 | 345 / 25 | 342 / 32 | 333 / 22 | 338 / 41 | 344 / 34 | 365 / 37.5 | 1474 / 136 |
+| 9 | 50 / 9 | 73 / 7 | 73 / 8 | 72 / 8 | 81 / 9 | 69 / 9 | 83 / 10 | 102 / 14 | 136 / 14 | 350 / 41 |
+| 10 | 60 / 10 | 89 / 10 | 90 / 10 | 86 / 9 | 102 / 11.5 | 87 / 10 | 99 / 14 | 122 / 15 | 165 / 15.5 | 415 / 47 |
+| 12 | 72 / 12 | 108 / 9 | 112 / 9 | 115 / 8 | 136 / 9 | 95 / 11 | 122 / 14 | 132 / 16 | 195 / 14.5 | 540 / 59 |
+| 16 | 97 / 14.5 | 122 / 15 | 120 / 18.5 | 122 / 15 | 155 / 15.5 | 114 / 18.5 | 139 / 20 | 178 / 17.5 | 217 / 16.5 | 830 / 85.5 |
+| 20 | 141 / 11 | 156 / 17 | 156 / 21 | 136 / 24 | 183 / 23 | 135 / 23 | 167 / 32 | 211 / 22 | 264 / 19 | 1046 / 103 |
+| 24 | 221 / 11.5 | 173 / 21 | 187 / 26 | 207 / 23 | 193 / 30 | 154 / 27 | 236 / 37 | 250 / 27 | 297 / 22 | 1184 / 113 |
+| 28 | 295 / 10 | 202 / 21 | 279 / 26.5 | 280 / 26 | 237 / 33 | 208 / 24 | 288 / 37 | 300 / 30.5 | 314 / 37 | 1324 / 124 |
+| 32 | 341 / 11.5 | 265 / 21 | 337 / 26.5 | 343 / 27 | 317 / 36.5 | 331 / 24 | 345 / 37 | 351 / 33 | 371 / 37 | 1491 / 138 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -359,7 +361,7 @@ What it shows:
   controllers, on the line leave a company of 1 short of six or seven fights, so they come down
   whole, to between 0.8 and 1 of the line.
 - **Held to short fights, monsters hit harder than today's.** From level 3 to 12 most roles have 1.1
-  to 3.1 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
+  to 3.6 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
   company that husbands its spells through the day kills slowly, and a fight that must end in four
   or five rounds has to take its share of the day in them.
 - **Some fights cannot be finished.** A fight still going at fifteen rounds is broken off, and it
@@ -369,8 +371,8 @@ What it shows:
 - **The heavy hitters are slower.** Held to four rounds, brutes, elites and the armoured hit hard
   enough to take a member from standing to −10 in one blow, and a death ended up to half their days
   at 4–12 (two brutes at 4, nearly half). Given half as long again, a death or a lost fight ends
-  4–9% of the armoured's days, 4–15% of the elites' and 2–21% of the brutes', in fights of 4.4 to
-  7.5 rounds. Two brutes at 4 are the worst of it, a fifth of the days even so.
+  1–9% of the armoured's days, 6–15% of the elites' and 1–21% of the brutes', in fights of 4.4 to
+  7.8 rounds. Two brutes at 4 are the worst of it, a fifth of the days even so.
 - **Hit points jump where tier 5 lands.** At 8, where Meteor Swarm, Tempest and Wrath reach every
   foe, every role needs nearly half as many hit points again as at 7, or more (the soldier 35 to
   59). Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole group of them: 7
@@ -390,12 +392,12 @@ What it shows:
   sorcerer has about 24. Real bosses want an escort, as the Hand of Ash and the Warden of the Cut
   have, or the sweep of §3.3.
 - **Past 12, on today's rules, no monster makes a good day.** With rests further apart, monsters
-  there need only 1.7 to 4 times the line's hit points (fodder up to 5.6), where six or seven fights
+  there need only 1.9 to 4 times the line's hit points (fodder up to 5.7), where six or seven fights
   a rest asked up to seven. But the company's spells grow with its level and nothing else does, so
   once they are spent its weapons cannot finish a fight, and blows hard enough to end fights sooner
-  kill. From 16 a sixth to two-fifths of the days end badly for most roles, half for elites by 28,
-  nine in ten for brutes at 28, and nearly all for the armoured at 20–28, whom weapons barely
-  scratch.
+  kill. From 16 a tenth to over half of the days end badly for most roles (the casters 58% at 24),
+  half for elites by 28, three in four for brutes at 28 and nearly all for the armoured at 20–28,
+  whom weapons barely scratch.
 - **Weaker spells, and something else that grows.** Past 10 the balance can come from the monsters,
   the spells or the company, and the harness tries each. `--spell-cap 10` stops damage spells
   growing at 10. `--gear-grows` enchants Thornmark's gear past 10, so that a weapon's blow grows as
