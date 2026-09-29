@@ -746,3 +746,16 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (with main 7395a12) merged onto 136c3c6 cleanly, and that tree tested ALL OK (47 owed), SMOKE OK,
   "Nothing new."; CI green on the head; main's tree is the tested merge's (e3e4f58). #73 closes;
   its session is done for Phase 1.
+
+### 01:30: #263 reviewed
+
+- `reviews/263.md`: ready after fixes, then the owner's OK on the look. The Tusker, Barn Rat,
+  Footpad and Hedge Archer read as their own at combat size; the Chalk Wolf is still the stand-in
+  (8.8% of its ink off the wolf's, where the Black Dog is 26%; `leg` is thickness, so it came out
+  heavier, not leaner), its eye glows at night (the rift hound's untoned ember), and its def is
+  ed2addf's level 3 where the pilot's F2 needs 90974f5's level 4. Main 0ced6cf merges clean: ALL
+  OK (52 owed, the five `UNPLACED`), SMOKE OK. Sent 01:40. Found in passing, for the owner later:
+  nothing holds a family module's `KINDS` to `FAMILY` (the quality lane's).
+- For #145 once #263 lands: take main's side for the five (bandit.ts's dispatch line conflicts),
+  delete its own defs block (it merges silently as a second definition), drop the five from
+  `UNPLACED`.
