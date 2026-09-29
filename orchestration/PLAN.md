@@ -1254,3 +1254,23 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 16:51: #49 (I4, Henlys) to the #100 session, authored beside #214 on `claude/m1-49-henlys` and
   landing after it, since the Deepthorn's longest chain is #214, #49, #216, #218; two area sessions
   in Thornmark's area, as in the Foreland. A scout on #49 (`footprints/49.md`).
+
+### 16:55: check-in; four new PRs; the delegate on #283, #284 and #163
+- Opened since 16:40: #289 (#77's C, Who Lived at Ashcombe; its work survived; Closes #77), #290
+  (#285, a mixed group drawn as its kinds; the #45 session), #291 (#68's A, E2 the Wend's fields),
+  #292 (#287, the silhouette check seated as a fight seats; the #97 session). A reviewer on each
+  (16:52); their choices and sheets (`render/sheet289.png`, `sheet290.png`, `sheet291.png`, beside
+  main's) to a delegate (16:54).
+- **The delegate on #283** (16:52): Hild's knowing text keyed on both of Hale's flags, as built (the
+  body's "either" to "both"); the title "A Boat With No Name-Board" (shelf.md §6 row 4 to match);
+  Hale's line as #85 put it; the sheet OK (four automap marks). To #283's round.
+- **The delegate on #284**: the ten choices as built; the sheet **not OK yet**: the niche's secret
+  door at 19,29 has no rock, mountain or tree beside it, so it draws as dressed stone beside its own
+  hint (`viewport.ts:905-915`): write 20,29 as rock. Crowness Light reads as a lighthouse by sense and
+  on the world map, one grey block in the view (a tower drawing is a systems change). To #284's round.
+- **#163** (Sunderwood's terrain) approved at the delegate's word (16:52; marked so on the issue):
+  all of it, in the systems lane after #286 and #288, the dead wood first so #216's blocker is on
+  main before #216 starts. Queued to the #45 session (16:54).
+- Sessions: the pilot on E; #67's A (#284) and #68's A (#291) in review; #214 (Thornmark session)
+  and #49 (#100 session) authoring; #45 session on #286; #97 session free after #292; #76 session
+  after #289. Scouts out: #214, #71, #87, #49.
