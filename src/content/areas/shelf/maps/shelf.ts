@@ -3,7 +3,7 @@
 // south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
+import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 
 export const SHELF: MapDef = {
   id: 'shelf',
@@ -42,7 +42,7 @@ export const SHELF: MapDef = {
     'M,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,M',
     'MMMM,,,,,,,,,,,,,,,,,,,,,,,,,,,M',
     'M______________________________M',
-    'M________~~~~~~~~~~~~~~~~~~~~~~M',
+    '=________~~~~~~~~~~~~~~~~~~~~~~M',
     'M________WWWWWWWWWWWWWWWWWWWWWWM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
   ],
@@ -51,6 +51,7 @@ export const SHELF: MapDef = {
     { x: 24, y: 20, to: 'mill', tx: 1, ty: 1, tf: EAST, label: 'The farmhouse door hangs open. Stairs lead down into the cellar.' },
     { x: 31, y: 9, to: 'thornmark', tx: 1, ty: 9, tf: EAST, label: 'The pass opens onto old forest. Thornmark.' },
     { x: 2, y: 28, to: 'greywater1', tx: 1, ty: 1, tf: SOUTH, label: 'A cave mouth in the cliff foot, half hidden by kelp. Brandy Hole.' },
+    { x: 0, y: 29, to: 'downs_f2', tx: 30, ty: 29, tf: WEST, label: 'The Salt Road climbs off the beach onto the Downs.' },
   ],
   features: [
     { kind: 'sign', x: 16, y: 4, text: 'North: Helmstow. South and east along the road: Ashcombe farm.' },

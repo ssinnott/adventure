@@ -69,7 +69,8 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
 export const OWED: Record<string, { whose: string; at: number }> = {
   // The Foreland: the pilot settles these, by retuning it or by moving the thresholds.
   'shelf: rest': { whose: '#47', at: 4.58 },
-  'mill:m_warden: floor': { whose: '#47', at: 0.98 },
+  // The Rift Warden is retuned with Ashcombe's move past Gullwick, to about half at level 2.
+  'mill:m_warden: floor': { whose: '#87', at: 0.98 },
   'greywater1: rest': { whose: '#47', at: 4.08 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },

@@ -5,7 +5,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'shelf', name: 'The Foreland', area: 'shelf', maps: [{ map: 'shelf', at: [200, 30] }] },
-  { id: 'downs', name: 'Callow Downs', area: 'shelf', band: [2, 5], seeds: [[160, 48], [128, 66], [180, 30]], label: [132, 60] },
+  { id: 'downs', name: 'Callow Downs', area: 'shelf', band: [2, 5], maps: [{ map: 'downs_f2', at: [168, 30] }], seeds: [[160, 48], [128, 66], [180, 30]], label: [132, 60] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -26,5 +26,5 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'The Scarth', icon: 'gate', map: 'shelf', at: [31.5, 8.6], label: 'none' },
   { name: 'Gullwick', icon: 'village', at: [172, 70], label: 'below', planned: true },
   { name: 'Crowness Light', icon: 'lighthouse', at: [140, 88], label: 'below', planned: true },
-  { name: 'Coldharbour', icon: 'farm', at: [176, 42], label: 'right', planned: true }, // the Knight's second prestige
+  { name: 'Coldharbour', icon: 'farm', map: 'downs_f2', at: [8.5, 12.5], label: 'right' }, // the Knight's second prestige
 ];
