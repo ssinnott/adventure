@@ -1245,3 +1245,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   counts and commas. Diff read. Landing check on cfa4fd3 (main c9abc79 in): ALL OK (42 owed), SMOKE
   OK, "Nothing new."; the ten Deepthorn lines. CI green. Merged as 95a5bc1; main's tree is the tested
   tree (b53e767). #212 closes with it. The #100 session is free; #282 told to merge main (items.ts:2).
+- 16:50: #282 (#219, Thornmark's six side quests) landed: its round (09b2ca0: the glass starts on its
+  reading, Ruan at 4,8 and Mylor at 11,8, the Mender's camp on the road at 13,20, the nits; 0a14dc9:
+  the delegate's gold shares; 20a32a7: main with #281, `items.ts:2` joined). Diff read. Landing check
+  on 20a32a7: ALL OK (42 owed), SMOKE OK, "Nothing new."; Thornmark 100% at 5, 20.7% two under, 6.02
+  fights to a rest. CI green. Merged as 97e2d81; main's tree is the tested tree (5cd175e). #219
+  closes with it. The Thornmark session goes on to #214 (H3), its footprint to follow.
