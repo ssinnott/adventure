@@ -1133,3 +1133,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   wreckers at 4; the crabs on the north-east sand; night only). One nit for the review's round, or
   else C: the sea line at 16,2 (`downs_f3.ts:51`) sits on grass off the road's bend, so a company on
   the road never fires it: move it to 14,1 or 13,2. Note for #68: the shanty's first word is "Ten".
+
+### 16:01: check-in
+- Open: #277 (round in: 19bf37c, main ac64abb merged; relative probes, the off-aim list tested, a
+  dungeon in the fixture, n/a for an area with no groups, roads held to their zones; landing check
+  running), #279 (#210, in review), #280 (F3, in review; the delegate's OK in), #281 (#212, the #100
+  session, 15:47) and #282 (#219, the Thornmark session, 15:51): reviewers started on both.
+- Landed since 15:00: #276, #272, #275, #274, #278.
