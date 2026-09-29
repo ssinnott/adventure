@@ -60,8 +60,11 @@ const now = (file: string): string => (existsSync(path.join(ROOT, file)) ? readF
 const EVERY_MONSTER = [/^src\/ui\/(sprites|brush)\.ts$/, /^src\/lib\/art\//];
 const FAMILY_FILE = /^src\/ui\/monsters\/[^/]+\.ts$/;
 const AREA_MONSTERS = /^src\/content\/areas\/([^/]+)\/monsters\.ts$/;
-/** The sprite kinds a family module draws, as its KINDS lists them; null for a shared module. */
-const kindsOf = (text: string): string[] | null => {
+/**
+ * The sprite kinds a family module draws, as its KINDS lists them, read from its text; null for a
+ * shared module. tools/tests/changed.ts holds it to each module's KINDS as imported.
+ */
+export const kindsOf = (text: string): string[] | null => {
   const m = /export const KINDS[^=]*=\s*\[([^\]]*)\]/.exec(text);
   return m ? [...m[1].matchAll(/'([^']+)'/g)].map((k) => k[1]) : null;
 };

@@ -13,7 +13,7 @@ are measured on this branch at `5092f9c`.*
 Three jobs. Where they pull apart, the earlier one wins.
 
 1. **They are the gate.** Nothing on the road is locked (EXPANSION.md §2.2): what turns a company
-   back is the monsters. An area's monsters let a company at its band's floor through and turn one
+   back is the monsters. An area's monsters let a company at each map's floor through and turn one
    two levels under it back (EXPANSION.md §5.2), and they do it by what they are and who they stand
    with, not by their numbers alone (DESIGN.md §6).
 2. **They carry the secret.** The road starts among beasts and people and ends among machines, and
@@ -286,6 +286,10 @@ does Thornmark's 3, its groups may be many and thin to hold the gate: ten or twe
 heavier is both lost at 3 and cheap at 6. Elsewhere they are fewer and harder, as in the Cut Stone
 (the owner, on #40).
 
+The gate holds each of these figures to an aim and a limit beyond it (EXPANSION.md §5.2, #273): six
+or seven fights to a rest is the aim; a map outside it but between four and ten passes, and is listed
+as off its aim; only past its limit does it fail. Tune to the aim, not to the decimal.
+
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
 (the gear ladder, `GEAR`: the kits, the Foreland's band gear and its finds with a plus by 3 and 5,
@@ -483,8 +487,8 @@ to Kestrel Edge. The Foreland's weather: mild, wet, and foggy off the sea in the
 The Downs are the night the light went out, seen from the shore. The fishermen steer by the Hearth;
 with it failing the coast is dark, and the dark has people in it who were waiting for it (STORY.md,
 Act One). Up on the hills the Queen's barrow, the Berth, stands open, and her guard is up. The Downs
-are the pilot's zone map (EXPANSION.md §9, Phase 1), so their monsters test the pipeline and not the
-resolver: one new family, variants on the frames that exist, and two small fields.
+are the pilot's zone map (EXPANSION.md §9, Phase 1.1), so their monsters test the pipeline and not
+the resolver: one new family, variants on the frames that exist, and two small fields.
 
 **New:** birds, the frame the road reuses for owls, herons, gulls, ravens, eagles and vultures.
 **Back:** the Wolf on the hills, bandits and their archers on the coast road, the Shore Crab under
@@ -493,11 +497,20 @@ Crowness Light.
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
 | Carrion Crow | birds, new | fodder, 2 | the stubble fields; the gibbet on the coast road | *Crows, too many to count, and all of them watching.* Flies, so it reaches the back row (`ranged` without `missile`); six to eight to a group |
-| Wrecker | bandit | soldier, 3 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
-| Lampman | bandit | archer, 3 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
+| Wrecker | bandit | soldier, 4 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
+| Lampman | bandit | archer, 4 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
 | Barrow Guard | skeleton | armoured, 4 | the Berth, the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
 | Black Dog | wolf | skirmisher, 4 | the hills round the barrow, by night | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
 | Barrow Captain | skeleton | boss, 5 | at the Queen's empty bier | *Her captain, at his post beside an empty bier.* |
+| Chalk Wolf | wolf | skirmisher, 4 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
+| Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
+| Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
+| Footpad | bandit | soldier, 3 | the Salt Road, two with a poacher | *A short blade, and a coat taken off someone better dressed.* |
+| Poacher | bandit | archer, 3 | the field edges, beside the footpads | *A longbow taller than he is, and one of the Queen's hares at his belt.* |
+| Barnacle Crab | spider | armoured, 4 | under Crowness Light | *A rock with barnacles on it, until it stands up.* Shrugs off sleep, as the shore crab does |
+| Billman | bandit | soldier, 4 | the Salt Road west of Gullwick | *A bill on a pole, and a man who knows which end to hold.* |
+| Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
+| Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
@@ -531,8 +544,8 @@ dead never come back already.
 
 ### 5.4 The Deepthorn (band 8–10)
 
-*The oldest of the forest, south of Thornmark down to Thorn Head, and the oldest elf-hold, which
-keeps the treaty. Thornmark's winter: cold, and snow that lies for weeks.*
+*The oldest of the forest, south of Thornmark down to Penspern, and Henlys, the oldest elf-hold,
+which keeps the treaty. Thornmark's winter: cold, and snow that lies for weeks.*
 
 The Deepthorn is age: trees older than Helmstow in a wood older than the elves' memory, and a treaty
 sealed with the chisel's mark, the first time the machine's script is seen on something that is not
@@ -549,7 +562,7 @@ the deep; the Great Owl from the birds.
 | Great Owl | birds | skirmisher, 8 | the deep, by night | *Wings as wide as a cart, and not a sound.* Flies, and hunts the back row |
 | Rootwalker | old wood, new | armoured, 9 | the old groves | *A stump walking on its roots, its bark like plate.* Slow and hard to hit; fire bites, once there are elements |
 | Heartwood | old wood, new | brute, 10 | alone, or over a thicket of brambles | *An oak that has decided to move.* Size 1.8 |
-| The Eldest | old wood, new | boss, 10 | Thorn Head | *The oldest tree in Caldera, and it is awake.* The last of the wood awake: it stays so until it is beaten, and beaten is put back to sleep, not felled |
+| The Eldest | old wood, new | boss, 10 | Penspern | *The oldest tree in Caldera, and it is awake.* The last of the wood awake: it stays so until it is beaten, and beaten is put back to sleep, not felled |
 
 - **Brambles and an owl** on a path at night: members held in the thorns while the owl takes the
   back row.
@@ -568,14 +581,14 @@ today's level cap, and the first that one spell must not answer.
 
 ### 6.1 Saltreach (band 10–12)
 
-*The Long Water's country: the Upper Water's willows and Reedholm's fields, the Delta's fen and the
+*The Long Water's country: the Upper Water's willows and Rietum's fields, the Delta's fen and the
 Drowned Temples, the Saltings' pans and Saltmouth, the free port. Salt flats and tidal ground.*
 
 Saltreach has lost its Stone. The Tide Stone went downriver on a barge at midsummer, so its Rifts
 are open and the fen glitters with brine glass; the temples are dark, and their drowned priests
 count instead of singing; the Compact's barges carry shards and people down the Long Water. Most of
 the road's new abilities are first spent here, which adds to what Saltreach already waits on in
-Phase 2 (EXPANSION.md §7, §9).
+Phase 1.2 (EXPANSION.md §7, §9; #150).
 
 **New:** long bodies (the eels first; later the worms and the pike) and toads. **Back:** the
 Drowned Man in the temples; the Rift, in brine (§2.1); the spider frame as the salt crab; the Grey
@@ -610,7 +623,7 @@ Two).
 ### 6.2 Wrackholm (band 12–14)
 
 *The smugglers' isle, reached by a smugglers' boat from Saltmouth: a heather moor with a rocky east
-end, Smugglers' Cove, and the Tide Ship at anchor under the cliffs.*
+end, Kelp Hole, and the Tide Ship at anchor under the cliffs.*
 
 Wrackholm is the cargo. The Tide Ship's hold carries shards and people bound below; the Compact's
 crews work it, the Hand's overseers keep the chains, and the orders come up from below. In the
@@ -629,7 +642,7 @@ warden in the hold.
 | Ashen Overseer | cultist | controller, 13 | the hold, among the chained rows | *Grey to the wrist, and a chain in each hand.* The chain holds (paralysis, 0.25) |
 | Devilfish | devilfish, new | controller, 13 | the cove's pools; under the ship | *Arms, coming up over the side.* Reaches the back row; holds (paralysis, 0.2) |
 | Tide Elder | riftling | elite, 13 | the forward hold | *A shard of the sea, stood up.* Paralyses (0.15) |
-| Great Devilfish | devilfish, new | boss, 14 | Smugglers' Cove, the sea cave | *What the smugglers feed.* Size 1.9 |
+| Great Devilfish | devilfish, new | boss, 14 | Kelp Hole, the sea cave | *What the smugglers feed.* Size 1.9 |
 | Warden of the Tide | riftling | boss, 14 | the forward hold, over the Stone | *The Stone's own light, standing guard over it.* The hold's tear closes when it falls |
 
 - **The hold**: two overseers behind four smugglers, among the chained rows. The chains hold the
@@ -1009,7 +1022,7 @@ the pilot.
 | riftling | the cellar (built) | brine (Saltreach, Wrackholm), black glass (Sunderwood), slag (the Kilns): §2.1 |
 | ogre | Thornmark (built) | the tor troll (Cairnmoor), the snow troll (the Whitespine) |
 | wraith | Thornmark (built) | the cairn wight (Cairnmoor) |
-| **birds** | the Downs | the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
+| **birds** | the Downs | the old rook (the Downs), the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
 | **old wood** | the Deepthorn | the strangler vine (Ashfall) |
 | **long bodies** | Saltreach | the rock worm (the Kilns), the ice pike (Rimewater), the glass worm and the ice worm (the reach) |
 | **toads** | Saltreach | none: the first to cut if the art budget bites |
@@ -1067,6 +1080,8 @@ Where this and DESIGN.md disagree, the design wins.
    the company can take up (DESIGN.md §10.2). Either killing them sets the Compact against the
    company, or the crews who carry the Hand's cargo have left the Compact for the Hand's coin. The
    Compact's line should say which.
+   *Answered (#151, call 4): the crews who carry the Hand's cargo have left the Compact for the
+   Hand's coin. Killing them costs nothing with the guild, whose line stays open to any company.*
 2. **What the giants are.** They are not among the sleepers, and every people came in the ship
    (DESIGN.md §7). Either they came awake, or they are something else. The monsters need only the
    surface; the design may want the rest.

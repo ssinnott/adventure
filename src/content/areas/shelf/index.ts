@@ -8,6 +8,8 @@ import { SHELF } from './maps/shelf.ts';
 import { MILL } from './maps/mill.ts';
 import { GREYWATER1 } from './maps/greywater1.ts';
 import { GREYWATER2 } from './maps/greywater2.ts';
+import { DOWNS_F2 } from './maps/downs_f2.ts';
+import { DOWNS_F3 } from './maps/downs_f3.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
@@ -18,7 +20,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 export const AREA = {
   id: 'shelf' as const,
   // Helmstow first: a new game starts on it.
-  maps: [HARROW, KEEP, SHELF, MILL, GREYWATER1, GREYWATER2],
+  maps: [HARROW, KEEP, SHELF, MILL, GREYWATER1, GREYWATER2, DOWNS_F2, DOWNS_F3],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

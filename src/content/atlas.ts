@@ -50,7 +50,7 @@ export const PLAN: Atlas = {
     {
       rough: 5,
       pts: [
-        // The Wyke, from the Foreland's beach; its east shore, then round Thorn Head.
+        // The Wyke, from the Foreland's beach; its east shore, then round Penspern.
         [199, 61], [216, 59.5], [232, 61], [236, 70], [240, 82], [248, 92], [258, 100], [266, 112], [276, 126],
         [286, 140], [294, 150], [302, 146], [304, 132], [308, 118],
         // Sunder Bay under Sunderwood and the Iron Fells' cliffs; Kiln Bight; round the Anvil.
@@ -64,7 +64,7 @@ export const PLAN: Atlas = {
         // The Ember Sound along Ashfall; the Glasswold's cliffs.
         [250, 272], [234, 278], [218, 280], [204, 278], [190, 272], [176, 266], [164, 258], [152, 248],
         [142, 236], [134, 224], [126, 214],
-        // The Saltings, the delta's front, the Salt Gulf, the Downs' cliffs back to the bay.
+        // The Saltings, the delta's front, Sylmeer, the Downs' cliffs back to the bay.
         [116, 204], [108, 196], [102, 186], [106, 176], [98, 164], [100, 150], [106, 138], [116, 124],
         [128, 110], [140, 98], [154, 90], [168, 80], [182, 70], [192, 64],
       ],
@@ -83,7 +83,7 @@ export const PLAN: Atlas = {
     { rough: 1, pts: [[118, 146], [122, 144], [124, 149], [119, 150]] },
   ],
   lakes: [
-    // Thornmere, Reedmere, Longmere, Coldmere, Stillmere, a tarn on the moor.
+    // Lyngwyn, Reedmere, Longmere, Coldmere, Stillmere, a tarn on the moor.
     { pts: [[258, 47], [266, 45], [274, 48], [278, 55], [272, 60], [262, 58], [258, 54]] },
     { pts: [[58, 104], [68, 100], [76, 106], [72, 116], [60, 114]] },
     { pts: [[398, 270], [404, 268], [408, 284], [406, 302], [400, 310], [396, 296], [394, 282]] },
@@ -133,7 +133,7 @@ export const PLAN: Atlas = {
     { pts: [[70, 128], [58, 146], [62, 168], [80, 186], [100, 190]], width: [2, 2] },
     { pts: [[80, 146], [84, 164], [98, 178]], width: [1.5, 1.5] },
     { name: 'The Wend', pts: [[150, 20], [154, 40], [164, 60], [172, 72]], width: [1, 1.5] },
-    { name: 'The Thornwater', pts: [[268, 58], [266, 72], [258, 86], [252, 94]], width: [1.5, 2.5] },
+    { name: 'The Dowrdu', pts: [[268, 58], [266, 72], [258, 86], [252, 94]], width: [1.5, 2.5] },
     { pts: [[360, 10], [354, 28], [346, 46], [338, 58]], width: [1, 2] },
     { pts: [[398, 24], [394, 52], [384, 84], [372, 110], [364, 122]], width: [1, 2] },
     { name: 'The Kilnwater', pts: [[494, 96], [474, 112], [452, 130], [430, 148], [408, 162], [390, 164]], width: [1, 2.5] },
@@ -148,7 +148,7 @@ export const PLAN: Atlas = {
     { t: 'hills', pts: [[104, 34], [132, 26], [150, 36], [140, 56], [120, 70], [108, 56]] },
     { t: 'farm', pts: [[140, 40], [170, 34], [190, 44], [186, 62], [164, 72], [146, 62]] },
     { t: 'forest', pts: [[176, 24], [192, 26], [196, 40], [184, 44], [174, 36]] },
-    // II. The Deepthorn south of Thornmark, down to Thorn Head.
+    // II. The Deepthorn south of Thornmark, down to Penspern.
     { t: 'forest', pts: [[236, 62], [262, 60], [276, 70], [286, 90], [296, 118], [300, 142], [290, 146], [276, 128], [262, 106], [250, 92], [238, 78]] },
     { t: 'woods', rough: 4, pts: [[234, 62], [246, 62], [250, 74], [244, 86], [236, 76]] },
     // V. Sunderwood: pines under the rim, dead wood and crystal along the rift.
@@ -208,7 +208,7 @@ export const PLAN: Atlas = {
     { t: 'rock', rough: 2, pts: [[128, 286], [134, 284], [136, 292], [129, 293]] },
     { t: 'rock', rough: 2, pts: [[60, 240], [66, 238], [68, 245], [61, 246]] },
     { t: 'rock', rough: 2, pts: [[100, 304], [106, 302], [108, 309], [101, 310]] },
-    // III. Saltreach: willow along the Upper Water, fields at Reedholm, the delta's fen, salt pans.
+    // III. Saltreach: willow along the Upper Water, fields at Rietum, the delta's fen, salt pans.
     { t: 'forest', pts: [[36, 56], [54, 50], [60, 76], [52, 96], [40, 92], [32, 74]] },
     { t: 'farm', pts: [[68, 66], [90, 60], [98, 82], [84, 94], [68, 88]] },
     { t: 'marsh', rough: 4, pts: [[40, 118], [70, 116], [96, 128], [104, 150], [98, 176], [108, 196], [84, 204], [56, 200], [34, 186], [28, 150]] },
@@ -224,7 +224,7 @@ export const PLAN: Atlas = {
   trails: [
     // The coast road west from the Foreland, along the Downs and down Kestrel Edge to Saltmouth.
     { pts: [[200, 58], [186, 62], [172, 70], [150, 84], [132, 96], [120, 108], [108, 120], [100, 140], [98, 156], [102, 176]] },
-    // Upriver to Reedholm.
+    // Upriver to Rietum.
     { pts: [[98, 156], [84, 136], [74, 104], [80, 80]] },
     // The east road out of Thornmark, over the Sunder by the rope bridge, and on to the Kilns.
     { pts: [[264, 40.5], [290, 40], [316, 48], [336, 56], [360, 52], [384, 56], [410, 76], [430, 96], [446, 118]] },
@@ -276,9 +276,9 @@ export const PLAN: Atlas = {
     { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
   ],
   places: [
-    { id: 'saltmouth', name: 'Saltmouth', kind: 'town', planned: true, band: [10, 12], at: [118, 172] },
+    { id: 'saltmouth', name: 'Saltmouth', kind: 'town', planned: true, band: [10, 12], at: [100, 176] }, // on C6, at the Salt Road's end (#151),
     { id: 'drowned_temples', name: 'Drowned Temples', kind: 'dungeon', planned: true, band: [10, 12], at: [56, 160] },
-    { id: 'smugglers_cove', name: 'Smugglers\' Cove', kind: 'dungeon', planned: true, band: [12, 14], at: [150, 158] },
+    { id: 'smugglers_cove', name: 'Kelp Hole', kind: 'dungeon', planned: true, band: [12, 14], at: [150, 158] },
     { id: 'tide_ship', name: 'The Tide Ship', kind: 'dungeon', planned: true, band: [12, 14], at: [208, 192] },
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
     { id: 'lantern_watch', name: 'Lantern Watch', kind: 'town', planned: true, band: [14, 16], at: [372, 36] },
@@ -302,13 +302,13 @@ export const PLAN: Atlas = {
   ],
   sites: [
     // III. Saltreach.
-    { name: 'Reedholm', icon: 'village', at: [80, 80], label: 'right', planned: true },
+    { name: 'Rietum', icon: 'village', at: [80, 80], label: 'right', planned: true },
     { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
     { name: 'Tide Stone', icon: 'stone', at: [48, 140], label: 'below', planned: true },
     { name: 'Drowned Temples', icon: 'sunken', at: [56, 170], label: 'below', planned: true },
-    { name: 'Wind Cave', icon: 'cave', at: [104, 76], label: 'right', planned: true }, // in Kestrel Edge's cliffs: the Monk's second prestige
+    { name: 'Sjonghol', icon: 'cave', at: [104, 76], label: 'right', planned: true }, // the singing hollow in Kestrel Edge's cliffs: the Monk's second prestige
     // IV. Wrackholm.
-    { name: 'Smugglers\' Cove', icon: 'cave', at: [154, 170], label: 'left', planned: true },
+    { name: 'Kelp Hole', icon: 'cave', at: [154, 170], label: 'left', planned: true },
     { name: 'Tide Ship', icon: 'wreck', at: [182, 188], label: 'right', planned: true },
     // V. Sunderwood.
     { name: 'Lantern Watch', icon: 'tower', at: [372, 46], label: 'below', planned: true },
@@ -353,14 +353,13 @@ export const PLAN: Atlas = {
     { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right', planned: true }, // on Hearth Isle: the Cleric's third prestige
     { name: 'The Inland Sea', icon: 'water', at: [214, 230], size: 2 },
     { name: 'The Wyke', icon: 'water', at: [216, 84] },
-    { name: 'Salt Gulf', icon: 'water', at: [124, 150] },
+    { name: 'Sylmeer', icon: 'water', at: [124, 150] },
     { name: 'Kestrel Edge', icon: 'label', at: [101, 92] },
     { name: 'The Scarp', icon: 'label', at: [70, 208] },
     { name: 'The Sheer', icon: 'label', at: [262, 300] },
     { name: 'The Iron Fells', icon: 'label', at: [420, 70] },
   ],
   links: [
-    { from: 'shelf', to: 'downs', kind: 'road', a: [201.5, 57.5], b: [192, 60] },
     { from: 'downs', to: 'delta', kind: 'road', a: [126, 100], b: [114, 116], note: 'down Kestrel Edge' },
     { from: 'saltings', to: 'saltmouth', kind: 'enter', a: [102, 178] },
     { from: 'delta', to: 'drowned_temples', kind: 'enter', a: [56, 170] },

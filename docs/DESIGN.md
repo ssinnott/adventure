@@ -285,8 +285,9 @@ Lanterns; the Cartographers' and the Compact's halls go in with Saltreach (docs/
 - **The Wardens** keep Helmstow's roads, its checkpoints and its walls. Their hall is the Warden
   Drillyard, which goes on training levels. Lord Vask commands them as Regent-Warden, though some
   of their captains back the Queen's cousin (§10.1). In Act I their work is the roads: Captain
-  Hale's checkpoint and a lost watchtower in Thornmark. What they become under Vask's hand, the
-  Wardens on the walls between acts (§9), is set with Act II.
+  Hale's checkpoint and a lost watchtower in Thornmark. Between acts, under Vask's hand, the
+  Wardens on Helmstow's walls are his and the captains who back the cousin give the Drillyard's
+  quests: the hall stays open and the guild splits quietly, which is its line into Act III (#151).
 - **The Lanterns' halls are both.** The Lantern Guildhall in Helmstow and the Thornhold Lantern
   Hall (not the Lantern Chapterhouse, Thornhold's temple) go on selling spells, and give the
   Lanterns' quests to a company that has done the first task. The fee to study is the hall's, §7's
@@ -372,7 +373,9 @@ the reach. docs/STORY.md tells the whole quest as a story.
 | V. The Hearth | 28–32 | Hearth Isle, the Underdeep, the Core | What do we do? | The choice |
 
 The Hearth is the quest's measure. Each restored Stone brightens it, in the night sky and on the
-title's horizon. It moves only with the story, never with the clock.
+title's horizon. It moves only with the story, never with the clock. The Tide Stone, set back on
+its plinth at the end of Act II's second chapter, is its first step; the Grove Stone counts once a
+Lantern has mended it (#151).
 
 ### The captain's line
 
@@ -419,9 +422,9 @@ dungeon. Restoring it closes Thornmark's Rifts.
   west, into Act II, starts here.
 - **Thornmark** (built): Thornhold and Elder Sylvane, the Grove Roots and the Cut Stone, the Hand of
   Ash, and the Warden of the Cut with the first Meridian journal.
-- **The Deepthorn:** the oldest elf-hold keeps the two-hundred-year-old treaty behind the elves'
-  claim to the throne, which says the elves' line and Helmstow's were once one. Its seal is the
-  chisel's maintenance mark: the royal line is written in the machine's script.
+- **The Deepthorn:** Henlys, the oldest elf-hold, keeps the two-hundred-year-old treaty behind the
+  elves' claim to the throne, which says the elves' line and Helmstow's were once one. Its seal is
+  the chisel's maintenance mark: the royal line is written in the machine's script.
 
 Turn: the Ashen Hand's cutting tools are Underdeep-made. Somebody is arming them. The Hand's creed
 is on the walls from the cellar to the Grove (THE HEARTH IS A CAGE; THE HAND OPENS WHAT THE HEARTH
@@ -438,14 +441,14 @@ god is one of its fragments.
 ### Act II — The Salt Road (levels 10–16: Saltreach, Wrackholm, Sunderwood)
 
 - **The Upper Water:** the way in, down Kestrel Edge from the Downs. The Salt Compact's river barges
-  carry shards and people downriver, and the folk of Reedholm saw the Tide Stone go by one night.
+  carry shards and people downriver, and the folk of Rietum saw the Tide Stone go by one night.
 - **The Delta:** the Tide Stone's plinth stands empty, and the Drowned Temples have gone dark. The
   Tidefolk's god used to sing the tides; now it only counts, until its Stone comes home and it
   sings again.
 - **The Saltings:** Saltmouth, the free port, is the Compact's home and the seat of Jory Tallis,
   the dockmaster claimant (§10.1, §10.2). His forged lineage convinces because it was copied from a
   real crew record, below. The crossing to Wrackholm leaves from here.
-- **Wrackholm:** Smugglers' Cove and the Tide Ship, whose hold carries Wardstone shards and people
+- **Wrackholm:** Kelp Hole and the Tide Ship, whose hold carries Wardstone shards and people
   bound for the Dead-Drop, a large dungeon down a stair from the hold. The Compact's orders come
   from there. The Tide Stone comes home.
 - **The Eaves and Lanternwood:** the Sunder, a Rift that split a whole wood, which is what a
