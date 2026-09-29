@@ -861,3 +861,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   not approved): each monster family's `KINDS` held to `FAMILY`; its line added to #26's Work.
   Scouts on #67 (Crowness, E3) and #68 (the Wend's fields, E2) at 11:49 (`footprints/67.md`,
   `68.md`), planning against the pilot's branches, #263's variants and #209.
+- 11:58: `footprints/209.md` (size M, one PR, about 2.5 hours, the quality lane). After #145 (both
+  edit `OWED`, shelf.md §8, SLICE's owed sentence) and before #47's B (on F3's head today's rule
+  gives 89.98% against 90%), #67, #68 and #214. With F2, 'the Foreland: floor' goes (99.6% with
+  each group at its own map's floor). For the owner: as written, #209 judges every group two under
+  its own map's floor, which undoes #148's (b) for dungeons (Thornmark 62.4%, the Foreland 65.8% on
+  main). The scout's default keeps (b) for dungeons and changes no figure today.
