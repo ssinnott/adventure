@@ -1,7 +1,7 @@
 // The scaffold (tools/scaffold.ts): the Downs' first zone map, as the tool writes it, cut at its
 // atlas square and laid back into the atlas, is the atlas square for square. It pins that the Downs'
-// hills, farmland, woods and road come through, not how many of each, so the owner may repaint the
-// Downs.
+// hills, farmland, forest and road come through, not how many of each, so the owner may repaint the
+// Downs. Then the Deepthorn's first box, for the light woods no map could hold before #210.
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -18,6 +18,8 @@ import { ok } from './lib.ts';
 /** The Downs' first zone map: the square west of the Foreland, on the grid the built maps sit on. */
 const AT = [168, 30] as const;
 const REGIONS = AREAS.map((a) => a.id);
+/** The Deepthorn's first box, H3, where the atlas lays its light woods along the Wyke. */
+const WOODS_AT = [232, 62] as const;
 
 /** The draft as the tool writes it: its module, written out and imported back, by export name. */
 async function exported(d: Draft, zone: string, x: number, y: number): Promise<Record<string, MapDef>> {
@@ -59,7 +61,7 @@ export async function scaffold(): Promise<void> {
   const band = zone.band ?? atlas.areas.find((a) => a.id === zone.area)?.band;
   ok(def.id === zone.id && def.name === zone.name && def.kind === 'outdoor' && def.density === 'country' && def.band?.join('-') === band?.join('-') && def.region === undefined, `it takes the zone's id, name and band, the Foreland's sky, and is country (${def.name}, ${def.band?.join('-')}, ${def.density})`);
   const has = (t: 'hills' | 'farm' | 'forest' | 'road'): boolean => (d.counts[t] ?? 0) > 0;
-  ok(has('hills') && has('farm') && has('forest') && has('road'), `its hills, farmland, woods and road come through (${['hills', 'farm', 'forest', 'road'].map((t) => `${t} ${d.counts[t as 'hills'] ?? 0}`).join(', ')})`);
+  ok(has('hills') && has('farm') && has('forest') && has('road'), `its hills, farmland, forest and road come through (${['hills', 'farm', 'forest', 'road'].map((t) => `${t} ${d.counts[t as 'hills'] ?? 0}`).join(', ')})`);
 
   // Laid back where it was cut, the atlas is unchanged under it, square for square.
   const back = (draft: MapDef): number => {
@@ -113,4 +115,18 @@ export async function scaffold(): Promise<void> {
   const own = await sky(REGIONS), none = await sky(['shelf']);
   ok(own.region === 'thornmark' && !own.told, `a Thornmark zone's draft is written in Thornmark's region (${own.region})`);
   ok(none.region === undefined && none.told, `and before Thornmark has a region, in none, and its header says so (${none.region})`);
+
+  // A woods box: the Deepthorn's first, H3, cut where the atlas lays its light woods along the Wyke
+  // and laid back as the atlas, and not with its woods written as grass (#210).
+  const [wx, wy] = WOODS_AT, wood = unbuilt(wx, wy), wg = baseline(wood.atlas, wood.defs);
+  const wd = cut(wood.atlas, wood.defs, wg, REGIONS, 'deepthorn', wx, wy);
+  ok(!('refused' in wd) && (wd.counts.woods ?? 0) > 0, `the Deepthorn is cut at ${wx},${wy}, its woods coming through (${'refused' in wd ? `refused: ${wd.refused}` : `woods ${wd.counts.woods ?? 0}`})`);
+  if ('refused' in wd) return;
+  const wdef = await written(wd, 'deepthorn', wx, wy), wzone = wood.atlas.zones.find((z) => z.id === 'deepthorn')!;
+  const wback = (draft: MapDef): number => { const l = layBack(wood.atlas, wood.defs, draft, wzone, WOODS_AT); return mismatches(wg, worldGrid(l.atlas, l.defs), wx, wy); };
+  ok(wback(wdef) === 0, `laid back, its woods and all match the atlas square for square`);
+  const thinned = wback({ ...wdef, rows: wdef.rows.map((r) => r.replace(/t/g, ',')) });
+  ok(thinned === wd.counts.woods, `and with its woods written as grass it does not (${thinned} squares differ, ${wd.counts.woods} of them woods)`);
+  const wm = new GameMap(wdef), at = wdef.rows.flatMap((r, y) => [...r].flatMap((c, x) => (c === 't' ? [[x, y]] : [])))[0];
+  ok(!!at && wm.at(at[0], at[1]).terrain === 'woods' && wm.passable(at[0], at[1]) === 'ok' && !wm.blocksView(at[0], at[1]), 'its woods are walked through and seen past');
 }

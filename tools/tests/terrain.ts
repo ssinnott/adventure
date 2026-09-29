@@ -1,5 +1,5 @@
-// Hills and farmland: their legend characters, snow and the crops through the year, the fields'
-// patchwork, and every terrain's own colour on the automap.
+// Hills, farmland and woods: their legend characters, snow and the crops through the year, the
+// fields' patchwork, and every terrain's own colour on the automap.
 import { GameMap } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { SNOW_HOLD, cropColor, fieldAt, hedgeColor } from '../../src/ui/viewport.ts';
@@ -12,6 +12,10 @@ export function terrain(): void {
   const m = new GameMap({ id: 'fixture_fields', name: 'Fields fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'M^fM', 'MMMM'] });
   ok(m.at(1, 1).terrain === 'hills' && m.at(2, 1).terrain === 'farm', `'^' is hills and 'f' farmland (${m.at(1, 1).terrain}, ${m.at(2, 1).terrain})`);
   ok(m.passable(1, 1) === 'ok' && m.passable(2, 1) === 'ok' && !m.blocksView(1, 1) && !m.blocksView(2, 1), 'both can be walked, and neither hides what lies behind it');
+  // Woods: light woodland, walked through and seen past, unlike the forest's wall of trees ('T').
+  const w = new GameMap({ id: 'fixture_woods', name: 'Woods fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'MtTM', 'MMMM'] });
+  ok(w.at(1, 1).terrain === 'woods' && w.passable(1, 1) === 'ok' && !w.blocksView(1, 1) && w.passable(2, 1) !== 'ok', `'t' is woods, walked through and seen past, where 'T' is a tree that blocks (${w.at(1, 1).terrain}, ${w.passable(2, 1)})`);
+  ok(SNOW_HOLD.woods > 0.5 && SNOW_HOLD.woods < SNOW_HOLD.grass, `snow lies on the woods' floor, thinner under the trees than on open grass (${SNOW_HOLD.woods})`);
   // Snow lies on both; the grain greens in Sowing and goes gold by Harvest, and fields span squares.
   ok(SNOW_HOLD.hills >= 0.85 && SNOW_HOLD.farm >= 0.85, `snow lies white on hills and fields (${SNOW_HOLD.hills}, ${SNOW_HOLD.farm})`);
   ok([0, 1].every((crop) => cropColor(crop, 20) !== cropColor(crop, 50) && cropColor(crop, 50) !== cropColor(crop, 100)), 'the grain turns from Sowing to Harvest to Frost');

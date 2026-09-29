@@ -37,9 +37,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'ashen_deacon', name: 'Ashen Deacon', plural: 'Ashen Deacons', sprite: 'deacon', kind: 'person', level: 5, hp: 80, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 1000, gold: [60, 120], tint: '#3a2a3a', size: 1.0, drops: [{ item: 'elixir', chance: 1 }] },
   { id: 'carrion_crow', name: 'Carrion Crow', plural: 'Carrion Crows', sprite: 'crow', kind: 'beast', look: 'Crows, too many to count, and all of them watching.', level: 2, hp: 6, ac: 11, attack: 1, dice: 1, sides: 4, bonus: 0, speed: 14, xp: 12, gold: [0, 0], ranged: true, tint: '#26242c', size: 0.3 },
   // ---- the Downs: unplaced until their issues place them ----
-  // the wreckers (#47): Gullwick's beach and the Salt Road
-  { id: 'wrecker', name: 'Wrecker', plural: 'Wreckers', sprite: 'wrecker', kind: 'person', level: 3, hp: 13, ac: 13, attack: 3, dice: 1, sides: 8, bonus: 0, speed: 10, xp: 60, gold: [4, 14], tint: '#8c7a36', size: 0.9 },
-  { id: 'lampman', name: 'Lampman', plural: 'Lampmen', sprite: 'lampman', kind: 'person', level: 3, hp: 11, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 0, speed: 11, xp: 65, gold: [3, 12], ranged: true, missile: true, tint: '#4e4638', size: 1.0 },
+  // the wreckers: Gullwick's far beach, by night
+  { id: 'wrecker', name: 'Wrecker', plural: 'Wreckers', sprite: 'wrecker', kind: 'person', look: 'Oilskins, a boathook, and a boat they were expecting.', level: 4, hp: 23, ac: 13, attack: 4, dice: 2, sides: 6, bonus: 1, speed: 10, xp: 86, gold: [4, 14], tint: '#8c7a36', size: 0.9 },
+  { id: 'lampman', name: 'Lampman', plural: 'Lampmen', sprite: 'lampman', kind: 'person', look: 'A lantern held high on a pole, and someone under it.', level: 4, hp: 24, ac: 13, attack: 5, dice: 1, sides: 6, bonus: 1, speed: 11, xp: 86, gold: [3, 12], ranged: true, missile: true, tint: '#4e4638', size: 1.0 },
   // the Black Dog (#69): the chalk hills round the Berth, by night
   { id: 'black_dog', name: 'Black Dog', plural: 'Black Dogs', sprite: 'black_dog', kind: 'beast', look: 'A black dog the size of a calf, with eyes like coals.', level: 4, hp: 16, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 0, speed: 15, xp: 80, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.1 }, tint: '#1c1a20', size: 0.75 },
   // the Queen's guard (#70): the Berth's passage, two by two
