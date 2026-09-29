@@ -1051,3 +1051,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - Opened in the outage: #274 (#211, the names; session_01FvrT4W9tXZiXXhFgKCnCES, 14:06), #275 (#268;
   the #97 session, 14:09), #276 (#209; the #40 session, 14:11), #277 (#273, stacked on #276, 14:17).
   Reviewers started on all four (15:10), and a delegate on #274's names; all four watched.
+- 15:30: the delegate on #274's names (Henlys, Penspern, the Dowrdu, Lyngwyn) and texts: they stand,
+  both Choices taken. Two doc nits ride the code review's round if it reopens the branch: no river
+  is lettered on the atlas (`River.name` is read by nothing), so thornmark.md §4 and §10 should say
+  "named in the atlas" as shelf.md does; two prose lines over the docs' wrap (DESIGN.md:425,
+  thornmark.md:76).
