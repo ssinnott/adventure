@@ -90,7 +90,7 @@ export const SHELF: MapDef = {
       '"Smugglers. They\'ve holed up in Brandy Hole, the caves at the west end of the beach. I lost three men going in after them, and the one who came back talks about worse than smugglers. I believe him. I\'ve an arm that believes him."',
       '"Clear them out and bring me their ledger. I want the names of everyone in Helmstow who has been buying from them. Not the brandy; the names."',
       '"The pass is open. I\'ll not shut a road because I can\'t hold a cave. But it\'s mine to warn you about, and I\'m warning you: Thornmark\'s wolves are twice the size of ours."',
-    ], flag: 'q_greywater', quest: {
+    ], flag: 'q_greywater', quest: [{
       item: 'greywater_ledger', reward: 400, setFlag: 'q_greywater_done',
       early: [
         'A grizzled Warden with a bandaged arm gets up off a crate by the checkpoint. "That\'s the Brandy Hole ledger. I lost three men going in after it."',
@@ -105,7 +105,14 @@ export const SHELF: MapDef = {
         '"You\'ve earned this, and more than I\'ve got. The Regent-Warden gets a copy. It\'s the sort of thing a Regent wants."',
       ],
       after: ['"The pass is yours; it always was. Mind yourselves in Thornmark. The wolves are twice the size of ours and the trees are older than Helmstow, and the elves will thank you for neither observation."'],
-    } },
+    }, {
+      item: 'clerks_seal', reward: 150, setFlag: 'q_seal_hale',
+      done: [
+        'Hale weighs the seal in his good hand.',
+        '"So that\'s how the crates got their stamp. Not forged. Real, and rented." He wraps it in a cloth. "It goes to the Regent beside the smugglers\' ledger: the accounts, and the stamp that made them lawful. He\'ll want to know whose hand held it. So do I."',
+        'He pays you from the post\'s strongbox, not his own purse, and writes it down. "Wardens\' money. It\'s a Wardens\' matter now, and I want that in ink."',
+      ],
+    }] },
     { kind: 'sign', x: 3, y: 28, text: 'Brandy Hole. Chalked beneath, in Warden hand: CLOSED. DO NOT ENTER. ASK CAPT. HALE.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
     // The Rest of the Survey (#77): Ailith behind the west wood, hiding from the Wardens, until the
