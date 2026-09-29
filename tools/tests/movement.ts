@@ -65,7 +65,7 @@ export function movement(): void {
   world.travel('shelf', 1, 29, 3);
   world.move('forward');
   const downs = world.move('forward');
-  ok(local(world).map === 'downs_f2' && local(world).x === 31 && downs.kind === 'moved' && downs.messages.includes('The Salt Road climbs off the beach onto the Downs.'), `the Salt Road walks west through the gap onto the Downs, and says so (${downs.kind === 'moved' ? downs.messages.join(' / ') : downs.kind})`);
+  ok(local(world).map === 'downs_f2' && local(world).x === 31 && downs.kind === 'moved' && downs.messages.includes('The Salt Road climbs off the beach. Callow Downs.'), `the Salt Road walks west through the gap onto the Downs, and says so (${downs.kind === 'moved' ? downs.messages.join(' / ') : downs.kind})`);
   party.flags.skill_mountaineer = 1;
   world.travel('shelf', 10, 1, 0);
   ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Foreland in to the north');
