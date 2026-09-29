@@ -1175,3 +1175,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   owed), SMOKE OK, "Nothing new."; CI green. No built map changes to the eye (all sheets byte-
   identical); the woods' look is judged on #214's sheet, the first map to use them. Merged as
   c9abc79. #210 closes with it. The #45 session is free.
+- 16:20: a scout on #214 (H3, the Deepthorn's edge; footprint `footprints/214.md`), since #214 waits only
+  on #281 now; the Thornmark session builds it after #219. A delegate on four things found in
+  passing: the exploring view draws a mixed group as its first monster; sconce flames through a
+  nearer tree; the silhouette check blind to a part wholly off its canvas; "1 The Eldest".
