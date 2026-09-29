@@ -856,3 +856,4 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - The owner (11:40): "209 is good too". `approved` put on #209 at the owner's word. A scout on it
   at 11:41 (`footprints/209.md`); it builds after the pilot's F2 lands (both edit the gate's `OWED`),
   in a free quality session.
+- The owner (11:44): "Close 46". #46 (the Downs' monsters drawn: #79 to #84, all merged) closed as completed.
