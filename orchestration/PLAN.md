@@ -1140,3 +1140,19 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   running), #279 (#210, in review), #280 (F3, in review; the delegate's OK in), #281 (#212, the #100
   session, 15:47) and #282 (#219, the Thornmark session, 15:51): reviewers started on both.
 - Landed since 15:00: #276, #272, #275, #274, #278.
+
+### 16:06: #277 landed; #279 and #280 reviewed
+- #277 (#273) landed: its round (19bf37c) read; landing check on it (main ac64abb in): ALL OK (37
+  owed), SMOKE OK, "Nothing new."; the list "Off their aim, inside their limits (2)": shelf at 1,
+  4.60 fights to a rest; greywater1 at 2, 4.05. CI green. Merged as 02bea14; main's tree is the tested
+  tree (f03415f). #273 closes with it; so does #209 (with #276).
+- `reviews/279.md` (#210, woods): ready after fixes. Blocker: it has conflicted with main in SLICE.md
+  since it opened, so no CI ran. Should-fix: a woods tree drawn over a wall or the void beside its
+  square (`viewport.ts:348`; fix tried). Nits. Sent to the #45 session (16:05).
+- `reviews/280.md` (F3): ready after fixes. Should-fix: the cave's secret door and pocket sit on F3's
+  west edge (0,16-17), so E3's draft reaches the cave with the door shut (no check sees across
+  maps); decided in review: move them in now (door 1,16, pocket 1,17, rock at 0,16-17; tried, ALL
+  OK). Should-fix: SLICE.md:96, :113-114 and shelf.md:563-564 made false. Nits: the sea line to
+  15,1 (the delegate's too), "beside" for Hamo (shelf.md:283), commas. For #67: rock at 31,12-17 and
+  31,5-9 kept off paths (Hamo). Sent to the pilot.
+- Sent the owner the Phase 1 map (`phase1-map.png`, `phase1-world.png`).
