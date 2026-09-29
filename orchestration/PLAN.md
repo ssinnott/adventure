@@ -1087,3 +1087,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   tip, where it stands on the crown (296,142). With the delegate's two (§4 "lettered"; DESIGN.md:425
   and thornmark.md:76 over the wrap), sent to the Thornmark session. For #219: its Dialogue's "the
   oldest hold" and "the still lake" may be written as Henlys and Lyngwyn where they read better.
+
+### 15:22: #276 landed
+- `reviews/276.md`: ready, nits only. The rule as the owner ruled it (a zone map at its own floor and
+  two under; a dungeon two under its area's); the body's figures reproduce ('the Foreland: floor'
+  89.4% owed to 99.6% of 42 groups; Thornmark's floor 94.1% to 97.2%, under 21.5% of 34). With F3 on
+  top: the Foreland 99.7% of 45; F3 re-records 99.6% at shelf.md:547.
+- My landing check on 359f7e4 (main f438644 its base): ALL OK (35 owed), SMOKE OK, "Nothing new.";
+  CI green; the diff read (`areaPools`, zone-keyed `BOSSES` and `ROADS`). Merged as ec2b93c; main's
+  tree is the tested tree (8dd9388). #276's nits ride #277 (the same lines), sent at 15:24 with
+  #277's.
