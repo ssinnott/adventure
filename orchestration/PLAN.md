@@ -1169,3 +1169,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   each other and never rewrite each other's lines. Its brief carries what changed since 67.md (#273's
   gate settles decision 1; #272's monsters to place; F3's cave moved in; 31,12-15 rock; 31,5-9 off
   paths). The pilot told to start C (16:19). #68 (E2) follows #67, as its footprint orders.
+- 16:19: #279 (#210, the woods) landed: its round (5104b0b): a woods tree skips a side a wall or the void
+  closes; smoke lines "no tree of the woods stands in front of a wall beside its square (0 pixels)"
+  and "the way ahead stays open". Landing check on 5104b0b merged onto main ccc4c92: ALL OK (33
+  owed), SMOKE OK, "Nothing new."; CI green. No built map changes to the eye (all sheets byte-
+  identical); the woods' look is judged on #214's sheet, the first map to use them. Merged as
+  c9abc79. #210 closes with it. The #45 session is free.
