@@ -543,12 +543,15 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
   Deacon are won 98, 99 and 100% of the time at their maps' floors, where a boss should be won about
-  half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The Seam is won 66% of
-  the time two levels under its floor, where the gate wants a quarter. The area as one is won 89.4%
-  of the time at level 1, F2's groups with it, against nine in ten. The Foreland
-  map and Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; the Seam 6.3, now
-  that the company at 3 wears the band's gear. The pilot settles them, by retuning or by moving the
-  thresholds.
+  half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The area as one pools
+  each group at its own map's floor (#209): 99.6% won, F2's at 2, against nine in ten. Two under,
+  the Foreland's floor is 1 and F2's 2, so no group has a company there yet; the Seam, a dungeon,
+  counts two under the area's floor since #148, and is no longer judged alone. Each zone walks its
+  own road and warns at its own way in: the Foreland's from Helmstow, the Downs' from F2's east edge
+  along the Salt Road (`ROADS.downs`, the footpads and the Poacher), both walked every time. The
+  Foreland map and Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; the Seam
+  6.7, now that the company at 3 wears the band's gear. The pilot settles them, by retuning or by
+  moving the thresholds.
 - **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the
   band's gear: the Long Sword, the Hand Axe, the Long Bow, Scale Mail, Chain Mail and the Kite
   Shield. The Downs hold the kits with a plus and the band's gear with one, box by box as §4.2 to

@@ -1,11 +1,12 @@
 // The gate check (EXPANSION §2.2, §5.2): with one road and no flags on it, the monsters are what
 // turn a company back. tools/gate.ts's bot plays the premade company, dressed by the ladder, against
-// every group of a map alone from full health; each map is held to its sign's band and each area to
-// its band on the curve (src/content/progression.ts). Every margin is printed. A miss the owners
-// below are owed is reported, not failed, until it holds: the Foreland's are the pilot's to settle
-// (#47).
+// every group of a map alone from full health; each map is held to its sign's band, each area pools
+// its groups each at its own map's floor, and each zone walks its road and warns at its way in.
+// Every margin is printed. A miss the owners below are owed is reported, not failed, until it holds:
+// the Foreland's are the pilot's to settle (#47).
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
+import { ATLAS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
 import { rest } from '../../src/game/party.ts';
@@ -44,17 +45,19 @@ const SEEDS = 100;
 const DAYS = 300;
 
 /**
- * Each area's boss groups, as the game names a group, 'map:id': each is judged at its own map's floor
- * and two levels above it, so an area may have several.
+ * The boss groups, by the zone they are met from (a dungeon's under the zone it opens from), as the
+ * game names a group, 'map:id': each is judged at its own map's floor and two levels above it, and
+ * left out of its map's day. An area's are all its zones' together.
  */
-export const BOSSES: Record<RegionId, readonly string[]> = {
+export const BOSSES: Record<string, readonly string[]> = {
   shelf: ['mill:m_warden', 'greywater1:gw1_captain', 'greywater2:gw2_deacon'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
 };
 
-/** Each area's road: the groups met on it, in order, from the way in. */
-export const ROADS: Record<RegionId, readonly string[]> = {
+/** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
+export const ROADS: Record<string, readonly string[]> = {
   shelf: ['shelf:road_rats', 'shelf:hill_wolves'],
+  downs: ['downs_f2:f2_bandits'],
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
 };
 
@@ -74,7 +77,6 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'greywater1: rest': { whose: '#47', at: 4.08 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
-  'the Foreland: floor': { whose: '#47', at: 0.886 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
@@ -125,19 +127,36 @@ export function denReading(def: MapDef, den: Extract<Feature, { kind: 'den' }>, 
   return { line, fault: harder.length ? `brood harder than the keepers: ${harder.map((b) => b.id).join(', ')}` : '' };
 }
 const pooled = (groups: readonly EncounterDef[], level: number): number => groups.reduce((t, g) => t + rate(g, level), 0) / groups.length;
+const mean = (v: readonly number[]): number => v.reduce((t, x) => t + x, 0) / v.length;
+/**
+ * An area's pools: every group of its maps fought at its own map's floor (through), and two levels
+ * under a floor (back): a zone map's own, and for a town or dungeon the area's, as the owner ruled
+ * on #209 and #40. The back is null where no group has a company two under (under level 1).
+ */
+export function areaPools(maps: readonly MapDef[], areaFloor: number, r: (g: EncounterDef, level: number) => number = rate): { through: number; back: number | null; groups: number; under: number } {
+  const at: number[] = [], low: number[] = [];
+  for (const d of maps) {
+    if (!d.encounters?.length || !d.band) continue;
+    const under = (d.kind === 'outdoor' ? d.band[0] : areaFloor) - GATE.under;
+    for (const g of d.encounters) { at.push(r(g, d.band[0])); if (under >= 1) low.push(r(g, under)); }
+  }
+  return { through: at.length ? mean(at) : 1, back: low.length ? mean(low) : null, groups: at.length, under: low.length };
+}
+/** A zone's name in the check's lines, 'the Foreland' for 'The Foreland'. */
+const zoneName = (name: string): string => name.replace(/^The /, 'the ');
 const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 
 /**
- * At the floor through, two levels under it back (or n/a, where that is under level 1). Two under is
- * asked only where `judgeUnder` says: of an area, and of a map whose floor is its area's. A map with a
- * higher floor, a dungeon deeper in, is held at its floor alone, and its groups are judged two under
- * in the area's (the owner's decision on #40, 28 September).
+ * A map at its floor through, two levels under it back (or n/a, where that is under level 1). Two
+ * under is asked of a map alone only where `judgeUnder` says: where its floor is its area's. A map with
+ * a higher floor is held at its floor alone, and its groups count two under in the area's pool
+ * (`areaPools`; the owner's decisions on #40, 28 September, and #209, 29 September).
  */
 function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly [number, number], judgeUnder = true): void {
   if (!groups.length) { console.log(`  n/a:  ${id} has no groups yet`); return; }
   const at = pooled(groups, floor);
   check(`${id}: floor`, at, (v) => GATE.through - v, `${id} at its floor, ${floor}: ${pc(at)} of fights won (${pc(GATE.through)} asked)`);
-  if (!judgeUnder) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups count two under only in the area's, where there is one`); return; }
+  if (!judgeUnder) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups count two under in the area's pool (a zone map's under its own floor, a town's or dungeon's under the area's), where they have a company`); return; }
   const low = floor - GATE.under;
   if (low < 1) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: level ${low} is no company`); return; }
   const under = pooled(groups, low);
@@ -177,12 +196,25 @@ export function gate(): void {
     const camp = (keep: string[], brood: string[]): MapDef => ({ id: 'dens', name: '', kind: 'outdoor', start: { x: 0, y: 0, facing: 0 }, rows: [], features: [den], encounters: [{ id: 'k', x: 2, y: 1, monsters: keep, roams: false }, { id: 'b', x: 5, y: 1, monsters: brood, respawn: 1440 }] });
     const three = ['smuggler_captain', 'smuggler_captain', 'smuggler_captain'], fair = denReading(camp(three, ['rat']), den, 1), wrong = denReading(camp(['rat'], three), den, 1);
     ok(!fair.fault && wrong.fault.includes('b'), `a den whose brood is harder than its keepers is caught (${fair.line}; ${wrong.fault})`);
+    // An area whose second zone rises above its first: each map is judged at its own floor, so it
+    // holds where each holds, and fails where one does not, at its floor or two under it.
+    const box = (id: string, band: [number, number], ...groups: string[][]): MapDef => ({ id, name: '', kind: 'outdoor', band, start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: groups.map((monsters, i) => ({ id: `${id}${i}`, x: i, y: 0, monsters })) });
+    const lower = box('low', [1, 3], ['rat', 'rat', 'rat']), wolves = box('mid', [3, 4], ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf']);
+    const band = (top: string[]): MapDef[] => [lower, wolves, box('top', [4, 5], top)];
+    const held = areaPools(band([...new Array(11).fill('brigand'), 'brigand_archer']), 1);
+    const once = pooled(band([...new Array(11).fill('brigand'), 'brigand_archer']).flatMap((d) => d.encounters!), 1);
+    const hard = areaPools(band(['ashen_hand', 'ashen_adept', 'ashen_adept']), 1), soft = areaPools(band(['rat', 'rat', 'rat']), 1);
+    ok(held.through >= GATE.through && held.back !== null && held.back <= GATE.back && once < GATE.through,
+      `an area whose second zone rises holds at its maps' own floors (${pc(held.through)} won, ${pc(held.back ?? 0)} two under), where one floor for all would fail it (${pc(once)} at 1)`);
+    ok(hard.through < GATE.through && soft.back !== null && soft.back > GATE.back,
+      `and fails where one map does not hold: too hard at its floor (${pc(hard.through)}), or too soft two under it (${pc(soft.back ?? 0)})`);
   }
 
   for (const area of AREAS) {
     const id: RegionId = area.id, band = CURVE[id].band;
     const fought = area.maps.filter((d): d is MapDef & { band: [number, number] } => !!d.encounters?.length && !!d.band);
-    const all = fought.flatMap((d) => d.encounters!);
+    const zones = area.atlas.zones.filter((z) => z.maps?.length);
+    const bosses = area.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []);
     /** A group by the game's name for it, 'map:id'. */
     const find = (ref: string): EncounterDef | undefined => {
       const [map, g] = ref.split(':');
@@ -193,7 +225,7 @@ export function gate(): void {
     for (const d of fought) {
       const groups = d.encounters!;
       margins(d.id, groups, d.band, d.band[0] === band[0]);
-      for (const b of BOSSES[id].filter((ref) => ref.startsWith(`${d.id}:`))) {
+      for (const b of bosses.filter((ref) => ref.startsWith(`${d.id}:`))) {
         const boss = groups.find((e) => `${d.id}:${e.id}` === b);
         if (!boss) continue;
         const at = rate(boss, d.band[0]), above = rate(boss, d.band[0] + GATE.under);
@@ -205,33 +237,46 @@ export function gate(): void {
       // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
       // A boss is judged on its odds above, not on the day (MONSTERS.md §4.4), so the day leaves it out
       // (the owner's decision on #40, 28 September).
-      const day = days(d.band[0], groups.filter((g) => !BOSSES[id].includes(`${d.id}:${g.id}`)).map((g) => g.monsters), DAYS, 1, true), want = fightsPerRest(d.band[0]);
+      const day = days(d.band[0], groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`)).map((g) => g.monsters), DAYS, 1, true), want = fightsPerRest(d.band[0]);
       check(`${d.id}: rest`, day.fights, (v) => Math.abs(v - want) - GATE.perRest, `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${want} asked, ±${GATE.perRest}); ${pc(day.why.long)} of days end in a fight broken off`, true);
     }
 
-    // The area against the curve.
+    // The area against the curve: each group at its own map's floor, and two under a floor.
     const name = NAMES[id];
-    const lost = [...BOSSES[id], ...ROADS[id]].filter((ref) => !find(ref));
-    ok(!lost.length, `${name}: its bosses and its road are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
-    margins(name, all, band);
-    const way = ROADS[id].map(find);
-    if (way.every((g) => g)) {
-      const walked = road(way as EncounterDef[], band[0]);
-      check(`${name}: road`, walked, (v) => GATE.road - v, `${name} at ${band[0]}: its road (${ROADS[id].join(', ')}) walked ${pc(walked)} of the time (${pc(GATE.road)} asked)`);
-    }
+    const lost = [...bosses, ...zones.flatMap((z) => ROADS[z.id] ?? [])].filter((ref) => !find(ref));
+    ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
+    const pools = areaPools(fought, band[0]);
+    check(`${name}: floor`, pools.through, (v) => GATE.through - v, `${name} at its maps' floors: ${pc(pools.through)} of its ${pools.groups} groups' fights won (${pc(GATE.through)} asked)`);
+    if (pools.back === null) console.log(`  n/a:  ${name} ${GATE.under} under its maps' floors: no group has a company there`);
+    else check(`${name}: under`, pools.back, (v) => v - GATE.back, `${name} ${GATE.under} under its maps' floors (a town's or dungeon's, the area's ${band[0]}): ${pc(pools.back)} of ${pools.under} groups' fights won (${pc(GATE.back)} at most)`);
 
-    // A warning, not a wall: the two groups nearest the way in are among the gentlest, a point's
-    // grace below the median so that where most groups are always won one loss in a hundred is not a wall.
-    // A group that comes only after a step is not there when a company first walks in.
-    const outdoors = area.maps.find((d) => d.kind === 'outdoor' && d.encounters?.length);
-    if (outdoors && all.length) {
-      const steps = stepsFrom(outdoors), level = band[0] - GATE.under >= 1 ? band[0] - GATE.under : band[0];
-      const first = nearestWayIn(outdoors.encounters!, steps);
-      const mid = median(all.map((g) => rate(g, level)));
-      const least = Math.min(...first.map((g) => rate(g, level)));
-      check(`${name}: warning`, least, (v) => mid - GATE.warning - v, `${name}: the groups nearest the way in, ${first.map((g) => `${g.id} ${pc(rate(g, level))}`).join(' and ')}, are won at ${level} about as often as its median group or more (${pc(mid)}, less ${pc(GATE.warning)})`);
+    // Each zone: its road walked at its floor, and a warning, not a wall, at its way in.
+    for (const z of zones) {
+      const maps = z.maps!.map((m) => fought.find((d) => d.id === m.map)).filter((d): d is (typeof fought)[number] => !!d);
+      if (!maps.length) continue;
+      const zn = zoneName(z.name), floor = Math.min(...maps.map((d) => d.band[0]));
+      const refs = ROADS[z.id];
+      ok(!!refs?.length, `${zn}: its road is named${refs?.length ? '' : ` (ROADS has no '${z.id}')`}`);
+      const way = (refs ?? []).map(find);
+      if (refs?.length && way.every((g) => g)) {
+        const walked = road(way as EncounterDef[], floor);
+        check(`${zn}: road`, walked, (v) => GATE.road - v, `${zn} at ${floor}: its road (${refs.join(', ')}) walked ${pc(walked)} of the time (${pc(GATE.road)} asked)`);
+      }
+      // The two groups nearest its way in are among its gentlest, a point's grace below the median of
+      // its own groups so that where most groups are always won one loss in a hundred is not a wall.
+      // A group that comes only after a step is not there when a company first walks in.
+      const first = fought.find((d) => d.id === z.maps![0].map);
+      if (first?.encounters?.length) {
+        const steps = stepsFrom(first), level = floor - GATE.under >= 1 ? floor - GATE.under : floor;
+        const near = nearestWayIn(first.encounters, steps);
+        const mid = median(maps.flatMap((d) => d.encounters!).map((g) => rate(g, level)));
+        const least = Math.min(...near.map((g) => rate(g, level)));
+        check(`${zn}: warning`, least, (v) => mid - GATE.warning - v, `${zn}: the groups nearest its way in, ${near.map((g) => `${g.id} ${pc(rate(g, level))}`).join(' and ')}, are won at ${level} about as often as its median group or more (${pc(mid)}, less ${pc(GATE.warning)})`);
+      }
     }
   }
+  const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
+  ok(!astray.length, `every key of ROADS and BOSSES is a zone${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
   const stale = Object.keys(OWED).filter((k) => !used.has(k));
   ok(!stale.length, `every owed entry names a check that ran${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
 }
