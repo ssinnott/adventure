@@ -52,7 +52,7 @@ export const DOWNS_F2: MapDef = {
   features: [
     { kind: 'sign', x: 30, y: 28, text: 'A milestone: GULLWICK 2. CROWNESS 4.' },
     { kind: 'shrine', x: 25, y: 28, id: 'f2_shrine', text: 'A wayside shrine where the farm track leaves the road. Its candle is out.', stat: 'luck', done: 'The shrine is quiet.' },
-    { kind: 'event', x: 6, y: 11, id: 'f2_lamp', once: true, text: 'Coldharbour. A lamp burns in the farmhouse window in broad day, and the glass is black with it.' },
+    { kind: 'event', x: 6, y: 11, id: 'f2_lamp', once: true, when: { hours: 'day' }, text: 'Coldharbour. A lamp burns in the farmhouse window in broad day, and the glass is black with it.' },
     { kind: 'well', x: 8, y: 11, text: 'Coldharbour\'s well. The rope is new.' },
     { kind: 'camp', x: 22, y: 7, name: 'Woodcutter\'s camp', text: 'A woodcutter\'s fire in a ring of split beech.' },
     { kind: 'npc', x: 21, y: 7, name: 'A woodcutter', lines: [
@@ -68,8 +68,7 @@ export const DOWNS_F2: MapDef = {
   ],
   secrets: [{ x: 12, y: 3, hint: 'f2_holly' }],
   encounters: [
-    { id: 'f2_crows', x: 8, y: 25, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
-    { id: 'f2_crows_east', x: 26, y: 22, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
+    { id: 'f2_crows', x: 8, y: 25, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
     { id: 'f2_wolves', x: 15, y: 6, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: 1440 },
     { id: 'f2_boar', x: 9, y: 7, monsters: ['tusker'], aware: 3, respawn: 2880 },
     { id: 'f2_rats', x: 11, y: 11, monsters: ['barn_rat', 'barn_rat', 'barn_rat', 'barn_rat', 'barn_rat'], aware: 4, respawn: 720 },

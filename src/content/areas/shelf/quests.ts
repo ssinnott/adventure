@@ -1,6 +1,7 @@
-// The Foreland's side quests, in the journal's words: The Cargo Ledger (Hale) and A Boat With No
-// Name-Board (Wat and Hamo, at Gullwick). Its chapter of the one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
-// tools/tests/quests.ts checks every key.
+// The Foreland's side quests, in the journal's words: The Cargo Ledger (Hale), The Bell That Rang
+// Twice (Osmund), The Rest of the Survey (Ebba and Ailith) and A Boat With No Name-Board (Wat and
+// Hamo, at Gullwick). Its chapter of the one quest is in ./chapter.ts. How the words are keyed is in
+// src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 
 export const QUESTS: readonly QuestDef[] = [
@@ -27,6 +28,58 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { item: 'greywater_ledger' }, text: 'Take the ledger to Captain Hale at the pass, east along the Foreland road.' },
       { when: { visited: 'greywater1' }, text: 'Clear out the smugglers and find their ledger.' },
       { when: { flag: 'q_greywater' }, text: 'Find the caves at Brandy Hole, west along the beach, and take the smugglers\' ledger.' },
+    ],
+  },
+  {
+    // #56's first: who rang the Queen's death bell at midnight. The name goes to Osmund's book, or
+    // does not; the Wardens take Ebba, or she keeps the Chapel's lamps.
+    id: 'bell',
+    title: 'The Bell That Rang Twice',
+    start: { flag: 'q_bell' },
+    done: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }],
+    entries: [
+      { id: 'osmund', when: { flag: 'q_bell' },
+        text: 'Osmund, sexton of the Chapel, wants a name for his book: whoever rang the Queen\'s death bell at midnight, hours before anyone knew she was dead.' },
+      { id: 'boats', when: { flag: 'q_bell_boats' },
+        text: 'A fisherman at the Gilded Eel heard the bell at midnight, hauling his net.' },
+      { id: 'wall', when: { flag: 'q_bell_wall' },
+        text: 'A Warden on the wall saw someone in grey leave the tower after the bell and go down towards the Eel.' },
+      { id: 'ebba', when: { flag: 'q_bell_ebba' },
+        text: 'Ebba, a Lantern adjunct at the Eel, rang it. The Hearth burns for the Crown, the catechism says; she watched it go out, and knew.' },
+      { id: 'named', when: { flag: 'q_bell_named' },
+        text: 'We gave Osmund her name for his book. The Wardens will want her at the keep.' },
+      { id: 'kept', when: { flag: 'q_bell_kept' },
+        text: 'We told Osmund we could not find out. He wrote RANG ITSELF, and shut the book.' },
+    ],
+    goals: [
+      { when: { flag: 'q_bell_ebba' }, text: 'Tell Osmund at the Chapel whose hand was on the rope, or that we could not find out.' },
+      { when: { flag: ['q_bell_boats', 'q_bell_wall'] }, text: 'Someone in grey went down towards the Gilded Eel that night. Ask there.' },
+      { when: { flag: 'q_bell' }, text: 'Ask in Helmstow who rang the bell: at the Gilded Eel, and on the wall by the Chapel.' },
+    ],
+  },
+  {
+    // #56's eighth: Ailith of the survey team, hiding in the woods. Ebba asks after her, or the woods
+    // show where she is; she goes to the Chapel, or to Thornhold.
+    id: 'survey',
+    title: 'The Rest of the Survey',
+    start: [{ seen: 'shelf:survey_ring' }, { flag: 'q_survey' }, { flag: 'q_ailith' }],
+    done: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }],
+    entries: [
+      { id: 'ebba', when: { flag: 'q_survey' },
+        text: 'Ebba, a Lantern adjunct, says four of the survey team went south before the Queen died, and one lies dead under Ashcombe. She wants word of Ailith, who would hide in a wood.' },
+      { id: 'ring', when: { seen: 'shelf:survey_ring' },
+        text: 'In the woods south-west of Helmstow: a scrap of Lantern grey on a thorn, and a fire-ring hidden from its own smoke.' },
+      { id: 'ailith', when: { flag: 'q_ailith' },
+        text: 'Ailith, adjunct of the survey, is alive and hiding from the Wardens. The Regent sent the survey to Ashcombe under his seal, before the Queen died.' },
+      { id: 'chapel', when: { flag: 'q_survey_chapel' },
+        text: 'We sent Ailith home to the Chapel in Helmstow.' },
+      { id: 'thornhold', when: { flag: 'q_survey_thornhold' },
+        text: 'We sent Ailith over the Scarth to Thornhold, where nobody is looking for her.' },
+    ],
+    goals: [
+      { when: { flag: 'q_ailith' }, text: 'Tell Ailith where to go: the Chapel in Helmstow, or Thornhold over the Scarth.' },
+      { when: { flag: 'q_survey' }, text: 'Look for Ailith in the woods south-west of Helmstow, off the road.' },
+      { when: { seen: 'shelf:survey_ring' }, text: 'Find whoever lit the fire-ring in the woods south-west of Helmstow, and hid from its smoke.' },
     ],
   },
   {
