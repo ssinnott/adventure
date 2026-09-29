@@ -150,8 +150,11 @@ export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horiz
 
 // ---------------------------------------------------------------- monsters ----
 
-/** Which family module draws each sprite kind. */
-const FAMILY: Record<MonsterSprite, MonsterDrawer> = {
+/**
+ * Which family module draws each sprite kind. A module lists the same kinds in its `KINDS`, which
+ * the gallery and `tools/changed.ts` read; tools/tests/art.ts holds the two to each other.
+ */
+export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   rat: rat.draw, barn_rat: rat.draw,
   slime: slime.draw,
   wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw, chalk_wolf: wolf.draw,
