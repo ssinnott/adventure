@@ -857,3 +857,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   at 11:41 (`footprints/209.md`); it builds after the pilot's F2 lands (both edit the gate's `OWED`),
   in a free quality session.
 - The owner (11:44): "Close 46". #46 (the Downs' monsters drawn: #79 to #84, all merged) closed as completed.
+- The owner (11:47): "4+ 5 sound good to". Filed #268 (Task, `lane: quality`, a sub-issue of #26,
+  not approved): each monster family's `KINDS` held to `FAMILY`; its line added to #26's Work.
+  Scouts on #67 (Crowness, E3) and #68 (the Wend's fields, E2) at 11:49 (`footprints/67.md`,
+  `68.md`), planning against the pilot's branches, #263's variants and #209.
