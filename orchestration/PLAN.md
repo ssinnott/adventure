@@ -820,3 +820,4 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - No new PR. #263 merged main again (5f5608c; no drawing changed since the 01:59 sheet); the pilot
   merged main into F2 (aafc250) and builds F3 (`claude/m1-47-f3`) and C (`claude/m1-47-people`) as
   branches. Everything waits on the owner's OK of #263's look.
+- 05:30: nothing moved; still waiting on the owner's OK of #263.
