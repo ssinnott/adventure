@@ -380,8 +380,9 @@ over content broken on purpose too, and two tools to theirs:
   and a town's or dungeon's two under the area's), a boss three to seven times in ten, 6.5 fights to
   a rest give or take one, its bosses left out of the day, and each zone's road walked at its floor
   eight times in ten, its nearest groups at its way in among its gentlest. A group that walks only
-  in fog is fought with the bows' toll; one that waits on an `after` is no warning at the way in. A den's keepers are its camp's hardest fight, won no more often than any
-  of its brood; its brood's number and pace are printed.
+  in fog is fought with the bows' toll; one that waits on an `after` is no warning at the way in. A
+  den's keepers are its camp's hardest fight, won no more often than any of its brood; its brood's
+  number and pace are printed.
 - `density` (§5.3): nine squares in ten within seven steps of something to find (eight in the core
   outdoors, twelve in the country, as `MapDef.density` marks it), none too far and no more than
   one point in four a sign.
