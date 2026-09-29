@@ -1129,3 +1129,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 15:41: #280 (F3, #47's B; the pilot, bf6d052 at 15:39) opened: a reviewer and a delegate on its sheet
   (`sheet280.png`) started. #277's round message (15:24) had not fired; fired by hand at 15:40, with
   main now ac64abb to merge.
+- 15:49: the delegate on F3 (#280): it stands, look, texts and Choices 1 to 3 as the body has them (the
+  wreckers at 4; the crabs on the north-east sand; night only). One nit for the review's round, or
+  else C: the sea line at 16,2 (`downs_f3.ts:51`) sits on grass off the road's bend, so a company on
+  the road never fires it: move it to 14,1 or 13,2. Note for #68: the shanty's first word is "Ten".
