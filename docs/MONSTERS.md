@@ -483,8 +483,8 @@ to Kestrel Edge. The Foreland's weather: mild, wet, and foggy off the sea in the
 The Downs are the night the light went out, seen from the shore. The fishermen steer by the Hearth;
 with it failing the coast is dark, and the dark has people in it who were waiting for it (STORY.md,
 Act One). Up on the hills the Queen's barrow, the Berth, stands open, and her guard is up. The Downs
-are the pilot's zone map (EXPANSION.md §9, Phase 1), so their monsters test the pipeline and not the
-resolver: one new family, variants on the frames that exist, and two small fields.
+are the pilot's zone map (EXPANSION.md §9, Phase 1.1), so their monsters test the pipeline and not
+the resolver: one new family, variants on the frames that exist, and two small fields.
 
 **New:** birds, the frame the road reuses for owls, herons, gulls, ravens, eagles and vultures.
 **Back:** the Wolf on the hills, bandits and their archers on the coast road, the Shore Crab under
@@ -568,14 +568,14 @@ today's level cap, and the first that one spell must not answer.
 
 ### 6.1 Saltreach (band 10–12)
 
-*The Long Water's country: the Upper Water's willows and Reedholm's fields, the Delta's fen and the
+*The Long Water's country: the Upper Water's willows and Rietum's fields, the Delta's fen and the
 Drowned Temples, the Saltings' pans and Saltmouth, the free port. Salt flats and tidal ground.*
 
 Saltreach has lost its Stone. The Tide Stone went downriver on a barge at midsummer, so its Rifts
 are open and the fen glitters with brine glass; the temples are dark, and their drowned priests
 count instead of singing; the Compact's barges carry shards and people down the Long Water. Most of
 the road's new abilities are first spent here, which adds to what Saltreach already waits on in
-Phase 2 (EXPANSION.md §7, §9).
+Phase 1.2 (EXPANSION.md §7, §9; #150).
 
 **New:** long bodies (the eels first; later the worms and the pike) and toads. **Back:** the
 Drowned Man in the temples; the Rift, in brine (§2.1); the spider frame as the salt crab; the Grey
@@ -610,7 +610,7 @@ Two).
 ### 6.2 Wrackholm (band 12–14)
 
 *The smugglers' isle, reached by a smugglers' boat from Saltmouth: a heather moor with a rocky east
-end, Smugglers' Cove, and the Tide Ship at anchor under the cliffs.*
+end, Kelp Hole, and the Tide Ship at anchor under the cliffs.*
 
 Wrackholm is the cargo. The Tide Ship's hold carries shards and people bound below; the Compact's
 crews work it, the Hand's overseers keep the chains, and the orders come up from below. In the
@@ -629,7 +629,7 @@ warden in the hold.
 | Ashen Overseer | cultist | controller, 13 | the hold, among the chained rows | *Grey to the wrist, and a chain in each hand.* The chain holds (paralysis, 0.25) |
 | Devilfish | devilfish, new | controller, 13 | the cove's pools; under the ship | *Arms, coming up over the side.* Reaches the back row; holds (paralysis, 0.2) |
 | Tide Elder | riftling | elite, 13 | the forward hold | *A shard of the sea, stood up.* Paralyses (0.15) |
-| Great Devilfish | devilfish, new | boss, 14 | Smugglers' Cove, the sea cave | *What the smugglers feed.* Size 1.9 |
+| Great Devilfish | devilfish, new | boss, 14 | Kelp Hole, the sea cave | *What the smugglers feed.* Size 1.9 |
 | Warden of the Tide | riftling | boss, 14 | the forward hold, over the Stone | *The Stone's own light, standing guard over it.* The hold's tear closes when it falls |
 
 - **The hold**: two overseers behind four smugglers, among the chained rows. The chains hold the
@@ -1067,6 +1067,8 @@ Where this and DESIGN.md disagree, the design wins.
    the company can take up (DESIGN.md §10.2). Either killing them sets the Compact against the
    company, or the crews who carry the Hand's cargo have left the Compact for the Hand's coin. The
    Compact's line should say which.
+   *Answered (#151, call 4): the crews who carry the Hand's cargo have left the Compact for the
+   Hand's coin. Killing them costs nothing with the guild, whose line stays open to any company.*
 2. **What the giants are.** They are not among the sleepers, and every people came in the ship
    (DESIGN.md §7). Either they came awake, or they are something else. The monsters need only the
    surface; the design may want the rest.
