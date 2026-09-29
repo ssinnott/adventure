@@ -13,11 +13,11 @@
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
-import { blob, glossBall, glossEllipse, glossPoly, glow, softLine } from './gloss.ts';
+import { blob, glossBall, glossEllipse, glossPoly, glow, patch, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 import { shade } from '../../lib/art/palettes.ts';
 import type { Arm, Pt, Rig } from './figure.ts';
-import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
+import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, rnd, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
@@ -225,8 +225,9 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 /**
  * The archer: braced side-on with the far foot forward and wide, shoulders turned away. Hooded
  * tunic in the tint with a feather, the bow arm raised out to the far side, the near hand down on
- * a dagger at mid-thigh. The Downs' hedge archer wears the hedge: a ragged mantle of leaves over
- * the hood and shoulders, sprigs standing out of it where the feather was.
+ * a dagger at mid-thigh. The Downs' hedge archer wears the hedge: a cloak of foliage from the hood
+ * to below the knee, leaves on the bow arm, over half the face and on the bow and quiver, so what
+ * the company sees is a hedge with a bow in it.
  */
 function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, hedge = false): void {
   const R = makeRig(x, y, h, p, { tilt: 0.017, hipTilt: -0.028, turn: -0.032, near: [0.068, 0.085, 0.045], far: [-0.066, -0.175, -0.255], toe: [0.3, -1], lift: [0.085, 0] });
@@ -245,6 +246,7 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     ctx.beginPath(); ctx.moveTo(qx + h * 0.03, qy - h * 0.07); ctx.lineTo(qx + h * 0.01, qy - h * 0.08); ctx.lineTo(qx + h * 0.04, qy - h * 0.095); ctx.lineTo(qx + h * 0.045, qy - h * 0.065); ctx.closePath(); ctx.fill();
   }
   blob(ctx, B, shade(p.dark, 0.78), armParts(R, far, 21, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  if (hedge) leafSleeve(ctx, R, p, far);
   legs(ctx, R, shade('#363a42', p.tone), 22, [0.4, -1]);
   // The hooded tunic: hood, cowl, body and near sleeve, one mass in the tint. The hood is cut round
   // the head, so it ends under the chin, a neck's length above the collar, and he is the one man in
@@ -265,12 +267,12 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The cowl's hem across the chest, as one soft line (three creases darken where they overlap):
   // without it the cowl reads as a neck as thick as the hood, growing out of the tunic.
   softLine(ctx, B, [x - h * 0.1, sy + h * 0.05, x - h * 0.045, sy + h * 0.074, x + h * 0.05, sy + h * 0.076, x + h * 0.1, sy + h * 0.052], p.base, Math.max(1, h * 0.022), 0.28);
-  if (hedge) leafMantle(ctx, R, p, sway);
+  if (hedge) hedgeCloak(ctx, R, p, sway);
   // Inside the hood: shadow, then the face.
   blob(ctx, B, shade(p.dark, 0.55), [{ k: 'curve', pts: [hx - hr * 0.95, hy - hr * 0.85, hx + hr * 0.95, hy - hr * 0.8, hx + hr * 1.0, hy + hr * 0.3, hx + hr * 0.5, hy + hr * 1.05, hx - hr * 0.5, hy + hr * 1.05, hx - hr * 1.0, hy + hr * 0.3], wobble: 0.04, seed: 26, sub: 2 }], { h, form: false, outline: false });
-  // Belt over the tunic.
-  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.062, h * 0.042, 27)], { h, form: false });
-  band(ctx, B, x - h * 0.018, hemY - h * 0.066, h * 0.038, h * 0.042, R.brass);
+  // Belt over the tunic; the hedge archer's is under his cloak.
+  if (!hedge) blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.062, h * 0.042, 27)], { h, form: false });
+  if (!hedge) band(ctx, B, x - h * 0.018, hemY - h * 0.066, h * 0.038, h * 0.042, R.brass);
   // The face inside the hood is smaller than a bare head: only the front of it shows.
   blob(ctx, B, R.skin, [{ k: 'curve', pts: [hx - hr * 0.72, hy - hr * 0.62, hx + hr * 0.72, hy - hr * 0.6, hx + hr * 0.86, hy + hr * 0.2, hx + hr * 0.45, hy + hr * 0.95, hx - hr * 0.4, hy + hr * 0.95, hx - hr * 0.82, hy + hr * 0.2], wobble: 0.03, seed: 28, sub: 2 }], { h, formK: 0.55, spread: 0.7 });
   // Dagger at the near hip, hilt up, the near hand closed on it at mid-thigh.
@@ -279,6 +281,7 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // A short beard under the jaw.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.7, hy + hr * 0.45, hx - hr * 0.3, hy + hr * 0.62, hx + hr * 0.3, hy + hr * 0.62, hx + hr * 0.75, hy + hr * 0.42, hx + hr * 0.55, hy + hr * 1.05, hx, hy + hr * 1.2, hx - hr * 0.55, hy + hr * 1.05], wobble: 0.06, spiky: 0.1, seed: 30, sub: 2 }], { h, formK: 0.4 });
   face(ctx, R, true);
+  if (hedge) faceLeaves(ctx, R, p);
   // The feather in the hood, at the near side; the hedge archer has leaves there instead.
   const fx = hx + hr * 1.05, fy = hy - hr * 0.9;
   if (!hedge) glossEllipse(ctx, B, fx + hr * 0.5, fy - hr * 0.55 + sway, hr * 0.75, hr * 0.2, shade('#d8d0a8', p.tone), -0.95, { spread: 0.6 });
@@ -286,43 +289,100 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The shortbow in the raised far hand, gripped across the riser.
   const ba = bow(ctx, R, far[2], sway);
   hand(ctx, R, far[2], ba, 33, { flip: -1 });
+  if (hedge) bowLeaves(ctx, R, p, far[2], sway);
   void p.light;
 }
 
-/**
- * The hedge archer's mantle: leaves and twigs worked into a ragged cape over the hood and the
- * shoulders, so the outline of the man breaks up into hedge. One leafy mass, its edge made of leaf
- * shapes rather than a line, and the sprigs are part of it, so nothing on it can come loose.
- */
-function leafMantle(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, sway: number): void {
-  const { h, hx, hy, hr, sy } = R;
-  const leaf = shade('#3e5a28', p.tone), young = shade('#7a9a44', p.tone);
-  const parts: Part[] = [
-    // Over the shoulders and the cowl, ragged at the hem.
-    { k: 'curve', pts: [
-      R.sFar.x - h * 0.04, sy + h * 0.03, hx - hr * 1.2, hy + hr * 0.9, hx + hr * 1.2, hy + hr * 0.9,
-      R.sNear.x + h * 0.045, sy + h * 0.03, R.sNear.x + h * 0.02, sy + h * 0.11, x0(R, 0.06), sy + h * 0.13,
-      x0(R, -0.05), sy + h * 0.14, R.sFar.x - h * 0.01, sy + h * 0.1,
-    ], wobble: 0.12, spiky: 0.3, seed: 71, sub: 3 },
-    // Over the crown of the hood.
-    { k: 'curve', pts: [hx - hr * 1.3, hy - hr * 0.2, hx - hr * 1.0, hy - hr * 1.3, hx, hy - hr * 1.75, hx + hr * 1.0, hy - hr * 1.45, hx + hr * 1.32, hy - hr * 0.3, hx + hr * 0.9, hy - hr * 0.9, hx - hr * 0.9, hy - hr * 0.9], wobble: 0.12, spiky: 0.3, seed: 72, sub: 3 },
-  ];
-  // Sprigs standing out of the crown and the near shoulder, each a spray of leaves.
-  for (const [bx, by, a, n] of [[hx + hr * 0.7, hy - hr * 1.4, -0.5, 3], [hx - hr * 0.5, hy - hr * 1.6, -1.9, 3], [R.sNear.x + h * 0.03, sy + h * 0.02, -0.9, 2]] as const) {
-    for (let i = 0; i < n; i++) {
-      const d = hr * (0.5 + i * 0.45), aa = a + (i % 2 ? 0.35 : -0.3);
-      parts.push({ k: 'ell', x: bx + Math.cos(a) * d + (i === n - 1 ? sway : 0), y: by + Math.sin(a) * d, rx: hr * 0.34, ry: hr * 0.17, rot: aa });
-    }
-  }
-  blob(ctx, B, leaf, parts, { h, formK: 0.5, spread: 0.7, tex: 'fur', seed: 73, amount: 0.4 });
-  // A few paler new leaves catching the light, a marking on the mass rather than parts of it.
-  if (!B.override) for (const [lx, ly] of [[hx - hr * 0.6, hy - hr * 1.2], [hx + hr * 0.5, hy - hr * 1.3], [x0(R, 0.1), sy + h * 0.05], [x0(R, -0.08), sy + h * 0.09]]) {
-    softLine(ctx, B, [lx - hr * 0.18, ly + hr * 0.06, lx + hr * 0.18, ly - hr * 0.06], young, Math.max(1, hr * 0.16), 0.7);
-  }
+/** The hedge's colours: leaf greens, a dead-leaf brown and dark undergrowth. The light leaves
+ * keep some of their tone by night, as leaves do under a moon, so the hedge still reads. */
+function hedgePalette(p: Paint): { under: string; leaf: string; young: string; dead: string } {
+  return {
+    under: shade('#26361c', p.tone), leaf: shade('#48682a', p.tone),
+    young: shade('#8aaa48', Math.max(0.65, p.tone)), dead: shade('#7a5c32', Math.max(0.6, p.tone)),
+  };
 }
 
-/** x at `u` h from the rig's centre line. */
-function x0(R: Rig, u: number): number { return R.x + u * R.h; }
+/** Leaves along a polyline, each a small ellipse at a slant of its own: the ragged edge of a hedge. */
+function leavesAlong(pts: readonly number[], r: number, seed: number, out: Part[] = []): Part[] {
+  for (let i = 0; i + 3 < pts.length; i += 2) {
+    const ax = pts[i], ay = pts[i + 1], bx = pts[i + 2], by = pts[i + 3];
+    const n = Math.max(1, Math.round(Math.hypot(bx - ax, by - ay) / (r * 1.3)));
+    for (let k = 0; k < n; k++) {
+      const t = k / n, j = rnd(seed, i, k);
+      out.push({ k: 'ell', x: ax + (bx - ax) * t + (j - 0.5) * r * 0.6, y: ay + (by - ay) * t + (rnd(seed, k, i) - 0.5) * r * 0.6, rx: r, ry: r * 0.5, rot: j * Math.PI * 2 });
+    }
+  }
+  return out;
+}
+
+/** Leaves scattered over a box as markings: the lighter and the dead leaves on the hedge's face. */
+function leafFlecks(ctx: CanvasRenderingContext2D, hex: string, x0: number, y0: number, w: number, hh: number, r: number, n: number, seed: number, alpha: number): void {
+  const parts: Part[] = [];
+  for (let i = 0; i < n; i++) parts.push({ k: 'ell', x: x0 + rnd(seed, i, 1) * w, y: y0 + rnd(seed, i, 2) * hh, rx: r, ry: r * 0.5, rot: rnd(seed, i, 3) * Math.PI * 2 });
+  patch(ctx, B, hex, parts, { alpha, feather: 0.2 });
+}
+
+/**
+ * The hedge archer's cloak: foliage from the crown of the hood to below the knee, its whole edge
+ * made of leaves, so the man's line breaks up from head to foot. One mass, darker undergrowth low
+ * down, lighter and dead leaves on its face, and sprays standing off the hood and the shoulders.
+ */
+function hedgeCloak(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, sway: number): void {
+  const { h, hx, hy, hr, sy, x, y } = R;
+  const c = hedgePalette(p), lr = h * 0.03;
+  const hem = y - h * 0.2;
+  // The outline, round from the far shoulder over the hood, down the near side and back along a
+  // ragged hem just below the knee.
+  const edge = [
+    R.sFar.x - h * 0.05, sy + h * 0.06, R.sFar.x - h * 0.02, sy - h * 0.02, hx - hr * 1.35, hy - hr * 0.2,
+    hx - hr * 0.9, hy - hr * 1.4, hx + hr * 0.2, hy - hr * 1.8, hx + hr * 1.2, hy - hr * 1.2, hx + hr * 1.35, hy,
+    R.sNear.x + h * 0.03, sy - h * 0.01, R.sNear.x + h * 0.05, sy + h * 0.1, x + h * 0.19, y - h * 0.5,
+    x + h * 0.2, hem, x + h * 0.06, hem + h * 0.02, x - h * 0.08, hem - h * 0.01, x - h * 0.19, hem,
+    x - h * 0.18, y - h * 0.5, R.sFar.x - h * 0.05, sy + h * 0.06,
+  ];
+  const parts: Part[] = [{ k: 'curve', pts: edge.slice(0, -2), wobble: 0.08, spiky: 0.2, seed: 81, sub: 3 }];
+  leavesAlong(edge, lr, 82, parts);
+  // Sprays off the hood and the near shoulder: twigs of three or four leaves.
+  for (const [bx, by, a, n] of [[hx + hr * 0.9, hy - hr * 1.4, -0.6, 4], [hx - hr * 0.7, hy - hr * 1.5, -2.2, 3], [R.sNear.x + h * 0.04, sy, -0.5, 3]] as const) {
+    for (let i = 0; i < n; i++) {
+      const d = hr * (0.45 + i * 0.4), aa = a + (i % 2 ? 0.4 : -0.35);
+      parts.push({ k: 'ell', x: bx + Math.cos(a) * d + (i === n - 1 ? sway : 0), y: by + Math.sin(a) * d, rx: lr * 1.1, ry: lr * 0.55, rot: aa });
+    }
+  }
+  blob(ctx, B, c.leaf, parts, { h, formK: 0.5, spread: 0.75, tex: 'fur', seed: 83, amount: 0.35 });
+  if (B.override) return;
+  // Undergrowth: the lower cloak in the dark of the hedge bottom.
+  patch(ctx, B, c.under, [{ k: 'curve', pts: [x - h * 0.17, y - h * 0.46, x + h * 0.17, y - h * 0.46, x + h * 0.18, hem, x - h * 0.18, hem], wobble: 0.1, spiky: 0.2, seed: 84, sub: 2 }], { alpha: 0.6, feather: 0.6 });
+  // The face of the hedge: young leaves catching the light, dead ones among them.
+  leafFlecks(ctx, c.young, x - h * 0.16, sy - h * 0.02, h * 0.32, h * 0.36, lr * 0.9, 16, 85, 0.85);
+  leafFlecks(ctx, c.dead, x - h * 0.16, sy + h * 0.1, h * 0.32, h * 0.36, lr * 0.85, 8, 86, 0.8);
+  leafFlecks(ctx, c.young, hx - hr * 1.1, hy - hr * 1.6, hr * 2.2, hr * 0.8, lr * 0.8, 5, 87, 0.85);
+}
+
+/** Leaves along the raised bow arm, from the shoulder out past the elbow. */
+function leafSleeve(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, far: Arm): void {
+  const c = hedgePalette(p), lr = R.h * 0.026;
+  const parts = leavesAlong([far[0].x, far[0].y, far[1].x, far[1].y, (far[1].x + far[2].x) / 2, (far[1].y + far[2].y) / 2], lr, 91);
+  blob(ctx, B, c.leaf, parts, { h: R.h, formK: 0.5, spread: 0.7 });
+  if (!B.override) leafFlecks(ctx, c.young, far[1].x - lr * 2, far[1].y - lr * 2, lr * 4, lr * 4, lr * 0.8, 3, 92, 0.85);
+}
+
+/** Leaves across one side of the face and the jaw, so only an eye and a brow look out of the hedge. */
+function faceLeaves(ctx: CanvasRenderingContext2D, R: Rig, p: Paint): void {
+  const { hx, hy, hr } = R, c = hedgePalette(p);
+  const parts = leavesAlong([hx - hr * 1.05, hy - hr * 0.1, hx - hr * 0.6, hy + hr * 0.6, hx + hr * 0.1, hy + hr * 0.95, hx + hr * 0.8, hy + hr * 0.75], hr * 0.34, 95);
+  blob(ctx, B, c.leaf, parts, { h: R.h, formK: 0.5, spread: 0.7 });
+  if (!B.override) leafFlecks(ctx, c.young, hx - hr * 0.9, hy + hr * 0.2, hr * 1.4, hr * 0.6, hr * 0.26, 3, 96, 0.85);
+}
+
+/** A few leaves bound to the bow's limbs and tucked in the top of the quiver. */
+function bowLeaves(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, at: Pt, sway: number): void {
+  const { h, x, sy } = R, c = hedgePalette(p), lr = h * 0.022;
+  const parts: Part[] = [];
+  for (const [bx, by] of [[at.x + h * 0.035, at.y - h * 0.2], [at.x + h * 0.03, at.y + h * 0.18]]) leavesAlong([bx - lr, by - lr, bx + lr, by + lr * 1.5], lr, 97, parts);
+  leavesAlong([x + h * 0.19, sy - h * 0.1 + sway * 0.2, x + h * 0.23, sy - h * 0.14], lr, 98, parts);
+  blob(ctx, B, c.leaf, parts, { h, formK: 0.5, spread: 0.7 });
+}
 
 /**
  * The footpad: a road thief who has robbed his coat off a gentleman. The coat is the tint, cut for a
