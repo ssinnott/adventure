@@ -49,6 +49,7 @@ function who(map: string, x: number, y: number, name: string): Person {
   if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
   return p;
 }
+const MAUD = (): Person => who('harrow', 12, 13, 'Maud');
 const EBBA_EEL = (): Person => who('harrow', 12, 13, 'Ebba'), EBBA_CHAPEL = (): Person => who('harrow', 11, 4, 'Ebba');
 const FISHERMAN = (): Person => who('harrow', 12, 13, 'the fisherman'), WALL = (): Person => who('harrow', 14, 3, 'a Warden on the wall');
 const OSMUND = (): Person => who('harrow', 11, 4, 'Osmund'), AILITH_WOOD = (): Person => who('shelf', 2, 14, 'Ailith'), AILITH_HOLD = (): Person => who('thornhold', 11, 4, 'Ailith');
@@ -66,6 +67,27 @@ function answerWho(w: Walk, what: string, label: string): string {
   const said = a ? answer(a, w.party) : '';
   listen(w);
   return said;
+}
+
+/** Open a chest, 'map:id', as the game does: its gold and items to the party, and spent. */
+function open(w: Walk, at: string): void {
+  const [map, id] = at.split(':');
+  const c = MAP_DEFS.find((d) => d.id === map)?.features?.find((f) => f.kind === 'chest' && f.id === id);
+  if (!c || c.kind !== 'chest') { w.ok(false, `there is a chest ${at}`); return; }
+  w.world.travel(map, c.x, c.y);
+  w.ok(!w.world.used(id), `the chest ${at} is there to open`);
+  w.world.markUsed(id);
+  w.party.gold += c.gold;
+  w.party.bag.push(...c.items);
+  listen(w);
+}
+
+/** The Clerk's Seal to the seal in hand: the coat among the drowned, the strongbox and its chest. */
+function sealFound(w: Walk): void {
+  see(w, 'greywater1:gw1_coat');
+  see(w, 'greywater1:gw1_strongbox');
+  open(w, 'greywater1:gw1_seal');
+  w.ok(w.party.bag.includes('clerks_seal'), "the strongbox holds the clerk's seal");
 }
 
 /** What a person says at the next meeting, as the game would have it. */
@@ -157,6 +179,36 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     answerWho(w, 'q_bell', "We couldn't find out.");
     const first = hear(w, 'harrow', EBBA_CHAPEL()), then = hear(w, 'harrow', EBBA_CHAPEL());
     w.ok(first.startsWith('Ebba is in the Chapel, sober') && then.startsWith('"Thornhold. Good.'), 'Ailith sent first, Ebba in the Chapel says what she saw of Vask first, then what she has heard');
+  }
+  { // The seal to Maud: she pays, says her last words once, and is gone.
+    const w = newWalk(ok);
+    meetWho(w, 'q_seal');
+    w.ok(w.news.at(-1) === 'New quest: The Clerk\'s Seal.' && !!page(w, 'seal')?.goal, `Maud's first meeting begins The Clerk's Seal, with a goal (${w.news.at(-1)})`);
+    sealFound(w);
+    const gold = w.party.gold;
+    meetWho(w, 'q_seal_maud');
+    w.ok(w.party.gold === gold + 150 && !w.party.bag.includes('clerks_seal'), 'Maud takes the seal and pays 150');
+    reads(w, 'seal', 'The Clerk\'s Seal', ['maud', 'coat', 'seal', 'sold'], ['hale'], 'the seal to Maud');
+    w.ok(there(w, MAUD(), 'harrow') && hear(w, 'harrow', MAUD()).startsWith('"Sold.') && !there(w, MAUD(), 'harrow'), 'Maud says her last words once, and is gone from the Eel');
+  }
+  { // The seal to Hale: he takes it as his second hand-in and pays; Maud's last words are the Warden's.
+    const w = newWalk(ok);
+    meetWho(w, 'q_seal');
+    sealFound(w);
+    const gold = w.party.gold;
+    meetWho(w, 'q_seal_hale');
+    w.ok(w.party.gold === gold + 150 && !w.party.bag.includes('clerks_seal') && !w.party.flags.q_greywater_done, 'Hale takes the seal, without the ledger, and pays 150');
+    reads(w, 'seal', 'The Clerk\'s Seal', ['maud', 'coat', 'seal', 'hale'], ['sold'], 'the seal to Hale');
+    w.ok(hear(w, 'harrow', MAUD()).startsWith('"You gave it to the Warden."') && !there(w, MAUD(), 'harrow'), 'Maud says her last words once, and is gone from the Eel');
+  }
+  { // The seal found with no word from Maud, taken to Hale: the quest shows done, and Maud, met
+    // after, asks after Edwin once and then says her last words.
+    const w = newWalk(ok);
+    sealFound(w);
+    meetWho(w, 'q_seal_hale');
+    reads(w, 'seal', 'The Clerk\'s Seal', ['coat', 'seal', 'hale'], ['maud', 'sold'], 'the seal to Hale, Maud never met');
+    const first = hear(w, 'harrow', MAUD()), last = hear(w, 'harrow', MAUD());
+    w.ok(first.startsWith('A woman in a good plain dress') && last.startsWith('"You gave it to the Warden."') && !there(w, MAUD(), 'harrow'), 'Maud met after asks after Edwin first, then says her last words, and is gone');
   }
   { // Ailith met first, with no word from anyone: her meeting begins the quest; Esc puts her question again.
     const w = newWalk(ok);

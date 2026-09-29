@@ -123,5 +123,25 @@ export const HARROW: MapDef = {
         '"If she\'s alive she\'s hiding, and if she\'s hiding it\'s in a wood; she was raised in one. Look south-west along the coast, off the road. Find her, or find where she\'s buried, so I can stop looking at the door."',
       ] },
     ] },
+    // The Clerk's Seal (#77, from #56): Maud at the Eel's cleanest table, until her last words, said
+    // once the seal has gone to her or to Hale.
+    { kind: 'npc', x: 12, y: 13, name: 'Maud, a clerk\'s wife', lines: [
+      'A woman in a good plain dress sits at the Eel\'s cleanest table, with a cup she has not touched and a purse she keeps her hand on.',
+      '"You\'re the company that goes into places. My husband is Edwin, a clerk at the customs house. Nine days ago he went down the beach to Brandy Hole with the price of a bottle in his pocket, and he hasn\'t come home. The price of one bottle. I count what leaves this house, and I count it twice."',
+      '"The Wardens say the caves are closed and to wait. I\'ve waited nine days. Find him, or find out. If it\'s the second, I want whatever he had on him. There\'s his seal, which is the customs house\'s property, and I\'d sooner they asked me for it than asked the tide."',
+    ], flag: 'q_seal', until: { flag: 'q_maud_gone' },
+      quest: { item: 'clerks_seal', reward: 150, setFlag: 'q_seal_maud', done: [
+        'Maud turns the seal to the light and looks at its face, worn bright, for a long time.',
+        '"Nine months. That\'s how long a face wears like that." She puts it in the purse, and her hand over the purse. "There was money this winter a clerk doesn\'t earn. I counted it twice and didn\'t ask, because we ate. So I knew the sum and not the sale. Now I know the sale."',
+        '"The customs house will pay to have this back, and pay more not to ask where it\'s been, and I\'ll take both and say nothing. Edwin\'s name stays a clerk\'s name. That\'s what I\'m buying. Here\'s yours."',
+      ] },
+      says: [
+        { after: { flag: 'q_seal_maud' }, sets: 'q_maud_gone', lines: [
+          '"Sold. The customs house paid, and asked nothing, and I asked nothing, and Edwin is a clerk who drowned buying brandy, which is true as far as it goes." She stands. "I\'ll not be in here again. It\'s a filthy place. I only came because it was his."',
+        ] },
+        { after: { flag: ['q_seal', 'q_seal_hale'] }, sets: 'q_maud_gone', lines: [
+          '"You gave it to the Warden." She has finished the cup, for once. "So Edwin\'s name goes to the Regent in Hale\'s hand, beside the smugglers\' book, and the customs house will strike him off with a note in the margin." She stands. "A note in the margin. He\'d have hated that. He kept beautiful margins."',
+        ] },
+      ] },
   ],
 };

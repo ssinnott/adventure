@@ -40,4 +40,5 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'rations', name: 'Rations', slot: 'none', price: 4, use: { food: 5 } },
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
   { id: 'greywater_ledger', name: 'Cargo Ledger', slot: 'none', price: 0 },
+  { id: 'clerks_seal', name: "Clerk's Seal", slot: 'none', price: 0 },
 ];
