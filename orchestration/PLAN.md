@@ -1097,3 +1097,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   CI green; the diff read (`areaPools`, zone-keyed `BOSSES` and `ROADS`). Merged as ec2b93c; main's
   tree is the tested tree (8dd9388). #276's nits ride #277 (the same lines), sent at 15:24 with
   #277's.
+
+### 15:29: #272 landed
+- The Black Dog session's round (adf3543): main merged (f438644), the Billman's far arm sleeved to the
+  elbow, the sling's ring toned, the commas out. Looked at: the Billman reads with both sleeves.
+- Landing check on adf3543 merged onto main ec2b93c: ALL OK (39 owed: the four new "appears on a
+  map", #67 ×3 and #68 ×1), SMOKE OK, "Nothing new."; CI green. Merged as a584985; main's tree is the
+  tested tree (6dd842b). #67's and #68's 0 is done: their A waits now on #273 (#277) and the pilot's
+  B and C.
+- #275's round (b311e09): `kindsOf` exported and held to each module's `KINDS` in
+  tools/tests/changed.ts, the two-lists case, drawers held distinct, `familyModules` shared in
+  lib.ts. Its landing check runs on main a584985 (with #272's four kinds) in scratchpad/land2.
