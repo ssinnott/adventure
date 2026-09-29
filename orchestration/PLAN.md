@@ -1238,3 +1238,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   to a delegate (16:40).
 - The #214 scout still out; the #71 and #87 scouts started 16:29. #77's C (Who Lived at Ashcombe)
   sent to its session (16:32): its branch was never pushed, so it may rebuild.
+- 16:40: #281 (#212, the Deepthorn's gear ladder) landed: its round (4722461, cfa4fd3): the ladder
+  check faults a two-handed weapon beside a shield and armour past a robe's for Unarmoured Defence
+  (`robeLike` exported from `src/game/party.ts`, one word, so the test holds the game's own rule;
+  accepted), MONSTERS' figures past 10 re-measured, its level-9 row (the delegate's), the body's
+  counts and commas. Diff read. Landing check on cfa4fd3 (main c9abc79 in): ALL OK (42 owed), SMOKE
+  OK, "Nothing new."; the ten Deepthorn lines. CI green. Merged as 95a5bc1; main's tree is the tested
+  tree (b53e767). #212 closes with it. The #100 session is free; #282 told to merge main (items.ts:2).
