@@ -1066,3 +1066,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   body's first choice, decided in review as the fix, not the default. Nits: the fixture misses the
   two-lists branch; an ok that drawers are distinct; an Oxford comma (SLICE.md:427); `familyModules`
   repeats `families` (pillars.ts:193-200). Sent to the #97 session (15:19).
+
+### 15:25: #277 reviewed
+- `reviews/277.md` (reviewed over #276's head): ready once #276 lands; nits only. With main (f438644
+  is the base): ALL OK (33 owed; #276 alone 35, `shelf: rest` and `greywater1: rest` go), SMOKE OK;
+  every figure takes the table's aim and limit, every edge right, each dropped entry put back fails.
+  The list: shelf at 1, 4.60 fights to a rest; greywater1 at 2, 4.05 (both between aim and limit).
+  Nits: the judge fixture probes `GATE.through`'s live numbers (fails if #47 moves them) and nothing
+  tests the list (`gate.ts:110`); wording (MONSTERS.md:290 "listed" for any map 4-10; `gate.ts:239`
+  "fails" at 60.5% two under; "threshold" at `:83-84`, `:87`); Oxford commas (EXPANSION.md:275,
+  `gate.ts:22`, `:44`, `:48`, `:204`, `:210`). Choices: all three taken. greywater1 sits 0.05 inside
+  its limit. Sent with #276's round when its review is in.
