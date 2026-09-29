@@ -492,7 +492,7 @@ export async function pillars(): Promise<void> {
     ok(lay(['MMMMMM', 'M,,,,M', 'MW,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and so does sea at its edge');
     ok(lay(['MMMMMM', 'M,,,,M', '=,,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and a road through a gap in the ring');
     // Land against open water along an edge: a shore, not water cut short. Laid in Thornmark's place,
-    // its east edge faces Thornmere at 264,44-46; the premise is checked first.
+    // its east edge faces Lyngwyn at 264,44-46; the premise is checked first.
     const coast = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_coast', name: 'Coast fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
       const w = rows[0].length, zone: AtlasZone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', maps: [{ map: 'fixture_coast', at: [264 - w, 43] }] };
