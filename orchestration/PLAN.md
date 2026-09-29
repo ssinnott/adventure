@@ -1056,3 +1056,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   is lettered on the atlas (`River.name` is read by nothing), so thornmark.md §4 and §10 should say
   "named in the atlas" as shelf.md does; two prose lines over the docs' wrap (DESIGN.md:425,
   thornmark.md:76).
+
+### 15:40: #275 reviewed
+- `reviews/275.md`: ready after fixes. The check fails every way asked (a kind dropped, under another
+  drawer, in two lists; a `KINDS` entry drawn by nothing), maps drawers by identity (13 drawers);
+  with main ALL OK (36 owed), SMOKE OK, "Nothing new."; with #272 in, it holds over 53 kinds.
+  Should-fix: `changedMonsters` reads `KINDS` by regex (`tools/changed.ts:64-67`) and nothing holds
+  that to the imported lists (double quotes or a trailing comment drop monsters off the sheet): the
+  body's first choice, decided in review as the fix, not the default. Nits: the fixture misses the
+  two-lists branch; an ok that drawers are distinct; an Oxford comma (SLICE.md:427); `familyModules`
+  repeats `families` (pillars.ts:193-200). Sent to the #97 session (15:43).
