@@ -360,7 +360,7 @@ What it shows:
   controllers, on the line leave a company of 1 short of six or seven fights, so they come down
   whole, to between 0.8 and 1 of the line.
 - **Held to short fights, monsters hit harder than today's.** From level 3 to 12 most roles have 1.1
-  to 3.1 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
+  to 3.6 times the line's hit points and hit up to 1.8 times as hard, the armoured up to 2.1. A
   company that husbands its spells through the day kills slowly, and a fight that must end in four
   or five rounds has to take its share of the day in them.
 - **Some fights cannot be finished.** A fight still going at fifteen rounds is broken off, and it
@@ -370,8 +370,8 @@ What it shows:
 - **The heavy hitters are slower.** Held to four rounds, brutes, elites and the armoured hit hard
   enough to take a member from standing to −10 in one blow, and a death ended up to half their days
   at 4–12 (two brutes at 4, nearly half). Given half as long again, a death or a lost fight ends
-  4–9% of the armoured's days, 4–15% of the elites' and 2–21% of the brutes', in fights of 4.4 to
-  7.5 rounds. Two brutes at 4 are the worst of it, a fifth of the days even so.
+  1–9% of the armoured's days, 6–15% of the elites' and 1–21% of the brutes', in fights of 4.4 to
+  7.8 rounds. Two brutes at 4 are the worst of it, a fifth of the days even so.
 - **Hit points jump where tier 5 lands.** At 8, where Meteor Swarm, Tempest and Wrath reach every
   foe, every role needs nearly half as many hit points again as at 7, or more (the soldier 35 to
   59). Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole group of them: 7
@@ -391,12 +391,12 @@ What it shows:
   sorcerer has about 24. Real bosses want an escort, as the Hand of Ash and the Warden of the Cut
   have, or the sweep of §3.3.
 - **Past 12, on today's rules, no monster makes a good day.** With rests further apart, monsters
-  there need only 1.7 to 4 times the line's hit points (fodder up to 5.6), where six or seven fights
+  there need only 1.9 to 4 times the line's hit points (fodder up to 5.7), where six or seven fights
   a rest asked up to seven. But the company's spells grow with its level and nothing else does, so
   once they are spent its weapons cannot finish a fight, and blows hard enough to end fights sooner
-  kill. From 16 a sixth to two-fifths of the days end badly for most roles, half for elites by 28,
-  nine in ten for brutes at 28, and nearly all for the armoured at 20–28, whom weapons barely
-  scratch.
+  kill. From 16 a tenth to over half of the days end badly for most roles (the casters 58% at 24),
+  half for elites by 28, three in four for brutes at 28 and nearly all for the armoured at 20–28,
+  whom weapons barely scratch.
 - **Weaker spells, and something else that grows.** Past 10 the balance can come from the monsters,
   the spells or the company, and the harness tries each. `--spell-cap 10` stops damage spells
   growing at 10. `--gear-grows` enchants Thornmark's gear past 10, so that a weapon's blow grows as

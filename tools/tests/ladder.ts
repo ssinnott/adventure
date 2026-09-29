@@ -7,7 +7,7 @@
 // inside Thornmark's window and owed to its box until placed.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
-import { CLASSES } from '../../src/game/party.ts';
+import { CLASSES, robeLike } from '../../src/game/party.ts';
 import type { ClassId } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { GEAR, companyAt } from '../harness.ts';
@@ -112,14 +112,19 @@ export function ladder(): void {
   ok(Object.keys(LADDER).length === Object.keys(CLASSES).length, `every class is on the ladder (${Object.keys(LADDER).length} of ${Object.keys(CLASSES).length})`);
 
   // The Deepthorn, class by class: each find is in the ladder by 10 and no sooner, the class can use
-  // it, and it betters the best of its kind the class had by 9, its kit and the ladder's gear.
+  // it and it betters the best of its kind the class had by 9, its kit and the ladder's gear. A class
+  // that bears a shield takes no two-handed weapon, and one with Unarmoured Defence no armour past a
+  // robe's (`robeLike`).
   for (const [cls, finds] of Object.entries(DEEPTHORN) as [ClassId, readonly string[]][]) {
     const had = [...CLASSES[cls].kit, ...by(9)].map((id) => ITEMS[id]).filter((d) => usable(d, cls));
+    const shielded = [...CLASSES[cls].kit, ...finds].some((id) => ITEMS[id]?.slot === 'shield');
     const faults = finds.flatMap((id) => {
       const d = ITEMS[id];
       if (!d) return [`${id} is no item`];
       if (!by(10).includes(id) || by(9).includes(id)) return [`${id} is not in the ladder at 10`];
       if (!usable(d, cls)) return [`${id} is not for a ${cls}`];
+      if (shielded && d.twoHanded) return [`${id} is two-handed, and a ${cls} bears a shield`];
+      if (CLASSES[cls].traits.includes('unarmoured') && d.slot === 'armor' && !robeLike(d)) return [`${id} is past a robe's armour, and a ${cls} fights unarmoured`];
       const best = Math.max(0, ...had.filter((h) => kind(h) === kind(d)).map(worth));
       return worth(d) > best ? [] : [`${id} (${worth(d)}) is no better than the ${kind(d)} it had by 9 (${best})`];
     });

@@ -193,7 +193,7 @@ export function armorClass(c: Character): number {
 }
 
 /** Nothing, or armour of a robe's own armour class: a plus does not make a robe armour. */
-const robeLike = (d: ItemDef | undefined): boolean => (d?.ac ?? 0) - (d?.plus ?? 0) <= 1;
+export const robeLike = (d: ItemDef | undefined): boolean => (d?.ac ?? 0) - (d?.plus ?? 0) <= 1;
 
 export function weaponOf(c: Character): ItemDef { return c.equipment.weapon ? item(c.equipment.weapon) : ITEMS.club; }
 
