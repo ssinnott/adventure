@@ -669,3 +669,29 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   explorer (176 states) strands nobody. Sent 23:35: merge main; assert the witnesses gone after
   the answer and absent at a new game; nits (the ring's `until`, a ring-only goal that doesn't name
   Ailith, a comment, an Oxford comma). All ten owner's choices: take the defaults.
+
+### 00:27: #147 merged; the reviews of #145, #146 and #148 sent; #47's 0c started
+
+- The container restarted at about 00:15; the reviews of #146 and #148 had finished and were on disk.
+- #147 (#77's A) merged at 00:27 (main b48f459) after its six fixes (the witnesses held both ways,
+  the ring's `until`, a goal for the ring alone, a comment, the comma, main): on its head 296aaa9,
+  ALL OK (47 owed), SMOKE OK, "Nothing new."; CI green; main's tree is the head's (8a7dc11). The
+  owner had its words from 23:37 and raised nothing. #77 stays open: B (the Seal) started at 00:30 on
+  `claude/m1-77-seal`; then D (the Well); C after the pilot's B.
+- `reviews/146.md` (the Lanterns): ready after fixes (each hall held alone; the Second Marker named
+  by the rocks, not hills Thornmark hasn't; `lake` moved to the water or the words changed; nits).
+  It closes #21. Sent 00:29.
+- `reviews/148.md` (#40's dungeons): ready after fixes (the pay figures, the n/a line, the seeds'
+  margins in the body, nits), then the owner's word on its ten-to-twelve bands: §4.4's line alone
+  can't make the Grove Roots lost at 3 and cheap at 6; nothing else was measured. Sent 00:29, the
+  swarms left as they are until the owner answers. Found in passing: the combat header reads "12
+  Ogres" over two ogres and ten zealots (`src/ui/combat.ts:188`), a systems bug to put to the owner.
+- `reviews/145.md` (the pilot's F2): the pilot had already built five Downs variants (ed2addf:
+  Chalk Wolf, Tusker, Barn Rat, Footpad, Hedge Archer, at the brief's sizes), but registered them
+  in `src/ui/monsters/` and `src/ui/sprites.ts` as recolours, the creatures lane's files. Sent 00:29:
+  the drawings go first as #47's 0c, started in the Black Dog session (`claude/m1-47-downs-kinds`,
+  real variants on their frames, the defs held in `UNPLACED` for #47, the sheet to the owner);
+  #145 then takes them from main. Meanwhile #145: 'the Foreland: floor' back in `OWED` (the crows
+  one group of six, as the brief), the lamp by day, nits, #148's side of the `OWED` hunk.
+- #140 told at 00:30 to merge b48f459 (the walkthrough's three places, §3, shipped.json); it still
+  waits on the owner's OK of the track.
