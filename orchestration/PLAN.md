@@ -881,3 +881,23 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #270 (the Deepthorn's plan, #208's docs, not ours) merged at 11:54, not by me. Main is 0a8fd4d.
 - #269 (#264's fix, the #45 session, 8bed946; CI green) opened 11:44: a reviewer started
   (`reviews/269.md`), asked also to try it with #145 (both touch smoke.ts and SLICE.md).
+
+### 12:40: the footprints for #67 and #68 in
+- `footprints/67.md` (Crowness, E3; size L, 10-14 h; 0 creatures, A the map, B the keeper's step and
+  Oil for the Lamp) and `footprints/68.md` (the Wend's fields, E2; size L, 6-10 h; 0 the rookery's
+  keepers, A the box, B Riders in the Dark). Both measured on the pilot's C (e098228) with main in.
+- Both find the brief's groups soft at 3 (8.63 and 9.36 fights to a rest against 6.5 ± 1): harder
+  monsters, as the owner asked. E3: a crab and the road's bandit and archer at 4; E2: an elite bird
+  on the crow's frame (an Old Rook, id never `rook`). One creatures PR for both (0), after #263; the
+  Black Dog session, which drew #263, is the natural hand.
+- **For the owner (a correction of mine):** under #209 as ruled (B), E3 and E2 are judged two under
+  their floor, at 1, in 'the Foreland: under' (25% at most). Both scouts, and #209's, find nothing on
+  MONSTERS §4.4's line or in a swarm lost at 1 and 6.5 fights to a rest at 3 (E3 72%, E2 67.8% at 1
+  with the harder monsters). My 12:00 question said nothing that passes today fails, which is true,
+  but left out that the Downs' boxes above 2 cannot pass it. #209's footprint said so ("those boxes
+  need swarms or the owner's C"). Their shared default: tune to the box's own floor, owe 'the
+  Foreland: under' to #47's E (the thresholds, set after the owner plays A to D). Alternatives:
+  #209's D (the Downs never judged two under); a softer two-under test at low levels.
+- Order: both issues are blocked by #47 ("tunes the thresholds this one is held to"), so A and B land
+  after #47 closes with E; 0 and the authoring can go ahead. #67's footprint lands A after F3 with the
+  figure owed; #68's after E. I take the issues' word (after E) unless the owner says otherwise.
