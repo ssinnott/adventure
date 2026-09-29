@@ -845,3 +845,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   he is, a broad-brimmed hat, a patched jerkin and a hare at his belt. Sent 11:30 to the Black Dog
   session: redraw on the archer's frame, rename `hedge_archer` to `poacher` everywhere (never on
   main), the other four unchanged, then the sheet. The pilot's F2 places `poacher` in its place.
+
+### 11:35: #264 approved and started
+
+- The owner (11:33): "Yeah approved 264". `approved` put on #264 at the owner's word. Started at
+  11:37 in the #45 session (session_01KQC92fBp7Bg9WK9VYCHypE) on `claude/m1-264-group-labels` from
+  main a434a53 (the owner merged #267, Act II's docs, at about 11:30).
+- Still with the owner: #209 (approve; run after F2), close #46, the KINDS/FAMILY check, scouting
+  #67 and #68 now.
