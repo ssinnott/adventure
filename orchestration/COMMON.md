@@ -40,6 +40,10 @@ work settles an owed entry, drop it. Never write a second mechanism for this.
   owner has not answered, and wants the work to go ahead), keep it easy to change, and list it under
   "Choices for the owner". If a choice truly cannot be defaulted, say so in your turn's summary and
   carry on with what you can.
+- The owner has delegated their calls (29 September, 13:35): the orchestrator puts each question,
+  and each contact sheet, to a delegate that must decide, and relays the answer. Send the owner your
+  sheets as before, but never wait on them for an answer: carry on with your defaults until the
+  orchestrator relays a decision.
 - The voice of docs, issues and pull requests: terse, British spelling, no Oxford comma. Game texts:
   two lines to an event the aim, three the most; the secret is found, never told.
 - Commit subjects as CLAUDE.md says: imperative, sentence case, no prefix, no issue number, no full
@@ -66,8 +70,9 @@ work settles an owed entry, drop it. Never write a second mechanism for this.
   see it green.
 - NEVER merge a pull request, yours or another's, and never enable auto-merge or call any merge
   tool. The owner has asked the orchestrator to review and merge. A pull request that adds a
-  monster, a map or an interior, or changes one to the eye, also waits for the owner's OK on its
-  contact sheet; one whose sheet shows nothing changed says so in its body.
+  monster, a map or an interior, or changes one to the eye, also waits for an OK on its contact
+  sheet (since 29 September the owner's delegate's, which the orchestrator relays); one whose sheet
+  shows nothing changed says so in its body.
 - After opening it, subscribe to its activity (subscribe_pr_activity) and see it through: answer
   review comments and the orchestrator's messages, fix red checks, and when main moves (other Phase
   1 pull requests land often) merge main in (never rebase or force-push once it is open) and re-run

@@ -952,3 +952,18 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   decision 2's stats). Held in `UNPLACED`; names and looks the owner's on the sheet. The aim-and-limit
   issue is still to be agreed (with the harder monsters E2 and E3 stand at about 70% two under, under
   a 75% limit).
+
+### 13:40: the owner delegates their calls
+- The owner (13:35): "when you run into a question like this, launch a Fable subagent, ask them the
+  question, and then go with whatever answer they suggest. They must make a decision. This should
+  fully automate the loop, and you should be able to churn through the remainder of the work."
+- So from now: every question that went to the owner (designs, filings, approvals, the OK on a
+  contact sheet) goes to a Fable subagent briefed by `DECIDE.md`, which must decide; I act on its
+  answer and log it here as the delegate's. Sheets still go to the owner to see, but nothing waits
+  on them. `approved` put on at the delegate's word is marked so on the issue. COMMON.md tells the
+  sessions not to wait on the owner.
+- The remainder of #26: #65 (the Downs: #47, #67 to #72, #77, #87, #209, all approved), #208 (Phase
+  1.1, the Deepthorn: #49, #210 to #219, none approved; the owner's planning session that wrote them
+  is archived), #268 and #271 (not approved).
+- First batch to the delegate (13:40): the aim-and-limit gate issue; #271; #268; #47's E without
+  the owner's play; #208.
