@@ -1,5 +1,6 @@
 // The Foreland's guild quests (DESIGN §8; game/guilds.ts): the Wardens' first task and the first of
-// their rank 1 quests, given out at the Warden Drillyard in Helmstow. Thornmark holds the rest.
+// their rank 1 quests, given out at the Warden Drillyard in Helmstow; the Lanterns' first task and
+// the first of theirs, given out at either Lantern hall. Thornmark holds the rest.
 import type { GuildQuest } from '../../../game/guilds.ts';
 
 export const GUILDS: readonly GuildQuest[] = [
@@ -29,6 +30,34 @@ export const GUILDS: readonly GuildQuest[] = [
     goals: [
       { when: { slain: ['mill:m_cult1', 'mill:m_cult2'] }, text: 'Report to the Warden Drillyard in Helmstow.' },
       { when: { flag: 'q_wardens_cult' }, text: 'Kill both bands of cultists in the Ashcombe cellar.' },
+    ],
+  },
+  {
+    id: 'lanterns_light', guild: 'lanterns', rank: 0,
+    offer: ['A Lantern in grey marks her place in a ledger. "We take nobody on who has not looked at it. Go down to the Foreland\'s shore, look at the Hearth across the water and come back and tell us what it did."'],
+    goal: { seen: 'shelf:coast' },
+    paid: ['"It flickered. Everyone who looks says so, and fewer look every night. You have, and that makes you one of us."'],
+    early: ['"You have stood on the shore and watched it already. Then you know why we keep the lamps lit."'],
+    pay: { gold: 20, xp: 60 },
+    title: 'First Light',
+    entries: [{ id: 'sent', when: { flag: 'q_lanterns_light' }, text: 'A Lantern sent us down to the Foreland\'s shore to look at the Hearth across the water, and come back and say what it did.' }],
+    goals: [
+      { when: { seen: 'shelf:coast' }, text: 'Tell a Lantern hall, in Helmstow or Thornhold, what the Hearth did.' },
+      { when: { flag: 'q_lanterns_light' }, text: 'Look at the Hearth from the Foreland\'s southern shore.' },
+    ],
+  },
+  {
+    id: 'lanterns_stair', guild: 'lanterns', rank: 1,
+    offer: ['"There are dead by the stair down in Brandy Hole that will not lie down. They were Helmstow people once. Lay them, and we will see to the rest."'],
+    goal: { slain: 'greywater1:gw1_stairs' },
+    paid: ['"Laid. We will go down with the words when the Wardens let us in."'],
+    early: ['"The stair in Brandy Hole is quiet? Then someone has done the hard part already. Thank you."'],
+    pay: { gold: 80, xp: 300 },
+    title: 'The Drowned Stair',
+    entries: [{ id: 'sent', when: { flag: 'q_lanterns_stair' }, text: 'The Lanterns want the dead at the stair down in Brandy Hole laid to rest.' }],
+    goals: [
+      { when: { slain: 'greywater1:gw1_stairs' }, text: 'Report to a Lantern hall, in Helmstow or Thornhold.' },
+      { when: { flag: 'q_lanterns_stair' }, text: 'Lay the dead at the stair down in Brandy Hole.' },
     ],
   },
 ];

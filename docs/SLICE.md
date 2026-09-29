@@ -21,8 +21,8 @@ DESIGN.md first for the why.
   with its trade alone opens straight on it. The guild's work pays what is done, then offers the
   quests at or under the company's rank. Membership and rank are worked out from the guild quests'
   done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). The Warden Drillyard
-  is the Wardens' hall; the Lanterns' halls come with their quests. A spell hall's fee buys the
-  right to study, not membership.
+  is the Wardens' hall, and the Lantern Guildhall and the Thornhold Lantern Hall the Lanterns'. A
+  spell hall's fee buys the right to study, not membership.
 - **People in a business:** a person with no room of their own on a business's doorway, listed after
   it, is in the business while present, and its first menu offers "Talk to <name to its first
   comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
@@ -186,8 +186,8 @@ cap, which is 10 until the road past it is built:
   window: the Foreland 1-5 and 500 gold, Thornmark 5-10 and 1,200. Three quarters of a clear's xp
   should take a member to the next floor, and its gold train the six there; every monster has a
   `level` within two of its maps' bands, rising from the way in (it changes no combat yet), and no
-  chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,710 a
-  member of 3,734, Thornmark 8,249 of 13,667), nor Thornmark's the gold (5,800 of 8,400):
+  chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,770 a
+  member of 3,734, Thornmark 8,649 of 13,667), nor Thornmark's the gold (6,150 of 8,400):
   `tools/tests/curve.ts` reports them as #26's.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big
   heal plus every cure), Revive (raises the dead), Wrath of the Hearth (damage to every foe).
@@ -316,7 +316,6 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 
 ## Stubbed or absent
 
-- The Lanterns' guild quests are not built yet; the Wardens' are.
 - No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
