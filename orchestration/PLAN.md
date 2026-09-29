@@ -871,3 +871,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   judged at their own floor and two under it. Recorded on #209 in a comment. Order: F2 (#145), then
   #209 in a free quality session (the #40 session, which knows the gate), then the pilot's B (F3),
   #67, #68, #214.
+
+### 12:13: the Poacher's sheet to the owner; #269 opened
+- #263's Poacher pushed (37e1f80, 11:37; CI green). Sheet (`--monsters poacher,bandit_archer,footpad,
+  chalk_wolf,tusker,barn_rat`) and a close crop sent to the owner for their OK. My read of the round:
+  the rename is whole (defs, `SPRITES`, `FAMILY`, `UNPLACED`, shipped.json, §5.2's row); against
+  main, `bandit.ts` only adds (the archer is main's again). One line missed: MONSTERS.md:504, the
+  Footpad's row, "two with a hedge archer"; the Black Dog session asked to fix it (12:20 trigger).
+- #270 (the Deepthorn's plan, #208's docs, not ours) merged at 11:54, not by me. Main is 0a8fd4d.
+- #269 (#264's fix, the #45 session, 8bed946; CI green) opened 11:44: a reviewer started
+  (`reviews/269.md`), asked also to try it with #145 (both touch smoke.ts and SLICE.md).
