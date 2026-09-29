@@ -423,8 +423,8 @@ over content broken on purpose too, and two tools to theirs:
   together, labelled with each kind and its count of the living. A kind leaves the label when its
   last one falls; every line stays inside the view and above the monsters' markers, running into
   no other.
-- `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
-  kind at its rate; a secret door outdoors among mountain, rock or trees drawn as they are
+- `art` (§5.6): every monster def its own sprite kind, each family module's `KINDS` the kinds
+  `FAMILY` sends it, and the walls dressed under their caps, each kind at its rate; a secret door outdoors among mountain, rock or trees drawn as they are
   (`drawnCell`), and any other door, or one in a wall or a town, left a door.
 - `changed`: which files count every map, monster or interior for the crack sweep and the sheet,
   and which only their own.
