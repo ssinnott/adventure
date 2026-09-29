@@ -19,7 +19,8 @@ dependencies, and nothing compiled to disk during development.
 - [docs/ISSUES.md](docs/ISSUES.md) — how that work is filed: issue types, labels, epics, the
   Dependencies section every issue carries, and the sections of an issue.
 - [docs/areas/](docs/areas/) — each area's own doc: where the atlas puts it, what is built, what
-  is still to build and what is left to decide. The Foreland's is the first.
+  is still to build and what is left to decide. The Foreland's is the first; Saltreach's,
+  Wrackholm's and Sunderwood's are plans.
 - [docs/NAMES.md](docs/NAMES.md) — how places are named: each people's tongue, the few old names
   the first crew left, and the rules a rename follows.
 
