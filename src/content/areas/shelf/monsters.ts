@@ -9,6 +9,7 @@ export const SPRITES = [
   'warden', 'crab', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'drowned', 'ghoul', 'acolyte',
   'rift_crawler', 'deacon', 'crow', 'wrecker', 'lampman', 'black_dog',
   'barrow_guard', 'barrow_captain',
+  'chalk_wolf', 'tusker', 'barn_rat', 'footpad', 'poacher',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -44,4 +45,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'barrow_guard', name: 'Barrow Guard', plural: 'Barrow Guards', sprite: 'barrow_guard', kind: 'dead', level: 4, hp: 20, ac: 15, attack: 4, dice: 1, sides: 10, bonus: 0, speed: 8, xp: 110, gold: [0, 6], tint: '#7a8088', size: 0.95 },
   // the Queen's captain (#70): at her bier
   { id: 'barrow_captain', name: 'Barrow Captain', plural: 'Barrow Captains', sprite: 'barrow_captain', kind: 'dead', level: 5, hp: 60, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 800, gold: [40, 80], tint: '#8a8e96', size: 1.1 },
+  // the Downs' own wolves, boar, rats, footpad and poacher (#47): F2, on the Foreland's frames
+  { id: 'chalk_wolf', name: 'Chalk Wolf', plural: 'Chalk Wolves', sprite: 'chalk_wolf', kind: 'beast', look: 'Pale as the chalk it runs on, and leaner than the Foreland\'s.', level: 4, hp: 24, ac: 13, attack: 4, dice: 1, sides: 6, bonus: 3, speed: 15, xp: 86, gold: [0, 0], tint: '#c8c2b0', size: 0.6 },
+  { id: 'tusker', name: 'Tusker', plural: 'Tuskers', sprite: 'tusker', kind: 'beast', look: 'A boar grown old and huge on beech mast.', level: 4, hp: 67, ac: 12, attack: 5, dice: 3, sides: 5, bonus: 2, speed: 8, xp: 173, gold: [0, 0], tint: '#3e2e26', size: 0.75 },
+  { id: 'barn_rat', name: 'Barn Rat', plural: 'Barn Rats', sprite: 'barn_rat', kind: 'beast', look: 'Rats, fat on someone\'s grain.', level: 3, hp: 7, ac: 12, attack: 2, dice: 1, sides: 7, bonus: 0, speed: 12, xp: 32, gold: [0, 0], tint: '#5c4c3c', size: 0.38, inflict: { cond: 'diseased', chance: 0.1 } },
+  { id: 'footpad', name: 'Footpad', plural: 'Footpads', sprite: 'footpad', kind: 'person', look: 'A short blade, and a coat taken off someone better dressed.', level: 3, hp: 17, ac: 13, attack: 3, dice: 1, sides: 6, bonus: 2, speed: 11, xp: 64, gold: [4, 14], tint: '#6e5a3a', size: 0.9 },
+  { id: 'poacher', name: 'Poacher', plural: 'Poachers', sprite: 'poacher', kind: 'person', look: 'A longbow taller than he is, and one of the Queen\'s hares at his belt.', level: 3, hp: 16, ac: 13, attack: 4, dice: 1, sides: 5, bonus: 1, speed: 12, xp: 64, gold: [3, 12], ranged: true, missile: true, tint: '#55663a', size: 0.9 },
 ];

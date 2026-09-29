@@ -498,6 +498,11 @@ Crowness Light.
 | Barrow Guard | skeleton | armoured, 4 | the Berth, the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
 | Black Dog | wolf | skirmisher, 4 | the hills round the barrow, by night | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
 | Barrow Captain | skeleton | boss, 5 | at the Queen's empty bier | *Her captain, at his post beside an empty bier.* |
+| Chalk Wolf | wolf | skirmisher, 4 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
+| Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
+| Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
+| Footpad | bandit | soldier, 3 | the Salt Road, two with a poacher | *A short blade, and a coat taken off someone better dressed.* |
+| Poacher | bandit | archer, 3 | the field edges, beside the footpads | *A longbow taller than he is, and one of the Queen's hares at his belt.* |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
