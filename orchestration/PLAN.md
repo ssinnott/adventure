@@ -1108,3 +1108,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #275's round (b311e09): `kindsOf` exported and held to each module's `KINDS` in
   tools/tests/changed.ts, the two-lists case, drawers held distinct, `familyModules` shared in
   lib.ts. Its landing check runs on main a584985 (with #272's four kinds) in scratchpad/land2.
+- 15:30: #275 (#268) landed: its landing check on b311e09 merged onto main a584985 (with #272's four):
+  ALL OK (39 owed), SMOKE OK, "Nothing new."; the new lines "each family module's KINDS are the kinds
+  FAMILY sends it (53 kinds, 13 modules)", "exports a drawer of its own", "KINDS reads from its text
+  as it imports"; CI green. Merged as 466ca5c. #268 closes with it.
