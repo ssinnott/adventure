@@ -80,7 +80,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 |---|---|---|---|
 | Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel |
 | The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask and his contract in the throne room behind the keep's door |
-| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
+| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
@@ -103,8 +103,12 @@ In more detail, as SLICE.md had it before the area docs:
   room (the contract and the hand-in); people and a well. A building on its west side stands empty
   for the armourer (#19).
 - **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or lurking
-  monster groups with respawn timers, the Ashcombe farm. It and Thornmark are played as one
-  outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
+  monster groups with respawn timers, the Ashcombe farm. The Lodestone, the Foreland's own Stone
+  and whole, stands at the end of a track east of the south gate (the stone said at 20,4), and
+  Gytha, its Lantern, sits at its foot (21,4): she gives a new company the lesson (`q_lodestone`),
+  and her words change once Sylvane has spoken (`q_grove`) and again once she has the chisel
+  (`q_grove_done`). The stone is its words and is not drawn, as the Grove Stone is. It and
+  Thornmark are played as one outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
 - **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
   dead Lantern and her survey wand, the Rift and its Warden.
 - **Brandy Hole** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
@@ -173,7 +177,7 @@ The places, as the atlas and the docs have them:
 | Coldharbour | F2 | a retired Warden captain's farm; the Knight's second prestige (#19) | a planned farm at 176,42 |
 | The Berth | a dungeon, entered from D2 | the Queen's barrow, opened, and only her signet gone (DESIGN §9); band 4–5, her guard two by two down the passage and her captain at the empty bier (MONSTERS §5.2) | not on the atlas |
 | The Salt Road | F2, F3, E3, a corner of D3, and D4 | the wreckers and their lampman in fog; crows at the gibbet (MONSTERS §5.2) | a planned road, and the way down the Edge |
-| The Lodestone | G2, the built map (21.5,4) | "already intact; tutorial" (DESIGN §4) | a planned site; nothing in the game |
+| The Lodestone | G2, the built map (21.5,4) | "already intact; tutorial" (DESIGN §4) | built (#73): the stone's words, Gytha and the track from the gate road |
 | The Mewstone | G4 | nothing yet | an isle, the Deepthorn's |
 
 ### 4.1 The briefs
