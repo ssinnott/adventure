@@ -1119,3 +1119,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   lines rewrapped; Penspern's site). Landing check on c388ef2 merged onto main 466ca5c: ALL OK (39
   owed), SMOKE OK, "Nothing new."; CI green. Merged as f92d356. #211 closes with it. The Thornmark
   session goes on with #219 on its names.
+- 15:40: #278 (#271, the target marker) landed: '↓' for '▼' at combat.ts:179; tools/tests/glyphs.ts
+  holds every non-ASCII character in `src/ui/`'s literals to the font (comments left out). My own
+  review (small): the diff read, the marker drawn over the chosen brigand (`marker278.png`). Landing
+  check on 4adf4cc merged onto main f92d356: ALL OK (39 owed), SMOKE OK, "Nothing new.", the glyphs
+  lines ok; CI green. Merged as ac64abb. #271 closes with it.
+- New: #279 (#210, walk woods; the #45 session, 15:33): a reviewer started. #277 still at 8175656
+  (the #40 session's round due).
