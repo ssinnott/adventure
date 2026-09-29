@@ -835,3 +835,4 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   owed to #47 until F2 places them), SMOKE OK, "Nothing new."; CI green. It lands on the owner's OK
   of the Hedge Archer.
 - 08:07: nothing of Phase 1's moved; #263 waits on the owner's OK. A new branch `claude/phase-1-2-docs` (07:13) is not ours (Act II's docs); left alone.
+- 09:06: nothing moved; check-ins now two hours apart while every session waits on the owner.
