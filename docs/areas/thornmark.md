@@ -91,7 +91,7 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
 
   | Class | Its plus in Thornmark |
   |---|---|
-  | Knight | Great Sword +1 |
+  | Knight | War Hammer +1, keeping its shield |
   | Paladin | War Hammer +1 |
   | Ranger | Thornmark Bow +1 |
   | Barbarian | Great Sword +1, Brigandine +1 and +2 |
@@ -586,8 +586,9 @@ I5.
   | Monk | the Eldest's Bough |
   | Druid | the Eldest's Bough, Brigandine +3 |
 
-  With them, a Silver Torc, I5's keepsake. §3's table gives the Knight a Great Sword +1, but a
-  Knight with a shield does not take it: the harness's takes the War Hammer +1.
+  With them, a Silver Torc, I5's keepsake. The Monk's is a Grove Staff +2 of its own, the Eldest's
+  Bough +2. The gear finds are in the ladder at 10 (`GEAR`), and `tools/tests/ladder.ts` holds each
+  class to bettering its Thornmark find with them and each find owed to its box until it is placed.
 - **Spells** come with levels (`spellTierAt`), tier 5 at 8, inside the band: `levelUp` teaches
   every spell up to a member's tier free (`src/game/party.ts:271-273`). Thornhold's Lantern Hall
   sells to tier 4 (`src/content/areas/thornmark/maps/thornhold.ts:42`), and stays there. A hall
