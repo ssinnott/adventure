@@ -1014,3 +1014,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 14:01, sessions sent new work: the #40 session #209 then #273; the #45 session #271 then #210; the
   #97 session #268; the pilot B (F3) now, then C, D and E as the delegate settled. New session
   session_01FvrT4W9tXZiXXhFgKCnCES (Thornmark's area lane): #211, then #219.
+
+### 14:02: the owner on merging
+- The owner (14:02): "You should review the work and merge it yourself." So the gate for a merge is
+  my own review: a reviewer's report (REVIEW.md) read and its findings settled, the diff read, the
+  landing check on the head with main in, CI green, then the merge and the tree compared. The
+  delegate still decides what was the owner's (design, art, filing, approval); it no longer stands
+  in for the review.
+- F2's post-merge check, run now: main f438644's tree is 224f968, the tree tested at 13:45.

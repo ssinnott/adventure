@@ -72,7 +72,8 @@ work settles an owed entry, drop it. Never write a second mechanism for this.
   tool. The owner has asked the orchestrator to review and merge. A pull request that adds a
   monster, a map or an interior, or changes one to the eye, also waits for an OK on its contact
   sheet (since 29 September the owner's delegate's, which the orchestrator relays); one whose sheet
-  shows nothing changed says so in its body.
+  shows nothing changed says so in its body. The orchestrator reviews every pull request itself
+  before it merges it: answer its review as you would the owner's.
 - After opening it, subscribe to its activity (subscribe_pr_activity) and see it through: answer
   review comments and the orchestrator's messages, fix red checks, and when main moves (other Phase
   1 pull requests land often) merge main in (never rebase or force-push once it is open) and re-run
