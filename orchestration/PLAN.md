@@ -742,3 +742,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   and MONSTERS.md), so main is 136c3c6.
 - #140 merged main 7395a12 (b4fafa1; CI green). Test-merged onto 136c3c6 cleanly (tree e3e4f58);
   the landing check started 01:22.
+- #140 (#73, the Lodestone) merged at 01:23 (main 0ced6cf) on the owner's OK: its head b4fafa1
+  (with main 7395a12) merged onto 136c3c6 cleanly, and that tree tested ALL OK (47 owed), SMOKE OK,
+  "Nothing new."; CI green on the head; main's tree is the tested merge's (e3e4f58). #73 closes;
+  its session is done for Phase 1.
