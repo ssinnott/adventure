@@ -29,8 +29,8 @@ const DIRE: Build = { neck: 1.3, head: 1.18, jaw: 1.2, ruff: 1.6, leg: 1.25, bod
 const HOUND: Build = { neck: 1.1, head: 1.06, jaw: 1.1, ruff: 0.8, leg: 1.1, body: 1.02, fang: 1.35, tail: 0.78 };
 /** The black dog: a calf's height, deep in the chest, the head low and heavy, the coat rough. */
 const DOG: Build = { neck: 1.4, head: 1.22, jaw: 1.15, ruff: 1.9, leg: 1.18, body: 1.14, fang: 1.25, tail: 1.1 };
-/** The Downs' chalk wolf: leaner than the Foreland's, longer in the leg, thin in the ruff. */
-const CHALK: Build = { neck: 0.9, head: 0.97, jaw: 1.02, ruff: 0.6, leg: 1.1, body: 0.98, fang: 1, tail: 0.85 };
+/** The Downs' chalk wolf: leaner than the Foreland's, thin in the leg, the neck and the ruff. */
+const CHALK: Build = { neck: 0.82, head: 0.97, jaw: 1.02, ruff: 0.5, leg: 0.78, body: 1, fang: 1, tail: 0.72 };
 
 type Variant = 'wolf' | 'dire' | 'rift' | 'dog' | 'chalk';
 
@@ -58,7 +58,8 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   const sway = Math.sin(f / 22) * h * 0.02;
   const bob = br * h * 0.006;
   // The chalk wolf's belly tucks up hard behind the ribs: it is leaner than the Foreland's.
-  const tuck = chalk ? 0.045 : 0, belly = br * h * 0.005 - h * b.body * tuck;
+  const sag = chalk ? 0.03 : 0, slim = chalk ? 0.85 : 1;
+  const tuck = chalk ? 0.085 : 0, belly = br * h * 0.005 - h * b.body * tuck;
   /** x in units of h from the sprite's centre. */
   const X = (u: number) => x + u * h;
   /** HEIGHT ABOVE THE GROUND LINE, in units of h: the way the reference was measured. */
@@ -71,8 +72,9 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // ears rise above them. It used to hang below the shoulder in a stalk, which along with short
   // legs and an arched back is what made the animal read as a bean on stumps.
   const rH = h * 0.147 * b.head;
-  // The black dog carries it lower, level with the withers, and heavier.
-  const hx = X(dog ? 0.47 : 0.45), hy = U(dog ? 0.74 : 0.80) + bob;
+  // The black dog carries it lower, level with the withers and heavier; the chalk wolf low and
+  // out in front, the way a lean wolf travels.
+  const hx = X(dog ? 0.47 : chalk ? 0.52 : 0.45), hy = U(dog ? 0.74 : chalk ? 0.71 : 0.80) + bob;
 
   // ---- far side, in shadow: the two off legs and the far ear, one mass behind everything.
   const far: Part[] = [];
@@ -93,6 +95,8 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
       { k: 'tube', pts: [t0x, t0y, t0x + (t1x - t0x) * 0.6, t0y + (t1y - t0y) * 0.6, t1x, t1y], r0: h * 0.05 * k, r1: h * 0.082 * k, wobble: 0.07, seed: 31 },
       { k: 'tube', pts: [t1x, t1y, t1x + (t2x - t1x) * 0.55, t1y + (t2y - t1y) * 0.55, t2x, t2y], r0: h * 0.082 * k, r1: h * 0.03 * k, wobble: 0.08, seed: 32 },
     ], { h, tex: 'fur', seed: 31, amount: 0.5, formK: 0.5, spread: 0.8 });
+    // The chalk wolf's one dark mark: the tip of its tail.
+    if (chalk) patch(ctx, B, shade(base, 0.3), [{ k: 'ell', x: t2x + h * 0.004, y: t2y - h * 0.045, rx: h * 0.03 * k, ry: h * 0.06 * k, rot: 0.15 }], { alpha: 0.85, feather: 0.4 });
   }
 
   if (rift) spines(ctx, x, y, h, light, pulse);
@@ -102,14 +106,14 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // tucks up behind the ribs, and a deep but narrow chest.
   const fur: Part[] = [
     { k: 'curve', pts: [
-      X(-0.33), U(0.855), X(-0.11), U(0.848), X(0.05), U(0.858), X(0.19), U(0.878),
-      X(0.285), U(0.805), X(0.315), U(0.62), X(0.275), U(0.465),
+      X(-0.33), U(0.855 - sag), X(-0.11), U(0.848 - sag), X(0.05), U(0.858 - sag * 0.5), X(0.19), U(0.878),
+      X(0.285), U(0.805), X(chalk ? 0.29 : 0.315), U(0.62), X(chalk ? 0.26 : 0.275), U(0.465 + tuck * 0.4),
       X(0.11), U(0.43) + belly, X(-0.05), U(0.425) + belly, X(-0.18), U(0.49) + belly,
       X(-0.31), U(0.56), X(-0.41), U(0.72),
     ], wobble: 0.03, spiky: dog ? 0.1 : 0.035, seed: 1, sub: 3 },
     // Shoulder and haunch under the coat.
-    { k: 'ell', x: X(0.17), y: U(0.66), rx: h * 0.095, ry: h * 0.115, rot: 0.12 },
-    { k: 'ell', x: X(-0.27), y: U(0.66), rx: h * 0.125, ry: h * 0.135, rot: -0.12 },
+    { k: 'ell', x: X(0.17), y: U(0.66), rx: h * 0.095 * slim, ry: h * 0.115 * slim, rot: 0.12 },
+    { k: 'ell', x: X(-0.27), y: U(0.66), rx: h * 0.125 * slim, ry: h * 0.135 * slim, rot: -0.12 },
     // Neck: short and thick, sloping down and forward from the withers into the skull.
     { k: 'cap', x0: X(0.20), y0: U(0.835), x1: hx - rH * 0.55, y1: hy - rH * 0.1, r0: h * 0.118 * b.neck, r1: h * 0.10 * b.neck },
     // The ruff: the thick collar of fur behind the jaw.
@@ -166,12 +170,11 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     ], { alpha: 0.78, feather: 0.5 });
   }
   if (chalk) {
-    // A lean coat shows the ribs, and a pale wolf carries dark tips to its ears.
+    // A lean coat shows the ribs.
     for (let i = 0; i < 3; i++) {
       const rx = X(0.13 - i * 0.07);
       softLine(ctx, B, [rx, U(0.72 - i * 0.01), rx - h * 0.02, U(0.62), rx - h * 0.015, U(0.53 + tuck)], shade(base, 0.72), Math.max(1, h * 0.012), 0.45);
     }
-    softLine(ctx, B, [hx - rH * 0.12, hy - rH * 1.62, hx - rH * 0.1, hy - rH * 1.4], shade(base, 0.45), Math.max(1, rH * 0.2), 0.7);
   }
 
   // ---- the open mouth, fangs, nose and eye.
@@ -185,11 +188,13 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
   // The inner ear, a dark hollow up the near ear.
   softLine(ctx, B, [hx - rH * 0.16, hy - rH * 0.98, hx - rH * 0.1, hy - rH * 1.55], base, Math.max(1, rH * 0.15), 0.45);
+  // A pale wolf carries dark tips to its ears: the top third of the near ear, over the hollow.
+  if (chalk) patch(ctx, B, shade(base, 0.35), [{ k: 'poly', pts: [hx - rH * 0.14, hy - rH * 1.78, hx - rH * 0.34, hy - rH * 1.42, hx + rH * 0.04, hy - rH * 1.42] }], { alpha: 0.85, feather: 0.3 });
   // ONE eye, but for the black dog's: the head is a profile, so the far cheek is turned away and a
   // second eye has nowhere to be. If this head is ever turned toward the party it becomes a matched
   // PAIR of the same size, the far one only slightly narrowed by the turn, as the black dog's is
   // (coals()); the rat and the boar are profiles with one eye.
-  const eyeCol = v === 'wolf' ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : HOT;
+  const eyeCol = v === 'wolf' || chalk ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : HOT;
   const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * (dog ? 0.17 : 0.15);
   if (rift) glow(ctx, B, ex, ey, er * 3, EMBER, 0.4 + 0.3 * pulse, HOT);
   if (dog) coals(ctx, hx, hy, rH, ex, ey, er, pulse);

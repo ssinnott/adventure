@@ -6,7 +6,7 @@
 // animal rather than trailing on the ground. Coarse agouti brown above, a sharply demarcated cream
 // belly, bare pink extremities. Idle: the nose and whiskers twitch, the tail sways. The Downs' barn
 // rat is the same animal fat on stolen grain: a barrel of a body sagging nearly to the floor, the
-// head small on it, and an ear of wheat still in its teeth.
+// head small on it and an ear of wheat still in its teeth.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';

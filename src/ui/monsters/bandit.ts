@@ -328,7 +328,7 @@ function x0(R: Rig, u: number): number { return R.x + u * R.h; }
  * The footpad: a road thief who has robbed his coat off a gentleman. The coat is the tint, cut for a
  * bigger man, to below the knee, with turned-back cuffs in a claret facing, brass buttons and braid
  * down the front and a lace stock gone grey at the throat, all over his own rough clothes; a
- * battered cocked hat, no mask, and a short knife held low and forward in the near fist.
+ * battered cocked hat, no mask and a short knife held low and forward in the near fist.
  */
 function footpad(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const R = makeRig(x, y, h, p, { tilt: -0.02, hipTilt: 0.026, turn: 0.028, near: [0.07, 0.16, 0.2], far: [-0.068, -0.085, -0.09], toe: [1, -0.6], lift: [0, 0.04] });
@@ -366,7 +366,7 @@ function footpad(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   // The lace stock at the throat, rumpled and grey with the road.
   blob(ctx, B, lace, [{ k: 'curve', pts: [hx - hr * 0.5, hy + hr * 1.55, hx + hr * 0.55, hy + hr * 1.5, hx + hr * 0.45, hy + hr * 2.2, hx + hr * 0.05, hy + hr * 2.6, hx - hr * 0.3, hy + hr * 2.2], wobble: 0.08, spiky: 0.14, seed: 178, sub: 2 }],
     { h, formK: 0.4, spread: 0.7, tex: 'folds', seed: 178, amount: 0.4 });
-  // Stubble, the face, and a cocked hat gone shapeless in the rain.
+  // Stubble, the face and a cocked hat gone shapeless in the rain.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.84, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.58, hx + hr * 0.3, hy + hr * 0.58, hx + hr * 0.86, hy + hr * 0.3, hx + hr * 0.6, hy + hr * 0.9, hx, hy + hr * 1.02, hx - hr * 0.6, hy + hr * 0.9], wobble: 0.06, spiky: 0.06, seed: 179, sub: 2 }], { h, form: false, outline: false });
   face(ctx, R, false, true);
   blob(ctx, B, shade('#2a2622', p.tone), [

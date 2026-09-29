@@ -10,8 +10,7 @@
 // is a fur marking, so it follows the belly line, pinches at the brisket and dies away under the
 // hind quarters with a ragged edge. Three-quarter view facing the party. Idle: the chest breathes,
 // an ear flicks. The Downs' tusker is the same animal grown old: heavier in the barrel and the
-// crest, grey at the muzzle and the brow, one ear torn, and tusks grown long enough to curl back
-// toward the eye.
+// crest, grey at the muzzle and the brow, its tusks grown long enough to curl back toward the eye.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -136,9 +135,7 @@ function boar(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   // what tells it apart from a pig at a glance.
   blob(ctx, B, shade(hide, 0.88), [
     { k: 'curve', pts: [X(0.245), U(0.855), X(0.225), U(0.985) + flick * h * 0.02, X(0.315), U(0.945), X(0.33), U(0.845)], wobble: 0.09, spiky: 0.22, seed: 13, sub: 2 },
-    { k: 'curve', pts: old
-      ? [X(0.355), U(0.83), X(0.37), U(0.95) + flick * h * 0.015, X(0.40), U(0.89), X(0.42), U(0.93), X(0.45), U(0.88), X(0.44), U(0.80)]
-      : [X(0.355), U(0.83), X(0.37), U(0.95) + flick * h * 0.015, X(0.45), U(0.90), X(0.44), U(0.80)], wobble: 0.09, spiky: 0.22, seed: 14, sub: 2 },
+    { k: 'curve', pts: [X(0.355), U(0.83), X(0.37), U(0.95) + flick * h * 0.015, X(0.45), U(0.90), X(0.44), U(0.80)], wobble: 0.09, spiky: 0.22, seed: 14, sub: 2 },
   ], { h, formK: 0.55 });
   softLine(ctx, B, [X(0.27), U(0.87), X(0.28), U(0.94)], hide, Math.max(1, h * 0.018), 0.45);
 
