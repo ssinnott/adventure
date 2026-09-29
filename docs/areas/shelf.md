@@ -44,7 +44,7 @@ Its edges:
 - **South: the Wyke.** The Mewstone lies in its mouth, in G4, a box of sea round the islet. The
   atlas gives it to the Deepthorn (110 of its 116 squares), since an islet goes to the nearest zone
   across the water. It is off the road, and waits for boats.
-- **West: Kestrel Edge,** a cliff from the rim to the Salt Gulf, above Saltreach's Upper Water
+- **West: Kestrel Edge,** a cliff from the rim to Sylmeer, the Salt Gulf that was, above Saltreach's Upper Water
   (10–12). The area's border keeps to the cliff's lip except at its two ends. In the rim it drops
   straight down through the mountains at x 94, a few squares east of the cliff, where there is
   nothing to follow. At the south end it leaves the cliff and takes a strip of low ground at the
@@ -372,7 +372,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 
 - **Purpose.** The open downs to the lip of Kestrel Edge, and the first sight of Act II: the Upper
   Water below.
-- **Landmarks.** The lip of the cliff, with the Upper Water under it and Reedholm's smoke far off;
+- **Landmarks.** The lip of the cliff, with the Upper Water under it and Rietum's smoke far off;
   the chalk's last slopes; the Salt Road cutting the south-east corner.
 - **Points of interest,** about six features and five groups:
   - a lookout on the lip, over the Upper Water;
@@ -602,7 +602,7 @@ Proposed, for the owner, each in the issue that would build it:
 - **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across
   E2 (#68 and #69). #56's Riders in the Dark rides it.
-- **The Wind Cave** (`src/content/atlas.ts:309`), Saltreach's cave in the face of Kestrel Edge,
+- **Sjonghol** (the Wind Cave, `src/content/atlas.ts:309`), Saltreach's cave in the face of Kestrel Edge,
   moves a square west into C3, so that D3 does not hold it (#71).
 - **The chalk figure** below the Berth, a ship that only the Berth's mouth shows as one (§4.6).
 - **The Queen on her bier,** her hand bare, as STORY has the tomb, where MONSTERS §5.2 has the bier
