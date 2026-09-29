@@ -912,3 +912,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   corrected; the Oxford commas out (SLICE.md, comments, body); `PLAYED_DEFS` if cheap.
 - Found in passing, for the owner (an issue, systems): the target marker '▼' (`combat.ts:179`) is not
   in the font, so choosing a target shows nothing over the monster.
+
+### 12:50: #269 landed
+- The #45 session's round (30b2abf, 13484d4; main merged at e3d3ea1): groups 24 px apart; `seatFoot`
+  and `MARKER_RISE` shared with combat.ts, the check holding every line's painted foot above the
+  highest marker (the 67 px fixture caught: "reaches 80 px down, onto the monsters' markers at 76");
+  fights and faults counted apart; `PLAYED_DEFS` (3,071 fights: 2,511 one row, 550 two, 10 three,
+  all above the markers); no Oxford commas. Read the diff: the seat and marker formulas are
+  unchanged.
+- Landing check on 13484d4 (main 0a8fd4d in): ALL OK (40 owed), SMOKE OK, "Nothing new." (`check269.log`);
+  CI green. Merged as b59933d; main's tree 8cf9db4 is the tested tree. #264 closes with it.
+- The #45 session is free (systems). For the owner: file the '▼' marker bug?
