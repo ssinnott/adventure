@@ -53,7 +53,7 @@ export function labelFaults(monsters: readonly LabelMonster[], width: number = V
 }
 
 export function labels(): void {
-  // Every group on the maps, alone, and every fight of up to three of a map's groups.
+  // Every group on the maps as played alone and in every fight of up to three of a map's groups.
   // The outdoors as played, since a group follows the party over a zone's edge (SLICE.md).
   const bad: string[] = [];
   let fights = 0, faulty = 0;
