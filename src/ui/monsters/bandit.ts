@@ -15,18 +15,20 @@ import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
 import { blob, glossBall, glossEllipse, glossPoly, glow, patch, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
-import { shade } from '../../lib/art/palettes.ts';
+import { rgba, shade } from '../../lib/art/palettes.ts';
 import type { Arm, Pt, Rig } from './figure.ts';
 import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
   else if (kind === 'footpad') footpad(ctx, x, y, h, p);
   else if (kind === 'poacher') poacher(ctx, x, y, h, p);
+  else if (kind === 'billman') billman(ctx, x, y, h, p);
+  else if (kind === 'slinger') slinger(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -376,6 +378,116 @@ function hare(ctx: CanvasRenderingContext2D, R: Rig, bx: number, by: number, h: 
   patch(ctx, B, pale, [{ k: 'ell', x: body.x + h * 0.01, y: body.y + h * 0.01, rx: h * 0.018, ry: h * 0.05 }], { alpha: 0.6, feather: 0.6 });
   if (!B.override && h >= 60) { ctx.fillStyle = '#1a1210'; ctx.fillRect(Math.round(head.x + h * 0.006), Math.round(head.y), 1, 1); }
   stroke(ctx, [bx - h * 0.02, by + h * 0.004, bx + h * 0.024, by + h * 0.004], R.strap, Math.max(1, h * 0.01));
+}
+
+/**
+ * The billman: the Salt Road's harder man, a deserter who kept his bill. Planted wide with the bill
+ * held across him in both fists, the head high and forward: a hooked blade with a spike at its top
+ * and another at its back, on an ash pole longer than he is tall. A quilted jack in the tint, a
+ * leather cap, a big beard and bare forearms.
+ */
+function billman(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.015, hipTilt: 0.02, turn: 0.02, near: [0.075, 0.17, 0.21], far: [-0.07, -0.12, -0.15], toe: [1, -0.7], lift: [0, 0.03] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 25) * h * 0.006;
+  // The pole, low behind the far hip to high in front of the near shoulder.
+  const lo = { x: x - h * 0.2, y: y - h * 0.22 }, hi = { x: x + h * 0.34 + sway, y: y - h * 1.14 };
+  const at = (yy: number): Pt => { const t = (lo.y - yy) / (lo.y - hi.y); return { x: lo.x + (hi.x - lo.x) * t, y: yy }; };
+  const gNear = at(sy + h * 0.06), gFar = at(sy + h * 0.34);
+  const near: Arm = [R.sNear, { x: x + h * 0.25, y: sy + h * 0.17 }, gNear];
+  const far: Arm = [R.sFar, { x: x - h * 0.19, y: sy + h * 0.24 }, gFar];
+  const hemY = y - h * 0.4;
+  const jack = p.base, cap = shade('#4a3424', p.tone);
+  groundShadow(ctx, x, y + 1, h * 0.8);
+  // The far arm, bare from the elbow as the near one is, the jack's sleeve over the upper arm.
+  blob(ctx, B, shade(R.skin, 0.8), armParts(R, far, 231, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  blob(ctx, B, shade(p.base, 0.8), armParts(R, [far[0], far[1], { x: (far[1].x + far[2].x) / 2, y: (far[1].y + far[2].y) / 2 }], 244, 0.96), { h, formK: 0.45 });
+  legs(ctx, R, shade('#3e3a34', p.tone), 232, [1, -0.7]);
+  blob(ctx, B, R.boot, [
+    { k: 'cap', x0: x + h * 0.2, y0: y - h * 0.18, x1: x + h * 0.21, y1: y - h * 0.055, r0: h * 0.045, r1: h * 0.043 },
+    { k: 'cap', x0: x - h * 0.14, y0: y - h * 0.17, x1: x - h * 0.15, y1: y - h * 0.06, r0: h * 0.043, r1: h * 0.041 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The jack: quilted in rows, to the thigh, with the near arm bare from the elbow too.
+  blob(ctx, B, jack, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 233, sub: 3 },
+    { k: 'curve', pts: [x - h * 0.13, hemY - h * 0.1, x - h * 0.15, hemY + h * 0.04, x - h * 0.02, hemY + h * 0.07, x + h * 0.14, hemY + h * 0.04, x + h * 0.14, hemY - h * 0.1], wobble: 0.04, seed: 234, sub: 2 },
+    ...armParts(R, [near[0], near[1], { x: (near[1].x + near[2].x) / 2, y: (near[1].y + near[2].y) / 2 }], 235),
+  ], { h, formK: 0.55, tex: 'folds', seed: 233, amount: 0.5, creases: torsoCreases(R, hemY) });
+  if (!B.override && h >= 50) for (let i = 1; i < 5; i++) {
+    const ly = sy + h * (0.06 + i * 0.075);
+    softLine(ctx, B, [x - trunkW(R, ly) * 0.8, ly, x + trunkW(R, ly) * 0.85, ly + h * 0.006], shade(jack, 0.7), Math.max(1, h * 0.008), 0.5);
+  }
+  blob(ctx, B, R.skin, armParts(R, [{ x: (near[1].x + near[2].x) / 2, y: (near[1].y + near[2].y) / 2 }, { x: (near[1].x * 0.3 + near[2].x * 0.7), y: (near[1].y * 0.3 + near[2].y * 0.7) }, near[2]], 236, 0.9), { h, formK: 0.5 });
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.05, h * 0.042, 237)], { h, form: false });
+  band(ctx, B, x - h * 0.02, hemY - h * 0.054, h * 0.04, h * 0.042, R.dull);
+  // A big beard, the face and a leather cap pulled down to the brows.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.9, hy + hr * 0.1, hx - hr * 0.4, hy + hr * 0.5, hx + hr * 0.4, hy + hr * 0.5, hx + hr * 0.92, hy + hr * 0.1, hx + hr * 0.8, hy + hr * 1.1, hx + hr * 0.2, hy + hr * 1.6, hx - hr * 0.4, hy + hr * 1.5, hx - hr * 0.85, hy + hr * 1.0], wobble: 0.08, spiky: 0.14, seed: 238, sub: 2 }], { h, formK: 0.4 });
+  face(ctx, R, true, true);
+  blob(ctx, B, cap, [{ k: 'curve', pts: [hx - hr * 1.02, hy - hr * 0.2, hx - hr * 0.95, hy - hr * 0.85, hx - hr * 0.3, hy - hr * 1.12, hx + hr * 0.4, hy - hr * 1.1, hx + hr * 0.98, hy - hr * 0.8, hx + hr * 1.04, hy - hr * 0.22, hx + hr * 0.6, hy - hr * 0.4, hx - hr * 0.6, hy - hr * 0.42], wobble: 0.04, seed: 239, sub: 2 }], { h, formK: 0.55, spread: 0.7, tex: 'stipple', seed: 239, amount: 0.3 });
+  // The bill: the ash pole across him, then its head.
+  blob(ctx, B, R.wood, [tube([lo.x, lo.y, hi.x, hi.y], Math.max(h * 0.014, 1.1), Math.max(h * 0.012, 1), 0, 240)], { h, formK: 0.5, spread: 0.6, tex: 'cracks', seed: 240, amount: 0.3 });
+  const ux = (hi.x - lo.x) / Math.hypot(hi.x - lo.x, hi.y - lo.y), uy = (hi.y - lo.y) / Math.hypot(hi.x - lo.x, hi.y - lo.y), nx = -uy, ny = ux;
+  const Q = (u: number, v: number): number[] => [hi.x + ux * h * u + nx * h * v, hi.y + uy * h * u + ny * h * v];
+  // A broad blade forward, hooked at its top, with a spike up the pole's line and one behind.
+  glossPoly(ctx, B, [
+    ...Q(-0.14, 0.012), ...Q(-0.12, 0.06), ...Q(-0.04, 0.085), ...Q(0.02, 0.07), ...Q(0.04, 0.03),
+    ...Q(0.14, 0.006), ...Q(0.14, -0.006), ...Q(0.03, -0.012), ...Q(0.0, -0.06), ...Q(-0.03, -0.012), ...Q(-0.14, -0.012),
+  ], R.steel, { gloss: 0.4, spread: 0.6 });
+  blob(ctx, B, R.dull, [tube([...Q(-0.16, 0), ...Q(-0.12, 0)], Math.max(h * 0.02, 1.4), Math.max(h * 0.018, 1.3), 0, 241)], { h, formK: 0.5 });
+  hand(ctx, R, gFar, Math.atan2(hi.y - lo.y, hi.x - lo.x), 242, { far: true, flip: 1, k: 0.95 });
+  hand(ctx, R, gNear, Math.atan2(hi.y - lo.y, hi.x - lo.x), 243, { flip: 1 });
+  void p.light;
+}
+
+/**
+ * The slinger: the road's harder shot, a shepherd gone bad. A fleece jerkin in the tint over a
+ * rough shirt, a woollen cap, a bag of flints at the hip and one more in the far fist and the
+ * sling whirling over his head in the near: two cords from the fist to the pouch, going round.
+ */
+function slinger(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.02, hipTilt: -0.02, turn: -0.015, near: [0.07, 0.13, 0.16], far: [-0.07, -0.13, -0.17], toe: [0.8, -0.9], lift: [0.02, 0] });
+  const { sy, hx, hy, hr } = R;
+  const shirt = shade('#6a5a48', p.tone), capHex = shade('#7a2e26', p.tone), flint = shade('#a8a4a0', p.tone);
+  const near: Arm = [R.sNear, { x: x + h * 0.22, y: sy - h * 0.1 }, { x: x + h * 0.14, y: sy - h * 0.3 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.19 }, { x: x - h * 0.23, y: sy + h * 0.34 }];
+  const hemY = y - h * 0.4;
+  groundShadow(ctx, x, y + 1, h * 0.78);
+  blob(ctx, B, shade(shirt, 0.8), armParts(R, far, 251, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  // The flint in the far fist.
+  blob(ctx, B, flint, [{ k: 'curve', pts: ring(far[2].x - h * 0.01, far[2].y + h * 0.03, h * 0.028, h * 0.022), wobble: 0.15, seed: 252, sub: 2 }], { h, formK: 0.5, tex: 'facets', seed: 252, amount: 0.5 });
+  hand(ctx, R, far[2], Math.PI / 2, 253, { far: true, flip: 1, k: 0.95 });
+  legs(ctx, R, shade('#4a3e30', p.tone), 254, [0.8, -0.9]);
+  blob(ctx, B, R.boot, [
+    { k: 'cap', x0: x + h * 0.16, y0: y - h * 0.17, x1: x + h * 0.165, y1: y - h * 0.055, r0: h * 0.043, r1: h * 0.041 },
+    { k: 'cap', x0: x - h * 0.17, y0: y - h * 0.16, x1: x - h * 0.175, y1: y - h * 0.06, r0: h * 0.041, r1: h * 0.039 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The near sleeve raised, then the fleece over the body, its edge ragged with the wool.
+  blob(ctx, B, shirt, armParts(R, near, 255), { h, formK: 0.5, tex: 'folds', seed: 255, amount: 0.5, creases: [elbowCrease(R, near)] });
+  blob(ctx, B, p.base, [{ k: 'curve', pts: torsoPts(R, hemY), wobble: 0.08, spiky: 0.12, seed: 256, sub: 3 }], { h, formK: 0.5, tex: 'fur', seed: 256, amount: 0.6, creases: torsoCreases(R, hemY) });
+  // The bag of flints at the near hip, heavy, on a strap from the far shoulder.
+  stroke(ctx, [R.sFar.x + h * 0.02, sy + h * 0.02, x + h * 0.12, hemY - h * 0.02], R.strap, Math.max(1, h * 0.014));
+  blob(ctx, B, R.leather, [{ k: 'curve', pts: ring(x + h * 0.13, hemY + h * 0.02, h * 0.05, h * 0.06), wobble: 0.1, seed: 257, sub: 2 }], { h, formK: 0.5, spread: 0.7, tex: 'stipple', seed: 257, amount: 0.3 });
+  // A short beard, the face and a woollen cap with its end flopped over.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.8, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.6, hx + hr * 0.3, hy + hr * 0.6, hx + hr * 0.84, hy + hr * 0.3, hx + hr * 0.55, hy + hr * 1.0, hx, hy + hr * 1.12, hx - hr * 0.55, hy + hr * 1.0], wobble: 0.06, spiky: 0.1, seed: 258, sub: 2 }], { h, formK: 0.4 });
+  face(ctx, R, false);
+  blob(ctx, B, capHex, [
+    { k: 'curve', pts: [hx - hr * 1.02, hy - hr * 0.3, hx - hr * 0.9, hy - hr * 1.0, hx - hr * 0.2, hy - hr * 1.3, hx + hr * 0.6, hy - hr * 1.2, hx + hr * 1.02, hy - hr * 0.7, hx + hr * 1.02, hy - hr * 0.3], wobble: 0.05, seed: 259, sub: 3 },
+    { k: 'curve', pts: [hx - hr * 0.3, hy - hr * 1.25, hx - hr * 0.9, hy - hr * 1.5, hx - hr * 1.45, hy - hr * 1.2, hx - hr * 1.4, hy - hr * 0.85, hx - hr * 0.8, hy - hr * 0.9], wobble: 0.06, seed: 260, sub: 2 },
+  ], { h, formK: 0.55, spread: 0.7, tex: 'stipple', seed: 259, amount: 0.3 });
+  // The sling going round over his head: the blur of its path, then the two cords and the pouch.
+  const w = near[2], a = p.frame / 5, rr = h * 0.2;
+  const px = w.x + Math.cos(a) * rr, py = w.y - h * 0.02 + Math.sin(a) * rr * 0.3;
+  if (!B.override) {
+    ctx.strokeStyle = rgba(shade('#e8e0d0', p.tone), 0.3); ctx.lineWidth = Math.max(1, h * 0.01);
+    ctx.beginPath(); ctx.ellipse(w.x, w.y - h * 0.02, rr, rr * 0.3, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+  stroke(ctx, [w.x, w.y - h * 0.01, (w.x + px) / 2, (w.y + py) / 2 - h * 0.012, px, py], R.leather, Math.max(1, h * 0.009));
+  stroke(ctx, [w.x, w.y - h * 0.01, (w.x + px) / 2, (w.y + py) / 2 + h * 0.008, px, py], R.leather, Math.max(1, h * 0.009));
+  blob(ctx, B, R.leather, [{ k: 'ell', x: px, y: py, rx: h * 0.028, ry: h * 0.02, rot: a }], { h, formK: 0.5, spread: 0.7 });
+  hand(ctx, R, w, -Math.PI / 2, 261, { flip: 1 });
+  void p.light;
 }
 
 /**
