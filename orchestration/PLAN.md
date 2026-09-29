@@ -1024,3 +1024,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - F2's post-merge check, run now: main f438644's tree is 224f968, the tree tested at 13:45.
 - 14:10: the Dependencies of #47, #49, #67, #68, #209 and #214 written and read back (each body
   byte for byte the 13:40 read before the write; #49's and #214's later `updated_at` was my labels).
+
+### 14:20: #272 reviewed
+- `reviews/272.md`: ready after fixes. Merge main (F2's `UNPLACED` conflicts at maps.ts:18-24; with
+  main's side plus the line of four: ALL OK, 40 owed, SMOKE OK, "Nothing new."). Nits: the Billman's
+  far arm bare from the shoulder (a jack with one sleeve; the comments say bare forearms); the
+  sling's ring undimmed at night (`bandit.ts:481`); Oxford commas in five comments and the body.
+  All 49 monsters on main draw pixel for pixel as before (40,572 drawings by hash); the stats sit on
+  §4.4's line at 4 as the footprints measured. Found in passing (quality): the silhouette check
+  cannot see a part drawn wholly off its canvas (`tools/smoke.ts:561-577`): for the delegate's next
+  batch.
+- Sent to the Black Dog session (14:23): merge main, sleeve the far arm to the elbow, dim the ring,
+  the commas. I land it on that head.
