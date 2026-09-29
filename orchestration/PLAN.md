@@ -1251,3 +1251,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   on 20a32a7: ALL OK (42 owed), SMOKE OK, "Nothing new."; Thornmark 100% at 5, 20.7% two under, 6.02
   fights to a rest. CI green. Merged as 97e2d81; main's tree is the tested tree (5cd175e). #219
   closes with it. The Thornmark session goes on to #214 (H3), its footprint to follow.
+- 16:51: #49 (I4, Henlys) to the #100 session, authored beside #214 on `claude/m1-49-henlys` and
+  landing after it, since the Deepthorn's longest chain is #214, #49, #216, #218; two area sessions
+  in Thornmark's area, as in the Foreland. A scout on #49 (`footprints/49.md`).
