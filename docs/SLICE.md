@@ -423,15 +423,19 @@ over content broken on purpose too, and two tools to theirs:
   #47 and the Deepthorn's to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
+- `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
+  font, so none is painted as nothing.
 - `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
   together, labelled with each kind and its count of the living. A kind leaves the label when its
   last one falls; every line stays inside the view and above the monsters' markers, running into
   no other.
-- `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
-  kind at its rate; a secret door outdoors among mountain, rock or trees drawn as they are
-  (`drawnCell`), and any other door, or one in a wall or a town, left a door.
-- `changed`: which files count every map, monster or interior for the crack sweep and the sheet,
-  and which only their own.
+- `art` (§5.6): every monster def its own sprite kind, each family module's `KINDS` the kinds
+  `FAMILY` sends it and the walls dressed under their caps, each kind at its rate; a secret door
+  outdoors among mountain, rock or trees drawn as they are (`drawnCell`), and any other door, or one
+  in a wall or a town, left a door.
+- `changed`: which files count every map, monster or interior for the crack sweep and the sheet, and
+  which only their own; and that it reads each family module's `KINDS` from the module's text as the
+  module lists them.
 - `scaffold` (§8.2): the Downs' draft, laid back into the atlas, is the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until

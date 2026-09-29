@@ -507,6 +507,10 @@ Crowness Light.
 | Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
 | Footpad | bandit | soldier, 3 | the Salt Road, two with a poacher | *A short blade, and a coat taken off someone better dressed.* |
 | Poacher | bandit | archer, 3 | the field edges, beside the footpads | *A longbow taller than he is, and one of the Queen's hares at his belt.* |
+| Barnacle Crab | spider | armoured, 4 | under Crowness Light | *A rock with barnacles on it, until it stands up.* Shrugs off sleep, as the shore crab does |
+| Billman | bandit | soldier, 4 | the Salt Road west of Gullwick | *A bill on a pole, and a man who knows which end to hold.* |
+| Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
+| Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
@@ -540,8 +544,8 @@ dead never come back already.
 
 ### 5.4 The Deepthorn (band 8–10)
 
-*The oldest of the forest, south of Thornmark down to Thorn Head, and the oldest elf-hold, which
-keeps the treaty. Thornmark's winter: cold, and snow that lies for weeks.*
+*The oldest of the forest, south of Thornmark down to Penspern, and Henlys, the oldest elf-hold,
+which keeps the treaty. Thornmark's winter: cold, and snow that lies for weeks.*
 
 The Deepthorn is age: trees older than Helmstow in a wood older than the elves' memory, and a treaty
 sealed with the chisel's mark, the first time the machine's script is seen on something that is not
@@ -558,7 +562,7 @@ the deep; the Great Owl from the birds.
 | Great Owl | birds | skirmisher, 8 | the deep, by night | *Wings as wide as a cart, and not a sound.* Flies, and hunts the back row |
 | Rootwalker | old wood, new | armoured, 9 | the old groves | *A stump walking on its roots, its bark like plate.* Slow and hard to hit; fire bites, once there are elements |
 | Heartwood | old wood, new | brute, 10 | alone, or over a thicket of brambles | *An oak that has decided to move.* Size 1.8 |
-| The Eldest | old wood, new | boss, 10 | Thorn Head | *The oldest tree in Caldera, and it is awake.* The last of the wood awake: it stays so until it is beaten, and beaten is put back to sleep, not felled |
+| The Eldest | old wood, new | boss, 10 | Penspern | *The oldest tree in Caldera, and it is awake.* The last of the wood awake: it stays so until it is beaten, and beaten is put back to sleep, not felled |
 
 - **Brambles and an owl** on a path at night: members held in the thorns while the owl takes the
   back row.
@@ -1018,7 +1022,7 @@ the pilot.
 | riftling | the cellar (built) | brine (Saltreach, Wrackholm), black glass (Sunderwood), slag (the Kilns): §2.1 |
 | ogre | Thornmark (built) | the tor troll (Cairnmoor), the snow troll (the Whitespine) |
 | wraith | Thornmark (built) | the cairn wight (Cairnmoor) |
-| **birds** | the Downs | the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
+| **birds** | the Downs | the old rook (the Downs), the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
 | **old wood** | the Deepthorn | the strangler vine (Ashfall) |
 | **long bodies** | Saltreach | the rock worm (the Kilns), the ice pike (Rimewater), the glass worm and the ice worm (the reach) |
 | **toads** | Saltreach | none: the first to cut if the art budget bites |

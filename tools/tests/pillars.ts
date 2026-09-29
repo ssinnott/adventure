@@ -4,7 +4,6 @@
 // carry on into the atlas land beyond its edge; every story lock is signed in, none stands between
 // areas, and every hand-in takes its item at the first meeting. Each check is a function of the content it reads, so it runs over every area and over
 // fixtures broken on purpose, which it must refuse.
-import { readdirSync } from 'node:fs';
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS, GUILD_QUESTS } from '../../src/content/index.ts';
 import { GUILDS } from '../../src/content/guilds.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
@@ -23,7 +22,7 @@ import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../sr
 import { lookLine } from '../../src/game/wilds.ts';
 import { handIns, choices } from '../../src/game/people.ts';
 import { hoardLine } from '../../src/game/dens.ts';
-import { ok, owed } from './lib.ts';
+import { ok, owed, familyModules } from './lib.ts';
 
 /**
  * What is wrong with a map's secret doors and their hints: a secret door with no hint declared, a
@@ -188,16 +187,6 @@ export const AMERICAN = [
 ];
 const AMERICAN_RE = new RegExp(`\\b(${AMERICAN.join('|')})\\b`, 'gi');
 export const americanisms = (text: string): string[] => [...new Set(text.match(AMERICAN_RE) ?? [])];
-
-/** Each monster family, the module in src/ui/monsters/ that draws it, and the kinds it draws. */
-export async function families(): Promise<Map<string, readonly string[]>> {
-  const dir = new URL('../../src/ui/monsters/', import.meta.url), out = new Map<string, readonly string[]>();
-  for (const f of readdirSync(dir).filter((f) => f.endsWith('.ts')).sort()) {
-    const kinds = ((await import(new URL(f, dir).href)) as { KINDS?: readonly string[] }).KINDS;
-    if (kinds) out.set(f.slice(0, -3), kinds);
-  }
-  return out;
-}
 
 type Uses = { [K in keyof Novelty]: Set<string> };
 /** What an area uses, in the words of its claim: the families it places, the ground of its maps, its mechanics, its built sites. */
@@ -454,7 +443,7 @@ export async function pillars(): Promise<void> {
   ok(americanisms('The gray walls lose their Color.').length === 2 && !americanisms('Armour of every size, a prize to seize.').length, 'gray and color fail; armour, size, prize and seize do not');
 
   // Novelty: each area's claim of what is new in it exists, is used in it and is nowhere earlier on the road.
-  const family = await families();
+  const family = new Map((await familyModules()).map((m) => [m.name, m.kinds]));
   ok(family.size > 0, `the monster families: ${[...family.keys()].join(', ')}`);
   const faults = noveltyFaults(AREAS, family);
   for (const area of AREAS) {
@@ -503,7 +492,7 @@ export async function pillars(): Promise<void> {
     ok(lay(['MMMMMM', 'M,,,,M', 'MW,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and so does sea at its edge');
     ok(lay(['MMMMMM', 'M,,,,M', '=,,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and a road through a gap in the ring');
     // Land against open water along an edge: a shore, not water cut short. Laid in Thornmark's place,
-    // its east edge faces Thornmere at 264,44-46; the premise is checked first.
+    // its east edge faces Lyngwyn at 264,44-46; the premise is checked first.
     const coast = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_coast', name: 'Coast fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
       const w = rows[0].length, zone: AtlasZone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', maps: [{ map: 'fixture_coast', at: [264 - w, 43] }] };

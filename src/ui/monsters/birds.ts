@@ -15,6 +15,9 @@
 // orange eyes over a small hooked bill, short legs feathered to the talons, and the wings raised
 // wide in threat, their pale undersides barred. Tawny and matte, the breast pale, streaked above
 // and barred below. Idle: the wings lift and settle slowly, and now and then the eyes close.
+// The Old Rook, the keeper of a rookery, is the crow's frame grown heavy and ragged: bigger, the
+// throat and the thighs shaggy, a purple sheen on the black and the rook's bare grey-white face
+// round the base of its bill, which is what tells a rook from a crow across a field.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -23,7 +26,7 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['crow', 'owl'];
+export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook'];
 
 /**
  * The frame's parts, as proportions of the crow's (1 = the crow, 0 = none). Each is named for the
@@ -73,19 +76,26 @@ interface Build {
   tufts: number;
   /** Barring and streaks on a pale breast, 0 none: the owl's, the eagle's. */
   bars: number;
+  /** Bare grey-white skin round the base of the bill, 0 none: the rook's. */
+  mask: number;
 }
 const CROW: Build = {
   body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
-  sheen: '#5a68b0', gloss: 1, feathered: 0, lean: -0.36, hop: 1, tufts: 0, bars: 0,
+  sheen: '#5a68b0', gloss: 1, feathered: 0, lean: -0.36, hop: 1, tufts: 0, bars: 0, mask: 0,
 };
 /** Upright and turned to the party, wings raised wide: a big round head sunk in the shoulders, a small hooked bill, short feathered legs. */
 const OWL: Build = {
   body: 1.1, neck: 0, head: 1.6, face: 1, bill: 0.35, hook: 0.8, leg: 0.6, wing: 1.4, broad: 1.3, tail: 0.6, wedge: 0, ruff: 0, bare: 0,
-  sheen: null, gloss: 0, feathered: 1, lean: -1.2, hop: 0, tufts: 1, bars: 1,
+  sheen: null, gloss: 0, feathered: 1, lean: -1.2, hop: 0, tufts: 1, bars: 1, mask: 0,
+};
+/** The old rook: bigger and heavier than the crow, shaggy at the throat and the thighs, the bill long and pale-based. */
+const ROOK: Build = {
+  body: 1.2, neck: 1, head: 1.08, face: 0, bill: 1.2, hook: 0, leg: 1, wing: 1.08, broad: 1.12, tail: 1, wedge: 0.15, ruff: 1, bare: 0,
+  sheen: '#7a5aa8', gloss: 0.8, feathered: 1, lean: -0.3, hop: 0.5, tufts: 0, bars: 0, mask: 1,
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  const b = kind === 'owl' ? OWL : CROW;
+  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : CROW;
   // The pose is the Build's `face`. Turned to the party, the raised wings reach higher than the
   // crow's hop: drawn inside 0.85 of its height, as the lampman is, the owl's tips keep clear of the
   // top of the combat canvas (at full height and wing 1.6 they run off it), and the wings as much
@@ -247,7 +257,12 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     blob(ctx, B, horn, [{ k: 'poly', pts: px(pts) }], { h, form: false, gloss: 0.35 * b.gloss });
     // The gape, and the bristles that cover a crow's nostrils.
     if (h >= 30) softLine(ctx, B, px([bx0 - rH * 0.1, byb - dp * 0.05, bx0 + bl * 0.7, byb - bl * 0.13]), horn, Math.max(1, h * 0.007), 0.7);
-    if (!bare) patch(ctx, B, plume, [{ k: 'ell', x: X(bx0 + bl * 0.12), y: U(byb + dp * 0.25), rx: h * bl * 0.2, ry: h * dp * 0.35 }], { alpha: 0.8, feather: 0.4 });
+    if (!bare && !b.mask) patch(ctx, B, plume, [{ k: 'ell', x: X(bx0 + bl * 0.12), y: U(byb + dp * 0.25), rx: h * bl * 0.2, ry: h * dp * 0.35 }], { alpha: 0.8, feather: 0.4 });
+    // The rook's bare face: grey-white skin round the base of the bill and under the chin.
+    if (b.mask > 0) patch(ctx, B, shade('#cfcac4', Math.max(0.6, tone)), [
+      { k: 'ell', x: X(bx0 + bl * 0.05), y: U(byb), rx: h * (rH * 0.5 + bl * 0.15), ry: h * rH * 0.55, rot: 0.15 },
+      { k: 'ell', x: X(bx0 - rH * 0.15), y: U(byb - rH * 0.45), rx: h * rH * 0.4, ry: h * rH * 0.3 },
+    ], { alpha: 0.85 * b.mask, feather: 0.3 });
   }
 
   // ---- a face half turned to the party: a pale disc about the eye (a full turn is the `facing` pose).

@@ -1,6 +1,8 @@
 // The spider family: marsh spider, thorn spider, rift crawler -- and the shore crab, which is not
 // an arachnid and does not use the eight-legged rig the other three share: a crab is one wide flat
 // carapace, eyes up on stalks, two chelae held forward and only six walking legs, all of it low.
+// The barnacle crab is the same animal grown old under Crowness: a shell domed and crusted with
+// barnacles, weed trailing off its rim and one crusher claw grown out of all proportion.
 // The spider family proper: An arachnid is two bulbs on a narrow waist,
 // and both are the same chitin, so unioning them into one mass the way a single material usually
 // wants leaves an undifferentiated blob with legs. Each body SECTION is therefore its own blob
@@ -16,11 +18,12 @@ import type { Part, Crease } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler'];
+export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'thorn_spider') thorn(ctx, x, y, h, p);
   else if (kind === 'crab') crab(ctx, x, y, h, p);
+  else if (kind === 'barnacle_crab') crab(ctx, x, y, h, p, true);
   else if (kind === 'rift_crawler') crawler(ctx, x, y, h, p);
   else marsh(ctx, x, y, h, p);
 };
@@ -307,10 +310,11 @@ interface Pt2 { x: number; y: number }
  * a single wide flat carapace sat low with its eyes on stalks, two chelae held forward with the
  * near one the larger, and three pairs of short walking legs stepping out from under the shell.
  */
-function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, old = false): void {
   const bob = p.breathe * h * 0.01;
   const shell = shade(p.base, 1), rim = shade(p.light, 1.02), dark = shade(p.dark, 0.85);
-  const cy = y - h * 0.325 + bob, cw = h * 0.35, ch = h * 0.135;
+  // The old crab's shell is domed and heavy: taller, and carried a little higher on its legs.
+  const cy = y - h * (old ? 0.35 : 0.325) + bob, cw = h * 0.35, ch = h * (old ? 0.18 : 0.135);
   groundShadow(ctx, x, y + 1, h * 0.86);
 
   // The walking legs, behind the shell: three pairs, each a thigh and a pointed dactyl, stepping
@@ -334,7 +338,7 @@ function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     x - cw * 0.2, cy - ch * 1.0, x + cw * 0.24, cy - ch * 0.98, x + cw * 0.62, cy - ch * 0.84,
     x + cw * 0.94, cy - ch * 0.46, x + cw, cy + ch * 0.14, x + cw * 0.66, cy + ch * 0.8,
     x + cw * 0.2, cy + ch * 1.0, x - cw * 0.26, cy + ch * 0.98, x - cw * 0.7, cy + ch * 0.76,
-  ], wobble: 0.035, spiky: 0.02, seed: 60, sub: 3 }],
+  ], wobble: old ? 0.07 : 0.035, spiky: 0.02, seed: 60, sub: 3 }],
     { h, formK: 0.6, spread: 0.85, tex: 'stipple', seed: 61, amount: 0.5, creases: [
       { x0: x - cw * 0.5, y0: cy - ch * 0.1, x1: x + cw * 0.52, y1: cy - ch * 0.06, r: h * 0.02, a: 0.3 },
       { x0: x - cw * 0.16, y0: cy - ch * 0.5, x1: x - cw * 0.12, y1: cy + ch * 0.7, r: h * 0.018, a: 0.26 },
@@ -345,6 +349,8 @@ function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     const a = (i / 7) * Math.PI * 2, gx = x + Math.cos(a) * cw * 0.5, gy = cy + Math.sin(a) * ch * 0.46;
     patch(ctx, B, rim, [{ k: 'ell', x: gx, y: gy, rx: h * 0.014, ry: h * 0.01 }], { alpha: 0.2, feather: 0.9 });
   }
+
+  if (old) barnacles(ctx, x, cy, cw, ch, h, p);
 
   // Eyes up on their stalks, out of the shell's front edge: the crab's other signature.
   for (const s of [-1, 1] as const) {
@@ -361,10 +367,38 @@ function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   // and a step darker, the near one the big crusher. The gape runs across the silhouette, so the
   // claw reads as a claw rather than as a paddle folded against the flank.
   chela(ctx, { x: x - cw * 0.62, y: cy + h * 0.05 }, { x: x - h * 0.31, y: cy + h * 0.13 },
-    { x: x - h * 0.205, y: y - h * 0.135 }, Math.PI + 0.26, -1, h, dark, 74, 0.94);
+    { x: x - h * 0.205, y: y - h * 0.135 }, Math.PI + 0.26, -1, h, dark, 74, old ? 0.8 : 0.94);
   chela(ctx, { x: x + cw * 0.64, y: cy + h * 0.06 }, { x: x + h * 0.33, y: cy + h * 0.14 },
-    { x: x + h * 0.215, y: y - h * 0.15 }, -0.26, 1, h, shell, 77, 1.3);
+    { x: x + h * 0.215, y: y - h * 0.15 }, -0.26, 1, h, shell, 77, old ? 1.5 : 1.3);
   void p.light;
+}
+
+/**
+ * The barnacle crab's crust: barnacles in clusters over the shell and standing proud of its rim,
+ * so the skyline is knobbled, and wrack hanging off the front edge. The barnacles are one pale mass
+ * sat on the shell and the weed one dark-green mass hanging from it, so neither comes apart.
+ */
+function barnacles(ctx: CanvasRenderingContext2D, x: number, cy: number, cw: number, ch: number, h: number, p: Paint): void {
+  const shellWhite = shade('#bab2a0', p.tone), weed = shade('#3a4a2a', p.tone);
+  const cones: Part[] = [];
+  // Along the top of the shell, half in and half out of the rim.
+  for (let i = 0; i < 7; i++) {
+    const t = -0.8 + i * 0.27, bx = x + cw * t, by = cy - ch * (0.95 - 0.25 * t * t) + (i % 2) * h * 0.006;
+    cones.push({ k: 'ell', x: bx, y: by, rx: h * 0.022, ry: h * 0.016 });
+  }
+  // A cluster on the shell's face.
+  for (const [u, v] of [[-0.35, -0.2], [-0.28, -0.02], [-0.18, -0.12], [0.3, -0.35], [0.42, -0.18], [0.36, -0.05], [0.05, -0.55]]) {
+    cones.push({ k: 'ell', x: x + cw * u, y: cy + ch * v, rx: h * 0.016, ry: h * 0.012 });
+  }
+  blob(ctx, B, shellWhite, cones, { h, formK: 0.5, spread: 0.7, tex: 'stipple', seed: 65, amount: 0.4 });
+  // Wrack hanging off the front of the shell in ragged strands.
+  const strands: Part[] = [];
+  const sw = Math.sin(p.frame / 17) * h * 0.006;
+  for (const [u, len] of [[-0.62, 0.09], [-0.4, 0.06], [0.12, 0.07], [0.48, 0.1], [0.72, 0.06]]) {
+    const sx = x + cw * u, sy = cy + ch * (0.7 - 0.3 * Math.abs(u));
+    strands.push({ k: 'tube', pts: [sx, sy - h * 0.01, sx + sw, sy + h * len * 0.5, sx + sw * 1.6 + h * 0.008, sy + h * len], r0: h * 0.014, r1: h * 0.006, wobble: 0.2, seed: 66 });
+  }
+  blob(ctx, B, weed, strands, { h, formK: 0.4, spread: 0.7 });
 }
 
 // ------------------------------------------------------------------ rift crawler ----
