@@ -31,7 +31,7 @@ Squares are the ones the atlas gives it, shallows included. Without the shallows
 squares, about 1.7 zone maps (EXPANSION §1 has 1.7), and every one of them a company could walk:
 grass 878, heather 514, hills 158, rock 105 and sand 99. It runs from x 142 to x 199 and from y 150
 to y 210, in the middle of Sylmeer, with Saltreach's Saltings to the west across the water, the
-Deepthorn's Thorn Head to the north-east and Hearth Isle to the east.
+Deepthorn's Penspern to the north-east and Hearth Isle to the east.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The isle is two boxes, E6 and F6, and 234
 squares of shore in the four round them (E5, F5, E7, F7), which go with their boxes' edges or stay
