@@ -882,7 +882,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #269 (#264's fix, the #45 session, 8bed946; CI green) opened 11:44: a reviewer started
   (`reviews/269.md`), asked also to try it with #145 (both touch smoke.ts and SLICE.md).
 
-### 12:40: the footprints for #67 and #68 in
+### 12:25: the footprints for #67 and #68 in
 - `footprints/67.md` (Crowness, E3; size L, 10-14 h; 0 creatures, A the map, B the keeper's step and
   Oil for the Lamp) and `footprints/68.md` (the Wend's fields, E2; size L, 6-10 h; 0 the rookery's
   keepers, A the box, B Riders in the Dark). Both measured on the pilot's C (e098228) with main in.
@@ -901,3 +901,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - Order: both issues are blocked by #47 ("tunes the thresholds this one is held to"), so A and B land
   after #47 closes with E; 0 and the authoring can go ahead. #67's footprint lands A after F3 with the
   figure owed; #68's after E. I take the issues' word (after E) unless the owner says otherwise.
+
+### 12:35: #269 reviewed
+- `reviews/269.md`: ready, four nits. Combined with main 0a8fd4d ALL OK (40 owed), SMOKE OK, "Nothing
+  new."; with #145 no conflict either way, labels ok over 1,416 fights. Counts follow deaths (295,420
+  random death steps); the measure is exact (221 strings painted in Chromium).
+- One round asked of the #45 session before I land it: 24 px between groups (14 px is hardly more
+  than the ", " inside one; 24 still keeps every fight to two rows); the vertical check held to the
+  fight's highest marker, not half the view; faults or fights counted as the message says, the body
+  corrected; the Oxford commas out (SLICE.md, comments, body); `PLAYED_DEFS` if cheap.
+- Found in passing, for the owner (an issue, systems): the target marker '▼' (`combat.ts:179`) is not
+  in the font, so choosing a target shows nothing over the monster.
