@@ -292,12 +292,15 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     const said = answerWho(w, 'q_well', 'The Wardens.');
     w.ok(said.startsWith('"The Wardens. Good. Yes."'), 'the Wardens told, Mottram breathes out');
     reads(w, 'well', 'The Well Tastes of Iron', ['mottram', 'alwin', 'wardens'], ['lanterns'], 'the Wardens told');
+    at(w, 12);
+    w.ok(!shows(w, 'well_swept'), 'the Wardens told, by day the gatehouse is not swept');
     at(w, 0);
     w.ok(!there(w, ALWIN(), 'harrow') && !shows(w, 'well_cart'), 'the Wardens told, by night Alwin and the cart are gone');
     see(w, 'harrow:well_swept');
     w.ok(w.world.used('well_swept'), 'and the gatehouse is swept');
     w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('"Still iron." He does not offer'), "Mottram's after-lines are the Wardens'");
-    w.ok(hear(w, 'harrow', OSMUND()).startsWith('A thin man in a leather apron') && !w.party.flags.q_osmund_well, 'and Osmund has nothing written');
+    const first = hear(w, 'harrow', OSMUND()), then = hear(w, 'harrow', OSMUND());
+    w.ok(first.startsWith('A thin man in a leather apron') && then.startsWith('A thin man in a leather apron') && !w.party.flags.q_osmund_well, 'and Osmund, met twice, has nothing written');
   }
   { // The well: Alwin met before Mottram, the Lanterns told. Mottram hires first; Osmund writes it down.
     const w = newWalk(ok);

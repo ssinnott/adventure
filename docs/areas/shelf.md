@@ -87,7 +87,8 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
-Clerk's Seal (Maud) and The Well Tastes of Iron (Mottram, `quests.ts`); the monsters are MONSTERS §5.1's.
+Clerk's Seal (Maud) and The Well Tastes of Iron (Mottram, `quests.ts`); the monsters are MONSTERS
+§5.1's.
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
 (`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`) and the Seam's
 the carving over a blank stretch of wall.

@@ -1,6 +1,6 @@
 // The Foreland's side quests, in the journal's words: The Cargo Ledger (Hale), The Bell That Rang
-// Twice (Osmund), The Rest of the Survey (Ebba and Ailith) and The Clerk's Seal (Maud). Its chapter of the
-// one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
+// Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The Clerk's Seal (Maud) and The Well
+// Tastes of Iron (Mottram). Its chapter of the one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
 // tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 
