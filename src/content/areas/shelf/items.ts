@@ -45,4 +45,5 @@ export const ITEMS: readonly ItemDef[] = [
   ] },
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
   { id: 'greywater_ledger', name: 'Cargo Ledger', slot: 'none', price: 0 },
+  { id: 'clerks_seal', name: "Clerk's Seal", slot: 'none', price: 0 },
 ];
