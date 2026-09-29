@@ -1112,3 +1112,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   ALL OK (39 owed), SMOKE OK, "Nothing new."; the new lines "each family module's KINDS are the kinds
   FAMILY sends it (53 kinds, 13 modules)", "exports a drawer of its own", "KINDS reads from its text
   as it imports"; CI green. Merged as 466ca5c. #268 closes with it.
+- 15:31: #212 (the Deepthorn's gear ladder) sent to the #100 session (session_01JbyZsPz1NTc8cTjfQn9Grs,
+  idle since #100 and #98): plan at the top of its PR, the items, `GEAR` at 10, the Knight's
+  Thornmark row, each find owed to its box; lands after #277. The #97 session told it's done.
