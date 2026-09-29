@@ -3,7 +3,8 @@
 // window, owed to the box that places it until a chest, cairn, statue or drop gives it; Mottram's
 // sells the ladder's plain step; and the gate check's company wears what harness's does. Past them,
 // Thornmark (#101): every class finds a plus it can use there, and nothing there gives the Armoury's
-// gear.
+// gear. At the top, the Deepthorn (#212): every class betters its Thornmark find by 10, each find
+// inside Thornmark's window and owed to its box until placed.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { CLASSES } from '../../src/game/party.ts';
@@ -47,7 +48,7 @@ export const FINDS: Record<string, string> = {
  * in the ladder by 9.
  */
 export const THORNMARK: Record<ClassId, readonly string[]> = {
-  knight: ['greatsword+1'],
+  knight: ['warhammer+1'],
   paladin: ['warhammer+1'],
   ranger: ['elfbow+1'],
   barbarian: ['greatsword+1', 'brigandine+1', 'brigandine+2'],
@@ -57,6 +58,30 @@ export const THORNMARK: Record<ClassId, readonly string[]> = {
   bard: ['rune_dagger+1', 'brigandine+1', 'brigandine+2'],
   monk: ['grove_staff+1'],
   druid: ['grove_staff+1', 'brigandine+1', 'brigandine+2'],
+};
+
+/** The Deepthorn's step (#212, docs/areas/thornmark.md §8): what each class betters its Thornmark find with by 10. */
+export const DEEPTHORN: Record<ClassId, readonly string[]> = {
+  knight: ['warhammer+2', 'tower_shield+1'],
+  paladin: ['warhammer+2', 'tower_shield+1'],
+  ranger: ['elfbow+2'],
+  barbarian: ['greatsword+2', 'brigandine+3'],
+  cleric: ['warhammer+2', 'runed_robe+2'],
+  sorcerer: ['rune_dagger+2', 'runed_robe+2'],
+  thief: ['rune_dagger+2', 'brigandine+3'],
+  bard: ['rune_dagger+2', 'brigandine+3'],
+  monk: ['eldests_bough'],
+  druid: ['eldests_bough', 'brigandine+3'],
+};
+
+/** The Deepthorn's finds and the box that places each: H3 (#214), I3 (#215), I4 (#49), J4 (#216), I5 (#217), J5 (#218); '' once placed. */
+export const DEEP_FINDS: Record<string, string> = {
+  'tower_shield+1': '#214', 'rune_dagger+2': '#214',
+  'runed_robe+2': '#215',
+  'elfbow+2': '#49', 'brigandine+3': '#49',
+  'warhammer+2': '#216',
+  silver_torc: '#217',
+  eldests_bough: '#218', 'greatsword+2': '#218',
 };
 
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
@@ -86,6 +111,24 @@ export function ladder(): void {
   }
   ok(Object.keys(LADDER).length === Object.keys(CLASSES).length, `every class is on the ladder (${Object.keys(LADDER).length} of ${Object.keys(CLASSES).length})`);
 
+  // The Deepthorn, class by class: each find is in the ladder by 10 and no sooner, the class can use
+  // it, and it betters the best of its kind the class had by 9, its kit and the ladder's gear.
+  for (const [cls, finds] of Object.entries(DEEPTHORN) as [ClassId, readonly string[]][]) {
+    const had = [...CLASSES[cls].kit, ...by(9)].map((id) => ITEMS[id]).filter((d) => usable(d, cls));
+    const faults = finds.flatMap((id) => {
+      const d = ITEMS[id];
+      if (!d) return [`${id} is no item`];
+      if (!by(10).includes(id) || by(9).includes(id)) return [`${id} is not in the ladder at 10`];
+      if (!usable(d, cls)) return [`${id} is not for a ${cls}`];
+      const best = Math.max(0, ...had.filter((h) => kind(h) === kind(d)).map(worth));
+      return worth(d) > best ? [] : [`${id} (${worth(d)}) is no better than the ${kind(d)} it had by 9 (${best})`];
+    });
+    ok(finds.length > 0 && !faults.length, `the ${CLASSES[cls].name} betters its Thornmark find by 10: ${finds.join(', ')}${faults.length ? ` (${faults.join('; ')})` : ''}`);
+  }
+  ok(Object.keys(DEEPTHORN).length === Object.keys(CLASSES).length, `every class has a Deepthorn find (${Object.keys(DEEPTHORN).length} of ${Object.keys(CLASSES).length})`);
+  const unlisted = by(10).filter((id) => !by(9).includes(id) && !(id in DEEP_FINDS));
+  ok(!unlisted.length, `every rung at 10 is a Deepthorn find with its box${unlisted.length ? ` (not: ${unlisted.join(', ')})` : ''}`);
+
   // Every id in the ladder is an item, and every find is one within the Foreland's window.
   const missing = GEAR.flatMap(([, ids]) => ids).filter((id) => !ITEMS[id]);
   ok(!missing.length, `every rung of the ladder is an item${missing.length ? ` (not: ${missing.join(', ')})` : ''}`);
@@ -96,6 +139,12 @@ export function ladder(): void {
   for (const [id, whose] of Object.entries(FINDS)) {
     const d = ITEMS[id];
     ok(!!d && d.price > 0 && d.price <= CURVE.shelf.price, `find ${id} is an item within the Foreland's window (${d?.price} of ${CURVE.shelf.price} gold)`);
+    const msg = `find ${id} lies in a chest, a cairn, a statue's gift or a hoard`;
+    if (whose) owed(found.has(id), msg, whose); else ok(found.has(id), msg);
+  }
+  for (const [id, whose] of Object.entries(DEEP_FINDS)) {
+    const d = ITEMS[id];
+    ok(!!d && d.price > 0 && d.price <= CURVE.thornmark.price, `find ${id} is an item within Thornmark's window (${d?.price} of ${CURVE.thornmark.price} gold)`);
     const msg = `find ${id} lies in a chest, a cairn, a statue's gift or a hoard`;
     if (whose) owed(found.has(id), msg, whose); else ok(found.has(id), msg);
   }
