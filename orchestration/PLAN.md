@@ -1156,3 +1156,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   15,1 (the delegate's too), "beside" for Hamo (shelf.md:283), commas. For #67: rock at 31,12-17 and
   31,5-9 kept off paths (Hamo). Sent to the pilot.
 - Sent the owner the Phase 1 map (`phase1-map.png`, `phase1-world.png`).
+- 16:15: F3 (#280, #47's B) landed: the round (85fe19d; main 02bea14 in): the cave's door at 1,16 and its
+  pocket at 1,17 with rock at 0,16-17, the sea line on the road (15,1), SLICE's and shelf.md's lines,
+  "beside" for Hamo, the commas. Landing check on 85fe19d: ALL OK (33 owed; #47 from 9 to 3), SMOKE
+  OK, "Nothing new."; downs_f3 at 2: 100% won, 7.01 fights to a rest; the Foreland 99.7% of 45
+  groups (all inside their aims). CI green. Merged as ccc4c92.
+- Next for the pilot: C (the people and quests, `claude/m1-47-people`), D beside it, then E. #67's
+  and #68's A (E3, E2) are unblocked but for C: area sessions to start once C lands (or on C's branch).
