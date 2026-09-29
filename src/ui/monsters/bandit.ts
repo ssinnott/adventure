@@ -17,16 +17,16 @@ import { blob, glossBall, glossEllipse, glossPoly, glow, patch, softLine } from 
 import type { Crease, Part } from './gloss.ts';
 import { shade } from '../../lib/art/palettes.ts';
 import type { Arm, Pt, Rig } from './figure.ts';
-import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, rnd, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
+import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'hedge_archer'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
-  else if (kind === 'hedge_archer') archer(ctx, x, y, h, p, true);
   else if (kind === 'footpad') footpad(ctx, x, y, h, p);
+  else if (kind === 'poacher') poacher(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -225,11 +225,9 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 /**
  * The archer: braced side-on with the far foot forward and wide, shoulders turned away. Hooded
  * tunic in the tint with a feather, the bow arm raised out to the far side, the near hand down on
- * a dagger at mid-thigh. The Downs' hedge archer wears the hedge: a cloak of foliage from the hood
- * to below the knee, leaves on the bow arm, over half the face and on the bow and quiver, so what
- * the company sees is a hedge with a bow in it.
+ * a dagger at mid-thigh.
  */
-function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, hedge = false): void {
+function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const R = makeRig(x, y, h, p, { tilt: 0.017, hipTilt: -0.028, turn: -0.032, near: [0.068, 0.085, 0.045], far: [-0.066, -0.175, -0.255], toe: [0.3, -1], lift: [0.085, 0] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 23) * h * 0.006;
@@ -246,7 +244,6 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     ctx.beginPath(); ctx.moveTo(qx + h * 0.03, qy - h * 0.07); ctx.lineTo(qx + h * 0.01, qy - h * 0.08); ctx.lineTo(qx + h * 0.04, qy - h * 0.095); ctx.lineTo(qx + h * 0.045, qy - h * 0.065); ctx.closePath(); ctx.fill();
   }
   blob(ctx, B, shade(p.dark, 0.78), armParts(R, far, 21, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
-  if (hedge) leafSleeve(ctx, R, p, far);
   legs(ctx, R, shade('#363a42', p.tone), 22, [0.4, -1]);
   // The hooded tunic: hood, cowl, body and near sleeve, one mass in the tint. The hood is cut round
   // the head, so it ends under the chin, a neck's length above the collar, and he is the one man in
@@ -267,12 +264,11 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The cowl's hem across the chest, as one soft line (three creases darken where they overlap):
   // without it the cowl reads as a neck as thick as the hood, growing out of the tunic.
   softLine(ctx, B, [x - h * 0.1, sy + h * 0.05, x - h * 0.045, sy + h * 0.074, x + h * 0.05, sy + h * 0.076, x + h * 0.1, sy + h * 0.052], p.base, Math.max(1, h * 0.022), 0.28);
-  if (hedge) hedgeCloak(ctx, R, p, sway);
   // Inside the hood: shadow, then the face.
   blob(ctx, B, shade(p.dark, 0.55), [{ k: 'curve', pts: [hx - hr * 0.95, hy - hr * 0.85, hx + hr * 0.95, hy - hr * 0.8, hx + hr * 1.0, hy + hr * 0.3, hx + hr * 0.5, hy + hr * 1.05, hx - hr * 0.5, hy + hr * 1.05, hx - hr * 1.0, hy + hr * 0.3], wobble: 0.04, seed: 26, sub: 2 }], { h, form: false, outline: false });
-  // Belt over the tunic; the hedge archer's is under his cloak.
-  if (!hedge) blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.062, h * 0.042, 27)], { h, form: false });
-  if (!hedge) band(ctx, B, x - h * 0.018, hemY - h * 0.066, h * 0.038, h * 0.042, R.brass);
+  // Belt over the tunic.
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.062, h * 0.042, 27)], { h, form: false });
+  band(ctx, B, x - h * 0.018, hemY - h * 0.066, h * 0.038, h * 0.042, R.brass);
   // The face inside the hood is smaller than a bare head: only the front of it shows.
   blob(ctx, B, R.skin, [{ k: 'curve', pts: [hx - hr * 0.72, hy - hr * 0.62, hx + hr * 0.72, hy - hr * 0.6, hx + hr * 0.86, hy + hr * 0.2, hx + hr * 0.45, hy + hr * 0.95, hx - hr * 0.4, hy + hr * 0.95, hx - hr * 0.82, hy + hr * 0.2], wobble: 0.03, seed: 28, sub: 2 }], { h, formK: 0.55, spread: 0.7 });
   // Dagger at the near hip, hilt up, the near hand closed on it at mid-thigh.
@@ -281,107 +277,105 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // A short beard under the jaw.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.7, hy + hr * 0.45, hx - hr * 0.3, hy + hr * 0.62, hx + hr * 0.3, hy + hr * 0.62, hx + hr * 0.75, hy + hr * 0.42, hx + hr * 0.55, hy + hr * 1.05, hx, hy + hr * 1.2, hx - hr * 0.55, hy + hr * 1.05], wobble: 0.06, spiky: 0.1, seed: 30, sub: 2 }], { h, formK: 0.4 });
   face(ctx, R, true);
-  if (hedge) faceLeaves(ctx, R, p);
-  // The feather in the hood, at the near side; the hedge archer has leaves there instead.
+  // The feather in the hood, at the near side.
   const fx = hx + hr * 1.05, fy = hy - hr * 0.9;
-  if (!hedge) glossEllipse(ctx, B, fx + hr * 0.5, fy - hr * 0.55 + sway, hr * 0.75, hr * 0.2, shade('#d8d0a8', p.tone), -0.95, { spread: 0.6 });
-  if (!hedge) softLine(ctx, B, [fx, fy + hr * 0.05, fx + hr * 0.95, fy - hr * 1.1 + sway], R.wood, 1, 0.6);
+  glossEllipse(ctx, B, fx + hr * 0.5, fy - hr * 0.55 + sway, hr * 0.75, hr * 0.2, shade('#d8d0a8', p.tone), -0.95, { spread: 0.6 });
+  softLine(ctx, B, [fx, fy + hr * 0.05, fx + hr * 0.95, fy - hr * 1.1 + sway], R.wood, 1, 0.6);
   // The shortbow in the raised far hand, gripped across the riser.
   const ba = bow(ctx, R, far[2], sway);
   hand(ctx, R, far[2], ba, 33, { flip: -1 });
-  if (hedge) bowLeaves(ctx, R, p, far[2], sway);
   void p.light;
 }
 
-/** The hedge's colours: leaf greens, a dead-leaf brown and dark undergrowth. The light leaves
- * keep some of their tone by night, as leaves do under a moon, so the hedge still reads. */
-function hedgePalette(p: Paint): { under: string; leaf: string; young: string; dead: string } {
-  return {
-    under: shade('#26361c', p.tone), leaf: shade('#48682a', p.tone),
-    young: shade('#8aaa48', Math.max(0.65, p.tone)), dead: shade('#7a5c32', Math.max(0.6, p.tone)),
-  };
-}
-
-/** Leaves along a polyline, each a small ellipse at a slant of its own: the ragged edge of a hedge. */
-function leavesAlong(pts: readonly number[], r: number, seed: number, out: Part[] = []): Part[] {
-  for (let i = 0; i + 3 < pts.length; i += 2) {
-    const ax = pts[i], ay = pts[i + 1], bx = pts[i + 2], by = pts[i + 3];
-    const n = Math.max(1, Math.round(Math.hypot(bx - ax, by - ay) / (r * 1.3)));
-    for (let k = 0; k < n; k++) {
-      const t = k / n, j = rnd(seed, i, k);
-      out.push({ k: 'ell', x: ax + (bx - ax) * t + (j - 0.5) * r * 0.6, y: ay + (by - ay) * t + (rnd(seed, k, i) - 0.5) * r * 0.6, rx: r, ry: r * 0.5, rot: j * Math.PI * 2 });
+/**
+ * The poacher: a Downs countryman who takes the Queen's game on her own land. He stands easy at the
+ * field edge with a yew longbow taller than he is grounded beside him in the far fist, a sheaf of
+ * arrows loose in the near hand, a broad-brimmed hat pulled low, a jerkin in the tint patched with
+ * whatever cloth came to hand over a russet shirt, and a hare hung by its hind legs from his belt.
+ */
+function poacher(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.012, hipTilt: 0.024, turn: -0.012, near: [0.07, 0.12, 0.14], far: [-0.068, -0.1, -0.12], toe: [0.8, -0.7], lift: [0, 0.02] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 23) * h * 0.005;
+  const shirt = shade('#8a4a2e', p.tone), hose = shade('#5a4632', p.tone), felt = shade('#3e3226', p.tone);
+  const yew = shade('#8a5a2a', p.tone), fur = shade('#6a5440', p.tone), furPale = shade('#c8b490', p.tone);
+  const near: Arm = [R.sNear, { x: x + h * 0.2, y: sy + h * 0.2 }, { x: x + h * 0.21, y: sy + h * 0.35 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.19 }, { x: x - h * 0.255, y: sy + h * 0.31 }];
+  const hemY = y - h * 0.4;
+  groundShadow(ctx, x - h * 0.04, y + 1, h * 0.8);
+  // The longbow, grounded by the far foot and standing a head above his hat: a D of yew, thick at
+  // the grip and fining to the horn nocks, belly to the man, the string a finger's breadth off it.
+  const bx = far[2].x - h * 0.012, top = { x: bx + h * 0.02 + sway, y: y - h * 1.2 }, bot = { x: bx - h * 0.005, y: y - h * 0.01 };
+  const grip = { x: bx - h * 0.028, y: far[2].y };
+  const mid = Math.max(h * 0.016, 1.3), tip = Math.max(h * 0.007, 0.8);
+  blob(ctx, B, yew, [
+    tube([top.x, top.y, bx - h * 0.02, (top.y + grip.y) / 2, grip.x, grip.y], tip, mid, 0, 201),
+    tube([grip.x, grip.y, bx - h * 0.018, (grip.y + bot.y) / 2, bot.x, bot.y], mid, tip, 0, 202),
+  ], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 201, amount: 0.3 });
+  stroke(ctx, [top.x + h * 0.004, top.y + h * 0.01, bot.x + h * 0.012, bot.y - h * 0.01], R.bone, 1);
+  // The far arm down to the grip, behind the body.
+  blob(ctx, B, shade(shirt, 0.72), armParts(R, far, 203, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  hand(ctx, R, far[2], Math.atan2(top.y - bot.y, top.x - bot.x), 204, { far: true, flip: 1, k: 0.95 });
+  legs(ctx, R, hose, 205, [0.8, -0.7]);
+  blob(ctx, B, R.boot, [
+    { k: 'cap', x0: x + h * 0.14, y0: y - h * 0.17, x1: x + h * 0.145, y1: y - h * 0.055, r0: h * 0.043, r1: h * 0.041 },
+    { k: 'cap', x0: x - h * 0.118, y0: y - h * 0.16, x1: x - h * 0.12, y1: y - h * 0.06, r0: h * 0.041, r1: h * 0.039 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The russet shirt's near sleeve, then the jerkin over the body, sleeveless.
+  blob(ctx, B, shirt, armParts(R, near, 206), { h, formK: 0.5, tex: 'folds', seed: 206, amount: 0.5, creases: [elbowCrease(R, near)] });
+  blob(ctx, B, p.base, [{ k: 'curve', pts: torsoPts(R, hemY), wobble: 0.04, seed: 207, sub: 3 }],
+    { h, formK: 0.5, tex: 'folds', seed: 207, amount: 0.7, creases: torsoCreases(R, hemY) });
+  // Patches of other cloth, sewn on where the jerkin wore through.
+  for (const [px, py, pw, ph, hex, seed] of [
+    [x - h * 0.08, sy + h * 0.12, h * 0.07, h * 0.06, '#7a5a3a', 208], [x + h * 0.06, sy + h * 0.2, h * 0.06, h * 0.07, '#6e3a2a', 209],
+  ] as const) {
+    blob(ctx, B, shade(hex, p.tone), [{ k: 'poly', pts: [px, py, px + pw, py + h * 0.004, px + pw - h * 0.003, py + ph, px + h * 0.002, py + ph - h * 0.004] }], { h, formK: 0.4, spread: 0.6, tex: 'stipple', seed, amount: 0.3 });
+  }
+  // Belt, and the hare hung from it at the far hip by its hind legs, head down against his thigh.
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.05, h * 0.04, 210)], { h, form: false });
+  hare(ctx, R, x - h * 0.1, hemY - h * 0.04, h, fur, furPale, sway);
+  // A stubbled face under the brim, then the hat: a low crown and a brim wide enough to shade him.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.84, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.58, hx + hr * 0.3, hy + hr * 0.58, hx + hr * 0.86, hy + hr * 0.3, hx + hr * 0.6, hy + hr * 0.9, hx, hy + hr * 1.02, hx - hr * 0.6, hy + hr * 0.9], wobble: 0.06, spiky: 0.06, seed: 211, sub: 2 }], { h, form: false, outline: false });
+  face(ctx, R, false);
+  softLine(ctx, B, [hx - hr * 0.95, hy - hr * 0.3, hx + hr * 0.95, hy - hr * 0.3], shade('#1a1410', p.tone), Math.max(1, hr * 0.3), 0.45);
+  blob(ctx, B, felt, [
+    { k: 'curve', pts: [hx - hr * 0.8, hy - hr * 0.55, hx - hr * 0.75, hy - hr * 1.2, hx - hr * 0.2, hy - hr * 1.45, hx + hr * 0.45, hy - hr * 1.38, hx + hr * 0.82, hy - hr * 1.05, hx + hr * 0.85, hy - hr * 0.55], wobble: 0.05, seed: 212, sub: 3 },
+    { k: 'curve', pts: [hx - hr * 2.0, hy - hr * 0.5, hx - hr * 1.2, hy - hr * 0.78, hx, hy - hr * 0.84, hx + hr * 1.2, hy - hr * 0.8, hx + hr * 2.0, hy - hr * 0.42, hx + hr * 1.1, hy - hr * 0.4, hx, hy - hr * 0.5, hx - hr * 1.1, hy - hr * 0.42], wobble: 0.05, seed: 213, sub: 3 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 212, amount: 0.4 });
+  softLine(ctx, B, [hx - hr * 0.78, hy - hr * 0.7, hx + hr * 0.82, hy - hr * 0.68], shade('#6e3a2a', p.tone), Math.max(1, hr * 0.14), 0.8);
+  // Three arrows loose in the near hand, points down, the fletchings standing above the fist.
+  const w = near[2];
+  for (let i = 0; i < 3; i++) {
+    const dx = (i - 1) * h * 0.012;
+    stroke(ctx, [w.x + dx - h * 0.01, w.y - h * 0.09, w.x + dx + h * 0.04, w.y + h * 0.17], R.wood, Math.max(1, h * 0.008));
+    if (!B.override) {
+      ctx.fillStyle = B.col(shade(i === 1 ? '#d8d0b0' : '#8a3a30', p.tone));
+      ctx.beginPath(); ctx.moveTo(w.x + dx - h * 0.01, w.y - h * 0.09); ctx.lineTo(w.x + dx - h * 0.018, w.y - h * 0.05); ctx.lineTo(w.x + dx - h * 0.004, w.y - h * 0.05); ctx.closePath(); ctx.fill();
     }
   }
-  return out;
-}
-
-/** Leaves scattered over a box as markings: the lighter and the dead leaves on the hedge's face. */
-function leafFlecks(ctx: CanvasRenderingContext2D, hex: string, x0: number, y0: number, w: number, hh: number, r: number, n: number, seed: number, alpha: number): void {
-  const parts: Part[] = [];
-  for (let i = 0; i < n; i++) parts.push({ k: 'ell', x: x0 + rnd(seed, i, 1) * w, y: y0 + rnd(seed, i, 2) * hh, rx: r, ry: r * 0.5, rot: rnd(seed, i, 3) * Math.PI * 2 });
-  patch(ctx, B, hex, parts, { alpha, feather: 0.2 });
+  hand(ctx, R, w, Math.PI * 0.42, 214, { flip: 1 });
+  void p.light;
 }
 
 /**
- * The hedge archer's cloak: foliage from the crown of the hood to below the knee, its whole edge
- * made of leaves, so the man's line breaks up from head to foot. One mass, darker undergrowth low
- * down, lighter and dead leaves on its face, and sprays standing off the hood and the shoulders.
+ * A hare hung head down by its hind legs from a belt at (bx, by): the hind legs up to the knot, a
+ * long body against the thigh, the head and the long ears hanging at the bottom. One mass of fur,
+ * so it is part of the man's silhouette and never a thing apart.
  */
-function hedgeCloak(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, sway: number): void {
-  const { h, hx, hy, hr, sy, x, y } = R;
-  const c = hedgePalette(p), lr = h * 0.03;
-  const hem = y - h * 0.2;
-  // The outline, round from the far shoulder over the hood, down the near side and back along a
-  // ragged hem just below the knee.
-  const edge = [
-    R.sFar.x - h * 0.05, sy + h * 0.06, R.sFar.x - h * 0.02, sy - h * 0.02, hx - hr * 1.35, hy - hr * 0.2,
-    hx - hr * 0.9, hy - hr * 1.4, hx + hr * 0.2, hy - hr * 1.8, hx + hr * 1.2, hy - hr * 1.2, hx + hr * 1.35, hy,
-    R.sNear.x + h * 0.03, sy - h * 0.01, R.sNear.x + h * 0.05, sy + h * 0.1, x + h * 0.19, y - h * 0.5,
-    x + h * 0.2, hem, x + h * 0.06, hem + h * 0.02, x - h * 0.08, hem - h * 0.01, x - h * 0.19, hem,
-    x - h * 0.18, y - h * 0.5, R.sFar.x - h * 0.05, sy + h * 0.06,
-  ];
-  const parts: Part[] = [{ k: 'curve', pts: edge.slice(0, -2), wobble: 0.08, spiky: 0.2, seed: 81, sub: 3 }];
-  leavesAlong(edge, lr, 82, parts);
-  // Sprays off the hood and the near shoulder: twigs of three or four leaves.
-  for (const [bx, by, a, n] of [[hx + hr * 0.9, hy - hr * 1.4, -0.6, 4], [hx - hr * 0.7, hy - hr * 1.5, -2.2, 3], [R.sNear.x + h * 0.04, sy, -0.5, 3]] as const) {
-    for (let i = 0; i < n; i++) {
-      const d = hr * (0.45 + i * 0.4), aa = a + (i % 2 ? 0.4 : -0.35);
-      parts.push({ k: 'ell', x: bx + Math.cos(a) * d + (i === n - 1 ? sway : 0), y: by + Math.sin(a) * d, rx: lr * 1.1, ry: lr * 0.55, rot: aa });
-    }
-  }
-  blob(ctx, B, c.leaf, parts, { h, formK: 0.5, spread: 0.75, tex: 'fur', seed: 83, amount: 0.35 });
-  if (B.override) return;
-  // Undergrowth: the lower cloak in the dark of the hedge bottom.
-  patch(ctx, B, c.under, [{ k: 'curve', pts: [x - h * 0.17, y - h * 0.46, x + h * 0.17, y - h * 0.46, x + h * 0.18, hem, x - h * 0.18, hem], wobble: 0.1, spiky: 0.2, seed: 84, sub: 2 }], { alpha: 0.6, feather: 0.6 });
-  // The face of the hedge: young leaves catching the light, dead ones among them.
-  leafFlecks(ctx, c.young, x - h * 0.16, sy - h * 0.02, h * 0.32, h * 0.36, lr * 0.9, 16, 85, 0.85);
-  leafFlecks(ctx, c.dead, x - h * 0.16, sy + h * 0.1, h * 0.32, h * 0.36, lr * 0.85, 8, 86, 0.8);
-  leafFlecks(ctx, c.young, hx - hr * 1.1, hy - hr * 1.6, hr * 2.2, hr * 0.8, lr * 0.8, 5, 87, 0.85);
-}
-
-/** Leaves along the raised bow arm, from the shoulder out past the elbow. */
-function leafSleeve(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, far: Arm): void {
-  const c = hedgePalette(p), lr = R.h * 0.026;
-  const parts = leavesAlong([far[0].x, far[0].y, far[1].x, far[1].y, (far[1].x + far[2].x) / 2, (far[1].y + far[2].y) / 2], lr, 91);
-  blob(ctx, B, c.leaf, parts, { h: R.h, formK: 0.5, spread: 0.7 });
-  if (!B.override) leafFlecks(ctx, c.young, far[1].x - lr * 2, far[1].y - lr * 2, lr * 4, lr * 4, lr * 0.8, 3, 92, 0.85);
-}
-
-/** Leaves across one side of the face and the jaw, so only an eye and a brow look out of the hedge. */
-function faceLeaves(ctx: CanvasRenderingContext2D, R: Rig, p: Paint): void {
-  const { hx, hy, hr } = R, c = hedgePalette(p);
-  const parts = leavesAlong([hx - hr * 1.05, hy - hr * 0.1, hx - hr * 0.6, hy + hr * 0.6, hx + hr * 0.1, hy + hr * 0.95, hx + hr * 0.8, hy + hr * 0.75], hr * 0.34, 95);
-  blob(ctx, B, c.leaf, parts, { h: R.h, formK: 0.5, spread: 0.7 });
-  if (!B.override) leafFlecks(ctx, c.young, hx - hr * 0.9, hy + hr * 0.2, hr * 1.4, hr * 0.6, hr * 0.26, 3, 96, 0.85);
-}
-
-/** A few leaves bound to the bow's limbs and tucked in the top of the quiver. */
-function bowLeaves(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, at: Pt, sway: number): void {
-  const { h, x, sy } = R, c = hedgePalette(p), lr = h * 0.022;
-  const parts: Part[] = [];
-  for (const [bx, by] of [[at.x + h * 0.035, at.y - h * 0.2], [at.x + h * 0.03, at.y + h * 0.18]]) leavesAlong([bx - lr, by - lr, bx + lr, by + lr * 1.5], lr, 97, parts);
-  leavesAlong([x + h * 0.19, sy - h * 0.1 + sway * 0.2, x + h * 0.23, sy - h * 0.14], lr, 98, parts);
-  blob(ctx, B, c.leaf, parts, { h, formK: 0.5, spread: 0.7 });
+function hare(ctx: CanvasRenderingContext2D, R: Rig, bx: number, by: number, h: number, fur: string, pale: string, sway: number): void {
+  const s = sway * 0.6, body = { x: bx - h * 0.01 + s, y: by + h * 0.14 }, head = { x: bx - h * 0.014 + s * 1.4, y: by + h * 0.27 };
+  blob(ctx, B, fur, [
+    tube([bx - h * 0.01, by, bx - h * 0.004, by + h * 0.05, body.x - h * 0.012, body.y - h * 0.04], h * 0.011, h * 0.016, 0.05, 221),
+    tube([bx + h * 0.012, by, bx + h * 0.02, by + h * 0.05, body.x + h * 0.014, body.y - h * 0.04], h * 0.011, h * 0.016, 0.05, 222),
+    { k: 'ell', x: body.x, y: body.y, rx: h * 0.044, ry: h * 0.085 },
+    { k: 'ell', x: head.x, y: head.y, rx: h * 0.03, ry: h * 0.036, rot: 0.1 },
+    tube([head.x - h * 0.008, head.y + h * 0.02, head.x - h * 0.024 + s, head.y + h * 0.12], h * 0.011, h * 0.007, 0.05, 223),
+    tube([head.x + h * 0.008, head.y + h * 0.02, head.x + h * 0.014 + s, head.y + h * 0.12], h * 0.011, h * 0.007, 0.05, 224),
+  ], { h, formK: 0.5, spread: 0.75, tex: 'fur', seed: 221, amount: 0.5 });
+  patch(ctx, B, pale, [{ k: 'ell', x: body.x + h * 0.01, y: body.y + h * 0.01, rx: h * 0.018, ry: h * 0.05 }], { alpha: 0.6, feather: 0.6 });
+  if (!B.override && h >= 60) { ctx.fillStyle = '#1a1210'; ctx.fillRect(Math.round(head.x + h * 0.006), Math.round(head.y), 1, 1); }
+  stroke(ctx, [bx - h * 0.02, by + h * 0.004, bx + h * 0.024, by + h * 0.004], R.strap, Math.max(1, h * 0.01));
 }
 
 /**

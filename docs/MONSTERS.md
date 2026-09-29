@@ -502,7 +502,7 @@ Crowness Light.
 | Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
 | Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
 | Footpad | bandit | soldier, 3 | the Salt Road, two with a hedge archer | *A short blade, and a coat taken off someone better dressed.* |
-| Hedge Archer | bandit | archer, 3 | beside the footpads | *A bow in the hedge, and the hedge moves.* |
+| Poacher | bandit | archer, 3 | the field edges, beside the footpads | *A longbow taller than he is, and one of the Queen's hares at his belt.* |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
