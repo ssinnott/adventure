@@ -239,10 +239,9 @@ settled in its issue, and what the pilot teaches changes them.
 - **Encounters** are MONSTERS §5.4's roster and fights, with Thornmark's own monsters (§5.3) where
   its forest runs on. A group is about one of MONSTERS §4.4's standard encounters. The old wood's
   numbers came with its drawings (#48) and are drafts: the gate sets them (§8).
-- **Pay.** The Deepthorn owes about 2,870 xp a member (§8). The shares below add up to 3,440, what
-  it owed before #219's side quests, for the curve to settle (#31) and the gate to check (#38); they
-  were cut against 5,420, scaled down when the Cut Stone's retune (#148) raised Thornmark's clear,
-  and are scaled down again, by the same fraction, as each box is measured.
+- **Pay.** The Deepthorn owes about 3,440 xp a member and 1,200 gold (§8). The shares below add up
+  to the xp, for the curve to settle (#31) and the gate to check (#38); they were cut against 5,420
+  and scaled down when the Cut Stone's retune (#148) raised Thornmark's clear.
 - **Side quests** are #56's, placed as §6 has them.
 - **Finds** are the top of Act I's gear ladder (§8): each is an item already or a named one, and its
   box's issue places it.
@@ -549,17 +548,19 @@ I5.
 - **Experience.** A clear of Thornmark pays 10,227 xp a member on main (§3), the Lanterns' quests
   (#146) in it, and 10,794 with #219's side quests. The curve (EXPANSION §5.2, #31) asks the climb
   from 5 to 10 over 0.75, 13,667 (`src/content/progression.ts:38`). The Deepthorn is where the other
-  2,870 or so come from, shared among the boxes as §4.1 has it: H3 410, I3 470, I4 890, J4 470, I5
-  360 and J5 830, the first shares scaled down by the same fraction when #148 raised the clear; they
-  add up to 3,440, and are to be scaled again for #219's. Until the boxes are built the curve
-  reports the shortfall as owed to #26. A den's keepers pay once, and its brood as a group that
-  respawns does; the figures count the brood once. Act II's cap and curve (#159) are to pay a kill
-  by the monster's level against the member's, which re-prices every figure here if they land first;
-  each box is measured when it is built.
+  3,440 or so come from, shared among the boxes as §4.1 has it: H3 410, I3 470, I4 890, J4 470, I5
+  360 and J5 830, the first shares scaled down by the same fraction when #148 raised the clear.
+  #219's 567 are not taken off: they are all Leofwin's band and Thora's, and a company fights one at
+  most, the peaceful ways neither, so the Deepthorn's share does not pay for fights most companies
+  never have. Until the boxes are built the curve reports the shortfall as owed to #26. A den's
+  keepers pay once, and its brood as a group that respawns does; the figures count the brood once.
+  Act II's cap and curve (#159) are to pay a kill by the monster's level against the member's, which
+  re-prices every figure here if they land first; each box is measured when it is built.
 - **Gold.** A clear pays 6,518 of the 8,400 that training six members from 5 to 10 costs (§3), the
-  Lanterns' quests in it, and 7,600 with #219's side quests. The Deepthorn's share of the rest,
-  about 800 now, was set at 1,900 before #219: H3 250, I3 270, I4 430, J4 250, I5 150 and J5 530, in
-  its chests, cairns and hoards, the Hand's drops at the landing and the side quests' pay.
+  Lanterns' quests in it, and 7,600 with #219's side quests. The Deepthorn's share of the rest is
+  about 1,200, the 1,900 it was less the two hand-ins' sure 700 (#219): H3 160, I3 170, I4 275, J4
+  160, I5 95 and J5 340, in its chests, cairns and hoards, the Hand's drops at the landing and the
+  side quests' pay.
 - **The gate.** Each box is held to its band as it is built (`tools/tests/gate.ts`): at 8 a box's
   groups are won nine fights in ten, and the Eldest about half the time at 8 and nearly always at
   10. The area as one pools each group at its own map's floor (#209), so the Deepthorn's groups
