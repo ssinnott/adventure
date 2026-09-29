@@ -834,3 +834,4 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 07:10: #263's landing check on 304ee61 (main 2cc52cd in): ALL OK (45 owed: the five new monsters
   owed to #47 until F2 places them), SMOKE OK, "Nothing new."; CI green. It lands on the owner's OK
   of the Hedge Archer.
+- 08:07: nothing of Phase 1's moved; #263 waits on the owner's OK. A new branch `claude/phase-1-2-docs` (07:13) is not ours (Act II's docs); left alone.
