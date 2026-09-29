@@ -967,3 +967,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   is archived), #268 and #271 (not approved).
 - First batch to the delegate (13:40): the aim-and-limit gate issue; #271; #268; #47's E without
   the owner's play; #208.
+- 13:45: the pilot pushed 86777ac ("Merge main, with the Downs' own drawings and the Poacher"): no
+  `src/ui/` file differs from main, no "hedge archer" left, shipped.json only adds F2's (the zone,
+  five groups, eight features, the sett's door), `mill:m_warden: floor` re-keyed to #87. Landing
+  check on 86777ac (main 92e14f5 in): ALL OK (36 owed), SMOKE OK, "Nothing new.", labels ok over 4,836
+  fights; downs_f2 at 2: 99.6% won, 6.44 fights to a rest; the Foreland at 1: 89.4% (owed). CI green.
+  Tree 224f968. The sheet (`sheet145f.png`) shows the void pink south of F2 where F3 is not built:
+  `VOID_PINK`, by design. The art OK and #145's choices put to a delegate (13:47).
