@@ -378,7 +378,7 @@ over content broken on purpose too, and two tools to theirs:
   fought at its own map's floor: nine fights in ten won at the floor, a quarter at most two under it
   (of a map whose floor is its area's, and of the area, a zone map's groups two under its own floor
   and a town's or dungeon's two under the area's), a boss three to seven times in ten, 6.5 fights to
-  a rest give or take one, its bosses left out of the day, and each zone's road walked at its floor
+  a rest give or take one, its bosses left out of the day and each zone's road walked at its floor
   eight times in ten, its nearest groups at its way in among its gentlest. A group that walks only
   in fog is fought with the bows' toll; one that waits on an `after` is no warning at the way in.
   Each figure has an aim (these) and a limit beyond it (#273): between the two it passes and is

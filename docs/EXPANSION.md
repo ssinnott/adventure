@@ -272,7 +272,7 @@ The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **ai
 and the check lists it as off its aim; past its limit it fails, and only then is it owed. The first
 limits, the pilot's to settle against the owner's own play (#47): 80% won at the floor, 90% two
 under, the road walked 65% of the time, a boss 20% to 80% at its floor and 75% two above, 4 to 10
-fights to a rest, and the warning's nearest groups ten points under the median.
+fights to a rest and the warning's nearest groups ten points under the median.
 
 - **At the floor, through.** A company at each map's own floor wins nine in ten of that map's
   fights, and of the area's, each fought at its map's floor; each zone's road is walked at the

@@ -13,7 +13,7 @@ are measured on this branch at `5092f9c`.*
 Three jobs. Where they pull apart, the earlier one wins.
 
 1. **They are the gate.** Nothing on the road is locked (EXPANSION.md §2.2): what turns a company
-   back is the monsters. An area's monsters let a company at its band's floor through and turn one
+   back is the monsters. An area's monsters let a company at each map's floor through and turn one
    two levels under it back (EXPANSION.md §5.2), and they do it by what they are and who they stand
    with, not by their numbers alone (DESIGN.md §6).
 2. **They carry the secret.** The road starts among beasts and people and ends among machines, and
@@ -287,8 +287,8 @@ heavier is both lost at 3 and cheap at 6. Elsewhere they are fewer and harder, a
 (the owner, on #40).
 
 The gate holds each of these figures to an aim and a limit beyond it (EXPANSION.md §5.2, #273): six
-or seven fights to a rest is the aim, and a map between four and ten passes, listed as off its aim;
-only past its limit does it fail. Tune to the aim, not to the decimal.
+or seven fights to a rest is the aim; a map outside it but between four and ten passes, and is listed
+as off its aim; only past its limit does it fail. Tune to the aim, not to the decimal.
 
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then

@@ -235,7 +235,7 @@ export function gate(): void {
     const three = ['smuggler_captain', 'smuggler_captain', 'smuggler_captain'], fair = denReading(camp(three, ['rat']), den, 1), wrong = denReading(camp(['rat'], three), den, 1);
     ok(!fair.fault && wrong.fault.includes('b'), `a den whose brood is harder than its keepers is caught (${fair.line}; ${wrong.fault})`);
     // An area whose second zone rises above its first: each map is judged at its own floor, so it
-    // holds where each holds, and fails where one does not, at its floor or two under it.
+    // holds its aims where each holds, and misses them where one does not, at its floor or two under it.
     const box = (id: string, band: [number, number], ...groups: string[][]): MapDef => ({ id, name: '', kind: 'outdoor', band, start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: groups.map((monsters, i) => ({ id: `${id}${i}`, x: i, y: 0, monsters })) });
     // A dungeon of three rats at 3-4 counts two under the area's floor, where no group has a company:
     // judged two under its own floor instead, it would be won at 1 and pull the back over its aim.
