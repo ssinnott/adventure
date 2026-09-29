@@ -784,3 +784,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   new."; CI green; main's tree is the head's (946dbd2). #40 closes; its session is done for Phase 1.
 - #262 merges onto 9462c89 cleanly (SLICE auto-merged); the landing check on that merge started
   01:58.
+- #262 (#77's B, the Seal) merged at 01:59 (main 12956d4): its head b3b8418 merged onto 9462c89
+  cleanly, and that tree tested ALL OK (40 owed), SMOKE OK, "Nothing new."; CI green on the head;
+  main's tree is the tested merge's (537049c). #77 stays open; D (the Well) started at 02:02 on
+  `claude/m1-77-well`; C after the pilot's B.
