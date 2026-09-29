@@ -115,6 +115,8 @@ const combatColours = await colours();
 await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornmark', 6, 8, 3); g.enterCell(); });
 await page.waitForTimeout(150);
 const thornColours = await colours();
+// The ogre's band as the view draws it before the fight: each of its kinds, to three (world.ts, groupDrawn).
+const ogreView = await page.evaluate(() => { const g = (window as any).__game.game, band = g.world.liveGroups().find((q: any) => q.def.id === 'tm_ogre'); return band ? (g.monstersAt(band.state.x, band.state.y) ?? []).map((m: any) => m.id).join(',') : 'no tm_ogre'; });
 await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['tm_ogre', 'tm_wraiths']); });
 await page.waitForTimeout(150);
 const thornFight = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, monsters: g.top.state.monsters.map((m: any) => m.def.sprite).join(','), labels: g.top.labels.map((l: any) => l.text).join(' | ') }; });
@@ -639,6 +641,7 @@ ok(exploreColours > 20, `the viewport, automap and party cards painted (${explor
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
+ok(ogreView === 'ogre,brigand_archer,brigand', `before the fight the view draws the ogre's band as each of its kinds (${ogreView})`);
 // The ogre's band is mixed: its label names each kind with its count, as painted (ui/grouplabels.ts).
 ok(thornFight.labels.startsWith('1 Ogre, 1 Brigand Archer, 3 Brigands'), `a mixed band's label names each kind with its count (${thornFight.labels})`);
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);

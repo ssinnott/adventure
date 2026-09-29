@@ -66,8 +66,10 @@ DESIGN.md first for the why.
   hours (by night), once their `after` holds and until their `until` does, so one person can stand
   in two places, one at a time, and a once-event by night is not spent by day (`World.present`; the
   automap shows only who is there). The Foreland's side quests are built on them (#77).
-- **A monster's look.** The first time a company sees a kind, as the viewport draws it (the group's
-  first monster, in line of sight), or meets one in a fight unseen, the log says its `look`, once.
+- **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
+  of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
+  once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
+  then the rest (`groupDrawn`, `game/world.ts`), so the archer among the brigands is seen.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
   journal of what the party has found. The main quest is one, The Dimming, joined from each area's
   chapter in road order (EXPANSION §5.8): The Quiet Farm (Vask) and The Grove Stone (Vask's lead,
@@ -427,6 +429,8 @@ over content broken on purpose too, and two tools to theirs:
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
+- `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
+  band seen ahead is met as each kind drawn.
 - `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
   together, labelled with each kind and its count of the living. A kind leaves the label when its
   last one falls; every line stays inside the view and above the monsters' markers, running into
