@@ -286,6 +286,10 @@ does Thornmark's 3, its groups may be many and thin to hold the gate: ten or twe
 heavier is both lost at 3 and cheap at 6. Elsewhere they are fewer and harder, as in the Cut Stone
 (the owner, on #40).
 
+The gate holds each of these figures to an aim and a limit beyond it (EXPANSION.md §5.2, #273): six
+or seven fights to a rest is the aim, and a map between four and ten passes, listed as off its aim;
+only past its limit does it fail. Tune to the aim, not to the decimal.
+
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
 (the gear ladder, `GEAR`: the kits, the Foreland's band gear and its finds with a plus by 3 and 5,
