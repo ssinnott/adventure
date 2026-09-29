@@ -13,7 +13,7 @@
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
-import { blob, glossBall, glossEllipse, glossPoly, glow, softLine } from './gloss.ts';
+import { blob, glossBall, glossEllipse, glossPoly, glow, patch, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 import { shade } from '../../lib/art/palettes.ts';
 import type { Arm, Pt, Rig } from './figure.ts';
@@ -21,10 +21,12 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'hedge_archer'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  if (kind === 'archer' || kind === 'hedge_archer') archer(ctx, x, y, h, p);
+  if (kind === 'archer') archer(ctx, x, y, h, p);
+  else if (kind === 'footpad') footpad(ctx, x, y, h, p);
+  else if (kind === 'poacher') poacher(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -282,6 +284,155 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The shortbow in the raised far hand, gripped across the riser.
   const ba = bow(ctx, R, far[2], sway);
   hand(ctx, R, far[2], ba, 33, { flip: -1 });
+  void p.light;
+}
+
+/**
+ * The poacher: a Downs countryman who takes the Queen's game on her own land. He stands easy at the
+ * field edge with a yew longbow taller than he is grounded beside him in the far fist, a sheaf of
+ * arrows loose in the near hand, a broad-brimmed hat pulled low, a jerkin in the tint patched with
+ * whatever cloth came to hand over a russet shirt, and a hare hung by its hind legs from his belt.
+ */
+function poacher(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.012, hipTilt: 0.024, turn: -0.012, near: [0.07, 0.12, 0.14], far: [-0.068, -0.1, -0.12], toe: [0.8, -0.7], lift: [0, 0.02] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 23) * h * 0.005;
+  const shirt = shade('#8a4a2e', p.tone), hose = shade('#5a4632', p.tone), felt = shade('#3e3226', p.tone);
+  const yew = shade('#8a5a2a', p.tone), fur = shade('#6a5440', p.tone), furPale = shade('#c8b490', p.tone);
+  const near: Arm = [R.sNear, { x: x + h * 0.2, y: sy + h * 0.2 }, { x: x + h * 0.21, y: sy + h * 0.35 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.19 }, { x: x - h * 0.255, y: sy + h * 0.31 }];
+  const hemY = y - h * 0.4;
+  groundShadow(ctx, x - h * 0.04, y + 1, h * 0.8);
+  // The longbow, grounded by the far foot and standing a head above his hat: a D of yew, thick at
+  // the grip and fining to the horn nocks, belly to the man, the string a finger's breadth off it.
+  const bx = far[2].x - h * 0.012, top = { x: bx + h * 0.02 + sway, y: y - h * 1.2 }, bot = { x: bx - h * 0.005, y: y - h * 0.01 };
+  const grip = { x: bx - h * 0.028, y: far[2].y };
+  const mid = Math.max(h * 0.016, 1.3), tip = Math.max(h * 0.007, 0.8);
+  blob(ctx, B, yew, [
+    tube([top.x, top.y, bx - h * 0.02, (top.y + grip.y) / 2, grip.x, grip.y], tip, mid, 0, 201),
+    tube([grip.x, grip.y, bx - h * 0.018, (grip.y + bot.y) / 2, bot.x, bot.y], mid, tip, 0, 202),
+  ], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 201, amount: 0.3 });
+  stroke(ctx, [top.x + h * 0.004, top.y + h * 0.01, bot.x + h * 0.012, bot.y - h * 0.01], R.bone, 1);
+  // The far arm down to the grip, behind the body.
+  blob(ctx, B, shade(shirt, 0.72), armParts(R, far, 203, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  hand(ctx, R, far[2], Math.atan2(top.y - bot.y, top.x - bot.x), 204, { far: true, flip: 1, k: 0.95 });
+  legs(ctx, R, hose, 205, [0.8, -0.7]);
+  blob(ctx, B, R.boot, [
+    { k: 'cap', x0: x + h * 0.14, y0: y - h * 0.17, x1: x + h * 0.145, y1: y - h * 0.055, r0: h * 0.043, r1: h * 0.041 },
+    { k: 'cap', x0: x - h * 0.118, y0: y - h * 0.16, x1: x - h * 0.12, y1: y - h * 0.06, r0: h * 0.041, r1: h * 0.039 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The russet shirt's near sleeve, then the jerkin over the body, sleeveless.
+  blob(ctx, B, shirt, armParts(R, near, 206), { h, formK: 0.5, tex: 'folds', seed: 206, amount: 0.5, creases: [elbowCrease(R, near)] });
+  blob(ctx, B, p.base, [{ k: 'curve', pts: torsoPts(R, hemY), wobble: 0.04, seed: 207, sub: 3 }],
+    { h, formK: 0.5, tex: 'folds', seed: 207, amount: 0.7, creases: torsoCreases(R, hemY) });
+  // Patches of other cloth, sewn on where the jerkin wore through.
+  for (const [px, py, pw, ph, hex, seed] of [
+    [x - h * 0.08, sy + h * 0.12, h * 0.07, h * 0.06, '#7a5a3a', 208], [x + h * 0.06, sy + h * 0.2, h * 0.06, h * 0.07, '#6e3a2a', 209],
+  ] as const) {
+    blob(ctx, B, shade(hex, p.tone), [{ k: 'poly', pts: [px, py, px + pw, py + h * 0.004, px + pw - h * 0.003, py + ph, px + h * 0.002, py + ph - h * 0.004] }], { h, formK: 0.4, spread: 0.6, tex: 'stipple', seed, amount: 0.3 });
+  }
+  // Belt, and the hare hung from it at the far hip by its hind legs, head down against his thigh.
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.05, h * 0.04, 210)], { h, form: false });
+  hare(ctx, R, x - h * 0.1, hemY - h * 0.04, h, fur, furPale, sway);
+  // A stubbled face under the brim, then the hat: a low crown and a brim wide enough to shade him.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.84, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.58, hx + hr * 0.3, hy + hr * 0.58, hx + hr * 0.86, hy + hr * 0.3, hx + hr * 0.6, hy + hr * 0.9, hx, hy + hr * 1.02, hx - hr * 0.6, hy + hr * 0.9], wobble: 0.06, spiky: 0.06, seed: 211, sub: 2 }], { h, form: false, outline: false });
+  face(ctx, R, false);
+  softLine(ctx, B, [hx - hr * 0.95, hy - hr * 0.3, hx + hr * 0.95, hy - hr * 0.3], shade('#1a1410', p.tone), Math.max(1, hr * 0.3), 0.45);
+  blob(ctx, B, felt, [
+    { k: 'curve', pts: [hx - hr * 0.8, hy - hr * 0.55, hx - hr * 0.75, hy - hr * 1.2, hx - hr * 0.2, hy - hr * 1.45, hx + hr * 0.45, hy - hr * 1.38, hx + hr * 0.82, hy - hr * 1.05, hx + hr * 0.85, hy - hr * 0.55], wobble: 0.05, seed: 212, sub: 3 },
+    { k: 'curve', pts: [hx - hr * 2.0, hy - hr * 0.5, hx - hr * 1.2, hy - hr * 0.78, hx, hy - hr * 0.84, hx + hr * 1.2, hy - hr * 0.8, hx + hr * 2.0, hy - hr * 0.42, hx + hr * 1.1, hy - hr * 0.4, hx, hy - hr * 0.5, hx - hr * 1.1, hy - hr * 0.42], wobble: 0.05, seed: 213, sub: 3 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 212, amount: 0.4 });
+  softLine(ctx, B, [hx - hr * 0.78, hy - hr * 0.7, hx + hr * 0.82, hy - hr * 0.68], shade('#6e3a2a', p.tone), Math.max(1, hr * 0.14), 0.8);
+  // Three arrows loose in the near hand, points down, the fletchings standing above the fist.
+  const w = near[2];
+  for (let i = 0; i < 3; i++) {
+    const dx = (i - 1) * h * 0.012;
+    stroke(ctx, [w.x + dx - h * 0.01, w.y - h * 0.09, w.x + dx + h * 0.04, w.y + h * 0.17], R.wood, Math.max(1, h * 0.008));
+    if (!B.override) {
+      ctx.fillStyle = B.col(shade(i === 1 ? '#d8d0b0' : '#8a3a30', p.tone));
+      ctx.beginPath(); ctx.moveTo(w.x + dx - h * 0.01, w.y - h * 0.09); ctx.lineTo(w.x + dx - h * 0.018, w.y - h * 0.05); ctx.lineTo(w.x + dx - h * 0.004, w.y - h * 0.05); ctx.closePath(); ctx.fill();
+    }
+  }
+  hand(ctx, R, w, Math.PI * 0.42, 214, { flip: 1 });
+  void p.light;
+}
+
+/**
+ * A hare hung head down by its hind legs from a belt at (bx, by): the hind legs up to the knot, a
+ * long body against the thigh, the head and the long ears hanging at the bottom. One mass of fur,
+ * so it is part of the man's silhouette and never a thing apart.
+ */
+function hare(ctx: CanvasRenderingContext2D, R: Rig, bx: number, by: number, h: number, fur: string, pale: string, sway: number): void {
+  const s = sway * 0.6, body = { x: bx - h * 0.01 + s, y: by + h * 0.14 }, head = { x: bx - h * 0.014 + s * 1.4, y: by + h * 0.27 };
+  blob(ctx, B, fur, [
+    tube([bx - h * 0.01, by, bx - h * 0.004, by + h * 0.05, body.x - h * 0.012, body.y - h * 0.04], h * 0.011, h * 0.016, 0.05, 221),
+    tube([bx + h * 0.012, by, bx + h * 0.02, by + h * 0.05, body.x + h * 0.014, body.y - h * 0.04], h * 0.011, h * 0.016, 0.05, 222),
+    { k: 'ell', x: body.x, y: body.y, rx: h * 0.044, ry: h * 0.085 },
+    { k: 'ell', x: head.x, y: head.y, rx: h * 0.03, ry: h * 0.036, rot: 0.1 },
+    tube([head.x - h * 0.008, head.y + h * 0.02, head.x - h * 0.024 + s, head.y + h * 0.12], h * 0.011, h * 0.007, 0.05, 223),
+    tube([head.x + h * 0.008, head.y + h * 0.02, head.x + h * 0.014 + s, head.y + h * 0.12], h * 0.011, h * 0.007, 0.05, 224),
+  ], { h, formK: 0.5, spread: 0.75, tex: 'fur', seed: 221, amount: 0.5 });
+  patch(ctx, B, pale, [{ k: 'ell', x: body.x + h * 0.01, y: body.y + h * 0.01, rx: h * 0.018, ry: h * 0.05 }], { alpha: 0.6, feather: 0.6 });
+  if (!B.override && h >= 60) { ctx.fillStyle = '#1a1210'; ctx.fillRect(Math.round(head.x + h * 0.006), Math.round(head.y), 1, 1); }
+  stroke(ctx, [bx - h * 0.02, by + h * 0.004, bx + h * 0.024, by + h * 0.004], R.strap, Math.max(1, h * 0.01));
+}
+
+/**
+ * The footpad: a road thief who has robbed his coat off a gentleman. The coat is the tint, cut for a
+ * bigger man, to below the knee, with turned-back cuffs in a claret facing, brass buttons and braid
+ * down the front and a lace stock gone grey at the throat, all over his own rough clothes; a
+ * battered cocked hat, no mask and a short knife held low and forward in the near fist.
+ */
+function footpad(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.02, hipTilt: 0.026, turn: 0.028, near: [0.07, 0.16, 0.2], far: [-0.068, -0.085, -0.09], toe: [1, -0.6], lift: [0, 0.04] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 21) * h * 0.008;
+  const near: Arm = [R.sNear, { x: x + h * 0.27, y: sy + h * 0.19 }, { x: x + h * 0.3, y: sy + h * 0.34 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.19 }, { x: x - h * 0.205, y: sy + h * 0.35 }];
+  const hemY = y - h * 0.42, skirtY = y - h * 0.22;
+  const coat = p.base, facing = shade('#7a3432', p.tone), lace = shade('#e4e0d4', p.tone);
+  groundShadow(ctx, x, y + 1, h * 0.76);
+  blob(ctx, B, shade(p.dark, 0.86), armParts(R, far, 171, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  hand(ctx, R, far[2], null, 172, { far: true, k: 0.92 });
+  legs(ctx, R, shade('#3a3630', p.tone), 173, [1, -0.6]);
+  blob(ctx, B, R.boot, [
+    { k: 'cap', x0: x + h * 0.196, y0: y - h * 0.18, x1: x + h * 0.2, y1: y - h * 0.055, r0: h * 0.044, r1: h * 0.042 },
+    { k: 'cap', x0: x - h * 0.088, y0: y - h * 0.17, x1: x - h * 0.09, y1: y - h * 0.065, r0: h * 0.041, r1: h * 0.039 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The coat: body, near sleeve and long skirts, too big for him, open at the front.
+  blob(ctx, B, coat, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 174, sub: 3 },
+    { k: 'curve', pts: [
+      x - h * 0.13, hemY - h * 0.1, x - h * 0.17, hemY - h * 0.02, x - h * 0.2, skirtY,
+      x - h * 0.06, skirtY + h * 0.02, x + h * 0.02, skirtY - h * 0.02, x + h * 0.08, skirtY + h * 0.012, x + h * 0.21, skirtY - h * 0.01,
+      x + h * 0.17, hemY - h * 0.02, x + h * 0.14, hemY - h * 0.1,
+    ], wobble: 0.05, seed: 175, sub: 3 },
+    ...armParts(R, near, 176),
+  ], { h, formK: 0.5, tex: 'folds', seed: 174, amount: 0.8, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The front edge in braid, and a row of brass buttons: the one thing on him worth money.
+  softLine(ctx, B, [x + h * 0.014, sy + h * 0.05, x + h * 0.02, hemY, x + h * 0.03, skirtY], R.brass, Math.max(1, h * 0.012), 0.8);
+  for (let i = 0; i < 4; i++) glossBall(ctx, B, x + h * 0.04, sy + h * (0.08 + i * 0.07), Math.max(1, h * 0.012), R.brass, { gloss: 0.6 });
+  // The deep cuff turned back on the near sleeve, in the claret facing.
+  const e = near[1], w = near[2], cu = (t: number): number[] => [e.x + (w.x - e.x) * t, e.y + (w.y - e.y) * t];
+  blob(ctx, B, facing, [tube([...cu(0.6), ...cu(0.88)], h * 0.036, h * 0.044, 0, 177)], { h, formK: 0.5, spread: 0.7 });
+  // The lace stock at the throat, rumpled and grey with the road.
+  blob(ctx, B, lace, [{ k: 'curve', pts: [hx - hr * 0.5, hy + hr * 1.55, hx + hr * 0.55, hy + hr * 1.5, hx + hr * 0.45, hy + hr * 2.2, hx + hr * 0.05, hy + hr * 2.6, hx - hr * 0.3, hy + hr * 2.2], wobble: 0.08, spiky: 0.14, seed: 178, sub: 2 }],
+    { h, formK: 0.4, spread: 0.7, tex: 'folds', seed: 178, amount: 0.4 });
+  // Stubble, the face and a cocked hat gone shapeless in the rain.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.84, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.58, hx + hr * 0.3, hy + hr * 0.58, hx + hr * 0.86, hy + hr * 0.3, hx + hr * 0.6, hy + hr * 0.9, hx, hy + hr * 1.02, hx - hr * 0.6, hy + hr * 0.9], wobble: 0.06, spiky: 0.06, seed: 179, sub: 2 }], { h, form: false, outline: false });
+  face(ctx, R, false, true);
+  blob(ctx, B, shade('#2a2622', p.tone), [
+    { k: 'curve', pts: [hx - hr * 0.9, hy - hr * 0.6, hx - hr * 0.7, hy - hr * 1.35, hx, hy - hr * 1.6, hx + hr * 0.75, hy - hr * 1.35, hx + hr * 0.95, hy - hr * 0.6], wobble: 0.04, seed: 180, sub: 3 },
+    { k: 'curve', pts: [
+      hx - hr * 1.65, hy - hr * 0.45 + sway, hx - hr * 1.1, hy - hr * 1.15, hx - hr * 0.3, hy - hr * 0.9, hx + hr * 0.5, hy - hr * 1.2,
+      hx + hr * 1.6, hy - hr * 0.7, hx + hr * 1.0, hy - hr * 0.5, hx + hr * 0.2, hy - hr * 0.38, hx - hr * 0.8, hy - hr * 0.5,
+    ], wobble: 0.05, seed: 181, sub: 3 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 180, amount: 0.4 });
+  // The short blade, held low and forward, point up a little: a knife for close work.
+  const ka = blade(ctx, R, near[2], near[2].x + h * 0.15, near[2].y - h * 0.03, h * 0.014, h * 0.03);
+  hand(ctx, R, near[2], ka, 182, { flip: -1 });
   void p.light;
 }
 

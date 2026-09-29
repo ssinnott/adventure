@@ -235,7 +235,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     on its west side for the boar. A scarecrow in the south-west fields and a view back over the
     Foreland from the north-east rise make up the country's floor.
   - The brief's groups, of the Downs' own monsters (§7): six crows, three Chalk Wolves, a Tusker,
-    five Barn Rats, two Footpads and a Hedge Archer. At level 2 the company wins every fight and
+    five Barn Rats, two Footpads and a Poacher. At level 2 the company wins every fight and
     manages 6.4 fights to a rest; with the Foreland's own wolves, boar, rats and bandits the same
     lines gave 19.6. They pay about 142 xp a member.
   - Density: 94% of its 777 squares within 12 steps of something, the furthest 15.
@@ -519,7 +519,7 @@ four wreckers on the Salt Road on a foggy night; the Berth, the Downs' hardest p
 are #46.
 
 The Downs' wolves, boars, rats and road bandits are their own: the Chalk Wolf, the Tusker, the Barn
-Rat, the Footpad and the Hedge Archer, variants on the Foreland's frames statted on MONSTERS §4.4's
+Rat, the Footpad and the Poacher, variants on the Foreland's frames statted on MONSTERS §4.4's
 line (§5.2's table), so a group of the brief's size holds the gate. The Foreland's own stay as they
 are, and every later box uses these where its brief says wolves, a boar, rats, bandits or archers.
 

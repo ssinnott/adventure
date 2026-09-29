@@ -419,6 +419,10 @@ over content broken on purpose too, and two tools to theirs:
   #47 and the Deepthorn's to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
+- `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
+  together, labelled with each kind and its count of the living. A kind leaves the label when its
+  last one falls; every line stays inside the view and above the monsters' markers, running into
+  no other.
 - `art` (§5.6): every monster def its own sprite kind, and the walls dressed under their caps, each
   kind at its rate; a secret door outdoors among mountain, rock or trees drawn as they are
   (`drawnCell`), and any other door, or one in a wall or a town, left a door.
@@ -502,6 +506,7 @@ does.
 | `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`) and a guild's work at its hall, and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
+| `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living, laid out inside the view; pure |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
