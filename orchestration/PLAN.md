@@ -853,3 +853,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   main a434a53 (the owner merged #267, Act II's docs, at about 11:30).
 - Still with the owner: #209 (approve; run after F2), close #46, the KINDS/FAMILY check, scouting
   #67 and #68 now.
+- The owner (11:40): "209 is good too". `approved` put on #209 at the owner's word. A scout on it
+  at 11:41 (`footprints/209.md`); it builds after the pilot's F2 lands (both edit the gate's `OWED`),
+  in a free quality session.
