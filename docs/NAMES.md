@@ -23,7 +23,7 @@ built or given a naming pass of its own.
 | People | Their country | Modelled on | Name parts |
 |---|---|---|---|
 | The Foreland folk, the Crown's own | the Foreland | English place-names, Old English and Old Norse | -stow (place), -wick and wyke (bay, landing), -ness (headland), -combe (valley), -by (farm), -holt (wood), scarth (notch), -don and down (hill), hole (sea cave), harbour (shelter), mew (gull), brock (badger), callow (bare), kestrel, crow |
-| Thornmark's elves | Thornmark, the Deepthorn | to choose, with Thornmark's naming pass | |
+| Thornmark's elves | Thornmark, the Deepthorn | Cornish, the older British of the far west: short parts, spelled as they are said. A few of the Foreland's oldest people carry names of it | pen (head), hen (old), lys (court), coos (wood), dar (oak), spern (thorns), kelli (grove), lyn (pool), dowr (water), rid (ford), hir (long), du (dark), gwyn (white) |
 | The Tidefolk | Saltreach: the fen, the villages, the temples' island | Frisian, the low coast of dykes and tidal flats | wierde (a mound above the flood), -um (home), riet (reed), syl (a sluice, a way through), diep (channel), skor (salt marsh), wad (tidal flat), meer (a broad water), stien (stone), hol (hollow, cave), sjong (song), tel (count), dyk (dyke), salt |
 | The dwarves | the Kilns | to choose, beside Kiln-script | |
 | The Wold Riders | the Glasswold | to choose | |
@@ -48,6 +48,10 @@ built or given a naming pass of its own.
 
 - **The Foreland** (step I, once the Shelf): named on 27 September 2026. `docs/areas/shelf.md` §10
   has its names, what each means and what it replaced.
+- **Thornmark** (step II): named on 29 September 2026 (#211). `docs/areas/thornmark.md` §10 has the
+  elves' tongue, its names, what each means and what it replaced. Thornmark, Thornhold, the
+  Deepthorn and Deepthorn Lodge keep the Crown's English, each a place and the one it lends its
+  name to.
 - **Saltreach** (step III): named on 29 September 2026 with its area doc. `docs/areas/saltreach.md`
   §10 has the tongue, its names, what each means and what it replaced. Its port and its road keep
   the Crown's English (Saltreach, Saltmouth, the Saltings), as the Foreland kept a few old names.
