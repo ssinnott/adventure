@@ -421,6 +421,8 @@ over content broken on purpose too, and two tools to theirs:
   #47 and the Deepthorn's to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
+- `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
+  font, so none is painted as nothing.
 - `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
   together, labelled with each kind and its count of the living. A kind leaves the label when its
   last one falls; every line stays inside the view and above the monsters' markers, running into
