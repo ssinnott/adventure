@@ -75,7 +75,7 @@ export const THORNMARK: MapDef = {
     // The side quests (#219); their givers are in Thornhold.
     // A Coin Not From Caldera: Leofwin's camp in the trees north of the bridge, and him there once
     // Tegen has sent the company; his answer sends him off, or brings his band.
-    { kind: 'event', x: 16, y: 15, id: 'tm_camp', once: true, text: 'A camp in the trees: a fire, a lean-to, and a Warden cloak with the badge cut off, hung up to dry.' },
+    { kind: 'event', x: 16, y: 15, id: 'tm_camp', once: true, until: [{ flag: 'q_coin_walk' }, { flag: 'q_coin_fight', slain: 'thornmark:tm_deserters' }], text: 'A camp in the trees: a fire, a lean-to, and a Warden cloak with the badge cut off, hung up to dry.' },
     { kind: 'npc', x: 17, y: 15, name: 'Leofwin, once of Hale\'s post', lines: [
       'A man in a brigand\'s coat over Warden breeches looks up from the fire, sees six of you, and does not reach for anything; he has been a soldier, and he can count.',
       '"The coin. Tegen\'s sent you; she said she would." He turns his own on his knuckles, grey and faceless. "Leofwin. I had the Scarth under Hale till the pay stopped coming and the orders got strange, and then I had the road. A man\'s got to eat, and the road eats better than the post."',
@@ -115,11 +115,11 @@ export const THORNMARK: MapDef = {
       '"You again." He holds out a grey, faceless coin, and takes it back. "No good to me, and no good to you, and I\'ll keep it anyway. A man ought to have something to show for a stack of charcoal." He looks up the pass. "They\'ll let me through when it suits them. Everything does, lately."',
     ], after: { flag: 'q_trees_home' } },
     // The Dark Glass: the marker's crown on the lake's far shore, and its glass.
-    { kind: 'event', x: 29, y: 24, id: 'tm_far_shore', once: true, text: 'The marker\'s crown: a brass cage round a disc of glass, not dark but black, the way a full inkwell is black.' },
+    { kind: 'event', x: 29, y: 24, id: 'tm_far_shore', once: true, until: [{ flag: 'q_glass_told' }, { flag: 'q_glass_kept' }], text: 'The marker\'s crown: a brass cage round a disc of glass, not dark but black, the way a full inkwell is black.' },
     { kind: 'chest', x: 30, y: 24, id: 'tm_glass', gold: 0, items: ['marker_glass'] },
     // Terms From the Brigands: Thora's camp in the trees north-east of the sign, and her there once
     // Sylvane has told the company of her terms, until it answers her.
-    { kind: 'event', x: 18, y: 5, id: 'tm_thora_camp', once: true, text: 'Lean-tos of Foreland thatch, a plough without an ox, and children who stop playing, and do not run.' },
+    { kind: 'event', x: 18, y: 5, id: 'tm_thora_camp', once: true, until: [{ flag: 'q_terms_taken' }, { flag: 'q_terms_refuse' }], text: 'Lean-tos of Foreland thatch, a plough without an ox, and children who stop playing, and do not run.' },
     { kind: 'npc', x: 18, y: 4, name: 'Thora, who leads the camp', lines: [
       'A broad woman with a Foreland farmer\'s hands and a Warden\'s sword stands up from the fire, and the camp stands up behind her.',
       '"You\'ve come from the Elder. She sent me back with my branch, so she\'s sent you with your swords; I know how it goes. Look at them before you draw. That\'s Aldwick, Stanton and Hurst, or was. The Regent\'s men came for the winter corn, and then the seed corn, and then the roof-beams. We came east because east was the only way the Wardens weren\'t."',
@@ -138,7 +138,7 @@ export const THORNMARK: MapDef = {
     // The Mender: her camp turned over on the Grove road once Sylvane has sent for her, Edith in the
     // Grove's hollow until the tear is shut with her kit in hand (then she is by the Stone), and
     // the kit at the zealots' camp in the hollow's lee.
-    { kind: 'event', x: 12, y: 20, id: 'tm_mender_camp', once: true, after: { flag: 'q_grove_done' }, text: 'A Lantern\'s camp, turned over: the tent slashed, and straps cut where something heavy was carried off.' },
+    { kind: 'event', x: 13, y: 20, id: 'tm_mender_camp', once: true, after: { flag: 'q_grove_done' }, text: 'A Lantern\'s camp, turned over: the tent slashed, and straps cut where something heavy was carried off.' },
     { kind: 'npc', x: 5, y: 27, name: 'Edith, Reader of the Guildhall', lines: [
       'A Lantern in a Reader\'s grey sits in the roots at the hollow\'s edge, where the oaks lean in, with a stone in her hand that she has been ready to throw for a day and a night.',
       '"Company. Chartered. Sylvane\'s?" She puts the stone down. "Edith, Reader, of the Guildhall, sent for to mend a Stone, which nobody alive has done, and which I have read of in a book older than the Chapel roof. I got as far as the road. Then men in grey took my kit and left me my life, and I\'ve sat in these roots wondering which of the two they wanted."',

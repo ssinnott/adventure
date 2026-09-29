@@ -45,10 +45,10 @@ export const GROVE1: MapDef = {
     { kind: 'chest', x: 10, y: 3, id: 'g1_c2', gold: 150, items: ['elfbow+1', 'potion_heal', 'potion_heal'] },
     { kind: 'chest', x: 12, y: 11, id: 'g1_c3', gold: 200, items: ['brigandine+1', 'elixir'] },
     { kind: 'event', x: 11, y: 11, id: 'g1_stairs', once: true, text: 'A stair, and beside it a dead elf in Thornhold green, a week gone. Her hands are burned to the wrist.' },
-    // The Elder's Four (#219): the other two dead, one in each half, and Meva, the fourth, alive in
+    // The Elder's Four (#219): the other two dead, one in each half on the way to Meva, and Meva, the fourth, alive in
     // the east half's dead end until the company answers her. Keyne, in Thornhold, asked.
-    { kind: 'event', x: 1, y: 12, id: 'g1_ruan', once: true, text: 'An elf in Thornhold green, face down in the dead roots, a bow beside him with the string still on. He is nineteen, or was.' },
-    { kind: 'event', x: 14, y: 10, id: 'g1_mylor', once: true, text: 'A third, in green, curled against the grey roots as if they were warm. His hands are burned, like the woman\'s at the stair.' },
+    { kind: 'event', x: 4, y: 8, id: 'g1_ruan', once: true, text: 'An elf in Thornhold green, face down in the dead roots, a bow beside him with the string still on. He is nineteen, or was.' },
+    { kind: 'event', x: 11, y: 8, id: 'g1_mylor', once: true, text: 'A third, in green, curled against the grey roots as if they were warm. His hands are burned, like the woman\'s at the stair.' },
     { kind: 'npc', x: 12, y: 4, name: 'Meva, the fourth', lines: [
       'In a dead end of the roots a young elf sits in a grey robe too big for her, with her Thornhold green folded beside her, very neatly, as if she meant to give it back.',
       '"Don\'t. I know what I\'m wearing. They gave it me when I stopped screaming, and they were kind, the way people are kind to a dog they\'ve decided to keep." Her hands are not burned. "I went under with Ruan and Breaca and Mylor. I watched the tear take Breaca. I put my hands up, and the grey men put a robe on me, and I found I was still alive, and I have not worked out since whether that was a thing I chose."',

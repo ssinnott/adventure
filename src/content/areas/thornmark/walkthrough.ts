@@ -198,12 +198,15 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(!shows(w, 'thornmark', 'tm_deserters'), 'before the whistle, Leofwin\'s band is not there');
     answerTo(w, 'thornmark', LEOFWIN(), 'You\'ll answer at the Scarth.');
     w.ok(!there(w, LEOFWIN(), 'thornmark') && shows(w, 'thornmark', 'tm_deserters') && !page(w, 'coin')?.done, 'Leofwin whistles: he is gone, his band stands by the camp and the quest is not done');
+    w.ok(hear(w, 'thornhold', TEGEN()).startsWith('"Keep the coin.'), 'his band still standing, Tegen has no word of him yet');
     fight(w, 'thornmark:tm_deserters');
     reads(w, 'coin', 'A Coin Not From Caldera', ['tegen', 'fight', 'slain'], ['walk'], 'Leofwin fought');
     w.ok(hear(w, 'thornhold', TEGEN()).startsWith('"Dead in the trees') && w.party.bag.includes('faceless_coin'), "Tegen's after-lines are the fight's, and the coin stays in the pack");
   }
-  { // Leave the Trees Standing: Ulf before the Elder, who banishes him.
+  { // Leave the Trees Standing: Ulf before the Elder, who banishes him. Sylvane met first: her
+    // words for the burner wait on it.
     const w = newWalk(ok);
+    meetWho(w, 'q_grove');
     meetWho(w, 'q_trees');
     w.ok(w.news.at(-1) === 'New quest: Leave the Trees Standing.' && !!page(w, 'trees')?.goal, `Piran's first meeting begins Leave the Trees Standing, with a goal (${w.news.at(-1)})`);
     w.ok(shows(w, 'thornmark', 'tm_stack') && !shows(w, 'thornmark', 'tm_stack_cold'), 'the stack is smoking, not cold');
@@ -222,8 +225,9 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(!there(w, ULF(), 'thornmark') && there(w, ULF_PASS(), 'thornmark') && hear(w, 'thornmark', ULF_PASS()).startsWith('Ulf sits on his cart'), 'Ulf sent home, he waits at the pass');
     w.ok(hear(w, 'thornhold', PIRAN()).startsWith('"Gone home'), "Piran, met after, says he's gone home");
   }
-  { // The Dark Glass: asked for, found and read, and Sylvane told.
+  { // The Dark Glass: asked for, found and read, and Sylvane, met first, told.
     const w = newWalk(ok);
+    meetWho(w, 'q_grove');
     w.ok(!there(w, TAMSIN(), 'thornhold'), 'before the lake is seen, Tamsin is not in the Chapterhouse');
     see(w, 'thornmark:lake');
     meetWho(w, 'q_glass');
@@ -243,6 +247,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     open(w, 'thornmark:tm_glass');
     see(w, 'thornmark:lake');
     w.ok(hear(w, 'thornhold', TAMSIN()).startsWith('The Reader looks at the glass') && !w.party.flags.q_glass, 'Tamsin takes the glass brought unasked, with her early words, and does not hire');
+    w.ok(w.news.at(-1) === 'New quest: The Dark Glass.' && page(w, 'glass')?.goal === 'Answer Reader Tamsin at the Chapterhouse: what will Sylvane be told?', `the glass read begins The Dark Glass, with her question as its goal (${page(w, 'glass')?.goal})`);
     const vials = w.party.bag.filter((i) => i === 'potion_sp_great').length;
     answerTo(w, 'thornhold', TAMSIN(), 'Nothing.');
     reads(w, 'glass', 'The Dark Glass', ['read', 'kept'], ['tamsin', 'told'], 'the silence kept, the glass brought unasked');

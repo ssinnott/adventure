@@ -76,7 +76,7 @@ export const QUESTS: readonly QuestDef[] = [
     // holds the cut and an older one, mended. Sylvane is told, or the Reader pays for the silence.
     id: 'glass',
     title: 'The Dark Glass',
-    start: { flag: 'q_glass' },
+    start: [{ flag: 'q_glass' }, { flag: 'q_glass_read' }],
     done: [{ flag: 'q_glass_told' }, { flag: 'q_glass_kept' }],
     entries: [
       { id: 'tamsin', when: { flag: 'q_glass' },

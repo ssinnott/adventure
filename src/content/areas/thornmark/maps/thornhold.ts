@@ -70,15 +70,16 @@ export const THORNHOLD: MapDef = {
       ],
       after: GROVE_QUIET,
     }, says: [
-      // The side quests (#219). What is said once comes first, then the brigands' terms, open until
+      // The side quests (#219). Words keyed to another quest's flag wait on her own first meeting, or
+      // the chisel, as the Foreland's do (harrow.ts). What is said once comes first, then the brigands' terms, open until
       // the company answers Thora, then after. Her Grove words are said once before the terms, so
       // the chisel paid is still news at the next meeting.
-      { after: { flag: 'q_trees_sylvane' }, until: { flag: 'q_trees_done' }, sets: 'q_trees_done', lines: [
+      { after: [{ flag: ['q_grove', 'q_trees_sylvane'] }, { flag: ['q_grove_done', 'q_trees_sylvane'] }], until: { flag: 'q_trees_done' }, sets: 'q_trees_done', lines: [
         'Sylvane hears the burner out without rising, and without once looking at his axe, which is more than he can manage.',
         '"Paid to fell the marked oaks. By a Lantern in travel-grey, with coin that is not coin." She turns to you. "The Hand marked those trees. Now someone pays to have them felled, in the Hand\'s coin, in a Lantern\'s coat. I want you to remember that. I will."',
         '"Burner. You go over the Scarth tonight with what you came with, and you do not come back into Thornmark while I live. That is not a punishment. It is the only mercy the wood has left in it."',
       ] },
-      { after: { flag: 'q_glass_truth' }, until: { flag: 'q_glass_told' }, sets: 'q_glass_told', lines: [
+      { after: [{ flag: ['q_grove', 'q_glass_truth'] }, { flag: ['q_grove_done', 'q_glass_truth'] }], until: { flag: 'q_glass_told' }, sets: 'q_glass_told', lines: [
         'Sylvane does not ask what the glass held. She waits, and you tell her, and at the word mend she closes her eyes.',
         '"My mother\'s time. I was a child; I remember the winter, and Lanterns in the Grove, and being told nothing. So there is a glass that remembers what I was told to forget." She opens her eyes. "Since the Reader would keep it from me, I will give you something she does not have. The mark on the chisel that cut our Stone is on the seal of a treaty in Henlys, south through the deep. My mother said once it was on the mend, too, and never again. Go and see it."',
       ] },
