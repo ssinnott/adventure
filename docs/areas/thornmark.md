@@ -73,10 +73,10 @@ The second half of Act I (DESIGN §9): the Stone found cut, not failing; the Ash
 made below; the Warden of the Cut and the first Meridian journal. Every kind the Foreland showed is
 here at full strength (MONSTERS §5.3). The Deepthorn is age (MONSTERS §5.4): trees older than
 Helmstow in a wood older than the elves' memory, woken by the cut and not knowing friends from
-cutters; and Henlys, the oldest elf-hold, which keeps a treaty sealed with the chisel's mark, the first time
-the machine's script is seen on something that is not a tool. The act turns here: the tools were
-made under the world, and somebody is arming the Hand. The weather is Thornmark's: colder than the
-Foreland, hard winters whose snow lies for weeks, mist under the trees.
+cutters; and Henlys, the oldest elf-hold, which keeps a treaty sealed with the chisel's mark, the
+first time the machine's script is seen on something that is not a tool. The act turns here: the
+tools were made under the world, and somebody is arming the Hand. The weather is Thornmark's: colder
+than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
 
 ## 3. What is built
 
@@ -212,8 +212,8 @@ The places, as the atlas and the docs have them:
 |---|---|---|---|
 | Henlys | I4 | keeps the two-hundred-year-old treaty behind the elves' claim to the throne, sealed with the chisel's mark (DESIGN §9, §10.1) | a planned site, about 274,104 |
 | Deepthorn Lodge | I3 | a hunting lodge; the Ranger's second prestige (#19); its hunters took the cutters' pay (#56's 15) | a planned lodge at 278,112, in I4 (`src/content/areas/thornmark/atlas.ts:23`) |
-| Penspern | J5, and I5 beside it | the Eldest (MONSTERS §5.4); a standing stone older than the elves (#56's 16); a fire for the boats (#56's 19) | the tip the sea goes round, about 300,148; a planned site |
-| The Dowrdu | I3, H3 and H4 | nothing yet | a river from Lyngwyn to the Wyke, lettered |
+| Penspern | J5, and I5 beside it | the Eldest (MONSTERS §5.4); a standing stone older than the elves (#56's 16); a fire for the boats (#56's 19) | the tip the sea goes round, about 300,148; a planned site on the crown, 296,142 |
+| The Dowrdu | I3, H3 and H4 | nothing yet | a river from Lyngwyn to the Wyke, named |
 | Lyngwyn | H2 and I2 | its dark survey marker (built), and the Lanterns' Dark Marker (#146) | a lake, half on the built map, lettered |
 | The Hoarhills | I2, I3 and J4 | nothing yet | the ridge between Thornmark and Sunderwood, ending in Sunder Bay |
 | The long glade | I4 and J4 | nothing yet | a strip of grass down the wood's east side, to the head |
@@ -678,8 +678,8 @@ the one it lends its name to:
   | the Thornwater | the Dowrdu | the dark water | the Blackwater, a Foreland name |
   | the still lake, Thornmere in a comment | Lyngwyn | the white pool: mist under the trees, and a marker gone dark in it | Lynhir, the long pool |
 
-  The atlas letters the Dowrdu and Lyngwyn, and marks Henlys and Penspern as planned sites until
-  their boxes are built (#49, #218). No game text names any of the four yet; the texts that come
+  The atlas names the Dowrdu and letters Lyngwyn, and marks Henlys and Penspern as planned sites
+  until their boxes are built (#49, #218). No game text names any of the four yet; the texts that come
   with the boxes use them. The event at the lake's shore on the Thornmark map calls it a still lake,
   which is what the company sees.
 - **Kept:** Thornmark and Thornhold, which the story leans on; the Deepthorn, the Crown's name for

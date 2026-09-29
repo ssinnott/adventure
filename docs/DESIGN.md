@@ -422,9 +422,9 @@ dungeon. Restoring it closes Thornmark's Rifts.
   west, into Act II, starts here.
 - **Thornmark** (built): Thornhold and Elder Sylvane, the Grove Roots and the Cut Stone, the Hand of
   Ash, and the Warden of the Cut with the first Meridian journal.
-- **The Deepthorn:** Henlys, the oldest elf-hold, keeps the two-hundred-year-old treaty behind the elves'
-  claim to the throne, which says the elves' line and Helmstow's were once one. Its seal is the
-  chisel's maintenance mark: the royal line is written in the machine's script.
+- **The Deepthorn:** Henlys, the oldest elf-hold, keeps the two-hundred-year-old treaty behind the
+  elves' claim to the throne, which says the elves' line and Helmstow's were once one. Its seal is
+  the chisel's maintenance mark: the royal line is written in the machine's script.
 
 Turn: the Ashen Hand's cutting tools are Underdeep-made. Somebody is arming them. The Hand's creed
 is on the walls from the cellar to the Grove (THE HEARTH IS A CAGE; THE HAND OPENS WHAT THE HEARTH
