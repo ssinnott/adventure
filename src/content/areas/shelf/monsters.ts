@@ -10,6 +10,7 @@ export const SPRITES = [
   'rift_crawler', 'deacon', 'crow', 'wrecker', 'lampman', 'black_dog',
   'barrow_guard', 'barrow_captain',
   'chalk_wolf', 'tusker', 'barn_rat', 'footpad', 'poacher',
+  'barnacle_crab', 'billman', 'slinger', 'old_rook',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -51,4 +52,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'barn_rat', name: 'Barn Rat', plural: 'Barn Rats', sprite: 'barn_rat', kind: 'beast', look: 'Rats, fat on someone\'s grain.', level: 3, hp: 7, ac: 12, attack: 2, dice: 1, sides: 7, bonus: 0, speed: 12, xp: 32, gold: [0, 0], tint: '#5c4c3c', size: 0.38, inflict: { cond: 'diseased', chance: 0.1 } },
   { id: 'footpad', name: 'Footpad', plural: 'Footpads', sprite: 'footpad', kind: 'person', look: 'A short blade, and a coat taken off someone better dressed.', level: 3, hp: 17, ac: 13, attack: 3, dice: 1, sides: 6, bonus: 2, speed: 11, xp: 64, gold: [4, 14], tint: '#6e5a3a', size: 0.9 },
   { id: 'poacher', name: 'Poacher', plural: 'Poachers', sprite: 'poacher', kind: 'person', look: 'A longbow taller than he is, and one of the Queen\'s hares at his belt.', level: 3, hp: 16, ac: 13, attack: 4, dice: 1, sides: 5, bonus: 1, speed: 12, xp: 64, gold: [3, 12], ranged: true, missile: true, tint: '#55663a', size: 0.9 },
+  // the Downs' harder monsters, at 4 on MONSTERS §4.4's line: Crowness and the Salt Road (#67), the Wend's rookery (#68)
+  { id: 'barnacle_crab', name: 'Barnacle Crab', plural: 'Barnacle Crabs', sprite: 'barnacle_crab', kind: 'beast', look: 'A rock with barnacles on it, until it stands up.', level: 4, hp: 29, ac: 15, attack: 4, dice: 2, sides: 6, bonus: 4, speed: 8, xp: 115, gold: [0, 0], immune: ['asleep'], tint: '#6e665a', size: 0.65 },
+  { id: 'billman', name: 'Billman', plural: 'Billmen', sprite: 'billman', kind: 'person', look: 'A bill on a pole, and a man who knows which end to hold.', level: 4, hp: 23, ac: 13, attack: 4, dice: 2, sides: 6, bonus: 1, speed: 10, xp: 86, gold: [4, 14], tint: '#6a5a48', size: 0.95 },
+  { id: 'slinger', name: 'Slinger', plural: 'Slingers', sprite: 'slinger', kind: 'person', look: 'A sling going round, and the Downs have flints to spare.', level: 4, hp: 24, ac: 13, attack: 5, dice: 1, sides: 6, bonus: 1, speed: 11, xp: 86, gold: [3, 12], ranged: true, missile: true, tint: '#b0a288', size: 0.9 },
+  { id: 'old_rook', name: 'Old Rook', plural: 'Old Rooks', sprite: 'old_rook', kind: 'beast', look: 'Grey in the face, and older than the trees it keeps.', level: 4, hp: 50, ac: 14, attack: 5, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 173, gold: [0, 0], ranged: true, tint: '#2a2830', size: 0.45 },
 ];

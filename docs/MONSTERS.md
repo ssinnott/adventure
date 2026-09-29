@@ -503,6 +503,10 @@ Crowness Light.
 | Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
 | Footpad | bandit | soldier, 3 | the Salt Road, two with a poacher | *A short blade, and a coat taken off someone better dressed.* |
 | Poacher | bandit | archer, 3 | the field edges, beside the footpads | *A longbow taller than he is, and one of the Queen's hares at his belt.* |
+| Barnacle Crab | spider | armoured, 4 | under Crowness Light | *A rock with barnacles on it, until it stands up.* Shrugs off sleep, as the shore crab does |
+| Billman | bandit | soldier, 4 | the Salt Road west of Gullwick | *A bill on a pole, and a man who knows which end to hold.* |
+| Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
+| Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
@@ -1014,7 +1018,7 @@ the pilot.
 | riftling | the cellar (built) | brine (Saltreach, Wrackholm), black glass (Sunderwood), slag (the Kilns): §2.1 |
 | ogre | Thornmark (built) | the tor troll (Cairnmoor), the snow troll (the Whitespine) |
 | wraith | Thornmark (built) | the cairn wight (Cairnmoor) |
-| **birds** | the Downs | the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
+| **birds** | the Downs | the old rook (the Downs), the great owl, the grey heron, the wrack gull, the raven, the spine eagle, the vulture |
 | **old wood** | the Deepthorn | the strangler vine (Ashfall) |
 | **long bodies** | Saltreach | the rock worm (the Kilns), the ice pike (Rimewater), the glass worm and the ice worm (the reach) |
 | **toads** | Saltreach | none: the first to cut if the art budget bites |
