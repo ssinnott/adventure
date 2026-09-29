@@ -111,7 +111,7 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
   well: the Foreland's north and south edges, F2's north (the rim, cut for good), its west and south
-  until E2 and F3 are built, and Thornmark's north, east and south. Between the Foreland and
+  until E2 and F3 are built and Thornmark's north, east and south. Between the Foreland and
   Thornmark the ridge stands as it was, two squares thick with the pass through it; between the
   Foreland and F2 it is the Foreland's ring alone, with the Salt Road through a gap at 0,29. The
   viewport paints the void as pink empty space, flat, unlit and untextured, standing up past the top
