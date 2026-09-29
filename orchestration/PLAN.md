@@ -788,3 +788,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   cleanly, and that tree tested ALL OK (40 owed), SMOKE OK, "Nothing new."; CI green on the head;
   main's tree is the tested merge's (537049c). #77 stays open; D (the Well) started at 02:02 on
   `claude/m1-77-well`; C after the pilot's B.
+
+### 02:42: check-in; #266 open
+
+- Opened: #266 (#77's D, the Well, `claude/m1-77-well`). Reviewer at 02:42 (`reviews/266.md`).
+- #263 (the Downs' five) still waits on the owner's OK of its sheet (01:59); #145 waits on #263.
+  The pilot has F3 on `claude/m1-47-f3` (on F2's branch, at the brief's sizes, the wreckers on the
+  line), a branch only, as asked.
