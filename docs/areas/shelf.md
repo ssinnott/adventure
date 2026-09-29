@@ -78,7 +78,8 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, Vask and his contract |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward |
+| The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask and his contract in the throne room behind the keep's door |
 | The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key |
@@ -94,8 +95,12 @@ In more detail, as SLICE.md had it before the area docs:
 
 - **Helmstow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
   (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
-  when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), Lord Vask
-  (the contract and the hand-in), a well, a sign.
+  when the xp allows; levels are bought, not automatic), the Gilded Eel tavern (rumours), a well, a
+  sign and the gatehouse in the north wall.
+- **The Keep** (town, 16×10): the keep's ward behind the gatehouse, with a palette of its own and
+  the Queen's banners placed (`banners`); Lord Vask on the keep's door, holding court in the throne
+  room (the contract and the hand-in); people and a well. A building on its west side stands empty
+  for the armourer (#19).
 - **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or lurking
   monster groups with respawn timers, the Ashcombe farm. It and Thornmark are played as one
   outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
@@ -607,6 +612,7 @@ of the old names the first crew left (marked *old*).
 |---|---|---|---|
 | the Shelf | the Foreland | the land in front of the mountains, facing the sea; *old*, faintly | |
 | Harrow | Helmstow | *old*: "the helm's place", the Crown's seat in the old word for a crown | |
+| | the Keep | the ward behind Helmstow's north gate, and the keep at its head; short, as the map's frame wants | the Keep's Ward |
 | Harrow Downs | Callow Downs | the bare downs; and callow, like the companies that meet them first | Chaldon Downs |
 | Harrow Bay | the Wyke | the bay, in the old word Gullwick's wick comes from | Mewstone Bay |
 | Harrow Light | Crowness Light | the light on Crowness, the crows' headland; *old* | |
