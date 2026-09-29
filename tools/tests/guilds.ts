@@ -129,6 +129,13 @@ export function guilds(): void {
   // names real things, has a deed and flags its own; a guild has one first task and no gap in its ranks.
   const halls = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => ('hall' in f && f.hall ? [f.hall] : []))));
   for (const h of halls) ok(h in GUILDS, `a hall's guild, ${h}, is a guild`);
+  // Each hall DESIGN §8 names is its guild's, by name: the Drillyard the Wardens', and both Lantern
+  // halls the Lanterns' ("The Lanterns' halls are both").
+  const HALLS: Readonly<Record<string, GuildId>> = { 'Warden Drillyard': 'wardens', 'Lantern Guildhall': 'lanterns', 'Thornhold Lantern Hall': 'lanterns' };
+  for (const [name, g] of Object.entries(HALLS)) {
+    const f = MAP_DEFS.flatMap((d) => d.features ?? []).find((x) => 'name' in x && x.name === name);
+    ok(!!f && 'hall' in f && f.hall === g, `${name} is a hall of ${GUILDS[g].name.replace(/^The /, 'the ')}`);
+  }
   const npcFlags = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' ? personFlags(f) : []))));
   const findable = new Set([
     ...MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => [...(giftOf(f)?.items ?? []), ...(f.kind === 'shop' ? f.stock : []), ...(f.kind === 'npc' ? personGives(f) : [])])),
