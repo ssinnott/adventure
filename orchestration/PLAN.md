@@ -828,3 +828,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   four (taken as OK unless they say otherwise). Sent 06:30 to the Black Dog session: rework the
   Hedge Archer as a hedge with a bow in it (foliage to the knees, sprays off the arms and hood, the
   face half-hidden, leaves on the bow, one silhouette, the bow still clear), then the sheet again.
+- 07:07: #263's Hedge Archer redrawn (304ee61: foliage to the knee, leaves on the arm, face and bow;
+  only `bandit.ts`). Its sheet (with the four others unchanged) went to the owner at 07:07 for
+  their OK.
