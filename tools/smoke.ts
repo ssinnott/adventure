@@ -577,22 +577,27 @@ const hillSpill: string[] = await page.evaluate(async () => {
 // One silhouette: every monster drawn at combat size, alone, three abreast and six abreast, through
 // its idle motion, is one piece of ink. Ink is alpha 128 and up (a ground shadow is under it), a
 // piece is 8-connected, and specks under 6 px are left out. What stands apart must be declared.
-interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: boolean }
-const silhouettes: Silhouette[] = await page.evaluate(async () => {
+// Each is drawn where a fight seats a first group, its foot as far below the view's top as there
+// (`seatFoot`), on a canvas three heights wide, a height more above the view's top and 0.3 under the
+// foot: ink above the view's top reaches over the frame, and ink on a border runs off the canvas.
+interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: '' | 'top' | 'edge'; room: number }
+const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhouette; seat: number } = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const S = await load('/src/ui/sprites.ts'), C = await load('/src/content/index.ts');
-  const out: Silhouette[] = [];
+  const F = await load('/src/ui/frame.ts'), G = await load('/src/ui/grouplabels.ts');
+  const seat = Math.round(G.seatFoot(0, F.LAYOUT.view.h));
   const c = document.createElement('canvas');
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
-  for (const def of Object.values(C.MONSTERS) as any[]) {
-    const worst = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: false };
+  type Draw = (ctx: CanvasRenderingContext2D, x: number, y: number, h: number, frame: number) => void;
+  const scan = (def: any, draw: Draw): Silhouette => {
+    const worst: Silhouette = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: '', room: seat };
     for (const n of [1, 3, 6]) {
-      const h = S.combatHeight(def.size, n), cw = Math.ceil(h * 3), ch = Math.ceil(h * 1.6);
+      const h = S.combatHeight(def.size, n), pad = Math.ceil(h), cw = Math.ceil(h * 3), ch = pad + seat + Math.ceil(h * 0.3);
       c.width = cw; c.height = ch;
       const seen = new Int32Array(cw * ch), stack = new Int32Array(cw * ch);
       for (let frame = 0; frame <= 176; frame += 4) {
         ctx.clearRect(0, 0, cw, ch);
-        S.drawMonsterSprite(ctx, def.sprite, cw / 2, Math.round(h * 1.3), h, def.tint, 1, frame);
+        draw(ctx, cw / 2, pad + seat, h, frame);
         const d = ctx.getImageData(0, 0, cw, ch).data;
         seen.fill(0);
         const sizes: number[] = [];
@@ -603,7 +608,9 @@ const silhouettes: Silhouette[] = await page.evaluate(async () => {
           while (top) {
             const p = stack[--top], px = p % cw, py = (p - px) / cw;
             size++;
-            if (px === 0 || py === 0 || px === cw - 1 || py === ch - 1) worst.clipped = true;
+            if (py - pad < worst.room) worst.room = py - pad;
+            if (px === 0 || py === 0 || px === cw - 1 || py === ch - 1) worst.clipped = 'edge';
+            else if (py < pad && worst.clipped !== 'edge') worst.clipped = 'top';
             for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
               const qx = px + dx, qy = py + dy, q = qy * cw + qx;
               if (qx < 0 || qy < 0 || qx >= cw || qy >= ch || seen[q] || d[q * 4 + 3] < 128) continue;
@@ -618,9 +625,26 @@ const silhouettes: Silhouette[] = await page.evaluate(async () => {
         if (ink && apart / ink > worst.share) worst.share = apart / ink;
       }
     }
-    out.push(worst);
-  }
-  return out;
+    return worst;
+  };
+  const defs = Object.values(C.MONSTERS) as any[];
+  const silhouettes = defs.map((def) => scan(def, (g, x, y, h, frame) => S.drawMonsterSprite(g, def.sprite, x, y, h, def.tint, 1, frame)));
+  // The fixture: the tallest def with the top fifth of its ink moved up a third of its height, as a
+  // crest or a raised wing might be. It has to fail for reaching above the view.
+  const tall = defs.reduce((a, b) => (b.size > a.size ? b : a));
+  const o = document.createElement('canvas');
+  const raised = scan({ ...tall, id: `${tall.id}, its top fifth raised a third` }, (g, x, y, h, frame) => {
+    o.width = g.canvas.width; o.height = g.canvas.height;
+    const oc = o.getContext('2d', { willReadFrequently: true })!;
+    S.drawMonsterSprite(oc, tall.sprite, x, y, h, tall.tint, 1, frame);
+    g.drawImage(o, 0, 0);
+    const d = oc.getImageData(0, 0, o.width, o.height).data;
+    let top = 0;
+    while (top < o.height && ![...Array(o.width).keys()].some((i) => d[(top * o.width + i) * 4 + 3] >= 128)) top++;
+    const band = Math.round(h * 0.2), lift = Math.round(h / 3);
+    g.drawImage(o, 0, top, o.width, band, 0, top - lift, o.width, band);
+  });
+  return { silhouettes, raised, seat };
 });
 const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
 const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
@@ -687,7 +711,10 @@ ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 ok(!hillSpill.length, `a hill's body, its crest light with it, is drawn inside its outline, near and far${hillSpill.length ? ` -> ${hillSpill.slice(0, 4).join(', ')}` : ''}`);
 ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls beside the party are drawn, in ${cracks.views} views (${sweeps.map((m) => m.id + (m.all ? ' four ways' : '')).join(', ')})${cracks.bad.length ? ` -> ${cracks.bad.length} views, ` + cracks.bad.slice(0, 4).join(', ') : ''}`);
-ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
+ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped === 'top' ? 'reaches above the view' : s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
+const closest = silhouettes.reduce((a, b) => (b.room < a.room ? b : a));
+ok(closest.room > 0, `every monster stands inside the view, its foot ${seat} px below the top as a fight seats it (the closest, ${closest.id}, ${closest.room} px under the top)`);
+ok(raised.clipped === 'top', `a monster with a part raised a third of its height reaches above the view, and fails (${raised.id}: ${raised.clipped === 'top' ? 'reaches above the view' : `${raised.room} px under the top`})`);
 if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);
