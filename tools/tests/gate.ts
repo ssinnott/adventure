@@ -2,8 +2,8 @@
 // turn a company back. tools/gate.ts's bot plays the premade company, dressed by the ladder, against
 // every group of a map alone from full health; each map is held to its sign's band and each area to
 // its band on the curve (src/content/progression.ts). Every margin is printed. A miss the owners
-// below are owed is reported, not failed, until it holds: Thornmark's are #40's to retune, the
-// Foreland's the pilot's to settle (#47).
+// below are owed is reported, not failed, until it holds: the Foreland's are the pilot's to settle
+// (#47).
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
@@ -72,16 +72,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'mill:m_warden: floor': { whose: '#47', at: 0.98 },
   'greywater1: rest': { whose: '#47', at: 4.08 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
-  'greywater2: under': { whose: '#47', at: 0.658 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
   'the Foreland: floor': { whose: '#47', at: 0.886 },
-  // The Grove Roots and the Cut Stone: retuned until they hold; the area with them.
-  'grove1: under': { whose: '#40', at: 0.999 },
-  'grove2: under': { whose: '#40', at: 1 },
-  'grove2: rest': { whose: '#40', at: 7.95 },
-  'grove2:g2_hand: floor': { whose: '#40', at: 1 },
-  'grove2:g2_warden: floor': { whose: '#40', at: 1 },
-  'Thornmark: under': { whose: '#40', at: 0.536 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
@@ -134,11 +126,17 @@ export function denReading(def: MapDef, den: Extract<Feature, { kind: 'den' }>, 
 const pooled = (groups: readonly EncounterDef[], level: number): number => groups.reduce((t, g) => t + rate(g, level), 0) / groups.length;
 const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
 
-/** At the floor through, two levels under it back (or n/a, where that is under level 1). */
-function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly [number, number]): void {
+/**
+ * At the floor through, two levels under it back (or n/a, where that is under level 1). Two under is
+ * asked only where `judgeUnder` says: of an area, and of a map whose floor is its area's. A map with a
+ * higher floor, a dungeon deeper in, is held at its floor alone, and its groups are judged two under
+ * in the area's (the owner's decision on #40, 28 September).
+ */
+function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly [number, number], judgeUnder = true): void {
   if (!groups.length) { console.log(`  n/a:  ${id} has no groups yet`); return; }
   const at = pooled(groups, floor);
   check(`${id}: floor`, at, (v) => GATE.through - v, `${id} at its floor, ${floor}: ${pc(at)} of fights won (${pc(GATE.through)} asked)`);
+  if (!judgeUnder) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups count two under only in the area's, where there is one`); return; }
   const low = floor - GATE.under;
   if (low < 1) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: level ${low} is no company`); return; }
   const under = pooled(groups, low);
@@ -193,7 +191,7 @@ export function gate(): void {
     // Each map against its sign.
     for (const d of fought) {
       const groups = d.encounters!;
-      margins(d.id, groups, d.band);
+      margins(d.id, groups, d.band, d.band[0] === band[0]);
       for (const b of BOSSES[id].filter((ref) => ref.startsWith(`${d.id}:`))) {
         const boss = groups.find((e) => `${d.id}:${e.id}` === b);
         if (!boss) continue;
@@ -204,7 +202,9 @@ export function gate(): void {
       // Its dens: the keepers the camp's hardest fight, and its brood's number and pace.
       for (const f of d.features ?? []) if (f.kind === 'den') { const r = denReading(d, f, d.band[0]); ok(!r.fault, `${r.line}${r.fault ? ` (${r.fault})` : ''}`); }
       // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
-      const day = days(d.band[0], groups.map((g) => g.monsters), DAYS, 1, true), want = fightsPerRest(d.band[0]);
+      // A boss is judged on its odds above, not on the day (MONSTERS.md §4.4), so the day leaves it out
+      // (the owner's decision on #40, 28 September).
+      const day = days(d.band[0], groups.filter((g) => !BOSSES[id].includes(`${d.id}:${g.id}`)).map((g) => g.monsters), DAYS, 1, true), want = fightsPerRest(d.band[0]);
       check(`${d.id}: rest`, day.fights, (v) => Math.abs(v - want) - GATE.perRest, `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${want} asked, ±${GATE.perRest}); ${pc(day.why.long)} of days end in a fight broken off`, true);
     }
 
