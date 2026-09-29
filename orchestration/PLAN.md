@@ -1036,3 +1036,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   batch.
 - Sent to the Black Dog session (14:23): merge main, sleeve the far arm to the elbow, dim the ring,
   the commas. I land it on that head.
+- 14:23: the Claude Code Remote server needs signing in again ("run /mcp to re-authenticate"): no
+  triggers, sessions or subscriptions from here until the owner re-authorises it. #272's round sent
+  as a comment on the PR instead (its session watches it). The 14:40 check-in was set before the
+  outage and fires server-side; re-arming it after needs the server back.
