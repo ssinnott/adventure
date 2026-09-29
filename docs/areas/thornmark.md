@@ -41,10 +41,13 @@ to level 10").
   road in the south-west. Fourteen groups. By Thornhold's north wall, the chest the watchtower's
   garrison buried when the elves shut the gate (`tm_strongbox`), the Wardens' rank 2 quest; their
   rank 1 quest is the tower's ogre (docs/areas/shelf.md §6, the Wardens' quests).
-- **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the
-  Lantern Hall (tier 4), the Elder's Yard, the Split Oak tavern (rumours about Vask's timing),
-  a healing spring, and Elder Sylvane, who pays 1500 gold for the Underdeep chisel. Ailith of the
-  survey is in the Chapterhouse once the company sends her there (docs/areas/shelf.md §6, 8).
+  By the boulders south of the river, a Lantern survey marker still lit (`second_marker`), the
+  Lanterns' rank 2 quest; their rank 1 quest is the dark marker in the lake, seen from its west
+  shore (docs/areas/shelf.md §6, the Lanterns' quests).
+- **Thornhold** (town, 16×16): the Green Man inn, the Lantern Chapterhouse, the Armoury, the Lantern
+  Hall (tier 4; the Lanterns' hall), the Elder's Yard, the Split Oak tavern (rumours about Vask's
+  timing), a healing spring and Elder Sylvane, who pays 1500 gold for the Underdeep chisel. Ailith
+  of the survey is in the Chapterhouse once the company sends her there (docs/areas/shelf.md §6, 8).
 - **The Grove Roots** (dungeon, 16×16, band 6–9): two halves joined by a locked door; the iron
   key is behind a secret door on the west side; the stairs down are guarded.
 - **The Cut Stone** (dungeon, 16×16, band 8–10): three square rings of Underdeep corridor. A
@@ -61,9 +64,9 @@ to level 10").
 One clear of every map is worth a little over level 8 per member; the dungeons respawn in one to
 two days, and a little over two more sweeps of the Grove reach 10 (a sweep pays 38% less once the
 Warden of the Cut is dead and the Rift's groups stop coming). Levels are still bought, so the gold
-matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays 8,249 xp a member of
-the 13,667 its curve asks, and 5,800 gold of the 8,400 (the Wardens' two quests and their chest
-give 400 xp a member and 470 gold of it): the curve (`src/content/progression.ts`)
+matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays 8,649 xp a member of
+the 13,667 its curve asks, and 6,150 gold of the 8,400 (the guilds' four quests and the Wardens'
+chest give 800 xp a member and 820 gold of it): the curve (`src/content/progression.ts`)
 reports both as owed to the pilot (#26).
 
 The gate check (`tools/tests/gate.ts`) reports Thornmark's misses as #40's. Its company is dressed
