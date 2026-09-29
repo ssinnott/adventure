@@ -974,3 +974,26 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   fights; downs_f2 at 2: 99.6% won, 6.44 fights to a rest; the Foreland at 1: 89.4% (owed). CI green.
   Tree 224f968. The sheet (`sheet145f.png`) shows the void pink south of F2 where F3 is not built:
   `VOID_PINK`, by design. The art OK and #145's choices put to a delegate (13:47).
+
+### 13:55: the delegate's first decisions (Fable, `DECIDE.md`)
+- **Q1, the gate as a suggestion:** file it (Task, `lane: quality`, under #26), blocked by #209,
+  blocking #67's and #68's A, #214 and #47's E; approved. Limits: through 80%; fights to a rest 4 to
+  10; a boss at its floor 20 to 80%; two under 90%; the road 65%; `bossAbove` 75%; the warning 10
+  points under the median. Inside the aim quiet, between a pass listed with its figure, past the
+  limit a failure; `OWED` kept only for those past it. Its own issue, built straight after #209 by
+  the #209 session. Why 90%: every two-under figure Phase 1 can measure sits on the flat of the line
+  (E3 64-87%, E2 67.8%, D2-D4 68-100% at 2, H3 100% at 6); 75% would bind each box to its hardest
+  shape, and 90% still fails a walkover.
+- **Q2, #271:** approved; the #45 session builds it now, then #210.
+- **Q3, #268:** approved; built now in the quality lane, ahead of #209.
+- **Q4, the owner's play:** #47's E goes ahead without it, after C (D beside it), on the harness's
+  and the bot's measurements under Q1's gate; the hours written into the briefs, "what the owner
+  found" added when they play. #67 and #68 wait on #209, the aim-and-limit issue, #272 (their 0) and
+  the pilot's B and C on main, not on E. Their Dependencies (and #214's, #49's) kept in step; #47
+  stays open on its last line ("the owner has played them"), which nothing waits on.
+- **Q5, Phase 1.1 (#208):** approve #208 and its eleven now, built beside the Downs in Thornmark's
+  own area lane: one Thornmark area session, #211 (names as thornmark.md §10: Henlys, Penspern,
+  Dowrdu, Lyngwyn), #213, then #219; #210 in the systems lane after #271; #212 in the quality lane
+  after the aim-and-limit issue; #214 when #209, aim-and-limit, #210 and #212 are in; then #49,
+  #215, #217, #216, #218 down their chains; #163 (Act II's dead wood, #216's blocker) to the delegate
+  when #49 lands.
