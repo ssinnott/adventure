@@ -1,5 +1,5 @@
-// The wolf family: wolf, dire wolf, rift hound and black dog on one canine frame, standing alert
-// in profile.
+// The wolf family: wolf, dire wolf, rift hound, black dog and chalk wolf on one canine frame,
+// standing alert in profile.
 // The proportions are measured off a photograph of a grey wolf rather than invented: the legs are
 // two fifths of the height, the body a little under a half, the withers are the highest point of
 // the body, the back is level, the belly tucks up behind the ribs, and the head is carried so the
@@ -20,7 +20,7 @@ import { celBall } from '../../lib/art/shading.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog'];
+export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf'];
 
 /** Proportions that tell the kinds apart on the shared frame (1 = the lean grey wolf). */
 interface Build { neck: number; head: number; jaw: number; ruff: number; leg: number; body: number; fang: number; tail: number }
@@ -29,13 +29,16 @@ const DIRE: Build = { neck: 1.3, head: 1.18, jaw: 1.2, ruff: 1.6, leg: 1.25, bod
 const HOUND: Build = { neck: 1.1, head: 1.06, jaw: 1.1, ruff: 0.8, leg: 1.1, body: 1.02, fang: 1.35, tail: 0.78 };
 /** The black dog: a calf's height, deep in the chest, the head low and heavy, the coat rough. */
 const DOG: Build = { neck: 1.4, head: 1.22, jaw: 1.15, ruff: 1.9, leg: 1.18, body: 1.14, fang: 1.25, tail: 1.1 };
+/** The Downs' chalk wolf: leaner than the Foreland's, longer in the leg, thin in the ruff. */
+const CHALK: Build = { neck: 0.9, head: 0.97, jaw: 1.02, ruff: 0.6, leg: 1.1, body: 0.98, fang: 1, tail: 0.85 };
 
-type Variant = 'wolf' | 'dire' | 'rift' | 'dog';
+type Variant = 'wolf' | 'dire' | 'rift' | 'dog' | 'chalk';
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'dire_wolf') canine(ctx, x, y, h, p, DIRE, 'dire');
   else if (kind === 'rift_hound') canine(ctx, x, y, h, p, HOUND, 'rift');
   else if (kind === 'black_dog') canine(ctx, x, y, h, p, DOG, 'dog');
+  else if (kind === 'chalk_wolf') canine(ctx, x, y, h, p, CHALK, 'chalk');
   else canine(ctx, x, y, h, p, LEAN, 'wolf');
 };
 
@@ -46,15 +49,16 @@ const COAL = '#ff4a14', COAL_HOT = '#ffc060';
 
 
 function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build, v: Variant): void {
-  const br = p.breathe, f = p.frame, rift = v === 'rift', dog = v === 'dog';
+  const br = p.breathe, f = p.frame, rift = v === 'rift', dog = v === 'dog', chalk = v === 'chalk';
   const base = p.base, dark = p.dark, light = p.light;
-  const pale = v === 'wolf' ? mix(light, shade('#efe8dc', p.tone), 0.6) : mix(light, shade('#a8a4b0', p.tone), 0.4);
+  const pale = chalk ? shade('#f4f0e6', p.tone) : v === 'wolf' ? mix(light, shade('#efe8dc', p.tone), 0.6) : mix(light, shade('#a8a4b0', p.tone), 0.4);
   const ivory = shade('#f0ead8', p.tone);
   const mouth = shade('#4a1a26', p.tone);
   const pulse = 0.5 + 0.5 * Math.sin(f / 7);
   const sway = Math.sin(f / 22) * h * 0.02;
   const bob = br * h * 0.006;
-  const belly = br * h * 0.005;
+  // The chalk wolf's belly tucks up hard behind the ribs: it is leaner than the Foreland's.
+  const tuck = chalk ? 0.045 : 0, belly = br * h * 0.005 - h * b.body * tuck;
   /** x in units of h from the sprite's centre. */
   const X = (u: number) => x + u * h;
   /** HEIGHT ABOVE THE GROUND LINE, in units of h: the way the reference was measured. */
@@ -146,20 +150,28 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   patch(ctx, B, shade(base, 0.58), [{ k: 'curve', pts: [
     X(-0.36), U(0.80), X(-0.14), U(0.855), X(0.06), U(0.862), X(0.21), U(0.85),
     X(0.235), U(0.72), X(0.12), U(0.63), X(-0.10), U(0.62), X(-0.28), U(0.66),
-  ], wobble: 0.08, spiky: 0.07, seed: 44, sub: 2 }], { alpha: 0.6, feather: 0.5 });
+  ], wobble: 0.08, spiky: 0.07, seed: 44, sub: 2 }], { alpha: chalk ? 0.3 : 0.6, feather: 0.5 });
   // The black dog has none: black on black.
-  if (v === 'wolf' || v === 'dire') {
+  if (v === 'wolf' || v === 'dire' || chalk) {
     patch(ctx, B, mix(base, pale, 0.88), [
       // Legs, from the elbow and the stifle down.
       { k: 'tube', pts: [X(0.235), U(0.44), X(0.25), U(0.24), X(0.26), U(0.03)], r0: h * 0.05 * b.leg, r1: h * 0.038 * b.leg },
       { k: 'tube', pts: [X(-0.14), U(0.44), X(-0.25), U(0.255), X(-0.195), U(0.03)], r0: h * 0.05 * b.leg, r1: h * 0.038 * b.leg },
       // Brisket, belly and throat.
-      { k: 'curve', pts: [X(0.26), U(0.52), X(0.10), U(0.46), X(-0.10), U(0.44), X(-0.22), U(0.47), X(-0.16), U(0.40), X(0.10), U(0.40), X(0.27), U(0.44)], wobble: 0.07, spiky: 0.06, seed: 22, sub: 2 },
+      { k: 'curve', pts: [X(0.26), U(0.52 + tuck * 0.5), X(0.10), U(0.46 + tuck), X(-0.10), U(0.44 + tuck), X(-0.22), U(0.47 + tuck), X(-0.16), U(0.40 + tuck), X(0.10), U(0.40 + tuck), X(0.27), U(0.44 + tuck * 0.5)], wobble: 0.07, spiky: 0.06, seed: 22, sub: 2 },
       { k: 'cap', x0: hx - rH * 0.3, y0: hy + rH * 0.66, x1: X(0.27), y1: U(0.62), r0: rH * 0.3, r1: h * 0.055 },
       // Muzzle sides and the cheek, which a wolf wears as a pale mask.
       { k: 'cap', x0: hx + rH * 0.62, y0: hy + rH * 0.24, x1: hx + rH * 1.6, y1: hy + rH * 0.18, r0: rH * 0.26, r1: rH * 0.2 },
       { k: 'ell', x: hx - rH * 0.05, y: hy + rH * 0.42, rx: rH * 0.42, ry: rH * 0.3, rot: 0.1 },
     ], { alpha: 0.78, feather: 0.5 });
+  }
+  if (chalk) {
+    // A lean coat shows the ribs, and a pale wolf carries dark tips to its ears.
+    for (let i = 0; i < 3; i++) {
+      const rx = X(0.13 - i * 0.07);
+      softLine(ctx, B, [rx, U(0.72 - i * 0.01), rx - h * 0.02, U(0.62), rx - h * 0.015, U(0.53 + tuck)], shade(base, 0.72), Math.max(1, h * 0.012), 0.45);
+    }
+    softLine(ctx, B, [hx - rH * 0.12, hy - rH * 1.62, hx - rH * 0.1, hy - rH * 1.4], shade(base, 0.45), Math.max(1, rH * 0.2), 0.7);
   }
 
   // ---- the open mouth, fangs, nose and eye.

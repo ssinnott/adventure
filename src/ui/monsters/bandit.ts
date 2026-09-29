@@ -21,10 +21,12 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'hedge_archer'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
+  else if (kind === 'hedge_archer') archer(ctx, x, y, h, p, true);
+  else if (kind === 'footpad') footpad(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -223,9 +225,10 @@ function bandit(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 /**
  * The archer: braced side-on with the far foot forward and wide, shoulders turned away. Hooded
  * tunic in the tint with a feather, the bow arm raised out to the far side, the near hand down on
- * a dagger at mid-thigh.
+ * a dagger at mid-thigh. The Downs' hedge archer wears the hedge: a ragged mantle of leaves over
+ * the hood and shoulders, sprigs standing out of it where the feather was.
  */
-function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, hedge = false): void {
   const R = makeRig(x, y, h, p, { tilt: 0.017, hipTilt: -0.028, turn: -0.032, near: [0.068, 0.085, 0.045], far: [-0.066, -0.175, -0.255], toe: [0.3, -1], lift: [0.085, 0] });
   const { sy, hx, hy, hr } = R;
   const sway = Math.sin(p.frame / 23) * h * 0.006;
@@ -262,6 +265,7 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The cowl's hem across the chest, as one soft line (three creases darken where they overlap):
   // without it the cowl reads as a neck as thick as the hood, growing out of the tunic.
   softLine(ctx, B, [x - h * 0.1, sy + h * 0.05, x - h * 0.045, sy + h * 0.074, x + h * 0.05, sy + h * 0.076, x + h * 0.1, sy + h * 0.052], p.base, Math.max(1, h * 0.022), 0.28);
+  if (hedge) leafMantle(ctx, R, p, sway);
   // Inside the hood: shadow, then the face.
   blob(ctx, B, shade(p.dark, 0.55), [{ k: 'curve', pts: [hx - hr * 0.95, hy - hr * 0.85, hx + hr * 0.95, hy - hr * 0.8, hx + hr * 1.0, hy + hr * 0.3, hx + hr * 0.5, hy + hr * 1.05, hx - hr * 0.5, hy + hr * 1.05, hx - hr * 1.0, hy + hr * 0.3], wobble: 0.04, seed: 26, sub: 2 }], { h, form: false, outline: false });
   // Belt over the tunic.
@@ -275,13 +279,106 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // A short beard under the jaw.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.7, hy + hr * 0.45, hx - hr * 0.3, hy + hr * 0.62, hx + hr * 0.3, hy + hr * 0.62, hx + hr * 0.75, hy + hr * 0.42, hx + hr * 0.55, hy + hr * 1.05, hx, hy + hr * 1.2, hx - hr * 0.55, hy + hr * 1.05], wobble: 0.06, spiky: 0.1, seed: 30, sub: 2 }], { h, formK: 0.4 });
   face(ctx, R, true);
-  // The feather in the hood, at the near side.
+  // The feather in the hood, at the near side; the hedge archer has leaves there instead.
   const fx = hx + hr * 1.05, fy = hy - hr * 0.9;
-  glossEllipse(ctx, B, fx + hr * 0.5, fy - hr * 0.55 + sway, hr * 0.75, hr * 0.2, shade('#d8d0a8', p.tone), -0.95, { spread: 0.6 });
-  softLine(ctx, B, [fx, fy + hr * 0.05, fx + hr * 0.95, fy - hr * 1.1 + sway], R.wood, 1, 0.6);
+  if (!hedge) glossEllipse(ctx, B, fx + hr * 0.5, fy - hr * 0.55 + sway, hr * 0.75, hr * 0.2, shade('#d8d0a8', p.tone), -0.95, { spread: 0.6 });
+  if (!hedge) softLine(ctx, B, [fx, fy + hr * 0.05, fx + hr * 0.95, fy - hr * 1.1 + sway], R.wood, 1, 0.6);
   // The shortbow in the raised far hand, gripped across the riser.
   const ba = bow(ctx, R, far[2], sway);
   hand(ctx, R, far[2], ba, 33, { flip: -1 });
+  void p.light;
+}
+
+/**
+ * The hedge archer's mantle: leaves and twigs worked into a ragged cape over the hood and the
+ * shoulders, so the outline of the man breaks up into hedge. One leafy mass, its edge made of leaf
+ * shapes rather than a line, and the sprigs are part of it, so nothing on it can come loose.
+ */
+function leafMantle(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, sway: number): void {
+  const { h, hx, hy, hr, sy } = R;
+  const leaf = shade('#3e5a28', p.tone), young = shade('#7a9a44', p.tone);
+  const parts: Part[] = [
+    // Over the shoulders and the cowl, ragged at the hem.
+    { k: 'curve', pts: [
+      R.sFar.x - h * 0.04, sy + h * 0.03, hx - hr * 1.2, hy + hr * 0.9, hx + hr * 1.2, hy + hr * 0.9,
+      R.sNear.x + h * 0.045, sy + h * 0.03, R.sNear.x + h * 0.02, sy + h * 0.11, x0(R, 0.06), sy + h * 0.13,
+      x0(R, -0.05), sy + h * 0.14, R.sFar.x - h * 0.01, sy + h * 0.1,
+    ], wobble: 0.12, spiky: 0.3, seed: 71, sub: 3 },
+    // Over the crown of the hood.
+    { k: 'curve', pts: [hx - hr * 1.3, hy - hr * 0.2, hx - hr * 1.0, hy - hr * 1.3, hx, hy - hr * 1.75, hx + hr * 1.0, hy - hr * 1.45, hx + hr * 1.32, hy - hr * 0.3, hx + hr * 0.9, hy - hr * 0.9, hx - hr * 0.9, hy - hr * 0.9], wobble: 0.12, spiky: 0.3, seed: 72, sub: 3 },
+  ];
+  // Sprigs standing out of the crown and the near shoulder, each a spray of leaves.
+  for (const [bx, by, a, n] of [[hx + hr * 0.7, hy - hr * 1.4, -0.5, 3], [hx - hr * 0.5, hy - hr * 1.6, -1.9, 3], [R.sNear.x + h * 0.03, sy + h * 0.02, -0.9, 2]] as const) {
+    for (let i = 0; i < n; i++) {
+      const d = hr * (0.5 + i * 0.45), aa = a + (i % 2 ? 0.35 : -0.3);
+      parts.push({ k: 'ell', x: bx + Math.cos(a) * d + (i === n - 1 ? sway : 0), y: by + Math.sin(a) * d, rx: hr * 0.34, ry: hr * 0.17, rot: aa });
+    }
+  }
+  blob(ctx, B, leaf, parts, { h, formK: 0.5, spread: 0.7, tex: 'fur', seed: 73, amount: 0.4 });
+  // A few paler new leaves catching the light, a marking on the mass rather than parts of it.
+  if (!B.override) for (const [lx, ly] of [[hx - hr * 0.6, hy - hr * 1.2], [hx + hr * 0.5, hy - hr * 1.3], [x0(R, 0.1), sy + h * 0.05], [x0(R, -0.08), sy + h * 0.09]]) {
+    softLine(ctx, B, [lx - hr * 0.18, ly + hr * 0.06, lx + hr * 0.18, ly - hr * 0.06], young, Math.max(1, hr * 0.16), 0.7);
+  }
+}
+
+/** x at `u` h from the rig's centre line. */
+function x0(R: Rig, u: number): number { return R.x + u * R.h; }
+
+/**
+ * The footpad: a road thief who has robbed his coat off a gentleman. The coat is the tint, cut for a
+ * bigger man, to below the knee, with turned-back cuffs in a claret facing, brass buttons and braid
+ * down the front and a lace stock gone grey at the throat, all over his own rough clothes; a
+ * battered cocked hat, no mask, and a short knife held low and forward in the near fist.
+ */
+function footpad(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.02, hipTilt: 0.026, turn: 0.028, near: [0.07, 0.16, 0.2], far: [-0.068, -0.085, -0.09], toe: [1, -0.6], lift: [0, 0.04] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 21) * h * 0.008;
+  const near: Arm = [R.sNear, { x: x + h * 0.27, y: sy + h * 0.19 }, { x: x + h * 0.3, y: sy + h * 0.34 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.19 }, { x: x - h * 0.205, y: sy + h * 0.35 }];
+  const hemY = y - h * 0.42, skirtY = y - h * 0.22;
+  const coat = p.base, facing = shade('#7a3432', p.tone), lace = shade('#e4e0d4', p.tone);
+  groundShadow(ctx, x, y + 1, h * 0.76);
+  blob(ctx, B, shade(p.dark, 0.86), armParts(R, far, 171, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  hand(ctx, R, far[2], null, 172, { far: true, k: 0.92 });
+  legs(ctx, R, shade('#3a3630', p.tone), 173, [1, -0.6]);
+  blob(ctx, B, R.boot, [
+    { k: 'cap', x0: x + h * 0.196, y0: y - h * 0.18, x1: x + h * 0.2, y1: y - h * 0.055, r0: h * 0.044, r1: h * 0.042 },
+    { k: 'cap', x0: x - h * 0.088, y0: y - h * 0.17, x1: x - h * 0.09, y1: y - h * 0.065, r0: h * 0.041, r1: h * 0.039 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The coat: body, near sleeve and long skirts, too big for him, open at the front.
+  blob(ctx, B, coat, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 174, sub: 3 },
+    { k: 'curve', pts: [
+      x - h * 0.13, hemY - h * 0.1, x - h * 0.17, hemY - h * 0.02, x - h * 0.2, skirtY,
+      x - h * 0.06, skirtY + h * 0.02, x + h * 0.02, skirtY - h * 0.02, x + h * 0.08, skirtY + h * 0.012, x + h * 0.21, skirtY - h * 0.01,
+      x + h * 0.17, hemY - h * 0.02, x + h * 0.14, hemY - h * 0.1,
+    ], wobble: 0.05, seed: 175, sub: 3 },
+    ...armParts(R, near, 176),
+  ], { h, formK: 0.5, tex: 'folds', seed: 174, amount: 0.8, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The front edge in braid, and a row of brass buttons: the one thing on him worth money.
+  softLine(ctx, B, [x + h * 0.014, sy + h * 0.05, x + h * 0.02, hemY, x + h * 0.03, skirtY], R.brass, Math.max(1, h * 0.012), 0.8);
+  for (let i = 0; i < 4; i++) glossBall(ctx, B, x + h * 0.04, sy + h * (0.08 + i * 0.07), Math.max(1, h * 0.012), R.brass, { gloss: 0.6 });
+  // The deep cuff turned back on the near sleeve, in the claret facing.
+  const e = near[1], w = near[2], cu = (t: number): number[] => [e.x + (w.x - e.x) * t, e.y + (w.y - e.y) * t];
+  blob(ctx, B, facing, [tube([...cu(0.6), ...cu(0.88)], h * 0.036, h * 0.044, 0, 177)], { h, formK: 0.5, spread: 0.7 });
+  // The lace stock at the throat, rumpled and grey with the road.
+  blob(ctx, B, lace, [{ k: 'curve', pts: [hx - hr * 0.5, hy + hr * 1.55, hx + hr * 0.55, hy + hr * 1.5, hx + hr * 0.45, hy + hr * 2.2, hx + hr * 0.05, hy + hr * 2.6, hx - hr * 0.3, hy + hr * 2.2], wobble: 0.08, spiky: 0.14, seed: 178, sub: 2 }],
+    { h, formK: 0.4, spread: 0.7, tex: 'folds', seed: 178, amount: 0.4 });
+  // Stubble, the face, and a cocked hat gone shapeless in the rain.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.84, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.58, hx + hr * 0.3, hy + hr * 0.58, hx + hr * 0.86, hy + hr * 0.3, hx + hr * 0.6, hy + hr * 0.9, hx, hy + hr * 1.02, hx - hr * 0.6, hy + hr * 0.9], wobble: 0.06, spiky: 0.06, seed: 179, sub: 2 }], { h, form: false, outline: false });
+  face(ctx, R, false, true);
+  blob(ctx, B, shade('#2a2622', p.tone), [
+    { k: 'curve', pts: [hx - hr * 0.9, hy - hr * 0.6, hx - hr * 0.7, hy - hr * 1.35, hx, hy - hr * 1.6, hx + hr * 0.75, hy - hr * 1.35, hx + hr * 0.95, hy - hr * 0.6], wobble: 0.04, seed: 180, sub: 3 },
+    { k: 'curve', pts: [
+      hx - hr * 1.65, hy - hr * 0.45 + sway, hx - hr * 1.1, hy - hr * 1.15, hx - hr * 0.3, hy - hr * 0.9, hx + hr * 0.5, hy - hr * 1.2,
+      hx + hr * 1.6, hy - hr * 0.7, hx + hr * 1.0, hy - hr * 0.5, hx + hr * 0.2, hy - hr * 0.38, hx - hr * 0.8, hy - hr * 0.5,
+    ], wobble: 0.05, seed: 181, sub: 3 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 180, amount: 0.4 });
+  // The short blade, held low and forward, point up a little: a knife for close work.
+  const ka = blade(ctx, R, near[2], near[2].x + h * 0.15, near[2].y - h * 0.03, h * 0.014, h * 0.03);
+  hand(ctx, R, near[2], ka, 182, { flip: -1 });
   void p.light;
 }
 
