@@ -701,3 +701,22 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   with their figures and the swarm is the fallback.
 - Put to the owner at 00:35: the Lodestone's track (#140) again, and whether to file the combat
   header's "12 Ogres" as a systems issue.
+
+### 01:15: check-in; 0c and #77's B open; #148's trial; the zone swarms too
+
+- Opened: #262 (#77's B, the Seal) and #263 (#47's 0c, the Downs' five variants). Reviewers at
+  01:13 (`reviews/262.md`, `263.md`). (The owner filed issues #149 to #261 tonight, for later acts:
+  lanes only, none `approved`; nothing for Phase 1.)
+- #146's fixes in (c28f83a: each hall held alone; the second marker "by the boulders south of the
+  river", DESIGN §8's row with it; `lake` moved to 26,22 at the water; "It has gone dark"; the
+  stair; the nits) and main b48f459 merged (090f6c8); CI green. Landing check started 01:17.
+- #145's fixes in (90974f5: one flock of six crows, the lamp by day, 'the Foreland: floor' owed
+  again). It waits on #263.
+- #148 tried the owner's way (dde9215): the Cut Stone now fewer, harder groups (4-8, the zealot a
+  soldier), holding at its floor 8 (6.89 fights to a rest); the Grove Roots keeps twelve-strong
+  swarms, since at its floor 6 every heavy shape a level-3 company loses costs 3-4.5 fights to a rest
+  (5.5 asked). The pay figures, the n/a line and the seeds' margins are fixed in the body.
+- Thornmark's zone on main (#134, 21:15) already swarms: 11 of its 14 groups hold 12 (brigands,
+  spiders, skeletons). The owner's OK of #134's look could not show it (a group draws as its first
+  monster). Put to the owner: keep the swarms where only they hold (the Grove Roots, the zone), or
+  a shorter day, a higher floor or a changed rule.
