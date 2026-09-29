@@ -10,12 +10,12 @@ gate each map is held to is #65's #209. Figures are measured on main at `54ae56d
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Its content is in `src/content/areas/thornmark/` (maps, monsters, items, its chapter of the one
-quest, The Grove Stone, in `chapter.ts`, its side quest The Lost Expedition in `quests.ts`, climate
-and its part of the world map) and its businesses' rooms in `src/ui/interiors/thornmark/`. The
-systems it runs on, the level cap and the spells, classes and traits that carry a company to it
-included, are in [SLICE.md](../SLICE.md) ("The road to level 10"). Its ids: the area, its zone and
-its map are `thornmark`, the Deepthorn `deepthorn`, the town `thornhold`, the Grove Roots `grove1`
-and the Cut Stone `grove2`.
+quest, The Grove Stone, in `chapter.ts`, its side quests, The Lost Expedition and #56's six on the
+built maps (#219), in `quests.ts`, climate and its part of the world map) and its businesses' rooms
+in `src/ui/interiors/thornmark/`. The systems it runs on, the level cap and the spells, classes and
+traits that carry a company to it included, are in [SLICE.md](../SLICE.md) ("The road to level 10").
+Its ids: the area, its zone and its map are `thornmark`, the Deepthorn `deepthorn`, the town
+`thornhold`, the Grove Roots `grove1` and the Cut Stone `grove2`.
 
 ---
 
@@ -135,9 +135,11 @@ One clear of every map is worth level 9 per member; the dungeons respawn in one 
 about two fifths of one more sweep of the Grove reaches 10 (2,759 xp a member a sweep once the
 Warden of the Cut is dead and the Rift's groups stop coming, 34% less than before). Levels are still
 bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays
-10,227 xp a member of the 13,667 its curve asks, and 6,518 gold of the 8,400 (the guilds' four
-quests and the Wardens' chest give 800 xp a member and 820 gold of it): the curve
-(`src/content/progression.ts`) reports both as owed to the pilot (#26).
+10,794 xp a member of the 13,667 its curve asks, and 7,600 gold of the 8,400 (the guilds' four
+quests and the Wardens' chest give 800 xp a member and 820 gold of it, and #219's side quests 567 xp
+and 1,082 gold): the curve (`src/content/progression.ts`) reports both as owed to the pilot (#26).
+The curve counts both of a choice's ways, so Leofwin's band and Thora's are each in it though a
+company meets one at most.
 
 The gate check (`tools/tests/gate.ts`) holds for Thornmark. Its company is dressed by the Foreland's
 gear ladder (#99), so at 3 it wears the band's gear. The zone is judged two under its floor, and the
@@ -451,16 +453,16 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
-| 9 | A Coin Not From Caldera | 5 | the Split Oak; a deserter's camp off the Warden road | an item no shop buys; a choice put by a person | the built maps (#219) |
-| 10 | Leave the Trees Standing | 5 | the Grove road; Thornhold | a choice put by a person; a person who moves | the built maps (#219) |
-| 11 | The Dark Glass | 6 | Lyngwyn; the Chapterhouse | a hand-in; words that change with a flag; a choice | the built maps (#219), after the Lanterns' Dark Marker (#146) |
-| 12 | The Elder's Four | 6 | the Grove Roots; Thornhold | a person found below; a choice; an event that comes with a flag | the built maps (#219) |
+| 9 | A Coin Not From Caldera | 5 | the Split Oak; a deserter's camp off the Warden road | an item no shop buys; a choice put by a person | the built maps (#219), built |
+| 10 | Leave the Trees Standing | 5 | the Grove road; Thornhold | a choice put by a person; a person who moves | the built maps (#219), built |
+| 11 | The Dark Glass | 6 | Lyngwyn; the Chapterhouse | a hand-in; words that change with a flag; a choice | the built maps (#219), after the Lanterns' Dark Marker (#146), built |
+| 12 | The Elder's Four | 6 | the Grove Roots; Thornhold | a person found below; a choice; an event that comes with a flag | the built maps (#219), built |
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214) |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215) |
 | 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218) |
-| 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219) |
-| 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219) |
+| 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
+| 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
 | 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218) |
 | 20 | Hale's Sergeant | 10 | Thornhold; the Deepthorn's shore | Hale gone from the Scarth | Act II (#156, #190) |
 
@@ -543,18 +545,18 @@ I5.
 ## 8. The numbers
 
 - **Experience.** A clear of Thornmark pays 10,227 xp a member on main (§3), the Lanterns' quests
-  (#146) in it. The curve (EXPANSION §5.2, #31) asks the climb from 5 to 10 over 0.75, 13,667
-  (`src/content/progression.ts:38`). The Deepthorn is where the other 3,440 or so come from, shared
-  among the boxes as §4.1 has it: H3 410, I3 470, I4 890, J4 470, I5 360 and J5 830, the first
-  shares scaled down by the same fraction when #148 raised the clear. Until the boxes are built the
-  curve reports the shortfall as owed to #26. A den's keepers pay once, and its brood as a group
-  that respawns does; the figures count the brood once. Act II's cap and curve (#159) are to pay a
-  kill by the monster's level against the member's, which re-prices every figure here if they land
-  first; each box is measured when it is built.
+  (#146) in it, and 10,794 with #219's side quests. The curve (EXPANSION §5.2, #31) asks the climb
+  from 5 to 10 over 0.75, 13,667 (`src/content/progression.ts:38`). The Deepthorn is where the other
+  3,440 or so come from, shared among the boxes as §4.1 has it: H3 410, I3 470, I4 890, J4 470, I5
+  360 and J5 830, the first shares scaled down by the same fraction when #148 raised the clear, and
+  to be again for #219's. Until the boxes are built the curve reports the shortfall as owed to #26.
+  A den's keepers pay once, and its brood as a group that respawns does; the figures count the brood
+  once. Act II's cap and curve (#159) are to pay a kill by the monster's level against the member's,
+  which re-prices every figure here if they land first; each box is measured when it is built.
 - **Gold.** A clear pays 6,518 of the 8,400 that training six members from 5 to 10 costs (§3), the
-  Lanterns' quests in it. The Deepthorn's share of the rest, about 1,900: H3 250, I3 270, I4 430, J4
-  250, I5 150 and J5 530, in its chests, cairns and hoards, the Hand's drops at the landing and the
-  side quests' pay.
+  Lanterns' quests in it, and 7,600 with #219's side quests. The Deepthorn's share of the rest,
+  about 1,900: H3 250, I3 270, I4 430, J4 250, I5 150 and J5 530, in its chests, cairns and hoards,
+  the Hand's drops at the landing and the side quests' pay.
 - **The gate.** Each box is held to its band as it is built (`tools/tests/gate.ts`): at 8 a box's
   groups are won nine fights in ten and at 6 no more than one in four, and the Eldest about half the
   time at 8 and nearly always at 10. The area as one is judged differently: every group of every

@@ -45,6 +45,25 @@ export const GROVE1: MapDef = {
     { kind: 'chest', x: 10, y: 3, id: 'g1_c2', gold: 150, items: ['elfbow+1', 'potion_heal', 'potion_heal'] },
     { kind: 'chest', x: 12, y: 11, id: 'g1_c3', gold: 200, items: ['brigandine+1', 'elixir'] },
     { kind: 'event', x: 11, y: 11, id: 'g1_stairs', once: true, text: 'A stair, and beside it a dead elf in Thornhold green, a week gone. Her hands are burned to the wrist.' },
+    // The Elder's Four (#219): the other two dead, one in each half, and Meva, the fourth, alive in
+    // the east half's dead end until the company answers her. Keyne, in Thornhold, asked.
+    { kind: 'event', x: 1, y: 12, id: 'g1_ruan', once: true, text: 'An elf in Thornhold green, face down in the dead roots, a bow beside him with the string still on. He is nineteen, or was.' },
+    { kind: 'event', x: 14, y: 10, id: 'g1_mylor', once: true, text: 'A third, in green, curled against the grey roots as if they were warm. His hands are burned, like the woman\'s at the stair.' },
+    { kind: 'npc', x: 12, y: 4, name: 'Meva, the fourth', lines: [
+      'In a dead end of the roots a young elf sits in a grey robe too big for her, with her Thornhold green folded beside her, very neatly, as if she meant to give it back.',
+      '"Don\'t. I know what I\'m wearing. They gave it me when I stopped screaming, and they were kind, the way people are kind to a dog they\'ve decided to keep." Her hands are not burned. "I went under with Ruan and Breaca and Mylor. I watched the tear take Breaca. I put my hands up, and the grey men put a robe on me, and I found I was still alive, and I have not worked out since whether that was a thing I chose."',
+      '"I\'m not going home. Not in this, and not in that. Tell my mother I died by the stair with Breaca. Tell her it was quick. It\'s the only true thing left to say."',
+    ], until: [{ flag: 'q_four_truth' }, { flag: 'q_four_lie' }], choice: {
+      ask: '"Well? Will you tell them I\'m dead?"',
+      answers: [
+        { label: 'We\'ll tell them the truth.', sets: 'q_four_truth', says: [
+          '"The truth." She picks up the folded green and holds it, and does not put it on. "Then tell it all. That I put my hands up. That I was fed. That I am alive, and I know what that cost." She turns her face to the roots. "Go on. I\'d like to be alone with it before they are."',
+        ] },
+        { label: 'We\'ll tell them you died there.', sets: 'q_four_lie', says: [
+          '"Thank you." She says it the way you would thank someone for closing a door. "Breaca and I, by the stair. Quick." She holds the folded green against her. "Go on. Before I change my mind about which of us is dead."',
+        ] },
+      ],
+    } },
   ],
   secrets: [{ x: 5, y: 11, hint: 'g1_grit' }],
   encounters: [
