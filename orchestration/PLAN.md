@@ -836,3 +836,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   of the Hedge Archer.
 - 08:07: nothing of Phase 1's moved; #263 waits on the owner's OK. A new branch `claude/phase-1-2-docs` (07:13) is not ours (Act II's docs); left alone.
 - 09:06: nothing moved; check-ins now two hours apart while every session waits on the owner.
+
+### 11:28: the Hedge Archer out, the Poacher in
+
+- The owner (between 09:06 and 11:06): "The hedge archer just looks lob like I think it need a new
+  concept. Like maybe it kinda looks like a bush ona a person that makes no sense." Put three
+  concepts to them at 11:27; they chose the Poacher: a Downs countryman with a longbow taller than
+  he is, a broad-brimmed hat, a patched jerkin and a hare at his belt. Sent 11:30 to the Black Dog
+  session: redraw on the archer's frame, rename `hedge_archer` to `poacher` everywhere (never on
+  main), the other four unchanged, then the sheet. The pilot's F2 places `poacher` in its place.
