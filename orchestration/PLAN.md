@@ -923,3 +923,24 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - Landing check on 13484d4 (main 0a8fd4d in): ALL OK (40 owed), SMOKE OK, "Nothing new." (`check269.log`);
   CI green. Merged as b59933d; main's tree 8cf9db4 is the tested tree. #264 closes with it.
 - The #45 session is free (systems). For the owner: file the '▼' marker bug?
+
+### 13:25: the owner's answers; #263 landed; #271 filed
+- The owner (13:00): the Poacher looks fine; the gate test "should be more of a suggestion": within
+  a range is fine, no massive outliers, and no overfitting to a number; the target marker "worth
+  doing" as a small fix.
+- #263: landing check on 8e61ebe merged onto main b59933d: ALL OK (45 owed: the five "appears on a
+  map (#47's)" lines new), SMOKE OK, "Nothing new." (`check263.log`). The head moved to 5ce7d84 (the
+  Black Dog session merged main at 12:58); its tree is the tested tree (34ca6ce), CI green on it.
+  Merged as 92e14f5; main's tree is the tested tree.
+- The pilot told (13:23 trigger) to merge main into #145: main's side for the five, its defs block
+  gone, the five out of `UNPLACED`, `poacher` for `hedge_archer` everywhere, shipped.json from main's
+  plus F2's own, then F2's sheet to the owner. I land F2 on the owner's OK.
+- #271 filed at the owner's word (Bug, lane: systems, under #26; not approved): the target marker
+  '▼' is not in the font (`src/lib/engine/text.ts`, the engine's); the fix draws '↓', which the font
+  has, and a test holds `src/ui/`'s symbols to the font. Only '▼' is missing today ('▶', the arrows,
+  '★' and '♥' are in). For the #45 session once approved.
+- The gate: I put to the owner an aim and a limit for each figure (inside the aim quiet; between,
+  listed as off its aim; past the limit, a failure), with suggested limits (through 80%, rests 4-10,
+  boss 20-80%, two under 75% or 90%). At 75% E2 and E3 still need the scouts' harder monsters (about
+  70% two under); at 90% the brief's groups pass with notes. To be filed as a quality issue if the
+  owner agrees, built after #209 by the same session. The Downs' new monsters (0) wait on this.
