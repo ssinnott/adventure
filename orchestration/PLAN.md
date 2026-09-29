@@ -821,3 +821,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   merged main into F2 (aafc250) and builds F3 (`claude/m1-47-f3`) and C (`claude/m1-47-people`) as
   branches. Everything waits on the owner's OK of #263's look.
 - 05:30: nothing moved; still waiting on the owner's OK of #263.
+
+### 06:28: the owner on the Downs' five
+
+- The owner (06:27): "The hedge archers should probably look more leaf like." Nothing on the other
+  four (taken as OK unless they say otherwise). Sent 06:30 to the Black Dog session: rework the
+  Hedge Archer as a hedge with a bow in it (foliage to the knees, sprays off the arms and hood, the
+  face half-hidden, leaves on the bow, one silhouette, the bow still clear), then the sheet again.
