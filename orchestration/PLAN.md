@@ -831,3 +831,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 07:07: #263's Hedge Archer redrawn (304ee61: foliage to the knee, leaves on the arm, face and bow;
   only `bandit.ts`). Its sheet (with the four others unchanged) went to the owner at 07:07 for
   their OK.
+- 07:10: #263's landing check on 304ee61 (main 2cc52cd in): ALL OK (45 owed: the five new monsters
+  owed to #47 until F2 places them), SMOKE OK, "Nothing new."; CI green. It lands on the owner's OK
+  of the Hedge Archer.
