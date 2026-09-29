@@ -34,9 +34,9 @@ and from the rim down to y 151, the tip of Thorn Head.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Thornmark map is H2, and the Deepthorn is
 six boxes: H3 below the Grove; I3, I4 and I5 down the wood; J4 and J5, the Hoarhills' end and Thorn
-Head. The rest is scraps (§11): the rim above (H1, I1); the still lake's east shore under the Hoarhills
-(I2) and a strip of Sunder Bay's shore by the dead wood (K4), which go with Sunderwood's boxes; the
-Thornwater's mouth (H4); and the Mewstone in the Wyke (G3, G4).
+Head. The rest is scraps (§11): the rim above (H1, I1); the still lake's east shore under the
+Hoarhills (I2) and a strip of Sunder Bay's shore by the dead wood (K4), which go with Sunderwood's
+boxes (#195, #203); the Thornwater's mouth (H4); and the Mewstone in the Wyke (G3, G4).
 
 Its edges:
 
@@ -186,14 +186,16 @@ Isle's rocks across deep water. A map is its whole box (EXPANSION §8.2), as D4 
 foot from the Delta (docs/areas/shelf.md §1): built, each is the Deepthorn's to its edges, the
 ridge and its end the border inside it, and J4's Eaves' forest is drawn closed, with few paths and
 nothing to find, so that the Eaves' own look is kept for Sunderwood. J4's 30 squares of dead wood
-are the Eaves' too; its map paints them over, so that dead wood is still new when Sunderwood is
-built (§7). Both are built so (§9, 7).
+are the Eaves' too; its map paints them over as forest, so that dead wood is still new when
+Sunderwood is built (§7). Both are built so (§9, 7), and Sunderwood's plan (#155) cuts the land they
+take.
 
 **The order** is the road's: H3 first, the only box that meets the built map and the Deepthorn's
 way in; then I4, which holds the step, and I3 beside it; then J4, the glade road on to the head,
 and I5; Thorn Head last. Building waits on the pilot (#47), which measures a box first and tunes
 the thresholds the rest are held to. Three of the six hold ground no map character is, woods in H3
-and I3 and dead wood in J4, and the scaffold refuses them until it has one (§7).
+and I3 and dead wood in J4, and the scaffold refuses them until it has one: woods here, dead wood in
+Sunderwood's #163 (§7).
 
 The places, as the atlas and the docs have them:
 
@@ -337,8 +339,8 @@ settled in its issue, and what the pilot teaches changes them.
   the bay; the Eaves' forest north-east of them, built as the Deepthorn's (§4) but drawn as closed
   forest with few paths and nothing to find, so that the Eaves' own look is kept for Sunderwood, and
   its dead wood painted over; the bay shore round the ridge's foot, east to the box's edge, where
-  Sunderwood's dead wood begins and the world ends until Sunderwood is built; across the bay, dead
-  trees white against the Eaves' green.
+  Sunderwood's dead wood begins in K4 (#203) and the world ends until it is built; across the bay,
+  dead trees white against the Eaves' green.
 - **Points of interest,** about five features and four groups:
   - a lookout on the last crag, over the bay and the dead wood;
   - a hermit on the shore who watches the dead wood, with a rumour of what split it (#45's hermit);
@@ -459,7 +461,8 @@ Taken: 9 to 12 and 14 to 19. The changes to #56's drafts:
   (MONSTERS §8.1), first needed in the Whitespine. It is built with that system, not before.
 - **20 goes to Act II.** Hale's vanishing is Act II's news (DESIGN §9, STORY) and his checkpoint is
   the Wardens' first task (DESIGN §8); the quest would take him off the Foreland map at level 10. It
-  goes with Saltreach's plan, where the news reaches the company.
+  is Act II's: #156 starts it at Thornhold once Hale is gone from the pass, and #190 ends it on the
+  Tide Ship with his pass-token.
 - **11 follows the Lanterns' Dark Marker.** #146 builds the Lanterns' rank 1 quest at the same
   marker as a look and a report (DESIGN §8). 11 stays a plain quest, given at the Chapterhouse as #56
   has it, which asks for the glass once the marker is known dark.
@@ -503,14 +506,15 @@ New in the Deepthorn, for the novelty check (EXPANSION §5.4):
 - **The old wood,** a new family.
 - **Woods,** as terrain: the Deepthorn's own light woods along the Wyke, in H3 (243 squares), and 62
   in I3, 15 of them on the Deepthorn's side of the ridge and 47 on the Eaves'. The atlas's woods
-  have no map character, so the scaffold refuses both boxes. Woods are given one and walked, as hills
-  and farmland were for the Downs (#44).
+  have no map character, so the scaffold refuses both boxes. Woods are given one and walked, as
+  hills and farmland were for the Downs (#44). Sunderwood's first boxes hold woods too: the scaffold
+  refuses I2 (#195) for 579 squares of them and J2 (#196) for 18, and no issue of Act II's gives
+  them a character.
 - **Deepthorn Lodge,** the first lodge on the road, a landmark.
 
-Dead wood is not given a character. J4 holds 30 squares of it, all the Eaves', and it is
-Sunderwood's ground (EXPANSION §7), which no Deepthorn map uses: the scaffold learns instead to
-paint over a ground that a brief says its map paints over, J4's dead wood to forest, so that dead
-wood is still new when Sunderwood is built.
+Dead wood is Sunderwood's ground (EXPANSION §7), and #163 gives it its character. J4 holds 30
+squares of it, all the Eaves'; the scaffold cuts J4 once #163 has landed, and its map paints them
+over as forest, so that dead wood is still new when Sunderwood is built.
 
 New but not for the check: a wood walked by its paths, which the brambles close; a boss outdoors,
 the Eldest; and the first den whose brood walks only by night, I5's owls' roost. Brambles that never
@@ -527,7 +531,9 @@ I5.
   I3 740, I4 1,400, J4 740, I5 560 and J5 1,310. The Lanterns' quests (#146) add 400 a member, and
   the Deepthorn's shares shrink to match when they land. Until the boxes are built the curve reports
   the shortfall as owed to #26. A den's keepers pay once, and its brood as a group that respawns
-  does; the figures count the brood once.
+  does; the figures count the brood once. Act II's cap and curve (#159) are to pay a kill by the
+  monster's level against the member's, which re-prices every figure here if they land first; each
+  box is measured when it is built.
 - **Gold.** A clear pays 5,800 of the 8,400 that training six members from 5 to 10 costs; #146 adds
   350. The Deepthorn's share of the rest, about 2,600: H3 340, I3 380, I4 590, J4 340, I5 210 and J5
   740, in its chests, cairns and hoards, the Hand's drops at the landing and the side quests' pay.
@@ -543,10 +549,12 @@ I5.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their
-  company from it at 10 (`GEAR`, `tools/harness.ts`), and Saltreach's gate will meet a company in
-  it. A shield is never beside a two-handed weapon (`src/game/party.ts:177`), so the Knight and the
-  Paladin keep theirs with a War Hammer; and a Monk keeps to a robe's armour, or loses Unarmoured
-  Defence (`robeLike`), so the Monk's step is a weapon alone:
+  company from it at 10 (`GEAR`, `tools/harness.ts`), and Act II's gate check runs its company at 10
+  in it (#159). Saltmouth's armourer, the next rung, is set a step past Thornmark's Armoury (#177);
+  it is to be a step past this. A shield is never beside a two-handed weapon
+  (`src/game/party.ts:177`), so the Knight and the Paladin keep theirs with a War Hammer; and a Monk
+  keeps to a robe's armour, or loses Unarmoured Defence (`robeLike`), so the Monk's step is a weapon
+  alone:
 
   | Class | Its find in the Deepthorn |
   |---|---|
@@ -564,7 +572,8 @@ I5.
   Knight with a shield does not take it: the harness's takes the War Hammer +1.
 - **Spells** come with levels (`spellTierAt`), tier 5 at 8, inside the band. Thornhold's Lantern
   Hall sells to tier 4 (`src/content/areas/thornmark/maps/thornhold.ts:41`), and EXPANSION §4 asks an
-  area's towns to sell its band's tier, as #74 did for the Foreland: the hall to tier 5.
+  area's towns to sell its band's tier, as #74 did for the Foreland: the hall to tier 5. Act II's
+  next tier is sold at Lantern Watch and none at Saltmouth (#151, call 9), so tier 5 is bought here.
 
 ## 9. Decisions
 
@@ -600,10 +609,10 @@ when the issues are filed:
 12. **The step** is the treaty's seal, in the oldest hold; the chapter ends on it (§5).
 13. **The Empty Throne** opens at the treaty (§5).
 14. **The side quests:** #56's 9 to 12 and 14 to 19 are taken, with the changes in §6; 13 is held for
-    a group that talks before it fights, and 20 goes to Act II.
+    a group that talks before it fights, and 20 is Act II's (#156, #190).
 15. **The Mender** stays a side quest, not the chapter's last step (§6).
-16. **Woods are walked,** with a map character; dead wood gets none, and the scaffold paints it over
-    in J4 (§7).
+16. **Woods are walked,** with a map character. Dead wood's is #163's, Sunderwood's, and J4 paints
+    its 30 squares over as forest (§7).
 17. **The gate pools each group at its own map's floor,** so that the Deepthorn is held at 8 and the
     Downs' boxes at theirs; it is #65's, which needs it first (§8).
 18. **The ladder's top:** a +2 or better for every class in the Deepthorn, the Eldest's Bough and a
@@ -611,12 +620,17 @@ when the issues are filed:
 19. **Tier 5** sold at Thornhold's Lantern Hall (§8).
 20. **The cuts** of §11, the Thornwater's mouth among them.
 21. **The names** of §10.
-22. **The epic** is Phase 1.1, as the owner called it, under #26 as #65 is: the second half of Phase
-    1's build-out, before Act II's Phase 1.2 (#149).
+22. **The epic** is Phase 1.1's, as the owner called it and #151's call 11 numbers #26: under #26 as
+    #65 is, the second half of its build-out, before Act II's Phase 1.2 (#149).
+
+Fitted on 29 September to Act II, filed as Phase 1.2 (#149) the night before: 7 (Sunderwood's plan
+cuts the same land), 14 (20 is #156's and #190's), 16 (#163 gives dead wood its character, so the
+scaffold learns no paint-over) and 22 (#151's call 11 numbers #26 1.1).
 
 Left for later: a home for the subplots that span areas. The Lost Expedition and The Empty Throne
-live in Thornmark's `quests.ts`, and Saltreach adding Tallis's claim would edit another area's file
-(EXPANSION §5.8); a home joined as the chapters are is a systems ask, to file before Saltreach.
+live in Thornmark's `quests.ts`. #181 goes on with The Lost Expedition in Saltmouth, which would
+edit another area's file (EXPANSION §5.8), and Tallis's claim comes in Phase 4 (#177); a home joined
+as the chapters are is a systems ask, wanted before #181.
 
 ## 10. Names
 
@@ -631,7 +645,8 @@ one it lends its name to:
   Foreland's English: short parts, spelled as they are said. *Pen* head, *hen* old, *lys* court,
   *coos* wood, *dar* oak, *spern* thorns, *kelli* grove, *lyn* pool, *dowr* water, *rid* ford, *hir*
   long, *du* dark, *gwyn* white. It goes into NAMES §2's row for Thornmark's elves, with a line that
-  a few of the Foreland's oldest people carry names of it.
+  a few of the Foreland's oldest people carry names of it. The Tidefolk's tongue, "modelled on one
+  real family of coastal names", is still to choose (#152), and takes another family than this.
 - **The names:**
 
   | Was | Now | What it means | Also thought of |
@@ -654,7 +669,8 @@ one it lends its name to:
   of row 2 end in it.
 - **The scraps** of Thornmark's land in boxes that are others' or the sea's: the still lake's east
   shore and the Hoarhills' west face in I2 (128 squares, 22 of them walkable) and a strip of Sunder
-  Bay's shore by the dead wood in K4 (76, 55 walkable), which go with Sunderwood's boxes; and the
+  Bay's shore by the dead wood in K4 (76, 55 walkable), which go with Sunderwood's boxes (#195,
+  #203); and the
   Mewstone (G3 and G4, 170 squares), an isle off the road, which waits for boats (EXPANSION §2.1).
 - **The Thornwater's mouth,** H4: 128 squares, 81 of them dry, in a box of sea, with nothing new to
   do or see (DESIGN §1). H3 carries the river to its south edge, where the world ends; the mouth goes
