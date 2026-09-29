@@ -1,7 +1,7 @@
 // The gate check (EXPANSION §2.2, §5.2): with one road and no flags on it, the monsters are what
 // turn a company back. tools/gate.ts's bot plays the premade company, dressed by the ladder, against
-// every group of a map alone from full health; each map is held to its sign's band, each area pools
-// its groups each at its own map's floor, and each zone walks its road and warns at its way in.
+// every group of a map alone from full health; each map is held to its sign's band; each area pools
+// its groups each at its own map's floor; each zone walks its road and warns at its way in.
 // Every margin is printed, each figure against its aim and its limit: off its aim it is listed, past
 // its limit it fails. A figure past its limit the owners below are owed is reported, not failed,
 // until it holds: the Foreland's are the pilot's to settle (#47).
@@ -18,8 +18,8 @@ import { stepsFrom } from './curve.ts';
 import { ok, owed } from './lib.ts';
 
 /**
- * Each figure's aim, and its limit beyond it (#273): a figure inside its aim passes, one between its
- * aim and its limit passes and is listed as off its aim, and one past its limit fails. The pilot
+ * Each figure's aim, and its limit beyond it (#273): a figure inside its aim passes; one between its
+ * aim and its limit passes and is listed as off its aim; one past its limit fails. The pilot
  * settles the numbers against the owner's own play (#47).
  */
 export const GATE = {
@@ -41,11 +41,11 @@ export const GATE = {
   under: 2,
 };
 
-/** Which side of a line a figure is: inside its aim, off its aim but inside its limit, or past its limit. */
+/** Which side of a line a figure is: inside its aim ('aim'), off it but inside its limit ('off'), past its limit ('past'). */
 export type Judged = 'aim' | 'off' | 'past';
 /** A figure judged by how far it misses its aim and its limit (nothing or less where it holds). */
 export const judge = (missAim: number, missLimit: number): Judged => (missLimit > 1e-9 ? 'past' : missAim > 1e-9 ? 'off' : 'aim');
-/** The miss of a figure that should be at least `t`, at most `t`, or within [lo, hi]. */
+/** The miss of a figure that should be at least `t`, at most `t`, within [lo, hi]. */
 const atLeast = (t: number) => (v: number): number => t - v;
 const atMost = (t: number) => (v: number): number => v - t;
 const within = ([lo, hi]: readonly [number, number]) => (v: number): number => Math.max(lo - v, v - hi);
@@ -79,12 +79,12 @@ export const ROADS: Record<string, readonly string[]> = {
 const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark' };
 
 /**
- * The misses someone owes, by check: who owes each, and the figure it stood at when it was owed. It
- * is reported, not failed, and fails once it holds; it fails too if it moves further from the
- * threshold than that figure, by more than a point (a tenth of a fight to a rest).
+ * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
+ * when it was owed. It is reported, not failed, and fails once it is inside its limit; it fails too if
+ * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest).
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
-  // The Foreland: the pilot settles these, by retuning it or by moving the thresholds.
+  // The Foreland: the pilot settles these, by retuning it or by moving the limits.
   // The Rift Warden is retuned with Ashcombe's move past Gullwick, to about half at level 2.
   'mill:m_warden: floor': { whose: '#87', at: 0.98 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
@@ -129,7 +129,7 @@ export function rate(g: Pick<EncounterDef, 'monsters' | 'when'>, level: number):
   if (r === undefined) { r = winRate(level, g.monsters, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
 }
-/** The two groups nearest an area's way in, as a company first finds it: none that waits on an `after`. */
+/** The two groups nearest a zone's way in, as a company first finds it: none that waits on an `after`. */
 export const nearestWayIn = (groups: readonly EncounterDef[], steps: (x: number, y: number) => number): EncounterDef[] =>
   groups.filter((g) => !g.after).sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
 /**
@@ -152,16 +152,17 @@ const mean = (v: readonly number[]): number => v.reduce((t, x) => t + x, 0) / v.
 /**
  * An area's pools: every group of its maps fought at its own map's floor (through), and two levels
  * under a floor (back): a zone map's own, and for a town or dungeon the area's, as the owner ruled
- * on #209 and #40. The back is null where no group has a company two under (under level 1).
+ * on #209 and #40. The through is null where the area has no groups, and the back where no group has
+ * a company two under (under level 1).
  */
-export function areaPools(maps: readonly MapDef[], areaFloor: number, r: (g: EncounterDef, level: number) => number = rate): { through: number; back: number | null; groups: number; under: number } {
+export function areaPools(maps: readonly MapDef[], areaFloor: number, r: (g: EncounterDef, level: number) => number = rate): { through: number | null; back: number | null; groups: number; under: number } {
   const at: number[] = [], low: number[] = [];
   for (const d of maps) {
     if (!d.encounters?.length || !d.band) continue;
     const under = (d.kind === 'outdoor' ? d.band[0] : areaFloor) - GATE.under;
     for (const g of d.encounters) { at.push(r(g, d.band[0])); if (under >= 1) low.push(r(g, under)); }
   }
-  return { through: at.length ? mean(at) : 1, back: low.length ? mean(low) : null, groups: at.length, under: low.length };
+  return { through: at.length ? mean(at) : null, back: low.length ? mean(low) : null, groups: at.length, under: low.length };
 }
 /** A zone's name in the check's lines, 'the Foreland' for 'The Foreland'. */
 const zoneName = (name: string): string => name.replace(/^The /, 'the ');
@@ -201,13 +202,21 @@ function road(groups: readonly EncounterDef[], level: number): number {
 }
 
 export function gate(): void {
-  // A figure inside its aim passes, one between its aim and its limit passes and is listed, and one
-  // past its limit fails.
+  // A figure inside its aim passes; one between its aim and its limit passes and is listed; one past
+  // its limit fails. Probed either side of whatever the aim and the limit are, so the pilot may move them.
   {
-    const at = (v: number): Judged => judge(atLeast(GATE.through.aim)(v), atLeast(GATE.through.limit)(v));
-    const rest = (v: number): Judged => judge(within([5.5, 7.5])(v), within([4, 10])(v));
-    ok(at(0.95) === 'aim' && at(0.85) === 'off' && at(0.75) === 'past' && rest(6.5) === 'aim' && rest(4.2) === 'off' && rest(10.5) === 'past',
-      `a figure is judged inside its aim, off it, or past its limit (${pc(GATE.through.aim)} and ${pc(GATE.through.limit)} through; 5.5 to 7.5 and 4 to 10 fights to a rest)`);
+    const { aim: a, limit: l } = GATE.through;
+    const at = (v: number): Judged => judge(atLeast(a)(v), atLeast(l)(v));
+    const want = 6.5, [ra, rl] = [GATE.perRest.aim, GATE.perRest.limit].map(([lo, hi]) => [want - lo, want + hi] as [number, number]);
+    const rest = (v: number): Judged => judge(within(ra)(v), within(rl)(v));
+    ok(at((a + 1) / 2) === 'aim' && at((a + l) / 2) === 'off' && at(l / 2) === 'past' && rest(want) === 'aim' && rest((ra[0] + rl[0]) / 2) === 'off' && rest(rl[1] + 1) === 'past',
+      `a figure is judged inside its aim, off it or past its limit (${pc(a)} and ${pc(l)} through; ${ra.join(' to ')} and ${rl.join(' to ')} fights to a rest)`);
+    // A figure off its aim is listed at the end of the suite, one inside it is not.
+    const before = offAim.length, key = 'fixture: floor', off = `the fixture at its floor: ${pc((a + l) / 2)} (off its aim)`;
+    check(key, (a + l) / 2, atLeast(a), atLeast(l), off);
+    check(key, (a + 1) / 2, atLeast(a), atLeast(l), 'the fixture at its floor, inside its aim');
+    ok(offAim.length === before + 1 && offAim[before] === off, 'a figure off its aim is listed, and one inside it is not');
+    offAim.splice(before);
   }
   // A fight nobody finishes in fifteen rounds is broken off, and counted as not won.
   const slow = [testMonster('soldier', 1, 400, 0.01)];
@@ -228,15 +237,19 @@ export function gate(): void {
     // An area whose second zone rises above its first: each map is judged at its own floor, so it
     // holds where each holds, and fails where one does not, at its floor or two under it.
     const box = (id: string, band: [number, number], ...groups: string[][]): MapDef => ({ id, name: '', kind: 'outdoor', band, start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: groups.map((monsters, i) => ({ id: `${id}${i}`, x: i, y: 0, monsters })) });
+    // A dungeon of three rats at 3-4 counts two under the area's floor, where no group has a company:
+    // judged two under its own floor instead, it would be won at 1 and pull the back over its aim.
     const lower = box('low', [1, 3], ['rat', 'rat', 'rat']), wolves = box('mid', [3, 4], ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf']);
-    const band = (top: string[]): MapDef[] => [lower, wolves, box('top', [4, 5], top)];
+    const cellar: MapDef = { ...box('cellar', [3, 4], ['rat', 'rat', 'rat']), kind: 'dungeon' };
+    const band = (top: string[]): MapDef[] => [lower, wolves, cellar, box('top', [4, 5], top)];
     const held = areaPools(band([...new Array(11).fill('brigand'), 'brigand_archer']), 1);
     const once = pooled(band([...new Array(11).fill('brigand'), 'brigand_archer']).flatMap((d) => d.encounters!), 1);
     const hard = areaPools(band(['ashen_hand', 'ashen_adept', 'ashen_adept']), 1), soft = areaPools(band(['rat', 'rat', 'rat']), 1);
-    ok(held.through >= GATE.through.aim && held.back !== null && held.back <= GATE.back.aim && once < GATE.through.aim,
-      `an area whose second zone rises holds at its maps' own floors (${pc(held.through)} won, ${pc(held.back ?? 0)} two under), where one floor for all would fail it (${pc(once)} at 1)`);
-    ok(hard.through < GATE.through.aim && soft.back !== null && soft.back > GATE.back.aim,
-      `and fails where one map does not hold: too hard at its floor (${pc(hard.through)}), or too soft two under it (${pc(soft.back ?? 0)})`);
+    ok(held.through !== null && held.through >= GATE.through.aim && held.back !== null && held.back <= GATE.back.aim && once < GATE.through.aim,
+      `an area whose second zone rises, with a dungeon in it, holds its aims at its maps' own floors (${pc(held.through ?? 0)} won, ${pc(held.back ?? 0)} two under), where one floor for all would miss (${pc(once)} at 1)`);
+    ok(hard.through !== null && hard.through < GATE.through.aim && soft.back !== null && soft.back > GATE.back.aim,
+      `and misses its aim where one map does not hold: too hard at its floor (${pc(hard.through ?? 0)}), or too soft two under it (${pc(soft.back ?? 0)})`);
+    ok(areaPools([], 1).through === null, 'an area with no groups has no figure to judge');
   }
 
   for (const area of AREAS) {
@@ -276,7 +289,8 @@ export function gate(): void {
     const lost = [...bosses, ...zones.flatMap((z) => ROADS[z.id] ?? [])].filter((ref) => !find(ref));
     ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
     const pools = areaPools(fought, band[0]);
-    check(`${name}: floor`, pools.through, atLeast(GATE.through.aim), atLeast(GATE.through.limit), `${name} at its maps' floors: ${pc(pools.through)} of its ${pools.groups} groups' fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
+    if (pools.through === null) console.log(`  n/a:  ${name} has no groups yet`);
+    else check(`${name}: floor`, pools.through, atLeast(GATE.through.aim), atLeast(GATE.through.limit), `${name} at its maps' floors: ${pc(pools.through)} of its ${pools.groups} groups' fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
     if (pools.back === null) console.log(`  n/a:  ${name} ${GATE.under} under its maps' floors: no group has a company there`);
     else check(`${name}: under`, pools.back, atMost(GATE.back.aim), atMost(GATE.back.limit), `${name} ${GATE.under} under its maps' floors (a town's or dungeon's, the area's ${band[0]}): ${pc(pools.back)} of ${pools.under} groups' fights won (at most: ${aims(pc(GATE.back.aim), pc(GATE.back.limit))})`);
 
@@ -285,8 +299,9 @@ export function gate(): void {
       const maps = z.maps!.map((m) => fought.find((d) => d.id === m.map)).filter((d): d is (typeof fought)[number] => !!d);
       if (!maps.length) continue;
       const zn = zoneName(z.name), floor = Math.min(...maps.map((d) => d.band[0]));
-      const refs = ROADS[z.id];
+      const refs = ROADS[z.id], own = new Set(z.maps!.map((m) => m.map)), astray = (refs ?? []).filter((ref) => !own.has(ref.split(':')[0]));
       ok(!!refs?.length, `${zn}: its road is named${refs?.length ? '' : ` (ROADS has no '${z.id}')`}`);
+      ok(!astray.length, `${zn}: its road runs on its own maps${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
       const way = (refs ?? []).map(find);
       if (refs?.length && way.every((g) => g)) {
         const walked = road(way as EncounterDef[], floor);
