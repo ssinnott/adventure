@@ -4,8 +4,8 @@
 //
 // The slice's own figures, which the tests used to pin and the curve replaces: one clear of the
 // Foreland and the cellar is worth level 2 a member (391 xp), adding Brandy Hole level 4 (1,660),
-// one clear of everything 9 and most of the way to 10 (12,318), and a fifth of one more sweep of
-// the Grove reaches it (3,503 a sweep once the Warden of the Cut is dead and the Rift's groups stop).
+// one clear of everything 9 (11,537), and about half of one more sweep of the Grove reaches 10
+// (2,759 a sweep once the Warden of the Cut is dead and the Rift's groups stop).
 // Training six members from 5 to 10 costs 8,400 gold.
 import type { RegionId } from './index.ts';
 import { xpForLevel, trainPrice } from '../game/party.ts';
