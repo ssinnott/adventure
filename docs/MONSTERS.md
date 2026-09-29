@@ -240,11 +240,12 @@ Measured on today's monsters against the line:
 | Role | Hit points | Armour | To-hit | Damage | Speed | Today |
 |---|---|---|---|---|---|---|
 | Fodder | ×0.6 | −1 | −1 | ×0.6 | 12 and up | the Giant Rat; six or more to a group |
+| Thin fodder | ×0.3 to 0.4 | +2 to +3 | +2.5 | ×1.1 to 1.25 | 11 | the Thorn Spider and the Brigand; ten to twelve to a group, where a map's floor sits near its area's two under (§4.4) |
 | Skirmisher | ×1 | = | = | ×0.95 | 14–17 | Wolf, Dire Wolf, Rift Hound |
-| Soldier | ×1 | = | = | ×1 | 10–11 | Bandit, Smuggler, Brigand, Zealot |
+| Soldier | ×1 | = | = | ×1 | 10–11 | Bandit, Smuggler, Zealot |
 | Archer | ×0.85 | = | +0.5 to +1 | ×0.85 | 11–12 | the archers and bowmen: `ranged` and `missile` |
 | Caster | ×0.95 | = | +1 to +1.5 | ×1.05 | 11–12 | Acolyte, Adept: `ranged` |
-| Controller | ×0.8 to 1.25 | = | = | ×0.65 to 1 | any | the spiders, the Ghoul, the Wraith: a condition at 0.1 to 0.4 a hit |
+| Controller | ×0.8 to 1.25 | = | = | ×0.65 to 1 | any | the Marsh Spider, the Ghoul, the Wraith: a condition at 0.1 to 0.4 a hit |
 | Armoured | ×1.25 | +1.5 to +2.5 | = | ×1.05 | 8–9 | Shore Crab, Bone Knight |
 | Elite | ×1.45 | +0.5 | +1 | ×1.25 | 15 | Riftling Elder |
 | Brute | ×1.9 | −1.5 | +1 | ×1.45 | 8 | the Ogre, alone or with two or three |
@@ -278,6 +279,12 @@ running after fifteen rounds is broken off, and the company rests. A standard en
 fodder; four skirmishers, soldiers, archers or controllers; three casters or armoured; two elites or
 brutes; or the boss alone. A mix is one encounter when its shares add to one: two soldiers and four
 fodder, say.
+
+Where a map's floor sits within about three levels of its area's two under, as the Grove Roots' 6
+does Thornmark's 3, its groups may be many and thin to hold the gate: ten or twelve thin fodder
+(§4.2) that a level-3 company cannot outlast and one group spell breaks at the floor, since nothing
+heavier is both lost at 3 and cheap at 6. Elsewhere they are fewer and harder, as in the Cut Stone
+(the owner, on #40).
 
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then

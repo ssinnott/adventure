@@ -131,26 +131,29 @@ Foreland, hard winters whose snow lies for weeks, mist under the trees.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
-One clear of every map is worth a little over level 8 per member; the dungeons respawn in one to
-two days, and a little over two more sweeps of the Grove reach 10 (a sweep pays 38% less once the
-Warden of the Cut is dead and the Rift's groups stop coming). Levels are still bought, so the gold
-matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays 8,649 xp a member of
-the 13,667 its curve asks, and 6,150 gold of the 8,400 (the guilds' four quests and the Wardens'
-chest give 800 xp a member and 820 gold of it): the curve (`src/content/progression.ts`)
-reports both as owed to the pilot (#26).
+One clear of every map is worth level 9 per member; the dungeons respawn in one to two days, and
+about two fifths of one more sweep of the Grove reaches 10 (2,759 xp a member a sweep once the
+Warden of the Cut is dead and the Rift's groups stop coming, 34% less than before). Levels are still
+bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays
+10,227 xp a member of the 13,667 its curve asks, and 6,518 gold of the 8,400 (the guilds' four
+quests and the Wardens' chest give 800 xp a member and 820 gold of it): the curve
+(`src/content/progression.ts`) reports both as owed to the pilot (#26).
 
-The gate check (`tools/tests/gate.ts`) reports Thornmark's misses as #40's. Its company is dressed
-by the Foreland's gear ladder (#99), so at 3 it wears the band's gear. The zone holds: the company
-wins 23% of its fights at 3, 7% at 2 and 2% at 1, and all of them from 4, where the group spells
-come; at 5 it gives 5.84 fights to a rest. It does so with swarms: past the two gentle groups at
-the way in (the dire wolves, and the ogre with his brigands and an archer), most groups are twelve
-strong, of thorn spiders or brigands that die to one group spell but bite hard, with the area's
-own heavier monsters among them, and the barrow's dead and the wraiths in their own bands. The
-dungeons do not yet hold: two under their floors the company wins all of the Grove Roots' fights
-(at 4) and the Cut Stone's (at 6), and two under the area's floor, at 3, 54% of the area's. The
-gate wants a quarter. The Hand of Ash and the Warden of the Cut are won every time at level 8,
-where a boss should be won about half the time, and the Cut Stone gives 7.95 fights to a rest,
-against six or seven.
+The gate check (`tools/tests/gate.ts`) holds for Thornmark. Its company is dressed by the Foreland's
+gear ladder (#99), so at 3 it wears the band's gear. The zone is judged two under its floor, and the
+Grove Roots and the Cut Stone at their own floors only, their groups judged two under in the area's;
+a boss is judged on its odds and left out of its map's day (the owner's decisions on #40). The
+company wins 23% of the zone's fights at 3 and 22% of the whole area's, and all of the zone's from
+4, where the damaging group spells come; at the floors it gives 5.84 fights to a rest in the zone,
+5.89 in the Grove Roots and 6.89 in the Cut Stone. The zone and the Grove Roots do it with swarms:
+past the two gentle groups at the way in (the dire wolves, and the ogre with his brigands and an
+archer), most groups are twelve strong, of thorn spiders or brigands that die to one group spell but
+bite hard, with the area's heavier monsters among them. The Grove Roots' floor, 6, is too near 3 for
+anything else: a heavier group lost at 3 costs a company at 6 three or four fights' worth of its
+rest. The Cut Stone, with its floor at 8, holds with fewer, harder groups of eight at most: six bone
+knights, seven rift hounds, four ogres, five wraiths, the zealots with their adepts. The Hand of Ash
+is won 63% of the time at level 8 and the Warden of the Cut 43%, both nearly always at 9 and every
+time at 10.
 
 ### Tests
 
