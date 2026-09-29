@@ -31,8 +31,8 @@ DESIGN.md first for the why.
   opens as before.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and
-  mountains gated by party abilities, hills (`^`) and farmland (`f`) open to all but on no built
-  map yet, a calendar and weather over a day/night clock (below), automap with field-of-view
+  mountains gated by party abilities, hills (`^`), farmland (`f`) and light woods (`t`) open to all
+  but on no built map yet, a calendar and weather over a day/night clock (below), automap with field-of-view
   reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The wilderness
   features, on no built map yet: a shrine or fountain that gives every member a stat point once, a
   cairn with a cache, a statue whose riddle takes its answer typed and a camp where the party may
@@ -306,7 +306,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   grass that run on into one another (slow going; they hide nothing yet); farmland lies in fields
   three squares long in bands two deep, each with its crop (wheat, barley, pasture, roots) green in
   Sowing, gold or cut by Harvest and ploughed through the winter, its rows or furrows and the
-  hedges between fields showing under snow. Broadleaf trees bud in Thaw, blossom in Sowing,
+  hedges between fields showing under snow. Light woods (`t`, the atlas's woods) are walked through
+  at a plain step: a shaded floor of moss, leaf litter and ferns with a tree or two to either side
+  of the square, the way through it open. Broadleaf trees bud in Thaw, blossom in Sowing,
   turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the winter
   (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn. Lamps
   and windows light early on a dark day. Every frame, over the scene (and over the monsters in a
@@ -428,7 +430,8 @@ over content broken on purpose too, and two tools to theirs:
   (`drawnCell`), and any other door, or one in a wall or a town, left a door.
 - `changed`: which files count every map, monster or interior for the crack sweep and the sheet,
   and which only their own.
-- `scaffold` (§8.2): the Downs' draft, laid back into the atlas, is the atlas square for square.
+- `scaffold` (§8.2): the Downs' draft and the Deepthorn's first, its light woods and all, laid back
+  into the atlas, are the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
   a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
@@ -483,7 +486,7 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills and farmland named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland and woods named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |

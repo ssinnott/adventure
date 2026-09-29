@@ -79,7 +79,7 @@ const SNOW = '#eef2f7';
  * Every terrain has its entry, so one left out fails the typecheck rather than never taking snow.
  */
 export const SNOW_HOLD: Record<Terrain, number> = {
-  grass: 0.92, hills: 0.92, farm: 0.9, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
+  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
   water: 0, deep: 0, lava: 0,
 };
 type Ramp = readonly [number, string][];
@@ -95,6 +95,8 @@ const GRASS: Ramp = [[0, '#6a7650'], [10, '#6a8a4a'], [22, '#58ae40'], [40, '#4c
 function grassColor(day: number): string { return rampColor(GRASS, day); }
 /** Hill grass: the grass of the year, thinner and drier on the rise. */
 function hillColor(day: number): string { return mix(grassColor(day), '#8a8450', 0.3); }
+/** The floor of the woods: the grass of the year in the trees' shade, over moss and leaf litter. */
+function woodsColor(day: number): string { return mix(grassColor(day), '#3e5028', 0.45); }
 
 /**
  * The crops of the fields through the year (Thaw is day 0, Harvest 45, Mistfall 75): wheat and
@@ -128,7 +130,7 @@ function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 
  */
 function groundColor(terrain: Terrain, kind: string, floorPal: string, crop = 0): string {
   if (kind === 'dungeon') return floorPal;
-  let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
+  let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
   if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava') c = shade(c, 1 - 0.18 * env.wet);
   const s = env.cover * SNOW_HOLD[terrain];
   return s > 0 ? mix(c, SNOW, s) : c;
@@ -338,6 +340,15 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
+      } else if (d > 0 && cell.terrain === 'woods' && !backdrop) {
+        // Light woods: a tree or two stand to the sides of the square, leaving the way through it open.
+        const u = unit(d, r.h);
+        const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
+        for (const side of [-1, 1]) {
+          if (hash(c.x, c.y, 60 + side) < 0.3) continue;
+          const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
+          drawTreeSprite(ctx, bx, by, u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side)), tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
+        }
       }
     }
   }
@@ -771,7 +782,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
       ctx.strokeStyle = fog(shade(base, 0.55), d, dark, haze); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
     }
   }
-  const deco = terrain === 'grass' ? 7 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
+  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
@@ -789,6 +800,16 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
       const tuft = fog(env.cover > 0.05 ? shade(grassColor(env.day), 0.85) : shade(base, 1.3), d, dark, haze);
       ctx.strokeStyle = tuft; ctx.lineWidth = Math.max(1, sc);
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 1.5 * sc, y - 4 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1 * sc, y - 4.5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 2.5 * sc, y - 3 * sc); ctx.stroke();
+    } else if (terrain === 'woods') {
+      // Leaf litter and ferns under the trees, buried by a deep snow.
+      if (env.cover > 0.55) continue;
+      if (i < 3) {
+        ctx.fillStyle = fog(['#6a4a2a', '#8a6a2e', '#4e5a2c'][Math.floor(hash(seed, 43, i) * 3)], d, dark, haze);
+        ctx.fillRect(Math.round(x), Math.round(y - sc), Math.max(1, Math.round(3 * sc)), Math.max(1, Math.round(1.5 * sc)));
+      } else {
+        ctx.strokeStyle = fog(shade(base, 1.45), d, dark, haze); ctx.lineWidth = Math.max(1, sc);
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 4 * sc, y - 3 * sc); ctx.moveTo(x, y); ctx.lineTo(x, y - 5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 4 * sc, y - 3 * sc); ctx.stroke();
+      }
     } else if (flag) {
       if (hash(seed, 51, i) > 0.5) continue;
       if (i === 0) {
