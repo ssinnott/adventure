@@ -779,3 +779,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - #263 pushed its fixes (2f779c2: the Chalk Wolf lean and long in the leg, an amber eye, the pilot's
   level-4 def) and merged main (b9e96f9). Its sheet (the five beside the Foreland's own) went to
   the owner at 01:59; it waits on their OK of the look.
+- #148 (#40's C, the dungeons) merged at 01:58 (main 9462c89): on its head a7a6369 (main 0ced6cf
+  in), ALL OK (40 owed: #40's six gone, #47's 'greywater2: under' with them), SMOKE OK, "Nothing
+  new."; CI green; main's tree is the head's (946dbd2). #40 closes; its session is done for Phase 1.
+- #262 merges onto 9462c89 cleanly (SLICE auto-merged); the landing check on that merge started
+  01:58.
