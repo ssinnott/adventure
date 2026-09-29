@@ -804,3 +804,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   lines). All seven owner's choices: the defaults (6: both events on the west lane only).
 - For #67's brief when it starts: key its Mottram words to `q_well` or say them once, so they never
   hide the well's first meeting.
+
+### 03:27: #266 merged; everything else waits on the owner's OK of #263
+
+- #266 (#77's D, the Well) merged at 03:27 (main 2cc52cd) after its fixes (853fb41: Osmund heard
+  twice, `well_swept` held to the night, the docs wrapped): on its head, ALL OK (40 owed), SMOKE OK,
+  "Nothing new."; CI green; main's tree is the head's (e227186). #77 has A, B and D; C waits on
+  the pilot's B (F3), which waits on #145 and #263.
+- #263's head moved to 33f13d4 (a main merge only; no drawing changed since the sheet sent 01:59).
+  It waits on the owner's OK of the look; the chain behind it: #263, then #145 (F2), then the
+  pilot's B (F3), then #77's C.
