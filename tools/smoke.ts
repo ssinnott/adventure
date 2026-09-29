@@ -220,11 +220,13 @@ const interiors = await page.evaluate(async () => {
 // each season and under deep snow. Every view is a picture; a hill rises and a field has rows or
 // hedges where grass is flat; the fields turn from Sowing to Harvest, and snow lies white on both.
 // Samples are taken inside the square ahead, clear of its edges. The patch is taken up again after.
+/** The most of the strip straight ahead over the horizon the woods may fill: the way through stays open. */
+const PATH_MAX = 15;
 const terrains = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const V = await load('/src/ui/viewport.ts');
   const w = (window as any).__game.game.world;
-  const W = 400, H = 268, thin: string[] = [], mean: Record<string, number[]> = {}, form: Record<string, { tones: number; edges: number }> = {};
+  const W = 400, H = 268, thin: string[] = [], mean: Record<string, number[]> = {}, form: Record<string, { tones: number; edges: number }> = {}, upper: Record<string, Uint8ClampedArray> = {};
   const c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
@@ -238,13 +240,13 @@ const terrains = await page.evaluate(async () => {
   // The search is bounded: a view it cannot find fails the check plainly rather than hanging.
   const fits = (): boolean => V.fieldAt(w.state.x, w.state.y - 1).crop <= 1 && crops(w.state.x, w.state.y).size >= 2;
   for (let tries = 0; tries < 200 && !fits(); tries++) w.state.x++;
-  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[] };
+  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[] };
   const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
   let hedge = { off: 999, apart: 0 }, patchwork = 0;
   // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
   const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
-  for (const terrain of ['grass', 'hills', 'farm']) {
+  for (const terrain of ['grass', 'hills', 'farm', 'woods']) {
     for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
     for (const [name, doy] of days) for (const hour of [12, 0]) {
       if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
@@ -269,6 +271,8 @@ const terrains = await page.evaluate(async () => {
       for (let x = x0; x < x0 + sw; x++) { const a = px(x, y0 + sh / 2), b = px(x + 1, y0 + sh / 2); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) across++; }
       for (let y = y0; y < y0 + sh; y++) { const a = px(W / 2, y), b = px(W / 2, y + 1); if (Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]) > 12) down++; }
       form[terrain] = { tones: tones.size, edges: Math.max(across, down) };
+      // What stands above the horizon: grass has only the sky there, woods their trees.
+      upper[terrain] = ctx.getImageData(0, H / 2 - 60, W, 55).data;
       if (terrain !== 'farm') continue;
       // The hedge along the far edge of the square ahead (rows 193 to 196 down the middle) is near
       // the hedge's colour, and far from the crop just inside it.
@@ -290,13 +294,38 @@ const terrains = await page.evaluate(async () => {
       for (const a of middles) for (const b of middles) patchwork = Math.max(patchwork, Math.round(far(a, b)));
     }
   }
+  // Woods beside a wall: the woods run up the party's column and the ones west of it, a wall runs
+  // up the column east. What the woods paint otherwise than grass, where the wall's faces stand, is
+  // a tree in front of a wall it stands beside.
+  const woodsBy = (t: string) => { for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = x === sx + 1 && y < sy ? { terrain: 'floor', solid: 'wall', door: 'none', ch: '#' } : { terrain: x <= sx ? t : 'grass', solid: 'none', door: 'none', ch: '.' }; };
+  w.state.minutes = ((50 - 75 + 120) % 120) * 1440 + 12 * 60;
+  w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  const shot = (backdrop?: string) => { V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, 0, W, H / 2).data; };
+  woodsBy('woods'); const withTrees = shot();
+  woodsBy('grass'); const bare = shot(), mask = shot('#ff00ff');
+  let overWall = 0;
+  for (let i = 0; i < mask.length; i += 4) {
+    // The backdrop shows through where nothing stands, a little dimmed by the day's veil.
+    const wall = !(mask[i] > 200 && mask[i + 1] < 40 && mask[i + 2] > 200);
+    if (wall && Math.abs(withTrees[i] - bare[i]) + Math.abs(withTrees[i + 1] - bare[i + 1]) + Math.abs(withTrees[i + 2] - bare[i + 2]) > 30) overWall++;
+  }
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
   w.state.minutes = minutes; w.cached = undefined;
   const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
   const light = (a: number[]): number => (a[0] + a[1] + a[2]) / 3;
+  // The share of the band above the horizon the woods paint otherwise than open grass: their trees.
+  // And the way straight ahead, a strip 24 wide up the middle of that band: woods leave it open, as a
+  // forest's wall of trees would not.
+  let risen = 0, blocked = 0, strip = 0;
+  for (let i = 0; i < upper.woods.length; i += 4) {
+    const differs = Math.abs(upper.woods[i] - upper.grass[i]) + Math.abs(upper.woods[i + 1] - upper.grass[i + 1]) + Math.abs(upper.woods[i + 2] - upper.grass[i + 2]) > 30;
+    if (differs) risen++;
+    if (Math.abs((i / 4) % W - W / 2) < 12) { strip++; if (differs) blocked++; }
+  }
   return {
+    trees: Math.round(1000 * risen / (upper.woods.length / 4)) / 10, path: Math.round(1000 * blocked / strip) / 10, overWall,
     missing: '', thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
-    whiten: ['hills', 'farm'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
+    whiten: ['hills', 'farm', 'woods'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
   };
 });
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
@@ -626,13 +655,15 @@ ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens 
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
-  ok(terrains.thin.length === 0, `hills and farmland paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+  ok(terrains.thin.length === 0, `hills, farmland and woods paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
   {
-    const { grass, hills, farm } = terrains.form;
+    const { grass, hills, farm, woods } = terrains.form;
+    ok(terrains.trees >= 10 && terrains.path <= PATH_MAX && woods.edges > grass.edges, `trees stand about the woods where grass lies open, and the way ahead stays open (${terrains.trees}% of the band over the horizon is trees, ${terrains.path}% of the strip straight ahead, at most ${PATH_MAX}; edges across the square ahead: grass ${grass.edges}, woods ${woods.edges})`);
+    ok(terrains.overWall === 0, `no tree of the woods stands in front of a wall beside its square (${terrains.overWall} pixels over the wall's faces)`);
     ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
     ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
   }
-  ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills and the fields (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
+  ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills, the fields and the woods (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
 }
 ok(questLine === 'New quest: The Dimming.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(asked.words.screen === 'MessageScreen' && asked.words.text === '"Riders, by night."' && asked.question.screen === 'ChoiceScreen' && asked.question.text === 'Shall I write to Hale?' && asked.choiceColours > 20,

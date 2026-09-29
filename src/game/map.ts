@@ -12,12 +12,13 @@ import type { GuildId } from '../content/guilds.ts';
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
 
 /**
- * What the floor of a cell is. Drives the floor colour outdoors and the passability rules. Hills and
- * farm are named as the atlas names them (WorldTerrain), so the two agree square for square.
+ * What the floor of a cell is. Drives the floor colour outdoors and the passability rules. Hills,
+ * farm and woods are named as the atlas names them (WorldTerrain), so the two agree square for square.
+ * Woods is light woodland, walked through: a ground with trees about it, not a wall of them (`T`).
  */
 export type Terrain =
   | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
-  | 'hills' | 'farm';
+  | 'hills' | 'farm' | 'woods';
 
 /** Minutes a step onto hills costs over the usual six in the open. */
 export const HILL_DRAG = 2;
@@ -298,6 +299,7 @@ export const LEGEND: Record<string, Cell> = {
   '*': cell('snow'),
   '^': cell('hills'),
   'f': cell('farm'),
+  't': cell('woods'),
   'T': cell('grass', 'tree'),
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),
