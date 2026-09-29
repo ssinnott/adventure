@@ -1,0 +1,77 @@
+// Callow Downs, box F2: the road west. Country, band 2-3: the Salt Road up off Brandy Hole's beach and
+// south-west into F3, stubble fields, Brockholt's beeches in the north with a woodcutter's camp, and
+// Coldharbour, the retired captain's steading, at the wood's south-west corner. Cut from the atlas by
+// tools/scaffold.ts; docs/areas/shelf.md §4.2 is its brief.
+import type { MapDef } from '../../../../game/map.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
+
+export const DOWNS_F2: MapDef = {
+  id: 'downs_f2',
+  name: 'Callow Downs',
+  kind: 'outdoor',
+  density: 'country',
+  band: [2, 3],
+  start: { x: 31, y: 29, facing: WEST },
+  rows: [
+    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
+    '^^^^^^TTTTTTTTTTTTTTTTTTTTTT^^^^',
+    '^^^^,,TTTTT,,TTTTTTTTTTTTTTT^^^^',
+    ',,,,^^TTTTTTSTTTTTTTTTTTTTTTT^^^',
+    ',,,fff^TTTT,,,,,,TTTTTTTTTTTT^^^',
+    'fffffffTTT,,,,,,,TTTTTTTTTTTT,^^',
+    'ffffffff,,,,,,,,,TTT,,,,,TTTT,,^',
+    'ffffffff,,,,,,,,,:::,:,,,TTTT,,,',
+    'ffffffff,,,TTTTTTTTT,,:,,::::,,,',
+    'fffffBBB::BBTTTTTTTT,,,,,TTTT,,,',
+    'fffffBBB::BBTTTTTTTTTTTTTTTTT,,,',
+    'fffff:::::::TTTTTTTTTTTTTTTT,,,,',
+    'fffff:::::::ffTTTTTTTTTTTT,,,,,,',
+    'fffff:::::::ffffTTTTTTT,,,,,,,,,',
+    'ffffffffff:::::::::::::::,,,,,,,',
+    'ffffffffffffffffffffffff:,,,,,,,',
+    'fffffffffffffffffTTfffff:,,,,,,,',
+    'fffffffffffffffffTTfffff:,,,,,,,',
+    'ffffffffffffffffffffffff:,,,,,,,',
+    'fTTTTTTffTTTTTTfffffffff:,,,,,,,',
+    'ffffffffffffffffffffffff:,,,,,,,',
+    'fffffffffffffffTffffffff:,,,,,,,',
+    'fffffffffffffffTffffffff:,,,,,,,',
+    'fffffffffffffffTfffffff,:,,,,,,,',
+    'fffffffffffffffTfffffff,:,,,,,,,',
+    'fffTTTfffffffffffffffff,:,,,,,,,',
+    'fffTTTffffffffffffffff,,:,,,,,,,',
+    'ffffffffffffffffffffff,,:,,,,,,,',
+    'fffffffffffffffffffff,,,:,,,,,,,',
+    'fffffffffffffffffffff,,,========',
+    'fffffffffffffffff========,,,,,,,',
+    'fffffffffffffff===ff,,,,,,,,,,,,',
+  ],
+  exits: [
+    { x: 31, y: 29, to: 'shelf', tx: 1, ty: 29, tf: EAST, label: 'The road drops to the sand. The Foreland.' },
+  ],
+  features: [
+    { kind: 'sign', x: 30, y: 28, text: 'A milestone: GULLWICK 2. CROWNESS 4.' },
+    { kind: 'shrine', x: 25, y: 28, id: 'f2_shrine', text: 'A wayside shrine where the farm track leaves the road. Its candle is out.', stat: 'luck', done: 'The shrine is quiet.' },
+    { kind: 'event', x: 6, y: 11, id: 'f2_lamp', once: true, when: { hours: 'day' }, text: 'Coldharbour. A lamp burns in the farmhouse window in broad day, and the glass is black with it.' },
+    { kind: 'well', x: 8, y: 11, text: 'Coldharbour\'s well. The rope is new.' },
+    { kind: 'camp', x: 22, y: 7, name: 'Woodcutter\'s camp', text: 'A woodcutter\'s fire in a ring of split beech.' },
+    { kind: 'npc', x: 21, y: 7, name: 'A woodcutter', lines: [
+      'A woodcutter splits beech by the fire, and does not stop for you.',
+      '"Brockholt\'s badgers dig where they please. Never under the holly, mind. Thirty years I\'ve cut here, and never once."',
+    ] },
+    { kind: 'event', x: 12, y: 4, id: 'f2_holly', once: true, text: 'Setts riddle the bank under the beeches, fresh earth at every mouth. The ground under the holly is bare.' },
+    { kind: 'event', x: 12, y: 2, id: 'f2_sett', once: true, text: 'No badger dug this. Brandy casks, and a crate stamped with the customs seal.' },
+    { kind: 'chest', x: 11, y: 2, id: 'f2_cache', gold: 45, items: ['shortsword+1', 'dagger+1', 'potion_heal'] },
+    { kind: 'event', x: 4, y: 21, id: 'f2_scarecrow', once: true, text: 'A scarecrow in a Warden\'s old coat, its buttons polished.' },
+    { kind: 'event', x: 29, y: 4, id: 'f2_rise', once: true, text: 'From the rise the Foreland lies below you, and the smoke of Helmstow.' },
+    { kind: 'cairn', x: 2, y: 2, id: 'f2_cairn', text: 'A cairn on the rise, a stone from every shepherd who ever passed.', gold: 20, items: ['potion_heal'] },
+  ],
+  secrets: [{ x: 12, y: 3, hint: 'f2_holly' }],
+  encounters: [
+    { id: 'f2_crows', x: 8, y: 25, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
+    { id: 'f2_wolves', x: 15, y: 6, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: 1440 },
+    { id: 'f2_boar', x: 9, y: 7, monsters: ['tusker'], aware: 3, respawn: 2880 },
+    { id: 'f2_rats', x: 11, y: 11, monsters: ['barn_rat', 'barn_rat', 'barn_rat', 'barn_rat', 'barn_rat'], aware: 4, respawn: 720 },
+    { id: 'f2_bandits', x: 17, y: 30, monsters: ['footpad', 'footpad', 'poacher'], aware: 5, respawn: 2880 },
+  ],
+};

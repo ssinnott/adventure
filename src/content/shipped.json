@@ -7,6 +7,14 @@
         "ashcombe_gate",
         "barrow",
         "coast",
+        "f2_cache",
+        "f2_cairn",
+        "f2_holly",
+        "f2_lamp",
+        "f2_rise",
+        "f2_scarecrow",
+        "f2_sett",
+        "f2_shrine",
         "grove_edge",
         "grove_road",
         "lake",
@@ -24,6 +32,11 @@
         "beach_crabs",
         "cliff_smugglers",
         "coast_bandits",
+        "f2_bandits",
+        "f2_boar",
+        "f2_crows",
+        "f2_rats",
+        "f2_wolves",
         "farm_rats",
         "hill_wolves",
         "marsh_spiders",
@@ -46,7 +59,9 @@
         "wood_boar",
         "wood_wolves"
       ],
-      "doors": []
+      "doors": [
+        "180,33"
+      ]
     },
     "greywater1": {
       "size": "16x16",
@@ -228,6 +243,10 @@
     }
   },
   "zones": {
+    "downs_f2": {
+      "at": "168,30",
+      "size": "32x32"
+    },
     "shelf": {
       "at": "200,30",
       "size": "32x32"

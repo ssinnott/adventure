@@ -53,10 +53,19 @@ export function movement(): void {
   world.travel('shelf', 30, 2, 1);
   const steep = world.move('forward');
   ok(steep.kind === 'blocked' && /steep/.test(steep.reason), 'mountains (the ridge between the Foreland and Thornmark) block without a mountaineer');
-  // Where nothing is built yet the world ends, and nothing crosses into it, a mountaineer included.
-  world.travel('shelf', 1, 12, 3);
+  // Where nothing is built yet the world ends, and nothing crosses into it, a mountaineer included:
+  // north of the Foreland, above the rim that is cut for good.
+  world.travel('downs_f2', 8, 1, 0);
   const edge = world.move('forward');
-  ok(edge.kind === 'blocked' && edge.reason === 'The world ends here.' && local(world).x === 1, `west of the Foreland the world ends, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
+  ok(edge.kind === 'blocked' && edge.reason === 'The world ends here.' && local(world).y === 1, `north of the Downs the world ends, and the party cannot step into it (${edge.kind === 'blocked' ? edge.reason : edge.kind})`);
+  // West of the Foreland, the Downs: the ridge, and the Salt Road through a gap in it.
+  world.travel('shelf', 1, 12, 3);
+  const ridge = world.move('forward');
+  ok(ridge.kind === 'blocked' && /steep/.test(ridge.reason), `west of the Foreland the ridge stands against the Downs (${ridge.kind === 'blocked' ? ridge.reason : ridge.kind})`);
+  world.travel('shelf', 1, 29, 3);
+  world.move('forward');
+  const downs = world.move('forward');
+  ok(local(world).map === 'downs_f2' && local(world).x === 31 && downs.kind === 'moved' && downs.messages.includes('The Salt Road climbs off the beach onto the Downs.'), `the Salt Road walks west through the gap onto the Downs, and says so (${downs.kind === 'moved' ? downs.messages.join(' / ') : downs.kind})`);
   party.flags.skill_mountaineer = 1;
   world.travel('shelf', 10, 1, 0);
   ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Foreland in to the north');

@@ -16,7 +16,7 @@
 // wide in threat, their pale undersides barred. Tawny and matte, the breast pale, streaked above
 // and barred below. Idle: the wings lift and settle slowly, and now and then the eyes close.
 // The Old Rook, the keeper of a rookery, is the crow's frame grown heavy and ragged: bigger, the
-// throat and the thighs shaggy, a purple sheen on the black, and the rook's bare grey-white face
+// throat and the thighs shaggy, a purple sheen on the black and the rook's bare grey-white face
 // round the base of its bill, which is what tells a rook from a crow across a field.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';

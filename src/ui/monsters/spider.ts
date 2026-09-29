@@ -2,7 +2,7 @@
 // an arachnid and does not use the eight-legged rig the other three share: a crab is one wide flat
 // carapace, eyes up on stalks, two chelae held forward and only six walking legs, all of it low.
 // The barnacle crab is the same animal grown old under Crowness: a shell domed and crusted with
-// barnacles, weed trailing off its rim, and one crusher claw grown out of all proportion.
+// barnacles, weed trailing off its rim and one crusher claw grown out of all proportion.
 // The spider family proper: An arachnid is two bulbs on a narrow waist,
 // and both are the same chitin, so unioning them into one mass the way a single material usually
 // wants leaves an undifferentiated blob with legs. Each body SECTION is therefore its own blob

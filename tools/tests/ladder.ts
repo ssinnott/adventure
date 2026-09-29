@@ -28,9 +28,12 @@ export const LADDER: Record<ClassId, { 3: readonly string[]; 5: readonly string[
   druid: { 3: ['staff+1'], 5: ['leather+1', 'spear+1'] },
 };
 
-/** The Downs' finds and the box that places each: F2 and F3 (#47), E3 (#67), E2 (#68), D2 (#69), the Berth (#70), D3 (#71), D4 (#72). */
+/**
+ * The Downs' finds and the box that places each: F2 and F3 (#47), E3 (#67), E2 (#68), D2 (#69), the
+ * Berth (#70), D3 (#71), D4 (#72); '' once placed, when it must be found.
+ */
 export const FINDS: Record<string, string> = {
-  'shortsword+1': '#47', 'dagger+1': '#47', 'mace+1': '#47', 'staff+1': '#47',
+  'shortsword+1': '', 'dagger+1': '', 'mace+1': '#47', 'staff+1': '#47',
   'buckler+1': '#67',
   'robe+1': '#68', 'leather+1': '#68', silver_locket: '#68',
   'halberd+1': '#69', ring_of_office: '#69', 'spear+1': '#69',
@@ -93,7 +96,8 @@ export function ladder(): void {
   for (const [id, whose] of Object.entries(FINDS)) {
     const d = ITEMS[id];
     ok(!!d && d.price > 0 && d.price <= CURVE.shelf.price, `find ${id} is an item within the Foreland's window (${d?.price} of ${CURVE.shelf.price} gold)`);
-    owed(found.has(id), `find ${id} lies in a chest, a cairn, a statue's gift or a hoard`, whose);
+    const msg = `find ${id} lies in a chest, a cairn, a statue's gift or a hoard`;
+    if (whose) owed(found.has(id), msg, whose); else ok(found.has(id), msg);
   }
 
   // Mottram's sells the ladder's plain step: the band's gear.

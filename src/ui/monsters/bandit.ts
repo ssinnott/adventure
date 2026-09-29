@@ -399,14 +399,16 @@ function billman(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const hemY = y - h * 0.4;
   const jack = p.base, cap = shade('#4a3424', p.tone);
   groundShadow(ctx, x, y + 1, h * 0.8);
+  // The far arm, bare from the elbow as the near one is, the jack's sleeve over the upper arm.
   blob(ctx, B, shade(R.skin, 0.8), armParts(R, far, 231, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  blob(ctx, B, shade(p.base, 0.8), armParts(R, [far[0], far[1], { x: (far[1].x + far[2].x) / 2, y: (far[1].y + far[2].y) / 2 }], 244, 0.96), { h, formK: 0.45 });
   legs(ctx, R, shade('#3e3a34', p.tone), 232, [1, -0.7]);
   blob(ctx, B, R.boot, [
     { k: 'cap', x0: x + h * 0.2, y0: y - h * 0.18, x1: x + h * 0.21, y1: y - h * 0.055, r0: h * 0.045, r1: h * 0.043 },
     { k: 'cap', x0: x - h * 0.14, y0: y - h * 0.17, x1: x - h * 0.15, y1: y - h * 0.06, r0: h * 0.043, r1: h * 0.041 },
   ], { h, formK: 0.5, spread: 0.7 });
   headNeck(ctx, R);
-  // The jack: quilted in rows, to the thigh, with the near arm bare from the elbow.
+  // The jack: quilted in rows, to the thigh, with the near arm bare from the elbow too.
   blob(ctx, B, jack, [
     { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 233, sub: 3 },
     { k: 'curve', pts: [x - h * 0.13, hemY - h * 0.1, x - h * 0.15, hemY + h * 0.04, x - h * 0.02, hemY + h * 0.07, x + h * 0.14, hemY + h * 0.04, x + h * 0.14, hemY - h * 0.1], wobble: 0.04, seed: 234, sub: 2 },
@@ -419,7 +421,7 @@ function billman(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   blob(ctx, B, R.skin, armParts(R, [{ x: (near[1].x + near[2].x) / 2, y: (near[1].y + near[2].y) / 2 }, { x: (near[1].x * 0.3 + near[2].x * 0.7), y: (near[1].y * 0.3 + near[2].y * 0.7) }, near[2]], 236, 0.9), { h, formK: 0.5 });
   blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.05, h * 0.042, 237)], { h, form: false });
   band(ctx, B, x - h * 0.02, hemY - h * 0.054, h * 0.04, h * 0.042, R.dull);
-  // A big beard, the face, and a leather cap pulled down to the brows.
+  // A big beard, the face and a leather cap pulled down to the brows.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.9, hy + hr * 0.1, hx - hr * 0.4, hy + hr * 0.5, hx + hr * 0.4, hy + hr * 0.5, hx + hr * 0.92, hy + hr * 0.1, hx + hr * 0.8, hy + hr * 1.1, hx + hr * 0.2, hy + hr * 1.6, hx - hr * 0.4, hy + hr * 1.5, hx - hr * 0.85, hy + hr * 1.0], wobble: 0.08, spiky: 0.14, seed: 238, sub: 2 }], { h, formK: 0.4 });
   face(ctx, R, true, true);
   blob(ctx, B, cap, [{ k: 'curve', pts: [hx - hr * 1.02, hy - hr * 0.2, hx - hr * 0.95, hy - hr * 0.85, hx - hr * 0.3, hy - hr * 1.12, hx + hr * 0.4, hy - hr * 1.1, hx + hr * 0.98, hy - hr * 0.8, hx + hr * 1.04, hy - hr * 0.22, hx + hr * 0.6, hy - hr * 0.4, hx - hr * 0.6, hy - hr * 0.42], wobble: 0.04, seed: 239, sub: 2 }], { h, formK: 0.55, spread: 0.7, tex: 'stipple', seed: 239, amount: 0.3 });
@@ -440,7 +442,7 @@ function billman(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
 
 /**
  * The slinger: the road's harder shot, a shepherd gone bad. A fleece jerkin in the tint over a
- * rough shirt, a woollen cap, a bag of flints at the hip and one more in the far fist, and the
+ * rough shirt, a woollen cap, a bag of flints at the hip and one more in the far fist and the
  * sling whirling over his head in the near: two cords from the fist to the pouch, going round.
  */
 function slinger(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
@@ -467,7 +469,7 @@ function slinger(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   // The bag of flints at the near hip, heavy, on a strap from the far shoulder.
   stroke(ctx, [R.sFar.x + h * 0.02, sy + h * 0.02, x + h * 0.12, hemY - h * 0.02], R.strap, Math.max(1, h * 0.014));
   blob(ctx, B, R.leather, [{ k: 'curve', pts: ring(x + h * 0.13, hemY + h * 0.02, h * 0.05, h * 0.06), wobble: 0.1, seed: 257, sub: 2 }], { h, formK: 0.5, spread: 0.7, tex: 'stipple', seed: 257, amount: 0.3 });
-  // A short beard, the face, and a woollen cap with its end flopped over.
+  // A short beard, the face and a woollen cap with its end flopped over.
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.8, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.6, hx + hr * 0.3, hy + hr * 0.6, hx + hr * 0.84, hy + hr * 0.3, hx + hr * 0.55, hy + hr * 1.0, hx, hy + hr * 1.12, hx - hr * 0.55, hy + hr * 1.0], wobble: 0.06, spiky: 0.1, seed: 258, sub: 2 }], { h, formK: 0.4 });
   face(ctx, R, false);
   blob(ctx, B, capHex, [
@@ -478,7 +480,7 @@ function slinger(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const w = near[2], a = p.frame / 5, rr = h * 0.2;
   const px = w.x + Math.cos(a) * rr, py = w.y - h * 0.02 + Math.sin(a) * rr * 0.3;
   if (!B.override) {
-    ctx.strokeStyle = rgba('#e8e0d0', 0.3); ctx.lineWidth = Math.max(1, h * 0.01);
+    ctx.strokeStyle = rgba(shade('#e8e0d0', p.tone), 0.3); ctx.lineWidth = Math.max(1, h * 0.01);
     ctx.beginPath(); ctx.ellipse(w.x, w.y - h * 0.02, rr, rr * 0.3, 0, 0, Math.PI * 2); ctx.stroke();
   }
   stroke(ctx, [w.x, w.y - h * 0.01, (w.x + px) / 2, (w.y + py) / 2 - h * 0.012, px, py], R.leather, Math.max(1, h * 0.009));

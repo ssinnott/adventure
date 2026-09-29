@@ -392,14 +392,14 @@ const almanacClosed = await page.evaluate(() => (window as any).__game.game.top.
 await page.keyboard.press('KeyM'); await page.waitForTimeout(150);
 const afterMap = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
 const weatherSeed = await page.evaluate(() => (window as any).__game.game.world.state.weatherSeed);
-// The end of the world: nothing is built west of the Foreland yet. On a clear noon, with nothing the
+// The end of the world: nothing is built north of the Foreland, the rim cut for good. On a clear noon, with nothing the
 // view would wash over it, facing it from the last square before it, the view is pink empty space and
 // the automap marks it pink; a step into it is refused and the log says why. No such noon fails the check.
 const edgeAt: number = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts'), V = await load('/src/ui/viewport.ts');
   const g = (window as any).__game.game, w = g.world;
-  g.screens = [g.screens[0]]; w.travel('shelf', 1, 12, 3); w.sky = null;
+  g.screens = [g.screens[0]]; w.travel('shelf', 8, 1, 0); w.sky = null;
   const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => wx.precip < 0.02 && !V.washes(wx) && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480);
   if (at >= 0) w.state.minutes = at;
   return at;
@@ -414,7 +414,7 @@ const pinkIn = async (r: { x: number; y: number; w: number; h: number }): Promis
 }, r);
 const edgeView = edgeAt >= 0 ? await pinkIn({ x: 8, y: 8, w: 400, h: 200 }) : 0, edgeMap = edgeAt >= 0 ? await pinkIn({ x: 416, y: 42, w: 216, h: 214 }) : 0;
 await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100);
-const edgeBump = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { log: g.log.at(-1), x: g.world.state.x - z.x, zone: z.id }; });
+const edgeBump = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { log: g.log.at(-1), y: g.world.state.y - z.y, zone: z.id }; });
 // The pass is open, a road walked straight through into Thornmark past the checkpoint's warning,
 // no transition between.
 await page.evaluate(() => {
@@ -649,8 +649,8 @@ ok(zonesColours > 200 && wholeColours > 200, `Tab lays the zones over it and Z s
 ok(almanacScreen === 'MessageScreen' && almanacClosed === 'WorldMapScreen', `Space opens the almanac over the map and Esc goes back to it (${almanacScreen}, then ${almanacClosed})`);
 ok(afterMap === 'ExploreScreen', `M closes it again (${afterMap})`);
 ok(edgeAt >= 0, `the weather has a clear noon with no wash within 480 days, to face the end of the world in (${edgeAt >= 0 ? `minute ${edgeAt}` : `none for weather seed ${weatherSeed}`})`);
-ok(edgeAt >= 0 && edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world west of the Foreland, the view is pink empty space and the automap marks it (${edgeAt >= 0 ? `${edgeView} pink pixels in the view, ${edgeMap} on the automap` : 'not looked at: no clear noon'})`);
-ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeBump.x === 1, `a step into it is refused, and the log says why (${JSON.stringify(edgeBump)})`);
+ok(edgeAt >= 0 && edgeView > 400 * 200 * 0.6 && edgeMap > 20, `facing the end of the world north of the Foreland, the view is pink empty space and the automap marks it (${edgeAt >= 0 ? `${edgeView} pink pixels in the view, ${edgeMap} on the automap` : 'not looked at: no clear noon'})`);
+ok(edgeBump.log === 'The world ends here.' && edgeBump.zone === 'shelf' && edgeBump.y === 1, `a step into it is refused, and the log says why (${JSON.stringify(edgeBump)})`);
 ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y === 9 && pass.screen === 'ExploreScreen' && /Warden checkpoint.*The pass opens onto old forest/.test(pass.said) && passColours > 20,
   `the open pass is walked straight through into Thornmark, warned at the checkpoint, and Thornmark says so (${JSON.stringify(pass)})`);
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
