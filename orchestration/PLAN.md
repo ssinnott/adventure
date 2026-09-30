@@ -1378,3 +1378,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (32 owed), SMOKE OK, "Nothing new."; H3 at 8 7.92 fights to a rest (off its aim, listed). CI
   green. Merged as 854cbc2; main's tree is the tested tree (73f693f). #214 closes. The Thornmark
   session on to #215 (I3), no footprint; the #100 session to merge main into #298.
+- 22:48: #294 (#288's fix) landed: its round (e9a4904: `/^The /` written out in the labels suite,
+  "a lone" in the comments). Its head merged onto main 854cbc2 (clean): ALL OK (32 owed), SMOKE OK,
+  "Nothing new."; CI green. Merged as d5260f3; main's tree is the tested tree. #288 closes, so
+  #218's blocker is gone.
