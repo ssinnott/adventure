@@ -3,7 +3,7 @@
 // fixture town holds the rest: questions and their answers, words by flag, several hand-ins, letters.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MAP_DEFS, ITEMS } from '../../src/content/index.ts';
+import { MAP_DEFS, ITEMS, QUESTS } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -75,7 +75,10 @@ export function people(): void {
     ok(meet(p, early.party, heard(early.world, p)).text === q.after?.join('\n\n') && meet(p, hired.party, heard(hired.world, p)).text === q.after?.join('\n\n'), `${who}: the next meeting says the after words, either way round`);
 
     // The log, either way round: the quest or chapter done with no goal; early, nothing keyed to
-    // the hiring alone, and nothing the hired order does not write too.
+    // the hiring alone, and nothing the hired order does not write too. Where the end asks more than
+    // the hand-in (the Grove Stone's, the treaty's seal seen too), both companies see it first.
+    const rest = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'event' && doneSeen(q.setFlag).includes(`${d.id}:${f.id}`) ? [{ map: d.id, f }] : []));
+    for (const s of [early, hired]) for (const { map, f } of rest) { s.world.travel(map, f.x, f.y); s.world.eventsHere(); }
     const ends = (x: { id: string; page: PageView }): boolean => x.page.done && [x.page.def.done ?? []].flat().some((c) => [(c as QuestCond).flag ?? []].flat().includes(q.setFlag));
     const quest = pages(early).find(ends);
     const questH = pages(hired).find((x) => x.id === quest?.id);
@@ -85,6 +88,11 @@ export function people(): void {
     ok(!hiring.length && !extra.length, `${who}, early: the log writes no hiring and nothing the hired order does not${hiring.length || extra.length ? ' -> ' + [...hiring, ...extra].join(', ') : ''}`);
   }
   fixtures(fresh, all);
+}
+
+/** The events, 'map:id', that the ends naming a hand-in's flag ask to have been seen as well. */
+function doneSeen(flag: string): string[] {
+  return QUESTS.flatMap((q): readonly QuestDef[] => q.chapters ?? [q as QuestDef]).flatMap((d) => [d.done ?? []].flat().filter((c) => [(c as QuestCond).flag ?? []].flat().includes(flag)).flatMap((c) => ((c as QuestCond).seen ? [(c as QuestCond).seen!] : [])));
 }
 
 /**

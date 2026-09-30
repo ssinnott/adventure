@@ -1,4 +1,4 @@
-// Thornmark's side quests, in the journal's words: The Lost Expedition, a subplot, and #56's six on
+// Thornmark's side quests, in the journal's words: The Lost Expedition and The Empty Throne, subplots, and #56's six on
 // the built maps (#219): A Coin Not From Caldera (Tegen), Leave the Trees Standing (Piran), The
 // Dark Glass (Tamsin), The Elder's Four (Keyne), Terms From the Brigands and The Mender (Sylvane).
 // Its chapter of the one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
@@ -20,6 +20,21 @@ export const QUESTS: readonly QuestDef[] = [
     ],
     goals: [
       { when: { item: 'meridian_journal' }, text: 'Find the other volumes of the Meridian journal.' },
+    ],
+  },
+  {
+    // The Empty Throne (DESIGN.md 10.1), a subplot with no end yet: the elves' claim, which the
+    // treaty in Henlys keeps. Its start is a list, so that a claim met first opens it too. It lives
+    // here until subplots that span areas have a home of their own.
+    id: 'throne',
+    title: 'The Empty Throne',
+    start: [{ seen: 'deepthorn_i4:i4_treaty' }, { flag: 'q_treaty' }],
+    entries: [
+      { id: 'treaty', when: [{ seen: 'deepthorn_i4:i4_treaty' }, { flag: 'q_treaty' }],
+        text: 'The elves of Henlys keep a treaty that says their line and Helmstow\'s were once one. Their elder keeps it close.' },
+    ],
+    goals: [
+      { when: [{ seen: 'deepthorn_i4:i4_treaty' }, { flag: 'q_treaty' }], text: 'Learn what the treaty in Henlys is worth, and to whom.' },
     ],
   },
   {
