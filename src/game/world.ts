@@ -114,6 +114,18 @@ export function lineOfSight(map: GameMap, px: number, py: number, f: Facing, d: 
   return true;
 }
 
+/** The most figures a group is drawn as while exploring. */
+export const DRAWN_MAX = 3;
+/**
+ * The monsters a group is drawn as while exploring, to three: each kind once, in the order they
+ * stand, then the rest in order, so no kind of the first three is hidden behind copies of another.
+ */
+export function groupDrawn(monsters: readonly string[]): string[] {
+  const kinds = [...new Set(monsters)], out = kinds.slice(0, DRAWN_MAX), rest = [...monsters];
+  for (const k of out) rest.splice(rest.indexOf(k), 1);
+  return [...out, ...rest].slice(0, DRAWN_MAX);
+}
+
 /** A sign as the log shows it. */
 export const signLine = (text: string): string => `A sign reads: "${text}"`;
 
@@ -451,11 +463,11 @@ export class World {
     return said;
   }
 
-  /** The looks of the groups now in sight that the company has not met: each group as it is drawn, by its first monster. */
+  /** The looks of the kinds now in sight that the company has not met: each group's kinds as it is drawn (`groupDrawn`). */
   sightings(): string[] {
     // A den's look first: the place, then what guards it.
     const dens = densOf(this.map).length ? denLooks(this, (x, y) => this.sees(x, y)) : [];
-    return [...dens, ...this.meet(this.groupsInSight().map((g) => g.def.monsters[0]))];
+    return [...dens, ...this.meet(this.groupsInSight().flatMap((g) => groupDrawn(g.def.monsters)))];
   }
 
   /** Whether the party sees a square: its own, or one the viewport draws, by the same rule. */

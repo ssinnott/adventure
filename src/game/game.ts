@@ -5,6 +5,7 @@ import { rng } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
 import { World, signLine } from './world.ts';
 import type { WorldState } from './world.ts';
+import { groupDrawn } from './world.ts';
 import { defaultParty, isDown, allDown, heal, spellHeal } from './party.ts';
 import { meet, answer, heard } from './people.ts';
 import type { Person } from './people.ts';
@@ -291,11 +292,10 @@ export class Game {
   }
 
   /** Monsters the viewport should draw at a cell. */
-  monstersAt = (x: number, y: number): ViewMonster | null => {
+  monstersAt = (x: number, y: number): ViewMonster[] | null => {
     const g = this.world.groupAt(x, y);
     if (!g) return null;
-    const d = monster(g.def.monsters[0]);
-    return { sprite: d.sprite, tint: d.tint, size: d.size, count: g.def.monsters.length };
+    return groupDrawn(g.def.monsters).map((id) => { const d = monster(id); return { id, sprite: d.sprite, tint: d.tint, size: d.size }; });
   };
 }
 

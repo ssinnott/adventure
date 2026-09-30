@@ -11,20 +11,32 @@ import { EAST, SOUTH } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
 import { MAP_DEFS } from '../../index.ts';
-import { meet, answer, heard } from '../../../game/people.ts';
+import { meet, answer, heard, readText } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
+import { GameMap } from '../../../game/map.ts';
 import type { PageView } from '../../../game/quests.ts';
 
 /** Vask hires the company: before the chapter, or its last step for a company that came early. */
 export const HIRE: Step = { name: 'the hire', play: (w) => meetWho(w, 'q_ashcombe') };
 
-/** The chapter once hired: the farm, the cellar and the wand taken back. */
+/** The chapter once hired: Gullwick, the farm, the cellar and the wand taken back. */
 export const STEPS: readonly Step[] = [
+  { name: 'to Gullwick', play: (w) => meetWho(w, 'q_wenna') },
   { name: 'to Ashcombe', play: (w) => walkThrough(w, 'shelf', 23, 20, EAST, 'mill') },
   { name: 'the cellar', play: (w) => { see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core'); } },
   { name: 'the wand', play: (w) => meetWho(w, 'survey_wand') },
 ];
+
+/** The farm first and Gullwick last: the chapter's goal sends a company that did it so to Hild. */
+export const FARM_FIRST: readonly Step[] = [...STEPS.slice(1), {
+  name: 'to Gullwick, the farm done',
+  play: (w) => {
+    const goal = quest(w)?.goal ?? '';
+    w.ok(goal.startsWith('Gullwick'), `the farm done first, the goal is Gullwick (${goal})`);
+    meetWho(w, 'q_wenna');
+  },
+}];
 
 /** A new game hired by Vask, the way the chapter begins in order. */
 export function hired(w: Walk): void {
@@ -105,6 +117,23 @@ const EBBA_EEL = (): Person => who('harrow', 12, 13, 'Ebba'), EBBA_CHAPEL = (): 
 const FISHERMAN = (): Person => who('harrow', 12, 13, 'the fisherman'), WALL = (): Person => who('harrow', 14, 3, 'a Warden on the wall');
 const MOTTRAM = (): Person => who('harrow', 4, 10, 'Mottram'), ALWIN = (): Person => who('harrow', 9, 1, 'Alwin');
 const OSMUND = (): Person => who('harrow', 11, 4, 'Osmund'), AILITH_WOOD = (): Person => who('shelf', 2, 14, 'Ailith'), AILITH_HOLD = (): Person => who('thornhold', 11, 4, 'Ailith');
+
+const WAT = (): Person => who('downs_f3', 11, 14, 'Wat'), HAMO = (): Person => who('downs_f3', 0, 9, 'Hamo');
+
+/** Whether a four-way walk from `from` reaches `to` on `map` without stepping on `shut`. */
+function around(map: string, shut: Person, from: readonly [number, number], to: Person): boolean {
+  const m = new GameMap(MAP_DEFS.find((d) => d.id === map)!), seen = new Set([from.join()]), q: [number, number][] = [[from[0], from[1]]];
+  while (q.length) {
+    const [x, y] = q.shift()!;
+    if (x === to.x && y === to.y) return true;
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = x + dx, ny = y + dy, k = `${nx},${ny}`;
+      if (seen.has(k) || (nx === shut.x && ny === shut.y) || m.passable(nx, ny) !== 'ok') continue;
+      seen.add(k); q.push([nx, ny]);
+    }
+  }
+  return false;
+}
 
 /** Whether a person stands where they are listed now. */
 const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
@@ -194,6 +223,38 @@ function wellAsked(w: Walk, alwinFirst: boolean): void {
 }
 
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
+  { // The Boat: nobody who buys the boards stands where every way home from the hoard must pass.
+    const w = newWalk(ok);
+    w.ok(around('downs_f3', HAMO(), [1, 14], WAT()), 'the boards go home from the hoard to Wat by a way that never steps on Hamo');
+  }
+  { // The Boat: the boards home to Wat. Hamo has heard, and Wat's after-lines are home's.
+    const w = newWalk(ok);
+    w.ok(hear(w, 'downs_f3', WAT()).startsWith('An old man sits') && w.news.at(-1) === 'New quest: A Boat With No Name-Board.', 'Wat begins the Boat');
+    see(w, 'downs_f3:f3_hoard');
+    open(w, 'downs_f3:f3_hoard_chest');
+    w.ok((readText('customs_chit') ?? []).length === 2 && w.party.bag.includes('name_boards'), 'the hoard holds the boards, and the chit reads from the pack');
+    const gold = w.party.gold;
+    w.ok(hear(w, 'downs_f3', WAT()).startsWith('Wat turns the board over') && w.party.gold === gold + 60, 'home: Wat takes the boards and pays 60');
+    reads(w, 'board', 'A Boat With No Name-Board', ['wat', 'hoard', 'chit', 'home'], ['sold'], 'home');
+    w.ok(hear(w, 'downs_f3', HAMO()).startsWith('"I heard the boards went up') && hear(w, 'downs_f3', WAT()).startsWith('"Up in the loft'), "home: Hamo has heard, and Wat's after-lines are home's");
+  }
+  { // The Boat: the boards sold to Hamo. Wat knows, and Hamo's after-lines are the sale's.
+    const w = newWalk(ok);
+    hear(w, 'downs_f3', WAT());
+    see(w, 'downs_f3:f3_hoard');
+    open(w, 'downs_f3:f3_hoard_chest');
+    const gold = w.party.gold;
+    w.ok(hear(w, 'downs_f3', HAMO()).startsWith('Hamo counts the coin') && w.party.gold === gold + 140, 'sold: Hamo takes the boards and pays 140');
+    reads(w, 'board', 'A Boat With No Name-Board', ['wat', 'hoard', 'chit', 'sold'], ['home'], 'sold');
+    w.ok(hear(w, 'downs_f3', WAT()).startsWith('"You sold them."') && hear(w, 'downs_f3', HAMO()).startsWith('"Still here.'), "sold: Wat knows, and Hamo's after-lines are the sale's");
+  }
+  { // The Boat: the hoard first. The chest begins it, and Wat takes the boards at the first meeting.
+    const w = newWalk(ok);
+    open(w, 'downs_f3:f3_hoard_chest');
+    w.ok(w.news.at(-1) === 'New quest: A Boat With No Name-Board.', 'the hoard first begins the Boat');
+    w.ok(hear(w, 'downs_f3', WAT()).startsWith('Wat turns the board over'), 'the hoard first: Wat takes the boards at the first meeting');
+    reads(w, 'board', 'A Boat With No Name-Board', ['hoard', 'chit', 'home'], ['wat', 'sold'], 'the hoard first');
+  }
   { // The bell: the name given. Ebba is gone from the Eel and never in the Chapel.
     const w = newWalk(ok);
     bellAsked(w);
