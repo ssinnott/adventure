@@ -505,7 +505,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     against the brief's 260, the brood counted once.
   - The crows are over the camp, not along the lip: at level 2 they must be nearest the way in for
     the levels to rise from it. Kestrels keep the lip, and are not monsters.
-  - Density: 99.7% of its 914 squares within 12 steps, the furthest 14.
+  - Density: 99.7% of its 913 squares within 12 steps, the furthest 14.
 
 ### 4.9 D4, Kestrel Edge (#72): country, band 4–5
 
