@@ -1510,3 +1510,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (#70, the Berth; the new session, 23:20, on #306's branch; the guard and captain retuned onto
   §4.4's lines, the captain won 45% at 4). All subscribed. Review queue: #303 (after its recut),
   #307, #308, #309, #310; #305 and #306 in review.
+
+### 23:40: check-in
+- Nothing ready to land: rounds out on #302, #303 (the recut) and #304; #305 and #306 in review;
+  #307, #308, #309 and #310 queued. Check-in re-armed for 00:40 (trig_01EC1iND1ExFbXtoLtP5fbyN).
