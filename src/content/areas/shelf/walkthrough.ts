@@ -33,7 +33,11 @@ function crowness(w: Walk): void {
 export const STEPS: readonly Step[] = [
   { name: 'to Gullwick', play: (w) => meetWho(w, 'q_wenna') },
   { name: 'to Ashcombe', play: (w) => walkThrough(w, 'downs_e3', 20, 4, EAST, 'mill') },
-  { name: 'the cellar', play: (w) => { see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core'); } },
+  { name: 'the cellar', play: (w) => {
+    // Walked at its floor, 2, where the gate tunes its Warden to about half (#87), before Crowness at 3.
+    w.ok(w.level === 2, `the cellar is walked at level 2, its floor (${w.level})`);
+    see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core');
+  } },
   { name: 'to Crowness', play: crowness },
   { name: 'the wand', play: (w) => meetWho(w, 'survey_wand') },
 ];
