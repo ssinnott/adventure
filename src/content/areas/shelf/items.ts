@@ -43,6 +43,14 @@ export const ITEMS: readonly ItemDef[] = [
     'A chit of thick paper, creased and salt-spotted, stamped with the Helmstow customs seal.',
     '"Passed for Helmstow, under seal: boards fourteen, oars twenty-two, cordage, one bell. Salvage, the Wyke shore. Duty paid."',
   ] },
+  // The keeper's log at Crowness Light, of the night the Queen died: read from the pack (#67).
+  { id: 'keepers_log', name: "Keeper's Log", slot: 'none', price: 0, text: [
+    'CROWNESS LIGHT. Wind south-west, fresh; sea getting up. Lamp lit at dusk and trimmed for the night. Myself to Gullwick.',
+    'Near midnight the Hearth went out. Not dim: out, and back, and out. Counted between, as for thunder.',
+    'Out. 2. Out. 9. Out. 2. Out. 9. Out. 2. Out. 9. Out. 2. Out. 9. Out. 2. Out. 9. Out. Then no more.',
+    'Eleven. Each about the length of a grace. The pairs even, every time, as if measured. Gullwick\'s boats had no light but mine. Not all in by dawn.',
+    'Morning: a rider from Helmstow. The Queen is dead.',
+  ] },
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
   { id: 'greywater_ledger', name: 'Cargo Ledger', slot: 'none', price: 0 },
   { id: 'clerks_seal', name: "Clerk's Seal", slot: 'none', price: 0 },
@@ -51,5 +59,9 @@ export const ITEMS: readonly ItemDef[] = [
     'A grey paper folded small, soft at the creases from handling.',
     '"For the use of the cellar under Ashcombe, from this new moon to the next, twenty in gold, paid in hand. The tenant to ask nothing, to go down no stairs, and to keep his people above them, that the farm look lived in."',
     'Below, in place of a name, a cross, pressed hard enough to tear the paper. On the back, in the same grey ink: THE HEARTH IS A CAGE.',
+  ] },
+  { id: 'dunstan_letter', name: "Dunstan's Letter", slot: 'none', price: 0, text: [
+    'A paper folded twice, unsealed, addressed in a square hand: HALE. THE SCARTH.',
+    '"Hale. Eight riders, shod, no lights, the week she died. West to the Berth by my ford and back before dawn, and not once only. Grey under the cloaks. You know what I am not writing. Burn this. D."',
   ] },
 ];

@@ -28,19 +28,19 @@ DESIGN.md first for the why.
   comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
   sends away is gone from it. A tavern (the Gilded Eel, a person with a room) with people in it says
   its room first, over a menu of "The talk of the room" and them. With nobody there, a business
-  opens as before.
-- **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
-  (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and mountains
-  gated by party abilities, hills (`^`), farmland (`f`) and light woods (`t`) open to all, a
-  calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
-  food, a search action, exploration spells (Light, Wizard Eye). The wilderness features (a shrine
-  on F2; the rest on E2): a shrine or fountain that gives every member a stat point once, a cairn
-  with a cache, a statue whose riddle takes its answer typed and a camp where the party may rest
-  with monsters two squares off; a hermit is a person. Dens (E2's rookery; #69 and #71 place more):
-  a camp that breeds one kind of monster, its brood back one a pace at their posts while it stands,
-  guarded by keepers beside it that never leave. Its look is said when first seen; its keepers dead,
-  a step or Space asks to burn it, and burnt it gives its hoard, breeds no more and shows as ash on
-  the automap.
+  opens as before. - **Exploration:** grid movement with 90° turns and strafing, doors, locked
+  doors, secret doors (each with a hint on its near side, the event or sign `MapDef.secrets` names),
+  water and mountains gated by party abilities, hills (`^`), farmland (`f`), light woods (`t`) and
+  dead wood (`d`, on no built map yet) open to all, the Sunder's glass trees (`c`) and chasm (`v`),
+  on none yet, a calendar and weather over a day/night clock (below), automap with field-of-view
+  reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The wilderness
+  features (a shrine on F2; the rest on E2): a shrine or fountain that gives every member a stat
+  point once, a cairn with a cache, a statue whose riddle takes its answer typed and a camp where
+  the party may rest with monsters two squares off; a hermit is a person. Dens (E2's rookery; #69
+  and #71 place more): a camp that breeds one kind of monster, its brood back one a pace at their
+  posts while it stands, guarded by keepers beside it that never leave. Its look is said when first
+  seen; its keepers dead, a step or Space asks to burn it, and burnt it gives its hoard, breeds no
+  more and shows as ash on the automap.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
@@ -78,13 +78,14 @@ DESIGN.md first for the why.
   them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
   Beside it are the side quests: The Cargo Ledger (Hale), The Bell That Rang Twice (Osmund), The
   Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud), The Well Tastes of Iron (Mottram), A
-  Boat With No Name-Board (Wat and Hamo), Who Lived at Ashcombe (Hob) and The Lost Expedition, which
-  the first Meridian journal opens and which stays open until the rest of its trail is built. Left
-  and right page the one quest by chapter, and a page too long goes on over the next. Nothing new is
-  saved. Every entry is keyed to something the save already holds (a flag, a carried item, a
-  once-only event, a guardian killed, a map set foot on), so an old save opens with its log whole. A
-  quest or chapter begun, advanced or finished is announced once in the message log, and J opens on
-  the one that changed last, at its goal's chapter.
+  Boat With No Name-Board (Wat and Hamo), Who Lived at Ashcombe (Hob), Oil for the Lamp (Aldred,
+  Mottram and Vask) and The Lost Expedition, which the first Meridian journal opens and which stays
+  open until the rest of its trail is built. Left and right page the one quest by chapter, and a
+  page too long goes on over the next. Nothing new is saved. Every entry is keyed to something the
+  save already holds (a flag, a carried item, a once-only event, a guardian killed, a map set foot
+  on), so an old save opens with its log whole. A quest or chapter begun, advanced or finished is
+  announced once in the message log, and J opens on the one that changed last, at its goal's
+  chapter.
 
 ## The outdoors as one map, and the end of the world
 
@@ -300,32 +301,34 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   and side slopes meet along their hips); timber bracing and a window on house side faces; a birch
   tree variant; a parchment automap with inked walls and a compass rose; hit sparks and a red card
   flash in combat when someone takes damage.
-- Weather and seasons: the cached scene is two canvases now, the sky and everything in front of
-  it, so a lightning strike can light the whole sky behind the roofs and trees and fork down
-  behind the hills. An overcast sky greys over with a cloud deck and hides the stars, sun and moon;
-  a downpour darkens it; fog washes it out. In the scene, cloud lays a flat grey light over
-  everything, murk (fog, or rain or snow coming down hard) swallows far faces into the haze, rain
-  darkens the ground and leaves puddles holding the sky on the roads, and lying snow whitens the
-  ground, the cobbles, the roofs, the hills, the rocks and the conifers' boughs. The grass runs
-  from spring green to tawny through the year. Hills rise as round-shouldered mounds of drier
-  grass that run on into one another (slow going; they hide nothing yet); farmland lies in fields
-  three squares long in bands two deep, each with its crop (wheat, barley, pasture, roots) green in
-  Sowing, gold or cut by Harvest and ploughed through the winter, its rows or furrows and the
-  hedges between fields showing under snow. Light woods (`t`, the atlas's woods) are walked through
-  at a plain step: a shaded floor of moss, leaf litter and ferns with a tree or two to either side
-  of the square, the way through it open. Broadleaf trees bud in Thaw, blossom in Sowing,
-  turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the winter
-  (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn. Lamps
-  and windows light early on a dark day. Every frame, over the scene (and over the monsters in a
-  fight): rain as streaks in three depths, more, longer and slanting harder with the wind across
+- Weather and seasons: the cached scene is two canvases now, the sky and everything in front of it,
+  so a lightning strike can light the whole sky behind the roofs and trees and fork down behind the
+  hills. An overcast sky greys over with a cloud deck and hides the stars, sun and moon; a downpour
+  darkens it; fog washes it out. In the scene, cloud lays a flat grey light over everything, murk
+  (fog, or rain or snow coming down hard) swallows far faces into the haze, rain darkens the ground
+  and leaves puddles holding the sky on the roads, and lying snow whitens the ground, the cobbles,
+  the roofs, the hills, the rocks and the conifers' boughs. The grass runs from spring green to
+  tawny through the year. Hills rise as round-shouldered mounds of drier grass that run on into one
+  another (slow going; they hide nothing yet); farmland lies in fields three squares long in bands
+  two deep, each with its crop (wheat, barley, pasture, roots) green in Sowing, gold or cut by
+  Harvest and ploughed through the winter, its rows or furrows and the hedges between fields showing
+  under snow. Light woods (`t`, the atlas's woods) are walked through at a plain step: a shaded
+  floor of moss, leaf litter and ferns with a tree or two to either side of the square, the way
+  through it open. Dead wood (`d`) is walked the same, over grey ground and fallen limbs, its trees
+  long dead: bleached trunks, bare or snapped short, with no green in any season. A glass tree (`c`,
+  on crystal) stands where a tree would and blocks as one, shards of crystal catching a point of
+  light by day. The chasm (`v`) is no wall and is seen across, but a step into it is refused ("The
+  ground falls away. There is no way down here."); where ground stands beyond it, its far wall hangs
+  from the rim in bands of rock darkening into the drop. Broadleaf trees bud in Thaw, blossom in
+  Sowing, turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the
+  winter (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn.
+  Lamps and windows light early on a dark day. Every frame, over the scene (and over the monsters in
+  a fight): rain as streaks in three depths, more, longer and slanting harder with the wind across
   the view, splashing only on floor the party can see; snow as flakes that sway and blow, nearly
   flat in a blizzard; fog banks drifting low; and the flash of a strike. Particles take their
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
-  millisecond a frame.
-
-## Stubbed or absent
-
+  millisecond a frame.  ## Stubbed or absent
 - No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
@@ -446,8 +449,9 @@ over content broken on purpose too, and two tools to theirs:
 - `changed`: which files count every map, monster or interior for the crack sweep and the sheet, and
   which only their own; and that it reads each family module's `KINDS` from the module's text as the
   module lists them.
-- `scaffold` (§8.2): the Downs' draft and the Deepthorn's first, its light woods and all, laid back
-  into the atlas, are the atlas square for square.
+- `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4 and the Sunder's K3, their
+  light woods, dead wood, chasm and crystal and all, laid back into the atlas, are the atlas square
+  for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
   a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
@@ -502,7 +506,7 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland and woods named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal and the chasm named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
@@ -518,7 +522,7 @@ does.
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods and the dead wood, the glass trees and the chasm's drop, the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |
