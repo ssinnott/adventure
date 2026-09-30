@@ -20,6 +20,8 @@ const AT = [168, 30] as const;
 const REGIONS = AREAS.map((a) => a.id);
 /** The Deepthorn's first box, H3, where the atlas lays its light woods along the Wyke. */
 const WOODS_AT = [232, 62] as const;
+/** The Deepthorn's J4, over the ridge in the Eaves' land, with 30 squares of the atlas's dead wood. */
+const DEAD_AT = [296, 94] as const;
 
 /** The draft as the tool writes it: its module, written out and imported back, by export name. */
 async function exported(d: Draft, zone: string, x: number, y: number): Promise<Record<string, MapDef>> {
@@ -129,4 +131,16 @@ export async function scaffold(): Promise<void> {
   ok(thinned === wd.counts.woods, `and with its woods written as grass it does not (${thinned} squares differ, ${wd.counts.woods} of them woods)`);
   const wm = new GameMap(wdef), at = wdef.rows.flatMap((r, y) => [...r].flatMap((c, x) => (c === 't' ? [[x, y]] : [])))[0];
   ok(!!at && wm.at(at[0], at[1]).terrain === 'woods' && wm.passable(at[0], at[1]) === 'ok' && !wm.blocksView(at[0], at[1]), 'its woods are walked through and seen past');
+
+  // A dead-wood box: the Deepthorn's J4, refused until dead wood had a character (#163), cut and
+  // laid back as the atlas, its dead wood and all.
+  const [dx, dy] = DEAD_AT, dead = unbuilt(dx, dy), dgr = baseline(dead.atlas, dead.defs);
+  const dd = cut(dead.atlas, dead.defs, dgr, REGIONS, 'deepthorn', dx, dy);
+  ok(!('refused' in dd) && (dd.counts.deadwood ?? 0) > 0, `the Deepthorn's J4 is cut at ${dx},${dy}, its dead wood coming through (${'refused' in dd ? `refused: ${dd.refused}` : `dead wood ${dd.counts.deadwood ?? 0}`})`);
+  if ('refused' in dd) return;
+  const ddef = await written(dd, 'deepthorn', dx, dy), dzone = dead.atlas.zones.find((z) => z.id === 'deepthorn')!;
+  const dback = (draft: MapDef): number => { const l = layBack(dead.atlas, dead.defs, draft, dzone, DEAD_AT); return mismatches(dgr, worldGrid(l.atlas, l.defs), dx, dy); };
+  ok(dback(ddef) === 0, 'laid back, its dead wood and all match the atlas square for square');
+  const forested = dback({ ...ddef, rows: ddef.rows.map((r) => r.replace(/d/g, 'T')) });
+  ok(forested === dd.counts.deadwood, `and with its dead wood painted over as forest it does not (${forested} squares differ, ${dd.counts.deadwood} of them dead wood)`);
 }

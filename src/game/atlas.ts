@@ -181,7 +181,7 @@ export const TI = Object.fromEntries(TERRAINS.map((t, i) => [t, i])) as Record<W
 
 /** What a built map's legend characters are on the world map. */
 export const MAP_TERRAIN: Record<string, WorldTerrain> = {
-  ',': 'grass', '^': 'hills', 'f': 'farm', 't': 'woods', ':': 'dirt', '=': 'road', '_': 'sand', '~': 'shallow', 'W': 'sea', 'w': 'marsh', '!': 'lava',
+  ',': 'grass', '^': 'hills', 'f': 'farm', 't': 'woods', 'd': 'deadwood', ':': 'dirt', '=': 'road', '_': 'sand', '~': 'shallow', 'W': 'sea', 'w': 'marsh', '!': 'lava',
   '*': 'snow', 'T': 'forest', 'r': 'rock', 'M': 'mountain', '"': 'rock', 'B': 'building', 'D': 'building',
   'L': 'building', 'S': 'building', '#': 'building', 'o': 'building', '.': 'dirt',
 };
