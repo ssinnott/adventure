@@ -1448,3 +1448,17 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Nits: the automap's colours, a secret door between glass and green trees, seams, a chasm indoors,
   no smoke line, long lines. The look and the four choices to a delegate. Reviewer on #304 (I3),
   merging #298's branch on top.
+- 23:16: #298 (#49, I4, Henlys) landed: its round (5b2d61b, dfe6b62: the halls drawn in round a
+  yard five across and four deep, which from the yard now read as halls on three sides; Senara at
+  10,9 shows the seal and `done` and `seal` take `q_treaty`; `henlys()` keyed on each ask's words;
+  the chisel-carried meeting and the seal shown by Senara walked; the glade's shrine; the night
+  group still; The Older Mark's hand-in recorded as #218's; long lines; the lodge site left to #304).
+  Landing check on it merged onto b267260: ALL OK (27 owed: #49's gone, the reachability owed to
+  #215), SMOKE OK, "Nothing new."; CI green. Merged as e2c7eaa; main's tree is the tested tree
+  (f3ca871). #49 closes. #304 is now the second of the two and joins them.
+- 23:17: the delegate on #297: the look OK with the far-ground fix (should-fix 3), all four choices
+  taken. Round sent to the #45 session. `reviews/301.md` (#67's B): ready after fixes (merge main,
+  ten hunks both sides; name the log in both goals, as Lantern Oil is common and Aldred's first
+  meeting takes it; nits: the Oxford comma in the title, spacing, an indent). Order: #302, #301,
+  #303, which must recut the chain (Crowness before the farm puts #303's level-2 Warden at 3). Its
+  choices, old saves reopening the chapter and the order to a delegate. Reviewer on #302.
