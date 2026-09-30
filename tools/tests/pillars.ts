@@ -290,7 +290,10 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  * The squares where map and atlas disagree today, by whose fix they wait on: each is reported, and
  * fails once it agrees, so it is dropped here.
  */
-const EDGES_OWED: Record<string, readonly string[]> = {};
+const EDGES_OWED: Record<string, readonly string[]> = {
+  // The elves' road on out of H3's east edge into I3, towards Henlys (I4), which the atlas does not draw.
+  '#215': ['deepthorn_h3 31,23'],
+};
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */
 export interface FoundLock { kind: 'exit' | 'hand-in' | 'other'; flags: string[]; map: string; x: number; y: number; area: string; to?: string; key: string }

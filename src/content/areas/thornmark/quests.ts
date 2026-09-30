@@ -47,6 +47,31 @@ export const QUESTS: readonly QuestDef[] = [
     ],
   },
   {
+    // #56's fourteenth (#214): the survey team's orders, burnt in their camp over the Deepthorn's
+    // edge. Idony carries them east to Lantern Watch, or hands them back for the Council.
+    id: 'orders',
+    title: 'How Did He Know',
+    start: [{ flag: 'q_orders' }, { flag: 'q_orders_read' }],
+    done: [{ flag: 'q_orders_watch' }, { flag: 'q_orders_council' }],
+    entries: [
+      { id: 'idony', when: { flag: 'q_orders' },
+        text: 'Idony, a Lantern in travel-grey at the Split Oak, wants the survey team\'s orders. Their camp is south of the Grove, over the edge of the deep.' },
+      { id: 'camp', when: { seen: 'deepthorn_h3:h3_survey' },
+        text: 'The survey\'s camp: tents cut open, burnt paper in the fire-pit, and Wardens\' boot prints all round it.' },
+      { id: 'orders', when: [{ item: 'survey_orders' }, { flag: 'q_orders_read' }, { flag: 'q_orders_watch' }, { flag: 'q_orders_council' }],
+        text: 'The survey\'s orders, half burnt: dated three days before the Queen died, under the Regent\'s seal. Report what the seam does, and when.' },
+      { id: 'watch', when: { flag: 'q_orders_watch' },
+        text: 'Idony carries the orders east to Lantern Watch, where the order will split on them.' },
+      { id: 'council', when: { flag: 'q_orders_council' },
+        text: 'We kept the orders for the Council that will one day sit on the throne. Idony goes east with what is in her head.' },
+    ],
+    goals: [
+      { when: { flag: 'q_orders_read' }, text: 'Answer Idony at the Split Oak: the orders to the Watch, or back to us?' },
+      { when: { item: 'survey_orders' }, text: 'Take the survey\'s orders to Idony at the Split Oak, in Thornhold.' },
+      { when: { flag: 'q_orders' }, text: 'Find the survey team\'s camp, south of the Grove over the edge of the deep, and their orders.' },
+    ],
+  },
+  {
     // #56's tenth: a charcoal-burner felling the marked oaks on the Grove road, paid in faceless
     // coin by a Lantern in travel-grey. He goes before Sylvane, who banishes him, or home.
     id: 'trees',

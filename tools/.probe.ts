@@ -1,0 +1,11 @@
+import { rate } from './tests/gate.ts';
+import { days, fightsPerRest } from './harness.ts';
+import { DEEPTHORN_H3 } from '../src/content/areas/thornmark/maps/deepthorn_h3.ts';
+import { stepsFrom } from './tests/curve.ts';
+const rep = (m: string, n: number): string[] => Array(n).fill(m);
+const G: Record<string, string[]> = JSON.parse(process.argv[2] ?? 'null') ?? Object.fromEntries(DEEPTHORN_H3.encounters!.map((e) => [e.id, e.monsters]));
+for (const [id, ms] of Object.entries(G)) console.log(id, ms.length, ms[0], 'at8', rate({ monsters: ms } as any, 8).toFixed(2), 'at6', rate({ monsters: ms } as any, 6).toFixed(2));
+const d = days(8, Object.values(G), 300, 1, true);
+console.log('fights to rest at 8', d.fights.toFixed(2), 'want', fightsPerRest(8));
+const st = stepsFrom(DEEPTHORN_H3);
+for (const e of DEEPTHORN_H3.encounters!) console.log(e.id, 'steps', st(e.x, e.y));
