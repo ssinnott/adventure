@@ -12,7 +12,7 @@ import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { EAST } from '../../src/game/types.ts';
-import { ok, owed, local } from './lib.ts';
+import { ok, owed, local, stopsWalk } from './lib.ts';
 
 /**
  * Zone maps laid before the map that joins them to the rest, and whose map that is: their squares
@@ -85,21 +85,20 @@ export function outdoors(): void {
     ok(harrow.exits!.filter((e) => e.y !== harrow.rows.length - 1).every((e) => e.y === 0 && e.to === 'keep'), 'and its only other way out is the north gate, into the keep\'s ward');
   }
   ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
-  { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void,
+  { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void or the chasm,
     // but for a zone map laid before the one that joins it (CUT_OFF).
-    const can = { swim: true, climb: true, keys: 1 }, reached = new Uint8Array(out.width * out.height);
+    const reached = new Uint8Array(out.width * out.height);
     const stack = [[out.def.start.x, out.def.start.y]];
     while (stack.length) {
-      const [x, y] = stack.pop()!, k = y * out.width + x, p = out.passable(x, y, can), c = out.at(x, y);
-      if (reached[k] || p === 'wall' || p === 'void' || c.solid === 'tree' || c.solid === 'rock') continue;
+      const [x, y] = stack.pop()!, k = y * out.width + x;
+      if (reached[k] || stopsWalk(out, x, y)) continue;
       reached[k] = 1;
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (out.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
     }
     let open = 0, got = 0;
     const cut = new Map(Object.keys(CUT_OFF).map((id) => [id, { open: 0, got: 0 }]));
     for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) {
-      const p = out.passable(x, y, can);
-      if (p === 'wall' || p === 'void' || out.at(x, y).solid !== 'none') continue;
+      if (stopsWalk(out, x, y) || out.at(x, y).solid !== 'none') continue;
       const z = out.zones.find((q) => cut.has(q.id) && x >= q.x && x < q.x + q.w && y >= q.y && y < q.y + q.h), tally = z ? cut.get(z.id)! : null;
       if (tally) { tally.open++; if (reached[y * out.width + x]) tally.got++; continue; }
       open++; if (reached[y * out.width + x]) got++;

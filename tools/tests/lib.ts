@@ -3,6 +3,7 @@
 // count lives here, as a module's own binding can only be changed by the module.
 import { readdirSync } from 'node:fs';
 import type { World } from '../../src/game/world.ts';
+import type { GameMap } from '../../src/game/map.ts';
 
 let failures = 0;
 export const ok = (cond: boolean, msg: string): void => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) failures++; };
@@ -34,6 +35,15 @@ export const summary = (failures: number, owing: ReadonlyMap<string, number>): s
 export const local = (w: World): { map: string; x: number; y: number } => {
   const z = w.zone;
   return z ? { map: z.id, x: w.state.x - z.x, y: w.state.y - z.y } : { map: w.state.mapId, x: w.state.x, y: w.state.y };
+};
+
+/**
+ * Whether the reachability walks stop at a square, given keys, secrets, water and climbing: a wall,
+ * the void, the chasm, a tree or a rock. None is open ground to walk to, either.
+ */
+export const stopsWalk = (m: GameMap, x: number, y: number): boolean => {
+  const p = m.passable(x, y, { swim: true, climb: true, keys: 1 }), c = m.at(x, y);
+  return p === 'wall' || p === 'void' || p === 'chasm' || c.solid === 'tree' || c.solid === 'rock';
 };
 
 /** A monster family: its module in src/ui/monsters/ (by name, as 'boar'), the kinds it lists and the drawer it exports. */
