@@ -31,16 +31,16 @@ DESIGN.md first for the why.
   opens as before.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and mountains
-  gated by party abilities, hills (`^`), farmland (`f`), light woods (`t`) and dead wood (`d`, on
-  no built map yet) open to all, a calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
-  food, a search action, exploration spells (Light, Wizard Eye). The wilderness features (a shrine
-  on F2; the rest on E2): a shrine or fountain that gives every member a stat point once, a cairn
-  with a cache, a statue whose riddle takes its answer typed and a camp where the party may rest
-  with monsters two squares off; a hermit is a person. Dens (E2's rookery; #69 and #71 place more):
-  a camp that breeds one kind of monster, its brood back one a pace at their posts while it stands,
-  guarded by keepers beside it that never leave. Its look is said when first seen; its keepers dead,
-  a step or Space asks to burn it, and burnt it gives its hoard, breeds no more and shows as ash on
-  the automap.
+  gated by party abilities, hills (`^`), farmland (`f`), light woods (`t`) and dead wood (`d`, on no
+  built map yet) open to all, a calendar and weather over a day/night clock (below), automap with
+  field-of-view reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The
+  wilderness features (a shrine on F2; the rest on E2): a shrine or fountain that gives every member
+  a stat point once, a cairn with a cache, a statue whose riddle takes its answer typed and a camp
+  where the party may rest with monsters two squares off; a hermit is a person. Dens (E2's rookery;
+  #69 and #71 place more): a camp that breeds one kind of monster, its brood back one a pace at
+  their posts while it stands, guarded by keepers beside it that never leave. Its look is said when
+  first seen; its keepers dead, a step or Space asks to burn it, and burnt it gives its hoard,
+  breeds no more and shows as ash on the automap.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
@@ -299,34 +299,30 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   and side slopes meet along their hips); timber bracing and a window on house side faces; a birch
   tree variant; a parchment automap with inked walls and a compass rose; hit sparks and a red card
   flash in combat when someone takes damage.
-- Weather and seasons: the cached scene is two canvases now, the sky and everything in front of
-  it, so a lightning strike can light the whole sky behind the roofs and trees and fork down
-  behind the hills. An overcast sky greys over with a cloud deck and hides the stars, sun and moon;
-  a downpour darkens it; fog washes it out. In the scene, cloud lays a flat grey light over
-  everything, murk (fog, or rain or snow coming down hard) swallows far faces into the haze, rain
-  darkens the ground and leaves puddles holding the sky on the roads, and lying snow whitens the
-  ground, the cobbles, the roofs, the hills, the rocks and the conifers' boughs. The grass runs
-  from spring green to tawny through the year. Hills rise as round-shouldered mounds of drier
-  grass that run on into one another (slow going; they hide nothing yet); farmland lies in fields
-  three squares long in bands two deep, each with its crop (wheat, barley, pasture, roots) green in
-  Sowing, gold or cut by Harvest and ploughed through the winter, its rows or furrows and the
-  hedges between fields showing under snow. Light woods (`t`, the atlas's woods) are walked through
-  at a plain step: a shaded floor of moss, leaf litter and ferns with a tree or two to either side
-  of the square, the way through it open. Dead wood (`d`) is walked the same, over grey ground and
-  fallen limbs, its trees long dead: bleached trunks, bare or snapped short, with no green in any
-  season. Broadleaf trees bud in Thaw, blossom in Sowing,
-  turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the winter
-  (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn. Lamps
-  and windows light early on a dark day. Every frame, over the scene (and over the monsters in a
-  fight): rain as streaks in three depths, more, longer and slanting harder with the wind across
-  the view, splashing only on floor the party can see; snow as flakes that sway and blow, nearly
-  flat in a blizzard; fog banks drifting low; and the flash of a strike. Particles take their
-  positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
-  unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
-  millisecond a frame.
-
-## Stubbed or absent
-
+- Weather and seasons: the cached scene is two canvases now, the sky and everything in front of it,
+  so a lightning strike can light the whole sky behind the roofs and trees and fork down behind the
+  hills. An overcast sky greys over with a cloud deck and hides the stars, sun and moon; a downpour
+  darkens it; fog washes it out. In the scene, cloud lays a flat grey light over everything, murk
+  (fog, or rain or snow coming down hard) swallows far faces into the haze, rain darkens the ground
+  and leaves puddles holding the sky on the roads, and lying snow whitens the ground, the cobbles,
+  the roofs, the hills, the rocks and the conifers' boughs. The grass runs from spring green to
+  tawny through the year. Hills rise as round-shouldered mounds of drier grass that run on into one
+  another (slow going; they hide nothing yet); farmland lies in fields three squares long in bands
+  two deep, each with its crop (wheat, barley, pasture, roots) green in Sowing, gold or cut by
+  Harvest and ploughed through the winter, its rows or furrows and the hedges between fields showing
+  under snow. Light woods (`t`, the atlas's woods) are walked through at a plain step: a shaded
+  floor of moss, leaf litter and ferns with a tree or two to either side of the square, the way
+  through it open. Dead wood (`d`) is walked the same, over grey ground and fallen limbs, its trees
+  long dead: bleached trunks, bare or snapped short, with no green in any season. Broadleaf trees
+  bud in Thaw, blossom in Sowing, turn orange and gold in Leafturn, brown and drop in Mistfall and
+  stand bare through the winter (`treeSeason()` in `ui/sprites.ts`); flowers only come out between
+  Sowing and Leafturn. Lamps and windows light early on a dark day. Every frame, over the scene (and
+  over the monsters in a fight): rain as streaks in three depths, more, longer and slanting harder
+  with the wind across the view, splashing only on floor the party can see; snow as flakes that sway
+  and blow, nearly flat in a blizzard; fog banks drifting low; and the flash of a strike. Particles
+  take their positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's
+  x is unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
+  millisecond a frame.  ## Stubbed or absent
 - No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
