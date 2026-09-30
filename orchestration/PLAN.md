@@ -1466,3 +1466,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   recuts the chain); old saves see The Quiet Farm reopen at Crowness, said in the body (an
   alternative `done` without the log would hold for every company); the order #302, #301, #303.
   Round sent to the #67 session, before its D4.
+- 23:26: #301's round in (0ba34d6 main merged; a6d4330: the goals name the log, the nits, the
+  title, the old saves said in the body). The delegate, asked again now that #301 was ready and #302
+  not yet reviewed: land #301 now; #302 takes its 5 keep-both hunks in the main merge its round
+  makes anyway; #303 last. Landing check on a6d4330 (main in): ALL OK (27 owed), SMOKE OK, "Nothing
+  new."; CI green. Merged as 62ca3fa; main's tree is the tested tree (6ad4864). #67 closes.
+- 23:28: the #77 session told to merge main into #303 and recut the chain before its review:
+  Gullwick, the farm, the cellar, Crowness, the wand (the #301 review's suggestion, noted by the
+  delegate), so the Warden is met at 2.
