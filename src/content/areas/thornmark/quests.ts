@@ -1,16 +1,16 @@
-// Thornmark's side quests, in the journal's words: The Lost Expedition, a subplot, and #56's six on
-// the built maps (#219): A Coin Not From Caldera (Tegen), Leave the Trees Standing (Piran), The
-// Dark Glass (Tamsin), The Elder's Four (Keyne), Terms From the Brigands and The Mender (Sylvane).
-// Its chapter of the one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
-// tools/tests/quests.ts checks every key.
+// Thornmark's side quests, in the journal's words: The Lost Expedition and The Empty Throne,
+// subplots, and #56's six on the built maps (#219): A Coin Not From Caldera (Tegen), Leave the
+// Trees Standing (Piran), The Dark Glass (Tamsin), The Elder's Four (Keyne), Terms From the
+// Brigands and The Mender (Sylvane). Its chapter of the one quest is in ./chapter.ts. How the words
+// are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 
 export const QUESTS: readonly QuestDef[] = [
   {
-    // The Lost Expedition (DESIGN.md 10.3) begins with the first of the Meridian Company's journals.
-    // The rest of its trail is not built yet, so it has no `done` and stays open. Nothing takes the
-    // journal (no hand-in asks for it and no shop buys it; tools/tests/quests.ts holds to that), so the item
-    // alone keeps the entry written.
+    // The Lost Expedition (DESIGN.md 10.3) begins with the first of the Meridian Company's
+    // journals. The rest of its trail is not built yet, so it has no `done` and stays open. Nothing
+    // takes the journal (no hand-in asks for it and no shop buys it; tools/tests/quests.ts holds to
+    // that), so the item alone keeps the entry written.
     id: 'meridian',
     title: 'The Lost Expedition',
     start: { item: 'meridian_journal' },
@@ -20,6 +20,21 @@ export const QUESTS: readonly QuestDef[] = [
     ],
     goals: [
       { when: { item: 'meridian_journal' }, text: 'Find the other volumes of the Meridian journal.' },
+    ],
+  },
+  {
+    // The Empty Throne (DESIGN.md 10.1), a subplot with no end yet: the elves' claim, which the
+    // treaty in Henlys keeps. Its start is a list, so that a claim met first opens it too. It lives
+    // here until subplots that span areas have a home of their own.
+    id: 'throne',
+    title: 'The Empty Throne',
+    start: [{ seen: 'deepthorn_i4:i4_treaty' }, { flag: 'q_treaty' }],
+    entries: [
+      { id: 'treaty', when: [{ seen: 'deepthorn_i4:i4_treaty' }, { flag: 'q_treaty' }],
+        text: 'The elves of Henlys keep a treaty that says their line and Helmstow\'s were once one. Their elder keeps it close.' },
+    ],
+    goals: [
+      { when: [{ seen: 'deepthorn_i4:i4_treaty' }, { flag: 'q_treaty' }], text: 'Learn what the treaty in Henlys is worth, and to whom.' },
     ],
   },
   {
@@ -44,6 +59,31 @@ export const QUESTS: readonly QuestDef[] = [
     goals: [
       { when: { flag: 'q_coin_fight' }, text: 'Deal with Leofwin\'s band, in the trees north of the bridge.' },
       { when: { flag: 'q_coin' }, text: 'Find the deserter camped off the Warden road, north of the bridge, and ask where the coin comes from.' },
+    ],
+  },
+  {
+    // #56's fourteenth (#214): the survey team's orders, burnt in their camp over the Deepthorn's
+    // edge. Idony carries them east to Lantern Watch, or hands them back for the Council.
+    id: 'orders',
+    title: 'How Did He Know',
+    start: [{ flag: 'q_orders' }, { flag: 'q_orders_read' }],
+    done: [{ flag: 'q_orders_watch' }, { flag: 'q_orders_council' }],
+    entries: [
+      { id: 'idony', when: { flag: 'q_orders' },
+        text: 'Idony, a Lantern in travel-grey at the Split Oak, wants the survey team\'s orders. Their camp is south of the Grove, over the edge of the deep.' },
+      { id: 'camp', when: { seen: 'deepthorn_h3:h3_survey' },
+        text: 'The survey\'s camp: tents cut open, burnt paper in the fire-pit, and Wardens\' boot prints all round it.' },
+      { id: 'orders', when: [{ item: 'survey_orders' }, { flag: 'q_orders_read' }, { flag: 'q_orders_watch' }, { flag: 'q_orders_council' }],
+        text: 'The survey\'s orders, half burnt: dated three days before the Queen died, under the Regent\'s seal. Report what the seam does, and when.' },
+      { id: 'watch', when: { flag: 'q_orders_watch' },
+        text: 'Idony carries the orders east to Lantern Watch, where the order will split on them.' },
+      { id: 'council', when: { flag: 'q_orders_council' },
+        text: 'We kept the orders for the Council that will one day sit on the throne. Idony goes east with what is in her head.' },
+    ],
+    goals: [
+      { when: { flag: 'q_orders_read' }, text: 'Answer Idony at the Split Oak: the orders to the Watch, or back to us?' },
+      { when: { item: 'survey_orders' }, text: 'Take the survey\'s orders to Idony at the Split Oak, in Thornhold.' },
+      { when: { flag: 'q_orders' }, text: 'Find the survey team\'s camp, south of the Grove over the edge of the deep, and their orders.' },
     ],
   },
   {

@@ -28,7 +28,7 @@ import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS, VOID_PINK } from './palette.ts';
-import { drawMonsterSprite, drawTreeSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
+import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
 import type { TreeSeason } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
 import type { Weather } from '../game/weather.ts';
@@ -43,7 +43,6 @@ const LATERAL = VIEW_LATERAL;
 
 export interface ViewRect { x: number; y: number; w: number; h: number; }
 
-/** A monster to draw at a cell, resolved by the caller from the world's live groups. */
 /** A figure the viewport draws for a group: the monster, its sprite, tint and size. */
 export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; }
 
@@ -80,8 +79,8 @@ const SNOW = '#eef2f7';
  * Every terrain has its entry, so one left out fails the typecheck rather than never taking snow.
  */
 export const SNOW_HOLD: Record<Terrain, number> = {
-  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
-  water: 0, deep: 0, lava: 0,
+  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, deadwood: 0.85, crystal: 0.5, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
+  water: 0, deep: 0, lava: 0, chasm: 0,
 };
 type Ramp = readonly [number, string][];
 /** A colour through the year: the ramp's stops by day of the year, mixed between. */
@@ -132,12 +131,13 @@ function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 
 function groundColor(terrain: Terrain, kind: string, floorPal: string, crop = 0): string {
   if (kind === 'dungeon') return floorPal;
   let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
-  if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava') c = shade(c, 1 - 0.18 * env.wet);
+  if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava' && terrain !== 'chasm') c = shade(c, 1 - 0.18 * env.wet);
   const s = env.cover * SNOW_HOLD[terrain];
   return s > 0 ? mix(c, SNOW, s) : c;
 }
 
-interface Flame { x: number; y: number; s: number; }
+/** A torch or lantern's flame, and the pixel it was painted over, read once its wall is done. */
+export interface Flame { x: number; y: number; s: number; under?: number; }
 interface Scene {
   key: string;
   /** Everything but the sky, which shows through where nothing was painted. */
@@ -149,6 +149,8 @@ interface Scene {
 let scene: Scene | null = null;
 /** Filled while a scene is painted: where the torches and lanterns are, for the per-frame flames. */
 let flames: Flame[] = [];
+/** The flames the last scene painted left alight. */
+export function paintedFlames(): readonly Flame[] { return flames; }
 
 export { isSolidWall };
 
@@ -165,8 +167,8 @@ export function drawViewport(
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
-    flames = [];
-    paintScene(canvas.getContext('2d')!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
+    // Each torch's point is read back as the scene is painted (see `pixel`).
+    paintScene(canvas.getContext('2d', { willReadFrequently: true })!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
     scene = { key, canvas, sky, flames };
   }
   ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
@@ -179,6 +181,8 @@ export function drawViewport(
   }
   ctx.drawImage(scene.canvas, r.x, r.y);
 
+  // Flames on the sconces and lanterns, animated over the cached scene; a monster stands before them.
+  for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
   // Monsters, every frame, with a line-of-sight check against the cached walls.
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
@@ -209,8 +213,6 @@ export function drawViewport(
     g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.75)');
     ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h);
   }
-  // Flames on the sconces and lanterns, animated over the cached scene.
-  for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
   ctx.restore();
   if (weather) drawWeather(ctx, world, r, frame);
 }
@@ -238,6 +240,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const skyBottom = mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk));
   const haze = map.kind === 'dungeon' ? null : skyBottom;
 
+  flames = [];
   ctx.save();
   ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
 
@@ -251,10 +254,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
-    // The ground runs on to the horizon in the terrain out past the last cell drawn; the void has
-    // none, so short of it the ground is the party's own.
+    // The ground runs on to the horizon in the terrain out past the last cell drawn; the void and
+    // the chasm have none, so short of them the ground is the party's own.
     const far = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1));
-    const farCell = far.solid === 'void' ? map.at(px, py) : far;
+    const farCell = far.solid === 'void' || far.terrain === 'chasm' ? map.at(px, py) : far;
     const ground = shade(groundColor(farCell.terrain, map.kind, pal.floor), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
     gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
@@ -288,7 +291,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
       const plot = cell.terrain === 'farm' ? farmPlot(map, c.x, c.y, f) : undefined;
-      drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, cellPal.floor, plot);
+      // The chasm's rims: where the ground stands before it and beyond it.
+      const rims = cell.terrain === 'chasm' ? { near: d > 0 && drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain !== 'chasm', far: drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain !== 'chasm' } : undefined;
+      drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, cellPal.floor, plot, rims);
       if (map.kind === 'dungeon') drawCeiling(ctx, cellPal, cx, horizon, r.h, d, l, seed, f);
     }
     if (d > 0) for (const l of order) {
@@ -333,28 +338,36 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           drawSideFace(ctx, map, cell, c.x, c.y, xIn(uN), uN, xIn(uF), uF, horizon, d, seed, dark, haze, l > 0, joinNear, joinFar, !solidAt(d + 1, l), ahead);
         }
         if (b) drawRoof(ctx, at, d, l, houseAt, b.seed, dark, haze, false);
+        for (const fl of flames) fl.under ??= pixel(ctx, fl.x, fl.y);
       } else if (d > 0 && cell.solid !== 'none' && !backdrop) {
         // Over the smoke test's backdrop the billboards stay out: their gaps are not cracks.
         const u = unit(d, r.h);
         const bx = cx + l * 2 * u, by = horizon + u;
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
-        if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5), env.trees);
+        // A glass tree stands on crystal, catching the light by day.
+        if (cell.solid === 'tree' && cell.terrain === 'crystal') drawCrystalSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 3), dark ? 0 : daylight * (1 - cloud));
+        else if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5), env.trees);
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
-      } else if (d > 0 && cell.terrain === 'woods' && !backdrop) {
+      } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood') && !backdrop) {
         // Light woods: a tree or two stand to the sides of the square, leaving the way through it open.
         // None stands on a side a wall or the void closes: drawn after them, it would stand in front.
+        // Dead wood stands the same, its trees dead.
         const u = unit(d, r.h);
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
         for (const side of [-1, 1]) {
           if (hash(c.x, c.y, 60 + side) < 0.3 || solidAt(d, l + side)) continue;
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
-          drawTreeSprite(ctx, bx, by, u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side)), tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
+          const s = u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side));
+          if (cell.terrain === 'deadwood') drawDeadTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 3), env.cover);
+          else drawTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
         }
       }
     }
   }
+  // A torch goes out where anything nearer was painted over it, a tree or a rock or a wall.
+  flames = flames.filter((fl) => pixel(ctx, fl.x, fl.y) === fl.under);
   // An overcast day's flat grey light over everything painted; the sky has its own greys.
   const veil = cloud * 0.2 + env.murk * 0.12;
   if (veil > 0.01) {
@@ -597,7 +610,7 @@ function drawSplashes(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, 
     const d = Math.round(k), l = Math.round(lat);
     if (d > world.sight) continue;
     const c = cellAt(px, py, f, d, l), cell = map.at(c.x, c.y);
-    if (isSolidWall(cell) || cell.solid !== 'none' || cell.terrain === 'water' || cell.terrain === 'deep' || !lineOfSight(map, px, py, f, d, l)) continue;
+    if (isSolidWall(cell) || cell.solid !== 'none' || cell.terrain === 'water' || cell.terrain === 'deep' || cell.terrain === 'chasm' || !lineOfSight(map, px, py, f, d, l)) continue;
     const u = unit(k, r.h), x = cx + lat * 2 * u, y = horizon + u, s = Math.max(1, u * 0.045) * (0.6 + age / SPLASH_LIFE);
     ctx.moveTo(x - s * 1.6, y); ctx.quadraticCurveTo(x - s * 1.2, y - s * 1.6, x - s * 0.3, y - s * 0.4);
     ctx.moveTo(x + s * 1.6, y); ctx.quadraticCurveTo(x + s * 1.2, y - s * 1.6, x + s * 0.3, y - s * 0.4);
@@ -749,8 +762,42 @@ function drawHill(ctx: CanvasRenderingContext2D, base: string, cx: number, horiz
   }
 }
 
-function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string, plot?: Plot): void {
+/**
+ * The chasm: the drop, dark as it goes down. Where ground stands beyond it, its far wall shows under
+ * the rim, rock in bands darkening into the depth; where ground stands before it, a lit lip.
+ */
+function drawChasm(ctx: CanvasRenderingContext2D, base: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, rims: { near: boolean; far: boolean }): void {
+  const pt = (s: number, t: number): [number, number] => floorPt(cx, horizon, h, d, l, s, t);
+  quad(ctx, pt(0, 0), pt(0, 1), pt(1, 1), pt(1, 0), fog(base, d, dark, haze));
+  if (rims.far) {
+    // The far wall hangs from the rim toward the eye, down past the chasm's own floor; the ground
+    // before the chasm is painted after it, over its foot.
+    const uF = unitIn(d, 1, h), y0 = horizon + uF, x0 = cx + (l - 0.5) * 2 * uF, x1 = cx + (l + 0.5) * 2 * uF, drop = uF * 2.4, bands = 7;
+    const rock = '#9a92a4';
+    for (let k = 0; k < bands; k++) {
+      const ya = y0 + (drop * k) / bands, yb = y0 + (drop * (k + 1)) / bands + 1;
+      ctx.fillStyle = fog(mix(shade(rock, 1 - 0.06 * (k % 2)), base, Math.min(1, (k / bands) * 1.15)), d, dark, haze);
+      // Each band spans the column as it widens toward the eye, a half pixel over each edge, so walls
+      // side by side meet with no seam.
+      const ua = ya - horizon, ub = yb - horizon, col = (u: number, e: number): number => cx + (l - 0.5 + e) * 2 * u + (e - 0.5);
+      quad(ctx, [col(ua, 0), ya], [col(ua, 1), ya], [col(ub, 1), yb], [col(ub, 0), yb], ctx.fillStyle as string);
+      // Strata: a crack or two across each band.
+      if (k < bands - 2) {
+        ctx.strokeStyle = fog(mix(shade(rock, 0.6), base, k / bands), d, dark, haze); ctx.lineWidth = 1;
+        const yy = ya + (yb - ya) * (0.3 + 0.4 * hash(seed, 83, k));
+        const uy = yy - horizon, xa = col(uy, 0), xb = col(uy, 1);
+        ctx.beginPath(); ctx.moveTo(xa, yy); for (let q = 1; q <= 4; q++) ctx.lineTo(xa + ((xb - xa) * q) / 4, yy + (hash(seed, 84, k, q) - 0.5) * (yb - ya) * 0.6); ctx.stroke();
+      }
+    }
+    ctx.strokeStyle = fog(shade(rock, 1.3), d, dark, haze); ctx.lineWidth = Math.max(1, uF * 0.02); line(ctx, [x0, y0], [x1, y0]);
+  }
+  if (rims.near) { ctx.strokeStyle = fog('#8a8290', d, dark, haze); ctx.lineWidth = Math.max(1, unit(d, h) * 0.03); line(ctx, pt(0, 0), pt(0, 1)); }
+}
+
+function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string, plot?: Plot, rims?: { near: boolean; far: boolean }): void {
   const base = groundColor(terrain, kind, floorPal, plot?.crop);
+  // The drop is dark indoors too, not the floor's colour.
+  if (terrain === 'chasm') { drawChasm(ctx, TERRAIN_COLORS.chasm, cx, horizon, h, d, l, seed, dark, haze, rims ?? { near: false, far: false }); return; }
   const n = d <= 2 ? 3 : 2;
   const flag = kind === 'dungeon' && terrain === 'floor';
   const mortar = fog(shade(base, 0.55), d, dark, haze);
@@ -785,7 +832,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
       ctx.strokeStyle = fog(shade(base, 0.55), d, dark, haze); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
     }
   }
-  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
+  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'deadwood' ? 5 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
@@ -813,6 +860,12 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
         ctx.strokeStyle = fog(shade(base, 1.45), d, dark, haze); ctx.lineWidth = Math.max(1, sc);
         ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 4 * sc, y - 3 * sc); ctx.moveTo(x, y); ctx.lineTo(x, y - 5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 4 * sc, y - 3 * sc); ctx.stroke();
       }
+    } else if (terrain === 'deadwood') {
+      // Fallen limbs and bleached twigs, grey on grey, buried by a deep snow.
+      if (env.cover > 0.55) continue;
+      const a = (hash(seed, 45, i) - 0.5) * 1.2, len = (3 + 4 * hash(seed, 47, i)) * sc;
+      ctx.strokeStyle = fog(i % 2 ? '#b0a898' : '#5e5850', d, dark, haze); ctx.lineWidth = Math.max(1, sc * (i < 2 ? 1.2 : 0.7));
+      ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len * 0.4); ctx.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len * 0.4); ctx.stroke();
     } else if (flag) {
       if (hash(seed, 51, i) > 0.5) continue;
       if (i === 0) {
@@ -896,7 +949,9 @@ function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number,
 // ------------------------------------------------------------------ walls ----
 
 /** The billboards a door outdoors may be set among, in the order a tie goes. */
-const GUISES: readonly Solid[] = ['mountain', 'rock', 'tree'];
+const GUISES = ['mountain', 'rock', 'tree', 'glass'] as const;
+/** What a cell stands as for a secret door beside it: a glass tree is a guise of its own, not a tree. */
+const guiseOf = (c: Cell): Solid | 'glass' => (c.solid === 'tree' && c.terrain === 'crystal' ? 'glass' : c.solid);
 
 /**
  * What a cell is drawn as. Outdoors a secret door set among mountain, rock or trees (a sett in the
@@ -911,7 +966,7 @@ export function drawnCell(map: GameMap, x: number, y: number): Cell {
   if (around.some((n) => n.solid === 'wall' || n.solid === 'building')) return c;
   let best = c, most = 0;
   for (const g of GUISES) {
-    const of = around.filter((n) => n.solid === g);
+    const of = around.filter((n) => guiseOf(n) === g);
     if (of.length > most) { most = of.length; best = of[0]; }
   }
   return best;
@@ -943,6 +998,12 @@ function drawVoidFront(ctx: CanvasRenderingContext2D, voids: Path2D, x0: number,
 function drawVoidSide(ctx: CanvasRenderingContext2D, voids: Path2D, xN: number, footN: number, xF: number, footF: number, top: number): void {
   xN = Math.round(xN); xF = Math.round(xF);
   cutVoid(ctx, voids, [[xN, top], [xF, top], [xF, footF + 1], [xN, footN + 1]]);
+}
+
+/** The colour at a point, as one number. */
+function pixel(ctx: CanvasRenderingContext2D, x: number, y: number): number {
+  const p = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+  return ((p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3]) >>> 0;
 }
 
 /**

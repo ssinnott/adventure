@@ -8,7 +8,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, personFlags, personGives } from '../../src/game/people.ts';
-import { ok, owed } from './lib.ts';
+import { ok, owed, stopsWalk } from './lib.ts';
 
 /**
  * What is drawn before the map that places it, and whose map places it: a monster no map puts in a
@@ -18,7 +18,7 @@ import { ok, owed } from './lib.ts';
 const UNPLACED: Record<string, string> = {
   black_dog: '#69', barrow_guard: '#70', barrow_captain: '#70',
   farm_kitchen: '#87',
-  great_owl: '#49', bramble: '#49', rootwalker: '#49', heartwood: '#49', eldest: '#49',
+  eldest: '#218',
 };
 
 /**
@@ -38,6 +38,20 @@ export function doorwayFaults(m: GameMap): string[] {
     for (const f of rest) if (!(f.kind === 'event' || (f.kind === 'npc' && !f.interior))) out.push(`the doorway at ${at} holds the ${f.kind}${'interior' in f && f.interior ? ' with a room' : ''} after its business`);
   }
   return out;
+}
+
+/** How many open cells of a map the walk from x,y reaches, given keys, secrets, water and climbing, of how many there are. */
+function reach(m: GameMap, sx: number, sy: number): { seen: number; open: number } {
+  const seen = new Set<number>(), stack = [[sx, sy]];
+  while (stack.length) {
+    const [x, y] = stack.pop()!, k = y * m.width + x;
+    if (seen.has(k) || stopsWalk(m, x, y)) continue;
+    seen.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (m.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
+  }
+  let open = 0;
+  for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) if (!stopsWalk(m, x, y) && m.at(x, y).solid === 'none') open++;
+  return { seen: seen.size, open };
 }
 
 export function maps(): void {
@@ -105,17 +119,13 @@ export function maps(): void {
   ok(Math.max(...bands) >= MAX_LEVEL, `some map is tuned for level ${MAX_LEVEL}`);
   // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
   for (const def of MAP_DEFS) {
-    const m = maps[def.id];
-    const seen = new Set<number>(); const stack = [[def.start.x, def.start.y]];
-    while (stack.length) {
-      const [x, y] = stack.pop()!; const k = y * m.width + x;
-      if (seen.has(k) || m.passable(x, y, { swim: true, climb: true, keys: 1 }) === 'wall') continue;
-      if (m.at(x, y).solid === 'tree' || m.at(x, y).solid === 'rock') continue;
-      seen.add(k);
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (m.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
-    }
-    let open = 0; for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) { const c = m.at(x, y); if (m.passable(x, y, { swim: true, climb: true, keys: 1 }) !== 'wall' && c.solid === 'none') open++; }
-    ok(seen.size >= open, `${def.id}: every open cell is reachable from the start (${seen.size} reached of ${open})`);
+    const { seen, open } = reach(maps[def.id], def.start.x, def.start.y);
+    ok(seen >= open, `${def.id}: every open cell is reachable from the start (${seen} reached of ${open})`);
+  }
+  { // A room open only across a chasm is not reached: the walk stops at the drop.
+    const gorge = new GameMap({ id: 'fx_gorge', name: 'Gorge', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#######', '#,,v,,#', '#######'] });
+    const { seen, open } = reach(gorge, 1, 1);
+    ok(seen === 2 && open === 4, `a room open only across a chasm is caught (${seen} reached of ${open})`);
   }
   // Each area lists what is its own, and the lists are true: its maps share its weather, its monsters
   // are drawn with the sprite kinds it lists, and its businesses paint the rooms it lists.

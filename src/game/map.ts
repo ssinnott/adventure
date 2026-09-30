@@ -15,10 +15,13 @@ export type MapKind = 'town' | 'dungeon' | 'outdoor';
  * What the floor of a cell is. Drives the floor colour outdoors and the passability rules. Hills,
  * farm and woods are named as the atlas names them (WorldTerrain), so the two agree square for square.
  * Woods is light woodland, walked through: a ground with trees about it, not a wall of them (`T`).
+ * Dead wood is walked through as the woods are, its trees long dead: grey trunks and no green.
+ * Crystal is the ground the glass trees stand on (`c`, each a tree that blocks as the forest's do).
+ * The chasm is the Sunder's drop: seen across, never walked, and no wall.
  */
 export type Terrain =
   | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
-  | 'hills' | 'farm' | 'woods';
+  | 'hills' | 'farm' | 'woods' | 'deadwood' | 'crystal' | 'chasm';
 
 /** Minutes a step onto hills costs over the usual six in the open. */
 export const HILL_DRAG = 2;
@@ -300,6 +303,9 @@ export const LEGEND: Record<string, Cell> = {
   '^': cell('hills'),
   'f': cell('farm'),
   't': cell('woods'),
+  'd': cell('deadwood'),
+  'c': cell('crystal', 'tree'),
+  'v': cell('chasm'),
   'T': cell('grass', 'tree'),
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),
@@ -394,6 +400,7 @@ export class GameMap {
     if (c.solid === 'tree' || c.solid === 'rock') return 'blocked';
     if (c.solid === 'mountain') return can.climb ? 'ok' : 'mountain';
     if (c.terrain === 'deep') return 'deep';
+    if (c.terrain === 'chasm') return 'chasm';
     if (c.terrain === 'water') return can.swim ? 'ok' : 'water';
     if (c.door === 'locked') return can.keys ? 'unlock' : 'locked';
     return 'ok';
@@ -409,6 +416,6 @@ export class GameMap {
   }
 }
 
-export type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'locked' | 'unlock' | 'void';
+export type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'chasm' | 'locked' | 'unlock' | 'void';
 
 const OUT_OF_BOUNDS: Cell = Object.freeze({ terrain: 'floor', solid: 'wall', door: 'none', ch: '#' }) as Cell;

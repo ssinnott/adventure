@@ -52,10 +52,10 @@ export const DOWNS_F2: MapDef = {
   features: [
     { kind: 'sign', x: 30, y: 28, text: 'A milestone: GULLWICK 2. CROWNESS 4.' },
     { kind: 'shrine', x: 25, y: 28, id: 'f2_shrine', text: 'A wayside shrine where the farm track leaves the road. Its candle is out.', stat: 'luck', done: 'The shrine is quiet.' },
-    { kind: 'event', x: 6, y: 11, id: 'f2_lamp', once: true, when: { hours: 'day' }, text: 'Coldharbour. A lamp burns in the farmhouse window in broad day, and the glass is black with it.' },
+    { kind: 'event', x: 6, y: 11, id: 'f2_lamp', once: true, when: { hours: 'day' }, text: 'Coldharbour: a farm kept like a barracks, whitewashed to the eaves, and not a weed in the yard.' },
     // Riders in the Dark (#68): Dunstan in his yard. The riders are seen at E2's ford by night; he
     // writes to Hale, who takes the letter at the Scarth, or keeps it under his roof.
-    { kind: 'npc', x: 7, y: 13, name: 'Captain Dunstan, retired', lines: [
+    { kind: 'npc', x: 10, y: 11, name: 'Captain Dunstan, retired', lines: [
       'Coldharbour. A lamp burns in the farmhouse window, as it does at every hour, and the man mending the gate has a Warden\'s shoulders and a farmer\'s hands. He does not stop working to talk.',
       '"Captain, once. Dunstan, now. You\'ll want to know about the lamp. Everyone does, and the gate won\'t mend itself, so I\'ll tell you while I work."',
       '"The week the Queen died, riders came off the Salt Road and through my stubble at the second hour. Eight horses, shod; farm horses aren\'t shod for chalk. West over the ford towards the Berth, and back before dawn, and not a lantern among them."',
