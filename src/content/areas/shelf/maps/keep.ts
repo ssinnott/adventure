@@ -36,7 +36,7 @@ export const KEEP: MapDef = {
       'A tall man in Warden grey, his guards a step behind him. He does not wait for you to bow, and does not appear to notice that you did not.',
       '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm south of here, Ashcombe, on the Foreland road, has gone quiet. Find out why. Clear whatever is there."',
       '"Bring me anything you find that is not a rat. Especially anything that glows."',
-    ], flag: 'q_ashcombe', quest: {
+    ], flag: 'q_ashcombe', quest: [{
       item: 'survey_wand', reward: 300, setFlag: 'q_ashcombe_done',
       early: [
         'A tall man in Warden grey, flanked by guards. His eyes go to the cracked survey wand before they go to you.',
@@ -50,7 +50,14 @@ export const KEEP: MapDef = {
         '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
       ],
       after: ['"Thornmark, and the Grove Stone. Go and see why it has gone quiet, and bring me what you find. The road east runs through the Scarth; Captain Hale holds it, and will tell you the forest is dangerous, which it is. Thornhold will train you further than my drillyard can."'],
-        }, says: [
+    }, {
+      // Who Lived at Ashcombe (#77): the tenant's paper, with no after-lines, so the wand's stay his.
+      item: 'tenant_paper', reward: 50, setFlag: 'q_paper_vask',
+      done: [
+        'Vask reads the paper once, and the back of it once, and folds it along its own creases.',
+        '"A tenant who let his cellar and did not ask. How very ordinary." He hands it to the guard at his shoulder without looking at him. "Thank you. The Crown pays for this kind of thing, and it will see the matter closed. Ashcombe will have a new tenant by spring."',
+      ],
+    }], says: [
       // Oil for the Lamp (#67), the keeper's want put to him: said once, and not once the company has lit the lamp itself.
       { after: { flag: 'q_oil_vask' }, until: { flag: 'q_oil_lit' }, sets: ['q_oil_order', 'q_oil_lit'], lines: [
         'Vask hears you out without moving. When you have finished he lets the silence sit a moment, so that you know he has chosen to end it.',

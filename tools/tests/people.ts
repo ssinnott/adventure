@@ -77,15 +77,18 @@ export function people(): void {
     // The log, either way round: the quest or chapter done with no goal; early, nothing keyed to
     // the hiring alone, and nothing the hired order does not write too.
     // A chapter may end on more than this hand-in (The Quiet Farm on Hild's word and the keeper's
-    // log too): the rest of its end is set both ways round, so the hand-in's end is what is judged.
+    // log too, the Grove Stone on the treaty's seal seen): its other flags are set, its events seen
+    // and its chests opened both ways round, so the hand-in's end is what is judged.
     for (const s of [early, hired]) for (const def of QUESTS.flatMap((x): readonly QuestDef[] => x.chapters ?? [x])) for (const c of [def.done ?? []].flat() as QuestCond[]) {
       const flags = [c.flag ?? []].flat();
       if (!flags.includes(q.setFlag)) continue;
       for (const f of flags) s.party.flags[f] = 1;
-      // And what else it asks, as a company that did the rest would have: the keeper's log read.
+      // A chest it asks opened, as a company that did the rest would have: the keeper's log read.
       if (c.seen) { const [m, id] = c.seen.split(':'), on = s.world.locate(m, 0, 0).mapId; if (on !== m && !s.world.state.zones!.includes(m)) s.world.state.zones!.push(m); s.world.ensureMapState(on).used[id] = 1; }
       if (c.item) s.party.bag.push(c.item);
     }
+    const rest = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'event' && doneSeen(q.setFlag).includes(`${d.id}:${f.id}`) ? [{ map: d.id, f }] : []));
+    for (const s of [early, hired]) for (const { map, f } of rest) { s.world.travel(map, f.x, f.y); s.world.eventsHere(); }
     const ends = (x: { id: string; page: PageView }): boolean => x.page.done && [x.page.def.done ?? []].flat().some((c) => [(c as QuestCond).flag ?? []].flat().includes(q.setFlag));
     const quest = pages(early).find(ends);
     const questH = pages(hired).find((x) => x.id === quest?.id);
@@ -95,6 +98,11 @@ export function people(): void {
     ok(!hiring.length && !extra.length, `${who}, early: the log writes no hiring and nothing the hired order does not${hiring.length || extra.length ? ' -> ' + [...hiring, ...extra].join(', ') : ''}`);
   }
   fixtures(fresh, all);
+}
+
+/** The events, 'map:id', that the ends naming a hand-in's flag ask to have been seen as well. */
+function doneSeen(flag: string): string[] {
+  return QUESTS.flatMap((q): readonly QuestDef[] => q.chapters ?? [q as QuestDef]).flatMap((d) => [d.done ?? []].flat().filter((c) => [(c as QuestCond).flag ?? []].flat().includes(flag)).flatMap((c) => ((c as QuestCond).seen ? [(c as QuestCond).seen!] : [])));
 }
 
 /**
