@@ -46,4 +46,8 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
   { id: 'greywater_ledger', name: 'Cargo Ledger', slot: 'none', price: 0 },
   { id: 'clerks_seal', name: "Clerk's Seal", slot: 'none', price: 0 },
+  { id: 'dunstan_letter', name: "Dunstan's Letter", slot: 'none', price: 0, text: [
+    'A paper folded twice, unsealed, addressed in a square hand: HALE. THE SCARTH.',
+    '"Hale. Eight riders, shod, no lights, the week she died. West to the Berth by my ford and back before dawn, and not once only. Grey under the cloaks. You know what I am not writing. Burn this. D."',
+  ] },
 ];

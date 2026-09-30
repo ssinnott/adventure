@@ -113,6 +113,14 @@ export const SHELF: MapDef = {
         '"So that\'s how the crates got their stamp. Not forged. Real, and rented." He wraps it in a cloth. "It goes to the Regent beside the smugglers\' ledger: the accounts, and the stamp that made them lawful. He\'ll want to know whose hand held it. So do I."',
         'He pays you from the post\'s strongbox, not his own purse, and writes it down. "Wardens\' money. It\'s a Wardens\' matter now, and I want that in ink."',
       ],
+    }, {
+      // Riders in the Dark (#68): Dunstan's letter, from Coldharbour.
+      item: 'dunstan_letter', reward: 0, setFlag: 'q_riders_hale',
+      done: [
+        'Hale reads it standing, twice, and folds it along its own lines.',
+        '"Dunstan. He taught me the light in the window." He looks east, up the pass, and then west. "Wardens, riding dark to the Queen\'s barrow. The Regent should know what his own men are doing. He\'ll have it from me, under my seal."',
+        'He puts the letter inside his coat, not into the fire. "He says burn it. I don\'t burn things. He\'d tell you that\'s my fault, and it is."',
+      ],
     }] },
     { kind: 'sign', x: 3, y: 28, text: 'Brandy Hole. Chalked beneath, in Warden hand: CLOSED. DO NOT ENTER. ASK CAPT. HALE.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },

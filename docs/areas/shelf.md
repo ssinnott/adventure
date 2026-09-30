@@ -77,19 +77,19 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 |---|---|---|---|
 | Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`) |
 | The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask and his contract in the throne room behind the keep's door |
-| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
+| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ashcombe farm; Hale's checkpoint at the Scarth, where he takes Dunstan's letter; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key; a clerk's coat among the drowned (`gw1_coat`) and his seal in the den's strongbox (`gw1_strongbox`, `gw1_seal`) |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
-| Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour; Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
+| Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour and Captain Dunstan, retired (Riders in the Dark); Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
 | Callow Downs, F3 | outdoor zone, 32×32 | 2–3 | Gullwick at the Wend's mouth, its net loft and boats; the rise; the wreckers' far beach and their cave; three groups (§4.3) |
 | Callow Downs, E3 | outdoor zone, 32×32 | 3–4 | Crowness Light and the keeper's cottage on the point; the Salt Road west in fog; the gibbet; the wreck and the wreckers' niche below the light; eight groups (§4.4) |
-| Callow Downs, E2 | outdoor zone, 32×32 | 3–4 | the Wend's fields and its ford on the track from Coldharbour west to the Berth; the drowned mill and its wheel-pit; the rookery in the willows, the first den; a boundary stone with a riddle, a spring, a cairn and a shepherd's camp; five groups (§4.5) |
+| Callow Downs, E2 | outdoor zone, 32×32 | 3–4 | the Wend's fields and its ford on the track from Coldharbour west to the Berth, where the riders come back by night once Dunstan has asked; the drowned mill and its wheel-pit; the rookery in the willows, the first den; a boundary stone with a riddle, a spring, a cairn and a shepherd's camp; five groups (§4.5) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
-Clerk's Seal (Maud), The Well Tastes of Iron (Mottram) and A Boat With No Name-Board (Wat and Hamo,
-`quests.ts`); the monsters are MONSTERS §5.1's.
+Clerk's Seal (Maud), The Well Tastes of Iron (Mottram), A Boat With No Name-Board (Wat and Hamo)
+and Riders in the Dark (Dunstan; `quests.ts`); the monsters are MONSTERS §5.1's.
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
 (`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's the
 carving over a blank stretch of wall; Brockholt's (downs_f2 12,3) the bare ground under the holly at
@@ -395,6 +395,11 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   3, every fight is won and a day is 6.28 fights to a rest; a clear pays about 210 xp a member, the
   brood counted once. The hoards: 40 gold, Robe +1 and Leather Armour +1 in the pit; 30 gold and the
   Silver Locket in the rookery.
+- **Riders in the Dark, as built** (#68). Dunstan stands in Coldharbour's yard (downs_f2 7,13) and
+  sets `q_riders`. Once he has asked, the riders cross the ford by night (`e2_riders`, once, on the
+  day event's square). Told of it, he puts the choice: his letter (`dunstan_letter`,
+  `q_riders_letter`) goes to Hale, who takes it at the first meeting and pays nothing
+  (`q_riders_hale`), or he keeps it (`q_riders_kept`). The words are the issue's.
 
 ### 4.6 D2, the chalk hills (#69): core, band 4–5
 
@@ -530,7 +535,7 @@ are:
 | 3 | The Well Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | #77 (built) |
 | 4 | A Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 (built) |
 | 5 | Oil for the Lamp | 3 | Crowness Light (E3); Mottram's Stores and Vask, in Helmstow | a choice put by a person | #67 |
-| 6 | Riders in the Dark | 3 | Coldharbour (F2) and the ford (E2) | `when` (#41); a choice put by a person | #68 |
+| 6 | Riders in the Dark | 3 | Coldharbour (F2) and the ford (E2) | `when` (#41); a choice put by a person | #68 (built) |
 | 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | #77 (built) |
 | 8 | The Rest of the Survey | 4 | the Foreland map's south-west woods; the Chapel, or Thornhold | a choice put by a person; a person who moves | #77 (built) |
 
