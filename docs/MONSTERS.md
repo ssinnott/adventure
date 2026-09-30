@@ -564,8 +564,13 @@ the deep; the Great Owl from the birds.
 | Bramble | old wood, new | controller, 8 | across the deep paths | *A thicket that closes behind you.* Never roams, and wakes at one square; its thorns hold (paralysis, 0.3); slow |
 | Great Owl | birds | skirmisher, 8 | the deep, by night | *Wings as wide as a cart, and not a sound.* Flies, and hunts the back row |
 | Rootwalker | old wood, new | armoured, 9 | the old groves | *A stump walking on its roots, its bark like plate.* Slow and hard to hit; fire bites, once there are elements |
-| Heartwood | old wood, new | brute, 10 | alone, or over a thicket of brambles | *An oak that has decided to move.* Size 1.8 |
+| Heartwood | old wood, new | brute, 10 | alone, or over a thicket of brambles | *An oak that has decided to move.* Size 1.3 |
 | The Eldest | old wood, new | boss, 10 | Penspern | *The oldest tree in Caldera, and it is awake.* The last of the wood awake: it stays so until it is beaten, and beaten is put back to sleep, not felled |
+
+The old wood's numbers are its roles' at its levels (§4.4), set by the gate when Henlys was built
+(#49): a bramble 57 hit points and 2d6+2, a great owl the same and fast, a rootwalker 83 and 2d6+3
+under armour 18, a heartwood 165 and 3d8+2. The heartwood is drawn at 1.3: taller, its label over a
+fight has no room above it.
 
 - **Brambles and an owl** on a path at night: members held in the thorns while the owl takes the
   back row.
