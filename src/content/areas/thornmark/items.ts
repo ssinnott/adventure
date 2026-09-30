@@ -54,4 +54,10 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'marker_glass', name: 'Marker Glass', slot: 'none', price: 0 },
   { id: 'mending_kit', name: 'Mending Kit', slot: 'none', price: 0 },
   { id: 'grove_sliver', name: 'Sliver of the Grove Stone', slot: 'none', price: 0 },
+  // How Did He Know (#214): the survey's orders, a letter read from the pack, found in H3's fire-pit.
+  { id: 'survey_orders', name: 'The Survey\'s Orders', slot: 'none', price: 0, text: [
+    'Grey Lantern paper, burnt along one edge so that every line ends early. Dated three days before the Queen died, and sealed with the Regent\'s seal, whole where the fire missed it.',
+    '"To the survey, four: south by the Foreland road to Ashcombe, and the cellar beneath it. Survey the ground below the farm as far as the seam and no further. Report what the seam does, and when. To me alone; nothing to the Guildhall, nothing to the"',
+    'The rest is ash. Beneath, in a clerk\'s hand: "the Grove next, if the ground answers".',
+  ] },
 ];
