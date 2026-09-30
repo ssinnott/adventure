@@ -1358,3 +1358,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   other five choices and the sheet OK. Since H3 lands first, it takes the two retuned lines from
   #298, identical, so #298 merges clean. Round sent to the Thornmark session (22:34), and the #100
   session told.
+- 22:36: `reviews/294.md` (#288's fix): ready after fixes (its test takes the rule from the code it
+  checks, so it cannot fail on it: write `/^The /` out in the test; nits). Round sent to the #45
+  session. A delegate on #293's and #294's choices and #293's look. Reviewer on #296 (#163's dead
+  wood, #216's blocker).
