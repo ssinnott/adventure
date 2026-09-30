@@ -237,7 +237,7 @@ export const PLAN: Atlas = {
     { pts: [[206, 280], [196, 300], [180, 318], [160, 312], [140, 296], [116, 280], [92, 272]] },
   ],
   areas: [
-    { id: 'shelf', name: 'The Foreland', order: 1, stone: 'Lodestone', label: [152, 44], note: 'The starting coast: Helmstow, farms, the Downs' },
+    { id: 'shelf', name: 'The Foreland', order: 1, stone: 'Lodestone', label: [176, 24], note: 'The starting coast: Helmstow, farms, the Downs' },
     { id: 'thornmark', name: 'Thornmark', order: 2, stone: 'Grove Stone', label: [272, 84], tint: '#94ac62', note: 'Old forest, the elf hold, the Grove' },
     { id: 'saltreach', name: 'Saltreach', order: 3, band: [10, 12], stone: 'Tide Stone', label: [62, 150], tint: '#b0b874', note: 'The Long Water\'s delta and the free port' },
     { id: 'wrackholm', name: 'Wrackholm', order: 4, band: [12, 14], label: [166, 204], note: 'The smugglers\' isle, where the stolen Tide Stone lies' },
