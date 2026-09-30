@@ -75,8 +75,14 @@ export function people(): void {
     ok(meet(p, early.party, heard(early.world, p)).text === q.after?.join('\n\n') && meet(p, hired.party, heard(hired.world, p)).text === q.after?.join('\n\n'), `${who}: the next meeting says the after words, either way round`);
 
     // The log, either way round: the quest or chapter done with no goal; early, nothing keyed to
-    // the hiring alone, and nothing the hired order does not write too. Where the end asks more than
-    // the hand-in (the Grove Stone's, the treaty's seal seen too), both companies see it first.
+    // the hiring alone, and nothing the hired order does not write too.
+    // A chapter may end on more than this hand-in (The Quiet Farm on Hild's word too, the Grove Stone
+    // on the treaty's seal seen): its other flags are set and its events seen both ways round, so the
+    // hand-in's end is what is judged.
+    for (const s of [early, hired]) for (const def of QUESTS.flatMap((x): readonly QuestDef[] => x.chapters ?? [x])) for (const c of [def.done ?? []].flat() as QuestCond[]) {
+      const flags = [c.flag ?? []].flat();
+      if (flags.includes(q.setFlag)) for (const f of flags) s.party.flags[f] = 1;
+    }
     const rest = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'event' && doneSeen(q.setFlag).includes(`${d.id}:${f.id}`) ? [{ map: d.id, f }] : []));
     for (const s of [early, hired]) for (const { map, f } of rest) { s.world.travel(map, f.x, f.y); s.world.eventsHere(); }
     const ends = (x: { id: string; page: PageView }): boolean => x.page.done && [x.page.def.done ?? []].flat().some((c) => [(c as QuestCond).flag ?? []].flat().includes(q.setFlag));

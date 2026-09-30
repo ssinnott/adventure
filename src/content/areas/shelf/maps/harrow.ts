@@ -181,5 +181,21 @@ export const HARROW: MapDef = {
       '"Move along. Regent\'s works." He follows your eyes to the dust on the cobbles. "Aye, that\'s mine. It gets in the water; the old cut runs under the well. I told them. They said cart it out at night, and it\'s not your concern where it goes."',
       '"What\'s down there? An old way, older than the keep, and the Regent wants it opened. I cut where they chalk the line. Ask him what\'s at the bottom of it, if you\'re on speaking terms. I\'m not."',
     ], flag: 'q_well_alwin', when: { hours: 'night' }, until: { flag: 'q_well_wardens' } },
+    // Who Lived at Ashcombe (#77, from #56): Hob by the Hearthlight's fire until the paper goes to
+    // Vask or to Hale; his empty chair, said once, if it went to Vask.
+    { kind: 'npc', x: 4, y: 4, name: 'Hob, once tenant of Ashcombe', lines: [
+      'A man in a farmer\'s smock sits by the Hearthlight\'s fire with a full cup and the settled look of someone who has paid for the next one too.',
+      '"Ashcombe? Aye, I had the tenancy. Had. Now the Regent\'s hiring companies to look at it, and everyone wants to know where my people went. Where does anyone go? Away. They went away."',
+      '"The rent\'s forty a year, and the land gives thirty in a good year, and there\'s not been a good year since I took it. Do your own sums, and leave me to my cup."',
+    ], flag: 'q_ashcombe_who', until: [{ flag: 'q_paper_vask' }, { flag: 'q_paper_hale' }],
+      quest: { item: 'hearth_key', reward: 0, setFlag: 'q_hob_key', done: [
+        'Hob looks at the hearth-key in your hand for a long moment, and puts his cup down for the first time.',
+        '"That\'s off my nail. You\'ve been in my kitchen." A breath. "They came at the back end of summer, three of them, in grey, with money, and they wanted the cellar and nothing else. Nothing else. I was to keep my family upstairs and my nose out and the smoke going up the chimney like any farm."',
+        '"Twenty gold not to go down my own stairs. You\'d have taken it. Everyone says they wouldn\'t, and everyone would. I sent Ann and the children to her people in Gullwick the first night I heard the singing come up through the floor, and I\'ve not been down since, and I\'m not going to be."',
+      ], after: [
+        '"Still here. Still not going down those stairs." He turns the cup. "Take that paper wherever you\'re taking it. I\'ve stopped caring which door it goes in."',
+      ] } },
+    { kind: 'event', x: 4, y: 4, id: 'hob_chair', once: true, after: { flag: 'q_paper_vask' },
+      text: 'Hob\'s chair by the fire is empty, his cup on the mantel unwashed. Nobody at the inn says his name, or sits in the chair.' },
   ],
 };
