@@ -1539,3 +1539,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   standard encounter; the third was added to hit a number), and the same for D4 (#309), whose
   drift, if any, the crows take up; choices 3, 5–8 taken. Round sent to the #67 session (the two
   Cutthroats in D3 and D4, the door's second side, the void count, the fixture at 72,60, main).
+- 23:55: **the owner** (in this session): "For the crowness light I think we should have some
+  special art that maybe extends vertically so it actually looks like a light house from far away."
+  Filed as #312 ("Draw Crowness Light as a lighthouse: a tall tower seen from far off", Feature,
+  `lane: systems` and `lane: area`, under #26), approved on the owner's own request; #26's Work list
+  gains it. Given to the #45 session (idle, 440K, the viewport's billboards, torches and void in
+  hand) on `claude/m1-312-lighthouse`: a tall billboard tower that shows from far off, its lamp
+  dark until `q_oil_lit` and lit by night after.
