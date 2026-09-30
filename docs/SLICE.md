@@ -250,7 +250,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   size, alone, three and six abreast, through its idle, but for the parts `DETACHED` in
   `tools/smoke.ts` declares apart (the wardens' shards, the acolyte's censer, the lampman's
   lantern, the adept's hand flame, the rift hound's and the Hand of Ash's embers, the wraith's
-  fading cloth); the smoke test holds it.
+  fading cloth), and stands inside the view where a fight seats it, its foot 184 px below the
+  view's top (`seatFoot`); the smoke test holds it.
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
   three and four taper down, five is the old flat size and six goes under it. The row's spacing is
