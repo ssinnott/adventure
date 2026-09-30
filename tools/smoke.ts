@@ -135,12 +135,14 @@ const innColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 await page.evaluate(() => { const m = (window as any).__game.game.world.map; m.features.splice(m.features.findIndex((f: any) => f.id === 'fx_chair'), 1); });
 const outside = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), x: g.world.state.x, y: g.world.state.y, facing: g.world.state.facing }; });
-// A person in a business (game/people.ts, World.peopleAt): Hob, put in the Hearthlight at run time,
-// makes its first menu list him; his answer sends him away, and the menu no longer lists him.
+// A person in a business (game/people.ts, World.peopleAt): a Hob put in the Hearthlight at run time,
+// with the real Hob (#77) taken out for the run, makes its first menu list him; his answer sends him
+// away, and the menu no longer lists him. Then the real Hob is put back, and the menu lists him.
 const inn = await (async () => {
   const state = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
   await page.evaluate(() => {
-    const g = (window as any).__game.game;
+    const g = (window as any).__game.game, m = g.world.map;
+    (window as any).__hob = m.features.splice(m.features.findIndex((f: any) => f.kind === 'npc' && f.name.startsWith('Hob')), 1)[0];
     g.world.travel('harrow', 4, 5, 0);
     g.world.map.features.push({ kind: 'npc', x: 4, y: 4, name: 'Hob, once tenant of Ashcombe', lines: ['"A stranger, and armed."'], until: { flag: 'fx_hob_gone' },
       choice: { ask: '"Should I go to Gullwick?"', answers: [{ label: 'Go', sets: 'fx_hob_gone', says: ['"Then I go."'] }, { label: 'Stay', sets: 'fx_hob_stays', says: ['"Then I stay."'] }] } });
@@ -165,8 +167,16 @@ const inn = await (async () => {
     while (g.screens.length > 1) g.pop();
     const i = m.features.findIndex((f: any) => f.kind === 'npc' && f.name.startsWith('Hob'));
     if (i >= 0) m.features.splice(i, 1);
+    m.features.push((window as any).__hob);
     delete g.party.flags.fx_hob_gone; delete g.party.flags.fx_hob_stays;
     return top;
+  });
+  const hob = await page.evaluate(() => {
+    const g = (window as any).__game.game;
+    g.interact(g.world.map.features.find((f: any) => f.kind === 'inn'));
+    const menu = g.screens.find((s: any) => s.constructor.name === 'ChoiceScreen')?.options ?? [];
+    while (g.screens.length > 1) g.pop();
+    return menu;
   });
   // The Gilded Eel is its keeper: with Ebba and Maud in it from a new game (#77), the room says
   // itself over a menu that lists them.
@@ -177,7 +187,7 @@ const inn = await (async () => {
     while (g.screens.length > 1) g.pop();
     return { screens: out, options: under };
   });
-  return { menu, words, question, said, back, backColours, traded, left, eel };
+  return { menu, words, question, said, back, backColours, traded, left, hob, eel };
 })();
 // The Wardens' hall, the Drillyard, with First Watch's walk already made, so taking it pays at once.
 // Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
@@ -746,6 +756,7 @@ ok(inn.menu.screen === 'ChoiceScreen' && inn.menu.options.join() === 'A room and
 ok(inn.words.text === '"A stranger, and armed."' && inn.question.text === '"Should I go to Gullwick?"' && inn.said.text === '"Then I go."', `talking to him says his words and puts his question in the side panel (${inn.words.screen}, ${inn.question.screen}, ${inn.said.screen})`);
 ok(inn.back.screen === 'ChoiceScreen' && inn.back.options.join() === 'A room and rations,Leave' && inn.backColours > 20, `his answer sends him away: back on the first menu, which no longer lists him (${inn.back.options.join(', ')})`);
 ok(inn.traded === 'ExploreScreen,InteriorScreen,ChoiceScreen' && inn.left === 'ExploreScreen', `with him gone, the trade opens once, and Esc leaves (${inn.traded}, then ${inn.left})`);
+ok(inn.hob.join() === 'A room and rations,Talk to Hob,Leave', `the real Hob, by the Hearthlight's fire from a new game, is on its first menu (${inn.hob.join(', ')})`);
 ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Talk to Maud,Leave', `the Gilded Eel, with Ebba and Maud in it from a new game, says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
 ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);

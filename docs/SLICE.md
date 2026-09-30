@@ -31,16 +31,16 @@ DESIGN.md first for the why.
   opens as before.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and mountains
-  gated by party abilities, hills (`^`), farmland (`f`) and light woods (`t`) open to all but on no
-  built map yet, a calendar and weather over a day/night clock (below), automap with field-of-view
-  reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The wilderness
-  features, on no built map yet: a shrine or fountain that gives every member a stat point once, a
-  cairn with a cache, a statue whose riddle takes its answer typed and a camp where the party may
-  rest with monsters two squares off; a hermit is a person. Dens, on no built map yet (#68, #69 and
-  #71 place them): a camp that breeds one kind of monster, its brood back one a pace at their posts
-  while it stands, guarded by keepers beside it that never leave. Its look is said when first seen;
-  its keepers dead, a step or Space asks to burn it, and burnt it gives its hoard, breeds no more
-  and shows as ash on the automap.
+  gated by party abilities, hills (`^`), farmland (`f`) and light woods (`t`) open to all, a
+  calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
+  food, a search action, exploration spells (Light, Wizard Eye). The wilderness features (a shrine
+  on F2; the rest on E2): a shrine or fountain that gives every member a stat point once, a cairn
+  with a cache, a statue whose riddle takes its answer typed and a camp where the party may rest
+  with monsters two squares off; a hermit is a person. Dens (E2's rookery; #69 and #71 place more):
+  a camp that breeds one kind of monster, its brood back one a pace at their posts while it stands,
+  guarded by keepers beside it that never leave. Its look is said when first seen; its keepers dead,
+  a step or Space asks to burn it, and burnt it gives its hoard, breeds no more and shows as ash on
+  the automap.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
@@ -78,13 +78,13 @@ DESIGN.md first for the why.
   them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
   Beside it are the side quests: The Cargo Ledger (Hale), The Bell That Rang Twice (Osmund), The
   Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud), The Well Tastes of Iron (Mottram), A
-  Boat With No Name-Board (Wat and Hamo) and The Lost Expedition, which the first Meridian journal
-  opens and which stays open until the rest of its trail is built. Left and right page the one quest
-  by chapter, and a page too long goes on over the next. Nothing new is saved. Every entry is keyed
-  to something the save already holds (a flag, a carried item, a once-only event, a guardian killed,
-  a map set foot on), so an old save opens with its log whole. A quest or chapter begun, advanced or
-  finished is announced once in the message log, and J opens on the one that changed last, at its
-  goal's chapter.
+  Boat With No Name-Board (Wat and Hamo), Who Lived at Ashcombe (Hob) and The Lost Expedition, which
+  the first Meridian journal opens and which stays open until the rest of its trail is built. Left
+  and right page the one quest by chapter, and a page too long goes on over the next. Nothing new is
+  saved. Every entry is keyed to something the save already holds (a flag, a carried item, a
+  once-only event, a guardian killed, a map set foot on), so an old save opens with its log whole. A
+  quest or chapter begun, advanced or finished is announced once in the message log, and J opens on
+  the one that changed last, at its goal's chapter.
 
 ## The outdoors as one map, and the end of the world
 
@@ -96,12 +96,12 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
 `PLAYED_DEFS`, the maps as played).
 
 - **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 at its box of the grid: the
-  Foreland at 200,30 (G2), Thornmark at 232,30 (H2) and Callow Downs' first two boxes, F2 at 168,30
-  and F3 at 168,62. The zone maps are still written as maps of their own in their areas' `maps/`
-  folders, in their own coordinates; laying them in moves their features, monster groups and exits
-  to where they sit, and leads every town's and dungeon's way out onto the outdoors. Outdoors, the
-  party's zone says where it is: the name on the status strip and the almanac, the level band, the
-  region whose weather it has, the palette it is painted in.
+  Foreland at 200,30 (G2), Thornmark at 232,30 (H2) and Callow Downs' first four boxes, F2 at
+  168,30, F3 at 168,62, E3 at 136,62 and E2 at 136,30. The zone maps are still written as maps of
+  their own in their areas' `maps/` folders, in their own coordinates; laying them in moves their
+  features, monster groups and exits to where they sit, and leads every town's and dungeon's way out
+  onto the outdoors. Outdoors, the party's zone says where it is: the name on the status strip and
+  the almanac, the level band, the region whose weather it has, the palette it is painted in.
 - **Walked, not jumped.** An exit from one zone map into the next is dropped: the road through the
   pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its
   arrival line as what the log says on crossing into Thornmark ("The pass opens onto old forest.
@@ -113,14 +113,14 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the `void`
   solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
-  well: the Foreland's north and south edges, F2's north (the rim, cut for good), F2's and F3's west
-  until E2 and E3 are built and Thornmark's north, east and south. Between the Foreland and
-  Thornmark the ridge stands as it was, two squares thick with the pass through it; between the
-  Foreland and F2 it is the Foreland's ring alone, with the Salt Road through a gap at 0,29. The
-  viewport paints the void as pink empty space, flat, unlit and untextured, standing up past the top
-  of the view so it hides the sky as well as the ground; no weather greys it (it is cut out of the
-  scene as it is painted, so anything nearer still covers it, and filled pink from behind at the
-  end). The automap marks it the same pink.
+  well: the Foreland's north and south edges, F2's and E2's north (the rim, cut for good), E2's west
+  until D2 is built, E3's north, west and south and Thornmark's north, east and south. Between the
+  Foreland and Thornmark the ridge stands as it was, two squares thick with the pass through it;
+  between the Foreland and F2 it is the Foreland's ring alone, with the Salt Road through a gap at
+  0,29. The viewport paints the void as pink empty space, flat, unlit and untextured, standing up
+  past the top of the view so it hides the sky as well as the ground; no weather greys it (it is cut
+  out of the scene as it is painted, so anything nearer still covers it, and filled pink from behind
+  at the end). The automap marks it the same pink.
 - **Building more.** A new box is a map in its area's `maps/` and `index.ts`, marked `density`
   core or country, and a line in its zone's `maps` in its area's `atlas.ts`, the map at its box's
   corner; `node tools/scaffold.ts` cuts its first draft from the atlas and names its box. Laid in, it
@@ -334,7 +334,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
   Thornmark's less gold (#26); the gate's limits for a boss's odds are missed on the Foreland
-  (#47, the Rift Warden's odds #87's), and its fights to a rest are off their aim.
+  (#47, the Rift Warden's odds #87's), and its fights to a rest are off their aim, as is the share
+  of the Foreland's fights won two under its floors, which only E3's groups make yet.
 
 ## Checks
 
