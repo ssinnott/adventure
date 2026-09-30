@@ -26,7 +26,7 @@ export const seatFoot = (group: number, viewH: number): number => viewH * 0.62 +
 /** How far above a sprite's head its target and turn markers are painted. */
 export const MARKER_RISE = 12;
 
-/** A proper name, "The Eldest", is never counted: a name beginning with "The". */
+/** A proper name, "The Eldest": a name beginning with "The". A lone one is not counted. */
 export const isProperName = (name: string): boolean => /^The /.test(name);
 
 /** A group's kinds among the living, in the order they stand, each with its count, but for a lone proper name. */

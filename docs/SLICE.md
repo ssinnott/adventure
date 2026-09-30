@@ -436,8 +436,8 @@ over content broken on purpose too, and two tools to theirs:
   band seen ahead is met as each kind drawn.
 - `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
   together, labelled with each kind and its count of the living, but for a lone proper name ("The
-  Eldest, 2 Heartwoods"). A kind leaves the label when its last one falls; every line stays inside the view and above the monsters' markers, running into
-  no other.
+  Eldest, 2 Heartwoods"). A kind leaves the label when its last one falls; every line stays inside
+  the view and above the monsters' markers, running into no other.
 - `art` (§5.6): every monster def its own sprite kind, each family module's `KINDS` the kinds
   `FAMILY` sends it and the walls dressed under their caps, each kind at its rate; a secret door
   outdoors among mountain, rock or trees drawn as they are (`drawnCell`), and any other door, or one
