@@ -86,6 +86,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | Callow Downs, E3 | outdoor zone, 32×32 | 3–4 | Crowness Light and the keeper's cottage on the point; the Salt Road west in fog; the gibbet; the wreck and the wreckers' niche below the light; eight groups (§4.4) |
 | Callow Downs, E2 | outdoor zone, 32×32 | 3–4 | the Wend's fields and its ford on the track from Coldharbour west to the Berth; the drowned mill and its wheel-pit; the rookery in the willows, the first den; a boundary stone with a riddle, a spring, a cairn and a shepherd's camp; five groups (§4.5) |
 | Callow Downs, D2 | outdoor zone, 32×32 | 4–5 | the chalk hills and the Berth open on the crest where the track from E2 ends; the ridge's barrows, one of them hollow; the shepherd's hut, the dew pond, a shrine, a cairn and a camp; the Cradle cut in the chalk; the wolves' den in the old chalk pit; the Black Dog by night; seven groups (§4.6) |
+| The Berth | dungeon, 16×16 | 4–5 | the Queen's barrow under D2, opened: the forecourt, the passage and four side chambers of the old Queens, their grave goods untouched; the Queen on her bier, her signet cut away; her guard two by two and her captain, the boss; his arms in a niche behind the bier (§4.7) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
@@ -100,7 +101,8 @@ where the far beach ends at 0,15 (`f3_soot`), beside the shanty's last verse; th
 below Crowness Light (downs_e3 19,29) the soot on the ledge beside it at 18,29 (`e3_ledge`); and the
 wheel-pit's (downs_e2 22,26) the course of dry stone below the mill at 22,27 (`e2_wheel`), beside
 the shepherd's word; and the hollow barrow's (downs_d2 20,4) the ringing turf at 20,5 (`d2_ring`),
-beside the other shepherd's word.
+beside the other shepherd's word; and the captain's niche in the Berth (berth 2,7) the words cut in
+the forecourt at 13,6 (`berth_hint`).
 
 In more detail, as SLICE.md had it before the area docs:
 
@@ -160,7 +162,7 @@ hold 5,654 of those squares and 5,570 of the walkable ones:
 | D4 | Kestrel Edge | country | 4–5 | 481, and the cliff's foot | the Salt Road down the cliff, and bandits with their archers on it | none | #72 |
 
 **The Berth** is a dungeon of its own, one level of 16 by 16, band 4–5, entered from D2: the Queen's
-guard two by two down the passage, and her captain at the empty bier (MONSTERS §5.2). Its step is
+guard two by two down the passage, and her captain at the bier (MONSTERS §5.2). Its step is
 the barrow opened, and only her signet gone (#70).
 
 The core is the three boxes that hold a step of the quest, built at full density; the rest is
@@ -472,6 +474,25 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 - **Finds.** The niche behind the bier holds the captain's arms, the Captain's Sword +1 and the
   Captain's Mail +1 (a Long Sword and Scale Mail); the first side chamber a Queen's Long Sword +1.
 - **Pay.** About 420 xp a member.
+- **As built** (#70). The door is in the barrow's face on D2 (11,12), west of the mouth, whose
+  event takes the owner's words; the Berth's way out lands on the forecourt (12,12). Inside, the
+  forecourt (13–14,6–8) and its sign, the hint (13,6); the passage west along row 7, cut square,
+  said at 12,7; four side chambers, the youngest Queen's north at 10–12,2–4 and the oldest's south
+  at 6–8,10–12, each with its words and its chest; the bier chamber (3–4,5–9), the step said at
+  4,7; and behind it a secret door (2,7) to the captain's niche (1,6–8), his arms in its chest. The
+  guard stands in pairs at 11, 9, 7 and 5 on row 7, holding their ground, and the captain at 3,7.
+  None of them respawns. The first chamber's chest holds 70 gold and the Queen's Long Sword +1; the
+  second's 90 gold and two healing potions; the third's 60 gold and a spell potion; the fourth's a
+  healing potion and an antidote; the niche's the Captain's Sword +1 and the Captain's Mail +1.
+  The plate is at 108,54 on the world map, below the mouth.
+- **The numbers** (#70). As drawn, the guard (20 hit points, 5.5 a hit) and the captain (60, 9)
+  were soft for a company of 4: thirty fights to a rest, and the captain won every time. The guard
+  now weighs an elite in an armoured shape, since two are one standard encounter (50 hit points,
+  armour 16, 2d8+3, slow; 173 xp), and the captain is 220 hit points, armour 16 and 3d8+8 (1,140
+  xp), so the Berth pays 420 a member. At 4, its guard is won every time and 7.12 fights to a rest,
+  the captain 45% of the time, and always at 6; the map at its floor is 89% won, the captain
+  counted, off the aim and inside the limit. Two under, at 2, a pair is won 79% of the time and the
+  captain never; as a dungeon the Berth counts there under the area's floor, where no company is.
 
 ### 4.8 D3, the west downs (#71): country, band 4–5
 
@@ -621,8 +642,8 @@ first statue too. §4.2 to §4.9 place every group, box by box.
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 2,823 xp a member today, 110 of it the guilds' pay and
-  about 1,050 F2's, F3's, E3's, E2's and D2's, past level 4 (1,650). The curve (EXPANSION §5.2, #31)
+- **Experience.** One clear of the area pays 3,244 xp a member today, 110 of it the guilds' pay and
+  about 1,470 F2's, F3's, E3's, E2's, D2's and the Berth's, past level 4 (1,650). The curve (EXPANSION §5.2, #31)
   gives an area the climb from its floor to the next area's floor, divided by 0.75: 2,800 / 0.75,
   about 3,730. The Downs are where the other 910 or so come from, shared among the boxes as §4.1 has
   it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built
@@ -631,20 +652,22 @@ first statue too. §4.2 to §4.9 place every group, box by box.
 - **Gold.** A clear pays about 3,740 with E3, E2 and D2: 1,190 in chests before them, about 820 in
   drops (F2's and F3's among them), 900 in rewards (the clerk's seal and the tenant's paper once
   each, whoever takes them) and 180 in the guilds' pay, and E3's, E2's and D2's chests, hoards and
-  drops on top. Training six members from 1 to 5 costs 1,500, so gold holds.
+  drops on top, and the Berth's 300 or so (220 in its chests, the rest the captain's and his
+  guard's). Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
   Deacon are won 98, 99 and 100% of the time at their maps' floors, where a boss should be won about
   half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The area as one pools
-  each group at its own map's floor (#209): 99.7% of its 65 groups' fights won, F2's and F3's at 2,
-  E3's and E2's at 3 and D2's at 4, against nine in ten. Two under, the Foreland's floor is 1 and
+  each group at its own map's floor (#209): 98.9% of its 70 groups' fights won, F2's and F3's at 2,
+  E3's and E2's at 3 and D2's and the Berth's at 4, against nine in ten. Two under, the Foreland's floor is 1 and
   F2's and F3's 2, so only E3's and E2's 13 groups have a company there, at 1, and D2's 7 at 2: 80%
-  won, off the aim of a quarter and inside the limit of nine in ten (#273), listed; the Seam, a
-  dungeon, counts two under the area's floor since #148, and is no longer judged alone. Each zone
+  won, off the aim of a quarter and inside the limit of nine in ten (#273), listed; the Seam and
+  the Berth, dungeons, count two under the area's floor since #148, and are not judged alone there. Each zone
   walks its own road and warns at its own way in: the Foreland's from Helmstow, the Downs' from F2's
   east edge along the Salt Road (`ROADS.downs`, the footpads and the Poacher), both walked every
   time. The Foreland map and Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; E3
   6.41 and E2 6.28; D2 14.3, past its limit and owed to #69 until its harder monsters are drawn; the
+  Berth 7.12, its captain left out of the day and won 45% of the time at 4 and always at 6; the
   Seam 6.7, now that the company at 3 wears the band's gear. The pilot settles them, by retuning or
   by moving the thresholds.
 - **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the

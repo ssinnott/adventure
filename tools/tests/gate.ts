@@ -65,6 +65,7 @@ const DAYS = 300;
  */
 export const BOSSES: Record<string, readonly string[]> = {
   shelf: ['mill:m_warden', 'greywater1:gw1_captain', 'greywater2:gw2_deacon'],
+  downs: ['berth:berth_captain'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
 };
 

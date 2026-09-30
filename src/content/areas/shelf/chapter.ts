@@ -14,6 +14,9 @@ export const CHAPTER: Chapter = {
       text: 'Lord Vask, the Regent-Warden, has hired us: the Ashcombe farm south of Helmstow has gone quiet. He wants anything we find there that is not a rat.' },
     { id: 'wenna', when: { flag: 'q_wenna' },
       text: 'At Gullwick, Hild asked us to find her daughter, Wenna, gone with the boat the night the light failed. She wants the name said wherever we go.' },
+    // The Berth (#70): a step on the road, not yet one the chapter waits on.
+    { id: 'berth', when: { seen: 'berth:berth_bier' },
+      text: 'In the Berth, the Queen\'s barrow, Queen Isaure lies on her bier with her grave goods untouched. Only her signet is gone, cut from her hand.' },
     { id: 'lantern', when: { seen: 'mill:mill_lantern' },
       text: 'A dead Lantern in the cellar under Ashcombe, a note in her hand: "Not failing. CUT. The Grove Stone is next. Tell Vask nothing."' },
     { id: 'wand', when: [{ item: 'survey_wand' }, { flag: 'q_ashcombe_done' }],
