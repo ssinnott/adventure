@@ -1,4 +1,4 @@
-// Hills, farmland, woods and dead wood: their legend characters, snow and the crops through the year, the
+// Hills, farmland, woods, dead wood, crystal and the chasm: their legend characters, snow and the crops through the year, the
 // fields' patchwork, and every terrain's own colour on the automap.
 import { GameMap } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
@@ -21,6 +21,11 @@ export function terrain(): void {
   ok(dw.at(1, 1).terrain === 'deadwood' && dw.passable(1, 1) === 'ok' && !dw.blocksView(1, 1), `'d' is dead wood, walked through and seen past (${dw.at(1, 1).terrain}, ${dw.passable(1, 1)})`);
   const [dr, dg, db] = hexToRgb(TERRAIN_COLORS.deadwood);
   ok(dg <= Math.max(dr, db) + 4, `the dead wood's ground is grey, with no green in it (${TERRAIN_COLORS.deadwood})`);
+  // Crystal: a glass tree that blocks as the forest's trunks do, and is seen past. The chasm: no wall
+  // and seen across, but never walked, a swimmer and a mountaineer notwithstanding.
+  const sd = new GameMap({ id: 'fixture_sunder', name: 'Sunder fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'McvM', 'MMMM'] });
+  ok(sd.at(1, 1).terrain === 'crystal' && sd.at(1, 1).solid === 'tree' && sd.passable(1, 1) === 'blocked' && !sd.blocksView(1, 1), `'c' is a glass tree on crystal, blocking the way but not the view (${sd.at(1, 1).terrain}, ${sd.passable(1, 1)})`);
+  ok(sd.at(2, 1).terrain === 'chasm' && sd.at(2, 1).solid === 'none' && sd.passable(2, 1, { swim: true, climb: true }) === 'chasm' && !sd.blocksView(2, 1) && SNOW_HOLD.chasm === 0, `'v' is the chasm: seen across, no wall, never walked and never snowed on (${sd.at(2, 1).terrain}, ${sd.passable(2, 1, { swim: true, climb: true })})`);
   // Snow lies on both; the grain greens in Sowing and goes gold by Harvest, and fields span squares.
   ok(SNOW_HOLD.hills >= 0.85 && SNOW_HOLD.farm >= 0.85, `snow lies white on hills and fields (${SNOW_HOLD.hills}, ${SNOW_HOLD.farm})`);
   ok([0, 1].every((crop) => cropColor(crop, 20) !== cropColor(crop, 50) && cropColor(crop, 50) !== cropColor(crop, 100)), 'the grain turns from Sowing to Harvest to Frost');

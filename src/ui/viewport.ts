@@ -28,7 +28,7 @@ import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS, VOID_PINK } from './palette.ts';
-import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
+import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
 import type { TreeSeason } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
 import type { Weather } from '../game/weather.ts';
@@ -79,8 +79,8 @@ const SNOW = '#eef2f7';
  * Every terrain has its entry, so one left out fails the typecheck rather than never taking snow.
  */
 export const SNOW_HOLD: Record<Terrain, number> = {
-  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, deadwood: 0.85, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
-  water: 0, deep: 0, lava: 0,
+  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, deadwood: 0.85, crystal: 0.5, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
+  water: 0, deep: 0, lava: 0, chasm: 0,
 };
 type Ramp = readonly [number, string][];
 /** A colour through the year: the ramp's stops by day of the year, mixed between. */
@@ -131,7 +131,7 @@ function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 
 function groundColor(terrain: Terrain, kind: string, floorPal: string, crop = 0): string {
   if (kind === 'dungeon') return floorPal;
   let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
-  if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava') c = shade(c, 1 - 0.18 * env.wet);
+  if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava' && terrain !== 'chasm') c = shade(c, 1 - 0.18 * env.wet);
   const s = env.cover * SNOW_HOLD[terrain];
   return s > 0 ? mix(c, SNOW, s) : c;
 }
@@ -286,7 +286,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
       const plot = cell.terrain === 'farm' ? farmPlot(map, c.x, c.y, f) : undefined;
-      drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, cellPal.floor, plot);
+      // The chasm's rims: where the ground stands before it and beyond it.
+      const rims = cell.terrain === 'chasm' ? { near: d > 0 && drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain !== 'chasm', far: drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain !== 'chasm' } : undefined;
+      drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, cellPal.floor, plot, rims);
       if (map.kind === 'dungeon') drawCeiling(ctx, cellPal, cx, horizon, r.h, d, l, seed, f);
     }
     if (d > 0) for (const l of order) {
@@ -336,7 +338,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         const u = unit(d, r.h);
         const bx = cx + l * 2 * u, by = horizon + u;
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
-        if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5), env.trees);
+        // A glass tree stands on crystal, catching the light by day.
+        if (cell.solid === 'tree' && cell.terrain === 'crystal') drawCrystalSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 3), dark ? 0 : daylight * (1 - cloud));
+        else if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5), env.trees);
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
@@ -598,7 +602,7 @@ function drawSplashes(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, 
     const d = Math.round(k), l = Math.round(lat);
     if (d > world.sight) continue;
     const c = cellAt(px, py, f, d, l), cell = map.at(c.x, c.y);
-    if (isSolidWall(cell) || cell.solid !== 'none' || cell.terrain === 'water' || cell.terrain === 'deep' || !lineOfSight(map, px, py, f, d, l)) continue;
+    if (isSolidWall(cell) || cell.solid !== 'none' || cell.terrain === 'water' || cell.terrain === 'deep' || cell.terrain === 'chasm' || !lineOfSight(map, px, py, f, d, l)) continue;
     const u = unit(k, r.h), x = cx + lat * 2 * u, y = horizon + u, s = Math.max(1, u * 0.045) * (0.6 + age / SPLASH_LIFE);
     ctx.moveTo(x - s * 1.6, y); ctx.quadraticCurveTo(x - s * 1.2, y - s * 1.6, x - s * 0.3, y - s * 0.4);
     ctx.moveTo(x + s * 1.6, y); ctx.quadraticCurveTo(x + s * 1.2, y - s * 1.6, x + s * 0.3, y - s * 0.4);
@@ -750,8 +754,40 @@ function drawHill(ctx: CanvasRenderingContext2D, base: string, cx: number, horiz
   }
 }
 
-function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string, plot?: Plot): void {
+/**
+ * The chasm: the drop, dark as it goes down. Where ground stands beyond it, its far wall shows under
+ * the rim, rock in bands darkening into the depth; where ground stands before it, a lit lip.
+ */
+function drawChasm(ctx: CanvasRenderingContext2D, base: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, rims: { near: boolean; far: boolean }): void {
+  const pt = (s: number, t: number): [number, number] => floorPt(cx, horizon, h, d, l, s, t);
+  quad(ctx, pt(0, 0), pt(0, 1), pt(1, 1), pt(1, 0), fog(base, d, dark, haze));
+  if (rims.far) {
+    // The far wall hangs from the rim toward the eye, down past the chasm's own floor; the ground
+    // before the chasm is painted after it, over its foot.
+    const uF = unitIn(d, 1, h), y0 = horizon + uF, x0 = cx + (l - 0.5) * 2 * uF, x1 = cx + (l + 0.5) * 2 * uF, drop = uF * 2.4, bands = 7;
+    const rock = '#9a92a4';
+    for (let k = 0; k < bands; k++) {
+      const ya = y0 + (drop * k) / bands, yb = y0 + (drop * (k + 1)) / bands + 1;
+      ctx.fillStyle = fog(mix(shade(rock, 1 - 0.06 * (k % 2)), base, Math.min(1, (k / bands) * 1.15)), d, dark, haze);
+      // Each band spans the column as it widens toward the eye, so walls side by side meet.
+      const ua = ya - horizon, ub = yb - horizon, col = (u: number, e: number): number => cx + (l - 0.5 + e) * 2 * u;
+      quad(ctx, [col(ua, 0), ya], [col(ua, 1), ya], [col(ub, 1), yb], [col(ub, 0), yb], ctx.fillStyle as string);
+      // Strata: a crack or two across each band.
+      if (k < bands - 2) {
+        ctx.strokeStyle = fog(mix(shade(rock, 0.6), base, k / bands), d, dark, haze); ctx.lineWidth = 1;
+        const yy = ya + (yb - ya) * (0.3 + 0.4 * hash(seed, 83, k));
+        const uy = yy - horizon, xa = col(uy, 0), xb = col(uy, 1);
+        ctx.beginPath(); ctx.moveTo(xa, yy); for (let q = 1; q <= 4; q++) ctx.lineTo(xa + ((xb - xa) * q) / 4, yy + (hash(seed, 84, k, q) - 0.5) * (yb - ya) * 0.6); ctx.stroke();
+      }
+    }
+    ctx.strokeStyle = fog(shade(rock, 1.3), d, dark, haze); ctx.lineWidth = Math.max(1, uF * 0.02); line(ctx, [x0, y0], [x1, y0]);
+  }
+  if (rims.near) { ctx.strokeStyle = fog('#8a8290', d, dark, haze); ctx.lineWidth = Math.max(1, unit(d, h) * 0.03); line(ctx, pt(0, 0), pt(0, 1)); }
+}
+
+function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string, plot?: Plot, rims?: { near: boolean; far: boolean }): void {
   const base = groundColor(terrain, kind, floorPal, plot?.crop);
+  if (terrain === 'chasm') { drawChasm(ctx, base, cx, horizon, h, d, l, seed, dark, haze, rims ?? { near: false, far: false }); return; }
   const n = d <= 2 ? 3 : 2;
   const flag = kind === 'dungeon' && terrain === 'floor';
   const mortar = fog(shade(base, 0.55), d, dark, haze);

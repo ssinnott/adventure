@@ -5,6 +5,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
+import { LEGEND } from '../../src/game/map.ts';
 import { defaultParty, partyCan } from '../../src/game/party.ts';
 import { ok, local } from './lib.ts';
 
@@ -109,4 +110,15 @@ export function movement(): void {
   world.travel('shelf', 16, 4, 0);
   const home = world.move('forward');
   ok(home.kind === 'moved' && world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14 && home.messages.includes('You enter Helmstow.'), `from the Foreland road the south gate leads back into Helmstow (${world.map.id} ${world.state.x},${world.state.y})`);
+  // The chasm: a step into it is refused with a line of its own, as the sea is; a glass tree blocks
+  // as a tree does. Laid on the Foreland and taken up.
+  world.travel('shelf', 16, 16, 0);
+  const m = world.map, stood = world.state.y, ahead = m.width * (stood - 1) + world.state.x, kept = m.cells[ahead];
+  m.cells[ahead] = { ...LEGEND.v, ch: 'v' };
+  const drop = world.move('forward');
+  m.cells[ahead] = { ...LEGEND.c, ch: 'c' };
+  const glass = world.move('forward');
+  m.cells[ahead] = kept;
+  ok(drop.kind === 'blocked' && drop.reason === 'The ground falls away. There is no way down here.' && world.state.y === stood, `a step into the chasm is refused, and says so (${drop.kind === 'blocked' ? drop.reason : drop.kind})`);
+  ok(glass.kind === 'blocked' && glass.reason === 'Something blocks the way.', `a glass tree blocks the way (${glass.kind === 'blocked' ? glass.reason : glass.kind})`);
 }
