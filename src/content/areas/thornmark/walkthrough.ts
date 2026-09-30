@@ -7,7 +7,7 @@
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
-import { HIRE, STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
+import { HIRE, STEPS as FORELAND_STEPS, FARM_FIRST, hired } from '../shelf/walkthrough.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH } from '../../../game/types.ts';
@@ -66,7 +66,8 @@ export const walkthrough: Walkthrough = (ok) => {
   goalFromBegun(early, 'early, before the hire');
   playChapter(early, CHAPTER, FROM_SYLVANE, 'early, before the hire');
   goalFromBegun(early, 'early, before the hire, the Grove done');
-  playChapter(early, FORELAND, [HIRE, ...FORELAND_STEPS], 'early, before the hire');
+  // The farm before Gullwick here, so the Foreland's goal for a company that did it first comes up.
+  playChapter(early, FORELAND, [HIRE, ...FARM_FIRST], 'early, before the hire');
   ok(JSON.stringify(ending(early, 'early, before the hire')) === JSON.stringify(want), 'early, before the hire: the log ends with the same entries as in order');
 
   // Thornmark after the hire, before the wand: the quest never sends the company to the Stone
@@ -75,7 +76,8 @@ export const walkthrough: Walkthrough = (ok) => {
   hired(hiredEarly);
   pass(hiredEarly);
   goalFromBegun(hiredEarly, 'hired, in Thornmark before the wand');
-  ok(/Ashcombe/.test(quest(hiredEarly)?.goal ?? ''), `hired, in Thornmark before the wand, the goal is still the farm (${quest(hiredEarly)?.goal})`);
+  const from = FORELAND.goals.some((g) => g.text === quest(hiredEarly)?.goal);
+  ok(from, `hired, in Thornmark before the wand, the goal is still the Foreland's (${quest(hiredEarly)?.goal})`);
   sylvane(hiredEarly);
   ok(hiredEarly.news.at(-1) === 'New chapter: The Grove Stone.', `hired, Sylvane opens the Grove's chapter (${hiredEarly.news.at(-1)})`);
   playChapter(hiredEarly, CHAPTER, FROM_SYLVANE, 'hired, early');
