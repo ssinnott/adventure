@@ -1490,3 +1490,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   untested (his `says` swapped, every suite passes). Only E2's ford sign doubles the prefix. Its
   five choices, his square and the sign check to a delegate. Reviewer on #306 (D2), asked above all
   whether it can land with its rest line owed past the limit (14.32) before its monsters.
+- 23:37: #297 (#163's crystal and chasm) landed: its round (3870be9: the reachability walks stop at
+  the chasm through one `stopsWalk`, with a gorge fixture; `monsterPassable` as `passable() ===
+  'ok'`, the same rule on every other cell, and a group across a chasm stays out; the sheet's
+  `open`; the far ground painted beyond a chasm, the delegate's change; the automap's glass and
+  drop; glass a guise of its own; the seams; the chasm dark indoors; a smoke line). Landing check on
+  it merged onto 62ca3fa: ALL OK (27 owed), SMOKE OK, "Nothing new."; CI green. Merged as 8dad64d;
+  main's tree is the tested tree (cf791e1). #163 closes.
