@@ -474,8 +474,9 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 - **Finds.** The niche behind the bier holds the captain's arms, the Captain's Sword +1 and the
   Captain's Mail +1 (a Long Sword and Scale Mail); the first side chamber a Queen's Long Sword +1.
 - **Pay.** About 420 xp a member.
-- **As built** (#70). The door is in the barrow's face on D2 (11,12), west of the mouth, whose
-  event takes the owner's words; the Berth's way out lands on the forecourt (12,12). Inside, the
+- **As built** (#70). The way in is the open forecourt's west square on D2 (12,12), under the
+  barrow's lintel, past the mouth's event (13,12), which takes the owner's words; the way out lands
+  there too. Inside, the
   forecourt (13–14,6–8) and its sign, the hint (13,6); the passage west along row 7, cut square,
   said at 12,7; four side chambers, the youngest Queen's north at 10–12,2–4 and the oldest's south
   at 6–8,10–12, each with its words and its chest; the bier chamber (3–4,5–9), the step said at

@@ -69,7 +69,7 @@ export const walkthrough: Walkthrough = (ok) => {
  * Queen seen writes the chapter's step (#70), and the captain behind her is won there.
  */
 function berth(w: Walk): void {
-  walkThrough(w, 'downs_d2', 12, 12, WEST, 'berth');
+  walkThrough(w, 'downs_d2', 13, 12, WEST, 'berth');
   w.level = MAP_DEFS.find((d) => d.id === 'berth')!.band![0];
   for (const g of ['berth_guard1', 'berth_guard2', 'berth_guard3', 'berth_guard4']) fight(w, `berth:${g}`);
   see(w, 'berth:berth_bier');

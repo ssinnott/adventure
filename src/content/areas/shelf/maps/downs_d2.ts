@@ -30,7 +30,7 @@ export const DOWNS_D2: MapDef = {
     ',^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',
     ',^^^^^^rrrrrrr^^^^^^^^^^^^^^^^^^',
     ',^^^^^^rrrrrrr^^^^^^^^^^^^^^^^^^',
-    ',^^^^^^rrrrD::==================',
+    ',^^^^^^rrrrr::==================',
     ',^^^^^^rrrrrrr^^^^^^^^^^^^^^^^^^',
     ',^^^^^^rrrrrrr^^^^^^^^^^^^^^^^^^',
     ',,^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',
@@ -52,7 +52,7 @@ export const DOWNS_D2: MapDef = {
     ',,,,,^^^^^^^^^^^^^^^^^^^^^^^^^^,',
   ],
   exits: [
-    { x: 11, y: 12, to: 'berth', tx: 14, ty: 7, tf: WEST, label: 'You duck under the lintel into the Berth.' },
+    { x: 12, y: 12, to: 'berth', tx: 14, ty: 7, tf: WEST, label: 'You duck under the lintel into the Berth.' },
   ],
   features: [
     { kind: 'sign', x: 22, y: 11, text: 'The Berth, barrow of the Queens. By order of the Crown, let them lie.' },
