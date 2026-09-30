@@ -1535,3 +1535,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   look from the mouth go to a delegate on the retuned sheet. #310 (the Berth) waits behind it.
 - 23:53: reviewer on #307 (J4), asked first whether its 30 dead-wood squares, painted over as
   forest, should be on the map now #163 has landed.
+- 23:53: the delegate on #305: the Cutthroat OK; two keepers, not three (two elites are one
+  standard encounter; the third was added to hit a number), and the same for D4 (#309), whose
+  drift, if any, the crows take up; choices 3, 5–8 taken. Round sent to the #67 session (the two
+  Cutthroats in D3 and D4, the door's second side, the void count, the fixture at 72,60, main).
