@@ -4,7 +4,7 @@
 // the monsters' markers, no line running into another.
 import { MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import { PLAYED_DEFS } from '../../src/content/maps.ts';
-import { groupLabels, seatFoot, LABEL_ROW, LABEL_TOP, MARKER_RISE } from '../../src/ui/grouplabels.ts';
+import { groupLabels, isProperName, seatFoot, LABEL_ROW, LABEL_TOP, MARKER_RISE } from '../../src/ui/grouplabels.ts';
 import { combatHeight } from '../../src/ui/sprites.ts';
 import type { LabelMonster, LabelLine } from '../../src/ui/grouplabels.ts';
 import { LAYOUT } from '../../src/ui/frame.ts';
@@ -29,11 +29,12 @@ function seat(groups: readonly (readonly string[])[]): LabelMonster[] {
  */
 export function labelFaults(monsters: readonly LabelMonster[], width: number = V.w, height: number = V.h, row = LABEL_ROW): string[] {
   const lines = groupLabels(monsters, width).map((l) => ({ ...l, y: (l.y / LABEL_ROW) * row })), out: string[] = [];
-  // Each group standing reads as its kinds, each with its count of the living, in the order they stand.
+  // Each group standing reads as its kinds, each with its count of the living, in the order they
+  // stand; a lone proper name ("The Eldest") is not counted.
   for (const g of new Set(monsters.map((m) => m.group))) {
     const living = monsters.filter((m) => m.group === g && m.hp > 0);
     const kinds = [...new Set(living.map((m) => m.def.id))];
-    const want = kinds.map((id) => { const n = living.filter((m) => m.def.id === id).length, d = MONSTERS[id] ?? living.find((m) => m.def.id === id)!.def; return `${n} ${n === 1 ? d.name : d.plural}`; }).join(', ');
+    const want = kinds.map((id) => { const n = living.filter((m) => m.def.id === id).length, d = MONSTERS[id] ?? living.find((m) => m.def.id === id)!.def; return n === 1 && isProperName(d.name) ? d.name : `${n} ${n === 1 ? d.name : d.plural}`; }).join(', ');
     const got = lines.filter((l) => l.group === g).map((l) => l.text).join(' ');
     if (got !== want) out.push(`group ${g} reads "${got}", not "${want}"`);
   }
@@ -85,6 +86,12 @@ export function labels(): void {
   const fall = (id: string, n: number): void => { for (const m of ogre.filter((q) => q.def.id === id && q.hp > 0).slice(0, n)) m.hp = 0; };
   fall('ogre', 1); fall('brigand', 2);
   ok(read(ogre) === `1 ${A.name}, 1 ${B.name}`, `and drops a kind when its last one falls (${read(ogre)})`);
+
+  // The Eldest and its heartwoods, which no map places yet (#218): a proper name is never counted,
+  // and the want above follows, so a count put back on it fails both.
+  // Only the naming is held here: so tall a band stands up past the view's top, which is #218's to seat.
+  const eldest = seat([['eldest', 'heartwood', 'heartwood']]), { eldest: E, heartwood: T } = MONSTERS, misread = labelFaults(eldest).filter((f) => f.includes(' reads '));
+  ok(read(eldest) === `${E.name}, 2 ${T.plural}` && misread.length === 0, `a lone proper name is not counted (${read(eldest)}${misread.map((f) => ' -> ' + f).join('')})`);
 
   // A group of the six longest-named kinds is too long for a row: it breaks between its kinds and
   // stays inside the view, and a group beside it takes the row under it.

@@ -26,7 +26,10 @@ export const seatFoot = (group: number, viewH: number): number => viewH * 0.62 +
 /** How far above a sprite's head its target and turn markers are painted. */
 export const MARKER_RISE = 12;
 
-/** A group's kinds among the living, in the order they stand, each with its count. */
+/** A proper name, "The Eldest", is never counted: a name beginning with "The". */
+export const isProperName = (name: string): boolean => /^The /.test(name);
+
+/** A group's kinds among the living, in the order they stand, each with its count, but for a lone proper name. */
 export function groupParts(monsters: readonly LabelMonster[], group: number): string[] {
   const counts = new Map<string, { n: number; name: string; plural: string }>();
   for (const m of monsters) {
@@ -34,7 +37,7 @@ export function groupParts(monsters: readonly LabelMonster[], group: number): st
     const k = counts.get(m.def.id) ?? { n: 0, name: m.def.name, plural: m.def.plural };
     k.n++; counts.set(m.def.id, k);
   }
-  return [...counts.values()].map((k) => `${k.n} ${k.n === 1 ? k.name : k.plural}`);
+  return [...counts.values()].map((k) => k.n === 1 && isProperName(k.name) ? k.name : `${k.n} ${k.n === 1 ? k.name : k.plural}`);
 }
 
 /**
