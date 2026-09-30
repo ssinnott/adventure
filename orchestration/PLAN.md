@@ -1411,3 +1411,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   dead trees go or dead wood takes no snow (#279's tree and snow checks run on woods only). Nit:
   SLICE's lines. #297 merges clean on top. The look and the three choices to a delegate. Reviewer
   on #301 (#67's B), merging #302 and #303 on top to order the Downs' three.
+- Opened since 22:40: #304 (#215, I3, Deepthorn Lodge; the Thornmark session, 22:53, the lodge
+  site moved onto it and #298's old-wood lines carried verbatim), #305 (#71, D3, with a new monster,
+  the Cutthroat; the #67 session) and #306 (#69's A, D2; the #68 session; its rest line owed to
+  #69's B until D2's level-5 monsters are drawn). All subscribed. Review queue: #304, #302, #303,
+  #305, #306.
+- 23:00: #298's lodge-site nit withdrawn (#304 moves it); whichever of #298 and #304 lands second
+  joins them (`CUT_OFF`, the owed road square, the owed xp). The delegate on #296: the look OK, all
+  three choices taken. Round sent to the #45 session (the tests on dead wood, SLICE's lines, main).
