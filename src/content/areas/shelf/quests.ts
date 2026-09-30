@@ -1,9 +1,9 @@
-// The Foreland's side quests, in the journal's words: The Cargo Ledger (Hale), The Bell That Rang
-// Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The Clerk's Seal (Maud), The Well Tastes
-// of Iron (Mottram), A Boat With No Name-Board (Wat and Hamo, at Gullwick), Who Lived at Ashcombe
-// (Hob) and Oil for the Lamp (Aldred at Crowness Light, Mottram and Vask). Its chapter of the one
-// quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
-// tools/tests/quests.ts checks every key.
+// The Foreland's side quests, in the journal's words: The Cargo Ledger (Hale), The Bell That
+// Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The Clerk's Seal (Maud), The
+// Well Tastes of Iron (Mottram), A Boat With No Name-Board (Wat and Hamo, at Gullwick), Who
+// Lived at Ashcombe (Hob) and Oil for the Lamp (Aldred at Crowness Light, Mottram and Vask). Its
+// chapter of the one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts
+// (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 
 export const QUESTS: readonly QuestDef[] = [
@@ -153,7 +153,8 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { item: 'name_boards' }, at: 'downs_f3', text: 'Take the name-boards across the Wend to Gullwick, or sell them.' },
       { when: { flag: 'q_board' }, at: 'downs_f3', text: 'Find the Patience\'s name-board on the wreckers\' beach, across the Wend from Gullwick. Go by night.' },
     ],
-  },  {
+  },
+  {
     // #56's fifth: Crowness Light dark since the Wardens stopped its oil. Mottram asks whether the
     // company buys the oil and carries it down, or puts it to Vask; oil carried in lights it either way.
     id: 'oil',

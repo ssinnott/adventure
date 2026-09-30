@@ -34,13 +34,13 @@ export const CHAPTER: Chapter = {
   ],
   goals: [
     // A company that did the farm first: Gullwick and Crowness are still to come.
-    { when: { flag: ['q_ashcombe_done', 'q_wenna'] }, at: 'downs_e3', text: 'Crowness Light, past Gullwick: the keeper who counted that night.' },
+    { when: { flag: ['q_ashcombe_done', 'q_wenna'] }, at: 'downs_e3', text: 'Crowness Light, past Gullwick: the keeper\'s log of that night.' },
     { when: { flag: 'q_ashcombe_done' }, at: 'downs_f3', text: 'Gullwick, west on the Salt Road: a mother asks for her daughter.' },
     { when: { item: 'survey_wand' }, at: 'keep', text: 'Take the survey wand to Lord Vask in Helmstow.' },
     { when: { visited: 'mill' }, at: 'mill', text: 'Search the cellar under the Ashcombe farmhouse.' },
     { when: { flag: ['q_ashcombe', 'q_wenna'], seen: 'downs_e3:e3_log' }, at: 'shelf', text: 'Find out why Ashcombe has gone quiet: south of Helmstow, then east along the Foreland road.' },
     // Hired: Gullwick first, where the road west goes, then Crowness, and then the farm.
-    { when: { flag: ['q_ashcombe', 'q_wenna'] }, at: 'downs_e3', text: 'Before Ashcombe, Crowness Light: on along the Salt Road past Gullwick, to the keeper who counted that night.' },
+    { when: { flag: ['q_ashcombe', 'q_wenna'] }, at: 'downs_e3', text: 'Before Ashcombe, Crowness Light: on along the Salt Road past Gullwick, to read the keeper\'s log of that night.' },
     { when: { flag: 'q_ashcombe' }, at: 'downs_f3', text: 'Before Ashcombe, Gullwick: west on the Salt Road from Brandy Hole\'s beach, a mother asks every company for her daughter.' },
     // Shown only to a company that began a later chapter before Vask hired it.
     { when: {}, at: 'keep', text: 'The Regent-Warden is hiring in Helmstow.' },
