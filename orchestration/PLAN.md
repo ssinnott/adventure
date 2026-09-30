@@ -1393,3 +1393,21 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   comment kept, the stale one gone; the body says the vignette's reach and the sheets' change) and
   main in (c918b56). Landing check on it merged onto d5260f3: ALL OK (32 owed), SMOKE OK, "Nothing
   new."; CI green. Merged as 8f69253; main's tree is the tested tree (529a7c5). #286 closes.
+- 22:55: #300 (#299, the Foreland's badge) reviewed by me (one line; `reviews/300.md`): the badge
+  leaves E2's track and ford for the foothills above E2 and F2, clear of every box. Landing check on
+  it merged onto 8f69253: ALL OK (32 owed), SMOKE OK, "Nothing new."; CI green. Its one choice (the
+  foothills) taken as the default. Merged as dca3ae1; main's tree is the tested tree (b1932c6).
+  #299 closes.
+- 22:57: the delegate on #298: (A) the PR's default, land I4 on its own, the quest's end owed to
+  #215 as the plan laid I4 before I3 (holding it would hold #216 and #218 too); (B) the path in and
+  the old wood OK, but draw the halls in round the yard, within four squares on three sides of it
+  (from 10,12 the north hall is six off, past the five the viewport draws); (C) the rest taken.
+  Round sent to the #100 session (22:59): Senara met from 10,7 ends the chapter too (a `q_treaty`
+  alternative in `done` and `seal`); `henlys()` keyed on each ask's own words and the chisel-carried
+  meeting walked; the halls drawn in; the nits (the shrine, The Older Mark's hand-in recorded, the
+  lodge site moved to I3's 272,76, the night brambles still, long lines); the review's sign finding
+  withdrawn (the text is bare); main merged again.
+- 22:59: `reviews/296.md` (#163's dead wood): ready after fixes. Should-fix: nothing fails if the
+  dead trees go or dead wood takes no snow (#279's tree and snow checks run on woods only). Nit:
+  SLICE's lines. #297 merges clean on top. The look and the three choices to a delegate. Reviewer
+  on #301 (#67's B), merging #302 and #303 on top to order the Downs' three.
