@@ -246,7 +246,7 @@ const terrains = await page.evaluate(async () => {
   // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
   const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
-  for (const terrain of ['grass', 'hills', 'farm', 'woods']) {
+  for (const terrain of ['grass', 'hills', 'farm', 'woods', 'deadwood']) {
     for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
     for (const [name, doy] of days) for (const hour of [12, 0]) {
       if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
@@ -655,7 +655,7 @@ ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens 
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
-  ok(terrains.thin.length === 0, `hills, farmland and woods paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+  ok(terrains.thin.length === 0, `hills, farmland, woods and dead wood paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
   {
     const { grass, hills, farm, woods } = terrains.form;
     ok(terrains.trees >= 10 && terrains.path <= PATH_MAX && woods.edges > grass.edges, `trees stand about the woods where grass lies open, and the way ahead stays open (${terrains.trees}% of the band over the horizon is trees, ${terrains.path}% of the strip straight ahead, at most ${PATH_MAX}; edges across the square ahead: grass ${grass.edges}, woods ${woods.edges})`);

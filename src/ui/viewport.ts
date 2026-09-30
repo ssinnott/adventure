@@ -28,7 +28,7 @@ import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS, VOID_PINK } from './palette.ts';
-import { drawMonsterSprite, drawTreeSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
+import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
 import type { TreeSeason } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
 import type { Weather } from '../game/weather.ts';
@@ -79,7 +79,7 @@ const SNOW = '#eef2f7';
  * Every terrain has its entry, so one left out fails the typecheck rather than never taking snow.
  */
 export const SNOW_HOLD: Record<Terrain, number> = {
-  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
+  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, deadwood: 0.85, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
   water: 0, deep: 0, lava: 0,
 };
 type Ramp = readonly [number, string][];
@@ -340,15 +340,18 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
-      } else if (d > 0 && cell.terrain === 'woods' && !backdrop) {
+      } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood') && !backdrop) {
         // Light woods: a tree or two stand to the sides of the square, leaving the way through it open.
         // None stands on a side a wall or the void closes: drawn after them, it would stand in front.
+        // Dead wood stands the same, its trees dead.
         const u = unit(d, r.h);
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
         for (const side of [-1, 1]) {
           if (hash(c.x, c.y, 60 + side) < 0.3 || solidAt(d, l + side)) continue;
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
-          drawTreeSprite(ctx, bx, by, u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side)), tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
+          const s = u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side));
+          if (cell.terrain === 'deadwood') drawDeadTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 3), env.cover);
+          else drawTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
         }
       }
     }
@@ -783,7 +786,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
       ctx.strokeStyle = fog(shade(base, 0.55), d, dark, haze); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
     }
   }
-  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
+  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'deadwood' ? 5 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
@@ -811,6 +814,12 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
         ctx.strokeStyle = fog(shade(base, 1.45), d, dark, haze); ctx.lineWidth = Math.max(1, sc);
         ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 4 * sc, y - 3 * sc); ctx.moveTo(x, y); ctx.lineTo(x, y - 5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 4 * sc, y - 3 * sc); ctx.stroke();
       }
+    } else if (terrain === 'deadwood') {
+      // Fallen limbs and bleached twigs, grey on grey, buried by a deep snow.
+      if (env.cover > 0.55) continue;
+      const a = (hash(seed, 45, i) - 0.5) * 1.2, len = (3 + 4 * hash(seed, 47, i)) * sc;
+      ctx.strokeStyle = fog(i % 2 ? '#b0a898' : '#5e5850', d, dark, haze); ctx.lineWidth = Math.max(1, sc * (i < 2 ? 1.2 : 0.7));
+      ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len * 0.4); ctx.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len * 0.4); ctx.stroke();
     } else if (flag) {
       if (hash(seed, 51, i) > 0.5) continue;
       if (i === 0) {

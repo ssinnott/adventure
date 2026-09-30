@@ -15,10 +15,11 @@ export type MapKind = 'town' | 'dungeon' | 'outdoor';
  * What the floor of a cell is. Drives the floor colour outdoors and the passability rules. Hills,
  * farm and woods are named as the atlas names them (WorldTerrain), so the two agree square for square.
  * Woods is light woodland, walked through: a ground with trees about it, not a wall of them (`T`).
+ * Dead wood is walked through as the woods are, its trees long dead: grey trunks and no green.
  */
 export type Terrain =
   | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
-  | 'hills' | 'farm' | 'woods';
+  | 'hills' | 'farm' | 'woods' | 'deadwood';
 
 /** Minutes a step onto hills costs over the usual six in the open. */
 export const HILL_DRAG = 2;
@@ -300,6 +301,7 @@ export const LEGEND: Record<string, Cell> = {
   '^': cell('hills'),
   'f': cell('farm'),
   't': cell('woods'),
+  'd': cell('deadwood'),
   'T': cell('grass', 'tree'),
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),
