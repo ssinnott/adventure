@@ -43,7 +43,6 @@ const LATERAL = VIEW_LATERAL;
 
 export interface ViewRect { x: number; y: number; w: number; h: number; }
 
-/** A monster to draw at a cell, resolved by the caller from the world's live groups. */
 /** A figure the viewport draws for a group: the monster, its sprite, tint and size. */
 export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; }
 
@@ -137,7 +136,8 @@ function groundColor(terrain: Terrain, kind: string, floorPal: string, crop = 0)
   return s > 0 ? mix(c, SNOW, s) : c;
 }
 
-interface Flame { x: number; y: number; s: number; }
+/** A torch or lantern's flame, and the pixel it was painted over, read once its wall is done. */
+export interface Flame { x: number; y: number; s: number; under?: number; }
 interface Scene {
   key: string;
   /** Everything but the sky, which shows through where nothing was painted. */
@@ -149,6 +149,8 @@ interface Scene {
 let scene: Scene | null = null;
 /** Filled while a scene is painted: where the torches and lanterns are, for the per-frame flames. */
 let flames: Flame[] = [];
+/** The flames the last scene painted left alight. */
+export function paintedFlames(): readonly Flame[] { return flames; }
 
 export { isSolidWall };
 
@@ -165,8 +167,8 @@ export function drawViewport(
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
-    flames = [];
-    paintScene(canvas.getContext('2d')!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
+    // Each torch's point is read back as the scene is painted (see `pixel`).
+    paintScene(canvas.getContext('2d', { willReadFrequently: true })!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
     scene = { key, canvas, sky, flames };
   }
   ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
@@ -179,6 +181,8 @@ export function drawViewport(
   }
   ctx.drawImage(scene.canvas, r.x, r.y);
 
+  // Flames on the sconces and lanterns, animated over the cached scene; a monster stands before them.
+  for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
   // Monsters, every frame, with a line-of-sight check against the cached walls.
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
@@ -209,8 +213,6 @@ export function drawViewport(
     g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.75)');
     ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h);
   }
-  // Flames on the sconces and lanterns, animated over the cached scene.
-  for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
   ctx.restore();
   if (weather) drawWeather(ctx, world, r, frame);
 }
@@ -238,6 +240,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const skyBottom = mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk));
   const haze = map.kind === 'dungeon' ? null : skyBottom;
 
+  flames = [];
   ctx.save();
   ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
 
@@ -333,6 +336,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           drawSideFace(ctx, map, cell, c.x, c.y, xIn(uN), uN, xIn(uF), uF, horizon, d, seed, dark, haze, l > 0, joinNear, joinFar, !solidAt(d + 1, l), ahead);
         }
         if (b) drawRoof(ctx, at, d, l, houseAt, b.seed, dark, haze, false);
+        for (const fl of flames) fl.under ??= pixel(ctx, fl.x, fl.y);
       } else if (d > 0 && cell.solid !== 'none' && !backdrop) {
         // Over the smoke test's backdrop the billboards stay out: their gaps are not cracks.
         const u = unit(d, r.h);
@@ -355,6 +359,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       }
     }
   }
+  // A torch goes out where anything nearer was painted over it, a tree or a rock or a wall.
+  flames = flames.filter((fl) => pixel(ctx, fl.x, fl.y) === fl.under);
   // An overcast day's flat grey light over everything painted; the sky has its own greys.
   const veil = cloud * 0.2 + env.murk * 0.12;
   if (veil > 0.01) {
@@ -943,6 +949,12 @@ function drawVoidFront(ctx: CanvasRenderingContext2D, voids: Path2D, x0: number,
 function drawVoidSide(ctx: CanvasRenderingContext2D, voids: Path2D, xN: number, footN: number, xF: number, footF: number, top: number): void {
   xN = Math.round(xN); xF = Math.round(xF);
   cutVoid(ctx, voids, [[xN, top], [xF, top], [xF, footF + 1], [xN, footN + 1]]);
+}
+
+/** The colour at a point, as one number. */
+function pixel(ctx: CanvasRenderingContext2D, x: number, y: number): number {
+  const p = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+  return ((p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3]) >>> 0;
 }
 
 /**
