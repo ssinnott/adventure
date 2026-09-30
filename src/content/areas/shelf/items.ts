@@ -38,6 +38,11 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'potion_sp', name: 'Blue Vial', slot: 'none', price: 45, use: { sp: 10 } },
   { id: 'antidote', name: 'Antidote', slot: 'none', price: 25, use: { cure: ['poisoned'] } },
   { id: 'rations', name: 'Rations', slot: 'none', price: 4, use: { food: 5 } },
+  { id: 'name_boards', name: 'Name-Boards', slot: 'none', price: 0 },
+  { id: 'customs_chit', name: 'Customs Chit', slot: 'none', price: 0, text: [
+    'A chit of thick paper, creased and salt-spotted, stamped with the Helmstow customs seal.',
+    '"Passed for Helmstow, under seal: boards fourteen, oars twenty-two, cordage, one bell. Salvage, the Wyke shore. Duty paid."',
+  ] },
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
   { id: 'greywater_ledger', name: 'Cargo Ledger', slot: 'none', price: 0 },
   { id: 'clerks_seal', name: "Clerk's Seal", slot: 'none', price: 0 },
