@@ -44,7 +44,8 @@ const LATERAL = VIEW_LATERAL;
 export interface ViewRect { x: number; y: number; w: number; h: number; }
 
 /** A monster to draw at a cell, resolved by the caller from the world's live groups. */
-export interface ViewMonster { sprite: MonsterSprite; tint: string; size: number; count: number; }
+/** A figure the viewport draws for a group: the monster, its sprite, tint and size. */
+export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; }
 
 function unit(k: number, h: number): number { return (h / 2) * NEAR / (k + 0.5); }
 
@@ -157,7 +158,7 @@ export { isSolidWall };
  */
 export function drawViewport(
   ctx: CanvasRenderingContext2D, world: World, r: ViewRect,
-  monstersAt: (x: number, y: number) => ViewMonster | null, frame: number, weather = true,
+  monstersAt: (x: number, y: number) => readonly ViewMonster[] | null, frame: number, weather = true,
 ): void {
   // The minute and the weather seed pin down the weather, so they key the scene with the place.
   const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, r.w, r.h].join('|');
@@ -189,15 +190,16 @@ export function drawViewport(
     for (let l = -LATERAL; l <= LATERAL; l++) {
       const c = cellAt(px, py, f, d, l);
       if (isSolidWall(map.at(c.x, c.y)) || !lineOfSight(map, px, py, f, d, l)) continue;
-      const m = monstersAt(c.x, c.y);
-      if (!m) continue;
+      const ms = monstersAt(c.x, c.y);
+      if (!ms?.length) continue;
       const u = unit(d, r.h);
       const tone = (dark ? 0.5 : Math.max(0.55, 1 - d * 0.12)) * dim * (1 - murk * 0.12 * d);
-      const n = Math.min(m.count, 3);
-      for (let i = 0; i < n; i++) {
+      // A group's figures side by side, each kind of it among them (world.ts, groupDrawn).
+      const n = ms.length;
+      ms.forEach((m, i) => {
         const off = (i - (n - 1) / 2) * u * 0.8;
         drawMonsterSprite(ctx, m.sprite, cx + l * 2 * u + off, horizon + u * 0.95, u * 2 * m.size, m.tint, tone, frame + i * 7);
-      }
+      });
     }
   }
   // Torch flicker in the dark: a vignette whose reach breathes a little.

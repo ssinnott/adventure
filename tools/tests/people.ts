@@ -3,7 +3,7 @@
 // fixture town holds the rest: questions and their answers, words by flag, several hand-ins, letters.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MAP_DEFS, ITEMS } from '../../src/content/index.ts';
+import { MAP_DEFS, ITEMS, QUESTS } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -76,6 +76,12 @@ export function people(): void {
 
     // The log, either way round: the quest or chapter done with no goal; early, nothing keyed to
     // the hiring alone, and nothing the hired order does not write too.
+    // A chapter may end on more than this hand-in (The Quiet Farm on Hild's word too): its other
+    // flags are set both ways round, so the hand-in's end is what is judged.
+    for (const s of [early, hired]) for (const def of QUESTS.flatMap((x): readonly QuestDef[] => x.chapters ?? [x])) for (const c of [def.done ?? []].flat() as QuestCond[]) {
+      const flags = [c.flag ?? []].flat();
+      if (flags.includes(q.setFlag)) for (const f of flags) s.party.flags[f] = 1;
+    }
     const ends = (x: { id: string; page: PageView }): boolean => x.page.done && [x.page.def.done ?? []].flat().some((c) => [(c as QuestCond).flag ?? []].flat().includes(q.setFlag));
     const quest = pages(early).find(ends);
     const questH = pages(hired).find((x) => x.id === quest?.id);

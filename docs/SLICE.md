@@ -66,8 +66,10 @@ DESIGN.md first for the why.
   hours (by night), once their `after` holds and until their `until` does, so one person can stand
   in two places, one at a time, and a once-event by night is not spent by day (`World.present`; the
   automap shows only who is there). The Foreland's side quests are built on them (#77).
-- **A monster's look.** The first time a company sees a kind, as the viewport draws it (the group's
-  first monster, in line of sight), or meets one in a fight unseen, the log says its `look`, once.
+- **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
+  of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
+  once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
+  then the rest (`groupDrawn`, `game/world.ts`), so the archer among the brigands is seen.
 - **Quest log** (J): the quests the party knows of, active first, each with its next goal and a
   journal of what the party has found. The main quest is one, The Dimming, joined from each area's
   chapter in road order (EXPANSION §5.8): The Quiet Farm (Vask) and The Grove Stone (Vask's lead,
@@ -75,13 +77,14 @@ DESIGN.md first for the why.
   every one is; its goal is tried from the last chapter back, over those begun and the ones before
   them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
   Beside it are the side quests: The Cargo Ledger (Hale), The Bell That Rang Twice (Osmund), The
-  Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud), The Well Tastes of Iron (Mottram) and
-  The Lost Expedition, which the first Meridian journal opens and which stays open until the rest of
-  its trail is built. Left and right page the one quest by chapter, and a page too long goes on over
-  the next. Nothing new is saved. Every entry is keyed to something the save already holds (a flag,
-  a carried item, a once-only event, a guardian killed, a map set foot on), so an old save opens
-  with its log whole. A quest or chapter begun, advanced or finished is announced once in the
-  message log, and J opens on the one that changed last, at its goal's chapter.
+  Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud), The Well Tastes of Iron (Mottram), A
+  Boat With No Name-Board (Wat and Hamo) and The Lost Expedition, which the first Meridian journal
+  opens and which stays open until the rest of its trail is built. Left and right page the one quest
+  by chapter, and a page too long goes on over the next. Nothing new is saved. Every entry is keyed
+  to something the save already holds (a flag, a carried item, a once-only event, a guardian killed,
+  a map set foot on), so an old save opens with its log whole. A quest or chapter begun, advanced or
+  finished is announced once in the message log, and J opens on the one that changed last, at its
+  goal's chapter.
 
 ## The outdoors as one map, and the end of the world
 
@@ -247,7 +250,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   size, alone, three and six abreast, through its idle, but for the parts `DETACHED` in
   `tools/smoke.ts` declares apart (the wardens' shards, the acolyte's censer, the lampman's
   lantern, the adept's hand flame, the rift hound's and the Hand of Ash's embers, the wraith's
-  fading cloth); the smoke test holds it.
+  fading cloth), and stands inside the view where a fight seats it, its foot 184 px below the
+  view's top (`seatFoot`); the smoke test holds it.
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
   three and four taper down, five is the old flat size and six goes under it. The row's spacing is
@@ -421,12 +425,14 @@ over content broken on purpose too, and two tools to theirs:
   goal on; a person who takes an item stands at the step's place; and nothing a person says is
   written into a chapter already done. Early, the goal comes from no chapter past the last begun,
   each end is said once and the log ends with the entries of the order played. The quests suite
-  holds every zone on the road of the built areas to a step of the quest; the Downs' is owed to
-  #47 and the Deepthorn's to #49.
+  holds every zone on the road of the built areas to a step of the quest; the Deepthorn's is owed
+  to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
+- `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
+  band seen ahead is met as each kind drawn.
 - `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
   together, labelled with each kind and its count of the living, but for a lone proper name ("The
   Eldest, 2 Heartwoods"). A kind leaves the label when its last one falls; every line stays inside the view and above the monsters' markers, running into
