@@ -96,13 +96,13 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
 `PLAYED_DEFS`, the maps as played).
 
 - **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 at its box of the grid: the
-  Foreland at 200,30 (G2), Thornmark at 232,30 (H2) and Callow Downs' first five boxes, F2 at
-  168,30, F3 at 168,62, E3 at 136,62, E2 at 136,30 and D3 at 104,62. The zone maps are still written
-  as maps of their own in their areas' `maps/` folders, in their own coordinates; laying them in
-  moves their features, monster groups and exits to where they sit, and leads every town's and
-  dungeon's way out onto the outdoors. Outdoors, the party's zone says where it is: the name on the
-  status strip and the almanac, the level band, the region whose weather it has, the palette it is
-  painted in.
+  Foreland at 200,30 (G2), Thornmark at 232,30 (H2) and Callow Downs' first six boxes, F2 at 168,30,
+  F3 at 168,62, E3 at 136,62, E2 at 136,30, D3 at 104,62 and D4 at 104,94. The zone maps are still
+  written as maps of their own in their areas' `maps/` folders, in their own coordinates; laying
+  them in moves their features, monster groups and exits to where they sit, and leads every town's
+  and dungeon's way out onto the outdoors. Outdoors, the party's zone says where it is: the name on
+  the status strip and the almanac, the level band, the region whose weather it has, the palette it
+  is painted in.
 - **Walked, not jumped.** An exit from one zone map into the next is dropped: the road through the
   pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its
   arrival line as what the log says on crossing into Thornmark ("The pass opens onto old forest.
@@ -115,14 +115,14 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
   well: the Foreland's north and south edges, F2's and E2's north (the rim, cut for good), E2's west
-  until D2 is built, E3's south, D3's north until D2 is built and its west and south, beyond the
-  cliff and the Upper Water's void, and Thornmark's north, east and south. Between the Foreland and
-  Thornmark the ridge stands as it was, two squares thick with the pass through it; between the
-  Foreland and F2 it is the Foreland's ring alone, with the Salt Road through a gap at 0,29. The
-  viewport paints the void as pink empty space, flat, unlit and untextured, standing up past the top
-  of the view so it hides the sky as well as the ground; no weather greys it (it is cut out of the
-  scene as it is painted, so anything nearer still covers it, and filled pink from behind at the
-  end). The automap marks it the same pink.
+  until D2 is built, E3's south, D3's north until D2 is built and its west, beyond the cliff and the
+  Upper Water's void, D4's west and south, where the Delta begins, and Thornmark's north, east and
+  south. Between the Foreland and Thornmark the ridge stands as it was, two squares thick with the
+  pass through it; between the Foreland and F2 it is the Foreland's ring alone, with the Salt Road
+  through a gap at 0,29. The viewport paints the void as pink empty space, flat, unlit and
+  untextured, standing up past the top of the view so it hides the sky as well as the ground; no
+  weather greys it (it is cut out of the scene as it is painted, so anything nearer still covers it,
+  and filled pink from behind at the end). The automap marks it the same pink.
 - **Building more.** A new box is a map in its area's `maps/` and `index.ts`, marked `density`
   core or country, and a line in its zone's `maps` in its area's `atlas.ts`, the map at its box's
   corner; `node tools/scaffold.ts` cuts its first draft from the atlas and names its box. Laid in, it

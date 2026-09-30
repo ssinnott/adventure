@@ -19,7 +19,7 @@ The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` b
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Foreland | 1–5, its map's | 2,296 | 879: the Foreland map, laid at 200,30 |
-| Callow Downs | 2–5 | 6,569 | F2, F3, E3, E2 and D3, laid at 168,30, 168,62, 136,62, 136,30 and 104,62 |
+| Callow Downs | 2–5 | 6,569 | F2, F3, E3, E2, D3 and D4, laid at 168,30, 168,62, 136,62, 136,30, 104,62 and 104,94 |
 | The area | 1–5 | 8,865 | a quarter |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -86,6 +86,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | Callow Downs, E3 | outdoor zone, 32×32 | 3–4 | Crowness Light and the keeper's cottage on the point; the Salt Road west in fog; the gibbet; the wreck and the wreckers' niche below the light; eight groups (§4.4) |
 | Callow Downs, E2 | outdoor zone, 32×32 | 3–4 | the Wend's fields and its ford on the track from Coldharbour west to the Berth; the drowned mill and its wheel-pit; the rookery in the willows, the first den; a boundary stone with a riddle, a spring, a cairn and a shepherd's camp; five groups (§4.5) |
 | Callow Downs, D3 | outdoor zone, 32×32 | 4–5 | the west downs to the lip of Kestrel Edge; a falconer, the lip over the Upper Water and the cleft with a kestrels' ledge; the bandit camp by the Salt Road, a den; a shrine, a cairn and a shepherd's hollow; seven groups (§4.8) |
+| Callow Downs, D4 | outdoor zone, 32×32 | 4–5 | Kestrel Edge: the Salt Road over the top, down the cliff in seven bends and across the low ground at its foot to the Delta; the runners' cave behind a bend; a shrine, a cairn and the waystation; four groups (§4.9) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
@@ -100,7 +101,8 @@ where the far beach ends at 0,15 (`f3_soot`), beside the shanty's last verse; th
 below Crowness Light (downs_e3 19,29) the soot on the ledge beside it at 18,29 (`e3_ledge`); and the
 wheel-pit's (downs_e2 22,26) the course of dry stone below the mill at 22,27 (`e2_wheel`), beside
 the shepherd's word; and the kestrels' ledge's (downs_d3 3,18) the cleft in the lip at 4,18
-(`d3_cleft`), beside the falconer's word.
+(`d3_cleft`), beside the falconer's word; and the runners' cave's (downs_d4 20,13) the rock worn
+smooth between the bends at 19,13 (`d4_worn`).
 
 In more detail, as SLICE.md had it before the area docs:
 
@@ -186,7 +188,7 @@ The places, as the atlas and the docs have them:
 | Crowness Light | E3 | the keeper who counted the eleven and wrote down the gaps (DESIGN §9, STORY); the Cleric's second prestige (#19); shore crabs under it | charted on E3 at the point, 156,90 (#67) |
 | Coldharbour | F2 | a retired Warden captain's farm; the Knight's second prestige (#19) | a planned farm at 176,42 |
 | The Berth | a dungeon, entered from D2 | the Queen's barrow, opened, and only her signet gone (DESIGN §9); band 4–5, her guard two by two down the passage and her captain at the empty bier (MONSTERS §5.2) | not on the atlas |
-| The Salt Road | F2, F3, E3, a corner of D3, and D4 | the wreckers and their lampman in fog; crows at the gibbet (MONSTERS §5.2) | a road through F2, F3, E3 and D3's corner, and planned down the Edge |
+| The Salt Road | F2, F3, E3, a corner of D3, and D4 | the wreckers and their lampman in fog; crows at the gibbet (MONSTERS §5.2) | a road through F2, F3, E3, D3's corner and down the Edge in D4 |
 | The Lodestone | G2, the built map (21.5,4) | "already intact; tutorial" (DESIGN §4) | built (#73): the stone's words, Gytha and the track from the gate road |
 | The Mewstone | G4 | nothing yet | an isle, the Deepthorn's |
 
@@ -525,6 +527,26 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 - **New here.** The road into Act II.
 - **Finds.** The runners' cave holds a Kite Shield +1.
 - **Pay.** About 200 xp a member.
+- **As built** (`maps/downs_d4.ts`, cut from the atlas at 104,94 as D3 was, the cliff written as
+  mountain):
+  - The Salt Road comes in from D3 at 29–30,0, crosses the plateau to the top of the Edge and goes
+    down the cliff in seven bends (x 12–20, rows 10–16), cut through the cliff widened there, then
+    across the low ground at its foot and out by the south-west corner at 1,31, as the atlas has it.
+    The atlas's road steps diagonally off that corner, so 0,31 and 1,31 are owed to #170, whose C5
+    meets it. The atlas's cliff stops three squares short of the gulf; it is carried on to the water
+    (19–20,18–20), so the bends are the one way down.
+  - At the top, the sign (bare words, THE DELTA, SALTMOUTH.), the shrine and the first sight of the
+    Delta (`d4_top`); gulls in the updraught on the plateau.
+  - The secret: the runners' cave, a secret door in the rock at 20,13 beside the fourth bend,
+    mountain either side, with the Kite Shield +1 in it. The hint is the rock worn smooth between
+    the bends at 19,13 (`d4_worn`). The cairn stands on the seventh bend.
+  - At the foot, the waystation (the camp), a mule's bones under the cliff and the reeds of the
+    Delta by the south edge.
+  - The groups, four: six Carrion Crows at the top, nearest the way in; two groups of three Billmen
+    and a Slinger, one on the bends and one at the foot; three Cutthroats on the road by the Delta,
+    the hardest and the furthest. At 4 the company wins every fight and manages 5.77 fights to a
+    rest. They pay about 236 xp a member, against the brief's 200.
+  - Density: 96.7% of its 667 squares within 12 steps, the furthest 18.
 
 ## 5. The one quest here
 
@@ -629,13 +651,13 @@ D3. E2 has the first statue too. §4.2 to §4.9 place every group, box by box.
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 2,957 xp a member today, 110 of it the guilds' pay and
-  about 1,180 F2's, F3's, E3's, E2's and D3's, past level 4 (1,650). The curve (EXPANSION §5.2, #31)
-  gives an area the climb from its floor to the next area's floor, divided by 0.75: 2,800 / 0.75,
-  about 3,730. The Downs are where the other 1,160 or so come from, shared among the boxes as §4.1
-  has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until they are
-  built the curve reports the shortfall as owed to the pilot (#26). A den's keepers pay once, and
-  its brood as a group that respawns does; the figures count the brood once.
+- **Experience.** One clear of the area pays 3,193 xp a member today, 110 of it the guilds' pay and
+  about 1,410 F2's, F3's, E3's, E2's, D3's and D4's, past level 4 (1,650). The curve (EXPANSION
+  §5.2, #31) gives an area the climb from its floor to the next area's floor, divided by 0.75: 2,800
+  / 0.75, about 3,730. The Downs are where the other 1,160 or so come from, shared among the boxes
+  as §4.1 has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until
+  they are built the curve reports the shortfall as owed to the pilot (#26). A den's keepers pay
+  once, and its brood as a group that respawns does; the figures count the brood once.
 - **Gold.** A clear pays about 3,590 with E3 and E2: 1,190 in chests before them, about 820 in drops
   (F2's and F3's among them), 900 in rewards (the clerk's seal and the tenant's paper once each,
   whoever takes them) and 180 in the guilds' pay, and E3's and E2's chests, hoards and drops on top. Training six members from 1 to
@@ -644,16 +666,17 @@ D3. E2 has the first statue too. §4.2 to §4.9 place every group, box by box.
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
   Deacon are won 98, 99 and 100% of the time at their maps' floors, where a boss should be won about
   half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The area as one pools
-  each group at its own map's floor (#209): 99.7% of its 65 groups' fights won, F2's and F3's at 2,
-  E3's and E2's at 3 and D3's at 4, against nine in ten. Two under, the Foreland's floor is 1 and
-  F2's and F3's 2, so only E3's, E2's and D3's 20 groups have a company there, E3's and E2's at 1
-  and D3's at 2: 75.2% won, off the aim of a quarter and inside the limit of nine in ten (#273),
-  listed; the Seam, a dungeon, counts two under the area's floor since #148, and is no longer judged
-  alone. Each zone walks its own road and warns at its own way in: the Foreland's from Helmstow, the
-  Downs' from F2's east edge along the Salt Road (`ROADS.downs`, the footpads and the Poacher), both
-  walked every time. The Foreland map and Brandy Hole give 4.6 and 4.1 fights to a rest, against six
-  or seven; E3 6.41, E2 6.28 and D3 6.32; the Seam 6.7, now that the company at 3 wears the band's
-  gear. The pilot settles them, by retuning or by moving the thresholds.
+  each group at its own map's floor (#209): 99.7% of its 69 groups' fights won, F2's and F3's at 2,
+  E3's and E2's at 3 and D3's and D4's at 4, against nine in ten. Two under, the Foreland's floor is
+  1 and F2's and F3's 2, so only E3's, E2's, D3's and D4's 24 groups have a company there, E3's and
+  E2's at 1 and D3's and D4's at 2: 75.5% won, off the aim of a quarter and inside the limit of nine
+  in ten (#273), listed; the Seam, a dungeon, counts two under the area's floor since #148, and is
+  no longer judged alone. Each zone walks its own road and warns at its own way in: the Foreland's
+  from Helmstow, the Downs' from F2's east edge along the Salt Road (`ROADS.downs`, the footpads and
+  the Poacher), both walked every time. The Foreland map and Brandy Hole give 4.6 and 4.1 fights to
+  a rest, against six or seven; E3 6.41, E2 6.28, D3 6.32 and D4 5.77; the Seam 6.7, now that the
+  company at 3 wears the band's gear. The pilot settles them, by retuning or by moving the
+  thresholds.
 - **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the
   band's gear: the Long Sword, the Hand Axe, the Long Bow, Scale Mail, Chain Mail and the Kite
   Shield. The Downs hold the kits with a plus and the band's gear with one, box by box as §4.2 to
