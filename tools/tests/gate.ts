@@ -89,6 +89,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'mill:m_warden: floor': { whose: '#87', at: 0.98 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
+  // D2's groups are the Downs' monsters at 4, too soft for a company of 4: its harder monsters
+  // are drawn in #69's creatures pull request, and the box retuned with them.
+  'downs_d2: rest': { whose: '#69', at: 14.32 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
