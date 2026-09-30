@@ -291,6 +291,8 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  * fails once it agrees, so it is dropped here.
  */
 const EDGES_OWED: Record<string, readonly string[]> = {
+  // The Salt Road's corner into D3 steps diagonally on the atlas, which no square of E3's edge can meet.
+  '#71': ['downs_e3 0,30', 'downs_e3 0,31'],
   // The elves' road on out of H3's east edge into I3, towards Henlys (I4), which the atlas does not draw.
   '#215': ['deepthorn_h3 31,23'],
 };

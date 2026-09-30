@@ -115,6 +115,8 @@ const combatColours = await colours();
 await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornmark', 6, 8, 3); g.enterCell(); });
 await page.waitForTimeout(150);
 const thornColours = await colours();
+// The ogre's band as the view draws it before the fight: each of its kinds, to three (world.ts, groupDrawn).
+const ogreView = await page.evaluate(() => { const g = (window as any).__game.game, band = g.world.liveGroups().find((q: any) => q.def.id === 'tm_ogre'); return band ? (g.monstersAt(band.state.x, band.state.y) ?? []).map((m: any) => m.id).join(',') : 'no tm_ogre'; });
 await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['tm_ogre', 'tm_wraiths']); });
 await page.waitForTimeout(150);
 const thornFight = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, monsters: g.top.state.monsters.map((m: any) => m.def.sprite).join(','), labels: g.top.labels.map((l: any) => l.text).join(' | ') }; });
@@ -133,12 +135,14 @@ const innColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 await page.evaluate(() => { const m = (window as any).__game.game.world.map; m.features.splice(m.features.findIndex((f: any) => f.id === 'fx_chair'), 1); });
 const outside = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), x: g.world.state.x, y: g.world.state.y, facing: g.world.state.facing }; });
-// A person in a business (game/people.ts, World.peopleAt): Hob, put in the Hearthlight at run time,
-// makes its first menu list him; his answer sends him away, and the menu no longer lists him.
+// A person in a business (game/people.ts, World.peopleAt): a Hob put in the Hearthlight at run time,
+// with the real Hob (#77) taken out for the run, makes its first menu list him; his answer sends him
+// away, and the menu no longer lists him. Then the real Hob is put back, and the menu lists him.
 const inn = await (async () => {
   const state = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
   await page.evaluate(() => {
-    const g = (window as any).__game.game;
+    const g = (window as any).__game.game, m = g.world.map;
+    (window as any).__hob = m.features.splice(m.features.findIndex((f: any) => f.kind === 'npc' && f.name.startsWith('Hob')), 1)[0];
     g.world.travel('harrow', 4, 5, 0);
     g.world.map.features.push({ kind: 'npc', x: 4, y: 4, name: 'Hob, once tenant of Ashcombe', lines: ['"A stranger, and armed."'], until: { flag: 'fx_hob_gone' },
       choice: { ask: '"Should I go to Gullwick?"', answers: [{ label: 'Go', sets: 'fx_hob_gone', says: ['"Then I go."'] }, { label: 'Stay', sets: 'fx_hob_stays', says: ['"Then I stay."'] }] } });
@@ -163,8 +167,16 @@ const inn = await (async () => {
     while (g.screens.length > 1) g.pop();
     const i = m.features.findIndex((f: any) => f.kind === 'npc' && f.name.startsWith('Hob'));
     if (i >= 0) m.features.splice(i, 1);
+    m.features.push((window as any).__hob);
     delete g.party.flags.fx_hob_gone; delete g.party.flags.fx_hob_stays;
     return top;
+  });
+  const hob = await page.evaluate(() => {
+    const g = (window as any).__game.game;
+    g.interact(g.world.map.features.find((f: any) => f.kind === 'inn'));
+    const menu = g.screens.find((s: any) => s.constructor.name === 'ChoiceScreen')?.options ?? [];
+    while (g.screens.length > 1) g.pop();
+    return menu;
   });
   // The Gilded Eel is its keeper: with Ebba and Maud in it from a new game (#77), the room says
   // itself over a menu that lists them.
@@ -175,7 +187,7 @@ const inn = await (async () => {
     while (g.screens.length > 1) g.pop();
     return { screens: out, options: under };
   });
-  return { menu, words, question, said, back, backColours, traded, left, eel };
+  return { menu, words, question, said, back, backColours, traded, left, hob, eel };
 })();
 // The Wardens' hall, the Drillyard, with First Watch's walk already made, so taking it pays at once.
 // Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
@@ -577,22 +589,28 @@ const hillSpill: string[] = await page.evaluate(async () => {
 // One silhouette: every monster drawn at combat size, alone, three abreast and six abreast, through
 // its idle motion, is one piece of ink. Ink is alpha 128 and up (a ground shadow is under it), a
 // piece is 8-connected, and specks under 6 px are left out. What stands apart must be declared.
-interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: boolean }
-const silhouettes: Silhouette[] = await page.evaluate(async () => {
+// Each is drawn where a fight seats a first group, its foot as far below the view's top as there
+// (`seatFoot`), on a canvas three heights wide, a height or the seat more above the view's top
+// (whichever is more) and 0.3 under the foot: ink above the view's top reaches over the frame, and ink on a border runs off the canvas.
+interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: '' | 'top' | 'edge'; room: number }
+const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhouette[]; seat: number } = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const S = await load('/src/ui/sprites.ts'), C = await load('/src/content/index.ts');
-  const out: Silhouette[] = [];
+  const F = await load('/src/ui/frame.ts'), G = await load('/src/ui/grouplabels.ts');
+  const seat = Math.round(G.seatFoot(0, F.LAYOUT.view.h));
+  const padOf = (h: number): number => Math.max(Math.ceil(h), seat);
   const c = document.createElement('canvas');
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
-  for (const def of Object.values(C.MONSTERS) as any[]) {
-    const worst = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: false };
+  type Draw = (ctx: CanvasRenderingContext2D, x: number, y: number, h: number, frame: number) => void;
+  const scan = (def: any, draw: Draw): Silhouette => {
+    const worst: Silhouette = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: '', room: seat };
     for (const n of [1, 3, 6]) {
-      const h = S.combatHeight(def.size, n), cw = Math.ceil(h * 3), ch = Math.ceil(h * 1.6);
+      const h = S.combatHeight(def.size, n), pad = padOf(h), cw = Math.ceil(h * 3), ch = pad + seat + Math.ceil(h * 0.3);
       c.width = cw; c.height = ch;
       const seen = new Int32Array(cw * ch), stack = new Int32Array(cw * ch);
       for (let frame = 0; frame <= 176; frame += 4) {
         ctx.clearRect(0, 0, cw, ch);
-        S.drawMonsterSprite(ctx, def.sprite, cw / 2, Math.round(h * 1.3), h, def.tint, 1, frame);
+        draw(ctx, cw / 2, pad + seat, h, frame);
         const d = ctx.getImageData(0, 0, cw, ch).data;
         seen.fill(0);
         const sizes: number[] = [];
@@ -603,7 +621,9 @@ const silhouettes: Silhouette[] = await page.evaluate(async () => {
           while (top) {
             const p = stack[--top], px = p % cw, py = (p - px) / cw;
             size++;
-            if (px === 0 || py === 0 || px === cw - 1 || py === ch - 1) worst.clipped = true;
+            if (py - pad < worst.room) worst.room = py - pad;
+            if (px === 0 || py === 0 || px === cw - 1 || py === ch - 1) worst.clipped = 'edge';
+            else if (py < pad && worst.clipped !== 'edge') worst.clipped = 'top';
             for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
               const qx = px + dx, qy = py + dy, q = qy * cw + qx;
               if (qx < 0 || qy < 0 || qx >= cw || qy >= ch || seen[q] || d[q * 4 + 3] < 128) continue;
@@ -618,9 +638,32 @@ const silhouettes: Silhouette[] = await page.evaluate(async () => {
         if (ink && apart / ink > worst.share) worst.share = apart / ink;
       }
     }
-    out.push(worst);
-  }
-  return out;
+    return worst;
+  };
+  const defs = Object.values(C.MONSTERS) as any[];
+  const silhouettes = defs.map((def) => scan(def, (g, x, y, h, frame) => S.drawMonsterSprite(g, def.sprite, x, y, h, def.tint, 1, frame)));
+  // The fixtures: a def with the top fifth of its ink moved up, as a crest or a raised wing might
+  // be. Each has to fail for reaching above the view: the tallest def's moved a third of its height,
+  // and the smallest's moved clear of the view by more than its own height.
+  const o = document.createElement('canvas');
+  const lifted = (def: any, id: string, lift: (h: number, top: number) => number): Silhouette => scan({ ...def, id }, (g, x, y, h, frame) => {
+    o.width = g.canvas.width; o.height = g.canvas.height;
+    const oc = o.getContext('2d', { willReadFrequently: true })!;
+    S.drawMonsterSprite(oc, def.sprite, x, y, h, def.tint, 1, frame);
+    g.drawImage(o, 0, 0);
+    const d = oc.getImageData(0, 0, o.width, o.height).data;
+    let top = 0;
+    while (top < o.height && ![...Array(o.width).keys()].some((i) => d[(top * o.width + i) * 4 + 3] >= 128)) top++;
+    const band = Math.round(h * 0.2), up = Math.round(lift(h, top));
+    g.drawImage(o, 0, top, o.width, band, 0, top - up, o.width, band);
+  });
+  const tall = defs.reduce((a, b) => (b.size > a.size ? b : a)), small = defs.reduce((a, b) => (b.size < a.size ? b : a));
+  const raised = [
+    lifted(tall, `${tall.id}, its top fifth raised a third`, (h) => h / 3),
+    // Its band's foot a height and 8 px above the view's top, which is row `padOf(h)` of the canvas.
+    lifted(small, `${small.id}, its top fifth raised a height clear of the view`, (h, top) => top + Math.round(h * 0.2) - (padOf(h) - h - 8)),
+  ];
+  return { silhouettes, raised, seat };
 });
 const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
 const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
@@ -639,6 +682,7 @@ ok(exploreColours > 20, `the viewport, automap and party cards painted (${explor
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
+ok(ogreView === 'ogre,brigand_archer,brigand', `before the fight the view draws the ogre's band as each of its kinds (${ogreView})`);
 // The ogre's band is mixed: its label names each kind with its count, as painted (ui/grouplabels.ts).
 ok(thornFight.labels.startsWith('1 Ogre, 1 Brigand Archer, 3 Brigands'), `a mixed band's label names each kind with its count (${thornFight.labels})`);
 ok(townColours > 20, `Thornhold paints (${townColours} colours)`);
@@ -647,6 +691,7 @@ ok(inn.menu.screen === 'ChoiceScreen' && inn.menu.options.join() === 'A room and
 ok(inn.words.text === '"A stranger, and armed."' && inn.question.text === '"Should I go to Gullwick?"' && inn.said.text === '"Then I go."', `talking to him says his words and puts his question in the side panel (${inn.words.screen}, ${inn.question.screen}, ${inn.said.screen})`);
 ok(inn.back.screen === 'ChoiceScreen' && inn.back.options.join() === 'A room and rations,Leave' && inn.backColours > 20, `his answer sends him away: back on the first menu, which no longer lists him (${inn.back.options.join(', ')})`);
 ok(inn.traded === 'ExploreScreen,InteriorScreen,ChoiceScreen' && inn.left === 'ExploreScreen', `with him gone, the trade opens once, and Esc leaves (${inn.traded}, then ${inn.left})`);
+ok(inn.hob.join() === 'A room and rations,Talk to Hob,Leave', `the real Hob, by the Hearthlight's fire from a new game, is on its first menu (${inn.hob.join(', ')})`);
 ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Talk to Maud,Leave', `the Gilded Eel, with Ebba and Maud in it from a new game, says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
 ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
@@ -687,7 +732,10 @@ ok(pass.map === 'caldera' && pass.zone === 'thornmark' && pass.x === 1 && pass.y
 ok(windingHoles.length === 0, `every pair of sprite part kinds unions without a hole${windingHoles.length ? ' -> ' + windingHoles.join(', ') : ''}`);
 ok(!hillSpill.length, `a hill's body, its crest light with it, is drawn inside its outline, near and far${hillSpill.length ? ` -> ${hillSpill.slice(0, 4).join(', ')}` : ''}`);
 ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls beside the party are drawn, in ${cracks.views} views (${sweeps.map((m) => m.id + (m.all ? ' four ways' : '')).join(', ')})${cracks.bad.length ? ` -> ${cracks.bad.length} views, ` + cracks.bad.slice(0, 4).join(', ') : ''}`);
-ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
+ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped === 'top' ? 'reaches above the view' : s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
+const closest = silhouettes.reduce((a, b) => (b.room < a.room ? b : a));
+ok(closest.room >= 0, `every monster stands inside the view, its foot ${seat} px below the top as a fight seats it (the closest, ${closest.id}, ${closest.room} px under the top)`);
+ok(raised.every((r) => r.clipped === 'top'), `a monster with a part raised a third of its height, or clear of the view, reaches above it, and fails (${raised.map((r) => `${r.id}: ${r.clipped === 'top' ? 'reaches above the view' : `${r.room} px under the top`}`).join('; ')})`);
 if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

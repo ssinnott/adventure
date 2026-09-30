@@ -58,7 +58,7 @@ export const DEEPTHORN_H3: MapDef = {
   ],
   features: [
     // The way in, in the order the road meets it.
-    { kind: 'sign', x: 8, y: 1, text: 'A sign reads: "The Deepthorn. The Elder\'s peace ends here. Keep to the path, and keep walking."' },
+    { kind: 'sign', x: 8, y: 1, text: 'The Deepthorn. The Elder\'s peace ends here. Keep to the path, and keep walking.' },
     { kind: 'shrine', x: 9, y: 1, id: 'h3_shrine', text: 'A shrine of piled stones where the elves\' road leaves the hollow, a green branch laid across it.', stat: 'personality', done: 'The branch on the shrine is green still.' },
     { kind: 'event', x: 5, y: 9, id: 'h3_wyke', once: true, text: 'Light woods, and the Wyke through the trunks. Across the water, low and grey, the Foreland\'s shore.' },
     { kind: 'camp', x: 7, y: 13, name: 'A camp on the shingle', text: 'A camp on the shingle, its fire-ring stacked ready. By night the Foreland\'s lights show across the water.' },
@@ -88,11 +88,11 @@ export const DEEPTHORN_H3: MapDef = {
     // strayed from the Grove on the shore, brambles across the road short of the ford, and east of
     // it, where the deep begins, the rootwalkers.
     { id: 'h3_wolves', x: 7, y: 11, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
-    { id: 'h3_brood1', x: 15, y: 9, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440, until: NEST_BURNT },
-    { id: 'h3_brood2', x: 14, y: 18, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440, until: NEST_BURNT },
-    { id: 'h3_keepers', x: 18, y: 27, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 3, roams: false },
-    { id: 'h3_hounds', x: 12, y: 27, monsters: ['rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'h3_brambles', x: 19, y: 23, monsters: ['bramble', 'bramble', 'bramble', 'bramble', 'bramble', 'bramble'], aware: 2, respawn: 2880 },
-    { id: 'h3_rootwalkers', x: 30, y: 23, monsters: ['rootwalker', 'rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: 2880 },
+    { id: 'h3_brood1', x: 15, y: 9, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440, until: NEST_BURNT },
+    { id: 'h3_brood2', x: 14, y: 18, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440, until: NEST_BURNT },
+    { id: 'h3_keepers', x: 18, y: 27, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 3, roams: false },
+    { id: 'h3_hounds', x: 12, y: 27, monsters: ['rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 2880, until: TEAR_CLOSED },
+    { id: 'h3_brambles', x: 19, y: 23, monsters: ['bramble', 'bramble', 'bramble', 'bramble'], aware: 1, roams: false, respawn: 2880, until: TEAR_CLOSED },
+    { id: 'h3_rootwalkers', x: 30, y: 23, monsters: ['rootwalker', 'rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: 2880, until: TEAR_CLOSED },
   ],
 };

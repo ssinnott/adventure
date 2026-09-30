@@ -1,6 +1,8 @@
 // The Foreland's side quests, in the journal's words: The Cargo Ledger (Hale), The Bell That Rang
-// Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The Clerk's Seal (Maud) and The Well
-// Tastes of Iron (Mottram). Its chapter of the one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
+// Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The Clerk's Seal (Maud), The Well Tastes
+// of Iron (Mottram), A Boat With No Name-Board (Wat and Hamo, at Gullwick) and Who Lived at Ashcombe
+// (Hob). Its chapter of the one quest is in ./chapter.ts. How the words are keyed is in
+// src/content/area.ts (`quests`);
 // tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 
@@ -128,6 +130,57 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { flag: ['q_well', 'q_well_alwin'] }, text: 'Take what the mason said back to Mottram\'s Stores.' },
       { when: { flag: 'q_well', seen: 'harrow:well_cart' }, text: 'Find who drives the cart with no lamp that leaves the gatehouse by night.' },
       { when: { flag: 'q_well' }, text: 'Find where the stone dust in Helmstow\'s well comes from.' },
+    ],
+  },
+  {
+    id: 'board',
+    title: 'A Boat With No Name-Board',
+    start: [{ flag: 'q_board' }, { item: 'name_boards' }],
+    done: [{ flag: 'q_board_home' }, { flag: 'q_board_sold' }],
+    entries: [
+      { id: 'wat', when: { flag: 'q_board' },
+        text: 'Wat, Gullwick\'s boat-builder, wants the Patience\'s name-board off the wreckers\' beach before it goes on a fire. He says to go by night.' },
+      { id: 'hoard', when: [{ item: 'name_boards' }, { flag: 'q_board_home' }, { flag: 'q_board_sold' }],
+        text: 'Under sailcloth on the far beach, the wreckers\' hoard: name-boards stacked like slates, the Patience\'s among them.' },
+      { id: 'chit', when: [{ item: 'customs_chit' }, { flag: 'q_board_home' }, { flag: 'q_board_sold' }],
+        text: 'With them, a chit under the Helmstow customs seal: boards fourteen, passed as salvage, duty paid.' },
+      { id: 'home', when: { flag: 'q_board_home' },
+        text: 'The boards went home to Gullwick. Wat found a chisel\'s marks on the Patience\'s: she was not wrecked but taken, and his boys with her.' },
+      { id: 'sold', when: { flag: 'q_board_sold' },
+        text: 'We sold the boards to Hamo, the Compact\'s buyer on the Salt Road, by the plank.' },
+    ],
+    goals: [
+      { when: { item: 'name_boards' }, at: 'downs_f3', text: 'Take the name-boards across the Wend to Gullwick, or sell them.' },
+      { when: { flag: 'q_board' }, at: 'downs_f3', text: 'Find the Patience\'s name-board on the wreckers\' beach, across the Wend from Gullwick. Go by night.' },
+    ],
+  },
+  {
+    // #56's second: Hob, once tenant of Ashcombe, who let his cellar to the Ashen and did not ask. His
+    // paper goes to Vask, and he is not seen again, or to Hale, who sends him to Gullwick. A company
+    // that brings him his key before it has heard him begins it there.
+    id: 'tenant',
+    title: 'Who Lived at Ashcombe',
+    start: [{ flag: 'q_ashcombe_who' }, { flag: 'q_hob_key' }],
+    done: [{ flag: 'q_paper_vask' }, { flag: 'q_paper_hale' }],
+    entries: [
+      { id: 'hob', when: { flag: 'q_ashcombe_who' },
+        text: 'Hob, by the Hearthlight\'s fire, had the tenancy of Ashcombe. His people went away, he says, and the land never paid the rent.' },
+      { id: 'kitchen', when: { seen: 'shelf:ash_kitchen' },
+        text: 'In the Ashcombe kitchen, the hearth-key on its nail and the hearth below it swept. Nobody flees a house and sweeps it first.' },
+      { id: 'key', when: { flag: 'q_hob_key' },
+        text: 'Hob let the cellar under Ashcombe to three in grey for twenty gold, and sent his family to Gullwick when the singing came up through the floor.' },
+      { id: 'paper', when: [{ item: 'tenant_paper' }, { flag: 'q_paper_vask' }, { flag: 'q_paper_hale' }],
+        text: 'Under the flour crock, the paper that let the cellar, with a tenant\'s cross at its foot. On the back: THE HEARTH IS A CAGE.' },
+      { id: 'vask', when: { flag: 'q_paper_vask' },
+        text: 'We gave the paper to Vask. The Crown will see the matter closed, and Ashcombe will have a new tenant by spring.' },
+      { id: 'hale', when: { flag: 'q_paper_hale' },
+        text: 'We gave the paper to Captain Hale. Hob goes to his wife\'s people at Gullwick, and stays there until Hale says.' },
+    ],
+    goals: [
+      { when: { item: 'tenant_paper' }, text: 'Take the paper to Vask in the keep, or to Captain Hale at the pass.' },
+      { when: { flag: 'q_hob_key' }, text: 'Hob let his cellar and sent his family away. Look again around the Ashcombe farmhouse.' },
+      { when: { item: 'hearth_key' }, text: 'Take the hearth-key to Hob, by the Hearthlight\'s fire.' },
+      { when: { flag: 'q_ashcombe_who' }, text: 'Find out where Hob\'s people went. Ashcombe is south-east of Helmstow, on the Foreland road.' },
     ],
   },
 ];

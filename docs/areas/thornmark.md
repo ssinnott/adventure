@@ -135,7 +135,7 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   den, #88, its hoard a Rune Dagger +2); and How Did He Know's camp, whose orders Idony wants at the
   Split Oak. Seven groups: dire wolves, the nest's two brood and its keepers, rift hounds until the
   tear is closed, brambles short of the ford and rootwalkers east of it, where the road runs on out
-  of the east edge for I3 and Henlys. The gate holds at 8, off its aim at 8.9 fights to a rest.
+  of the east edge for I3 and Henlys. The gate holds at 8, at 7.9 fights to a rest.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
@@ -287,14 +287,16 @@ settled in its issue, and what the pilot teaches changes them.
 - **Finds.** The ford-keeper's strongbox holds a Tower Shield +1; the nest's hoard, a dead
   traveller's Rune Dagger +2.
 - **Pay.** About 410 xp a member.
-- **As built** (#214, 30 September): the brief's places, with the gate's groups larger than it drew
-  them. Brambles two to a group and eight dire wolves left a company at 8 over fifteen fights to a
-  rest, past the gate's limit of ten, so the brambles are six, the rift hounds and the nest's groups
-  twelve and the rootwalkers four, and the nest breeds two brood, not three. The rise from the way
-  in put the wolves nearest, the brambles on the road short of the ford. It pays about 1,900 xp a
-  member and 610 gold, against the 410 and 160 shared to it here: the gate and the curve's shares
-  disagree, and the owner decides which gives (§8). It took an afternoon's session, the scaffold to
-  a green check. What the owner finds by hand goes here when the box has been played.
+- **As built** (#214, 30 September): the brief's places, with harder monsters, not bigger groups, as
+  the Cut Stone has them: no group above eight (the owner's delegate). The bramble and the
+  rootwalker are retuned as #298 has them (57 and 83 hit points), the brambles four and the
+  rootwalkers four, the rift hounds, the wolves, the nest's keepers and its two brood eight each;
+  the nest breeds two brood, not three. The brambles stand rooted across the road short of the ford,
+  and they and the rootwalkers stop coming once the tear is closed. A company at 8 wins every fight
+  and manages 7.9 fights to a rest. The rise from the way in put the wolves nearest. As measured it
+  pays about 1,300 xp a member and 610 gold; the 410 and 160 shared to it here are drafts. It took
+  an afternoon's session, the scaffold to a green check. What the owner finds by hand goes here when
+  the box has been played.
 
 ### 4.3 I3, Deepthorn Lodge (#215): country, band 8–10
 
@@ -571,7 +573,8 @@ I5.
   never have. Until the boxes are built the curve reports the shortfall as owed to #26. A den's
   keepers pay once, and its brood as a group that respawns does; the figures count the brood once.
   Act II's cap and curve (#159) are to pay a kill by the monster's level against the member's, which
-  re-prices every figure here if they land first; each box is measured when it is built.
+  re-prices every figure here if they land first; each box is measured when it is built. H3, built,
+  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101.
 - **Gold.** A clear pays 6,518 of the 8,400 that training six members from 5 to 10 costs (§3), the
   Lanterns' quests in it, and 7,600 with #219's side quests. The Deepthorn's share of the rest is
   about 1,200, the 1,900 it was less the two hand-ins' sure 700 (#219): H3 160, I3 170, I4 275, J4
@@ -584,7 +587,9 @@ I5.
   floor, in Thornmark's pool, with the zone's at 3 and the dungeons' at 3, the area's floor less
   two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
   of its own, with its road walked at 8 and its warning at its way in from the Grove
-  (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it.
+  (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it. With H3 built, Thornmark
+  two under its maps' floors wins 33.6% of its 43 groups' fights, off the aim of 25% and inside the
+  limit: it comes of #209's pooling, which the size of a group does not move.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their
