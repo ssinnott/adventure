@@ -1436,3 +1436,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Saltreach's C2, C3 and the Wind Cave want the face from below). #305's choices 1 and 2 are so
   settled. #72 (D4) to the #67 session (540K of context, the Downs' cut workaround in hand), on
   `claude/m1-72-d4` with #305's branch merged; lands after #305.
+- 23:14: #296 (#163's dead wood) landed: its round (d52be4d: the woods' tree, wall and snow checks
+  run on dead wood too, with `DEAD_MIN` 2.5; each broken on purpose; SLICE rewrapped, no word
+  changed) on main dca3ae1. Landing check on its head: ALL OK (32 owed), SMOKE OK, "Nothing new.";
+  CI green. Merged as b267260; main's tree is the tested tree (f9bbee8). #163 stays open for #297;
+  #216's blocker is gone.
+- 23:14: `reviews/297.md` (#163's crystal and chasm): ready after fixes. Should-fix: the two
+  reachability walkers (and the sheet's `open`) walk through the chasm (K3 as cut is split by it:
+  247 of 462 reached, and both checks would pass it); nothing tests that monsters refuse it; a chasm
+  five ahead blacks the ground under the horizon across the view (`viewport.ts:257`, a fix tried).
+  Nits: the automap's colours, a secret door between glass and green trees, seams, a chasm indoors,
+  no smoke line, long lines. The look and the four choices to a delegate. Reviewer on #304 (I3),
+  merging #298's branch on top.
