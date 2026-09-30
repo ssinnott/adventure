@@ -293,8 +293,8 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
 const EDGES_OWED: Record<string, readonly string[]> = {
   // The Salt Road's corner into D3 steps diagonally on the atlas, which no square of E3's edge can meet.
   '#71': ['downs_e3 0,30', 'downs_e3 0,31'],
-  // The elves' road on out of H3's east edge into I3, towards Henlys (I4), which the atlas does not draw.
-  '#215': ['deepthorn_h3 31,23'],
+  // The elves' road on out of I3's south edge into Henlys (I4), which the atlas does not draw.
+  '#49': ['deepthorn_i3 12,31'],
 };
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */

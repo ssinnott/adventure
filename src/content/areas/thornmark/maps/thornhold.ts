@@ -79,6 +79,11 @@ export const THORNHOLD: MapDef = {
         '"Paid to fell the marked oaks. By a Lantern in travel-grey, with coin that is not coin." She turns to you. "The Hand marked those trees. Now someone pays to have them felled, in the Hand\'s coin, in a Lantern\'s coat. I want you to remember that. I will."',
         '"Burner. You go over the Scarth tonight with what you came with, and you do not come back into Thornmark while I live. That is not a punishment. It is the only mercy the wood has left in it."',
       ] },
+      { after: [{ flag: ['q_grove', 'q_hunters_told'] }, { flag: ['q_grove_done', 'q_hunters_told'] }], until: { flag: 'q_hunters_shut' }, sets: 'q_hunters_shut', lines: [
+        'Sylvane hears it through without a word, and when you have finished she is quiet for so long that you wonder whether she heard.',
+        '"The lodge was built on my sufferance, and its hunters have walked my wood for sixty years, and the one night it mattered they looked at the river." She closes her eyes. "They winter in the deep. Thornhold\'s gate is shut to them until the Stone is whole, and they may tell their grandchildren why."',
+        '"You did right to tell me. I do not thank you for it. Those are different things, and you are old enough to know it."',
+      ] },
       { after: [{ flag: ['q_grove', 'q_glass_truth'] }, { flag: ['q_grove_done', 'q_glass_truth'] }], until: { flag: 'q_glass_told' }, sets: 'q_glass_told', lines: [
         'Sylvane does not ask what the glass held. She waits, and you tell her, and at the word mend she closes her eyes.',
         '"My mother\'s time. I was a child; I remember the winter, and Lanterns in the Grove, and being told nothing. So there is a glass that remembers what I was told to forget." She opens her eyes. "Since the Reader would keep it from me, I will give you something she does not have. The mark on the chisel that cut our Stone is on the seal of a treaty in Henlys, south through the deep. My mother said once it was on the mend, too, and never again. Go and see it."',

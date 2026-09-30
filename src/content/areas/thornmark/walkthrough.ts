@@ -116,6 +116,7 @@ const KEYNE = (): Person => who('thornhold', 6, 7, 'Keyne'), MEVA = (): Person =
 const THORA = (): Person => who('thornmark', 18, 4, 'Thora'), THORA_WALL = (): Person => who('thornhold', 7, 1, 'Thora'), KERROW = (): Person => who('thornhold', 4, 10, 'Kerrow');
 const EDITH = (): Person => who('thornmark', 5, 27, 'Edith'), EDITH_STONE = (): Person => who('grove2', 7, 7, 'Edith');
 const IDONY = (): Person => who('thornhold', 12, 13, 'Idony');
+const GODRIC = (): Person => who('deepthorn_i3', 11, 14, 'Godric');
 
 /** Whether a person stands where they are listed now. */
 const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
@@ -330,6 +331,30 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     answerTo(w, 'thornhold', IDONY(), 'Give them back to us.');
     reads(w, 'orders', 'How Did He Know', ['orders', 'council'], ['idony', 'watch'], 'the orders kept for the Council');
     w.ok(w.party.bag.includes('survey_orders') && there(w, IDONY(), 'thornhold') && hear(w, 'thornhold', IDONY()).startsWith('"Still here.'), 'kept, the orders are back in the pack, and Idony stays with her after-line');
+  }
+  { // The Hunters' Bargain (#215): the yard's brambles cut down, Godric freed, and Sylvane told.
+    const w = newWalk(ok);
+    meetWho(w, 'q_grove');
+    walkThrough(w, 'deepthorn_h3', 29, 23, EAST, 'deepthorn_i3');
+    see(w, 'deepthorn_i3:i3_cellar');
+    w.ok(!there(w, GODRIC(), 'deepthorn_i3'), 'while the brambles stand in the yard, Godric is behind the cellar door');
+    w.level = 8;
+    fight(w, 'deepthorn_i3:lodge_brambles');
+    w.ok(there(w, GODRIC(), 'deepthorn_i3') && !shows(w, 'deepthorn_i3', 'i3_cellar'), 'the brambles cut down, Godric comes up from the cellar');
+    answerTo(w, 'deepthorn_i3', GODRIC(), 'Sylvane will hear it.');
+    w.ok(w.news.includes('New quest: The Hunters\' Bargain.') && page(w, 'hunters')?.goal === 'Tell Elder Sylvane in Thornhold what the lodge\'s hunters did.', `told, the goal is Sylvane (${page(w, 'hunters')?.goal})`);
+    w.ok(hear(w, 'thornhold', SYLVANE()).startsWith('Sylvane hears it through'), 'Sylvane hears the lodge\'s part in it');
+    reads(w, 'hunters', 'The Hunters\' Bargain', ['cellar', 'godric', 'told', 'shut'], ['kept'], 'Sylvane told');
+    w.ok(hear(w, 'deepthorn_i3', GODRIC()).startsWith('"Word came.'), "Godric's after-lines are the gate shut's");
+  }
+  { // The Hunters' Bargain: the lodge's secret kept, and the blazed oak shown.
+    const w = newWalk(ok);
+    w.level = 8;
+    fight(w, 'deepthorn_i3:lodge_brambles');
+    const said = answerTo(w, 'deepthorn_i3', GODRIC(), 'We\'ll hold it.');
+    w.ok(said.includes('blazed with three notches'), 'kept, Godric shows the hunters\' mark');
+    reads(w, 'hunters', 'The Hunters\' Bargain', ['godric', 'kept'], ['told', 'shut'], 'the secret kept');
+    w.ok(hear(w, 'deepthorn_i3', GODRIC()).startsWith('"Still here.') && !w.party.flags.q_hunters_shut, "Godric's after-lines are the secret kept's, and Sylvane shuts no gate");
   }
   { // The Mender: the camp found, the kit back, the tear shut and the Stone mended; the sliver carried.
     const w = newWalk(ok);

@@ -27,7 +27,7 @@ The atlas (its rows in `src/content/areas/thornmark/atlas.ts`, merged into `ATLA
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Thornmark | 5–10, its map's | 2,028 | 901: the Thornmark map, laid at 232,30 |
-| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214) |
+| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I3, Deepthorn Lodge, at 264,62 (#215) |
 | The area | 5–10 | 5,274 | a sixth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -136,6 +136,16 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   Split Oak. Seven groups: dire wolves, the nest's two brood and its keepers, rift hounds until the
   tear is closed, brambles short of the ford and rootwalkers east of it, where the road runs on out
   of the east edge for I3 and Henlys. The gate holds at 8, at 7.9 fights to a rest.
+- **Deepthorn Lodge** (I3, `deepthorn_i3`, country, band 8–10; #215): the upper Dowrdu down the
+  box's west side, the Hoarhills across it with the Eaves' forest closed over them, and the lodge on
+  its rise at 272,76, its yard shut by four brambles (a guardian) with its hunters in the cellar
+  (The Hunters' Bargain). A game trail runs north past the hunters' hide and a spring to a cairn on
+  the saddle and the cutters' boot prints; a dire wolves' den lies under a fallen oak off the road
+  (its hoard a Runed Robe +2); behind the blazed oak the hunters' path runs south to the den's
+  track. Eight groups, none above eight: thorn spiders in the brakes, the den's pack and two brood,
+  the ogre alone on the road, the brambles, four great owls over the lodge by night and two
+  heartwoods on the game trail. The road comes in from H3 and runs out of the south edge at 12,31
+  for Henlys. The gate holds at 8, at 7.3 fights to a rest.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
@@ -326,6 +336,13 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** A lodge in the deep, and a rest there.
 - **Finds.** The den's hoard, what the pack dragged in: a dead Lantern's Runed Robe +2.
 - **Pay.** About 470 xp a member.
+- **As built** (#215, 30 September): the brief's places, no group above eight, with the bramble, the
+  rootwalker, the great owl and the heartwood as #298 retunes them. The den's brood are eight, not
+  eight to ten; the owl is four by night; the heartwood two. The yard's brambles are a guardian, so
+  Godric comes up once they are cut down. The hunters' path runs south from the yard to the den's
+  track, since a way to I4 of its own would cross the road. As measured it pays about 1,100 xp a
+  member and 210 gold, and brings Thornmark's gold to the curve's 8,400, so its owed gold is
+  dropped. What the owner finds by hand goes here when the box has been played.
 
 ### 4.4 I4, Henlys (#49): core, band 8–10
 
@@ -478,7 +495,7 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 12 | The Elder's Four | 6 | the Grove Roots; Thornhold | a person found below; a choice; an event that comes with a flag | the built maps (#219), built |
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214), built |
-| 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215) |
+| 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215), built |
 | 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218) |
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
