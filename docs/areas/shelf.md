@@ -441,22 +441,22 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   keepsake that sells well; the wolves' den's hoard, a dead traveller's Spear +1.
 - **Pay.** About 420 xp a member.
 - **As built** (#69). The track from E2's ford comes in at 31,12 and ends on the crest at the
-  Berth's mouth (12–13,12), a long barrow of rock at 7–13,10–14 with its forecourt open; the
-  pulled stones and their chisel marks at 15,13; the sign where the track tops the ridge (22,11).
-  The dungeon's door is #70's, on the forecourt. Nine small barrows along the ridge, the hollow one
-  at 20,3 behind a door at 20,4, hinted at 20,5 (`d2_ring`) and by the shepherd at his hut
-  (3–4,17). The dew pond (20–21,17–18), a shrine on the crest (8,2), a cairn on the highest barrow
-  (27,3), a camp in the lee (17,27) and the Cradle, cut in the chalk below the ridge at 10–20,18–22
-  and said at 15,23. The chalk pit at 3–8,4–8 holds the den (5,6). The groups: six Carrion Crows by
-  the way in (27,15); three Chalk Wolves three times, the den's brood (24,6, 25,23 and 8,26); the
-  pack beside the den (6,6); the Black Dog by night, one on the track (17,10) and two behind the
-  barrow (11,16). The cist holds 60 gold, the Halberd +1 and the Ring of Office; the den's hoard 45
-  gold and the Spear +1. The Berth is on the atlas as a site (a ruin: Thornmark claims the barrow's
-  icon), its place with #70's dungeon.
-- **For the owner.** The Downs' monsters are all at 4 or under, and at D2's floor a company of 4
-  wins every fight and goes 14.3 fights to a rest. Its gate line is owed to #69 until D2's harder
-  monsters are drawn, as E2's Old Rook was for E2. The pack is a stand-in until then: two of
-  Thornmark's Dire Wolves (6) with two Chalk Wolves, the only group at 5, which the curve asks for.
+  Berth's mouth (12–13,12), a long barrow of rock at 7–13,10–14 with its forecourt open; the grooves
+  where the stones were dragged clear at 15,13; the sign where the track tops the ridge (22,11). The
+  dungeon's door is #70's, on the forecourt. Eight small barrows along the ridge, the hollow one at
+  20,3 behind a door at 20,4, hinted at 20,5 (`d2_ring`) and by the shepherd at his hut (3–4,17).
+  The dew pond (20–21,17–18), a shrine on the crest (8,2), a cairn on the highest barrow (27,3), a
+  camp in the lee (17,27) and the Cradle, cut in the chalk below the ridge at 10–20,18–22 and said
+  at 15,23. The chalk pit at 3–8,4–8 holds the den (5,6). The groups: six Carrion Crows by the way
+  in (27,15); a Barrow Wolf and two Chalk Wolves three times, the den's brood (24,6, 25,23 and
+  8,26); the pack, two Barrow Wolves and a Chalk Wolf, beside the den (6,6); the Black Dog by night,
+  one on the track (17,10) and two behind the barrow (11,16). The cist holds 60 gold, the Halberd +1
+  and the Ring of Office; the den's hoard 45 gold and the Spear +1. The Berth is on the atlas as a
+  site (a ruin: Thornmark claims the barrow's icon), its place with #70's dungeon.
+- **The gate.** D2's floor is 4, over the Downs' monsters, so its harder ones are at 5 on MONSTERS
+  §4.4's line: the Barrow Wolf, an elite on the chalk wolf's frame (#69's creatures pull request),
+  and the Black Dog, an elite at 5. At 4 every fight is won and a day is 6.99 fights to a rest; a
+  clear pays about 400 xp a member, the brood counted once.
 
 ### 4.7 The Berth (#70): dungeon, 16 by 16, band 4–5
 
@@ -629,15 +629,15 @@ New in the Downs, for the novelty check (EXPANSION §5.4): the birds, a new fami
 farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41); and dens, camps
 that breed one kind of monster until a company beats their keepers and burns them (#88): a rookery
 in E2 (built: two Old Rooks its keepers, MONSTERS §5.2), a wolves' den in D2 (built: the pack its
-keepers, two Dire Wolves and two Chalk Wolves, a stand-in, §4.6) and a bandit camp in D3. E2 has the
-first statue too. §4.2 to §4.9 place every group, box by box.
+keepers, two Barrow Wolves and a Chalk Wolf, §4.6) and a bandit camp in D3. E2 has the first statue
+too. §4.2 to §4.9 place every group, box by box.
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 2,823 xp a member today, 110 of it the guilds' pay and
-  about 1,050 F2's, F3's, E3's, E2's and D2's, past level 4 (1,650). The curve (EXPANSION §5.2, #31)
+- **Experience.** One clear of the area pays 2,977 xp a member today, 110 of it the guilds' pay and
+  about 1,200 F2's, F3's, E3's, E2's and D2's, past level 4 (1,650). The curve (EXPANSION §5.2, #31)
   gives an area the climb from its floor to the next area's floor, divided by 0.75: 2,800 / 0.75,
-  about 3,730. The Downs are where the other 910 or so come from, shared among the boxes as §4.1 has
+  about 3,730. The Downs are where the other 760 or so come from, shared among the boxes as §4.1 has
   it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built
   the curve reports the shortfall as owed to the pilot (#26). A den's keepers pay once, and its
   brood as a group that respawns does; the figures count the brood once.
@@ -651,15 +651,14 @@ first statue too. §4.2 to §4.9 place every group, box by box.
   half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The area as one pools
   each group at its own map's floor (#209): 99.7% of its 65 groups' fights won, F2's and F3's at 2,
   E3's and E2's at 3 and D2's at 4, against nine in ten. Two under, the Foreland's floor is 1 and
-  F2's and F3's 2, so only E3's and E2's 13 groups have a company there, at 1, and D2's 7 at 2: 80%
+  F2's and F3's 2, so only E3's and E2's 13 groups have a company there, at 1, and D2's 7 at 2: 71%
   won, off the aim of a quarter and inside the limit of nine in ten (#273), listed; the Seam, a
   dungeon, counts two under the area's floor since #148, and is no longer judged alone. Each zone
   walks its own road and warns at its own way in: the Foreland's from Helmstow, the Downs' from F2's
   east edge along the Salt Road (`ROADS.downs`, the footpads and the Poacher), both walked every
   time. The Foreland map and Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; E3
-  6.41 and E2 6.28; D2 14.3, past its limit and owed to #69 until its harder monsters are drawn; the
-  Seam 6.7, now that the company at 3 wears the band's gear. The pilot settles them, by retuning or
-  by moving the thresholds.
+  6.41 and E2 6.28; D2 6.99; the Seam 6.7, now that the company at 3 wears the band's gear. The
+  pilot settles them, by retuning or by moving the thresholds.
 - **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the
   band's gear: the Long Sword, the Hand Axe, the Long Bow, Scale Mail, Chain Mail and the Kite
   Shield. The Downs hold the kits with a plus and the band's gear with one, box by box as §4.2 to

@@ -8,7 +8,7 @@ import { WEST } from '../../../../game/types.ts';
 
 /** The wolves on the chalk run until the den in the chalk pit is pulled down (game/dens.ts's denBurnt). */
 const PULLED = { seen: 'downs_d2:d2_den' };
-const WOLVES = ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'];
+const WOLVES = ['barrow_wolf', 'chalk_wolf', 'chalk_wolf'];
 
 export const DOWNS_D2: MapDef = {
   id: 'downs_d2',
@@ -53,9 +53,9 @@ export const DOWNS_D2: MapDef = {
   ],
   features: [
     { kind: 'sign', x: 22, y: 11, text: 'The Berth, barrow of the Queens. By order of the Crown, let them lie.' },
-    { kind: 'event', x: 15, y: 13, id: 'd2_stones', once: true, text: 'Stones dragged off the barrow\'s mouth, fresh chisel marks on every one. The chalk is cut up with the prints of shod horses.' },
+    { kind: 'event', x: 15, y: 13, id: 'd2_stones', once: true, text: 'Grooves in the turf where the stones were dragged clear, and a lever of new oak left where it broke.' },
     { kind: 'event', x: 13, y: 12, id: 'd2_mouth', once: true, text: 'The Berth. Its mouth stands open, and the dark goes back into the hill further than a barrow should.' },
-    { kind: 'event', x: 15, y: 23, id: 'd2_cradle', once: true, text: 'Below the ridge a figure is cut through the turf to the chalk: a long curve, and a line standing up from it. The shepherds call it the Cradle.' },
+    { kind: 'event', x: 15, y: 23, id: 'd2_cradle', once: true, text: 'A figure cut through the turf to the chalk: a long curve, and a line standing up from it. The shepherds call it the Cradle.' },
     { kind: 'shrine', x: 8, y: 2, id: 'd2_shrine', text: 'A shrine on the crest, older than the barrows, its stone worn to a thumb.', stat: 'might', done: 'The shrine is only a stone now.' },
     { kind: 'fountain', x: 22, y: 18, id: 'd2_pond', text: 'A dew pond, lined with clay and full to the brim, though it has not rained.', stat: 'accuracy', done: 'The dew pond gives only water.' },
     { kind: 'cairn', x: 27, y: 3, id: 'd2_cairn', text: 'A cairn on the highest barrow, every stone carried up from the valley.', gold: 40, items: ['potion_heal', 'potion_heal'] },
@@ -63,10 +63,10 @@ export const DOWNS_D2: MapDef = {
     { kind: 'npc', x: 4, y: 18, name: 'A shepherd', lines: [
       'A shepherd sits in the door of his hut with a crook across his knees, and does not get up.',
       '"The Dog? Every night since they opened her. Round and round the barrow, and never a print by morning."',
-      '"Nine barrows on the ridge, and she\'s the biggest. One of the little ones rings when my sheep run over it. They don\'t like it. Nor do I."',
+      '"Nine barrows on the ridge, and she\'s the biggest. One of the little ones rings when my sheep run over it."',
     ] },
     { kind: 'den', x: 5, y: 6, id: 'd2_den', name: 'The chalk pit', text: 'A den dug into the side of the old chalk pit. The spoil is trodden grey, and the bones at its mouth are not all sheep.',
-      breeds: ['chalk_wolf'], keepers: 'd2_pack', brood: ['d2_wolves1', 'd2_wolves2', 'd2_wolves3'],
+      breeds: ['chalk_wolf', 'barrow_wolf'], keepers: 'd2_pack', brood: ['d2_wolves1', 'd2_wolves2', 'd2_wolves3'],
       ask: 'The pack is dead. Fire the den with gorse and pull the bank down over it?', burn: 'Pull it down.', leave: 'Leave it.',
       burnt: 'The gorse catches, and the bank comes down over the den\'s mouth. Nothing on the chalk answers.',
       ruin: 'A fallen bank of chalk, grey with old smoke.', gold: 45, items: ['spear+1'] },
@@ -79,7 +79,7 @@ export const DOWNS_D2: MapDef = {
     { id: 'd2_wolves1', x: 24, y: 6, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
     { id: 'd2_wolves2', x: 25, y: 23, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
     { id: 'd2_wolves3', x: 8, y: 26, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
-    { id: 'd2_pack', x: 6, y: 6, monsters: ['dire_wolf', 'dire_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 3, roams: false },
+    { id: 'd2_pack', x: 6, y: 6, monsters: ['barrow_wolf', 'barrow_wolf', 'chalk_wolf'], aware: 3, roams: false },
     { id: 'd2_dog', x: 17, y: 10, when: { hours: 'night' }, monsters: ['black_dog'], aware: 5, respawn: 1440 },
     { id: 'd2_dogs', x: 11, y: 16, when: { hours: 'night' }, monsters: ['black_dog', 'black_dog'], aware: 5, respawn: 2880 },
   ],
