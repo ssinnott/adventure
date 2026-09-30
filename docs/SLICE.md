@@ -78,13 +78,14 @@ DESIGN.md first for the why.
   them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
   Beside it are the side quests: The Cargo Ledger (Hale), The Bell That Rang Twice (Osmund), The
   Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud), The Well Tastes of Iron (Mottram), A
-  Boat With No Name-Board (Wat and Hamo), Who Lived at Ashcombe (Hob) and The Lost Expedition, which
-  the first Meridian journal opens and which stays open until the rest of its trail is built. Left
-  and right page the one quest by chapter, and a page too long goes on over the next. Nothing new is
-  saved. Every entry is keyed to something the save already holds (a flag, a carried item, a
-  once-only event, a guardian killed, a map set foot on), so an old save opens with its log whole. A
-  quest or chapter begun, advanced or finished is announced once in the message log, and J opens on
-  the one that changed last, at its goal's chapter.
+  Boat With No Name-Board (Wat and Hamo), Who Lived at Ashcombe (Hob), Oil for the Lamp (Aldred,
+  Mottram and Vask) and The Lost Expedition, which the first Meridian journal opens and which stays
+  open until the rest of its trail is built. Left and right page the one quest by chapter, and a
+  page too long goes on over the next. Nothing new is saved. Every entry is keyed to something the
+  save already holds (a flag, a carried item, a once-only event, a guardian killed, a map set foot
+  on), so an old save opens with its log whole. A quest or chapter begun, advanced or finished is
+  announced once in the message log, and J opens on the one that changed last, at its goal's
+  chapter.
 
 ## The outdoors as one map, and the end of the world
 

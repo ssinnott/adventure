@@ -7,8 +7,9 @@ export const CHAPTER: Chapter = {
   id: 'ashcombe',
   title: 'The Quiet Farm',
   start: { flag: 'q_ashcombe' },
-  // Done once the wand is back and Hild has asked after her daughter at Gullwick.
-  done: { flag: ['q_ashcombe_done', 'q_wenna'] },
+  // Done once Hild has asked after her daughter at Gullwick, the keeper's log is read at Crowness,
+  // on along the road from the farm, and the wand is back.
+  done: { flag: ['q_ashcombe_done', 'q_wenna'], seen: 'downs_e3:e3_log' },
   entries: [
     { id: 'hired', when: { flag: 'q_ashcombe' },
       text: 'Lord Vask, the Regent-Warden, has hired us: the Ashcombe farm, past Gullwick off the Salt Road, has gone quiet. He wants anything we find there that is not a rat.' },
@@ -22,6 +23,8 @@ export const CHAPTER: Chapter = {
       text: 'Deep in the cellar, a Rift: a tear in the floor, breathing heat, and beside it a shard of worked Wardstone.' },
     { id: 'warden', when: { slain: 'mill:m_warden' },
       text: 'We killed the Rift Warden that kept the tear.' },
+    { id: 'keeper', when: { seen: 'downs_e3:e3_log' },
+      text: 'At Crowness Light, the keeper\'s log of that night: the Hearth out eleven times, and the gaps between even, as if measured.' },
     { id: 'paid', when: { flag: 'q_ashcombe_done' },
       text: 'Vask turned the wand over in his fingers and pocketed it. If he knew what he held, nothing in his face admitted it. He paid 300 gold.' },
     // His lead, here and not in Thornmark's chapter, so it is written when he gives it, whichever
@@ -30,11 +33,14 @@ export const CHAPTER: Chapter = {
       text: 'He spoke of the Grove Stone in Thornmark: gone quiet too, he said, and he wants to know why.' },
   ],
   goals: [
-    // A company that did the farm first: Gullwick is still to come.
+    // A company that did the farm first: Gullwick and Crowness are still to come.
+    { when: { flag: ['q_ashcombe_done', 'q_wenna'] }, at: 'downs_e3', text: 'Crowness Light, past Gullwick: the keeper\'s log of that night.' },
     { when: { flag: 'q_ashcombe_done' }, at: 'downs_f3', text: 'Gullwick, west on the Salt Road: a mother asks for her daughter.' },
-    { when: { item: 'survey_wand' }, at: 'keep', text: 'Take the survey wand to Lord Vask in Helmstow.' },
+    { when: { item: 'survey_wand', seen: 'downs_e3:e3_log' }, at: 'keep', text: 'Take the survey wand to Lord Vask in Helmstow.' },
+    // The wand in hand: Crowness, on along the road from the farm, before Helmstow.
+    { when: { item: 'survey_wand' }, at: 'downs_e3', text: 'Before Helmstow, Crowness Light: on along the Salt Road from Ashcombe, to read the keeper\'s log of that night.' },
     { when: { visited: 'mill' }, at: 'mill', text: 'Search the cellar under the Ashcombe farmhouse.' },
-    { when: { flag: ['q_ashcombe', 'q_wenna'] }, at: 'downs_e3', text: 'Find out why Ashcombe has gone quiet: over the Wend from Gullwick, off the Salt Road.' },
+    { when: { flag: ['q_ashcombe', 'q_wenna'] }, at: 'mill', text: 'Find out why Ashcombe has gone quiet: over the Wend from Gullwick, off the Salt Road.' },
     // Hired: Gullwick, on the road west to the farm, where a mother asks every company.
     { when: { flag: 'q_ashcombe' }, at: 'downs_f3', text: 'Ashcombe is past Gullwick: west on the Salt Road from Brandy Hole\'s beach. At Gullwick a mother asks every company for her daughter.' },
     // Shown only to a company that began a later chapter before Vask hired it.

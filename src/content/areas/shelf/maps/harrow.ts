@@ -37,7 +37,7 @@ export const HARROW: MapDef = {
   features: [
     { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn' },
     { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel' },
-    { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'rations', 'torch'], interior: 'harrow_provisioner' },
+    { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'lantern_oil', 'rations', 'torch'], interior: 'harrow_provisioner' },
     { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50, interior: 'lantern_guildhall', hall: 'lanterns' },
     { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6, interior: 'warden_drillyard', hall: 'wardens' },
     { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', interior: 'gilded_eel', lines: [
@@ -165,6 +165,27 @@ export const HARROW: MapDef = {
           '"The Chapel." He considers it the way he considers a price. "They\'ll write it down. It\'s what they do, write things down: hours and bells, and now my well. Nothing will change." He puts the bucket under the counter. "Someone should have it written, though. I\'ll say that. Someone should."',
         ] },
       ] } },
+      // Oil for the Lamp (#67): keyed on the well's hire too, so a company that met Aldred first still
+      // hears the well. Its question while it is open; each report said once, before the well's
+      // lasting after-lines.
+      { after: { flag: ['q_oil', 'q_well'] }, until: [{ flag: 'q_oil_buy' }, { flag: 'q_oil_vask' }, { flag: 'q_oil_lit' }], lines: [
+        'Mottram is counting torches into a crate, and finishes the count before he looks up.',
+        '"Crowness oil. Yes. A cask a month, first of the month, onto the Lanterns\' cart, and I\'ve the bills for forty years, my father\'s and mine, if you doubt it. Then a Warden sergeant with a paper: stop. I asked why. He said \'Regent\'s orders.\' I said that\'s who, not why, and he didn\'t care for the distinction."',
+        '"I don\'t sell against a paper with that seal on it. I\'ve a shop. But nobody wrote me a paper about you."',
+      ], choice: { ask: '"So. A flask of Lantern Oil on my shelf at forty, you carry it down yourselves, and my name\'s not on it. Or you take it up with the man whose seal is on the paper. Which?"', answers: [
+        { label: 'We\'ll buy the oil.', sets: 'q_oil_buy', says: [
+          '"Sensible. Oil\'s oil; it doesn\'t care who paid for it." He sets a stoppered flask of it on the counter. "That\'s a night\'s burning. Mind the road past Gullwick. Things on that coast like the dark, and you\'re carrying the cure for it."',
+        ] },
+        { label: 'We\'ll put it to Vask.', sets: 'q_oil_vask', says: [
+          '"Then I never said the word Regent, and you never heard it in this shop." He goes back to the torches. "I\'ll say this for you. You\'ve more nerve than sense. I\'ve a shop; I keep the other kind."',
+        ] },
+      ] } },
+      { after: { flag: ['q_well', 'q_oil_order'] }, until: { flag: 'q_oil_told' }, sets: 'q_oil_told', lines: [
+        '"The sergeant came back for his paper. Didn\'t say a word, didn\'t look at me, took it off the nail and went." He counts on. "Forty years a chandler, father and son, and neither of us ever saw a Warden embarrassed. I\'d pay to see it again."',
+      ] },
+      { after: { flag: ['q_well', 'q_oil', 'q_oil_lit'] }, until: { flag: 'q_oil_told' }, sets: 'q_oil_told', lines: [
+        '"Lit, is it? Good. Then that\'s a cask a month the Lanterns will have to start finding again, and a sergeant with a paper who\'ll have to explain a light he stopped that\'s burning." He counts on. "Not my shop, not my paper. Cheaper than a Regent, oil."',
+      ] },
       { after: { flag: 'q_well_wardens' }, lines: [
         '"Still iron." He does not offer you the bucket. "The mason\'s gone; nobody has seen him since, nor the cart. The dust isn\'t gone. Whatever they\'re cutting down there, they\'re still cutting it."',
       ] },
