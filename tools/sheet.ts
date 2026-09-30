@@ -84,7 +84,7 @@ interface View { label: string; x: number; y: number; facing: Facing }
 interface MapPlan { id: string; name: string; kind: string; region: RegionId; views: View[]; world: { x: number; y: number; w: number; h: number; mark: [number, number] } }
 
 const FACING_NAME = ['north', 'east', 'south', 'west'];
-const open = (m: GameMap, x: number, y: number): boolean => m.inBounds(x, y) && m.at(x, y).solid === 'none' && !['water', 'deep', 'lava'].includes(m.at(x, y).terrain);
+const open = (m: GameMap, x: number, y: number): boolean => m.inBounds(x, y) && m.at(x, y).solid === 'none' && !['water', 'deep', 'lava', 'chasm'].includes(m.at(x, y).terrain);
 
 /** Where the party arrives: the map's start, and every other map's way in, once each. */
 function arrivals(def: MapDef): View[] {

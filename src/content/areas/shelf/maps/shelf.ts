@@ -120,6 +120,14 @@ export const SHELF: MapDef = {
         '"Hob. I know him. His father had Ashcombe before him and never let so much as a hayloft." He folds the paper into the cover of his ledger. "He goes to Gullwick, to his wife\'s people, tonight, and he doesn\'t come back to Helmstow until I say so. A man who\'ll sell his stairs for twenty gold wants somewhere with nothing to sell."',
         '"Tell him I said so. Tell him gently; he\'ll come quicker."',
       ],
+    }, {
+      // Riders in the Dark (#68): Dunstan's letter, from Coldharbour.
+      item: 'dunstan_letter', reward: 0, setFlag: 'q_riders_hale',
+      done: [
+        'Hale reads it standing, twice, and folds it along its own lines.',
+        '"Dunstan. He taught me the light in the window." He looks east, up the pass, and then west. "Wardens, riding dark to the Queen\'s barrow. The Regent should know what his own men are doing. He\'ll have it from me, under my seal."',
+        'He puts the letter inside his coat, not into the fire. "He says burn it. I don\'t burn things. He\'d tell you that\'s my fault, and it is."',
+      ],
     }] },
     { kind: 'sign', x: 3, y: 28, text: 'Brandy Hole. Chalked beneath, in Warden hand: CLOSED. DO NOT ENTER. ASK CAPT. HALE.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },

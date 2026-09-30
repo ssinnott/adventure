@@ -416,6 +416,49 @@ const torches = await page.evaluate(async () => {
     shown: differs(shown, dark, ...flameAt), covers: differs(ogreOnly, dark, ...flameAt), behind: !differs(withOgre, ogreOnly, ...flameAt),
   };
 });
+// The Sunder: on the Foreland at noon, the ground cleared, a chasm two squares deep across the view
+// one ahead, and a glass tree either side of the way beyond it. Straight ahead, the chasm paints
+// darker than grass, its far wall under the rim lighter than the drop; the glass trees stand over
+// the horizon, bluer than they are red.
+const sunder = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string), M = await import('/src/game/map.ts' as string);
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const minutes = w.state.minutes;
+  w.travel('shelf', 16, 16, 0);
+  w.state.minutes = 50 * 1440 + 12 * 60;
+  w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  const m = w.map, kept = m.cells.slice(), px = w.state.x, py = w.state.y;
+  const lay = (sunder: boolean): Uint8ClampedArray => {
+    for (let y = py - 7; y <= py + 2; y++) for (let x = px - 7; x <= px + 7; x++) {
+      const ch = !sunder ? ',' : y === py - 2 || y === py - 3 ? 'v' : y === py - 4 && Math.abs(x - px) === 1 ? 'c' : ',';
+      m.cells[y * m.width + x] = { ...M.LEGEND[ch], ch };
+    }
+    V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+    return ctx.getImageData(0, 0, W, H).data;
+  };
+  const grass = lay(false), gorge = lay(true);
+  for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
+  w.state.minutes = minutes; w.cached = undefined;
+  const at = (a: Uint8ClampedArray, x: number, y: number): number[] => { const i = (y * W + x) * 4; return [a[i], a[i + 1], a[i + 2]]; };
+  const lum = (p: number[]): number => (p[0] + p[1] + p[2]) / 3;
+  const differs = (x: number, y: number): boolean => { const a = at(grass, x, y), b = at(gorge, x, y); return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]) > 30; };
+  // The chasm straight ahead: the run of rows under the horizon, down the middle, painted otherwise than grass.
+  const rows: number[] = [];
+  for (let y = H / 2; y < H; y++) if (differs(W / 2, y)) rows.push(y);
+  const mean = (ys: number[], a: Uint8ClampedArray): number => ys.reduce((n, y) => n + lum(at(a, W / 2, y)), 0) / Math.max(1, ys.length);
+  const fifth = Math.max(1, Math.floor(rows.length / 5));
+  // Over the horizon: what the glass trees paint otherwise than open grass.
+  let glass = 0, red = 0, blue = 0;
+  for (let y = 40; y < H / 2; y++) for (let x = 0; x < W; x++) if (differs(x, y)) { glass++; const p = at(gorge, x, y); red += p[0]; blue += p[2]; }
+  return {
+    rows: rows.length, drop: Math.round(mean(rows.slice(rows.length >> 1), grass) - mean(rows.slice(rows.length >> 1), gorge)),
+    wall: Math.round(mean(rows.slice(0, fifth), gorge) - mean(rows.slice(-fifth), gorge)),
+    glass, bluer: glass > 0 && blue > red,
+  };
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
 // holds court on the keep's door, in the throne room.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
@@ -776,6 +819,8 @@ ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens 
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
 ok(!torches.missing && torches.lit > 0 && torches.out > 0 && torches.over === 0, `a tree before a sconced wall puts out the torches it covers (${torches.missing || `${torches.lit} alight, ${torches.out} under the tree, ${torches.over} still drawn over it`})`);
 ok(torches.shown && torches.covers && torches.behind, `an ogre before a sconced wall stands in front of its torch's flame (flame shown ${torches.shown}, ogre over it ${torches.covers}, flame behind the ogre ${torches.behind})`);
+ok(sunder.rows > 20 && sunder.drop > 40 && sunder.wall > 20, `a chasm paints darker than grass, its far wall under the rim lighter than the drop (${sunder.rows} rows straight ahead, ${sunder.drop} darker than grass in the lower half; the wall ${sunder.wall} lighter than the foot)`);
+ok(sunder.glass > 200 && sunder.bluer, `glass trees stand over the horizon beyond the chasm, bluer than red (${sunder.glass} pixels, ${sunder.bluer ? 'bluer' : 'not bluer'})`);
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
   ok(terrains.thin.length === 0, `hills, farmland, woods and dead wood paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
