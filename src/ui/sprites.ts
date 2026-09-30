@@ -122,6 +122,30 @@ export function drawTreeSprite(ctx: CanvasRenderingContext2D, x: number, y: numb
   }
 }
 
+/**
+ * A dead tree: a grey trunk, bleached and bare in every season, its limbs fanned or its top snapped
+ * off short (`variant` 0 to 2). Snow lies along its limbs.
+ */
+export function drawDeadTreeSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, variant: number, snow = 0): void {
+  const bark = shade(['#aaa498', '#bab4a8', '#948e84'][variant % 3], tone), dark = shade('#4a4640', tone);
+  const white = snow > 0.15 ? shade(SNOW_WHITE, tone) : null;
+  if (variant === 1) {
+    // Snapped: a short stump of a trunk, its broken top jagged, one limb left.
+    const h = u * 1.3;
+    celTaper(ctx, B, x, y, x, y - h, u * 0.17, u * 0.13, bark, 0.2);
+    celPoly(ctx, B, [x - u * 0.13, y - h, x - u * 0.05, y - h - u * 0.22, x + u * 0.02, y - h - u * 0.08, x + u * 0.13, y - h - u * 0.3, x + u * 0.13, y - h], bark, 0.3, 0.2);
+    stroke(ctx, [x, y - h * 0.62, x - u * 0.42, y - h * 0.95], bark, Math.max(1, u * 0.07));
+    if (white) stroke(ctx, [x - u * 0.13, y - h - 0.5, x + u * 0.13, y - h - 0.5], white, Math.max(1, u * 0.05));
+  } else {
+    const h = u * (variant === 2 ? 2.5 : 2.1);
+    celTaper(ctx, B, x, y, x, y - h * 0.55, u * 0.15, u * 0.09, bark, 0.2);
+    bareCrown(ctx, x, y - h * 0.52, u, variant === 2 ? 0.8 : 1, bark, white, variant === 2);
+  }
+  // Splits in the bark.
+  ctx.fillStyle = dark;
+  for (let i = 0; i < 3; i++) ctx.fillRect(Math.round(x - u * 0.04 + (i % 2) * u * 0.05), Math.round(y - u * (0.25 + i * 0.28)), Math.max(1, Math.round(u * 0.03)), Math.max(1, Math.round(u * 0.14)));
+}
+
 export function drawRockSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, snow = 0): void {
   const w = u * 1.3, h = u * 0.8;
   const c = shade('#7a7468', tone);
