@@ -5,6 +5,7 @@ import { THORNMARK } from './maps/thornmark.ts';
 import { THORNHOLD } from './maps/thornhold.ts';
 import { GROVE1 } from './maps/grove1.ts';
 import { GROVE2 } from './maps/grove2.ts';
+import { DEEPTHORN_H3 } from './maps/deepthorn_h3.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
@@ -15,7 +16,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 export const AREA = {
   id: 'thornmark' as const,
   // The zone before its town, unlike the Foreland: the order the outdoors is laid in is kept.
-  maps: [THORNMARK, THORNHOLD, GROVE1, GROVE2],
+  maps: [THORNMARK, THORNHOLD, GROVE1, GROVE2, DEEPTHORN_H3],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
