@@ -101,7 +101,7 @@ table: a Rift in the Kilns is slag, and a Rift in the Delta is brine.
 
 | The Stone | Its Rifts | Material and light | What bites | Its things |
 |---|---|---|---|---|
-| The cellar's tear | the Foreland, under Ashcombe | ember and crystal, orange | cold | Riftling, Rift Crawler, the Rift Warden (built) |
+| The cellar's tear | Callow Downs, under Ashcombe (E3) | ember and crystal, orange | cold | Riftling, Rift Crawler, the Rift Warden (built) |
 | The Grove Stone, cut | Thornmark | ember and crystal; the Warden of the Cut burns blue | cold; fire on the Warden | Riftling Elder, Rift Hound, the Warden of the Cut (built) |
 | The Tide Stone, stolen | the Delta, and the Tide Ship's hold | brine glass, sea green | lightning | Brineling, Tide Elder, the Warden of the Tide |
 | The Sunder, a Stone that failed long ago | Sunderwood | black glass and dead wood, white | fire | Sunderling, Sunder Hound, the Warden of the Sunder |

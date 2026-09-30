@@ -1,10 +1,10 @@
 // Callow Downs, box E3: Crowness. Core, band 3-4: the Salt Road west along the coast from Gullwick to
 // the corner of D3, the gibbet above the rocks, and Crowness Light on the point, with the keeper's
-// cottage under it and the rocks below, where the wreckers show their own light. The stubble in the
-// north-east corner, across the Wend from Gullwick, is left for Ashcombe (#87). Cut from the atlas by
-// tools/scaffold.ts; docs/areas/shelf.md §4.4 is its brief.
+// cottage under it and the rocks below, where the wreckers show their own light. In the stubble of
+// the north-east corner, across the Wend from Gullwick, Ashcombe and its cellar (#87). Cut from the
+// atlas by tools/scaffold.ts; docs/areas/shelf.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { WEST } from '../../../../game/types.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
 
 export const DOWNS_E3: MapDef = {
   id: 'downs_e3',
@@ -17,15 +17,15 @@ export const DOWNS_E3: MapDef = {
     ',,,,,,,,,,,fffffffffffffffff~fff',
     ',,,,,,,,,,,fffffffffffffffff~~ff',
     ',,,TT,,,,,,,,fffffffffffffffff=f',
-    ',,TTTT,,,,,,,,ffffffffffffffff~~',
-    ',,,TT,,,,,,,,,^,fffffffffffffff~',
-    ',,,,,,,,,,,,^^,,,ffffffffffffffr',
-    ',,,,,,,,,,,^^^,,,,,ffffffffffffr',
-    ',,,,,,,,,,,^^^,,,,,,,,,,fffffffr',
-    ',,,,,,,,,,,,,,,,,,,,,,,,,ffffffr',
-    ',,,,,,,,,,,,,,,,,,,,,,,,,,,,fffr',
-    ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,=',
-    ',,,,,,,,,,,,,,,,,,,,,,,,,,,,,===',
+    ',,TTTT,,,,,,,,ffffffffBBBB,fff~~',
+    ',,,TT,,,,,,,,,^,ffff:DBBB,fffff~',
+    ',,,,,,,,,,,,^^,,,fff:fBBBBfffffr',
+    ',,,,,,,,,,,^^^,,,,,f:f::::fffffr',
+    ',,,,,,,,,,,^^^,,,,,,:,,,fffffffr',
+    ',,,,,,,,,,,,,,,,,,,,:,,,,ffffffr',
+    ',,,,,,,,,,,,,,,,,,,,:::::::::ffr',
+    ',,,,,,,,,,,,,,,,,,,,,,,,,,,,:,,=',
+    ',,,,,,,,,,,,,,,,,,,,,,,,,,,,:===',
     ',,,,,,,,,,,,,,,,,,,,,,,,,,,,==,r',
     ',,,,,,,,,,,,,,,,,,,,,,,,,,==,,rr',
     ',,,,,,,,,,,,,,,,,,,,,,,,===,,,rr',
@@ -47,6 +47,9 @@ export const DOWNS_E3: MapDef = {
     '==^^^^^^,,,__~~WW~r_r_r~WWWWWWWW',
     ',,,,^^^^,__~~~WWWWWWWWWWWWWWWWWW',
   ],
+  exits: [
+    { x: 21, y: 4, to: 'mill', tx: 1, ty: 1, tf: EAST, label: 'The farmhouse door hangs open. Stairs lead down into the cellar.' },
+  ],
   features: [
     { kind: 'event', x: 30, y: 2, id: 'e3_ford', once: true, text: 'The Wend\'s last bend, and a ford of flat stones. Gullwick\'s smoke across the water.' },
     { kind: 'event', x: 20, y: 9, id: 'e3_point', once: true, text: 'Out on the point, a lighthouse. No light in it.' },
@@ -62,10 +65,19 @@ export const DOWNS_E3: MapDef = {
     { kind: 'event', x: 19, y: 29, id: 'e3_niche', once: true, text: 'A niche in the rock: a shuttered lamp, and a chart of the reef with the rocks marked as a harbour.' },
     { kind: 'chest', x: 19, y: 30, id: 'e3_niche_chest', gold: 40, items: ['potion_sp'] },
     { kind: 'event', x: 5, y: 9, id: 'e3_pond', once: true, text: 'A dew pond on the down, its rim trodden by sheep and by something heavier.' },
+    // Ashcombe (#87), moved here from the Foreland map: the farmhouse over the cellar, its gate and
+    // its rats, and at its back the kitchen and the flour crock of Who Lived at Ashcombe (#77). The
+    // ids are the Foreland's, kept: the outdoors is one map, and a save holds them by id.
+    { kind: 'event', x: 20, y: 4, id: 'ashcombe_gate', once: true, text: 'Ashcombe. The gate is off its hinges and the yard is silent. Something has scraped the earth in a wide ring around the house.' },
+    { kind: 'event', x: 25, y: 4, id: 'ash_kitchen', once: true, until: [{ flag: 'q_paper_vask' }, { flag: 'q_paper_hale' }], text: 'The kitchen. The hearth-key on its nail in the chimney, and the hearth below it swept. Nobody flees a house and sweeps it first.' },
+    { kind: 'chest', x: 25, y: 4, id: 'ash_hearth', gold: 0, items: ['hearth_key'] },
+    { kind: 'event', x: 26, y: 3, id: 'ash_crock', once: true, text: 'Under the flour crock, folded small: a grey paper with a mark at its foot, and on the back, in grey ink, THE HEARTH IS A CAGE.' },
+    { kind: 'chest', x: 26, y: 3, id: 'ash_crock_c', gold: 0, items: ['tenant_paper'] },
     { kind: 'event', x: 5, y: 17, id: 'e3_fold', once: true, text: 'A shepherd\'s fold of piled flints, the gate off its hinge and no sheep.' },
   ],
   secrets: [{ x: 19, y: 29, hint: 'e3_ledge' }],
   encounters: [
+    { id: 'farm_rats', x: 19, y: 4, monsters: ['rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: 720 },
     { id: 'e3_crows', x: 27, y: 16, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
     { id: 'e3_fog', x: 18, y: 18, when: { sky: 'fog' }, monsters: ['lampman', 'wrecker', 'wrecker', 'wrecker', 'wrecker'], aware: 3, respawn: 2880 },
     { id: 'e3_rocks', x: 25, y: 20, when: { hours: 'night' }, monsters: ['wrecker', 'wrecker', 'lampman'], aware: 5, respawn: 2880 },

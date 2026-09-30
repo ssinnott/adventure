@@ -34,7 +34,7 @@ export const KEEP: MapDef = {
     { kind: 'sign', x: 9, y: 8, text: 'A proclamation on the gatehouse: the Regent-Warden holds Helmstow in the Crown\'s name until the succession is settled.' },
     { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', lines: [
       'A tall man in Warden grey, his guards a step behind him. He does not wait for you to bow, and does not appear to notice that you did not.',
-      '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm south of here, Ashcombe, on the Foreland road, has gone quiet. Find out why. Clear whatever is there."',
+      '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm past Gullwick, Ashcombe, off the Salt Road, has gone quiet. Find out why. Clear whatever is there."',
       '"Bring me anything you find that is not a rat. Especially anything that glows."',
     ], flag: 'q_ashcombe', quest: [{
       item: 'survey_wand', reward: 300, setFlag: 'q_ashcombe_done',

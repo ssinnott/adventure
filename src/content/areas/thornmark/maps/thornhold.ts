@@ -47,7 +47,7 @@ export const THORNHOLD: MapDef = {
     { kind: 'npc', x: 12, y: 13, name: 'The Split Oak', interior: 'split_oak', lines: [
       'A tavern built around a living oak. The elves drink slowly and watch the door.',
       'A forester says: "The Stone went quiet a month back. Then the wolves got big. Then the wolves got strange."',
-      'A Lantern in travel-grey, not drunk: "Vask sent a survey team south before the Stone even failed. How did he know?"',
+      'A Lantern in travel-grey, not drunk: "Vask sent a survey team south-west before the Stone even failed. How did he know?"',
       'A brigand, or a man dressed like one, pays for his ale with a coin that is not from Caldera.',
     ] },
     { kind: 'well', x: 7, y: 6, text: 'A spring in an oak-root basin. The water is cold and sweet.', heal: true },

@@ -1,5 +1,5 @@
 // The Foreland: the starting coast. Helmstow at the north, the Lodestone on a track outside its
-// south gate, the Ashcombe farm to the south-east, woods to the west, marsh and the sea at the
+// south gate, the Ellerby farm to the south-east, woods to the west, marsh and the sea at the
 // south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef } from '../../../../game/map.ts';
@@ -48,17 +48,19 @@ export const SHELF: MapDef = {
   ],
   exits: [
     { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Helmstow.' },
-    { x: 24, y: 20, to: 'mill', tx: 1, ty: 1, tf: EAST, label: 'The farmhouse door hangs open. Stairs lead down into the cellar.' },
     { x: 31, y: 9, to: 'thornmark', tx: 1, ty: 9, tf: EAST, label: 'The pass opens onto old forest. Thornmark.' },
     { x: 2, y: 28, to: 'greywater1', tx: 1, ty: 1, tf: SOUTH, label: 'A cave mouth in the cliff foot, half hidden by kelp. Brandy Hole.' },
     { x: 0, y: 29, to: 'downs_f2', tx: 30, ty: 29, tf: WEST, label: 'The Salt Road climbs off the beach. Callow Downs.' },
   ],
   features: [
-    { kind: 'sign', x: 16, y: 4, text: 'North: Helmstow. South and east along the road: Ashcombe farm.' },
-    { kind: 'sign', x: 13, y: 9, text: 'South: the coast and Ashcombe. West along the beach: Brandy Hole. East: the pass to Thornmark, Warden road.' },
+    { kind: 'sign', x: 16, y: 4, text: 'North: Helmstow. South and east along the road: Ellerby farm.' },
+    { kind: 'sign', x: 13, y: 9, text: 'South: the coast and Ellerby. West along the beach: Brandy Hole, and the Salt Road. East: the pass to Thornmark, Warden road.' },
     { kind: 'sign', x: 30, y: 9, text: 'Warden checkpoint. The road east is open. Past it lies Thornmark, and the Wardens will not come in after you.' },
-    { kind: 'sign', x: 18, y: 16, text: 'East: Ashcombe.' },
-    { kind: 'event', x: 23, y: 20, id: 'ashcombe_gate', once: true, text: 'Ashcombe. The gate is off its hinges and the yard is silent. Something has scraped the earth in a wide ring around the house.' },
+    { kind: 'sign', x: 18, y: 16, text: 'East: Ellerby.' },
+    // Ellerby (#87), the farm where Ashcombe stood on this map before it moved past Gullwick: lived
+    // in, with a store in its kitchen that sells rations under Mottram's price.
+    { kind: 'event', x: 23, y: 20, id: 'ellerby_gate', once: true, text: 'Ellerby. Hens in the yard, smoke from the chimney and a board by the door: RATIONS.' },
+    { kind: 'shop', x: 24, y: 20, name: 'Ellerby Farm', stock: ['rations'], prices: { rations: 3 }, interior: 'farm_kitchen' },
     { kind: 'event', x: 28, y: 9, id: 'scarth_watch', once: true, text: 'The Scarth. A pole across the road, a brazier and two Wardens with nothing to do but watch the pole.' },
     { kind: 'event', x: 15, y: 28, id: 'coast', once: true, text: 'The sea. Out on the water, far off, the column of the Hearth stands against the sky. It flickers.' },
     // The Lodestone, the Foreland's own Stone, whole: its words, not a drawing, as the Grove Stone
@@ -138,13 +140,6 @@ export const SHELF: MapDef = {
         '"Thornhold. Elves and trees and nobody in grey." She takes the stake for a crutch. "Elder Sylvane knows a Lantern\'s word when she hears one. I\'ll tell her about you. She\'ll pretend not to have listened, and then she\'ll have listened. That\'s how the Chapterhouse works."',
       ] },
     ] } },
-    // Who Lived at Ashcombe (#77): the hearth-key in the farmhouse kitchen, at its back notch, and the
-    // tenant's paper under the flour crock beside it. Each find is on its chest's square, so is said first;
-    // the kitchen, which the crock does not need, is not said once the paper is given.
-    { kind: 'event', x: 28, y: 20, id: 'ash_kitchen', once: true, until: [{ flag: 'q_paper_vask' }, { flag: 'q_paper_hale' }], text: 'The kitchen. The hearth-key on its nail in the chimney, and the hearth below it swept. Nobody flees a house and sweeps it first.' },
-    { kind: 'chest', x: 28, y: 20, id: 'ash_hearth', gold: 0, items: ['hearth_key'] },
-    { kind: 'event', x: 29, y: 19, id: 'ash_crock', once: true, text: 'Under the flour crock, folded small: a grey paper with a mark at its foot, and on the back, in grey ink, THE HEARTH IS A CAGE.' },
-    { kind: 'chest', x: 29, y: 19, id: 'ash_crock_c', gold: 0, items: ['tenant_paper'] },
   ],
   encounters: [
     { id: 'road_rats', x: 16, y: 7, monsters: ['rat', 'rat', 'rat'], aware: 4, respawn: 1440 },
@@ -153,7 +148,6 @@ export const SHELF: MapDef = {
     { id: 'road_bandits', x: 13, y: 12, monsters: ['bandit', 'bandit', 'bandit_archer'], aware: 5, respawn: 2880 },
     { id: 'hill_wolves', x: 24, y: 11, monsters: ['wolf', 'wolf', 'wolf'], aware: 5, respawn: 1440 },
     { id: 'marsh_spiders', x: 7, y: 23, monsters: ['spider', 'spider', 'spider', 'spider'], aware: 4, respawn: 1440 },
-    { id: 'farm_rats', x: 22, y: 20, monsters: ['rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: 720 },
     { id: 'beach_crabs', x: 9, y: 28, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
     { id: 'cliff_smugglers', x: 5, y: 26, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler_bowman'], aware: 5, respawn: 2880 },
     { id: 'coast_bandits', x: 20, y: 27, monsters: ['bandit', 'bandit', 'bandit', 'bandit_archer', 'bandit_archer'], aware: 5, respawn: 2880 },

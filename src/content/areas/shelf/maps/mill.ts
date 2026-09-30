@@ -1,7 +1,7 @@
 // The Ashcombe cellar: the first dungeon and the tutorial Rift. Four rings of corridor around
 // four rooms; a locked door and a secret door decide the order the rings open in.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { SOUTH, WEST } from '../../../../game/types.ts';
 
 export const MILL: MapDef = {
   id: 'mill',
@@ -29,7 +29,7 @@ export const MILL: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 1, to: 'shelf', tx: 24, ty: 20, tf: SOUTH, label: 'You climb back into the farmyard.' },
+    { x: 1, y: 1, to: 'downs_e3', tx: 21, ty: 4, tf: WEST, label: 'You climb back into the farmyard.' },
   ],
   features: [
     { kind: 'event', x: 1, y: 2, id: 'mill_in', once: true, text: 'The cellar is far larger than the house above it. The walls are older than the farm.' },

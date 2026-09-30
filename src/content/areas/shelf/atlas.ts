@@ -11,20 +11,21 @@ export const ZONES: readonly AtlasZone[] = [
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'harrow', kind: 'town', at: [216, 22] },
   { id: 'keep', kind: 'town', at: [216, 16] },
-  { id: 'mill', kind: 'dungeon', at: [224, 84] },
+  { id: 'mill', kind: 'dungeon', at: [157, 66] },
   { id: 'greywater1', kind: 'dungeon', at: [196, 68] },
   { id: 'greywater2', kind: 'dungeon', at: [196, 74] },
 ];
 
 export const SITES: readonly AtlasSite[] = [
-  // I. The Foreland, from its map: Helmstow's walls at 14-18,1-3, the Ashcombe farm, the Brandy
+  // I. The Foreland, from its map: Helmstow's walls at 14-18,1-3, the Ellerby farm, the Brandy
   // Hole cliffs.
   { name: 'Helmstow', icon: 'city', map: 'shelf', at: [16.5, 2.4], label: 'right' },
   { name: 'Lodestone', icon: 'stone', map: 'shelf', at: [21.5, 4], label: 'none' },
-  { name: 'Ashcombe', icon: 'farm', map: 'shelf', at: [26.5, 20.2], label: 'below' },
+  { name: 'Ellerby', icon: 'farm', map: 'shelf', at: [26.5, 20.2], label: 'below' },
   { name: 'Brandy Hole', icon: 'cave', map: 'shelf', at: [2.5, 27.4], label: 'below' },
   { name: 'The Scarth', icon: 'gate', map: 'shelf', at: [31.5, 8.6], label: 'none' },
   { name: 'Gullwick', icon: 'village', map: 'downs_f3', at: [4.5, 8.5], label: 'below' },
   { name: 'Crowness Light', icon: 'lighthouse', map: 'downs_e3', at: [20.5, 28.5], label: 'below' },
+  { name: 'Ashcombe', icon: 'farm', map: 'downs_e3', at: [23.5, 4.2], label: 'below' },
   { name: 'Coldharbour', icon: 'farm', map: 'downs_f2', at: [8.5, 12.5], label: 'right' }, // the Knight's second prestige
 ];

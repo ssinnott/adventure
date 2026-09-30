@@ -3,7 +3,8 @@
 // file: it stays out of the build, and out of index.ts, which src/game/party.ts imports.
 //
 // The slice's own figures, which the tests used to pin and the curve replaces: one clear of the
-// Foreland and the cellar is worth level 2 a member (391 xp), adding Brandy Hole level 4 (1,660),
+// walk to Ashcombe, the Foreland map, F2 and F3 by day and the farm's rats, is worth level 2 a member
+// (375 xp; the Foreland's walkthrough holds it, #87), adding Brandy Hole level 4 (1,660),
 // one clear of everything 9 (11,997), and two fifths of one more sweep of the Grove reaches 10
 // (2,759 a sweep once the Warden of the Cut is dead and the Rift's groups stop).
 // Training six members from 5 to 10 costs 8,400 gold.
