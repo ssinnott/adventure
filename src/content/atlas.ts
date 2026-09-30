@@ -224,6 +224,8 @@ export const PLAN: Atlas = {
   trails: [
     // The coast road west from the Foreland, along the Downs and down Kestrel Edge to Saltmouth.
     { pts: [[200, 58], [186, 62], [172, 70], [150, 84], [132, 96], [120, 108], [108, 120], [100, 140], [98, 156], [102, 176]] },
+    // The track west from Coldharbour over the Wend's ford, up to the Berth in the chalk.
+    { pts: [[176, 42], [155, 42], [118, 42]] },
     // Upriver to Rietum.
     { pts: [[98, 156], [84, 136], [74, 104], [80, 80]] },
     // The east road out of Thornmark, over the Sunder by the rope bridge, and on to the Kilns.
