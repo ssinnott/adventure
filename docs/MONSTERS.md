@@ -513,7 +513,7 @@ Crowness Light.
 | Billman | bandit | soldier, 4 | the Salt Road west of Gullwick | *A bill on a pole, and a man who knows which end to hold.* |
 | Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
 | Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
-| Barrow Wolf | wolf | elite, 5 | the chalk pit's den in D2, its pack | *Grey to the muzzle and big as a pony, and the pack waits on it.* The den's keepers: the chalk wolf's pale coat on a heavy frame, scarred |
+| Barrow Wolf | wolf | elite, 5 | the chalk hills (D2): one leading each of the den's packs, and two in the pack that keeps it | *Grey to the muzzle and big as a pony, and the pack waits on it.* The den's keepers: the chalk wolf's pale coat on a heavy frame, scarred |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
