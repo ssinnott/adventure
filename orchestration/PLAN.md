@@ -1474,3 +1474,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 23:28: the #77 session told to merge main into #303 and recut the chain before its review:
   Gullwick, the farm, the cellar, Crowness, the wand (the #301 review's suggestion, noted by the
   delegate), so the Warden is met at 2.
+- 23:33: `reviews/304.md` (#215, I3): ready after fixes. Should-fix: Godric replays his first
+  meeting if met again after "Sylvane will hear it" and before she hears (the Reader's pattern
+  fixes it); thornmark.md §8's two-under figure stale (44.0% of 51 with I3). Nits: the body's I3–I4
+  exits (none are needed), a stale "unplaced until #49", "three lines" quoting two. As the second of
+  #298 and #304 it drops `CUT_OFF`'s I4, `EDGES_OWED['#49']` and Thornmark's owed xp (14,322 of
+  13,667): then ALL OK (23 owed). The lodge a grey stone block in grass: its look and the six
+  choices to a delegate. Reviewer on #305 (D3 and the Cutthroat).
