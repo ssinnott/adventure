@@ -483,10 +483,9 @@ export class World {
     return this.liveGroups().find((g) => g.state.x === x && g.state.y === y);
   }
 
+  /** Where a group may step: where the party could with no key, swimmer or mountaineer, and no group stands. */
   private monsterPassable(x: number, y: number): boolean {
-    const c = this.map.at(x, y);
-    if (c.solid !== 'none' || c.terrain === 'deep' || c.terrain === 'water' || c.terrain === 'chasm' || c.door === 'locked') return false;
-    return !this.groupAt(x, y);
+    return this.map.passable(x, y) === 'ok' && !this.groupAt(x, y);
   }
 
   /** Each aware, roaming group steps one cell toward the party. */

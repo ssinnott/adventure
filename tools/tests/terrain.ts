@@ -1,5 +1,5 @@
-// Hills, farmland, woods, dead wood, crystal and the chasm: their legend characters, snow and the crops through the year, the
-// fields' patchwork, and every terrain's own colour on the automap.
+// Hills, farmland, woods, dead wood, crystal and the chasm: their legend characters, snow and the
+// crops through the year, the fields' patchwork, and every terrain's own colour on the automap.
 import { GameMap } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { SNOW_HOLD, cropColor, fieldAt, hedgeColor } from '../../src/ui/viewport.ts';

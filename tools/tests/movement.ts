@@ -116,9 +116,25 @@ export function movement(): void {
   const m = world.map, stood = world.state.y, ahead = m.width * (stood - 1) + world.state.x, kept = m.cells[ahead];
   m.cells[ahead] = { ...LEGEND.v, ch: 'v' };
   const drop = world.move('forward');
+  // The glass tree is tried from where the party stood, whatever the chasm's step did.
+  world.travel('shelf', 16, 16, 0);
   m.cells[ahead] = { ...LEGEND.c, ch: 'c' };
   const glass = world.move('forward');
   m.cells[ahead] = kept;
+  // A group aware of the party across the chasm stays on its side; across open ground it comes on.
+  world.travel('shelf', 16, 16, 0);
+  const g = world.liveGroups().find((q) => q.def.roams !== false)!, was = { x: g.state.x, y: g.state.y };
+  const px = world.state.x, py = world.state.y, gap = [py - 1, py - 2].map((y) => y * m.width + px), under = gap.map((i) => m.cells[i]);
+  const approach = (ch: string): number => {
+    for (const i of gap) m.cells[i] = { ...LEGEND[ch], ch };
+    g.state.x = px; g.state.y = py - 3; world.state.truce = 0;
+    world.moveMonsters();
+    return g.state.y;
+  };
+  const acrossChasm = approach('v'), acrossGround = approach(',');
+  gap.forEach((i, j) => { m.cells[i] = under[j]; });
+  g.state.x = was.x; g.state.y = was.y;
   ok(drop.kind === 'blocked' && drop.reason === 'The ground falls away. There is no way down here.' && world.state.y === stood, `a step into the chasm is refused, and says so (${drop.kind === 'blocked' ? drop.reason : drop.kind})`);
   ok(glass.kind === 'blocked' && glass.reason === 'Something blocks the way.', `a glass tree blocks the way (${glass.kind === 'blocked' ? glass.reason : glass.kind})`);
+  ok(acrossChasm === py - 3 && acrossGround === py - 2, `a group aware of the party does not step into the chasm, and across open ground comes on (${py - acrossChasm} and ${py - acrossGround} squares off)`);
 }

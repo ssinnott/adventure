@@ -254,10 +254,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
-    // The ground runs on to the horizon in the terrain out past the last cell drawn; the void has
-    // none, so short of it the ground is the party's own.
+    // The ground runs on to the horizon in the terrain out past the last cell drawn; the void and
+    // the chasm have none, so short of them the ground is the party's own.
     const far = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1));
-    const farCell = far.solid === 'void' ? map.at(px, py) : far;
+    const farCell = far.solid === 'void' || far.terrain === 'chasm' ? map.at(px, py) : far;
     const ground = shade(groundColor(farCell.terrain, map.kind, pal.floor), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
     gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
@@ -777,8 +777,9 @@ function drawChasm(ctx: CanvasRenderingContext2D, base: string, cx: number, hori
     for (let k = 0; k < bands; k++) {
       const ya = y0 + (drop * k) / bands, yb = y0 + (drop * (k + 1)) / bands + 1;
       ctx.fillStyle = fog(mix(shade(rock, 1 - 0.06 * (k % 2)), base, Math.min(1, (k / bands) * 1.15)), d, dark, haze);
-      // Each band spans the column as it widens toward the eye, so walls side by side meet.
-      const ua = ya - horizon, ub = yb - horizon, col = (u: number, e: number): number => cx + (l - 0.5 + e) * 2 * u;
+      // Each band spans the column as it widens toward the eye, a half pixel over each edge, so walls
+      // side by side meet with no seam.
+      const ua = ya - horizon, ub = yb - horizon, col = (u: number, e: number): number => cx + (l - 0.5 + e) * 2 * u + (e - 0.5);
       quad(ctx, [col(ua, 0), ya], [col(ua, 1), ya], [col(ub, 1), yb], [col(ub, 0), yb], ctx.fillStyle as string);
       // Strata: a crack or two across each band.
       if (k < bands - 2) {
@@ -795,7 +796,8 @@ function drawChasm(ctx: CanvasRenderingContext2D, base: string, cx: number, hori
 
 function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string, plot?: Plot, rims?: { near: boolean; far: boolean }): void {
   const base = groundColor(terrain, kind, floorPal, plot?.crop);
-  if (terrain === 'chasm') { drawChasm(ctx, base, cx, horizon, h, d, l, seed, dark, haze, rims ?? { near: false, far: false }); return; }
+  // The drop is dark indoors too, not the floor's colour.
+  if (terrain === 'chasm') { drawChasm(ctx, TERRAIN_COLORS.chasm, cx, horizon, h, d, l, seed, dark, haze, rims ?? { near: false, far: false }); return; }
   const n = d <= 2 ? 3 : 2;
   const flag = kind === 'dungeon' && terrain === 'floor';
   const mortar = fog(shade(base, 0.55), d, dark, haze);
@@ -947,7 +949,9 @@ function drawCeiling(ctx: CanvasRenderingContext2D, pal: MapPalette, cx: number,
 // ------------------------------------------------------------------ walls ----
 
 /** The billboards a door outdoors may be set among, in the order a tie goes. */
-const GUISES: readonly Solid[] = ['mountain', 'rock', 'tree'];
+const GUISES = ['mountain', 'rock', 'tree', 'glass'] as const;
+/** What a cell stands as for a secret door beside it: a glass tree is a guise of its own, not a tree. */
+const guiseOf = (c: Cell): Solid | 'glass' => (c.solid === 'tree' && c.terrain === 'crystal' ? 'glass' : c.solid);
 
 /**
  * What a cell is drawn as. Outdoors a secret door set among mountain, rock or trees (a sett in the
@@ -962,7 +966,7 @@ export function drawnCell(map: GameMap, x: number, y: number): Cell {
   if (around.some((n) => n.solid === 'wall' || n.solid === 'building')) return c;
   let best = c, most = 0;
   for (const g of GUISES) {
-    const of = around.filter((n) => n.solid === g);
+    const of = around.filter((n) => guiseOf(n) === g);
     if (of.length > most) { most = of.length; best = of[0]; }
   }
   return best;
