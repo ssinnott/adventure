@@ -58,6 +58,19 @@
         "f3_soot",
         "grove_edge",
         "grove_road",
+        "h3_cairn",
+        "h3_deep",
+        "h3_firepit",
+        "h3_ford",
+        "h3_house",
+        "h3_nest",
+        "h3_orders",
+        "h3_post",
+        "h3_shrine",
+        "h3_strongbox",
+        "h3_survey",
+        "h3_thorns",
+        "h3_wyke",
         "lake",
         "lodestone",
         "scarth_watch",
@@ -111,6 +124,13 @@
         "f3_crows",
         "f3_wreckers",
         "farm_rats",
+        "h3_brambles",
+        "h3_brood1",
+        "h3_brood2",
+        "h3_hounds",
+        "h3_keepers",
+        "h3_rootwalkers",
+        "h3_wolves",
         "hill_wolves",
         "marsh_spiders",
         "road_bandits",
@@ -139,7 +159,8 @@
         "155,91",
         "158,56",
         "169,78",
-        "180,33"
+        "180,33",
+        "260,86"
       ]
     },
     "greywater1": {
@@ -327,6 +348,10 @@
     }
   },
   "zones": {
+    "deepthorn_h3": {
+      "at": "232,62",
+      "size": "32x32"
+    },
     "downs_d2": {
       "at": "104,30",
       "size": "32x32"
@@ -407,6 +432,10 @@
     "q_mender_kit",
     "q_mender_left",
     "q_mender_sliver",
+    "q_orders",
+    "q_orders_council",
+    "q_orders_read",
+    "q_orders_watch",
     "q_osmund_ailith",
     "q_osmund_well",
     "q_paper_hale",
@@ -522,6 +551,7 @@
     "spear+1",
     "staff",
     "staff+1",
+    "survey_orders",
     "survey_wand",
     "tenant_paper",
     "torch",
