@@ -308,7 +308,7 @@ export const PLAN: Atlas = {
     { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
     { name: 'Tide Stone', icon: 'stone', at: [48, 140], label: 'below', planned: true },
     { name: 'Drowned Temples', icon: 'sunken', at: [56, 170], label: 'below', planned: true },
-    { name: 'Sjonghol', icon: 'cave', at: [104, 76], label: 'right', planned: true }, // the singing hollow in Kestrel Edge's cliffs: the Monk's second prestige
+    { name: 'Sjonghol', icon: 'cave', at: [103, 76], label: 'right', planned: true }, // the singing hollow in Kestrel Edge's cliffs: the Monk's second prestige; a square west into C3, so D3 does not hold it (#71)
     // IV. Wrackholm.
     { name: 'Kelp Hole', icon: 'cave', at: [154, 170], label: 'left', planned: true },
     { name: 'Tide Ship', icon: 'wreck', at: [182, 188], label: 'right', planned: true },
