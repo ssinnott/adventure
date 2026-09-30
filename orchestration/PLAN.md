@@ -1333,3 +1333,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   main merge.
 - 22:06: the container restarted; the reviewers of #295 and #293 were lost mid-run (the files
   survived). Their worktrees and the dead scouts' removed; both reviewers started again.
+- 22:15: #289 (#77's C, Who Lived at Ashcombe) landed: its round (9795489: Hob unnamed on the crock's
+  path, the kitchen said until the paper, the nits) and its main merges (481511f, 7635f49; shelf.md
+  kept both sides, the gold line adding the paper's 50 to E3's and E2's). Landing check on 7635f49:
+  ALL OK (35 owed), SMOKE OK, "Nothing new."; CI green. Merged as 35592d2; main's tree is the tested
+  tree (6c5dc68). #77 closes (A, B, C and D in). The #77 session on to #87 (Ashcombe past Gullwick),
+  no footprint, planning it itself.
+- Unblocked now: #69 (D2, after #68's E2) and #71 (D3, after #67's E3). They go to the #68 and #67
+  sessions after their Bs.
