@@ -17,7 +17,7 @@ import { ok, owed } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   farm_kitchen: '#87',
-  great_owl: '#49', heartwood: '#49', eldest: '#49',
+  eldest: '#218',
 };
 
 /**
