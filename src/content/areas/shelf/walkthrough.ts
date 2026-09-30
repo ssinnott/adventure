@@ -115,6 +115,7 @@ function who(map: string, x: number, y: number, name: string): Person {
 const MAUD = (): Person => who('harrow', 12, 13, 'Maud');
 const EBBA_EEL = (): Person => who('harrow', 12, 13, 'Ebba'), EBBA_CHAPEL = (): Person => who('harrow', 11, 4, 'Ebba');
 const FISHERMAN = (): Person => who('harrow', 12, 13, 'the fisherman'), WALL = (): Person => who('harrow', 14, 3, 'a Warden on the wall');
+const HOB = (): Person => who('harrow', 4, 4, 'Hob'), HOB_GULLWICK = (): Person => who('downs_f3', 7, 14, 'Hob');
 const MOTTRAM = (): Person => who('harrow', 4, 10, 'Mottram'), ALWIN = (): Person => who('harrow', 9, 1, 'Alwin');
 const OSMUND = (): Person => who('harrow', 11, 4, 'Osmund'), AILITH_WOOD = (): Person => who('shelf', 2, 14, 'Ailith'), AILITH_HOLD = (): Person => who('thornhold', 11, 4, 'Ailith');
 
@@ -220,6 +221,33 @@ function wellAsked(w: Walk, alwinFirst: boolean): void {
   w.ok(there(w, ALWIN(), 'harrow') && hear(w, 'harrow', ALWIN()).startsWith('A big man in Warden grey') && !!w.party.flags.q_well_alwin, 'by night Alwin stands by the cart, and says what is under the keep');
   if (alwinFirst) hire();
   w.ok(page(w, 'well')?.goal === 'Take what the mason said back to Mottram\'s Stores.', `the mason heard, the goal is Mottram (${page(w, 'well')?.goal})`);
+}
+
+/** Who Lived at Ashcombe to the key in hand: the kitchen at the farmhouse's back and its chest. */
+function keyFound(w: Walk): void {
+  see(w, 'shelf:ash_kitchen');
+  w.ok(w.world.used('ash_kitchen'), 'the kitchen is seen and its words said');
+  open(w, 'shelf:ash_hearth');
+  w.ok(w.party.bag.includes('hearth_key'), 'the kitchen chimney holds the hearth-key');
+}
+
+/** The paper in hand: the crock beside the kitchen and its chest. */
+function paperFound(w: Walk): void {
+  see(w, 'shelf:ash_crock');
+  w.ok(w.world.used('ash_crock'), 'the crock is lifted and its words said');
+  open(w, 'shelf:ash_crock_c');
+  w.ok(w.party.bag.includes('tenant_paper'), "under the crock is the tenant's paper");
+}
+
+/** Who Lived at Ashcombe to the paper in hand: Hob hires, takes his key and talks; the paper found. */
+function tenantAsked(w: Walk): void {
+  meetWho(w, 'q_ashcombe_who');
+  w.ok(w.news.at(-1) === 'New quest: Who Lived at Ashcombe.' && !!page(w, 'tenant')?.goal, `Hob's first meeting begins Who Lived at Ashcombe, with a goal (${w.news.at(-1)})`);
+  keyFound(w);
+  const told = hear(w, 'harrow', HOB());
+  w.ok(told.startsWith('Hob looks at the hearth-key') && !w.party.bag.includes('hearth_key') && !!w.party.flags.q_hob_key, 'Hob takes his key and says who took his cellar');
+  w.ok(hear(w, 'harrow', HOB()).startsWith('"Still here.'), 'met again, he is still here');
+  paperFound(w);
 }
 
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
@@ -373,6 +401,50 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('"Still iron. It\'s in a book now'), "Mottram's after-lines are the Lanterns'");
     const first = hear(w, 'harrow', OSMUND()), record = hear(w, 'harrow', OSMUND()), then = hear(w, 'harrow', OSMUND());
     w.ok(first.startsWith('A thin man in a leather apron') && record.startsWith('"Written. Stone dust') && then.startsWith('A thin man in a leather apron'), "Osmund's first meeting comes first, then his record, once");
+  }
+  { // The paper to Vask: he pays; Hob is gone from the inn, and his empty chair is said once.
+    const w = newWalk(ok);
+    w.ok(!there(w, HOB_GULLWICK(), 'downs_f3'), 'before the paper is given, Hob is not at Gullwick');
+    tenantAsked(w);
+    const gold = w.party.gold;
+    meetWho(w, 'q_paper_vask');
+    w.ok(w.party.gold === gold + 50 && !w.party.bag.includes('tenant_paper') && !w.party.flags.q_ashcombe_done, 'Vask takes the paper, without the wand, and pays 50');
+    reads(w, 'tenant', 'Who Lived at Ashcombe', ['hob', 'kitchen', 'key', 'paper', 'vask'], ['hale'], 'the paper to Vask');
+    w.ok(!there(w, HOB(), 'harrow') && !there(w, HOB_GULLWICK(), 'downs_f3'), 'the paper to Vask, Hob is gone from the inn and not at Gullwick');
+    see(w, 'harrow:hob_chair');
+    const again = (w.world.travel('harrow', 4, 4), w.world.eventsHere());
+    w.ok(w.world.used('hob_chair') && again.length === 0, 'and his empty chair is said once');
+  }
+  { // The paper to Hale: he takes it as his third hand-in and pays; Hob is gone, and no chair is said.
+    const w = newWalk(ok);
+    tenantAsked(w);
+    const gold = w.party.gold;
+    meetWho(w, 'q_paper_hale');
+    w.ok(w.party.gold === gold + 50 && !w.party.bag.includes('tenant_paper') && !w.party.flags.q_greywater_done, 'Hale takes the paper, without the ledger, and pays 50');
+    reads(w, 'tenant', 'Who Lived at Ashcombe', ['hob', 'kitchen', 'key', 'paper', 'hale'], ['vask'], 'the paper to Hale');
+    w.ok(!there(w, HOB(), 'harrow') && there(w, HOB_GULLWICK(), 'downs_f3'), 'the paper to Hale, Hob is gone from the inn and on the shingle at Gullwick');
+    w.ok(hear(w, 'downs_f3', HOB_GULLWICK()).startsWith('Hob is on the shingle at Gullwick'), 'where he says he stayed');
+    see(w, 'harrow:hob_chair');
+    w.ok(!w.world.used('hob_chair'), 'and no empty chair is said');
+  }
+  { // The crock alone, the paper to Vask: nothing on the way names Hob, and the kitchen after writes nothing.
+    const w = newWalk(ok);
+    paperFound(w);
+    meetWho(w, 'q_paper_vask');
+    reads(w, 'tenant', 'Who Lived at Ashcombe', ['paper', 'vask'], ['hob', 'kitchen', 'key', 'hale'], 'the crock alone, the paper to Vask');
+    w.ok(!page(w, 'tenant')?.entries.some((e) => e.text.includes('Hob')), 'and its journal does not name Hob, whom the company never met');
+    see(w, 'shelf:ash_kitchen');
+    w.ok(!w.world.used('ash_kitchen') && !page(w, 'tenant')?.entries.some((e) => e.id === 'kitchen'), 'the kitchen stepped into after the paper is given is not said, and writes nothing');
+  }
+  { // The key brought to Hob before he is heard: the hand-in begins the quest, and his after-lines follow.
+    const w = newWalk(ok);
+    keyFound(w);
+    const told = hear(w, 'harrow', HOB());
+    w.ok(told.startsWith('Hob looks at the hearth-key') && w.news.at(-1) === 'New quest: Who Lived at Ashcombe.' && !!page(w, 'tenant')?.goal, `Hob given his key unasked takes it and begins Who Lived at Ashcombe, with a goal (${w.news.at(-1)})`);
+    w.ok(hear(w, 'harrow', HOB()).startsWith('"Still here.'), 'met again, he is still here');
+    paperFound(w);
+    meetWho(w, 'q_paper_vask');
+    reads(w, 'tenant', 'Who Lived at Ashcombe', ['kitchen', 'key', 'paper', 'vask'], ['hob', 'hale'], 'the paper to Vask, Hob never hired');
   }
   { // Ailith met first, with no word from anyone: her meeting begins the quest; Esc puts her question again.
     const w = newWalk(ok);

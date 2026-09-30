@@ -122,6 +122,12 @@ export const DOWNS_F3: MapDef = {
     { kind: 'event', x: 1, y: 13, id: 'f3_hoard', once: true, text: 'Under sailcloth in a cleft: name-boards stacked like slates, oars, a shuttered lamp. Halfway down, PATIENCE, in three coats.' },
     { kind: 'chest', x: 1, y: 14, id: 'f3_hoard_chest', gold: 0, items: ['name_boards', 'customs_chit'] },
     { kind: 'chest', x: 1, y: 17, id: 'f3_cave', gold: 60, items: ['mace+1', 'staff+1', 'elixir'] },
+    // Who Lived at Ashcombe (#77): Hob on the shingle by the net loft, once Hale has sent him here.
+    { kind: 'npc', x: 7, y: 14, name: 'Hob, once tenant of Ashcombe', lines: [
+      'Hob is on the shingle at Gullwick, gutting fish badly, with a child either side of him telling him how.',
+      '"Hale sent me. You know; you carried the word. Ann\'s people have put me to the fish. I\'m no good at it, and they know, and they\'ve not said so, which is worse."',
+      '"There\'s no singing here. There\'s the sea, and that\'s loud enough to sleep by. Tell Hale I stayed. He\'ll not believe it. Tell him anyway."',
+    ], after: { flag: 'q_paper_hale' } },
   ],
   secrets: [{ x: 1, y: 16, hint: 'f3_soot' }],
   encounters: [
