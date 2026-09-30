@@ -1341,3 +1341,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   no footprint, planning it itself.
 - Unblocked now: #69 (D2, after #68's E2) and #71 (D3, after #67's E3). They go to the #68 and #67
   sessions after their Bs.
+- 22:20: `reviews/295.md` (#214, H3): ready after fixes. Should-fix: the sign doubles its prefix
+  (`A sign reads:` written into the text; `signLine` adds it; E2's sign on main has the same, from
+  #291: to the #68 session in its B); four groups of twelve (H3 pays 1,903 xp a member against 410,
+  and Thornmark's two-under rises to 33.5%, unreported): against "harder, not bigger"; the brambles
+  roam and wake at 2 and lack `until: TEAR_CLOSED`; a scratch probe committed (`tools/.probe.ts`).
+  Group sizes and #295's choices to a delegate before the round goes. Reviewer on #298 (I4).
