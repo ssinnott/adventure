@@ -129,6 +129,41 @@ export const THORNHOLD: MapDef = {
         '"Keep the coin. If he wants it back, he can tell you where it\'s from first."',
       ] },
     ] },
+    // How Did He Know (#214): Idony, the Split Oak's Lantern in travel-grey. The orders are in the
+    // survey team's fire-pit in H3; she takes them at the first meeting and asks at the next.
+    { kind: 'npc', x: 12, y: 13, name: 'Idony, a Lantern in travel-grey', lines: [
+      'The Lantern in travel-grey has a cup of water and a chart she is not looking at, and she has looked at you twice since you came in.',
+      '"You\'ll have heard me say it. Vask sent a survey south before the Stone even failed. I was not being clever; I was being loud, so that somebody would tell me I was wrong. Nobody has."',
+      '"Four Lanterns, under the Regent\'s seal, and I taught two of them to hold a wand. One is dead under Ashcombe. Their camp is south of the Grove, over the edge of the deep, and their orders are with it, and I want them. Not for the Chapterhouse. For Lantern Watch, in Sunderwood, where Lanterns still ask questions."',
+      '"I\'d go myself. I have been as far as the sign three times, and turned back three times, and I am not ashamed of it. You have the look of people who don\'t turn back."',
+    ], flag: 'q_orders', until: { flag: 'q_orders_watch' }, quest: {
+      item: 'survey_orders', reward: 300, setFlag: 'q_orders_read',
+      done: [
+        'Idony reads what the fire left, and the clerk\'s line under it, and lays the paper face down on the table as if it could be read from across the room.',
+        '"Three days before the Queen died. \'What the seam does, and when.\' He knew there was a seam. He knew it would do something." She is very quiet. "I have been loud for a month, and I was not loud enough."',
+        '"This goes east. There is a watchtower on the far side of the Sunder where the Lanterns read what they are given, and they will read this, and the order will split on it, and it should. That is Lantern money. It is not enough."',
+      ],
+      early: [
+        'The Lantern in travel-grey looks at the burnt paper in your hand before she looks at you, and holds out hers.',
+        '"You\'ve been over the edge of the deep. I know that paper; I\'ve asked for it in every tavern between here and Helmstow, and none of them heard me." She reads what the fire left. "Three days before the Queen died. \'What the seam does, and when.\' He knew."',
+        '"This goes east, to Lantern Watch, where Lanterns still read what they are given. That is Lantern money. It is not enough."',
+      ],
+    }, says: [
+      { after: { flag: 'q_orders_read' }, until: [{ flag: 'q_orders_watch' }, { flag: 'q_orders_council' }], lines: [
+        'Idony has the burnt paper face down under her hand.',
+      ], choice: { ask: '"I carry these east tonight. Unless you want them for Helmstow: a Council will sit on the throne one day, and a paper like this would sit with it. The Watch\'s, or yours?"', answers: [
+        { label: 'Take them to the Watch.', sets: 'q_orders_watch', says: [
+          '"The Watch, then." She folds the paper into the chart, and the chart into her coat. "I\'ll be over the bridge before the elves are up. If anyone asks the Split Oak where its loud Lantern went, it never had one."',
+        ] },
+        { label: 'Give them back to us.', sets: 'q_orders_council', gives: 'survey_orders', says: [
+          '"For the Council." She gives it back the way you would hand someone a lamp. "Then keep it dry and keep it quiet, and when the day comes, read them the clerk\'s line first. It\'s the only line on it a Council will understand."',
+          '"I\'ll go east with what\'s in my head. It\'s less than a paper, and harder to burn."',
+        ] },
+      ] } },
+      { after: { flag: 'q_orders_council' }, lines: [
+        '"Still here. I leave at the thaw; the Watch keeps." She taps her temple. "It\'s all in here. Keep the paper dry."',
+      ] },
+    ] },
     // Leave the Trees Standing (#219): Piran inside the oak gate. Ulf is on the Grove road, and at the
     // pass once sent home; Sylvane's words above banish him.
     { kind: 'npc', x: 6, y: 14, name: 'Piran, woodward of Thornhold', lines: [
