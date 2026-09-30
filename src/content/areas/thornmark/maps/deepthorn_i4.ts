@@ -5,6 +5,7 @@
 // west. Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { TEAR_CLOSED } from './grove2.ts';
 
 export const DEEPTHORN_I4: MapDef = {
   id: 'deepthorn_i4',
@@ -13,6 +14,8 @@ export const DEEPTHORN_I4: MapDef = {
   density: 'core',
   band: [8, 10],
   region: 'thornmark',
+  // Henlys's halls are oaks grown into walls: bark, not stone.
+  palette: { floor: '#3f8a34', wall: '#6e5a3e', wallDark: '#4a3c28', banner: '#2a6a3a' },
   start: { x: 12, y: 0, facing: SOUTH },
   rows: [
     'TTTTTTTTTTTT:TTTTTTTTTTTTTTTTTTT',
@@ -103,14 +106,16 @@ export const DEEPTHORN_I4: MapDef = {
     { kind: 'chest', x: 24, y: 21, id: 'i4_bows', gold: 275, items: ['elfbow+2'] },
   ],
   secrets: [{ x: 21, y: 22, hint: 'i4_holly' }],
+  // The old wood woke when the Stone was cut, and sleeps once the tear is closed: its groups stop
+  // coming back then, and one still standing stays until it is killed (MONSTERS §5.4).
   encounters: [
-    { id: 'i4_gate_brambles', x: 12, y: 5, monsters: ['bramble', 'bramble', 'bramble'], aware: 1, roams: false, respawn: 2880 },
-    { id: 'i4_east_brambles', x: 21, y: 10, monsters: ['bramble', 'bramble', 'bramble'], aware: 1, roams: false, respawn: 2880 },
-    { id: 'i4_south_brambles', x: 10, y: 17, monsters: ['bramble', 'bramble', 'bramble'], aware: 1, roams: false, respawn: 2880 },
-    { id: 'i4_oak', x: 17, y: 27, monsters: ['heartwood', 'bramble', 'bramble', 'bramble'], aware: 2, roams: false, respawn: 2880 },
-    { id: 'i4_walkers_west', x: 6, y: 23, monsters: ['rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: 2880 },
-    { id: 'i4_walkers_east', x: 16, y: 23, monsters: ['rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: 2880 },
-    { id: 'i4_night', x: 28, y: 23, when: { hours: 'night' }, monsters: ['great_owl', 'great_owl', 'bramble', 'bramble'], aware: 3, respawn: 1440 },
+    { id: 'i4_gate_brambles', x: 12, y: 5, monsters: ['bramble', 'bramble', 'bramble'], aware: 1, roams: false, until: TEAR_CLOSED, respawn: 2880 },
+    { id: 'i4_east_brambles', x: 21, y: 10, monsters: ['bramble', 'bramble', 'bramble'], aware: 1, roams: false, until: TEAR_CLOSED, respawn: 2880 },
+    { id: 'i4_south_brambles', x: 10, y: 17, monsters: ['bramble', 'bramble', 'bramble'], aware: 1, roams: false, until: TEAR_CLOSED, respawn: 2880 },
+    { id: 'i4_oak', x: 17, y: 27, monsters: ['heartwood', 'bramble', 'bramble', 'bramble'], aware: 2, roams: false, until: TEAR_CLOSED, respawn: 2880 },
+    { id: 'i4_walkers_west', x: 6, y: 23, monsters: ['rootwalker', 'rootwalker', 'rootwalker'], aware: 3, until: TEAR_CLOSED, respawn: 2880 },
+    { id: 'i4_walkers_east', x: 16, y: 23, monsters: ['rootwalker', 'rootwalker', 'rootwalker'], aware: 3, until: TEAR_CLOSED, respawn: 2880 },
+    { id: 'i4_night', x: 28, y: 23, when: { hours: 'night' }, monsters: ['great_owl', 'great_owl', 'bramble', 'bramble'], aware: 3, until: TEAR_CLOSED, respawn: 1440 },
     { id: 'i4_wolves', x: 29, y: 8, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
     { id: 'i4_spiders', x: 9, y: 27, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 4, respawn: 1440 },
   ],
