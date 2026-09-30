@@ -1316,3 +1316,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   would meet E3 only corner to corner); nits. Round sent 21:58. Found in passing: the Foreland's
   badge over E2 (`atlas.ts:242`). A delegate on #289's and #291's choices, E2's sheet and the badge.
 - Reviewer on #284 (its round in: 18efa84).
+- 21:59: #284 (#67's A, E3 Crowness) landed: its round (20,29 rock so the niche door reads as rock;
+  31,5-9 rock so no way home crosses Hamo; main in). Review ready, four nits (to ride #67's B).
+  Landing check on 18efa84 merged onto main 7736a8c: ALL OK (39 owed), SMOKE OK, "Nothing new.";
+  CI green. Merged as 11cf0fd; main's tree is the tested tree (66e8ee9). The #67 session on to B.
+- The delegate (21:58): #289's seven choices and its sheet OK; #291's eight with 8's revert dropped
+  and its sheet OK; the Foreland's badge filed as #299 (Bug, systems lane, under #26, approved at
+  its word) and given to the #97 session. Relayed to the #77 and #68 sessions.
+- Opened since the resumption: #293 (#286), #294 (#288), #295 (#214, H3), #296 (#163's dead wood),
+  #297 (#163's crystal and chasm), #298 (#49, I4). Reviewers on #295 and #293; then #294, #298,
+  #296, #297 in turn.
