@@ -1462,3 +1462,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   meeting takes it; nits: the Oxford comma in the title, spacing, an indent). Order: #302, #301,
   #303, which must recut the chain (Crowness before the farm puts #303's level-2 Warden at 3). Its
   choices, old saves reopening the chapter and the order to a delegate. Reviewer on #302.
+- 23:20: the delegate on #301: all seven choices taken (the step's place stands here, #303
+  recuts the chain); old saves see The Quiet Farm reopen at Crowness, said in the body (an
+  alternative `done` without the log would hold for every company); the order #302, #301, #303.
+  Round sent to the #67 session, before its D4.
