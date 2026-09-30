@@ -1294,3 +1294,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   round, then E), #67 (#284's round: 20,29 rock for the niche door, 31,9 rock away from Hamo, merge
   main; a full review after), the Thornmark session (#214, no footprint), the #100 session (#49, no
   footprint), the #45 session (#286, #288, #163). Reviewers on #290 and #292; then #289, #291, #284.
+- 21:46: #283 (the pilot's C with D) landed: its round (5b89373: the Boat walked both ways and the
+  farm first, the footprints at 0,12, the docs and nits; main 97e2d81 in). Diff read. Landing check:
+  ALL OK (41 owed; #47 ×2), SMOKE OK, "Nothing new."; CI green. Merged as 4ab1683; main's tree is the
+  tested tree (7fa34d4). #47 stays open for E. #67 told to merge main.
+- `reviews/290.md` (#285's fix): ready, one nit (a stale comment, viewport.ts:46-47).
+  `reviews/292.md` (#287's fix): ready; two nits sent as a round (the headroom one height, so a
+  part more than a height above the view is missed: pad to the seat; `>= 0` at the top row). A
+  delegate on both PRs' choices and #290's pictures (21:47). Reviewer on #289.
