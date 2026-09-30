@@ -1302,3 +1302,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   `reviews/292.md` (#287's fix): ready; two nits sent as a round (the headroom one height, so a
   part more than a height above the view is missed: pad to the seat; `>= 0` at the top row). A
   delegate on both PRs' choices and #290's pictures (21:47). Reviewer on #289.
+- 21:50: the delegate on #290 and #292: every choice taken; #290's pictures OK (the ogre band reads
+  as an ogre, an archer and a brigand). #290 landed: its head e6fc918 merged onto main 4ab1683
+  (clean); landing check ALL OK (41 owed), SMOKE OK, "Nothing new."; CI green. Merged as 585697a;
+  main's tree is the tested tree (bccb45f). #285 closes. Its stale-comment nit rides #286.
