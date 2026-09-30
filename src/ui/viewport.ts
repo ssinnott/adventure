@@ -167,7 +167,8 @@ export function drawViewport(
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
-    paintScene(canvas.getContext('2d')!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
+    // Each torch's point is read back as the scene is painted (see `pixel`).
+    paintScene(canvas.getContext('2d', { willReadFrequently: true })!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
     scene = { key, canvas, sky, flames };
   }
   ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
@@ -212,7 +213,6 @@ export function drawViewport(
     g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.75)');
     ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h);
   }
-  // Flames on the sconces and lanterns, animated over the cached scene.
   ctx.restore();
   if (weather) drawWeather(ctx, world, r, frame);
 }
@@ -951,6 +951,12 @@ function drawVoidSide(ctx: CanvasRenderingContext2D, voids: Path2D, xN: number, 
   cutVoid(ctx, voids, [[xN, top], [xF, top], [xF, footF + 1], [xN, footN + 1]]);
 }
 
+/** The colour at a point, as one number. */
+function pixel(ctx: CanvasRenderingContext2D, x: number, y: number): number {
+  const p = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+  return ((p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3]) >>> 0;
+}
+
 /**
  * A face of the void is cut out of what is painted so far, which it stands in front of, and added
  * to `voids`; whatever is nearer is painted over the hole as usual. Once the scene is done the
@@ -958,12 +964,6 @@ function drawVoidSide(ctx: CanvasRenderingContext2D, voids: Path2D, xN: number, 
  * Every face is wound the same way, so filled together they union rather than cancel. A torch it
  * hides goes out: flames are drawn over the finished scene every frame.
  */
-/** The colour at a point, as one number. */
-function pixel(ctx: CanvasRenderingContext2D, x: number, y: number): number {
-  const p = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
-  return ((p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3]) >>> 0;
-}
-
 function cutVoid(ctx: CanvasRenderingContext2D, voids: Path2D, pts: [number, number][]): void {
   const face = new Path2D();
   addPoly(face, pts);
