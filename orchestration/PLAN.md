@@ -1351,3 +1351,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   vignette over the flames reaches every map at night, dimming an edge lantern by half: say so;
   stale comments). It also ends a wider bug (a torch through nearer walls or pillars in 409 of 2,296
   lit dungeon views). Round sent 22:30; its two choices to a delegate with #294's. Reviewer on #294.
+- 22:32: the delegate on #295: H3 is the `deepthorn` zone, not Thornmark's, so no group above
+  eight (the broods, keepers, hounds and wolves eight; brambles and rootwalkers four), measured with
+  #298's retune of the bramble and the rootwalker (57 hp and 83 hp); the pay (about 1,300 a member)
+  and the two-under (33.5%, #209's pooling) recorded as built, the 410 share being a draft; the
+  other five choices and the sheet OK. Since H3 lands first, it takes the two retuned lines from
+  #298, identical, so #298 merges clean. Round sent to the Thornmark session (22:34), and the #100
+  session told.
