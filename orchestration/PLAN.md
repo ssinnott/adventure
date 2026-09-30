@@ -1362,3 +1362,5 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   checks, so it cannot fail on it: write `/^The /` out in the test; nits). Round sent to the #45
   session. A delegate on #293's and #294's choices and #293's look. Reviewer on #296 (#163's dead
   wood, #216's blocker).
+- 22:38: the delegate on #293 (both choices and its look OK; the edge lantern at half still reads
+  as a lantern far off) and #294 (a lone Eldest "The Eldest", two "2 Eldest"). Relayed.
