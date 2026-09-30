@@ -52,7 +52,8 @@ export const DOWNS_E2: MapDef = {
   ],
   features: [
     { kind: 'event', x: 19, y: 12, id: 'e2_ford', once: true, when: { hours: 'day' }, text: 'The ford. Shod hoofprints in the mud of both banks, going west and coming back, and not once only.' },
-    { kind: 'sign', x: 18, y: 11, text: 'A sign reads: "THE BERTH. Scratched beneath, with a knife point: NOT AFTER DARK."' },
+    { kind: 'event', x: 19, y: 12, id: 'e2_riders', once: true, when: { hours: 'night' }, after: { flag: 'q_riders' }, text: 'Eight riders out of the west, unlit. At the water a horse baulks and a cloak lifts on Warden grey, and they are gone.' },
+    { kind: 'sign', x: 18, y: 11, text: 'THE BERTH. Scratched beneath, with a knife point: NOT AFTER DARK.' },
     { kind: 'fountain', x: 18, y: 3, id: 'e2_spring', text: 'A spring above the Wend, cold enough to ache the teeth.', stat: 'endurance', done: 'The spring runs on, and does no more for you.' },
     { kind: 'statue', x: 10, y: 17, id: 'e2_stone', text: 'A boundary stone between two fields, worn to a stump. Words are cut in it.', riddle: 'HOW MANY FOR THE HEARTH?', answer: 'ten', gift: { gold: 30, stat: 'luck' }, done: 'The stone keeps its count.' },
     { kind: 'cairn', x: 3, y: 26, id: 'e2_cairn', text: 'A cairn where the stubble gives out to the hill.', gold: 25, items: ['potion_heal'] },
