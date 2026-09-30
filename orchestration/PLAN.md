@@ -1481,3 +1481,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   #298 and #304 it drops `CUT_OFF`'s I4, `EDGES_OWED['#49']` and Thornmark's owed xp (14,322 of
   13,667): then ALL OK (23 owed). The lodge a grey stone block in grass: its look and the six
   choices to a delegate. Reviewer on #305 (D3 and the Cutthroat).
+- 23:34: the delegate on #304: the lodge not OK as a grey block; a bark palette as Henlys's (wall
+  and wallDark, the floor at the default for H3's seam); all six choices taken. Round sent to the
+  Thornmark session (main merged, the three owed entries dropped as the second to land, Godric's
+  words held in the gap, §8's figure, the palette, the nits), before its J4.
+- 23:34: `reviews/302.md` (#68's B): ready after fixes (merge main: five keep-both hunks since #301
+  landed). Nits: Dunstan's 7,13 lies on a way through the yard (row 11 is off every one); pitfall 15
+  untested (his `says` swapped, every suite passes). Only E2's ford sign doubles the prefix. Its
+  five choices, his square and the sign check to a delegate. Reviewer on #306 (D2), asked above all
+  whether it can land with its rest line owed past the limit (14.32) before its monsters.
