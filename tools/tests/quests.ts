@@ -147,6 +147,7 @@ export function quests(): void {
   { // The one quest in two chapters, with the side quests beside it as quests of their own.
     const s = fresh();
     for (const f of ['q_ashcombe_done', 'q_wenna', 'q_grove', 'q_greywater']) s.party.flags[f] = 1;
+    stateFor(s.world, 'downs_e3').used.e3_log = 1;
     s.party.bag.push('meridian_journal');
     const log = questLog(s.world.state, s.party);
     const one = log.find((v) => v.def === THE_QUEST);
@@ -192,7 +193,9 @@ export function quests(): void {
     party.flags.q_ashcombe = 1;
     ok(news() === 'New quest: The Dimming.' && /Gullwick/.test(goal()), `Vask's contract begins the one quest at its first chapter, and says where to go (${goal()})`);
     party.flags.q_wenna = 1; // what Hild's first meeting does
-    ok(news() === 'Quest log updated: The Dimming.' && /^Find out why/.test(goal()), `Hild at Gullwick writes Wenna into the log, and the goal moves on to the farm (${goal()})`);
+    ok(news() === 'Quest log updated: The Dimming.' && /Crowness Light/.test(goal()), `Hild at Gullwick writes Wenna into the log, and the goal moves on to the keeper at Crowness (${goal()})`);
+    stateFor(world, 'downs_e3').used.e3_log = 1; // what opening the keeper's log does
+    ok(news() === 'Quest log updated: The Dimming.' && chapter('ashcombe').entries.some((e) => e.id === 'keeper') && /^Find out why/.test(goal()), `the keeper's log writes the count into the log, and the goal moves on to the farm (${goal()})`);
     world.travel('mill', 1, 1, 2);
     ok(/cellar/.test(goal()) && news() === '', 'in the cellar the goal moves on, which is not news');
     world.travel('mill', 10, 4, NORTH); world.move('forward');

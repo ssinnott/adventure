@@ -1,6 +1,7 @@
 // The Foreland's side quests, in the journal's words: The Cargo Ledger (Hale), The Bell That Rang
 // Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The Clerk's Seal (Maud), The Well Tastes
-// of Iron (Mottram) and A Boat With No Name-Board (Wat and Hamo, at Gullwick). Its chapter of the one
+// of Iron (Mottram), A Boat With No Name-Board (Wat and Hamo, at Gullwick) and Oil for the Lamp
+// (Aldred at Crowness Light, Mottram and Vask). Its chapter of the one
 // quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
 // tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
@@ -151,6 +152,31 @@ export const QUESTS: readonly QuestDef[] = [
     goals: [
       { when: { item: 'name_boards' }, at: 'downs_f3', text: 'Take the name-boards across the Wend to Gullwick, or sell them.' },
       { when: { flag: 'q_board' }, at: 'downs_f3', text: 'Find the Patience\'s name-board on the wreckers\' beach, across the Wend from Gullwick. Go by night.' },
+    ],
+  },  {
+    // #56's fifth: Crowness Light dark since the Wardens stopped its oil. Mottram asks whether the
+    // company buys the oil and carries it down, or puts it to Vask; oil carried in lights it either way.
+    id: 'oil',
+    title: 'Oil for the Lamp',
+    start: { flag: 'q_oil' },
+    done: { flag: 'q_oil_lit' },
+    entries: [
+      { id: 'aldred', when: { flag: 'q_oil' },
+        text: 'Crowness Light has been dark since the week the Queen died. The Lanterns\' cart stopped bringing its oil, with no letter to say why.' },
+      { id: 'buy', when: { flag: 'q_oil_buy' },
+        text: 'Mottram stopped the oil on a Warden sergeant\'s paper: Regent\'s orders. He will sell us a flask at forty, and his name is not on it.' },
+      { id: 'vask', when: { flag: 'q_oil_vask' },
+        text: 'Mottram stopped the oil on a Warden sergeant\'s paper: Regent\'s orders. We said we would put it to Vask.' },
+      { id: 'order', when: { flag: 'q_oil_order' },
+        text: 'Vask called it an order given in the confusion of that week, and lifted it. The cart goes down on the first of the month.' },
+      { id: 'lit', when: { flag: 'q_oil_lit' },
+        text: 'Crowness Light burns again, and the Lanterns\' cart comes back on the first of the month.' },
+    ],
+    goals: [
+      { when: { item: 'lantern_oil' }, at: 'downs_e3', text: 'Carry the Lantern Oil down to Aldred at Crowness Light.' },
+      { when: { flag: 'q_oil_vask' }, at: 'keep', text: 'Put the keeper\'s oil to Lord Vask, in the keep at Helmstow.' },
+      { when: { flag: 'q_oil_buy' }, at: 'harrow', text: 'Buy a flask of Lantern Oil at Mottram\'s Stores in Helmstow, and carry it down to Crowness Light.' },
+      { when: { flag: 'q_oil' }, at: 'harrow', text: 'Ask at Mottram\'s Stores in Helmstow why the oil stopped coming to Crowness Light.' },
     ],
   },
 ];

@@ -50,7 +50,14 @@ export const KEEP: MapDef = {
         '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
       ],
       after: ['"Thornmark, and the Grove Stone. Go and see why it has gone quiet, and bring me what you find. The road east runs through the Scarth; Captain Hale holds it, and will tell you the forest is dangerous, which it is. Thornhold will train you further than my drillyard can."'],
-    } },
+        }, says: [
+      // Oil for the Lamp (#67), the keeper's want put to him: said once, and not once the company has lit the lamp itself.
+      { after: { flag: 'q_oil_vask' }, until: { flag: 'q_oil_lit' }, sets: ['q_oil_order', 'q_oil_lit'], lines: [
+        'Vask hears you out without moving. When you have finished he lets the silence sit a moment, so that you know he has chosen to end it.',
+        '"Crowness Light. An order given in the confusion of that week, by a sergeant who mistook thrift for policy. Consider it lifted. The cart goes down on the first of the month, as it always has."',
+        '"Tell the keeper the Crown remembers him." He smiles, briefly, the way a man does when a small account closes in his favour. "Was there anything else?"',
+      ] },
+    ] },
     { kind: 'npc', x: 6, y: 5, name: 'Petitioners', lines: [
       'Petitioners wait on the keep\'s steps, caps in hand.',
       'A farmer\'s wife: "Ashcombe has gone quiet. No smoke, no carts. My sister is out there."',

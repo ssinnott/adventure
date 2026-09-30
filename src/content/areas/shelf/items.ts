@@ -43,6 +43,14 @@ export const ITEMS: readonly ItemDef[] = [
     'A chit of thick paper, creased and salt-spotted, stamped with the Helmstow customs seal.',
     '"Passed for Helmstow, under seal: boards fourteen, oars twenty-two, cordage, one bell. Salvage, the Wyke shore. Duty paid."',
   ] },
+  // The keeper's log at Crowness Light, of the night the Queen died: read from the pack (#67).
+  { id: 'keepers_log', name: "Keeper's Log", slot: 'none', price: 0, text: [
+    'CROWNESS LIGHT. Wind south-west, fresh; sea getting up. Lamp lit at dusk and trimmed for the night. Myself to Gullwick.',
+    'Near midnight the Hearth went out. Not dim: out, and back, and out. Counted between, as for thunder.',
+    'Out. 2. Out. 9. Out. 2. Out. 9. Out. 2. Out. 9. Out. 2. Out. 9. Out. 2. Out. 9. Out. Then no more.',
+    'Eleven. Each about the length of a grace. The pairs even, every time, as if measured. Gullwick\'s boats had no light but mine. Not all in by dawn.',
+    'Morning: a rider from Helmstow. The Queen is dead.',
+  ] },
   { id: 'survey_wand', name: 'Cracked Survey Wand', slot: 'none', price: 0 },
   { id: 'greywater_ledger', name: 'Cargo Ledger', slot: 'none', price: 0 },
   { id: 'clerks_seal', name: "Clerk's Seal", slot: 'none', price: 0 },
