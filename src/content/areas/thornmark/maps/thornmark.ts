@@ -49,14 +49,16 @@ export const THORNMARK: MapDef = {
     'M,T,,,,=,,,,,,,,,,,rr,,,,,,,,,,M',
     'M,,,,,,=,,,,,,,,,,,r,,,,,,,,,,,M',
     'M,,TTT,=,TTT,,,,,,,,,,,,,,,,,,,M',
-    'M,TTTTT=TTTTT,,,,,,,,,,,,,,,,,,M',
-    'M,TTTTTTTTTTT,,,,,,,,,,,,,,,,,,M',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
+    'M,TTTTT==TTTT,,,,,,,,,,,,,,,,,,M',
+    'M,TTTTTT=TTTT,,,,,,,,,,,,,,,,,,M',
+    'MMMMMMMM=MMMMMMMMMMMMMMMMMMMMMMM',
   ],
   exits: [
     { x: 0, y: 9, to: 'shelf', tx: 30, ty: 9, tf: WEST, label: 'Back through the pass to the Foreland.' },
     { x: 23, y: 4, to: 'thornhold', tx: 7, ty: 14, tf: NORTH, label: 'You pass under the oak gate of Thornhold.' },
     { x: 7, y: 29, to: 'grove1', tx: 1, ty: 1, tf: SOUTH, label: 'Steps cut into the roots lead down beneath the Grove.' },
+    // The elves' road south out of the hollow, into the Deepthorn (#214).
+    { x: 8, y: 31, to: 'deepthorn_h3', tx: 8, ty: 1, tf: SOUTH, label: 'The Deepthorn. Past the Grove the road is the elves\', and the oaks are older than the elves.' },
   ],
   features: [
     { kind: 'event', x: 1, y: 9, id: 'thornmark_in', once: true, text: 'Thornmark. The trees here are older than Helmstow, and the Warden road under them has not been swept in weeks.' },
