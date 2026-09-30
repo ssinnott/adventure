@@ -28,7 +28,7 @@ import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS, VOID_PINK } from './palette.ts';
-import { drawMonsterSprite, drawTreeSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
+import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
 import type { TreeSeason } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
 import type { Weather } from '../game/weather.ts';
@@ -43,7 +43,6 @@ const LATERAL = VIEW_LATERAL;
 
 export interface ViewRect { x: number; y: number; w: number; h: number; }
 
-/** A monster to draw at a cell, resolved by the caller from the world's live groups. */
 /** A figure the viewport draws for a group: the monster, its sprite, tint and size. */
 export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; }
 
@@ -80,7 +79,7 @@ const SNOW = '#eef2f7';
  * Every terrain has its entry, so one left out fails the typecheck rather than never taking snow.
  */
 export const SNOW_HOLD: Record<Terrain, number> = {
-  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
+  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, deadwood: 0.85, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
   water: 0, deep: 0, lava: 0,
 };
 type Ramp = readonly [number, string][];
@@ -137,7 +136,8 @@ function groundColor(terrain: Terrain, kind: string, floorPal: string, crop = 0)
   return s > 0 ? mix(c, SNOW, s) : c;
 }
 
-interface Flame { x: number; y: number; s: number; }
+/** A torch or lantern's flame, and the pixel it was painted over, read once its wall is done. */
+export interface Flame { x: number; y: number; s: number; under?: number; }
 interface Scene {
   key: string;
   /** Everything but the sky, which shows through where nothing was painted. */
@@ -149,6 +149,8 @@ interface Scene {
 let scene: Scene | null = null;
 /** Filled while a scene is painted: where the torches and lanterns are, for the per-frame flames. */
 let flames: Flame[] = [];
+/** The flames the last scene painted left alight. */
+export function paintedFlames(): readonly Flame[] { return flames; }
 
 export { isSolidWall };
 
@@ -165,8 +167,8 @@ export function drawViewport(
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
-    flames = [];
-    paintScene(canvas.getContext('2d')!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
+    // Each torch's point is read back as the scene is painted (see `pixel`).
+    paintScene(canvas.getContext('2d', { willReadFrequently: true })!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
     scene = { key, canvas, sky, flames };
   }
   ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
@@ -179,6 +181,8 @@ export function drawViewport(
   }
   ctx.drawImage(scene.canvas, r.x, r.y);
 
+  // Flames on the sconces and lanterns, animated over the cached scene; a monster stands before them.
+  for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
   // Monsters, every frame, with a line-of-sight check against the cached walls.
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
@@ -209,8 +213,6 @@ export function drawViewport(
     g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,0.75)');
     ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h);
   }
-  // Flames on the sconces and lanterns, animated over the cached scene.
-  for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
   ctx.restore();
   if (weather) drawWeather(ctx, world, r, frame);
 }
@@ -238,6 +240,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const skyBottom = mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk));
   const haze = map.kind === 'dungeon' ? null : skyBottom;
 
+  flames = [];
   ctx.save();
   ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
 
@@ -333,6 +336,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           drawSideFace(ctx, map, cell, c.x, c.y, xIn(uN), uN, xIn(uF), uF, horizon, d, seed, dark, haze, l > 0, joinNear, joinFar, !solidAt(d + 1, l), ahead);
         }
         if (b) drawRoof(ctx, at, d, l, houseAt, b.seed, dark, haze, false);
+        for (const fl of flames) fl.under ??= pixel(ctx, fl.x, fl.y);
       } else if (d > 0 && cell.solid !== 'none' && !backdrop) {
         // Over the smoke test's backdrop the billboards stay out: their gaps are not cracks.
         const u = unit(d, r.h);
@@ -342,19 +346,24 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
-      } else if (d > 0 && cell.terrain === 'woods' && !backdrop) {
+      } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood') && !backdrop) {
         // Light woods: a tree or two stand to the sides of the square, leaving the way through it open.
         // None stands on a side a wall or the void closes: drawn after them, it would stand in front.
+        // Dead wood stands the same, its trees dead.
         const u = unit(d, r.h);
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
         for (const side of [-1, 1]) {
           if (hash(c.x, c.y, 60 + side) < 0.3 || solidAt(d, l + side)) continue;
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
-          drawTreeSprite(ctx, bx, by, u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side)), tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
+          const s = u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side));
+          if (cell.terrain === 'deadwood') drawDeadTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 3), env.cover);
+          else drawTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
         }
       }
     }
   }
+  // A torch goes out where anything nearer was painted over it, a tree or a rock or a wall.
+  flames = flames.filter((fl) => pixel(ctx, fl.x, fl.y) === fl.under);
   // An overcast day's flat grey light over everything painted; the sky has its own greys.
   const veil = cloud * 0.2 + env.murk * 0.12;
   if (veil > 0.01) {
@@ -785,7 +794,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
       ctx.strokeStyle = fog(shade(base, 0.55), d, dark, haze); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
     }
   }
-  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
+  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'deadwood' ? 5 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
@@ -813,6 +822,12 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
         ctx.strokeStyle = fog(shade(base, 1.45), d, dark, haze); ctx.lineWidth = Math.max(1, sc);
         ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 4 * sc, y - 3 * sc); ctx.moveTo(x, y); ctx.lineTo(x, y - 5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 4 * sc, y - 3 * sc); ctx.stroke();
       }
+    } else if (terrain === 'deadwood') {
+      // Fallen limbs and bleached twigs, grey on grey, buried by a deep snow.
+      if (env.cover > 0.55) continue;
+      const a = (hash(seed, 45, i) - 0.5) * 1.2, len = (3 + 4 * hash(seed, 47, i)) * sc;
+      ctx.strokeStyle = fog(i % 2 ? '#b0a898' : '#5e5850', d, dark, haze); ctx.lineWidth = Math.max(1, sc * (i < 2 ? 1.2 : 0.7));
+      ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len * 0.4); ctx.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len * 0.4); ctx.stroke();
     } else if (flag) {
       if (hash(seed, 51, i) > 0.5) continue;
       if (i === 0) {
@@ -943,6 +958,12 @@ function drawVoidFront(ctx: CanvasRenderingContext2D, voids: Path2D, x0: number,
 function drawVoidSide(ctx: CanvasRenderingContext2D, voids: Path2D, xN: number, footN: number, xF: number, footF: number, top: number): void {
   xN = Math.round(xN); xF = Math.round(xF);
   cutVoid(ctx, voids, [[xN, top], [xF, top], [xF, footF + 1], [xN, footN + 1]]);
+}
+
+/** The colour at a point, as one number. */
+function pixel(ctx: CanvasRenderingContext2D, x: number, y: number): number {
+  const p = ctx.getImageData(Math.floor(x), Math.floor(y), 1, 1).data;
+  return ((p[0] << 24) | (p[1] << 16) | (p[2] << 8) | p[3]) >>> 0;
 }
 
 /**

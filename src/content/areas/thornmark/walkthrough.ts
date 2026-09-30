@@ -1,9 +1,10 @@
 // Thornmark's walkthrough: the chain of the one quest, the Foreland's chapter and then its own, The
 // Grove Stone, played from a new game by the game's own moves and checked a step at a time
 // (tools/walk.ts); then played again with Thornmark taken early, before Vask's hire and after it
-// but before the wand, where the log must still read true and end the same. Then its side quests
-// on the built maps (#219), each from its giver to its choice and both ways: the log reads true and
-// the people stand where it says.
+// but before the wand, where the log must still read true and end the same; and with the treaty in
+// Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side
+// quests on the built maps (#219), each from its giver to its choice and both ways: the log reads
+// true and the people stand where it says.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -26,12 +27,16 @@ const sylvane = (w: Walk): void => { walkThrough(w, 'thornmark', 23, 5, NORTH, '
 /** Under the Grove: the Stone seen, the Hand of Ash and the Warden of the Cut fought. */
 const stone = (w: Walk): void => { see(w, 'grove2:g2_stone'); fight(w, 'grove2:g2_hand'); fight(w, 'grove2:g2_warden'); };
 
-/** The chapter in order: through the pass, to Sylvane, under the Grove and the chisel back. */
+/** The treaty in Henlys's hall, its seal seen. */
+const TREATY: Step = { name: 'the treaty', play: (w) => see(w, 'deepthorn_i4:i4_treaty') };
+
+/** The chapter in order: the pass, to Sylvane, under the Grove, the chisel back and the seal seen. */
 export const STEPS: readonly Step[] = [
   { name: 'the pass', play: pass },
   { name: 'to Thornhold', play: sylvane },
   { name: 'the Stone', play: stone },
   { name: 'the chisel', play: (w) => meetWho(w, 'ashen_chisel') },
+  TREATY,
 ];
 /** The chapter for a company Sylvane has already hired. */
 const FROM_SYLVANE = STEPS.slice(2);
@@ -43,6 +48,7 @@ const STONE_FIRST: readonly Step[] = [
   STEPS[0],
   { name: 'the Stone, unsent', play: stone },
   { name: 'the chisel, to someone who knows', play: (w) => { walkThrough(w, 'thornmark', 23, 5, NORTH, 'thornhold'); meetWho(w, 'ashen_chisel'); } },
+  TREATY,
 ];
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -52,7 +58,9 @@ export const walkthrough: Walkthrough = (ok) => {
   playChapter(chain, FORELAND, FORELAND_STEPS, 'in order');
   ok(chain.news.slice(-2).join(' ') === 'Chapter complete: The Quiet Farm. New chapter: The Grove Stone.', `in order, the wand ends the farm and opens the Grove (${chain.news.slice(-2).join(' ')})`);
   playChapter(chain, CHAPTER, STEPS, 'in order');
-  ok(chain.news.slice(-2).join(' ') === 'Chapter complete: The Grove Stone. Quest complete: The Dimming.', `in order, the chisel ends the Grove and the quest (${chain.news.slice(-2).join(' ')})`);
+  const sealed = chain.news.slice(-3).join(' ');
+  ok(sealed === 'Chapter complete: The Grove Stone. Quest complete: The Dimming. New quest: The Empty Throne.', `in order, the seal seen ends the Grove and the quest, and opens The Empty Throne (${sealed})`);
+  henlys(chain, 'in order');
   const want = ending(chain, 'in order');
 
   // Thornmark before Vask's hire: through the pass with no quest, to Sylvane and the Grove done
@@ -93,9 +101,55 @@ export const walkthrough: Walkthrough = (ok) => {
   playChapter(unsent, CHAPTER, STONE_FIRST, 'in order, the Stone first');
   ending(unsent, 'in order, the Stone first');
 
+  // The treaty seen before the Stone: a seal the company does not know, and Senara says so; the
+  // chisel, found after and paid for, makes the match and ends the chapter.
+  const treatyFirst = newWalk(ok);
+  hired(treatyFirst);
+  playChapter(treatyFirst, FORELAND, FORELAND_STEPS, 'the treaty first');
+  treatyFirst.level = 8;
+  see(treatyFirst, 'deepthorn_i4:i4_treaty');
+  ok(treatyFirst.news.at(-1) === 'New quest: The Empty Throne.' && !quest(treatyFirst)?.pages.find((p) => p.def === CHAPTER)?.done, `the treaty first, the seal opens The Empty Throne and ends nothing (${treatyFirst.news.at(-1)})`);
+  const unknown = hear(treatyFirst, 'deepthorn_i4', SENARA());
+  ok(unknown.includes('No word from Sylvane') && !!treatyFirst.party.flags.q_seal_unknown, 'the treaty first, Senara shows a seal that means nothing yet');
+  playChapter(treatyFirst, CHAPTER, STEPS.slice(1, 4), 'the treaty first');
+  const ids = ending(treatyFirst, 'the treaty first');
+  ok(['grove.seal_early', 'grove.seal', 'grove.lead', 'grove.paid'].every((e) => ids.includes(e)), `the treaty first, the log reads the seal unknown and then matched (${ids.filter((e) => e.startsWith('grove.')).join(', ')})`);
+
+  // The seal shown by Senara, from her square, and the treaty's never stepped on: the chapter ends
+  // there as well, and the log ends as in order.
+  const shown = newWalk(ok);
+  hired(shown);
+  playChapter(shown, FORELAND, FORELAND_STEPS, 'shown by Senara');
+  playChapter(shown, CHAPTER, [...STEPS.slice(0, 4), { name: 'Senara shows the seal', play: (w) => meetWho(w, 'q_treaty') }], 'shown by Senara');
+  ok(JSON.stringify(ending(shown, 'shown by Senara')) === JSON.stringify(want), 'shown by Senara: the log ends with the same entries as in order');
+
+  // The chisel carried to Senara before Sylvane has paid for it: she makes the match, the chapter
+  // waits on the pay, and her next words, the match not yet made, ask all the same.
+  const carried = newWalk(ok);
+  hired(carried);
+  playChapter(carried, FORELAND, FORELAND_STEPS, 'the chisel carried');
+  playChapter(carried, CHAPTER, STEPS.slice(0, 3), 'the chisel carried');
+  carried.level = 8;
+  ok(hear(carried, 'deepthorn_i4', SENARA()).includes('something that hums') && !!carried.party.flags.q_seal_matched && !quest(carried)?.pages.find((p) => p.def === CHAPTER)?.done,
+    'the chisel carried, Senara makes the match and the chapter waits on the pay');
+  ok(hear(carried, 'deepthorn_i4', SENARA()).includes('longer than most') && !!carried.party.flags.q_mark, 'the chisel carried, Senara, the match not yet made, asks for the rubbing');
+  playChapter(carried, CHAPTER, [STEPS[3]], 'the chisel carried');
+  ok(JSON.stringify(ending(carried, 'the chisel carried')) === JSON.stringify(want), 'the chisel carried: the log ends with the same entries as in order');
+
   everyGoalWalked(ok);
   sideQuests(ok);
 };
+
+/**
+ * Henlys after the seal, in order: Senara knows the match and asks for The Older Mark; Mawgan and
+ * Sylvane have seen it too.
+ */
+function henlys(w: Walk, how: string): void {
+  w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('Sylvane sent you') && !!w.party.flags.q_treaty, `${how}, Senara knows what Sylvane sent the company for`);
+  w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('one more place that mark is') && !!w.party.flags.q_mark, `${how}, Senara, the match made, asks for a rubbing of the stone on Penspern`);
+  w.ok(hear(w, 'deepthorn_i4', MAWGAN()).startsWith('"You have seen it. Good.'), `${how}, Mawgan's words are the treaty's`);
+  w.ok(hear(w, 'thornhold', SYLVANE()).startsWith('"You have seen it, then.'), `${how}, and so are Sylvane's`);
+}
 
 // ---- the side quests (#219) ----
 
@@ -109,6 +163,7 @@ function who(map: string, x: number, y: number, name: string): Person {
   return p;
 }
 const SYLVANE = (): Person => who('thornhold', 9, 5, 'Elder Sylvane');
+const SENARA = (): Person => who('deepthorn_i4', 10, 9, 'Senara'), MAWGAN = (): Person => who('deepthorn_i4', 9, 12, 'Mawgan');
 const TEGEN = (): Person => who('thornhold', 12, 13, 'Tegen'), LEOFWIN = (): Person => who('thornmark', 17, 15, 'Leofwin');
 const PIRAN = (): Person => who('thornhold', 6, 14, 'Piran'), ULF = (): Person => who('thornmark', 15, 22, 'Ulf'), ULF_PASS = (): Person => who('thornmark', 2, 10, 'Ulf');
 const TAMSIN = (): Person => who('thornhold', 11, 4, 'Reader Tamsin');
@@ -343,6 +398,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(there(w, GODRIC(), 'deepthorn_i3') && !shows(w, 'deepthorn_i3', 'i3_cellar'), 'the brambles cut down, Godric comes up from the cellar');
     answerTo(w, 'deepthorn_i3', GODRIC(), 'Sylvane will hear it.');
     w.ok(w.news.includes('New quest: The Hunters\' Bargain.') && page(w, 'hunters')?.goal === 'Tell Elder Sylvane in Thornhold what the lodge\'s hunters did.', `told, the goal is Sylvane (${page(w, 'hunters')?.goal})`);
+    w.ok(hear(w, 'deepthorn_i3', GODRIC()).startsWith('"Tell her, then.'), 'before Sylvane hears it, Godric sends the company on, and does not meet it again');
     w.ok(hear(w, 'thornhold', SYLVANE()).startsWith('Sylvane hears it through'), 'Sylvane hears the lodge\'s part in it');
     reads(w, 'hunters', 'The Hunters\' Bargain', ['cellar', 'godric', 'told', 'shut'], ['kept'], 'Sylvane told');
     w.ok(hear(w, 'deepthorn_i3', GODRIC()).startsWith('"Word came.'), "Godric's after-lines are the gate shut's");

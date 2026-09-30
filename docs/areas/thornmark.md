@@ -27,7 +27,7 @@ The atlas (its rows in `src/content/areas/thornmark/atlas.ts`, merged into `ATLA
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Thornmark | 5–10, its map's | 2,028 | 901: the Thornmark map, laid at 232,30 |
-| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I3, Deepthorn Lodge, at 264,62 (#215) |
+| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I3, Deepthorn Lodge, at 264,62 (#215); I4, Henlys, at 264,94 (#49) |
 | The area | 5–10 | 5,274 | a sixth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -146,6 +146,15 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   the ogre alone on the road, the brambles, four great owls over the lodge by night and two
   heartwoods on the game trail. The road comes in from H3 and runs out of the south edge at 12,31
   for Henlys. The gate holds at 8, at 7.3 fights to a rest.
+- **Henlys** (I4, `deepthorn_i4`, core, band 8–10; #49): the oldest hold, its halls grown into oaks
+  round a yard, its gate shut with brambles; inside, the gate-yard's hearth (a camp), the spring and
+  the hall, where Senara keeps the treaty and Mawgan sits under the hall's oak. The Deepthorn's
+  step: the treaty's seal, which ends Thornmark's chapter (§5). West and south the old groves, where
+  the rootwalkers all face the holly, and behind it the first grove, its chest at the oak's roots a
+  Thornmark Bow +2; east the long glade, its sign at the fork, its shrine and at its head the first
+  elder's statue, whose riddle Thornhold's gate answers for Brigandine +3. Nine groups, the old wood's
+  asleep once the tear is closed. It is reached through I3 (#215): H4 between it and H3 is cut
+  (§11).
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
@@ -377,6 +386,13 @@ settled in its issue, and what the pilot teaches changes them.
 - **Finds.** The first grove holds a Thornmark Bow +2; the statue gives Brigandine +3 for its
   answer.
 - **Pay.** About 890 xp a member.
+- **As built** (#49, 30 September): the brief's places and groups, the old wood set on MONSTERS
+  §4.4's lines for its roles and levels (§7), since on its drafts every group was won at level 4
+  and a company at 8 fought 18.8 to a rest. Harder monsters, not bigger groups: the brambles three
+  to a group, the rootwalkers three, the owls two over two brambles by night, the wolves eight. It
+  gives a company at 8 7.2 fights to a rest, every group won. It pays 1,098 xp a member and 275
+  gold, against the 890 and 275 shared to it here; the old wood's pay is its role's at its level.
+  The heartwood is drawn at 1.3, not 1.8: at 1.8 no group of it keeps its label above it (§7).
 
 ### 4.5 J4, the Hoarhills' end (#216): country, band 8–10
 
@@ -461,17 +477,16 @@ settled in its issue, and what the pilot teaches changes them.
 ## 5. The one quest here
 
 Thornmark's chapter is The Grove Stone (`chapter.ts`): Sylvane's charge, the Stone found cut, the
-chisel, the tear and the pay. DESIGN §9 gives the Deepthorn one step, and it is not built: in
+chisel, the tear, the pay and the seal. DESIGN §9 gives the Deepthorn one step, built in #49: in
 Henlys (I4), the treaty that says the elves' line and Helmstow's were once one, sealed with the
 chisel's mark.
 
-Every zone on the road holds at least one step (EXPANSION §5.8); this is the Deepthorn's, owed to
-#49 (`tools/tests/quests.ts:90`). Sylvane gives the lead: STORY has her know the chisel's marks from
-the seal of an old treaty her people keep, and her done words gain the line that sends the company
-south to see it. The chapter ends on the seal seen, where today it ends on her pay, and the log
-says of the seal that it is the chisel's mark and no more. A company that reaches the hold early
-sees a treaty with a seal it does not know yet, and the chisel, found after, makes the match, so the
-log reads true in either order.
+Every zone on the road holds at least one step (EXPANSION §5.8); this is the Deepthorn's. Sylvane
+gives the lead: STORY has her know the chisel's marks from the seal of an old treaty her people
+keep, and her done words gain the line that sends the company south to see it. The chapter ends on
+the seal seen, or shown by Senara, with the chisel paid for, and the log says of the seal that it is the chisel's mark
+and no more. A company that reaches the hold early sees a treaty with a seal it does not know yet,
+and the chisel, found after, makes the match, so the log reads true in either order.
 
 The treaty is also the elves' claim to Helmstow's throne, which the Lanterns back (DESIGN §10.1), and
 seeing it opens The Empty Throne in the log, as the Meridian journal opens The Lost Expedition: a
@@ -496,7 +511,7 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214), built |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215), built |
-| 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218) |
+| 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218); Senara's ask built, the rubbing's hand-in, choice and after-lines #218's |
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
 | 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218) |
@@ -604,9 +619,10 @@ I5.
   floor, in Thornmark's pool, with the zone's at 3 and the dungeons' at 3, the area's floor less
   two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
   of its own, with its road walked at 8 and its warning at its way in from the Grove
-  (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it. With H3 built, Thornmark
-  two under its maps' floors wins 33.6% of its 43 groups' fights, off the aim of 25% and inside the
-  limit: it comes of #209's pooling, which the size of a group does not move.
+  (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it. With H3, I3 and I4 built,
+  Thornmark two under its maps' floors wins 52.4% of its 60 groups' fights (44.0% of 51 with H3 and
+  I3), off the aim of 25% and inside the limit: it comes of #209's pooling, which the size of a
+  group does not move.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their

@@ -21,6 +21,8 @@ export const DEEPTHORN_I3: MapDef = {
   density: 'country',
   band: [8, 10],
   region: 'thornmark',
+  // Bark, as Henlys's halls are: the lodge is the one building, a long house under the oaks.
+  palette: { wall: '#6e5a3e', wallDark: '#4a3c28' },
   start: { x: 1, y: 23, facing: EAST },
   rows: [
     'TTT~^ttt^^MMM^^tTTTTTTTTTTTTTTTT',
@@ -95,6 +97,9 @@ export const DEEPTHORN_I3: MapDef = {
         ] },
       ],
     }, says: [
+      { after: { flag: 'q_hunters_told' }, until: { flag: 'q_hunters_shut' }, lines: [
+        '"Tell her, then. Tell her the men were paid and the men looked away, and that the eldest of them said so himself, and didn\'t ask you twice." A breath. "The door\'s open. That\'s your doing, and I\'ll not forget it either way."',
+      ] },
       { after: { flag: 'q_hunters_shut' }, lines: [
         '"Word came. The gate\'s shut to us till the Stone\'s whole." He is skinning a hare, badly, with the boar-spear. "She\'s right. I\'d have done the same, and hated whoever told me, and got over it. Give me a winter."',
       ] },
