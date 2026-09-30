@@ -114,6 +114,13 @@ export const SHELF: MapDef = {
         'He pays you from the post\'s strongbox, not his own purse, and writes it down. "Wardens\' money. It\'s a Wardens\' matter now, and I want that in ink."',
       ],
     }, {
+      item: 'tenant_paper', reward: 50, setFlag: 'q_paper_hale',
+      done: [
+        'Hale reads it and swears once, quietly.',
+        '"Hob. I know him. His father had Ashcombe before him and never let so much as a hayloft." He folds the paper into the cover of his ledger. "He goes to Gullwick, to his wife\'s people, tonight, and he doesn\'t come back to Helmstow until I say so. A man who\'ll sell his stairs for twenty gold wants somewhere with nothing to sell."',
+        '"Tell him I said so. Tell him gently; he\'ll come quicker."',
+      ],
+    }, {
       // Riders in the Dark (#68): Dunstan's letter, from Coldharbour.
       item: 'dunstan_letter', reward: 0, setFlag: 'q_riders_hale',
       done: [
@@ -139,6 +146,13 @@ export const SHELF: MapDef = {
         '"Thornhold. Elves and trees and nobody in grey." She takes the stake for a crutch. "Elder Sylvane knows a Lantern\'s word when she hears one. I\'ll tell her about you. She\'ll pretend not to have listened, and then she\'ll have listened. That\'s how the Chapterhouse works."',
       ] },
     ] } },
+    // Who Lived at Ashcombe (#77): the hearth-key in the farmhouse kitchen, at its back notch, and the
+    // tenant's paper under the flour crock beside it. Each find is on its chest's square, so is said first;
+    // the kitchen, which the crock does not need, is not said once the paper is given.
+    { kind: 'event', x: 28, y: 20, id: 'ash_kitchen', once: true, until: [{ flag: 'q_paper_vask' }, { flag: 'q_paper_hale' }], text: 'The kitchen. The hearth-key on its nail in the chimney, and the hearth below it swept. Nobody flees a house and sweeps it first.' },
+    { kind: 'chest', x: 28, y: 20, id: 'ash_hearth', gold: 0, items: ['hearth_key'] },
+    { kind: 'event', x: 29, y: 19, id: 'ash_crock', once: true, text: 'Under the flour crock, folded small: a grey paper with a mark at its foot, and on the back, in grey ink, THE HEARTH IS A CAGE.' },
+    { kind: 'chest', x: 29, y: 19, id: 'ash_crock_c', gold: 0, items: ['tenant_paper'] },
   ],
   encounters: [
     { id: 'road_rats', x: 16, y: 7, monsters: ['rat', 'rat', 'rat'], aware: 4, respawn: 1440 },
