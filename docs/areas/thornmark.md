@@ -27,7 +27,7 @@ The atlas (its rows in `src/content/areas/thornmark/atlas.ts`, merged into `ATLA
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Thornmark | 5–10, its map's | 2,028 | 901: the Thornmark map, laid at 232,30 |
-| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214) |
+| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I5, the wood to the head, at 264,126 (#217) |
 | The area | 5–10 | 5,274 | a sixth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -136,6 +136,16 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   Split Oak. Seven groups: dire wolves, the nest's two brood and its keepers, rift hounds until the
   tear is closed, brambles short of the ford and rootwalkers east of it, where the road runs on out
   of the east edge for I3 and Henlys. The gate holds at 8, at 7.9 fights to a rest.
+- **The wood to the head** (I5, `deepthorn_i5`, country, band 8–10; #217): a strip of forest down
+  Penspern's west side, walked by three paths: in from Henlys's south edge, down the shingle and
+  through the trees to the tip, where the beach runs on east under the head for J5. The owls' roost,
+  a dead oak on the shore, is the first den whose brood walks only by night (`when`), its hoard a
+  Silver Torc; by night the Hearth shows through the trunks; a camp under the last oaks. The secret:
+  a root with a rope's groove at the water's edge (the hint), and under it, behind a secret door in
+  the trees, the hold's youths' boat with a cask of Lantern Oil and no gold (#218). Five groups: the
+  roost's four old owls and its two broods of three, three brambles on the way down to the shore and
+  three rootwalkers at the tip. The Hearth Isle's corner is kept, its land drawn as rock and never
+  walked. The gate holds at 8, at 7.4 fights to a rest; the box pays 514 xp a member as measured.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
@@ -574,7 +584,8 @@ I5.
   keepers pay once, and its brood as a group that respawns does; the figures count the brood once.
   Act II's cap and curve (#159) are to pay a kill by the monster's level against the member's, which
   re-prices every figure here if they land first; each box is measured when it is built. H3, built,
-  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101.
+  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101; I5 514 (#217), and
+  brings it to 12,615.
 - **Gold.** A clear pays 6,518 of the 8,400 that training six members from 5 to 10 costs (§3), the
   Lanterns' quests in it, and 7,600 with #219's side quests. The Deepthorn's share of the rest is
   about 1,200, the 1,900 it was less the two hand-ins' sure 700 (#219): H3 160, I3 170, I4 275, J4
@@ -588,8 +599,9 @@ I5.
   two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
   of its own, with its road walked at 8 and its warning at its way in from the Grove
   (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it. With H3 built, Thornmark
-  two under its maps' floors wins 33.6% of its 43 groups' fights, off the aim of 25% and inside the
-  limit: it comes of #209's pooling, which the size of a group does not move.
+  two under its maps' floors wins 33.6% of its 43 groups' fights, and with I5 40.5% of 48, off the
+  aim of 25% and inside the limit: it comes of #209's pooling, which the size of a group does not
+  move.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their

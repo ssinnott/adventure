@@ -62,6 +62,11 @@
         "h3_survey",
         "h3_thorns",
         "h3_wyke",
+        "i5_boat",
+        "i5_groove",
+        "i5_hearth",
+        "i5_hollow",
+        "i5_roost",
         "lake",
         "lodestone",
         "scarth_watch",
@@ -116,6 +121,11 @@
         "h3_rootwalkers",
         "h3_wolves",
         "hill_wolves",
+        "i5_brambles",
+        "i5_brood1",
+        "i5_brood2",
+        "i5_keepers",
+        "i5_rootwalkers",
         "marsh_spiders",
         "road_bandits",
         "road_rats",
@@ -143,7 +153,8 @@
         "158,56",
         "169,78",
         "180,33",
-        "260,86"
+        "260,86",
+        "286,135"
       ]
     },
     "greywater1": {
@@ -333,6 +344,10 @@
   "zones": {
     "deepthorn_h3": {
       "at": "232,62",
+      "size": "32x32"
+    },
+    "deepthorn_i5": {
+      "at": "264,126",
       "size": "32x32"
     },
     "downs_e2": {
