@@ -19,7 +19,7 @@ The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` b
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Foreland | 1–5, its map's | 2,296 | 879: the Foreland map, laid at 200,30 |
-| Callow Downs | 2–5 | 6,569 | F2, F3 and E3, laid at 168,30, 168,62 and 136,62 |
+| Callow Downs | 2–5 | 6,569 | F2, F3, E3 and E2, laid at 168,30, 168,62, 136,62 and 136,30 |
 | The area | 1–5 | 8,865 | a quarter |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -84,6 +84,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour; Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
 | Callow Downs, F3 | outdoor zone, 32×32 | 2–3 | Gullwick at the Wend's mouth, its net loft and boats; the rise; the wreckers' far beach and their cave; three groups (§4.3); Hob on the shingle by the net loft once Hale has sent him |
 | Callow Downs, E3 | outdoor zone, 32×32 | 3–4 | Crowness Light and the keeper's cottage on the point; the Salt Road west in fog; the gibbet; the wreck and the wreckers' niche below the light; eight groups (§4.4) |
+| Callow Downs, E2 | outdoor zone, 32×32 | 3–4 | the Wend's fields and its ford on the track from Coldharbour west to the Berth; the drowned mill and its wheel-pit; the rookery in the willows, the first den; a boundary stone with a riddle, a spring, a cairn and a shepherd's camp; five groups (§4.5) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
@@ -91,12 +92,13 @@ Clerk's Seal (Maud), The Well Tastes of Iron (Mottram), A Boat With No Name-Boar
 Who Lived at Ashcombe (Hob,
 `quests.ts`); the monsters are MONSTERS §5.1's.
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
-(`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's
-the carving over a blank stretch of wall; Brockholt's (downs_f2 12,3) the bare ground under the
-holly at 12,4 (`f2_holly`), beside the woodcutter's word; and the wreckers' cave's (downs_f3 1,16)
-the soot where the far beach ends at 0,15 (`f3_soot`), beside the shanty's last verse; and the
-wreckers' niche below Crowness Light (downs_e3 19,29) the soot on the ledge beside it at 18,29
-(`e3_ledge`).
+(`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's the
+carving over a blank stretch of wall; Brockholt's (downs_f2 12,3) the bare ground under the holly at
+12,4 (`f2_holly`), beside the woodcutter's word; and the wreckers' cave's (downs_f3 1,16) the soot
+where the far beach ends at 0,15 (`f3_soot`), beside the shanty's last verse; the wreckers' niche
+below Crowness Light (downs_e3 19,29) the soot on the ledge beside it at 18,29 (`e3_ledge`); and the
+wheel-pit's (downs_e2 22,26) the course of dry stone below the mill at 22,27 (`e2_wheel`), beside
+the shepherd's word.
 
 In more detail, as SLICE.md had it before the area docs:
 
@@ -382,6 +384,18 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 - **Finds.** The miller's hoard holds a Robe +1 and Leather Armour +1; the rookery's hoard, the
   bright things a crow would carry, a Silver Locket, a keepsake.
 - **Pay.** About 190 xp a member.
+- **As built** (#68). The Wend comes off the rim at 15,1 and leaves for E3 at 28–29,31; it is
+  wadeable nowhere, so the ford (19,12) on the track, a road from Coldharbour's yard in F2 west to
+  the box's edge at 0,12, is the one way to the west bank, and the atlas carries the track on to the
+  Berth as a trail. The stone (10,17) is answered "ten"; the spring (18,3); the cairn (3,26); the
+  shepherd's camp (5,29). The mill stands beside the river at 21–22,22–23, the willows round it and
+  the rookery (19,20) among them; the wheel-pit (22,25) behind a door in the rock at 22,26. The
+  groups: crows over wolves twice as the rookery's brood (six Carrion Crows and two Chalk Wolves,
+  27,8 and 25,17), back one a day until it burns; its keepers two Old Rooks (19,21), elites at 4;
+  three Chalk Wolves under the western hills (6,9); a Tusker in the willows (18,24). At its floor,
+  3, every fight is won and a day is 6.28 fights to a rest; a clear pays about 210 xp a member, the
+  brood counted once. The hoards: 40 gold, Robe +1 and Leather Armour +1 in the pit; 30 gold and the
+  Silver Locket in the rookery.
 
 ### 4.6 D2, the chalk hills (#69): core, band 4–5
 
@@ -582,33 +596,36 @@ are, and every later box uses these where its brief says wolves, a boar, rats, b
 New in the Downs, for the novelty check (EXPANSION §5.4): the birds, a new family; hills and
 farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41); and dens, camps
 that breed one kind of monster until a company beats their keepers and burns them (#88): a rookery
-in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every group, box by box.
+in E2 (built: two Old Rooks its keepers, MONSTERS §5.2), a wolves' den in D2 and a bandit camp in
+D3. E2 has the first statue too. §4.2 to §4.9 place every group, box by box.
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 1,998 xp a member today, 110 of it the guilds' pay
-  and about 225 F2's and F3's, past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives an area
-  the climb from its floor to the next area's floor, divided by 0.75: 2,800 / 0.75, about 3,730.
-  The Downs are where the other 1,740 or so come from, shared among the boxes as §4.1 has it: F2
-  130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the
-  curve reports the shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood
-  as a group that respawns does; the figures count the brood once.
-- **Gold.** A clear pays about 3,470: about 2,250 in chests and drops (F2's, F3's and E3's among
-  them), 1,040 in rewards (the clerk's seal, the tenant's paper and the name-boards once each,
-  whoever takes them) and 180 in the guilds' pay.
-  Training six members from 1 to 5 costs 1,500, so gold holds.
+- **Experience.** One clear of the area pays 2,574 xp a member today, 110 of it the guilds' pay and
+  about 800 F2's, F3's, E3's and E2's, past level 4 (1,650). The curve (EXPANSION §5.2, #31) gives
+  an area the climb from its floor to the next area's floor, divided by 0.75: 2,800 / 0.75, about
+  3,730. The Downs are where the other 1,160 or so come from, shared among the boxes as §4.1 has it:
+  F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the
+  curve reports the shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood as
+  a group that respawns does; the figures count the brood once.
+- **Gold.** A clear pays about 3,590 with E3 and E2: 1,190 in chests before them, about 820 in drops
+  (F2's and F3's among them), 900 in rewards (the clerk's seal and the tenant's paper once each,
+  whoever takes them) and 180 in the guilds' pay, and E3's and E2's chests, hoards and drops on top. Training six members from 1 to
+  5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
   Deacon are won 98, 99 and 100% of the time at their maps' floors, where a boss should be won about
   half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The area as one pools
-  each group at its own map's floor (#209): 99.7% of its 45 groups' fights won, F2's and F3's at 2,
-  against nine in ten. Two under, the Foreland's floor is 1 and F2's and F3's 2, so no group has a
-  company there yet; the Seam, a dungeon, counts two under the area's floor since #148, and is no
-  longer judged alone. Each zone walks its own road and warns at its own way in: the Foreland's from
-  Helmstow, the Downs' from F2's east edge along the Salt Road (`ROADS.downs`, the footpads and the
-  Poacher), both walked every time. The Foreland map and Brandy Hole give 4.6 and 4.1 fights to a
-  rest, against six or seven; the Seam 6.7, now that the company at 3 wears the band's gear. The
-  pilot settles them, by retuning or by moving the thresholds.
+  each group at its own map's floor (#209): 99.6% of its 58 groups' fights won, F2's and F3's at 2
+  and E3's and E2's at 3, against nine in ten. Two under, the Foreland's floor is 1 and F2's and
+  F3's 2, so only E3's and E2's 13 groups have a company there, at 1: 70.4% won, off the aim of a
+  quarter and inside the limit of nine in ten (#273), listed; the Seam, a dungeon, counts two under
+  the area's floor since #148, and is no longer judged alone. Each zone walks its own road and warns
+  at its own way in: the Foreland's from Helmstow, the Downs' from F2's east edge along the Salt
+  Road (`ROADS.downs`, the footpads and the Poacher), both walked every time. The Foreland map and
+  Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; E3 6.41 and E2 6.28; the Seam
+  6.7, now that the company at 3 wears the band's gear. The pilot settles them, by retuning or by
+  moving the thresholds.
 - **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the
   band's gear: the Long Sword, the Hand Axe, the Long Bow, Scale Mail, Chain Mail and the Kite
   Shield. The Downs hold the kits with a plus and the band's gear with one, box by box as §4.2 to

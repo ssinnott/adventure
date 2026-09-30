@@ -25,7 +25,7 @@ export const DOWNS_F2: MapDef = {
     'fffffBBB::BBTTTTTTTT,,,,,TTTT,,,',
     'fffffBBB::BBTTTTTTTTTTTTTTTTT,,,',
     'fffff:::::::TTTTTTTTTTTTTTTT,,,,',
-    'fffff:::::::ffTTTTTTTTTTTT,,,,,,',
+    '=====:::::::ffTTTTTTTTTTTT,,,,,,',
     'fffff:::::::ffffTTTTTTT,,,,,,,,,',
     'ffffffffff:::::::::::::::,,,,,,,',
     'ffffffffffffffffffffffff:,,,,,,,',
