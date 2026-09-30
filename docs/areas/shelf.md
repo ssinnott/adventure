@@ -19,7 +19,7 @@ The atlas (its rows in `src/content/areas/shelf/atlas.ts`, merged into `ATLAS` b
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Foreland | 1–5, its map's | 2,296 | 879: the Foreland map, laid at 200,30 |
-| Callow Downs | 2–5 | 6,569 | F2 and F3, laid at 168,30 and 168,62 |
+| Callow Downs | 2–5 | 6,569 | F2, F3 and E3, laid at 168,30, 168,62 and 136,62 |
 | The area | 1–5 | 8,865 | a quarter |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -83,6 +83,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
 | Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour; Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
 | Callow Downs, F3 | outdoor zone, 32×32 | 2–3 | Gullwick at the Wend's mouth, its net loft and boats; the rise; the wreckers' far beach and their cave; three groups (§4.3) |
+| Callow Downs, E3 | outdoor zone, 32×32 | 3–4 | Crowness Light and the keeper's cottage on the point; the Salt Road west in fog; the gibbet; the wreck and the wreckers' niche below the light; eight groups (§4.4) |
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
@@ -92,7 +93,9 @@ Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold dra
 (`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's
 the carving over a blank stretch of wall; Brockholt's (downs_f2 12,3) the bare ground under the
 holly at 12,4 (`f2_holly`), beside the woodcutter's word; and the wreckers' cave's (downs_f3 1,16)
-the soot where the far beach ends at 0,15 (`f3_soot`), beside the shanty's last verse.
+the soot where the far beach ends at 0,15 (`f3_soot`), beside the shanty's last verse; and the
+wreckers' niche below Crowness Light (downs_e3 19,29) the soot on the ledge beside it at 18,29
+(`e3_ledge`).
 
 In more detail, as SLICE.md had it before the area docs:
 
@@ -175,7 +178,7 @@ The places, as the atlas and the docs have them:
 | Brockholt | F2 | nothing yet | a wood astride the two zones, its north tip in the rim's row |
 | The Wend | E2 and F3 | nothing yet | a river from the rim down to Gullwick, cutting a corner of E3 |
 | Gullwick | F3 | Wenna's village, where her mother asks the company to find her (DESIGN §9) and where STORY opens; an old shanty singer who teaches the Bard's second prestige (#19) | a planned village at 172,70 |
-| Crowness Light | E3 | the keeper who counted the eleven and wrote down the gaps (DESIGN §9, STORY); the Cleric's second prestige (#19); shore crabs under it | a planned lighthouse at 140,88, inland of the point (about 152,89) |
+| Crowness Light | E3 | the keeper who counted the eleven and wrote down the gaps (DESIGN §9, STORY); the Cleric's second prestige (#19); shore crabs under it | charted on E3 at the point, 156,90 (#67) |
 | Coldharbour | F2 | a retired Warden captain's farm; the Knight's second prestige (#19) | a planned farm at 176,42 |
 | The Berth | a dungeon, entered from D2 | the Queen's barrow, opened, and only her signet gone (DESIGN §9); band 4–5, her guard two by two down the passage and her captain at the empty bier (MONSTERS §5.2) | not on the atlas |
 | The Salt Road | F2, F3, E3, a corner of D3, and D4 | the wreckers and their lampman in fog; crows at the gibbet (MONSTERS §5.2) | a planned road, and the way down the Edge |
@@ -322,6 +325,35 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   begins in it.
 - **Finds.** The wreck's salvage holds a Buckler +1.
 - **Pay.** About 340 xp a member.
+- **As built** (`maps/downs_e3.ts`, cut by `tools/scaffold.ts downs 136 62`):
+  - The Salt Road comes in from Gullwick at 31,10–11 and runs south-west as cut to the west edge at
+    0,30. Its corner into D3 steps diagonally on the atlas, which no edge square can meet: 0,30 and
+    0,31 are owed to #71. The Wend's last bend crosses the north-east corner, with a ford at 30,2 so
+    its far bank is walked; 29,0 is dry, to meet the atlas's farm beyond.
+  - Crowness Light on a headland built out from the point: the tower at 20,28 (156,90) and the
+    keeper's cottage at 16,27, both buildings; a track from the fork at 13,23, with the finger-post
+    and the shrine; the cairn on the point, the keeper's well and a camp in the lee of the point at
+    12,27. The squares round the tower's foot are left for the keeper, his log and the lamp room.
+  - The gibbet above the rocks at 25,15; the wreck on the rocks under the light at 21,29, its
+    salvage (`e3_salvage`, the Buckler +1) at 21,30. A dew pond, a shepherd's fold and a first
+    sight of the light from the edge of the stubble fill the downs.
+  - The secret: the wreckers' niche, a secret door in the rock at 19,29, with rock beside it at
+    20,29 so the door draws as rock, its lamp and chart as words and a small chest behind at 19,30. The hint is the soot on the ledge beside it at 18,29
+    (`e3_ledge`); the keeper's second light is the hint in words.
+  - The seam with F3: rock at 31,12–15 keeps F3's far beach closed along its edge, and rock at
+    31,5–9 keeps every way from E3 to Gullwick off Hamo's square at F3's 0,9, and off the strip of
+    field above it.
+  - The corner is left for Ashcombe (#87): nothing in it but the ford (`e3_ford`), which it keeps.
+  - The groups, eight, the harder monsters (#272) at 4: eight crows at the gibbet, nearest the way
+    in; a lampman and four wreckers on the road in fog (`when: { sky: 'fog' }`), the lampman first
+    so his lamp is the first thing seen; two wreckers and a lampman by night on the rocks of the
+    little point (25,20) and again in the bay (12,29); four Barnacle Crabs under the light; two
+    Billmen and a Slinger on the road west; three Chalk Wolves on the hills and a Tusker by the
+    copse in the north-west. At level 3 the company wins 99.3% of fights and manages 6.41 fights to
+    a rest. Two under, the Foreland's pool is E3's groups alone: 72.2% won, off its aim of 25% and
+    inside its limit of 90%, and listed. They pay about 365 xp a member, against the brief's 340.
+  - Density: 95.3% of its 847 squares within 8 steps, the furthest 11; 23 points, one a sign.
+  - Time: about three session-hours to author and check.
 
 ### 4.5 E2, the Wend's fields (#68): country, band 3–4
 
@@ -641,6 +673,7 @@ Decided by the owner on 27 and 28 September 2026:
     the named ones at the top.
 12. **The world map's lettering** is on the grid: the border names each box, and the strips at the
     world's edges go unlettered (§1; #66).
+13. **Crowness Light** stands on the point, at 156,90, rather than inland at 140,88 (#67).
 
 Proposed, for the owner, each in the issue that would build it:
 
@@ -650,7 +683,6 @@ Proposed, for the owner, each in the issue that would build it:
   country (§4).
 - **Tier 3** is sold by Helmstow's Lantern Guildhall (`maxTier: 3`), so that the band's tier is
   sold in the band (§8; #74).
-- **Crowness Light** stands on the point, about 152,89, rather than inland at 140,88 (#67).
 - **The Berth** goes on the atlas in D2, about 118,42, with a track up to it from Coldharbour across
   E2 (#68 and #69). #56's Riders in the Dark rides it.
 - **Sjonghol** (the Wind Cave, `src/content/atlas.ts:309`), Saltreach's cave in the face of Kestrel Edge,

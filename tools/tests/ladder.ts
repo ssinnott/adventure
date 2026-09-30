@@ -35,7 +35,7 @@ export const LADDER: Record<ClassId, { 3: readonly string[]; 5: readonly string[
  */
 export const FINDS: Record<string, string> = {
   'shortsword+1': '', 'dagger+1': '', 'mace+1': '', 'staff+1': '',
-  'buckler+1': '#67',
+  'buckler+1': '',
   'robe+1': '#68', 'leather+1': '#68', silver_locket: '#68',
   'halberd+1': '#69', ring_of_office: '#69', 'spear+1': '#69',
   captains_sword: '#70', captains_mail: '#70', queens_sword: '#70',
