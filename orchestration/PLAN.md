@@ -1389,7 +1389,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   unrecorded, the lodge site on I4, night brambles roam, long lines. My sheet (`render/sheet298.png`):
   the path in a wood; from the yard, one grey block in open grass. A delegate on the way in, the
   look and the other choices. Reviewer on #297 (#163's crystal and chasm).
-- 22:56: #293 (#286's fix, the flames) landed: its round (785245b: `willReadFrequently`, `cutVoid`'s
+- 22:52: #293 (#286's fix, the flames) landed: its round (785245b: `willReadFrequently`, `cutVoid`'s
   comment kept, the stale one gone; the body says the vignette's reach and the sheets' change) and
   main in (c918b56). Landing check on it merged onto d5260f3: ALL OK (32 owed), SMOKE OK, "Nothing
   new."; CI green. Merged as 8f69253; main's tree is the tested tree (529a7c5). #286 closes.
