@@ -139,8 +139,9 @@ export const SHELF: MapDef = {
       ] },
     ] } },
     // Who Lived at Ashcombe (#77): the hearth-key in the farmhouse kitchen, at its back notch, and the
-    // tenant's paper under the flour crock beside it. Each find is on its chest's square, so is said first.
-    { kind: 'event', x: 28, y: 20, id: 'ash_kitchen', once: true, text: 'The kitchen. The hearth-key on its nail in the chimney, and the hearth below it swept. Nobody flees a house and sweeps it first.' },
+    // tenant's paper under the flour crock beside it. Each find is on its chest's square, so is said first;
+    // the kitchen, which the crock does not need, is not said once the paper is given.
+    { kind: 'event', x: 28, y: 20, id: 'ash_kitchen', once: true, until: [{ flag: 'q_paper_vask' }, { flag: 'q_paper_hale' }], text: 'The kitchen. The hearth-key on its nail in the chimney, and the hearth below it swept. Nobody flees a house and sweeps it first.' },
     { kind: 'chest', x: 28, y: 20, id: 'ash_hearth', gold: 0, items: ['hearth_key'] },
     { kind: 'event', x: 29, y: 19, id: 'ash_crock', once: true, text: 'Under the flour crock, folded small: a grey paper with a mark at its foot, and on the back, in grey ink, THE HEARTH IS A CAGE.' },
     { kind: 'chest', x: 29, y: 19, id: 'ash_crock_c', gold: 0, items: ['tenant_paper'] },

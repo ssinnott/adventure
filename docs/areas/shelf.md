@@ -76,7 +76,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 | Map | Kind | Band | What is there |
 |---|---|---|---|
 | Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`); Hob by the Hearthlight's fire until his paper is given, and his empty chair (`hob_chair`) once it went to Vask |
-| The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask and his contract in the throne room behind the keep's door, who takes Hob's paper too |
+| The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask, who takes Hob's paper too, and his contract in the throne room behind the keep's door |
 | The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ashcombe farm; Hale's checkpoint at the Scarth; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on; at the farmhouse's back, the kitchen (`ash_kitchen`, the hearth-key in `ash_hearth`) and the flour crock (`ash_crock`, the tenant's paper in `ash_crock_c`) |
 | Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key; a clerk's coat among the drowned (`gw1_coat`) and his seal in the den's strongbox (`gw1_strongbox`, `gw1_seal`) |
@@ -86,7 +86,8 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 Its chapter of the one quest is The Quiet Farm (Vask, `chapter.ts`) and its side quests The Cargo
 Ledger (Hale), The Bell That Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The
-Clerk's Seal (Maud), The Well Tastes of Iron (Mottram) and Who Lived at Ashcombe (Hob,
+Clerk's Seal (Maud), The Well Tastes of Iron (Mottram), A Boat With No Name-Board (Wat and Hamo) and
+Who Lived at Ashcombe (Hob,
 `quests.ts`); the monsters are MONSTERS §5.1's.
 Each secret door has a hint on its near side: the cellar's (mill 4,7) a cold draught at 4,6
 (`mill_draught`), Brandy Hole's (greywater1 10,11) drag marks at 9,11 (`gw1_drag`), the Seam's
@@ -266,7 +267,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - the village well.
 - **Encounters.** Two wreckers and their lampman on the beach by night (`when`); crows in the fields
   above the village (six); shore crabs on the shingle (three).
-- **Quests.** The step. The Boat With No Name-Board starts and ends here, and Who Lived at
+- **Quests.** The step. A Boat With No Name-Board starts and ends here, and Who Lived at
   Ashcombe's tenant starts over here if Hale sends him (§6).
 - **The secret and its hint.** A cave in the rock at the far end of the wreckers' beach, where they
   keep the boat they were expecting. The shanty's last verse is the hint: where the lamp goes out,
@@ -279,15 +280,19 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     comes in at 0,3–4, passes under the road's bridge at 1,10 and meets the sea at 5,15. Both meet
     the atlas at the west edge, where the raw cut did not.
   - Gullwick east of the mouth: seven cottages, the net loft (the camp), the well, the boats on the
-    shingle and the old man with the shanty; the rise above it, on the hills. Room is left on the
-    shingle for Hild and Wat, and beside the road west of the bridge for Hamo (C).
+    shingle and the old man with the shanty; the rise above it, on the hills. On the shingle, Hild at
+    the tideline (the step, §5) and Wat on his upturned hull; Hamo beside the road west of the bridge,
+    off the way from the far beach to Wat, so boards carried home are never sold by stepping on him.
   - The far beach, west of the mouth, is reached only by the bridge: the wreckers by night, the soot
     at its end and the cave behind a secret door in the rock at 1,16.
   - The brief's groups: six crows in the fields, three crabs on the north-east sand, two wreckers and
     their lampman by night, the wrecker and the lampman statted on MONSTERS §4.4's line at level 4
     (soldier and archer) to hold the day: 7.0 fights to a rest at level 2, every fight won. They pay
     about 85 xp a member, against the brief's 110.
-  - Density: 99.7% of its 289 squares within 8 steps, the furthest 9.
+  - A Boat With No Name-Board (§6): the hoard in the rocks at the far beach's north end, the chit
+    beside the boards and the night's footprints on the one way onto the beach, at 0,12. Wat pays
+    60 from the loft jar and Hamo 140 by the plank; the curve counts the larger once.
+  - Density: every one of its 289 squares within 8 steps, the furthest 8, with the people in.
 
 ### 4.4 E3, Crowness (#67): core, band 3–4
 
@@ -449,10 +454,13 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 
 ## 5. The one quest here
 
-DESIGN §9 gives the Downs three steps, and none is built. The plan puts one in each of the core's
-boxes, in the order the Salt Road reaches them:
+DESIGN §9 gives the Downs three steps, and the first is built. The plan puts one in each of the
+core's boxes, in the order the Salt Road reaches them:
 
-- in Gullwick (F3), Wenna's mother, asking the company to find her;
+- in Gullwick (F3), Wenna's mother, Hild, asking the company to find her: built (#47), a step of
+  The Quiet Farm between Vask's hire and the farm, and the chapter done on both the wand and her
+  word (`done`: `q_ashcombe_done` and `q_wenna`), as the owner agreed on 28 September 2026. A
+  company that did the farm first is sent to her by the chapter's first goal;
 - at Crowness Light (E3), the keeper who logged the night the Queen died: the Hearth went out eleven
   times, and he wrote down the gaps between;
 - in the Berth, below D2, the barrow opened, and only the Queen's signet gone.
@@ -475,7 +483,7 @@ are:
 | 1 | The Bell That Rang Twice | 1 | Helmstow: the Chapel, the Gilded Eel | a choice put by a person; a person who moves | #77 (built) |
 | 2 | Who Lived at Ashcombe | 1 | the Hearthlight Inn and Ashcombe; the tenant to Gullwick (F3) | hand-ins at the first meeting (#43); a person who moves | #77 (built) |
 | 3 | The Well Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | #77 (built) |
-| 4 | The Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 |
+| 4 | A Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 (built) |
 | 5 | Oil for the Lamp | 3 | Crowness Light (E3); Mottram's Stores and Vask, in Helmstow | a choice put by a person | #67 |
 | 6 | Riders in the Dark | 3 | Coldharbour (F2) and the ford (E2) | `when` (#41); a choice put by a person | #68 |
 | 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | #77 (built) |
@@ -483,7 +491,7 @@ are:
 
 Three changes to #56's drafts, for the owner:
 
-- **The Boat With No Name-Board keeps to F3.** The hoard is on Gullwick's own wreckers' beach and
+- **A Boat With No Name-Board keeps to F3.** The hoard is on Gullwick's own wreckers' beach and
   the Compact's man waits on the road west, so that a level 2 quest is not finished in country
   banded 3–4.
 - **Oil for the Lamp's chandler is Mottram,** whose stores are built, rather than a chandler of his
@@ -553,9 +561,9 @@ in E2, a wolves' den in D2 and a bandit camp in D3. §4.2 to §4.9 place every g
   130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until they are built the
   curve reports the shortfall as owed to the pilot (#26). A den's keepers pay once, and its brood
   as a group that respawns does; the figures count the brood once.
-- **Gold.** A clear pays about 3,090: 1,190 in chests, about 820 in drops (F2's and F3's among
-  them), 900 in rewards (the clerk's seal and the tenant's paper once each, whoever takes them) and
-  180 in the guilds' pay.
+- **Gold.** A clear pays about 3,230: 1,190 in chests, about 820 in drops (F2's and F3's among
+  them), 1,040 in rewards (the clerk's seal, the tenant's paper and the name-boards once each,
+  whoever takes them) and 180 in the guilds' pay.
   Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
   starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
