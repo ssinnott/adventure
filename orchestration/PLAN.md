@@ -1419,3 +1419,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 23:00: #298's lodge-site nit withdrawn (#304 moves it); whichever of #298 and #304 lands second
   joins them (`CUT_OFF`, the owed road square, the owed xp). The delegate on #296: the look OK, all
   three choices taken. Round sent to the #45 session (the tests on dead wood, SLICE's lines, main).
+- 23:04: new work while the queue is reviewed (the owner's "speed matters"; review stays two at a
+  time):
+  - #216 (J4) to the Thornmark session (critical path to #218): on main with #296's branch merged
+    (for `d`), I4's seam from #298's branch; lands after #296, #298 and #304.
+  - #217 (I5) in a new session, session_01BNVHNo8LSrJPhzXfmFTgxo, `claude/m1-217-i5`: I4's seam
+    from #298's branch; lands after #298 and #304.
+  - #70 (the Berth) in a new session, session_013QJqXzefpDEiEB8gRK39XZ, `claude/m1-70-berth`: on
+    #306's branch (D2's mouth); lands after #306.
+  - #72 (D4) waits on a delegate: does Kestrel Edge want a cliff character first (#305's choice 1)?
+  Fresh sessions for new boxes: the long-running ones carry 570K–740K of context a turn.
+- Found in passing (#296's review): after #163 the scaffold still refuses K2 (pine 18) and L2 (pine
+  64), so #197 and #200 stay blocked on pine. Phase 1.2's (#149), not filed.
