@@ -1372,3 +1372,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - Rounds out: #293, #294 (the #45 session), #295 (the Thornmark session). Each lands on its push.
 - Queued behind their rounds: #71 (D3) to the #67 session, #69 (D2) to the #68 session, no
   footprints. The pilot on E. Check-in re-armed for 23:40.
+- 22:44: #295 (#214, H3) landed: its round (13f711f: groups to eight, the brambles and rootwalkers
+  four with #298's retune copied identically, the sign's bare words, the brambles still and at one,
+  `until: TEAR_CLOSED`, the probe deleted, pay recorded as measured, main in). Landing check: ALL OK
+  (32 owed), SMOKE OK, "Nothing new."; H3 at 8 7.92 fights to a rest (off its aim, listed). CI
+  green. Merged as 854cbc2; main's tree is the tested tree (73f693f). #214 closes. The Thornmark
+  session on to #215 (I3), no footprint; the #100 session to merge main into #298.
