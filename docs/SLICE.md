@@ -28,19 +28,19 @@ DESIGN.md first for the why.
   comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
   sends away is gone from it. A tavern (the Gilded Eel, a person with a room) with people in it says
   its room first, over a menu of "The talk of the room" and them. With nobody there, a business
-  opens as before.
-- **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
-  (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and mountains
-  gated by party abilities, hills (`^`), farmland (`f`), light woods (`t`) and dead wood (`d`, on
-  no built map yet) open to all, the Sunder's glass trees (`c`) and chasm (`v`), on none yet, a calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
-  food, a search action, exploration spells (Light, Wizard Eye). The wilderness features (a shrine
-  on F2; the rest on E2): a shrine or fountain that gives every member a stat point once, a cairn
-  with a cache, a statue whose riddle takes its answer typed and a camp where the party may rest
-  with monsters two squares off; a hermit is a person. Dens (E2's rookery; #69 and #71 place more):
-  a camp that breeds one kind of monster, its brood back one a pace at their posts while it stands,
-  guarded by keepers beside it that never leave. Its look is said when first seen; its keepers dead,
-  a step or Space asks to burn it, and burnt it gives its hoard, breeds no more and shows as ash on
-  the automap.
+  opens as before. - **Exploration:** grid movement with 90° turns and strafing, doors, locked
+  doors, secret doors (each with a hint on its near side, the event or sign `MapDef.secrets` names),
+  water and mountains gated by party abilities, hills (`^`), farmland (`f`), light woods (`t`) and
+  dead wood (`d`, on no built map yet) open to all, the Sunder's glass trees (`c`) and chasm (`v`),
+  on none yet, a calendar and weather over a day/night clock (below), automap with field-of-view
+  reveal, rest with food, a search action, exploration spells (Light, Wizard Eye). The wilderness
+  features (a shrine on F2; the rest on E2): a shrine or fountain that gives every member a stat
+  point once, a cairn with a cache, a statue whose riddle takes its answer typed and a camp where
+  the party may rest with monsters two squares off; a hermit is a person. Dens (E2's rookery; #69
+  and #71 place more): a camp that breeds one kind of monster, its brood back one a pace at their
+  posts while it stands, guarded by keepers beside it that never leave. Its look is said when first
+  seen; its keepers dead, a step or Space asks to burn it, and burnt it gives its hoard, breeds no
+  more and shows as ash on the automap.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
@@ -299,38 +299,34 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   and side slopes meet along their hips); timber bracing and a window on house side faces; a birch
   tree variant; a parchment automap with inked walls and a compass rose; hit sparks and a red card
   flash in combat when someone takes damage.
-- Weather and seasons: the cached scene is two canvases now, the sky and everything in front of
-  it, so a lightning strike can light the whole sky behind the roofs and trees and fork down
-  behind the hills. An overcast sky greys over with a cloud deck and hides the stars, sun and moon;
-  a downpour darkens it; fog washes it out. In the scene, cloud lays a flat grey light over
-  everything, murk (fog, or rain or snow coming down hard) swallows far faces into the haze, rain
-  darkens the ground and leaves puddles holding the sky on the roads, and lying snow whitens the
-  ground, the cobbles, the roofs, the hills, the rocks and the conifers' boughs. The grass runs
-  from spring green to tawny through the year. Hills rise as round-shouldered mounds of drier
-  grass that run on into one another (slow going; they hide nothing yet); farmland lies in fields
-  three squares long in bands two deep, each with its crop (wheat, barley, pasture, roots) green in
-  Sowing, gold or cut by Harvest and ploughed through the winter, its rows or furrows and the
-  hedges between fields showing under snow. Light woods (`t`, the atlas's woods) are walked through
-  at a plain step: a shaded floor of moss, leaf litter and ferns with a tree or two to either side
-  of the square, the way through it open. Dead wood (`d`) is walked the same, over grey ground and
-  fallen limbs, its trees long dead: bleached trunks, bare or snapped short, with no green in any
-  season. A glass tree (`c`, on crystal) stands where a tree would and blocks as one, shards of
-  crystal catching a point of light by day. The chasm (`v`) is no wall and is seen across, but a
-  step into it is refused ("The ground falls away. There is no way down here."); where ground
-  stands beyond it, its far wall hangs from the rim in bands of rock darkening into the drop.
-  Broadleaf trees bud in Thaw, blossom in Sowing,
-  turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the winter
-  (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn. Lamps
-  and windows light early on a dark day. Every frame, over the scene (and over the monsters in a
-  fight): rain as streaks in three depths, more, longer and slanting harder with the wind across
+- Weather and seasons: the cached scene is two canvases now, the sky and everything in front of it,
+  so a lightning strike can light the whole sky behind the roofs and trees and fork down behind the
+  hills. An overcast sky greys over with a cloud deck and hides the stars, sun and moon; a downpour
+  darkens it; fog washes it out. In the scene, cloud lays a flat grey light over everything, murk
+  (fog, or rain or snow coming down hard) swallows far faces into the haze, rain darkens the ground
+  and leaves puddles holding the sky on the roads, and lying snow whitens the ground, the cobbles,
+  the roofs, the hills, the rocks and the conifers' boughs. The grass runs from spring green to
+  tawny through the year. Hills rise as round-shouldered mounds of drier grass that run on into one
+  another (slow going; they hide nothing yet); farmland lies in fields three squares long in bands
+  two deep, each with its crop (wheat, barley, pasture, roots) green in Sowing, gold or cut by
+  Harvest and ploughed through the winter, its rows or furrows and the hedges between fields showing
+  under snow. Light woods (`t`, the atlas's woods) are walked through at a plain step: a shaded
+  floor of moss, leaf litter and ferns with a tree or two to either side of the square, the way
+  through it open. Dead wood (`d`) is walked the same, over grey ground and fallen limbs, its trees
+  long dead: bleached trunks, bare or snapped short, with no green in any season. A glass tree (`c`,
+  on crystal) stands where a tree would and blocks as one, shards of crystal catching a point of
+  light by day. The chasm (`v`) is no wall and is seen across, but a step into it is refused ("The
+  ground falls away. There is no way down here."); where ground stands beyond it, its far wall hangs
+  from the rim in bands of rock darkening into the drop. Broadleaf trees bud in Thaw, blossom in
+  Sowing, turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the
+  winter (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn.
+  Lamps and windows light early on a dark day. Every frame, over the scene (and over the monsters in
+  a fight): rain as streaks in three depths, more, longer and slanting harder with the wind across
   the view, splashing only on floor the party can see; snow as flakes that sway and blow, nearly
   flat in a blizzard; fog banks drifting low; and the flash of a strike. Particles take their
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
-  millisecond a frame.
-
-## Stubbed or absent
-
+  millisecond a frame.  ## Stubbed or absent
 - No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
@@ -441,9 +437,9 @@ over content broken on purpose too, and two tools to theirs:
 - `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
   band seen ahead is met as each kind drawn.
 - `labels`: every group on the maps as played, alone and in every fight of up to three a map brings
-  together, labelled with each kind and its count of the living. A kind leaves the label when its
-  last one falls; every line stays inside the view and above the monsters' markers, running into
-  no other.
+  together, labelled with each kind and its count of the living, but for a lone proper name ("The
+  Eldest, 2 Heartwoods"). A kind leaves the label when its last one falls; every line stays inside
+  the view and above the monsters' markers, running into no other.
 - `art` (§5.6): every monster def its own sprite kind, each family module's `KINDS` the kinds
   `FAMILY` sends it and the walls dressed under their caps, each kind at its rate; a secret door
   outdoors among mountain, rock or trees drawn as they are (`drawnCell`), and any other door, or one
@@ -452,7 +448,8 @@ over content broken on purpose too, and two tools to theirs:
   which only their own; and that it reads each family module's `KINDS` from the module's text as the
   module lists them.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4 and the Sunder's K3, their
-  light woods, dead wood, chasm and crystal and all, laid back into the atlas, are the atlas square for square.
+  light woods, dead wood, chasm and crystal and all, laid back into the atlas, are the atlas square
+  for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
   a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
@@ -530,7 +527,7 @@ does.
 | `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`) and a guild's work at its hall, and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
-| `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living, laid out inside the view; pure |
+| `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living (a lone proper name none), laid out inside the view; pure |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
 | `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
