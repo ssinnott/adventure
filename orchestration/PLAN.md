@@ -1382,3 +1382,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   "a lone" in the comments). Its head merged onto main 854cbc2 (clean): ALL OK (32 owed), SMOKE OK,
   "Nothing new."; CI green. Merged as d5260f3; main's tree is the tested tree. #288 closes, so
   #218's blocker is gone.
+- 22:50: `reviews/298.md` (#49, I4): ready after fixes. The owner's call (finding 1): I4's only way
+  in is I3, so landed alone the one quest cannot be finished in play until #215. Should-fix: Senara
+  met early shows the seal but leaves the quest open; the sign's doubled prefix; the walkthrough's
+  `includes('Penspern')` holds for both asks. Nits: no glade shrine, The Older Mark's hand-in
+  unrecorded, the lodge site on I4, night brambles roam, long lines. My sheet (`render/sheet298.png`):
+  the path in a wood; from the yard, one grey block in open grass. A delegate on the way in, the
+  look and the other choices. Reviewer on #297 (#163's crystal and chasm).
+- 22:56: #293 (#286's fix, the flames) landed: its round (785245b: `willReadFrequently`, `cutVoid`'s
+  comment kept, the stale one gone; the body says the vignette's reach and the sheets' change) and
+  main in (c918b56). Landing check on it merged onto d5260f3: ALL OK (32 owed), SMOKE OK, "Nothing
+  new."; CI green. Merged as 8f69253; main's tree is the tested tree (529a7c5). #286 closes.
