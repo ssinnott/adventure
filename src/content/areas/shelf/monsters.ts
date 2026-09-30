@@ -11,6 +11,7 @@ export const SPRITES = [
   'barrow_guard', 'barrow_captain',
   'chalk_wolf', 'tusker', 'barn_rat', 'footpad', 'poacher',
   'barnacle_crab', 'billman', 'slinger', 'old_rook',
+  'cutthroat',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -57,4 +58,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'billman', name: 'Billman', plural: 'Billmen', sprite: 'billman', kind: 'person', look: 'A bill on a pole, and a man who knows which end to hold.', level: 4, hp: 23, ac: 13, attack: 4, dice: 2, sides: 6, bonus: 1, speed: 10, xp: 86, gold: [4, 14], tint: '#6a5a48', size: 0.95 },
   { id: 'slinger', name: 'Slinger', plural: 'Slingers', sprite: 'slinger', kind: 'person', look: 'A sling going round, and the Downs have flints to spare.', level: 4, hp: 24, ac: 13, attack: 5, dice: 1, sides: 6, bonus: 1, speed: 11, xp: 86, gold: [3, 12], ranged: true, missile: true, tint: '#b0a288', size: 0.9 },
   { id: 'old_rook', name: 'Old Rook', plural: 'Old Rooks', sprite: 'old_rook', kind: 'beast', look: 'Grey in the face, and older than the trees it keeps.', level: 4, hp: 50, ac: 14, attack: 5, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 173, gold: [0, 0], ranged: true, tint: '#2a2830', size: 0.45 },
+  // The west downs' harder man (#71): the bandit camp's own, who keep it and never leave it. The
+  // elite's line at 5 (MONSTERS §4.4).
+  { id: 'cutthroat', name: 'Cutthroat', plural: 'Cutthroats', sprite: 'cutthroat', kind: 'person', look: 'A captain\'s sash on a thief\'s coat, and a knife for every pocket.', level: 5, hp: 52, ac: 14, attack: 5, dice: 3, sides: 6, bonus: 1, speed: 15, xp: 218, gold: [10, 30], tint: '#5a3a3a', size: 0.95 },
 ];
