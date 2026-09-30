@@ -340,6 +340,71 @@ const terrains = await page.evaluate(async () => {
     whiten: ['hills', 'farm', 'woods'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
   };
 });
+// A torch behind a tree and behind a monster: a sconced wall three squares ahead on the Foreland at
+// noon, the ground before it cleared, with a tree or an ogre on the square before it. A flame the
+// tree covers goes out; one the ogre stands before is drawn behind it.
+const torches = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string);
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const minutes = w.state.minutes;
+  w.travel('shelf', 16, 16, 0);
+  w.state.minutes = 50 * 1440 + 12 * 60;
+  w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  const m = w.map, kept = m.cells.slice();
+  const lay = (sx: number, sy: number, ahead: string): void => {
+    for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) {
+      m.cells[y * m.width + x] = y === sy - 3 ? { terrain: 'floor', solid: 'wall', door: 'none', ch: '#' }
+        : x === sx && y === sy - 2 && ahead === 'tree' ? { terrain: 'floor', solid: 'tree', door: 'none', ch: 'T' }
+        : { terrain: 'floor', solid: 'none', door: 'none', ch: '.' };
+    }
+  };
+  const paint = (sx: number, sy: number, ahead: string): { flames: { x: number; y: number }[]; px: Uint8ClampedArray } => {
+    lay(sx, sy, ahead);
+    V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+    return { flames: V.paintedFlames().map((f: any) => ({ x: f.x, y: f.y })), px: ctx.getImageData(0, 0, W, H).data };
+  };
+  const differs = (a: Uint8ClampedArray, b: Uint8ClampedArray, x: number, y: number): boolean => { const i = (Math.floor(y) * W + Math.floor(x)) * 4; return Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 0; };
+  // The first square, of a bounded search, whose wall ahead hangs a sconce the tree stands before:
+  // with the tree there, that torch's point is painted otherwise than without it.
+  let found: { at: [number, number]; bare: ReturnType<typeof paint>; tree: ReturnType<typeof paint> } | null = null;
+  for (let y = 16, tries = 0; !found && y < m.height - 7 && tries < 400; y += 13) for (let x = 7; !found && x < m.width - 7 && tries < 400; x++) {
+    lay(x, y, 'none');
+    if (V.wallDressing(m, x, y - 3) === 'sconce') {
+      tries++;
+      w.state.x = x; w.state.y = y; w.state.facing = 0;
+      const bare = paint(x, y, 'none'), tree = paint(x, y, 'tree');
+      if (bare.flames.some((f) => f.x >= 0 && f.x < W && differs(tree.px, bare.px, f.x, f.y))) found = { at: [x, y], bare, tree };
+    }
+    for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
+  }
+  const done = (): void => { for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i]; w.state.minutes = minutes; w.cached = undefined; };
+  if (!found) { done(); return { missing: 'no square of the Foreland faces a sconced wall a tree before it hides', lit: 0, out: 0, over: 0, behind: false, shown: false, covers: false }; }
+  const { at, bare, tree } = found;
+  w.state.x = at[0]; w.state.y = at[1];
+  // A flame over the tree: its point painted otherwise with the tree there than without.
+  const over = tree.flames.filter((f) => differs(tree.px, bare.px, f.x, f.y)).length;
+  const hidden = bare.flames.filter((f) => f.x >= 0 && f.x < W && differs(tree.px, bare.px, f.x, f.y)), out = hidden.length;
+  // The ogre, on the square before the wall, drawn a frame with its flames and the same frame without.
+  lay(at[0], at[1], 'none');
+  const ogre = [{ id: 'ogre', sprite: 'ogre', tint: '#7a8a5a', size: 1.25 }];
+  const frame = (who: any, lit: boolean): Uint8ClampedArray => {
+    const flames = V.paintedFlames() as any[], was = flames.slice();
+    if (!lit) flames.length = 0;
+    V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, (x: number, y: number) => (x === at![0] && y === at![1] - 2 ? who : null), 40, false);
+    if (!lit) flames.push(...was);
+    return ctx.getImageData(0, 0, W, H).data;
+  };
+  const flameAt = [hidden[0].x, hidden[0].y - 1] as const;
+  const withOgre = frame(ogre, true), ogreOnly = frame(ogre, false), shown = frame(null, true), dark = frame(null, false);
+  done();
+  return {
+    missing: '', lit: bare.flames.length, out, over,
+    shown: differs(shown, dark, ...flameAt), covers: differs(ogreOnly, dark, ...flameAt), behind: !differs(withOgre, ogreOnly, ...flameAt),
+  };
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
 // holds court on the keep's door, in the throne room.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
@@ -698,6 +763,8 @@ ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && 
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
   `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
+ok(!torches.missing && torches.lit > 0 && torches.out > 0 && torches.over === 0, `a tree before a sconced wall puts out the torches it covers (${torches.missing || `${torches.lit} alight, ${torches.out} under the tree, ${torches.over} still drawn over it`})`);
+ok(torches.shown && torches.covers && torches.behind, `an ogre before a sconced wall stands in front of its torch's flame (flame shown ${torches.shown}, ogre over it ${torches.covers}, flame behind the ogre ${torches.behind})`);
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
   ok(terrains.thin.length === 0, `hills, farmland and woods paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
