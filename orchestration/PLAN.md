@@ -1431,3 +1431,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Fresh sessions for new boxes: the long-running ones carry 570K–740K of context a turn.
 - Found in passing (#296's review): after #163 the scaffold still refuses K2 (pine 18) and L2 (pine
   64), so #197 and #200 stay blocked on pine. Phase 1.2's (#149), not filed.
+- 23:06: the delegate on the cliff: no cliff character (a cliff walks as mountain does; nothing in
+  D4's brief, shelf.md §4.9, needs more than `M`; a character can retouch D3 and D4 in one pass when
+  Saltreach's C2, C3 and the Wind Cave want the face from below). #305's choices 1 and 2 are so
+  settled. #72 (D4) to the #67 session (540K of context, the Downs' cut workaround in hand), on
+  `claude/m1-72-d4` with #305's branch merged; lands after #305.
