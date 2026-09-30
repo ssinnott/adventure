@@ -7,6 +7,14 @@
         "ashcombe_gate",
         "barrow",
         "coast",
+        "e2_cairn",
+        "e2_ford",
+        "e2_hoard",
+        "e2_mill",
+        "e2_rookery",
+        "e2_spring",
+        "e2_stone",
+        "e2_wheel",
         "e3_cairn",
         "e3_fold",
         "e3_ford",
@@ -61,6 +69,11 @@
         "beach_crabs",
         "cliff_smugglers",
         "coast_bandits",
+        "e2_boar",
+        "e2_crows",
+        "e2_crows2",
+        "e2_keepers",
+        "e2_wolves",
         "e3_bandits",
         "e3_bay",
         "e3_crabs",
@@ -103,6 +116,7 @@
       ],
       "doors": [
         "155,91",
+        "158,56",
         "169,78",
         "180,33"
       ]
@@ -291,6 +305,10 @@
     }
   },
   "zones": {
+    "downs_e2": {
+      "at": "136,30",
+      "size": "32x32"
+    },
     "downs_e3": {
       "at": "136,62",
       "size": "32x32"
