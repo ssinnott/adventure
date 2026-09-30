@@ -75,13 +75,14 @@ DESIGN.md first for the why.
   every one is; its goal is tried from the last chapter back, over those begun and the ones before
   them, so a company in Thornmark early is not sent to the Stone before anyone has spoken of it.
   Beside it are the side quests: The Cargo Ledger (Hale), The Bell That Rang Twice (Osmund), The
-  Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud), The Well Tastes of Iron (Mottram) and
-  The Lost Expedition, which the first Meridian journal opens and which stays open until the rest of
-  its trail is built. Left and right page the one quest by chapter, and a page too long goes on over
-  the next. Nothing new is saved. Every entry is keyed to something the save already holds (a flag,
-  a carried item, a once-only event, a guardian killed, a map set foot on), so an old save opens
-  with its log whole. A quest or chapter begun, advanced or finished is announced once in the
-  message log, and J opens on the one that changed last, at its goal's chapter.
+  Rest of the Survey (Ebba, Ailith), The Clerk's Seal (Maud), The Well Tastes of Iron (Mottram), A
+  Boat With No Name-Board (Wat and Hamo) and The Lost Expedition, which the first Meridian journal
+  opens and which stays open until the rest of its trail is built. Left and right page the one quest
+  by chapter, and a page too long goes on over the next. Nothing new is saved. Every entry is keyed
+  to something the save already holds (a flag, a carried item, a once-only event, a guardian killed,
+  a map set foot on), so an old save opens with its log whole. A quest or chapter begun, advanced or
+  finished is announced once in the message log, and J opens on the one that changed last, at its
+  goal's chapter.
 
 ## The outdoors as one map, and the end of the world
 
@@ -421,8 +422,8 @@ over content broken on purpose too, and two tools to theirs:
   goal on; a person who takes an item stands at the step's place; and nothing a person says is
   written into a chapter already done. Early, the goal comes from no chapter past the last begun,
   each end is said once and the log ends with the entries of the order played. The quests suite
-  holds every zone on the road of the built areas to a step of the quest; the Downs' is owed to
-  #47 and the Deepthorn's to #49.
+  holds every zone on the road of the built areas to a step of the quest; the Deepthorn's is owed
+  to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel

@@ -118,7 +118,7 @@ export const DOWNS_F3: MapDef = {
         '"I heard the boards went up in a loft in Gullwick. Nailed to a wall. Seasoned oak, and nailed to a wall." He shakes his head, without malice. "No hard feelings. There\'ll be more."',
       ] },
     ] },
-    { kind: 'event', x: 0, y: 13, id: 'f3_night', when: { hours: 'night' }, text: 'By night the rocks stand up black and the tide is out. Below the wrack line, fresh footprints, many, all going one way.' },
+    { kind: 'event', x: 0, y: 12, id: 'f3_night', when: { hours: 'night' }, text: 'By night the rocks stand up black and the tide is out. Below the wrack line, fresh footprints, many, all going one way.' },
     { kind: 'event', x: 1, y: 13, id: 'f3_hoard', once: true, text: 'Under sailcloth in a cleft: name-boards stacked like slates, oars, a shuttered lamp. Halfway down, PATIENCE, in three coats.' },
     { kind: 'chest', x: 1, y: 14, id: 'f3_hoard_chest', gold: 0, items: ['name_boards', 'customs_chit'] },
     { kind: 'chest', x: 1, y: 17, id: 'f3_cave', gold: 60, items: ['mace+1', 'staff+1', 'elixir'] },

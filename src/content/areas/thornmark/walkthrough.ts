@@ -76,7 +76,8 @@ export const walkthrough: Walkthrough = (ok) => {
   hired(hiredEarly);
   pass(hiredEarly);
   goalFromBegun(hiredEarly, 'hired, in Thornmark before the wand');
-  ok(/Ashcombe/.test(quest(hiredEarly)?.goal ?? ''), `hired, in Thornmark before the wand, the goal is still the Foreland's (${quest(hiredEarly)?.goal})`);
+  const from = FORELAND.goals.some((g) => g.text === quest(hiredEarly)?.goal);
+  ok(from, `hired, in Thornmark before the wand, the goal is still the Foreland's (${quest(hiredEarly)?.goal})`);
   sylvane(hiredEarly);
   ok(hiredEarly.news.at(-1) === 'New chapter: The Grove Stone.', `hired, Sylvane opens the Grove's chapter (${hiredEarly.news.at(-1)})`);
   playChapter(hiredEarly, CHAPTER, FROM_SYLVANE, 'hired, early');

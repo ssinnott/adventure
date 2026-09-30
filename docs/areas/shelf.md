@@ -266,7 +266,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - the village well.
 - **Encounters.** Two wreckers and their lampman on the beach by night (`when`); crows in the fields
   above the village (six); shore crabs on the shingle (three).
-- **Quests.** The step. The Boat With No Name-Board starts and ends here, and Who Lived at
+- **Quests.** The step. A Boat With No Name-Board starts and ends here, and Who Lived at
   Ashcombe's tenant starts over here if Hale sends him (§6).
 - **The secret and its hint.** A cave in the rock at the far end of the wreckers' beach, where they
   keep the boat they were expecting. The shanty's last verse is the hint: where the lamp goes out,
@@ -289,7 +289,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     (soldier and archer) to hold the day: 7.0 fights to a rest at level 2, every fight won. They pay
     about 85 xp a member, against the brief's 110.
   - A Boat With No Name-Board (§6): the hoard in the rocks at the far beach's north end, the chit
-    beside the boards, and the night's footprints as a presence event on its first square. Wat pays
+    beside the boards and the night's footprints on the one way onto the beach, at 0,12. Wat pays
     60 from the loft jar and Hamo 140 by the plank; the curve counts the larger once.
   - Density: every one of its 289 squares within 8 steps, the furthest 8, with the people in.
 
@@ -482,7 +482,7 @@ are:
 | 1 | The Bell That Rang Twice | 1 | Helmstow: the Chapel, the Gilded Eel | a choice put by a person; a person who moves | #77 (built) |
 | 2 | Who Lived at Ashcombe | 1 | the Hearthlight Inn and Ashcombe; the tenant to Gullwick (F3) | hand-ins at the first meeting (#43); a person who moves | #77 |
 | 3 | The Well Tastes of Iron | 2 | Helmstow, and the works under the keep | the keep (#17); a choice put by a person | #77 (built) |
-| 4 | The Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 |
+| 4 | A Boat With No Name-Board | 2 | Gullwick and its wreckers' beach (F3) | `when` (#41); hand-ins at the first meeting (#43) | #47 (built) |
 | 5 | Oil for the Lamp | 3 | Crowness Light (E3); Mottram's Stores and Vask, in Helmstow | a choice put by a person | #67 |
 | 6 | Riders in the Dark | 3 | Coldharbour (F2) and the ford (E2) | `when` (#41); a choice put by a person | #68 |
 | 7 | The Clerk's Seal | 4 | the Gilded Eel and Brandy Hole | hand-ins at the first meeting (#43) | #77 (built) |
@@ -490,7 +490,7 @@ are:
 
 Three changes to #56's drafts, for the owner:
 
-- **The Boat With No Name-Board keeps to F3.** The hoard is on Gullwick's own wreckers' beach and
+- **A Boat With No Name-Board keeps to F3.** The hoard is on Gullwick's own wreckers' beach and
   the Compact's man waits on the road west, so that a level 2 quest is not finished in country
   banded 3–4.
 - **Oil for the Lamp's chandler is Mottram,** whose stores are built, rather than a chandler of his

@@ -149,7 +149,7 @@ export const QUESTS: readonly QuestDef[] = [
         text: 'We sold the boards to Hamo, the Compact\'s buyer on the Salt Road, by the plank.' },
     ],
     goals: [
-      { when: { item: 'name_boards' }, at: 'downs_f3', text: 'Take the name-boards home to Wat on Gullwick\'s shingle, or sell them.' },
+      { when: { item: 'name_boards' }, at: 'downs_f3', text: 'Take the name-boards across the Wend to Gullwick, or sell them.' },
       { when: { flag: 'q_board' }, at: 'downs_f3', text: 'Find the Patience\'s name-board on the wreckers\' beach, across the Wend from Gullwick. Go by night.' },
     ],
   },
