@@ -333,11 +333,12 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - The gibbet above the rocks at 25,15; the wreck on the rocks under the light at 21,29, its
     salvage (`e3_salvage`, the Buckler +1) at 21,30. A dew pond, a shepherd's fold and a first
     sight of the light from the edge of the stubble fill the downs.
-  - The secret: the wreckers' niche, a secret door in the rock at 19,29, its lamp and chart as
-    words and a small chest behind at 19,30. The hint is the soot on the ledge beside it at 18,29
+  - The secret: the wreckers' niche, a secret door in the rock at 19,29, with rock beside it at
+    20,29 so the door draws as rock, its lamp and chart as words and a small chest behind at 19,30. The hint is the soot on the ledge beside it at 18,29
     (`e3_ledge`); the keeper's second light is the hint in words.
-  - The seam with F3: rock at 31,12–15 keeps F3's far beach reached only by its bridge, and 31,5–9
-    lie off every path, since Hamo stands at F3's 0,9.
+  - The seam with F3: rock at 31,12–15 keeps F3's far beach closed along its edge, and rock at
+    31,5–9 keeps every way from E3 to Gullwick off Hamo's square at F3's 0,9, and off the strip of
+    field above it.
   - The corner is left for Ashcombe (#87): nothing in it but the ford (`e3_ford`), which it keeps.
   - The groups, eight, the harder monsters (#272) at 4: eight crows at the gibbet, nearest the way
     in; a lampman and four wreckers on the road in fog (`when: { sky: 'fog' }`), the lampman first
@@ -347,7 +348,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     copse in the north-west. At level 3 the company wins 99.3% of fights and manages 6.41 fights to
     a rest. Two under, the Foreland's pool is E3's groups alone: 72.2% won, off its aim of 25% and
     inside its limit of 90%, and listed. They pay about 365 xp a member, against the brief's 340.
-  - Density: 95.1% of its 853 squares within 8 steps, the furthest 11; 23 points, one a sign.
+  - Density: 95.3% of its 847 squares within 8 steps, the furthest 11; 23 points, one a sign.
   - Time: about three session-hours to author and check.
 
 ### 4.5 E2, the Wend's fields (#68): country, band 3–4
