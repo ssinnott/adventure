@@ -1364,3 +1364,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   wood, #216's blocker).
 - 22:38: the delegate on #293 (both choices and its look OK; the edge lantern at half still reads
   as a lantern far off) and #294 (a lone Eldest "The Eldest", two "2 Eldest"). Relayed.
+
+### 22:40: check-in
+- Opened since 22:00: #300 (#299, the badge; the #97 session), #301 (#67's B, the Crowness keeper
+  and Oil for the Lamp), #302 (#68's B, Riders in the Dark), #303 (#87, Ashcombe past Gullwick; the
+  #77 session). All subscribed. Review queue after #298 and #296: #297, #300, #301, #302, #303.
+- Rounds out: #293, #294 (the #45 session), #295 (the Thornmark session). Each lands on its push.
+- Queued behind their rounds: #71 (D3) to the #67 session, #69 (D2) to the #68 session, no
+  footprints. The pilot on E. Check-in re-armed for 23:40.
