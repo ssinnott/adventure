@@ -1289,3 +1289,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   delegate on #289-#292; the scouts of #214, #71, #87 and #49. Nothing merged since #282 (main
   97e2d81); no PR has moved since 16:58. Rounds sent but not acted on: #283 (the pilot), and the
   sessions' own work (#214, #49, E, #286, #288, #163). Waiting on the owner's word on the pace.
+- 21:37: the owner: "Ok you can resume orchestrating". Resumed at a throttled pace: two reviewers at
+  a time, no scouts (the sessions plan their own boxes), subagents spared. Sent: the pilot (#283's
+  round, then E), #67 (#284's round: 20,29 rock for the niche door, 31,9 rock away from Hamo, merge
+  main; a full review after), the Thornmark session (#214, no footprint), the #100 session (#49, no
+  footprint), the #45 session (#286, #288, #163). Reviewers on #290 and #292; then #289, #291, #284.
