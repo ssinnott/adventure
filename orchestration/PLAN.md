@@ -1306,3 +1306,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   as an ogre, an archer and a brigand). #290 landed: its head e6fc918 merged onto main 4ab1683
   (clean); landing check ALL OK (41 owed), SMOKE OK, "Nothing new."; CI green. Merged as 585697a;
   main's tree is the tested tree (bccb45f). #285 closes. Its stale-comment nit rides #286.
+- 21:56: #292 (#287's fix) landed: its round (e946d28: the headroom the larger of a height and the
+  seat, a second fixture a crow's part clear of the view, `>= 0` at the top row; main in). Landing
+  check ALL OK (41 owed), SMOKE OK, "Nothing new."; CI green. Merged as 7736a8c; main's tree is the
+  tested tree (4ace44f). #287 closes. The #97 session is free.
+- `reviews/289.md` (#77's C): ready after fixes (merge main; "Hob's cross" on a path that never
+  names Hob; the kitchen's event to end with the quest; nits). Round sent 21:53.
+- `reviews/291.md` (#68's A, E2): ready. Should-fix: keep 29,31 as shallows when E3 lands (the Wend
+  would meet E3 only corner to corner); nits. Round sent 21:58. Found in passing: the Foreland's
+  badge over E2 (`atlas.ts:242`). A delegate on #289's and #291's choices, E2's sheet and the badge.
+- Reviewer on #284 (its round in: 18efa84).
