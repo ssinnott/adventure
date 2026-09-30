@@ -27,7 +27,7 @@ The atlas (its rows in `src/content/areas/thornmark/atlas.ts`, merged into `ATLA
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Thornmark | 5–10, its map's | 2,028 | 901: the Thornmark map, laid at 232,30 |
-| The Deepthorn | 8–10 | 3,246 | none |
+| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214) |
 | The area | 5–10 | 5,274 | a sixth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -128,6 +128,14 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   it comes after the fight from whichever side the party fought. From then on the rift hounds and
   the riftling elders stop coming back, in the forest and under the Grove alike (`until:
   TEAR_CLOSED`, in `grove2.ts`); a group still standing stays until it is killed.
+- **The Deepthorn's edge** (H3, `deepthorn_h3`, country, band 8–10; #214): the elves' road out of
+  the Grove's hollow through Thornmark's south edge, which says the crossing line; the light woods
+  along the Wyke; the Dowrdu's ford, the keeper's empty post and, behind young thorns (the hint),
+  her roofless house with a Tower Shield +1 in her strongbox; the spiders' nest in the brakes (a
+  den, #88, its hoard a Rune Dagger +2); and How Did He Know's camp, whose orders Idony wants at the
+  Split Oak. Seven groups: dire wolves, the nest's two brood and its keepers, rift hounds until the
+  tear is closed, brambles short of the ford and rootwalkers east of it, where the road runs on out
+  of the east edge for I3 and Henlys. The gate holds at 8, off its aim at 8.9 fights to a rest.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
@@ -279,6 +287,14 @@ settled in its issue, and what the pilot teaches changes them.
 - **Finds.** The ford-keeper's strongbox holds a Tower Shield +1; the nest's hoard, a dead
   traveller's Rune Dagger +2.
 - **Pay.** About 410 xp a member.
+- **As built** (#214, 30 September): the brief's places, with the gate's groups larger than it drew
+  them. Brambles two to a group and eight dire wolves left a company at 8 over fifteen fights to a
+  rest, past the gate's limit of ten, so the brambles are six, the rift hounds and the nest's groups
+  twelve and the rootwalkers four, and the nest breeds two brood, not three. The rise from the way
+  in put the wolves nearest, the brambles on the road short of the ford. It pays about 1,900 xp a
+  member and 610 gold, against the 410 and 160 shared to it here: the gate and the curve's shares
+  disagree, and the owner decides which gives (§8). It took an afternoon's session, the scaffold to
+  a green check. What the owner finds by hand goes here when the box has been played.
 
 ### 4.3 I3, Deepthorn Lodge (#215): country, band 8–10
 
@@ -459,7 +475,7 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 11 | The Dark Glass | 6 | Lyngwyn; the Chapterhouse | a hand-in; words that change with a flag; a choice | the built maps (#219), after the Lanterns' Dark Marker (#146), built |
 | 12 | The Elder's Four | 6 | the Grove Roots; Thornhold | a person found below; a choice; an event that comes with a flag | the built maps (#219), built |
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
-| 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214) |
+| 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214), built |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215) |
 | 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218) |
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
