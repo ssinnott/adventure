@@ -1331,3 +1331,5 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   gone), SMOKE OK, "Nothing new."; CI green. Merged as 2e33d25; main's tree is the tested tree
   (1643158). The #68 session on to B (Riders in the Dark). #289's round in (9795489), waiting on a
   main merge.
+- 22:06: the container restarted; the reviewers of #295 and #293 were lost mid-run (the files
+  survived). Their worktrees and the dead scouts' removed; both reviewers started again.
