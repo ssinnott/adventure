@@ -20,7 +20,7 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Old Tower', icon: 'tower', map: 'thornmark', at: [4.8, 5], label: 'below' },
   { name: 'Barrow', icon: 'barrow', map: 'thornmark', at: [27.8, 8.4], label: 'below' },
   { name: 'The Grove', icon: 'grove', map: 'thornmark', at: [7.5, 28.6], label: 'right' },
-  { name: 'Deepthorn Lodge', icon: 'lodge', at: [272, 76], label: 'below', planned: true }, // the Ranger's second prestige
+  { name: 'Deepthorn Lodge', icon: 'lodge', at: [278, 112], label: 'below', planned: true }, // the Ranger's second prestige
   { name: 'Henlys', icon: 'hold', map: 'deepthorn_i4', at: [10.5, 10.5], label: 'below' }, // the oldest hold, the Deepthorn's step
   { name: 'Penspern', icon: 'stone', at: [296, 142], label: 'left', planned: true }, // the head, its standing stone (#218)
   { name: 'Lyngwyn', icon: 'water', at: [268, 53] }, // the still lake
