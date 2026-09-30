@@ -1514,3 +1514,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 ### 23:40: check-in
 - Nothing ready to land: rounds out on #302, #303 (the recut) and #304; #305 and #306 in review;
   #307, #308, #309 and #310 queued. Check-in re-armed for 00:40 (trig_01EC1iND1ExFbXtoLtP5fbyN).
+- 23:47: #302 (#68's B, Riders in the Dark) landed: its round (cd35aaf: main merged with #301 and
+  #297; Dunstan at 10,11; `f2_lamp` reworded off the lamp, its id kept; the doc). Landing check on
+  its head (main in): ALL OK (27 owed), SMOKE OK, "Nothing new."; CI green. Merged as f3dc095;
+  main's tree is the tested tree (e0da936). #68 closes, and with it #311's blocker. The #68 session
+  back to D2's creatures (0) and #306's round when it comes. #303's recut is pushed (a45a34d,
+  598ce86): it takes the next reviewer.
