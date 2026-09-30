@@ -379,7 +379,7 @@ const torches = await page.evaluate(async () => {
   const hidden = bare.flames.filter((f) => f.x >= 0 && f.x < W && differs(tree.px, bare.px, f.x, f.y)), out = hidden.length;
   // The ogre, on the square before the wall, drawn a frame with its flames and the same frame without.
   lay(at[0], at[1], 'none');
-  const ogre = { sprite: 'ogre', tint: '#7a8a5a', size: 1.25, count: 1 };
+  const ogre = [{ id: 'ogre', sprite: 'ogre', tint: '#7a8a5a', size: 1.25 }];
   const frame = (who: any, lit: boolean): Uint8ClampedArray => {
     const flames = V.paintedFlames() as any[], was = flames.slice();
     if (!lit) flames.length = 0;

@@ -43,7 +43,6 @@ const LATERAL = VIEW_LATERAL;
 
 export interface ViewRect { x: number; y: number; w: number; h: number; }
 
-/** A monster to draw at a cell, resolved by the caller from the world's live groups. */
 /** A figure the viewport draws for a group: the monster, its sprite, tint and size. */
 export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; }
 
