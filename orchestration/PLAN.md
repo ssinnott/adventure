@@ -1520,3 +1520,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   main's tree is the tested tree (e0da936). #68 closes, and with it #311's blocker. The #68 session
   back to D2's creatures (0) and #306's round when it comes. #303's recut is pushed (a45a34d,
   598ce86): it takes the next reviewer.
+- 23:52: `reviews/305.md` (#71, D3): ready after fixes. Should-fix: three Cutthroats as the den's
+  keepers are one and a half standard encounters, the third added to reach the aim: a bigger group
+  (with two, 7.98 fights to a rest, inside the limit). Nits: the secret door at 3,18 has mountain
+  on one side only; 70 void squares where the body says 67; the scaffold fixture's new cut at 88,30
+  lies half in D2. The Cutthroat reads (sash, two knives). Its look, the keepers' number (D4 has
+  three too) and the other choices to a delegate. Reviewer on #303 (the recut chain).
