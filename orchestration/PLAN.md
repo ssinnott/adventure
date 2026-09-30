@@ -1326,3 +1326,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - Opened since the resumption: #293 (#286), #294 (#288), #295 (#214, H3), #296 (#163's dead wood),
   #297 (#163's crystal and chasm), #298 (#49, I4). Reviewers on #295 and #293; then #294, #298,
   #296, #297 in turn.
+- 22:05: #291 (#68's A, E2) landed: its round merged E3 in and kept 29,31 as shallows (the review's
+  should-fix; the delegate dropped the revert). Landing check on 03cc2b4: ALL OK (35 owed; #68
+  gone), SMOKE OK, "Nothing new."; CI green. Merged as 2e33d25; main's tree is the tested tree
+  (1643158). The #68 session on to B (Riders in the Dark). #289's round in (9795489), waiting on a
+  main merge.
