@@ -11,7 +11,7 @@ import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
 import { HIRE, STEPS as FORELAND_STEPS, FARM_FIRST, hired } from '../shelf/walkthrough.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
-import { EAST, NORTH } from '../../../game/types.ts';
+import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { meet, answer, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
@@ -146,6 +146,7 @@ const TAMSIN = (): Person => who('thornhold', 11, 4, 'Reader Tamsin');
 const KEYNE = (): Person => who('thornhold', 6, 7, 'Keyne'), MEVA = (): Person => who('grove1', 12, 4, 'Meva');
 const THORA = (): Person => who('thornmark', 18, 4, 'Thora'), THORA_WALL = (): Person => who('thornhold', 7, 1, 'Thora'), KERROW = (): Person => who('thornhold', 4, 10, 'Kerrow');
 const EDITH = (): Person => who('thornmark', 5, 27, 'Edith'), EDITH_STONE = (): Person => who('grove2', 7, 7, 'Edith');
+const IDONY = (): Person => who('thornhold', 12, 13, 'Idony');
 
 /** Whether a person stands where they are listed now. */
 const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
@@ -336,6 +337,30 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     toSeason(w, 'winter');
     w.ok(!summer && shows(w, 'thornmark', 'tm_thora'), 'refused, her band stands at the camp in winter, and not in summer');
     w.ok(hear(w, 'thornhold', SYLVANE()).startsWith('"You told her no'), "Sylvane's after-lines are the refusal's");
+  }
+  { // How Did He Know (#214): asked for, the orders found in H3's fire-pit, and carried to the Watch.
+    const w = newWalk(ok);
+    meetWho(w, 'q_orders');
+    w.ok(w.news.at(-1) === 'New quest: How Did He Know.' && !!page(w, 'orders')?.goal, `Idony's first meeting begins How Did He Know, with a goal (${w.news.at(-1)})`);
+    walkThrough(w, 'thornmark', 8, 29, SOUTH, 'deepthorn_h3');
+    see(w, 'deepthorn_h3:h3_survey');
+    see(w, 'deepthorn_h3:h3_firepit');
+    open(w, 'deepthorn_h3:h3_orders');
+    w.ok(w.party.bag.includes('survey_orders') && page(w, 'orders')?.goal === 'Take the survey\'s orders to Idony at the Split Oak, in Thornhold.', `the orders found, the goal is Idony (${page(w, 'orders')?.goal})`);
+    const gold = w.party.gold;
+    w.ok(hear(w, 'thornhold', IDONY()).startsWith('Idony reads what the fire left') && w.party.gold === gold + 300 && !w.party.bag.includes('survey_orders'), 'Idony takes the orders, reads them and pays 300');
+    answerTo(w, 'thornhold', IDONY(), 'Take them to the Watch.');
+    reads(w, 'orders', 'How Did He Know', ['idony', 'camp', 'orders', 'watch'], ['council'], 'the orders to the Watch');
+    w.ok(!there(w, IDONY(), 'thornhold'), 'the orders to the Watch, Idony is gone from the Split Oak');
+  }
+  { // How Did He Know: the orders brought unasked, and handed back for the Council.
+    const w = newWalk(ok);
+    open(w, 'deepthorn_h3:h3_orders');
+    w.ok(hear(w, 'thornhold', IDONY()).startsWith('The Lantern in travel-grey looks at the burnt paper') && !w.party.flags.q_orders, 'Idony takes the orders brought unasked, with her early words, and does not hire');
+    w.ok(w.news.at(-1) === 'New quest: How Did He Know.' && page(w, 'orders')?.goal === 'Answer Idony at the Split Oak: the orders to the Watch, or back to us?', `the orders read begin How Did He Know, with her question as its goal (${page(w, 'orders')?.goal})`);
+    answerTo(w, 'thornhold', IDONY(), 'Give them back to us.');
+    reads(w, 'orders', 'How Did He Know', ['orders', 'council'], ['idony', 'watch'], 'the orders kept for the Council');
+    w.ok(w.party.bag.includes('survey_orders') && there(w, IDONY(), 'thornhold') && hear(w, 'thornhold', IDONY()).startsWith('"Still here.'), 'kept, the orders are back in the pack, and Idony stays with her after-line');
   }
   { // The Mender: the camp found, the kit back, the tear shut and the Stone mended; the sliver carried.
     const w = newWalk(ok);

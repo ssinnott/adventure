@@ -96,7 +96,7 @@ export const DEEPTHORN_I4: MapDef = {
         '"You have seen it. Good. Now you know what everybody knows: that two lines were once one, and that a seal says so." He does not look up. "What a seal is worth is a question for a Council, and there is no Council, and there is no Queen. So the hold keeps it, and I keep the hold. Go carefully in the groves."',
       ] },
     ] },
-    { kind: 'sign', x: 26, y: 10, text: 'A sign reads: "West: the hold. South, down the glade: the head. Past the glade the hold keeps no peace, and asks none."' },
+    { kind: 'sign', x: 26, y: 10, text: 'West: Henlys. South, down the glade: Penspern. Past the glade Henlys keeps no peace, and asks none.' },
     { kind: 'statue', x: 24, y: 3, id: 'i4_statue', name: 'The first elder', text: 'A statue of the hold\'s first elder, its face gone to lichen, one hand raised as if towards a gate.',
       riddle: 'I was here before the hold, and I will be here when its gate is grass. Thornhold\'s gate says what to leave me.', answer: 'standing',
       gift: { items: ['brigandine+3'] }, done: 'The stone hand is down, and what it held is yours. The lichen is taking the face again.' },

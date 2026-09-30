@@ -45,13 +45,17 @@ export function outdoors(): void {
   // world too; between the two zones they are the ridge, as they were, with the pass through it.
   const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
   const line = (x: number, y: number, dx: number, dy: number, n: number): string => Array.from({ length: n }, (_, i) => out.at(x + dx * i, y + dy * i).ch).join('');
-  const faces = [line(sh.x, sh.y, 1, 0, sh.w), line(sh.x, sh.y + sh.h - 1, 1, 0, sh.w), line(th.x, th.y, 1, 0, th.w), line(th.x, th.y + th.h - 1, 1, 0, th.w), line(th.x + th.w - 1, th.y, 0, 1, th.h)];
-  ok(faces.every((s) => /^%+$/.test(s)), 'the Foreland\'s north and south edges and Thornmark\'s north, east and south edges are the end of the world');
+  const faces = [line(sh.x, sh.y, 1, 0, sh.w), line(sh.x, sh.y + sh.h - 1, 1, 0, sh.w), line(th.x, th.y, 1, 0, th.w), line(th.x + th.w - 1, th.y, 0, 1, th.h)];
+  ok(faces.every((s) => /^%+$/.test(s)), 'the Foreland\'s north and south edges and Thornmark\'s north and east edges are the end of the world');
+  // South, the Deepthorn's edge (H3, #214): Thornmark's ring stands against it as mountains, with
+  // the elves' road through a gap out of the Grove's hollow; its corner past H3 is the world's end.
+  const south = line(th.x, th.y + th.h - 1, 1, 0, th.w);
+  ok(south === 'M'.repeat(8) + '=' + 'M'.repeat(22) + '%', `Thornmark's south edge is mountains against the Deepthorn, with the elves' road through a gap (${south})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);
   const ridge = '%' + 'M'.repeat(8) + '=' + 'M'.repeat(21) + '%';
-  ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge, 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at both ends');
+  ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge.slice(0, -1) + 'M', 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at its north end and on Thornmark\'s side into the Deepthorn\'s edge at its south');
   // The ways: every one lands on open ground; none joins one zone to the next, which is walked; no
   // gate closes the road; and the towns and dungeons open onto the outdoors.
   const maps = buildMaps();

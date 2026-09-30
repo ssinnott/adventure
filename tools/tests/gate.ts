@@ -73,8 +73,7 @@ export const ROADS: Record<string, readonly string[]> = {
   shelf: ['shelf:road_rats', 'shelf:hill_wolves'],
   downs: ['downs_f2:f2_bandits'],
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
-  // From Henlys's way in, until H3's road from the Grove (#214) runs to it.
-  deepthorn: ['deepthorn_i4:i4_gate_brambles', 'deepthorn_i4:i4_east_brambles'],
+  deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
