@@ -47,6 +47,24 @@ export const GROVE2: MapDef = {
     { kind: 'sign', x: 7, y: 10, text: 'Cut into the lintel of the iron door, in a hand you recognise from Ashcombe: THE HEARTH IS A CAGE. THIS IS A BAR OF IT.' },
     { kind: 'event', x: 7, y: 8, id: 'g2_stone', once: true, text: 'The Grove Stone: a standing stone the height of two men, and a hand-span of it cut clean away. Where the cut is, the air is torn. In the tear, something turns to look at you.' },
     { kind: 'chest', x: 8, y: 8, id: 'g2_hoard', gold: 600, items: ['brigandine+2', 'potion_sp_great', 'elixir'] },
+    // The Mender (#219): Edith by the Stone once the tear is shut and her kit is back, until she is
+    // answered, and the Stone mended after. She waits in the Grove's hollow till then.
+    { kind: 'npc', x: 7, y: 7, name: 'Edith, Reader of the Guildhall', lines: [
+      'Edith kneels at the Stone\'s foot with the wire laid into the cut and the wand across it, and the silver in the cut is already dull, as if it had always been stone.',
+      '"It\'s done. Don\'t touch it for a year." She sits back on her heels. "A cut this clean and this deep, mended in a night. The book says a winter. Either I\'m better than the book, or the Stone wanted mending. I know which I think."',
+      '"Something for you, since you did the getting back. The Lanterns are split about Vask. Not openly; Lanterns do nothing openly. But the Guildhall reads his orders one way and the Watch in Sunderwood reads them another, and I was sent by the Guildhall, and I begin to think the Watch has the right of it."',
+    ], flag: 'q_mender_done', after: { flag: 'q_mender_kit', slain: 'grove2:g2_warden' }, until: [{ flag: 'q_mender_sliver' }, { flag: 'q_mender_left' }], choice: {
+      ask: '"A sliver came off the cut when I dressed it. It hums. It\'s the Stone\'s, and by the book it stays near the Stone. Or you carry it, and see what it does near the other one. Which?"',
+      answers: [
+        { label: 'We\'ll carry it.', sets: 'q_mender_sliver', gives: 'grove_sliver', says: [
+          '"Then carry it near the skin, and don\'t sell it, and if it ever stops humming, run." She puts it in your hand, warm as a coal that has gone out. "The book says nothing about this. That\'s how I know it\'s worth doing."',
+        ] },
+        { label: 'Leave it with the Stone.', sets: 'q_mender_left', says: [
+          '"By the book." She lays it in the cut\'s shadow, where the silver is. "Good. One of us ought to do something by the book, and it was never going to be me."',
+        ] },
+      ],
+    } },
+    { kind: 'event', x: 8, y: 7, id: 'g2_mended', once: true, after: { flag: 'q_mender_done' }, text: 'The Grove Stone, whole: a seam of dull silver, and the hum one steady note. The air beside it is only air.' },
   ],
   secrets: [{ x: 6, y: 13, hint: 'g2_hint' }],
   encounters: [
