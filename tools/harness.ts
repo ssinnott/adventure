@@ -91,15 +91,16 @@ export function edgeOf(c: Character, round: number): Edge {
  * The ladder: what a company has in its hands by a level (EXPANSION.md §5.2). Its kit, then by 3
  * the band's gear from Mottram's and the kits' weapons with a plus from the Downs' first boxes, by
  * 5 the kits' armour with a plus and the Downs' last finds, then Thornmark's armoury from 8, where
- * plate is dear, and its chests' gear with a plus by 9. Each member takes the best its class can
- * use of the kind it already carries, which flatters the company a little. The harness and the gate
- * check both dress their company from it.
+ * plate is dear, its chests' gear with a plus by 9 and the Deepthorn's +2s by 10. Each member takes
+ * the best its class can use of the kind it already carries, which flatters the company a little.
+ * The harness and the gate check both dress their company from it.
  */
 export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [3, ['longsword', 'axe', 'longbow', 'shield', 'scale', 'chain', 'dagger+1', 'mace+1', 'shortsword+1', 'staff+1']],
   [5, ['robe+1', 'leather+1', 'buckler+1', 'captains_sword', 'queens_sword', 'captains_mail', 'halberd+1', 'spear+1', 'longbow+1', 'shield+1']],
   [8, ['warhammer', 'battleaxe', 'greatsword', 'crossbow', 'elfbow', 'rune_dagger', 'grove_staff', 'runed_robe', 'brigandine', 'plate', 'tower_shield']],
   [9, ['warhammer+1', 'rune_dagger+1', 'elfbow+1', 'grove_staff+1', 'greatsword+1', 'brigandine+1', 'brigandine+2', 'runed_robe+1']],
+  [10, ['warhammer+2', 'greatsword+2', 'elfbow+2', 'rune_dagger+2', 'runed_robe+2', 'brigandine+3', 'tower_shield+1', 'eldests_bough']],
 ];
 
 const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
