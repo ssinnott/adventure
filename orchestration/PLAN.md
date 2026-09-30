@@ -1497,3 +1497,16 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   drop; glass a guise of its own; the seams; the chasm dark indoors; a smoke line). Landing check on
   it merged onto 62ca3fa: ALL OK (27 owed), SMOKE OK, "Nothing new."; CI green. Merged as 8dad64d;
   main's tree is the tested tree (cf791e1). #163 closes.
+- 23:39: the delegate on #302: choices 1, 2, 4 and 5 taken (F2's `f2_lamp` reworded off the lamp,
+  id kept; Dunstan's line is the owner's); Dunstan moved to 10,11, off every way through the yard;
+  the sign check and a check for words never said filed for later as a quality-lane issue. Round
+  sent to the #68 session (main merged, the square, the lamp). Filed #311 ("Catch a sign that
+  repeats its prefix, and words a person can never say", Task, `lane: quality`, under #26, blocked
+  by #68; not approved: for later); #26's Work list gains #299 and #311; #68's other end noted in a
+  comment.
+- Opened since 23:04: #307 (#216, J4; the Thornmark session, 23:14, on #296's and #298's
+  branches), #308 (#217, I5; the new session, 23:15; its way in carves three squares of I4's forest
+  once #298 lands, its choice 1), #309 (#72, D4; the #67 session, 23:17, on #305's branch), #310
+  (#70, the Berth; the new session, 23:20, on #306's branch; the guard and captain retuned onto
+  §4.4's lines, the captain won 45% at 4). All subscribed. Review queue: #303 (after its recut),
+  #307, #308, #309, #310; #305 and #306 in review.
