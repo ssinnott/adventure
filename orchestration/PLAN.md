@@ -1347,3 +1347,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   and Thornmark's two-under rises to 33.5%, unreported): against "harder, not bigger"; the brambles
   roam and wake at 2 and lack `until: TEAR_CLOSED`; a scratch probe committed (`tools/.probe.ts`).
   Group sizes and #295's choices to a delegate before the round goes. Reviewer on #298 (I4).
+- 22:28: `reviews/293.md` (#286's fix, the flames): ready after fixes to comments and body (the
+  vignette over the flames reaches every map at night, dimming an edge lantern by half: say so;
+  stale comments). It also ends a wider bug (a torch through nearer walls or pillars in 409 of 2,296
+  lit dungeon views). Round sent 22:30; its two choices to a delegate with #294's. Reviewer on #294.
