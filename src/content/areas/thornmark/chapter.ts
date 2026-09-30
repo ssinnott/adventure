@@ -1,19 +1,19 @@
 // Thornmark's chapter of the one quest, in the journal's words: The Grove Stone, Vask's lead,
-// Sylvane's chisel and the treaty's seal in Henlys (his words are in the Foreland's chapter). content/index.ts joins it with the
-// other areas' in road order; how the words are keyed is in src/content/area.ts (`chapter`), and
-// tools/tests/quests.ts checks every key.
+// Sylvane's chisel and the treaty's seal in Henlys (his words are in the Foreland's chapter).
+// content/index.ts joins it with the other areas' in road order; how the words are keyed is in
+// src/content/area.ts (`chapter`), and tools/tests/quests.ts checks every key.
 import type { Chapter } from '../../../game/quests.ts';
 
 export const CHAPTER: Chapter = {
   // Vask sets the party on the Stone when he takes the wand; Sylvane, in Thornhold, is the one who
-  // takes the chisel, and sends the company south to the treaty whose seal is the chisel's mark. The
-  // chapter ends on the seal seen with the chisel paid for, in whichever order. A company that sees
-  // the treaty first reads a seal it does not know (Senara's words set q_seal_unknown), and the
-  // chisel, found after, makes the match.
+  // takes the chisel, and sends the company south to the treaty whose seal is the chisel's mark.
+  // The chapter ends on the seal seen, or shown by Senara, with the chisel paid for, in whichever
+  // order. A company that sees the treaty first reads a seal it does not know (Senara's words set
+  // q_seal_unknown), and the chisel, found after, makes the match.
   id: 'grove',
   title: 'The Grove Stone',
   start: [{ flag: 'q_ashcombe_done' }, { flag: 'q_grove' }],
-  done: { seen: 'deepthorn_i4:i4_treaty', flag: 'q_grove_done' },
+  done: [{ seen: 'deepthorn_i4:i4_treaty', flag: 'q_grove_done' }, { flag: ['q_treaty', 'q_grove_done'] }],
   entries: [
     { id: 'sylvane', when: { flag: 'q_grove' },
       text: 'Elder Sylvane of Thornhold says the Stone did not fail. It was cut, by hands, with tools, and she wants the tool that cut it.' },
@@ -29,7 +29,7 @@ export const CHAPTER: Chapter = {
       text: 'Sylvane has seen the chisel\'s mark before: on the seal of a treaty her people keep in Henlys, south through the deep.' },
     { id: 'seal_early', when: { flag: 'q_seal_unknown' },
       text: 'In Henlys, a treaty two hundred years old with two seals: the Crown\'s, and the elves\' oldest mark, which means nothing to us yet.' },
-    { id: 'seal', when: [{ seen: 'deepthorn_i4:i4_treaty', flag: 'q_grove_done' }, { flag: 'q_seal_matched' }],
+    { id: 'seal', when: [{ seen: 'deepthorn_i4:i4_treaty', flag: 'q_grove_done' }, { flag: ['q_treaty', 'q_grove_done'] }, { flag: 'q_seal_matched' }],
       text: 'In Henlys, a treaty two hundred years old, sealed with the elves\' oldest mark. It is the mark on the chisel that cut the Grove Stone, line for line.' },
   ],
   goals: [

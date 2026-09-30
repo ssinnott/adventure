@@ -2,9 +2,9 @@
 // Grove Stone, played from a new game by the game's own moves and checked a step at a time
 // (tools/walk.ts); then played again with Thornmark taken early, before Vask's hire and after it
 // but before the wand, where the log must still read true and end the same; and with the treaty in
-// Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side quests
-// on the built maps (#219), each from its giver to its choice and both ways: the log reads true and
-// the people stand where it says.
+// Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side
+// quests on the built maps (#219), each from its giver to its choice and both ways: the log reads
+// true and the people stand where it says.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -30,7 +30,7 @@ const stone = (w: Walk): void => { see(w, 'grove2:g2_stone'); fight(w, 'grove2:g
 /** The treaty in Henlys's hall, its seal seen. */
 const TREATY: Step = { name: 'the treaty', play: (w) => see(w, 'deepthorn_i4:i4_treaty') };
 
-/** The chapter in order: through the pass, to Sylvane, under the Grove, the chisel back and the seal seen. */
+/** The chapter in order: the pass, to Sylvane, under the Grove, the chisel back and the seal seen. */
 export const STEPS: readonly Step[] = [
   { name: 'the pass', play: pass },
   { name: 'to Thornhold', play: sylvane },
@@ -115,14 +115,38 @@ export const walkthrough: Walkthrough = (ok) => {
   const ids = ending(treatyFirst, 'the treaty first');
   ok(['grove.seal_early', 'grove.seal', 'grove.lead', 'grove.paid'].every((e) => ids.includes(e)), `the treaty first, the log reads the seal unknown and then matched (${ids.filter((e) => e.startsWith('grove.')).join(', ')})`);
 
+  // The seal shown by Senara, from her square, and the treaty's never stepped on: the chapter ends
+  // there as well, and the log ends as in order.
+  const shown = newWalk(ok);
+  hired(shown);
+  playChapter(shown, FORELAND, FORELAND_STEPS, 'shown by Senara');
+  playChapter(shown, CHAPTER, [...STEPS.slice(0, 4), { name: 'Senara shows the seal', play: (w) => meetWho(w, 'q_treaty') }], 'shown by Senara');
+  ok(JSON.stringify(ending(shown, 'shown by Senara')) === JSON.stringify(want), 'shown by Senara: the log ends with the same entries as in order');
+
+  // The chisel carried to Senara before Sylvane has paid for it: she makes the match, the chapter
+  // waits on the pay, and her next words, the match not yet made, ask all the same.
+  const carried = newWalk(ok);
+  hired(carried);
+  playChapter(carried, FORELAND, FORELAND_STEPS, 'the chisel carried');
+  playChapter(carried, CHAPTER, STEPS.slice(0, 3), 'the chisel carried');
+  carried.level = 8;
+  ok(hear(carried, 'deepthorn_i4', SENARA()).includes('something that hums') && !!carried.party.flags.q_seal_matched && !quest(carried)?.pages.find((p) => p.def === CHAPTER)?.done,
+    'the chisel carried, Senara makes the match and the chapter waits on the pay');
+  ok(hear(carried, 'deepthorn_i4', SENARA()).includes('longer than most') && !!carried.party.flags.q_mark, 'the chisel carried, Senara, the match not yet made, asks for the rubbing');
+  playChapter(carried, CHAPTER, [STEPS[3]], 'the chisel carried');
+  ok(JSON.stringify(ending(carried, 'the chisel carried')) === JSON.stringify(want), 'the chisel carried: the log ends with the same entries as in order');
+
   everyGoalWalked(ok);
   sideQuests(ok);
 };
 
-/** Henlys after the seal, in order: Senara knows the match and asks for The Older Mark; Mawgan and Sylvane have seen it too. */
+/**
+ * Henlys after the seal, in order: Senara knows the match and asks for The Older Mark; Mawgan and
+ * Sylvane have seen it too.
+ */
 function henlys(w: Walk, how: string): void {
   w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('Sylvane sent you') && !!w.party.flags.q_treaty, `${how}, Senara knows what Sylvane sent the company for`);
-  w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('Penspern') && !!w.party.flags.q_mark, `${how}, Senara asks for a rubbing of the stone on Penspern`);
+  w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('one more place that mark is') && !!w.party.flags.q_mark, `${how}, Senara, the match made, asks for a rubbing of the stone on Penspern`);
   w.ok(hear(w, 'deepthorn_i4', MAWGAN()).startsWith('"You have seen it. Good.'), `${how}, Mawgan's words are the treaty's`);
   w.ok(hear(w, 'thornhold', SYLVANE()).startsWith('"You have seen it, then.'), `${how}, and so are Sylvane's`);
 }
@@ -139,7 +163,7 @@ function who(map: string, x: number, y: number, name: string): Person {
   return p;
 }
 const SYLVANE = (): Person => who('thornhold', 9, 5, 'Elder Sylvane');
-const SENARA = (): Person => who('deepthorn_i4', 9, 7, 'Senara'), MAWGAN = (): Person => who('deepthorn_i4', 7, 9, 'Mawgan');
+const SENARA = (): Person => who('deepthorn_i4', 10, 9, 'Senara'), MAWGAN = (): Person => who('deepthorn_i4', 9, 12, 'Mawgan');
 const TEGEN = (): Person => who('thornhold', 12, 13, 'Tegen'), LEOFWIN = (): Person => who('thornmark', 17, 15, 'Leofwin');
 const PIRAN = (): Person => who('thornhold', 6, 14, 'Piran'), ULF = (): Person => who('thornmark', 15, 22, 'Ulf'), ULF_PASS = (): Person => who('thornmark', 2, 10, 'Ulf');
 const TAMSIN = (): Person => who('thornhold', 11, 4, 'Reader Tamsin');

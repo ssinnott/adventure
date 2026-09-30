@@ -222,7 +222,7 @@ export function quests(): void {
     ok(news() === 'Quest log updated: The Dimming. New quest: The Lost Expedition.', 'the journal the Warden drops begins the Lost Expedition');
     takeItem(party, 'ashen_chisel'); party.flags.q_grove_done = 1;
     ok(news() === 'Quest log updated: The Dimming.' && /Henlys/.test(goal()), `Sylvane's pay sends the company south to the treaty (${goal()})`);
-    world.travel('deepthorn_i4', 9, 8, 0); world.eventsHere(); // the treaty's seal, in Henlys's hall
+    world.travel('deepthorn_i4', 9, 9, 0); world.eventsHere(); // the treaty's seal, in Henlys's hall
     const end = news();
     ok(end.startsWith('Chapter complete: The Grove Stone. Quest complete: The Dimming.') && quest(THE_QUEST.id).done && log().filter((v) => v.done).length === 2,
       `the last chapter's end, the seal seen, finishes the one quest; it and the Cargo Ledger are done (${end})`);

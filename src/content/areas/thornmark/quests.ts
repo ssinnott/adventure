@@ -1,16 +1,16 @@
-// Thornmark's side quests, in the journal's words: The Lost Expedition and The Empty Throne, subplots, and #56's six on
-// the built maps (#219): A Coin Not From Caldera (Tegen), Leave the Trees Standing (Piran), The
-// Dark Glass (Tamsin), The Elder's Four (Keyne), Terms From the Brigands and The Mender (Sylvane).
-// Its chapter of the one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts (`quests`);
-// tools/tests/quests.ts checks every key.
+// Thornmark's side quests, in the journal's words: The Lost Expedition and The Empty Throne,
+// subplots, and #56's six on the built maps (#219): A Coin Not From Caldera (Tegen), Leave the
+// Trees Standing (Piran), The Dark Glass (Tamsin), The Elder's Four (Keyne), Terms From the
+// Brigands and The Mender (Sylvane). Its chapter of the one quest is in ./chapter.ts. How the words
+// are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 
 export const QUESTS: readonly QuestDef[] = [
   {
-    // The Lost Expedition (DESIGN.md 10.3) begins with the first of the Meridian Company's journals.
-    // The rest of its trail is not built yet, so it has no `done` and stays open. Nothing takes the
-    // journal (no hand-in asks for it and no shop buys it; tools/tests/quests.ts holds to that), so the item
-    // alone keeps the entry written.
+    // The Lost Expedition (DESIGN.md 10.3) begins with the first of the Meridian Company's
+    // journals. The rest of its trail is not built yet, so it has no `done` and stays open. Nothing
+    // takes the journal (no hand-in asks for it and no shop buys it; tools/tests/quests.ts holds to
+    // that), so the item alone keeps the entry written.
     id: 'meridian',
     title: 'The Lost Expedition',
     start: { item: 'meridian_journal' },

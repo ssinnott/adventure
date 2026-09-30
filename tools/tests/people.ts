@@ -76,9 +76,9 @@ export function people(): void {
 
     // The log, either way round: the quest or chapter done with no goal; early, nothing keyed to
     // the hiring alone, and nothing the hired order does not write too.
-    // A chapter may end on more than this hand-in (The Quiet Farm on Hild's word too, the Grove Stone
-    // on the treaty's seal seen): its other flags are set and its events seen both ways round, so the
-    // hand-in's end is what is judged.
+    // A chapter may end on more than this hand-in (The Quiet Farm on Hild's word too, the Grove
+    // Stone on the treaty's seal seen): its other flags are set and its events seen both ways round,
+    // so the hand-in's end is what is judged.
     for (const s of [early, hired]) for (const def of QUESTS.flatMap((x): readonly QuestDef[] => x.chapters ?? [x])) for (const c of [def.done ?? []].flat() as QuestCond[]) {
       const flags = [c.flag ?? []].flat();
       if (flags.includes(q.setFlag)) for (const f of flags) s.party.flags[f] = 1;
