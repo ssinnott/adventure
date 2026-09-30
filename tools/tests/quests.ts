@@ -87,7 +87,7 @@ export function quests(): void {
     // yet is owed by whoever builds its step.
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
-    const PLANNED: Record<string, string> = { deepthorn: '#49' };
+    const PLANNED: Record<string, string> = {};
     const built = new Set(AREAS.map((a) => a.id as string));
     for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
       const msg = `zone ${z.id} holds a step of the one quest`;
@@ -173,6 +173,8 @@ export function quests(): void {
     const v = view(t, THE_QUEST.id)!;
     ok(/under the Grove/.test(v.goal ?? '') && v.pages.length === 1 && v.pages[0].def.id === 'grove', `Sylvane first begins the quest at the Grove Stone, with no page for a farm no one has spoken of (${v.goal})`);
     t.party.flags.q_grove_done = 1;
+    ok(/Henlys/.test(view(t, THE_QUEST.id)?.goal ?? ''), `the chisel paid for, Sylvane's lead sends the company south to the treaty (${view(t, THE_QUEST.id)?.goal})`);
+    satisfy(t, { seen: 'deepthorn_i4:i4_treaty' });
     const w = view(t, THE_QUEST.id)!;
     ok(!w.done && w.goal === 'The Regent-Warden is hiring in Helmstow.' && w.pages.map((p) => p.def.id).join() === 'ashcombe,grove' && w.focus === 0 && !w.pages[0].begun,
       `the Grove done first, the quest goes on to the Regent-Warden (${w.goal})`);
@@ -219,8 +221,11 @@ export function quests(): void {
     ok(/Sylvane/.test(goal()) && ['chisel', 'tear'].every((id) => chapter('grove').entries.some((e) => e.id === id)), 'the chisel goes to Sylvane, and the Warden\'s death is written');
     ok(news() === 'Quest log updated: The Dimming. New quest: The Lost Expedition.', 'the journal the Warden drops begins the Lost Expedition');
     takeItem(party, 'ashen_chisel'); party.flags.q_grove_done = 1;
-    ok(news() === 'Chapter complete: The Grove Stone. Quest complete: The Dimming.' && quest(THE_QUEST.id).done && log().filter((v) => v.done).length === 2,
-      'the last chapter\'s end finishes the one quest; it and the Cargo Ledger are done');
+    ok(news() === 'Quest log updated: The Dimming.' && /Henlys/.test(goal()), `Sylvane's pay sends the company south to the treaty (${goal()})`);
+    world.travel('deepthorn_i4', 9, 8, 0); world.eventsHere(); // the treaty's seal, in Henlys's hall
+    const end = news();
+    ok(end.startsWith('Chapter complete: The Grove Stone. Quest complete: The Dimming.') && quest(THE_QUEST.id).done && log().filter((v) => v.done).length === 2,
+      `the last chapter's end, the seal seen, finishes the one quest; it and the Cargo Ledger are done (${end})`);
     const expedition = quest('meridian');
     ok(!expedition.done && /Meridian/.test(expedition.goal ?? '') && expedition.pages[0].entries.length === 1, `and the Lost Expedition stays open with a goal, its trail not built yet (${expedition.goal})`);
   }
