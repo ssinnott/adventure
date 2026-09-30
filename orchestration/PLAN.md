@@ -1282,3 +1282,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   makes Hamo (F3 0,9) a shortest way home from its fields (rock at 31,9 at least). Diff read. Round
   sent to the pilot with the delegate's four decisions (16:58); the reviewer's Boat walk sketch
   committed as `reviews/283-boatwalk.ts` for it.
+
+### 30 September, 21:35: stopped by the weekly limit
+- At about 17:00 on the 29th every agent and session hit the account's weekly limit (resets 30
+  September, 21:00 UTC). Lost mid-run: the reviewers of #284, #289, #290, #291 and #292; the
+  delegate on #289-#292; the scouts of #214, #71, #87 and #49. Nothing merged since #282 (main
+  97e2d81); no PR has moved since 16:58. Rounds sent but not acted on: #283 (the pilot), and the
+  sessions' own work (#214, #49, E, #286, #288, #163). Waiting on the owner's word on the pace.
