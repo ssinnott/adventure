@@ -1526,3 +1526,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   on one side only; 70 void squares where the body says 67; the scaffold fixture's new cut at 88,30
   lies half in D2. The Cutthroat reads (sash, two knives). Its look, the keepers' number (D4 has
   three too) and the other choices to a delegate. Reviewer on #303 (the recut chain).
+- 23:50: `reviews/306.md` (#69's A, D2): not ready. The map is sound, but 14.32 fights to a rest
+  (limit 10): every group but the stand-in pack under a standard encounter at 4. The owner's own
+  rule ("blocked on that, and should fix that issue first") decides it without a delegate: D2 waits
+  for its level-5 monsters. The #68 session told (23:53) to draw them now (a pack leader, a Black
+  Dog worth a fight), then retune #306, which then closes #69; nits (eight barrows, two-line texts,
+  `d2_stones` against #310's mouth, keep the fixture at 72,60). Its other choices and the Berth's
+  look from the mouth go to a delegate on the retuned sheet. #310 (the Berth) waits behind it.
+- 23:53: reviewer on #307 (J4), asked first whether its 30 dead-wood squares, painted over as
+  forest, should be on the map now #163 has landed.
