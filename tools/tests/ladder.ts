@@ -78,7 +78,7 @@ export const DEEPTHORN: Record<ClassId, readonly string[]> = {
 export const DEEP_FINDS: Record<string, string> = {
   'tower_shield+1': '#214', 'rune_dagger+2': '#214',
   'runed_robe+2': '#215',
-  'elfbow+2': '#49', 'brigandine+3': '#49',
+  'elfbow+2': '', 'brigandine+3': '',
   'warhammer+2': '#216',
   silver_torc: '#217',
   eldests_bough: '#218', 'greatsword+2': '#218',

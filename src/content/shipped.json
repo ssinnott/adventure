@@ -23,6 +23,14 @@
         "f3_soot",
         "grove_edge",
         "grove_road",
+        "i4_bows",
+        "i4_first_grove",
+        "i4_gate",
+        "i4_groves",
+        "i4_holly",
+        "i4_inside",
+        "i4_statue",
+        "i4_treaty",
         "lake",
         "lodestone",
         "scarth_watch",
@@ -57,6 +65,15 @@
         "f3_wreckers",
         "farm_rats",
         "hill_wolves",
+        "i4_east_brambles",
+        "i4_gate_brambles",
+        "i4_night",
+        "i4_oak",
+        "i4_south_brambles",
+        "i4_spiders",
+        "i4_walkers_east",
+        "i4_walkers_west",
+        "i4_wolves",
         "marsh_spiders",
         "road_bandits",
         "road_rats",
@@ -81,7 +98,8 @@
       ],
       "doors": [
         "169,78",
-        "180,33"
+        "180,33",
+        "285,116"
       ]
     },
     "greywater1": {
@@ -268,6 +286,10 @@
     }
   },
   "zones": {
+    "deepthorn_i4": {
+      "at": "264,94",
+      "size": "32x32"
+    },
     "downs_f2": {
       "at": "168,30",
       "size": "32x32"
