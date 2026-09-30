@@ -6,7 +6,9 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 /** Sylvane's words once the chisel is paid for: after her hand-in, and once, before the brigands' terms. */
-const GROVE_QUIET = ['"The Grove is quiet again. The cut will need a Lantern to mend, and we have sent for one. Rest here as long as you need; Thornhold owes you."'];
+const GROVE_QUIET = ['"The Grove is quiet again. The cut will need a Lantern to mend, and we have sent for one. The treaty is in Henlys, south through the deep past the Grove; ask for the lorekeeper, and say I sent you. Rest here first. Thornhold owes you."'];
+/** Sylvane's words once the treaty is seen: once before the brigands' terms, and after them. */
+const TREATY_SEEN = ['"You have seen it, then. Two seals on one skin: the Crown\'s, and ours, and ours is the mark on the chisel that cut our Stone." She looks at her hands. "Two hundred years we have called that mark ours. I no longer know whose it is. Keep that from Vask as well."'];
 
 export const THORNHOLD: MapDef = {
   id: 'thornhold',
@@ -61,12 +63,13 @@ export const THORNHOLD: MapDef = {
       early: [
         'An elf in a robe the colour of bark, older than any human you have met. She sees what you carry and rises, and takes the chisel in both hands.',
         '"This cut our Stone. Not forged anywhere in Caldera: the edge does not blunt. The runes are Underdeep, and they are a maintenance mark, not a prayer." She sets it down as if it were hot.',
-        '"Whoever arms the Ashen Hand can reach the Underdeep. Keep this from the Regent-Warden until you know which side of it he stands on. The Lanterns will pay for what you have done here, and pay well."',
+        '"Whoever arms the Ashen Hand can reach the Underdeep. Keep this from the Regent-Warden until you know which side of it he stands on. The Lanterns will pay for this, and pay well. I have seen that mark before, on the seal of a treaty my people keep in Henlys, south through the deep. Go and look at it."',
       ],
       done: [
         'Sylvane takes the chisel in both hands and is silent for a long time.',
         '"This was not forged anywhere in Caldera. The edge does not blunt. The runes are Underdeep, and they are a maintenance mark, not a prayer." She sets it down as if it were hot.',
         '"Whoever arms the Ashen Hand can reach the Underdeep. Keep this from the Regent-Warden until you know which side of it he stands on. The Lanterns will pay for what you have done here, and pay well."',
+        '"I have seen that mark before, and not on a tool: on the seal of a treaty my people keep in Henlys, south through the deep. Go and look at it."',
       ],
       after: GROVE_QUIET,
     }, says: [
@@ -90,6 +93,8 @@ export const THORNHOLD: MapDef = {
       { after: { flag: 'q_mender_done' }, until: { flag: 'q_sylvane_mended' }, sets: 'q_sylvane_mended', lines: [
         '"The Reader has mended it. She came up out of the roots grey to the elbows and asked for a bath and a bed, in that order." Sylvane almost smiles. "The Grove hums as it did when I was a child. I had forgotten the note."',
       ] },
+      // The treaty seen, her lead south is news no more: its words stand in for the Grove's, once.
+      { after: { flag: ['q_grove_done', 'q_treaty'] }, until: { flag: 'q_sylvane_treaty' }, sets: ['q_sylvane_treaty', 'q_grove_rest'], lines: TREATY_SEEN },
       { after: { flag: 'q_grove_done' }, until: { flag: 'q_grove_rest' }, sets: 'q_grove_rest', lines: GROVE_QUIET },
       { after: { flag: ['q_grove_done', 'q_grove_rest'] }, until: [{ flag: 'q_terms_carry' }, { flag: 'q_terms_refuse' }], sets: 'q_terms', lines: [
         '"A woman came to my gate under a green branch, from the brigands on the Warden road, and offered me terms. Her people leave the road alone, and Thornhold takes them in for the winter. Takes them in. Forty of them, she said, and children." Sylvane\'s hands are still. "I sent her back down the road with her branch. Thornhold does not treat with those who rob it."',
@@ -98,6 +103,7 @@ export const THORNHOLD: MapDef = {
       { after: { flag: 'q_terms_refuse' }, lines: [
         '"You told her no, to her face, with the children there." Sylvane does not look up. "So did I. It was easier from a gate."',
       ] },
+      { after: { flag: ['q_grove_done', 'q_treaty'] }, lines: TREATY_SEEN },
     ] },
     { kind: 'event', x: 7, y: 14, id: 'thornhold_intro', once: true, text: 'Thornhold. Houses grown around living trees, and a hush that is not peace.' },
     // The Rest of the Survey (#77): Ailith, once the company sent her here.
@@ -127,6 +133,41 @@ export const THORNHOLD: MapDef = {
       ] },
       { after: { flag: 'q_coin' }, lines: [
         '"Keep the coin. If he wants it back, he can tell you where it\'s from first."',
+      ] },
+    ] },
+    // How Did He Know (#214): Idony, the Split Oak's Lantern in travel-grey. The orders are in the
+    // survey team's fire-pit in H3; she takes them at the first meeting and asks at the next.
+    { kind: 'npc', x: 12, y: 13, name: 'Idony, a Lantern in travel-grey', lines: [
+      'The Lantern in travel-grey has a cup of water and a chart she is not looking at, and she has looked at you twice since you came in.',
+      '"You\'ll have heard me say it. Vask sent a survey south before the Stone even failed. I was not being clever; I was being loud, so that somebody would tell me I was wrong. Nobody has."',
+      '"Four Lanterns, under the Regent\'s seal, and I taught two of them to hold a wand. One is dead under Ashcombe. Their camp is south of the Grove, over the edge of the deep, and their orders are with it, and I want them. Not for the Chapterhouse. For Lantern Watch, in Sunderwood, where Lanterns still ask questions."',
+      '"I\'d go myself. I have been as far as the sign three times, and turned back three times, and I am not ashamed of it. You have the look of people who don\'t turn back."',
+    ], flag: 'q_orders', until: { flag: 'q_orders_watch' }, quest: {
+      item: 'survey_orders', reward: 300, setFlag: 'q_orders_read',
+      done: [
+        'Idony reads what the fire left, and the clerk\'s line under it, and lays the paper face down on the table as if it could be read from across the room.',
+        '"Three days before the Queen died. \'What the seam does, and when.\' He knew there was a seam. He knew it would do something." She is very quiet. "I have been loud for a month, and I was not loud enough."',
+        '"This goes east. There is a watchtower on the far side of the Sunder where the Lanterns read what they are given, and they will read this, and the order will split on it, and it should. That is Lantern money. It is not enough."',
+      ],
+      early: [
+        'The Lantern in travel-grey looks at the burnt paper in your hand before she looks at you, and holds out hers.',
+        '"You\'ve been over the edge of the deep. I know that paper; I\'ve asked for it in every tavern between here and Helmstow, and none of them heard me." She reads what the fire left. "Three days before the Queen died. \'What the seam does, and when.\' He knew."',
+        '"This goes east, to Lantern Watch, where Lanterns still read what they are given. That is Lantern money. It is not enough."',
+      ],
+    }, says: [
+      { after: { flag: 'q_orders_read' }, until: [{ flag: 'q_orders_watch' }, { flag: 'q_orders_council' }], lines: [
+        'Idony has the burnt paper face down under her hand.',
+      ], choice: { ask: '"I carry these east tonight. Unless you want them for Helmstow: a Council will sit on the throne one day, and a paper like this would sit with it. The Watch\'s, or yours?"', answers: [
+        { label: 'Take them to the Watch.', sets: 'q_orders_watch', says: [
+          '"The Watch, then." She folds the paper into the chart, and the chart into her coat. "I\'ll be over the bridge before the elves are up. If anyone asks the Split Oak where its loud Lantern went, it never had one."',
+        ] },
+        { label: 'Give them back to us.', sets: 'q_orders_council', gives: 'survey_orders', says: [
+          '"For the Council." She gives it back the way you would hand someone a lamp. "Then keep it dry and keep it quiet, and when the day comes, read them the clerk\'s line first. It\'s the only line on it a Council will understand."',
+          '"I\'ll go east with what\'s in my head. It\'s less than a paper, and harder to burn."',
+        ] },
+      ] } },
+      { after: { flag: 'q_orders_council' }, lines: [
+        '"Still here. I leave at the thaw; the Watch keeps." She taps her temple. "It\'s all in here. Keep the paper dry."',
       ] },
     ] },
     // Leave the Trees Standing (#219): Piran inside the oak gate. Ulf is on the Grove road, and at the
