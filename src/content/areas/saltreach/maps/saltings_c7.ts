@@ -1,10 +1,11 @@
 // The Saltings, box C7: the salt pans. Country, band 12: the salters' pans south of Saltmouth, walled
 // and walked in lanes, the salt crabs' country; the last marsh west of them; and the Scarp, the
-// escarpment to the Glasswold, as the box's south edge, with the stair's foot at 8,16 (80,206 on the
-// atlas) seen and not climbed. The Scarp is mountain, as Kestrel Edge is on D4, and the Glasswold's
-// ground below its line in the box, rows 23 to 31 and the corners above them, is closed with it:
-// that land is band 26-28, owed to Act IV, which opens it by editing this map. Cut from the atlas by
-// tools/scaffold.ts; docs/areas/saltreach.md §4.10 is its brief.
+// escarpment to the Glasswold, as the box's south edge, with the stair's foot at 8,22, a track down
+// from the plan's link at 8,16 (80,206 on the atlas), seen and not climbed. The Scarp is mountain,
+// as Kestrel Edge is on D4, and the Glasswold's ground below its line in the box, rows 23 to 31 and
+// the corners above them, is closed with it: that land is band 26-28, owed to Act IV, which opens it
+// by editing this map. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md §4.10 is its
+// brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
@@ -19,7 +20,7 @@ export const SALTINGS_C7: MapDef = {
   // The pans' walls are mud, crusted with salt where the brine has dried on them.
   palette: { wall: '#8c806a', wallDark: '#5e5646' },
   rows: [
-    'wwwwwwwwwwwwww----------~~~~~___',
+    'wwwwwwwwwwwwww----------~~~~~---',
     'wwwwwwwwwwwwww----------------__',
     'wwwwwwwwwwwww-------------------',
     'wwwwwwwwwwwww-#####-#####-#####-',

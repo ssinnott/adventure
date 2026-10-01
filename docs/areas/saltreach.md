@@ -11,8 +11,8 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Five boxes of it are built, the Delta road and the shore under the Edge (#170), Stienwierde (#173),
-Saltmouth's box (#176) and the salt pans (#178); with the first two the area was listed. Its content is
-`src/content/areas/saltreach/` (maps, monsters, items, climate and its part of the world map; its
+Saltmouth's box (#176) and the salt pans (#178); with the first two the area was listed. Its content
+is `src/content/areas/saltreach/` (maps, monsters, items, climate and its part of the world map; its
 chapter of the one quest, The Tide Stone, in `chapter.ts`, its side quests in `quests.ts` and its
 guild quests in `guilds.ts` are still to come) and its businesses' rooms
 `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta` and
@@ -154,8 +154,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
 
 ## 4. What is still to build
 
-All but C5, D5, B5, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the
-plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
+All but C5, D5, B5, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the grid (§1)
+the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -577,12 +577,12 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   about 10, about 1,700 at 11. C6 as built pays about 1,030 (#176), its three groups each inside the
   aim, the quay's by day and by night one of them at any hour. C7 as built pays its 700 (#178). No
   other share gives back the 600 and the 330, so the area comes to about 9,680, some 17% over the
-  curve's 8,267. The surplus
-  is for a kill paid by level to damp, and each box still to build is priced by its fights, about
-  300 a fight, and recorded as built where that passes its share; the sum here is restated with
-  each. The willows add 800 when they are built. From here on a kill pays by level (#159), so a
-  company that arrives at 10 earns the shares as written and one that arrives at 13 earns less; the
-  curve's row reports what a clear falls short of as owed to #153 until the boxes exist.
+  curve's 8,267. The surplus is for a kill paid by level to damp, and each box still to build is
+  priced by its fights, about 300 a fight, and recorded as built where that passes its share; the
+  sum here is restated with each. The willows add 800 when they are built. From here on a kill pays
+  by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
+  at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
+  boxes exist.
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
@@ -749,8 +749,8 @@ Decided by delegate for #178, each the owner's to overturn:
 2. **The band is 11–12,** the Saltings' and C6's, not the brief's 12: a band of 12 alone wants a
    hardest group at 13, and the bull toads are the band's top as on B5.
 3. **The Scarp is mountain, and the Glasswold's squares inside the box are closed with it:** 301 of
-   its 1,024 squares are band 26–28, and left open they would be an empty walk from a band 12 box. A
-   map is its whole box, so Act IV opens them by editing this one.
+   its 1,024 squares are band 26–28, and left open they would be an empty walk from a band 12 box.
+   A map is its whole box, so Act IV opens them by editing this one.
 4. **The stair's foot is a notch at 8,22,** at the end of a track from the link's 80,206, its lowest
    flight fallen with the face: rock in plain sight with its reason on it, no flag and nothing in
    `locks.ts`. The link stays the plan's, for Act IV to move with the way past the fall.
@@ -760,8 +760,8 @@ Decided by delegate for #178, each the owner's to overturn:
 6. **The buckler is the Crab-Shell Buckler +2,** armour 3 and 340 gold, for the martial classes and
    the cleric: a +3 would match Act I's Tower Shield +1 and pass B5's Kite Shield +1, found a box
    earlier.
-7. **The shrine gives endurance,** the drowned god's as C5's and C6's are, its bowl full of salt where
-   theirs are dry. No camp: C6's under the wall is the next box north.
+7. **The shrine gives endurance,** the drowned god's as C5's and C6's are, its bowl full of salt
+   where theirs are dry. No camp: C6's under the wall is the next box north.
 
 ## 10. Names
 
