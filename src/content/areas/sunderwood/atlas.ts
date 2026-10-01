@@ -2,13 +2,24 @@
 // sites. docs/areas/sunderwood.md is its brief.
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
+/**
+ * Lanternwood's line held at K3's east edge and at its south edge east of the gorge, a seed a square:
+ * a laid map seeds the zones' walk from every square of it, so without these the Eaves would run on
+ * from K3 into Lanternwood's depths (L3, L4 and K4, #198).
+ */
+const HELD: [number, number][] = [
+  ...Array.from({ length: 32 }, (_, i): [number, number] => [360, 62 + i]),
+  ...Array.from({ length: 20 }, (_, i): [number, number] => [340 + i, 94]),
+];
+
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }, { map: 'eaves_j2', at: [296, 30] }, { map: 'eaves_k2', at: [328, 30] }], seeds: [[292, 40], [300, 86]] },
-  { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], maps: [{ map: 'lanternwood_l2', at: [360, 30] }], seeds: [[372, 50], [370, 96]], label: [378, 84] },
+  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }, { map: 'eaves_j2', at: [296, 30] }, { map: 'eaves_k2', at: [328, 30] }, { map: 'eaves_k3', at: [328, 62] }], seeds: [[292, 40], [300, 86]] },
+  { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], maps: [{ map: 'lanternwood_l2', at: [360, 30] }], seeds: [[372, 50], [370, 96], ...HELD], label: [378, 84] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'lantern_watch', name: 'Lantern Watch', kind: 'town', planned: true, band: [14, 16], at: [372, 36] },
+  { id: 'k3_rift', kind: 'dungeon', band: [14, 15], at: [344, 88] }, // the black-glass Rift in the crystal's clearing, K3 (#198)
   { id: 'the_sunder', name: 'The Sunder', kind: 'dungeon', planned: true, band: [15, 16], at: [320, 62] },
 ];
 
