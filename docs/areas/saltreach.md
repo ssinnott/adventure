@@ -53,7 +53,8 @@ Its edges:
   with the Upper Water under it. The Foreland's D3 and D4 hold the cliff and its foot; the border
   meets the Downs on 104 squares along the Upper Water and 27 along the Delta, and the only way over
   it is the Salt Road down the Edge, in D4 (#72), open from the start (EXPANSION §2.2). Where the
-  road leaves D4 the Delta begins, in C5: the world's end, until #170 is built.
+  road leaves D4 it crosses D5's corner into C5, where the Delta begins: the world's end, until #170
+  is built.
 - **South: the Scarp,** the escarpment between the Saltings and the Glasswold (26–28, Act IV), 103
   squares of border along B7 and C7. The Scarp stair climbs it at 80,206 (`src/content/atlas.ts:397`),
   a road link open from the start; it is Act IV's way down, and this act sees its foot and no more
@@ -175,9 +176,10 @@ settled in its issue, and what the pilot teaches changes them.
 - **Purpose.** The first box below Kestrel Edge, and Act II's first ground: the Salt Road raised
   through the fen on a causeway, the area's gentlest groups, and the crossing line that tells a
   company under the band how the land feels (#166).
-- **Landmarks.** The causeway from D4's foot down the fen's east side to C6; the spur to Rietum
-  leaving it at 98,156 and following the river north; the fen's pools either side; a small brine
-  Rift on an islet west of the road; a camp on dry ground.
+- **Landmarks.** The causeway from D4's foot, over D5's corner (the road's three squares at
+  104,126–128 and the milestone, laid as a map of its own), down the fen's east side to C6; the spur
+  to Rietum leaving it at 98,156 and following the river north; the fen's pools either side; a small
+  brine Rift on an islet west of the road; a camp on dry ground.
 - **Points of interest,** about six features and five groups:
   - a milestone where the road leaves the Edge: SALTMOUTH 4, RIETUM 5;
   - the camp, to rest at (#45);
@@ -554,7 +556,8 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
 - **The Scarp's foot,** B7 and A7: 970 squares, most of them the escarpment's face and the mountain
   behind it; the Scarp stair's foot is C7's.
 - **The slivers** in the Foreland's boxes and the gulf: D3, D4 and D5 (416 squares along the cliff's
-  foot and the gulf's shore, which D4 takes as the Foreland's, docs/areas/shelf.md §1), D6 (45, the
-  plate's old place) and C1 (33 of mountain).
+  foot and the gulf's shore, which D4 takes as the Foreland's, docs/areas/shelf.md §1), but for
+  D5's corner, which #170 lays to carry the Salt Road into C5; D6 (45, the plate's old place) and
+  C1 (33 of mountain).
 
 About 5,700 squares in all, to come back as country only if the act plays short.

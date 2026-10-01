@@ -12,6 +12,7 @@ import { DOWNS_F2 } from './maps/downs_f2.ts';
 import { DOWNS_F3 } from './maps/downs_f3.ts';
 import { DOWNS_E3 } from './maps/downs_e3.ts';
 import { DOWNS_D3 } from './maps/downs_d3.ts';
+import { DOWNS_D4 } from './maps/downs_d4.ts';
 import { DOWNS_E2 } from './maps/downs_e2.ts';
 import { DOWNS_D2 } from './maps/downs_d2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
@@ -24,7 +25,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 export const AREA = {
   id: 'shelf' as const,
   // Helmstow first: a new game starts on it.
-  maps: [HARROW, KEEP, SHELF, MILL, GREYWATER1, GREYWATER2, DOWNS_F2, DOWNS_F3, DOWNS_E3, DOWNS_E2, DOWNS_D2, DOWNS_D3],
+  maps: [HARROW, KEEP, SHELF, MILL, GREYWATER1, GREYWATER2, DOWNS_F2, DOWNS_F3, DOWNS_E3, DOWNS_E2, DOWNS_D2, DOWNS_D3, DOWNS_D4],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
