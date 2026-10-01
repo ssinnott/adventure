@@ -68,6 +68,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   downs: ['mill:m_warden', 'berth:berth_captain'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
   deepthorn: ['deepthorn_j5:j5_eldest'],
+  wrackholm: ['smugglers_cove2:kh2_great_devilfish'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -77,7 +78,7 @@ export const ROADS: Record<string, readonly string[]> = {
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
   deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
   wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
-  eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2'],
+  eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2', 'eaves_j2:j2_bears', 'eaves_j2:j2_hounds'],
   delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad'],
   saltings: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'],
 };
@@ -95,8 +96,10 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // under a box dresses as one at its floor and wins as often: the gear past 10 is #18's. The groups
   // are at the line's standard size (tools/testmonster.ts).
   'wrackholm_e6: under': { whose: '#18', at: 1 },
+  'smugglers_cove: under': { whose: '#18', at: 1 },
   'Wrackholm: under': { whose: '#18', at: 1 },
   'eaves_i2: under': { whose: '#18', at: 1 },
+  'eaves_j2: under': { whose: '#18', at: 1 },
   'Sunderwood: under': { whose: '#18', at: 1 },
   'delta_c5: under': { whose: '#18', at: 1 },
   'c5_rift: under': { whose: '#18', at: 1 },
