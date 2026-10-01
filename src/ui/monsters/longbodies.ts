@@ -14,6 +14,12 @@
 // head come up on its neck, turned to the company, the jaw open. Olive-black on the back, a dirty
 // yellow underneath, and wet all over. Idle: the humps roll through the water, the neck sways, and
 // rings spread from where the body goes in.
+//
+// The Leech: black, and as long as your arm. A blunt length with no head to it: one hump in the
+// pool and the front end come up out of it, ringed all its length, ending in the round sucker it
+// feeds with, three pale jaws inside it. No eyes, no fin, no jaw: a mouth and nothing else for a
+// face. Wet black, a muddy stripe down the near side. Idle: it sways and quests, and the sucker
+// opens and closes.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -22,7 +28,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['fen_eel'];
+export const KINDS: readonly MonsterSprite[] = ['fen_eel', 'leech'];
 
 /**
  * The frame's parts, as proportions of the eel's (1 = the eel, 0 = none). Each is named for the
@@ -61,9 +67,13 @@ const EEL: Build = {
   ground: 'water', gloss: 0.7, belly: '#c8b870', pale: 0.7,
 };
 
+const LEECH: Build = {
+  girth: 1.1, rise: 0.6, coils: 1, fin: 0, jaw: 0, teeth: 0, sucker: 1, rings: 0.8, eyes: 0,
+  ground: 'water', gloss: 0.95, belly: '#7a6a44', pale: 0.25,
+};
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  longBody(ctx, x, y, h, p, EEL);
+  longBody(ctx, x, y, h, p, kind === 'leech' ? LEECH : EEL);
 };
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
@@ -101,7 +111,8 @@ function surface(b: Build, tone: number): { deep: string; face: string; ring: st
 }
 
 function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build): void {
-  const f = frame(x, y, h), u = f.u, s = p.breathe, t = p.frame;
+  // One hump sits left of the rise, so the frame steps right to keep the whole of it centred.
+  const f = frame(x + (b.coils < 2 ? 14 : 0) * h / 100, y, h), u = f.u, s = p.breathe, t = p.frame;
   const skin = p.base, under = shade(mix(p.base, b.belly, b.pale), Math.max(0.5, p.tone));
   const finHex = shade(mix(p.dark, '#2a1c10', 0.3), 0.9);
   const water = surface(b, p.tone);
@@ -111,14 +122,15 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   // --- the pool ---------------------------------------------------------------------------------
   // The surface it lies in, inked as part of it: the coils and the neck rise out of one piece of
   // water and the silhouette is that piece. Flat across, seen from a little above.
-  const PX = 0, PY = 8, RX = 58, RY = 8;
+  // One hump and the rise want less water than two: the pool closes in round them, to the left.
+  const PX = b.coils < 2 ? -14 : 0, PY = 8, RX = b.coils < 2 ? 42 : 58, RY = 8;
   const pool = (): void => {
     blob(ctx, B, water.face, [{ k: 'curve', pts: ring(f.X(PX), f.Y(PY), RX * u, RY * u, 18), wobble: 0.025, seed: 11, sub: 3 }], { h, form: false, spread: 0.9 });
     if (B.override) return;
     const pg = ctx.createRadialGradient(f.X(PX + 4), f.Y(PY + 1), 0, f.X(PX + 4), f.Y(PY + 1), RX * u);
     pg.addColorStop(0, rgba(water.deep, 0.8)); pg.addColorStop(0.7, rgba(water.deep, 0.4)); pg.addColorStop(1, rgba(water.deep, 0));
     ctx.save(); ctx.beginPath(); ctx.ellipse(f.X(PX), f.Y(PY), RX * u, RY * u, 0, 0, Math.PI * 2); ctx.clip();
-    ctx.fillStyle = pg; ctx.fillRect(f.X(-RX), f.Y(PY + RY), RX * 2 * u, RY * 2 * u);
+    ctx.fillStyle = pg; ctx.fillRect(f.X(PX - RX), f.Y(PY + RY), RX * 2 * u, RY * 2 * u);
     // The sky on the water, a pale streak along the far side.
     ctx.fillStyle = rgba(water.ring, 0.18); ctx.beginPath(); ctx.ellipse(f.X(PX - 8), f.Y(PY + RY * 0.55), RX * 0.6 * u, RY * 0.22 * u, 0, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
@@ -140,6 +152,7 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   for (const [i, c] of humps.entries()) {
     // The far hump a step darker, so the two stand apart in depth.
     blob(ctx, B, i ? skin : shade(skin, 0.85), [{ k: 'tube', pts: at(f, c.pts), r0: c.r * u, r1: c.r * u, wobble: 0.02, seed: 40 + i }], { h, formK: 0.4, spread: 0.85 });
+    rings(ctx, f, c.pts, c.r, c.r, b.rings, skin, 0);
     wet(ctx, f, c.pts, c.r, b.gloss);
   }
 
@@ -149,6 +162,7 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   const neck = spine([-4, PY - 3, -9 + sw * 0.3, 22 * R, -2 + sw * 0.7, 44 * R, 8 + sw, 60 * R, 10 + sw, 70 * R], 6);
   if (b.fin > 0) fin(ctx, f, finAlong(f, neck, g * 0.9, 4.5 * b.fin, 0.08, 0.7, t), finHex, 37);
   blob(ctx, B, skin, [{ k: 'tube', pts: at(f, neck), r0: g * u, r1: g * 0.88 * u, wobble: 0.02, seed: 45 }], { h, formK: 0.45, spread: 0.85 });
+  rings(ctx, f, neck, g, g * 0.88, b.rings, skin, t / 30);
   wet(ctx, f, neck, g * 0.94, b.gloss);
   // The pale throat and belly, down the near side of the neck: a marking, not a part.
   patch(ctx, B, under, [{ k: 'tube', pts: at(f, neck.slice(0, -4).map((v, i) => v + (i % 2 ? 0 : g * 0.42))), r0: g * 0.55 * u, r1: g * 0.5 * u }], { alpha: 0.75, feather: 0.6 });
@@ -160,7 +174,7 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   // --- where it goes in -------------------------------------------------------------------------
   // The near half of the water again, over the body's feet, so the coils and the neck go into it
   // rather than stand on it; then rings spreading from each place the body breaks the surface.
-  ctx.save(); ctx.beginPath(); ctx.rect(f.X(-RX - 4), f.Y(PY), (RX + 4) * 2 * u, (PY + 4) * u); ctx.clip();
+  ctx.save(); ctx.beginPath(); ctx.rect(f.X(PX - RX - 4), f.Y(PY), (RX + 4) * 2 * u, (PY + 4) * u); ctx.clip();
   pool();
   ctx.restore();
   if (!B.override) {
@@ -226,6 +240,30 @@ function fin(ctx: CanvasRenderingContext2D, f: F, pts: readonly number[], hex: s
   }
 }
 
+/**
+ * Rings round a body along its spine (frame units), its radius r0 to r1: the annuli of the leech
+ * and the worm, each a shallow arc across the tube bowed toward the far end, a dark crease with the
+ * light caught on the ridge beside it. `k` 0 draws none; `creep` slides them along as it moves.
+ */
+function rings(ctx: CanvasRenderingContext2D, f: F, pts: readonly number[], r0: number, r1: number, k: number, hex: string, creep: number): void {
+  if (B.override || k <= 0) return;
+  const n = pts.length / 2, len: number[] = [0];
+  for (let i = 1; i < n; i++) len.push(len[i - 1] + Math.hypot(pts[i * 2] - pts[i * 2 - 2], pts[i * 2 + 1] - pts[i * 2 - 1]));
+  const total = len[n - 1], step = 3.4 / k, crease = rgba(shade(hex, 0.4), Math.min(0.85, 0.8 * k)), ridge = rgba(shade(hex, 2.4), Math.min(0.4, 0.38 * k));
+  ctx.lineCap = 'round';
+  for (let d = step * (0.6 + (creep % 1)); d < total - step * 0.5; d += step) {
+    const i = Math.max(1, len.findIndex((l) => l >= d)), a = (d - len[i - 1]) / Math.max(1e-6, len[i] - len[i - 1]);
+    const cx = pts[i * 2 - 2] + (pts[i * 2] - pts[i * 2 - 2]) * a, cy = pts[i * 2 - 1] + (pts[i * 2 + 1] - pts[i * 2 - 1]) * a;
+    const L = len[i] - len[i - 1] || 1, tx = (pts[i * 2] - pts[i * 2 - 2]) / L, ty = (pts[i * 2 + 1] - pts[i * 2 - 1]) / L;
+    const r = (r0 + (r1 - r0) * (d / total)) * 0.92, bow = r * 0.3;
+    for (const [hexA, off, w] of [[crease, 0, 0.55], [ridge, 0.7, 0.4]] as const) {
+      const q = at(f, [cx - ty * r + tx * off, cy + tx * r + ty * off, cx + tx * (bow + off), cy + ty * (bow + off), cx + ty * r + tx * off, cy - tx * r + ty * off]);
+      ctx.strokeStyle = hexA; ctx.lineWidth = Math.max(0.6, f.u * w);
+      ctx.beginPath(); ctx.moveTo(q[0], q[1]); ctx.quadraticCurveTo(q[2], q[3], q[4], q[5]); ctx.stroke();
+    }
+  }
+}
+
 /** A ring of n points round (cx, cy). */
 function ring(cx: number, cy: number, rx: number, ry: number, n: number): number[] {
   const o: number[] = [];
@@ -238,6 +276,7 @@ function ring(cx: number, cy: number, rx: number, ry: number, n: number): number
  * blunt wedge as wide as the neck, the eyes small and high, and the mouth the kind's.
  */
 function head(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, g: number, b: Build, p: Paint, skin: string, under: string): void {
+  if (b.jaw <= 0 && b.sucker > 0) { sucker(ctx, f, hx, hy, g, b, p, skin); return; }
   const u = f.u, gape = 0.5 + 0.5 * Math.sin(p.frame / 17);
   const W = g * 1.25, L = g * 2.2 * Math.max(0.6, b.jaw);
   // The jaw first, under the skull, hanging open; the mouth's inside, then the teeth along both.
@@ -275,5 +314,45 @@ function head(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, g: nu
     // Small, high and forward, one each side of the snout's ridge: the far one smaller.
     eye(ctx, f.X(hx + L * 0.28), f.Y(hy + W * 0.5), Math.max(0.8, 1.35 * u * b.eyes), p.amber);
     eye(ctx, f.X(hx + L * 0.52), f.Y(hy + W * 0.42), Math.max(0.8, 1.05 * u * b.eyes), p.amber);
+  }
+}
+
+/**
+ * A round mouth on the end of the body, with no head round it: the end swells a little into a cup
+ * tipped to the company, and the cup is the face. Dark and wet inside, its lip lit, it opens and
+ * closes; three pale jaws meet in it (the leech's), and with `teeth` a ring of them (the worm's maw).
+ */
+function sucker(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, g: number, b: Build, p: Paint, skin: string): void {
+  const u = f.u, open = 0.55 + 0.45 * Math.sin(p.frame / 13), R = g * 0.82 * b.sucker, cy = hy - 3;
+  // The cup: the body's end swelling, then the lip, flattened toward the company.
+  blob(ctx, B, skin, [
+    { k: 'cap', x0: f.X(hx - 0.5), y0: f.Y(cy - 5), x1: f.X(hx), y1: f.Y(cy), r0: g * 0.82 * u, r1: R * 0.95 * u },
+    { k: 'ell', x: f.X(hx), y: f.Y(cy), rx: R * u, ry: R * 0.62 * u, gloss: b.gloss * 0.6 },
+  ], { h: f.h, formK: 0.4, spread: 0.85 });
+  if (B.override) return;
+  // The lip's light along its top edge, then the mouth inside it.
+  ctx.strokeStyle = rgba('#ffffff', 0.3 * b.gloss); ctx.lineWidth = Math.max(1, u * 0.7); ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.ellipse(f.X(hx), f.Y(cy), R * 0.86 * u, R * 0.5 * u, 0, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke();
+  const mr = R * (0.55 + 0.25 * open);
+  // A rim of raw flesh round the dark of the throat, so the cup reads as a mouth and not a face.
+  ctx.fillStyle = shade('#8a3a38', Math.max(0.5, p.tone));
+  ctx.beginPath(); ctx.ellipse(f.X(hx), f.Y(cy - 0.3), mr * u, mr * 0.58 * u, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = shade('#2a0c12', Math.max(0.5, p.tone));
+  ctx.beginPath(); ctx.ellipse(f.X(hx), f.Y(cy - 0.3), mr * 0.72 * u, mr * 0.42 * u, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = rgba(shade('#7a2a2a', Math.max(0.5, p.tone)), 0.6);
+  ctx.beginPath(); ctx.ellipse(f.X(hx), f.Y(cy - 0.3 - mr * 0.18), mr * 0.55 * u, mr * 0.28 * u, 0, 0, Math.PI * 2); ctx.fill();
+  const jaw = shade('#e0d4b4', Math.max(0.55, p.tone));
+  ctx.strokeStyle = jaw; ctx.lineWidth = Math.max(0.8, u * 0.55);
+  for (const a of [Math.PI / 2, Math.PI / 2 + (Math.PI * 2) / 3, Math.PI / 2 + (Math.PI * 4) / 3]) {
+    const q = at(f, [hx + Math.cos(a) * mr * 0.25, cy - 0.3 + Math.sin(a) * mr * 0.58 * 0.25, hx + Math.cos(a) * mr * 0.85, cy - 0.3 + Math.sin(a) * mr * 0.58 * 0.85]);
+    ctx.beginPath(); ctx.moveTo(q[0], q[1]); ctx.lineTo(q[2], q[3]); ctx.stroke();
+  }
+  if (b.teeth > 0) {
+    ctx.fillStyle = jaw;
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2, ex = Math.cos(a), ey = Math.sin(a) * 0.58, len = 1.2 * b.teeth;
+      const q = at(f, [hx + ex * mr, cy - 0.3 + ey * mr, hx + ex * (mr - len), cy - 0.3 + ey * (mr - len)]);
+      ctx.beginPath(); ctx.arc(q[2], q[3], Math.max(0.5, u * 0.35), 0, Math.PI * 2); ctx.fill();
+    }
   }
 }

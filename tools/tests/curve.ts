@@ -17,14 +17,14 @@ import { handIns } from '../../src/game/people.ts';
 import { ok, owed } from './lib.ts';
 
 /**
- * Walking steps from a map's way in (its start) to every cell, given keys and secrets, swimming and
+ * Walking steps from a map's way in (its start, or `from`) to every cell, given keys and secrets, swimming and
  * climbing: never through a wall, tree, rock, deep water or the void. Infinity where the party
  * cannot walk.
  */
-export function stepsFrom(def: MapDef): (x: number, y: number) => number {
+export function stepsFrom(def: MapDef, from: { x: number; y: number } = def.start): (x: number, y: number) => number {
   const m = new GameMap(def);
-  const steps = new Map<number, number>([[def.start.y * m.width + def.start.x, 0]]);
-  const queue = [[def.start.x, def.start.y]];
+  const steps = new Map<number, number>([[from.y * m.width + from.x, 0]]);
+  const queue = [[from.x, from.y]];
   for (let i = 0; i < queue.length; i++) {
     const [x, y] = queue[i]; const n = steps.get(y * m.width + x)!;
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
