@@ -231,9 +231,9 @@ for **3 + L/2** on average:
 |---|---|---|---|---|
 | 2 | 10 | 12 | 2.5 | 4 |
 | 8 | 28 | 15 | 5.5 | 7 |
-| 16 | 52 | 19 | 9.5 | 11 |
-| 24 | 76 | 23 | 13.5 | 15 |
-| 32 | 100 | 27 | 17.5 | 19 |
+| 16 | 127 / 11 | 179 / 15.5 | 182 / 16.5 | 187 / 13 | 278 / 15.5 | 203 / 13 | 249 / 18 | 351 / 19.5 | 393 / 23 | 872 / 90 |
+| 24 | 163 / 17.5 | 264 / 15 | 270 / 15.5 | 287 / 16 | 343 / 20 | 230 / 16 | 316 / 20 | 424 / 23 | 526 / 25 | 1242 / 119 |
+| 32 | 244 / 18 | 416 / 19 | 417 / 20 | 452 / 22 | 524 / 32 | 336 / 23 | 463 / 28.5 | 619 / 32 | 722 / 37 | 1754 / 162 |
 
 A character's to-hit gains half a point a level (`attackBonus`), so armour on the line keeps the
 chance of hitting a soldier the same at every level: Bram 75%, Wren 80% and Cassian 60%, at level 2
@@ -341,8 +341,8 @@ calibration:
   levels past 10, made again with #20), with the levels between interpolated. Past 10 the company
   runs on play's rules: its spells stop growing at 10 (#159), it takes its prestiges at 11, 19 and
   27 with their hit points, spell points and perks (#19), and with them its spell ranks, and it
-  learns tiers 6 and 7 at 15 and 23 (#20). No new gear comes until #18 brings it and the harness
-  re-runs.
+  learns tiers 6 and 7 at 15 and 23 (#20). It wears the ladder's gear to its top at 16, and the
+  levels past 10 were made again with it (#399).
 
 Hit points / average damage a hit, by role and level:
 
@@ -358,11 +358,11 @@ Hit points / average damage a hit, by role and level:
 | 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 70 / 9 | 57 / 10 | 70 / 11 | 88 / 13 | 119 / 13 | 311 / 37.5 |
 | 9 | 50 / 9 | 73 / 7 | 73 / 8 | 72 / 8 | 81 / 9 | 69 / 9 | 83 / 10 | 102 / 14 | 136 / 14 | 350 / 41 |
 | 10 | 60 / 10 | 89 / 10 | 90 / 10 | 86 / 9 | 102 / 11.5 | 87 / 10 | 99 / 14 | 122 / 15 | 165 / 15.5 | 415 / 47 |
-| 12 | 113 / 6.5 | 137 / 11.5 | 144 / 13 | 143 / 10 | 173 / 14 | 128 / 12 | 177 / 15 | 232 / 17 | 267 / 19 | 540 / 59 |
+| 12 | 107 / 6.5 | 133 / 11.5 | 138 / 13 | 138 / 10 | 184 / 14 | 124 / 12 | 158 / 16.5 | 244 / 15.5 | 278 / 18 | 540 / 59 |
 | 16 | 119 / 10 | 173 / 11.5 | 169 / 12 | 177 / 11.5 | 202 / 15 | 158 / 12 | 200 / 15.5 | 274 / 17.5 | 315 / 20 | 821 / 84.5 |
-| 20 | 170 / 8 | 227 / 12 | 223 / 13 | 248 / 12 | 277 / 17 | 186 / 15 | 242 / 19 | 329 / 21 | 404 / 21 | 974 / 96 |
+| 20 | 158 / 13 | 239 / 16 | 241 / 17.5 | 257 / 15 | 334 / 19 | 224 / 17.5 | 304 / 20 | 413 / 22 | 512 / 24 | 1048 / 103 |
 | 24 | 188 / 9 | 233 / 14.5 | 230 / 15 | 255 / 15 | 300 / 19.5 | 194 / 16.5 | 275 / 18.5 | 337 / 23 | 414 / 23 | 1160 / 111 |
-| 28 | 210 / 17 | 343 / 16 | 338 / 17 | 371 / 19.5 | 435 / 25.5 | 254 / 24 | 391 / 24 | 503 / 27.5 | 562 / 33 | 1315 / 123 |
+| 28 | 237 / 14 | 371 / 19 | 377 / 20 | 396 / 22 | 467 / 30 | 308 / 22 | 410 / 29.5 | 570 / 31 | 664 / 35 | 1398 / 131 |
 | 32 | 236 / 17 | 360 / 18 | 354 / 19 | 410 / 21 | 483 / 27.5 | 263 / 27 | 450 / 23 | 544 / 28.5 | 621 / 34 | 1666 / 153.5 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
