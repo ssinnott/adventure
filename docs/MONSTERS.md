@@ -424,6 +424,7 @@ What it shows:
   | stop at 10 | a bonus every two levels | a fifth at most (fodder up to a third) | 5–15% |
   | stop at 10 | a blow at 11 and 29 | a tenth at most, 8% past 12 | 12% at 12, then 4% at most |
   | stop at 10 | a blow at 11 and 29, and a bonus | a sixth at most (brutes 23% at 20) | 3–10% |
+  | stop at 10 | the prestiges, ranks of 15% and tiers 6 and 7 | a tenth at most past 12 (brutes 16% at 12), controllers 12–13% at 24 and 32 | 1–8% |
 
   While spells keep growing, none of them keeps the days safe. Past 16 or 20 the bad days are, as
   today, fights broken off once the spells are spent and deaths where monsters hit harder to end
@@ -445,10 +446,23 @@ What it shows:
   fewer hit points than the level under them at one level or more; held at the level under's,
   brutes at 24 and 28 leave the company a fight or two short of its day (8.6 of 10, 9.2 of 11). The
   bonus on top is worse, not better: monsters hit up to 1.6 times the line, fights run to twelve
-  rounds, and brutes end up to a quarter of their days badly. The prestiges that replace the
-  promotions are drafted at 11, 19 and 27, with perks and spell ranks rather than spell tiers
-  (DESIGN.md §5, §7; #19, #20); the harness runs them in place of `--level-traits` once they are
-  settled.
+  rounds, and brutes end up to a quarter of their days badly.
+
+  The prestiges fill the stretch. `--prestiges` gives the company the three of DESIGN.md §5 at 11,
+  19 and 27, with the perks it can play (the blows, the knight's banner, the ranger's Marksman, the
+  thief's sneak attack and its drop from sight, the cleric's last rite), their hit points and spell
+  points, and spell ranks on spells stopped at 10; `--tiers` adds stand-ins for the damage spells of
+  tiers 6 and 7 at 15 and 23 (DESIGN.md §7). Calibrated on them, monsters carry 2.5 to 5 times the
+  line's hit points and hit on it or up to 1.8 times as hard, in fights of three to eight rounds, and
+  the points the calibration must hold at the level under's fall from 22 to 6: no stretch is left
+  where the company gains nothing. The rank's step decides the rest. At 15% a rank, every role but
+  the controller ends a tenth of its days badly or fewer past 12; at 25% elites end a third of theirs
+  at 24 and controllers a fifth to a quarter; at 35% skirmishers, soldiers and controllers a fifth or
+  more at 24. A bigger step asks monsters to soak the spells, and the weapons cannot finish them once
+  the spells are spent. Without the new tiers, fodder end a tenth of their days badly at 20 and 24;
+  with them, none. Controllers, which paralyse, stay a few points over at 24 and 32 against a bot that
+  never cures and a company with no bard, whose second prestige stops paralysis; the bot learns to
+  cure before their numbers move (#18).
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -457,7 +471,9 @@ of that level, each on its own and then all of them dealt in a new order. `--sta
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
 `--spell-cap 10`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at 10, or the company gained gear, a bonus or blows as it levelled past it;
-they combine, and play has none of them.
+`--prestiges` (with `--rank-step`, `--rank-cost` and `--tiers`) as if it took its prestiges. They
+combine, and play has none of them; `--calibrate` under them says what share of days end badly at
+each point it makes, and writes nothing.
 
 ---
 

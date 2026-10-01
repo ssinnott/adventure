@@ -366,7 +366,7 @@ The points and the steps the map spells take wait on the harness and the gold cu
 damage spells' dice are the harness's stand-ins (MONSTERS.md §4.4).
 
 **Ranks.** A rank belongs to the caster, not the spell: it lifts every spell they know, those learned
-later too. Each rank adds a share, sized in the harness, to the dice of a damage spell and to what a mending spell heals;
+later too. Each rank adds 15% to the dice of a damage spell and to what a mending spell heals, 45% by the third;
 flat bonuses (Spellfire, Healing Hands), buffs, cures, Slumber, raising and the map spells stay as
 they are. A ranked spell costs what it did: the prestiges' spell points are the price. A hybrid's
 rank is half a caster's step, since its perks carry the rest of its growth. The third rank's

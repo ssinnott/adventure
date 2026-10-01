@@ -82,7 +82,7 @@ export const PRESTIGES: readonly number[] = [11, 19, 27];
 /** How many prestiges a member of `level` has taken: one at each of PRESTIGES reached. */
 export const prestigesAt = (level: number): number => PRESTIGES.filter((l) => level >= l).length;
 /** A spell rank's step, as a share of a spell's damage and mending, unless `--rank-step` says otherwise. */
-export const RANK_STEP = 0.25;
+export const RANK_STEP = 0.15;
 /** A hybrid's rank is half a caster's step: its perks carry the rest of its growth (DESIGN.md §7). */
 export const HYBRID_RANK = 0.5;
 /** Casters rank and gain the most spell points; hybrids rank and take a perk; the rest take perks. */
