@@ -1793,3 +1793,16 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   boss line or argue the limit), say the thresholds in shelf.md §8–9, the boxes' hours from git
   history. The old pilot session told to stand down.
 - **Left in Phase 1: #47 alone.** Then #65, #208 and #26 close.
+- 03:47: #323 (#47, the pilot's E) landed on my own review: Brandy Hole's two bosses retuned onto
+  the boss line (the Smuggler Captain 95 hp and 2d6+4, 50% at 2; the Ashen Deacon 175 and 2d8+5,
+  50% at 3; both always two above), `OWED` emptied, no aim or limit moved (shelf.md §8's table),
+  each Downs box's hours (17 to 46 with the owner in the loop, 1 to 2 once the calls were
+  delegated), "not played yet" said. The delegate took its four choices as defaulted (retune, pay
+  unchanged, two-under kept, clock hours). Landing check on 5cd1886 (main in): ALL OK (2 owed,
+  #170's), SMOKE OK, "Nothing new."; CI green. Merged as 7e0813d; main's tree is the tested tree
+  (339b15f). #47 closes.
+- **Phase 1's work is done.** Every sub-issue of #26, #65 and #208 is closed. The three epics stay
+  open: each one's Done when ends "the owner has played it", which only the owner can meet. The
+  only owed figures left on main are #170's two (D4's corner, Phase 1.2). Open, approved and outside
+  Phase 1: #57 (the owner's bug "Bow is wrong direction", no epic), put to the owner. The 04:40
+  check-in deleted: nothing is in flight.
