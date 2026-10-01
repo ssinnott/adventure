@@ -79,7 +79,7 @@ export const DOWNS_D2: MapDef = {
     { id: 'd2_wolves1', x: 24, y: 6, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
     { id: 'd2_wolves2', x: 25, y: 23, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
     { id: 'd2_wolves3', x: 8, y: 26, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
-    { id: 'd2_pack', x: 6, y: 6, monsters: ['barrow_wolf', 'barrow_wolf', 'chalk_wolf'], aware: 3, roams: false },
+    { id: 'd2_pack', x: 6, y: 6, monsters: ['barrow_wolf', 'barrow_wolf'], aware: 3, roams: false },
     { id: 'd2_dog', x: 17, y: 10, when: { hours: 'night' }, monsters: ['black_dog'], aware: 5, respawn: 1440 },
     { id: 'd2_dogs', x: 11, y: 16, when: { hours: 'night' }, monsters: ['black_dog', 'black_dog'], aware: 5, respawn: 2880 },
   ],

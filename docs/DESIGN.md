@@ -412,14 +412,14 @@ chisel marks, and a sigil the Lanterns recognise as the **Ashen Hand**, a sect t
 Hearth is a prison and its dimming is the door opening. Restoring the stone is the first real
 dungeon. Restoring it closes Thornmark's Rifts.
 
-- **The Foreland** (built): Ashcombe's Rift and the dead Lantern, whose note says *Tell Vask
-  nothing*; the party hands Vask her wand anyway. Brandy Hole, whose crates carry the Helmstow
-  customs seal, where the smugglers' cargo below was people and the Ashen Deacon was prising the
-  staples from a glowing seam. Captain Hale sends the Regent a copy of the smugglers' ledger.
-- **Callow Downs:** the Queen's barrow, the Berth, has been opened, and only her signet is gone. In
-  Gullwick, Wenna's mother asks the party to find her. Crowness Light's keeper logged the night the
-  Queen died: the Hearth went out eleven times, and he wrote down the gaps between. The coast road
-  west, into Act II, starts here.
+- **The Foreland** (built): Brandy Hole, whose crates carry the Helmstow customs seal, where the
+  smugglers' cargo below was people and the Ashen Deacon was prising the staples from a glowing
+  seam. Captain Hale sends the Regent a copy of the smugglers' ledger.
+- **Callow Downs:** Ashcombe, past Gullwick, its Rift and the dead Lantern, whose note says *Tell
+  Vask nothing*; the party hands Vask her wand anyway. The Queen's barrow, the Berth, has been
+  opened, and only her signet is gone. In Gullwick, Wenna's mother asks the party to find her.
+  Crowness Light's keeper logged the night the Queen died: the Hearth went out eleven times, and he
+  wrote down the gaps between. The coast road west, into Act II, starts here.
 - **Thornmark** (built): Thornhold and Elder Sylvane, the Grove Roots and the Cut Stone, the Hand of
   Ash, and the Warden of the Cut with the first Meridian journal.
 - **The Deepthorn:** Henlys, the oldest elf-hold, keeps the two-hundred-year-old treaty behind the

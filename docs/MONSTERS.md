@@ -101,7 +101,7 @@ table: a Rift in the Kilns is slag, and a Rift in the Delta is brine.
 
 | The Stone | Its Rifts | Material and light | What bites | Its things |
 |---|---|---|---|---|
-| The cellar's tear | the Foreland, under Ashcombe | ember and crystal, orange | cold | Riftling, Rift Crawler, the Rift Warden (built) |
+| The cellar's tear | Callow Downs, under Ashcombe (E3) | ember and crystal, orange | cold | Riftling, Rift Crawler, the Rift Warden (built) |
 | The Grove Stone, cut | Thornmark | ember and crystal; the Warden of the Cut burns blue | cold; fire on the Warden | Riftling Elder, Rift Hound, the Warden of the Cut (built) |
 | The Tide Stone, stolen | the Delta, and the Tide Ship's hold | brine glass, sea green | lightning | Brineling, Tide Elder, the Warden of the Tide |
 | The Sunder, a Stone that failed long ago | Sunderwood | black glass and dead wood, white | fire | Sunderling, Sunder Hound, the Warden of the Sunder |
@@ -378,8 +378,8 @@ What it shows:
   59). Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole group of them: 7
   hit points at 3, 13 at 4.
 - **Today's maps are close, and a little hard low down.** Their own groups, dealt in a new order
-  each day, give a company at its band's floor four to eight fights before a rest: the Foreland 4.6
-  at level 1 and the Ashcombe cellar 5.9, Brandy Hole's caves and the Seam 4.1 at 2 and 3, Thornmark
+  each day, give a company at its band's floor four to eight fights before a rest: the Foreland 4.37
+  at level 1 and the Ashcombe cellar 7.42 at 2, Brandy Hole's caves and the Seam 4.1 at 2 and 3, Thornmark
   5.7 at 5, the Grove Roots 6.0 at 6 and the Cut Stone 7.7 at 8. On the Foreland the cliff smugglers
   are a day's work on their own for a company of 1 (1.6 fights); at the Cut Stone, Meteor Swarm ends
   most fights in a round or two. The round cap barely touches them: no more than one day in fifty
@@ -514,6 +514,7 @@ Crowness Light.
 | Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
 | Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
 | Barrow Wolf | wolf | elite, 5 | the chalk hills (D2): one leading each of the den's packs, and two in the pack that keeps it | *Grey to the muzzle and big as a pony, and the pack waits on it.* The den's keepers: the chalk wolf's pale coat on a heavy frame, scarred |
+| Cutthroat | bandit | elite, 5 | the bandit camp on the west downs, two of them beside it | *A captain's sash on a thief's coat, and a knife for every pocket.* The camp's keepers |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
