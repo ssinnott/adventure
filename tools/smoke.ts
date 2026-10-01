@@ -254,13 +254,13 @@ const terrains = await page.evaluate(async () => {
   // The search is bounded: a view it cannot find fails the check plainly rather than hanging.
   const fits = (): boolean => V.fieldAt(w.state.x, w.state.y - 1).crop <= 1 && crops(w.state.x, w.state.y).size >= 2;
   for (let tries = 0; tries < 200 && !fits(); tries++) w.state.x++;
-  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, dead: { trees: 0, path: 0, overWall: 0 }, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[] };
+  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, dead: { trees: 0, path: 0, overWall: 0 }, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[], flats: null as any };
   const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
   let hedge = { off: 999, apart: 0 }, patchwork = 0;
   // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
   const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
-  for (const terrain of ['grass', 'hills', 'farm', 'woods', 'deadwood']) {
+  for (const terrain of ['grass', 'hills', 'farm', 'woods', 'deadwood', 'salt', 'heather', 'tidal']) {
     for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
     for (const [name, doy] of days) for (const hour of [12, 0]) {
       if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
@@ -275,6 +275,16 @@ const terrains = await page.evaluate(async () => {
       const g = ctx.getImageData(x0, y0, sw, sh).data, sum = [0, 0, 0];
       for (let i = 0; i < g.length; i += 4) { sum[0] += g[i]; sum[1] += g[i + 1]; sum[2] += g[i + 2]; }
       mean[`${terrain} ${name}`] = sum.map((v) => v / (g.length / 4));
+      // Tidal ground at noon is low water; at five it is high, and the sea is over it.
+      if (terrain === 'tidal' && name === 'summer') {
+        w.state.minutes += 5 * 60; w.cached = { ...w.cached, minutes: w.state.minutes };
+        ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+        const q = ctx.getImageData(x0, y0, sw, sh).data, t = [0, 0, 0];
+        for (let i = 0; i < q.length; i += 4) { t[0] += q[i]; t[1] += q[i + 1]; t[2] += q[i + 2]; }
+        mean['tidal high'] = t.map((v) => v / (q.length / 4));
+        w.state.minutes -= 5 * 60; w.cached = { ...w.cached, minutes: w.state.minutes };
+        ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+      }
       if (name !== 'summer') continue;
       // Form: the tones down the middle of the square (a hill's flank shades), and the hard edges
       // across it and down it (a field's rows and hedges); flat grass has few of either.
@@ -348,7 +358,9 @@ const terrains = await page.evaluate(async () => {
   return {
     trees, path, overWall, dead,
     missing: '', thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
-    whiten: ['hills', 'farm', 'woods', 'deadwood'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
+    whiten: ['hills', 'farm', 'woods', 'deadwood', 'heather'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
+    // The salt by day against the grass; the heather in flower against Sowing's; tidal ground at low and high water.
+    flats: { salt: Math.round(light(mean['salt summer'])), grass: Math.round(light(mean['grass summer'])), bloom: mean['heather summer'], sowing: mean['heather spring'], low: mean['tidal summer'], high: mean['tidal high'] },
   };
 });
 // A torch behind a tree and behind a monster: a sconced wall three squares ahead on the Foreland at
@@ -906,7 +918,7 @@ ok(sunder.glass > 200 && sunder.bluer, `glass trees stand over the horizon beyon
 }
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
-  ok(terrains.thin.length === 0, `hills, farmland, woods and dead wood paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+  ok(terrains.thin.length === 0, `hills, farmland, woods, dead wood, salt, heather and tidal ground paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
   {
     const { grass, hills, farm, woods } = terrains.form;
     ok(terrains.trees >= 10 && terrains.path <= PATH_MAX && woods.edges > grass.edges, `trees stand about the woods where grass lies open, and the way ahead stays open (${terrains.trees}% of the band over the horizon is trees, ${terrains.path}% of the strip straight ahead, at most ${PATH_MAX}; edges across the square ahead: grass ${grass.edges}, woods ${woods.edges})`);
@@ -916,7 +928,14 @@ if (!terrains.missing) {
     ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
     ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
   }
-  ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills, the fields, the woods and the dead wood (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
+  ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills, the fields, the woods, the dead wood and the heather (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
+  {
+    const { salt, grass, bloom, sowing, low, high } = terrains.flats;
+    const purple = (c: number[]): number => (c[0] + c[2]) / 2 - c[1];
+    ok(salt > grass + 60, `the salt flats lie white where the grass lies green (${salt} and ${grass} light)`);
+    ok(purple(bloom) > purple(sowing) + 8, `the heather flowers purple at Harvest (${Math.round(purple(bloom))} purple, ${Math.round(purple(sowing))} in Sowing)`);
+    ok(high[2] > high[0] + 20 && low[0] >= low[2], `tidal ground is wet sand at low water and the sea at high (${low.map(Math.round).join(',')} at noon, ${high.map(Math.round).join(',')} at five)`);
+  }
 }
 ok(questLine === 'New quest: The Dimming.', `closing Vask's dialogue announces his quest (${questLine})`);
 ok(asked.words.screen === 'MessageScreen' && asked.words.text === '"Riders, by night."' && asked.question.screen === 'ChoiceScreen' && asked.question.text === 'Shall I write to Hale?' && asked.choiceColours > 20,

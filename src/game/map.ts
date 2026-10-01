@@ -4,7 +4,7 @@
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';
 import type { RegionId } from './weather.ts';
-import type { Season } from './calendar.ts';
+import type { Season, Tide } from './calendar.ts';
 import type { When } from './quests.ts';
 import type { Interior } from '../content/index.ts';
 import type { GuildId } from '../content/guilds.ts';
@@ -18,10 +18,12 @@ export type MapKind = 'town' | 'dungeon' | 'outdoor';
  * Dead wood is walked through as the woods are, its trees long dead: grey trunks and no green.
  * Crystal is the ground the glass trees stand on (`c`, each a tree that blocks as the forest's do).
  * The chasm is the Sunder's drop: seen across, never walked, and no wall.
+ * Salt is the pans' white crust, walked as sand is; heather is moor, walked as grass is.
+ * Tidal ground is the shore the sea leaves twice a day: sand at low water, water at high (`tideAt`).
  */
 export type Terrain =
   | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
-  | 'hills' | 'farm' | 'woods' | 'deadwood' | 'crystal' | 'chasm';
+  | 'hills' | 'farm' | 'woods' | 'deadwood' | 'crystal' | 'chasm' | 'salt' | 'heather' | 'tidal';
 
 /** Minutes a step onto hills costs over the usual six in the open. */
 export const HILL_DRAG = 2;
@@ -213,6 +215,8 @@ export interface Hours {
   /** Fog as the almanac reads it (0.35 and over), or snow falling or lying. Never underground. */
   sky?: 'fog' | 'snow';
   season?: Season | readonly Season[];
+  /** High water or low, read from the clock (`tideAt`). */
+  tide?: Tide;
 }
 
 /**
@@ -318,6 +322,9 @@ export const LEGEND: Record<string, Cell> = {
   'd': cell('deadwood'),
   'c': cell('crystal', 'tree'),
   'v': cell('chasm'),
+  '-': cell('salt'),
+  'h': cell('heather'),
+  ';': cell('tidal'),
   'T': cell('grass', 'tree'),
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),
@@ -413,8 +420,11 @@ export class GameMap {
     return c.solid === 'wall' || c.solid === 'building' || c.solid === 'mountain' || c.solid === 'void' || c.door !== 'none';
   }
 
-  /** Whether walking is possible, given the party's terrain abilities. */
-  passable(x: number, y: number, can: { swim?: boolean; climb?: boolean; keys?: number } = {}): PassResult {
+  /**
+   * Whether walking is possible, given the party's terrain abilities and the tide; with no tide
+   * given, tidal ground is read at low water, at its most open.
+   */
+  passable(x: number, y: number, can: { swim?: boolean; climb?: boolean; keys?: number; tide?: Tide } = {}): PassResult {
     const c = this.at(x, y);
     if (c.solid === 'void') return 'void';
     if (c.solid === 'wall' || c.solid === 'building' || c.solid === 'pillar') return 'wall';
@@ -423,6 +433,8 @@ export class GameMap {
     if (c.terrain === 'deep') return 'deep';
     if (c.terrain === 'chasm') return 'chasm';
     if (c.terrain === 'water') return can.swim ? 'ok' : 'water';
+    // At high water tidal ground is water: a swimmer wades it, and nobody else.
+    if (c.terrain === 'tidal' && can.tide === 'high') return can.swim ? 'ok' : 'tide';
     if (c.door === 'locked') return can.keys ? 'unlock' : 'locked';
     return 'ok';
   }
@@ -440,6 +452,6 @@ export class GameMap {
   }
 }
 
-export type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'chasm' | 'locked' | 'unlock' | 'void';
+export type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'chasm' | 'tide' | 'locked' | 'unlock' | 'void';
 
 const OUT_OF_BOUNDS: Cell = Object.freeze({ terrain: 'floor', solid: 'wall', door: 'none', ch: '#' }) as Cell;
