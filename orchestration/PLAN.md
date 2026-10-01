@@ -1607,3 +1607,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 00:29: my render of #304 at 35e3752: the lodge now reads in bark, as the delegate asked. The
   delegate on #308 (I5): the look OK; carve I4's 24,29–31 now and drop I5's `CUT_OFF`; the
   corner rock; no cairn; pay 514. Round sent to the I5 session, on top of #304 when it lands.
+- 00:29: #218 (J5, Penspern, the Eldest), the Deepthorn's last box and the critical path, started
+  in a new session, session_01CLPAHKbXMWvRnKUYAVtrKA, on `claude/m1-218-j5` with #307's branch
+  (J4) merged; lands after #307. It carries The Older Mark's rubbing and Senara's hand-in, the
+  Light on Penspern (Kea), the landing and the sea cave; warned of the labels check at the Eldest's
+  size 2 (a systems change, if so, is put as a choice, not made on the side).
