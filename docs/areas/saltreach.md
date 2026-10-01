@@ -115,8 +115,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   brinelings in its rooms and a tide elder with one more at its heart, quiet once the elder falls;
   and the river's west fen over two fords. The secret is a barge drowned under the causeway's arch,
   the Brine Shard in its straw; the hint is the mast's stump at the arch, with the stones glowing
-  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.8 in the
-  Rift.
+  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.6 in the
+  Rift (6.8 before the re-stat to #409's line, #18).
 - **Stienwierde** (B5, `delta_b5`, core, band 11–12; #173): duckboards from the Delta road west over
   the fen and the channel to the Tide Stone's island, its plinth empty and its socket cut clean; a
   driftwood shrine at the boards' start, a cairn and house-footings on the mound, and a hermit on a
@@ -125,7 +125,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   breach), each two tide elders at the heart, quiet once they fall. The secret is a hollow under the
   plinth's landing, a Brine Shard and a Kite Shield +1 in it; the hint is the barge-poles' marks on
   the landing, and one plank among them unscored and new-nailed. The gate holds at 11, at 7.1 fights
-  to a rest on the box and 5.4 in each Rift.
+  to a rest on the box and 4.9 in each Rift (5.4 before the re-stat to #409's line, #18; §9).
 - **Saltmouth's box** (C6, `saltings_c6`, core, band 11–12; #176): the Salt Road's last reach from
   C5 down the fen's east side, its milestone (SALTMOUTH 2, RIETUM 7) and the road's end at the town's
   gate at 26,19, shut until #177 builds the town and makes it the way in; the coach yard outside it;
@@ -137,7 +137,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   master on the quay by day, two Wrack smugglers and two bowmen under the sea wall by night, and four
   salt crabs at the pans' edge. The secret is the smugglers' stair in the sea wall's dry end, its
   cache at the foot by a sea door barred from within, the hint the rope hanging over it with
-  nothing on it. The gate holds at 11, at 7.0 fights to a rest.
+  nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18).
 - **The salt pans** (C7, `saltings_c7`, country, band 11–12; #178): the salt runs on south from C6's
   pans into six walled pans, walked in lanes, each with a gap for its sluice but one; the last marsh
   west of them with its pools and the drowned god's shrine, its bowl full of salt; the salters' huts
@@ -145,17 +145,17 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   skiff at the creek's end, the night crew's; and the Scarp itself across the south, mountain as
   Kestrel Edge is on D4, with the stair's foot in a notch, its lowest flight fallen. By night a star
   stands over the Scarp where none should, the watch The Star That Moved asks for (#56's 24). The
-  groups are two: three salt crabs in the pans and two bull toads in the marsh. The secret is the one
+  groups are two: four salt crabs in the pans and two bull toads in the marsh. The secret is the one
   pan with no sluice, reached by the crabs' hole under its east wall, the salter's hoard in it; the
-  hint is the salt trodden at that wall's foot and nowhere else. The gate holds at 11, at 6.7 fights
+  hint is the salt trodden at that wall's foot and nowhere else. The gate holds at 11, at 6.0 fights
   to a rest.
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All but C5, D5, B5, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the plan
-is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
+All but C5, D5, B5, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the
+plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -474,17 +474,16 @@ settled in its issue, and what the pilot teaches changes them.
   The stair's foot is a notch at 8,22 at the end of a worn track from the plan's link at 80,206: its
   lowest flight has come down with the face and the flights above climb out of reach, so nothing is
   locked and nothing says "not yet"; Act IV builds a way past the fall and rewrites the event. The
-  groups are two, each a real fight at 11: three salt crabs in the middle south pan (8.0 fights to a
-  rest) and two bull toads in the last marsh, the box's hardest (5.6); a fourth crab put the box at
-  5.7, a twentieth under the aim, once #399's gear was in. The brief's three crab groups
-  are one here and C6's at the pans' edge, and its smugglers on the shore are C6's night crew under
-  the sea wall: the atlas gives C7 no sea, and their skiff at the creek's end is said, not fought.
-  The secret is a pan with no sluice, walled on four sides; the crabs' hole under its east wall is
-  the way in and the only one, with no lane, sluice or tide reaching it. The hoard holds 200 gold, the
-  Crab-Shell Buckler +2 and the ladder's Horn Bow +1 (#399). The star is a night event that sets nothing: the astrologer, the quest
-  and its choice are #177's, which rewrites `c7_star` as the watch. As measured, the box pays about
-  600 xp a member, a hundred under its share, and 280 gold. What the owner finds by hand goes here when the box has
-  been played.
+  groups are two, each a real fight at 11 after the re-stat (#18): four salt crabs in the middle
+  south pan (6.4 fights to a rest) and two bull toads in the last marsh, the box's hardest (5.8).
+  The brief's three crab groups are one here and C6's at the pans' edge, and its smugglers on the
+  shore are C6's night crew under the sea wall: the atlas gives C7 no sea, and their skiff at the
+  creek's end is said, not fought. The secret is a pan with no sluice, walled on four sides; the
+  crabs' hole under its east wall is the way in and the only one, with no lane, sluice or tide
+  reaching it. The hoard holds 200 gold, the Crab-Shell Buckler +2 and the ladder's Horn Bow +1
+  (#399). The star is a night event that sets nothing: the astrologer, the quest and its choice are
+  #177's, which rewrites `c7_star` as the watch. As measured, the box pays about 700 xp a member,
+  its share, and 280 gold. What the owner finds by hand goes here when the box has been played.
 
 ### 4.11 B3 and B4, the willows (#179): country, band 10–11, parked
 
@@ -571,14 +570,14 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   next area's floor, divided by 0.75: from 10 to 12 that is 6,200 / 0.75, about 8,267 xp a member,
   with today's `xpForLevel`. The shares of §4 are C5 700, C4 600, C3 1,000, B5 1,000, B6 800, the
   temples 1,800, C6 700, Saltmouth 300, C7 700 and the four side quests about 700 between them:
-  8,300 without the willows. C7 as built pays about 600 (#178), a hundred under its 700. A small Rift is budgeted at about 450 a member on top of its box's
+  8,300 without the willows. A small Rift is budgeted at about 450 a member on top of its box's
   share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve. B5 as built pays
   about 1,600, its two Rifts inside it (#173): a fight inside the gate's aim at 11 costs about 300
   xp a member whatever its monsters, and its five come to about 1,650 measured with the company at
-  about 10, about 1,700 at 11. C6 as built pays about 1,030 (#176), its three groups each inside
-  the aim, the quay's by day and by night one of them at any hour. No other share gives back the
-  600 and the 330, and C7's hundred under takes back a little, so the area comes to about 9,580,
-some 16% over the curve's 8,267. The surplus
+  about 10, about 1,700 at 11. C6 as built pays about 1,030 (#176), its three groups each inside the
+  aim, the quay's by day and by night one of them at any hour. C7 as built pays its 700 (#178). No
+  other share gives back the 600 and the 330, so the area comes to about 9,680, some 17% over the
+  curve's 8,267. The surplus
   is for a kill paid by level to damp, and each box still to build is priced by its fights, about
   300 a fight, and recorded as built where that passes its share; the sum here is restated with
   each. The willows add 800 when they are built. From here on a kill pays by level (#159), so a
@@ -733,13 +732,20 @@ Decided by delegate for #399, each the owner's to overturn:
    it, but a group a company at the floor fights six or seven of to a rest is one a company two
    under still beats. Past 10 the to-a-rest aim and the two-under aim pull against each other.
 
+Decided by delegate for #18, each the owner's to overturn:
+
+1. **B5's Rifts keep their two tide elders,** at 4.9 fights to a rest at 11 after the re-stat to
+   #409's line, under their aim of 5.75 and inside their limit. A warden must average 12 to hold the
+   band's top, and only the elder pair does that among the brine family; a room of brinelings ahead
+   of it would mend the figure, but it would cost the north Rift its cells and each Rift some 200 xp
+   a member more.
+
 Decided by delegate for #178, each the owner's to overturn:
 
-1. **The groups are two, both always there:** three salt crabs in the pans and two bull toads in the
-   marsh, about 600 a member, a hundred under the share. Of the brief's three crab groups the second
-   is C6's at the pans' edge, and its smugglers are C6's night crew: the atlas gives C7 no sea, and
-   the shore is C6's. A lone bull toad is no fight, so the marsh holds two; four crabs with them put
-   the box a twentieth of a fight under the aim at 11, so the pan holds three.
+1. **The groups are two, both always there:** four salt crabs in the pans and two bull toads in the
+   marsh, about 700 a member, the share. Of the brief's three crab groups the second is C6's at the
+   pans' edge, and its smugglers are C6's night crew: the atlas gives C7 no sea, and the shore is
+   C6's. A lone bull toad is no fight, so the marsh holds two.
 2. **The band is 11–12,** the Saltings' and C6's, not the brief's 12: a band of 12 alone wants a
    hardest group at 13, and the bull toads are the band's top as on B5.
 3. **The Scarp is mountain, and the Glasswold's squares inside the box are closed with it:** 301 of
