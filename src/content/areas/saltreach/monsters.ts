@@ -10,6 +10,8 @@ export const SPRITES = [
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
+  // the Drowned Temples' choir (#175), a caster on MONSTERS §4.4's line at 11
   { id: 'drowned_chanter', name: 'Drowned Chanter', plural: 'Drowned Chanters', sprite: 'drowned_chanter', kind: 'dead', look: 'A priest of the drowned god, still chanting.', level: 11, hp: 112, ac: 17, attack: 9, dice: 2, sides: 6, bonus: 4, speed: 12, xp: 578, gold: [0, 15], ranged: true, tint: '#5e7a74', size: 0.95 },
+  // the choir's end (#175), the area's boss at 12; its damage is an escorted boss's, for #175's gate to tune
   { id: 'choirmaster', name: 'The Choirmaster', plural: 'Choirmasters', sprite: 'choirmaster', kind: 'dead', look: 'The choir\'s master, beating time on a bell.', level: 12, hp: 540, ac: 19, attack: 10, dice: 6, sides: 8, bonus: 6, speed: 13, xp: 7573, gold: [60, 120], tint: '#4a6a6e', size: 1.1 },
 ];
