@@ -5,7 +5,7 @@ import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, core, MARTIAL, MAIL } from '../../items.ts';
 
 const spear = W('spear', 'Spear', 60, 1, 8, { twoHanded: true, classes: [...MARTIAL, 'monk', 'druid'] });
-const longbow = W('longbow', 'Long Bow', 200, 1, 8, { bonus: 1, ranged: true, twoHanded: true, classes: ['ranger', 'knight'] });
+const longbow = W('longbow', 'Long Bow', 200, 1, 8, { kind: 'bow', bonus: 1, ranged: true, twoHanded: true, classes: ['ranger', 'knight'] });
 const shield: ItemDef = { id: 'shield', name: 'Kite Shield', slot: 'shield', price: 150, ac: 2, classes: MAIL };
 const halberd = W('halberd', 'Halberd', 150, 1, 12, { twoHanded: true, classes: MARTIAL });
 
