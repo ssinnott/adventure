@@ -6,9 +6,12 @@
 // quests.ts. content/index.ts joins the chapters in road order.
 import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
-import { countItem } from './party.ts';
+import { countItem, prestigeOf } from './party.ts';
+import type { ClassId } from './party.ts';
+import { seekingQuests, trainersIn } from './seeking.ts';
+import type { Trainer } from './seeking.ts';
 import { OUTDOORS } from './outdoors.ts';
-import { QUESTS } from '../content/index.ts';
+import { QUESTS, MAP_DEFS } from '../content/index.ts';
 
 /** Something the save records. Every part given must hold. */
 export interface QuestCond {
@@ -22,6 +25,11 @@ export interface QuestCond {
   slain?: string | readonly string[];
   /** A map the party has set foot on, or a zone map of the outdoors it has walked into. */
   visited?: string;
+  /**
+   * A member (the one in party slot `who`, else any) of the class, at the level or over it, with the
+   * prestiges or more (game/seeking.ts). At least, never exactly, so what holds stays held.
+   */
+  member?: { who?: number; cls?: ClassId; level?: number; prestige?: number };
 }
 
 /**
@@ -61,6 +69,8 @@ export interface QuestDef {
   entries: readonly QuestEntry[];
   goals: readonly QuestGoal[];
   chapters?: undefined;
+  /** The world map marks its goal's place (`at`) while it is open: a seeking quest's trainer. */
+  mark?: true;
 }
 
 /** An area's chapter of the one quest: begun once its start or its end holds, and every step placed. */
@@ -112,6 +122,10 @@ function condHolds(c: QuestCond, w: WorldState, p: Party): boolean {
   if (c.seen !== undefined) { const [map, id] = c.seen.split(':'); if (!stateOf(w, map)?.used[id]) return false; }
   if (c.slain !== undefined && ![c.slain].flat().every((ref) => { const [map, id] = ref.split(':'); return (stateOf(w, map)?.groups[id]?.dead ?? -1) >= 0; })) return false;
   if (c.visited !== undefined && !w.maps[c.visited] && !w.zones?.includes(c.visited)) return false;
+  if (c.member !== undefined) {
+    const m = c.member, who = m.who === undefined ? p.members : [p.members[m.who]].filter((x) => !!x);
+    if (!who.some((x) => (m.cls === undefined || x.cls === m.cls) && x.level >= (m.level ?? 0) && prestigeOf(x) >= (m.prestige ?? 0))) return false;
+  }
   return true;
 }
 
@@ -124,15 +138,19 @@ function pageOf(q: QuestDef, world: WorldState, party: Party): PageView {
   };
 }
 
+/** The trainers the content places, each by its map: what the seeking quests are made from. */
+export const TRAINERS: readonly Trainer[] = trainersIn(MAP_DEFS);
+
 /**
- * Every quest the party knows of, in the content's order. The one quest is known once a chapter is
+ * Every quest the party knows of, in the content's order, then each member's seeking quests, by its
+ * slot (game/seeking.ts). The one quest is known once a chapter is
  * begun and done once every one is. Its goal is tried furthest along first, from the last chapter
  * back, passing over a chapter done and one with no chapter begun at or after it: so a company that
  * walked into Thornmark early is not sent to the Grove Stone before anyone has spoken of it.
  */
-export function questLog(world: WorldState, party: Party, quests: readonly LogQuest[] = QUESTS): QuestView[] {
+export function questLog(world: WorldState, party: Party, quests: readonly LogQuest[] = QUESTS, trainers: readonly Trainer[] = TRAINERS): QuestView[] {
   const out: QuestView[] = [];
-  for (const q of quests) {
+  for (const q of [...quests, ...seekingQuests(party, trainers, quests)]) {
     if (!q.chapters) {
       const page = pageOf(q, world, party);
       if (page.begun) out.push({ def: q, done: page.done, goal: page.goal, pages: [page], focus: 0 });
