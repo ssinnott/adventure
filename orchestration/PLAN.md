@@ -1774,3 +1774,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   when line; the other 54 monsters' sheet byte-identical; the ogre, Hand, Warden and heartwood fight
   pixel-identical. My own look: the Eldest towers over its heartwoods, plainly the boss. The look,
   nit 2 and the three choices to a delegate.
+- 03:02: the delegate on #321: the look OK (the Eldest fills the fight before its heartwoods,
+  plainly the boss; at the tip the three told apart); nit 2 (32 px of bough and root past the left
+  edge with both heartwoods) left this round, the body made true to it and the width put under
+  "After Phase 1"; all three choices taken. Round sent: the smoke scan holding `TALL_REACH` to the
+  ink, MONSTERS.md:266, the body.
