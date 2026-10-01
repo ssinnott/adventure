@@ -1,5 +1,5 @@
 // The Ashen cult: cultist, acolyte, zealot, adept, deacon and the Hand of Ash, six ranks in one
-// order. Painted as masses, not parts: every
+// order, and the overseer who keeps the Hand's chains. Painted as masses, not parts: every
 // robe is ONE blob in the def's tint (gown, cowl and near sleeve together, with creases under the
 // arm and at the belt and a folds texture), the far arm its own darker mass behind it, then the
 // other materials (skin, bone mask, mantle, rope, leather, steel) each as their own blob, then the
@@ -16,10 +16,10 @@ import { blob, glow, softLine, patch, glossBall, glossPoly, glossTaper, appendCu
 import type { Crease, Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import type { Arm, Mats, Pt, Rig } from './figure.ts';
-import { armParts, elbowCrease, hand as fist, makeRig, trunkW, FAR } from './figure.ts';
+import { armParts, elbowCrease, hand as fist, legs, makeRig, trunkW, FAR } from './figure.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['cultist', 'acolyte', 'zealot', 'adept', 'deacon', 'ashen_hand'];
+export const KINDS: readonly MonsterSprite[] = ['cultist', 'acolyte', 'zealot', 'adept', 'deacon', 'ashen_hand', 'overseer'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'zealot') zealot(ctx, x, y, h, p);
@@ -27,6 +27,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'ashen_hand') hand(ctx, x, y, h, p);
   else if (kind === 'acolyte') acolyte(ctx, x, y, h, p);
   else if (kind === 'deacon') deacon(ctx, x, y, h, p);
+  else if (kind === 'overseer') overseer(ctx, x, y, h, p);
   else cultist(ctx, x, y, h, p);
 };
 
@@ -118,6 +119,104 @@ function cultist(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   fist(ctx, R, near[2], ga, 42, { flip: -1 });
   staffHead(ctx, sTop.x, sTop.y, ga, h, m.wood, h * 0.026, pulse, flick);
   void p.light;
+}
+
+// ------------------------------------------------------------------ the overseer ----
+/**
+ * The overseer: the rank and file's robe hitched up into the belt for work, over trousers and
+ * boots, the sleeves pushed up to the elbow, and a chain hanging from each fist to the floor. The
+ * forearms are a man's; the hands are grey from the knuckles to the wrist, and stop there, the
+ * first step of the Hand's greying (MONSTERS §12). The chains sway a little and never settle.
+ */
+function overseer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const m = mats(p.tone);
+  const R = makeRig(x, y, h, p, { tilt: -0.01, hipTilt: 0.018, turn: 0.02, near: [0.06, 0.08, 0.1], far: [-0.054, -0.064, -0.07], toe: [0.85, -0.35] }, CULT);
+  const { sy, hx, hy, hr } = R;
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6), swing = Math.sin(p.frame / 14);
+  const beltY = sy + h * 0.18, hemY = sy + h * 0.52;
+  // Both arms down and a little out, the fists closed on the chains at the hip.
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.215 }, { x: x - h * 0.235, y: sy + h * 0.36 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.25, y: sy + h * 0.2 }, { x: x + h * 0.275, y: sy + h * 0.35 }];
+  // Where each sleeve ends: pushed up just past the elbow.
+  const cuff = (a: Arm): Pt => ({ x: a[1].x + (a[2].x - a[1].x) * 0.22, y: a[1].y + (a[2].y - a[1].y) * 0.22 });
+  groundShadow(ctx, x + h * 0.02, y + 1, h * 0.72);
+
+  // The far chain first, behind everything, then the far arm and its bare forearm.
+  chain(ctx, far[2].x, far[2].y + h * 0.03, x - h * 0.3 + swing * h * 0.012, y - h * 0.01, x - h * 0.42, y - h * 0.004, h, m.steel, 81);
+  blob(ctx, B, shade(m.skinFar, 0.95), [tube([far[1].x, far[1].y, far[2].x, far[2].y], h * 0.036, h * 0.026, 0.03, 82)], { h, formK: 0.5 });
+  blob(ctx, B, p.dark, armParts(R, [far[0], far[1], cuff(far)], 31, 1.25), { h, formK: 0.55, creases: [elbowCrease(R, far)] });
+  fist(ctx, R, far[2], Math.PI / 2, 34, { hex: shade(mix(m.skinFar, m.ash, 0.8), 0.68), k: 0.95, flip: 1 });
+
+  legs(ctx, R, shade('#3a3430', p.tone), 85, [0.85, -0.35]);
+
+  // The robe: gown and cowl in the tint, hitched to the knee, and the near sleeve to the elbow.
+  blob(ctx, B, p.base, [
+    robePart(R, beltY, hemY, 0.24, 86, 0.03),
+    cowlPart(R, 1.2, 87),
+    ...armParts(R, [near[0], near[1], cuff(near)], 88, 1.25),
+  ], { h, tex: 'folds', seed: 89, amount: 0.7, formK: 0.6, creases: [
+    { x0: x + trunkW(R, sy + h * 0.06) - h * 0.01, y0: sy + h * 0.07, x1: x + trunkW(R, beltY), y1: beltY - h * 0.01, r: h * 0.022, a: 0.35 },
+    { x0: hx - hr * 1.1, y0: hy + hr * 1.25, x1: hx + hr * 1.1, y1: hy + hr * 1.3, r: h * 0.02, a: 0.35 },
+    elbowCrease(R, near),
+  ] });
+  // The hitch: a fold of the skirt dragged up under the belt on the near side, pulling the hem
+  // into a swag, so the cloth reads as tucked rather than cut short.
+  drape(ctx, h, p.base, x + h * 0.06, beltY + h * 0.01, h * 0.16, hemY - beltY - h * 0.03, 4, 90, 0.4, 0.3);
+  softLine(ctx, B, [x + h * 0.02, beltY + h * 0.02, x + h * 0.1, beltY + h * 0.12, x + h * 0.18, hemY - h * 0.02], p.base, h * 0.022, 0.4);
+  sleeveEdge(ctx, h, p.base, near[0].x, near[0].y, near[1].x, near[1].y, h * 0.05);
+
+  // The face: the void under the cowl and its embers.
+  faceVoid(ctx, hx, hy + h * 0.016, hr * 0.92, hr * 1.08, 91);
+  emberEyes(ctx, hx - hr * 0.46, hy, hx + hr * 0.46, hy, h * 0.014, pulse, false, 2.1);
+
+  // A leather belt, not the cord: keys on a ring at the hip.
+  const bw = trunkW(R, beltY) + h * 0.014;
+  blob(ctx, B, m.leather, [tube([x - bw, beltY + h * 0.012, x, beltY - h * 0.004, x + bw, beltY + h * 0.008], h * 0.017, h * 0.017, 0.06, 92)], { h, formK: 0.5 });
+  blob(ctx, B, m.steel, [
+    { k: 'ell', x: x - h * 0.06, y: beltY + h * 0.03, rx: h * 0.02, ry: h * 0.016, rot: 0.3 },
+    tube([x - h * 0.07, beltY + h * 0.04, x - h * 0.078, beltY + h * 0.085], h * 0.007, h * 0.006, 0, 93),
+    tube([x - h * 0.054, beltY + h * 0.042, x - h * 0.046, beltY + h * 0.08], h * 0.007, h * 0.006, 0, 94),
+  ], { h, formK: 0.4, gloss: 0.5 });
+
+  // The near forearm, bare, then its chain, then the grey fist closed over the chain's end.
+  blob(ctx, B, m.skin, [tube([near[1].x, near[1].y, near[2].x, near[2].y], h * 0.038, h * 0.027, 0.03, 95)], { h, formK: 0.5 });
+  chain(ctx, near[2].x, near[2].y + h * 0.03, x + h * 0.34 - swing * h * 0.014, y - h * 0.012, x + h * 0.46, y - h * 0.006, h, m.steel, 96);
+  fist(ctx, R, near[2], Math.PI / 2, 42, { hex: shade(mix(m.skin, m.ash, 0.8), 0.72), k: 1.02, flip: -1 });
+  void p.light;
+}
+
+/**
+ * A chain hanging from a fist at (x0, y0) down to the floor at (x1, y1), and lying along it to
+ * (x2, y2): links on a curve, each overlapping the next, turned face-on and edge-on by turns, so
+ * the whole of it is one piece of ink with the hand.
+ */
+function chain(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, x2: number, y2: number, h: number, steel: string, seed: number): void {
+  const L = h * 0.036, pts: [number, number][] = [];
+  // The hanging run: a quadratic from the fist, out and down, to the floor.
+  const cx = x0 + (x1 - x0) * 0.15, cy = y1 - h * 0.04;
+  const at = (t: number): [number, number] => [(1 - t) ** 2 * x0 + 2 * (1 - t) * t * cx + t * t * x1, (1 - t) ** 2 * y0 + 2 * (1 - t) * t * cy + t * t * y1];
+  let prev = at(0), acc = 0;
+  pts.push(prev);
+  for (let i = 1; i <= 80; i++) {
+    const q = at(i / 80); acc += Math.hypot(q[0] - prev[0], q[1] - prev[1]); prev = q;
+    if (acc >= L * 0.8) { pts.push(q); acc = 0; }
+  }
+  const n = Math.max(1, Math.round(Math.hypot(x2 - x1, y2 - y1) / (L * 0.8)));
+  for (let i = 1; i <= n; i++) pts.push([x1 + (x2 - x1) * i / n, y1 + (y2 - y1) * i / n]);
+  const parts: Part[] = [];
+  for (let i = 0; i < pts.length; i++) {
+    const [px, py] = pts[i], [qx, qy] = pts[Math.min(pts.length - 1, i + 1)], [ox, oy] = pts[Math.max(0, i - 1)];
+    const rot = Math.atan2(qy - oy, qx - ox);
+    parts.push({ k: 'ell', x: px, y: py, rx: L * 0.64, ry: L * (i % 2 ? 0.24 : 0.4), rot });
+  }
+  blob(ctx, B, steel, parts, { h, formK: 0.4, gloss: 0.45, spread: 0.6, seed });
+  // The eye of each face-on link, where the floor shows through.
+  if (B.override || h < 60) return;
+  ctx.fillStyle = rgba('#18141a', 0.75);
+  for (let i = 0; i < pts.length; i += 2) {
+    const [px, py] = pts[i], [qx, qy] = pts[Math.min(pts.length - 1, i + 1)], [ox, oy] = pts[Math.max(0, i - 1)];
+    ctx.beginPath(); ctx.ellipse(px, py, L * 0.3, L * 0.12, Math.atan2(qy - oy, qx - ox), 0, Math.PI * 2); ctx.fill();
+  }
 }
 
 // ------------------------------------------------------------------ the fighter ----
