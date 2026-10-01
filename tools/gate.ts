@@ -8,8 +8,10 @@
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;
 // one group is one fight. A plain bot plays the party: mend the weakest when someone is under 40%,
-// else the strongest damage spell it can afford, else a weapon, else brace. It never sleeps, blesses,
-// drinks or flees, so it is weaker than a player; single fights at full health are kinder than play.
+// else the strongest damage spell it can afford, else a weapon, else brace; it aims at a leader where
+// it can reach one, since the people break at its fall, and else a weapon at the first foe it
+// reaches. It never sleeps, blesses, drinks or flees, so it is weaker than a player; single fights
+// at full health are kinder than play.
 // Read the numbers as where the fights bite, not as a promise. tools/tests/gate.ts holds every map
 // and area to them (the gate check); it imports this file, whose table runs only from the command
 // line.
@@ -17,15 +19,14 @@ import { pathToFileURL } from 'node:url';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, isDown, MAX_LEVEL } from '../src/game/party.ts';
 import type { Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow } from '../src/game/combat.ts';
-import type { CombatOpts } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup } from '../src/game/combat.ts';
+import type { CombatOpts, Fighters } from '../src/game/combat.ts';
 import { RANGED_PENALTY } from '../src/game/weather.ts';
 import { spell } from '../src/game/spells.ts';
 import type { SpellTarget } from '../src/game/spells.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
 import { outfit } from './harness.ts';
 import type { EncounterDef } from '../src/game/map.ts';
-import type { MonsterDef } from '../src/game/monsters.ts';
 
 /**
  * The premade company, every member trained to `level` and dressed by the ladder, as harness's is,
@@ -55,13 +56,14 @@ export function gateOpts(g: Pick<EncounterDef, 'when'>): CombatOpts {
  * `cap`, a fight still running after that many rounds is broken off, and not won; `opts` is the
  * fight's weather (see `gateOpts`).
  */
-export function gateFight(p: Party, monsters: readonly (string | MonsterDef)[], seed: number, cap = Infinity, opts: CombatOpts = {}): boolean {
-  const rng = makeRng(seed), s = startCombat(p, [{ id: 'gate', monsters }], rng, opts);
+export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infinity, opts: CombatOpts = {}): boolean {
+  const rng = makeRng(seed), s = startCombat(p, [asGroup('gate', monsters)], rng, opts);
   for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > cap) break;
     if (t.side === 'monster') { monsterAct(s, p, rng); continue; }
-    const c = p.members[t.i], foe = aliveMonsters(s)[0];
+    const c = p.members[t.i], foes = aliveMonsters(s), lead = foes.find((i) => isLeader(s, s.monsters[i])), foe = lead ?? foes[0];
+    const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((i) => canReach(s, c, i)) ?? foe;
     const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
     const low = p.members.map((m, i) => ({ m, i })).filter(({ m }) => !isDown(m) && m.hp < m.maxHp * 0.4).sort((a, b) => a.m.hp - b.m.hp)[0];
     const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
@@ -69,7 +71,7 @@ export function gateFight(p: Party, monsters: readonly (string | MonsterDef)[], 
       .sort((a, b) => REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
     if (low && mend && partyAct(s, p, rng, { type: 'cast', spellId: mend.id, target: low.i })) continue;
     if (blast && partyAct(s, p, rng, { type: 'cast', spellId: blast.id, target: foe })) continue;
-    if (canAttackFromRow(c, t.i) && partyAct(s, p, rng, { type: 'attack', target: foe })) continue;
+    if (canAttackFromRow(c, t.i) && partyAct(s, p, rng, { type: 'attack', target: blade })) continue;
     partyAct(s, p, rng, { type: 'defend' });
   }
   return s.outcome === 'victory';
@@ -79,7 +81,7 @@ export function gateFight(p: Party, monsters: readonly (string | MonsterDef)[], 
 export const fightSeed = (k: number): number => k * 7919 + 13;
 
 /** The share of a group's fights a company of `level` wins, each alone from full health, over seeds 1 to `seeds`. */
-export function winRate(level: number, monsters: readonly (string | MonsterDef)[], seeds: number, cap = Infinity, opts: CombatOpts = {}): number {
+export function winRate(level: number, monsters: Fighters, seeds: number, cap = Infinity, opts: CombatOpts = {}): number {
   let won = 0;
   for (let k = 1; k <= seeds; k++) if (gateFight(gateCompany(level, k), monsters, fightSeed(k), cap, opts)) won++;
   return won / seeds;
@@ -111,7 +113,7 @@ function main(): void {
     levels.forEach((l, li) => {
       for (let k = 1; k <= seeds; k++) {
         const p = gateCompany(l, k);
-        for (let f = 0; f < groups.length && gateFight(p, groups[f].monsters, k * 104729 + f, Infinity, gateOpts(groups[f])); f++) standing[f][li]++;
+        for (let f = 0; f < groups.length && gateFight(p, groups[f], k * 104729 + f, Infinity, gateOpts(groups[f])); f++) standing[f][li]++;
       }
     });
     groups.forEach((g, f) => line(`${f + 1}: ${g.id} [${g.monsters.length}]`, standing[f].map((n) => pct(n, seeds))));
@@ -122,7 +124,7 @@ function main(): void {
       const groups = d.encounters ?? [];
       if (!groups.length || (only && !only.includes(d.id))) continue;
       line(`${d.id} (${d.band?.join('-') ?? '-'})`, levels.map((l) => {
-        const won = groups.reduce((n, g) => n + Math.round(winRate(l, g.monsters, seeds, Infinity, gateOpts(g)) * seeds), 0);
+        const won = groups.reduce((n, g) => n + Math.round(winRate(l, g, seeds, Infinity, gateOpts(g)) * seeds), 0);
         return pct(won, groups.length * seeds);
       }));
     }

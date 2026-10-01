@@ -70,6 +70,9 @@ export function maps(): void {
     for (const e of m.encounters) {
       ok(m.passable(e.x, e.y) === 'ok', `${def.id}: encounter ${e.id} at ${e.x},${e.y} is passable`);
       for (const id of e.monsters) ok(id in MONSTERS, `${def.id}: encounter ${e.id} monster '${id}' exists`);
+      // Ranks (combat.ts `Ranks`): a back rank leaves a front, and a leader is one of the group.
+      if (e.back !== undefined) ok(Number.isInteger(e.back) && e.back >= 1 && e.back < e.monsters.length, `${def.id}: encounter ${e.id}'s back rank of ${e.back} leaves a front of its ${e.monsters.length}`);
+      if (e.leader !== undefined) ok(e.monsters.includes(e.leader), `${def.id}: encounter ${e.id}'s leader '${e.leader}' is one of the group`);
     }
     for (const f of m.features) {
       for (const id of giftOf(f)?.items ?? []) ok(id in ITEMS, `${def.id}: ${f.kind} ${spentId(f)} item '${id}' exists`);

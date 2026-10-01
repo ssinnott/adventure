@@ -1,10 +1,11 @@
 // The combat resolver: a seeded fight replays byte for byte, the cap, the rows, fleeing, the spells
-// that hit every foe, Ward and Revive.
+// that hit every foe, Ward and Revive; the ranks and morale (#160).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS } from '../../src/content/index.ts';
 import { defaultParty, equip, addCondition, hasCondition, killPay } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, WARD_AC } from '../../src/game/combat.ts';
-import type { CombatState } from '../../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, frontStands, WARD_AC, BREAK_LINE, ROUT_LINE } from '../../src/game/combat.ts';
+import type { CombatState, CombatGroup } from '../../src/game/combat.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
@@ -33,9 +34,11 @@ export function combat(): void {
   ok(a.log.join('|') === b.log.join('|'), 'the same seed replays the same fight');
   ok(a.log.join('|') !== c.log.join('|'), 'a different seed is a different fight');
   ok(a.state.outcome === 'victory', `the default party beats three rats and a wolf (${a.rounds} rounds, ${a.state.outcome})`);
-  // The rats are the party's level and the wolf one over it, so the wolf pays more (killPay).
-  const xp = MONSTERS.rat.xp * 3 + MONSTERS.wolf.xp * killPay(MONSTERS.wolf.level, 1);
-  ok(MONSTERS.rat.level === 1 && MONSTERS.wolf.level === 2 && a.state.loot !== null && a.state.loot.xp === Math.round(xp), `xp is the sum of the monsters', each by its level against the party's (${a.state.loot?.xp})`);
+  // Three in four down, the last of the pack bolts and pays nothing; the slain pay by their level
+  // against the party's, so the wolf, one over it, pays more (killPay).
+  const xp = a.state.monsters.filter((m) => !m.fled).reduce((n, m) => n + m.def.xp * killPay(m.def.level, 1), 0);
+  ok(a.state.monsters.filter((m) => m.fled).length === 1, `the last of three rats and a wolf bolts (${a.state.monsters.filter((m) => m.fled).map((m) => m.def.name).join(', ')})`);
+  ok(MONSTERS.rat.level === 1 && MONSTERS.wolf.level === 2 && a.state.loot !== null && a.state.loot.xp === Math.round(xp), `xp is the sum of the slain's, each by its level against the party's (${a.state.loot?.xp})`);
   ok(a.party.members.every((m) => m.xp === Math.floor(xp / 6)) && a.state.loot!.shares.every((x) => x === Math.floor(xp / 6)), 'xp is split evenly among the living');
   ok(a.party.gold >= 200, 'gold is added to the party');
   // The cap.
@@ -125,4 +128,103 @@ export function combat(): void {
   const noted = startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4), { rangedPenalty: RANGED_PENALTY, note: 'The downpour spoils every archer\'s aim.' });
   ok(noted.rangedPenalty === RANGED_PENALTY && noted.log[1] === 'The downpour spoils every archer\'s aim.', 'a fight in the weather carries the penalty and says why');
   ok(startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4)).rangedPenalty === 0, 'and a fight with no word of the weather has none');
+  ranks();
+  morale();
+}
+
+/** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
+function play(s: CombatState, party: Party, seed: number, aim: (s: CombatState, i: number) => number | undefined, each?: () => void): void {
+  const rng = makeRng(seed);
+  for (let guard = 0; s.outcome === 'ongoing' && guard < 2000; guard++) {
+    each?.();
+    const t = currentTurn(s, party, rng);
+    if (!t) break;
+    if (t.side === 'monster') { monsterAct(s, party, rng); continue; }
+    const target = aim(s, t.i);
+    if (target === undefined || !canAttackFromRow(party.members[t.i], t.i) || !partyAct(s, party, rng, { type: 'attack', target })) partyAct(s, party, rng, { type: 'defend' });
+  }
+}
+
+/** Ranks (MONSTERS.md §3.3): the issue's choir, four chanters behind two drowned men. */
+function ranks(): void {
+  const drowned: MonsterDef = { ...MONSTERS.skeleton, id: 'test_drowned', name: 'Drowned Man', plural: 'Drowned Men', hp: 12, attack: 0, dice: 1, sides: 3, bonus: 0 };
+  const chanter: MonsterDef = { ...MONSTERS.skeleton, id: 'test_chanter', name: 'Chanter', plural: 'Chanters', hp: 6, attack: 0, dice: 1, sides: 3, bonus: 0 };
+  const choir: CombatGroup = { id: 'choir', monsters: [drowned, drowned, chanter, chanter, chanter, chanter], back: 4 };
+  const fresh = (): { s: CombatState; p: Party } => { const p = defaultParty(makeRng(5)); return { s: startCombat(p, [choir], makeRng(5)), p }; };
+  {
+    const { s, p } = fresh(), knight = p.members[0], back = s.monsters.map((m, i) => ({ m, i })).filter(({ m }) => m.back).map(({ i }) => i);
+    ok(back.length === 4 && s.monsters.filter((m) => m.back).every((m) => m.def === chanter) && new Set(s.monsters.map((m) => m.group)).size === 2, 'the choir stands in two ranks, its four chanters behind');
+    ok(!ITEMS[knight.equipment.weapon!].ranged && back.every((i) => !canReach(s, knight, i)) && s.monsters.every((m, i) => m.back || canReach(s, knight, i)), 'a blade in the front row reaches the drowned men and not the chanters');
+    const bow = p.members[3]; equip(bow, 'sling');
+    ok(back.every((i) => canReach(s, bow, i)), 'a sling reaches the chanters');
+    // A blade aimed past the front does nothing; Spark reaches the back.
+    const rng = makeRng(6);
+    let blade = false, spark = false;
+    for (let guard = 0; guard < 200 && !(blade && spark) && s.outcome === 'ongoing'; guard++) {
+      const t = currentTurn(s, p, rng);
+      if (!t) break;
+      if (t.side === 'monster') { monsterAct(s, p, rng); continue; }
+      const c = p.members[t.i];
+      if (!blade && t.i < 3 && !ITEMS[c.equipment.weapon!].ranged) { const before = s.monsters.map((m) => m.hp).join(); blade = !partyAct(s, p, rng, { type: 'attack', target: back[0] }) && before === s.monsters.map((m) => m.hp).join(); if (!blade) break; }
+      else if (!spark && c.spells.includes('spark') && c.sp >= 2) { const hp = s.monsters[back[0]].hp; partyAct(s, p, rng, { type: 'cast', spellId: 'spark', target: back[0] }); spark = s.monsters[back[0]].hp < hp; }
+      else partyAct(s, p, rng, { type: 'defend' });
+    }
+    ok(blade, 'a front-row blade cannot strike a chanter while a drowned man stands');
+    ok(spark, 'Spark strikes a chanter over the drowned men');
+  }
+  {
+    // No chanter is struck by a blade, nor strikes with its own, until the front is down; then both.
+    const { s, p } = fresh();
+    let early = false, read = 0, front = true;
+    play(s, p, 7, (cs, i) => aliveMonsters(cs).filter((f) => canReach(cs, p.members[i], f)).pop(), () => {
+      const blade = (l: string): boolean => p.members.some((c) => !ITEMS[c.equipment.weapon!].ranged && l.startsWith(`${c.name} `));
+      if (front && s.log.slice(read).some((l) => /^Chanter (hits|misses)/.test(l) || (/(hits|misses) Chanter/.test(l) && blade(l)))) early = true;
+      read = s.log.length; front = frontStands(s);
+    });
+    ok(!early && s.outcome === 'victory', `the chanters neither strike nor are struck by a blade while the drowned men stand, and fall after them (${s.outcome})`);
+  }
+}
+
+/** Morale (MONSTERS.md §2, §3.3): the barge's crew at its master's fall, the pack at three in four, and who never breaks. */
+function morale(): void {
+  const master: MonsterDef = { ...MONSTERS.bandit, id: 'test_master', name: 'Barge Master', plural: 'Barge Masters', hp: 1, ac: 0, xp: 300 };
+  const bargeman: MonsterDef = { ...MONSTERS.bandit, id: 'test_bargeman', name: 'Bargeman', plural: 'Bargemen', hp: 500, xp: 50, gold: [10, 10] };
+  const atMaster = (s: CombatState): number | undefined => { const up = aliveMonsters(s); return up.find((f) => s.monsters[f].def === master) ?? up[0]; };
+  {
+    const p = defaultParty(makeRng(8)), s = startCombat(p, [{ id: 'barge', monsters: [master, bargeman, bargeman, bargeman, bargeman, bargeman], leader: master.id }], makeRng(8));
+    play(s, p, 8, atMaster);
+    const died = s.log.findIndex((l) => l.includes('Barge Master dies.'));
+    ok(s.outcome === 'victory' && s.monsters.filter((m) => m.fled).length === 5 && s.log[died + 1] === BREAK_LINE('5 Bargemen', false), `a barge crew leaves when its master dies, and the log says so (${s.log[died + 1]})`);
+    ok(s.loot?.xp === master.xp && s.loot.gold <= master.gold[1], `the fled pay no xp and take their gold (${s.loot?.xp} xp, ${s.loot?.gold} gold)`);
+  }
+  {
+    // A crew in a group of its own breaks at the master's fall in the next.
+    const p = defaultParty(makeRng(9)), s = startCombat(p, [{ id: 'master', monsters: [master], leader: master.id }, { id: 'crew', monsters: [bargeman, bargeman] }], makeRng(9));
+    play(s, p, 9, atMaster);
+    ok(s.monsters.filter((m) => m.fled).length === 2, 'a crew in another group breaks at its master\'s fall too');
+  }
+  {
+    // The Hand stands; so do people with no leader, the dead and the Rift.
+    const hand = startCombat(defaultParty(makeRng(10)), [{ id: 'h', monsters: [master, MONSTERS.cultist, MONSTERS.cultist, bargeman], leader: master.id }], makeRng(10));
+    hand.monsters[0].hp = 0;
+    partyAct(hand, defaultParty(makeRng(10)), makeRng(10), { type: 'defend' });
+    ok(hand.monsters.filter((m) => m.fled).map((m) => m.def.id).join() === bargeman.id && MONSTERS.cultist.steady === true, 'at the master\'s fall the bargeman breaks and the Hand\'s cultists stand');
+    const leaderless = startCombat(defaultParty(makeRng(11)), [{ id: 'b', monsters: ['bandit', 'bandit', 'bandit', 'bandit'] }], makeRng(11));
+    leaderless.monsters.slice(0, 3).forEach((m) => { m.hp = 0; });
+    const dead = startCombat(defaultParty(makeRng(11)), [{ id: 'd', monsters: ['skeleton', 'skeleton', 'skeleton', 'skeleton'], leader: 'skeleton' }], makeRng(11));
+    dead.monsters.slice(0, 3).forEach((m) => { m.hp = 0; });
+    for (const s of [leaderless, dead]) { const p = defaultParty(makeRng(11)); for (let k = 0; k < 3 && s.outcome === 'ongoing'; k++) { const t = currentTurn(s, p, makeRng(k)); if (t?.side === 'monster') monsterAct(s, p, makeRng(k)); else partyAct(s, p, makeRng(k), { type: 'defend' }); } }
+    ok(!leaderless.monsters.some((m) => m.fled) && !dead.monsters.some((m) => m.fled), 'people with no leader, and the dead, never break');
+  }
+  {
+    // A pack runs at three in four down; three rats are too few to.
+    const rout = (n: number): CombatState => {
+      const p = defaultParty(makeRng(12)), s = startCombat(p, [{ id: 'r', monsters: new Array(n).fill('rat') }], makeRng(12));
+      play(s, p, 12, (cs) => aliveMonsters(cs)[0]);
+      return s;
+    };
+    const four = rout(4), three = rout(3);
+    ok(four.monsters.filter((m) => m.fled).length === 1 && four.log.includes(ROUT_LINE(MONSTERS.rat.name, true)), `the last of four rats bolts, and the log says so`);
+    ok(!three.monsters.some((m) => m.fled), 'three rats fight to the last');
+  }
 }

@@ -9,12 +9,12 @@ import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardR
 import { drawMonsterSprite, combatHeight } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
-import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, shareRange } from '../game/combat.ts';
+import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction } from '../game/combat.ts';
 import { spell } from '../game/spells.ts';
 import { item } from '../game/items.ts';
 import { weaponOf } from '../game/party.ts';
-import { groupLabels, seatFoot, crown, MARKER_RISE, LABEL_TOP } from './grouplabels.ts';
+import { groupLabels, seatOf, crown, MARKER_RISE, LABEL_TOP, BACK_SCALE } from './grouplabels.ts';
 import type { LabelLine } from './grouplabels.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'item' | 'itemTarget' | 'done';
@@ -57,6 +57,11 @@ export class CombatScreen implements Screen {
       { label: 'Flee', key: 'flee', disabled: false },
     ];
   }
+  /** What the member may aim at: a weapon what it reaches, a spell anyone still in the fight. */
+  private targets(g: Game, who: number): number[] {
+    const alive = aliveMonsters(this.state);
+    return this.mode === 'target' ? alive.filter((i) => canReach(this.state, g.party.members[who], i)) : alive;
+  }
   private usable(g: Game, who: number): string[] {
     const c = g.party.members[who];
     return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(id).use && !item(id).use!.food))];
@@ -77,7 +82,7 @@ export class CombatScreen implements Screen {
     }
     if (!a) return;
     const who = t.i;
-    const alive = aliveMonsters(s);
+    const alive = this.targets(g, who);
     const act = (action: PartyAction) => { if (partyAct(s, g.party, g.rng, action)) { this.mode = 'menu'; this.sel = 0; } };
     switch (this.mode) {
       case 'menu': {
@@ -160,17 +165,27 @@ export class CombatScreen implements Screen {
     // weather falls in front of the monsters, below.
     drawViewport(ctx, g.world, v, () => null, frame, false);
     ctx.fillStyle = 'rgba(10,8,12,0.28)'; ctx.fillRect(v.x, v.y, v.w, v.h);
-    // Monsters in a row, grouped, with a marker on the targeted one.
+    // Monsters in a row, grouped, with a marker on the targeted one. A back rank has a row of its own,
+    // behind the front and smaller, each of it between two of the front.
     const alive = aliveMonsters(s);
     const t = currentTurn(s, g.party, g.rng);
-    const targeting = this.mode === 'target' || this.mode === 'spellTarget';
-    const n = alive.length, slot = v.w / Math.max(5, n);
-    // Painted from the back rank forward, so a tall boss on the third rank stands before its own.
-    const seats = alive.map((mi, k) => ({ mi, k, foot: seatFoot(s.monsters[mi].group, v.h, s.monsters[mi].def.size) })).sort((a, b) => a.foot - b.foot || a.k - b.k);
-    seats.forEach(({ mi, k, foot }) => {
+    const targeting = (this.mode === 'target' || this.mode === 'spellTarget') && t?.side === 'party';
+    const aimed = targeting && t ? this.targets(g, t.i)[this.sub] : -1;
+    const n = alive.length, front = alive.filter((mi) => !s.monsters[mi].back), rear = alive.filter((mi) => s.monsters[mi].back);
+    // Two lines of the same parity would stand one behind another, so each steps a quarter aside.
+    const ranked = front.length > 0 && rear.length > 0, step = ranked && (front.length - rear.length) % 2 === 0 ? 0.25 : 0;
+    const row = ranked ? Math.max(front.length, rear.length) : n, slot = v.w / Math.max(5, row + 2 * step);
+    const across = (mi: number): number => {
+      const back = ranked && s.monsters[mi].back, line = !ranked ? alive : back ? rear : front, k = line.indexOf(mi);
+      return v.x + (v.w - slot * line.length) / 2 + slot * (k + 0.5) + (back ? step : -step) * slot;
+    };
+    // Painted from the back forward, so a tall boss on the third rank stands before its own and a
+    // group's front before its back rank.
+    const seats = alive.map((mi, k) => ({ mi, k, foot: seatOf(s.monsters[mi], v.h, s.monsters[mi].def.size) })).sort((a, b) => a.foot - b.foot || a.k - b.k);
+    seats.forEach(({ mi, foot }) => {
       const m = s.monsters[mi];
-      const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + foot;
-      const h = combatHeight(m.def.size, n), top = crown(m.def.size, h);
+      const x = across(mi), y = v.y + foot;
+      const h = combatHeight(m.def.size, n) * (m.back ? BACK_SCALE : 1), top = crown(m.def.size, h);
       if (m.flash > 0) m.flash--;
       if (m.hp < this.lastMonsterHp[mi]) { this.burst(x, y - h * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070'); this.lastMonsterHp[mi] = m.hp; }
       const asleep = m.conditions.includes('asleep');
@@ -178,7 +193,7 @@ export class CombatScreen implements Screen {
       const hpFrac = m.hp / m.def.hp;
       ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(Math.round(x - 14), Math.round(y + 3), 28, 3);
       ctx.fillStyle = hpFrac > 0.5 ? GREEN : hpFrac > 0.25 ? YELLOW : RED; ctx.fillRect(Math.round(x - 14), Math.round(y + 3), Math.round(28 * hpFrac), 3);
-      if (targeting && k === this.sub) drawText(ctx, '↓', x, y - top - MARKER_RISE, { size: 1, color: YELLOW, align: 'center' });
+      if (mi === aimed) drawText(ctx, '↓', x, y - top - MARKER_RISE, { size: 1, color: YELLOW, align: 'center' });
       if (t && t.side === 'monster' && t.i === mi) drawText(ctx, '*', x, y - top - MARKER_RISE, { size: 1, color: RED, align: 'center' });
       if (asleep) drawText(ctx, 'z', x + 10, y - top - 2, { size: 1, color: TEXT_DIM });
     });
@@ -222,7 +237,7 @@ export class CombatScreen implements Screen {
         if (!canAttackFromRow(c, t.i)) drawText(ctx, 'BACK ROW: NEEDS A RANGED WEAPON', r.x + 8, r.y + r.h - 24, { size: 1, color: TEXT_DIM });
       } else if (this.mode === 'target' || this.mode === 'spellTarget') {
         drawText(ctx, 'TARGET', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
-        menu(ctx, alive.map((mi) => `${s.monsters[mi].def.name} ${s.monsters[mi].hp}/${s.monsters[mi].def.hp}`), r.x + 8, y, this.sub);
+        menu(ctx, this.targets(g, t.i).map((mi) => `${s.monsters[mi].def.name} ${s.monsters[mi].hp}/${s.monsters[mi].def.hp}`), r.x + 8, y, this.sub);
       } else if (this.mode === 'spell') {
         const list = c.spells.filter((x) => spell(x).context !== 'explore');
         drawText(ctx, `SPELL  (SP ${c.sp})`, r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;

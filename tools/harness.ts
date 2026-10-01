@@ -28,8 +28,8 @@ import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, toHit, buffHit, traitDamage, FRONT_ROW } from '../src/game/combat.ts';
-import type { CombatState, MonsterInst, PartyAction, Edge } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup, castOnAlly, toHit, buffHit, traitDamage, FRONT_ROW } from '../src/game/combat.ts';
+import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
 import { item } from '../src/game/items.ts';
@@ -334,7 +334,9 @@ export const thrifty: Bot = (s, p, rng, i) => {
   }
   const foes = aliveMonsters(s);
   if (!foes.length) { partyAct(s, p, rng, { type: 'defend' }); return; }
-  const weakest = foes.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a));
+  // A blade at a leader it reaches, since the people break at its fall, else at the weakest it reaches.
+  const lead = foes.find((f) => isLeader(s, s.monsters[f])), near = foes.filter((f) => canReach(s, c, f));
+  const weakest = lead !== undefined && near.includes(lead) ? lead : (near.length ? near : foes).reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a));
   const armed = canAttackFromRow(c, i), blow = armed ? weaponDamage(s, p, c, s.monsters[weakest]) : 0;
   const weapons = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(s, p, m, s.monsters[weakest], false) : 0), 0);
   const rate = incoming(s, p) / Math.max(1, weapons);
@@ -348,7 +350,7 @@ export const thrifty: Bot = (s, p, rng, i) => {
     const each = spellDamage(c, x), take = (f: number): number => Math.min(each, s.monsters[f].hp);
     let dmg = 0, target = weakest;
     if (x.target === 'all') dmg = foes.reduce((a, f) => a + take(f), 0);
-    else if (x.target === 'enemy') { for (const f of foes) if (take(f) > dmg) { dmg = take(f); target = f; } }
+    else if (x.target === 'enemy') { if (lead !== undefined) { dmg = take(lead); target = lead; } else for (const f of foes) if (take(f) > dmg) { dmg = take(f); target = f; } }
     else {
       const byGroup = new Map<number, number>();
       for (const f of foes) byGroup.set(s.monsters[f].group, (byGroup.get(s.monsters[f].group) ?? 0) + take(f));
@@ -369,13 +371,13 @@ export function spent(p: Party): { cost: number; hp: number; sp: number } {
   return { cost: (t.maxHp - t.hp + t.maxSp - t.sp) / (t.maxHp + t.maxSp), hp: 1 - t.hp / t.maxHp, sp: t.maxSp ? 1 - t.sp / t.maxSp : 0 };
 }
 
-export type Encounter = readonly (string | MonsterDef)[];
+export type Encounter = Fighters;
 export interface Outcome { won: boolean; cost: number; hp: number; sp: number; rounds: number; down: boolean; broken: boolean }
 
 /** One fight to its end from however the company stands: what it cost, read from what it has left. */
 export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
   const edge = RULES.levelTraits || RULES.levelBonus || RULES.prestiges ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round) : undefined;
-  const rng = makeRng(seed), s = startCombat(p, [{ id: 'harness', monsters }], rng, { spellsGrowTo: RULES.spellsGrowTo, edge });
+  const rng = makeRng(seed), s = startCombat(p, [asGroup('harness', monsters)], rng, { spellsGrowTo: RULES.spellsGrowTo, edge });
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > ROUND_CAP) break;
@@ -641,10 +643,10 @@ async function main(): Promise<void> {
     console.log('Fights: that group again and again from fresh, until the company must rest. One fight: from fresh.');
     console.log('group'.padEnd(20) + 'fights'.padStart(7) + 'cost'.padStart(6) + 'won'.padStart(6) + 'rounds'.padStart(8) + '  monsters');
     for (const g of def.encounters) {
-      const d = days(level, [g.monsters], seeds), t = measure(level, g.monsters, seeds);
+      const d = days(level, [g], seeds), t = measure(level, g, seeds);
       console.log(g.id.padEnd(20) + d.fights.toFixed(1).padStart(7) + `${pct(t.cost)}%`.padStart(6) + `${pct(t.won)}%`.padStart(6) + t.rounds.toFixed(1).padStart(8) + '  ' + g.monsters.join(' '));
     }
-    const all = days(level, def.encounters.map((g) => g.monsters), seeds, 1, true);
+    const all = days(level, def.encounters, seeds, 1, true);
     const why = (Object.entries(all.why) as [Why, number][]).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).map(([w, n]) => `${{ lost: 'a lost fight', long: 'a fight broken off', dead: 'a death', hp: 'hit points', sp: 'spell points', none: 'none' }[w]} ${pct(n)}%`);
     console.log(`\nIts groups in a new order each seed: ${all.fights.toFixed(1)} fights before a rest, against ${fightsPerRest(level)} at the company's own level. What ended the day: ${why.join(', ')}.`);
     return;
