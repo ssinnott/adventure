@@ -271,8 +271,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   grove; the Provisioner's pigeonholes and the Armoury's forge; the Guildhall's map of Caldera and
   the Lantern Hall's copy of the Grove Stone; the Drillyard inside Helmstow's wall and the Elder's
   ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak; the throne room
-  behind the keep's door, its throne under black cloth. The farm kitchen is painted for the store
-  #87 opens into it. No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
+  behind the keep's door, its throne under black cloth. The farm kitchen is Ellerby's store
+  (#87). No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
   light, `props.ts` the furniture and goods; each scene is a file in `ui/interiors/<area>/`, and
   what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
   A scene is painted once into an offscreen canvas and multiplied by a light map (the ambient for
