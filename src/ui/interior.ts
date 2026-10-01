@@ -10,9 +10,10 @@ import { mix } from '../lib/art/palettes.ts';
 import { SCENES as SHELF } from './interiors/shelf/index.ts';
 import { SCENES as THORNMARK } from './interiors/thornmark/index.ts';
 import { SCENES as SALTREACH } from './interiors/saltreach/index.ts';
+import { SCENES as SUNDERWOOD } from './interiors/sunderwood/index.ts';
 
 /** Every business's scene, an area's at a time: an interior with no scene fails the typecheck here. */
-export const SCENES: Record<Interior, Scene> = { ...SHELF, ...THORNMARK, ...SALTREACH };
+export const SCENES: Record<Interior, Scene> = { ...SHELF, ...THORNMARK, ...SALTREACH, ...SUNDERWOOD };
 
 /** The last room painted: repainted when the business, the size or the hour (to an eighth of a day's light) changes. */
 let painted: { key: string; room: HTMLCanvasElement; lights: Light[] } | null = null;
