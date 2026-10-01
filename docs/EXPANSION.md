@@ -271,6 +271,13 @@ quarters of the way to 11, and a sweep of the Grove at 10 pays about 1,000, so s
 more reaches Thornhold's 11. Act II's three rows came before their maps, each owed to the issue that
 builds its area (#159).
 
+The gear ladder (`GEAR`, `tools/harness.ts`) is what a company has in hand by a level, and the
+harness and the gate dress their companies by it. Act I's: Mottram's by 3, the Downs' finds by 5,
+Thornmark's Armoury by 8, its chests' plus by 9 and the Deepthorn's +2s by 10. Act II's (#399):
+Saltmouth's armourer by 11, Saltreach's and Wrackholm's boxes' plus by 13, Lantern Watch's stores
+by 14 and the Sunder's plus by 16. Each rung betters the last for every class, each find and ware
+inside its area's window; past the top, gear grows only in the harness's what-if.
+
 The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,
 and the check lists it as off its aim; past its limit it fails, and only then is it owed. The
