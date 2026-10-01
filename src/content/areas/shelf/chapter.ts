@@ -7,13 +7,16 @@ export const CHAPTER: Chapter = {
   id: 'ashcombe',
   title: 'The Quiet Farm',
   start: { flag: 'q_ashcombe' },
-  // Done once the wand is back and Hild has asked after her daughter at Gullwick.
-  done: { flag: ['q_ashcombe_done', 'q_wenna'] },
+  // Done once the wand is back, Hild has asked after her daughter at Gullwick and the keeper's log is
+  // read at Crowness.
+  done: { flag: ['q_ashcombe_done', 'q_wenna'], seen: 'downs_e3:e3_log' },
   entries: [
     { id: 'hired', when: { flag: 'q_ashcombe' },
       text: 'Lord Vask, the Regent-Warden, has hired us: the Ashcombe farm south of Helmstow has gone quiet. He wants anything we find there that is not a rat.' },
     { id: 'wenna', when: { flag: 'q_wenna' },
       text: 'At Gullwick, Hild asked us to find her daughter, Wenna, gone with the boat the night the light failed. She wants the name said wherever we go.' },
+    { id: 'keeper', when: { seen: 'downs_e3:e3_log' },
+      text: 'At Crowness Light, the keeper\'s log of that night: the Hearth out eleven times, and the gaps between even, as if measured.' },
     // The Berth (#70): a step on the road, not yet one the chapter waits on.
     { id: 'berth', when: { seen: 'berth:berth_bier' },
       text: 'In the Berth, the Queen\'s barrow, Queen Isaure lies on her bier with her grave goods untouched. Only her signet is gone, cut from her hand.' },
@@ -33,12 +36,14 @@ export const CHAPTER: Chapter = {
       text: 'He spoke of the Grove Stone in Thornmark: gone quiet too, he said, and he wants to know why.' },
   ],
   goals: [
-    // A company that did the farm first: Gullwick is still to come.
+    // A company that did the farm first: Gullwick and Crowness are still to come.
+    { when: { flag: ['q_ashcombe_done', 'q_wenna'] }, at: 'downs_e3', text: 'Crowness Light, past Gullwick: the keeper\'s log of that night.' },
     { when: { flag: 'q_ashcombe_done' }, at: 'downs_f3', text: 'Gullwick, west on the Salt Road: a mother asks for her daughter.' },
     { when: { item: 'survey_wand' }, at: 'keep', text: 'Take the survey wand to Lord Vask in Helmstow.' },
     { when: { visited: 'mill' }, at: 'mill', text: 'Search the cellar under the Ashcombe farmhouse.' },
-    { when: { flag: ['q_ashcombe', 'q_wenna'] }, at: 'shelf', text: 'Find out why Ashcombe has gone quiet: south of Helmstow, then east along the Foreland road.' },
-    // Hired: Gullwick first, where the road west goes, and then the farm.
+    { when: { flag: ['q_ashcombe', 'q_wenna'], seen: 'downs_e3:e3_log' }, at: 'shelf', text: 'Find out why Ashcombe has gone quiet: south of Helmstow, then east along the Foreland road.' },
+    // Hired: Gullwick first, where the road west goes, then Crowness, and then the farm.
+    { when: { flag: ['q_ashcombe', 'q_wenna'] }, at: 'downs_e3', text: 'Before Ashcombe, Crowness Light: on along the Salt Road past Gullwick, to read the keeper\'s log of that night.' },
     { when: { flag: 'q_ashcombe' }, at: 'downs_f3', text: 'Before Ashcombe, Gullwick: west on the Salt Road from Brandy Hole\'s beach, a mother asks every company for her daughter.' },
     // Shown only to a company that began a later chapter before Vask hired it.
     { when: {}, at: 'keep', text: 'The Regent-Warden is hiring in Helmstow.' },

@@ -52,7 +52,35 @@ export const DOWNS_F2: MapDef = {
   features: [
     { kind: 'sign', x: 30, y: 28, text: 'A milestone: GULLWICK 2. CROWNESS 4.' },
     { kind: 'shrine', x: 25, y: 28, id: 'f2_shrine', text: 'A wayside shrine where the farm track leaves the road. Its candle is out.', stat: 'luck', done: 'The shrine is quiet.' },
-    { kind: 'event', x: 6, y: 11, id: 'f2_lamp', once: true, when: { hours: 'day' }, text: 'Coldharbour. A lamp burns in the farmhouse window in broad day, and the glass is black with it.' },
+    { kind: 'event', x: 6, y: 11, id: 'f2_lamp', once: true, when: { hours: 'day' }, text: 'Coldharbour: a farm kept like a barracks, whitewashed to the eaves, and not a weed in the yard.' },
+    // Riders in the Dark (#68): Dunstan in his yard. The riders are seen at E2's ford by night; he
+    // writes to Hale, who takes the letter at the Scarth, or keeps it under his roof.
+    { kind: 'npc', x: 10, y: 11, name: 'Captain Dunstan, retired', lines: [
+      'Coldharbour. A lamp burns in the farmhouse window, as it does at every hour, and the man mending the gate has a Warden\'s shoulders and a farmer\'s hands. He does not stop working to talk.',
+      '"Captain, once. Dunstan, now. You\'ll want to know about the lamp. Everyone does, and the gate won\'t mend itself, so I\'ll tell you while I work."',
+      '"The week the Queen died, riders came off the Salt Road and through my stubble at the second hour. Eight horses, shod; farm horses aren\'t shod for chalk. West over the ford towards the Berth, and back before dawn, and not a lantern among them."',
+      '"I\'ve shown a light in that window every night since I hung up the grey. An honest rider steers for it. These steered round it. Go and sit at the ford by night. Men who ride dark always have a reason to go back."',
+    ], flag: 'q_riders', says: [
+      { after: { flag: 'q_riders_letter' }, lines: [
+        '"Anything from Hale? No. There wouldn\'t be. Wardens don\'t write \'thank you\'; we write \'noted\'." He looks at the lamp. "I\'ve sat where he\'s sitting. You send it up the line, and you hope the line\'s still yours."',
+      ] },
+      { after: { flag: 'q_riders_kept' }, lines: [
+        '"You\'ll not hear it from me again, and I\'ll thank you not to say it in Helmstow with my name on it." He is mending the same gate. "I sleep less and I still have a roof. That\'s the trade. I made it with my eyes open, which is more than most men can say of theirs."',
+      ] },
+      { after: { flag: 'q_riders', seen: 'downs_e2:e2_riders' }, lines: [
+        'Dunstan listens with his hands flat on the table, the way a man listens to a report.',
+        '"Grey under the cloaks." He is quiet a while. "A Warden shows his light. It\'s the first thing they teach you and the last you forget, because the country has to know who\'s on its roads. Wardens don\'t ride dark. So either the Wardens have gone dark, or somebody\'s wearing us."',
+        '"Hale holds the Scarth. He\'s the one Warden east of here I\'d put this in front of, and he\'d want it in front of him, which is his trouble and would become mine. Or it goes no further than this table, and I keep my farm."',
+      ], choice: { ask: '"I\'m asking you, because I know what I\'d do; I\'ve done it before, and it\'s why I farm. Do I write to Hale, or does this stay under my roof?"', answers: [
+        { label: 'Write to Hale.', sets: 'q_riders_letter', gives: 'dunstan_letter', says: [
+          '"Then I write." He does, in the Wardens\' shorthand, and folds it without a seal. "Take it east yourselves; I\'ll not trust it to the post, and a seal only tells a thief which letter to take. He\'ll read it, and it\'ll be one more thing he knows. Knowing is what gets Wardens killed. He\'d say the same of me, and he\'d be right."',
+        ] },
+        { label: 'Keep it under your roof.', sets: 'q_riders_kept', says: [
+          '"Then it stays here." He gets up and trims the lamp in the window, though it does not need it. "I\'ve a roof, a barn and forty acres, and I\'d like to die in the house. That\'s not cowardice at my age. It\'s arithmetic."',
+          '"The lamp stays lit, mind. That was never for them."',
+        ] },
+      ] } },
+    ] },
     { kind: 'well', x: 8, y: 11, text: 'Coldharbour\'s well. The rope is new.' },
     { kind: 'camp', x: 22, y: 7, name: 'Woodcutter\'s camp', text: 'A woodcutter\'s fire in a ring of split beech.' },
     { kind: 'npc', x: 21, y: 7, name: 'A woodcutter', lines: [
