@@ -100,6 +100,14 @@
         "i5_hearth",
         "i5_hollow",
         "i5_roost",
+        "j4_cairn",
+        "j4_cleft",
+        "j4_cleft_box",
+        "j4_eaves",
+        "j4_glade",
+        "j4_lookout",
+        "j4_prints",
+        "j4_shrine",
         "lake",
         "lodestone",
         "scarth_watch",
@@ -182,6 +190,11 @@
         "i5_brood2",
         "i5_keepers",
         "i5_rootwalkers",
+        "j4_heartwood",
+        "j4_owls",
+        "j4_rootwalkers",
+        "j4_spiders",
+        "j4_wolves",
         "lodge_brambles",
         "marsh_spiders",
         "road_bandits",
@@ -214,7 +227,8 @@
         "260,86",
         "276,77",
         "285,116",
-        "286,135"
+        "286,135",
+        "308,112"
       ]
     },
     "greywater1": {
@@ -418,6 +432,10 @@
       "at": "264,126",
       "size": "32x32"
     },
+    "deepthorn_j4": {
+      "at": "296,94",
+      "size": "32x32"
+    },
     "downs_d3": {
       "at": "104,62",
       "size": "32x32"
@@ -482,6 +500,7 @@
     "q_grove",
     "q_grove_done",
     "q_grove_rest",
+    "q_hermit",
     "q_hob_key",
     "q_hunters",
     "q_hunters_kept",
