@@ -1,7 +1,7 @@
 // The maps as written, each on its own: every row the same width, exits and features on open
 // ground, every monster and item real and placed, every business with a room, and every open cell
 // reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
-import { AREAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
+import { AREAS, ATLAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
@@ -79,6 +79,11 @@ export function maps(): void {
     }
     for (const e of m.exits) for (const flag of [e.needFlag ?? []].flat()) ok(MAP_DEFS.some((d) => d.features?.some((f) => f.kind === 'npc' && personFlags(f).includes(flag))), `${def.id}: gated exit flag '${flag}' is set by some person`);
   }
+  // The Deepthorn's monsters are harder, not more: no group on its maps is above eight.
+  const deep = new Set(ATLAS.zones.find((z) => z.id === 'deepthorn')?.maps?.map((m) => m.map));
+  ok(deep.size > 0, 'the Deepthorn has maps');
+  const big = MAP_DEFS.filter((d) => deep.has(d.id)).flatMap((d) => (d.encounters ?? []).filter((e) => e.monsters.length > 8).map((e) => `${e.id} (${e.monsters.length})`));
+  ok(!big.length, `no group in the Deepthorn is above eight${big.length ? ' -> ' + big.join(', ') : ''}`);
   // Every quest item is dropped or found somewhere; every monster is placed on some map.
   const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
   for (const id of Object.keys(MONSTERS)) {
