@@ -1131,7 +1131,7 @@ function arrowHead(ctx: CanvasRenderingContext2D, x: number, y: number, ang: num
   poly(ctx, [x, y, x - Math.cos(ang) * a + Math.sin(ang) * b, y - Math.sin(ang) * a - Math.cos(ang) * b, x - Math.cos(ang) * a - Math.sin(ang) * b, y - Math.sin(ang) * a + Math.cos(ang) * b], color, '#120c14');
 }
 
-const EDGE_COLOR: Record<ZoneEdge['kind'], string> = { road: '#ffd760', enter: '#f4ead2', stairs: '#ffd760', sea: '#7ec8f0', deep: '#c08af0' };
+const EDGE_COLOR: Record<ZoneEdge['kind'], string> = { road: '#ffd760', enter: '#f4ead2', stairs: '#ffd760', sea: '#7ec8f0', deep: '#c08af0', coach: '#e0a868' };
 const PLANNED_WAY = '#d8d0e8';
 
 /** A tiny boat for the middle of a sea route. */
@@ -1201,7 +1201,7 @@ function drawEdge(ctx: CanvasRenderingContext2D, e: ZoneEdge, find: (id: string)
     for (let k = 0; k <= 16; k++) { const t = k / 16; pts.push([(1 - t) * (1 - t) * ax + 2 * (1 - t) * t * mx + t * t * bx, (1 - t) * (1 - t) * ay + 2 * (1 - t) * t * my + t * t * by]); }
   }
   const path = (): void => { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (const p of pts.slice(1)) ctx.lineTo(p[0], p[1]); };
-  const main = e.kind === 'road' || e.kind === 'sea';
+  const main = e.kind === 'road' || e.kind === 'sea' || e.kind === 'coach';
   const color = e.planned && e.kind !== 'sea' && e.kind !== 'deep' ? PLANNED_WAY : EDGE_COLOR[e.kind];
   ctx.save();
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';

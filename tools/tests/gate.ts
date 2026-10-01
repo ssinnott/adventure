@@ -7,7 +7,7 @@
 // until it holds.
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
-import { ATLAS } from '../../src/content/index.ts';
+import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
 import { rest } from '../../src/game/party.ts';
@@ -129,6 +129,24 @@ export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'whe
 /** The two groups nearest a zone's way in, as a company first finds it: none that waits on an `after`. */
 export const nearestWayIn = (groups: readonly EncounterDef[], steps: (x: number, y: number) => number): EncounterDef[] =>
   groups.filter((g) => !g.after).sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
+/**
+ * Where the crossings people sell (game/passage.ts) put a company onto map `id`: a crossing's landing
+ * on it, and where a crossing lands in a town, that town's ways out onto it. Each is a way in, as a
+ * coach carries a company past country it has not earned (#164).
+ */
+export function landings(defs: readonly MapDef[], id: string): { x: number; y: number; by: string }[] {
+  const out: { x: number; y: number; by: string }[] = [];
+  for (const d of defs) for (const f of d.features ?? []) {
+    if (f.kind !== 'npc') continue;
+    for (const p of f.passage ?? []) {
+      const by = `${p.by} from ${d.id}`;
+      if (p.to === id) out.push({ x: p.x, y: p.y, by });
+      const town = defs.find((t) => t.id === p.to && t.kind === 'town');
+      for (const e of town?.exits ?? []) if (e.to === id && !out.some((o) => o.x === e.tx && o.y === e.ty && o.by === by)) out.push({ x: e.tx, y: e.ty, by: `${by} through ${town!.id}` });
+    }
+  }
+  return out;
+}
 /**
  * A den's reading at a level: its keepers' win rate against each of its brood groups', how many
  * brood it keeps abroad and at what pace. Its fault, if any: keepers won more often than a brood
@@ -307,14 +325,17 @@ export function gate(): void {
       // The two groups nearest its way in are among its gentlest, a point's grace below the median of
       // its own groups so that where most groups are always won one loss in a hundred is not a wall.
       // A group that comes only after a step is not there when a company first walks in.
-      const first = fought.find((d) => d.id === z.maps![0].map);
-      if (first?.encounters?.length) {
-        const steps = stepsFrom(first), level = floor - GATE.under >= 1 ? floor - GATE.under : floor;
-        const near = nearestWayIn(first.encounters, steps);
-        const mid = median(maps.flatMap((d) => d.encounters!).map((g) => rate(g, level)));
+      // A crossing's landing on any of its maps is a way in as well, held the same way (#164).
+      const level = floor - GATE.under >= 1 ? floor - GATE.under : floor;
+      const mid = median(maps.flatMap((d) => d.encounters!).map((g) => rate(g, level)));
+      const warn = (d: MapDef, from: { x: number; y: number }, key: string, what: string): void => {
+        const near = nearestWayIn(d.encounters!, stepsFrom(d, from));
         const least = Math.min(...near.map((g) => rate(g, level)));
-        check(`${zn}: warning`, least, atLeast(mid - GATE.warning.aim), atLeast(mid - GATE.warning.limit), `${zn}: the groups nearest its way in, ${near.map((g) => `${g.id} ${pc(rate(g, level))}`).join(' and ')}, are won at ${level} about as often as its median group or more (${pc(mid)}; less ${aims(pc(GATE.warning.aim), pc(GATE.warning.limit))})`);
-      }
+        check(key, least, atLeast(mid - GATE.warning.aim), atLeast(mid - GATE.warning.limit), `${zn}: the groups nearest ${what}, ${near.map((g) => `${g.id} ${pc(rate(g, level))}`).join(' and ')}, are won at ${level} about as often as its median group or more (${pc(mid)}; less ${aims(pc(GATE.warning.aim), pc(GATE.warning.limit))})`);
+      };
+      const first = fought.find((d) => d.id === z.maps![0].map);
+      if (first?.encounters?.length) warn(first, first.start, `${zn}: warning`, 'its way in');
+      for (const d of maps) for (const l of landings(MAP_DEFS, d.id)) warn(d, l, `${zn}: warning by ${l.by}`, `the ${l.by.split(' ')[0]}'s landing at ${d.id} ${l.x},${l.y}`);
     }
   }
   const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
