@@ -204,13 +204,13 @@ spell tiers between them at 15 and 23 (§7), so something new comes every four l
 prestige level is one a town's trainer teaches: Helmstow and Thornhold teach to 11, the Kilns' towns
 to 19 and Cinderport to 27.
 
-**Hit points and spell points,** added to every level from each prestige on, so that they add up:
+**Hit points and spell points,** added to every level from each prestige's own on, and adding up:
 
 | | Hit points | Spell points | By 32 |
 |---|---|---|---|
-| Casters (Cleric, Sorcerer, Druid) | +1 | +2 | +39 and +78 |
-| Hybrids (Paladin, Ranger, Bard) | +1 | +1 | +39 and +39 |
-| The rest (Knight, Thief, Barbarian, Monk) | +2 | none | +78 |
+| Casters (Cleric, Sorcerer, Druid) | +1 | +2 | +42 and +84 |
+| Hybrids (Paladin, Ranger, Bard) | +1 | +1 | +42 and +42 |
+| The rest (Knight, Thief, Barbarian, Monk) | +2 | none | +84 |
 
 **Prices.** The first about 1,000 gold, a little under the 1,200 Plate Mail costs in Thornhold's
 Armoury, and the second about 4,000, until the gold curve (#159) sets them. The third asks a quest.
@@ -365,12 +365,12 @@ points tier 5 was at 8.
 The points and the steps the map spells take wait on the harness and the gold curve (#159); the
 damage spells' dice are the harness's stand-ins (MONSTERS.md §4.4).
 
-**Ranks.** A rank belongs to the caster, not the spell: it lifts every spell they know, those learned
-later too. Each rank adds 15% to the dice of a damage spell and to what a mending spell heals, 45% by the third;
-flat bonuses (Spellfire, Healing Hands), buffs, cures, Slumber, raising and the map spells stay as
-they are. A ranked spell costs what it did: the prestiges' spell points are the price. A hybrid's
-rank is half a caster's step, since its perks carry the rest of its growth. The third rank's
-signature is the class's own perk (§5); no spell has one of its own.
+**Ranks.** A rank belongs to the caster, not the spell: it lifts every spell they know, those
+learned later too. Each rank adds 15% to the dice of a damage spell and to what a mending spell
+heals, 45% by the third; flat bonuses (Spellfire, Healing Hands), buffs, cures, Slumber, raising and
+the map spells stay as they are. A ranked spell costs what it did: the prestiges' spell points are
+the price. A hybrid's rank is half a caster's step, since its perks carry the rest of its growth.
+The third rank's signature is the class's own perk (§5); no spell has one of its own.
 
 **Elements.** Fire, cold, lightning, nature and holy, one to every damage spell, to meet monsters
 that resist one (half), are immune to one (none) or are weak to one (half again) (MONSTERS.md §3.3,
@@ -386,8 +386,8 @@ that resist one (half), are immune to one (none) or are weak to one (half again)
 
 Each list gains the element it lacks at 15, before the monster immune to its own: the sorcerer cold
 before the Kilns' salamanders, the cleric fire before the machines the Hearth's light passes through
-(MONSTERS.md §12), the druid fire before Cairnmoor's trolls, which heal from anything else. No rank adds an element; only the
-sorcerer's third deepens one, passing resistance and never immunity.
+(MONSTERS.md §12), the druid fire before Cairnmoor's trolls, which heal from anything else. No rank
+adds an element; only the sorcerer's third deepens one, passing resistance and never immunity.
 
 **Map spells.** Each is a shortcut, never a key (docs/EXPANSION.md §2.2): it has a cost and a limit,
 and the skill beside it is free and lasts.
