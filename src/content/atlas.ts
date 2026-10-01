@@ -17,8 +17,10 @@
 // This is the plan: the land, the areas of the road and what is not built yet. Each built area
 // charts its own zones, plates and sites in its folder (areas/<area>/atlas.ts), and
 // src/content/index.ts merges the two into ATLAS, which is what everything reads; a row an area
-// charts replaces the plan's row of the same id.
+// charts replaces the plan's row of the same id. A planned area may chart its rows in its folder
+// before it is listed, and the plan spreads them in where its own were.
 import type { Atlas } from '../game/atlas.ts';
+import * as SUNDERWOOD from './areas/sunderwood/atlas.ts';
 
 export const PLAN: Atlas = {
   width: 512,
@@ -257,8 +259,7 @@ export const PLAN: Atlas = {
     { id: 'delta', name: 'The Delta', area: 'saltreach', seeds: [[62, 150], [84, 136]], label: [76, 128] },
     { id: 'saltings', name: 'The Saltings', area: 'saltreach', seeds: [[98, 194], [70, 194]] },
     { id: 'wrackholm', name: 'Wrackholm', area: 'wrackholm', seeds: [[168, 176]] },
-    { id: 'eaves', name: 'The Eaves', area: 'sunderwood', seeds: [[292, 40], [300, 86]] },
-    { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', seeds: [[372, 50], [370, 96]], label: [378, 84] },
+    ...SUNDERWOOD.ZONES,
     { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66]] },
     { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', seeds: [[452, 120], [470, 160]] },
     { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', seeds: [[408, 160], [404, 140]] },
@@ -283,8 +284,7 @@ export const PLAN: Atlas = {
     { id: 'smugglers_cove', name: 'Kelp Hole', kind: 'dungeon', planned: true, band: [12, 14], at: [150, 158] },
     { id: 'tide_ship', name: 'The Tide Ship', kind: 'dungeon', planned: true, band: [12, 14], at: [208, 192] },
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
-    { id: 'lantern_watch', name: 'Lantern Watch', kind: 'town', planned: true, band: [14, 16], at: [372, 36] },
-    { id: 'the_sunder', name: 'The Sunder', kind: 'dungeon', planned: true, band: [14, 16], at: [320, 62] },
+    ...SUNDERWOOD.PLACES,
     { id: 'anvilhall', name: 'Anvilhall', kind: 'town', planned: true, band: [16, 18], at: [452, 70] },
     { id: 'kilnhaven', name: 'Kilnhaven', kind: 'town', planned: true, band: [16, 18], at: [378, 158] },
     { id: 'deep_mines', name: 'The Deep Mines', kind: 'dungeon', planned: true, band: [16, 18], at: [440, 104] },
@@ -312,10 +312,7 @@ export const PLAN: Atlas = {
     // IV. Wrackholm.
     { name: 'Kelp Hole', icon: 'cave', at: [154, 170], label: 'left', planned: true },
     { name: 'Tide Ship', icon: 'wreck', at: [182, 188], label: 'right', planned: true },
-    // V. Sunderwood.
-    { name: 'Lantern Watch', icon: 'tower', at: [372, 46], label: 'below', planned: true },
-    { name: 'The Sunder', icon: 'rift', at: [338, 70], label: 'right', planned: true },
-    { name: 'Sunderfall', icon: 'falls', at: [340, 60], label: 'none', planned: true },
+    ...SUNDERWOOD.SITES,
     // VI. The Kilns.
     { name: 'Anvilhall', icon: 'fortress', at: [452, 80], label: 'below', planned: true },
     { name: 'Deep Mines', icon: 'mine', at: [440, 96], label: 'below', planned: true },

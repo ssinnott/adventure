@@ -12,9 +12,10 @@ main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Nothing of it is built. Its content will be `src/content/areas/sunderwood/` (maps, monsters, items,
 its chapter of the one quest, The Wall, in `chapter.ts`, its side quests in `quests.ts`, climate and
-its part of the world map) and its businesses' rooms `src/ui/interiors/sunderwood/`. The folder
-comes with its first map (#195), as Thornmark's did; until then its rows are the plan's
-(`src/content/atlas.ts`). Its ids: the area `sunderwood`, its zones `eaves` and `lanternwood`, the
+its part of the world map) and its businesses' rooms `src/ui/interiors/sunderwood/`. Its part of
+the world map is its folder's already (`atlas.ts`, #194), spread into the plan
+(`src/content/atlas.ts`) until the area is listed; the rest of the folder comes with its first map
+(#195), as Thornmark's did. Its ids: the area `sunderwood`, its zones `eaves` and `lanternwood`, the
 town `lantern_watch` and the Sunder `the_sunder`.
 
 ---
@@ -33,8 +34,8 @@ Squares are the ones the atlas gives each zone, shallows and rivers included. Wi
 the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
-to y 131 on Sunder Bay. The zones' bands are the plan's: the atlas gives the area 14–16 and the
-boxes rise through it (§4).
+to y 131 on Sunder Bay. The bands are this doc's, written on the atlas's rows: the area is 14–16
+and the boxes rise through it (§4).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Sunderwood is the I to M columns from row 1
 to row 4, with a corner of L5. The land worth a map is ten boxes: I2, J2, K2 and L2 along the east
@@ -90,11 +91,13 @@ cannot see the bottom of, mist under the pines, and by night the moths to any li
 
 ## 3. What is built
 
-Nothing. The atlas has the area's zones, the town and the dungeon as planned plates, its sites
-(Lantern Watch, the Sunder, Sunderfall) and its links: the east road in and on, the rope bridge,
-the Sunder's and the Watch's ways in. Its systems are #150's, dead wood, crystal and the chasm
-(#163) its own; the coach east from Saltmouth (#164) is how the act stays a road between Wrackholm
-and here. Its monsters are drawn in #206 and its rooms in #207.
+Nothing but its atlas rows (`src/content/areas/sunderwood/atlas.ts`, #194): the zones with their
+bands (the Eaves 14–15, Lanternwood 15–16), the town at 14–16, the Sunder at 15–16 and the sites,
+which the plan spreads in where its own rows were. The atlas has the area's zones, the town and the
+dungeon as planned plates, its sites (Lantern Watch, the Sunder, Sunderfall) and its links: the east
+road in and on, the rope bridge, the Sunder's and the Watch's ways in. Its systems are #150's, dead
+wood, crystal and the chasm (#163) its own; the coach east from Saltmouth (#164) is how the act
+stays a road between Wrackholm and here. Its monsters are drawn in #206 and its rooms in #207.
 
 ## 4. What is still to build
 
@@ -103,7 +106,7 @@ a dungeon and a town, and the boxes hold 9,181 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
-| I2 | The Eaves' way in | the Eaves | country | 14 | 755 (woods 601, hills 60), 28 shallow | the east road out of Thornmark; the gentlest groups; the first glass in a wolf's fur | none | #195 |
+| I2 | The Eaves' way in | the Eaves | country | 14 | 755 (woods 601, hills 60), 28 shallow | the east road out of Thornmark; the gentlest groups, pine bears | none | #195 |
 | J2 | The Eaves | the Eaves | core | 14–15 | 1,024 (forest 866, deadwood 139) | pines under the rim; pine bears; the pine-cutters' steading at the glass trees; the road on to the bridge | the Sunder seen | #196 |
 | K2 | Sunderfall and the rope bridge | the Eaves, Lanternwood | core | 15 | 968 (forest 368, deadwood 383, crystal 117, chasm 82), 56 shallow | the bridge at 330–346,56; Sunderfall at 340,60 and its shrine; the glass trees | the crossing of the gorge | #197 |
 | K3 | The Sunder's mouth | the Eaves, Lanternwood | core | 15–16 | 1,024 (forest 402, deadwood 462, crystal 78, chasm 82) | the way down at 338,70; the gleaners' ledges; sunder hounds | the way down | #198 |
@@ -153,52 +156,64 @@ features; the pay shared out over the area (§8).
 - **Purpose.** The first box past Thornmark's east edge: woods and hills over the Hoarhills, the
   area's gentlest groups, and the crossing line that tells a level-10 company it is early (#166).
   It opens the Thornmark map's east edge for the east road.
-- **Landmarks.** The east road over the ridge's shoulder and down into the woods; the Hoarhills'
-  crest along the box's south, with the still lake's east shore (Lyngwyn, docs/areas/thornmark.md
-  §10) under it; a woodcutter's camp; the milestone.
+- **Landmarks.** The east road over the Hoarhills' shoulder, out of Thornmark at 263.5,40.5 and down
+  into the first woods; the crest along the box's south, with Lyngwyn's east shore grey under it
+  (docs/areas/thornmark.md §10); a woodcutter's camp; the milestone, down.
 - **Points of interest,** about six features and five groups:
   - a milestone with its face turned to the ground, HELMSTOW 40;
   - the woodcutter's camp, to rest at (#45), and the woodcutter with a rumour of the gorge;
   - a cairn on the ridge's shoulder (#45), a shrine where the road enters the wood (#45);
   - a lookout on the crest, west over Thornmark.
-- **Encounters.** Wolves with the first glass in their fur, the sunder hound's gentler kin (two
-  groups); a pine bear alone at the box's far end; moths at the camp's fire by night.
+- **Encounters.** Pine bears (two groups, the stronger alone at the box's far end); lantern moths at
+  the camp's fire by night.
 - **Quests.** None; the chapter's goal points down the road (§5).
 - **The secret and its hint.** Under the fallen milestone, a Warden's pack from the tower's last
-  patrol, with the patrol's orders. The hint: the woodcutter.
+  patrol, the patrol's orders still in it. The hint is in two parts: the turf under the stone's edge
+  cut square, not torn, and the woodcutter's word that it stood in spring.
+- **Lines,** drafts for the builder:
+  - the milestone: *A milestone on its face in the bracken, HELMSTOW 40 turned to the sky. The
+    turf under its edge is cut square, not torn.*
+  - the woodcutter: *Stood when I came up in spring. No frost lays a stone that size flat.*
 - **New here.** Woods underfoot (#210); the east road; a company told it is early.
 - **Finds.** A Warden's Halberd +1 in the pack.
-- **Pay.** About 1,300 xp a member.
+- **Pay.** About 1,150 xp a member.
 
 ### 4.3 J2, the Eaves (#196): core, band 14–15
 
 - **Purpose.** The Eaves' step of the quest: the Sunder first seen from its west rim, a wood split
   in half and the trees along the edge gone to glass. The pine bears; the pine-cutters' steading.
-- **Landmarks.** Pines under the rim thinning to dead wood at the box's east edge, where the gorge
-  opens (the chasm is K2's and K3's; here the rim looks over it); the steading at the glass trees;
-  the road bending north-east to the bridge; a bear's cave.
+- **Landmarks.** Pines under the rim, thinning east to dead wood where the ground stops: the rim
+  looks over the gorge, which is K2's and K3's; the steading among the glass trees; the road bending
+  north-east for the bridge; a bear's cave under the rim at the north path's end.
 - **Points of interest,** about nine features and nine groups:
   - the rim, and the event at it: the step (§5);
   - the steading, the family and the child going to glass (#56's 29);
   - the bear's cave, and the gleaner's sack in it;
   - a camp (#45), a cairn (#45), a shrine at the road's bend (#45);
   - a hermit under the rim who has watched the glass spread.
-- **Encounters.** Pine bears (three groups, one at the cave); sunder hounds along the rim; lantern
-  moths by night at the steading's lamp.
+- **Encounters.** Pine bears (three groups, one at the cave); sunder hounds along the rim at the
+  gorge; lantern moths by night at the steading's lamp.
 - **Quests.** The step. The Family at the Glass Trees (§6).
 - **The secret and its hint.** The bear's cave, with a gleaner's sack in it: shards, and a tally
-  of where they went. The hint: the cutters' dog will not go up the north path.
+  of where each went. The hint: the cutters' dog sits at the foot of the north path and will not go
+  up it, and the cutter's word that it never minded the bear before.
+- **Lines:**
+  - the rim, the step: *The wood ends in a line, and the ground with it. Across the gap the trees
+    stand clear as glass, and the rain goes down further than you can see.*
+  - the dog: *The dog sits at the foot of the north path and will go no further. It never minded
+    the bear before, the cutter says.*
 - **New here.** Dead wood underfoot (#163); the bears, a new family (#240); the Sunder seen.
 - **Finds.** A Great Axe +1 in the cave.
-- **Pay.** About 1,500 xp a member.
+- **Pay.** About 1,350 xp a member.
 
 ### 4.4 K2, Sunderfall and the rope bridge (#197): core, band 15
 
 - **Purpose.** The crossing of the gorge: the rope bridge the east road crosses the Sunder by,
   Sunderfall where the river goes over the lip, and its shrine, the Paladin's second prestige.
-- **Landmarks.** The gorge as chasm down the box's middle, glass trees along both lips; the bridge,
-  the one crossing, a way and never a lock; Sunderfall on the east lip, its shrine and its hermit;
-  the dam above the fall.
+- **Landmarks.** The chasm down the box's middle, glass trees along both lips; the bridge at
+  330–346,56, the one crossing, a way and never a lock; Sunderfall at 340,60 on the east lip, where
+  the river goes over, with its shrine and its hermit; the dam above the fall; the ledge behind the
+  water.
 - **Points of interest,** about nine features and eight groups:
   - the bridge, and the event on it: the step (§5);
   - the shrine at Sunderfall, the Paladin's trainer (#19) and the hermit (#56's 30);
@@ -209,19 +224,26 @@ features; the pay shared out over the area (§8).
 - **Encounters.** Sunder hounds and a glass spider at the bridge's far end (MONSTERS §6.3);
   sunderlings in the glass along the lips; gleaners at the dam.
 - **Quests.** The step. The Dammed Fall (§6).
-- **The secret and its hint.** A ledge under the fall behind the water, with the first gleaner's
-  tally. The hint: the fall's spray freezes on one rock and not its neighbours.
+- **The secret and its hint.** A ledge behind the fall's water, with the first gleaner's tally. The
+  hint: every rock under the fall is green with its spray but one, bare and worn, where feet go
+  through the water.
+- **Lines:**
+  - the bridge, the step: *Rope and planks over the gorge, swaying. Rain goes down past your boots
+    and never lands that you can hear.*
+  - the rocks: *Every rock under the fall is green with its spray. One is bare, and worn.*
+  - the fall, the dam's doing (§6): *A thread down wet rock, and a quiet where the roar should
+    be.*
 - **New here.** Crystal and the chasm's edge (#163); a bridge over a Rift.
 - **Finds.** A Holy Symbol of the fall, from the shrine, and a Long Sword +2 on the ledge.
-- **Pay.** About 1,500 xp a member.
+- **Pay.** About 1,350 xp a member.
 
 ### 4.5 K3, the Sunder's mouth (#198): core, band 15–16
 
 - **Purpose.** The way down into the Sunder, dead wood and crystal along the gorge, and the Hand
   quarrying the Rift: a sack of glowing shards, and a knife for the next.
-- **Landmarks.** Dead wood to the gorge's lip; the ledges cut into its side as the way down, with
-  the dungeon's door at the first landing at 338,70; the gleaners' camps on the ledges; a
-  black-glass Rift at the box's south end.
+- **Landmarks.** Dead wood to the lip; the ledges cut into the gorge's face, the way down, with the
+  dungeon's door on the first landing at 338,70; the gleaners' camps along them; the dry bed behind
+  the dam; a black-glass Rift at the box's south end, open whatever the company does.
 - **Points of interest,** about nine features and nine groups:
   - the ledges, and the door: the step (§5);
   - the gleaners' camps, and the foreman's tally;
@@ -232,40 +254,54 @@ features; the pay shared out over the area (§8).
   fight, two groups); sunderlings at the Rift; a glass spider on the threads between the ledges.
 - **Quests.** The step. The Dammed Fall's dam (§6).
 - **The secret and its hint.** The dry bed behind the dam, where the first shards were quarried,
-  and a shard the size of a fist still in the rock. The hint: the fall's silence, heard from K2.
+  and a shard the size of a fist still in the rock. The hint: dead wood stacked across the old
+  channel at the bed's mouth, cut ends outward; and K2's fall, gone quiet.
+- **Lines:**
+  - the ledges, the step: *Ledges cut into the gorge's face, a square wide, switchbacking down
+    into rain. On the first landing, a door, and chip marks all round it.*
+  - the bed: *Dead wood stacked across the old river bed, cut ends outward. Nobody stacks firewood
+    on a riverbed.*
 - **New here.** The Hand as quarrymen; a Rift that stays open.
 - **Finds.** The fist-sized shard, a quest item the Watch reads (§5).
-- **Pay.** About 1,500 xp a member.
+- **Pay.** About 1,350 xp a member.
 
 ### 4.6 The Sunder (#199): dungeon, two levels of 32×32, band 15–16
 
 - **Purpose.** The act's last dungeon and its biggest Rift, hand-built (#151, call 2): the ledges
   down the gorge and the floor, where under the soil and the rock stands the wall.
-- **Landmarks.** The upper level: ledges switchbacking down the gorge's face, glass spiders on the
-  threads between them, sunderlings in the black glass, a glass bear at the last landing. The floor:
-  dead wood and crystal in the dark, the river lost in the rock, the Warden of the Sunder in the
-  gorge's narrowest place; past it, silence, no group within four squares (MONSTERS §6.3), and the
-  wall, flat and seamless, running both ways further than the light reaches, warm to the hand.
+- **Landmarks.** The upper level: ledges switchbacking down the gorge's face, glass threads strung
+  between them and the spiders on them, sunderlings in the black glass. The floor: dead wood and
+  crystal in the dark, the river gone into the rock, a glass bear (MONSTERS §6.3 puts it here), the
+  Warden of the Sunder in the gorge's narrowest place; past it four squares of nothing (MONSTERS
+  §6.3), and the wall: flat and warm, without a join, further both ways than the light.
 - **Points of interest,** as a 32×32 dungeon is held: the ledges' landings, the threads, the
   river's fall into the rock, the Warden's narrows, the wall's length, the seam.
 - **Encounters.** Glass spiders (three groups), sunderlings (three), a glass bear; the Warden of the
   Sunder, boss, level 16, whose death closes nothing: the Sunder's groups keep coming after.
 - **Quests.** The Length of the Wall (§6). The chapter's entry: the wall (§5).
 - **The secret and its hint.** A place where the wall's face is not flat, a seam, and something
-  scratched beside it that is not the knot. The hint: the surveyor says where his rubbing failed.
+  scratched beside it that is not the knot. The hint: the surveyor chalked a mark every ten paces
+  and stopped where his paper tore, and the chalk on the wall runs out there.
+- **Lines:**
+  - the wall, the step: *A wall, under everything. Flat, no join, further both ways than the light.
+    Warm under the hand.*
+  - the chalk: *Chalk on the wall, a mark every ten paces, the surveyor's. Past the last one there
+    are none.*
+  - the surveyor, at the Watch: *I chalked it every ten paces and took rubbings. At one mark the
+    paper tore. I stopped chalking there.*
 - **New here.** A Rift that stays open; a wall no one built; the first thing on the road the
   company cannot fight.
 - **Finds.** The Warden's heart, a black-glass shard, named; a Plate Mail +2 in a gleaner's cache on
-  the ledges, the ladder's top for the act.
-- **Pay.** About 2,600 xp a member.
+  the ledges, a step past the Watch's stores, which are the ladder's last in the act (§8).
+- **Pay.** About 2,350 xp a member.
 
 ### 4.7 L2, Lantern Watch's box (#200): core, band 15–16
 
 - **Purpose.** Lanternwood's step: the Lanterns' watchtower across the gorge, the wood round it,
   and the moths that come to its lamp by night.
-- **Landmarks.** Forest with the road through it to the tower's gate at 372,46, the way into #201;
-  a Lantern's wayside lamp on the road, lit, and another dark; the Watch's old signal fire on a
-  knoll; a camp.
+- **Landmarks.** Forest with the road through it to the tower's gate at 372,46, #201's way in; two
+  Lantern wayside lamps on the road, one lit, one dark; the old signal fire's knoll, its ash cold; a
+  camp.
 - **Points of interest,** about nine features and eight groups:
   - the tower's gate;
   - the two wayside lamps;
@@ -273,14 +309,20 @@ features; the pay shared out over the area (§8).
   - a camp (#45), a cairn (#45), a shrine of the Lanterns' (#45);
   - a lookout on the knoll, west over the gorge to the bridge.
 - **Encounters.** Lantern moths by night with a deathshead among them, the back row their first
-  choice (MONSTERS §6.3's first fight, two groups; `when`); a glass bear on the road at dusk;
-  sunder hounds in the wood.
+  choice (MONSTERS §6.3's first fight, two groups; `when`); a glass bear on the road at dusk and
+  sunder hounds in the wood, both proposed (§7).
 - **Quests.** The step is in the tower (§5); The Watch's Lamp begins on the road (§6).
 - **The secret and its hint.** Under the signal fire's ash, a Lantern's letter about the papers,
-  written before the company came. The hint: the young sister.
+  written before the company came. The hint is in two parts: the ash raked flatter than ash is owed,
+  and the young sister's word that she burnt it.
+- **Lines:**
+  - the lamps: *A Lantern's wayside lamp, lit, and moths at it thick as snow. Down the road its twin
+    stands dark, and nothing comes to it.*
+  - the ash: *The signal fire's ash, cold, and raked flat with more care than ash is owed.*
+  - the sister: *If the prior asks, I burnt it on the knoll. The fire there draws badly in rain.*
 - **New here.** The moths, a new family (#241); a Rift hound gone to glass on the wolf frame.
 - **Finds.** A Lantern's Staff +1 under the ash.
-- **Pay.** About 1,300 xp a member.
+- **Pay.** About 1,150 xp a member.
 
 ### 4.8 Lantern Watch (#201): town, 16×16, a tower, band 14–16
 
@@ -295,6 +337,11 @@ features; the pay shared out over the area (§8).
   midpoint's flag; Vask, the next morning, in the rain at the gate, with two Wardens (§5).
 - **Quests.** The chapter's turn (§5); The Watch's Lamp and The Length of the Wall (§6); the
   Lanterns' quests to a member of the guild (#146, DESIGN §8).
+- **Lines:**
+  - the gate: *Lantern Watch: one tower, and a lamp at the top lit in daylight. Moth dust lies on
+    the step like flour.*
+  - Vask's morning: *Morning, and rain. Three horses at the gate, two Wardens holding them, and a
+    man standing in the wet as if it were not raining.*
 - **New here.** A town that is one tower; the act's midpoint.
 - **Pay.** About 300 xp a member in the tower's quests.
 
@@ -308,15 +355,22 @@ features; the pay shared out over the area (§8).
 - **Points of interest,** about five features and five groups each:
   - M2: a milestone (ANVILHALL 12), a camp (#45), a cairn at the border (#45), a shrine (#45);
   - J3: a hermit who has seen the Rift grow, a bear's den (#88), a shrine, a cairn.
-- **Encounters.** M2: glass bears and a deathshead at the box's far end, the band's top. J3: pine
+- **Encounters.** M2: glass bears (proposed, §7) and a deathshead at the box's far end, the band's
+  top. J3: pine
   bears, the den's brood; moths by night.
 - **Quests.** None.
 - **The secret and its hint.** J3: a gleaners' cache in the den's back, which the bears have not
-  touched; the hint, the hermit. M2: a Warden's grave by the milestone, with Hale's old patrol
-  badge on it; the hint, the milestone's second face.
+  touched; the hint, the hermit's word that something goes up to the den on two legs and comes down
+  lighter. M2: a Warden's grave by the milestone, with Hale's old patrol badge on it; the hint, the
+  milestone's second face, cut by another hand.
+- **Lines:**
+  - M2's milestone: *ANVILHALL 12 on the face. On the back, cut with a knife, the Wardens' mark and
+    two words: THIS FAR.*
+  - the hermit: *Bears go up to that den. So does something on two legs, and it comes down
+    lighter.*
 - **New here.** Act III seen: the Iron Fells' road.
 - **Finds.** A Chain Mail +2 in the cache.
-- **Pay.** About 900 xp a member each.
+- **Pay.** About 800 xp a member each.
 
 ### 4.10 L3, L4 and K4, Lanternwood's depths (#203): country, band 16, parked
 
@@ -324,8 +378,10 @@ features; the pay shared out over the area (§8).
   10): moths and deathsheads by night, a bear's den, and K4's dead wood at the gorge, where the
   Deepthorn's shore runs on into Sunderwood.
 - **Landmarks.** The river south to Sunder Bay; K4's gorge and shore.
-- **Encounters.** Lantern moths and deathsheads; bears; sunderlings at K4's gorge.
-- **Pay.** About 500 xp a member each.
+- **Encounters.** Lantern moths and deathsheads; bears (proposed, §7); sunderlings at K4's gorge.
+- **Pay.** About 450 xp a member each, outside the area's 11,467 (§8).
+- Points of interest, the secret and its hint, what is new and the finds are written when #203 is
+  unparked (#151, call 10).
 
 ## 5. The one quest here
 
@@ -347,10 +403,11 @@ way down, Lanternwood's at the Watch. Its entries:
   you. I have the girl.* His choice, put by a person (#76), sets a flag and nothing else: the
   endings are the one quest's later (DESIGN §9).
 - **Home.** The goal turns back west to Helmstow, where the walls have Wardens on them (#157). The
-  flag `q_salt_done` ends the act.
+  chapter's done flag ends the act; its name is #204's.
 
-No lock (#151, call 1): the bridge stands whatever the story does, the Watch reads the papers for
-whoever carries them, and a company that takes the Sunder before Wrackholm reads the journal true.
+No lock (#151, call 1): the bridge stands whatever the story does, and the Watch reads the papers
+for whoever carries them, whenever they come; a company that takes the Sunder before the Tide Ship
+finds the wall all the same.
 The walkthrough plays it at 14, 15 and 16, in order and with the Sunder taken first.
 
 ## 6. Side quests
@@ -377,6 +434,13 @@ issues (#240 to #248). Sunderwood asks one thing of the systems of its own: `whe
 by night, which #41 gave, and MONSTERS' wanted line, moths that come more often to a company
 carrying Light, which is proposed with #200.
 
+Proposed, against the roster's Where column: the Glass Bear on Lanternwood's road (L2, M2) and in
+its depths, and the Sunder Hound in Lanternwood's wood (L2), where MONSTERS §6.3 has them at the
+Sunder only and nothing of Lanternwood's by day. They stand in the briefs as proposals; if the owner
+takes them, MONSTERS' Where column says "the Sunder and Lanternwood", in a pull request of its own.
+I2 has no wolves: none is on the roster, and Thornmark's are Act I's; its groups are the gentlest
+bears.
+
 New in Sunderwood, for the novelty check (EXPANSION §5.4): the moths and the bears, two new
 families; dead wood, crystal and the chasm's edge underfoot (#163); a Rift that stays open when its
 Warden falls; a bridge over a Rift; a town that is one tower; the machine's wall, seen and never
@@ -385,11 +449,14 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
 ## 8. The numbers
 
 - **Experience.** The curve (EXPANSION §5.2, #159) asks the climb from 14 to 16 over 0.75: 8,600 /
-  0.75, about 11,467 xp a member, with today's `xpForLevel`. The shares of §4 add up to about
-  12,700 without the depths: I2 1,300, J2 1,500, K2 1,500, K3 1,500, the Sunder 2,600, L2 1,300,
-  the Watch 300, M2 and J3 1,800, and the four side quests about 900 between them; the depths add
-  1,500 when they are built. The margin is the act's last: a company should leave the Watch at 16,
-  where the midpoint is, with the Kilns' floor ahead.
+  0.75, about 11,467 xp a member, with today's `xpForLevel`. The shares of §4 add up to it, as
+  Saltreach's and Wrackholm's do, the side quests inside and the depths outside: I2 1,150, J2
+  1,350, K2 1,350, K3 1,350, the Sunder 2,350, L2 1,150, the Watch 300, M2 800 and J3 800; and the
+  four side quests about 900 between them: about 11,500. They were the plan's, 11,800 before the
+  side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
+  supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
+  when it is built; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
+  floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#18).
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17): a company at 14 wins nine
@@ -430,6 +497,26 @@ Proposed, for the owner, each in the issue that would build it:
 - **Moths that come more often to a company carrying Light** (MONSTERS §6.3's wanted line), a small
   systems ask, filed if #200 wants it.
 - **The pay's shares** (§8).
+- **The bands on the atlas's rows** (#194): the Eaves 14–15, Lanternwood 15–16, the Sunder 15–16.
+- **The Glass Bear and the Sunder Hound in Lanternwood** (§7), against MONSTERS §6.3's Where
+  column.
+
+Decided by delegate for #194, each the owner's to overturn:
+
+1. **The atlas folder is spread into the plan** (`src/content/atlas.ts` imports it where its rows
+   were): the area cannot be listed in AREAS without a map, a chapter and a walkthrough, and the
+   registry and `chart()` stay as they are. #195 points the area's `atlas` at it and takes the
+   import out.
+2. **The folder charts the plan's rows and the bands, and no new sites:** a site's place is its
+   box's to settle (#196, #197), and the bridge is a link, which an area's atlas has no room for.
+3. **The pay is scaled to 11,467, the side quests inside and the depths outside,** as Saltreach and
+   Wrackholm count theirs.
+4. **I2's wolves give way to pine bears,** and the Sunder's glass bear goes from the last landing to
+   the floor: the roster's.
+5. **The depths' brief stays short** until #203 is unparked: it waits on the owner's play.
+6. **The hints are things a player sees** (I2's cut turf, K2's bare rock, K3's stacked wood, the
+   Sunder's chalk, L2's raked ash): a hint that is only a person's name tells a player nothing to
+   look for.
 
 ## 10. Names
 
