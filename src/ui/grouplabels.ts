@@ -21,8 +21,21 @@ export const LABEL_ROW = 10;
 /** How far below the view's top the first row is painted. */
 export const LABEL_TOP = 6;
 
-/** Where a monster of `group` stands in a fight painted in a view `viewH` high: the foot of its sprite. */
-export const seatFoot = (group: number, viewH: number): number => viewH * 0.62 + 18 + group * 10;
+/**
+ * A monster drawn larger than this is a tall boss (MONSTERS.md §4.3). It stands on the third rank,
+ * its roots sunk into the ground, and its markers are painted over its crown, so it keeps its drawn
+ * size under the labels. Nothing on the maps but the Eldest is so tall.
+ */
+export const TALL = 1.5;
+/** How high a tall boss's crown stands, of its height: the Eldest is drawn inside 0.84 of it and its crown reaches 0.81. */
+export const TALL_REACH = 0.81;
+/**
+ * Where a monster of `group` and `size` stands in a fight painted in a view `viewH` high: the foot of
+ * its sprite. A tall boss stands on the third rank whatever its group.
+ */
+export const seatFoot = (group: number, viewH: number, size = 1): number => viewH * 0.62 + 18 + (size > TALL ? Math.max(group, 2) : group) * 10;
+/** How far above its foot a monster of `size`, drawn `h` high, stands: its whole height, or a tall boss's crown. */
+export const crown = (size: number, h: number): number => (size > TALL ? h * TALL_REACH : h);
 /** How far above a sprite's head its target and turn markers are painted. */
 export const MARKER_RISE = 12;
 
