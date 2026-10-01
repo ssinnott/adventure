@@ -120,9 +120,11 @@ table: a Rift in the Kilns is slag, and a Rift in the Delta is brine.
 | Act IV | the mountain's and the far side's | the giants, the Hand's masons | the ash-cast of Old Cinder | none | robed at the monastery, bare at the vents |
 | Act V | rats | the Hand's last, and Vask | none | none | nearly everything |
 
-Two lines of it can be checked, and should be, beside the novelty check (EXPANSION.md §5.4): no
-machine on the road before the bottom of the Deep Mines, and no Rift after Cairnmoor. They keep the
-secret's pace. A company that goes straight down finds a mystery, not a spoiler (DESIGN.md §14.4):
+Two lines of it are checked, beside the novelty check (EXPANSION.md §5.4; `paceFaults` in
+`tools/tests/pillars.ts`, #158): no machine on the road before the bottom of the Deep Mines, and no
+Rift after Cairnmoor. A map's place on the road is its area's, unless its floor is over its area's
+band: the Dead-Drop, 26 to 28 under Act II's Tide Ship, is placed by its band, past the Mines and
+past Cairnmoor. The reach is exempt. They keep the secret's pace. A company that goes straight down finds a mystery, not a spoiler (DESIGN.md §14.4):
 the first machines stand in band-16 country, where a company that arrives early does not live long
 enough to wonder what they are.
 
@@ -141,9 +143,22 @@ marks the bows the weather spoils, and `mindless` shrugs off Slumber. It carries
 That is all, but for ranks and morale (#160): a group may stand a `back` rank, which a blade reaches
 only once the fight's front is down and which waits, bow or spell aside, till then; and a fight's
 people break once its `leader` falls, a group's beasts bolt at three in four down, and the fled pay
-nothing; the Hand never breaks (`steady`). No monster casts, heals, calls for help, regenerates or
-resists an element. Nothing gives a curse or stone, though both conditions exist: Restore lifts a
-curse, and a temple a stoning.
+nothing; the Hand never breaks (`steady`).
+
+And for casting, drain and elements (#161). Every damage spell carries fire, cold, lightning,
+nature or holy (DESIGN.md §7), and a monster may `resist` one (half, rounded up), be `immune` to one
+(none) or be `weak` to one (half again); the dead are weak to holy and immune to nature by their
+kind, the machine weak to lightning and immune to holy and nature, and the brineling is bitten by
+lightning and not by cold. A monster that `cast`s names spells from the tables and a chance a turn
+to spend its turn on the first that would do something: Mend on the most hurt of its group or
+Mending Light on all of it, healing the spell's and its level held at 10; Bless or Ward over its
+group while none runs; a damage spell at one member, a row or the party; Slumber on the row with
+more awake. It casts at its level held at 10, unranked, and does not wait in the back rank. Its
+hits may `drain`: heal it by their damage, or take spell points before hit points. A hit wakes a
+sleeper, and a fight's sleepers wake when it ends. Both bots learn what an element does to a foe
+from the first spell of it they see land, and wake a sleeper of the front row, or a caster. No
+monster calls for help or regenerates. Nothing gives a curse or stone, though both conditions
+exist: Restore lifts a curse, and a temple a stoning.
 
 ### 3.2 What the numbers show
 
@@ -322,10 +337,10 @@ calibration:
 - No monster has fewer hit points than the one a level under it, at the levels made or between.
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
-- It is made at every level to 10 and every fourth level to 32, 300 seeds a point, with the levels
-  between interpolated. Past 10 the company runs on play's rules (#159): its spells stop growing at
-  10, and nothing new comes, no tier, prestige or gear, until #20, #19 and #18 bring them and the
-  harness re-runs.
+- It is made at every level to 10 and every fourth level to 32, 300 seeds a point (200 for the
+  levels past 10, made again with #19), with the levels between interpolated. Past 10 the company runs on play's rules: its spells stop growing at 10
+  (#159), and it takes its prestiges at 11, 19 and 27 with their hit points, spell points and perks
+  (#19). No new tier, spell rank or gear comes until #20 and #18 bring them and the harness re-runs.
 
 Hit points / average damage a hit, by role and level:
 
@@ -341,12 +356,12 @@ Hit points / average damage a hit, by role and level:
 | 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 70 / 9 | 57 / 10 | 70 / 11 | 88 / 13 | 119 / 13 | 311 / 37.5 |
 | 9 | 50 / 9 | 73 / 7 | 73 / 8 | 72 / 8 | 81 / 9 | 69 / 9 | 83 / 10 | 102 / 14 | 136 / 14 | 350 / 41 |
 | 10 | 60 / 10 | 89 / 10 | 90 / 10 | 86 / 9 | 102 / 11.5 | 87 / 10 | 99 / 14 | 122 / 15 | 165 / 15.5 | 415 / 47 |
-| 12 | 63 / 12 | 99 / 9 | 100 / 9 | 106 / 8 | 122 / 10 | 95 / 8 | 118 / 12 | 125 / 16 | 169 / 16 | 540 / 59 |
-| 16 | 70 / 11 | 113 / 10 | 114 / 11 | 113 / 11 | 133 / 11.5 | 100 / 12 | 127 / 12 | 146 / 16 | 180 / 17.5 | 703 / 72 |
-| 20 | 100 / 8 | 117 / 12 | 118 / 13 | 117 / 14.5 | 140 / 14 | 106 / 16 | 135 / 14 | 157 / 16.5 | 187 / 19 | 831 / 82 |
-| 24 | 108 / 9 | 121 / 14.5 | 122 / 15 | 120 / 17 | 153 / 15.5 | 109 / 18.5 | 139 / 16.5 | 161 / 18.5 | 192 / 22 | 907 / 87 |
-| 28 | 112 / 10 | 123 / 16 | 128 / 17 | 123 / 21 | 156 / 19.5 | 125 / 14 | 142 / 21 | 165 / 21 | 197 / 25 | 964 / 90 |
-| 32 | 115 / 11.5 | 125 / 18 | 135 / 19 | 130 / 22 | 159 / 24 | 127 / 18 | 145 / 24 | 168 / 24 | 201 / 27.5 | 1001 / 92 |
+| 12 | 104 / 6.5 | 131 / 11.5 | 132 / 12 | 138 / 10 | 184 / 12 | 124 / 12 | 179 / 14 | 228 / 15.5 | 284 / 17 | 540 / 59 |
+| 16 | 117 / 7 | 158 / 11 | 162 / 12 | 162 / 11.5 | 195 / 14 | 149 / 12 | 189 / 15 | 241 / 18.5 | 302 / 19.5 | 764 / 79 |
+| 20 | 133 / 8 | 189 / 12 | 189 / 13 | 212 / 12 | 243 / 16 | 185 / 12 | 217 / 18.5 | 277 / 22 | 365 / 21 | 887 / 88 |
+| 24 | 146 / 9 | 195 / 14.5 | 195 / 15 | 244 / 14 | 278 / 17.5 | 190 / 14 | 252 / 16.5 | 300 / 22 | 375 / 22 | 1029 / 99 |
+| 28 | 184 / 10 | 272 / 16 | 274 / 17 | 331 / 17.5 | 385 / 24 | 269 / 15 | 332 / 22 | 458 / 24 | 527 / 28.5 | 1103 / 103 |
+| 32 | 196 / 11.5 | 280 / 18 | 283 / 19 | 366 / 18 | 428 / 26.5 | 274 / 16.5 | 375 / 22 | 503 / 25 | 583 / 29 | 1379 / 127.5 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -454,10 +469,9 @@ What it shows:
   bonus on top is worse, not better: monsters hit up to 1.6 times the line, fights run to twelve
   rounds, and brutes end up to a quarter of their days badly.
 
-  The prestiges fill the stretch. `--prestiges` gives the company the three of DESIGN.md §5 at 11,
-  19 and 27, with the perks it can play (the blows, the knight's banner, the ranger's Marksman, the
-  thief's sneak attack and its drop from sight, the cleric's last rite), their hit points and spell
-  points, and spell ranks on spells stopped at 10; `--tiers` adds stand-ins for the damage spells of
+  The prestiges fill the stretch. Weighed first as a what-if, they are play's since #19: every
+  company takes the three of DESIGN.md §5 at 11, 19 and 27, with their perks, hit points and spell
+  points. `--ranks` adds spell ranks on spells stopped at 10 until #20 builds play's; `--tiers` adds stand-ins for the damage spells of
   tiers 6 and 7 at 15 and 23 (DESIGN.md §7). Calibrated on them, monsters carry 2.5 to 5 times the
   line's hit points and hit on it or up to 1.8 times as hard, in fights of three to eight rounds, and
   the points the calibration must hold at the level under's fall from 22 to 6: no stretch is left
@@ -469,14 +483,15 @@ What it shows:
   with them, none. Controllers, which paralyse, stay a few points over at 24 and 32 against a bot that
   never cures and a company with no bard, whose second prestige stops paralysis; the bot learns to
   cure before their numbers move (#18).
-- **On play's rules, the tables past 10 are made again (#159).** With spells stopped at 10 and
-  nothing new past Act I's, the calibration gives monsters less over the line the further they go:
-  1.1 to 3.2 times its hit points at 12 and 1.1 to 1.9 at 32 (the boss 3.9 down to 2.9), hitting on
-  it or up to 1.6 times as hard, in fights of three to seven rounds. Hit points are held at the level
-  under's for 25 of the 60 points. A tenth of the days or fewer end badly for most roles, but the
-  controllers end a fifth at 24 and 28, the armoured an eighth at 24 and 32, archers 12% at 32 and
-  brutes 14% at 12: the stretch the prestiges and the new tiers (#19, #20) are to fill, as
-  `--prestiges --tiers` shows above.
+- **On play's rules, with the prestiges, the tables past 10 are made again (#19).** With spells
+  stopped at 10 and the prestiges taken at 11, 19 and 27, a company left on the tables made before
+  them (#159) fought 16.5 standard soldier encounters to a rest at 24, against the 10 asked. Made
+  again, monsters carry 3.3 to 4.9 times the line's hit points at 12 and 2.7 to 4.5 at 32 (the boss
+  3.9 throughout), hitting on it or up to 1.7 times as hard, in fights of four to eight rounds. Hit
+  points are held at the level under's for 7 of the 60 points. A tenth of the days or fewer end badly
+  for every role but two: brutes 13% at 12, where the first prestige is new, and controllers 13% at
+  32, against a bot that never cures. Spell ranks and the new tiers (#20) come next, and the tables
+  are made again with them.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -485,8 +500,8 @@ of that level, each on its own and then all of them dealt in a new order. `--sta
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
-blows as it levelled past it; `--prestiges` (with `--rank-step`, `--rank-cost` and `--tiers`) as if
-it took its prestiges. They combine, and play has none of them; `--calibrate` under them says what
+blows as it levelled past it; `--ranks` (with `--rank-step` and `--rank-cost`) as if its prestiges
+ranked its spells, and `--tiers` as if tiers 6 and 7 came. They combine, and play has none of them; `--calibrate` under them says what
 share of days end badly at each point it makes, and writes nothing.
 
 ---
