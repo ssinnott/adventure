@@ -1,12 +1,13 @@
-// The Rift family: riftling, riftling elder, Rift Warden and Warden of the Cut, and the brineling,
-// the riftling in the Tide Stone's brine glass (MONSTERS §2.1). Things of crystal
-// shard and ember: a molten core wrapped in faceted stone. A body is built in depth layers rather
-// than as one flat card -- the dark far limbs, then the body mass, then one or two layers of paler
-// plates lying on it, each layer a blob of its own so it keeps an ink edge, and each plate given a
-// shadow cast under its far lip. The core is a dark gap in the stone with a glow behind it and a
-// hot lump inside, and it burns in the space the plates leave BETWEEN them, so its light leaks out
-// round their lips instead of sitting on a surface. Seams are soft hot lines that pulse with the
-// frame; eyes are hot points; wobble seeds are constants, never the frame, so no contour boils.
+// The Rift family: riftling, riftling elder, Rift Warden and Warden of the Cut, and the brineling
+// and the tide elder, the riftling and its elder in the Tide Stone's brine glass (MONSTERS §2.1).
+// Things of crystal shard and ember: a molten core wrapped in faceted stone. A body is built in
+// depth layers rather than as one flat card -- the dark far limbs, then the body mass, then one or
+// two layers of paler plates lying on it, each layer a blob of its own so it keeps an ink edge, and
+// each plate given a shadow cast under its far lip. The core is a dark gap in the stone with a glow
+// behind it and a hot lump inside, and it burns in the space the plates leave BETWEEN them, so its
+// light leaks out round their lips instead of sitting on a surface. Seams are soft hot lines that
+// pulse with the frame; eyes are hot points; wobble seeds are constants, never the frame, so no
+// contour boils.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -16,11 +17,11 @@ import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { tones } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden', 'brineling'];
+export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden', 'brineling', 'tide_elder'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'warden' || kind === 'cut_warden') sentinel(ctx, x, y, h, p, kind === 'cut_warden');
-  else creature(ctx, x, y, h, p, kind === 'riftling_elder', kind === 'brineling');
+  else creature(ctx, x, y, h, p, kind === 'riftling_elder' || kind === 'tide_elder', kind === 'brineling' || kind === 'tide_elder');
 };
 
 /** The hot colours of one Rift thing: the emissive glow, the molten lump, its white heart. */
@@ -176,6 +177,9 @@ function fragment(ctx: CanvasRenderingContext2D, x: number, y: number, s: number
  * The brineling is the same thing in sea-green glass: a little leaner, glass fins for a crown, and
  * wet. A light swims about inside it, seen through the plates, and the brine runs off its edges in
  * drops that hang from the claws and the jaw and never fall.
+ *
+ * The tide elder is the elder in that glass: the elder's weight, a taller crest of fins swept forward
+ * at the tips like a wave about to break, a fin along the back, and the light in it slower and bigger.
  */
 function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, elder: boolean, brine = false): void {
   const heat = heatOf(p, false, brine), pulse = 0.5 + 0.5 * Math.sin(p.frame / 6);
@@ -238,16 +242,23 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
     { k: 'poly', pts: shard(ex + h * 0.016, ey + h * 0.018, 1.05, h * 0.1 * T, h * 0.036 * T) },
   ];
   // Crown shards: short, thick, swept up and back; the elder wears four and they run longer. The
-  // brineling's are glass fins, thinner, taller and nearer upright, like a sea thing's spines.
-  const crown: [number, number, number, number][] = elder
+  // brineling's are glass fins, thinner, taller and nearer upright, like a sea thing's spines, and
+  // the tide elder's are five, taller again, curling forward at the tips.
+  const crown: [number, number, number, number][] = elder && brine
+    ? [[0.056, -0.112, -1.22, 0.118], [0.020, -0.160, -1.46, 0.172], [-0.022, -0.170, -1.72, 0.196], [-0.062, -0.146, -2.02, 0.164], [-0.094, -0.094, -2.36, 0.118]]
+    : elder
     ? [[0.050, -0.118, -1.42, 0.098], [0.008, -0.166, -1.80, 0.118], [-0.044, -0.158, -2.16, 0.104], [-0.086, -0.100, -2.58, 0.086]]
     : brine
       ? [[0.046, -0.128, -1.34, 0.112], [0.006, -0.168, -1.66, 0.136], [-0.040, -0.160, -2.00, 0.124], [-0.080, -0.112, -2.38, 0.092]]
       : [[0.034, -0.146, -1.46, 0.086], [-0.020, -0.172, -1.92, 0.104], [-0.072, -0.118, -2.42, 0.082]];
   for (const [u, v, a, len] of crown) {
     const base = HD(u, v);
-    stone.push({ k: 'poly', pts: shard(base[0], base[1], a, hs * len, hs * (brine ? 0.025 : 0.031), brine ? 0.16 : 0.26) });
+    stone.push({ k: 'poly', pts: elder && brine
+      ? fin(base[0], base[1], a, hs * len, hs * 0.03, 0.55)
+      : shard(base[0], base[1], a, hs * len, hs * (brine ? 0.025 : 0.031), brine ? 0.16 : 0.26) });
   }
+  // The tide elder's back fin, raised off the hump behind the shoulders and curling the same way.
+  if (elder && brine) stone.push({ k: 'poly', pts: fin(x - h * 0.13 * W, y - h * 0.72 + b, -2.0, h * 0.17, h * 0.034, 0.7) });
   // The hand: a short angular palm with the claws breaking off its front edge at different points.
   // Shards all radiating from the one point at the wrist read as a mitten with fingers drawn on it.
   const pw = h * 0.052 * T, phx = wx - h * 0.008, phy = wy + h * 0.004;
@@ -334,9 +345,10 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
 
   // ---- the light in it: a second light that swims slowly about the chest and belly, seen through
   //      the glass. Its path is the frame's, so it moves; its shape is not, so nothing boils.
-  const m = p.frame / 26, lx = x + h * (0.02 + 0.075 * Math.sin(m)), ly = y - h * (0.6 + 0.1 * Math.sin(m * 0.63 + 1));
-  glow(ctx, B, lx, ly, h * 0.15, heat.glow, 0.3 + pulse * 0.1, heat.heart);
-  glow(ctx, B, lx, ly, h * 0.045, heat.heart, 0.55, heat.heart);
+  //      The elder's is bigger, and slower.
+  const m = p.frame / (elder ? 44 : 26), lx = x + h * (0.02 + 0.075 * Math.sin(m)), ly = y - h * (0.6 + 0.1 * Math.sin(m * 0.63 + 1));
+  glow(ctx, B, lx, ly, h * (elder ? 0.19 : 0.15), heat.glow, 0.3 + pulse * 0.1, heat.heart);
+  glow(ctx, B, lx, ly, h * (elder ? 0.06 : 0.045), heat.heart, 0.55, heat.heart);
 
   // ---- wet at the edges: a sheen along the upper lips, and drops hanging from the claws, the
   //      elbow and the jaw. Each grows and goes back; none of them ever lets go.
@@ -350,6 +362,24 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
     [...(HD(0.03, 0.146) as [number, number]), 0.15],
   ];
   for (const [dx, dy, phase] of drops) drip(ctx, dx, dy, h * (0.018 + 0.022 * ((p.frame / 48 + phase) % 1)), h * 0.011, glass, h);
+}
+
+/**
+ * A fin of glass: a shard whose spine bends by `curl` radians over its length, toward the front, so
+ * its tip hangs over like the lip of a wave. Base at (x, y), half width `w` there, a blunt tip.
+ */
+function fin(x: number, y: number, a: number, len: number, w: number, curl: number): number[] {
+  const n = 5, left: number[] = [], right: number[] = [];
+  let px = x, py = y;
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, ang = a + curl * t * t, k = w * (1 - t * 0.8);
+    const nx = -Math.sin(ang), ny = Math.cos(ang);
+    left.push(px + nx * k, py + ny * k); right.push(px - nx * k, py - ny * k);
+    px += Math.cos(ang) * len / n; py += Math.sin(ang) * len / n;
+  }
+  const out = [...left];
+  for (let i = n; i >= 0; i--) out.push(right[i * 2], right[i * 2 + 1]);
+  return out;
 }
 
 /** A wet sheen along an edge: a thin pale line, skipped while the brush flashes. */

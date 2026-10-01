@@ -269,7 +269,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   acolyte: cultist.draw, deacon: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
   barrow_guard: skeleton.draw, barrow_captain: skeleton.draw, drowned_chanter: skeleton.draw, choirmaster: skeleton.draw,
-  riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw, brineling: riftling.draw,
+  riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw, brineling: riftling.draw, tide_elder: riftling.draw,
   ogre: ogre.draw,
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw, eldest: oldwood.draw,
   wraith: wraith.draw,
