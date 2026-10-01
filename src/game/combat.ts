@@ -9,7 +9,7 @@ import type { SpellDef, Element } from './spells.ts';
 import { item } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
-  hasTrait, spellHeal, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
+  hasTrait, spellHeal, rankMult, spellRank, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
   prestigeOf, deathAt,
 } from './party.ts';
 import type { ClassId } from './party.ts';
@@ -36,7 +36,7 @@ export type TurnRef = { side: 'party'; i: number } | { side: 'monster'; i: numbe
 
 export type PartyAction =
   | { type: 'attack'; target: number }
-  | { type: 'cast'; spellId: string; target: number }
+  | { type: 'cast'; spellId: string; target: number; element?: Element }
   | { type: 'defend' }
   | { type: 'use'; itemId: string; target: number }
   | { type: 'flee' };
@@ -63,6 +63,8 @@ export interface CombatState {
   bless: number;
   shield: number;
   haste: number;
+  /** Lampglass: the element the party takes half from, and the rounds left on it. */
+  glass?: { element: Element; rounds: number };
   /** Rounds left on Bless and Ward over each group of monsters, by the group it came in with (`band`). */
   foeBless: number[];
   foeShield: number[];
@@ -76,6 +78,8 @@ export interface CombatState {
   rangedPenalty: number;
   /** The level damage spells stop growing at, where a tool tries another: SPELLS_GROW_TO in play (see `spellDice`). */
   spellsGrowTo?: number;
+  /** What a spell rank adds, where a tool tries another: RANK_STEP in play (see `rankMult`). */
+  rankStep?: number;
   /** What a tool trying new powers gives each member: none in play (see `Edge`). */
   edge?: (c: Character, s: CombatState) => Edge;
   log: string[];
@@ -88,7 +92,7 @@ export interface CombatState {
  * for the log. A tool trying a ceiling on spells may also say where they stop growing, and one trying
  * new powers for the company what each member gains.
  */
-export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; edge?: (c: Character, s: CombatState) => Edge; }
+export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; rankStep?: number; edge?: (c: Character, s: CombatState) => Edge; }
 
 /**
  * What a tool trying new powers gives a member in a fight (tools/harness.ts): blows a turn with a
@@ -201,6 +205,7 @@ export function startCombat(party: Party, groups: readonly CombatGroup[], rng: R
     foeBless: groups.map(() => 0), foeShield: groups.map(() => 0), seen: {},
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,
     ...(opts.spellsGrowTo !== undefined ? { spellsGrowTo: opts.spellsGrowTo } : {}),
+    ...(opts.rankStep !== undefined ? { rankStep: opts.rankStep } : {}),
     ...(opts.edge ? { edge: opts.edge } : {}),
   };
   s.log.push(describeGroups(s) + ' attack!');
@@ -264,6 +269,11 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   if (s.shield > 0) s.shield--;
   if (s.haste > 0) s.haste--;
   for (const t of [s.foeBless, s.foeShield]) t.forEach((n, band) => { if (n > 0) t[band] = n - 1; });
+  if (s.glass && --s.glass.rounds <= 0) delete s.glass;
+  // A monster held by the roots tears free as a member shakes off paralysis.
+  const freed = s.monsters.filter((m) => standing(m) && m.conditions.includes('paralysed') && rng.chance(HOLD_BREAKS));
+  for (const m of freed) m.conditions = m.conditions.filter((k) => k !== 'paralysed');
+  if (freed.length) s.log.push(`${describe(freed)} ${freed.length === 1 ? 'tears' : 'tear'} free.`);
   for (const c of party.members) {
     if (hasCondition(c, 'poisoned') && !isDown(c)) { damage(c, 1); s.log.push(`${c.name} suffers from poison.`); }
     if (hasCondition(c, 'paralysed') && rng.chance(0.35)) { removeCondition(c, 'paralysed'); s.log.push(`${c.name} can move again.`); }
@@ -344,9 +354,9 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
     }
     case 'cast': {
       const sp = spell(action.spellId);
-      if (!c.spells.includes(sp.id) || c.sp < sp.sp || sp.context === 'explore') return false;
+      if (!c.spells.includes(sp.id) || c.sp < sp.sp || sp.context === 'explore' || (sp.glass && !action.element)) return false;
       c.sp -= sp.sp;
-      castSpell(s, party, rng, c, sp, action.target);
+      castSpell(s, party, rng, c, sp, action.target, action.element);
       break;
     }
     case 'defend':
@@ -391,12 +401,13 @@ function hurtMonster(s: CombatState, m: MonsterInst, dmg: number): void {
   m.conditions = m.conditions.filter((k) => k !== 'asleep');
 }
 
-function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number): void {
-  // A damage spell's roll on one monster, by what its element does to it, which the company now has seen.
+function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number, element?: Element): void {
+  // A damage spell's roll on one monster: its dice lifted by the caster's ranks, then Spellfire, then
+  // what its element does to the monster, which the company now has seen.
   const dmgOf = (m: MonsterInst): number => {
-    const d = roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
+    const d = Math.round(roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, 0) * rankMult(c, s.rankStep)) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
     if (sp.element) (s.seen[m.def.id] ??= {})[sp.element] = elementMult(m.def, sp.element);
-    return elementDamage(m.def, sp.element, d);
+    return elementDamage(m.def, sp.element, d, pierces(c));
   };
   switch (sp.target) {
     case 'enemy': {
@@ -413,8 +424,10 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       const members = s.monsters.filter((m) => m.group === m0.group && standing(m));
       if (sp.inflict) {
         let n = 0;
-        for (const m of members) if (!monsterImmune(m.def, sp.inflict) && rng.chance(SLUMBER_CHANCE)) { m.conditions = [sp.inflict]; n++; }
-        s.log.push(`${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} fall ${sp.inflict}.`);
+        const chance = sp.inflict === 'paralysed' ? ROOTS_CHANCE : SLUMBER_CHANCE;
+        for (const m of members) if (!monsterImmune(m.def, sp.inflict) && rng.chance(chance)) { m.conditions = [sp.inflict]; n++; }
+        s.log.push(sp.inflict === 'asleep' ? `${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} fall asleep.`
+          : n ? `${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} ${n === 1 ? 'is' : 'are'} held fast.` : `${c.name} casts ${sp.name}, but no root holds.`);
       } else {
         let total = 0, killed = 0;
         for (const m of members) { const d = dmgOf(m); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
@@ -431,25 +444,55 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
     }
     case 'ally': {
       const a = party.members[target] ?? c;
-      s.log.push(castOnAlly(c, sp, a));
+      s.log.push(castOnAlly(c, sp, a, s.rankStep));
       return;
     }
     case 'party':
       if (sp.buff === 'bless') { s.bless = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party is blessed.`); }
       else if (sp.buff === 'shield') { s.shield = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. A ward settles over the party.`); }
       else if (sp.buff === 'haste') { s.haste = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party quickens.`); }
-      else if (sp.heal) { for (const a of party.members) heal(a, spellHeal(c, sp.heal)); s.log.push(`${c.name} casts ${sp.name}. The party is healed.`); }
+      else if (sp.glass && element) { s.glass = { element, rounds: sp.turns ?? 5 }; s.log.push(`${c.name} casts ${sp.name}. The glass dims the ${GLASS_WORD[element]}.`); }
+      else if (sp.heal || sp.cure) s.log.push(castOnParty(c, sp, party, s.rankStep));
       return;
     default:
       s.log.push(`${c.name} casts ${sp.name}.`);
   }
 }
 
+/** The sorcerer's third rank (DESIGN §5): its damage spells pass a monster's resistance to their element, never an immunity. */
+export const pierces = (c: Character): boolean => c.cls === 'sorcerer' && spellRank(c) >= 3;
+
+/** What Lampglass's line calls each element: the wood for nature, the light for holy. */
+export const GLASS_WORD: Record<Element, string> = { fire: 'fire', cold: 'cold', lightning: 'lightning', nature: 'wood', holy: 'light' };
+/** The chance Grasping Roots holds each one it falls on, and the chance a round each held monster tears free. */
+export const ROOTS_CHANCE = 0.5, HOLD_BREAKS = 0.35;
+
+/**
+ * A healing or curing spell on the whole party, shared by combat and exploration: each member not dead
+ * or stoned is healed (see spellHeal) and cured. Returns the log line.
+ */
+export function castOnParty(c: Character, sp: SpellDef, party: Party, step?: number): string {
+  for (const a of party.members) {
+    if (hasCondition(a, 'dead') || hasCondition(a, 'stoned')) continue;
+    if (sp.heal) heal(a, spellHeal(c, sp.heal, step));
+    for (const k of sp.cure ?? []) removeCondition(a, k as Condition);
+  }
+  return `${c.name} casts ${sp.name}. The party is ${sp.heal && sp.cure ? 'healed and cleansed' : sp.heal ? 'healed' : 'cleansed'}.`;
+}
+
 /**
  * A healing, curing or raising spell on one ally, shared by combat and exploration. Returns the log
  * line. Raising brings the dead back at `heal` hp; other healing scales with the caster (see spellHeal).
+ * Absolve lifts stone and curse: the stoned come back as they were, out cold if their wounds say so.
  */
-export function castOnAlly(c: Character, sp: SpellDef, a: Character): string {
+export function castOnAlly(c: Character, sp: SpellDef, a: Character, step?: number): string {
+  if (sp.cure?.includes('stoned')) {
+    const stone = hasCondition(a, 'stoned'), curse = hasCondition(a, 'cursed');
+    removeCondition(a, 'stoned'); removeCondition(a, 'cursed');
+    if (stone && a.hp <= 0 && !hasCondition(a, 'dead')) addCondition(a, 'unconscious');
+    return stone && curse ? `${c.name} casts ${sp.name}: ${a.name} is flesh again, and the curse lifts.` : stone ? `${c.name} casts ${sp.name}: ${a.name} is flesh again.`
+      : curse ? `${c.name} casts ${sp.name}: the curse lifts from ${a.name}.` : `${c.name} casts ${sp.name}, but ${a.name} needs no absolving.`;
+  }
   if (sp.raise) {
     if (!hasCondition(a, 'dead')) return `${c.name} casts ${sp.name}, but ${a.name} is not dead.`;
     a.conditions = a.conditions.filter((k) => k === 'cursed');
@@ -457,7 +500,7 @@ export function castOnAlly(c: Character, sp: SpellDef, a: Character): string {
     return `${c.name} casts ${sp.name}: ${a.name} draws breath again.`;
   }
   const parts: string[] = [];
-  if (sp.heal) parts.push(`${a.name} recovers ${heal(a, spellHeal(c, sp.heal))}`);
+  if (sp.heal) parts.push(`${a.name} recovers ${heal(a, spellHeal(c, sp.heal, step))}`);
   if (sp.cure) { for (const k of sp.cure) removeCondition(a, k as Condition); if (!sp.heal) parts.push(`${a.name} is cleansed`); }
   return `${c.name} casts ${sp.name}: ${parts.join(', ')}.`;
 }
@@ -512,7 +555,11 @@ function struck(party: Party, c: Character, dmg: number): string {
 /** A monster's turn spent on a spell (`MonsterDef.cast`): at its level held to SPELLS_GROW_TO, unranked, with no Spellfire. */
 function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: MonsterInst, sp: SpellDef): void {
   const who = m.def.name;
-  const dmgOf = (k: number): number => { const d = roll(rng, spellDice(sp, m.def.level), sp.sides ?? 4, 0); return s.defending[k] ? Math.ceil(d / 2) : d; };
+  const dmgOf = (k: number): number => {
+    let d = roll(rng, spellDice(sp, m.def.level), sp.sides ?? 4, 0);
+    if (s.defending[k]) d = Math.ceil(d / 2);
+    return s.glass && s.glass.element === sp.element ? Math.ceil(d / 2) : d;
+  };
   if (sp.heal) {
     const mine = bandOf(s, m);
     if (sp.target === 'party') { for (const q of mine) q.hp = Math.min(q.def.hp, q.hp + foeHeal(m, sp)); s.log.push(`${who} casts ${sp.name}. ${bandName(mine)} ${isAre(mine)} healed.`); return; }

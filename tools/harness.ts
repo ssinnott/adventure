@@ -13,7 +13,7 @@
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 10
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
-//   node tools/harness.ts --ranks [...]                ... or its prestiges ranked its spells as DESIGN §7 drafts (--rank-step, --rank-cost, --tiers)
+//   node tools/harness.ts --rank-step 0.25 [...]       ... or a spell rank added another share than play's 15%
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
 // that level brings (game/party.ts), and dressed in what the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
@@ -28,14 +28,14 @@ import os from 'node:os';
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
-import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, PRESTIGES as CLASS_PRESTIGES, prestigeOf, takePrestige, spellRank } from '../src/game/party.ts';
+import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup, castOnAlly, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
 import { item } from '../src/game/items.ts';
-import { ITEMS, SPELLS } from '../src/content/index.ts';
+import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
@@ -62,14 +62,12 @@ export const CAP = MAX_LEVEL;
  * What-ifs on the rules, for weighing a change before it is made; play has none of them. `spellsGrowTo`
  * is another level for damage spells to stop growing at than play's 10 (`--spell-cap`); `gearGrows` keeps the company's gear
  * growing past Thornmark's (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
- * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`); `ranks` ranks a
-caster's and a hybrid's spells by its prestiges as DESIGN.md §7 drafts them (`--ranks`), each rank
-adding `rankStep` of a spell's damage and mending (half that for a hybrid) and `rankCost` of its price,
-until #20 builds play's; `tiers` adds the damage spells of tiers 6 and 7 as they are drafted (`--tiers`,
-see `NEW_TIERS`). The prestiges themselves are play's, and every company takes them.
+ * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`); `rankStep` is another
+share a spell rank adds than play's RANK_STEP (`--rank-step`). The prestiges, their ranks and tiers 6
+and 7 are play's, and every company takes them.
  */
-export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; ranks?: boolean; rankStep?: number; rankCost?: number; tiers?: boolean } = {};
-const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, ranks: undefined, rankStep: undefined, rankCost: undefined, tiers: undefined };
+export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; rankStep?: number } = {};
+const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, rankStep: undefined };
 
 /** The classes whose first work is a weapon: the ones `--level-traits` gives more blows. */
 export const FIGHTERS: readonly string[] = ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'monk'];
@@ -84,25 +82,6 @@ export const PROMOTIONS: readonly number[] = [11, 29];
 export const PRESTIGES: readonly number[] = PRESTIGE_LEVELS;
 /** How many prestiges a member of `level` has taken: one at each of PRESTIGES reached. */
 export const prestigesAt = (level: number): number => PRESTIGES.filter((l) => level >= l).length;
-/** A spell rank's step, as a share of a spell's damage and mending, unless `--rank-step` says otherwise. */
-export const RANK_STEP = 0.15;
-/** A hybrid's rank is half a caster's step: its perks carry the rest of its growth (DESIGN.md §7). */
-export const HYBRID_RANK = 0.5;
-/**
- * Stand-ins for the damage spells of the tiers past 5 (DESIGN.md §7), at the dice and prices drafted
- * there: tier 6 at 15 and tier 7 at 23, a hybrid's two levels later. Fixed dice, never growing with
- * level; a rank widens them as it does the rest. Their elements are not played, since no test monster
- * resists one.
- */
-export const TIER_LEVELS: readonly [number, number] = [15, 23];
-export const NEW_TIERS: readonly SpellDef[] = [
-  { id: 'tier6_sorcerer', name: 'Tier 6 (cold, a group)', list: 'sorcerer', level: 6, sp: 11, target: 'group', context: 'combat', dice: 8, sides: 8, text: '' },
-  { id: 'tier7_sorcerer', name: 'Tier 7 (cold, every foe)', list: 'sorcerer', level: 7, sp: 18, target: 'all', context: 'combat', dice: 10, sides: 12, text: '' },
-  { id: 'tier6_cleric', name: 'Tier 6 (fire, a group)', list: 'cleric', level: 6, sp: 10, target: 'group', context: 'combat', dice: 6, sides: 8, text: '' },
-  { id: 'tier6_druid', name: 'Tier 6 (fire, a group)', list: 'druid', level: 6, sp: 10, target: 'group', context: 'combat', dice: 6, sides: 8, text: '' },
-  { id: 'tier7_druid', name: 'Tier 7 (nature, every foe)', list: 'druid', level: 7, sp: 16, target: 'all', context: 'combat', dice: 8, sides: 10, text: '' },
-];
-
 /**
  * What the what-ifs give a member in a fight's `round`, past level 10. With `levelTraits` a fighter
  * strikes once more a turn with each promotion, and a sneak attack grows by 2 every two levels. With
@@ -176,36 +155,14 @@ export function outfit(c: Character, level: number): void {
 }
 
 /**
- * A spell at a rank: its damage dice (stopped where `spellsGrowTo` stops them) and its mending lifted
- * `rankStep` a rank, by widening the dice, and its price `rankCost` a rank. Kept in the spell table
- * under its own id, as `forge` keeps an item.
- */
-function rankUp(base: SpellDef, level: number, rank: number, share = 1): string {
-  const step = (RULES.rankStep ?? RANK_STEP) * share, cost = RULES.rankCost ?? 0, id = `${base.id}@${rank}:${step}:${cost}`;
-  if (!SPELLS[id]) {
-    // Past every tier, so that no level teaches it (`spellsFor`): it is only ever ranked into.
-    const up = 1 + step * rank, d: SpellDef = { ...base, id, level: Infinity, sp: Math.round(base.sp * (1 + cost * rank)) };
-    if (base.dice) { d.dice = spellDice(base, level, RULES.spellsGrowTo); d.perLevel = false; d.sides = Math.max(2, Math.round(((base.sides ?? 4) + 1) * up) - 1); }
-    if (base.heal) d.heal = Math.round(base.heal * up);
-    SPELLS[id] = d;
-  }
-  return id;
-}
-
-/**
  * The prestiges a company of its level takes (DESIGN.md §5), as play gives them: each at its level,
  * with its hit points, spell points and perks (game/party.ts, the resolver). The thief takes a light
- * weapon where its blows with it beat one with what it holds. With `ranks`, a caster's and a hybrid's
- * spells are ranked as DESIGN.md §7 drafts until #20 builds play's, and `tiers` adds tiers 6 and 7.
+ * weapon where its blows with it beat one with what it holds. A caster's and a hybrid's prestiges are
+ * its spell ranks, as play reads them (party.ts `rankMult`).
  */
 function prestige(p: Party): void {
   for (const c of p.members) {
     for (let n = prestigesAt(c.level); prestigeOf(c) < n;) takePrestige(c);
-    const calling = CLASS_PRESTIGES[c.cls].calling;
-    const list = CLASSES[c.cls].spells, lag = calling === 'hybrid' ? 2 : 0;
-    if (RULES.tiers && list) for (const x of NEW_TIERS) if (x.list === list && c.level >= TIER_LEVELS[x.level - 6] + lag) { SPELLS[x.id] ??= { ...x, level: Infinity }; c.spells.push(x.id); }
-    const rank = RULES.ranks ? spellRank(c) : 0;
-    if (rank) c.spells = c.spells.map((id) => { const x = spell(id); return x.dice || x.heal ? rankUp(x, c.level, rank, calling === 'hybrid' ? HYBRID_RANK : 1) : id; });
     if (c.cls === 'thief' && prestigeOf(c)) {
       const held = weaponOf(c), light = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(['dagger', 'shortsword', 'sling']).map(item)
         .filter((d) => d.kind === 'light' && !!d.ranged === !!held.ranged && (!d.classes || d.classes.includes(c.cls))).sort((a, b) => hits(b) - hits(a))[0];
@@ -217,7 +174,7 @@ function prestige(p: Party): void {
 const companies = new Map<string, Party>();
 /** The premade six trained to `level` and outfitted for it, whole; a fresh copy every call. */
 export function companyAt(level: number, seed: number): Party {
-  const key = `${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}:${RULES.ranks ? `${RULES.rankStep ?? RANK_STEP}:${RULES.rankCost ?? 0}` : ''}:${RULES.tiers ? 'tiers' : ''}`;
+  const key = `${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}`;
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
@@ -238,7 +195,7 @@ export function pools(p: Party): { hp: number; maxHp: number; sp: number; maxSp:
 }
 
 const spellDamage = (c: Character, sp: SpellDef): number =>
-  (spellDice(sp, c.level, RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2 + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
+  ((spellDice(sp, c.level, RULES.spellsGrowTo) * ((sp.sides ?? 4) + 1)) / 2) * rankMult(c, RULES.rankStep) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
 
 /** A turn's weapon blows' expected damage on a monster; `capped` counts no more than the monster has left. */
 function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, capped = true): number {
@@ -279,7 +236,7 @@ export function wakeWith(p: Party, c: Character): { spellId: string; target: num
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
 function mendRate(c: Character): number {
   let best = 1;
-  for (const x of c.spells.map(spell)) if (x.heal && x.target === 'ally' && !x.raise) best = Math.max(best, spellHeal(c, x.heal) / x.sp);
+  for (const x of c.spells.map(spell)) if (x.heal && x.target === 'ally' && !x.raise) best = Math.max(best, spellHeal(c, x.heal, RULES.rankStep) / x.sp);
   return best;
 }
 
@@ -305,7 +262,7 @@ export const thrifty: Bot = (s, p, rng, i) => {
   if (worst && mends.length) {
     // The cheapest mend that closes half the wound, else the biggest there is.
     const wound = worst.m.maxHp - worst.m.hp;
-    const pick = mends.filter((x) => spellHeal(c, x.heal ?? 0) >= wound / 2).sort((a, b) => a.sp - b.sp)[0] ?? mends.sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
+    const pick = mends.filter((x) => spellHeal(c, x.heal ?? 0, RULES.rankStep) >= wound / 2).sort((a, b) => a.sp - b.sp)[0] ?? mends.sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
     if (partyAct(s, p, rng, { type: 'cast', spellId: pick.id, target: worst.j })) return;
   }
   const sleeper = wakeWith(p, c);
@@ -356,7 +313,7 @@ export interface Outcome { won: boolean; cost: number; hp: number; sp: number; r
 /** One fight to its end from however the company stands: what it cost, read from what it has left. */
 export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
   const edge = RULES.levelTraits || RULES.levelBonus ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round) : undefined;
-  const rng = makeRng(seed), s = startCombat(p, [asGroup('harness', monsters)], rng, { spellsGrowTo: RULES.spellsGrowTo, edge });
+  const rng = makeRng(seed), s = startCombat(p, [asGroup('harness', monsters)], rng, { spellsGrowTo: RULES.spellsGrowTo, rankStep: RULES.rankStep, edge });
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > ROUND_CAP) break;
@@ -387,8 +344,8 @@ export function mendBetween(p: Party): void {
     const healers = p.members.filter((c) => !isDown(c)).map((c) => ({ c, known: c.spells.map(spell).filter((x) => x.context === 'any' && x.heal && !x.raise && x.sp <= c.sp) }));
     const all = healers.flatMap(({ c, known }) => known.filter((x) => x.target === 'party').map((x) => ({ c, x }))).sort((a, b) => a.x.sp - b.x.sp)[0];
     const one = healers.flatMap(({ c, known }) => known.filter((x) => x.target === 'ally').map((x) => ({ c, x }))).sort((a, b) => a.x.sp - b.x.sp)[0];
-    if (all && hurt.length >= 2) { all.c.sp -= all.x.sp; for (const m of p.members) heal(m, spellHeal(all.c, all.x.heal ?? 0)); }
-    else if (one) { one.c.sp -= one.x.sp; castOnAlly(one.c, one.x, hurt[0]); }
+    if (all && hurt.length >= 2) { all.c.sp -= all.x.sp; castOnParty(all.c, all.x, p, RULES.rankStep); }
+    else if (one) { one.c.sp -= one.x.sp; castOnAlly(one.c, one.x, hurt[0], RULES.rankStep); }
     else return;
   }
 }
@@ -595,18 +552,11 @@ async function main(): Promise<void> {
     RULES.levelBonus = true;
     console.log(`What if: past level 10 every member gains a point of weapon damage and of armour every two levels.`);
   }
-  if (args.includes('--ranks')) {
-    RULES.ranks = true;
-    RULES.spellsGrowTo ??= 10;
-    const step = opt('rank-step'), cost = opt('rank-cost');
-    if (step !== undefined) RULES.rankStep = Number(step);
-    if (cost !== undefined) RULES.rankCost = Number(cost);
-    if (!((RULES.rankStep ?? RANK_STEP) >= 0) || !((RULES.rankCost ?? 0) >= 0)) throw new Error('--rank-step and --rank-cost take a share, 0 or more');
-    console.log(`What if: its prestiges rank a caster's and a hybrid's spells; damage spells stop growing at ${RULES.spellsGrowTo}, and each rank adds ${pct(RULES.rankStep ?? RANK_STEP)}% to a spell's damage and mending and ${pct(RULES.rankCost ?? 0)}% to its price.`);
-  }
-  if (args.includes('--tiers')) {
-    RULES.tiers = true;
-    console.log(`What if: tiers 6 and 7 come at ${TIER_LEVELS.join(' and ')}, a hybrid's two levels later.`);
+  const step = opt('rank-step');
+  if (step !== undefined) {
+    RULES.rankStep = Number(step);
+    if (!(RULES.rankStep >= 0)) throw new Error('--rank-step takes a share, 0 or more');
+    console.log(`What if: each spell rank adds ${pct(RULES.rankStep)}% to a spell's damage and mending, not ${pct(RANK_STEP)}%.`);
   }
   const rules = { ...RULES };
   const row = (label: string, cells: readonly string[]): void => console.log(label.padEnd(14) + cells.map((c) => c.padStart(6)).join(''));
@@ -649,7 +599,7 @@ async function main(): Promise<void> {
     const at = (l: number): number => { const k = LEVELS.indexOf(l as (typeof LEVELS)[number]); if (k < 0) throw new Error(`level ${l} is not one of LEVELS`); return k; };
     levels.forEach(at);
     const say = (j: Job, [h, d, bad, fights, rounds]: Point): void => console.log(`  ${j.role} ${j.level}: hp ${fmt(h)}, damage ${fmt(d)}; ${j.role === 'boss' ? `won ${pct(fights)}%` : `${fights.toFixed(1)} fights, ${rounds.toFixed(1)} rounds, ${pct(bad)}% of days end badly`} (${secs()})`);
-    if (args.includes('--write') && (RULES.spellsGrowTo !== undefined || RULES.gearGrows || RULES.levelTraits || RULES.levelBonus || RULES.ranks || RULES.tiers)) throw new Error('a what-if is for weighing, not for writing: drop --write, or the what-ifs');
+    if (args.includes('--write') && (RULES.spellsGrowTo !== undefined || RULES.gearGrows || RULES.levelTraits || RULES.levelBonus || RULES.rankStep !== undefined)) throw new Error('a what-if is for weighing, not for writing: drop --write, or the what-ifs');
     const jobs = roles.flatMap((role) => levels.map((level): Job => ({ kind: 'calibrate', role, level, seeds, under: 0, rules })));
     const made = await onCores<Point>(jobs, say);
     // The tables with the points just made, as they will be written; the rest stay as they were.
@@ -719,7 +669,7 @@ async function main(): Promise<void> {
   block('rounds a fight, over the day', (c) => c.day!.rounds.toFixed(1), true);
   block('one fight from fresh: cost %', (c) => pct(c.fresh.cost));
   block('one fight from fresh: someone down at the end %', (c) => pct(c.fresh.down));
-  if (Math.max(...levels) > SPELLS_GROW_TO) console.log(`\nPast level ${SPELLS_GROW_TO} the company runs on play's rules: its spells stop growing, it takes its prestiges at ${PRESTIGES.join(', ')}, and it gains no new spells${RULES.ranks ? '' : ', spell ranks'} or gear.`);
+  if (Math.max(...levels) > SPELLS_GROW_TO) console.log(`\nPast level ${SPELLS_GROW_TO} the company runs on play's rules: its spells stop growing, it takes its prestiges at ${PRESTIGES.join(', ')} and their spell ranks, and tiers 6 and 7 at 15 and 23, and it gains no gear.`);
 }
 
 if (isMainThread && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch((e: unknown) => { console.error(e); process.exit(1); });
