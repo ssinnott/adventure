@@ -876,11 +876,60 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
 const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
 const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
 
+// The Hearth's measure (#168): at midnight under a clear sky, looking south from the Foreland by
+// Helmstow, the Hearth stands over the hills where it lies, and brighter once the Tide Stone is home;
+// looking north there is none. The title, over a save with the Tide Stone home, draws its column
+// brighter and flickering less than over one without.
+const hearth = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string), T = await import('/src/ui/title.ts' as string);
+  const g = (window as any).__game.game, w = g.world;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d', { willReadFrequently: true })!;
+  const minutes = w.state.minutes, flags = { ...w.party.flags }, place = { map: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing };
+  const glow = (f: number): number => {
+    w.travel('shelf', 16, 6, f);
+    w.state.minutes = Math.floor(minutes / 1440) * 1440 + 1440;
+    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+    skyCtx.clearRect(0, 0, W, H); ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+    const d = ctx.getImageData(0, H / 2 - 100, W, 90).data;
+    let warm = 0;
+    for (let i = 0; i < d.length; i += 4) warm += Math.max(0, d[i] - d[i + 2] - 4);
+    return warm;
+  };
+  delete w.party.flags.q_tide_home;
+  const south = glow(2), north = glow(0);
+  w.party.flags.q_tide_home = 1;
+  const home = glow(2);
+  // The title over each save: its column's light summed, and how far it swings over the frames.
+  const title = (): { light: number; swing: number } => {
+    g.saveGame();
+    const t = new T.TitleScreen(true), cv = document.createElement('canvas');
+    cv.width = 640; cv.height = 360;
+    const tc = cv.getContext('2d', { willReadFrequently: true })!;
+    const sums: number[] = [];
+    for (let frame = 0; frame < 60; frame++) {
+      t.render(g, tc, frame);
+      const d = tc.getImageData(310, 130, 20, 48).data;
+      let sum = 0; for (let i = 0; i < d.length; i += 4) sum += d[i] + d[i + 1];
+      sums.push(sum);
+    }
+    return { light: sums.reduce((a, b) => a + b, 0) / sums.length, swing: Math.max(...sums) - Math.min(...sums) };
+  };
+  const steadier = title();
+  delete w.party.flags.q_tide_home;
+  const plain = title();
+  g.store.removeItem('hearth-of-caldera.save');
+  w.party.flags = flags; w.state.minutes = minutes; w.cached = null; w.travel(place.map, place.x, place.y, place.f);
+  return { south, north, home, steadier, plain };
+});
 await browser.close();
 server.close();
 
 let bad = 0;
 const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) bad++; };
+ok(hearth.south > 0 && hearth.north < hearth.south / 100 && hearth.home > hearth.south, `by night the Hearth stands over the hills where it lies, south of Helmstow and not north, and brighter with the Tide Stone home (${hearth.south} south, ${hearth.north} north, ${hearth.home} home)`);
+ok(hearth.steadier.light > hearth.plain.light && hearth.steadier.swing < hearth.plain.swing, `the title over a save with the Tide Stone home draws a brighter, steadier Hearth (light ${hearth.steadier.light.toFixed(0)} against ${hearth.plain.light.toFixed(0)}, swing ${hearth.steadier.swing} against ${hearth.plain.swing})`);
 ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
 ok(titleColours > 6, `the title painted (${titleColours} colours)`);
 ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the title opens creation, Space again takes the premade company (${screen0}, ${screen1})`);
