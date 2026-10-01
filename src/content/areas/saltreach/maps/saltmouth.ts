@@ -1,8 +1,8 @@
 // Saltmouth, the free port: Act II's first town, band 10-12, entered from C6's land gate at 26,19.
 // The inn, the Telhus (the drowned god's town shrine, which cures), the Seawall Armoury with the
 // band's step on the ladder (#399), the Quay Chandlery, the Sail Loft (training to 13), the
-// locksmith's, the Keel (the harbour tavern, the Compact's hall to come, #182) and the
-// Cartographers' map room (#181). Four first prestiges are taught here, each by a person at their
+// locksmith's, the Keel (the harbour tavern, the Compact's hall to come, #182) and the Map Room,
+// the Cartographers' Guild's hall (#181). Four first prestiges are taught here, each by a person at their
 // trade: the astrologer, the locksmith, the stevedore and the ferryman. Jory Tallis stands at his
 // house front on the quay, and Kitto sells the boat to Wrackholm at the quay's end.
 // docs/areas/saltreach.md §4.9 is its brief.
@@ -58,11 +58,23 @@ export const SALTMOUTH: MapDef = {
     { kind: 'shop', x: 10, y: 9, name: 'Quay Chandlery', stock: ['rations', 'torch', 'lantern_oil', 'potion_heal', 'antidote', 'elixir', 'potion_sp', 'potion_sp_great'], interior: 'saltmouth_chandlery' },
     { kind: 'temple', x: 12, y: 9, name: 'The Telhus', interior: 'saltmouth_shrine' },
     { kind: 'trainer', x: 14, y: 9, name: 'The Sail Loft', maxLevel: 13, interior: 'training_loft' },
-    // The Cartographers' map room: its hall and its first task are #181's.
-    { kind: 'npc', x: 3, y: 12, name: 'Ysolde Carrow, Geographer of the Guild', interior: 'cartographers_room', lines: [
-      'Pale plaster and north light. One wall is Caldera, ruled box by box, and a third of the boxes are empty. A globe, a plotting table, a journal under glass.',
+    // The Cartographers' map room, the Guild's hall (#181): it sells what a surveyor takes out, and
+    // gives out the Guild's quests. Ysolde reads the first Meridian journal to a company that carries
+    // it, and gives it back.
+    { kind: 'shop', x: 3, y: 12, name: 'The Map Room', stock: ['rations', 'antidote', 'lantern_oil', 'potion_heal'], interior: 'cartographers_room', hall: 'cartographers' },
+    { kind: 'npc', x: 3, y: 12, name: 'Ysolde Carrow, Geographer of the Guild', lines: [
+      'Pale plaster and north light. One wall is Caldera, ruled box by box, and a third of the boxes are empty. A globe, a plotting table, a book under glass.',
       '"The Cartographers\' Guild. We go where the chart is blank and come back, mostly." She does not look up from her rule. "Look, if you like. Touch nothing under glass."',
-      '"That is a Meridian journal. Thirty years, and still the last word from under the world." A pause. "The empty boxes are not empty. We have not been yet."',
+      '"The Meridian route book. They left it with us the morning they went out, thirty years since; the journals went down with them." A pause. "The empty boxes are not empty. We have not been yet."',
+    ], says: [
+      { after: { flag: 'meridian_read' }, lines: [
+        '"Volume one, in Fane\'s hand, thirty years late." She has gone back to her rule, but the rule does not move. "The rest went down with them. Somewhere."',
+      ] },
+      { after: { item: 'meridian_journal' }, sets: 'meridian_read', lines: [
+        'She sees the book before she sees you, and her rule stops. "Fane\'s hand. Volume one." She opens it on the plotting table and reads standing, and for a while says nothing.',
+        '"Day two." She reads it out. "\'Lay dry under the arch where the causeway crosses the channel, in off the stones beside it. The tide did not reach us. A place to know again.\'"',
+        'She shuts it and holds it a moment longer than she needs to, then puts it in your hands. "Keep it. It came up out of the dark in yours, not ours. Bring the next and I will read that too."',
+      ] },
     ] },
     // The other three first prestiges, taught in the street by people who keep no shop.
     { kind: 'npc', x: 10, y: 7, name: 'Hiske the astrologer', lines: [

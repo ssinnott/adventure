@@ -10,9 +10,11 @@
 // Saltmouth's box (C6, #176): the Saltings named at the seam, the land gate at the road's end, the
 // smugglers' stair found from the rope that hangs over it, and the quay's and the pans' groups won
 // at the box's floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear
-// bought, training to 13 and a first prestige taken; and the boat to Wrackholm's landing and back.
-// Then south into the pans (C7, #178): the Scarp across the south and its stair's fallen foot, the
-// sealed pan's hoard found from the trodden wall, and the crabs and the toads won at 11.
+// bought, training to 13 and a first prestige taken; the Cartographers' first task taken at the Map
+// Room, the road chained stone to stone and the first rank's work done (#181), and the first
+// Meridian journal read there; and the boat to Wrackholm's landing and back. Then south into the
+// pans (C7, #178): the Scarp across the south and its stair's fallen foot, the sealed pan's hoard
+// found from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -25,6 +27,8 @@ import { questLog } from '../../../game/quests.ts';
 import type { QuestView } from '../../../game/quests.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { take } from '../../../game/passage.ts';
+import { take as takeWork, report, offered, rankOf, rankName } from '../../../game/guilds.ts';
+import { countItem } from '../../../game/party.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
 import { World } from '../../../game/world.ts';
@@ -207,6 +211,35 @@ export const walkthrough: Walkthrough = (ok) => {
   const locksmith = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.teaches?.cls === 'thief')!;
   w.party.gold = 1000;
   ok(teach(locksmith.teaches!, w.party, w.world.state, w.party.members.indexOf(ottilie)).taught && prestigeOf(ottilie) === 1 && w.party.gold === 0 && !seeking(), `the locksmith makes a ${PRESTIGES.thief.titles[0]} of ${ottilie.name} for 1,000 gold, and the seeking is done`);
+
+  // The Cartographers' Guild (#181): a stranger takes the first task at the Map Room, chains the
+  // Salt Road from the stone under the Edge to the one in the Saltings, and reports; a Chainman is
+  // offered the first rank's two quests, and done they make the company Surveyors.
+  const room = business('shop').find((f) => f.hall === 'cartographers');
+  ok(!!room && room.interior === 'cartographers_room', `the map room is the Cartographers' hall (${room?.name})`);
+  const first = offered('cartographers', w.party);
+  ok(rankOf('cartographers', w.party) === 0 && first.length === 1 && first[0].id === 'carto_chain', `a stranger is offered the first task alone (${first.map((q) => q.title).join(', ')})`);
+  ok(!takeWork(first[0], w.world.state, w.party).length, 'the first task is not paid on taking, though the company walked past both stones on the way in');
+  const chain = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'carto_chain');
+  ok(/Kestrel Edge/.test(chain()?.goal ?? ''), `the log sends the company back up the road (${chain()?.goal})`);
+  see(w, 'delta_d5:d5_milestone');
+  ok(/Saltings/.test(chain()?.goal ?? ''), `the chain begins at the stone under the Edge (${chain()?.goal})`);
+  see(w, 'saltings_c6:c6_milestone');
+  ok(/Map Room/.test(chain()?.goal ?? ''), `and holds to the stone in the Saltings (${chain()?.goal})`);
+  const paid = report('cartographers', w.world.state, w.party);
+  ok(rankOf('cartographers', w.party) === 1 && paid.at(-1) === `Your rank with the Cartographers' Guild is now ${rankName('cartographers', 1)}.` && !!chain()?.done, `the Map Room pays the chain and makes the company Chainmen (${paid.join(' | ').replace(/\n+/g, ' ')})`);
+  const rank1 = offered('cartographers', w.party);
+  ok(rank1.length === 2 && rank1.every((q) => q.rank === 1), `a Chainman is offered the first rank's two quests (${rank1.map((q) => q.title).join(', ')})`);
+  for (const q of rank1) takeWork(q, w.world.state, w.party);
+  see(w, 'delta_b5:b5_west');
+  see(w, 'saltings_c6:c6_hut');
+  report('cartographers', w.world.state, w.party);
+  ok(rankOf('cartographers', w.party) === 2 && rank1.every((q) => questLog(w.world.state, w.party).find((v) => v.def.id === q.id)?.done), `the fen's edge and the west arm found and reported make the company ${rankName('cartographers', 2)}s`);
+  // Ysolde reads the first Meridian journal to a company that carries it, and gives it back.
+  const ysolde = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Ysolde'))!;
+  w.party.bag.push('meridian_journal');
+  const reading = meet(ysolde, w.party, heard(w.world, ysolde)).text;
+  ok(!!w.party.flags.meridian_read && countItem(w.party, 'meridian_journal') === 1 && /Fane/.test(reading), `Ysolde reads the first Meridian journal and gives it back (${reading.split('\n\n')[1]})`);
 
   // The boat (#164): bought on the quay from Kitto, it sails at eight and lands on Wrackholm's stage
   // at six the next morning; a save made on the isle loads there; and Kitto sells the way back.
