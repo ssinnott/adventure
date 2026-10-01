@@ -1806,3 +1806,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   only owed figures left on main are #170's two (D4's corner, Phase 1.2). Open, approved and outside
   Phase 1: #57 (the owner's bug "Bow is wrong direction", no epic), put to the owner. The 04:40
   check-in deleted: nothing is in flight.
+- 04:52: #324, opened by the owner from this branch (the orchestration log, 143 files), closed
+  unmerged on their word that it can go: `orchestration/` is never merged. The branch stays, with
+  the log.
