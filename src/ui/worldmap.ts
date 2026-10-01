@@ -109,6 +109,7 @@ const WASH: Record<WorldTerrain, RGB> = {
   vines: [176, 150, 110], ash: [148, 138, 126], lava: [196, 74, 34], snow: [238, 238, 230], ice: [214, 230, 238],
   rock: [192, 170, 136], dirt: [208, 184, 134], mountain: [188, 168, 132], peak: [214, 216, 210],
   cliff: [170, 146, 112], chasm: [52, 36, 62], volcano: [112, 96, 88], road: [184, 193, 122], building: [184, 193, 122],
+  tidal: [196, 192, 160],
 };
 const WASH_BY = TERRAINS.map((t) => WASH[t]);
 const SHALLOW: RGB = [156, 192, 194];

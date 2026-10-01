@@ -6,6 +6,7 @@ import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { LEGEND } from '../../src/game/map.ts';
+import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';
 import { defaultParty, partyCan } from '../../src/game/party.ts';
 import { ok, local } from './lib.ts';
 
@@ -137,4 +138,55 @@ export function movement(): void {
   ok(drop.kind === 'blocked' && drop.reason === 'The ground falls away. There is no way down here.' && world.state.y === stood, `a step into the chasm is refused, and says so (${drop.kind === 'blocked' ? drop.reason : drop.kind})`);
   ok(glass.kind === 'blocked' && glass.reason === 'Something blocks the way.', `a glass tree blocks the way (${glass.kind === 'blocked' ? glass.reason : glass.kind})`);
   ok(acrossChasm === py - 3 && acrossGround === py - 2, `a group aware of the party does not step into the chasm, and across open ground comes on (${py - acrossChasm} and ${py - acrossGround} squares off)`);
+  // Tidal ground: walked at low water; at high water refused with its own line, unless someone
+  // swims, and a group keeps off it. Laid on the Foreland and taken up; the clock set to each tide.
+  {
+    world.travel('shelf', 16, 16, 0);
+    const day = Math.floor(world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY, sx = world.state.x, sy = world.state.y;
+    const flat = m.width * (sy - 1) + sx, under = m.cells[flat];
+    m.cells[flat] = { ...LEGEND[';'], ch: ';' };
+    const maren = party.members.find((q) => q.race === 'tidefolk')!;
+    const step = (hour: number, swims: boolean): { kind: string; reason?: string; y: number } => {
+      world.travel('shelf', 16, 16, 0);
+      world.state.minutes = day + hour * 60;
+      maren.race = swims ? 'tidefolk' : 'human';
+      const r = world.move('forward');
+      maren.race = 'tidefolk';
+      return { kind: r.kind, reason: r.kind === 'blocked' ? r.reason : undefined, y: world.state.y };
+    };
+    const low = step(11, false), high = step(5, false), wade = step(5, true);
+    // A group across the flat at high water stays on its side, and at low water comes on.
+    world.travel('shelf', 16, 16, 0);
+    const g = world.liveGroups().find((q) => q.def.roams !== false)!, was = { x: g.state.x, y: g.state.y };
+    const across = (hour: number): number => {
+      world.state.minutes = day + hour * 60;
+      g.state.x = sx; g.state.y = sy - 2; world.state.truce = 0;
+      world.moveMonsters();
+      return g.state.y;
+    };
+    const atHigh = across(5), atLow = across(11);
+    g.state.x = was.x; g.state.y = was.y;
+    m.cells[flat] = under;
+    ok(low.kind === 'moved' && low.y === sy - 1, `at low water a company walks onto tidal ground (${low.kind} at 11:00)`);
+    ok(high.kind === 'blocked' && high.reason === 'The tide is in. The sands will show again.' && high.y === sy, `at high water it is refused, and told the sea will go out (${high.reason ?? high.kind} at 05:00)`);
+    ok(wade.kind === 'moved' && wade.y === sy - 1, `a company with a swimmer wades it at high water (${wade.kind})`);
+    ok(atHigh === sy - 2 && atLow === sy - 1, `a group keeps off tidal ground at high water and crosses it at low (${sy - atHigh} and ${sy - atLow} squares off)`);
+  }
+  // The tide turning is said where the flats are in sight, and nowhere else.
+  {
+    world.travel('shelf', 16, 16, 0);
+    const day = Math.floor(world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY, sx = world.state.x, sy = world.state.y;
+    const flat = m.width * (sy - 3) + sx + 1, under = m.cells[flat];
+    const turning = (laid: boolean, hour: number): string[] => {
+      if (laid) m.cells[flat] = { ...LEGEND[';'], ch: ';' };
+      world.travel('shelf', 16, 16, 2);
+      world.state.minutes = day + hour * 60 - 3;
+      const r = world.move('forward');
+      m.cells[flat] = under;
+      return r.kind === 'moved' ? r.messages : [];
+    };
+    const comes = turning(true, 4), goes = turning(true, 8), unseen = turning(false, 16);
+    ok(comes.includes('The tide has turned. The sea comes in over the sand.') && goes.includes('The tide has turned. The sea draws off the sand.'), `the tide turning is said near the flats, coming in at 04:00 and going out at 08:00 (${comes.concat(goes).join(' / ')})`);
+    ok(!unseen.some((t) => t.includes('tide')), 'and not where there are none');
+  }
 }

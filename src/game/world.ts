@@ -11,8 +11,8 @@ import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from '
 import { partyCan, takeItem, isDown, hasTrait } from './party.ts';
 import { monster } from './monsters.ts';
 import type { Party } from './party.ts';
-import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock } from './calendar.ts';
-import type { CalendarDate } from './calendar.ts';
+import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock, tideAt } from './calendar.ts';
+import type { CalendarDate, Tide } from './calendar.ts';
 import { weatherAt, classify, isSnowy, skyNews, weatherSight, snowDrag, rangedPenalty, rangedNote, fairStart, tempWord, SKY_NAMES } from './weather.ts';
 import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
 import { CLIMATES } from '../content/index.ts';
@@ -80,6 +80,7 @@ export function hoursHold(when: Hours | readonly Hours[], minutes: number, weath
   return [when].flat().some((h) => {
     if (h.hours && (daylightAt(minutes) < 0.25 ? 'night' : 'day') !== h.hours) return false;
     if (h.season && ![h.season].flat().includes(dateAt(minutes).season)) return false;
+    if (h.tide && tideAt(minutes) !== h.tide) return false;
     if (h.sky === 'fog' && !(weather && weather.fog >= FOG)) return false;
     if (h.sky === 'snow' && !(weather && (isSnowy(classify(weather).sky) || weather.cover >= SNOW_LYING))) return false;
     return true;
@@ -309,6 +310,20 @@ export class World {
     this.advance(Math.max(wake, dawn) - now);
   }
 
+  /** The tide now: high water or low, from the clock. */
+  get tide(): Tide { return tideAt(this.state.minutes); }
+
+  /** What the party can cross, at this tide. */
+  private get can(): ReturnType<typeof partyCan> & { tide: Tide } { return { ...partyCan(this.party), tide: this.tide }; }
+
+  /** Whether tidal ground lies within sight of the party, outdoors. */
+  private tidalNear(): boolean {
+    if (this.map.kind !== 'outdoor') return false;
+    const r = VIEW_DEPTH, { x, y } = this.state;
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) if (this.map.at(x + dx, y + dy).terrain === 'tidal') return true;
+    return false;
+  }
+
   // ---- movement ----
   turn(dir: 'left' | 'right' | 'back'): MoveResult {
     const f = this.state.facing;
@@ -321,7 +336,7 @@ export class World {
     const f = this.state.facing;
     const mf: Facing = dir === 'forward' ? f : dir === 'back' ? turnBack(f) : dir === 'left' ? turnLeft(f) : turnRight(f);
     const nx = this.state.x + FACING_DX[mf], ny = this.state.y + FACING_DY[mf];
-    const pass = this.map.passable(nx, ny, partyCan(this.party));
+    const pass = this.map.passable(nx, ny, this.can);
     if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: BLOCK_TEXT[pass] };
     const gate = this.map.gateAt(nx, ny) ?? this.map.exitAt(nx, ny);
     if (gate?.needFlag && ![gate.needFlag].flat().every((k) => this.party.flags[k])) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
@@ -339,7 +354,10 @@ export class World {
     // Six minutes a step in the open, more onto hills and more through deep snow, the two adding up;
     // two in the streets and underground.
     const hills = this.map.at(nx, ny).terrain === 'hills' ? HILL_DRAG : 0;
+    const tide = this.tide;
     this.advance(this.map.kind === 'outdoor' ? 6 + hills + snowDrag(this.weather) : 2);
+    // The tide turning is said where the party can see the ground it covers.
+    if (this.tide !== tide && this.tidalNear()) messages.push(TIDE_TEXT[this.tide]);
     if (this.state.light > 0) this.state.light--;
     if (this.state.truce > 0 && --this.state.truce === 0) this.state.truceGroups = [];
     this.reveal();
@@ -485,7 +503,7 @@ export class World {
 
   /** Where a group may step: where the party could with no key, swimmer or mountaineer, and no group stands. */
   private monsterPassable(x: number, y: number): boolean {
-    return this.map.passable(x, y) === 'ok' && !this.groupAt(x, y);
+    return this.map.passable(x, y, { tide: this.tide }) === 'ok' && !this.groupAt(x, y);
   }
 
   /** Each aware, roaming group steps one cell toward the party. */
@@ -541,7 +559,7 @@ export class World {
     this.state.truce = 4; this.state.truceGroups = ids;
     const f = turnBack(this.state.facing);
     const nx = this.state.x + FACING_DX[f], ny = this.state.y + FACING_DY[f];
-    if (this.map.passable(nx, ny, partyCan(this.party)) === 'ok' && !this.groupAt(nx, ny)) { this.state.x = nx; this.state.y = ny; }
+    if (this.map.passable(nx, ny, this.can) === 'ok' && !this.groupAt(nx, ny)) { this.state.x = nx; this.state.y = ny; }
   }
 
   /**
@@ -553,7 +571,7 @@ export class World {
     const { x, y, facing } = this.state;
     const street = (f: Facing): boolean => {
       const nx = x + FACING_DX[f], ny = y + FACING_DY[f];
-      return this.map.passable(nx, ny) === 'ok' && this.map.at(nx, ny).door === 'none' && !this.map.exitAt(nx, ny) && !this.groupAt(nx, ny);
+      return this.map.passable(nx, ny, { tide: this.tide }) === 'ok' && this.map.at(nx, ny).door === 'none' && !this.map.exitAt(nx, ny) && !this.groupAt(nx, ny);
     };
     const out = ([turnBack(facing), 0, 1, 2, 3] as Facing[]).find(street);
     if (out === undefined) return false;
@@ -620,6 +638,12 @@ export class World {
   }
 }
 
+/** What the log says as the tide turns, near the ground it covers. */
+const TIDE_TEXT: Record<Tide, string> = {
+  high: 'The tide has turned. The sea comes in over the sand.',
+  low: 'The tide has turned. The sea draws off the sand.',
+};
+
 const BLOCK_TEXT: Record<string, string> = {
   void: 'The world ends here.',
   wall: 'A wall blocks the way.',
@@ -628,5 +652,6 @@ const BLOCK_TEXT: Record<string, string> = {
   water: 'The water is too deep to wade.',
   deep: 'The water is far too deep.',
   chasm: 'The ground falls away. There is no way down here.',
+  tide: 'The tide is in. The sands will show again.',
   locked: 'Locked. A key would open it.',
 };

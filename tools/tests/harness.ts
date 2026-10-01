@@ -2,8 +2,9 @@
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, describeGroups } from '../../src/game/combat.ts';
-import { spell, spellDice } from '../../src/game/spells.ts';
-import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from '../testmonster.ts';
+import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
+import { gateCompany } from '../gate.ts';
+import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS } from '../testmonster.ts';
 import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, VANISH_ROUND } from '../harness.ts';
 import { ok } from './lib.ts';
 
@@ -12,10 +13,10 @@ export function harness(): void {
   const soldier = testMonster('soldier', 3), rng = makeRng(31);
   const s = startCombat(defaultParty(rng), [{ id: 'test', monsters: [soldier, soldier] }], rng);
   ok(s.monsters.length === 2 && s.monsters.every((m) => m.def === soldier && m.hp === soldier.hp) && describeGroups(s) === '2 Test Soldiers', `a fight takes a def as well as an id, and names it (${describeGroups(s)})`);
-  // Spells that grow with their caster grow without end in play; a tool may try a ceiling.
+  // Spells that grow with their caster stop growing at 10 in play (DESIGN.md §7); a tool may try another ceiling.
   const meteor = spell('meteor'), smite = spell('smite');
-  ok(spellDice(meteor, 10) === 10 && spellDice(meteor, 20) === 20 && spellDice(meteor, 20, 10) === 10 && spellDice(smite, 20, 10) === 3, 'Meteor Swarm rolls 2d10 for every two levels, and stops growing only where a tool says');
-  ok(startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 10 }).spellsGrowTo === 10, 'a fight has no ceiling on spells unless it is given one');
+  ok(SPELLS_GROW_TO === 10 && spellDice(meteor, 8) === 8 && spellDice(meteor, 10) === 10 && spellDice(meteor, 20) === 10 && spellDice(meteor, 20, 32) === 20 && spellDice(smite, 20) === 3, 'Meteor Swarm rolls 2d10 for every two levels to 10 and no more, unless a tool tries another ceiling');
+  ok(startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 32 }).spellsGrowTo === 32, "a fight keeps play's ceiling on spells unless it is given another");
   // New powers, as a what-if: a member the resolver is told strikes twice does, and play gives none.
   const twice = defaultParty(makeRng(38)), duel = startCombat(twice, [{ id: 'a', monsters: [testMonster('soldier', 1, 60, 1)] }], makeRng(38), { edge: () => ({ blows: 2, damage: 0, ac: 0 }) });
   let turn: string[] = [];
@@ -38,11 +39,11 @@ export function harness(): void {
   // The prestiges, as a what-if: blows, pools and ranks at 11, 19 and 27, and spells stopped at 10.
   const plainAt = (l: number): ReturnType<typeof companyAt> => companyAt(l, 37);
   const plain = [plainAt(12), plainAt(28)];
-  RULES.prestiges = true; RULES.spellsGrowTo = 10;
+  RULES.prestiges = true;
   const ranked = [10, 11, 19, 27].map((l) => edgeOf(companyAt(l, 37).members[0], 1).blows), at12 = companyAt(12, 37), at28 = companyAt(28, 37);
   const meteor12 = spell(at12.members[5].spells.find((id) => id.startsWith('meteor@'))!), vanish = edgeOf(at28.members[3], VANISH_ROUND).ac;
   const unranked = companyAt(10, 37).members[5].spells.includes('meteor');
-  RULES.prestiges = undefined; RULES.spellsGrowTo = undefined;
+  RULES.prestiges = undefined;
   ok(ranked.join() === '1,2,2,3' && at12.members[0].maxHp === plain[0].members[0].maxHp + 4 && at12.members[5].maxSp === plain[0].members[5].maxSp + 4
     && at28.members[0].maxHp === plain[1].members[0].maxHp + 2 * (8 + 16 + 6) && spellDice(meteor12, 12, 10) === 10 && (meteor12.sides ?? 0) > 10 && unranked && vanish >= 100
     && edgeOf(companyAt(28, 37).members[0], 1).blows === 1,
@@ -62,12 +63,13 @@ export function harness(): void {
   // Six or seven fights between rests to level 10, a fight more every four levels after, and never fifteen.
   const perRest = Array.from({ length: CAP }, (_, k) => fightsPerRest(k + 1));
   ok(perRest[0] === 6.5 && perRest[9] === 6.5 && perRest[CAP - 1] === 12 && perRest.every((f, k) => f < 15 && (k === 0 || f >= perRest[k - 1])), `fights between rests run from ${perRest[0]} at level 1 and ${perRest[9]} at 10 to ${perRest[CAP - 1]} at ${CAP}`);
-  // Training past today's cap is for tools only.
+  // The harness trains as play does, to the road's cap.
   const c = defaultParty(makeRng(32)).members[0];
-  c.xp = xpForLevel(20); levelUp(c, makeRng(32));
-  ok(c.level === MAX_LEVEL, `levelUp stops at MAX_LEVEL in play (${c.level})`);
-  levelUp(c, makeRng(32), 20);
-  ok(c.level === 20, `and trains on when a tool asks it to (${c.level})`);
+  c.xp = xpForLevel(40); levelUp(c, makeRng(32));
+  ok(CAP === MAX_LEVEL && c.level === MAX_LEVEL && companyAt(20, 32).members.every((m) => m.level === 20), `levelUp trains to the cap, ${MAX_LEVEL}, and the harness's company to its level (${c.level})`);
+  // The gate's company at the new floors: trained to 12 and 14, in the ladder's top step, the Deepthorn's.
+  const gear = (l: number): string => gateCompany(l, 32).members.map((m) => `${m.equipment.weapon}/${m.equipment.armor}/${m.equipment.shield}`).join();
+  ok([10, 12, 14].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(12) === gear(10) && gear(14) === gear(10), `the gate's company trains to 10, 12 and 14, and past 10 wears the Deepthorn's gear (${gear(14)})`);
   // What a fight costs: all of a fallen member's hit points, and every spell point cast.
   const p = defaultParty(makeRng(33)), fallen = p.members[5];
   const pool = p.members.reduce((a, m) => a + m.maxHp + m.maxSp, 0);
@@ -98,6 +100,9 @@ export function harness(): void {
   // Past 10 the target grows: a company of 24 fights about ten between rests.
   const late = days(24, [standardEncounter('soldier', 24)], 40, 5001);
   ok(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`);
+  // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
+  const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
+  ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
   const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
   ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
 }

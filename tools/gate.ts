@@ -1,9 +1,10 @@
 // The level gates, measured: how often a company of a given level wins an area's fights, so a map's
 // band can be held against what its monsters actually do (docs/EXPANSION.md §2.2, §5.2).
-//   node tools/gate.ts                                 every map with monsters, levels 1-8 and 10
+//   node tools/gate.ts                                 every map with monsters, levels 1-8, 10, 12 and 14
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots
-// The premade company is trained to each level and dressed by the ladder (GEAR, tools/harness.ts),
+// The premade company is trained to each level and dressed by the ladder (GEAR, tools/harness.ts:
+// past 10, in its top step, the Deepthorn's, until #18 builds the ladder past Thornmark's Armoury),
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;
 // one group is one fight. A plain bot plays the party: mend the weakest when someone is under 40%,
@@ -89,7 +90,7 @@ export function winRate(level: number, monsters: Fighters, seeds: number, cap = 
 function main(): void {
   const args = process.argv.slice(2);
   const opt = (name: string): string | undefined => { const i = args.indexOf('--' + name); return i >= 0 ? args[i + 1] : undefined; };
-  const levels = (opt('levels') ?? '1,2,3,4,5,6,7,8,10').split(',').map(Number);
+  const levels = (opt('levels') ?? '1,2,3,4,5,6,7,8,10,12,14').split(',').map(Number);
   const seeds = Number(opt('seeds') ?? 100);
   const only = opt('maps')?.split(',').filter(Boolean);
   if (levels.some((l) => !(l >= 1 && l <= MAX_LEVEL))) throw new Error(`levels run from 1 to ${MAX_LEVEL}`);
