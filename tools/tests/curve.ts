@@ -67,24 +67,36 @@ function budget(id: string, what: string, gives: number, needs: number, owing: A
   } else ok(gives >= needs, msg);
 }
 
+/**
+ * Areas listed by their first maps whose band the atlas cannot give yet, and whose issue owes it: a
+ * zone's band is its built maps' once it has any, so an area with only its first map may read
+ * narrower than its row. Reported, not failed, until it holds; then the entry is dropped.
+ */
+const BAND_OWED: Record<string, string> = {};
+
 export function curve(): void {
-  // The built areas, then the planned ones, which have rows before they have maps: a planned area's
-  // clear gives nothing yet, and its row says who owes it.
+  // The built areas and the planned ones, which have rows before they have maps, in the atlas's
+  // order: an area may be listed before an earlier one is, and its row still follows that one's. A
+  // planned area's clear gives nothing yet, and its row says who owes it.
   const built: readonly string[] = AREAS.map((a) => a.id);
   for (const id of PLANNED) ok(!built.includes(id), `${id}: a planned row, and not yet an area (once its first map lists it in AREAS, it leaves PLANNED)`);
-  const road: readonly { id: RegionId | (typeof PLANNED)[number]; area?: Area }[] = [...AREAS.map((a) => ({ id: a.id, area: a as Area })), ...PLANNED.map((id) => ({ id }))];
+  const order = (id: string): number => ATLAS.areas.find((a) => a.id === id)?.order ?? Infinity;
+  const road: readonly { id: RegionId | (typeof PLANNED)[number]; area?: Area }[] = [...AREAS.map((a) => ({ id: a.id, area: a as Area })), ...PLANNED.map((id) => ({ id }))]
+    .sort((a, b) => order(a.id) - order(b.id));
   road.forEach(({ id, area }, i) => {
     const row = CURVE[id], maps = area?.maps ?? [];
     const [lo, hi] = row.band;
     // The band: the atlas's, holding every map's, and the next floor the next area's.
     const atlas = areaBand(ATLAS, MAP_DEFS, id);
-    ok(!!atlas && atlas[0] === lo && atlas[1] === hi, `${id}: its band ${lo}-${hi} is the atlas's (${atlas?.join('-') ?? 'none'})`);
+    const bandMsg = `${id}: its band ${lo}-${hi} is the atlas's (${atlas?.join('-') ?? 'none'})`, bandHolds = !!atlas && atlas[0] === lo && atlas[1] === hi;
+    if (BAND_OWED[id]) owed(bandHolds, bandMsg, BAND_OWED[id]);
+    else ok(bandHolds, bandMsg);
     for (const d of maps) ok(!!d.band && d.band[0] >= lo && d.band[1] <= hi, `${id}: ${d.id}'s band ${d.band?.join('-') ?? 'none'} sits in ${lo}-${hi}`);
     const later = road[i + 1];
-    const order = ATLAS.areas.find((a) => a.id === id)?.order;
-    const next = later ? CURVE[later.id].band[0] : ATLAS.areas.find((a) => order !== undefined && a.order === order + 1)?.band?.[0];
+    const at = order(id);
+    const next = later ? CURVE[later.id].band[0] : ATLAS.areas.find((a) => a.order === at + 1)?.band?.[0];
     ok(row.next === next, `${id}: the next floor, ${row.next}, is the next area's (${next ?? 'none'})`);
-    if (later) ok(ATLAS.areas.find((a) => a.id === later.id)?.order === (order ?? NaN) + 1, `${id}: ${later.id}, its next row, is the atlas's next area`);
+    if (later) ok(order(later.id) === at + 1, `${id}: ${later.id}, its next row, is the atlas's next area`);
 
     // What a clear gives: every group once, a member's share of the xp summed; the gold in cash.
     const groups = maps.flatMap((d) => d.encounters ?? []);
