@@ -1,5 +1,5 @@
 // The Ashen cult: cultist, acolyte, zealot, adept, deacon and the Hand of Ash, six ranks in one
-// order, and the overseer who keeps the Hand's chains. Painted as masses, not parts: every
+// order, the overseer who keeps the Hand's chains and the gleaner who quarries the Sunder. Painted as masses, not parts: every
 // robe is ONE blob in the def's tint (gown, cowl and near sleeve together, with creases under the
 // arm and at the belt and a folds texture), the far arm its own darker mass behind it, then the
 // other materials (skin, bone mask, mantle, rope, leather, steel) each as their own blob, then the
@@ -19,7 +19,7 @@ import type { Arm, Mats, Pt, Rig } from './figure.ts';
 import { armParts, elbowCrease, hand as fist, legs, makeRig, trunkW, FAR } from './figure.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['cultist', 'acolyte', 'zealot', 'adept', 'deacon', 'ashen_hand', 'overseer'];
+export const KINDS: readonly MonsterSprite[] = ['cultist', 'acolyte', 'zealot', 'adept', 'deacon', 'ashen_hand', 'overseer', 'gleaner'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'zealot') zealot(ctx, x, y, h, p);
@@ -28,6 +28,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'acolyte') acolyte(ctx, x, y, h, p);
   else if (kind === 'deacon') deacon(ctx, x, y, h, p);
   else if (kind === 'overseer') overseer(ctx, x, y, h, p);
+  else if (kind === 'gleaner') gleaner(ctx, x, y, h, p);
   else cultist(ctx, x, y, h, p);
 };
 
@@ -182,6 +183,92 @@ function overseer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   blob(ctx, B, m.skin, [tube([near[1].x, near[1].y, near[2].x, near[2].y], h * 0.038, h * 0.027, 0.03, 95)], { h, formK: 0.5 });
   chain(ctx, near[2].x, near[2].y + h * 0.03, x + h * 0.34 - swing * h * 0.014, y - h * 0.012, x + h * 0.46, y - h * 0.006, h, m.steel, 96);
   fist(ctx, R, near[2], Math.PI / 2, 42, { hex: shade(mix(m.skin, m.ash, 0.8), 0.72), k: 1.02, flip: -1 });
+  void p.light;
+}
+
+// ------------------------------------------------------------------ the gleaner ----
+/**
+ * The gleaner: the rank and file's robe, a sack of shards slung over the far shoulder and held by
+ * its neck, and a knife low in the near hand. The shards glow white through the sacking, and one
+ * pokes out of the mouth. Both sleeves are pushed up, and the grey has gone past the wrist and up
+ * the forearm: a step on from the overseer's (MONSTERS §12).
+ */
+function gleaner(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const m = mats(p.tone);
+  const R = makeRig(x, y, h, p, { tilt: -0.02, hipTilt: 0.016, turn: 0.02, near: [0.058, 0.076, 0.094], far: [-0.05, -0.058, -0.062], toe: [0.85, -0.3] }, CULT);
+  const { sy, hx, hy, hr } = R;
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 6), shimmer = 0.5 + 0.5 * Math.sin(p.frame / 9 + 1);
+  const beltY = sy + h * 0.18, hemY = sy + h * 0.68;
+  // The far arm bent up, its fist on the sack's neck above the shoulder; the near one low, the
+  // knife held point-forward at the hip.
+  const far: Arm = [R.sFar, { x: x - h * 0.235, y: sy + h * 0.12 }, { x: x - h * 0.19, y: sy - h * 0.035 }];
+  const near: Arm = [R.sNear, { x: x + h * 0.25, y: sy + h * 0.2 }, { x: x + h * 0.29, y: sy + h * 0.34 }];
+  const cuff = (a: Arm): Pt => ({ x: a[1].x + (a[2].x - a[1].x) * 0.2, y: a[1].y + (a[2].y - a[1].y) * 0.2 });
+  const grey = shade(mix(m.skin, m.ash, 0.85), 0.62), greyArm = shade(mix(m.skin, m.ash, 0.8), 0.76);
+  groundShadow(ctx, x + h * 0.02, y + 1, h * 0.72);
+
+  // The sack, behind everything: hung from the fist down the back, heavy at the bottom, and lit
+  // from inside where the shards lie against the cloth.
+  const sx = x - h * 0.27, sy0 = sy + h * 0.17;
+  const sacking = shade('#8a7a5c', p.tone);
+  blob(ctx, B, sacking, [
+    { k: 'curve', pts: [
+      far[2].x - h * 0.03, far[2].y + h * 0.02, far[2].x + h * 0.03, far[2].y + h * 0.03,
+      sx + h * 0.1, sy0 - h * 0.1, sx + h * 0.13, sy0 + h * 0.04, sx + h * 0.08, sy0 + h * 0.15,
+      sx - h * 0.04, sy0 + h * 0.17, sx - h * 0.13, sy0 + h * 0.1, sx - h * 0.14, sy0 - h * 0.03,
+      sx - h * 0.08, sy0 - h * 0.12,
+    ], wobble: 0.06, seed: 101, sub: 3 },
+  ], { h, tex: 'stipple', seed: 102, amount: 0.6, formK: 0.5, creases: [
+    { x0: sx - h * 0.06, y0: sy0 - h * 0.08, x1: sx - h * 0.02, y1: sy0 + h * 0.06, r: h * 0.02, a: 0.3 },
+    { x0: sx + h * 0.06, y0: sy0 - h * 0.06, x1: sx + h * 0.03, y1: sy0 + h * 0.1, r: h * 0.018, a: 0.25 },
+  ] });
+  // The light through the sacking: white, as the Sunder's shards burn, and never quite still.
+  for (const [u, v, r, k] of [[-0.04, 0.05, 0.07, 1], [0.05, 0.1, 0.05, 0.8], [-0.08, -0.04, 0.045, 0.7]] as const) {
+    glow(ctx, B, sx + u * h, sy0 + v * h, h * r, '#c8d4ff', (0.32 + 0.2 * shimmer) * k, '#ffffff');
+  }
+  // A shard out of the sack's mouth, black glass with a white edge.
+  glossPoly(ctx, B, [far[2].x - h * 0.05, far[2].y + h * 0.05, far[2].x - h * 0.09, far[2].y - h * 0.03, far[2].x - h * 0.035, far[2].y + h * 0.02], shade('#2c2e38', p.tone), { gloss: 1, h });
+  if (!B.override) glow(ctx, B, far[2].x - h * 0.07, far[2].y, h * 0.035, '#c8d4ff', 0.5 + 0.3 * pulse, '#ffffff');
+
+  // The far arm: the sleeve to the elbow, the bare grey forearm, the fist on the sack's neck.
+  blob(ctx, B, greyArm, [tube([far[1].x, far[1].y, far[2].x, far[2].y], h * 0.036, h * 0.026, 0.03, 103)], { h, formK: 0.5 });
+  blob(ctx, B, p.dark, armParts(R, [far[0], far[1], cuff(far)], 104, 1.25), { h, formK: 0.55, creases: [elbowCrease(R, far)] });
+  fist(ctx, R, far[2], null, 105, { hex: shade(grey, 0.9), k: 0.95 });
+
+  blob(ctx, B, m.skin, [
+    footPart(R, R.legL[2], R.toe[1], 106, R.lift[1]), footPart(R, R.legR[2], R.toe[0], 107, R.lift[0]),
+  ], { h, formK: 0.45, spread: 0.7 });
+  footMarks(ctx, R, R.legL[2], R.toe[1], m.skin, R.lift[1]); footMarks(ctx, R, R.legR[2], R.toe[0], m.skin, R.lift[0]);
+
+  // The robe: gown, cowl and the near sleeve to the elbow, one mass in the tint.
+  blob(ctx, B, p.base, [
+    robePart(R, beltY, hemY, 0.2, 108, 0.04),
+    cowlPart(R, 1.2, 109),
+    ...armParts(R, [near[0], near[1], cuff(near)], 110, 1.25),
+  ], { h, tex: 'folds', seed: 111, amount: 0.7, formK: 0.6, creases: [
+    { x0: x + trunkW(R, sy + h * 0.06) - h * 0.01, y0: sy + h * 0.07, x1: x + trunkW(R, beltY), y1: beltY - h * 0.01, r: h * 0.022, a: 0.35 },
+    { x0: hx - hr * 1.1, y0: hy + hr * 1.25, x1: hx + hr * 1.1, y1: hy + hr * 1.3, r: h * 0.02, a: 0.35 },
+    elbowCrease(R, near),
+  ] });
+  drape(ctx, h, p.base, x, beltY + h * 0.01, h * 0.2, hemY - beltY - h * 0.03, 6, 112, 0.8, 0.28);
+  // The sack's strap across the chest, from the far shoulder to the near hip.
+  blob(ctx, B, m.leather, [tube([R.sFar.x + h * 0.01, R.sFar.y + h * 0.01, x + h * 0.02, sy + h * 0.1, x + h * 0.12, beltY - h * 0.01], h * 0.014, h * 0.014, 0.04, 113)], { h, formK: 0.5 });
+  sleeveEdge(ctx, h, p.base, near[0].x, near[0].y, near[1].x, near[1].y, h * 0.05);
+
+  faceVoid(ctx, hx, hy + h * 0.016, hr * 0.92, hr * 1.08, 114);
+  emberEyes(ctx, hx - hr * 0.46, hy, hx + hr * 0.46, hy, h * 0.014, pulse, false, 2.1);
+
+  // Rope belt, as the rank and file wear it.
+  const bw = trunkW(R, beltY) + h * 0.012;
+  blob(ctx, B, m.rope, [
+    tube([x - bw, beltY + h * 0.012, x, beltY - h * 0.004, x + bw, beltY + h * 0.008], h * 0.013, h * 0.013, 0.1, 115),
+    { k: 'ball', x: x + h * 0.03, y: beltY + h * 0.006, r: h * 0.02 },
+  ], { h, formK: 0.5 });
+
+  // The near forearm, grey past the wrist, then the knife, then the fist closed on its grip.
+  blob(ctx, B, greyArm, [tube([near[1].x, near[1].y, near[2].x, near[2].y], h * 0.038, h * 0.027, 0.03, 116)], { h, formK: 0.5 });
+  const ka = knife(ctx, near[2].x, near[2].y, 0.35, h * 0.17, h, m.steel, m.leather, m.bone, false);
+  fist(ctx, R, near[2], ka, 117, { hex: grey, k: 0.98, flip: 1 });
   void p.light;
 }
 

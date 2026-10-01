@@ -25,6 +25,7 @@ const UNPLACED: Record<string, string> = {
   salt_crab: '#176',
   devilfish: '#188', great_devilfish: '#188',
   ashen_overseer: '#188',
+  ashen_gleaner: '#198',
 };
 
 /**
