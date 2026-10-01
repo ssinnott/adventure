@@ -1604,3 +1604,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Godric's words while Sylvane waits; §8 at 52.4% of 60). Merged onto main 477a721 it conflicts in
   `EDGES_OWED` (main dropped `#71` with D3; #304 drops `#215`): both go. The Thornmark session told
   to merge main and push; it lands on green, #307 after it.
+- 00:29: my render of #304 at 35e3752: the lodge now reads in bark, as the delegate asked. The
+  delegate on #308 (I5): the look OK; carve I4's 24,29–31 now and drop I5's `CUT_OFF`; the
+  corner rock; no cairn; pay 514. Round sent to the I5 session, on top of #304 when it lands.
