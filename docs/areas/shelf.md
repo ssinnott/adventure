@@ -551,12 +551,14 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     down the cliff in seven bends (x 12–20, rows 10–16), cut through the cliff widened there, then
     across the low ground at its foot and out by the south-west corner at 1,31, as the atlas has it.
     The atlas's road steps diagonally off that corner, so 0,31 and 1,31 are owed to #170, whose C5
-    meets it. The atlas's cliff stops three squares short of the gulf; it is carried on to the water
-    (19–20,18–20), so the bends are the one way down.
+    carries the road over D5's corner. The atlas's cliff stops three squares short of the gulf; it is
+    carried on to the water (19–20,18–20), and mountain at 21–22,20 closes the way round by the
+    shallows, so the bends are the one way down.
   - At the top, the sign (bare words, THE DELTA, SALTMOUTH.), the shrine and the first sight of the
     Delta (`d4_top`); gulls in the updraught on the plateau.
   - The secret: the runners' cave, a secret door in the rock at 20,13 beside the fourth bend,
-    mountain either side, with the Kite Shield +1 in it. The hint is the rock worn smooth between
+    mountain either side, with the Kite Shield +1 in it; the cave and the rock round it (21–22,12–14)
+    are cut from the plateau's grass outside the bends. The hint is the rock worn smooth between
     the bends at 19,13 (`d4_worn`). The cairn stands on the seventh bend.
   - At the foot, the waystation (the camp), a mule's bones under the cliff and the reeds of the
     Delta by the south edge.

@@ -34,7 +34,7 @@ export const DOWNS_D4: MapDef = {
     '^^^^^^^^^^,==,,,,MM,,,_~~WWWWWWW',
     ',,^^^^^^^^==,,,,,MMM,_~~WWWWWWWW',
     ',,,,,^^^^==,,,,,,,,MM_~~WWWWWWWW',
-    ',,,,,^^,==,,,,,,___,M~~WWWWWWWWW',
+    ',,,,,^^,==,,,,,,___,MMMWWWWWWWWW',
     ',,,,,^^==,,,,,,_~~~_~~WWWWWWWWWW',
     ',,,,,^==^^,,,,_~~~~~~WWWWWWWWWWW',
     ',,,,^==^^^^,,,,~~WW~WWWWWWWWWWWW',
