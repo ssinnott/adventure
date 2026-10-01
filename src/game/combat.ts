@@ -522,8 +522,9 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
     // A drain on spell points takes what it can of them, and the rest from hit points.
     const fromSp = m.def.drain === 'sp' ? Math.min(pick.c.sp, dmg) : 0;
     pick.c.sp -= fromSp;
-    const woke = struck(pick.c, dmg - fromSp);
-    if (m.def.drain === 'hp') m.hp = Math.min(m.def.hp, m.hp + dmg);
+    // A drain on hit points drinks what the member lost, never more than it had to lose.
+    const had = pick.c.hp, woke = struck(pick.c, dmg - fromSp);
+    if (m.def.drain === 'hp') m.hp = Math.min(m.def.hp, m.hp + Math.max(0, had - pick.c.hp));
     let line = fromSp === 0 ? `${m.def.name} hits ${pick.c.name} for ${dmg}${m.def.drain === 'hp' ? ' and drinks' : ''}.`
       : fromSp === dmg ? `${m.def.name} hits ${pick.c.name} for ${dmg} spell points.` : `${m.def.name} hits ${pick.c.name} for ${fromSp} spell points and ${dmg - fromSp}.`;
     line += woke;

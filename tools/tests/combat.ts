@@ -331,6 +331,24 @@ function casting(): void {
     s.monsters[0].hp = 0;
     partyAct(s, p, makeRng(53), { type: 'defend' });
     ok(s.outcome === 'victory' && !p.members.some((c) => hasCondition(c, 'asleep')), 'and the sleepers wake once the fight is won');
+    // Or fled.
+    let fled = false;
+    for (let seed = 1; seed < 30 && !fled; seed++) {
+      const r = makeRng(seed), q = defaultParty(r), f = startCombat(q, [{ id: 's', monsters: ['slime'] }], r);
+      addCondition(q.members[0], 'asleep');
+      for (let i = 0; i < 20 && f.outcome === 'ongoing'; i++) { const t = currentTurn(f, q, r); if (!t) break; if (t.side === 'party') partyAct(f, q, r, { type: 'flee' }); else monsterAct(f, q, r); }
+      fled = f.outcome === 'fled' && !hasCondition(q.members[0], 'asleep');
+    }
+    ok(fled, 'and once it is fled');
+  }
+  {
+    // A hit that fells a sleeper leaves them down, and says no waking.
+    const p = defaultParty(makeRng(55)), s = startCombat(p, [{ id: 'w', monsters: [{ ...MONSTERS.wolf, attack: 99, dice: 1, sides: 1, bonus: 200 }] }], makeRng(55));
+    for (const c of p.members) addCondition(c, 'asleep');
+    for (let k = 55; k < 70 && !s.log.some((l) => l.startsWith('Wolf hits')); k++) untilActs(s, p, k, 0);
+    const line = s.log.find((l) => l.startsWith('Wolf hits')) ?? '';
+    const felled = p.members.find((c) => line.startsWith(`Wolf hits ${c.name} `));
+    ok(!!felled && hasCondition(felled, 'dead') && !line.includes('wakes') && line.endsWith('falls!'), `a hit that fells a sleeper wakes no one (${line})`);
   }
   {
     // A mender mends the most hurt of its group; a priest blesses and wards it, and not again while it lasts.
@@ -386,6 +404,16 @@ function drain(): void {
   s.monsters[0].hp = leech.hp - 1;
   untilActs(s, p, 51, 0);
   ok(s.monsters[0].hp === leech.hp, 'and never past its own hit points');
+  {
+    // On a member near death it drinks only what the member had to lose.
+    const deep: MonsterDef = { ...leech, dice: 1, sides: 1, bonus: 49 };
+    const q = defaultParty(makeRng(54)), t = startCombat(q, [{ id: 'l', monsters: [deep] }], makeRng(54));
+    for (const c of q.members) c.hp = 3;
+    t.monsters[0].hp = 10;
+    for (let k = 54; k < 60 && t.monsters[0].hp === 10; k++) untilActs(t, q, k, 0);
+    const bitten = q.members.find((c) => c.hp < 3)!;
+    ok(!!bitten && t.monsters[0].hp === 10 + 3 - bitten.hp, `a leech's blow of 50 on a member with 3 drinks ${3 - (bitten?.hp ?? 3)}, what they lost (${t.monsters[0].hp} hp)`);
+  }
   const light: MonsterDef = { ...leech, id: 'test_light', name: 'Bog Light', plural: 'Bog Lights', ranged: true, drain: 'sp', dice: 1, sides: 1, bonus: 9 };
   const q = defaultParty(makeRng(52)), cassian = q.members[5];
   for (const c of q.members) if (c !== cassian) addCondition(c, 'unconscious');
