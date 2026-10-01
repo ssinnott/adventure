@@ -648,7 +648,7 @@ Heron from the birds.
 | Bull Toad | toads, new | brute, 12 | the Delta, alone | *It could swallow Ottilie whole.* Size 1.4; carries disease |
 | Bargeman | bandit | soldier, 10 | the barges on the Long Water | *A barge pole, a knife, and no questions.* Breaks when the master falls |
 | Barge Master | bandit | leader, 11 | one to a barge | *A ledger in one hand and a cudgel in the other.* |
-| Salt Crab | spider | armoured, 11 | the salt pans | *White with salt, and it glitters when it moves.* |
+| Salt Crab | spider | armoured, 11 | the salt pans | *White with salt, and it glitters when it moves.* Shrugs off sleep, as the shore crab does |
 | Brineling | riftling | skirmisher, 10 | the Delta's Rifts | *Green glass, walking, with a light in it.* Lightning bites; cold does not |
 | Drowned Chanter | skeleton | caster, 11 | the Drowned Temples | *A priest of the drowned god, still chanting.* Sings a row to sleep (Slumber); the chant is a count, and it ends on eleven |
 | The Choirmaster | skeleton | boss, 12 | the Drowned Temples' choir | *The choir's master, beating time on a bell.* Blesses its group each round it can; when it falls, the count stops |

@@ -3,6 +3,9 @@
 // carapace, eyes up on stalks, two chelae held forward and only six walking legs, all of it low.
 // The barnacle crab is the same animal grown old under Crowness: a shell domed and crusted with
 // barnacles, weed trailing off its rim and one crusher claw grown out of all proportion.
+// The salt crab is the same animal from the pans, white with salt: the shell caked in it and
+// ragged with crystals standing off the rim, the joints of the legs and claws crusted too, and
+// points of light that wink on the crystals as it moves.
 // The spider family proper: An arachnid is two bulbs on a narrow waist,
 // and both are the same chitin, so unioning them into one mass the way a single material usually
 // wants leaves an undifferentiated blob with legs. Each body SECTION is therefore its own blob
@@ -18,12 +21,13 @@ import type { Part, Crease } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab'];
+export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'thorn_spider') thorn(ctx, x, y, h, p);
   else if (kind === 'crab') crab(ctx, x, y, h, p);
-  else if (kind === 'barnacle_crab') crab(ctx, x, y, h, p, true);
+  else if (kind === 'barnacle_crab') crab(ctx, x, y, h, p, 'barnacle');
+  else if (kind === 'salt_crab') crab(ctx, x, y, h, p, 'salt');
   else if (kind === 'rift_crawler') crawler(ctx, x, y, h, p);
   else marsh(ctx, x, y, h, p);
 };
@@ -310,7 +314,8 @@ interface Pt2 { x: number; y: number }
  * a single wide flat carapace sat low with its eyes on stalks, two chelae held forward with the
  * near one the larger, and three pairs of short walking legs stepping out from under the shell.
  */
-function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, old = false): void {
+function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, v: 'shore' | 'barnacle' | 'salt' = 'shore'): void {
+  const old = v === 'barnacle', salt = v === 'salt';
   const bob = p.breathe * h * 0.01;
   const shell = shade(p.base, 1), rim = shade(p.light, 1.02), dark = shade(p.dark, 0.85);
   // The old crab's shell is domed and heavy: taller, and carried a little higher on its legs.
@@ -338,7 +343,7 @@ function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     x - cw * 0.2, cy - ch * 1.0, x + cw * 0.24, cy - ch * 0.98, x + cw * 0.62, cy - ch * 0.84,
     x + cw * 0.94, cy - ch * 0.46, x + cw, cy + ch * 0.14, x + cw * 0.66, cy + ch * 0.8,
     x + cw * 0.2, cy + ch * 1.0, x - cw * 0.26, cy + ch * 0.98, x - cw * 0.7, cy + ch * 0.76,
-  ], wobble: old ? 0.07 : 0.035, spiky: 0.02, seed: 60, sub: 3 }],
+  ], wobble: old ? 0.07 : salt ? 0.05 : 0.035, spiky: salt ? 0.05 : 0.02, seed: 60, sub: 3 }],
     { h, formK: 0.6, spread: 0.85, tex: 'stipple', seed: 61, amount: 0.5, creases: [
       { x0: x - cw * 0.5, y0: cy - ch * 0.1, x1: x + cw * 0.52, y1: cy - ch * 0.06, r: h * 0.02, a: 0.3 },
       { x0: x - cw * 0.16, y0: cy - ch * 0.5, x1: x - cw * 0.12, y1: cy + ch * 0.7, r: h * 0.018, a: 0.26 },
@@ -351,6 +356,7 @@ function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   }
 
   if (old) barnacles(ctx, x, cy, cw, ch, h, p);
+  if (salt) saltCrust(ctx, x, cy, cw, ch, h, p);
 
   // Eyes up on their stalks, out of the shell's front edge: the crab's other signature.
   for (const s of [-1, 1] as const) {
@@ -370,7 +376,66 @@ function crab(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     { x: x - h * 0.205, y: y - h * 0.135 }, Math.PI + 0.26, -1, h, dark, 74, old ? 0.8 : 0.94);
   chela(ctx, { x: x + cw * 0.64, y: cy + h * 0.06 }, { x: x + h * 0.33, y: cy + h * 0.14 },
     { x: x + h * 0.215, y: y - h * 0.15 }, -0.26, 1, h, shell, 77, old ? 1.5 : 1.3);
+  if (salt) saltGlints(ctx, x, cy, cw, ch, h, p);
   void p.light;
+}
+
+/** Stable 0..1 noise for the crust's placement; never from the frame, or the crust would crawl. */
+function nz(a: number, b: number): number {
+  let v = (Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263)) | 0;
+  v = Math.imul(v ^ (v >>> 13), 1274126177);
+  return ((v ^ (v >>> 16)) >>> 0) / 4294967296;
+}
+
+/**
+ * The salt crab's crust: a cake of salt over the back of the shell, a marking in the shell's own
+ * surface, and crystals standing proud of the rim as one pale mass, so the skyline is ragged with
+ * them and nothing comes apart.
+ */
+function saltCrust(ctx: CanvasRenderingContext2D, x: number, cy: number, cw: number, ch: number, h: number, p: Paint): void {
+  const white = shade('#f4f2ec', Math.max(0.55, p.tone)), grey = shade('#b8b4ac', p.tone);
+  patch(ctx, B, white, [{ k: 'curve', pts: ring(x - cw * 0.06, cy - ch * 0.32, cw * 0.78, ch * 0.62, 9, 67), wobble: 0.15, seed: 67, sub: 2 }], { alpha: 0.7, feather: 0.35 });
+  // The crystals: little blocks, tipped every way, along the top of the shell and in clusters on it.
+  const xtal: Part[] = [];
+  const block = (bx: number, by: number, r: number, a: number): void => {
+    const c = Math.cos(a) * r, s = Math.sin(a) * r;
+    xtal.push({ k: 'poly', pts: [bx - c + s, by - s - c, bx + c + s, by + s - c, bx + c - s, by + s + c, bx - c - s, by - s + c] });
+  };
+  for (let i = 0; i < 13; i++) {
+    const t = -0.88 + i * 0.147, bx = x + cw * t, by = cy - ch * (0.86 - 0.28 * t * t);
+    block(bx, by - h * 0.008 * nz(i, 2), h * (0.009 + nz(i, 3) * 0.008), nz(i, 4) * 1.5);
+  }
+  blob(ctx, B, white, xtal, { h, formK: 0.3, spread: 0.6 });
+  // On the shell's face they are part of the crust, not set on it: no ink of their own.
+  xtal.length = 0;
+  for (const [u, w] of [[-0.42, -0.3], [-0.34, -0.16], [-0.24, -0.26], [0.26, -0.42], [0.4, -0.22], [0.32, -0.3], [0.02, -0.6], [-0.08, -0.4], [0.1, -0.5]]) {
+    block(x + cw * u, cy + ch * w, h * (0.007 + nz(Math.round(u * 100), 5) * 0.005), (u + w) * 3);
+  }
+  blob(ctx, B, white, xtal, { h, formK: 0.4, spread: 0.6, outline: false });
+  // Grey grit in the crust's hollows, so the white has some depth to it.
+  if (!B.override && h >= 34) for (let i = 0; i < 8; i++) {
+    const gx = x + (nz(i, 9) - 0.5) * cw * 1.3, gy = cy - ch * (0.1 + nz(i, 10) * 0.6);
+    patch(ctx, B, grey, [{ k: 'ell', x: gx, y: gy, rx: h * 0.012, ry: h * 0.007 }], { alpha: 0.35, feather: 0.8 });
+  }
+}
+
+/**
+ * The glitter: points of light on the crystals, each winking on and off on its own beat, more of
+ * them as the crab shifts, so it glitters when it moves.
+ */
+function saltGlints(ctx: CanvasRenderingContext2D, x: number, cy: number, cw: number, ch: number, h: number, p: Paint): void {
+  if (B.override) return;
+  const star = shade('#ffffff', Math.max(0.6, p.tone));
+  for (let i = 0; i < 7; i++) {
+    const k = (p.frame / 11 + nz(i, 21) * 7) % 7;
+    if (k > 1.2) continue;
+    const a = Math.sin(k / 1.2 * Math.PI);
+    const gx = x + (nz(i, 22) - 0.5) * cw * 1.7, gy = cy - ch * (0.2 + nz(i, 23) * 0.85);
+    const r = h * (0.02 + nz(i, 24) * 0.015) * a;
+    ctx.strokeStyle = rgba(star, 0.9 * a); ctx.lineWidth = Math.max(1, h * 0.006); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(gx - r, gy); ctx.lineTo(gx + r, gy); ctx.moveTo(gx, gy - r); ctx.lineTo(gx, gy + r); ctx.stroke();
+    glow(ctx, B, gx, gy, r * 1.4, '#ffffff', 0.5 * a, '#ffffff');
+  }
 }
 
 /**
