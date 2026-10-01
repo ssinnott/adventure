@@ -502,10 +502,10 @@ settled in its issue, and what the pilot teaches changes them.
   person. The book under glass is the Meridian Company's route book, left with the Guild the
   morning they went; the journals went down with them. Ysolde reads the first journal to a company
   that carries it and gives it back (`meridian_read`): Oriel Fane's line about lying dry under the
-  causeway's arch points at C5's barge, the hint the mast's stump already gives. The Guild teaches
-  nothing yet: its three skills are #18's. The walkthrough takes the first task, chains the road,
-  is made Chainmen, does both quests of the first rank and is made Surveyors, then has the journal
-  read.
+  causeway's arch points at the dry place under C5's arch, which the mast's stump hints too. The
+  Guild teaches nothing yet: its three skills are #18's. The walkthrough takes the first task,
+  chains the road, is made Chainmen, does both quests of the first rank and is made Surveyors, then
+  has the journal read.
 
 ### 4.10 C7, the salt pans (#178): country, band 12
 
@@ -921,10 +921,12 @@ Decided by delegate for #181, each the owner's to overturn:
    Saltmouth's 300 is shared with the Compact's hall, the chapter and the side quests.
 6. **Ysolde reads the journal and gives it back:** her words, after the journal is carried, set
    `meridian_read`. Fane's line about lying dry under the arch where the causeway crosses the
-   channel, with the mast stood against the stone, points at C5's barge without saying it. The
-   Lost Expedition's log entry for the reading would go in `thornmark/quests.ts`, another area's
-   file, so it is owed to the owner's word and not written here; SLICE's "nothing reads it yet"
-   is the owner's to change.
+   channel, in off the stones beside it, points at C5's secret without claiming the barge or the
+   mast, which are the Tide Stone barge's of this midsummer (#393, STORY) and thirty years too
+   young for the Company: the mast's stump stays the hint it was (#170's 2), and the Company's is
+   only the dry place under the arch (changed on review). The Lost Expedition's log entry for the
+   reading would go in `thornmark/quests.ts`, another area's file, so it is owed to the owner's
+   word and not written here; SLICE says the journal is read (#181).
 7. **The Length of the Wall is not here:** it is #205's, given by the Guild's surveyor at Lantern
    Watch. The Guild's three skills are #18's, and the hall says nothing of teaching them.
 

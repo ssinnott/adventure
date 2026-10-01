@@ -72,7 +72,7 @@ export const SALTMOUTH: MapDef = {
       ] },
       { after: { item: 'meridian_journal' }, sets: 'meridian_read', lines: [
         'She sees the book before she sees you, and her rule stops. "Fane\'s hand. Volume one." She opens it on the plotting table and reads standing, and for a while says nothing.',
-        '"Day two." She reads it out. "\'Lay dry under the arch where the causeway crosses the channel. We stood the mast against the stone, to know it again.\'"',
+        '"Day two." She reads it out. "\'Lay dry under the arch where the causeway crosses the channel, in off the stones beside it. The tide did not reach us. A place to know again.\'"',
         'She shuts it and holds it a moment longer than she needs to, then puts it in your hands. "Keep it. It came up out of the dark in yours, not ours. Bring the next and I will read that too."',
       ] },
     ] },
