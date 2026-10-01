@@ -8,7 +8,6 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'devilfish', 'great_devilfish',
   'overseer',
-  'tide_elder',
   'tide_elder', 'tide_warden',
 ] as const;
 
