@@ -52,11 +52,14 @@ export const EAVES_I2: MapDef = {
     { x: 0, y: 10, to: 'thornmark', tx: 30, ty: 10, tf: WEST },
   ],
   features: [
+    // The road over the shoulder and into the wood.
     { kind: 'shrine', x: 9, y: 8, id: 'i2_shrine', text: 'A wayside shrine where the road enters the wood, the hills\' last dry stone. Needles lie on it an inch deep.', stat: 'speed', done: 'The needles on the shrine lie as they fell.' },
     { kind: 'cairn', x: 7, y: 5, id: 'i2_cairn', text: 'A cairn on the ridge\'s shoulder, the last of Thornmark behind it and the pines ahead. Every stone on it came up from the lake.', gold: 160, items: ['potion_sp_great'] },
+    // The secret: the milestone by the road, and under it the Watch's last patrol's pack.
     { kind: 'event', x: 17, y: 10, id: 'i2_milestone', once: true, text: 'A milestone face down in the bracken, the tops of its letters showing at the turf: STOW 40. The turf under its edge is cut square, not torn.' },
     { kind: 'event', x: 17, y: 12, id: 'i2_pack', once: true, text: 'A Warden\'s pack in the hollow where the stone stood, a halberd laid along it. Its orders, stamped with the Watch\'s lamp: the Hoarhills and back by the east road, four days.' },
     { kind: 'chest', x: 17, y: 12, id: 'i2_pack_chest', gold: 300, items: ['wardens_halberd'] },
+    // The woodcutter's camp, and the woodcutter's word on the stone.
     { kind: 'camp', x: 21, y: 14, name: 'The woodcutter\'s camp', text: 'A woodcutter\'s clearing off the road, a fire in a ring of stumps. The mist stops at the smoke.' },
     { kind: 'npc', x: 23, y: 14, name: 'A woodcutter', lines: [
       'A woodcutter limbs a pine by the fire, and does not look up from the saw.',
@@ -67,8 +70,11 @@ export const EAVES_I2: MapDef = {
   ],
   secrets: [{ x: 17, y: 11, hint: 'i2_milestone' }],
   encounters: [
+    // The gentlest first: pine bears in the north woods by the way in and in the south-east woods,
+    // the moths beside the camp by night, and a glass bear alone on the road at the far end.
     { id: 'i2_bears1', x: 11, y: 6, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: 2880 },
     { id: 'i2_bears2', x: 20, y: 24, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: 2880 },
-    { id: 'i2_bears3', x: 28, y: 6, monsters: ['pine_bear', 'pine_bear'], aware: 5, respawn: 2880, roams: false },
+    { id: 'i2_moths', x: 22, y: 16, monsters: ['lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth'], aware: 5, respawn: 1440, when: { hours: 'night' } },
+    { id: 'i2_glass_bear', x: 29, y: 10, monsters: ['glass_bear'], aware: 5, respawn: 2880, roams: false },
   ],
 };

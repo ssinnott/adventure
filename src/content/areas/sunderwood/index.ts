@@ -19,6 +19,6 @@ export const AREA = {
   climate: { summer: 16, winter: -2, daily: 5, damp: [0.01, 0.08], wettest: 85, fog: 0.6, lag: 8,
     fogText: 'Mist comes down through the pines.', thunderText: 'Thunder rolls down the gorge.' },
   interiors: INTERIORS,
-  novel: { families: ['bears'], terrain: [], mechanics: [], landmarks: [] },
+  novel: { families: ['bears', 'moths'], terrain: [], mechanics: ['inflict:asleep'], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

@@ -10,13 +10,11 @@ turns. This is its area doc (EXPANSION §4, §6 and §8.2). Its work is filed un
 (#204), its side quests (#205), its drawings (#206) and its rooms (#207). Figures are measured on
 main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Nothing of it is built. Its content will be `src/content/areas/sunderwood/` (maps, monsters, items,
-its chapter of the one quest, The Wall, in `chapter.ts`, its side quests in `quests.ts`, climate and
-its part of the world map) and its businesses' rooms `src/ui/interiors/sunderwood/`. Its part of
-the world map is its folder's already (`atlas.ts`, #194), spread into the plan
-(`src/content/atlas.ts`) until the area is listed; the rest of the folder comes with its first map
-(#195), as Thornmark's did. Its ids: the area `sunderwood`, its zones `eaves` and `lanternwood`, the
-town `lantern_watch` and the Sunder `the_sunder`.
+Its first map is built: I2, the Eaves' way in (#195), which lists the area. Its content is
+`src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
+`chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
+businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
+and `lanternwood`, the town `lantern_watch` and the Sunder `the_sunder`.
 
 ---
 
@@ -26,9 +24,9 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–15 | 5,764 | none |
+| The Eaves | 14–15 | 5,764 | I2, the Eaves' way in, laid at 264,30 (#195) |
 | Lanternwood | 15–16 | 7,971 | none |
-| The area | 14–16 | 13,735 | none |
+| The area | 14–16 | 13,735 | one box |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
@@ -91,11 +89,24 @@ cannot see the bottom of, mist under the pines, and by night the moths to any li
 
 ## 3. What is built
 
-Nothing but its atlas rows (`src/content/areas/sunderwood/atlas.ts`, #194): the zones with their
-bands (the Eaves 14–15, Lanternwood 15–16), the town at 14–16, the Sunder at 15–16 and the sites,
-which the plan spreads in where its own rows were. The atlas has the area's zones, the town and the
-dungeon as planned plates, its sites (Lantern Watch, the Sunder, Sunderfall) and its links: the east
-road in and on, the rope bridge, the Sunder's and the Watch's ways in. Its systems are #150's, dead
+Its atlas rows (`src/content/areas/sunderwood/atlas.ts`, #194): the zones with their bands (the
+Eaves 14–15, Lanternwood 15–16), the town at 14–16, the Sunder at 15–16 and the sites, the area's
+own since I2 listed it. Its first map:
+
+- **The Eaves' way in** (I2, `eaves_i2`, country, band 14–15; #195): the east road out of
+  Thornmark's east edge through a gap in its ring, over the Hoarhills' shoulder and east under the
+  pines to the box's far edge, where it runs on for J2. The rim closes the north, Lyngwyn fills the
+  south-west and a crest along the south shuts the box from the Deepthorn's I3. A shrine where the
+  road enters the wood, a cairn on the shoulder, the woodcutter's camp, the lookout on the crest and
+  the milestone face down by the road, with the Watch's last patrol's pack under it. Four groups:
+  pine bears in two pairs, lantern moths at the camp by night and a glass bear alone on the road at
+  the far end.
+- **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
+  gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
+
+The atlas has the area's zones, the town and the dungeon as planned plates, its sites (Lantern
+Watch, the Sunder, Sunderfall) and its links: the east road in and on, the rope bridge, the Sunder's
+and the Watch's ways in. Its systems are #150's, dead
 wood, crystal and the chasm (#163) its own; the coach east from Saltmouth (#164) is how the act
 stays a road between Wrackholm and here. Its monsters are drawn in #206 and its rooms in #207.
 
@@ -177,6 +188,20 @@ features; the pay shared out over the area (§8).
 - **New here.** Woods underfoot (#210); the east road; a company told it is early.
 - **Finds.** A Warden's Halberd +1 in the pack.
 - **Pay.** About 1,150 xp a member.
+
+- **As built** (#195, 1 October): the brief's places, with four groups for its five. The lantern
+  moths, eight, stand beside the camp by night, not on it, so the camp stays a rest. The stronger
+  group alone at the far end is a glass bear (MONSTERS §6.3 has it at the Sunder's floor): with one
+  pine bear on the roster, a pair at the far end could not be the hardest, and the curve asks a
+  group at 15 or more on every map. The first glass in the Eaves comes down the road to meet the
+  company. The pack holds a Warden's Halberd +1 (`wardens_halberd`), and the milestone reads STOW 40
+  where its letters meet the turf. A company at 14 wins every fight and manages 9.4 fights to a
+  rest, off the aim of 6.5 to 8.5 and inside the limit; the road is walked every time. As measured it
+  pays about 1,250 xp a member and 460 gold. Two under, at 12, it wins every fight too: past 10 the
+  company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company back, which
+  the gate's limit asks (§8). Woods are on the road before it (the Downs' E2, the Deepthorn's H3
+  and I3), so the area claims the bears, the moths and the moths' sleep as new, and not the woods.
+  What the owner finds by hand goes here when the box has been played.
 
 ### 4.3 J2, the Eaves (#196): core, band 14–15
 
@@ -524,6 +549,20 @@ Decided by delegate for #194, each the owner's to overturn:
 6. **The hints are things a player sees** (I2's cut turf, K2's bare rock, K3's stacked wood, the
    Sunder's chalk, L2's raked ash, J3's moths at the den): a hint that is only a person's name tells
    a player nothing to look for.
+
+Decided by delegate for #195, each the owner's to overturn:
+
+1. **A glass bear, alone, is the far end's stronger group,** against MONSTERS §6.3's Where column:
+   the curve asks a group at 15 or more on the map, the roster's one pine bear is 14, and a new
+   bear at 15 would want a drawing first.
+2. **Two pairs of pine bears and eight moths by night beside the camp:** a pair and eight are the
+   standard encounters the harness measures, and the four groups pay about 1,250 xp a member
+   against the brief's 1,150.
+3. **Every bear group comes back after two days, the moths after one,** as Thornmark's ogre and
+   owls do.
+4. **The shrine gives speed,** which no shrine or fountain on the road gave; the cairn 160 gold and
+   a Sapphire Vial; the pack 300 gold and a Warden's Halberd +1 of its own.
+5. **The climate:** summer 16, winter -2, damp to 0.08, fog 0.6, eight hours behind the Foreland.
 
 ## 10. Names
 
