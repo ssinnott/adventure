@@ -7,6 +7,8 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 /** The drawings Sunderwood's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
 export const SPRITES = [
   'pine_bear',
+  'sunderling', 'sunder_warden',
+  'gleaner',
   'glass_spider',
   'sunder_hound',
   'lantern_moth',
@@ -17,6 +19,12 @@ export const SPRITES = [
 export const MONSTERS: readonly MonsterDef[] = [
   // the Eaves (#195, #196), a brute on MONSTERS §4.4's line at 14
   { id: 'pine_bear', name: 'Pine Bear', plural: 'Pine Bears', sprite: 'pine_bear', kind: 'beast', look: 'A bear, and then the rest of the bear.', level: 14, hp: 297, ac: 17, attack: 10, dice: 3, sides: 7, bonus: 6, speed: 8, xp: 1107, gold: [0, 0], tint: '#6b4a2e', size: 1.15 },
+  // the Sunder's black glass (#198, #199), a skirmisher on MONSTERS §4.4's line at 14
+  { id: 'sunderling', name: 'Sunderling', plural: 'Sunderlings', sprite: 'sunderling', kind: 'rift', look: 'Black glass, with a white light inside.', level: 14, hp: 155, ac: 18, attack: 9, dice: 3, sides: 6, bonus: 1, speed: 15, xp: 553, gold: [0, 0], tint: '#2c2e38', size: 0.74, inflict: { cond: 'paralysed', chance: 0.1 } },
+  // the gorge above the wall (#199), the area's boss at 16
+  { id: 'sunder_warden', name: 'Warden of the Sunder', plural: 'Wardens of the Sunder', sprite: 'sunder_warden', kind: 'rift', look: 'The Sunder\'s own knot, and it has held for centuries.', level: 16, hp: 821, ac: 21, attack: 12, dice: 15, sides: 8, bonus: 17, speed: 13, xp: 10133, gold: [0, 0], immune: ['asleep'], tint: '#2a2a34', size: 1.35 },
+  // the Sunder's ledges (#198), a soldier on MONSTERS §4.4's line at 15: the Hand, quarrying the Rift
+  { id: 'ashen_gleaner', name: 'Ashen Gleaner', plural: 'Ashen Gleaners', sprite: 'gleaner', kind: 'person', steady: true, look: 'A sack of glowing shards, and a knife for the next.', level: 15, hp: 163, ac: 19, attack: 9, dice: 2, sides: 8, bonus: 3, speed: 11, xp: 593, gold: [25, 60], tint: '#54484e', size: 0.92 },
   // the Sunder's edge (#197, #198, #199), a controller on MONSTERS §4.4's line at 15: it paralyses, at 0.25 a hit
   { id: 'glass_spider', name: 'Glass Spider', plural: 'Glass Spiders', sprite: 'glass_spider', kind: 'beast', look: 'Threads of glass, and something walking them.', level: 15, hp: 151, ac: 19, attack: 9, dice: 2, sides: 8, bonus: 4, speed: 12, xp: 593, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.25 }, tint: '#23262e', size: 0.75 },
   // the Sunder (#196, #197, #198), a skirmisher on MONSTERS §4.4's line at 15: it paralyses, at 0.15 a hit; fire bites the Sunder's things, and cold does not

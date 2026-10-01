@@ -8,6 +8,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'devilfish', 'great_devilfish',
   'overseer',
+  'tide_elder', 'tide_warden',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -17,4 +18,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'great_devilfish', name: 'Great Devilfish', plural: 'Great Devilfish', sprite: 'great_devilfish', kind: 'beast', look: 'What the smugglers feed.', level: 14, hp: 649, ac: 20, attack: 11, dice: 12, sides: 8, bonus: 15, speed: 13, xp: 8853, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, immune: ['asleep'], tint: '#a8928a', size: 1.9 },
   // the cove's chained and the hold's rows (#188, #190), a controller on MONSTERS §4.4's line at 13: the chain holds
   { id: 'ashen_overseer', name: 'Ashen Overseer', plural: 'Ashen Overseers', sprite: 'overseer', kind: 'person', steady: true, look: 'Grey to the wrist, and a chain in each hand.', level: 13, hp: 131, ac: 18, attack: 8, dice: 2, sides: 8, bonus: 3, speed: 12, xp: 513, gold: [20, 50], inflict: { cond: 'paralysed', chance: 0.25 }, tint: '#4a4248', size: 0.95 },
+  // the Tide Ship's forward hold (#190), an elite on MONSTERS §4.4's line at 13: it paralyses
+  { id: 'tide_elder', name: 'Tide Elder', plural: 'Tide Elders', sprite: 'tide_elder', kind: 'rift', look: 'A shard of the sea, stood up.', level: 13, hp: 244, ac: 18, attack: 9, dice: 3, sides: 7, bonus: 5, speed: 15, xp: 1027, gold: [0, 0], tint: '#2e8a78', size: 0.95, inflict: { cond: 'paralysed', chance: 0.15 } },
+  // over the Stone in the forward hold (#190), the area's boss at 14; its damage is an escorted boss's, for #190's gate to tune
+  { id: 'tide_warden', name: 'Warden of the Tide', plural: 'Wardens of the Tide', sprite: 'tide_warden', kind: 'rift', look: "The Stone's own light, standing guard over it.", level: 14, hp: 674, ac: 20, attack: 11, dice: 7, sides: 7, bonus: 11, speed: 13, xp: 8853, gold: [0, 0], immune: ['asleep'], tint: '#2a7a6c', size: 1.25 },
 ];
