@@ -41,7 +41,6 @@
       ],
       "groups": [
         "c5_rift_g1",
-        "c5_rift_g2",
         "c5_rift_warden"
       ],
       "doors": []

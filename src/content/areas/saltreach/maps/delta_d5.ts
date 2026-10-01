@@ -1,7 +1,8 @@
 // The Delta, box D5: the shore under the Edge. Country, band 10-11: the Salt Road's three squares
 // down D4's foot to C5, where the milestone stands; the gulf's shore under the cliff; and a shingle
-// bar out to an islet and on to a spit, with tidal flats either side. The rest is Sylmeer. Laid with C5 (#170) so the road out of D4 has somewhere to go; docs/areas/saltreach.md
-// §4.2 is its brief. Cut from the atlas by tools/scaffold.ts.
+// bar out to an islet and on to a spit, with tidal flats either side. The rest is Sylmeer. Laid
+// with C5 (#170) so the road out of D4 has somewhere to go; docs/areas/saltreach.md §4.2 is its
+// brief. Cut from the atlas by tools/scaffold.ts.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
@@ -14,7 +15,7 @@ export const DELTA_D5: MapDef = {
   region: 'saltreach',
   start: { x: 0, y: 0, facing: SOUTH },
   rows: [
-    '=,,,,,,^~~WWWWWWWWWWWWWWWWWWWWWW',
+    '==,,,,,^~~WWWWWWWWWWWWWWWWWWWWWW',
     '=^,,,,,^~~WWWWWWWWWWWWWWWWWWWWWW',
     '=^,,,,,^~~WWWWWWWWWWWWWWWWWWWWWW',
     '^^,,,,,^~~WWWWWWWWWWWWWWWWWWWWWW',
@@ -56,6 +57,6 @@ export const DELTA_D5: MapDef = {
       '"You came down the Edge. Then you\'ve seen the fen glitter. It never did before midsummer." She ties a knot. "A barge went by here one night, out past the islet towards the sea, no lamp lit, and a light in its sacking all the same. Green. I know what the Stone looks like in the dark. Everyone here does."',
       '"It came down the river, so it passed Rietum first, and the quay there never sleeps. Go up the spur and ask what they saw. They\'ll not tell a stranger much." She holds the net up to the light. "The one who counts has not sung since. Nor have I."',
     ] },
-    { kind: 'event', x: 9, y: 30, id: 'd5_spit', once: true, text: 'A spit of sand at the bar\'s end, and a wreck\'s ribs standing out of it, grey as the shingle, picked clean of anything that would burn.' },
+    { kind: 'event', x: 9, y: 30, id: 'd5_spit', once: true, text: 'A spit of sand at the bar\'s end, and a wreck\'s ribs standing out of it, grey as the shingle, picked clean of all that would burn.' },
   ],
 };

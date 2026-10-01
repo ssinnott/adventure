@@ -50,7 +50,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(hold?.kind === 'chest' && hold.items.includes('brine_shard') && hold.x === 28 && hold.y === 22, 'in its straw, a Brine Shard');
   listen(w);
 
-  // The box's groups, each won at its floor: the pools' leeches and eels, the toads at the far end.
+  // The box's groups, each won at its floor: the pools' leeches and eels, the bull toad at the far end.
   for (const g of C5.encounters!) fight(w, `delta_c5:${g.id}`);
 
   // The Rift on its islet: walked into from its neck, and its groups and its warden won at 10.

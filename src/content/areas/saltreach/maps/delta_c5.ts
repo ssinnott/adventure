@@ -1,7 +1,7 @@
 // The Delta, box C5: the Delta road. Country, band 10-11: the Salt Road on its causeway down the
 // fen's east side from the Edge's foot (D5) to Saltmouth's box (C6), the spur to Rietum leaving it
 // at the fork for the river and C4, the fen's pools either side, a small brine Rift on an islet and
-// the river's west fen over two tidal fords. The leeches are new here, and the first Rift from a
+// the river's west fen over two fords. The leeches are new here, and the first Rift from a
 // template. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
@@ -15,7 +15,7 @@ export const RIFT_CLOSED: When = { slain: 'c5_rift:c5_rift_warden' };
 export const C5_RIFT = rift({
   id: 'c5_rift', template: 'ring', material: 'brine', seed: 6, band: [10, 11], region: 'saltreach',
   out: { to: 'delta_c5', tx: 20, ty: 13, tf: SOUTH },
-  table: { groups: [['brineling', 'brineling', 'brineling'], ['brineling', 'brineling', 'brineling', 'brineling']], warden: ['tide_elder', 'brineling', 'brineling'] },
+  table: { groups: [['brineling', 'brineling', 'brineling']], warden: ['tide_elder', 'brineling'] },
   hoard: { gold: 150, items: ['potion_heal', 'potion_heal'] },
   until: RIFT_CLOSED,
 });
@@ -64,19 +64,19 @@ export const DELTA_C5: MapDef = {
   ],
   features: [
     // The causeway, from the Edge's foot.
-    { kind: 'event', x: 27, y: 1, id: 'c5_foot', once: true, text: 'The Edge\'s foot. The road climbs onto a causeway of stone and runs south, the fen opening either side of it, reed and water to the sky.' },
+    { kind: 'event', x: 27, y: 1, id: 'c5_foot', once: true, text: 'The Edge\'s foot. The road climbs onto a stone causeway and runs south, the fen opening either side, reed and water to the sky.' },
     { kind: 'shrine', x: 28, y: 12, id: 'c5_shrine', text: 'A shrine on the causeway to the drowned god, a stone bowl at its foot where the tide should reach. The bowl is dry.', stat: 'personality', done: 'The bowl is dry still.' },
     { kind: 'camp', x: 30, y: 10, name: 'The causeway\'s head', text: 'A camp on dry ground at the causeway\'s head: a ring of stones, a stack of cut reed and the cliff at your back.' },
     // The secret: the arch, and the barge drowned under it.
-    { kind: 'event', x: 26, y: 22, id: 'c5_arch', text: 'A stone arch carries the road over a channel. A mast\'s stump leans out of the water against its side, and brine glass crusts the stones at the waterline.' },
+    { kind: 'event', x: 26, y: 22, id: 'c5_arch', text: 'A stone arch over a channel. A mast\'s stump leans against its side, and brine glass crusts the stones at the waterline.' },
     { kind: 'event', x: 26, y: 21, id: 'c5_glow', text: 'Night on the causeway. The stones beside the arch glow faintly green, from below.', when: { hours: 'night' } },
-    { kind: 'event', x: 27, y: 22, id: 'c5_barge', once: true, text: 'A dry hollow under the arch, and a barge drowned in it, keel up on the mud. Its straw has spilled, and in the straw something catches the light.' },
+    { kind: 'event', x: 27, y: 22, id: 'c5_barge', once: true, text: 'A dry hollow under the arch, and a barge drowned in it, keel up on the mud. In its spilled straw something catches the light.' },
     { kind: 'chest', x: 28, y: 22, id: 'c5_barge_hold', gold: 90, items: ['brine_shard', 'potion_heal'] },
     // The fork, and the spur north to Rietum.
     { kind: 'sign', x: 24, y: 27, text: 'North by the river: Rietum. South: Saltmouth.' },
     { kind: 'cairn', x: 24, y: 26, id: 'c5_cairn', text: 'A cairn at the fork, raised by bargemen for one of their own the river kept. Every stone in it is round, from the river\'s bed.', gold: 60, items: ['potion_heal'] },
     { kind: 'event', x: 16, y: 17, id: 'c5_glass', once: true, text: 'Brine glass among the reeds, glittering, and the reeds inside it still green. Where the sun is on it, the brine moves.' },
-    { kind: 'event', x: 9, y: 4, id: 'c5_spur', once: true, text: 'The spur runs north on the river\'s east bank, a track of trodden reed, the Long Water brown and slow beside it and the Edge over both.' },
+    { kind: 'event', x: 9, y: 4, id: 'c5_spur', once: true, text: 'The spur runs north on the east bank, a track of trodden reed, the Long Water brown and slow beside it and the Edge over both.' },
     // The Rift on its islet.
     C5_RIFT.way(20, 12),
     // Over the fords, the river's west fen.

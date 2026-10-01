@@ -90,38 +90,39 @@ day on the Saltings' ground (#162, #151's call 3).
 
 ## 3. What is built
 
-Its atlas rows (`src/content/areas/saltreach/atlas.ts`, #169): the zones with their bands (the
-Upper Water 10–11, the Delta 10–12, the Saltings 11–12), Saltmouth at 10–12, the Drowned Temples at
-11–12 and the sites. The atlas has the area's zones, the town and the dungeon as planned plates, its
-sites (Rietum, Saltmouth, the Tide Stone, the Drowned Temples and Sjonghol, its own; Sylmeer,
-Kestrel Edge and the Scarp, the plan's, §10) and its links: the road down Kestrel Edge, the town's
-and the temples' ways in, the boat to Wrackholm and the Scarp stair. The systems it waits on are
-#150's: the cap past 10 and the curve's rows (#159), ranks and morale (#160), casting, drain and
-elements (#161), salt, tidal ground and heather (#162), coaches and boats (#164), the Rift generator
-for its small Rifts (#165), the band said on crossing (#166) and the log paged by chapter (#167). Its
+Its atlas rows (`src/content/areas/saltreach/atlas.ts`, #169): the zones with their bands (the Upper
+Water 10–11, the Delta 10–12, the Saltings 11–12), Saltmouth at 10–12, the Drowned Temples at 11–12
+and the sites. The atlas has the area's zones, the town and the dungeon as planned plates, its sites
+(Rietum, Saltmouth, the Tide Stone, the Drowned Temples and Sjonghol, its own; Sylmeer, Kestrel Edge
+and the Scarp, the plan's, §10) and its links: the road down Kestrel Edge, the town's and the
+temples' ways in, the boat to Wrackholm and the Scarp stair. The systems it waits on are #150's: the
+cap past 10 and the curve's rows (#159), ranks and morale (#160), casting, drain and elements
+(#161), salt, tidal ground and heather (#162), coaches and boats (#164), the Rift generator for its
+small Rifts (#165), the band said on crossing (#166) and the log paged by chapter (#167). Its
 monsters are drawn in #184 and its rooms in #185. The boxes built:
 
 - **The shore under the Edge** (D5, `delta_d5`, country, band 10–11; #170): the Salt Road's three
   squares down D4's foot and the milestone beside them (SALTMOUTH 4, RIETUM 5); the sand under the
-  cliff where Sylmeer opens; a shingle bar out across tidal flats to an islet, where a hermit mending
-  nets saw the barge go by and sends the company up the spur; and on south to a spit with a wreck's
-  ribs in it. No groups. The rest of the box is the gulf.
+  cliff where Sylmeer opens; a shingle bar out across tidal flats to an islet, where a hermit
+  mending nets saw the barge go by and sends the company up the spur; and on south to a spit with a
+  wreck's ribs in it. No groups. The rest of the box is the gulf.
 - **The Delta road** (C5, `delta_c5`, country, band 10–11; #170): the causeway from the Edge's foot
-  down the fen's east side to C6, a camp at its head and the drowned god's dry shrine on it; the fork
-  at 25,27 with its sign and cairn, and the spur north up the river to C4; the fen's pools either side
-  of the causeway with leeches and an eel in each; a bull toad alone at the far end; a brine Rift
-  (`c5_rift`, #165's ring) on an islet between the spur and the causeway, its brinelings and its tide
-  elder quiet once the elder falls; and the river's west fen over two fords. The secret is a barge
-  drowned under the causeway's arch, the Brine Shard in its straw; the hint is the mast's stump at
-  the arch, with the stones glowing green beside it by night. The gate holds at 10, at 7.0 fights to
-  a rest on the box and 5.9 in the Rift.
+  down the fen's east side to C6, a camp at its head and the drowned god's dry shrine on it; the
+  fork, its sign at 24,27 and a cairn beside it, and the spur north up the river to C4; the fen's
+  pools either side of the causeway with leeches and an eel in each; a bull toad alone at the far
+  end; a brine Rift (`c5_rift`, #165's ring) on an islet between the spur and the causeway, three
+  brinelings in its rooms and a tide elder with one more at its heart, quiet once the elder falls;
+  and the river's west fen over two fords. The secret is a barge drowned under the causeway's arch,
+  the Brine Shard in its straw; the hint is the mast's stump at the arch, with the stones glowing
+  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.8 in the
+  Rift.
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All but C5 and D5: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the plan is ten boxes,
-a dungeon and a town, and the boxes hold 8,946 of those squares:
+All but C5 and D5: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the plan is ten
+boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -220,12 +221,13 @@ settled in its issue, and what the pilot teaches changes them.
   milestone and the hermit; the hermit is on D5's islet, not C5's, so that the islet and the spit
   are land a company reaches. The pools are two groups of three leeches and an eel; the fen toad at
   the far end is the bull toad alone, the box's hardest group, and the fen toads wait for B5. The
-  brinelings are the Rift's, in threes and fours, with a tide elder at its heart: the Tide Stone's
-  Rifts' family (MONSTERS §2.1). The Rift goes quiet when the elder falls; #191 adds the Stone home
-  as the other way. The hint is the mast's stump at the arch, which is always there; the green glow
-  above the arch is said by night beside it. As measured, C5 and its Rift pay 1,442 xp a member and
-  300 gold, the Rift about half of it. What the owner finds by hand goes here when the box has been
-  played.
+  brinelings are the Rift's, three in its rooms and one beside a tide elder at its heart: the Tide
+  Stone's Rifts' family (MONSTERS §2.1), and the tide elder's first placing. The Rift goes quiet
+  when the elder falls; #191 adds the Stone home as the other way. Its hoard holds no shard, though
+  the brine tear's words show one beside it, as the cellar's Rift shows a Wardstone shard it never
+  gives. The hint is the mast's stump at the arch, which is always there; the green glow is said by
+  night beside it. As measured, the box pays about 680 xp a member and its Rift about 430, 1,115
+  together, and 300 gold. What the owner finds by hand goes here when the box has been played.
 
 ### 4.3 C4, the spur to Rietum (#171): country, band 10–11
 
@@ -489,13 +491,14 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
 
 - **Experience.** The curve (EXPANSION §5.2, #159) gives an area the climb from its floor to the
   next area's floor, divided by 0.75: from 10 to 12 that is 6,200 / 0.75, about 8,267 xp a member,
-  with today's `xpForLevel`. The shares of §4 add up to about 8,300 without the willows: C5 700 (1,442
-  as built, its Rift's half of it), C4
-  600, C3 1,000, B5 1,000, B6 800, the temples 1,800, C6 700, Saltmouth 300, C7 700, and the four
-  side quests about 700 between them. The willows add 800 when they are built. From here on a kill
-  pays by level (#159), so a company that arrives at 10 earns the shares as written and one that
-  arrives at 13 earns less; the curve's row reports what a clear falls short of as owed to #153
-  until the boxes exist.
+  with today's `xpForLevel`. The shares of §4 are C5 700, C4 600, C3 1,000, B5 1,000, B6 800, the
+  temples 1,800, C6 700, Saltmouth 300, C7 700, and the four side quests about 700 between them:
+  8,300 without the willows. A small Rift is budgeted at about 450 a member on top of its box's
+  share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve, for kill-by-level
+  to settle; B5 builds its two Rifts inside its 1,000, trimming its own groups to match. The willows
+  add 800 when they are built. From here on a kill pays by level (#159), so a company that arrives
+  at 10 earns the shares as written and one that arrives at 13 earns less; the curve's row reports
+  what a clear falls short of as owed to #153 until the boxes exist.
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
@@ -566,8 +569,13 @@ Decided by delegate for #170, each the owner's to overturn:
    at the far end, MONSTERS §6.1's "the Delta, alone", which the curve needs as the box's hardest.
 4. **The bull toad stands 1.35, not 1.4:** a group with a monster of 1.4 to 1.5 puts its label on
    its markers, and five hundredths do not show in the drawing.
-5. **The Rift is #165's ring in brine,** brinelings in threes and fours and a tide elder with two at
-   its heart; its hoard holds no shard, so the barge's is the first the company can hold.
+5. **The Rift is #165's ring in brine,** three brinelings in its rooms and a tide elder with one
+   more at its heart, about 430 xp a member: trimmed from two groups and a warden of three, which
+   paid about 760, so that a small Rift costs the area about 450 a member and B5's two can follow
+   it. The tide elder is placed here first, off #190's list of monsters owed a map, as the Tide
+   Stone's Rifts' own (MONSTERS §2.1). Its hoard holds no shard, so the barge's is the first the
+   company can hold; the brine tear's words, which show a shard beside it, are the material's
+   (`src/content/rifts/materials.ts`), for the owner.
 6. **The Rift goes quiet when its warden falls,** as Thornmark's tear does; the Stone home is a flag
    nothing sets until #191, which adds it.
 7. **The shard is the Brine Shard,** the fen's own word for it.
