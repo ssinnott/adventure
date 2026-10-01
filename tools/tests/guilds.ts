@@ -19,7 +19,7 @@ import { giftOf } from '../../src/game/wilds.ts';
 import { personFlags, personGives } from '../../src/game/people.ts';
 import { CONTENT, collect } from '../shipped.ts';
 import { condFaults } from './quests.ts';
-import { ok } from './lib.ts';
+import { ok, owed } from './lib.ts';
 
 const quest = (id: string, rank: number, deed: Partial<GuildQuest>, guild: GuildId = 'wardens'): GuildQuest => ({
   id, guild, rank, offer: [`Offer ${id}.`], paid: [`Paid ${id}.`], early: [`Early ${id}.`],
@@ -153,14 +153,32 @@ export function guilds(): void {
     ok(Number.isInteger(q.rank) && q.rank >= 0 && q.rank < GUILDS[q.guild].ranks.length, `${q.id}: its rank, ${q.rank}, is one of the guild's`);
     ok(![takenFlag(q.id), doneFlag(q.id)].some((f) => npcFlags.has(f)), `${q.id}: its flags are its own, set by no person`);
   }
-  // Act I takes a guild with quests to its third rank (DESIGN §8): its quests, done in the order a
-  // hall offers them, raise a new company that far.
-  const ACT_I_RANK = 3;
+  // Every guild's quests, done in the order a hall offers them, raise a new company through every
+  // rank built; Act I builds its two guilds' to the third (DESIGN §8), and a later guild climbs as
+  // far as its area has built.
+  const ACT_I: readonly GuildId[] = ['wardens', 'lanterns'], ACT_I_RANK = 3;
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const { party } = fresh();
     for (let offers = offered(g, party); offers.length; offers = offered(g, party)) for (const q of offers) party.flags[takenFlag(q.id)] = party.flags[doneFlag(q.id)] = 1;
-    const r = rankOf(g, party);
-    ok(r === ACT_I_RANK, `${g}: its quests, done as the hall offers them, raise a company to rank ${ACT_I_RANK}, ${rankName(g, ACT_I_RANK)} (${rankName(g, r) ?? 'none'})`);
+    const r = rankOf(g, party), built = Math.max(...GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank)) + 1;
+    ok(r === built, `${g}: its quests, done as the hall offers them, raise a company to rank ${built}, ${rankName(g, built)} (${rankName(g, r) ?? 'none'})`);
+    if (ACT_I.includes(g)) ok(built >= ACT_I_RANK, `${g}: Act I takes it to rank ${ACT_I_RANK}, ${rankName(g, ACT_I_RANK)} (${rankName(g, built)})`);
+  }
+  // DESIGN §8 gives every guild four ranks: a first task (0) and quests under each rank below the
+  // last (1 to 3). A rank with no quests yet is owed to the issue that builds it, or to the owner
+  // where none is filed, and fails once built, so its entry is dropped here.
+  const OWED_RANKS: Readonly<Record<GuildId, readonly (string | undefined)[]>> = {
+    wardens: [undefined, undefined, undefined, 'the owner'],
+    lanterns: [undefined, undefined, undefined, 'the owner'],
+    cartographers: ['#181', '#181', 'the owner', 'the owner'],
+    compact: ['#182', '#182', 'the owner', 'the owner'],
+  };
+  for (const g of Object.keys(GUILDS) as GuildId[]) {
+    for (let r = 0; r < GUILDS[g].ranks.length; r++) {
+      const has = GUILD_QUESTS.some((q) => q.guild === g && q.rank === r), whose = OWED_RANKS[g][r];
+      const what = `${g}: ${r ? `rank ${r}'s quests, ${rankName(g, r)}'s` : 'its first task'}`;
+      if (whose) owed(has, what, whose); else ok(has, what);
+    }
   }
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const ranks = GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank);
