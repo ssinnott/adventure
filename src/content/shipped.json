@@ -668,6 +668,19 @@
         "7,11"
       ]
     },
+    "saltmouth": {
+      "size": "16x16",
+      "used": [
+        "saltmouth_intro",
+        "sm_customs",
+        "sm_nets",
+        "sm_quay",
+        "sm_steps",
+        "sm_wall"
+      ],
+      "groups": [],
+      "doors": []
+    },
     "smugglers_cove": {
       "size": "16x16",
       "used": [

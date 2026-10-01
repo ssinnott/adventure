@@ -343,7 +343,7 @@ export const PLAN: Atlas = {
   ],
   links: [
     { from: 'downs', to: 'delta', kind: 'road', a: [126, 100], b: [114, 116], note: 'down Kestrel Edge' },
-    { from: 'saltings', to: 'saltmouth', kind: 'enter', a: [102, 178] },
+    { from: 'saltings', to: 'saltmouth', kind: 'enter', a: [98, 177] },
     { from: 'delta', to: 'drowned_temples', kind: 'enter', a: [56, 170] },
     { from: 'saltmouth', to: 'wrackholm', kind: 'sea', b: [152, 172], note: 'smuggler boat' },
     { from: 'wrackholm', to: 'smugglers_cove', kind: 'enter', a: [154, 170] },
