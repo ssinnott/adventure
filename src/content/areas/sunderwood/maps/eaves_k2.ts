@@ -42,8 +42,8 @@ export const EAVES_K2: MapDef = {
     '===================TTTTTTTTTTTTM',
     'cdvvvvvvddcd~~ddddTTTTTTTTTTTTTM',
     'ddcvvvvvddd~~dddcTTTTTTTTTTTTTTM',
-    'dddvvvvvdd~~ddddTTTTTTTTTTTTTTTM',
-    'cddcvvvvv~~dddddTTTTTTTTTTTTTTTM',
+    'dddvvvvv~~~~ddddTTTTTTTTTTTTTTTM',
+    'cddcvvvvvr~dddddTTTTTTTTTTTTTTTM',
     'ddddvvvvv.SddddTTTTTTTTTTTTTTTTM',
     'cdcdvvvvvrrrddTTTTTTTTTTTTTTTTTM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
@@ -54,7 +54,7 @@ export const EAVES_K2: MapDef = {
     // The west lip, south of the road.
     { kind: 'camp', x: 1, y: 27, name: 'Bridgehead camp', text: 'A ring of blackened stones by the bridgehead, in the lee of the last pine not gone to glass. Rope-ends and a bent nail: others have slept here and gone over.' },
     // The east lip: the lookout down the gorge, the glass.
-    { kind: 'event', x: 8, y: 5, id: 'k2_lookout', once: true, text: 'Rain fills the gorge below the lip and makes no sound. Far down, where the face was sheer, it has been cut square, ledge under ledge, and a path to them goes south along the wall.' },
+    { kind: 'event', x: 8, y: 5, id: 'k2_lookout', once: true, text: 'The far lip is a grey line and the floor is nowhere. Below, where the face was sheer, it is cut square, ledge under ledge, and a path to them goes south along the wall.' },
     { kind: 'event', x: 14, y: 16, id: 'k2_stumps', once: true, text: 'Glass pines along the lip, and among them stumps sawn flat, the cut faces clear as water. A grey hand-print on one, set in the resin.' },
     // East of the river: the cairn in the pines, and a Lantern's lamp by the road on.
     { kind: 'cairn', x: 27, y: 13, id: 'k2_cairn', text: 'A cairn in the pines east of the river, the stones laid close and dry. The ones on top have been lifted and put back the wrong way up, lichen down.', gold: 180, items: ['potion_sp_great'] },

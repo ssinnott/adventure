@@ -17,5 +17,5 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'The steading', icon: 'farm', map: 'eaves_j2', at: [20.5, 7.5], label: 'below' }, // the pine-cutters', at the glass trees (#56's 29)
   { name: 'Lantern Watch', icon: 'tower', at: [372, 46], label: 'below', planned: true },
   { name: 'The Sunder', icon: 'rift', at: [338, 70], label: 'right', planned: true },
-  { name: 'Sunderfall', icon: 'falls', map: 'eaves_k2', at: [9.5, 28.5], label: 'right' }, // its shrine, the Paladin's second prestige (#19)
+  { name: 'Sunderfall', icon: 'falls', map: 'eaves_k2', at: [8.5, 27.5], label: 'right' }, // its shrine, the Paladin's second prestige (#19)
 ];

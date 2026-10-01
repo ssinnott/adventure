@@ -25,12 +25,13 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–15 | 5,764 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197) |
-| Lanternwood | 15–16 | 7,971 | none |
-| The area | 14–16 | 13,735 | two boxes |
+| The Eaves | 14–15 | 8,084 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197) |
+| Lanternwood | 15–16 | 3,969 | none |
+| The area | 14–16 | 12,053 | three boxes |
 
-Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
-the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
+Squares are the land the zone check counts in each zone with K2 laid in the Eaves (#197), which
+moved the zone line east; the plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
 to y 131 on Sunder Bay. The bands are this doc's, written on the atlas's rows: the area is 14–16
@@ -733,7 +734,7 @@ Decided by delegate for #197, each the owner's to overturn:
    the cairn 180 gold and a Sapphire Vial, as I2's and J2's. The Holy Symbol is dropped: the shrine's
    blessing is the find, and a keepsake that does nothing is clutter.
 8. **The map is `eaves_k2`, called Sunderfall,** and its fall is the area's site, built where the river
-   meets the lip at 337.5,58.5, not the plan's 340,60. The area claims the falls as a new landmark.
+   meets the lip at 336.5,57.5, not the plan's 340,60. The area claims the falls as a new landmark.
 9. **J2's two nits are fixed in the text:** the cabin is fieldstone and turf, as it draws, and the
    cairn is out of sight of the road, not off any path.
 10. **The Long Sword +2 stays, under the Watch's stores:** #399 kept it off the ladder, a find that

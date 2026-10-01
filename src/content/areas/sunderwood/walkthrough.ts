@@ -92,6 +92,16 @@ export const walkthrough: Walkthrough = (ok) => {
   fight(w, 'eaves_k2:k2_hounds');
 
   // The secret: the rocks under the quiet fall, one bare, then the search there and the ledge behind the water.
+  // Wading or walking, the ledge is never reached but through the bare rock.
+  const k2 = out.zones.find((z) => z.id === 'eaves_k2')!, door = [k2.x + 10, k2.y + 29], shelf = (k2.y + 29) * out.width + k2.x + 9;
+  const waded = new Set<number>(), wade = [[k2.x + 13, k2.y + 24]];
+  while (wade.length) {
+    const [x, y] = wade.pop()!, k = y * out.width + x;
+    if (waded.has(k) || (x === door[0] && y === door[1]) || !(x >= k2.x && x < k2.x + k2.w && y >= k2.y && y < k2.y + k2.h) || out.passable(x, y, { swim: true }) !== 'ok') continue;
+    waded.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) wade.push([x + dx, y + dy]);
+  }
+  ok(waded.size > 200 && !waded.has(shelf), `the ledge behind the fall is shut but for the bare rock: none of K2's ${waded.size} squares walked or waded reaches it`);
   see(w, 'eaves_k2:k2_fall');
   see(w, 'eaves_k2:k2_rocks');
   w.world.travel('eaves_k2', 11, 29, WEST);
