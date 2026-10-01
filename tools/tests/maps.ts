@@ -23,6 +23,8 @@ const UNPLACED: Record<string, string> = {
   fen_eel: '#170', fen_toad: '#170',
   grey_heron: '#171',
   salt_crab: '#176',
+  devilfish: '#188', great_devilfish: '#188',
+  ashen_overseer: '#188',
 };
 
 /**
