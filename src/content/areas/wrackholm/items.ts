@@ -20,7 +20,7 @@ export const ITEMS: readonly ItemDef[] = [
   // the log is read at Lantern Watch (#204). The captain's cutlass in his sea chest, named. The Tide
   // Stone in its Rift's hoard, a plain quest item (#151, call 6), carried home by #191.
   { id: 'ships_papers', name: 'The Ship\'s Papers', slot: 'none', price: 0, text: [
-    'A manifest in a clerk\'s hand, ruled in columns: DATE, CARGO, FROM, TO, PASSED. Every page bears the Helmstow customs seal, crisp, not one smudged.',
+    'A manifest in a clerk\'s hand, ruled in columns: DATE, CARGO, FROM, TO, PASSED. Each page is sealed at the foot, the wax gone soft with bilge and the device past making out.',
     'Brandy and salt fill the early pages. Then the TO column changes, every entry the same word: BELOW. The CARGO column counts heads.',
     'Midway, in the same hand: "The girl from Gullwick. Delivered below, as instructed, by way of the dwarves\' deepest mine." The date is months gone. PASSED.',
   ] },

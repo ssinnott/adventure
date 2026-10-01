@@ -49,6 +49,6 @@ export const TIDE_SHIP2: MapDef = {
   ],
   encounters: [
     { id: 'ts2_rats', x: 7, y: 6, monsters: new Array(8).fill('bilge_rat'), aware: 2, respawn: 1440 },
-    { id: 'ts2_post', x: 5, y: 10, monsters: ['ashen_overseer', 'ashen_overseer'], aware: 2, roams: false },
+    { id: 'ts2_post', x: 5, y: 10, monsters: ['ashen_overseer', 'ashen_overseer', 'ashen_overseer'], aware: 2, roams: false },
   ],
 };

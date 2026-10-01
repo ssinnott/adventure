@@ -11,10 +11,11 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
 
 /**
- * Hale taken from the Scarth: the ledger given him and the company come down into Saltreach, #156's
- * condition for strangers at the pass, so the pass and the hold never both hold him. #156 keys on it.
+ * Hale taken from the Scarth: a flag #156 sets when it puts strangers at the pass, on its own
+ * condition (the ledger given him and Saltreach set foot in), so the pass and the hold never both
+ * hold him. Until #156 sets it, the last row holds strangers whatever the company has done.
  */
-export const HALE_TAKEN = { flag: 'q_greywater_done', visited: 'delta_d5' } as const;
+export const HALE_TAKEN = { flag: 'q_hale_taken' } as const;
 
 /** Hale freed: his meeting, once the hold's crew is down. #191 and Act III key on it. */
 export const HALE_FREED: When = { flag: 'q_hale_freed' };
@@ -78,7 +79,7 @@ export const TIDE_SHIP3: MapDef = {
     { kind: 'event', x: 10, y: 12, id: 'ts3_last_row', once: true, until: HALE_TAKEN, text: 'The last row. A farmer, a boy, an old woman, irons on all three. None of them looks up. They have stopped looking up.' },
     { kind: 'npc', x: 10, y: 12, name: 'Captain Hale, in irons', flag: 'q_hale_freed', lines: [
       'In the last row a man sits straight in his irons, thin as a rake and filthy, his beard gone white, telling the boy beside him to keep his feet out of the wet. He knows you before you know him.',
-      '"The Scarth. You brought me a ledger." The voice has not changed. "The Regent got his copy. He came for me that same night. Not his men. Him."',
+      '"The Scarth. You brought me a ledger." The voice has not changed. "The Regent got his copy. He came for me that same night."',
       '"Never mind me. The rings pin under the floor; the pins knock out from the bilge. Start at the front, children first, and get them up to the boats before the watch counts heads."',
       'When the last iron drops he stands, which costs him, and goes to the ladder on the first man\'s shoulder. He does not look back. "Thank me when it\'s done. It isn\'t."',
     ],
@@ -95,6 +96,6 @@ export const TIDE_SHIP3: MapDef = {
     // Two overseers behind four, among the rows: the chains hold the front row while the bowmen shoot
     // the back, and the crew breaks once the overseers are down (MONSTERS §6.2).
     { id: 'ts3_crew', x: 7, y: 9, monsters: ['wrack_smuggler', 'wrack_smuggler', 'ashen_overseer', 'ashen_overseer', 'wrack_bowman', 'wrack_bowman'], back: 2, leader: 'ashen_overseer', aware: 3, roams: false, slainText: 'The last of them goes down in the straw. Nobody in the rows cheers. They watch the ladder, and then, slowly, they watch you.' },
-    { id: 'ts3_elder', x: 8, y: 6, monsters: ['tide_elder'], aware: 1, roams: false },
+    { id: 'ts3_elder', x: 8, y: 6, monsters: ['tide_elder', 'ashen_overseer'], aware: 1, roams: false },
   ],
 };

@@ -48,10 +48,10 @@ export const TIDE_SHIP: MapDef = {
     { kind: 'event', x: 7, y: 1, id: 'ts_bow', once: true, text: 'The bow. Black water, and the cliffs standing out of it, blacker, one light up on the point. Behind you the ship creaks under its load.' },
     { kind: 'chest', x: 10, y: 12, id: 'ts_locker', gold: 300, items: ['potion_heal', 'potion_heal'] },
   ],
-  // Over the side by night: three devilfish in the waist. The bowman MONSTERS §6.2 puts on the rail
+  // Over the side by night: four devilfish in the waist. The bowman MONSTERS §6.2 puts on the rail
   // with them is left off, since a group with him in it sits under the deck's top, 13, and alone he
   // stretched the deck's day past the gate's limit.
   encounters: [
-    { id: 'ts_over_side', x: 11, y: 8, when: NIGHT, monsters: ['devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'ts_over_side', x: 11, y: 8, when: NIGHT, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: 2880 },
   ],
 };

@@ -324,17 +324,17 @@ Foreland map's density.
   Pender, an old Compact oarsman, sits in his boat on F6's shingle and rows out whoever pays 20 gold,
   leaving at midnight and landing an hour on (a crossing, #164); by day nobody rows, and a company
   rows itself back over the side at any hour. The weather deck: the rail and the boats under it, the
-  foremast, the waist, the main hatch, the helm and the bow, a locker with 300 gold, and three
-  devilfish over the side by night. The lower deck: eight bilge rats in the crews' quarters, two
+  foremast, the waist, the main hatch, the helm and the bow, a locker with 300 gold, and four
+  devilfish over the side by night. The lower deck: eight bilge rats in the crews' quarters, three
   Ashen Overseers at the hatch down, and aft the captain's cabin, with the ship's papers and the log
   on the table and the sea chest with Slack Water, a Cutlass +2, and 1,000 gold. The hold: the
   chained rows under the beam carved EVERY SHARD IS A STEP, the shards in straw, and among the rows
   the crew, two smugglers and two overseers before two bowmen, the overseers its leaders, whose fall
-  breaks the rest; in the last row strangers while Hale holds the Scarth, and Hale once #156's
-  condition holds (the ledger given him, Saltreach set foot in) and the crew is down: he knows the
-  company, says the Regent came for him himself, and goes over the side with the freed, setting
-  `q_hale_freed`. Forward, a Tide Elder stands before the bulkhead's door; the straw against the
-  bulkhead west of it is fresh on one side, and a search there finds the shard-cut, a way past him.
+  breaks the rest; in the last row strangers while Hale holds the Scarth, and Hale once #156 has taken
+  him from it (`q_hale_taken`, a flag #156 sets on its own condition, #415) and the crew is down: he knows the
+  company, says the Regent came for him the night he got his copy, and goes over the side with the freed, setting
+  `q_hale_freed`. Forward, a Tide Elder and an overseer stand before the bulkhead's door; the straw against the
+  bulkhead west of it is fresh on one side, and a search there finds the shard-cut, a way past them.
   In the forward hold the Hand's strongbox (1,200 gold, a Long Axe +1, the ladder's for the barbarian at 13 (#399), and
   an elixir) and the Stone under
   its sacking, with its tear: the Rift is generated (`hall`, brine, seed 2), a Tide Elder and three
@@ -343,10 +343,10 @@ Foreland map's density.
   stair, and its foot is one room of clean cold stone, its sign the Dead-Drop's band, a way on into
   the dark at its far end and the stair back up. The Warden is set off the boss line, at 674 hit
   points and 10d7+15 against the line's 13d7+19 (38% at 12) and the escorted boss's 7d7+11 (97%):
-  the gate wins him 63% at 12 and 96% at 14, dressed by #399's ladder and measured after #414's re-stat. As measured the ship pays about 3,240 xp a member, 1,843
-  of it the Rift's, and 3,462 gold, which brings the area's gold to the 6,000 its
-  training costs. Each deck at 12 wins every fight, at 8.7, 9.6 and 8.8 fights to a rest (off the
-  aim of 6 to 8, inside the limit), the Rift 81.5% with its boss and 7.6 to a rest; two under, at 10,
+  the gate wins him 63% at 12 and 96% at 14, dressed by #399's ladder and measured after #414's re-stat. As measured the ship pays about 3,500 xp a member, 1,843
+  of it the Rift's, and 3,532 gold, which brings the area's gold to the 6,000 its
+  training costs. Each deck at 12 wins every fight, at 6.1, 7.6 and 7.0 fights to a rest, inside the
+  aim of 6 to 8, the Rift 81.5% with its boss and 7.6 to a rest; two under, at 10,
   the decks win every fight too, owed to #18 with E6's, the Rift 55.5%. Every square of every deck is within 5 steps
   of a point. The walkthrough rows out by night, plays the three decks at 12, finds the shard-cut,
   frees Hale once he is taken, wins the Warden at 14 and the Stone, and goes down the stair and
@@ -416,17 +416,18 @@ besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
   about 3,450 (#188), since its boss alone is about 1,475, and F6 about 1,658 (#189); with the rest
   as they stand the area comes to about 11,200, some 14% over the curve's 9,867. The surplus is
   meant; a kill paid by level damps it past 14, and if a measure finds the climb too fast, the Tide
-  Ship's groups short of its boss are what to trim. As built the Tide Ship pays about 3,240 (#190),
-  60 under its share: its groups are trimmed to one or two a deck, and the brief's crews on the rail
-  and in the quarters, the bowman over the side and the forward hold's second elder are cut. A clear
-  of the four maps gives 10,270 a member, and the side quests' 900 would bring it to about 11,170.
+  Ship's groups short of its boss are what to trim. As built the Tide Ship pays about 3,500 (#190),
+  200 over its share: its groups are trimmed to one or two a deck, and the brief's crews on the rail
+  and in the quarters and the bowman over the side are cut, but each deck keeps a group strong
+  enough for the gate's fights to a rest. A clear of the four maps gives 10,526 a member, 7% over
+  the curve, and the side quests' 900 would bring it to about 11,430, 16% over.
   From here on a kill pays
   by level (#159); the curve's row reports what a clear falls short of as owed to #154 until the
   maps exist, and MONSTERS' open question 4, what a fight is worth from Saltreach on, is settled on
   the first box built.
 - **Gold.** Training six members from 12 to 14 costs about 6,000 with today's `trainPrice`; the
   hold's strongboxes and the crews' drops pay it, and the isle has no shop to spend it in until the
-  boat back. As built a clear gives 6,009 (#190): the ship's chests carry 3,200 of it.
+  boat back. As built a clear gives 6,079 (#190): the ship's chests carry 3,200 of it.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17): a company at 12 wins nine
   in ten on E6 and one at 10 no more than one in four; the Great Devilfish is won about half the time
   at 12 and nearly always at 14, the Warden of the Tide the same.
@@ -463,29 +464,35 @@ Decided by delegate for #190, each the owner's to overturn:
 1. **The ship is boarded in Pender's boat by night,** a crossing sold on F6's shingle, since no way
    on a map can keep hours; the fare lands the company rested, as a crossing does. The way back is
    over the side, open at any hour.
-2. **Hale is in the last row only once he is gone from the Scarth,** on #156's own condition (the
-   ledger given, Saltreach set foot in), exported from the hold as `HALE_TAKEN` for #156 to key on,
-   so the pass and the hold never both hold him; until then the last row holds strangers.
+2. **Hale is in the last row only once he is gone from the Scarth:** the hold waits on
+   `q_hale_taken`, a flag #156 owns and sets on its own condition (the ledger given, Saltreach set
+   foot in), so the pass and the hold never both hold him. Until #156 lands the last row holds
+   strangers whatever the company has done; the checks owe the flag to #156 (#415). Changed on
+   review: the hold first read #156's condition itself, which held Hale in both places until #156.
 3. **Freeing Hale is his meeting,** once the crew is down: it sets `q_hale_freed`, and he is gone
    from the hold, over the side with the freed and placed nowhere else. Nothing is taken from the
    company (#43). His words for his sergeant's token (#56's 20) come with the token, which #156
    makes; the chapter (#191) keys on the flag, and 27's choice (#192) is put by one of the freed.
 4. **The Rift is generated in brine, floored at 12,** so the gate judges the Warden at 12 and 14 as
    the issue asks; the Warden stands alone at its heart, with the Tide Stone in the hoard beside him.
-5. **The ship aims under its share,** about 2,550 as first drawn; the curve and the gate moved it to
-   about 3,240 (decision 9).
+5. **The ship aims at its share,** about 2,550 as first drawn; the curve and the gate moved it to
+   about 3,500 (decision 9), 200 over, which the owner may weigh against the area's curve.
 6. **The stair's foot is `dead_drop_stair`,** one room at 26–28 with no group and no chest, the sign
    its warning; `dead_drop` stays the plan's place. The curve's band check let it stand first, in
    the quality lane (#407).
 7. **The ids** are `tide_ship`, `tide_ship2`, `tide_ship3` and `tide_ship_rift`; the first keeps the
    plan's id and its row.
 8. **The papers and the log are two letters** on the captain's table, read from the pack; the log is
-   in a hand the company cannot read, for Lantern Watch (#204). The captain is not aboard.
+   in a hand the company cannot read, for Lantern Watch (#204). The captain is not aboard. On
+   review, the papers' seals are past making out, so the Helmstow seal on every cargo stays the
+   Watch's to read; their PASSED column answers the crates' stamp in Kelp Hole for whoever looks.
 9. **What the checks moved, by the session** on the delegate's draft: the decks floored at 12, since
-   no 13–14 deck can hold the curve's hardest group without a 14 the roster lacks; three devilfish
-   over the side and no bowman, eight rats and a pair of overseers at the hatch below, since thinner
-   decks ran past the gate's fights to a rest; the Tide Elder moved to the bulkhead door, the hold's
-   group at 13, so the shard-cut is a way past him; a Tide Elder and three brinelings in the Rift's
+   no 13–14 deck can hold the curve's hardest group without a 14 the roster lacks; four devilfish
+   over the side and no bowman, eight rats and three overseers at the hatch below, and a Tide Elder
+   with an overseer at the bulkhead door, the hold's group at 13, so the shard-cut is a way past them:
+   on review, each the cheapest change that brings its deck inside the gate's 6 to 8 fights to a
+   rest, where thinner decks ran 8.7 to 9.6; a bowman at the post or over the side would sit under
+   its deck's top; a Tide Elder and three brinelings in the Rift's
    rooms and the Warden at about two in three at 12, so the Rift's own fights are won as the gate
    asks; and the ship's chests raised to 3,200 gold, as §8 has the hold pay the training.
 10. **The area claims the wreck** as new; a group's leader was the delegate's second claim, but

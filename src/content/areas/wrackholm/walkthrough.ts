@@ -164,12 +164,11 @@ export const walkthrough: Walkthrough = (ok) => {
   const hale = hold.features!.find((f): f is Person => f.kind === 'npc' && f.flag === 'q_hale_freed')!;
   fight(w, `${hold.id}:ts3_crew`);
   w.world.travel(hold.id, hale.x, hale.y - 1, SOUTH);
-  ok(!w.world.present(hale) && w.world.peopleAt(hale.x, hale.y).length === 0, 'with the ledger never given, Hale is not in the last row');
+  ok(!w.world.present(hale) && w.world.peopleAt(hale.x, hale.y).length === 0, 'while Hale holds the Scarth, he is not in the last row');
   see(w, `${hold.id}:ts3_last_row`);
   ok(w.world.used('ts3_last_row'), 'strangers sit in the last row');
-  // Taken from the Scarth: the ledger given and Saltreach set foot in, as #156 has it.
-  w.party.flags.q_greywater_done = 1;
-  w.world.travel('delta_d5', 0, 0);
+  // Taken from the Scarth: #156 sets the flag when it puts strangers at the pass.
+  w.party.flags.q_hale_taken = 1;
   w.world.travel(hold.id, hale.x, hale.y - 1, SOUTH);
   ok(w.world.present(hale), 'once he is taken from the Scarth and the crew is down, Hale is in the last row');
   ok(meet(hale, w.party, heard(w.world, hale)).text.includes('The Regent got his copy') && !!w.party.flags.q_hale_freed, 'he knows the company, says who came for him, and is freed');
