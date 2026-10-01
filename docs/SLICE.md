@@ -75,6 +75,14 @@ DESIGN.md first for the why.
   hours (by night), once their `after` holds and until their `until` does, so one person can stand
   in two places, one at a time, and a once-event by night is not spent by day (`World.present`; the
   automap shows only who is there). The Foreland's side quests are built on them (#77).
+- **The Hearth's measure** (`game/stones.ts`, #168; DESIGN §9): the Stones restored, counted from
+  the save's flags against `content/stones.ts` (the Tide Stone once `q_tide_home` holds, the Grove
+  once a Lantern has mended it, `q_grove_mended`; the rest as their areas write them), so nothing new
+  is saved. By night, outdoors and in a town, the Hearth stands over the far hills in its true bearing
+  from the party, faint from the first night and taller and brighter by a step for each Stone. The
+  title reads the save in storage and draws its column steadier, taller and wider by a step; the
+  world map's flickers less; the almanac adds a word on it once one is restored. No Stone can be
+  restored yet: #191 and #56 set the flags.
 - **Crossings** (`game/passage.ts`, #164): a person may sell passage by coach or by boat (`passage`,
   a list of `Passage`). Their words close onto a menu of the crossings, each with its fare and days,
   then the terms: when it leaves and when it lands, and to a company under the far end's floor the
@@ -562,6 +570,7 @@ does.
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
+| `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
@@ -590,6 +599,7 @@ does.
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |
+| `content/stones.ts` | the Wardstones a company may restore, each with its area and the condition it is restored on (or the issue that owes it); held to the atlas by `tools/tests/stones.ts`, read by `game/stones.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
 | `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
