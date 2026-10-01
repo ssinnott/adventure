@@ -101,6 +101,20 @@
         "b5_under",
         "b5_under_cache",
         "b5_west",
+        "b6_cairn",
+        "b6_crossing",
+        "b6_drowned",
+        "b6_far",
+        "b6_fen1",
+        "b6_fen2",
+        "b6_fen3",
+        "b6_fen4",
+        "b6_fen5",
+        "b6_fen6",
+        "b6_fen7",
+        "b6_in",
+        "b6_roof",
+        "b6_stair",
         "barrow",
         "c5_barge",
         "c5_barge_hold",
@@ -126,6 +140,12 @@
         "c6_stair_cache",
         "c6_wierde",
         "c6_yard",
+        "c7_boat",
+        "c7_cairn",
+        "c7_hoard",
+        "c7_in",
+        "c7_pans",
+        "c7_shrine",
         "coast",
         "d2_cairn",
         "d2_cist",
@@ -350,6 +370,9 @@
         "b5_bulls",
         "b5_toads_e",
         "b5_toads_w",
+        "b6_brine",
+        "b6_bulls",
+        "b6_toads",
         "beach_crabs",
         "c5_pools_n",
         "c5_pools_s",
@@ -357,6 +380,8 @@
         "c6_bargemen",
         "c6_crabs",
         "c6_smugglers",
+        "c7_crabs",
+        "c7_toads",
         "cliff_smugglers",
         "coast_bandits",
         "d2_crows",
@@ -486,6 +511,7 @@
       ],
       "doors": [
         "100,177",
+        "102,195",
         "107,80",
         "124,107",
         "124,34",
@@ -505,6 +531,7 @@
         "312,32",
         "338,59",
         "344,77",
+        "48,181",
         "53,140",
         "99,148"
       ]
@@ -792,6 +819,10 @@
       "at": "40,126",
       "size": "32x32"
     },
+    "delta_b6": {
+      "at": "40,158",
+      "size": "32x32"
+    },
     "delta_c5": {
       "at": "72,126",
       "size": "32x32"
@@ -846,6 +877,10 @@
     },
     "saltings_c6": {
       "at": "72,158",
+      "size": "32x32"
+    },
+    "saltings_c7": {
+      "at": "72,190",
       "size": "32x32"
     },
     "shelf": {
@@ -1002,6 +1037,7 @@
     "chain",
     "clerks_seal",
     "club",
+    "crabshell_buckler",
     "crossbow",
     "customs_chit",
     "dagger",

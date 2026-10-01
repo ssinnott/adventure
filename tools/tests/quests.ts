@@ -25,7 +25,16 @@ import type { MapState } from '../../src/game/world.ts';
 import { ok, owed } from './lib.ts';
 
 /**
- * What in a condition names nothing real: a flag no NPC or guild quest sets, an item, something spent once and kept
+ * Flags a condition may read before anything sets them, each owed to the issue that will set it:
+ * reported as that issue's while nothing does, and failed once something does, so its entry is
+ * dropped here.
+ */
+export const UNSET: Record<string, string> = {
+  q_hale_taken: '#156', // Hale gone from the Scarth, which the Tide Ship's last row waits on (#190)
+};
+
+/**
+ * What in a condition names nothing real: a flag no NPC or guild quest sets (nor one UNSET owes), an item, something spent once and kept
  * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue), a guardian that
  * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
  * maps are the game's unless given.
@@ -39,7 +48,7 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
   const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };
   const bad: string[] = [];
   for (const c of [w].flat() as QuestCond[]) {
-    for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f)) bad.push(`flag ${f}`);
+    for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f) && !Object.hasOwn(UNSET, f)) bad.push(`flag ${f}`);
     if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
     if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => id !== undefined && spentId(f) === id)) bad.push(`seen ${c.seen}`); }
     for (const ref of [c.slain ?? []].flat()) { const { map, id } = onMap(ref); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${ref}`); }
@@ -49,6 +58,11 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
 }
 
 export function quests(): void {
+  // A flag owed to an issue counts as real until that issue sets it, and only then.
+  const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])));
+  for (const [f, whose] of Object.entries(UNSET)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
+  ok(!condFaults({ flag: Object.keys(UNSET)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
+    'a flag owed to an issue names something real, and one nobody sets or owes does not');
   const conds = (w: When): QuestCond[] => [w].flat();
   // Every quest's steps: its own, or its chapters'. Each check reads these, so none passes the one
   // quest without reading a chapter.

@@ -4,11 +4,15 @@
 // barge under the causeway's arch found from its hint; and the box's groups and its Rift's won at
 // its floor. Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty;
 // the hermit who counts the Rifts' lights; the hollow under the landing found from its pole-marks;
-// and the box's groups and its two Rifts' won at 11. Then back to the road and down it into
+// and the box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6,
+// #174): the priestess at the dry door and her count; the far roof's door found from the count's
+// pause; and the box's groups won at 11. Then back to the road and down it into
 // Saltmouth's box (C6, #176): the Saltings named at the seam, the land gate at the road's end, the
 // smugglers' stair found from the rope that hangs over it, and the quay's and the pans' groups won
 // at the box's floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear
 // bought, training to 13 and a first prestige taken; and the boat to Wrackholm's landing and back.
+// Then south into the pans (C7, #178): the Scarp across the south and its stair's fallen foot, the
+// sealed pan's hoard found from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -36,7 +40,10 @@ const C5 = MAP_DEFS.find((d) => d.id === 'delta_c5')!;
 const RIFT = MAP_DEFS.find((d) => d.id === 'c5_rift')!;
 const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
 const B5_COUNTER = B5.features!.find((f) => f.kind === 'npc') as Person;
+const B6 = MAP_DEFS.find((d) => d.id === 'delta_b6')!;
+const PRIESTESS = B6.features!.find((f) => f.kind === 'npc') as Person;
 const C6 = MAP_DEFS.find((d) => d.id === 'saltings_c6')!;
+const C7 = MAP_DEFS.find((d) => d.id === 'saltings_c7')!;
 const TOWN = MAP_DEFS.find((d) => d.id === 'saltmouth')!;
 const HERMIT = D5.features!.find((f) => f.kind === 'npc') as Person;
 
@@ -116,6 +123,29 @@ export const walkthrough: Walkthrough = (ok) => {
     for (const g of MAP_DEFS.find((d) => d.id === id)!.encounters!) fight(w, `${id}:${g.id}`);
   }
 
+  // South off Stienwierde over the fen to the temples' roofs.
+  walkThrough(w, 'delta_b5', 16, 31, SOUTH, 'delta_b6', 2);
+
+  // The step: the priestess at the dry door, counting.
+  w.world.travel('delta_b6', PRIESTESS.x, PRIESTESS.y);
+  const number = meet(PRIESTESS, w.party, heard(w.world, PRIESTESS)).text;
+  ok(number.toLowerCase().includes('eleven'), 'at the temples\' dry door the priestess says the number');
+  see(w, 'delta_b6:b6_door');
+
+  // The secret: the count beside her and its pause, then the far roof's wall searched from its ledge.
+  w.world.travel('delta_b6', 17, 12);
+  ok(w.world.eventsHere().some((m) => m.includes('ten')), 'beside the priestess, her count of the doors');
+  w.world.travel('delta_b6', 8, 22, SOUTH);
+  let door = false;
+  for (let i = 0; i < 20 && !door; i++) door = w.world.search();
+  const porch = door ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(door && porch.every((r) => r.kind === 'moved'), 'searched from the far roof\'s ledge, a door in its wall opens, and can be walked into');
+  ok(w.world.used('b6_stair'), 'behind it, the stair down');
+  listen(w);
+
+  // The box's groups, each won at its floor.
+  for (const g of B6.encounters!) fight(w, `delta_b6:${g.id}`);
+
   // On down the road into Saltmouth's box: the fen gives way to the Saltings at the seam.
   w.world.travel('delta_c5', 26, 30, SOUTH);
   const crossed: string[] = [];
@@ -194,4 +224,32 @@ export const walkthrough: Walkthrough = (ok) => {
   w.party.gold = 150;
   const home = back ? take(back, w.world, w.party) : undefined;
   ok(!!home?.taken && w.world.state.mapId === 'saltmouth' && w.party.gold === 0 && w.world.hour === 6, `and Kitto at the stage sells the way back, onto Saltmouth's quay (${home?.lines.join(' ')})`);
+
+  // South out of Saltmouth's pans into C7's, under the Scarp.
+  w.world.travel('saltings_c6', 17, 30, SOUTH);
+  for (let i = 0; i < 3 && w.world.zone?.id !== 'saltings_c7'; i++) w.world.move('forward');
+  ok(w.world.zone?.id === 'saltings_c7', 'south from Saltmouth\'s box the salt runs on into the pans, C7');
+  listen(w);
+  const foot = C7.features!.find((f) => f.kind === 'event' && f.id === 'c7_stair');
+  ok(foot?.kind === 'event' && C7.rows[foot.y + 1][foot.x] === 'M' && new GameMap(C7).passable(foot.x, foot.y) === 'ok', 'the Scarp stair\'s foot is a notch in the cliff, its lowest flight fallen, walked to and no further');
+
+  // The secret: the one wall trodden, then the search, the crabs' hole and the sealed pan's hoard.
+  const hoard = C7.features!.find((f) => f.kind === 'chest' && f.id === 'c7_hoard');
+  const shut = new GameMap({ ...C7, rows: C7.rows.map((r) => r.replaceAll('S', '#')) });
+  const seen = new Set<string>([`${C7.start.x},${C7.start.y}`]), q = [[C7.start.x, C7.start.y]];
+  for (let k = 0; k < q.length; k++) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const x = q[k][0] + dx, y = q[k][1] + dy;
+    if (!seen.has(`${x},${y}`) && shut.passable(x, y) === 'ok') { seen.add(`${x},${y}`); q.push([x, y]); }
+  }
+  ok(hoard?.kind === 'chest' && hoard.items.includes('crabshell_buckler') && !seen.has(`${hoard.x},${hoard.y}`), 'the salter\'s hoard, a Crab-Shell Buckler, lies in a pan no lane or sluice reaches');
+  w.world.travel('saltings_c7', 31, 5, WEST);
+  w.world.eventsHere();
+  let holed = false;
+  for (let i = 0; i < 20 && !holed; i++) holed = w.world.search();
+  const inside = holed ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(holed && inside.every((r) => r.kind === 'moved'), 'searched by the trodden wall, the crabs\' hole opens under it, and the sealed pan can be walked into');
+  listen(w);
+
+  // The box's groups at its floor: the crabs in the pans, the bull toads in the last marsh.
+  for (const g of C7.encounters!) fight(w, `saltings_c7:${g.id}`);
 };
