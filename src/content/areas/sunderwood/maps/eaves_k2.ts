@@ -46,7 +46,7 @@ export const EAVES_K2: MapDef = {
     'cddcvvvvvr~dddddTTTTTTTTTTTTTTTM',
     'ddddvvvvv.SddddTTTTTTTTTTTTTTTTM',
     'cdcdvvvvvrrrddTTTTTTTTTTTTTTTTTM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
+    'cdddvvvvvrrrddTTTTTTTTTTTTTTTTTM',
   ],
   features: [
     // The rope bridge over the gorge: the step.
