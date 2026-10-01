@@ -101,6 +101,20 @@
         "b5_under",
         "b5_under_cache",
         "b5_west",
+        "b6_cairn",
+        "b6_crossing",
+        "b6_drowned",
+        "b6_far",
+        "b6_fen1",
+        "b6_fen2",
+        "b6_fen3",
+        "b6_fen4",
+        "b6_fen5",
+        "b6_fen6",
+        "b6_fen7",
+        "b6_in",
+        "b6_roof",
+        "b6_stair",
         "barrow",
         "c5_barge",
         "c5_barge_hold",
@@ -344,6 +358,9 @@
         "b5_bulls",
         "b5_toads_e",
         "b5_toads_w",
+        "b6_brine",
+        "b6_bulls",
+        "b6_toads",
         "beach_crabs",
         "c5_pools_n",
         "c5_pools_s",
@@ -499,6 +516,7 @@
         "308,112",
         "312,32",
         "338,59",
+        "48,181",
         "53,140",
         "99,148"
       ]
@@ -769,6 +787,10 @@
     },
     "delta_b5": {
       "at": "40,126",
+      "size": "32x32"
+    },
+    "delta_b6": {
+      "at": "40,158",
       "size": "32x32"
     },
     "delta_c5": {
