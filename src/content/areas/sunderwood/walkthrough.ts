@@ -6,8 +6,9 @@
 // bear's cave found from the dog and the cutter's word, and the box's groups won at its floor. Then
 // Sunderfall (K2, #197): the rope bridge crossed, the ledge behind the quiet fall found from its
 // rocks, and the box's groups won at its floor. Then Lanternwood (L2, #200): the road on through the
-// wood to the tower's gate, shut until #201, the pit under the signal fire's ash found from the ash
-// and the young sister's word, and the box's groups won at its floor.
+// wood to the tower's gate and in at it to Lantern Watch (#201), where a company rests, buys, studies
+// and trains, the pit under the signal fire's ash found from the ash and the young sister's word, and
+// the box's groups won at its floor.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
