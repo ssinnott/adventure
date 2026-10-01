@@ -1557,3 +1557,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   D2 retuned on it (64e5607): 6.99 fights to a rest at 4, inside the aim. #309 (D4) carried #305's
   round (070fea6: two Cutthroats, eight crows, 7.52). Review queue: #308 (I5), #309 (D4), #313
   then #306 (D2), then #310 (the Berth); #303 and #307 in review.
+- 00:08: `reviews/303.md` (#87, Ashcombe moved, the chain recut): ready after fixes. Should-fix:
+  old saves lose Hob's kitchen entry until the first step into E3 (say so, or key it to survive);
+  choice 6's premise false (Ailith "went west", but from the new Ashcombe her fire-ring lies east;
+  the issue has her follow the farm); two texts still send the survey "south" by the old way (the
+  survey's orders, Idony). Nits: the crossroads sign at three lines, stale figures, two Oxford
+  commas. The Warden 55% at 2, the walk worth level 2, Crowness at 3, every order true. Ailith,
+  the other choices and the sheet to a delegate. Reviewer on #313 and #306's retune together.
