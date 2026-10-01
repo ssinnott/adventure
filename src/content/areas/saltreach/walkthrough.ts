@@ -8,7 +8,7 @@
 // Saltmouth's box (C6, #176): the Saltings named at the seam, the land gate at the road's end, the
 // smugglers' stair found from the rope that hangs over it, and the quay's and the pans' groups won
 // at the box's floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear
-// bought, training to 13 and a first prestige taken.
+// bought, training to 13 and a first prestige taken; and the boat to Wrackholm's landing and back.
 // Then south into the pans (C7, #178): the Scarp across the south and its stair's fallen foot, the
 // sealed pan's hoard found from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
@@ -22,6 +22,12 @@ import { teach } from '../../../game/prestige.ts';
 import { questLog } from '../../../game/quests.ts';
 import type { QuestView } from '../../../game/quests.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
+import { take } from '../../../game/passage.ts';
+import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
+import { serialize, deserialize } from '../../../game/save.ts';
+import { World } from '../../../game/world.ts';
+import { buildMaps } from '../../maps.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_II } from '../../../../tools/tests/ladder.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { meet, heard } from '../../../game/people.ts';
@@ -174,6 +180,23 @@ export const walkthrough: Walkthrough = (ok) => {
   const locksmith = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.teaches?.cls === 'thief')!;
   w.party.gold = 1000;
   ok(teach(locksmith.teaches!, w.party, w.world.state, w.party.members.indexOf(ottilie)).taught && prestigeOf(ottilie) === 1 && w.party.gold === 0 && !seeking(), `the locksmith makes a ${PRESTIGES.thief.titles[0]} of ${ottilie.name} for 1,000 gold, and the seeking is done`);
+
+  // The boat (#164): bought on the quay from Kitto, it sails at eight and lands on Wrackholm's stage
+  // at six the next morning; a save made on the isle loads there; and Kitto sells the way back.
+  const boat = TOWN.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!.passage![0];
+  w.world.travel('saltmouth', 13, 10, WEST);
+  w.party.gold = 200;
+  const day = Math.floor(w.world.state.minutes / MINUTES_PER_DAY);
+  const out = take(boat, w.world, w.party);
+  ok(out.taken && w.party.gold === 50 && w.world.zone?.id === 'wrackholm_e6' && w.world.state.x - w.world.zone.x === 16 && w.world.state.y - w.world.zone.y === 15, `the boat from Saltmouth's quay lands the company on Wrackholm's stage for 150 gold (${out.lines.join(' ')})`);
+  ok(Math.floor(w.world.state.minutes / MINUTES_PER_DAY) > day && w.world.hour === 6, `and the calendar has moved: it lands at ${w.world.hour}:00 the next day`);
+  const saved = deserialize(serialize(w.world.state, w.party, 0));
+  const loaded = new World(buildMaps(), saved.party, makeRng(1), saved.world);
+  ok(loaded.zone?.id === 'wrackholm_e6' && loaded.state.minutes === w.world.state.minutes, 'a save made on the isle loads there');
+  const back = MAP_DEFS.find((d) => d.id === 'wrackholm_e6')!.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)?.passage?.[0];
+  w.party.gold = 150;
+  const home = back ? take(back, w.world, w.party) : undefined;
+  ok(!!home?.taken && w.world.state.mapId === 'saltmouth' && w.party.gold === 0 && w.world.hour === 6, `and Kitto at the stage sells the way back, onto Saltmouth's quay (${home?.lines.join(' ')})`);
 
   // South out of Saltmouth's pans into C7's, under the Scarp.
   w.world.travel('saltings_c6', 17, 30, SOUTH);

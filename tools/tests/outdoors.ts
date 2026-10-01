@@ -19,11 +19,9 @@ import { logLines } from '../../src/ui/frame.ts';
  * Zone maps laid before the map that joins them to the rest, and whose map that is: their squares
  * are reported as that issue's while none can be walked to, and fail once they all can, so the
  * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut.
+ * Wrackholm's isle is reached by the smugglers' boat from Saltmouth (#177), a crossing's landing.
  */
-const CUT_OFF: Record<string, string> = {
-  wrackholm_e6: '#177', // the isle, reached only by the smugglers' boat from Saltmouth
-  wrackholm_f6: '#177', // the isle's east end, walked to from the landing
-};
+const CUT_OFF: Record<string, string> = {};
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
@@ -103,9 +101,15 @@ export function outdoors(): void {
   }
   ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void or the chasm,
-    // but for a zone map laid before the one that joins it (CUT_OFF).
+    // but for a zone map laid before the one that joins it (CUT_OFF). A crossing a person sells
+    // (game/passage.ts) puts the company down on its landing, so each landing on a zone map is
+    // walked from too, as the gate counts it a way in (`landings`, tools/tests/gate.ts).
     const reached = new Uint8Array(out.width * out.height);
     const stack = [[out.def.start.x, out.def.start.y]];
+    for (const d of MAP_DEFS) for (const f of d.features ?? []) if (f.kind === 'npc') for (const p of f.passage ?? []) {
+      const z = out.zones.find((q) => q.id === p.to);
+      if (z) stack.push([z.x + p.x, z.y + p.y]);
+    }
     while (stack.length) {
       const [x, y] = stack.pop()!, k = y * out.width + x;
       if (reached[k] || stopsWalk(out, x, y)) continue;
