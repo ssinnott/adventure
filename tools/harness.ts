@@ -13,6 +13,7 @@
 //   node tools/harness.ts --spell-cap 10 [...]         any of the above as if spells stopped growing at 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 10
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
+//   node tools/harness.ts --prestiges [...]            ... or the company took its prestiges at 11, 19 and 27 (--rank-step, --rank-cost)
 // The company is the premade six, trained to the level (past today's cap if asked) and dressed in what
 // the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
@@ -25,14 +26,14 @@ import os from 'node:os';
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
-import { defaultParty, xpForLevel, levelUp, isDown, hasCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, SPELLFIRE_DMG, MAX_LEVEL } from '../src/game/party.ts';
+import { defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, toHit, buffHit, traitDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge } from '../src/game/combat.ts';
 import { spell, spellDice } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
 import { item } from '../src/game/items.ts';
-import { ITEMS } from '../src/content/index.ts';
+import { ITEMS, SPELLS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
@@ -59,9 +60,12 @@ export const CAP = 32;
  * What-ifs on the rules, for weighing a change before it is made; play has none of them. `spellsGrowTo`
  * is the level damage spells stop growing at (`--spell-cap`); `gearGrows` keeps the company's gear
  * growing past Thornmark's (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
- * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`).
+ * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`); `prestiges` gives it
+the three prestiges of DESIGN.md §5 and the spell ranks of §7 (`--prestiges`, see `PRESTIGES`), each
+rank adding `rankStep` of a spell's damage and mending (half that for a hybrid) and `rankCost` of its price.
  */
-export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean } = {};
+export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; prestiges?: boolean; rankStep?: number; rankCost?: number } = {};
+const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, prestiges: undefined, rankStep: undefined, rankCost: undefined };
 
 /** The classes whose first work is a weapon: the ones `--level-traits` gives more blows. */
 export const FIGHTERS: readonly string[] = ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'monk'];
@@ -71,6 +75,39 @@ export const FIGHTERS: readonly string[] = ['knight', 'paladin', 'ranger', 'thie
  * brings the first, and 29, on Hearth Isle (EXPANSION.md §7).
  */
 export const PROMOTIONS: readonly number[] = [11, 29];
+
+/** The levels the prestiges come at (DESIGN.md §5): the first past today's cap, then eight apart. */
+export const PRESTIGES: readonly number[] = [11, 19, 27];
+/** How many prestiges a member of `level` has taken: one at each of PRESTIGES reached. */
+export const prestigesAt = (level: number): number => PRESTIGES.filter((l) => level >= l).length;
+/** A spell rank's step, as a share of a spell's damage and mending, unless `--rank-step` says otherwise. */
+export const RANK_STEP = 0.25;
+/** A hybrid's rank is half a caster's step: its perks carry the rest of its growth (DESIGN.md §7). */
+export const HYBRID_RANK = 0.5;
+/** Casters rank and gain the most spell points; hybrids rank and take a perk; the rest take perks. */
+export type Calling = 'caster' | 'hybrid' | 'fighter';
+export const CALLING: Record<string, Calling> = {
+  cleric: 'caster', sorcerer: 'caster', druid: 'caster', paladin: 'hybrid', ranger: 'hybrid', bard: 'hybrid',
+  knight: 'fighter', thief: 'fighter', barbarian: 'fighter', monk: 'fighter',
+};
+/** What each prestige adds to every level from then on (DESIGN.md §5): hit points and spell points. */
+export const PRESTIGE_POOLS: Record<Calling, readonly [number, number]> = { caster: [1, 2], hybrid: [1, 1], fighter: [2, 0] };
+/**
+ * The blows each prestige adds a turn, by class (DESIGN.md §5): a second at the first and a third at
+ * the third. The thief's is with a light weapon, the ranger's with a bow.
+ */
+export const PRESTIGE_BLOWS: Record<string, readonly [number, number, number]> = {
+  knight: [1, 0, 1], barbarian: [1, 0, 1], monk: [1, 0, 1], paladin: [1, 0, 1], ranger: [1, 0, 1], thief: [1, 0, 0],
+};
+/** The thief's light weapons, the ones its first prestige strikes twice with. */
+export const LIGHT: readonly string[] = ['dagger', 'rune_dagger', 'shortsword', 'sling'];
+const baseId = (id: string): string => id.replace(/\+\d+$/, '');
+/** The ranger's second prestige lifts Marksman by this; the knight's lifts the front row's to-hit by this. */
+export const MARKSMAN_MORE = 2, BANNER_HIT = 2;
+/** The thief's second prestige: a sneak attack in the first two rounds, 2 more every two levels from it. */
+export const sneakGrowth = (level: number): number => (level >= PRESTIGES[1] ? 2 * Math.floor((level - PRESTIGES[1]) / 2) : 0);
+/** The round the thief's third prestige drops it from sight: untargetable, and its blows that round are sneak attacks. */
+export const VANISH_ROUND = 3;
 
 /**
  * What the what-ifs give a member in a fight's `round`, past level 10. With `levelTraits` a fighter
@@ -84,6 +121,15 @@ export function edgeOf(c: Character, round: number): Edge {
     if (hasTrait(c, 'sneak_attack') && round === 1) e.damage += 2 * steps;
   }
   if (RULES.levelBonus) { e.damage += steps; e.ac += steps; }
+  if (RULES.prestiges) {
+    const n = prestigesAt(c.level), w = weaponOf(c), blows = PRESTIGE_BLOWS[c.cls];
+    if (blows && !(c.cls === 'ranger' && !w.ranged) && !(c.cls === 'thief' && !LIGHT.includes(baseId(w.id)))) e.blows += blows.slice(0, n).reduce((a, b) => a + b, 0);
+    if (c.cls === 'ranger' && n >= 2 && w.ranged) e.damage += MARKSMAN_MORE;
+    if (hasTrait(c, 'sneak_attack')) {
+      if (n >= 2 && round <= 2) e.damage += sneakGrowth(c.level) + (round === 2 ? SNEAK_ATTACK_DMG : 0);
+      if (n >= 3 && round === VANISH_ROUND) { e.damage += SNEAK_ATTACK_DMG + sneakGrowth(c.level); e.ac += 100; }
+    }
+  }
   return e;
 }
 
@@ -106,12 +152,13 @@ export const GEAR: readonly (readonly [number, readonly string[]])[] = [
 const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
 
 /** A copy of an item with more to it, for a what-if: kept in the item table under its own id. */
-function forge(base: ItemDef, more: { bonus?: number; ac?: number }, plus: number): string {
-  const id = `${base.id}+${plus}`;
+function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number }, plus: number): string {
+  const id = `${base.id}+${plus}${more.hit ? `^${more.hit}` : ''}`;
   if (!ITEMS[id]) {
     ITEMS[id] = { ...base, id, name: `${base.name} +${plus}` };
     if (more.bonus !== undefined) ITEMS[id].bonus = (base.bonus ?? 0) + more.bonus;
     if (more.ac !== undefined) ITEMS[id].ac = (base.ac ?? 0) + more.ac;
+    if (more.hit !== undefined) ITEMS[id].plus = (base.plus ?? 0) + more.hit;
   }
   return id;
 }
@@ -142,15 +189,60 @@ export function outfit(c: Character, level: number): void {
   }
 }
 
+/**
+ * A spell at a rank: its damage dice (stopped where `spellsGrowTo` stops them) and its mending lifted
+ * `rankStep` a rank, by widening the dice, and its price `rankCost` a rank. Kept in the spell table
+ * under its own id, as `forge` keeps an item.
+ */
+function rankUp(base: SpellDef, level: number, rank: number, share = 1): string {
+  const step = (RULES.rankStep ?? RANK_STEP) * share, cost = RULES.rankCost ?? 0, id = `${base.id}@${rank}:${step}:${cost}`;
+  if (!SPELLS[id]) {
+    // Past every tier, so that no level teaches it (`spellsFor`): it is only ever ranked into.
+    const up = 1 + step * rank, d: SpellDef = { ...base, id, level: Infinity, sp: Math.round(base.sp * (1 + cost * rank)) };
+    if (base.dice) { d.dice = spellDice(base, level, RULES.spellsGrowTo); d.perLevel = false; d.sides = Math.max(2, Math.round(((base.sides ?? 4) + 1) * up) - 1); }
+    if (base.heal) d.heal = Math.round(base.heal * up);
+    SPELLS[id] = d;
+  }
+  return id;
+}
+
+/**
+ * The prestiges a company of its level has taken (DESIGN.md §5), as a what-if: each adds hit points
+ * and spell points to every level from it on, ranks a caster's and a hybrid's spells, and gives the
+ * perks the harness can play: the blows, the knight's banner (+2 to-hit for the front row, held on
+ * their weapons), the ranger's Marksman and the thief's sneak attacks (see `edgeOf`), and the
+ * cleric's last rite (see `day`). The thief takes a light weapon where two blows with it beat one with
+ * what it holds.
+ */
+function prestige(p: Party): void {
+  for (const c of p.members) {
+    const calling = CALLING[c.cls], [hp, sp] = PRESTIGE_POOLS[calling];
+    let levels = 0;
+    for (let l = PRESTIGES[0]; l <= c.level; l++) levels += prestigesAt(l);
+    c.maxHp += hp * levels; if (c.maxSp) c.maxSp += sp * levels;
+    const rank = calling === 'fighter' ? 0 : prestigesAt(c.level);
+    if (rank) c.spells = c.spells.map((id) => { const x = spell(id); return x.dice || x.heal ? rankUp(x, c.level, rank, calling === 'hybrid' ? HYBRID_RANK : 1) : id; });
+    if (c.cls === 'thief' && prestigesAt(c.level)) {
+      const held = weaponOf(c), light = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(LIGHT).map(item)
+        .filter((d) => LIGHT.includes(baseId(d.id)) && !!d.ranged === !!held.ranged && (!d.classes || d.classes.includes(c.cls))).sort((a, b) => hits(b) - hits(a))[0];
+      if (light && 2 * hits(light) > hits(held)) equip(c, light.id);
+    }
+  }
+  const knight = p.members.find((c) => c.cls === 'knight');
+  if (knight && prestigesAt(knight.level) >= 2) for (const c of p.members.slice(0, FRONT_ROW)) if (c.equipment.weapon) equip(c, forge(weaponOf(c), { hit: BANNER_HIT }, weaponOf(c).plus ?? 0));
+}
+
 const companies = new Map<string, Party>();
 /** The premade six trained to `level` and outfitted for it, whole; a fresh copy every call. */
 export function companyAt(level: number, seed: number): Party {
-  const key = `${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}`;
+  const key = `${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}:${RULES.prestiges ? `${RULES.rankStep ?? RANK_STEP}:${RULES.rankCost ?? 0}` : ''}`;
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
     p = defaultParty(rng);
-    for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng, CAP); outfit(c, level); c.hp = c.maxHp; c.sp = c.maxSp; }
+    for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng, CAP); outfit(c, level); }
+    if (RULES.prestiges) prestige(p);
+    for (const c of p.members) { c.hp = c.maxHp; c.sp = c.maxSp; }
     companies.set(key, p);
   }
   return structuredClone(p);
@@ -263,7 +355,7 @@ export interface Outcome { won: boolean; cost: number; hp: number; sp: number; r
 
 /** One fight to its end from however the company stands: what it cost, read from what it has left. */
 export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
-  const edge = RULES.levelTraits || RULES.levelBonus ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round) : undefined;
+  const edge = RULES.levelTraits || RULES.levelBonus || RULES.prestiges ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round) : undefined;
   const rng = makeRng(seed), s = startCombat(p, [{ id: 'harness', monsters }], rng, { spellsGrowTo: RULES.spellsGrowTo, edge });
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
     const t = currentTurn(s, p, rng);
@@ -328,11 +420,15 @@ export interface Day { fights: number; rounds: number; why: Why }
  */
 export function day(level: number, encounters: readonly Encounter[], seed: number, most = 30): Day {
   const p = companyAt(level, seed);
-  let rounds = 0;
+  // The cleric's third prestige: once between rests, the first member who would die is left at 1 hit
+  // point. The harness cannot reach into the blow, so it spares them when the fight is won.
+  let rite = RULES.prestiges && p.members.some((c) => c.cls === 'cleric' && prestigesAt(c.level) >= 3), rounds = 0;
   for (let n = 0; n < most; n++) {
     const o = fight(p, encounters[n % encounters.length], seed * 104729 + n);
     rounds += o.rounds;
     if (!o.won) return { fights: n, rounds: rounds / (n + 1), why: o.broken ? 'long' : 'lost' };
+    const fell = rite ? p.members.find((m) => hasCondition(m, 'dead')) : undefined;
+    if (fell) { removeCondition(fell, 'dead'); fell.hp = 1; rite = false; }
     mendBetween(p);
     const why = mustRest(p);
     if (why) return { fights: n + 1, rounds: rounds / (n + 1), why };
@@ -393,13 +489,21 @@ export const slowest = (level: number): number => Math.min(14, 1.5 * longest(lev
  * against six, so it takes one factor for both, set so that a company two levels under it wins half
  * the time.
  */
-export function calibrate(role: Role, level: number, seeds: number): [number, number] {
+/**
+ * A calibrated point: hit points and damage factors, and what the day at them comes to: the share of
+ * days that end in a death, a lost fight or one broken off (a boss's: the fights lost), the fights
+ * before a rest (a boss's: won) and the rounds a fight.
+ */
+export type Point = [hp: number, damage: number, bad: number, fights: number, rounds: number];
+const badOf = (t: DayTally): number => t.why.dead + t.why.lost + t.why.long;
+export function calibrate(role: Role, level: number, seeds: number): Point {
   if (role === 'boss') {
-    const s = solve((x) => measure(bossFloor(level), standardEncounter(role, level, x, x), seeds).won, 0.5, false);
-    return [s, s];
+    const s = solve((x) => measure(bossFloor(level), standardEncounter(role, level, x, x), seeds).won, 0.5, false), t = measure(bossFloor(level), standardEncounter(role, level, s, s), seeds);
+    return [s, s, 1 - t.won, t.won, t.rounds];
   }
   const run = (h: number, d: number): DayTally => days(level, [standardEncounter(role, level, h, d)], seeds), target = fightsPerRest(level);
-  if (run(1, 1).fights < target) { const whole = solve((x) => run(x, x).fights, target, false, 0.05, 1, 10); return [whole, whole]; }
+  const point = (h: number, d: number): Point => { const t = run(h, d); return [h, d, badOf(t), t.fights, t.rounds]; };
+  if (run(1, 1).fights < target) { const whole = solve((x) => run(x, x).fights, target, false, 0.05, 1, 10); return point(whole, whole); }
   const most = solve((x) => run(x, 1).fights, target, false, 1, 60, 10);
   // For hit points under `most`, the damage that brings the day back to its fights.
   const made = new Map<number, number>();
@@ -410,7 +514,7 @@ export function calibrate(role: Role, level: number, seeds: number): [number, nu
     return d;
   };
   const start = run(most, 1).rounds <= longest(level) ? most : solve((x) => run(x, damageFor(x)).rounds, longest(level), true, 0.05, most, 9);
-  const bad = (t: DayTally): number => t.why.dead + t.why.lost + t.why.long;
+  const bad = badOf;
   const first = run(start, damageFor(start)), shorter = first.why.long > first.why.dead + first.why.lost;
   let pick = start, least = bad(first);
   for (let k = 1, h = start; k <= 8 && least > WORST; k++) {
@@ -420,16 +524,17 @@ export function calibrate(role: Role, level: number, seeds: number): [number, nu
     if (!shorter && t.rounds > slowest(level)) break;
     if (bad(t) < least) { pick = h; least = bad(t); }
   }
-  return [pick, damageFor(pick)];
+  return point(pick, damageFor(pick));
 }
 
 /**
  * A point's damage again with its hit points held at `h`: what brings the day to its fights, or the
  * line's if even that leaves the company short.
  */
-export function refit(role: Role, level: number, h: number, seeds: number): [number, number] {
+export function refit(role: Role, level: number, h: number, seeds: number): Point {
   const run = (d: number): number => days(level, [standardEncounter(role, level, h, d)], seeds).fights, target = fightsPerRest(level);
-  return [h, run(1) <= target ? 1 : solve(run, target, false, 1, 60, 10)];
+  const d = run(1) <= target ? 1 : solve(run, target, false, 1, 60, 10), t = days(level, [standardEncounter(role, level, h, d)], seeds);
+  return [h, d, badOf(t), t.fights, t.rounds];
 }
 
 /** One cell of the report: a role's standard encounter at a level, against a company `under` levels below it. */
@@ -444,7 +549,7 @@ export function cell(role: Role, level: number, seeds: number, under = 0): Cell 
 // ---- every core ------------------------------------------------------------------------------
 
 interface Job { kind: 'calibrate' | 'refit' | 'cell'; role: Role; level: number; seeds: number; under: number; hp?: number; rules: typeof RULES }
-const work = (j: Job): [number, number] | Cell =>
+const work = (j: Job): Point | Cell =>
   j.kind === 'calibrate' ? calibrate(j.role, j.level, j.seeds) : j.kind === 'refit' ? refit(j.role, j.level, j.hp ?? 1, j.seeds) : cell(j.role, j.level, j.seeds, j.under);
 
 /** The jobs on a worker per core, each taking the next as it finishes one; the results in the jobs' order. */
@@ -464,7 +569,7 @@ function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void): Promis
   });
 }
 
-if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined }, j.rules); parentPort?.postMessage(work(j)); });
+if (!isMainThread) parentPort?.on('message', (j: Job) => { Object.assign(RULES, NO_RULES, j.rules); parentPort?.postMessage(work(j)); });
 
 // ---- the command line ------------------------------------------------------------------------
 
@@ -475,6 +580,7 @@ async function main(): Promise<void> {
   const levels = (opt('levels')?.split(',').map(Number) ?? [...LEVELS]);
   const roles = (opt('roles')?.split(',') ?? ROLE_IDS) as Role[];
   const under = Number(opt('under') ?? 0);
+  const pct = (x: number): string => `${Math.round(x * 100)}`;
   const cap = opt('spell-cap');
   if (cap !== undefined) {
     RULES.spellsGrowTo = Number(cap);
@@ -493,8 +599,16 @@ async function main(): Promise<void> {
     RULES.levelBonus = true;
     console.log(`What if: past level 10 every member gains a point of weapon damage and of armour every two levels.`);
   }
+  if (args.includes('--prestiges')) {
+    RULES.prestiges = true;
+    RULES.spellsGrowTo ??= 10;
+    const step = opt('rank-step'), cost = opt('rank-cost');
+    if (step !== undefined) RULES.rankStep = Number(step);
+    if (cost !== undefined) RULES.rankCost = Number(cost);
+    if (!((RULES.rankStep ?? RANK_STEP) >= 0) || !((RULES.rankCost ?? 0) >= 0)) throw new Error('--rank-step and --rank-cost take a share, 0 or more');
+    console.log(`What if: the company takes its prestiges at ${PRESTIGES.join(', ')}, with their perks, hit points and spell points; damage spells stop growing at ${RULES.spellsGrowTo}, and each rank adds ${pct(RULES.rankStep ?? RANK_STEP)}% to a spell's damage and mending and ${pct(RULES.rankCost ?? 0)}% to its price.`);
+  }
   const rules = { ...RULES };
-  const pct = (x: number): string => `${Math.round(x * 100)}`;
   const row = (label: string, cells: readonly string[]): void => console.log(label.padEnd(14) + cells.map((c) => c.padStart(6)).join(''));
   if (levels.some((l) => !(l >= 1 && l <= CAP)) || roles.some((r) => !ROLES[r])) throw new Error(`levels run from 1 to ${CAP}; roles are ${ROLE_IDS.join(', ')}`);
 
@@ -534,14 +648,14 @@ async function main(): Promise<void> {
     const fmt = (x: number): string => x.toFixed(2).replace(/\.?0+$/, '');
     const at = (l: number): number => { const k = LEVELS.indexOf(l as (typeof LEVELS)[number]); if (k < 0) throw new Error(`level ${l} is not one of LEVELS`); return k; };
     levels.forEach(at);
-    const say = (j: Job, [h, d]: [number, number]): void => console.log(`  ${j.role} ${j.level}: hp ${fmt(h)}, damage ${fmt(d)} (${secs()})`);
-    if (args.includes('--write') && (RULES.spellsGrowTo !== undefined || RULES.gearGrows || RULES.levelTraits || RULES.levelBonus)) throw new Error('a what-if is for weighing, not for writing: drop --write, or the what-ifs');
+    const say = (j: Job, [h, d, bad, fights, rounds]: Point): void => console.log(`  ${j.role} ${j.level}: hp ${fmt(h)}, damage ${fmt(d)}; ${j.role === 'boss' ? `won ${pct(fights)}%` : `${fights.toFixed(1)} fights, ${rounds.toFixed(1)} rounds, ${pct(bad)}% of days end badly`} (${secs()})`);
+    if (args.includes('--write') && (RULES.spellsGrowTo !== undefined || RULES.gearGrows || RULES.levelTraits || RULES.levelBonus || RULES.prestiges)) throw new Error('a what-if is for weighing, not for writing: drop --write, or the what-ifs');
     const jobs = roles.flatMap((role) => levels.map((level): Job => ({ kind: 'calibrate', role, level, seeds, under: 0, rules })));
-    const made = await onCores<[number, number]>(jobs, say);
+    const made = await onCores<Point>(jobs, say);
     // The tables with the points just made, as they will be written; the rest stay as they were.
-    const next = { hp: {} as Record<Role, number[]>, dmg: {} as Record<Role, number[]> };
-    for (const r of ROLE_IDS) { next.hp[r] = [...HP[r]]; next.dmg[r] = [...DAMAGE[r]]; }
-    const put = (j: Job, [h, d]: [number, number]): void => { next.hp[j.role][at(j.level)] = Number(fmt(h)); next.dmg[j.role][at(j.level)] = Number(fmt(d)); };
+    const next = { hp: {} as Record<Role, number[]>, dmg: {} as Record<Role, number[]>, bad: {} as Record<Role, number[]> };
+    for (const r of ROLE_IDS) { next.hp[r] = [...HP[r]]; next.dmg[r] = [...DAMAGE[r]]; next.bad[r] = HP[r].map(() => NaN); }
+    const put = (j: Job, [h, d, bad]: Point): void => { next.hp[j.role][at(j.level)] = Number(fmt(h)); next.dmg[j.role][at(j.level)] = Number(fmt(d)); next.bad[j.role][at(j.level)] = bad; };
     jobs.forEach((j, k) => put(j, made[k]));
     // A monster never has fewer hit points than the one a level under it, at the levels made or any
     // between: where a point's factor falls so fast from the one before that the hit points drawn
@@ -560,10 +674,13 @@ async function main(): Promise<void> {
     }
     if (held.length) {
       console.log(`  holding hit points at the level under's: ${held.map((j) => `${j.role} ${j.level}`).join(', ')}`);
-      const again = await onCores<[number, number]>(held, say);
+      const again = await onCores<Point>(held, say);
       held.forEach((j, k) => put(j, again[k]));
     }
     for (const r of roles) console.log(`  ${`${r}:`.padEnd(12)}hp [${levels.map((l) => fmt(next.hp[r][at(l)])).join(', ')}]  damage [${levels.map((l) => fmt(next.dmg[r][at(l)])).join(', ')}]`);
+    console.log(`\nDays that end in a death, a lost fight or one broken off, at the points made (%; the boss: fights lost from two under)`);
+    row('', levels.map((l) => `L${l}`));
+    for (const r of roles) row(r, levels.map((l) => pct(next.bad[r][at(l)])));
     console.log(`(${jobs.length} points${held.length ? `, ${held.length} held` : ''}, ${seeds} seeds each, ${secs()})`);
     if (args.includes('--write')) {
       const file = new URL('./testmonster.ts', import.meta.url);
@@ -602,7 +719,7 @@ async function main(): Promise<void> {
   block('rounds a fight, over the day', (c) => c.day!.rounds.toFixed(1), true);
   block('one fight from fresh: cost %', (c) => pct(c.fresh.cost));
   block('one fight from fresh: someone down at the end %', (c) => pct(c.fresh.down));
-  if (MAX_LEVEL < Math.max(...levels)) console.log(`\nPast level ${MAX_LEVEL} the company runs on today's rules extended: no new spells, promotions or gear.`);
+  if (MAX_LEVEL < Math.max(...levels)) console.log(`\nPast level ${MAX_LEVEL} the company runs on today's rules extended${RULES.prestiges ? ', with the prestiges' : ''}: no new spells${RULES.prestiges ? '' : ', prestiges'} or gear.`);
 }
 
 if (isMainThread && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch((e: unknown) => { console.error(e); process.exit(1); });
