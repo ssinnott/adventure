@@ -12,10 +12,11 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 
 Six boxes of it are built, the Delta road and the shore under the Edge (#170), Stienwierde (#173),
 the Drowned Temples' approach (#174), Saltmouth's box (#176) and the salt pans (#178), and the town
-behind C6's gate, Saltmouth (#177); with the first two the area was listed. Its content is
-`src/content/areas/saltreach/` (maps, monsters, items, climate, its part of the world map and its
-guild quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` and its
-side quests in `quests.ts` are still to come) and its businesses' rooms
+behind C6's gate, Saltmouth (#177), with the Salt Compact's hall in it (#182); with the first two
+the area was listed. Its content is `src/content/areas/saltreach/` (maps, monsters, items, climate,
+its part of the world map and its guild quests in `guilds.ts`; its chapter of the one quest, The
+Tide Stone, in `chapter.ts` and its side quests in `quests.ts` are still to come) and its
+businesses' rooms
 `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta` and
 `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
@@ -487,9 +488,9 @@ settled in its issue, and what the pilot teaches changes them.
   (the Thief's), Baukje the stevedore among the bales on the quay (the Barbarian's) and Tjerk the
   ferryman at the steps (the Monk's). Jory Tallis stands at his house front on the quay, his
   lineage framed on the wall through the open door, and his words touch the throne and no more.
-  The pump in the square is brackish and does not heal. The Keel's keeper says plain words: its
-  hall, its first task and the stair's top in its cellar are #182's, the Warden with the news of
-  Hale #180's, and The Star That Moved #183's. No coach runs from the yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
+  The pump in the square is brackish and does not heal. The halls are #181's and #182's (below),
+  the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach runs from the
+  yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
   and onto Wrackholm's stage at 6 the next morning, and back the same from the stage, landing on
   the quay. The walkthrough goes in by the gate and out again, buys each class its step at the
   armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of Ottilie at 11, once
@@ -506,6 +507,23 @@ settled in its issue, and what the pilot teaches changes them.
   Guild teaches nothing yet: its three skills are #18's. The walkthrough takes the first task,
   chains the road, is made Chainmen, does both quests of the first rank and is made Surveyors, then
   has the journal read.
+- **The Compact's hall** (#182, 1 October): the Keel is the Salt Compact's hall, a tavern that carries `hall`
+  (#417), so its menu is the talk of the room, the Compact's work and Ruan, who keeps it. Her words
+  are plain to a stranger and a degree warmer to a Runner, and never touch the line's reveal. The
+  first task, The Long Way: the warehouse clerk on C6's quay hands over a cask of brandy once the
+  run is taken, an event by the customs house door at 4,13 shows only while the cask is carried,
+  and the hall pays when that has been seen and takes the cask: 30 gold and 120 xp, and the company
+  is a Runner. The first rank's two: What the Crews Carry, the crate of the crews' cargo on C6's
+  quay opened (100 gold, 360 xp); and The Watcher on Wrackholm, the lookout on E6's west cliff
+  found (150 gold, 480 xp). Both are paid early to a company that came first. The Compact comes to
+  960 xp, 160 a member, and 280 gold. Kitto's boat is half to a Runner, 75, both ways, and Kitto
+  says so; `free` (Passage Paid, #401) still beats it. The cellar way is a second secret: sawdust
+  trodden out along the Keel's end wall at 14,5 is the hint, the wall at 14,4 opens to a search, and
+  the cellar's passage at 14,3 comes out on the sand under C6's sea wall at 28,18, on the rope's
+  square. The bar is lifted on the cellar side and drops behind, so the way runs one way only, and
+  the smugglers' stair and its cache are still had only through C6's own secret. The walkthrough joins the Compact by the run, pays the half fare both ways, walks the
+  crate in the log and goes down through the cellar. The hermit's letter (#56's 26) is #192's to
+  build end to end, Ruan's hand-in with it.
 
 ### 4.10 C7, the salt pans (#178): country, band 12
 
@@ -610,8 +628,9 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
 
   The quests of ranks 2 and 3, offered to a Surveyor and a Mapmaker, are for the boxes still to
   build; Geographer, the fourth rank, is the top and has none.
-- **The Salt Compact** (#182), the harbour tavern (#253): the first task, a run of brandy past the
-  customs house; a first rank of two quests; the boat's fare halved for a member. Its line begins
+- **The Salt Compact** (#182, built), the harbour tavern (#253): the first task, a run of brandy past
+  the customs house; a first rank of two quests, the crews' crate on C6's quay and the watcher's
+  place on Wrackholm's west cliff; the boat's fare halved for a member (§4.9). Its line begins
   with the hermit's letter from Wrackholm (#56's 26, #192): the founder is a decade dead and the
   orders come from below (DESIGN §10.2). The crews the company fights on the river and the isle
   have left the Compact for the Hand's coin, so killing them costs nothing with the guild (#151,
@@ -638,8 +657,9 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   next area's floor, divided by 0.75: from 10 to 12 that is 6,200 / 0.75, about 8,267 xp a member,
   with today's `xpForLevel`. The shares of §4 are C5 700, C4 600, C3 1,000, B5 1,000, B6 800, the
   temples 1,800, C6 700, Saltmouth 300, C7 700 and the four side quests about 700 between them:
-  8,300 without the willows. The Cartographers' three quests pay 840 xp, 140 a member, and 430
-  gold, of Saltmouth's 300; the Compact's share of the rest is #182's. A small Rift is budgeted at
+  8,300 without the willows. Saltmouth's 300 is its two halls': the Cartographers' three quests
+  pay 840 xp, 140 a member, and 430 gold (#181), and the Compact's three 960 xp, 160 a member, and
+  280 gold (#182). A small Rift is budgeted at
   about 450 a member on top of its box's share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve. B5 as built pays
   about 1,600, its two Rifts inside it (#173): a fight inside the gate's aim at 11 costs about 300
   xp a member whatever its monsters, and its five come to about 1,650 measured with the company at
@@ -929,6 +949,34 @@ Decided by delegate for #181, each the owner's to overturn:
    word and not written here; SLICE says the journal is read (#181).
 7. **The Length of the Wall is not here:** it is #205's, given by the Guild's surveyor at Lantern
    Watch. The Guild's three skills are #18's, and the hall says nothing of teaching them.
+
+Decided by delegate for #182, each the owner's to overturn:
+
+1. **The Keel is the hall by a small systems change** (#417): a person with a room may carry `hall`,
+   so the tavern keeps the talk of the room and adds the Compact's work. DESIGN §8 wants a hall that
+   does not look like one, and a shop would need stock invented for it; the Map Room, which sells
+   what a surveyor takes out, is a shop (#181's 1).
+2. **The half fare is `Passage.half`** (#417), the fare halved and rounded down once it holds, with
+   `free` above it. Both of Kitto's passages carry it, Saltmouth's and the way back from E6, which
+   reaches into Wrackholm's lane as #177 did; it turns on the first task's done flag, which marks
+   membership exactly, and Kitto alone says so.
+3. **The first task is the clerk's cask past the customs house door:** the cask is given only once
+   the run is taken and the door's event shows only while it is carried, so the run cannot be done
+   early and has no early words. The cask is priced at nothing, so no shop buys it away.
+4. **The first rank's two are the crews' crate on C6's quay and the lookout on E6's west cliff:**
+   both deal with the Hand's crews and who watches the port, not the founder; the crews and the
+   bargemen respawn, so no `slain` deed, and C5's drowned barge is its box's secret.
+5. **Ruan is named and stands in the Keel; the hermit's letter is #192's,** which builds 26 end to
+   end, the hermit's giving of it and Ruan's hand-in: a hand-in here alone would name an item no one
+   can find, and F6 is #410's to edit now. The founder's seal is not taken at Runner, which would
+   tell the reveal early; it is left to the rank that reveals (#22, Phase 4).
+6. **The cellar way is a second secret, down only:** a rank shuts no way on the map (DESIGN §8) and
+   any `needFlag` is a story lock Act II does not spend, so the way is open to anyone who finds it.
+   It comes out on the sand by the rope, not on the flight, so C6's stair and cache still need C6's
+   own secret, and no one leaving by it is stranded (changed on review).
+7. **The Compact pays 160 xp a member and 280 gold** across its three quests, the first task 20 a
+   member, so that with the Cartographers' 140 the two halls come to Saltmouth's 300 (§8), the area
+   being some 19% over its curve (changed on review).
 
 ## 10. Names
 

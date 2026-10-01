@@ -55,11 +55,12 @@ export const WRACKHOLM_E6: MapDef = {
   features: [
     // The landing: the stage at the inlet's head, the boat's captain on it, and the cove's mouth above.
     { kind: 'event', x: 16, y: 15, id: 'e6_stage', once: true, text: 'Wrackholm. A dozen planks on piles, green to the waterline, and the inlet\'s walls close over them. Nobody comes.' },
-    // Kitto, who sold the company its passage at Saltmouth's quay, sells the way back (#177).
+    // Kitto, who sold the company its passage at Saltmouth's quay, sells the way back (#177), at
+    // half the fare to a member of the Compact, as on the quay (#182).
     { kind: 'npc', x: 15, y: 14, name: 'Kitto, the boat\'s captain', lines: [
       'The captain makes the boat fast with his back to you, and keeps it there longer than a knot needs. When he turns he looks past your shoulder, at the cliff.',
       '"You\'ve paid, and here you are. I\'ll lie at the stage till you want Saltmouth again, same fare, and I\'ll not go up." He spits over the side. "Nobody from the boats goes up. Don\'t ask me more than that."',
-    ], passage: [{ to: 'saltmouth', x: 13, y: 10, facing: WEST, name: 'Saltmouth', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6,
+    ], passage: [{ to: 'saltmouth', x: 13, y: 10, facing: WEST, name: 'Saltmouth', by: 'boat', fare: 150, half: { flag: 'q_compact_run_done' }, departs: 20, days: 1, arrives: 6,
       label: 'Saltmouth comes up out of the morning, low and smoking, and you step onto the quay, rested, with the gulls already asking.' }] },
     { kind: 'event', x: 18, y: 13, id: 'e6_mouth', once: true, text: 'The cliff opens a few steps up: Kelp Hole, black inside, breathing weed and smoke. The path to it is worn and wet.' },
     // The huts: one under the cliff, the rest south of the inlet. The gulls sit on one roof and no
