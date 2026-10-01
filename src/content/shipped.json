@@ -111,6 +111,21 @@
         "c5_shrine",
         "c5_spur",
         "c5_wedge",
+        "c6_cairn",
+        "c6_crate",
+        "c6_ford",
+        "c6_glass",
+        "c6_hull",
+        "c6_hut",
+        "c6_in",
+        "c6_pans",
+        "c6_post",
+        "c6_quay",
+        "c6_shrine",
+        "c6_stair",
+        "c6_stair_cache",
+        "c6_wierde",
+        "c6_yard",
         "coast",
         "d2_cairn",
         "d2_cist",
@@ -316,6 +331,9 @@
         "c5_pools_n",
         "c5_pools_s",
         "c5_toad",
+        "c6_bargemen",
+        "c6_crabs",
+        "c6_smugglers",
         "cliff_smugglers",
         "coast_bandits",
         "d2_crows",
@@ -439,6 +457,7 @@
         "wood_wolves"
       ],
       "doors": [
+        "100,177",
         "107,80",
         "124,107",
         "124,34",
@@ -759,6 +778,10 @@
       "at": "296,30",
       "size": "32x32"
     },
+    "saltings_c6": {
+      "at": "72,158",
+      "size": "32x32"
+    },
     "shelf": {
       "at": "200,30",
       "size": "32x32"
@@ -949,7 +972,6 @@
     "key_iron",
     "lamellar",
     "lantern_oil",
-    "lantern_staff",
     "lanterns_staff",
     "leather",
     "leather+1",
@@ -984,6 +1006,7 @@
     "runed_robe+1",
     "runed_robe+2",
     "scale",
+    "scale+1",
     "sharkskin",
     "shield",
     "shield+1",
@@ -1015,7 +1038,8 @@
     "warhammer+1",
     "warhammer+2",
     "watch_habit",
-    "watch_shield"
+    "watch_shield",
+    "watch_staff"
   ],
   "spells": [
     "absolve",
