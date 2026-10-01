@@ -10,12 +10,12 @@ work is filed under #153 (Phase 1.2, #149): the boxes as §4's table has them, t
 its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52cd` (29 September
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Five boxes of it are built, the Delta road and the shore under the Edge (#170), Stienwierde (#173),
-Saltmouth's box (#176) and the salt pans (#178), and the town behind C6's gate, Saltmouth (#177);
-with the first two the area was listed. Its content is `src/content/areas/saltreach/` (maps,
-monsters, items, climate, its part of the world map and its guild quests in `guilds.ts`; its
-chapter of the one quest, The Tide Stone, in `chapter.ts` and its side quests in `quests.ts` are
-still to come) and its businesses' rooms
+Six boxes of it are built, the Delta road and the shore under the Edge (#170), Stienwierde (#173),
+the Drowned Temples' approach (#174), Saltmouth's box (#176) and the salt pans (#178), and the town
+behind C6's gate, Saltmouth (#177); with the first two the area was listed. Its content is
+`src/content/areas/saltreach/` (maps, monsters, items, climate, its part of the world map and its
+guild quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` and its
+side quests in `quests.ts` are still to come) and its businesses' rooms
 `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta` and
 `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
@@ -29,9 +29,9 @@ Saltreach three zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Upper Water | 10–11 | 7,714 | none |
-| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); B5, Stienwierde, at 40,126 (#173) |
+| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174) |
 | The Saltings | 11–12 | 3,588 | C6, Saltmouth's box, laid at 72,158 (#176); C7, the salt pans, at 72,190 (#178) |
-| The area | 10–12 | 14,999 | five boxes |
+| The area | 10–12 | 14,999 | six boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 14,143 squares, about 13.8 zone maps (EXPANSION §1 has 13.8), and 11,965 of them a
@@ -127,6 +127,17 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   plinth's landing, a Brine Shard and a Kite Shield +1 in it; the hint is the barge-poles' marks on
   the landing, and one plank among them unscored and new-nailed. The gate holds at 11, at 7.1 fights
   to a rest on the box and 4.9 in each Rift (5.4 before the re-stat to #409's line, #18; §9).
+- **The Drowned Temples' approach** (B6, `delta_b6`, core, band 11–12; #174): a causeway south
+  from Stienwierde round the temple's roof to its dry door at 16,11, open on a stair, with tidal
+  flats at its foot and the priestess beside it, counting; the last dry ground, a camp; a small roof
+  with a cairn, an east roof silted shut over the channel and a crossing of sunk stones; the drowned
+  standing in the water either side of the causeway south; and the far roof alone in the flats. Five
+  fen toads on the causeway in, five brinelings in the channel by night until both of B5's Rifts
+  are quiet, and two bull toads on the flats past the far roof. The secret is a door in the far
+  roof's wall under the tideline, a porch behind it and a stair down; the hint is the priestess's
+  count, one to ten with her hand to each roof and a pause towards the far roof before eleven. The
+  doors are events until the temples are built (#175). The gate holds at 11, at 7.0 fights to a
+  rest.
 - **Saltmouth's box** (C6, `saltings_c6`, core, band 11–12; #176): the Salt Road's last reach from
   C5 down the fen's east side, its milestone (SALTMOUTH 2, RIETUM 7) and the road's end at the town's
   land gate at 26,19, the way into Saltmouth (#177); the coach yard outside it;
@@ -156,8 +167,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
 
 ## 4. What is still to build
 
-All but C5, D5, B5, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the grid (§1)
-the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
+All but C5, D5, B5, B6, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the grid
+(§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -366,7 +377,23 @@ settled in its issue, and what the pilot teaches changes them.
   where the door is.
 - **New here.** Tidal ground that shows and hides a door.
 - **Finds.** None on the box; the temples' below.
-- **Pay.** About 800 xp a member.
+- **Pay.** About 800 xp a member; as built about 970 (§8).
+- **As built** (#174, 1 October): band 11–12. The temple's dry door stands at 16,11 with tidal
+  flats along its foot, so at high water it seems to stand in the sea; the door, the priestess and
+  the causeway to them are dry and reached the same way at either tide, as §5's "the temples open
+  at either tide" asks. No drowned men fight here: none stands at 11, and a new one is a drawing and
+  a sprite, the creatures' and the systems' lanes, which #175 needs for its nave and its choir's
+  front row and so owes before it is built. The causeways' drowned stand in the water and do not
+  move. The groups are three, each a real fight at 11: five fen toads on the causeway in, the
+  nearest; five brinelings in the channel by night, B5's Rifts' spill, until both are quiet; two bull
+  toads on the flats past the far roof, the farthest and the hardest at 12. The far roof's door
+  opens on a porch and a stair down, an event until #175 makes it the way into the second level's
+  back; tidal ground lies either side of the ledge before it and round the roof's foot, never beside
+  the porch, so nothing behind the door is reached across the flats. The hint is an event beside
+  the priestess, always there: she counts the doors one to ten with her hand to each roof, then
+  lifts it towards the far roof, where no door shows, and says eleven. The camp is on the last dry
+  ground before the door; the cairn holds gold and a potion, no gear. The Tide Bell is #175's
+  (§6). As measured, the box pays about 970 xp a member and 70 gold.
 
 ### 4.7 The Drowned Temples (#175): dungeon, two levels of 16×16, band 11–12
 
@@ -616,14 +643,15 @@ gold, of Saltmouth's 300; the Compact's share of the rest is #182's. A small Rif
   about 1,600, its two Rifts inside it (#173): a fight inside the gate's aim at 11 costs about 300
   xp a member whatever its monsters, and its five come to about 1,650 measured with the company at
   about 10, about 1,700 at 11. C6 as built pays about 1,030 (#176), its three groups each inside the
-  aim, the quay's by day and by night one of them at any hour. C7 as built pays its 700 (#178). No
-  other share gives back the 600 and the 330, so the area comes to about 9,680, some 17% over the
-  curve's 8,267. The surplus is for a kill paid by level to damp, and each box still to build is
-  priced by its fights, about 300 a fight, and recorded as built where that passes its share; the
-  sum here is restated with each. The willows add 800 when they are built. From here on a kill pays
-  by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
-  at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
-  boxes exist.
+  aim, the quay's by day and by night one of them at any hour. C7 as built pays its 700 (#178). B6
+  as built pays about 970 over its 800 (#174), its three fights at about 300 each and its
+  brinelings only by night. No other share gives back the 600, the 330 and the 170, so the area
+  comes to about 9,850, some 19% over the curve's 8,267. The surplus is for a kill paid by level to
+  damp, and each box still to build is priced by its fights, about 300 a fight, and recorded as
+  built where that passes its share; the sum here is restated with each. The willows add 800 when
+  they are built. From here on a kill pays by level (#159), so a company that arrives at 10 earns
+  the shares as written and one that arrives at 13 earns less; the curve's row reports what a clear
+  falls short of as owed to #153 until the boxes exist.
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
@@ -728,6 +756,33 @@ Decided by delegate for #173, each the owner's to overturn:
    Stone home is #191's. The north Rift was the spiral while it held a room group, which the cells
    put behind the warden.
 7. **No camp:** the brief has none, and C5's is the next box.
+
+Decided by delegate for #174, each the owner's to overturn:
+
+1. **The temples' dry door sits beside the flats** (the owner's open question): tidal ground along
+   its foot, so at high water the door reads as standing in the sea, while the door, the priestess
+   and the causeway to them stay dry and are reached the same way at either tide. It is the brief's
+   landmark in the only form the tide check allows, and keeps §5's "the temples open at either
+   tide".
+2. **No drowned men fight on B6;** it is built from the monsters that exist. A Drowned Chanter here
+   would spend #175's caster among the dead early, and a level-11 Drowned Man is a drawing and a
+   sprite, outside the area lane. #175 needs one for its nave and its choir's front row, so it is
+   owed before #175, for the owner to agree and file. The causeways' drowned are events.
+3. **Three groups, each a real fight at 11,** the hardest two bull toads at 12 with no averaging:
+   five fen toads on the causeway in, five brinelings in the channel by night until both of B5's
+   Rifts are quiet, and the bull toads on the flats past the far roof. The brief's seven groups
+   would pay about 2,100 against an 800 share.
+4. **B6 is built at about 970 over its 800,** and §8 says so: with C6 and C7 the area comes to
+   about 9,850, some 19% over the curve. No other share is cut.
+5. **The far roof's door opens on a sunken porch and a stair down,** an event owed to #175 as the
+   way into the second level's back; no cache, since the brief has no finds on the box. Tidal
+   ground lies either side of the ledge before the door and round the roof's foot, never beside the
+   porch.
+6. **The hint is the priestess's count, written as an event beside her** and always there: one to
+   ten with her hand to each roof, then a pause towards the far roof, where no door shows, and
+   eleven, the number the chant ends on.
+7. **The band stays 11–12, and the camp and the cairn both stand:** the camp is the company's rest
+   before the temples, C5's being two boxes back and B5 having none.
 
 Decided by delegate for #176, each the owner's to overturn:
 
@@ -861,7 +916,7 @@ Decided by delegate for #181, each the owner's to overturn:
 4. **The first rank's two quests are on events already built:** the fen's west edge past
    Stienwierde (B5) and the eel-catcher's hut over the west arm's ford (C6), two trips in two zones,
    both in band 11–12 and off the chapter's road. No map is changed for them.
-5. **The pay is small,** 140 xp a member in all, since the area is about 17% over its curve and
+5. **The pay is small,** 140 xp a member in all, since the area is about 19% over its curve and
    Saltmouth's 300 is shared with the Compact's hall, the chapter and the side quests.
 6. **Ysolde reads the journal and gives it back:** her words, after the journal is carried, set
    `meridian_read`. Fane's line about lying dry under the arch where the causeway crosses the
