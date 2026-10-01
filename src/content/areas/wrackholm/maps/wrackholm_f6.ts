@@ -62,7 +62,13 @@ export const WRACKHOLM_F6: MapDef = {
     { kind: 'event', x: 29, y: 14, id: 'f6_grave_seen', once: true, text: 'Under the stones a man laid out straight, his cloak gone to threads. On his breast a seal, the Compact\'s scales cut in it.' },
     // The cliff over the anchorage, and the boats below it: there by night, drawn up by day.
     { kind: 'event', x: 14, y: 24, id: 'f6_clifftop', once: true, when: { hours: 'day' }, text: 'The cliff falls sheer to the anchorage. A ship rides there, black and deep-laden, low in the water, and showing no colours.' },
-    { kind: 'event', x: 14, y: 30, id: 'f6_boats', once: true, when: { hours: 'night' }, text: 'The boats are manned now, lanterns hooded to a slit, going out one behind another to the ship. No one speaks.' },
+    { kind: 'event', x: 13, y: 30, id: 'f6_boats', once: true, when: { hours: 'night' }, text: 'The boats are manned now, lanterns hooded to a slit, going out one behind another to the ship. No one speaks.' },
+    // The way aboard the Tide Ship (#190): by night an oarsman of the boats rows out whoever pays.
+    { kind: 'npc', x: 14, y: 30, name: 'Pender, an oarsman', when: { hours: 'night' }, lines: [
+      'An old man sits on a thwart with his oars across his knees, salt in his beard and a Compact knot on the back of one hand, faded near to nothing. He looks at your boots, not your faces.',
+      '"Pender. I row out whoever pays and I ask nothing, which is why I\'m still rowing. She rides low tonight. She always rides low, whatever they carry off her. Pay, sit, don\'t talk."',
+    ],
+      passage: [{ to: 'tide_ship', x: 5, y: 9, facing: EAST, name: 'The Tide Ship', by: 'boat', fare: 20, departs: 0, days: 0, arrives: 1, label: 'You sit in the boat\'s bottom while Pender rows, and come under the ship\'s side in the dark.', warning: '"Not you. Not yet. I\'ve rowed your sort out before, and rowed the boat back lighter. Come when you\'ve the look of staying."' }] },
     { kind: 'event', x: 14, y: 29, id: 'f6_shingle', once: true, when: { hours: 'day' }, text: 'Shingle at the path\'s foot, and boats drawn up on it, six, oars shipped and thwarts dry. Nobody with them. Nobody near.' },
     // The smugglers' watch in the rock, the Hand its keepers and the crew on the path its brood.
     { kind: 'den', x: 17, y: 14, id: 'f6_watch', name: 'The watch', text: 'A fire kept low under a tarred roof. Grey robes at the hollow\'s lip, watching the anchorage, and now you.',
