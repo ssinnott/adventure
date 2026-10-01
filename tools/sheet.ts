@@ -93,9 +93,13 @@ interface MapPlan { id: string; name: string; kind: string; region: RegionId; vi
 const FACING_NAME = ['north', 'east', 'south', 'west'];
 const open = (m: GameMap, x: number, y: number): boolean => m.inBounds(x, y) && m.at(x, y).solid === 'none' && !['water', 'deep', 'lava', 'chasm'].includes(m.at(x, y).terrain);
 
-/** A map's ways out: its exits, and its tears into Rifts, which are walked through as exits are. */
-const waysOut = (d: MapDef): { x: number; y: number; to: string; tx: number; ty: number; tf?: Facing }[] =>
-  [...(d.exits ?? []), ...(d.features ?? []).flatMap((f) => (f.kind === 'rift' ? [f] : []))];
+/**
+ * A map's ways out: its exits, its tears into Rifts, which are walked through as exits are, and the
+ * crossings its people sell, from where the seller stands to where the crossing lands.
+ */
+type Way = { x: number; y: number; to: string; tx: number; ty: number; tf?: Facing };
+const waysOut = (d: MapDef): Way[] =>
+  [...(d.exits ?? []), ...(d.features ?? []).flatMap((f): Way[] => (f.kind === 'rift' ? [f] : f.kind === 'npc' ? (f.passage ?? []).map((p) => ({ x: f.x, y: f.y, to: p.to, tx: p.x, ty: p.y, tf: p.facing })) : []))];
 
 /** Where the party arrives: the map's start, and every other map's way in, once each. */
 function arrivals(def: MapDef): View[] {
