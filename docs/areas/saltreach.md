@@ -11,11 +11,11 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Three boxes of it are built, the Delta road and the shore under the Edge (#170) and Stienwierde
-(#173); with the first two the area was listed. Its content is `src/content/areas/saltreach/` (maps, monsters, items, climate and
-its part of the world map; its chapter of the one quest, The Tide Stone, in `chapter.ts`, its side
-quests in `quests.ts` and its guild quests in `guilds.ts` are still to come) and its businesses'
-rooms `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta`
-and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
+(#173); with the first two the area was listed. Its content is `src/content/areas/saltreach/` (maps,
+monsters, items, climate and its part of the world map; its chapter of the one quest, The Tide
+Stone, in `chapter.ts`, its side quests in `quests.ts` and its guild quests in `guilds.ts` are still
+to come) and its businesses' rooms `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its
+zones `upperwater`, `delta` and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
 ---
 
@@ -130,8 +130,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
 
 ## 4. What is still to build
 
-All but C5, D5 and B5: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the plan is ten
-boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
+All but C5, D5 and B5: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the plan is
+ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -359,7 +359,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** A caster among the dead; a boss that blesses (#161); a count that stops.
 - **Finds.** The god's silver: a Silver Mace +1 and a Holy Symbol of the tide, a resistance to
   cold worn.
-- **Pay.** About 1,700 xp a member (§8).
+- **Pay.** About 1,800 xp a member.
 
 ### 4.8 C6, Saltmouth's box (#176): core, band 11–12
 
@@ -382,7 +382,7 @@ settled in its issue, and what the pilot teaches changes them.
   harbour tavern's cellar (#182). The hint: a rope tied off at the wall's top with nothing on it.
 - **New here.** Salt underfoot (#162); a town on its box with its own map behind the gate.
 - **Finds.** A Scale Mail +1 in the warehouse.
-- **Pay.** About 500 xp a member (§8).
+- **Pay.** About 700 xp a member.
 
 ### 4.9 Saltmouth (#177): town, 16×16, band 10–12
 
@@ -425,7 +425,7 @@ settled in its issue, and what the pilot teaches changes them.
   salt is trodden at one wall and nowhere else.
 - **New here.** The Scarp, and the way down into Act IV, seen.
 - **Finds.** A named crab-shell buckler in the hoard.
-- **Pay.** About 400 xp a member (§8).
+- **Pay.** About 700 xp a member.
 
 ### 4.11 B3 and B4, the willows (#179): country, band 10–11, parked
 
