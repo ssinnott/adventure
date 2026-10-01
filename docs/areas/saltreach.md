@@ -115,8 +115,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   brinelings in its rooms and a tide elder with one more at its heart, quiet once the elder falls;
   and the river's west fen over two fords. The secret is a barge drowned under the causeway's arch,
   the Brine Shard in its straw; the hint is the mast's stump at the arch, with the stones glowing
-  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.8 in the
-  Rift.
+  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.6 in the
+  Rift (6.8 before the re-stat to #409's line, #18).
 - **The spur to Rietum** (C4, `delta_c4`, country, band 10–11; #171): the track up the Long Water's
   east bank from C5's fork to Rietum's first fields; a barge tied at the bank, its master, five
   bargemen and two herons, the first crew that breaks when its master falls; the backwater with a
@@ -134,7 +134,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   breach), each two tide elders at the heart, quiet once they fall. The secret is a hollow under the
   plinth's landing, a Brine Shard and a Kite Shield +1 in it; the hint is the barge-poles' marks on
   the landing, and one plank among them unscored and new-nailed. The gate holds at 11, at 7.1 fights
-  to a rest on the box and 5.4 in each Rift.
+  to a rest on the box and 4.9 in each Rift (5.4 before the re-stat to #409's line, #18; §9).
 - **Saltmouth's box** (C6, `saltings_c6`, core, band 11–12; #176): the Salt Road's last reach from
   C5 down the fen's east side, its milestone (SALTMOUTH 2, RIETUM 7) and the road's end at the town's
   gate at 26,19, shut until #177 builds the town and makes it the way in; the coach yard outside it;
@@ -146,7 +146,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   master on the quay by day, two Wrack smugglers and two bowmen under the sea wall by night, and four
   salt crabs at the pans' edge. The secret is the smugglers' stair in the sea wall's dry end, its
   cache at the foot by a sea door barred from within, the hint the rope hanging over it with
-  nothing on it. The gate holds at 11, at 7.0 fights to a rest.
+  nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18).
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
@@ -759,6 +759,14 @@ Decided by delegate for #399, each the owner's to overturn:
 5. **The gate two under stays owed to #18:** gear dresses a company at a floor past one two under
    it, but a group a company at the floor fights six or seven of to a rest is one a company two
    under still beats. Past 10 the to-a-rest aim and the two-under aim pull against each other.
+
+Decided by delegate for #18, each the owner's to overturn:
+
+1. **B5's Rifts keep their two tide elders,** at 4.9 fights to a rest at 11 after the re-stat to
+   #409's line, under their aim of 5.75 and inside their limit. A warden must average 12 to hold the
+   band's top, and only the elder pair does that among the brine family; a room of brinelings ahead
+   of it would mend the figure, but it would cost the north Rift its cells and each Rift some 200 xp
+   a member more.
 
 ## 10. Names
 

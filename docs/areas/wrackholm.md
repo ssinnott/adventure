@@ -176,10 +176,10 @@ Foreland map's density.
   on the crown, the camp in the lee of the south hills, the Tidefolk's bowl on the west shore, the
   lookout and four more on the moor are the box's other points: every square is within 8 steps of
   one. As measured it pays about 1,920 xp a member and 404 gold. The gate at 12 wins every fight, at
-  7.1 fights to a rest, and walks the road (the rats, the inlet's gulls, the east path) every time;
-  two under, at 10, it wins every fight too, which is owed to #18 until gear past 10 lands
-  (`tools/tests/gate.ts`'s `OWED`). What the owner finds by hand goes here when the box has been
-  played.
+  7.3 fights to a rest (7.1 as built; re-statted to #409's line, #18), and walks the road (the rats,
+  the inlet's gulls, the east path) every time; two under, at 10, it wins every fight too, which is
+  owed to #18 until gear past 10 lands (`tools/tests/gate.ts`'s `OWED`). What the owner finds by
+  hand goes here when the box has been played.
 
 ### 4.3 Kelp Hole (#188): dungeon, two levels of 16×16, band 12–14
 
@@ -208,24 +208,25 @@ Foreland map's density.
   at 12 and 14 as the issue asks. The cave's mouth at E6's 18,12 opens on the crews' hall: their
   fires and the first crew; west, the landing, where the sea comes in under the rock and two boats
   tie up, the crates stamped with the Helmstow customs and the second crew; north along the landing,
-  the ledge down. Behind the landing, the chamber of the chained rows, where four overseers (13) keep
-  the irons, the cave's hardest and farthest group, and beyond them the store with the crews'
+  the ledge down. Behind the landing, the chamber of the chained rows, where four overseers (13)
+  keep the irons, the cave's hardest and farthest group, and beyond them the store with the crews'
   strongbox: the Plate Mail +1 and 600 gold. Colan, the brother, sits by the rows once the overseers
   are down, with #192's first lines and no flag. Below, the third crew at the ledge's foot, four
-  devilfish in the west pools and four in the east, and the Great Devilfish (14) in the black pool at
-  the back, with Tam a square short of it, his first lines and no flag, gone once it is dead. The
-  secret: west of the tide-mark, which breaks by the west wall where the stone below is scoured bare,
-  a search finds the flooded passage, and it lets out on F6's east shore at 28,9, north of the
+  devilfish in the west pools and four in the east, and the Great Devilfish (14) in the black pool
+  at the back, with Tam a square short of it, his first lines and no flag, gone once it is dead. The
+  secret: west of the tide-mark, which breaks by the west wall where the stone below is scoured
+  bare, a search finds the flooded passage, and it lets out on F6's east shore at 28,9, north of the
   hermit's point, as the brief has it (#189 moved it from E6's south shore): nothing on that side
-  leads back in. The brief's encounters and the boss do not fit
-  2,180: the boss alone pays about 1,475 a member, and the six groups and the boss come to about
-  3,450 a member, and 1,676 gold, 1,230 of it in the chests. The Great Devilfish is set off the boss
-  line for the gate, at 600 hit points and 8d7+10: the bot wins it 66% at 12 and 91% at 14, where
-  the line's 674 and 13d7+19 won 11% and 28%. The crews' cave at 12 wins every fight, at 6.8 fights
-  to a rest, and two under, at 10, wins every fight too, which is owed to #18 with E6's; the sea cave
-  at 12 wins 91.5% of its fights with the boss, at 6.5 to a rest, and 83% at 10, inside the limit.
-  The walkthrough plays both levels, the boss at 14, and leaves by the passage. What the owner finds
-  by hand goes here when it has been played.
+  leads back in. The brief's encounters and the boss do not fit 2,180: the boss alone pays about
+  1,475 a member, and the six groups and the boss come to about 3,450 a member, and 1,676 gold,
+  1,230 of it in the chests. The Great Devilfish is set off the boss line for the gate, at 600 hit
+  points and 8d7+10: the bot wins it 66% at 12 and 91% at 14, where the line's 674 and 13d7+19 won
+  11% and 28% (69% and 96% after the re-stat to #409's line, #18, which leaves it as set). The
+  crews' cave at 12 wins every fight, at 6.8 fights to a rest (7.0 after the re-stat), and two
+  under, at 10, wins every fight too, which is owed to #18 with E6's; the sea cave at 12 wins 91.5%
+  of its fights with the boss, at 6.5 to a rest (92.3% and 6.6 after the re-stat), and 83% at 10,
+  inside the limit. The walkthrough plays both levels, the boss at 14, and leaves by the passage.
+  What the owner finds by hand goes here when it has been played.
 
 ### 4.4 F6, the east rocks (#189): core, band 13–14
 
@@ -267,9 +268,11 @@ Foreland map's density.
   behind it the founder's grave, with his seal and 150 gold. The camp in a hollow of the south-west
   moor, the shrine on the north-east shore (personality), the cliff top and five more points are the
   box's others: 95.9% of its squares are within 8 steps of one, the furthest 11. As measured it pays
-  about 1,658 xp a member and 487 gold. The gate at 13 wins every fight, at 7.67 fights to a rest;
-  the isle's road stays E6's, and F6, its floor above the area's, counts two under in the area's
-  pool, which is owed to #18. What the owner finds by hand goes here when the box has been played.
+  about 1,658 xp a member and 487 gold. The gate at 13 wins every fight, at 7.67 fights to a rest
+  (8.6 in the ladder's gear, #406, over the aim's 8.25; 8.2 after the re-stat to #409's line, #18,
+  inside it); the isle's road stays E6's, and F6, its floor above the area's, counts two under in
+  the area's pool, which is owed to #18. What the owner finds by hand goes here when the box has
+  been played.
 ### 4.5 The Tide Ship (#190): dungeon, three decks of 16×16, band 13–14
 
 - **Purpose.** The act's second dungeon and its heart: the smugglers' ship whose hold carries
