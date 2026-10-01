@@ -73,7 +73,7 @@ export const DEEPTHORN_J4: MapDef = {
       '"You\'ve seen it, then. The white wood. Don\'t ask its name; it had one, and it was a good wood, and I cut pine in it thirty years. Then one night the ground under it opened like a mouth, and the mouth was a mile long, and everything that stood near it went to glass."',
       '"That\'s a Rift, that is, let run. Yours under the Grove was caught, I hear. That one nobody caught. Nobody was there to." He spits. "I sit here so I don\'t forget it. Somebody should."',
     ], flag: 'q_hermit', says: [
-      { after: { flag: 'q_hermit', slain: 'grove2:g2_warden' }, lines: [
+      { after: { ...TEAR_CLOSED, flag: 'q_hermit' }, lines: [
         '"Yours is shut, they say. The one under the Grove." He does not turn round. "Good. Then you know what you were looking at over there, and what you weren\'t. Sit a while. It doesn\'t get any less white."',
       ] },
     ] },

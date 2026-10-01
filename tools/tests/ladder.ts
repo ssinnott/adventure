@@ -39,7 +39,7 @@ export const FINDS: Record<string, string> = {
   'robe+1': '', 'leather+1': '', silver_locket: '',
   'halberd+1': '#69', ring_of_office: '#69', 'spear+1': '#69',
   captains_sword: '#70', captains_mail: '#70', queens_sword: '#70',
-  'longbow+1': '#71',
+  'longbow+1': '',
   'shield+1': '#72',
 };
 
