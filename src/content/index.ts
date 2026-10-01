@@ -17,6 +17,7 @@ import type { Atlas } from '../game/atlas.ts';
 import { AREA as shelf } from './areas/shelf/index.ts';
 import { AREA as thornmark } from './areas/thornmark/index.ts';
 import * as saltreach from './areas/saltreach/monsters.ts';
+import * as sunderwood from './areas/sunderwood/interiors.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -31,13 +32,19 @@ export const AREAS = [shelf, thornmark] as const;
  */
 export const AHEAD = [{ id: 'saltreach' as const, sprites: saltreach.SPRITES, monsters: saltreach.MONSTERS }] as const;
 
+/**
+ * Rooms drawn ahead of their area, as AHEAD's monsters are: each area's list is merged into
+ * Interior and INTERIORS as a listed area's are, and goes when its Area takes it.
+ */
+export const ROOMS_AHEAD = [{ id: 'sunderwood' as const, interiors: sunderwood.INTERIORS }] as const;
+
 type AnyArea = (typeof AREAS)[number];
 /** The regions, one to an area; each map names its region and shares its sky. */
 export type RegionId = AnyArea['id'];
 /** One kind per distinct drawing; kinds that share a family module share a frame but not a look. */
 export type MonsterSprite = AnyArea['sprites'][number] | (typeof AHEAD)[number]['sprites'][number];
 /** The painted room a business shows while the party is inside it, one per business. */
-export type Interior = AnyArea['interiors'][number];
+export type Interior = AnyArea['interiors'][number] | (typeof ROOMS_AHEAD)[number]['interiors'][number];
 
 // The unions stay lists of names only while every area keeps its literals (`satisfies Area`, not
 // `: Area`). Widened to string, FAMILY and SCENES would stop catching a missing drawing or room,
@@ -92,7 +99,7 @@ once('quest or chapter', [...QUESTS, ...THE_QUEST.chapters], (q) => q.id);
 export const CLIMATES = Object.fromEntries(AREAS.map((a) => [a.id, a.climate])) as Record<RegionId, Climate>;
 
 /** Every business's interior, in road order. */
-export const INTERIORS: readonly Interior[] = once('interior', AREAS.flatMap((a) => a.interiors), (i) => i);
+export const INTERIORS: readonly Interior[] = once('interior', [...AREAS, ...ROOMS_AHEAD].flatMap((a) => a.interiors), (i) => i);
 
 /**
  * What the areas chart, then the plan: a row an area charts that the plan has too (a planned place
