@@ -17,6 +17,7 @@ import type { Atlas } from '../game/atlas.ts';
 import { AREA as shelf } from './areas/shelf/index.ts';
 import { AREA as thornmark } from './areas/thornmark/index.ts';
 import * as saltreach from './areas/saltreach/monsters.ts';
+import * as sunderwood from './areas/sunderwood/monsters.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -29,7 +30,10 @@ export const AREAS = [shelf, thornmark] as const;
  * on, and its monsters may be drawn before that. Each is merged into MONSTERS and MonsterSprite as
  * an area's are; once the area is listed, its Area takes the import and its line here goes.
  */
-export const AHEAD = [{ id: 'saltreach' as const, sprites: saltreach.SPRITES, monsters: saltreach.MONSTERS }] as const;
+export const AHEAD = [
+  { id: 'saltreach' as const, sprites: saltreach.SPRITES, monsters: saltreach.MONSTERS },
+  { id: 'sunderwood' as const, sprites: sunderwood.SPRITES, monsters: sunderwood.MONSTERS },
+] as const;
 
 type AnyArea = (typeof AREAS)[number];
 /** The regions, one to an area; each map names its region and shares its sky. */
