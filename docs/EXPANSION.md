@@ -265,8 +265,11 @@ Its first rows are the slice's own figures from SLICE.md: level 2 from the Forel
 level 4 with Brandy Hole, level 9 from one clear of everything, about two fifths of one more sweep
 of the Grove to 10 (a sweep pays 34% less once the Warden of the Cut is dead) and about 8,400 gold
 for six members from 5 to 10. Act I falls short of the budget: three quarters of it should reach 10,
-where a clear of everything reaches 9. Act II's three rows came before their maps, each owed to the
-issue that builds its area (#159).
+where a clear of everything reaches 9. The maps have grown since: summed at ×1, one clear of Act I is
+worth 19,957 xp a member, level 12; paid by level in road order (#159), 15,292, level 10 and three
+quarters of the way to 11, and a sweep of the Grove at 10 pays about 1,000, so seven tenths of one
+more reaches Thornhold's 11. Act II's three rows came before their maps, each owed to the issue that
+builds its area (#159).
 
 The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,

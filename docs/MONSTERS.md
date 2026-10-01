@@ -354,8 +354,9 @@ controllers 12, skirmishers and elites 15, soldiers 11, the armoured and brutes 
 Archers and casters reach the back row, archers with bows; controllers and elites paralyse, 0.15 a
 hit. Each monster pays its share of an encounter, and an encounter pays what the curve gives a group
 (EXPANSION.md §5.2): the company's climb through its level, over three quarters of the groups a
-clear holds for each level it climbs (`groupsPerLevel`: the Foreland 81 over 4, Thornmark 75 over 5,
-and past them Thornmark's, until Saltreach's first box settles open question 4). That is 99 at
+clear holds for each level it climbs (`groupsPerLevel`, pinned at the built areas' pace when #159
+counted it: the Foreland 81 over 4, Thornmark 75 over 5, and past them Thornmark's, until Saltreach's
+first box settles open question 4). That is 99 at
 level 1, 1,573 at 10 and 5,093 at 32; a boss pays four. There is no boss under level 3, since a boss
 sits at its band's top.
 

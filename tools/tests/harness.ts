@@ -4,7 +4,7 @@ import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, add
 import { startCombat, currentTurn, partyAct, monsterAct, describeGroups } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import { gateCompany } from '../gate.ts';
-import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from '../testmonster.ts';
+import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS } from '../testmonster.ts';
 import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, VANISH_ROUND } from '../harness.ts';
 import { ok } from './lib.ts';
 
@@ -100,6 +100,9 @@ export function harness(): void {
   // Past 10 the target grows: a company of 24 fights about ten between rests.
   const late = days(24, [standardEncounter('soldier', 24)], 40, 5001);
   ok(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`);
+  // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
+  const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
+  ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
   const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
   ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
 }

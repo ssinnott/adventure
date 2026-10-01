@@ -6,8 +6,7 @@
 // gallery can still show one).
 import type { MonsterDef, MonsterSprite } from '../src/game/monsters.ts';
 import { xpForLevel } from '../src/game/party.ts';
-import { AREAS } from '../src/content/index.ts';
-import { CURVE, MEMBERS } from '../src/content/progression.ts';
+import { MEMBERS } from '../src/content/progression.ts';
 
 export type Role = 'fodder' | 'skirmisher' | 'soldier' | 'archer' | 'caster' | 'controller' | 'armoured' | 'elite' | 'brute' | 'boss';
 
@@ -115,17 +114,12 @@ export function diceFor(avg: number): { dice: number; sides: number; bonus: numb
 }
 
 /**
- * How many groups a clear holds for each level it climbs, at a level: the built areas' own pace, the
- * groups of the area whose band climbs through that level over the levels it climbs to the next
- * floor (the Foreland 81 over 4, Thornmark 75 over 5). Past the built areas it keeps the last one's,
- * until Saltreach's first box settles what a fight is worth from there (docs/MONSTERS.md open
- * question 4).
+ * How many groups a clear holds for each level it climbs, at a level: the built areas' pace as
+ * counted for #159, the Foreland's 81 groups over its climb of 4 and Thornmark's 75 over 5, the
+ * second kept past it. Pinned, not counted live, so that a map adding a group moves nothing here;
+ * Saltreach's first box is where it is weighed again (docs/MONSTERS.md open question 4).
  */
-export function groupsPerLevel(level: number): number {
-  const paces = AREAS.map((a) => ({ row: CURVE[a.id], groups: a.maps.reduce((t, d) => t + (d.encounters?.length ?? 0), 0) }));
-  const at = paces.find((p) => level >= p.row.band[0] && level < p.row.next) ?? paces[paces.length - 1];
-  return at.groups / (at.row.next - at.row.band[0]);
-}
+export const groupsPerLevel = (level: number): number => (level < 5 ? 81 / 4 : 75 / 5);
 const BOSS_ENCOUNTERS = 4;
 
 /**

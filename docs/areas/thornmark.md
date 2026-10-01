@@ -189,9 +189,11 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
-One clear of every map is worth level 9 per member; the dungeons respawn in one to two days, and
-about two fifths of one more sweep of the Grove reaches 10 (2,759 xp a member a sweep once the
-Warden of the Cut is dead and the Rift's groups stop coming, 34% less than before). Levels are still
+One clear of every map, paid by level in road order (#159), is worth level 10 per member and three
+quarters of the way to 11 (15,292 xp from the Foreland on; 19,957 summed at ×1); the dungeons
+respawn in one to two days, and about seven tenths of one more sweep of the Grove reaches 11, the
+Elder's Yard's ceiling (about 1,000 xp a member a sweep at 10, its bosses and the Rift's groups
+aside). Levels are still
 bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays
 10,794 xp a member of the 13,667 its curve asks, and 7,600 gold of the 8,400 (the guilds' four
 quests and the Wardens' chest give 800 xp a member and 820 gold of it, and #219's side quests 567 xp

@@ -7,8 +7,9 @@
 // (375 xp; the Foreland's walkthrough holds it, #87), adding Brandy Hole level 4 (1,660),
 // one clear of everything 9 (11,997), and two fifths of one more sweep of the Grove reaches 10
 // (2,759 a sweep once the Warden of the Cut is dead and the Rift's groups stop).
-// Training six members from 5 to 10 costs 8,400 gold. Act II's areas have rows before their maps,
-// owed to the issues that build them.
+// Training six members from 5 to 10 costs 8,400 gold. Since #159 a kill pays by level: a clear of
+// Act I in road order is worth 15,292 a member, level 10, where the rows' ×1 sum gives 19,957. Act
+// II's areas have rows before their maps, owed to the issues that build them.
 import type { RegionId } from './index.ts';
 import { xpForLevel, trainPrice } from '../game/party.ts';
 
