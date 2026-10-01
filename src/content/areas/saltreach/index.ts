@@ -14,6 +14,7 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
 import { INTERIORS } from './interiors.ts';
+import { GUILDS } from './guilds.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -25,6 +26,9 @@ export const AREA = {
   sprites: SPRITES,
   items: ITEMS,
   quests: QUESTS,
+  // The Cartographers' first task and first rank at the Map Room (#181), and the Salt Compact's at
+  // the Keel (#182).
+  guilds: GUILDS,
   // The Tide Stone, the act's first chapter, is #180's.
   chapter: undefined,
   // The delta's: mild and wet, with sea fog off the gulf.

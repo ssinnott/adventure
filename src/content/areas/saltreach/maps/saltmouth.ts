@@ -1,8 +1,8 @@
 // Saltmouth, the free port: Act II's first town, band 10-12, entered from C6's land gate at 26,19.
 // The inn, the Telhus (the drowned god's town shrine, which cures), the Seawall Armoury with the
 // band's step on the ladder (#399), the Quay Chandlery, the Sail Loft (training to 13), the
-// locksmith's, the Keel (the harbour tavern, the Compact's hall to come, #182) and the
-// Cartographers' map room (#181). Four first prestiges are taught here, each by a person at their
+// locksmith's, the Keel (the harbour tavern, the Salt Compact's hall, #182) and the Map Room,
+// the Cartographers' Guild's hall (#181). Four first prestiges are taught here, each by a person at their
 // trade: the astrologer, the locksmith, the stevedore and the ferryman. Jory Tallis stands at his
 // house front on the quay, and Kitto sells the boat to Wrackholm at the quay's end.
 // docs/areas/saltreach.md §4.9 is its brief.
@@ -21,8 +21,8 @@ export const SALTMOUTH: MapDef = {
     '#######==#######',
     '#,T....==......#',
     '#.BBBB.==.BBBBB#',
-    '#.BBBB.==.BBBBB#',
-    '#.BBDB.==.BBDBB#',
+    '#.BBBB.==.BBBB.#',
+    '#.BBDB.==.BBDBS#',
     '#......==......#',
     '#==============#',
     '#......==......#',
@@ -38,16 +38,25 @@ export const SALTMOUTH: MapDef = {
   exits: [
     { x: 7, y: 0, to: 'saltings_c6', tx: 26, ty: 18, tf: NORTH, label: 'You leave Saltmouth by the land gate.' },
     { x: 8, y: 0, to: 'saltings_c6', tx: 26, ty: 18, tf: NORTH, label: 'You leave Saltmouth by the land gate.' },
+    { x: 14, y: 3, to: 'saltings_c6', tx: 28, ty: 18, tf: NORTH, label: 'Down through the Keel\'s cellar, a barred door and a dark passage, and out onto the sand under the sea wall.' },
   ],
   features: [
     { kind: 'inn', x: 4, y: 4, name: 'The Tide Table', price: 25, interior: 'saltmouth_inn' },
-    // The harbour tavern: the Compact's hall to those who know, its hall and its back room #182's.
-    { kind: 'npc', x: 12, y: 4, name: 'The Keel', interior: 'harbour_tavern', lines: [
+    // The harbour tavern: the Salt Compact's hall to those who know (#182), and Ruan, who keeps it.
+    { kind: 'npc', x: 12, y: 4, name: 'The Keel', interior: 'harbour_tavern', hall: 'compact', lines: [
       'A low vault against the sea wall, casks for tables and sawdust underfoot. Nobody looks up when you come in, which takes practice.',
       'A bargeman, loud: "Dues? The warehouse can whistle. There\'s a better paymaster on the river now, and he pays in grey."',
       'A pilot, quieter: "Tallis has three hulls in the roads and a fourth fitting out. For what, with the river empty?"',
       'The door at the back opens for a man you did not see come in, and shuts on the next who tries it.',
     ] },
+    { kind: 'npc', x: 12, y: 4, name: 'Ruan, who keeps the Keel', lines: [
+      'Behind the bar a woman dries a glass that was dry when she picked it up. The mirror behind her shows the door; she has not turned round once.',
+      '"Beer is two, brandy is four. The back room is not for strangers and the sawdust is not for spitting in."',
+      '"You want work? Drink first. The Keel likes to know a face before it knows a name."',
+    ], says: [{ after: { flag: 'q_compact_run_done' }, lines: [
+      '"Runner." A glass is set down before you ask. "The river crews have found somebody who pays in grey. We pay in coin and we are still here. Sit."',
+      'She goes back to the door in the mirror. "Work comes when it comes."',
+    ] }] },
     { kind: 'shop', x: 3, y: 9, name: 'Seawall Armoury', stock: ['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'], interior: 'saltmouth_armourer' },
     // The Thief's first prestige (DESIGN §5): the locksmith keeps his shop, and sells no picks.
     { kind: 'npc', x: 5, y: 9, name: 'Pender the locksmith', interior: 'saltmouth_locksmith', lines: [
@@ -58,11 +67,23 @@ export const SALTMOUTH: MapDef = {
     { kind: 'shop', x: 10, y: 9, name: 'Quay Chandlery', stock: ['rations', 'torch', 'lantern_oil', 'potion_heal', 'antidote', 'elixir', 'potion_sp', 'potion_sp_great'], interior: 'saltmouth_chandlery' },
     { kind: 'temple', x: 12, y: 9, name: 'The Telhus', interior: 'saltmouth_shrine' },
     { kind: 'trainer', x: 14, y: 9, name: 'The Sail Loft', maxLevel: 13, interior: 'training_loft' },
-    // The Cartographers' map room: its hall and its first task are #181's.
-    { kind: 'npc', x: 3, y: 12, name: 'Ysolde Carrow, Geographer of the Guild', interior: 'cartographers_room', lines: [
-      'Pale plaster and north light. One wall is Caldera, ruled box by box, and a third of the boxes are empty. A globe, a plotting table, a journal under glass.',
+    // The Cartographers' map room, the Guild's hall (#181): it sells what a surveyor takes out, and
+    // gives out the Guild's quests. Ysolde reads the first Meridian journal to a company that carries
+    // it, and gives it back.
+    { kind: 'shop', x: 3, y: 12, name: 'The Map Room', stock: ['rations', 'antidote', 'lantern_oil', 'potion_heal'], interior: 'cartographers_room', hall: 'cartographers' },
+    { kind: 'npc', x: 3, y: 12, name: 'Ysolde Carrow, Geographer of the Guild', lines: [
+      'Pale plaster and north light. One wall is Caldera, ruled box by box, and a third of the boxes are empty. A globe, a plotting table, a book under glass.',
       '"The Cartographers\' Guild. We go where the chart is blank and come back, mostly." She does not look up from her rule. "Look, if you like. Touch nothing under glass."',
-      '"That is a Meridian journal. Thirty years, and still the last word from under the world." A pause. "The empty boxes are not empty. We have not been yet."',
+      '"The Meridian route book. They left it with us the morning they went out, thirty years since; the journals went down with them." A pause. "The empty boxes are not empty. We have not been yet."',
+    ], says: [
+      { after: { flag: 'meridian_read' }, lines: [
+        '"Volume one, in Fane\'s hand, thirty years late." She has gone back to her rule, but the rule does not move. "The rest went down with them. Somewhere."',
+      ] },
+      { after: { item: 'meridian_journal' }, sets: 'meridian_read', lines: [
+        'She sees the book before she sees you, and her rule stops. "Fane\'s hand. Volume one." She opens it on the plotting table and reads standing, and for a while says nothing.',
+        '"Day two." She reads it out. "\'Lay dry under the arch where the causeway crosses the channel, in off the stones beside it. The tide did not reach us. A place to know again.\'"',
+        'She shuts it and holds it a moment longer than she needs to, then puts it in your hands. "Keep it. It came up out of the dark in yours, not ours. Bring the next and I will read that too."',
+      ] },
     ] },
     // The other three first prestiges, taught in the street by people who keep no shop.
     { kind: 'npc', x: 10, y: 7, name: 'Hiske the astrologer', lines: [
@@ -91,9 +112,14 @@ export const SALTMOUTH: MapDef = {
       'A man at the quay\'s end with a boat under him, coiling a line. He has seen you coming and not stopped coiling.',
       '"Kitto. Wrackholm, the landing, a hundred and fifty the boat. We go out at eight tonight and you step off at six, with the light."',
       '"A fare is a fare, and I don\'t ask why. Favours I don\'t do. Debts I pay." He goes back to his line.',
-    ], passage: [{ to: 'wrackholm_e6', x: 16, y: 15, facing: NORTH, name: 'Wrackholm', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6,
-      // Passage Paid (C4, #171): Hessel's word, for the barge pushed off his shoal, pays the fare out.
-      free: { flag: 'q_passage_owed' },
+    ], says: [{ after: { flag: 'q_passage_owed' }, lines: [
+      '"Hessel\'s word, is it." He looks at the water as though it owed him. "That squares him with me. Out to Wrackholm for nothing, back is a fare, and I still don\'t ask why. Get in."',
+    ] }, { after: { flag: 'q_compact_run_done' }, lines: [
+      '"Keel\'s people, are you." He looks at the sky as though it had arranged this. "Seventy-five to Wrackholm, then. A fare is a fare and a half fare is a half fare, and I still don\'t ask why. Get in."',
+    ] }],
+    // Half to a member of the Compact, never withheld from anyone (EXPANSION §2.2; #182); nothing on
+    // Hessel's word, for the barge pushed off his shoal (Passage Paid, C4, #171).
+    passage: [{ to: 'wrackholm_e6', x: 16, y: 15, facing: NORTH, name: 'Wrackholm', by: 'boat', fare: 150, half: { flag: 'q_compact_run_done' }, free: { flag: 'q_passage_owed' }, departs: 20, days: 1, arrives: 6,
       label: 'The boat grounds at the stage with the first light and you step ashore, rested. The cliff is already between you and the sea.' }] },
     { kind: 'event', x: 8, y: 11, id: 'sm_lineage', text: 'Through Tallis\'s door a hall, and on its wall a lineage framed, name over name up to a crown. The ink is one shade from top to bottom.' },
     { kind: 'event', x: 7, y: 1, id: 'saltmouth_intro', once: true, text: 'Saltmouth. Grey stone, tarred wood, gulls on everything, and under the gate\'s noise the slap of water that never stops.' },
@@ -104,5 +130,13 @@ export const SALTMOUTH: MapDef = {
     { kind: 'event', x: 8, y: 14, id: 'sm_steps', once: true, text: 'Stone steps down to the water, green from the third one. A flat boat rides at them, and across the harbour the far quay.' },
     { kind: 'event', x: 1, y: 8, id: 'sm_nets', once: true, text: 'Nets hung to dry along the wall, and women with needles going along the holes. The fish on the slabs behind are few and small.' },
     { kind: 'event', x: 3, y: 13, id: 'sm_customs', once: true, text: 'The customs house, shut, the Crown\'s arms over the door and the brass gone green. A chalk mark on the step that somebody renews.' },
+    // The Compact's first task (#182): the customs house door, passed with the cask, and only then.
+    { kind: 'event', x: 4, y: 13, id: 'sm_customs_run', once: true, after: { item: 'brandy_cask' }, until: { flag: 'q_compact_run_done' },
+      text: 'The customs house door stays shut and the chalk on its step is fresh this morning. Nobody comes out to ask what is in the cask; nobody, you begin to think, ever has.' },
+    // The secret: the Keel's cellar, through its end wall, and out under C6's sea wall by the rope.
+    // Its door is barred on the cellar side, so the way runs one way only, and the smugglers' stair
+    // and its cache are still had only through C6's own secret (#182).
+    { kind: 'event', x: 14, y: 5, id: 'sm_sawdust', text: 'Sawdust from the Keel\'s floor lies trodden out along the foot of its end wall, further than any floor reaches.' },
   ],
+  secrets: [{ x: 14, y: 4, hint: 'sm_sawdust' }],
 };
