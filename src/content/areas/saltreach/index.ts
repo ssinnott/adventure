@@ -7,6 +7,7 @@ import { DELTA_C5, C5_RIFT } from './maps/delta_c5.ts';
 import { DELTA_B5, B5_RIFT_N, B5_RIFT_S } from './maps/delta_b5.ts';
 import { DELTA_B6 } from './maps/delta_b6.ts';
 import { SALTINGS_C6 } from './maps/saltings_c6.ts';
+import { SALTMOUTH } from './maps/saltmouth.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -14,8 +15,8 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'saltreach' as const,
-  // The road's order: the shore under the Edge, the fen, west over it to the plinth and south to the temples, then Saltmouth's box.
-  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, SALTINGS_C6],
+  // The road's order: the shore under the Edge, the fen, west over it to the plinth and south to the temples, then Saltmouth's box and the town.
+  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, SALTINGS_C6, SALTMOUTH],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

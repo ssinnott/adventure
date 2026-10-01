@@ -11,10 +11,11 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Five boxes of it are built, the Delta road and the shore under the Edge (#170), Stienwierde (#173),
-the Drowned Temples' approach (#174) and Saltmouth's box (#176); with the first two the area was
-listed. Its content is `src/content/areas/saltreach/` (maps, monsters, items, climate and its part
-of the world map; its chapter of the one quest, The Tide Stone, in `chapter.ts`, its side quests in
-`quests.ts` and its guild quests in `guilds.ts` are still to come) and its businesses' rooms
+the Drowned Temples' approach (#174) and Saltmouth's box (#176), and the town behind its gate,
+Saltmouth (#177); with the first two the area was listed. Its content is
+`src/content/areas/saltreach/` (maps, monsters, items, climate and its part of the world map; its
+chapter of the one quest, The Tide Stone, in `chapter.ts`, its side quests in `quests.ts` and its
+guild quests in `guilds.ts` are still to come) and its businesses' rooms
 `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta` and
 `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
@@ -139,7 +140,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   rest.
 - **Saltmouth's box** (C6, `saltings_c6`, core, band 11–12; #176): the Salt Road's last reach from
   C5 down the fen's east side, its milestone (SALTMOUTH 2, RIETUM 7) and the road's end at the town's
-  gate at 26,19, shut until #177 builds the town and makes it the way in; the coach yard outside it;
+  land gate at 26,19, the way into Saltmouth (#177); the coach yard outside it;
   the barge quay on the Long Water's last reach with a crate of the crews' cargo on it, and the
   Compact's warehouse across the road with its clerk at the door; the sea wall down the town's east
   side and the shore path under it, dry at low water only; a camp under the wall; the fen west of
@@ -149,6 +150,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   salt crabs at the pans' edge. The secret is the smugglers' stair in the sea wall's dry end, its
   cache at the foot by a sea door barred from within, the hint the rope hanging over it with
   nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18).
+- **Saltmouth** (`saltmouth`, town, band 10–12; #177): the free port behind C6's land gate, §4.9.
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
@@ -427,7 +429,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **Finds.** A Scale Mail +1 in the warehouse.
 - **Pay.** About 700 xp a member.
 - **As built** (#176, 1 October): laid in the Saltings, all of it, so the crossing line falls at the
-  C5/C6 seam. The gate is drawn shut in the wall at 26,19, the road's end at it, and #177 makes it
+  C5/C6 seam. The gate is drawn shut in the wall at 26,19, the road's end at it; #177 opens it as
   the way in. The smugglers' stair opens from dry sand at the sea wall's north end, beside the gate:
   inside, its cache at the foot of the flight, by a sea door onto the shore path, barred from
   within; the stair's top, a door barred from the far side, is the harbour tavern's cellar, owed
@@ -463,6 +465,25 @@ settled in its issue, and what the pilot teaches changes them.
   member of the Compact (#182).
 - **New here.** A guild hall that does not look like one; the first prestiges; a crossing.
 - **Pay.** About 300 xp a member in the halls' first tasks and the town's quests.
+- **As built** (#177, 1 October): the land gate at C6's 26,19 opens on the head of the town's
+  street, 7,1, and the street runs south to the harbour in the town's south-east, with the quay
+  along its north and west sides and the ferry steps at its foot. The businesses are the brief's
+  eight, each its own room: the Tide Table (the inn, 25 a head); the Telhus, the drowned god's
+  town shrine, which cures; the Seawall Armoury, selling #399's seven and nothing else; the Quay
+  Chandlery, the provisions at list price; the Sail Loft, training to 13; the locksmith's, whose
+  keeper, Pender, sells no picks; the Keel, the harbour tavern; and the Cartographers' map room,
+  its Geographer, Ysolde Carrow, at the plotting table. The four first prestiges are taught each by
+  a person at their trade: Hiske the astrologer in the street (the Sorcerer's), Pender in his shop
+  (the Thief's), Baukje the stevedore among the bales on the quay (the Barbarian's) and Tjerk the
+  ferryman at the steps (the Monk's). Jory Tallis stands at his house front on the quay, his
+  lineage framed on the wall through the open door, and his words touch the throne and no more.
+  The pump in the square is brackish and does not heal. The Keel's and the map room's keepers say
+  plain words: the halls, their first tasks and the stair's top in the Keel's cellar are #182's
+  and #181's, the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach
+  runs from the yard yet (§9). The walkthrough goes in by the gate and out again, buys each class
+  its step at the armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of
+  Ottilie at 11, once the log has sent her to Pender. The town pays nothing of its own: its 300
+  is its quests', which are its halls', its chapter's and its side quests'.
 
 ### 4.10 C7, the salt pans (#178): country, band 12
 
@@ -737,7 +758,8 @@ Decided by delegate for #176, each the owner's to overturn:
 5. **Until #177 the gate is shut wall,** and the event before it says only what is seen: no flag, no
    time and no entry in `locks.ts`. #177 makes 26,19 the way in and rewrites the event. The site
    moves to the gate, 98,177; the plan's way in (`src/content/atlas.ts`, saltings to saltmouth) is
-   still at 102,178, a tidal square, and is #177's to move with the town's door.
+   still at 102,178, a tidal square, and is #177's to move with the town's door. #177 opened the
+   gate and moved the way in to 98,177.
 6. **The Scale Mail +1 is in a crate of the crews' cargo on the quay,** not the warehouse, which is
    the Compact's: call 4 frees only the crews' goods. The clerk's lines point at the crews.
 7. **The eel under the quay is said, not fought:** a lone fen eel is a trivial fight that only pushes
@@ -767,6 +789,45 @@ Decided by delegate for #18, each the owner's to overturn:
    band's top, and only the elder pair does that among the brine family; a room of brinelings ahead
    of it would mend the figure, but it would cost the north Rift its cells and each Rift some 200 xp
    a member more.
+
+Decided by delegate for #177, each the owner's to overturn:
+
+1. **The coach stays owed,** to a coaches issue for the owner to file: a coach that runs one way is
+   not honest, its return seller would stand in Helmstow, the Foreland's map, and the docs disagree
+   on where it goes (SLICE says Helmstow, docs/areas/sunderwood.md east from Saltmouth). C6's yard
+   keeps its "No horses", which is true as it stands.
+2. **The locksmith is his own business:** Pender stands in `saltmouth_locksmith` and teaches the
+   Thief's first prestige, as the Split Oak's keeper is his tavern. A shop must sell something, and
+   his trade is lock picks, which wait on #18; he becomes a shop when they exist, and the armourer
+   keeps the Stiletto.
+3. **The Keel and the map room are drawn with doors, each keeper in their room,** and #177 takes
+   their UNPLACED entries: a door with no business fails `doorwayFaults`, and a shut front leaves the
+   port short of its tavern. #181 and #182 turn each into its hall (a business with `hall`, which a
+   person cannot carry) and add the first tasks and ranks; the keepers' words stay plain until then.
+4. **The cellar way through is #182's,** with the tavern: the bar is lifted from the cellar side,
+   and who lifts it is the Compact's to say. Until then C6's stair top stays a door barred from the
+   far side, which is true.
+5. **The boat is sold on the town's own harbour quay** (the second pull request): C6's quay is the
+   river's and the barges'. #177 also gives E6's captain the passage back, as wrackholm.md and
+   `CUT_OFF` both owe it to #177, landing the company on Saltmouth's quay: 150 each way, sailing at
+   20 and landing at 6 the next day. The half fare for a member of the Compact waits on #182, since
+   a passage has only `free`.
+6. **The astrologer is Hiske,** a Tidefolk name, since Idony is a Lantern in Thornhold; **the
+   captain is Kitto,** as #183 drafts him and Kelp Hole's Colan names him, the same man at both
+   ends. The trainers' names carry their trades (Pender the locksmith), so the seeking quests' own
+   words read true and no `seek` is written.
+7. **The inn is 25 a head,** a step past the Green Man's 20 as Thornhold's was past Harrow's 12.
+   The chandlery sells the provisions at list price, since a place's own price wants a reason
+   Saltmouth does not have; the armourer sells #399's seven and nothing else: no shield steps on
+   until the Watch's at 14, and the provisions are the chandlery's.
+8. **Tallis stands in the street at his house front on the quay,** a person with no room, his door
+   drawn as wall: #185 drew no room for him, and a door needs a business. An event on his square
+   shows the lineage on the wall through the open door.
+9. **The way in moves to the gate, 98,177,** and the plate from 100,176, the coach yard outside the
+   wall, onto the walled ground at 99,180.
+10. **Two pull requests, the second stacked on the first:** the town (the map, the eight
+    businesses, the four trainers, Tallis and the people, the gate and the atlas), then the boat,
+    which reaches into Wrackholm's E6 and `CUT_OFF` and is reviewed on its own.
 
 ## 10. Names
 
