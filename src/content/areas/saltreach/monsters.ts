@@ -5,6 +5,11 @@
 import type { MonsterDef } from '../../../game/monsters.ts';
 
 /** The drawings Saltreach's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
-export const SPRITES = [] as const;
+export const SPRITES = [
+  'grey_heron',
+] as const;
 
-export const MONSTERS: readonly MonsterDef[] = [];
+export const MONSTERS: readonly MonsterDef[] = [
+  // the Upper Water (#222), a skirmisher on MONSTERS §4.4's line at 10: it flies, and spears the back row
+  { id: 'grey_heron', name: 'Grey Heron', plural: 'Grey Herons', sprite: 'grey_heron', kind: 'beast', look: 'Taller than Bram, and it has been watching.', level: 10, hp: 89, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 393, gold: [0, 0], ranged: true, tint: '#7c8490', size: 1.1 },
+];
