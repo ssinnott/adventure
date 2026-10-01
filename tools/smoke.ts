@@ -876,6 +876,33 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
 const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
 const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
 
+// Lampglass in a fight: Cast, the spell, then the menu asks against what, and the pick is cast (#20).
+const glass = await page.evaluate(() => {
+  const g = (window as any).__game.game;
+  while (g.screens.length > 1) g.pop();
+  const maren = g.party.members[4];
+  g.world.travel('shelf', 16, 4, 2);
+  maren.spells.push('lampglass'); maren.sp = maren.maxSp = 99;
+  for (const c of g.party.members) { c.hp = c.maxHp = 999; c.conditions = []; }
+  g.fight(['road_rats']);
+  const scr = g.top, s = scr.state;
+  let asked = '';
+  for (let guard = 0; guard < 300 && s.outcome === 'ongoing' && !s.glass; guard++) {
+    scr.update(g, null);
+    const who = s.order[s.turn];
+    if (!who || who.side === 'monster') { scr.update(g, 'interact'); continue; }
+    if (g.party.members[who.i] !== maren) { scr.update(g, 'n4'); continue; }
+    scr.update(g, 'n2');
+    scr.sub = maren.spells.indexOf('lampglass');
+    scr.update(g, 'interact');
+    asked = scr.mode;
+    scr.update(g, 'down'); scr.update(g, 'interact');
+  }
+  const out = { asked, element: s.glass?.element ?? '', line: s.log.find((l: string) => l.includes('Lampglass')) ?? '' };
+  while (g.screens.length > 1) g.pop();
+  return out;
+});
+
 await browser.close();
 server.close();
 
@@ -888,6 +915,7 @@ ok(gameSeed === SEED, `the new game starts from the pinned seed (${gameSeed}, we
 ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
+ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(ogreView === 'ogre,brigand_archer,brigand', `before the fight the view draws the ogre's band as each of its kinds (${ogreView})`);

@@ -366,7 +366,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
   millisecond a frame.  ## Stubbed or absent
-- No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
+- No prestiges, so no spell ranks (`prestige` waits on #19), and no hall sells tier 6 or 7 yet (Lantern Watch, #201, sells 6); no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.

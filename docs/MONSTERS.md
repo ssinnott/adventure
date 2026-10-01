@@ -498,8 +498,8 @@ of that level, each on its own and then all of them dealt in a new order. `--sta
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
-blows as it levelled past it; `--prestiges` (with `--rank-step`, `--rank-cost` and `--tiers`) as if
-it took its prestiges. They combine, and play has none of them; `--calibrate` under them says what
+blows as it levelled past it; `--prestiges` (with `--rank-step`) as if it took its prestiges, ranks
+and all. They combine, and play has none of them; `--calibrate` under them says what
 share of days end badly at each point it makes, and writes nothing.
 
 ---

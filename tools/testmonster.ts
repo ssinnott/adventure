@@ -44,8 +44,9 @@ export function line(level: number): { hp: number; ac: number; hit: number; dmg:
 
 /**
  * The levels the calibration is made at: each one to 10, then every fourth to the road's cap. Past
- * 10 the company runs on play's rules, its spells stopped growing and nothing new past Act I's
- * (no tiers, prestiges or gear), until #18, #19 and #20 bring them and the harness re-runs. Levels
+ * 10 the company runs on play's rules as they were made, its spells stopped growing and nothing new
+ * past Act I's (no tiers, prestiges or gear); tiers 6 and 7 came with #20, and the tables are made
+ * again once #19 hands out the prestiges and their ranks, and #18 the gear. Levels
  * between are interpolated.
  */
 export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32] as const;

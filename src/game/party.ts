@@ -25,8 +25,15 @@ export interface RaceDef {
   blurb: string;
 }
 
+/**
+ * What a class does with magic (DESIGN §5): casters rank and gain the most spell points, hybrids rank
+ * at half a caster's step and take a perk, and the rest take perks.
+ */
+export type Calling = 'caster' | 'hybrid' | 'fighter';
+
 export interface ClassDef {
   id: ClassId; name: string;
+  calling: Calling;
   hpDie: number;
   spDie: number;
   /** The stat SP scales from; none for non-casters. */
@@ -86,16 +93,16 @@ export const RACES: Record<RaceId, RaceDef> = {
 };
 
 export const CLASSES: Record<ClassId, ClassDef> = {
-  knight:   { id: 'knight', name: 'Knight', hpDie: 10, spDie: 0, attack: 3, kit: ['longsword', 'scale', 'buckler'], traits: ['stalwart', 'weapon_master'], blurb: 'The wall. Best weapons and armour.' },
-  paladin:  { id: 'paladin', name: 'Paladin', hpDie: 8, spDie: 3, spStat: 'personality', spells: 'cleric', attack: 2, kit: ['mace', 'leather', 'buckler'], traits: ['holy_strike', 'divine_health'], blurb: 'Fights and heals a little.' },
-  ranger:   { id: 'ranger', name: 'Ranger', hpDie: 8, spDie: 2, spStat: 'intellect', spells: 'druid', attack: 2, kit: ['shortsword', 'leather', 'shortbow'], traits: ['marksman', 'keen_eyes'], blurb: 'Bows and a little druid magic. Pathfinder.' },
-  cleric:   { id: 'cleric', name: 'Cleric', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['mace', 'robe'], traits: ['healing_hands', 'faith'], blurb: 'Heals, cures, protects.' },
-  sorcerer: { id: 'sorcerer', name: 'Sorcerer', hpDie: 4, spDie: 8, spStat: 'intellect', spells: 'sorcerer', attack: 0, kit: ['dagger', 'robe', 'sling'], traits: ['spellfire', 'iron_will'], blurb: 'Damage and the spells that open the map.' },
-  thief:    { id: 'thief', name: 'Thief', hpDie: 6, spDie: 0, attack: 2, kit: ['shortsword', 'leather', 'sling'], traits: ['sneak_attack', 'keen_eyes'], blurb: 'Locks, traps, and hitting first.' },
-  barbarian: { id: 'barbarian', name: 'Barbarian', hpDie: 12, spDie: 0, attack: 3, kit: ['axe', 'leather'], traits: ['rage', 'die_hard'], blurb: 'Most hp of all. Big weapons, light armour.' },
-  monk:     { id: 'monk', name: 'Monk', hpDie: 8, spDie: 0, attack: 3, kit: ['staff', 'robe'], traits: ['unarmoured', 'stillness'], blurb: 'Staff and robe, no steel. Quick.' },
-  bard:     { id: 'bard', name: 'Bard', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['shortsword', 'leather', 'sling'], traits: ['inspire'], blurb: 'A blade, a song, and some healing.' },
-  druid:    { id: 'druid', name: 'Druid', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, kit: ['staff', 'leather'], traits: ['natures_ward', 'healing_hands'], blurb: 'Thorn, storm and mending. Wears leather.' },
+  knight:   { id: 'knight', name: 'Knight', calling: 'fighter', hpDie: 10, spDie: 0, attack: 3, kit: ['longsword', 'scale', 'buckler'], traits: ['stalwart', 'weapon_master'], blurb: 'The wall. Best weapons and armour.' },
+  paladin:  { id: 'paladin', name: 'Paladin', calling: 'hybrid', hpDie: 8, spDie: 3, spStat: 'personality', spells: 'cleric', attack: 2, kit: ['mace', 'leather', 'buckler'], traits: ['holy_strike', 'divine_health'], blurb: 'Fights and heals a little.' },
+  ranger:   { id: 'ranger', name: 'Ranger', calling: 'hybrid', hpDie: 8, spDie: 2, spStat: 'intellect', spells: 'druid', attack: 2, kit: ['shortsword', 'leather', 'shortbow'], traits: ['marksman', 'keen_eyes'], blurb: 'Bows and a little druid magic. Pathfinder.' },
+  cleric:   { id: 'cleric', name: 'Cleric', calling: 'caster', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['mace', 'robe'], traits: ['healing_hands', 'faith'], blurb: 'Heals, cures, protects.' },
+  sorcerer: { id: 'sorcerer', name: 'Sorcerer', calling: 'caster', hpDie: 4, spDie: 8, spStat: 'intellect', spells: 'sorcerer', attack: 0, kit: ['dagger', 'robe', 'sling'], traits: ['spellfire', 'iron_will'], blurb: 'Damage and the spells that open the map.' },
+  thief:    { id: 'thief', name: 'Thief', calling: 'fighter', hpDie: 6, spDie: 0, attack: 2, kit: ['shortsword', 'leather', 'sling'], traits: ['sneak_attack', 'keen_eyes'], blurb: 'Locks, traps, and hitting first.' },
+  barbarian: { id: 'barbarian', name: 'Barbarian', calling: 'fighter', hpDie: 12, spDie: 0, attack: 3, kit: ['axe', 'leather'], traits: ['rage', 'die_hard'], blurb: 'Most hp of all. Big weapons, light armour.' },
+  monk:     { id: 'monk', name: 'Monk', calling: 'fighter', hpDie: 8, spDie: 0, attack: 3, kit: ['staff', 'robe'], traits: ['unarmoured', 'stillness'], blurb: 'Staff and robe, no steel. Quick.' },
+  bard:     { id: 'bard', name: 'Bard', calling: 'hybrid', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['shortsword', 'leather', 'sling'], traits: ['inspire'], blurb: 'A blade, a song, and some healing.' },
+  druid:    { id: 'druid', name: 'Druid', calling: 'caster', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, kit: ['staff', 'leather'], traits: ['natures_ward', 'healing_hands'], blurb: 'Thorn, storm and mending. Wears leather.' },
 };
 
 export type Condition = 'asleep' | 'poisoned' | 'diseased' | 'paralysed' | 'cursed' | 'stoned' | 'unconscious' | 'dead';
@@ -116,6 +123,8 @@ export interface Character {
   equipment: Equipment;
   /** Spell ids known. */
   spells: string[];
+  /** The prestiges taken, 0 to 3 (DESIGN §5): each a spell rank to a caster or a hybrid. Absent: none. #19 hands them out. */
+  prestige?: number;
   /** Personal pack, item ids. */
   pack: string[];
 }
@@ -145,9 +154,27 @@ export function xpForLevel(level: number): number { return Math.floor(100 * Math
  * plus one (EXPANSION §5.2), so what a company can reach is set by the towns built, not by this.
  */
 export const MAX_LEVEL = 32;
-/** Spell tiers unlock at levels 1, 2, 4, 6 and 8; five tiers exist. */
-export const MAX_SPELL_TIER = 5;
-export function spellTierAt(level: number): number { return Math.min(MAX_SPELL_TIER, 1 + Math.floor(level / 2)); }
+/** Spell tiers unlock at levels 1, 2, 4, 6 and 8, then 15 and 23, between the prestiges (DESIGN §7); seven tiers exist. */
+export const MAX_SPELL_TIER = 7;
+/** The levels tiers 6 and 7 come at; a hybrid's come two levels later (HYBRID_LAG). */
+export const LATE_TIERS: readonly [number, number] = [15, 23];
+export const HYBRID_LAG = 2;
+export function spellTierAt(level: number, hybrid = false): number {
+  const lag = hybrid ? HYBRID_LAG : 0;
+  return level >= LATE_TIERS[1] + lag ? 7 : level >= LATE_TIERS[0] + lag ? 6 : Math.min(5, 1 + Math.floor(level / 2));
+}
+
+/** What a spell rank adds to a damage spell's dice and a mending spell's heal (DESIGN §7): 15%, 45% by the third. */
+export const RANK_STEP = 0.15;
+/** A caster's or a hybrid's spell rank: one a prestige taken. */
+export function spellRank(c: Character): number { return CLASSES[c.cls].calling === 'fighter' ? 0 : c.prestige ?? 0; }
+/**
+ * What its ranks make a caster's damage dice and mending: a step a rank, half a step for a hybrid,
+ * whose perks carry the rest of its growth. A tool weighing another step passes it.
+ */
+export function rankMult(c: Character, step = RANK_STEP): number {
+  return 1 + step * (CLASSES[c.cls].calling === 'hybrid' ? 0.5 : 1) * spellRank(c);
+}
 /** Whether the character has the experience for the next level (and is not at the cap). */
 export function canTrain(c: Character): boolean { return c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1); }
 /** Whether a trainer who teaches to `maxLevel` can teach the character its next level. */
@@ -248,9 +275,9 @@ export function damage(c: Character, n: number): void {
   if (c.hp <= 0) { removeCondition(c, 'asleep'); }
 }
 
-/** What a healing spell of `base` restores when this caster casts it. */
-export function spellHeal(caster: Character, base: number): number {
-  return base + bonus(caster.stats.personality) + (hasTrait(caster, 'healing_hands') ? HEALING_HANDS : 0);
+/** What a healing spell of `base` restores when this caster casts it: its ranks lift the base (`rankMult`), and not the flat bonuses. */
+export function spellHeal(caster: Character, base: number, step = RANK_STEP): number {
+  return Math.round(base * rankMult(caster, step)) + bonus(caster.stats.personality) + (hasTrait(caster, 'healing_hands') ? HEALING_HANDS : 0);
 }
 
 export function heal(c: Character, n: number): number {
@@ -282,8 +309,8 @@ export function levelUp(c: Character, rng: RngInstance, cap = MAX_LEVEL): number
     if (cd.spStat) {
       const sp = Math.max(1, rng.int(1, cd.spDie) + bonus(c.stats[cd.spStat]));
       c.maxSp += sp; c.sp += sp;
-      // A new spell tier every two levels: tier 5 lands at level 8.
-      const tier = spellTierAt(c.level);
+      // A new spell tier every two levels to tier 5 at level 8, then 6 and 7 at 15 and 23.
+      const tier = spellTierAt(c.level, cd.calling === 'hybrid');
       for (const s of spellsFor(cd.spells!, tier)) if (!c.spells.includes(s.id)) c.spells.push(s.id);
     }
     // One stat point in the class's leaning, every other level.

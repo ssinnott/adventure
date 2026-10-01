@@ -425,16 +425,16 @@ export class GameMap {
 
   /**
    * Whether walking is possible, given the party's terrain abilities and the tide; with no tide
-   * given, tidal ground is read at low water, at its most open.
+   * given, tidal ground is read at low water, at its most open. A party afloat (Levitate) crosses the chasm.
    */
-  passable(x: number, y: number, can: { swim?: boolean; climb?: boolean; keys?: number; tide?: Tide } = {}): PassResult {
+  passable(x: number, y: number, can: { swim?: boolean; climb?: boolean; keys?: number; tide?: Tide; float?: boolean } = {}): PassResult {
     const c = this.at(x, y);
     if (c.solid === 'void') return 'void';
     if (c.solid === 'wall' || c.solid === 'building' || c.solid === 'pillar') return 'wall';
     if (c.solid === 'tree' || c.solid === 'rock') return 'blocked';
     if (c.solid === 'mountain') return can.climb ? 'ok' : 'mountain';
     if (c.terrain === 'deep') return 'deep';
-    if (c.terrain === 'chasm') return 'chasm';
+    if (c.terrain === 'chasm') return can.float ? 'ok' : 'chasm';
     if (c.terrain === 'water') return can.swim ? 'ok' : 'water';
     // At high water tidal ground is water: a swimmer wades it, and nobody else.
     if (c.terrain === 'tidal' && can.tide === 'high') return can.swim ? 'ok' : 'tide';

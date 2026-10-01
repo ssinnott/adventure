@@ -297,6 +297,8 @@ export class SpellScreen implements Screen {
           c.sp -= sp.sp;
           g.say(castOnAlly(c, sp, g.party.members[i]));
         });
+      } else if (sp.explore === 'mark' && g.world.state.mark) {
+        g.push(new ChoiceScreen('The mark is set. Which?', ['Return to the mark', 'Set it here'], (i) => { if (i >= 0) g.castExplore(caster, sp.id, i === 0); }, sp.name));
       } else g.castExplore(caster, sp.id);
       this.onDone?.();
     }

@@ -1,6 +1,6 @@
 // The combat harness and its test monster (docs/MONSTERS.md §4.4).
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition } from '../../src/game/party.ts';
+import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, rankMult } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, describeGroups } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import { gateCompany } from '../gate.ts';
@@ -41,13 +41,13 @@ export function harness(): void {
   const plain = [plainAt(12), plainAt(28)];
   RULES.prestiges = true;
   const ranked = [10, 11, 19, 27].map((l) => edgeOf(companyAt(l, 37).members[0], 1).blows), at12 = companyAt(12, 37), at28 = companyAt(28, 37);
-  const meteor12 = spell(at12.members[5].spells.find((id) => id.startsWith('meteor@'))!), vanish = edgeOf(at28.members[3], VANISH_ROUND).ac;
-  const unranked = companyAt(10, 37).members[5].spells.includes('meteor');
+  const ranks = [at12.members[5], at28.members[5], at28.members[1], at28.members[0]].map((c) => rankMult(c).toFixed(3)), vanish = edgeOf(at28.members[3], VANISH_ROUND).ac;
+  const unranked = rankMult(companyAt(10, 37).members[5]) === 1;
   RULES.prestiges = undefined;
   ok(ranked.join() === '1,2,2,3' && at12.members[0].maxHp === plain[0].members[0].maxHp + 4 && at12.members[5].maxSp === plain[0].members[5].maxSp + 4
-    && at28.members[0].maxHp === plain[1].members[0].maxHp + 2 * (8 + 16 + 6) && spellDice(meteor12, 12, 10) === 10 && (meteor12.sides ?? 0) > 10 && unranked && vanish >= 100
+    && at28.members[0].maxHp === plain[1].members[0].maxHp + 2 * (8 + 16 + 6) && ranks.join() === '1.150,1.450,1.225,1.000' && rankMult(plain[1].members[5]) === 1 && unranked && vanish >= 100
     && edgeOf(companyAt(28, 37).members[0], 1).blows === 1,
-    `with --prestiges the knight strikes ${ranked.join(', ')} times at 10, 11, 19 and 27, gains 2 hit points a level a prestige, the sorcerer's Meteor Swarm stops at 10 dice and widens them at rank 1, and the thief drops from sight; without, none`);
+    `with --prestiges the knight strikes ${ranked.join(', ')} times at 10, 11, 19 and 27, gains 2 hit points a level a prestige, the sorcerer's spells gain 15% at the first prestige and 45% by the third, the paladin's half that and the knight's none, and the thief drops from sight; without, none`);
   // The curve's gear, as a what-if: past level 10 weapons and armour keep growing; play has none of it.
   const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
   const flat = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];
