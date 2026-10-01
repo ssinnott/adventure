@@ -5,6 +5,7 @@
 // here too, so the labels can be held above them. Pure, so tools/tests/labels.ts holds every group
 // on the maps to it; ui/combat.ts draws what it returns.
 import { measureText } from '../lib/engine/text.ts';
+import { combatHeight } from './sprites.ts';
 
 /**
  * What a label needs of a monster in the fight: its group (a rank of a group on the map), and where it
@@ -37,17 +38,29 @@ export const BACK_RISE = 14, BACK_SCALE = 0.8;
 export const TALL = 1.5;
 /** How high a tall boss's crown stands, of its height: the Eldest is drawn inside 0.84 of it and its crown reaches 0.812 (the smoke test holds it). */
 export const TALL_REACH = 0.82;
+/** How far above a sprite's head its target and turn markers are painted. */
+export const MARKER_RISE = 12;
+/**
+ * How far below the view's top a monster's head must stand for its markers to clear the labels'
+ * first row (a line is 7 px of the font). A big monster short of a tall boss sinks below its rank by
+ * as much as it would rise past that, drawn at its full height: from about 1.36 to TALL it sinks a
+ * little more with each step in size, not all at once, and may stand below a later group's rank. A
+ * second row of labels is not allowed for.
+ */
+const HEAD_ROOM = LABEL_TOP + 7 + 1 + MARKER_RISE;
 /**
  * Where a monster of `group` and `size` stands in a fight painted in a view `viewH` high: the foot of
- * its sprite, a back rank's further up. A tall boss stands on the third rank whatever its group.
+ * its sprite, a back rank's further up, a big one sunk under the labels. A tall boss stands on the
+ * third rank whatever its group.
  */
-export const seatFoot = (group: number, viewH: number, size = 1, back = false): number => viewH * 0.62 + 18 + (size > TALL ? Math.max(group, 2) : group) * 10 - (back ? BACK_RISE : 0);
+export const seatFoot = (group: number, viewH: number, size = 1, back = false): number => {
+  const rank = viewH * 0.62 + 18 + (size > TALL ? Math.max(group, 2) : group) * 10 - (back ? BACK_RISE : 0);
+  return size > TALL ? rank : Math.max(rank, HEAD_ROOM + combatHeight(size, 1) * (back ? BACK_SCALE : 1));
+};
 /** Where a monster in the fight stands: by the group on the map it came with, and its rank. */
 export const seatOf = (m: LabelMonster, viewH: number, size = 1): number => seatFoot(m.band ?? m.group, viewH, size, m.back);
 /** How far above its foot a monster of `size`, drawn `h` high, stands: its whole height, or a tall boss's crown. */
 export const crown = (size: number, h: number): number => (size > TALL ? h * TALL_REACH : h);
-/** How far above a sprite's head its target and turn markers are painted. */
-export const MARKER_RISE = 12;
 
 /** A proper name, "The Eldest": a name beginning with "The". A lone one is not counted. */
 export const isProperName = (name: string): boolean => /^The /.test(name);
