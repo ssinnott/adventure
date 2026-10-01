@@ -189,6 +189,33 @@ const inn = await (async () => {
   });
   return { menu, words, question, said, back, backColours, traded, left, hob, eel };
 })();
+// A crossing (#164, game/passage.ts): a coachman put in Helmstow's street at run time sells a coach
+// to Thornhold. Faced and asked, his words close onto the menu of crossings, then the terms; paying
+// takes the fare, runs the clock to the landing and leaves the company in Thornhold, exploring.
+const coach = await (async () => {
+  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  const before = await page.evaluate(() => {
+    const g = (window as any).__game.game;
+    while (g.screens.length > 1) g.pop();
+    g.world.travel('harrow', 7, 14, 0);
+    g.world.map.features.push({ kind: 'npc', x: 7, y: 13, name: 'A coachman', lines: ['"Thornhold, at dawn."'], passage: [{ to: 'thornhold', x: 7, y: 14, name: 'Thornhold', by: 'coach', fare: 100, departs: 6, days: 1, arrives: 18 }] });
+    g.party.gold = 500;
+    return { minutes: g.world.state.minutes, day: g.world.day };
+  });
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const words = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const menu = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const terms = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(150);
+  const after = await page.evaluate(() => {
+    const g = (window as any).__game.game, m = g.maps.harrow;
+    m.features.splice(m.features.findIndex((f: any) => f.name === 'A coachman'), 1);
+    return { screens: g.screens.map((s: any) => s.constructor.name).join(','), map: g.world.state.mapId, gold: g.party.gold, day: g.world.day, hour: g.world.hour, minutes: g.world.state.minutes, log: g.log.slice(-3) };
+  });
+  return { before, words, menu, terms, after };
+})();
 // A prestige's trainer (#19, game/prestige.ts): an armourer put in Helmstow's street at run time
 // teaches knights their first. Faced and asked, her words close onto her menu, which lists Bram, the
 // one knight, with the title and the price; taking it pays and makes him a Knight-Errant.
@@ -931,6 +958,10 @@ ok(inn.hob.join() === 'A room and rations,Talk to Hob,Leave', `the real Hob, by 
 ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Talk to Maud,Leave', `the Gilded Eel, with Ebba and Maud in it from a new game, says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
 ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
+ok(coach.words.text === '"Thornhold, at dawn."' && coach.menu.options.join('|') === 'Thornhold\t100g\t1 day|Not now' && /leaves at 06:00 (tomorrow )?and lands the next day at 18:00/.test(coach.terms.text) && coach.terms.options[0] === 'Pay the fare (100 gold)',
+  `a coachman's words close onto his crossings, then their terms (${coach.menu.options.join(', ').replace(/\t/g, ' ')}; "${coach.terms.text}")`);
+ok(coach.after.screens === 'ExploreScreen' && coach.after.map === 'thornhold' && coach.after.gold === 400 && coach.after.day === coach.before.day + (coach.before.minutes % 1440 <= 360 ? 1 : 2) && coach.after.hour === 18,
+  `paying takes the fare and lands the company in Thornhold, its calendar moved to the landing (day ${coach.before.day} to ${coach.after.day}, ${coach.after.hour}:00, ${coach.after.gold} gold; ${coach.after.log.join(' / ')})`);
 ok(trainer.words.text === '"Steel, or a title?"' && trainer.menu.options.join('|') === 'Bram: Knight-Errant\t1000g|Leave' && trainer.after.screens === 'ExploreScreen' && trainer.after.prestige === 1 && trainer.after.gold === 500 && trainer.after.log === 'Bram is a Knight-Errant now.',
   `a trainer's words close onto the members of her class, and Bram takes the first for 1000 (${trainer.menu.options.join(', ').replace(/\t/g, ' ')}; "${trainer.after.log}")`);
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
