@@ -18,7 +18,7 @@ export const ZONES: readonly AtlasZone[] = [
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
-  { id: 'lantern_watch', name: 'Lantern Watch', kind: 'town', planned: true, band: [14, 16], at: [372, 36] },
+  { id: 'lantern_watch', kind: 'town', at: [372, 42] }, // on L2 behind its gate at 12,16 (#200, #201)
   { id: 'k3_rift', kind: 'dungeon', band: [14, 15], at: [344, 88] }, // the black-glass Rift in the crystal's clearing, K3 (#198)
   { id: 'the_sunder', name: 'The Sunder', kind: 'dungeon', planned: true, band: [15, 16], at: [320, 62] },
 ];
@@ -26,7 +26,7 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // V. Sunderwood.
   { name: 'The steading', icon: 'farm', map: 'eaves_j2', at: [20.5, 7.5], label: 'below' }, // the pine-cutters', at the glass trees (#56's 29)
-  { name: 'Lantern Watch', icon: 'tower', at: [372, 46], label: 'below', planned: true },
+  { name: 'Lantern Watch', icon: 'tower', at: [372, 46], label: 'below' }, // at the gate on L2, 12,16 (#200, #201)
   { name: 'The Sunder', icon: 'rift', at: [338, 70], label: 'right', planned: true },
   { name: 'Sunderfall', icon: 'falls', map: 'eaves_k2', at: [8.5, 27.5], label: 'right' }, // its shrine, the Paladin's second prestige (#19)
 ];

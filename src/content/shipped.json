@@ -116,6 +116,26 @@
         "b6_roof",
         "b6_stair",
         "barrow",
+        "c3_barges",
+        "c3_cache",
+        "c3_cache_chest",
+        "c3_cairn",
+        "c3_drains",
+        "c3_edge",
+        "c3_fields",
+        "c3_flood",
+        "c3_foot",
+        "c3_hills",
+        "c3_in",
+        "c3_lofts",
+        "c3_middle",
+        "c3_mound",
+        "c3_shrine",
+        "c3_sjonghol",
+        "c3_sluice",
+        "c3_staithe",
+        "c3_stubble",
+        "c3_west",
         "c4_barge",
         "c4_cairn",
         "c4_edge",
@@ -412,6 +432,10 @@
         "b6_bulls",
         "b6_toads",
         "beach_crabs",
+        "c3_brine",
+        "c3_herons",
+        "c3_quay",
+        "c3_toad",
         "c4_barge",
         "c4_crew",
         "c4_toad",
@@ -588,6 +612,7 @@
         "48,181",
         "53,140",
         "77,108",
+        "81,75",
         "99,148"
       ]
     },
@@ -756,6 +781,18 @@
       "size": "16x10",
       "used": [
         "keep_chapel"
+      ],
+      "groups": [],
+      "doors": []
+    },
+    "lantern_watch": {
+      "size": "16x16",
+      "used": [
+        "lw_bell",
+        "lw_gate",
+        "lw_graves",
+        "lw_lookout",
+        "lw_oil"
       ],
       "groups": [],
       "doors": []
@@ -1047,6 +1084,10 @@
       "at": "232,30",
       "size": "32x32"
     },
+    "upperwater_c3": {
+      "at": "72,62",
+      "size": "32x32"
+    },
     "wrackholm_e6": {
       "at": "136,158",
       "size": "32x32"
@@ -1057,11 +1098,14 @@
     }
   },
   "flags": [
+    "c3_saw_stone",
     "compact_cask",
     "donations",
     "guild_Lantern Guildhall",
+    "guild_The Watch's Lantern Hall",
     "guild_Thornhold Lantern Hall",
     "meridian_read",
+    "papers_read",
     "q_ailith",
     "q_ashcombe",
     "q_ashcombe_done",
@@ -1192,7 +1236,9 @@
     "rank_cartographers",
     "rank_compact",
     "rank_lanterns",
-    "rank_wardens"
+    "rank_wardens",
+    "watch_prior_met",
+    "watch_reader_met"
   ],
   "items": [
     "antidote",
@@ -1210,6 +1256,7 @@
     "captains_mail",
     "captains_sword",
     "chain",
+    "chain+1",
     "chain+2",
     "clerks_seal",
     "club",
@@ -1298,6 +1345,7 @@
     "silver_locket",
     "silver_torc",
     "sling",
+    "smugglers_sword",
     "spear",
     "spear+1",
     "staff",

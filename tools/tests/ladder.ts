@@ -105,8 +105,8 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
   {
     level: 13, name: "Saltreach's and Wrackholm's finds",
     from: {
-      'stiletto+1': ['saltreach', '#172'], 'ironshod_staff+1': ['saltreach', '#175'], 'morning_star+1': ['saltreach', '#175'],
-      'tidefolk_robe+1': ['saltreach', '#172'], 'horn_bow+1': ['saltreach', ''], 'plate+1': ['wrackholm', ''], 'long_axe+1': ['wrackholm', ''],
+      'stiletto+1': ['saltreach', ''], 'ironshod_staff+1': ['saltreach', '#175'], 'morning_star+1': ['saltreach', '#175'],
+      'tidefolk_robe+1': ['saltreach', ''], 'horn_bow+1': ['saltreach', ''], 'plate+1': ['wrackholm', ''], 'long_axe+1': ['wrackholm', ''],
     },
     classes: {
       knight: ['morning_star+1', 'plate+1'], paladin: ['morning_star+1', 'plate+1'], ranger: ['horn_bow+1'], barbarian: ['long_axe+1'],
@@ -116,7 +116,7 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
   },
   {
     level: 14, name: "Lantern Watch's stores",
-    from: Object.fromEntries(['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield'].map((id) => [id, ['sunderwood', '#201']])),
+    from: Object.fromEntries(['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield'].map((id) => [id, ['sunderwood', '']])),
     classes: {
       knight: ['flail', 'watch_shield'], paladin: ['flail', 'watch_shield'], ranger: ['ironwood_bow', 'lamellar'], barbarian: ['great_axe', 'lamellar'],
       cleric: ['flail', 'watch_habit'], sorcerer: ['wardens_dirk', 'watch_habit'], thief: ['wardens_dirk', 'lamellar'], bard: ['wardens_dirk', 'lamellar'],

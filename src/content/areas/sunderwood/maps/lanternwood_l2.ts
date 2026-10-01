@@ -1,13 +1,13 @@
 // Sunderwood, box L2: Lantern Watch's box. Core, band 15-16: Lanternwood's old forest east of the
 // gorge, the east road on from the rope bridge (K2) past the Lanterns' watchtower and out south-east
-// for M2. The tower's gate at 12,16 stands shut until #201 makes it the way into Lantern Watch; two
+// for M2. The tower's gate at 12,16 is the way into Lantern Watch (#201); two
 // wayside lamps on the road, one lit and one dark; the knoll in the north-west with the Watch's old
 // signal fire on its crown; the moths to the lamps by night; and the river from the rim at the box's
 // corner, where the road leaves.
 // Cut from the atlas by hand, its rim's pine drawn as forest (tools/scaffold.ts has no character for
 // pine); docs/areas/sunderwood.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST } from '../../../../game/types.ts';
+import { EAST, NORTH } from '../../../../game/types.ts';
 
 export const LANTERNWOOD_L2: MapDef = {
   id: 'lanternwood_l2',
@@ -34,7 +34,7 @@ export const LANTERNWOOD_L2: MapDef = {
     'TTTTTtTTTtBBBBBtttTTTTTTTTTTTTTT',
     'TTTTTtTTTtBBBBBtttTTTTTTTTTTTTTT',
     'TTTTTtTTTtBBBBBtttTTTTTTTTTTTTTT',
-    'TTTTTtTTTtBBBBBtttTTTTTTTTTTTTTT',
+    'TTTTTtTTTtBB=BBtttTTTTTTTTTTTTTT',
     'TTTTTtTTTttt=tttttTTTTTTTTTTTTTT',
     'TTTTTtTTTttt=tttttTTTTTTTTTTTTTT',
     'TTTTTtTTTttt=tttttTTTTTTTTTTTTTT',
@@ -51,6 +51,9 @@ export const LANTERNWOOD_L2: MapDef = {
     'TTTTTTTTTTTTTTTTTTTTTTTTTTTTttt~',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM~',
   ],
+  exits: [
+    { x: 12, y: 16, to: 'lantern_watch', tx: 7, ty: 14, tf: NORTH, label: 'You go in under the gate, through the moth dust on the step, into the Watch\'s yard.' },
+  ],
   features: [
     // The road in off the bridge, and the lit lamp by it.
     { kind: 'event', x: 4, y: 22, id: 'l2_lamp_day', once: true, when: { hours: 'day' }, text: 'A Lantern\'s wayside lamp by the road, lit though it is day, the glass gone grey with moth dust. Down the road its twin stands dark.' },
@@ -62,9 +65,9 @@ export const LANTERNWOOD_L2: MapDef = {
     { kind: 'event', x: 5, y: 6, id: 'l2_ash', once: true, text: 'The signal fire\'s ash, cold, and raked flat with more care than ash is owed.' },
     { kind: 'event', x: 5, y: 4, id: 'l2_letter', once: true, text: 'Under the ash a pit, a staff and a letter in oilcloth. A Reader at Helmstow: papers are coming that are not what they are stamped. Read them with the door shut, the prior out.' },
     { kind: 'chest', x: 5, y: 4, id: 'l2_letter_chest', gold: 250, items: ['lanterns_staff'] },
-    // The tower: its gate, shut until #201 makes it the way into Lantern Watch, and the shrine in its yard.
-    { kind: 'event', x: 12, y: 17, id: 'l2_gate', when: { hours: 'day' }, text: 'The road ends at a barred gate. Over it the tower goes up into the rain, one lamp at the top lit in broad day, and nothing stirs behind the bar.' },
-    { kind: 'event', x: 12, y: 17, id: 'l2_gate_night', when: { hours: 'night' }, text: 'The road ends at a barred gate. Over it the tower goes up into the night, one lamp at the top lit, moths round it, and nothing stirs behind the bar.' },
+    // The tower: its gate, the way into Lantern Watch (#201), and the shrine in its yard.
+    { kind: 'event', x: 12, y: 17, id: 'l2_gate', when: { hours: 'day' }, text: 'The road ends at the tower\'s gate, and the gate stands open. Over it the tower goes up into the rain, one lamp at the top lit in broad day.' },
+    { kind: 'event', x: 12, y: 17, id: 'l2_gate_night', when: { hours: 'night' }, text: 'The road ends at the tower\'s gate, and the gate stands open. Over it the tower goes up into the night, one lamp at the top lit and the moths going round it.' },
     { kind: 'shrine', x: 10, y: 9, id: 'l2_shrine', text: 'A Lanterns\' shrine in the tower\'s yard, a book cut in its face, the pages open and the words gone to rain. A moth sits on it in the wet and does not move.', stat: 'intellect', done: 'The book on the shrine, its page worn blank.' },
     // North-east of the yard, the cairn.
     { kind: 'cairn', x: 26, y: 6, id: 'l2_cairn', text: 'A cairn where the path gives out among the oaks, the stones mossed on their north faces only. One has a flame cut in it, half grown over.', gold: 180, items: ['potion_sp_great'] },

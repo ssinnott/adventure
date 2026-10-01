@@ -8,6 +8,7 @@ import { EAVES_K3, K3_RIFT } from './maps/eaves_k3.ts';
 import { EAVES_J3 } from './maps/eaves_j3.ts';
 import { LANTERNWOOD_L2 } from './maps/lanternwood_l2.ts';
 import { LANTERNWOOD_M2 } from './maps/lanternwood_m2.ts';
+import { LANTERN_WATCH } from './maps/lantern_watch.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -15,7 +16,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'sunderwood' as const,
-  maps: [EAVES_I2, EAVES_J2, EAVES_K2, EAVES_K3, K3_RIFT.map, EAVES_J3, LANTERNWOOD_L2, LANTERNWOOD_M2],
+  maps: [EAVES_I2, EAVES_J2, EAVES_K2, EAVES_K3, K3_RIFT.map, EAVES_J3, LANTERNWOOD_L2, LANTERNWOOD_M2, LANTERN_WATCH],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
