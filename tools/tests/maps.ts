@@ -22,7 +22,6 @@ const UNPLACED: Record<string, string> = {
   tide_warden: '#190',
   watch_hall: '#201', watch_refectory: '#201', watch_stores: '#201', priors_room: '#201',
   sunderling: '#198', sunder_warden: '#199',
-  glass_spider: '#197',
   deathshead: '#200',
 };
 

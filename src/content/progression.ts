@@ -58,7 +58,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   sunderwood: {
     band: [14, 16], next: 16, price: 3000,
-    owed: { whose: '#155', why: 'Sunderwood is built box by box', xp: 2572, gold: 890 },
+    owed: { whose: '#155', why: 'Sunderwood is built box by box', xp: 3644, gold: 1397 },
   },
 };
 
