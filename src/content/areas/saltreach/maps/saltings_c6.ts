@@ -56,6 +56,8 @@ export const SALTINGS_C6: MapDef = {
     // The road in from the Delta, and the milestone beside it.
     { kind: 'event', x: 26, y: 1, id: 'c6_in', once: true, text: 'The fen gives way to salt. The road runs on, dry now, and far ahead a wall, a gate and smoke above them.' },
     { kind: 'sign', x: 25, y: 2, text: 'SALTMOUTH 2, RIETUM 7.' },
+    // The Cartographers' first task (#181): the chain comes to the second stone.
+    { kind: 'event', x: 26, y: 2, id: 'c6_milestone', once: true, after: { seen: 'delta_d5:d5_milestone' }, text: 'The chain comes to the second stone with two on the count and nothing over. SALTMOUTH 2, RIETUM 7: both hold. Whoever set these stones walked the road first.' },
     // The quay, a crate of the crews' cargo on it, and the Compact's warehouse across the road.
     { kind: 'event', x: 26, y: 6, id: 'c6_quay', once: true, text: 'The barge quay: boards on piles, barges two deep, the Long Water gone brown into the grey. Under them something long turns.' },
     { kind: 'chest', x: 25, y: 8, id: 'c6_crate', gold: 80, items: ['scale+1'] },
@@ -78,8 +80,8 @@ export const SALTINGS_C6: MapDef = {
     { kind: 'event', x: 26, y: 18, id: 'c6_gate', text: 'Saltmouth\'s gate, open, carts going in under it and carts coming out. In the lee of the wall a carter sleeps on his load.' },
     { kind: 'camp', x: 23, y: 20, name: 'Under the wall', text: 'Dry ground in the lee of the town wall, a fire ring of broken brick and the town\'s noise coming over the top all night.' },
     // The secret: the smugglers' stair in the sea wall's dry end, and its flight down to a sea door
-    // barred from within. Its top is the Keel's cellar, whose door is barred on the cellar side: the way
-    // through comes down from Saltmouth (#182), and the bar drops behind it.
+    // barred from within. Its top is the Keel's cellar, whose door is barred on the cellar side; the
+    // Keel's own way down comes out on the sand by the rope, not on the flight (#182).
     { kind: 'event', x: 28, y: 18, id: 'c6_rope', text: 'A rope tied off at the top of the sea wall and hanging down the stones, nothing on it. The stones under it are bare of weed.' },
     { kind: 'event', x: 28, y: 20, id: 'c6_stair', once: true, text: 'A stair in the wall. Up, brandy-smelling dark and a door barred from the far side. Down, a door onto the shore, weed on it.' },
     { kind: 'chest', x: 28, y: 22, id: 'c6_stair_cache', gold: 150, items: ['potion_heal', 'potion_heal'] },

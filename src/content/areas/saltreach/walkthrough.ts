@@ -10,12 +10,14 @@
 // Saltmouth's box (C6, #176): the Saltings named at the seam, the land gate at the road's end, the
 // smugglers' stair found from the rope that hangs over it, and the quay's and the pans' groups won
 // at the box's floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear
-// bought, training to 13 and a first prestige taken; the Salt Compact joined at the Keel (#182) by
-// its run of brandy past the customs house, and its first rank's crate; the way down through the
-// Keel's cellar to the stair found from its sawdust; and the boat to Wrackholm's landing and back,
-// at the half fare a member pays. Then south into the pans (C7, #178): the Scarp across the south
-// and its stair's fallen foot, the sealed pan's hoard found from the trodden wall, and the crabs and
-// the toads won at 11.
+// bought, training to 13 and a first prestige taken; the Cartographers' first task taken at the Map
+// Room, the road chained stone to stone and the first rank's work done (#181), and the first
+// Meridian journal read there; the Salt Compact joined at the Keel (#182) by its run of brandy past
+// the customs house, and its first rank's crate; the way down through the Keel's cellar to the
+// stair found from its sawdust; and the boat to Wrackholm's landing and back, at the half fare a
+// member pays. Then south into the pans (C7, #178): the Scarp across the south and its stair's
+// fallen foot, the sealed pan's hoard found from the trodden wall, and the crabs and the toads won
+// at 11.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -28,7 +30,8 @@ import { questLog } from '../../../game/quests.ts';
 import type { QuestView } from '../../../game/quests.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { take, fareOf } from '../../../game/passage.ts';
-import { offered, rankOf, report, take as takeWork } from '../../../game/guilds.ts';
+import { take as takeWork, report, offered, rankOf, rankName } from '../../../game/guilds.ts';
+import { countItem } from '../../../game/party.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
 import { World } from '../../../game/world.ts';
@@ -212,6 +215,35 @@ export const walkthrough: Walkthrough = (ok) => {
   w.party.gold = 1000;
   ok(teach(locksmith.teaches!, w.party, w.world.state, w.party.members.indexOf(ottilie)).taught && prestigeOf(ottilie) === 1 && w.party.gold === 0 && !seeking(), `the locksmith makes a ${PRESTIGES.thief.titles[0]} of ${ottilie.name} for 1,000 gold, and the seeking is done`);
 
+  // The Cartographers' Guild (#181): a stranger takes the first task at the Map Room, chains the
+  // Salt Road from the stone under the Edge to the one in the Saltings, and reports; a Chainman is
+  // offered the first rank's two quests, and done they make the company Surveyors.
+  const room = business('shop').find((f) => f.hall === 'cartographers');
+  ok(!!room && room.interior === 'cartographers_room', `the map room is the Cartographers' hall (${room?.name})`);
+  const first = offered('cartographers', w.party);
+  ok(rankOf('cartographers', w.party) === 0 && first.length === 1 && first[0].id === 'carto_chain', `a stranger is offered the first task alone (${first.map((q) => q.title).join(', ')})`);
+  ok(!takeWork(first[0], w.world.state, w.party).length, 'the first task is not paid on taking, though the company walked past both stones on the way in');
+  const chain = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'carto_chain');
+  ok(/Kestrel Edge/.test(chain()?.goal ?? ''), `the log sends the company back up the road (${chain()?.goal})`);
+  see(w, 'delta_d5:d5_milestone');
+  ok(/Saltings/.test(chain()?.goal ?? ''), `the chain begins at the stone under the Edge (${chain()?.goal})`);
+  see(w, 'saltings_c6:c6_milestone');
+  ok(/Map Room/.test(chain()?.goal ?? ''), `and holds to the stone in the Saltings (${chain()?.goal})`);
+  const paid = report('cartographers', w.world.state, w.party);
+  ok(rankOf('cartographers', w.party) === 1 && paid.at(-1) === `Your rank with the Cartographers' Guild is now ${rankName('cartographers', 1)}.` && !!chain()?.done, `the Map Room pays the chain and makes the company Chainmen (${paid.join(' | ').replace(/\n+/g, ' ')})`);
+  const rank1 = offered('cartographers', w.party);
+  ok(rank1.length === 2 && rank1.every((q) => q.rank === 1), `a Chainman is offered the first rank's two quests (${rank1.map((q) => q.title).join(', ')})`);
+  for (const q of rank1) takeWork(q, w.world.state, w.party);
+  see(w, 'delta_b5:b5_west');
+  see(w, 'saltings_c6:c6_hut');
+  report('cartographers', w.world.state, w.party);
+  ok(rankOf('cartographers', w.party) === 2 && rank1.every((q) => questLog(w.world.state, w.party).find((v) => v.def.id === q.id)?.done), `the fen's edge and the west arm found and reported make the company ${rankName('cartographers', 2)}s`);
+  // Ysolde reads the first Meridian journal to a company that carries it, and gives it back.
+  const ysolde = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Ysolde'))!;
+  w.party.bag.push('meridian_journal');
+  const reading = meet(ysolde, w.party, heard(w.world, ysolde)).text;
+  ok(!!w.party.flags.meridian_read && countItem(w.party, 'meridian_journal') === 1 && /Fane/.test(reading), `Ysolde reads the first Meridian journal and gives it back (${reading.split('\n\n')[1]})`);
+
   // The Salt Compact (#182): the Keel is its hall, and a stranger is offered the run alone. The
   // clerk on C6's quay hands over the cask once the run is taken; the customs house door shows
   // itself only to the cask; the hall takes the cask and the company is a Runner.
@@ -233,8 +265,8 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('saltmouth', 4, 13, WEST);
   const passed = w.world.eventsHere();
   ok(passed.some((t) => t.includes('customs house door stays shut')), `carried the long way, past the customs house door (${passed.join(' ')})`);
-  const paid = report('compact', w.world.state, w.party);
-  ok(rankOf('compact', w.party) === 1 && !w.party.bag.includes('brandy_cask') && paid.at(-1) === 'Your rank with the Salt Compact is now Runner.', `the hall takes the cask and the company is a Runner (${paid.join(' | ').replace(/\n+/g, ' ')})`);
+  const runPaid = report('compact', w.world.state, w.party);
+  ok(rankOf('compact', w.party) === 1 && !w.party.bag.includes('brandy_cask') && runPaid.at(-1) === 'Your rank with the Salt Compact is now Runner.', `the hall takes the cask and the company is a Runner (${runPaid.join(' | ').replace(/\n+/g, ' ')})`);
   ok(questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_run')?.done === true, 'and the log has the run finished');
   ok(fareOf(boat, w.world) === 75, 'a member pays half the boat\'s fare, never more');
   ok(work() === 'compact_crate, compact_lookout', `a Runner is offered the first rank's two (${work()})`);
@@ -243,20 +275,23 @@ export const walkthrough: Walkthrough = (ok) => {
   takeWork(crateWork, w.world.state, w.party);
   const goal = (): string => questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.goal ?? '';
   ok(goal().includes('Open a crate'), `the log sends the company to the crews' crate (${goal()})`);
+  // Opened as the game opens a chest: its gold and the Scale Mail to the party, and spent.
   w.world.travel('saltings_c6', crate!.x, crate!.y);
-  w.world.markUsed('c6_crate');
+  ok(crate?.kind === 'chest' && !w.world.used(crate.id), 'the crews\' crate is there to open');
+  if (crate?.kind === 'chest') { w.world.markUsed(crate.id); w.party.gold += crate.gold; w.party.bag.push(...crate.items); }
+  ok(w.party.bag.includes('scale+1'), 'and in it the Scale Mail +1');
   ok(goal().includes('Report to the Keel'), `opened, the log sends it back to the Keel (${goal()})`);
   ok(report('compact', w.world.state, w.party).length > 0 && questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.done === true, 'and the Keel pays for it');
 
   // The secret way down: the sawdust trodden out along the Keel's end wall, the search, and the
-  // cellar's stair onto C6's flight, by the cache.
+  // cellar's passage out under C6's sea wall, by the rope, the stair's own secret still to find.
   w.world.travel('saltmouth', 14, 5, NORTH);
   ok(w.world.eventsHere().some((t) => t.includes('Sawdust')), 'by the Keel\'s end wall, the sawdust trodden out along its foot');
   let cellar = false;
   for (let i = 0; i < 20 && !cellar; i++) cellar = w.world.search();
   const through = cellar ? [w.world.move('forward'), w.world.move('forward')] : [];
-  ok(cellar && through.every((r) => r.kind === 'moved') && w.world.zone?.id === 'saltings_c6' && w.world.state.x - w.world.zone.x === 28 && w.world.state.y - w.world.zone.y === 21,
-    'searched, the wall opens, and the cellar\'s stair comes down onto the smugglers\' flight');
+  ok(cellar && through.every((r) => r.kind === 'moved') && w.world.zone?.id === 'saltings_c6' && w.world.state.x - w.world.zone.x === 28 && w.world.state.y - w.world.zone.y === 18,
+    'searched, the wall opens, and the cellar\'s passage comes out on the sand under C6\'s sea wall, on the rope\'s square');
 
   // The boat (#164): bought on the quay from Kitto, it sails at eight and lands on Wrackholm's stage
   // at six the next morning; a save made on the isle loads there; and Kitto sells the way back. A

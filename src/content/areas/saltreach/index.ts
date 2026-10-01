@@ -24,7 +24,8 @@ export const AREA = {
   sprites: SPRITES,
   items: ITEMS,
   quests: [],
-  // The Salt Compact's first task and first rank, at the Keel (#182).
+  // The Cartographers' first task and first rank at the Map Room (#181), and the Salt Compact's at
+  // the Keel (#182).
   guilds: GUILDS,
   // The Tide Stone, the act's first chapter, is #180's.
   chapter: undefined,
