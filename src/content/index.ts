@@ -17,6 +17,7 @@ import type { Atlas } from '../game/atlas.ts';
 import { AREA as shelf } from './areas/shelf/index.ts';
 import { AREA as thornmark } from './areas/thornmark/index.ts';
 import * as saltreach from './areas/saltreach/monsters.ts';
+import * as wrackholm from './areas/wrackholm/monsters.ts';
 import * as sunderwood from './areas/sunderwood/monsters.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
@@ -32,6 +33,7 @@ export const AREAS = [shelf, thornmark] as const;
  */
 export const AHEAD = [
   { id: 'saltreach' as const, sprites: saltreach.SPRITES, monsters: saltreach.MONSTERS },
+  { id: 'wrackholm' as const, sprites: wrackholm.SPRITES, monsters: wrackholm.MONSTERS },
   { id: 'sunderwood' as const, sprites: sunderwood.SPRITES, monsters: sunderwood.MONSTERS },
 ] as const;
 
