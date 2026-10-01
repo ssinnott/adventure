@@ -1,8 +1,9 @@
 // Crossings (#164; game/passage.ts): a person sells passage by coach or boat. It leaves at its hour,
 // lands its days later at its own, costs the company its fare and nothing else, lands it rested, and
-// a save made at the far end loads there. Half once its `half` holds, free once its `free` does; a warning, never a refusal, to
-// a company under the far end's floor. On the atlas a boat is a way by sea and a coach a way of its
-// own, each travelled both ways where a crossing runs back; the gate counts its landing as a way in.
+// a save made at the far end loads there. Half once its `half` holds, free once its `free` does; a
+// warning, never a refusal, to a company under the far end's floor. On the atlas a boat is a way by
+// sea and a coach a way of its own, each travelled both ways where a crossing runs back; the gate
+// counts its landing as a way in.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Passage } from '../../src/game/map.ts';
