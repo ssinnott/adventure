@@ -22,6 +22,8 @@ const REGIONS = AREAS.map((a) => a.id);
 const WOODS_AT = [232, 62] as const;
 /** The Deepthorn's J4, over the ridge in the Eaves' land, with 30 squares of the atlas's dead wood. */
 const DEAD_AT = [296, 94] as const;
+/** K3, the Sunder's gorge, with its chasm and the glass trees at its lip. */
+const SUNDER_AT = [328, 62] as const;
 
 /** The draft as the tool writes it: its module, written out and imported back, by export name. */
 async function exported(d: Draft, zone: string, x: number, y: number): Promise<Record<string, MapDef>> {
@@ -99,7 +101,7 @@ export async function scaffold(): Promise<void> {
   ok(refused('downs', AT[0] + 1, AT[1], /lies over shelf/), 'it refuses a cut over a laid zone map, ring and all');
   ok(refused('downs', ATLAS.width - SIZE + 1, AT[1], /outside the world/), 'and one outside the world');
   ok(refused('nowhere', AT[0], AT[1], /no zone/), 'and a zone the atlas has not');
-  ok(refused('downs', 88, 46, /cliff \d+/), 'and ground no map character is, counting its squares (Kestrel Edge\'s cliffs at 88,46)');
+  ok(refused('downs', 72, 60, /cliff \d+/), 'and ground no map character is, counting its squares (Kestrel Edge\'s cliffs at 72,60)');
   ok(refused('downs', AT[0], AT[1], /built already/, 'shelf') && refused('downs', AT[0], AT[1], /no map id/, 'Downs-2'), 'and an id a built map has, or no map id could be');
 
   // --id names the map and its export.
@@ -143,4 +145,15 @@ export async function scaffold(): Promise<void> {
   ok(dback(ddef) === 0, 'laid back, its dead wood and all match the atlas square for square');
   const forested = dback({ ...ddef, rows: ddef.rows.map((r) => r.replace(/d/g, 'T')) });
   ok(forested === dd.counts.deadwood, `and with its dead wood painted over as forest it does not (${forested} squares differ, ${dd.counts.deadwood} of them dead wood)`);
+
+  // The Sunder: K3's chasm and crystal, which no map character was until #163, cut and laid back.
+  const [sx, sy] = SUNDER_AT, sunder = unbuilt(sx, sy), sg = baseline(sunder.atlas, sunder.defs);
+  const sdr = cut(sunder.atlas, sunder.defs, sg, REGIONS, 'eaves', sx, sy);
+  ok(!('refused' in sdr) && (sdr.counts.chasm ?? 0) > 0 && (sdr.counts.crystal ?? 0) > 0, `the Sunder is cut at ${sx},${sy}, its chasm and crystal coming through (${'refused' in sdr ? `refused: ${sdr.refused}` : `chasm ${sdr.counts.chasm ?? 0}, crystal ${sdr.counts.crystal ?? 0}`})`);
+  if ('refused' in sdr) return;
+  const sdef = await written(sdr, 'eaves', sx, sy), szone = sunder.atlas.zones.find((z) => z.id === 'eaves')!;
+  const sback = (draft: MapDef): number => { const l = layBack(sunder.atlas, sunder.defs, draft, szone, SUNDER_AT); return mismatches(sg, worldGrid(l.atlas, l.defs), sx, sy); };
+  ok(sback(sdef) === 0, 'laid back, its chasm and crystal match the atlas square for square');
+  const filled = sback({ ...sdef, rows: sdef.rows.map((r) => r.replace(/[cv]/g, 'r')) });
+  ok(filled === (sdr.counts.chasm ?? 0) + (sdr.counts.crystal ?? 0), `and with them written as rock it does not (${filled} squares differ)`);
 }

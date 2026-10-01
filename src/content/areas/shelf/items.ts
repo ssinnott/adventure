@@ -60,4 +60,8 @@ export const ITEMS: readonly ItemDef[] = [
     '"For the use of the cellar under Ashcombe, from this new moon to the next, twenty in gold, paid in hand. The tenant to ask nothing, to go down no stairs, and to keep his people above them, that the farm look lived in."',
     'Below, in place of a name, a cross, pressed hard enough to tear the paper. On the back, in the same grey ink: THE HEARTH IS A CAGE.',
   ] },
+  { id: 'dunstan_letter', name: "Dunstan's Letter", slot: 'none', price: 0, text: [
+    'A paper folded twice, unsealed, addressed in a square hand: HALE. THE SCARTH.',
+    '"Hale. Eight riders, shod, no lights, the week she died. West to the Berth by my ford and back before dawn, and not once only. Grey under the cloaks. You know what I am not writing. Burn this. D."',
+  ] },
 ];
