@@ -8,7 +8,7 @@ export const EMBER: RiftMaterial = {
   palette: { wall: '#8a5a44', wallDark: '#5a3426', floor: '#4a3028', ceiling: '#3a2018', door: '#6a4a3a', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#c05a3a' },
   enter: 'Heat, and an orange light with no lamp to make it.',
   leave: 'Cold air. The orange goes out of your eyes slowly.',
-  tear: 'The tear. Ember-light breathes up out of the floor. A shard beside it, warm in the hand, humming.',
+  tear: 'The tear. Ember-light breathes up out of the floor. A shard grown into the stone beside it, warm, humming.',
   quiet: 'The tear is a dark seam, and cold. The crystal on the walls has gone the grey of ash.',
   looks: [
     'Crystal grows from the wall in rows too even to be grown.',
@@ -25,7 +25,7 @@ export const BRINE: RiftMaterial = {
   palette: { wall: '#4a8a7a', wallDark: '#2a5a50', floor: '#2e4a46', ceiling: '#1e3434', door: '#3a5a50', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3aa08a' },
   enter: 'Wet air, and a green light that moves like water.',
   leave: 'Open air. Your boots are dry, and should not be.',
-  tear: 'The tear. Brine glass round it like a frozen wave. A shard beside it, wet, humming in the teeth.',
+  tear: 'The tear. Brine glass round it like a frozen wave. A shard grown into the glass, wet, humming in the teeth.',
   quiet: 'The green has gone out of the glass. The tear is a crack, and nothing comes up but salt.',
   looks: [
     'The walls are glass with brine inside, and the brine moves.',
@@ -42,7 +42,7 @@ export const GLASS: RiftMaterial = {
   palette: { wall: '#2e2c36', wallDark: '#18161e', floor: '#3a3a42', ceiling: '#121016', door: '#4a4440', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#e0e0ea' },
   enter: 'Dead wood, black glass, and a white light inside it.',
   leave: 'Daylight. It takes a while to seem bright enough.',
-  tear: 'The tear. White light inside black glass, as if from behind it. A shard beside it, cold, humming.',
+  tear: 'The tear. White light inside black glass, as if from behind it. A shard grown into the glass, cold, humming.',
   quiet: 'The white has gone. The glass is only black, the wood only dead. The tear is a line on the floor.',
   looks: [
     'Black glass walls, and under the black a white light that does not warm.',
@@ -59,7 +59,7 @@ export const SLAG: RiftMaterial = {
   palette: { wall: '#5a4a46', wallDark: '#3a2a26', floor: '#3a2e2a', ceiling: '#241a18', door: '#4a3a34', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#c0402a' },
   enter: 'Hot iron and a red light low in the walls.',
   leave: 'Clean air. The forge smell stays in your clothes.',
-  tear: 'The tear. Slag set round it in ridges, red at the cracks. A shard beside it, hot, humming.',
+  tear: 'The tear. Slag set round it in ridges, red at the cracks. A shard sunk in the slag, hot, humming.',
   quiet: 'The slag is black and the iron is cold. The tear is a seam you could step over without looking.',
   looks: [
     'The walls are slag, run and set, but set in squares.',
