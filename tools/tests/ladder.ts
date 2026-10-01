@@ -116,7 +116,7 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
   },
   {
     level: 14, name: "Lantern Watch's stores",
-    from: Object.fromEntries(['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield'].map((id) => [id, ['sunderwood', '#201']])),
+    from: Object.fromEntries(['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield'].map((id) => [id, ['sunderwood', '']])),
     classes: {
       knight: ['flail', 'watch_shield'], paladin: ['flail', 'watch_shield'], ranger: ['ironwood_bow', 'lamellar'], barbarian: ['great_axe', 'lamellar'],
       cleric: ['flail', 'watch_habit'], sorcerer: ['wardens_dirk', 'watch_habit'], thief: ['wardens_dirk', 'lamellar'], bard: ['wardens_dirk', 'lamellar'],

@@ -440,7 +440,7 @@ not its name in the world. Something like Standing may come back, but it will lo
 | Guild | Who they are | Halls | Skills they teach |
 |---|---|---|---|
 | **The Wardens** | soldiers and road guards | Helmstow | Arms Master, Danger Sense, Mountaineer |
-| **The Lanterns** | clergy and scholars of the Stones | Helmstow, Thornhold | Spirit Sense, Linguist, Perception |
+| **The Lanterns** | clergy and scholars of the Stones | Helmstow, Thornhold, Lantern Watch | Spirit Sense, Linguist, Perception |
 | **The Cartographers' Guild** | explorers and surveyors | Saltreach | Cartographer, Pathfinder, Swimmer |
 | **The Salt Compact** | smugglers and fences | Saltreach | Lockpick, Merchant, Navigator |
 
@@ -453,8 +453,9 @@ Lanterns; the Cartographers' and the Compact's halls go in with Saltreach (docs/
   Hale's checkpoint and a lost watchtower in Thornmark. Between acts, under Vask's hand, the
   Wardens on Helmstow's walls are his and the captains who back the cousin give the Drillyard's
   quests: the hall stays open and the guild splits quietly, which is its line into Act III (#151).
-- **The Lanterns' halls are both.** The Lantern Guildhall in Helmstow and the Thornhold Lantern
-  Hall (not the Lantern Chapterhouse, Thornhold's temple) go on selling spells, and give the
+- **The Lanterns' halls are all three.** The Lantern Guildhall in Helmstow, the Thornhold Lantern
+  Hall (not the Lantern Chapterhouse, Thornhold's temple) and the Watch's Lantern Hall at Lantern
+  Watch (#201) go on selling spells, and give the
   Lanterns' quests to a company that has done the first task. The fee to study is the hall's, §7's
   regional toll; any company may pay it, and a Lantern pays it too. It is not membership.
 

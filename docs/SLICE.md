@@ -244,7 +244,7 @@ trainer one level past it, onto Act II's road:
   under it does; the sheet says so at the cap. What a company reaches is set by the towns built:
   each town's trainer teaches to its area's band's top plus one (`trainerCeiling` in
   `content/progression.ts`), the Warden Drillyard in Helmstow to 6, the Elder's Yard in
-  Thornhold to 11 and the Sail Loft in Saltmouth to 13. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
+  Thornhold to 11, the Sail Loft in Saltmouth to 13 and the Lamp Gallery at Lantern Watch to 17. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
   spells stop growing at 10 (`SPELLS_GROW_TO`, DESIGN.md §7). Trainers charge 25 a level to 5 and
   40 a level after, to the cap (`trainPrice` in `party.ts`, which the curve's gold reads). Guilds
   sell up to a tier of their own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320 gold;
@@ -402,7 +402,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
   millisecond a frame.  ## Stubbed or absent
-- No hall sells tier 6 or 7 yet (Lantern Watch, #201, sells 6); no Master trainers; no secondary skills yet beyond race
+- No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, and the
   Cartographers' Geographer in Saltmouth reads it (#181), but no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.

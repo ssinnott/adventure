@@ -10,9 +10,9 @@ turns. This is its area doc (EXPANSION §4, §6 and §8.2). Its work is filed un
 (#204), its side quests (#205), its drawings (#206) and its rooms (#207). Figures are measured on
 main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Five maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
-Sunderfall (#197), K3, the Sunder's mouth (#198), with its Rift, and L2, Lanternwood (#200). Its content
-is
+Six maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
+Sunderfall (#197), K3, the Sunder's mouth (#198), with its Rift, L2, Lanternwood (#200), and Lantern
+Watch, the town behind L2's gate (#201). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -136,12 +136,17 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   the far end; sunderlings and glass spiders in the Rift.
 - **Lanternwood** (L2, `lanternwood_l2`, core, band 15–16; #200): the east road on from the bridge
   through the old forest and out at the box's south-east corner by the river for M2, with a spur
-  north to the tower's gate, barred until #201 makes it the way into Lantern Watch. Two wayside lamps
+  north to the tower's gate, the way into Lantern Watch (#201). Two wayside lamps
   on the road, one lit and one dark, and a young sister of the Watch by the dark one; the knoll in
   the north-west with the signal fire's ash and the pit under it; a shrine in the tower's yard, a
   cairn in the wood north-east of it and a camp south of the road. Four groups: moths with a
   deathshead at the lit lamp by night, sunder hounds on the knoll's path, two deathsheads at the
   tower by night and two glass bears on the road by the river.
+- **Lantern Watch** (`lantern_watch`, town, band 14–16; #201): one tower in a walled yard over the
+  gorge, through L2's gate. The Lamp Gallery at the top trains to 17; the prior's room, where the
+  Reader of the Watch sits; the stores, the band's step on the ladder; the refectory; and the
+  Lanterns' hall at the tower's foot, which sells to tier 6. Prior Osric in the yard under the lamp,
+  Wouter Brink of the Cartographers on the west wall. No temple: Sunderfall's shrine cures.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -463,8 +468,8 @@ features; the pay shared out over the area (§8).
   in off K2 on world row 52 and leaves at the box's south-east corner, where the river from the rim
   meets it, as the atlas runs it; the atlas carries it on through M2's corner into M3, which is cut,
   so four squares of the edge are owed to #202. The tower's foot is drawn north of the gate, a block
-  five wide in a yard of woods, with a spur of road up to the gate at 12,16, barred: no exit, owed to
-  #201, which makes it the way in. The lit lamp stands by the road at the way in, with a text by day
+  five wide in a yard of woods, with a spur of road up to the gate at 12,16, barred until #201 made
+  it the way in. The lit lamp stands by the road at the way in, with a text by day
   and one by night; the dark lamp down the road, and by it a young sister of the Watch with lines of
   her own and the hint; her quest, 31, and where she moves are #201's and #205's. The knoll is hills
   in the north-west, its path down to the road; the ash on its crown, and north of it, under the
@@ -503,6 +508,21 @@ features; the pay shared out over the area (§8).
     man standing in the wet as if it were not raining.*
 - **New here.** A town that is one tower; the act's midpoint.
 - **Pay.** About 300 xp a member in the tower's quests.
+
+- **As built** (#201, 1 October): one tower in a walled yard, the yard's wall the map's edge, the
+  road up from the gate to the tower's foot, grass and six oaks. The tower is six squares a side
+  with its five doors: the Lantern hall at its foot (The Watch's Lantern Hall, the Lanterns' hall,
+  spells to tier 6 for a fee of 400), the refectory (rest at 30), the stores (the eight wares of
+  #399, lamp oil, elixirs, great spell potions and rations), the prior's room, and the Lamp Gallery
+  at the top, the trainer to 17 in a fifth room of its own (`watch_gallery`), since every business
+  has one and #207 drew four. Prior Osric stands in the yard under the lamp at every hour, his side
+  felt and not told; Hester Dunmore, Reader of the Watch, sits in his room at every hour; Wouter
+  Brink, the Cartographers' surveyor, sights the gorge from the west wall. Both speak and set
+  nothing: 31 and 32 are #205's. The young sister stays by L2's dark lamp: where she moves is 31's.
+  Six events, a sign and a well: the gate, the lamp by night, the lookout, the oil jars stopper out,
+  the brothers' graves and the bell tied up. Every square is within five steps of a point. The
+  papers are read in the prior's room, the midpoint, in a pull request of their own. The 300 xp of
+  the tower's quests waits on 31 and 32, so the area's curve stays owed to #155.
 
 ### 4.9 M2 and J3, the road on and under the Eaves (#202): country, band 16
 
@@ -581,8 +601,8 @@ with its box on the systems of #76 (#205):
 |---|---|---|---|---|---|---|
 | 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 200 | #196, #201 |
 | 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 200 | #197, #198 |
-| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #201, #205 (L2, #200, places the sister and her hint only) |
-| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #201, #199 |
+| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #205 (L2, #200, places the sister and her hint only; #201 leaves her there) |
+| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #205, #199 (#201 places the surveyor and his lines only) |
 
 Pay is xp a member, whichever way the choice goes, shared by level: 900 between the four (§8).
 
@@ -756,6 +776,31 @@ Decided by delegate for #399, each the owner's to overturn:
    goes or moves (EXPANSION §5.5), and nobody loses gear or gold.
 7. **The Watch's staff is the Watch Staff,** so that L2's Lantern's Staff +1 reads as a named copy
    of it and not as the same thing.
+
+Decided by delegate for #201, each the owner's to overturn:
+
+1. **The trainer has a fifth room, the Lamp Gallery** (`watch_gallery`): the open walk round the
+   great lamp at the tower's top, a straw pell lashed to the parapet and staves racked against the
+   lamp-house, the gorge below. A trainer is a business, every business has a room of its own, #207
+   drew four, and no other town can teach to 17.
+2. **The prior's room is a room with a keeper who is out:** its doorway opens on the room, and the
+   Reader sits in it at every hour, so nothing the company does or when it comes shuts it.
+3. **Prior Osric keeps the yard,** under the lamp, at every hour; his lines keep to the lamp, the
+   oil and Helmstow. The letter under L2's ash says why the papers are not read in front of him.
+4. **The young sister stays on L2:** a person who moves is 31's, and 31 is #205's.
+5. **Wouter Brink, the Cartographers' surveyor,** stands on the west wall with lines of his own and
+   no quest; his name is Saltreach's, as his guild is. His ruled line under the ledges is the wall's
+   hint, never its name.
+6. **The hall's fee is 400,** twice Thornhold's for two tiers more, small beside 1,280 a sixth-tier
+   spell; **the refectory is 30,** the inns' climb from 12, 20 and 25.
+7. **The stores sell the eight wares, lamp oil, elixirs, great spell potions and rations,**
+   Thornhold's four goods: with no temple, the oil's and elixirs' cures matter. Quest 29's warding
+   lamp is #205's to add.
+8. **The map is one tower in a walled yard,** its wall the map's edge: a town that is one tower.
+   The tower is not claimed as a new landmark, since Thornmark's old tower has the icon already.
+9. **The gate's two events keep their ids,** and now read open: no id moves.
+10. **Two pull requests:** the tower and its businesses first, then the papers read and the
+    midpoint's flag, which is the act's turn and is reviewed on its own.
 
 ## 10. Names
 
