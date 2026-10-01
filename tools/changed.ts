@@ -100,20 +100,21 @@ export async function changedMonsters(files: readonly string[], base?: string): 
 /** What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the brushes they borrow (ui/brush.ts, ui/monsters/gloss.ts), the art library and the pixel font (some rooms letter their signs). */
 const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//, /^src\/lib\/engine\/text\.ts$/];
 const SCENE_FILE = /^src\/ui\/interiors\/[^/]+\/([^/]+)\.ts$/;
-const AREA_INDEX = /^src\/content\/areas\/([^/]+)\/index\.ts$/;
+const AREA_INDEX = /^src\/content\/areas\/([^/]+)\/(index|interiors)\.ts$/;
 
 /**
  * The interiors among the files: each whose scene file (named for it) changed, and each an area's
- * index lists that its base did not. `all` where a file changed that every room is painted by.
+ * index (or its list of rooms drawn ahead of it) lists that its base did not. `all` where a file
+ * changed that every room is painted by.
  */
 export async function changedInteriors(files: readonly string[], base?: string): Promise<{ all: boolean; interiors: string[] }> {
-  const { AREAS, INTERIORS } = await import('../src/content/index.ts');
+  const { AREAS, ROOMS_AHEAD, INTERIORS } = await import('../src/content/index.ts');
   const all = files.some((f) => EVERY_INTERIOR.some((re) => re.test(f)));
   const out = new Set<string>();
   for (const f of files) {
     const id = SCENE_FILE.exec(f)?.[1];
     if (id && (INTERIORS as readonly string[]).includes(id)) out.add(id);
-    const area = AREAS.find((a) => a.id === AREA_INDEX.exec(f)?.[1]);
+    const area = [...AREAS, ...ROOMS_AHEAD].find((a) => a.id === AREA_INDEX.exec(f)?.[1]);
     if (area) { const was = base ? atBase(base, f) : ''; for (const i of area.interiors) if (!was.includes(`'${i}'`)) out.add(i); }
   }
   return { all, interiors: [...out] };
