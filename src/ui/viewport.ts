@@ -1393,6 +1393,12 @@ function drawStoneFront(ctx: CanvasRenderingContext2D, pal: MapPalette, x0: numb
   const wall = pal.wall, wallDark = pal.wallDark;
   const w = x1 - x0, h = bottom - top;
   const X0 = Math.round(x0), X1 = Math.round(x1), T = Math.round(top), B = Math.round(bottom);
+  // A smooth wall is one face: no course, no block and no joint, outlined only where it ends.
+  if (pal.wallStyle === 'smooth') {
+    ctx.fillStyle = fog(wall, d, dark, haze); ctx.fillRect(X0, T, X1 - X0, B - T);
+    ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; outlineRect(ctx, X0, T, X1, B, !joinL, !joinR);
+    return;
+  }
   ctx.fillStyle = fog(wallDark, d, dark, haze); ctx.fillRect(X0, T, X1 - X0, B - T);
   const brick = pal.wallStyle === 'brick';
   const rows = brick ? 9 : 6, cols = brick ? 4 : 3;
@@ -1667,12 +1673,18 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, m
     }
     return;
   }
-  const brick = pal.wallStyle === 'brick';
-  const rows = brick ? 9 : 6;
+  const brick = pal.wallStyle === 'brick', smooth = pal.wallStyle === 'smooth';
+  const rows = smooth ? 0 : brick ? 9 : 6;
   const cols = brick ? 4 : 3;
   // The planes the face spans, as paintScene clips them. Each block is fogged by its own depth, not
   // the cell's, so a wall darkens along its length instead of in a band per cell.
   const kN = Math.max(0, d - 0.5), kF = d + 0.5;
+  // A smooth wall's side is one face, in strips that overlap so no seam shows, each fogged by its depth.
+  const strips = 6;
+  if (smooth) for (let j = 0; j < strips; j++) {
+    const s0 = j / strips, s1 = Math.min(1, (j + 1.2) / strips), fd = kN + (kF - kN) * (s0 + s1) / 2;
+    quad(ctx, P(s0, 0), P(s1, 0), P(s1, 1), P(s0, 1), fog(shade(pal.wallDark, shadeSide), fd, dark, haze));
+  }
   for (let i = 0; i < rows; i++) {
     const t0 = i / rows, t1 = (i + 1) / rows;
     const off = (i % 2) * 0.5 / cols;
