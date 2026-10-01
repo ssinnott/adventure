@@ -67,6 +67,13 @@ function budget(id: string, what: string, gives: number, needs: number, owing: A
   } else ok(gives >= needs, msg);
 }
 
+/**
+ * Areas listed by their first maps whose band the atlas cannot give yet, and whose issue owes it: a
+ * zone's band is its built maps' once it has any, so an area with only its first map may read
+ * narrower than its row. Reported, not failed, until it holds; then the entry is dropped.
+ */
+const BAND_OWED: Record<string, string> = {};
+
 export function curve(): void {
   // The built areas and the planned ones, which have rows before they have maps, in the atlas's
   // order: an area may be listed before an earlier one is, and its row still follows that one's. A
@@ -81,7 +88,9 @@ export function curve(): void {
     const [lo, hi] = row.band;
     // The band: the atlas's, holding every map's, and the next floor the next area's.
     const atlas = areaBand(ATLAS, MAP_DEFS, id);
-    ok(!!atlas && atlas[0] === lo && atlas[1] === hi, `${id}: its band ${lo}-${hi} is the atlas's (${atlas?.join('-') ?? 'none'})`);
+    const bandMsg = `${id}: its band ${lo}-${hi} is the atlas's (${atlas?.join('-') ?? 'none'})`, bandHolds = !!atlas && atlas[0] === lo && atlas[1] === hi;
+    if (BAND_OWED[id]) owed(bandHolds, bandMsg, BAND_OWED[id]);
+    else ok(bandHolds, bandMsg);
     for (const d of maps) ok(!!d.band && d.band[0] >= lo && d.band[1] <= hi, `${id}: ${d.id}'s band ${d.band?.join('-') ?? 'none'} sits in ${lo}-${hi}`);
     const later = road[i + 1];
     const at = order(id);
