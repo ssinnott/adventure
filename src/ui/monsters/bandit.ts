@@ -112,6 +112,29 @@ function pauldronTrim(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, s: number):
 }
 
 /**
+ * A bow's points, shared by its drawer and the check that holds it (tools/tests/art.ts): the two
+ * nocks, the riser under the bow hand, and `back`, a point on the archer's side of the string. A
+ * bow bends away from the man who holds it, so the riser and `back` lie either side of the string.
+ */
+export interface BowPts { top: Pt; bot: Pt; riser: Pt; back: Pt }
+
+/** The archer's shortbow, braced and gripped at `at` by a man standing at `x`. */
+export function heldBow(at: Pt, h: number, x: number): BowPts {
+  return { top: { x: at.x + h * 0.074, y: at.y - h * 0.325 }, bot: { x: at.x + h * 0.06, y: at.y + h * 0.3 }, riser: { x: at.x - h * 0.006, y: at.y }, back: { x, y: at.y } };
+}
+
+/** The smuggler's shortbow at full draw, gripped at `at` and the string drawn to `anchor`. */
+export function drawnBow(at: Pt, h: number, anchor: Pt): BowPts {
+  return { top: { x: at.x - h * 0.096, y: at.y - h * 0.3 }, bot: { x: at.x - h * 0.084, y: at.y + h * 0.28 }, riser: { x: at.x + h * 0.008, y: at.y - h * 0.028 }, back: anchor };
+}
+
+/** The poacher's longbow, grounded at `y` and gripped at `at` by a man standing at `x`. */
+export function longbow(at: Pt, y: number, h: number, x: number, sway = 0): BowPts {
+  const bx = at.x - h * 0.012;
+  return { top: { x: bx + h * 0.02 + sway, y: y - h * 1.2 }, bot: { x: bx - h * 0.005, y: y - h * 0.01 }, riser: { x: bx - h * 0.028, y: at.y }, back: { x, y: at.y } };
+}
+
+/**
  * A shortbow gripped at `at`. Drawn as a bow rather than an arc: the two limbs are tapered tubes in
  * ONE wooden mass, thick at the riser under the hand and fining to the nocks, bowed away from the
  * archer so the string stands off the grip by a brace height. The arrow is NOCKED — its shaft
@@ -120,8 +143,7 @@ function pauldronTrim(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, s: number):
  */
 function bow(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, sway: number): number {
   const { h } = R;
-  const top = { x: at.x + h * 0.074, y: at.y - h * 0.325 }, bot = { x: at.x + h * 0.06, y: at.y + h * 0.3 };
-  const grip = { x: at.x - h * 0.006, y: at.y };
+  const { top, bot, riser: grip } = heldBow(at, h, R.x);
   const px = Math.min(1, h * 0.026), tipR = Math.max(h * 0.0075, px * 0.6), midR = Math.max(h * 0.017, px * 1.25);
   blob(ctx, B, R.wood, [
     tube([top.x, top.y, at.x - h * 0.016, at.y - h * 0.165, grip.x, grip.y - h * 0.03], tipR, midR, 0, 61),
@@ -308,8 +330,7 @@ function poacher(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   groundShadow(ctx, x - h * 0.04, y + 1, h * 0.8);
   // The longbow, grounded by the far foot and standing a head above his hat: a D of yew, thick at
   // the grip and fining to the horn nocks, belly to the man, the string a finger's breadth off it.
-  const bx = far[2].x - h * 0.012, top = { x: bx + h * 0.02 + sway, y: y - h * 1.2 }, bot = { x: bx - h * 0.005, y: y - h * 0.01 };
-  const grip = { x: bx - h * 0.028, y: far[2].y };
+  const bx = far[2].x - h * 0.012, { top, bot, riser: grip } = longbow(far[2], y, h, x, sway);
   const mid = Math.max(h * 0.016, 1.3), tip = Math.max(h * 0.007, 0.8);
   blob(ctx, B, yew, [
     tube([top.x, top.y, bx - h * 0.02, (top.y + grip.y) / 2, grip.x, grip.y], tip, mid, 0, 201),
@@ -875,12 +896,13 @@ function smuggler(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
  */
 function bowDrawn(ctx: CanvasRenderingContext2D, R: Rig, at: Pt, anchor: Pt): number {
   const { h } = R;
-  // Limbs bent hard away from the archer: a drawn bow is a much deeper arc than a braced one.
-  const top = { x: at.x + h * 0.096, y: at.y - h * 0.3 }, bot = { x: at.x + h * 0.084, y: at.y + h * 0.28 };
+  // Limbs bent hard away from the archer: a drawn bow is a much deeper arc than a braced one. The
+  // riser leads and the tips trail back toward the string hand; they stood out past the grip (#57).
+  const { top, bot, riser } = drawnBow(at, h, anchor);
   const tipR = Math.max(h * 0.0075, Math.min(1, h * 0.026) * 0.6), midR = Math.max(h * 0.017, Math.min(1, h * 0.026) * 1.25);
   blob(ctx, B, R.wood, [
-    tube([top.x, top.y, at.x + h * 0.004, at.y - h * 0.15, at.x - h * 0.008, at.y - h * 0.028], tipR, midR, 0, 91),
-    tube([at.x - h * 0.008, at.y - h * 0.028, at.x + h * 0.006, at.y + h * 0.14, bot.x, bot.y], midR, tipR, 0, 92),
+    tube([top.x, top.y, at.x - h * 0.004, at.y - h * 0.15, riser.x, riser.y], tipR, midR, 0, 91),
+    tube([riser.x, riser.y, at.x - h * 0.006, at.y + h * 0.14, bot.x, bot.y], midR, tipR, 0, 92),
   ], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 91, amount: 0.35 });
   stroke(ctx, [top.x, top.y, anchor.x, anchor.y, bot.x, bot.y], R.bone, 1);
   // The arrow lies along the draw, from the anchor out past the riser.

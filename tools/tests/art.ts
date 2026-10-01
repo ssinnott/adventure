@@ -1,7 +1,8 @@
 // The art held to what the owner once found by hand. Every monster def has a drawing of its own
 // (EXPANSION §5.6), and the walls are dressed with restraint: the share of wall faces that carry
 // dressing stays near where #9 put it, and each kind of dressing has its rate. The silhouettes and
-// the cracks need a canvas, so they are the smoke test's (tools/smoke.ts).
+// the cracks need a canvas, so they are the smoke test's (tools/smoke.ts). Every bow bends away
+// from the man who holds it (#57).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { wallDressing, isSolidWall, isHouse, drawnCell, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
@@ -9,6 +10,7 @@ import { hash } from '../../src/ui/brush.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { FAMILY } from '../../src/ui/sprites.ts';
+import { heldBow, drawnBow, longbow, type BowPts } from '../../src/ui/monsters/bandit.ts';
 import { ok, familyModules, type Family } from './lib.ts';
 
 /** The defs that draw with a kind another def draws with too, as 'kind: a, b'. */
@@ -99,6 +101,22 @@ export function kindsDrift(family: Readonly<Record<string, unknown>>, modules: r
   return out;
 }
 
+/**
+ * What is wrong with a bow: its riser on the archer's side of the string, or on it. Which side of
+ * the line from nock to nock a point lies, by the sign of the cross product.
+ */
+export function bowFault(b: BowPts): string | null {
+  const side = (p: { x: number; y: number }): number => Math.sign((b.bot.x - b.top.x) * (p.y - b.top.y) - (b.bot.y - b.top.y) * (p.x - b.top.x));
+  return side(b.riser) !== 0 && side(b.riser) === -side(b.back) ? null : 'the riser is not on the far side of the string from the archer';
+}
+
+/** Each bow as its sprite holds it: h 100, the man at x 0, his shoulders at y -72 (bandit.ts). */
+export const BOWS: readonly [string, BowPts][] = [
+  ['the archer\'s shortbow', heldBow({ x: -35.2, y: -61.6 }, 100, 0)],
+  ['the smuggler bowman\'s drawn bow', drawnBow({ x: 29.6, y: -66.4 }, 100, { x: 6.4, y: -71.4 })],
+  ['the poacher\'s longbow', longbow({ x: -25.5, y: -41 }, 0, 100, 0)],
+];
+
 export async function art(): Promise<void> {
   // A drawing of its own: the typecheck holds each kind to a drawing, but nothing held two defs
   // off one.
@@ -185,4 +203,13 @@ export async function art(): Promise<void> {
   const then = tallyWalls(maps, BEFORE_9);
   const kindsThen = byKind(then);
   ok(kindsThen.every((t) => t.faces < KIND_FLOOR || kindOver(t)) && kindsThen.some(kindOver) && then.every(mapOver), `walls dressed as before #9 fail: ${kindsThen.map((t) => `${t.kind} ${pct(t)}`).join(', ')}${then.some((t) => !mapOver(t)) ? ' -> passed: ' + then.filter((t) => !mapOver(t)).map((t) => t.id).join(', ') : ''}`);
+
+  // Every bow bends away from its archer: the riser leads and the nocks trail back to the string. The
+  // smuggler bowman's drew with the nocks out past the grip (#57), and that drawing fails, as does
+  // each bow turned the wrong way about its riser.
+  for (const [what, b] of BOWS) { const f = bowFault(b); ok(!f, `${what} bends away from the archer${f ? ' -> ' + f : ''}`); }
+  const at = { x: 29.6, y: -66.4 };
+  const old: BowPts = { top: { x: at.x + 9.6, y: at.y - 30 }, bot: { x: at.x + 8.4, y: at.y + 28 }, riser: { x: at.x - 0.8, y: at.y - 2.8 }, back: { x: 6.4, y: -71.4 } };
+  const turned = BOWS.filter(([, b]) => bowFault({ ...b, top: { x: 2 * b.riser.x - b.top.x, y: b.top.y }, bot: { x: 2 * b.riser.x - b.bot.x, y: b.bot.y } }));
+  ok(bowFault(old) !== null && turned.length === BOWS.length, `a bow turned toward its archer fails: the smuggler bowman's before #57, and ${turned.length} of ${BOWS.length} bows turned about the riser`);
 }
