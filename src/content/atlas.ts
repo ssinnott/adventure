@@ -20,7 +20,9 @@
 // charts replaces the plan's row of the same id. A planned area may chart its rows in its folder
 // before it is listed, and the plan spreads them in where its own were.
 import type { Atlas } from '../game/atlas.ts';
+import * as SALTREACH from './areas/saltreach/atlas.ts';
 import * as SUNDERWOOD from './areas/sunderwood/atlas.ts';
+import * as WRACKHOLM from './areas/wrackholm/atlas.ts';
 
 export const PLAN: Atlas = {
   width: 512,
@@ -255,10 +257,8 @@ export const PLAN: Atlas = {
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
   ],
   zones: [
-    { id: 'upperwater', name: 'The Upper Water', area: 'saltreach', seeds: [[56, 76], [80, 56], [36, 110]] },
-    { id: 'delta', name: 'The Delta', area: 'saltreach', seeds: [[62, 150], [84, 136]], label: [76, 128] },
-    { id: 'saltings', name: 'The Saltings', area: 'saltreach', seeds: [[98, 194], [70, 194]] },
-    { id: 'wrackholm', name: 'Wrackholm', area: 'wrackholm', seeds: [[168, 176]] },
+    ...SALTREACH.ZONES,
+    ...WRACKHOLM.ZONES,
     ...SUNDERWOOD.ZONES,
     { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66]] },
     { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', seeds: [[452, 120], [470, 160]] },
@@ -279,10 +279,8 @@ export const PLAN: Atlas = {
     { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
   ],
   places: [
-    { id: 'saltmouth', name: 'Saltmouth', kind: 'town', planned: true, band: [10, 12], at: [100, 176] }, // on C6, at the Salt Road's end (#151),
-    { id: 'drowned_temples', name: 'Drowned Temples', kind: 'dungeon', planned: true, band: [10, 12], at: [56, 160] },
-    { id: 'smugglers_cove', name: 'Kelp Hole', kind: 'dungeon', planned: true, band: [12, 14], at: [150, 158] },
-    { id: 'tide_ship', name: 'The Tide Ship', kind: 'dungeon', planned: true, band: [12, 14], at: [208, 192] },
+    ...SALTREACH.PLACES,
+    ...WRACKHOLM.PLACES,
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
     ...SUNDERWOOD.PLACES,
     { id: 'anvilhall', name: 'Anvilhall', kind: 'town', planned: true, band: [16, 18], at: [452, 70] },
@@ -303,15 +301,8 @@ export const PLAN: Atlas = {
     { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
   ],
   sites: [
-    // III. Saltreach.
-    { name: 'Rietum', icon: 'village', at: [80, 80], label: 'right', planned: true },
-    { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
-    { name: 'Tide Stone', icon: 'stone', at: [48, 140], label: 'below', planned: true }, // the plinth on Stienwierde, the stone mound (saltreach.md §10)
-    { name: 'Drowned Temples', icon: 'sunken', at: [56, 170], label: 'below', planned: true },
-    { name: 'Sjonghol', icon: 'cave', at: [103, 76], label: 'right', planned: true }, // the singing hollow in Kestrel Edge's cliffs: the Monk's second prestige; a square west into C3, so D3 does not hold it (#71)
-    // IV. Wrackholm.
-    { name: 'Kelp Hole', icon: 'cave', at: [154, 170], label: 'left', planned: true },
-    { name: 'Tide Ship', icon: 'wreck', at: [182, 188], label: 'right', planned: true },
+    ...SALTREACH.SITES,
+    ...WRACKHOLM.SITES,
     ...SUNDERWOOD.SITES,
     // VI. The Kilns.
     { name: 'Anvilhall', icon: 'fortress', at: [452, 80], label: 'below', planned: true },
