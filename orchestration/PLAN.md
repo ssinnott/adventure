@@ -1546,3 +1546,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   gains it. Given to the #45 session (idle, 440K, the viewport's billboards, torches and void in
   hand) on `claude/m1-312-lighthouse`: a tall billboard tower that shows from far off, its lamp
   dark until `q_oil_lit` and lit by night after.
+- 00:02: #305 (#71, D3) landed: its round (102dc2f: two Cutthroats; the ledge's door in mountain
+  both sides; 5,30 rock; the fixture at 72,60; the docs: two keepers, 69 void squares, pay 347;
+  030188c main). Landing check on its head (main in): ALL OK (24 owed: #71's gone), SMOKE OK,
+  "Nothing new."; D3 at 4 7.98 fights to a rest (off its aim, inside the limit, listed); CI green.
+  Merged as a12aa7f; main's tree is the tested tree (7c981c9). #71 closes. #309 (D4) can now be
+  reviewed on it (the two Cutthroats carried in).
