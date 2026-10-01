@@ -114,9 +114,7 @@ export function atlas(): void {
   for (const l of ATLAS.links.filter((q) => q.kind === 'sea')) for (const [x, y] of l.via ?? []) ok(grid.t(Math.floor(x), Math.floor(y)) === TI.sea, `crossing ${l.from} -> ${l.to}: passes ${x},${y} at sea`);
   // Places: a built one is a map, a planned one is not yet; every town and dungeon has one.
   for (const q of ATLAS.places) ok(q.planned ? !MAP_DEFS.some((d) => d.id === q.id) : MAP_DEFS.some((d) => d.id === q.id), `place ${q.id}: ${q.planned ? 'planned and not built yet' : 'a built map'}`);
-  // A Rift is entered by its tear on a map that has a plate or a zone already, and takes no plate of its own.
-  const torn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'rift' ? [f.to] : []))));
-  for (const d of MAP_DEFS.filter((q) => q.kind !== 'outdoor' && !torn.has(q.id))) ok(ATLAS.places.some((q) => q.id === d.id), `${d.id}: has a plate on the world map`);
+  for (const d of MAP_DEFS.filter((q) => q.kind !== 'outdoor')) ok(ATLAS.places.some((q) => q.id === d.id), `${d.id}: has a plate on the world map`);
   // A town entered only from another town (the keep's ward, behind Helmstow) has its plate by that
   // town's, where the party is drawn while it is inside.
   const plate = (id: string): readonly number[] | undefined => ATLAS.places.find((q) => q.id === id)?.at;

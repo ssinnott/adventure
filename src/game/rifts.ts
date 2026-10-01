@@ -156,6 +156,7 @@ export function generateRift(spec: RiftSpec): MapDef {
     ...(spec.region ? { region: spec.region } : {}),
     start: { x: way.x, y: way.y, facing: face },
     palette: material.palette,
+    bare: true,
     rows: grid.map((r) => r.join('')),
     exits, features, encounters,
   };

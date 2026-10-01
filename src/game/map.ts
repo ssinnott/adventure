@@ -247,6 +247,8 @@ export interface MapDef {
    * outdoor map places none (tools/tests/art.ts).
    */
   banners?: readonly { x: number; y: number }[];
+  /** No wall dressing, not even a banner: a Rift's walls are its material and nothing hangs on them (ui/viewport.ts). */
+  bare?: boolean;
   /** Landmarks drawn tall over their building squares and seen from far off (`Landmark`). */
   landmarks?: readonly Landmark[];
   /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */

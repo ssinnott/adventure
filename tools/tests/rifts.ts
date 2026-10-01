@@ -14,6 +14,7 @@ import type { MapDef } from '../../src/game/map.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { EAST } from '../../src/game/types.ts';
+import { wallDressing } from '../../src/ui/viewport.ts';
 import { judge } from './density.ts';
 import { lineFaults, hintFaults, missingGlyphs, americanisms } from './pillars.ts';
 import { strandedLocks, respawnsOutOfRange, returningGuardians, presenceFaults, questItems } from './structure.ts';
@@ -112,6 +113,8 @@ export function rifts(): void {
   const sampleBad = RIFT_SAMPLES.flatMap((d) => faults(d, items).map((f) => `${d.id}: ${f}`));
   ok(RIFT_SAMPLES.length === 8 && !sampleBad.length, `the eight samples pass the contract${sampleBad.length ? ' -> ' + sampleBad.join('; ') : ''}`);
   ok(!RIFT_SAMPLES.some((d) => MAP_DEFS.some((m) => m.id === d.id)), 'and no area places them');
+  const hung = RIFT_SAMPLES.flatMap((d) => { const m = new GameMap(d); return d.rows.flatMap((r, y) => [...r].flatMap((_, x) => (wallDressing(m, x, y) ? [`${d.id} ${x},${y}`] : []))); });
+  ok(RIFT_SAMPLES.every((d) => d.bare) && !hung.length, `nothing hangs on a Rift's walls, not even a banner${hung.length ? ' -> ' + hung.slice(0, 4).join(', ') : ''}`);
 
   // A brine Rift on a box of the Delta: its tear walked into, the Rift walked, and back out.
   {
