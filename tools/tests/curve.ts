@@ -74,7 +74,17 @@ function budget(id: string, what: string, gives: number, needs: number, owing: A
  */
 const BAND_OWED: Record<string, string> = {};
 
+/**
+ * Whether a map's floor is over its area's band: a later area's country reached from this one, as
+ * the Dead-Drop's stair under the Tide Ship is, 26 to 28 in Act II's isle. The pace check places it
+ * with that later area (tools/tests/pillars.ts); here it stands outside its area's band and clear.
+ */
+export const beyond = (d: Pick<MapDef, 'band'>, band: readonly [number, number]): boolean => !!d.band && d.band[0] > band[1];
+
 export function curve(): void {
+  const fx: [number, number] = [12, 14];
+  ok(beyond({ band: [26, 28] }, fx) && !beyond({ band: [12, 14] }, fx) && !beyond({ band: [10, 11] }, fx) && !beyond({}, fx),
+    'a map whose floor is over its area\'s band stands past it; one in it, under it or with none does not');
   // The built areas and the planned ones, which have rows before they have maps, in the atlas's
   // order: an area may be listed before an earlier one is, and its row still follows that one's. A
   // planned area's clear gives nothing yet, and its row says who owes it.
@@ -84,8 +94,10 @@ export function curve(): void {
   const road: readonly { id: RegionId | (typeof PLANNED)[number]; area?: Area }[] = [...AREAS.map((a) => ({ id: a.id, area: a as Area })), ...PLANNED.map((id) => ({ id }))]
     .sort((a, b) => order(a.id) - order(b.id));
   road.forEach(({ id, area }, i) => {
-    const row = CURVE[id], maps = area?.maps ?? [];
+    const row = CURVE[id];
     const [lo, hi] = row.band;
+    const maps = (area?.maps ?? []).filter((d) => !beyond(d, row.band));
+    for (const d of (area?.maps ?? []).filter((q) => beyond(q, row.band))) ok(!d.encounters?.length && !d.features?.some((f) => f.kind === 'chest'), `${id}: ${d.id}, at ${d.band!.join('-')}, stands past its band, a later area's country, and pays nothing here`);
     // The band: the atlas's, holding every map's, and the next floor the next area's.
     const atlas = areaBand(ATLAS, MAP_DEFS, id);
     const bandMsg = `${id}: its band ${lo}-${hi} is the atlas's (${atlas?.join('-') ?? 'none'})`, bandHolds = !!atlas && atlas[0] === lo && atlas[1] === hi;
