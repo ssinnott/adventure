@@ -33,5 +33,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the fen's pools (#221), a controller on MONSTERS §4.4's line at 10: its hits heal it
   { id: 'leech', name: 'Leech', plural: 'Leeches', sprite: 'leech', kind: 'beast', look: 'Black, and as long as your arm.', level: 10, hp: 87, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 12, xp: 393, gold: [0, 0], drain: 'hp', tint: '#26282a', size: 0.45 },
   // the Delta, alone (#224), a brute on MONSTERS §4.4's line at 12: it carries disease
-  { id: 'bull_toad', name: 'Bull Toad', plural: 'Bull Toads', sprite: 'bull_toad', kind: 'beast', look: 'It could swallow Ottilie whole.', level: 12, hp: 267, ac: 16, attack: 9, dice: 3, sides: 7, bonus: 7, speed: 8, xp: 947, gold: [0, 0], inflict: { cond: 'diseased', chance: 0.15 }, tint: '#5a3e26', size: 1.4 },
+  { id: 'bull_toad', name: 'Bull Toad', plural: 'Bull Toads', sprite: 'bull_toad', kind: 'beast', look: 'It could swallow Ottilie whole.', level: 12, hp: 267, ac: 16, attack: 9, dice: 3, sides: 7, bonus: 7, speed: 8, xp: 947, gold: [0, 0], inflict: { cond: 'diseased', chance: 0.15 }, tint: '#5a3e26', size: 1.35 },
 ];

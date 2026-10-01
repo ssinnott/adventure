@@ -1,15 +1,9 @@
-// A draft of The Delta, cut from the atlas at 104,126 by tools/scaffold.ts delta 104 126. The
-// ground is the atlas's square for square; everything else is to be authored (EXPANSION §8.2).
-// Terrain: sea 770, shallow 115, grass 72, hills 34, sand 30, road 3.
-// Zones in the cut: none 770, downs 254.
-// - Area saltreach has no region yet, so the draft shares the Foreland's sky until it has.
-// - Box D5.
-// - The north edge faces downs_d4 on 32 squares: its row 31 is its seam, and both sides are the author's.
-// - The road crosses the north edge at 0,0.
-// - The road crosses the west edge at 0,0 0,1 0,2.
-// - Site Sylmeer (water) at 20,24.
+// The Delta, box D5: the shore under the Edge. Country, band 10-11: the Salt Road's three squares
+// down D4's foot to C5, where the milestone stands; the gulf's shore under the cliff; and a shingle
+// bar out to an islet and on to a spit, with tidal flats either side. The rest is Sylmeer. Laid with C5 (#170) so the road out of D4 has somewhere to go; docs/areas/saltreach.md
+// §4.2 is its brief. Cut from the atlas by tools/scaffold.ts.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST } from '../../../../game/types.ts';
+import { SOUTH } from '../../../../game/types.ts';
 
 export const DELTA_D5: MapDef = {
   id: 'delta_d5',
@@ -18,7 +12,7 @@ export const DELTA_D5: MapDef = {
   density: 'country',
   band: [10, 11],
   region: 'saltreach',
-  start: { x: 0, y: 0, facing: EAST },
+  start: { x: 0, y: 0, facing: SOUTH },
   rows: [
     '=,,,,,,^~~WWWWWWWWWWWWWWWWWWWWWW',
     '=^,,,,,^~~WWWWWWWWWWWWWWWWWWWWWW',
@@ -33,24 +27,35 @@ export const DELTA_D5: MapDef = {
     ',,,,_~~~WWWWWWWWWWWWWWWWWWWWWWWW',
     ',,,_~~~WWWWWWWWWWWWWWWWWWWWWWWWW',
     ',,_~~WWWWWWWWWWWWWWWWWWWWWWWWWWW',
-    ',_~~WWWWWWWWWWWWWWWWWWWWWWWWWWWW',
-    ',_~~WWWWWWWWWWWWWWWWWWWWWWWWWWWW',
-    '_~~WWWWWWWWWWWWW~~~WWWWWWWWWWWWW',
-    '_~~WWWWWWWWWWW~~~~~~WWWWWWWWWWWW',
-    '~~WWWWWWWWWWW~~~___~~WWWWWWWWWWW',
+    ',_~~;;WWWWWWWWWWWWWWWWWWWWWWWWWW',
+    ',_____;WWWWWWWWWWWWWWWWWWWWWWWWW',
+    '_~~WW____;;WWWWW~~~WWWWWWWWWWWWW',
+    '_~~WWWWW____;;~~~~~~WWWWWWWWWWWW',
+    '~~WWWWWWWWW________~~WWWWWWWWWWW',
     '~~WWWWWWWWWW~~__,,_~~WWWWWWWWWWW',
     '~~WWWWWWWWWW~~_,,,_~~WWWWWWWWWWW',
     '~~WWWWWWWWWW~~_,,,,_~~WWWWWWWWWW',
     '~WWWWWWWWWWW~~^^^,,_~~WWWWWWWWWW',
     'WWWWWWWWWWWW~~^^^^__~~WWWWWWWWWW',
     'WWWWWWWWWWWW~~^^^^~~~WWWWWWWWWWW',
-    'WWWWWWWWWWWWW~~~~~~~WWWWWWWWWWWW',
-    'WWWWWWWWWWWWWW~~~~WWWWWWWWWWWWWW',
-    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
-    'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
-    'WWWWWWWW~~~~~WWWWWWWWWWWWWWWWWWW',
-    'WWWWWWW~~~~~~~WWWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWW~_;~~~~WWWWWWWWWWWW',
+    'WWWWWWWWWWWWWW_;~~WWWWWWWWWWWWWW',
+    'WWWWWWWWWWWWW__WWWWWWWWWWWWWWWWW',
+    'WWWWWWWWWWWW__WWWWWWWWWWWWWWWWWW',
+    'WWWWWWWW~~~__WWWWWWWWWWWWWWWWWWW',
+    'WWWWWWW~~~__~~WWWWWWWWWWWWWWWWWW',
     'WWWWWW~~,,___~~WWWWWWWWWWWWWWWWW',
     'WWWWWW~~,,,,,_~~WWWWWWWWWWWWWWWW',
+  ],
+  features: [
+    { kind: 'sign', x: 1, y: 1, text: 'SALTMOUTH 4, RIETUM 5.' },
+    { kind: 'event', x: 5, y: 9, id: 'd5_shore', once: true, text: 'The sand under the Edge, and east of it the gulf, grey as far as the eye goes. Sylmeer.' },
+    { kind: 'event', x: 4, y: 14, id: 'd5_bar', once: true, text: 'A bar of shingle runs out from the shore across the flats to an islet, the tide sucking at the mud either side of it.' },
+    { kind: 'npc', x: 16, y: 19, name: 'a hermit on the islet', lines: [
+      'An old woman of the Tidefolk sits on the islet\'s rock mending a net with no boat to go with it, and does not look up.',
+      '"You came down the Edge. Then you\'ve seen the fen glitter. It never did before midsummer." She ties a knot. "A barge went by here one night, out past the islet towards the sea, no lamp lit, and a light in its sacking all the same. Green. I know what the Stone looks like in the dark. Everyone here does."',
+      '"It came down the river, so it passed Rietum first, and the quay there never sleeps. Go up the spur and ask what they saw. They\'ll not tell a stranger much." She holds the net up to the light. "The one who counts has not sung since. Nor have I."',
+    ] },
+    { kind: 'event', x: 9, y: 30, id: 'd5_spit', once: true, text: 'A spit of sand at the bar\'s end, and a wreck\'s ribs standing out of it, grey as the shingle, picked clean of anything that would burn.' },
   ],
 };

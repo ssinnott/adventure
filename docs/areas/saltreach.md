@@ -10,27 +10,26 @@ work is filed under #153 (Phase 1.2, #149): the boxes as §4's table has them, t
 its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52cd` (29 September
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Nothing of it is built. Its content will be `src/content/areas/saltreach/` (maps, monsters, items,
-its chapter of the one quest, The Tide Stone, in `chapter.ts`, its side quests in `quests.ts`, its
-guild quests in `guilds.ts`, climate and its part of the world map) and its businesses' rooms
-`src/ui/interiors/saltreach/`. Its part of the world map is its folder's already (`atlas.ts`, #169),
-spread into the plan (`src/content/atlas.ts`) until the area is listed; the rest of the folder comes
-with its first map (#170), as Thornmark's did. Its ids: the area `saltreach`, its zones
-`upperwater`, `delta` and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
+Two boxes of it are built, the Delta road and the shore under the Edge (#170), and with them the
+area is listed. Its content is `src/content/areas/saltreach/` (maps, monsters, items, climate and
+its part of the world map; its chapter of the one quest, The Tide Stone, in `chapter.ts`, its side
+quests in `quests.ts` and its guild quests in `guilds.ts` are still to come) and its businesses'
+rooms `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta`
+and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
 ---
 
 ## 1. Where it is
 
-The atlas (`src/content/areas/saltreach/atlas.ts`, spread into the plan until the area is listed)
-makes Saltreach three zones:
+The atlas (`src/content/areas/saltreach/atlas.ts`, merged into `ATLAS` with the plan) makes
+Saltreach three zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Upper Water | 10–11 | 7,714 | none |
-| The Delta | 10–12 | 3,697 | none |
+| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170) |
 | The Saltings | 11–12 | 3,588 | none |
-| The area | 10–12 | 14,999 | none |
+| The area | 10–12 | 14,999 | two boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 14,143 squares, about 13.8 zone maps (EXPANSION §1 has 13.8), and 11,965 of them a
@@ -53,8 +52,8 @@ Its edges:
   with the Upper Water under it. The Foreland's D3 and D4 hold the cliff and its foot; the border
   meets the Downs on 104 squares along the Upper Water and 27 along the Delta, and the only way over
   it is the Salt Road down the Edge, in D4 (#72), open from the start (EXPANSION §2.2). Where the
-  road leaves D4 it crosses D5's corner into C5, where the Delta begins: the world's end, until #170
-  is built.
+  road leaves D4 it comes down D5's west column, the shore under the Edge, and steps into C5. Laid
+  in the Delta, D5 takes the shore from the Downs, so the crossing line (#166) falls at D4's foot.
 - **South: the Scarp,** the escarpment between the Saltings and the Glasswold (26–28, Act IV), 103
   squares of border along B7 and C7. The Scarp stair climbs it at 80,206 (`src/content/atlas.ts`),
   a road link open from the start; it is Act IV's way down, and this act sees its foot and no more
@@ -91,21 +90,37 @@ day on the Saltings' ground (#162, #151's call 3).
 
 ## 3. What is built
 
-Nothing but its atlas rows (`src/content/areas/saltreach/atlas.ts`, #169): the zones with their
-bands (the Upper Water 10–11, the Delta 10–12, the Saltings 11–12), Saltmouth at 10–12, the Drowned
-Temples at 11–12 and the sites, which the plan spreads in where its own rows were. The atlas has the
-area's zones, the town and the dungeon as planned plates, its sites (Rietum, Saltmouth, the Tide
-Stone, the Drowned Temples and Sjonghol, its own; Sylmeer, Kestrel Edge and the Scarp, the plan's,
-§10) and its links: the road down Kestrel Edge, the town's and the temples' ways in, the boat to
-Wrackholm and the Scarp stair. The systems it waits on are #150's: the cap past 10 and the curve's
-rows (#159), ranks and morale (#160), casting, drain and elements (#161), salt, tidal ground and
-heather (#162), coaches and boats (#164), the Rift generator for its small Rifts (#165), the band
-said on crossing (#166) and the log paged by chapter (#167). Its monsters are drawn in #184 and its
-rooms in #185.
+Its atlas rows (`src/content/areas/saltreach/atlas.ts`, #169): the zones with their bands (the
+Upper Water 10–11, the Delta 10–12, the Saltings 11–12), Saltmouth at 10–12, the Drowned Temples at
+11–12 and the sites. The atlas has the area's zones, the town and the dungeon as planned plates, its
+sites (Rietum, Saltmouth, the Tide Stone, the Drowned Temples and Sjonghol, its own; Sylmeer,
+Kestrel Edge and the Scarp, the plan's, §10) and its links: the road down Kestrel Edge, the town's
+and the temples' ways in, the boat to Wrackholm and the Scarp stair. The systems it waits on are
+#150's: the cap past 10 and the curve's rows (#159), ranks and morale (#160), casting, drain and
+elements (#161), salt, tidal ground and heather (#162), coaches and boats (#164), the Rift generator
+for its small Rifts (#165), the band said on crossing (#166) and the log paged by chapter (#167). Its
+monsters are drawn in #184 and its rooms in #185. The boxes built:
+
+- **The shore under the Edge** (D5, `delta_d5`, country, band 10–11; #170): the Salt Road's three
+  squares down D4's foot and the milestone beside them (SALTMOUTH 4, RIETUM 5); the sand under the
+  cliff where Sylmeer opens; a shingle bar out across tidal flats to an islet, where a hermit mending
+  nets saw the barge go by and sends the company up the spur; and on south to a spit with a wreck's
+  ribs in it. No groups. The rest of the box is the gulf.
+- **The Delta road** (C5, `delta_c5`, country, band 10–11; #170): the causeway from the Edge's foot
+  down the fen's east side to C6, a camp at its head and the drowned god's dry shrine on it; the fork
+  at 25,27 with its sign and cairn, and the spur north up the river to C4; the fen's pools either side
+  of the causeway with leeches and an eel in each; a bull toad alone at the far end; a brine Rift
+  (`c5_rift`, #165's ring) on an islet between the spur and the causeway, its brinelings and its tide
+  elder quiet once the elder falls; and the river's west fen over two fords. The secret is a barge
+  drowned under the causeway's arch, the Brine Shard in its straw; the hint is the mast's stump at
+  the arch, with the stones glowing green beside it by night. The gate holds at 10, at 7.0 fights to
+  a rest on the box and 5.9 in the Rift.
+- **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
+  it four hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All of it: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the plan is ten boxes,
+All but C5 and D5: 14,143 squares of land, 11,965 of them walkable. On the grid (§1) the plan is ten boxes,
 a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
@@ -201,6 +216,16 @@ settled in its issue, and what the pilot teaches changes them.
   from a template (#165); the leech, the first monster whose hits heal it (#161).
 - **Finds.** The barge's shard, a quest item the plinth does not take (§5).
 - **Pay.** About 700 xp a member.
+- **As built** (#170, 1 October): with D5 beside it, the shore under the Edge (§3), which holds the
+  milestone and the hermit; the hermit is on D5's islet, not C5's, so that the islet and the spit
+  are land a company reaches. The pools are two groups of three leeches and an eel; the fen toad at
+  the far end is the bull toad alone, the box's hardest group, and the fen toads wait for B5. The
+  brinelings are the Rift's, in threes and fours, with a tide elder at its heart: the Tide Stone's
+  Rifts' family (MONSTERS §2.1). The Rift goes quiet when the elder falls; #191 adds the Stone home
+  as the other way. The hint is the mast's stump at the arch, which is always there; the green glow
+  above the arch is said by night beside it. As measured, C5 and its Rift pay 1,442 xp a member and
+  300 gold, the Rift about half of it. What the owner finds by hand goes here when the box has been
+  played.
 
 ### 4.3 C4, the spur to Rietum (#171): country, band 10–11
 
@@ -464,7 +489,8 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
 
 - **Experience.** The curve (EXPANSION §5.2, #159) gives an area the climb from its floor to the
   next area's floor, divided by 0.75: from 10 to 12 that is 6,200 / 0.75, about 8,267 xp a member,
-  with today's `xpForLevel`. The shares of §4 add up to about 8,300 without the willows: C5 700, C4
+  with today's `xpForLevel`. The shares of §4 add up to about 8,300 without the willows: C5 700 (1,442
+  as built, its Rift's half of it), C4
   600, C3 1,000, B5 1,000, B6 800, the temples 1,800, C6 700, Saltmouth 300, C7 700, and the four
   side quests about 700 between them. The willows add 800 when they are built. From here on a kill
   pays by level (#159), so a company that arrives at 10 earns the shares as written and one that
@@ -529,6 +555,24 @@ Decided by delegate for #169, each the owner's to overturn:
 4. **Sylmeer, Kestrel Edge and the Scarp stay the plan's:** each is a name on a border Saltreach
    shares, with the Foreland, Wrackholm or the Glasswold.
 
+Decided by delegate for #170, each the owner's to overturn:
+
+1. **D5 is laid with C5, both in the Delta,** band 10–11: the shore under the Edge becomes
+   Saltreach's, and the crossing line falls at D4's foot, where its last event already says the
+   Delta.
+2. **The hint is the mast's stump at the arch,** always there, and the stones' green glow is a
+   night-only line beside it: a secret's hint may not come and go (`tools/tests/pillars.ts`).
+3. **The groups are three:** the pools' leeches and eel, two groups of four, and the bull toad alone
+   at the far end, MONSTERS §6.1's "the Delta, alone", which the curve needs as the box's hardest.
+4. **The bull toad stands 1.35, not 1.4:** a group with a monster of 1.4 to 1.5 puts its label on
+   its markers, and five hundredths do not show in the drawing.
+5. **The Rift is #165's ring in brine,** brinelings in threes and fours and a tide elder with two at
+   its heart; its hoard holds no shard, so the barge's is the first the company can hold.
+6. **The Rift goes quiet when its warden falls,** as Thornmark's tear does; the Stone home is a flag
+   nothing sets until #191, which adds it.
+7. **The shard is the Brine Shard,** the fen's own word for it.
+8. **The hermit sits on D5's islet,** reached over a shingle bar, and points up the spur to Rietum.
+
 ## 10. Names
 
 Saltreach's naming pass, by the rules of `docs/NAMES.md`: the Tidefolk's tongue was left to it
@@ -574,9 +618,8 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
   country if the act plays short.
 - **The Scarp's foot,** B7 and A7: 970 squares, most of them the escarpment's face and the mountain
   behind it; the Scarp stair's foot is C7's.
-- **The slivers** in the Foreland's boxes and the gulf: D3, D4 and D5 (416 squares along the cliff's
-  foot and the gulf's shore, which D4 takes as the Foreland's, docs/areas/shelf.md §1), but for
-  D5's corner, which #170 lays to carry the Salt Road into C5; D6 (45, the plate's old place) and
-  C1 (33 of mountain).
+- **The slivers** in the Foreland's boxes and the gulf: D3 and D4 (the cliff's foot, which D4 takes
+  as the Foreland's, docs/areas/shelf.md §1); D6 (45, the plate's old place) and C1 (33 of
+  mountain). D5, the shore under the Edge, is laid with C5 (#170) to carry the Salt Road into it.
 
 About 5,700 squares in all, to come back as country only if the act plays short.

@@ -76,6 +76,7 @@ export const ROADS: Record<string, readonly string[]> = {
   downs: ['downs_f2:f2_bandits'],
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
   deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
+  delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -86,7 +87,13 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  * when it was owed. It is reported, not failed, and fails once it is inside its limit; it fails too if
  * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest).
  */
-export const OWED: Record<string, { whose: string; at: number }> = {};
+export const OWED: Record<string, { whose: string; at: number }> = {
+  // Past 10 the company's gear stops growing (GEAR's top step is the Deepthorn's), so a company two
+  // under a box past 10 is dressed as well as one at its floor: the gear past 10 is #18's.
+  'delta_c5: under': { whose: '#18', at: 1 },
+  'c5_rift: under': { whose: '#18', at: 1 },
+  'Saltreach: under': { whose: '#18', at: 1 },
+};
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
 

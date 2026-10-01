@@ -11,6 +11,7 @@ export const ZONES: readonly AtlasZone[] = [
 
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'saltmouth', name: 'Saltmouth', kind: 'town', planned: true, band: [10, 12], at: [100, 176] }, // on C6, at the Salt Road's end (#151)
+  { id: 'c5_rift', kind: 'dungeon', band: [10, 11], at: [92, 138] }, // the brine Rift on its islet off the causeway, C5 (#170)
   { id: 'drowned_temples', name: 'Drowned Temples', kind: 'dungeon', planned: true, band: [11, 12], at: [56, 160] },
 ];
 
