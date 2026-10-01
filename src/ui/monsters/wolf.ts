@@ -1,5 +1,8 @@
-// The wolf family: wolf, dire wolf, rift hound, black dog, chalk wolf and barrow wolf on one canine
-// frame, standing alert in profile. The barrow wolf, the chalk pit's old leader, is the chalk wolf's
+// The wolf family: wolf, dire wolf, rift hound, black dog, chalk wolf, barrow wolf and sunder hound
+// on one canine frame, standing alert in profile. The sunder hound is the rift hound gone to glass:
+// the coat dark, with plates of the Sunder's black glass grown through it at the shoulder, the
+// haunch and along the back, its spines clear glass, and its seams and eyes the Sunder's white
+// light rather than embers, and what rises off its back is motes of glass. The barrow wolf, the chalk pit's old leader, is the chalk wolf's
 // pale coat on a heavy frame: deep in the chest, thick in the ruff and the neck, the muzzle scarred.
 // The proportions are measured off a photograph of a grey wolf rather than invented: the legs are
 // two fifths of the height, the body a little under a half, the withers are the highest point of
@@ -21,7 +24,7 @@ import { celBall } from '../../lib/art/shading.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf', 'barrow_wolf'];
+export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf', 'barrow_wolf', 'sunder_hound'];
 
 /** Proportions that tell the kinds apart on the shared frame (1 = the lean grey wolf). */
 interface Build { neck: number; head: number; jaw: number; ruff: number; leg: number; body: number; fang: number; tail: number }
@@ -35,11 +38,12 @@ const CHALK: Build = { neck: 0.82, head: 0.97, jaw: 1.02, ruff: 0.5, leg: 0.78, 
 /** The barrow wolf: the chalk wolf grown old and heavy, the neck and the ruff thick, the fangs long. */
 const BARROW: Build = { neck: 1.25, head: 1.14, jaw: 1.15, ruff: 1.45, leg: 1.08, body: 1.1, fang: 1.5, tail: 0.95 };
 
-type Variant = 'wolf' | 'dire' | 'rift' | 'dog' | 'chalk' | 'barrow';
+type Variant = 'wolf' | 'dire' | 'rift' | 'dog' | 'chalk' | 'barrow' | 'sunder';
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'dire_wolf') canine(ctx, x, y, h, p, DIRE, 'dire');
   else if (kind === 'rift_hound') canine(ctx, x, y, h, p, HOUND, 'rift');
+  else if (kind === 'sunder_hound') canine(ctx, x, y, h, p, HOUND, 'sunder');
   else if (kind === 'black_dog') canine(ctx, x, y, h, p, DOG, 'dog');
   else if (kind === 'chalk_wolf') canine(ctx, x, y, h, p, CHALK, 'chalk');
   else if (kind === 'barrow_wolf') canine(ctx, x, y, h, p, BARROW, 'barrow');
@@ -48,12 +52,17 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
 
 /** Emissive ember colours for the rift hound: never toned, they are the light source. */
 const EMBER = '#ff7020', HOT = '#ffe0a0';
+/** A Rift's light, as the hound wears it: the glow, its hot core and the warm edge between. */
+interface Light { glow: string; hot: string; warm: string }
+const EMBERS: Light = { glow: EMBER, hot: HOT, warm: '#ffb060' };
+/** The Sunder's light: white, a little cold. */
+const SUNDER: Light = { glow: '#b8d0ff', hot: '#ffffff', warm: '#e4ecff' };
 /** The black dog's eyes, coals in the dark: never toned either, so they are what night leaves. */
 const COAL = '#ff4a14', COAL_HOT = '#ffc060';
 
 
 function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build, v: Variant): void {
-  const br = p.breathe, f = p.frame, rift = v === 'rift', dog = v === 'dog', chalk = v === 'chalk';
+  const br = p.breathe, f = p.frame, rift = v === 'rift' || v === 'sunder', lit = v === 'sunder' ? SUNDER : EMBERS, dog = v === 'dog', chalk = v === 'chalk';
   /** The Downs' pale wolves: the chalk wolf, and the barrow wolf on its heavier frame. */
   const pallid = chalk || v === 'barrow';
   const base = p.base, dark = p.dark, light = p.light;
@@ -72,7 +81,7 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   const U = (u: number) => y - u * h * b.body;
 
   groundShadow(ctx, x + h * 0.02, y + 1, h * 1.05);
-  if (rift) glow(ctx, B, X(-0.02), U(0.22), h * 0.36, EMBER, 0.22 + 0.12 * pulse, '#ffb060');
+  if (rift) glow(ctx, B, X(-0.02), U(0.22), h * 0.36, lit.glow, 0.22 + 0.12 * pulse, lit.warm);
 
   // The head rides high: on a standing wolf the eye sits just below the withers and the skull and
   // ears rise above them. It used to hang below the shoulder in a stalk, which along with short
@@ -105,7 +114,7 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     if (pallid) patch(ctx, B, shade(base, 0.3), [{ k: 'ell', x: t2x + h * 0.004, y: t2y - h * 0.045, rx: h * 0.03 * k, ry: h * 0.06 * k, rot: 0.15 }], { alpha: 0.85, feather: 0.4 });
   }
 
-  if (rift) spines(ctx, x, y, h, light, pulse);
+  if (rift) spines(ctx, x, y, h, light, pulse, lit);
 
   // ---- the coat: body, neck, ruff, head, jaw, near ear and the two near legs, ONE mass.
   // The outline carries the landmarks a wolf has: withers highest, a level back, a belly that
@@ -183,6 +192,8 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     }
   }
 
+  if (v === 'sunder') glassPlates(ctx, X, U, h, base);
+
   // ---- the open mouth, fangs, nose and eye.
   const jx0 = hx + rH * 0.45, jy0 = hy + rH * 0.56, jx1 = hx + rH * 1.45, jy1 = hy + rH * 0.6 * b.jaw;
   blob(ctx, B, mouth, [{ k: 'poly', pts: [hx + rH * 0.66, hy + rH * 0.34, hx + rH * 1.52, hy + rH * 0.42, jx1 + rH * 0.04, jy1 - rH * 0.12, jx0 + rH * 0.1, jy0 - rH * 0.1] }], { outline: false, form: false });
@@ -200,9 +211,9 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // second eye has nowhere to be. If this head is ever turned toward the party it becomes a matched
   // PAIR of the same size, the far one only slightly narrowed by the turn, as the black dog's is
   // (coals()); the rat and the boar are profiles with one eye.
-  const eyeCol = v === 'wolf' || pallid ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : HOT;
+  const eyeCol = v === 'wolf' || pallid ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : lit.hot;
   const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * (dog ? 0.17 : 0.15);
-  if (rift) glow(ctx, B, ex, ey, er * 3, EMBER, 0.4 + 0.3 * pulse, HOT);
+  if (rift) glow(ctx, B, ex, ey, er * 3, lit.glow, 0.4 + 0.3 * pulse, lit.hot);
   if (dog) coals(ctx, hx, hy, rH, ex, ey, er, pulse);
   // The dark surround a wolf carries around the eye, which is what makes it read from across a room.
   if (rH >= 9 && !dog) softLine(ctx, B, [ex - er * 1.2, ey + er * 0.2, ex + er * 1.6, ey - er * 0.1], shade(base, 0.6), Math.max(1, er * 1.5), 0.5);
@@ -215,7 +226,7 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   if (v === 'dire') scars(ctx, x, y, h, mx, my, rH, shade('#c0b0a4', p.tone));
   // The barrow wolf's scars are dark on its pale coat: bare hide where the fur never grew back.
   if (v === 'barrow') scars(ctx, x, y, h, mx, my, rH, shade('#6a6258', p.tone));
-  if (rift) riftFx(ctx, x, y, h, hx, hy, rH, f, light, pulse);
+  if (rift) riftFx(ctx, x, y, h, hx, hy, rH, f, light, pulse, lit);
 }
 
 /**
@@ -345,42 +356,66 @@ function scars(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, m
   ctx.stroke();
 }
 
+/**
+ * The sunder hound's glass: plates of the Sunder's black glass grown through the coat at the
+ * shoulder, the haunch, the back and the near foreleg, each faceted and glossy, a pale edge where it
+ * catches the light. Sunk inside the coat's outline, so the hound stays one piece.
+ */
+function glassPlates(ctx: CanvasRenderingContext2D, X: (u: number) => number, U: (u: number) => number, h: number, base: string): void {
+  const glass = mix(base, '#6a7c9c', 0.4), edge = mix(SUNDER.warm, base, 0.25);
+  const PLATES: number[][] = [
+    [0.1, 0.78, 0.2, 0.82, 0.27, 0.7, 0.22, 0.56, 0.12, 0.6],            // the shoulder
+    [-0.35, 0.74, -0.24, 0.79, -0.19, 0.66, -0.25, 0.56, -0.34, 0.6],    // the haunch
+    [-0.12, 0.8, 0.0, 0.83, 0.05, 0.76, -0.04, 0.71, -0.13, 0.74],       // the back
+    [0.215, 0.44, 0.25, 0.42, 0.255, 0.3, 0.23, 0.29],                   // the near foreleg
+  ];
+  PLATES.forEach((q, i) => {
+    const pts = q.map((v, k) => (k % 2 ? U(v) : X(v)));
+    blob(ctx, B, glass, [{ k: 'poly', pts }], { h, tex: 'facets', seed: 60 + i, gloss: 0.9, form: false, spread: 0.6 });
+    if (B.override) return;
+    // The lit edge: the top and the left-hand sides, the way the light falls.
+    softLine(ctx, B, [pts[pts.length - 2], pts[pts.length - 1], pts[0], pts[1], pts[2], pts[3]], edge, Math.max(1, h * 0.01), 0.7);
+    ctx.strokeStyle = rgba(edge, 0.75); ctx.lineWidth = Math.max(1, h * 0.006); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(pts[pts.length - 2], pts[pts.length - 1]); ctx.lineTo(pts[0], pts[1]); ctx.lineTo(pts[2], pts[3]); ctx.stroke();
+  });
+}
+
 /** Rift hound: a row of crystal shards along the back, leaning back, one faceted glossy mass, hot at the root. */
-function spines(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, light: string, pulse: number): void {
+function spines(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, light: string, pulse: number, lit: Light): void {
   const yb = y - h * 0.845, pts: number[] = [x - h * 0.34, yb + h * 0.05];
   for (let i = 0; i < 4; i++) {
     const t = i / 3, bx = x - h * 0.28 + t * h * 0.38, sh = h * (i === 1 ? 0.18 : i === 2 ? 0.21 : 0.13), sw = h * 0.042;
-    glow(ctx, B, bx, yb - sh * 0.15, sh * 0.6, EMBER, 0.25 + 0.25 * pulse, '#ffb060');
+    glow(ctx, B, bx, yb - sh * 0.15, sh * 0.6, lit.glow, 0.25 + 0.25 * pulse, lit.warm);
     pts.push(bx - sw * 0.6, yb, bx - sw * 0.9, yb - sh, bx + sw * 0.5, yb - sh * 0.5, bx + sw, yb);
   }
   pts.push(x + h * 0.14, yb + h * 0.05);
-  blob(ctx, B, mix(light, HOT, 0.35), [{ k: 'poly', pts }], { h, tex: 'facets', seed: 5, gloss: 0.8, form: false, spread: 0.6 });
+  blob(ctx, B, mix(light, lit.hot, 0.35), [{ k: 'poly', pts }], { h, tex: 'facets', seed: 5, gloss: 0.8, form: false, spread: 0.6 });
 }
 
 /** Rift hound: ember seams splitting the hide, glowing eyes and embers drifting up off the back. */
-function riftFx(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, hx: number, hy: number, rH: number, f: number, light: string, pulse: number): void {
+function riftFx(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, hx: number, hy: number, rH: number, f: number, light: string, pulse: number, lit: Light): void {
   const gw = Math.max(2, h * 0.05), sw = Math.max(1, h * 0.016);
-  seam(ctx, [x - h * 0.26, y - h * 0.76, x - h * 0.16, y - h * 0.64, x - h * 0.02, y - h * 0.70, x + h * 0.12, y - h * 0.58], light, gw, sw, pulse);
-  seam(ctx, [x - h * 0.30, y - h * 0.64, x - h * 0.24, y - h * 0.54, x - h * 0.22, y - h * 0.44], light, gw, sw, pulse);
-  seam(ctx, [x + h * 0.10, y - h * 0.84, x + h * 0.20, y - h * 0.76, hx - rH * 0.5, hy - rH * 0.3], light, gw, sw, pulse);
-  seam(ctx, [hx - rH * 0.15, hy + rH * 0.1, hx + rH * 0.2, hy + rH * 0.32, hx + rH * 0.7, hy + rH * 0.28], light, gw * 0.7, sw, pulse);
+  seam(ctx, [x - h * 0.26, y - h * 0.76, x - h * 0.16, y - h * 0.64, x - h * 0.02, y - h * 0.70, x + h * 0.12, y - h * 0.58], light, gw, sw, pulse, lit);
+  seam(ctx, [x - h * 0.30, y - h * 0.64, x - h * 0.24, y - h * 0.54, x - h * 0.22, y - h * 0.44], light, gw, sw, pulse, lit);
+  seam(ctx, [x + h * 0.10, y - h * 0.84, x + h * 0.20, y - h * 0.76, hx - rH * 0.5, hy - rH * 0.3], light, gw, sw, pulse, lit);
+  seam(ctx, [hx - rH * 0.15, hy + rH * 0.1, hx + rH * 0.2, hy + rH * 0.32, hx + rH * 0.7, hy + rH * 0.28], light, gw * 0.7, sw, pulse, lit);
   if (B.override) return;
-  // Embers rising off the back, four on a loop.
+  // Embers rising off the back, four on a loop: the sunder hound's are motes of glass.
   for (let i = 0; i < 4; i++) {
     const t = ((f / 90) + i / 4) % 1;
     const ex = x - h * 0.28 + i * h * 0.16 + Math.sin(f / 9 + i * 2) * h * 0.03, ey = y - h * 0.94 - t * h * 0.3;
     const r = Math.max(2, h * 0.04 * (1 - t * 0.5));
-    ctx.fillStyle = rgba(i === 1 ? HOT : EMBER, 0.9 - t * 0.8);
+    ctx.fillStyle = rgba(i === 1 ? lit.hot : lit.glow, 0.9 - t * 0.8);
     ctx.fillRect(Math.round(ex - r / 2), Math.round(ey - r / 2), Math.max(1, Math.round(r)), Math.max(1, Math.round(r)));
   }
 }
 
 /** One ember seam: a soft glow along the line, then a light line with a hot core. Flat white while flashing. */
-function seam(ctx: CanvasRenderingContext2D, pts: number[], light: string, gw: number, sw: number, pulse: number): void {
+function seam(ctx: CanvasRenderingContext2D, pts: number[], light: string, gw: number, sw: number, pulse: number, lit: Light): void {
   if (!B.override) {
-    for (let i = 2; i < pts.length; i += 2) glow(ctx, B, (pts[i - 2] + pts[i]) / 2, (pts[i - 1] + pts[i + 1]) / 2, gw * 1.8, EMBER, 0.2 + 0.2 * pulse, '#ffb060');
-    stroke(ctx, pts, rgba(EMBER, 0.35 + 0.3 * pulse), gw);
+    for (let i = 2; i < pts.length; i += 2) glow(ctx, B, (pts[i - 2] + pts[i]) / 2, (pts[i - 1] + pts[i + 1]) / 2, gw * 1.8, lit.glow, 0.2 + 0.2 * pulse, lit.warm);
+    stroke(ctx, pts, rgba(lit.glow, 0.35 + 0.3 * pulse), gw);
   }
   stroke(ctx, pts, light, sw + 1);
-  stroke(ctx, pts, mix(HOT, '#ffffff', 0.3 * pulse), sw);
+  stroke(ctx, pts, mix(lit.hot, '#ffffff', 0.3 * pulse), sw);
 }

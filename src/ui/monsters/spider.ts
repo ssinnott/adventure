@@ -13,6 +13,8 @@
 // near legs over that; the rear legs are a darker mass behind everything. A leg reads as segmented
 // because the knee carries a swelling and a crease, and the shin is visibly thinner than the
 // thigh. Facing the party in a slight three-quarter; idle is a leg twitch and an abdomen bob.
+// The glass spider is the marsh spider's body in the Sunder's black glass, a white light inside it,
+// standing on threads of glass it has strung from its feet out across the air.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -21,7 +23,7 @@ import type { Part, Crease } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab'];
+export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab', 'glass_spider'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'thorn_spider') thorn(ctx, x, y, h, p);
@@ -29,6 +31,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'barnacle_crab') crab(ctx, x, y, h, p, 'barnacle');
   else if (kind === 'salt_crab') crab(ctx, x, y, h, p, 'salt');
   else if (kind === 'rift_crawler') crawler(ctx, x, y, h, p);
+  else if (kind === 'glass_spider') glassSpider(ctx, x, y, h, p);
   else marsh(ctx, x, y, h, p);
 };
 
@@ -539,4 +542,115 @@ function crawler(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
     eye(ctx, cx + h * ex, cy + h * ey, h * er, mix('#ff5a14', heart, 0.06 + pulse * 0.26), false);
   }
   void p.light;
+}
+
+// ------------------------------------------------------------------ the glass spider ----
+/** The Sunder's light: white, and never toned, since it is the light source. */
+const SUNDER = '#e8f0ff', SUNDER_HOT = '#ffffff';
+
+/**
+ * The threads it walks: glass drawn out fine, strung from its feet across the gorge's air and up
+ * into the dark, each one taut and ruled straight, with beads of light standing on it. They are
+ * drawn before the spider, so they run under its feet and are one piece with it.
+ */
+function threads(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, R: Rig, f: number): void {
+  if (B.override && h < 40) return;
+  const foot = (s: number, i: number): [number, number] => { const l = R.legs.find((l) => l.s === s && l.i === i)!; return [l.pts[10], l.pts[11]]; };
+  const lines: [number, number, number, number][] = [];
+  for (const s of [-1, 1]) {
+    const [fx, fy] = foot(s, 1), [rx, ry] = foot(s, 3), [qx, qy] = foot(s, 0);
+    const hi: [number, number] = [x + s * h * 1.36, y - h * (s > 0 ? 0.92 : 0.78)], out: [number, number] = [x + s * h * 1.4, y - h * 0.26];
+    lines.push([rx, ry, hi[0], hi[1]]);                              // up and away into the dark
+    lines.push([fx, fy, out[0], out[1]]);                            // out across the air
+    lines.push([qx, qy, x + s * h * 0.7, y - h * 0.01]);             // down to the edge it walks
+    // A strand across between the two, as a web's first rung.
+    const a = 0.62, b = 0.78;
+    lines.push([rx + (hi[0] - rx) * a, ry + (hi[1] - ry) * a, fx + (out[0] - fx) * b, fy + (out[1] - fy) * b]);
+  }
+  const w = Math.max(1, h * 0.011), glass = shade(mix(SUNDER, '#8090b0', 0.35), 1);
+  ctx.lineCap = 'round';
+  for (const [x0, y0, x1, y1] of lines) {
+    if (B.override) { ctx.strokeStyle = B.override; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); continue; }
+    // A dark core with a pale edge, so the thread reads on a lit ground and on a dark one.
+    ctx.strokeStyle = rgba('#141824', 0.75); ctx.lineWidth = w + 1; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    ctx.strokeStyle = rgba(glass, 0.95); ctx.lineWidth = w * 0.6; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+  }
+  // Beads of light along them, each on its own beat, as a dew line catches the sun.
+  if (B.override || h < 30) return;
+  lines.forEach(([x0, y0, x1, y1], i) => {
+    for (let k = 0; k < 3; k++) {
+      const t = 0.3 + k * 0.24 + nz(i, k) * 0.08, beat = 0.5 + 0.5 * Math.sin(f / 9 + i * 1.7 + k * 2.3);
+      const bx = x0 + (x1 - x0) * t, by = y0 + (y1 - y0) * t;
+      glow(ctx, B, bx, by, h * 0.03 * (0.6 + beat * 0.6), SUNDER, 0.25 + beat * 0.45, SUNDER_HOT);
+      ctx.fillStyle = rgba(SUNDER_HOT, 0.6 + beat * 0.4); ctx.beginPath(); ctx.arc(bx, by, Math.max(0.7, h * 0.006), 0, Math.PI * 2); ctx.fill();
+    }
+  });
+}
+
+/**
+ * The Glass Spider: the marsh spider's body in the Sunder's black glass, slender and smooth where
+ * the rift crawler is spiked, its legs rods of glass with a pale edge down each, and a white light
+ * inside the abdomen showing through the glass and along its cracks. White eyes. Idle: the light
+ * breathes, the legs twitch, and the beads on the threads catch it.
+ */
+function glassSpider(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = rig(x, y, h, p.frame, p.breathe, 1.04);
+  const { ax, ay, cx, cy } = R;
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 11);
+  const glass = mix(p.base, '#10121c', 0.25);
+  const edge = shade(mix(SUNDER, glass, 0.35), Math.max(0.7, p.tone));
+  groundShadow(ctx, x + h * 0.02, y + 1, h * 1.9);
+  threads(ctx, x, y, h, R, p.frame);
+  glow(ctx, B, ax, ay, h * 0.5, SUNDER, 0.1 + pulse * 0.06, SUNDER);
+
+  const rear = R.legs.filter((l) => l.i >= 2), near = R.legs.filter((l) => l.i < 2);
+  blob(ctx, B, shade(glass, 0.75), rear.flatMap((l) => legParts(l, h, 0.046, 0.011, 0)), { h, formK: 0.45, spread: 0.7, creases: legCreases(rear, h, 0.04) });
+  rods(ctx, rear, h, edge, 0.45);
+  // The abdomen: a smooth bulb of glass, glossy, its own contour.
+  blob(ctx, B, glass, [{ k: 'curve', pts: ring(ax, ay, h * 0.31, h * 0.26, 11, 9), wobble: 0.03, seed: 91, sub: 3 }], { h, formK: 0.55, gloss: 0.9, spread: 0.65, tex: 'facets', seed: 92, amount: 0.5 });
+  // The light inside, and the cracks it gets out along.
+  if (!B.override) {
+    glow(ctx, B, ax + h * 0.03, ay + h * 0.02, h * 0.22 * (1 + pulse * 0.2), SUNDER, 0.75 + pulse * 0.25, SUNDER_HOT);
+    glow(ctx, B, ax + h * 0.03, ay + h * 0.02, h * 0.08, SUNDER_HOT, 0.9, SUNDER_HOT);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const crack of [
+      [ax - h * 0.22, ay - h * 0.1, ax - h * 0.08, ay - h * 0.02, ax + h * 0.03, ay + h * 0.02],
+      [ax + h * 0.03, ay + h * 0.02, ax + h * 0.12, ay - h * 0.14, ax + h * 0.2, ay - h * 0.16],
+      [ax + h * 0.03, ay + h * 0.02, ax + h * 0.05, ay + h * 0.18],
+    ]) for (const [w, a] of [[h * 0.03, 0.2], [h * 0.011, 0.65 + pulse * 0.35]] as const) {
+      ctx.strokeStyle = rgba(SUNDER, a); ctx.lineWidth = Math.max(1, w);
+      ctx.beginPath(); ctx.moveTo(crack[0], crack[1]); for (let i = 2; i < crack.length; i += 2) ctx.lineTo(crack[i], crack[i + 1]); ctx.stroke();
+    }
+  }
+  blob(ctx, B, shade(glass, 0.85), [{ k: 'tube', pts: [ax + h * 0.21, ay + h * 0.14, cx - h * 0.1, cy - h * 0.06], r0: h * 0.06, r1: h * 0.07 }], { h, form: false });
+  blob(ctx, B, glass, near.flatMap((l) => legParts(l, h, 0.05, 0.012, 0)), { h, formK: 0.55, spread: 0.7, creases: legCreases(near, h, 0.042) });
+  rods(ctx, near, h, edge, 0.7);
+  // The cephalothorax, smooth glass, with the palps and the chelicerae under it.
+  blob(ctx, B, shade(glass, 1.12), [
+    { k: 'curve', pts: ring(cx, cy, h * 0.3, h * 0.245, 9, 10), wobble: 0.03, seed: 93, sub: 3, gloss: 0.5 },
+    { k: 'tube', pts: [cx - h * 0.1, cy + h * 0.05, cx - h * 0.2, cy + h * 0.16, cx - h * 0.17, cy + h * 0.28], r0: h * 0.032, r1: h * 0.017, seed: 94 },
+    { k: 'tube', pts: [cx + h * 0.11, cy + h * 0.05, cx + h * 0.22, cy + h * 0.15, cx + h * 0.2, cy + h * 0.28], r0: h * 0.032, r1: h * 0.017, seed: 95 },
+    { k: 'tube', pts: [cx - h * 0.06, cy + h * 0.1, cx - h * 0.065, cy + h * 0.21], r0: h * 0.046, r1: h * 0.038, seed: 96 },
+    { k: 'tube', pts: [cx + h * 0.07, cy + h * 0.1, cx + h * 0.072, cy + h * 0.21], r0: h * 0.046, r1: h * 0.038, seed: 97 },
+  ], { h, formK: 0.45, gloss: 0.6, spread: 0.65 });
+  // The rim of the carapace catching the light, a pale arc along its top.
+  softLine(ctx, B, [cx - h * 0.24, cy - h * 0.1, cx - h * 0.12, cy - h * 0.2, cx + h * 0.02, cy - h * 0.23, cx + h * 0.14, cy - h * 0.2], edge, Math.max(1, h * 0.012), 0.55);
+  if (!B.override) {
+    ctx.strokeStyle = rgba(edge, 0.55); ctx.lineWidth = Math.max(1, h * 0.008); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(cx - h * 0.22, cy - h * 0.11); ctx.quadraticCurveTo(cx - h * 0.08, cy - h * 0.24, cx + h * 0.12, cy - h * 0.2); ctx.stroke();
+  }
+  // White eyes, lit from inside; glass fangs.
+  glow(ctx, B, cx, cy - h * 0.095, h * 0.15, SUNDER, 0.2 + pulse * 0.1, SUNDER_HOT);
+  eyes(ctx, cx, cy - h * 0.095, h, mix(SUNDER, '#b8c8e8', 0.3 - pulse * 0.2));
+  fangs(ctx, cx, cy + h * 0.03, h, h * 0.028, h * 0.13, shade(mix(SUNDER, '#9aa8c4', 0.5), Math.max(0.7, p.tone)));
+}
+
+/** A pale edge down each segment of a glass leg, on its lit side: what makes a dark rod read as glass. */
+function rods(ctx: CanvasRenderingContext2D, legs: readonly Leg[], h: number, edge: string, a: number): void {
+  if (B.override || h < 26) return;
+  ctx.lineCap = 'round'; ctx.strokeStyle = rgba(edge, a); ctx.lineWidth = Math.max(1, h * 0.007);
+  for (const l of legs) {
+    const q = l.pts, o = -h * 0.012;
+    ctx.beginPath(); ctx.moveTo(q[0] + o, q[1] + o); ctx.lineTo(q[4] + o, q[5] + o); ctx.lineTo(q[8] + o * 0.6, q[9] + o * 0.6); ctx.lineTo(q[10], q[11]); ctx.stroke();
+  }
 }
