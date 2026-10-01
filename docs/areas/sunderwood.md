@@ -510,7 +510,7 @@ features; the pay shared out over the area (§8).
 - **Pay.** About 300 xp a member in the tower's quests.
 
 - **As built** (#201, 1 October): one tower in a walled yard, the yard's wall the map's edge, the
-  road up from the gate to the tower's foot, grass and four oaks. The tower is six squares a side
+  road up from the gate to the tower's foot, grass and six oaks. The tower is six squares a side
   with its five doors: the Lantern hall at its foot (The Watch's Lantern Hall, the Lanterns' hall,
   spells to tier 6 for a fee of 400), the refectory (rest at 30), the stores (the eight wares of
   #399, lamp oil, elixirs, great spell potions and rations), the prior's room, and the Lamp Gallery
@@ -521,11 +521,12 @@ features; the pay shared out over the area (§8).
   nothing: 31 and 32 are #205's. The young sister stays by L2's dark lamp: where she moves is 31's.
   Six events, a sign and a well: the gate, the lamp by night, the lookout, the oil jars stopper out,
   the brothers' graves and the bell tied up. Every square is within five steps of a point. The
-  papers are read in the prior's room: the Reader shuts the door and reads the Helmstow customs seal
-  on every cargo, the Regent's countersign on every page and the one name at the foot of the log's
-  entries, Vask, and puts both back in the company's hands. That sets `papers_read`, the midpoint's
-  flag, which #204's chapter reads; what Vask believes is his to say the next morning. The prior,
-  shown the papers, asks for them for Helmstow's oil cart and takes nothing. The 300 xp of
+  papers are read in the prior's room: once she has met the company, the Reader shuts the door and
+  reads what it carries, the Helmstow customs seal on every cargo and the Regent's countersign on
+  every page of the papers, and the one name at the foot of the log's entries, Vask, and puts what
+  she read back in the company's hands. That sets `papers_read`, the midpoint's flag, which #204's
+  chapter will read; what Vask believes is his to say the next morning. The prior, met and shown
+  the papers, asks for them for Helmstow's oil cart and takes nothing. The 300 xp of
   the tower's quests waits on 31 and 32, so the area's curve stays owed to #155.
 
 ### 4.9 M2 and J3, the road on and under the Eaves (#202): country, band 16
@@ -605,8 +606,8 @@ with its box on the systems of #76 (#205):
 |---|---|---|---|---|---|---|
 | 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 200 | #196, #201 |
 | 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 200 | #197, #198 |
-| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #201, #205 (L2, #200, places the sister and her hint only) |
-| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #201, #199 |
+| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #205 (L2, #200, places the sister and her hint only; #201 leaves her there) |
+| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #205, #199 (#201 places the surveyor and his lines only) |
 
 Pay is xp a member, whichever way the choice goes, shared by level: 900 between the four (§8).
 
@@ -808,14 +809,21 @@ Decided by delegate for #201, each the owner's to overturn:
 11. **The Reader reads the papers, not the prior,** in his room with the door shut, as the letter
     under L2's ash asks: Hester Dunmore, Reader of the Watch, the Lanterns' third rank.
 12. **The midpoint's flag is `papers_read`,** set by her words once the company carries the papers or
-    the log, at any hour and with nothing else done. It is not a hand-in: she reads them and gives
+    the log, at any hour and with nothing but her introduction done. It is not a hand-in: she reads them and gives
     them back, as Ysolde reads the Meridian journal, so #204 and the company keep them.
 13. **The letter changes only how she begins** ("You have been on the knoll, then."): the reading is
     never missed for want of the secret.
 14. **The reveal stops at what is written:** the seal, the countersign and the name. She draws no
     conclusion aloud; cages, the sky and the Hand are Vask's to say in the rain (#204).
 15. **The prior asks for the papers and takes nothing,** and once they are read says the chair in his
-    room was warm: his side is felt, and no flag or choice is spent on it (31 is #205's).
+    room was warm: his side is felt, and no flag of the split or choice is spent on it (31 is
+    #205's).
+16. **The reading follows what is carried:** the papers alone are read for the seal and the
+    countersign, the log alone for the name, and both for all three; the drafting agent wrote each.
+17. **The introduction comes first:** the Reader and the prior each set a flag on meeting
+    (`watch_reader_met`, `watch_prior_met`), and their words about the papers wait on it, so a
+    company that comes in carrying them hears who they are before the reading, and "Shut it, if you
+    would" sets up the shut door.
 
 ## 10. Names
 

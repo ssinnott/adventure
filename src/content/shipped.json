@@ -1174,7 +1174,9 @@
     "rank_cartographers",
     "rank_compact",
     "rank_lanterns",
-    "rank_wardens"
+    "rank_wardens",
+    "watch_prior_met",
+    "watch_reader_met"
   ],
   "items": [
     "antidote",
