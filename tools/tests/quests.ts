@@ -94,8 +94,11 @@ export function quests(): void {
       if (PLANNED[z.id]) owed(held.has(z.id), msg, PLANNED[z.id]);
       else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
+    // An area listed by its first map before its chapter is written: the chapter is owed by its issue.
+    const CHAPTER_OWED: Record<string, string> = {};
     const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
-    ok(AREAS.every((a) => a.chapter) && !walks.length, `every area has a chapter of the one quest and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
+    ok(AREAS.every((a) => a.chapter || CHAPTER_OWED[a.id]) && !walks.length, `every area has a chapter of the one quest, or owes it, and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
+    for (const a of AREAS.filter((x) => CHAPTER_OWED[x.id])) owed(!!a.chapter, `${a.id} has a chapter of the one quest`, CHAPTER_OWED[a.id]);
   }
   { // A chapter too long for one page goes on over the next, and keeps every entry.
     const c = THE_QUEST.chapters[0];
