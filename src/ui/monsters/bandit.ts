@@ -21,7 +21,7 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat', 'bargeman', 'barge_master'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat', 'bargeman', 'barge_master', 'wrack_smuggler', 'wrack_bowman'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
@@ -32,6 +32,8 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'cutthroat') cutthroat(ctx, x, y, h, p);
   else if (kind === 'bargeman') bargeman(ctx, x, y, h, p);
   else if (kind === 'barge_master') bargeMaster(ctx, x, y, h, p);
+  else if (kind === 'wrack_smuggler') wrackSmuggler(ctx, x, y, h, p);
+  else if (kind === 'wrack_bowman') wrackBowman(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -1398,5 +1400,164 @@ function bargeMaster(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
     stroke(ctx, [a[0], a[1], b[0], b[1]], shade('#7a6a58', p.tone), 1);
   }
   hand(ctx, R, far[2], null, 448, { far: true, k: 0.94 });
+  void p.light;
+}
+
+// ------------------------------------------------------------------ the Wrack crews ----
+/**
+ * The Helmstow coat: a short reefer to the hip off a capital tailor, double-breasted and fitted at
+ * the waist, madder red with gold piping at the collar and the cuffs and two rows of pewter
+ * buttons. Every Wrack crewman wears one, and nobody else in this family wears red. Body and near
+ * sleeve are one mass; the standing collar and the piping go over it.
+ */
+function helmstowCoat(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, near: Arm, hemY: number, seed: number): void {
+  const { x, sy, h, hx, hy, hr } = R;
+  const coat = p.base, gold = shade('#c8a040', p.tone), pewter = shade('#a8acb0', p.tone);
+  blob(ctx, B, coat, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed, sub: 3 },
+    ...armParts(R, near, seed + 1),
+  ], { h, formK: 0.5, tex: 'folds', seed, amount: 0.6, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The double breast: the overlap's edge down the near side, and the two rows of buttons.
+  softLine(ctx, B, [x + h * 0.05, sy + h * 0.05, x + h * 0.046, hemY], shade(coat, 0.6), Math.max(1, h * 0.008), 0.7);
+  for (let i = 0; i < 3; i++) for (const bx of [-0.03, 0.09]) glossBall(ctx, B, x + h * bx, sy + h * (0.08 + i * 0.065), Math.max(1, h * 0.011), pewter, { gloss: 0.6 });
+  // The standing collar, piped in gold.
+  blob(ctx, B, coat, [{ k: 'curve', pts: [hx - hr * 1.5, hy + hr * 2.3, hx - hr * 1.3, hy + hr * 1.55, hx - hr * 0.5, hy + hr * 1.68, hx + hr * 0.6, hy + hr * 1.66, hx + hr * 1.36, hy + hr * 1.5, hx + hr * 1.56, hy + hr * 2.3, hx + hr * 0.8, hy + hr * 2.1, hx - hr * 0.7, hy + hr * 2.12], wobble: 0.04, seed: seed + 2, sub: 3 }],
+    { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: seed + 2, amount: 0.3 });
+  softLine(ctx, B, [hx - hr * 1.3, hy + hr * 1.6, hx - hr * 0.5, hy + hr * 1.73, hx + hr * 0.6, hy + hr * 1.71, hx + hr * 1.36, hy + hr * 1.55], gold, Math.max(1, h * 0.009), 0.95);
+  // The cuff on the near sleeve, piped.
+  const e = near[1], w = near[2], cu = (t: number): Pt => ({ x: e.x + (w.x - e.x) * t, y: e.y + (w.y - e.y) * t });
+  const c0 = cu(0.68), c1 = cu(0.9);
+  blob(ctx, B, shade(coat, 0.8), [tube([c0.x, c0.y, c1.x, c1.y], h * 0.04, h * 0.044, 0, seed + 3)], { h, formK: 0.5, spread: 0.7 });
+  const dx = c1.x - c0.x, dy = c1.y - c0.y, L = Math.hypot(dx, dy) || 1, nx = -dy / L * h * 0.042, ny = dx / L * h * 0.042;
+  softLine(ctx, B, [c0.x + nx, c0.y + ny, c0.x - nx, c0.y - ny], gold, Math.max(1, h * 0.008), 0.95);
+}
+
+/**
+ * A Wrack crewman's head: bare, the hair tarred back into a sailor's queue that stands out behind
+ * him, a gold ring in the near ear, clean-shaven. The queue is what sets the crews apart from the
+ * capped and hatted men of the Foreland's smuggling gang at a glance.
+ */
+function wrackHead(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, sway: number, seed: number): void {
+  const { h, hx, hy, hr } = R;
+  // The queue: out from the back of the head toward the far side, bound with cord, a tuft at the end.
+  const q0 = { x: hx - hr * 0.7, y: hy - hr * 0.3 }, q1 = { x: hx - hr * 1.9 + sway, y: hy + hr * 0.5 };
+  blob(ctx, B, R.hair, [
+    tube([q0.x, q0.y, (q0.x + q1.x) / 2, (q0.y + q1.y) / 2 - hr * 0.1, q1.x, q1.y], hr * 0.26, hr * 0.16, 0.04, seed),
+    { k: 'curve', pts: [q1.x + hr * 0.1, q1.y - hr * 0.1, q1.x - hr * 0.3, q1.y + hr * 0.1, q1.x - hr * 0.2, q1.y + hr * 0.5, q1.x + hr * 0.15, q1.y + hr * 0.3], wobble: 0.1, spiky: 0.2, seed: seed + 1, sub: 2 },
+  ], { h, formK: 0.4, spread: 0.7 });
+  const qb = { x: q0.x + (q1.x - q0.x) * 0.6, y: q0.y + (q1.y - q0.y) * 0.6 };
+  stroke(ctx, [qb.x - hr * 0.05, qb.y - hr * 0.2, qb.x + hr * 0.08, qb.y + hr * 0.2], shade('#c8b890', p.tone), Math.max(1, hr * 0.16));
+  face(ctx, R, false);
+  // The hair, combed back flat and tarred: a cap of it to the brow, close to the skull.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 1.02, hy - hr * 0.2, hx - hr * 0.96, hy - hr * 0.86, hx - hr * 0.3, hy - hr * 1.1, hx + hr * 0.4, hy - hr * 1.08, hx + hr * 0.94, hy - hr * 0.8, hx + hr * 1.0, hy - hr * 0.36, hx + hr * 0.5, hy - hr * 0.6, hx - hr * 0.5, hy - hr * 0.62], wobble: 0.04, seed: seed + 2, sub: 2 }], { h, formK: 0.45, gloss: 0.3 });
+  // The gold ring in the near ear.
+  if (!B.override) {
+    ctx.strokeStyle = shade('#e0b040', Math.max(0.6, p.tone)); ctx.lineWidth = Math.max(1, hr * 0.12);
+    ctx.beginPath(); ctx.arc(hx + hr * 0.98, hy + hr * 0.38, Math.max(1, hr * 0.17), 0, Math.PI * 2); ctx.stroke();
+  }
+}
+
+/**
+ * The Wrack smuggler: a Compact hand gone over to the Hand's coin, and dressed on it, in a Helmstow
+ * coat. He leans in with the near foot leading and the Compact's knife raised by his ear in a
+ * reverse grip, point down and out, ready to cut; the far fist is on his hip. The knife is a long
+ * single-edged blade with its grip bound in tarred cord and a pale rope knot at the pommel: the
+ * Compact's mark, on a man who has left it.
+ */
+function wrackSmuggler(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.024, hipTilt: 0.02, turn: 0.026, near: [0.082, 0.19, 0.236], far: [-0.078, -0.12, -0.162], toe: [1, -0.8], lift: [0, 0.03] });
+  const { sy } = R;
+  const sway = Math.sin(p.frame / 20) * h * 0.006;
+  // The near fist up by the ear; the far one on the hip, elbow out.
+  const fist = { x: x + h * 0.25, y: sy - h * 0.08 + sway };
+  const near: Arm = [R.sNear, { x: x + h * 0.3, y: sy + h * 0.08 }, fist];
+  const far: Arm = [R.sFar, { x: x - h * 0.26, y: sy + h * 0.16 }, { x: x - h * 0.13, y: sy + h * 0.25 }];
+  const hemY = y - h * 0.45;
+  groundShadow(ctx, x, y + 1, h * 0.78);
+  blob(ctx, B, shade(p.dark, 0.84), armParts(R, far, 501, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  hand(ctx, R, far[2], null, 502, { far: true, k: 0.92 });
+  legs(ctx, R, shade('#4a5260', p.tone), 503, [1, -0.8]);
+  headNeck(ctx, R);
+  helmstowCoat(ctx, R, p, near, hemY, 504);
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.06, h * 0.036, 509)], { h, form: false });
+  band(ctx, B, x - h * 0.02, hemY - h * 0.062, h * 0.036, h * 0.036, R.dull);
+  wrackHead(ctx, R, p, sway, 510);
+  // The knife, point down and out from the fist, and the Compact's knot at its pommel.
+  const tip = { x: fist.x + h * 0.15, y: fist.y + h * 0.13 };
+  const ka = blade(ctx, R, fist, tip.x, tip.y, h * 0.014, h * 0.028);
+  const ux = Math.cos(ka), uy = Math.sin(ka);
+  glossBall(ctx, B, fist.x - ux * h * 0.06, fist.y - uy * h * 0.06, Math.max(1.2, h * 0.016), shade('#d8c8a0', p.tone), { gloss: 0.2, spread: 0.6 });
+  hand(ctx, R, fist, ka, 515, { flip: -1 });
+  void p.light;
+}
+
+/**
+ * A longbow taller than the man, at full draw and aimed down by `aim` (radians below level): the
+ * stave square across the line of the arrow, its limbs bent back toward the string hand, the
+ * string a V through the anchor. Returns the stave's axis for the bow hand.
+ */
+function longbowDrawn(ctx: CanvasRenderingContext2D, R: Rig, grip: Pt, anchor: Pt, aim: number): number {
+  const { h } = R;
+  const ux = Math.cos(aim), uy = Math.sin(aim), px = Math.sin(aim), py = -Math.cos(aim), L = h * 0.56;
+  const P = (along: number, up: number): number[] => [grip.x + ux * along + px * up, grip.y + uy * along + py * up];
+  const top = P(-h * 0.13, L), bot = P(-h * 0.13, -L);
+  const pxw = Math.min(1, h * 0.026), tipR = Math.max(h * 0.0075, pxw * 0.6), midR = Math.max(h * 0.017, pxw * 1.25);
+  blob(ctx, B, R.wood, [
+    tube([...top, ...P(-h * 0.035, L * 0.55), ...P(0, 0)], tipR, midR, 0, 521),
+    tube([...P(0, 0), ...P(-h * 0.035, -L * 0.55), ...bot], midR, tipR, 0, 522),
+  ], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 521, amount: 0.35 });
+  stroke(ctx, [top[0], top[1], anchor.x, anchor.y, bot[0], bot[1]], R.bone, 1);
+  // The arrow along the draw, its head out past the stave.
+  const tip = { x: grip.x + ux * h * 0.08, y: grip.y + uy * h * 0.08 };
+  stroke(ctx, [anchor.x, anchor.y, tip.x, tip.y], R.wood, Math.max(1, h * 0.013));
+  ctx.fillStyle = B.col(R.steel);
+  ctx.beginPath();
+  ctx.moveTo(tip.x + ux * h * 0.03, tip.y + uy * h * 0.03);
+  ctx.lineTo(tip.x - uy * h * 0.016, tip.y + ux * h * 0.016);
+  ctx.lineTo(tip.x + uy * h * 0.016, tip.y - ux * h * 0.016);
+  ctx.closePath(); ctx.fill();
+  return Math.atan2(bot[1] - top[1], bot[0] - top[0]);
+}
+
+/**
+ * The Wrack bowman: the smuggler's coat worn harder, and a longbow. He has the high ground: the
+ * near foot up on a grey rock, the knee bent and the body leaning out over it, the bow at full
+ * draw and aimed down at the company. The Foreland's smuggler bowman draws a shortbow level; the
+ * poacher's longbow stands grounded. Spare arrows are thrust through his belt.
+ */
+function wrackBowman(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.03, hipTilt: -0.02, turn: 0.032, near: [0.08, 0.2, 0.19], far: [-0.07, -0.11, -0.15], toe: [1, -0.5], lift: [0.1, 0] });
+  const { sy } = R;
+  const sway = Math.sin(p.frame / 19) * h * 0.004;
+  const aim = 0.42;
+  // The bow arm out and down toward the company; the string hand back at the jaw on the same line.
+  const grip = { x: x + h * 0.33, y: sy + h * 0.14 + sway };
+  const anchor = { x: grip.x - Math.cos(aim) * h * 0.27, y: grip.y - Math.sin(aim) * h * 0.27 };
+  const near: Arm = [R.sNear, { x: x + h * 0.25, y: sy + h * 0.1 }, grip];
+  const far: Arm = [R.sFar, { x: x - h * 0.09, y: sy + h * 0.13 }, anchor];
+  const hemY = y - h * 0.45;
+  groundShadow(ctx, x, y + 1, h * 0.8);
+  // The rock under the near foot: grey, weathered, with a lit top.
+  const ft = R.legR[2];
+  blob(ctx, B, shade('#7a7c78', p.tone), [{ k: 'curve', pts: [ft.x - h * 0.13, y, ft.x - h * 0.11, y - h * 0.07, ft.x - h * 0.03, y - R.lift[0] + h * 0.005, ft.x + h * 0.08, y - R.lift[0] - h * 0.005, ft.x + h * 0.13, y - h * 0.05, ft.x + h * 0.14, y], wobble: 0.05, seed: 520, sub: 2 }],
+    { h, formK: 0.5, spread: 0.7, tex: 'cracks', seed: 520, amount: 0.5 });
+  legs(ctx, R, shade('#4a5260', p.tone), 523, [1, -0.5]);
+  headNeck(ctx, R);
+  helmstowCoat(ctx, R, p, near, hemY, 524);
+  // The draw arm over the coat: at full draw the forearm crosses in front of the chest.
+  blob(ctx, B, shade(p.dark, 0.82), armParts(R, far, 529, 0.92), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.06, h * 0.036, 530)], { h, form: false });
+  band(ctx, B, x - h * 0.02, hemY - h * 0.062, h * 0.036, h * 0.036, R.dull);
+  // Three spare arrows through the belt on the far hip, fletching up.
+  for (let i = 0; i < 3; i++) {
+    const ax = x - h * (0.1 - i * 0.02), ay = hemY - h * 0.06;
+    stroke(ctx, [ax + h * 0.01, ay + h * 0.05, ax - h * 0.012, ay - h * 0.07], R.wood, 1);
+    ctx.fillStyle = B.col(shade(i === 1 ? '#c8c0a0' : '#8a3a30', p.tone));
+    ctx.beginPath(); ctx.moveTo(ax - h * 0.008, ay - h * 0.05); ctx.lineTo(ax - h * 0.026, ay - h * 0.064); ctx.lineTo(ax - h * 0.014, ay - h * 0.09); ctx.lineTo(ax - h * 0.002, ay - h * 0.07); ctx.closePath(); ctx.fill();
+  }
+  wrackHead(ctx, R, p, sway, 531);
+  const ba = longbowDrawn(ctx, R, grip, anchor, aim);
+  hand(ctx, R, anchor, aim, 535, { flip: 1, k: 0.9 });
+  hand(ctx, R, grip, ba, 536, { flip: -1 });
   void p.light;
 }

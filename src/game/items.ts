@@ -21,6 +21,11 @@ export interface ItemDef {
   twoHanded?: boolean;
   /** Ranged weapons may attack from the back row. */
   ranged?: boolean;
+  /**
+   * What sort of weapon it is, where a prestige's perk asks (DESIGN §5): a light weapon (a dagger, a
+   * short sword, a sling), a staff, or a bow. A +N copy keeps its base's.
+   */
+  kind?: 'light' | 'staff' | 'bow';
   /** Armour class contribution. */
   ac?: number;
   /** A +N item's plus, counted in `bonus` or `ac` already; a weapon's also adds to to-hit (`attackBonus`). */

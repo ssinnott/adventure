@@ -197,7 +197,11 @@ When a character reaches a prestige's level, they get a quest to seek out its tr
 quest reveals where the trainer is. The trainer who teaches a character their 11th, 19th or 27th
 level names who to seek and where, and the quest log and the world map mark the place: one quest for
 each member. For the third, the quest names the place; the way there, and the quest that trainer then
-asks, are the hard part. The cap passed 10 with #159; nothing here is built until #19.
+asks, are the hard part. The cap passed 10 with #159. Built with #19: the titles, the hit points and
+spell points, every perk below but the sorcerer's and the druid's third, and a trainer, a person who
+teaches one class one prestige (`teaches`), and the seeking quests, made from the trainers placed,
+with the world map's marks. Still to build: the trainers in their places, the third prestiges'
+quests and the ranks' effect on spells (#20).
 
 **Levels.** The first at 11, the second at 19 and the third at 27, eight levels apart, with the new
 spell tiers between them at 15 and 23 (§7), so something new comes every four levels. Every
@@ -354,7 +358,7 @@ points tier 5 was at 8.
 | Sorcerer | 7 | Killing Frost | 18 | A killing cold on every foe: 10d12, cold. |
 | Sorcerer | 7 | Levitate | 12 | The party floats a few steps over a drop, never up one. |
 | Cleric | 6 | Hearthfire | 10 | The Hearth's fire falls on a whole group: 6d8, fire. |
-| Cleric | 6 | Cleansing Light | 9 | Removes an affliction from everyone. |
+| Cleric | 6 | Cleansing Light | 9 | Cures poison, disease, sleep and paralysis in everyone. |
 | Cleric | 7 | Lampglass | 10 | The party takes half from one element, for five rounds. |
 | Cleric | 7 | Absolve | 12 | Lifts stone and curse. |
 | Druid | 6 | Wildfire | 10 | The wood's own fire on a whole group: 6d8, fire. |
@@ -362,8 +366,10 @@ points tier 5 was at 8.
 | Druid | 7 | Wrath of the Wood | 16 | The whole wood turns on every foe: 8d10, nature. |
 | Druid | 7 | Greening | 14 | Heals everyone well, and draws out poison and disease. |
 
-The points and the steps the map spells take wait on the harness and #20; the damage spells' dice
-are the harness's stand-ins (MONSTERS.md §4.4).
+The damage spells' dice are those the harness sized as stand-ins (MONSTERS.md §4.4), and the tiers
+are built (#20). Walk on Water lasts twelve steps and Levitate six; Lampglass's element is picked as
+it is cast. Grasping Roots holds each of a group at one in two, a blow does not free it, and each
+held monster tears free at 0.35 a round.
 
 **Ranks.** A rank belongs to the caster, not the spell: it lifts every spell they know, those
 learned later too. Each rank adds 15% to the dice of a damage spell and to what a mending spell
@@ -392,13 +398,15 @@ adds an element; only the sorcerer's third deepens one, passing resistance and n
 **Map spells.** Each is a shortcut, never a key (docs/EXPANSION.md §2.2): it has a cost and a limit,
 and the skill beside it is free and lasts.
 
-- **Walk on Water** crosses shallow water for a set number of steps and ends in a fight. It never
+- **Walk on Water** crosses shallow water for a set number of steps, and a fight ends it. It never
   crosses deep water, so a paid crossing stays paid, and never dives: what lies under the water is
   Swimmer's.
-- **Waymark** holds one mark, set on land the company has stood on, outside a fight. It never takes a
-  company anywhere it has not walked; the sea's ways stay Navigator's.
-- **Levitate** floats over a chasm, a pit or lava for a set number of steps. It never rises up a cliff
-  or a mountain, which stay Mountaineer's, and never goes down into a chasm. Jump is folded into it:
+- **Waymark** holds one mark, set on land the company stands on in the outdoors, never in a town or a
+  dungeon nor on ground the tide covers, outside a fight. It never takes a company anywhere it has not walked, nor past a dungeon's
+  depth; the sea's ways stay Navigator's.
+- **Levitate** floats over the chasm for a set number of steps; the chasm is the only drop built, and
+  pits and lava, once an area builds them, are its to float over too. It never rises up a cliff or a
+  mountain, which stay Mountaineer's, and never goes down into a chasm. Jump is folded into it:
   the grid has no height for a jump to clear.
 - **Detect Secrets is cut.** The secret is found, never told, and Perception, Keen Eyes, the elves
   and the gnomes already find what is hidden.

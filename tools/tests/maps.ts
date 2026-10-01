@@ -18,6 +18,11 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   cartographers_room: '#181',
+  saltmouth_locksmith: '#177',
+  saltmouth_chandlery: '#177',
+  saltmouth_armourer: '#177',
+  training_loft: '#177',
+  saltmouth_inn: '#177',
   brineling: '#170',
   bargeman: '#171', barge_master: '#171',
   drowned_chanter: '#175', choirmaster: '#175',
@@ -26,6 +31,20 @@ const UNPLACED: Record<string, string> = {
   salt_crab: '#176',
   devilfish: '#188', great_devilfish: '#188',
   ashen_overseer: '#188',
+  tide_elder: '#190', tide_warden: '#190',
+  watch_hall: '#201', watch_refectory: '#201', watch_stores: '#201', priors_room: '#201',
+  pine_bear: '#195',
+  wrack_smuggler: '#187', wrack_bowman: '#187',
+  bilge_rat: '#189',
+  wrack_gull: '#187',
+  bull_toad: '#173',
+  sunderling: '#198', sunder_warden: '#199',
+  ashen_gleaner: '#198',
+  glass_spider: '#197',
+  sunder_hound: '#196',
+  lantern_moth: '#195',
+  glass_bear: '#199',
+  deathshead: '#200',
 };
 
 /**
