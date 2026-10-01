@@ -1646,3 +1646,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   ALL OK (18 owed), SMOKE OK, "Nothing new."; CI green. Merged as 60644ee; main's tree is the tested
   tree (3a74c74). #216 closes. The I5 session told to merge main and re-measure; the J5 session to
   merge main in place of #307's branch; the J4 session done.
+- 00:48: #308 (I5) merged main with #304 (2b4705f, CI green), but #307 landed after: it conflicts
+  in J4's one-liners; the 00:48 message has its session merge again. #306 (D2) merged main with
+  #304 (60fe8fa, CI green); onto 60644ee it conflicts in `shipped.json` only: its session told to
+  merge once more and rerun `shipped.ts`.
+- 00:49: the delegate on #309 (D4): D4 stays as built, 0,31 and 1,31 owed to #170, which lays D5
+  (104,126) as a second map, the shore under the Edge with the road's three squares and the
+  milestone; the round changes words only (pillars.ts's comment, shelf.md, saltreach.md §1, §4.2,
+  §11). The look OK (a switchback on the automap; the words carry the descent). Choices 1, 3–6
+  taken, with mountain at 21–22,20 closing the swimmer's way round; nits 3–5 as the reviewer has
+  them. Round sent to the D4 session; noted on #170 (comment 5922459662). It lands after #306.
