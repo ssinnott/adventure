@@ -99,12 +99,12 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
 
 - **Zones.** Every outdoor map the atlas places is a zone, laid in 1:1 at its box of the grid: the
   Foreland at 200,30 (G2), Thornmark at 232,30 (H2) and Callow Downs' first five boxes, F2 at
-  168,30, F3 at 168,62, E3 at 136,62, E2 at 136,30, D2 at 104,30 and D3 at 104,62. The zone maps are still written
-  as maps of their own in their areas' `maps/` folders, in their own coordinates; laying them in
-  moves their features, monster groups and exits to where they sit, and leads every town's and
-  dungeon's way out onto the outdoors. Outdoors, the party's zone says where it is: the name on the
-  status strip and the almanac, the level band, the region whose weather it has, the palette it is
-  painted in.
+  168,30, F3 at 168,62, E3 at 136,62, E2 at 136,30, D2 at 104,30 and D3 at 104,62. The zone maps are
+  still written as maps of their own in their areas' `maps/` folders, in their own coordinates;
+  laying them in moves their features, monster groups and exits to where they sit, and leads every
+  town's and dungeon's way out onto the outdoors. Outdoors, the party's zone says where it is: the
+  name on the status strip and the almanac, the level band, the region whose weather it has, the
+  palette it is painted in.
 - **Walked, not jumped.** An exit from one zone map into the next is dropped: the road through the
   pass runs straight on into Thornmark, and the view looks down it. The Foreland's exit kept its
   arrival line as what the log says on crossing into Thornmark ("The pass opens onto old forest.
@@ -271,8 +271,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   grove; the Provisioner's pigeonholes and the Armoury's forge; the Guildhall's map of Caldera and
   the Lantern Hall's copy of the Grove Stone; the Drillyard inside Helmstow's wall and the Elder's
   ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak; the throne room
-  behind the keep's door, its throne under black cloth. The farm kitchen is painted for the store
-  #87 opens into it. No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
+  behind the keep's door, its throne under black cloth. The farm kitchen is Ellerby's store
+  (#87). No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
   light, `props.ts` the furniture and goods; each scene is a file in `ui/interiors/<area>/`, and
   what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
   A scene is painted once into an offscreen canvas and multiplied by a light map (the ambient for

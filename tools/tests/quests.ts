@@ -195,15 +195,15 @@ export function quests(): void {
     party.flags.q_ashcombe = 1;
     ok(news() === 'New quest: The Dimming.' && /Gullwick/.test(goal()), `Vask's contract begins the one quest at its first chapter, and says where to go (${goal()})`);
     party.flags.q_wenna = 1; // what Hild's first meeting does
-    ok(news() === 'Quest log updated: The Dimming.' && /Crowness Light/.test(goal()), `Hild at Gullwick writes Wenna into the log, and the goal moves on to the keeper at Crowness (${goal()})`);
-    stateFor(world, 'downs_e3').used.e3_log = 1; // what opening the keeper's log does
-    ok(news() === 'Quest log updated: The Dimming.' && chapter('ashcombe').entries.some((e) => e.id === 'keeper') && /^Find out why/.test(goal()), `the keeper's log writes the count into the log, and the goal moves on to the farm (${goal()})`);
+    ok(news() === 'Quest log updated: The Dimming.' && /^Find out why/.test(goal()), `Hild at Gullwick writes Wenna into the log, and the goal moves on to the farm past it (${goal()})`);
     world.travel('mill', 1, 1, 2);
     ok(/cellar/.test(goal()) && news() === '', 'in the cellar the goal moves on, which is not news');
     world.travel('mill', 10, 4, NORTH); world.move('forward');
     ok(chapter('ashcombe').entries.some((e) => e.id === 'lantern') && news() === 'Quest log updated: The Dimming.', "stepping on the dead Lantern writes her note into the log");
     party.bag.push('survey_wand');
-    ok(/Vask/.test(goal()) && news() === 'Quest log updated: The Dimming.', 'with the wand in hand, the goal is Vask');
+    ok(/Crowness Light/.test(goal()) && news() === 'Quest log updated: The Dimming.', `with the wand in hand, the goal is the keeper at Crowness, on along the road (${goal()})`);
+    stateFor(world, 'downs_e3').used.e3_log = 1; // what opening the keeper's log does
+    ok(news() === 'Quest log updated: The Dimming.' && chapter('ashcombe').entries.some((e) => e.id === 'keeper') && /Vask/.test(goal()), `the keeper's log writes the count into the log, and the goal moves on to Vask (${goal()})`);
     takeItem(party, 'survey_wand'); party.flags.q_ashcombe_done = 1; // what Vask's hand-in does
     ok(news() === 'Chapter complete: The Quiet Farm. New chapter: The Grove Stone.', 'the hand-in finishes the farm and, after it, begins the Grove Stone');
     const farm = chapter('ashcombe');

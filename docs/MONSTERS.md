@@ -101,7 +101,7 @@ table: a Rift in the Kilns is slag, and a Rift in the Delta is brine.
 
 | The Stone | Its Rifts | Material and light | What bites | Its things |
 |---|---|---|---|---|
-| The cellar's tear | the Foreland, under Ashcombe | ember and crystal, orange | cold | Riftling, Rift Crawler, the Rift Warden (built) |
+| The cellar's tear | Callow Downs, under Ashcombe (E3) | ember and crystal, orange | cold | Riftling, Rift Crawler, the Rift Warden (built) |
 | The Grove Stone, cut | Thornmark | ember and crystal; the Warden of the Cut burns blue | cold; fire on the Warden | Riftling Elder, Rift Hound, the Warden of the Cut (built) |
 | The Tide Stone, stolen | the Delta, and the Tide Ship's hold | brine glass, sea green | lightning | Brineling, Tide Elder, the Warden of the Tide |
 | The Sunder, a Stone that failed long ago | Sunderwood | black glass and dead wood, white | fire | Sunderling, Sunder Hound, the Warden of the Sunder |
@@ -378,8 +378,8 @@ What it shows:
   59). Tier 3 at 4 shows most on fodder, since Fire Bolt and the swarm take a whole group of them: 7
   hit points at 3, 13 at 4.
 - **Today's maps are close, and a little hard low down.** Their own groups, dealt in a new order
-  each day, give a company at its band's floor four to eight fights before a rest: the Foreland 4.6
-  at level 1 and the Ashcombe cellar 5.9, Brandy Hole's caves and the Seam 4.1 at 2 and 3, Thornmark
+  each day, give a company at its band's floor four to eight fights before a rest: the Foreland 4.37
+  at level 1 and the Ashcombe cellar 7.42 at 2, Brandy Hole's caves and the Seam 4.1 at 2 and 3, Thornmark
   5.7 at 5, the Grove Roots 6.0 at 6 and the Cut Stone 7.7 at 8. On the Foreland the cliff smugglers
   are a day's work on their own for a company of 1 (1.6 fights); at the Cut Stone, Meteor Swarm ends
   most fights in a round or two. The round cap barely touches them: no more than one day in fifty
@@ -502,7 +502,7 @@ Crowness Light.
 | Wrecker | bandit | soldier, 4 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
 | Lampman | bandit | archer, 4 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
 | Barrow Guard | skeleton | armoured, 4, on an elite's weight | the Berth, the Queen's barrow, two by two | *The Queen's guard, in her colours, still standing to. They do not turn their heads. They have already seen you.* Halberds; holds its ground and never roams. Two are a standard encounter, so each weighs an elite (50 hit points, 12 a hit) in an armoured shape (armour 16, slow) |
-| Black Dog | wolf | skirmisher, 4 | the hills round the barrow, by night | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
+| Black Dog | wolf | elite, 5 | the hills round the barrow, by night, one or two | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
 | Barrow Captain | skeleton | boss, 5 | at the Queen's bier | *Her captain, at his post beside the bier. He was told to hold it, and nobody has told him otherwise.* 220 hit points, armour 16, 21.5 a hit: won about half the time by a company of 4 |
 | Chalk Wolf | wolf | skirmisher, 4 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
 | Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
@@ -513,6 +513,7 @@ Crowness Light.
 | Billman | bandit | soldier, 4 | the Salt Road west of Gullwick | *A bill on a pole, and a man who knows which end to hold.* |
 | Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
 | Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
+| Barrow Wolf | wolf | elite, 5 | the chalk hills (D2): one leading each of the den's packs, and two in the pack that keeps it | *Grey to the muzzle and big as a pony, and the pack waits on it.* The den's keepers: the chalk wolf's pale coat on a heavy frame, scarred |
 | Cutthroat | bandit | elite, 5 | the bandit camp on the west downs, two of them beside it | *A captain's sash on a thief's coat, and a knife for every pocket.* The camp's keepers |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
@@ -1025,7 +1026,7 @@ the pilot.
 | rat | the Foreland (built) | the bilge rat (Wrackholm), the deep rat (the Underdeep) |
 | slime | the cellar (built) | none |
 | boar | the Foreland (built) | none |
-| wolf | the Foreland (built) | the black dog (the Downs), the sunder hound (Sunderwood), the moor hound (Cairnmoor) |
+| wolf | the Foreland (built) | the black dog and the barrow wolf (the Downs), the sunder hound (Sunderwood), the moor hound (Cairnmoor) |
 | spider | the Foreland (built) | the salt crab (Saltreach), the glass spider (Sunderwood), the fire beetle (the Kilns), the cinder beetle (Ashfall), the glass scorpion (the Wold) |
 | bandit | the Foreland (built) | the wreckers and their lampman (the Downs), the bargemen (Saltreach), the Wrack smugglers (Wrackholm), the anvil guard (the Kilns) |
 | cultist | the cellar (built) | the overseer (Wrackholm), the gleaner (Sunderwood), the mason (the Whitespine), the champion and the preacher (Hearth Isle), the Grey Hand (the Core) |

@@ -64,8 +64,8 @@ const DAYS = 300;
  * left out of its map's day. An area's are all its zones' together.
  */
 export const BOSSES: Record<string, readonly string[]> = {
-  shelf: ['mill:m_warden', 'greywater1:gw1_captain', 'greywater2:gw2_deacon'],
-  downs: ['berth:berth_captain'],
+  shelf: ['greywater1:gw1_captain', 'greywater2:gw2_deacon'],
+  downs: ['mill:m_warden', 'berth:berth_captain'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
 };
 
@@ -87,13 +87,8 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
   // The Foreland: the pilot settles these, by retuning it or by moving the limits.
-  // The Rift Warden is retuned with Ashcombe's move past Gullwick, to about half at level 2.
-  'mill:m_warden: floor': { whose: '#87', at: 0.98 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
-  // D2's groups are the Downs' monsters at 4, too soft for a company of 4: its harder monsters
-  // are drawn in #69's creatures pull request, and the box retuned with them.
-  'downs_d2: rest': { whose: '#69', at: 14.32 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;

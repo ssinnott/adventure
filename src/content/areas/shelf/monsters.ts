@@ -11,6 +11,7 @@ export const SPRITES = [
   'barrow_guard', 'barrow_captain',
   'chalk_wolf', 'tusker', 'barn_rat', 'footpad', 'poacher',
   'barnacle_crab', 'billman', 'slinger', 'old_rook',
+  'barrow_wolf',
   'cutthroat',
 ] as const;
 
@@ -25,7 +26,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'cultist', name: 'Ashen Cultist', plural: 'Ashen Cultists', sprite: 'cultist', kind: 'person', level: 2, hp: 12, ac: 12, attack: 3, dice: 1, sides: 6, bonus: 2, speed: 10, xp: 50, gold: [5, 20], tint: '#5a4a5a', size: 0.9, drops: [{ item: 'potion_sp', chance: 0.15 }] },
   { id: 'skeleton', name: 'Skeleton', plural: 'Skeletons', sprite: 'skeleton', kind: 'dead', level: 4, hp: 13, ac: 13, attack: 3, dice: 1, sides: 8, bonus: 1, speed: 8, xp: 55, gold: [0, 6], tint: '#d8d0c0', size: 0.9 },
   { id: 'riftling', name: 'Riftling', plural: 'Riftlings', sprite: 'riftling', kind: 'rift', level: 6, hp: 11, ac: 14, attack: 3, dice: 2, sides: 4, bonus: 0, speed: 15, xp: 60, gold: [0, 0], tint: '#c05a3a', size: 0.7, inflict: { cond: 'paralysed', chance: 0.1 } },
-  { id: 'rift_warden', name: 'Rift Warden', plural: 'Rift Wardens', sprite: 'warden', kind: 'rift', level: 4, hp: 40, ac: 15, attack: 5, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 300, gold: [20, 40], tint: '#e07a3a', size: 1.0, immune: ['asleep'], drops: [{ item: 'survey_wand', chance: 1 }] },
+  { id: 'rift_warden', name: 'Rift Warden', plural: 'Rift Wardens', sprite: 'warden', kind: 'rift', level: 4, hp: 125, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 3, speed: 12, xp: 300, gold: [20, 40], tint: '#e07a3a', size: 1.0, immune: ['asleep'], drops: [{ item: 'survey_wand', chance: 1 }] },
   // ---- Brandy Hole: band 2-5, the caves between the cellar and the pass ----
   { id: 'shore_crab', name: 'Shore Crab', plural: 'Shore Crabs', sprite: 'crab', kind: 'beast', level: 2, hp: 16, ac: 15, attack: 3, dice: 1, sides: 6, bonus: 1, speed: 8, xp: 60, gold: [0, 0], immune: ['asleep'], tint: '#b0603a', size: 0.5 },
   { id: 'smuggler', name: 'Smuggler', plural: 'Smugglers', sprite: 'smuggler', kind: 'person', level: 3, hp: 18, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 1, speed: 11, xp: 70, gold: [6, 18], tint: '#4a5a7a', size: 0.9, drops: [{ item: 'potion_heal', chance: 0.15 }, { item: 'shortsword', chance: 0.05 }] },
@@ -42,7 +43,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'wrecker', name: 'Wrecker', plural: 'Wreckers', sprite: 'wrecker', kind: 'person', look: 'Oilskins, a boathook, and a boat they were expecting.', level: 4, hp: 23, ac: 13, attack: 4, dice: 2, sides: 6, bonus: 1, speed: 10, xp: 86, gold: [4, 14], tint: '#8c7a36', size: 0.9 },
   { id: 'lampman', name: 'Lampman', plural: 'Lampmen', sprite: 'lampman', kind: 'person', look: 'A lantern held high on a pole, and someone under it.', level: 4, hp: 24, ac: 13, attack: 5, dice: 1, sides: 6, bonus: 1, speed: 11, xp: 86, gold: [3, 12], ranged: true, missile: true, tint: '#4e4638', size: 1.0 },
   // the Black Dog (#69): the chalk hills round the Berth, by night
-  { id: 'black_dog', name: 'Black Dog', plural: 'Black Dogs', sprite: 'black_dog', kind: 'beast', look: 'A black dog the size of a calf, with eyes like coals.', level: 4, hp: 16, ac: 13, attack: 4, dice: 1, sides: 8, bonus: 0, speed: 15, xp: 80, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.1 }, tint: '#1c1a20', size: 0.75 },
+  { id: 'black_dog', name: 'Black Dog', plural: 'Black Dogs', sprite: 'black_dog', kind: 'beast', look: 'A black dog the size of a calf, with eyes like coals.', level: 5, hp: 52, ac: 14, attack: 5, dice: 3, sides: 6, bonus: 1, speed: 15, xp: 218, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.1 }, tint: '#1c1a20', size: 0.75 },
   // the Queen's guard (#70): the Berth's passage, two by two
   { id: 'barrow_guard', name: 'Barrow Guard', plural: 'Barrow Guards', sprite: 'barrow_guard', kind: 'dead', look: 'The Queen\'s guard, in her colours, still standing to. They do not turn their heads. They have already seen you.', level: 4, hp: 50, ac: 16, attack: 4, dice: 2, sides: 8, bonus: 3, speed: 8, xp: 173, gold: [0, 6], tint: '#7a8088', size: 0.95 },
   // the Queen's captain (#70): at her bier
@@ -57,6 +58,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'barnacle_crab', name: 'Barnacle Crab', plural: 'Barnacle Crabs', sprite: 'barnacle_crab', kind: 'beast', look: 'A rock with barnacles on it, until it stands up.', level: 4, hp: 29, ac: 15, attack: 4, dice: 2, sides: 6, bonus: 4, speed: 8, xp: 115, gold: [0, 0], immune: ['asleep'], tint: '#6e665a', size: 0.65 },
   { id: 'billman', name: 'Billman', plural: 'Billmen', sprite: 'billman', kind: 'person', look: 'A bill on a pole, and a man who knows which end to hold.', level: 4, hp: 23, ac: 13, attack: 4, dice: 2, sides: 6, bonus: 1, speed: 10, xp: 86, gold: [4, 14], tint: '#6a5a48', size: 0.95 },
   { id: 'slinger', name: 'Slinger', plural: 'Slingers', sprite: 'slinger', kind: 'person', look: 'A sling going round, and the Downs have flints to spare.', level: 4, hp: 24, ac: 13, attack: 5, dice: 1, sides: 6, bonus: 1, speed: 11, xp: 86, gold: [3, 12], ranged: true, missile: true, tint: '#b0a288', size: 0.9 },
+  // the chalk hills (#69), at 5 on MONSTERS §4.4's line: the chalk pit's pack leader
+  { id: 'barrow_wolf', name: 'Barrow Wolf', plural: 'Barrow Wolves', sprite: 'barrow_wolf', kind: 'beast', look: 'Grey to the muzzle and big as a pony, and the pack waits on it.', level: 5, hp: 52, ac: 14, attack: 5, dice: 3, sides: 6, bonus: 1, speed: 15, xp: 218, gold: [0, 0], tint: '#9c978a', size: 0.8 },
   { id: 'old_rook', name: 'Old Rook', plural: 'Old Rooks', sprite: 'old_rook', kind: 'beast', look: 'Grey in the face, and older than the trees it keeps.', level: 4, hp: 50, ac: 14, attack: 5, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 173, gold: [0, 0], ranged: true, tint: '#2a2830', size: 0.45 },
   // The west downs' harder man (#71): the bandit camp's own, who keep it and never leave it. The
   // elite's line at 5 (MONSTERS §4.4).

@@ -77,13 +77,13 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 |---|---|---|---|
 | Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores, with Lantern Oil on his shelf and the keeper's oil to put, and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`); Hob by the Hearthlight's fire until his paper is given, and his empty chair (`hob_chair`) once it went to Vask |
 | The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask, who takes Hob's paper too, and his contract in the throne room behind the keep's door, and the keeper's oil to put to him |
-| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ashcombe farm; Hale's checkpoint at the Scarth, where he takes Dunstan's letter; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on; at the farmhouse's back, the kitchen (`ash_kitchen`, the hearth-key in `ash_hearth`) and the flour crock (`ash_crock`, the tenant's paper in `ash_crock_c`) |
-| Ashcombe Cellar | dungeon, 16×16 | 1–4 | four rings; the dead Lantern and her survey wand; the Rift and its Warden |
+| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ellerby farm where Ashcombe stood, and its store (rations at 3 gold, in the farm kitchen); Hale's checkpoint at the Scarth, where he takes Dunstan's letter; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
+| Ashcombe Cellar | dungeon, 16×16 | 2–4 | under Ashcombe in E3; four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key; a clerk's coat among the drowned (`gw1_coat`) and his seal in the den's strongbox (`gw1_strongbox`, `gw1_seal`) |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
 | Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour and Captain Dunstan, retired (Riders in the Dark); Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
 | Callow Downs, F3 | outdoor zone, 32×32 | 2–3 | Gullwick at the Wend's mouth, its net loft and boats; the rise; the wreckers' far beach and their cave; three groups (§4.3); Hob on the shingle by the net loft once Hale has sent him |
-| Callow Downs, E3 | outdoor zone, 32×32 | 3–4 | Crowness Light and the keeper's cottage on the point; the Salt Road west in fog; the gibbet; the wreck and the wreckers' niche below the light; Aldred, the keeper, his log and the lamp room; eight groups (§4.4) |
+| Callow Downs, E3 | outdoor zone, 32×32 | 3–4 | Crowness Light and the keeper's cottage on the point; the Salt Road west in fog; the gibbet; the wreck and the wreckers' niche below the light; Aldred, the keeper, his log and the lamp room; eight groups (§4.4); in the north-east corner, Ashcombe: the farmhouse over the cellar, its gate (`ashcombe_gate`) and rats (`farm_rats`) and at its back the kitchen (`ash_kitchen`, the hearth-key in `ash_hearth`) and the flour crock (`ash_crock`, the tenant's paper in `ash_crock_c`) |
 | Callow Downs, E2 | outdoor zone, 32×32 | 3–4 | the Wend's fields and its ford on the track from Coldharbour west to the Berth, where the riders come back by night once Dunstan has asked; the drowned mill and its wheel-pit; the rookery in the willows, the first den; a boundary stone with a riddle, a spring, a cairn and a shepherd's camp; five groups (§4.5) |
 | Callow Downs, D2 | outdoor zone, 32×32 | 4–5 | the chalk hills and the Berth open on the crest where the track from E2 ends; the ridge's barrows, one of them hollow; the shepherd's hut, the dew pond, a shrine, a cairn and a camp; the Cradle cut in the chalk; the wolves' den in the old chalk pit; the Black Dog by night; seven groups (§4.6) |
 | Callow Downs, D3 | outdoor zone, 32×32 | 4–5 | the west downs to the lip of Kestrel Edge; a falconer, the lip over the Upper Water and the cleft with a kestrels' ledge; the bandit camp by the Salt Road, a den; a shrine, a cairn and a shepherd's hollow; seven groups (§4.8) |
@@ -100,10 +100,10 @@ Brockholt's (downs_f2 12,3) the bare ground under the holly at 12,4 (`f2_holly`)
 woodcutter's word; and the wreckers' cave's (downs_f3 1,16) the soot where the far beach ends at
 0,15 (`f3_soot`), beside the shanty's last verse; the wreckers' niche below Crowness Light (downs_e3
 19,29), the soot on the ledge beside it at 18,29 (`e3_ledge`); and the wheel-pit's (downs_e2 22,26)
-the course of dry stone below the mill at 22,27 (`e2_wheel`), beside the shepherd's word; and the
-kestrels' ledge's (downs_d3 3,18) the cleft in the lip at 4,18 (`d3_cleft`), beside the falconer's
-word; the hollow barrow's (downs_d2 20,4) the ringing turf at 20,5 (`d2_ring`), beside the other
-shepherd's word; and the captain's niche in the Berth (berth 2,7) the words cut in the forecourt at
+the course of dry stone below the mill at 22,27 (`e2_wheel`), beside the shepherd's word; the hollow
+barrow's (downs_d2 20,4) the ringing turf at 20,5 (`d2_ring`), beside the other shepherd's word; and
+the kestrels' ledge's (downs_d3 3,18) the cleft in the lip at 4,18 (`d3_cleft`), beside the
+falconer's word; and the captain's niche in the Berth (berth 2,7) the words cut in the forecourt at
 13,6 (`berth_hint`).
 
 In more detail, as SLICE.md had it before the area docs:
@@ -116,15 +116,18 @@ In more detail, as SLICE.md had it before the area docs:
   the Queen's banners placed (`banners`); Lord Vask on the keep's door, holding court in the throne
   room (the contract and the hand-in); people and a well. A building on its west side stands empty
   for the armourer (#19).
-- **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or lurking
-  monster groups with respawn timers, the Ashcombe farm. The Lodestone, the Foreland's own Stone
-  and whole, stands at the end of a track east of the south gate (the stone said at 20,4), and
-  Gytha, its Lantern, sits at its foot (21,4): she gives a new company the lesson (`q_lodestone`),
-  and her words change once Sylvane has spoken (`q_grove`) and again once she has the chisel
-  (`q_grove_done`). The stone is its words and is not drawn, as the Grove Stone is. It and
-  Thornmark are played as one outdoors ([SLICE.md](../SLICE.md), "The outdoors as one map").
-- **Ashcombe Cellar** (dungeon, 16×16): four rings, an iron key, a locked door, a secret door, the
-  dead Lantern and her survey wand, the Rift and its Warden.
+- **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or
+  lurking monster groups with respawn timers, the Ellerby farm, lived in, where Ashcombe stood until
+  it moved past Gullwick (#87), with a store in its kitchen that sells rations at 3 gold. The
+  Lodestone, the Foreland's own Stone and whole, stands at the end of a track east of the south gate
+  (the stone said at 20,4), and Gytha, its Lantern, sits at its foot (21,4): she gives a new company
+  the lesson (`q_lodestone`), and her words change once Sylvane has spoken (`q_grove`) and again
+  once she has the chisel (`q_grove_done`). The stone is its words and is not drawn, as the Grove
+  Stone is. It and Thornmark are played as one outdoors ([SLICE.md](../SLICE.md), "The outdoors as
+  one map").
+- **Ashcombe Cellar** (dungeon, 16×16, band 2–4), under the farmhouse in E3's north-east corner
+  (#87): four rings, an iron key, a locked door, a secret door, the dead Lantern and her survey
+  wand, the Rift and its Warden.
 - **Brandy Hole** (two dungeon levels, 16×16 each, band 2–5): smugglers' caves in the south-west
   cliffs, reached from the beach. Level one, the caves: smugglers, shore crabs and drowned
   men, a secret stash, and the captain's den with the iron key to the stairs. Level two, the
@@ -189,7 +192,7 @@ The places, as the atlas and the docs have them:
 | Gullwick | F3 | Wenna's village, where her mother asks the company to find her (DESIGN §9) and where STORY opens; an old shanty singer who teaches the Bard's second prestige (#19) | a planned village at 172,70 |
 | Crowness Light | E3 | the keeper who counted the eleven and wrote down the gaps (DESIGN §9, STORY); the Cleric's second prestige (#19); shore crabs under it | charted on E3 at the point, 156,90 (#67) |
 | Coldharbour | F2 | a retired Warden captain's farm; the Knight's second prestige (#19) | a planned farm at 176,42 |
-| The Berth | a dungeon, entered from D2 | the Queen's barrow, opened, and only her signet gone (DESIGN §9); band 4–5, her guard two by two down the passage and her captain at the empty bier (MONSTERS §5.2) | not on the atlas |
+| The Berth | a dungeon, entered from D2 | the Queen's barrow, opened, and only her signet gone (DESIGN §9); band 4–5, her guard two by two down the passage and her captain at the bier (MONSTERS §5.2) | a ruin on D2 at 114.5,42.5, and its plate at 108,54 |
 | The Salt Road | F2, F3, E3, a corner of D3, and D4 | the wreckers and their lampman in fog; crows at the gibbet (MONSTERS §5.2) | a road through F2, F3, E3 and D3's corner, and planned down the Edge |
 | The Lodestone | G2, the built map (21.5,4) | "already intact; tutorial" (DESIGN §4) | built (#73): the stone's words, Gytha and the track from the gate road |
 | The Mewstone | G4 | nothing yet | an isle, the Deepthorn's |
@@ -313,8 +316,8 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   coast where wreckers wait for the dark.
 - **Landmarks.** Crowness Light on the point, about 152,89, with the keeper's cottage under it. The
   Salt Road along the coast to the corner of D3. A gibbet at the roadside above the rocks. The last
-  of the stubble to the north, and the Wend's last bend in the north-east corner. That corner,
-  across the Wend from Gullwick, is left free for Ashcombe, which #87 moves there.
+  of the stubble to the north, and the Wend's last bend in the north-east corner. In that corner,
+  across the Wend from Gullwick, Ashcombe, which #87 moved there.
 - **Points of interest,** about nine features and eight groups:
   - the keeper who counted the eleven, and his log: the step (§5);
   - the lamp room at the top of the stair, dark until Oil for the Lamp is done (§6);
@@ -356,13 +359,17 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - The seam with F3: rock at 31,12–15 keeps F3's far beach closed along its edge, and rock at
     31,5–9 keeps every way from E3 to Gullwick off Hamo's square at F3's 0,9, and off the strip of
     field above it.
-  - The corner is left for Ashcombe (#87): nothing in it but the ford (`e3_ford`), which it keeps.
+  - Ashcombe in the corner (#87), off the Salt Road by a track from 28,11 up to its gate at 20,4:
+    the farmhouse at 22–25,3–5 with the cellar's door at 21,4, its yard behind and the Foreland's
+    ids kept (the outdoors is one map): the gate (`ashcombe_gate`), five rats (`farm_rats`) at
+    19,4, the kitchen at the back notch (25,4) and the flour crock (26,3) with their chests. The
+    ford (`e3_ford`) stays. With the farm, 96.9% of 836 squares are within 8 steps, the furthest 10.
   - The groups, eight, the harder monsters (#272) at 4: eight crows at the gibbet, nearest the way
     in; a lampman and four wreckers on the road in fog (`when: { sky: 'fog' }`), the lampman first
     so his lamp is the first thing seen; two wreckers and a lampman by night on the rocks of the
     little point (25,20) and again in the bay (12,29); four Barnacle Crabs under the light; two
     Billmen and a Slinger on the road west; three Chalk Wolves on the hills and a Tusker by the
-    copse in the north-west. At level 3 the company wins 99.3% of fights and manages 6.41 fights to
+    copse in the north-west. At level 3 the company wins 99.3% of fights and manages 7.28 fights to
     a rest. Two under, the Foreland's pool is E3's groups alone: 72.2% won, off its aim of 25% and
     inside its limit of 90%, and listed. They pay about 365 xp a member, against the brief's 340.
   - Density: 95.3% of its 847 squares within 8 steps, the furthest 11; 23 points, one a sign.
@@ -445,22 +452,22 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   keepsake that sells well; the wolves' den's hoard, a dead traveller's Spear +1.
 - **Pay.** About 420 xp a member.
 - **As built** (#69). The track from E2's ford comes in at 31,12 and ends on the crest at the
-  Berth's mouth (12–13,12), a long barrow of rock at 7–13,10–14 with its forecourt open; the
-  pulled stones and their chisel marks at 15,13; the sign where the track tops the ridge (22,11).
-  The dungeon's door is #70's, on the forecourt. Nine small barrows along the ridge, the hollow one
-  at 20,3 behind a door at 20,4, hinted at 20,5 (`d2_ring`) and by the shepherd at his hut
-  (3–4,17). The dew pond (20–21,17–18), a shrine on the crest (8,2), a cairn on the highest barrow
-  (27,3), a camp in the lee (17,27) and the Cradle, cut in the chalk below the ridge at 10–20,18–22
-  and said at 15,23. The chalk pit at 3–8,4–8 holds the den (5,6). The groups: six Carrion Crows by
-  the way in (27,15); three Chalk Wolves three times, the den's brood (24,6, 25,23 and 8,26); the
-  pack beside the den (6,6); the Black Dog by night, one on the track (17,10) and two behind the
-  barrow (11,16). The cist holds 60 gold, the Halberd +1 and the Ring of Office; the den's hoard 45
-  gold and the Spear +1. The Berth is on the atlas as a site (a ruin: Thornmark claims the barrow's
-  icon), its place with #70's dungeon.
-- **For the owner.** The Downs' monsters are all at 4 or under, and at D2's floor a company of 4
-  wins every fight and goes 14.3 fights to a rest. Its gate line is owed to #69 until D2's harder
-  monsters are drawn, as E2's Old Rook was for E2. The pack is a stand-in until then: two of
-  Thornmark's Dire Wolves (6) with two Chalk Wolves, the only group at 5, which the curve asks for.
+  Berth's mouth (12–13,12), a long barrow of rock at 7–13,10–14 with its forecourt open; the grooves
+  where the stones were dragged clear at 15,13; the sign where the track tops the ridge (22,11). The
+  dungeon's door is #70's, on the forecourt. Eight small barrows along the ridge, the hollow one at
+  20,3 behind a door at 20,4, hinted at 20,5 (`d2_ring`) and by the shepherd at his hut (3–4,17).
+  The dew pond (20–21,17–18), a shrine on the crest (8,2), a cairn on the highest barrow (27,3), a
+  camp in the lee (17,27) and the Cradle, cut in the chalk below the ridge at 10–20,18–22 and said
+  at 15,23. The chalk pit at 3–8,4–8 holds the den (5,6). The groups: six Carrion Crows by the way
+  in (27,15); a Barrow Wolf and two Chalk Wolves three times, the den's brood (24,6, 25,23 and
+  8,26); the pack, two Barrow Wolves, beside the den (6,6); the Black Dog by night, one on the track
+  (17,10) and two behind the barrow (11,16). The cist holds 60 gold, the Halberd +1 and the Ring of
+  Office; the den's hoard 45 gold and the Spear +1. The Berth is on the atlas as a site (a ruin:
+  Thornmark claims the barrow's icon), its place with #70's dungeon.
+- **The gate.** D2's floor is 4, over the Downs' monsters, so its harder ones are at 5 on MONSTERS
+  §4.4's line: the Barrow Wolf, an elite on the wolf frame in the chalk wolf's coat (#313), and the
+  Black Dog, an elite at 5. At 4 every fight is won and a day is 7.80 fights to a rest, off the aim
+  and inside the limit; a clear pays about 390 xp a member, the brood counted once.
 
 ### 4.7 The Berth (#70): dungeon, 16 by 16, band 4–5
 
@@ -481,16 +488,16 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   BEHIND HER.
 - **New here.** The Barrow Guard and the Barrow Captain, in the Queen's colours, and a boss that
   asks: won about half the time at the band's floor (EXPANSION §5.2).
-- **For the owner.** MONSTERS §5.2 puts the captain beside an empty bier; STORY has the tomb robbed
-  of the ring alone, "not the gold, not the jewels". The brief follows STORY.
+- **The bier.** MONSTERS §5.2 put the captain beside an empty bier; STORY has the tomb robbed of
+  the ring alone, "not the gold, not the jewels". The brief follows STORY, and MONSTERS now does too
+  (#70).
 - **Finds.** The niche behind the bier holds the captain's arms, the Captain's Sword +1 and the
   Captain's Mail +1 (a Long Sword and Scale Mail); the first side chamber a Queen's Long Sword +1.
 - **Pay.** About 420 xp a member.
 - **As built** (#70). The way in is the open forecourt's west square on D2 (12,12), under the
   barrow's lintel, past the mouth's event (13,12), which takes the owner's words; the way out lands
-  there too. Inside, the
-  forecourt (13–14,6–8) and its sign, the hint (13,6); the passage west along row 7, cut square,
-  said at 12,7; four side chambers, the youngest Queen's north at 10–12,2–4 and the oldest's south
+  there too. Inside, the forecourt (13–14,6–8) and its sign, the hint (13,6); the passage west
+  along row 7, cut square, said at 12,7; four side chambers, the youngest Queen's north at 10–12,2–4 and the oldest's south
   at 6–8,10–12, each with its words and its chest; the bier chamber (3–4,5–9), the step said at
   4,7; and behind it a secret door (2,7) to the captain's niche (1,6–8), his arms in its chest. The
   guard stands in pairs at 11, 9, 7 and 5 on row 7, holding their ground, and the captain at 3,7.
@@ -583,15 +590,18 @@ settled in its issue, and what the pilot teaches changes the ones after it.
 DESIGN §9 gives the Downs three steps, and the first is built. The plan puts one in each of the
 core's boxes, in the order the Salt Road reaches them:
 
-- in Gullwick (F3), Wenna's mother, Hild, asking the company to find her: built (#47), a step of
-  The Quiet Farm between Vask's hire and the farm, and the chapter done on both the wand and her
-  word (`done`: `q_ashcombe_done` and `q_wenna`), as the owner agreed on 28 September 2026. A
-  company that did the farm first is sent to her by the chapter's first goal;
+- in Gullwick (F3), Wenna's mother, Hild, asking the company to find her: built (#47), a step of The
+  Quiet Farm between Vask's hire and the farm, which is past Gullwick in E3's corner (#87), and the
+  chapter done on both the wand and her word (`done`: `q_ashcombe_done` and `q_wenna`), as the owner
+  agreed on 28 September 2026. A company that did the farm first is sent to her by the chapter's
+  first goal;
 - at Crowness Light (E3), the keeper who logged the night the Queen died: the Hearth went out eleven
-  times, and he wrote down the gaps between. Built (#67): Aldred at the foot of the tower stair,
-  and his log on the cottage table, a letter read from the pack. The step comes after Gullwick and
-  before the farm, and the chapter is done on the log read as well (`seen`: `downs_e3:e3_log`). A
-  company that did the farm first is sent to Gullwick and then to the keeper;
+  times, and he wrote down the gaps between. Built (#67): Aldred at the foot of the tower stair, and
+  his log on the cottage table, a letter read from the pack. The step comes after the farm and its
+  cellar and before the wand goes to Vask (#87): the road reaches the farm first, in the corner it
+  enters E3 by, and the point after it. The chapter is done on the log read as well (`seen`:
+  `downs_e3:e3_log`). The wand in hand, the goal is Crowness before Helmstow; a company that took
+  the wand straight back is sent to Gullwick if it has not been, and then to the keeper;
 - in the Berth, below D2, the barrow opened, and only the Queen's signet gone.
 
 The Salt Road west, into Act II, starts here. The Foreland's chapter is The Quiet Farm (#42), and
@@ -679,41 +689,43 @@ are, and every later box uses these where its brief says wolves, a boar, rats, b
 New in the Downs, for the novelty check (EXPANSION §5.4): the birds, a new family; hills and
 farmland as terrain (#44); groups that walk only by night or in fog (`when`, #41); and dens, camps
 that breed one kind of monster until a company beats their keepers and burns them (#88): a rookery
-in E2 (built: two Old Rooks its keepers, MONSTERS §5.2), a wolves' den in D2 (built: the pack its
-keepers, two Dire Wolves and two Chalk Wolves, a stand-in, §4.6) and a bandit camp in D3. E2 has the
-first statue too. §4.2 to §4.9 place every group, box by box.
+in E2 (built: two Old Rooks its keepers, MONSTERS §5.2), a wolves' den in D2 (built: two Barrow
+Wolves its keepers, §4.6) and a bandit camp in D3. E2 has the first statue too. §4.2 to §4.9 place
+every group, box by box.
 
 ## 8. The numbers
 
-- **Experience.** One clear of the area pays 3,591 xp a member today, 110 of it the guilds' pay and
-  about 1,810 F2's, F3's, E3's, E2's, D2's, D3's and the Berth's, past level 4 (1,650). The curve
-  (EXPANSION §5.2, #31) gives an area the climb from its floor to the next area's floor, divided by
-  0.75: 2,800 / 0.75, about 3,730. The Downs are where the rest comes from, shared among the boxes
-  as §4.1 has it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. Until
-  they are built the curve reports the shortfall as owed to the pilot (#26). A den's keepers pay
-  once, and its brood as a group that respawns does; the figures count the brood once.
-- **Gold.** A clear pays about 3,590 with E3 and E2: 1,190 in chests before them, about 820 in drops
-  (F2's and F3's among them), 900 in rewards (the clerk's seal and the tenant's paper once each,
-  whoever takes them) and 180 in the guilds' pay, and E3's and E2's chests, hoards and drops on top;
-  D2's, D3's and the Berth's on top of that (the Berth's 300 or so, 220 in its chests, the rest the
+- **Experience.** One clear of the area pays 3,898 xp a member today, 110 of it the guilds' pay and
+  about 1,950 F2's, F3's, E3's, E2's, D2's, D3's and the Berth's, past level 4 (1,650). The curve (EXPANSION
+  §5.2, #31) gives an area the climb from its floor to the next area's floor, divided by 0.75: 2,800
+  / 0.75, about 3,730. The Downs are where the rest comes from, shared among the boxes as §4.1 has
+  it: F2 130, F3 110, E3 340, E2 190, D2 420, the Berth 420, D3 260 and D4 200. With the Berth the
+  clear meets the curve, so its shortfall is no longer owed to the pilot (#26); D4's share will take
+  it about a tenth over, the pilot's to weigh. A den's keepers pay once,
+  and its brood as a group that respawns does; the figures count the brood once.
+- **Gold.** A clear pays about 4,020 with E3, E2, D2 and D3: 1,190 in chests before them, about 820
+  in drops (F2's and F3's among them), 900 in rewards (the clerk's seal and the tenant's paper once
+  each, whoever takes them) and 180 in the guilds' pay, and E3's, E2's, D2's and D3's chests,
+  hoards, drops and rewards on top, and the Berth's 300 or so (220 in its chests, the rest the
   captain's and his guard's). Training six members from 1 to 5 costs 1,500, so gold holds.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
-  starting thresholds, as the pilot's to settle (#47). The Rift Warden, the Smuggler Captain and the
-  Deacon are won 98, 99 and 100% of the time at their maps' floors, where a boss should be won about
-  half the time; the Rift Warden's is #87's to retune, with Ashcombe's move. The area as one pools
-  each group at its own map's floor (#209): 99% of its 77 groups' fights won, F2's and F3's at 2,
-  E3's and E2's at 3 and D2's, D3's and the Berth's at 4, against nine in ten. Two under, the
-  Foreland's floor is 1 and F2's and F3's 2, so only E3's, E2's, D2's and D3's groups have a company
-  there, E3's and E2's at 1 and D2's and D3's at 2: 83.1% of 27 groups' fights won, off the aim of a quarter and inside
-  the limit of nine in ten (#273), listed; the Seam and the Berth, dungeons, count two under the
-  area's floor since #148, and are not judged alone there. Each zone walks its own road and warns
-  at its own way in: the Foreland's from Helmstow, the Downs' from F2's east edge along the Salt
-  Road (`ROADS.downs`, the footpads and the Poacher), both walked every time. The Foreland map and
-  Brandy Hole give 4.6 and 4.1 fights to a rest, against six or seven; E3 6.41, E2 6.28 and D3 7.98;
-  D2 14.3, past its limit and owed to #69 until its harder monsters are drawn; the Berth 7.12, its
-  captain left out of the day and won 45% of the time at 4 and always at 6; the Seam 6.7, now that
-  the company at 3 wears the band's gear. The pilot settles them, by retuning or by moving the
-  thresholds.
+  starting thresholds, as the pilot's to settle (#47). The Smuggler Captain and the Deacon are won
+  99 and 100% of the time at their maps' floors, where a boss should be won about half the time. The
+  Rift Warden, retuned with Ashcombe's move (#87), is won 55% at the cellar's floor, 2, and always
+  at 4; the cellar's groups are harder kinds from the Seam and F2 (acolytes, ghouls, crawlers, barn
+  rats), so a day there is 7.42 fights to a rest at 2. The area as one pools each group at its own
+  map's floor (#209): 98.5% of its 77 groups' fights won, F2's and F3's at 2, E3's and E2's at 3 and
+  D2's, D3's and the Berth's at 4, against nine in ten. Two under, the Foreland's floor is 1 and F2's and F3's 2,
+  so only E3's, E2's, D2's and D3's 28 groups (the farm's rats among them) have a company there,
+  E3's and E2's at 1 and D2's and D3's at 2: 78.6% won, off the aim of a quarter and inside the
+  limit of nine in ten (#273), listed; the Seam and the Berth, dungeons, count two under the area's
+  floor since #148, and are not judged alone there. Each zone walks its own road and warns at its own way in: the
+  Foreland's from Helmstow, the Downs' from F2's east edge along the Salt Road (`ROADS.downs`, the
+  footpads and the Poacher), both walked every time. The Foreland map and Brandy Hole give 4.37 and
+  4.1 fights to a rest, against six or seven; E3 7.28, E2 6.28, D2 7.80 and D3 7.98; the Berth 7.12, its captain left out of the
+  day and won 45% of the time at 4 and always at 6; the Seam 6.7,
+  now that the company at 3 wears the band's gear. The pilot settles them, by retuning or by moving
+  the thresholds.
 - **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the
   band's gear: the Long Sword, the Hand Axe, the Long Bow, Scale Mail, Chain Mail and the Kite
   Shield. The Downs hold the kits with a plus and the band's gear with one, box by box as §4.2 to
@@ -754,7 +766,7 @@ Decided by the owner on 27 and 28 September 2026:
    an atlas zone lists its maps (`AtlasZone.maps`; #66). A zone to a box would ask a step of the
    quest of every box the road crosses (EXPANSION §5.8), bare country included.
 4. **Gullwick** is a village on F3: its houses, its boats and Wenna's mother as features, as the
-   Ashcombe farm is on the Foreland map, and a camp to rest at (#45). No businesses, so no new
+   Ellerby farm is on the Foreland map, and a camp to rest at (#45). No businesses, so no new
    interiors.
 5. **The Berth** is a dungeon of its own: one level of 16 by 16, entered from D2 (#70).
 6. **The Lodestone** is a stone to see, beside Helmstow on the Foreland map, with a Lantern who
@@ -767,8 +779,8 @@ Decided by the owner on 27 and 28 September 2026:
    #87): into E3's north-east corner, across the Wend from Gullwick, with its cellar starting at
    level 2 and its Rift Warden held to the gate's rule for a boss there. The Foreland map keeps a
    farm where it stood, under a name of its own, with a small store in a farm kitchen (#97) that
-   sells rations at its own price (#98): 3 gold, a quarter under Mottram's. #87 recuts the briefs
-   when it is built; until then the Foreland map's keeps the farm, and E3's leaves the corner free.
+   sells rations at its own price (#98): 3 gold, a quarter under Mottram's. Built in #87: the farm
+   there is Ellerby (§10).
 10. **Dens** (#88): a camp that breeds one kind of monster until a company beats its keepers and
     burns it; its hoard is theirs, and it stands as a ruin after. The first three are a rookery in
     E2, a wolves' den in D2 and a bandit camp in D3.
@@ -816,6 +828,7 @@ of the old names the first crew left (marked *old*).
 | the Ledge | Kestrel Edge | the edge the kestrels hunt along | the Bulwark, *old* |
 | the Queen's barrow | the Berth | the barrow's name, older than the Crown's; *old* | |
 | Warden Pass | the Scarth | the notch in the ridge | Thorngate |
+| Ashcombe, on the Foreland map | Ellerby | the alder farm, lived in, where Ashcombe stood before it moved past Gullwick (#87); a name first thought of for Coldharbour | |
 | Captain's Farm | Coldharbour | a cold shelter: an old roadside name the farm kept | Ellerby |
 | Gull Isle | the Mewstone | the gulls' rock | |
 | Greywater, and its caves | Brandy Hole | where the cheap brandy came from | Kelp Hole |
