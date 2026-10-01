@@ -358,12 +358,12 @@ Hit points / average damage a hit, by role and level:
 | 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 70 / 9 | 57 / 10 | 70 / 11 | 88 / 13 | 119 / 13 | 311 / 37.5 |
 | 9 | 50 / 9 | 73 / 7 | 73 / 8 | 72 / 8 | 81 / 9 | 69 / 9 | 83 / 10 | 102 / 14 | 136 / 14 | 350 / 41 |
 | 10 | 60 / 10 | 89 / 10 | 90 / 10 | 86 / 9 | 102 / 11.5 | 87 / 10 | 99 / 14 | 122 / 15 | 165 / 15.5 | 415 / 47 |
-| 12 | 104 / 6.5 | 131 / 11.5 | 132 / 12 | 138 / 10 | 184 / 12 | 124 / 12 | 179 / 14 | 228 / 15.5 | 284 / 17 | 540 / 59 |
-| 16 | 117 / 7 | 158 / 11 | 162 / 12 | 162 / 11.5 | 195 / 14 | 149 / 12 | 189 / 15 | 241 / 18.5 | 302 / 19.5 | 764 / 79 |
-| 20 | 133 / 8 | 189 / 12 | 189 / 13 | 212 / 12 | 243 / 16 | 185 / 12 | 217 / 18.5 | 277 / 22 | 365 / 21 | 887 / 88 |
-| 24 | 146 / 9 | 195 / 14.5 | 195 / 15 | 244 / 14 | 278 / 17.5 | 190 / 14 | 252 / 16.5 | 300 / 22 | 375 / 22 | 1029 / 99 |
-| 28 | 184 / 10 | 272 / 16 | 274 / 17 | 331 / 17.5 | 385 / 24 | 269 / 15 | 332 / 22 | 458 / 24 | 527 / 28.5 | 1103 / 103 |
-| 32 | 196 / 11.5 | 280 / 18 | 283 / 19 | 366 / 18 | 428 / 26.5 | 274 / 16.5 | 375 / 22 | 503 / 25 | 583 / 29 | 1379 / 127.5 |
+| 12 | 113 / 6.5 | 137 / 11.5 | 144 / 13 | 143 / 10 | 173 / 14 | 128 / 12 | 177 / 15 | 232 / 17 | 267 / 19 | 540 / 59 |
+| 16 | 119 / 10 | 173 / 11.5 | 169 / 12 | 177 / 11.5 | 202 / 15 | 158 / 12 | 200 / 15.5 | 274 / 17.5 | 315 / 20 | 821 / 84.5 |
+| 20 | 170 / 8 | 227 / 12 | 223 / 13 | 248 / 12 | 277 / 17 | 186 / 15 | 242 / 19 | 329 / 21 | 404 / 21 | 974 / 96 |
+| 24 | 188 / 9 | 233 / 14.5 | 230 / 15 | 255 / 15 | 300 / 19.5 | 194 / 16.5 | 275 / 18.5 | 337 / 23 | 414 / 23 | 1160 / 111 |
+| 28 | 210 / 17 | 343 / 16 | 338 / 17 | 371 / 19.5 | 435 / 25.5 | 254 / 24 | 391 / 24 | 503 / 27.5 | 562 / 33 | 1315 / 123 |
+| 32 | 236 / 17 | 360 / 18 | 354 / 19 | 410 / 21 | 483 / 27.5 | 263 / 27 | 450 / 23 | 544 / 28.5 | 621 / 34 | 1666 / 153.5 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -490,9 +490,12 @@ What it shows:
   before them (#159) fought 16.5 standard soldier encounters to a rest at 24, against the 10 asked.
   Made again with the prestiges alone, monsters carried 3.3 to 4.9 times the line's hit points at 12
   and 2.7 to 4.5 at 32. With the spell ranks and tiers 6 and 7 (#20), made again: 3.2 to 4.7 times at
-  12 and 2.6 to 5.1 at 32 (the boss 3.9 at 12 and 4.8 at 32), up to a quarter more than the
-  prestiges alone asked past 16 (the soldier 3.84 at 28 where it had 3.11), hitting on the line or up
-  to 1.8 times as hard, in fights of four to eight rounds. Hit points are held at the level under's
+  12 and 2.6 to 5.1 at 32 (the boss 3.9 at 12 and 4.8 at 32). Every level from 12 to 32 moved: most
+  roles carry a fifth to over a quarter more from 20 (fodder 28 and 29% more at 20 and 24, the
+  soldier 3.84 at 28 where it had 3.11), the controllers a little less at 28 and 32, and where hit
+  points could not carry the day damage rose instead (the controllers' blow 1.79 times the line's
+  at 32 where it was 1.10, fodder's 1.69 at 28 where it was 1.0). They hit on the line or up to 1.8
+  times as hard, in fights of four to eight rounds. Hit points are held at the level under's
   for 6 of the 60 points. A tenth of the days or fewer end badly for every role but two: brutes 17%
   at 12, where the first prestige is new and tier 6 not yet come, and controllers 12% at 24, against
   a bot that never cures. Ranks of nothing in their place would ask 5 to 15% fewer hit points and

@@ -16,7 +16,7 @@ export const SPELLS: readonly SpellDef[] = [
   { id: 'revive', name: 'Revive', list: 'cleric', level: 5, sp: 12, target: 'ally', context: 'any', raise: true, heal: 10, text: 'Calls the dead back.' },
   { id: 'wrath', name: 'Wrath of the Hearth', list: 'cleric', level: 5, sp: 12, target: 'all', context: 'combat', dice: 4, sides: 6, element: 'holy', text: 'Light scours every foe.' },
   { id: 'hearthfire', name: 'Hearthfire', list: 'cleric', level: 6, sp: 10, target: 'group', context: 'combat', dice: 6, sides: 8, element: 'fire', text: "The Hearth's fire on a whole group." },
-  { id: 'cleansing_light', name: 'Cleansing Light', list: 'cleric', level: 6, sp: 9, target: 'party', context: 'any', cure: ['poisoned', 'diseased', 'asleep', 'paralysed'], text: 'Removes an affliction from everyone.' },
+  { id: 'cleansing_light', name: 'Cleansing Light', list: 'cleric', level: 6, sp: 9, target: 'party', context: 'any', cure: ['poisoned', 'diseased', 'asleep', 'paralysed'], text: 'Cures poison, disease, sleep and paralysis.' },
   { id: 'lampglass', name: 'Lampglass', list: 'cleric', level: 7, sp: 10, target: 'party', context: 'combat', glass: true, turns: 5, text: 'Dims one kind of harm for a while.' },
   { id: 'absolve', name: 'Absolve', list: 'cleric', level: 7, sp: 12, target: 'ally', context: 'any', cure: ['stoned', 'cursed'], text: 'Lifts stone and curse.' },
   // ---- sorcerer ----

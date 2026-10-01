@@ -180,11 +180,15 @@ export function movement(): void {
     ok(first === 'moved' && second.kind === 'blocked' && second.reason === FLOAT_FAILS && ends.kind === 'moved' && ends.messages.includes(FLOAT_ENDS) && world.state.float === 0, `Levitate never leaves the company over the drop when it fails, and says when it ends (${second.kind === 'blocked' ? second.reason : second.kind})`);
     lay(',', 0);
     world.travel('shelf', 16, 16, 0);
+    const sand = m.width * sy + sx, ground = m.cells[sand];
+    m.cells[sand] = { ...LEGEND[';'], ch: ';' };
+    const tidal = world.canMark();
+    m.cells[sand] = ground;
     const set = world.setMark(), mark = { ...world.state.mark! };
     world.travel('harrow', 7, 10, 0);
     const indoors = world.canMark() || world.setMark();
     const back = world.toMark();
-    ok(set && !indoors && back && world.state.mapId === mark.mapId && world.state.x === mark.x && world.state.y === mark.y && world.state.mark?.x === mark.x, 'Waymark sets its mark outdoors, not in a town, and returns to it from anywhere');
+    ok(!tidal && set && !indoors && back && world.state.mapId === mark.mapId && world.state.x === mark.x && world.state.y === mark.y && world.state.mark?.x === mark.x, 'Waymark sets its mark outdoors, not on tidal ground nor in a town, and returns to it from anywhere');
     delete world.state.mark;
   }
   // Tidal ground: walked at low water; at high water refused with its own line, unless someone

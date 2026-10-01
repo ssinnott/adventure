@@ -1006,6 +1006,27 @@ const glass = await page.evaluate(() => {
   return out;
 });
 
+// Waymark with a mark set: the spell asks "Return to the mark" or "Set it here", and the first goes back (#20).
+const mark = await page.evaluate(async () => {
+  const S = await import('/src/ui/screens.ts' as string), P = await import('/src/game/spells.ts' as string);
+  const g = (window as any).__game.game, w = g.world, cassian = g.party.members[5];
+  while (g.screens.length > 1) g.pop();
+  w.travel('shelf', 16, 6, 0);
+  const set = w.setMark(), at = { ...w.state.mark };
+  w.travel('shelf', 16, 12, 0);
+  cassian.spells.push('waymark'); cassian.sp = cassian.maxSp = 99; cassian.conditions = [];
+  g.push(new S.SpellScreen('explore'));
+  g.top.update(g, 'n6');
+  g.top.sel = cassian.spells.filter((id: string) => P.spell(id).context !== 'combat').indexOf('waymark');
+  g.top.update(g, 'interact');
+  const asked = { screen: g.top.constructor.name, options: g.top.options ?? [] };
+  g.top.update(g, 'interact');
+  const back = w.state.x === at.x && w.state.y === at.y;
+  delete w.state.mark;
+  while (g.screens.length > 1) g.pop();
+  return { set, asked, back };
+});
+
 await browser.close();
 server.close();
 
@@ -1020,6 +1041,7 @@ ok(gameSeed === SEED, `the new game starts from the pinned seed (${gameSeed}, we
 ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
+ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
 ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);

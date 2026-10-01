@@ -173,6 +173,10 @@ export interface Teaching {
   prestige: 1 | 2 | 3;
   /** The third prestige's quest, done: the trainer teaches it once this holds. */
   done?: When;
+  /** The id of the quest the trainer asks for the third; once it begins, seeking them is done (game/seeking.ts). */
+  asks?: string;
+  /** The journal's line when a member is to seek them, in the voice of the place; the system's own when absent. */
+  seek?: string;
 }
 
 /**

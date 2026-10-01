@@ -457,9 +457,13 @@ export class World {
   /** A fight ends Walk on Water: the party stands where it stands. */
   endWalk(): void { delete this.state.walk; }
 
-  /** Whether Waymark can set its mark here: on an outdoor map, on ground the party stands on without swimming or floating. */
+  /**
+   * Whether Waymark can set its mark here: on an outdoor map, on ground the party stands on without
+   * swimming or floating, and never tidal ground, which the sea may cover by the time it returns.
+   */
   canMark(): boolean {
-    return this.map.kind === 'outdoor' && this.map.passable(this.state.x, this.state.y, { tide: this.tide }) === 'ok';
+    const { x, y } = this.state;
+    return this.map.kind === 'outdoor' && this.map.at(x, y).terrain !== 'tidal' && this.map.passable(x, y, { tide: this.tide }) === 'ok';
   }
   /** Waymark: set the mark where the party stands. False where it will not take (`canMark`). */
   setMark(): boolean {
