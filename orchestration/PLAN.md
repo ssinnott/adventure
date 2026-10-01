@@ -1755,3 +1755,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   5a034ee; main's tree is the tested tree (f5e2ae1). #218 closes: **the Deepthorn is built** (#208's
   boxes all closed). The J5 session done (the body's decisions on the merged PR); #318's session
   unblocked; #319's to merge main.
+- 02:41: check-in (the GitHub and remote tools were away a while); re-armed for 03:40. Opened since
+  01:55: #320 (#319), #321 (#318), #322 (#311). The pilot session idle since 01:30 on "Then I'll
+  commit, push and open E's pull request closing #47", nothing pushed: told to do it in one turn.
+- 02:45: #320 (#319, the eight check) landed on my own review (tools/tests/maps.ts only: groups on
+  the atlas's `deepthorn` maps held to eight; broken with nine rootwalkers, it fails). Landing check
+  on cff56bc (main in): ALL OK (4 owed), SMOKE OK, "Nothing new."; CI green. Merged as 20582b3; main's
+  tree is the tested tree (9669544). #319 closes.
+- 02:48: #322 (#311, signs and says) landed on my own review (pillars: no sign opens with "A sign
+  reads"; people: an answered question's after-words come up, the issue's narrower line, 11 answers;
+  each broken on purpose). Landing check on 95213be merged onto 20582b3: ALL OK (4 owed), SMOKE OK,
+  "Nothing new."; CI green. Merged as a001743; main's tree is the tested tree (26b2950). #311 closes.
+  The quality session done. #321 (#318) in review.
