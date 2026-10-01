@@ -329,8 +329,8 @@ export interface MapPalette {
   floor: string;
   ceiling: string;
   door: string;
-  /** 'stone' is large rough blocks; 'brick' is small fired courses. */
-  wallStyle: 'stone' | 'brick';
+  /** 'stone' is large rough blocks; 'brick' is small fired courses; 'smooth' is one face with no join in it. */
+  wallStyle: 'stone' | 'brick' | 'smooth';
   /** 'vault' is stone overhead; 'beams' is a timbered ceiling (cellars, inns). */
   ceilingStyle: 'vault' | 'beams';
   /** Colour of hung banners on this map. */
