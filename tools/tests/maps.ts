@@ -32,6 +32,7 @@ const UNPLACED: Record<string, string> = {
   sunder_hound: '#196',
   lantern_moth: '#195',
   glass_bear: '#199',
+  deathshead: '#200',
 };
 
 /**

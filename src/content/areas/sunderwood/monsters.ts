@@ -11,6 +11,7 @@ export const SPRITES = [
   'sunder_hound',
   'lantern_moth',
   'glass_bear',
+  'deathshead',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -24,4 +25,6 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'lantern_moth', name: 'Lantern Moth', plural: 'Lantern Moths', sprite: 'lantern_moth', kind: 'beast', look: 'Wings like a pair of hands, and dust that glitters.', level: 14, hp: 112, ac: 17, attack: 8, dice: 1, sides: 6, bonus: 3, speed: 12, xp: 277, gold: [0, 0], ranged: true, inflict: { cond: 'asleep', chance: 0.2 }, tint: '#d8ceb0', size: 0.4 },
   // the Sunder's floor (#199), armoured on MONSTERS §4.4's line at 16; fire does not touch it
   { id: 'glass_bear', name: 'Glass Bear', plural: 'Glass Bears', sprite: 'glass_bear', kind: 'beast', look: 'Glass through its fur like frost.', level: 16, hp: 189, ac: 21, attack: 10, dice: 3, sides: 7, bonus: 3, speed: 8, xp: 844, gold: [0, 0], immune: ['fire'], tint: '#4e4a46', size: 1.2 },
+  // Lanternwood by night (#200, #202, #203), an elite on MONSTERS §4.4's line at 16: it flies, reaches the back row, and its dust puts to sleep, at 0.35 a hit
+  { id: 'deathshead', name: 'Deathshead', plural: 'Deathsheads', sprite: 'deathshead', kind: 'beast', look: 'A skull on its back, and a scream in its wings.', level: 16, hp: 241, ac: 20, attack: 11, dice: 3, sides: 8, bonus: 5, speed: 15, xp: 1267, gold: [0, 0], ranged: true, inflict: { cond: 'asleep', chance: 0.35 }, tint: '#3a3026', size: 0.55 },
 ];

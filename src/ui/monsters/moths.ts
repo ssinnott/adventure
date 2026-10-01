@@ -20,7 +20,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['lantern_moth'];
+export const KINDS: readonly MonsterSprite[] = ['lantern_moth', 'deathshead'];
 
 /**
  * The frame's parts, as proportions of the lantern moth's (1 = the lantern moth, 0 = none), each
@@ -48,6 +48,10 @@ interface Build {
   smudge: number;
   /** The skull on the thorax, 0 none: the deathshead's. */
   mark: number;
+  /** How far the forewings are swept down and back from the level, in radians: the hawk-moth's. */
+  sweep: number;
+  /** The scream: now and then the wings shiver, too fast to see, 0 never. */
+  scream: number;
   /** How much dust comes off the wings, 0 none. */
   dust: number;
   /** The colour mixed in under the wings and the body: the hearth moth's red, lit from below. */
@@ -60,13 +64,22 @@ interface Build {
   dustHex: string;
 }
 const LANTERN: Build = {
-  fore: 1, fingers: 1, veins: 1, hind: 1, band: 0, body: 1, fur: 1, antenna: 1, smudge: 1, mark: 0, dust: 1,
+  fore: 1, fingers: 1, veins: 1, hind: 1, band: 0, body: 1, fur: 1, antenna: 1, smudge: 1, mark: 0, sweep: 0, scream: 0, dust: 1,
   underside: null, bandHex: '#b8862e', markHex: '#e6dcbc', dustHex: '#fff4d0',
+};
+/**
+ * The Deathshead: a skull on its back, and a scream in its wings. The hawk-moth: bigger and darker,
+ * the body heavy, the forewings long and swept back with their fingers worn nearly to a plain edge,
+ * the hindwings and the abdomen banded ochre and black, short antennae, and on the thorax the skull,
+ * the one pale thing on it. Now and then its wings shiver: the scream.
+ */
+const DEATHSHEAD: Build = {
+  fore: 1.1, fingers: 0.4, veins: 0.6, hind: 0.85, band: 1, body: 1.4, fur: 1.3, antenna: 0.5, smudge: 0.6, mark: 1, sweep: 0.3, scream: 1, dust: 1,
+  underside: null, bandHex: '#b8862e', markHex: '#e6dcbc', dustHex: '#e8d8a8',
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  moth(ctx, x, y, h, p, LANTERN);
+  moth(ctx, x, y, h, p, kind === 'deathshead' ? DEATHSHEAD : LANTERN);
 };
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
@@ -97,7 +110,9 @@ const HIND = [4, 57, 22, 53, 39, 46, 45, 36, 39, 26, 25, 27, 10, 40];
 function moth(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build): void {
   const t = p.frame, u = h / 100;
   // The beat: the wings lift and drop about the shoulder, and the body bobs against them.
-  const beat = Math.sin(t / 5), bob = -beat * 2.2;
+  // The scream: for a moment in every few seconds the wings shiver, fast and small.
+  const sc = t % 130, shiver = b.scream > 0 && sc < 22 ? Math.sin(sc * 2.1) * 0.5 * b.scream * (1 - sc / 22) : 0;
+  const beat = Math.sin(t / 5) * (shiver ? 0.3 : 1) + shiver, bob = -beat * 2.2;
   const f: F = { u, X: (v) => x + v * u, Y: (v) => y - (v + bob) * u };
   const under = (hex: string): string => (b.underside ? mix(hex, shade(b.underside, p.tone), 0.35) : hex);
   const wing = under(p.base), vein = shade(mix(p.dark, '#3a3430', 0.4), 1), fur = under(shade(mix(p.base, p.dark, 0.45), 1));
@@ -107,7 +122,7 @@ function moth(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   const shoulder = { x: 4, y: 60 };
   const narrow = 0.86 + 0.14 * Math.cos(t / 5);
   const turn = (pts: readonly number[], s: number, lift: number, k = b.fore): number[] => {
-    const a = beat * 0.14 * lift, c = Math.cos(a), sn = Math.sin(a), o: number[] = [];
+    const a = beat * 0.14 * lift - (lift >= 1 ? b.sweep : 0), c = Math.cos(a), sn = Math.sin(a), o: number[] = [];
     for (let i = 0; i < pts.length; i += 2) {
       const dx = (pts[i] - shoulder.x) * k * narrow, dy = (pts[i + 1] - shoulder.y) * (lift < 1 ? b.hind : 1);
       o.push(s * (shoulder.x + dx * c - dy * sn), shoulder.y + dx * sn + dy * c);
@@ -192,6 +207,9 @@ function skullMark(ctx: CanvasRenderingContext2D, f: F, u: number, k: number, he
   patch(ctx, B, bone, [{ k: 'ell', x: f.X(0), y: f.Y(62), rx: 5 * u * k, ry: 4.6 * u * k }], { alpha: 0.9, feather: 0.25 });
   ctx.fillStyle = rgba('#140c08', 0.85);
   for (const s of [-1, 1]) { ctx.beginPath(); ctx.ellipse(f.X(s * 2), f.Y(62.5), 1.3 * u * k, 1.5 * u * k, 0, 0, Math.PI * 2); ctx.fill(); }
+  // The nose, and the jaw's teeth under it: a row of dark ticks across the bone.
+  ctx.beginPath(); ctx.moveTo(f.X(0), f.Y(61)); ctx.lineTo(f.X(-0.7), f.Y(59.8)); ctx.lineTo(f.X(0.7), f.Y(59.8)); ctx.closePath(); ctx.fill();
+  if (u * k > 0.7) for (let i = -2; i <= 2; i++) ctx.fillRect(Math.round(f.X(i * 1.1)), Math.round(f.Y(58.6)), 1, Math.max(1, Math.round(1.2 * u * k)));
 }
 
 /**
