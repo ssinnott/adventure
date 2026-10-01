@@ -11,6 +11,8 @@
 // found from the rope that hangs over it, and the quay's and the pans' groups won at the box's
 // floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear bought, training to
 // 13 and a first prestige taken; and the boat to Wrackholm's landing and back.
+// Then south into the pans (C7, #178): the Scarp across the south and its stair's fallen foot, the
+// sealed pan's hoard found from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -40,6 +42,7 @@ const C4 = MAP_DEFS.find((d) => d.id === 'delta_c4')!;
 const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
 const B5_COUNTER = B5.features!.find((f) => f.kind === 'npc') as Person;
 const C6 = MAP_DEFS.find((d) => d.id === 'saltings_c6')!;
+const C7 = MAP_DEFS.find((d) => d.id === 'saltings_c7')!;
 const TOWN = MAP_DEFS.find((d) => d.id === 'saltmouth')!;
 const HERMIT = D5.features!.find((f) => f.kind === 'npc') as Person;
 const person = (name: string): Person => C4.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
@@ -101,8 +104,8 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.eventsHere();
   let hid = false;
   for (let i = 0; i < 20 && !hid; i++) hid = w.world.search();
-  const inside = hid ? [w.world.move('forward'), w.world.move('forward')] : [];
-  ok(hid && inside.every((r) => r.kind === 'moved'), 'searched from the gap in the herons, the hut\'s wall opens, and can be walked into');
+  const intoHut = hid ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(hid && intoHut.every((r) => r.kind === 'moved'), 'searched from the gap in the herons, the hut\'s wall opens, and can be walked into');
   ok(w.world.used('c4_hide'), 'inside, the bargemen\'s hide is found');
   const hide = C4.features!.find((f) => f.kind === 'chest' && f.id === 'c4_hide_chest');
   ok(hide?.kind === 'chest' && hide.items.includes('brine_shard') && hide.items.includes('longsword+1') && hide.x === 6 && hide.y === 14, 'in the hide, a Brine Shard and a Long Sword +1');
@@ -244,4 +247,32 @@ export const walkthrough: Walkthrough = (ok) => {
   w.party.gold = 150;
   const home = back ? take(back, w.world, w.party) : undefined;
   ok(!!home?.taken && w.world.state.mapId === 'saltmouth' && w.party.gold === 0 && w.world.hour === 6, `and Kitto at the stage sells the way back, onto Saltmouth's quay (${home?.lines.join(' ')})`);
+
+  // South out of Saltmouth's pans into C7's, under the Scarp.
+  w.world.travel('saltings_c6', 17, 30, SOUTH);
+  for (let i = 0; i < 3 && w.world.zone?.id !== 'saltings_c7'; i++) w.world.move('forward');
+  ok(w.world.zone?.id === 'saltings_c7', 'south from Saltmouth\'s box the salt runs on into the pans, C7');
+  listen(w);
+  const foot = C7.features!.find((f) => f.kind === 'event' && f.id === 'c7_stair');
+  ok(foot?.kind === 'event' && C7.rows[foot.y + 1][foot.x] === 'M' && new GameMap(C7).passable(foot.x, foot.y) === 'ok', 'the Scarp stair\'s foot is a notch in the cliff, its lowest flight fallen, walked to and no further');
+
+  // The secret: the one wall trodden, then the search, the crabs' hole and the sealed pan's hoard.
+  const hoard = C7.features!.find((f) => f.kind === 'chest' && f.id === 'c7_hoard');
+  const shut = new GameMap({ ...C7, rows: C7.rows.map((r) => r.replaceAll('S', '#')) });
+  const seen = new Set<string>([`${C7.start.x},${C7.start.y}`]), q = [[C7.start.x, C7.start.y]];
+  for (let k = 0; k < q.length; k++) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const x = q[k][0] + dx, y = q[k][1] + dy;
+    if (!seen.has(`${x},${y}`) && shut.passable(x, y) === 'ok') { seen.add(`${x},${y}`); q.push([x, y]); }
+  }
+  ok(hoard?.kind === 'chest' && hoard.items.includes('crabshell_buckler') && !seen.has(`${hoard.x},${hoard.y}`), 'the salter\'s hoard, a Crab-Shell Buckler, lies in a pan no lane or sluice reaches');
+  w.world.travel('saltings_c7', 31, 5, WEST);
+  w.world.eventsHere();
+  let holed = false;
+  for (let i = 0; i < 20 && !holed; i++) holed = w.world.search();
+  const inside = holed ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(holed && inside.every((r) => r.kind === 'moved'), 'searched by the trodden wall, the crabs\' hole opens under it, and the sealed pan can be walked into');
+  listen(w);
+
+  // The box's groups at its floor: the crabs in the pans, the bull toads in the last marsh.
+  for (const g of C7.encounters!) fight(w, `saltings_c7:${g.id}`);
 };
