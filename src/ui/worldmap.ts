@@ -10,6 +10,7 @@ import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
+import { flickerOf } from '../game/stones.ts';
 import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
 import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
@@ -1404,10 +1405,11 @@ function paintedNow(): Painted {
 /** The painted cloth alone, drawn once. */
 export function worldArt(): HTMLCanvasElement { return paintedNow().cloth; }
 
-/** The Hearth burns over the painted sea: a warm pool on the water and a flickering column. Cloth coordinates. */
-function drawHearth(ctx: CanvasRenderingContext2D, frame: number): void {
+/** The Hearth burns over the painted sea: a warm pool on the water and a column, flickering less for each Stone restored. Cloth coordinates. */
+function drawHearth(ctx: CanvasRenderingContext2D, frame: number, stones = 0): void {
   const [x, hy] = hearthAt(), y = hy - 4;
-  const flick = 0.82 + 0.18 * Math.sin(frame / 7) * Math.sin(frame / 3.1);
+  // Steadier for each Stone restored, as the title's (#168).
+  const amp = flickerOf(stones), flick = 1 - amp + amp * Math.sin(frame / 7) * Math.sin(frame / 3.1);
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   glow(ctx, x, y + 2, 48, '#ffc070', 0.32 * flick);
@@ -1575,7 +1577,7 @@ export class WorldMapScreen implements Screen {
       ctx.save();
       ctx.beginPath(); ctx.rect(VIEW.x, VIEW.y, VIEW.w, VIEW.h); ctx.clip();
       ctx.translate(VIEW.x - vx, VIEW.y - vy);
-      drawHearth(ctx, frame);
+      drawHearth(ctx, frame, world?.stones ?? 0);
       if (this.mode === 'zones') {
         ctx.drawImage(art.overlay, vx, vy, VIEW.w, VIEW.h, vx, vy, VIEW.w, VIEW.h);
         if (party) drawParty(ctx, party, world?.state.facing ?? 0, frame);
@@ -1645,7 +1647,7 @@ export function renderCloth(mode: WorldMapMode, world: World | null = null, fram
   const cv = canvas(CLOTH.w, CLOTH.h);
   const ctx = cv.getContext('2d')!;
   ctx.drawImage(art.cloth, 0, 0);
-  drawHearth(ctx, frame);
+  drawHearth(ctx, frame, world?.stones ?? 0);
   if (mode === 'art') drawNames(ctx, art.names, 0, 0, CLOTH.w, CLOTH.h);
   if (mode === 'zones') {
     ctx.drawImage(art.overlay, 0, 0);
