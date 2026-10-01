@@ -101,7 +101,7 @@ export async function scaffold(): Promise<void> {
   ok(refused('downs', AT[0] + 1, AT[1], /lies over shelf/), 'it refuses a cut over a laid zone map, ring and all');
   ok(refused('downs', ATLAS.width - SIZE + 1, AT[1], /outside the world/), 'and one outside the world');
   ok(refused('nowhere', AT[0], AT[1], /no zone/), 'and a zone the atlas has not');
-  ok(refused('downs', 88, 46, /cliff \d+/), 'and ground no map character is, counting its squares (Kestrel Edge\'s cliffs at 88,46)');
+  ok(refused('downs', 72, 60, /cliff \d+/), 'and ground no map character is, counting its squares (Kestrel Edge\'s cliffs at 72,60)');
   ok(refused('downs', AT[0], AT[1], /built already/, 'shelf') && refused('downs', AT[0], AT[1], /no map id/, 'Downs-2'), 'and an id a built map has, or no map id could be');
 
   // --id names the map and its export.

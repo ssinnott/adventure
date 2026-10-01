@@ -10,7 +10,9 @@ import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, SOUTH } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
-import { MAP_DEFS } from '../../index.ts';
+import { MAP_DEFS, MONSTERS } from '../../index.ts';
+import { xpForLevel } from '../../../game/party.ts';
+import { priceIn } from '../../../game/items.ts';
 import { meet, answer, heard, readText } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -27,17 +29,33 @@ function crowness(w: Walk): void {
   w.ok(w.party.bag.includes('keepers_log') && (readText('keepers_log') ?? []).length === 5, "the keeper's log is on the cottage table, and reads from the pack");
 }
 
-/** The chapter once hired: Gullwick, Crowness, the farm, the cellar and the wand taken back. */
+/** The chapter once hired: Gullwick, the farm and its cellar, Crowness on along the road, and the wand taken back. */
 export const STEPS: readonly Step[] = [
   { name: 'to Gullwick', play: (w) => meetWho(w, 'q_wenna') },
+  { name: 'to Ashcombe', play: (w) => walkThrough(w, 'downs_e3', 20, 4, EAST, 'mill') },
+  { name: 'the cellar', play: (w) => {
+    // Walked at its floor, 2, where the gate tunes its Warden to about half (#87), before Crowness at 3.
+    w.ok(w.level === 2, `the cellar is walked at level 2, its floor (${w.level})`);
+    see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core');
+  } },
   { name: 'to Crowness', play: crowness },
-  { name: 'to Ashcombe', play: (w) => walkThrough(w, 'shelf', 23, 20, EAST, 'mill') },
-  { name: 'the cellar', play: (w) => { see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core'); } },
   { name: 'the wand', play: (w) => meetWho(w, 'survey_wand') },
 ];
 
-/** The farm first, Gullwick and Crowness last: the chapter's goals send a company that did it so to Hild, then the keeper. */
-export const FARM_FIRST: readonly Step[] = [...STEPS.slice(2), {
+/**
+ * The farm first and the wand straight back from the cellar, Gullwick and Crowness last: against
+ * the goal, which asks for Crowness before Helmstow, so the wand is handed over in the cellar's step
+ * and not as a step of its own. Then the chapter's goals send the company to Hild, then the keeper.
+ */
+export const FARM_FIRST: readonly Step[] = [STEPS[1], {
+  name: 'the cellar, and the wand straight back',
+  play: (w) => {
+    STEPS[2].play(w);
+    const vask = MAP_DEFS.find((d) => d.id === 'keep')?.features?.find((f): f is Person => f.kind === 'npc' && [f.flag ?? []].flat().includes('q_ashcombe'));
+    if (vask) { w.world.travel('keep', vask.x, vask.y); meet(vask, w.party, heard(w.world, vask)); listen(w); }
+    w.ok(!!w.party.flags.q_ashcombe_done, 'the wand taken straight back to Vask, before Crowness');
+  },
+}, {
   name: 'to Gullwick, the farm done',
   play: (w) => {
     const goal = quest(w)?.goal ?? '';
@@ -76,7 +94,27 @@ export const walkthrough: Walkthrough = (ok) => {
     'Sylvane met first: Gytha gives the lesson, and then the cut\'s words');
 
   sideQuests(ok);
+  walkWorth(ok);
 };
+
+/**
+ * The walk to Ashcombe (#87), once, and what it pays a member of six: the Foreland map's groups,
+ * F2's and F3's by day and the farm's rats. It is worth level 2 and not 3, where the Foreland map
+ * alone was not worth 2: the first job is earned on the road to it.
+ */
+function walkWorth(ok: (cond: boolean, msg: string) => void): void {
+  const xp = (map: string, keep: (e: { id: string; when?: unknown }) => boolean = () => true): number =>
+    (MAP_DEFS.find((d) => d.id === map)?.encounters ?? []).filter(keep).flatMap((e) => e.monsters).reduce((t, m) => t + MONSTERS[m].xp, 0);
+  const foreland = Math.floor(xp('shelf') / 6);
+  const walk = Math.floor((xp('shelf') + xp('downs_f2', (e) => !e.when) + xp('downs_f3', (e) => !e.when) + xp('downs_e3', (e) => e.id === 'farm_rats')) / 6);
+  ok(walk >= xpForLevel(2) && walk < xpForLevel(3) && foreland < xpForLevel(2),
+    `the walk to Ashcombe is worth level 2: ${walk} xp a member (level 2 at ${xpForLevel(2)}, 3 at ${xpForLevel(3)}), where the Foreland map alone is ${foreland}`);
+  // On the way out of the Foreland, the one place outside Helmstow that sells food.
+  const shop = (map: string) => MAP_DEFS.find((d) => d.id === map)?.features?.find((f) => f.kind === 'shop');
+  const farm = shop('shelf'), mottram = shop('harrow');
+  ok(farm?.kind === 'shop' && farm.name === 'Ellerby Farm' && farm.interior === 'farm_kitchen' && priceIn(farm, 'rations') === 3 && mottram?.kind === 'shop' && priceIn(mottram, 'rations') === 4,
+    `Ellerby's farm store sells rations at 3 gold, in the farm kitchen, and Mottram's still at 4 (${farm?.kind === 'shop' ? priceIn(farm, 'rations') : 'no store'}, ${mottram?.kind === 'shop' ? priceIn(mottram, 'rations') : 'no shop'})`);
+}
 
 /** Gytha, found by the flag she sets. */
 function gytha(): Person | undefined {
@@ -256,17 +294,17 @@ function oilAsked(w: Walk): void {
 
 /** Who Lived at Ashcombe to the key in hand: the kitchen at the farmhouse's back and its chest. */
 function keyFound(w: Walk): void {
-  see(w, 'shelf:ash_kitchen');
+  see(w, 'downs_e3:ash_kitchen');
   w.ok(w.world.used('ash_kitchen'), 'the kitchen is seen and its words said');
-  open(w, 'shelf:ash_hearth');
+  open(w, 'downs_e3:ash_hearth');
   w.ok(w.party.bag.includes('hearth_key'), 'the kitchen chimney holds the hearth-key');
 }
 
 /** The paper in hand: the crock beside the kitchen and its chest. */
 function paperFound(w: Walk): void {
-  see(w, 'shelf:ash_crock');
+  see(w, 'downs_e3:ash_crock');
   w.ok(w.world.used('ash_crock'), 'the crock is lifted and its words said');
-  open(w, 'shelf:ash_crock_c');
+  open(w, 'downs_e3:ash_crock_c');
   w.ok(w.party.bag.includes('tenant_paper'), "under the crock is the tenant's paper");
 }
 
@@ -506,7 +544,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     meetWho(w, 'q_paper_vask');
     reads(w, 'tenant', 'Who Lived at Ashcombe', ['paper', 'vask'], ['hob', 'kitchen', 'key', 'hale'], 'the crock alone, the paper to Vask');
     w.ok(!page(w, 'tenant')?.entries.some((e) => e.text.includes('Hob')), 'and its journal does not name Hob, whom the company never met');
-    see(w, 'shelf:ash_kitchen');
+    see(w, 'downs_e3:ash_kitchen');
     w.ok(!w.world.used('ash_kitchen') && !page(w, 'tenant')?.entries.some((e) => e.id === 'kitchen'), 'the kitchen stepped into after the paper is given is not said, and writes nothing');
   }
   { // The key brought to Hob before he is heard: the hand-in begins the quest, and his after-lines follow.

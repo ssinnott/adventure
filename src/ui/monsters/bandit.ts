@@ -21,7 +21,7 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
@@ -29,6 +29,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'poacher') poacher(ctx, x, y, h, p);
   else if (kind === 'billman') billman(ctx, x, y, h, p);
   else if (kind === 'slinger') slinger(ctx, x, y, h, p);
+  else if (kind === 'cutthroat') cutthroat(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -487,6 +488,64 @@ function slinger(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   stroke(ctx, [w.x, w.y - h * 0.01, (w.x + px) / 2, (w.y + py) / 2 + h * 0.008, px, py], R.leather, Math.max(1, h * 0.009));
   blob(ctx, B, R.leather, [{ k: 'ell', x: px, y: py, rx: h * 0.028, ry: h * 0.02, rot: a }], { h, formK: 0.5, spread: 0.7 });
   hand(ctx, R, w, -Math.PI / 2, 261, { flip: 1 });
+  void p.light;
+}
+
+/**
+ * The cutthroat: the bandit camp's own, who keeps it and never leaves it. Lean and crouched, weight
+ * forward, a knife low in each fist, the far one held reversed along the forearm. A thief's long
+ * coat in the tint, a captain's sash taken off a better man, yellowed, over it from the near
+ * shoulder to the far hip, and a belt of knife hilts. Cropped hair, stubble and a scar.
+ */
+function cutthroat(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.04, hipTilt: 0.02, turn: 0.03, near: [0.08, 0.18, 0.22], far: [-0.075, -0.12, -0.16], toe: [1, -0.8], lift: [0, 0.03] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 19) * h * 0.006;
+  const near: Arm = [R.sNear, { x: x + h * 0.26, y: sy + h * 0.2 }, { x: x + h * 0.32 + sway, y: sy + h * 0.31 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.21, y: sy + h * 0.17 }, { x: x - h * 0.17, y: sy + h * 0.3 }];
+  const hemY = y - h * 0.42, skirtY = y - h * 0.24;
+  const coat = p.base, sash = shade('#b89a4a', p.tone);
+  groundShadow(ctx, x, y + 1, h * 0.8);
+  blob(ctx, B, shade(p.dark, 0.86), armParts(R, far, 331, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  // The far knife, reversed along the forearm.
+  const fa = blade(ctx, R, far[2], far[2].x - h * 0.02, far[2].y - h * 0.13, h * 0.012, h * 0.026);
+  hand(ctx, R, far[2], fa, 332, { far: true, flip: 1, k: 0.92 });
+  legs(ctx, R, shade('#2e2a26', p.tone), 333, [1, -0.8]);
+  blob(ctx, B, R.boot, [
+    { k: 'cap', x0: x + h * 0.2, y0: y - h * 0.18, x1: x + h * 0.21, y1: y - h * 0.055, r0: h * 0.044, r1: h * 0.042 },
+    { k: 'cap', x0: x - h * 0.15, y0: y - h * 0.17, x1: x - h * 0.16, y1: y - h * 0.06, r0: h * 0.041, r1: h * 0.039 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The coat: body, near sleeve and skirts to the knee, split at the front.
+  blob(ctx, B, coat, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 334, sub: 3 },
+    { k: 'curve', pts: [
+      x - h * 0.13, hemY - h * 0.1, x - h * 0.17, hemY - h * 0.02, x - h * 0.19, skirtY,
+      x - h * 0.05, skirtY + h * 0.02, x + h * 0.03, skirtY - h * 0.03, x + h * 0.09, skirtY + h * 0.01, x + h * 0.2, skirtY - h * 0.01,
+      x + h * 0.17, hemY - h * 0.02, x + h * 0.14, hemY - h * 0.1,
+    ], wobble: 0.05, seed: 335, sub: 3 },
+    ...armParts(R, near, 336),
+  ], { h, formK: 0.5, tex: 'folds', seed: 334, amount: 0.7, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The sash, from the near shoulder across to the far hip, knotted there with its ends hanging.
+  const s0 = { x: R.sNear.x - h * 0.02, y: sy + h * 0.01 }, s1 = { x: x - h * 0.12, y: hemY - h * 0.03 };
+  blob(ctx, B, sash, [
+    tube([s0.x, s0.y, s1.x, s1.y], h * 0.034, h * 0.03, 0, 337),
+    { k: 'curve', pts: [s1.x - h * 0.02, s1.y, s1.x + h * 0.02, s1.y + h * 0.01, s1.x + h * 0.01, s1.y + h * 0.11, s1.x - h * 0.03, s1.y + h * 0.1], wobble: 0.06, seed: 338, sub: 2 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 337, amount: 0.4 });
+  // The belt, and three knife hilts along it.
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.05, h * 0.04, 339)], { h, form: false });
+  for (let i = 0; i < 3; i++) {
+    const kx = x + h * (0.02 + i * 0.045), ky = hemY - h * 0.05;
+    blob(ctx, B, R.wood, [tube([kx, ky - h * 0.05, kx + h * 0.005, ky + h * 0.01], Math.max(h * 0.011, 1), Math.max(h * 0.01, 1), 0, 340 + i)], { h, formK: 0.5, spread: 0.6 });
+    band(ctx, B, kx - h * 0.012, ky - h * 0.006, h * 0.024, h * 0.012, R.dull);
+  }
+  // Stubble, the face with its scar, and hair cropped to the skull.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.84, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.58, hx + hr * 0.3, hy + hr * 0.58, hx + hr * 0.86, hy + hr * 0.3, hx + hr * 0.6, hy + hr * 0.9, hx, hy + hr * 1.02, hx - hr * 0.6, hy + hr * 0.9], wobble: 0.06, spiky: 0.06, seed: 344, sub: 2 }], { h, form: false, outline: false });
+  face(ctx, R, false, true);
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 1.0, hy - hr * 0.3, hx - hr * 0.9, hy - hr * 0.9, hx - hr * 0.3, hy - hr * 1.12, hx + hr * 0.4, hy - hr * 1.1, hx + hr * 0.96, hy - hr * 0.82, hx + hr * 1.02, hy - hr * 0.3, hx + hr * 0.6, hy - hr * 0.62, hx - hr * 0.6, hy - hr * 0.64], wobble: 0.05, spiky: 0.1, seed: 345, sub: 2 }], { h, formK: 0.45, tex: 'stipple', seed: 345, amount: 0.3 });
+  // The near knife, low and forward, point up: the one he means to use.
+  const ka = blade(ctx, R, near[2], near[2].x + h * 0.14, near[2].y - h * 0.06, h * 0.014, h * 0.03);
+  hand(ctx, R, near[2], ka, 346, { flip: -1 });
   void p.light;
 }
 

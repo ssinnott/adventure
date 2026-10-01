@@ -119,7 +119,7 @@ export const QUESTS: readonly QuestDef[] = [
     done: [{ flag: 'q_well_wardens' }, { flag: 'q_well_lanterns' }],
     entries: [
       { id: 'mottram', when: { flag: 'q_well' },
-        text: 'Helmstow\'s well has tasted of iron since the week the Queen died. Mottram says the grit in it is stone dust, and none he knows; the cistern behind Ashcombe is sweet.' },
+        text: 'Helmstow\'s well has tasted of iron since the week the Queen died. Mottram says the grit in it is stone dust, and none he knows; the cistern behind Ellerby is sweet.' },
       { id: 'alwin', when: { flag: 'q_well_alwin' },
         text: 'Alwin, a Warden mason, carts the dust out of the gatehouse by night. The Regent is opening an old way under the keep, and the old cut runs under the well.' },
       { id: 'wardens', when: { flag: 'q_well_wardens' },
@@ -192,7 +192,7 @@ export const QUESTS: readonly QuestDef[] = [
     entries: [
       { id: 'hob', when: { flag: 'q_ashcombe_who' },
         text: 'Hob, by the Hearthlight\'s fire, had the tenancy of Ashcombe. His people went away, he says, and the land never paid the rent.' },
-      { id: 'kitchen', when: { seen: 'shelf:ash_kitchen' },
+      { id: 'kitchen', when: { seen: 'downs_e3:ash_kitchen' },
         text: 'In the Ashcombe kitchen, the hearth-key on its nail and the hearth below it swept. Nobody flees a house and sweeps it first.' },
       { id: 'key', when: { flag: 'q_hob_key' },
         text: 'Hob let the cellar under Ashcombe to three in grey for twenty gold, and sent his family to Gullwick when the singing came up through the floor.' },
@@ -207,7 +207,7 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { item: 'tenant_paper' }, text: 'Take the paper to Vask in the keep, or to Captain Hale at the pass.' },
       { when: { flag: 'q_hob_key' }, text: 'Hob let his cellar and sent his family away. Look again around the Ashcombe farmhouse.' },
       { when: { item: 'hearth_key' }, text: 'Take the hearth-key to Hob, by the Hearthlight\'s fire.' },
-      { when: { flag: 'q_ashcombe_who' }, text: 'Find out where Hob\'s people went. Ashcombe is south-east of Helmstow, on the Foreland road.' },
+      { when: { flag: 'q_ashcombe_who' }, text: 'Find out where Hob\'s people went. Ashcombe is past Gullwick, across the Wend.' },
     ],
   },
   {
