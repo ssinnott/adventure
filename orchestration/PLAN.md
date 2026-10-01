@@ -1741,3 +1741,11 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   #316 session; #318 to a new session, session_01TipPh9h71FQJh2y3FUd32r, on
   `claude/m1-318-tall-boss` (the systems change now, the Eldest at 2 once #315 lands).
 - Left in Phase 1: #218 (#315's round), #47 (the pilot's E), #318, #319, and #311 (not approved).
+- **01:49, the owner:** #311 approved ("Yeah that sounds good", to my "If you approve it, the
+  quality session can take it right after #319"): `approved` on, its opening says so. **And: "can
+  we cut off new issues though".** So no more issues are filed in Phase 1: DECIDE.md (filing is
+  never an answer; what a review finds in passing is fixed in its pull request if it blocks it or is
+  small and in its lane, else left in "Found in passing" for after Phase 1), REVIEW.md (never propose
+  filing) and COMMON.md say so. #318 and #319, filed just before, stand and are running; the owner
+  told they can be parked if they would rather. #311 queued to the quality session after #319.
+- Phase 1's last issues: #218 (#315's round), #47 (the pilot's E), #318, #319, #311.

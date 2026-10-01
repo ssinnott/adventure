@@ -27,9 +27,13 @@ on art or a choice is one input to that review, not the review.
 - **The project's rules hold:** `CLAUDE.md`, `docs/ISSUES.md`, the lanes (EXPANSION §8.1), `src/lib/`
   never edited here (DESIGN §13). The voice: terse, British spelling, no Oxford comma; a game text
   two lines to an event, three at most; the secret is found, never told.
-- **Scope** is Phase 1 (#26) and what it holds. Filing an issue, approving one or OK'ing art for
+- **Scope** is Phase 1 (#26) and what it holds. Approving an issue already filed or OK'ing art for
   Phase 1 is yours to decide when asked. Anything that deletes work, rewrites history or reaches
   outside the repository is not.
+- **No new issues** (the owner, 1 October: "can we cut off new issues"). Filing is never an answer.
+  What a review finds in passing is fixed in the pull request that found it, if it blocks that
+  pull request or is small and in its lane; otherwise it is left in the body's "Found in passing"
+  for after Phase 1.
 
 ## How the owner has decided so far
 

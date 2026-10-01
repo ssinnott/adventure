@@ -64,3 +64,7 @@ the proof and the fix):
 **The owner's choices** the pull request puts, each with a one-line view (take the default, or why
 not).
 ```
+
+No new issues are filed in Phase 1 (the owner, 1 October). A finding outside the pull request's
+issue is a should-fix only if it blocks this pull request or is small and in its lane; otherwise
+note it in one line for after Phase 1, and never propose filing it.

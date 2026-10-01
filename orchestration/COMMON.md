@@ -35,7 +35,8 @@ work settles an owed entry, drop it. Never write a second mechanism for this.
 - Stay inside your issue and the files your footprint names. Where it names a collision, do what it
   says (who adds a shared piece, who lands first). Never edit `src/lib/` (vendored).
 - Never add or remove labels, edit issue bodies, comment on issues, or file issues. Work outside your
-  scope goes in your pull request under "Found in passing", for the owner to decide.
+  scope goes in your pull request under "Found in passing", for after Phase 1: no new issues are
+  filed in it (the owner, 1 October).
 - Where the issue leaves a choice open, take the conservative default your footprint gives (the
   owner has not answered, and wants the work to go ahead), keep it easy to change, and list it under
   "Choices for the owner". If a choice truly cannot be defaulted, say so in your turn's summary and
