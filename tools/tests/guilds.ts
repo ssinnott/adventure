@@ -170,7 +170,7 @@ export function guilds(): void {
   const OWED_RANKS: Readonly<Record<GuildId, readonly (string | undefined)[]>> = {
     wardens: [undefined, undefined, undefined, 'the owner'],
     lanterns: [undefined, undefined, undefined, 'the owner'],
-    cartographers: ['#181', '#181', 'the owner', 'the owner'],
+    cartographers: [undefined, undefined, 'the owner', 'the owner'],
     compact: ['#182', '#182', 'the owner', 'the owner'],
   };
   for (const g of Object.keys(GUILDS) as GuildId[]) {
