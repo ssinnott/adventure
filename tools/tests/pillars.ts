@@ -339,11 +339,7 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  * The squares where map and atlas disagree today, by whose fix they wait on: each is reported, and
  * fails once it agrees, so it is dropped here.
  */
-const EDGES_OWED: Record<string, readonly string[]> = {
-  // The Salt Road off D4's south-west corner into the Delta steps diagonally on the atlas, which no
-  // square of D4's edge can meet; #170's C5 carries the road over D5's corner.
-  '#170': ['downs_d4 0,31', 'downs_d4 1,31'],
-};
+const EDGES_OWED: Record<string, readonly string[]> = {};
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */
 export interface FoundLock { kind: 'exit' | 'hand-in' | 'other'; flags: string[]; map: string; x: number; y: number; area: string; to?: string; key: string }

@@ -20,7 +20,6 @@
 // charts replaces the plan's row of the same id. A planned area may chart its rows in its folder
 // before it is listed, and the plan spreads them in where its own were.
 import type { Atlas } from '../game/atlas.ts';
-import * as SALTREACH from './areas/saltreach/atlas.ts';
 import * as SUNDERWOOD from './areas/sunderwood/atlas.ts';
 import * as WRACKHOLM from './areas/wrackholm/atlas.ts';
 
@@ -261,7 +260,6 @@ export const PLAN: Atlas = {
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
   ],
   zones: [
-    ...SALTREACH.ZONES,
     ...WRACKHOLM.ZONES,
     ...SUNDERWOOD.ZONES,
     { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66]] },
@@ -283,7 +281,6 @@ export const PLAN: Atlas = {
     { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
   ],
   places: [
-    ...SALTREACH.PLACES,
     ...WRACKHOLM.PLACES,
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
     ...SUNDERWOOD.PLACES,
@@ -305,7 +302,6 @@ export const PLAN: Atlas = {
     { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
   ],
   sites: [
-    ...SALTREACH.SITES,
     ...WRACKHOLM.SITES,
     ...SUNDERWOOD.SITES,
     // VI. The Kilns.

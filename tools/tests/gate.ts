@@ -79,7 +79,7 @@ export const ROADS: Record<string, readonly string[]> = {
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
