@@ -48,12 +48,20 @@ export function outdoors(): void {
   // world too; between the two zones they are the ridge, as they were, with the pass through it.
   const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
   const line = (x: number, y: number, dx: number, dy: number, n: number): string => Array.from({ length: n }, (_, i) => out.at(x + dx * i, y + dy * i).ch).join('');
-  const faces = [line(sh.x, sh.y, 1, 0, sh.w), line(sh.x, sh.y + sh.h - 1, 1, 0, sh.w), line(th.x, th.y, 1, 0, th.w), line(th.x + th.w - 1, th.y, 0, 1, th.h)];
-  ok(faces.every((s) => /^%+$/.test(s)), 'the Foreland\'s north and south edges and Thornmark\'s north and east edges are the end of the world');
+  const faces = [line(sh.x, sh.y, 1, 0, sh.w), line(sh.x, sh.y + sh.h - 1, 1, 0, sh.w), line(th.x, th.y, 1, 0, th.w)];
+  ok(faces.every((s) => /^%+$/.test(s)), 'the Foreland\'s north and south edges and Thornmark\'s north edge are the end of the world');
   // South, the Deepthorn's edge (H3, #214): Thornmark's ring stands against it as mountains, with
-  // the elves' road through a gap out of the Grove's hollow; its corner past H3 is the world's end.
+  // the elves' road through a gap out of the Grove's hollow, and against I2 at its corner.
   const south = line(th.x, th.y + th.h - 1, 1, 0, th.w);
-  ok(south === 'M'.repeat(8) + '=' + 'M'.repeat(22) + '%', `Thornmark's south edge is mountains against the Deepthorn, with the elves' road through a gap (${south})`);
+  ok(south === 'M'.repeat(8) + '=' + 'M'.repeat(23), `Thornmark's south edge is mountains against the Deepthorn, with the elves' road through a gap (${south})`);
+  // East, the Eaves' way in (I2, #195): Thornmark's ring stands against it as mountains, with the
+  // east road through a gap over the Hoarhills; its corner under the rim is the world's end. Past
+  // I2 the world ends at the rim and at J2, which is not built.
+  const eaves = out.zones.find((z) => z.id === 'eaves_i2')!;
+  const east = line(th.x + th.w - 1, th.y, 0, 1, th.h);
+  ok(east === '%' + 'M'.repeat(9) + '=' + 'M'.repeat(21), `Thornmark's east edge is mountains against the Eaves, with the east road through a gap (${east})`);
+  const rim = line(eaves.x, eaves.y, 1, 0, eaves.w), far = line(eaves.x + eaves.w - 1, eaves.y, 0, 1, eaves.h);
+  ok(/^%+$/.test(rim) && far === '%'.repeat(11) + '=' + '%'.repeat(20), `I2's north edge, the rim, and its east edge, but for the east road on into J2, are the end of the world (${far})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);
