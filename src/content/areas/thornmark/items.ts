@@ -54,6 +54,8 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'marker_glass', name: 'Marker Glass', slot: 'none', price: 0 },
   { id: 'mending_kit', name: 'Mending Kit', slot: 'none', price: 0 },
   { id: 'grove_sliver', name: 'Sliver of the Grove Stone', slot: 'none', price: 0 },
+  // The Older Mark (#218): the rubbing of Penspern's standing stone, Senara's ask; she takes it.
+  { id: 'stone_rubbing', name: 'The Stone\'s Rubbing', slot: 'none', price: 0 },
   // How Did He Know (#214): the survey's orders, a letter read from the pack, found in H3's fire-pit.
   { id: 'survey_orders', name: 'The Survey\'s Orders', slot: 'none', price: 0, text: [
     'Grey Lantern paper, burnt along one edge so that every line ends early. Dated three days before the Queen died, and sealed with the Regent\'s seal, whole where the fire missed it.',
