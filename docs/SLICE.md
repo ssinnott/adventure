@@ -84,7 +84,12 @@ DESIGN.md first for the why.
   thief's growing sneak attack and its round out of sight, the Ironhide's rage and -30, the monk
   first and from the back row, Holy Strike risen, the bard's song and its ward against sleep and
   paralysis, and the cleric's last rite. A rank is recorded (`spellRank`); what it does is #20's.
-  No trainer is placed yet.
+  No trainer is placed yet. Each placed trainer makes a seeking quest for each member of the class
+  (`game/seeking.ts`), keyed by its slot: begun at the prestige's level with the one before (a quest
+  condition on a member's class, level and prestiges, `member`), done once taken, or once the third's
+  trainer's own quest begins (`asks`); a trainer's `seek` words stand in for the journal's. The world
+  map marks the place of every open quest that asks (`mark`) with a green diamond and who is sought
+  there (SOUGHT in its legend). Nothing is saved.
 - **The Hearth's measure** (`game/stones.ts`, #168; DESIGN §9): the Stones restored, counted from
   the save's flags against `content/stones.ts` (the Tide Stone once `q_tide_home` holds, the Grove
   once a Lantern has mended it, `q_grove_mended`; the rest as their areas write them), so nothing new
@@ -580,6 +585,7 @@ does.
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
+| `game/seeking.ts` | the seeking quests: the trainers placed (`trainersIn`), a quest for each member and prestige (`seekingQuests`), and the places the world map marks (`sought`); pure |
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
