@@ -1,8 +1,10 @@
 // Thornmark's side quests, in the journal's words: The Lost Expedition and The Empty Throne,
 // subplots, and #56's six on the built maps (#219): A Coin Not From Caldera (Tegen), Leave the
 // Trees Standing (Piran), The Dark Glass (Tamsin), The Elder's Four (Keyne), Terms From the
-// Brigands and The Mender (Sylvane). Its chapter of the one quest is in ./chapter.ts. How the words
-// are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
+// Brigands and The Mender (Sylvane); and the Deepthorn's: How Did He Know (Idony), The Older
+// Mark (Senara) and The Light on Penspern (Kea). Its chapter of the one quest is in ./chapter.ts.
+// How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every
+// key.
 import type { QuestDef } from '../../../game/quests.ts';
 
 export const QUESTS: readonly QuestDef[] = [
@@ -109,6 +111,52 @@ export const QUESTS: readonly QuestDef[] = [
     goals: [
       { when: { flag: 'q_hunters_told' }, text: 'Tell Elder Sylvane in Thornhold what the lodge\'s hunters did.' },
       { when: { flag: 'q_hunters' }, text: 'Answer Godric at the lodge: hold its secret, or tell Sylvane.' },
+    ],
+  },
+  {
+    // #56's sixteenth (#49, #218): Senara asks for a rubbing of the standing stone on Penspern's
+    // crown, takes it and asks whether to burn it. Kept, the dwarves read it, later (#56's 34).
+    id: 'mark',
+    title: 'The Older Mark',
+    start: [{ flag: 'q_mark' }, { flag: 'q_mark_shown' }],
+    done: [{ flag: 'q_mark_burnt' }, { flag: 'q_mark_kept' }],
+    entries: [
+      { id: 'senara', when: { flag: 'q_mark' },
+        text: 'Senara, lorekeeper of Henlys, wants a rubbing of the standing stone on Penspern\'s crown. The lore says the elves copied their mark from it.' },
+      { id: 'stone', when: { seen: 'deepthorn_j5:j5_stone' },
+        text: 'The standing stone on Penspern\'s crown, one mark cut in its face, and the Eldest\'s roots a spear\'s length short of it.' },
+      { id: 'shown', when: { flag: 'q_mark_shown' },
+        text: 'The stone\'s mark is the hold\'s, line for line, but cut where the hold\'s was copied. The stone was there before the elves.' },
+      { id: 'burnt', when: { flag: 'q_mark_burnt' },
+        text: 'Senara burnt the rubbing. The hold\'s seal is its own again, for as long as nobody takes another.' },
+      { id: 'kept', when: { flag: 'q_mark_kept' },
+        text: 'We kept the rubbing, to carry to someone who reads cut marks: the dwarves, Senara thinks.' },
+    ],
+    goals: [
+      { when: { flag: 'q_mark_shown' }, text: 'Answer Senara in Henlys: burn the rubbing, or keep it?' },
+      { when: { item: 'stone_rubbing' }, text: 'Take the stone\'s rubbing to Senara, lorekeeper of Henlys.' },
+      { when: { flag: 'q_mark' }, text: 'Take a rubbing of the standing stone on Penspern\'s crown, at the end of the glade.' },
+    ],
+  },
+  {
+    // #56's nineteenth (#218): the hold's youths light a fire on Penspern for the Wyke's boats, and
+    // the Hand lands under it. Put out, or kept and Helmstow warned, which sends Wardens to watch.
+    id: 'light',
+    title: 'The Light on Penspern',
+    start: { flag: 'q_light' },
+    done: [{ flag: 'q_light_out' }, { flag: 'q_light_kept' }],
+    entries: [
+      { id: 'kea', when: { flag: 'q_light' },
+        text: 'Kea and the hold\'s youths light a fire on Penspern by night for the Wyke\'s boats. A boat with no light comes in under it.' },
+      { id: 'landing', when: { seen: 'deepthorn_j5:j5_landing' },
+        text: 'By night a boat lands under the head, unlit, and grey shapes carry crates from it into the rock.' },
+      { id: 'out', when: { flag: 'q_light_out' },
+        text: 'We had the fire put out. The boats steer by the Hearth now, when there is one.' },
+      { id: 'kept', when: { flag: 'q_light_kept' },
+        text: 'The fire burns, and Kea sent word to Helmstow of what lands under it.' },
+    ],
+    goals: [
+      { when: { flag: 'q_light' }, text: 'Answer Kea at the fire on Penspern: put it out, or keep it and warn Helmstow?' },
     ],
   },
   {
