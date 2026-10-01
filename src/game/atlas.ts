@@ -26,7 +26,8 @@ export type SiteIcon =
   | 'springs' | 'label' | 'water';
 
 /** How a way is travelled. */
-export type LinkKind = 'road' | 'enter' | 'stairs' | 'sea' | 'deep';
+/** `coach` is a crossing by road (game/passage.ts): it carries a company over the land, never walked. */
+export type LinkKind = 'road' | 'enter' | 'stairs' | 'sea' | 'deep' | 'coach';
 
 /** A closed outline in world cells. `rough` is how far, in cells, the land's edge may wander from it. */
 export interface Outline { pts: readonly Pt[]; rough?: number }
@@ -800,8 +801,8 @@ export interface ZoneEdge {
 }
 
 /**
- * The ways: every pair of built maps an exit joins, merged with its return exit, then the atlas's
- * planned links. Outdoor-to-outdoor exits run from the exit cell to the arrival cell; an exit into a
+ * The ways: every pair of built maps an exit joins, merged with its return exit, then the crossings
+ * people sell, then the atlas's planned links. Outdoor-to-outdoor exits run from the exit cell to the arrival cell; an exit into a
  * town or dungeon runs from its cell to that place's plate; stairs join plates.
  */
 export function zoneEdges(atlas: Atlas, defs: readonly MapDef[]): ZoneEdge[] {
@@ -827,9 +828,24 @@ export function zoneEdges(atlas: Atlas, defs: readonly MapDef[]): ZoneEdge[] {
       if (out) { const p = worldPoint(atlas, edge.to, out.x, out.y); if (p) edge.b = p; }
     }
   }
+  // The crossings people sell (game/passage.ts): a boat's by sea, a coach's by coach, each from its
+  // seller's square to its landing; one each way is travelled both ways.
+  for (const d of defs) for (const f of d.features ?? []) {
+    if (f.kind !== 'npc') continue;
+    for (const p of f.passage ?? []) {
+      const kind: LinkKind = p.by === 'boat' ? 'sea' : 'coach';
+      const back = edges.find((x) => x.from === p.to && x.to === d.id && x.kind === kind && !x.planned);
+      if (back) { back.both = true; continue; }
+      if (edges.some((x) => x.from === d.id && x.to === p.to && x.kind === kind && !x.planned)) continue;
+      const edge: ZoneEdge = { from: d.id, to: p.to, kind, planned: false, both: false, gate: [] };
+      if (kindOf.get(d.id) === 'outdoor') edge.a = worldPoint(atlas, d.id, f.x, f.y) ?? undefined;
+      if (kindOf.get(p.to) === 'outdoor') edge.b = worldPoint(atlas, p.to, p.x, p.y) ?? undefined;
+      edges.push(edge);
+    }
+  }
   for (const l of atlas.links) {
     edges.push({
-      from: l.from, to: l.to, kind: l.kind, planned: true, both: l.kind === 'road' || l.kind === 'enter' || l.kind === 'sea',
+      from: l.from, to: l.to, kind: l.kind, planned: true, both: l.kind === 'road' || l.kind === 'enter' || l.kind === 'sea' || l.kind === 'coach',
       gate: [], opens: l.opens, a: l.a, b: l.b, via: l.via, note: l.note, noteAt: l.noteAt,
     });
   }

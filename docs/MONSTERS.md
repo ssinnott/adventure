@@ -120,9 +120,11 @@ table: a Rift in the Kilns is slag, and a Rift in the Delta is brine.
 | Act IV | the mountain's and the far side's | the giants, the Hand's masons | the ash-cast of Old Cinder | none | robed at the monastery, bare at the vents |
 | Act V | rats | the Hand's last, and Vask | none | none | nearly everything |
 
-Two lines of it can be checked, and should be, beside the novelty check (EXPANSION.md §5.4): no
-machine on the road before the bottom of the Deep Mines, and no Rift after Cairnmoor. They keep the
-secret's pace. A company that goes straight down finds a mystery, not a spoiler (DESIGN.md §14.4):
+Two lines of it are checked, beside the novelty check (EXPANSION.md §5.4; `paceFaults` in
+`tools/tests/pillars.ts`, #158): no machine on the road before the bottom of the Deep Mines, and no
+Rift after Cairnmoor. A map's place on the road is its area's, unless its floor is over its area's
+band: the Dead-Drop, 26 to 28 under Act II's Tide Ship, is placed by its band, past the Mines and
+past Cairnmoor. The reach is exempt. They keep the secret's pace. A company that goes straight down finds a mystery, not a spoiler (DESIGN.md §14.4):
 the first machines stand in band-16 country, where a company that arrives early does not live long
 enough to wonder what they are.
 
