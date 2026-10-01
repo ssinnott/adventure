@@ -5,12 +5,15 @@
 // Eaves (J2, #196): the road on through the pines, the rim of the Sunder seen, the secret in the
 // bear's cave found from the dog and the cutter's word, and the box's groups won at its floor. Then
 // Sunderfall (K2, #197): the rope bridge crossed, the ledge behind the quiet fall found from its
-// rocks, and the box's groups won at its floor.
+// rocks, and the box's groups won at its floor. Then Lanternwood (L2, #200): the road on through the
+// wood to the tower's gate, shut until #201, the pit under the signal fire's ash found from the ash
+// and the young sister's word, and the box's groups won at its floor.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
+import { GameMap } from '../../../game/map.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
@@ -20,6 +23,8 @@ const WOODCUTTER = I2.features!.find((f) => f.kind === 'npc' && f.name === 'A wo
 const J2 = MAP_DEFS.find((d) => d.id === 'eaves_j2')!;
 const CUTTER = J2.features!.find((f) => f.kind === 'npc' && f.name === 'Garret, a pine-cutter') as Person;
 const K2 = MAP_DEFS.find((d) => d.id === 'eaves_k2')!;
+const L2 = MAP_DEFS.find((d) => d.id === 'lanternwood_l2')!;
+const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'A young sister of the Watch') as Person;
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -116,4 +121,43 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The box's other groups, each won at its floor: the gleaners at the dam and the glass bears on the road on east.
   for (const g of K2.encounters!.filter((e) => e.id !== 'k2_hounds')) fight(w, `eaves_k2:${g.id}`);
+
+  // Lanternwood: the road on out of K2 through the wood, and the lit lamp by it.
+  w.level = 15;
+  walkThrough(w, 'eaves_k2', 29, 22, EAST, 'lanternwood_l2');
+  see(w, 'lanternwood_l2:l2_lamp_day');
+  listen(w);
+
+  // The tower's gate is shut until #201 builds the Watch behind it, and says so by what is seen.
+  const gate = L2.features!.find((f) => f.kind === 'event' && f.id === 'l2_gate');
+  ok(gate?.kind === 'event' && gate.text.includes('barred') && new GameMap(L2).passable(gate.x, gate.y - 1) !== 'ok' && !L2.exits?.length, 'the spur ends at the tower\'s gate, barred');
+
+  // The secret: the ash raked flat on the knoll and the sister's word that she burnt it, then the
+  // search at the ash and the pit under it. Walking or wading, the pit is never reached but through the ash.
+  const l2 = out.zones.find((z) => z.id === 'lanternwood_l2')!, lid = [l2.x + 5, l2.y + 5], pit = (l2.y + 4) * out.width + l2.x + 5;
+  const walked = new Set<number>(), walk = [[l2.x + 1, l2.y + 22]];
+  while (walk.length) {
+    const [x, y] = walk.pop()!, k = y * out.width + x;
+    if (walked.has(k) || (x === lid[0] && y === lid[1]) || !(x >= l2.x && x < l2.x + l2.w && y >= l2.y && y < l2.y + l2.h) || out.passable(x, y, { swim: true }) !== 'ok') continue;
+    walked.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) walk.push([x + dx, y + dy]);
+  }
+  ok(walked.size > 250 && !walked.has(pit), `the pit under the ash is shut but for the ash: none of L2's ${walked.size} squares walked or waded reaches it`);
+  see(w, 'lanternwood_l2:l2_knoll');
+  see(w, 'lanternwood_l2:l2_ash');
+  w.world.travel('lanternwood_l2', SISTER.x, SISTER.y);
+  const word = meet(SISTER, w.party, heard(w.world, SISTER)).text;
+  ok(word.includes('I burnt it on the knoll'), 'the young sister says she burnt it on the knoll');
+  w.world.travel('lanternwood_l2', 5, 6, NORTH);
+  let opened = false;
+  for (let i = 0; i < 20 && !opened; i++) opened = w.world.search();
+  const down = opened ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(opened && down.every((r) => r.kind === 'moved'), 'searched at the ash, it opens, and the pit under it can be walked into');
+  ok(w.world.used('l2_letter'), 'in the pit, the Lantern\'s letter is found');
+  listen(w);
+  const staff = L2.features!.find((f) => f.kind === 'chest' && f.id === 'l2_letter_chest');
+  ok(staff?.kind === 'chest' && staff.items.includes('lanterns_staff') && staff.x === 5 && staff.y === 4, 'beside it, the Lantern\'s Staff +1');
+
+  // The box's groups, each won at its floor: the moths at the lit lamp and the tower by night, the hounds on the knoll's path and the glass bears on the road on.
+  for (const g of L2.encounters!) fight(w, `lanternwood_l2:${g.id}`);
 };
