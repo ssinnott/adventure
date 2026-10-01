@@ -66,8 +66,8 @@ export const LANTERNWOOD_L2: MapDef = {
     { kind: 'event', x: 5, y: 4, id: 'l2_letter', once: true, text: 'Under the ash a pit, a staff and a letter in oilcloth. A Reader at Helmstow: papers are coming that are not what they are stamped. Read them with the door shut, the prior out.' },
     { kind: 'chest', x: 5, y: 4, id: 'l2_letter_chest', gold: 250, items: ['lanterns_staff'] },
     // The tower: its gate, the way into Lantern Watch (#201), and the shrine in its yard.
-    { kind: 'event', x: 12, y: 17, id: 'l2_gate', when: { hours: 'day' }, text: 'The road ends at the tower\'s gate, open now. Over it the tower goes up into the rain, one lamp at the top lit in broad day.' },
-    { kind: 'event', x: 12, y: 17, id: 'l2_gate_night', when: { hours: 'night' }, text: 'The road ends at the tower\'s gate, open now. Over it the tower goes up into the night, one lamp at the top lit and the moths going round it.' },
+    { kind: 'event', x: 12, y: 17, id: 'l2_gate', when: { hours: 'day' }, text: 'The road ends at the tower\'s gate, and the gate stands open. Over it the tower goes up into the rain, one lamp at the top lit in broad day.' },
+    { kind: 'event', x: 12, y: 17, id: 'l2_gate_night', when: { hours: 'night' }, text: 'The road ends at the tower\'s gate, and the gate stands open. Over it the tower goes up into the night, one lamp at the top lit and the moths going round it.' },
     { kind: 'shrine', x: 10, y: 9, id: 'l2_shrine', text: 'A Lanterns\' shrine in the tower\'s yard, a book cut in its face, the pages open and the words gone to rain. A moth sits on it in the wet and does not move.', stat: 'intellect', done: 'The book on the shrine, its page worn blank.' },
     // North-east of the yard, the cairn.
     { kind: 'cairn', x: 26, y: 6, id: 'l2_cairn', text: 'A cairn where the path gives out among the oaks, the stones mossed on their north faces only. One has a flame cut in it, half grown over.', gold: 180, items: ['potion_sp_great'] },

@@ -510,7 +510,7 @@ features; the pay shared out over the area (§8).
 - **Pay.** About 300 xp a member in the tower's quests.
 
 - **As built** (#201, 1 October): one tower in a walled yard, the yard's wall the map's edge, the
-  road up from the gate to the tower's foot, grass and four oaks. The tower is six squares a side
+  road up from the gate to the tower's foot, grass and six oaks. The tower is six squares a side
   with its five doors: the Lantern hall at its foot (The Watch's Lantern Hall, the Lanterns' hall,
   spells to tier 6 for a fee of 400), the refectory (rest at 30), the stores (the eight wares of
   #399, lamp oil, elixirs, great spell potions and rations), the prior's room, and the Lamp Gallery
@@ -601,8 +601,8 @@ with its box on the systems of #76 (#205):
 |---|---|---|---|---|---|---|
 | 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 200 | #196, #201 |
 | 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 200 | #197, #198 |
-| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #201, #205 (L2, #200, places the sister and her hint only) |
-| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #201, #199 |
+| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #205 (L2, #200, places the sister and her hint only; #201 leaves her there) |
+| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #205, #199 (#201 places the surveyor and his lines only) |
 
 Pay is xp a member, whichever way the choice goes, shared by level: 900 between the four (§8).
 
