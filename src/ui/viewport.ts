@@ -23,16 +23,16 @@
 // hides the sky behind it as well as the ground.
 import type { World } from '../game/world.ts';
 import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight } from '../game/world.ts';
-import type { GameMap, Cell, Solid, Terrain, MapPalette } from '../game/map.ts';
+import type { GameMap, Cell, Solid, Terrain, MapPalette, Landmark } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { TERRAIN_COLORS, VOID_PINK } from './palette.ts';
-import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
+import { drawMonsterSprite, drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawLighthouseSprite, LIGHTHOUSE_HEIGHT, LIGHTHOUSE_BANDS, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, HIGH_SUMMER } from './sprites.ts';
 import type { TreeSeason } from './sprites.ts';
 import type { MonsterSprite } from '../game/monsters.ts';
 import type { Weather } from '../game/weather.ts';
-import { mixHash } from '../game/weather.ts';
+import { mixHash, weatherSight } from '../game/weather.ts';
 import { sunTimes } from '../game/calendar.ts';
 import { hash } from './brush.ts';
 
@@ -40,6 +40,8 @@ export const VIEW_W = 400, VIEW_H = 268;
 const NEAR = 0.9;
 const DEPTH = VIEW_DEPTH;
 const LATERAL = VIEW_LATERAL;
+/** How many squares off a landmark stands over the land: a lighthouse seen from across the bay. */
+export const LANDMARK_REACH = 40;
 
 export interface ViewRect { x: number; y: number; w: number; h: number; }
 
@@ -137,7 +139,11 @@ function groundColor(terrain: Terrain, kind: string, floorPal: string, crop = 0)
 }
 
 /** A torch or lantern's flame, and the pixel it was painted over, read once its wall is done. */
-export interface Flame { x: number; y: number; s: number; under?: number; }
+export interface Flame {
+  x: number; y: number; s: number; under?: number; lamp?: boolean;
+  /** A lamp's light: the strip its glow and beam can reach, as painted when the lamp was, then where nothing nearer painted over it. */
+  reach?: { x: number; y: number; w: number; h: number; before?: ImageData; mask?: HTMLCanvasElement };
+}
 interface Scene {
   key: string;
   /** Everything but the sky, which shows through where nothing was painted. */
@@ -163,7 +169,7 @@ export function drawViewport(
   monstersAt: (x: number, y: number) => readonly ViewMonster[] | null, frame: number, weather = true,
 ): void {
   // The minute and the weather seed pin down the weather, so they key the scene with the place.
-  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, r.w, r.h].join('|');
+  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, world.map.landmarks.map((l) => (l.lit && world.party.flags[l.lit] ? 1 : 0)).join(''), r.w, r.h].join('|');
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
@@ -182,7 +188,10 @@ export function drawViewport(
   ctx.drawImage(scene.canvas, r.x, r.y);
 
   // Flames on the sconces and lanterns, animated over the cached scene; a monster stands before them.
-  for (const fl of scene.flames) drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
+  for (const fl of scene.flames) {
+    if (fl.lamp) drawLamp(ctx, fl, r.x, r.y, frame);
+    else drawFlame(ctx, r.x + fl.x, r.y + fl.y, fl.s, frame + Math.round(fl.x));
+  }
   // Monsters, every frame, with a line-of-sight check against the cached walls.
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
@@ -280,6 +289,33 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   // Where a point in view space (see the roofs) falls on the screen.
   const at = (X: number, k: number, Y: number): [number, number] => { const u = unit(k, r.h); return [cx + X * u, horizon + Y * u]; };
 
+  // A landmark drawn tall, its lamp lit by night once the party holds its flag; the lamp is drawn
+  // every frame, and goes out as a torch does wherever anything nearer is painted over it.
+  // One tone near and far, so the tower does not darken as it comes into the squares drawn.
+  const landmarkTone = (dark ? 0.3 : 0.95) * (1 - env.murk * 0.5);
+  const drawLandmark = (lm: Landmark, bx: number, by: number, u: number, tone = landmarkTone): void => {
+    const lit = (!lm.lit || !!world.party.flags[lm.lit]) && daylight < 0.35;
+    const lamp = drawLighthouseSprite(ctx, bx, by, u, tone, lit ? 1 : 0, env.cover);
+    if (!lit) return;
+    const fl: Flame = { x: lamp.x, y: lamp.y, s: lamp.r, lamp: true, under: pixel(ctx, lamp.x, lamp.y) };
+    // The strip the beam and the glow can reach, read now: what is painted over it later is nearer.
+    const R = lamp.r * LAMP_REACH, G = lamp.r * 6;
+    const x0 = Math.max(r.x, Math.floor(lamp.x - R)), x1 = Math.min(r.x + r.w, Math.ceil(lamp.x + R));
+    const y0 = Math.max(r.y, Math.floor(lamp.y - G)), y1 = Math.min(r.y + r.h, Math.ceil(lamp.y + G));
+    if (x1 > x0 && y1 > y0) fl.reach = { x: x0, y: y0, w: x1 - x0, h: y1 - y0, before: ctx.getImageData(x0, y0, x1 - x0, y1 - y0) };
+    flames.push(fl);
+  };
+  // Past the squares drawn, a landmark still stands over the land, out to LANDMARK_REACH; anything
+  // nearer is painted over it. The weather that takes the fourth square takes it too (fog, a
+  // downpour), its lamp with it; short of that, murk fades its tone.
+  if (map.kind === 'outdoor' && !backdrop && (!wx || weatherSight(wx) >= 4)) for (const lm of map.landmarks) {
+    const dx = lm.x - px, dy = lm.y - py, k = dx * FACING_DX[f] + dy * FACING_DY[f], lat = dx * FACING_DX[rf] + dy * FACING_DY[rf];
+    if (k <= Math.min(DEPTH, sight) || k > LANDMARK_REACH) continue;
+    const u = unit(k, r.h), bx = cx + lat * 2 * u;
+    if (bx < r.x - u * 2 || bx > r.x + r.w + u * 2) continue;
+    drawLandmark(lm, bx, horizon + u, u);
+  }
+
   for (let d = DEPTH; d >= 0; d--) {
     if (d > sight) continue;
     // The floors of a row go down before anything stands on them, so a hill can run on over the
@@ -320,6 +356,15 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         const s = Math.sign(l);
         if (d > 0 && !voidAt(d - 1, l)) drawVoidFront(ctx, voids, xl(uN), xr(uN), r.y, horizon + uN);
         if (l !== 0 && !voidAt(d, l - s)) { const xIn = l > 0 ? xl : xr; drawVoidSide(ctx, voids, xIn(uN), horizon + uN, xIn(uF), horizon + uF, r.y); }
+      } else if (d === 0 && l !== 0 && isSolidWall(cell) && map.landmarkAt(c.x, c.y) && !backdrop) {
+        // At its foot, beside the party: the tower's flank, white and banded red, up past the view.
+        const xIn = l > 0 ? xl : xr;
+        drawLighthouseFlank(ctx, xIn(uN), horizon + uN, xIn(uF), horizon + uF, uN, uF, landmarkTone);
+      } else if (d > 0 && isSolidWall(cell) && map.landmarkAt(c.x, c.y) && !backdrop) {
+        // A landmark stands on its square as it is, not as a wall. Over the smoke test's backdrop it
+        // is the wall it stands in for, as the billboards stay out: the crack sweep looks at walls.
+        const u = unit(d, r.h);
+        drawLandmark(map.landmarkAt(c.x, c.y)!, cx + l * 2 * u, horizon + u, u);
       } else if (isSolidWall(cell)) {
         // A house's chimney stands on the roof behind its slopes, so it goes down before them.
         const b = map.kind === 'town' && isHouse(map, c.x, c.y) ? building(map, c.x, c.y) : null;
@@ -368,6 +413,15 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   }
   // A torch goes out where anything nearer was painted over it, a tree or a rock or a wall.
   flames = flames.filter((fl) => pixel(ctx, fl.x, fl.y) === fl.under);
+  // A lamp's light shows only where nothing nearer was painted over the strip it reaches.
+  for (const fl of flames) if (fl.reach?.before) {
+    const { x, y, w, h, before } = fl.reach, now = ctx.getImageData(x, y, w, h).data, b = before.data;
+    const mask = document.createElement('canvas'); mask.width = w; mask.height = h;
+    const mctx = mask.getContext('2d')!, m = mctx.createImageData(w, h);
+    for (let i = 0; i < now.length; i += 4) if (now[i] === b[i] && now[i + 1] === b[i + 1] && now[i + 2] === b[i + 2] && now[i + 3] === b[i + 3]) m.data[i + 3] = 255;
+    mctx.putImageData(m, 0, 0);
+    fl.reach = { x, y, w, h, mask };
+  }
   // An overcast day's flat grey light over everything painted; the sky has its own greys.
   const veil = cloud * 0.2 + env.murk * 0.12;
   if (veil > 0.01) {
@@ -1203,6 +1257,56 @@ function drawSignGlyph(ctx: CanvasRenderingContext2D, kind: string, x: number, y
     default: // a mug for the tavern and anything else
       ctx.fillRect(Math.round(x - s * 0.25), Math.round(y - s * 0.3), Math.round(s * 0.5), Math.round(s * 0.6));
   }
+}
+
+/**
+ * A lighthouse's flank seen beside the party, from its near edge to its far one: the tower's white
+ * and red bands at the heights the sprite paints them, each edge as high as its own depth makes it.
+ */
+function drawLighthouseFlank(ctx: CanvasRenderingContext2D, xN: number, footN: number, xF: number, footF: number, uN: number, uF: number, tone: number): void {
+  const H = LIGHTHOUSE_HEIGHT;
+  for (const [a, b, red] of LIGHTHOUSE_BANDS) {
+    ctx.fillStyle = shade(red ? '#9a3226' : '#d8d2c6', tone);
+    ctx.beginPath();
+    ctx.moveTo(xN, footN - a * H * uN); ctx.lineTo(xN, footN - b * H * uN); ctx.lineTo(xF, footF - b * H * uF); ctx.lineTo(xF, footF - a * H * uF);
+    ctx.closePath(); ctx.fill();
+  }
+}
+
+/** How far a lamp's beam reaches to either side, in the lamp's own size. */
+const LAMP_REACH = 26;
+/** Where a lamp's light is drawn before it is masked to what nothing nearer covers. */
+let lampScratch: HTMLCanvasElement | null = null;
+
+/**
+ * A lighthouse's lamp, lit: a glow, and the lens's bar turning, seen side on as a beam that sweeps
+ * out to one side and flashes as it faces the eye before sweeping out to the other. Masked to the
+ * strip of its reach that nothing nearer painted over.
+ */
+function drawLamp(ctx: CanvasRenderingContext2D, fl: Flame, ox: number, oy: number, frame: number): void {
+  const m = fl.reach?.mask;
+  if (!m || !fl.reach) { lampLight(ctx, ox + fl.x, oy + fl.y, fl.s, frame); return; }
+  const { x, y, w, h } = fl.reach;
+  lampScratch ??= document.createElement('canvas');
+  if (lampScratch.width < w || lampScratch.height < h) { lampScratch.width = Math.max(lampScratch.width, w); lampScratch.height = Math.max(lampScratch.height, h); }
+  const sc = lampScratch.getContext('2d')!;
+  sc.clearRect(0, 0, w, h);
+  lampLight(sc, fl.x - x, fl.y - y, fl.s, frame);
+  sc.globalCompositeOperation = 'destination-in'; sc.drawImage(m, 0, 0); sc.globalCompositeOperation = 'source-over';
+  ctx.drawImage(lampScratch, 0, 0, w, h, ox + x, oy + y, w, h);
+}
+
+/** The lamp's glow and beam, unmasked. */
+function lampLight(ctx: CanvasRenderingContext2D, x: number, y: number, s: number, frame: number): void {
+  const turn = frame / 45, face = Math.cos(turn), reach = s * LAMP_REACH * Math.abs(Math.sin(turn)), side = Math.sign(Math.sin(turn)) || 1;
+  ctx.save();
+  const glow = ctx.createRadialGradient(x, y, 0, x, y, s * (3 + 3 * Math.max(0, face)));
+  glow.addColorStop(0, 'rgba(255,240,180,0.9)'); glow.addColorStop(1, 'rgba(255,220,140,0)');
+  ctx.fillStyle = glow; ctx.fillRect(x - s * 6, y - s * 6, s * 12, s * 12);
+  const beam = ctx.createLinearGradient(x, y, x + side * reach, y);
+  beam.addColorStop(0, 'rgba(255,240,190,0.55)'); beam.addColorStop(1, 'rgba(255,240,190,0)');
+  ctx.fillStyle = beam; ctx.beginPath(); ctx.moveTo(x, y - s * 0.4); ctx.lineTo(x + side * reach, y - s * 1.6); ctx.lineTo(x + side * reach, y + s * 1.6); ctx.lineTo(x, y + s * 0.4); ctx.closePath(); ctx.fill();
+  ctx.restore();
 }
 
 /** A flame: two tones and a glow, flickering with the frame. */

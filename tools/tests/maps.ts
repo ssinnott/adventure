@@ -66,6 +66,8 @@ export function maps(): void {
       if (to) ok(to.passable(e.tx, e.ty) === 'ok', `${def.id} -> ${e.to}: arrival cell ${e.tx},${e.ty} is passable`);
     }
     for (const f of m.features) ok(m.passable(f.x, f.y, { swim: true, climb: true, keys: 1 }) !== 'wall', `${def.id}: feature ${f.kind} at ${f.x},${f.y} is not inside a wall`);
+    // A landmark is a building drawn as what it is (#312): it stands on a building's square.
+    for (const l of m.landmarks) ok(m.at(l.x, l.y).solid === 'building', `${def.id}: the ${l.kind} at ${l.x},${l.y} stands on a building's square`);
     for (const e of m.encounters) {
       ok(m.passable(e.x, e.y) === 'ok', `${def.id}: encounter ${e.id} at ${e.x},${e.y} is passable`);
       for (const id of e.monsters) ok(id in MONSTERS, `${def.id}: encounter ${e.id} monster '${id}' exists`);

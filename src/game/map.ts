@@ -246,6 +246,8 @@ export interface MapDef {
    * outdoor map places none (tools/tests/art.ts).
    */
   banners?: readonly { x: number; y: number }[];
+  /** Landmarks drawn tall over their building squares and seen from far off (`Landmark`). */
+  landmarks?: readonly Landmark[];
   /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */
   band?: [number, number];
   /** The region whose climate and weather the map shares; the Foreland when absent. */
@@ -316,6 +318,12 @@ export const LEGEND: Record<string, Cell> = {
 /** Every void cell of a map is this one: nothing in the void ever changes. */
 const VOID_CELL: Cell = Object.freeze({ ...LEGEND[VOID_CH], ch: VOID_CH });
 
+/**
+ * A landmark: a building square drawn as what it is, tall, over the land and from far off. A
+ * lighthouse's lamp is lit by night once the party holds its `lit` flag.
+ */
+export interface Landmark { x: number; y: number; kind: 'lighthouse'; lit?: string }
+
 export class GameMap {
   readonly id: string;
   readonly name: string;
@@ -334,6 +342,7 @@ export class GameMap {
   private readonly zonePalettes: readonly MapPalette[];
   /** The squares the map places a banner on, as y * width + x. */
   private readonly banners: ReadonlySet<number>;
+  readonly landmarks: readonly Landmark[];
 
   constructor(def: MapDef) {
     this.def = def;
@@ -361,6 +370,7 @@ export class GameMap {
     this.palette = { ...DEFAULT_PALETTES[def.kind], ...(def.palette ?? {}) };
     this.zonePalettes = this.zones.map((z) => ({ ...this.palette, ...(z.palette ?? {}) }));
     this.banners = new Set((def.banners ?? []).map((b) => b.y * this.width + b.x));
+    this.landmarks = def.landmarks ?? [];
     for (const e of this.encounters) if (e.monsters.length > 12) throw new Error(`map ${def.id}: encounter ${e.id} has more than 12 monsters`);
   }
 
@@ -374,6 +384,7 @@ export class GameMap {
 
   /** Whether the map places a banner on x,y (`MapDef.banners`). */
   bannerAt(x: number, y: number): boolean { return this.inBounds(x, y) && this.banners.has(y * this.width + x); }
+  landmarkAt(x: number, y: number): Landmark | undefined { return this.landmarks.find((l) => l.x === x && l.y === y); }
 
   /** The zone a cell lies in, on the outdoors; undefined anywhere else. */
   zoneAt(x: number, y: number): MapZone | undefined {
