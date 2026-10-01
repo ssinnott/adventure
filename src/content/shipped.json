@@ -761,6 +761,18 @@
       "groups": [],
       "doors": []
     },
+    "lantern_watch": {
+      "size": "16x16",
+      "used": [
+        "lw_bell",
+        "lw_gate",
+        "lw_graves",
+        "lw_lookout",
+        "lw_oil"
+      ],
+      "groups": [],
+      "doors": []
+    },
     "mill": {
       "size": "16x16",
       "used": [
@@ -1102,6 +1114,7 @@
     "compact_cask",
     "donations",
     "guild_Lantern Guildhall",
+    "guild_The Watch's Lantern Hall",
     "guild_Thornhold Lantern Hall",
     "meridian_read",
     "q_ailith",
