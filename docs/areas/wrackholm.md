@@ -210,7 +210,8 @@ Foreland map's density.
   out and not in. The hint: the tide-mark on the cave's wall stops short of the roof at one place.
 - **New here.** A boss that is fed; the devilfish in their own water, met first in E6's pools
   (#187).
-- **Finds.** The crews' strongbox: a Plate Mail +1, the first plate with a plus on the road.
+- **Finds.** The crews' strongbox: a Plate Mail +1, the first plate with a plus on the road and
+  plate's wearers' step on the ladder (#399).
 - **Pay.** About 2,180 xp a member: 2,400 less what E6 pays over its 1,700 as built (§8).
 - **As built** (#188, 1 October): two levels, `smugglers_cove` (the crews' cave, 12–13) and
   `smugglers_cove2` (the sea cave, 12–14), both floored at the area's 12 so that the boss is judged
@@ -309,7 +310,8 @@ Foreland map's density.
 - **New here.** A ship as a dungeon, three decks; a boss that closes a tear on a ship; the first
   door into the hull's depths.
 - **Finds.** The Tide Stone (a quest item, plain: #151, call 6); the ship's papers and its log
-  (letters read from the pack, #76); the captain's Cutlass +2, named.
+  (letters read from the pack, #76); the captain's Cutlass +2, named; a Long Axe +1, the ladder's
+  (#399).
 - **Pay.** About 3,300 xp a member.
 - **As built** (#190, 1 October): three decks, `tide_ship` (the weather deck, 12–13), `tide_ship2`
   (the lower deck, 12–13) and `tide_ship3` (the hold, 12–14), the forward hold's Rift

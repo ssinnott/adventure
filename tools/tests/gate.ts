@@ -80,6 +80,7 @@ export const ROADS: Record<string, readonly string[]> = {
   wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
   eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2', 'eaves_j2:j2_bears', 'eaves_j2:j2_hounds'],
   delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad'],
+  saltings: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -91,9 +92,10 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest).
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
-  // Past 10 the company's gear stops growing (GEAR's top step is the Deepthorn's), so a company two
-  // under a box dresses as one at its floor and wins as often: the gear past 10 is #18's. The groups
-  // are at the line's standard size (tools/testmonster.ts).
+  // A company two under an Act II box wins every fight. The ladder past 10 (#399) dresses a company
+  // at a floor past one two under it, but at the line's standard size (tools/testmonster.ts) a group
+  // a company at the floor fights six or seven of to a rest is one a company two under still beats:
+  // the to-a-rest aim and the two-under aim pull against each other past 10, which is #18's.
   'wrackholm_e6: under': { whose: '#18', at: 1 },
   'smugglers_cove: under': { whose: '#18', at: 1 },
   'tide_ship: under': { whose: '#18', at: 1 },
