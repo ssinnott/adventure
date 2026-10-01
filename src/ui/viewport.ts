@@ -1122,11 +1122,12 @@ export const DRESSING_RATES: Record<Dressing, number> = {
 /**
  * The dressing on the wall at x,y, chosen by hash, so it is stable; null where it is bare. A door
  * is dressing enough, and only a plain wall is carved (a secret door is a wall that is not). A stone
- * wall the map places a banner on (`MapDef.banners`) always hangs one.
+ * wall the map places a banner on (`MapDef.banners`) always hangs one. A bare map (`MapDef.bare`, a
+ * Rift) has none.
  */
 export function wallDressing(map: GameMap, x: number, y: number): Dressing | null {
   const cell = map.at(x, y);
-  if (!isSolidWall(cell) || cell.solid === 'void' || cell.door === 'door' || cell.door === 'locked') return null;
+  if (map.def.bare || !isSolidWall(cell) || cell.solid === 'void' || cell.door === 'door' || cell.door === 'locked') return null;
   const house = map.kind === 'town' && isHouse(map, x, y);
   if (!house && map.bannerAt(x, y)) return 'banner';
   if (!isDressed(map, x, y)) return null;
