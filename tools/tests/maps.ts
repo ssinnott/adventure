@@ -18,6 +18,8 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   saltmouth_armourer: '#177',
+  training_loft: '#177',
+  saltmouth_inn: '#177',
   brineling: '#170',
   bargeman: '#171', barge_master: '#171',
   drowned_chanter: '#175', choirmaster: '#175',
@@ -26,6 +28,7 @@ const UNPLACED: Record<string, string> = {
   salt_crab: '#176',
   devilfish: '#188', great_devilfish: '#188',
   ashen_overseer: '#188',
+  watch_hall: '#201', watch_refectory: '#201',
 };
 
 /**
