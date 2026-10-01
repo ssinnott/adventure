@@ -75,6 +75,16 @@ DESIGN.md first for the why.
   hours (by night), once their `after` holds and until their `until` does, so one person can stand
   in two places, one at a time, and a once-event by night is not spent by day (`World.present`; the
   automap shows only who is there). The Foreland's side quests are built on them (#77).
+- **Prestiges** (`game/prestige.ts`, `game/party.ts`, #19; DESIGN §5): each class's three, at 11,
+  19 and 27, each a title that becomes its name on the sheet. Each adds hit points and spell points
+  to every level from its own on, whenever it is taken. A person who `teaches` one class one prestige
+  offers it once their words are said: the company's members of the class, each with the title and
+  the price, or why not (its level, the prestige before, the third's quest, the gold). The perks are
+  the resolver's: the blows, the knight's banner, the ranger's Marksman and weatherproof shots, the
+  thief's growing sneak attack and its round out of sight, the Ironhide's rage and -30, the monk
+  first and from the back row, Holy Strike risen, the bard's song and its ward against sleep and
+  paralysis, and the cleric's last rite. A rank is recorded (`spellRank`); what it does is #20's.
+  No trainer is placed yet.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -549,8 +559,9 @@ does.
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
-| `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
+| `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
+| `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
 | `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |

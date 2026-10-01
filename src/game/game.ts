@@ -11,7 +11,8 @@ import { meet, answer, heard } from './people.ts';
 import type { Person } from './people.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps.ts';
-import type { GameMap, Feature, Interior, Choice } from './map.ts';
+import type { GameMap, Feature, Interior, Choice, Teaching } from './map.ts';
+import * as prestige from './prestige.ts';
 import { startCombat } from './combat.ts';
 import { spell } from './spells.ts';
 import { save as saveTo, load as loadFrom, browserStore, hasSave } from './save.ts';
@@ -224,7 +225,7 @@ export class Game {
   /** What talking to a person opens: their words in a box, which close onto their question, if they put one. */
   talkScreen(p: Person): Screen {
     const m = meet(p, this.party, heard(this.world, p));
-    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : undefined;
+    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.teaches ? (): void => this.train(p.teaches!, p.name) : undefined;
     return new MessageScreen(m.text, then, p.name);
   }
 
@@ -238,6 +239,22 @@ export class Game {
       const text = answer(c.answers[i], this.party);
       if (said) said(text); else this.push(new MessageScreen(text, undefined, title));
     }, title));
+  }
+
+  /**
+   * A prestige's trainer (game/prestige.ts): the company's members of the class, each with the title
+   * and the price or why not, and the prestige taught to the one chosen. A company with none of the
+   * class hears so.
+   */
+  train(t: Teaching, title: string): void {
+    const party = this.party, list = prestige.offers(t, party, this.world.state);
+    if (!list.length) { this.push(new MessageScreen(prestige.noneHere(t), undefined, title)); return; }
+    this.push(new ChoiceScreen(prestige.ask(party), [...list.map((o) => prestige.offerLine(o, party)), prestige.LEAVE], (i) => {
+      const o = list[i];
+      if (!o) return;
+      const { line } = prestige.teach(t, party, this.world.state, o.who);
+      if (line) this.say(line);
+    }, title, [...list.map((o) => !!o.bar), false]));
   }
 
   /**

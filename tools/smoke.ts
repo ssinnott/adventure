@@ -189,6 +189,34 @@ const inn = await (async () => {
   });
   return { menu, words, question, said, back, backColours, traded, left, hob, eel };
 })();
+// A prestige's trainer (#19, game/prestige.ts): an armourer put in Helmstow's street at run time
+// teaches knights their first. Faced and asked, her words close onto her menu, which lists Bram, the
+// one knight, with the title and the price; taking it pays and makes him a Knight-Errant.
+const trainer = await (async () => {
+  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  await page.evaluate(() => {
+    const g = (window as any).__game.game, bram = g.party.members[0];
+    while (g.screens.length > 1) g.pop();
+    g.world.travel('harrow', 7, 14, 0);
+    g.world.map.features.push({ kind: 'npc', x: 7, y: 13, name: 'An armourer', lines: ['"Steel, or a title?"'], teaches: { cls: 'knight', prestige: 1 } });
+    (window as any).__bram = { level: bram.level, maxHp: bram.maxHp, hp: bram.hp, gold: g.party.gold };
+    bram.level = 11; g.party.gold = 1500;
+  });
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const words = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const menu = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(100);
+  const after = await page.evaluate(() => {
+    const g = (window as any).__game.game, m = g.maps.harrow, bram = g.party.members[0];
+    m.features.splice(m.features.findIndex((f: any) => f.name === 'An armourer'), 1);
+    const out = { screens: g.screens.map((s: any) => s.constructor.name).join(','), prestige: bram.prestige ?? 0, gold: g.party.gold, log: g.log.slice(-1)[0] };
+    const was = (window as any).__bram;
+    bram.level = was.level; bram.maxHp = was.maxHp; bram.hp = was.hp; g.party.gold = was.gold; delete bram.prestige;
+    return out;
+  });
+  return { words, menu, after };
+})();
 // The Wardens' hall, the Drillyard, with First Watch's walk already made, so taking it pays at once.
 // Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
 // when the menu was first opened.
@@ -903,6 +931,8 @@ ok(inn.hob.join() === 'A room and rations,Talk to Hob,Leave', `the real Hob, by 
 ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Talk to Maud,Leave', `the Gilded Eel, with Ebba and Maud in it from a new game, says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
 ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
+ok(trainer.words.text === '"Steel, or a title?"' && trainer.menu.options.join('|') === 'Bram: Knight-Errant\t1000g|Leave' && trainer.after.screens === 'ExploreScreen' && trainer.after.prestige === 1 && trainer.after.gold === 500 && trainer.after.log === 'Bram is a Knight-Errant now.',
+  `a trainer's words close onto the members of her class, and Bram takes the first for 1000 (${trainer.menu.options.join(', ').replace(/\t/g, ' ')}; "${trainer.after.log}")`);
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
   `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
