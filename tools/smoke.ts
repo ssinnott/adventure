@@ -234,8 +234,8 @@ const interiors = await page.evaluate(async () => {
 // Samples are taken inside the square ahead, clear of its edges. The patch is taken up again after.
 /** The most of the strip straight ahead over the horizon the woods may fill: the way through stays open. */
 const PATH_MAX = 15;
-/** The least of the band over the horizon the dead wood's bare trees fill: about 3.4% as drawn, 1.7% with none. */
-const DEAD_MIN = 2.5;
+/** The least of the band over the horizon the dead wood's bare trees fill: about 1.7% as drawn, 0% with none. */
+const DEAD_MIN = 1;
 const terrains = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const V = await load('/src/ui/viewport.ts');
@@ -267,7 +267,7 @@ const terrains = await page.evaluate(async () => {
       w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
       const snow = name === 'snow';
       w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
-      V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+      ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
       const d = ctx.getImageData(0, 0, W, H).data, seen = new Set<number>();
       for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
       if (seen.size < 20) thin.push(`${terrain} ${name}@${hour} (${seen.size})`);
@@ -314,7 +314,7 @@ const terrains = await page.evaluate(async () => {
   const woodsBy = (t: string) => { for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = x === sx + 1 && y < sy ? { terrain: 'floor', solid: 'wall', door: 'none', ch: '#' } : { terrain: x <= sx ? t : 'grass', solid: 'none', door: 'none', ch: '.' }; };
   w.state.minutes = ((50 - 75 + 120) % 120) * 1440 + 12 * 60;
   w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
-  const shot = (backdrop?: string) => { V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, 0, W, H / 2).data; };
+  const shot = (backdrop?: string) => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, 0, W, H / 2).data; };
   woodsBy('woods'); const withTrees = shot();
   woodsBy('deadwood'); const withDead = shot();
   woodsBy('grass'); const bare = shot(), mask = shot('#ff00ff');
@@ -374,7 +374,7 @@ const torches = await page.evaluate(async () => {
   };
   const paint = (sx: number, sy: number, ahead: string): { flames: { x: number; y: number }[]; px: Uint8ClampedArray } => {
     lay(sx, sy, ahead);
-    V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+    ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
     return { flames: V.paintedFlames().map((f: any) => ({ x: f.x, y: f.y })), px: ctx.getImageData(0, 0, W, H).data };
   };
   const differs = (a: Uint8ClampedArray, b: Uint8ClampedArray, x: number, y: number): boolean => { const i = (Math.floor(y) * W + Math.floor(x)) * 4; return Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 0; };
@@ -404,7 +404,7 @@ const torches = await page.evaluate(async () => {
   const frame = (who: any, lit: boolean): Uint8ClampedArray => {
     const flames = V.paintedFlames() as any[], was = flames.slice();
     if (!lit) flames.length = 0;
-    V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, (x: number, y: number) => (x === at![0] && y === at![1] - 2 ? who : null), 40, false);
+    ctx.clearRect(0, 0, W, H); V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, (x: number, y: number) => (x === at![0] && y === at![1] - 2 ? who : null), 40, false);
     if (!lit) flames.push(...was);
     return ctx.getImageData(0, 0, W, H).data;
   };
@@ -436,7 +436,7 @@ const sunder = await page.evaluate(async () => {
       const ch = !sunder ? ',' : y === py - 2 || y === py - 3 ? 'v' : y === py - 4 && Math.abs(x - px) === 1 ? 'c' : ',';
       m.cells[y * m.width + x] = { ...M.LEGEND[ch], ch };
     }
-    V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+    ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
     return ctx.getImageData(0, 0, W, H).data;
   };
   const grass = lay(false), gorge = lay(true);
@@ -719,7 +719,7 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
   // The sky goes to a canvas of its own and is never composited, so only the backdrop is behind the walls.
   const sky = document.createElement('canvas'); sky.width = W; sky.height = H;
   const skyCtx = sky.getContext('2d')!;
-  const paint = (backdrop: string) => { V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
+  const paint = (backdrop: string) => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, H / 2 - band, W, band * 2).data; };
   // The same view with the hills laid flat: each hill square read as grass while it is painted.
   const flat = (m: any, backdrop: string) => {
     const at = m.at;
