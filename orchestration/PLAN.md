@@ -1552,3 +1552,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   "Nothing new."; D3 at 4 7.98 fights to a rest (off its aim, inside the limit, listed); CI green.
   Merged as a12aa7f; main's tree is the tested tree (7c981c9). #71 closes. #309 (D4) can now be
   reviewed on it (the two Cutthroats carried in).
+- 00:05: the #68 session opened #313 (#69's creatures: the Barrow Wolf, an elite wolf at 5 leading
+  the den's packs, and the Black Dog re-statted to an elite at 5), and merged it into #306 with
+  D2 retuned on it (64e5607): 6.99 fights to a rest at 4, inside the aim. #309 (D4) carried #305's
+  round (070fea6: two Cutthroats, eight crows, 7.52). Review queue: #308 (I5), #309 (D4), #313
+  then #306 (D2), then #310 (the Berth); #303 and #307 in review.
