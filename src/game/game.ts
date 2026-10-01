@@ -11,7 +11,8 @@ import { meet, answer, heard } from './people.ts';
 import type { Person } from './people.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps.ts';
-import type { GameMap, Feature, Interior, Choice } from './map.ts';
+import type { GameMap, Feature, Interior, Choice, Passage } from './map.ts';
+import * as passage from './passage.ts';
 import { startCombat, castOnParty } from './combat.ts';
 import { spell } from './spells.ts';
 import { save as saveTo, load as loadFrom, browserStore, hasSave } from './save.ts';
@@ -224,7 +225,7 @@ export class Game {
   /** What talking to a person opens: their words in a box, which close onto their question, if they put one. */
   talkScreen(p: Person): Screen {
     const m = meet(p, this.party, heard(this.world, p));
-    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : undefined;
+    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => this.offer(p.passage!, p.name) : undefined;
     return new MessageScreen(m.text, then, p.name);
   }
 
@@ -237,6 +238,24 @@ export class Game {
       if (i < 0) return;
       const text = answer(c.answers[i], this.party);
       if (said) said(text); else this.push(new MessageScreen(text, undefined, title));
+    }, title));
+  }
+
+  /**
+   * A seller's crossings (game/passage.ts): the menu of where to, then the terms and the fare, then
+   * the crossing taken. Esc at either backs out with nothing spent.
+   */
+  offer(routes: readonly Passage[], title: string): void {
+    const w = this.world;
+    this.push(new ChoiceScreen(passage.ask(this.party), [...routes.map((r) => passage.offerLine(r, w)), passage.NOT_NOW], (i) => {
+      const r = routes[i];
+      if (!r) return;
+      this.push(new ChoiceScreen(passage.terms(r, w), [passage.payLabel(r, w), passage.NOT_NOW], (j) => {
+        if (j !== 0) return;
+        const { taken, lines } = passage.take(r, w, this.party);
+        for (const l of lines) this.say(l);
+        if (taken) { for (const m of w.eventsHere()) this.say(m); this.enterCell(); }
+      }, title));
     }, title));
   }
 
