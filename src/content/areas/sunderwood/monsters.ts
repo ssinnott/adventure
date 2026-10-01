@@ -6,10 +6,12 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 
 /** The drawings Sunderwood's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
 export const SPRITES = [
-  'sunderling',
+  'sunderling', 'sunder_warden',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
   // the Sunder's black glass (#198, #199), a skirmisher on MONSTERS §4.4's line at 14
   { id: 'sunderling', name: 'Sunderling', plural: 'Sunderlings', sprite: 'sunderling', kind: 'rift', look: 'Black glass, with a white light inside.', level: 14, hp: 107, ac: 18, attack: 9, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 553, gold: [0, 0], tint: '#2c2e38', size: 0.74, inflict: { cond: 'paralysed', chance: 0.1 } },
+  // the gorge above the wall (#199), the area's boss at 16
+  { id: 'sunder_warden', name: 'Warden of the Sunder', plural: 'Wardens of the Sunder', sprite: 'sunder_warden', kind: 'rift', look: 'The Sunder\'s own knot, and it has held for centuries.', level: 16, hp: 703, ac: 21, attack: 12, dice: 13, sides: 7, bonus: 20, speed: 13, xp: 10133, gold: [0, 0], immune: ['asleep'], tint: '#2a2a34', size: 1.35 },
 ];

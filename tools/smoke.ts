@@ -54,6 +54,7 @@ const DETACHED: Partial<Record<MonsterSprite, { what: string; pieces: number; sh
   warden: { what: 'shard', pieces: 1, share: 0.01 },
   cut_warden: { what: 'shards', pieces: 2, share: 0.01 },
   tide_warden: { what: 'shards', pieces: 2, share: 0.01 },
+  sunder_warden: { what: 'shards', pieces: 2, share: 0.01 },
   acolyte: { what: 'censer', pieces: 1, share: 0.05 },
   lampman: { what: 'lantern', pieces: 1, share: 0.07 },
   adept: { what: 'hand flame', pieces: 1, share: 0.03 },
