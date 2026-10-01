@@ -1142,7 +1142,8 @@ function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
   const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my);
   if (house) drawHouseFront(ctx, x0, x1, top, bottom, d, seed, building(map, mx, my).seed, dark, haze, daylight, joinL, joinR);
   else drawStoneFront(ctx, pal, x0, x1, top, bottom, d, seed, dark, haze, map.kind === 'outdoor', joinL, joinR, across);
-  if (isDoor) drawDoor(ctx, x0, x1, horizon, u, pal.door, d, dark, cell.door === 'locked', map.kind === 'town');
+  if (isDoor && pal.wallStyle === 'smooth') drawSeam(ctx, x0, x1, horizon, u, pal.wall, d, dark);
+  else if (isDoor) drawDoor(ctx, x0, x1, horizon, u, pal.door, d, dark, cell.door === 'locked', map.kind === 'town');
   drawWallDecor(ctx, map, cell, mx, my, x0, x1, top, bottom, d, seed, dark, haze, daylight, house, isDoor);
 }
 
@@ -1708,6 +1709,14 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, m
   ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.moveTo(e[0], e[1]); ctx.lineTo(c[0], c[1]);
   if (openFar) { const i = xF > xN ? -0.5 : 0.5; ctx.moveTo(b[0] + i, b[1]); ctx.lineTo(c[0] + i, c[1]); }
   ctx.stroke();
+}
+
+/** A door in a smooth wall: only its seam, a hairline up its sides and across its head, in the wall's colour darkened. */
+function drawSeam(ctx: CanvasRenderingContext2D, xl: number, xr: number, horizon: number, u: number, wall: string, d: number, dark: boolean): void {
+  const w = xr - xl, dw = Math.round(w * 0.42), foot = Math.round(horizon + u);
+  const x = Math.round(xl + (w - dw) / 2) + 0.5, y = Math.round(horizon + u - u * 1.55) + 0.5;
+  ctx.strokeStyle = fog(shade(wall, 0.7), d, dark); ctx.lineWidth = 1; ctx.lineCap = 'butt';
+  ctx.beginPath(); ctx.moveTo(x, foot); ctx.lineTo(x, y); ctx.lineTo(x + dw, y); ctx.lineTo(x + dw, foot); ctx.stroke();
 }
 
 function drawDoor(ctx: CanvasRenderingContext2D, xl: number, xr: number, horizon: number, u: number, color: string, d: number, dark: boolean, locked: boolean, arched: boolean): void {

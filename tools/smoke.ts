@@ -544,7 +544,7 @@ const sunder = await page.evaluate(async () => {
 });
 // A smooth wall (#199): a dungeon corridor two squares long, lit, its sides and its end wall laid
 // around the party. Drawn in the dungeon's stone, its end face and a side face show courses; drawn
-// smooth, each is one colour down its height, with no joint in it.
+// smooth, each is one colour down its height, with no joint in it, and a door in it is its seam.
 const smooth = await page.evaluate(async () => {
   const V = await import('/src/ui/viewport.ts' as string), M = await import('/src/game/map.ts' as string);
   const w = (window as any).__game.game.world;
@@ -565,16 +565,25 @@ const smooth = await page.evaluate(async () => {
     for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
     return seen.size;
   };
-  const paint = (wallStyle: string): { end: number; side: number } => {
+  /** Distinct colours in a box of the view. */
+  const box = (x0: number, y0: number, x1: number, y1: number): number => {
+    const d = ctx.getImageData(x0, y0, x1 - x0, y1 - y0).data, seen = new Set<number>();
+    for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
+    return seen.size;
+  };
+  const paint = (wallStyle: string): { end: number; side: number; middle: number } => {
     m.palette.wallStyle = wallStyle;
     ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
-    return { end: column(W / 2, H / 2 - 12, H / 2 + 12), side: column(Math.round(W * 0.08), H / 2 - 30, H / 2 + 30) };
+    return { end: column(W / 2, H / 2 - 12, H / 2 + 12), side: column(Math.round(W * 0.08), H / 2 - 30, H / 2 + 30), middle: box(W / 2 - 8, H / 2, W / 2 + 8, H / 2 + 12) };
   };
   const stone = paint('stone'), flat = paint('smooth');
+  // A door in the end wall: in stone its planks and bands, smooth only its seam, across its head.
+  m.cells[(py - 3) * m.width + px] = { ...M.LEGEND.D, ch: 'D' };
+  const door = paint('stone').middle, seam = paint('smooth').middle;
   m.palette.wallStyle = style;
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
   w.travel(from.id, from.x, from.y, from.f); w.state.light = from.light;
-  return { stone, flat };
+  return { stone, flat, door, seam };
 });
 // Crowness Light (#312), from E3's road eleven squares north of it and from Gullwick's beach in F3,
 // far past the squares drawn: by noon the tower stands over the land, painted otherwise than with no
@@ -1123,6 +1132,7 @@ ok(torches.shown && torches.covers && torches.behind, `an ogre before a sconced 
 ok(sunder.rows > 20 && sunder.drop > 40 && sunder.wall > 20, `a chasm paints darker than grass, its far wall under the rim lighter than the drop (${sunder.rows} rows straight ahead, ${sunder.drop} darker than grass in the lower half; the wall ${sunder.wall} lighter than the foot)`);
 ok(sunder.glass > 200 && sunder.bluer, `glass trees stand over the horizon beyond the chasm, bluer than red (${sunder.glass} pixels, ${sunder.bluer ? 'bluer' : 'not bluer'})`);
 ok(smooth.stone.end > 2 && smooth.stone.side > 2 && smooth.flat.end === 1 && smooth.flat.side === 1, `a smooth wall is one colour down its face, end and side, where stone shows its courses (stone ${smooth.stone.end} and ${smooth.stone.side} colours, smooth ${smooth.flat.end} and ${smooth.flat.side})`);
+ok(smooth.door > 2 && smooth.seam === 1, `a door in a smooth wall is its seam alone, where in stone it is planks and bands (smooth, ${smooth.seam} colour in its middle; in stone, ${smooth.door})`);
 {
   const { beam, weather, ...views } = lighthouse as Record<string, any>;
   ok(weather.thin > 100 && weather.fog === 0 && weather.rain === 0 && weather.lamp === 0, `the weather that takes the fourth square takes Crowness Light, its lamp with it (fog 0.3: ${weather.thin} pixels of tower; fog 0.35: ${weather.fog}; a downpour: ${weather.rain}; a lit lamp in fog by night: ${weather.lamp})`);
