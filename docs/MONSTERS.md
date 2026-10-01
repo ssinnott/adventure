@@ -120,9 +120,11 @@ table: a Rift in the Kilns is slag, and a Rift in the Delta is brine.
 | Act IV | the mountain's and the far side's | the giants, the Hand's masons | the ash-cast of Old Cinder | none | robed at the monastery, bare at the vents |
 | Act V | rats | the Hand's last, and Vask | none | none | nearly everything |
 
-Two lines of it can be checked, and should be, beside the novelty check (EXPANSION.md §5.4): no
-machine on the road before the bottom of the Deep Mines, and no Rift after Cairnmoor. They keep the
-secret's pace. A company that goes straight down finds a mystery, not a spoiler (DESIGN.md §14.4):
+Two lines of it are checked, beside the novelty check (EXPANSION.md §5.4; `paceFaults` in
+`tools/tests/pillars.ts`, #158): no machine on the road before the bottom of the Deep Mines, and no
+Rift after Cairnmoor. A map's place on the road is its area's, unless its floor is over its area's
+band: the Dead-Drop, 26 to 28 under Act II's Tide Ship, is placed by its band, past the Mines and
+past Cairnmoor. The reach is exempt. They keep the secret's pace. A company that goes straight down finds a mystery, not a spoiler (DESIGN.md §14.4):
 the first machines stand in band-16 country, where a company that arrives early does not live long
 enough to wonder what they are.
 
@@ -141,9 +143,22 @@ marks the bows the weather spoils, and `mindless` shrugs off Slumber. It carries
 That is all, but for ranks and morale (#160): a group may stand a `back` rank, which a blade reaches
 only once the fight's front is down and which waits, bow or spell aside, till then; and a fight's
 people break once its `leader` falls, a group's beasts bolt at three in four down, and the fled pay
-nothing; the Hand never breaks (`steady`). No monster casts, heals, calls for help, regenerates or
-resists an element. Nothing gives a curse or stone, though both conditions exist: Restore lifts a
-curse, and a temple a stoning.
+nothing; the Hand never breaks (`steady`).
+
+And for casting, drain and elements (#161). Every damage spell carries fire, cold, lightning,
+nature or holy (DESIGN.md §7), and a monster may `resist` one (half, rounded up), be `immune` to one
+(none) or be `weak` to one (half again); the dead are weak to holy and immune to nature by their
+kind, the machine weak to lightning and immune to holy and nature, and the brineling is bitten by
+lightning and not by cold. A monster that `cast`s names spells from the tables and a chance a turn
+to spend its turn on the first that would do something: Mend on the most hurt of its group or
+Mending Light on all of it, healing the spell's and its level held at 10; Bless or Ward over its
+group while none runs; a damage spell at one member, a row or the party; Slumber on the row with
+more awake. It casts at its level held at 10, unranked, and does not wait in the back rank. Its
+hits may `drain`: heal it by their damage, or take spell points before hit points. A hit wakes a
+sleeper, and a fight's sleepers wake when it ends. Both bots learn what an element does to a foe
+from the first spell of it they see land, and wake a sleeper of the front row, or a caster. No
+monster calls for help or regenerates. Nothing gives a curse or stone, though both conditions
+exist: Restore lifts a curse, and a temple a stoning.
 
 ### 3.2 What the numbers show
 
