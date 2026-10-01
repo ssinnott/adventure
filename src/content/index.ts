@@ -16,17 +16,16 @@ import type { Climate } from '../game/weather.ts';
 import type { Atlas } from '../game/atlas.ts';
 import { AREA as shelf } from './areas/shelf/index.ts';
 import { AREA as thornmark } from './areas/thornmark/index.ts';
+import { AREA as sunderwood } from './areas/sunderwood/index.ts';
 import * as saltreach from './areas/saltreach/monsters.ts';
 import * as wrackholm from './areas/wrackholm/monsters.ts';
 import * as saltreachRooms from './areas/saltreach/interiors.ts';
-import * as sunderwoodRooms from './areas/sunderwood/interiors.ts';
-import * as sunderwood from './areas/sunderwood/monsters.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
 
 /** The areas in road order. The order is behaviour: a new game starts on the first area's first map. */
-export const AREAS = [shelf, thornmark] as const;
+export const AREAS = [shelf, thornmark, sunderwood] as const;
 
 /**
  * Monsters drawn ahead of their area: an area is listed in AREAS only once it has a map to start
@@ -36,7 +35,6 @@ export const AREAS = [shelf, thornmark] as const;
 export const AHEAD = [
   { id: 'saltreach' as const, sprites: saltreach.SPRITES, monsters: saltreach.MONSTERS },
   { id: 'wrackholm' as const, sprites: wrackholm.SPRITES, monsters: wrackholm.MONSTERS },
-  { id: 'sunderwood' as const, sprites: sunderwood.SPRITES, monsters: sunderwood.MONSTERS },
 ] as const;
 
 /**
@@ -47,7 +45,6 @@ export const AHEAD = [
  */
 export const ROOMS_AHEAD = [
   { id: 'saltreach' as const, interiors: saltreachRooms.INTERIORS },
-  { id: 'sunderwood' as const, interiors: sunderwoodRooms.INTERIORS },
 ] as const;
 
 type AnyArea = (typeof AREAS)[number];
