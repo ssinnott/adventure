@@ -16,6 +16,7 @@ import type { Climate } from '../game/weather.ts';
 import type { Atlas } from '../game/atlas.ts';
 import { AREA as shelf } from './areas/shelf/index.ts';
 import { AREA as thornmark } from './areas/thornmark/index.ts';
+import * as saltreach from './areas/saltreach/monsters.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -23,11 +24,18 @@ import { PLAN } from './atlas.ts';
 /** The areas in road order. The order is behaviour: a new game starts on the first area's first map. */
 export const AREAS = [shelf, thornmark] as const;
 
+/**
+ * Monsters drawn ahead of their area: an area is listed in AREAS only once it has a map to start
+ * on, and its monsters may be drawn before that. Each is merged into MONSTERS and MonsterSprite as
+ * an area's are; once the area is listed, its Area takes the import and its line here goes.
+ */
+export const AHEAD = [{ id: 'saltreach' as const, sprites: saltreach.SPRITES, monsters: saltreach.MONSTERS }] as const;
+
 type AnyArea = (typeof AREAS)[number];
 /** The regions, one to an area; each map names its region and shares its sky. */
 export type RegionId = AnyArea['id'];
 /** One kind per distinct drawing; kinds that share a family module share a frame but not a look. */
-export type MonsterSprite = AnyArea['sprites'][number];
+export type MonsterSprite = AnyArea['sprites'][number] | (typeof AHEAD)[number]['sprites'][number];
 /** The painted room a business shows while the party is inside it, one per business. */
 export type Interior = AnyArea['interiors'][number];
 
@@ -57,7 +65,7 @@ once('area', AREAS, (a) => a.id);
 /** The maps as written, in road order, Helmstow first. The outdoor ones are zones the atlas places. */
 export const MAP_DEFS: readonly MapDef[] = once('map', AREAS.flatMap((a) => a.maps), (d) => d.id);
 
-export const MONSTERS: Record<string, MonsterDef> = byId('monster', AREAS.flatMap((a) => a.monsters));
+export const MONSTERS: Record<string, MonsterDef> = byId('monster', [...AREAS, ...AHEAD].flatMap((a) => a.monsters));
 
 /** The items no area owns first, then each area's. */
 export const ITEMS: Record<string, ItemDef> = byId('item', [...CORE_ITEMS, ...AREAS.flatMap((a) => a.items)]);
