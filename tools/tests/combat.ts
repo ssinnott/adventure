@@ -2,7 +2,7 @@
 // that hit every foe, Ward and Revive; the ranks and morale (#160).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS } from '../../src/content/index.ts';
-import { defaultParty, equip, addCondition, hasCondition } from '../../src/game/party.ts';
+import { defaultParty, equip, addCondition, hasCondition, killPay } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, frontStands, WARD_AC, BREAK_LINE, ROUT_LINE } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
@@ -34,11 +34,12 @@ export function combat(): void {
   ok(a.log.join('|') === b.log.join('|'), 'the same seed replays the same fight');
   ok(a.log.join('|') !== c.log.join('|'), 'a different seed is a different fight');
   ok(a.state.outcome === 'victory', `the default party beats three rats and a wolf (${a.rounds} rounds, ${a.state.outcome})`);
-  // Three in four down, the last of the pack bolts and pays nothing.
-  const xp = a.state.monsters.filter((m) => !m.fled).reduce((n, m) => n + m.def.xp, 0);
+  // Three in four down, the last of the pack bolts and pays nothing; the slain pay by their level
+  // against the party's, so the wolf, one over it, pays more (killPay).
+  const xp = a.state.monsters.filter((m) => !m.fled).reduce((n, m) => n + m.def.xp * killPay(m.def.level, 1), 0);
   ok(a.state.monsters.filter((m) => m.fled).length === 1, `the last of three rats and a wolf bolts (${a.state.monsters.filter((m) => m.fled).map((m) => m.def.name).join(', ')})`);
-  ok(a.state.loot !== null && a.state.loot.xp === xp, `xp is the sum of the slain's (${a.state.loot?.xp})`);
-  ok(a.party.members.every((m) => m.xp === Math.floor(xp / 6)), 'xp is split evenly among the living');
+  ok(MONSTERS.rat.level === 1 && MONSTERS.wolf.level === 2 && a.state.loot !== null && a.state.loot.xp === Math.round(xp), `xp is the sum of the slain's, each by its level against the party's (${a.state.loot?.xp})`);
+  ok(a.party.members.every((m) => m.xp === Math.floor(xp / 6)) && a.state.loot!.shares.every((x) => x === Math.floor(xp / 6)), 'xp is split evenly among the living');
   ok(a.party.gold >= 200, 'gold is added to the party');
   // The cap.
   const rng = makeRng(1);
@@ -194,7 +195,8 @@ function morale(): void {
     play(s, p, 8, atMaster);
     const died = s.log.findIndex((l) => l.includes('Barge Master dies.'));
     ok(s.outcome === 'victory' && s.monsters.filter((m) => m.fled).length === 5 && s.log[died + 1] === BREAK_LINE('5 Bargemen', false), `a barge crew leaves when its master dies, and the log says so (${s.log[died + 1]})`);
-    ok(s.loot?.xp === master.xp && s.loot.gold <= master.gold[1], `the fled pay no xp and take their gold (${s.loot?.xp} xp, ${s.loot?.gold} gold)`);
+    const paid = master.xp * killPay(master.level, 1);
+    ok(s.loot?.xp === Math.round(paid) && s.loot.shares.every((x) => x === Math.floor(paid / 6)) && s.loot.gold <= master.gold[1], `the fled pay no xp under the kill pay, the slain master paying by its level against the party's (${master.level} against 1), and take their gold (${s.loot?.xp} xp, ${s.loot?.gold} gold)`);
   }
   {
     // A crew in a group of its own breaks at the master's fall in the next.

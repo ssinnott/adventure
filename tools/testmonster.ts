@@ -6,6 +6,7 @@
 // gallery can still show one).
 import type { MonsterDef, MonsterSprite } from '../src/game/monsters.ts';
 import { xpForLevel } from '../src/game/party.ts';
+import { MEMBERS } from '../src/content/progression.ts';
 
 export type Role = 'fodder' | 'skirmisher' | 'soldier' | 'archer' | 'caster' | 'controller' | 'armoured' | 'elite' | 'brute' | 'boss';
 
@@ -42,10 +43,10 @@ export function line(level: number): { hp: number; ac: number; hit: number; dmg:
 }
 
 /**
- * The levels the calibration is made at: each one up to today's MAX_LEVEL, then every fourth to the
- * road's cap. Past 10 the company runs on today's rules extended, with no spells, promotions or gear
- * past Thornmark's, so that stretch is provisional until those systems exist and the harness re-runs.
- * Levels between are interpolated.
+ * The levels the calibration is made at: each one to 10, then every fourth to the road's cap. Past
+ * 10 the company runs on play's rules, its spells stopped growing and nothing new past Act I's
+ * (no tiers, prestiges or gear), until #18, #19 and #20 bring them and the harness re-runs. Levels
+ * between are interpolated.
  */
 export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32] as const;
 
@@ -63,28 +64,28 @@ export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32] as
  * --calibrate --write`; do not tune by hand.
  */
 export const HP: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.08, 0.88, 1.4, 1.53, 1.63, 1.83, 2.77, 2.71, 2.93, 3.01, 3.11, 3.66, 4.85, 5.59, 5.68],
-  skirmisher: [0.83, 1.25, 1.27, 1.47, 1.4, 1.43, 1.54, 2.05, 2.34, 2.61, 2.69, 2.35, 2.44, 2.27, 2.29, 2.65],
-  soldier:    [1.07, 1.45, 1.27, 1.41, 1.35, 1.34, 1.38, 2.09, 2.34, 2.64, 2.81, 2.31, 2.44, 2.46, 3.17, 3.37],
-  archer:     [0.93, 1.59, 1.49, 1.73, 1.64, 1.57, 1.82, 2.37, 2.75, 2.99, 3.38, 2.75, 2.5, 3.2, 3.74, 4.03],
-  caster:     [1.13, 2.16, 1.91, 2.01, 1.85, 1.84, 1.88, 2.62, 2.76, 3.16, 3.58, 3.13, 3.01, 2.68, 2.84, 3.34],
-  controller: [0.98, 1.25, 1.11, 1.28, 1.29, 1.3, 1.34, 2.02, 2.24, 2.57, 2.38, 2.2, 2.11, 2.02, 2.36, 3.31],
-  armoured:   [1.54, 1.4, 1.26, 1.45, 1.45, 1.28, 1.32, 1.99, 2.14, 2.33, 2.44, 2.14, 2.09, 2.48, 2.62, 2.76],
-  elite:      [1.23, 1.82, 1.68, 2.16, 1.87, 1.65, 1.59, 2.16, 2.27, 2.47, 2.28, 2.36, 2.27, 2.27, 2.35, 2.42],
-  brute:      [1.99, 1.82, 1.64, 2.19, 2.21, 1.95, 1.75, 2.23, 2.31, 2.56, 2.56, 2.2, 2.17, 2.06, 1.88, 1.95],
-  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 4.56, 4.67, 4.45, 4.3, 4.26],
+  fodder:     [0.83, 1.08, 0.88, 1.4, 1.53, 1.63, 1.83, 2.77, 2.71, 2.93, 2.63, 2.23, 2.6, 2.36, 2.13, 1.92],
+  skirmisher: [0.83, 1.25, 1.27, 1.47, 1.4, 1.43, 1.54, 2.05, 2.34, 2.61, 2.48, 2.17, 1.83, 1.59, 1.4, 1.25],
+  soldier:    [1.07, 1.45, 1.27, 1.41, 1.35, 1.34, 1.38, 2.09, 2.34, 2.64, 2.49, 2.19, 1.85, 1.6, 1.46, 1.35],
+  archer:     [0.93, 1.59, 1.49, 1.73, 1.64, 1.57, 1.82, 2.37, 2.75, 2.99, 3.13, 2.55, 2.15, 1.86, 1.65, 1.53],
+  caster:     [1.13, 2.16, 1.91, 2.01, 1.85, 1.84, 1.88, 2.62, 2.76, 3.16, 3.21, 2.7, 2.31, 2.12, 1.87, 1.67],
+  controller: [0.98, 1.25, 1.11, 1.28, 1.29, 1.3, 1.34, 2.02, 2.24, 2.57, 2.37, 1.93, 1.65, 1.43, 1.42, 1.27],
+  armoured:   [1.54, 1.4, 1.26, 1.45, 1.45, 1.28, 1.32, 1.99, 2.14, 2.33, 2.36, 1.96, 1.69, 1.46, 1.29, 1.16],
+  elite:      [1.23, 1.82, 1.68, 2.16, 1.87, 1.65, 1.59, 2.16, 2.27, 2.47, 2.15, 1.94, 1.69, 1.46, 1.29, 1.16],
+  brute:      [1.99, 1.82, 1.64, 2.19, 2.21, 1.95, 1.75, 2.23, 2.31, 2.56, 2.23, 1.82, 1.54, 1.33, 1.18, 1.06],
+  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 3.86, 3.71, 3.41, 3.13, 2.86],
 };
 export const DAMAGE: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.15, 1.39, 1.42, 1.44, 1.04, 1, 1.13, 2.11, 1.98, 2.31, 2.23, 1.44, 1.25, 1, 1],
-  skirmisher: [0.83, 1, 1.11, 1.38, 1.44, 1.32, 1.06, 1.28, 1.05, 1.25, 1, 1.42, 1.36, 1.44, 1.33, 1.19],
-  soldier:    [1, 1.06, 1.17, 1.5, 1.55, 1.42, 1.31, 1.22, 1.13, 1.19, 1, 1.66, 1.65, 1.74, 1.55, 1.4],
-  archer:     [0.93, 1, 1.11, 1.11, 1.34, 1.29, 1.04, 1.43, 1.18, 1.25, 1.11, 1.63, 2.13, 1.77, 1.81, 1.66],
-  caster:     [1, 1, 1, 1.25, 1.3, 1.35, 1.1, 1.16, 1.08, 1.34, 1, 1.36, 1.65, 1.92, 1.87, 1.84],
-  controller: [0.98, 1.33, 1.46, 1.87, 1.93, 1.56, 1.64, 1.7, 1.58, 1.49, 1.56, 2.08, 2.25, 2.23, 1.8, 1.55],
-  armoured:   [1, 1.79, 1.58, 2, 1.81, 1.66, 1.65, 1.43, 1.33, 1.61, 1.43, 1.77, 2.31, 2.32, 2.08, 1.83],
-  elite:      [1, 1.15, 1.33, 1.67, 1.64, 1.4, 1.45, 1.43, 1.44, 1.52, 1.44, 1.26, 1.38, 1.43, 1.43, 1.37],
-  brute:      [1, 1.3, 1.45, 1.55, 1.42, 1.21, 1.19, 1.24, 1.25, 1.32, 1.13, 1.02, 1, 1, 1.51, 1.35],
-  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 4.56, 4.67, 4.45, 4.3, 4.26],
+  fodder:     [0.83, 1.15, 1.39, 1.42, 1.44, 1.04, 1, 1.13, 2.11, 1.98, 2.18, 1.7, 1, 1, 1, 1],
+  skirmisher: [0.83, 1, 1.11, 1.38, 1.44, 1.32, 1.06, 1.28, 1.05, 1.25, 1, 1, 1, 1, 1, 1],
+  soldier:    [1, 1.06, 1.17, 1.5, 1.55, 1.42, 1.31, 1.22, 1.13, 1.19, 1.05, 1, 1, 1, 1, 1],
+  archer:     [0.93, 1, 1.11, 1.11, 1.34, 1.29, 1.04, 1.43, 1.18, 1.25, 1.11, 1.13, 1.29, 1.35, 1.42, 1.39],
+  caster:     [1, 1, 1, 1.25, 1.3, 1.35, 1.1, 1.16, 1.08, 1.34, 1.11, 1, 1, 1, 1.08, 1.18],
+  controller: [0.98, 1.33, 1.46, 1.87, 1.93, 1.56, 1.64, 1.7, 1.58, 1.49, 1.18, 1.42, 1.56, 1.56, 1, 1.2],
+  armoured:   [1, 1.79, 1.58, 2, 1.81, 1.66, 1.65, 1.43, 1.33, 1.61, 1.25, 1.08, 1, 1.06, 1.15, 1.18],
+  elite:      [1, 1.15, 1.33, 1.67, 1.64, 1.4, 1.45, 1.43, 1.44, 1.52, 1.44, 1.18, 1, 1, 1, 1],
+  brute:      [1, 1.3, 1.45, 1.55, 1.42, 1.21, 1.19, 1.24, 1.25, 1.32, 1.24, 1.11, 1, 1, 1, 1],
+  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 3.86, 3.71, 3.41, 3.13, 2.86],
 };
 
 /** A role's factor from a table at a level, straight between the levels it was made at. */
@@ -113,17 +114,21 @@ export function diceFor(avg: number): { dice: number; sides: number; bonus: numb
 }
 
 /**
- * How many standard encounters at their own level a company fights for a level. The curve's to set
- * (EXPANSION.md §5.2); 20 is three rests' worth at six or seven fights a rest, and under two at 32,
- * where a rest comes every twelve. A boss pays four encounters.
+ * How many groups a clear holds for each level it climbs, at a level: the built areas' pace as
+ * counted for #159, the Foreland's 81 groups over its climb of 4 and Thornmark's 75 over 5, the
+ * second kept past it. Pinned, not counted live, so that a map adding a group moves nothing here;
+ * Saltreach's first box is where it is weighed again (docs/MONSTERS.md open question 4).
  */
-export const FIGHTS_PER_LEVEL = 20;
+export const groupsPerLevel = (level: number): number => (level < 5 ? 81 / 4 : 75 / 5);
 const BOSS_ENCOUNTERS = 4;
 
-/** What one monster of the role pays at the level: its share of an encounter's worth. */
+/**
+ * What one monster of the role pays at the level: its share of an encounter's worth, which is what
+ * the curve gives a group (EXPANSION.md §5.2): the company's climb through the level, over three
+ * quarters of the groups a clear holds for it (`groupsPerLevel`). A boss pays four encounters.
+ */
 export function xpFor(role: Role, level: number): number {
-  const perLevel = 6 * (xpForLevel(level + 1) - xpForLevel(level));
-  const encounter = perLevel / FIGHTS_PER_LEVEL;
+  const encounter = (MEMBERS * (xpForLevel(level + 1) - xpForLevel(level))) / (0.75 * groupsPerLevel(level));
   return Math.round(role === 'boss' ? encounter * BOSS_ENCOUNTERS : encounter / ROLES[role].group);
 }
 

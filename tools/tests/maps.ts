@@ -6,6 +6,7 @@ import { GameMap } from '../../src/game/map.ts';
 import type { Feature } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
+import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, personFlags, personGives } from '../../src/game/people.ts';
 import { ok, owed, stopsWalk } from './lib.ts';
@@ -118,11 +119,17 @@ export function maps(): void {
   const opened = INTERIORS.filter((i) => !Object.hasOwn(UNPLACED, i));
   ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
   for (const i of INTERIORS.filter((i) => Object.hasOwn(UNPLACED, i))) owed(interiors.includes(i), `a business opens into ${i}`, UNPLACED[i]);
-  // The trainer ladder: some trainer teaches to the cap, and the cap is what levelUp stops at.
-  const trainers = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'trainer'));
-  ok(Math.max(...trainers.map((t) => t.kind === 'trainer' ? t.maxLevel : 0)) === MAX_LEVEL, `a trainer teaches to level ${MAX_LEVEL}`);
-  const bands = MAP_DEFS.map((d) => d.band?.[1] ?? 0);
-  ok(Math.max(...bands) >= MAX_LEVEL, `some map is tuned for level ${MAX_LEVEL}`);
+  // The trainer ladder: each town's trainers teach to its area's band's top plus one (EXPANSION
+  // §5.2), so the towns built set how far a company can train, and none past the cap.
+  for (const area of AREAS) {
+    for (const d of area.maps) {
+      for (const f of d.features ?? []) {
+        if (f.kind !== 'trainer') continue;
+        const want = trainerCeiling(CURVE[area.id]);
+        ok(f.maxLevel === want && f.maxLevel <= MAX_LEVEL, `${d.id}: ${f.name} teaches to ${f.maxLevel}, its area's band's top plus one (${want})`);
+      }
+    }
+  }
   // Every cell in every map is reachable from the start, given keys and secrets: no orphaned rooms.
   for (const def of MAP_DEFS) {
     const { seen, open } = reach(maps[def.id], def.start.x, def.start.y);
