@@ -25,9 +25,9 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–15 | 6,211 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197) |
-| Lanternwood | 15–16 | 6,041 | L2, Lanternwood, laid at 360,30 (#200) |
-| The area | 14–16 | 12,252 | four boxes |
+| The Eaves | 14–15 | 6,197 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197) |
+| Lanternwood | 15–16 | 6,043 | L2, Lanternwood, laid at 360,30 (#200) |
+| The area | 14–16 | 12,240 | four boxes |
 
 Squares are the land the zone check counts in each zone with K2 laid in the Eaves (#197), which
 moved the zone line east, and L2 in Lanternwood (#200), which moved it back west; the plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
@@ -541,7 +541,7 @@ with its box on the systems of #76 (#205):
 |---|---|---|---|---|---|---|
 | 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 200 | #196, #201 |
 | 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 200 | #197, #198 |
-| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #200, #201 |
+| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #201, #205 (L2, #200, places the sister and her hint only) |
 | 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #201, #199 |
 
 Pay is xp a member, whichever way the choice goes, shared by level: 900 between the four (§8).
