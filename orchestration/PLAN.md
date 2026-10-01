@@ -1628,3 +1628,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   squares outside the stated x 12–20; MONSTERS.md:516; the #40 note stale. The bends read as a
   switchback on the automap, a row of peaks at eye level. The corner, the look and the choices to
   a delegate.
+- 00:41: #306's round in (1ef514c: the pack two Barrow Wolves, the stones reworded, the Cradle in two
+  lines, main and #313). Merged onto 9b51988 it conflicts in `UNPLACED` (main still owes the Black
+  Dog and the Barrow Wolf to #69; D2 places them): the #68 session told to merge main, take its own
+  line and push. The J4 and I5 sessions told #304 has landed.
