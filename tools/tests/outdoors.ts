@@ -20,7 +20,9 @@ import { logLines } from '../../src/ui/frame.ts';
  * are reported as that issue's while none can be walked to, and fail once they all can, so the
  * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut.
  */
-const CUT_OFF: Record<string, string> = {};
+const CUT_OFF: Record<string, string> = {
+  wrackholm_e6: '#177', // the isle, reached only by the smugglers' boat from Saltmouth
+};
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.

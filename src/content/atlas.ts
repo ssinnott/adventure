@@ -21,7 +21,6 @@
 // before it is listed, and the plan spreads them in where its own were.
 import type { Atlas } from '../game/atlas.ts';
 import * as SALTREACH from './areas/saltreach/atlas.ts';
-import * as WRACKHOLM from './areas/wrackholm/atlas.ts';
 
 export const PLAN: Atlas = {
   width: 512,
@@ -261,7 +260,6 @@ export const PLAN: Atlas = {
   ],
   zones: [
     ...SALTREACH.ZONES,
-    ...WRACKHOLM.ZONES,
     { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66]] },
     { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', seeds: [[452, 120], [470, 160]] },
     { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', seeds: [[408, 160], [404, 140]] },
@@ -282,7 +280,6 @@ export const PLAN: Atlas = {
   ],
   places: [
     ...SALTREACH.PLACES,
-    ...WRACKHOLM.PLACES,
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
     { id: 'anvilhall', name: 'Anvilhall', kind: 'town', planned: true, band: [16, 18], at: [452, 70] },
     { id: 'kilnhaven', name: 'Kilnhaven', kind: 'town', planned: true, band: [16, 18], at: [378, 158] },
@@ -303,7 +300,6 @@ export const PLAN: Atlas = {
   ],
   sites: [
     ...SALTREACH.SITES,
-    ...WRACKHOLM.SITES,
     // VI. The Kilns.
     { name: 'Anvilhall', icon: 'fortress', at: [452, 80], label: 'below', planned: true },
     { name: 'Deep Mines', icon: 'mine', at: [440, 96], label: 'below', planned: true },
