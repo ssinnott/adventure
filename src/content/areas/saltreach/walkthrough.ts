@@ -113,6 +113,21 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // Passage Paid: the master on the shoal puts it. Cut loose, the people go ashore and a crew comes
   // up the bank after them; pushed off, the master's word pays the boat's fare from Saltmouth.
+  // The shoal is reached on foot, from the track, by a company with no swimmer in it at either tide.
+  const c4 = new GameMap(C4);
+  const onFoot = (tide: 'high' | 'low'): boolean => {
+    const seen = new Set([`${C4.start.x},${C4.start.y}`]), q = [[C4.start.x, C4.start.y]];
+    while (q.length) {
+      const [x, y] = q.shift()!;
+      if (x === MASTER.x && y === MASTER.y) return true;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        const p = c4.passable(nx, ny, { tide });
+        if (!seen.has(`${nx},${ny}`) && (p === 'ok' || p === 'unlock')) { seen.add(`${nx},${ny}`); q.push([nx, ny]); }
+      }
+    }
+    return false;
+  };
+  ok(onFoot('high') && onFoot('low'), 'the master on the shoal can be walked to from the way in with no swimmer, at either tide');
   const page = (): string => questLog(w.world.state, w.party).find((v) => v.def.id === 'passage')?.pages[0]?.entries.map((e) => e.text).join(' ') ?? '';
   for (const [label, flag] of [['Push her off.', 'q_passage_owed'], ['Cut them loose.', 'q_passage_freed']] as const) {
     for (const f of ['q_passage', 'q_passage_owed', 'q_passage_freed']) delete w.party.flags[f];

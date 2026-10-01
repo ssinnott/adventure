@@ -90,7 +90,7 @@ export const SALTMOUTH: MapDef = {
     { kind: 'npc', x: 14, y: 10, name: 'Kitto, who has a boat', lines: [
       'A man at the quay\'s end with a boat under him, coiling a line. He has seen you coming and not stopped coiling.',
       '"Kitto. Wrackholm, the landing, a hundred and fifty the boat. We go out at eight tonight and you step off at six, with the light."',
-      '"A fare is a fare. I don\'t do favours and I don\'t ask why. The one leads to the other." He goes back to his line.',
+      '"A fare is a fare, and I don\'t ask why. Favours I don\'t do. Debts I pay." He goes back to his line.',
     ], passage: [{ to: 'wrackholm_e6', x: 16, y: 15, facing: NORTH, name: 'Wrackholm', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6,
       // Passage Paid (C4, #171): Hessel's word, for the barge pushed off his shoal, pays the fare out.
       free: { flag: 'q_passage_owed' },
