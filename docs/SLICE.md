@@ -243,8 +243,8 @@ trainer one level past it, onto Act II's road:
 - **Progression.** `MAX_LEVEL` is the road's cap, 32 (#159), and each level past 10 gives what one
   under it does; the sheet says so at the cap. What a company reaches is set by the towns built:
   each town's trainer teaches to its area's band's top plus one (`trainerCeiling` in
-  `content/progression.ts`), the Warden Drillyard in Helmstow to 6 and the Elder's Yard in
-  Thornhold to 11. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
+  `content/progression.ts`), the Warden Drillyard in Helmstow to 6, the Elder's Yard in
+  Thornhold to 11 and the Sail Loft in Saltmouth to 13. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
   spells stop growing at 10 (`SPELLS_GROW_TO`, DESIGN.md §7). Trainers charge 25 a level to 5 and
   40 a level after, to the cap (`trainPrice` in `party.ts`, which the curve's gold reads). Guilds
   sell up to a tier of their own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320 gold;

@@ -1,9 +1,9 @@
 // The Saltings, box C6: Saltmouth's box. Core, band 11-12: the Salt Road's last reach down the
-// fen's east side from the Delta road (C5) to the town's gate at 26,19, shut until #177 makes it
-// the way into Saltmouth; the barge quay on the Long Water's last reach, with the Compact's
-// warehouse across the road; the shore path along the sea wall on tidal ground, under water at high
-// tide; and the pans beginning at the south edge. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md
-// §4.8 is its brief.
+// fen's east side from the Delta road (C5) to the town's land gate at 26,19, the way into
+// Saltmouth (#177); the barge quay on the Long Water's last reach, with the Compact's warehouse
+// across the road; the shore path along the sea wall on tidal ground, under water at high tide;
+// and the pans beginning at the south edge. Cut from the atlas by tools/scaffold.ts;
+// docs/areas/saltreach.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
@@ -35,7 +35,7 @@ export const SALTINGS_C6: MapDef = {
     'wwwwwwwwwwwwwwwwwwwww~~www:::=__',
     'wwwwwwwwwwwwwwwwwwwwww~~w:====__',
     'wwwwwwwwwwwwwwwwwwwwwww~~:=:____',
-    '~wwwwwwwwwwwwwwwwwwwwwww~###S#__',
+    '~wwwwwwwwwwwwwwwwwwwwwww~#=#S#__',
     '~wwwwwwwwwwwwwwwwwwwww:::###.#;;',
     '~~wwwwwwwwwwwwwwwwwwww:::###.#_~',
     'w~~wwwwwwwwwwwwwwwwwwwwww###.#_~',
@@ -49,6 +49,9 @@ export const SALTINGS_C6: MapDef = {
     'wwwwwwwwwwww~~~~~~~~-~~~~-------',
     'wwwwwwwwwwwwww----------~~~~~---',
   ],
+  exits: [
+    { x: 26, y: 19, to: 'saltmouth', tx: 7, ty: 1, tf: SOUTH, label: 'You pass under the land gate into Saltmouth.' },
+  ],
   features: [
     // The road in from the Delta, and the milestone beside it.
     { kind: 'event', x: 26, y: 1, id: 'c6_in', once: true, text: 'The fen gives way to salt. The road runs on, dry now, and far ahead a wall, a gate and smoke above them.' },
@@ -61,9 +64,9 @@ export const SALTINGS_C6: MapDef = {
       '"Dues. That is what this door is for. Every hull on that quay owed the warehouse its tithe till midsummer, and since midsummer not one has paid."',
       '"Somebody pays them better than we do, and they know it. Ask on the quay who, if you\'ve a mind. They\'ll tell you less than I have." He shuts the door to a hand\'s width.',
     ] },
-    // The coach yard, and the gate shut behind it: #177 makes 26,19 the way into Saltmouth.
+    // The coach yard, and the land gate behind it, the way into Saltmouth (#177).
     { kind: 'event', x: 27, y: 16, id: 'c6_yard', once: true, text: 'The coach yard outside the gate: trodden dirt cut with ruts, and a coach with its shafts down in the dust. No horses.' },
-    { kind: 'event', x: 26, y: 18, id: 'c6_gate', text: 'Saltmouth\'s gate, shut, the town loud behind it. In the lee of the wall a carter sleeps on his load.' },
+    { kind: 'event', x: 26, y: 18, id: 'c6_gate', text: 'Saltmouth\'s gate, open, carts going in under it and carts coming out. In the lee of the wall a carter sleeps on his load.' },
     { kind: 'camp', x: 23, y: 20, name: 'Under the wall', text: 'Dry ground in the lee of the town wall, a fire ring of broken brick and the town\'s noise coming over the top all night.' },
     // The secret: the smugglers' stair in the sea wall's dry end, and its flight down to a sea door
     // barred from within. Its top, the harbour tavern's cellar, is #177's and #182's to open.
