@@ -25,6 +25,7 @@ const UNPLACED: Record<string, string> = {
   salt_crab: '#176',
   pine_bear: '#195',
   glass_spider: '#197',
+  sunder_hound: '#196',
 };
 
 /**
