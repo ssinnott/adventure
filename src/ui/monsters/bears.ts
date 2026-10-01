@@ -15,12 +15,12 @@
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
-import { blob, glossBall, patch, softLine } from './gloss.ts';
+import { blob, glossBall, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['pine_bear'];
+export const KINDS: readonly MonsterSprite[] = ['pine_bear', 'glass_bear'];
 
 /**
  * The frame's parts, as proportions of the pine bear's (1 = the pine bear, 0 = none), each named
@@ -50,12 +50,18 @@ interface Build {
   frost: number;
   /** The glass's colour. */
   frostColour: string;
+  /** Whether it rocks back off its forepaws now and then: the pine bear does; the glass bear, stiff with glass, shakes its shoulders instead. */
+  rears: boolean;
 }
-const PINE: Build = { bulk: 1, hump: 1, head: 1, snout: 1, shag: 1, claws: 1, grizzle: 0.42, muzzle: '#c8a478', frost: 0, frostColour: '#d8eaf4', ears: 1 };
+const PINE: Build = { bulk: 1, hump: 1, head: 1, snout: 1, shag: 1, claws: 1, grizzle: 0.42, muzzle: '#c8a478', frost: 0, frostColour: '#d8eaf4', ears: 1, rears: true };
+/**
+ * The Glass Bear: the pine bear gone dull and ash-grey on the Sunder's floor, the coat stiff with
+ * glass grown through it like hoarfrost, heaviest over the hump and the shoulders.
+ */
+const GLASS: Build = { bulk: 1.05, hump: 1.1, head: 0.95, snout: 1, ears: 0.9, shag: 0.6, claws: 1.1, grizzle: 0.12, muzzle: '#9a9288', frost: 1, frostColour: '#e6f0f6', rears: false };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  bear(ctx, x, y, h, p, PINE);
+  bear(ctx, x, y, h, p, kind === 'glass_bear' ? GLASS : PINE);
 };
 
 /** A ring of n points round (cx, cy), the raw contour a 'curve' part lumps further. */
@@ -81,9 +87,11 @@ function rearAt(frame: number): number {
 }
 
 function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint, b: Build): void {
-  const t = p.frame, br = p.breathe * h * 0.006, tone = p.tone;
+  const t = p.frame, br = p.breathe * h * (b.rears ? 0.006 : 0.004), tone = p.tone;
+  // A bear that does not rear shakes its shoulders instead, a shudder that dies away.
+  const sk = t % 200, shake = !b.rears && sk < 18 ? Math.sin(sk * 1.7) * 0.006 * (1 - sk / 18) : 0;
   // The head reaches out to the right; shift the mass left so the whole bear is centred on x0.
-  const x = x0 - h * 0.06;
+  const x = x0 - h * 0.06 + shake * h;
   // Seen three-quarter on, the body runs back from the company: its length is foreshortened.
   const X = (u: number): number => x + u * h * 0.8;
   const U = (u: number): number => y - u * h;
@@ -95,7 +103,7 @@ function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // The rear: the forequarters lift about the hind feet. `lift` raises a point by how far forward
   // it is, so the hind feet stay put and the head goes up most.
-  const r = rearAt(t), pitch = r * 0.3;
+  const r = b.rears ? rearAt(t) : 0, pitch = r * 0.3;
   const L = (u: number, v: number): [number, number] => {
     const du = u + 0.5, a = pitch;                  // pivot at the hind feet
     if (a <= 0) return [X(u), U(v)];
@@ -166,6 +174,9 @@ function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     }
   }
 
+  // The frost: glass grown through the fur, standing out of the back and the shoulder.
+  if (b.frost > 0) frost(ctx, L, h, hm, b, t, shake !== 0);
+
   // --- the head: broad, turned to the company, carried low ----------------------------------------
   const hc = L(0.6 + sway, 0.6 + sway * 0.5);
   const hr = h * 0.17 * head;
@@ -185,6 +196,15 @@ function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     { k: 'curve', pts: ring(hc[0], hc[1], hr * 1.08, hr * 0.92, 12, tilt), wobble: 0.05, spiky: 0.07 * b.shag, seed: 11, sub: 3 },
     { k: 'cap', x0: hc[0] + hr * 0.2, y0: hc[1] + hr * 0.15, x1: mz[0], y1: mz[1], r0: hr * 0.62, r1: hr * 0.42 },
   ], { h, tex: 'fur', seed: 12, amount: 0.45, formK: 0.5, spread: 0.85 });
+  // A little glass on the crown, between the ears.
+  if (b.frost > 0) {
+    const crown: Part[] = [];
+    for (const [dx, a, len] of [[-0.25, -0.4, 0.5], [0.05, -0.15, 0.6], [0.3, 0.25, 0.45]] as const) {
+      const rx = hc[0] + dx * hr, ry = hc[1] - hr * 0.86, l = len * hr * b.frost, w = hr * 0.07;
+      crown.push({ k: 'poly', pts: [rx - w, ry + w, rx + w, ry + w, rx + Math.sin(a) * l, ry - Math.cos(a) * l] });
+    }
+    blob(ctx, B, b.frostColour, crown, { h, tex: 'facets', seed: 77, gloss: 1, form: false, spread: 0.55 });
+  }
   // The paler muzzle, and the brow's shadow over the eyes.
   patch(ctx, B, snoutCol, [{ k: 'cap', x0: hc[0] + hr * 0.35, y0: hc[1] + hr * 0.25, x1: mz[0], y1: mz[1], r0: hr * 0.5, r1: hr * 0.4 }], { alpha: 0.75, feather: 0.55 });
   patch(ctx, B, ink, [{ k: 'ell', x: hc[0] + hr * 0.1, y: hc[1] - hr * 0.1, rx: hr * 0.7, ry: hr * 0.18, rot: tilt }], { alpha: 0.18, feather: 0.8 });
@@ -218,4 +238,54 @@ function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
       blob(ctx, B, k < 1 ? shade(claw, 0.8) : claw, parts, { h, formK: 0.3 });
     }
   }
+}
+
+/** The back's top line at u, as the hide's outline runs it: the rump, the back, the hump. */
+function backAt(u: number, hm: number): number {
+  const K: [number, number][] = [[-0.7, 0.76], [-0.54, 0.85], [-0.32, 0.86], [-0.1, 0.88 + hm * 0.4], [0.06, 0.88 + hm], [0.19, 0.86 + hm], [0.31, 0.8 + hm * 0.5]];
+  if (u <= K[0][0]) return K[0][1];
+  for (let i = 1; i < K.length; i++) if (u <= K[i][0]) { const [u0, v0] = K[i - 1], [u1, v1] = K[i]; return v0 + ((v1 - v0) * (u - u0)) / (u1 - u0); }
+  return K[K.length - 1][1];
+}
+
+/**
+ * Glass grown through the fur like frost: clusters of splinters rooted in the hide, standing out of
+ * the back and the hump and leaning back as the fur lies, and smaller ones over the shoulder and
+ * down the near foreleg. Each is clear and hard-edged, a pale edge on its lit side, and now and
+ * then one catches the light. Rooted inside the hide's outline, so the bear stays one piece.
+ */
+function frost(ctx: CanvasRenderingContext2D, L: (u: number, v: number) => [number, number], h: number, hm: number, b: Build, t: number, shaking: boolean): void {
+  const glass = b.frostColour, k = b.frost, parts: Part[] = [], glints: [number, number][] = [], roots: [number, number][] = [];
+  /** A splinter rooted at (u, v), leaning `a` from straight up (back is negative), `len` long. */
+  const splinter = (u: number, v: number, a: number, len: number, w: number): void => {
+    const [x0, y0] = L(u, v), dx = Math.sin(a) * len * h * k, dy = -Math.cos(a) * len * h * k;
+    const nx = Math.cos(a) * w * h, ny = Math.sin(a) * w * h;
+    parts.push({ k: 'poly', pts: [x0 - nx, y0 - ny, x0 + nx, y0 + ny, x0 + dx * 0.55 + nx * 0.4, y0 + dy * 0.55 + ny * 0.4, x0 + dx, y0 + dy] });
+    glints.push([x0 + dx * 0.7, y0 + dy * 0.7]); roots.push([x0, y0]);
+  };
+  // Along the back, in clusters of two and three, the tallest on the hump.
+  const BACK: [number, number][] = [[-0.62, 0.06], [-0.46, 0.08], [-0.3, 0.07], [-0.14, 0.1], [0.02, 0.13], [0.14, 0.12], [0.26, 0.08]];
+  BACK.forEach(([u, len], i) => {
+    const v = backAt(u, hm) - 0.03;
+    splinter(u, v, -0.5 + (i % 2) * 0.12, len, 0.018);
+    splinter(u + 0.035, v - 0.01, -0.25 - (i % 3) * 0.08, len * 0.65, 0.013);
+    if (i % 2 === 0) splinter(u - 0.035, v - 0.012, -0.75, len * 0.5, 0.011);
+  });
+  // A few long shards on the hump's crest, so the hump stays the highest thing on it.
+  for (const [u, a, len] of [[0.0, -0.55, 0.2], [0.07, -0.35, 0.24], [0.13, -0.6, 0.17]] as const) splinter(u, backAt(u, hm) - 0.03, a, len, 0.02);
+  // Over the shoulder and down the near foreleg, short, standing out sideways and up.
+  for (const [u, v, a, len] of [[0.22, 0.66, 0.5, 0.06], [0.16, 0.6, -0.2, 0.05], [0.3, 0.42, 0.9, 0.045], [0.24, 0.3, -0.9, 0.04], [-0.5, 0.62, -0.6, 0.05]] as const) splinter(u, v, a, len, 0.012);
+  blob(ctx, B, glass, parts, { h, tex: 'facets', seed: 71, gloss: 1, form: false, spread: 0.55 });
+  if (B.override || h < 40) return;
+  // The Sunder's light, faint in the glass: a soft white at each root, shimmering unevenly.
+  roots.forEach(([rx, ry], i) => { if (i % 2 === 0) glow(ctx, B, rx, ry, h * 0.05, '#ffffff', 0.18 + 0.08 * Math.sin(t / 17 + i * 2.7), '#ffffff'); });
+  glints.forEach(([gx, gy], i) => {
+    if (i % 3 !== 0) return;
+    const on = 0.5 + 0.5 * Math.sin(t / 7 + i * 1.9) + (shaking ? 0.3 : 0);
+    if (on < 0.85) return;
+    ctx.fillStyle = rgba('#ffffff', Math.min(1, (on - 0.85) * 6));
+    const r = Math.max(1, h * 0.006), l = r * 3.5;
+    ctx.fillRect(Math.round(gx - l), Math.round(gy - 0.5), Math.round(l * 2), 1);
+    ctx.fillRect(Math.round(gx - 0.5), Math.round(gy - l), 1, Math.round(l * 2));
+  });
 }

@@ -733,7 +733,7 @@ sunder hound; the Hand, gleaning shards.
 | Lantern Moth | moths, new | fodder, 14 | Lanternwood, by night | *Wings like a pair of hands, and dust that glitters.* Flies; its dust puts to sleep (0.2) |
 | Sunderling | riftling | skirmisher, 14 | the Sunder | *Black glass, with a white light inside.* Fire bites, for the dead wood in it |
 | Glass Spider | spider | controller, 15 | the Sunder's edge | *Threads of glass, and something walking them.* Paralyses (0.25) |
-| Sunder Hound | wolf | skirmisher, 15 | the Sunder | *A rift hound, gone to glass.* Paralyses (0.15) |
+| Sunder Hound | wolf | skirmisher, 15 | the Sunder | *A rift hound, gone to glass.* Paralyses (0.15). Fire bites; cold does not |
 | Ashen Gleaner | cultist | soldier, 15 | the Sunder's ledges | *A sack of glowing shards, and a knife for the next.* The Hand quarries the Rift: every shard is a step |
 | Deathshead | moths, new | elite, 16 | Lanternwood, by night | *A skull on its back, and a scream in its wings.* Flies; its dust puts to sleep (0.35) |
 | Glass Bear | bears, new | armoured, 16 | the Sunder's floor | *Glass through its fur like frost.* Fire does not touch it |
