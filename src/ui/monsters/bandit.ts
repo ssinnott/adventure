@@ -21,7 +21,7 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat', 'bargeman', 'barge_master', 'wrack_smuggler'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat', 'bargeman', 'barge_master', 'wrack_smuggler', 'wrack_bowman'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
@@ -33,6 +33,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'bargeman') bargeman(ctx, x, y, h, p);
   else if (kind === 'barge_master') bargeMaster(ctx, x, y, h, p);
   else if (kind === 'wrack_smuggler') wrackSmuggler(ctx, x, y, h, p);
+  else if (kind === 'wrack_bowman') wrackBowman(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -1487,5 +1488,76 @@ function wrackSmuggler(ctx: CanvasRenderingContext2D, x: number, y: number, h: n
   const ux = Math.cos(ka), uy = Math.sin(ka);
   glossBall(ctx, B, fist.x - ux * h * 0.06, fist.y - uy * h * 0.06, Math.max(1.2, h * 0.016), shade('#d8c8a0', p.tone), { gloss: 0.2, spread: 0.6 });
   hand(ctx, R, fist, ka, 515, { flip: -1 });
+  void p.light;
+}
+
+/**
+ * A longbow taller than the man, at full draw and aimed down by `aim` (radians below level): the
+ * stave square across the line of the arrow, its limbs bent back toward the string hand, the
+ * string a V through the anchor. Returns the stave's axis for the bow hand.
+ */
+function longbowDrawn(ctx: CanvasRenderingContext2D, R: Rig, grip: Pt, anchor: Pt, aim: number): number {
+  const { h } = R;
+  const ux = Math.cos(aim), uy = Math.sin(aim), px = Math.sin(aim), py = -Math.cos(aim), L = h * 0.56;
+  const P = (along: number, up: number): number[] => [grip.x + ux * along + px * up, grip.y + uy * along + py * up];
+  const top = P(-h * 0.13, L), bot = P(-h * 0.13, -L);
+  const pxw = Math.min(1, h * 0.026), tipR = Math.max(h * 0.0075, pxw * 0.6), midR = Math.max(h * 0.017, pxw * 1.25);
+  blob(ctx, B, R.wood, [
+    tube([...top, ...P(-h * 0.035, L * 0.55), ...P(0, 0)], tipR, midR, 0, 521),
+    tube([...P(0, 0), ...P(-h * 0.035, -L * 0.55), ...bot], midR, tipR, 0, 522),
+  ], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 521, amount: 0.35 });
+  stroke(ctx, [top[0], top[1], anchor.x, anchor.y, bot[0], bot[1]], R.bone, 1);
+  // The arrow along the draw, its head out past the stave.
+  const tip = { x: grip.x + ux * h * 0.08, y: grip.y + uy * h * 0.08 };
+  stroke(ctx, [anchor.x, anchor.y, tip.x, tip.y], R.wood, Math.max(1, h * 0.013));
+  ctx.fillStyle = B.col(R.steel);
+  ctx.beginPath();
+  ctx.moveTo(tip.x + ux * h * 0.03, tip.y + uy * h * 0.03);
+  ctx.lineTo(tip.x - uy * h * 0.016, tip.y + ux * h * 0.016);
+  ctx.lineTo(tip.x + uy * h * 0.016, tip.y - ux * h * 0.016);
+  ctx.closePath(); ctx.fill();
+  return Math.atan2(bot[1] - top[1], bot[0] - top[0]);
+}
+
+/**
+ * The Wrack bowman: the smuggler's coat worn harder, and a longbow. He has the high ground: the
+ * near foot up on a grey rock, the knee bent and the body leaning out over it, the bow at full
+ * draw and aimed down at the company. The Foreland's smuggler bowman draws a shortbow level; the
+ * poacher's longbow stands grounded. Spare arrows are thrust through his belt.
+ */
+function wrackBowman(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.03, hipTilt: -0.02, turn: 0.032, near: [0.08, 0.2, 0.19], far: [-0.07, -0.11, -0.15], toe: [1, -0.5], lift: [0.1, 0] });
+  const { sy } = R;
+  const sway = Math.sin(p.frame / 19) * h * 0.004;
+  const aim = 0.42;
+  // The bow arm out and down toward the company; the string hand back at the jaw on the same line.
+  const grip = { x: x + h * 0.33, y: sy + h * 0.14 + sway };
+  const anchor = { x: grip.x - Math.cos(aim) * h * 0.27, y: grip.y - Math.sin(aim) * h * 0.27 };
+  const near: Arm = [R.sNear, { x: x + h * 0.25, y: sy + h * 0.1 }, grip];
+  const far: Arm = [R.sFar, { x: x - h * 0.09, y: sy + h * 0.13 }, anchor];
+  const hemY = y - h * 0.45;
+  groundShadow(ctx, x, y + 1, h * 0.8);
+  // The rock under the near foot: grey, weathered, with a lit top.
+  const ft = R.legR[2];
+  blob(ctx, B, shade('#7a7c78', p.tone), [{ k: 'curve', pts: [ft.x - h * 0.13, y, ft.x - h * 0.11, y - h * 0.07, ft.x - h * 0.03, y - R.lift[0] + h * 0.005, ft.x + h * 0.08, y - R.lift[0] - h * 0.005, ft.x + h * 0.13, y - h * 0.05, ft.x + h * 0.14, y], wobble: 0.05, seed: 520, sub: 2 }],
+    { h, formK: 0.5, spread: 0.7, tex: 'cracks', seed: 520, amount: 0.5 });
+  legs(ctx, R, shade('#4a5260', p.tone), 523, [1, -0.5]);
+  headNeck(ctx, R);
+  helmstowCoat(ctx, R, p, near, hemY, 524);
+  // The draw arm over the coat: at full draw the forearm crosses in front of the chest.
+  blob(ctx, B, shade(p.dark, 0.82), armParts(R, far, 529, 0.92), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.06, h * 0.036, 530)], { h, form: false });
+  band(ctx, B, x - h * 0.02, hemY - h * 0.062, h * 0.036, h * 0.036, R.dull);
+  // Three spare arrows through the belt on the far hip, fletching up.
+  for (let i = 0; i < 3; i++) {
+    const ax = x - h * (0.1 - i * 0.02), ay = hemY - h * 0.06;
+    stroke(ctx, [ax + h * 0.01, ay + h * 0.05, ax - h * 0.012, ay - h * 0.07], R.wood, 1);
+    ctx.fillStyle = B.col(shade(i === 1 ? '#c8c0a0' : '#8a3a30', p.tone));
+    ctx.beginPath(); ctx.moveTo(ax - h * 0.008, ay - h * 0.05); ctx.lineTo(ax - h * 0.026, ay - h * 0.064); ctx.lineTo(ax - h * 0.014, ay - h * 0.09); ctx.lineTo(ax - h * 0.002, ay - h * 0.07); ctx.closePath(); ctx.fill();
+  }
+  wrackHead(ctx, R, p, sway, 531);
+  const ba = longbowDrawn(ctx, R, grip, anchor, aim);
+  hand(ctx, R, anchor, aim, 535, { flip: 1, k: 0.9 });
+  hand(ctx, R, grip, ba, 536, { flip: -1 });
   void p.light;
 }
