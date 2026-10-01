@@ -11,7 +11,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { ok } from './lib.ts';
 
 type Row = 'core' | 'country' | 'town' | 'dungeon';
-/** 90% of the squares within `within` steps, and none past `cap`. Country is a first guess, tuned in #47. */
+/** 90% of the squares within `within` steps, and none past `cap`. Country held on every country box of the Downs (#47). */
 export const FLOORS: Record<Row, { within: number; cap: number }> = {
   core: { within: 8, cap: 15 },
   country: { within: 12, cap: 20 },

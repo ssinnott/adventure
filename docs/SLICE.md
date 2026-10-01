@@ -339,9 +339,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   Lost Expedition past its first journal: design only.
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
-  Thornmark's less gold (#26); the gate's limits for a boss's odds are missed on the Foreland
-  (#47, the Rift Warden's odds #87's), and its fights to a rest are off their aim, as is the share
-  of the Foreland's fights won two under its floors, which only E3's groups make yet.
+  Thornmark's less gold (#26). Some of the gate's fights to a rest are off their aim, inside their
+  limits, as is the share of each area's fights won two under its floors (#47 left the limits as
+  they were).
 
 ## Checks
 

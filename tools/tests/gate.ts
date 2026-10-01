@@ -4,7 +4,7 @@
 // its groups each at its own map's floor; each zone walks its road and warns at its way in.
 // Every margin is printed, each figure against its aim and its limit: off its aim it is listed, past
 // its limit it fails. A figure past its limit the owners below are owed is reported, not failed,
-// until it holds: the Foreland's are the pilot's to settle (#47).
+// until it holds.
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import { ATLAS } from '../../src/content/index.ts';
@@ -19,8 +19,8 @@ import { ok, owed } from './lib.ts';
 
 /**
  * Each figure's aim, and its limit beyond it (#273): a figure inside its aim passes; one between its
- * aim and its limit passes and is listed as off its aim; one past its limit fails. The pilot
- * settles the numbers against the owner's own play (#47).
+ * aim and its limit passes and is listed as off its aim; one past its limit fails. The pilot weighed
+ * them on every box of the Downs and moved none (#47, docs/areas/shelf.md §8).
  */
 export const GATE = {
   /** At the floor, the share of the fights won: through. At least. */
@@ -86,11 +86,7 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  * when it was owed. It is reported, not failed, and fails once it is inside its limit; it fails too if
  * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest).
  */
-export const OWED: Record<string, { whose: string; at: number }> = {
-  // The Foreland: the pilot settles these, by retuning it or by moving the limits.
-  'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
-  'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
-};
+export const OWED: Record<string, { whose: string; at: number }> = {};
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
 
