@@ -1117,6 +1117,7 @@
     "guild_The Watch's Lantern Hall",
     "guild_Thornhold Lantern Hall",
     "meridian_read",
+    "papers_read",
     "q_ailith",
     "q_ashcombe",
     "q_ashcombe_done",
@@ -1247,7 +1248,9 @@
     "rank_cartographers",
     "rank_compact",
     "rank_lanterns",
-    "rank_wardens"
+    "rank_wardens",
+    "watch_prior_met",
+    "watch_reader_met"
   ],
   "items": [
     "antidote",

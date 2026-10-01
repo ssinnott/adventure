@@ -5,8 +5,33 @@
 // temple: the shrine at Sunderfall cures. Prior Osric keeps the lamp in the yard; Hester Dunmore, the
 // Watch's Reader, sits in his room; Wouter Brink of the Cartographers sights the gorge from the west
 // wall. docs/areas/sunderwood.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef, Words } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+
+/**
+ * The Reader's words, read to what the company carries: the papers, the log or both, each opened
+ * plainly or, to a company that found the letter under L2's ash, knowing it has been on the knoll.
+ * Each holds only once she has met the company (`MET`), so her introduction always comes first; the
+ * papers only and the log only stand before both, so whichever is carried alone finds its own.
+ */
+const MET = 'watch_reader_met', PRIOR_MET = 'watch_prior_met';
+const SEAL = '"The Helmstow customs seal on every cargo, the same as on the crates in the caves. Under it on every page a countersign. The Regent\'s."';
+const READINGS = [
+  { has: 'ships_papers', not: 'ships_log', plain: 'She sees the papers before she sees you, and gets up, and shuts the door herself. "Sit." She lays them open under the window.',
+    knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and lays the papers open under the window.',
+    read: [`${SEAL} She puts them back in your hands.`] },
+  { has: 'ships_log', not: 'ships_papers', plain: 'She sees the log before she sees you, and gets up, and shuts the door herself. "Sit." She opens it under the window.',
+    knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and opens the log under the window.',
+    read: ['"The log is a clerk\'s cipher. I know it." At the foot of each entry, in another ink, one name: Vask. She puts it back in your hands.'] },
+  { has: 'ships_papers', plain: 'She sees what you carry before she sees you, and gets up, and shuts the door herself. "Sit." Papers and log go open under the window.',
+    knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and lays papers and log open under the window.',
+    read: [SEAL, '"The log is a clerk\'s cipher. I know it." At the foot of each entry, the other ink, one name: Vask. She puts both back in your hands.'] },
+];
+const reading = (knoll: boolean): Words[] => READINGS.map((r) => ({
+  after: { flag: MET, item: r.has, ...(knoll ? { seen: 'lanternwood_l2:l2_letter' } : {}) },
+  ...(r.not ? { until: { item: r.not } } : {}),
+  sets: 'papers_read', lines: [knoll ? r.knoll : r.plain, ...r.read],
+}));
 
 export const LANTERN_WATCH: MapDef = {
   id: 'lantern_watch',
@@ -46,20 +71,33 @@ export const LANTERN_WATCH: MapDef = {
       'The prior\'s room, high in the tower. A desk under the window on the gorge, and the rain on the glass.',
       'On the wall a survey of the ledges, pinned at the corners. A cold hearth, two chairs. The prior is not in it.',
     ] },
-    // The Watch's Reader, in the prior's room at every hour (#201).
-    { kind: 'npc', x: 5, y: 5, name: 'Hester Dunmore, Reader of the Watch', lines: [
+    // The Watch's Reader, in the prior's room at every hour (#201). She reads the Tide Ship's papers
+    // and its log to whoever carries them, whenever they come, once she has met them, and gives
+    // them back: the midpoint (DESIGN §9), its flag `papers_read` for #204's chapter to read. The
+    // letter under L2's ash changes only how she begins.
+    { kind: 'npc', x: 5, y: 5, name: 'Hester Dunmore, Reader of the Watch', flag: MET, lines: [
       'A woman at the desk with a cut wick in a dish beside her, a book shut under her hand. She does not stand.',
       '"Hester Dunmore, Reader of the Watch. Helmstow sends oil and orders, and once a season somebody to count the jars."',
       '"Sometimes papers come instead, and those come to me." She looks past you at the door. "Shut it, if you would."',
+    ], says: [
+      { after: { flag: 'papers_read' }, lines: [
+        'She has the wick in its dish lit now, the door still shut. "They came to me. They are yours. Keep them close, and keep them dry."',
+        '"Nothing I read leaves this room by me." She looks at the door. "What goes down the stair is yours to carry."',
+      ] },
+      ...reading(true),
+      ...reading(false),
     ] },
     { kind: 'shop', x: 10, y: 5, name: 'The Watch Stores', stock: ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield', 'lantern_oil', 'elixir', 'potion_sp_great', 'rations'], interior: 'watch_stores' },
     { kind: 'inn', x: 10, y: 7, name: 'The Refectory', price: 30, interior: 'watch_refectory' },
     { kind: 'guild', x: 7, y: 8, name: "The Watch's Lantern Hall", classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 400, maxTier: 6, interior: 'watch_hall', hall: 'lanterns' },
     // The prior, in the yard under the lamp at every hour.
-    { kind: 'npc', x: 8, y: 9, name: 'Prior Osric', lines: [
+    { kind: 'npc', x: 8, y: 9, name: 'Prior Osric', flag: PRIOR_MET, lines: [
       'A tall man in the yard under the lamp, grey as the stone, his face turned up to it. He has heard you and not looked down.',
       '"Osric. Prior of the Watch. I keep the one lamp. The oil comes from Helmstow when Helmstow sends it, and the lamp burns while it lasts."',
       '"The Watch keeps no secrets from Helmstow, and asks none of its guests." He looks down at last. "You are welcome to the yard."',
+    ], says: [
+      { after: { flag: [PRIOR_MET, 'papers_read'] }, lines: ['"You have been up in my room." He looks at the lamp, not at you. "The chair was warm."'] },
+      { after: [{ flag: PRIOR_MET, item: 'ships_papers' }, { flag: PRIOR_MET, item: 'ships_log' }], lines: ['"Papers from the coast, I hear. Leave them with me. They go to Helmstow by the next oil cart." He holds out his hand, and lets it fall.'] },
     ] },
     // The Cartographers' surveyor on the west wall, sighting across the gorge.
     { kind: 'npc', x: 2, y: 4, name: 'Wouter Brink, surveyor of the Guild', lines: [
