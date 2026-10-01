@@ -52,13 +52,13 @@ export function party(): void {
   ok(xpForLevel(10) === 13050 && xpForLevel(MAX_LEVEL) === 147250, `level 10 costs ${xpForLevel(10)} xp, and ${MAX_LEVEL} ${xpForLevel(MAX_LEVEL)}`);
 
   // A trainer teaches to its town's band's top plus one: a member ready for 11 trains in Thornhold
-  // and at Saltmouth's ceiling (13, when #177 builds its trainer), and not in Helmstow (6).
+  // and at Saltmouth's ceiling (13, the Sail Loft's), and not in Helmstow (6).
   const trainers = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'trainer' ? [{ town: d.name, maxLevel: f.maxLevel }] : [])));
   const at = (town: string): number => trainers.find((t) => t.town === town)?.maxLevel ?? NaN;
   const ten = defaultParty(makeRng(6)).members[0];
   ten.xp = xpForLevel(10); levelUp(ten, makeRng(6)); ten.xp = xpForLevel(11);
   const saltmouth = trainerCeiling(CURVE.saltreach);
-  ok(ten.level === 10 && saltmouth === 13 && canTrainAt(ten, saltmouth) && canTrainAt(ten, at('Thornhold')) && at('Helmstow') === 6 && !canTrainAt(ten, at('Helmstow')),
+  ok(ten.level === 10 && saltmouth === 13 && at('Saltmouth') === saltmouth && canTrainAt(ten, saltmouth) && canTrainAt(ten, at('Thornhold')) && at('Helmstow') === 6 && !canTrainAt(ten, at('Helmstow')),
     `a member of 10 with the xp for 11 trains at Saltmouth's ceiling (${saltmouth}) and in Thornhold (${at('Thornhold')}), and not in Helmstow (${at('Helmstow')})`);
   ten.xp = xpForLevel(14);
   ten.level = 13;
