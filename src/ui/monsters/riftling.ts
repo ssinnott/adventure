@@ -1,5 +1,6 @@
 // The Rift family: riftling, riftling elder, Rift Warden and Warden of the Cut, and the brineling,
-// the tide elder and the Warden of the Tide, in the Tide Stone's brine glass (MONSTERS §2.1).
+// the tide elder and the Warden of the Tide, in the Tide Stone's brine glass, and the sunderling, in
+// the Sunder's black glass with dead wood through it (MONSTERS §2.1).
 // Things of crystal shard and ember: a molten core wrapped in faceted stone. A body is built in
 // depth layers rather than as one flat card -- the dark far limbs, then the body mass, then one or
 // two layers of paler plates lying on it, each layer a blob of its own so it keeps an ink edge, and
@@ -17,17 +18,18 @@ import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { tones } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden', 'brineling', 'tide_elder', 'tide_warden'];
+export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden', 'brineling', 'tide_elder', 'tide_warden', 'sunderling'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'warden' || kind === 'cut_warden' || kind === 'tide_warden') sentinel(ctx, x, y, h, p, kind === 'cut_warden', kind === 'tide_warden');
-  else creature(ctx, x, y, h, p, kind === 'riftling_elder' || kind === 'tide_elder', kind === 'brineling' || kind === 'tide_elder');
+  else creature(ctx, x, y, h, p, kind === 'riftling_elder' || kind === 'tide_elder', kind === 'brineling' || kind === 'tide_elder', kind === 'sunderling');
 };
 
 /** The hot colours of one Rift thing: the emissive glow, the molten lump, its white heart. */
 interface Heat { glow: string; ember: string; heart: string; seam: string }
-function heatOf(p: Paint, cold: boolean, brine = false): Heat {
+function heatOf(p: Paint, cold: boolean, brine = false, sunder = false): Heat {
   const t = Math.max(0.6, p.tone);
+  if (sunder) return { glow: '#a8bcf0', ember: shade(mix(p.light, '#ffffff', 0.85), t), heart: '#ffffff', seam: '#eef2ff' };
   if (brine) return { glow: '#52f0c2', ember: shade(mix(p.light, '#c4fff0', 0.75), t), heart: '#f2fffa', seam: '#a8ffe4' };
   if (cold) return { glow: '#8ec8ff', ember: shade(mix(p.light, '#cfe8ff', 0.75), t), heart: '#f4fbff', seam: '#dff2ff' };
   return { glow: '#ff8a30', ember: shade(mix(p.light, '#ffb040', 0.65), t), heart: '#fff4c8', seam: '#ffb050' };
@@ -180,12 +182,16 @@ function fragment(ctx: CanvasRenderingContext2D, x: number, y: number, s: number
  *
  * The tide elder is the elder in that glass: the elder's weight, a taller crest of fins swept forward
  * at the tips like a wave about to break, a fin along the back, and the light in it slower and bigger.
+ *
+ * The sunderling is the riftling in the Sunder's black glass, smooth and hard-lit, with dead wood
+ * grown through it: a branch out of the crown, another through the shoulder, a stub at the hip. Its
+ * light is white, and moves about inside it as the brineling's does.
  */
-function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, elder: boolean, brine = false): void {
-  const heat = heatOf(p, false, brine), pulse = 0.5 + 0.5 * Math.sin(p.frame / 6);
+function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, elder: boolean, brine = false, sunder = false): void {
+  const heat = heatOf(p, false, brine, sunder), pulse = 0.5 + 0.5 * Math.sin(p.frame / 6);
   const b = p.breathe * h * 0.008, sway = Math.sin(p.frame / 20) * h * 0.006;
   // W widens the frame, T thickens the limbs: the elder is the same creature grown heavy.
-  const W = elder ? 1.18 : brine ? 0.9 : 0.94, T = elder ? 1.3 : brine ? 0.96 : 1;
+  const W = elder ? 1.18 : brine ? 0.9 : sunder ? 0.92 : 0.94, T = elder ? 1.3 : brine ? 0.96 : 1;
   if (brine && !B.override) {
     // The wet it stands in: a sheen on the ground, too faint to be ink.
     ctx.fillStyle = rgba(mix(heat.glow, '#c8fff0', 0.4), 0.2);
@@ -276,14 +282,14 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
     stone.push({ k: 'poly', pts: shard(bx, by, a, h * len * T, h * 0.026 * T, 0.18) });
     tips.push([bx + Math.cos(a) * h * len * T * 0.94, by + Math.sin(a) * h * len * T * 0.94]);
   }
-  blob(ctx, B, p.base, stone, { h, tex: 'facets', seed: 4, amount: brine ? 0.22 : 0.3, formK: 0.55, spread: 0.8, creases: [
+  blob(ctx, B, p.base, stone, { h, tex: 'facets', seed: 4, amount: brine ? 0.22 : sunder ? 0.16 : 0.3, formK: 0.55, spread: 0.8, creases: [
     { x0: x + h * 0.06, y0: y - h * 0.745 + b, x1: hx - hs * 0.07, y1: hy + hs * 0.1, r: h * 0.026, a: 0.4 },
     { x0: ax + h * 0.015, y0: ay + h * 0.025, x1: ex, y1: ey, r: h * 0.024, a: 0.28 },
     { x0: ex, y0: ey, x1: wx, y1: wy, r: h * 0.02, a: 0.24 },
   ] });
 
   // ---- first plate layer: the belly slab, the shoulder guard and the brow shelf, on the mass.
-  const mid = shade(mix(p.base, brine ? '#c8fff0' : '#ffd0a0', elder ? 0.25 : brine ? 0.26 : 0.21), Math.max(0.65, p.tone));
+  const mid = shade(mix(p.base, brine ? '#c8fff0' : sunder ? '#9aa4bc' : '#ffd0a0', elder ? 0.25 : brine ? 0.26 : sunder ? 0.2 : 0.21), Math.max(0.65, p.tone));
   const belly = [x - h * 0.116 * W, y - h * 0.418, x - h * 0.142 * W, y - h * 0.492, x - h * 0.05, y - h * 0.542,
     x + h * 0.06 * W, y - h * 0.528, x + h * 0.132 * W, y - h * 0.464, x + h * 0.096 * W, y - h * 0.414, x + h * 0.014, y - h * 0.396];
   const guard = [x + h * 0.09, y - h * 0.758 + b, x + h * 0.22 * W, y - h * 0.722 + b, x + h * 0.288 * W, y - h * 0.632, x + h * 0.244 * W, y - h * 0.57, x + h * 0.142, y - h * 0.614];
@@ -298,7 +304,7 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   core(ctx, ccx, ccy, cr, p.dark, heat, pulse, 30, h);
 
   // ---- second plate layer: the breastplate, palest, lying on the belly slab and the mass.
-  const top = shade(mix(p.base, brine ? '#e6fff8' : '#ffe0b8', elder ? 0.43 : brine ? 0.44 : 0.37), Math.max(0.65, p.tone));
+  const top = shade(mix(p.base, brine ? '#e6fff8' : sunder ? '#c8d0e4' : '#ffe0b8', elder ? 0.43 : brine ? 0.44 : sunder ? 0.32 : 0.37), Math.max(0.65, p.tone));
   const breast = [x - h * 0.104 * W, y - h * 0.606, x - h * 0.14 * W, y - h * 0.668 + b, x - h * 0.086 * W, y - h * 0.722 + b,
     x - h * 0.008, y - h * 0.742 + b, x + h * 0.106 * W, y - h * 0.706 + b, x + h * 0.122 * W, y - h * 0.642,
     x + h * 0.04, y - h * 0.652, x - h * 0.014, y - h * 0.698, x - h * 0.056, y - h * 0.644];
@@ -341,14 +347,22 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   const er = hs * (elder ? 0.030 : 0.028);
   hotEye(ctx, ...(HD(0.002, 0.000) as [number, number]), er * 0.58, heat, pulse * 0.8, 0.5);
   hotEye(ctx, ...(HD(0.058, 0.016) as [number, number]), er, heat, pulse, -0.34);
-  if (!brine) return;
+  if (sunder) {
+    deadWood(ctx, x, y, h, b, HD, W);
+    // Black glass takes a hard light: a sharp highlight on each lit face, brighter than the stone's.
+    glint(ctx, x - h * 0.06, y - h * 0.48, h * 0.035, 0.6, -0.5);
+    glint(ctx, x + h * 0.27 * W, y - h * 0.62, h * 0.03, 0.6, -0.8);
+    glint(ctx, x + h * 0.16, y - h * 0.12, h * 0.025, 0.5, 1.2);
+  }
+  if (!brine && !sunder) return;
 
   // ---- the light in it: a second light that swims slowly about the chest and belly, seen through
   //      the glass. Its path is the frame's, so it moves; its shape is not, so nothing boils.
   //      The elder's is bigger, and slower.
   const m = p.frame / (elder ? 44 : 26), lx = x + h * (0.02 + 0.075 * Math.sin(m)), ly = y - h * (0.6 + 0.1 * Math.sin(m * 0.63 + 1));
-  glow(ctx, B, lx, ly, h * (elder ? 0.19 : 0.15), heat.glow, 0.3 + pulse * 0.1, heat.heart);
+  glow(ctx, B, lx, ly, h * (elder ? 0.19 : sunder ? 0.11 : 0.15), heat.glow, 0.3 + pulse * 0.1, heat.heart);
   glow(ctx, B, lx, ly, h * (elder ? 0.06 : 0.045), heat.heart, 0.55, heat.heart);
+  if (!brine) return;
 
   // ---- wet at the edges: a sheen along the upper lips, and drops hanging from the claws, the
   //      elbow and the jaw. Each grows and goes back; none of them ever lets go.
@@ -362,6 +376,28 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
     [...(HD(0.03, 0.146) as [number, number]), 0.15],
   ];
   for (const [dx, dy, phase] of drops) drip(ctx, dx, dy, h * (0.018 + 0.022 * ((p.frame / 48 + phase) % 1)), h * 0.011, glass, h);
+}
+
+/**
+ * The dead wood grown through a sunderling: grey branches, cracked and bare, that go into the glass
+ * and come out again. A bough out of the back of the crown with a fork at its end, one through the
+ * far shoulder, and a snapped stub at the hip. Each runs from inside the body outward, so it is one
+ * piece with it.
+ */
+function deadWood(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, b: number, HD: (u: number, v: number) => number[], W: number): void {
+  const wood = '#6e665c';
+  const [cx0, cy0] = HD(-0.07, -0.08);
+  const crownBough = facetLimb([cx0, cy0, cx0 - h * 0.06, cy0 - h * 0.1, cx0 - h * 0.05, cy0 - h * 0.2, cx0 - h * 0.1, cy0 - h * 0.27], [h * 0.024, h * 0.02, h * 0.015, h * 0.01], 0.3);
+  const fork = facetLimb([cx0 - h * 0.05, cy0 - h * 0.19, cx0 + h * 0.0, cy0 - h * 0.26, cx0 + h * 0.01, cy0 - h * 0.31], [h * 0.012, h * 0.009, h * 0.006], 0.3);
+  const shoulder = facetLimb([x - h * 0.08 * W, y - h * 0.68 + b, x - h * 0.2 * W, y - h * 0.76 + b, x - h * 0.3 * W, y - h * 0.8 + b, x - h * 0.36 * W, y - h * 0.9 + b], [h * 0.026, h * 0.022, h * 0.016, h * 0.01], 0.3);
+  const twig = facetLimb([x - h * 0.27 * W, y - h * 0.79 + b, x - h * 0.36 * W, y - h * 0.77 + b, x - h * 0.42 * W, y - h * 0.8 + b], [h * 0.01, h * 0.008, h * 0.005], 0.3);
+  const stub = facetLimb([x - h * 0.08, y - h * 0.46, x - h * 0.2 * W, y - h * 0.42, x - h * 0.27 * W, y - h * 0.44], [h * 0.022, h * 0.019, h * 0.016], 0.3);
+  blob(ctx, B, wood, [
+    { k: 'poly', pts: crownBough }, { k: 'poly', pts: fork },
+    { k: 'poly', pts: shoulder }, { k: 'poly', pts: twig }, { k: 'poly', pts: stub },
+  ], { h, tex: 'cracks', seed: 61, amount: 0.9, formK: 0.4, spread: 0.7 });
+  // The snapped end of the stub, pale where it broke.
+  fillPoly(ctx, [x - h * 0.272 * W, y - h * 0.458, x - h * 0.262 * W, y - h * 0.426, x - h * 0.282 * W, y - h * 0.43], shade('#c8bca8', 0.9));
 }
 
 /**

@@ -1,0 +1,15 @@
+// Sunderwood's monsters, band 14-16: the Eaves, Lanternwood and the Sunder between them.
+// `sprite` names the drawing (src/ui/sprites.ts); the numbers are the combat model's. A group on a
+// map is a list of these ids, and any area's maps may place them.
+// Drawn ahead of the area's first map, so src/content/index.ts lists them in AHEAD until then.
+import type { MonsterDef } from '../../../game/monsters.ts';
+
+/** The drawings Sunderwood's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+export const SPRITES = [
+  'sunderling',
+] as const;
+
+export const MONSTERS: readonly MonsterDef[] = [
+  // the Sunder's black glass (#198, #199), a skirmisher on MONSTERS §4.4's line at 14
+  { id: 'sunderling', name: 'Sunderling', plural: 'Sunderlings', sprite: 'sunderling', kind: 'rift', look: 'Black glass, with a white light inside.', level: 14, hp: 107, ac: 18, attack: 9, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 553, gold: [0, 0], tint: '#2c2e38', size: 0.74, inflict: { cond: 'paralysed', chance: 0.1 } },
+];
