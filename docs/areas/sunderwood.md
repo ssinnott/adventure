@@ -356,16 +356,18 @@ features; the pay shared out over the area (§8).
   - M2: a milestone (ANVILHALL 12), a camp (#45), a cairn at the border (#45), a shrine (#45);
   - J3: a hermit who has seen the Rift grow, a bear's den (#88), a shrine, a cairn.
 - **Encounters.** M2: glass bears (proposed, §7) and a deathshead at the box's far end, the band's
-  top. J3: pine
-  bears, the den's brood; moths by night.
+  top. J3: pine bears, the den's brood; moths by night.
 - **Quests.** None.
 - **The secret and its hint.** J3: a gleaners' cache in the den's back, which the bears have not
-  touched; the hint, the hermit's word that something goes up to the den on two legs and comes down
+  touched; the hint is in two parts: moths at the den's mouth by night, thick as at a lamp where no
+  lamp is, and the hermit's word that something goes up to the den on two legs and comes down
   lighter. M2: a Warden's grave by the milestone, with Hale's old patrol badge on it; the hint, the
   milestone's second face, cut by another hand.
 - **Lines:**
   - M2's milestone: *ANVILHALL 12 on the face. On the back, cut with a knife, the Wardens' mark and
     two words: THIS FAR.*
+  - J3's den, by night: *Moths at the den's mouth after dark, thick as at any lamp. Bears keep no
+    lamp.*
   - the hermit: *Bears go up to that den. So does something on two legs, and it comes down
     lighter.*
 - **New here.** Act III seen: the Iron Fells' road.
@@ -408,6 +410,7 @@ way down, Lanternwood's at the Watch. Its entries:
 No lock (#151, call 1): the bridge stands whatever the story does, and the Watch reads the papers
 for whoever carries them, whenever they come; a company that takes the Sunder before the Tide Ship
 finds the wall all the same.
+
 The walkthrough plays it at 14, 15 and 16, in order and with the Sunder taken first.
 
 ## 6. Side quests
@@ -415,12 +418,14 @@ The walkthrough plays it at 14, 15 and 16, in order and with the Sunder taken fi
 #56's four for Sunderwood, all taken by the owner on 28 September 2026 (#151, call 13), each built
 with its box on the systems of #76 (#205):
 
-| # | Quest | Level | Where | What it needs | Built in |
-|---|---|---|---|---|---|
-| 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | #196, #201 |
-| 30 | The Dammed Fall | 15 | Sunderfall's shrine (K2); the dam and the foreman (K3) | a choice; `until` (#41) | #197, #198 |
-| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | #200, #201 |
-| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | #201, #199 |
+| # | Quest | Level | Where | What it needs | Pay | Built in |
+|---|---|---|---|---|---|---|
+| 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 200 | #196, #201 |
+| 30 | The Dammed Fall | 15 | Sunderfall's shrine (K2); the dam and the foreman (K3) | a choice; `until` (#41) | 200 | #197, #198 |
+| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #200, #201 |
+| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #201, #199 |
+
+Pay is xp a member, whichever way the choice goes, shared by level: 900 between the four (§8).
 
 No change to #56's drafts. 31 opens the Lanterns' split now, with the company on the sister's side,
 or leaves the prior his Watch (#21); 32 puts a wall in it.
@@ -452,7 +457,7 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   0.75, about 11,467 xp a member, with today's `xpForLevel`. The shares of §4 add up to it, as
   Saltreach's and Wrackholm's do, the side quests inside and the depths outside: I2 1,150, J2
   1,350, K2 1,350, K3 1,350, the Sunder 2,350, L2 1,150, the Watch 300, M2 800 and J3 800; and the
-  four side quests about 900 between them: about 11,500. They were the plan's, 11,800 before the
+  four side quests 900 between them (29 and 30 200 each, 31 and 32 250 each, §6): about 11,500. They were the plan's, 11,800 before the
   side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
   supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
   when it is built; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
@@ -498,6 +503,8 @@ Proposed, for the owner, each in the issue that would build it:
   systems ask, filed if #200 wants it.
 - **The pay's shares** (§8).
 - **The bands on the atlas's rows** (#194): the Eaves 14–15, Lanternwood 15–16, the Sunder 15–16.
+  They are set already in `src/content/areas/sunderwood/atlas.ts`, where only the scaffold reads
+  them, for a box's draft; the owner's word changes them there.
 - **The Glass Bear and the Sunder Hound in Lanternwood** (§7), against MONSTERS §6.3's Where
   column.
 
@@ -515,7 +522,7 @@ Decided by delegate for #194, each the owner's to overturn:
    the floor: the roster's.
 5. **The depths' brief stays short** until #203 is unparked: it waits on the owner's play.
 6. **The hints are things a player sees** (I2's cut turf, K2's bare rock, K3's stacked wood, the
-   Sunder's chalk, L2's raked ash): a hint that is only a person's name tells a player nothing to
+   Sunder's chalk, L2's raked ash, J3's moths at the den): a hint that is only a person's name tells a player nothing to
    look for.
 
 ## 10. Names
