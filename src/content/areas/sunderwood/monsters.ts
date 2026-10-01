@@ -11,5 +11,5 @@ export const SPRITES = [
 
 export const MONSTERS: readonly MonsterDef[] = [
   // the Eaves (#195, #196), a brute on MONSTERS §4.4's line at 14
-  { id: 'pine_bear', name: 'Pine Bear', plural: 'Pine Bears', sprite: 'pine_bear', kind: 'beast', look: 'A bear, and then the rest of the bear.', level: 14, hp: 297, ac: 17, attack: 10, dice: 3, sides: 7, bonus: 6, speed: 8, xp: 1107, gold: [0, 0], tint: '#6b4a2e', size: 1.15 },
+  { id: 'pine_bear', name: 'Pine Bear', plural: 'Pine Bears', sprite: 'pine_bear', kind: 'beast', look: 'A bear, and then the rest of the bear.', level: 14, hp: 293, ac: 17, attack: 10, dice: 3, sides: 8, bonus: 6, speed: 8, xp: 1107, gold: [0, 0], tint: '#6b4a2e', size: 1.15 },
 ];
