@@ -10,22 +10,25 @@
 // one group is one fight. A plain bot plays the party: mend the weakest when someone is under 40%,
 // else the strongest damage spell it can afford, else a weapon, else brace; it aims at a leader where
 // it can reach one, since the people break at its fall, and else a weapon at the first foe it
-// reaches. It never sleeps, blesses, drinks or flees, so it is weaker than a player; single fights
-// at full health are kinder than play.
+// reaches. Once it has seen what an element does to a foe it casts the element that foe is weakest
+// to, and never one it has seen do nothing to any foe still standing. It wakes a sleeper of the front
+// row, or a caster, before it strikes. It never sleeps, blesses, drinks or flees, nor cures anything
+// but sleep, so it is weaker than a player; single fights at full health are kinder than play.
 // Read the numbers as where the fights bite, not as a promise. tools/tests/gate.ts holds every map
 // and area to them (the gate check); it imports this file, whose table runs only from the command
 // line.
 import { pathToFileURL } from 'node:url';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, isDown, MAX_LEVEL } from '../src/game/party.ts';
-import type { Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup } from '../src/game/combat.ts';
-import type { CombatOpts, Fighters } from '../src/game/combat.ts';
+import type { Party, Character } from '../src/game/party.ts';
+import type { RngInstance } from '../src/lib/engine/rng.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup, seenMult } from '../src/game/combat.ts';
+import type { CombatOpts, CombatState, Fighters } from '../src/game/combat.ts';
 import { RANGED_PENALTY } from '../src/game/weather.ts';
 import { spell } from '../src/game/spells.ts';
-import type { SpellTarget } from '../src/game/spells.ts';
+import type { SpellDef, SpellTarget } from '../src/game/spells.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { outfit } from './harness.ts';
+import { outfit, wakeWith } from './harness.ts';
 import type { EncounterDef } from '../src/game/map.ts';
 
 /**
@@ -61,20 +64,34 @@ export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infi
   for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t || s.round > cap) break;
-    if (t.side === 'monster') { monsterAct(s, p, rng); continue; }
-    const c = p.members[t.i], foes = aliveMonsters(s), lead = foes.find((i) => isLeader(s, s.monsters[i])), foe = lead ?? foes[0];
-    const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((i) => canReach(s, c, i)) ?? foe;
-    const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
-    const low = p.members.map((m, i) => ({ m, i })).filter(({ m }) => !isDown(m) && m.hp < m.maxHp * 0.4).sort((a, b) => a.m.hp - b.m.hp)[0];
-    const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
-    const blast = known.filter((x) => x.dice && REACH[x.target])
-      .sort((a, b) => REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
-    if (low && mend && partyAct(s, p, rng, { type: 'cast', spellId: mend.id, target: low.i })) continue;
-    if (blast && partyAct(s, p, rng, { type: 'cast', spellId: blast.id, target: foe })) continue;
-    if (canAttackFromRow(c, t.i) && partyAct(s, p, rng, { type: 'attack', target: blade })) continue;
-    partyAct(s, p, rng, { type: 'defend' });
+    if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i);
   }
   return s.outcome === 'victory';
+}
+
+/** The damage spell the bot would cast at the fight's first foe, or its leader: none if it can afford none worth casting. */
+export function gateBlast(s: CombatState, c: Character): SpellDef | undefined {
+  const foes = aliveMonsters(s), foe = foes.find((i) => isLeader(s, s.monsters[i])) ?? foes[0];
+  if (foe === undefined) return undefined;
+  const mult = (x: SpellDef): number => seenMult(s, s.monsters[foe], x.element);
+  return c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0))
+    .sort((a, b) => mult(b) - mult(a) || REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
+}
+
+/** The bot's turn for member `i`. */
+export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number): void {
+  const c = p.members[i], foes = aliveMonsters(s), lead = foes.find((f) => isLeader(s, s.monsters[f])), foe = lead ?? foes[0];
+  const blade = lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
+  const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
+  const low = p.members.map((m, j) => ({ m, j })).filter(({ m }) => !isDown(m) && m.hp < m.maxHp * 0.4).sort((a, b) => a.m.hp - b.m.hp)[0];
+  const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
+  const blast = gateBlast(s, c);
+  if (low && mend && partyAct(s, p, rng, { type: 'cast', spellId: mend.id, target: low.j })) return;
+  const sleeper = wakeWith(p, c);
+  if (sleeper && partyAct(s, p, rng, { type: 'cast', ...sleeper })) return;
+  if (blast && partyAct(s, p, rng, { type: 'cast', spellId: blast.id, target: foe })) return;
+  if (canAttackFromRow(c, i) && partyAct(s, p, rng, { type: 'attack', target: blade })) return;
+  partyAct(s, p, rng, { type: 'defend' });
 }
 
 /** The seed of a group's fight on seed `k`, the same for every level and every caller. */

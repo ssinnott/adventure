@@ -91,8 +91,11 @@ export type Feature =
    * ends in `choice`; `quest` is the hand-ins, one or several; `says` the words once they hold.
    * `interior` makes the NPC a business you walk into (a tavern); a person in the street has none.
    * Where a person stands they stand only in their `when`, once `after` holds and until `until` does.
+   * `passage` makes them a coachman or a boatman: once their words are said they sell the crossings
+   * listed (game/passage.ts). `teaches` makes them a prestige's trainer: once their words are said
+   * they offer it (game/prestige.ts).
    */
-  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior } & Presence)
+  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; passage?: readonly Passage[]; teaches?: Teaching } & Presence)
   /** A tear into a Rift (game/rifts.ts): stepped on, it takes the party through, as an exit does. */
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number; tf?: Facing; label?: string }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
@@ -158,6 +161,44 @@ export interface NpcQuest {
   setFlag: string;
   /** What the NPC says once the quest is complete; of several hand-ins, the last done that has any. */
   after?: string[];
+}
+
+/**
+ * A prestige a person teaches (game/prestige.ts; DESIGN §5): the class's `prestige`th, to a member of
+ * `cls` at its level who has the one before, for its price; the third for the quest `done`, which
+ * must hold. Once their words are said, they offer it to the company's members of the class.
+ */
+export interface Teaching {
+  cls: import('./party.ts').ClassId;
+  prestige: 1 | 2 | 3;
+  /** The third prestige's quest, done: the trainer teaches it once this holds. */
+  done?: When;
+}
+
+/**
+ * A crossing a person sells (game/passage.ts; EXPANSION §2.1): a coach or a boat to `to`, a map (a
+ * zone map's cells count), landing on `x`,`y`. It leaves at the hour `departs`, every day, and lands
+ * `days` midnights later at the hour `arrives`: a boat that sails at 20 and lands at 6 is one. The
+ * fare is the company's, not each member's, and pays its board: the company lands rested, as from
+ * an inn. Open to anyone with the fare; `free` waives it once it holds.
+ */
+export interface Passage {
+  to: string; x: number; y: number;
+  /** Facing on landing; default: keep. */
+  facing?: Facing;
+  /** What the menu calls the far end. */
+  name: string;
+  by: 'coach' | 'boat';
+  fare: number;
+  departs: number;
+  days: number;
+  arrives: number;
+  /** Said on landing; the passage's own line when absent. */
+  label?: string;
+  /** The seller's words to a company under the far end's floor, in place of the passage's own. */
+  warning?: string;
+  /** Once this holds the crossing costs nothing (#56's 22 makes the smugglers' boat free). */
+  free?: When;
 }
 
 /**
