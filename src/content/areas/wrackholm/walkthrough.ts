@@ -1,14 +1,17 @@
-// Wrackholm's walkthrough. Its chapter, The Stone Carried Home, is #191's, so for now it walks E6 and
-// Kelp Hole as a company the boat has put ashore at 12 (tools/walk.ts): the landing, the gulls' roof
-// and the cache under it, found by a search and not told, and every group of the box won at the
-// floor; then up into Kelp Hole, its crews and overseers, the strongbox and the brother by the rows;
-// down to the sea cave, the boy at the black pool and the beast at 14; and out by the flooded
-// passage, found by the tide-mark and not told, onto E6's shore.
+// Wrackholm's walkthrough. Its chapter, The Stone Carried Home, is #191's, so for now it walks the
+// built maps as a company the boat has put ashore at 12 (tools/walk.ts): the landing, the gulls'
+// roof and the cache under it, found by a search and not told, and every group of E6 won at the
+// floor; then up into Kelp Hole, its crews and overseers, the strongbox and the brother by the
+// rows; down to the sea cave, the boy at the black pool and the beast at 14; and out by the flooded
+// passage, found by the tide-mark and not told, onto F6's east shore. Last, east over the moor into
+// F6 at 13: the hermit's tally, the door in the cairn on the point found by a search, the founder's
+// seal in the grave, and every group of F6 won at its floor.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
-import { NORTH, SOUTH, WEST } from '../../../game/types.ts';
+import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
+import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
 import { SMUGGLERS_COVE } from './maps/smugglers_cove.ts';
 import { SMUGGLERS_COVE2 } from './maps/smugglers_cove2.ts';
 
@@ -75,6 +78,35 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel(down.id, mark.x, mark.y, WEST);
   for (let i = 0; i < 3; i++) w.world.move('forward');
   ok(w.world.state.mapId === down.id && w.world.state.x === gap.x - 2 && w.world.state.y === gap.y, 'through the door the passage runs on west, under the wall');
-  walkThrough(w, down.id, w.world.state.x, w.world.state.y, SOUTH, e6.id, 4);
-  ok(w.world.map.at(w.world.state.x, w.world.state.y).terrain === 'sand', 'the flooded passage lets out on E6\'s sand, under the moor');
+  walkThrough(w, down.id, w.world.state.x, w.world.state.y, SOUTH, WRACKHOLM_F6.id, 4);
+  ok(w.world.map.at(w.world.state.x, w.world.state.y).terrain === 'sand', 'the flooded passage lets out on F6\'s sand, the isle\'s east shore');
+
+  // East over the moor into F6, at its floor.
+  w.level = 13;
+  const f6 = WRACKHOLM_F6;
+  walkThrough(w, e6.id, 30, 12, EAST, f6.id, 4);
+
+  // The hermit's tally starts at a date; the cairn on the point keeps the rest, behind a door a
+  // search finds.
+  const tally = f6.features!.find((f) => f.kind === 'event' && f.id === 'f6_tally')!, grave = f6.secrets![0];
+  ok(grave.hint === 'f6_tally', 'the door in the cairn names the hermit\'s tally as its hint');
+  ok(Math.abs(tally.x - grave.x) + Math.abs(tally.y - grave.y) > 1, 'the tally is not beside the door it hints at');
+  see(w, 'wrackholm_f6:f6_tally');
+  see(w, 'wrackholm_f6:f6_cairn');
+  w.world.travel(f6.id, grave.x - 1, grave.y, EAST);
+  let opened = false;
+  for (let i = 0; i < 20 && !opened; i++) opened = w.world.search();
+  ok(opened, 'a search at the cairn finds the door in it');
+  w.world.move('forward'); w.world.move('forward');
+  const dug = f6.features!.find((f) => f.kind === 'chest' && f.id === 'f6_grave');
+  const under = dug && w.world.locate(f6.id, dug.x, dug.y);
+  ok(!!under && w.world.state.x === under.x && w.world.state.y === under.y, 'through it, the grave under the cairn');
+  if (dug?.kind === 'chest') {
+    w.world.markUsed(dug.id); w.party.gold += dug.gold; w.party.bag.push(...dug.items);
+    ok(w.party.bag.includes('founders_seal'), 'and in it the founder\'s seal');
+  }
+  see(w, 'wrackholm_f6:f6_grave_seen');
+  listen(w);
+
+  for (const g of MAP_DEFS.find((d) => d.id === f6.id)!.encounters ?? []) fight(w, `${f6.id}:${g.id}`);
 };
