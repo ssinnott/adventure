@@ -117,7 +117,7 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   quiet. The shrine at the fall and Orm its keeper, the rocks under the fall and the ledge behind
   them, the camp on the west lip, the lookout down the gorge, the sawn glass, a cairn in the pines and
   a Lantern's stone by the road. Three groups: sunder hounds with a glass spider at the bridge's far
-  end, gleaners with a hound at the dam and glass bears on the road at the far end.
+  end, gleaners with a hound at the dam and two glass bears on the road at the far end.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -310,13 +310,14 @@ features; the pay shared out over the area (§8).
   ask, Hew and the choice are #205's. The shrine gives personality; the Paladin's trainer there is
   owed to #19. The ledge is behind the bare rock under the fall, with the first gleaner's tally,
   BELOW, a Long Sword +2 (`longsword+2`) and 200 gold. Four sunder hounds and a glass spider were the
-  plan at the bridge's far end; three and the spider keep fights to a rest inside the aim. Three glass
-  bears on the road at the far end, where Lanternwood begins, are the hardest group and the hardest
-  fight (5.8 fights to a rest alone): a narrow band asks a group above its floor. A company at 15
-  wins every fight and manages 6.9 fights to a rest, inside the aim (8.6 once Act II's gear came
-  in, #399, still inside it); the Eaves' road, I2 to K2, is
-  walked every time at 14. As measured it pays about 1,210 xp a member and 510 gold, I2, J2 and K2
-  together 3,785 against their 3,850. Its floor is above the area's, so its groups count two under
+  plan at the bridge's far end; three and the spider keep fights to a rest inside the aim. Two glass
+  bears on the road at the far end, where Lanternwood begins, are the box's group at 16: a narrow
+  band asks a group above its floor, and the bears are a fight of their own, not a level carried by
+  others. Since #409's line and #414's re-stat, three bears were past the limit alone (4.3 fights to
+  a rest) and two hold it (9.4). A company at 15 wins every fight and manages 7.8 fights to a rest,
+  inside the aim; the Eaves' road, I2 to K2, is
+  walked every time at 14. As measured it pays about 1,070 xp a member and 510 gold, I2, J2 and K2
+  together 3,644 against their 3,850. Its floor is above the area's, so its groups count two under
   in the area's pool, which is owed to #18. The area claims the falls as a landmark, the first built
   on the road. What the owner finds by hand goes here when the box has been played.
 
@@ -547,7 +548,7 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   four side quests 900 between them (29 and 30 200 each, 31 and 32 250 each, §6): about 11,500. They were the plan's, 11,800 before the
   side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
   supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
-  when it is built: I2 1,063, J2 1,509 and K2 1,213 so far, 3,785 against their 3,850; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
+  when it is built: I2 1,063, J2 1,509 and K2 1,072 so far, 3,644 against their 3,850; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
   floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
@@ -714,11 +715,12 @@ Decided by delegate for #197, each the owner's to overturn:
    and moving it is a shared file's change for nothing a player walks.
 3. **J2's east ring opens:** its mountain north of the road becomes chasm, so the lip runs unbroken
    to the road, and south of the road pines, so its woods meet K2's west lip.
-4. **Three groups, about 1,210 xp a member, all back after two days:** three sunder hounds and a
+4. **Three groups, about 1,070 xp a member, all back after two days:** three sunder hounds and a
    glass spider at the bridge's far end (four hounds put fights to a rest at 15 under the aim, 6.1);
    three gleaners and a hound at the dam, #205's "men with grey hands and dogs with glass in them";
-   and three glass bears on the road at the far end, where Lanternwood begins, the box's group at 16
-   and its hardest fight. Glass bears there are against MONSTERS §6.3's Where column, as I2's is, and
+   and two glass bears on the road at the far end, where Lanternwood begins, the box's group at 16:
+   since #414's re-stat three were past the limit alone and two hold it, a true fight where a mixed
+   group would only average to 16. Glass bears there are against MONSTERS §6.3's Where column, as I2's is, and
    stand with §7's proposal. Sunderlings in the glass were dropped: the box paid 1,580 with them,
    and they are K3's (#198).
 5. **The dam is K2's,** on the river above the fall, as #205 has it, and the fall below it a thread:
