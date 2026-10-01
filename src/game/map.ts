@@ -185,6 +185,13 @@ export interface EncounterDef extends Presence {
   x: number; y: number;
   /** Monster def ids; up to 12. */
   monsters: string[];
+  /**
+   * How many of `monsters`, from the end, stand in the back rank: a blade reaches them only once the
+   * fight's front is down, and those with no bow or spell wait till then (docs/MONSTERS.md §3.3).
+   */
+  back?: number;
+  /** The monster id of the group's leader: once every leader in the fight is down, its people break. */
+  leader?: string;
   /** Cells within which the group notices the party (manhattan). */
   aware?: number;
   /** false = stays put (a guardian). */

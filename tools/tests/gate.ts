@@ -120,10 +120,10 @@ const rates = new Map<string, number>();
  * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters and
  * that weather, each computed once: the maps and their areas share them.
  */
-export function rate(g: Pick<EncounterDef, 'monsters' | 'when'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}@${level}~${opts.rangedPenalty ?? 0}`;
+export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when'>, level: number): number {
+  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}@${level}~${opts.rangedPenalty ?? 0}`;
   let r = rates.get(key);
-  if (r === undefined) { r = winRate(level, g.monsters, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
+  if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
 }
 /** The two groups nearest a zone's way in, as a company first finds it: none that waits on an `after`. */
@@ -188,7 +188,7 @@ function road(groups: readonly EncounterDef[], level: number): number {
   for (let k = 1; k <= SEEDS; k++) {
     const p = gateCompany(level, k);
     const won = groups.every((g, f) => {
-      if (!gateFight(p, g.monsters, k * 104729 + f, ROUND_CAP, gateOpts(g))) return false;
+      if (!gateFight(p, g, k * 104729 + f, ROUND_CAP, gateOpts(g))) return false;
       mendBetween(p);
       if (mustRest(p)) for (const m of p.members) rest(m);
       return true;
@@ -276,7 +276,7 @@ export function gate(): void {
       // Fights to a rest are harness's measure: its thrifty bot, its outfitted company, its round cap.
       // A boss is judged on its odds above, not on the day (MONSTERS.md §4.4), so the day leaves it out
       // (the owner's decision on #40, 28 September).
-      const day = days(d.band[0], groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`)).map((g) => g.monsters), DAYS, 1, true), want = fightsPerRest(d.band[0]);
+      const day = days(d.band[0], groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`)), DAYS, 1, true), want = fightsPerRest(d.band[0]);
       const around = (e: readonly [number, number]): [number, number] => [want - e[0], want + e[1]], range = ([lo, hi]: [number, number]): string => `${lo} to ${hi}`;
       check(`${d.id}: rest`, day.fights, within(around(GATE.perRest.aim)), within(around(GATE.perRest.limit)), `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${aims(range(around(GATE.perRest.aim)), range(around(GATE.perRest.limit)))}); ${pc(day.why.long)} of days end in a fight broken off`, true);
     }

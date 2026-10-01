@@ -15,15 +15,17 @@ export interface KindDef {
   immune: readonly Condition[];
   /** Holy Strike bites. */
   holy: boolean;
+  /** When it leaves a fight: at its leader's fall, once three in four of its group are down, or never (combat.ts `morale`). */
+  breaks: 'leader' | 'rout' | 'never';
 }
 
 /** Each kind's defaults, the ones the combat model has so far; the rest of MONSTERS §2 comes with #18 and #20. */
 export const KINDS: Record<MonsterKind, KindDef> = {
-  beast:   { immune: [], holy: false },
-  person:  { immune: [], holy: false },
-  dead:    { immune: ['asleep'], holy: true },
-  rift:    { immune: [], holy: false },
-  machine: { immune: ['asleep'], holy: false },
+  beast:   { immune: [], holy: false, breaks: 'rout' },
+  person:  { immune: [], holy: false, breaks: 'leader' },
+  dead:    { immune: ['asleep'], holy: true, breaks: 'never' },
+  rift:    { immune: [], holy: false, breaks: 'never' },
+  machine: { immune: ['asleep'], holy: false, breaks: 'never' },
 };
 
 export interface MonsterDef {
@@ -61,6 +63,8 @@ export interface MonsterDef {
   drops?: readonly { item: string; chance: number }[];
   /** Conditions it shrugs off beyond its kind's, as the slime and the wardens do sleep. */
   immune?: readonly Condition[];
+  /** Never breaks, whatever its kind: the Hand (docs/MONSTERS.md §2). */
+  steady?: boolean;
   /** Tint of the sprite. */
   tint: string;
   /** Sprite height relative to a wall (1 = a full cell). */

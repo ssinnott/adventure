@@ -92,7 +92,7 @@ export function fight(w: Walk, at: string): void {
   const [map, id] = ref(at);
   const g = def(map)?.encounters?.find((e) => e.id === id);
   if (!g) { w.ok(false, `there is a group ${at}`); return; }
-  const rate = winRate(w.level, g.monsters, 10, Infinity, gateOpts(g));
+  const rate = winRate(w.level, g, 10, Infinity, gateOpts(g));
   w.ok(rate > 0, `${at} is won at level ${w.level} (${Math.round(rate * 100)}% of ten fights)`);
   w.world.travel(map, g.x, g.y);
   w.world.killGroups([id]);
