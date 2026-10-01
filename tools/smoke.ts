@@ -189,6 +189,33 @@ const inn = await (async () => {
   });
   return { menu, words, question, said, back, backColours, traded, left, hob, eel };
 })();
+// A crossing (#164, game/passage.ts): a coachman put in Helmstow's street at run time sells a coach
+// to Thornhold. Faced and asked, his words close onto the menu of crossings, then the terms; paying
+// takes the fare, runs the clock to the landing and leaves the company in Thornhold, exploring.
+const coach = await (async () => {
+  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  const before = await page.evaluate(() => {
+    const g = (window as any).__game.game;
+    while (g.screens.length > 1) g.pop();
+    g.world.travel('harrow', 7, 14, 0);
+    g.world.map.features.push({ kind: 'npc', x: 7, y: 13, name: 'A coachman', lines: ['"Thornhold, at dawn."'], passage: [{ to: 'thornhold', x: 7, y: 14, name: 'Thornhold', by: 'coach', fare: 100, departs: 6, days: 1, arrives: 18 }] });
+    g.party.gold = 500;
+    return { minutes: g.world.state.minutes, day: g.world.day };
+  });
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const words = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const menu = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const terms = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(150);
+  const after = await page.evaluate(() => {
+    const g = (window as any).__game.game, m = g.maps.harrow;
+    m.features.splice(m.features.findIndex((f: any) => f.name === 'A coachman'), 1);
+    return { screens: g.screens.map((s: any) => s.constructor.name).join(','), map: g.world.state.mapId, gold: g.party.gold, day: g.world.day, hour: g.world.hour, minutes: g.world.state.minutes, log: g.log.slice(-3) };
+  });
+  return { before, words, menu, terms, after };
+})();
 // The Wardens' hall, the Drillyard, with First Watch's walk already made, so taking it pays at once.
 // Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
 // when the menu was first opened.
@@ -876,11 +903,60 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
 const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
 const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
 
+// The Hearth's measure (#168): at midnight under a clear sky, looking south from the Foreland by
+// Helmstow, the Hearth stands over the hills where it lies, and brighter once the Tide Stone is home;
+// looking north there is none. The title, over a save with the Tide Stone home, draws its column
+// brighter and flickering less than over one without.
+const hearth = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string), T = await import('/src/ui/title.ts' as string);
+  const g = (window as any).__game.game, w = g.world;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d', { willReadFrequently: true })!;
+  const minutes = w.state.minutes, flags = { ...w.party.flags }, place = { map: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing };
+  const glow = (f: number): number => {
+    w.travel('shelf', 16, 6, f);
+    w.state.minutes = Math.floor(minutes / 1440) * 1440 + 1440;
+    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+    skyCtx.clearRect(0, 0, W, H); ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+    const d = ctx.getImageData(0, H / 2 - 100, W, 90).data;
+    let warm = 0;
+    for (let i = 0; i < d.length; i += 4) warm += Math.max(0, d[i] - d[i + 2] - 4);
+    return warm;
+  };
+  delete w.party.flags.q_tide_home;
+  const south = glow(2), north = glow(0);
+  w.party.flags.q_tide_home = 1;
+  const home = glow(2);
+  // The title over each save: its column's light summed, and how far it swings over the frames.
+  const title = (): { light: number; swing: number } => {
+    g.saveGame();
+    const t = new T.TitleScreen(true), cv = document.createElement('canvas');
+    cv.width = 640; cv.height = 360;
+    const tc = cv.getContext('2d', { willReadFrequently: true })!;
+    const sums: number[] = [];
+    for (let frame = 0; frame < 60; frame++) {
+      t.render(g, tc, frame);
+      const d = tc.getImageData(310, 130, 20, 48).data;
+      let sum = 0; for (let i = 0; i < d.length; i += 4) sum += d[i] + d[i + 1];
+      sums.push(sum);
+    }
+    return { light: sums.reduce((a, b) => a + b, 0) / sums.length, swing: Math.max(...sums) - Math.min(...sums) };
+  };
+  const steadier = title();
+  delete w.party.flags.q_tide_home;
+  const plain = title();
+  g.store.removeItem('hearth-of-caldera.save');
+  w.party.flags = flags; w.state.minutes = minutes; w.cached = null; w.travel(place.map, place.x, place.y, place.f);
+  return { south, north, home, steadier, plain };
+});
 await browser.close();
 server.close();
 
 let bad = 0;
 const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) bad++; };
+ok(hearth.south > 0 && hearth.north < hearth.south / 100 && hearth.home > hearth.south, `by night the Hearth stands over the hills where it lies, south of Helmstow and not north, and brighter with the Tide Stone home (${hearth.south} south, ${hearth.north} north, ${hearth.home} home)`);
+ok(hearth.steadier.light > hearth.plain.light && hearth.steadier.swing < hearth.plain.swing, `the title over a save with the Tide Stone home draws a brighter, steadier Hearth (light ${hearth.steadier.light.toFixed(0)} against ${hearth.plain.light.toFixed(0)}, swing ${hearth.steadier.swing} against ${hearth.plain.swing})`);
 ok(errors.length === 0, `no page errors${errors.length ? ' -> ' + errors.join(' | ') : ''}`);
 ok(titleColours > 6, `the title painted (${titleColours} colours)`);
 ok(screen0 === 'CreateScreen' && screen1 === 'ExploreScreen', `Space on the title opens creation, Space again takes the premade company (${screen0}, ${screen1})`);
@@ -903,6 +979,10 @@ ok(inn.hob.join() === 'A room and rations,Talk to Hob,Leave', `the real Hob, by 
 ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Talk to Maud,Leave', `the Gilded Eel, with Ebba and Maud in it from a new game, says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
 ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
+ok(coach.words.text === '"Thornhold, at dawn."' && coach.menu.options.join('|') === 'Thornhold\t100g\t1 day|Not now' && /leaves at 06:00 (tomorrow )?and lands the next day at 18:00/.test(coach.terms.text) && coach.terms.options[0] === 'Pay the fare (100 gold)',
+  `a coachman's words close onto his crossings, then their terms (${coach.menu.options.join(', ').replace(/\t/g, ' ')}; "${coach.terms.text}")`);
+ok(coach.after.screens === 'ExploreScreen' && coach.after.map === 'thornhold' && coach.after.gold === 400 && coach.after.day === coach.before.day + (coach.before.minutes % 1440 <= 360 ? 1 : 2) && coach.after.hour === 18,
+  `paying takes the fare and lands the company in Thornhold, its calendar moved to the landing (day ${coach.before.day} to ${coach.after.day}, ${coach.after.hour}:00, ${coach.after.gold} gold; ${coach.after.log.join(' / ')})`);
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
   `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
