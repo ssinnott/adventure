@@ -116,6 +116,16 @@
         "b6_roof",
         "b6_stair",
         "barrow",
+        "c4_barge",
+        "c4_cairn",
+        "c4_edge",
+        "c4_fen",
+        "c4_fields",
+        "c4_ford",
+        "c4_herons",
+        "c4_hide",
+        "c4_hide_chest",
+        "c4_shrine",
         "c5_barge",
         "c5_barge_hold",
         "c5_cairn",
@@ -336,6 +346,18 @@
         "k2_rocks",
         "k2_shrine",
         "k2_stumps",
+        "k3_bed",
+        "k3_bed_chest",
+        "k3_cairn",
+        "k3_camp",
+        "k3_camp_chest",
+        "k3_glass",
+        "k3_ledges",
+        "k3_lookout",
+        "k3_rope",
+        "k3_shrine",
+        "k3_stack",
+        "k3_stones",
         "l2_ash",
         "l2_cairn",
         "l2_knoll",
@@ -374,6 +396,9 @@
         "b6_bulls",
         "b6_toads",
         "beach_crabs",
+        "c4_barge",
+        "c4_crew",
+        "c4_toad",
         "c5_pools_n",
         "c5_pools_s",
         "c5_toad",
@@ -484,6 +509,8 @@
         "k2_bears",
         "k2_dam",
         "k2_hounds",
+        "k3_bears",
+        "k3_door",
         "l2_bears",
         "l2_hounds",
         "l2_lamp_moths",
@@ -532,9 +559,11 @@
         "308,112",
         "312,32",
         "338,59",
+        "344,77",
         "365,35",
         "48,181",
         "53,140",
+        "77,108",
         "99,148"
       ]
     },
@@ -682,6 +711,21 @@
         "well_swept"
       ],
       "groups": [],
+      "doors": []
+    },
+    "k3_rift": {
+      "size": "12x12",
+      "used": [
+        "k3_rift_hoard",
+        "k3_rift_look1",
+        "k3_rift_look2",
+        "k3_rift_look3",
+        "k3_rift_tear"
+      ],
+      "groups": [
+        "k3_rift_g1",
+        "k3_rift_g2"
+      ],
       "doors": []
     },
     "keep": {
@@ -907,6 +951,10 @@
       "at": "40,158",
       "size": "32x32"
     },
+    "delta_c4": {
+      "at": "72,94",
+      "size": "32x32"
+    },
     "delta_c5": {
       "at": "72,126",
       "size": "32x32"
@@ -953,6 +1001,10 @@
     },
     "eaves_k2": {
       "at": "328,30",
+      "size": "32x32"
+    },
+    "eaves_k3": {
+      "at": "328,62",
       "size": "32x32"
     },
     "lanternwood_l2": {
@@ -1079,6 +1131,9 @@
     "q_osmund_well",
     "q_paper_hale",
     "q_paper_vask",
+    "q_passage",
+    "q_passage_freed",
+    "q_passage_owed",
     "q_riders",
     "q_riders_hale",
     "q_riders_kept",
@@ -1184,6 +1239,7 @@
     "longbow",
     "longbow+1",
     "longsword",
+    "longsword+1",
     "longsword+2",
     "mace",
     "mace+1",
@@ -1230,6 +1286,7 @@
     "stiletto",
     "stiletto+1",
     "stone_rubbing",
+    "sunder_shard",
     "survey_orders",
     "survey_wand",
     "tenant_paper",

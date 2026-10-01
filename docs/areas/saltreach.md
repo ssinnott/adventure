@@ -10,13 +10,13 @@ work is filed under #153 (Phase 1.2, #149): the boxes as §4's table has them, t
 its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52cd` (29 September
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Six boxes of it are built, the Delta road and the shore under the Edge (#170), Stienwierde (#173),
-the Drowned Temples' approach (#174), Saltmouth's box (#176) and the salt pans (#178), and the town
-behind C6's gate, Saltmouth (#177), with the Salt Compact's hall in it (#182); with the first two
-the area was listed. Its content is `src/content/areas/saltreach/` (maps, monsters, items, climate,
-its part of the world map and its guild quests in `guilds.ts`; its chapter of the one quest, The
-Tide Stone, in `chapter.ts` and its side quests in `quests.ts` are still to come) and its
-businesses' rooms
+Seven boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
+Rietum (#171), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's box (#176) and
+the salt pans (#178), and the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
+in it (#182); with the first two the area was listed. Its content is `src/content/areas/saltreach/`
+(maps, monsters, items, climate, its part of the world map, its side quests in `quests.ts` and its
+guild quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` is still
+to come) and its businesses' rooms
 `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta` and
 `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
@@ -30,7 +30,7 @@ Saltreach three zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Upper Water | 10–11 | 7,714 | none |
-| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174) |
+| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); C4, the spur to Rietum, at 72,94 (#171); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174) |
 | The Saltings | 11–12 | 3,588 | C6, Saltmouth's box, laid at 72,158 (#176); C7, the salt pans, at 72,190 (#178) |
 | The area | 10–12 | 14,999 | six boxes |
 
@@ -119,6 +119,15 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   the Brine Shard in its straw; the hint is the mast's stump at the arch, with the stones glowing
   green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.6 in the
   Rift (6.8 before the re-stat to #409's line, #18).
+- **The spur to Rietum** (C4, `delta_c4`, country, band 10–11; #171): the track up the Long Water's
+  east bank from C5's fork to Rietum's first fields; a barge tied at the bank, its master, five
+  bargemen and two herons, the first crew that breaks when its master falls; the backwater with a
+  heron every few yards along its reed bank; the ford with an eel-trapper at his traps, who knows
+  the Stone's poleman for no river man by his stroke; Passage Paid's barge on a shoal (§6); a bull
+  toad alone in a flooded drain in the fields; a camp, a shrine and a cairn on the grass under
+  Kestrel Edge. The secret is the crews' hide, a reed hut where the herons leave a gap, with a Brine
+  Shard and a Long Sword +1 inside; the hint is the gap itself, and the sand trodden hard to the
+  hut's wall. The gate holds at 10, at 6.7 fights to a rest.
 - **Stienwierde** (B5, `delta_b5`, core, band 11–12; #173): duckboards from the Delta road west over
   the fen and the channel to the Tide Stone's island, its plinth empty and its socket cut clean; a
   driftwood shrine at the boards' start, a cairn and house-footings on the mound, and a hermit on a
@@ -168,13 +177,13 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
 
 ## 4. What is still to build
 
-All but C5, D5, B5, B6, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the grid
-(§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
+All but C5, D5, C4, B5, B6, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the
+grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
 | C5 | The Delta road | the Delta | country | 10–11 | 872 (marsh 783), 122 shallow | the Salt Road through the fen from D4 to C6; the fen's pools; a brine Rift; a camp | none | #170 |
-| C4 | The spur to Rietum | the Delta, the Upper Water | country | 10–11 | 986 (grass 758, marsh 135) | the Long Water's east bank; barges at dusk; the track up to Rietum | none | #171 |
+| C4 | The spur to Rietum | the Delta | country | 10–11 | 986 (grass 758, marsh 135) | the Long Water's east bank; barges at dusk; the track up to Rietum | none | #171 |
 | C3 | Rietum | the Upper Water | core | 10–11 | 998 (farm 751, grass 216) | Rietum at 80,80 under Kestrel Edge; Sjonghol in the cliff; the barge smuggler | the folk who saw the Stone go by | #172 |
 | B5 | Stienwierde, the plinth | the Delta, the Upper Water | core | 11–12 | 948 (marsh) | the plinth at 48,140, empty; fen toads; two brine Rifts | the plinth stands empty | #173 |
 | B6 | The Drowned Temples' approach | the Delta, the Saltings | core | 11–12 | 975 (marsh) | the temples' way in at 56,170; the priestess who says the number | the temples gone dark | #174 |
@@ -191,8 +200,9 @@ willows are parked until the owner has played it (#151, call 10). The bands rise
 10 at the foot of the Edge, to 12 at the pans and the temples' choir, as the gate asks (EXPANSION
 §5.2), and each box holds a group at the top of its band for the curve.
 
-**Two boxes hold land of two zones.** C4 is the Delta's grass and the Upper Water's along the
-river, and B5 and B6 each straddle two zones' fen. A map is its whole box (EXPANSION §8.2), so each
+**Two boxes hold land of two zones.** B5 and B6 each straddle two zones' fen. C4 was drafted as
+the Delta's grass and the Upper Water's along the river, and is laid in the Delta (§9), so the
+Upper Water begins at Rietum. A map is its whole box (EXPANSION §8.2), so each
 is built to its edges and the zone line runs inside it; the zone a square belongs to decides only
 its crossing line (#166) and its band.
 
@@ -297,7 +307,18 @@ settled in its issue, and what the pilot teaches changes them.
   cargo, a shard among it. The hint: the herons stand everywhere along the bank but one place.
 - **New here.** Ranks and morale (#160): a crew that breaks when its master falls.
 - **Finds.** A Long Sword +1 in the hide.
-- **Pay.** About 600 xp a member.
+- **Pay.** About 600 xp a member; as built, about 690 (§8).
+- **As built** (#171, 1 October): laid in the Delta, so the crossing line into the Upper Water
+  falls at Rietum. Two barges. The fight's is tied at the bank and always there: the master, five
+  bargemen and two herons in its back rank. They break when he falls, so it is over in about a
+  round. "Dusk" is in its words only: the game has no dusk hour. The other is Passage Paid's, on a
+  shoal by the ford (§6). The herons in the reeds are the bank's events, which carry the hint, not
+  a group. There is no eel at the ford: the eel-trapper fishes it. A bull toad alone sits in a
+  flooded drain in Rietum's fields, at the far end from the fork. It is the box's hardest group and
+  a real fight, which the barge (its mean level 10.1) is not by level. With the eel, the box ran 8.4
+  fights to a rest, off the aim; without it, 6.7. The shard in the hide is a second Brine Shard. As
+  measured, the box pays about 690 xp a member, the crew that comes after Passage Paid about 200
+  more (§8 counts it in the side quests'), and about 470 gold with the crew's.
 
 ### 4.4 C3, Rietum (#172): core, band 10–11
 
@@ -604,12 +625,20 @@ with its box on the systems of #76 (#183):
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
 | 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | #172 |
-| 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171 |
+| 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171; the boat reads its flag (#413) |
 | 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175 |
 | 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178 |
 
 One change to #56's drafts, decided with the boat (#164): 22's favour is the boat's fare, never
 the boat, which sails for anyone from the start (EXPANSION §2.2).
+
+**Passage Paid, as built** (#171). Hessel, the master of a barge on a shoal by C4's ford, wants it
+pushed off; his hold is full of people he swears paid passage to Saltmouth. The people aft have
+nothing with them and the second row of notches on his pole is shorter: the Cargo Ledger's column,
+seen and never said. Cut loose (`q_passage_freed`), they wade ashore, and a crew of three bargemen
+comes up the bank after them. Pushed off (`q_passage_owed`), Hessel's word carries the company to
+Wrackholm with no fare: Kitto's boat on Saltmouth's quay (#413) reads the flag as its `free`. Either way he is gone
+off the shoal.
 
 ### The guilds' quests
 
@@ -663,16 +692,19 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   about 450 a member on top of its box's share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve. B5 as built pays
   about 1,600, its two Rifts inside it (#173): a fight inside the gate's aim at 11 costs about 300
   xp a member whatever its monsters, and its five come to about 1,650 measured with the company at
-  about 10, about 1,700 at 11. C6 as built pays about 1,030 (#176), its three groups each inside the
-  aim, the quay's by day and by night one of them at any hour. C7 as built pays its 700 (#178). B6
-  as built pays about 970 over its 800 (#174), its three fights at about 300 each and its
-  brinelings only by night. No other share gives back the 600, the 330 and the 170, so the area
-  comes to about 9,850, some 19% over the curve's 8,267. The surplus is for a kill paid by level to
-  damp, and each box still to build is priced by its fights, about 300 a fight, and recorded as
-  built where that passes its share; the sum here is restated with each. The willows add 800 when
-  they are built. From here on a kill pays by level (#159), so a company that arrives at 10 earns
-  the shares as written and one that arrives at 13 earns less; the curve's row reports what a clear
-  falls short of as owed to #153 until the boxes exist.
+  about 10, about 1,700 at 11. C4 as built pays about 690 against its 600 (#171): the bull toad its
+  curve needs as its hardest group pays about 160, and the eel was cut to keep its day inside the
+  aim; the crew that comes after Passage Paid, about 200, is the side quests'. C6 as built pays
+  about 1,030 (#176), its three groups each inside the aim, the quay's by day and by night one of
+  them at any hour. C7 as built pays its 700 (#178). B6 as built pays about 970 over its 800
+  (#174), its three fights at about 300 each and its brinelings only by night. No other share gives
+  back the 600, the 90, the 330 and the 170, so the area comes to about 9,940, some 20% over the
+  curve's 8,267. The surplus is for a kill paid by level to damp, and each box still to build is
+  priced by its fights, about 300 a fight, and recorded as built where that passes its share; the
+  sum here is restated with each. The willows add 800 when they are built. From here on a kill pays
+  by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
+  at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
+  boxes exist.
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
@@ -756,6 +788,32 @@ Decided by delegate for #170, each the owner's to overturn:
    nothing sets until #191, which adds it.
 7. **The shard is the Brine Shard,** the fen's own word for it.
 8. **The hermit sits on D5's islet,** reached over a shingle bar, and points up the spur to Rietum.
+
+Decided by delegate for #171, each the owner's to overturn:
+
+1. **C4 is laid in the Delta, and named The Delta.** Its band, 10–11, sits in the Delta's, and its
+   barges are the Delta road's. The Delta's first map stays D5, which has no groups, and the Upper
+   Water begins at Rietum (#172).
+2. **Two barges.** The fight's, tied at the bank, is always there: the curve needs its group, and
+   it is the road's first crew that breaks, so it may not be missing by day. Dusk lives in its words.
+   Passage Paid's, on the shoal, is a person, there until either answer.
+3. **Passage Paid takes no fight to help.** The choice is the whole quest. Cut loose, the people go
+   ashore and three bargemen with no master come up the bank `after` it; pushed off, the master owes
+   the boat's fare, `q_passage_owed`, which Kitto's boat (#413) reads as its `free`. He does not say the half he sold are
+   in the ledger's column: the company sees it.
+4. **The hide is a reed hut with its secret wall on the sand,** at the one gap in the herons. Its
+   shard is a second Brine Shard, not a new item: the area's shards are one kind.
+5. **The groups are the barge at the bank and a bull toad alone in the fields' drain; no eel.** The
+   curve wants the hardest group at 11 or over by its mean level, and the barge's is 10.1; a lone
+   level-11 would pass by level and be no fight. The toad is C5's precedent and MONSTERS' "the Delta,
+   alone". With the eel the box ran 8.4 fights to a rest, off the aim; without it, 6.7. C4 is recorded
+   as built at about 690 against its share of 600 (§8).
+6. **C4's hermit is an eel-trapper at the ford,** not a second net-mender: D5's woman saw the light
+   in the sacking, and he heard the barge and knows its poleman for the Hand's by his stroke.
+7. **The Delta's road runs on up the spur:** the two pools and C5's bull toad, which sees a company
+   at the fork, then C4's barge. It is walked 100% of the time at 10.
+8. **The boat reads Hessel's word here:** #413 sold the boat without it, so this pull request adds
+   `free: { flag: 'q_passage_owed' }` to Kitto's passage out of Saltmouth. The way back is paid.
 
 Decided by delegate for #173, each the owner's to overturn:
 
