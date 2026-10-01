@@ -108,9 +108,9 @@ DESIGN.md first for the why.
   pays its board and lands it rested, as an inn does (the dead stay dead, and no food is eaten).
   Open to anyone with the fare, it is free once its `free` holds. On the world map a boat is a way
   by sea and a coach a way of its own (`coach`); the gate check counts each landing as a way in, and
-  where a crossing lands in a town, that town's ways out (`landings`, `tools/tests/gate.ts`). No
-  built town sells one yet: Saltmouth's boat to Wrackholm and its coach to Helmstow come with those
-  maps (#177, #187).
+  where a crossing lands in a town, that town's ways out (`landings`, `tools/tests/gate.ts`), and
+  the outdoors' walk (`tools/tests/outdoors.ts`) starts from each landing as well. Saltmouth's quay
+  sells the boat to Wrackholm's landing and the landing sells it back (#177); no coach runs yet.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
