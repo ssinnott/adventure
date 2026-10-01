@@ -5,9 +5,10 @@
 // its floor. Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty;
 // the hermit who counts the Rifts' lights; the hollow under the landing found from its pole-marks;
 // and the box's groups and its two Rifts' won at 11. Then back to the road and down it into
-// Saltmouth's box (C6, #176): the Saltings named at the seam, the gate shut until #177 builds the
-// town, the smugglers' stair found from the rope that hangs over it, and the quay's and the pans'
-// groups won at the box's floor.
+// Saltmouth's box (C6, #176): the Saltings named at the seam, the land gate at the road's end, the
+// smugglers' stair found from the rope that hangs over it, and the quay's and the pans' groups won
+// at the box's floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear
+// bought, training to 13 and a first prestige taken.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
