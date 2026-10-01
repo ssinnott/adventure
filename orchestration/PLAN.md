@@ -1599,3 +1599,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   `CUT_OFF`'s I5 entry once #304 joins I3. On main Thornmark's owed curve row now holds (13,713 of
   13,667): drop it. Stale figures in thornmark.md. Its look and four choices to a delegate.
   Reviewer on #310 (the Berth).
+- 00:28: #304's round had been pushed at 23:38 (35e3752: main merged, I3 joined to Henlys with
+  `CUT_OFF` emptied, `EDGES_OWED['#49']` and Thornmark's owed xp dropped; the lodge in bark;
+  Godric's words while Sylvane waits; §8 at 52.4% of 60). Merged onto main 477a721 it conflicts in
+  `EDGES_OWED` (main dropped `#71` with D3; #304 drops `#215`): both go. The Thornmark session told
+  to merge main and push; it lands on green, #307 after it.
