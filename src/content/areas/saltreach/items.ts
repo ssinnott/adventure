@@ -20,8 +20,8 @@ export const ITEMS: readonly ItemDef[] = [
   ironshodStaff,
   sharkskin,
   tidefolkRobe,
-  // Found, not sold, by 13: the Drowned Temples', Rietum's, the plinth's, Saltmouth's box's and the
-  // pans' (docs/areas/saltreach.md §4). Wrackholm's are in its own table.
+  // Found, not sold, by 13: the Drowned Temples' two, Rietum's, Saltmouth's box's and the pans'
+  // (docs/areas/saltreach.md §4). Wrackholm's are in its own table.
   P(morningStar, 1),
   P(stiletto, 1),
   P(ironshodStaff, 1),
