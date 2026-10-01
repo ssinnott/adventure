@@ -1684,3 +1684,19 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   lighthouse from E3's road, Gullwick's beach by night with its beam, and D3's Salt Road at 22
   squares. The fixes sent to the #45 session; the look, the choices, the fog and the dead wood's
   check to a delegate, whose answer follows before it pushes.
+- 01:10: the delegate on #314 (the lighthouse): the look OK with the review's fixes (no change to the
+  drawing); all four choices taken; fog: hide it from 0.35, keyed on `weatherSight` (the tower goes
+  when the fourth square goes, a downpour too), with a check; the dead wood's smoke check: file it,
+  not fold it (the quality lane; #314 is systems). Filed #316 ("Smoke test: the paint-and-compare
+  blocks keep the last paint, and the dead wood's check passes on it"; Bug, quality, approved at the
+  delegate's word and marked so, under #26, blocked by #312; #312's Blocks and #26's Work say so),
+  for the quality session (#97's) once #314 lands. The decisions sent to the #45 session.
+- 01:12: #309 (#72, D4) landed: its round f4d8cb1 (the corner's words, mountain at 21–22,20, the
+  cave's squares, MONSTERS.md) and its merge 462e3ee (main with D2): ALL OK (13 owed: #170's two as
+  decided, none #72's), SMOKE OK, "Nothing new."; CI green. Merged as cd0218b; main's tree is the
+  tested tree (6dd4353). #72 closes. The D4 session done. #310 (head 696d03f, its round as asked:
+  the owed curve entry gone, the captain held dead, the true reason) conflicts with D4 in shelf.md
+  and the area's index: its session told to merge cd0218b; nothing else in the Foreland before it.
+- 01:13: #315 (#218, J5, Penspern and the Eldest) opened from the J5 session: the Eldest at 450 hp,
+  +12, 4d8+12, drawn at 1.35 (2 breaks the labels); Senara's hire moved to `q_mark`; a fifth group;
+  pay 1,230 a member. Subscribed; its review launched.
