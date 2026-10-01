@@ -163,8 +163,10 @@ Foreland map's density.
   plan's landing, 152,172, and the cove's way in, 154,170, lay inland on the atlas, so an inlet is
   cut in from the west shore: the stage stands at its head, at 16,14, and the cliff over its north
   side is carried east so that the cove's mouth, at 18,12, opens in it above the stage. The landing
-  is the boat's far end only until #177 builds the boat, and the isle is cut off until then
-  (`tools/tests/outdoors.ts`'s `CUT_OFF`); the crossing line on the stage is the boat's to say. The
+  is the boat's far end, and #177 built the boat: Kitto sells it on Saltmouth's quay and lands the
+  company on the stage at 16,15, and on the stage he sells the way back; the outdoors' walk now
+  starts from a crossing's landing too, so the isle is no longer cut off. The crossing line on
+  the stage is the boat's to say. The
   captain stands on the stage with two lines and no flag, for The Captain's Brother to hang on
   (#192, #188). Six groups: eight bilge rats in the huts and eight gulls on the inlet's cliff,
   nearest the stage; eight gulls at the lookout; two crews of two smugglers and two bowmen on the
