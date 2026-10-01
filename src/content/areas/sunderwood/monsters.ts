@@ -18,7 +18,7 @@ export const SPRITES = [
 
 export const MONSTERS: readonly MonsterDef[] = [
   // the Eaves (#195, #196), a brute on MONSTERS §4.4's line at 14
-  { id: 'pine_bear', name: 'Pine Bear', plural: 'Pine Bears', sprite: 'pine_bear', kind: 'beast', look: 'A bear, and then the rest of the bear.', level: 14, hp: 297, ac: 17, attack: 10, dice: 3, sides: 7, bonus: 6, speed: 8, xp: 1107, gold: [0, 0], tint: '#6b4a2e', size: 1.15 },
+  { id: 'pine_bear', name: 'Pine Bear', plural: 'Pine Bears', sprite: 'pine_bear', kind: 'beast', look: 'A bear, and then the rest of the bear.', level: 14, hp: 293, ac: 17, attack: 10, dice: 3, sides: 8, bonus: 6, speed: 8, xp: 1107, gold: [0, 0], tint: '#6b4a2e', size: 1.15 },
   // the Sunder's black glass (#198, #199), a skirmisher on MONSTERS §4.4's line at 14
   { id: 'sunderling', name: 'Sunderling', plural: 'Sunderlings', sprite: 'sunderling', kind: 'rift', look: 'Black glass, with a white light inside.', level: 14, hp: 155, ac: 18, attack: 9, dice: 3, sides: 6, bonus: 1, speed: 15, xp: 553, gold: [0, 0], tint: '#2c2e38', size: 0.74, inflict: { cond: 'paralysed', chance: 0.1 } },
   // the gorge above the wall (#199), the area's boss at 16
