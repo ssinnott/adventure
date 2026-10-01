@@ -127,7 +127,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   the landing, and one plank among them unscored and new-nailed. The gate holds at 11, at 7.1 fights
   to a rest on the box and 5.4 in each Rift.
 - **The Drowned Temples' approach** (B6, `delta_b6`, core, band 11–12; #174): a causeway south
-  from Stienwierde round the temple's roof to its dry door at 16,12, open on a stair, with tidal
+  from Stienwierde round the temple's roof to its dry door at 16,11, open on a stair, with tidal
   flats at its foot and the priestess beside it, counting; the last dry ground, a camp; a small roof
   with a cairn, an east roof silted shut over the channel and a crossing of sunk stones; the drowned
   standing in the water either side of the causeway south; and the far roof alone in the flats. Five
@@ -365,7 +365,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** Tidal ground that shows and hides a door.
 - **Finds.** None on the box; the temples' below.
 - **Pay.** About 800 xp a member; as built about 970 (§8).
-- **As built** (#174, 1 October): band 11–12. The temple's dry door stands at 16,12 with tidal
+- **As built** (#174, 1 October): band 11–12. The temple's dry door stands at 16,11 with tidal
   flats along its foot, so at high water it seems to stand in the sea; the door, the priestess and
   the causeway to them are dry and reached the same way at either tide, as §5's "the temples open
   at either tide" asks. No drowned men fight here: none stands at 11, and a new one is a drawing and
