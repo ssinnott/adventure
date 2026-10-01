@@ -58,7 +58,7 @@ export const SALTINGS_C7: MapDef = {
     { kind: 'event', x: 19, y: 2, id: 'c7_pans', once: true, text: 'Lanes between the pans, their mud walls crusted white, a gap in each for the sluice. Crab tracks over all of it.' },
     // The secret: the one pan with no sluice, its hoard reached by the crabs' hole under its east wall.
     { kind: 'event', x: 31, y: 5, id: 'c7_trodden', text: 'At this wall\'s foot the crust is trodden to grey mud. Every other wall in the pans stands in salt unbroken.' },
-    { kind: 'chest', x: 28, y: 4, id: 'c7_hoard', gold: 200, items: ['crabshell_buckler'] },
+    { kind: 'chest', x: 28, y: 4, id: 'c7_hoard', gold: 200, items: ['crabshell_buckler', 'horn_bow+1'] },
     // The Star That Moved's watch (#56's 24): what is seen, by night. #177 adds the astrologer and the quest.
     { kind: 'event', x: 25, y: 7, id: 'c7_star', text: 'Low over the Scarp a star stands where no star stood. Look again and it has crept along the rim.', when: { hours: 'night' } },
     { kind: 'npc', x: 24, y: 14, name: 'a salter', lines: [
@@ -77,7 +77,7 @@ export const SALTINGS_C7: MapDef = {
   secrets: [{ x: 30, y: 5, hint: 'c7_trodden' }],
   encounters: [
     // Salt crabs in the middle south pan; two bull toads in the last marsh, the box's hardest.
-    { id: 'c7_crabs', x: 22, y: 10, monsters: ['salt_crab', 'salt_crab', 'salt_crab', 'salt_crab'], aware: 3, respawn: 1440 },
+    { id: 'c7_crabs', x: 22, y: 10, monsters: ['salt_crab', 'salt_crab', 'salt_crab'], aware: 3, respawn: 1440 },
     { id: 'c7_toads', x: 6, y: 9, monsters: ['bull_toad', 'bull_toad'], aware: 3, respawn: 1440 },
   ],
 };

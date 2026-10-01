@@ -145,9 +145,9 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   skiff at the creek's end, the night crew's; and the Scarp itself across the south, mountain as
   Kestrel Edge is on D4, with the stair's foot in a notch, its lowest flight fallen. By night a star
   stands over the Scarp where none should, the watch The Star That Moved asks for (#56's 24). The
-  groups are two: four salt crabs in the pans and two bull toads in the marsh. The secret is the one
+  groups are two: three salt crabs in the pans and two bull toads in the marsh. The secret is the one
   pan with no sluice, reached by the crabs' hole under its east wall, the salter's hoard in it; the
-  hint is the salt trodden at that wall's foot and nowhere else. The gate holds at 11, at 5.9 fights
+  hint is the salt trodden at that wall's foot and nowhere else. The gate holds at 11, at 6.7 fights
   to a rest.
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
@@ -219,9 +219,11 @@ settled in its issue, and what the pilot teaches changes them.
 - **Pay.** The area owes 8,267 xp a member (§8). The shares below add up to a little over that,
   for the curve to settle (#159) and the gate to check (#38).
 - **Side quests** are #56's 21 to 24, placed as §6 has them (#183).
-- **Finds** are the ladder's next step (#18): the band's gear at Saltmouth's armourer, and the
-  first named pieces on the road out of it. Each is an item when its box is built; no find is dearer
-  than the band's window on the curve.
+- **Finds** are the ladder's next step (#399): the band's gear at Saltmouth's armourer from 11
+  (§4.9), the same with a plus in the boxes by 13, and the first named pieces on the road out of
+  it. Each is placed when its box is built; no find or ware is dearer than the band's window on the
+  curve. Wrackholm's boxes give two of the pluses: Kelp Hole's Plate Mail +1 and the Tide Ship's
+  Long Axe +1.
 
 ### 4.2 C5, the Delta road (#170): country, band 10–11
 
@@ -304,7 +306,8 @@ settled in its issue, and what the pilot teaches changes them.
 - **The secret and its hint.** The smuggler's cache under the quay, reached from the water at low
   tide. The hint: the child's night-light shows where the water glows.
 - **New here.** A village of the Tidefolk, on a mound; a trainer in a cave.
-- **Finds.** A Chain Mail +1 and a named short sword, the smuggler's, in the cache.
+- **Finds.** A Chain Mail +1 and a named short sword, the smuggler's, in the cache; a Stiletto +1
+  and a Tidefolk Robe +1, the ladder's (#399).
 - **Pay.** About 1,000 xp a member.
 
 ### 4.5 B5, Stienwierde (#173): core, band 11
@@ -382,7 +385,7 @@ settled in its issue, and what the pilot teaches changes them.
   behind it the sacristy the priests drowned themselves in, with their god's silver.
 - **New here.** A caster among the dead; a boss that blesses (#161); a count that stops.
 - **Finds.** The god's silver: a Silver Mace +1 and a Holy Symbol of the tide, a resistance to
-  cold worn.
+  cold worn; beside it a Morning Star +1 and an Ironshod Staff +1, the ladder's (#399).
 - **Pay.** About 1,800 xp a member.
 
 ### 4.8 C6, Saltmouth's box (#176): core, band 11–12
@@ -428,8 +431,9 @@ settled in its issue, and what the pilot teaches changes them.
   classes take their first prestige. It sells and teaches what the band needs (EXPANSION §4).
 - **Businesses,** each with a room of its own (#185): the inn (rest, and the coach yard, #249); the
   drowned god's town shrine (cures and raising at the band's price, #250); the armourer (the
-  band's gear, a step past Thornhold's, #251); the provisioner, a chandlery (#252); the harbour
-  tavern that is the Compact's hall (#182, #253); the Cartographers' map room (#181, #254); the
+  band's gear, a step past Thornhold's, #251: a Morning Star, a Stiletto, a Horn Bow, a Long Axe,
+  an Ironshod Staff, a Sharkskin Coat and a Tidefolk Robe, 600 to 1,100 gold, #399); the
+  provisioner, a chandlery (#252); the harbour tavern that is the Compact's hall (#182, #253); the Cartographers' map room (#181, #254); the
   training hall, to 13 (#159, #255); the locksmith's shop (#19, #256). No spell hall: the next tier
   is sold at Lantern Watch (#151, call 9).
 - **People.** The astrologer, the locksmith, the stevedore and the ferryman, the four trainers (#19),
@@ -462,7 +466,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **The secret and its hint.** A crab-hole under a pan's wall with a salter's hoard. The hint: the
   salt is trodden at one wall and nowhere else.
 - **New here.** The Scarp, and the way down into Act IV, seen.
-- **Finds.** A named crab-shell buckler in the hoard.
+- **Finds.** A named crab-shell buckler and a Horn Bow +1, the ladder's (#399), in the hoard.
 - **Pay.** About 700 xp a member.
 - **As built** (#178, 1 October): band 11–12, the Saltings', as C6's: a band of 12 alone wants its
   hardest group at 13, which the roster has not. The Scarp is mountain and the Glasswold's ground
@@ -470,15 +474,16 @@ settled in its issue, and what the pilot teaches changes them.
   The stair's foot is a notch at 8,22 at the end of a worn track from the plan's link at 80,206: its
   lowest flight has come down with the face and the flights above climb out of reach, so nothing is
   locked and nothing says "not yet"; Act IV builds a way past the fall and rewrites the event. The
-  groups are two, each a real fight at 11: four salt crabs in the middle south pan (6.2 fights to a
-  rest) and two bull toads in the last marsh, the box's hardest (5.9). The brief's three crab groups
+  groups are two, each a real fight at 11: three salt crabs in the middle south pan (8.0 fights to a
+  rest) and two bull toads in the last marsh, the box's hardest (5.6); a fourth crab put the box at
+  5.7, a twentieth under the aim, once #399's gear was in. The brief's three crab groups
   are one here and C6's at the pans' edge, and its smugglers on the shore are C6's night crew under
   the sea wall: the atlas gives C7 no sea, and their skiff at the creek's end is said, not fought.
   The secret is a pan with no sluice, walled on four sides; the crabs' hole under its east wall is
-  the way in and the only one, with no lane, sluice or tide reaching it. The hoard holds 200 gold and
-  the Crab-Shell Buckler +2. The star is a night event that sets nothing: the astrologer, the quest
+  the way in and the only one, with no lane, sluice or tide reaching it. The hoard holds 200 gold, the
+  Crab-Shell Buckler +2 and the ladder's Horn Bow +1 (#399). The star is a night event that sets nothing: the astrologer, the quest
   and its choice are #177's, which rewrites `c7_star` as the watch. As measured, the box pays about
-  700 xp a member, its share, and 280 gold. What the owner finds by hand goes here when the box has
+  600 xp a member, a hundred under its share, and 280 gold. What the owner finds by hand goes here when the box has
   been played.
 
 ### 4.11 B3 and B4, the willows (#179): country, band 10–11, parked
@@ -566,14 +571,14 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   next area's floor, divided by 0.75: from 10 to 12 that is 6,200 / 0.75, about 8,267 xp a member,
   with today's `xpForLevel`. The shares of §4 are C5 700, C4 600, C3 1,000, B5 1,000, B6 800, the
   temples 1,800, C6 700, Saltmouth 300, C7 700 and the four side quests about 700 between them:
-  8,300 without the willows. C7 as built pays its 700 (#178). A small Rift is budgeted at about 450 a member on top of its box's
+  8,300 without the willows. C7 as built pays about 600 (#178), a hundred under its 700. A small Rift is budgeted at about 450 a member on top of its box's
   share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve. B5 as built pays
   about 1,600, its two Rifts inside it (#173): a fight inside the gate's aim at 11 costs about 300
   xp a member whatever its monsters, and its five come to about 1,650 measured with the company at
   about 10, about 1,700 at 11. C6 as built pays about 1,030 (#176), its three groups each inside
   the aim, the quay's by day and by night one of them at any hour. No other share gives back the
-  600 and the 330, so the area comes to about 9,680, some 17% over the curve's 8,267, with C7 built
-at its share. The surplus
+  600 and the 330, and C7's hundred under takes back a little, so the area comes to about 9,580,
+some 16% over the curve's 8,267. The surplus
   is for a kill paid by level to damp, and each box still to build is priced by its fights, about
   300 a fight, and recorded as built where that passes its share; the sum here is restated with
   each. The willows add 800 when they are built. From here on a kill pays by level (#159), so a
@@ -582,7 +587,9 @@ at its share. The surplus
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
-  band's window (#18).
+  band's window (#399): its dearest ware the Sharkskin Coat at 1,100 and its dearest find the Horn
+  Bow +1 at 900, against 2,000. Its weapons for the premade six come to about 4,250, and with the
+  armour about 7,850.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 10 wins nine in ten of C5's fights and walks the
   causeway resting at its camp; one at 8 wins no more than one in four. The Choirmaster is won about
@@ -709,12 +716,30 @@ Decided by delegate for #176, each the owner's to overturn:
 7. **The eel under the quay is said, not fought:** a lone fen eel is a trivial fight that only pushes
    fights to a rest up, and C5 has eels in both its pools.
 
+Decided by delegate for #399, each the owner's to overturn:
+
+1. **Every class has a new weapon line at each town,** sold, then found with a plus, as Thornmark's
+   was: a point of blow a rung, a two-hander a point over a one-hander. Saltmouth sells the Morning
+   Star, the Stiletto, the Horn Bow, the Long Axe and the Ironshod Staff.
+2. **Armour steps on alternate rungs:** the medium wearers take the Sharkskin Coat (9) at 11 and the
+   Watch's Lamellar (10) at 14; plate's wearers take Kelp Hole's Plate Mail +1 (10) at 13 and the
+   Sunder's Plate Mail +2 (11) at 16. So Saltmouth sells nothing past plate's 9, and the Sunder's
+   plate is a step past the Watch's stores, as Sunderwood's doc has it.
+3. **The plus finds go to boxes that already promise finds:** Rietum's cache (two), the temples
+   (two) and the pans' hoard; B6 has none, and B5 and C6 were built before the ladder, so the staff
+   went to the temples and the robe to Rietum. Each is owed to its box until placed.
+4. **The windows stay as they are:** no ware or find comes within 400 gold of its area's price.
+5. **The gate two under stays owed to #18:** gear dresses a company at a floor past one two under
+   it, but a group a company at the floor fights six or seven of to a rest is one a company two
+   under still beats. Past 10 the to-a-rest aim and the two-under aim pull against each other.
+
 Decided by delegate for #178, each the owner's to overturn:
 
-1. **The groups are two, both always there:** four salt crabs in the pans and two bull toads in the
-   marsh, about 700 a member, the share. Of the brief's three crab groups the second is C6's at the
-   pans' edge, and its smugglers are C6's night crew: the atlas gives C7 no sea, and the shore is
-   C6's. A lone bull toad is no fight, so the marsh holds two.
+1. **The groups are two, both always there:** three salt crabs in the pans and two bull toads in the
+   marsh, about 600 a member, a hundred under the share. Of the brief's three crab groups the second
+   is C6's at the pans' edge, and its smugglers are C6's night crew: the atlas gives C7 no sea, and
+   the shore is C6's. A lone bull toad is no fight, so the marsh holds two; four crabs with them put
+   the box a twentieth of a fight under the aim at 11, so the pan holds three.
 2. **The band is 11–12,** the Saltings' and C6's, not the brief's 12: a band of 12 alone wants a
    hardest group at 13, and the bull toads are the band's top as on B5.
 3. **The Scarp is mountain, and the Glasswold's squares inside the box are closed with it:** 301 of
