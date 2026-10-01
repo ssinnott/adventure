@@ -4,7 +4,8 @@
 // locksmith's, the Keel (the harbour tavern, the Compact's hall to come, #182) and the
 // Cartographers' map room (#181). Four first prestiges are taught here, each by a person at their
 // trade: the astrologer, the locksmith, the stevedore and the ferryman. Jory Tallis stands at his
-// house front on the quay. docs/areas/saltreach.md §4.9 is its brief.
+// house front on the quay, and Kitto sells the boat to Wrackholm at the quay's end.
+// docs/areas/saltreach.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
@@ -85,6 +86,13 @@ export const SALTMOUTH: MapDef = {
       '"Tallis. Dockmaster, and the hulls in the roads are mine, which in a free port is the same as mayor." He names three ships without turning to look at them.',
       '"Mine is an old name, older than the port. Helmstow\'s chair stands empty, and its Council counts on its fingers. A port counts hulls." He wishes you a good tide.',
     ] },
+    // The boat to Wrackholm's landing (#164): a fare, never a favour, at the quay's end.
+    { kind: 'npc', x: 14, y: 10, name: 'Kitto, who has a boat', lines: [
+      'A man at the quay\'s end with a boat under him, coiling a line. He has seen you coming and not stopped coiling.',
+      '"Kitto. Wrackholm, the landing, a hundred and fifty the boat. We go out at eight tonight and you step off at six, with the light."',
+      '"A fare is a fare. I don\'t do favours and I don\'t ask why. The one leads to the other." He goes back to his line.',
+    ], passage: [{ to: 'wrackholm_e6', x: 16, y: 15, facing: NORTH, name: 'Wrackholm', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6,
+      label: 'The boat grounds at the stage with the first light and you step ashore, rested. The cliff is already between you and the sea.' }] },
     { kind: 'event', x: 8, y: 11, id: 'sm_lineage', text: 'Through Tallis\'s door a hall, and on its wall a lineage framed, name over name up to a crown. The ink is one shade from top to bottom.' },
     { kind: 'event', x: 7, y: 1, id: 'saltmouth_intro', once: true, text: 'Saltmouth. Grey stone, tarred wood, gulls on everything, and under the gate\'s noise the slap of water that never stops.' },
     { kind: 'sign', x: 6, y: 1, text: 'Saltmouth. Land gate: the Salt Road, the barge quay, Rietum.' },
