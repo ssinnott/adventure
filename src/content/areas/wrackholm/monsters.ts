@@ -6,13 +6,15 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 
 /** The drawings Wrackholm's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
 export const SPRITES = [
-  'devilfish',
+  'devilfish', 'great_devilfish',
   'wrack_smuggler', 'wrack_bowman',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
   // the cove's pools and under the ship (#188, #190), a controller on MONSTERS §4.4's line at 13: it reaches the back row, and holds
   { id: 'devilfish', name: 'Devilfish', plural: 'Devilfish', sprite: 'devilfish', kind: 'beast', look: 'Arms, coming up over the side.', level: 13, hp: 97, ac: 18, attack: 8, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 513, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#7a3a30', size: 1.0 },
+  // the sea cave at Kelp Hole's back (#188), the area's boss at 14 on MONSTERS §4.4's boss line; it keeps the family's reach and hold
+  { id: 'great_devilfish', name: 'Great Devilfish', plural: 'Great Devilfish', sprite: 'great_devilfish', kind: 'beast', look: 'What the smugglers feed.', level: 14, hp: 621, ac: 20, attack: 11, dice: 12, sides: 8, bonus: 12, speed: 13, xp: 8853, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, immune: ['asleep'], tint: '#a8928a', size: 1.9 },
   // the cove and the Tide Ship's deck (#187, #188, #190), a soldier on MONSTERS §4.4's line at 12
   { id: 'wrack_smuggler', name: 'Wrack Smuggler', plural: 'Wrack Smugglers', sprite: 'wrack_smuggler', kind: 'person', look: 'A Compact knife in a Helmstow coat.', level: 12, hp: 100, ac: 17, attack: 8, dice: 2, sides: 6, bonus: 2, speed: 11, xp: 473, gold: [15, 40], drops: [{ item: 'dagger', chance: 0.1 }, { item: 'potion_heal', chance: 0.15 }], tint: '#7a3a32', size: 0.92 },
   // with the smugglers (#187, #188, #190), an archer on MONSTERS §4.4's line at 12: it shoots the back row
