@@ -34,7 +34,6 @@ export const MEMBERS = 6;
 export const CURVE: Record<RegionId, AreaCurve> = {
   shelf: {
     band: [1, 5], next: 5, price: 500,
-    owed: { whose: '#26', why: 'Act I falls short until the pilot fills it', xp: 1660 },
   },
   thornmark: {
     band: [5, 10], next: 10, price: 1200,

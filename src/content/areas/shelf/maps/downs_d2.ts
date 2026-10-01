@@ -51,10 +51,13 @@ export const DOWNS_D2: MapDef = {
     ',,,,,^^^^^^^^^^^^^^^^^^^^^^^^^^^',
     ',,,,,^^^^^^^^^^^^^^^^^^^^^^^^^^,',
   ],
+  exits: [
+    { x: 12, y: 12, to: 'berth', tx: 14, ty: 7, tf: WEST, label: 'You duck under the lintel into the Berth.' },
+  ],
   features: [
     { kind: 'sign', x: 22, y: 11, text: 'The Berth, barrow of the Queens. By order of the Crown, let them lie.' },
     { kind: 'event', x: 15, y: 13, id: 'd2_stones', once: true, text: 'Grooves in the turf where the stones were dragged clear, and a lever of new oak left where it broke.' },
-    { kind: 'event', x: 13, y: 12, id: 'd2_mouth', once: true, text: 'The Berth. Its mouth stands open, and the dark goes back into the hill further than a barrow should.' },
+    { kind: 'event', x: 13, y: 12, id: 'd2_mouth', once: true, text: 'The Berth. Its stones lie pulled aside in the grass, the chisel marks on them still white, the chalk cut up by shod hooves.' },
     { kind: 'event', x: 15, y: 23, id: 'd2_cradle', once: true, text: 'A figure cut through the turf to the chalk: a long curve, and a line standing up from it. The shepherds call it the Cradle.' },
     { kind: 'shrine', x: 8, y: 2, id: 'd2_shrine', text: 'A shrine on the crest, older than the barrows, its stone worn to a thumb.', stat: 'might', done: 'The shrine is only a stone now.' },
     { kind: 'fountain', x: 22, y: 18, id: 'd2_pond', text: 'A dew pond, lined with clay and full to the brim, though it has not rained.', stat: 'accuracy', done: 'The dew pond gives only water.' },

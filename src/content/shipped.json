@@ -1,6 +1,34 @@
 {
   "version": 2,
   "maps": {
+    "berth": {
+      "size": "16x16",
+      "used": [
+        "berth_arms",
+        "berth_bier",
+        "berth_c1",
+        "berth_c2",
+        "berth_c3",
+        "berth_c4",
+        "berth_forecourt",
+        "berth_niche",
+        "berth_passage",
+        "berth_queen1",
+        "berth_queen2",
+        "berth_queen3",
+        "berth_queen4"
+      ],
+      "groups": [
+        "berth_captain",
+        "berth_guard1",
+        "berth_guard2",
+        "berth_guard3",
+        "berth_guard4"
+      ],
+      "doors": [
+        "2,7"
+      ]
+    },
     "caldera": {
       "size": "512x384",
       "used": [
