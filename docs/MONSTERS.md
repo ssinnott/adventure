@@ -341,8 +341,8 @@ calibration:
   levels past 10, made again with #20), with the levels between interpolated. Past 10 the company
   runs on play's rules: its spells stop growing at 10 (#159), it takes its prestiges at 11, 19 and
   27 with their hit points, spell points and perks (#19), and with them its spell ranks, and it
-  learns tiers 6 and 7 at 15 and 23 (#20). No new gear comes until #18 brings it and the harness
-  re-runs.
+  learns tiers 6 and 7 at 15 and 23 (#20). Its gear is Act I's: the ladder past 10 is in (#399),
+  and the levels past 10 wait to be made again with it (#18).
 
 Hit points / average damage a hit, by role and level:
 

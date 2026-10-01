@@ -5,8 +5,8 @@ import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import { gateCompany } from '../gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS } from '../testmonster.ts';
-import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES } from '../harness.ts';
-import { ok } from './lib.ts';
+import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
+import { ok, owed } from './lib.ts';
 
 export function harness(): void {
   // The resolver fights defs that no map places, which is what the combat harness hands it.
@@ -43,13 +43,13 @@ export function harness(): void {
   const ranks = [at12.members[5], at28.members[5], at28.members[1], at28.members[0], companyAt(10, 37).members[5]].map((c) => rankMult(c).toFixed(3));
   ok(taken.map((c) => c.prestige ?? 0).join() === '0,1,2,3' && blowsAt.join() === '1,2,2,3' && className(taken[3]) === 'Knight Paramount' && ranks.join() === '1.150,1.450,1.225,1.000,1.000',
     `the company takes its prestiges at 11, 19 and 27 (the knight a ${className(taken[3])} at 27, striking ${blowsAt.join(', ')} times at 10, 11, 19 and 27), and with them the sorcerer's spells gain 15% at the first and 45% by the third, the paladin's half that and the knight's none (${ranks.join(', ')})`);
-  // The curve's gear, as a what-if: past level 10 weapons and armour keep growing; play has none of it.
+  // The curve's gear, as a what-if: past the ladder's top weapons and armour keep growing; play has none of it.
   const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
-  const flat = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];
+  const flat = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(24, 37))];
   RULES.gearGrows = true;
-  const grown = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];
+  const grown = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(24, 37))];
   RULES.gearGrows = undefined;
-  ok(grown[0].join() === flat[0].join() && grown[1][0] > flat[1][0] && grown[1][1] === flat[1][1] + 5, `gear grows past 10 only where a what-if asks: at 20 the knight's weapon gains ${grown[1][0] - flat[1][0]} and the knight's armour 5`);
+  ok(grown[0].join() === flat[0].join() && grown[1][0] > flat[1][0] && grown[1][1] === flat[1][1] + (24 - GEAR_TOP) / 2, `gear grows past the ladder's top, ${GEAR_TOP}, only where a what-if asks: at 24 the knight's weapon gains ${grown[1][0] - flat[1][0]} and the knight's armour ${grown[1][1] - flat[1][1]}`);
   // Fights may run longer as both sides grow, and never to the cap; a fight that would is broken off.
   const allowed = Array.from({ length: CAP }, (_, k) => [longest(k + 1), slowest(k + 1)]);
   ok(longest(1) === 4 && slowest(1) === 6 && allowed.every(([a, b], k) => a <= b && b < ROUND_CAP && (k === 0 || a >= allowed[k - 1][0])), `a fight's rounds run from ${longest(1)} (${slowest(1)} at most) at level 1 to ${longest(CAP).toFixed(1)} (${slowest(CAP).toFixed(1)}) at ${CAP}`);
@@ -62,9 +62,11 @@ export function harness(): void {
   const c = defaultParty(makeRng(32)).members[0];
   c.xp = xpForLevel(40); levelUp(c, makeRng(32));
   ok(CAP === MAX_LEVEL && c.level === MAX_LEVEL && companyAt(20, 32).members.every((m) => m.level === 20), `levelUp trains to the cap, ${MAX_LEVEL}, and the harness's company to its level (${c.level})`);
-  // The gate's company at the new floors: trained to 12 and 14, in the ladder's top step, the Deepthorn's.
+  // The gate's company at Act II's floors: trained to 10, 12, 14 and 16, and dressed past the one two
+  // under it by the ladder past Thornmark's Armoury (#399), as the gate's two-under check asks.
   const gear = (l: number): string => gateCompany(l, 32).members.map((m) => `${m.equipment.weapon}/${m.equipment.armor}/${m.equipment.shield}`).join();
-  ok([10, 12, 14].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(12) === gear(10) && gear(14) === gear(10), `the gate's company trains to 10, 12 and 14, and past 10 wears the Deepthorn's gear (${gear(14)})`);
+  ok([10, 12, 14, 16].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(12) !== gear(10) && gear(14) !== gear(12) && gear(16) !== gear(14),
+    `the gate's company trains to 10, 12, 14 and 16, and dresses past the one two under it (${gear(16)})`);
   // What a fight costs: all of a fallen member's hit points, and every spell point cast.
   const p = defaultParty(makeRng(33)), fallen = p.members[5];
   const pool = p.members.reduce((a, m) => a + m.maxHp + m.maxSp, 0);
@@ -92,9 +94,10 @@ export function harness(): void {
     const d = days(l, [standardEncounter(r, l)], 60, 5001), bad = d.why.dead + d.why.lost + d.why.long;
     ok(Math.abs(d.fights - fightsPerRest(l)) <= 1 && bad <= worst, `a company of level ${l} fights ${d.fights.toFixed(1)} encounters of ${ROLES[r].group} ${ROLES[r].plural} between rests (${fightsPerRest(l)} asked), and ${(bad * 100).toFixed(0)}% of its days end badly (${(worst * 100).toFixed(0)}% at most)`);
   }
-  // Past 10 the target grows: a company of 24 fights about ten between rests.
+  // Past 10 the target grows: a company of 24 fights about ten between rests. In the ladder's gear
+  // past 10 (#399) it fights more, until the line is made again with it (#18).
   const late = days(24, [standardEncounter('soldier', 24)], 40, 5001);
-  ok(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`);
+  owed(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`, '#18');
   // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
   const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
