@@ -1616,3 +1616,15 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Barrow Wolf at 0.8; e8dc9bc main). Landing check on its head (main in): ALL OK (23 owed),
   SMOKE OK, "Nothing new."; CI green. Merged as dea8e86; main's tree is the tested tree (dfdf31e).
   #306 (D2) next on its round, then #310.
+- 00:38: #313's head (e8dc9bc) landed first (above). #304 (#215, I3) landed: its merge 6c593e7
+  (`EDGES_OWED` emptied as D3 and I3 meet theirs) merged onto dea8e86: ALL OK (19 owed: #215's
+  gone), SMOKE OK, "Nothing new."; every open square of the outdoors reachable (7500 of 7500); I3
+  at 8 7.25 fights to a rest; CI green. Merged as 9b51988 (a guessed full sha first refused, 409);
+  main's tree is the tested tree (08325a1). #215 closes, and Henlys is walked to: the one quest
+  can be finished in play again. #307 (J4) and #308 (I5) to merge main.
+- 00:38: `reviews/309.md` (#72, D4): ready after fixes. Should-fix: #170's C5 touches D4 only at a
+  point, so it cannot pay the owed corner; the squares face D5, whose corner carries the atlas's
+  road to C5: who carries it is the owner's call. Nits: a swimmer wades round the bends; the cave's
+  squares outside the stated x 12–20; MONSTERS.md:516; the #40 note stale. The bends read as a
+  switchback on the automap, a row of peaks at eye level. The corner, the look and the choices to
+  a delegate.
