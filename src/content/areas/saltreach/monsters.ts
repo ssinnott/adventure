@@ -7,11 +7,19 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 /** The drawings Saltreach's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
 export const SPRITES = [
   'brineling',
+  'bargeman', 'barge_master',
+  'drowned_chanter', 'choirmaster',
   'fen_eel',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
   { id: 'brineling', name: 'Brineling', plural: 'Brinelings', sprite: 'brineling', kind: 'rift', look: 'Green glass, walking, with a light in it.', level: 10, hp: 89, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 393, gold: [0, 0], tint: '#3a9a82', size: 0.72, inflict: { cond: 'paralysed', chance: 0.1 } },
+  { id: 'bargeman', name: 'Bargeman', plural: 'Bargemen', sprite: 'bargeman', kind: 'person', look: 'A barge pole, a knife, and no questions.', level: 10, hp: 90, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 11, xp: 393, gold: [12, 35], tint: '#6e7c86', size: 0.92 },
+  { id: 'barge_master', name: 'Barge Master', plural: 'Barge Masters', sprite: 'barge_master', kind: 'person', look: 'A ledger in one hand and a cudgel in the other.', level: 11, hp: 95, ac: 17, attack: 7, dice: 1, sides: 10, bonus: 4, speed: 11, xp: 433, gold: [40, 100], tint: '#3a3e52', size: 1.0 },
+  // the Drowned Temples' choir (#175), a caster on MONSTERS §4.4's line at 11
+  { id: 'drowned_chanter', name: 'Drowned Chanter', plural: 'Drowned Chanters', sprite: 'drowned_chanter', kind: 'dead', look: 'A priest of the drowned god, still chanting.', level: 11, hp: 112, ac: 17, attack: 9, dice: 2, sides: 6, bonus: 4, speed: 12, xp: 578, gold: [0, 15], ranged: true, tint: '#5e7a74', size: 0.95 },
+  // the choir's end (#175), the area's boss at 12; its damage is an escorted boss's, for #175's gate to tune
+  { id: 'choirmaster', name: 'The Choirmaster', plural: 'Choirmasters', sprite: 'choirmaster', kind: 'dead', look: 'The choir\'s master, beating time on a bell.', level: 12, hp: 540, ac: 19, attack: 10, dice: 6, sides: 8, bonus: 6, speed: 13, xp: 7573, gold: [60, 120], tint: '#4a6a6e', size: 1.1 },
   // the river and the fen's water (#261), a skirmisher on MONSTERS §4.4's line at 10
   { id: 'fen_eel', name: 'Fen Eel', plural: 'Fen Eels', sprite: 'fen_eel', kind: 'beast', look: "A back as thick as a man's leg, turning in the reeds.", level: 10, hp: 89, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 393, gold: [0, 0], tint: '#3c4228', size: 0.75 },
 ];

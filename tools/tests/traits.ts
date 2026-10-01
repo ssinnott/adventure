@@ -45,7 +45,7 @@ export function traits(): void {
   s.round = 2;
   const pal = mk('paladin'), holy = (d: typeof MONSTERS[string]): number => traitDamage(s, pal, sword, { ...rat, def: d });
   const struck = Object.values(MONSTERS).filter((d) => holy(d) === HOLY_STRIKE_DMG).map((d) => d.id).sort();
-  ok(struck.join() === 'barrow_captain,barrow_guard,bone_knight,drowned,ghoul,skeleton,wraith', `Holy Strike lands on the seven dead (${struck.join(', ')})`);
+  ok(struck.join() === 'barrow_captain,barrow_guard,bone_knight,choirmaster,drowned,drowned_chanter,ghoul,skeleton,wraith', `Holy Strike lands on the nine dead (${struck.join(', ')})`);
   ok(Object.values(MONSTERS).every((d) => d.kind === 'dead' || holy(d) === 0), 'and on nothing else: not the slime, the crab or the wardens');
   ok(holy({ ...MONSTERS.slime, kind: 'dead' }) === HOLY_STRIKE_DMG && holy({ ...MONSTERS.skeleton, kind: 'beast' }) === 0, 'it follows the kind: a dead slime takes it, a skeleton made a beast does not');
   s.round = 1;
