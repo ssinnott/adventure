@@ -1709,3 +1709,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   I'll open E's pull request", with no branch pushed: told the Downs are in, to settle the two boss
   floors `OWED` to #47 in `gate.ts` (Greywater's captain and deacon), write the hours and what the
   owner found into shelf.md, and open E, closing #47.
+- 01:29: #314 (#312, the lighthouse) landed: its round (dd3c835: one tone near and far, the beam
+  masked to what nothing nearer painted, the flank at its foot, the far pass keyed on
+  `weatherSight`, Gullwick's beach at 6,14; checks for the lamp by day, the frame after the oil, the
+  fog and the beam over a wall) and its merge 116a7ba, merged onto f666c77: ALL OK (7 owed), SMOKE
+  OK, "Nothing new."; CI green. Merged as 103064a; main's tree is the tested tree (56c6f04). #312
+  closes: the owner's lighthouse is in. The #45 session done.
+- 01:30: #316 to a new session, session_01Wp8nGn1FQNFo3JPMzvnZ7x, on `claude/m1-316-smoke-clear`
+  (the #97 session holds 742k of context; a fresh one is cheaper for a small fix).
+- Left in Phase 1 (#26): #218 (#315 in review), #47 (the pilot's E, told to open), #316 (just
+  started) and #311 (not approved; #68, its blocker, closed). Then #65, #208 and #26 close.
