@@ -1,11 +1,9 @@
 // Sunderwood's part of the world map: its two zones, the plates of its town and dungeon, and its
-// sites. Nothing of it is built yet, so it is listed in no AREAS; the plan (src/content/atlas.ts)
-// spreads these rows in where its own were until the area's first map (#195) lists it.
-// docs/areas/sunderwood.md is its brief.
+// sites. docs/areas/sunderwood.md is its brief.
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], seeds: [[292, 40], [300, 86]] },
+  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }], seeds: [[292, 40], [300, 86]] },
   { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], seeds: [[372, 50], [370, 96]], label: [378, 84] },
 ];
 

@@ -76,10 +76,11 @@ export const ROADS: Record<string, readonly string[]> = {
   downs: ['downs_f2:f2_bandits'],
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
   deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
+  eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears3'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', sunderwood: 'Sunderwood' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at

@@ -574,21 +574,20 @@ export async function pillars(): Promise<void> {
     ok(lay(['MMMMMM', 'M,,,,M', 'M====M', 'M,,,,M', 'MMMMMM']).length === 2, 'a road that runs into its ring against atlas land fails, at both ends');
     ok(lay(['MMMMMM', 'M,,,,M', 'MW,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and so does sea at its edge');
     ok(lay(['MMMMMM', 'M,,,,M', '=,,,,M', 'M,,,,M', 'MMMMMM']).length === 1, 'and a road through a gap in the ring');
-    // Land against open water along an edge: a shore, not water cut short. Laid in Thornmark's place,
-    // its east edge faces Lyngwyn at 264,44-46; the premise is checked first.
+    // Land against open water along an edge: a shore, not water cut short. Laid on the Deepthorn's
+    // west, in the cut H4, its east edge faces the inner sea at 226,96-98; the premise is checked first.
     const coast = (rows: string[]): EdgeFault[] => {
       const fixture: MapDef = { id: 'fixture_coast', name: 'Coast fixture', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows };
-      const w = rows[0].length, zone: AtlasZone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', maps: [{ map: 'fixture_coast', at: [264 - w, 43] }] };
-      const others = ATLAS.zones.filter((z) => z.id !== 'thornmark');
-      const atlas = { ...ATLAS, zones: [...others, zone] };
+      const w = rows[0].length, zone: AtlasZone = { id: 'fixture_coast', name: 'Coast fixture', area: 'thornmark', maps: [{ map: 'fixture_coast', at: [226 - w, 95] }] };
+      const atlas = { ...ATLAS, zones: [...ATLAS.zones, zone] };
       if (!mapAt(atlas, fixture.id)) throw new Error('the coast fixture is not laid: its checks would pass on nothing');
-      return edgeFaults(atlas, [...MAP_DEFS.filter((d) => d.id !== 'thornmark'), fixture]).filter((e) => e.map === 'fixture_coast' && e.x === w - 1);
+      return edgeFaults(atlas, [...MAP_DEFS, fixture]).filter((e) => e.map === 'fixture_coast' && e.x === w - 1);
     };
-    const shore = worldGrid(ATLAS, MAP_DEFS), open = [44, 45, 46].every((y) => {
-      const i = y * shore.width + 264;
-      return isWater(shore.t(264, y)) && !shore.river[i] && !shore.road[i] && !shore.built[i];
-    });
-    ok(open, 'the atlas at 264,44-46 is open water, no river, road or zone map');
+    const shore = worldGrid(ATLAS, MAP_DEFS), open = [96, 97, 98].every((y) => {
+      const i = y * shore.width + 226;
+      return isWater(shore.t(226, y)) && !shore.river[i] && !shore.road[i] && !shore.built[i];
+    }) && [95, 96, 97, 98, 99].every((y) => Array.from({ length: 7 }, (_, k) => 220 + k).every((x) => !shore.built[y * shore.width + x]));
+    ok(open, 'the atlas at 226,96-98 is open water, no river, road or zone map, and the fixture\'s squares beside it are no zone map\'s');
     ok(open && !coast(['MMMMMM', 'M,,,,M', 'M,,,,M', 'M,,,,M', 'MMMMMM']).length, 'map land against open atlas water along an edge passes, a shore');
     // A ford: the atlas's road crosses a river beyond the edge, and only a road on the map meets it.
     const ford = { t: TI.shallow, road: true, river: true };

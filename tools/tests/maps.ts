@@ -31,7 +31,6 @@ const UNPLACED: Record<string, string> = {
   ashen_overseer: '#188',
   tide_elder: '#190', tide_warden: '#190',
   watch_hall: '#201', watch_refectory: '#201', watch_stores: '#201', priors_room: '#201',
-  pine_bear: '#195',
   sunderling: '#198', sunder_warden: '#199',
   ashen_gleaner: '#198',
 };
