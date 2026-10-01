@@ -19,5 +19,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the cove's chained and the hold's rows (#188, #190), a controller on MONSTERS §4.4's line at 13: the chain holds
   { id: 'ashen_overseer', name: 'Ashen Overseer', plural: 'Ashen Overseers', sprite: 'overseer', kind: 'person', steady: true, look: 'Grey to the wrist, and a chain in each hand.', level: 13, hp: 97, ac: 18, attack: 8, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 513, gold: [20, 50], inflict: { cond: 'paralysed', chance: 0.25 }, tint: '#4a4248', size: 0.95 },
   // the Tide Ship's lower decks and the east shore (#189, #190), fodder on MONSTERS §4.4's line at 12, eight to a group: it carries disease
-  { id: 'bilge_rat', name: 'Bilge Rat', plural: 'Bilge Rats', sprite: 'bilge_rat', kind: 'beast', look: 'The rats aboard have been eating well.', level: 12, hp: 63, ac: 16, attack: 7, dice: 3, sides: 5, bonus: 3, speed: 12, xp: 237, gold: [0, 0], inflict: { cond: 'diseased', chance: 0.15 }, tint: '#3e3832', size: 0.4 },
+  { id: 'bilge_rat', name: 'Bilge Rat', plural: 'Bilge Rats', sprite: 'bilge_rat', kind: 'beast', look: 'The rats aboard have been eating well.', level: 12, hp: 104, ac: 16, attack: 7, dice: 1, sides: 6, bonus: 3, speed: 12, xp: 237, gold: [0, 0], inflict: { cond: 'diseased', chance: 0.15 }, tint: '#3e3832', size: 0.4 },
 ];
