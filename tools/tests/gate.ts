@@ -87,7 +87,12 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  * when it was owed. It is reported, not failed, and fails once it is inside its limit; it fails too if
  * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest).
  */
-export const OWED: Record<string, { whose: string; at: number }> = {};
+export const OWED: Record<string, { whose: string; at: number }> = {
+  // Past 10 the company's gear stops growing (GEAR's top step is the Deepthorn's), so a company two
+  // under a box at 14 dresses as one at 14 and wins as often: the gear past 10 is #18's.
+  'eaves_i2: under': { whose: '#18', at: 1 },
+  'Sunderwood: under': { whose: '#18', at: 1 },
+};
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
 

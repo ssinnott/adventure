@@ -199,7 +199,8 @@ features; the pay shared out over the area (§8).
   rest, off the aim of 6.5 to 8.5 and inside the limit; the road is walked every time. As measured it
   pays about 1,250 xp a member and 460 gold. Two under, at 12, it wins every fight too: past 10 the
   company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company back, which
-  the gate's limit asks (§8). Woods are on the road before it (the Downs' E2, the Deepthorn's H3
+  the gate's limit asks (§8): owed to #18, as every Act II box will owe it until the gear past 10
+  is built. Woods are on the road before it (the Downs' E2, the Deepthorn's H3
   and I3), so the area claims the bears, the moths and the moths' sleep as new, and not the woods.
   What the owner finds by hand goes here when the box has been played.
 
@@ -562,7 +563,10 @@ Decided by delegate for #195, each the owner's to overturn:
    owls do.
 4. **The shrine gives speed,** which no shrine or fountain on the road gave; the cairn 160 gold and
    a Sapphire Vial; the pack 300 gold and a Warden's Halberd +1 of its own.
-5. **The climate:** summer 16, winter -2, damp to 0.08, fog 0.6, eight hours behind the Foreland.
+5. **The gate two under is owed to #18,** for I2 and for the area, with the groups kept at the
+   line's standard size: no group size turns back a company whose gear is the same as at 14, and
+   bigger groups only push fights to a rest at 14 under its limit.
+6. **The climate:** summer 16, winter -2, damp to 0.08, fog 0.6, eight hours behind the Foreland.
 
 ## 10. Names
 
