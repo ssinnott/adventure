@@ -5,9 +5,9 @@ import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 
 const warhammer = W('warhammer', 'War Hammer', 300, 1, 10, { bonus: 2, classes: [...MARTIAL, 'cleric'] });
 const greatsword = W('greatsword', 'Great Sword', 450, 2, 6, { bonus: 1, twoHanded: true, classes: MARTIAL });
-const elfbow = W('elfbow', 'Thornmark Bow', 420, 1, 10, { bonus: 2, ranged: true, twoHanded: true, classes: ['ranger'] });
-const runeDagger = W('rune_dagger', 'Rune Dagger', 320, 1, 6, { bonus: 3 });
-const groveStaff = W('grove_staff', 'Grove Staff', 280, 1, 8, { bonus: 2, twoHanded: true });
+const elfbow = W('elfbow', 'Thornmark Bow', 420, 1, 10, { kind: 'bow', bonus: 2, ranged: true, twoHanded: true, classes: ['ranger'] });
+const runeDagger = W('rune_dagger', 'Rune Dagger', 320, 1, 6, { kind: 'light', bonus: 3 });
+const groveStaff = W('grove_staff', 'Grove Staff', 280, 1, 8, { kind: 'staff', bonus: 2, twoHanded: true });
 const runedRobe = A('runed_robe', 'Runed Robe', 350, 3);
 const brigandine = A('brigandine', 'Brigandine', 400, 5, { classes: NO_CASTER_HEAVY });
 const towerShield: ItemDef = { id: 'tower_shield', name: 'Tower Shield', slot: 'shield', price: 400, ac: 3, classes: MAIL };
