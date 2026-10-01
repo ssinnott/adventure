@@ -6,7 +6,7 @@ import type { Rng } from '../lib/engine/rng.ts';
 import { World, signLine } from './world.ts';
 import type { WorldState } from './world.ts';
 import { groupDrawn } from './world.ts';
-import { defaultParty, isDown, allDown, heal, spellHeal } from './party.ts';
+import { defaultParty, isDown, allDown } from './party.ts';
 import { meet, answer, heard } from './people.ts';
 import type { Person } from './people.ts';
 import type { Party } from './party.ts';
@@ -14,7 +14,7 @@ import { buildMaps } from '../content/maps.ts';
 import type { GameMap, Feature, Interior, Choice, Passage, Teaching } from './map.ts';
 import * as passage from './passage.ts';
 import * as prestige from './prestige.ts';
-import { startCombat } from './combat.ts';
+import { startCombat, castOnParty } from './combat.ts';
 import { spell } from './spells.ts';
 import { save as saveTo, load as loadFrom, browserStore, hasSave } from './save.ts';
 import type { Store } from './save.ts';
@@ -294,6 +294,7 @@ export class Game {
   fight(groupIds: string[]): void {
     const groups = this.world.groupDefs(groupIds);
     const state = startCombat(this.party, groups, this.rng, this.world.combatWeather());
+    this.world.endWalk();
     // A kind not met before, one unseen beside or behind the party or in the ranks, says what it is as the fight opens.
     state.log.push(...this.world.meet(groups.flatMap((x) => x.monsters)));
     this.push(new CombatScreen(state, groupIds));
@@ -311,8 +312,8 @@ export class Game {
     this.screens = [new TitleScreen(hasSave(this.store), 'The party has fallen. Caldera goes on without them.')];
   }
 
-  /** Cast an exploration spell by the selected caster. */
-  castExplore(casterIndex: number, spellId: string): void {
+  /** Cast an exploration spell by the selected caster; Waymark sets its mark, or with `back` returns to it. */
+  castExplore(casterIndex: number, spellId: string, back = false): void {
     const c = this.party.members[casterIndex];
     const sp = spell(spellId);
     if (c.sp < sp.sp) { this.say(`${c.name} lacks the spell points.`); return; }
@@ -321,8 +322,16 @@ export class Game {
       case 'light': this.world.state.light = 200; this.say(`${c.name} casts ${sp.name}. The way ahead is lit.`); break;
       case 'wizard_eye': this.world.revealAll(6); this.say(`${c.name} casts ${sp.name}. The map fills in around you.`); break;
       case 'town_portal': { const name = this.world.townPortal(); this.say(`${c.name} casts ${sp.name}. The world folds, and you stand in ${name}.`); this.enterCell(); break; }
+      case 'walk': this.world.bear('walk'); this.say(`${c.name} casts ${sp.name}. The shallows will bear you a while.`); break;
+      case 'float': this.world.bear('float'); this.say(`${c.name} casts ${sp.name}. Your feet leave the ground.`); break;
+      case 'mark':
+        if (back ? this.world.toMark() : this.world.setMark()) {
+          this.say(back ? `${c.name} casts ${sp.name}. The world folds, and you stand at the mark.` : `${c.name} casts ${sp.name}. The ground here is marked.`);
+          if (back) this.enterCell();
+        } else { c.sp += sp.sp; this.say(`${c.name} casts ${sp.name}, but the mark will not take here.`); }
+        break;
       default:
-        if (sp.target === 'party' && sp.heal) { for (const t of this.party.members) heal(t, spellHeal(c, sp.heal)); this.say(`${c.name} casts ${sp.name}. The party is healed.`); }
+        if (sp.target === 'party' && (sp.heal || sp.cure)) this.say(castOnParty(c, sp, this.party));
         else this.say(`${c.name} casts ${sp.name}.`);
     }
   }
