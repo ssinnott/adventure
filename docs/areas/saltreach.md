@@ -123,8 +123,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   toads on the island's far side; two brine Rifts (`b5_rift_n`, #165's cells, and `b5_rift_s`, its
   breach), each two tide elders at the heart, quiet once they fall. The secret is a hollow under the
   plinth's landing, a Brine Shard and a Kite Shield +1 in it; the hint is the barge-poles' marks on
-  the landing, one plank sprung. The gate holds at 11, at 7.1 fights to a rest on the box and 5.4 in
-  each Rift.
+  the landing, and one plank among them unscored and new-nailed. The gate holds at 11, at 7.1 fights
+  to a rest on the box and 5.4 in each Rift.
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
@@ -304,15 +304,15 @@ settled in its issue, and what the pilot teaches changes them.
   Rietum, who saw the barge and knows a pole's mark.
 - **New here.** The toads, a new family (#223); a Stone's plinth without its Stone.
 - **Finds.** A Kite Shield +1 under the landing.
-- **Pay.** About 1,600 xp a member, its two Rifts inside it (§8).
+- **Pay.** About 1,000 xp a member; as built about 1,600, its two Rifts inside it (§8).
 - **As built** (#173, 1 October): band 11–12, so that the bull toads and the tide elders sit in it.
   The plinth's island is reached by the duckboards, a ring of shallows round the rest of it. The
   groups are three on the box and one warden in each Rift, each a fight inside the gate's aim at 11:
   two groups of five fen toads on the boards, and two bull toads on the island's far side, the box's
   hardest; the Rifts, on #165's cells and breach, hold two tide elders each at the tear's heart and
   go quiet when they fall, #191 adding the Stone home as the other way. No leeches: the pools are
-  C5's fight. The hint is the landing's pole-marks, always there; the priest at Rietum's line about a
-  pole's mark is #172's. The shard under the landing is a Brine Shard, as C5's is. No camp. As
+  C5's fight. The hint is the landing's pole-marks, always there; the priest at Rietum's line about
+  a pole's mark is #172's. The shard under the landing is a Brine Shard, as C5's is. No camp. As
   measured, the box and its Rifts pay about 1,650 xp a member and 410 gold, the company at about 10
   in the road's order until C4 and C3 are listed ahead of it; at 11 the figure is about 1,700.
 
@@ -510,17 +510,19 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
 
 - **Experience.** The curve (EXPANSION §5.2, #159) gives an area the climb from its floor to the
   next area's floor, divided by 0.75: from 10 to 12 that is 6,200 / 0.75, about 8,267 xp a member,
-  with today's `xpForLevel`. The shares of §4 are C5 700, C4 600, C3 1,000, B5 1,600, B6 800, the
-  temples 1,700, C6 500, Saltmouth 300, C7 400, and the four side quests about 700 between them:
+  with today's `xpForLevel`. The shares of §4 are C5 700, C4 600, C3 1,000, B5 1,000, B6 800, the
+  temples 1,800, C6 700, Saltmouth 300, C7 700 and the four side quests about 700 between them:
   8,300 without the willows. A small Rift is budgeted at about 450 a member on top of its box's
-  share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve, for kill-by-level
-  to settle; B5 builds its two Rifts inside its 1,600. B5's share was 1,000 until it was measured
-  (#173): a fight inside the gate's aim at 11 costs about 300 xp a member whatever its monsters, so
-  the brief's five fights cost about 1,600, and the temples, C6 and C7 gave back 100, 200 and 300.
-  Each box still to build is priced at about 300 a fight, not by its share alone. The willows
-  add 800 when they are built. From here on a kill pays by level (#159), so a company that arrives
-  at 10 earns the shares as written and one that arrives at 13 earns less; the curve's row reports
-  what a clear falls short of as owed to #153 until the boxes exist.
+  share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve. B5 as built pays
+  about 1,600, its two Rifts inside it (#173): a fight inside the gate's aim at 11 costs about 300
+  xp a member whatever its monsters, and its five come to about 1,650 measured with the company at
+  about 10, about 1,700 at 11. No other share gives back the 600, so the area comes to about 9,350,
+  some 13% over the curve's 8,267. The surplus is for a kill paid by level to damp, and each box
+  still to build is priced by its fights, about 300 a fight, and recorded as built where that
+  passes its share. The willows add 800 when they are built. From here on a kill pays by level
+  (#159), so a company that arrives at 10 earns the shares as written and one that arrives at 13
+  earns less; the curve's row reports what a clear falls short of as owed to #153 until the boxes
+  exist.
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
@@ -605,18 +607,19 @@ Decided by delegate for #170, each the owner's to overturn:
 
 Decided by delegate for #173, each the owner's to overturn:
 
-1. **The band is 11–12,** not the brief's 11: the floor stays 11, and the top meets B6's so the box's
-   bull toads and tide elders sit in it.
-2. **The hint is the landing's pole-marks,** always there, one plank sprung where a pole went down;
-   the priest at Rietum's line about a pole's mark is #172's to add.
+1. **The band is 11–12,** not the brief's 11: the floor stays 11, and the top meets B6's so the
+   box's bull toads and tide elders sit in it.
+2. **The hint is the landing's pole-marks,** always there, and one plank among them unscored and
+   new-nailed; the priest at Rietum's line about a pole's mark is #172's to add.
 3. **The shard is a Brine Shard,** as C5's: a chip of the Stone would be an item with no use until
    #191, and would say the plinth takes it.
-4. **Every fight is a real one at 11,** and B5's share is 1,600, not 1,000 (§8): two groups of five
-   fen toads, two bull toads, and two tide elders at each Rift's heart, each inside the gate's aim
-   or, for the Rifts, a quarter of a fight under it (5.4 to its 5.75) and inside its limit. A lone
-   bull toad or tide elder was eighteen to twenty fights to a rest at 11, no fight at all, and a
-   tide elder with three brinelings reached the band's top only by averaging. The temples, C6 and
-   C7 give back the 600.
+4. **Every fight is a real one at 11,** and B5 is built at about 1,600 over its share of 1,000
+   (§8): two groups of five fen toads, two bull toads and two tide elders at each Rift's heart,
+   each inside the gate's aim or, for the Rifts, a quarter of a fight under it (5.4 to its 5.75) and
+   inside its limit. A lone bull toad or tide elder was eighteen to twenty fights to a rest at 11,
+   no fight at all, and a tide elder with three brinelings reached the band's top only by averaging.
+   No other box's share is cut: a fight at 11 costs about 300 a member in any box, so a cut would
+   balance only on paper, and C6 is being built against its 700.
 5. **No leeches:** the pools are C5's fight, and the toads are B5's new family.
 6. **The Rifts are #165's cells and breach,** each its warden alone and closed `until` it falls; the
    Stone home is #191's. The north Rift was the spiral while it held a room group, which the cells

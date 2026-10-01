@@ -75,11 +75,11 @@ export const DELTA_B5: MapDef = {
   ],
   features: [
     // The duckboards, from the Delta road.
-    { kind: 'event', x: 30, y: 13, id: 'b5_boards', once: true, text: 'Duckboards go out from the dry ground west over the fen, plank on plank, to a mound far off with one upright thing on it.' },
+    { kind: 'event', x: 30, y: 13, id: 'b5_boards', once: true, text: 'Duckboards rise out of the marsh, staked in the mud, and go west plank on plank to a mound far off. Nothing stands on it.' },
     { kind: 'shrine', x: 30, y: 12, id: 'b5_shrine', text: 'A driftwood shrine to the drowned god at the boards\' start, notched in tally. The notches stop a hand short of the top.', stat: 'luck', done: 'No notch has been cut since.' },
     { kind: 'event', x: 21, y: 13, id: 'b5_channel', once: true, text: 'The boards cross the channel on three planks lashed to posts, the water brown and quick beneath, going south to the sea.' },
     // The island: the landing, the hollow under it, the plinth.
-    { kind: 'event', x: 13, y: 13, id: 'b5_landing', text: 'The plinth\'s landing, grey planks scored by barge-poles, every mark dragging south. One is sprung where a pole went down between, and no water under it.' },
+    { kind: 'event', x: 13, y: 13, id: 'b5_landing', text: 'The plinth\'s landing, grey planks scored by barge-poles, every mark dragging south. One plank is unscored, and its nails are new.' },
     { kind: 'event', x: 13, y: 15, id: 'b5_under', once: true, text: 'Dry mud under the landing, and in it what was dropped in haste: a shield face down, and beside it a green glow through the dark.' },
     { kind: 'chest', x: 13, y: 16, id: 'b5_under_cache', gold: 80, items: ['brine_shard', 'shield+1'] },
     { kind: 'event', x: 8, y: 14, id: 'b5_plinth', once: true, text: 'Stienwierde. The plinth, and nothing on it: a socket cut clean, a man\'s width. You have seen that cut before, a hand-span of it, under the roots.' },
