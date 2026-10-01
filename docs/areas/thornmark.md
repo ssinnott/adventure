@@ -27,7 +27,7 @@ The atlas (its rows in `src/content/areas/thornmark/atlas.ts`, merged into `ATLA
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Thornmark | 5–10, its map's | 2,028 | 901: the Thornmark map, laid at 232,30 |
-| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I5, the wood to the head, at 264,126 (#217) |
+| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I4, Henlys, at 264,94 (#49); I5, the wood to the head, at 264,126 (#217) |
 | The area | 5–10 | 5,274 | a sixth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -136,16 +136,28 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   Split Oak. Seven groups: dire wolves, the nest's two brood and its keepers, rift hounds until the
   tear is closed, brambles short of the ford and rootwalkers east of it, where the road runs on out
   of the east edge for I3 and Henlys. The gate holds at 8, at 7.9 fights to a rest.
+- **Henlys** (I4, `deepthorn_i4`, core, band 8–10; #49): the oldest hold, its halls grown into oaks
+  round a yard, its gate shut with brambles; inside, the gate-yard's hearth (a camp), the spring and
+  the hall, where Senara keeps the treaty and Mawgan sits under the hall's oak. The Deepthorn's
+  step: the treaty's seal, which ends Thornmark's chapter (§5). West and south the old groves, where
+  the rootwalkers all face the holly, and behind it the first grove, its chest at the oak's roots a
+  Thornmark Bow +2; east the long glade, its sign at the fork, its shrine and at its head the first
+  elder's statue, whose riddle Thornhold's gate answers for Brigandine +3. Nine groups, the old wood's
+  asleep once the tear is closed. It is reached through I3 (#215): H4 between it and H3 is cut
+  (§11), and the outdoors owes its squares to #215 until then (`tools/tests/outdoors.ts`). From the
+  groves' path a way runs on south through the trees at 24,29 to 24,31, into I5 (#217).
 - **The wood to the head** (I5, `deepthorn_i5`, country, band 8–10; #217): a strip of forest down
-  Penspern's west side, walked by three paths: in from Henlys's south edge, down the shingle and
-  through the trees to the tip, where the beach runs on east under the head for J5. The owls' roost,
-  a dead oak on the shore, is the first den whose brood walks only by night (`when`), its hoard a
-  Silver Torc; by night the Hearth shows through the trunks; a camp under the last oaks. The secret:
-  a root with a rope's groove at the water's edge (the hint), and under it, behind a secret door in
-  the trees, the hold's youths' boat with a cask of Lantern Oil and no gold (#218). Five groups: the
-  roost's four old owls and its two broods of three, three brambles on the way down to the shore and
-  three rootwalkers at the tip. The Hearth Isle's corner is kept, its land drawn as rock and never
-  walked. The gate holds at 8, at 7.4 fights to a rest; the box pays 514 xp a member as measured.
+  Penspern's west side, walked by three paths: in from Henlys's groves (its way at 24,29), down the
+  shingle and through the trees to the tip, where the beach runs on east under the head for J5. The
+  owls' roost, a dead oak on the shore, is the first den whose brood walks only by night (`when`),
+  its hoard a Silver Torc; by night the Hearth shows through the trunks; a camp under the last oaks.
+  The secret: a root with a rope's groove at the water's edge (the hint), and under it, behind a
+  secret door in the trees, the hold's youths' boat with a cask of Lantern Oil and no gold (#218).
+  Five groups: the roost's four old owls and its two broods of three, three brambles on the way down
+  to the shore and three rootwalkers at the tip. The Hearth Isle's corner is kept, its land drawn as
+  rock and never walked. A swimmer can reach the boat round the root by the water, as the skills
+  that open the map are to (EXPANSION §7). The gate holds at 8, at 7.4 fights to a rest; the box
+  pays 514 xp a member as measured.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
@@ -155,7 +167,9 @@ Warden of the Cut is dead and the Rift's groups stop coming, 34% less than befor
 bought, so the gold matters: about 8,400 for six members from 5 to 10. A clear of Thornmark pays
 10,794 xp a member of the 13,667 its curve asks, and 7,600 gold of the 8,400 (the guilds' four
 quests and the Wardens' chest give 800 xp a member and 820 gold of it, and #219's side quests 567 xp
-and 1,082 gold): the curve (`src/content/progression.ts`) reports both as owed to the pilot (#26).
+and 1,082 gold): the curve (`src/content/progression.ts`) reported both as owed to the pilot (#26)
+until the Deepthorn's boxes filled it: with H3, I4 and I5 a clear pays 13,713 xp a member and 8,485
+gold, and nothing is owed (§8).
 The curve counts both of a choice's ways, so Leofwin's band and Thora's are each in it though a
 company meets one at most.
 
@@ -370,6 +384,13 @@ settled in its issue, and what the pilot teaches changes them.
 - **Finds.** The first grove holds a Thornmark Bow +2; the statue gives Brigandine +3 for its
   answer.
 - **Pay.** About 890 xp a member.
+- **As built** (#49, 30 September): the brief's places and groups, the old wood set on MONSTERS
+  §4.4's lines for its roles and levels (§7), since on its drafts every group was won at level 4
+  and a company at 8 fought 18.8 to a rest. Harder monsters, not bigger groups: the brambles three
+  to a group, the rootwalkers three, the owls two over two brambles by night, the wolves eight. It
+  gives a company at 8 7.2 fights to a rest, every group won. It pays 1,098 xp a member and 275
+  gold, against the 890 and 275 shared to it here; the old wood's pay is its role's at its level.
+  The heartwood is drawn at 1.3, not 1.8: at 1.8 no group of it keeps its label above it (§7).
 
 ### 4.5 J4, the Hoarhills' end (#216): country, band 8–10
 
@@ -454,17 +475,16 @@ settled in its issue, and what the pilot teaches changes them.
 ## 5. The one quest here
 
 Thornmark's chapter is The Grove Stone (`chapter.ts`): Sylvane's charge, the Stone found cut, the
-chisel, the tear and the pay. DESIGN §9 gives the Deepthorn one step, and it is not built: in
+chisel, the tear, the pay and the seal. DESIGN §9 gives the Deepthorn one step, built in #49: in
 Henlys (I4), the treaty that says the elves' line and Helmstow's were once one, sealed with the
 chisel's mark.
 
-Every zone on the road holds at least one step (EXPANSION §5.8); this is the Deepthorn's, owed to
-#49 (`tools/tests/quests.ts:90`). Sylvane gives the lead: STORY has her know the chisel's marks from
-the seal of an old treaty her people keep, and her done words gain the line that sends the company
-south to see it. The chapter ends on the seal seen, where today it ends on her pay, and the log
-says of the seal that it is the chisel's mark and no more. A company that reaches the hold early
-sees a treaty with a seal it does not know yet, and the chisel, found after, makes the match, so the
-log reads true in either order.
+Every zone on the road holds at least one step (EXPANSION §5.8); this is the Deepthorn's. Sylvane
+gives the lead: STORY has her know the chisel's marks from the seal of an old treaty her people
+keep, and her done words gain the line that sends the company south to see it. The chapter ends on
+the seal seen, or shown by Senara, with the chisel paid for, and the log says of the seal that it is the chisel's mark
+and no more. A company that reaches the hold early sees a treaty with a seal it does not know yet,
+and the chisel, found after, makes the match, so the log reads true in either order.
 
 The treaty is also the elves' claim to Helmstow's throne, which the Lanterns back (DESIGN §10.1), and
 seeing it opens The Empty Throne in the log, as the Meridian journal opens The Lost Expedition: a
@@ -489,7 +509,7 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214), built |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215) |
-| 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218) |
+| 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218); Senara's ask built, the rubbing's hand-in, choice and after-lines #218's |
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
 | 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218) |
@@ -580,12 +600,12 @@ I5.
   360 and J5 830, the first shares scaled down by the same fraction when #148 raised the clear.
   #219's 567 are not taken off: they are all Leofwin's band and Thora's, and a company fights one at
   most, the peaceful ways neither, so the Deepthorn's share does not pay for fights most companies
-  never have. Until the boxes are built the curve reports the shortfall as owed to #26. A den's
+  never have. Until the boxes were built the curve reported the shortfall as owed to #26. A den's
   keepers pay once, and its brood as a group that respawns does; the figures count the brood once.
   Act II's cap and curve (#159) are to pay a kill by the monster's level against the member's, which
   re-prices every figure here if they land first; each box is measured when it is built. H3, built,
-  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101; I5 514 (#217), and
-  brings it to 12,615.
+  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101; I4 (#49) and I5,
+  514 (#217), bring it to 13,713, past the curve's 13,667, and the shortfall owed goes.
 - **Gold.** A clear pays 6,518 of the 8,400 that training six members from 5 to 10 costs (§3), the
   Lanterns' quests in it, and 7,600 with #219's side quests. The Deepthorn's share of the rest is
   about 1,200, the 1,900 it was less the two hand-ins' sure 700 (#219): H3 160, I3 170, I4 275, J4
@@ -599,8 +619,8 @@ I5.
   two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
   of its own, with its road walked at 8 and its warning at its way in from the Grove
   (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it. With H3 built, Thornmark
-  two under its maps' floors wins 33.6% of its 43 groups' fights, and with I5 40.5% of 48, off the
-  aim of 25% and inside the limit: it comes of #209's pooling, which the size of a group does not
+  two under its maps' floors wins 33.6% of its 43 groups' fights, and with I4 and I5 49.9% of 57, off
+  the aim of 25% and inside the limit: it comes of #209's pooling, which the size of a group does not
   move.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every

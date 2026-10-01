@@ -64,7 +64,8 @@ const DAYS = 300;
  * left out of its map's day. An area's are all its zones' together.
  */
 export const BOSSES: Record<string, readonly string[]> = {
-  shelf: ['mill:m_warden', 'greywater1:gw1_captain', 'greywater2:gw2_deacon'],
+  shelf: ['greywater1:gw1_captain', 'greywater2:gw2_deacon'],
+  downs: ['mill:m_warden'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
 };
 
@@ -86,8 +87,6 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
   // The Foreland: the pilot settles these, by retuning it or by moving the limits.
-  // The Rift Warden is retuned with Ashcombe's move past Gullwick, to about half at level 2.
-  'mill:m_warden: floor': { whose: '#87', at: 0.98 },
   'greywater1:gw1_captain: floor': { whose: '#47', at: 0.99 },
   'greywater2:gw2_deacon: floor': { whose: '#47', at: 1 },
 };

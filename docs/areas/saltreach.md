@@ -140,7 +140,7 @@ The places, as the atlas and the docs have them:
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
 | Rietum (Reedholm) | C3 | the folk who saw the Tide Stone go by one night (DESIGN §9); an old barge smuggler, the Thief's second prestige (#19); the barge child's night-light (#56's 21) | a planned village at 80,80 |
-| Sjonghol (the Wind Cave) | C3, in the cliff | the Monk's second prestige (#19) | a planned cave at 104,76, moved a square west into C3 by #71 |
+| Sjonghol (the Wind Cave) | C3, in the cliff | the Monk's second prestige (#19) | a planned cave at 103,76, moved a square west into C3 by #71, so D3 does not hold it |
 | The Tide Stone's plinth | B5 | stands empty; the Stone comes home to it (DESIGN §9, #191) | a planned stone at 48,140 |
 | The Drowned Temples | B6, and below | gone dark; the god used to sing the tides and now only counts, until its Stone comes home (DESIGN §9, STORY); the choir and the Choirmaster (MONSTERS §6.1); the bell (#56's 23) | a planned dungeon at 56,160, its way in at 56,170 |
 | Saltmouth | C6, and its own map | the free port, the Compact's home, the seat of Jory Tallis (DESIGN §9, §10.1); four first prestiges (#19); the Cartographers' and the Compact's halls (DESIGN §8); the boat to Wrackholm | a planned port at 102,178; its plate moved from 118,172 (D6) to C6 (#151, call 7) |

@@ -6,7 +6,9 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 /** Sylvane's words once the chisel is paid for: after her hand-in, and once, before the brigands' terms. */
-const GROVE_QUIET = ['"The Grove is quiet again. The cut will need a Lantern to mend, and we have sent for one. Rest here as long as you need; Thornhold owes you."'];
+const GROVE_QUIET = ['"The Grove is quiet again. The cut will need a Lantern to mend, and we have sent for one. The treaty is in Henlys, south through the deep past the Grove; ask for the lorekeeper, and say I sent you. Rest here first. Thornhold owes you."'];
+/** Sylvane's words once the treaty is seen: once before the brigands' terms, and after them. */
+const TREATY_SEEN = ['"You have seen it, then. Two seals on one skin: the Crown\'s, and ours, and ours is the mark on the chisel that cut our Stone." She looks at her hands. "Two hundred years we have called that mark ours. I no longer know whose it is. Keep that from Vask as well."'];
 
 export const THORNHOLD: MapDef = {
   id: 'thornhold',
@@ -47,7 +49,7 @@ export const THORNHOLD: MapDef = {
     { kind: 'npc', x: 12, y: 13, name: 'The Split Oak', interior: 'split_oak', lines: [
       'A tavern built around a living oak. The elves drink slowly and watch the door.',
       'A forester says: "The Stone went quiet a month back. Then the wolves got big. Then the wolves got strange."',
-      'A Lantern in travel-grey, not drunk: "Vask sent a survey team south before the Stone even failed. How did he know?"',
+      'A Lantern in travel-grey, not drunk: "Vask sent a survey team south-west before the Stone even failed. How did he know?"',
       'A brigand, or a man dressed like one, pays for his ale with a coin that is not from Caldera.',
     ] },
     { kind: 'well', x: 7, y: 6, text: 'A spring in an oak-root basin. The water is cold and sweet.', heal: true },
@@ -61,12 +63,13 @@ export const THORNHOLD: MapDef = {
       early: [
         'An elf in a robe the colour of bark, older than any human you have met. She sees what you carry and rises, and takes the chisel in both hands.',
         '"This cut our Stone. Not forged anywhere in Caldera: the edge does not blunt. The runes are Underdeep, and they are a maintenance mark, not a prayer." She sets it down as if it were hot.',
-        '"Whoever arms the Ashen Hand can reach the Underdeep. Keep this from the Regent-Warden until you know which side of it he stands on. The Lanterns will pay for what you have done here, and pay well."',
+        '"Whoever arms the Ashen Hand can reach the Underdeep. Keep this from the Regent-Warden until you know which side of it he stands on. The Lanterns will pay for this, and pay well. I have seen that mark before, on the seal of a treaty my people keep in Henlys, south through the deep. Go and look at it."',
       ],
       done: [
         'Sylvane takes the chisel in both hands and is silent for a long time.',
         '"This was not forged anywhere in Caldera. The edge does not blunt. The runes are Underdeep, and they are a maintenance mark, not a prayer." She sets it down as if it were hot.',
         '"Whoever arms the Ashen Hand can reach the Underdeep. Keep this from the Regent-Warden until you know which side of it he stands on. The Lanterns will pay for what you have done here, and pay well."',
+        '"I have seen that mark before, and not on a tool: on the seal of a treaty my people keep in Henlys, south through the deep. Go and look at it."',
       ],
       after: GROVE_QUIET,
     }, says: [
@@ -90,6 +93,8 @@ export const THORNHOLD: MapDef = {
       { after: { flag: 'q_mender_done' }, until: { flag: 'q_sylvane_mended' }, sets: 'q_sylvane_mended', lines: [
         '"The Reader has mended it. She came up out of the roots grey to the elbows and asked for a bath and a bed, in that order." Sylvane almost smiles. "The Grove hums as it did when I was a child. I had forgotten the note."',
       ] },
+      // The treaty seen, her lead south is news no more: its words stand in for the Grove's, once.
+      { after: { flag: ['q_grove_done', 'q_treaty'] }, until: { flag: 'q_sylvane_treaty' }, sets: ['q_sylvane_treaty', 'q_grove_rest'], lines: TREATY_SEEN },
       { after: { flag: 'q_grove_done' }, until: { flag: 'q_grove_rest' }, sets: 'q_grove_rest', lines: GROVE_QUIET },
       { after: { flag: ['q_grove_done', 'q_grove_rest'] }, until: [{ flag: 'q_terms_carry' }, { flag: 'q_terms_refuse' }], sets: 'q_terms', lines: [
         '"A woman came to my gate under a green branch, from the brigands on the Warden road, and offered me terms. Her people leave the road alone, and Thornhold takes them in for the winter. Takes them in. Forty of them, she said, and children." Sylvane\'s hands are still. "I sent her back down the road with her branch. Thornhold does not treat with those who rob it."',
@@ -98,6 +103,7 @@ export const THORNHOLD: MapDef = {
       { after: { flag: 'q_terms_refuse' }, lines: [
         '"You told her no, to her face, with the children there." Sylvane does not look up. "So did I. It was easier from a gate."',
       ] },
+      { after: { flag: ['q_grove_done', 'q_treaty'] }, lines: TREATY_SEEN },
     ] },
     { kind: 'event', x: 7, y: 14, id: 'thornhold_intro', once: true, text: 'Thornhold. Houses grown around living trees, and a hush that is not peace.' },
     // The Rest of the Survey (#77): Ailith, once the company sent her here.
@@ -133,7 +139,7 @@ export const THORNHOLD: MapDef = {
     // survey team's fire-pit in H3; she takes them at the first meeting and asks at the next.
     { kind: 'npc', x: 12, y: 13, name: 'Idony, a Lantern in travel-grey', lines: [
       'The Lantern in travel-grey has a cup of water and a chart she is not looking at, and she has looked at you twice since you came in.',
-      '"You\'ll have heard me say it. Vask sent a survey south before the Stone even failed. I was not being clever; I was being loud, so that somebody would tell me I was wrong. Nobody has."',
+      '"You\'ll have heard me say it. Vask sent a survey south-west before the Stone even failed. I was not being clever; I was being loud, so that somebody would tell me I was wrong. Nobody has."',
       '"Four Lanterns, under the Regent\'s seal, and I taught two of them to hold a wand. One is dead under Ashcombe. Their camp is south of the Grove, over the edge of the deep, and their orders are with it, and I want them. Not for the Chapterhouse. For Lantern Watch, in Sunderwood, where Lanterns still ask questions."',
       '"I\'d go myself. I have been as far as the sign three times, and turned back three times, and I am not ashamed of it. You have the look of people who don\'t turn back."',
     ], flag: 'q_orders', until: { flag: 'q_orders_watch' }, quest: {

@@ -39,7 +39,7 @@ export const FINDS: Record<string, string> = {
   'robe+1': '', 'leather+1': '', silver_locket: '',
   'halberd+1': '#69', ring_of_office: '#69', 'spear+1': '#69',
   captains_sword: '#70', captains_mail: '#70', queens_sword: '#70',
-  'longbow+1': '#71',
+  'longbow+1': '',
   'shield+1': '#72',
 };
 
@@ -78,7 +78,7 @@ export const DEEPTHORN: Record<ClassId, readonly string[]> = {
 export const DEEP_FINDS: Record<string, string> = {
   'tower_shield+1': '', 'rune_dagger+2': '',
   'runed_robe+2': '#215',
-  'elfbow+2': '#49', 'brigandine+3': '#49',
+  'elfbow+2': '', 'brigandine+3': '',
   'warhammer+2': '#216',
   silver_torc: '',
   eldests_bough: '#218', 'greatsword+2': '#218',

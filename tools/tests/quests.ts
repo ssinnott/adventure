@@ -87,7 +87,7 @@ export function quests(): void {
     // yet is owed by whoever builds its step.
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
-    const PLANNED: Record<string, string> = { deepthorn: '#49' };
+    const PLANNED: Record<string, string> = {};
     const built = new Set(AREAS.map((a) => a.id as string));
     for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
       const msg = `zone ${z.id} holds a step of the one quest`;
@@ -147,6 +147,7 @@ export function quests(): void {
   { // The one quest in two chapters, with the side quests beside it as quests of their own.
     const s = fresh();
     for (const f of ['q_ashcombe_done', 'q_wenna', 'q_grove', 'q_greywater']) s.party.flags[f] = 1;
+    stateFor(s.world, 'downs_e3').used.e3_log = 1;
     s.party.bag.push('meridian_journal');
     const log = questLog(s.world.state, s.party);
     const one = log.find((v) => v.def === THE_QUEST);
@@ -173,6 +174,8 @@ export function quests(): void {
     const v = view(t, THE_QUEST.id)!;
     ok(/under the Grove/.test(v.goal ?? '') && v.pages.length === 1 && v.pages[0].def.id === 'grove', `Sylvane first begins the quest at the Grove Stone, with no page for a farm no one has spoken of (${v.goal})`);
     t.party.flags.q_grove_done = 1;
+    ok(/Henlys/.test(view(t, THE_QUEST.id)?.goal ?? ''), `the chisel paid for, Sylvane's lead sends the company south to the treaty (${view(t, THE_QUEST.id)?.goal})`);
+    satisfy(t, { seen: 'deepthorn_i4:i4_treaty' });
     const w = view(t, THE_QUEST.id)!;
     ok(!w.done && w.goal === 'The Regent-Warden is hiring in Helmstow.' && w.pages.map((p) => p.def.id).join() === 'ashcombe,grove' && w.focus === 0 && !w.pages[0].begun,
       `the Grove done first, the quest goes on to the Regent-Warden (${w.goal})`);
@@ -192,13 +195,15 @@ export function quests(): void {
     party.flags.q_ashcombe = 1;
     ok(news() === 'New quest: The Dimming.' && /Gullwick/.test(goal()), `Vask's contract begins the one quest at its first chapter, and says where to go (${goal()})`);
     party.flags.q_wenna = 1; // what Hild's first meeting does
-    ok(news() === 'Quest log updated: The Dimming.' && /^Find out why/.test(goal()), `Hild at Gullwick writes Wenna into the log, and the goal moves on to the farm (${goal()})`);
+    ok(news() === 'Quest log updated: The Dimming.' && /^Find out why/.test(goal()), `Hild at Gullwick writes Wenna into the log, and the goal moves on to the farm past it (${goal()})`);
     world.travel('mill', 1, 1, 2);
     ok(/cellar/.test(goal()) && news() === '', 'in the cellar the goal moves on, which is not news');
     world.travel('mill', 10, 4, NORTH); world.move('forward');
     ok(chapter('ashcombe').entries.some((e) => e.id === 'lantern') && news() === 'Quest log updated: The Dimming.', "stepping on the dead Lantern writes her note into the log");
     party.bag.push('survey_wand');
-    ok(/Vask/.test(goal()) && news() === 'Quest log updated: The Dimming.', 'with the wand in hand, the goal is Vask');
+    ok(/Crowness Light/.test(goal()) && news() === 'Quest log updated: The Dimming.', `with the wand in hand, the goal is the keeper at Crowness, on along the road (${goal()})`);
+    stateFor(world, 'downs_e3').used.e3_log = 1; // what opening the keeper's log does
+    ok(news() === 'Quest log updated: The Dimming.' && chapter('ashcombe').entries.some((e) => e.id === 'keeper') && /Vask/.test(goal()), `the keeper's log writes the count into the log, and the goal moves on to Vask (${goal()})`);
     takeItem(party, 'survey_wand'); party.flags.q_ashcombe_done = 1; // what Vask's hand-in does
     ok(news() === 'Chapter complete: The Quiet Farm. New chapter: The Grove Stone.', 'the hand-in finishes the farm and, after it, begins the Grove Stone');
     const farm = chapter('ashcombe');
@@ -219,8 +224,11 @@ export function quests(): void {
     ok(/Sylvane/.test(goal()) && ['chisel', 'tear'].every((id) => chapter('grove').entries.some((e) => e.id === id)), 'the chisel goes to Sylvane, and the Warden\'s death is written');
     ok(news() === 'Quest log updated: The Dimming. New quest: The Lost Expedition.', 'the journal the Warden drops begins the Lost Expedition');
     takeItem(party, 'ashen_chisel'); party.flags.q_grove_done = 1;
-    ok(news() === 'Chapter complete: The Grove Stone. Quest complete: The Dimming.' && quest(THE_QUEST.id).done && log().filter((v) => v.done).length === 2,
-      'the last chapter\'s end finishes the one quest; it and the Cargo Ledger are done');
+    ok(news() === 'Quest log updated: The Dimming.' && /Henlys/.test(goal()), `Sylvane's pay sends the company south to the treaty (${goal()})`);
+    world.travel('deepthorn_i4', 9, 9, 0); world.eventsHere(); // the treaty's seal, in Henlys's hall
+    const end = news();
+    ok(end.startsWith('Chapter complete: The Grove Stone. Quest complete: The Dimming.') && quest(THE_QUEST.id).done && log().filter((v) => v.done).length === 2,
+      `the last chapter's end, the seal seen, finishes the one quest; it and the Cargo Ledger are done (${end})`);
     const expedition = quest('meridian');
     ok(!expedition.done && /Meridian/.test(expedition.goal ?? '') && expedition.pages[0].entries.length === 1, `and the Lost Expedition stays open with a goal, its trail not built yet (${expedition.goal})`);
   }

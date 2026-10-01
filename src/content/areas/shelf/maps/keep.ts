@@ -34,7 +34,7 @@ export const KEEP: MapDef = {
     { kind: 'sign', x: 9, y: 8, text: 'A proclamation on the gatehouse: the Regent-Warden holds Helmstow in the Crown\'s name until the succession is settled.' },
     { kind: 'npc', x: 7, y: 4, name: 'Lord Aumery Vask, Regent-Warden', interior: 'throne_room', lines: [
       'A tall man in Warden grey, his guards a step behind him. He does not wait for you to bow, and does not appear to notice that you did not.',
-      '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm south of here, Ashcombe, on the Foreland road, has gone quiet. Find out why. Clear whatever is there."',
+      '"The Crown has need of a chartered company; the Wardens are stretched thin. A farm past Gullwick, Ashcombe, off the Salt Road, has gone quiet. Find out why. Clear whatever is there."',
       '"Bring me anything you find that is not a rat. Especially anything that glows."',
     ], flag: 'q_ashcombe', quest: [{
       item: 'survey_wand', reward: 300, setFlag: 'q_ashcombe_done',
@@ -57,7 +57,14 @@ export const KEEP: MapDef = {
         'Vask reads the paper once, and the back of it once, and folds it along its own creases.',
         '"A tenant who let his cellar and did not ask. How very ordinary." He hands it to the guard at his shoulder without looking at him. "Thank you. The Crown pays for this kind of thing, and it will see the matter closed. Ashcombe will have a new tenant by spring."',
       ],
-    }] },
+    }], says: [
+      // Oil for the Lamp (#67), the keeper's want put to him: said once, and not once the company has lit the lamp itself.
+      { after: { flag: 'q_oil_vask' }, until: { flag: 'q_oil_lit' }, sets: ['q_oil_order', 'q_oil_lit'], lines: [
+        'Vask hears you out without moving. When you have finished he lets the silence sit a moment, so that you know he has chosen to end it.',
+        '"Crowness Light. An order given in the confusion of that week, by a sergeant who mistook thrift for policy. Consider it lifted. The cart goes down on the first of the month, as it always has."',
+        '"Tell the keeper the Crown remembers him." He smiles, briefly, the way a man does when a small account closes in his favour. "Was there anything else?"',
+      ] },
+    ] },
     { kind: 'npc', x: 6, y: 5, name: 'Petitioners', lines: [
       'Petitioners wait on the keep\'s steps, caps in hand.',
       'A farmer\'s wife: "Ashcombe has gone quiet. No smoke, no carts. My sister is out there."',

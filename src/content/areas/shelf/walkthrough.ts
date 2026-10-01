@@ -10,7 +10,9 @@ import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, SOUTH } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
-import { MAP_DEFS } from '../../index.ts';
+import { MAP_DEFS, MONSTERS } from '../../index.ts';
+import { xpForLevel } from '../../../game/party.ts';
+import { priceIn } from '../../../game/items.ts';
 import { meet, answer, heard, readText } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -20,21 +22,52 @@ import type { PageView } from '../../../game/quests.ts';
 /** Vask hires the company: before the chapter, or its last step for a company that came early. */
 export const HIRE: Step = { name: 'the hire', play: (w) => meetWho(w, 'q_ashcombe') };
 
-/** The chapter once hired: Gullwick, the farm, the cellar and the wand taken back. */
+/** At Crowness Light: the keeper met, and his log opened and read from the pack. */
+function crowness(w: Walk): void {
+  meetWho(w, 'q_keeper');
+  open(w, 'downs_e3:e3_log');
+  w.ok(w.party.bag.includes('keepers_log') && (readText('keepers_log') ?? []).length === 5, "the keeper's log is on the cottage table, and reads from the pack");
+}
+
+/** The chapter once hired: Gullwick, the farm and its cellar, Crowness on along the road, and the wand taken back. */
 export const STEPS: readonly Step[] = [
   { name: 'to Gullwick', play: (w) => meetWho(w, 'q_wenna') },
-  { name: 'to Ashcombe', play: (w) => walkThrough(w, 'shelf', 23, 20, EAST, 'mill') },
-  { name: 'the cellar', play: (w) => { see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core'); } },
+  { name: 'to Ashcombe', play: (w) => walkThrough(w, 'downs_e3', 20, 4, EAST, 'mill') },
+  { name: 'the cellar', play: (w) => {
+    // Walked at its floor, 2, where the gate tunes its Warden to about half (#87), before Crowness at 3.
+    w.ok(w.level === 2, `the cellar is walked at level 2, its floor (${w.level})`);
+    see(w, 'mill:mill_lantern'); fight(w, 'mill:m_warden'); see(w, 'mill:mill_core');
+  } },
+  { name: 'to Crowness', play: crowness },
   { name: 'the wand', play: (w) => meetWho(w, 'survey_wand') },
 ];
 
-/** The farm first and Gullwick last: the chapter's goal sends a company that did it so to Hild. */
-export const FARM_FIRST: readonly Step[] = [...STEPS.slice(1), {
+/**
+ * The farm first and the wand straight back from the cellar, Gullwick and Crowness last: against
+ * the goal, which asks for Crowness before Helmstow, so the wand is handed over in the cellar's step
+ * and not as a step of its own. Then the chapter's goals send the company to Hild, then the keeper.
+ */
+export const FARM_FIRST: readonly Step[] = [STEPS[1], {
+  name: 'the cellar, and the wand straight back',
+  play: (w) => {
+    STEPS[2].play(w);
+    const vask = MAP_DEFS.find((d) => d.id === 'keep')?.features?.find((f): f is Person => f.kind === 'npc' && [f.flag ?? []].flat().includes('q_ashcombe'));
+    if (vask) { w.world.travel('keep', vask.x, vask.y); meet(vask, w.party, heard(w.world, vask)); listen(w); }
+    w.ok(!!w.party.flags.q_ashcombe_done, 'the wand taken straight back to Vask, before Crowness');
+  },
+}, {
   name: 'to Gullwick, the farm done',
   play: (w) => {
     const goal = quest(w)?.goal ?? '';
     w.ok(goal.startsWith('Gullwick'), `the farm done first, the goal is Gullwick (${goal})`);
     meetWho(w, 'q_wenna');
+  },
+}, {
+  name: 'to Crowness, the farm done',
+  play: (w) => {
+    const goal = quest(w)?.goal ?? '';
+    w.ok(goal.startsWith('Crowness Light'), `the farm and Gullwick done first, the goal is Crowness Light (${goal})`);
+    crowness(w);
   },
 }];
 
@@ -61,7 +94,27 @@ export const walkthrough: Walkthrough = (ok) => {
     'Sylvane met first: Gytha gives the lesson, and then the cut\'s words');
 
   sideQuests(ok);
+  walkWorth(ok);
 };
+
+/**
+ * The walk to Ashcombe (#87), once, and what it pays a member of six: the Foreland map's groups,
+ * F2's and F3's by day and the farm's rats. It is worth level 2 and not 3, where the Foreland map
+ * alone was not worth 2: the first job is earned on the road to it.
+ */
+function walkWorth(ok: (cond: boolean, msg: string) => void): void {
+  const xp = (map: string, keep: (e: { id: string; when?: unknown }) => boolean = () => true): number =>
+    (MAP_DEFS.find((d) => d.id === map)?.encounters ?? []).filter(keep).flatMap((e) => e.monsters).reduce((t, m) => t + MONSTERS[m].xp, 0);
+  const foreland = Math.floor(xp('shelf') / 6);
+  const walk = Math.floor((xp('shelf') + xp('downs_f2', (e) => !e.when) + xp('downs_f3', (e) => !e.when) + xp('downs_e3', (e) => e.id === 'farm_rats')) / 6);
+  ok(walk >= xpForLevel(2) && walk < xpForLevel(3) && foreland < xpForLevel(2),
+    `the walk to Ashcombe is worth level 2: ${walk} xp a member (level 2 at ${xpForLevel(2)}, 3 at ${xpForLevel(3)}), where the Foreland map alone is ${foreland}`);
+  // On the way out of the Foreland, the one place outside Helmstow that sells food.
+  const shop = (map: string) => MAP_DEFS.find((d) => d.id === map)?.features?.find((f) => f.kind === 'shop');
+  const farm = shop('shelf'), mottram = shop('harrow');
+  ok(farm?.kind === 'shop' && farm.name === 'Ellerby Farm' && farm.interior === 'farm_kitchen' && priceIn(farm, 'rations') === 3 && mottram?.kind === 'shop' && priceIn(mottram, 'rations') === 4,
+    `Ellerby's farm store sells rations at 3 gold, in the farm kitchen, and Mottram's still at 4 (${farm?.kind === 'shop' ? priceIn(farm, 'rations') : 'no store'}, ${mottram?.kind === 'shop' ? priceIn(mottram, 'rations') : 'no shop'})`);
+}
 
 /** Gytha, found by the flag she sets. */
 function gytha(): Person | undefined {
@@ -120,6 +173,7 @@ const MOTTRAM = (): Person => who('harrow', 4, 10, 'Mottram'), ALWIN = (): Perso
 const OSMUND = (): Person => who('harrow', 11, 4, 'Osmund'), AILITH_WOOD = (): Person => who('shelf', 2, 14, 'Ailith'), AILITH_HOLD = (): Person => who('thornhold', 11, 4, 'Ailith');
 
 const WAT = (): Person => who('downs_f3', 11, 14, 'Wat'), HAMO = (): Person => who('downs_f3', 0, 9, 'Hamo');
+const ALDRED = (): Person => who('downs_e3', 18, 28, 'Aldred'), VASK = (): Person => who('keep', 7, 4, 'Lord Aumery Vask');
 
 /** Whether a four-way walk from `from` reaches `to` on `map` without stepping on `shut`. */
 function around(map: string, shut: Person, from: readonly [number, number], to: Person): boolean {
@@ -223,19 +277,34 @@ function wellAsked(w: Walk, alwinFirst: boolean): void {
   w.ok(page(w, 'well')?.goal === 'Take what the mason said back to Mottram\'s Stores.', `the mason heard, the goal is Mottram (${page(w, 'well')?.goal})`);
 }
 
+/** Whether the lamp room at Crowness shows its dark words or its lit ones now. */
+const lamp = (w: Walk): string => {
+  const e = MAP_DEFS.find((d) => d.id === 'downs_e3')!.features!.filter((f) => f.kind === 'event' && f.id.startsWith('e3_lamp_'));
+  return e.filter((f) => w.world.present(f)).map((f) => (f as { id: string }).id).join() || 'none';
+};
+
+/** Oil for the Lamp to Mottram's question: Aldred first, then Mottram, who hires for the well first. */
+function oilAsked(w: Walk): void {
+  w.ok(lamp(w) === 'e3_lamp_dark', `before the oil, the lamp room is dark (${lamp(w)})`);
+  w.ok(hear(w, 'downs_e3', ALDRED()).startsWith('The lamp room at the top of the tower is dark') && w.news.at(-1) === 'New quest: Oil for the Lamp.' && !!page(w, 'oil')?.goal,
+    `Aldred's first meeting begins Oil for the Lamp, with a goal (${w.news.at(-1)})`);
+  w.ok(hear(w, 'downs_e3', ALDRED()).startsWith('"Still dark.'), "then, while it is dark, his words of the second light");
+  w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('Mottram sets a bucket') && !!w.party.flags.q_well, 'Aldred met first, Mottram still hires for the well at the first meeting');
+}
+
 /** Who Lived at Ashcombe to the key in hand: the kitchen at the farmhouse's back and its chest. */
 function keyFound(w: Walk): void {
-  see(w, 'shelf:ash_kitchen');
+  see(w, 'downs_e3:ash_kitchen');
   w.ok(w.world.used('ash_kitchen'), 'the kitchen is seen and its words said');
-  open(w, 'shelf:ash_hearth');
+  open(w, 'downs_e3:ash_hearth');
   w.ok(w.party.bag.includes('hearth_key'), 'the kitchen chimney holds the hearth-key');
 }
 
 /** The paper in hand: the crock beside the kitchen and its chest. */
 function paperFound(w: Walk): void {
-  see(w, 'shelf:ash_crock');
+  see(w, 'downs_e3:ash_crock');
   w.ok(w.world.used('ash_crock'), 'the crock is lifted and its words said');
-  open(w, 'shelf:ash_crock_c');
+  open(w, 'downs_e3:ash_crock_c');
   w.ok(w.party.bag.includes('tenant_paper'), "under the crock is the tenant's paper");
 }
 
@@ -251,6 +320,48 @@ function tenantAsked(w: Walk): void {
 }
 
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
+  { // Oil for the Lamp: bought and carried down. The lamp is lit, and both have heard.
+    const w = newWalk(ok);
+    oilAsked(w);
+    w.ok(answerWho(w, 'q_well', 'We\'ll buy the oil.').startsWith('"Sensible.'), 'bought: Mottram will sell the oil');
+    w.ok(page(w, 'oil')?.goal?.startsWith('Buy a flask') === true, `bought: the goal is the flask (${page(w, 'oil')?.goal})`);
+    w.party.bag.push('lantern_oil'); // from Mottram's shelf, at 40
+    w.ok(page(w, 'oil')?.goal?.startsWith('Carry the Lantern Oil') === true, `with the oil in the pack, the goal is Aldred (${page(w, 'oil')?.goal})`);
+    w.ok(hear(w, 'downs_e3', ALDRED()).startsWith('Aldred takes the flask') && !w.party.bag.includes('lantern_oil'), 'bought: Aldred takes the flask and lights the lamp');
+    reads(w, 'oil', 'Oil for the Lamp', ['aldred', 'buy', 'lit'], ['vask', 'order'], 'bought');
+    w.ok(lamp(w) === 'e3_lamp_lit', `bought: the lamp room is lit (${lamp(w)})`);
+    w.ok(hear(w, 'downs_e3', ALDRED()).startsWith('The lamp turns overhead, and Aldred has the look'), "bought: Aldred's after-lines are the company's oil");
+    w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('"Lit, is it?') && hear(w, 'harrow', MOTTRAM()).startsWith('Mottram sets a bucket'), 'bought: Mottram has heard, says so once, and then as before');
+  }
+  { // Oil for the Lamp: put to Vask. His order lights it; Aldred and Mottram say what it cost.
+    const w = newWalk(ok);
+    oilAsked(w);
+    answerWho(w, 'q_well', 'We\'ll put it to Vask.');
+    w.ok(page(w, 'oil')?.goal?.startsWith('Put the keeper\'s oil to Lord Vask') === true, `put to Vask: the goal is Vask (${page(w, 'oil')?.goal})`);
+    w.ok(hear(w, 'keep', VASK()).startsWith('Vask hears you out') && !!w.party.flags.q_oil_lit, 'put to Vask: he lifts the order, and the lamp is lit');
+    w.ok(hear(w, 'keep', VASK()).startsWith('A tall man in Warden grey'), 'put to Vask: his words are said once');
+    reads(w, 'oil', 'Oil for the Lamp', ['aldred', 'vask', 'order', 'lit'], ['buy'], 'put to Vask');
+    w.ok(lamp(w) === 'e3_lamp_lit', `put to Vask: the lamp room is lit (${lamp(w)})`);
+    w.ok(hear(w, 'downs_e3', ALDRED()).startsWith('The lamp turns overhead. Aldred does not look up'), "put to Vask: Aldred's after-lines are the Crown's");
+    w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('"The sergeant came back') && hear(w, 'harrow', MOTTRAM()).startsWith('Mottram sets a bucket'), 'put to Vask: Mottram has seen the sergeant back for his paper, says so once, and then as before');
+  }
+  { // Oil for the Lamp: put to Vask, but the oil carried in first. The company lit it, and the order's words lapse.
+    const w = newWalk(ok);
+    oilAsked(w);
+    answerWho(w, 'q_well', 'We\'ll put it to Vask.');
+    w.party.bag.push('lantern_oil');
+    hear(w, 'downs_e3', ALDRED());
+    w.ok(hear(w, 'keep', VASK()).startsWith('A tall man in Warden grey') && !w.party.flags.q_oil_order, 'put to Vask, then lit with oil carried in: Vask has nothing to lift');
+    reads(w, 'oil', 'Oil for the Lamp', ['aldred', 'vask', 'lit'], ['buy', 'order'], 'put to Vask, lit with oil');
+    w.ok(hear(w, 'downs_e3', ALDRED()).startsWith('The lamp turns overhead, and Aldred has the look'), "and Aldred's after-lines are the company's oil");
+  }
+  { // Oil for the Lamp: oil carried in at the first meeting. Aldred takes it, and never asks.
+    const w = newWalk(ok);
+    w.party.bag.push('lantern_oil'); // found in Thornmark, or bought at Thornhold
+    w.ok(hear(w, 'downs_e3', ALDRED()).startsWith('Aldred takes the flask') && !w.party.flags.q_keeper && !w.party.flags.q_oil, 'carried in: Aldred takes the flask at the first meeting, and asks nothing');
+    reads(w, 'oil', 'Oil for the Lamp', ['lit'], ['aldred', 'buy', 'vask', 'order'], 'carried in');
+    w.ok(lamp(w) === 'e3_lamp_lit' && hear(w, 'downs_e3', ALDRED()).startsWith('The lamp turns overhead, and Aldred has the look'), 'carried in: the lamp room is lit, and his after-lines are the company\'s oil');
+  }
   { // The Boat: nobody who buys the boards stands where every way home from the hoard must pass.
     const w = newWalk(ok);
     w.ok(around('downs_f3', HAMO(), [1, 14], WAT()), 'the boards go home from the hoard to Wat by a way that never steps on Hamo');
@@ -433,7 +544,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     meetWho(w, 'q_paper_vask');
     reads(w, 'tenant', 'Who Lived at Ashcombe', ['paper', 'vask'], ['hob', 'kitchen', 'key', 'hale'], 'the crock alone, the paper to Vask');
     w.ok(!page(w, 'tenant')?.entries.some((e) => e.text.includes('Hob')), 'and its journal does not name Hob, whom the company never met');
-    see(w, 'shelf:ash_kitchen');
+    see(w, 'downs_e3:ash_kitchen');
     w.ok(!w.world.used('ash_kitchen') && !page(w, 'tenant')?.entries.some((e) => e.id === 'kitchen'), 'the kitchen stepped into after the paper is given is not said, and writes nothing');
   }
   { // The key brought to Hob before he is heard: the hand-in begins the quest, and his after-lines follow.
