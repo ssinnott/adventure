@@ -20,10 +20,11 @@ const UNPLACED: Record<string, string> = {
   brineling: '#170',
   bargeman: '#171', barge_master: '#171',
   drowned_chanter: '#175', choirmaster: '#175',
-  fen_eel: '#170', fen_toad: '#170',
+  fen_eel: '#170', fen_toad: '#170', leech: '#170',
   grey_heron: '#171',
   salt_crab: '#176',
   devilfish: '#188', great_devilfish: '#188',
+  ashen_overseer: '#188',
   watch_hall: '#201',
 };
 
