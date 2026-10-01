@@ -90,7 +90,8 @@ export type Feature =
    * Where a person stands they stand only in their `when`, once `after` holds and until `until` does.
    */
   | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior } & Presence)
-  | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number }
+  /** A tear into a Rift (game/rifts.ts): stepped on, it takes the party through, as an exit does. */
+  | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number; tf?: Facing; label?: string }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
   | ({ kind: 'shrine' } & Blessing)
   | ({ kind: 'fountain' } & Blessing)
@@ -417,7 +418,10 @@ export class GameMap {
     return 'ok';
   }
 
-  exitAt(x: number, y: number): Exit | undefined { return this.exits.find((e) => e.x === x && e.y === y); }
+  /** The way off the map on a square: an exit, or a tear into a Rift, which is walked through as one. */
+  exitAt(x: number, y: number): Exit | undefined {
+    return this.exits.find((e) => e.x === x && e.y === y) ?? this.features.find((f): f is Extract<Feature, { kind: 'rift' }> => f.kind === 'rift' && f.x === x && f.y === y);
+  }
   gateAt(x: number, y: number): Gate | undefined { return this.gates.find((g) => g.x === x && g.y === y); }
   featuresAt(x: number, y: number): Feature[] { return this.features.filter((f) => f.x === x && f.y === y); }
 
