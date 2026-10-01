@@ -207,8 +207,8 @@ features; the pay shared out over the area (§8).
   and manages 7.3 fights to a rest, inside the aim; the road is walked every time. As measured it
   pays about 1,060 xp a member and 460 gold. Two under, at 12, it wins every fight too: past 10 the
   company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company back, which
-  the gate's limit asks (§8): owed to #18, and since the ladder past 10 landed to #399, whose groups
-  wait on the line re-run with it. Woods are on the road before it (the Downs' E2, the Deepthorn's H3
+  the gate's limit asks (§8): owed to #18, as every Act II box will owe it until the gear past 10
+  is built. Woods are on the road before it (the Downs' E2, the Deepthorn's H3
   and I3), so the area claims the bears, the moths and the moths' sleep as new, and not the woods.
   What the owner finds by hand goes here when the box has been played. Since J2 (#196) its east
   edge is the wood on into J2, the rim's mountain kept on its north rows and the road through.
@@ -253,7 +253,7 @@ features; the pay shared out over the area (§8).
   one a company at 14 manages fewest of between rests (6.2), and six moths stand by the steading by
   night. A company at 14 wins every fight and manages 6.8 fights to a rest, inside the aim; the
   road is walked every time. As measured it pays about 1,510 xp a member and 430 gold, I2 and J2
-  together 2,570 against their 2,500. Two under, at 12, it wins every fight: owed to #18, as I2's, and since the ladder landed to #399.
+  together 2,570 against their 2,500. Two under, at 12, it wins every fight: owed to #18, as I2's.
   The area claims dead wood, crystal and the chasm as new, all three first on the road here.
   What the owner finds by hand goes here when the box has been played.
 
@@ -384,7 +384,7 @@ features; the pay shared out over the area (§8).
 - **Businesses,** each with a room of its own (#207): the Lantern hall (spells to the next tier for
   the fee, and the Lanterns' quests to a member, #257); the refectory (rest and food, #258); the
   stores (the band's gear, a step past Saltmouth's, and lamp oil, #259: a Flail, a Warden's Dirk,
-  an Ironwood Bow, a Great Axe, a Lantern Staff, Lamellar, a Watch Habit and a Watch Shield, 900
+  an Ironwood Bow, a Great Axe, a Watch Staff, Lamellar, a Watch Habit and a Watch Shield, 900
   to 1,600 gold, #399); the prior's room, where
   the papers are read (#260). A trainer to 17 (#159). No temple: the shrine at Sunderfall cures.
 - **People.** The prior and the young sister, on their two sides (#56's 31); the Cartographers'
@@ -596,7 +596,7 @@ Decided by delegate for #195, each the owner's to overturn:
    owls do.
 4. **The shrine gives speed,** which no shrine or fountain on the road gave; the cairn 160 gold and
    a Sapphire Vial; the pack 300 gold and a Warden's Halberd +1 of its own.
-5. **The gate two under is owed to #18** (to #399 since the ladder landed), for I2 and for the area, with the groups kept at the
+5. **The gate two under is owed to #18,** for I2 and for the area, with the groups kept at the
    line's standard size: no group size turns back a company whose gear is the same as at 14, and
    bigger groups only push fights to a rest at 14 under its limit.
 6. **The climate:** summer 16, winter -2, damp to 0.08, fog 0.6, eight hours behind the Foreland.
@@ -635,7 +635,7 @@ Decided by delegate for #196, each the owner's to overturn:
 Decided by delegate for #399, each the owner's to overturn:
 
 1. **The Watch sells a new weapon line for every class,** a point of blow past Saltmouth's finds,
-   and the Sunder and the boxes round it give each with a plus by 16. The Great Axe and the Lantern
+   and the Sunder and the boxes round it give each with a plus by 16. The Great Axe and the Watch
    Staff are among the wares, so J2's Great Axe +1 and L2's Lantern's Staff +1, already in the
    briefs, are the barbarian's and the monk's and druid's steps.
 2. **The stores' Lamellar (10) is the medium wearers' armour step,** and the Watch Shield (5) plate's
@@ -645,8 +645,12 @@ Decided by delegate for #399, each the owner's to overturn:
 4. **The window stays at 3,000:** the dearest ware is the Lamellar at 1,600.
 5. **The Halberd +1, the Long Sword +2 and the Chain Mail +2 stay off the ladder,** finds that sell.
 6. **J2's Great Axe is the Watch's ware,** 2d8+4 at 1,200 gold, not the 2d8+1 at 600 that #196 gave
-   it: its +1 at 2d8+1 would not better Saltmouth's Long Axe +1, and at 2d8+5 (1,350) the cave's
-   find is the barbarian's step at 16, early, inside the window.
+   it: its +1 at 2d8+2 would not better Saltmouth's Long Axe +1, and at 2d8+5 (1,350) the cave's
+   find is the barbarian's step at 16, early, inside the window. Saves are fine: the base was never
+   sold or placed, so a save holds only `great_axe+1`, which keeps its id and grows stronger; no id
+   goes or moves (EXPANSION §5.5), and nobody loses gear or gold.
+7. **The Watch's staff is the Watch Staff,** so that L2's Lantern's Staff +1 reads as a named copy
+   of it and not as the same thing.
 
 ## 10. Names
 

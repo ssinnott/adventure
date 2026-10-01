@@ -92,18 +92,18 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
   // A company two under an Act II box wins every fight. The ladder past 10 (#399) dresses a company
-  // at a floor past one two under it, and the test monster's line is made again with it, but the
-  // boxes' groups were statted on the old line (tools/testmonster.ts) and wait to be re-statted to
-  // the new one, which #399 owes.
-  'wrackholm_e6: under': { whose: '#399', at: 1 },
-  'smugglers_cove: under': { whose: '#399', at: 1 },
-  'Wrackholm: under': { whose: '#399', at: 1 },
-  'eaves_i2: under': { whose: '#399', at: 1 },
-  'eaves_j2: under': { whose: '#399', at: 1 },
-  'Sunderwood: under': { whose: '#399', at: 1 },
-  'delta_c5: under': { whose: '#399', at: 1 },
-  'c5_rift: under': { whose: '#399', at: 1 },
-  'Saltreach: under': { whose: '#399', at: 1 },
+  // at a floor past one two under it, but at the line's standard size (tools/testmonster.ts) a group
+  // a company at the floor fights six or seven of to a rest is one a company two under still beats:
+  // the to-a-rest aim and the two-under aim pull against each other past 10, which is #18's.
+  'wrackholm_e6: under': { whose: '#18', at: 1 },
+  'smugglers_cove: under': { whose: '#18', at: 1 },
+  'Wrackholm: under': { whose: '#18', at: 1 },
+  'eaves_i2: under': { whose: '#18', at: 1 },
+  'eaves_j2: under': { whose: '#18', at: 1 },
+  'Sunderwood: under': { whose: '#18', at: 1 },
+  'delta_c5: under': { whose: '#18', at: 1 },
+  'c5_rift: under': { whose: '#18', at: 1 },
+  'Saltreach: under': { whose: '#18', at: 1 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;

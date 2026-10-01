@@ -116,7 +116,7 @@ export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [10, ['warhammer+2', 'greatsword+2', 'elfbow+2', 'rune_dagger+2', 'runed_robe+2', 'brigandine+3', 'tower_shield+1', 'eldests_bough']],
   [11, ['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe']],
   [13, ['morning_star+1', 'stiletto+1', 'ironshod_staff+1', 'tidefolk_robe+1', 'horn_bow+1', 'plate+1', 'long_axe+1']],
-  [14, ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'lantern_staff', 'lamellar', 'watch_habit', 'watch_shield']],
+  [14, ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield']],
   [16, ['flail+1', 'ironwood_bow+1', 'plate+2', 'wardens_dirk+1', 'lanterns_staff', 'great_axe+1']],
 ];
 /** The ladder's top: past it, gear grows only in a what-if (`RULES.gearGrows`). */

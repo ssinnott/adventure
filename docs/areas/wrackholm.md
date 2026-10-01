@@ -177,9 +177,9 @@ Foreland map's density.
   lookout and four more on the moor are the box's other points: every square is within 8 steps of
   one. As measured it pays about 1,920 xp a member and 404 gold. The gate at 12 wins every fight, at
   7.1 fights to a rest, and walks the road (the rats, the inlet's gulls, the east path) every time;
-  two under, at 10, it wins every fight too, owed to #18 until the gear past 10 landed and to #399
-  since (`tools/tests/gate.ts`'s `OWED`). What the owner finds by hand goes here when the box has
-  been played.
+  two under, at 10, it wins every fight too, which is owed to #18 until gear past 10 lands
+  (`tools/tests/gate.ts`'s `OWED`). What the owner finds by hand goes here when the box has been
+  played.
 
 ### 4.3 Kelp Hole (#188): dungeon, two levels of 16×16, band 12–14
 

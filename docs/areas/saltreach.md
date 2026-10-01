@@ -645,10 +645,9 @@ Decided by delegate for #399, each the owner's to overturn:
    the warehouse and the pans' hoard; B6 has none, and B5 was built before the ladder, so its staff
    went to the temples. Each is owed to its box until placed.
 4. **The windows stay as they are:** no ware or find comes within 400 gold of its area's price.
-5. **The gate two under stays owed, now to #399:** gear dresses a company at a floor past one two
-   under it, but a company at 8 wins every C5 fight already, in Act I's gear. The test monster's
-   line is re-run with the ladder (`node tools/harness.ts --calibrate --write`); the boxes' groups,
-   statted on the old line, wait to be re-statted to it.
+5. **The gate two under stays owed to #18:** gear dresses a company at a floor past one two under
+   it, but a group a company at the floor fights six or seven of to a rest is one a company two
+   under still beats. Past 10 the to-a-rest aim and the two-under aim pull against each other.
 
 ## 10. Names
 
