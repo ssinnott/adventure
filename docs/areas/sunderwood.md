@@ -204,14 +204,15 @@ features; the pay shared out over the area (§8).
   the curve asks a group at 15 or more on every map. The first glass in the Eaves comes down the
   road to meet the company. The pack holds a Warden's Halberd +1 (`wardens_halberd`), and the
   milestone reads STOW 40, the end of its line clear of the turf. A company at 14 wins every fight
-  and manages 7.3 fights to a rest, inside the aim; the road is walked every time. As measured it
-  pays about 1,060 xp a member and 460 gold. Two under, at 12, it wins every fight too: past 10 the
-  company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company back, which
-  the gate's limit asks (§8): owed to #18, as every Act II box will owe it until the gear past 10
-  is built. Woods are on the road before it (the Downs' E2, the Deepthorn's H3
-  and I3), so the area claims the bears, the moths and the moths' sleep as new, and not the woods.
-  What the owner finds by hand goes here when the box has been played. Since J2 (#196) its east
-  edge is the wood on into J2, the rim's mountain kept on its north rows and the road through.
+  and manages 7.3 fights to a rest, inside the aim (8.7 in the ladder's gear, #406, over it; 7.5
+  after the re-stat to #409's line, #18, inside it again); the road is walked every time. As
+  measured it pays about 1,060 xp a member and 460 gold. Two under, at 12, it wins every fight too:
+  past 10 the company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company
+  back, which the gate's limit asks (§8): owed to #18, as every Act II box will owe it until the
+  gear past 10 is built. Woods are on the road before it (the Downs' E2, the Deepthorn's H3 and I3),
+  so the area claims the bears, the moths and the moths' sleep as new, and not the woods. What the
+  owner finds by hand goes here when the box has been played. Since J2 (#196) its east edge is the
+  wood on into J2, the rim's mountain kept on its north rows and the road through.
 
 ### 4.3 J2, the Eaves (#196): core, band 14–15
 
@@ -248,14 +249,15 @@ features; the pay shared out over the area (§8).
   lip from x 328 to meet it. The cave is behind a door in the rim's rock at the north path's end,
   with a pair of pine bears on the path below it; the dog sits at the path's foot by the cabin, and
   Garret says it never minded the bear up there. The sack holds a tally, SHIP, SHIP, BELOW, and a
-  Great Axe +1 (`great_axe+1`, the Watch's ware with a plus, #399) with 250 gold. Garret has lines of his own and
-  the hint; Nell, his choice and the lamp are #205's. Five sunder hounds are the hardest group, the
-  one a company at 14 manages fewest of between rests (6.2), and six moths stand by the steading by
-  night. A company at 14 wins every fight and manages 6.8 fights to a rest, inside the aim; the
-  road is walked every time. As measured it pays about 1,510 xp a member and 430 gold, I2 and J2
-  together 2,570 against their 2,500. Two under, at 12, it wins every fight: owed to #18, as I2's.
-  The area claims dead wood, crystal and the chasm as new, all three first on the road here.
-  What the owner finds by hand goes here when the box has been played.
+  Great Axe +1 (`great_axe+1`, the Watch's ware with a plus, #399) with 250 gold. Garret has lines
+  of his own and the hint; Nell, his choice and the lamp are #205's. Five sunder hounds are the
+  hardest group, the one a company at 14 manages fewest of between rests (6.2), and six moths stand
+  by the steading by night. A company at 14 wins every fight and manages 6.8 fights to a rest,
+  inside the aim (6.9 after the re-stat to #409's line, #18); the road is walked every time. As
+  measured it pays about 1,510 xp a member and 430 gold, I2 and J2 together 2,570 against their
+  2,500. Two under, at 12, it wins every fight: owed to #18, as I2's. The area claims dead wood,
+  crystal and the chasm as new, all three first on the road here. What the owner finds by hand goes
+  here when the box has been played.
 
 ### 4.4 K2, Sunderfall and the rope bridge (#197): core, band 15
 
