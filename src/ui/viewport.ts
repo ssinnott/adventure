@@ -1142,7 +1142,8 @@ function drawFrontFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
   const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my);
   if (house) drawHouseFront(ctx, x0, x1, top, bottom, d, seed, building(map, mx, my).seed, dark, haze, daylight, joinL, joinR);
   else drawStoneFront(ctx, pal, x0, x1, top, bottom, d, seed, dark, haze, map.kind === 'outdoor', joinL, joinR, across);
-  if (isDoor) drawDoor(ctx, x0, x1, horizon, u, pal.door, d, dark, cell.door === 'locked', map.kind === 'town');
+  if (isDoor && pal.wallStyle === 'smooth') drawSeam(ctx, x0, x1, horizon, u, pal.wall, d, dark);
+  else if (isDoor) drawDoor(ctx, x0, x1, horizon, u, pal.door, d, dark, cell.door === 'locked', map.kind === 'town');
   drawWallDecor(ctx, map, cell, mx, my, x0, x1, top, bottom, d, seed, dark, haze, daylight, house, isDoor);
 }
 
@@ -1393,6 +1394,12 @@ function drawStoneFront(ctx: CanvasRenderingContext2D, pal: MapPalette, x0: numb
   const wall = pal.wall, wallDark = pal.wallDark;
   const w = x1 - x0, h = bottom - top;
   const X0 = Math.round(x0), X1 = Math.round(x1), T = Math.round(top), B = Math.round(bottom);
+  // A smooth wall is one face: no course, no block and no joint, outlined only where it ends.
+  if (pal.wallStyle === 'smooth') {
+    ctx.fillStyle = fog(wall, d, dark, haze); ctx.fillRect(X0, T, X1 - X0, B - T);
+    ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; outlineRect(ctx, X0, T, X1, B, !joinL, !joinR);
+    return;
+  }
   ctx.fillStyle = fog(wallDark, d, dark, haze); ctx.fillRect(X0, T, X1 - X0, B - T);
   const brick = pal.wallStyle === 'brick';
   const rows = brick ? 9 : 6, cols = brick ? 4 : 3;
@@ -1667,12 +1674,18 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, m
     }
     return;
   }
-  const brick = pal.wallStyle === 'brick';
-  const rows = brick ? 9 : 6;
+  const brick = pal.wallStyle === 'brick', smooth = pal.wallStyle === 'smooth';
+  const rows = smooth ? 0 : brick ? 9 : 6;
   const cols = brick ? 4 : 3;
   // The planes the face spans, as paintScene clips them. Each block is fogged by its own depth, not
   // the cell's, so a wall darkens along its length instead of in a band per cell.
   const kN = Math.max(0, d - 0.5), kF = d + 0.5;
+  // A smooth wall's side is one face, in strips that overlap so no seam shows, each fogged by its depth.
+  const strips = 6;
+  if (smooth) for (let j = 0; j < strips; j++) {
+    const s0 = j / strips, s1 = Math.min(1, (j + 1.2) / strips), fd = kN + (kF - kN) * (s0 + s1) / 2;
+    quad(ctx, P(s0, 0), P(s1, 0), P(s1, 1), P(s0, 1), fog(shade(pal.wallDark, shadeSide), fd, dark, haze));
+  }
   for (let i = 0; i < rows; i++) {
     const t0 = i / rows, t1 = (i + 1) / rows;
     const off = (i % 2) * 0.5 / cols;
@@ -1696,6 +1709,14 @@ function drawSideFace(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, m
   ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.moveTo(e[0], e[1]); ctx.lineTo(c[0], c[1]);
   if (openFar) { const i = xF > xN ? -0.5 : 0.5; ctx.moveTo(b[0] + i, b[1]); ctx.lineTo(c[0] + i, c[1]); }
   ctx.stroke();
+}
+
+/** A door in a smooth wall: only its seam, a hairline up its sides and across its head, in the wall's colour darkened. */
+function drawSeam(ctx: CanvasRenderingContext2D, xl: number, xr: number, horizon: number, u: number, wall: string, d: number, dark: boolean): void {
+  const w = xr - xl, dw = Math.round(w * 0.42), foot = Math.round(horizon + u);
+  const x = Math.round(xl + (w - dw) / 2) + 0.5, y = Math.round(horizon + u - u * 1.55) + 0.5;
+  ctx.strokeStyle = fog(shade(wall, 0.7), d, dark); ctx.lineWidth = 1; ctx.lineCap = 'butt';
+  ctx.beginPath(); ctx.moveTo(x, foot); ctx.lineTo(x, y); ctx.lineTo(x + dw, y); ctx.lineTo(x + dw, foot); ctx.stroke();
 }
 
 function drawDoor(ctx: CanvasRenderingContext2D, xl: number, xr: number, horizon: number, u: number, color: string, d: number, dark: boolean, locked: boolean, arched: boolean): void {
