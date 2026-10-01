@@ -16,8 +16,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * and fails once it is placed, so its entry is dropped here.
  */
 const UNPLACED: Record<string, string> = {
-  black_dog: '#69', barrow_guard: '#70', barrow_captain: '#70',
-  farm_kitchen: '#87',
+  black_dog: '#69', barrow_wolf: '#69', barrow_guard: '#70', barrow_captain: '#70',
   eldest: '#218',
 };
 

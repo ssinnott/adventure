@@ -4,7 +4,7 @@
 // survey team's camp is past the sign, short of the first group. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/thornmark.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { denBurnt } from '../../../../game/dens.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
@@ -55,6 +55,7 @@ export const DEEPTHORN_H3: MapDef = {
   ],
   exits: [
     { x: 8, y: 0, to: 'thornmark', tx: 8, ty: 30, tf: NORTH },
+    { x: 31, y: 23, to: 'deepthorn_i3', tx: 1, ty: 23, tf: EAST },
   ],
   features: [
     // The way in, in the order the road meets it.

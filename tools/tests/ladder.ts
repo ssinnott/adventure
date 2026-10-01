@@ -77,7 +77,7 @@ export const DEEPTHORN: Record<ClassId, readonly string[]> = {
 /** The Deepthorn's finds and the box that places each: H3 (#214), I3 (#215), I4 (#49), J4 (#216), I5 (#217), J5 (#218); '' once placed. */
 export const DEEP_FINDS: Record<string, string> = {
   'tower_shield+1': '', 'rune_dagger+2': '',
-  'runed_robe+2': '#215',
+  'runed_robe+2': '',
   'elfbow+2': '', 'brigandine+3': '',
   'warhammer+2': '',
   silver_torc: '#217',
