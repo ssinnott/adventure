@@ -19,7 +19,7 @@ import { giftOf } from '../../src/game/wilds.ts';
 import { personFlags, personGives } from '../../src/game/people.ts';
 import { CONTENT, collect } from '../shipped.ts';
 import { condFaults } from './quests.ts';
-import { ok } from './lib.ts';
+import { ok, owed } from './lib.ts';
 
 const quest = (id: string, rank: number, deed: Partial<GuildQuest>, guild: GuildId = 'wardens'): GuildQuest => ({
   id, guild, rank, offer: [`Offer ${id}.`], paid: [`Paid ${id}.`], early: [`Early ${id}.`],
@@ -166,6 +166,22 @@ export function guilds(): void {
     const r = rankOf(g, party), built = Math.max(...GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank)) + 1;
     ok(r === built, `${g}: its quests, done as the hall offers them, raise a company to rank ${built}, ${rankName(g, built)} (${rankName(g, r) ?? 'none'})`);
     if (ACT_I.includes(g)) ok(built >= ACT_I_RANK, `${g}: Act I takes it to rank ${ACT_I_RANK}, ${rankName(g, ACT_I_RANK)} (${rankName(g, built)})`);
+  }
+  // DESIGN §8 gives every guild four ranks: a first task (0) and quests under each rank below the
+  // last (1 to 3). A rank with no quests yet is owed to the issue that builds it, or to the owner
+  // where none is filed, and fails once built, so its entry is dropped here.
+  const OWED_RANKS: Readonly<Record<GuildId, readonly (string | undefined)[]>> = {
+    wardens: [undefined, undefined, undefined, 'the owner'],
+    lanterns: [undefined, undefined, undefined, 'the owner'],
+    cartographers: ['#181', '#181', 'the owner', 'the owner'],
+    compact: [undefined, undefined, 'the owner', 'the owner'],
+  };
+  for (const g of Object.keys(GUILDS) as GuildId[]) {
+    for (let r = 0; r < GUILDS[g].ranks.length; r++) {
+      const has = GUILD_QUESTS.some((q) => q.guild === g && q.rank === r), whose = OWED_RANKS[g][r];
+      const what = `${g}: ${r ? `rank ${r}'s quests, ${rankName(g, r)}'s` : 'its first task'}`;
+      if (whose) owed(has, what, whose); else ok(has, what);
+    }
   }
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const ranks = GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank);
