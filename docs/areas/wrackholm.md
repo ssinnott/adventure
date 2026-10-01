@@ -10,12 +10,11 @@ and §8.2). Its work is filed under #154 (Phase 1.2, #149): its two boxes (#187,
 Figures are measured on main at `2cc52cd` (29 September 2026) with `worldGrid`
 (`src/game/atlas.ts`).
 
-Nothing of it is built. Its content will be `src/content/areas/wrackholm/` (maps, monsters, items,
-its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, its side quests in
-`quests.ts`, climate and its part of the world map); it has no town and no businesses, so no rooms.
-Its part of the world map is its folder's already (`atlas.ts`, #186), spread into the plan
-(`src/content/atlas.ts`) until the area is listed; the rest of the folder comes with its first map
-(#187), as Thornmark's did. Its ids: the area and its zone `wrackholm`, the cove `smugglers_cove`
+E6, the moor and the landing, is built (#187), and with it the area is listed in AREAS. Its content
+is `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters and atlas, its walkthrough; its
+items, its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, and its side quests in
+`quests.ts` to come); it has no town and no businesses, so no rooms. Its part of the world map is
+its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its ids: the area and its zone `wrackholm`, the cove `smugglers_cove`
 (the id stays under the new name, NAMES §3), the ship `tide_ship` and, below it, `dead_drop`.
 
 ---
@@ -27,7 +26,7 @@ makes Wrackholm one zone:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| Wrackholm | 12–14 | 2,066 | none |
+| Wrackholm | 12–14 | 2,066 | E6, the moor and the landing, laid at 136,158 (#187) |
 
 Squares are the ones the atlas gives it, shallows included. Without the shallows the isle is 1,754
 squares, about 1.7 zone maps (EXPANSION §1 has 1.7), and every one of them a company could walk:
@@ -72,11 +71,20 @@ The weather is the gulf's: wind, spray on the cliffs, gulls and the moor's heath
 
 ## 3. What is built
 
-Nothing but its atlas rows (`src/content/areas/wrackholm/atlas.ts`, #186): the zone at 12–14, Kelp
-Hole at 12–14, the Tide Ship at 13–14 and the sites, which the plan spreads in where its own rows
-were. The atlas has the zone, the cove and the ship as planned plates, the sites (Kelp Hole, the
-Tide Ship) and the links (the boat, the two ways in, the stair); the Dead-Drop's plate is the plan's
-(#22). Its systems are Saltreach's (#150) and the boat's (#164); its monsters are drawn in #193.
+Its atlas rows (`src/content/areas/wrackholm/atlas.ts`, #186): the zone at 12–14, Kelp Hole at
+12–14, the Tide Ship at 13–14 and the sites. The atlas has the cove and the ship as planned plates,
+the sites (Kelp Hole, the Tide Ship) and the links (the boat, the two ways in, the stair); the
+Dead-Drop's plate is the plan's (#22). Its systems are Saltreach's (#150) and the boat's (#164); its
+monsters are drawn in #193.
+
+- **The moor and the landing** (E6, `wrackholm_e6`, core, band 12–13; #187): the landing stage at
+  the head of an inlet on the isle's west side, the smugglers' huts round it, Kelp Hole's mouth in
+  the cliff above, the heather moor north and east. Its groups: bilge rats in the huts, wrack gulls
+  on the inlet's cliff and at the lookout, two crews of smugglers and bowmen on the paths, devilfish
+  in the pools under the south hills. The area is listed with it (`src/content/index.ts`), its
+  monsters and atlas carried by its Area and no longer in AHEAD or the plan.
+- **Weather.** The gulf's: mild winters, cool summers, a narrow day, wet autumns and much fog. Fronts
+  reach it three hours after they cross the Foreland.
 
 ## 4. What is still to build
 
@@ -138,6 +146,25 @@ Foreland map's density.
   landing stage.
 - **Finds.** A Long Bow +1 in the cache.
 - **Pay.** About 1,700 xp a member.
+- **As built** (#187, 1 October): the brief's places, the groups at the line's standard size. The
+  plan's landing, 152,172, and the cove's way in, 154,170, lay inland on the atlas, so an inlet is
+  cut in from the west shore: the stage stands at its head, at 16,14, and the cliff over its north
+  side is carried east so that the cove's mouth, at 18,12, opens in it above the stage. The landing
+  is the boat's far end only until #177 builds the boat, and the isle is cut off until then
+  (`tools/tests/outdoors.ts`'s `CUT_OFF`); the crossing line on the stage is the boat's to say. The
+  captain stands on the stage with two lines and no flag, for The Captain's Brother to hang on
+  (#192, #188). Six groups: eight bilge rats in the huts and eight gulls on the inlet's cliff,
+  nearest the stage; eight gulls at the lookout; two crews of two smugglers and two bowmen on the
+  paths north and east; and four devilfish in the pools under the south hills, the far end, so the
+  groups' levels rise to the band's top (13). The cache is the hut south of the inlet with the gulls
+  on its roof, its door found by searching from where they are seen; it holds the Long Bow +1 and 140
+  gold. The cairn on the crown, the camp in the lee of the south hills, the Tidefolk's bowl on the
+  west shore, the lookout and four more on the moor are the box's other points: every square is within
+  8 steps of one. As measured it pays about 1,920 xp a member and 404 gold. The gate at 12 wins every
+  fight, at 7.1 fights to a rest, and walks the road (the rats, the inlet's gulls, the east path)
+  every time; two under, at 10, it wins every fight too, which is owed to #18 until gear past 10
+  lands (`tools/tests/gate.ts`'s `OWED`). What the owner finds by hand goes here when the box has
+  been played.
 
 ### 4.3 Kelp Hole (#188): dungeon, two levels of 16×16, band 12–14
 
@@ -310,6 +337,18 @@ Proposed, for the owner, each in the issue that would build it:
 - **The bands on the atlas's rows** (#186): the zone 12–14, Kelp Hole 12–14, the Tide Ship 13–14.
   They are set already in `src/content/areas/wrackholm/atlas.ts`, where only the scaffold reads
   them, for a box's draft; the owner's word changes them there.
+
+Decided by delegate for #187, each the owner's to overturn:
+
+1. **The landing is an inlet's head,** cut in from the west shore, so that the plan's two points
+   stand: the stage at 152,172 and the cove's mouth at 154,170 in the cliff above it.
+2. **The pay aims at 1,700,** #186's figure, not the issue's 1,400; six groups at the standard size
+   come to about 1,920.
+3. **The captain stands on the stage** with two lines and no flag; the quest is #192's and #188's.
+4. **Nothing for the chapter** (#191) is placed in E6: it keys on what it needs when it is written.
+5. **Four devilfish in the south pools,** the box's far end and its level-13 group, so the levels
+   rise; E6 claims the devilfish as new, and heather.
+6. **The bilge rats are placed in E6's huts,** as the brief has them, not left to #189.
 
 Decided by delegate for #186, each the owner's to overturn:
 

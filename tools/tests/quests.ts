@@ -87,7 +87,7 @@ export function quests(): void {
     // yet is owed by whoever builds its step.
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
-    const PLANNED: Record<string, string> = {};
+    const PLANNED: Record<string, string> = { wrackholm: '#191' };
     const built = new Set(AREAS.map((a) => a.id as string));
     for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
       const msg = `zone ${z.id} holds a step of the one quest`;

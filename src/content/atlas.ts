@@ -22,7 +22,6 @@
 import type { Atlas } from '../game/atlas.ts';
 import * as SALTREACH from './areas/saltreach/atlas.ts';
 import * as SUNDERWOOD from './areas/sunderwood/atlas.ts';
-import * as WRACKHOLM from './areas/wrackholm/atlas.ts';
 
 export const PLAN: Atlas = {
   width: 512,
@@ -262,7 +261,6 @@ export const PLAN: Atlas = {
   ],
   zones: [
     ...SALTREACH.ZONES,
-    ...WRACKHOLM.ZONES,
     ...SUNDERWOOD.ZONES,
     { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66]] },
     { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', seeds: [[452, 120], [470, 160]] },
@@ -284,7 +282,6 @@ export const PLAN: Atlas = {
   ],
   places: [
     ...SALTREACH.PLACES,
-    ...WRACKHOLM.PLACES,
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
     ...SUNDERWOOD.PLACES,
     { id: 'anvilhall', name: 'Anvilhall', kind: 'town', planned: true, band: [16, 18], at: [452, 70] },
@@ -306,7 +303,6 @@ export const PLAN: Atlas = {
   ],
   sites: [
     ...SALTREACH.SITES,
-    ...WRACKHOLM.SITES,
     ...SUNDERWOOD.SITES,
     // VI. The Kilns.
     { name: 'Anvilhall', icon: 'fortress', at: [452, 80], label: 'below', planned: true },

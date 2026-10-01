@@ -76,17 +76,24 @@ export const ROADS: Record<string, readonly string[]> = {
   downs: ['downs_f2:f2_bandits'],
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
   deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
+  wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', wrackholm: 'Wrackholm' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
  * when it was owed. It is reported, not failed, and fails once it is inside its limit; it fails too if
  * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest).
  */
-export const OWED: Record<string, { whose: string; at: number }> = {};
+export const OWED: Record<string, { whose: string; at: number }> = {
+  // Two under a floor past 10 the company is dressed in the ladder's top step, the Deepthorn's, as it
+  // is at the floor: it holds nobody back until gear past 10 lands (#18). Wrackholm's groups are at
+  // the line's standard size (tools/testmonster.ts).
+  'wrackholm_e6: under': { whose: '#18', at: 1 },
+  'Wrackholm: under': { whose: '#18', at: 1 },
+};
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
 

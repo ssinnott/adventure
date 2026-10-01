@@ -1,11 +1,10 @@
-// Wrackholm's part of the world map: its one zone, the plates of Kelp Hole and the Tide Ship, and its
-// sites. Nothing of it is built yet, so it is listed in no AREAS; the plan (src/content/atlas.ts)
-// spreads these rows in where its own were until the area's first map (#187) lists it. The
-// Dead-Drop below the ship stays the plan's (#22). docs/areas/wrackholm.md is its brief.
+// Wrackholm's part of the world map: its one zone, with E6 laid at its box (#187), the plates of Kelp
+// Hole and the Tide Ship, and its sites. The Area carries it (index.ts). The Dead-Drop below the ship
+// stays the plan's (#22). docs/areas/wrackholm.md is its brief.
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'wrackholm', name: 'Wrackholm', area: 'wrackholm', band: [12, 14], seeds: [[168, 176]] },
+  { id: 'wrackholm', name: 'Wrackholm', area: 'wrackholm', band: [12, 14], maps: [{ map: 'wrackholm_e6', at: [136, 158] }], seeds: [[168, 176]] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
