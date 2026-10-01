@@ -28,7 +28,10 @@ export const ITEMS: readonly ItemDef[] = [
   P(tidefolkRobe, 1),
   P(hornBow, 1),
   // C5's secret (#170): a shard from the barge drowned under the causeway, which the plinth does not take.
+  // C4's hide (#171) holds another.
   { id: 'brine_shard', name: 'Brine Shard', slot: 'none', price: 0 },
+  // C4's secret (#171): the crews' hide in the reeds.
+  P(core('longsword'), 1),
   // C6's find (#176): in a crate of the crews' cargo on the quay.
   P(core('scale'), 1),
   // C7's secret (#178): the salter's hoard in the sealed pan, beside the ladder's Horn Bow +1.
