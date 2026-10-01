@@ -22,6 +22,6 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'sunder_hound', name: 'Sunder Hound', plural: 'Sunder Hounds', sprite: 'sunder_hound', kind: 'rift', look: 'A rift hound, gone to glass.', level: 15, hp: 152, ac: 19, attack: 9, dice: 3, sides: 5, bonus: 2, speed: 15, xp: 593, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, weak: ['fire'], immune: ['cold'], tint: '#2c2f38', size: 0.72 },
   // Lanternwood by night (#195, #200, #202, #203), fodder on MONSTERS §4.4's line at 14: it flies, reaches the back row, and its dust puts to sleep, at 0.2 a hit
   { id: 'lantern_moth', name: 'Lantern Moth', plural: 'Lantern Moths', sprite: 'lantern_moth', kind: 'beast', look: 'Wings like a pair of hands, and dust that glitters.', level: 14, hp: 112, ac: 17, attack: 8, dice: 1, sides: 6, bonus: 3, speed: 12, xp: 277, gold: [0, 0], ranged: true, inflict: { cond: 'asleep', chance: 0.2 }, tint: '#d8ceb0', size: 0.4 },
-  // the Sunder's floor (#199), armoured on MONSTERS §4.4's line at 16; fire does not touch it, once there are elements (MONSTERS §3.3)
-  { id: 'glass_bear', name: 'Glass Bear', plural: 'Glass Bears', sprite: 'glass_bear', kind: 'beast', look: 'Glass through its fur like frost.', level: 16, hp: 127, ac: 21, attack: 10, dice: 2, sides: 8, bonus: 3, speed: 8, xp: 844, gold: [0, 0], tint: '#4e4a46', size: 1.2 },
+  // the Sunder's floor (#199), armoured on MONSTERS §4.4's line at 16; fire does not touch it
+  { id: 'glass_bear', name: 'Glass Bear', plural: 'Glass Bears', sprite: 'glass_bear', kind: 'beast', look: 'Glass through its fur like frost.', level: 16, hp: 189, ac: 21, attack: 10, dice: 3, sides: 7, bonus: 3, speed: 8, xp: 844, gold: [0, 0], immune: ['fire'], tint: '#4e4a46', size: 1.2 },
 ];
