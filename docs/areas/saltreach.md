@@ -13,9 +13,9 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 Four boxes of it are built, the Delta road and the shore under the Edge (#170), Stienwierde (#173)
 and Saltmouth's box (#176), and the town behind its gate, Saltmouth (#177); with the first two the
 area was listed. Its content is
-`src/content/areas/saltreach/` (maps, monsters, items, climate and its part of the world map; its
-chapter of the one quest, The Tide Stone, in `chapter.ts`, its side quests in `quests.ts` and its
-guild quests in `guilds.ts` are still to come) and its businesses' rooms
+`src/content/areas/saltreach/` (maps, monsters, items, climate, its part of the world map and its
+guild quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` and its
+side quests in `quests.ts` are still to come) and its businesses' rooms
 `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta` and
 `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
@@ -449,9 +449,8 @@ settled in its issue, and what the pilot teaches changes them.
   (the Thief's), Baukje the stevedore among the bales on the quay (the Barbarian's) and Tjerk the
   ferryman at the steps (the Monk's). Jory Tallis stands at his house front on the quay, his
   lineage framed on the wall through the open door, and his words touch the throne and no more.
-  The pump in the square is brackish and does not heal. The Keel's and the map room's keepers say
-  plain words: the halls, their first tasks and the stair's top in the Keel's cellar are #182's
-  and #181's, the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach
+  The pump in the square is brackish and does not heal. The Keel's keeper says plain words: its
+  hall, its first task and the stair's top in its cellar are #182's, the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach
   runs from the yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
   and onto Wrackholm's stage at 6 the next morning, and back the same from the stage, landing on
   the quay. The walkthrough goes in by the gate and out again, buys each class its step at the
@@ -459,6 +458,16 @@ settled in its issue, and what the pilot teaches changes them.
   the log has sent her to Pender; then it takes the boat to the isle, saves there and loads, and
   takes it home. The town pays nothing of its own: its 300
   is its quests', which are its halls', its chapter's and its side quests'.
+- **The Cartographers' hall** (#181, 1 October): the map room is the Map Room, a shop with the
+  Guild's `hall`, selling rations, antidotes, lamp oil and healing potions at list price to
+  surveyors going out; its menu is the trade, the Guild's work and Ysolde, who stands in it as a
+  person. The book under glass is the Meridian Company's route book, left with the Guild the
+  morning they went; the journals went down with them. Ysolde reads the first journal to a company
+  that carries it and gives it back (`meridian_read`): Oriel Fane's line about lying dry under the
+  causeway's arch points at C5's barge, the hint the mast's stump already gives. The Guild teaches
+  nothing yet: its three skills are #18's. The walkthrough takes the first task, chains the road,
+  is made Chainmen, does both quests of the first rank and is made Surveyors, then has the journal
+  read.
 
 ### 4.10 C7, the salt pans (#178): country, band 12
 
@@ -537,7 +546,15 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
 - **The Cartographers' Guild** (#181), a map room in Saltmouth (#254): the first task, a survey
   of the Salt Road's milestones; a first rank of two quests in the boxes and the Delta; the Meridian
   journal read here for the first time, where the Lost Expedition goes on (DESIGN §10.3). Its
-  surveyor gives The Length of the Wall in Sunderwood (#56's 32, #205).
+  surveyor gives The Length of the Wall in Sunderwood (#56's 32, #205). As built:
+
+  | Rank | Quest | The deed | Pay |
+  |---|---|---|---|
+  | first task | First Chain | taken, the road chained from D5's milestone (`d5_milestone`, 0,1) to C6's (`c6_milestone`, 26,2), two new once-events that wait on the taking | 30 gold, 120 xp |
+  | 1 | The Fen's Edge | west past Stienwierde to where the fen ends (`delta_b5:b5_west`) | 200 gold, 360 xp |
+  | 1 | The West Arm | over the west arm's ford to the eel-catcher's hut (`saltings_c6:c6_hut`) | 200 gold, 360 xp |
+
+  Ranks 2 to 4 (Mapmaker, Geographer) are for the boxes still to build.
 - **The Salt Compact** (#182), the harbour tavern (#253): the first task, a run of brandy past the
   customs house; a first rank of two quests; the boat's fare halved for a member. Its line begins
   with the hermit's letter from Wrackholm (#56's 26, #192): the founder is a decade dead and the
@@ -566,7 +583,8 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   next area's floor, divided by 0.75: from 10 to 12 that is 6,200 / 0.75, about 8,267 xp a member,
   with today's `xpForLevel`. The shares of §4 are C5 700, C4 600, C3 1,000, B5 1,000, B6 800, the
   temples 1,800, C6 700, Saltmouth 300, C7 700 and the four side quests about 700 between them:
-  8,300 without the willows. A small Rift is budgeted at about 450 a member on top of its box's
+  8,300 without the willows. The Cartographers' three quests pay 840 xp, 140 a member, and 430
+gold, of Saltmouth's 300; the Compact's share of the rest is #182's. A small Rift is budgeted at about 450 a member on top of its box's
   share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve. B5 as built pays
   about 1,600, its two Rifts inside it (#173): a fight inside the gate's aim at 11 costs about 300
   xp a member whatever its monsters, and its five come to about 1,650 measured with the company at
@@ -774,6 +792,34 @@ Decided by delegate for #177, each the owner's to overturn:
 10. **Two pull requests, the second stacked on the first:** the town (the map, the eight
     businesses, the four trainers, Tallis and the people, the gate and the atlas), then the boat,
     which reaches into Wrackholm's E6 and `CUT_OFF` and is reviewed on its own.
+
+Decided by delegate for #181, each the owner's to overturn:
+
+1. **The hall is a shop, the Map Room,** on the map room's door with the Guild's `hall`: only a
+   business may carry one, and a shop must sell something real, so it sells rations, antidotes,
+   lamp oil and healing potions at list price, what a surveyor takes out. No chart or kit is
+   sold: it would do nothing until #18's Cartographer exists. Ysolde stands after it on its square,
+   a person with no room of her own.
+2. **The book under glass is the Company's route book,** left with the Guild the morning they went,
+   since the room draws a book under glass and the journals went down with them: the first journal
+   the company carries is the first read here.
+3. **The first task is First Chain,** the road chained from D5's milestone to C6's, two once-events
+   beside the stones that wait on the taking, the second on the first. Every company walks past both
+   stones on its way in, so without the wait the task would always be paid as done early; with it,
+   it is a trip back up the road, as First Watch is. It has no words for a company that came early.
+4. **The first rank's two quests are on events already built:** the fen's west edge past
+   Stienwierde (B5) and the eel-catcher's hut over the west arm's ford (C6), two trips in two zones,
+   both in band 11–12 and off the chapter's road. No map is changed for them.
+5. **The pay is small,** 140 xp a member in all, since the area is about 17% over its curve and
+   Saltmouth's 300 is shared with the Compact's hall, the chapter and the side quests.
+6. **Ysolde reads the journal and gives it back:** her words, after the journal is carried, set
+   `meridian_read`. Fane's line about lying dry under the arch where the causeway crosses the
+   channel, with the mast stood against the stone, points at C5's barge without saying it. The
+   Lost Expedition's log entry for the reading would go in `thornmark/quests.ts`, another area's
+   file, so it is owed to the owner's word and not written here; SLICE's "nothing reads it yet"
+   is the owner's to change.
+7. **The Length of the Wall is not here:** it is #205's, given by the Guild's surveyor at Lantern
+   Watch. The Guild's three skills are #18's, and the hall says nothing of teaching them.
 
 ## 10. Names
 
