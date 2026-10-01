@@ -13,9 +13,10 @@ import { rest, companyLevel } from './party.ts';
 
 export type { Passage };
 
-/** What the crossing costs this company: nothing once its `free` holds. */
+/** What the crossing costs this company: nothing once its `free` holds, half once its `half` does. */
 export function fareOf(p: Passage, world: World): number {
-  return p.free && holds(p.free, world.state, world.party) ? 0 : p.fare;
+  const by = (w: Passage['free']): boolean => !!w && holds(w, world.state, world.party);
+  return by(p.free) ? 0 : by(p.half) ? Math.floor(p.fare / 2) : p.fare;
 }
 
 /** The minute of the next departure at or after `minutes`: today's, if its hour has not passed. */
