@@ -522,8 +522,8 @@ Decided by delegate for #194, each the owner's to overturn:
    the floor: the roster's.
 5. **The depths' brief stays short** until #203 is unparked: it waits on the owner's play.
 6. **The hints are things a player sees** (I2's cut turf, K2's bare rock, K3's stacked wood, the
-   Sunder's chalk, L2's raked ash, J3's moths at the den): a hint that is only a person's name tells a player nothing to
-   look for.
+   Sunder's chalk, L2's raked ash, J3's moths at the den): a hint that is only a person's name tells
+   a player nothing to look for.
 
 ## 10. Names
 
