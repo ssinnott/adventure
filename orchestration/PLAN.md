@@ -1656,3 +1656,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   §11). The look OK (a switchback on the automap; the words carry the descent). Choices 1, 3–6
   taken, with mountain at 21–22,20 closing the swimmer's way round; nits 3–5 as the reviewer has
   them. Round sent to the D4 session; noted on #170 (comment 5922459662). It lands after #306.
+- 00:53: the delegate on #310 (the Berth): the look OK as built (stone and vault the right pair of
+  the engine's four; a barrow wall style a systems item for later, not filed); choices 1, 3, 4 and 5
+  taken; choice 2 the journal entry only, with the true reason (nothing in The Quiet Farm sends the
+  company there; found, not told): a goal and `seen: 'berth:berth_bier'` in `done` is a one-issue
+  change once a later chapter gives a reason (the signet). The owed curve entry goes in this round;
+  the captain held dead in the walkthrough two days on (finding 3); nits 4 and 5. Round sent to the
+  Berth's session: merge #306's head and main now, main once more after #306 lands.
