@@ -36,6 +36,7 @@ import { mixHash, weatherSight } from '../game/weather.ts';
 import { sunTimes } from '../game/calendar.ts';
 import type { Tide } from '../game/calendar.ts';
 import { hash } from './brush.ts';
+import { hearthBearing } from '../game/stones.ts';
 
 export const VIEW_W = 400, VIEW_H = 268;
 const NEAR = 0.9;
@@ -177,7 +178,7 @@ export function drawViewport(
   monstersAt: (x: number, y: number) => readonly ViewMonster[] | null, frame: number, weather = true,
 ): void {
   // The minute and the weather seed pin down the weather, so they key the scene with the place.
-  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, world.map.landmarks.map((l) => (l.lit && world.party.flags[l.lit] ? 1 : 0)).join(''), r.w, r.h].join('|');
+  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, world.map.landmarks.map((l) => (l.lit && world.party.flags[l.lit] ? 1 : 0)).join(''), world.stones, r.w, r.h].join('|');
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
@@ -268,7 +269,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     ctx.fillStyle = shade(pal.floor, 0.5); ctx.fillRect(r.x, horizon, r.w, r.h / 2);
   } else {
     const { dawn, dusk } = sunTimes(day);
-    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day };
+    const at = world.worldCell, hearth = at ? { bearing: hearthBearing(at.x, at.y), stones: world.stones } : undefined;
+    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
     // The ground runs on to the horizon in the terrain out past the last cell drawn; the void and
@@ -460,6 +462,11 @@ export interface SkyOpts {
   cover?: number; day?: number;
   /** Paint only the sky behind everything, or only the hills in front of it; both when absent. */
   part?: 'back' | 'hills';
+  /**
+   * The Hearth on the horizon by night: its compass bearing from the party, and the Stones restored,
+   * each a step brighter and wider (game/stones.ts, #168). Not drawn when absent.
+   */
+  hearth?: { bearing: number; stones: number };
 }
 
 /** The sky, sun or moon, clouds, stars and distant hills for the top half of `r`. Also used by the title. */
@@ -556,7 +563,27 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
       ctx.lineTo(r.x + r.w, horizon + 1); ctx.closePath();
       ctx.fillStyle = dark ? shade(col, 0.5) : col; ctx.fill();
     }
+    if (o.hearth) drawHearthLight(ctx, r, o.hearth.bearing - f * 90, o.hearth.stones, daylight, 1 - Math.min(1, cloud * 1.05 + murk * 0.5));
   }
+}
+
+/**
+ * The Hearth where it lies, `ahead` degrees right of the way the party faces, as the light goes: a column standing over the far hills and the glow
+ * about its foot, faint from the first night and taller and brighter by a step for each Stone
+ * restored (#168); lost in cloud and murk as the moon is. Not drawn when its bearing is out of view.
+ */
+function drawHearthLight(ctx: CanvasRenderingContext2D, r: ViewRect, ahead: number, n: number, daylight: number, seen: number): void {
+  const light = Math.min(1, Math.max(0, (0.3 - daylight) / 0.3)) * seen;
+  let rel = (ahead % 360 + 360) % 360; if (rel > 180) rel -= 360;
+  if (light <= 0.02 || Math.abs(rel) > 100) return;
+  const horizon = r.y + r.h / 2, hx = r.x + r.w / 2 + (rel / 90) * r.w * 0.55;
+  const tall = 64 + 14 * n, rad = 18 + 5 * n, a = (0.25 + 0.1 * n) * light, foot = horizon - 30;
+  const hg = ctx.createRadialGradient(hx, foot, 1, hx, foot, rad * 2);
+  hg.addColorStop(0, rgba('#ffd890', a)); hg.addColorStop(1, rgba('#ffc070', 0));
+  ctx.fillStyle = hg; ctx.fillRect(hx - rad * 2, foot - rad * 2, rad * 4, rad * 4);
+  const col = ctx.createLinearGradient(0, horizon - tall, 0, horizon - 14);
+  col.addColorStop(0, rgba('#fff0c0', 0)); col.addColorStop(1, rgba('#fff0c0', Math.min(1, a * 2)));
+  ctx.fillStyle = col; ctx.fillRect(Math.round(hx) - 1, horizon - tall, 2, tall - 14);
 }
 
 // ------------------------------------------------------------------ weather, every frame ----
