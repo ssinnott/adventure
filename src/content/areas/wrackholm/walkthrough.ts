@@ -6,7 +6,7 @@
 // passage, found by the tide-mark and not told, onto F6's east shore. Last, east over the moor into
 // F6 at 13: the hermit's tally, the door in the cairn on the point found by a search, the founder's
 // seal in the grave, and every group of F6 won at its floor. Then out to the Tide Ship by night in
-// Pender's boat: the devilfish over the side; the rats and the Hand's post on the lower deck, and the
+// Dando's boat: the devilfish over the side; the rats and the Hand's post on the lower deck, and the
 // papers, the log and the cutlass in the cabin; the hold's crew, strangers in the last row while Hale
 // holds the Scarth and Hale once he is taken from it, freed and gone; the straw that is fresh on one
 // side, and the shard-cut behind it found by a search and not told; the tear, the Warden at 14 and
@@ -134,7 +134,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   for (const g of MAP_DEFS.find((d) => d.id === f6.id)!.encounters ?? []) fight(w, `${f6.id}:${g.id}`);
 
-  // Out to the Tide Ship. By day the shingle is empty; by night Pender rows whoever pays.
+  // Out to the Tide Ship. By day the shingle is empty; by night Dando rows whoever pays.
   const ship = TIDE_SHIP, lower = TIDE_SHIP2, hold = TIDE_SHIP3, foot = DEAD_DROP_STAIR;
   const pender = f6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
   clock(w, 12);
@@ -142,7 +142,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!w.world.present(pender), 'by day nobody on the shingle rows out to the ship');
   clock(w, 23);
   w.world.travel(f6.id, pender.x, pender.y);
-  ok(w.world.present(pender) && meet(pender, w.party, heard(w.world, pender)).text.startsWith('An old man sits on a thwart'), 'by night Pender sits in his boat on the shingle');
+  ok(w.world.present(pender) && meet(pender, w.party, heard(w.world, pender)).text.startsWith('An old man sits on a thwart'), 'by night Dando sits in his boat on the shingle');
   w.party.gold += 20;
   const rowed = take(pender.passage![0], w.world, w.party);
   ok(rowed.taken && w.world.state.mapId === ship.id && w.world.hour < 6, 'he rows the company out, and it comes aboard by night');

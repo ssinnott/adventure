@@ -52,7 +52,7 @@ Its edges are the sea on every side. Its ways:
   and the boat is how it leaves.
 - **Kelp Hole,** at 154,170 in E6, the cove's mouth in the cliff above the landing. Its sea cave lets
   out by a flooded passage onto F6's east shore at 196,167: a way out and not in (§4.3).
-- **The Tide Ship,** boarded from F6's shingle at 182,188 by night, in Pender's boat; the ship lies
+- **The Tide Ship,** boarded from F6's shingle at 182,188 by night, in Dando's boat; the ship lies
   off the shore, its decks' plates at 208,192 and beside it in the sea, and a company rows itself
   back to the shingle at any hour.
 - **The Dead-Drop's stair,** from the Tide Ship's hold down to the stair's foot, one room at 26–28
@@ -102,7 +102,7 @@ monsters are drawn in #193.
   under the cliff by night. Its item is the founder's seal (`items.ts`).
 - **The Tide Ship** (`tide_ship` 12–13, `tide_ship2` 12–13 and `tide_ship3` 12–14, three decks of
   16×16, with the Rift `tide_ship_rift` 12–14 and the stair's foot `dead_drop_stair` 26–28; #190):
-  boarded by night in Pender's boat from F6's shingle; the weather deck and the devilfish over the
+  boarded by night in Dando's boat from F6's shingle; the weather deck and the devilfish over the
   side, the lower deck's rats, the Hand's post and the captain's cabin with the papers and the log,
   and the hold, its crew among the chained rows, Hale in the last row, the Tide Elder at the
   bulkhead and the shard-cut past him; the Stone's Rift and its Warden, and the stair down (§4.5).
@@ -321,7 +321,7 @@ Foreland map's density.
   `tide_ship_rift` (12–14) and the stair's foot `dead_drop_stair` (26–28). The decks are floored at
   12, as Kelp Hole's are: the curve asks each map's hardest group to stand near its top, and only the
   bosses and the borrowed gleaner are Wrackholm's 14s, so the plan's 13–14 could not hold. By night
-  Pender, an old Compact oarsman, sits in his boat on F6's shingle and rows out whoever pays 20 gold,
+  Dando, an old Compact oarsman, sits in his boat on F6's shingle and rows out whoever pays 20 gold,
   leaving at midnight and landing an hour on (a crossing, #164); by day nobody rows, and a company
   rows itself back over the side at any hour. The weather deck: the rail and the boats under it, the
   foremast, the waist, the main hatch, the helm and the bow, a locker with 300 gold, and four
@@ -461,7 +461,7 @@ Proposed, for the owner, each in the issue that would build it:
 
 Decided by delegate for #190, each the owner's to overturn:
 
-1. **The ship is boarded in Pender's boat by night,** a crossing sold on F6's shingle, since no way
+1. **The ship is boarded in Dando's boat by night,** a crossing sold on F6's shingle, since no way
    on a map can keep hours; the fare lands the company rested, as a crossing does. The way back is
    over the side, open at any hour.
 2. **Hale is in the last row only once he is gone from the Scarth:** the hold waits on
