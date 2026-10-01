@@ -17,8 +17,10 @@
 // The company is the premade six, trained to the level (to the road's cap, 32) and dressed in what
 // the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
-// the spell saves outweigh its spell points, each weighed by what the company has left of that pool.
-// It never blesses, sleeps, cures, drinks or flees. Between fights it mends as a player would. The
+// the spell saves outweigh its spell points, each weighed by what the company has left of that pool,
+// and counts a spell's element for what it has seen it do to each foe.
+// It wakes a sleeper of the front row, or a caster, where it can, and never blesses, sleeps, cures
+// anything else, drinks or flees. Between fights it mends as a player would. The
 // report and the calibration run on every core.
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';
@@ -28,7 +30,7 @@ import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup, castOnAlly, toHit, buffHit, traitDamage, FRONT_ROW } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup, castOnAlly, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
@@ -280,7 +282,7 @@ const spellDamage = (c: Character, sp: SpellDef): number =>
 /** A turn's weapon blows' expected damage on a monster; `capped` counts no more than the monster has left. */
 function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, capped = true): number {
   const w = weaponOf(c), e = edgeOf(c, s.round);
-  const chance = toHit(attackBonus(c) + buffHit(s, p) - (w.ranged ? s.rangedPenalty : 0), m.def.ac);
+  const chance = toHit(attackBonus(c) + buffHit(s, p) - (w.ranged ? s.rangedPenalty : 0), monsterAc(s, m));
   const blow = Math.max(0, hits(w) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + e.damage);
   return e.blows * chance * (capped ? Math.min(m.hp, blow) : blow);
 }
@@ -293,12 +295,25 @@ function incoming(s: CombatState, p: Party): number {
     const d = s.monsters[f].def, reach = d.ranged || !front.length ? up : front;
     if (!reach.length) continue;
     const ac = reach.reduce((a, { c }) => a + armorClass(c) + edgeOf(c, s.round).ac, 0) / reach.length;
-    total += toHit(d.attack - (d.missile ? s.rangedPenalty : 0), ac) * Math.max(0, (d.dice * (d.sides + 1)) / 2 + d.bonus);
+    total += toHit(monsterHit(s, s.monsters[f]), ac) * Math.max(0, (d.dice * (d.sides + 1)) / 2 + d.bonus);
   }
   return total;
 }
 
 export type Bot = (s: CombatState, p: Party, rng: RngInstance, i: number) => void;
+
+/**
+ * The bots' answer to sleep: the sleeper to wake, a member of the front row first and then a caster,
+ * and the cheapest spell the member can afford that wakes them; none if no one need be woken. A
+ * sleeper of the back row with no spells is left to wake of itself. Paralysis is left (#18).
+ */
+export function wakeWith(p: Party, c: Character): { spellId: string; target: number } | undefined {
+  const cure = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.target === 'ally' && x.cure?.includes('asleep') && x.sp <= c.sp).sort((a, b) => a.sp - b.sp)[0];
+  if (!cure) return undefined;
+  const asleep = p.members.map((m, j) => ({ m, j })).filter(({ m }) => hasCondition(m, 'asleep') && !isDown(m));
+  const who = asleep.find(({ j }) => j < FRONT_ROW) ?? asleep.find(({ m }) => m.maxSp > 0);
+  return who && { spellId: cure.id, target: who.j };
+}
 
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
 function mendRate(c: Character): number {
@@ -332,6 +347,8 @@ export const thrifty: Bot = (s, p, rng, i) => {
     const pick = mends.filter((x) => spellHeal(c, x.heal ?? 0) >= wound / 2).sort((a, b) => a.sp - b.sp)[0] ?? mends.sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
     if (partyAct(s, p, rng, { type: 'cast', spellId: pick.id, target: worst.j })) return;
   }
+  const sleeper = wakeWith(p, c);
+  if (sleeper && partyAct(s, p, rng, { type: 'cast', ...sleeper })) return;
   const foes = aliveMonsters(s);
   if (!foes.length) { partyAct(s, p, rng, { type: 'defend' }); return; }
   // A blade at a leader it reaches, since the people break at its fall, else at the weakest it reaches.
@@ -346,8 +363,9 @@ export const thrifty: Bot = (s, p, rng, i) => {
   let best: PartyAction = armed ? { type: 'attack', target: weakest } : { type: 'defend' }, worth = 0;
   for (const x of known) {
     if (!x.dice || (x.target !== 'enemy' && x.target !== 'group' && x.target !== 'all')) continue;
-    // What the spell would do, no target counted for more than it has left.
-    const each = spellDamage(c, x), take = (f: number): number => Math.min(each, s.monsters[f].hp);
+    // What the spell would do, by what the company has seen its element do to each, no target counted
+    // for more than it has left.
+    const each = spellDamage(c, x), take = (f: number): number => Math.min(each * seenMult(s, s.monsters[f], x.element), s.monsters[f].hp);
     let dmg = 0, target = weakest;
     if (x.target === 'all') dmg = foes.reduce((a, f) => a + take(f), 0);
     else if (x.target === 'enemy') { if (lead !== undefined) { dmg = take(lead); target = lead; } else for (const f of foes) if (take(f) > dmg) { dmg = take(f); target = f; } }

@@ -141,9 +141,22 @@ marks the bows the weather spoils, and `mindless` shrugs off Slumber. It carries
 That is all, but for ranks and morale (#160): a group may stand a `back` rank, which a blade reaches
 only once the fight's front is down and which waits, bow or spell aside, till then; and a fight's
 people break once its `leader` falls, a group's beasts bolt at three in four down, and the fled pay
-nothing; the Hand never breaks (`steady`). No monster casts, heals, calls for help, regenerates or
-resists an element. Nothing gives a curse or stone, though both conditions exist: Restore lifts a
-curse, and a temple a stoning.
+nothing; the Hand never breaks (`steady`).
+
+And for casting, drain and elements (#161). Every damage spell carries fire, cold, lightning,
+nature or holy (DESIGN.md §7), and a monster may `resist` one (half, rounded up), be `immune` to one
+(none) or be `weak` to one (half again); the dead are weak to holy and immune to nature by their
+kind, the machine weak to lightning and immune to holy and nature, and the brineling is bitten by
+lightning and not by cold. A monster that `cast`s names spells from the tables and a chance a turn
+to spend its turn on the first that would do something: Mend on the most hurt of its group or
+Mending Light on all of it, healing the spell's and its level held at 10; Bless or Ward over its
+group while none runs; a damage spell at one member, a row or the party; Slumber on the row with
+more awake. It casts at its level held at 10, unranked, and does not wait in the back rank. Its
+hits may `drain`: heal it by their damage, or take spell points before hit points. A hit wakes a
+sleeper, and a fight's sleepers wake when it ends. Both bots learn what an element does to a foe
+from the first spell of it they see land, and wake a sleeper of the front row, or a caster. No
+monster calls for help or regenerates. Nothing gives a curse or stone, though both conditions
+exist: Restore lifts a curse, and a temple a stoning.
 
 ### 3.2 What the numbers show
 

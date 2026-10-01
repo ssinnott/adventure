@@ -1,11 +1,15 @@
 // The combat resolver: a seeded fight replays byte for byte, the cap, the rows, fleeing, the spells
-// that hit every foe, Ward and Revive; the ranks and morale (#160).
+// that hit every foe, Ward and Revive; the ranks and morale (#160); elements, monsters that cast and
+// drain, and a hit that wakes a sleeper (#161).
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ITEMS, MONSTERS } from '../../src/content/index.ts';
+import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
 import { defaultParty, equip, addCondition, hasCondition, killPay } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, frontStands, WARD_AC, BREAK_LINE, ROUT_LINE } from '../../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, frontStands, monsterAc, monsterHit, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
+import { elementMult, monsterSpells, KINDS } from '../../src/game/monsters.ts';
+import { gateBlast } from '../gate.ts';
+import { wakeWith } from '../harness.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
@@ -130,6 +134,9 @@ export function combat(): void {
   ok(startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4)).rangedPenalty === 0, 'and a fight with no word of the weather has none');
   ranks();
   morale();
+  elements();
+  casting();
+  drain();
 }
 
 /** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
@@ -228,4 +235,164 @@ function morale(): void {
     ok(four.monsters.filter((m) => m.fled).length === 1 && four.log.includes(ROUT_LINE(MONSTERS.rat.name, true)), `the last of four rats bolts, and the log says so`);
     ok(!three.monsters.some((m) => m.fled), 'three rats fight to the last');
   }
+}
+
+/** Until the monster whose index is `who` has taken its turn, the party braces; then it stops. */
+function untilActs(s: CombatState, p: Party, seed: number, who: number): boolean {
+  const rng = makeRng(seed);
+  for (let guard = 0; guard < 200 && s.outcome === 'ongoing'; guard++) {
+    const t = currentTurn(s, p, rng);
+    if (!t) return false;
+    if (t.side === 'monster') { monsterAct(s, p, rng); if (t.i === who) return true; } else partyAct(s, p, rng, { type: 'defend' });
+  }
+  return false;
+}
+
+/** Elements (DESIGN §7, MONSTERS §3.3): every damage spell has one, and a brineling is bitten by lightning and not by cold. */
+function elements(): void {
+  const spells = Object.values(SPELLS).filter((x) => x.level <= 5);
+  ok(spells.every((x) => !!x.element === !!x.dice), `every damage spell has an element and no other spell has one (${spells.filter((x) => !!x.element !== !!x.dice).map((x) => x.id).join(', ') || 'all'})`);
+  const of = (el: string): string => spells.filter((x) => x.element === el).map((x) => x.name).join(', ');
+  ok(of('fire') === 'Fire Bolt, Meteor Swarm' && of('cold') === 'Hailstorm' && of('lightning') === 'Spark, Chain Lightning, Tempest' && of('nature') === 'Thorn Lash, Stinging Swarm' && of('holy') === 'Smite, Wrath of the Hearth', 'the elements are DESIGN §7\'s');
+  const brine = MONSTERS.brineling;
+  ok(elementMult(brine, 'lightning') === 1.5 && elementMult(brine, 'cold') === 0 && elementMult(brine, 'fire') === 1, 'a brineling takes half again from lightning, nothing from cold and the rest whole');
+  ok(elementMult(MONSTERS.skeleton, 'holy') === 1.5 && elementMult(MONSTERS.skeleton, 'nature') === 0 && elementMult(MONSTERS.bandit, 'holy') === 1, 'holy light bites the dead and the swarm does nothing to them, as their kind says; a bandit takes both whole');
+  ok(KINDS.machine.weak?.includes('lightning') === true && KINDS.machine.immune.includes('holy'), 'lightning bites a machine, and the Hearth\'s light passes through it');
+  ok(elementMult({ ...MONSTERS.rat, resist: ['fire'] }, 'fire') === 0.5, 'a monster that resists an element takes half');
+  // The same fight, the same rolls: Chain Lightning on brinelings and on the same glass with no weakness; Hailstorm on brinelings.
+  const cast = (def: MonsterDef, spellId: string): { took: number[]; s: CombatState } => {
+    const r = makeRng(31), p = defaultParty(r), sorc = p.members[5];
+    sorc.level = 10; sorc.spells.push(spellId); sorc.sp = 99;
+    const s = startCombat(p, [{ id: 'b', monsters: [def, def, def, def] }], r);
+    for (let guard = 0; guard < 100 && s.outcome === 'ongoing'; guard++) {
+      const t = currentTurn(s, p, r); if (!t) break;
+      if (t.side === 'monster') { monsterAct(s, p, r); continue; }
+      if (t.i === 5) { const before = s.monsters.map((m) => m.hp); partyAct(s, p, r, { type: 'cast', spellId, target: 0 }); return { took: s.monsters.map((m, k) => before[k] - m.hp), s }; }
+      partyAct(s, p, r, { type: 'defend' });
+    }
+    return { took: [], s };
+  };
+  const plain: MonsterDef = { ...brine, weak: undefined, immune: undefined };
+  const bitten = cast(brine, 'lightning'), whole = cast(plain, 'lightning'), hail = cast(brine, 'hailstorm');
+  ok(bitten.took.length === 4 && bitten.took.every((d, k) => d === whole.took[k] + Math.floor(whole.took[k] / 2)), `a brineling takes half again from Chain Lightning (${bitten.took.join(', ')} against ${whole.took.join(', ')})`);
+  ok(hail.took.length === 4 && hail.took.every((d) => d === 0) && hail.s.log.some((l) => /Hailstorm: 0 damage/.test(l)), 'and nothing from Hailstorm');
+  ok(hail.s.seen.brineling?.cold === 0 && bitten.s.seen.brineling?.lightning === 1.5, 'and the company has seen both');
+  // The gate bot casts the widest, strongest spell until it has seen what the elements do; then the one the foe is weakest to.
+  const r = makeRng(32), p = defaultParty(r), sorc = p.members[5];
+  sorc.level = 10; sorc.spells.push('lightning', 'meteor'); sorc.sp = 99;
+  const s = startCombat(p, [{ id: 'b', monsters: [brine, brine, brine] }], r);
+  const first = gateBlast(s, sorc)?.id;
+  s.seen.brineling = { lightning: 1.5 };
+  const then = gateBlast(s, sorc)?.id;
+  s.seen.brineling = { lightning: 0, fire: 0 };
+  const never = gateBlast(s, sorc)?.id;
+  ok(first === 'meteor' && then === 'lightning' && never === undefined, `the gate bot casts Meteor Swarm unseen, Chain Lightning once it has seen lightning bite, and no fire or lightning once it has seen both do nothing (${first}, ${then}, ${never})`);
+}
+
+/** Casting (MONSTERS §3.3): a chanter sings a row to sleep, a caster mends and blesses its group, and a caster in the back rank does not wait. */
+function casting(): void {
+  ok(Object.values(MONSTERS).every((d) => { try { monsterSpells(d); return true; } catch { return false; } }), 'every monster that casts names spells it can cast');
+  ok(MONSTERS.drowned_chanter.cast?.spells.includes('sleep') === true, 'the drowned chanter sings Slumber');
+  const sure: MonsterDef = { ...MONSTERS.drowned_chanter, cast: { spells: ['sleep'], chance: 1 } };
+  {
+    const p = defaultParty(makeRng(40)), s = startCombat(p, [{ id: 'c', monsters: [sure] }], makeRng(40));
+    untilActs(s, p, 40, 0);
+    const line = s.log.find((l) => l.startsWith('Drowned Chanter casts Slumber')) ?? '';
+    const asleep = p.members.filter((c) => hasCondition(c, 'asleep'));
+    ok(asleep.length > 0 && asleep.every((c) => p.members.indexOf(c) < 3) && line.includes('asleep'), `a chanter puts the front row to sleep (${line})`);
+  }
+  {
+    // Over a few fights the chanter as the table has it sings someone to sleep.
+    let slept = 0;
+    for (let seed = 41; seed < 51; seed++) {
+      const p = defaultParty(makeRng(seed)), s = startCombat(p, [{ id: 'c', monsters: ['drowned_chanter', 'drowned_chanter', 'drowned_chanter'] }], makeRng(seed));
+      for (let k = 0; k < 6; k++) untilActs(s, p, seed * 10 + k, k % 3);
+      if (s.log.some((l) => /^Drowned Chanter casts Slumber: .* asleep\.$/.test(l))) slept++;
+    }
+    ok(slept >= 5, `the table's chanter sings a row asleep in most short fights (${slept} of 10)`);
+  }
+  {
+    // A hit wakes a sleeper; a sleeper it fells stays down.
+    const p = defaultParty(makeRng(42)), s = startCombat(p, [{ id: 'w', monsters: [{ ...MONSTERS.wolf, attack: 99, dice: 1, sides: 1, bonus: 0 }] }], makeRng(42));
+    for (const c of p.members) addCondition(c, 'asleep');
+    untilActs(s, p, 42, 0);
+    const line = s.log.find((l) => l.startsWith('Wolf hits')) ?? '';
+    const struck = p.members.find((c) => line.startsWith(`Wolf hits ${c.name} `));
+    ok(!!struck && !hasCondition(struck, 'asleep') && line === `Wolf hits ${struck.name} for 1. ${struck.name} wakes.`, `a hit wakes the sleeper it falls on (${line})`);
+  }
+  {
+    // Sleep is the fight's: its sleepers wake once it is won. The bots wake a sleeper of the front row first.
+    const p = defaultParty(makeRng(53)), s = startCombat(p, [{ id: 'r', monsters: ['rat'] }], makeRng(53));
+    const maren = p.members[4];
+    maren.spells.push('cure'); maren.sp = 20;
+    addCondition(p.members[3], 'asleep'); addCondition(p.members[1], 'asleep');
+    const pick = wakeWith(p, maren);
+    ok(pick?.spellId === 'cure' && pick.target === 1, `the bots wake Idris, of the front row, before Ottilie, of the back, with Cleanse (${JSON.stringify(pick)})`);
+    s.monsters[0].hp = 0;
+    partyAct(s, p, makeRng(53), { type: 'defend' });
+    ok(s.outcome === 'victory' && !p.members.some((c) => hasCondition(c, 'asleep')), 'and the sleepers wake once the fight is won');
+  }
+  {
+    // A mender mends the most hurt of its group; a priest blesses and wards it, and not again while it lasts.
+    const mender: MonsterDef = { ...MONSTERS.bandit, id: 'test_mender', name: 'Mender', plural: 'Menders', level: 12, cast: { spells: ['heal'], chance: 1 } };
+    const fellow: MonsterDef = { ...MONSTERS.bandit, hp: 100 };
+    const p = defaultParty(makeRng(43)), s = startCombat(p, [{ id: 'm', monsters: [mender, fellow] }], makeRng(43));
+    s.monsters[1].hp = 2;
+    untilActs(s, p, 43, 0);
+    ok(s.monsters[1].hp === 2 + 8 + 10 && s.log.some((l) => l === `Mender casts Mend: Bandit recovers ${8 + 10}.`), `a mender mends its hurt fellow by the spell and its level held to 10 (${s.monsters[1].hp})`);
+    const whole = startCombat(defaultParty(makeRng(44)), [{ id: 'm', monsters: [mender, MONSTERS.bandit] }], makeRng(44));
+    untilActs(whole, defaultParty(makeRng(44)), 44, 0);
+    ok(!whole.log.some((l) => l.includes('casts Mend')), 'and with nobody hurt it strikes instead');
+    const priest: MonsterDef = { ...MONSTERS.bandit, id: 'test_priest', name: 'Priest', plural: 'Priests', cast: { spells: ['bless', 'ward'], chance: 1 } };
+    const pp = defaultParty(makeRng(45)), b = startCombat(pp, [{ id: 'p', monsters: [priest, MONSTERS.bandit] }, { id: 'q', monsters: [MONSTERS.bandit] }], makeRng(45));
+    untilActs(b, pp, 45, 0);
+    ok(b.foeBless[0] === 5 && b.foeBless[1] === 0 && monsterHit(b, b.monsters[1]) === MONSTERS.bandit.attack + BLESS_HIT && monsterHit(b, b.monsters[2]) === MONSTERS.bandit.attack, 'a priest blesses its own group and not the next');
+    const round = b.round;
+    untilActs(b, pp, 46, 0);
+    ok(b.foeShield[0] > 0 && monsterAc(b, b.monsters[1]) === MONSTERS.bandit.ac + WARD_AC && b.log.includes('Priest casts Ward. A ward settles over its group.') && b.log.includes('Priest casts Bless. Its group is blessed.'), 'and wards it while the blessing lasts, rather than bless again');
+    ok(b.foeBless[0] === 5 - (b.round - round), `the blessing runs down a round at a time (${b.foeBless[0]} left after ${b.round - round} rounds)`);
+  }
+  {
+    // A caster in the back rank casts while the front stands; one without a bow that fails its chance holds.
+    const singer: MonsterDef = { ...sure, id: 'test_singer', ranged: false };
+    const choir: CombatGroup = { id: 'choir', monsters: [MONSTERS.skeleton, MONSTERS.skeleton, singer], back: 1 };
+    const p = defaultParty(makeRng(47)), s = startCombat(p, [choir], makeRng(47));
+    ok(untilActs(s, p, 47, 2) && frontStands(s) && s.log.some((l) => l.startsWith('Drowned Chanter casts Slumber')), 'a chanter in the back rank sings while the drowned men stand');
+    const quiet: MonsterDef = { ...singer, cast: { spells: ['sleep'], chance: 0 } };
+    const q = defaultParty(makeRng(48)), t = startCombat(q, [{ ...choir, monsters: [MONSTERS.skeleton, MONSTERS.skeleton, quiet] }], makeRng(48));
+    untilActs(t, q, 48, 2);
+    ok(!t.log.some((l) => l.startsWith('Drowned Chanter')), 'and one that does not sing holds its place, and strikes no one');
+  }
+  {
+    // Fire Bolt falls on a row; Meteor Swarm on the whole party.
+    const bolt: MonsterDef = { ...MONSTERS.bandit, id: 'test_bolt', name: 'Adept', plural: 'Adepts', level: 14, cast: { spells: ['firebolt'], chance: 1 } };
+    const p = defaultParty(makeRng(49)), s = startCombat(p, [{ id: 'a', monsters: [bolt] }], makeRng(49));
+    const before = p.members.map((c) => c.hp);
+    untilActs(s, p, 49, 0);
+    const hurt = p.members.map((c, k) => before[k] - c.hp);
+    ok(hurt.slice(0, 3).every((d) => d >= 5 && d <= 20) && hurt.slice(3).every((d) => d === 0) && s.log.some((l) => /^Adept casts Fire Bolt: \d+ damage to the front row\./.test(l)), `an adept's Fire Bolt falls on the front row, five dice at its level held to 10 (${hurt.join(', ')})`);
+  }
+}
+
+/** Drain (MONSTERS §3.3): a leech that hits is healed by it; a bog light takes spell points before hit points. */
+function drain(): void {
+  // The leech is #174's; this is its shape, a controller on the line at 10.
+  const leech: MonsterDef = { ...MONSTERS.fen_eel, id: 'test_leech', name: 'Leech', plural: 'Leeches', attack: 99, drain: 'hp' };
+  const p = defaultParty(makeRng(50)), s = startCombat(p, [{ id: 'l', monsters: [leech] }], makeRng(50));
+  s.monsters[0].hp = 40;
+  untilActs(s, p, 50, 0);
+  const line = s.log.find((l) => l.startsWith('Leech hits')) ?? '', took = Number(/for (\d+)/.exec(line)?.[1]);
+  ok(took > 0 && s.monsters[0].hp === 40 + took && line.includes('and drinks'), `a leech that hits is healed by it (${line}; ${s.monsters[0].hp} hp)`);
+  s.monsters[0].hp = leech.hp - 1;
+  untilActs(s, p, 51, 0);
+  ok(s.monsters[0].hp === leech.hp, 'and never past its own hit points');
+  const light: MonsterDef = { ...leech, id: 'test_light', name: 'Bog Light', plural: 'Bog Lights', ranged: true, drain: 'sp', dice: 1, sides: 1, bonus: 9 };
+  const q = defaultParty(makeRng(52)), cassian = q.members[5];
+  for (const c of q.members) if (c !== cassian) addCondition(c, 'unconscious');
+  cassian.sp = 15; cassian.hp = 30; cassian.maxHp = 30;
+  const t = startCombat(q, [{ id: 'b', monsters: [light] }], makeRng(52));
+  untilActs(t, q, 52, 0);
+  ok(cassian.sp === 5 && cassian.hp === 30 && t.log.includes('Bog Light hits Cassian for 10 spell points.'), `a bog light takes spell points before hit points (${cassian.sp} sp, ${cassian.hp} hp)`);
+  for (let k = 53; k < 60 && cassian.sp > 0; k++) untilActs(t, q, k, 0);
+  ok(cassian.sp === 0 && cassian.hp === 25 && t.log.includes('Bog Light hits Cassian for 5 spell points and 5.'), `and the rest from hit points once they run dry (${cassian.sp} sp, ${cassian.hp} hp)`);
 }
