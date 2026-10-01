@@ -612,6 +612,48 @@
         "7,11"
       ]
     },
+    "smugglers_cove": {
+      "size": "16x16",
+      "used": [
+        "kh1_crate",
+        "kh1_crates",
+        "kh1_fires",
+        "kh1_in",
+        "kh1_landing",
+        "kh1_ledge",
+        "kh1_rows",
+        "kh1_store",
+        "kh1_strongbox"
+      ],
+      "groups": [
+        "kh1_crew_fires",
+        "kh1_crew_landing",
+        "kh1_overseers"
+      ],
+      "doors": []
+    },
+    "smugglers_cove2": {
+      "size": "16x16",
+      "used": [
+        "kh2_bones",
+        "kh2_hoard",
+        "kh2_in",
+        "kh2_kelp",
+        "kh2_passage",
+        "kh2_pools",
+        "kh2_purse",
+        "kh2_tidemark"
+      ],
+      "groups": [
+        "kh2_crew",
+        "kh2_devilfish_east",
+        "kh2_devilfish_west",
+        "kh2_great_devilfish"
+      ],
+      "doors": [
+        "3,11"
+      ]
+    },
     "thornhold": {
       "size": "16x16",
       "used": [
@@ -882,6 +924,7 @@
     "meridian_journal",
     "name_boards",
     "plate",
+    "plate+1",
     "potion_heal",
     "potion_sp",
     "potion_sp_great",
