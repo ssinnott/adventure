@@ -12,6 +12,11 @@
 // free arms sway and curl, each on its own beat, while the gripping ones hold; the mantle swells
 // and falls and the siphon pulses; the eye watches, its lid sliding over now and then; a dark flush
 // runs over it and fades; and water runs off the lip.
+//
+// The Great Devilfish: what the smugglers feed. The same frame nearly twice the size, filling the
+// cave's pool: a pale, livid hide gone pallid in the dark, the mantle full, seven arms over the lip
+// and reaching along it, white sucker-ring scars and a long healed gash, barnacles along its crown,
+// and the eye's gold gone pale.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -20,7 +25,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['devilfish'];
+export const KINDS: readonly MonsterSprite[] = ['devilfish', 'great_devilfish'];
 
 /** An arm over the lip: where it crosses the edge, and which way it curls down the face (-1 left, 1 right). */
 type Grip = readonly [x: number, s: number];
@@ -64,10 +69,18 @@ const DEVILFISH: Build = {
   free: [[-6, -36, 92, 0, 0], [12, 38, 80, 2.3, 0], [14, 24, 62, 4.1, 1]],
   eye: 1, iris: '#d8a02a', mottle: 1, scars: 0, barnacles: 0, gloss: 0.7,
 };
+// Old, fed and kept in the dark: wider and fuller, seven arms showing, its hide scarred and
+// barnacled and its eye paled. Its reared arms reach out rather than up, so it keeps a tall boss's
+// crown (TALL_REACH in src/ui/grouplabels.ts).
+const GREAT: Build = {
+  span: 60, lip: 14, mantle: 1.2, girth: 1.25,
+  grip: [[-46, -1], [-22, -1], [19, 1], [44, 1]],
+  free: [[-8, -54, 72, 0, 0], [14, 56, 66, 2.3, 0], [22, 32, 58, 4.1, 1]],
+  eye: 1.3, iris: '#d8c890', mottle: 0.4, scars: 1, barnacles: 1, gloss: 0.5,
+};
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  devilfish(ctx, x, y, h, p, DEVILFISH);
+  devilfish(ctx, x, y, h, p, kind === 'great_devilfish' ? GREAT : DEVILFISH);
 };
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
