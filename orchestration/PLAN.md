@@ -1612,3 +1612,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (J4) merged; lands after #307. It carries The Older Mark's rubbing and Senara's hand-in, the
   Light on Penspern (Kea), the landing and the sea cave; warned of the labels check at the Eldest's
   size 2 (a systems change, if so, is put as a choice, not made on the side).
+- 00:36: #313 (#69's creatures: the Barrow Wolf, the Black Dog at 5) landed: its round (d587eb2: the
+  Barrow Wolf at 0.8; e8dc9bc main). Landing check on its head (main in): ALL OK (23 owed),
+  SMOKE OK, "Nothing new."; CI green. Merged as dea8e86; main's tree is the tested tree (dfdf31e).
+  #306 (D2) next on its round, then #310.
