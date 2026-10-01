@@ -36,7 +36,7 @@ export const MEMBERS = 6;
  * The areas next on the road that have a row before they have a map, in road order. An area leaves
  * this list when its first map lists it in AREAS; the curve check fails while it is in both.
  */
-export const PLANNED = ['saltreach'] as const;
+export const PLANNED = [] as const;
 
 /** Every area's row, and every planned area's: an area without one is a type error. */
 export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
@@ -50,7 +50,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // Thornmark's Armoury (#18) prices them.
   saltreach: {
     band: [10, 12], next: 12, price: 2000,
-    owed: { whose: '#153', why: 'Saltreach is not built yet', xp: 0, gold: 0 },
+    owed: { whose: '#153', why: 'Saltreach is built box by box', xp: 1115, gold: 300 },
   },
   wrackholm: {
     band: [12, 14], next: 14, price: 2500,

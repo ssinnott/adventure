@@ -29,6 +29,22 @@
         "2,7"
       ]
     },
+    "c5_rift": {
+      "size": "12x12",
+      "used": [
+        "c5_rift_hoard",
+        "c5_rift_look1",
+        "c5_rift_look2",
+        "c5_rift_look3",
+        "c5_rift_quiet",
+        "c5_rift_tear"
+      ],
+      "groups": [
+        "c5_rift_g1",
+        "c5_rift_warden"
+      ],
+      "doors": []
+    },
     "caldera": {
       "size": "512x384",
       "used": [
@@ -38,6 +54,15 @@
         "ash_kitchen",
         "ashcombe_gate",
         "barrow",
+        "c5_barge",
+        "c5_barge_hold",
+        "c5_cairn",
+        "c5_foot",
+        "c5_ford",
+        "c5_glass",
+        "c5_shrine",
+        "c5_spur",
+        "c5_wedge",
         "coast",
         "d2_cairn",
         "d2_cist",
@@ -67,6 +92,9 @@
         "d4_shrine",
         "d4_top",
         "d4_worn",
+        "d5_bar",
+        "d5_shore",
+        "d5_spit",
         "e2_cairn",
         "e2_ford",
         "e2_hoard",
@@ -226,6 +254,9 @@
       ],
       "groups": [
         "beach_crabs",
+        "c5_pools_n",
+        "c5_pools_s",
+        "c5_toad",
         "cliff_smugglers",
         "coast_bandits",
         "d2_crows",
@@ -360,7 +391,8 @@
         "285,116",
         "286,135",
         "297,145",
-        "308,112"
+        "308,112",
+        "99,148"
       ]
     },
     "greywater1": {
@@ -572,6 +604,14 @@
       "at": "296,126",
       "size": "32x32"
     },
+    "delta_c5": {
+      "at": "72,126",
+      "size": "32x32"
+    },
+    "delta_d5": {
+      "at": "104,126",
+      "size": "32x32"
+    },
     "downs_d2": {
       "at": "104,30",
       "size": "32x32"
@@ -750,6 +790,7 @@
     "brigandine+1",
     "brigandine+2",
     "brigandine+3",
+    "brine_shard",
     "buckler",
     "buckler+1",
     "captains_mail",
@@ -885,6 +926,8 @@
     "ashen_overseer",
     "bandit",
     "bandit_archer",
+    "barge_master",
+    "bargeman",
     "barn_rat",
     "barnacle_crab",
     "barrow_captain",
@@ -898,8 +941,11 @@
     "bramble",
     "brigand",
     "brigand_archer",
+    "brineling",
+    "bull_toad",
     "carrion_crow",
     "chalk_wolf",
+    "choirmaster",
     "cultist",
     "cut_warden",
     "cutthroat",
@@ -907,16 +953,21 @@
     "devilfish",
     "dire_wolf",
     "drowned",
+    "drowned_chanter",
     "eldest",
+    "fen_eel",
+    "fen_toad",
     "footpad",
     "ghoul",
     "glass_bear",
     "glass_spider",
     "great_devilfish",
     "great_owl",
+    "grey_heron",
     "heartwood",
     "lampman",
     "lantern_moth",
+    "leech",
     "ogre",
     "old_rook",
     "pine_bear",
@@ -928,6 +979,7 @@
     "riftling",
     "riftling_elder",
     "rootwalker",
+    "salt_crab",
     "shore_crab",
     "skeleton",
     "slime",
