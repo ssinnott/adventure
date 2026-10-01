@@ -194,8 +194,91 @@ Each prestige is taught by a trainer of its own, and every trainer lives on the 
 - **The third,** somewhere hard to find and dangerous. It asks for a quest instead.
 
 When a character reaches a prestige's level, they get a quest to seek out its trainer, and the
-quest reveals where the trainer is. The titles, trainers, perks, levels and quests are drafted in
-#19.
+quest reveals where the trainer is. The trainer who teaches a character their 11th, 19th or 27th
+level names who to seek and where, and the quest log and the world map mark the place: one quest for
+each member. For the third, the quest names the place; the way there, and the quest that trainer then
+asks, are the hard part. Nothing here is built until the cap passes 10 (#159).
+
+**Levels.** The first at 11, the second at 19 and the third at 27, eight levels apart, with the new
+spell tiers between them at 15 and 23 (§7), so something new comes every four levels. Every
+prestige level is one a town's trainer teaches: Helmstow and Thornhold teach to 11, the Kilns' towns
+to 19 and Cinderport to 27.
+
+**Hit points and spell points,** added to every level from each prestige's own on, and adding up:
+
+| | Hit points | Spell points | By 32 |
+|---|---|---|---|
+| Casters (Cleric, Sorcerer, Druid) | +1 | +2 | +42 and +84 |
+| Hybrids (Paladin, Ranger, Bard) | +1 | +1 | +42 and +42 |
+| The rest (Knight, Thief, Barbarian, Monk) | +2 | none | +84 |
+
+**Prices.** The first about 1,000 gold, a little under the 1,200 Plate Mail costs in Thornhold's
+Armoury, and the second about 4,000, until the gold curve (#159) sets them. The third asks a quest.
+
+**Perks.** A rank is a spell rank (§7). They lean on offence and on work outside combat, and none
+adds armour: in the harness, armour that keeps up makes monsters hit harder, and harder hits kill
+(MONSTERS.md §4.4).
+
+| Class | First | Second | Third |
+|---|---|---|---|
+| Knight | a second attack each turn | while the knight stands, the front row gains +2 to-hit | a third attack each turn |
+| Thief | a second attack each turn with a light weapon (dagger, short sword, sling), and Sneak Attack grows by 2 every two levels | once a fight, drops from sight for a round: no foe can single the thief out, and its blows that round are sneak attacks | a third attack each turn with a light weapon |
+| Barbarian | a second attack each turn | Rage starts below three quarters of hit points, and the barbarian dies only at −30 | a third attack each turn |
+| Monk | two strikes a turn with a staff or bare hands | always acts first in a round, and can strike from the back row | a third strike each turn |
+| Paladin | rank 1, and a second attack each turn | rank 2, and Holy Strike rises to +6, on the dead only | rank 3, and a third attack each turn |
+| Ranger | rank 1, and two shots a turn with a bow | rank 2; Marksman rises to +4, and the weather no longer spoils the ranger's shots | rank 3, and three shots a turn |
+| Bard | rank 1; Inspiring Song adds +1 damage as well | rank 2; while the bard stands, the company can't be put to sleep or paralysed | rank 3; the song rises to +2 to-hit and +2 damage |
+| Cleric | rank 1 | rank 2 | rank 3; once between rests, the first member who would die is left at 1 hit point |
+| Sorcerer | rank 1 | rank 2 | rank 3; damage spells pass a monster's resistance to their element, though not an immunity |
+| Druid | rank 1 | rank 2 | rank 3; beasts of a lower level than the druid leave the company alone |
+
+**The trainers.** Every first is taught in a city a company reaches by 11, by someone with a job
+there. Every second is off the beaten path: not a step of the one quest, and not within about ten
+squares of the road. Every third is hard to find and dangerous, and its trainer waits on the surface
+while the quest goes down.
+
+| Class | Titles | First: city and job | Second: off the beaten path | Third: hidden and dangerous |
+|---|---|---|---|---|
+| Knight | Knight-Errant, Knight Banneret, Knight Paramount | Helmstow: an armourer in the keep's ward (#17) | Coldharbour: a retired Warden captain's farm off the Downs | Stairwatch: a ledge above the Giants' Stair, its way up found off the Stair |
+| Paladin | Lightbearer, Justicar, Exemplar | Helmstow: the chandler who makes the Lantern Chapel's lamps | under the Eaves: a hermit's shrine by the clearing, kept by a knight of the Crown that was | Old Cinder, on Fire Mountain's west flank |
+| Ranger | Outrider, Deadeye, Unerring | Thornhold: the fletcher | Deepthorn Lodge, in the Deepthorn | the Eyrie: the Wold Rider scout who guided the Meridian Company, on the far-west mesa under the rim |
+| Cleric | Curate, Prelate, Exarch | Thornhold: the bone-setter at the Lantern Chapterhouse | Lanternwood: the keeper of the moth shrine, a Lantern who stayed when the wood split | Anchorhold: a hermit walled into a cell on Hearth Isle |
+| Sorcerer | Arcanist, Thaumaturge, Magus | Saltmouth: an astrologer who draws star charts for the ships' pilots | Watcher's Hut, beside the Stone Ring on High Moor | the crown of the Buried Tower, where it breaks the Glass |
+| Thief | Tumbler, Nightjar, Faceless | Saltmouth: a locksmith | the Upper Water: an old barge smuggler at the willows' quay, out of the Compact, or so he says | Rook's Nest: a hide on the tip of Sheer Point, over the Hand's causeway |
+| Barbarian | Berserker, Ironhide, Warlord | Saltmouth: a stevedore on the docks | Iron Crag, in the Iron Fells | Warlord's Forge, by the mouth of Fire Mountain's vents |
+| Monk | Stillwater, Windwalker, Ascendant | Saltmouth: the harbour ferryman | Sjonghol, in Kestrel Edge's cliffs above the Upper Water | Spine Summit, above the Peak Stone and its monastery |
+| Bard | Troubadour, Skald, Laureate | Helmstow: a luthier | High Moor: a piper camped by the tarn below the Stone Ring | the monastery's bell tower, where the bells ring the eleven |
+| Druid | Swarmcaller, Thornspeaker, Archdruid | Thornhold: a beekeeper | the wood to the head, in the Deepthorn: an elf of the old wood, who comes out of the trees once the Grove Stone is restored | the Ember Waste, where the Ember Stone was never finished |
+
+No title repeats the name of a skill, a trait or a spell. Where the trade is a shop the trainer keeps
+it and sells what exists: the armourer armour and shields, the chandler Lantern Oil and torches, the
+fletcher bows, the bone-setter draughts and cures. The locksmith's lock picks, the chandler's
+lanterns and the beekeeper's honey and salves wait on the items past Thornmark (#18). The astrologer,
+the luthier, the stevedore and the ferryman keep no shop.
+
+**The quests for the third prestige,** in sketch. Where a third sits in country under 27, the
+quest's own fights are set at 26.
+
+- **Knight:** hold the ledge above the Giants' Stair with the old champion through a night of the
+  giants' toll-takers (MONSTERS.md §12).
+- **Paladin:** go down into Old Cinder's undercroft, and relight the lamp at its bottom.
+- **Ranger:** follow the Meridian journals down Fire Mountain's vents to Meridian Camp, and bring
+  Oriel Fane's map back to the scout at the Eyrie (§10.3).
+- **Cleric:** carry the Crowness Light keeper's log of the eleven over the sea to the hermit walled
+  into Anchorhold, and go down alone into the temple's first crypt while the hermit keeps the top.
+- **Sorcerer:** go down the Buried Tower for the scholar at its crown, and read what is written at
+  its foot. The walk and the floors the quest asks are held at 26–28, wherever the tower's own band
+  settles (MONSTERS.md open question 3).
+- **Thief:** steal the Compact's orders from the Dead-Drop, below the Tide Ship, and learn who writes
+  them (§10.2).
+- **Barbarian:** go down Fire Mountain's vents from the old warlord's forge to Meridian Camp, and
+  kill what nests there.
+- **Monk:** climb past the monastery, whose Brothers are not what they seem (MONSTERS.md §8.1), to the
+  summit, and keep the hermit's vigil through a night.
+- **Bard:** gather the verses of the eleven, from the Drowned Temples' count, the Stone Ring's call
+  and the lighthouse keeper's log, and sing them in the monastery's bell tower.
+- **Druid:** carry a seedling from the Grove into the Ember Waste, and keep it alive until the Ember
+  Stone is finished.
 
 ### Stats, skills, mastery
 
@@ -237,14 +320,88 @@ dark), not because of numbers.
 
 - **Cleric list** (Body, Mind, Spirit): heal, cure, protect, turn, bless, resurrect.
 - **Sorcerer list** (Fire, Air, Water, Earth): damage, control, and the utility spells that make
-  the world bigger: *Light, Levitate, Wizard Eye, Walk on Water, Town Portal, Waymark / Recall,
-  Detect Secrets, Jump.*
+  the world bigger: *Light, Levitate, Wizard Eye, Walk on Water, Town Portal, Waymark.*
+- **Druid list** (the wood, its beasts and its weather): damage, mending and the party's skin.
+  Paladins and Bards learn from the cleric's list, Rangers from the druid's.
 - Spells are **bought** at the spell halls (in Act I, the Lanterns' two) after paying the hall's fee
   to study; the fee is the region's toll for making you stronger there, and buys no membership (§8).
-- About 40 spells at v1. Spells grow two ways: levels unlock new spells, and prestiges bring spell
-  ranks, which make the spells a caster already knows stronger (§5). In the combat harness, damage
-  spells that go on growing with level break the road past 10 (MONSTERS.md §4.4), so the spells
-  past 10, their ranks and their elements are to be designed around that (#20).
+  A level gives every spell of a new tier free, so a hall only lets a caster buy ahead.
+- About 40 spells at v1: 28 to tier 5, and 13 more in two tiers past 10. Spells grow two ways:
+  levels unlock new spells, and prestiges bring spell ranks, which make the spells a caster already
+  knows stronger (§5). In the combat harness, damage spells that go on growing with level break the
+  road past 10 (MONSTERS.md §4.4), so from 10 they grow by rank alone.
+
+### Spells past level 10
+
+**Growth stops at 10.** Spark, Fire Bolt, Chain Lightning, Meteor Swarm, Hailstorm and Tempest stop
+gaining dice at 10 (Meteor Swarm 10d10, Tempest 10d8), and no spell grows with level after. A
+monster that casts from these tables (MONSTERS.md §3.3) casts at its own level, held at 10 too, and
+unranked.
+
+**Two tiers.** Tier 6 at 15 and tier 7 at 23, between the prestiges, so a caster gains something
+every four levels. A hybrid gains each two levels later, at 17 and 25, between its own perks. Lantern
+Watch's hall (band 14–16) sells to tier 6 and Rime Lodge's (20–22) to tier 7, each a level or three
+ahead; no other town sells a new tier, Saltmouth among them. Halls keep no level check, so a company
+that reaches the Watch early may buy early; the band's monsters and the price are the gate. New
+damage spells roll fixed dice, near tier 5's at 10, so that neither tier is the jump in monster hit
+points tier 5 was at 8.
+
+| List | Tier | Spell | Points | What it does |
+|---|---|---|---|---|
+| Sorcerer | 6 | Hoarfrost | 11 | Cold grips a whole group: 8d8, cold. |
+| Sorcerer | 6 | Walk on Water | 8 | Shallow water bears the party a short way. |
+| Sorcerer | 6 | Waymark | 10 | Marks where you stand, or brings the party back to the mark. |
+| Sorcerer | 7 | Killing Frost | 18 | A killing cold on every foe: 10d12, cold. |
+| Sorcerer | 7 | Levitate | 12 | The party floats a few steps over a drop, never up one. |
+| Cleric | 6 | Hearthfire | 10 | The Hearth's fire falls on a whole group: 6d8, fire. |
+| Cleric | 6 | Cleansing Light | 9 | Removes an affliction from everyone. |
+| Cleric | 7 | Lampglass | 10 | The party takes half from one element, for five rounds. |
+| Cleric | 7 | Absolve | 12 | Lifts stone and curse. |
+| Druid | 6 | Wildfire | 10 | The wood's own fire on a whole group: 6d8, fire. |
+| Druid | 6 | Grasping Roots | 7 | Roots may hold a group fast. |
+| Druid | 7 | Wrath of the Wood | 16 | The whole wood turns on every foe: 8d10, nature. |
+| Druid | 7 | Greening | 14 | Heals everyone well, and draws out poison and disease. |
+
+The points and the steps the map spells take wait on the harness and the gold curve (#159); the
+damage spells' dice are the harness's stand-ins (MONSTERS.md §4.4).
+
+**Ranks.** A rank belongs to the caster, not the spell: it lifts every spell they know, those
+learned later too. Each rank adds 15% to the dice of a damage spell and to what a mending spell
+heals, 45% by the third; flat bonuses (Spellfire, Healing Hands), buffs, cures, Slumber, raising and
+the map spells stay as they are. A ranked spell costs what it did: the prestiges' spell points are
+the price. A hybrid's rank is half a caster's step, since its perks carry the rest of its growth.
+The third rank's signature is the class's own perk (§5); no spell has one of its own.
+
+**Elements.** Fire, cold, lightning, nature and holy, one to every damage spell, to meet monsters
+that resist one (half), are immune to one (none) or are weak to one (half again) (MONSTERS.md §3.3,
+#161). One spell stops being the answer to every fight, and choosing the element becomes the choice.
+
+| Element | Spells |
+|---|---|
+| Fire | Fire Bolt, Meteor Swarm, Hearthfire, Wildfire |
+| Cold | Hailstorm, Hoarfrost, Killing Frost |
+| Lightning | Spark, Chain Lightning, Tempest |
+| Nature | Thorn Lash, Stinging Swarm, Wrath of the Wood |
+| Holy | Smite, Wrath of the Hearth |
+
+Each list gains the element it lacks at 15, before the monster immune to its own: the sorcerer cold
+before the Kilns' salamanders, the cleric fire before the machines the Hearth's light passes through
+(MONSTERS.md §12), the druid fire before Cairnmoor's trolls, which heal from anything else. No rank
+adds an element; only the sorcerer's third deepens one, passing resistance and never immunity.
+
+**Map spells.** Each is a shortcut, never a key (docs/EXPANSION.md §2.2): it has a cost and a limit,
+and the skill beside it is free and lasts.
+
+- **Walk on Water** crosses shallow water for a set number of steps and ends in a fight. It never
+  crosses deep water, so a paid crossing stays paid, and never dives: what lies under the water is
+  Swimmer's.
+- **Waymark** holds one mark, set on land the company has stood on, outside a fight. It never takes a
+  company anywhere it has not walked; the sea's ways stay Navigator's.
+- **Levitate** floats over a chasm, a pit or lava for a set number of steps. It never rises up a cliff
+  or a mountain, which stay Mountaineer's, and never goes down into a chasm. Jump is folded into it:
+  the grid has no height for a jump to clear.
+- **Detect Secrets is cut.** The secret is found, never told, and Perception, Keen Eyes, the elves
+  and the gnomes already find what is hidden.
 
 ### The secret, in brief
 

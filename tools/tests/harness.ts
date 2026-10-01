@@ -4,7 +4,7 @@ import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, add
 import { startCombat, currentTurn, partyAct, monsterAct, describeGroups } from '../../src/game/combat.ts';
 import { spell, spellDice } from '../../src/game/spells.ts';
 import { testMonster, standardEncounter, line, scaleAt, HP, DAMAGE, ROLES, ROLE_IDS } from '../testmonster.ts';
-import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES } from '../harness.ts';
+import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, VANISH_ROUND } from '../harness.ts';
 import { ok } from './lib.ts';
 
 export function harness(): void {
@@ -35,6 +35,18 @@ export function harness(): void {
   const perks = companyAt(24, 37).members.map((m) => edgeOf(m, 1));
   RULES.levelBonus = undefined;
   ok(blows.join() === '1,2,2,3' && traits[5].blows === 1 && traits[3].damage === 14 && later === 0 && perks.every((e) => e.damage === 7 && e.ac === 7) && edgeOf(companyAt(24, 37).members[0], 1).blows === 1, `with --level-traits the knight strikes once more a turn with each promotion (${blows.join(', ')} blows at 10, 11, 28 and 29) and at 24 a sneak attack adds 14 in the first round only; with --level-bonus every member gains 7 at 24; without, none`);
+  // The prestiges, as a what-if: blows, pools and ranks at 11, 19 and 27, and spells stopped at 10.
+  const plainAt = (l: number): ReturnType<typeof companyAt> => companyAt(l, 37);
+  const plain = [plainAt(12), plainAt(28)];
+  RULES.prestiges = true; RULES.spellsGrowTo = 10;
+  const ranked = [10, 11, 19, 27].map((l) => edgeOf(companyAt(l, 37).members[0], 1).blows), at12 = companyAt(12, 37), at28 = companyAt(28, 37);
+  const meteor12 = spell(at12.members[5].spells.find((id) => id.startsWith('meteor@'))!), vanish = edgeOf(at28.members[3], VANISH_ROUND).ac;
+  const unranked = companyAt(10, 37).members[5].spells.includes('meteor');
+  RULES.prestiges = undefined; RULES.spellsGrowTo = undefined;
+  ok(ranked.join() === '1,2,2,3' && at12.members[0].maxHp === plain[0].members[0].maxHp + 4 && at12.members[5].maxSp === plain[0].members[5].maxSp + 4
+    && at28.members[0].maxHp === plain[1].members[0].maxHp + 2 * (8 + 16 + 6) && spellDice(meteor12, 12, 10) === 10 && (meteor12.sides ?? 0) > 10 && unranked && vanish >= 100
+    && edgeOf(companyAt(28, 37).members[0], 1).blows === 1,
+    `with --prestiges the knight strikes ${ranked.join(', ')} times at 10, 11, 19 and 27, gains 2 hit points a level a prestige, the sorcerer's Meteor Swarm stops at 10 dice and widens them at rank 1, and the thief drops from sight; without, none`);
   // The curve's gear, as a what-if: past level 10 weapons and armour keep growing; play has none of it.
   const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
   const flat = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];
