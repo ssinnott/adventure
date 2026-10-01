@@ -726,13 +726,16 @@
       "used": [
         "saltmouth_intro",
         "sm_customs",
+        "sm_customs_run",
         "sm_nets",
         "sm_quay",
         "sm_steps",
         "sm_wall"
       ],
       "groups": [],
-      "doors": []
+      "doors": [
+        "14,4"
+      ]
     },
     "smugglers_cove": {
       "size": "16x16",
@@ -970,6 +973,7 @@
     }
   },
   "flags": [
+    "compact_cask",
     "donations",
     "guild_Lantern Guildhall",
     "guild_Thornhold Lantern Hall",
@@ -996,6 +1000,12 @@
     "q_coin",
     "q_coin_fight",
     "q_coin_walk",
+    "q_compact_crate",
+    "q_compact_crate_done",
+    "q_compact_lookout",
+    "q_compact_lookout_done",
+    "q_compact_run",
+    "q_compact_run_done",
     "q_ebba_chapel",
     "q_four",
     "q_four_done",
@@ -1102,6 +1112,7 @@
     "ashen_chisel",
     "axe",
     "battleaxe",
+    "brandy_cask",
     "brigandine",
     "brigandine+1",
     "brigandine+2",
