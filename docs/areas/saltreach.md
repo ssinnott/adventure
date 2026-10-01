@@ -115,8 +115,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   brinelings in its rooms and a tide elder with one more at its heart, quiet once the elder falls;
   and the river's west fen over two fords. The secret is a barge drowned under the causeway's arch,
   the Brine Shard in its straw; the hint is the mast's stump at the arch, with the stones glowing
-  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.8 in the
-  Rift.
+  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.6 in the
+  Rift (6.8 before the re-stat to #409's line, #18).
 - **Stienwierde** (B5, `delta_b5`, core, band 11–12; #173): duckboards from the Delta road west over
   the fen and the channel to the Tide Stone's island, its plinth empty and its socket cut clean; a
   driftwood shrine at the boards' start, a cairn and house-footings on the mound, and a hermit on a
@@ -137,7 +137,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   master on the quay by day, two Wrack smugglers and two bowmen under the sea wall by night, and four
   salt crabs at the pans' edge. The secret is the smugglers' stair in the sea wall's dry end, its
   cache at the foot by a sea door barred from within, the hint the rope hanging over it with
-  nothing on it. The gate holds at 11, at 7.0 fights to a rest.
+  nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18).
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
