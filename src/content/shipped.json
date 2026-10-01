@@ -872,6 +872,7 @@
       "used": [
         "su2_chalk",
         "su2_east",
+        "su2_fall",
         "su2_fallen",
         "su2_fallen_chest",
         "su2_in",
@@ -888,7 +889,7 @@
         "su2_wood"
       ],
       "doors": [
-        "6,26"
+        "2,25"
       ]
     },
     "thornhold": {

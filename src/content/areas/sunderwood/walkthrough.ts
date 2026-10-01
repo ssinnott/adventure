@@ -261,7 +261,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // No group within four squares of the wall: the silence at the bottom (MONSTERS §6.3).
   const wall: [number, number][] = [];
-  for (let y = 0; y < floor.height; y++) for (let x = 0; x < floor.width; x++) if (floor.at(x, y).solid === 'wall' || floor.at(x, y).door === 'secret') wall.push([x, y]);
+  for (let y = 0; y < floor.height; y++) for (let x = 0; x < floor.width; x++) if (floor.at(x, y).solid === 'wall') wall.push([x, y]);
   const near = FLOOR.encounters!.filter((e) => wall.some(([x, y]) => Math.abs(x - e.x) + Math.abs(y - e.y) <= 4));
   ok(wall.length > 30 && !near.length, `no group stands within four squares of the wall${near.length ? ` (not: ${near.map((e) => e.id).join(', ')})` : ''}`);
 
@@ -269,15 +269,19 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'the_sunder2:su2_silence');
   see(w, 'the_sunder2:su2_wall');
 
-  // The secret: the surveyor's chalk runs out at one mark; searched there, the face is not flat, and
-  // the recess behind it is reached only so.
-  ok(shut(6, 26, [8, 2], [6, 27]), 'the recess is shut but through the face at the chalk\'s last mark');
+  // The secret: the surveyor's chalk runs out at the rock fall that closes the strip; searched there,
+  // a gap in the fall opens on a hollow beside the wall, the seam on the wall's face at its back. The
+  // hollow is reached only so, and nothing passes into the wall.
+  ok(shut(2, 25, [8, 2], [1, 25]), 'the hollow is shut but through the fall at the chalk\'s last mark');
+  see(w, 'the_sunder2:su2_fall');
   see(w, 'the_sunder2:su2_chalk');
-  w.world.travel('the_sunder2', 6, 25, SOUTH);
+  w.world.travel('the_sunder2', 3, 25, WEST);
   let seam = false;
   for (let i = 0; i < 20 && !seam; i++) seam = w.world.search();
   const inSeam = seam ? [w.world.move('forward'), w.world.move('forward')] : [];
-  ok(seam && inSeam.every((r) => r.kind === 'moved') && w.world.used('su2_seam'), 'searched at the last chalk mark, the face gives, and the recess behind it can be stood in');
+  ok(seam && inSeam.every((r) => r.kind === 'moved') && w.world.used('su2_seam'), 'searched at the chalk\'s last mark, the fall gives, and the hollow behind it can be stood in');
+  w.world.turn('left');
+  ok(w.world.move('forward').kind === 'blocked' && floor.at(1, 26).solid === 'wall' && floor.at(1, 26).door === 'door', 'the seam is on the wall\'s face at the hollow\'s back, and nothing passes it');
   listen(w);
 
   // The Warden is dead and nothing closes: two days on, the floor's groups are back, and it is not.

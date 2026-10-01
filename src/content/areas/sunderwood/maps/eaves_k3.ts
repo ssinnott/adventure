@@ -67,7 +67,7 @@ export const EAVES_K3: MapDef = {
   ],
   features: [
     // The ledges' head on the east lip: the step. The door at 10,8 in the face is the Sunder's way in (#199).
-    { kind: 'event', x: 12, y: 1, id: 'k3_ledges', once: true, text: 'Ledges cut into the gorge\'s face, a square wide, switchbacking down into rain. On the first landing, a door, and chip marks all round it.' },
+    { kind: 'event', x: 12, y: 1, id: 'k3_ledges', once: true, text: 'Ledges cut into the gorge\'s face, a square wide, switchbacking down into rain. On the first landing, a way cut into the rock, chip marks all round it, and inside a stair going down.' },
     // The east lip: the camp back from it, and the glass to the south.
     { kind: 'camp', x: 18, y: 3, name: 'The last pines', text: 'A ring of stones where the pines give out and the dead wood begins, the last sound trunks at your back. The rain that falls here lands.' },
     { kind: 'event', x: 16, y: 17, id: 'k3_glass', once: true, text: 'South the dead trunks go to glass, and in the glass a white light, low and steady, not the sun\'s. Each trunk is lit through, and casts its shadow at you.' },
@@ -77,7 +77,7 @@ export const EAVES_K3: MapDef = {
     // The Rift in the crystal's clearing.
     K3_RIFT.way(16, 26),
     // The west lip: the lookout across to the ledges, a rope at the edge, the Lanterns' shrine and the cairn.
-    { kind: 'event', x: 2, y: 6, id: 'k3_lookout', once: true, text: 'Across the gorge the far face is cut in ledges, down and back and down into rain. On a landing, a door in the rock, shut, the chipping round it white from here.' },
+    { kind: 'event', x: 2, y: 6, id: 'k3_lookout', once: true, text: 'Across the gorge the far face is cut in ledges, down and back and down into rain. On a landing, a dark opening cut in the rock, the chipping round it white from here.' },
     { kind: 'event', x: 8, y: 15, id: 'k3_rope', once: true, text: 'A rope tied round a dead trunk at the lip, the knot hard with rain. Its end hangs a span over the edge, cut clean.' },
     { kind: 'shrine', x: 7, y: 23, id: 'k3_shrine', text: 'A Lantern shrine at the lip\'s end, its face to the gorge, a lamp set in it to see far by. The lamp is cold and the oil gone thick. The lens is still clear.', stat: 'accuracy', done: 'The lamp on the Lanterns\' shrine, cold, and the lens still clear.' },
     { kind: 'cairn', x: 3, y: 28, id: 'k3_cairn', text: 'A cairn in the dead wood back from the lip, built by somebody who built walls, every joint crossed. A lamp is cut in the top stone, and needles lie in the cut.', gold: 170, items: ['potion_sp_great'] },

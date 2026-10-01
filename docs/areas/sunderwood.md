@@ -449,9 +449,11 @@ features; the pay shared out over the area (§8).
   and their Flail +1, Ironwood Bow +1 and 300 gold; bare rock and no sound; and the wall, from edge to
   edge of the map, a strip of floor along its face running both ways into rock fall. It is drawn
   smooth (`wallStyle: 'smooth'`, #424), the only wall face on the level: the gorge's sides are rock.
-  The step is the brief's line where the floor meets it. The secret: the chalk's last mark, west along
-  the strip; searched there, the face gives on a recess a square deep, the seam drawn as a hairline,
-  rows of small scratched marks nobody can read beside it, and 200 gold and a Sapphire Vial. The
+  The step is the brief's line where the floor meets it. The secret: west along the strip a rock fall
+  closes it against the wall, and the chalk's last mark is at its foot; searched there, a gap in the
+  fall opens on a hollow of air beside the wall, and on the wall's face at its back the seam, a
+  hairline that nobody passes, with rows of small scratched marks nobody can read beside it and 200
+  gold and a Sapphire Vial. The gap is drawn as rock until found and as open ground after (#427). The
   Warden drops the Heart of the Sunder (`sunder_heart`), a keepsake; it never comes back, its death
   text says nothing closes, and every other group comes back after two days. No group stands within
   four squares of the wall (the walkthrough holds it); the silence holds the step's and the chalk's
@@ -965,9 +967,15 @@ Decided by delegate for #199, each the owner's to overturn:
 4. **The wall is drawn smooth, a systems pull request first (#424):** `wallStyle: 'smooth'`, one face
    with no join, and a door in it its seam alone. Drawn in courses the wall would be false on the
    step's own square. The floor's gorge sides are rock and mountain, so the wall is its only wall face.
-5. **The secret is in the wall's face, at the chalk's last mark:** a recess a square deep, the seam,
-   and beside it rows of small marks nobody can read, which are not the knot. The find is the sight,
-   with 200 gold and a Sapphire Vial so the search pays; nothing in it is the wall's.
+5. **The secret is a hollow in the rock fall beside the wall, not a way into it** (the review of
+   #426): the wall is flat and its ways open only to Wenna's palm (STORY), so nothing passes into it.
+   The chalk runs out at the fall's foot; searched there, a gap in the fall opens on a pocket of air
+   whose back is the wall's face, with the seam on it, drawn as a hairline on a wall square nobody
+   walks through, and beside it rows of small marks nobody can read, which are not the knot. The
+   seam's line is said on stepping into the hollow, where it is seen. The find is the sight, with 200
+   gold and a Sapphire Vial so the search pays. A systems pull request first (#427) draws a secret door
+   among rock underground as the rock, and once found as the gap it is, so the smooth style never
+   shows a slab of the wall in the fall.
 6. **The Warden drops the Heart of the Sunder** (`sunder_heart`, slot none, price 0), a keepsake, as
    K3's Sunder Shard is. No hand-in takes it.
 7. **The threads are walked:** one a square wide, glass ground over the chasm by the level's own
@@ -982,3 +990,9 @@ Decided by delegate for #199, each the owner's to overturn:
 11. **The finds are the ladder's (#399, #406):** the Plate Mail +2 in the gleaners' cleft on the
     ledges, the Flail +1 and the Ironwood Bow +1 with the fallen past the narrows.
 12. **The text was drafted in the voice by a separate agent,** and no line names what the wall is.
+13. **The floor has no sky and no rain** (the review of #426): a dungeon draws a vault overhead, so
+    the floor's lines say the faces lean together so high that no sky shows and no rain comes down,
+    rather than open the dungeon's sky, a systems change for one level. The ledges keep their rain:
+    their vault is near black, the night over a gorge.
+14. **K3's step and lookout lines see the way in open,** a way cut into the rock with a stair inside,
+    where they saw a shut door.
