@@ -1749,3 +1749,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   filing) and COMMON.md say so. #318 and #319, filed just before, stand and are running; the owner
   told they can be parked if they would rather. #311 queued to the quality session after #319.
 - Phase 1's last issues: #218 (#315's round), #47 (the pilot's E), #318, #319, #311.
+- 01:53: #315 (#218, J5, Penspern and the Eldest) landed: its merges 27f9595 and 0b1933d (main in;
+  the hand-in checked on a fresh walk; the comma), pushed before the delegate's decisions came, which
+  needed no code: ALL OK (4 owed: #47 ×2, #170 ×2), SMOKE OK, "Nothing new."; CI green. Merged as
+  5a034ee; main's tree is the tested tree (f5e2ae1). #218 closes: **the Deepthorn is built** (#208's
+  boxes all closed). The J5 session done (the body's decisions on the merged PR); #318's session
+  unblocked; #319's to merge main.
