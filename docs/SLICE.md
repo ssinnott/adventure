@@ -50,7 +50,10 @@ DESIGN.md first for the why.
   bows, slings and spells reach anyone, and a back rank with no bow or spell waits for the front to
   fall. Morale: once a fight's leaders (`leader`) are down its people break and run, and a group's
   beasts bolt at three in four down; the dead, the Rift, the machine and the Hand (`steady`) never
-  do, and the fled pay nothing (#160).
+  do, and the fled pay nothing (#160). Every damage spell has an element, which a monster may
+  resist (half), be immune to (none) or be weak to (half again); a monster may cast from the tables
+  (`cast`) and drain hit points or spell points with its hits (`drain`); a hit wakes a sleeper, and
+  sleep ends with the fight (#161).
   Gear may carry a plus: a point is +1 to hit and damage on a weapon, +1 armour class on armour or
   a shield (`P`, `src/content/items.ts`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
