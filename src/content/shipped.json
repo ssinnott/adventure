@@ -116,6 +116,16 @@
         "b6_roof",
         "b6_stair",
         "barrow",
+        "c4_barge",
+        "c4_cairn",
+        "c4_edge",
+        "c4_fen",
+        "c4_fields",
+        "c4_ford",
+        "c4_herons",
+        "c4_hide",
+        "c4_hide_chest",
+        "c4_shrine",
         "c5_barge",
         "c5_barge_hold",
         "c5_cairn",
@@ -386,6 +396,9 @@
         "b6_bulls",
         "b6_toads",
         "beach_crabs",
+        "c4_barge",
+        "c4_crew",
+        "c4_toad",
         "c5_pools_n",
         "c5_pools_s",
         "c5_toad",
@@ -550,6 +563,7 @@
         "365,35",
         "48,181",
         "53,140",
+        "77,108",
         "99,148"
       ]
     },
@@ -925,6 +939,10 @@
       "at": "40,158",
       "size": "32x32"
     },
+    "delta_c4": {
+      "at": "72,94",
+      "size": "32x32"
+    },
     "delta_c5": {
       "at": "72,126",
       "size": "32x32"
@@ -1099,6 +1117,9 @@
     "q_osmund_well",
     "q_paper_hale",
     "q_paper_vask",
+    "q_passage",
+    "q_passage_freed",
+    "q_passage_owed",
     "q_riders",
     "q_riders_hale",
     "q_riders_kept",
@@ -1204,6 +1225,7 @@
     "longbow",
     "longbow+1",
     "longsword",
+    "longsword+1",
     "longsword+2",
     "mace",
     "mace+1",

@@ -80,7 +80,8 @@ export const ROADS: Record<string, readonly string[]> = {
   wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
   eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2', 'eaves_j2:j2_bears', 'eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears'],
   lanternwood: ['lanternwood_l2:l2_lamp_moths', 'lanternwood_l2:l2_bears'],
-  delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad'],
+  // On to the fork, where the bull toad sees the company, and up the spur past the barge (#171).
+  delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad', 'delta_c4:c4_barge'],
   saltings: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'],
 };
 
@@ -109,6 +110,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'delta_c5: under': { whose: '#18', at: 1 },
   'c5_rift: under': { whose: '#18', at: 1 },
   'k3_rift: under': { whose: '#18', at: 1 },
+  'delta_c4: under': { whose: '#18', at: 1 },
   'Saltreach: under': { whose: '#18', at: 1 },
 };
 

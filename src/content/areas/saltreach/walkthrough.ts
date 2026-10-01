@@ -2,22 +2,23 @@
 // the Delta road (C5 and D5, #170) walked: down off Kestrel Edge onto the shore, where the land says
 // what it is to a company under its band; the hermit on the islet, who points up the spur; the
 // barge under the causeway's arch found from its hint; and the box's groups and its Rift's won at
-// its floor. Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty;
-// the hermit who counts the Rifts' lights; the hollow under the landing found from its pole-marks;
-// and the box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6,
-// #174): the priestess at the dry door and her count; the far roof's door found from the count's
-// pause; and the box's groups won at 11. Then back to the road and down it into
-// Saltmouth's box (C6, #176): the Saltings named at the seam, the land gate at the road's end, the
-// smugglers' stair found from the rope that hangs over it, and the quay's and the pans' groups won
-// at the box's floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear
-// bought, training to 13 and a first prestige taken; the Cartographers' first task taken at the Map
-// Room, the road chained stone to stone and the first rank's work done (#181), and the first
-// Meridian journal read there; the Salt Compact joined at the Keel (#182) by its run of brandy past
-// the customs house, and its first rank's crate; the way down through the Keel's cellar to the
-// stair found from its sawdust; and the boat to Wrackholm's landing and back, at the half fare a
-// member pays. Then south into the pans (C7, #178): the Scarp across the south and its stair's
-// fallen foot, the sealed pan's hoard found from the trodden wall, and the crabs and the toads won
-// at 11.
+// its floor. Then the spur to Rietum (C4, #171): the eel-trapper's word on the poleman, the crews'
+// hide found from the gap in the herons, Passage Paid answered both ways, and the box's groups won.
+// Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty; the hermit
+// who counts the Rifts' lights; the hollow under the landing found from its pole-marks; and the
+// box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6, #174):
+// the priestess at the dry door and her count; the far roof's door found from the count's pause;
+// and the box's groups won at 11. Then back to the road and down it into Saltmouth's box (C6, #176):
+// the Saltings named at the seam, the land gate at the road's end, the smugglers' stair found from
+// the rope that hangs over it, and the quay's and the pans' groups won at the box's floor. Then in
+// at the gate to Saltmouth (#177) and out again: the band's gear bought, training to 13 and a first
+// prestige taken; the Cartographers' first task taken at the Map Room, the road chained stone to
+// stone and the first rank's work done (#181), and the first Meridian journal read there; the Salt
+// Compact joined at the Keel (#182) by its run of brandy past the customs house, and its first
+// rank's crate; the way down through the Keel's cellar to the stair found from its sawdust; and the
+// boat to Wrackholm's landing and back, at the half fare a member pays. Then south into the pans
+// (C7, #178): the Scarp across the south and its stair's fallen foot, the sealed pan's hoard found
+// from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -45,6 +46,7 @@ import type { Person } from '../../../game/people.ts';
 const D5 = MAP_DEFS.find((d) => d.id === 'delta_d5')!;
 const C5 = MAP_DEFS.find((d) => d.id === 'delta_c5')!;
 const RIFT = MAP_DEFS.find((d) => d.id === 'c5_rift')!;
+const C4 = MAP_DEFS.find((d) => d.id === 'delta_c4')!;
 const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
 const B5_COUNTER = B5.features!.find((f) => f.kind === 'npc') as Person;
 const B6 = MAP_DEFS.find((d) => d.id === 'delta_b6')!;
@@ -53,6 +55,9 @@ const C6 = MAP_DEFS.find((d) => d.id === 'saltings_c6')!;
 const C7 = MAP_DEFS.find((d) => d.id === 'saltings_c7')!;
 const TOWN = MAP_DEFS.find((d) => d.id === 'saltmouth')!;
 const HERMIT = D5.features!.find((f) => f.kind === 'npc') as Person;
+const person = (name: string): Person => C4.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
+const TRAPPER = person('an eel-trapper'), MASTER = person('the master of the barge');
+const CREW = C4.encounters!.find((e) => e.id === 'c4_crew')!;
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -95,6 +100,67 @@ export const walkthrough: Walkthrough = (ok) => {
   // The Rift on its islet: walked into from its neck, and its groups and its warden won at 10.
   walkThrough(w, 'delta_c5', 20, 13, NORTH, 'c5_rift', 2);
   for (const g of RIFT.encounters!) fight(w, `c5_rift:${g.id}`);
+
+  // Up the spur from the fork into C4, the Long Water's east bank.
+  walkThrough(w, 'delta_c5', 7, 1, NORTH, 'delta_c4', 3);
+
+  // The eel-trapper at the ford heard the Stone's barge go by, and knows the poleman was no river man.
+  w.world.travel('delta_c4', TRAPPER.x, TRAPPER.y);
+  const told = meet(TRAPPER, w.party, heard(w.world, TRAPPER)).text;
+  ok(told.includes('stroke') && told.includes('Hand'), 'the eel-trapper knows the poleman by his stroke: the Hand\'s, not the river\'s');
+
+  // The secret: the one gap in the herons, the hut there, and the crews' hide behind its wall.
+  w.world.travel('delta_c4', 4, 14, EAST);
+  w.world.eventsHere();
+  let hid = false;
+  for (let i = 0; i < 20 && !hid; i++) hid = w.world.search();
+  const intoHut = hid ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(hid && intoHut.every((r) => r.kind === 'moved'), 'searched from the gap in the herons, the hut\'s wall opens, and can be walked into');
+  ok(w.world.used('c4_hide'), 'inside, the bargemen\'s hide is found');
+  const hide = C4.features!.find((f) => f.kind === 'chest' && f.id === 'c4_hide_chest');
+  ok(hide?.kind === 'chest' && hide.items.includes('brine_shard') && hide.items.includes('longsword+1') && hide.x === 6 && hide.y === 14, 'in the hide, a Brine Shard and a Long Sword +1');
+  listen(w);
+
+  // Passage Paid: the master on the shoal puts it. Cut loose, the people go ashore and a crew comes
+  // up the bank after them; pushed off, the master's word pays the boat's fare from Saltmouth.
+  // The shoal is reached on foot, from the track, by a company with no swimmer in it at either tide.
+  const c4 = new GameMap(C4);
+  const onFoot = (tide: 'high' | 'low'): boolean => {
+    const seen = new Set([`${C4.start.x},${C4.start.y}`]), q = [[C4.start.x, C4.start.y]];
+    while (q.length) {
+      const [x, y] = q.shift()!;
+      if (x === MASTER.x && y === MASTER.y) return true;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        const p = c4.passable(nx, ny, { tide });
+        if (!seen.has(`${nx},${ny}`) && (p === 'ok' || p === 'unlock')) { seen.add(`${nx},${ny}`); q.push([nx, ny]); }
+      }
+    }
+    return false;
+  };
+  ok(onFoot('high') && onFoot('low'), 'the master on the shoal can be walked to from the way in with no swimmer, at either tide');
+  const page = (): string => questLog(w.world.state, w.party).find((v) => v.def.id === 'passage')?.pages[0]?.entries.map((e) => e.text).join(' ') ?? '';
+  for (const [label, flag] of [['Push her off.', 'q_passage_owed'], ['Cut them loose.', 'q_passage_freed']] as const) {
+    for (const f of ['q_passage', 'q_passage_owed', 'q_passage_freed']) delete w.party.flags[f];
+    ok(!w.world.walks(CREW, CREW.x, CREW.y), `before '${label}', no crew on the bank`);
+    w.world.travel('delta_c4', MASTER.x, MASTER.y);
+    const m = meet(MASTER, w.party, heard(w.world, MASTER)), a = m.choice?.answers.find((x) => x.label === label);
+    ok(!!a && page().includes('Hessel'), `the master on the shoal asks, '${label}' is an answer, and the log has his barge (${m.choice?.ask ?? 'no question'})`);
+    if (a) answer(a, w.party);
+    ok(!!w.party.flags[flag] && !w.world.present(MASTER), `'${label}' sets ${flag}, and the barge is gone off the shoal`);
+    ok(w.world.walks(CREW, CREW.x, CREW.y) === (flag === 'q_passage_freed'), `'${label}': a crew comes up the bank ${flag === 'q_passage_freed' ? 'after it' : 'only if they are freed'}`);
+  }
+  ok(page().includes('waded ashore'), 'the log says the passengers went ashore');
+  // Hessel's word waives the boat's fare out of Saltmouth; the passengers cut loose, it does not.
+  const kitto = TOWN.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!.passage![0];
+  w.party.flags.q_passage_owed = 1;
+  const owedFare = fareOf(kitto, w.world);
+  const kittoP = TOWN.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
+  const kittoSays = meet(kittoP, w.party, heard(w.world, kittoP)).text;
+  delete w.party.flags.q_passage_owed;
+  ok(owedFare === 0 && kittoSays.includes('Hessel') && fareOf(kitto, w.world) === kitto.fare, `pushed off, Hessel's word pays the boat's fare to Wrackholm; cut loose, it is ${kitto.fare}`);
+
+  // The box's groups, each won at its floor: the barge at the bank, the bull toad in the drain, the crew.
+  for (const g of C4.encounters!) fight(w, `delta_c4:${g.id}`);
 
   // West off the Delta road over the fen, onto the duckboards of B5.
   w.level = 11;
