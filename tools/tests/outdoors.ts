@@ -60,13 +60,17 @@ export function outdoors(): void {
   const east = line(th.x + th.w - 1, th.y, 0, 1, th.h);
   ok(east === '%' + 'M'.repeat(9) + '=' + 'M'.repeat(21), `Thornmark's east edge is mountains against the Eaves, with the east road through a gap (${east})`);
   // I2 and J2 (#196) meet in one wood, pines on both sides of the seam with the road through them;
-  // the rim over both is the world's end. Past J2 the world ends at K2 and J3, which are not built:
-  // at K2 behind the gorge's west lip, a strip of chasm, and the road on through a gap in the ring.
-  const j2 = out.zones.find((z) => z.id === 'eaves_j2')!;
-  const rim = line(eaves.x, eaves.y, 1, 0, eaves.w * 2), seam = line(eaves.x + eaves.w - 1, eaves.y, 0, 1, eaves.h);
-  ok(/^%+$/.test(rim) && seam === '%MM' + 'T'.repeat(8) + '=' + 'T'.repeat(19) + 'M', `I2's north edge and J2's, the rim, are the end of the world, and I2's east edge is the wood on into J2, with the road through it (${seam})`);
-  const lip = line(j2.x + j2.w - 1, j2.y, 0, 1, j2.h), j2south = line(j2.x, j2.y + j2.h - 1, 1, 0, j2.w);
-  ok(lip === '%' + 'v'.repeat(21) + '%==' + '%'.repeat(7) && /^%+$/.test(j2south), `J2's east edge is the gorge's lip and its south edge the world's end, but for the east road on into K2 (${lip})`);
+  // the rim over both is the world's end.
+  const j2 = out.zones.find((z) => z.id === 'eaves_j2')!, k2 = out.zones.find((z) => z.id === 'eaves_k2')!;
+  const rim = line(eaves.x, eaves.y, 1, 0, eaves.w * 3), seam = line(eaves.x + eaves.w - 1, eaves.y, 0, 1, eaves.h);
+  ok(/^%+$/.test(rim) && seam === '%MM' + 'T'.repeat(8) + '=' + 'T'.repeat(19) + 'M', `I2's north edge, J2's and K2's, the rim, are the end of the world, and I2's east edge is the wood on into J2, with the road through it (${seam})`);
+  // J2 and K2 (#197) meet in the gorge: chasm on both sides of the seam north of the road, the east
+  // road onto the rope bridge, and the west lip's dead wood and glass south of it. Past K2 the world
+  // ends at L2 and K3, which are not built: the road on east through a gap in the ring.
+  const lip = line(j2.x + j2.w - 1, j2.y, 0, 1, j2.h), gorge = line(k2.x, k2.y, 0, 1, k2.h);
+  const k2east = line(k2.x + k2.w - 1, k2.y, 0, 1, k2.h), ends = [j2, k2].map((z) => line(z.x, z.y + z.h - 1, 1, 0, z.w));
+  ok(lip === '%' + 'v'.repeat(22) + '==' + 'T'.repeat(6) + '%' && gorge === '%' + 'v'.repeat(23) + '=cddcdc%', `J2's east edge and K2's west edge are the gorge, but for the road onto the bridge and the woods south of it (${lip}; ${gorge})`);
+  ok(k2east === '%'.repeat(22) + '=' + '%'.repeat(9) && ends.every((l) => /^%+$/.test(l)), `J2's and K2's south edges are the world's end, and K2's east edge, but for the east road on into L2 (${k2east})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);
