@@ -1779,3 +1779,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   edge with both heartwoods) left this round, the body made true to it and the width put under
   "After Phase 1"; all three choices taken. Round sent: the smoke scan holding `TALL_REACH` to the
   ink, MONSTERS.md:266, the body.
+- 03:03: the pilot ended a third turn (02:46) on "Then I'll commit, push and open the pull request
+  closing #47", nothing on origin. Likely waiting on a background check lost to a container restart
+  (worker_epoch 32). Told: commit and push first, then merge main and check in the foreground, then
+  open the PR (or say it has no GitHub tool, and I open it from the branch).
