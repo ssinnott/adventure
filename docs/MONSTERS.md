@@ -336,9 +336,10 @@ calibration:
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
 - It is made at every level to 10 and every fourth level to 32, 300 seeds a point, with the levels
-  between interpolated. Past 10 the company runs on play's rules (#159): its spells stop growing at
-  10, and nothing new comes, no tier, prestige or gear, until #20, #19 and #18 bring them and the
-  harness re-runs.
+  between interpolated. Past 10 the company runs on play's rules as they were when the tables were
+  made (#159): its spells stop growing at 10, and nothing new comes, no tier, prestige or gear.
+  Tiers 6 and 7 came with #20; the tables are made again once, when #19 hands out the prestiges and
+  their ranks.
 
 Hit points / average damage a hit, by role and level:
 
@@ -443,7 +444,7 @@ What it shows:
   | stop at 10 | a bonus every two levels | a fifth at most (fodder up to a third) | 5–15% |
   | stop at 10 | a blow at 11 and 29 | a tenth at most, 8% past 12 | 12% at 12, then 4% at most |
   | stop at 10 | a blow at 11 and 29, and a bonus | a sixth at most (brutes 23% at 20) | 3–10% |
-  | stop at 10 | the prestiges, ranks of 15% and tiers 6 and 7 | a tenth at most past 12 (brutes 16% at 12), controllers 12–13% at 24 and 32 | 1–8% |
+  | stop at 10 | the prestiges, ranks of 15% and tiers 6 and 7 | a tenth at most past 12 (brutes 17% at 12), controllers 12% at 24 | 1–9% |
 
   While spells keep growing, none of them keeps the days safe. Past 16 or 20 the bad days are, as
   today, fights broken off once the spells are spent and deaths where monsters hit harder to end
@@ -470,8 +471,9 @@ What it shows:
   The prestiges fill the stretch. `--prestiges` gives the company the three of DESIGN.md §5 at 11,
   19 and 27, with the perks it can play (the blows, the knight's banner, the ranger's Marksman, the
   thief's sneak attack and its drop from sight, the cleric's last rite), their hit points and spell
-  points, and spell ranks on spells stopped at 10; `--tiers` adds stand-ins for the damage spells of
-  tiers 6 and 7 at 15 and 23 (DESIGN.md §7). Calibrated on them, monsters carry 2.5 to 5 times the
+  points, and spell ranks on spells stopped at 10, with the tiers 6 and 7 play now teaches at 15 and
+  23 (DESIGN.md §7; first sized here as stand-ins, then built in #20 and measured again, as the
+  table's last line gives it). Calibrated on them, monsters carry 2.5 to 5 times the
   line's hit points and hit on it or up to 1.8 times as hard, in fights of three to eight rounds, and
   the points the calibration must hold at the level under's fall from 22 to 6: no stretch is left
   where the company gains nothing. The rank's step decides the rest. At 15% a rank, every role but
@@ -481,7 +483,11 @@ What it shows:
   the spells are spent. Without the new tiers, fodder end a tenth of their days badly at 20 and 24;
   with them, none. Controllers, which paralyse, stay a few points over at 24 and 32 against a bot that
   never cures and a company with no bard, whose second prestige stops paralysis; the bot learns to
-  cure before their numbers move (#18).
+  cure before their numbers move (#18). On the built spells and play's own ranks (#20) the picture
+  holds: monsters carry 2.6 to 5.1 times the line's hit points, a tenth of the days or fewer end
+  badly past 12 but for the controllers' 12% at 24, and the boss is held at half. Ranks of nothing
+  in their place ask 5 to 15% fewer hit points and leave the controllers 18% at 24: the ranks are
+  growth the monsters must answer, and they keep the days no worse.
 - **On play's rules, the tables past 10 are made again (#159).** With spells stopped at 10 and
   nothing new past Act I's, the calibration gives monsters less over the line the further they go:
   1.1 to 3.2 times its hit points at 12 and 1.1 to 1.9 at 32 (the boss 3.9 down to 2.9), hitting on
@@ -489,7 +495,10 @@ What it shows:
   under's for 25 of the 60 points. A tenth of the days or fewer end badly for most roles, but the
   controllers end a fifth at 24 and 28, the armoured an eighth at 24 and 32, archers 12% at 32 and
   brutes 14% at 12: the stretch the prestiges and the new tiers (#19, #20) are to fill, as
-  `--prestiges --tiers` shows above.
+  `--prestiges` shows above. With the tiers in play (#20) and no prestige yet, the calibration
+  would give every role up to a tenth more hit points from 16 (the soldier 1.48 times the line at 28
+  where the table has 1.46, the boss 3.2 at 32 where it has 2.86), and days end badly no more often:
+  the tables are left for #19's run.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
