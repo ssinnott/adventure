@@ -31,6 +31,10 @@ const UNPLACED: Record<string, string> = {
   ashen_overseer: '#188',
   watch_hall: '#201', watch_refectory: '#201', watch_stores: '#201', priors_room: '#201',
   pine_bear: '#195',
+  wrack_smuggler: '#187', wrack_bowman: '#187',
+  bilge_rat: '#189',
+  wrack_gull: '#187',
+  bull_toad: '#173',
 };
 
 /**

@@ -23,6 +23,9 @@
 // of a bill. Grey, the head and neck white with a black stripe from the eye into a trailing crest,
 // the neck's front streaked. Taller than a man, so it is drawn inside 0.74 of its height. It does
 // not hop; it stands and watches, and only the wings stir.
+// The Wrack Gull is the crow's frame white, with the gull's long wings: a grey mantle over the
+// back and wings, the long primaries black-tipped with white mirrors, and a yellow bill with a red
+// spot, hooked at the tip and open. It screams: the bill gapes and shuts, and it hops at the company.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -31,7 +34,7 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron'];
+export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron', 'wrack_gull'];
 
 /**
  * The frame's parts, as proportions of the crow's (1 = the crow, 0 = none). Each is named for the
@@ -91,23 +94,29 @@ interface Build {
   streaks: number;
   /** The bill's colour, or null for horn: the heron's yellow dagger. */
   billHex: string | null;
+  /** The wings' and the back's colour where it is not the plumage's, or null: the gull's grey mantle. */
+  mantle: string | null;
+  /** Black wingtips, 0 none to 1: the gull's, with a white mirror in each. */
+  tips: number;
+  /** How far the bill opens, 0 shut: the gull's scream. */
+  gape: number;
 }
 const CROW: Build = {
   body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
   sheen: '#5a68b0', gloss: 1, feathered: 0, lean: -0.36, hop: 1, tufts: 0, bars: 0, mask: 0,
-  crest: 0, pale: 0, streaks: 0, billHex: null,
+  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0,
 };
 /** Upright and turned to the party, wings raised wide: a big round head sunk in the shoulders, a small hooked bill, short feathered legs. */
 const OWL: Build = {
   body: 1.1, neck: 0, head: 1.6, face: 1, bill: 0.35, hook: 0.8, leg: 0.6, wing: 1.4, broad: 1.3, tail: 0.6, wedge: 0, ruff: 0, bare: 0,
   sheen: null, gloss: 0, feathered: 1, lean: -1.2, hop: 0, tufts: 1, bars: 1, mask: 0,
-  crest: 0, pale: 0, streaks: 0, billHex: null,
+  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0,
 };
 /** The old rook: bigger and heavier than the crow, shaggy at the throat and the thighs, the bill long and pale-based. */
 const ROOK: Build = {
   body: 1.2, neck: 1, head: 1.08, face: 0, bill: 1.2, hook: 0, leg: 1, wing: 1.08, broad: 1.12, tail: 1, wedge: 0.15, ruff: 1, bare: 0,
   sheen: '#7a5aa8', gloss: 0.8, feathered: 1, lean: -0.3, hop: 0.5, tufts: 0, bars: 0, mask: 1,
-  crest: 0, pale: 0, streaks: 0, billHex: null,
+  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0,
 };
 /**
  * The grey heron: the crow's profile on stilts, the body slim and nearly level, the neck three
@@ -118,11 +127,20 @@ const ROOK: Build = {
 const HERON: Build = {
   body: 0.85, neck: 3, head: 0.8, face: 0, bill: 1.55, hook: 0, leg: 2.6, wing: 1.05, broad: 1.1, tail: 0.45, wedge: 0, ruff: 0, bare: 0,
   sheen: null, gloss: 0.1, feathered: 0, lean: -0.18, hop: 0, tufts: 0, bars: 0, mask: 0,
-  crest: 1, pale: 1, streaks: 1, billHex: '#d8b040',
+  crest: 1, pale: 1, streaks: 1, billHex: '#d8b040', mantle: null, tips: 0, gape: 0,
+};
+/**
+ * The wrack gull: the crow's frame white and lighter in the body, with long narrow wings in a grey
+ * mantle and black tips, a hooked yellow bill with the red spot, open. Matte, and it hops at you.
+ */
+const GULL: Build = {
+  body: 0.92, neck: 1, head: 1, face: 0, bill: 1.1, hook: 0.45, leg: 0.85, wing: 1.45, broad: 0.8, tail: 0.75, wedge: 0, ruff: 0, bare: 0,
+  sheen: null, gloss: 0.15, feathered: 0, lean: -0.3, hop: 1.2, tufts: 0, bars: 0, mask: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: '#e8c040', mantle: '#9aa2ac', tips: 1, gape: 1,
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : CROW;
+  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : CROW;
   // The pose is the Build's `face`. Turned to the party, the raised wings reach higher than the
   // crow's hop: drawn inside 0.85 of its height, as the lampman is, the owl's tips keep clear of the
   // top of the combat canvas (at full height and wing 1.6 they run off it), and the wings as much
@@ -226,7 +244,9 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   leg(-0.09, farLeg);
   blob(ctx, B, shade(shank, 0.85), farLeg, { h, formK: 0.3 });
   const fw = wingOutline(sx - 0.05, sy + 0.02, th + 0.15, W, b.broad, ax, ay + 0.04);
-  blob(ctx, B, far, [{ k: 'poly', pts: px(fw.pts) }], { h, formK: 0.3 });
+  const mantle = b.mantle ? shade(b.mantle, tone) : null;
+  blob(ctx, B, mantle ? shade(mantle, 0.78) : far, [{ k: 'poly', pts: px(fw.pts) }], { h, formK: 0.3 });
+  wingTips(ctx, fw, b.tips, h, px, tone, 0.8);
 
   // ---- the tail: its own mass behind the rump, angled down, fanned a little toward its end.
   {
@@ -291,7 +311,10 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // ---- the near wing, half open over the body.
   const nw = wingOutline(sx, sy, th, W, b.broad, ax, ay);
-  blob(ctx, B, mix(plume, far, 0.15), [{ k: 'poly', pts: px(nw.pts) }], { h, formK: 0.35, spread: 0.8, gloss: 0.2 * b.gloss });
+  // The gull's grey mantle over the back, under the wing's root.
+  if (mantle) patch(ctx, B, mantle, [{ k: 'ell', x: X(-0.06), y: U(by + 0.3 * bs), rx: h * 0.24 * bs, ry: h * 0.07 * bs, rot: b.lean }], { alpha: 0.85, feather: 0.4 });
+  blob(ctx, B, mantle ?? mix(plume, far, 0.15), [{ k: 'poly', pts: px(nw.pts) }], { h, formK: 0.35, spread: 0.8, gloss: 0.2 * b.gloss });
+  wingTips(ctx, nw, b.tips, h, px, tone, 1);
   // The sheen: blue-violet on the coverts and the nape, where a crow's black catches the light.
   if (sheen) patch(ctx, B, sheen, [
     { k: 'ell', x: X((sx + nw.wrist[0] + ax) / 3), y: U((sy + nw.wrist[1] + ay) / 3), rx: h * 0.1 * W, ry: h * 0.07 * W, rot: -0.9 },
@@ -315,7 +338,20 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     if (b.hook > 0) pts.push(tip[0] - b.hook * bl * 0.12, tip[1] - b.hook * bl * 0.25);
     pts.push(bx0 + bl * 0.5, byb - dp * 0.35 - bl * 0.12, bx0 - rH * 0.15, byb - dp * 0.6);
     const billCol = b.billHex ? shade(b.billHex, Math.max(0.6, tone)) : horn;
-    blob(ctx, B, billCol, [{ k: 'poly', pts: px(pts) }], { h, form: false, gloss: b.billHex ? 0.3 : 0.35 * b.gloss });
+    if (b.gape > 0) {
+      // Open: the lower mandible swung down from the base, the mouth dark between, the red spot on
+      // its angle. The scream comes and goes.
+      const open = b.gape * (0.22 + 0.2 * Math.max(0, Math.sin(f / 9)));
+      const lx = bx0 - rH * 0.15, ly = byb - dp * 0.15, ll = bl * 0.9;
+      const lt = [lx + Math.cos(-0.2 - open) * ll, ly + Math.sin(-0.2 - open) * ll];
+      const lower = [lx, ly + dp * 0.1, bx0 + bl * 0.4, ly - dp * 0.1 - open * bl * 0.35, lt[0], lt[1], bx0 + bl * 0.35, ly - dp * 0.55 - open * bl * 0.45, lx, ly - dp * 0.5];
+      blob(ctx, B, billCol, [{ k: 'poly', pts: px(pts) }, { k: 'poly', pts: px(lower) }], { h, form: false, gloss: 0.3 });
+      if (!B.override) {
+        const mouth = px([bx0 - rH * 0.05, byb - dp * 0.1, tip[0] - bl * 0.1, tip[1] - bl * 0.02, lt[0] - bl * 0.1, lt[1] + bl * 0.05]);
+        ctx.fillStyle = shade('#5a1a1c', Math.max(0.5, tone)); ctx.beginPath(); ctx.moveTo(mouth[0], mouth[1]); ctx.lineTo(mouth[2], mouth[3]); ctx.lineTo(mouth[4], mouth[5]); ctx.closePath(); ctx.fill();
+        patch(ctx, B, shade('#d02a20', Math.max(0.6, tone)), [{ k: 'ell', x: X(lx + (lt[0] - lx) * 0.72), y: U(ly + (lt[1] - ly) * 0.72 - dp * 0.12), rx: h * dp * 0.3, ry: h * dp * 0.24 }], { alpha: 0.95, feather: 0.2 });
+      }
+    } else blob(ctx, B, billCol, [{ k: 'poly', pts: px(pts) }], { h, form: false, gloss: b.billHex ? 0.3 : 0.35 * b.gloss });
     // The gape, and the bristles that cover a crow's nostrils.
     if (h >= 30) softLine(ctx, B, px([bx0 - rH * 0.1, byb - dp * 0.05, bx0 + bl * 0.7, byb - bl * 0.13]), b.billHex ? shade(billCol, 0.6) : horn, Math.max(1, h * 0.007), 0.7);
     if (!bare && !b.mask && !b.billHex) patch(ctx, B, plume, [{ k: 'ell', x: X(bx0 + bl * 0.12), y: U(byb + dp * 0.25), rx: h * bl * 0.2, ry: h * dp * 0.35 }], { alpha: 0.8, feather: 0.4 });
@@ -343,6 +379,26 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   // ---- the eye: bright and watching. In profile only the one (a bird turned to the party is `facing`).
   const er = rH * 0.2 * h;
   eye(ctx, X(hx + rH * 0.22), U(hy + rH * 0.18), er, eyeCol);
+}
+
+/**
+ * Black ends to the primaries, `k` 0 none: a band across the wing's fingered tip from just past the
+ * wrist, a marking on the wing, and a white mirror near the end of the two longest.
+ */
+function wingTips(ctx: CanvasRenderingContext2D, w: { pts: number[]; wrist: [number, number] }, k: number, h: number, px: (u: readonly number[]) => number[], tone: number, lit: number): void {
+  if (k <= 0 || B.override) return;
+  const [wx, wy] = w.wrist, outer: number[] = [], inner: number[] = [];
+  // The primaries are the nine points after the arm's four: five tips and the four notches between.
+  for (let i = 4; i < 13; i++) {
+    const x = w.pts[i * 2], y = w.pts[i * 2 + 1];
+    outer.push(x, y);
+    inner.unshift(wx + (x - wx) * 0.58, wy + (y - wy) * 0.58);
+  }
+  patch(ctx, B, shade('#16161a', tone * lit), [{ k: 'poly', pts: px([...outer, ...inner]) }], { alpha: 0.92 * k, feather: 0 });
+  if (h >= 30) for (const i of [4, 6]) {
+    const x = w.pts[i * 2], y = w.pts[i * 2 + 1];
+    patch(ctx, B, shade('#f4f4f0', tone * lit), [{ k: 'ball', x: px([wx + (x - wx) * 0.86, 0])[0], y: px([0, wy + (y - wy) * 0.86])[1], r: h * 0.013 }], { alpha: 0.9, feather: 0.3 });
+  }
 }
 
 /**
