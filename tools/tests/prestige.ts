@@ -71,6 +71,17 @@ export function prestige(): void {
   ok(third.taught && party.gold === 4000 && className(bram) === 'Knight Paramount', 'its quest done, the third costs no gold');
   ok(offers({ cls: 'monk', prestige: 1 }, party, world.state).length === 0, 'a trainer of a class the company lacks has no one to teach');
 
+  // A save with prestiges taken keeps them: the count, the hit points they added and a spent rite.
+  {
+    const r = makeRng(29), p = defaultParty(r), w = new World(buildMaps(), p, r), maren = p.members[4];
+    maren.xp = xpForLevel(27); levelUp(maren, r);
+    for (let n = 0; n < 3; n++) takePrestige(maren);
+    maren.riteSpent = true;
+    const back = deserialize(serialize(w.state, p, 0)).party.members[4];
+    ok(back.prestige === 3 && back.maxHp === maren.maxHp && back.maxSp === maren.maxSp && back.riteSpent === true && className(back) === 'Exarch',
+      `a save with prestiges taken keeps them: ${className(back)}, ${back.maxHp} hit points, the rite spent`);
+  }
+
   // A save from before the prestiges, a member with neither field, loads with none taken.
   const old = deserialize(serialize(world.state, defaultParty(makeRng(1)), 0));
   ok(old.party.members.every((m) => prestigeOf(m) === 0 && className(m) === CLASSES[m.cls].name && !m.riteSpent), 'a save from before them loads with none taken');

@@ -546,7 +546,7 @@ pinned, so the same tree makes the same PNG; an unknown flag or id, a flag given
 no value is refused. `--changed <base>` draws what changed since the base (tools/changed.ts), which
 is how the checks attach a sheet to every pull request that changes a map, a monster or an
 interior; with nothing changed it says so and writes none.
-`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits]`
+`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--ranks] [--tiers]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
 seven an encounter at its level should allow (docs/MONSTERS.md §4.4). `--spell-cap` tries a world
