@@ -6,7 +6,10 @@
 // animal rather than trailing on the ground. Coarse agouti brown above, a sharply demarcated cream
 // belly, bare pink extremities. Idle: the nose and whiskers twitch, the tail sways. The Downs' barn
 // rat is the same animal fat on stolen grain: a barrel of a body sagging nearly to the floor, the
-// head small on it and an ear of wheat still in its teeth.
+// head small on it and an ear of wheat still in its teeth. The Tide Ship's bilge rat is fat too,
+// but sleek with it: a round, full body rather than a sagging one, the fur dark and slicked flat
+// with bilge water, a wet shine along the back, a grey belly instead of a cream one, and drips
+// gathering under it.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -15,10 +18,10 @@ import type { Part } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['rat', 'barn_rat'];
+export const KINDS: readonly MonsterSprite[] = ['rat', 'barn_rat', 'bilge_rat'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  rat(ctx, x, y, h, p, kind === 'barn_rat');
+  rat(ctx, x, y, h, p, kind === 'barn_rat', kind === 'bilge_rat');
 };
 
 /** A lumpy ring of n points around (cx, cy), for skulls and ears. */
@@ -29,11 +32,11 @@ function ring(cx: number, cy: number, rx: number, ry: number, n: number, out: nu
 }
 const R1: number[] = [], R2: number[] = [], R3: number[] = [];
 
-function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint, fat = false): void {
+function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint, fat = false, wet = false): void {
   const br = p.breathe, tone = p.tone;
   const base = p.base, dark = p.dark, light = p.light;
   const fur = mix(base, light, 0.3);
-  const bellyHex = mix(light, shade('#efe9dc', tone), 0.7);
+  const bellyHex = wet ? mix(light, shade('#8a8a86', tone), 0.6) : mix(light, shade('#efe9dc', tone), 0.7);
   const skin = shade('#d9a09a', tone), skinDim = shade('#a87a76', tone);
   const ivory = shade('#e6dcae', tone);
   // The body runs from the rump at -0.78 to the nose at +0.72; centre the whole animal on x0.
@@ -74,16 +77,18 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
       X(-0.78), U(0.50), X(-0.72), U(0.74) + b, X(-0.50), U(0.855) + b, X(-0.24), U(0.86) + b,
       X(0.02), U(0.80) + b, X(0.20), U(0.68), X(0.26), U(0.50),
       X(0.10), U(0.22), X(-0.20), U(0.175), X(-0.50), U(0.19), X(-0.72), U(0.28),
-    ], wobble: 0.03, spiky: 0.05, seed: 1, sub: 3 },
+    ], wobble: 0.03, spiky: wet ? 0.01 : 0.05, seed: 1, sub: 3 },
     { k: 'ell', x: X(-0.50), y: U(0.50), rx: h * 0.26, ry: h * 0.30, rot: -0.06 },   // the heavy hindquarters
     { k: 'ell', x: X(-0.02), y: U(0.48), rx: h * 0.19, ry: h * 0.24 },               // the shoulder
   ];
   // Fat on grain: the gut sags nearly to the floor and bulges the flanks out past the legs.
   if (fat) body.push({ k: 'ell', x: X(-0.26), y: U(0.37) + b, rx: h * 0.43, ry: h * 0.33, rot: 0.02 });
+  // Well fed and sleek: a round, full body that fills out the back without sagging to the floor.
+  if (wet) body.push({ k: 'ell', x: X(-0.27), y: U(0.47) + b, rx: h * 0.42, ry: h * 0.32, rot: -0.03 });
   // Near legs: short, the front paw tucked under the chest and the hind foot flat on the ground.
   body.push({ k: 'tube', pts: [X(0.22), U(0.24), X(0.245), U(0.12), X(0.25), U(0.03)], r0: h * 0.046, r1: h * 0.028 });
   body.push({ k: 'tube', pts: [X(-0.50), U(0.28), X(-0.415), U(0.13), X(-0.49), U(0.05)], r0: h * 0.06, r1: h * 0.034 });
-  blob(ctx, B, fur, body, { h, tex: 'fur', seed: 3, amount: 0.6, formK: 0.45, spread: 0.85, creases: [
+  blob(ctx, B, fur, body, { h, tex: 'fur', seed: 3, amount: wet ? 0.2 : 0.6, formK: 0.45, spread: 0.85, gloss: wet ? 0.35 : 0, creases: [
     { x0: X(0.04), y0: U(0.74), x1: X(0.02), y1: U(0.28), r: h * 0.028, a: 0.24 },   // behind the shoulder
     { x0: X(-0.28), y0: U(0.78), x1: X(-0.26), y1: U(0.26), r: h * 0.026, a: 0.2 },  // in front of the haunch
     { x0: X(-0.44), y0: U(0.16), x1: X(-0.50), y1: U(0.10), r: h * 0.022, a: 0.3 },  // the hock
@@ -122,6 +127,24 @@ function rat(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p:
     { k: 'curve', pts: [X(0.19), U(0.38), X(-0.02), U(0.315), X(-0.28), U(0.29), X(-0.52), U(0.31), X(-0.62), U(0.21), X(-0.26), U(fat ? 0.12 : 0.155), X(0.12), U(0.21)], wobble: 0.035, spiky: 0.04, seed: 22, sub: 3 },
     { k: 'cap', x0: hx - rH * 0.6, y0: hy + rH * 0.6, x1: hx + rH * 1.1, y1: hy + rH * 0.3, r0: rH * 0.26, r1: rH * 0.18 },
   ], { alpha: 0.72, feather: 0.28 });
+
+  // Wet: the fur slicked into dark runs down the flank, the light caught in a line along the back,
+  // and drips gathering under the belly.
+  if (wet && !B.override) {
+    if (h >= 30) for (let i = 0; i < 5; i++) {
+      const sx = -0.62 + i * 0.16;
+      softLine(ctx, B, [X(sx), U(0.74 - Math.abs(sx + 0.27) * 0.25), X(sx + 0.03), U(0.52), X(sx + 0.01), U(0.36)], dark, Math.max(1, h * 0.012), 0.5);
+    }
+    ctx.strokeStyle = rgba('#ffffff', 0.4); ctx.lineWidth = Math.max(1, h * 0.018); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(X(-0.66), U(0.74) + b); ctx.quadraticCurveTo(X(-0.36), U(0.9) + b, X(-0.04), U(0.78) + b); ctx.stroke();
+    const drop = shade('#9aa6a0', Math.max(0.6, tone));
+    // Each swells where it hangs and is gone, never falling clear of the rat.
+    for (const [i, dx] of [-0.5, -0.24, 0.04].entries()) {
+      const g = (p.frame / 50 + i * 0.37) % 1;
+      ctx.fillStyle = rgba(drop, g > 0.9 ? 0 : 0.8);
+      ctx.beginPath(); ctx.arc(X(dx), U(0.2) + h * g * 0.012, Math.max(0.7, h * (0.008 + g * 0.01)), 0, Math.PI * 2); ctx.fill();
+    }
+  }
 
   // Nose, whiskers, incisors, the beady eye.
   const nx = hx + rH * 1.46 + twitch * h * 0.01, ny = hy + rH * 0.06;

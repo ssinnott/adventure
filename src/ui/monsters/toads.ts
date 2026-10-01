@@ -11,6 +11,11 @@
 //
 // The Fen Toad: a toad the size of a sheep, its skin weeping. Mud-olive, blotched, wet. Idle: the
 // throat pumps, the eyes blink now and then, and the sweat gathers and drips.
+//
+// The Bull Toad: it could swallow Ottilie whole. The same toad built heavier: the back higher, the
+// warts bigger, and the mouth the width of the body. It does not weep, it festers: grey-rimmed
+// sores open on its flanks, the disease it carries. Dark bog-green, the throat yellow. Idle: the
+// throat swells like a bellows, slow.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -19,7 +24,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['fen_toad'];
+export const KINDS: readonly MonsterSprite[] = ['fen_toad', 'bull_toad'];
 
 /**
  * The frame's parts, as proportions of the fen toad's (1 = the fen toad, 0 = none), each named for
@@ -42,18 +47,24 @@ interface Build {
   blotch: number;
   /** The pale sweat running from the glands: the fen toad's weeping. */
   weep: number;
+  /** Sores on the flanks, raw in a grey rim: the bull toad's disease. 0 none. */
+  sores: number;
+  /** Width of the mouth: the bull toad's is the width of the body. */
+  mouth: number;
   /** How wet the skin shines, 0..1. */
   gloss: number;
   /** The throat's and the belly's colour, mixed into the tint. */
   belly: string;
 }
 const FEN: Build = {
-  width: 1, dome: 1, eyes: 1, throat: 1, glands: 1, warts: 1, blotch: 1, weep: 1, gloss: 0.8, belly: '#d8cc98',
+  width: 1, dome: 1, eyes: 1, throat: 1, glands: 1, warts: 1, blotch: 1, weep: 1, sores: 0, mouth: 1, gloss: 0.8, belly: '#d8cc98',
+};
+const BULL: Build = {
+  width: 1.08, dome: 1.12, eyes: 0.85, throat: 1.7, glands: 1.15, warts: 1.5, blotch: 0.7, weep: 0, sores: 1, mouth: 1.28, gloss: 0.45, belly: '#d4bc5c',
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  toad(ctx, x, y, h, p, FEN);
+  toad(ctx, x, y, h, p, kind === 'bull_toad' ? BULL : FEN);
 };
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
@@ -116,7 +127,7 @@ function toad(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   }
 
   // --- the mouth: a line as wide as the head, curving down at its ends ----------------------------
-  const my = 36 * b.dome, mw = W * 0.38;
+  const my = 36 * b.dome, mw = W * 0.38 * b.mouth;
   if (!B.override) {
     const lip = at(f, [-mw, my - 3, -mw * 0.7, my - 0.6, -mw * 0.3, my, 0, my + 0.4, mw * 0.3, my, mw * 0.7, my - 0.6, mw, my - 3]);
     softLine(ctx, B, lip, mark, Math.max(1, 2 * u), 0.95);
@@ -151,6 +162,18 @@ function toad(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
       const r = (0.9 + nz(i, 11) * 1.2) * b.warts * u;
       ctx.fillStyle = rgba(shade(hide, 1.35), 0.75); ctx.beginPath(); ctx.arc(f.X(wx) - r * 0.25, f.Y(wy) - r * 0.25, r, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = rgba(mark, 0.3); ctx.beginPath(); ctx.arc(f.X(wx) + r * 0.35, f.Y(wy) + r * 0.3, r * 0.5, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  // --- the sores: raw, wet and grey-rimmed, on the flanks and the haunches -----------------------
+  if (!B.override && b.sores > 0 && h >= 36) {
+    const SORES: [number, number, number][] = [[-38, 28, 2.6], [35, 33, 2.2], [-28, 42, 1.6], [42, 19, 2], [28, 24, 1.4], [-44, 15, 1.7]];
+    for (const [i, [sx, sy, r0]] of SORES.entries()) {
+      const r = r0 * b.sores, cx = f.X(sx * b.width), cy = f.Y(sy * b.dome);
+      patch(ctx, B, shade(mix(hide, '#a8a090', 0.55), Math.max(0.55, p.tone)), [{ k: 'curve', pts: blot(f, sx * b.width, sy * b.dome, r * 1.5, r * 1.1, i + 300), wobble: 0.25, seed: i + 300, sub: 2 }], { alpha: 0.6, feather: 0.35 });
+      patch(ctx, B, shade('#6a2a1c', Math.max(0.5, p.tone)), [{ k: 'curve', pts: blot(f, sx * b.width, sy * b.dome, r * 0.85, r * 0.6, i + 320), wobble: 0.3, seed: i + 320, sub: 2 }], { alpha: 0.9, feather: 0.15 });
+      // Wet: a fleck of light that comes and goes as the hide moves.
+      if ((t / 30 + i * 0.4) % 1 < 0.7) { ctx.fillStyle = 'rgba(255,240,220,0.55)'; ctx.beginPath(); ctx.arc(cx - r * 0.3 * u, cy - r * 0.25 * u, Math.max(0.6, r * 0.22 * u), 0, Math.PI * 2); ctx.fill(); }
     }
   }
 
