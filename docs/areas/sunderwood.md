@@ -10,7 +10,8 @@ turns. This is its area doc (EXPANSION §4, §6 and §8.2). Its work is filed un
 (#204), its side quests (#205), its drawings (#206) and its rooms (#207). Figures are measured on
 main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Two maps are built: I2, the Eaves' way in (#195), which lists the area, and J2, the Eaves (#196). Its content is
+Three maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), and K2,
+Sunderfall (#197). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -24,12 +25,13 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–15 | 5,764 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196) |
-| Lanternwood | 15–16 | 7,971 | none |
-| The area | 14–16 | 13,735 | two boxes |
+| The Eaves | 14–15 | 8,084 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197) |
+| Lanternwood | 15–16 | 3,969 | none |
+| The area | 14–16 | 12,053 | three boxes |
 
-Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
-the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
+Squares are the land the zone check counts in each zone with K2 laid in the Eaves (#197), which
+moved the zone line east; the plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
 to y 131 on Sunder Bay. The bands are this doc's, written on the atlas's rows: the area is 14–16
@@ -109,6 +111,14 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   the lip, a shrine by the road, a camp and a cairn in the pines south of it, and the rim, the step.
   Four groups: pine bears by the way in and at the cave, lantern moths by the steading by night and
   sunder hounds on the lip by the road at the far end.
+- **Sunderfall** (K2, `eaves_k2`, core, band 15; #197): the gorge down the box's west, from J2's lip
+  to the atlas's line, with glass trees along both lips; the east road over it by the rope bridge,
+  through the river by a ford and on east through the pines for Lantern Watch. The river from the rim
+  is dammed where it leaves the pines, and Sunderfall, where it goes over the east lip, has gone
+  quiet. The shrine at the fall and Orm its keeper, the rocks under the fall and the ledge behind
+  them, the camp on the west lip, the lookout down the gorge, the sawn glass, a cairn in the pines and
+  a Lantern's stone by the road. Three groups: sunder hounds with a glass spider at the bridge's far
+  end, gleaners with a hound at the dam and two glass bears on the road at the far end.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -143,8 +153,9 @@ Hoarhills, to 16 at the Sunder's floor and the Watch, as the gate asks (EXPANSIO
 box holds a group at the top of its band for the curve.
 
 **Boxes of two zones.** K2 and K3 are the gorge, half the Eaves' and half Lanternwood's, and K4 is
-mostly Lanternwood's with the Eaves' dead wood at its gorge; each is built to its edges and the
-zone line runs down the chasm inside it (EXPANSION §8.2).
+mostly Lanternwood's with the Eaves' dead wood at its gorge; each is built to its edges. A map is
+laid in one zone and all its squares are that zone's, so K2, laid in the Eaves (#197), moves the
+zone line to its east edge: Lanternwood begins at L2.
 
 **The order** is the east road's, and the quest's: I2, the only box that meets the Thornmark map,
 and the way in; J2, the Eaves and the first step; K2, the bridge; K3 and the Sunder; L2 and the
@@ -290,6 +301,27 @@ features; the pay shared out over the area (§8).
 - **Finds.** A Holy Symbol of the fall, from the shrine, and a Long Sword +2 on the ledge.
 - **Pay.** About 1,350 xp a member.
 
+- **As built** (#197, 1 October): the brief's places, with three groups for its eight, and the
+  dam, which #205 puts on the river above the fall. The gorge runs from J2's lip at x 328, seven to
+  nine wide north of the road, to the atlas's line south of it, with a strip of dead wood and glass
+  on the west lip; the road crosses it on world row 54, straight on from J2, by seven planks of road
+  over the chasm, then the river by a ford. The dam is pine trunks across the river where it leaves
+  the pines, and the fall below it a thread, as quest 30 finds it: its lines (#205's) are written for
+  a fall gone quiet, and the map draws no other. Orm keeps the shrine with lines of his own; his
+  ask, Hew and the choice are #205's. The shrine gives personality; the Paladin's trainer there is
+  owed to #19. The ledge is behind the bare rock under the fall, with the first gleaner's tally,
+  BELOW, a Long Sword +2 (`longsword+2`) and 200 gold. Four sunder hounds and a glass spider were the
+  plan at the bridge's far end; three and the spider keep fights to a rest inside the aim. Two glass
+  bears on the road at the far end, where Lanternwood begins, are the box's group at 16: a narrow
+  band asks a group above its floor, and the bears are a fight of their own, not a level carried by
+  others. Since #409's line and #414's re-stat, three bears were past the limit alone (4.3 fights to
+  a rest) and two hold it (9.4). A company at 15 wins every fight and manages 7.8 fights to a rest,
+  inside the aim; the Eaves' road, I2 to K2, is
+  walked every time at 14. As measured it pays about 1,070 xp a member and 510 gold, I2, J2 and K2
+  together 3,644 against their 3,850. Its floor is above the area's, so its groups count two under
+  in the area's pool, which is owed to #18. The area claims the falls as a landmark, the first built
+  on the road. What the owner finds by hand goes here when the box has been played.
+
 ### 4.5 K3, the Sunder's mouth (#198): core, band 15–16
 
 - **Purpose.** The way down into the Sunder, dead wood and crystal along the gorge, and the Hand
@@ -305,7 +337,7 @@ features; the pay shared out over the area (§8).
   - a camp back from the lip (#45), a shrine of the Lanterns' with its lamp out (#45).
 - **Encounters.** Gleaners with sunder hounds on a ledge a square wide (MONSTERS §6.3's second
   fight, two groups); sunderlings at the Rift; a glass spider on the threads between the ledges.
-- **Quests.** The step. The Dammed Fall's dam (§6).
+- **Quests.** The step. The Dammed Fall's ledges, which stop when the dam is broken (§6).
 - **The secret and its hint.** The dry bed behind the dam, where the first shards were quarried,
   and a shard the size of a fist still in the rock. The hint: dead wood stacked across the old
   channel at the bed's mouth, cut ends outward; and K2's fall, gone quiet.
@@ -478,7 +510,7 @@ with its box on the systems of #76 (#205):
 | # | Quest | Level | Where | What it needs | Pay | Built in |
 |---|---|---|---|---|---|---|
 | 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 200 | #196, #201 |
-| 30 | The Dammed Fall | 15 | Sunderfall's shrine (K2); the dam and the foreman (K3) | a choice; `until` (#41) | 200 | #197, #198 |
+| 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 200 | #197, #198 |
 | 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #200, #201 |
 | 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #201, #199 |
 
@@ -517,7 +549,7 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   four side quests 900 between them (29 and 30 200 each, 31 and 32 250 each, §6): about 11,500. They were the plan's, 11,800 before the
   side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
   supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
-  when it is built; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
+  when it is built: I2 1,063, J2 1,509 and K2 1,072 so far, 3,644 against their 3,850; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
   floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
@@ -672,3 +704,38 @@ and the Lanterns Helmstow's. A naming pass is the owner's to ask for; none is fi
   Eaves' forest drawn closed. Not void: the Deepthorn's, and not Sunderwood's to build.
 
 About 3,400 squares void, and 817 another area's.
+
+Decided by delegate for #197, each the owner's to overturn:
+
+1. **K2 is laid whole in the Eaves, band 15:** the chapter makes the bridge the Eaves' step. The zone
+   line moves to its east edge (§4). A narrow band asks a group above its floor (the curve's check),
+   so the hardest group is at 16.
+2. **The gorge runs from J2's lip at x 328,** seven to nine wide north of the road, narrowing south
+   of it to the atlas's line, and the bridge carries the road straight on from J2 on world row 54
+   rather than bending down to the link's 56. The atlas's link keeps its ends: it is a planned line,
+   and moving it is a shared file's change for nothing a player walks.
+3. **J2's east ring opens:** its mountain north of the road becomes chasm, so the lip runs unbroken
+   to the road, and south of the road pines, so its woods meet K2's west lip.
+4. **Three groups, about 1,070 xp a member, all back after two days:** three sunder hounds and a
+   glass spider at the bridge's far end (four hounds put fights to a rest at 15 under the aim, 6.1);
+   three gleaners and a hound at the dam, #205's "men with grey hands and dogs with glass in them";
+   and two glass bears on the road at the far end, where Lanternwood begins, the box's group at 16:
+   since #414's re-stat three were past the limit alone and two hold it, a true fight where a mixed
+   group would only average to 16. Glass bears there are against MONSTERS §6.3's Where column, as I2's is, and
+   stand with §7's proposal. Sunderlings in the glass were dropped: the box paid 1,580 with them,
+   and they are K3's (#198).
+5. **The dam is K2's,** on the river above the fall, as #205 has it, and the fall below it a thread:
+   a line of pine trunks across the river where it leaves the pines, with #205's line. §6 had the dam
+   and the foreman in K3, a slip; K3 keeps the ledges that stop. Hew, the choice, the fall's second
+   text and Orm's after-lines are #205's.
+6. **The shrine gives personality,** the Paladin's spell stat; the Paladin's trainer is owed to #19.
+   Orm, #205's name for the keeper, has lines of his own and asks nothing.
+7. **The finds:** on the ledge a Long Sword +2 and 200 gold, a one-handed blade beside J2's Great Axe;
+   the cairn 180 gold and a Sapphire Vial, as I2's and J2's. The Holy Symbol is dropped: the shrine's
+   blessing is the find, and a keepsake that does nothing is clutter.
+8. **The map is `eaves_k2`, called Sunderfall,** and its fall is the area's site, built where the river
+   meets the lip at 336.5,57.5, not the plan's 340,60. The area claims the falls as a new landmark.
+9. **J2's two nits are fixed in the text:** the cabin is fieldstone and turf, as it draws, and the
+   cairn is out of sight of the road, not off any path.
+10. **The Long Sword +2 stays, under the Watch's stores:** #399 kept it off the ladder, a find that
+    sells, as I2's halberd is. Every +1 has its box (#399), and none moves to K2.
