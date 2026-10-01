@@ -258,7 +258,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw, barnacle_crab: spider.draw,
   bandit: bandit.draw, archer: bandit.draw, brigand: bandit.draw, brigand_archer: bandit.draw,
   smuggler: bandit.draw, smuggler_bow: bandit.draw, smuggler_captain: bandit.draw,
-  wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, poacher: bandit.draw, billman: bandit.draw, slinger: bandit.draw,
+  wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, poacher: bandit.draw, billman: bandit.draw, slinger: bandit.draw, cutthroat: bandit.draw,
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
   acolyte: cultist.draw, deacon: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
