@@ -60,7 +60,7 @@ export const SALTINGS_C7: MapDef = {
     // The secret: the one pan with no sluice, its hoard reached by the crabs' hole under its east wall.
     { kind: 'event', x: 31, y: 5, id: 'c7_trodden', text: 'At this wall\'s foot the crust is trodden to grey mud. Every other wall in the pans stands in salt unbroken.' },
     { kind: 'chest', x: 28, y: 4, id: 'c7_hoard', gold: 200, items: ['crabshell_buckler', 'horn_bow+1'] },
-    // The Star That Moved's watch (#56's 24): what is seen, by night. #177 adds the astrologer and the quest.
+    // The Star That Moved's watch (#56's 24): what is seen, by night. The quest, with Hiske, is #183's.
     { kind: 'event', x: 25, y: 7, id: 'c7_star', text: 'Low over the Scarp a star stands where no star stood. Look again and it has crept along the rim.', when: { hours: 'night' } },
     { kind: 'npc', x: 24, y: 14, name: 'a salter', lines: [
       'A salter at the huts\' door, bare-armed and burnt, a rake on her shoulder, squinting at the glare off the pans.',
