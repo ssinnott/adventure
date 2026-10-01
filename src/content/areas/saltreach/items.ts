@@ -8,5 +8,5 @@ export const ITEMS: readonly ItemDef[] = [
   // C6's find (#176): in a crate of the crews' cargo on the quay.
   P(core('scale'), 1),
   // C7's secret (#178): the salter's hoard in the crab-hole under a pan's wall.
-  P(core('buckler'), 3, { id: 'crabshell_buckler', name: 'Crab-Shell Buckler +3' }),
+  P(core('buckler'), 2, { id: 'crabshell_buckler', name: 'Crab-Shell Buckler +2' }),
 ];

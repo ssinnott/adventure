@@ -126,6 +126,12 @@
         "c6_stair_cache",
         "c6_wierde",
         "c6_yard",
+        "c7_boat",
+        "c7_cairn",
+        "c7_hoard",
+        "c7_in",
+        "c7_pans",
+        "c7_shrine",
         "coast",
         "d2_cairn",
         "d2_cist",
@@ -334,6 +340,8 @@
         "c6_bargemen",
         "c6_crabs",
         "c6_smugglers",
+        "c7_crabs",
+        "c7_toads",
         "cliff_smugglers",
         "coast_bandits",
         "d2_crows",
@@ -458,6 +466,7 @@
       ],
       "doors": [
         "100,177",
+        "102,195",
         "107,80",
         "124,107",
         "124,34",
@@ -782,6 +791,10 @@
       "at": "72,158",
       "size": "32x32"
     },
+    "saltings_c7": {
+      "at": "72,190",
+      "size": "32x32"
+    },
     "shelf": {
       "at": "200,30",
       "size": "32x32"
@@ -936,6 +949,7 @@
     "chain",
     "clerks_seal",
     "club",
+    "crabshell_buckler",
     "crossbow",
     "customs_chit",
     "dagger",
