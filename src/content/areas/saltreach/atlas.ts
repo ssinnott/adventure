@@ -7,7 +7,7 @@ export const ZONES: readonly AtlasZone[] = [
   { id: 'delta', name: 'The Delta', area: 'saltreach', band: [10, 12], seeds: [[62, 150], [84, 136]], label: [76, 128],
     maps: [{ map: 'delta_d5', at: [104, 126] }, { map: 'delta_c5', at: [72, 126] }, { map: 'delta_b5', at: [40, 126] }, { map: 'delta_b6', at: [40, 158] }] },
   { id: 'saltings', name: 'The Saltings', area: 'saltreach', band: [11, 12], seeds: [[98, 194], [70, 194]],
-    maps: [{ map: 'saltings_c6', at: [72, 158] }] },
+    maps: [{ map: 'saltings_c6', at: [72, 158] }, { map: 'saltings_c7', at: [72, 190] }] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
