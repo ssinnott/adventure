@@ -1783,3 +1783,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   closing #47", nothing on origin. Likely waiting on a background check lost to a container restart
   (worker_epoch 32). Told: commit and push first, then merge main and check in the foreground, then
   open the PR (or say it has no GitHub tool, and I open it from the branch).
+- 03:15: #321 (#318, the tall boss) landed: its round 6b36bd9 (a smoke line holds a tall boss's
+  crown within `TALL_REACH`, now 0.82 over the Eldest's measured 0.812; MONSTERS.md's sizes; the body
+  made true to the 32 px of bough past the edge): ALL OK (4 owed: #47 ×2, #170 ×2), SMOKE OK,
+  "Nothing new."; CI green. Merged as ad6bd1e; main's tree is the tested tree (2276f00). #318 closes.
+- 03:17: the pilot session's fourth turn (03:05–03:06) ended again before the commit, nothing on
+  origin (worker_epoch 33). #47's E to a new session, session_018Fq8bCWt3nNU1W7yLhq9fm, on
+  `claude/m1-47-thresholds` from main: settle `OWED`'s two Greywater boss floors (retune onto the
+  boss line or argue the limit), say the thresholds in shelf.md §8–9, the boxes' hours from git
+  history. The old pilot session told to stand down.
+- **Left in Phase 1: #47 alone.** Then #65, #208 and #26 close.
