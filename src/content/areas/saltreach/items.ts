@@ -2,6 +2,7 @@
 // boxes and Wrackholm's give up by 13, and the finds of its boxes.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, core, MARTIAL, NO_CASTER_HEAVY } from '../../items.ts';
+import { ITEMS as FORELAND } from '../shelf/items.ts';
 
 // Sold at Saltmouth's armourer (#177): a step past the Deepthorn's +2s for every class, at 11.
 export const morningStar = W('morning_star', 'Morning Star', 700, 2, 6, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
@@ -32,6 +33,10 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'brine_shard', name: 'Brine Shard', slot: 'none', price: 0 },
   // C4's secret (#171): the crews' hide in the reeds.
   P(core('longsword'), 1),
+  // Rietum's cache under the quay (#172), beside the ladder's Stiletto +1 and Tidefolk Robe +1: the old
+  // smuggler's mail and his sword.
+  P(FORELAND.find((i) => i.id === 'chain')!, 1),
+  P(core('shortsword'), 2, { id: 'smugglers_sword', name: "Auke's Count, Short Sword +2" }),
   // C6's find (#176): in a crate of the crews' cargo on the quay.
   P(core('scale'), 1),
   // C7's secret (#178): the salter's hoard in the sealed pan, beside the ladder's Horn Bow +1.

@@ -4,6 +4,10 @@
 // barge under the causeway's arch found from its hint; and the box's groups and its Rift's won at
 // its floor. Then the spur to Rietum (C4, #171): the eel-trapper's word on the poleman, the crews'
 // hide found from the gap in the herons, Passage Paid answered both ways, and the box's groups won.
+// Then up the track into Rietum (C3, #172): the Upper Water named at the seam; the quay-hand who saw
+// the Stone go by, the step, and the priest's word on a pole's mark; the old smuggler's cache found
+// from the clean stone in the quay and reached no other way; the two second prestiges taught off the
+// road; and the box's groups won at 10.
 // Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty; the hermit
 // who counts the Rifts' lights; the hollow under the landing found from its pole-marks; and the
 // box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6, #174):
@@ -25,7 +29,7 @@ import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature } from '../../../game/map.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, prestigeOf, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
 import { questLog } from '../../../game/quests.ts';
 import type { QuestView } from '../../../game/quests.ts';
@@ -58,6 +62,9 @@ const HERMIT = D5.features!.find((f) => f.kind === 'npc') as Person;
 const person = (name: string): Person => C4.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
 const TRAPPER = person('an eel-trapper'), MASTER = person('the master of the barge');
 const CREW = C4.encounters!.find((e) => e.id === 'c4_crew')!;
+const C3 = MAP_DEFS.find((d) => d.id === 'upperwater_c3')!;
+const c3person = (name: string): Person => C3.features!.find((f) => f.kind === 'npc' && f.name.includes(name)) as Person;
+const QUAYHAND = c3person('quay'), PRIEST = c3person('priest'), SMUGGLER = C3.features!.find((f): f is Person => f.kind === 'npc' && f.teaches?.cls === 'thief')!;
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -161,6 +168,82 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The box's groups, each won at its floor: the barge at the bank, the bull toad in the drain, the crew.
   for (const g of C4.encounters!) fight(w, `delta_c4:${g.id}`);
+
+  // Up the track out of C4 onto Rietum's fields: the Upper Water, named at the seam.
+  w.world.travel('delta_c4', 3, 1, NORTH);
+  const upper: string[] = [];
+  for (let i = 0; i < 3 && w.world.zone?.id !== 'upperwater_c3'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') upper.push(...r.messages); }
+  ok(w.world.zone?.id === 'upperwater_c3' && upper.some((m) => m.includes('The Upper Water')), `the track out of C4 leads into the Upper Water, C3, and the land is named (${upper.join(' | ')})`);
+  listen(w);
+
+  // The step: the quay-hand saw the Stone go by, and turns the company west to the plinth.
+  w.world.travel('upperwater_c3', QUAYHAND.x, QUAYHAND.y);
+  const saw = meet(QUAYHAND, w.party, heard(w.world, QUAYHAND)).text;
+  ok(saw.includes('sacking') && saw.includes('west') && !!w.party.flags.c3_saw_stone, `on the quay, the Stone went by glowing in its sacking, and the company is sent west; c3_saw_stone is set (${QUAYHAND.name})`);
+  listen(w);
+  // The priest reads poles' marks, B5's hint, without naming the plinth's landing.
+  const marks = meet(PRIEST, w.party, heard(w.world, PRIEST)).text;
+  ok(marks.includes('pole') && !marks.includes('Stienwierde'), `the priest at the sluice knows what a pole's mark says (${PRIEST.name})`);
+
+  // The secret: the clean stone in the quay's face, and the smuggler's old cache behind it, which
+  // nothing else reaches: not on foot, not a swimmer, at either tide.
+  const c3 = new GameMap(C3);
+  const reach = (to: { x: number; y: number }, can: { swim?: boolean; tide: 'high' | 'low' }, secrets: boolean): boolean => {
+    const seen = new Set([`${C3.start.x},${C3.start.y}`]), q = [[C3.start.x, C3.start.y]];
+    while (q.length) {
+      const [x, y] = q.shift()!;
+      if (x === to.x && y === to.y) return true;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        if (!c3.inBounds(nx, ny) || seen.has(`${nx},${ny}`) || (!secrets && c3.at(nx, ny).door === 'secret')) continue;
+        const p = c3.passable(nx, ny, can);
+        if (p === 'ok' || p === 'unlock') { seen.add(`${nx},${ny}`); q.push([nx, ny]); }
+      }
+    }
+    return false;
+  };
+  const quayCache = C3.features!.find((f) => f.kind === 'chest' && f.id === 'c3_cache_chest')!;
+  ok((['high', 'low'] as const).every((tide) => !reach(quayCache, { swim: true, tide }, false) && reach(quayCache, { tide }, true)),
+    'the cache under the quay is reached through its secret door and no other way, by a swimmer or at either tide');
+  const people = C3.features!.filter((f): f is Person => f.kind === 'npc');
+  ok(people.length >= 5 && people.every((f) => (['high', 'low'] as const).every((tide) => reach(f, { tide }, false))), `Rietum's ${people.length} people are each walked to on foot from the way in, with no swimmer, at either tide`);
+  w.world.travel('upperwater_c3', 8, 13, EAST);
+  w.world.eventsHere();
+  let faceOpen = false;
+  for (let i = 0; i < 20 && !faceOpen; i++) faceOpen = w.world.search();
+  const intoCache = faceOpen ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(faceOpen && intoCache.every((r) => r.kind === 'moved') && w.world.used('c3_cache'), 'searched from the clean stone, the quay\'s face opens on the old smuggler\'s cache');
+  ok(quayCache.kind === 'chest' && ['chain+1', 'smugglers_sword', 'stiletto+1', 'tidefolk_robe+1'].every((id) => quayCache.items.includes(id)), `in the cache, the smuggler's mail and sword and the ladder's Stiletto +1 and Tidefolk Robe +1 (${quayCache.kind === 'chest' ? quayCache.items.map((id) => item(id).name).join(', ') : ''})`);
+  listen(w);
+
+  // The two second prestiges here, off the road: the old smuggler's Nightjar in the north fields
+  // and the Windwalker in Sjonghol. A company has neither until 19, and then each is sent to its
+  // trainer, the world map marking the box, and takes it for 4,000 gold.
+  const trainers = people.filter((f) => f.teaches);
+  ok(trainers.length === 2 && trainers.some((f) => f.teaches!.cls === 'thief' && f.teaches!.prestige === 2) && trainers.some((f) => f.teaches!.cls === 'monk' && f.teaches!.prestige === 2), 'Rietum\'s box teaches the Thief\'s and the Monk\'s second prestiges');
+  const road = C3.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
+  ok(trainers.every((f) => road.every((r) => Math.abs(r.x - f.x) + Math.abs(r.y - f.y) > 10)), 'each is more than ten squares off the road');
+  ok(trainers.every((f) => C3.encounters!.every((g) => Math.abs(g.x - f.x) + Math.abs(g.y - f.y) > 10)), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');
+  const later = newWalk(ok).party;
+  // The premade six have no monk; one joins for the look ahead.
+  if (!later.members.some((c) => c.cls === 'monk')) later.members[later.members.length - 1] = createCharacter('Sjoerd', 'human', 'monk', {}, makeRng(19));
+  for (const c of later.members) { c.xp = xpForLevel(19); c.level = 19; if (c.cls === 'thief' || c.cls === 'monk') takePrestige(c); }
+  const marked = sought(questLog(w.world.state, later)).filter((p) => p.at === 'upperwater_c3');
+  ok(['thief', 'monk'].every((cls) => marked.some((p) => p.who.includes(later.members.find((c) => c.cls === cls)!.name))), `at 19 the thief and the monk are sent to Rietum's box (${marked.map((p) => p.who).join(', ')})`);
+  for (const t of trainers) {
+    const who = later.members.findIndex((c) => c.cls === t.teaches!.cls);
+    later.gold = 4000;
+    ok(who >= 0 && (teach(t.teaches!, later, w.world.state, who).taught && prestigeOf(later.members[who]) === 2 && later.gold === 0), `${t.name} makes a ${PRESTIGES[t.teaches!.cls].titles[1]} for 4,000 gold`);
+  }
+  // The old smuggler knows his sword, and lets it go.
+  const before = meet(SMUGGLER, w.party, heard(w.world, SMUGGLER)).text;
+  w.party.bag.push('smugglers_sword');
+  const after = meet(SMUGGLER, w.party, heard(w.world, SMUGGLER)).text;
+  w.party.bag.splice(w.party.bag.indexOf('smugglers_sword'), 1);
+  ok(after !== before, `the old smuggler knows his sword in the company's hands (${after.slice(0, 60)}...)`);
+
+  // The box's groups, each won at its floor: the herons, the quay's crew by day, the brinelings at
+  // the child's window by night and the bull toad in the drain at the east fields' end.
+  for (const g of C3.encounters!) fight(w, `upperwater_c3:${g.id}`);
 
   // West off the Delta road over the fen, onto the duckboards of B5.
   w.level = 11;
