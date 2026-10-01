@@ -24,6 +24,10 @@ const WOODS_AT = [232, 62] as const;
 const DEAD_AT = [296, 94] as const;
 /** K3, the Sunder's gorge, with its chasm and the glass trees at its lip. */
 const SUNDER_AT = [328, 62] as const;
+/** C6, Saltmouth's box, with salt at the pans' head and tidal ground along the Saltings' shore. */
+const SALT_AT = [72, 158] as const;
+/** F6, Wrackholm's moor, with its heather. */
+const MOOR_AT = [168, 158] as const;
 
 /** The draft as the tool writes it: its module, written out and imported back, by export name. */
 async function exported(d: Draft, zone: string, x: number, y: number): Promise<Record<string, MapDef>> {
@@ -156,4 +160,21 @@ export async function scaffold(): Promise<void> {
   ok(sback(sdef) === 0, 'laid back, its chasm and crystal match the atlas square for square');
   const filled = sback({ ...sdef, rows: sdef.rows.map((r) => r.replace(/[cv]/g, 'r')) });
   ok(filled === (sdr.counts.chasm ?? 0) + (sdr.counts.crystal ?? 0), `and with them written as rock it does not (${filled} squares differ)`);
+
+  // The Saltings and Wrackholm: salt, tidal ground and heather, which no map character was until
+  // #162, cut and laid back; written as sand, shallows and grass, they are not the atlas.
+  for (const [zoneId, [bx, by], kinds, plain] of [['saltings', SALT_AT, ['salt', 'tidal'], { '-': '_', ';': '~' }], ['wrackholm', MOOR_AT, ['heather'], { h: ',' }]] as const) {
+    const world = unbuilt(bx, by), gr = baseline(world.atlas, world.defs);
+    const dr = cut(world.atlas, world.defs, gr, REGIONS, zoneId, bx, by);
+    const has = 'refused' in dr ? '' : kinds.map((k) => `${k} ${dr.counts[k] ?? 0}`).join(', ');
+    ok(!('refused' in dr) && kinds.every((k) => (dr.counts[k] ?? 0) > 0), `${zoneId} is cut at ${bx},${by}, its ${kinds.join(' and ')} coming through (${'refused' in dr ? `refused: ${dr.refused}` : has})`);
+    if ('refused' in dr) return;
+    const def = await written(dr, zoneId, bx, by), z = world.atlas.zones.find((q) => q.id === zoneId)!;
+    const back = (draft: MapDef): number => { const l = layBack(world.atlas, world.defs, draft, z, [bx, by]); return mismatches(gr, worldGrid(l.atlas, l.defs), bx, by); };
+    ok(back(def) === 0, `laid back, its ${kinds.join(' and ')} and all match the atlas square for square`);
+    const swapped: Record<string, string> = plain;
+    const flat = back({ ...def, rows: def.rows.map((r) => [...r].map((c) => swapped[c] ?? c).join('')) });
+    const n = kinds.reduce((t, k) => t + (dr.counts[k] ?? 0), 0);
+    ok(flat === n, `and with them written as ${Object.values(swapped).join(' and ')} it does not (${flat} squares differ, ${n} of them)`);
+  }
 }
