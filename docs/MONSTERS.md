@@ -514,7 +514,7 @@ Crowness Light.
 | Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
 | Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
 | Barrow Wolf | wolf | elite, 5 | the chalk hills (D2): one leading each of the den's packs, and two in the pack that keeps it | *Grey to the muzzle and big as a pony, and the pack waits on it.* The den's keepers: the chalk wolf's pale coat on a heavy frame, scarred |
-| Cutthroat | bandit | elite, 5 | the bandit camp on the west downs, two of them beside it | *A captain's sash on a thief's coat, and a knife for every pocket.* The camp's keepers |
+| Cutthroat | bandit | elite, 5 | the bandit camp on the west downs, two of them beside it; two on the road by the Delta, at the foot of Kestrel Edge | *A captain's sash on a thief's coat, and a knife for every pocket.* The camp's keepers |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
