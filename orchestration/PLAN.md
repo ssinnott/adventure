@@ -1636,3 +1636,13 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   `MapDef.landmarks`, a lighthouse billboard drawn far (to 40 squares) and lit by night once the
   oil is in. Subscribed; its review launched (the second reviewer, with #310's). Check-in re-armed
   for 01:40.
+- 00:45: `reviews/310.md` (#70, the Berth): ready after fixes. Should-fix once #306 is in: the
+  Berth's 421 a member takes the Foreland's clear to 3,912 of the curve's 3,734, so `CURVE.shelf`'s
+  owed entry (#26) goes. Nits: choice 2's reason overstates (a Berth goal could sit before the
+  hand-in since #303); nothing holds the captain dead; stale words (atlas.ts:17, shelf.md:192). The
+  view reads as a cut-stone tomb more than a barrow; the automap as a long barrow. The look, the
+  choices and finding 3 to a delegate.
+- 00:46: #307 (#216, J4) landed: its merge 3a6969a (main with #304; `CUT_OFF` emptied with I3 in):
+  ALL OK (18 owed), SMOKE OK, "Nothing new."; CI green. Merged as 60644ee; main's tree is the tested
+  tree (3a74c74). #216 closes. The I5 session told to merge main and re-measure; the J5 session to
+  merge main in place of #307's branch; the J4 session done.
