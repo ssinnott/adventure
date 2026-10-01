@@ -174,7 +174,8 @@ Foreland map's density.
   cut in from the west shore: the stage stands at its head, at 16,14, and the cliff over its north
   side is carried east so that the cove's mouth, at 18,12, opens in it above the stage. The landing
   is the boat's far end, and #177 built the boat: Kitto sells it on Saltmouth's quay and lands the
-  company on the stage at 16,15, and on the stage he sells the way back; the outdoors' walk now
+  company on the stage at 16,15, and on the stage he sells the way back, at half the fare to a
+  member of the Salt Compact as on the quay (#182); the outdoors' walk now
   starts from a crossing's landing too, so the isle is no longer cut off. The crossing line on
   the stage is the boat's to say. The
   captain stands on the stage with two lines and no flag, for The Captain's Brother to hang on
@@ -260,7 +261,8 @@ Foreland map's density.
 - **The secret and its hint.** The founder's grave under the cairn on the point, with his seal.
   The hint: the hermit's count starts at a date.
 - **New here.** Nothing, as built: dens are on the Downs already, and boarding by night is #190's.
-- **Finds.** The founder's seal, a quest item the Compact's hall takes (#182).
+- **Finds.** The founder's seal, a quest item the Compact's hall takes at the rank that reveals
+  (#22; #182 left it there, so as not to tell the reveal at Runner).
 - **Pay.** About 1,600 xp a member.
 - **As built** (#189, 1 October): the brief's places, five groups at the line's standard size. The
   company comes in from the moor at the west edge, 0,12, where E6's east path crosses. The rock mass
