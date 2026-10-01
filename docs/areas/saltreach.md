@@ -488,8 +488,8 @@ settled in its issue, and what the pilot teaches changes them.
   ferryman at the steps (the Monk's). Jory Tallis stands at his house front on the quay, his
   lineage framed on the wall through the open door, and his words touch the throne and no more.
   The pump in the square is brackish and does not heal. The Keel's keeper says plain words: its
-  hall, its first task and the stair's top in its cellar are #182's, the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach
-  runs from the yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
+  hall, its first task and the stair's top in its cellar are #182's, the Warden with the news of
+  Hale #180's, and The Star That Moved #183's. No coach runs from the yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
   and onto Wrackholm's stage at 6 the next morning, and back the same from the stage, landing on
   the quay. The walkthrough goes in by the gate and out again, buys each class its step at the
   armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of Ottilie at 11, once
@@ -608,7 +608,8 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
   | 1 | The Fen's Edge | west past Stienwierde to where the fen ends (`delta_b5:b5_west`) | 200 gold, 360 xp |
   | 1 | The West Arm | over the west arm's ford to the eel-catcher's hut (`saltings_c6:c6_hut`) | 200 gold, 360 xp |
 
-  Ranks 2 to 4 (Mapmaker, Geographer) are for the boxes still to build.
+  The quests of ranks 2 and 3, offered to a Surveyor and a Mapmaker, are for the boxes still to
+  build; Geographer, the fourth rank, is the top and has none.
 - **The Salt Compact** (#182), the harbour tavern (#253): the first task, a run of brandy past the
   customs house; a first rank of two quests; the boat's fare halved for a member. Its line begins
   with the hermit's letter from Wrackholm (#56's 26, #192): the founder is a decade dead and the
@@ -638,8 +639,8 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   with today's `xpForLevel`. The shares of §4 are C5 700, C4 600, C3 1,000, B5 1,000, B6 800, the
   temples 1,800, C6 700, Saltmouth 300, C7 700 and the four side quests about 700 between them:
   8,300 without the willows. The Cartographers' three quests pay 840 xp, 140 a member, and 430
-gold, of Saltmouth's 300; the Compact's share of the rest is #182's. A small Rift is budgeted at about 450 a member on top of its box's
-  share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve. B5 as built pays
+  gold, of Saltmouth's 300; the Compact's share of the rest is #182's. A small Rift is budgeted at
+  about 450 a member on top of its box's share: C5's, about 430, brings the sum to about 8,750, some 6% over the curve. B5 as built pays
   about 1,600, its two Rifts inside it (#173): a fight inside the gate's aim at 11 costs about 300
   xp a member whatever its monsters, and its five come to about 1,650 measured with the company at
   about 10, about 1,700 at 11. C6 as built pays about 1,030 (#176), its three groups each inside the
