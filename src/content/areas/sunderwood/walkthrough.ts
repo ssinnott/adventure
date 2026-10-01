@@ -7,11 +7,11 @@
 // Sunderfall (K2, #197): the rope bridge crossed, the ledge behind the quiet fall found from its
 // rocks, and the box's groups won at its floor. Then Lanternwood (L2, #200): the road on through the
 // wood to the tower's gate and in at it to Lantern Watch (#201), where a company rests, buys, studies
-// and trains, the pit under the signal fire's ash found from the ash and the young sister's word, and
-// the box's groups won at its floor. Then the Sunder's mouth (K3, #198): the ledges walked down past
-// the gleaners to the door and the camp below it, the river's old bed found from its stones and the
-// stack across it, the box's bears won at its floor, and its Rift walked into and won, its groups
-// still coming back.
+// and trains and the Reader reads the Tide Ship's papers and its log, the pit under the signal
+// fire's ash found from the ash and the young sister's word, and the box's groups won at its floor.
+// Then the Sunder's mouth (K3, #198): the ledges walked down past the gleaners to the door and the
+// camp below it, the river's old bed found from its stones and the stack across it, the box's bears
+// won at its floor, and its Rift walked into and won, its groups still coming back.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -19,7 +19,7 @@ import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import type { Feature } from '../../../game/map.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, CLASSES, rest, guildFlag, trainPrice, levelUp } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, CLASSES, rest, guildFlag, trainPrice, levelUp, countItem } from '../../../game/party.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { ACT_II } from '../../../../tools/tests/ladder.ts';
@@ -36,6 +36,8 @@ const K3 = MAP_DEFS.find((d) => d.id === 'eaves_k3')!;
 const K3_RIFT = MAP_DEFS.find((d) => d.id === 'k3_rift')!;
 const L2 = MAP_DEFS.find((d) => d.id === 'lanternwood_l2')!;
 const WATCH = MAP_DEFS.find((d) => d.id === 'lantern_watch')!;
+const READER = WATCH.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Hester Dunmore')) as Person;
+const PRIOR = WATCH.features!.find((f) => f.kind === 'npc' && f.name === 'Prior Osric') as Person;
 const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'A young sister of the Watch') as Person;
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -181,6 +183,31 @@ export const walkthrough: Walkthrough = (ok) => {
   w.party.gold -= fee; levelUp(trainee, makeRng(1), 17);
   ok(trainee.level === 17 && !canTrainAt(trainee, gallery.maxLevel), `who trains to 17 for ${fee} gold, and no further`);
 
+  // The papers read (#201): the Reader in the prior's room, once she has met the company, reads it
+  // what it carries of the Tide Ship's, the papers, the log or both, at any hour and with nothing
+  // else done, sets the midpoint's flag and gives them back. The prior, met, asks for them and takes
+  // nothing.
+  const talk = (p: Person): string => meet(p, w.party, heard(w.world, p)).text;
+  w.party.bag.push('ships_papers', 'ships_log');
+  ok(talk(PRIOR).includes('I keep the one lamp'), 'the prior meets the company first, the papers or no');
+  const asked = talk(PRIOR);
+  ok(asked.includes('next oil cart') && countItem(w.party, 'ships_papers') === 1, `then asks for the papers, and takes nothing (${asked})`);
+  const intro = talk(READER);
+  ok(intro.includes('Shut it, if you would') && !w.party.flags.papers_read, 'the Reader meets the company first, the papers or no, and reads nothing yet');
+  const without = (id: string, then: () => string): string => { const i = w.party.bag.indexOf(id); w.party.bag.splice(i, 1); const t = then(); w.party.bag.push(id); return t; };
+  const logOnly = without('ships_papers', () => talk(READER));
+  ok(!!w.party.flags.papers_read && /Vask/.test(logOnly) && /puts it back/.test(logOnly) && !/customs seal/.test(logOnly), `to a company with the log alone, she reads the log and the name in it (${logOnly.split('\n\n').at(-1)})`);
+  delete w.party.flags.papers_read;
+  const papersOnly = without('ships_log', () => talk(READER));
+  ok(!!w.party.flags.papers_read && /customs seal/.test(papersOnly) && /Regent/.test(papersOnly) && /puts them back/.test(papersOnly) && !/Vask/.test(papersOnly), `to a company with the papers alone, the seal and the Regent's hand (${papersOnly.split('\n\n').at(-1)})`);
+  delete w.party.flags.papers_read;
+  const reading = talk(READER);
+  ok(!!w.party.flags.papers_read && /customs seal/.test(reading) && /Regent/.test(reading) && /Vask/.test(reading) && /puts both back/.test(reading) && !/knoll/.test(reading), `and to a company with both, the seal, the Regent's hand and the name in the log (${reading.split('\n\n').slice(-2).join(' ')})`);
+  ok([logOnly, papersOnly, reading].every((t) => !/cage|sky|Hearth|Hand/.test(t)), 'and says nothing past what is written');
+  ok(countItem(w.party, 'ships_papers') === 1 && countItem(w.party, 'ships_log') === 1, 'she puts what she read back in the company\'s hands');
+  ok(talk(PRIOR).includes('The chair was warm'), 'the prior knows his room has been sat in');
+  ok(talk(READER).includes('Keep them close'), 'and the Reader, read, says only to keep them');
+
   // The secret: the ash raked flat on the knoll and the sister's word that she burnt it, then the
   // search at the ash and the pit under it. Walking or wading, the pit is never reached but through the ash.
   const l2 = out.zones.find((z) => z.id === 'lanternwood_l2')!, lid = [l2.x + 5, l2.y + 5], pit = (l2.y + 4) * out.width + l2.x + 5;
@@ -206,6 +233,10 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const staff = L2.features!.find((f) => f.kind === 'chest' && f.id === 'l2_letter_chest');
   ok(staff?.kind === 'chest' && staff.items.includes('lanterns_staff') && staff.x === 5 && staff.y === 4, 'beside it, the Lantern\'s Staff +1');
+  // A company that found the letter first is read to all the same; only her first words know it.
+  delete w.party.flags.papers_read;
+  const knoll = talk(READER);
+  ok(!!w.party.flags.papers_read && knoll.includes('on the knoll') && /Vask/.test(knoll), `with the letter found, the Reader knows where the company has been (${knoll.split('\n\n').at(-3)})`);
 
   // The box's groups, each won at its floor: the moths at the lit lamp and the tower by night, the hounds on the knoll's path and the glass bears on the road on.
   for (const g of L2.encounters!) fight(w, `lanternwood_l2:${g.id}`);
