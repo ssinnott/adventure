@@ -127,6 +127,12 @@
         "c6_stair_cache",
         "c6_wierde",
         "c6_yard",
+        "c7_boat",
+        "c7_cairn",
+        "c7_hoard",
+        "c7_in",
+        "c7_pans",
+        "c7_shrine",
         "coast",
         "d2_cairn",
         "d2_cist",
@@ -305,6 +311,17 @@
         "j5_stack_day",
         "j5_stack_night",
         "j5_stone",
+        "k2_bridge",
+        "k2_cairn",
+        "k2_dam",
+        "k2_fall",
+        "k2_lamp",
+        "k2_ledge",
+        "k2_ledge_chest",
+        "k2_lookout",
+        "k2_rocks",
+        "k2_shrine",
+        "k2_stumps",
         "lake",
         "lodestone",
         "scarth_watch",
@@ -336,6 +353,8 @@
         "c6_bargemen",
         "c6_crabs",
         "c6_smugglers",
+        "c7_crabs",
+        "c7_toads",
         "cliff_smugglers",
         "coast_bandits",
         "d2_crows",
@@ -435,6 +454,9 @@
         "j5_landing",
         "j5_owls",
         "j5_rootwalkers",
+        "k2_bears",
+        "k2_dam",
+        "k2_hounds",
         "lodge_brambles",
         "marsh_spiders",
         "road_bandits",
@@ -460,6 +482,7 @@
       ],
       "doors": [
         "100,177",
+        "102,195",
         "107,80",
         "124,107",
         "124,34",
@@ -477,6 +500,7 @@
         "297,145",
         "308,112",
         "312,32",
+        "338,59",
         "53,140",
         "99,148"
       ]
@@ -793,8 +817,16 @@
       "at": "296,30",
       "size": "32x32"
     },
+    "eaves_k2": {
+      "at": "328,30",
+      "size": "32x32"
+    },
     "saltings_c6": {
       "at": "72,158",
+      "size": "32x32"
+    },
+    "saltings_c7": {
+      "at": "72,190",
       "size": "32x32"
     },
     "shelf": {
@@ -958,6 +990,7 @@
     "chain",
     "clerks_seal",
     "club",
+    "crabshell_buckler",
     "crossbow",
     "customs_chit",
     "dagger",
@@ -1002,6 +1035,7 @@
     "longbow",
     "longbow+1",
     "longsword",
+    "longsword+2",
     "mace",
     "mace+1",
     "marker_glass",
