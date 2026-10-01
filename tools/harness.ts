@@ -13,7 +13,7 @@
 //   node tools/harness.ts --spell-cap 10 [...]         any of the above as if spells stopped growing at 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 10
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
-//   node tools/harness.ts --prestiges [...]            ... or the company took its prestiges at 11, 19 and 27 (--rank-step, --rank-cost)
+//   node tools/harness.ts --prestiges [...]            ... or the company took its prestiges at 11, 19 and 27 (--rank-step, --rank-cost, --tiers)
 // The company is the premade six, trained to the level (past today's cap if asked) and dressed in what
 // the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
@@ -26,7 +26,7 @@ import os from 'node:os';
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
-import { defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL } from '../src/game/party.ts';
+import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, toHit, buffHit, traitDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge } from '../src/game/combat.ts';
@@ -62,10 +62,11 @@ export const CAP = 32;
  * growing past Thornmark's (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
  * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`); `prestiges` gives it
 the three prestiges of DESIGN.md §5 and the spell ranks of §7 (`--prestiges`, see `PRESTIGES`), each
-rank adding `rankStep` of a spell's damage and mending (half that for a hybrid) and `rankCost` of its price.
+rank adding `rankStep` of a spell's damage and mending (half that for a hybrid) and `rankCost` of its price;
+`tiers` adds the damage spells of tiers 6 and 7 as they are drafted (`--tiers`, see `NEW_TIERS`).
  */
-export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; prestiges?: boolean; rankStep?: number; rankCost?: number } = {};
-const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, prestiges: undefined, rankStep: undefined, rankCost: undefined };
+export const RULES: { spellsGrowTo?: number; gearGrows?: boolean; levelTraits?: boolean; levelBonus?: boolean; prestiges?: boolean; rankStep?: number; rankCost?: number; tiers?: boolean } = {};
+const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, levelTraits: undefined, levelBonus: undefined, prestiges: undefined, rankStep: undefined, rankCost: undefined, tiers: undefined };
 
 /** The classes whose first work is a weapon: the ones `--level-traits` gives more blows. */
 export const FIGHTERS: readonly string[] = ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'monk'];
@@ -97,17 +98,32 @@ export const PRESTIGE_POOLS: Record<Calling, readonly [number, number]> = { cast
  * the third. The thief's is with a light weapon, the ranger's with a bow.
  */
 export const PRESTIGE_BLOWS: Record<string, readonly [number, number, number]> = {
-  knight: [1, 0, 1], barbarian: [1, 0, 1], monk: [1, 0, 1], paladin: [1, 0, 1], ranger: [1, 0, 1], thief: [1, 0, 0],
+  knight: [1, 0, 1], barbarian: [1, 0, 1], monk: [1, 0, 1], paladin: [1, 0, 1], ranger: [1, 0, 1], thief: [1, 0, 1],
 };
-/** The thief's light weapons, the ones its first prestige strikes twice with. */
+/**
+ * Stand-ins for the damage spells of the tiers past 5 (DESIGN.md §7), at the dice and prices drafted
+ * there: tier 6 at 15 and tier 7 at 23, a hybrid's two levels later. Fixed dice, never growing with
+ * level; a rank widens them as it does the rest. Their elements are not played, since no test monster
+ * resists one.
+ */
+export const TIER_LEVELS: readonly [number, number] = [15, 23];
+export const NEW_TIERS: readonly SpellDef[] = [
+  { id: 'tier6_sorcerer', name: 'Tier 6 (cold, a group)', list: 'sorcerer', level: 6, sp: 11, target: 'group', context: 'combat', dice: 8, sides: 8, text: '' },
+  { id: 'tier7_sorcerer', name: 'Tier 7 (cold, every foe)', list: 'sorcerer', level: 7, sp: 18, target: 'all', context: 'combat', dice: 10, sides: 12, text: '' },
+  { id: 'tier6_cleric', name: 'Tier 6 (fire, a group)', list: 'cleric', level: 6, sp: 10, target: 'group', context: 'combat', dice: 6, sides: 8, text: '' },
+  { id: 'tier6_druid', name: 'Tier 6 (fire, a group)', list: 'druid', level: 6, sp: 10, target: 'group', context: 'combat', dice: 6, sides: 8, text: '' },
+  { id: 'tier7_druid', name: 'Tier 7 (nature, every foe)', list: 'druid', level: 7, sp: 16, target: 'all', context: 'combat', dice: 8, sides: 10, text: '' },
+];
+
+/** The thief's light weapons, the ones its first and third prestiges strike more often with. */
 export const LIGHT: readonly string[] = ['dagger', 'rune_dagger', 'shortsword', 'sling'];
 const baseId = (id: string): string => id.replace(/\+\d+$/, '');
 /** The ranger's second prestige lifts Marksman by this; the knight's lifts the front row's to-hit by this. */
 export const MARKSMAN_MORE = 2, BANNER_HIT = 2;
-/** The thief's second prestige: a sneak attack in the first two rounds, 2 more every two levels from it. */
-export const sneakGrowth = (level: number): number => (level >= PRESTIGES[1] ? 2 * Math.floor((level - PRESTIGES[1]) / 2) : 0);
-/** The round the thief's third prestige drops it from sight: untargetable, and its blows that round are sneak attacks. */
-export const VANISH_ROUND = 3;
+/** The thief's first prestige: its sneak attack grows by 2 every two levels past 10. */
+export const sneakGrowth = (level: number): number => (level >= PRESTIGES[0] ? 2 * Math.floor((level - 10) / 2) : 0);
+/** The round the thief's second prestige drops it from sight: untargetable, and its blows that round are sneak attacks. */
+export const VANISH_ROUND = 2;
 
 /**
  * What the what-ifs give a member in a fight's `round`, past level 10. With `levelTraits` a fighter
@@ -126,8 +142,8 @@ export function edgeOf(c: Character, round: number): Edge {
     if (blows && !(c.cls === 'ranger' && !w.ranged) && !(c.cls === 'thief' && !LIGHT.includes(baseId(w.id)))) e.blows += blows.slice(0, n).reduce((a, b) => a + b, 0);
     if (c.cls === 'ranger' && n >= 2 && w.ranged) e.damage += MARKSMAN_MORE;
     if (hasTrait(c, 'sneak_attack')) {
-      if (n >= 2 && round <= 2) e.damage += sneakGrowth(c.level) + (round === 2 ? SNEAK_ATTACK_DMG : 0);
-      if (n >= 3 && round === VANISH_ROUND) { e.damage += SNEAK_ATTACK_DMG + sneakGrowth(c.level); e.ac += 100; }
+      if (round === 1) e.damage += sneakGrowth(c.level);
+      if (n >= 2 && round === VANISH_ROUND) { e.damage += SNEAK_ATTACK_DMG + sneakGrowth(c.level); e.ac += 100; }
     }
   }
   return e;
@@ -210,9 +226,9 @@ function rankUp(base: SpellDef, level: number, rank: number, share = 1): string 
  * The prestiges a company of its level has taken (DESIGN.md §5), as a what-if: each adds hit points
  * and spell points to every level from it on, ranks a caster's and a hybrid's spells, and gives the
  * perks the harness can play: the blows, the knight's banner (+2 to-hit for the front row, held on
- * their weapons), the ranger's Marksman and the thief's sneak attacks (see `edgeOf`), and the
- * cleric's last rite (see `day`). The thief takes a light weapon where two blows with it beat one with
- * what it holds.
+ * their weapons), the ranger's Marksman and the thief's growing sneak attack and drop from sight (see
+ * `edgeOf`), and the cleric's last rite (see `day`). The thief takes a light weapon where its blows
+ * with it beat one with what it holds.
  */
 function prestige(p: Party): void {
   for (const c of p.members) {
@@ -220,12 +236,15 @@ function prestige(p: Party): void {
     let levels = 0;
     for (let l = PRESTIGES[0]; l <= c.level; l++) levels += prestigesAt(l);
     c.maxHp += hp * levels; if (c.maxSp) c.maxSp += sp * levels;
+    const list = CLASSES[c.cls].spells, lag = calling === 'hybrid' ? 2 : 0;
+    if (RULES.tiers && list) for (const x of NEW_TIERS) if (x.list === list && c.level >= TIER_LEVELS[x.level - 6] + lag) { SPELLS[x.id] ??= { ...x, level: Infinity }; c.spells.push(x.id); }
     const rank = calling === 'fighter' ? 0 : prestigesAt(c.level);
     if (rank) c.spells = c.spells.map((id) => { const x = spell(id); return x.dice || x.heal ? rankUp(x, c.level, rank, calling === 'hybrid' ? HYBRID_RANK : 1) : id; });
     if (c.cls === 'thief' && prestigesAt(c.level)) {
       const held = weaponOf(c), light = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(LIGHT).map(item)
         .filter((d) => LIGHT.includes(baseId(d.id)) && !!d.ranged === !!held.ranged && (!d.classes || d.classes.includes(c.cls))).sort((a, b) => hits(b) - hits(a))[0];
-      if (light && 2 * hits(light) > hits(held)) equip(c, light.id);
+      const blows = 1 + PRESTIGE_BLOWS.thief.slice(0, prestigesAt(c.level)).reduce((a, b) => a + b, 0);
+      if (light && blows * hits(light) > hits(held)) equip(c, light.id);
     }
   }
   const knight = p.members.find((c) => c.cls === 'knight');
@@ -235,7 +254,7 @@ function prestige(p: Party): void {
 const companies = new Map<string, Party>();
 /** The premade six trained to `level` and outfitted for it, whole; a fresh copy every call. */
 export function companyAt(level: number, seed: number): Party {
-  const key = `${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}:${RULES.prestiges ? `${RULES.rankStep ?? RANK_STEP}:${RULES.rankCost ?? 0}` : ''}`;
+  const key = `${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}:${RULES.prestiges ? `${RULES.rankStep ?? RANK_STEP}:${RULES.rankCost ?? 0}:${RULES.tiers ? 'tiers' : ''}` : ''}`;
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
@@ -606,7 +625,8 @@ async function main(): Promise<void> {
     if (step !== undefined) RULES.rankStep = Number(step);
     if (cost !== undefined) RULES.rankCost = Number(cost);
     if (!((RULES.rankStep ?? RANK_STEP) >= 0) || !((RULES.rankCost ?? 0) >= 0)) throw new Error('--rank-step and --rank-cost take a share, 0 or more');
-    console.log(`What if: the company takes its prestiges at ${PRESTIGES.join(', ')}, with their perks, hit points and spell points; damage spells stop growing at ${RULES.spellsGrowTo}, and each rank adds ${pct(RULES.rankStep ?? RANK_STEP)}% to a spell's damage and mending and ${pct(RULES.rankCost ?? 0)}% to its price.`);
+    if (args.includes('--tiers')) RULES.tiers = true;
+    console.log(`What if: the company takes its prestiges at ${PRESTIGES.join(', ')}, with their perks, hit points and spell points; damage spells stop growing at ${RULES.spellsGrowTo}, and each rank adds ${pct(RULES.rankStep ?? RANK_STEP)}% to a spell's damage and mending and ${pct(RULES.rankCost ?? 0)}% to its price${RULES.tiers ? `; tiers 6 and 7 come at ${TIER_LEVELS.join(' and ')}, a hybrid's two levels later` : ''}.`);
   }
   const rules = { ...RULES };
   const row = (label: string, cells: readonly string[]): void => console.log(label.padEnd(14) + cells.map((c) => c.padStart(6)).join(''));
