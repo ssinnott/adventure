@@ -17,10 +17,9 @@ import { ok, owed, local, stopsWalk } from './lib.ts';
 /**
  * Zone maps laid before the map that joins them to the rest, and whose map that is: their squares
  * are reported as that issue's while none can be walked to, and fail once they all can, so the
- * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut, and
- * the wood to the head, I5, through Henlys.
+ * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut.
  */
-const CUT_OFF: Record<string, string> = { deepthorn_i4: '#215', deepthorn_i5: '#215' };
+const CUT_OFF: Record<string, string> = {};
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.

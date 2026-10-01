@@ -1,5 +1,6 @@
-// The wolf family: wolf, dire wolf, rift hound, black dog and chalk wolf on one canine frame,
-// standing alert in profile.
+// The wolf family: wolf, dire wolf, rift hound, black dog, chalk wolf and barrow wolf on one canine
+// frame, standing alert in profile. The barrow wolf, the chalk pit's old leader, is the chalk wolf's
+// pale coat on a heavy frame: deep in the chest, thick in the ruff and the neck, the muzzle scarred.
 // The proportions are measured off a photograph of a grey wolf rather than invented: the legs are
 // two fifths of the height, the body a little under a half, the withers are the highest point of
 // the body, the back is level, the belly tucks up behind the ribs, and the head is carried so the
@@ -20,7 +21,7 @@ import { celBall } from '../../lib/art/shading.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf'];
+export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf', 'barrow_wolf'];
 
 /** Proportions that tell the kinds apart on the shared frame (1 = the lean grey wolf). */
 interface Build { neck: number; head: number; jaw: number; ruff: number; leg: number; body: number; fang: number; tail: number }
@@ -31,14 +32,17 @@ const HOUND: Build = { neck: 1.1, head: 1.06, jaw: 1.1, ruff: 0.8, leg: 1.1, bod
 const DOG: Build = { neck: 1.4, head: 1.22, jaw: 1.15, ruff: 1.9, leg: 1.18, body: 1.14, fang: 1.25, tail: 1.1 };
 /** The Downs' chalk wolf: leaner than the Foreland's, thin in the leg, the neck and the ruff. */
 const CHALK: Build = { neck: 0.82, head: 0.97, jaw: 1.02, ruff: 0.5, leg: 0.78, body: 1, fang: 1, tail: 0.72 };
+/** The barrow wolf: the chalk wolf grown old and heavy, the neck and the ruff thick, the fangs long. */
+const BARROW: Build = { neck: 1.25, head: 1.14, jaw: 1.15, ruff: 1.45, leg: 1.08, body: 1.1, fang: 1.5, tail: 0.95 };
 
-type Variant = 'wolf' | 'dire' | 'rift' | 'dog' | 'chalk';
+type Variant = 'wolf' | 'dire' | 'rift' | 'dog' | 'chalk' | 'barrow';
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'dire_wolf') canine(ctx, x, y, h, p, DIRE, 'dire');
   else if (kind === 'rift_hound') canine(ctx, x, y, h, p, HOUND, 'rift');
   else if (kind === 'black_dog') canine(ctx, x, y, h, p, DOG, 'dog');
   else if (kind === 'chalk_wolf') canine(ctx, x, y, h, p, CHALK, 'chalk');
+  else if (kind === 'barrow_wolf') canine(ctx, x, y, h, p, BARROW, 'barrow');
   else canine(ctx, x, y, h, p, LEAN, 'wolf');
 };
 
@@ -50,8 +54,10 @@ const COAL = '#ff4a14', COAL_HOT = '#ffc060';
 
 function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build, v: Variant): void {
   const br = p.breathe, f = p.frame, rift = v === 'rift', dog = v === 'dog', chalk = v === 'chalk';
+  /** The Downs' pale wolves: the chalk wolf, and the barrow wolf on its heavier frame. */
+  const pallid = chalk || v === 'barrow';
   const base = p.base, dark = p.dark, light = p.light;
-  const pale = chalk ? shade('#f4f0e6', p.tone) : v === 'wolf' ? mix(light, shade('#efe8dc', p.tone), 0.6) : mix(light, shade('#a8a4b0', p.tone), 0.4);
+  const pale = pallid ? shade('#f4f0e6', p.tone) : v === 'wolf' ? mix(light, shade('#efe8dc', p.tone), 0.6) : mix(light, shade('#a8a4b0', p.tone), 0.4);
   const ivory = shade('#f0ead8', p.tone);
   const mouth = shade('#4a1a26', p.tone);
   const pulse = 0.5 + 0.5 * Math.sin(f / 7);
@@ -96,7 +102,7 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
       { k: 'tube', pts: [t1x, t1y, t1x + (t2x - t1x) * 0.55, t1y + (t2y - t1y) * 0.55, t2x, t2y], r0: h * 0.082 * k, r1: h * 0.03 * k, wobble: 0.08, seed: 32 },
     ], { h, tex: 'fur', seed: 31, amount: 0.5, formK: 0.5, spread: 0.8 });
     // The chalk wolf's one dark mark: the tip of its tail.
-    if (chalk) patch(ctx, B, shade(base, 0.3), [{ k: 'ell', x: t2x + h * 0.004, y: t2y - h * 0.045, rx: h * 0.03 * k, ry: h * 0.06 * k, rot: 0.15 }], { alpha: 0.85, feather: 0.4 });
+    if (pallid) patch(ctx, B, shade(base, 0.3), [{ k: 'ell', x: t2x + h * 0.004, y: t2y - h * 0.045, rx: h * 0.03 * k, ry: h * 0.06 * k, rot: 0.15 }], { alpha: 0.85, feather: 0.4 });
   }
 
   if (rift) spines(ctx, x, y, h, light, pulse);
@@ -154,9 +160,9 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   patch(ctx, B, shade(base, 0.58), [{ k: 'curve', pts: [
     X(-0.36), U(0.80), X(-0.14), U(0.855), X(0.06), U(0.862), X(0.21), U(0.85),
     X(0.235), U(0.72), X(0.12), U(0.63), X(-0.10), U(0.62), X(-0.28), U(0.66),
-  ], wobble: 0.08, spiky: 0.07, seed: 44, sub: 2 }], { alpha: chalk ? 0.3 : 0.6, feather: 0.5 });
+  ], wobble: 0.08, spiky: 0.07, seed: 44, sub: 2 }], { alpha: pallid ? 0.3 : 0.6, feather: 0.5 });
   // The black dog has none: black on black.
-  if (v === 'wolf' || v === 'dire' || chalk) {
+  if (v === 'wolf' || v === 'dire' || pallid) {
     patch(ctx, B, mix(base, pale, 0.88), [
       // Legs, from the elbow and the stifle down.
       { k: 'tube', pts: [X(0.235), U(0.44), X(0.25), U(0.24), X(0.26), U(0.03)], r0: h * 0.05 * b.leg, r1: h * 0.038 * b.leg },
@@ -189,12 +195,12 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // The inner ear, a dark hollow up the near ear.
   softLine(ctx, B, [hx - rH * 0.16, hy - rH * 0.98, hx - rH * 0.1, hy - rH * 1.55], base, Math.max(1, rH * 0.15), 0.45);
   // A pale wolf carries dark tips to its ears: the top third of the near ear, over the hollow.
-  if (chalk) patch(ctx, B, shade(base, 0.35), [{ k: 'poly', pts: [hx - rH * 0.14, hy - rH * 1.78, hx - rH * 0.34, hy - rH * 1.42, hx + rH * 0.04, hy - rH * 1.42] }], { alpha: 0.85, feather: 0.3 });
+  if (pallid) patch(ctx, B, shade(base, 0.35), [{ k: 'poly', pts: [hx - rH * 0.14, hy - rH * 1.78, hx - rH * 0.34, hy - rH * 1.42, hx + rH * 0.04, hy - rH * 1.42] }], { alpha: 0.85, feather: 0.3 });
   // ONE eye, but for the black dog's: the head is a profile, so the far cheek is turned away and a
   // second eye has nowhere to be. If this head is ever turned toward the party it becomes a matched
   // PAIR of the same size, the far one only slightly narrowed by the turn, as the black dog's is
   // (coals()); the rat and the boar are profiles with one eye.
-  const eyeCol = v === 'wolf' || chalk ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : HOT;
+  const eyeCol = v === 'wolf' || pallid ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : HOT;
   const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * (dog ? 0.17 : 0.15);
   if (rift) glow(ctx, B, ex, ey, er * 3, EMBER, 0.4 + 0.3 * pulse, HOT);
   if (dog) coals(ctx, hx, hy, rH, ex, ey, er, pulse);
@@ -207,6 +213,8 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   softLine(ctx, B, [ex + er * 1.5, ey - er * 1.5 - bl, ex - er * 1.3, ey - er * 0.8 - bl], base, Math.max(1, rH * 0.13), 0.8);
 
   if (v === 'dire') scars(ctx, x, y, h, mx, my, rH, shade('#c0b0a4', p.tone));
+  // The barrow wolf's scars are dark on its pale coat: bare hide where the fur never grew back.
+  if (v === 'barrow') scars(ctx, x, y, h, mx, my, rH, shade('#6a6258', p.tone));
   if (rift) riftFx(ctx, x, y, h, hx, hy, rH, f, light, pulse);
 }
 
