@@ -29,6 +29,7 @@ const UNPLACED: Record<string, string> = {
   devilfish: '#188', great_devilfish: '#188',
   ashen_overseer: '#188',
   watch_hall: '#201', watch_refectory: '#201', watch_stores: '#201', priors_room: '#201',
+  pine_bear: '#195',
 };
 
 /**
