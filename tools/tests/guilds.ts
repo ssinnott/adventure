@@ -129,6 +129,9 @@ export function guilds(): void {
   // names real things, has a deed and flags its own; a guild has one first task and no gap in its ranks.
   const halls = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => ('hall' in f && f.hall ? [f.hall] : []))));
   for (const h of halls) ok(h in GUILDS, `a hall's guild, ${h}, is a guild`);
+  // A tavern may be a hall, as a business may: a person with a room, never one in the street.
+  const roomless = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' && f.hall && !f.interior ? [`${d.id}'s ${f.name}`] : [])));
+  ok(!roomless.length, `every hall is a room${roomless.length ? ': not ' + roomless.join(', ') : ''}`);
   // Each hall DESIGN §8 names is its guild's, by name: the Drillyard the Wardens', and both Lantern
   // halls the Lanterns' ("The Lanterns' halls are both").
   const HALLS: Readonly<Record<string, GuildId>> = { 'Warden Drillyard': 'wardens', 'Lantern Guildhall': 'lanterns', 'Thornhold Lantern Hall': 'lanterns' };
@@ -170,7 +173,7 @@ export function guilds(): void {
   const OWED_RANKS: Readonly<Record<GuildId, readonly (string | undefined)[]>> = {
     wardens: [undefined, undefined, undefined, 'the owner'],
     lanterns: [undefined, undefined, undefined, 'the owner'],
-    cartographers: ['#181', '#181', 'the owner', 'the owner'],
+    cartographers: [undefined, undefined, 'the owner', 'the owner'],
     compact: ['#182', '#182', 'the owner', 'the owner'],
   };
   for (const g of Object.keys(GUILDS) as GuildId[]) {

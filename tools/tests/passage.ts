@@ -1,8 +1,9 @@
 // Crossings (#164; game/passage.ts): a person sells passage by coach or boat. It leaves at its hour,
 // lands its days later at its own, costs the company its fare and nothing else, lands it rested, and
-// a save made at the far end loads there. Free once its `free` holds; a warning, never a refusal, to
-// a company under the far end's floor. On the atlas a boat is a way by sea and a coach a way of its
-// own, each travelled both ways where a crossing runs back; the gate counts its landing as a way in.
+// a save made at the far end loads there. Half once its `half` holds, free once its `free` does; a
+// warning, never a refusal, to a company under the far end's floor. On the atlas a boat is a way by
+// sea and a coach a way of its own, each travelled both ways where a crossing runs back; the gate
+// counts its landing as a way in.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Passage } from '../../src/game/map.ts';
@@ -16,7 +17,7 @@ import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
 import { landings } from './gate.ts';
 import { ok } from './lib.ts';
 
-const BOAT: Passage = { to: 'fx_isle', x: 2, y: 1, facing: NORTH, name: 'The isle', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6, free: { flag: 'fx_free' } };
+const BOAT: Passage = { to: 'fx_isle', x: 2, y: 1, facing: NORTH, name: 'The isle', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6, free: { flag: 'fx_free' }, half: { flag: 'fx_half' } };
 const BACK: Passage = { to: 'fx_port', x: 1, y: 1, name: 'The port', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6 };
 const COACH: Passage = { to: 'fx_town', x: 1, y: 1, name: 'The town', by: 'coach', fare: 80, departs: 6, days: 2, arrives: 18, label: 'The coach rattles in.' };
 
@@ -95,10 +96,14 @@ export function passage(): void {
   const loaded = new World(maps(), data.party, makeRng(1), data.world);
   ok(loaded.state.mapId === 'fx_isle' && loaded.state.x === 2 && loaded.state.minutes === at(2, 6) && data.party.gold === 50, 'a save made on the isle loads there, on the day it landed');
 
-  // Free once its `free` holds: the fare waived, never the boat.
+  // Half once its `half` holds, and free once its `free` does: the fare cut or waived, never the boat.
+  party.flags.fx_half = 1;
+  ok(fareOf(BOAT, world) === 75 && offerLine(BOAT, world).includes('75g') && payLabel(BOAT, world) === 'Pay the fare (75 gold)', 'once its half holds the crossing costs half its fare');
+  ok(fareOf({ ...BOAT, fare: 25 }, world) === 12, 'an odd fare halved is rounded down');
   party.flags.fx_free = 1;
-  ok(fareOf(BOAT, world) === 0 && offerLine(BOAT, world).includes('free') && payLabel(BOAT, world) === 'Board', 'once its free holds the crossing costs nothing');
-  delete party.flags.fx_free;
+  ok(fareOf(BOAT, world) === 0 && offerLine(BOAT, world).includes('free') && payLabel(BOAT, world) === 'Board', 'once its free holds the crossing costs nothing, half or not');
+  delete party.flags.fx_free; delete party.flags.fx_half;
+  ok(fareOf(BOAT, world) === 150, 'and neither holding, the whole fare');
 
   // The atlas: a boat both ways is one way by sea, travelled both ways; a coach is a way of its own.
   const edges = zoneEdges(ATLAS, [...MAP_DEFS, PORT, ISLE, TOWN]);
