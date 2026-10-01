@@ -1,10 +1,12 @@
 // Sunderwood's walkthrough. Its chapter, The Wall, is #204's, which plays it here; until then, the
 // Eaves' way in (I2, #195) walked: the east road out of Thornmark over the Hoarhills, the secret
 // under the milestone found from its hints, the box's groups won at its floor, and the crest along
-// its south shut against the Deepthorn, so the road is the only way between the two areas.
+// its south shut against the Deepthorn, so the road is the only way between the two areas. Then the
+// Eaves (J2, #196): the road on through the pines, the rim of the Sunder seen, the secret in the
+// bear's cave found from the dog and the cutter's word, and the box's groups won at its floor.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
-import { EAST, SOUTH } from '../../../game/types.ts';
+import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -13,6 +15,8 @@ import type { Person } from '../../../game/people.ts';
 
 const I2 = MAP_DEFS.find((d) => d.id === 'eaves_i2')!;
 const WOODCUTTER = I2.features!.find((f) => f.kind === 'npc' && f.name === 'A woodcutter') as Person;
+const J2 = MAP_DEFS.find((d) => d.id === 'eaves_j2')!;
+const CUTTER = J2.features!.find((f) => f.kind === 'npc' && f.name === 'Garret, a pine-cutter') as Person;
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -51,4 +55,28 @@ export const walkthrough: Walkthrough = (ok) => {
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) stack.push([x + dx, y + dy]);
   }
   ok(seen.size > 400 && !crossed, `the crest shuts I2 from the Deepthorn's I3: none of its ${seen.size} squares walked leads down into it`);
+
+  // The Eaves: the road on east out of I2, through the pines to the rim, where the wood stops.
+  walkThrough(w, 'eaves_i2', 29, 11, EAST, 'eaves_j2');
+  see(w, 'eaves_j2:j2_rim');
+  ok(w.world.used('j2_rim'), 'at the rim, the Sunder is seen');
+
+  // The secret: the dog at the north path's foot and the cutter's word, then the search at the rock and the cave behind it.
+  see(w, 'eaves_j2:j2_dog');
+  w.world.travel('eaves_j2', CUTTER.x, CUTTER.y);
+  const cutter = meet(CUTTER, w.party, heard(w.world, CUTTER)).text;
+  ok(cutter.includes('Never minded the bear'), 'the cutter says the dog never minded the bear before');
+  fight(w, 'eaves_j2:j2_cave_bears');
+  w.world.travel('eaves_j2', 16, 3, NORTH);
+  let cave = false;
+  for (let i = 0; i < 20 && !cave; i++) cave = w.world.search();
+  const up = cave ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(cave && up.every((r) => r.kind === 'moved'), 'searched at the rock under the rim, it opens, and the cave behind it can be walked into');
+  ok(w.world.used('j2_sack'), 'in the cave, the gleaner\'s sack is found');
+  listen(w);
+  const sack = J2.features!.find((f) => f.kind === 'chest' && f.id === 'j2_sack_chest');
+  ok(sack?.kind === 'chest' && sack.items.includes('great_axe+1') && sack.x === 16 && sack.y === 1, 'beside it, the Great Axe');
+
+  // The box's other groups, each won at its floor: the bears by the way in, the moths at the steading by night and the hounds on the lip.
+  for (const g of J2.encounters!.filter((e) => e.id !== 'j2_cave_bears')) fight(w, `eaves_j2:${g.id}`);
 };

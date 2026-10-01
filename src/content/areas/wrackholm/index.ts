@@ -2,13 +2,16 @@
 // and the Tide Ship. docs/areas/wrackholm.md is its brief.
 import type { Area } from '../../area.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
+import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
+import { SMUGGLERS_COVE } from './maps/smugglers_cove.ts';
+import { SMUGGLERS_COVE2 } from './maps/smugglers_cove2.ts';
+import { ITEMS } from './items.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
-import { ITEMS } from './items.ts';
 
 export const AREA = {
   id: 'wrackholm' as const,
-  maps: [WRACKHOLM_E6],
+  maps: [WRACKHOLM_E6, SMUGGLERS_COVE, SMUGGLERS_COVE2, WRACKHOLM_F6],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

@@ -68,6 +68,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   downs: ['mill:m_warden', 'berth:berth_captain'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
   deepthorn: ['deepthorn_j5:j5_eldest'],
+  wrackholm: ['smugglers_cove2:kh2_great_devilfish'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -77,7 +78,7 @@ export const ROADS: Record<string, readonly string[]> = {
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
   deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
   wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
-  eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2'],
+  eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2', 'eaves_j2:j2_bears', 'eaves_j2:j2_hounds'],
   delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad'],
 };
 
@@ -91,12 +92,14 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
   // A company two under an Act II box wins every fight. The ladder past 10 (#399) dresses a company
-  // at the floor past one two under it, but the groups are at the line's standard size
-  // (tools/testmonster.ts), whose calibration is Act I's gear's: they wait on the line re-run with
-  // the ladder, and the boxes' groups re-statted to it, which #399 owes.
+  // at a floor past one two under it, and the test monster's line is made again with it, but the
+  // boxes' groups were statted on the old line (tools/testmonster.ts) and wait to be re-statted to
+  // the new one, which #399 owes.
   'wrackholm_e6: under': { whose: '#399', at: 1 },
+  'smugglers_cove: under': { whose: '#399', at: 1 },
   'Wrackholm: under': { whose: '#399', at: 1 },
   'eaves_i2: under': { whose: '#399', at: 1 },
+  'eaves_j2: under': { whose: '#399', at: 1 },
   'Sunderwood: under': { whose: '#399', at: 1 },
   'delta_c5: under': { whose: '#399', at: 1 },
   'c5_rift: under': { whose: '#399', at: 1 },

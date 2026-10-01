@@ -45,7 +45,7 @@ export function labelFaults(monsters: readonly LabelMonster[], width: number = V
   }
   const box = (l: LabelLine): { x0: number; x1: number; y: number } => ({ x0: l.x, x1: l.x + measureText(l.text), y: l.y });
   const living = monsters.filter((m) => m.hp > 0);
-  const size = (m: LabelMonster): number => MONSTERS[m.def.id]?.size ?? 1, h = (m: LabelMonster): number => combatHeight(size(m), living.length) * (m.back ? BACK_SCALE : 1);
+  const size = (m: LabelMonster): number => (m.def as { size?: number }).size ?? MONSTERS[m.def.id]?.size ?? 1, h = (m: LabelMonster): number => combatHeight(size(m), living.length) * (m.back ? BACK_SCALE : 1);
   const markers = Math.min(...living.map((m) => seatOf(m, height, size(m)) - crown(size(m), h(m)) - MARKER_RISE));
   for (const l of lines) {
     const b = box(l), foot = LABEL_TOP + b.y + GLYPH;
@@ -109,6 +109,15 @@ export function labels(): void {
   for (const m of eldest.filter((q) => q.def.id === 'heartwood')) m.hp = 0;
   const alone = labelFaults(eldest), stands = (id: string): number => crown(MONSTERS[id].size, combatHeight(MONSTERS[id].size, 3));
   ok(E.size > TALL && alone.length === 0 && stands('eldest') > stands('heartwood') * 1.1, `the Eldest at ${E.size} stands ${Math.round(stands('eldest'))} px to the full height its heartwoods are drawn, ${Math.round(stands('heartwood'))}, and alone under its label too${alone.map((f) => ' -> ' + f).join('')}`);
+
+  // A monster short of a tall boss but near it, at 1.4, 1.45 and 1.5, sinks under the labels as far as
+  // it would rise into them (#397): its markers clear them alone and as the third of three groups.
+  const big = [1.4, 1.45, 1.5].flatMap((s) => {
+    const def = { ...MONSTERS.brigand, size: s }, one = (group: number): LabelMonster => ({ group, band: group, hp: def.hp, def });
+    const third: LabelMonster[] = [{ ...one(0), def: MONSTERS.brigand_archer }, { ...one(1), def: MONSTERS.ogre }, one(2)];
+    return [...labelFaults([one(0)]), ...labelFaults(third)].map((f) => `${s}: ${f}`);
+  });
+  ok(big.length === 0, `a monster at 1.4, 1.45 and 1.5 stands with its markers under the labels, alone and as the third group${big.map((f) => ' -> ' + f).join('')}`);
 
   // A group of the six longest-named kinds is too long for a row: it breaks between its kinds and
   // stays inside the view, and a group beside it takes the row under it.

@@ -22,6 +22,7 @@ import { logLines } from '../../src/ui/frame.ts';
  */
 const CUT_OFF: Record<string, string> = {
   wrackholm_e6: '#177', // the isle, reached only by the smugglers' boat from Saltmouth
+  wrackholm_f6: '#177', // the isle's east end, walked to from the landing
 };
 
 export function outdoors(): void {
@@ -55,13 +56,18 @@ export function outdoors(): void {
   const south = line(th.x, th.y + th.h - 1, 1, 0, th.w);
   ok(south === 'M'.repeat(8) + '=' + 'M'.repeat(23), `Thornmark's south edge is mountains against the Deepthorn, with the elves' road through a gap (${south})`);
   // East, the Eaves' way in (I2, #195): Thornmark's ring stands against it as mountains, with the
-  // east road through a gap over the Hoarhills; its corner under the rim is the world's end. Past
-  // I2 the world ends at the rim and at J2, which is not built.
+  // east road through a gap over the Hoarhills; its corner under the rim is the world's end.
   const eaves = out.zones.find((z) => z.id === 'eaves_i2')!;
   const east = line(th.x + th.w - 1, th.y, 0, 1, th.h);
   ok(east === '%' + 'M'.repeat(9) + '=' + 'M'.repeat(21), `Thornmark's east edge is mountains against the Eaves, with the east road through a gap (${east})`);
-  const rim = line(eaves.x, eaves.y, 1, 0, eaves.w), far = line(eaves.x + eaves.w - 1, eaves.y, 0, 1, eaves.h);
-  ok(/^%+$/.test(rim) && far === '%'.repeat(11) + '=' + '%'.repeat(20), `I2's north edge, the rim, and its east edge, but for the east road on into J2, are the end of the world (${far})`);
+  // I2 and J2 (#196) meet in one wood, pines on both sides of the seam with the road through them;
+  // the rim over both is the world's end. Past J2 the world ends at K2 and J3, which are not built:
+  // at K2 behind the gorge's west lip, a strip of chasm, and the road on through a gap in the ring.
+  const j2 = out.zones.find((z) => z.id === 'eaves_j2')!;
+  const rim = line(eaves.x, eaves.y, 1, 0, eaves.w * 2), seam = line(eaves.x + eaves.w - 1, eaves.y, 0, 1, eaves.h);
+  ok(/^%+$/.test(rim) && seam === '%MM' + 'T'.repeat(8) + '=' + 'T'.repeat(19) + 'M', `I2's north edge and J2's, the rim, are the end of the world, and I2's east edge is the wood on into J2, with the road through it (${seam})`);
+  const lip = line(j2.x + j2.w - 1, j2.y, 0, 1, j2.h), j2south = line(j2.x, j2.y + j2.h - 1, 1, 0, j2.w);
+  ok(lip === '%' + 'v'.repeat(21) + '%==' + '%'.repeat(7) && /^%+$/.test(j2south), `J2's east edge is the gorge's lip and its south edge the world's end, but for the east road on into K2 (${lip})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);

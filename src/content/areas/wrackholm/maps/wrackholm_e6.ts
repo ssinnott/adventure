@@ -49,6 +49,9 @@ export const WRACKHOLM_E6: MapDef = {
     'WWWWWWWWWW~~^^^^^^^^^^^^^^^__~~_',
     'WWWWWWWWWWW~~^^^^^^^^^^^^^_~~~~~',
   ],
+  exits: [
+    { x: 18, y: 12, to: 'smugglers_cove', tx: 12, ty: 14, tf: NORTH, label: 'You climb the wet path into the mouth of Kelp Hole.' },
+  ],
   features: [
     // The landing: the stage at the inlet's head, the boat's captain on it, and the cove's mouth above.
     { kind: 'event', x: 16, y: 15, id: 'e6_stage', once: true, text: 'Wrackholm. A dozen planks on piles, green to the waterline, and the inlet\'s walls close over them. Nobody comes.' },

@@ -106,7 +106,7 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
     level: 13, name: "Saltreach's and Wrackholm's finds",
     from: {
       'stiletto+1': ['saltreach', '#172'], 'ironshod_staff+1': ['saltreach', '#173'], 'morning_star+1': ['saltreach', '#175'],
-      'tidefolk_robe+1': ['saltreach', '#176'], 'horn_bow+1': ['saltreach', '#178'], 'plate+1': ['wrackholm', '#188'], 'long_axe+1': ['wrackholm', '#190'],
+      'tidefolk_robe+1': ['saltreach', '#176'], 'horn_bow+1': ['saltreach', '#178'], 'plate+1': ['wrackholm', ''], 'long_axe+1': ['wrackholm', '#190'],
     },
     classes: {
       knight: ['morning_star+1', 'plate+1'], paladin: ['morning_star+1', 'plate+1'], ranger: ['horn_bow+1'], barbarian: ['long_axe+1'],
@@ -126,7 +126,7 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
   {
     level: 16, name: "the Sunder's finds",
     from: {
-      'great_axe+1': ['sunderwood', '#196'], 'wardens_dirk+1': ['sunderwood', '#198'], 'flail+1': ['sunderwood', '#199'],
+      'great_axe+1': ['sunderwood', ''], 'wardens_dirk+1': ['sunderwood', '#198'], 'flail+1': ['sunderwood', '#199'],
       'ironwood_bow+1': ['sunderwood', '#199'], 'plate+2': ['sunderwood', '#199'], lanterns_staff: ['sunderwood', '#200'],
     },
     classes: {

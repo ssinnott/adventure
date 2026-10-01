@@ -27,13 +27,14 @@ export const ITEMS: readonly ItemDef[] = [
   lamellar,
   watchHabit,
   watchShield,
-  // Found, not sold, by 16: the Sunder's, K3's, L2's and J2's (docs/areas/sunderwood.md §4). The
-  // plate is a step past the stores' lamellar, for those who wear plate.
+  // Found, not sold, by 16: the Sunder's, K3's and L2's, and J2's below (docs/areas/sunderwood.md
+  // §4). The plate is a step past the stores' lamellar, for those who wear plate.
   P(flail, 1),
   P(ironwoodBow, 1),
   P(plate, 2),
   P(wardensDirk, 1),
   P(lanternStaff, 1, { id: 'lanterns_staff', name: "Lantern's Staff +1" }),
+  // J2's secret (#196): in the bear's cave, with the gleaner's sack.
   P(greatAxe, 1),
   // I2's secret (#195): the Watch's last patrol's, under the milestone.
   P(halberd, 1, { id: 'wardens_halberd', name: "Warden's Halberd +1" }),

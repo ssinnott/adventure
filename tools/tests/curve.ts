@@ -72,7 +72,7 @@ function budget(id: string, what: string, gives: number, needs: number, owing: A
  * zone's band is its built maps' once it has any, so an area with only its first map may read
  * narrower than its row. Reported, not failed, until it holds; then the entry is dropped.
  */
-const BAND_OWED: Record<string, string> = { wrackholm: '#189' };
+const BAND_OWED: Record<string, string> = {};
 
 export function curve(): void {
   // The built areas and the planned ones, which have rows before they have maps, in the atlas's

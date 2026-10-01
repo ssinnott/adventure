@@ -225,10 +225,10 @@ settled in its issue, and what the pilot teaches changes them.
   the far end is the bull toad alone, the box's hardest group, and the fen toads wait for B5. The
   brinelings are the Rift's, three in its rooms and one beside a tide elder at its heart: the Tide
   Stone's Rifts' family (MONSTERS §2.1), and the tide elder's first placing. The Rift goes quiet
-  when the elder falls; #191 adds the Stone home as the other way. Its hoard holds no shard, though
-  the brine tear's words show one beside it, as the cellar's Rift shows a Wardstone shard it never
-  gives. The hint is the mast's stump at the arch, which is always there; the green glow is said by
-  night beside it. As measured, the box pays about 680 xp a member and its Rift about 430, 1,115
+  when the elder falls; #191 adds the Stone home as the other way. Its hoard holds no shard, and
+  the brine tear's words show its shard grown into the glass, not lying to be taken, as the
+  cellar's Rift shows its Wardstone shard set in the tear's lip (#398). The hint is the mast's stump
+  at the arch, which is always there; the green glow is said by night beside it. As measured, the box pays about 680 xp a member and its Rift about 430, 1,115
   together, and 300 gold. What the owner finds by hand goes here when the box has been played.
 
 ### 4.3 C4, the spur to Rietum (#171): country, band 10–11
