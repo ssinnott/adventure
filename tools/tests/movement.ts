@@ -7,6 +7,7 @@ import { World } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { LEGEND } from '../../src/game/map.ts';
 import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';
+import { logLines } from '../../src/ui/frame.ts';
 import { defaultParty, partyCan } from '../../src/game/party.ts';
 import { ok, local } from './lib.ts';
 
@@ -67,7 +68,7 @@ export function movement(): void {
   world.travel('shelf', 1, 29, 3);
   world.move('forward');
   const downs = world.move('forward');
-  ok(local(world).map === 'downs_f2' && local(world).x === 31 && downs.kind === 'moved' && downs.messages.includes('The Salt Road climbs off the beach. Callow Downs.'), `the Salt Road walks west through the gap onto the Downs, and says so (${downs.kind === 'moved' ? downs.messages.join(' / ') : downs.kind})`);
+  ok(local(world).map === 'downs_f2' && local(world).x === 31 && downs.kind === 'moved' && downs.messages.includes('The Salt Road climbs off the beach. Callow Downs. The land here is harder than the road behind.'), `the Salt Road walks west through the gap onto the Downs, and says so, a level under their floor (${downs.kind === 'moved' ? downs.messages.join(' / ') : downs.kind})`);
   party.flags.skill_mountaineer = 1;
   world.travel('shelf', 10, 1, 0);
   ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Foreland in to the north');
@@ -81,9 +82,14 @@ export function movement(): void {
   for (let i = 0; i < 4; i++) { const step = world.move('forward'); steps.push(step.kind); if (step.kind === 'moved') said.push(...step.messages); }
   const there = local(world);
   ok(steps.every((k) => k === 'moved') && world.map.id === OUTDOORS && there.map === 'thornmark' && there.x === 1 && there.y === 9, `four steps on the road reach Thornmark (${steps.join(', ')}; ${there.map} ${there.x},${there.y})`);
-  const warn = said.findIndex((m) => /Warden checkpoint/.test(m) && /Thornmark/.test(m)), cross = said.indexOf('The pass opens onto old forest. Thornmark.');
+  const warn = said.findIndex((m) => /Warden checkpoint/.test(m) && /Thornmark/.test(m)), cross = said.findIndex((m) => m.startsWith('The pass opens onto old forest. Thornmark.'));
   ok(warn >= 0 && cross > warn && said.some((m) => /older than Helmstow/.test(m)), `the checkpoint warns the company before it crosses, and crossing into Thornmark says so (${said.join(' / ')})`);
   ok(world.here.name === 'Thornmark' && world.region === 'thornmark' && world.state.zones!.includes('thornmark'), 'the party has set foot in Thornmark, and its weather is Thornmark\'s');
+  // Four levels under Thornmark's floor, the plain warning follows the arrival line in the same
+  // entry of the log, which already names the place, and the two fit two lines.
+  const arrived = said[cross] ?? '';
+  ok(arrived === 'The pass opens onto old forest. Thornmark. Nothing here would spare you. The road behind is still open.' && logLines(arrived).length <= 2 && !said.includes('Thornmark.'),
+    `crossing four levels under Thornmark's floor, the company is warned in the way's own line (${arrived}, ${logLines(arrived).length} lines)`);
   world.turn('back');
   const back = [world.move('forward'), world.move('forward')];
   ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the pass it is the Foreland again');

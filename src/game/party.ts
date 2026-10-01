@@ -299,6 +299,11 @@ export function createParty(members: Character[]): Party {
   return { members, gold: 200, food: 30, bag: ['torch', 'potion_heal', 'potion_heal'], flags: {} };
 }
 
+/** The company's level, as the land judges it: its members' mean, the fallen too, rounded down. */
+export function companyLevel(p: Party): number {
+  return Math.floor(p.members.reduce((t, m) => t + m.level, 0) / Math.max(1, p.members.length));
+}
+
 /** Whether anyone standing can do the thing. */
 export function partyCan(p: Party): { swim: boolean; climb: boolean; keys: number } {
   const up = p.members.filter((m) => !isDown(m));
