@@ -10,8 +10,8 @@ work is filed under #153 (Phase 1.2, #149): the boxes as §4's table has them, t
 its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52cd` (29 September
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Seven boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
-Rietum (#171), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's box (#176) and
+Eight boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
+Rietum (#171), Rietum (#172), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's box (#176) and
 the salt pans (#178), and the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
 in it (#182); with the first two the area was listed. Its content is `src/content/areas/saltreach/`
 (maps, monsters, items, climate, its part of the world map, its side quests in `quests.ts` and its
@@ -29,10 +29,10 @@ Saltreach three zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Upper Water | 10–11 | 7,714 | none |
+| The Upper Water | 10–11 | 7,714 | C3, Rietum, laid at 72,62 (#172) |
 | The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); C4, the spur to Rietum, at 72,94 (#171); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174) |
 | The Saltings | 11–12 | 3,588 | C6, Saltmouth's box, laid at 72,158 (#176); C7, the salt pans, at 72,190 (#178) |
-| The area | 10–12 | 14,999 | six boxes |
+| The area | 10–12 | 14,999 | eight boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 14,143 squares, about 13.8 zone maps (EXPANSION §1 has 13.8), and 11,965 of them a
@@ -128,6 +128,20 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   Kestrel Edge. The secret is the crews' hide, a reed hut where the herons leave a gap, with a Brine
   Shard and a Long Sword +1 inside; the hint is the gap itself, and the sand trodden hard to the
   hut's wall. The gate holds at 10, at 6.7 fights to a rest.
+- **Rietum** (C3, `upperwater_c3`, core, band 10–11; #172): the spur's track up through the
+  fields to the village of the Tidefolk on its mound, its houses and net lofts either side of the
+  diep, a deep cut from a sluice-house on the west edge to the quay; the drowned god's shrine by the
+  sluice, its bowl dry, and its priest, who knows what a pole's mark says; Wytske on the quay, who saw
+  the Stone go by green through its sacking, the step; Nynke at her window with a shard in a jar for
+  a night-light; the well, the reed-cutters' loft to rest in and a cairn; Auke the old bargeman at a
+  silted staithe in the north fields, the Thief's second prestige; and Kestrel Edge down the east
+  side, closed as mountain with the Downs' strip above it, with Sjonghol, a cleft in its foot, and
+  Douwe at its mouth, the Monk's second. Four herons in the stubble by the track, a barge master and
+  three bargemen on the quay by day, four brinelings at the child's window by night and a bull toad
+  alone in a flooded drain under the Edge. The secret is the old smuggler's cache under the quay, a
+  Chain Mail +1 and his sword, Auke's Count, with the ladder's Stiletto +1 and Tidefolk Robe +1; the hint
+  is one stone in the quay's face scrubbed clean, the water glowing under it by night. The gate
+  holds at 10, at 7.2 fights to a rest.
 - **Stienwierde** (B5, `delta_b5`, core, band 11–12; #173): duckboards from the Delta road west over
   the fen and the channel to the Tide Stone's island, its plinth empty and its socket cut clean; a
   driftwood shrine at the boards' start, a cairn and house-footings on the mound, and a hermit on a
@@ -177,7 +191,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
 
 ## 4. What is still to build
 
-All but C5, D5, C4, B5, B6, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the
+All but C5, D5, C4, C3, B5, B6, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the
 grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
@@ -216,8 +230,8 @@ The places, as the atlas and the docs have them:
 
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
-| Rietum (Reedholm) | C3 | the folk who saw the Tide Stone go by one night (DESIGN §9); an old barge smuggler, the Thief's second prestige (#19); the barge child's night-light (#56's 21) | a planned village at 80,80 |
-| Sjonghol (the Wind Cave) | C3, in the cliff | the Monk's second prestige (#19) | a planned cave at 103,76, moved a square west into C3 by #71, so D3 does not hold it |
+| Rietum (Reedholm) | C3 | the folk who saw the Tide Stone go by one night (DESIGN §9); an old barge smuggler, the Thief's second prestige (#19); the barge child's night-light (#56's 21) | a village on C3, the site at 77.5,77.5 on the mound (#172) |
+| Sjonghol (the Wind Cave) | C3, in the cliff | the Monk's second prestige (#19) | a cave at 101.5,72.5, the cleft's mouth on C3 (#71, #172) |
 | The Tide Stone's plinth | B5 | stands empty; the Stone comes home to it (DESIGN §9, #191) | a planned stone at 48,140 |
 | The Drowned Temples | B6, and below | gone dark; the god used to sing the tides and now only counts, until its Stone comes home (DESIGN §9, STORY); the choir and the Choirmaster (MONSTERS §6.1); the bell (#56's 23) | a planned dungeon at 56,160, its way in at 56,170 |
 | Saltmouth | C6, and its own map | the free port, the Compact's home, the seat of Jory Tallis (DESIGN §9, §10.1); four first prestiges (#19); the Cartographers' and the Compact's halls (DESIGN §8); the boat to Wrackholm | a port, its gate at 98,177 and its plate at 99,180; the plate moved from 118,172 (D6) to C6 (#151, call 7, #177) |
@@ -343,7 +357,24 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** A village of the Tidefolk, on a mound; a trainer in a cave.
 - **Finds.** A Chain Mail +1 and a named short sword, the smuggler's, in the cache; a Stiletto +1
   and a Tidefolk Robe +1, the ladder's (#399).
-- **Pay.** About 1,000 xp a member.
+- **Pay.** About 1,000 xp a member; as built, about 1,010 (§8).
+- **As built** (#172, 1 October): the first map of the Upper Water, so the crossing line falls at
+  the C4/C3 seam. The atlas puts no water in the box, so the quay stands on a diep, a deep cut from a
+  sluice-house on the west edge, its way on to the Long Water owed to B3 (#179); with no river there
+  is no ford and no eel, and the shrine stands by the sluice. The cliff is mountain, since no map
+  character is cliff, and the Downs' strip above it is closed with it. Sjonghol is a cleft of four
+  squares in the cliff's foot, Douwe at its mouth teaching the Monk's second prestige; Auke the old
+  bargeman teaches the Thief's at his hut in the north fields, so both are more than ten squares off
+  the road and off the step (DESIGN §5, whose "willows' quay" is the owner's to reword). The groups
+  are four, a company at one hour meeting three: herons by the track, the nearest; the quay's crew
+  by day, which breaks when its master falls; brinelings at Nynke's window by night, with no `until`
+  until the Stone home (#191) or The Night-Light (#56's 21) gives one; and a bull toad alone in the
+  drain under the Edge, the hardest, as on C4 and C5. Nynke stands and gives the hint and no more:
+  21 is not yet approved. Wytske's words set `c3_saw_stone` for the chapter (#180). The cache is the
+  old bargeman's from his Compact days, closed by deep water and walls on every side but its secret
+  door, and he lets the company keep his sword. As measured, the box pays about 1,010 xp a member at
+  10, about 950 in the road's order, and 380 gold. What the owner finds by hand goes here when the
+  box has been played.
 
 ### 4.5 B5, Stienwierde (#173): core, band 11
 
@@ -624,7 +655,7 @@ with its box on the systems of #76 (#183):
 
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
-| 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | #172 |
+| 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | not yet approved; #172 places the child and her hint |
 | 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171; the boat reads its flag (#413) |
 | 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175 |
 | 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178 |
@@ -697,9 +728,12 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   aim; the crew that comes after Passage Paid, about 200, is the side quests'. C6 as built pays
   about 1,030 (#176), its three groups each inside the aim, the quay's by day and by night one of
   them at any hour. C7 as built pays its 700 (#178). B6 as built pays about 970 over its 800
-  (#174), its three fights at about 300 each and its brinelings only by night. No other share gives
-  back the 600, the 90, the 330 and the 170, so the area comes to about 9,940, some 20% over the
-  curve's 8,267. The surplus is for a kill paid by level to damp, and each box still to build is
+  (#174), its three fights at about 300 each and its brinelings only by night. C3 as built pays
+  about 1,010 against its 1,000 (#172), its four groups about 260 to 280 each with the company at
+  10 and the quay's by day and the brinelings by night both counted. No other share gives back the
+  600, the 90, the 330, the 170 and the 10, so the area comes to about 9,950, some 20% over the
+  curve's 8,267. Paid by level in the road's order, a clear of what is built gives about 7,610 a
+  member and 3,170 gold, the rest owed to #153 (`src/content/progression.ts`). The surplus is for a kill paid by level to damp, and each box still to build is
   priced by its fights, about 300 a fight, and recorded as built where that passes its share; the
   sum here is restated with each. The willows add 800 when they are built. From here on a kill pays
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
@@ -890,6 +924,59 @@ Decided by delegate for #176, each the owner's to overturn:
    the Compact's: call 4 frees only the crews' goods. The clerk's lines point at the crews.
 7. **The eel under the quay is said, not fought:** a lone fen eel is a trivial fight that only pushes
    fights to a rest up, and C5 has eels in both its pools.
+
+Decided by delegate for #172, each the owner's to overturn:
+
+1. **The quay stands on a cut, a diep, with no river in the box:** deep water from a sluice-house
+   on the west edge at 0,12 to the quay under the mound. The sluice-house is a building square, so
+   the edge check holds with no change to the atlas, and deep water carries the barges and keeps a
+   swimmer off the cache. The diep's way on through B3 to the Long Water is owed to #179. The eel is
+   said, not fought, as on C4 and C6, and the brief's ford goes with the river, so the shrine stands
+   by the sluice.
+2. **The Downs' strip above the cliff is closed as mountain with the Edge,** as C7 closed the
+   Glasswold's squares (#178's 3). §1 says the only way over the Edge is the Salt Road in D4, and a
+   band 4–5 strip left open from a band 10–11 box would be a back way and an empty walk.
+3. **Sjonghol is a short cleft of dirt cut into the cliff's foot,** four squares from its mouth at
+   28,10 to its back at 30,8, a dead end with the Monk's second-prestige trainer at its mouth. It
+   needs no interior, so the Interiors lane stays out. It opens into neither D3 nor the strip above,
+   and the site moves to the mouth, still inside C3 as #71 wanted.
+4. **The old barge smuggler lives at a hut on a silted drain in the north fields under the hills,**
+   in Rietum's box as the brief has it, and well over ten squares from the spur's road, which ends
+   at 8,18. So he is off the beaten path and not a step of the quest. DESIGN's "the willows' quay" no
+   longer reads true, but DESIGN is outside the area lane, so its rewording is the owner's to make.
+5. **The cache is his old one from his Compact days, and he says nothing of it:** found, never told.
+   Once the company carries his sword, a line of his `says` lets them keep it, and nothing else
+   changes.
+6. **Four groups, each always there or keyed to its hour:** four herons in the stubble beside the
+   track nearest the way in, the barge master and three bargemen on the quay by day, four brinelings
+   at the child's window by night and one bull toad in a flooded drain under the Edge, the hardest at
+   12 alone with no averaging. A company at one hour meets three; both hours are counted, as on C6.
+   The toad sits apart from the smuggler's hut and from Sjonghol's mouth, so both stay relatively
+   safe (DESIGN §5).
+7. **One bull toad, not two:** the gate measures C3 at its floor of 10. Alone it is 9.0 fights to a
+   rest there, inside the limit, and the box's mix is 7.2, inside the aim. Two toads were 2.1 at 10,
+   under the limit of 4, and broke a fight off on 27% of days, though 5.8 at 11. One toad still meets
+   the curve's rule, a mean level of 12 against the 11 asked, and follows C4 and C5, the other
+   floor-10 boxes (#170's 3, #171's 5); B5 refused a lone toad because its floor is 11.
+8. **The brinelings take no `until` now, and the child speaks her hint with no quest flags:** no flag
+   marks the Stone home until #191 adds it, as #170's 6 and #173's 6 leave it. The Night-Light's
+   choice and the brinelings' `until` are owed to whatever builds 21 once the owner approves it.
+9. **The hint is one stone in the quay's face scrubbed clean where the rest are weeded,** always there
+   on the square before the secret door. Beside it goes a night-only line: the child's night-light
+   throws green on the water under that stone (C5's precedent, #170's 2). Her words say only that her
+   light shows where the water glows. The brief's way in from the water at low tide is turned round,
+   as C6's stair was: deep water and walls close the cache on every other side, so its secret door
+   is the only way in.
+10. **All four finds are in the cache, as #399's 3 gives Rietum's cache the ladder's two:** the Chain
+    Mail +1, the Stiletto +1, the Tidefolk Robe +1 and the smuggler's sword. The sword is a Short
+    Sword +2 under a name of its own (1d8+2, 340 gold), the step past the Downs' +1: a +3 or a +4
+    would pass Wrackholm's Cutlass +2, found later, and with the Stiletto +1 in the same cache any
+    plus is a keepsake.
+11. **The step is a Tidefolk quay-hand whose words point west to the plinth, and they set a flag,
+    `c3_saw_stone`, for #180's chapter to key on,** as Ysolde's set `meridian_read` (#181's 6). D5's
+    net-mender saw the light in the sacking and C4's eel-trapper heard the barge, so this one adds
+    what is new. The priest's line, owed by #173's 2, is about how every poleman scores the landing
+    he pushes off from, without naming Stienwierde's.
 
 Decided by delegate for #399, each the owner's to overturn:
 

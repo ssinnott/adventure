@@ -82,6 +82,8 @@ export const ROADS: Record<string, readonly string[]> = {
   lanternwood: ['lanternwood_l2:l2_lamp_moths', 'lanternwood_l2:l2_bears'],
   // On to the fork, where the bull toad sees the company, and up the spur past the barge (#171).
   delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad', 'delta_c4:c4_barge'],
+  // Up the last of the spur past the herons in the stubble, onto the mound and the quay by day (#172).
+  upperwater: ['upperwater_c3:c3_herons', 'upperwater_c3:c3_quay'],
   saltings: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'],
 };
 
@@ -110,6 +112,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'delta_c5: under': { whose: '#18', at: 1 },
   'c5_rift: under': { whose: '#18', at: 1 },
   'delta_c4: under': { whose: '#18', at: 1 },
+  'upperwater_c3: under': { whose: '#18', at: 1 },
   'Saltreach: under': { whose: '#18', at: 1 },
 };
 
