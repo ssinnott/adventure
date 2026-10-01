@@ -80,7 +80,7 @@ export const DEEP_FINDS: Record<string, string> = {
   'runed_robe+2': '',
   'elfbow+2': '', 'brigandine+3': '',
   'warhammer+2': '',
-  silver_torc: '#217',
+  silver_torc: '',
   eldests_bough: '#218', 'greatsword+2': '#218',
 };
 
