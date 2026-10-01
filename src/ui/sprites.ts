@@ -176,6 +176,48 @@ export function drawCrystalSprite(ctx: CanvasRenderingContext2D, x: number, y: n
   }
 }
 
+/**
+ * A lighthouse standing on its square, its foot at y: a stone plinth, a white tower tapering up with
+ * two red bands, the gallery's rail, the glazed lamp room and a red cap. The lamp room is dark glass,
+ * or glowing when `lamp` is 1 (lit by night). Gives where the lamp is, for its light and its beam.
+ */
+export function drawLighthouseSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, lamp = 0, snow = 0): { x: number; y: number; r: number } {
+  const H = u * 5.2, wb = u * 0.42, wt = u * 0.26, plinth = u * 0.55;
+  const white = shade('#ece6da', tone), shadow = shade('#bdb6a8', tone), red = shade('#b23a2c', tone), redShadow = shade('#86281e', tone);
+  const stone = shade('#6e6a64', tone), dark = shade('#2a2622', tone);
+  const halfAt = (h: number): number => wb + (wt - wb) * (h / H);
+  // The plinth, snow along its top.
+  ctx.fillStyle = stone; ctx.fillRect(Math.round(x - u * 0.55), Math.round(y - plinth), Math.round(u * 1.1), Math.round(plinth));
+  ctx.fillStyle = shade('#56524c', tone); ctx.fillRect(Math.round(x + u * 0.1), Math.round(y - plinth), Math.round(u * 0.45), Math.round(plinth));
+  if (snow > 0.2) { ctx.fillStyle = shade('#eef2f7', tone); ctx.fillRect(Math.round(x - u * 0.55), Math.round(y - plinth), Math.round(u * 1.1), Math.max(1, Math.round(u * 0.06))); }
+  // The tower: a band at a time from the plinth up, lit on the left and shaded on the right.
+  const top = y - H, base = y - plinth;
+  const bands: [number, number, boolean][] = [[0, 0.3, false], [0.3, 0.45, true], [0.45, 0.72, false], [0.72, 0.86, true], [0.86, 1, false]];
+  for (const [a, b, isRed] of bands) {
+    const ya = base - (base - top) * a, yb = base - (base - top) * b, ha = halfAt(y - ya), hb = halfAt(y - yb);
+    ctx.fillStyle = isRed ? red : white; ctx.beginPath(); ctx.moveTo(x - ha, ya); ctx.lineTo(x - hb, yb); ctx.lineTo(x, yb); ctx.lineTo(x, ya); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = isRed ? redShadow : shadow; ctx.beginPath(); ctx.moveTo(x, ya); ctx.lineTo(x, yb); ctx.lineTo(x + hb, yb); ctx.lineTo(x + ha, ya); ctx.closePath(); ctx.fill();
+  }
+  // A door and two windows up the tower.
+  ctx.fillStyle = dark;
+  ctx.fillRect(Math.round(x - u * 0.09), Math.round(base - u * 0.4), Math.max(1, Math.round(u * 0.18)), Math.max(1, Math.round(u * 0.4)));
+  for (const f of [0.4, 0.62]) ctx.fillRect(Math.round(x - u * 0.04), Math.round(base - (base - top) * f), Math.max(1, Math.round(u * 0.08)), Math.max(1, Math.round(u * 0.14)));
+  // The gallery: a rail wider than the tower's head.
+  const gw = wt + u * 0.12, gh = Math.max(1, u * 0.08);
+  ctx.fillStyle = dark; ctx.fillRect(Math.round(x - gw), Math.round(top - gh), Math.round(gw * 2), Math.round(gh));
+  // The lamp room: glass between iron frames, dark or lit.
+  const lw = wt * 0.8, lh = u * 0.5, ly = top - gh - lh;
+  ctx.fillStyle = lamp > 0 ? mix(shade('#3a4450', tone), '#ffe7a0', lamp) : shade('#3a4450', tone);
+  ctx.fillRect(Math.round(x - lw), Math.round(ly), Math.round(lw * 2), Math.round(lh));
+  ctx.fillStyle = dark;
+  for (const f of [-1, 0, 1]) ctx.fillRect(Math.round(x + f * lw * 0.95 - Math.max(1, u * 0.02)), Math.round(ly), Math.max(1, Math.round(u * 0.04)), Math.round(lh));
+  // The cap: a red cone and a finial.
+  const ch = u * 0.4;
+  ctx.fillStyle = red; ctx.beginPath(); ctx.moveTo(x - lw * 1.2, ly); ctx.lineTo(x, ly - ch); ctx.lineTo(x + lw * 1.2, ly); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = dark; ctx.lineWidth = Math.max(1, u * 0.03); ctx.beginPath(); ctx.moveTo(x, ly - ch); ctx.lineTo(x, ly - ch - u * 0.18); ctx.stroke();
+  return { x, y: ly + lh / 2, r: Math.max(2, lw * 1.2) };
+}
+
 export function drawRockSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, snow = 0): void {
   const w = u * 1.3, h = u * 0.8;
   const c = shade('#7a7468', tone);

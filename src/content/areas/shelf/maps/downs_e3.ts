@@ -102,6 +102,9 @@ export const DOWNS_E3: MapDef = {
     { kind: 'event', x: 5, y: 17, id: 'e3_fold', once: true, text: 'A shepherd\'s fold of piled flints, the gate off its hinge and no sheep.' },
   ],
   secrets: [{ x: 19, y: 29, hint: 'e3_ledge' }],
+  // Crowness Light, drawn as the tower it is over the land and seen from far off, its lamp lit by
+  // night once Oil for the Lamp is done.
+  landmarks: [{ x: 20, y: 28, kind: 'lighthouse', lit: 'q_oil_lit' }],
   encounters: [
     { id: 'e3_crows', x: 27, y: 16, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
     { id: 'e3_fog', x: 18, y: 18, when: { sky: 'fog' }, monsters: ['lampman', 'wrecker', 'wrecker', 'wrecker', 'wrecker'], aware: 3, respawn: 2880 },

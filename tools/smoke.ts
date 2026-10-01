@@ -459,6 +459,38 @@ const sunder = await page.evaluate(async () => {
     glass, bluer: glass > 0 && blue > red,
   };
 });
+// Crowness Light (#312), from E3's road eleven squares north of it and from F3's shore fourteen
+// east, far past the squares drawn: by noon the tower stands over the land, painted otherwise than
+// with no landmark there; by night its lamp is dark until the oil is in, and lit after.
+const lighthouse = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string);
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const minutes = w.state.minutes, flags = { ...w.party.flags };
+  const clear = (hour: number): void => {
+    w.state.minutes = Math.floor(minutes / 1440) * 1440 + hour * 60;
+    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  };
+  // Cleared first: the sky shows through what the scene leaves unpainted, and a paint before would show in it.
+  const paint = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H / 2).data; };
+  const lamps = (): number => V.paintedFlames().filter((f: any) => f.lamp).length;
+  const out: Record<string, { tower: number; dark: number; lit: number }> = {};
+  for (const [name, zone, x, y, f] of [['road', 'downs_e3', 20, 17, 2], ['shore', 'downs_f3', 2, 28, 3]] as const) {
+    w.travel(zone, x, y, f);
+    clear(12);
+    const m = w.map, kept = m.landmarks, withIt = paint();
+    m.landmarks = []; const without = paint(); m.landmarks = kept;
+    let tower = 0;
+    for (let i = 0; i < withIt.length; i += 4) if (Math.abs(withIt[i] - without[i]) + Math.abs(withIt[i + 1] - without[i + 1]) + Math.abs(withIt[i + 2] - without[i + 2]) > 30) tower++;
+    clear(23); delete w.party.flags.q_oil_lit; paint(); const dark = lamps();
+    w.party.flags.q_oil_lit = true; paint(); const lit = lamps();
+    out[name] = { tower, dark, lit };
+  }
+  w.party.flags = flags; w.state.minutes = minutes; w.cached = undefined;
+  return out;
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
 // holds court on the keep's door, in the throne room.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
@@ -821,6 +853,7 @@ ok(!torches.missing && torches.lit > 0 && torches.out > 0 && torches.over === 0,
 ok(torches.shown && torches.covers && torches.behind, `an ogre before a sconced wall stands in front of its torch's flame (flame shown ${torches.shown}, ogre over it ${torches.covers}, flame behind the ogre ${torches.behind})`);
 ok(sunder.rows > 20 && sunder.drop > 40 && sunder.wall > 20, `a chasm paints darker than grass, its far wall under the rim lighter than the drop (${sunder.rows} rows straight ahead, ${sunder.drop} darker than grass in the lower half; the wall ${sunder.wall} lighter than the foot)`);
 ok(sunder.glass > 200 && sunder.bluer, `glass trees stand over the horizon beyond the chasm, bluer than red (${sunder.glass} pixels, ${sunder.bluer ? 'bluer' : 'not bluer'})`);
+for (const [name, v] of Object.entries(lighthouse as Record<string, { tower: number; dark: number; lit: number }>)) ok(v.tower > 150 && v.dark === 0 && v.lit === 1, `Crowness Light stands over the land from the ${name === 'road' ? 'E3 road' : 'F3 shore'}, its lamp dark by night before the oil and lit after (${v.tower} pixels of tower at noon; lamps ${v.dark}, then ${v.lit})`);
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
   ok(terrains.thin.length === 0, `hills, farmland, woods and dead wood paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
