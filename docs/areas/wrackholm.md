@@ -13,15 +13,17 @@ Figures are measured on main at `2cc52cd` (29 September 2026) with `worldGrid`
 Nothing of it is built. Its content will be `src/content/areas/wrackholm/` (maps, monsters, items,
 its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, its side quests in
 `quests.ts`, climate and its part of the world map); it has no town and no businesses, so no rooms.
-The folder comes with its first map (#187), as Thornmark's did; until then its rows are the plan's
-(`src/content/atlas.ts`). Its ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the
-id stays under the new name, NAMES §3), the ship `tide_ship` and, below it, `dead_drop`.
+Its part of the world map is its folder's already (`atlas.ts`, #186), spread into the plan
+(`src/content/atlas.ts`) until the area is listed; the rest of the folder comes with its first map
+(#187), as Thornmark's did. Its ids: the area and its zone `wrackholm`, the cove `smugglers_cove`
+(the id stays under the new name, NAMES §3), the ship `tide_ship` and, below it, `dead_drop`.
 
 ---
 
 ## 1. Where it is
 
-The atlas makes Wrackholm one zone:
+The atlas (`src/content/areas/wrackholm/atlas.ts`, spread into the plan until the area is listed)
+makes Wrackholm one zone:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
@@ -31,7 +33,8 @@ Squares are the ones the atlas gives it, shallows included. Without the shallows
 squares, about 1.7 zone maps (EXPANSION §1 has 1.7), and every one of them a company could walk:
 grass 878, heather 514, hills 158, rock 105 and sand 99. It runs from x 142 to x 199 and from y 150
 to y 210, in the middle of Sylmeer, with Saltreach's Saltings to the west across the water, the
-Deepthorn's Penspern to the north-east and Hearth Isle to the east.
+Deepthorn's Penspern to the north-east and Hearth Isle to the east. The zone's band is the folder's:
+12–14, the area's, and the boxes rise through it (§4).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The isle is two boxes, E6 and F6, and 234
 squares of shore in the four round them (E5, F5, E7, F7), which go with their boxes' edges or stay
@@ -41,7 +44,7 @@ south-west corner where the Glasswold's coast comes near; no way runs there.
 Its edges are the sea on every side. Its ways:
 
 - **The landing,** at 152,172 on E6's south shore, where the smugglers' boat from Saltmouth puts
-  in (`src/content/atlas.ts:368`; #164). A crossing, open from the start for the fare (EXPANSION
+  in (`src/content/atlas.ts`; #164). A crossing, open from the start for the fare (EXPANSION
   §2.2, §7): Wrackholm is the first area a company reaches by paying, and the boat is how it
   leaves.
 - **Kelp Hole,** at 154,170 in E6, the cove's mouth in the cliff above the landing.
@@ -69,9 +72,11 @@ The weather is the gulf's: wind, spray on the cliffs, gulls and the moor's heath
 
 ## 3. What is built
 
-Nothing. The atlas has the zone, the cove and the ship as planned plates, the sites (Kelp Hole, the
-Tide Ship) and the links (the boat, the two ways in, the stair). Its systems are Saltreach's (#150)
-and the boat's (#164); its monsters are drawn in #193.
+Nothing but its atlas rows (`src/content/areas/wrackholm/atlas.ts`, #186): the zone at 12–14, Kelp
+Hole at 12–14, the Tide Ship at 13–14 and the sites, which the plan spreads in where its own rows
+were. The atlas has the zone, the cove and the ship as planned plates, the sites (Kelp Hole, the
+Tide Ship) and the links (the boat, the two ways in, the stair); the Dead-Drop's plate is the plan's
+(#22). Its systems are Saltreach's (#150) and the boat's (#164); its monsters are drawn in #193.
 
 ## 4. What is still to build
 
@@ -100,7 +105,7 @@ The places, as the atlas and the docs have them:
 | Kelp Hole (Smugglers' Cove) | E6, and below | the Compact's crews and the Hand's cargo; the sea cave, where the Great Devilfish is fed (MONSTERS §6.2); the captain's brother (#56's 25); what the smugglers feed (#56's 28) | a planned dungeon at 150,158, its way in at 154,170 |
 | The east rocks | F6 | the hermit who has counted the ships since the founder died (#56's 26) | rock, 105 squares at the isle's east end |
 | The Tide Ship | F6, and aboard | the hold's two kinds of cargo; Hale in the last row; the papers on Wenna; the Stone in the forward hold, with its Rift (DESIGN §9, STORY, MONSTERS §6.2); every name in the column (#56's 27) | a planned wreck at 182,188, its plate at 208,192 |
-| The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | a planned dungeon at 208,204, band 26–28 |
+| The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | a planned dungeon at 208,204, band 26–28, the plan's (#22) |
 
 ### 4.1 The briefs
 
@@ -132,13 +137,13 @@ Foreland map's density.
 - **New here.** Heather underfoot (#162); an area reached by a crossing; the crossing line said on a
   landing stage.
 - **Finds.** A Long Bow +1 in the cache.
-- **Pay.** About 1,600 xp a member.
+- **Pay.** About 1,700 xp a member.
 
 ### 4.3 Kelp Hole (#188): dungeon, two levels of 16×16, band 12–14
 
 - **Purpose.** The cove where the Compact's crews land the Hand's cargo before it goes out to the
-  ship, and the sea cave under it, where the Great Devilfish is fed (MONSTERS §6.2). Smugglers'
-  Cove on the atlas; Kelp Hole in the sailors' English (§10).
+  ship, and the sea cave under it, where the Great Devilfish is fed (MONSTERS §6.2). Kelp Hole,
+  once Smugglers' Cove (§10).
 - **Landmarks.** The upper cave: crates under the customs seal on the ledges, the crews' fires, an
   overseer with the chained. The sea cave: pools, kelp on the rocks, and the Great Devilfish at
   the back with the boy who feeds it.
@@ -176,7 +181,7 @@ Foreland map's density.
   The hint: the hermit's count starts at a date.
 - **New here.** A den on an isle; a dungeon boarded at night and not by day.
 - **Finds.** The founder's seal, a quest item the Compact's hall takes (#182).
-- **Pay.** About 1,500 xp a member.
+- **Pay.** About 1,600 xp a member.
 
 ### 4.5 The Tide Ship (#190): dungeon, three decks of 16×16, band 13–14
 
@@ -209,7 +214,7 @@ Foreland map's density.
   door into the hull's depths.
 - **Finds.** The Tide Stone (a quest item, plain: #151, call 6); the ship's papers and its log
   (letters read from the pack, #76); the captain's Cutlass +2, named.
-- **Pay.** About 3,200 xp a member.
+- **Pay.** About 3,300 xp a member.
 
 ## 5. The one quest here
 
@@ -264,11 +269,12 @@ landmarks: a landing, a sea cave, a wreck.
 ## 8. The numbers
 
 - **Experience.** The curve (EXPANSION §5.2, #159) asks the climb from 12 to 14 over 0.75: 7,400 /
-  0.75, about 9,867 xp a member, with today's `xpForLevel`. The isle is small, two boxes for a band
-  two levels deep where Saltreach has nine, so its dungeons carry more of the budget than
-  Saltreach's do: E6 1,600, Kelp Hole 2,400, F6 1,500, the Tide Ship 3,200 and the four side quests
-  about 900 between them, about 9,600. What is short the curve reports as owed to #154 until the
-  maps exist; the Compact's rank quests (#182) and the crews that come back make it up in play, and
+  0.75, about 9,867 xp a member, with today's `xpForLevel`. The shares of §4 add up to it, the side
+  quests inside and the Dead-Drop outside. The isle is small, two boxes for a band two levels deep
+  where Saltreach has nine, so its dungeons carry more of the budget than Saltreach's do: E6 1,700,
+  Kelp Hole 2,400, F6 1,600, the Tide Ship 3,300 and the four side quests 900 between them (25 and
+  26 200 each, 27 and 28 250 each, §6): about 9,900. From here on a kill pays by level (#159); the
+  curve's row reports what a clear falls short of as owed to #154 until the maps exist, and
   MONSTERS' open question 4, what a fight is worth from Saltreach on, is settled on the first box
   built.
 - **Gold.** Training six members from 12 to 14 costs about 6,000 with today's `trainPrice`; the
@@ -300,7 +306,25 @@ Proposed, for the owner, each in the issue that would build it:
 - **The ship boarded at night** (`when`, #41), by the boats from F6's shore, and its plate left in
   the sea where the atlas has it (#190).
 - **The stair's landing room,** one room of 26–28 country with a way back up, until #22 is built.
-- **The pay's shares** (§8), the dungeons heavier than Saltreach's.
+- **The pay's shares** (§8), the dungeons heavier than Saltreach's, scaled to the curve's 9,867.
+- **The bands on the atlas's rows** (#186): the zone 12–14, Kelp Hole 12–14, the Tide Ship 13–14.
+  They are set already in `src/content/areas/wrackholm/atlas.ts`, where only the scaffold reads
+  them, for a box's draft; the owner's word changes them there.
+
+Decided by delegate for #186, each the owner's to overturn:
+
+1. **The atlas folder is spread into the plan** (`src/content/atlas.ts` imports it where its rows
+   were), as Saltreach's and Sunderwood's are: the area cannot be listed in AREAS until #187 gives
+   it a map. #187 points the area's `atlas` at it and takes the import out.
+2. **The folder charts the plan's rows and the bands, and no new sites:** the hermit and the east
+   rocks are F6's to place (#189), and the landing is the boat's link, which an area's atlas has no
+   room for.
+3. **The Tide Ship is 13–14,** not the plan's 12–14: §4.5 gives it so, and it is boarded from F6,
+   which is 13–14; the world map shows a plate's band.
+4. **The Dead-Drop stays the plan's:** its band and brief are Phase 4's (#22), and this act builds
+   only the hatch and one room.
+5. **The pay is scaled to 9,867,** the side quests inside and the Dead-Drop outside, as Sunderwood
+   counts Wrackholm's: 100 more each to E6, F6 and the Tide Ship.
 
 ## 10. Names
 
