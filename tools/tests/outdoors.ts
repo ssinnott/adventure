@@ -22,6 +22,7 @@ import { logLines } from '../../src/ui/frame.ts';
  */
 const CUT_OFF: Record<string, string> = {
   wrackholm_e6: '#177', // the isle, reached only by the smugglers' boat from Saltmouth
+  wrackholm_f6: '#177', // the isle's east end, walked to from the landing
 };
 
 export function outdoors(): void {

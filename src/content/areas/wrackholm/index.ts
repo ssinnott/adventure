@@ -2,15 +2,17 @@
 // and the Tide Ship. docs/areas/wrackholm.md is its brief.
 import type { Area } from '../../area.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
+import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
+import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'wrackholm' as const,
-  maps: [WRACKHOLM_E6],
+  maps: [WRACKHOLM_E6, WRACKHOLM_F6],
   monsters: MONSTERS,
   sprites: SPRITES,
-  items: [],
+  items: ITEMS,
   quests: [],
   chapter: undefined, // The Stone Carried Home, #191's
   // Out in the gulf: mild winters, cool summers, wind and spray, and fog off the water.
