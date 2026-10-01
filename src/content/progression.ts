@@ -7,7 +7,8 @@
 // (375 xp; the Foreland's walkthrough holds it, #87), adding Brandy Hole level 4 (1,660),
 // one clear of everything 9 (11,997), and two fifths of one more sweep of the Grove reaches 10
 // (2,759 a sweep once the Warden of the Cut is dead and the Rift's groups stop).
-// Training six members from 5 to 10 costs 8,400 gold.
+// Training six members from 5 to 10 costs 8,400 gold. Act II's areas have rows before their maps,
+// owed to the issues that build them.
 import type { RegionId } from './index.ts';
 import { xpForLevel, trainPrice } from '../game/party.ts';
 
@@ -30,15 +31,38 @@ export interface AreaCurve {
 /** The party the curve pays for. */
 export const MEMBERS = 6;
 
-/** Every area's row: an area without one is a type error. */
-export const CURVE: Record<RegionId, AreaCurve> = {
+/**
+ * The areas next on the road that have a row before they have a map, in road order. An area leaves
+ * this list when its first map lists it in AREAS; the curve check fails while it is in both.
+ */
+export const PLANNED = ['saltreach', 'wrackholm', 'sunderwood'] as const;
+
+/** Every area's row, and every planned area's: an area without one is a type error. */
+export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   shelf: {
     band: [1, 5], next: 5, price: 500,
   },
   thornmark: {
     band: [5, 10], next: 10, price: 1200,
   },
+  // Act II (#159). The windows past Saltreach's rise about 500 a band until the ladder past
+  // Thornmark's Armoury (#18) prices them.
+  saltreach: {
+    band: [10, 12], next: 12, price: 2000,
+    owed: { whose: '#153', why: 'Saltreach is not built yet', xp: 0, gold: 0 },
+  },
+  wrackholm: {
+    band: [12, 14], next: 14, price: 2500,
+    owed: { whose: '#154', why: 'Wrackholm is not built yet', xp: 0, gold: 0 },
+  },
+  sunderwood: {
+    band: [14, 16], next: 16, price: 3000,
+    owed: { whose: '#155', why: 'Sunderwood is not built yet', xp: 0, gold: 0 },
+  },
 };
+
+/** What a town's trainers teach to: its area's band's top plus one (EXPANSION §5.2). */
+export const trainerCeiling = (c: AreaCurve): number => c.band[1] + 1;
 
 /** The xp a member should have from a clear: the climb from the floor to the next floor, over 0.75. */
 export function xpBudget(c: AreaCurve): number {

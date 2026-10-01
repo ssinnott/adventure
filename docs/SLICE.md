@@ -184,19 +184,29 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
 
 ## The road to level 10
 
-The slice's content ends around level 4. The Thornmark extension carries a party to the level
-cap, which is 10 until the road past it is built:
+The slice's content ends around level 4. The Thornmark extension carries a party to 10, and its
+trainer one level past it, onto Act II's road:
 
-- **Progression.** `MAX_LEVEL` is 10; `levelUp` stops there and the sheet says so. Five spell
-  tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`). Trainers charge 25 a level to 5 and
-  40 a level after (`trainPrice` in `party.ts`, which the curve's gold reads); the Warden Drillyard
-  in Helmstow teaches to 6, the Elder's Yard in Thornhold to 10. Guilds sell up to a tier of their
-  own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320 gold; tier 5 comes only with level 8.
+- **Progression.** `MAX_LEVEL` is the road's cap, 32 (#159), and each level past 10 gives what one
+  under it does; the sheet says so at the cap. What a company reaches is set by the towns built:
+  each town's trainer teaches to its area's band's top plus one (`trainerCeiling` in
+  `content/progression.ts`), the Warden Drillyard in Helmstow to 6 and the Elder's Yard in
+  Thornhold to 11. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
+  spells stop growing at 10 (`SPELLS_GROW_TO`, DESIGN.md §7). Trainers charge 25 a level to 5 and
+  40 a level after, to the cap (`trainPrice` in `party.ts`, which the curve's gold reads). Guilds
+  sell up to a tier of their own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320 gold;
+  tier 5 comes only with level 8.
+- **What a kill pays.** Each member by the monster's level against theirs (`killPay`): a tenth at
+  three or more under, 0.4 at two, 0.7 at one, the whole at their level, 1.15, 1.3 and half again
+  at three or more over, split among the living. Where the members' levels differ, the log gives
+  the least and the most share. Gold and loot stay fixed.
 - **The curve** (`content/progression.ts`). Each area has a band, the floor of the next and a price
-  window: the Foreland 1-5 and 500 gold, Thornmark 5-10 and 1,200. Three quarters of a clear's xp
-  should take a member to the next floor, and its gold train the six there; every monster has a
-  `level` within two of its maps' bands, rising from the way in (it changes no combat yet), and no
-  chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,770 a
+  window: the Foreland 1-5 and 500 gold, Thornmark 5-10 and 1,200; and Act II's three before their
+  maps, Saltreach 10-12 and 2,000, Wrackholm 12-14 and 2,500, Sunderwood 14-16 and 3,000, their
+  clears owed to #153, #154 and #155 (`PLANNED`). Three quarters of a clear's xp should take a
+  member to the next floor, and its gold train the six there; every monster has a `level` within
+  two of its maps' bands, rising from the way in (it sets what a kill pays, and changes no combat),
+  and no chest or drop is dearer than the window. Neither clear gives the xp yet (the Foreland 1,770 a
   member of 3,734, Thornmark 10,227 of 13,667), nor Thornmark's the gold (6,518 of 8,400):
   `tools/tests/curve.ts` reports them as #26's.
 - **Spells.** Nine new ones. Cleric: Ward (party AC), Mending Light (party heal), Restore (big

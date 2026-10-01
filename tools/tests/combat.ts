@@ -2,7 +2,7 @@
 // that hit every foe, Ward and Revive.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS } from '../../src/content/index.ts';
-import { defaultParty, equip, addCondition, hasCondition } from '../../src/game/party.ts';
+import { defaultParty, equip, addCondition, hasCondition, killPay } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, WARD_AC } from '../../src/game/combat.ts';
 import type { CombatState } from '../../src/game/combat.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -33,9 +33,10 @@ export function combat(): void {
   ok(a.log.join('|') === b.log.join('|'), 'the same seed replays the same fight');
   ok(a.log.join('|') !== c.log.join('|'), 'a different seed is a different fight');
   ok(a.state.outcome === 'victory', `the default party beats three rats and a wolf (${a.rounds} rounds, ${a.state.outcome})`);
-  const xp = MONSTERS.rat.xp * 3 + MONSTERS.wolf.xp;
-  ok(a.state.loot !== null && a.state.loot.xp === xp, `xp is the sum of the monsters' (${a.state.loot?.xp})`);
-  ok(a.party.members.every((m) => m.xp === Math.floor(xp / 6)), 'xp is split evenly among the living');
+  // The rats are the party's level and the wolf one over it, so the wolf pays more (killPay).
+  const xp = MONSTERS.rat.xp * 3 + MONSTERS.wolf.xp * killPay(MONSTERS.wolf.level, 1);
+  ok(MONSTERS.rat.level === 1 && MONSTERS.wolf.level === 2 && a.state.loot !== null && a.state.loot.xp === Math.round(xp), `xp is the sum of the monsters', each by its level against the party's (${a.state.loot?.xp})`);
+  ok(a.party.members.every((m) => m.xp === Math.floor(xp / 6)) && a.state.loot!.shares.every((x) => x === Math.floor(xp / 6)), 'xp is split evenly among the living');
   ok(a.party.gold >= 200, 'gold is added to the party');
   // The cap.
   const rng = makeRng(1);

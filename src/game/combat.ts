@@ -8,7 +8,7 @@ import { spell, spellDice } from './spells.ts';
 import type { SpellDef } from './spells.ts';
 import { item } from './items.ts';
 import {
-  armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain,
+  armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
   hasTrait, spellHeal, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
 } from './party.ts';
 import type { ItemDef } from './items.ts';
@@ -34,8 +34,13 @@ export type PartyAction =
 
 export type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
 
-/** `ready` names who now has the experience to train a level (levels are bought at a trainer). */
-export interface Loot { xp: number; gold: number; items: string[]; ready: string[]; }
+/**
+ * `xp` is what the kills were worth before the split, each by the monster's level against a
+ * member's (`killPay`), and `shares` what each living member took, in party order: one share for all
+ * where all are of one level. `ready` names who now has the experience to train a level (levels are
+ * bought at a trainer).
+ */
+export interface Loot { xp: number; shares: number[]; gold: number; items: string[]; ready: string[]; }
 
 export interface CombatState {
   monsters: MonsterInst[];
@@ -50,7 +55,7 @@ export interface CombatState {
   defending: boolean[];
   /** To-hit lost by bows, slings and crossbows on both sides: the weather (see weather.ts). */
   rangedPenalty: number;
-  /** The level damage spells stop growing at: none in play (see `spellDice`). */
+  /** The level damage spells stop growing at, where a tool tries another: SPELLS_GROW_TO in play (see `spellDice`). */
   spellsGrowTo?: number;
   /** What a tool trying new powers gives each member: none in play (see `Edge`). */
   edge?: (c: Character, s: CombatState) => Edge;
@@ -352,23 +357,39 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   return true;
 }
 
+/** The least and the most share a fight paid, the same where all took one. */
+export function shareRange(loot: Loot): [number, number] {
+  return loot.shares.length ? [Math.min(...loot.shares), Math.max(...loot.shares)] : [0, 0];
+}
+
+/** The log's line for a won fight: what it was worth, or the least and most share where levels made them differ. */
+export function victoryLine(loot: Loot): string {
+  const [least, most] = shareRange(loot);
+  return least === most ? `Victory! ${loot.xp} experience, ${loot.gold} gold.` : `Victory! ${least} to ${most} experience by level, ${loot.gold} gold.`;
+}
+
 function checkOutcome(s: CombatState, party: Party, rng: RngInstance): void {
   if (s.outcome !== 'ongoing') return;
   if (party.members.every(isDown)) { s.outcome = 'defeat'; s.log.push('The party has fallen.'); return; }
   if (s.monsters.every((m) => m.hp <= 0)) {
     s.outcome = 'victory';
-    const loot: Loot = { xp: 0, gold: 0, items: [], ready: [] };
+    const loot: Loot = { xp: 0, shares: [], gold: 0, items: [], ready: [] };
     for (const m of s.monsters) {
-      loot.xp += m.def.xp;
       loot.gold += rng.int(m.def.gold[0], m.def.gold[1]);
       for (const d of m.def.drops ?? []) if (rng.chance(d.chance)) loot.items.push(d.item);
     }
+    // A kill pays each member by the monster's level against theirs, split among the living.
     const alive = party.members.filter((c) => !hasCondition(c, 'dead'));
-    const each = Math.floor(loot.xp / Math.max(1, alive.length));
-    for (const c of alive) { const before = canTrain(c); c.xp += each; if (!before && canTrain(c)) loot.ready.push(c.name); }
+    const worth = alive.map((c) => s.monsters.reduce((t, m) => t + m.def.xp * killPay(m.def.level, c.level), 0));
+    loot.xp = Math.round(worth.reduce((t, w) => t + w, 0) / Math.max(1, worth.length));
+    alive.forEach((c, k) => {
+      const each = Math.floor(worth[k] / alive.length), before = canTrain(c);
+      c.xp += each; loot.shares.push(each);
+      if (!before && canTrain(c)) loot.ready.push(c.name);
+    });
     party.gold += loot.gold;
     party.bag.push(...loot.items);
     s.loot = loot;
-    s.log.push(`Victory! ${loot.xp} experience, ${loot.gold} gold.`);
+    s.log.push(victoryLine(loot));
   }
 }

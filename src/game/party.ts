@@ -140,15 +140,29 @@ export function bonus(v: number): number { return Math.floor((v - 10) / 3); }
 
 export function xpForLevel(level: number): number { return Math.floor(100 * Math.pow(level - 1, 2) * 1.5) + (level - 1) * 100; }
 
-/** The level cap for now. Levels are bought at a trainer; no trainer teaches past this. */
-export const MAX_LEVEL = 10;
+/**
+ * The road's cap. Levels are bought at a trainer, and each town's trainer teaches to its band's top
+ * plus one (EXPANSION §5.2), so what a company can reach is set by the towns built, not by this.
+ */
+export const MAX_LEVEL = 32;
 /** Spell tiers unlock at levels 1, 2, 4, 6 and 8; five tiers exist. */
 export const MAX_SPELL_TIER = 5;
 export function spellTierAt(level: number): number { return Math.min(MAX_SPELL_TIER, 1 + Math.floor(level / 2)); }
 /** Whether the character has the experience for the next level (and is not at the cap). */
 export function canTrain(c: Character): boolean { return c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1); }
-/** What a trainer charges to teach the next level: 25 a level to 5, 40 a level after. */
+/** Whether a trainer who teaches to `maxLevel` can teach the character its next level. */
+export function canTrainAt(c: Character, maxLevel: number): boolean { return c.level < maxLevel && canTrain(c); }
+/** What a trainer charges to teach the next level: 25 a level to 5, 40 a level after, to the cap. */
 export function trainPrice(c: Pick<Character, 'level'>): number { return c.level < 5 ? c.level * 25 : c.level * 40; }
+
+/**
+ * What a kill pays a member, as a share of the monster's xp, by the monster's level against theirs
+ * (EXPANSION §5.2): a tenth at three or more under, up to half again at three or more over.
+ */
+export const KILL_PAY: Readonly<Record<number, number>> = { [-3]: 0.1, [-2]: 0.4, [-1]: 0.7, 0: 1, 1: 1.15, 2: 1.3, 3: 1.5 };
+export function killPay(monsterLevel: number, memberLevel: number): number {
+  return KILL_PAY[Math.max(-3, Math.min(3, Math.round(monsterLevel - memberLevel)))];
+}
 
 export function createCharacter(name: string, race: RaceId, cls: ClassId, base: Partial<Stats>, rng: RngInstance): Character {
   const stats = { ...BASE_STATS, ...base };
