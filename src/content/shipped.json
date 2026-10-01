@@ -166,6 +166,14 @@
         "i5_hearth",
         "i5_hollow",
         "i5_roost",
+        "j2_cairn",
+        "j2_dog",
+        "j2_graves",
+        "j2_rim",
+        "j2_sack",
+        "j2_sack_chest",
+        "j2_shrine",
+        "j2_steading",
         "j4_cairn",
         "j4_cleft",
         "j4_cleft_box",
@@ -290,6 +298,10 @@
         "i5_brood2",
         "i5_keepers",
         "i5_rootwalkers",
+        "j2_bears",
+        "j2_cave_bears",
+        "j2_hounds",
+        "j2_moths",
         "j4_heartwood",
         "j4_owls",
         "j4_rootwalkers",
@@ -338,7 +350,8 @@
         "285,116",
         "286,135",
         "297,145",
-        "308,112"
+        "308,112",
+        "312,32"
       ]
     },
     "greywater1": {
@@ -582,6 +595,10 @@
       "at": "264,30",
       "size": "32x32"
     },
+    "eaves_j2": {
+      "at": "296,30",
+      "size": "32x32"
+    },
     "shelf": {
       "at": "200,30",
       "size": "32x32"
@@ -742,6 +759,7 @@
     "elfbow+2",
     "elixir",
     "faceless_coin",
+    "great_axe+1",
     "greatsword",
     "greatsword+1",
     "greatsword+2",

@@ -10,7 +10,7 @@ turns. This is its area doc (EXPANSION §4, §6 and §8.2). Its work is filed un
 (#204), its side quests (#205), its drawings (#206) and its rooms (#207). Figures are measured on
 main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Its first map is built: I2, the Eaves' way in (#195), which lists the area. Its content is
+Two maps are built: I2, the Eaves' way in (#195), which lists the area, and J2, the Eaves (#196). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -24,9 +24,9 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–15 | 5,764 | I2, the Eaves' way in, laid at 264,30 (#195) |
+| The Eaves | 14–15 | 5,764 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196) |
 | Lanternwood | 15–16 | 7,971 | none |
-| The area | 14–16 | 13,735 | one box |
+| The area | 14–16 | 13,735 | two boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
@@ -91,7 +91,7 @@ cannot see the bottom of, mist under the pines, and by night the moths to any li
 
 Its atlas rows (`src/content/areas/sunderwood/atlas.ts`, #194): the zones with their bands (the
 Eaves 14–15, Lanternwood 15–16), the town at 14–16, the Sunder at 15–16 and the sites, the area's
-own since I2 listed it. Its first map:
+own since I2 listed it, the steading's since J2 (#196). Its maps:
 
 - **The Eaves' way in** (I2, `eaves_i2`, country, band 14–15; #195): the east road out of
   Thornmark's east edge through a gap in its ring, over the Hoarhills' shoulder and east under the
@@ -101,6 +101,14 @@ own since I2 listed it. Its first map:
   the milestone face down by the road, with the Watch's last patrol's pack under it. Three groups:
   a pair of pine bears by the way in, lantern moths at the camp by night and a pine bear with a
   glass bear on the road at the far end.
+- **The Eaves** (J2, `eaves_j2`, core, band 14–15; #196): the east road on from I2 through the
+  pines and south-east for the bridge; the rim closes the north and the gorge's west lip, a strip of
+  chasm with glass trees along it, the east. The pine-cutters' steading among the first glass trees,
+  Garret the cutter, the two graves and the dog at the north path's foot; the bear's cave under the
+  rim at the path's end, with the gleaner's sack in it behind the rock; the hermit under the rim by
+  the lip, a shrine by the road, a camp and a cairn in the pines south of it, and the rim, the step.
+  Four groups: pine bears by the way in and at the cave, lantern moths by the steading by night and
+  sunder hounds on the lip by the road at the far end.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -152,7 +160,7 @@ The places, as the atlas and the docs have them:
 | The rope bridge | K2 | the east road's crossing of the gorge (DESIGN §9) | a road link at 330–346,56 |
 | Sunderfall | K2 | the Paladin's second prestige, a shrine (#19); the dammed fall (#56's 30) | a planned falls at 340,60 |
 | Lantern Watch | L2, and its own map | the Lanterns' watchtower across the gorge, where the papers are read and the Lanterns begin to split (DESIGN §8, §9); the prior and the sister (#56's 31); the next spell tier (#151, call 9) | a planned town at 372,36, its way in at 372,46 |
-| The pine-cutters' steading | J2 | the family at the glass trees (#56's 29) | not on the atlas |
+| The pine-cutters' steading | J2 | the family at the glass trees (#56's 29) | a site on J2 at 20.5,7.5 (#196) |
 | The Hoarhills | I2, and the Deepthorn's I3 and J4 | the ridge between Thornmark and Sunderwood (docs/areas/thornmark.md) | hills and mountain, lettered |
 | The Iron Fells | east of M2 | the Kilns' first zone, Act III | mountain, lettered at 420,70 |
 
@@ -202,7 +210,8 @@ features; the pay shared out over the area (§8).
   the gate's limit asks (§8): owed to #18, as every Act II box will owe it until the gear past 10
   is built. Woods are on the road before it (the Downs' E2, the Deepthorn's H3
   and I3), so the area claims the bears, the moths and the moths' sleep as new, and not the woods.
-  What the owner finds by hand goes here when the box has been played.
+  What the owner finds by hand goes here when the box has been played. Since J2 (#196) its east
+  edge is the wood on into J2, the rim's mountain kept on its north rows and the road through.
 
 ### 4.3 J2, the Eaves (#196): core, band 14–15
 
@@ -232,6 +241,22 @@ features; the pay shared out over the area (§8).
 - **Finds.** A Great Axe +1 in the cave.
 - **Pay.** About 1,350 xp a member.
 
+- **As built** (#196, 1 October): the brief's places, with four groups for its nine. The road runs
+  south-east as the atlas paints it, not north-east, out of the east edge at 31,23 for the bridge.
+  The step's line stands at the lip, a strip of chasm one to three wide down the box's east edge
+  north of the road, glass trees along it: the wood ends where the line says, and K2 draws its west
+  lip from x 328 to meet it. The cave is behind a door in the rim's rock at the north path's end,
+  with a pair of pine bears on the path below it; the dog sits at the path's foot by the cabin, and
+  Garret says it never minded the bear up there. The sack holds a tally, SHIP, SHIP, BELOW, and a
+  Great Axe +1 (`great_axe+1`, a new base at 2d8+1) with 250 gold. Garret has lines of his own and
+  the hint; Nell, his choice and the lamp are #205's. Five sunder hounds are the hardest group, the
+  one a company at 14 manages fewest of between rests (6.2), and six moths stand by the steading by
+  night. A company at 14 wins every fight and manages 6.8 fights to a rest, inside the aim; the
+  road is walked every time. As measured it pays about 1,510 xp a member and 430 gold, I2 and J2
+  together 2,570 against their 2,500. Two under, at 12, it wins every fight: owed to #18, as I2's.
+  The area claims dead wood, crystal and the chasm as new, all three first on the road here.
+  What the owner finds by hand goes here when the box has been played.
+
 ### 4.4 K2, Sunderfall and the rope bridge (#197): core, band 15
 
 - **Purpose.** The crossing of the gorge: the rope bridge the east road crosses the Sunder by,
@@ -259,7 +284,7 @@ features; the pay shared out over the area (§8).
   - the rocks: *Every rock under the fall is green with its spray. One is bare, and worn.*
   - the fall, the dam's doing (§6): *A thread down wet rock, and a quiet where the roar should
     be.*
-- **New here.** Crystal and the chasm's edge (#163); a bridge over a Rift.
+- **New here.** A bridge over a Rift; crystal and the chasm's edge are J2's first (#196).
 - **Finds.** A Holy Symbol of the fall, from the shrine, and a Long Sword +2 on the ledge.
 - **Pay.** About 1,350 xp a member.
 
@@ -569,6 +594,37 @@ Decided by delegate for #195, each the owner's to overturn:
    line's standard size: no group size turns back a company whose gear is the same as at 14, and
    bigger groups only push fights to a rest at 14 under its limit.
 6. **The climate:** summer 16, winter -2, damp to 0.08, fog 0.6, eight hours behind the Foreland.
+
+Decided by delegate for #196, each the owner's to overturn:
+
+1. **Four groups, not nine:** a pair of pine bears by the way in (the gentlest), a pair at the
+   cave on the north path, lantern moths by the steading's lamp by night (beside it and not on it,
+   so the steading stays a place to talk) and sunder hounds on the lip by the road at the far end
+   (the hardest, at 15, the band's top). Nine groups would pay about 3,000 a member against the
+   brief's 1,350. The hounds are five, not the standard four: at four they cost a company less a
+   fight than the bears did, and the hardest group has to be a real fight. The moths are six and
+   the cave's bears two, so that fights to a rest at 14 sit inside the aim (6.8) and the box pays
+   about 1,510, which with I2's 1,060 is 2,570 against the Eaves' 2,500.
+2. **The lip is J2's east edge,** a strip of chasm one to three wide north of the road with glass
+   trees along it, against the atlas's dead wood beyond: the step's line has to be true where it is
+   read, and a ring of mountains or the void would make it false. K2 draws its west lip from x 328
+   to meet the strip; south of the road the box stays dry, so the road reaches the bridge.
+3. **The road runs south-east, as the atlas paints it:** north-east in the brief was a slip.
+4. **Quest 29 stays #205's:** J2 builds its cabin, the two graves under the glass trees and
+   Garret, a pine-cutter whose lines of his own carry the secret's hint. Nell, the choice, the
+   warding lamp and the flags are #205's to add: #205 is not approved, and names #196 as the
+   builder of the cabin and the graves only.
+5. **The area claims dead wood, crystal and the chasm as new terrain,** all three first on the road
+   in J2: novelty is checked per area, and K2's new things are the bridge and Sunderfall.
+6. **The finds:** in the cave a Great Axe +1 and 250 gold, the Great Axe a new two-handed base at
+   2d8+1 and 600 gold, so its +1 (750) is a step past Thornmark's Great Sword +2 and inside the
+   area's window of 3,000; the cairn 180 gold and a Sapphire Vial, as I2's; the shrine gives might,
+   which only the Foreland's D2 gave before.
+7. **Bears and hounds come back after two days, moths after one:** the moths are the night's.
+8. **I2's east edge opens where J2's west edge meets it:** the mountain wall was the world's end
+   while J2 was unbuilt, and kept it would be a range through one wood. J2's column 0 is pine but
+   for the road, so no new way opens and I2's figures stand.
+9. **J2 is built at core density** (90% within 8 steps, none past 15): it holds the Eaves' step.
 
 ## 10. Names
 

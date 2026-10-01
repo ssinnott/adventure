@@ -3,7 +3,7 @@
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }], seeds: [[292, 40], [300, 86]] },
+  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }, { map: 'eaves_j2', at: [296, 30] }], seeds: [[292, 40], [300, 86]] },
   { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], seeds: [[372, 50], [370, 96]], label: [378, 84] },
 ];
 
@@ -14,6 +14,7 @@ export const PLACES: readonly AtlasPlace[] = [
 
 export const SITES: readonly AtlasSite[] = [
   // V. Sunderwood.
+  { name: 'The steading', icon: 'farm', map: 'eaves_j2', at: [20.5, 7.5], label: 'below' }, // the pine-cutters', at the glass trees (#56's 29)
   { name: 'Lantern Watch', icon: 'tower', at: [372, 46], label: 'below', planned: true },
   { name: 'The Sunder', icon: 'rift', at: [338, 70], label: 'right', planned: true },
   { name: 'Sunderfall', icon: 'falls', at: [340, 60], label: 'none', planned: true }, // its shrine, the Paladin's second prestige (#19)
