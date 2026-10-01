@@ -12,6 +12,7 @@ export const SPRITES = [
   'fen_eel',
   'fen_toad',
   'grey_heron',
+  'salt_crab',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -28,4 +29,6 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'fen_toad', name: 'Fen Toad', plural: 'Fen Toads', sprite: 'fen_toad', kind: 'beast', look: 'A toad the size of a sheep, its skin weeping.', level: 10, hp: 87, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 12, xp: 393, gold: [0, 0], inflict: { cond: 'poisoned', chance: 0.3 }, tint: '#5e5a32', size: 0.6 },
   // the Upper Water (#222), a skirmisher on MONSTERS §4.4's line at 10: it flies, and spears the back row
   { id: 'grey_heron', name: 'Grey Heron', plural: 'Grey Herons', sprite: 'grey_heron', kind: 'beast', look: 'Taller than Bram, and it has been watching.', level: 10, hp: 89, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 393, gold: [0, 0], ranged: true, tint: '#7c8490', size: 1.1 },
+  // the salt pans (#227), armoured on MONSTERS §4.4's line at 11; it shrugs off sleep, as the crabs do
+  { id: 'salt_crab', name: 'Salt Crab', plural: 'Salt Crabs', sprite: 'salt_crab', kind: 'beast', look: 'White with salt, and it glitters when it moves.', level: 11, hp: 108, ac: 19, attack: 7, dice: 2, sides: 8, bonus: 4, speed: 8, xp: 578, gold: [0, 0], immune: ['asleep'], tint: '#c8c2b4', size: 0.7 },
 ];
