@@ -10,11 +10,11 @@
 //   node tools/harness.ts --map thornmark --level 5    a map's own groups, against a company of 5
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
-//   node tools/harness.ts --spell-cap 10 [...]         any of the above as if spells stopped growing at 10
+//   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 10
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 //   node tools/harness.ts --prestiges [...]            ... or the company took its prestiges at 11, 19 and 27 (--rank-step, --rank-cost, --tiers)
-// The company is the premade six, trained to the level (past today's cap if asked) and dressed in what
+// The company is the premade six, trained to the level (to the road's cap, 32) and dressed in what
 // the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
 // the spell saves outweigh its spell points, each weighed by what the company has left of that pool.
@@ -30,7 +30,7 @@ import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, remov
 import type { Character, Party } from '../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, castOnAlly, toHit, buffHit, traitDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge } from '../src/game/combat.ts';
-import { spell, spellDice } from '../src/game/spells.ts';
+import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
 import { item } from '../src/game/items.ts';
 import { ITEMS, SPELLS } from '../src/content/index.ts';
@@ -53,12 +53,12 @@ export const ROUND_CAP = 15;
  * is under this share of its spell points.
  */
 export const REST_AT = 0.25;
-/** How far the harness will train a company: the road's cap, past today's MAX_LEVEL. */
-export const CAP = 32;
+/** How far the harness will train a company: the road's cap, as play has it. */
+export const CAP = MAX_LEVEL;
 
 /**
  * What-ifs on the rules, for weighing a change before it is made; play has none of them. `spellsGrowTo`
- * is the level damage spells stop growing at (`--spell-cap`); `gearGrows` keeps the company's gear
+ * is another level for damage spells to stop growing at than play's 10 (`--spell-cap`); `gearGrows` keeps the company's gear
  * growing past Thornmark's (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
  * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`); `prestiges` gives it
 the three prestiges of DESIGN.md §5 and the spell ranks of §7 (`--prestiges`, see `PRESTIGES`), each
@@ -72,12 +72,12 @@ const NO_RULES: typeof RULES = { spellsGrowTo: undefined, gearGrows: undefined, 
 export const FIGHTERS: readonly string[] = ['knight', 'paladin', 'ranger', 'thief', 'barbarian', 'monk'];
 
 /**
- * The levels the what-ifs put promotions I and II at: 11, the first past today's cap, where Saltreach
+ * The levels the what-ifs put promotions I and II at: 11, the first past Act I's 10, where Saltreach
  * brings the first, and 29, on Hearth Isle (EXPANSION.md §7).
  */
 export const PROMOTIONS: readonly number[] = [11, 29];
 
-/** The levels the prestiges come at (DESIGN.md §5): the first past today's cap, then eight apart. */
+/** The levels the prestiges come at (DESIGN.md §5): the first past Act I's 10, then eight apart. */
 export const PRESTIGES: readonly number[] = [11, 19, 27];
 /** How many prestiges a member of `level` has taken: one at each of PRESTIGES reached. */
 export const prestigesAt = (level: number): number => PRESTIGES.filter((l) => level >= l).length;
@@ -259,7 +259,7 @@ export function companyAt(level: number, seed: number): Party {
   if (!p) {
     const rng = makeRng(seed);
     p = defaultParty(rng);
-    for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng, CAP); outfit(c, level); }
+    for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); outfit(c, level); }
     if (RULES.prestiges) prestige(p);
     for (const c of p.members) { c.hp = c.maxHp; c.sp = c.maxSp; }
     companies.set(key, p);
@@ -604,7 +604,7 @@ async function main(): Promise<void> {
   if (cap !== undefined) {
     RULES.spellsGrowTo = Number(cap);
     if (!(RULES.spellsGrowTo >= 1)) throw new Error('--spell-cap takes the level damage spells stop growing at');
-    console.log(`What if: damage spells stop growing at level ${RULES.spellsGrowTo}.`);
+    console.log(`What if: damage spells stop growing at level ${RULES.spellsGrowTo}, not ${SPELLS_GROW_TO}.`);
   }
   if (args.includes('--gear-grows')) {
     RULES.gearGrows = true;
@@ -739,7 +739,7 @@ async function main(): Promise<void> {
   block('rounds a fight, over the day', (c) => c.day!.rounds.toFixed(1), true);
   block('one fight from fresh: cost %', (c) => pct(c.fresh.cost));
   block('one fight from fresh: someone down at the end %', (c) => pct(c.fresh.down));
-  if (MAX_LEVEL < Math.max(...levels)) console.log(`\nPast level ${MAX_LEVEL} the company runs on today's rules extended${RULES.prestiges ? ', with the prestiges' : ''}: no new spells${RULES.prestiges ? '' : ', prestiges'} or gear.`);
+  if (Math.max(...levels) > SPELLS_GROW_TO) console.log(`\nPast level ${SPELLS_GROW_TO} the company runs on play's rules${RULES.prestiges ? ', with the prestiges' : ''}: its spells stop growing, and it gains no new spells${RULES.prestiges ? '' : ', prestiges'} or gear.`);
 }
 
 if (isMainThread && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch((e: unknown) => { console.error(e); process.exit(1); });
