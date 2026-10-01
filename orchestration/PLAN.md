@@ -1590,3 +1590,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   Landing check on its head (main in): ALL OK (22 owed: #87's gone), SMOKE OK, "Nothing new."; the
   Warden 55% at 2; CI green. Merged as 477a721; main's tree is the tested tree (fce4512). #87
   closes. The #77 session's work is done.
+- 00:26: the delegate on D2's monsters: the Barrow Wolf's drawing OK, its size 0.75 to 0.8 (apart
+  from the calf-sized Black Dog and the Dire Wolf, as "big as a pony" wants); #313's three choices
+  and #306's six taken; the Berth's mouth OK as drawn. Rounds sent to the #68 session (#313: the
+  size and main; #306 after it: the pack to two Barrow Wolves, the nit, main).
+- 00:26: `reviews/308.md` (#217, I5): ready after fixes. The way in: carve I4's 24,29–31 now
+  (sound; I4 still passes; waiting for J5 leaves I5 reached only by swimming), then drop
+  `CUT_OFF`'s I5 entry once #304 joins I3. On main Thornmark's owed curve row now holds (13,713 of
+  13,667): drop it. Stale figures in thornmark.md. Its look and four choices to a delegate.
+  Reviewer on #310 (the Berth).
