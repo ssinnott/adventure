@@ -1578,3 +1578,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 00:17: the delegate on #307 (J4): the look OK, all five choices taken. Round sent to the
   Thornmark session, after #304's: J4 lands second (drops its `CUT_OFF` and the owed-xp line),
   §8's figure, the nits.
+- 00:22: `reviews/313.md` (#313 and #306's retune): #313 ready (the Barrow Wolf and the Black Dog
+  exactly on the elite line at 5; nit: "big as a pony" at the Dire Wolf's size 0.75), landing
+  first; #306 ready after one fix: its pack (two Barrow Wolves and a Chalk Wolf) is 1.25 standard
+  encounters: two Barrow Wolves, as D3's keepers (7.80, inside the limit); nit on "the chalk wolf's
+  frame". With both, #69 closes. The Barrow Wolf's look, both PRs' choices and the Berth's mouth to
+  a delegate. Reviewer on #309 (D4).
