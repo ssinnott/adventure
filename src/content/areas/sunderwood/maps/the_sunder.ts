@@ -1,5 +1,5 @@
-// The Sunder, level one: the ledges. Through K3's door a stair cut in the rock comes out lower on the
-// gorge's east face, onto ledges a square wide that go down it in the rain; black glass grown out of
+// The Sunder, level one: the ledges. Through the way cut into the rock on K3's first landing, a stair
+// comes out lower on the gorge's east face, onto ledges a square wide that go down it in the rain; black glass grown out of
 // the face at the first landing; glass threads strung across the drop from face to face, one thick
 // enough to walk and the spiders on it; the west face's ledges, north to the gleaners' cleft and south
 // to the last landing, where a stair goes down to the floor. Band 14-15; docs/areas/sunderwood.md
@@ -66,7 +66,7 @@ export const THE_SUNDER: MapDef = {
     { kind: 'event', x: 10, y: 7, id: 'su1_cleft', once: true, text: 'A cleft off the ledge, a hide pegged over its mouth, the pegs new. Under it, dry, a chest, and a sack of shards lit through the cloth.' },
     { kind: 'chest', x: 8, y: 6, id: 'su1_cache', gold: 250, items: ['plate+2'] },
     { kind: 'event', x: 12, y: 24, id: 'su1_below', once: true, text: 'Still no bottom. But a sound now, under the rain: water falling a long way, and landing, small.' },
-    { kind: 'event', x: 10, y: 28, id: 'su1_landing', once: true, text: 'The last landing. The ledges end here and the rain does not. A stair goes down into the rock, cut square, the chip marks wet.' },
+    { kind: 'event', x: 10, y: 28, id: 'su1_landing', once: true, text: 'The last landing, and the ledges end. A stair goes down into the rock, cut square, chip marks on the treads, and the rain stays above it.' },
   ],
   encounters: [
     { id: 'su1_spiders', x: 16, y: 20, monsters: ['glass_spider', 'glass_spider', 'glass_spider', 'glass_spider'], aware: 3, respawn: 2880, roams: false },

@@ -69,7 +69,7 @@ export const THE_SUNDER2: MapDef = {
     { kind: 'event', x: 26, y: 25, id: 'su2_east', once: true, text: 'The strip along the wall runs east into the dark. Rock has come down against the wall in a heap, and the wall goes on under it, flat, the same.' },
     // The secret: the surveyor's chalk runs out at the fall; searched from the cleft above it, a gap in
     // the rock opens on a hollow beside the wall, and on the wall's face at its back, the seam.
-    { kind: 'event', x: 4, y: 25, id: 'su2_fall', once: true, text: 'West the strip ends under a fall of rock, heaped against the wall higher than the light. Under the heap the wall goes on, flat, the same under the hand.' },
+    { kind: 'event', x: 4, y: 25, id: 'su2_fall', once: true, text: 'West the strip ends against a fall of rock, heaped higher than the light. Close to, the stones are loose underfoot, and air moves out of a cleft at its north edge.' },
     { kind: 'event', x: 3, y: 25, id: 'su2_chalk', once: true, text: 'Chalk on the wall, a mark every ten paces, the surveyor\'s. Past the last one there are none.' },
     { kind: 'event', x: 1, y: 25, id: 'su2_seam', once: true, text: 'A pocket of air behind the fall. Here the face is not flat: a hairline, up past reach, across, back down. Beside it, shoulder high, rows of scratched marks nobody can read.' },
     { kind: 'chest', x: 1, y: 25, id: 'su2_seam_chest', gold: 200, items: ['potion_sp_great'] },

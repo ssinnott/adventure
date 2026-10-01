@@ -1,7 +1,7 @@
 // Sunderwood, box K3: the Sunder's mouth. Core, band 15-16: the gorge on south from Sunderfall, dead
 // wood along both lips and the glass grown thick to the east; the ledges cut into the east face, a
-// square wide, the way down, with the door on the first landing; the gleaners quarrying the Rift on
-// them with their hounds; the river's old bed on the east lip, from before the Sunder took the river;
+// square wide, the way down, with the way cut into the rock on the first landing; the gleaners
+// quarrying the Rift on them with their hounds; the river's old bed on the east lip, from before the Sunder took the river;
 // and a black-glass Rift in the crystal at the box's south end, open whatever the company does.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
@@ -66,7 +66,8 @@ export const EAVES_K3: MapDef = {
     { x: 10, y: 8, to: 'the_sunder', tx: 28, ty: 2, tf: SOUTH, label: 'In out of the rain, into the rock.' },
   ],
   features: [
-    // The ledges' head on the east lip: the step. The door at 10,8 in the face is the Sunder's way in (#199).
+    // The ledges' head on the east lip: the step. The way cut into the rock at 10,8 is the Sunder's
+    // way in (#199).
     { kind: 'event', x: 12, y: 1, id: 'k3_ledges', once: true, text: 'Ledges cut into the gorge\'s face, a square wide, switchbacking down into rain. On the first landing, a way cut into the rock, chip marks all round it, and inside a stair going down.' },
     // The east lip: the camp back from it, and the glass to the south.
     { kind: 'camp', x: 18, y: 3, name: 'The last pines', text: 'A ring of stones where the pines give out and the dead wood begins, the last sound trunks at your back. The rain that falls here lands.' },
@@ -89,8 +90,8 @@ export const EAVES_K3: MapDef = {
   ],
   secrets: [{ x: 16, y: 15, hint: 'k3_stack' }],
   encounters: [
-    // On the first landing at the door, the gleaners and their hounds, chipping at it, on a ledge a
-    // square wide, between the company and their camp below; and in the dead wood east of the crystal
+    // On the first landing by the way cut into the rock, the gleaners and their hounds, chipping at
+    // it, on a ledge a square wide, between the company and their camp below; and in the dead wood east of the crystal
     // at the far south end, the glass bears.
     { id: 'k3_door', x: 9, y: 8, monsters: ['ashen_gleaner', 'ashen_gleaner', 'sunder_hound', 'sunder_hound'], aware: 3, respawn: 2880, roams: false },
     { id: 'k3_bears', x: 23, y: 29, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false },
