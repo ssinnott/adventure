@@ -86,6 +86,14 @@
         "i4_shrine",
         "i4_statue",
         "i4_treaty",
+        "j4_cairn",
+        "j4_cleft",
+        "j4_cleft_box",
+        "j4_eaves",
+        "j4_glade",
+        "j4_lookout",
+        "j4_prints",
+        "j4_shrine",
         "lake",
         "lodestone",
         "scarth_watch",
@@ -156,6 +164,11 @@
         "i4_walkers_east",
         "i4_walkers_west",
         "i4_wolves",
+        "j4_heartwood",
+        "j4_owls",
+        "j4_rootwalkers",
+        "j4_spiders",
+        "j4_wolves",
         "marsh_spiders",
         "road_bandits",
         "road_rats",
@@ -185,7 +198,8 @@
         "169,78",
         "180,33",
         "260,86",
-        "285,116"
+        "285,116",
+        "308,112"
       ]
     },
     "greywater1": {
@@ -381,6 +395,10 @@
       "at": "264,94",
       "size": "32x32"
     },
+    "deepthorn_j4": {
+      "at": "296,94",
+      "size": "32x32"
+    },
     "downs_d3": {
       "at": "104,62",
       "size": "32x32"
@@ -445,6 +463,7 @@
     "q_grove",
     "q_grove_done",
     "q_grove_rest",
+    "q_hermit",
     "q_hob_key",
     "q_keeper",
     "q_lanterns_light",

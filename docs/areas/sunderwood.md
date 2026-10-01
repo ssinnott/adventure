@@ -416,8 +416,9 @@ Decided by the owner on 28 September 2026 (#151), and followed here:
 Fitted to Thornmark's plan (docs/areas/thornmark.md §9, 7, filed 29 September 2026 under #208): I3,
 I4 and J4 are the Deepthorn's, built whole, their Eaves' forest drawn closed and no way opened
 between them and the Eaves' boxes; the east road, opened by #195, is the only way from Thornmark
-into Sunderwood. #163 gives dead wood its map character, so J4's 30 squares of it are painted over
-as forest until then, and the Deepthorn's scaffold learns no paint-over.
+into Sunderwood. #163 gives dead wood its map character, and J4 (#216) paints its 30 squares of it
+over as forest all the same, by hand, so that dead wood is first walked in Sunderwood; the
+Deepthorn's scaffold learns no paint-over.
 
 Proposed, for the owner, each in the issue that would build it:
 

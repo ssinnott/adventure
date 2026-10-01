@@ -27,7 +27,7 @@ The atlas (its rows in `src/content/areas/thornmark/atlas.ts`, merged into `ATLA
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Thornmark | 5–10, its map's | 2,028 | 901: the Thornmark map, laid at 232,30 |
-| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I4, Henlys, laid at 264,94 (#49) |
+| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I4, Henlys, laid at 264,94 (#49); J4, the Hoarhills' end, at 296,94 (#216) |
 | The area | 5–10 | 5,274 | a sixth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -145,6 +145,15 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   elder's statue, whose riddle Thornhold's gate answers for Brigandine +3. Nine groups, the old wood's
   asleep once the tear is closed. It is reached through I3 (#215): H4 between it and H3 is cut
   (§11), and the outdoors owes its squares to #215 until then (`tools/tests/outdoors.ts`).
+- **The Hoarhills' end** (J4, `deepthorn_j4`, country, band 8–10; #216): the long glade down the
+  box's west side, in from Henlys's glade at the seam and on south for the head; the last crag over
+  Sunder Bay, a lookout, with the carriers' cleft in it behind a door in the rock (a War Hammer +2)
+  and the boot prints on the glade road its hint; a hermit on the shore under it; the Eaves' forest
+  north-east of the ridge, closed, its 30 squares of dead wood painted over as forest; and the shore
+  path east to the box's edge, where K4 is void. Five groups, none above eight: thorn spiders where
+  the glade comes in, dire wolves, great owls by night, rootwalkers under the crag and the heartwood
+  alone at the glade's south end, the old wood asleep once the tear is closed. The gate holds at 8,
+  at 7.3 fights to a rest.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
@@ -405,6 +414,13 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** Sunderwood, across the water.
 - **Finds.** The carriers' cleft holds a War Hammer +2.
 - **Pay.** About 470 xp a member.
+- **As built** (#216, 30 September): the brief's places, no group above eight, the old wood on
+  #298's numbers. The rootwalkers under the crag are four, not two, one standard encounter of them;
+  the thorn spiders stand where the glade comes in, not on the crag, the gentlest group at the way
+  in. The glade road is a track of dirt down the glade, as Henlys's is. The heartwood is one, alone,
+  as the brief has it. The shrine, the camp and the cairn are the builder's words. As measured it
+  pays about 700 xp a member and 200 gold. What the owner finds by hand goes here when the box has
+  been played.
 
 ### 4.6 I5, the wood to the head (#217): country, band 8–10
 
@@ -602,9 +618,9 @@ I5.
   floor, in Thornmark's pool, with the zone's at 3 and the dungeons' at 3, the area's floor less
   two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
   of its own, with its road walked at 8 and its warning at its way in from the Grove
-  (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it. With H3 built, Thornmark
-  two under its maps' floors wins 33.6% of its 43 groups' fights, off the aim of 25% and inside the
-  limit: it comes of #209's pooling, which the size of a group does not move.
+  (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it. With H3, I4 and J4 built,
+  Thornmark two under its maps' floors wins 49.9% of its 57 groups' fights, off the aim of 25% and
+  inside the limit: it comes of #209's pooling, which the size of a group does not move.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their
