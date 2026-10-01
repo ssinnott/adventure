@@ -59,7 +59,7 @@ export interface RiftSpec {
   /** The way out: the square beside the tear on the map it was entered from. */
   out: { to: string; tx: number; ty: number; tf?: Facing };
   table: RiftTable;
-  /** The chest at the heart, the Stone's shard among its items. */
+  /** The chest at the heart. It holds no shard: the Stone's is grown into the tear, as its words say. */
   hoard: { gold: number; items: readonly string[] };
   /** The Stone restored, or the warden fallen: the groups stop coming back and the tear goes quiet. */
   until?: When;

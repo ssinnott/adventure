@@ -40,7 +40,7 @@ export const MILL: MapDef = {
     { kind: 'sign', x: 12, y: 8, text: 'Scratched into the wall in fresh marks: THE HEARTH IS A CAGE.' },
     { kind: 'chest', x: 11, y: 10, id: 'mill_c3', gold: 60, items: ['shortbow', 'potion_heal', 'rations', 'rations'] },
     { kind: 'event', x: 6, y: 11, id: 'mill_rift', once: true, text: 'The air here is wrong. The corridor ahead is lit from below by a red seam in the floor, and the stone around it has gone smooth as glass.' },
-    { kind: 'event', x: 3, y: 10, id: 'mill_core', once: true, text: 'The Rift. A tear in the floor the size of a door, breathing heat. Beside it, a fist-sized shard of worked stone that hums against your teeth. A Wardstone shard.' },
+    { kind: 'event', x: 3, y: 10, id: 'mill_core', once: true, text: 'The Rift. A tear in the floor the size of a door, breathing heat. Set in its lip, a fist-sized shard of worked stone that hums against your teeth. A Wardstone shard.' },
     { kind: 'chest', x: 4, y: 10, id: 'mill_shard', gold: 0, items: ['potion_heal', 'potion_heal'] },
   ],
   secrets: [{ x: 4, y: 7, hint: 'mill_draught' }],
