@@ -89,6 +89,31 @@ export const QUESTS: readonly QuestDef[] = [
     ],
   },
   {
+    // #56's fifteenth (#215): the lodge's hunters, shut in its cellar, who took the cutters' pay to
+    // look away. Sylvane is told, and shuts her gate to them; or the lodge's secret is kept, and
+    // Godric shows the hunters' path.
+    id: 'hunters',
+    title: 'The Hunters\' Bargain',
+    start: { flag: 'q_hunters' },
+    done: [{ flag: 'q_hunters_shut' }, { flag: 'q_hunters_kept' }],
+    entries: [
+      { id: 'cellar', when: { seen: 'deepthorn_i3:i3_cellar' },
+        text: 'Deepthorn Lodge\'s yard is grown shut with brambles, and someone is behind its barred cellar door.' },
+      { id: 'godric', when: { flag: 'q_hunters' },
+        text: 'Godric, eldest of the lodge\'s hunters, was shut in its cellar a month. Men in grey with chisels paid the hunters to look away as they crossed the hills.' },
+      { id: 'told', when: { flag: 'q_hunters_told' },
+        text: 'We said Sylvane would hear it.' },
+      { id: 'shut', when: { flag: 'q_hunters_shut' },
+        text: 'Sylvane shut Thornhold\'s gate to the lodge until the Stone is whole. She does not thank us for telling her.' },
+      { id: 'kept', when: { flag: 'q_hunters_kept' },
+        text: 'We kept the lodge\'s secret. Godric showed us the hunters\' mark, three notches on an oak, and a path south the brambles do not cross.' },
+    ],
+    goals: [
+      { when: { flag: 'q_hunters_told' }, text: 'Tell Elder Sylvane in Thornhold what the lodge\'s hunters did.' },
+      { when: { flag: 'q_hunters' }, text: 'Answer Godric at the lodge: hold its secret, or tell Sylvane.' },
+    ],
+  },
+  {
     // #56's sixteenth (#49, #218): Senara asks for a rubbing of the standing stone on Penspern's
     // crown, takes it and asks whether to burn it. Kept, the dwarves read it, later (#56's 34).
     id: 'mark',

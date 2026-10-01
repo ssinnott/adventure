@@ -25,7 +25,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // The Grove Stone's cutters and what their cut let through.
   { id: 'ashen_hand', name: 'Hand of Ash', plural: 'Hands of Ash', sprite: 'ashen_hand', kind: 'person', level: 10, hp: 440, ac: 17, attack: 12, dice: 4, sides: 8, bonus: 13, speed: 13, xp: 2000, gold: [100, 200], tint: '#2a1a2a', size: 1.1, drops: [{ item: 'ashen_chisel', chance: 1 }, { item: 'runed_robe+1', chance: 1 }] },
   { id: 'cut_warden', name: 'Warden of the Cut', plural: 'Wardens of the Cut', sprite: 'cut_warden', kind: 'rift', level: 10, hp: 450, ac: 18, attack: 12, dice: 4, sides: 8, bonus: 15, speed: 12, xp: 3000, gold: [50, 100], tint: '#8a8aa0', size: 1.15, immune: ['asleep'], drops: [{ item: 'meridian_journal', chance: 1 }] },
-  // ---- the Deepthorn ----
+  // ---- the Deepthorn's old wood ----
   { id: 'great_owl', name: 'Great Owl', plural: 'Great Owls', sprite: 'owl', kind: 'beast', look: 'Wings as wide as a cart, and not a sound.', level: 8, hp: 57, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 15, xp: 176, gold: [0, 0], ranged: true, tint: '#8a6a40', size: 0.8 },
   { id: 'bramble', name: 'Bramble', plural: 'Brambles', sprite: 'bramble', kind: 'beast', look: 'A thicket that closes behind you.', level: 8, hp: 57, ac: 15, attack: 6, dice: 2, sides: 6, bonus: 2, speed: 6, xp: 176, gold: [0, 0], tint: '#4c4a30', size: 0.9, inflict: { cond: 'paralysed', chance: 0.3 } },
   { id: 'rootwalker', name: 'Rootwalker', plural: 'Rootwalkers', sprite: 'rootwalker', kind: 'beast', look: 'A stump walking on its roots, its bark like plate.', level: 9, hp: 83, ac: 18, attack: 6, dice: 2, sides: 6, bonus: 3, speed: 8, xp: 265, gold: [0, 0], tint: '#6a5842', size: 1.0 },

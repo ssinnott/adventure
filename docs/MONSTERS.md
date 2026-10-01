@@ -502,7 +502,7 @@ Crowness Light.
 | Wrecker | bandit | soldier, 4 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
 | Lampman | bandit | archer, 4 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
 | Barrow Guard | skeleton | armoured, 4 | the Berth, the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
-| Black Dog | wolf | skirmisher, 4 | the hills round the barrow, by night | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
+| Black Dog | wolf | elite, 5 | the hills round the barrow, by night, one or two | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
 | Barrow Captain | skeleton | boss, 5 | at the Queen's empty bier | *Her captain, at his post beside an empty bier.* |
 | Chalk Wolf | wolf | skirmisher, 4 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
 | Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
@@ -513,6 +513,7 @@ Crowness Light.
 | Billman | bandit | soldier, 4 | the Salt Road west of Gullwick | *A bill on a pole, and a man who knows which end to hold.* |
 | Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
 | Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
+| Barrow Wolf | wolf | elite, 5 | the chalk hills (D2): one leading each of the den's packs, and two in the pack that keeps it | *Grey to the muzzle and big as a pony, and the pack waits on it.* The den's keepers: the chalk wolf's pale coat on a heavy frame, scarred |
 | Cutthroat | bandit | elite, 5 | the bandit camp on the west downs, two of them beside it | *A captain's sash on a thief's coat, and a knife for every pocket.* The camp's keepers |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
@@ -1022,7 +1023,7 @@ the pilot.
 | rat | the Foreland (built) | the bilge rat (Wrackholm), the deep rat (the Underdeep) |
 | slime | the cellar (built) | none |
 | boar | the Foreland (built) | none |
-| wolf | the Foreland (built) | the black dog (the Downs), the sunder hound (Sunderwood), the moor hound (Cairnmoor) |
+| wolf | the Foreland (built) | the black dog and the barrow wolf (the Downs), the sunder hound (Sunderwood), the moor hound (Cairnmoor) |
 | spider | the Foreland (built) | the salt crab (Saltreach), the glass spider (Sunderwood), the fire beetle (the Kilns), the cinder beetle (Ashfall), the glass scorpion (the Wold) |
 | bandit | the Foreland (built) | the wreckers and their lampman (the Downs), the bargemen (Saltreach), the Wrack smugglers (Wrackholm), the anvil guard (the Kilns) |
 | cultist | the cellar (built) | the overseer (Wrackholm), the gleaner (Sunderwood), the mason (the Whitespine), the champion and the preacher (Hearth Isle), the Grey Hand (the Core) |

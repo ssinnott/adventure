@@ -27,7 +27,7 @@ The atlas (its rows in `src/content/areas/thornmark/atlas.ts`, merged into `ATLA
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Thornmark | 5–10, its map's | 2,028 | 901: the Thornmark map, laid at 232,30 |
-| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I4, Henlys, laid at 264,94 (#49); J4, the Hoarhills' end, at 296,94 (#216); J5, Penspern, at 296,126 (#218) |
+| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I3, Deepthorn Lodge, at 264,62 (#215); I4, Henlys, at 264,94 (#49); J4, the Hoarhills' end, at 296,94 (#216); J5, Penspern, at 296,126 (#218) |
 | The area | 5–10 | 5,274 | a sixth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -136,6 +136,16 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   Split Oak. Seven groups: dire wolves, the nest's two brood and its keepers, rift hounds until the
   tear is closed, brambles short of the ford and rootwalkers east of it, where the road runs on out
   of the east edge for I3 and Henlys. The gate holds at 8, at 7.9 fights to a rest.
+- **Deepthorn Lodge** (I3, `deepthorn_i3`, country, band 8–10; #215): the upper Dowrdu down the
+  box's west side, the Hoarhills across it with the Eaves' forest closed over them, and the lodge on
+  its rise at 272,76, its yard shut by four brambles (a guardian) with its hunters in the cellar
+  (The Hunters' Bargain). A game trail runs north past the hunters' hide and a spring to a cairn on
+  the saddle and the cutters' boot prints; a dire wolves' den lies under a fallen oak off the road
+  (its hoard a Runed Robe +2); behind the blazed oak the hunters' path runs south to the den's
+  track. Eight groups, none above eight: thorn spiders in the brakes, the den's pack and two brood,
+  the ogre alone on the road, the brambles, four great owls over the lodge by night and two
+  heartwoods on the game trail. The road comes in from H3 and runs out of the south edge at 12,31
+  for Henlys. The gate holds at 8, at 7.3 fights to a rest.
 - **Henlys** (I4, `deepthorn_i4`, core, band 8–10; #49): the oldest hold, its halls grown into oaks
   round a yard, its gate shut with brambles; inside, the gate-yard's hearth (a camp), the spring and
   the hall, where Senara keeps the treaty and Mawgan sits under the hall's oak. The Deepthorn's
@@ -144,7 +154,7 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   Thornmark Bow +2; east the long glade, its sign at the fork, its shrine and at its head the first
   elder's statue, whose riddle Thornhold's gate answers for Brigandine +3. Nine groups, the old wood's
   asleep once the tear is closed. It is reached through I3 (#215): H4 between it and H3 is cut
-  (§11), and the outdoors owes its squares to #215 until then (`tools/tests/outdoors.ts`).
+  (§11).
 - **The Hoarhills' end** (J4, `deepthorn_j4`, country, band 8–10; #216): the long glade down the
   box's west side, in from Henlys's glade at the seam and on south for the head; the last crag over
   Sunder Bay, a lookout, with the carriers' cleft in it behind a door in the rock (a War Hammer +2)
@@ -154,6 +164,15 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   the glade comes in, dire wolves, great owls by night, rootwalkers under the crag and the heartwood
   alone at the glade's south end, the old wood asleep once the tear is closed. The gate holds at 8,
   at 7.3 fights to a rest.
+- **Penspern** (J5, `deepthorn_j5`, core, band 8–10; #218): the head's neck, with J4's glade road
+  down it to the crown; on the crown the standing stone, where The Older Mark's rubbing is taken,
+  and the fire-stack, where Kea and the hold's youths light the Wyke's boats home by night (The
+  Light on Penspern); the Eldest at the tip, the Deepthorn's boss, with two heartwoods; the Hearth
+  across the water; and under the head, on its west side, the beach where the Hand's boat lands by
+  night, its keel marks the hint to the sea cave behind the rock (a Great Sword +2). Five groups,
+  none above eight: great owls by night, rootwalkers and a heartwood over two brambles on the neck,
+  the landing party by night and the Eldest. The gate holds at 8, at 6.2 fights to a rest, and the
+  Eldest is won 55% at 8 and every time at 10.
 - **Weather.** Colder than the Foreland, with hard winters whose snow lies deep for weeks over the
   pass, and mist under the trees. Fronts reach it five hours after they cross the Foreland.
 
@@ -344,6 +363,13 @@ settled in its issue, and what the pilot teaches changes them.
 - **New here.** A lodge in the deep, and a rest there.
 - **Finds.** The den's hoard, what the pack dragged in: a dead Lantern's Runed Robe +2.
 - **Pay.** About 470 xp a member.
+- **As built** (#215, 30 September): the brief's places, no group above eight, with the bramble, the
+  rootwalker, the great owl and the heartwood as #298 retunes them. The den's brood are eight, not
+  eight to ten; the owl is four by night; the heartwood two. The yard's brambles are a guardian, so
+  Godric comes up once they are cut down. The hunters' path runs south from the yard to the den's
+  track, since a way to I4 of its own would cross the road. As measured it pays about 1,100 xp a
+  member and 210 gold, and brings Thornmark's gold to the curve's 8,400, so its owed gold is
+  dropped. What the owner finds by hand goes here when the box has been played.
 
 ### 4.4 I4, Henlys (#49): core, band 8–10
 
@@ -523,7 +549,7 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 12 | The Elder's Four | 6 | the Grove Roots; Thornhold | a person found below; a choice; an event that comes with a flag | the built maps (#219), built |
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214), built |
-| 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215) |
+| 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215), built |
 | 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218), built |
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
@@ -621,8 +647,8 @@ I5.
   keepers pay once, and its brood as a group that respawns does; the figures count the brood once.
   Act II's cap and curve (#159) are to pay a kill by the monster's level against the member's, which
   re-prices every figure here if they land first; each box is measured when it is built. H3, built,
-  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101; with I4, J4 and J5
-  (#218, about 1,230) a clear is 15,129.
+  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101; with I3, I4, J4 and
+  J5 (#218, about 1,230) a clear is 16,251.
 - **Gold.** A clear pays 6,518 of the 8,400 that training six members from 5 to 10 costs (§3), the
   Lanterns' quests in it, and 7,600 with #219's side quests. The Deepthorn's share of the rest is
   about 1,200, the 1,900 it was less the two hand-ins' sure 700 (#219): H3 160, I3 170, I4 275, J4
@@ -636,9 +662,9 @@ I5.
   two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
   of its own, with its road walked at 8 and its warning at its way in from the Grove
   (`ROADS.deepthorn`, from H3), and its boss the Eldest (`BOSSES.deepthorn`), won 55% at 8 and 100%
-  at 10. Thornmark's own gate holds, as §3 has it. With H3, I4, J4 and J5 built, Thornmark two under
-  its maps' floors wins 52.3% of its 62 groups' fights, off the aim of 25% and inside the limit: it
-  comes of #209's pooling, which the size of a group does not move.
+  at 10. Thornmark's own gate holds, as §3 has it. With H3, I3, I4, J4 and J5 built, Thornmark two
+  under its maps' floors wins 57.7% of its 70 groups' fights, off the aim of 25% and inside the
+  limit: it comes of #209's pooling, which the size of a group does not move.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their
