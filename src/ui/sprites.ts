@@ -274,7 +274,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   ogre: ogre.draw,
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw, eldest: oldwood.draw,
   wraith: wraith.draw,
-  crow: birds.draw, owl: birds.draw, old_rook: birds.draw, grey_heron: birds.draw,
+  crow: birds.draw, owl: birds.draw, old_rook: birds.draw, grey_heron: birds.draw, wrack_gull: birds.draw,
   fen_eel: longbodies.draw,
   fen_toad: toads.draw,
   devilfish: devilfish.draw,
