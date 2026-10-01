@@ -1564,3 +1564,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   survey's orders, Idony). Nits: the crossroads sign at three lines, stale figures, two Oxford
   commas. The Warden 55% at 2, the walk worth level 2, Crowness at 3, every order true. Ailith,
   the other choices and the sheet to a delegate. Reviewer on #313 and #306's retune together.
+- 00:12: `reviews/307.md` (#216, J4): ready after fixes. The dead wood painted over is right: #216
+  asks it twice, and the other ways fail density or open the Eaves. Should-fix: Thornmark's
+  two-under figure (49.9% of 57 with J4; 56% of 65 with #304). Nits: "as built" against the brief
+  (four rootwalkers, the spiders at the way in), the hermit's condition as `{ ...TEAR_CLOSED, flag:
+  'q_hermit' }`, a wrong Found in passing. J4 lands second of it and #304: drops its `CUT_OFF` and
+  the owed-xp sentence. Its look and five choices to a delegate. Reviewer on #308 (I5), asked first
+  about its way in through I4's forest.
