@@ -21,6 +21,7 @@ import * as ogre from './monsters/ogre.ts';
 import * as wraith from './monsters/wraith.ts';
 import * as birds from './monsters/birds.ts';
 import * as oldwood from './monsters/oldwood.ts';
+import * as longbodies from './monsters/longbodies.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -262,15 +263,17 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   bandit: bandit.draw, archer: bandit.draw, brigand: bandit.draw, brigand_archer: bandit.draw,
   smuggler: bandit.draw, smuggler_bow: bandit.draw, smuggler_captain: bandit.draw,
   wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, poacher: bandit.draw, billman: bandit.draw, slinger: bandit.draw, cutthroat: bandit.draw,
+  bargeman: bandit.draw, barge_master: bandit.draw,
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
   acolyte: cultist.draw, deacon: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
-  barrow_guard: skeleton.draw, barrow_captain: skeleton.draw,
+  barrow_guard: skeleton.draw, barrow_captain: skeleton.draw, drowned_chanter: skeleton.draw, choirmaster: skeleton.draw,
   riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw, brineling: riftling.draw,
   ogre: ogre.draw,
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw, eldest: oldwood.draw,
   wraith: wraith.draw,
   crow: birds.draw, owl: birds.draw, old_rook: birds.draw, grey_heron: birds.draw,
+  fen_eel: longbodies.draw,
 };
 
 /**
