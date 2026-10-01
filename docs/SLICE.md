@@ -46,6 +46,11 @@ DESIGN.md first for the why.
   conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
   machine: the dead and machines never sleep, and a def may shrug off more of its own (`immune`).
+  A group may stand in two ranks (`back`): a blade reaches its back once the fight's front is down,
+  bows, slings and spells reach anyone, and a back rank with no bow or spell waits for the front to
+  fall. Morale: once a fight's leaders (`leader`) are down its people break and run, and a group's
+  beasts bolt at three in four down; the dead, the Rift, the machine and the Hand (`steady`) never
+  do, and the fled pay nothing (#160).
   Gear may carry a plus: a point is +1 to hit and damage on a weapon, +1 armour class on armour or
   a shield (`P`, `src/content/items.ts`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
@@ -259,7 +264,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
   three and four taper down, five is the old flat size and six goes under it. The row's spacing is
-  fixed, so every extra monster is width its neighbours do not have.
+  fixed, so every extra monster is width its neighbours do not have. A back rank stands in a row of
+  its own behind the front, a fifth smaller and between them (`BACK_RISE`, `BACK_SCALE`).
 - `ui/viewport.ts` textures every surface procedurally: stone courses (front faces and receding
   side faces), timber-framed houses with hipped roofs and windows lit at night, flagstones with
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
