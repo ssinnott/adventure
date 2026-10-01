@@ -15,7 +15,9 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * group yet, a room no business opens into yet. Each is reported as that issue's while it waits,
  * and fails once it is placed, so its entry is dropped here.
  */
-const UNPLACED: Record<string, string> = {};
+const UNPLACED: Record<string, string> = {
+  drowned_chanter: '#175', choirmaster: '#175',
+};
 
 /**
  * What is wrong with a town's doorways: the business must come first on its square (the game

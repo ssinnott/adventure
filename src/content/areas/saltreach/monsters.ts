@@ -1,0 +1,15 @@
+// Saltreach's monsters, band 10-12: the Long Water, the Delta's fen and the Drowned Temples, the
+// salt pans and Saltmouth. `sprite` names the drawing (src/ui/sprites.ts); the numbers are the
+// combat model's. A group on a map is a list of these ids, and any area's maps may place them.
+// Drawn ahead of the area's first map, so src/content/index.ts lists them in AHEAD until then.
+import type { MonsterDef } from '../../../game/monsters.ts';
+
+/** The drawings Saltreach's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
+export const SPRITES = [
+  'drowned_chanter', 'choirmaster',
+] as const;
+
+export const MONSTERS: readonly MonsterDef[] = [
+  { id: 'drowned_chanter', name: 'Drowned Chanter', plural: 'Drowned Chanters', sprite: 'drowned_chanter', kind: 'dead', look: 'A priest of the drowned god, still chanting.', level: 11, hp: 118, ac: 17, attack: 9, dice: 2, sides: 6, bonus: 3, speed: 12, xp: 325, gold: [0, 15], ranged: true, tint: '#5e7a74', size: 0.95 },
+  { id: 'choirmaster', name: 'The Choirmaster', plural: 'Choirmasters', sprite: 'choirmaster', kind: 'dead', look: 'The choir\'s master, beating time on a bell.', level: 12, hp: 540, ac: 19, attack: 10, dice: 6, sides: 8, bonus: 6, speed: 13, xp: 4260, gold: [60, 120], tint: '#4a6a6e', size: 1.1 },
+];
