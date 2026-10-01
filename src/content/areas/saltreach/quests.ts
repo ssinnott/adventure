@@ -1,7 +1,7 @@
 // Saltreach's side quests, in the journal's words: #56's four, each built with its box (§6 of
 // docs/areas/saltreach.md). So far Passage Paid (C4, #171): the barge on a shoal by the ford, its
 // hold full of people. Cut loose, they go ashore and a crew comes up the bank after them; pushed off,
-// the master's word pays the smugglers' boat's fare from Saltmouth (#177 reads `q_passage_owed`).
+// the master's word pays the boat's fare out of Saltmouth (Kitto's passage reads `q_passage_owed`).
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every
 // key.
 import type { QuestDef } from '../../../game/quests.ts';

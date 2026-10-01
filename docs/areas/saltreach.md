@@ -165,7 +165,7 @@ the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those s
 | B5 | Stienwierde, the plinth | the Delta, the Upper Water | core | 11–12 | 948 (marsh) | the plinth at 48,140, empty; fen toads; two brine Rifts | the plinth stands empty | #173 |
 | B6 | The Drowned Temples' approach | the Delta, the Saltings | core | 11–12 | 975 (marsh) | the temples' way in at 56,170; the priestess who says the number | the temples gone dark | #174 |
 | | The Drowned Temples | | dungeon, two levels of 16×16 | 11–12 | | the choir, the Choirmaster and the bell | | #175 |
-| C6 | Saltmouth's box | the Saltings, the Delta | core | 11–12 | 834 (marsh 714, salt 56, sand 51), 175 shallow | the port's approach at 102,178; the barge quay; tidal ground along the shore | the free port | #176 |
+| C6 | Saltmouth's box | the Saltings, the Delta | core | 11–12 | 834 (marsh 714, salt 56, sand 51), 175 shallow | the port's land gate at 98,177; the barge quay; tidal ground along the shore | the free port | #176 |
 | | Saltmouth | | town, 16×16 | 10–12 | | the two halls, Tallis, four trainers, the boat | the crossing | #177 |
 | C7 | The salt pans | the Saltings | country | 12 | 718 (salt 244, grass 241, marsh 193) | the pans and the salt crabs; the Scarp's foot | none | #178 |
 | B3, B4 | The willows | the Upper Water, the Delta | country, behind the road | 10–11 | 970 and 775 | willows along the Upper Water; herons; the fen's north | none | #179 |
@@ -197,7 +197,7 @@ The places, as the atlas and the docs have them:
 | Sjonghol (the Wind Cave) | C3, in the cliff | the Monk's second prestige (#19) | a planned cave at 103,76, moved a square west into C3 by #71, so D3 does not hold it |
 | The Tide Stone's plinth | B5 | stands empty; the Stone comes home to it (DESIGN §9, #191) | a planned stone at 48,140 |
 | The Drowned Temples | B6, and below | gone dark; the god used to sing the tides and now only counts, until its Stone comes home (DESIGN §9, STORY); the choir and the Choirmaster (MONSTERS §6.1); the bell (#56's 23) | a planned dungeon at 56,160, its way in at 56,170 |
-| Saltmouth | C6, and its own map | the free port, the Compact's home, the seat of Jory Tallis (DESIGN §9, §10.1); four first prestiges (#19); the Cartographers' and the Compact's halls (DESIGN §8); the boat to Wrackholm | a planned port at 102,178; its plate moved from 118,172 (D6) to C6 (#151, call 7) |
+| Saltmouth | C6, and its own map | the free port, the Compact's home, the seat of Jory Tallis (DESIGN §9, §10.1); four first prestiges (#19); the Cartographers' and the Compact's halls (DESIGN §8); the boat to Wrackholm | a port, its gate at 98,177 and its plate at 99,180; the plate moved from 118,172 (D6) to C6 (#151, call 7, #177) |
 | The salt pans | C7 | the Salt Crab's ground (MONSTERS §6.1); the star that moved, seen from them at night (#56's 24) | salt, 337 squares of the Saltings |
 | The Long Water | C4, C5, B3, B4 | the Compact's barges, shards and people downriver (DESIGN §9); a barge on a shoal (#56's 22) | a river from the rim to Saltmouth, lettered |
 | The Scarp | C7's south edge | the Glasswold's border; Act IV's stair (#56's 54) | the escarpment, lettered at 70,208; the stair at 80,206 |
@@ -404,7 +404,7 @@ settled in its issue, and what the pilot teaches changes them.
 
 - **Purpose.** The Saltings' step, the free port from outside: the Salt Road's end at the town's
   gate, the barge quay where the Long Water meets the sea, and the shore that floods.
-- **Landmarks.** The town's walls and gate at 102,178, the way into #177; the barge quay with a
+- **Landmarks.** The town's walls and gate at 98,177, the way into #177; the barge quay with a
   Compact warehouse; the shore path along tidal ground, under water at high tide; the pans
   beginning at the box's south edge; Sylmeer seen east.
 - **Points of interest,** about eight features and six groups:
@@ -423,8 +423,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **Finds.** A Scale Mail +1 in the warehouse.
 - **Pay.** About 700 xp a member.
 - **As built** (#176, 1 October): laid in the Saltings, all of it, so the crossing line falls at the
-  C5/C6 seam. The gate is drawn shut in the wall at 26,19, the road's end at it; #177 opens it as
-  the way in. The smugglers' stair opens from dry sand at the sea wall's north end, beside the gate:
+  C5/C6 seam. The land gate is at 26,19, the road's end at it and the way into Saltmouth (#177). The smugglers' stair opens from dry sand at the sea wall's north end, beside the gate:
   inside, its cache at the foot of the flight, by a sea door onto the shore path, barred from
   within; the stair's top, a door barred from the far side, is the harbour tavern's cellar, owed
   to #177 and #182 as a way through. The tide may cut nothing off (`tidalFaults`), so the stair is
@@ -474,9 +473,12 @@ settled in its issue, and what the pilot teaches changes them.
   The pump in the square is brackish and does not heal. The Keel's and the map room's keepers say
   plain words: the halls, their first tasks and the stair's top in the Keel's cellar are #182's
   and #181's, the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach
-  runs from the yard yet (§9). The walkthrough goes in by the gate and out again, buys each class
-  its step at the armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of
-  Ottilie at 11, once the log has sent her to Pender. The town pays nothing of its own: its 300
+  runs from the yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
+  and onto Wrackholm's stage at 6 the next morning, and back the same from the stage, landing on
+  the quay. The walkthrough goes in by the gate and out again, buys each class its step at the
+  armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of Ottilie at 11, once
+  the log has sent her to Pender; then it takes the boat to the isle, saves there and loads, and
+  takes it home. The town pays nothing of its own: its 300
   is its quests', which are its halls', its chapter's and its side quests'.
 
 ### 4.10 C7, the salt pans (#178): country, band 12
@@ -542,7 +544,7 @@ with its box on the systems of #76 (#183):
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
 | 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | #172 |
-| 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171, built; the boat's `free` is #177's |
+| 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171; the boat reads its flag (#413) |
 | 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175 |
 | 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178 |
 
@@ -554,7 +556,7 @@ pushed off; his hold is full of people he swears paid passage to Saltmouth. The 
 nothing with them and the second row of notches on his pole is shorter: the Cargo Ledger's column,
 seen and never said. Cut loose (`q_passage_freed`), they wade ashore, and a crew of three bargemen
 comes up the bank after them. Pushed off (`q_passage_owed`), Hessel's word carries the company to
-Wrackholm with no fare: Saltmouth's boat (#177) reads the flag as its `free`. Either way he is gone
+Wrackholm with no fare: Kitto's boat on Saltmouth's quay (#413) reads the flag as its `free`. Either way he is gone
 off the shoal.
 
 ### The guilds' quests
@@ -702,7 +704,7 @@ Decided by delegate for #171, each the owner's to overturn:
    Passage Paid's, on the shoal, is a person, there until either answer.
 3. **Passage Paid takes no fight to help.** The choice is the whole quest. Cut loose, the people go
    ashore and three bargemen with no master come up the bank `after` it; pushed off, the master owes
-   the boat's fare, `q_passage_owed`, for #177's boat to read. He does not say the half he sold are
+   the boat's fare, `q_passage_owed`, which Kitto's boat (#413) reads as its `free`. He does not say the half he sold are
    in the ledger's column: the company sees it.
 4. **The hide is a reed hut with its secret wall on the sand,** at the one gap in the herons. Its
    shard is a second Brine Shard, not a new item: the area's shards are one kind.
@@ -715,6 +717,8 @@ Decided by delegate for #171, each the owner's to overturn:
    in the sacking, and he heard the barge and knows its poleman for the Hand's by his stroke.
 7. **The Delta's road runs on up the spur:** the two pools and C5's bull toad, which sees a company
    at the fork, then C4's barge. It is walked 100% of the time at 10.
+8. **The boat reads Hessel's word here:** #413 sold the boat without it, so this pull request adds
+   `free: { flag: 'q_passage_owed' }` to Kitto's passage out of Saltmouth. The way back is paid.
 
 Decided by delegate for #173, each the owner's to overturn:
 
