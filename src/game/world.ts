@@ -521,8 +521,8 @@ export class World {
     return ids;
   }
 
-  groupDefs(ids: string[]): { id: string; monsters: string[] }[] {
-    return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters }; });
+  groupDefs(ids: string[]): { id: string; monsters: string[]; back?: number; leader?: string }[] {
+    return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters, back: e.back, leader: e.leader }; });
   }
 
   /** Mark the groups dead; returns what the log says about it (each group's `slainText`). */

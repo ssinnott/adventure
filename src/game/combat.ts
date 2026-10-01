@@ -17,7 +17,14 @@ import type { Party, Character, Condition } from './party.ts';
 export interface MonsterInst {
   def: MonsterDef;
   hp: number;
+  /** Its rank of its group: a group's front and back are each a group of the fight's (`Ranks`). */
   group: number;
+  /** The group on the map it came in with: the index into `groupIds`. */
+  band: number;
+  /** In the back rank: a weapon of the front row reaches it only once the fight's front is down. */
+  back: boolean;
+  /** Broke and left the fight (`morale`): no longer in it, and paying nothing. */
+  fled: boolean;
   conditions: Condition[];
   /** Set for one render frame when hit. */
   flash: number;
@@ -40,6 +47,8 @@ export interface Loot { xp: number; gold: number; items: string[]; ready: string
 export interface CombatState {
   monsters: MonsterInst[];
   groupIds: string[];
+  /** Each group's leader, by monster id, as `groupIds` lists them (`Ranks`). */
+  leaders: (string | undefined)[];
   round: number;
   order: TurnRef[];
   turn: number;
@@ -72,7 +81,26 @@ export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowT
  */
 export interface Edge { blows: number; damage: number; ac: number }
 
+/**
+ * How a group stands (docs/MONSTERS.md §3.3): the last `back` of its monsters in the back rank, and
+ * the monster id of its leader, whose fall breaks the fight's people (`morale`).
+ */
+export interface Ranks { back?: number; leader?: string }
+
+/** A group as a fight takes it. Its monsters by id; a tool may hand in defs that no map places (tools/harness.ts). */
+export interface CombatGroup extends Ranks { id: string; monsters: readonly (string | MonsterDef)[] }
+
+/** What a tool fights: a group's monsters, or the group with its ranks. */
+export type Fighters = readonly (string | MonsterDef)[] | (Ranks & { monsters: readonly (string | MonsterDef)[] });
+
+/** The group a tool's fighters make, under `id`. */
+export const asGroup = (id: string, f: Fighters): CombatGroup => ('monsters' in f ? { id, monsters: f.monsters, back: f.back, leader: f.leader } : { id, monsters: f });
+
 export const FRONT_ROW = 3;
+
+/** The log's line when people break at their leader's fall, and when beasts run; given who goes, and whether one. */
+export const BREAK_LINE = (names: string, one: boolean): string => one ? `${names} breaks and runs.` : `${names} break and run.`;
+export const ROUT_LINE = (names: string, one: boolean): string => one ? `${names} bolts.` : `${names} bolt.`;
 /** What the buffs are worth while they last. */
 export const BLESS_HIT = 2, HASTE_HIT = 1, HASTE_SPEED = 8, WARD_AC = 3;
 
@@ -95,14 +123,21 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
   return n;
 }
 
-/** A group names its monsters by id; a tool may hand in defs that no map places (tools/harness.ts). */
-export function startCombat(party: Party, groups: readonly { id: string; monsters: readonly (string | MonsterDef)[] }[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
+/** Start a fight with up to three groups, twelve monsters at most; each rank of a group is a group of the fight's. */
+export function startCombat(party: Party, groups: readonly CombatGroup[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
   const monsters: MonsterInst[] = [];
-  groups.forEach((g, gi) => {
-    for (const m of g.monsters) if (monsters.length < 12) { const def = typeof m === 'string' ? monster(m) : m; monsters.push({ def, hp: def.hp, group: gi, conditions: [], flash: 0 }); }
+  let rank = -1;
+  groups.forEach((g, band) => {
+    const front = g.monsters.length - Math.max(0, Math.min(g.back ?? 0, g.monsters.length - 1));
+    g.monsters.forEach((m, k) => {
+      if (monsters.length >= 12) return;
+      if (k === 0 || k === front) rank++;
+      const def = typeof m === 'string' ? monster(m) : m;
+      monsters.push({ def, hp: def.hp, group: rank, band, back: k >= front, fled: false, conditions: [], flash: 0 });
+    });
   });
   const s: CombatState = {
-    monsters, groupIds: groups.map((g) => g.id), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
+    monsters, groupIds: groups.map((g) => g.id), leaders: groups.map((g) => g.leader), round: 0, order: [], turn: 0, bless: 0, shield: 0, haste: 0,
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,
     ...(opts.spellsGrowTo !== undefined ? { spellsGrowTo: opts.spellsGrowTo } : {}),
     ...(opts.edge ? { edge: opts.edge } : {}),
@@ -114,8 +149,13 @@ export function startCombat(party: Party, groups: readonly { id: string; monster
 }
 
 export function describeGroups(s: CombatState): string {
+  return describe(s.monsters.filter(standing));
+}
+
+/** Monsters as the log names them: "Bandit", "3 Bandits, Bandit Archer". */
+function describe(ms: readonly MonsterInst[]): string {
   const counts = new Map<string, { def: MonsterDef; n: number }>();
-  for (const m of s.monsters) if (m.hp > 0) { const c = counts.get(m.def.id); if (c) c.n++; else counts.set(m.def.id, { def: m.def, n: 1 }); }
+  for (const m of ms) { const c = counts.get(m.def.id); if (c) c.n++; else counts.set(m.def.id, { def: m.def, n: 1 }); }
   return [...counts.values()].map(({ def, n }) => n === 1 ? def.name : `${n} ${def.plural}`).join(', ');
 }
 
@@ -125,7 +165,7 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   const refs: { ref: TurnRef; speed: number }[] = [];
   const haste = s.haste > 0 ? HASTE_SPEED : 0;
   party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: c.stats.speed + haste + rng.range(0, 4) }); });
-  s.monsters.forEach((m, i) => { if (m.hp > 0) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
+  s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
   refs.sort((a, b) => b.speed - a.speed);
   s.order = refs.map((r) => r.ref);
   s.turn = 0;
@@ -144,8 +184,8 @@ export function currentTurn(s: CombatState, party: Party, rng: RngInstance): Tur
         if (hasCondition(c, 'asleep') && rng.chance(0.3)) { removeCondition(c, 'asleep'); s.log.push(`${c.name} wakes.`); }
       } else {
         const m = s.monsters[t.i];
-        if (m.hp > 0 && !m.conditions.length) return t;
-        if (m.hp > 0 && m.conditions.includes('asleep') && rng.chance(0.25)) m.conditions = [];
+        if (standing(m) && !m.conditions.length && !waits(s, m)) return t;
+        if (standing(m) && m.conditions.includes('asleep') && rng.chance(0.25)) m.conditions = [];
       }
       s.turn++;
     }
@@ -179,14 +219,32 @@ function roll(rng: RngInstance, dice: number, sides: number, plus: number): numb
   return Math.max(0, n);
 }
 
-/** Living monsters the given character may attack with their weapon. */
+/** Whether the character in party slot `index` may strike with their weapon at all. */
 export function canAttackFromRow(c: Character, index: number): boolean {
   return index < FRONT_ROW || !!weaponOf(c).ranged;
 }
 
+/** Still in the fight: alive, and not fled. */
+export const standing = (m: MonsterInst): boolean => m.hp > 0 && !m.fled;
+
+/** Whether any of the fight's front rank stands: while one does, the back is out of a blade's reach. */
+export const frontStands = (s: CombatState): boolean => s.monsters.some((m) => standing(m) && !m.back);
+
+/** Whether the character's weapon reaches the monster: a bow or sling any, a blade the back only once the front is down. */
+export function canReach(s: CombatState, c: Character, target: number): boolean {
+  const m = s.monsters[target];
+  return !!m && standing(m) && (!m.back || !!weaponOf(c).ranged || !frontStands(s));
+}
+
+/** A monster of the back rank with no bow or spell waits for the front to fall before it steps up. */
+const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.ranged && frontStands(s);
+
+/** Whether the monster leads its group (`Ranks`). */
+export const isLeader = (s: CombatState, m: MonsterInst): boolean => s.leaders[m.band] === m.def.id;
+
 export function aliveMonsters(s: CombatState): number[] {
   const out: number[] = [];
-  s.monsters.forEach((m, i) => { if (m.hp > 0) out.push(i); });
+  s.monsters.forEach((m, i) => { if (standing(m)) out.push(i); });
   return out;
 }
 
@@ -198,11 +256,11 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
   switch (action.type) {
     case 'attack': {
       let m = s.monsters[action.target];
-      if (!m || m.hp <= 0 || !canAttackFromRow(c, t.i)) return false;
+      if (!m || !canAttackFromRow(c, t.i) || !canReach(s, c, action.target)) return false;
       const w = weaponOf(c), edge = s.edge?.(c, s);
       for (let blow = 0; blow < (edge?.blows ?? 1); blow++) {
         // A later blow, where a tool gives more than one, falls on the weakest foe still standing.
-        if (m.hp <= 0) { const left = aliveMonsters(s); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
+        if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
         const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party) - (w.ranged ? s.rangedPenalty : 0), m.def.ac));
         if (hit) {
           const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(c.stats.might)) + traitDamage(s, c, w, m) + (edge?.damage ?? 0));
@@ -266,7 +324,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
   switch (sp.target) {
     case 'enemy': {
       const m = s.monsters[target];
-      if (!m || m.hp <= 0) { s.log.push(`${c.name}'s ${sp.name} fizzles.`); return; }
+      if (!m || !standing(m)) { s.log.push(`${c.name}'s ${sp.name} fizzles.`); return; }
       const d = dmgOf();
       hurtMonster(s, m, d);
       s.log.push(`${c.name} casts ${sp.name}: ${m.def.name} takes ${d}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
@@ -274,8 +332,8 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
     }
     case 'group': {
       const m0 = s.monsters[target];
-      if (!m0 || m0.hp <= 0) { s.log.push(`${c.name}'s ${sp.name} fizzles.`); return; }
-      const members = s.monsters.filter((m) => m.group === m0.group && m.hp > 0);
+      if (!m0 || !standing(m0)) { s.log.push(`${c.name}'s ${sp.name} fizzles.`); return; }
+      const members = s.monsters.filter((m) => m.group === m0.group && standing(m));
       if (sp.inflict) {
         let n = 0;
         for (const m of members) if (!monsterImmune(m.def, sp.inflict) && rng.chance(0.7)) { m.conditions = [sp.inflict]; n++; }
@@ -288,7 +346,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       return;
     }
     case 'all': {
-      const members = s.monsters.filter((m) => m.hp > 0);
+      const members = s.monsters.filter(standing);
       let total = 0, killed = 0;
       for (const m of members) { const d = dmgOf(); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
       s.log.push(`${c.name} casts ${sp.name}: ${total} damage to every foe` + (killed ? `, ${killed} slain.` : '.'));
@@ -352,13 +410,37 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   return true;
 }
 
+/**
+ * Who breaks (docs/MONSTERS.md §2, §3.3): once every leader in the fight is down its people leave it,
+ * and a group's beasts once three in four of them are down; a `steady` monster never does, nor a kind
+ * that does not break. The fled pay nothing.
+ */
+function morale(s: CombatState): void {
+  const breaks = (m: MonsterInst, how: 'leader' | 'rout'): boolean => standing(m) && !m.def.steady && KINDS[m.def.kind].breaks === how;
+  const leaders = s.monsters.filter((m) => isLeader(s, m));
+  if (leaders.length && leaders.every((m) => !standing(m))) {
+    const gone = s.monsters.filter((m) => breaks(m, 'leader'));
+    for (const m of gone) m.fled = true;
+    if (gone.length) s.log.push(BREAK_LINE(describe(gone), gone.length === 1));
+  }
+  s.groupIds.forEach((_, band) => {
+    const beasts = s.monsters.filter((m) => m.band === band && !m.def.steady && KINDS[m.def.kind].breaks === 'rout');
+    const down = beasts.filter((m) => !standing(m)).length;
+    if (down * 4 < beasts.length * 3) return;
+    const gone = beasts.filter((m) => breaks(m, 'rout'));
+    for (const m of gone) m.fled = true;
+    if (gone.length) s.log.push(ROUT_LINE(describe(gone), gone.length === 1));
+  });
+}
+
 function checkOutcome(s: CombatState, party: Party, rng: RngInstance): void {
   if (s.outcome !== 'ongoing') return;
   if (party.members.every(isDown)) { s.outcome = 'defeat'; s.log.push('The party has fallen.'); return; }
-  if (s.monsters.every((m) => m.hp <= 0)) {
+  morale(s);
+  if (s.monsters.every((m) => !standing(m))) {
     s.outcome = 'victory';
     const loot: Loot = { xp: 0, gold: 0, items: [], ready: [] };
-    for (const m of s.monsters) {
+    for (const m of s.monsters.filter((q) => !q.fled)) {
       loot.xp += m.def.xp;
       loot.gold += rng.int(m.def.gold[0], m.def.gold[1]);
       for (const d of m.def.drops ?? []) if (rng.chance(d.chance)) loot.items.push(d.item);
