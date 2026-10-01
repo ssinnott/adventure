@@ -10,9 +10,9 @@ turns. This is its area doc (EXPANSION §4, §6 and §8.2). Its work is filed un
 (#204), its side quests (#205), its drawings (#206) and its rooms (#207). Figures are measured on
 main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Five maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
-Sunderfall (#197), K3, the Sunder's mouth (#198), with its Rift, and L2, Lanternwood (#200). Its content
-is
+Seven maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
+Sunderfall (#197), K3, the Sunder's mouth (#198), with its Rift, L2, Lanternwood (#200), and J3, the
+Bears' Wood, and M2, the Fells Road (#202). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -26,9 +26,9 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–16 | 6,717 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197); K3, the Sunder's mouth, at 328,62 (#198) |
-| Lanternwood | 15–16 | 5,926 | L2, Lanternwood, laid at 360,30 (#200) |
-| The area | 14–16 | 12,643 | five boxes |
+| The Eaves | 14–16 | 7,155 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197); K3, the Sunder's mouth, at 328,62 (#198); J3, the Bears' Wood, at 296,62 (#202) |
+| Lanternwood | 15–16 | 8,802 | L2, Lanternwood, laid at 360,30 (#200); M2, the Fells Road, at 392,30 (#202) |
+| The area | 14–16 | 15,957 | seven boxes |
 
 Squares are the land the zone check counts in each zone with K2 and K3 laid in the Eaves (#197,
 #198) and L2 in Lanternwood (#200). K2 moved the zone line east and L2 moved it back west. K3 takes
@@ -37,7 +37,16 @@ Lanternwood's line is held at K3's east and south edges by seeds (`atlas.ts`), s
 the zones' walk from every square of it: without them the Eaves would run on into L3, L4 and K4. The
 walk still moves 252 more of the Deepthorn's into the Eaves in J3 and K4 (5,955 to 5,551), both boxes
 Sunderwood's on the grid, and 4 of Lanternwood's; the Iron Fells stand at 3,052 against 3,045.
-Holding the Deepthorn's line would need seeds in Thornmark's rows (§9). The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+Holding the Deepthorn's line would need seeds in Thornmark's rows (§9). J3 (#202), laid whole in the
+Eaves, takes the 445 of its squares the walk still gave the Deepthorn: the Deepthorn falls from 5,558 to
+5,113 and the Eaves rise from 6,710 to 7,155. Its west and south edges meet I3's and J4's closed forest,
+so the line a player could see does not move; the count does, and stays the owner's question (§9, #198's
+20). M2 (#202), laid whole in Lanternwood, seeds the walk from its east edge, and Lanternwood runs on
+east through the Fells' unbuilt land, into M3, N2, N3, O2 and O3: the Iron Fells fall from 3,048 to 583
+and Lanternwood rises from 5,927 to 8,802, Kilnmouth and the Kilns losing a little. Nobody walks it, since
+that land is void in play, but the world map paints it so. Holding the Fells' line wants seeds in the
+Iron Fells' row in `src/content/atlas.ts`, a shared file, one a square down x 424 as K3's hold
+Lanternwood's: proposed (§9, #202's 2), not made here. The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
 included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
@@ -142,6 +151,19 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   cairn in the wood north-east of it and a camp south of the road. Four groups: moths with a
   deathshead at the lit lamp by night, sunder hounds on the knoll's path, two deathsheads at the
   tower by night and two glass bears on the road by the river.
+- **The Bears' Wood** (J3, `eaves_j3`, country, band 15–16; #202): the deep forest south of J2,
+  reached by a cutters' track down out of J2's pines and from K3's west lip by the dead wood; its west
+  and south edges stand closed against the Deepthorn's I3 and J4. A hermit in his clearing, a shrine and
+  a cairn in the wood, and a bears' den under a fallen pine, its old bears gone to glass, with the
+  gleaners' cache behind its back. Three groups: the den's brood, two pine bears on the track and one on
+  the hermit's path, and its keepers, three glass bears.
+- **The Fells Road** (M2, `lanternwood_m2`, country, band 15–16; #202): Lanternwood's forest east of
+  L2, the river from the rim down its west side and a strip of hills under the range. The east road
+  fords the river off L2 and clips the box's south-west corner, out by its south edge for the pass in
+  M3, where the world ends until Act III. The milestone by the road, the Warden's grave behind the trees
+  beside it, a shrine at the river's bend, a camp on a gravel bar and the cairn and lookout on the hills.
+  Three groups: two sunder hounds up the river, a moth and two deathsheads at the camp by night and two
+  glass bears under the range.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -480,6 +502,9 @@ features; the pay shared out over the area (§8).
   against their 5,000. Two under, at 13, it wins every fight: its floor is above the area's, so its
   groups count two under in the area's pool, owed to #18. The moths and the bears were new on I2, so
   the box claims nothing new. What the owner finds by hand goes here when the box has been played.
+  Since M2 (#202) the road fords the river at the box's corner into M2, and the river runs out of the
+  corner's south edge for L3, so map and atlas agree at the edge and nothing is owed; L2's east ring
+  opens to M2's forest square for square.
 
 ### 4.8 Lantern Watch (#201): town, 16×16, a tower, band 14–16
 
@@ -532,6 +557,39 @@ features; the pay shared out over the area (§8).
 - **New here.** Act III seen: the Iron Fells' road.
 - **Finds.** A Chain Mail +2 in the cache.
 - **Pay.** About 800 xp a member each.
+
+- **As built** (#202, 2 October): both boxes at band 15–16, not 16: the curve asks the hardest group to
+  stand above the floor however narrow the band, and no monster stands above 16 before the Kilns.
+  - **M2, the Fells Road** (`lanternwood_m2`): the atlas's road clips only the box's corner and runs on
+    south through M3, where the pass and 404,70 are, so the road fords the river off L2, turns south and
+    leaves by the box's south edge at 393–394,62, where the world ends until M3 is built (§9, #202's 1).
+    The milestone stands by the road, ANVILHALL 12 on its face and THIS FAR on its back; through the tree
+    line beside it, searched for, the Warden's grave with Hale's old patrol badge on it (in words only)
+    and the dead Warden's pack, 250 gold and two Healing Draughts. Up the river the shrine at its bend
+    (endurance) and the camp on a gravel bar; on the hills under the range the cairn (180 gold and a
+    Sapphire Vial) and a lookout south over the pass, smoke by day and a red glow by night. East of the
+    range the Fells' hills are drawn as the range, where nothing walked reached them. Two sunder hounds up
+    the river, the gentlest; a lantern moth and two deathsheads at the camp by night; and two glass bears
+    on the hills, the box's group at 16. A company at 15 wins every fight and manages 7.25 fights to a
+    rest, inside the aim, though 32% of its days end in a fight broken off at fifteen rounds. As measured
+    it pays about 948 xp a member and 430 gold. Density 100% within 12 steps, the furthest 10.
+  - **J3, the Bears' Wood** (`eaves_j3`): a cutters' track two wide down out of J2's pines, and dead
+    wood at the south-east onto K3's west lip; the west and south edges closed. The hermit's clearing,
+    the shrine (luck), a cairn (170 gold and a Sapphire Vial), dead wood where the pines give out at the
+    lip, and the den (#88) under a fallen pine: it breeds pine bears, two on the track and one on the
+    hermit's path, back one a day until it is burnt, and its keepers beside it are three glass bears, the
+    old bears gone to glass, the box's group at 16; its hoard 140 gold and a Healing Draught. The hint is
+    moth dust at the den's mouth, and by night the moths themselves, with the hermit's word; behind the
+    den's back, searched for, the gleaners' cache, a Chain Mail +2 (`chain+2`) and 200 gold, which no
+    swimmer, climber or levitator reaches. A company at 15 wins every fight and manages 7.60 fights to a
+    rest, inside the aim, though 27% of its days end in a fight broken off. As measured it pays about
+    976 xp a member and 510 gold. Density 99.3% within 12 steps, the furthest 13.
+  - Both pay about 1,920 against their 1,600, near the issue's 900 each: fewer groups that were each a
+    real fight held fights to a rest inside the aim, where more and gentler groups put them past it.
+    Their floors are above the area's, so their groups count two under in the area's pool, owed to #18.
+    J2's south edge opens for the track and K3's west edge for the dead wood; J2 is re-measured, 91.7%
+    within 8. Neither box claims anything new. What the owner finds by hand goes here when they have
+    been played.
 
 ### 4.10 L3, L4 and K4, Lanternwood's depths (#203): country, band 16, parked
 
@@ -620,7 +678,8 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
   supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
   when it is built: I2 1,063, J2 1,509, K2 1,072, K3 with its Rift 1,441 and L2 1,396 so far, 6,481
-  against their 6,350, about 130 over. A company should leave the Watch at 16, where the midpoint is, with the Kilns'
+  against their 6,350, about 130 over; with J3 976 and M2 948 (#202), 8,404 against their 7,950, about
+  450 over. A company should leave the Watch at 16, where the midpoint is, with the Kilns'
   floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
@@ -769,7 +828,9 @@ and the Lanterns Helmstow's. A naming pass is the owner's to ask for; none is fi
 - **The rim's row,** I1 to M1: 2,984 squares of land, 1,708 a company could walk, mountain and
   pine under the world's edge, with the springs of both rivers in it. The maps of row 2 end in it.
 - **The mountain edges,** M3, M4 and L5: 405 squares, 264 walkable, the mountains between
-  Lanternwood and Kilnmouth, with no way through (§1).
+  Lanternwood and Kilnmouth, with no way through (§1). M3 holds the east road's pass into the Iron
+  Fells and 404,70, so it is proposed to the owner as Act III's first box, laid in the Iron Fells
+  (§9, #202's 1).
 - **The Deepthorn's boxes,** I3, I4 and J4: 817 squares of the Eaves' land over the Hoarhills and
   round their end, built whole by Thornmark as its own (docs/areas/thornmark.md §4 and §9, 7), their
   Eaves' forest drawn closed. Not void: the Deepthorn's, and not Sunderwood's to build.
@@ -911,3 +972,44 @@ Decided by delegate for #200, each the owner's to overturn:
     of one name would confuse the log.
 13. **The road's corner is owed to #202:** the atlas runs the road out of L2 through M2's corner into
     M3, which is cut; the four squares where map and atlas disagree wait on M2.
+
+Decided by delegate for #202, each the owner's to overturn:
+
+1. **M2's road follows the atlas:** it crosses M2's corner and leaves by its south edge into M3, the
+   world's end there. The crossing, the pass and 404,70 are M3's, and M3 is proposed to the owner as
+   Act III's first box, laid in the Iron Fells, which would carry the road on from M2's 1–2,31; the
+   crossing line facing back (#166) needs two built zone maps, so it is owed to that box. A road cut east
+   through M2's own range would run to a closed edge, or one that disagrees with N2's grass. The atlas's
+   link at 404,70 keeps its ends: a shared file's line that nothing here walks.
+2. **M2 is laid whole in Lanternwood.** Its way in, its wood and its river are Lanternwood's. The delegate
+   expected only the 109 squares east of the range to move; as built, the walk runs on east from M2's
+   edge and the Iron Fells fall to 583 (§1). Holding them wants seeds in the Iron Fells' row, a shared
+   file: proposed, not made.
+3. **L2's corner is re-drawn:** the river leaves M2 into L2's corner and runs out of its south edge
+   against L3's atlas river at 391,62, and the road fords it into M2 on row 29; L2's four squares owed to
+   #202 agree, and the entry goes from `EDGES_OWED`.
+4. **J3 is laid whole in the Eaves,** taking the Deepthorn's 445 squares, recorded as the owner's
+   question with #198's 20. thornmark.md's counts are Thornmark's, measured earlier, and are not touched.
+5. **J3 opens two ways,** a cutters' track two wide down from J2's cairn clearing and the dead wood onto
+   K3's west lip, so a country box off the road need not be left the way it was come into. Its west and
+   south edges stay closed. J3 draws its land under the Sunder's planned plate at 24,0 and puts nothing on
+   it.
+6. **The den's keepers are its old bears gone to glass,** and it breeds pine bears. Measured, the
+   delegate's two keepers, two broods of two, a way-in pair and six moths paid about 1,665 a member, and
+   gentler groups put fights to a rest past their limit (11.6): the keepers are three glass bears, the
+   brood two pine bears and one, and the moths are the hint's and not a group. No group stands at the
+   den's mouth.
+7. **M2's groups are two sunder hounds by the way in, a lantern moth and two deathsheads at the camp by
+   night and two glass bears under the range,** the box's group at 16 a true fight: the brief's four moths
+   and a deathshead were too gentle a fight (11.1 fights to a rest with the rest).
+8. **The finds:** Hale's badge is words on the grave, left by him on a comrade's, and nobody takes it; the
+   dead Warden's pack beside it holds 250 gold and two Healing Draughts. The cache holds the Chain Mail +2
+   (`chain+2`), off the ladder, a find that sells, and 200 gold; the sack of glowing shards in it is the
+   lamp the moths come to. Nothing on #406's ladder was owed to #202.
+9. **M2's shrine gives endurance and J3's luck;** neither had been given in Sunderwood. The cairns give
+   180 and 170 gold and a Sapphire Vial, as I2's to L2's.
+10. **The hints are things seen:** the milestone's back, cut by another hand; the moth dust at the den's
+    mouth by day and the moths by night, with the hermit's word. The grave's way is a secret door in the
+    tree line beside the stone, so the box has one wall and the pre-#9 dressing check still sees it.
+11. **The maps are `lanternwood_m2`, called The Fells Road, and `eaves_j3`, called The Bears' Wood.** Bears
+    and hounds come back after two days, the moths after one, the brood one a day.

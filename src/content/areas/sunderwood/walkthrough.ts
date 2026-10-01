@@ -10,7 +10,12 @@
 // and the young sister's word, and the box's groups won at its floor. Then the Sunder's mouth (K3,
 // #198): the ledges walked down past the gleaners to the door and the camp below it, the river's old
 // bed found from its stones and the stack across it, the box's bears won at its floor, and its Rift
-// walked into and won, its groups still coming back.
+// walked into and won, its groups still coming back. Then the Fells Road (M2, #202): the road off
+// L2 by its ford and out by M2's south edge, where the world ends until the pass is built, the
+// Warden's grave found from the milestone's back, and the box's groups won at its floor. Then the
+// Bears' Wood (J3, #202): the cutters' track down out of J2, the hermit's word, the den's keepers
+// and brood won and the den burnt, the cache behind it found from the moths at its mouth, and the
+// way on east into K3's west lip.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -19,6 +24,8 @@ import { buildMaps } from '../../maps.ts';
 import { GameMap } from '../../../game/map.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard } from '../../../game/people.ts';
+import { approach, burn, burnt } from '../../../game/dens.ts';
+import type { Den } from '../../../game/dens.ts';
 import type { Person } from '../../../game/people.ts';
 
 const I2 = MAP_DEFS.find((d) => d.id === 'eaves_i2')!;
@@ -29,6 +36,10 @@ const K2 = MAP_DEFS.find((d) => d.id === 'eaves_k2')!;
 const K3 = MAP_DEFS.find((d) => d.id === 'eaves_k3')!;
 const K3_RIFT = MAP_DEFS.find((d) => d.id === 'k3_rift')!;
 const L2 = MAP_DEFS.find((d) => d.id === 'lanternwood_l2')!;
+const M2 = MAP_DEFS.find((d) => d.id === 'lanternwood_m2')!;
+const J3 = MAP_DEFS.find((d) => d.id === 'eaves_j3')!;
+const HERMIT = J3.features!.find((f) => f.kind === 'npc' && f.name === 'A hermit') as Person;
+const DEN = J3.features!.find((f): f is Den => f.kind === 'den')!;
 const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'A young sister of the Watch') as Person;
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -213,4 +224,65 @@ export const walkthrough: Walkthrough = (ok) => {
   walkThrough(w, 'eaves_k3', 15, 26, EAST, 'k3_rift', 2);
   for (const g of K3_RIFT.encounters!) fight(w, `k3_rift:${g.id}`);
   ok(K3_RIFT.encounters!.every((e) => !!e.respawn && !e.until) && !K3_RIFT.features!.some((f) => 'after' in f && f.after), 'the Rift stays open: its groups come back, and its tear never goes quiet');
+
+  // Shut but for a square: of a box's squares walked, waded, climbed or floated from `from`, none is
+  // `prize` unless through `door`.
+  const shut = (box: { x: number; y: number; w: number; h: number }, from: [number, number], door: [number, number], prize: [number, number]): { size: number; reached: boolean } => {
+    const seen = new Set<number>(), todo = [[box.x + from[0], box.y + from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * out.width + x;
+      if (seen.has(k) || (x === box.x + door[0] && y === box.y + door[1]) || !(x >= box.x && x < box.x + box.w && y >= box.y && y < box.y + box.h) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return { size: seen.size, reached: seen.has((box.y + prize[1]) * out.width + box.x + prize[0]) };
+  };
+
+  // The Fells Road: off L2 over the river by its ford, and onto M2's corner, where the road turns
+  // south for the pass. Past M2's south edge the world ends, until M3 is built.
+  w.level = 15;
+  walkThrough(w, 'lanternwood_l2', 29, 29, EAST, 'lanternwood_m2', 3);
+  const m2 = out.zones.find((z) => z.id === 'lanternwood_m2')!;
+  ok(['=', '='].join() === [out.at(m2.x + 1, m2.y + 31).ch, out.at(m2.x + 2, m2.y + 31).ch].join() && out.passable(m2.x + 1, m2.y + 32) !== 'ok', 'the road leaves M2 by its south edge, and past it, for now, the world ends');
+  // The secret: the milestone's back, then the search there and the grave through the tree line.
+  // Walked, waded, climbed or floated, the grave is never reached but through the trees by the stone.
+  const grave = shut(m2, [1, 29], [5, 30], [6, 30]);
+  ok(grave.size > 100 && !grave.reached, `the grave is shut but for the trees by the stone: none of M2's ${grave.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'lanternwood_m2:m2_milestone');
+  w.world.travel('lanternwood_m2', 4, 30, EAST);
+  let tree = false;
+  for (let i = 0; i < 20 && !tree; i++) tree = w.world.search();
+  const through = tree ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(tree && through.every((r) => r.kind === 'moved') && w.world.used('m2_grave'), 'searched by the milestone, the tree line opens, and the grave behind it can be walked to');
+  listen(w);
+  const gravePack = M2.features!.find((f) => f.kind === 'chest' && f.id === 'm2_grave_chest');
+  ok(gravePack?.kind === 'chest' && gravePack.x === 7 && gravePack.y === 30 && gravePack.gold > 0, 'beside the grave, the dead Warden\'s pack');
+  // The box's groups, each won at its floor: the hounds up the river, the moths at the camp by night and the bears under the range.
+  for (const g of M2.encounters!) fight(w, `lanternwood_m2:${g.id}`);
+
+  // The Bears' Wood: down the cutters' track out of J2's pines.
+  walkThrough(w, 'eaves_j2', 14, 27, SOUTH, 'eaves_j3', 6);
+  see(w, 'eaves_j3:j3_track');
+  w.world.travel('eaves_j3', HERMIT.x, HERMIT.y);
+  const told = meet(HERMIT, w.party, heard(w.world, HERMIT)).text;
+  ok(told.includes('something on two legs'), 'the hermit says something on two legs goes up to the den, and comes down lighter');
+  // The den: its brood abroad and its keepers beside it, won at the box's floor; then burnt, once.
+  for (const g of J3.encounters!) fight(w, `eaves_j3:${g.id}`);
+  ok(approach(w.world, DEN).ask && burn(w.world, w.party, DEN).length > 0 && burnt(w.world, DEN), 'its keepers dead, the den is fired, and its hoard is the company\'s');
+  // The secret: the moth dust at the den's mouth, then the search at the den's back and the cache.
+  // Walked, waded, climbed or floated, the cache is never reached but through the den's back.
+  const j3 = out.zones.find((z) => z.id === 'eaves_j3')!;
+  const cache = shut(j3, [14, 0], [21, 20], [23, 20]);
+  ok(cache.size > 100 && !cache.reached, `the cache is shut but for the den's back: none of J3's ${cache.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'eaves_j3:j3_mouth');
+  w.world.travel('eaves_j3', 20, 20, EAST);
+  let back = false;
+  for (let i = 0; i < 20 && !back; i++) back = w.world.search();
+  const inCache = back ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(back && inCache.every((r) => r.kind === 'moved') && w.world.used('j3_cache'), 'searched at the den\'s back, it opens, and the cache behind it can be walked into');
+  listen(w);
+  const coat = J3.features!.find((f) => f.kind === 'chest' && f.id === 'j3_cache_chest');
+  ok(coat?.kind === 'chest' && coat.items.includes('chain+2'), 'in the cache, a Chain Mail +2');
+  // And on east out of the wood onto K3's west lip.
+  walkThrough(w, 'eaves_j3', 29, 28, EAST, 'eaves_k3', 4);
 };
