@@ -22,6 +22,7 @@ import * as wraith from './monsters/wraith.ts';
 import * as birds from './monsters/birds.ts';
 import * as oldwood from './monsters/oldwood.ts';
 import * as longbodies from './monsters/longbodies.ts';
+import * as toads from './monsters/toads.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -274,6 +275,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   wraith: wraith.draw,
   crow: birds.draw, owl: birds.draw, old_rook: birds.draw,
   fen_eel: longbodies.draw,
+  fen_toad: toads.draw,
 };
 
 /**
