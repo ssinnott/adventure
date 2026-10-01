@@ -50,7 +50,10 @@ DESIGN.md first for the why.
   bows, slings and spells reach anyone, and a back rank with no bow or spell waits for the front to
   fall. Morale: once a fight's leaders (`leader`) are down its people break and run, and a group's
   beasts bolt at three in four down; the dead, the Rift, the machine and the Hand (`steady`) never
-  do, and the fled pay nothing (#160).
+  do, and the fled pay nothing (#160). Every damage spell has an element, which a monster may
+  resist (half), be immune to (none) or be weak to (half again); a monster may cast from the tables
+  (`cast`) and drain hit points or spell points with its hits (`drain`); a hit wakes a sleeper, and
+  sleep ends with the fight (#161).
   Gear may carry a plus: a point is +1 to hit and damage on a weapon, +1 armour class on armour or
   a shield (`P`, `src/content/items.ts`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
@@ -72,6 +75,25 @@ DESIGN.md first for the why.
   hours (by night), once their `after` holds and until their `until` does, so one person can stand
   in two places, one at a time, and a once-event by night is not spent by day (`World.present`; the
   automap shows only who is there). The Foreland's side quests are built on them (#77).
+- **The Hearth's measure** (`game/stones.ts`, #168; DESIGN §9): the Stones restored, counted from
+  the save's flags against `content/stones.ts` (the Tide Stone once `q_tide_home` holds, the Grove
+  once a Lantern has mended it, `q_grove_mended`; the rest as their areas write them), so nothing new
+  is saved. By night, outdoors and in a town, the Hearth stands over the far hills in its true bearing
+  from the party, faint from the first night and taller and brighter by a step for each Stone. The
+  title reads the save in storage and draws its column steadier, taller and wider by a step; the
+  world map's flickers less; the almanac adds a word on it once one is restored. No Stone can be
+  restored yet: #191 and #56 set the flags.
+- **Crossings** (`game/passage.ts`, #164): a person may sell passage by coach or by boat (`passage`,
+  a list of `Passage`). Their words close onto a menu of the crossings, each with its fare and days,
+  then the terms: when it leaves and when it lands, and to a company under the far end's floor the
+  seller's warning, never a refusal. A crossing leaves at its hour every day, so a company that buys
+  after it waits for the next, and lands its days later at its own hour; the fare is the company's,
+  pays its board and lands it rested, as an inn does (the dead stay dead, and no food is eaten).
+  Open to anyone with the fare, it is free once its `free` holds. On the world map a boat is a way
+  by sea and a coach a way of its own (`coach`); the gate check counts each landing as a way in, and
+  where a crossing lands in a town, that town's ways out (`landings`, `tools/tests/gate.ts`). No
+  built town sells one yet: Saltmouth's boat to Wrackholm and its coach to Helmstow come with those
+  maps (#177, #187).
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -540,14 +562,16 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather and tidal ground named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather and tidal ground named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
-| `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
+| `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links) and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
+| `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
+| `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
@@ -575,6 +599,7 @@ does.
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key) and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |
+| `content/stones.ts` | the Wardstones a company may restore, each with its area and the condition it is restored on (or the issue that owes it); held to the atlas by `tools/tests/stones.ts`, read by `game/stones.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
 | `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
