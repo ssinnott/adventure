@@ -1,7 +1,7 @@
 // Sunderwood's items: Lantern Watch's stores, the act's last step on the ladder (#399), the same
 // with a plus that the Sunder and the boxes round it give up by 16, and the finds of its boxes.
 import type { ItemDef } from '../../../game/items.ts';
-import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
+import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY, core } from '../../items.ts';
 import { ITEMS as FORELAND } from '../shelf/items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
 
@@ -36,6 +36,8 @@ export const ITEMS: readonly ItemDef[] = [
   P(watchStaff, 1, { id: 'lanterns_staff', name: "Lantern's Staff +1" }),
   // J2's secret (#196): in the bear's cave, with the gleaner's sack.
   P(greatAxe, 1),
+  // K2's secret (#197): on the ledge behind Sunderfall's water.
+  P(core('longsword'), 2),
   // I2's secret (#195): the Watch's last patrol's, under the milestone.
   P(halberd, 1, { id: 'wardens_halberd', name: "Warden's Halberd +1" }),
 ];
