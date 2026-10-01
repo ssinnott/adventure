@@ -1673,3 +1673,14 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   dd7cb90; main's tree is the tested tree (8311e5e). #69 closes (with #313). The D2 session done
   (its 01:00 message void); the Berth's session to merge main with its round; D4's to merge main
   with its round. The Berth lands first if it is ready first.
+- 01:05: #310's round in (a6c832e: the curve met, the captain held dead), merged with #306's branch
+  before the squash: onto dd7cb90 it conflicts in five files; its 01:03 message has it merge main.
+- 01:05: `reviews/314.md` (#312, the lighthouse): ready after fixes. Should-fix: the Gullwick check
+  and shot are from the sea (F3 2,28; Gullwick sees it from 6,14 west); the tone jumps at four
+  squares (0.97 far, 0.52 near); the beam shows over a nearer wall or the void (clip by readback).
+  Nits: the checks miss the lamp lit by day and the cache keyed without the flag; the old grey wall
+  at its foot; a stale comment; an Oxford comma. Found in passing: cleared first, the dead wood's
+  smoke check fails (1.7% against 2.5%): it passes on leftovers. My own look at the shots: plainly a
+  lighthouse from E3's road, Gullwick's beach by night with its beam, and D3's Salt Road at 22
+  squares. The fixes sent to the #45 session; the look, the choices, the fog and the dead wood's
+  check to a delegate, whose answer follows before it pushes.
