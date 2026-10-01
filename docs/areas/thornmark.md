@@ -27,7 +27,7 @@ The atlas (its rows in `src/content/areas/thornmark/atlas.ts`, merged into `ATLA
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | Thornmark | 5–10, its map's | 2,028 | 901: the Thornmark map, laid at 232,30 |
-| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I4, Henlys, laid at 264,94 (#49); J4, the Hoarhills' end, at 296,94 (#216) |
+| The Deepthorn | 8–10 | 3,246 | H3, the Deepthorn's edge, laid at 232,62 (#214); I4, Henlys, laid at 264,94 (#49); J4, the Hoarhills' end, at 296,94 (#216); J5, Penspern, at 296,126 (#218) |
 | The area | 5–10 | 5,274 | a sixth |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
@@ -241,7 +241,7 @@ The places, as the atlas and the docs have them:
 |---|---|---|---|
 | Henlys | I4 | keeps the two-hundred-year-old treaty behind the elves' claim to the throne, sealed with the chisel's mark (DESIGN §9, §10.1) | a planned site, about 274,104 |
 | Deepthorn Lodge | I3 | a hunting lodge; the Ranger's second prestige (#19); its hunters took the cutters' pay (#56's 15) | a planned lodge at 278,112, in I4 (`src/content/areas/thornmark/atlas.ts:23`) |
-| Penspern | J5, and I5 beside it | the Eldest (MONSTERS §5.4); a standing stone older than the elves (#56's 16); a fire for the boats (#56's 19) | the tip the sea goes round, about 300,148; a planned site on the crown, 296,142 |
+| Penspern | J5, and I5 beside it | the Eldest (MONSTERS §5.4); a standing stone older than the elves (#56's 16); a fire for the boats (#56's 19) | the tip the sea goes round, about 300,148; a site on the crown, at the standing stone, 299.5,144.5 |
 | The Dowrdu | I3, H3 and H4 | nothing yet | a river from Lyngwyn to the Wyke, named |
 | Lyngwyn | H2 and I2 | its dark survey marker (built), and the Lanterns' Dark Marker (#146) | a lake, half on the built map, lettered |
 | The Hoarhills | I2, I3 and J4 | nothing yet | the ridge between Thornmark and Sunderwood, ending in Sunder Bay |
@@ -472,6 +472,20 @@ settled in its issue, and what the pilot teaches changes them.
 - **Finds.** The Eldest, beaten, drops the Eldest's Bough, a Grove Staff +2 of its own; the Hand's
   cave holds a Great Sword +2.
 - **Pay.** About 830 xp a member.
+- **As built** (#218, 1 October): the brief's places, no group above eight, the old wood on #298's
+  numbers. The head's neck runs north to south from J4's glade road, which goes on down it as a
+  track of dirt to the crown; the stone and the fire-stack stand on the crown, the Eldest at the tip
+  with its two heartwoods, and the beach and the sea cave are on the head's west side, where its
+  shingle meets I5's at 0,20. Rootwalkers (three) on the glade road are the builder's, so that the
+  box is won nine fights in ten at 8 with the boss among them: four groups were 88.8%. The heartwood
+  over two brambles stands across the neck where it is narrowest, and the rubbing is reached past
+  it, not past the Eldest. The landing party is an adept and five zealots, by night; the owls are
+  four. The Eldest is the Hand of Ash's weight, 450 hit points and 4d8+12, for the boss's odds: 55%
+  at 8 and 100% at 10. It is drawn at 1.35, not 2: at 2 it stands past the view's top and its
+  label falls on it, alone or with its heartwoods; 1.35 is the most that clears both (§7). The
+  rubbing pays 150 at Senara's hand-in, whose ask is now her hire, so that a rubbing brought
+  unasked hears her early words. As measured it pays about 1,230 xp a member and 460 gold, the
+  Eldest 650 of the xp. What the owner finds by hand goes here when the box has been played.
 
 ## 5. The one quest here
 
@@ -510,10 +524,10 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 13 | The Ogre's Boy | 7 | the old tower; Thornhold | a group that talks before it fights | held (below) |
 | 14 | How Did He Know | 7 | the survey team's camp (H3); the Split Oak | a letter read from the pack; a hand-in; a choice | H3 (#214), built |
 | 15 | The Hunters' Bargain | 8 | Deepthorn Lodge (I3) | a choice; the hunters' path, a secret hinted | I3 (#215) |
-| 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218); Senara's ask built, the rubbing's hand-in, choice and after-lines #218's |
+| 16 | The Older Mark | 8 | Henlys (I4) and Penspern (J5) | a rubbing, an item made at the stone; a hand-in; a choice | I4 and J5 (#49, #218), built |
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
-| 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218) |
+| 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218), built |
 | 20 | Hale's Sergeant | 10 | Thornhold; the Deepthorn's shore | Hale gone from the Scarth | Act II (#156, #190) |
 
 Taken: 9 to 12 and 14 to 19. The changes to #56's drafts:
@@ -560,7 +574,9 @@ Thorn Spider and the Ogre, alone in the deep. Two more are this plan's: rift hou
 from the Grove into H3, which stop with the Grove's own; and the Hand at the head's landing, zealots
 with an adept. §4.2 to §4.7 place every group, box by box; the Deepthorn's five are unplaced until
 then (`tools/tests/maps.ts:21`), and each box drops the entries of those it places first: H3 the
-Bramble and the Rootwalker, I4 the Heartwood and the Great Owl, J5 the Eldest.
+Bramble and the Rootwalker, I4 the Heartwood and the Great Owl, J5 the Eldest. The heartwood is drawn
+at 1.3 and the Eldest at 1.35, not the 1.8 and 2 they were drawn for: taller, a fight's label falls
+on its marker, and the Eldest at 2 stands past the view's top (#49, #218).
 
 The old wood woke when the Stone was cut and sleeps when it is restored (MONSTERS §5.4): in the
 build, when the tear closes at the Warden of the Cut's death (#41, #49), its groups stop coming back
@@ -605,7 +621,8 @@ I5.
   keepers pay once, and its brood as a group that respawns does; the figures count the brood once.
   Act II's cap and curve (#159) are to pay a kill by the monster's level against the member's, which
   re-prices every figure here if they land first; each box is measured when it is built. H3, built,
-  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101.
+  pays about 1,300 xp a member as measured (#214), and brings a clear to 12,101; with I4, J4 and J5
+  (#218, about 1,230) a clear is 15,129.
 - **Gold.** A clear pays 6,518 of the 8,400 that training six members from 5 to 10 costs (§3), the
   Lanterns' quests in it, and 7,600 with #219's side quests. The Deepthorn's share of the rest is
   about 1,200, the 1,900 it was less the two hand-ins' sure 700 (#219): H3 160, I3 170, I4 275, J4
@@ -618,9 +635,10 @@ I5.
   floor, in Thornmark's pool, with the zone's at 3 and the dungeons' at 3, the area's floor less
   two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
   of its own, with its road walked at 8 and its warning at its way in from the Grove
-  (`ROADS.deepthorn`, from H3). Thornmark's own gate holds, as §3 has it. With H3, I4 and J4 built,
-  Thornmark two under its maps' floors wins 49.9% of its 57 groups' fights, off the aim of 25% and
-  inside the limit: it comes of #209's pooling, which the size of a group does not move.
+  (`ROADS.deepthorn`, from H3), and its boss the Eldest (`BOSSES.deepthorn`), won 55% at 8 and 100%
+  at 10. Thornmark's own gate holds, as §3 has it. With H3, I4, J4 and J5 built, Thornmark two under
+  its maps' floors wins 52.3% of its 62 groups' fights, off the aim of 25% and inside the limit: it
+  comes of #209's pooling, which the size of a group does not move.
 - **Gear.** The top of Act I's gear ladder (#99, #101). Thornmark's chests hold its gear with a
   plus, which every class has by 9; the Deepthorn holds the next step, a +2 or better for every
   class, by 10, every one inside the window's 1,200 gold. The harness and the gate check dress their

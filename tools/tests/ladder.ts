@@ -81,7 +81,7 @@ export const DEEP_FINDS: Record<string, string> = {
   'elfbow+2': '', 'brigandine+3': '',
   'warhammer+2': '',
   silver_torc: '#217',
-  eldests_bough: '#218', 'greatsword+2': '#218',
+  eldests_bough: '', 'greatsword+2': '',
 };
 
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */

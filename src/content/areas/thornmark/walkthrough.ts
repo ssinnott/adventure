@@ -3,8 +3,8 @@
 // (tools/walk.ts); then played again with Thornmark taken early, before Vask's hire and after it
 // but before the wand, where the log must still read true and end the same; and with the treaty in
 // Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side
-// quests on the built maps (#219), each from its giver to its choice and both ways: the log reads
-// true and the people stand where it says.
+// quests on the built maps (#219) and in the Deepthorn, each from its giver to its choice and both
+// ways: the log reads true and the people stand where it says; and the Eldest on Penspern.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -120,7 +120,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const shown = newWalk(ok);
   hired(shown);
   playChapter(shown, FORELAND, FORELAND_STEPS, 'shown by Senara');
-  playChapter(shown, CHAPTER, [...STEPS.slice(0, 4), { name: 'Senara shows the seal', play: (w) => meetWho(w, 'q_treaty') }], 'shown by Senara');
+  playChapter(shown, CHAPTER, [...STEPS.slice(0, 4), { name: 'Senara shows the seal', play: (w) => meetWho(w, 'q_mark') }], 'shown by Senara');
   ok(JSON.stringify(ending(shown, 'shown by Senara')) === JSON.stringify(want), 'shown by Senara: the log ends with the same entries as in order');
 
   // The chisel carried to Senara before Sylvane has paid for it: she makes the match, the chapter
@@ -171,6 +171,7 @@ const KEYNE = (): Person => who('thornhold', 6, 7, 'Keyne'), MEVA = (): Person =
 const THORA = (): Person => who('thornmark', 18, 4, 'Thora'), THORA_WALL = (): Person => who('thornhold', 7, 1, 'Thora'), KERROW = (): Person => who('thornhold', 4, 10, 'Kerrow');
 const EDITH = (): Person => who('thornmark', 5, 27, 'Edith'), EDITH_STONE = (): Person => who('grove2', 7, 7, 'Edith');
 const IDONY = (): Person => who('thornhold', 12, 13, 'Idony');
+const KEA = (): Person => who('deepthorn_j5', 6, 18, 'Kea'), CENRIC = (): Person => who('deepthorn_j5', 7, 20, 'a Warden sergeant');
 
 /** Whether a person stands where they are listed now. */
 const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
@@ -228,6 +229,9 @@ function groveDone(w: Walk): void {
   meetWho(w, 'ashen_chisel');
   w.ok(hear(w, 'thornhold', SYLVANE()).startsWith('"The Grove is quiet again.'), 'the chisel paid for, Sylvane says the Grove is quiet at the next meeting');
 }
+
+/** The clock to the next midnight, or the next noon. */
+const at = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
 
 /** The clock to the first day of the next winter, or of the next summer. */
 function toSeason(w: Walk, season: 'winter' | 'summer'): void {
@@ -418,5 +422,66 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     answerTo(w, 'grove2', EDITH_STONE(), 'Leave it with the Stone.');
     reads(w, 'mender', 'The Mender', ['camp', 'kit', 'mended', 'left'], ['edith', 'sliver'], 'the sliver left, the kit found first');
     w.ok(!w.party.bag.includes('grove_sliver'), 'and no sliver in the pack');
+  }
+  { // The Older Mark (#218): Sylvane's company asked for it in Henlys, the rubbing made on
+    // Penspern's crown, and burnt.
+    const w = newWalk(ok);
+    groveDone(w);
+    w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('Sylvane sent you'), 'sent by Sylvane, Senara shows the seal');
+    w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('one more place that mark is') && w.news.at(-1) === 'New quest: The Older Mark.' && !!page(w, 'mark')?.goal, `Senara's ask begins The Older Mark, with a goal (${w.news.at(-1)})`);
+    w.ok(hear(w, 'deepthorn_i4', SENARA()).startsWith('"The stone on Penspern'), 'asked again before the rubbing, she says only where the stone is');
+    see(w, 'deepthorn_j5:j5_stone');
+    see(w, 'deepthorn_j5:j5_rubbed');
+    open(w, 'deepthorn_j5:j5_rubbing');
+    w.ok(w.party.bag.includes('stone_rubbing') && page(w, 'mark')?.goal === 'Take the stone\'s rubbing to Senara, lorekeeper of Henlys.', `the rubbing made, the goal is Senara (${page(w, 'mark')?.goal})`);
+    const gold = w.party.gold;
+    w.ok(hear(w, 'deepthorn_i4', SENARA()).startsWith('Senara lays the rubbing on the treaty') && w.party.gold === gold + 150 && !w.party.bag.includes('stone_rubbing'), 'Senara takes the rubbing, lays it on the seal and pays 150');
+    answerTo(w, 'deepthorn_i4', SENARA(), 'Burn it.');
+    reads(w, 'mark', 'The Older Mark', ['senara', 'stone', 'shown', 'burnt'], ['kept'], 'the rubbing burnt');
+    w.ok(hear(w, 'deepthorn_i4', SENARA()).startsWith('"Burnt.') && !w.party.bag.includes('stone_rubbing'), "burnt, Senara's after-lines are the ash's");
+  }
+  { // The Older Mark: the rubbing made before Senara has asked, or the treaty is seen, and kept.
+    const w = newWalk(ok);
+    open(w, 'deepthorn_j5:j5_rubbing');
+    w.ok(hear(w, 'deepthorn_i4', SENARA()).startsWith('Senara sees what you carry') && !w.party.flags.q_mark && !w.party.flags.q_treaty, 'Senara takes the rubbing brought unasked, with her early words, and neither hires nor shows the treaty');
+    w.ok(w.news.at(-1) === 'New quest: The Older Mark.' && page(w, 'mark')?.goal === 'Answer Senara in Henlys: burn the rubbing, or keep it?', `the rubbing shown begins The Older Mark, with her question as its goal (${page(w, 'mark')?.goal})`);
+    answerTo(w, 'deepthorn_i4', SENARA(), 'We\'ll keep it.');
+    reads(w, 'mark', 'The Older Mark', ['shown', 'kept'], ['senara', 'burnt'], 'the rubbing kept, made unasked');
+    w.ok(w.party.bag.includes('stone_rubbing') && hear(w, 'deepthorn_i4', SENARA()).includes('No word from Sylvane') && !!w.party.flags.q_seal_unknown, 'kept, the rubbing is back in the pack, and her next words show the treaty');
+    w.ok(hear(w, 'deepthorn_i4', SENARA()).startsWith('"You still have it.') && !w.party.flags.q_mark, 'then her after-lines are the kept rubbing\'s, and she never asks for one');
+  }
+  { // The Light on Penspern (#218): Kea at the fire by night, and the fire put out.
+    const w = newWalk(ok);
+    at(w, 12);
+    w.ok(!there(w, KEA(), 'deepthorn_j5') && shows(w, 'deepthorn_j5', 'j5_stack_day') && !shows(w, 'deepthorn_j5', 'j5_stack_night') && !shows(w, 'deepthorn_j5', 'j5_landing'), 'by day the stack is cold and nobody is at it, and no boat lands');
+    at(w, 0);
+    w.ok(there(w, KEA(), 'deepthorn_j5') && shows(w, 'deepthorn_j5', 'j5_stack_night') && shows(w, 'deepthorn_j5', 'j5_landing'), 'by night Kea feeds the fire, and the Hand\'s boat lands under it');
+    see(w, 'deepthorn_j5:j5_landing');
+    answerTo(w, 'deepthorn_j5', KEA(), 'Put it out.');
+    reads(w, 'light', 'The Light on Penspern', ['kea', 'landing', 'out'], ['kept'], 'the fire put out');
+    w.ok(!shows(w, 'deepthorn_j5', 'j5_stack_night') && shows(w, 'deepthorn_j5', 'j5_stack_cold') && hear(w, 'deepthorn_j5', KEA()).startsWith('Kea sits by the cold stack'), 'put out, by night the stack is cold, and Kea\'s after-lines are the dark\'s');
+    w.ok(!there(w, CENRIC(), 'deepthorn_j5') && shows(w, 'deepthorn_j5', 'j5_landing'), 'and no Wardens come, and the boat lands still');
+  }
+  { // The Light on Penspern: the fire kept, and Helmstow's Wardens come to watch it.
+    const w = newWalk(ok);
+    at(w, 0);
+    w.ok(!there(w, CENRIC(), 'deepthorn_j5'), 'before the word to Helmstow, no Warden stands on the head');
+    answerTo(w, 'deepthorn_j5', KEA(), 'Keep it, and warn Helmstow.');
+    reads(w, 'light', 'The Light on Penspern', ['kea', 'kept'], ['out'], 'the fire kept');
+    w.ok(shows(w, 'deepthorn_j5', 'j5_stack_night') && hear(w, 'deepthorn_j5', KEA()).startsWith('"They came.'), 'kept, the fire burns by night, and Kea\'s after-lines are the Wardens\'');
+    w.ok(there(w, CENRIC(), 'deepthorn_j5') && hear(w, 'deepthorn_j5', CENRIC()).startsWith('A Warden sergeant stands on the crown'), 'by night Sergeant Cenric stands on the crown');
+    at(w, 12);
+    w.ok(there(w, CENRIC(), 'deepthorn_j5') && !there(w, KEA(), 'deepthorn_j5'), 'and by day, when Kea is gone');
+  }
+  { // The Eldest (#218): awake whichever the company does first, beaten once, and its bough.
+    const w = newWalk(ok);
+    w.level = 8;
+    fight(w, 'grove2:g2_warden');
+    w.ok(shows(w, 'deepthorn_j5', 'j5_eldest') && !shows(w, 'deepthorn_j5', 'j5_heartwood'), 'the tear closed, the old wood sleeps but the Eldest stands at the tip');
+    fight(w, 'deepthorn_j5:j5_eldest');
+    w.ok(w.party.bag.includes('eldests_bough'), 'beaten, the Eldest lets fall its bough');
+    w.world.state.minutes += 30 * 1440;
+    w.world.travel('deepthorn_j5', 6, 18);
+    w.ok(!w.world.liveGroups().some((g) => g.def.id === 'j5_eldest'), 'and a month on it is still asleep');
   }
 }

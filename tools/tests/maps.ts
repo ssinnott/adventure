@@ -17,7 +17,6 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   black_dog: '#69', barrow_guard: '#70', barrow_captain: '#70',
-  eldest: '#218',
 };
 
 /**

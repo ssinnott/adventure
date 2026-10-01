@@ -67,6 +67,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   shelf: ['greywater1:gw1_captain', 'greywater2:gw2_deacon'],
   downs: ['mill:m_warden'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
+  deepthorn: ['deepthorn_j5:j5_eldest'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */

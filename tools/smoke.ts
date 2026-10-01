@@ -762,7 +762,7 @@ const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhou
   const defs = Object.values(C.MONSTERS) as any[];
   const silhouettes = defs.map((def) => scan(def, (g, x, y, h, frame) => S.drawMonsterSprite(g, def.sprite, x, y, h, def.tint, 1, frame)));
   // The fixtures: a def with the top fifth of its ink moved up, as a crest or a raised wing might
-  // be. Each has to fail for reaching above the view: the tallest def's moved a third of its height,
+  // be. Each has to fail for reaching above the view: the tallest def's moved half its height,
   // and the smallest's moved clear of the view by more than its own height.
   const o = document.createElement('canvas');
   const lifted = (def: any, id: string, lift: (h: number, top: number) => number): Silhouette => scan({ ...def, id }, (g, x, y, h, frame) => {
@@ -778,7 +778,7 @@ const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhou
   });
   const tall = defs.reduce((a, b) => (b.size > a.size ? b : a)), small = defs.reduce((a, b) => (b.size < a.size ? b : a));
   const raised = [
-    lifted(tall, `${tall.id}, its top fifth raised a third`, (h) => h / 3),
+    lifted(tall, `${tall.id}, its top fifth raised a half`, (h) => h / 2),
     // Its band's foot a height and 8 px above the view's top, which is row `padOf(h)` of the canvas.
     lifted(small, `${small.id}, its top fifth raised a height clear of the view`, (h, top) => top + Math.round(h * 0.2) - (padOf(h) - h - 8)),
   ];
@@ -860,7 +860,7 @@ ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls besid
 ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped === 'top' ? 'reaches above the view' : s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
 const closest = silhouettes.reduce((a, b) => (b.room < a.room ? b : a));
 ok(closest.room >= 0, `every monster stands inside the view, its foot ${seat} px below the top as a fight seats it (the closest, ${closest.id}, ${closest.room} px under the top)`);
-ok(raised.every((r) => r.clipped === 'top'), `a monster with a part raised a third of its height, or clear of the view, reaches above it, and fails (${raised.map((r) => `${r.id}: ${r.clipped === 'top' ? 'reaches above the view' : `${r.room} px under the top`}`).join('; ')})`);
+ok(raised.every((r) => r.clipped === 'top'), `a monster with a part raised half its height, or clear of the view, reaches above it, and fails (${raised.map((r) => `${r.id}: ${r.clipped === 'top' ? 'reaches above the view' : `${r.room} px under the top`}`).join('; ')})`);
 if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);
