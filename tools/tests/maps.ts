@@ -19,7 +19,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
 const UNPLACED: Record<string, string> = {
   drowned_chanter: '#175', choirmaster: '#175',
   watch_hall: '#201', watch_refectory: '#201', watch_stores: '#201', priors_room: '#201',
-  sunderling: '#198', sunder_warden: '#199',
+  sunder_warden: '#199',
 };
 
 /**
