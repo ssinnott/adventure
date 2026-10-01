@@ -1719,3 +1719,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (the #97 session holds 742k of context; a fresh one is cheaper for a small fix).
 - Left in Phase 1 (#26): #218 (#315 in review), #47 (the pilot's E, told to open), #316 (just
   started) and #311 (not approved; #68, its blocker, closed). Then #65, #208 and #26 close.
+- 01:36: `reviews/315.md` (#218, J5): ready after fixes. Should-fix: merge main (`shipped.json`,
+  `UNPLACED`; CI never ran on 36b38a7 for the conflict). Nits: walkthrough.ts:464 passes with main's
+  hire (check the hand-in first); a serial comma. Held: the Dialogue verbatim (43), the Eldest 55%
+  at 8 and 100% at 10, Senara's change moves no save, the Light, the seam, the door, the rubbing.
+  My own look at the fight: the Eldest no taller than its two heartwoods, told by its split trunk and
+  moss; at the tip the three overlap. The round sent to the J5 session; the look, the eight choices
+  and "no check holds a group to eight" to a delegate, whose answer follows before it pushes.
