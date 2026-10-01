@@ -195,7 +195,7 @@ features; the pay shared out over the area (§8).
   pine bear on the roster, a pair at the far end could not be the hardest, and the curve asks a
   group at 15 or more on every map. The first glass in the Eaves comes down the road to meet the
   company. The pack holds a Warden's Halberd +1 (`wardens_halberd`), and the milestone reads STOW 40
-  where its letters meet the turf. A company at 14 wins every fight and manages 9.4 fights to a
+  where its letters meet the turf. A company at 14 wins every fight and manages 9.0 fights to a
   rest, off the aim of 6.5 to 8.5 and inside the limit; the road is walked every time. As measured it
   pays about 1,250 xp a member and 460 gold. Two under, at 12, it wins every fight too: past 10 the
   company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company back, which
