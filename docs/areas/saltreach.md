@@ -186,9 +186,11 @@ settled in its issue, and what the pilot teaches changes them.
 - **Pay.** The area owes 8,267 xp a member (§8). The shares below add up to a little over that,
   for the curve to settle (#159) and the gate to check (#38).
 - **Side quests** are #56's 21 to 24, placed as §6 has them (#183).
-- **Finds** are the ladder's next step (#18): the band's gear at Saltmouth's armourer, and the
-  first named pieces on the road out of it. Each is an item when its box is built; no find is dearer
-  than the band's window on the curve.
+- **Finds** are the ladder's next step (#399): the band's gear at Saltmouth's armourer from 11
+  (§4.9), the same with a plus in the boxes by 13, and the first named pieces on the road out of
+  it. Each is placed when its box is built; no find or ware is dearer than the band's window on the
+  curve. Wrackholm's boxes give two of the pluses: Kelp Hole's Plate Mail +1 and the Tide Ship's
+  Long Axe +1.
 
 ### 4.2 C5, the Delta road (#170): country, band 10–11
 
@@ -271,7 +273,8 @@ settled in its issue, and what the pilot teaches changes them.
 - **The secret and its hint.** The smuggler's cache under the quay, reached from the water at low
   tide. The hint: the child's night-light shows where the water glows.
 - **New here.** A village of the Tidefolk, on a mound; a trainer in a cave.
-- **Finds.** A Chain Mail +1 and a named short sword, the smuggler's, in the cache.
+- **Finds.** A Chain Mail +1 and a named short sword, the smuggler's, in the cache; a Stiletto +1,
+  the ladder's (#399).
 - **Pay.** About 1,000 xp a member.
 
 ### 4.5 B5, Stienwierde (#173): core, band 11
@@ -294,7 +297,7 @@ settled in its issue, and what the pilot teaches changes them.
   the Stone went, and under the landing a shard the thieves dropped. The hint: the priest at
   Rietum, who saw the barge and knows a pole's mark.
 - **New here.** The toads, a new family (#223); a Stone's plinth without its Stone.
-- **Finds.** A Kite Shield +1 under the landing.
+- **Finds.** A Kite Shield +1 under the landing; an Ironshod Staff +1, the ladder's (#399).
 - **Pay.** About 1,000 xp a member.
 
 ### 4.6 B6, the Drowned Temples' approach (#174): core, band 11–12
@@ -339,7 +342,7 @@ settled in its issue, and what the pilot teaches changes them.
   behind it the sacristy the priests drowned themselves in, with their god's silver.
 - **New here.** A caster among the dead; a boss that blesses (#161); a count that stops.
 - **Finds.** The god's silver: a Silver Mace +1 and a Holy Symbol of the tide, a resistance to
-  cold worn.
+  cold worn; beside it a Morning Star +1, the ladder's (#399).
 - **Pay.** About 1,800 xp a member.
 
 ### 4.8 C6, Saltmouth's box (#176): core, band 11–12
@@ -362,7 +365,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **The secret and its hint.** A smugglers' stair in the sea wall, dry at low tide only, into the
   harbour tavern's cellar (#182). The hint: a rope tied off at the wall's top with nothing on it.
 - **New here.** Salt underfoot (#162); a town on its box with its own map behind the gate.
-- **Finds.** A Scale Mail +1 in the warehouse.
+- **Finds.** A Scale Mail +1 and a Tidefolk Robe +1, the ladder's (#399), in the warehouse.
 - **Pay.** About 700 xp a member.
 
 ### 4.9 Saltmouth (#177): town, 16×16, band 10–12
@@ -371,7 +374,8 @@ settled in its issue, and what the pilot teaches changes them.
   classes take their first prestige. It sells and teaches what the band needs (EXPANSION §4).
 - **Businesses,** each with a room of its own (#185): the inn (rest, and the coach yard, #249); the
   drowned god's town shrine (cures and raising at the band's price, #250); the armourer (the
-  band's gear, a step past Thornhold's, #251); the provisioner, a chandlery (#252); the harbour
+  band's gear, a step past Thornhold's, #251: a Morning Star, a Stiletto, a Horn Bow, a Long Axe,
+  an Ironshod Staff, a Sharkskin Coat and a Tidefolk Robe, 600 to 1,100 gold, #399); the provisioner, a chandlery (#252); the harbour
   tavern that is the Compact's hall (#182, #253); the Cartographers' map room (#181, #254); the
   training hall, to 13 (#159, #255); the locksmith's shop (#19, #256). No spell hall: the next tier
   is sold at Lantern Watch (#151, call 9).
@@ -405,7 +409,7 @@ settled in its issue, and what the pilot teaches changes them.
 - **The secret and its hint.** A crab-hole under a pan's wall with a salter's hoard. The hint: the
   salt is trodden at one wall and nowhere else.
 - **New here.** The Scarp, and the way down into Act IV, seen.
-- **Finds.** A named crab-shell buckler in the hoard.
+- **Finds.** A named crab-shell buckler and a Horn Bow +1, the ladder's (#399), in the hoard.
 - **Pay.** About 700 xp a member.
 
 ### 4.11 B3 and B4, the willows (#179): country, band 10–11, parked
@@ -502,7 +506,9 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
-  band's window (#18).
+  band's window (#399): its dearest ware the Sharkskin Coat at 1,100 and its dearest find the Horn
+  Bow +1 at 900, against 2,000. Its weapons for the premade six come to about 4,250, and with the
+  armour about 7,850.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 10 wins nine in ten of C5's fights and walks the
   causeway resting at its camp; one at 8 wins no more than one in four. The Choirmaster is won about
@@ -580,6 +586,23 @@ Decided by delegate for #170, each the owner's to overturn:
    nothing sets until #191, which adds it.
 7. **The shard is the Brine Shard,** the fen's own word for it.
 8. **The hermit sits on D5's islet,** reached over a shingle bar, and points up the spur to Rietum.
+
+Decided by delegate for #399, each the owner's to overturn:
+
+1. **Every class has a new weapon line at each town,** sold, then found with a plus, as Thornmark's
+   was: a point of blow a rung, a two-hander a point over a one-hander. Saltmouth sells the Morning
+   Star, the Stiletto, the Horn Bow, the Long Axe and the Ironshod Staff.
+2. **Armour steps on alternate rungs:** the medium wearers take the Sharkskin Coat (9) at 11 and the
+   Watch's Lamellar (10) at 14; plate's wearers take Kelp Hole's Plate Mail +1 (10) at 13 and the
+   Sunder's Plate Mail +2 (11) at 16. So Saltmouth sells nothing past plate's 9, and the Sunder's
+   plate is a step past the Watch's stores, as Sunderwood's doc has it.
+3. **The plus finds go to boxes that already promise finds:** Rietum's cache, the plinth, the
+   temples, the warehouse and the pans' hoard; B6 has none. Each is owed to its box until placed.
+4. **The windows stay as they are:** no ware or find comes within 400 gold of its area's price.
+5. **The gate two under stays owed, now to #399:** gear dresses a company at a floor past one two
+   under it, but a company at 8 wins every C5 fight already, in Act I's gear. The test monster's
+   line is re-run with the ladder (`node tools/harness.ts --calibrate --write`); the boxes' groups,
+   statted on the old line, wait to be re-statted to it.
 
 ## 10. Names
 

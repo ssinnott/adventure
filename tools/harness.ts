@@ -11,7 +11,7 @@
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
-//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 10
+//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 16
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 //   node tools/harness.ts --rank-step 0.25 [...]       ... or a spell rank added another share than play's 15%
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
@@ -61,7 +61,7 @@ export const CAP = MAX_LEVEL;
 /**
  * What-ifs on the rules, for weighing a change before it is made; play has none of them. `spellsGrowTo`
  * is another level for damage spells to stop growing at than play's 10 (`--spell-cap`); `gearGrows` keeps the company's gear
- * growing past Thornmark's (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
+ * growing past the ladder's top (`--gear-grows`, see `outfit`); `levelTraits` and `levelBonus` give it
  * powers past level 10 instead (`--level-traits`, `--level-bonus`, see `edgeOf`); `rankStep` is another
 share a spell rank adds than play's RANK_STEP (`--rank-step`). The prestiges, their ranks and tiers 6
 and 7 are play's, and every company takes them.
@@ -102,7 +102,9 @@ export function edgeOf(c: Character, round: number): Edge {
  * The ladder: what a company has in its hands by a level (EXPANSION.md §5.2). Its kit, then by 3
  * the band's gear from Mottram's and the kits' weapons with a plus from the Downs' first boxes, by
  * 5 the kits' armour with a plus and the Downs' last finds, then Thornmark's armoury from 8, where
- * plate is dear, its chests' gear with a plus by 9 and the Deepthorn's +2s by 10. Each member takes
+ * plate is dear, its chests' gear with a plus by 9 and the Deepthorn's +2s by 10. Past them, Act II's
+ * (#399): Saltmouth's armourer's step from 11, the same with a plus from Saltreach's and Wrackholm's
+ * boxes by 13, Lantern Watch's stores from 14 and theirs with a plus from the Sunder by 16. Each member takes
  * the best its class can use of the kind it already carries, which flatters the company a little.
  * The harness and the gate check both dress their company from it.
  */
@@ -112,7 +114,13 @@ export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [8, ['warhammer', 'battleaxe', 'greatsword', 'crossbow', 'elfbow', 'rune_dagger', 'grove_staff', 'runed_robe', 'brigandine', 'plate', 'tower_shield']],
   [9, ['warhammer+1', 'rune_dagger+1', 'elfbow+1', 'grove_staff+1', 'greatsword+1', 'brigandine+1', 'brigandine+2', 'runed_robe+1']],
   [10, ['warhammer+2', 'greatsword+2', 'elfbow+2', 'rune_dagger+2', 'runed_robe+2', 'brigandine+3', 'tower_shield+1', 'eldests_bough']],
+  [11, ['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe']],
+  [13, ['morning_star+1', 'stiletto+1', 'ironshod_staff+1', 'tidefolk_robe+1', 'horn_bow+1', 'plate+1', 'long_axe+1']],
+  [14, ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'lantern_staff', 'lamellar', 'watch_habit', 'watch_shield']],
+  [16, ['flail+1', 'ironwood_bow+1', 'plate+2', 'wardens_dirk+1', 'lanterns_staff', 'great_axe+1']],
 ];
+/** The ladder's top: past it, gear grows only in a what-if (`RULES.gearGrows`). */
+export const GEAR_TOP = GEAR[GEAR.length - 1][0];
 
 const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1)) / 2 + (d.bonus ?? 0);
 
@@ -129,9 +137,9 @@ function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number 
 }
 
 /**
- * Dresses a member in the best of GEAR it can use by `level`. With `RULES.gearGrows`, past level 10
- * its weapon and armour are enchanted as the curve's gear would be: the weapon's blow grows as the
- * line's hit points do, and the armour a point every two levels, as the line's to-hit does.
+ * Dresses a member in the best of GEAR it can use by `level`. With `RULES.gearGrows`, past the
+ * ladder's top its weapon and armour are enchanted as the curve's gear would be: the weapon's blow
+ * grows as the line's hit points do, and the armour a point every two levels, as the line's to-hit does.
  */
 export function outfit(c: Character, level: number): void {
   const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map(item).filter((d) => !d.classes || d.classes.includes(c.cls));
@@ -146,10 +154,10 @@ export function outfit(c: Character, level: number): void {
     const shield = pool.filter((d) => d.slot === 'shield' && (d.ac ?? 0) > held).sort((a, b) => (b.ac ?? 0) - (a.ac ?? 0))[0];
     if (shield) equip(c, shield.id);
   }
-  if (RULES.gearGrows && level > 10) {
-    const held = weaponOf(c), blow = Math.round(hits(held) * (line(level).hp / line(10).hp - 1));
+  if (RULES.gearGrows && level > GEAR_TOP) {
+    const held = weaponOf(c), blow = Math.round(hits(held) * (line(level).hp / line(GEAR_TOP).hp - 1));
     if (blow > 0) equip(c, forge(held, { bonus: blow }, blow));
-    const worn = c.equipment.armor ? item(c.equipment.armor) : null, ac = Math.floor((level - 10) / 2);
+    const worn = c.equipment.armor ? item(c.equipment.armor) : null, ac = Math.floor((level - GEAR_TOP) / 2);
     if (worn && ac > 0) equip(c, forge(worn, { ac }, ac));
   }
 }

@@ -90,16 +90,17 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  * it moves further from its limit than that figure, by more than a point (a tenth of a fight to a rest).
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
-  // Past 10 the company's gear stops growing (GEAR's top step is the Deepthorn's), so a company two
-  // under a box dresses as one at its floor and wins as often: the gear past 10 is #18's. The groups
-  // are at the line's standard size (tools/testmonster.ts).
-  'wrackholm_e6: under': { whose: '#18', at: 1 },
-  'Wrackholm: under': { whose: '#18', at: 1 },
-  'eaves_i2: under': { whose: '#18', at: 1 },
-  'Sunderwood: under': { whose: '#18', at: 1 },
-  'delta_c5: under': { whose: '#18', at: 1 },
-  'c5_rift: under': { whose: '#18', at: 1 },
-  'Saltreach: under': { whose: '#18', at: 1 },
+  // A company two under an Act II box wins every fight. The ladder past 10 (#399) dresses a company
+  // at the floor past one two under it, but the groups are at the line's standard size
+  // (tools/testmonster.ts), whose calibration is Act I's gear's: they wait on the line re-run with
+  // the ladder, and the boxes' groups re-statted to it, which #399 owes.
+  'wrackholm_e6: under': { whose: '#399', at: 1 },
+  'Wrackholm: under': { whose: '#399', at: 1 },
+  'eaves_i2: under': { whose: '#399', at: 1 },
+  'Sunderwood: under': { whose: '#399', at: 1 },
+  'delta_c5: under': { whose: '#399', at: 1 },
+  'c5_rift: under': { whose: '#399', at: 1 },
+  'Saltreach: under': { whose: '#399', at: 1 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;

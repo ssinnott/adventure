@@ -164,9 +164,9 @@ Foreland map's density.
   lookout and four more on the moor are the box's other points: every square is within 8 steps of
   one. As measured it pays about 1,920 xp a member and 404 gold. The gate at 12 wins every fight, at
   7.1 fights to a rest, and walks the road (the rats, the inlet's gulls, the east path) every time;
-  two under, at 10, it wins every fight too, which is owed to #18 until gear past 10 lands
-  (`tools/tests/gate.ts`'s `OWED`). What the owner finds by hand goes here when the box has been
-  played.
+  two under, at 10, it wins every fight too, owed to #18 until the gear past 10 landed and to #399
+  since (`tools/tests/gate.ts`'s `OWED`). What the owner finds by hand goes here when the box has
+  been played.
 
 ### 4.3 Kelp Hole (#188): dungeon, two levels of 16×16, band 12–14
 
@@ -187,7 +187,8 @@ Foreland map's density.
   out and not in. The hint: the tide-mark on the cave's wall stops short of the roof at one place.
 - **New here.** A boss that is fed; the devilfish in their own water, met first in E6's pools
   (#187).
-- **Finds.** The crews' strongbox: a Plate Mail +1, the first plate with a plus on the road.
+- **Finds.** The crews' strongbox: a Plate Mail +1, the first plate with a plus on the road and
+  plate's wearers' step on the ladder (#399).
 - **Pay.** About 2,180 xp a member: 2,400 less what E6 pays over its 1,700 as built (§8).
 
 ### 4.4 F6, the east rocks (#189): core, band 13–14
@@ -243,7 +244,8 @@ Foreland map's density.
 - **New here.** A ship as a dungeon, three decks; a boss that closes a tear on a ship; the first
   door into the hull's depths.
 - **Finds.** The Tide Stone (a quest item, plain: #151, call 6); the ship's papers and its log
-  (letters read from the pack, #76); the captain's Cutlass +2, named.
+  (letters read from the pack, #76); the captain's Cutlass +2, named; a Long Axe +1, the ladder's
+  (#399).
 - **Pay.** About 3,300 xp a member.
 
 ## 5. The one quest here

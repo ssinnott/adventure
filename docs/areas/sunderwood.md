@@ -199,8 +199,8 @@ features; the pay shared out over the area (§8).
   and manages 7.3 fights to a rest, inside the aim; the road is walked every time. As measured it
   pays about 1,060 xp a member and 460 gold. Two under, at 12, it wins every fight too: past 10 the
   company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company back, which
-  the gate's limit asks (§8): owed to #18, as every Act II box will owe it until the gear past 10
-  is built. Woods are on the road before it (the Downs' E2, the Deepthorn's H3
+  the gate's limit asks (§8): owed to #18, and since the ladder past 10 landed to #399, whose groups
+  wait on the line re-run with it. Woods are on the road before it (the Downs' E2, the Deepthorn's H3
   and I3), so the area claims the bears, the moths and the moths' sleep as new, and not the woods.
   What the owner finds by hand goes here when the box has been played.
 
@@ -229,7 +229,7 @@ features; the pay shared out over the area (§8).
   - the dog: *The dog sits at the foot of the north path and will go no further. It never minded
     the bear before, the cutter says.*
 - **New here.** Dead wood underfoot (#163); the bears, a new family (#240); the Sunder seen.
-- **Finds.** A Great Axe +1 in the cave.
+- **Finds.** A Great Axe +1 in the cave, the ladder's (#399).
 - **Pay.** About 1,350 xp a member.
 
 ### 4.4 K2, Sunderfall and the rope bridge (#197): core, band 15
@@ -288,7 +288,8 @@ features; the pay shared out over the area (§8).
   - the bed: *Dead wood stacked across the old river bed, cut ends outward. Nobody stacks firewood
     on a riverbed.*
 - **New here.** The Hand as quarrymen; a Rift that stays open.
-- **Finds.** The fist-sized shard, a quest item the Watch reads (§5).
+- **Finds.** The fist-sized shard, a quest item the Watch reads (§5); a Warden's Dirk +1 in the
+  gleaners' camps, the ladder's (#399).
 - **Pay.** About 1,350 xp a member.
 
 ### 4.6 The Sunder (#199): dungeon, two levels of 32×32, band 15–16
@@ -318,7 +319,8 @@ features; the pay shared out over the area (§8).
 - **New here.** A Rift that stays open; a wall no one built; the first thing on the road the
   company cannot fight.
 - **Finds.** The Warden's heart, a black-glass shard, named; a Plate Mail +2 in a gleaner's cache on
-  the ledges, a step past the Watch's stores, which are the ladder's last in the act (§8).
+  the ledges, a step past the Watch's stores, which are the ladder's last in the act (§8); a Flail
+  +1 and an Ironwood Bow +1 at the Warden's narrows, the ladder's (#399).
 - **Pay.** About 2,350 xp a member.
 
 ### 4.7 L2, Lantern Watch's box (#200): core, band 15–16
@@ -347,7 +349,7 @@ features; the pay shared out over the area (§8).
   - the ash: *The signal fire's ash, cold, and raked flat with more care than ash is owed.*
   - the sister: *If the prior asks, I burnt it on the knoll. The fire there draws badly in rain.*
 - **New here.** The moths, a new family (#241); a Rift hound gone to glass on the wolf frame.
-- **Finds.** A Lantern's Staff +1 under the ash.
+- **Finds.** A Lantern's Staff +1 under the ash, the ladder's (#399).
 - **Pay.** About 1,150 xp a member.
 
 ### 4.8 Lantern Watch (#201): town, 16×16, a tower, band 14–16
@@ -356,7 +358,9 @@ features; the pay shared out over the area (§8).
   papers, where the next spell tier is sold (#151, call 9), and where the Lanterns begin to split.
 - **Businesses,** each with a room of its own (#207): the Lantern hall (spells to the next tier for
   the fee, and the Lanterns' quests to a member, #257); the refectory (rest and food, #258); the
-  stores (the band's gear, a step past Saltmouth's, and lamp oil, #259); the prior's room, where
+  stores (the band's gear, a step past Saltmouth's, and lamp oil, #259: a Flail, a Warden's Dirk,
+  an Ironwood Bow, a Great Axe, a Lantern Staff, Lamellar, a Watch Habit and a Watch Shield, 900
+  to 1,600 gold, #399); the prior's room, where
   the papers are read (#260). A trainer to 17 (#159). No temple: the shrine at Sunderfall cures.
 - **People.** The prior and the young sister, on their two sides (#56's 31); the Cartographers'
   surveyor (#56's 32); the Lantern who reads the papers and the log, the hand-in that sets the
@@ -489,7 +493,9 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   when it is built; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
   floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
-  next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#18).
+  next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
+  at 1,600 and the act's dearest find the Sunder's Plate Mail +2 at 1,500, against 3,000. The
+  stores' full set for the premade six comes to about 10,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17): a company at 14 wins nine
   in ten on I2 and one at 10 no more than one in four, which is how the east road out of Thornmark
   turns an Act I company back (#40); the Warden of the Sunder is won about half the time at 14 and
@@ -565,10 +571,23 @@ Decided by delegate for #195, each the owner's to overturn:
    owls do.
 4. **The shrine gives speed,** which no shrine or fountain on the road gave; the cairn 160 gold and
    a Sapphire Vial; the pack 300 gold and a Warden's Halberd +1 of its own.
-5. **The gate two under is owed to #18,** for I2 and for the area, with the groups kept at the
+5. **The gate two under is owed to #18** (to #399 since the ladder landed), for I2 and for the area, with the groups kept at the
    line's standard size: no group size turns back a company whose gear is the same as at 14, and
    bigger groups only push fights to a rest at 14 under its limit.
 6. **The climate:** summer 16, winter -2, damp to 0.08, fog 0.6, eight hours behind the Foreland.
+
+Decided by delegate for #399, each the owner's to overturn:
+
+1. **The Watch sells a new weapon line for every class,** a point of blow past Saltmouth's finds,
+   and the Sunder and the boxes round it give each with a plus by 16. The Great Axe and the Lantern
+   Staff are among the wares, so J2's Great Axe +1 and L2's Lantern's Staff +1, already in the
+   briefs, are the barbarian's and the monk's and druid's steps.
+2. **The stores' Lamellar (10) is the medium wearers' armour step,** and the Watch Shield (5) plate's
+   wearers', whose armour step is the Sunder's Plate Mail +2 (11) at 16, a step past the stores.
+3. **No robe or Lamellar with a plus at 16:** the casters better their gear with the dirk or the
+   flail.
+4. **The window stays at 3,000:** the dearest ware is the Lamellar at 1,600.
+5. **The Halberd +1, the Long Sword +2 and the Chain Mail +2 stay off the ladder,** finds that sell.
 
 ## 10. Names
 

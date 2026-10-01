@@ -4,7 +4,10 @@
 // sells the ladder's plain step; and the gate check's company wears what harness's does. Past them,
 // Thornmark (#101): every class finds a plus it can use there, and nothing there gives the Armoury's
 // gear. At the top, the Deepthorn (#212): every class betters its Thornmark find by 10, each find
-// inside Thornmark's window and owed to its box until placed.
+// inside Thornmark's window and owed to its box until placed. Past it, Act II (#399): Saltmouth's
+// armourer's step at 11, its plus finds by 13, Lantern Watch's stores' at 14 and theirs by 16, each
+// rung bettered by every class, each ware and find inside its area's window and owed to its shop or
+// box until it is sold or placed.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { CLASSES, robeLike } from '../../src/game/party.ts';
@@ -84,6 +87,56 @@ export const DEEP_FINDS: Record<string, string> = {
   eldests_bough: '', 'greatsword+2': '',
 };
 
+/**
+ * Act II's rungs (#399, docs/areas/saltreach.md §4.1, docs/areas/sunderwood.md §8): what each class
+ * betters the rung before with, and where each comes from: a ware's area and the shop's issue that
+ * sells it, a find's area and the box's issue that places it; '' once sold or placed.
+ */
+export const ACT_II: readonly { level: number; name: string; from: Record<string, readonly [area: 'saltreach' | 'wrackholm' | 'sunderwood', whose: string]>; classes: Record<ClassId, readonly string[]> }[] = [
+  {
+    level: 11, name: "Saltmouth's armourer",
+    from: Object.fromEntries(['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'].map((id) => [id, ['saltreach', '#177']])),
+    classes: {
+      knight: ['morning_star'], paladin: ['morning_star'], ranger: ['horn_bow', 'sharkskin'], barbarian: ['long_axe', 'sharkskin'],
+      cleric: ['morning_star', 'tidefolk_robe'], sorcerer: ['stiletto', 'tidefolk_robe'], thief: ['stiletto', 'sharkskin'], bard: ['stiletto', 'sharkskin'],
+      monk: ['ironshod_staff'], druid: ['ironshod_staff', 'sharkskin'],
+    },
+  },
+  {
+    level: 13, name: "Saltreach's and Wrackholm's finds",
+    from: {
+      'stiletto+1': ['saltreach', '#172'], 'ironshod_staff+1': ['saltreach', '#173'], 'morning_star+1': ['saltreach', '#175'],
+      'tidefolk_robe+1': ['saltreach', '#176'], 'horn_bow+1': ['saltreach', '#178'], 'plate+1': ['wrackholm', '#188'], 'long_axe+1': ['wrackholm', '#190'],
+    },
+    classes: {
+      knight: ['morning_star+1', 'plate+1'], paladin: ['morning_star+1', 'plate+1'], ranger: ['horn_bow+1'], barbarian: ['long_axe+1'],
+      cleric: ['morning_star+1', 'tidefolk_robe+1'], sorcerer: ['stiletto+1', 'tidefolk_robe+1'], thief: ['stiletto+1'], bard: ['stiletto+1'],
+      monk: ['ironshod_staff+1'], druid: ['ironshod_staff+1'],
+    },
+  },
+  {
+    level: 14, name: "Lantern Watch's stores",
+    from: Object.fromEntries(['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'lantern_staff', 'lamellar', 'watch_habit', 'watch_shield'].map((id) => [id, ['sunderwood', '#201']])),
+    classes: {
+      knight: ['flail', 'watch_shield'], paladin: ['flail', 'watch_shield'], ranger: ['ironwood_bow', 'lamellar'], barbarian: ['great_axe', 'lamellar'],
+      cleric: ['flail', 'watch_habit'], sorcerer: ['wardens_dirk', 'watch_habit'], thief: ['wardens_dirk', 'lamellar'], bard: ['wardens_dirk', 'lamellar'],
+      monk: ['lantern_staff'], druid: ['lantern_staff', 'lamellar'],
+    },
+  },
+  {
+    level: 16, name: "the Sunder's finds",
+    from: {
+      'great_axe+1': ['sunderwood', '#196'], 'wardens_dirk+1': ['sunderwood', '#198'], 'flail+1': ['sunderwood', '#199'],
+      'ironwood_bow+1': ['sunderwood', '#199'], 'plate+2': ['sunderwood', '#199'], lanterns_staff: ['sunderwood', '#200'],
+    },
+    classes: {
+      knight: ['flail+1', 'plate+2'], paladin: ['flail+1', 'plate+2'], ranger: ['ironwood_bow+1'], barbarian: ['great_axe+1'],
+      cleric: ['flail+1'], sorcerer: ['wardens_dirk+1'], thief: ['wardens_dirk+1'], bard: ['wardens_dirk+1'],
+      monk: ['lanterns_staff'], druid: ['lanterns_staff'],
+    },
+  },
+];
+
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
 const kind = (d: ItemDef): string => (d.slot === 'weapon' ? (d.ranged ? 'bow' : 'hand') : d.slot);
 /** How good an item is of its kind: a weapon's mean blow with its plus, armour's and a shield's AC. */
@@ -134,6 +187,33 @@ export function ladder(): void {
   const unlisted = by(10).filter((id) => !by(9).includes(id) && !(id in DEEP_FINDS));
   ok(!unlisted.length, `every rung at 10 is a Deepthorn find with its box${unlisted.length ? ` (not: ${unlisted.join(', ')})` : ''}`);
 
+  // Act II, rung by rung, as the Deepthorn's: each item is in the ladder at its rung and no sooner, the
+  // class can use it, and it betters the best of its kind the class had on the rung before.
+  ACT_II.forEach((rung, k) => {
+    const before = k ? ACT_II[k - 1].level : 10;
+    for (const [cls, ids] of Object.entries(rung.classes) as [ClassId, readonly string[]][]) {
+      // A class that bears a shield had no two-hander to better.
+      const shielded = [...CLASSES[cls].kit, ...ids].some((id) => ITEMS[id]?.slot === 'shield');
+      const had = [...CLASSES[cls].kit, ...by(before)].map((id) => ITEMS[id]).filter((d) => usable(d, cls) && !(shielded && d.twoHanded));
+      const faults = ids.flatMap((id) => {
+        const d = ITEMS[id];
+        if (!d) return [`${id} is no item`];
+        if (!by(rung.level).includes(id) || by(rung.level - 1).includes(id)) return [`${id} is not in the ladder at ${rung.level}`];
+        if (!(id in rung.from)) return [`${id} is not one of ${rung.name}`];
+        if (!usable(d, cls)) return [`${id} is not for a ${cls}`];
+        if (shielded && d.twoHanded) return [`${id} is two-handed, and a ${cls} bears a shield`];
+        if (CLASSES[cls].traits.includes('unarmoured') && d.slot === 'armor' && !robeLike(d)) return [`${id} is past a robe's armour, and a ${cls} fights unarmoured`];
+        const best = Math.max(0, ...had.filter((h) => kind(h) === kind(d)).map(worth));
+        return worth(d) > best ? [] : [`${id} (${worth(d)}) is no better than the ${kind(d)} it had by ${before} (${best})`];
+      });
+      ok(ids.length > 0 && !faults.length, `the ${CLASSES[cls].name} betters its gear by ${rung.level} from ${rung.name}: ${ids.join(', ')}${faults.length ? ` (${faults.join('; ')})` : ''}`);
+    }
+    ok(Object.keys(rung.classes).length === Object.keys(CLASSES).length, `every class has a step from ${rung.name} (${Object.keys(rung.classes).length} of ${Object.keys(CLASSES).length})`);
+    const rungIds = by(rung.level).filter((id) => !by(rung.level - 1).includes(id));
+    const stray = [...rungIds.filter((id) => !(id in rung.from)), ...Object.keys(rung.from).filter((id) => !rungIds.includes(id))];
+    ok(!stray.length, `the ladder at ${rung.level} is ${rung.name}, every one of them${stray.length ? ` (not: ${stray.join(', ')})` : ''}`);
+  });
+
   // Every id in the ladder is an item, and every find is one within the Foreland's window.
   const missing = GEAR.flatMap(([, ids]) => ids).filter((id) => !ITEMS[id]);
   ok(!missing.length, `every rung of the ladder is an item${missing.length ? ` (not: ${missing.join(', ')})` : ''}`);
@@ -152,6 +232,19 @@ export function ladder(): void {
     ok(!!d && d.price > 0 && d.price <= CURVE.thornmark.price, `find ${id} is an item within Thornmark's window (${d?.price} of ${CURVE.thornmark.price} gold)`);
     const msg = `find ${id} lies in a chest, a cairn, a statue's gift or a hoard`;
     if (whose) owed(found.has(id), msg, whose); else ok(found.has(id), msg);
+  }
+
+  // Act II's wares are sold in their area and its finds placed there, each inside the area's window;
+  // each owed to its shop or box until it is.
+  const areaOf = (id: string) => AREAS.find((a) => a.id === id)!;
+  for (const rung of ACT_II) for (const [id, [area, whose]] of Object.entries(rung.from)) {
+    const d = ITEMS[id], a = areaOf(area), plus = !!d?.plus;
+    ok(!!d && d.price > 0 && d.price <= CURVE[area].price, `${plus ? 'find' : 'ware'} ${id} is an item within ${area}'s window (${d?.price} of ${CURVE[area].price} gold)`);
+    const there = plus
+      ? a.maps.some((m) => (m.features ?? []).some((f) => giftOf(f)?.items?.includes(id))) || a.monsters.some((m) => (m.drops ?? []).some((x) => x.item === id))
+      : a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && f.stock.includes(id)));
+    const msg = plus ? `find ${id} lies in a chest, a cairn, a statue's gift or a hoard in ${area}` : `ware ${id} is sold in ${area}`;
+    if (whose) owed(there, msg, whose); else ok(there, msg);
   }
 
   // Mottram's sells the ladder's plain step: the band's gear.
