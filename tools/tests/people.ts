@@ -11,7 +11,7 @@ import { meet, answer, heard, handIns, personFlags, personGives, readText, choic
 import type { Person } from '../../src/game/people.ts';
 import { questLog } from '../../src/game/quests.ts';
 import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef, Words, Answer } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { CONTENT, collect } from '../shipped.ts';
@@ -46,6 +46,10 @@ export function people(): void {
   for (const i of Object.values(ITEMS)) if (i.text) ok(wrap(i.text.join('\n\n'), SAY_W).length <= SAY_LINES, `${i.id}: the letter fits the box's ${SAY_LINES} lines`);
   // Every answer that hands over an item sets a flag, so the question is put once and the item given once.
   for (const { map, p } of all) for (const c of choices(p)) for (const a of c.answers) if (a.gives) ok([a.sets ?? []].flat().length > 0, `${map} ${p.x},${p.y}: '${a.label}' gives ${a.gives} and sets a flag`);
+  // A question answered, the next meeting says that answer's after-words: words put first that hold
+  // whenever the question's do would say the question's words for good.
+  const unsaid = all.flatMap(({ map, p }) => afterFaults(p).map((bad) => `${map} ${p.x},${p.y}: ${bad}`)), answers = all.reduce((n, { p }) => n + answered(p), 0);
+  ok(answers > 0 && !unsaid.length, `an answered question's after-words are said at the next meeting (${answers} answers)${unsaid.length ? ' -> ' + unsaid.join('; ') : ''}`);
 
   ok(THREE.every((item) => givers.filter((x) => handIns(x.p).some((q) => q.item === item)).length === 1), `the three hand-ins are found: ${THREE.join(', ')}`);
   for (const item of THREE) {
@@ -241,6 +245,41 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     delete ITEMS[LETTER.id];
   }
   presence();
+}
+
+const flagsOf = (x: string | readonly string[] | undefined): readonly string[] => [x ?? []].flat();
+
+/** A person's answers whose flags some later words of theirs wait for: the answers with after-words. */
+const withAfter = (p: Person): { w: Words; a: Answer; after: Words[] }[] => (p.says ?? []).flatMap((w) => (w.choice?.answers ?? []).flatMap((a) => {
+  const after = (p.says ?? []).filter((v) => v !== w && [v.after ?? []].flat().some((c) => flagsOf(c.flag).some((f) => flagsOf(a.sets).includes(f))));
+  return after.length ? [{ w, a, after }] : [];
+}));
+const answered = (p: Person): number => withAfter(p).length;
+
+/**
+ * Each of a person's answers with after-words, met as the game meets them: the words ending in the
+ * question first, as they hold (their first `after`, at any hour); then the answer; then the next
+ * meeting, which says the answer's after-words. What fails, said.
+ */
+export function afterFaults(p: Person): string[] {
+  const out: string[] = [];
+  for (const { w, a, after } of withAfter(p)) {
+    const first = [w.after ?? []].flat()[0] ?? {};
+    const party = { flags: Object.fromEntries(flagsOf(first.flag).map((f) => [f, 1])), bag: [] as string[], gold: 0 } as unknown as Party;
+    // What the save records besides flags is taken as the question's words found it, and stays so.
+    const facts = { seen: first.seen, item: first.item, slain: flagsOf(first.slain), visited: first.visited };
+    const cond = (c: QuestCond): boolean => flagsOf(c.flag).every((f) => party.flags[f]) && (c.seen === undefined || c.seen === facts.seen) && (c.item === undefined || c.item === facts.item)
+      && flagsOf(c.slain).every((s) => facts.slain.includes(s)) && (c.visited === undefined || c.visited === facts.visited);
+    const when = (x: Words['after']): boolean => [x ?? []].flat().some(cond);
+    const holds = (v: Words): boolean => (!v.after || when(v.after)) && !(v.until && when(v.until));
+    const said = (v: Words): string => v.lines.join('\n\n');
+    const one = meet(p, party, holds);
+    if (one.text !== said(w)) { out.push(`the words that put '${w.choice!.ask.slice(0, 40)}…' are not said when they hold: earlier words are said in their place`); continue; }
+    answer(a, party);
+    const two = meet(p, party, holds).text;
+    if (!after.some((v) => said(v) === two)) out.push(`'${a.label}' answered, the next meeting does not say its after-words (it says '${two.slice(0, 50)}…')`);
+  }
+  return out;
 }
 
 /** People who come and go and events by night or by flag, on a fixture town, as `World` finds them. */

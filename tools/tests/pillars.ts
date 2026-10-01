@@ -401,6 +401,9 @@ export async function pillars(): Promise<void> {
     }
     console.log(`        ${area.id}: ${count.reduce((a, b) => a + b)} events and signs; by lines as shown, ${count.slice(1).map((n, i) => `${n} at ${i + 1}`).join(', ')}`);
   }
+  // The log puts "A sign reads:" before a sign's words, so a sign's own text never says it again.
+  const doubled = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'sign' && /^\W*a sign reads/i.test(f.text) ? [`${d.id} ${f.x},${f.y}`] : [])));
+  ok(!doubled.length, `no sign's text opens with "A sign reads", which the log adds${doubled.length ? ' -> ' + doubled.join('; ') : ''}`);
   {
     const long = 'The corridor runs on into the dark, and every step of it is carved with hands, palm out, hundreds of them, then thousands; some are small as a child\'s, and some are bigger than any hand that ever lived. Nobody has swept here.';
     const at = (features: MapDef['features']): MapDef => ({ id: 'fixture_text', name: 'Text fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['###', '#.#', '###'], features });
