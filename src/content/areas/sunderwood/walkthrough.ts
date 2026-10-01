@@ -13,7 +13,11 @@ import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
-import { GameMap } from '../../../game/map.ts';
+import type { Feature } from '../../../game/map.ts';
+import { buy, item } from '../../../game/items.ts';
+import { canTrainAt, xpForLevel, CLASSES } from '../../../game/party.ts';
+import { spellsFor } from '../../../game/spells.ts';
+import { ACT_II } from '../../../../tools/tests/ladder.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
@@ -24,6 +28,7 @@ const J2 = MAP_DEFS.find((d) => d.id === 'eaves_j2')!;
 const CUTTER = J2.features!.find((f) => f.kind === 'npc' && f.name === 'Garret, a pine-cutter') as Person;
 const K2 = MAP_DEFS.find((d) => d.id === 'eaves_k2')!;
 const L2 = MAP_DEFS.find((d) => d.id === 'lanternwood_l2')!;
+const WATCH = MAP_DEFS.find((d) => d.id === 'lantern_watch')!;
 const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'A young sister of the Watch') as Person;
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -128,9 +133,33 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'lanternwood_l2:l2_lamp_day');
   listen(w);
 
-  // The tower's gate is shut until #201 builds the Watch behind it, and says so by what is seen.
+  // The tower's gate is the way into Lantern Watch (#201): in at it and out again onto the spur.
   const gate = L2.features!.find((f) => f.kind === 'event' && f.id === 'l2_gate');
-  ok(gate?.kind === 'event' && gate.text.includes('barred') && new GameMap(L2).passable(gate.x, gate.y - 1) !== 'ok' && !L2.exits?.length, 'the spur ends at the tower\'s gate, barred');
+  ok(gate?.kind === 'event' && gate.text.includes('open now') && !!L2.exits?.some((e) => e.x === gate.x && e.y === gate.y - 1 && e.to === 'lantern_watch'), 'the spur ends at the tower\'s gate, and the gate is the way in');
+  walkThrough(w, 'lanternwood_l2', 12, 17, NORTH, 'lantern_watch');
+  ok(w.world.state.mapId === 'lantern_watch' && w.world.state.x === WATCH.start.x && w.world.state.y === WATCH.start.y, 'the gate lets the company into the Watch\'s yard');
+  walkThrough(w, 'lantern_watch', 7, 14, SOUTH, 'lanternwood_l2');
+  ok(w.world.zone?.id === 'lanternwood_l2' && w.world.state.x - w.world.zone.x === 12 && w.world.state.y - w.world.zone.y === 17, 'and out again onto the spur before the gate');
+
+  // A company of 14 rests, buys the band's gear, studies to the sixth tier and trains to 17. No temple:
+  // Sunderfall's shrine cures.
+  const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => WATCH.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
+  ok(business('inn').length === 1 && !business('temple').length, 'the Watch has a refectory to rest in, and no temple');
+  const stores = business('shop').find((f) => f.interior === 'watch_stores')!;
+  const rung = ACT_II.find((r) => r.level === 14)!;
+  w.party.gold = 20000;
+  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, stores, id), `${m.name} buys a ${item(id).name} from the stores`);
+  ok(stores.stock.includes('lantern_oil'), 'and the stores sell lamp oil');
+  const hall = business('guild')[0];
+  ok(business('guild').length === 1 && hall.hall === 'lanterns' && hall.interior === 'watch_hall' && hall.maxTier === 6, `the Lantern hall is the Lanterns' hall and teaches to the sixth tier (${hall.name})`);
+  const caster = w.party.members.find((m) => CLASSES[m.cls].spells)!;
+  const sixth = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).filter((sp) => sp.level === 6);
+  ok(sixth.length > 0 && hall.classes.includes(caster.cls), `${caster.name} may study the sixth tier there (${sixth.map((sp) => sp.name).join(', ')})`);
+  const gallery = business('trainer')[0];
+  const trainee = w.party.members[0], was = { level: trainee.level, xp: trainee.xp };
+  trainee.level = 16; trainee.xp = xpForLevel(17);
+  ok(gallery.maxLevel === 17 && gallery.interior === 'watch_gallery' && canTrainAt(trainee, gallery.maxLevel) && (trainee.level = 17, !canTrainAt(trainee, gallery.maxLevel)), 'the Lamp Gallery trains a member of 16 to 17, and no further');
+  Object.assign(trainee, was);
 
   // The secret: the ash raked flat on the knoll and the sister's word that she burnt it, then the
   // search at the ash and the pit under it. Walking or wading, the pit is never reached but through the ash.
