@@ -1,4 +1,5 @@
-// The Rift family: riftling, riftling elder, Rift Warden and Warden of the Cut. Things of crystal
+// The Rift family: riftling, riftling elder, Rift Warden and Warden of the Cut, and the brineling,
+// the riftling in the Tide Stone's brine glass (MONSTERS §2.1). Things of crystal
 // shard and ember: a molten core wrapped in faceted stone. A body is built in depth layers rather
 // than as one flat card -- the dark far limbs, then the body mass, then one or two layers of paler
 // plates lying on it, each layer a blob of its own so it keeps an ink edge, and each plate given a
@@ -15,17 +16,18 @@ import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { tones } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden'];
+export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden', 'brineling'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'warden' || kind === 'cut_warden') sentinel(ctx, x, y, h, p, kind === 'cut_warden');
-  else creature(ctx, x, y, h, p, kind === 'riftling_elder');
+  else creature(ctx, x, y, h, p, kind === 'riftling_elder', kind === 'brineling');
 };
 
 /** The hot colours of one Rift thing: the emissive glow, the molten lump, its white heart. */
 interface Heat { glow: string; ember: string; heart: string; seam: string }
-function heatOf(p: Paint, cold: boolean): Heat {
+function heatOf(p: Paint, cold: boolean, brine = false): Heat {
   const t = Math.max(0.6, p.tone);
+  if (brine) return { glow: '#52f0c2', ember: shade(mix(p.light, '#c4fff0', 0.75), t), heart: '#f2fffa', seam: '#a8ffe4' };
   if (cold) return { glow: '#8ec8ff', ember: shade(mix(p.light, '#cfe8ff', 0.75), t), heart: '#f4fbff', seam: '#dff2ff' };
   return { glow: '#ff8a30', ember: shade(mix(p.light, '#ffb040', 0.65), t), heart: '#fff4c8', seam: '#ffb050' };
 }
@@ -170,16 +172,25 @@ function fragment(ctx: CanvasRenderingContext2D, x: number, y: number, s: number
  * then the belly plate and shoulder guard lying on it, then the breastplate and brow lying on those.
  * Every plate carries its own ink edge and a shadow cast under its far lip, and the core burns in
  * the notch the breastplate lifts away from the belly, so the light leaks out from BETWEEN them.
+ *
+ * The brineling is the same thing in sea-green glass: a little leaner, glass fins for a crown, and
+ * wet. A light swims about inside it, seen through the plates, and the brine runs off its edges in
+ * drops that hang from the claws and the jaw and never fall.
  */
-function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, elder: boolean): void {
-  const heat = heatOf(p, false), pulse = 0.5 + 0.5 * Math.sin(p.frame / 6);
+function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, elder: boolean, brine = false): void {
+  const heat = heatOf(p, false, brine), pulse = 0.5 + 0.5 * Math.sin(p.frame / 6);
   const b = p.breathe * h * 0.008, sway = Math.sin(p.frame / 20) * h * 0.006;
   // W widens the frame, T thickens the limbs: the elder is the same creature grown heavy.
-  const W = elder ? 1.18 : 0.94, T = elder ? 1.3 : 1;
+  const W = elder ? 1.18 : brine ? 0.9 : 0.94, T = elder ? 1.3 : brine ? 0.96 : 1;
+  if (brine && !B.override) {
+    // The wet it stands in: a sheen on the ground, too faint to be ink.
+    ctx.fillStyle = rgba(mix(heat.glow, '#c8fff0', 0.4), 0.2);
+    ctx.beginPath(); ctx.ellipse(x + h * 0.04, y + 1, h * 0.34 * W, h * 0.04, 0, 0, Math.PI * 2); ctx.fill();
+  }
   groundShadow(ctx, x, y + 1, h * 0.78 * W);
 
   // The skull's own frame: locals in head units, so brow, jaw, teeth and crown scale as one piece.
-  const hs = h * (elder ? 1.02 : 0.92);
+  const hs = h * (elder ? 1.02 : brine ? 0.94 : 0.92);
   const hx = x + h * 0.175 + sway, hy = y - h * 0.815 + b;
   const HD = (u: number, v: number): number[] => [hx + u * hs, hy + v * hs];
 
@@ -226,13 +237,16 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
     { k: 'poly', pts: facetLimb([ax, ay, ex, ey, wx, wy], [h * 0.072 * T, h * 0.054 * T, h * 0.042 * T]) },
     { k: 'poly', pts: shard(ex + h * 0.016, ey + h * 0.018, 1.05, h * 0.1 * T, h * 0.036 * T) },
   ];
-  // Crown shards: short, thick, swept up and back; the elder wears four and they run longer.
+  // Crown shards: short, thick, swept up and back; the elder wears four and they run longer. The
+  // brineling's are glass fins, thinner, taller and nearer upright, like a sea thing's spines.
   const crown: [number, number, number, number][] = elder
     ? [[0.050, -0.118, -1.42, 0.098], [0.008, -0.166, -1.80, 0.118], [-0.044, -0.158, -2.16, 0.104], [-0.086, -0.100, -2.58, 0.086]]
-    : [[0.034, -0.146, -1.46, 0.086], [-0.020, -0.172, -1.92, 0.104], [-0.072, -0.118, -2.42, 0.082]];
+    : brine
+      ? [[0.046, -0.128, -1.34, 0.112], [0.006, -0.168, -1.66, 0.136], [-0.040, -0.160, -2.00, 0.124], [-0.080, -0.112, -2.38, 0.092]]
+      : [[0.034, -0.146, -1.46, 0.086], [-0.020, -0.172, -1.92, 0.104], [-0.072, -0.118, -2.42, 0.082]];
   for (const [u, v, a, len] of crown) {
     const base = HD(u, v);
-    stone.push({ k: 'poly', pts: shard(base[0], base[1], a, hs * len, hs * 0.031, 0.26) });
+    stone.push({ k: 'poly', pts: shard(base[0], base[1], a, hs * len, hs * (brine ? 0.025 : 0.031), brine ? 0.16 : 0.26) });
   }
   // The hand: a short angular palm with the claws breaking off its front edge at different points.
   // Shards all radiating from the one point at the wrist read as a mitten with fingers drawn on it.
@@ -244,19 +258,21 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   const claws: [number, number, number][] = elder
     ? [[-0.36, 0.100, -0.52], [0.00, 0.122, -0.16], [0.38, 0.108, 0.22], [0.78, 0.084, 0.6]]
     : [[-0.30, 0.092, -0.46], [0.06, 0.112, -0.02], [0.46, 0.090, 0.46]];
+  const tips: [number, number][] = [];
   for (const [a, len, off] of claws) {
     const bx = phx + Math.cos(a) * pw * 0.36 - Math.sin(a) * pw * off;
     const by = phy + Math.sin(a) * pw * 0.36 + Math.cos(a) * pw * off;
     stone.push({ k: 'poly', pts: shard(bx, by, a, h * len * T, h * 0.026 * T, 0.18) });
+    tips.push([bx + Math.cos(a) * h * len * T * 0.94, by + Math.sin(a) * h * len * T * 0.94]);
   }
-  blob(ctx, B, p.base, stone, { h, tex: 'facets', seed: 4, amount: 0.3, formK: 0.55, spread: 0.8, creases: [
+  blob(ctx, B, p.base, stone, { h, tex: 'facets', seed: 4, amount: brine ? 0.22 : 0.3, formK: 0.55, spread: 0.8, creases: [
     { x0: x + h * 0.06, y0: y - h * 0.745 + b, x1: hx - hs * 0.07, y1: hy + hs * 0.1, r: h * 0.026, a: 0.4 },
     { x0: ax + h * 0.015, y0: ay + h * 0.025, x1: ex, y1: ey, r: h * 0.024, a: 0.28 },
     { x0: ex, y0: ey, x1: wx, y1: wy, r: h * 0.02, a: 0.24 },
   ] });
 
   // ---- first plate layer: the belly slab, the shoulder guard and the brow shelf, on the mass.
-  const mid = shade(mix(p.base, '#ffd0a0', elder ? 0.25 : 0.21), Math.max(0.65, p.tone));
+  const mid = shade(mix(p.base, brine ? '#c8fff0' : '#ffd0a0', elder ? 0.25 : brine ? 0.26 : 0.21), Math.max(0.65, p.tone));
   const belly = [x - h * 0.116 * W, y - h * 0.418, x - h * 0.142 * W, y - h * 0.492, x - h * 0.05, y - h * 0.542,
     x + h * 0.06 * W, y - h * 0.528, x + h * 0.132 * W, y - h * 0.464, x + h * 0.096 * W, y - h * 0.414, x + h * 0.014, y - h * 0.396];
   const guard = [x + h * 0.09, y - h * 0.758 + b, x + h * 0.22 * W, y - h * 0.722 + b, x + h * 0.288 * W, y - h * 0.632, x + h * 0.244 * W, y - h * 0.57, x + h * 0.142, y - h * 0.614];
@@ -271,7 +287,7 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   core(ctx, ccx, ccy, cr, p.dark, heat, pulse, 30, h);
 
   // ---- second plate layer: the breastplate, palest, lying on the belly slab and the mass.
-  const top = shade(mix(p.base, '#ffe0b8', elder ? 0.43 : 0.37), Math.max(0.65, p.tone));
+  const top = shade(mix(p.base, brine ? '#e6fff8' : '#ffe0b8', elder ? 0.43 : brine ? 0.44 : 0.37), Math.max(0.65, p.tone));
   const breast = [x - h * 0.104 * W, y - h * 0.606, x - h * 0.14 * W, y - h * 0.668 + b, x - h * 0.086 * W, y - h * 0.722 + b,
     x - h * 0.008, y - h * 0.742 + b, x + h * 0.106 * W, y - h * 0.706 + b, x + h * 0.122 * W, y - h * 0.642,
     x + h * 0.04, y - h * 0.652, x - h * 0.014, y - h * 0.698, x - h * 0.056, y - h * 0.644];
@@ -314,7 +330,44 @@ function creature(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   const er = hs * (elder ? 0.030 : 0.028);
   hotEye(ctx, ...(HD(0.002, 0.000) as [number, number]), er * 0.58, heat, pulse * 0.8, 0.5);
   hotEye(ctx, ...(HD(0.058, 0.016) as [number, number]), er, heat, pulse, -0.34);
+  if (!brine) return;
 
+  // ---- the light in it: a second light that swims slowly about the chest and belly, seen through
+  //      the glass. Its path is the frame's, so it moves; its shape is not, so nothing boils.
+  const m = p.frame / 26, lx = x + h * (0.02 + 0.075 * Math.sin(m)), ly = y - h * (0.6 + 0.1 * Math.sin(m * 0.63 + 1));
+  glow(ctx, B, lx, ly, h * 0.15, heat.glow, 0.3 + pulse * 0.1, heat.heart);
+  glow(ctx, B, lx, ly, h * 0.045, heat.heart, 0.55, heat.heart);
+
+  // ---- wet at the edges: a sheen along the upper lips, and drops hanging from the claws, the
+  //      elbow and the jaw. Each grows and goes back; none of them ever lets go.
+  wet(ctx, [x - h * 0.17 * W, y - h * 0.7 + b, x - h * 0.06, y - h * 0.742 + b, x + h * 0.08, y - h * 0.735 + b], h);
+  wet(ctx, [ex - h * 0.01, ey - h * 0.04, wx - h * 0.02, wy - h * 0.045], h);
+  wet(ctx, [...HD(-0.07, -0.13), ...HD(0.0, -0.165), ...HD(0.05, -0.135)], h);
+  const glass = shade(mix(heat.glow, p.light, 0.45), Math.max(0.65, p.tone));
+  const drops: [number, number, number][] = [
+    ...tips.map(([tx, ty], i): [number, number, number] => [tx, ty, i * 0.37]),
+    [ex + h * 0.016 + Math.cos(1.05) * h * 0.095 * T, ey + h * 0.018 + Math.sin(1.05) * h * 0.095 * T, 0.6],
+    [...(HD(0.03, 0.146) as [number, number]), 0.15],
+  ];
+  for (const [dx, dy, phase] of drops) drip(ctx, dx, dy, h * (0.018 + 0.022 * ((p.frame / 48 + phase) % 1)), h * 0.011, glass, h);
+}
+
+/** A wet sheen along an edge: a thin pale line, skipped while the brush flashes. */
+function wet(ctx: CanvasRenderingContext2D, pts: readonly number[], h: number): void {
+  if (B.override) return;
+  ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  ctx.strokeStyle = rgba('#effffa', 0.55); ctx.lineWidth = Math.max(1, h * 0.008);
+  ctx.beginPath(); ctx.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]); ctx.stroke();
+}
+
+/**
+ * A drop of brine hanging from (x, y): a neck from the edge it clings to, swelling to a bead `len`
+ * below. It starts inside the edge, so it is always one piece with the body.
+ */
+function drip(ctx: CanvasRenderingContext2D, x: number, y: number, len: number, w: number, hex: string, h: number): void {
+  const pts: number[] = [x - w * 0.45, y - w * 0.6, x + w * 0.45, y - w * 0.6];
+  for (let i = 0; i <= 6; i++) { const a = (i / 6) * Math.PI; pts.push(x + Math.cos(a) * w, y + len + Math.sin(a) * w * 0.9); }
+  glossPoly(ctx, B, pts, hex, { gloss: 1, h });
 }
 
 // ------------------------------------------------------------------ warden ----
