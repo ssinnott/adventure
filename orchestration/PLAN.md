@@ -1767,3 +1767,10 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   each broken on purpose). Landing check on 95213be merged onto 20582b3: ALL OK (4 owed), SMOKE OK,
   "Nothing new."; CI green. Merged as a001743; main's tree is the tested tree (26b2950). #311 closes.
   The quality session done. #321 (#318) in review.
+- 03:00: `reviews/321.md` (#318, the tall boss): ready after fixes. Should-fix: nothing ties
+  `TALL_REACH` to the ink (a crown drawn to 0.95 passes the checks with the marker inside it): a
+  smoke scan should hold a def over `TALL` to ink within it. Nits: with both heartwoods the crown
+  and a root run 32 px past the view's left edge; MONSTERS.md:266's size range. Held: every Done
+  when line; the other 54 monsters' sheet byte-identical; the ogre, Hand, Warden and heartwood fight
+  pixel-identical. My own look: the Eldest towers over its heartwoods, plainly the boss. The look,
+  nit 2 and the three choices to a delegate.
