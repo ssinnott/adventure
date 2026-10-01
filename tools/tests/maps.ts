@@ -18,8 +18,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   drowned_chanter: '#175', choirmaster: '#175',
-  grey_heron: '#171',
-  sunderling: '#198', sunder_warden: '#199',
+  sunder_warden: '#199',
 };
 
 /**

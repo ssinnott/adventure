@@ -8,7 +8,10 @@
 // rocks, and the box's groups won at its floor. Then Lanternwood (L2, #200): the road on through the
 // wood to the tower's gate and in at it to Lantern Watch (#201), where a company rests, buys, studies
 // and trains, the pit under the signal fire's ash found from the ash and the young sister's word, and
-// the box's groups won at its floor.
+// the box's groups won at its floor. Then the Sunder's mouth (K3, #198): the ledges walked down past
+// the gleaners to the door and the camp below it, the river's old bed found from its stones and the
+// stack across it, the box's bears won at its floor, and its Rift walked into and won, its groups
+// still coming back.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -28,6 +31,8 @@ const WOODCUTTER = I2.features!.find((f) => f.kind === 'npc' && f.name === 'A wo
 const J2 = MAP_DEFS.find((d) => d.id === 'eaves_j2')!;
 const CUTTER = J2.features!.find((f) => f.kind === 'npc' && f.name === 'Garret, a pine-cutter') as Person;
 const K2 = MAP_DEFS.find((d) => d.id === 'eaves_k2')!;
+const K3 = MAP_DEFS.find((d) => d.id === 'eaves_k3')!;
+const K3_RIFT = MAP_DEFS.find((d) => d.id === 'k3_rift')!;
 const L2 = MAP_DEFS.find((d) => d.id === 'lanternwood_l2')!;
 const WATCH = MAP_DEFS.find((d) => d.id === 'lantern_watch')!;
 const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'A young sister of the Watch') as Person;
@@ -190,4 +195,52 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The box's groups, each won at its floor: the moths at the lit lamp and the tower by night, the hounds on the knoll's path and the glass bears on the road on.
   for (const g of L2.encounters!) fight(w, `lanternwood_l2:${g.id}`);
+
+  // The Sunder's mouth: south out of K2 along the east lip, to the ledges' head.
+  walkThrough(w, 'eaves_k2', 12, 29, SOUTH, 'eaves_k3', 4);
+  see(w, 'eaves_k3:k3_ledges');
+  // Down the ledges, a square wide: the gleaners at the door, then on down past it to their camp,
+  // where the ledges stop. The door is drawn shut in the face; the Sunder (#199) opens it.
+  fight(w, 'eaves_k3:k3_door');
+  const k3 = out.zones.find((z) => z.id === 'eaves_k3')!;
+  ok(out.passable(k3.x + 10, k3.y + 8) !== 'ok', 'the door on the first landing stands shut in the rock');
+  w.world.travel('eaves_k3', 12, 1, SOUTH);
+  const turns = ['forward', 'forward', 'forward', 'forward', 'right', 'forward', 'forward', 'forward', 'left', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'left', 'forward', 'forward', 'right', 'forward'] as const;
+  const stepped = turns.map((t) => (t === 'forward' ? w.world.move('forward') : (w.world.turn(t), { kind: 'moved' })));
+  ok(stepped.every((r) => r.kind === 'moved') && w.world.used('k3_camp'), 'the ledges are walked down, a square at a time, past the door to the camp where they stop');
+  listen(w);
+  const dirk = K3.features!.find((f) => f.kind === 'chest' && f.id === 'k3_camp_chest');
+  ok(dirk?.kind === 'chest' && dirk.items.includes('wardens_dirk+1'), 'in the gleaners\' camp, a Warden\'s Dirk +1');
+
+  // The secret: the river's old bed, cut off at the lip, and the stack across its mouth; searched there,
+  // the bed behind it and the shard. Walked, waded, climbed or floated, the bed is never reached but
+  // through the stack.
+  const pile = [k3.x + 16, k3.y + 15], bed = (k3.y + 15) * out.width + k3.x + 18;
+  const roamed = new Set<number>(), roam = [[k3.x + 13, k3.y]];
+  while (roam.length) {
+    const [x, y] = roam.pop()!, k = y * out.width + x;
+    if (roamed.has(k) || (x === pile[0] && y === pile[1]) || !(x >= k3.x && x < k3.x + k3.w && y >= k3.y && y < k3.y + k3.h) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+    roamed.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) roam.push([x + dx, y + dy]);
+  }
+  ok(roamed.size > 400 && !roamed.has(bed), `the old bed is shut but for the stack: none of K3's ${roamed.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'eaves_k3:k3_stones');
+  see(w, 'eaves_k3:k3_stack');
+  w.world.travel('eaves_k3', 15, 15, EAST);
+  let searched = false;
+  for (let i = 0; i < 20 && !searched; i++) searched = w.world.search();
+  const inBed = searched ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(searched && inBed.every((r) => r.kind === 'moved') && w.world.used('k3_bed'), 'searched at the stack, it opens, and the old bed behind it can be walked into');
+  listen(w);
+  const shard = K3.features!.find((f) => f.kind === 'chest' && f.id === 'k3_bed_chest');
+  ok(shard?.kind === 'chest' && shard.items.includes('sunder_shard') && shard.x === 18 && shard.y === 15, 'in the rock at the bed\'s end, the Sunder Shard');
+
+  // The bears at the far end, at 16, the box's top; then the Rift in the crystal, walked into from its
+  // lane, and its groups won at its floor. Nothing closes it: its groups keep coming back, and its tear
+  // has no quiet word.
+  fight(w, 'eaves_k3:k3_bears');
+  w.level = 14;
+  walkThrough(w, 'eaves_k3', 15, 26, EAST, 'k3_rift', 2);
+  for (const g of K3_RIFT.encounters!) fight(w, `k3_rift:${g.id}`);
+  ok(K3_RIFT.encounters!.every((e) => !!e.respawn && !e.until) && !K3_RIFT.features!.some((f) => 'after' in f && f.after), 'the Rift stays open: its groups come back, and its tear never goes quiet');
 };

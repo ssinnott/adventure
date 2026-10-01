@@ -10,8 +10,9 @@ turns. This is its area doc (EXPANSION §4, §6 and §8.2). Its work is filed un
 (#204), its side quests (#205), its drawings (#206) and its rooms (#207). Figures are measured on
 main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Five maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
-Sunderfall (#197), L2, Lanternwood (#200), and Lantern Watch, the town behind L2's gate (#201). Its content is
+Six maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
+Sunderfall (#197), K3, the Sunder's mouth (#198), with its Rift, L2, Lanternwood (#200), and Lantern
+Watch, the town behind L2's gate (#201). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -25,12 +26,18 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–15 | 6,197 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197) |
-| Lanternwood | 15–16 | 6,043 | L2, Lanternwood, laid at 360,30 (#200) |
-| The area | 14–16 | 12,240 | four boxes |
+| The Eaves | 14–16 | 6,717 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197); K3, the Sunder's mouth, at 328,62 (#198) |
+| Lanternwood | 15–16 | 5,926 | L2, Lanternwood, laid at 360,30 (#200) |
+| The area | 14–16 | 12,643 | five boxes |
 
-Squares are the land the zone check counts in each zone with K2 laid in the Eaves (#197), which
-moved the zone line east, and L2 in Lanternwood (#200), which moved it back west; the plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+Squares are the land the zone check counts in each zone with K2 and K3 laid in the Eaves (#197,
+#198) and L2 in Lanternwood (#200). K2 moved the zone line east and L2 moved it back west. K3 takes
+its own 265 squares that were not the Eaves' (152 of the Deepthorn's and 113 of Lanternwood's), and
+Lanternwood's line is held at K3's east and south edges by seeds (`atlas.ts`), since a laid map seeds
+the zones' walk from every square of it: without them the Eaves would run on into L3, L4 and K4. The
+walk still moves 252 more of the Deepthorn's into the Eaves in J3 and K4 (5,955 to 5,551), both boxes
+Sunderwood's on the grid, and 4 of Lanternwood's; the Iron Fells stand at 3,052 against 3,045.
+Holding the Deepthorn's line would need seeds in Thornmark's rows (§9). The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
 included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
@@ -119,6 +126,14 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   them, the camp on the west lip, the lookout down the gorge, the sawn glass, a cairn in the pines and
   a Lantern's stone by the road. Three groups: sunder hounds with a glass spider at the bridge's far
   end, gleaners with a hound at the dam and two glass bears on the road at the far end.
+- **The Sunder's mouth** (K3, `eaves_k3`, core, band 15–16; #198): the gorge on south from K2, both
+  lips dead wood, the glass grown thick to the south-east; the ledges cut into the east face, a
+  square wide, down from the east lip to the first landing, where the door stands shut in the rock
+  at 338,70, and on to a lower landing where they stop; the river's old bed on the east lip, the
+  camp back from it and the glass's light to the south; on the west lip the lookout, a cut rope, the
+  Lanterns' shrine and a cairn; and in a clearing in the crystal a black-glass Rift (`k3_rift`) that
+  stays open. Two groups: gleaners with sunder hounds on the first landing and two glass bears at
+  the far end; sunderlings and glass spiders in the Rift.
 - **Lanternwood** (L2, `lanternwood_l2`, core, band 15–16; #200): the east road on from the bridge
   through the old forest and out at the box's south-east corner by the river for M2, with a spur
   north to the tower's gate, the way into Lantern Watch (#201). Two wayside lamps
@@ -333,7 +348,9 @@ features; the pay shared out over the area (§8).
   walked every time at 14. As measured it pays about 1,070 xp a member and 510 gold, I2, J2 and K2
   together 3,644 against their 3,850. Its floor is above the area's, so its groups count two under
   in the area's pool, which is owed to #18. The area claims the falls as a landmark, the first built
-  on the road. What the owner finds by hand goes here when the box has been played.
+  on the road. What the owner finds by hand goes here when the box has been played. Since K3 (#198)
+  its south edge is the gorge on into K3, both lips through and the rock under the ledge kept, so
+  the lookout's path south along the wall is walked.
 
 ### 4.5 K3, the Sunder's mouth (#198): core, band 15–16
 
@@ -360,9 +377,32 @@ features; the pay shared out over the area (§8).
   - the bed: *Dead wood stacked across the old river bed, cut ends outward. Nobody stacks firewood
     on a riverbed.*
 - **New here.** The Hand as quarrymen; a Rift that stays open.
-- **Finds.** The fist-sized shard, a quest item the Watch reads (§5); a Warden's Dirk +1 in the
+- **Finds.** The fist-sized shard, the first Sunder Shard the company can hold; a Warden's Dirk +1 in the
   gleaners' camps, the ladder's (#399).
 - **Pay.** About 1,350 xp a member.
+
+- **As built** (#198, 1 October): the brief's ledges, door and Rift, with two groups on the box and
+  two in the Rift for its nine, and a new secret, since K2 took the dam (#197): the river's old bed
+  from before the Sunder took the river over the fall, on the east lip. The gorge runs on at x 4–8
+  from K2's seam and bends back to the atlas's line below the landings. The ledges are cut stone a
+  square wide, chasm to the west and the face to the east, from the east lip at 340,63 down to the
+  first landing, where the door stands shut in the face at 338,70, and on to a lower landing where
+  they stop, with the gleaners' camp: a Warden's Dirk +1 (`wardens_dirk+1`) and 120 gold. The door is
+  a wall until the Sunder (#199) opens it and writes its way back; it sets no flag and holds no lock.
+  Two gleaners and two sunder hounds stand on the first landing, MONSTERS §6.3's fight, and bar the
+  only way down; two glass bears in the dead wood past the crystal are the box's group at 16. The
+  bed's round stones in a gully cut off at the lip, and dead wood stacked across it, cut ends
+  outward, are the hint; behind the stack, a Sunder Shard (`sunder_shard`) half cut from the rock and
+  200 gold, walled by rock and pines so that no swimmer, climber or levitator reaches it. The camp,
+  the light in the glass, the lookout, a cut rope, the Lanterns' shrine (accuracy) and a cairn (170
+  gold and a Sapphire Vial) hold the lips. The Rift (`k3_rift`, the spiral in black glass, band
+  14–15, seed 2) has four sunderlings by the way in and four glass spiders by the tear, back after a
+  day, with no warden and no `until`: nothing closes it. A company at 15 wins every fight and manages
+  8.2 fights to a rest on the box, inside the aim; one at 14, 7.7 in the Rift, inside it too. Two
+  under, the Rift is won every time, owed to #18 as C5's; the box's floor is above the area's. As
+  measured the box pays about 677 xp a member and the Rift 764: 1,441 with 725 gold, about 90 over
+  the brief. Density 95.9% within 8 steps, the furthest 10. What the owner finds by hand goes here
+  when the box has been played.
 
 ### 4.6 The Sunder (#199): dungeon, two levels of 32×32, band 15–16
 
@@ -599,7 +639,8 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   four side quests 900 between them (29 and 30 200 each, 31 and 32 250 each, §6): about 11,500. They were the plan's, 11,800 before the
   side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
   supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
-  when it is built: I2 1,063, J2 1,509, K2 1,072 and L2 1,396 so far, 5,040 against their 5,000; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
+  when it is built: I2 1,063, J2 1,509, K2 1,072, K3 with its Rift 1,441 and L2 1,396 so far, 6,481
+  against their 6,350, about 130 over. A company should leave the Watch at 16, where the midpoint is, with the Kilns'
   floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
@@ -814,6 +855,74 @@ Decided by delegate for #197, each the owner's to overturn:
    cairn is out of sight of the road, not off any path.
 10. **The Long Sword +2 stays, under the Watch's stores:** #399 kept it off the ladder, a find that
     sells, as I2's halberd is. Every +1 has its box (#399), and none moves to K2.
+
+Decided by delegate for #198, each the owner's to overturn:
+
+1. **The ledges are cut into the east face,** and the gorge's north half is K2's line carried on,
+   at x 4–8 to the landings, then back to the atlas's x 10–12. K2's lookout sees a path to them going
+   south along the wall, and the face behind them lets nobody step off the lip onto a lower ledge: a
+   ledge is open only to its own way, or to Levitate.
+2. **Below the door the ledges go on to a lower landing and stop there in rain.** The rest of the
+   way down is the Sunder's upper level (#199).
+3. **The door is drawn shut until #199:** a wall in the face at 338,70, with the step's event at the
+   ledges' head and the landing plain. It sets no flag and is no entry in `locks.ts`, as C6's gate
+   was none before #177. #199 makes the square its way in and writes its exit back to the landing.
+4. **The secret is the river's old bed, from before the Sunder took the river over the fall,** where
+   the first shards were quarried. The dam and the quiet fall are K2's (#197), so the bed needs
+   neither. It lies on the east lip, the river's side: on the west lip, reached only from K2's
+   bridgehead, the hint check, which walks a map from its own start, could not find it.
+5. **The hint is two things seen:** round stones, the river's kind, in a gully on dry ground that
+   ends in air at the lip, and dead wood stacked across the bed, cut ends outward (the brief's line).
+   "K2's fall gone quiet" goes: it is the dam's, and hints at nothing here.
+6. **The prize is a Sunder Shard and 200 gold,** the shard (`sunder_shard`, slot none, price 0, as
+   the Brine Shard) half cut from the rock. The bed is walled by rock and pines,
+   so neither a swimmer, a climber nor Levitate reaches it.
+7. **Two groups on the box and two in the Rift, about 1,440 xp a member.** On the box, back after two
+   days: two gleaners and two sunder hounds on the first landing, MONSTERS §6.3's fight, barring the
+   only way down; and two glass bears in the dead wood past the crystal, the group at 16, as on K2, a
+   real fight. The bear is the only fit at 16: the deathshead is Lanternwood's by night. The Sunder's
+   mouth is nearer the glass bear's Where column than K2 or I2, and stands with §7's proposal. A
+   second gleaner group on the lower landing was dropped: the Rift holds its aim only at full size, and
+   with both the box paid about 1,840, where at three it was off its aim (9.0 fights to a rest).
+8. **The glass spider leaves the threads,** which are the Sunder's upper level (§4.6); K3's spiders
+   are in the Rift.
+9. **The Rift is the spiral in black glass, band 14–15, in a clearing in the crystal at the box's
+   south end,** reached by a lane from the dead wood by the gorge: the crystal reads as its own grown
+   glass. Seed 2 puts four sunderlings, its gentlest at 14, by the way in and four glass spiders, its
+   all-15 group, by the tear. Smaller groups ran past the limit on fights to a rest (14.9 at three and
+   two). Its two-under figure is owed to #18, as C5's Rift's is.
+10. **The Rift has no `until` and no warden:** both groups come back after a day and the tear never
+    goes quiet. A warden is the one group that never returns, the opposite of open whatever the
+    company does, and a heart whose fall closes nothing is the Warden of the Sunder's turn (MONSTERS
+    §6.3). The hoard is 150 gold and a Healing Draught, with no shard: the bed holds the box's.
+11. **The pay is about 90 over the brief's 1,350,** recorded in §8 and not cut: with L2's (#200), the
+    five boxes stand about 130 over their 6,350.
+12. **The foreman's tally is dropped,** and quest 30's ledges that stop: the tally is K2's ledge, and
+    the foreman and the stopping are #205's, which is not approved. No `until` on the landing's group.
+13. **The gleaners' camp on the lower landing holds the Warden's Dirk +1 and 120 gold,** behind the
+    landing's group, with a sack of shards that glow in words only.
+14. **The camp is on the east lip by the last pines,** the company's rest before the ledges and the
+    Rift; the light in the glass to its south points at the Rift without naming it.
+15. **The Lanterns' shrine is on the west lip's south end, facing the gorge, its lamp cold, and gives
+    accuracy:** no shrine in Act II had, and the lamp was for seeing far. The west lip carries the
+    lookout across to the door, a cut rope at the lip and a cairn of 170 gold and a Sapphire Vial, as
+    I2's to K2's.
+16. **K2's south ring opens to K3's north row square for square:** both lips' dead wood, the chasm,
+    the rock under K2's ledge and the pines. K3's west, south and east edges stay ringed, for J3, K4
+    and L3 to open.
+17. **The map is `eaves_k3`, called The Sunder's Mouth, laid whole in the Eaves,** core, band 15–16,
+    so the Eaves reads 14–16. The atlas's link at 338,70 keeps its ends. Its floor is above the
+    area's, so its groups count two under in the area's pool, owed to #18.
+18. **K3's Rift claims nothing new:** a Rift that stays open is the Sunder's (§4.6), where its
+    Warden falls and nothing closes, as §7 has it; K3's open Rift comes before it unclaimed.
+19. **The Sunder Shard is a keepsake, the bed's find and nothing more.** No hand-in takes it: the Watch
+    reads the Tide Ship's papers and log, not a shard (§5, #201, #204), so a secret's find never holds
+    up the act. It follows the Brine Shard, which neither the plinth nor any hand-in takes.
+20. **Lanternwood's line is held at K3's edges by seeds,** one a square down its east edge and along
+    its south edge east of the gorge, so that L4, L5 and M4 keep their squares and K4 its Lanternwood.
+    With L2 laid the Iron Fells keep their line. The Deepthorn's would need seeds in Thornmark's rows,
+    another lane's, or a systems change that settles unbuilt land as the plan has it; both are proposed
+    to the owner, not made here.
 
 Decided by delegate for #200, each the owner's to overturn:
 
