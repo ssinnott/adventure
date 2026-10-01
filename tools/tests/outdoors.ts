@@ -64,12 +64,17 @@ export function outdoors(): void {
   const rim = line(eaves.x, eaves.y, 1, 0, eaves.w * 3), seam = line(eaves.x + eaves.w - 1, eaves.y, 0, 1, eaves.h);
   ok(/^%+$/.test(rim) && seam === '%MM' + 'T'.repeat(8) + '=' + 'T'.repeat(19) + 'M', `I2's north edge, J2's and K2's, the rim, are the end of the world, and I2's east edge is the wood on into J2, with the road through it (${seam})`);
   // J2 and K2 (#197) meet in the gorge: chasm on both sides of the seam north of the road, the east
-  // road onto the rope bridge, and the west lip's dead wood and glass south of it. Past K2 the world
-  // ends at L2 and K3, which are not built: the road on east through a gap in the ring.
+  // road onto the rope bridge, and the west lip's dead wood and glass south of it.
   const lip = line(j2.x + j2.w - 1, j2.y, 0, 1, j2.h), gorge = line(k2.x, k2.y, 0, 1, k2.h);
-  const k2east = line(k2.x + k2.w - 1, k2.y, 0, 1, k2.h), ends = [j2, k2].map((z) => line(z.x, z.y + z.h - 1, 1, 0, z.w));
   ok(lip === '%' + 'v'.repeat(22) + '==' + 'T'.repeat(6) + '%' && gorge === '%' + 'v'.repeat(23) + '=cddcdc%', `J2's east edge and K2's west edge are the gorge, but for the road onto the bridge and the woods south of it (${lip}; ${gorge})`);
-  ok(k2east === '%'.repeat(22) + '=' + '%'.repeat(9) && ends.every((l) => /^%+$/.test(l)), `J2's and K2's south edges are the world's end, and K2's east edge, but for the east road on into L2 (${k2east})`);
+  // K2 and L2 (#200) meet in one wood, forest on both sides of the seam with the east road through
+  // it. Past L2 the world ends at M2 and L3, which are not built: the road on south-east through a
+  // gap in the ring; and under J2, K2 and L2 at J3, K3 and L3.
+  const l2 = out.zones.find((z) => z.id === 'lanternwood_l2')!;
+  const k2east = line(k2.x + k2.w - 1, k2.y, 0, 1, k2.h), l2west = line(l2.x, l2.y, 0, 1, l2.h), l2east = line(l2.x + l2.w - 1, l2.y, 0, 1, l2.h);
+  const ends = [j2, k2, l2].map((z) => line(z.x, z.y + z.h - 1, 1, 0, z.w)), wood = '%' + 'T'.repeat(21) + '=' + 'T'.repeat(8) + '%';
+  ok(k2east === wood && l2west === wood, `K2's east edge and L2's west edge are the wood on into Lanternwood, with the road through it (${k2east}; ${l2west})`);
+  ok(/^%+$/.test(line(l2.x, l2.y, 1, 0, l2.w)) && l2east === '%'.repeat(30) + '=%' && ends.every((l) => /^%+$/.test(l)), `L2's north edge, the rim, and J2's, K2's and L2's south edges are the world's end, and L2's east edge, but for the east road on into M2 (${l2east})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);
