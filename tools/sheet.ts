@@ -3,8 +3,10 @@
 //   node tools/sheet.ts out.png --area thornmark
 //   node tools/sheet.ts out.png [--maps thornhold,grove1] [--monsters tm_ogre] [--interiors green_man]
 //   node tools/sheet.ts out.png --changed origin/main
+//   node tools/sheet.ts out.png --rifts all          (or --rifts ring,spiral)
 // --changed draws what changed since the base, as tools/changed.ts reads it; with nothing changed
-// it says so, writes nothing and exits 0. A change to this tool draws everything.
+// it says so, writes nothing and exits 0. A change to this tool draws everything. --rifts draws the
+// Rift templates as content/rifts' samples dress them, which no area places; a placed Rift is a map.
 // Each map from its arrivals and, outdoors, from each of its sites on the world map, by day and by
 // night, with its automap revealed whole and its crop of the world map; a dungeon once, lit, since
 // it has no day or night. Each monster as a strip of idle frames ending on the hit flash. Each
@@ -14,7 +16,8 @@ import fs from 'node:fs';
 import { createRequire } from 'node:module';
 import { createServer } from './server.ts';
 import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './changed.ts';
-import { AREAS, MAP_DEFS, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
+import { AREAS, MAP_DEFS as PLACED, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
+import { RIFT_SAMPLES } from '../src/content/rifts/index.ts';
 import { GameMap } from '../src/game/map.ts';
 import { worldPoint, mapAt } from '../src/game/atlas.ts';
 import type { MapDef } from '../src/game/map.ts';
@@ -25,11 +28,11 @@ import type { RegionId } from '../src/game/weather.ts';
 import { daylightAt, MINUTES_PER_DAY, MIDSUMMER, EPOCH_DAY, DAYS_PER_YEAR } from '../src/game/calendar.ts';
 
 const require = createRequire(import.meta.url);
-const USAGE = 'usage: node tools/sheet.ts out.png [--area <id>] [--maps a,b] [--monsters x,y] [--interiors p,q] [--changed <base>]';
+const USAGE = 'usage: node tools/sheet.ts out.png [--area <id>] [--maps a,b] [--monsters x,y] [--interiors p,q] [--rifts all|a,b] [--changed <base>]';
 const fail = (msg: string): never => { console.error(msg); process.exit(2); };
 // Strict: one output path, and each known flag once with a value. Anything else is refused, so a
 // misspelt flag never makes an empty sheet that looks like nothing changed.
-const FLAGS = ['area', 'maps', 'monsters', 'interiors', 'changed'];
+const FLAGS = ['area', 'maps', 'monsters', 'interiors', 'rifts', 'changed'];
 const opts: Record<string, string> = {};
 let out: string | undefined;
 for (let i = 2; i < process.argv.length; i++) {
@@ -52,6 +55,10 @@ const list = (name: string): string[] => opt(name)?.split(',').filter(Boolean) ?
 // ---------------------------------------------------------------- what goes on it
 
 let maps = list('maps'), monsters = list('monsters'), interiors = list('interiors');
+// The Rift samples by template, drawn as maps: put with the maps as written so the rest finds them.
+const samples = opt('rifts') === 'all' ? RIFT_SAMPLES.map((d) => d.id) : list('rifts').map((t) => `rift_${t}`);
+const MAP_DEFS = [...PLACED, ...RIFT_SAMPLES.filter((d) => samples.includes(d.id))];
+maps = [...maps, ...samples];
 const areaId = opt('area');
 if (areaId) {
   const area = AREAS.find((a) => a.id === areaId) ?? fail(`unknown area '${areaId}' (${AREAS.map((a) => a.id).join(', ')})`);
@@ -70,7 +77,7 @@ if (base) {
 }
 maps = [...new Set(maps)]; monsters = [...new Set(monsters)]; interiors = [...new Set(interiors)];
 const unknown = [
-  ...maps.filter((id) => !MAP_DEFS.some((d) => d.id === id)).map((id) => `map '${id}'`),
+  ...maps.filter((id) => !MAP_DEFS.some((d) => d.id === id)).map((id) => (id.startsWith('rift_') && samples.includes(id) ? `rift template '${id.slice(5)}'` : `map '${id}'`)),
   ...monsters.filter((id) => !Object.hasOwn(MONSTERS, id)).map((id) => `monster '${id}'`),
   ...interiors.filter((id) => !(INTERIORS as readonly string[]).includes(id)).map((id) => `interior '${id}'`),
 ];
@@ -81,10 +88,14 @@ if (!maps.length && !monsters.length && !interiors.length) {
 }
 
 interface View { label: string; x: number; y: number; facing: Facing }
-interface MapPlan { id: string; name: string; kind: string; region: RegionId; views: View[]; world: { x: number; y: number; w: number; h: number; mark: [number, number] } }
+interface MapPlan { id: string; name: string; kind: string; region: RegionId; views: View[]; world: { x: number; y: number; w: number; h: number; mark: [number, number] } | null; sample?: MapDef }
 
 const FACING_NAME = ['north', 'east', 'south', 'west'];
 const open = (m: GameMap, x: number, y: number): boolean => m.inBounds(x, y) && m.at(x, y).solid === 'none' && !['water', 'deep', 'lava', 'chasm'].includes(m.at(x, y).terrain);
+
+/** A map's ways out: its exits, and its tears into Rifts, which are walked through as exits are. */
+const waysOut = (d: MapDef): { x: number; y: number; to: string; tx: number; ty: number; tf?: Facing }[] =>
+  [...(d.exits ?? []), ...(d.features ?? []).flatMap((f) => (f.kind === 'rift' ? [f] : []))];
 
 /** Where the party arrives: the map's start, and every other map's way in, once each. */
 function arrivals(def: MapDef): View[] {
@@ -95,7 +106,7 @@ function arrivals(def: MapDef): View[] {
     seen.add(k); views.push({ label: `from ${from}, ${x},${y} facing ${FACING_NAME[facing]}`, x, y, facing });
   };
   add(def.start.x, def.start.y, def.start.facing, 'the start');
-  for (const d of MAP_DEFS) for (const e of d.exits ?? []) if (e.to === def.id && d.id !== def.id) add(e.tx, e.ty, e.tf ?? def.start.facing, d.name);
+  for (const d of MAP_DEFS) for (const e of waysOut(d)) if (e.to === def.id && d.id !== def.id) add(e.tx, e.ty, e.tf ?? def.start.facing, d.name);
   return views;
 }
 
@@ -122,7 +133,7 @@ function siteView(m: GameMap, name: string, at: readonly [number, number]): View
 /** The outdoor square, as a world point, that leads to a map, through as many maps as it takes. */
 function entrance(id: string, seen = new Set<string>()): [number, number] | null {
   seen.add(id);
-  for (const d of MAP_DEFS) for (const e of d.exits ?? []) {
+  for (const d of MAP_DEFS) for (const e of waysOut(d)) {
     if (e.to !== id || seen.has(d.id)) continue;
     const p = worldPoint(ATLAS, d.id, e.x, e.y) ?? entrance(d.id, seen);
     if (p) return p;
@@ -150,8 +161,10 @@ function planMap(id: string): MapPlan {
     const door = entrance(id);
     if (door) world = { x: Math.floor(door[0]) - 20, y: Math.floor(door[1]) - 20, w: 40, h: 40, mark: door };
   }
-  if (!world) return fail(`map '${id}' has no zone and no way in from the outdoors`);
-  return { id, name: def.name, kind: def.kind, region: def.region ?? 'shelf', views, world };
+  // A sample is entered from nowhere, so it has no crop; it is put into the game's maps to be shot.
+  const sample = RIFT_SAMPLES.find((d) => d.id === id);
+  if (!world && !sample) return fail(`map '${id}' has no zone and no way in from the outdoors`);
+  return { id, name: def.name, kind: def.kind, region: def.region ?? 'shelf', views, world: world ?? null, ...(sample ? { sample } : {}) };
 }
 
 const mapPlans = maps.map(planMap);
@@ -240,6 +253,7 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
   const I = await load('/src/ui/interior.ts');
   const WM = await load('/src/ui/worldmap.ts');
   const C = await load('/src/content/index.ts');
+  const GM = await load('/src/game/map.ts');
   const g = (window as any).__game.game, w = g.world;
 
   // The stage's top: the view, the status strip, the automap and the purse, above the party cards.
@@ -260,6 +274,7 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
   const clock = (min: number): string => `${String(Math.floor(min % 1440 / 60)).padStart(2, '0')}:00`;
 
   for (const m of o.maps) {
+    if (m.sample) w.maps[m.id] = new GM.GameMap(m.sample);
     const t = o.times[m.region], dungeon = m.kind === 'dungeon';
     heading(`${m.name} (${m.id}, ${m.kind})`);
     const shots: { label: string; day: HTMLCanvasElement; night: HTMLCanvasElement | null }[] = [];
@@ -287,16 +302,26 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
     const crop = document.createElement('canvas'); crop.width = crop.height = CROP;
     const cc = crop.getContext('2d')!;
     cc.imageSmoothingEnabled = false;
-    const k = CROP / (Math.max(m.world.w, m.world.h) * CS);
-    const cx = CPAD + m.world.x * CS, cy = CPAD + m.world.y * CS;
     cc.fillStyle = '#120c14'; cc.fillRect(0, 0, CROP, CROP);
-    cc.drawImage(cloth!, cx, cy, m.world.w * CS, m.world.h * CS, 0, 0, m.world.w * CS * k, m.world.h * CS * k);
-    const [mx, my] = [(CPAD + m.world.mark[0] * CS - cx) * k, (CPAD + m.world.mark[1] * CS - cy) * k];
-    cc.strokeStyle = '#c0201a'; cc.lineWidth = 2; cc.beginPath(); cc.arc(mx, my, 6, 0, Math.PI * 2); cc.stroke();
+    if (m.world) {
+      const k = CROP / (Math.max(m.world.w, m.world.h) * CS);
+      const cx = CPAD + m.world.x * CS, cy = CPAD + m.world.y * CS;
+      cc.drawImage(cloth!, cx, cy, m.world.w * CS, m.world.h * CS, 0, 0, m.world.w * CS * k, m.world.h * CS * k);
+      const [mx, my] = [(CPAD + m.world.mark[0] * CS - cx) * k, (CPAD + m.world.mark[1] * CS - cy) * k];
+      cc.strokeStyle = '#c0201a'; cc.lineWidth = 2; cc.beginPath(); cc.arc(mx, my, 6, 0, Math.PI * 2); cc.stroke();
+    } else if (m.sample) {
+      // A sample is on no world map: its plan instead, the tear red, the warden and the groups
+      // orange, the hoard gold, the looks pale and the way in green.
+      const d = m.sample, cs = Math.floor(CROP / d.rows.length), dot = (x: number, y: number, c: string): void => { cc.fillStyle = c; cc.fillRect(x * cs + cs / 4, y * cs + cs / 4, cs / 2, cs / 2); };
+      d.rows.forEach((row: string, y: number) => [...row].forEach((ch, x) => { cc.fillStyle = ch === '#' ? '#3a3440' : ch === 'o' ? '#6a6070' : ch === 'D' ? '#8a5a2a' : '#d8ccb0'; cc.fillRect(x * cs, y * cs, cs - 1, cs - 1); }));
+      for (const f of d.features ?? []) dot(f.x, f.y, f.kind === 'chest' ? '#e0b030' : 'id' in f && /_look\d+$/.test(f.id ?? '') ? '#9aa0b0' : '#c0201a');
+      for (const e of d.encounters ?? []) dot(e.x, e.y, '#e07020');
+      for (const e of d.exits ?? []) dot(e.x, e.y, '#3a9a3a');
+    }
     shots.forEach((s, i) => {
       const hh = CAP + SHOT.h;
       blocks.push({ w: CROP + GAP + SHOT.w * 2 + GAP, h: hh, draw: (ctx, x, y) => {
-        if (i === 0) { caption(ctx, 'on the world map', x, y); ctx.drawImage(crop, x, y + CAP); }
+        if (i === 0) { caption(ctx, m.world ? 'on the world map' : 'its plan', x, y); ctx.drawImage(crop, x, y + CAP); }
         const x1 = x + CROP + GAP;
         caption(ctx, `${s.label}: ${dungeon ? 'lit' : clock(t.noon)}`, x1, y);
         ctx.drawImage(s.day, x1, y + CAP);
