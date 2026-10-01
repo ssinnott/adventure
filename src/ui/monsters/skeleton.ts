@@ -8,7 +8,9 @@
 // laid over a hollow so the gaps between the ribs read as space. The knight is the same bones
 // inside dull steel plate, several steps darker and cooler than bone, with raw bone at the neck,
 // elbows, knees and hands. The barrow guard keeps less plate and wears the Queen's livery over it,
-// in her blue and gold; her captain wears it under a cloak of her blue gone nearly black.
+// in her blue and gold; her captain wears it under a cloak of her blue gone nearly black. The
+// Drowned Temples' priests are bones in sodden robes with the drowned god's collar at the throat,
+// the jaw open on the count; their Choirmaster is the same, taller and fuller, beating it on a bell.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow, eye } from './common.ts';
@@ -28,7 +30,7 @@ const BONE = (t: number): Mats => ({
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard', 'barrow_captain'];
+export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard', 'barrow_captain', 'drowned_chanter', 'choirmaster'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bone_knight') knight(ctx, x, y, h, p);
@@ -36,6 +38,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'drowned') drowned(ctx, x, y, h, p);
   else if (kind === 'barrow_guard') guard(ctx, x, y, h, p);
   else if (kind === 'barrow_captain') captain(ctx, x, y, h, p);
+  else if (kind === 'drowned_chanter' || kind === 'choirmaster') priest(ctx, x, y, h, p, kind === 'choirmaster');
   else skeleton(ctx, x, y, h, p);
 };
 
@@ -975,3 +978,176 @@ function captain(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   eye(ctx, hx - R.hr * 0.4, hy + 0.6 * u, Math.max(0.8, 0.8 * u), mix(q.gold, '#fff4d0', 0.3 + 0.3 * pulse), false);
   eye(ctx, hx + R.hr * 0.38, hy + 0.2 * u, Math.max(0.8, 0.9 * u), mix(q.gold, '#fff4d0', 0.3 + 0.3 * pulse), false);
 }
+
+// ------------------------------------------------------------ the Drowned Temples ----
+/** The drowned god's bronze, gone green in the water, with what gilding is left on it. */
+const VERDIGRIS = '#4f8f78', GILT = '#c8a85a';
+
+/**
+ * An open hand of bones, held up: a palm and four finger bones fanning from it along `a` (radians,
+ * -PI/2 is straight up), the thumb out to one side. One blob, so it is one piece with the wrist.
+ */
+function boneHand(ctx: CanvasRenderingContext2D, wx: number, wy: number, a: number, u: number, hex: string, side: number): void {
+  const ux = Math.cos(a), uy = Math.sin(a), nx = -uy, ny = ux;
+  const parts: Part[] = [{ k: 'ell', x: wx + ux * 2.2 * u, y: wy + uy * 2.2 * u, rx: 2.6 * u, ry: 2.2 * u, rot: a }];
+  for (let i = 0; i < 4; i++) {
+    const o = (i - 1.5) * 1.4 * u, l = (5.2 - Math.abs(i - 1.4) * 0.9) * u, bx = wx + ux * 3.6 * u + nx * o, by = wy + uy * 3.6 * u + ny * o;
+    parts.push({ k: 'tube', pts: [bx, by, bx + ux * l + nx * o * 0.25, by + uy * l + ny * o * 0.25], r0: 0.75 * u, r1: 0.55 * u });
+  }
+  const tx = wx + ux * 1.6 * u - nx * side * 2.4 * u, ty = wy + uy * 1.6 * u - ny * side * 2.4 * u;
+  parts.push({ k: 'tube', pts: [tx, ty, tx - nx * side * 2.6 * u + ux * 2 * u, ty - ny * side * 2.6 * u + uy * 2 * u], r0: 0.8 * u, r1: 0.6 * u });
+  blob(ctx, B, hex, parts, { h: u * 100, formK: 0.5, spread: 0.7 });
+}
+
+/**
+ * The Drowned Chanter and the Choirmaster. A priest of the drowned god: the bones in a hooded robe
+ * gone heavy with the water, darker from the knee down where it still soaks, the hem torn and
+ * trailing weed. A broad collar of the god's bronze lies across the chest, a row of scallops along
+ * its edge. The jaw hangs open and works: the chant is a count. The chanter holds both hands up and
+ * open before it. The Choirmaster is taller, its robe fuller and a mantle over it, a crown of whelk
+ * shells on the skull; the bell hangs before it on two cords from the collar, the far hand on its
+ * shoulder, and the near hand raised high with the beater, keeping time.
+ */
+function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, master: boolean): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.008, hipTilt: 0.008, turn: 0.01, near: [0.08, 0.09, 0.1], far: [-0.08, -0.09, -0.1], toe: [0.6, -0.6] }, BONE);
+  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
+  const lift = p.breathe * h * 0.007, BY = (v: number) => y + v * u - lift;
+  const bn = shade('#d8d0bc', p.tone), old = shade('#a89e88', p.tone), murk = mix(old, INK, 0.75);
+  const robe = p.base, soaked = shade(mix(p.dark, '#0e1c1e', 0.35), 1), weed = shade(mix(p.dark, '#2a3a1c', 0.55), 1);
+  const bronze = shade(VERDIGRIS, p.tone), gilt = shade(GILT, p.tone);
+  const sw = Math.sin(p.frame / 31) * 0.8;                                     // the wet hem barely stirs
+  // The count: the jaw drops and closes, again and again, steady as a beat.
+  const beat = Math.abs(Math.sin(p.frame / (master ? 9 : 7)));
+  const jd = 0.16 + 0.22 * beat;
+  const F = master ? 1.24 : 1;                                                  // how full the robe is below the waist
+  groundShadow(ctx, x, y + 1, h * (master ? 0.7 : 0.6));
+
+  // ---- the robe: one mass from the shoulders to the ground, the hem torn, then the soaked part.
+  const hem = (k: number): number[] => [
+    X(23 * F + sw), Y(-1.5), X(17 * F), Y(0.2), X(12 * F), Y(-2.4), X(6 * F), Y(0.6), X(0), Y(-2), X(-6 * F), Y(0.6),
+    X(-12 * F), Y(-2.6), X(-17 * F), Y(0.2), X(-22 * F + sw), Y(-1.6), X(-19.5 * F), Y(-20 * k),
+  ];
+  const body = [X(-13), BY(-80), X(1), BY(-82), X(15), BY(-80), X(19), BY(-71), X(16.5), Y(-46), X(19 * F), Y(-22), ...hem(1), X(-16.5), Y(-46), X(-18), BY(-71)];
+  blob(ctx, B, robe, [{ k: 'curve', pts: body, wobble: 0.025, seed: 501, sub: 2 }], { h, tex: 'folds', seed: 501, amount: 0.8, formK: 0.45, spread: 0.8, creases: [
+    { x0: X(-6), y0: Y(-44), x1: X(-9 * F), y1: Y(-4), r: 1.6 * u, a: 0.4 },
+    { x0: X(5), y0: Y(-44), x1: X(8 * F), y1: Y(-4), r: 1.6 * u, a: 0.4 },
+    { x0: X(-0.5), y0: Y(-40), x1: X(0), y1: Y(-6), r: 1.2 * u, a: 0.3 },
+  ] });
+  // Below the waterline the cloth is still soaked through: a darker skirt with a ragged top edge.
+  blob(ctx, B, soaked, [{ k: 'curve', pts: [
+    X(18.5 * F), Y(-30), X(19.2 * F), Y(-22), ...hem(0.98).slice(0, -2), X(-19.4 * F), Y(-22), X(-18.6 * F), Y(-30),
+    X(-12), Y(-27), X(-6), Y(-31), X(0), Y(-27.5), X(6), Y(-31.5), X(12), Y(-27),
+  ], wobble: 0.04, seed: 503, sub: 2 }], { h, tex: 'folds', seed: 503, amount: 0.6, formK: 0.4, spread: 0.7, outline: false });
+  // Bone toes under the hem, and weed off the hem, hanging straight and heavy.
+  blob(ctx, B, old, [
+    { k: 'poly', pts: [X(-11), Y(-1.4), X(-5), Y(-1.4), X(-4), Y(0.8), X(-11.6), Y(0.8)] },
+    { k: 'poly', pts: [X(5), Y(-1.4), X(11.5), Y(-1.4), X(12.6), Y(0.8), X(4.6), Y(0.8)] },
+  ], { h, formK: 0.5 });
+  const strands: Part[] = [];
+  for (const [wx, wy, l] of [[-15 * F, -12, 9], [-9 * F, -9, 7], [10 * F, -10, 8], [16 * F, -14, 11]] as const) {
+    strands.push({ k: 'tube', pts: [X(wx), Y(wy), X(wx + 0.6 + sw * 0.3), Y(wy + l * 0.55), X(wx + sw * 0.8), Y(wy + l)], r0: 1.1 * u, r1: 0.45 * u, wobble: 0.14, seed: 505 });
+  }
+  blob(ctx, B, weed, strands, { h, formK: 0.4, spread: 0.7 });
+
+  // ---- the arms, in wide sleeves that hang heavy from the elbow; bone from the cuff to the hand.
+  const nEl = { x: X(20), y: BY(-58) }, fEl = { x: X(-19), y: BY(-57) };
+  const nWr = master ? { x: X(25), y: BY(-96 + beat * 6) } : { x: X(18.5), y: BY(-69) };
+  const fWr = master ? { x: X(-8), y: BY(-49) } : { x: X(-16), y: BY(-68) };
+  const nElR = master ? { x: X(27), y: BY(-78) } : nEl;
+  const sleeve = (sh: { x: number; y: number }, el: { x: number; y: number }, s: number, seed: number): Part => ({ k: 'curve', pts: [
+    sh.x - s * 4 * u, sh.y - 3 * u, sh.x + s * 4.5 * u, sh.y - 1.5 * u, el.x + s * 5.5 * u, el.y - 2 * u, el.x + s * 6 * u, el.y + 7 * u,
+    el.x + s * 2 * u, el.y + 12 * u, el.x - s * 3.5 * u, el.y + 9 * u, el.x - s * 5 * u, el.y + 2 * u, sh.x - s * 5 * u, sh.y + 8 * u,
+  ], wobble: 0.04, seed, sub: 2 });
+  // The far arm, darker, behind; then its forearm and hand.
+  blob(ctx, B, shade(robe, 0.8), [sleeve(R.sFar, fEl, -1, 511)], { h, tex: 'folds', seed: 511, amount: 0.5, formK: 0.45, spread: 0.7 });
+  blob(ctx, B, old, [shaft(fEl.x, fEl.y + 2 * u, fWr.x, fWr.y, 2 * u, 513)], { h, formK: 0.5 });
+
+  // ---- the hood up behind the skull, its mouth a dark hollow.
+  const hx = R.hx + 0.4 * u, hy = R.hy + (master ? 0.2 : 1.2) * u, hr = R.hr;
+  blob(ctx, B, master ? shade(robe, 0.86) : robe, [{ k: 'curve', pts: [
+    hx - hr * 1.5, hy + hr * 1.7, hx - hr * 1.62, hy + hr * 0.2, hx - hr * 1.28, hy - hr * 1.12, hx - hr * 0.2, hy - hr * 1.62,
+    hx + hr * 0.92, hy - hr * 1.34, hx + hr * 1.56, hy - hr * 0.3, hx + hr * 1.56, hy + hr * 1.7, hx, hy + hr * 2.0,
+  ], wobble: 0.03, seed: 515, sub: 2 }], { h, tex: 'folds', seed: 515, amount: 0.5, formK: 0.5, spread: 0.75 });
+  hollow(ctx, [hx - hr * 1.12, hy + hr * 1.5, hx - hr * 1.22, hy - hr * 0.2, hx - hr * 0.6, hy - hr * 1.18, hx + hr * 0.4, hy - hr * 1.24, hx + hr * 1.12, hy - hr * 0.4, hx + hr * 1.16, hy + hr * 1.5], murk, 0.03, 517);
+
+  // ---- the Choirmaster's mantle, over both shoulders.
+  if (master) blob(ctx, B, shade(mix(robe, '#10181c', 0.35), 1), [
+    { k: 'curve', pts: [X(-20), BY(-64), X(-21), BY(-76), X(-12), BY(-82.5), X(1), BY(-83.5), X(14), BY(-82), X(22), BY(-75), X(22.5), BY(-63), X(13), BY(-60), X(1), BY(-62), X(-11), BY(-60)], wobble: 0.04, seed: 519, sub: 2 },
+  ], { h, tex: 'folds', seed: 519, amount: 0.6, formK: 0.45, spread: 0.8 });
+
+  // ---- the skull in the hood, the jaw working.
+  skull(ctx, hx, hy, hr * 0.92, 0.05, bn, old, h, jd, murk);
+  const glint = 0.5 + 0.5 * Math.sin(p.frame / 13), cold = mix('#7fe0c4', '#e8fff8', 0.3 + 0.3 * glint);
+  eye(ctx, hx - hr * 0.38, hy + 0.1 * u, Math.max(0.8, 0.8 * u), cold, false);
+  eye(ctx, hx + hr * 0.36, hy - 0.2 * u, Math.max(0.8, 0.9 * u), cold, false);
+  // The Choirmaster's crown: three whelk shells standing on the skull, the middle one tallest.
+  if (master) {
+    const shell = shade('#d8c8a8', p.tone);
+    const crown: Part[] = [];
+    for (const [ox, len, lean] of [[-5, 9, -0.25], [0.6, 13, 0.02], [6, 9, 0.28]] as const) {
+      const bx = hx + ox * u, by = hy - hr * 0.86 + Math.abs(ox) * 0.14 * u, tx = bx + Math.sin(lean) * len * u, ty = by - Math.cos(lean) * len * u;
+      crown.push({ k: 'tube', pts: [bx, by, (bx + tx) / 2, (by + ty) / 2, tx, ty], r0: 2.4 * u, r1: 0.5 * u });
+    }
+    blob(ctx, B, shell, crown, { h, tex: 'cracks', seed: 521, amount: 0.4, formK: 0.5, spread: 0.7 });
+    if (!B.override) for (const [ox, len, lean] of [[-5, 9, -0.25], [0.6, 13, 0.02], [6, 9, 0.28]] as const) for (let i = 1; i < 4; i++) {
+      const t = i / 4.4, bx = hx + ox * u, by = hy - hr * 0.86 + Math.abs(ox) * 0.14 * u, w = 2.4 * u * (1 - t * 0.8);
+      const cx2 = bx + Math.sin(lean) * len * u * t, cy2 = by - Math.cos(lean) * len * u * t;
+      softLine(ctx, B, [cx2 - w, cy2 + w * 0.3, cx2 + w, cy2 - w * 0.3], shade('#8a7a60', p.tone), Math.max(1, 0.5 * u), 0.6);
+    }
+  }
+
+  // ---- the drowned god's collar across the chest, its lower edge in scallops.
+  const cy0 = BY(-77), cy1 = BY(master ? -63 : -65);
+  blob(ctx, B, bronze, [{ k: 'curve', pts: [
+    X(-14), cy0, X(-6), BY(-73.5), X(1), BY(-72.5), X(8), BY(-73.5), X(15), cy0,
+    X(16), BY(-71), X(10), cy1 + 2 * u, X(1), cy1, X(-8), cy1 + 2 * u, X(-15), BY(-71),
+  ], wobble: 0.02, seed: 523, sub: 2, gloss: 0.4 }], { h, tex: 'cracks', seed: 523, amount: 0.35, formK: 0.5, spread: 0.7 });
+  for (let i = 0; i < 5; i++) {
+    const t = (i - 2) / 2, sx = X(1 + t * 10.5), sy2 = cy1 + Math.abs(t) * 1.6 * u - 0.6 * u;
+    blob(ctx, B, gilt, [{ k: 'curve', pts: [sx - 2.4 * u, sy2 - 1 * u, sx, sy2 - 2.8 * u, sx + 2.4 * u, sy2 - 1 * u, sx + 1.8 * u, sy2 + 1.6 * u, sx, sy2 + 2.4 * u, sx - 1.8 * u, sy2 + 1.6 * u], wobble: 0.02, seed: 525 + i, sub: 2, gloss: 0.6 }], { h, formK: 0.5, spread: 0.7 });
+    if (!B.override && u >= 0.8) softLine(ctx, B, [sx, sy2 - 2 * u, sx, sy2 + 1.6 * u], shade('#7a6230', p.tone), Math.max(1, 0.4 * u), 0.6);
+  }
+
+  // ---- the Choirmaster's bell, hung before it on two cords from the collar.
+  if (master) {
+    const bx = X(-1), by = BY(-41), bw = 6.4 * u, bh = 13 * u;
+    ctx.strokeStyle = B.col(shade('#3a2a1c', p.tone)); ctx.lineWidth = Math.max(1, 0.8 * u); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(X(-8), cy1 + u); ctx.lineTo(bx - 2 * u, by - bh * 0.5); ctx.moveTo(X(5), cy1 + u); ctx.lineTo(bx + 2 * u, by - bh * 0.5); ctx.stroke();
+    blob(ctx, B, bronze, [
+      { k: 'curve', pts: [bx - bw * 0.42, by - bh * 0.42, bx, by - bh * 0.56, bx + bw * 0.42, by - bh * 0.42, bx + bw * 0.6, by + bh * 0.1, bx + bw * 1.0, by + bh * 0.46, bx, by + bh * 0.54, bx - bw * 1.0, by + bh * 0.46, bx - bw * 0.6, by + bh * 0.1], wobble: 0.02, seed: 531, sub: 2, gloss: 0.6 },
+    ], { h, tex: 'cracks', seed: 531, amount: 0.3, formK: 0.55, spread: 0.7 });
+    // The lip, the mouth under it and the clapper hanging in it.
+    ctx.fillStyle = B.col(murk); ctx.beginPath(); ctx.ellipse(bx, by + bh * 0.48, bw * 0.92, bh * 0.08, 0, 0, Math.PI * 2); ctx.fill();
+    blob(ctx, B, old, [{ k: 'ball', x: bx + Math.sin(p.frame / 9) * u * 0.8, y: by + bh * 0.52, r: 1.6 * u }], { h, formK: 0.5 });
+    softLine(ctx, B, [bx - bw * 0.88, by + bh * 0.4, bx + bw * 0.88, by + bh * 0.4], gilt, Math.max(1, 0.9 * u), 0.7);
+  }
+
+  // ---- the near arm, in front: its sleeve, the forearm up, the hand open or on the beater.
+  if (master) {
+    blob(ctx, B, robe, [sleeve(R.sNear, nElR, 1, 533)], { h, tex: 'folds', seed: 533, amount: 0.5, formK: 0.45, spread: 0.7 });
+    blob(ctx, B, bn, [shaft(nElR.x, nElR.y - 1 * u, nWr.x, nWr.y, 2.1 * u, 535)], { h, formK: 0.5 });
+    // The beater: a bone haft and a knob of tarred rope, held out over the bell.
+    const k0 = { x: nWr.x - 1 * u, y: nWr.y - 1.5 * u }, k1 = { x: nWr.x - 9 * u, y: nWr.y - 7 * u };
+    blob(ctx, B, old, [{ k: 'tube', pts: [nWr.x + 2 * u, nWr.y + 1.5 * u, k0.x, k0.y, k1.x, k1.y], r0: 1.1 * u, r1: 1.1 * u }], { h, formK: 0.5 });
+    blob(ctx, B, shade('#2e2620', p.tone), [{ k: 'ell', x: k1.x - 1.2 * u, y: k1.y - 1 * u, rx: 2.8 * u, ry: 2.5 * u, rot: 0.6 }], { h, formK: 0.5, tex: 'stipple', seed: 537, amount: 0.4 });
+    fist(ctx, R, nWr, Math.atan2(k1.y - nWr.y, k1.x - nWr.x), 539, { hex: bn, flip: -1, k: 0.8 });
+    // The far hand on the bell's shoulder, steadying it.
+    boneHand(ctx, fWr.x, fWr.y, -0.3, u, old, -1);
+  } else {
+    boneHand(ctx, fWr.x, fWr.y, -1.75, u, old, -1);
+    blob(ctx, B, robe, [sleeve(R.sNear, nEl, 1, 533)], { h, tex: 'folds', seed: 533, amount: 0.5, formK: 0.45, spread: 0.7 });
+    blob(ctx, B, bn, [shaft(nEl.x, nEl.y + 2 * u, nWr.x, nWr.y, 2.1 * u, 535)], { h, formK: 0.5 });
+    boneHand(ctx, nWr.x, nWr.y, -1.4, u, bn, 1);
+  }
+  gap(ctx, master ? nElR.x : nEl.x, (master ? nElR.y : nEl.y) + 2 * u, master ? nWr.x : nWr.x, nWr.y, 2 * u, murk, 0.5);
+
+  // Water still running off the hem and the sleeves.
+  if (!B.override) for (let i = 0; i < 4; i++) {
+    const t = ((p.frame * 0.02 + i * 0.27) % 1);
+    const dx2 = [X(-14 * F), nEl.x + 2 * u, fEl.x - 2 * u, X(13 * F)][i], dy2 = [Y(-3), nEl.y + 11 * u, fEl.y + 11 * u, Y(-3)][i];
+    ctx.fillStyle = B.col(rgba(shade('#cfe4e0', p.tone), 0.45 * (1 - t)));
+    ctx.beginPath(); ctx.ellipse(dx2, dy2 + t * h * (i % 3 ? 0.08 : 0.02), Math.max(0.6, h * 0.008), Math.max(0.8, h * 0.014), 0, 0, Math.PI * 2); ctx.fill();
+  }
+  void p.light;
+}
+
