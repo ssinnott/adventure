@@ -13,22 +13,22 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 Nothing of it is built. Its content will be `src/content/areas/saltreach/` (maps, monsters, items,
 its chapter of the one quest, The Tide Stone, in `chapter.ts`, its side quests in `quests.ts`, its
 guild quests in `guilds.ts`, climate and its part of the world map) and its businesses' rooms
-`src/ui/interiors/saltreach/`. The folder comes with its first map (#170), as Thornmark's did: an
-area is listed in `src/content/index.ts` only once it has a map to start on, so until then its rows
-are the plan's (`src/content/atlas.ts`). Its ids: the area `saltreach`, its zones `upperwater`,
-`delta` and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
+`src/ui/interiors/saltreach/`. Its part of the world map is its folder's already (`atlas.ts`, #169),
+spread into the plan (`src/content/atlas.ts`) until the area is listed; the rest of the folder comes
+with its first map (#170), as Thornmark's did. Its ids: the area `saltreach`, its zones
+`upperwater`, `delta` and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
 ---
 
 ## 1. Where it is
 
-The atlas (`src/content/atlas.ts`, the plan's rows until the area's folder replaces them) makes
-Saltreach three zones:
+The atlas (`src/content/areas/saltreach/atlas.ts`, spread into the plan until the area is listed)
+makes Saltreach three zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Upper Water | 10–11 | 7,714 | none |
-| The Delta | 11–12 | 3,697 | none |
+| The Delta | 10–12 | 3,697 | none |
 | The Saltings | 11–12 | 3,588 | none |
 | The area | 10–12 | 14,999 | none |
 
@@ -36,7 +36,7 @@ Squares are the ones the atlas gives each zone, shallows and rivers included. Wi
 the area is 14,143 squares, about 13.8 zone maps (EXPANSION §1 has 13.8), and 11,965 of them a
 company could walk: the rest is the rim's mountain in the A column, Kestrel Edge's face and the
 Scarp's. It runs from x 11 to x 125 and from the rim down to y 213, the Scarp's foot. The zones'
-bands are the plan's: the atlas gives the area 10–12 and the boxes rise through it (§4).
+bands are the folder's: the atlas gives the area 10–12 and the boxes rise through it (§4).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Saltreach is the B and C columns from row 3
 to row 7, with slivers in A and D. The land worth a map is ten boxes: C3, C4 and C5 down the Long
@@ -56,12 +56,12 @@ Its edges:
   road leaves D4 it crosses D5's corner into C5, where the Delta begins: the world's end, until #170
   is built.
 - **South: the Scarp,** the escarpment between the Saltings and the Glasswold (26–28, Act IV), 103
-  squares of border along B7 and C7. The Scarp stair climbs it at 80,206 (`src/content/atlas.ts:398`),
+  squares of border along B7 and C7. The Scarp stair climbs it at 80,206 (`src/content/atlas.ts`),
   a road link open from the start; it is Act IV's way down, and this act sees its foot and no more
   (§4.9).
 - **South-east: the sea,** Sylmeer, once the Salt Gulf (§10), between Kestrel Edge and the
   Saltings, with Wrackholm beyond it. The smugglers' boat crosses from Saltmouth's quay to the
-  isle's landing at 152,172 (`src/content/atlas.ts:368`; #164).
+  isle's landing at 152,172 (`src/content/atlas.ts`; #164).
 - **West: the rim** again, the A column, mountain and hill with the fen's west edge under it.
 
 The Long Water runs the length of the area: from the rim at 30,44 down the Upper Water's west side,
@@ -91,14 +91,17 @@ day on the Saltings' ground (#162, #151's call 3).
 
 ## 3. What is built
 
-Nothing. The atlas has the area's zones, the town and the dungeon as planned plates, its sites
-(Rietum, Saltmouth, the Tide Stone, the Drowned Temples, Sjonghol, Sylmeer, Kestrel Edge and the
-Scarp, §10) and its links: the road down Kestrel Edge, the town's and the temples' ways in, the
-boat to Wrackholm and the Scarp stair. The systems it waits on are #150's: the cap past 10 and the
-curve's rows (#159), ranks and morale (#160), casting, drain and elements (#161), salt, tidal ground
-and heather (#162), coaches and boats (#164), the Rift generator for its small Rifts (#165), the
-band said on crossing (#166) and the log paged by chapter (#167). Its monsters are drawn in #184
-and its rooms in #185.
+Nothing but its atlas rows (`src/content/areas/saltreach/atlas.ts`, #169): the zones with their
+bands (the Upper Water 10–11, the Delta 10–12, the Saltings 11–12), Saltmouth at 10–12, the Drowned
+Temples at 11–12 and the sites, which the plan spreads in where its own rows were. The atlas has the
+area's zones, the town and the dungeon as planned plates, its sites (Rietum, Saltmouth, the Tide
+Stone, the Drowned Temples and Sjonghol, its own; Sylmeer, Kestrel Edge and the Scarp, the plan's,
+§10) and its links: the road down Kestrel Edge, the town's and the temples' ways in, the boat to
+Wrackholm and the Scarp stair. The systems it waits on are #150's: the cap past 10 and the curve's
+rows (#159), ranks and morale (#160), casting, drain and elements (#161), salt, tidal ground and
+heather (#162), coaches and boats (#164), the Rift generator for its small Rifts (#165), the band
+said on crossing (#166) and the log paged by chapter (#167). Its monsters are drawn in #184 and its
+rooms in #185.
 
 ## 4. What is still to build
 
@@ -509,6 +512,22 @@ Proposed, for the owner, each in the issue that would build it:
 - **Saltmouth's eight businesses** (§4.9), the locksmith's among them, since #19 gives the trainer
   a shop where the job is a trade.
 - **The pay's shares** (§8).
+- **The bands on the atlas's rows** (#169): the Upper Water 10–11, the Delta 10–12, the Saltings
+  11–12, Saltmouth 10–12, the Drowned Temples 11–12. They are set already in
+  `src/content/areas/saltreach/atlas.ts`, where only the scaffold reads them, for a box's draft; the
+  owner's word changes them there.
+
+Decided by delegate for #169, each the owner's to overturn:
+
+1. **The atlas folder is spread into the plan** (`src/content/atlas.ts` imports it where its rows
+   were), as Sunderwood's is: the area cannot be listed in AREAS until #170 gives it a map. #170
+   points the area's `atlas` at it and takes the import out.
+2. **The folder charts the plan's rows and the bands, and no new sites:** Stienwierde and the pans
+   are their boxes' to place (#173, #178), and the Long Water is lettered as a river.
+3. **The Delta is 10–12,** not the 11–12 this doc first gave it: C5 and C4, the way in, are 10–11,
+   and the scaffold drafts a box at its zone's band.
+4. **Sylmeer, Kestrel Edge and the Scarp stay the plan's:** each is a name on a border Saltreach
+   shares, with the Foreland, Wrackholm or the Glasswold.
 
 ## 10. Names
 
