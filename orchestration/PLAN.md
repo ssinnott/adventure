@@ -1700,3 +1700,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 01:13: #315 (#218, J5, Penspern and the Eldest) opened from the J5 session: the Eldest at 450 hp,
   +12, 4d8+12, drawn at 1.35 (2 breaks the labels); Senara's hire moved to `q_mark`; a fifth group;
   pay 1,230 a member. Subscribed; its review launched.
+- 01:23: #310 (#70, the Berth) landed: its merge e882406 (main with D4; the owed curve entry gone,
+  the captain held dead two days on, the journal entry's true reason, the stale words): ALL OK (7
+  owed: #47 ×2, #170 ×2, #218 ×3), SMOKE OK, "Nothing new."; CI green. Merged as f666c77; main's tree
+  is the tested tree (317d40a). #70 closes; the Foreland's curve is met. The Berth's session done.
+  **The Downs' boxes are all in** (F2, F3, E3, E2, D2, D3, D4, the Berth, Ashcombe past Gullwick).
+- 01:25: the pilot session (session_017gmKkkiPWxH5PB61L1M1mr) had been idle since 21:50 on "Then
+  I'll open E's pull request", with no branch pushed: told the Downs are in, to settle the two boss
+  floors `OWED` to #47 in `gate.ts` (Greywater's captain and deacon), write the hours and what the
+  owner found into shelf.md, and open E, closing #47.
