@@ -453,9 +453,12 @@ settled in its issue, and what the pilot teaches changes them.
   The pump in the square is brackish and does not heal. The Keel's and the map room's keepers say
   plain words: the halls, their first tasks and the stair's top in the Keel's cellar are #182's
   and #181's, the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach
-  runs from the yard yet (§9). The walkthrough goes in by the gate and out again, buys each class
-  its step at the armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of
-  Ottilie at 11, once the log has sent her to Pender. The town pays nothing of its own: its 300
+  runs from the yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
+  and onto Wrackholm's stage at 6 the next morning, and back the same from the stage, landing on
+  the quay. The walkthrough goes in by the gate and out again, buys each class its step at the
+  armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of Ottilie at 11, once
+  the log has sent her to Pender; then it takes the boat to the isle, saves there and loads, and
+  takes it home. The town pays nothing of its own: its 300
   is its quests', which are its halls', its chapter's and its side quests'.
 
 ### 4.10 C7, the salt pans (#178): country, band 12
