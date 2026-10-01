@@ -339,8 +339,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         const s = Math.sign(l);
         if (d > 0 && !voidAt(d - 1, l)) drawVoidFront(ctx, voids, xl(uN), xr(uN), r.y, horizon + uN);
         if (l !== 0 && !voidAt(d, l - s)) { const xIn = l > 0 ? xl : xr; drawVoidSide(ctx, voids, xIn(uN), horizon + uN, xIn(uF), horizon + uF, r.y); }
-      } else if (d > 0 && isSolidWall(cell) && map.landmarkAt(c.x, c.y)) {
-        // A landmark stands on its square as it is, not as a wall.
+      } else if (d > 0 && isSolidWall(cell) && map.landmarkAt(c.x, c.y) && !backdrop) {
+        // A landmark stands on its square as it is, not as a wall. Over the smoke test's backdrop it
+        // is the wall it stands in for, as the billboards stay out: the crack sweep looks at walls.
         const u = unit(d, r.h);
         drawLandmark(map.landmarkAt(c.x, c.y)!, cx + l * 2 * u, horizon + u, u, (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d));
       } else if (isSolidWall(cell)) {
