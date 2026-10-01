@@ -37,7 +37,7 @@ export const FINDS: Record<string, string> = {
   'shortsword+1': '', 'dagger+1': '', 'mace+1': '', 'staff+1': '',
   'buckler+1': '',
   'robe+1': '', 'leather+1': '', silver_locket: '',
-  'halberd+1': '#69', ring_of_office: '#69', 'spear+1': '#69',
+  'halberd+1': '', ring_of_office: '', 'spear+1': '',
   captains_sword: '#70', captains_mail: '#70', queens_sword: '#70',
   'longbow+1': '',
   'shield+1': '#72',
@@ -77,10 +77,10 @@ export const DEEPTHORN: Record<ClassId, readonly string[]> = {
 /** The Deepthorn's finds and the box that places each: H3 (#214), I3 (#215), I4 (#49), J4 (#216), I5 (#217), J5 (#218); '' once placed. */
 export const DEEP_FINDS: Record<string, string> = {
   'tower_shield+1': '', 'rune_dagger+2': '',
-  'runed_robe+2': '#215',
+  'runed_robe+2': '',
   'elfbow+2': '', 'brigandine+3': '',
-  'warhammer+2': '#216',
-  silver_torc: '#217',
+  'warhammer+2': '',
+  silver_torc: '',
   eldests_bough: '#218', 'greatsword+2': '#218',
 };
 

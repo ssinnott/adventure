@@ -5,7 +5,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'thornmark', name: 'Thornmark', area: 'thornmark', maps: [{ map: 'thornmark', at: [232, 30] }] },
-  { id: 'deepthorn', name: 'The Deepthorn', area: 'thornmark', band: [8, 10], maps: [{ map: 'deepthorn_h3', at: [232, 62] }, { map: 'deepthorn_i4', at: [264, 94] }], seeds: [[262, 80], [250, 70], [284, 128]], label: [270, 98] },
+  { id: 'deepthorn', name: 'The Deepthorn', area: 'thornmark', band: [8, 10], maps: [{ map: 'deepthorn_h3', at: [232, 62] }, { map: 'deepthorn_i3', at: [264, 62] }, { map: 'deepthorn_i4', at: [264, 94] }, { map: 'deepthorn_i5', at: [264, 126] }, { map: 'deepthorn_j4', at: [296, 94] }], seeds: [[262, 80], [250, 70], [284, 128]], label: [270, 98] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -20,7 +20,7 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Old Tower', icon: 'tower', map: 'thornmark', at: [4.8, 5], label: 'below' },
   { name: 'Barrow', icon: 'barrow', map: 'thornmark', at: [27.8, 8.4], label: 'below' },
   { name: 'The Grove', icon: 'grove', map: 'thornmark', at: [7.5, 28.6], label: 'right' },
-  { name: 'Deepthorn Lodge', icon: 'lodge', at: [278, 112], label: 'below', planned: true }, // the Ranger's second prestige
+  { name: 'Deepthorn Lodge', icon: 'lodge', map: 'deepthorn_i3', at: [8.5, 12.5], label: 'below' }, // the Ranger's second prestige (#19)
   { name: 'Henlys', icon: 'hold', map: 'deepthorn_i4', at: [10.5, 10.5], label: 'below' }, // the oldest hold, the Deepthorn's step
   { name: 'Penspern', icon: 'stone', at: [296, 142], label: 'left', planned: true }, // the head, its standing stone (#218)
   { name: 'Lyngwyn', icon: 'water', at: [268, 53] }, // the still lake

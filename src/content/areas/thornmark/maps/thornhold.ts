@@ -49,7 +49,7 @@ export const THORNHOLD: MapDef = {
     { kind: 'npc', x: 12, y: 13, name: 'The Split Oak', interior: 'split_oak', lines: [
       'A tavern built around a living oak. The elves drink slowly and watch the door.',
       'A forester says: "The Stone went quiet a month back. Then the wolves got big. Then the wolves got strange."',
-      'A Lantern in travel-grey, not drunk: "Vask sent a survey team south before the Stone even failed. How did he know?"',
+      'A Lantern in travel-grey, not drunk: "Vask sent a survey team south-west before the Stone even failed. How did he know?"',
       'A brigand, or a man dressed like one, pays for his ale with a coin that is not from Caldera.',
     ] },
     { kind: 'well', x: 7, y: 6, text: 'A spring in an oak-root basin. The water is cold and sweet.', heal: true },
@@ -81,6 +81,11 @@ export const THORNHOLD: MapDef = {
         'Sylvane hears the burner out without rising, and without once looking at his axe, which is more than he can manage.',
         '"Paid to fell the marked oaks. By a Lantern in travel-grey, with coin that is not coin." She turns to you. "The Hand marked those trees. Now someone pays to have them felled, in the Hand\'s coin, in a Lantern\'s coat. I want you to remember that. I will."',
         '"Burner. You go over the Scarth tonight with what you came with, and you do not come back into Thornmark while I live. That is not a punishment. It is the only mercy the wood has left in it."',
+      ] },
+      { after: [{ flag: ['q_grove', 'q_hunters_told'] }, { flag: ['q_grove_done', 'q_hunters_told'] }], until: { flag: 'q_hunters_shut' }, sets: 'q_hunters_shut', lines: [
+        'Sylvane hears it through without a word, and when you have finished she is quiet for so long that you wonder whether she heard.',
+        '"The lodge was built on my sufferance, and its hunters have walked my wood for sixty years, and the one night it mattered they looked at the river." She closes her eyes. "They winter in the deep. Thornhold\'s gate is shut to them until the Stone is whole, and they may tell their grandchildren why."',
+        '"You did right to tell me. I do not thank you for it. Those are different things, and you are old enough to know it."',
       ] },
       { after: [{ flag: ['q_grove', 'q_glass_truth'] }, { flag: ['q_grove_done', 'q_glass_truth'] }], until: { flag: 'q_glass_told' }, sets: 'q_glass_told', lines: [
         'Sylvane does not ask what the glass held. She waits, and you tell her, and at the word mend she closes her eyes.',
@@ -139,7 +144,7 @@ export const THORNHOLD: MapDef = {
     // survey team's fire-pit in H3; she takes them at the first meeting and asks at the next.
     { kind: 'npc', x: 12, y: 13, name: 'Idony, a Lantern in travel-grey', lines: [
       'The Lantern in travel-grey has a cup of water and a chart she is not looking at, and she has looked at you twice since you came in.',
-      '"You\'ll have heard me say it. Vask sent a survey south before the Stone even failed. I was not being clever; I was being loud, so that somebody would tell me I was wrong. Nobody has."',
+      '"You\'ll have heard me say it. Vask sent a survey south-west before the Stone even failed. I was not being clever; I was being loud, so that somebody would tell me I was wrong. Nobody has."',
       '"Four Lanterns, under the Regent\'s seal, and I taught two of them to hold a wand. One is dead under Ashcombe. Their camp is south of the Grove, over the edge of the deep, and their orders are with it, and I want them. Not for the Chapterhouse. For Lantern Watch, in Sunderwood, where Lanterns still ask questions."',
       '"I\'d go myself. I have been as far as the sign three times, and turned back three times, and I am not ashamed of it. You have the look of people who don\'t turn back."',
     ], flag: 'q_orders', until: { flag: 'q_orders_watch' }, quest: {
