@@ -5,6 +5,10 @@
 import type { MonsterDef } from '../../../game/monsters.ts';
 
 /** The drawings Saltreach's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
-export const SPRITES = [] as const;
+export const SPRITES = [
+  'brineling',
+] as const;
 
-export const MONSTERS: readonly MonsterDef[] = [];
+export const MONSTERS: readonly MonsterDef[] = [
+  { id: 'brineling', name: 'Brineling', plural: 'Brinelings', sprite: 'brineling', kind: 'rift', look: 'Green glass, walking, with a light in it.', level: 10, hp: 89, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 393, gold: [0, 0], tint: '#3a9a82', size: 0.72, inflict: { cond: 'paralysed', chance: 0.1 } },
+];
