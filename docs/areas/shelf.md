@@ -733,24 +733,62 @@ every group, box by box.
   once each, whoever takes them) and 180 in the guilds' pay, and E3's, E2's, D2's, D3's and D4's
   chests, hoards, drops and rewards on top, and the Berth's 300 or so (220 in its chests, the rest
   the captain's and his guard's). Training six members from 1 to 5 costs 1,500, so gold holds.
-- **The gate.** The gate check (`tools/tests/gate.ts`, #38) reports the Foreland outside the
-  starting thresholds, as the pilot's to settle (#47). The Smuggler Captain and the Deacon are won
-  99 and 100% of the time at their maps' floors, where a boss should be won about half the time. The
-  Rift Warden, retuned with Ashcombe's move (#87), is won 55% at the cellar's floor, 2, and always
-  at 4; the cellar's groups are harder kinds from the Seam and F2 (acolytes, ghouls, crawlers, barn
-  rats), so a day there is 7.42 fights to a rest at 2. The area as one pools each group at its own
-  map's floor (#209): 98.5% of its 81 groups' fights won, F2's and F3's at 2, E3's and E2's at 3 and
-  D2's, D3's, D4's and the Berth's at 4, against nine in ten. Two under, the Foreland's floor is 1 and F2's and
-  F3's 2, so only E3's, E2's, D2's, D3's and D4's 32 groups (the farm's rats among them) have a
-  company there, E3's and E2's at 1 and D2's, D3's and D4's at 2: 80.1% won, off the aim of a
-  quarter and inside the limit of nine in ten (#273), listed; the Seam and the Berth, dungeons, count
-  two under the area's floor since #148, and are not judged alone there. Each zone walks its own road and warns
-  at its own way in: the Foreland's from Helmstow, the Downs' from F2's east edge along the Salt
-  Road (`ROADS.downs`, the footpads and the Poacher), both walked every time. The Foreland map and
-  Brandy Hole give 4.37 and 4.1 fights to a rest, against six or seven; E3 7.28, E2 6.28, D2 7.80,
-  D3 7.98 and D4 7.52; the Berth 7.12, its captain left out of the day and won 45% of the
-  time at 4 and always at 6; the Seam 6.7, now that the company at 3 wears the band's gear. The pilot
-  settles them, by retuning or by moving the thresholds.
+- **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds every figure to an aim and fails
+  it only past a limit (#273); nothing on the Foreland is owed to it. The Smuggler Captain and the
+  Deacon, won 99 and 100% of the time at Brandy Hole's and the Seam's floors before the pilot, are
+  brought onto the boss line as the Downs' bosses were (#47): the captain 95 hit points and 2d6+4,
+  won 50% at 2; the Deacon 175 and 2d8+5, MONSTERS §4.4's boss at 5, won 50% at 3; each always two
+  above. The Rift
+  Warden, retuned with Ashcombe's move (#87), is won 55% at the cellar's floor, 2, and always at 4;
+  the Berth's captain 45% at 4 and always at 6. The area as one pools each group at its own map's
+  floor (#209): 97.3% of its 81 groups' fights won, against nine in ten. Two under, only E3's, E2's,
+  D2's, D3's and D4's 32 groups have a company: 80.1% won, off the aim of a quarter and inside the
+  limit of nine in ten, listed. Each zone walks its own road (both every time) and warns at its own
+  way in. Fights to a rest: the Foreland map 4.37, Brandy Hole's caves 4.05, the Seam 6.69, the
+  Ashcombe cellar 7.42, F2 6.44, F3 7.01, E3 7.28, E2 6.28, D2 7.80, D3 7.98, D4 7.52 and the Berth
+  7.12.
+- **The thresholds, as the pilot left them** (#47). Every box of the Downs was tuned to the aims of
+  #273, and none moved them:
+
+  | Figure | Aim | Limit | What the Downs did |
+  |---|---|---|---|
+  | Won at the floor | 90% | 80% | 89% to 100% a box; the Berth's 89% off its aim |
+  | Fights to a rest | 5.5 to 7.5 | 4 to 10 | 6.28 to 7.98; D2, D3 and D4 a little over the aim |
+  | A boss at its floor | 30% to 70% | 20% to 80% | 45% and 55%; Brandy Hole's now 50% |
+  | A boss two above | 90% | 75% | always |
+  | Won two under | a quarter | nine in ten | 80.1% over the area; no area meets the aim |
+  | The road walked | 80% | 65% | every time |
+  | The warning | 1 point | 10 points | the nearest groups at the median or over |
+  | Country, density | 90% within 12 | none past 20 | F2 94% (15), E2 96.4% (20), D3 99.7% (14), D4 96.7% (18) |
+
+  Bosses made to MONSTERS §4.4's line with an escort land inside the aim at the first try, so
+  Brandy Hole's, made before the line, are retuned, not the limit widened. Two under stays as it
+  is: no group both lost at the floor less two and held to the rest line is won a quarter of the
+  time or less (#273), so it is listed, never failed; the limit catches a map won always. Two
+  figures sit on their limits' edge and are watched, not moved: Brandy Hole's caves at 4.05 fights
+  to a rest, and E2's furthest square at 20 steps. The owner has not played the Downs yet; what
+  their play shows may move these still.
+- **The pilot's hours** (#47). Each box from its pull request's first commit to its merge, by the
+  clock, waits for review and for main included:
+
+  | Box | Pull request | Hours |
+  |---|---|---|
+  | F2, the road west | #145 | 17.4 |
+  | F3, Gullwick | #280 | 19.6 |
+  | F3's people, Hild's step and the Boat, with the night beach | #283 | 46.1 |
+  | E3, Crowness | #284 | 29.4 |
+  | E2, the Wend's fields | #291 | 29.4 |
+  | D2, the chalk hills | #306 | 2.1 |
+  | The Berth | #310 | 2.1 |
+  | D3, the west downs | #305 | 1.1 |
+  | D4, Kestrel Edge | #309 | 2.0 |
+
+  F2, F3 and its people were begun together on the evening of 28 September and waited on the owner
+  overnight; E3 and E2 waited a day on main. D2 to D4 and the Berth were built in parallel on 30
+  September, with the owner's calls delegated, and merged within two or three hours of their first
+  commit. The work itself was about three session-hours a box where the brief says (§4.2, §4.4).
+- **What the owner found by hand.** Nothing yet: the owner has not played the Downs. It goes here
+  when they have.
 - **Gear.** The ladder (#99) is what a company has in its hands by a level. Mottram's sells the
   band's gear: the Long Sword, the Hand Axe, the Long Bow, Scale Mail, Chain Mail and the Kite
   Shield. The Downs hold the kits with a plus and the band's gear with one, box by box as §4.2 to
@@ -786,7 +824,8 @@ Decided by the owner on 27 and 28 September 2026:
 2. **The pilot** (#47) is F2 and F3, the road west to Gullwick: F2 is the only box that meets the
    Foreland, and F3 holds the Downs' first step. Gullwick's box is two-thirds sea, so the two are
    about 1.3 maps of land, and between them they measure a country box and a core box, the two
-   floors the pilot tunes (EXPANSION §5.3).
+   floors the pilot tunes (EXPANSION §5.3). The pilot measured every box of the Downs in the end:
+   its hours, and the gate's aims and limits it left as they were, are in §8.
 3. **Zones hold several maps.** The Downs are one zone of seven boxes, F2 and F3 from the pilot on;
    an atlas zone lists its maps (`AtlasZone.maps`; #66). A zone to a box would ask a step of the
    quest of every box the road crosses (EXPANSION §5.8), bare country included.
