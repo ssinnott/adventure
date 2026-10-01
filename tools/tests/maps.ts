@@ -29,7 +29,6 @@ const UNPLACED: Record<string, string> = {
   drowned_chanter: '#175', choirmaster: '#175',
   grey_heron: '#171',
   salt_crab: '#176',
-  fen_toad: '#173',
   great_devilfish: '#188',
   ashen_overseer: '#188',
   tide_warden: '#190',
