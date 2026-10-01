@@ -31,6 +31,8 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'brine_shard', name: 'Brine Shard', slot: 'none', price: 0 },
   // C6's find (#176): in a crate of the crews' cargo on the quay.
   P(core('scale'), 1),
+  // C7's secret (#178): the salter's hoard in the sealed pan, beside the ladder's Horn Bow +1.
+  P(core('buckler'), 2, { id: 'crabshell_buckler', name: 'Crab-Shell Buckler +2' }),
   // The Compact's first task (#182): the warehouse clerk's cask, carried to the Keel past the customs house.
   { id: 'brandy_cask', name: 'Cask of Brandy', slot: 'none', price: 0 },
 ];
