@@ -403,11 +403,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
   millisecond a frame.  ## Stubbed or absent
 - No hall sells tier 6 or 7 yet (Lantern Watch, #201, sells 6); no Master trainers; no secondary skills yet beyond race
-  innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
-  yet and no second volume exists.
+  innate ones. The Meridian journal opens The Lost Expedition in the quest log, and the
+  Cartographers' Geographer in Saltmouth reads it (#181), but no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
-- Prestiges, the Cartographers' and the Compact's halls, the succession, the Salt Compact, the
-  Lost Expedition past its first journal: design only.
+- Prestiges, the Compact's hall, the succession, the Salt Compact, the Lost Expedition past its
+  first journal: design only. The Cartographers' hall is built in Saltmouth (#181).
 - What the checks owe: a known shortfall prints as `owed` with the issue that owes it, and
   `node tools/test.ts` ends by counting them. Both clears give less xp than the curve asks, and
   Thornmark's less gold (#26). Some of the gate's fights to a rest are off their aim, inside their

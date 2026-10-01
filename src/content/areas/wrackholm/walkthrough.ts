@@ -5,15 +5,39 @@
 // rows; down to the sea cave, the boy at the black pool and the beast at 14; and out by the flooded
 // passage, found by the tide-mark and not told, onto F6's east shore. Last, east over the moor into
 // F6 at 13: the hermit's tally, the door in the cairn on the point found by a search, the founder's
-// seal in the grave, and every group of F6 won at its floor.
+// seal in the grave, and every group of F6 won at its floor. Then out to the Tide Ship by night in
+// Dando's boat: the devilfish over the side; the rats and the Hand's post on the lower deck, and the
+// papers, the log and the cutlass in the cabin; the hold's crew, strangers in the last row while Hale
+// holds the Scarth and Hale once he is taken from it, freed and gone; the straw that is fresh on one
+// side, and the shard-cut behind it found by a search and not told; the tear, the Warden at 14 and
+// the Stone; and down the hatch to the stair's foot, and back up.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
+import type { Walk } from '../../../../tools/walk.ts';
+import { meet, heard } from '../../../game/people.ts';
+import type { Person } from '../../../game/people.ts';
+import { take } from '../../../game/passage.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
 import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
 import { SMUGGLERS_COVE } from './maps/smugglers_cove.ts';
 import { SMUGGLERS_COVE2 } from './maps/smugglers_cove2.ts';
+import { TIDE_SHIP } from './maps/tide_ship.ts';
+import { TIDE_SHIP2 } from './maps/tide_ship2.ts';
+import { TIDE_SHIP3, TIDE_RIFT } from './maps/tide_ship3.ts';
+import { DEAD_DROP_STAIR } from './maps/dead_drop_stair.ts';
+
+/** The clock on to the next hour given. */
+const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
+/** A chest opened: its gold and its items into the purse and the bag. */
+function open(w: Walk, map: string, id: string): readonly string[] {
+  const c = MAP_DEFS.find((d) => d.id === map)!.features!.find((f) => f.kind === 'chest' && f.id === id);
+  if (c?.kind !== 'chest') { w.ok(false, `there is a chest ${map}:${id}`); return []; }
+  w.world.travel(map, c.x, c.y);
+  w.world.markUsed(c.id); w.party.gold += c.gold; w.party.bag.push(...c.items);
+  return c.items;
+}
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -109,4 +133,74 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
 
   for (const g of MAP_DEFS.find((d) => d.id === f6.id)!.encounters ?? []) fight(w, `${f6.id}:${g.id}`);
+
+  // Out to the Tide Ship. By day the shingle is empty; by night Dando rows whoever pays.
+  const ship = TIDE_SHIP, lower = TIDE_SHIP2, hold = TIDE_SHIP3, foot = DEAD_DROP_STAIR;
+  const pender = f6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
+  clock(w, 12);
+  w.world.travel(f6.id, pender.x, pender.y);
+  ok(!w.world.present(pender), 'by day nobody on the shingle rows out to the ship');
+  clock(w, 23);
+  w.world.travel(f6.id, pender.x, pender.y);
+  ok(w.world.present(pender) && meet(pender, w.party, heard(w.world, pender)).text.startsWith('An old man sits on a thwart'), 'by night Dando sits in his boat on the shingle');
+  w.party.gold += 20;
+  const rowed = take(pender.passage![0], w.world, w.party);
+  ok(rowed.taken && w.world.state.mapId === ship.id && w.world.hour < 6, 'he rows the company out, and it comes aboard by night');
+  see(w, `${ship.id}:ts_aboard`);
+  w.level = 12;
+  for (const g of ship.encounters ?? []) fight(w, `${ship.id}:${g.id}`);
+  ok(open(w, ship.id, 'ts_locker').includes('potion_heal'), 'the deck locker holds the crews\' draughts');
+
+  // The lower deck: the rats and the Hand's post, and the captain's cabin.
+  walkThrough(w, ship.id, 8, 5, NORTH, lower.id, 2);
+  for (const g of lower.encounters ?? []) fight(w, `${lower.id}:${g.id}`);
+  see(w, `${lower.id}:ts2_cabin`);
+  const table = open(w, lower.id, 'ts2_table'), sea = open(w, lower.id, 'ts2_sea_chest');
+  ok(table.includes('ships_papers') && table.includes('ships_log') && sea.includes('tide_cutlass'), 'on the captain\'s table the papers and the log, and in his sea chest the cutlass');
+
+  // The hold: the crew among the rows, and in the last row strangers, while Hale holds the Scarth.
+  walkThrough(w, lower.id, 4, 9, SOUTH, hold.id, 2);
+  see(w, `${hold.id}:ts3_beam`);
+  const hale = hold.features!.find((f): f is Person => f.kind === 'npc' && f.flag === 'q_hale_freed')!;
+  fight(w, `${hold.id}:ts3_crew`);
+  w.world.travel(hold.id, hale.x, hale.y - 1, SOUTH);
+  ok(!w.world.present(hale) && w.world.peopleAt(hale.x, hale.y).length === 0, 'while Hale holds the Scarth, he is not in the last row');
+  see(w, `${hold.id}:ts3_last_row`);
+  ok(w.world.used('ts3_last_row'), 'strangers sit in the last row');
+  // Taken from the Scarth: #156 sets the flag when it puts strangers at the pass.
+  w.party.flags.q_hale_taken = 1;
+  w.world.travel(hold.id, hale.x, hale.y - 1, SOUTH);
+  ok(w.world.present(hale), 'once he is taken from the Scarth and the crew is down, Hale is in the last row');
+  ok(meet(hale, w.party, heard(w.world, hale)).text.includes('The Regent got his copy') && !!w.party.flags.q_hale_freed, 'he knows the company, says who came for him, and is freed');
+  ok(!w.world.present(hale), 'freed, he is gone over the side with the rest');
+  listen(w);
+
+  // The straw is fresh on one side, and a search there finds the shard-cut past the elder's door.
+  const straw = hold.features!.find((f) => f.kind === 'event' && f.id === 'ts3_straw')!, cut = hold.secrets![0];
+  ok(cut.hint === 'ts3_straw' && straw.x === cut.x && straw.y === cut.y + 1, 'the straw is seen from the square aft of the shard-cut');
+  see(w, `${hold.id}:ts3_straw`);
+  w.world.travel(hold.id, straw.x, straw.y, NORTH);
+  let cutFound = false;
+  for (let i = 0; i < 20 && !cutFound; i++) cutFound = w.world.search();
+  ok(cutFound, 'a search at the fresh straw finds the shard-cut in the bulkhead');
+  w.world.move('forward'); w.world.move('forward');
+  ok(w.world.state.mapId === hold.id && w.world.state.y === cut.y - 1, 'through it, the forward hold, past the elder at the door');
+  ok(open(w, hold.id, 'ts3_strongbox').includes('long_axe+1'), 'the Hand\'s strongbox stands in the forward hold, the Long Axe +1 in it');
+  see(w, `${hold.id}:ts3_forward`);
+  fight(w, `${hold.id}:ts3_elder`);
+
+  // The tear: the Rift's rooms at its floor, the Warden at 14, and the Stone beside it.
+  const tear = hold.features!.find((f) => f.kind === 'rift')!;
+  walkThrough(w, hold.id, tear.x, tear.y + 1, NORTH, TIDE_RIFT.map.id, 1);
+  for (const g of (TIDE_RIFT.map.encounters ?? []).filter((e) => !e.id.endsWith('_warden'))) fight(w, `${TIDE_RIFT.map.id}:${g.id}`);
+  w.level = 14;
+  fight(w, `${TIDE_RIFT.map.id}:tide_ship_rift_warden`);
+  ok(open(w, TIDE_RIFT.map.id, 'tide_ship_rift_hoard').includes('tide_stone') && w.party.bag.includes('tide_stone'), 'beside the fallen Warden, the Tide Stone');
+
+  // The hatch aft: the stair's foot, at the Dead-Drop's band, and the way back up.
+  see(w, `${hold.id}:ts3_hatch`);
+  walkThrough(w, hold.id, 7, 13, SOUTH, foot.id, 1);
+  ok(w.world.map.def.band?.[0] === 26, 'the stair\'s foot is the Dead-Drop\'s country, 26 and over, as its sign says');
+  see(w, `${foot.id}:dd_door`);
+  walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
 };

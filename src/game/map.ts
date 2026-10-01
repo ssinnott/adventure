@@ -93,9 +93,10 @@ export type Feature =
    * Where a person stands they stand only in their `when`, once `after` holds and until `until` does.
    * `passage` makes them a coachman or a boatman: once their words are said they sell the crossings
    * listed (game/passage.ts). `teaches` makes them a prestige's trainer: once their words are said
-   * they offer it (game/prestige.ts).
+   * they offer it (game/prestige.ts). `hall`, on a person with a room, makes the tavern a guild's
+   * hall, as a business's does: a hall that does not look like one.
    */
-  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; passage?: readonly Passage[]; teaches?: Teaching } & Presence)
+  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; hall?: GuildId; passage?: readonly Passage[]; teaches?: Teaching } & Presence)
   /** A tear into a Rift (game/rifts.ts): stepped on, it takes the party through, as an exit does. */
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number; tf?: Facing; label?: string }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
@@ -184,7 +185,7 @@ export interface Teaching {
  * zone map's cells count), landing on `x`,`y`. It leaves at the hour `departs`, every day, and lands
  * `days` midnights later at the hour `arrives`: a boat that sails at 20 and lands at 6 is one. The
  * fare is the company's, not each member's, and pays its board: the company lands rested, as from
- * an inn. Open to anyone with the fare; `free` waives it once it holds.
+ * an inn. Open to anyone with the fare; `half` halves it once it holds, and `free` waives it.
  */
 export interface Passage {
   to: string; x: number; y: number;
@@ -203,6 +204,8 @@ export interface Passage {
   warning?: string;
   /** Once this holds the crossing costs nothing (#56's 22 makes the smugglers' boat free). */
   free?: When;
+  /** Once this holds the fare is halved, rounded down (the Compact's boat for a member, EXPANSION §2.2); `free` beats it. */
+  half?: When;
 }
 
 /**

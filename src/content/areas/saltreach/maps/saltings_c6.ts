@@ -56,6 +56,8 @@ export const SALTINGS_C6: MapDef = {
     // The road in from the Delta, and the milestone beside it.
     { kind: 'event', x: 26, y: 1, id: 'c6_in', once: true, text: 'The fen gives way to salt. The road runs on, dry now, and far ahead a wall, a gate and smoke above them.' },
     { kind: 'sign', x: 25, y: 2, text: 'SALTMOUTH 2, RIETUM 7.' },
+    // The Cartographers' first task (#181): the chain comes to the second stone.
+    { kind: 'event', x: 26, y: 2, id: 'c6_milestone', once: true, after: { seen: 'delta_d5:d5_milestone' }, text: 'The chain comes to the second stone with two on the count and nothing over. SALTMOUTH 2, RIETUM 7: both hold. Whoever set these stones walked the road first.' },
     // The quay, a crate of the crews' cargo on it, and the Compact's warehouse across the road.
     { kind: 'event', x: 26, y: 6, id: 'c6_quay', once: true, text: 'The barge quay: boards on piles, barges two deep, the Long Water gone brown into the grey. Under them something long turns.' },
     { kind: 'chest', x: 25, y: 8, id: 'c6_crate', gold: 80, items: ['scale+1'] },
