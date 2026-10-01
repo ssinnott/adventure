@@ -732,3 +732,5 @@ Decided by delegate for #197, each the owner's to overturn:
    meets the lip at 337.5,58.5, not the plan's 340,60. The area claims the falls as a new landmark.
 9. **J2's two nits are fixed in the text:** the cabin is fieldstone and turf, as it draws, and the
    cairn is out of sight of the road, not off any path.
+10. **The Long Sword +2 stays, under the Watch's stores:** #399 kept it off the ladder, a find that
+    sells, as I2's halberd is. Every +1 has its box (#399), and none moves to K2.
