@@ -384,7 +384,7 @@ export class World {
   /**
    * What the log says crossing from one zone map into another (EXPANSION §5.2): the way's arrival
    * line, if it has one; the land's name where the atlas zone changes, unless the arrival line said
-   * it; and how the land feels where its floor is over the company's level and is new or higher than
+   * it; and how the land feels, all as one entry of the log where its floor is over the company's level and is new or higher than
    * the one left: harder one or two under, a plainer warning three or more under, in the zone's own
    * words if it has them. Never a wall. Stepping straight back over a line just crossed says no more
    * than the way's own line.
@@ -399,7 +399,8 @@ export class World {
     const words = zone.land?.crossing;
     const feel = under <= 0 || !rises ? '' : under <= 2 ? words?.harder ?? HARDER : words?.warning ?? WARNING;
     const line = [newLand && !arrival && zone.land ? `${zone.land.name}.` : '', feel].filter(Boolean).join(' ');
-    return [...(arrival ? [arrival] : []), ...(line ? [line] : [])];
+    const said = [arrival, line].filter(Boolean).join(' ');
+    return said ? [said] : [];
   }
 
   /** Put the party on a map (a zone map's cells count: see `locate`), facing on as it was unless told. */
