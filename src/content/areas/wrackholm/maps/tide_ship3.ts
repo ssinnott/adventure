@@ -86,7 +86,7 @@ export const TIDE_SHIP3: MapDef = {
     { kind: 'event', x: 7, y: 13, id: 'ts3_hatch', once: true, text: 'A hatch in the floor, and up through it cold clean air with nothing of ship or sea in it. What is below is not for a company that came for a Stone.' },
     // The forward hold, through the door past the elder or the shard-cut behind the straw: the Hand's
     // strongbox, the pay for the cargo, and the Stone in its tear.
-    { kind: 'chest', x: 10, y: 3, id: 'ts3_strongbox', gold: 1200, items: ['potion_sp', 'elixir'] },
+    { kind: 'chest', x: 10, y: 3, id: 'ts3_strongbox', gold: 1200, items: ['long_axe+1', 'elixir'] },
     { kind: 'event', x: 7, y: 3, id: 'ts3_forward', once: true, text: 'The forward hold. A thing the size of a cart under sacking, lit green from inside. Round it the air is torn, and the tear stands up like a door.' },
     TIDE_RIFT.way(8, 2),
   ],

@@ -332,18 +332,19 @@ Foreland map's density.
   company, says the Regent came for him himself, and goes over the side with the freed, setting
   `q_hale_freed`. Forward, a Tide Elder stands before the bulkhead's door; the straw against the
   bulkhead west of it is fresh on one side, and a search there finds the shard-cut, a way past him.
-  In the forward hold the Hand's strongbox (1,200 gold, a potion and an elixir) and the Stone under
+  In the forward hold the Hand's strongbox (1,200 gold, a Long Axe +1, the ladder's for the barbarian at 13 (#399), and
+  an elixir) and the Stone under
   its sacking, with its tear: the Rift is generated (`hall`, brine, seed 2), a Tide Elder and three
   brinelings in its rooms and the Warden of the Tide alone at its heart, with the Tide Stone and 700
   gold in the hoard beside him; his fall quiets the tear. Aft, the hatch in the floor opens on the
   stair, and its foot is one room of clean cold stone, its sign the Dead-Drop's band, a way on into
   the dark at its far end and the stair back up. The Warden is set off the boss line, at 674 hit
   points and 10d7+15 against the line's 13d7+19 (38% at 12) and the escorted boss's 7d7+11 (97%):
-  the gate wins him 64% at 12 and 90% at 14. As measured the ship pays about 3,240 xp a member, 1,843
+  the gate wins him 63% at 12 and 96% at 14, dressed by #399's ladder. As measured the ship pays about 3,240 xp a member, 1,843
   of it the Rift's, and 3,462 gold, which brings the area's gold to the 6,000 its
-  training costs. Each deck at 12 wins every fight, at 8.9, 9.7 and 9.3 fights to a rest (off the
-  aim of 6 to 8, inside the limit), the Rift 82% with its boss and 7.7 to a rest; two under, at 10,
-  the decks win every fight too, owed to #18 with E6's. Every square of every deck is within 5 steps
+  training costs. Each deck at 12 wins every fight, at 9.3, 9.5 and 9.1 fights to a rest (off the
+  aim of 6 to 8, inside the limit), the Rift 81.5% with its boss and 7.7 to a rest; two under, at 10,
+  the decks win every fight too, owed to #18 with E6's, the Rift 55.5%. Every square of every deck is within 5 steps
   of a point. The walkthrough rows out by night, plays the three decks at 12, finds the shard-cut,
   frees Hale once he is taken, wins the Warden at 14 and the Stone, and goes down the stair and
   back. What the owner finds by hand goes here when it has been played.
@@ -398,9 +399,8 @@ the gleaner is met here first; MONSTERS' Where column is the owner's to change.
 New in Wrackholm, for the novelty check (EXPANSION §5.4): the devilfish, a new family (E6 claims it,
 placing them first); heather underfoot (#162); an area reached by a crossing (#164); a ship as a
 dungeon; the Hand's overseers, grey to the wrist (MONSTERS §12); a boss that is fed; the first door
-into the hull (#22). Its landmarks: a landing, a sea cave, a wreck. The check holds two of these
-besides the devilfish and the heather (#190): the wreck, the Tide Ship's site, and a group's leader,
-whose fall breaks its people (`encounter:leader`), first placed in the hold.
+into the hull (#22). Its landmarks: a landing, a sea cave, a wreck. The check holds one of these
+besides the devilfish and the heather (#190): the wreck, the Tide Ship's site.
 
 ## 8. The numbers
 
@@ -485,8 +485,9 @@ Decided by delegate for #190, each the owner's to overturn:
    group at 13, so the shard-cut is a way past him; a Tide Elder and three brinelings in the Rift's
    rooms and the Warden at about two in three at 12, so the Rift's own fights are won as the gate
    asks; and the ship's chests raised to 3,200 gold, as §8 has the hold pay the training.
-10. **The area claims the wreck and a group's leader** as new; a boss that closes a tear is C5's
-    already, and the stair is words in §7.
+10. **The area claims the wreck** as new; a group's leader was the delegate's second claim, but
+    Saltreach's boxes place one first, a boss that closes a tear is C5's already, and the stair is
+    words in §7.
 
 Decided by delegate for #189, each the owner's to overturn:
 

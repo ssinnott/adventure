@@ -106,7 +106,7 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
     level: 13, name: "Saltreach's and Wrackholm's finds",
     from: {
       'stiletto+1': ['saltreach', '#172'], 'ironshod_staff+1': ['saltreach', '#175'], 'morning_star+1': ['saltreach', '#175'],
-      'tidefolk_robe+1': ['saltreach', '#172'], 'horn_bow+1': ['saltreach', '#178'], 'plate+1': ['wrackholm', ''], 'long_axe+1': ['wrackholm', '#190'],
+      'tidefolk_robe+1': ['saltreach', '#172'], 'horn_bow+1': ['saltreach', '#178'], 'plate+1': ['wrackholm', ''], 'long_axe+1': ['wrackholm', ''],
     },
     classes: {
       knight: ['morning_star+1', 'plate+1'], paladin: ['morning_star+1', 'plate+1'], ranger: ['horn_bow+1'], barbarian: ['long_axe+1'],

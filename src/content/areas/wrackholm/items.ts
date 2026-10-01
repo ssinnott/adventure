@@ -11,7 +11,7 @@ export const ITEMS: readonly ItemDef[] = [
   // Kelp Hole's (#188): the crews' strongbox, the first plate with a plus on the road, and the
   // ladder's for plate's wearers (#399).
   P(plate, 1),
-  // The Tide Ship's (#190).
+  // The Tide Ship's (#190): the ladder's for the barbarian, in the Hand's strongbox in the forward hold.
   P(longAxe, 1),
   // F6's (#189): the founder's seal, in his grave under the cairn on the east rocks; the Compact's
   // hall takes it (#182).

@@ -186,7 +186,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(cutFound, 'a search at the fresh straw finds the shard-cut in the bulkhead');
   w.world.move('forward'); w.world.move('forward');
   ok(w.world.state.mapId === hold.id && w.world.state.y === cut.y - 1, 'through it, the forward hold, past the elder at the door');
-  ok(open(w, hold.id, 'ts3_strongbox').includes('elixir'), 'the Hand\'s strongbox stands in the forward hold');
+  ok(open(w, hold.id, 'ts3_strongbox').includes('long_axe+1'), 'the Hand\'s strongbox stands in the forward hold, the Long Axe +1 in it');
   see(w, `${hold.id}:ts3_forward`);
   fight(w, `${hold.id}:ts3_elder`);
 

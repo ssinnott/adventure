@@ -25,6 +25,6 @@ export const AREA = {
   climate: { summer: 16, winter: 4, daily: 3, damp: [0.02, 0.09], wettest: 300, fog: 0.9, lag: 3,
     fogText: 'Fog comes in over the heather.', thunderText: 'Thunder breaks over the gulf.' },
   interiors: [] as const,
-  novel: { families: ['devilfish'], terrain: ['heather'], mechanics: ['encounter:leader'], landmarks: ['wreck'] },
+  novel: { families: ['devilfish'], terrain: ['heather'], mechanics: [], landmarks: ['wreck'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
