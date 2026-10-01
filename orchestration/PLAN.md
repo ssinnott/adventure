@@ -1668,3 +1668,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   (17 owed, none #217's), SMOKE OK, "Nothing new."; CI green. Merged as cac5a2f; main's tree is the
   tested tree (03e1d6c). #217 closes. The J5 session told to merge main (J5 next in Thornmark); #306
   to merge cac5a2f, with nothing landing before it; the I5 session done.
+- 01:02: #306 (#69, D2) landed: its merge aa46eba (main with #307) merged cleanly onto cac5a2f
+  (#308): ALL OK (12 owed, none #69's), SMOKE OK, "Nothing new."; CI green on the head. Merged as
+  dd7cb90; main's tree is the tested tree (8311e5e). #69 closes (with #313). The D2 session done
+  (its 01:00 message void); the Berth's session to merge main with its round; D4's to merge main
+  with its round. The Berth lands first if it is ready first.
