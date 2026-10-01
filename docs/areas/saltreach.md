@@ -11,11 +11,11 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Four boxes of it are built, the Delta road and the shore under the Edge (#170), Stienwierde (#173)
-and Saltmouth's box (#176), and the town behind its gate, Saltmouth (#177); with the first two the
-area was listed. Its content is
-`src/content/areas/saltreach/` (maps, monsters, items, climate and its part of the world map; its
-chapter of the one quest, The Tide Stone, in `chapter.ts`, its side quests in `quests.ts` and its
-guild quests in `guilds.ts` are still to come) and its businesses' rooms
+and Saltmouth's box (#176), and the town behind its gate, Saltmouth (#177), with the Salt Compact's
+hall in it (#182); with the first two the area was listed. Its content is
+`src/content/areas/saltreach/` (maps, monsters, items, climate, its part of the world map and its
+guild quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` and its
+side quests in `quests.ts` are still to come) and its businesses' rooms
 `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta` and
 `saltings`, the town `saltmouth` and the temples `drowned_temples`.
 
@@ -449,9 +449,8 @@ settled in its issue, and what the pilot teaches changes them.
   (the Thief's), Baukje the stevedore among the bales on the quay (the Barbarian's) and Tjerk the
   ferryman at the steps (the Monk's). Jory Tallis stands at his house front on the quay, his
   lineage framed on the wall through the open door, and his words touch the throne and no more.
-  The pump in the square is brackish and does not heal. The Keel's and the map room's keepers say
-  plain words: the halls, their first tasks and the stair's top in the Keel's cellar are #182's
-  and #181's, the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach
+  The pump in the square is brackish and does not heal. The map room's keeper says plain words:
+  its hall and first task are #181's, the Keel's #182's (below), the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach
   runs from the yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
   and onto Wrackholm's stage at 6 the next morning, and back the same from the stage, landing on
   the quay. The walkthrough goes in by the gate and out again, buys each class its step at the
@@ -459,6 +458,23 @@ settled in its issue, and what the pilot teaches changes them.
   the log has sent her to Pender; then it takes the boat to the isle, saves there and loads, and
   takes it home. The town pays nothing of its own: its 300
   is its quests', which are its halls', its chapter's and its side quests'.
+- **As built** (#182, 1 October): the Keel is the Salt Compact's hall, a tavern that carries `hall`
+  (#417), so its menu is the talk of the room, the Compact's work and Ruan, who keeps it. Her words
+  are plain to a stranger and a degree warmer to a Runner, and never touch the line's reveal. The
+  first task, The Long Way: the warehouse clerk on C6's quay hands over a cask of brandy once the
+  run is taken, an event by the customs house door at 4,13 shows only while the cask is carried,
+  and the hall pays when that has been seen and takes the cask: 30 gold and 300 xp, and the company
+  is a Runner. The first rank's two: What the Crews Carry, the crate of the crews' cargo on C6's
+  quay opened (100 gold, 600 xp); and The Watcher on Wrackholm, the lookout on E6's west cliff
+  found (150 gold, 900 xp). Both are paid early to a company that came first. The Compact comes to
+  1,800 xp, 300 a member, and 280 gold. Kitto's boat is half to a Runner, 75, both ways, and Kitto
+  says so; `free` (Passage Paid, #401) still beats it. The cellar way is a second secret: sawdust
+  trodden out along the Keel's end wall at 14,5 is the hint, the wall at 14,4 opens to a search, and
+  the cellar's stair at 14,3 comes down onto C6's flight at 28,21, by the cache. The bar is lifted
+  on the cellar side and drops behind, so the way runs down only and the stair's top stays barred
+  from below. The walkthrough joins the Compact by the run, pays the half fare both ways, walks the
+  crate in the log and goes down through the cellar. The hermit's letter (#56's 26) is #192's to
+  build end to end, Ruan's hand-in with it.
 
 ### 4.10 C7, the salt pans (#178): country, band 12
 
@@ -538,8 +554,9 @@ Two halls open here (DESIGN §8), on the rules and the hall menu built in #132:
   of the Salt Road's milestones; a first rank of two quests in the boxes and the Delta; the Meridian
   journal read here for the first time, where the Lost Expedition goes on (DESIGN §10.3). Its
   surveyor gives The Length of the Wall in Sunderwood (#56's 32, #205).
-- **The Salt Compact** (#182), the harbour tavern (#253): the first task, a run of brandy past the
-  customs house; a first rank of two quests; the boat's fare halved for a member. Its line begins
+- **The Salt Compact** (#182, built), the harbour tavern (#253): the first task, a run of brandy past
+  the customs house; a first rank of two quests, the crews' crate on C6's quay and the watcher's
+  place on Wrackholm's west cliff; the boat's fare halved for a member (§4.9). Its line begins
   with the hermit's letter from Wrackholm (#56's 26, #192): the founder is a decade dead and the
   orders come from below (DESIGN §10.2). The crews the company fights on the river and the isle
   have left the Compact for the Hand's coin, so killing them costs nothing with the guild (#151,
@@ -774,6 +791,33 @@ Decided by delegate for #177, each the owner's to overturn:
 10. **Two pull requests, the second stacked on the first:** the town (the map, the eight
     businesses, the four trainers, Tallis and the people, the gate and the atlas), then the boat,
     which reaches into Wrackholm's E6 and `CUT_OFF` and is reviewed on its own.
+
+Decided by delegate for #182, each the owner's to overturn:
+
+1. **The Keel is the hall by a small systems change** (#417): a person with a room may carry `hall`,
+   so the tavern keeps the talk of the room and adds the Compact's work. DESIGN §8 wants a hall that
+   does not look like one, and a shop would need stock invented for it; #181's map room uses the
+   same change.
+2. **The half fare is `Passage.half`** (#417), the fare halved and rounded down once it holds, with
+   `free` above it. Both of Kitto's passages carry it, Saltmouth's and the way back from E6, which
+   reaches into Wrackholm's lane as #177 did; it turns on the first task's done flag, which marks
+   membership exactly, and Kitto alone says so.
+3. **The first task is the clerk's cask past the customs house door:** the cask is given only once
+   the run is taken and the door's event shows only while it is carried, so the run cannot be done
+   early and has no early words. The cask is priced at nothing, so no shop buys it away.
+4. **The first rank's two are the crews' crate on C6's quay and the lookout on E6's west cliff:**
+   both deal with the Hand's crews and who watches the port, not the founder; the crews and the
+   bargemen respawn, so no `slain` deed, and C5's drowned barge is its box's secret.
+5. **Ruan is named and stands in the Keel; the hermit's letter is #192's,** which builds 26 end to
+   end, the hermit's giving of it and Ruan's hand-in: a hand-in here alone would name an item no one
+   can find, and F6 is #410's to edit now. The founder's seal is not taken at Runner, which would
+   tell the reveal early; it is left to the rank that reveals (#22, Phase 4).
+6. **The cellar way is a second secret, down only:** a rank shuts no way on the map (DESIGN §8) and
+   any `needFlag` is a story lock Act II does not spend, so the way is open to anyone who finds it,
+   and the cache is still had only through a secret.
+7. **The Compact pays 300 xp a member and 280 gold** across its three quests, the first task 50 a
+   member, under the Act I halls' share for each rank at the band; Saltmouth's 300 in §8 counted
+   the first tasks only, and the area's sum is restated as each box is built.
 
 ## 10. Names
 

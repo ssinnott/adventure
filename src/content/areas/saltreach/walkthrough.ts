@@ -8,7 +8,10 @@
 // Saltmouth's box (C6, #176): the Saltings named at the seam, the land gate at the road's end, the
 // smugglers' stair found from the rope that hangs over it, and the quay's and the pans' groups won
 // at the box's floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear
-// bought, training to 13 and a first prestige taken; and the boat to Wrackholm's landing and back.
+// bought, training to 13 and a first prestige taken; the Salt Compact joined at the Keel (#182) by
+// its run of brandy past the customs house, and its first rank's crate; the way down through the
+// Keel's cellar to the stair found from its sawdust; and the boat to Wrackholm's landing and back,
+// at the half fare a member pays.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -20,15 +23,16 @@ import { teach } from '../../../game/prestige.ts';
 import { questLog } from '../../../game/quests.ts';
 import type { QuestView } from '../../../game/quests.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
-import { take } from '../../../game/passage.ts';
+import { take, fareOf } from '../../../game/passage.ts';
+import { offered, rankOf, report, take as takeWork } from '../../../game/guilds.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
 import { World } from '../../../game/world.ts';
 import { buildMaps } from '../../maps.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_II } from '../../../../tools/tests/ladder.ts';
-import { MAP_DEFS } from '../../index.ts';
-import { meet, heard } from '../../../game/people.ts';
+import { MAP_DEFS, GUILD_QUESTS } from '../../index.ts';
+import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 
 const D5 = MAP_DEFS.find((d) => d.id === 'delta_d5')!;
@@ -178,20 +182,66 @@ export const walkthrough: Walkthrough = (ok) => {
   w.party.gold = 1000;
   ok(teach(locksmith.teaches!, w.party, w.world.state, w.party.members.indexOf(ottilie)).taught && prestigeOf(ottilie) === 1 && w.party.gold === 0 && !seeking(), `the locksmith makes a ${PRESTIGES.thief.titles[0]} of ${ottilie.name} for 1,000 gold, and the seeking is done`);
 
-  // The boat (#164): bought on the quay from Kitto, it sails at eight and lands on Wrackholm's stage
-  // at six the next morning; a save made on the isle loads there; and Kitto sells the way back.
+  // The Salt Compact (#182): the Keel is its hall, and a stranger is offered the run alone. The
+  // clerk on C6's quay hands over the cask once the run is taken; the customs house door shows
+  // itself only to the cask; the hall takes the cask and the company is a Runner.
   const boat = TOWN.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!.passage![0];
+  const keel = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.hall === 'compact');
+  ok(keel?.name === 'The Keel' && keel.interior === 'harbour_tavern', 'the Keel, the harbour tavern, is the Salt Compact\'s hall');
+  ok(TOWN.features!.some((f) => f.kind === 'npc' && f.x === keel!.x && f.y === keel!.y && !f.interior && f.name.startsWith('Ruan')), 'and Ruan keeps it');
+  const work = (): string => offered('compact', w.party).map((q) => q.id).join(', ');
+  ok(work() === 'compact_run' && fareOf(boat, w.world) === 150, `a stranger is offered the run alone (${work()}), and pays the boat's whole fare`);
+  const run = GUILD_QUESTS.find((q) => q.id === 'compact_run')!;
+  takeWork(run, w.world.state, w.party);
+  const clerk = C6.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'the warehouse clerk')!;
+  w.world.travel('saltings_c6', clerk.x, clerk.y + 1, NORTH);
+  const sent = meet(clerk, w.party, heard(w.world, clerk));
+  ok(!!sent.choice && sent.text.includes('The Keel sent you'), `the warehouse clerk has the cask for the Keel (${sent.text})`);
+  answer(sent.choice!.answers[0], w.party);
+  ok(w.party.bag.includes('brandy_cask'), 'and hands it over');
+  ok(report('compact', w.world.state, w.party).length === 0, 'the cask carried straight in is not the run: the hall pays nothing yet');
+  w.world.travel('saltmouth', 4, 13, WEST);
+  const passed = w.world.eventsHere();
+  ok(passed.some((t) => t.includes('customs house door stays shut')), `carried the long way, past the customs house door (${passed.join(' ')})`);
+  const paid = report('compact', w.world.state, w.party);
+  ok(rankOf('compact', w.party) === 1 && !w.party.bag.includes('brandy_cask') && paid.at(-1) === 'Your rank with the Salt Compact is now Runner.', `the hall takes the cask and the company is a Runner (${paid.join(' | ').replace(/\n+/g, ' ')})`);
+  ok(questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_run')?.done === true, 'and the log has the run finished');
+  ok(fareOf(boat, w.world) === 75, 'a member pays half the boat\'s fare, never more');
+  ok(work() === 'compact_crate, compact_lookout', `a Runner is offered the first rank's two (${work()})`);
+  // The first rank's crate, walked in the log: taken, the crate opened on C6's quay, reported.
+  const crateWork = GUILD_QUESTS.find((q) => q.id === 'compact_crate')!;
+  takeWork(crateWork, w.world.state, w.party);
+  const goal = (): string => questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.goal ?? '';
+  ok(goal().includes('Open a crate'), `the log sends the company to the crews' crate (${goal()})`);
+  w.world.travel('saltings_c6', crate!.x, crate!.y);
+  w.world.markUsed('c6_crate');
+  ok(goal().includes('Report to the Keel'), `opened, the log sends it back to the Keel (${goal()})`);
+  ok(report('compact', w.world.state, w.party).length > 0 && questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.done === true, 'and the Keel pays for it');
+
+  // The secret way down: the sawdust trodden out along the Keel's end wall, the search, and the
+  // cellar's stair onto C6's flight, by the cache.
+  w.world.travel('saltmouth', 14, 5, NORTH);
+  ok(w.world.eventsHere().some((t) => t.includes('Sawdust')), 'by the Keel\'s end wall, the sawdust trodden out along its foot');
+  let cellar = false;
+  for (let i = 0; i < 20 && !cellar; i++) cellar = w.world.search();
+  const through = cellar ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(cellar && through.every((r) => r.kind === 'moved') && w.world.zone?.id === 'saltings_c6' && w.world.state.x - w.world.zone.x === 28 && w.world.state.y - w.world.zone.y === 21,
+    'searched, the wall opens, and the cellar\'s stair comes down onto the smugglers\' flight');
+
+  // The boat (#164): bought on the quay from Kitto, it sails at eight and lands on Wrackholm's stage
+  // at six the next morning; a save made on the isle loads there; and Kitto sells the way back. A
+  // member of the Compact pays half each way.
   w.world.travel('saltmouth', 13, 10, WEST);
   w.party.gold = 200;
   const day = Math.floor(w.world.state.minutes / MINUTES_PER_DAY);
   const out = take(boat, w.world, w.party);
-  ok(out.taken && w.party.gold === 50 && w.world.zone?.id === 'wrackholm_e6' && w.world.state.x - w.world.zone.x === 16 && w.world.state.y - w.world.zone.y === 15, `the boat from Saltmouth's quay lands the company on Wrackholm's stage for 150 gold (${out.lines.join(' ')})`);
+  ok(out.taken && w.party.gold === 125 && w.world.zone?.id === 'wrackholm_e6' && w.world.state.x - w.world.zone.x === 16 && w.world.state.y - w.world.zone.y === 15, `the boat from Saltmouth's quay lands the company on Wrackholm's stage for 75 gold, a member's fare (${out.lines.join(' ')})`);
   ok(Math.floor(w.world.state.minutes / MINUTES_PER_DAY) > day && w.world.hour === 6, `and the calendar has moved: it lands at ${w.world.hour}:00 the next day`);
   const saved = deserialize(serialize(w.world.state, w.party, 0));
   const loaded = new World(buildMaps(), saved.party, makeRng(1), saved.world);
   ok(loaded.zone?.id === 'wrackholm_e6' && loaded.state.minutes === w.world.state.minutes, 'a save made on the isle loads there');
   const back = MAP_DEFS.find((d) => d.id === 'wrackholm_e6')!.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)?.passage?.[0];
-  w.party.gold = 150;
+  w.party.gold = 75;
   const home = back ? take(back, w.world, w.party) : undefined;
   ok(!!home?.taken && w.world.state.mapId === 'saltmouth' && w.party.gold === 0 && w.world.hour === 6, `and Kitto at the stage sells the way back, onto Saltmouth's quay (${home?.lines.join(' ')})`);
 };
