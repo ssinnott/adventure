@@ -4,8 +4,11 @@
 // barge under the causeway's arch found from its hint; and the box's groups and its Rift's won at
 // its floor. Then the spur to Rietum (C4, #171): the eel-trapper's word on the poleman, the crews'
 // hide found from the gap in the herons, Passage Paid answered both ways, and the box's groups won.
+// Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty; the hermit
+// who counts the Rifts' lights; the hollow under the landing found from its pole-marks; and the
+// box's groups and its two Rifts' won at 11.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, fight, listen } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { meet, answer, heard } from '../../../game/people.ts';
@@ -16,6 +19,8 @@ const D5 = MAP_DEFS.find((d) => d.id === 'delta_d5')!;
 const C5 = MAP_DEFS.find((d) => d.id === 'delta_c5')!;
 const RIFT = MAP_DEFS.find((d) => d.id === 'c5_rift')!;
 const C4 = MAP_DEFS.find((d) => d.id === 'delta_c4')!;
+const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
+const B5_COUNTER = B5.features!.find((f) => f.kind === 'npc') as Person;
 const HERMIT = D5.features!.find((f) => f.kind === 'npc') as Person;
 const person = (name: string): Person => C4.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
 const TRAPPER = person('an eel-trapper'), MASTER = person('the master of the barge');
@@ -79,8 +84,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const inside = hid ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(hid && inside.every((r) => r.kind === 'moved'), 'searched from the gap in the herons, the hut\'s wall opens, and can be walked into');
   ok(w.world.used('c4_hide'), 'inside, the bargemen\'s hide is found');
-  const cache = C4.features!.find((f) => f.kind === 'chest' && f.id === 'c4_hide_chest');
-  ok(cache?.kind === 'chest' && cache.items.includes('brine_shard') && cache.items.includes('longsword+1') && cache.x === 6 && cache.y === 14, 'in the hide, a Brine Shard and a Long Sword +1');
+  const hide = C4.features!.find((f) => f.kind === 'chest' && f.id === 'c4_hide_chest');
+  ok(hide?.kind === 'chest' && hide.items.includes('brine_shard') && hide.items.includes('longsword+1') && hide.x === 6 && hide.y === 14, 'in the hide, a Brine Shard and a Long Sword +1');
   listen(w);
 
   // Passage Paid: the master on the shoal puts it. Cut loose, the people go ashore and a crew comes
@@ -100,4 +105,38 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The box's groups, each won at its floor: the barge at the bank, the bull toad in the drain, the crew.
   for (const g of C4.encounters!) fight(w, `delta_c4:${g.id}`);
+
+  // West off the Delta road over the fen, onto the duckboards of B5.
+  w.level = 11;
+  walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2);
+
+  // The step: the plinth on Stienwierde, empty, its socket cut clean.
+  see(w, 'delta_b5:b5_plinth');
+  ok(w.world.used('b5_plinth'), 'on Stienwierde the plinth stands empty');
+
+  // The hermit on the hummock counts the Rifts' lights.
+  w.world.travel('delta_b5', B5_COUNTER.x, B5_COUNTER.y);
+  const count = meet(B5_COUNTER, w.party, heard(w.world, B5_COUNTER)).text;
+  ok(count.includes('Two') && count.includes('island'), 'the hermit on the hummock counts two lights, and sends the company to the island');
+
+  // The secret: the pole-marks on the landing, then the search, the hollow under it and its cache.
+  w.world.travel('delta_b5', 13, 13, SOUTH);
+  ok(w.world.eventsHere().some((m) => m.includes('barge-poles')), 'on the plinth\'s landing, the barge-poles\' marks');
+  let under = false;
+  for (let i = 0; i < 20 && !under; i++) under = w.world.search();
+  const down = under ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(under && down.every((r) => r.kind === 'moved'), 'searched from the landing, the hollow under it opens, and can be walked into');
+  ok(w.world.used('b5_under'), 'under the landing, what the thieves dropped');
+  const cache = B5.features!.find((f) => f.kind === 'chest' && f.id === 'b5_under_cache');
+  ok(cache?.kind === 'chest' && cache.items.includes('brine_shard') && cache.items.includes('shield+1'), 'in the hollow, a Brine Shard and a Kite Shield +1');
+  listen(w);
+
+  // The box's groups, each won at its floor.
+  for (const g of B5.encounters!) fight(w, `delta_b5:${g.id}`);
+
+  // The two Rifts, each walked into from its hummock and won at 11.
+  for (const [id, x, y, f] of [['b5_rift_n', 16, 6, NORTH], ['b5_rift_s', 26, 25, SOUTH]] as const) {
+    walkThrough(w, 'delta_b5', x, y, f, id, 2);
+    for (const g of MAP_DEFS.find((d) => d.id === id)!.encounters!) fight(w, `${id}:${g.id}`);
+  }
 };

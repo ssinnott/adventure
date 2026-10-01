@@ -1,6 +1,39 @@
 {
   "version": 2,
   "maps": {
+    "b5_rift_n": {
+      "size": "12x12",
+      "used": [
+        "b5_rift_n_hoard",
+        "b5_rift_n_look1",
+        "b5_rift_n_look2",
+        "b5_rift_n_look3",
+        "b5_rift_n_look4",
+        "b5_rift_n_look5",
+        "b5_rift_n_quiet",
+        "b5_rift_n_tear"
+      ],
+      "groups": [
+        "b5_rift_n_warden"
+      ],
+      "doors": []
+    },
+    "b5_rift_s": {
+      "size": "12x12",
+      "used": [
+        "b5_rift_s_hoard",
+        "b5_rift_s_look1",
+        "b5_rift_s_look2",
+        "b5_rift_s_look3",
+        "b5_rift_s_look4",
+        "b5_rift_s_quiet",
+        "b5_rift_s_tear"
+      ],
+      "groups": [
+        "b5_rift_s_warden"
+      ],
+      "doors": []
+    },
     "berth": {
       "size": "16x16",
       "used": [
@@ -53,6 +86,21 @@
         "ash_hearth",
         "ash_kitchen",
         "ashcombe_gate",
+        "b5_bank",
+        "b5_boards",
+        "b5_cairn",
+        "b5_channel",
+        "b5_glass",
+        "b5_mound",
+        "b5_north",
+        "b5_plinth",
+        "b5_post",
+        "b5_punt",
+        "b5_shrine",
+        "b5_trap",
+        "b5_under",
+        "b5_under_cache",
+        "b5_west",
         "barrow",
         "c4_barge",
         "c4_cairn",
@@ -160,6 +208,22 @@
         "f3_rise",
         "f3_sea",
         "f3_soot",
+        "f6_boats",
+        "f6_cairn",
+        "f6_cleft",
+        "f6_clifftop",
+        "f6_grave",
+        "f6_grave_seen",
+        "f6_heather",
+        "f6_moor",
+        "f6_north",
+        "f6_pools",
+        "f6_rockfoot",
+        "f6_shingle",
+        "f6_shrine",
+        "f6_stores",
+        "f6_tally",
+        "f6_watch",
         "grove_edge",
         "grove_road",
         "h3_cairn",
@@ -255,6 +319,9 @@
         "tower"
       ],
       "groups": [
+        "b5_bulls",
+        "b5_toads_e",
+        "b5_toads_w",
         "beach_crabs",
         "c4_barge",
         "c4_crew",
@@ -309,6 +376,11 @@
         "f3_crabs",
         "f3_crows",
         "f3_wreckers",
+        "f6_crew",
+        "f6_devilfish",
+        "f6_gulls",
+        "f6_keepers",
+        "f6_rats",
         "farm_rats",
         "h3_brambles",
         "h3_brood1",
@@ -388,6 +460,7 @@
         "158,56",
         "169,78",
         "180,33",
+        "196,172",
         "260,86",
         "276,77",
         "281,41",
@@ -396,6 +469,7 @@
         "297,145",
         "308,112",
         "312,32",
+        "53,140",
         "77,108",
         "99,148"
       ]
@@ -574,6 +648,48 @@
         "7,11"
       ]
     },
+    "smugglers_cove": {
+      "size": "16x16",
+      "used": [
+        "kh1_crate",
+        "kh1_crates",
+        "kh1_fires",
+        "kh1_in",
+        "kh1_landing",
+        "kh1_ledge",
+        "kh1_rows",
+        "kh1_store",
+        "kh1_strongbox"
+      ],
+      "groups": [
+        "kh1_crew_fires",
+        "kh1_crew_landing",
+        "kh1_overseers"
+      ],
+      "doors": []
+    },
+    "smugglers_cove2": {
+      "size": "16x16",
+      "used": [
+        "kh2_bones",
+        "kh2_hoard",
+        "kh2_in",
+        "kh2_kelp",
+        "kh2_passage",
+        "kh2_pools",
+        "kh2_purse",
+        "kh2_tidemark"
+      ],
+      "groups": [
+        "kh2_crew",
+        "kh2_devilfish_east",
+        "kh2_devilfish_west",
+        "kh2_great_devilfish"
+      ],
+      "doors": [
+        "3,11"
+      ]
+    },
     "thornhold": {
       "size": "16x16",
       "used": [
@@ -607,6 +723,10 @@
     },
     "deepthorn_j5": {
       "at": "296,126",
+      "size": "32x32"
+    },
+    "delta_b5": {
+      "at": "40,126",
       "size": "32x32"
     },
     "delta_c4": {
@@ -667,6 +787,10 @@
     },
     "wrackholm_e6": {
       "at": "136,158",
+      "size": "32x32"
+    },
+    "wrackholm_f6": {
+      "at": "168,158",
       "size": "32x32"
     }
   },
@@ -821,6 +945,7 @@
     "elfbow+2",
     "elixir",
     "faceless_coin",
+    "founders_seal",
     "great_axe+1",
     "greatsword",
     "greatsword+1",
@@ -848,6 +973,7 @@
     "meridian_journal",
     "name_boards",
     "plate",
+    "plate+1",
     "potion_heal",
     "potion_sp",
     "potion_sp_great",

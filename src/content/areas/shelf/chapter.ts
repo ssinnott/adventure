@@ -20,7 +20,7 @@ export const CHAPTER: Chapter = {
     { id: 'wand', when: [{ item: 'survey_wand' }, { flag: 'q_ashcombe_done' }],
       text: 'We have a cracked survey wand, Lantern work.' },
     { id: 'rift', when: { seen: 'mill:mill_core' },
-      text: 'Deep in the cellar, a Rift: a tear in the floor, breathing heat, and beside it a shard of worked Wardstone.' },
+      text: 'Deep in the cellar, a Rift: a tear in the floor, breathing heat, and set in its lip a shard of worked Wardstone.' },
     { id: 'warden', when: { slain: 'mill:m_warden' },
       text: 'We killed the Rift Warden that kept the tear.' },
     { id: 'keeper', when: { seen: 'downs_e3:e3_log' },

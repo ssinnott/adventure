@@ -10,13 +10,14 @@ and §8.2). Its work is filed under #154 (Phase 1.2, #149): its two boxes (#187,
 Figures are measured on main at `2cc52cd` (29 September 2026) with `worldGrid`
 (`src/game/atlas.ts`).
 
-E6, the moor and the landing, is built (#187), and with it the area is listed in AREAS. Its content
-is `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters and atlas, its walkthrough; its
-items, its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, and its side quests in
+E6, the moor and the landing, is built (#187), and with it the area is listed in AREAS; Kelp Hole's
+two levels are built under it (#188), and F6, the east rocks, beside it (#189). Its content is
+`src/content/areas/wrackholm/` (`index.ts`, its maps, monsters, items and atlas, its walkthrough;
+its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, and its side quests in
 `quests.ts` to come); it has no town and no businesses, so no rooms. Its part of the world map is
 its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
 ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
-NAMES §3), the ship `tide_ship` and, below it, `dead_drop`.
+NAMES §3) and its sea cave `smugglers_cove2`, the ship `tide_ship` and, below it, `dead_drop`.
 
 ---
 
@@ -26,7 +27,7 @@ The atlas (`src/content/areas/wrackholm/atlas.ts`, which the Area carries) makes
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| Wrackholm | 12–14 | 2,066 | E6, the moor and the landing, laid at 136,158 (#187) |
+| Wrackholm | 12–14 | 2,066 | E6, the moor and the landing, laid at 136,158 (#187); F6, the east rocks, at 168,158 (#189) |
 
 Squares are the ones the atlas gives it, shallows included. Without the shallows the isle is 1,754
 squares, about 1.7 zone maps (EXPANSION §1 has 1.7), and every one of them a company could walk:
@@ -46,7 +47,8 @@ Its edges are the sea on every side. Its ways:
   smugglers' boat from Saltmouth puts in (`src/content/atlas.ts`; #164). A crossing, open from the
   start for the fare (EXPANSION §2.2, §7): Wrackholm is the first area a company reaches by paying,
   and the boat is how it leaves.
-- **Kelp Hole,** at 154,170 in E6, the cove's mouth in the cliff above the landing.
+- **Kelp Hole,** at 154,170 in E6, the cove's mouth in the cliff above the landing. Its sea cave lets
+  out by a flooded passage onto F6's east shore at 196,167: a way out and not in (§4.3).
 - **The Tide Ship,** boarded from F6's south-east shore at 182,188 at night, by the boats that row
   out to it; the ship itself lies off the shore, its plate at 208,192 in the sea.
 - **The Dead-Drop's stair,** from the Tide Ship's hold, planned at 26–28 (#22): built in #190 as a
@@ -71,8 +73,8 @@ The weather is the gulf's: wind, spray on the cliffs, gulls and the moor's heath
 
 ## 3. What is built
 
-Its atlas rows (`src/content/areas/wrackholm/atlas.ts`, #186): the zone at 12–14, Kelp Hole at
-12–14, the Tide Ship at 13–14 and the sites. The atlas has the cove and the ship as planned plates,
+Its atlas rows (`src/content/areas/wrackholm/atlas.ts`, #186): the zone at 12–14, Kelp Hole's two
+plates (#188), the Tide Ship at 13–14 and the sites. The atlas has the cove and the ship as planned plates,
 the sites (Kelp Hole, the Tide Ship) and the links (the boat, the two ways in, the stair); the
 Dead-Drop's plate is the plan's (#22). Its systems are Saltreach's (#150) and the boat's (#164); its
 monsters are drawn in #193.
@@ -83,18 +85,29 @@ monsters are drawn in #193.
   on the inlet's cliff and at the lookout, two crews of smugglers and bowmen on the paths, devilfish
   in the pools under the south hills. The area is listed with it (`src/content/index.ts`), its
   monsters and atlas carried by its Area and no longer in AHEAD or the plan.
+- **Kelp Hole** (`smugglers_cove` 12–13 and `smugglers_cove2` 12–14, two levels of 16×16; #188): the
+  crews' cave behind the mouth in E6's cliff, its fires, its landing where the sea comes in under the
+  rock and the crates under the customs seal, the chained rows and the crews' strongbox; and the sea
+  cave below its ledge, with its pools, the Great Devilfish at the back and the boy who feeds it.
+  Six groups and the boss (§4.3).
+- **The east rocks** (F6, `wrackholm_f6`, core, band 13–14; #189): heather from the moor rising to
+  a mass of grey rock, open grass east to the shore, the hermit's cell and the cairn on the point,
+  and the cliff over the anchorage with its path down to the boats' shingle at 182,188. Its groups:
+  gulls on the rocks, a crew of smugglers and bowmen on the heather, the Hand at the smugglers'
+  watch in the rocks, bilge rats at the landed stores on the east shore, and devilfish in the pools
+  under the cliff by night. Its item is the founder's seal (`items.ts`).
 - **Weather.** The gulf's: mild winters, cool summers, a narrow day, wet autumns and much fog.
   Fronts reach it three hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All of it: two boxes, both core, and two dungeons. The whole of the isle is built at full density,
-since a company crosses to it for the ship and nothing else:
+E6, Kelp Hole and F6 are built; the Tide Ship is still to come. The whole of the isle is built at
+full density, since a company crosses to it for the ship and nothing else:
 
 | Box | Name | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|
 | E6 | The moor and the landing | core | 12–13 | 663 (grass 318, heather 238, hills 76), 72 shallow | the landing at 152,172; the heather moor; Kelp Hole's mouth at 154,170; gulls on the cliffs | the cove's crews, and whose orders they take | #187 |
-| | Kelp Hole | dungeon, two levels of 16×16 | 12–14 | | the crews' cave and the sea cave, where the Great Devilfish is fed | | #188 |
+| | Kelp Hole | dungeon, two levels of 16×16 | 12–13, 12–14 | | the crews' cave and the sea cave, where the Great Devilfish is fed | | #188 |
 | F6 | The east rocks | core | 13–14 | 857 (grass 393, heather 276, rock 105), 71 shallow | the rocky east end; the hermit who counts the ships; the Tide Ship's anchorage at 182,188 | the ship at anchor | #189 |
 | | The Tide Ship | dungeon, three decks of 16×16 | 13–14 | | the deck, the lower deck, the hold: the chained rows, Hale, the papers, the forward hold and the Stone; the stair down | the Stone found, the papers read | #190 |
 
@@ -110,7 +123,7 @@ The places, as the atlas and the docs have them:
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
 | The landing | E6 | the smugglers' boat from Saltmouth (STORY; #164) | the sea link's far end at 152,172 |
-| Kelp Hole (Smugglers' Cove) | E6, and below | the Compact's crews and the Hand's cargo; the sea cave, where the Great Devilfish is fed (MONSTERS §6.2); the captain's brother (#56's 25); what the smugglers feed (#56's 28) | a planned dungeon at 150,158, its way in at 154,170 |
+| Kelp Hole (Smugglers' Cove) | E6, and below | the Compact's crews and the Hand's cargo; the sea cave, where the Great Devilfish is fed (MONSTERS §6.2); the captain's brother (#56's 25); what the smugglers feed (#56's 28) | built: its two plates at 150,158 and 150,164, its way in at 154,170 |
 | The east rocks | F6 | the hermit who has counted the ships since the founder died (#56's 26) | rock, 105 squares at the isle's east end |
 | The Tide Ship | F6, and aboard | the hold's two kinds of cargo; Hale in the last row; the papers on Wenna; the Stone in the forward hold, with its Rift (DESIGN §9, STORY, MONSTERS §6.2); every name in the column (#56's 27) | a planned wreck at 182,188, its plate at 208,192 |
 | The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | a planned dungeon at 208,204, band 26–28, the plan's (#22) |
@@ -189,6 +202,29 @@ Foreland map's density.
   (#187).
 - **Finds.** The crews' strongbox: a Plate Mail +1, the first plate with a plus on the road.
 - **Pay.** About 2,180 xp a member: 2,400 less what E6 pays over its 1,700 as built (§8).
+- **As built** (#188, 1 October): two levels, `smugglers_cove` (the crews' cave, 12–13) and
+  `smugglers_cove2` (the sea cave, 12–14), both floored at the area's 12 so that the boss is judged
+  at 12 and 14 as the issue asks. The cave's mouth at E6's 18,12 opens on the crews' hall: their
+  fires and the first crew; west, the landing, where the sea comes in under the rock and two boats
+  tie up, the crates stamped with the Helmstow customs and the second crew; north along the landing,
+  the ledge down. Behind the landing, the chamber of the chained rows, where four overseers (13) keep
+  the irons, the cave's hardest and farthest group, and beyond them the store with the crews'
+  strongbox: the Plate Mail +1 and 600 gold. Colan, the brother, sits by the rows once the overseers
+  are down, with #192's first lines and no flag. Below, the third crew at the ledge's foot, four
+  devilfish in the west pools and four in the east, and the Great Devilfish (14) in the black pool at
+  the back, with Tam a square short of it, his first lines and no flag, gone once it is dead. The
+  secret: west of the tide-mark, which breaks by the west wall where the stone below is scoured bare,
+  a search finds the flooded passage, and it lets out on F6's east shore at 28,9, north of the
+  hermit's point, as the brief has it (#189 moved it from E6's south shore): nothing on that side
+  leads back in. The brief's encounters and the boss do not fit
+  2,180: the boss alone pays about 1,475 a member, and the six groups and the boss come to about
+  3,450 a member, and 1,676 gold, 1,230 of it in the chests. The Great Devilfish is set off the boss
+  line for the gate, at 600 hit points and 8d7+10: the bot wins it 66% at 12 and 91% at 14, where
+  the line's 674 and 13d7+19 won 11% and 28%. The crews' cave at 12 wins every fight, at 6.8 fights
+  to a rest, and two under, at 10, wins every fight too, which is owed to #18 with E6's; the sea cave
+  at 12 wins 91.5% of its fights with the boss, at 6.5 to a rest, and 83% at 10, inside the limit.
+  The walkthrough plays both levels, the boss at 14, and leaves by the passage. What the owner finds
+  by hand goes here when it has been played.
 
 ### 4.4 F6, the east rocks (#189): core, band 13–14
 
@@ -209,10 +245,30 @@ Foreland map's density.
 - **Quests.** The Hermit of the East Rocks (§6). The chapter's entry: the ship at anchor (§5).
 - **The secret and its hint.** The founder's grave under the cairn on the point, with his seal.
   The hint: the hermit's count starts at a date.
-- **New here.** A den on an isle; a dungeon boarded at night and not by day.
+- **New here.** Nothing, as built: dens are on the Downs already, and boarding by night is #190's.
 - **Finds.** The founder's seal, a quest item the Compact's hall takes (#182).
 - **Pay.** About 1,600 xp a member.
-
+- **As built** (#189, 1 October): the brief's places, five groups at the line's standard size. The
+  company comes in from the moor at the west edge, 0,12, where E6's east path crosses. The rock mass
+  in the middle is solid, with one cleft into it from the south, and in the hollow at the cleft's
+  head is the smugglers' watch, a den (#88): its keepers are the Hand, two Ashen Overseers and two
+  Ashen Gleaners, and its brood the crew of two smugglers and two bowmen on the heather path, back
+  every two days until the watch is burnt. The keepers are the box's hardest group, at 14 and 6.6
+  fights to a rest at 13, and the gleaner, MONSTERS §6.3's, is met here before the Sunder: the curve
+  asks F6 for a group at 14, and the only Wrackholm monsters at 14 are its two bosses. Eight gulls
+  on the rocks' north face, eight bilge rats at the landed stores on the east shore, and four
+  devilfish in the pools under the cliff, by night only, are the rest. The atlas's 182,188 lay in
+  the south hills, so a rock face is cut into them, with a path a square wide from the cliff top
+  down to a shingle where the boats lie: the boats are there by night, the shingle empty by day, and
+  the way aboard is #190's. The hermit stands at her cell on the point with two lines and no flag,
+  for The Hermit of the East Rocks to hang on (#192, #182). Her tally of ships is cut in her cell's
+  wall from a date; the cairn a few steps off, on the point itself, has a door a search finds, and
+  behind it the founder's grave, with his seal and 150 gold. The camp in a hollow of the south-west
+  moor, the shrine on the north-east shore (personality), the cliff top and five more points are the
+  box's others: 95.9% of its squares are within 8 steps of one, the furthest 11. As measured it pays
+  about 1,658 xp a member and 487 gold. The gate at 13 wins every fight, at 7.67 fights to a rest;
+  the isle's road stays E6's, and F6, its floor above the area's, counts two under in the area's
+  pool, which is owed to #18. What the owner finds by hand goes here when the box has been played.
 ### 4.5 The Tide Ship (#190): dungeon, three decks of 16×16, band 13–14
 
 - **Purpose.** The act's second dungeon and its heart: the smugglers' ship whose hold carries
@@ -275,7 +331,7 @@ with its map on the systems of #76 (#192):
 
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
-| 25 | The Captain's Brother | 13 | the captain at the landing (E6); the overseer in Kelp Hole | a letter read from the pack; `after` (#41) | #187, #188 |
+| 25 | The Captain's Brother | 13 | the captain at the landing (E6); the brother, who keeps the rows in Kelp Hole | a letter read from the pack; `after` (#41) | #187, #188 |
 | 26 | The Hermit of the East Rocks | 13 | the hermit (F6); the Compact's hall or Tallis, in Saltmouth | a letter; a hand-in at the first meeting (#43) | #189, #182 |
 | 27 | Every Name in the Column | 14 | the Tide Ship's hold | the Cargo Ledger read against the rows; a choice put by a person | #190 |
 | 28 | What the Smugglers Feed | 14 | Kelp Hole's sea cave; the mother in Saltmouth | a choice; `after` | #188, #177 |
@@ -289,7 +345,9 @@ III).
 MONSTERS §6.2 has the roster and the fights: the Wrack Gull, the Bilge Rat, the Wrack Smuggler and
 the Wrack Bowman, the Ashen Overseer, the Devilfish and the Great Devilfish, the Tide Elder and the
 Warden of the Tide; the hold, and over the side. Their drawings are #193's, nine issues (#231 to
-#239). Wrackholm spends none of MONSTERS §3.3's asks of its own: it spends Saltreach's.
+#239). Wrackholm spends none of MONSTERS §3.3's asks of its own: it spends Saltreach's. F6 places
+Sunderwood's Ashen Gleaner (MONSTERS §6.3) beside the overseers at the smugglers' watch (#189), so
+the gleaner is met here first; MONSTERS' Where column is the owner's to change.
 
 New in Wrackholm, for the novelty check (EXPANSION §5.4): the devilfish, a new family (E6 claims it,
 placing them first); heather underfoot (#162); an area reached by a crossing (#164); a ship as a
@@ -303,7 +361,11 @@ into the hull (#22). Its landmarks: a landing, a sea cave, a wreck.
   quests inside and the Dead-Drop outside. The isle is small, two boxes for a band two levels deep
   where Saltreach has nine, so its dungeons carry more of the budget than Saltreach's do: E6 1,920
   as built (#187), Kelp Hole 2,180, F6 1,600, the Tide Ship 3,300 and the four side quests 900
-  between them (25 and 26 200 each, 27 and 28 250 each, §6): about 9,900. From here on a kill pays
+  between them (25 and 26 200 each, 27 and 28 250 each, §6): about 9,900. Kelp Hole as built pays
+  about 3,450 (#188), since its boss alone is about 1,475, and F6 about 1,658 (#189); with the rest
+  as they stand the area comes to about 11,200, some 14% over the curve's 9,867. The surplus is
+  meant; a kill paid by level damps it past 14, and if a measure finds the climb too fast, the Tide
+  Ship's groups short of its boss are what to trim. From here on a kill pays
   by level (#159); the curve's row reports what a clear falls short of as owed to #154 until the
   maps exist, and MONSTERS' open question 4, what a fight is worth from Saltreach on, is settled on
   the first box built.
@@ -340,6 +402,52 @@ Proposed, for the owner, each in the issue that would build it:
 - **The bands on the atlas's rows** (#186): the zone 12–14, Kelp Hole 12–14, the Tide Ship 13–14.
   They are set already in `src/content/areas/wrackholm/atlas.ts`, where only the scaffold reads
   them, for a box's draft; the owner's word changes them there.
+
+Decided by delegate for #189, each the owner's to overturn:
+
+1. **The hardest group is the Hand at the smugglers' watch,** two Ashen Overseers and two Ashen
+   Gleaners, the den's keepers: the curve asks for a group at 14, which only the bosses are in
+   Wrackholm's roster, and borrowing the gleaner, as Sunderwood's I2 borrowed the glass bear, needs
+   no drawing first. Four gleaners (6.0 fights to a rest) and a smuggler with three (6.4) were
+   measured and sat nearer the aim's edge than the pair of pairs (6.6).
+2. **Five groups, at about 1,658 xp a member,** against #186's 1,600 and not the issue's 1,300: a
+   sixth would add 315 to 370 and overshoot, as E6 held the pay over the brief's count of eight.
+3. **The anchorage is a shingle under a cut cliff,** the path down a square wide; the boats are an
+   event by night and the way aboard is left to #190, as E6 left Kelp Hole's mouth to #188.
+4. **The hermit has two lines and no flag,** and no letter yet: the quest and its hand-in are
+   #192's and #182's, built together.
+5. **The founder's seal lies in the grave now,** with 150 gold.
+6. **F6 claims nothing new;** the shrine gives personality.
+7. **The hint is the tally on the cell's wall,** not the cairn beside the door: the date is found at
+   one place, and the cairn left for the company to put together with it.
+8. **Kelp Hole's flooded passage now lets out on F6's east shore,** at 28,9, facing south down the
+   shore to the point, as #188's brief has it; it lay on E6 only until F6 was built (#188's decision
+   6). Nothing on the shore leads back in, and the square is clear of every group and the secret.
+9. **F6 places the Ashen Overseer at the watch,** as Kelp Hole does, so a company that walks east
+   before it goes into the cliff meets the Hand here first. The borrowed Ashen Gleaner is level 15,
+   so the Hand at the watch reads 14 as the group's mean.
+
+Decided by delegate for #188, each the owner's to overturn:
+
+1. **The ids are `smugglers_cove` and `smugglers_cove2`,** the crews' cave and the sea cave: the
+   first keeps the plan's id and its link from the zone, so nothing outside the area's folder moves.
+2. **Both levels are floored at 12,** the crews' cave 12–13 and the sea cave 12–14, so that the
+   boss is judged at 12 and 14 as the issue asks.
+3. **The brief's encounters, at about 3,450 a member,** not the share's 2,180, which the boss alone
+   nearly fills: two crews and four overseers above, a crew and two devilfish groups below, and the
+   boss. F6 and the Tide Ship keep their shares, and the area runs about 1,270 over (§8).
+4. **The Great Devilfish is set at 600 hit points, 8d7+10 and armour 20,** the one set measured
+   inside both of the gate's aims; the narrow rise from 12 to 14 is the gear past 10, #18's.
+5. **Colan and Tam are placed with #192's first lines and no flags:** Colan by the rows once the
+   overseers are down, Tam at the pool's edge until the beast is dead. Their choices, letters and
+   after-lines are #192's. The brother keeps the rows; he is no overseer group.
+6. **The flooded passage lets out on E6's south shore,** at 30,29, until F6 is built; #189 may
+   repoint it to F6's east shore. Nothing on the shore leads back in.
+7. **About 1,230 gold in the chests,** 600 of it in the crews' strongbox with the Plate Mail +1,
+   behind the overseers.
+8. **The crates stamped with the Helmstow customs** are a plain event, keyed to nothing, for #191.
+9. **Kelp Hole claims nothing new:** the devilfish are E6's, the cave is on the road before, and it
+   adds no mechanic.
 
 Decided by delegate for #187, each the owner's to overturn:
 
