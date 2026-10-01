@@ -457,6 +457,24 @@ function pastTen(): void {
   ok(mend(maren, 2) === mend(maren, 0) + Math.round(30 * 1.3) - 30 && mend(idris, 2) === mend(idris, 0) + Math.round(30 * 1.15) - 30, `a cleric's second rank lifts a mend of 30 by 30%, a paladin's by 15% (${mend(maren, 2)}, ${mend(idris, 2)})`);
   bram.prestige = 3;
   ok(rankMult(bram) === 1, 'and a knight\'s prestiges are no ranks');
+  // The sorcerer's third rank passes a resistance to its element, never an immunity.
+  {
+    const glass: MonsterDef = { ...tough, id: 'test_glass', resist: ['cold'], immune: ['lightning'] };
+    const hit = (prestige: number, spellId: string): number => {
+      const r = makeRng(67), q = defaultParty(r), sorc = q.members[5];
+      sorc.level = 16; sorc.spells.push(spellId); sorc.sp = 99; sorc.prestige = prestige;
+      const s = startCombat(q, [{ id: 'g', monsters: [glass] }], r);
+      for (let guard = 0; guard < 60; guard++) {
+        const t = currentTurn(s, q, r); if (!t) break;
+        if (t.side === 'monster') monsterAct(s, q, r);
+        else if (t.i === 5) { partyAct(s, q, r, { type: 'cast', spellId, target: 0 }); return 9999 - s.monsters[0].hp; }
+        else partyAct(s, q, r, { type: 'defend' });
+      }
+      return -1;
+    };
+    const second = hit(2, 'hoarfrost'), third = hit(3, 'hoarfrost'), whole = Math.round((third - 2) / 1.45) + 2;
+    ok(second === Math.ceil((Math.round((whole - 2) * 1.3) + 2) / 2) && third > second * 1.5 && hit(3, 'lightning') === 0, `a Magus's Hoarfrost passes a resistance to cold (${second} at the second rank, ${third} at the third), and its Chain Lightning still does nothing to what lightning cannot touch`);
+  }
   // Grasping Roots holds a group, a hit does not free it, and each held monster tears free in time.
   {
     const r = makeRng(62), q = defaultParty(r), druid = q.members[2];

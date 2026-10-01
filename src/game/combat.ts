@@ -9,7 +9,7 @@ import type { SpellDef, Element } from './spells.ts';
 import { item } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
-  hasTrait, spellHeal, rankMult, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
+  hasTrait, spellHeal, rankMult, spellRank, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
 } from './party.ts';
 import type { ItemDef } from './items.ts';
 import type { Party, Character, Condition } from './party.ts';
@@ -357,7 +357,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
   const dmgOf = (m: MonsterInst): number => {
     const d = Math.round(roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, 0) * rankMult(c, s.rankStep)) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
     if (sp.element) (s.seen[m.def.id] ??= {})[sp.element] = elementMult(m.def, sp.element);
-    return elementDamage(m.def, sp.element, d);
+    return elementDamage(m.def, sp.element, d, pierces(c));
   };
   switch (sp.target) {
     case 'enemy': {
@@ -408,6 +408,9 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       s.log.push(`${c.name} casts ${sp.name}.`);
   }
 }
+
+/** The sorcerer's third rank (DESIGN §5): its damage spells pass a monster's resistance to their element, never an immunity. */
+export const pierces = (c: Character): boolean => c.cls === 'sorcerer' && spellRank(c) >= 3;
 
 /** What Lampglass's line calls each element: the wood for nature, the light for holy. */
 export const GLASS_WORD: Record<Element, string> = { fire: 'fire', cold: 'cold', lightning: 'lightning', nature: 'wood', holy: 'light' };
