@@ -78,7 +78,8 @@ export const ROADS: Record<string, readonly string[]> = {
   deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
   wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
   eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2'],
-  delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad'],
+  // On to the fork, where the bull toad sees the company, and up the spur past the barge (#171).
+  delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad', 'delta_c4:c4_barge'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -99,6 +100,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'Sunderwood: under': { whose: '#18', at: 1 },
   'delta_c5: under': { whose: '#18', at: 1 },
   'c5_rift: under': { whose: '#18', at: 1 },
+  'delta_c4: under': { whose: '#18', at: 1 },
   'Saltreach: under': { whose: '#18', at: 1 },
 };
 

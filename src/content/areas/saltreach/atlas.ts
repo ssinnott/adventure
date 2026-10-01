@@ -5,7 +5,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 export const ZONES: readonly AtlasZone[] = [
   { id: 'upperwater', name: 'The Upper Water', area: 'saltreach', band: [10, 11], seeds: [[56, 76], [80, 56], [36, 110]] },
   { id: 'delta', name: 'The Delta', area: 'saltreach', band: [10, 12], seeds: [[62, 150], [84, 136]], label: [76, 128],
-    maps: [{ map: 'delta_d5', at: [104, 126] }, { map: 'delta_c5', at: [72, 126] }] },
+    maps: [{ map: 'delta_d5', at: [104, 126] }, { map: 'delta_c5', at: [72, 126] }, { map: 'delta_c4', at: [72, 94] }] },
   { id: 'saltings', name: 'The Saltings', area: 'saltreach', band: [11, 12], seeds: [[98, 194], [70, 194]] },
 ];
 

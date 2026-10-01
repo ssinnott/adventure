@@ -4,19 +4,21 @@
 import type { Area } from '../../area.ts';
 import { DELTA_D5 } from './maps/delta_d5.ts';
 import { DELTA_C5, C5_RIFT } from './maps/delta_c5.ts';
+import { DELTA_C4 } from './maps/delta_c4.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
+import { QUESTS } from './quests.ts';
 import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'saltreach' as const,
-  // The road's order: the shore under the Edge, then the fen.
-  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map],
+  // The road's order: the shore under the Edge, the fen, then the spur up the river.
+  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
-  quests: [],
+  quests: QUESTS,
   // The Tide Stone, the act's first chapter, is #180's.
   chapter: undefined,
   // The delta's: mild and wet, with sea fog off the gulf.
