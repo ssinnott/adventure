@@ -11,6 +11,15 @@
         "ashcombe_gate",
         "barrow",
         "coast",
+        "d2_cairn",
+        "d2_cist",
+        "d2_cradle",
+        "d2_den",
+        "d2_mouth",
+        "d2_pond",
+        "d2_ring",
+        "d2_shrine",
+        "d2_stones",
         "d3_barrow",
         "d3_cairn",
         "d3_camp",
@@ -132,6 +141,13 @@
         "beach_crabs",
         "cliff_smugglers",
         "coast_bandits",
+        "d2_crows",
+        "d2_dog",
+        "d2_dogs",
+        "d2_pack",
+        "d2_wolves1",
+        "d2_wolves2",
+        "d2_wolves3",
         "d3_bandits",
         "d3_bandits2",
         "d3_boar",
@@ -220,6 +236,7 @@
       ],
       "doors": [
         "107,80",
+        "124,34",
         "155,91",
         "158,56",
         "169,78",
@@ -434,6 +451,10 @@
     },
     "deepthorn_j4": {
       "at": "296,94",
+      "size": "32x32"
+    },
+    "downs_d2": {
+      "at": "104,30",
       "size": "32x32"
     },
     "downs_d3": {
