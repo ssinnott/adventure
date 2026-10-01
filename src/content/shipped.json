@@ -521,6 +521,15 @@
         "99,148"
       ]
     },
+    "dead_drop_stair": {
+      "size": "10x9",
+      "used": [
+        "dd_door",
+        "dd_foot"
+      ],
+      "groups": [],
+      "doors": []
+    },
     "greywater1": {
       "size": "16x16",
       "used": [
@@ -758,6 +767,79 @@
       ],
       "groups": [],
       "doors": []
+    },
+    "tide_ship": {
+      "size": "16x16",
+      "used": [
+        "ts_aboard",
+        "ts_boats",
+        "ts_bow",
+        "ts_foremast",
+        "ts_hatch",
+        "ts_helm",
+        "ts_locker",
+        "ts_waist"
+      ],
+      "groups": [
+        "ts_over_side"
+      ],
+      "doors": []
+    },
+    "tide_ship2": {
+      "size": "16x16",
+      "used": [
+        "ts2_cabin",
+        "ts2_hatch",
+        "ts2_in",
+        "ts2_quarters",
+        "ts2_rats",
+        "ts2_sea_chest",
+        "ts2_table",
+        "ts2_window"
+      ],
+      "groups": [
+        "ts2_post",
+        "ts2_rats"
+      ],
+      "doors": []
+    },
+    "tide_ship3": {
+      "size": "16x16",
+      "used": [
+        "ts3_beam",
+        "ts3_bulkhead",
+        "ts3_forward",
+        "ts3_hatch",
+        "ts3_in",
+        "ts3_last_row",
+        "ts3_rows",
+        "ts3_shards",
+        "ts3_straw",
+        "ts3_strongbox"
+      ],
+      "groups": [
+        "ts3_crew",
+        "ts3_elder"
+      ],
+      "doors": [
+        "5,5"
+      ]
+    },
+    "tide_ship_rift": {
+      "size": "12x12",
+      "used": [
+        "tide_ship_rift_hoard",
+        "tide_ship_rift_look1",
+        "tide_ship_rift_look2",
+        "tide_ship_rift_look3",
+        "tide_ship_rift_quiet",
+        "tide_ship_rift_tear"
+      ],
+      "groups": [
+        "tide_ship_rift_g1",
+        "tide_ship_rift_warden"
+      ],
+      "doors": []
     }
   },
   "zones": {
@@ -901,6 +983,7 @@
     "q_grove",
     "q_grove_done",
     "q_grove_rest",
+    "q_hale_freed",
     "q_hermit",
     "q_hob_key",
     "q_hunters",
@@ -1079,6 +1162,8 @@
     "sharkskin",
     "shield",
     "shield+1",
+    "ships_log",
+    "ships_papers",
     "shortbow",
     "shortsword",
     "shortsword+1",
@@ -1095,6 +1180,8 @@
     "survey_orders",
     "survey_wand",
     "tenant_paper",
+    "tide_cutlass",
+    "tide_stone",
     "tidefolk_robe",
     "tidefolk_robe+1",
     "torch",
