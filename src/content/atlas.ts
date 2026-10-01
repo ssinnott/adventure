@@ -20,7 +20,6 @@
 // charts replaces the plan's row of the same id. A planned area may chart its rows in its folder
 // before it is listed, and the plan spreads them in where its own were.
 import type { Atlas } from '../game/atlas.ts';
-import * as SUNDERWOOD from './areas/sunderwood/atlas.ts';
 import * as WRACKHOLM from './areas/wrackholm/atlas.ts';
 
 export const PLAN: Atlas = {
@@ -261,7 +260,6 @@ export const PLAN: Atlas = {
   ],
   zones: [
     ...WRACKHOLM.ZONES,
-    ...SUNDERWOOD.ZONES,
     { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66]] },
     { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', seeds: [[452, 120], [470, 160]] },
     { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', seeds: [[408, 160], [404, 140]] },
@@ -283,7 +281,6 @@ export const PLAN: Atlas = {
   places: [
     ...WRACKHOLM.PLACES,
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
-    ...SUNDERWOOD.PLACES,
     { id: 'anvilhall', name: 'Anvilhall', kind: 'town', planned: true, band: [16, 18], at: [452, 70] },
     { id: 'kilnhaven', name: 'Kilnhaven', kind: 'town', planned: true, band: [16, 18], at: [378, 158] },
     { id: 'deep_mines', name: 'The Deep Mines', kind: 'dungeon', planned: true, band: [16, 18], at: [440, 104] },
@@ -303,7 +300,6 @@ export const PLAN: Atlas = {
   ],
   sites: [
     ...WRACKHOLM.SITES,
-    ...SUNDERWOOD.SITES,
     // VI. The Kilns.
     { name: 'Anvilhall', icon: 'fortress', at: [452, 80], label: 'below', planned: true },
     { name: 'Deep Mines', icon: 'mine', at: [440, 96], label: 'below', planned: true },

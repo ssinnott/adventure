@@ -76,11 +76,12 @@ export const ROADS: Record<string, readonly string[]> = {
   downs: ['downs_f2:f2_bandits'],
   thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
   deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
+  eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2'],
   delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', sunderwood: 'Sunderwood' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -89,7 +90,9 @@ const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Tho
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
   // Past 10 the company's gear stops growing (GEAR's top step is the Deepthorn's), so a company two
-  // under a box past 10 is dressed as well as one at its floor: the gear past 10 is #18's.
+  // under a box past 10 dresses as one at its floor and wins as often: the gear past 10 is #18's.
+  'eaves_i2: under': { whose: '#18', at: 1 },
+  'Sunderwood: under': { whose: '#18', at: 1 },
   'delta_c5: under': { whose: '#18', at: 1 },
   'c5_rift: under': { whose: '#18', at: 1 },
   'Saltreach: under': { whose: '#18', at: 1 },
