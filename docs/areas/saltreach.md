@@ -56,12 +56,12 @@ Its edges:
   road leaves D4 it crosses D5's corner into C5, where the Delta begins: the world's end, until #170
   is built.
 - **South: the Scarp,** the escarpment between the Saltings and the Glasswold (26–28, Act IV), 103
-  squares of border along B7 and C7. The Scarp stair climbs it at 80,206 (`src/content/atlas.ts:397`),
+  squares of border along B7 and C7. The Scarp stair climbs it at 80,206 (`src/content/atlas.ts:398`),
   a road link open from the start; it is Act IV's way down, and this act sees its foot and no more
   (§4.9).
-- **South-east: the sea,** the Salt Gulf between Kestrel Edge and the Saltings, which the plan
-  renames Sylmeer (§10), with Wrackholm beyond it. The smugglers' boat crosses from Saltmouth's quay
-  to the isle's landing at 152,172 (`src/content/atlas.ts:367`; #164).
+- **South-east: the sea,** Sylmeer, once the Salt Gulf (§10), between Kestrel Edge and the
+  Saltings, with Wrackholm beyond it. The smugglers' boat crosses from Saltmouth's quay to the
+  isle's landing at 152,172 (`src/content/atlas.ts:368`; #164).
 - **West: the rim** again, the A column, mountain and hill with the fen's west edge under it.
 
 The Long Water runs the length of the area: from the rim at 30,44 down the Upper Water's west side,
@@ -223,8 +223,7 @@ settled in its issue, and what the pilot teaches changes them.
 ### 4.4 C3, Rietum (#172): core, band 10–11
 
 - **Purpose.** The Upper Water's step of the quest: the village that saw the Tide Stone go
-  downriver one night, glowing through its sacking. Reedholm on the atlas; Rietum in the Tidefolk's
-  tongue (§10).
+  downriver one night, glowing through its sacking. Rietum, once Reedholm (§10).
 - **Landmarks.** The village at 80,80 under Kestrel Edge's cliff, drawn on its box as Gullwick is on
   F3: a dozen houses on a mound above the flood, a quay with barges tied at it, the net lofts, a
   camp; its fields south and east; the cliff along the box's east edge, with Sjonghol in its face.
@@ -537,8 +536,9 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
 
 - **Kept:** Saltreach and Saltmouth, the Crown's names for the area and the free port, which the
   story leans on; the Saltings, the salters' English for their marsh, since three names with *salt*
-  is the light and its headland, not Harrow's five; the Drowned Temples and the Tide Stone, plain
-  names for plain things, as the Grove and the Grove Stone are; the Long Water, which the Tidefolk
+  is the light and its headland, not Harrow's five; the salt pans, a thing and not a name, the
+  salters' plain word for their flats, lettered nowhere on the map; the Drowned Temples and the Tide
+  Stone, plain names for plain things, as the Grove and the Grove Stone are; the Long Water, which the Tidefolk
   call the Diep in their own speech and nowhere on the map; the Upper Water and the Delta, the
   zones; the Scarp and Kestrel Edge, the Foreland folk's; Wrackholm and the Tide Ship, the sailors'.
 - **The god** has no name yet; the Tidefolk say *the one who counts* until its Stone is home. It
