@@ -58,6 +58,7 @@ const DETACHED: Partial<Record<MonsterSprite, { what: string; pieces: number; sh
   adept: { what: 'hand flame', pieces: 1, share: 0.03 },
   rift_hound: { what: 'embers', pieces: 3, share: 0.01 },
   sunder_hound: { what: 'glass motes', pieces: 3, share: 0.01 },
+  lantern_moth: { what: 'dust', pieces: 3, share: 0.025 },
   ashen_hand: { what: 'embers', pieces: 5, share: 0.01 },
   wraith: { what: 'fading tongue of cloth', pieces: 1, share: 0.01 },
 };
