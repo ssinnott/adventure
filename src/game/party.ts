@@ -98,6 +98,72 @@ export const CLASSES: Record<ClassId, ClassDef> = {
   druid:    { id: 'druid', name: 'Druid', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, kit: ['staff', 'leather'], traits: ['natures_ward', 'healing_hands'], blurb: 'Thorn, storm and mending. Wears leather.' },
 };
 
+/**
+ * How a class grows by its prestiges (DESIGN §5): a caster's are spell ranks, a hybrid's a rank and a
+ * perk, and the rest perks.
+ */
+export type Calling = 'caster' | 'hybrid' | 'fighter';
+
+/**
+ * Each class's three prestiges (DESIGN §5): the titles, which become its name once taken, and how it
+ * grows. They come at PRESTIGE_LEVELS; the first two cost PRESTIGE_PRICES and the third a quest.
+ */
+export const PRESTIGES: Record<ClassId, { calling: Calling; titles: readonly [string, string, string] }> = {
+  knight:    { calling: 'fighter', titles: ['Knight-Errant', 'Knight Banneret', 'Knight Paramount'] },
+  paladin:   { calling: 'hybrid', titles: ['Lightbearer', 'Justicar', 'Exemplar'] },
+  ranger:    { calling: 'hybrid', titles: ['Outrider', 'Deadeye', 'Unerring'] },
+  cleric:    { calling: 'caster', titles: ['Curate', 'Prelate', 'Exarch'] },
+  sorcerer:  { calling: 'caster', titles: ['Arcanist', 'Thaumaturge', 'Magus'] },
+  thief:     { calling: 'fighter', titles: ['Tumbler', 'Nightjar', 'Faceless'] },
+  barbarian: { calling: 'fighter', titles: ['Berserker', 'Ironhide', 'Warlord'] },
+  monk:      { calling: 'fighter', titles: ['Stillwater', 'Windwalker', 'Ascendant'] },
+  bard:      { calling: 'hybrid', titles: ['Troubadour', 'Skald', 'Laureate'] },
+  druid:     { calling: 'caster', titles: ['Swarmcaller', 'Thornspeaker', 'Archdruid'] },
+};
+/** The levels the prestiges come at: the first past Act I's 10, then eight apart. */
+export const PRESTIGE_LEVELS: readonly [number, number, number] = [11, 19, 27];
+/** What the first and second cost, each member; the third asks a quest instead. */
+export const PRESTIGE_PRICES: readonly [number, number, number] = [1000, 4000, 0];
+/** What each prestige adds to every level from its own on: hit points and spell points. */
+export const PRESTIGE_POOLS: Record<Calling, readonly [number, number]> = { caster: [1, 2], hybrid: [1, 1], fighter: [2, 0] };
+
+/** The prestiges a member has taken. */
+export const prestigeOf = (c: Pick<Character, 'prestige'>): number => c.prestige ?? 0;
+/** What a member is called: its last prestige's title, or its class's name. */
+export const className = (c: Pick<Character, 'cls' | 'prestige'>): string => (prestigeOf(c) ? PRESTIGES[c.cls].titles[prestigeOf(c) - 1] : CLASSES[c.cls].name);
+/**
+ * A member's spell rank (DESIGN §7): a caster's or a hybrid's prestiges, none for the rest. What a
+ * rank does to a spell is #20's; a hybrid's is half a caster's step.
+ */
+export const spellRank = (c: Pick<Character, 'cls' | 'prestige'>): number => (PRESTIGES[c.cls].calling === 'fighter' ? 0 : prestigeOf(c));
+/**
+ * The hit points and spell points a member's prestiges add to every level from each one's own on, at
+ * its level: each counted from the prestige's level, whenever it was taken.
+ */
+export function prestigePools(c: Pick<Character, 'cls' | 'prestige' | 'level'>): { hp: number; sp: number } {
+  const [hp, sp] = PRESTIGE_POOLS[PRESTIGES[c.cls].calling];
+  const levels = PRESTIGE_LEVELS.slice(0, prestigeOf(c)).reduce((t, at) => t + Math.max(0, c.level - at + 1), 0);
+  return { hp: hp * levels, sp: CLASSES[c.cls].spStat ? sp * levels : 0 };
+}
+
+/**
+ * Why a member may not take its next prestige, or '' if it may: three taken already, or short of its
+ * level. The price, and the third's quest, are the trainer's to ask.
+ */
+export function prestigeBar(c: Pick<Character, 'cls' | 'prestige' | 'level'>): string {
+  const n = prestigeOf(c);
+  if (n >= 3) return 'done';
+  return c.level < PRESTIGE_LEVELS[n] ? `level ${PRESTIGE_LEVELS[n]}` : '';
+}
+
+/** Take the next prestige: its title, and its hit points and spell points for every level from its own. */
+export function takePrestige(c: Character): void {
+  const before = prestigePools(c);
+  c.prestige = prestigeOf(c) + 1;
+  const after = prestigePools(c), hp = after.hp - before.hp, sp = after.sp - before.sp;
+  c.maxHp += hp; c.hp += hp; c.maxSp += sp; c.sp += sp;
+}
+
 export type Condition = 'asleep' | 'poisoned' | 'diseased' | 'paralysed' | 'cursed' | 'stoned' | 'unconscious' | 'dead';
 export const CONDITION_ORDER: readonly Condition[] = ['dead', 'stoned', 'unconscious', 'paralysed', 'asleep', 'poisoned', 'diseased', 'cursed'];
 
@@ -118,6 +184,10 @@ export interface Character {
   spells: string[];
   /** Personal pack, item ids. */
   pack: string[];
+  /** The prestiges taken, 0 to 3 (DESIGN §5); absent in a save from before them, which is none. */
+  prestige?: number;
+  /** A cleric's third prestige has kept someone from death since the last rest (`lastRite`). */
+  riteSpent?: boolean;
 }
 
 export interface Party {
@@ -239,10 +309,18 @@ export function worstCondition(c: Character): Condition | null {
   return null;
 }
 
+/** The barbarian's second prestige: it dies only at this (DESIGN §5). */
+export const IRONHIDE_AT = -30;
+/** The hit points a member dies at: -10, lower for Die Hard, lower still for an Ironhide. */
+export function deathAt(c: Character): number {
+  if (!hasTrait(c, 'die_hard')) return -10;
+  return c.cls === 'barbarian' && prestigeOf(c) >= 2 ? IRONHIDE_AT : DIE_HARD_AT;
+}
+
 export function damage(c: Character, n: number): void {
   if (isDown(c)) return;
   c.hp -= n;
-  const deadAt = hasTrait(c, 'die_hard') ? DIE_HARD_AT : -10;
+  const deadAt = deathAt(c);
   if (c.hp <= deadAt) { c.hp = deadAt; removeCondition(c, 'unconscious'); addCondition(c, 'dead'); }
   else if (c.hp <= 0) addCondition(c, 'unconscious');
   if (c.hp <= 0) { removeCondition(c, 'asleep'); }
@@ -263,6 +341,7 @@ export function heal(c: Character, n: number): number {
 
 /** Full recovery, as an inn or a night's rest gives. Does not raise the dead. */
 export function rest(c: Character): void {
+  delete c.riteSpent;
   if (hasCondition(c, 'dead') || hasCondition(c, 'stoned')) return;
   c.hp = c.maxHp; c.sp = c.maxSp;
   c.conditions = c.conditions.filter((k) => k === 'poisoned' || k === 'diseased' || k === 'cursed');
@@ -277,10 +356,12 @@ export function levelUp(c: Character, rng: RngInstance, cap = MAX_LEVEL): number
   while (c.level < cap && c.xp >= xpForLevel(c.level + 1)) {
     c.level++; gained++;
     const cd = CLASSES[c.cls];
-    const hp = Math.max(1, rng.int(1, cd.hpDie) + bonus(c.stats.endurance));
+    // Each prestige taken adds its hit points and spell points to every level after it (DESIGN §5).
+    const [php, psp] = PRESTIGE_POOLS[PRESTIGES[c.cls].calling].map((x) => x * prestigeOf(c));
+    const hp = Math.max(1, rng.int(1, cd.hpDie) + bonus(c.stats.endurance)) + php;
     c.maxHp += hp; c.hp += hp;
     if (cd.spStat) {
-      const sp = Math.max(1, rng.int(1, cd.spDie) + bonus(c.stats[cd.spStat]));
+      const sp = Math.max(1, rng.int(1, cd.spDie) + bonus(c.stats[cd.spStat])) + psp;
       c.maxSp += sp; c.sp += sp;
       // A new spell tier every two levels: tier 5 lands at level 8.
       const tier = spellTierAt(c.level);
