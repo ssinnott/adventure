@@ -38,7 +38,6 @@ export const CURVE: Record<RegionId, AreaCurve> = {
   },
   thornmark: {
     band: [5, 10], next: 10, price: 1200,
-    owed: { whose: '#26', why: 'Act I falls short until the pilot fills it', xp: 6039 },
   },
 };
 

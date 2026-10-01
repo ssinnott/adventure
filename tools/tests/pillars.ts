@@ -294,8 +294,6 @@ const EDGES_OWED: Record<string, readonly string[]> = {
   // The Salt Road off D4's south-west corner into the Delta steps diagonally on the atlas, which no
   // square of D4's edge can meet; #170's C5 carries the road over D5's corner.
   '#170': ['downs_d4 0,31', 'downs_d4 1,31'],
-  // The elves' road on out of H3's east edge into I3, towards Henlys (I4), which the atlas does not draw.
-  '#215': ['deepthorn_h3 31,23'],
 };
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */
