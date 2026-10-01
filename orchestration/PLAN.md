@@ -1663,3 +1663,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   change once a later chapter gives a reason (the signet). The owed curve entry goes in this round;
   the captain held dead in the walkthrough two days on (finding 3); nits 4 and 5. Round sent to the
   Berth's session: merge #306's head and main now, main once more after #306 lands.
+- 00:58: #308 (#217, I5) landed: its merge ab63337 (main with #307; `CUT_OFF` empty, I5 walked to
+  from I4's carve; Thornmark two under 59.2% of 70, listed; a clear 15,537 xp, nothing owed): ALL OK
+  (17 owed, none #217's), SMOKE OK, "Nothing new."; CI green. Merged as cac5a2f; main's tree is the
+  tested tree (03e1d6c). #217 closes. The J5 session told to merge main (J5 next in Thornmark); #306
+  to merge cac5a2f, with nothing landing before it; the I5 session done.
