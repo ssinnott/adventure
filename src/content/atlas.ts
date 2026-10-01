@@ -93,6 +93,10 @@ export const PLAN: Atlas = {
     { pts: [[426, 300], [434, 298], [438, 310], [432, 318], [424, 312]] },
     { pts: [[456, 230], [462, 228], [464, 234], [458, 236]] },
   ],
+  tides: [
+    // The Saltings' shore, from Saltmouth's quay down past the pans (#162).
+    { rough: 0.5, pts: [[96, 154], [108, 154], [114, 206], [98, 206]] },
+  ],
   ridges: [
     // Between the Foreland and Thornmark, the Scarth through it.
     { pts: [[231.5, 20], [231.5, 40], [231.5, 61]], width: 3, foot: 0 },

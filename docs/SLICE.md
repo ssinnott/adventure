@@ -32,8 +32,8 @@ DESIGN.md first for the why.
 - **Exploration:** grid movement with 90° turns and strafing, doors, locked doors, secret doors
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and mountains
   gated by party abilities, hills (`^`), farmland (`f`), light woods (`t`) and dead wood (`d`, on no
-  built map yet) open to all, the Sunder's glass trees (`c`) and chasm (`v`), on none yet, a
-  calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
+  built map yet) open to all, the Sunder's glass trees (`c`) and chasm (`v`), on none yet, salt
+  (`-`), heather (`h`) and tidal ground (`;`), on none yet, a calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
   food, a search action, exploration spells (Light, Wizard Eye). The wilderness features (a shrine
   on F2; the rest on E2): a shrine or fountain that gives every member a stat point once, a cairn
   with a cache, a statue whose riddle takes its answer typed and a camp where the party may rest
@@ -321,7 +321,14 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   on crystal) stands where a tree would and blocks as one, shards of crystal catching a point of
   light by day. The chasm (`v`) is no wall and is seen across, but a step into it is refused ("The
   ground falls away. There is no way down here."); where ground stands beyond it, its far wall hangs
-  from the rim in bands of rock darkening into the drop. Broadleaf trees bud in Thaw, blossom in
+  from the rim in bands of rock darkening into the drop. Salt (`-`) is walked as sand, a white crust
+  cracked into plates. Heather (`h`) is walked as grass, a purple-brown moor of low dark clumps that
+  goes purple while it flowers, from late Longlight to Leafturn. Tidal ground (`;`) is the shore the
+  sea leaves twice a day (`tideAt` in `game/calendar.ts`: high water 04:00 to 08:00 and 16:00 to
+  20:00, read from the clock and saved nowhere). At low water it is wet sand with ripples and pools,
+  walked; at high water it is drawn as the sea, and a step onto it is refused ("The tide is in. The
+  sands will show again.") unless someone swims, and a group keeps off it. The log says the tide
+  turning where the flats are in sight, and a `when` can name the tide. Broadleaf trees bud in Thaw, blossom in
   Sowing, turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the
   winter (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn.
   Lamps and windows light early on a dark day. Every frame, over the scene (and over the monsters in
@@ -451,9 +458,9 @@ over content broken on purpose too, and two tools to theirs:
 - `changed`: which files count every map, monster or interior for the crack sweep and the sheet, and
   which only their own; and that it reads each family module's `KINDS` from the module's text as the
   module lists them.
-- `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4 and the Sunder's K3, their
-  light woods, dead wood, chasm and crystal and all, laid back into the atlas, are the atlas square
-  for square.
+- `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
+  C6 and Wrackholm's F6, their light woods, dead wood, chasm, crystal, salt, tidal ground and heather
+  and all, laid back into the atlas, are the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
   a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
@@ -508,11 +515,11 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal and the chasm named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather and tidal ground named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice` and `Answer`), `GameMap` queries (passable, blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
-| `game/calendar.ts` | the months and seasons, dates, and dawn and dusk through the year |
+| `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |

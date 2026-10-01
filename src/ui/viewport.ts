@@ -34,6 +34,7 @@ import type { MonsterSprite } from '../game/monsters.ts';
 import type { Weather } from '../game/weather.ts';
 import { mixHash, weatherSight } from '../game/weather.ts';
 import { sunTimes } from '../game/calendar.ts';
+import type { Tide } from '../game/calendar.ts';
 import { hash } from './brush.ts';
 
 export const VIEW_W = 400, VIEW_H = 268;
@@ -55,8 +56,10 @@ function unit(k: number, h: number): number { return (h / 2) * NEAR / (k + 0.5);
  * `flames`: murk is fog or driving rain or snow closing in (0 .. 1), cover the snow lying, wet the
  * rain standing, `day` the day of the year for the grass, `trees` how the year dresses them.
  */
-interface Env { murk: number; cover: number; wet: number; day: number; trees: TreeSeason; }
-const CLEAR: Env = { murk: 0, cover: 0, wet: 0, day: 45, trees: HIGH_SUMMER };
+interface Env { murk: number; cover: number; wet: number; day: number; trees: TreeSeason; tide: Tide; }
+const CLEAR: Env = { murk: 0, cover: 0, wet: 0, day: 45, trees: HIGH_SUMMER, tide: 'low' };
+/** Tidal ground as it is drawn: the sea over it at high water, wet sand at low. */
+const asDrawn = (t: Terrain): Terrain => (t === 'tidal' && env.tide === 'high' ? 'water' : t);
 let env: Env = CLEAR;
 
 /** How much the weather closes the view: fog, or rain and (more so) snow coming down hard. */
@@ -82,7 +85,7 @@ const SNOW = '#eef2f7';
  */
 export const SNOW_HOLD: Record<Terrain, number> = {
   grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, deadwood: 0.85, crystal: 0.5, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
-  water: 0, deep: 0, lava: 0, chasm: 0,
+  salt: 0.6, heather: 0.85, water: 0, deep: 0, lava: 0, chasm: 0, tidal: 0,
 };
 type Ramp = readonly [number, string][];
 /** A colour through the year: the ramp's stops by day of the year, mixed between. */
@@ -97,6 +100,10 @@ const GRASS: Ramp = [[0, '#6a7650'], [10, '#6a8a4a'], [22, '#58ae40'], [40, '#4c
 function grassColor(day: number): string { return rampColor(GRASS, day); }
 /** Hill grass: the grass of the year, thinner and drier on the rise. */
 function hillColor(day: number): string { return mix(grassColor(day), '#8a8450', 0.3); }
+/** How far the heather is in flower: from late Longlight through Harvest, and over by Leafturn. */
+export function heatherBloom(day: number): number { return Math.max(0, Math.min(1, (day - 38) / 6, (66 - day) / 6)); }
+/** The moor: a purple-brown through the year, purple while the heather flowers. */
+function heatherColor(day: number): string { return mix('#644a48', '#7a4a6c', heatherBloom(day)); }
 /** The floor of the woods: the grass of the year in the trees' shade, over moss and leaf litter. */
 function woodsColor(day: number): string { return mix(grassColor(day), '#3e5028', 0.45); }
 
@@ -130,9 +137,10 @@ function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 
  * The colour of the ground: the terrain's, the grass, the hills and the crop by season, darker when
  * wet, whitened by snow.
  */
-function groundColor(terrain: Terrain, kind: string, floorPal: string, crop = 0): string {
+function groundColor(t: Terrain, kind: string, floorPal: string, crop = 0): string {
   if (kind === 'dungeon') return floorPal;
-  let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
+  const terrain = asDrawn(t);
+  let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : terrain === 'heather' ? heatherColor(env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
   if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava' && terrain !== 'chasm') c = shade(c, 1 - 0.18 * env.wet);
   const s = env.cover * SNOW_HOLD[terrain];
   return s > 0 ? mix(c, SNOW, s) : c;
@@ -241,7 +249,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const daylight = world.daylight;
   const sight = world.sight;
   const wx = world.underSky ? world.weather : null, day = world.date.dayOfYear;
-  env = wx ? { murk: murkOf(wx), cover: wx.cover, wet: wx.cover < 0.3 ? wx.wet : 0, day, trees: treeSeason(day, wx.cover) } : CLEAR;
+  env = wx ? { murk: murkOf(wx), cover: wx.cover, wet: wx.cover < 0.3 ? wx.wet : 0, day, trees: treeSeason(day, wx.cover), tide: world.tide } : CLEAR;
   const cloud = wx?.cloud ?? 0;
   // A dark day lights the lamps early.
   const gloom = daylight * (1 - 0.3 * cloud - 0.25 * (wx?.precip ?? 0));
@@ -848,7 +856,8 @@ function drawChasm(ctx: CanvasRenderingContext2D, base: string, cx: number, hori
   if (rims.near) { ctx.strokeStyle = fog('#8a8290', d, dark, haze); ctx.lineWidth = Math.max(1, unit(d, h) * 0.03); line(ctx, pt(0, 0), pt(0, 1)); }
 }
 
-function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string, plot?: Plot, rims?: { near: boolean; far: boolean }): void {
+function drawFloor(ctx: CanvasRenderingContext2D, laid: Terrain, kind: string, cx: number, horizon: number, h: number, d: number, l: number, seed: number, dark: boolean, haze: string | null, floorPal: string, plot?: Plot, rims?: { near: boolean; far: boolean }): void {
+  const terrain = asDrawn(laid);
   const base = groundColor(terrain, kind, floorPal, plot?.crop);
   // The drop is dark indoors too, not the floor's colour.
   if (terrain === 'chasm') { drawChasm(ctx, TERRAIN_COLORS.chasm, cx, horizon, h, d, l, seed, dark, haze, rims ?? { near: false, far: false }); return; }
@@ -886,7 +895,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
       ctx.strokeStyle = fog(shade(base, 0.55), d, dark, haze); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
     }
   }
-  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'deadwood' ? 5 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
+  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'deadwood' ? 5 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'salt' ? 5 : terrain === 'heather' ? 7 : terrain === 'tidal' ? 5 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
@@ -936,6 +945,29 @@ function drawFloor(ctx: CanvasRenderingContext2D, terrain: Terrain, kind: string
       ctx.beginPath(); ctx.ellipse(x, y, 1.5 * sc + 0.5, 1 * sc + 0.4, 0, 0, Math.PI * 2); ctx.fill();
     } else if (terrain === 'sand') {
       ctx.fillStyle = fog(shade(base, 0.8), d, dark, haze); ctx.fillRect(Math.round(x), Math.round(y), 1, 1);
+    } else if (terrain === 'salt') {
+      // The crust cracked into plates, the cracks grey where the brine dried in them; snow hides them.
+      if (env.cover > 0.55) continue;
+      const a = hash(seed, 53, i) * Math.PI, len = (4 + 4 * hash(seed, 54, i)) * sc, b = a + 0.9 + hash(seed, 55, i);
+      ctx.strokeStyle = fog(shade(base, 0.72), d, dark, haze); ctx.lineWidth = Math.max(1, sc * 0.8);
+      ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len * 0.4); ctx.lineTo(x, y); ctx.lineTo(x + Math.cos(b) * len, y + Math.sin(b) * len * 0.4); ctx.stroke();
+    } else if (terrain === 'heather') {
+      // Low clumps, dark and wiry, purple-tipped while the heather flowers; a deep snow buries them.
+      if (env.cover > 0.55) continue;
+      const bloom = heatherBloom(env.day);
+      ctx.fillStyle = fog(shade(base, 0.7), d, dark, haze);
+      ctx.beginPath(); ctx.ellipse(x, y - sc, 3 * sc + 0.5, 1.6 * sc + 0.5, 0, 0, Math.PI * 2); ctx.fill();
+      if (hash(seed, 56, i) < bloom) { ctx.fillStyle = fog('#a05a94', d, dark, haze); ctx.fillRect(Math.round(x - sc), Math.round(y - 2.5 * sc), Math.max(1, Math.round(2 * sc)), Math.max(1, Math.round(sc))); }
+    } else if (terrain === 'tidal') {
+      // Wet sand the sea has just left: ripples, and a pool that holds the sky.
+      if (i === 0 && d <= 3) {
+        const pw = unitIn(d, s, h) * (0.16 + 0.12 * hash(seed, 57, i)), ph = pw * 0.22;
+        ctx.beginPath(); ctx.ellipse(x, y, pw, ph, 0, 0, Math.PI * 2); ctx.fillStyle = fog(shade(base, 0.62), d, dark, haze); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(x - pw * 0.15, y - ph * 0.2, pw * 0.6, ph * 0.4, 0, 0, Math.PI * 2); ctx.fillStyle = rgba(fog(haze ?? '#8a94a4', d, dark, haze), 0.6); ctx.fill();
+        continue;
+      }
+      ctx.strokeStyle = fog(shade(base, 0.78), d, dark, haze); ctx.lineWidth = Math.max(1, sc * 0.8);
+      ctx.beginPath(); ctx.moveTo(x - 5 * sc, y); ctx.quadraticCurveTo(x - 2.5 * sc, y - 1.2 * sc, x, y); ctx.quadraticCurveTo(x + 2.5 * sc, y + 1.2 * sc, x + 5 * sc, y); ctx.stroke();
     } else if (terrain === 'swamp') {
       ctx.strokeStyle = fog('#6a7a3a', d, dark, haze); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 0.5 * sc, y - 7 * sc); ctx.moveTo(x + 2 * sc, y); ctx.lineTo(x + 1.5 * sc, y - 5 * sc); ctx.stroke();

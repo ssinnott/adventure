@@ -76,6 +76,17 @@ export function daylightAt(minutes: number): number {
   return 1 - (h - dusk + 1.5) / 3;
 }
 
+/** Minutes from one high water to the next: the tide turns twice a day (#151, call 3). */
+export const TIDE_PERIOD = MINUTES_PER_DAY / 2;
+/** High water, in minutes into each turn: 04:00 to 08:00 and 16:00 to 20:00, a third of the day. */
+export const HIGH_WATER: readonly [number, number] = [4 * 60, 8 * 60];
+export type Tide = 'high' | 'low';
+/** The tide at a minute: read from the clock alone, so nothing is saved. */
+export function tideAt(minutes: number): Tide {
+  const m = mod(minutes, TIDE_PERIOD);
+  return m >= HIGH_WATER[0] && m < HIGH_WATER[1] ? 'high' : 'low';
+}
+
 /** 'HH:MM' for an hour of the day given as a fraction. */
 export function clock(hour: number): string {
   const m = Math.round(hour * 60);

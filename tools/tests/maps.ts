@@ -3,7 +3,7 @@
 // reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { Feature } from '../../src/game/map.ts';
+import type { Feature, MapDef } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
@@ -48,6 +48,47 @@ function reach(m: GameMap, sx: number, sy: number): { seen: number; open: number
   let open = 0;
   for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) if (!stopsWalk(m, x, y) && m.at(x, y).solid === 'none') open++;
   return { seen: seen.size, open };
+}
+
+/**
+ * Where a map's tidal ground would cut a place off, or catch what stands on it: an exit, a feature
+ * or a group standing on it; a square of it with no ground beside it that is open at both tides; and
+ * an exit, a feature or a group start the company reaches at low water but not at high, without a
+ * swimmer. The tide opens nothing on the road (EXPANSION §2.2), so the only thing let off is an
+ * exit to a map some other exit (`elsewhere`) reaches too, as Saltmouth's smugglers' stair is.
+ */
+export function tidalFaults(m: GameMap, elsewhere: ReadonlySet<string>): string[] {
+  const out: string[] = [];
+  const tidal = (x: number, y: number): boolean => m.at(x, y).terrain === 'tidal';
+  let any = false;
+  for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
+    if (!tidal(x, y)) continue;
+    any = true;
+    if (![[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => !tidal(x + dx, y + dy) && m.passable(x + dx, y + dy) === 'ok')) out.push(`tidal ground at ${x},${y} has no dry ground beside it`);
+  }
+  if (!any) return out;
+  const places = [
+    ...m.exits.map((e) => ({ x: e.x, y: e.y, what: `the exit to ${e.to}`, spared: elsewhere.has(e.to) })),
+    ...m.features.map((f) => ({ x: f.x, y: f.y, what: `the ${f.kind}`, spared: false })),
+    ...m.encounters.map((e) => ({ x: e.x, y: e.y, what: `group ${e.id}`, spared: false })),
+  ];
+  for (const p of places) if (tidal(p.x, p.y)) out.push(`${p.what} at ${p.x},${p.y} stands on tidal ground`);
+  const walk = (tide: 'high' | 'low'): Set<number> => {
+    const seen = new Set<number>(), stack = [[m.def.start.x, m.def.start.y]];
+    while (stack.length) {
+      const [x, y] = stack.pop()!, k = y * m.width + x, p = m.passable(x, y, { keys: 1, tide });
+      if (seen.has(k) || (p !== 'ok' && p !== 'unlock')) continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (m.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
+    }
+    return seen;
+  };
+  const low = walk('low'), high = walk('high');
+  for (const p of places) {
+    const k = p.y * m.width + p.x;
+    if (low.has(k) && !high.has(k) && !p.spared) out.push(`${p.what} at ${p.x},${p.y} is cut off at high water`);
+  }
+  return out;
 }
 
 export function maps(): void {
@@ -129,6 +170,29 @@ export function maps(): void {
     const gorge = new GameMap({ id: 'fx_gorge', name: 'Gorge', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#######', '#,,v,,#', '#######'] });
     const { seen, open } = reach(gorge, 1, 1);
     ok(seen === 2 && open === 4, `a room open only across a chasm is caught (${seen} reached of ${open})`);
+  }
+  // The tide cuts nothing off and catches nothing on its ground: every map, then a fixture that
+  // breaks each rule and one that keeps them.
+  {
+    const into = (id: string): Set<string> => new Set(MAP_DEFS.flatMap((d) => (d.exits ?? []).filter((e) => d.id !== id).map((e) => e.to)));
+    const faults = MAP_DEFS.flatMap((def) => tidalFaults(maps[def.id], into(def.id)).map((f) => `${def.id}: ${f}`));
+    ok(faults.length === 0, `on every map the tide cuts nothing off and catches nothing on its ground${faults.length ? ' -> ' + faults.join('; ') : ''}`);
+    const shore = (rows: string[], extra: Partial<MapDef> = {}): GameMap => new GameMap({ id: 'fx_shore', name: 'Shore', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows, ...extra });
+    // A spit reached only over the flats, with a sign and a group on it, a group on the flats and an
+    // island of them with no dry ground beside it.
+    const cutOff = tidalFaults(shore(['MMMMMMM', 'M,;,,WM', 'MMMMMWM', 'MW;WWWM', 'MMMMMMM'], {
+      features: [{ kind: 'sign', x: 3, y: 1, text: 'A post.' }],
+      encounters: [{ id: 'crabs', x: 4, y: 1, monsters: ['wolf'] }, { id: 'wet', x: 2, y: 1, monsters: ['wolf'] }],
+    }), new Set());
+    const want = ['tidal ground at 2,3 has no dry ground beside it', 'group wet at 2,1 stands on tidal ground', 'the sign at 3,1 is cut off at high water', 'group crabs at 4,1 is cut off at high water'];
+    ok(want.every((w) => cutOff.includes(w)), `flats that cut a spit off, catch a group and lie with no dry ground beside them are caught (${cutOff.join('; ')})`);
+    // The same spit with a dry way round it, and an exit reached over the flats to a map reached as well by another way.
+    const round = tidalFaults(shore(['MMMMMMM', 'M,;,,WM', 'M,,,,WM', 'MMMMMMM'], {
+      features: [{ kind: 'sign', x: 3, y: 1, text: 'A post.' }], exits: [{ x: 4, y: 2, to: 'harrow', tx: 1, ty: 1 }],
+    }), new Set());
+    const stair = tidalFaults(shore(['MMMMMM', 'M,;,WM', 'MMMMMM'], { exits: [{ x: 3, y: 1, to: 'harrow', tx: 1, ty: 1 }] }), new Set(['harrow']));
+    const only = tidalFaults(shore(['MMMMMM', 'M,;,WM', 'MMMMMM'], { exits: [{ x: 3, y: 1, to: 'harrow', tx: 1, ty: 1 }] }), new Set());
+    ok(round.length === 0 && stair.length === 0 && only.length === 1, `a dry way round passes, and so does a stair over the flats to a map reached another way, but not one reached only so (${[...round, ...stair, ...only].join('; ')})`);
   }
   // Each area lists what is its own, and the lists are true: its maps share its weather, its monsters
   // are drawn with the sprite kinds it lists, and its businesses paint the rooms it lists.
