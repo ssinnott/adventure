@@ -46,10 +46,10 @@ export function people(): void {
   for (const i of Object.values(ITEMS)) if (i.text) ok(wrap(i.text.join('\n\n'), SAY_W).length <= SAY_LINES, `${i.id}: the letter fits the box's ${SAY_LINES} lines`);
   // Every answer that hands over an item sets a flag, so the question is put once and the item given once.
   for (const { map, p } of all) for (const c of choices(p)) for (const a of c.answers) if (a.gives) ok([a.sets ?? []].flat().length > 0, `${map} ${p.x},${p.y}: '${a.label}' gives ${a.gives} and sets a flag`);
-  // A question answered, the next meeting says that answer's after-words: words put first that hold
-  // whenever the question's do would say the question's words for good.
+  // A question answered, the meetings after come to that answer's after-words: words put first that
+  // hold whenever the question's do would say the question's words for good.
   const unsaid = all.flatMap(({ map, p }) => afterFaults(p).map((bad) => `${map} ${p.x},${p.y}: ${bad}`)), answers = all.reduce((n, { p }) => n + answered(p), 0);
-  ok(answers > 0 && !unsaid.length, `an answered question's after-words are said at the next meeting (${answers} answers)${unsaid.length ? ' -> ' + unsaid.join('; ') : ''}`);
+  ok(answers > 0 && !unsaid.length, `an answered question's after-words are said at the meetings after (${answers} answers)${unsaid.length ? ' -> ' + unsaid.join('; ') : ''}`);
 
   ok(THREE.every((item) => givers.filter((x) => handIns(x.p).some((q) => q.item === item)).length === 1), `the three hand-ins are found: ${THREE.join(', ')}`);
   for (const item of THREE) {
@@ -258,8 +258,8 @@ const answered = (p: Person): number => withAfter(p).length;
 
 /**
  * Each of a person's answers with after-words, met as the game meets them: the words ending in the
- * question first, as they hold (their first `after`, at any hour); then the answer; then the next
- * meeting, which says the answer's after-words. What fails, said.
+ * question first, as they hold (their first `after`, at any hour); then the answer; then the
+ * meetings after, which come to the answer's after-words. What fails, said.
  */
 export function afterFaults(p: Person): string[] {
   const out: string[] = [];
@@ -276,8 +276,12 @@ export function afterFaults(p: Person): string[] {
     const one = meet(p, party, holds);
     if (one.text !== said(w)) { out.push(`the words that put '${w.choice!.ask.slice(0, 40)}…' are not said when they hold: earlier words are said in their place`); continue; }
     answer(a, party);
-    const two = meet(p, party, holds).text;
-    if (!after.some((v) => said(v) === two)) out.push(`'${a.label}' answered, the next meeting does not say its after-words (it says '${two.slice(0, 50)}…')`);
+    // The state is only what the question's words wait for, so words a company that got this far has
+    // already heard once may come first; each says its piece and moves on. Words said again in their
+    // place stand there for good.
+    let last = '', next = meet(p, party, holds).text;
+    for (let n = 0; n < 8 && next !== last && !after.some((v) => said(v) === next); n++) [last, next] = [next, meet(p, party, holds).text];
+    if (!after.some((v) => said(v) === next)) out.push(`'${a.label}' answered, its after-words are never said ('${next.slice(0, 50)}…' is said in their place)`);
   }
   return out;
 }
