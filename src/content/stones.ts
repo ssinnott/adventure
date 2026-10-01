@@ -2,7 +2,7 @@
 // restored Stone brightens it, in the night sky, on the title's horizon and in the almanac
 // (game/stones.ts, #168). Each is restored once its `restored` holds, a quest-log condition the
 // save already keeps, so nothing new is saved. A Stone whose area is not built has none yet; its
-// area fills it in. The content check (tools/tests/pillars.ts) holds every Stone the atlas names
+// area fills it in. The check (tools/tests/stones.ts) holds every Stone the atlas names
 // here, but the Lodestone, which is whole from the start, and each `restored` flag to something that
 // sets it, or to the issue that owes it.
 import type { When } from '../game/quests.ts';
