@@ -1571,3 +1571,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   'q_hermit' }`, a wrong Found in passing. J4 lands second of it and #304: drops its `CUT_OFF` and
   the owed-xp sentence. Its look and five choices to a delegate. Reviewer on #308 (I5), asked first
   about its way in through I4's forest.
+- 00:12: the delegate on #303: Ailith stays in the west wood and only her compass word is recut
+  ("I made for Helmstow…"; moving her recuts #77's quest 8 for one word's truth); the other choices
+  taken, the kitchen entry's loss said in the body, both survey texts recut and listed as Owner
+  actions; the sheet OK. Round sent to the #77 session.
