@@ -7,6 +7,7 @@ import { ARMOURER } from './saltmouth_armourer.ts';
 import { CHANDLERY } from './saltmouth_chandlery.ts';
 import { LOCKSMITH } from './saltmouth_locksmith.ts';
 import { SHRINE } from './saltmouth_shrine.ts';
+import { HARBOUR_TAVERN } from './harbour_tavern.ts';
 import { MAP_ROOM } from './cartographers_room.ts';
 
 export const SCENES = {
@@ -16,5 +17,6 @@ export const SCENES = {
   saltmouth_chandlery: CHANDLERY,
   saltmouth_locksmith: LOCKSMITH,
   saltmouth_shrine: SHRINE,
+  harbour_tavern: HARBOUR_TAVERN,
   cartographers_room: MAP_ROOM,
 } satisfies Record<string, Scene>;
