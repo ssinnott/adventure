@@ -14,15 +14,15 @@ E6, the moor and the landing, is built (#187), and with it the area is listed in
 is `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters and atlas, its walkthrough; its
 items, its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, and its side quests in
 `quests.ts` to come); it has no town and no businesses, so no rooms. Its part of the world map is
-its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its ids: the area and its zone `wrackholm`, the cove `smugglers_cove`
-(the id stays under the new name, NAMES §3), the ship `tide_ship` and, below it, `dead_drop`.
+its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
+ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
+NAMES §3), the ship `tide_ship` and, below it, `dead_drop`.
 
 ---
 
 ## 1. Where it is
 
-The atlas (`src/content/areas/wrackholm/atlas.ts`, spread into the plan until the area is listed)
-makes Wrackholm one zone:
+The atlas (`src/content/areas/wrackholm/atlas.ts`, which the Area carries) makes Wrackholm one zone:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
@@ -42,10 +42,10 @@ south-west corner where the Glasswold's coast comes near; no way runs there.
 
 Its edges are the sea on every side. Its ways:
 
-- **The landing,** at 152,172 on E6's south shore, where the smugglers' boat from Saltmouth puts
-  in (`src/content/atlas.ts`; #164). A crossing, open from the start for the fare (EXPANSION
-  §2.2, §7): Wrackholm is the first area a company reaches by paying, and the boat is how it
-  leaves.
+- **The landing,** at 152,172, at the head of an inlet off E6's west shore (§4.2), where the
+  smugglers' boat from Saltmouth puts in (`src/content/atlas.ts`; #164). A crossing, open from the
+  start for the fare (EXPANSION §2.2, §7): Wrackholm is the first area a company reaches by paying,
+  and the boat is how it leaves.
 - **Kelp Hole,** at 154,170 in E6, the cove's mouth in the cliff above the landing.
 - **The Tide Ship,** boarded from F6's south-east shore at 182,188 at night, by the boats that row
   out to it; the ship itself lies off the shore, its plate at 208,192 in the sea.
@@ -83,8 +83,8 @@ monsters are drawn in #193.
   on the inlet's cliff and at the lookout, two crews of smugglers and bowmen on the paths, devilfish
   in the pools under the south hills. The area is listed with it (`src/content/index.ts`), its
   monsters and atlas carried by its Area and no longer in AHEAD or the plan.
-- **Weather.** The gulf's: mild winters, cool summers, a narrow day, wet autumns and much fog. Fronts
-  reach it three hours after they cross the Foreland.
+- **Weather.** The gulf's: mild winters, cool summers, a narrow day, wet autumns and much fog.
+  Fronts reach it three hours after they cross the Foreland.
 
 ## 4. What is still to build
 
@@ -155,16 +155,18 @@ Foreland map's density.
   captain stands on the stage with two lines and no flag, for The Captain's Brother to hang on
   (#192, #188). Six groups: eight bilge rats in the huts and eight gulls on the inlet's cliff,
   nearest the stage; eight gulls at the lookout; two crews of two smugglers and two bowmen on the
-  paths north and east; and four devilfish in the pools under the south hills, the far end, so the
-  groups' levels rise to the band's top (13). The cache is the hut south of the inlet with the gulls
-  on its roof, its door found by searching from where they are seen; it holds the Long Bow +1 and 140
-  gold. The cairn on the crown, the camp in the lee of the south hills, the Tidefolk's bowl on the
-  west shore, the lookout and four more on the moor are the box's other points: every square is within
-  8 steps of one. As measured it pays about 1,920 xp a member and 404 gold. The gate at 12 wins every
-  fight, at 7.1 fights to a rest, and walks the road (the rats, the inlet's gulls, the east path)
-  every time; two under, at 10, it wins every fight too, which is owed to #18 until gear past 10
-  lands (`tools/tests/gate.ts`'s `OWED`). What the owner finds by hand goes here when the box has
-  been played.
+  paths north and east; and four devilfish in the pools under the south hills, the far end. The
+  devilfish, at 13, take the place of the brief's third crew: with every other group at 12 the
+  groups' levels could not rise to the band's top, as the curve asks, and so E6 places the family
+  before Kelp Hole does. The cache is the hut south of the inlet with the gulls on its roof, its
+  door found by searching from where they are seen; it holds the Long Bow +1 and 140 gold. The cairn
+  on the crown, the camp in the lee of the south hills, the Tidefolk's bowl on the west shore, the
+  lookout and four more on the moor are the box's other points: every square is within 8 steps of
+  one. As measured it pays about 1,920 xp a member and 404 gold. The gate at 12 wins every fight, at
+  7.1 fights to a rest, and walks the road (the rats, the inlet's gulls, the east path) every time;
+  two under, at 10, it wins every fight too, which is owed to #18 until gear past 10 lands
+  (`tools/tests/gate.ts`'s `OWED`). What the owner finds by hand goes here when the box has been
+  played.
 
 ### 4.3 Kelp Hole (#188): dungeon, two levels of 16×16, band 12–14
 
@@ -183,9 +185,10 @@ Foreland map's density.
   Feed: the boy, and the choice (§6).
 - **The secret and its hint.** A flooded passage from the sea cave to the isle's east shore, a way
   out and not in. The hint: the tide-mark on the cave's wall stops short of the roof at one place.
-- **New here.** The devilfish, a new family (#231); a boss that is fed.
+- **New here.** A boss that is fed; the devilfish in their own water, met first in E6's pools
+  (#187).
 - **Finds.** The crews' strongbox: a Plate Mail +1, the first plate with a plus on the road.
-- **Pay.** About 2,400 xp a member.
+- **Pay.** About 2,180 xp a member: 2,400 less what E6 pays over its 1,700 as built (§8).
 
 ### 4.4 F6, the east rocks (#189): core, band 13–14
 
@@ -288,22 +291,22 @@ the Wrack Bowman, the Ashen Overseer, the Devilfish and the Great Devilfish, the
 Warden of the Tide; the hold, and over the side. Their drawings are #193's, nine issues (#231 to
 #239). Wrackholm spends none of MONSTERS §3.3's asks of its own: it spends Saltreach's.
 
-New in Wrackholm, for the novelty check (EXPANSION §5.4): the devilfish, a new family; heather
-underfoot (#162); an area reached by a crossing (#164); a ship as a dungeon; the Hand's overseers,
-grey to the wrist (MONSTERS §12); a boss that is fed; the first door into the hull (#22). Its
-landmarks: a landing, a sea cave, a wreck.
+New in Wrackholm, for the novelty check (EXPANSION §5.4): the devilfish, a new family (E6 claims it,
+placing them first); heather underfoot (#162); an area reached by a crossing (#164); a ship as a
+dungeon; the Hand's overseers, grey to the wrist (MONSTERS §12); a boss that is fed; the first door
+into the hull (#22). Its landmarks: a landing, a sea cave, a wreck.
 
 ## 8. The numbers
 
 - **Experience.** The curve (EXPANSION §5.2, #159) asks the climb from 12 to 14 over 0.75: 7,400 /
   0.75, about 9,867 xp a member, with today's `xpForLevel`. The shares of §4 add up to it, the side
   quests inside and the Dead-Drop outside. The isle is small, two boxes for a band two levels deep
-  where Saltreach has nine, so its dungeons carry more of the budget than Saltreach's do: E6 1,700,
-  Kelp Hole 2,400, F6 1,600, the Tide Ship 3,300 and the four side quests 900 between them (25 and
-  26 200 each, 27 and 28 250 each, §6): about 9,900. From here on a kill pays by level (#159); the
-  curve's row reports what a clear falls short of as owed to #154 until the maps exist, and
-  MONSTERS' open question 4, what a fight is worth from Saltreach on, is settled on the first box
-  built.
+  where Saltreach has nine, so its dungeons carry more of the budget than Saltreach's do: E6 1,920
+  as built (#187), Kelp Hole 2,180, F6 1,600, the Tide Ship 3,300 and the four side quests 900
+  between them (25 and 26 200 each, 27 and 28 250 each, §6): about 9,900. From here on a kill pays
+  by level (#159); the curve's row reports what a clear falls short of as owed to #154 until the
+  maps exist, and MONSTERS' open question 4, what a fight is worth from Saltreach on, is settled on
+  the first box built.
 - **Gold.** Training six members from 12 to 14 costs about 6,000 with today's `trainPrice`; the
   hold's strongboxes and the crews' drops pay it, and the isle has no shop to spend it in until the
   boat back.
@@ -349,6 +352,8 @@ Decided by delegate for #187, each the owner's to overturn:
 5. **Four devilfish in the south pools,** the box's far end and its level-13 group, so the levels
    rise; E6 claims the devilfish as new, and heather.
 6. **The bilge rats are placed in E6's huts,** as the brief has them, not left to #189.
+7. **Wrackholm's climate** is the gulf's: mild winters, cool summers, a narrow day, wet autumns and
+   much fog, its fronts three hours behind the Foreland's.
 
 Decided by delegate for #186, each the owner's to overturn:
 
