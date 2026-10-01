@@ -54,11 +54,11 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   wrackholm: {
     band: [12, 14], next: 14, price: 2500,
-    owed: { whose: '#154', why: 'of Wrackholm only E6 and F6 are built (#187, #189)', xp: 3578, gold: 891 },
+    owed: { whose: '#154', why: 'of Wrackholm only E6, Kelp Hole and F6 are built (#187, #188, #189)', xp: 7026, gold: 2567 },
   },
   sunderwood: {
     band: [14, 16], next: 16, price: 3000,
-    owed: { whose: '#155', why: 'Sunderwood is built box by box', xp: 1063, gold: 460 },
+    owed: { whose: '#155', why: 'Sunderwood is built box by box', xp: 2572, gold: 890 },
   },
 };
 

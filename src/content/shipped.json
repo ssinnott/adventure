@@ -210,6 +210,14 @@
         "i5_hearth",
         "i5_hollow",
         "i5_roost",
+        "j2_cairn",
+        "j2_dog",
+        "j2_graves",
+        "j2_rim",
+        "j2_sack",
+        "j2_sack_chest",
+        "j2_shrine",
+        "j2_steading",
         "j4_cairn",
         "j4_cleft",
         "j4_cleft_box",
@@ -342,6 +350,10 @@
         "i5_brood2",
         "i5_keepers",
         "i5_rootwalkers",
+        "j2_bears",
+        "j2_cave_bears",
+        "j2_hounds",
+        "j2_moths",
         "j4_heartwood",
         "j4_owls",
         "j4_rootwalkers",
@@ -392,6 +404,7 @@
         "286,135",
         "297,145",
         "308,112",
+        "312,32",
         "99,148"
       ]
     },
@@ -569,6 +582,48 @@
         "7,11"
       ]
     },
+    "smugglers_cove": {
+      "size": "16x16",
+      "used": [
+        "kh1_crate",
+        "kh1_crates",
+        "kh1_fires",
+        "kh1_in",
+        "kh1_landing",
+        "kh1_ledge",
+        "kh1_rows",
+        "kh1_store",
+        "kh1_strongbox"
+      ],
+      "groups": [
+        "kh1_crew_fires",
+        "kh1_crew_landing",
+        "kh1_overseers"
+      ],
+      "doors": []
+    },
+    "smugglers_cove2": {
+      "size": "16x16",
+      "used": [
+        "kh2_bones",
+        "kh2_hoard",
+        "kh2_in",
+        "kh2_kelp",
+        "kh2_passage",
+        "kh2_pools",
+        "kh2_purse",
+        "kh2_tidemark"
+      ],
+      "groups": [
+        "kh2_crew",
+        "kh2_devilfish_east",
+        "kh2_devilfish_west",
+        "kh2_great_devilfish"
+      ],
+      "doors": [
+        "3,11"
+      ]
+    },
     "thornhold": {
       "size": "16x16",
       "used": [
@@ -642,6 +697,10 @@
     },
     "eaves_i2": {
       "at": "264,30",
+      "size": "32x32"
+    },
+    "eaves_j2": {
+      "at": "296,30",
       "size": "32x32"
     },
     "shelf": {
@@ -810,6 +869,7 @@
     "elixir",
     "faceless_coin",
     "founders_seal",
+    "great_axe+1",
     "greatsword",
     "greatsword+1",
     "greatsword+2",
@@ -835,6 +895,7 @@
     "meridian_journal",
     "name_boards",
     "plate",
+    "plate+1",
     "potion_heal",
     "potion_sp",
     "potion_sp_great",
