@@ -37,7 +37,7 @@ export const FINDS: Record<string, string> = {
   'shortsword+1': '', 'dagger+1': '', 'mace+1': '', 'staff+1': '',
   'buckler+1': '',
   'robe+1': '', 'leather+1': '', silver_locket: '',
-  'halberd+1': '#69', ring_of_office: '#69', 'spear+1': '#69',
+  'halberd+1': '', ring_of_office: '', 'spear+1': '',
   captains_sword: '#70', captains_mail: '#70', queens_sword: '#70',
   'longbow+1': '',
   'shield+1': '',
@@ -80,7 +80,7 @@ export const DEEP_FINDS: Record<string, string> = {
   'runed_robe+2': '',
   'elfbow+2': '', 'brigandine+3': '',
   'warhammer+2': '',
-  silver_torc: '#217',
+  silver_torc: '',
   eldests_bough: '#218', 'greatsword+2': '#218',
 };
 

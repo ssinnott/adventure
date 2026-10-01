@@ -11,6 +11,15 @@
         "ashcombe_gate",
         "barrow",
         "coast",
+        "d2_cairn",
+        "d2_cist",
+        "d2_cradle",
+        "d2_den",
+        "d2_mouth",
+        "d2_pond",
+        "d2_ring",
+        "d2_shrine",
+        "d2_stones",
         "d3_barrow",
         "d3_cairn",
         "d3_camp",
@@ -104,6 +113,11 @@
         "i4_shrine",
         "i4_statue",
         "i4_treaty",
+        "i5_boat",
+        "i5_groove",
+        "i5_hearth",
+        "i5_hollow",
+        "i5_roost",
         "j4_cairn",
         "j4_cleft",
         "j4_cleft_box",
@@ -136,6 +150,13 @@
         "beach_crabs",
         "cliff_smugglers",
         "coast_bandits",
+        "d2_crows",
+        "d2_dog",
+        "d2_dogs",
+        "d2_pack",
+        "d2_wolves1",
+        "d2_wolves2",
+        "d2_wolves3",
         "d3_bandits",
         "d3_bandits2",
         "d3_boar",
@@ -193,6 +214,11 @@
         "i4_walkers_east",
         "i4_walkers_west",
         "i4_wolves",
+        "i5_brambles",
+        "i5_brood1",
+        "i5_brood2",
+        "i5_keepers",
+        "i5_rootwalkers",
         "j4_heartwood",
         "j4_owls",
         "j4_rootwalkers",
@@ -224,6 +250,7 @@
       "doors": [
         "107,80",
         "124,107",
+        "124,34",
         "155,91",
         "158,56",
         "169,78",
@@ -231,6 +258,7 @@
         "260,86",
         "276,77",
         "285,116",
+        "286,135",
         "308,112"
       ]
     },
@@ -431,8 +459,16 @@
       "at": "264,94",
       "size": "32x32"
     },
+    "deepthorn_i5": {
+      "at": "264,126",
+      "size": "32x32"
+    },
     "deepthorn_j4": {
       "at": "296,94",
+      "size": "32x32"
+    },
+    "downs_d2": {
+      "at": "104,30",
       "size": "32x32"
     },
     "downs_d3": {
