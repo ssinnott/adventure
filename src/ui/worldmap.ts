@@ -10,6 +10,7 @@ import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
 import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
+import { flickerOf } from '../game/stones.ts';
 import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
 import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
@@ -1131,7 +1132,7 @@ function arrowHead(ctx: CanvasRenderingContext2D, x: number, y: number, ang: num
   poly(ctx, [x, y, x - Math.cos(ang) * a + Math.sin(ang) * b, y - Math.sin(ang) * a - Math.cos(ang) * b, x - Math.cos(ang) * a - Math.sin(ang) * b, y - Math.sin(ang) * a + Math.cos(ang) * b], color, '#120c14');
 }
 
-const EDGE_COLOR: Record<ZoneEdge['kind'], string> = { road: '#ffd760', enter: '#f4ead2', stairs: '#ffd760', sea: '#7ec8f0', deep: '#c08af0' };
+const EDGE_COLOR: Record<ZoneEdge['kind'], string> = { road: '#ffd760', enter: '#f4ead2', stairs: '#ffd760', sea: '#7ec8f0', deep: '#c08af0', coach: '#e0a868' };
 const PLANNED_WAY = '#d8d0e8';
 
 /** A tiny boat for the middle of a sea route. */
@@ -1201,7 +1202,7 @@ function drawEdge(ctx: CanvasRenderingContext2D, e: ZoneEdge, find: (id: string)
     for (let k = 0; k <= 16; k++) { const t = k / 16; pts.push([(1 - t) * (1 - t) * ax + 2 * (1 - t) * t * mx + t * t * bx, (1 - t) * (1 - t) * ay + 2 * (1 - t) * t * my + t * t * by]); }
   }
   const path = (): void => { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]); for (const p of pts.slice(1)) ctx.lineTo(p[0], p[1]); };
-  const main = e.kind === 'road' || e.kind === 'sea';
+  const main = e.kind === 'road' || e.kind === 'sea' || e.kind === 'coach';
   const color = e.planned && e.kind !== 'sea' && e.kind !== 'deep' ? PLANNED_WAY : EDGE_COLOR[e.kind];
   ctx.save();
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -1404,10 +1405,11 @@ function paintedNow(): Painted {
 /** The painted cloth alone, drawn once. */
 export function worldArt(): HTMLCanvasElement { return paintedNow().cloth; }
 
-/** The Hearth burns over the painted sea: a warm pool on the water and a flickering column. Cloth coordinates. */
-function drawHearth(ctx: CanvasRenderingContext2D, frame: number): void {
+/** The Hearth burns over the painted sea: a warm pool on the water and a column, flickering less for each Stone restored. Cloth coordinates. */
+function drawHearth(ctx: CanvasRenderingContext2D, frame: number, stones = 0): void {
   const [x, hy] = hearthAt(), y = hy - 4;
-  const flick = 0.82 + 0.18 * Math.sin(frame / 7) * Math.sin(frame / 3.1);
+  // Steadier for each Stone restored, as the title's (#168).
+  const amp = flickerOf(stones), flick = 1 - amp + amp * Math.sin(frame / 7) * Math.sin(frame / 3.1);
   ctx.save();
   ctx.globalCompositeOperation = 'lighter';
   glow(ctx, x, y + 2, 48, '#ffc070', 0.32 * flick);
@@ -1575,7 +1577,7 @@ export class WorldMapScreen implements Screen {
       ctx.save();
       ctx.beginPath(); ctx.rect(VIEW.x, VIEW.y, VIEW.w, VIEW.h); ctx.clip();
       ctx.translate(VIEW.x - vx, VIEW.y - vy);
-      drawHearth(ctx, frame);
+      drawHearth(ctx, frame, world?.stones ?? 0);
       if (this.mode === 'zones') {
         ctx.drawImage(art.overlay, vx, vy, VIEW.w, VIEW.h, vx, vy, VIEW.w, VIEW.h);
         if (party) drawParty(ctx, party, world?.state.facing ?? 0, frame);
@@ -1645,7 +1647,7 @@ export function renderCloth(mode: WorldMapMode, world: World | null = null, fram
   const cv = canvas(CLOTH.w, CLOTH.h);
   const ctx = cv.getContext('2d')!;
   ctx.drawImage(art.cloth, 0, 0);
-  drawHearth(ctx, frame);
+  drawHearth(ctx, frame, world?.stones ?? 0);
   if (mode === 'art') drawNames(ctx, art.names, 0, 0, CLOTH.w, CLOTH.h);
   if (mode === 'zones') {
     ctx.drawImage(art.overlay, 0, 0);
