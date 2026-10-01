@@ -181,8 +181,12 @@ export function drawCrystalSprite(ctx: CanvasRenderingContext2D, x: number, y: n
  * two red bands, the gallery's rail, the glazed lamp room and a red cap. The lamp room is dark glass,
  * or glowing when `lamp` is 1 (lit by night). Gives where the lamp is, for its light and its beam.
  */
+/** A lighthouse's height over its foot, in squares' half widths, and its bands from the foot up (red or white). */
+export const LIGHTHOUSE_HEIGHT = 5.2;
+export const LIGHTHOUSE_BANDS: readonly [number, number, boolean][] = [[0, 0.33, false], [0.33, 0.47, true], [0.47, 0.73, false], [0.73, 0.86, true], [0.86, 1, false]];
+
 export function drawLighthouseSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, lamp = 0, snow = 0): { x: number; y: number; r: number } {
-  const H = u * 5.2, wb = u * 0.42, wt = u * 0.26, plinth = u * 0.55;
+  const H = u * LIGHTHOUSE_HEIGHT, wb = u * 0.42, wt = u * 0.26, plinth = u * 0.55;
   const white = shade('#ece6da', tone), shadow = shade('#bdb6a8', tone), red = shade('#b23a2c', tone), redShadow = shade('#86281e', tone);
   const stone = shade('#6e6a64', tone), dark = shade('#2a2622', tone);
   const halfAt = (h: number): number => wb + (wt - wb) * (h / H);
@@ -192,8 +196,7 @@ export function drawLighthouseSprite(ctx: CanvasRenderingContext2D, x: number, y
   if (snow > 0.2) { ctx.fillStyle = shade('#eef2f7', tone); ctx.fillRect(Math.round(x - u * 0.55), Math.round(y - plinth), Math.round(u * 1.1), Math.max(1, Math.round(u * 0.06))); }
   // The tower: a band at a time from the plinth up, lit on the left and shaded on the right.
   const top = y - H, base = y - plinth;
-  const bands: [number, number, boolean][] = [[0, 0.3, false], [0.3, 0.45, true], [0.45, 0.72, false], [0.72, 0.86, true], [0.86, 1, false]];
-  for (const [a, b, isRed] of bands) {
+  for (const [a, b, isRed] of LIGHTHOUSE_BANDS) {
     const ya = base - (base - top) * a, yb = base - (base - top) * b, ha = halfAt(y - ya), hb = halfAt(y - yb);
     ctx.fillStyle = isRed ? red : white; ctx.beginPath(); ctx.moveTo(x - ha, ya); ctx.lineTo(x - hb, yb); ctx.lineTo(x, yb); ctx.lineTo(x, ya); ctx.closePath(); ctx.fill();
     ctx.fillStyle = isRed ? redShadow : shadow; ctx.beginPath(); ctx.moveTo(x, ya); ctx.lineTo(x, yb); ctx.lineTo(x + hb, yb); ctx.lineTo(x + ha, ya); ctx.closePath(); ctx.fill();
