@@ -16,7 +16,7 @@
 import type { Atlas } from './atlas.ts';
 import { mapAt } from './atlas.ts';
 import { VOID_CH } from './map.ts';
-import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell } from './map.ts';
+import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell, Landmark } from './map.ts';
 
 /** The outdoors' map id. */
 export const OUTDOORS = 'caldera';
@@ -72,7 +72,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
     const l = byId.get(e.to);
     return l ? { ...e, to: OUTDOORS, tx: e.tx + l.x, ty: e.ty + l.y } : e;
   };
-  const exits: Exit[] = [], features: Feature[] = [], encounters: EncounterDef[] = [], gates: Gate[] = [];
+  const exits: Exit[] = [], features: Feature[] = [], encounters: EncounterDef[] = [], gates: Gate[] = [], landmarks: Landmark[] = [];
   const legend: Record<string, Partial<Cell>> = {};
   const enter = new Map<string, Record<string, string>>();
   const used = new Set<string>(), groups = new Set<string>();
@@ -96,6 +96,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
       }
       features.push(place(f.kind === 'rift' ? lead(f) : f));
     }
+    for (const m of l.def.landmarks ?? []) landmarks.push(place(m));
     for (const e of l.def.encounters ?? []) {
       if (groups.has(e.id)) throw new Error(`${l.def.id}: group id '${e.id}' is another zone's too, and the outdoors keeps one record of both`);
       groups.add(e.id);
@@ -114,7 +115,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
     rows,
     legend,
     start: { ...first.def.start, x: first.def.start.x + first.x, y: first.def.start.y + first.y },
-    exits, features, encounters, gates, zones,
+    exits, features, encounters, gates, zones, landmarks,
   };
   const out: MapDef[] = [];
   for (const d of defs) {

@@ -515,8 +515,8 @@ settled in its issue, and what the pilot teaches changes them.
 - **Pay.** About 830 xp a member.
 - **As built** (#218, 1 October): the brief's places, no group above eight, the old wood on #298's
   numbers. The head's neck runs north to south from J4's glade road, which goes on down it as a
-  track of dirt to the crown; the stone and the fire-stack stand on the crown, the Eldest at the tip
-  with its two heartwoods, and the beach and the sea cave are on the head's west side, where its
+  track of dirt to the crown; the stone and the fire-stack stand on the crown and the Eldest at the
+  tip with its two heartwoods; the beach and the sea cave are on the head's west side, where its
   shingle meets I5's at 0,20. Rootwalkers (three) on the glade road are the builder's, so that the
   box is won nine fights in ten at 8 with the boss among them: four groups were 88.8%. The heartwood
   over two brambles stands across the neck where it is narrowest, and the rubbing is reached past

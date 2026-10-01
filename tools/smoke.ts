@@ -459,6 +459,82 @@ const sunder = await page.evaluate(async () => {
     glass, bluer: glass > 0 && blue > red,
   };
 });
+// Crowness Light (#312), from E3's road eleven squares north of it and from Gullwick's beach in F3,
+// far past the squares drawn: by noon the tower stands over the land, painted otherwise than with no
+// landmark there, its lamp unlit; by night the lamp is dark until the oil is in and lit after, and a
+// frame drawn after the oil goes in repaints the scene with it. Then a fixture lighthouse on the
+// Foreland with a wall beside its beam: the beam never shows over the wall.
+const lighthouse = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string);
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+  c.width = sky.width = W; c.height = sky.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+  const minutes = w.state.minutes, flags = { ...w.party.flags };
+  const clear = (hour: number, sky: Record<string, number> = {}): void => {
+    w.state.minutes = Math.floor(minutes / 1440) * 1440 + hour * 60;
+    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0, ...sky } };
+  };
+  // Cleared first: the sky shows through what the scene leaves unpainted, and a paint before would show in it.
+  const paint = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H / 2).data; };
+  const lamps = (): number => V.paintedFlames().filter((f: any) => f.lamp).length;
+  const out: Record<string, { tower: number; day: number; dark: number; lit: number; drawn: number }> = {};
+  const view = (): void => V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, () => null, 71, false);
+  for (const [name, zone, x, y, f] of [['road', 'downs_e3', 20, 17, 2], ['Gullwick', 'downs_f3', 6, 14, 3]] as const) {
+    w.travel(zone, x, y, f);
+    clear(12);
+    const m = w.map, kept = m.landmarks, withIt = paint(), day = lamps();
+    m.landmarks = []; const without = paint(); m.landmarks = kept;
+    let tower = 0;
+    for (let i = 0; i < withIt.length; i += 4) if (Math.abs(withIt[i] - without[i]) + Math.abs(withIt[i + 1] - without[i + 1]) + Math.abs(withIt[i + 2] - without[i + 2]) > 30) tower++;
+    clear(23); delete w.party.flags.q_oil_lit; paint(); const dark = lamps();
+    w.party.flags.q_oil_lit = true; paint(); const lit = lamps();
+    // As played: a frame before the oil goes in, then one after, on the same square.
+    delete w.party.flags.q_oil_lit; view(); w.party.flags.q_oil_lit = true; view(); const drawn = lamps();
+    out[name] = { tower, day, dark, lit, drawn };
+  }
+  // The weather that takes the fourth square takes the tower too, its lamp with it: from E3's road,
+  // fog just short of it leaves the tower; fog at it, or a downpour, leaves nothing of it, by day or
+  // by night lit.
+  w.travel('downs_e3', 20, 17, 2);
+  const towerIn = (sky: Record<string, number>): number => {
+    clear(12, sky); const a = paint(); const m = w.map, kept = m.landmarks; m.landmarks = []; const b = paint(); m.landmarks = kept;
+    let n = 0; for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30) n++;
+    return n;
+  };
+  w.party.flags.q_oil_lit = true;
+  const weather = { thin: towerIn({ fog: 0.3 }), fog: towerIn({ fog: 0.35 }), rain: towerIn({ precip: 0.65 }), lamp: 0 };
+  clear(23, { fog: 0.35 }); paint(); weather.lamp = lamps();
+  (out as any).weather = weather;
+  // The fixture: the Foreland at 23:00, a lit lighthouse six squares north, and a wall one north and
+  // one east, which stands over the beam's right-hand reach. Drawn at the frame the beam is longest
+  // to the right, with its light and without: nothing changes over the wall, and something does
+  // over the open sky between.
+  w.travel('shelf', 16, 16, 0); clear(23);
+  const m = w.map, px = w.state.x, py = w.state.y, cells = m.cells.slice(), kept = m.landmarks;
+  for (let yy = py - 8; yy <= py + 1; yy++) for (let xx = px - 4; xx <= px + 4; xx++) m.cells[yy * m.width + xx] = { terrain: 'grass', solid: 'none', door: 'none', ch: ',' };
+  m.cells[(py - 6) * m.width + px] = { terrain: 'floor', solid: 'building', door: 'none', ch: 'B' };
+  m.cells[(py - 1) * m.width + px + 1] = { terrain: 'floor', solid: 'wall', door: 'none', ch: '#' };
+  m.landmarks = [{ x: px, y: py - 6, kind: 'lighthouse' }];
+  ctx.clearRect(0, 0, W, H); view();
+  const lamp = V.paintedFlames().find((f: any) => f.lamp), lit = ctx.getImageData(0, 0, W, H).data;
+  const flames = V.paintedFlames() as any[], was = flames.slice(); flames.length = 0;
+  ctx.clearRect(0, 0, W, H); view(); const unlit = ctx.getImageData(0, 0, W, H).data; flames.push(...was);
+  for (let i = 0; i < cells.length; i++) m.cells[i] = cells[i];
+  m.landmarks = kept;
+  // Over the wall: the columns from 300 right, where the wall's side face and front stand over the
+  // lamp's row (its side's top edge crosses that row at about 284); the open sky: the columns
+  // between the lamp and 250.
+  let overWall = 0, overSky = 0;
+  if (lamp) for (let y = Math.round(lamp.y) - 2; y <= Math.round(lamp.y) + 2; y++) for (let x = 0; x < W; x++) {
+    const i = (y * W + x) * 4, differs = Math.abs(lit[i] - unlit[i]) + Math.abs(lit[i + 1] - unlit[i + 1]) + Math.abs(lit[i + 2] - unlit[i + 2]) > 6;
+    if (!differs) continue;
+    if (x >= 300) overWall++; else if (x > lamp.x + 10 && x < 250) overSky++;
+  }
+  (out as any).beam = { lamp: !!lamp, overWall, overSky };
+  w.party.flags = flags; w.state.minutes = minutes; w.cached = undefined;
+  return out;
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
 // holds court on the keep's door, in the throne room.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
@@ -821,6 +897,12 @@ ok(!torches.missing && torches.lit > 0 && torches.out > 0 && torches.over === 0,
 ok(torches.shown && torches.covers && torches.behind, `an ogre before a sconced wall stands in front of its torch's flame (flame shown ${torches.shown}, ogre over it ${torches.covers}, flame behind the ogre ${torches.behind})`);
 ok(sunder.rows > 20 && sunder.drop > 40 && sunder.wall > 20, `a chasm paints darker than grass, its far wall under the rim lighter than the drop (${sunder.rows} rows straight ahead, ${sunder.drop} darker than grass in the lower half; the wall ${sunder.wall} lighter than the foot)`);
 ok(sunder.glass > 200 && sunder.bluer, `glass trees stand over the horizon beyond the chasm, bluer than red (${sunder.glass} pixels, ${sunder.bluer ? 'bluer' : 'not bluer'})`);
+{
+  const { beam, weather, ...views } = lighthouse as Record<string, any>;
+  ok(weather.thin > 100 && weather.fog === 0 && weather.rain === 0 && weather.lamp === 0, `the weather that takes the fourth square takes Crowness Light, its lamp with it (fog 0.3: ${weather.thin} pixels of tower; fog 0.35: ${weather.fog}; a downpour: ${weather.rain}; a lit lamp in fog by night: ${weather.lamp})`);
+  for (const [name, v] of Object.entries(views)) ok(v.tower > 100 && v.day === 0 && v.dark === 0 && v.lit === 1 && v.drawn === 1, `Crowness Light stands over the land from ${name === 'road' ? "E3's road" : "Gullwick's beach"}, its lamp unlit by day, dark by night before the oil and lit after, and the frame after the oil goes in shows it (${v.tower} pixels of tower at noon; lamps ${v.day} by day, ${v.dark} then ${v.lit} by night, ${v.drawn} drawn)`);
+  ok(beam.lamp && beam.overWall === 0 && beam.overSky > 0, `a lighthouse's beam shows over the open sky but never over a wall nearer than it (${beam.overSky} pixels of beam over the sky, ${beam.overWall} over the wall${beam.lamp ? '' : '; no lamp lit'})`);
+}
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
   ok(terrains.thin.length === 0, `hills, farmland, woods and dead wood paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);

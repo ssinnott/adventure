@@ -7,7 +7,7 @@ import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
-import { EAST, SOUTH } from '../../../game/types.ts';
+import { EAST, SOUTH, WEST } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
 import { MAP_DEFS, MONSTERS } from '../../index.ts';
@@ -84,6 +84,7 @@ export const walkthrough: Walkthrough = (ok) => {
   hired(w);
   playChapter(w, CHAPTER, STEPS, 'in order');
   ok(quest(w)?.pages.find((p) => p.def === CHAPTER)?.done === true && w.news.includes('Chapter complete: The Quiet Farm.'), 'in order, the wand back to Vask finishes The Quiet Farm');
+  berth(w);
 
   lodestone(newWalk(ok), 'a new company');
   // A company Sylvane has spoken to before it comes by still gets the lesson first.
@@ -96,6 +97,24 @@ export const walkthrough: Walkthrough = (ok) => {
   sideQuests(ok);
   walkWorth(ok);
 };
+
+/**
+ * Down into the Berth from the chalk of D2 at its floor, past the guard two by two to the bier: the
+ * Queen seen writes the chapter's step (#70), and the captain behind her is won there.
+ */
+function berth(w: Walk): void {
+  walkThrough(w, 'downs_d2', 13, 12, WEST, 'berth');
+  w.level = MAP_DEFS.find((d) => d.id === 'berth')!.band![0];
+  for (const g of ['berth_guard1', 'berth_guard2', 'berth_guard3', 'berth_guard4']) fight(w, `berth:${g}`);
+  see(w, 'berth:berth_bier');
+  fight(w, 'berth:berth_captain');
+  const ids = quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries.map((e) => e.id) ?? [];
+  w.ok(ids.includes('berth'), `the Queen on her bier in the Berth writes the chapter's step (${ids.join(', ')})`);
+  // None of them comes back (EXPANSION §5.1): two days on, the captain and his guard are still dead.
+  w.world.advance(2 * 1440);
+  const back = w.world.liveGroups().map((g) => g.def.id).filter((id) => id.startsWith('berth_'));
+  w.ok(back.length === 0, `two days on, the Berth's captain and its four pairs of guards stay dead${back.length ? ' -> ' + back.join(', ') : ''}`);
+}
 
 /**
  * The walk to Ashcombe (#87), once, and what it pays a member of six: the Foreland map's groups,

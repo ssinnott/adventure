@@ -15,9 +15,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * group yet, a room no business opens into yet. Each is reported as that issue's while it waits,
  * and fails once it is placed, so its entry is dropped here.
  */
-const UNPLACED: Record<string, string> = {
-  black_dog: '#69', barrow_wolf: '#69', barrow_guard: '#70', barrow_captain: '#70',
-};
+const UNPLACED: Record<string, string> = {};
 
 /**
  * What is wrong with a town's doorways: the business must come first on its square (the game
@@ -66,6 +64,8 @@ export function maps(): void {
       if (to) ok(to.passable(e.tx, e.ty) === 'ok', `${def.id} -> ${e.to}: arrival cell ${e.tx},${e.ty} is passable`);
     }
     for (const f of m.features) ok(m.passable(f.x, f.y, { swim: true, climb: true, keys: 1 }) !== 'wall', `${def.id}: feature ${f.kind} at ${f.x},${f.y} is not inside a wall`);
+    // A landmark is a building drawn as what it is (#312): it stands on a building's square.
+    for (const l of m.landmarks) ok(m.at(l.x, l.y).solid === 'building', `${def.id}: the ${l.kind} at ${l.x},${l.y} stands on a building's square`);
     for (const e of m.encounters) {
       ok(m.passable(e.x, e.y) === 'ok', `${def.id}: encounter ${e.id} at ${e.x},${e.y} is passable`);
       for (const id of e.monsters) ok(id in MONSTERS, `${def.id}: encounter ${e.id} monster '${id}' exists`);

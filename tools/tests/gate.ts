@@ -65,7 +65,7 @@ const DAYS = 300;
  */
 export const BOSSES: Record<string, readonly string[]> = {
   shelf: ['greywater1:gw1_captain', 'greywater2:gw2_deacon'],
-  downs: ['mill:m_warden'],
+  downs: ['mill:m_warden', 'berth:berth_captain'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
   deepthorn: ['deepthorn_j5:j5_eldest'],
 };

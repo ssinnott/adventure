@@ -1,6 +1,34 @@
 {
   "version": 2,
   "maps": {
+    "berth": {
+      "size": "16x16",
+      "used": [
+        "berth_arms",
+        "berth_bier",
+        "berth_c1",
+        "berth_c2",
+        "berth_c3",
+        "berth_c4",
+        "berth_forecourt",
+        "berth_niche",
+        "berth_passage",
+        "berth_queen1",
+        "berth_queen2",
+        "berth_queen3",
+        "berth_queen4"
+      ],
+      "groups": [
+        "berth_captain",
+        "berth_guard1",
+        "berth_guard2",
+        "berth_guard3",
+        "berth_guard4"
+      ],
+      "doors": [
+        "2,7"
+      ]
+    },
     "caldera": {
       "size": "512x384",
       "used": [
@@ -11,6 +39,15 @@
         "ashcombe_gate",
         "barrow",
         "coast",
+        "d2_cairn",
+        "d2_cist",
+        "d2_cradle",
+        "d2_den",
+        "d2_mouth",
+        "d2_pond",
+        "d2_ring",
+        "d2_shrine",
+        "d2_stones",
         "d3_barrow",
         "d3_cairn",
         "d3_camp",
@@ -21,6 +58,15 @@
         "d3_pack",
         "d3_pond",
         "d3_shrine",
+        "d4_cairn",
+        "d4_cave",
+        "d4_gulls",
+        "d4_mule",
+        "d4_reeds",
+        "d4_runners",
+        "d4_shrine",
+        "d4_top",
+        "d4_worn",
         "e2_cairn",
         "e2_ford",
         "e2_hoard",
@@ -146,6 +192,13 @@
         "beach_crabs",
         "cliff_smugglers",
         "coast_bandits",
+        "d2_crows",
+        "d2_dog",
+        "d2_dogs",
+        "d2_pack",
+        "d2_wolves1",
+        "d2_wolves2",
+        "d2_wolves3",
         "d3_bandits",
         "d3_bandits2",
         "d3_boar",
@@ -153,6 +206,10 @@
         "d3_keepers",
         "d3_wolves",
         "d3_wolves2",
+        "d4_bandits",
+        "d4_bandits2",
+        "d4_crows",
+        "d4_cutthroats",
         "e2_boar",
         "e2_crows",
         "e2_crows2",
@@ -239,6 +296,8 @@
       ],
       "doors": [
         "107,80",
+        "124,107",
+        "124,34",
         "155,91",
         "158,56",
         "169,78",
@@ -460,8 +519,16 @@
       "at": "296,126",
       "size": "32x32"
     },
+    "downs_d2": {
+      "at": "104,30",
+      "size": "32x32"
+    },
     "downs_d3": {
       "at": "104,62",
+      "size": "32x32"
+    },
+    "downs_d4": {
+      "at": "104,94",
       "size": "32x32"
     },
     "downs_e2": {

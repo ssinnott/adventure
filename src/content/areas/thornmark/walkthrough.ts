@@ -455,7 +455,6 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     groveDone(w);
     w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('Sylvane sent you'), 'sent by Sylvane, Senara shows the seal');
     w.ok(hear(w, 'deepthorn_i4', SENARA()).includes('one more place that mark is') && w.news.at(-1) === 'New quest: The Older Mark.' && !!page(w, 'mark')?.goal, `Senara's ask begins The Older Mark, with a goal (${w.news.at(-1)})`);
-    w.ok(hear(w, 'deepthorn_i4', SENARA()).startsWith('"The stone on Penspern'), 'asked again before the rubbing, she says only where the stone is');
     see(w, 'deepthorn_j5:j5_stone');
     see(w, 'deepthorn_j5:j5_rubbed');
     open(w, 'deepthorn_j5:j5_rubbing');
@@ -465,6 +464,12 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     answerTo(w, 'deepthorn_i4', SENARA(), 'Burn it.');
     reads(w, 'mark', 'The Older Mark', ['senara', 'stone', 'shown', 'burnt'], ['kept'], 'the rubbing burnt');
     w.ok(hear(w, 'deepthorn_i4', SENARA()).startsWith('"Burnt.') && !w.party.bag.includes('stone_rubbing'), "burnt, Senara's after-lines are the ash's");
+  }
+  { // The Older Mark: asked again before the rubbing is made, Senara says only where the stone is.
+    const w = newWalk(ok);
+    hear(w, 'deepthorn_i4', SENARA());
+    hear(w, 'deepthorn_i4', SENARA());
+    w.ok(hear(w, 'deepthorn_i4', SENARA()).startsWith('"The stone on Penspern') && !!w.party.flags.q_mark, 'asked again before the rubbing, she says only where the stone is');
   }
   { // The Older Mark: the rubbing made before Senara has asked, or the treaty is seen, and kept.
     const w = newWalk(ok);

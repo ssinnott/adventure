@@ -25,6 +25,11 @@ export const CHAPTER: Chapter = {
       text: 'We killed the Rift Warden that kept the tear.' },
     { id: 'keeper', when: { seen: 'downs_e3:e3_log' },
       text: 'At Crowness Light, the keeper\'s log of that night: the Hearth out eleven times, and the gaps between even, as if measured.' },
+    // The Berth (#70): found, not told. Nothing in The Quiet Farm sends the company to the barrow and
+    // Vask's contract ends at his hand-in, so the step is an entry and the chapter does not wait on
+    // it; a goal and the bier in `done` come when a later chapter gives a reason to go (the signet).
+    { id: 'berth', when: { seen: 'berth:berth_bier' },
+      text: 'In the Berth, the Queen\'s barrow, opened: Queen Isaure on her bier under blue and gold, her grave goods untouched, and the wrappings on her right hand cut.' },
     { id: 'paid', when: { flag: 'q_ashcombe_done' },
       text: 'Vask turned the wand over in his fingers and pocketed it. If he knew what he held, nothing in his face admitted it. He paid 300 gold.' },
     // His lead, here and not in Thornmark's chapter, so it is written when he gives it, whichever

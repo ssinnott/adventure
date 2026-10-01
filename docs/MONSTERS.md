@@ -501,9 +501,9 @@ Crowness Light.
 | Carrion Crow | birds, new | fodder, 2 | the stubble fields; the gibbet on the coast road | *Crows, too many to count, and all of them watching.* Flies, so it reaches the back row (`ranged` without `missile`); six to eight to a group |
 | Wrecker | bandit | soldier, 4 | the coast from Gullwick to Crowness Light, by night and in fog | *Oilskins, a boathook, and a boat they were expecting.* Carries a chit stamped with the Helmstow customs seal, as the Brandy Hole crates are |
 | Lampman | bandit | archer, 4 | one to every wreckers' group | *A lantern held high on a pole, and someone under it.* Slings stones over the wreckers; their leader, once there is morale |
-| Barrow Guard | skeleton | armoured, 4 | the Berth, the Queen's barrow | *The Queen's guard, in her colours, still standing to.* Halberds; holds its ground and never roams |
+| Barrow Guard | skeleton | armoured, 4, on an elite's weight | the Berth, the Queen's barrow, two by two | *The Queen's guard, in her colours, still standing to. They do not turn their heads. They have already seen you.* Halberds; holds its ground and never roams. Two are a standard encounter, so each weighs an elite (50 hit points, 12 a hit) in an armoured shape (armour 16, slow) |
 | Black Dog | wolf | elite, 5 | the hills round the barrow, by night, one or two | *A black dog the size of a calf, with eyes like coals.* The dead's own hound: its bite holds (paralysis, 0.1) |
-| Barrow Captain | skeleton | boss, 5 | at the Queen's empty bier | *Her captain, at his post beside an empty bier.* |
+| Barrow Captain | skeleton | boss, 5 | at the Queen's bier | *Her captain, at his post beside the bier. He was told to hold it, and nobody has told him otherwise.* 220 hit points, armour 16, 21.5 a hit: won about half the time by a company of 4 |
 | Chalk Wolf | wolf | skirmisher, 4 | Brockholt and the chalk, three to a pack | *Pale as the chalk it runs on, and leaner than the Foreland's.* |
 | Tusker | boar | brute, 4 | the woods, alone | *A boar grown old and huge on beech mast.* |
 | Barn Rat | rat | fodder, 3 | the Downs' farms and barns | *Rats, fat on someone's grain.* Its bite carries disease, as the rat's does |
@@ -514,14 +514,17 @@ Crowness Light.
 | Slinger | bandit | archer, 4 | beside the billmen | *A sling going round, and the Downs have flints to spare.* |
 | Old Rook | birds | elite, 4 | the Wend's rookery, two of them beside it | *Grey in the face, and older than the trees it keeps.* The rookery's keepers; flies |
 | Barrow Wolf | wolf | elite, 5 | the chalk hills (D2): one leading each of the den's packs, and two in the pack that keeps it | *Grey to the muzzle and big as a pony, and the pack waits on it.* The den's keepers: the chalk wolf's pale coat on a heavy frame, scarred |
-| Cutthroat | bandit | elite, 5 | the bandit camp on the west downs, two of them beside it | *A captain's sash on a thief's coat, and a knife for every pocket.* The camp's keepers |
+| Cutthroat | bandit | elite, 5 | the bandit camp on the west downs, two of them beside it; two on the road by the Delta, at the foot of Kestrel Edge | *A captain's sash on a thief's coat, and a knife for every pocket.* The camp's keepers |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
   two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
   nuisance: the lamp is what the company sees first.
 - **Crows over wolves** in the stubble: the back row learns it can be reached.
 - **The Berth**: guards two by two down the passage, then the captain at the bier. It is the
-  Downs' hardest place, band 4–5, and its boss asks there.
+  Downs' hardest place, band 4–5, and its boss asks there. Built (#70): the guard as drawn (20 hit
+  points, 5.5 a hit) left a company of 4 thirty fights to a rest and the captain (60, 9) won every
+  time, so both were raised: four pairs are 7.1 fights to a rest at 4, and the captain is won 45%
+  of the time at 4 and always at 6.
 
 **Asks:** `look` and `when`. Flyers are `ranged` without `missile`, which exists.
 

@@ -1,0 +1,70 @@
+// Callow Downs, box D4: Kestrel Edge. Country, band 4-5: the Downs' way out west, the Salt Road from
+// D3's corner over the plateau to the top of the Edge, down the cliff in seven bends, and across the
+// low ground at its foot to the Delta, which is the world's end until Saltreach is built. The cliff
+// is mountain, as D3's is, carried on to the water where the atlas stops it short, so the bends are
+// the one way down. Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md §4.9 is its brief.
+import type { MapDef } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
+
+export const DOWNS_D4: MapDef = {
+  id: 'downs_d4',
+  name: 'Callow Downs',
+  kind: 'outdoor',
+  density: 'country',
+  band: [4, 5],
+  start: { x: 29, y: 0, facing: SOUTH },
+  rows: [
+    ',,,,,,,,MM,,,,,,,,,,,,,,,,,,,==,',
+    ',,,,,,,,,MM,,,,,,,,,,,,,,,,,==,,',
+    ',,,,,,,,,MM,,,,,,,^,,,,,,,==,,,,',
+    ',,,,,,,,,,MM,,,,^^^^^,,,,==,,,,,',
+    ',,,,,,,,,,MM,,,^^^^^^^,,==,,,,,,',
+    ',,,,,,,,,,,MM,^^^^^^^^,==,,,,,,,',
+    ',,,,,,,,,,,MM,^^^^^^^^==,,,,,,,,',
+    ',,,,,,,,,,,,MM,^^^^^^==,,,,,,,,,',
+    ',,,,,,,,,,,,MM,,^^^^==,,,,,,,,,,',
+    ',,,,,,,,,,,,,MM,,,,==^,,,,,,,,,,',
+    ',,,,,,,,,,,,M=======M,,,,,,,,,,_',
+    ',,,,,,,,,,,,M=MMMMMMM,,,,,,,,__~',
+    '^,,,,,,,,,,,M=======MM,,,,,,_~~~',
+    '^^,,,,,^^,,,MMMMMMM=S:M,,,__~~~W',
+    '^^^,,,,^^,,,M=======MM,,__~~~WWW',
+    '^^^^,,,^^,,,M=MMMMMMM,,_~~~~WWWW',
+    '^^^^^,^^^^,,==MMMMMMM,,_~~WWWWWW',
+    '^^^^^^^^^^,==,,,,MM,,,_~~WWWWWWW',
+    ',,^^^^^^^^==,,,,,MMM,_~~WWWWWWWW',
+    ',,,,,^^^^==,,,,,,,,MM_~~WWWWWWWW',
+    ',,,,,^^,==,,,,,,___,MMMWWWWWWWWW',
+    ',,,,,^^==,,,,,,_~~~_~~WWWWWWWWWW',
+    ',,,,,^==^^,,,,_~~~~~~WWWWWWWWWWW',
+    ',,,,^==^^^^,,,,~~WW~WWWWWWWWWWWW',
+    ',,,,==^^^^^^,,~~WWWWWWWWWWWWWWWW',
+    ',,,,=^^^^^^^,~~WWWWWWWWWWWWWWWWW',
+    ',,,=,^^^^^^^~~WWWWWWWWWWWWWWWWWW',
+    ',,,=,,,^^^^~~WWWWWWWWWWWWWWWWWWW',
+    ',,=,,,,,,,~~WWWWWWWWWWWWWWWWWWWW',
+    ',==,,^^^,~~WWWWWWWWWWWWWWWWWWWWW',
+    ',=,,,^^^~~WWWWWWWWWWWWWWWWWWWWWW',
+    ',=,,,,,^~~WWWWWWWWWWWWWWWWWWWWWW',
+  ],
+  features: [
+    { kind: 'sign', x: 22, y: 8, text: 'THE DELTA, SALTMOUTH.' },
+    { kind: 'shrine', x: 22, y: 9, id: 'd4_shrine', text: 'A shrine at the top of the Edge, its dish heaped with coins left for the road down.', stat: 'luck', done: 'The shrine is quiet.' },
+    { kind: 'event', x: 20, y: 9, id: 'd4_top', once: true, text: 'The top of Kestrel Edge. The road goes over in bends, and below it the Delta runs green to the sea.' },
+    { kind: 'event', x: 19, y: 13, id: 'd4_worn', once: true, text: 'Between the bends the rock is worn smooth at knee height, as if by packs set down.' },
+    { kind: 'event', x: 20, y: 13, id: 'd4_runners', once: true, text: 'A cave behind the bend. Bundles in oilcloth, marked for Saltmouth and for Helmstow.' },
+    { kind: 'chest', x: 21, y: 13, id: 'd4_cave', gold: 80, items: ['shield+1', 'potion_heal'] },
+    { kind: 'cairn', x: 13, y: 16, id: 'd4_cairn', text: 'A cairn on the seventh bend, a stone from everyone who counted them.', gold: 25, items: ['potion_heal'] },
+    { kind: 'camp', x: 10, y: 19, name: 'The waystation', text: 'A waystation at the cliff\'s foot: a roof on four posts, and a ring of old fires.' },
+    { kind: 'event', x: 2, y: 30, id: 'd4_reeds', once: true, text: 'Reeds from here to the sea, and the Salt Road on into them. The Delta.' },
+    { kind: 'event', x: 5, y: 6, id: 'd4_mule', once: true, text: 'Under the cliff, the bones of a mule that took the short way down.' },
+    { kind: 'event', x: 26, y: 8, id: 'd4_gulls', once: true, text: 'Gulls hang in the updraught off the Edge, level with you and screaming.' },
+  ],
+  secrets: [{ x: 20, y: 13, hint: 'd4_worn' }],
+  encounters: [
+    { id: 'd4_crows', x: 25, y: 3, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
+    { id: 'd4_bandits', x: 16, y: 12, monsters: ['billman', 'billman', 'billman', 'slinger'], aware: 4, respawn: 2880 },
+    { id: 'd4_bandits2', x: 7, y: 22, monsters: ['billman', 'billman', 'billman', 'slinger'], aware: 5, respawn: 2880 },
+    { id: 'd4_cutthroats', x: 3, y: 27, monsters: ['cutthroat', 'cutthroat'], aware: 5, respawn: 2880 },
+  ],
+};
