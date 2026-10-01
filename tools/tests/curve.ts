@@ -7,7 +7,7 @@
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
-import { CURVE, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
+import { CURVE, PLANNED, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
 import type { AreaCurve } from '../../src/content/progression.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
@@ -68,25 +68,31 @@ function budget(id: string, what: string, gives: number, needs: number, owing: A
 }
 
 export function curve(): void {
-  AREAS.forEach((area, i) => {
-    const id: RegionId = area.id, row = CURVE[id];
+  // The built areas, then the planned ones, which have rows before they have maps: a planned area's
+  // clear gives nothing yet, and its row says who owes it.
+  const built: readonly string[] = AREAS.map((a) => a.id);
+  for (const id of PLANNED) ok(!built.includes(id), `${id}: a planned row, and not yet an area (once its first map lists it in AREAS, it leaves PLANNED)`);
+  const road: readonly { id: RegionId | (typeof PLANNED)[number]; area?: Area }[] = [...AREAS.map((a) => ({ id: a.id, area: a as Area })), ...PLANNED.map((id) => ({ id }))];
+  road.forEach(({ id, area }, i) => {
+    const row = CURVE[id], maps = area?.maps ?? [];
     const [lo, hi] = row.band;
     // The band: the atlas's, holding every map's, and the next floor the next area's.
     const atlas = areaBand(ATLAS, MAP_DEFS, id);
     ok(!!atlas && atlas[0] === lo && atlas[1] === hi, `${id}: its band ${lo}-${hi} is the atlas's (${atlas?.join('-') ?? 'none'})`);
-    for (const d of area.maps) ok(!!d.band && d.band[0] >= lo && d.band[1] <= hi, `${id}: ${d.id}'s band ${d.band?.join('-') ?? 'none'} sits in ${lo}-${hi}`);
-    const later = AREAS[i + 1];
+    for (const d of maps) ok(!!d.band && d.band[0] >= lo && d.band[1] <= hi, `${id}: ${d.id}'s band ${d.band?.join('-') ?? 'none'} sits in ${lo}-${hi}`);
+    const later = road[i + 1];
     const order = ATLAS.areas.find((a) => a.id === id)?.order;
     const next = later ? CURVE[later.id].band[0] : ATLAS.areas.find((a) => order !== undefined && a.order === order + 1)?.band?.[0];
     ok(row.next === next, `${id}: the next floor, ${row.next}, is the next area's (${next ?? 'none'})`);
+    if (later) ok(ATLAS.areas.find((a) => a.id === later.id)?.order === (order ?? NaN) + 1, `${id}: ${later.id}, its next row, is the atlas's next area`);
 
     // What a clear gives: every group once, a member's share of the xp summed; the gold in cash.
-    const groups = area.maps.flatMap((d) => d.encounters ?? []);
+    const groups = maps.flatMap((d) => d.encounters ?? []);
     const placed = groups.flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
     // The area's guild quests pay too, counted with the area whose file holds them.
-    const guild = (area as Area).guilds ?? [];
+    const guild = area?.guilds ?? [];
     const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0)) / MEMBERS);
-    const features = area.maps.flatMap((d) => d.features ?? []);
+    const features = maps.flatMap((d) => d.features ?? []);
     // A hand-in's reward, once an item: of two people who take it, the larger.
     const rewards = new Map<string, number>();
     for (const f of features) if (f.kind === 'npc') for (const q of handIns(f)) rewards.set(q.item, Math.max(rewards.get(q.item) ?? 0, q.reward));
@@ -97,7 +103,7 @@ export function curve(): void {
     budget(id, 'gold', Math.floor(gold), goldBudget(row), row.owed, row.owed?.gold);
 
     // Every monster's level: at least 1, and within two of the band of every map that places it.
-    for (const d of area.maps) {
+    for (const d of maps) {
       if (!d.encounters?.length) continue;
       const [a, b] = d.band ?? [1, 0];
       const kinds = [...new Set(d.encounters.flatMap((e) => e.monsters))];
@@ -136,7 +142,7 @@ export function curve(): void {
     const dearest = found.reduce((p, x) => (ITEMS[x.it].price > ITEMS[p.it].price ? x : p), found[0]);
     if (!dearer.length && dearest) ok(true, `${id}: its dearest find, ${dearest.it} at ${ITEMS[dearest.it].price} gold, sits in its window (${row.price})`);
     // The window never narrows along the road.
-    const before = AREAS[i - 1];
+    const before = road[i - 1];
     if (before) ok(row.price >= CURVE[before.id].price, `${id}: its window, ${row.price}, is no narrower than ${before.id}'s (${CURVE[before.id].price})`);
   });
 }

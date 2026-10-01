@@ -156,6 +156,8 @@ export interface Atlas {
   /** Land raised back out of the seas. */
   isles: readonly Outline[];
   lakes: readonly Outline[];
+  /** Shores the tide leaves twice a day: inside each, the shallows that touch the land are tidal ground. */
+  tides?: readonly Outline[];
   ridges: readonly Ridge[];
   rivers: readonly River[];
   patches: readonly Patch[];
@@ -173,7 +175,7 @@ export interface Atlas {
 export const TERRAINS = [
   'void', 'sea', 'shallow', 'grass', 'farm', 'steppe', 'forest', 'woods', 'pine', 'deadwood', 'crystal', 'hills',
   'heather', 'marsh', 'sand', 'dunes', 'salt', 'glass', 'vines', 'ash', 'lava', 'snow', 'ice', 'rock',
-  'dirt', 'mountain', 'peak', 'cliff', 'chasm', 'volcano', 'road', 'building',
+  'dirt', 'mountain', 'peak', 'cliff', 'chasm', 'volcano', 'road', 'building', 'tidal',
 ] as const;
 export type WorldTerrain = (typeof TERRAINS)[number];
 /** Index of each terrain in TERRAINS. */
@@ -181,7 +183,7 @@ export const TI = Object.fromEntries(TERRAINS.map((t, i) => [t, i])) as Record<W
 
 /** What a built map's legend characters are on the world map. */
 export const MAP_TERRAIN: Record<string, WorldTerrain> = {
-  ',': 'grass', '^': 'hills', 'f': 'farm', 't': 'woods', 'd': 'deadwood', 'c': 'crystal', 'v': 'chasm', ':': 'dirt', '=': 'road', '_': 'sand', '~': 'shallow', 'W': 'sea', 'w': 'marsh', '!': 'lava',
+  ',': 'grass', '^': 'hills', 'f': 'farm', 't': 'woods', 'd': 'deadwood', 'c': 'crystal', 'v': 'chasm', '-': 'salt', 'h': 'heather', ';': 'tidal', ':': 'dirt', '=': 'road', '_': 'sand', '~': 'shallow', 'W': 'sea', 'w': 'marsh', '!': 'lava',
   '*': 'snow', 'T': 'forest', 'r': 'rock', 'M': 'mountain', '"': 'rock', 'B': 'building', 'D': 'building',
   'L': 'building', 'S': 'building', '#': 'building', 'o': 'building', '.': 'dirt',
 };
@@ -333,7 +335,7 @@ export interface WorldGrid {
 const CROSS: Partial<Record<WorldTerrain, number>> = {
   grass: 2, farm: 2, road: 2, steppe: 2, sand: 2, dirt: 2, building: 2, woods: 2, forest: 3, pine: 3, heather: 3,
   vines: 3, salt: 3, marsh: 4, deadwood: 4, dunes: 4, ash: 4, glass: 4, hills: 5, rock: 5, snow: 6, ice: 6,
-  crystal: 8, shallow: 16, lava: 20, mountain: 16, volcano: 30, peak: 30, cliff: 40, chasm: 60,
+  crystal: 8, tidal: 8, shallow: 16, lava: 20, mountain: 16, volcano: 30, peak: 30, cliff: 40, chasm: 60,
 };
 /** Terrain that foothills and beaches may be laid over. */
 const SOFT = new Set<number>([TI.grass, TI.farm, TI.steppe, TI.heather, TI.dirt, TI.woods]);
@@ -341,7 +343,7 @@ const SOFT = new Set<number>([TI.grass, TI.farm, TI.steppe, TI.heather, TI.dirt,
 /**
  * The world as cells. In order: the rim (nothing beyond it, a band of mountains inside it), the
  * seas and the isles raised from them, the patches of country, the lakes, the ranges with their
- * foothills, shallows along every shore, the rivers, beaches, and last the built maps, whose ring
+ * foothills, shallows along every shore, the rivers, beaches, the tidal ground, and last the built maps, whose ring
  * of edge mountains is only their closed border, so edge cells that are mountain keep the atlas's
  * terrain (the sea south of the Foreland, the ridge between the Foreland and Thornmark) and any
  * other edge cell, like the road through the pass, is the map's. Then every land cell is given to a
@@ -451,6 +453,17 @@ export function worldGrid(atlas: Atlas, defs: readonly MapDef[]): WorldGrid {
     if (!SOFT.has(terrain[i])) continue;
     const shore = [i - 1, i + 1, i - W, i + W].some((q) => isWater(terrain[q]) && !river[q]);
     if (shore && noise(x / 11, y / 11, seed + 5) > 0.36) terrain[i] = TI.sand;
+  }
+  // Tidal ground: inside a tide's outline, the sea's shallows that touch the land. A river keeps its
+  // water, and the beach above stays sand, the dry way round at high water.
+  for (const tide of atlas.tides ?? []) {
+    const flats: number[] = [];
+    each(tide.pts, tide.rough ?? 2, (i) => {
+      const x = i % W;
+      if (terrain[i] !== TI.shallow || river[i] || x === 0 || x === W - 1 || i < W || i >= N - W) return;
+      if ([i - 1, i + 1, i - W, i + W].some((q) => !isWater(terrain[q]) && terrain[q] !== TI.void && terrain[q] !== TI.tidal)) flats.push(i);
+    });
+    for (const i of flats) terrain[i] = TI.tidal;
   }
   // The built maps, stamped 1:1.
   for (const z of atlas.zones) for (const { map, at } of z.maps ?? []) {

@@ -9,7 +9,7 @@ import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardR
 import { drawMonsterSprite, combatHeight } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
-import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach } from '../game/combat.ts';
+import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction } from '../game/combat.ts';
 import { spell } from '../game/spells.ts';
 import { item } from '../game/items.ts';
@@ -221,7 +221,8 @@ export class CombatScreen implements Screen {
     if (s.outcome !== 'ongoing') {
       drawText(ctx, s.outcome === 'victory' ? 'VICTORY' : s.outcome === 'fled' ? 'ESCAPED' : 'DEFEAT', r.x + 8, r.y + 24, { size: 2, color: s.outcome === 'defeat' ? RED : BRASS });
       if (s.loot) {
-        drawText(ctx, `${s.loot.xp} XP  ${s.loot.gold} GOLD`, r.x + 8, r.y + 48, { size: 1, color: TEXT });
+        const [least, most] = shareRange(s.loot);
+        drawText(ctx, `${least === most ? s.loot.xp : `${least}-${most}`} XP  ${s.loot.gold} GOLD`, r.x + 8, r.y + 48, { size: 1, color: TEXT });
         s.loot.items.slice(0, 6).forEach((id, i) => drawText(ctx, item(id).name, r.x + 8, r.y + 62 + i * 10, { size: 1, color: TEXT }));
         if (s.loot.ready.length) drawText(ctx, `READY TO TRAIN: ${s.loot.ready.join(', ')}`, r.x + 8, r.y + 130, { size: 1, color: YELLOW });
       }

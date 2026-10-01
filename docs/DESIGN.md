@@ -197,12 +197,12 @@ When a character reaches a prestige's level, they get a quest to seek out its tr
 quest reveals where the trainer is. The trainer who teaches a character their 11th, 19th or 27th
 level names who to seek and where, and the quest log and the world map mark the place: one quest for
 each member. For the third, the quest names the place; the way there, and the quest that trainer then
-asks, are the hard part. Nothing here is built until the cap passes 10 (#159).
+asks, are the hard part. The cap passed 10 with #159; nothing here is built until #19.
 
 **Levels.** The first at 11, the second at 19 and the third at 27, eight levels apart, with the new
 spell tiers between them at 15 and 23 (§7), so something new comes every four levels. Every
-prestige level is one a town's trainer teaches: Helmstow and Thornhold teach to 11, the Kilns' towns
-to 19 and Cinderport to 27.
+prestige level is one a town's trainer teaches, since each teaches to its band's top plus one:
+Thornhold to 11, Saltmouth to 13, the Kilns' towns to 19 and Cinderport to 27.
 
 **Hit points and spell points,** added to every level from each prestige's own on, and adding up:
 
@@ -213,7 +213,7 @@ to 19 and Cinderport to 27.
 | The rest (Knight, Thief, Barbarian, Monk) | +2 | none | +84 |
 
 **Prices.** The first about 1,000 gold, a little under the 1,200 Plate Mail costs in Thornhold's
-Armoury, and the second about 4,000, until the gold curve (#159) sets them. The third asks a quest.
+Armoury, and the second about 4,000, until #19 adds them to the curve's gold. The third asks a quest.
 
 **Perks.** A rank is a spell rank (§7). They lean on offence and on work outside combat, and none
 adds armour: in the harness, armour that keeps up makes monsters hit harder, and harder hits kill
@@ -362,8 +362,8 @@ points tier 5 was at 8.
 | Druid | 7 | Wrath of the Wood | 16 | The whole wood turns on every foe: 8d10, nature. |
 | Druid | 7 | Greening | 14 | Heals everyone well, and draws out poison and disease. |
 
-The points and the steps the map spells take wait on the harness and the gold curve (#159); the
-damage spells' dice are the harness's stand-ins (MONSTERS.md §4.4).
+The points and the steps the map spells take wait on the harness and #20; the damage spells' dice
+are the harness's stand-ins (MONSTERS.md §4.4).
 
 **Ranks.** A rank belongs to the caster, not the spell: it lifts every spell they know, those
 learned later too. Each rank adds 15% to the dice of a damage spell and to what a mending spell

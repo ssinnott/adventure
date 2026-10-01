@@ -14,7 +14,7 @@ import { item, priceIn, buy } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, trainPrice, MAX_LEVEL, guildFlag } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
@@ -525,7 +525,7 @@ export function spellPrice(tier: number): number { return 40 * Math.pow(2, tier 
 
 function trainer(g: Game, f: Extract<Feature, { kind: 'trainer' }>): Screen {
   const cost = trainPrice;
-  const can = g.party.members.map((c) => c.level < f.maxLevel && canTrain(c) && !isDown(c));
+  const can = g.party.members.map((c) => canTrainAt(c, f.maxLevel) && !isDown(c));
   const names = g.party.members.map((c, i) => `${c.name}  L${c.level}\t${can[i] ? `train ${cost(c)}g` : c.level >= f.maxLevel ? 'beyond me' : `needs ${xpForLevel(c.level + 1) - c.xp} xp`}`);
   return new ChoiceScreen(`"${f.name}. I train to level ${f.maxLevel}. Who is ready?" (${g.party.gold} gold.)`, [...names, 'Leave'], (i) => {
     if (i < 0 || i === names.length) return;
