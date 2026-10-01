@@ -1732,3 +1732,12 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   pick; the woods' figures moved within their floors). Landing check on 915b956 (main in): ALL OK (7
   owed), SMOKE OK, "Nothing new."; CI green. Merged as 5baf5b6; main's tree is the tested tree
   (56addcc). #316 closes. The J5 session told to merge 5baf5b6.
+- 01:45: the delegate on #315 (J5): the look OK at 1.35 (the oldest of three oaks, its label clear;
+  already the game's tallest sprite); all eight choices taken; the towering Eldest filed apart. Filed
+  #318 ("Seat a tall boss in the fight: the Eldest at its drawn 2"; Feature, systems and area,
+  approved at the delegate's word, under #26; building blocked by #218, said on #218 by comment
+  5923056545) and #319 ("Check that no group in the Deepthorn is above eight"; Task, quality,
+  approved, under #26). #26's Work gains both. The decisions sent to the J5 session; #319 to the
+  #316 session; #318 to a new session, session_01TipPh9h71FQJh2y3FUd32r, on
+  `claude/m1-318-tall-boss` (the systems change now, the Eldest at 2 once #315 lands).
+- Left in Phase 1: #218 (#315's round), #47 (the pilot's E), #318, #319, and #311 (not approved).
