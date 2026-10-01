@@ -6,11 +6,13 @@
 // hide found from the gap in the herons, Passage Paid answered both ways, and the box's groups won.
 // Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty; the hermit
 // who counts the Rifts' lights; the hollow under the landing found from its pole-marks; and the
-// box's groups and its two Rifts' won at 11. Then back to the road and down it into Saltmouth's box
-// (C6, #176): the Saltings named at the seam, the land gate at the road's end, the smugglers' stair
-// found from the rope that hangs over it, and the quay's and the pans' groups won at the box's
-// floor. Then in at the gate to Saltmouth (#177) and out again: the band's gear bought, training to
-// 13 and a first prestige taken; and the boat to Wrackholm's landing and back.
+// box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6, #174):
+// the priestess at the dry door and her count; the far roof's door found from the count's pause;
+// and the box's groups won at 11. Then back to the road and down it into Saltmouth's box (C6, #176):
+// the Saltings named at the seam, the land gate at the road's end, the smugglers' stair found from
+// the rope that hangs over it, and the quay's and the pans' groups won at the box's floor. Then in
+// at the gate to Saltmouth (#177) and out again: the band's gear bought, training to 13 and a first
+// prestige taken; and the boat to Wrackholm's landing and back.
 // Then south into the pans (C7, #178): the Scarp across the south and its stair's fallen foot, the
 // sealed pan's hoard found from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
@@ -41,6 +43,8 @@ const RIFT = MAP_DEFS.find((d) => d.id === 'c5_rift')!;
 const C4 = MAP_DEFS.find((d) => d.id === 'delta_c4')!;
 const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
 const B5_COUNTER = B5.features!.find((f) => f.kind === 'npc') as Person;
+const B6 = MAP_DEFS.find((d) => d.id === 'delta_b6')!;
+const PRIESTESS = B6.features!.find((f) => f.kind === 'npc') as Person;
 const C6 = MAP_DEFS.find((d) => d.id === 'saltings_c6')!;
 const C7 = MAP_DEFS.find((d) => d.id === 'saltings_c7')!;
 const TOWN = MAP_DEFS.find((d) => d.id === 'saltmouth')!;
@@ -183,6 +187,29 @@ export const walkthrough: Walkthrough = (ok) => {
     walkThrough(w, 'delta_b5', x, y, f, id, 2);
     for (const g of MAP_DEFS.find((d) => d.id === id)!.encounters!) fight(w, `${id}:${g.id}`);
   }
+
+  // South off Stienwierde over the fen to the temples' roofs.
+  walkThrough(w, 'delta_b5', 16, 31, SOUTH, 'delta_b6', 2);
+
+  // The step: the priestess at the dry door, counting.
+  w.world.travel('delta_b6', PRIESTESS.x, PRIESTESS.y);
+  const number = meet(PRIESTESS, w.party, heard(w.world, PRIESTESS)).text;
+  ok(number.toLowerCase().includes('eleven'), 'at the temples\' dry door the priestess says the number');
+  see(w, 'delta_b6:b6_door');
+
+  // The secret: the count beside her and its pause, then the far roof's wall searched from its ledge.
+  w.world.travel('delta_b6', 17, 12);
+  ok(w.world.eventsHere().some((m) => m.includes('ten')), 'beside the priestess, her count of the doors');
+  w.world.travel('delta_b6', 8, 22, SOUTH);
+  let door = false;
+  for (let i = 0; i < 20 && !door; i++) door = w.world.search();
+  const porch = door ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(door && porch.every((r) => r.kind === 'moved'), 'searched from the far roof\'s ledge, a door in its wall opens, and can be walked into');
+  ok(w.world.used('b6_stair'), 'behind it, the stair down');
+  listen(w);
+
+  // The box's groups, each won at its floor.
+  for (const g of B6.encounters!) fight(w, `delta_b6:${g.id}`);
 
   // On down the road into Saltmouth's box: the fen gives way to the Saltings at the seam.
   w.world.travel('delta_c5', 26, 30, SOUTH);
