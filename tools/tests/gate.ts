@@ -68,6 +68,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   downs: ['mill:m_warden', 'berth:berth_captain'],
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
   deepthorn: ['deepthorn_j5:j5_eldest'],
+  wrackholm: ['smugglers_cove2:kh2_great_devilfish'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -94,6 +95,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // under a box dresses as one at its floor and wins as often: the gear past 10 is #18's. The groups
   // are at the line's standard size (tools/testmonster.ts).
   'wrackholm_e6: under': { whose: '#18', at: 1 },
+  'smugglers_cove: under': { whose: '#18', at: 1 },
   'Wrackholm: under': { whose: '#18', at: 1 },
   'eaves_i2: under': { whose: '#18', at: 1 },
   'eaves_j2: under': { whose: '#18', at: 1 },
