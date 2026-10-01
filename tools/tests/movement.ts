@@ -3,7 +3,7 @@
 // gates.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { World } from '../../src/game/world.ts';
+import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { LEGEND } from '../../src/game/map.ts';
 import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';
@@ -144,6 +144,53 @@ export function movement(): void {
   ok(drop.kind === 'blocked' && drop.reason === 'The ground falls away. There is no way down here.' && world.state.y === stood, `a step into the chasm is refused, and says so (${drop.kind === 'blocked' ? drop.reason : drop.kind})`);
   ok(glass.kind === 'blocked' && glass.reason === 'Something blocks the way.', `a glass tree blocks the way (${glass.kind === 'blocked' ? glass.reason : glass.kind})`);
   ok(acrossChasm === py - 3 && acrossGround === py - 2, `a group aware of the party does not step into the chasm, and across open ground comes on (${py - acrossChasm} and ${py - acrossGround} squares off)`);
+  // The map spells (DESIGN §7): Walk on Water bears a company with no swimmer over shallow water for
+  // its steps, Levitate floats it over the chasm and never leaves it there, and Waymark returns to a
+  // mark set outdoors. Laid on the Foreland and taken up.
+  {
+    world.travel('shelf', 16, 16, 0);
+    const sx = world.state.x, sy = world.state.y, strip = [1, 2, 3].map((d) => m.width * (sy - d) + sx), under = strip.map((i) => m.cells[i]);
+    const lay = (ch: string, n: number): void => strip.forEach((i, k) => { m.cells[i] = k < n ? { ...LEGEND[ch], ch } : under[k]; });
+    const maren = party.members.find((q) => q.race === 'tidefolk')!;
+    maren.race = 'human';
+    lay('~', 3);
+    world.travel('shelf', 16, 16, 0);
+    const wet = world.move('forward').kind;
+    world.bear('walk');
+    const waded = [1, 2, 3].map(() => world.move('forward').kind).join();
+    const left = world.state.walk;
+    world.state.walk = 1;
+    world.travel('shelf', 16, 16, 0);
+    const last = world.move('forward');
+    world.bear('walk'); world.endWalk();
+    const fought = world.state.walk;
+    maren.race = 'tidefolk';
+    ok(wet === 'blocked' && waded === 'moved,moved,moved' && left === WALK_STEPS - 3, `with no swimmer the water is refused; Walk on Water bears the company over it, a step at a time (${wet}; ${waded}; ${left} left)`);
+    ok(last.kind === 'moved' && last.messages.includes(WALK_ENDS) && fought === undefined, 'it says so when its steps run out, and a fight ends it');
+    lay('v', 2);
+    world.travel('shelf', 16, 16, 0);
+    const fall = world.move('forward');
+    world.bear('float');
+    const floated = [1, 2, 3].map(() => world.move('forward').kind).join(), landed = world.state.y === sy - 3;
+    world.travel('shelf', 16, 16, 0); world.state.float = 2;
+    const first = world.move('forward').kind, second = world.move('forward');
+    world.state.float = 1;
+    const ends = world.move('back');
+    ok(fall.kind === 'blocked' && floated === 'moved,moved,moved' && landed, `the chasm is refused, and Levitate floats the company over it (${floated})`);
+    ok(first === 'moved' && second.kind === 'blocked' && second.reason === FLOAT_FAILS && ends.kind === 'moved' && ends.messages.includes(FLOAT_ENDS) && world.state.float === 0, `Levitate never leaves the company over the drop when it fails, and says when it ends (${second.kind === 'blocked' ? second.reason : second.kind})`);
+    lay(',', 0);
+    world.travel('shelf', 16, 16, 0);
+    const sand = m.width * sy + sx, ground = m.cells[sand];
+    m.cells[sand] = { ...LEGEND[';'], ch: ';' };
+    const tidal = world.canMark();
+    m.cells[sand] = ground;
+    const set = world.setMark(), mark = { ...world.state.mark! };
+    world.travel('harrow', 7, 10, 0);
+    const indoors = world.canMark() || world.setMark();
+    const back = world.toMark();
+    ok(!tidal && set && !indoors && back && world.state.mapId === mark.mapId && world.state.x === mark.x && world.state.y === mark.y && world.state.mark?.x === mark.x, 'Waymark sets its mark outdoors, not on tidal ground nor in a town, and returns to it from anywhere');
+    delete world.state.mark;
+  }
   // Tidal ground: walked at low water; at high water refused with its own line, unless someone
   // swims, and a group keeps off it. Laid on the Foreland and taken up; the clock set to each tide.
   {

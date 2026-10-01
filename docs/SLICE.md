@@ -83,7 +83,9 @@ DESIGN.md first for the why.
   the resolver's: the blows, the knight's banner, the ranger's Marksman and weatherproof shots, the
   thief's growing sneak attack and its round out of sight, the Ironhide's rage and -30, the monk
   first and from the back row, Holy Strike risen, the bard's song and its ward against sleep and
-  paralysis, and the cleric's last rite. A rank is recorded (`spellRank`); what it does is #20's.
+  paralysis, and the cleric's last rite. A caster's or a hybrid's prestiges are its spell ranks
+  (`spellRank`, `rankMult`, #20): 15% a rank on its damage dice and its mending, half that for a
+  hybrid, and the Magus's spells pass a resistance.
   No trainer is placed yet. Each placed trainer makes a seeking quest for each member of the class
   (`game/seeking.ts`), keyed by its slot: begun at the prestige's level with the one before (a quest
   condition on a member's class, level and prestiges, `member`), done once taken, or once the third's
@@ -400,7 +402,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
   millisecond a frame.  ## Stubbed or absent
-- No prestiges and no spells past tier 5; no Master trainers; no secondary skills yet beyond race
+- No hall sells tier 6 or 7 yet (Lantern Watch, #201, sells 6); no Master trainers; no secondary skills yet beyond race
   innate ones. The Meridian journal opens The Lost Expedition in the quest log, but nothing reads it
   yet and no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
@@ -551,7 +553,7 @@ pinned, so the same tree makes the same PNG; an unknown flag or id, a flag given
 no value is refused. `--changed <base>` draws what changed since the base (tools/changed.ts), which
 is how the checks attach a sheet to every pull request that changes a map, a monster or an
 interior; with nothing changed it says so and writes none.
-`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--ranks] [--tiers]`
+`node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--rank-step 0.25]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
 seven an encounter at its level should allow (docs/MONSTERS.md §4.4). `--spell-cap` tries a world

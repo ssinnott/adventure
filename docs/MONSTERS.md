@@ -338,9 +338,11 @@ calibration:
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
 - It is made at every level to 10 and every fourth level to 32, 300 seeds a point (200 for the
-  levels past 10, made again with #19), with the levels between interpolated. Past 10 the company runs on play's rules: its spells stop growing at 10
-  (#159), and it takes its prestiges at 11, 19 and 27 with their hit points, spell points and perks
-  (#19). No new tier, spell rank or gear comes until #20 and #18 bring them and the harness re-runs.
+  levels past 10, made again with #20), with the levels between interpolated. Past 10 the company
+  runs on play's rules: its spells stop growing at 10 (#159), it takes its prestiges at 11, 19 and
+  27 with their hit points, spell points and perks (#19), and with them its spell ranks, and it
+  learns tiers 6 and 7 at 15 and 23 (#20). No new gear comes until #18 brings it and the harness
+  re-runs.
 
 Hit points / average damage a hit, by role and level:
 
@@ -356,12 +358,12 @@ Hit points / average damage a hit, by role and level:
 | 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 70 / 9 | 57 / 10 | 70 / 11 | 88 / 13 | 119 / 13 | 311 / 37.5 |
 | 9 | 50 / 9 | 73 / 7 | 73 / 8 | 72 / 8 | 81 / 9 | 69 / 9 | 83 / 10 | 102 / 14 | 136 / 14 | 350 / 41 |
 | 10 | 60 / 10 | 89 / 10 | 90 / 10 | 86 / 9 | 102 / 11.5 | 87 / 10 | 99 / 14 | 122 / 15 | 165 / 15.5 | 415 / 47 |
-| 12 | 104 / 6.5 | 131 / 11.5 | 132 / 12 | 138 / 10 | 184 / 12 | 124 / 12 | 179 / 14 | 228 / 15.5 | 284 / 17 | 540 / 59 |
-| 16 | 117 / 7 | 158 / 11 | 162 / 12 | 162 / 11.5 | 195 / 14 | 149 / 12 | 189 / 15 | 241 / 18.5 | 302 / 19.5 | 764 / 79 |
-| 20 | 133 / 8 | 189 / 12 | 189 / 13 | 212 / 12 | 243 / 16 | 185 / 12 | 217 / 18.5 | 277 / 22 | 365 / 21 | 887 / 88 |
-| 24 | 146 / 9 | 195 / 14.5 | 195 / 15 | 244 / 14 | 278 / 17.5 | 190 / 14 | 252 / 16.5 | 300 / 22 | 375 / 22 | 1029 / 99 |
-| 28 | 184 / 10 | 272 / 16 | 274 / 17 | 331 / 17.5 | 385 / 24 | 269 / 15 | 332 / 22 | 458 / 24 | 527 / 28.5 | 1103 / 103 |
-| 32 | 196 / 11.5 | 280 / 18 | 283 / 19 | 366 / 18 | 428 / 26.5 | 274 / 16.5 | 375 / 22 | 503 / 25 | 583 / 29 | 1379 / 127.5 |
+| 12 | 113 / 6.5 | 137 / 11.5 | 144 / 13 | 143 / 10 | 173 / 14 | 128 / 12 | 177 / 15 | 232 / 17 | 267 / 19 | 540 / 59 |
+| 16 | 119 / 10 | 173 / 11.5 | 169 / 12 | 177 / 11.5 | 202 / 15 | 158 / 12 | 200 / 15.5 | 274 / 17.5 | 315 / 20 | 821 / 84.5 |
+| 20 | 170 / 8 | 227 / 12 | 223 / 13 | 248 / 12 | 277 / 17 | 186 / 15 | 242 / 19 | 329 / 21 | 404 / 21 | 974 / 96 |
+| 24 | 188 / 9 | 233 / 14.5 | 230 / 15 | 255 / 15 | 300 / 19.5 | 194 / 16.5 | 275 / 18.5 | 337 / 23 | 414 / 23 | 1160 / 111 |
+| 28 | 210 / 17 | 343 / 16 | 338 / 17 | 371 / 19.5 | 435 / 25.5 | 254 / 24 | 391 / 24 | 503 / 27.5 | 562 / 33 | 1315 / 123 |
+| 32 | 236 / 17 | 360 / 18 | 354 / 19 | 410 / 21 | 483 / 27.5 | 263 / 27 | 450 / 23 | 544 / 28.5 | 621 / 34 | 1666 / 153.5 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -445,7 +447,7 @@ What it shows:
   | stop at 10 | a bonus every two levels | a fifth at most (fodder up to a third) | 5–15% |
   | stop at 10 | a blow at 11 and 29 | a tenth at most, 8% past 12 | 12% at 12, then 4% at most |
   | stop at 10 | a blow at 11 and 29, and a bonus | a sixth at most (brutes 23% at 20) | 3–10% |
-  | stop at 10 | the prestiges, ranks of 15% and tiers 6 and 7 | a tenth at most past 12 (brutes 16% at 12), controllers 12–13% at 24 and 32 | 1–8% |
+  | stop at 10 | the prestiges, ranks of 15% and tiers 6 and 7 | a tenth at most past 12 (brutes 17% at 12), controllers 12% at 24 | 1–9% |
 
   While spells keep growing, none of them keeps the days safe. Past 16 or 20 the bad days are, as
   today, fights broken off once the spells are spent and deaths where monsters hit harder to end
@@ -471,8 +473,8 @@ What it shows:
 
   The prestiges fill the stretch. Weighed first as a what-if, they are play's since #19: every
   company takes the three of DESIGN.md §5 at 11, 19 and 27, with their perks, hit points and spell
-  points. `--ranks` adds spell ranks on spells stopped at 10 until #20 builds play's; `--tiers` adds stand-ins for the damage spells of
-  tiers 6 and 7 at 15 and 23 (DESIGN.md §7). Calibrated on them, monsters carry 2.5 to 5 times the
+  points, and since #20 their spell ranks on spells stopped at 10 and tiers 6 and 7 at 15 and 23
+  (DESIGN.md §7), first weighed here as stand-ins. Calibrated on them, monsters carry 2.5 to 5 times the
   line's hit points and hit on it or up to 1.8 times as hard, in fights of three to eight rounds, and
   the points the calibration must hold at the level under's fall from 22 to 6: no stretch is left
   where the company gains nothing. The rank's step decides the rest. At 15% a rank, every role but
@@ -483,15 +485,22 @@ What it shows:
   with them, none. Controllers, which paralyse, stay a few points over at 24 and 32 against a bot that
   never cures and a company with no bard, whose second prestige stops paralysis; the bot learns to
   cure before their numbers move (#18).
-- **On play's rules, with the prestiges, the tables past 10 are made again (#19).** With spells
-  stopped at 10 and the prestiges taken at 11, 19 and 27, a company left on the tables made before
-  them (#159) fought 16.5 standard soldier encounters to a rest at 24, against the 10 asked. Made
-  again, monsters carry 3.3 to 4.9 times the line's hit points at 12 and 2.7 to 4.5 at 32 (the boss
-  3.9 throughout), hitting on it or up to 1.7 times as hard, in fights of four to eight rounds. Hit
-  points are held at the level under's for 7 of the 60 points. A tenth of the days or fewer end badly
-  for every role but two: brutes 13% at 12, where the first prestige is new, and controllers 13% at
-  32, against a bot that never cures. Spell ranks and the new tiers (#20) come next, and the tables
-  are made again with them.
+- **On play's rules, with the prestiges, the tables past 10 are made again (#19, #20).** With spells
+  stopped at 10 and the prestiges taken at 11, 19 and 27 (#19), a company left on the tables made
+  before them (#159) fought 16.5 standard soldier encounters to a rest at 24, against the 10 asked.
+  Made again with the prestiges alone, monsters carried 3.3 to 4.9 times the line's hit points at 12
+  and 2.7 to 4.5 at 32. With the spell ranks and tiers 6 and 7 (#20), made again: 3.2 to 4.7 times at
+  12 and 2.6 to 5.1 at 32 (the boss 3.9 at 12 and 4.8 at 32). Every level from 12 to 32 moved: most
+  roles carry a fifth to over a quarter more from 20 (fodder 28 and 29% more at 20 and 24, the
+  soldier 3.84 at 28 where it had 3.11), the controllers a little less at 28 and 32, and where hit
+  points could not carry the day damage rose instead (the controllers' blow 1.79 times the line's
+  at 32 where it was 1.10, fodder's 1.69 at 28 where it was 1.0). They hit on the line or up to 1.8
+  times as hard, in fights of four to eight rounds. Hit points are held at the level under's
+  for 6 of the 60 points. A tenth of the days or fewer end badly for every role but two: brutes 17%
+  at 12, where the first prestige is new and tier 6 not yet come, and controllers 12% at 24, against
+  a bot that never cures. Ranks of nothing in their place would ask 5 to 15% fewer hit points and
+  leave the controllers 18% at 24: the ranks are growth the monsters answer, and the days are no
+  worse for them.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
@@ -500,8 +509,8 @@ of that level, each on its own and then all of them dealt in a new order. `--sta
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
-blows as it levelled past it; `--ranks` (with `--rank-step` and `--rank-cost`) as if its prestiges
-ranked its spells, and `--tiers` as if tiers 6 and 7 came. They combine, and play has none of them; `--calibrate` under them says what
+blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
+They combine, and play has none of them; `--calibrate` under them says what
 share of days end badly at each point it makes, and writes nothing.
 
 ---

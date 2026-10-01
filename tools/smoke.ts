@@ -981,6 +981,55 @@ const hearth = await page.evaluate(async () => {
   w.party.flags = flags; w.state.minutes = minutes; w.cached = null; w.travel(place.map, place.x, place.y, place.f);
   return { south, north, home, steadier, plain };
 });
+
+// Lampglass in a fight: Cast, the spell, then the menu asks against what, and the pick is cast (#20).
+const glass = await page.evaluate(() => {
+  const g = (window as any).__game.game;
+  while (g.screens.length > 1) g.pop();
+  const maren = g.party.members[4];
+  g.world.travel('shelf', 16, 4, 2);
+  maren.spells.push('lampglass'); maren.sp = maren.maxSp = 99;
+  for (const c of g.party.members) { c.hp = c.maxHp = 999; c.conditions = []; }
+  g.fight(['road_rats']);
+  const scr = g.top, s = scr.state;
+  let asked = '';
+  for (let guard = 0; guard < 300 && s.outcome === 'ongoing' && !s.glass; guard++) {
+    scr.update(g, null);
+    const who = s.order[s.turn];
+    if (!who || who.side === 'monster') { scr.update(g, 'interact'); continue; }
+    if (g.party.members[who.i] !== maren) { scr.update(g, 'n4'); continue; }
+    scr.update(g, 'n2');
+    scr.sub = maren.spells.indexOf('lampglass');
+    scr.update(g, 'interact');
+    asked = scr.mode;
+    scr.update(g, 'down'); scr.update(g, 'interact');
+  }
+  const out = { asked, element: s.glass?.element ?? '', line: s.log.find((l: string) => l.includes('Lampglass')) ?? '' };
+  while (g.screens.length > 1) g.pop();
+  return out;
+});
+
+// Waymark with a mark set: the spell asks "Return to the mark" or "Set it here", and the first goes back (#20).
+const mark = await page.evaluate(async () => {
+  const S = await import('/src/ui/screens.ts' as string), P = await import('/src/game/spells.ts' as string);
+  const g = (window as any).__game.game, w = g.world, cassian = g.party.members[5];
+  while (g.screens.length > 1) g.pop();
+  w.travel('shelf', 16, 6, 0);
+  const set = w.setMark(), at = { ...w.state.mark };
+  w.travel('shelf', 16, 12, 0);
+  cassian.spells.push('waymark'); cassian.sp = cassian.maxSp = 99; cassian.conditions = [];
+  g.push(new S.SpellScreen('explore'));
+  g.top.update(g, 'n6');
+  g.top.sel = cassian.spells.filter((id: string) => P.spell(id).context !== 'combat').indexOf('waymark');
+  g.top.update(g, 'interact');
+  const asked = { screen: g.top.constructor.name, options: g.top.options ?? [] };
+  g.top.update(g, 'interact');
+  const back = w.state.x === at.x && w.state.y === at.y;
+  delete w.state.mark;
+  while (g.screens.length > 1) g.pop();
+  return { set, asked, back };
+});
+
 await browser.close();
 server.close();
 
@@ -995,6 +1044,8 @@ ok(gameSeed === SEED, `the new game starts from the pinned seed (${gameSeed}, we
 ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
+ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
+ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(ogreView === 'ogre,brigand_archer,brigand', `before the fight the view draws the ogre's band as each of its kinds (${ogreView})`);

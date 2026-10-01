@@ -1,6 +1,6 @@
 // The combat harness and its test monster (docs/MONSTERS.md §4.4).
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className } from '../../src/game/party.ts';
+import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import { gateCompany } from '../gate.ts';
@@ -36,15 +36,13 @@ export function harness(): void {
   const perks = companyAt(24, 37).members.map((m) => edgeOf(m, 1));
   RULES.levelBonus = undefined;
   ok(blows.join() === '1,2,2,3' && traits[5].blows === 1 && traits[3].damage === 14 && later === 0 && perks.every((e) => e.damage === 7 && e.ac === 7) && edgeOf(companyAt(24, 37).members[0], 1).blows === 1, `with --level-traits the knight strikes once more a turn with each promotion (${blows.join(', ')} blows at 10, 11, 28 and 29) and at 24 a sneak attack adds 14 in the first round only; with --level-bonus every member gains 7 at 24; without, none`);
-  // The prestiges are play's: every company takes them at 11, 19 and 27, with their blows. Ranks are
-  // still a what-if (--ranks) until #20 builds play's: Meteor Swarm stops at 10 dice and widens at rank 1.
+  // The prestiges are play's: every company takes them at 11, 19 and 27, with their blows, and with
+  // them its spell ranks: a caster's spells 15% a rank, a hybrid's half that, a fighter's none.
   const taken = [10, 11, 19, 27].map((l) => companyAt(l, 37).members[0]), blowsAt = taken.map(blowsOf);
-  const unranked = companyAt(12, 37).members[5].spells.includes('meteor');
-  RULES.ranks = true; RULES.spellsGrowTo = 10;
-  const meteor12 = spell(companyAt(12, 37).members[5].spells.find((id) => id.startsWith('meteor@'))!);
-  RULES.ranks = undefined; RULES.spellsGrowTo = undefined;
-  ok(taken.map((c) => c.prestige ?? 0).join() === '0,1,2,3' && blowsAt.join() === '1,2,2,3' && className(taken[3]) === 'Knight Paramount' && unranked && spellDice(meteor12, 12, 10) === 10 && (meteor12.sides ?? 0) > 10,
-    `the company takes its prestiges at 11, 19 and 27 (the knight a ${className(taken[3])} at 27, striking ${blowsAt.join(', ')} times at 10, 11, 19 and 27); with --ranks the sorcerer's Meteor Swarm stops at 10 dice and widens them at rank 1, and without, its spells are unranked`);
+  const at12 = companyAt(12, 37), at28 = companyAt(28, 37);
+  const ranks = [at12.members[5], at28.members[5], at28.members[1], at28.members[0], companyAt(10, 37).members[5]].map((c) => rankMult(c).toFixed(3));
+  ok(taken.map((c) => c.prestige ?? 0).join() === '0,1,2,3' && blowsAt.join() === '1,2,2,3' && className(taken[3]) === 'Knight Paramount' && ranks.join() === '1.150,1.450,1.225,1.000,1.000',
+    `the company takes its prestiges at 11, 19 and 27 (the knight a ${className(taken[3])} at 27, striking ${blowsAt.join(', ')} times at 10, 11, 19 and 27), and with them the sorcerer's spells gain 15% at the first and 45% by the third, the paladin's half that and the knight's none (${ranks.join(', ')})`);
   // The curve's gear, as a what-if: past level 10 weapons and armour keep growing; play has none of it.
   const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
   const flat = [knight(companyAt(10, 37)), knight(companyAt(20, 37))];
