@@ -428,7 +428,7 @@ features; the pay shared out over the area (§8).
   and one by night; the dark lamp down the road, and by it a young sister of the Watch with lines of
   her own and the hint; her quest, 31, and where she moves are #201's and #205's. The knoll is hills
   in the north-west, its path down to the road; the ash on its crown, and north of it, under the
-  search, a pit with the letter, from a Reader at Helmstow, written last winter and naming neither
+  search, a pit with the letter, from a Reader at Helmstow, written before the company came and naming neither
   the seal nor the Regent, and a chest: the Lantern's Staff +1 (`lanterns_staff`), the monk's and the
   druid's step at 16 (#406), with 250 gold. Nothing walked or waded reaches the pit but through the
   ash. The plan's groups paid 1,370 and gave 9.6 fights to a rest at 15, over the aim: the lamp's
