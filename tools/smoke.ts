@@ -192,7 +192,18 @@ const inn = await (async () => {
     while (g.screens.length > 1) g.pop();
     return { screens: out, options: under };
   });
-  return { menu, words, question, said, back, backColours, traded, left, hob, eel };
+  // A tavern may be a guild's hall (#417): the Gilded Eel made the Wardens' for the run lists their
+  // work after the talk of the room and before its people.
+  const hall = await page.evaluate(() => {
+    const g = (window as any).__game.game, eel = g.world.map.features.find((f: any) => f.kind === 'npc' && f.interior === 'gilded_eel');
+    eel.hall = 'wardens';
+    g.interact(eel);
+    const under = g.screens[g.screens.length - 2]?.options ?? [];
+    while (g.screens.length > 1) g.pop();
+    delete eel.hall;
+    return under;
+  });
+  return { menu, words, question, said, back, backColours, traded, left, hob, eel, hall };
 })();
 // A crossing (#164, game/passage.ts): a coachman put in Helmstow's street at run time sells a coach
 // to Thornhold. Faced and asked, his words close onto the menu of crossings, then the terms; paying
@@ -1061,6 +1072,7 @@ ok(inn.back.screen === 'ChoiceScreen' && inn.back.options.join() === 'A room and
 ok(inn.traded === 'ExploreScreen,InteriorScreen,ChoiceScreen' && inn.left === 'ExploreScreen', `with him gone, the trade opens once, and Esc leaves (${inn.traded}, then ${inn.left})`);
 ok(inn.hob.join() === 'A room and rations,Talk to Hob,Leave', `the real Hob, by the Hearthlight's fire from a new game, is on its first menu (${inn.hob.join(', ')})`);
 ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Talk to Maud,Leave', `the Gilded Eel, with Ebba and Maud in it from a new game, says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
+ok(inn.hall.join() === 'The talk of the room,Work for the Wardens,Talk to Ebba,Talk to Maud,Leave', `a tavern that is a hall lists the guild's work after the talk of the room and before its people (${inn.hall.join(', ')})`);
 ok(roomLog.includes('An empty chair by the fire.'), `an event on the doorway, said by the step in, shows in the room's log (${JSON.stringify(roomLog)})`);
 ok(outside.screens === 'ExploreScreen' && outside.x === 4 && outside.y === 5 && outside.facing === 0, `leaving the inn puts the party back in the street, facing the door (${JSON.stringify(outside)})`);
 ok(coach.words.text === '"Thornhold, at dawn."' && coach.menu.options.join('|') === 'Thornhold\t100g\t1 day|Not now' && /leaves at 06:00 (tomorrow )?and lands the next day at 18:00/.test(coach.terms.text) && coach.terms.options[0] === 'Pay the fare (100 gold)',

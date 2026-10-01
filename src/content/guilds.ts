@@ -1,6 +1,7 @@
 // The guilds (DESIGN §8): who they are, where their halls are and the names of their ranks. A
-// company may join any or all of them; a hall is a business with `hall` set to the guild's id. Each
-// guild's quests are an area's, in src/content/areas/<area>/guilds.ts; the rules are game/guilds.ts.
+// company may join any or all of them; a hall is a business, or a tavern, with `hall` set to the
+// guild's id. Each guild's quests are an area's, in src/content/areas/<area>/guilds.ts; the rules
+// are game/guilds.ts.
 // Membership and rank are worked out from the quests' done flags; a rank once reached is kept by
 // its own flag, so that content added later never lowers it.
 import type { GuildQuest } from '../game/guilds.ts';
