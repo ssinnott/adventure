@@ -280,7 +280,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   fen_eel: longbodies.draw,
   fen_toad: toads.draw,
   devilfish: devilfish.draw, great_devilfish: devilfish.draw,
-  pine_bear: bears.draw,
+  pine_bear: bears.draw, glass_bear: bears.draw,
   lantern_moth: moths.draw,
 };
 

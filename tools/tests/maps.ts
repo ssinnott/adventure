@@ -28,6 +28,7 @@ const UNPLACED: Record<string, string> = {
   glass_spider: '#197',
   sunder_hound: '#196',
   lantern_moth: '#195',
+  glass_bear: '#199',
 };
 
 /**
