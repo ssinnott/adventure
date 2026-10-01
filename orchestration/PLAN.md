@@ -1726,3 +1726,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   My own look at the fight: the Eldest no taller than its two heartwoods, told by its split trunk and
   moss; at the tip the three overlap. The round sent to the J5 session; the look, the eight choices
   and "no check holds a group to eight" to a delegate, whose answer follows before it pushes.
+- 01:41: check-in; re-armed for 02:40. #317 (#316) opened from the #316 session.
+- 01:44: #317 (#316, smoke's blocks cleared) landed on my own review (tools/smoke.ts only: a clear
+  before the six paints read back; `DEAD_MIN` 2.5 → 1 between the clean 1.7% and 0%, the delegate's
+  pick; the woods' figures moved within their floors). Landing check on 915b956 (main in): ALL OK (7
+  owed), SMOKE OK, "Nothing new."; CI green. Merged as 5baf5b6; main's tree is the tested tree
+  (56addcc). #316 closes. The J5 session told to merge 5baf5b6.
