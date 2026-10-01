@@ -97,7 +97,7 @@ export function labels(): void {
   fall('ogre', 1); fall('brigand', 2);
   ok(read(ogre) === `1 ${A.name}, 1 ${B.name}`, `and drops a kind when its last one falls (${read(ogre)})`);
 
-  // The Eldest and its heartwoods: a lone proper name is not counted, and the want above follows,
+  // The Eldest and its heartwoods, at Penspern's tip: a lone proper name is not counted, and the want above follows,
   // so a count put back on it fails both. Drawn at 2, it is a tall boss: whole, with its heartwoods
   // or alone, it stands under the labels and over the log, and taller than they are.
   const eldest = seat([['eldest', 'heartwood', 'heartwood']]), { eldest: E, heartwood: T } = MONSTERS, eldestFaults = labelFaults(eldest);
