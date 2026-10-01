@@ -1632,3 +1632,7 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   lines, main and #313). Merged onto 9b51988 it conflicts in `UNPLACED` (main still owes the Black
   Dog and the Barrow Wolf to #69; D2 places them): the #68 session told to merge main, take its own
   line and push. The J4 and I5 sessions told #304 has landed.
+- 00:42: check-in. #314 (#312, the lighthouse, the owner's ask), from the #45 session, opened:
+  `MapDef.landmarks`, a lighthouse billboard drawn far (to 40 squares) and lit by night once the
+  oil is in. Subscribed; its review launched (the second reviewer, with #310's). Check-in re-armed
+  for 01:40.
