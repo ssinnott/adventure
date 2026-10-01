@@ -5,7 +5,7 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'thornmark', name: 'Thornmark', area: 'thornmark', maps: [{ map: 'thornmark', at: [232, 30] }] },
-  { id: 'deepthorn', name: 'The Deepthorn', area: 'thornmark', band: [8, 10], maps: [{ map: 'deepthorn_h3', at: [232, 62] }, { map: 'deepthorn_i3', at: [264, 62] }, { map: 'deepthorn_i4', at: [264, 94] }, { map: 'deepthorn_j4', at: [296, 94] }], seeds: [[262, 80], [250, 70], [284, 128]], label: [270, 98] },
+  { id: 'deepthorn', name: 'The Deepthorn', area: 'thornmark', band: [8, 10], maps: [{ map: 'deepthorn_h3', at: [232, 62] }, { map: 'deepthorn_i3', at: [264, 62] }, { map: 'deepthorn_i4', at: [264, 94] }, { map: 'deepthorn_i5', at: [264, 126] }, { map: 'deepthorn_j4', at: [296, 94] }], seeds: [[262, 80], [250, 70], [284, 128]], label: [270, 98] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [

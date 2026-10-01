@@ -104,6 +104,11 @@
         "i4_shrine",
         "i4_statue",
         "i4_treaty",
+        "i5_boat",
+        "i5_groove",
+        "i5_hearth",
+        "i5_hollow",
+        "i5_roost",
         "j4_cairn",
         "j4_cleft",
         "j4_cleft_box",
@@ -196,6 +201,11 @@
         "i4_walkers_east",
         "i4_walkers_west",
         "i4_wolves",
+        "i5_brambles",
+        "i5_brood1",
+        "i5_brood2",
+        "i5_keepers",
+        "i5_rootwalkers",
         "j4_heartwood",
         "j4_owls",
         "j4_rootwalkers",
@@ -234,6 +244,7 @@
         "260,86",
         "276,77",
         "285,116",
+        "286,135",
         "308,112"
       ]
     },
@@ -432,6 +443,10 @@
     },
     "deepthorn_i4": {
       "at": "264,94",
+      "size": "32x32"
+    },
+    "deepthorn_i5": {
+      "at": "264,126",
       "size": "32x32"
     },
     "deepthorn_j4": {
