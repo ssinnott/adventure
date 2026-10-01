@@ -222,6 +222,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(trainers.length === 2 && trainers.some((f) => f.teaches!.cls === 'thief' && f.teaches!.prestige === 2) && trainers.some((f) => f.teaches!.cls === 'monk' && f.teaches!.prestige === 2), 'Rietum\'s box teaches the Thief\'s and the Monk\'s second prestiges');
   const road = C3.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
   ok(trainers.every((f) => road.every((r) => Math.abs(r.x - f.x) + Math.abs(r.y - f.y) > 10)), 'each is more than ten squares off the road');
+  ok(trainers.every((f) => C3.encounters!.every((g) => Math.abs(g.x - f.x) + Math.abs(g.y - f.y) > 10)), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');
   const later = newWalk(ok).party;
   // The premade six have no monk; one joins for the look ahead.
   if (!later.members.some((c) => c.cls === 'monk')) later.members[later.members.length - 1] = createCharacter('Sjoerd', 'human', 'monk', {}, makeRng(19));
@@ -241,7 +242,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(after !== before, `the old smuggler knows his sword in the company's hands (${after.slice(0, 60)}...)`);
 
   // The box's groups, each won at its floor: the herons, the quay's crew by day, the brinelings at
-  // the child's window by night and the bull toad in the drain under the Edge.
+  // the child's window by night and the bull toad in the drain at the east fields' end.
   for (const g of C3.encounters!) fight(w, `upperwater_c3:${g.id}`);
 
   // West off the Delta road over the fen, onto the duckboards of B5.

@@ -138,7 +138,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   side, closed as mountain with the Downs' strip above it, with Sjonghol, a cleft in its foot, and
   Douwe at its mouth, the Monk's second. Four herons in the stubble by the track, a barge master and
   three bargemen on the quay by day, four brinelings at the child's window by night and a bull toad
-  alone in a flooded drain under the Edge. The secret is the old smuggler's cache under the quay, a
+  alone in a flooded drain at the east fields' end. The secret is the old smuggler's cache under the quay, a
   Chain Mail +1 and his sword, Auke's Count, with the ladder's Stiletto +1 and Tidefolk Robe +1; the hint
   is one stone in the quay's face scrubbed clean, the water glowing under it by night. The gate
   holds at 10, at 7.2 fights to a rest.
@@ -369,7 +369,7 @@ settled in its issue, and what the pilot teaches changes them.
   are four, a company at one hour meeting three: herons by the track, the nearest; the quay's crew
   by day, which breaks when its master falls; brinelings at Nynke's window by night, with no `until`
   until the Stone home (#191) or The Night-Light (#56's 21) gives one; and a bull toad alone in the
-  drain under the Edge, the hardest, as on C4 and C5. Nynke stands and gives the hint and no more:
+  drain at the east fields' end, the hardest, as on C4 and C5. Nynke stands and gives the hint and no more:
   21 is not yet approved. Wytske's words set `c3_saw_stone` for the chapter (#180). The cache is the
   old bargeman's from his Compact days, closed by deep water and walls on every side but its secret
   door, and he lets the company keep his sword. As measured, the box pays about 1,010 xp a member at
@@ -930,9 +930,8 @@ Decided by delegate for #172, each the owner's to overturn:
 1. **The quay stands on a cut, a diep, with no river in the box:** deep water from a sluice-house
    on the west edge at 0,12 to the quay under the mound. The sluice-house is a building square, so
    the edge check holds with no change to the atlas, and deep water carries the barges and keeps a
-   swimmer off the cache. The diep's way on through B3 to the Long Water is owed to #179. The eel is
-   said, not fought, as on C4 and C6, and the brief's ford goes with the river, so the shrine stands
-   by the sluice.
+   swimmer off the cache. The diep's way on through B3 to the Long Water is owed to #179. With no
+   river the brief's eel and ford go, and the shrine stands by the sluice.
 2. **The Downs' strip above the cliff is closed as mountain with the Edge,** as C7 closed the
    Glasswold's squares (#178's 3). §1 says the only way over the Edge is the Salt Road in D4, and a
    band 4–5 strip left open from a band 10–11 box would be a back way and an empty walk.
@@ -949,10 +948,11 @@ Decided by delegate for #172, each the owner's to overturn:
    changes.
 6. **Four groups, each always there or keyed to its hour:** four herons in the stubble beside the
    track nearest the way in, the barge master and three bargemen on the quay by day, four brinelings
-   at the child's window by night and one bull toad in a flooded drain under the Edge, the hardest at
-   12 alone with no averaging. A company at one hour meets three; both hours are counted, as on C6.
-   The toad sits apart from the smuggler's hut and from Sjonghol's mouth, so both stay relatively
-   safe (DESIGN §5).
+   at the child's window by night and one bull toad in a flooded drain at the east fields' end, the
+   hardest at 12 alone with no averaging. A company at one hour meets three; both hours are counted,
+   as on C6. The toad sits twelve squares from Sjonghol's mouth and further from the smuggler's hut,
+   so neither trainer's door is a fight's doorstep and both stay relatively safe (DESIGN §5; moved
+   from under the Edge, five squares from Douwe, on review).
 7. **One bull toad, not two:** the gate measures C3 at its floor of 10. Alone it is 9.0 fights to a
    rest there, inside the limit, and the box's mix is 7.2, inside the aim. Two toads were 2.1 at 10,
    under the limit of 4, and broke a fight off on 27% of days, though 5.8 at 11. One toad still meets

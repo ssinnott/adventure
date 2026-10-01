@@ -25,13 +25,13 @@ export const UPPERWATER_C3: MapDef = {
     'fffffffffffffffffffffff^,,,,MMMM',
     'ffffffffffffffffffffffff,,,,MMMM',
     'fffffffffffffffffffffffff,,,,M:M',
-    'ffffffffffffffffffffff~~~~,,,M:M',
+    'ffffffffffffffffffffffffff,,,M:M',
     'ffBffBffBffffffffffffffffff,,::M',
     'f::::::::::ffffffffffffffff,,,MM',
     'BWWWWWWWWWWffffffffffffffff,,,MM',
     'f::::::::S.Bfffffffffffffff,,,MM',
     'fBB:BB:B:BBffffffffffffffff,,,MM',
-    'f:::::::::fffffffffffffffff,,,MM',
+    'f:::::::::ffffffffffff~~~~f,,,MM',
     'fB:BB:BB:Bfffffffffffffffff,,,MM',
     'f::::::::ffffffffffffffffff,,,MM',
     'fBB:BfB==ffffffffffffffffff,,,,M',
@@ -101,8 +101,8 @@ export const UPPERWATER_C3: MapDef = {
     teaches: { cls: 'thief', prestige: 2, seek: 'Auke the old bargeman, at the silted staithe in Rietum\'s north fields, can make a Nightjar of a Tumbler.' } },
     { kind: 'event', x: 15, y: 12, id: 'c3_middle', once: true, text: 'The middle fields, the village\'s best, dry to the Edge. Their drains run east to one cut under the cliff, and the cut has backed up and spread.' },
     { kind: 'event', x: 21, y: 3, id: 'c3_hills', once: true, text: 'On the hills: the fields below in their ruled squares, Rietum a knot of thatch on its mound, and west past the willows the fen, glittering, and no sun on it.' },
-    // Under the Edge: the flooded drain, the grass and Sjonghol.
-    { kind: 'event', x: 21, y: 9, id: 'c3_flood', once: true, text: 'A drain under the Edge, flooded out over the grass and the mud round it churned, as if something the size of a cart had wallowed there and gone back in.' },
+    // Under the Edge: the flooded drain at the east fields' end, the grass and Sjonghol.
+    { kind: 'event', x: 21, y: 16, id: 'c3_flood', once: true, text: 'A drain at the fields\' east end, flooded out over the stubble and the mud round it churned, as if something the size of a cart had wallowed there and gone back in.' },
     { kind: 'event', x: 25, y: 5, id: 'c3_edge', once: true, text: 'The grass under the cliff, cropped short and no beast on it, with the rock going up grey over your heads and a kestrel\'s cry coming down.' },
     { kind: 'event', x: 28, y: 10, id: 'c3_sjonghol', once: true, text: 'Sjonghol, a cleft in the cliff\'s foot a man wide, and out of it a note, low and steady, that the wind makes. It is the one sound under the Edge.' },
     { kind: 'npc', x: 29, y: 10, name: 'Douwe, who sits in Sjonghol', lines: [
@@ -121,7 +121,7 @@ export const UPPERWATER_C3: MapDef = {
     { id: 'c3_quay', x: 3, y: 13, when: { hours: 'day' }, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman'], leader: 'barge_master', aware: 2, roams: false, respawn: 2880 },
     // Brinelings at the child's window by night, come to her shard's light.
     { id: 'c3_brine', x: 2, y: 15, when: { hours: 'night' }, monsters: ['brineling', 'brineling', 'brineling', 'brineling'], aware: 3, roams: false, respawn: 1440 },
-    // A bull toad alone in the flooded drain under the Edge: the hardest.
-    { id: 'c3_toad', x: 24, y: 10, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
+    // A bull toad alone in the flooded drain at the east fields' end, the hardest, well away from Sjonghol's mouth.
+    { id: 'c3_toad', x: 24, y: 16, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
   ],
 };
