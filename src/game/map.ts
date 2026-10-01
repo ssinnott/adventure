@@ -92,9 +92,10 @@ export type Feature =
    * `interior` makes the NPC a business you walk into (a tavern); a person in the street has none.
    * Where a person stands they stand only in their `when`, once `after` holds and until `until` does.
    * `passage` makes them a coachman or a boatman: once their words are said they sell the crossings
-   * listed (game/passage.ts).
+   * listed (game/passage.ts). `teaches` makes them a prestige's trainer: once their words are said
+   * they offer it (game/prestige.ts).
    */
-  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; passage?: readonly Passage[] } & Presence)
+  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; passage?: readonly Passage[]; teaches?: Teaching } & Presence)
   /** A tear into a Rift (game/rifts.ts): stepped on, it takes the party through, as an exit does. */
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number; tf?: Facing; label?: string }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
@@ -160,6 +161,22 @@ export interface NpcQuest {
   setFlag: string;
   /** What the NPC says once the quest is complete; of several hand-ins, the last done that has any. */
   after?: string[];
+}
+
+/**
+ * A prestige a person teaches (game/prestige.ts; DESIGN §5): the class's `prestige`th, to a member of
+ * `cls` at its level who has the one before, for its price; the third for the quest `done`, which
+ * must hold. Once their words are said, they offer it to the company's members of the class.
+ */
+export interface Teaching {
+  cls: import('./party.ts').ClassId;
+  prestige: 1 | 2 | 3;
+  /** The third prestige's quest, done: the trainer teaches it once this holds. */
+  done?: When;
+  /** The id of the quest the trainer asks for the third; once it begins, seeking them is done (game/seeking.ts). */
+  asks?: string;
+  /** The journal's line when a member is to seek them, in the voice of the place; the system's own when absent. */
+  seek?: string;
 }
 
 /**

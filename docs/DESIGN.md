@@ -197,7 +197,11 @@ When a character reaches a prestige's level, they get a quest to seek out its tr
 quest reveals where the trainer is. The trainer who teaches a character their 11th, 19th or 27th
 level names who to seek and where, and the quest log and the world map mark the place: one quest for
 each member. For the third, the quest names the place; the way there, and the quest that trainer then
-asks, are the hard part. The cap passed 10 with #159; nothing here is built until #19.
+asks, are the hard part. The cap passed 10 with #159. Built with #19: the titles, the hit points and
+spell points, every perk below but the sorcerer's and the druid's third, and a trainer, a person who
+teaches one class one prestige (`teaches`), and the seeking quests, made from the trainers placed,
+with the world map's marks. Still to build: the trainers in their places, the third prestiges'
+quests and the ranks' effect on spells (#20).
 
 **Levels.** The first at 11, the second at 19 and the third at 27, eight levels apart, with the new
 spell tiers between them at 15 and 23 (§7), so something new comes every four levels. Every
