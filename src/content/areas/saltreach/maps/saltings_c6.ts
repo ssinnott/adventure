@@ -1,8 +1,8 @@
 // The Saltings, box C6: Saltmouth's box. Core, band 11-12: the Salt Road's last reach down the
-// fen's east side from the Delta road (C5) to the town's gate at 30,19, the way into Saltmouth
-// (#177); the barge quay on the Long Water's last reach, with the Compact's warehouse across the
-// road; the shore path along the sea wall on tidal ground, under water at high tide; and the pans
-// beginning at the south edge. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md
+// fen's east side from the Delta road (C5) to the town's gate at 26,19, shut until #177 makes it
+// the way into Saltmouth; the barge quay on the Long Water's last reach, with the Compact's
+// warehouse across the road; the shore path along the sea wall on tidal ground, under water at high
+// tide; and the pans beginning at the south edge. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md
 // §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
@@ -38,7 +38,7 @@ export const SALTINGS_C6: MapDef = {
     '~wwwwwwwwwwwwwwwwwwwwwww~###S#__',
     '~wwwwwwwwwwwwwwwwwwwww:::###.#;;',
     '~~wwwwwwwwwwwwwwwwwwww:::###.#_~',
-    'w~~wwwwwwwwwwwwwwwwwwwwww###.D_~',
+    'w~~wwwwwwwwwwwwwwwwwwwwww###.#_~',
     'w~~~wwwwwwwwwwwwwwwwwwwww#####_~',
     'wwwwwwwwwwwwwwwwwwwwwwwww#####;~',
     'www~~~wwwwwwwwwwwwwwwwwww----ww;',
@@ -66,7 +66,7 @@ export const SALTINGS_C6: MapDef = {
     { kind: 'event', x: 26, y: 18, id: 'c6_gate', text: 'Saltmouth\'s gate, shut, the town loud behind it. In the lee of the wall a carter sleeps on his load.' },
     { kind: 'camp', x: 23, y: 20, name: 'Under the wall', text: 'Dry ground in the lee of the town wall, a fire ring of broken brick and the town\'s noise coming over the top all night.' },
     // The secret: the smugglers' stair in the sea wall's dry end, and its flight down to a sea door
-    // the tide covers. Its top, the harbour tavern's cellar, is #177's and #182's to open.
+    // barred from within. Its top, the harbour tavern's cellar, is #177's and #182's to open.
     { kind: 'event', x: 28, y: 18, id: 'c6_rope', text: 'A rope tied off at the top of the sea wall and hanging down the stones, nothing on it. The stones under it are bare of weed.' },
     { kind: 'event', x: 28, y: 20, id: 'c6_stair', once: true, text: 'A stair in the wall. Up, brandy-smelling dark and a door barred from the far side. Down, a door onto the shore, weed on it.' },
     { kind: 'chest', x: 28, y: 22, id: 'c6_stair_cache', gold: 150, items: ['potion_heal', 'potion_heal'] },

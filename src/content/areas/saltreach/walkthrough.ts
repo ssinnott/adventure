@@ -88,7 +88,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(opened && up.every((r) => r.kind === 'moved'), 'searched under the rope, the sea wall opens, and the stair inside can be walked into');
   ok(w.world.used('c6_stair'), 'inside the wall, the stair up to the barred door and down to the shore');
   const cache = C6.features!.find((f) => f.kind === 'chest' && f.id === 'c6_stair_cache');
-  ok(cache?.kind === 'chest' && C6.rows[cache.y][cache.x] === '.' && C6.rows[cache.y][cache.x + 1] === 'D', 'at the stair\'s foot, by the sea door, the smugglers\' cache');
+  ok(cache?.kind === 'chest' && C6.rows[cache.y][cache.x] === '.' && C6.rows[cache.y][cache.x + 1] === '#', 'at the stair\'s foot, by the barred sea door, the smugglers\' cache');
   listen(w);
 
   // The box's groups at its floor: the bargemen by day, the Hand's smugglers by night, the crabs.

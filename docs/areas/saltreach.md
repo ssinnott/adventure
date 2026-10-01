@@ -11,8 +11,8 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Three boxes of it are built, the Delta road and the shore under the Edge (#170) and Saltmouth's box
-(#176), and with the first two the area is listed. Its content is `src/content/areas/saltreach/` (maps, monsters, items, climate and
-its part of the world map; its chapter of the one quest, The Tide Stone, in `chapter.ts`, its side
+(#176), and with the first two the area is listed. Its content is `src/content/areas/saltreach/`
+(maps, monsters, items, climate and its part of the world map; its chapter of the one quest, The Tide Stone, in `chapter.ts`, its side
 quests in `quests.ts` and its guild quests in `guilds.ts` are still to come) and its businesses'
 rooms `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta`
 and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
@@ -126,8 +126,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   hut; the pans' first walls along the south edge. The groups are three: four bargemen and their
   master on the quay by day, two Wrack smugglers and two bowmen under the sea wall by night, and four
   salt crabs at the pans' edge. The secret is the smugglers' stair in the sea wall's dry end, its
-  cache at the foot by a sea door the tide covers, the hint the rope hanging over it with nothing on
-  it. The gate holds at 11, at 7.0 fights to a rest.
+  cache at the foot by a sea door barred from within, the hint the rope hanging over it with
+  nothing on it. The gate holds at 11, at 7.0 fights to a rest.
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
@@ -379,10 +379,10 @@ settled in its issue, and what the pilot teaches changes them.
 - **As built** (#176, 1 October): laid in the Saltings, all of it, so the crossing line falls at the
   C5/C6 seam. The gate is drawn shut in the wall at 26,19, the road's end at it, and #177 makes it
   the way in. The smugglers' stair opens from dry sand at the sea wall's north end, beside the gate:
-  inside, its cache at the foot of the flight, by a sea door onto the shore path, which the tide
-  covers twice a day; the stair's top, a door barred from the far side, is the harbour tavern's
-  cellar, owed to #177 and #182 as a way through. The tide may cut nothing off (`tidalFaults`), so
-  the cache is reached through the secret at either tide and the low-water way is the smugglers'.
+  inside, its cache at the foot of the flight, by a sea door onto the shore path, barred from
+  within; the stair's top, a door barred from the far side, is the harbour tavern's cellar, owed
+  to #177 and #182 as a way through. The tide may cut nothing off (`tidalFaults`), so the stair is
+  dry at either tide, and it is the shore path under it that the tide covers twice a day.
   The Scale Mail is a crate of the crews' cargo on the quay, not the warehouse's, which is the
   Compact's. The eel under the quay is said, not fought, and the groups are three: the bargemen by
   day, the Hand's smugglers by night and the crabs; the smugglers, at 12, are the box's hardest,
@@ -521,10 +521,11 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   temples 1,800, C6 1,030 as built (#176), Saltmouth 300, C7 700, and the four side quests about
   700 between them: 8,630 without the willows. A small Rift is budgeted at about 450 a member on top
   of its box's share: C5's, about 430, brings the sum to about 9,060, some 10% over the curve, for
-  kill-by-level to settle, and the boxes still to build keep to their shares or under; B5 builds its two Rifts inside its 1,000, trimming its own groups to match. The willows
-  add 800 when they are built. From here on a kill pays by level (#159), so a company that arrives
-  at 10 earns the shares as written and one that arrives at 13 earns less; the curve's row reports
-  what a clear falls short of as owed to #153 until the boxes exist.
+  kill-by-level to settle. The boxes still to build record what they pay as built, and the sum
+  here is restated with each. B5 builds its two Rifts inside its 1,000. The willows add 800 when
+  they are built. From here on a kill pays by level (#159), so a company that arrives at 10 earns
+  the shares as written and one that arrives at 13 earns less; the curve's row reports what a clear
+  falls short of as owed to #153 until the boxes exist.
 - **Gold.** Training six members from 10 to 12 costs about 5,040 with today's `trainPrice`, and the
   first prestiges about 1,000 each (#19); a clear should pay for the training at least, in chests,
   drops and the halls' pay, and the ladder's step at Saltmouth's armourer is priced within the
@@ -614,9 +615,10 @@ Decided by delegate for #176, each the owner's to overturn:
    Saltmouth and call 3 gives the tide to the Saltings' shore. The crossing line falls at the C5/C6
    seam, where the fen gives way to salt.
 2. **The stair's foot is a secret door on dry sand at the sea wall's north end,** beside the gate,
-   and the cache is at the flight's foot. Below it a sea door opens on the shore path, dry only at
-   low water: the smugglers' way in. The stair's top is the tavern's cellar, owed to #177 and #182.
-   It is the only way the secret holds something today without the tide cutting it off.
+   and the cache is at the flight's foot, by a sea door onto the shore path barred from within, so
+   the cache is had only through the secret. This inverts the brief: the stair is dry at either
+   tide, and the shore path under it is dry at low water only, since the tide may cut nothing off.
+   The stair's top is the tavern's cellar, owed to #177 and #182.
 3. **The groups stay three at about 1,030 xp a member,** and C6's share in §8 moves to match: fights
    to a rest is the gate, a share a proposal, and trimming to 700 would push the box out of aim or
    lose a group. A company at one hour meets the quay's day group or its night one, not both.
@@ -625,7 +627,9 @@ Decided by delegate for #176, each the owner's to overturn:
    Cartographers' first task surveys the Salt Road's milestones (#181), so the stones must agree.
    THE PASS 40 is dropped: the pass lies behind the Edge, off this road's reckoning.
 5. **Until #177 the gate is shut wall,** and the event before it says only what is seen: no flag, no
-   time and no entry in `locks.ts`. #177 makes 26,19 the way in and rewrites the event.
+   time and no entry in `locks.ts`. #177 makes 26,19 the way in and rewrites the event. The site
+   moves to the gate, 98,177; the plan's way in (`src/content/atlas.ts`, saltings to saltmouth) is
+   still at 102,178, a tidal square, and is #177's to move with the town's door.
 6. **The Scale Mail +1 is in a crate of the crews' cargo on the quay,** not the warehouse, which is
    the Compact's: call 4 frees only the crews' goods. The clerk's lines point at the crews.
 7. **The eel under the quay is said, not fought:** a lone fen eel is a trivial fight that only pushes
