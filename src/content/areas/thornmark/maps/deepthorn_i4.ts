@@ -47,9 +47,9 @@ export const DEEPTHORN_I4: MapDef = {
     'WWWWWW~~T,,,TTT,,,,,,TTTTTTT:TTT',
     'WWWWWWW~~,,,,,,,,,,,,TTTTTTT:TTT',
     'WWWWWWWW~~~TTTTTTTTT:::::::::TTT',
-    'WWWWWWWWW~~~~~TTTTTTTTTTTTTTTTTT',
-    'WWWWWWWWWWW~~~~~~TTTTTTTTTTTTTTT',
-    'WWWWWWWWWWWWWW~~~~TTTTTTTTTTTTTT',
+    'WWWWWWWWW~~~~~TTTTTTTTTT:TTTTTTT',
+    'WWWWWWWWWWW~~~~~~TTTTTTT:TTTTTTT',
+    'WWWWWWWWWWWWWW~~~~TTTTTT:TTTTTTT',
   ],
   features: [
     { kind: 'event', x: 12, y: 3, id: 'i4_gate', once: true, text: 'Henlys. Halls grown into oaks wider than houses, and brambles standing in the shut gate like a guard.' },
