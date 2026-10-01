@@ -79,6 +79,7 @@ export const ROADS: Record<string, readonly string[]> = {
   wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
   eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2'],
   delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad'],
+  saltings: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
