@@ -156,14 +156,16 @@ export function guilds(): void {
     ok(Number.isInteger(q.rank) && q.rank >= 0 && q.rank < GUILDS[q.guild].ranks.length, `${q.id}: its rank, ${q.rank}, is one of the guild's`);
     ok(![takenFlag(q.id), doneFlag(q.id)].some((f) => npcFlags.has(f)), `${q.id}: its flags are its own, set by no person`);
   }
-  // Act I takes a guild with quests to its third rank (DESIGN §8): its quests, done in the order a
-  // hall offers them, raise a new company that far.
-  const ACT_I_RANK = 3;
+  // Every guild's quests, done in the order a hall offers them, raise a new company through every
+  // rank built; Act I builds its two guilds' to the third (DESIGN §8), and a later guild climbs as
+  // far as its area has built.
+  const ACT_I: readonly GuildId[] = ['wardens', 'lanterns'], ACT_I_RANK = 3;
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const { party } = fresh();
     for (let offers = offered(g, party); offers.length; offers = offered(g, party)) for (const q of offers) party.flags[takenFlag(q.id)] = party.flags[doneFlag(q.id)] = 1;
-    const r = rankOf(g, party);
-    ok(r === ACT_I_RANK, `${g}: its quests, done as the hall offers them, raise a company to rank ${ACT_I_RANK}, ${rankName(g, ACT_I_RANK)} (${rankName(g, r) ?? 'none'})`);
+    const r = rankOf(g, party), built = Math.max(...GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank)) + 1;
+    ok(r === built, `${g}: its quests, done as the hall offers them, raise a company to rank ${built}, ${rankName(g, built)} (${rankName(g, r) ?? 'none'})`);
+    if (ACT_I.includes(g)) ok(built >= ACT_I_RANK, `${g}: Act I takes it to rank ${ACT_I_RANK}, ${rankName(g, ACT_I_RANK)} (${rankName(g, built)})`);
   }
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const ranks = GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank);
