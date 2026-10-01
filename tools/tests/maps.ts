@@ -34,6 +34,11 @@ const UNPLACED: Record<string, string> = {
   pine_bear: '#195',
   sunderling: '#198', sunder_warden: '#199',
   ashen_gleaner: '#198',
+  glass_spider: '#197',
+  sunder_hound: '#196',
+  lantern_moth: '#195',
+  glass_bear: '#199',
+  deathshead: '#200',
 };
 
 /**
