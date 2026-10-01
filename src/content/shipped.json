@@ -116,6 +116,26 @@
         "b6_roof",
         "b6_stair",
         "barrow",
+        "c3_barges",
+        "c3_cache",
+        "c3_cache_chest",
+        "c3_cairn",
+        "c3_drains",
+        "c3_edge",
+        "c3_fields",
+        "c3_flood",
+        "c3_foot",
+        "c3_hills",
+        "c3_in",
+        "c3_lofts",
+        "c3_middle",
+        "c3_mound",
+        "c3_shrine",
+        "c3_sjonghol",
+        "c3_sluice",
+        "c3_staithe",
+        "c3_stubble",
+        "c3_west",
         "c4_barge",
         "c4_cairn",
         "c4_edge",
@@ -396,6 +416,10 @@
         "b6_bulls",
         "b6_toads",
         "beach_crabs",
+        "c3_brine",
+        "c3_herons",
+        "c3_quay",
+        "c3_toad",
         "c4_barge",
         "c4_crew",
         "c4_toad",
@@ -564,6 +588,7 @@
         "48,181",
         "53,140",
         "77,108",
+        "81,75",
         "99,148"
       ]
     },
@@ -1058,6 +1083,10 @@
       "at": "232,30",
       "size": "32x32"
     },
+    "upperwater_c3": {
+      "at": "72,62",
+      "size": "32x32"
+    },
     "wrackholm_e6": {
       "at": "136,158",
       "size": "32x32"
@@ -1068,6 +1097,7 @@
     }
   },
   "flags": [
+    "c3_saw_stone",
     "compact_cask",
     "donations",
     "guild_Lantern Guildhall",
@@ -1221,6 +1251,7 @@
     "captains_mail",
     "captains_sword",
     "chain",
+    "chain+1",
     "clerks_seal",
     "club",
     "crabshell_buckler",
@@ -1308,6 +1339,7 @@
     "silver_locket",
     "silver_torc",
     "sling",
+    "smugglers_sword",
     "spear",
     "spear+1",
     "staff",
