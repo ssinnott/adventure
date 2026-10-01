@@ -340,7 +340,7 @@ export const shortName = (name: string): string => name.split(',')[0];
  */
 export function businessEntries(g: Game, f: Business): BusinessEntry[] {
   const out: BusinessEntry[] = [f.kind === 'npc' ? { label: 'The talk of the room', open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
-  if (f.kind !== 'npc' && f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
+  if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
   for (const p of g.world.peopleAt(f.x, f.y)) out.push({ label: `Talk to ${shortName(p.name)}`, open: () => g.talkScreen(p) });
   return out;
 }
@@ -356,7 +356,7 @@ export function serviceScreen(g: Game, f: Feature): Screen {
   if (entries.length === 1) return entries[0].open();
   // Made when drawn: the guild's work, open above it, can raise the company's rank, and a person's
   // answer can send them away.
-  const hall = b.kind !== 'npc' ? b.hall : undefined;
+  const hall = b.hall;
   return new ChoiceScreen(hall ? () => standing(g, hall) : `${b.name}.`, () => [...businessEntries(g, b).map((e) => e.label), 'Leave'], (i) => {
     const now = businessEntries(g, b);
     if (i < 0 || i >= now.length) return;
