@@ -25,6 +25,7 @@ import * as longbodies from './monsters/longbodies.ts';
 import * as toads from './monsters/toads.ts';
 import * as devilfish from './monsters/devilfish.ts';
 import * as bears from './monsters/bears.ts';
+import * as moths from './monsters/moths.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -260,9 +261,9 @@ export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horiz
 export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   rat: rat.draw, barn_rat: rat.draw, bilge_rat: rat.draw,
   slime: slime.draw,
-  wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw, chalk_wolf: wolf.draw, barrow_wolf: wolf.draw,
+  wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw, chalk_wolf: wolf.draw, barrow_wolf: wolf.draw, sunder_hound: wolf.draw,
   boar: boar.draw, tusker: boar.draw,
-  spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw, barnacle_crab: spider.draw, salt_crab: spider.draw,
+  spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw, barnacle_crab: spider.draw, salt_crab: spider.draw, glass_spider: spider.draw,
   bandit: bandit.draw, archer: bandit.draw, brigand: bandit.draw, brigand_archer: bandit.draw,
   smuggler: bandit.draw, smuggler_bow: bandit.draw, smuggler_captain: bandit.draw,
   wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, poacher: bandit.draw, billman: bandit.draw, slinger: bandit.draw, cutthroat: bandit.draw,
@@ -279,7 +280,8 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   fen_eel: longbodies.draw, leech: longbodies.draw,
   fen_toad: toads.draw, bull_toad: toads.draw,
   devilfish: devilfish.draw, great_devilfish: devilfish.draw,
-  pine_bear: bears.draw,
+  pine_bear: bears.draw, glass_bear: bears.draw,
+  lantern_moth: moths.draw, deathshead: moths.draw,
 };
 
 /**
