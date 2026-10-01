@@ -785,7 +785,7 @@ const hillSpill: string[] = await page.evaluate(async () => {
 // its idle motion, is one piece of ink. Ink is alpha 128 and up (a ground shadow is under it), a
 // piece is 8-connected, and specks under 6 px are left out. What stands apart must be declared.
 // Each is drawn where a fight seats a first group, its foot as far below the view's top as there
-// (`seatFoot`, a tall boss on the third rank), on a canvas three heights wide, a height or the seat more above the view's top
+// (`seatFoot`: a tall boss on the third rank), on a canvas three heights wide, a height or the seat more above the view's top
 // (whichever is more) and 0.3 under the foot: ink above the view's top reaches over the frame, and ink on a border runs off the canvas.
 interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: '' | 'top' | 'edge'; room: number }
 const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhouette[]; seat: number } = await page.evaluate(async () => {
