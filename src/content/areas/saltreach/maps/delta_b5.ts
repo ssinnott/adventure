@@ -1,8 +1,8 @@
-// The Delta, box B5: Stienwierde. Core, band 11: duckboards out from the Delta road (C5) west across
-// the fen and a channel of the Long Water to the Tide Stone's island, where its plinth stands empty;
-// two brine Rifts open in the fen round it because the Stone is gone; fen toads on the boards and a
-// bull toad on the island's far side. The toads are new here, and a Stone's plinth without its Stone.
-// Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md §4.5 is its brief.
+// The Delta, box B5: Stienwierde. Core, band 11-12: duckboards out from the Delta road (C5) west
+// across the fen and a channel of the Long Water to the Tide Stone's island, where its plinth stands
+// empty; two brine Rifts open in the fen round it because the Stone is gone; fen toads on the boards
+// and two bull toads on the island's far side. The toads are new here, and a Stone's plinth without
+// its Stone. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST, NORTH, SOUTH } from '../../../../game/types.ts';
@@ -13,20 +13,20 @@ export const RIFT_N_CLOSED: When = { slain: 'b5_rift_n:b5_rift_n_warden' };
 /** The south Rift gone quiet, likewise. */
 export const RIFT_S_CLOSED: When = { slain: 'b5_rift_s:b5_rift_s_warden' };
 
-/** The brine Rift on the hummock north of the boards (#165). */
+/** The brine Rift on the hummock north of the boards (#165): two tide elders at the tear's heart. */
 export const B5_RIFT_N = rift({
-  id: 'b5_rift_n', template: 'spiral', material: 'brine', seed: 11, band: [11, 12], region: 'saltreach',
+  id: 'b5_rift_n', template: 'cells', material: 'brine', seed: 11, band: [11, 12], region: 'saltreach',
   out: { to: 'delta_b5', tx: 16, ty: 6, tf: SOUTH },
-  table: { groups: [['brineling', 'brineling']], warden: ['tide_elder'] },
+  table: { groups: [], warden: ['tide_elder', 'tide_elder'] },
   hoard: { gold: 120, items: ['potion_heal'] },
   until: RIFT_N_CLOSED,
 });
 
-/** The brine Rift on the hummock south of the boards, over the channel, with a tide elder at its heart. */
+/** The brine Rift on the hummock over the channel, south of the boards: two tide elders at its heart. */
 export const B5_RIFT_S = rift({
   id: 'b5_rift_s', template: 'breach', material: 'brine', seed: 12, band: [11, 12], region: 'saltreach',
   out: { to: 'delta_b5', tx: 26, ty: 25, tf: NORTH },
-  table: { groups: [], warden: ['tide_elder'] },
+  table: { groups: [], warden: ['tide_elder', 'tide_elder'] },
   hoard: { gold: 150, items: ['potion_heal', 'potion_heal'] },
   until: RIFT_S_CLOSED,
 });
@@ -104,9 +104,9 @@ export const DELTA_B5: MapDef = {
   ],
   secrets: [{ x: 12, y: 14, hint: 'b5_landing' }],
   encounters: [
-    // Fen toads on the duckboards; the bull toad alone on the island's far side.
-    { id: 'b5_toads_e', x: 26, y: 13, monsters: ['fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: 1440 },
-    { id: 'b5_toads_w', x: 17, y: 13, monsters: ['fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: 1440 },
-    { id: 'b5_toad', x: 3, y: 16, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
+    // Fen toads on the duckboards; two bull toads, and no toad with them, on the island's far side.
+    { id: 'b5_toads_e', x: 26, y: 13, monsters: ['fen_toad', 'fen_toad', 'fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: 1440 },
+    { id: 'b5_toads_w', x: 17, y: 13, monsters: ['fen_toad', 'fen_toad', 'fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: 1440 },
+    { id: 'b5_bulls', x: 3, y: 16, monsters: ['bull_toad', 'bull_toad'], aware: 4, respawn: 1440 },
   ],
 };
