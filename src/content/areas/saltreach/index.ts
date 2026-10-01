@@ -4,6 +4,7 @@
 import type { Area } from '../../area.ts';
 import { DELTA_D5 } from './maps/delta_d5.ts';
 import { DELTA_C5, C5_RIFT } from './maps/delta_c5.ts';
+import { DELTA_B5, B5_RIFT_N, B5_RIFT_S } from './maps/delta_b5.ts';
 import { SALTINGS_C6 } from './maps/saltings_c6.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
@@ -12,8 +13,8 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'saltreach' as const,
-  // The road's order: the shore under the Edge, the fen, then Saltmouth's box.
-  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, SALTINGS_C6],
+  // The road's order: the shore under the Edge, the fen, west over it to the plinth, then Saltmouth's box.
+  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, SALTINGS_C6],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
@@ -24,6 +25,6 @@ export const AREA = {
   climate: { summer: 19, winter: 4, daily: 4, damp: [0.02, 0.09], wettest: 300, fog: 0.9, lag: 4,
     fogText: 'Fog comes in off the gulf.', thunderText: 'Thunder rolls over the fen.' },
   interiors: INTERIORS,
-  novel: { families: ['longbodies'], terrain: ['salt'], mechanics: [], landmarks: [] },
+  novel: { families: ['longbodies', 'toads'], terrain: ['salt'], mechanics: [], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

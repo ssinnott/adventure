@@ -1,6 +1,39 @@
 {
   "version": 2,
   "maps": {
+    "b5_rift_n": {
+      "size": "12x12",
+      "used": [
+        "b5_rift_n_hoard",
+        "b5_rift_n_look1",
+        "b5_rift_n_look2",
+        "b5_rift_n_look3",
+        "b5_rift_n_look4",
+        "b5_rift_n_look5",
+        "b5_rift_n_quiet",
+        "b5_rift_n_tear"
+      ],
+      "groups": [
+        "b5_rift_n_warden"
+      ],
+      "doors": []
+    },
+    "b5_rift_s": {
+      "size": "12x12",
+      "used": [
+        "b5_rift_s_hoard",
+        "b5_rift_s_look1",
+        "b5_rift_s_look2",
+        "b5_rift_s_look3",
+        "b5_rift_s_look4",
+        "b5_rift_s_quiet",
+        "b5_rift_s_tear"
+      ],
+      "groups": [
+        "b5_rift_s_warden"
+      ],
+      "doors": []
+    },
     "berth": {
       "size": "16x16",
       "used": [
@@ -53,6 +86,21 @@
         "ash_hearth",
         "ash_kitchen",
         "ashcombe_gate",
+        "b5_bank",
+        "b5_boards",
+        "b5_cairn",
+        "b5_channel",
+        "b5_glass",
+        "b5_mound",
+        "b5_north",
+        "b5_plinth",
+        "b5_post",
+        "b5_punt",
+        "b5_shrine",
+        "b5_trap",
+        "b5_under",
+        "b5_under_cache",
+        "b5_west",
         "barrow",
         "c5_barge",
         "c5_barge_hold",
@@ -276,6 +324,9 @@
         "tower"
       ],
       "groups": [
+        "b5_bulls",
+        "b5_toads_e",
+        "b5_toads_w",
         "beach_crabs",
         "c5_pools_n",
         "c5_pools_s",
@@ -424,6 +475,7 @@
         "297,145",
         "308,112",
         "312,32",
+        "53,140",
         "99,148"
       ]
     },
@@ -676,6 +728,10 @@
     },
     "deepthorn_j5": {
       "at": "296,126",
+      "size": "32x32"
+    },
+    "delta_b5": {
+      "at": "40,126",
       "size": "32x32"
     },
     "delta_c5": {
