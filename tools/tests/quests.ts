@@ -105,6 +105,25 @@ export function quests(): void {
     ok(sheets.length > 1 && whole(v) && sheets.every((s) => s.rows[0].text === THE_QUEST.title && s.rows.some((r) => r.text === c.goals[0].text)),
       `a chapter of fourteen entries goes on over ${sheets.length} pages, each headed and with its goal, and keeps all fourteen`);
   }
+  { // Five chapters (#167): each reads on its own page or pages, in road order and headed by its own
+    // numeral, title and goal; J opens on the newest, the goal's, and the earlier are turned back to.
+    const chapter = (i: number, n = 2): Chapter => ({
+      id: `fx_c${i}`, title: `Chapter ${i}`, start: { flag: `fx_c${i}` }, done: { flag: `fx_c${i}_done` },
+      entries: Array.from({ length: n }, (_, k) => ({ id: `fx_c${i}_e${k}`, when: { flag: `fx_c${i}` }, text: `Chapter ${i}, entry ${k}: ${THE_QUEST.chapters[0].entries[0].text}` })),
+      goals: [{ when: { flag: `fx_c${i}` }, text: `Go on with chapter ${i}.`, at: 'harrow' }],
+    });
+    const five = { id: 'fx_five', title: THE_QUEST.title, chapters: [chapter(1), chapter(2), chapter(3, 14), chapter(4), chapter(5)] };
+    const rng = makeRng(167), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
+    for (let i = 1; i <= 5; i++) party.flags[`fx_c${i}`] = 1;
+    for (let i = 1; i <= 4; i++) party.flags[`fx_c${i}_done`] = 1;
+    const v = questLog(world.state, party, [five])[0];
+    const sheets = questSheets(v, PAGE.w, PAGE.h), open = openingSheet(v, sheets);
+    const pagesInOrder = sheets.every((s, i) => i === 0 || s.page >= sheets[i - 1].page) && new Set(sheets.map((s) => s.page)).size === 5;
+    const headed = sheets.every((s) => s.rows[1].text === `${['I', 'II', 'III', 'IV', 'V'][s.page]}. Chapter ${s.page + 1}` && s.rows[2].text === (s.page === 4 ? 'Go on with chapter 5.' : 'Done.')
+      && s.rows.slice(3).every((r) => !/^Chapter \d/.test(r.text) || r.text.startsWith(`Chapter ${s.page + 1},`)));
+    ok(v.pages.length === 5 && pagesInOrder && headed && whole(v), `five chapters each read on their own pages, in road order, each headed by its numeral, title and own goal (${sheets.map((s) => ['I', 'II', 'III', 'IV', 'V'][s.page]).join(' ')})`);
+    ok(sheets[open].page === 4 && open === sheets.length - 1 && sheets.filter((s) => s.page === 2).length > 1, `J opens on the newest chapter, V, the goal's (sheet ${open + 1} of ${sheets.length}); the long third goes on over its own pages, turned back to`);
+  }
   // Each way in starts the quest with a goal; each entry can be written; each goal can be the one
   // shown (not hidden behind an earlier one); and an entry keyed to an item outlasts the hand-in.
   const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(rng); return { party, world: new World(buildMaps(), party, rng) }; };
