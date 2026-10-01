@@ -15,13 +15,13 @@ import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
 import { blob, glossBall, glossEllipse, glossPoly, glow, patch, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
-import { rgba, shade } from '../../lib/art/palettes.ts';
+import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import type { Arm, Pt, Rig } from './figure.ts';
 import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat', 'bargeman', 'barge_master'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
@@ -30,6 +30,8 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'billman') billman(ctx, x, y, h, p);
   else if (kind === 'slinger') slinger(ctx, x, y, h, p);
   else if (kind === 'cutthroat') cutthroat(ctx, x, y, h, p);
+  else if (kind === 'bargeman') bargeman(ctx, x, y, h, p);
+  else if (kind === 'barge_master') bargeMaster(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -1226,5 +1228,175 @@ function lampman(ctx: CanvasRenderingContext2D, x: number, y: number, h0: number
   hand(ctx, R, grip, Math.atan2(hi.y - lo.y, hi.x - lo.x), 165, { flip: 1 });
   // The lamp swings a little on its links, against the pole's own sway.
   lantern(ctx, R, { x: crook.x + h0 * 0.004, y: crook.y + h0 * 0.034 }, crook.x - sway * 0.6, crook.y + h0 * 0.17, pulse);
+  void p.light;
+}
+
+// ------------------------------------------------------------------ the bargemen ----
+/**
+ * The bargeman: a Compact barge hand off the Long Water, planted wide as on a deck. A canvas smock
+ * in the tint to mid-thigh, gathered across the chest, the sleeves rolled to the elbow; a cloth cap
+ * pulled low and a kerchief at the throat. His barge pole is levelled across him in both fists, long
+ * enough to reach past him either side: the forked iron foot out in front, the button end behind. A
+ * long knife rides in its sheath at the front of his belt. The wrecker and the lampman stand by
+ * their poles; this one holds his like a weapon.
+ */
+function bargeman(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.012, hipTilt: 0.022, turn: 0.022, near: [0.085, 0.2, 0.25], far: [-0.08, -0.15, -0.19], toe: [1, -0.8], lift: [0, 0.02] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 23) * h * 0.007;
+  // The pole, nearly level at the ribs, rising a little to the front: back end, then the foot.
+  const lo = { x: x - h * 0.6, y: sy + h * 0.25 + sway * 0.5 }, hi = { x: x + h * 0.78, y: sy + h * 0.13 - sway };
+  const len = Math.hypot(hi.x - lo.x, hi.y - lo.y), ux = (hi.x - lo.x) / len, uy = (hi.y - lo.y) / len;
+  const on = (t: number): Pt => ({ x: lo.x + (hi.x - lo.x) * t, y: lo.y + (hi.y - lo.y) * t });
+  const gFar = on(0.3), gNear = on(0.62);
+  const near: Arm = [R.sNear, { x: x + h * 0.21, y: sy + h * 0.22 }, gNear];
+  const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.24 }, gFar];
+  const hemY = y - h * 0.4, smockY = y - h * 0.33;
+  const smock = p.base, cap = shade('#3a3a40', p.tone), kerchief = shade('#9a3a2c', p.tone);
+  groundShadow(ctx, x, y + 1, h * 0.82);
+  // The far arm: the smock's sleeve to the elbow, then bare.
+  const fMid = { x: (far[1].x + far[2].x) / 2, y: (far[1].y + far[2].y) / 2 };
+  blob(ctx, B, R.skinFar, armParts(R, far, 401, 0.94), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  blob(ctx, B, shade(p.base, 0.78), armParts(R, [far[0], far[1], { x: far[1].x + (fMid.x - far[1].x) * 0.4, y: far[1].y + (fMid.y - far[1].y) * 0.4 }], 402, 0.98), { h, formK: 0.45 });
+  legs(ctx, R, shade('#34383e', p.tone), 403, [1, -0.8]);
+  headNeck(ctx, R);
+  // The smock: body, its skirt past the hips, and the near sleeve rolled to the elbow, one mass.
+  blob(ctx, B, smock, [
+    { k: 'curve', pts: torsoPts(R, hemY), wobble: 0.03, seed: 404, sub: 3 },
+    { k: 'curve', pts: [
+      x - h * 0.13, hemY - h * 0.1, x - h * 0.165, hemY - h * 0.02, x - h * 0.18, smockY,
+      x - h * 0.06, smockY + h * 0.016, x + h * 0.06, smockY - h * 0.01, x + h * 0.19, smockY + h * 0.006,
+      x + h * 0.17, hemY - h * 0.02, x + h * 0.14, hemY - h * 0.1,
+    ], wobble: 0.05, seed: 405, sub: 3 },
+    ...armParts(R, [near[0], near[1], { x: near[1].x + (near[2].x - near[1].x) * 0.2, y: near[1].y + (near[2].y - near[1].y) * 0.2 }], 406),
+  ], { h, formK: 0.5, tex: 'folds', seed: 404, amount: 0.8, creases: [...torsoCreases(R, hemY), elbowCrease(R, near)] });
+  // The smocking: rows of gathers across the chest, and the rolled cuff round the near arm.
+  if (!B.override && h >= 50) for (let i = 0; i < 3; i++) {
+    const ly = sy + h * (0.07 + i * 0.03), pts: number[] = [];
+    for (let k = 0; k <= 6; k++) pts.push(x - h * 0.07 + k * h * 0.024, ly + (k % 2 ? h * 0.008 : 0));
+    softLine(ctx, B, pts, shade(smock, 0.68), Math.max(1, h * 0.006), 0.6);
+  }
+  const rc = { x: near[1].x + (near[2].x - near[1].x) * 0.2, y: near[1].y + (near[2].y - near[1].y) * 0.2 };
+  blob(ctx, B, R.skin, armParts(R, [rc, { x: (rc.x + near[2].x) / 2, y: (rc.y + near[2].y) / 2 + h * 0.004 }, near[2]], 407, 0.9), { h, formK: 0.5 });
+  blob(ctx, B, shade(smock, 1.08), [tube([near[1].x, near[1].y, rc.x, rc.y], h * 0.04, h * 0.042, 0, 408)], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 408, amount: 0.4 });
+  // The belt, and the long knife in its sheath at the front, its hilt canted up to the near hand.
+  blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.05, h * 0.04, 409)], { h, form: false });
+  band(ctx, B, x - h * 0.022, hemY - h * 0.054, h * 0.04, h * 0.04, R.dull);
+  const sh0 = { x: x + h * 0.07, y: hemY - h * 0.05 }, sh1 = { x: x + h * 0.03, y: hemY + h * 0.11 };
+  blob(ctx, B, R.leather, [tube([sh0.x, sh0.y, sh1.x, sh1.y], h * 0.022, h * 0.012, 0, 410)], { h, formK: 0.5, spread: 0.6 });
+  blob(ctx, B, R.wood, [tube([sh0.x, sh0.y, sh0.x + h * 0.022, sh0.y - h * 0.075], Math.max(h * 0.012, 1), Math.max(h * 0.011, 1), 0, 411)], { h, formK: 0.5, spread: 0.6 });
+  band(ctx, B, sh0.x - h * 0.016, sh0.y - h * 0.012, h * 0.034, h * 0.012, R.dull);
+  // The kerchief knotted at the throat, its ends out to the near side.
+  blob(ctx, B, kerchief, [
+    { k: 'curve', pts: [hx - hr * 0.8, hy + hr * 1.5, hx + hr * 0.8, hy + hr * 1.45, hx + hr * 0.5, hy + hr * 2.15, hx - hr * 0.1, hy + hr * 2.3, hx - hr * 0.6, hy + hr * 2.05], wobble: 0.06, seed: 412, sub: 2 },
+    { k: 'curve', pts: [hx + hr * 0.3, hy + hr * 1.9, hx + hr * 0.75, hy + hr * 2.1, hx + hr * 0.95 + sway, hy + hr * 2.7, hx + hr * 0.6, hy + hr * 2.6], wobble: 0.06, seed: 413, sub: 2 },
+  ], { h, formK: 0.5, spread: 0.7, tex: 'folds', seed: 412, amount: 0.4 });
+  // Stubble, a face that asks nothing, and the cap pulled down to the brows with a short peak.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.84, hy + hr * 0.3, hx - hr * 0.3, hy + hr * 0.58, hx + hr * 0.3, hy + hr * 0.58, hx + hr * 0.86, hy + hr * 0.3, hx + hr * 0.6, hy + hr * 0.9, hx, hy + hr * 1.02, hx - hr * 0.6, hy + hr * 0.9], wobble: 0.06, spiky: 0.06, seed: 414, sub: 2 }], { h, form: false, outline: false });
+  face(ctx, R, false);
+  blob(ctx, B, cap, [
+    { k: 'curve', pts: [hx - hr * 1.08, hy - hr * 0.22, hx - hr * 1.06, hy - hr * 0.86, hx - hr * 0.4, hy - hr * 1.2, hx + hr * 0.5, hy - hr * 1.16, hx + hr * 1.08, hy - hr * 0.8, hx + hr * 1.06, hy - hr * 0.3, hx + hr * 0.4, hy - hr * 0.44, hx - hr * 0.6, hy - hr * 0.42], wobble: 0.04, seed: 415, sub: 2 },
+    { k: 'curve', pts: [hx + hr * 0.2, hy - hr * 0.5, hx + hr * 1.1, hy - hr * 0.58, hx + hr * 1.62, hy - hr * 0.36, hx + hr * 1.1, hy - hr * 0.22, hx + hr * 0.3, hy - hr * 0.3], wobble: 0.03, seed: 416, sub: 2 },
+  ], { h, formK: 0.55, spread: 0.7, tex: 'stipple', seed: 415, amount: 0.3 });
+  // The pole: ash, worn pale where the hands go, a button at the back and a forked iron foot.
+  blob(ctx, B, R.wood, [tube([lo.x, lo.y, hi.x, hi.y], Math.max(h * 0.016, 1.2), Math.max(h * 0.014, 1.1), 0, 417)], { h, formK: 0.5, spread: 0.6, tex: 'cracks', seed: 417, amount: 0.3 });
+  glossBall(ctx, B, lo.x, lo.y, Math.max(h * 0.022, 1.4), R.wood, { gloss: 0.3, spread: 0.6 });
+  const nx = -uy, ny = ux;
+  const Q = (u: number, v: number): number[] => [hi.x + ux * h * u + nx * h * v, hi.y + uy * h * u + ny * h * v];
+  glossPoly(ctx, B, [
+    ...Q(-0.07, 0.018), ...Q(0.0, 0.02), ...Q(0.07, 0.034), ...Q(0.075, 0.022), ...Q(0.02, 0.006),
+    ...Q(0.02, -0.006), ...Q(0.075, -0.022), ...Q(0.07, -0.034), ...Q(0.0, -0.02), ...Q(-0.07, -0.018),
+  ], R.dull, { gloss: 0.4, spread: 0.6 });
+  const a = Math.atan2(uy, ux);
+  hand(ctx, R, gFar, a, 418, { far: true, flip: 1, k: 0.95 });
+  hand(ctx, R, gNear, a, 419, { flip: 1 });
+  void p.light;
+}
+
+/**
+ * The barge master: the one man aboard who answers to the Compact, and better fed and better
+ * dressed for it. A long coat in the tint over a mustard waistcoat with brass buttons, wide cuffs,
+ * a round hat with a rolled brim, side whiskers. The ledger is open in his far hand, held up and out
+ * as if he were reading you off it; the cudgel rests on his near shoulder. Square on and heavy, so
+ * the company can see at once who to reach.
+ */
+function bargeMaster(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: 0.01, hipTilt: 0.016, turn: 0.012, near: [0.09, 0.16, 0.2], far: [-0.088, -0.15, -0.19], toe: [0.9, -0.9], lift: [0, 0] });
+  const { sy, hx, hy, hr } = R;
+  const sway = Math.sin(p.frame / 27) * h * 0.006;
+  // The far hand up and out with the ledger; the near fist at the chest, the cudgel on the shoulder.
+  const book = { x: x - h * 0.3, y: sy + h * 0.1 + sway * 0.4 };
+  const near: Arm = [R.sNear, { x: x + h * 0.26, y: sy + h * 0.21 }, { x: x + h * 0.2, y: sy + h * 0.27 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.25, y: sy + h * 0.2 }, { x: book.x + h * 0.03, y: book.y + h * 0.05 }];
+  const hemY = y - h * 0.42, skirtY = y - h * 0.24;
+  const coat = p.base, vest = shade('#a07a30', p.tone), cuff = shade(mix(p.base, '#000000', 0.25), 1);
+  groundShadow(ctx, x, y + 1, h * 0.84);
+  // The far arm in its sleeve, up to the book.
+  blob(ctx, B, shade(p.dark, 0.86), armParts(R, far, 431, 0.96), { h, formK: 0.45, creases: [elbowCrease(R, far)] });
+  legs(ctx, R, shade('#2c2a2e', p.tone), 432, [0.9, -0.9]);
+  blob(ctx, B, shade('#1e1a18', p.tone), [
+    { k: 'cap', x0: x + h * 0.195, y0: y - h * 0.2, x1: x + h * 0.2, y1: y - h * 0.055, r0: h * 0.047, r1: h * 0.045 },
+    { k: 'cap', x0: x - h * 0.185, y0: y - h * 0.19, x1: x - h * 0.19, y1: y - h * 0.055, r0: h * 0.045, r1: h * 0.043 },
+  ], { h, formK: 0.5, spread: 0.7 });
+  headNeck(ctx, R);
+  // The waistcoat first, over a paunch that pushes past the trunk's own line.
+  blob(ctx, B, vest, [
+    { k: 'curve', pts: [x - h * 0.07, sy + h * 0.03, x + h * 0.075, sy + h * 0.03, x + h * 0.14, sy + h * 0.16, x + h * 0.165, sy + h * 0.25, x + h * 0.13, hemY + h * 0.02, x, hemY + h * 0.06, x - h * 0.12, hemY + h * 0.02, x - h * 0.13, sy + h * 0.22], wobble: 0.04, seed: 433, sub: 3 },
+  ], { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: 433, amount: 0.4 });
+  // The coat: the body open over the waistcoat, the near sleeve, and the skirts to the knee.
+  blob(ctx, B, coat, [
+    vestPanel(R, -1, hemY + h * 0.04, h * 0.07, 434), vestPanel(R, 1, hemY + h * 0.04, h * 0.08, 435),
+    { k: 'curve', pts: [
+      x - h * 0.14, hemY - h * 0.08, x - h * 0.18, hemY + h * 0.0, x - h * 0.21, skirtY,
+      x - h * 0.06, skirtY + h * 0.02, x + h * 0.01, skirtY - h * 0.02, x + h * 0.08, skirtY + h * 0.014, x + h * 0.22, skirtY - h * 0.01,
+      x + h * 0.19, hemY + h * 0.0, x + h * 0.15, hemY - h * 0.08, x, hemY + h * 0.05,
+    ], wobble: 0.04, seed: 436, sub: 3 },
+    { k: 'curve', pts: [R.sFar.x + h * 0.01, sy + h * 0.0, R.sNear.x - h * 0.01, sy + h * 0.0, R.sNear.x, sy + h * 0.07, R.sFar.x, sy + h * 0.07], wobble: 0.03, seed: 438, sub: 2 },
+    ...armParts(R, near, 439),
+  ], { h, formK: 0.5, tex: 'folds', seed: 434, amount: 0.7, creases: [elbowCrease(R, near)] });
+  for (let i = 0; i < 4; i++) glossBall(ctx, B, x + h * 0.012, sy + h * (0.09 + i * 0.06), Math.max(1, h * 0.011), R.brass, { gloss: 0.6 });
+  // A standing collar in the coat's cloth and a white stock tied at the throat.
+  blob(ctx, B, coat, [{ k: 'curve', pts: [hx - hr * 1.5, hy + hr * 2.3, hx - hr * 1.3, hy + hr * 1.2, hx - hr * 0.5, hy + hr * 1.36, hx + hr * 0.6, hy + hr * 1.34, hx + hr * 1.36, hy + hr * 1.16, hx + hr * 1.56, hy + hr * 2.3, hx + hr * 0.8, hy + hr * 2.05, hx - hr * 0.7, hy + hr * 2.08], wobble: 0.04, seed: 450, sub: 3 }],
+    { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: 450, amount: 0.4 });
+  blob(ctx, B, shade('#e8e2d2', p.tone), [{ k: 'curve', pts: [hx - hr * 0.6, hy + hr * 1.3, hx + hr * 0.62, hy + hr * 1.28, hx + hr * 0.42, hy + hr * 2.0, hx + hr * 0.04, hy + hr * 2.5, hx - hr * 0.36, hy + hr * 2.0], wobble: 0.06, spiky: 0.06, seed: 451, sub: 2 }],
+    { h, formK: 0.4, spread: 0.7, tex: 'folds', seed: 451, amount: 0.3 });
+  // A watch chain across the paunch, in brass.
+  softLine(ctx, B, [x - h * 0.08, sy + h * 0.2, x - h * 0.03, sy + h * 0.235, x + h * 0.04, sy + h * 0.2], R.brass, Math.max(1, h * 0.008), 0.85);
+  // The wide cuff on the near sleeve, darker than the coat.
+  const e = near[1], w = near[2], cu = (t: number): number[] => [e.x + (w.x - e.x) * t, e.y + (w.y - e.y) * t];
+  blob(ctx, B, cuff, [tube([...cu(0.62), ...cu(0.9)], h * 0.04, h * 0.048, 0, 440)], { h, formK: 0.5, spread: 0.7 });
+  // Side whiskers, a heavy jaw, and the round hat with its rolled brim.
+  blob(ctx, B, R.hair, [
+    { k: 'curve', pts: [hx - hr * 1.0, hy + hr * 0.0, hx - hr * 0.72, hy + hr * 0.1, hx - hr * 0.5, hy + hr * 0.62, hx - hr * 0.78, hy + hr * 0.8, hx - hr * 1.0, hy + hr * 0.5], wobble: 0.06, spiky: 0.12, seed: 441, sub: 2 },
+    { k: 'curve', pts: [hx + hr * 1.02, hy + hr * 0.0, hx + hr * 0.74, hy + hr * 0.1, hx + hr * 0.52, hy + hr * 0.62, hx + hr * 0.8, hy + hr * 0.8, hx + hr * 1.02, hy + hr * 0.5], wobble: 0.06, spiky: 0.12, seed: 442, sub: 2 },
+  ], { h, formK: 0.4 });
+  face(ctx, R, false);
+  // The moustache, clipped, over a mouth used to being obeyed.
+  blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.42, hy + hr * 0.5, hx + hr * 0.02, hy + hr * 0.36, hx + hr * 0.46, hy + hr * 0.5, hx + hr * 0.3, hy + hr * 0.6, hx, hy + hr * 0.52, hx - hr * 0.3, hy + hr * 0.6], wobble: 0.05, seed: 449, sub: 2 }], { h, form: false });
+  blob(ctx, B, shade('#26221e', p.tone), [
+    { k: 'curve', pts: [hx - hr * 0.92, hy - hr * 0.62, hx - hr * 0.95, hy - hr * 1.3, hx - hr * 0.5, hy - hr * 1.78, hx + hr * 0.5, hy - hr * 1.8, hx + hr * 0.98, hy - hr * 1.32, hx + hr * 0.96, hy - hr * 0.62], wobble: 0.03, seed: 443, sub: 3 },
+    { k: 'curve', pts: ring(hx + hr * 0.02, hy - hr * 0.62, hr * 1.38, hr * 0.26), wobble: 0.03, seed: 444, sub: 3 },
+  ], { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: 443, amount: 0.3 });
+  stroke(ctx, [hx - hr * 0.92, hy - hr * 0.86, hx + hr * 0.95, hy - hr * 0.86], shade('#4a3c2c', p.tone), Math.max(1, hr * 0.2));
+  // The cudgel: a blackthorn club up from the fist and over the shoulder, its knob behind the head.
+  const c0 = { x: w.x - h * 0.035, y: w.y + h * 0.07 }, c1 = { x: R.sNear.x + h * 0.11, y: sy - h * 0.13 };
+  blob(ctx, B, shade('#3a2a20', p.tone), [
+    tube([c0.x, c0.y, (c0.x + c1.x) / 2 + h * 0.008, (c0.y + c1.y) / 2, c1.x, c1.y], Math.max(h * 0.014, 1.1), Math.max(h * 0.02, 1.3), 0.04, 445),
+    { k: 'curve', pts: ring(c1.x, c1.y, h * 0.032, h * 0.03), wobble: 0.12, seed: 446, sub: 2 },
+  ], { h, formK: 0.5, spread: 0.6, tex: 'cracks', seed: 445, amount: 0.4 });
+  hand(ctx, R, w, Math.atan2(c1.y - c0.y, c1.x - c0.x), 447, { flip: 1 });
+  // The ledger, open: two pages over a leather board, the far hand under its spine.
+  const bw = h * 0.085, bh = h * 0.1, bt = -0.18;
+  const P = (u: number, v: number): number[] => [book.x + u * Math.cos(bt) - v * Math.sin(bt), book.y + u * Math.sin(bt) + v * Math.cos(bt)];
+  glossPoly(ctx, B, [...P(-bw - h * 0.008, -bh / 2 - h * 0.006), ...P(bw + h * 0.008, -bh / 2 - h * 0.006), ...P(bw + h * 0.008, bh / 2 + h * 0.008), ...P(-bw - h * 0.008, bh / 2 + h * 0.008)], shade('#5a2a1c', p.tone), { gloss: 0.2, spread: 0.6 });
+  const paper = shade('#e6dcc0', p.tone);
+  glossPoly(ctx, B, [...P(-bw, -bh / 2), ...P(-h * 0.004, -bh / 2 + h * 0.008), ...P(-h * 0.004, bh / 2 + h * 0.004), ...P(-bw, bh / 2)], paper, { gloss: 0.1, spread: 0.5 });
+  glossPoly(ctx, B, [...P(h * 0.004, -bh / 2 + h * 0.008), ...P(bw, -bh / 2), ...P(bw, bh / 2), ...P(h * 0.004, bh / 2 + h * 0.004)], paper, { gloss: 0.1, spread: 0.5 });
+  if (!B.override && h >= 60) for (let i = 0; i < 4; i++) for (const s of [-1, 1]) {
+    const v = -bh / 2 + h * 0.022 + i * h * 0.02;
+    const a = P(s * h * 0.016, v), b = P(s * (bw - h * 0.012), v);
+    stroke(ctx, [a[0], a[1], b[0], b[1]], shade('#7a6a58', p.tone), 1);
+  }
+  hand(ctx, R, far[2], null, 448, { far: true, k: 0.94 });
   void p.light;
 }
