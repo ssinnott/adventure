@@ -1,5 +1,5 @@
-// The Rift family: riftling, riftling elder, Rift Warden and Warden of the Cut, and the brineling
-// and the tide elder, the riftling and its elder in the Tide Stone's brine glass (MONSTERS §2.1).
+// The Rift family: riftling, riftling elder, Rift Warden and Warden of the Cut, and the brineling,
+// the tide elder and the Warden of the Tide, in the Tide Stone's brine glass (MONSTERS §2.1).
 // Things of crystal shard and ember: a molten core wrapped in faceted stone. A body is built in
 // depth layers rather than as one flat card -- the dark far limbs, then the body mass, then one or
 // two layers of paler plates lying on it, each layer a blob of its own so it keeps an ink edge, and
@@ -17,10 +17,10 @@ import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import { tones } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden', 'brineling', 'tide_elder'];
+export const KINDS: readonly MonsterSprite[] = ['riftling', 'riftling_elder', 'warden', 'cut_warden', 'brineling', 'tide_elder', 'tide_warden'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  if (kind === 'warden' || kind === 'cut_warden') sentinel(ctx, x, y, h, p, kind === 'cut_warden');
+  if (kind === 'warden' || kind === 'cut_warden' || kind === 'tide_warden') sentinel(ctx, x, y, h, p, kind === 'cut_warden', kind === 'tide_warden');
   else creature(ctx, x, y, h, p, kind === 'riftling_elder' || kind === 'tide_elder', kind === 'brineling' || kind === 'tide_elder');
 };
 
@@ -401,15 +401,30 @@ function drip(ctx: CanvasRenderingContext2D, x: number, y: number, len: number, 
 }
 
 // ------------------------------------------------------------------ warden ----
-/** The Rift Warden and the Warden of the Cut: a standing stone split open to a furnace, with orbiting shards. */
-function sentinel(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, cut: boolean): void {
-  const heat = heatOf(p, cut), pulse = 0.5 + 0.5 * Math.sin(p.frame / 7);
+/**
+ * The Rift Warden and the Warden of the Cut: a standing stone split open to a furnace, with orbiting
+ * shards. The Warden of the Tide is the Cut's frame in brine glass, whole, and lit from behind by the
+ * Stone it stands over: a great light at its back, its edges rimmed with it, its crown a row of fins
+ * curling forward, and brine hanging from its fists.
+ */
+function sentinel(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, cut: boolean, tide = false): void {
+  const heat = heatOf(p, cut, tide), pulse = 0.5 + 0.5 * Math.sin(p.frame / 7);
   const b = p.breathe * h * 0.006;
   const cx = x, cy = y - h * 0.55 + b;
+  if (tide && !B.override) {
+    // The wet it stands in: a sheen on the ground, too faint to be ink.
+    ctx.fillStyle = rgba(mix(heat.glow, '#c8fff0', 0.4), 0.2);
+    ctx.beginPath(); ctx.ellipse(x, y + 1, h * 0.5, h * 0.05, 0, 0, Math.PI * 2); ctx.fill();
+  }
   groundShadow(ctx, x, y + 1, h * 0.8);
-  // The halo behind, and the fragments on their far pass.
-  glow(ctx, B, cx, cy, h * 0.64, heat.glow, 0.2 + pulse * 0.08, heat.glow);
-  const nFrag = cut ? 5 : 3;
+  // The halo behind, and the fragments on their far pass. The Stone is behind the tide's, low and to
+  // its left, and its light is the biggest thing in the hold: a wide glow and a hot heart.
+  if (tide) {
+    const sx = x - h * 0.12, sy = y - h * 0.42;
+    glow(ctx, B, sx, sy, h * 0.8, heat.glow, 0.32 + pulse * 0.1, heat.glow);
+    glow(ctx, B, sx, sy, h * 0.42, heat.heart, 0.36 + pulse * 0.12, heat.heart);
+  } else glow(ctx, B, cx, cy, h * 0.64, heat.glow, 0.2 + pulse * 0.08, heat.glow);
+  const nFrag = cut || tide ? 5 : 3;
   const frag = (i: number) => {
     const a = p.frame / 45 + (i / nFrag) * Math.PI * 2 + i * 0.7;
     const fx = cx + Math.cos(a) * h * (0.5 + (i % 2) * 0.1), fy = cy + Math.sin(a) * h * 0.2 - h * (0.1 - (i % 3) * 0.08), front = Math.sin(a) > 0;
@@ -439,8 +454,9 @@ function sentinel(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   // Fists: blunt shard knuckles; the Warden of the Cut has lost its left hand at the wrist.
   stone.push({ k: 'poly', pts: [x + h * 0.44, y - h * 0.36, x + h * 0.6, y - h * 0.38, x + h * 0.62, y - h * 0.22, x + h * 0.5, y - h * 0.17, x + h * 0.42, y - h * 0.26] });
   if (!cut) stone.push({ k: 'poly', pts: [x - h * 0.56, y - h * 0.34, x - h * 0.4, y - h * 0.34, x - h * 0.37, y - h * 0.2, x - h * 0.5, y - h * 0.15, x - h * 0.58, y - h * 0.24] });
-  // The crown: five or seven spikes of uneven length, the tallest just right of centre.
-  const spikes = cut ? 7 : 5, tall = cut ? 0.36 : 0.26;
+  // The crown: five or seven spikes of uneven length, the tallest just right of centre. The tide's
+  // are fins, curling forward at the tips.
+  const spikes = cut || tide ? 7 : 5, tall = cut || tide ? 0.36 : 0.26;
   for (let i = 0; i < spikes; i++) {
     const u = (i - (spikes - 1) / 2) / spikes, bx = cx + u * h * 0.62;
     const jitter = 0.62 + ((i * 37) % 11) / 11 * 0.7;                  // stable per spike, never off the frame
@@ -448,14 +464,16 @@ function sentinel(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
     const lean = u * h * 0.14 + (i % 2 ? 1 : -1) * h * 0.03 * jitter;
     const top = y - h * 0.86 + Math.abs(u) * h * 0.1 + ((i * 53) % 7) / 7 * h * 0.03;
     const w = h * (0.036 + ((i * 29) % 5) / 5 * 0.022);
-    stone.push({ k: 'poly', pts: [bx - w, top + h * 0.06, bx + lean, top - len, bx + w * 0.9, top + h * 0.05] });
+    stone.push({ k: 'poly', pts: tide
+      ? fin(bx, top + h * 0.05, Math.atan2(-len, lean) - 0.3, Math.hypot(len, lean) * 1.05, w, 0.75)
+      : [bx - w, top + h * 0.06, bx + lean, top - len, bx + w * 0.9, top + h * 0.05] });
   }
   const creases: Crease[] = [
     { x0: x - h * 0.3, y0: y - h * 0.72 + b, x1: x - h * 0.22, y1: y - h * 0.62 + b, r: h * 0.03, a: 0.35 },
     { x0: x + h * 0.24, y0: y - h * 0.7 + b, x1: x + h * 0.32, y1: y - h * 0.62 + b, r: h * 0.03, a: 0.35 },
     { x0: x - h * 0.24, y0: y - h * 0.26, x1: x + h * 0.24, y1: y - h * 0.26, r: h * 0.035, a: 0.3 },
   ];
-  blob(ctx, B, p.base, stone, { h, tex: 'facets', seed: 6, amount: 1.2, formK: 0.45, spread: 0.7, creases });
+  blob(ctx, B, p.base, stone, { h, tex: 'facets', seed: 6, amount: tide ? 0.8 : 1.2, formK: 0.45, spread: 0.7, creases });
   glint(ctx, x - h * 0.3, y - h * 0.8 + b, h * 0.07, 0.55, -0.7);
   glint(ctx, x - h * 0.02, y - h * 0.86 + b, h * 0.05, 0.45, -0.2);
   glint(ctx, x + h * 0.36, y - h * 0.66 + b, h * 0.04, 0.4, -0.9);
@@ -511,7 +529,8 @@ function sentinel(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
     glow(ctx, B, x - h * 0.48, y - h * 0.3, h * 0.13, heat.glow, 0.5 + pulse * 0.3, heat.heart);
     blob(ctx, B, heat.ember, [{ k: 'curve', pts: ring(x - h * 0.48, y - h * 0.3, h * 0.05, 6, 1.3, 0.8, 0.5), wobble: 0.12, seed: 33, sub: 2 }], { h, outline: false, formK: 0.4, gloss: 0.6 });
   } else {
-    // Split open down the middle: a furnace core, seams running out from it across the stone.
+    // Split open down the middle: a furnace core, seams running out from it across the stone. The
+    // tide's runs the same way, in the Stone's green.
     core(ctx, x + h * 0.01, y - h * 0.56 + b, h * 0.11, p.dark, heat, pulse, 32, h);
     const sw = Math.max(1, h * 0.016), sa = 0.55 + pulse * 0.35;
     seam(ctx, [x - h * 0.06, y - h * 0.7, x - h * 0.12, y - h * 0.8, x - h * 0.08, y - h * 0.9], heat.seam, sw, sa);
@@ -531,4 +550,20 @@ function sentinel(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   hotEye(ctx, x - h * 0.115, y - h * 0.815 + b, h * 0.021, heat, pulse * 0.85, 0.4);
   hotEye(ctx, x + h * 0.105, y - h * 0.775 + b, h * 0.03, heat, pulse, -0.3);
   for (const f of frags) if (f.front) fragment(ctx, f.fx, f.fy, f.s, f.rot, p.light, heat, h);
+  if (!tide) return;
+
+  // ---- lit from behind: the Stone's light along the edges that face it, the near shoulder and arm
+  //      dark against it. Then the brine, hanging from the fists and the elbows, never falling.
+  const rim = Math.max(1, h * 0.012), ra = 0.5 + pulse * 0.3;
+  seam(ctx, [x - h * 0.3, y - h * 0.74 + b, x - h * 0.52, y - h * 0.5 + b, x - h * 0.56, y - h * 0.34], heat.seam, rim, ra);
+  seam(ctx, [x - h * 0.24, y - h * 0.24, x - h * 0.36, y - h * 0.16, x - h * 0.4, y - h * 0.02], heat.seam, rim, ra * 0.8);
+  seam(ctx, [x - h * 0.42, y - h * 0.86, x - h * 0.22, y - h * 0.63], heat.seam, rim, ra * 0.7);
+  wet(ctx, [x + h * 0.14, y - h * 0.86 + b, x + h * 0.4, y - h * 0.8 + b], h);
+  wet(ctx, [x + h * 0.32, y - h * 0.72 + b, x + h * 0.52, y - h * 0.58 + b], h);
+  const glass = shade(mix(heat.glow, p.light, 0.45), Math.max(0.65, p.tone));
+  const drops: [number, number, number][] = [
+    [x + h * 0.6, y - h * 0.24, 0], [x + h * 0.52, y - h * 0.18, 0.45], [x - h * 0.5, y - h * 0.16, 0.2],
+    [x - h * 0.56, y - h * 0.24, 0.7], [x + h * 0.53, y - h * 0.48, 0.35],
+  ];
+  for (const [dx, dy, phase] of drops) drip(ctx, dx, dy, h * (0.02 + 0.026 * ((p.frame / 52 + phase) % 1)), h * 0.012, glass, h);
 }
