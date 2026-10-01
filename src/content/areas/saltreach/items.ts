@@ -8,4 +8,6 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'brine_shard', name: 'Brine Shard', slot: 'none', price: 0 },
   // C4's secret (#171): the crews' hide in the reeds.
   P(core('longsword'), 1),
+  // C6's find (#176): in a crate of the crews' cargo on the quay.
+  P(core('scale'), 1),
 ];

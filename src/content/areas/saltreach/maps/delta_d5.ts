@@ -49,7 +49,7 @@ export const DELTA_D5: MapDef = {
     'WWWWWW~~,,,,,_~~WWWWWWWWWWWWWWWW',
   ],
   features: [
-    { kind: 'sign', x: 1, y: 1, text: 'SALTMOUTH 4, RIETUM 5.' },
+    { kind: 'sign', x: 1, y: 1, text: 'SALTMOUTH 4, RIETUM 9.' },
     { kind: 'event', x: 5, y: 9, id: 'd5_shore', once: true, text: 'The sand under the Edge, and east of it the gulf, grey as far as the eye goes. Sylmeer.' },
     { kind: 'event', x: 4, y: 14, id: 'd5_bar', once: true, text: 'A bar of shingle runs out from the shore across the flats to an islet, the tide sucking at the mud either side of it.' },
     { kind: 'npc', x: 16, y: 19, name: 'a hermit on the islet', lines: [

@@ -6,7 +6,8 @@ export const ZONES: readonly AtlasZone[] = [
   { id: 'upperwater', name: 'The Upper Water', area: 'saltreach', band: [10, 11], seeds: [[56, 76], [80, 56], [36, 110]] },
   { id: 'delta', name: 'The Delta', area: 'saltreach', band: [10, 12], seeds: [[62, 150], [84, 136]], label: [76, 128],
     maps: [{ map: 'delta_d5', at: [104, 126] }, { map: 'delta_c5', at: [72, 126] }, { map: 'delta_c4', at: [72, 94] }, { map: 'delta_b5', at: [40, 126] }] },
-  { id: 'saltings', name: 'The Saltings', area: 'saltreach', band: [11, 12], seeds: [[98, 194], [70, 194]] },
+  { id: 'saltings', name: 'The Saltings', area: 'saltreach', band: [11, 12], seeds: [[98, 194], [70, 194]],
+    maps: [{ map: 'saltings_c6', at: [72, 158] }] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -20,7 +21,7 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // III. Saltreach.
   { name: 'Rietum', icon: 'village', at: [80, 80], label: 'right', planned: true },
-  { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
+  { name: 'Saltmouth', icon: 'port', at: [98, 177], label: 'left', planned: true }, // at the gate on C6, 26,19 (#176)
   { name: 'Tide Stone', icon: 'stone', map: 'delta_b5', at: [8.5, 14.5], label: 'below' }, // the plinth on Stienwierde, the stone mound, empty (saltreach.md §10)
   { name: 'Drowned Temples', icon: 'sunken', at: [56, 170], label: 'below', planned: true },
   { name: 'Sjonghol', icon: 'cave', at: [103, 76], label: 'right', planned: true }, // the singing hollow in Kestrel Edge's cliffs: the Monk's second prestige; a square west into C3, so D3 does not hold it (#71)
