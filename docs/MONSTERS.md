@@ -165,10 +165,10 @@ monster's hit points to outrun it would leave the company's weapons behind, sinc
 gear and a point of Might every other level, not with level. So the road past level 10 needs
 monsters that one spell does not answer: kinds and elements that make the company choose (§2),
 ranks that shield a back row, abilities that make the order of the kills matter, and more hit
-points on the few (the elites, the brutes, the bosses) than a single casting takes. Whether a
-spell's dice should stop growing somewhere is the systems lane's to weigh. The combat harness puts
+points on the few (the elites, the brutes, the bosses) than a single casting takes. Play stops a
+spell's dice growing at 10 (DESIGN.md §7, #159). The combat harness puts
 numbers on it (§4.4): for a company to fight its standard encounters between rests, a monster of
-its level needs about twice the line's hit points from level 8. Past 16, on today's rules, no split
+its level needs about twice the line's hit points from level 8. Past 16, with spells still growing, no split
 of hit points and damage keeps the days safe: fights the weapons can finish once the spells are
 spent kill, and fights that do not kill stall. Stop the spells growing at 10 and let something else
 grow past it, the gear, a bonus every two levels or a blow more a turn at 11 and another at 29, and
@@ -323,8 +323,9 @@ calibration:
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
 - It is made at every level to 10 and every fourth level to 32, 300 seeds a point, with the levels
-  between interpolated. Past 10 the company runs on today's rules extended, with no new spells,
-  prestiges or gear, so that stretch is provisional.
+  between interpolated. Past 10 the company runs on play's rules (#159): its spells stop growing at
+  10, and nothing new comes, no tier, prestige or gear, until #20, #19 and #18 bring them and the
+  harness re-runs.
 
 Hit points / average damage a hit, by role and level:
 
@@ -340,21 +341,24 @@ Hit points / average damage a hit, by role and level:
 | 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 70 / 9 | 57 / 10 | 70 / 11 | 88 / 13 | 119 / 13 | 311 / 37.5 |
 | 9 | 50 / 9 | 73 / 7 | 73 / 8 | 72 / 8 | 81 / 9 | 69 / 9 | 83 / 10 | 102 / 14 | 136 / 14 | 350 / 41 |
 | 10 | 60 / 10 | 89 / 10 | 90 / 10 | 86 / 9 | 102 / 11.5 | 87 / 10 | 99 / 14 | 122 / 15 | 165 / 15.5 | 415 / 47 |
-| 12 | 72 / 12 | 108 / 9 | 112 / 9 | 115 / 8 | 136 / 9 | 95 / 11 | 122 / 14 | 132 / 16 | 195 / 14.5 | 540 / 59 |
-| 16 | 97 / 14.5 | 122 / 15 | 120 / 18.5 | 122 / 15 | 155 / 15.5 | 114 / 18.5 | 139 / 20 | 178 / 17.5 | 217 / 16.5 | 830 / 85.5 |
-| 20 | 141 / 11 | 156 / 17 | 156 / 21 | 136 / 24 | 183 / 23 | 135 / 23 | 167 / 32 | 211 / 22 | 264 / 19 | 1046 / 103 |
-| 24 | 221 / 11.5 | 173 / 21 | 187 / 26 | 207 / 23 | 193 / 30 | 154 / 27 | 236 / 37 | 250 / 27 | 297 / 22 | 1184 / 113 |
-| 28 | 295 / 10 | 202 / 21 | 279 / 26.5 | 280 / 26 | 237 / 33 | 208 / 24 | 288 / 37 | 300 / 30.5 | 314 / 37 | 1324 / 124 |
-| 32 | 341 / 11.5 | 265 / 21 | 337 / 26.5 | 343 / 27 | 317 / 36.5 | 331 / 24 | 345 / 37 | 351 / 33 | 371 / 37 | 1491 / 138 |
+| 12 | 63 / 12 | 99 / 9 | 100 / 9 | 106 / 8 | 122 / 10 | 95 / 8 | 118 / 12 | 125 / 16 | 169 / 16 | 540 / 59 |
+| 16 | 70 / 11 | 113 / 10 | 114 / 11 | 113 / 11 | 133 / 11.5 | 100 / 12 | 127 / 12 | 146 / 16 | 180 / 17.5 | 703 / 72 |
+| 20 | 100 / 8 | 117 / 12 | 118 / 13 | 117 / 14.5 | 140 / 14 | 106 / 16 | 135 / 14 | 157 / 16.5 | 187 / 19 | 831 / 82 |
+| 24 | 108 / 9 | 121 / 14.5 | 122 / 15 | 120 / 17 | 153 / 15.5 | 109 / 18.5 | 139 / 16.5 | 161 / 18.5 | 192 / 22 | 907 / 87 |
+| 28 | 112 / 10 | 123 / 16 | 128 / 17 | 123 / 21 | 156 / 19.5 | 125 / 14 | 142 / 21 | 165 / 21 | 197 / 25 | 964 / 90 |
+| 32 | 115 / 11.5 | 125 / 18 | 135 / 19 | 130 / 22 | 159 / 24 | 127 / 18 | 145 / 24 | 168 / 24 | 201 / 27.5 | 1001 / 92 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
 controllers 12, skirmishers and elites 15, soldiers 11, the armoured and brutes 8, the boss 13.
 Archers and casters reach the back row, archers with bows; controllers and elites paralyse, 0.15 a
-hit. Each monster pays its share of an encounter, and an encounter pays a twentieth of what the
-company needs for its next level (`FIGHTS_PER_LEVEL`, the curve's to set), about three rests' worth:
-75 at level 1, 885 at 10, 2,865 at 32. There is no boss under level 3, since a boss sits at its
-band's top.
+hit. Each monster pays its share of an encounter, and an encounter pays what the curve gives a group
+(EXPANSION.md §5.2): the company's climb through its level, over three quarters of the groups a
+clear holds for each level it climbs (`groupsPerLevel`, pinned at the built areas' pace when #159
+counted it: the Foreland 81 over 4, Thornmark 75 over 5, and past them Thornmark's, until Saltreach's
+first box settles open question 4). That is 99 at
+level 1, 1,573 at 10 and 5,093 at 32; a boss pays four. There is no boss under level 3, since a boss
+sits at its band's top.
 
 What it shows:
 
@@ -396,7 +400,7 @@ What it shows:
 - **A lone boss has to kill with a blow.** At level 8 it hits for 37.5 against a company whose
   sorcerer has about 24. Real bosses want an escort, as the Hand of Ash and the Warden of the Cut
   have, or the sweep of §3.3.
-- **Past 12, on today's rules, no monster makes a good day.** With rests further apart, monsters
+- **Past 12, with spells still growing, no monster makes a good day.** With rests further apart, monsters
   there need only 1.9 to 4 times the line's hit points (fodder up to 5.7), where six or seven fights
   a rest asked up to seven. But the company's spells grow with its level and nothing else does, so
   once they are spent its weapons cannot finish a fight, and blows hard enough to end fights sooner
@@ -404,8 +408,8 @@ What it shows:
   half for elites by 28, three in four for brutes at 28 and nearly all for the armoured at 20–28,
   whom weapons barely scratch.
 - **Weaker spells, and something else that grows.** Past 10 the balance can come from the monsters,
-  the spells or the company, and the harness tries each. `--spell-cap 10` stops damage spells
-  growing at 10. `--gear-grows` enchants Thornmark's gear past 10, so that a weapon's blow grows as
+  the spells or the company, and the harness tries each. `--spell-cap 10` stopped damage spells
+  growing at 10, which play has done since #159 (`--spell-cap 32` now tries the old rule). `--gear-grows` enchants Thornmark's gear past 10, so that a weapon's blow grows as
   the line's hit points do and armour gains a point every two levels, as the line's to-hit does.
   `--level-bonus` gives every member a point of weapon damage and of armour every two levels
   instead. `--level-traits` gives the fighters (in the premade six the knight, paladin, ranger and
@@ -415,7 +419,7 @@ What it shows:
 
   | Spells | What else grows past 10 | Most roles | The armoured |
   |---|---|---|---|
-  | keep growing | nothing (today) | a sixth to two-fifths | nearly all |
+  | keep growing | nothing (play before #159) | a sixth to two-fifths | nearly all |
   | keep growing | gear | a fifth to five in six from 24 | nearly all |
   | keep growing | a bonus every two levels | up to six in seven by 28 | nearly all from 24 |
   | keep growing | a blow at 11 and 29 | a fifth at most to 16, up to two-thirds from 24 | a tenth at most to 16, up to nine in ten from 24 |
@@ -465,17 +469,25 @@ What it shows:
   with them, none. Controllers, which paralyse, stay a few points over at 24 and 32 against a bot that
   never cures and a company with no bard, whose second prestige stops paralysis; the bot learns to
   cure before their numbers move (#18).
+- **On play's rules, the tables past 10 are made again (#159).** With spells stopped at 10 and
+  nothing new past Act I's, the calibration gives monsters less over the line the further they go:
+  1.1 to 3.2 times its hit points at 12 and 1.1 to 1.9 at 32 (the boss 3.9 down to 2.9), hitting on
+  it or up to 1.6 times as hard, in fights of three to seven rounds. Hit points are held at the level
+  under's for 25 of the 60 points. A tenth of the days or fewer end badly for most roles, but the
+  controllers end a fifth at 24 and 28, the armoured an eighth at 24 and 32, archers 12% at 32 and
+  brutes 14% at 12: the stretch the prestiges and the new tiers (#19, #20) are to fill, as
+  `--prestiges --tiers` shows above.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
 costs, and the boss's odds. `--map thornmark --level 5` puts a map's own groups against a company
 of that level, each on its own and then all of them dealt in a new order. `--stats` prints the stat
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
-`--spell-cap 10`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
-spells stopped growing at 10, or the company gained gear, a bonus or blows as it levelled past it;
-`--prestiges` (with `--rank-step`, `--rank-cost` and `--tiers`) as if it took its prestiges. They
-combine, and play has none of them; `--calibrate` under them says what share of days end badly at
-each point it makes, and writes nothing.
+`--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
+spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
+blows as it levelled past it; `--prestiges` (with `--rank-step`, `--rank-cost` and `--tiers`) as if
+it took its prestiges. They combine, and play has none of them; `--calibrate` under them says what
+share of days end badly at each point it makes, and writes nothing.
 
 ---
 
