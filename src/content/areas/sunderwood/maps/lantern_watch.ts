@@ -8,6 +8,12 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
+/** What the Reader reads in the Tide Ship's papers and its log, and nothing past it: the rest is Vask's to say. */
+const READING = [
+  '"The Helmstow customs seal on every cargo, the same as on the crates in the caves. Under it on every page a countersign. The Regent\'s."',
+  '"The log is a clerk\'s cipher. I know it." At the foot of each entry, the other ink, one name: Vask. She puts both back in your hands.',
+];
+
 export const LANTERN_WATCH: MapDef = {
   id: 'lantern_watch',
   name: 'Lantern Watch',
@@ -46,11 +52,27 @@ export const LANTERN_WATCH: MapDef = {
       'The prior\'s room, high in the tower. A desk under the window on the gorge, and the rain on the glass.',
       'On the wall a survey of the ledges, pinned at the corners. A cold hearth, two chairs. The prior is not in it.',
     ] },
-    // The Watch's Reader, in the prior's room at every hour (#201).
+    // The Watch's Reader, in the prior's room at every hour (#201). She reads the Tide Ship's papers
+    // and its log to whoever carries them, whenever they come, and gives them back: the midpoint
+    // (DESIGN §9), its flag `papers_read` for #204's chapter. The letter under L2's ash changes
+    // only how she begins.
     { kind: 'npc', x: 5, y: 5, name: 'Hester Dunmore, Reader of the Watch', lines: [
       'A woman at the desk with a cut wick in a dish beside her, a book shut under her hand. She does not stand.',
       '"Hester Dunmore, Reader of the Watch. Helmstow sends oil and orders, and once a season somebody to count the jars."',
       '"Sometimes papers come instead, and those come to me." She looks past you at the door. "Shut it, if you would."',
+    ], says: [
+      { after: { flag: 'papers_read' }, lines: [
+        'She has the wick in its dish lit now, the door still shut. "They came to me. They are yours. Keep them close, and keep them dry."',
+        '"Nothing I read leaves this room by me." She looks at the door. "What goes down the stair is yours to carry."',
+      ] },
+      { after: { item: 'ships_papers', seen: 'lanternwood_l2:l2_letter' }, sets: 'papers_read', lines: [
+        '"You have been on the knoll, then." She gets up and shuts the door herself, and lays the papers open under the window.',
+        ...READING,
+      ] },
+      { after: [{ item: 'ships_papers' }, { item: 'ships_log' }], sets: 'papers_read', lines: [
+        'She sees the papers before she sees you, and gets up, and shuts the door herself. "Sit." She lays them open under the window.',
+        ...READING,
+      ] },
     ] },
     { kind: 'shop', x: 10, y: 5, name: 'The Watch Stores', stock: ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield', 'lantern_oil', 'elixir', 'potion_sp_great', 'rations'], interior: 'watch_stores' },
     { kind: 'inn', x: 10, y: 7, name: 'The Refectory', price: 30, interior: 'watch_refectory' },
@@ -60,6 +82,9 @@ export const LANTERN_WATCH: MapDef = {
       'A tall man in the yard under the lamp, grey as the stone, his face turned up to it. He has heard you and not looked down.',
       '"Osric. Prior of the Watch. I keep the one lamp. The oil comes from Helmstow when Helmstow sends it, and the lamp burns while it lasts."',
       '"The Watch keeps no secrets from Helmstow, and asks none of its guests." He looks down at last. "You are welcome to the yard."',
+    ], says: [
+      { after: { flag: 'papers_read' }, lines: ['"You have been up in my room." He looks at the lamp, not at you. "The chair was warm."'] },
+      { after: [{ item: 'ships_papers' }, { item: 'ships_log' }], lines: ['"Papers from the coast, I hear. Leave them with me. They go to Helmstow by the next oil cart." He holds out his hand, and lets it fall.'] },
     ] },
     // The Cartographers' surveyor on the west wall, sighting across the gorge.
     { kind: 'npc', x: 2, y: 4, name: 'Wouter Brink, surveyor of the Guild', lines: [
