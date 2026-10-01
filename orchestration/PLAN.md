@@ -1809,3 +1809,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
 - 04:52: #324, opened by the owner from this branch (the orchestration log, 143 files), closed
   unmerged on their word that it can go: `orchestration/` is never merged. The branch stays, with
   the log.
+- 05:00, **the owner: "Can we close out the completed epics".** Checked first: #65's 19 sub-issues
+  and #208's 11 all closed; #26's 27 all closed but those two. Closed #65, #208 and #26 as completed,
+  each with a comment that it is closed on the owner's word with their own play still to come (the
+  last line of each Done when), its findings for the area docs' §8. **Phase 1 is closed.** Still
+  open and approved outside it: #57 (the bow), put to the owner.
