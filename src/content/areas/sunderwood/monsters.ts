@@ -11,5 +11,5 @@ export const SPRITES = [
 
 export const MONSTERS: readonly MonsterDef[] = [
   // the Sunder's ledges (#198), a soldier on MONSTERS §4.4's line at 15: the Hand, quarrying the Rift
-  { id: 'ashen_gleaner', name: 'Ashen Gleaner', plural: 'Ashen Gleaners', sprite: 'gleaner', kind: 'person', steady: true, look: 'A sack of glowing shards, and a knife for the next.', level: 15, hp: 111, ac: 19, attack: 9, dice: 2, sides: 6, bonus: 4, speed: 11, xp: 593, gold: [25, 60], tint: '#54484e', size: 0.92 },
+  { id: 'ashen_gleaner', name: 'Ashen Gleaner', plural: 'Ashen Gleaners', sprite: 'gleaner', kind: 'person', steady: true, look: 'A sack of glowing shards, and a knife for the next.', level: 15, hp: 155, ac: 19, attack: 9, dice: 3, sides: 5, bonus: 3, speed: 11, xp: 593, gold: [25, 60], tint: '#54484e', size: 0.92 },
 ];
