@@ -138,10 +138,12 @@ deals its dice. A hit may add a condition at a chance (`inflict`: poison, diseas
 paralysis); ten monsters use it, and none for sleep. `ranged` lets it pick the back row, `missile`
 marks the bows the weather spoils, and `mindless` shrugs off Slumber. It carries gold and drops.
 
-That is all. No monster casts, heals, calls for help, runs, regenerates, resists an element or
-stands behind another; monsters stand in no rows, so a weapon in the party's front row reaches any
-of them. Nothing gives a curse or stone, though both conditions exist: Restore lifts a curse, and a
-temple a stoning.
+That is all, but for ranks and morale (#160): a group may stand a `back` rank, which a blade reaches
+only once the fight's front is down and which waits, bow or spell aside, till then; and a fight's
+people break once its `leader` falls, a group's beasts bolt at three in four down, and the fled pay
+nothing; the Hand never breaks (`steady`). No monster casts, heals, calls for help, regenerates or
+resists an element. Nothing gives a curse or stone, though both conditions exist: Restore lifts a
+curse, and a temple a stoning.
 
 ### 3.2 What the numbers show
 
