@@ -18,7 +18,8 @@ import { AREA as shelf } from './areas/shelf/index.ts';
 import { AREA as thornmark } from './areas/thornmark/index.ts';
 import * as saltreach from './areas/saltreach/monsters.ts';
 import * as wrackholm from './areas/wrackholm/monsters.ts';
-import * as sunderwood from './areas/sunderwood/interiors.ts';
+import * as saltreachRooms from './areas/saltreach/interiors.ts';
+import * as sunderwoodRooms from './areas/sunderwood/interiors.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -37,11 +38,14 @@ export const AHEAD = [
 ] as const;
 
 /**
- * Rooms drawn ahead of their area, as AHEAD's monsters are: each area's list is merged into
- * Interior and INTERIORS as a listed area's are, and goes when its Area takes it.
+ * Rooms drawn ahead of their area, as AHEAD's monsters are: an area's businesses' rooms may be
+ * drawn before its first map. Each area's list is merged into Interior and INTERIORS as a listed
+ * area's is (src/ui/interior.ts paints every one); once the area is listed, its Area takes the
+ * list as `interiors` and its line here goes.
  */
 export const ROOMS_AHEAD = [
-  { id: 'sunderwood' as const, interiors: sunderwood.INTERIORS },
+  { id: 'saltreach' as const, interiors: saltreachRooms.INTERIORS },
+  { id: 'sunderwood' as const, interiors: sunderwoodRooms.INTERIORS },
 ] as const;
 
 type AnyArea = (typeof AREAS)[number];
