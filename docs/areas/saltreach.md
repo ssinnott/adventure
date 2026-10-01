@@ -12,10 +12,11 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 
 Three boxes of it are built, the Delta road and the shore under the Edge (#170) and Saltmouth's box
 (#176), and with the first two the area is listed. Its content is `src/content/areas/saltreach/`
-(maps, monsters, items, climate and its part of the world map; its chapter of the one quest, The Tide Stone, in `chapter.ts`, its side
-quests in `quests.ts` and its guild quests in `guilds.ts` are still to come) and its businesses'
-rooms `src/ui/interiors/saltreach/`. Its ids: the area `saltreach`, its zones `upperwater`, `delta`
-and `saltings`, the town `saltmouth` and the temples `drowned_temples`.
+(maps, monsters, items, climate and its part of the world map; its chapter of the one quest, The
+Tide Stone, in `chapter.ts`, its side quests in `quests.ts` and its guild quests in `guilds.ts` are
+still to come) and its businesses' rooms `src/ui/interiors/saltreach/`. Its ids: the area
+`saltreach`, its zones `upperwater`, `delta` and `saltings`, the town `saltmouth` and the temples
+`drowned_temples`.
 
 ---
 
