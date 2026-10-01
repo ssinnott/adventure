@@ -119,9 +119,12 @@ export function elementMult(d: MonsterDef, el: Element | undefined): number {
   return 1;
 }
 
-/** A spell's damage on it, rolled: none, half rounded up (never nothing), half again rounded down, or whole. */
-export function elementDamage(d: MonsterDef, el: Element | undefined, dmg: number): number {
-  const mult = elementMult(d, el);
+/**
+ * A spell's damage on it, rolled: none, half rounded up (never nothing), half again rounded down, or
+ * whole. A caster who `pierces` (the sorcerer's third rank) passes a resistance, never an immunity.
+ */
+export function elementDamage(d: MonsterDef, el: Element | undefined, dmg: number, pierces = false): number {
+  const m = elementMult(d, el), mult = pierces && m === RESIST ? 1 : m;
   return mult === 0 ? 0 : mult === RESIST ? Math.ceil(dmg / 2) : mult === WEAK ? dmg + Math.floor(dmg / 2) : dmg;
 }
 

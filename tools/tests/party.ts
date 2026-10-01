@@ -27,14 +27,16 @@ export function party(): void {
   ok(armorClass(p.members[0]) > armorClass(p.members[5]), 'the knight has the better AC');
   ok(Object.values(SPELLS).every((sp) => sp.sp > 0), 'every spell costs something');
   // The road to level 10: tiers land at 1, 2, 4, 6, 8; levelling stops at the cap; nothing is left to train.
-  ok([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join() === '1,2,2,3,3,4,4,5,5,5', `spell tiers by level are ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(spellTierAt).join()}`);
-  for (const list of ['cleric', 'sorcerer', 'druid'] as const) for (let t = 1; t <= 5; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
+  const tiers = (ls: number[], hybrid = false): string => ls.map((l) => spellTierAt(l, hybrid)).join();
+  ok(tiers([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) === '1,2,2,3,3,4,4,5,5,5', `spell tiers by level are ${tiers([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])}`);
+  ok(tiers([14, 15, 22, 23, 32]) === '5,6,6,7,7' && tiers([8, 15, 16, 17, 24, 25], true) === '5,5,5,6,6,7', `tiers 6 and 7 come at 15 and 23, a hybrid's at 17 and 25 (${tiers([14, 15, 22, 23, 32])}; ${tiers([8, 15, 16, 17, 24, 25], true)})`);
+  for (const list of ['cleric', 'sorcerer', 'druid'] as const) for (let t = 1; t <= 7; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
   const c = p.members[4];
   c.xp = 1_000_000;
   const gained = levelUp(c, rng);
   ok(c.level === MAX_LEVEL && gained === MAX_LEVEL - 1, `a cleric with endless xp levels to exactly ${MAX_LEVEL} (${c.level})`);
   ok(!canTrain(c), 'and cannot train further');
-  ok(spellsFor('cleric', 5).every((sp) => c.spells.includes(sp.id)), 'at the cap every cleric spell is known, including tier 5');
+  ok(spellsFor('cleric', 7).every((sp) => c.spells.includes(sp.id)), 'at the cap every cleric spell is known, including tier 7');
   ok(c.maxHp >= 31 * 1 + 8 && c.maxSp > 60, `hp and sp grew with the levels (hp ${c.maxHp}, sp ${c.maxSp})`);
   ok(MAX_LEVEL === 32 && trainPrice({ level: 10 }) === 400 && trainPrice({ level: 31 }) === 1240, `the road's cap is ${MAX_LEVEL}, and a level past 10 costs 40 gold a level (${trainPrice({ level: 31 })} for the 32nd)`);
   const k = p.members[0]; k.xp = xpForLevel(8);

@@ -133,7 +133,7 @@ export const prestigeOf = (c: Pick<Character, 'prestige'>): number => c.prestige
 export const className = (c: Pick<Character, 'cls' | 'prestige'>): string => (prestigeOf(c) ? PRESTIGES[c.cls].titles[prestigeOf(c) - 1] : CLASSES[c.cls].name);
 /**
  * A member's spell rank (DESIGN §7): a caster's or a hybrid's prestiges, none for the rest. What a
- * rank does to a spell is #20's; a hybrid's is half a caster's step.
+ * rank does to a spell is `rankMult`'s; a hybrid's is half a caster's step.
  */
 export const spellRank = (c: Pick<Character, 'cls' | 'prestige'>): number => (PRESTIGES[c.cls].calling === 'fighter' ? 0 : prestigeOf(c));
 /**
@@ -215,9 +215,25 @@ export function xpForLevel(level: number): number { return Math.floor(100 * Math
  * plus one (EXPANSION §5.2), so what a company can reach is set by the towns built, not by this.
  */
 export const MAX_LEVEL = 32;
-/** Spell tiers unlock at levels 1, 2, 4, 6 and 8; five tiers exist. */
-export const MAX_SPELL_TIER = 5;
-export function spellTierAt(level: number): number { return Math.min(MAX_SPELL_TIER, 1 + Math.floor(level / 2)); }
+/** Spell tiers unlock at levels 1, 2, 4, 6 and 8, then 15 and 23, between the prestiges (DESIGN §7); seven tiers exist. */
+export const MAX_SPELL_TIER = 7;
+/** The levels tiers 6 and 7 come at; a hybrid's come two levels later (HYBRID_LAG). */
+export const LATE_TIERS: readonly [number, number] = [15, 23];
+export const HYBRID_LAG = 2;
+export function spellTierAt(level: number, hybrid = false): number {
+  const lag = hybrid ? HYBRID_LAG : 0;
+  return level >= LATE_TIERS[1] + lag ? 7 : level >= LATE_TIERS[0] + lag ? 6 : Math.min(5, 1 + Math.floor(level / 2));
+}
+
+/** What a spell rank adds to a damage spell's dice and a mending spell's heal (DESIGN §7): 15%, 45% by the third. */
+export const RANK_STEP = 0.15;
+/**
+ * What its ranks make a caster's damage dice and mending: a step a rank, half a step for a hybrid,
+ * whose perks carry the rest of its growth. A tool weighing another step passes it.
+ */
+export function rankMult(c: Character, step = RANK_STEP): number {
+  return 1 + step * (PRESTIGES[c.cls].calling === 'hybrid' ? 0.5 : 1) * spellRank(c);
+}
 /** Whether the character has the experience for the next level (and is not at the cap). */
 export function canTrain(c: Character): boolean { return c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1); }
 /** Whether a trainer who teaches to `maxLevel` can teach the character its next level. */
@@ -326,9 +342,9 @@ export function damage(c: Character, n: number): void {
   if (c.hp <= 0) { removeCondition(c, 'asleep'); }
 }
 
-/** What a healing spell of `base` restores when this caster casts it. */
-export function spellHeal(caster: Character, base: number): number {
-  return base + bonus(caster.stats.personality) + (hasTrait(caster, 'healing_hands') ? HEALING_HANDS : 0);
+/** What a healing spell of `base` restores when this caster casts it: its ranks lift the base (`rankMult`), and not the flat bonuses. */
+export function spellHeal(caster: Character, base: number, step = RANK_STEP): number {
+  return Math.round(base * rankMult(caster, step)) + bonus(caster.stats.personality) + (hasTrait(caster, 'healing_hands') ? HEALING_HANDS : 0);
 }
 
 export function heal(c: Character, n: number): number {
@@ -363,8 +379,8 @@ export function levelUp(c: Character, rng: RngInstance, cap = MAX_LEVEL): number
     if (cd.spStat) {
       const sp = Math.max(1, rng.int(1, cd.spDie) + bonus(c.stats[cd.spStat])) + psp;
       c.maxSp += sp; c.sp += sp;
-      // A new spell tier every two levels: tier 5 lands at level 8.
-      const tier = spellTierAt(c.level);
+      // A new spell tier every two levels to tier 5 at level 8, then 6 and 7 at 15 and 23.
+      const tier = spellTierAt(c.level, PRESTIGES[c.cls].calling === 'hybrid');
       for (const s of spellsFor(cd.spells!, tier)) if (!c.spells.includes(s.id)) c.spells.push(s.id);
     }
     // One stat point in the class's leaning, every other level.

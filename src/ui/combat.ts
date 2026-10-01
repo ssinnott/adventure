@@ -11,13 +11,13 @@ import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction } from '../game/combat.ts';
-import { spell } from '../game/spells.ts';
+import { spell, ELEMENTS } from '../game/spells.ts';
 import { item } from '../game/items.ts';
 import { weaponOf } from '../game/party.ts';
 import { groupLabels, seatOf, crown, MARKER_RISE, LABEL_TOP, BACK_SCALE } from './grouplabels.ts';
 import type { LabelLine } from './grouplabels.ts';
 
-type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'item' | 'itemTarget' | 'done';
+type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | 'itemTarget' | 'done';
 const MONSTER_DELAY = 22;
 
 export class CombatScreen implements Screen {
@@ -118,7 +118,8 @@ export class CombatScreen implements Screen {
           const sp = spell(list[this.sub]);
           if (c.sp < sp.sp) { g.say('Not enough spell points.'); return; }
           this.pendingSpell = sp.id;
-          if (sp.target === 'enemy' || sp.target === 'group') { this.mode = 'spellTarget'; this.sub = 0; }
+          if (sp.glass) { this.mode = 'element'; this.sub = 0; }
+          else if (sp.target === 'enemy' || sp.target === 'group') { this.mode = 'spellTarget'; this.sub = 0; }
           else if (sp.target === 'ally') { this.mode = 'itemTarget'; this.pendingItem = ''; this.sub = who; }
           else act({ type: 'cast', spellId: sp.id, target: 0 });
         }
@@ -137,6 +138,14 @@ export class CombatScreen implements Screen {
         if (is(a, 'up')) this.sub = (this.sub + items.length - 1) % items.length;
         else if (is(a, 'down')) this.sub = (this.sub + 1) % items.length;
         else if (is(a, 'interact')) { this.pendingItem = items[this.sub]; this.mode = 'itemTarget'; this.sub = who; }
+        break;
+      }
+      case 'element': {
+        // Lampglass: what the party is to take half from.
+        if (is(a, 'cancel')) { this.mode = 'spell'; this.sub = 0; return; }
+        if (is(a, 'up')) this.sub = (this.sub + ELEMENTS.length - 1) % ELEMENTS.length;
+        else if (is(a, 'down')) this.sub = (this.sub + 1) % ELEMENTS.length;
+        else if (is(a, 'interact')) act({ type: 'cast', spellId: this.pendingSpell, target: 0, element: ELEMENTS[this.sub] });
         break;
       }
       case 'itemTarget': {
@@ -242,6 +251,9 @@ export class CombatScreen implements Screen {
         const list = c.spells.filter((x) => spell(x).context !== 'explore');
         drawText(ctx, `SPELL  (SP ${c.sp})`, r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, list.map((x) => `${spell(x).name} (${spell(x).sp})`), r.x + 8, y, this.sub, { disabled: list.map((x) => spell(x).sp > c.sp) });
+      } else if (this.mode === 'element') {
+        drawText(ctx, 'AGAINST WHAT?', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
+        menu(ctx, ELEMENTS.map((e) => e[0].toUpperCase() + e.slice(1)), r.x + 8, y, this.sub);
       } else if (this.mode === 'item') {
         const items = this.usable(g, t.i);
         drawText(ctx, 'ITEM', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
