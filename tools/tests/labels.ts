@@ -88,9 +88,8 @@ export function labels(): void {
   fall('ogre', 1); fall('brigand', 2);
   ok(read(ogre) === `1 ${A.name}, 1 ${B.name}`, `and drops a kind when its last one falls (${read(ogre)})`);
 
-  // The Eldest and its heartwoods, which no map places yet (#218): a lone proper name is not
-  // counted, and the want above follows, so a count put back on it fails both.
-  // Only the naming is held here: so tall a band stands up past the view's top, which is #218's to seat.
+  // The Eldest and its heartwoods, at Penspern's tip: a lone proper name is not counted, and the
+  // want above follows, so a count put back on it fails both. The maps' sweep above seats it.
   const eldest = seat([['eldest', 'heartwood', 'heartwood']]), { eldest: E, heartwood: T } = MONSTERS, misread = labelFaults(eldest).filter((f) => f.includes(' reads '));
   ok(read(eldest) === `${E.name}, 2 ${T.plural}` && misread.length === 0, `a lone proper name is not counted (${read(eldest)}${misread.map((f) => ' -> ' + f).join('')})`);
 
