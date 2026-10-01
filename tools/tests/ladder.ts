@@ -95,7 +95,7 @@ export const DEEP_FINDS: Record<string, string> = {
 export const ACT_II: readonly { level: number; name: string; from: Record<string, readonly [area: 'saltreach' | 'wrackholm' | 'sunderwood', whose: string]>; classes: Record<ClassId, readonly string[]> }[] = [
   {
     level: 11, name: "Saltmouth's armourer",
-    from: Object.fromEntries(['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'].map((id) => [id, ['saltreach', '#177']])),
+    from: Object.fromEntries(['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'].map((id) => [id, ['saltreach', '']])),
     classes: {
       knight: ['morning_star'], paladin: ['morning_star'], ranger: ['horn_bow', 'sharkskin'], barbarian: ['long_axe', 'sharkskin'],
       cleric: ['morning_star', 'tidefolk_robe'], sorcerer: ['stiletto', 'tidefolk_robe'], thief: ['stiletto', 'sharkskin'], bard: ['stiletto', 'sharkskin'],

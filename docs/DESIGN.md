@@ -200,8 +200,8 @@ each member. For the third, the quest names the place; the way there, and the qu
 asks, are the hard part. The cap passed 10 with #159. Built with #19: the titles, the hit points and
 spell points, every perk below but the sorcerer's and the druid's third, and a trainer, a person who
 teaches one class one prestige (`teaches`), and the seeking quests, made from the trainers placed,
-with the world map's marks. Still to build: the trainers in their places, the third prestiges'
-quests and the ranks' effect on spells (#20).
+with the world map's marks. Still to build: the trainers in their places (Saltmouth's four are
+placed, #177), the third prestiges' quests and the ranks' effect on spells (#20).
 
 **Levels.** The first at 11, the second at 19 and the third at 27, eight levels apart, with the new
 spell tiers between them at 15 and 23 (§7), so something new comes every four levels. Every
