@@ -115,8 +115,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   brinelings in its rooms and a tide elder with one more at its heart, quiet once the elder falls;
   and the river's west fen over two fords. The secret is a barge drowned under the causeway's arch,
   the Brine Shard in its straw; the hint is the mast's stump at the arch, with the stones glowing
-  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.8 in the
-  Rift.
+  green beside it by night. The gate holds at 10, at 7.0 fights to a rest on the box and 6.6 in the
+  Rift (6.8 before the re-stat to #409's line, #18).
 - **Stienwierde** (B5, `delta_b5`, core, band 11–12; #173): duckboards from the Delta road west over
   the fen and the channel to the Tide Stone's island, its plinth empty and its socket cut clean; a
   driftwood shrine at the boards' start, a cairn and house-footings on the mound, and a hermit on a
@@ -125,7 +125,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   breach), each two tide elders at the heart, quiet once they fall. The secret is a hollow under the
   plinth's landing, a Brine Shard and a Kite Shield +1 in it; the hint is the barge-poles' marks on
   the landing, and one plank among them unscored and new-nailed. The gate holds at 11, at 7.1 fights
-  to a rest on the box and 5.4 in each Rift.
+  to a rest on the box and 4.9 in each Rift (5.4 before the re-stat to #409's line, #18; §9).
 - **The Drowned Temples' approach** (B6, `delta_b6`, core, band 11–12; #174): a causeway south
   from Stienwierde round the temple's roof to its dry door at 16,11, open on a stair, with tidal
   flats at its foot and the priestess beside it, counting; the last dry ground, a camp; a small roof
@@ -134,8 +134,8 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   fen toads on the causeway in, five brinelings in the channel by night until both of B5's Rifts
   are quiet, and two bull toads on the flats past the far roof. The secret is a door in the far
   roof's wall under the tideline, a porch behind it and a stair down; the hint is the priestess's
-  count, one to ten with her hand to each roof and a pause toward the far roof before eleven. The
-  doors are events until the temples are built (#175). The gate holds at 11, at 7.1 fights to a
+  count, one to ten with her hand to each roof and a pause towards the far roof before eleven. The
+  doors are events until the temples are built (#175). The gate holds at 11, at 7.0 fights to a
   rest.
 - **Saltmouth's box** (C6, `saltings_c6`, core, band 11–12; #176): the Salt Road's last reach from
   C5 down the fen's east side, its milestone (SALTMOUTH 2, RIETUM 7) and the road's end at the town's
@@ -148,7 +148,7 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   master on the quay by day, two Wrack smugglers and two bowmen under the sea wall by night, and four
   salt crabs at the pans' edge. The secret is the smugglers' stair in the sea wall's dry end, its
   cache at the foot by a sea door barred from within, the hint the rope hanging over it with
-  nothing on it. The gate holds at 11, at 7.0 fights to a rest.
+  nothing on it. The gate holds at 11, at 7.3 fights to a rest (7.0 before the re-stat, #18).
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
@@ -378,7 +378,7 @@ settled in its issue, and what the pilot teaches changes them.
   back; tidal ground lies either side of the ledge before it and round the roof's foot, never beside
   the porch, so nothing behind the door is reached across the flats. The hint is an event beside
   the priestess, always there: she counts the doors one to ten with her hand to each roof, then
-  lifts it toward the far roof, where no door shows, and says eleven. The camp is on the last dry
+  lifts it towards the far roof, where no door shows, and says eleven. The camp is on the last dry
   ground before the door; the cairn holds gold and a potion, no gear. The Tide Bell is #175's
   (§6). As measured, the box pays about 970 xp a member and 70 gold.
 
@@ -711,7 +711,7 @@ Decided by delegate for #174, each the owner's to overturn:
    ground lies either side of the ledge before the door and round the roof's foot, never beside the
    porch.
 6. **The hint is the priestess's count, written as an event beside her** and always there: one to
-   ten with her hand to each roof, then a pause toward the far roof, where no door shows, and
+   ten with her hand to each roof, then a pause towards the far roof, where no door shows, and
    eleven, the number the chant ends on.
 7. **The band stays 11–12, and the camp and the cairn both stand:** the camp is the company's rest
    before the temples, C5's being two boxes back and B5 having none.
@@ -759,6 +759,14 @@ Decided by delegate for #399, each the owner's to overturn:
 5. **The gate two under stays owed to #18:** gear dresses a company at a floor past one two under
    it, but a group a company at the floor fights six or seven of to a rest is one a company two
    under still beats. Past 10 the to-a-rest aim and the two-under aim pull against each other.
+
+Decided by delegate for #18, each the owner's to overturn:
+
+1. **B5's Rifts keep their two tide elders,** at 4.9 fights to a rest at 11 after the re-stat to
+   #409's line, under their aim of 5.75 and inside their limit. A warden must average 12 to hold the
+   band's top, and only the elder pair does that among the brine family; a room of brinelings ahead
+   of it would mend the figure, but it would cost the north Rift its cells and each Rift some 200 xp
+   a member more.
 
 ## 10. Names
 
