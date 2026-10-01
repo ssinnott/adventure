@@ -4,6 +4,8 @@
 import { MONSTERS } from '../content/index.ts';
 import type { MonsterSprite } from '../content/index.ts';
 import type { Condition } from './party.ts';
+import { spell } from './spells.ts';
+import type { Element, SpellDef } from './spells.ts';
 
 export type { MonsterSprite };
 
@@ -11,21 +13,29 @@ export type { MonsterSprite };
 export type MonsterKind = 'beast' | 'person' | 'dead' | 'rift' | 'machine';
 
 export interface KindDef {
-  /** Conditions the whole kind shrugs off. */
-  immune: readonly Condition[];
+  /** Conditions and elements the whole kind shrugs off. */
+  immune: readonly (Condition | Element)[];
+  /** Elements that do it half (`elementMult`). */
+  resist?: readonly Element[];
+  /** Elements that do it half again. */
+  weak?: readonly Element[];
   /** Holy Strike bites. */
   holy: boolean;
   /** When it leaves a fight: at its leader's fall, once three in four of its group are down, or never (combat.ts `morale`). */
   breaks: 'leader' | 'rout' | 'never';
 }
 
-/** Each kind's defaults, the ones the combat model has so far; the rest of MONSTERS §2 comes with #18 and #20. */
+/**
+ * Each kind's defaults, the ones the combat model has so far: holy light bites the dead and lightning
+ * the machine, and the swarm does nothing to either nor the Hearth's light to a machine. A beast's
+ * or the Rift's elements are its own (MONSTERS §2, §2.1).
+ */
 export const KINDS: Record<MonsterKind, KindDef> = {
   beast:   { immune: [], holy: false, breaks: 'rout' },
   person:  { immune: [], holy: false, breaks: 'leader' },
-  dead:    { immune: ['asleep'], holy: true, breaks: 'never' },
+  dead:    { immune: ['asleep', 'nature'], weak: ['holy'], holy: true, breaks: 'never' },
   rift:    { immune: [], holy: false, breaks: 'never' },
-  machine: { immune: ['asleep'], holy: false, breaks: 'never' },
+  machine: { immune: ['asleep', 'holy', 'nature'], weak: ['lightning'], holy: false, breaks: 'never' },
 };
 
 export interface MonsterDef {
@@ -61,8 +71,19 @@ export interface MonsterDef {
   /** Gold dropped per monster, as a range. */
   gold: [number, number];
   drops?: readonly { item: string; chance: number }[];
-  /** Conditions it shrugs off beyond its kind's, as the slime and the wardens do sleep. */
-  immune?: readonly Condition[];
+  /** Conditions and elements it shrugs off beyond its kind's, as the slime and the wardens do sleep and the brineling cold. */
+  immune?: readonly (Condition | Element)[];
+  /** Elements that do it half, beyond its kind's (`elementMult`). */
+  resist?: readonly Element[];
+  /** Elements that do it half again, beyond its kind's: lightning the brineling. */
+  weak?: readonly Element[];
+  /**
+   * Spells from the tables it may spend a turn on, the first it can use (`castable`), at `chance` a
+   * turn: at its own level held to SPELLS_GROW_TO, unranked (DESIGN §7). The drowned chanter's Slumber.
+   */
+  cast?: { spells: readonly string[]; chance: number };
+  /** Its hits heal it by their damage ('hp', the leech), or take spell points before hit points ('sp', the bog light). */
+  drain?: 'hp' | 'sp';
   /** Never breaks, whatever its kind: the Hand (docs/MONSTERS.md §2). */
   steady?: boolean;
   /** Tint of the sprite. */
@@ -80,4 +101,48 @@ export function monster(id: string): MonsterDef {
 /** Whether its kind or its own nature keeps the condition off. */
 export function monsterImmune(d: MonsterDef, k: Condition): boolean {
   return KINDS[d.kind].immune.includes(k) || !!d.immune?.includes(k);
+}
+
+/** What resisting an element leaves of a spell's damage, and what a weakness adds to it. */
+export const RESIST = 0.5, WEAK = 1.5;
+
+/**
+ * What an element does to it, as a share of a spell's damage: none where its kind or it is immune,
+ * half where either resists, half again where either is weak, else whole. No element is whole.
+ */
+export function elementMult(d: MonsterDef, el: Element | undefined): number {
+  if (!el) return 1;
+  const k = KINDS[d.kind];
+  if (k.immune.includes(el) || d.immune?.includes(el)) return 0;
+  if (k.resist?.includes(el) || d.resist?.includes(el)) return RESIST;
+  if (k.weak?.includes(el) || d.weak?.includes(el)) return WEAK;
+  return 1;
+}
+
+/** A spell's damage on it, rolled: none, half rounded up (never nothing), half again rounded down, or whole. */
+export function elementDamage(d: MonsterDef, el: Element | undefined, dmg: number): number {
+  const mult = elementMult(d, el);
+  return mult === 0 ? 0 : mult === RESIST ? Math.ceil(dmg / 2) : mult === WEAK ? dmg + Math.floor(dmg / 2) : dmg;
+}
+
+/**
+ * Whether a monster can cast the spell (`MonsterDef.cast`): a mend on one of its group or all of it,
+ * Bless or Ward on its group, a damage spell, or Slumber on a row. Haste, cures, raising and the map
+ * spells are the party's.
+ */
+export function monsterCanCast(sp: SpellDef): boolean {
+  if (sp.context === 'explore' || sp.raise || sp.cure) return false;
+  if (sp.heal) return sp.target === 'ally' || sp.target === 'party';
+  if (sp.buff) return sp.buff === 'bless' || sp.buff === 'shield';
+  if (sp.inflict) return sp.inflict === 'asleep' && sp.target === 'group';
+  return !!sp.dice && (sp.target === 'enemy' || sp.target === 'group' || sp.target === 'all');
+}
+
+/** The spells a monster names, every one of which it can cast; throws on one it cannot. */
+export function monsterSpells(d: MonsterDef): SpellDef[] {
+  return (d.cast?.spells ?? []).map((id) => {
+    const sp = spell(id);
+    if (!monsterCanCast(sp)) throw new Error(`${d.id} cannot cast '${id}'`);
+    return sp;
+  });
 }

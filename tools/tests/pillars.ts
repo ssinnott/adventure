@@ -13,7 +13,7 @@ import type { StoryLock } from '../../src/content/locks.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Presence } from '../../src/game/map.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
-import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS } from '../../src/game/atlas.ts';
+import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS, areaBand, zoneOfMap, homeMap } from '../../src/game/atlas.ts';
 import { CLASSES, RACES, TRAITS } from '../../src/game/party.ts';
 import { signLine } from '../../src/game/world.ts';
 import { NORTH } from '../../src/game/types.ts';
@@ -214,6 +214,55 @@ export function uses(area: Pick<Area, 'maps' | 'atlas'>, family: Map<string, rea
     }
   }
   for (const s of area.atlas.sites) if (!s.planned && s.icon !== 'label' && s.icon !== 'water') out.landmarks.add(s.icon);
+  return out;
+}
+
+/**
+ * The reach (DESIGN §9): off the road by design, so the secret's pace does not bind it. Its zones are
+ * named here until the atlas marks them itself (EXPANSION §5.8); a town or dungeon goes with the zone
+ * it opens from.
+ */
+export const REACH_ZONES: readonly string[] = ['theglass', 'glacierfoot'];
+
+/** A map as the pace check reads it: the area that lists it, and the atlas zone it lies in or opens from. */
+export interface PacedMap { def: MapDef; area: string; zone?: string }
+
+/**
+ * The secret's pace (MONSTERS §2.2, #158): no machine on the road before the bottom of the Deep
+ * Mines, and no Rift after Cairnmoor. A map's place on the road is its area's order; a map whose
+ * floor is over its area's band (the Dead-Drop under the Tide Ship, 26 to 28 in Act II's isle)
+ * takes the place of the last area whose floor is at or under its own. A machine stands only past
+ * the Kilns, or in the Kilns on the Deep Mines' last level (the highest-numbered `deep_mines` map);
+ * with no Mines built, nowhere in the Kilns. A Rift is a tear, a group with a monster of the Rift's
+ * kind, or a rift on the atlas, in an area past Cairnmoor. The reach is exempt.
+ */
+export function paceFaults(maps: readonly PacedMap[], kindOf: (monster: string) => MonsterDef['kind'] | undefined, atlas: Atlas = ATLAS, defs: readonly MapDef[] = maps.map((m) => m.def), grid?: { zone: Int16Array; width: number; height: number }): string[] {
+  const order = (id: string): number => atlas.areas.find((a) => a.id === id)?.order ?? Infinity;
+  const KILNS = order('kilns'), CAIRNMOOR = order('cairnmoor');
+  const bands = atlas.areas.map((a) => ({ order: a.order, band: areaBand(atlas, defs, a.id) })).filter((a): a is { order: number; band: [number, number] } => !!a.band);
+  const placeOf = (m: PacedMap): number => {
+    const own = order(m.area), top = bands.find((b) => b.order === own)?.band[1], floor = m.def.band?.[0];
+    if (floor === undefined || top === undefined || floor <= top) return own;
+    return Math.max(own, ...bands.filter((b) => b.band[0] <= floor).map((b) => b.order));
+  };
+  const mines = maps.map((m) => /^deep_mines(\d*)$/.exec(m.def.id)).filter((x): x is RegExpExecArray => !!x);
+  const bottom = mines.length ? Math.max(...mines.map((x) => Number(x[1] || 0))) : null;
+  const out: string[] = [];
+  for (const m of maps) {
+    if (m.zone && REACH_ZONES.includes(m.zone)) continue;
+    const at = placeOf(m), mine = /^deep_mines(\d*)$/.exec(m.def.id);
+    const machineOk = at > KILNS || (at === KILNS && !!mine && bottom !== null && Number(mine[1] || 0) === bottom);
+    for (const g of m.def.encounters ?? []) {
+      const kinds = new Set(g.monsters.map(kindOf));
+      if (kinds.has('machine') && !machineOk) out.push(`${m.area}/${m.def.id}: a machine in ${g.id}, before the bottom of the Deep Mines`);
+      if (kinds.has('rift') && at > CAIRNMOOR) out.push(`${m.area}/${m.def.id}: a Rift's monster in ${g.id}, after Cairnmoor`);
+    }
+    for (const f of m.def.features ?? []) if (f.kind === 'rift' && at > CAIRNMOOR) out.push(`${m.area}/${m.def.id}: a tear into a Rift at ${f.x},${f.y}, after Cairnmoor`);
+  }
+  if (grid) for (const site of atlas.sites.filter((q) => q.icon === 'rift' && !q.map)) {
+    const z = atlas.zones[grid.zone[Math.floor(site.at[1]) * grid.width + Math.floor(site.at[0])]];
+    if (z && !REACH_ZONES.includes(z.id) && order(z.area) > CAIRNMOOR) out.push(`the atlas: ${site.name}, a rift in ${z.name}, after Cairnmoor`);
+  }
   return out;
 }
 
@@ -448,6 +497,33 @@ export async function pillars(): Promise<void> {
   ok(!american.length, `the ${all.length} texts spell as the game does, not American${american.length ? ' -> ' + american.join(', ') : ''}`);
   ok(missingGlyphs('Ashcombe—the café’s door').length === 3, 'a dash, an accent and a curled quote have no glyph, and fail');
   ok(americanisms('The gray walls lose their Color.').length === 2 && !americanisms('Armour of every size, a prize to seize.').length, 'gray and color fail; armour, size, prize and seize do not');
+
+  // The secret's pace (#158): no machine before the bottom of the Deep Mines, no Rift after Cairnmoor.
+  {
+    const kindOf = (id: string): MonsterDef['kind'] | undefined => MONSTERS[id]?.kind;
+    const zoneOf = (id: string): string | undefined => (zoneOfMap(ATLAS, id) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, id)?.id ?? ''))?.id;
+    const paced: PacedMap[] = AREAS.flatMap((a) => a.maps.map((def) => ({ def, area: a.id as string, zone: zoneOf(def.id) })));
+    const pace = paceFaults(paced, kindOf, ATLAS, MAP_DEFS, worldGrid(ATLAS, MAP_DEFS));
+    ok(!pace.length, `no machine before the bottom of the Deep Mines and no Rift after Cairnmoor, over ${paced.length} maps and the atlas${pace.length ? ' -> ' + pace.join('; ') : ''}`);
+    // Fixtures: a keeper, a machine, on the Tide Ship fails; under it in the Dead-Drop, at 26, it does not.
+    const fx = (id: string, band: [number, number], monsters: string[], extra: Partial<MapDef> = {}): MapDef =>
+      ({ id, name: id, kind: 'dungeon', band, start: { x: 1, y: 1, facing: NORTH }, rows: ['###', '#.#', '###'], encounters: [{ id: `${id}_g`, x: 1, y: 1, monsters }], ...extra });
+    const fxKind = (id: string): MonsterDef['kind'] | undefined => (id === 'keeper' ? 'machine' : id === 'riftling' ? 'rift' : kindOf(id));
+    const judge = (...maps: PacedMap[]): string[] => paceFaults(maps, fxKind, ATLAS, [...MAP_DEFS, ...maps.map((m) => m.def)]);
+    const ship = judge({ def: fx('tide_ship', [13, 14], ['keeper']), area: 'wrackholm' });
+    ok(ship.length === 1 && /tide_ship: a machine/.test(ship[0]), `a keeper on the Tide Ship fails (${ship.join('; ')})`);
+    ok(!judge({ def: fx('dead_drop', [26, 28], ['keeper']), area: 'wrackholm' }).length && judge({ def: fx('dead_drop', [26, 28], ['riftling']), area: 'wrackholm' }).length === 1,
+      'under it, the Dead-Drop at 26 to 28 is placed by its band: a keeper passes there, and a riftling fails, past Cairnmoor');
+    const mines = [fx('deep_mines1', [16, 17], ['keeper']), fx('deep_mines2', [17, 18], ['keeper'])].map((def) => ({ def, area: 'kilns' }));
+    const deep = judge(...mines);
+    ok(deep.length === 1 && /deep_mines1/.test(deep[0]) && judge({ def: fx('anvilhall', [16, 18], ['keeper']), area: 'kilns' }).length === 1 && judge({ def: fx('anvilhall', [16, 18], ['keeper']), area: 'kilns' }, ...mines).length === 2,
+      `in the Kilns a machine stands only on the Deep Mines' last level (${deep.join('; ')}), and with no Mines built, nowhere`);
+    ok(!judge({ def: fx('cairns', [18, 20], ['riftling'], { features: [{ kind: 'rift', x: 1, y: 1, id: 'r', to: 'x', tx: 0, ty: 0 }] }), area: 'cairnmoor' }).length
+      && judge({ def: fx('rime_lodge', [20, 22], ['riftling']), area: 'rimewater' }).length === 1
+      && judge({ def: fx('ice_caves', [20, 22], [], { features: [{ kind: 'rift', x: 1, y: 1, id: 'r', to: 'x', tx: 0, ty: 0 }] }), area: 'rimewater' }).length === 1,
+      'a Rift in Cairnmoor passes, and a riftling or a tear in Rimewater after it fails');
+    ok(!judge({ def: fx('ice_caves', [20, 22], ['riftling', 'keeper']), area: 'rimewater', zone: 'glacierfoot' }).length, 'the reach is exempt: Glacier Foot may hold either');
+  }
 
   // Novelty: each area's claim of what is new in it exists, is used in it and is nowhere earlier on the road.
   const family = new Map((await familyModules()).map((m) => [m.name, m.kinds]));

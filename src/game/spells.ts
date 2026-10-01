@@ -6,6 +6,9 @@ import { SPELLS } from '../content/index.ts';
 export type SpellList = 'cleric' | 'sorcerer' | 'druid';
 export type SpellTarget = 'self' | 'ally' | 'party' | 'enemy' | 'group' | 'all';
 export type SpellContext = 'combat' | 'explore' | 'any';
+/** What a damage spell is made of, which a monster may resist, be immune to or be weak to (DESIGN §7). */
+export type Element = 'fire' | 'cold' | 'lightning' | 'nature' | 'holy';
+export const ELEMENTS: readonly Element[] = ['fire', 'cold', 'lightning', 'nature', 'holy'];
 
 export interface SpellDef {
   id: string;
@@ -17,6 +20,8 @@ export interface SpellDef {
   context: SpellContext;
   /** Damage dice, scaled per caster level for `perLevel`. */
   dice?: number; sides?: number; perLevel?: boolean;
+  /** Every damage spell's, and only theirs (see monsters.ts `elementMult`). */
+  element?: Element;
   heal?: number;
   cure?: readonly string[];
   /** Brings a dead ally back (with `heal` hp). */
