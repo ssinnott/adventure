@@ -1584,3 +1584,9 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   encounters: two Barrow Wolves, as D3's keepers (7.80, inside the limit); nit on "the chalk wolf's
   frame". With both, #69 closes. The Barrow Wolf's look, both PRs' choices and the Berth's mouth to
   a delegate. Reviewer on #309 (D4).
+- 00:25: #303 (#87, Ashcombe moved past Gullwick) landed: its rounds (the chain recut, a45a34d and
+  598ce86; f8bf610: main with #302 and #305, Ailith "made for Helmstow", the survey's orders by the
+  Salt Road past Gullwick, Idony's "south-west", the crossroads sign in two lines, the figures).
+  Landing check on its head (main in): ALL OK (22 owed: #87's gone), SMOKE OK, "Nothing new."; the
+  Warden 55% at 2; CI green. Merged as 477a721; main's tree is the tested tree (fce4512). #87
+  closes. The #77 session's work is done.
