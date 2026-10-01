@@ -59,6 +59,10 @@ export function seeking(): void {
   ok(log().find((v) => v.def.id === seekId(2, 3))?.goal === 'Find the scout in the Wold.', 'at 27 with the second, the third sends Wren to the scout');
   p2.flags.fx_asked = 1;
   ok(log().find((v) => v.def.id === seekId(2, 3))?.done === true, 'and once the scout asks the map, seeking is done');
+  ok(!log().some((v) => v.def.id === seekId(3, 3) || v.def.id === seekId(3, 1)), 'while Brin, a ranger still at 1, has no quest begun or done by it');
+  const named = seekingQuests({ ...p2, members: p2.members.map((m, i) => (i === 2 ? { ...m, name: 'Wren: the Younger' } : m)) }, trainers, [fane]);
+  p2.members[2].level = 11; p2.members[2].prestige = 0;
+  ok(sought(questLog(w2.state, { ...p2, members: p2.members.map((m, i) => (i === 2 ? { ...m, name: 'Wren: the Younger' } : m)) }, [fane], trainers))[0]?.who.join() === 'Wren: the Younger' && named[0].seeker === 'Wren: the Younger', 'the mark names the member the quest carries, a colon in the name or not');
   // Content's own words, in place of the system's.
   const worded = seekingQuests(p2, [{ ...fletcher, teaches: { ...fletcher.teaches, seek: 'The fletcher by the oak gate has a bow for Wren.' } }]);
   ok(worded[0].entries[0].text === 'The fletcher by the oak gate has a bow for Wren.', 'a trainer\'s own words stand in for the journal\'s');

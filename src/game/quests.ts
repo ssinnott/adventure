@@ -71,6 +71,8 @@ export interface QuestDef {
   chapters?: undefined;
   /** The world map marks its goal's place (`at`) while it is open: a seeking quest's trainer. */
   mark?: true;
+  /** Who the marked place is for, lettered beside the world map's mark: a seeking quest's member. The title when absent. */
+  seeker?: string;
 }
 
 /** An area's chapter of the one quest: begun once its start or its end holds, and every step placed. */

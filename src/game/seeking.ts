@@ -25,11 +25,14 @@ export function seekingQuests(party: Party, trainers: readonly Trainer[], quests
   const steps = quests.flatMap((q): readonly QuestDef[] => q.chapters ?? [q]);
   return party.members.flatMap((c, who) => trainers.filter((t) => t.teaches.cls === c.cls).sort((a, b) => a.teaches.prestige - b.teaches.prestige).map((t): QuestDef => {
     const n = t.teaches.prestige, title = PRESTIGES[c.cls].titles[n - 1];
+    const member = { who, level: PRESTIGE_LEVELS[n - 1], prestige: n - 1 };
+    // The trainer's own quest begun hands over, but only for this member once it is its turn: the
+    // quest's start is the company's, and another of the class still under the level has not been sent.
     const asked = t.teaches.asks ? steps.find((q) => q.id === t.teaches.asks)?.start : undefined;
-    const done: When = [{ member: { who, prestige: n } }, ...(asked ? [asked].flat() : [])];
-    const start: When = { member: { who, level: PRESTIGE_LEVELS[n - 1], prestige: n - 1 } };
+    const done: When = [{ member: { who, prestige: n } }, ...(asked ? [asked].flat().map((c) => ({ ...c, member })) : [])];
+    const start: When = { member };
     return {
-      id: seekId(who, n), title: TITLE(c.name, title), start, done, mark: true,
+      id: seekId(who, n), title: TITLE(c.name, title), start, done, mark: true, seeker: c.name,
       entries: [{ id: 'told', when: [start, ...[done].flat()], text: t.teaches.seek ?? TOLD(t.name, t.place, title, c.name) }],
       goals: [{ when: start, text: GOAL(t.name, t.place), at: t.map }],
     };
@@ -46,7 +49,7 @@ export function sought(log: readonly QuestView[]): { at: string; who: string[] }
     if (v.done || v.def.chapters || !v.def.mark || v.goal === null) continue;
     const at = v.def.goals.find((g) => g.text === v.goal)?.at;
     if (!at) continue;
-    const who = v.def.title.split(':')[0], here = out.find((p) => p.at === at);
+    const who = v.def.seeker ?? v.def.title, here = out.find((p) => p.at === at);
     if (here) { if (!here.who.includes(who)) here.who.push(who); } else out.push({ at, who: [who] });
   }
   return out;
