@@ -8,7 +8,7 @@ import { GameMap, HILL_DRAG } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
-import { partyCan, takeItem, isDown, hasTrait } from './party.ts';
+import { partyCan, takeItem, isDown, hasTrait, companyLevel } from './party.ts';
 import { monster } from './monsters.ts';
 import type { Party } from './party.ts';
 import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock, tideAt } from './calendar.ts';
@@ -139,6 +139,8 @@ export class World {
   /** The sky as the party last saw it, for the log; null underground or before the first look. Not saved. */
   sky: SkyState | null = null;
   private cached: { seed: number; minutes: number; region: RegionId; weather: Weather } | null = null;
+  /** The last line crossed between zone maps, and when: a step straight back over it says no more. Not saved. */
+  private lastCross?: { from: string; to: string; at: number };
   /** The weather of every region a group has asked after, this minute: liveGroups runs every frame. */
   private skies: { seed: number; minutes: number; by: Map<RegionId, Weather> } | null = null;
 
@@ -368,15 +370,36 @@ export class World {
       if (arrived.label) messages.push(arrived.label);
       return { kind: 'moved', messages, arrived };
     }
-    // Over the line into the next zone of the outdoors: what the way between them says, if anything.
-    const crossed = zone && left && zone !== left ? zone.enter?.[left.id] : undefined;
-    if (crossed) messages.push(crossed);
+    // Over the line into the next zone of the outdoors: what the way between them says, if anything,
+    // and how the land feels.
+    if (zone && left && zone !== left) messages.push(...this.crossing(left, zone));
     messages.push(...this.eventsHere());
     this.moveMonsters();
     // What comes into sight is said before the fight it may start.
     messages.push(...this.sightings());
     const encounter = this.adjacentGroups();
     return { kind: 'moved', messages, encounter: encounter.length ? encounter : undefined };
+  }
+
+  /**
+   * What the log says crossing from one zone map into another (EXPANSION §5.2): the way's arrival
+   * line, if it has one; the land's name where the atlas zone changes, unless the arrival line said
+   * it; and how the land feels where its floor is over the company's level and is new or higher than
+   * the one left: harder one or two under, a plainer warning three or more under, in the zone's own
+   * words if it has them. Never a wall. Stepping straight back over a line just crossed says no more
+   * than the way's own line.
+   */
+  private crossing(left: MapZone, zone: MapZone): string[] {
+    const arrival = zone.enter?.[left.id], was = this.lastCross, now = this.state.minutes;
+    this.lastCross = { from: left.id, to: zone.id, at: now };
+    if (was && was.from === zone.id && was.to === left.id && now - was.at < 60) return arrival ? [arrival] : [];
+    const newLand = zone.land?.id !== left.land?.id, floor = zone.band?.[0];
+    const under = floor === undefined ? 0 : floor - companyLevel(this.party);
+    const rises = newLand || (floor ?? 0) > (left.band?.[0] ?? 0);
+    const words = zone.land?.crossing;
+    const feel = under <= 0 || !rises ? '' : under <= 2 ? words?.harder ?? HARDER : words?.warning ?? WARNING;
+    const line = [newLand && !arrival && zone.land ? `${zone.land.name}.` : '', feel].filter(Boolean).join(' ');
+    return [...(arrival ? [arrival] : []), ...(line ? [line] : [])];
   }
 
   /** Put the party on a map (a zone map's cells count: see `locate`), facing on as it was unless told. */
@@ -637,6 +660,10 @@ export class World {
     return true;
   }
 }
+
+/** How the land feels to a company one or two levels under its floor, and three or more (`crossing`). */
+const HARDER = 'The land here is harder than the road behind.';
+const WARNING = 'Nothing here would spare you. The road behind is still open.';
 
 /** What the log says as the tide turns, near the ground it covers. */
 const TIDE_TEXT: Record<Tide, string> = {

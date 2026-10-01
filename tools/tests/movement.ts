@@ -84,6 +84,10 @@ export function movement(): void {
   const warn = said.findIndex((m) => /Warden checkpoint/.test(m) && /Thornmark/.test(m)), cross = said.indexOf('The pass opens onto old forest. Thornmark.');
   ok(warn >= 0 && cross > warn && said.some((m) => /older than Helmstow/.test(m)), `the checkpoint warns the company before it crosses, and crossing into Thornmark says so (${said.join(' / ')})`);
   ok(world.here.name === 'Thornmark' && world.region === 'thornmark' && world.state.zones!.includes('thornmark'), 'the party has set foot in Thornmark, and its weather is Thornmark\'s');
+  // Four levels under Thornmark's floor, the arrival line is followed by the plain warning, and the
+  // line said already names the place.
+  const feel = said.indexOf('Nothing here would spare you. The road behind is still open.');
+  ok(feel === cross + 1 && !said.includes('Thornmark.'), `crossing four levels under Thornmark's floor, the company is warned after the way's own line (${said.slice(cross).join(' / ')})`);
   world.turn('back');
   const back = [world.move('forward'), world.move('forward')];
   ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the pass it is the Foreland again');

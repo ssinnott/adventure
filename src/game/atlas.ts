@@ -88,7 +88,12 @@ export interface AtlasZone {
   band?: readonly [number, number];
   /** Where the overlay letters the zone's name; its first seed when absent. */
   label?: Pt;
+  /** The zone's own words for how its land feels to a company under its floor, in place of the world's (game/world.ts). */
+  crossing?: Crossing;
 }
+
+/** How a zone's land feels to a company one or two levels under its floor (`harder`), or three or more (`warning`). */
+export interface Crossing { harder?: string; warning?: string }
 
 /** A town, dungeon or Underdeep segment: a map of its own, shown as a plate in the zone overlay. */
 export interface AtlasPlace {
