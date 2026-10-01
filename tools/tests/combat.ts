@@ -195,7 +195,7 @@ function morale(): void {
     play(s, p, 8, atMaster);
     const died = s.log.findIndex((l) => l.includes('Barge Master dies.'));
     ok(s.outcome === 'victory' && s.monsters.filter((m) => m.fled).length === 5 && s.log[died + 1] === BREAK_LINE('5 Bargemen', false), `a barge crew leaves when its master dies, and the log says so (${s.log[died + 1]})`);
-    ok(s.loot?.xp === master.xp && s.loot.gold <= master.gold[1], `the fled pay no xp and take their gold (${s.loot?.xp} xp, ${s.loot?.gold} gold)`);
+    ok(s.loot?.xp === Math.round(master.xp * killPay(master.level, 1)) && s.loot.gold <= master.gold[1], `the fled pay no xp, the master paying by its level, and take their gold (${s.loot?.xp} xp, ${s.loot?.gold} gold)`);
   }
   {
     // A crew in a group of its own breaks at the master's fall in the next.
