@@ -18,6 +18,7 @@ import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
 import { CLIMATES } from '../content/index.ts';
 import { holds } from './quests.ts';
 import { pace, denLooks, densOf } from './dens.ts';
+import { stonesRestored, steadier } from './stones.ts';
 
 export { MINUTES_PER_DAY };
 export const START_MINUTES = 7 * 60;
@@ -278,10 +279,25 @@ export class World {
     return skyNews(prev?.sky ?? null, this.sky.sky, this.climate);
   }
 
+  /** The Stones the company has restored, by which the Hearth steadies (game/stones.ts). */
+  get stones(): number { return stonesRestored(this.state, this.party); }
+
+  /**
+   * Where the party stands in world cells: its square on the outdoors, which is laid out as the world
+   * map charts it; in a town, the square its way out leads to; undefined underground.
+   */
+  get worldCell(): { x: number; y: number } | undefined {
+    if (this.map.kind === 'outdoor') return { x: this.state.x, y: this.state.y };
+    if (this.map.kind !== 'town') return undefined;
+    const out = this.map.exits.find((e) => this.maps[e.to]?.kind === 'outdoor');
+    return out ? { x: out.tx, y: out.ty } : undefined;
+  }
+
   /** The M screen's almanac: the date and the season, the hours of light, the sky and what it is doing to the party. */
   almanac(): string {
     const d = this.date, sun = sunTimes(d.dayOfYear), date = longDate(d);
-    const lines = [`${date[0].toUpperCase()}${date.slice(1)}: ${seasonName(d)}. Day ${d.gameDay} since the Hearth flickered.`, `Dawn ${clock(sun.dawn)}, dusk ${clock(sun.dusk)}.`];
+    const steady = steadier(this.stones);
+    const lines = [`${date[0].toUpperCase()}${date.slice(1)}: ${seasonName(d)}. Day ${d.gameDay} since the Hearth flickered.${steady ? ' ' + steady : ''}`, `Dawn ${clock(sun.dawn)}, dusk ${clock(sun.dusk)}.`];
     if (!this.underSky) return [...lines, 'Underground, there is no telling the weather.'].join('\n');
     const wx = this.weather, sky = classify(wx, this.sky).sky, seen = weatherSight(wx);
     const cause = wx.fog >= 0.35 ? 'fog' : wx.snow >= 0.7 ? 'snow' : wx.snow > 0.3 ? 'sleet' : 'rain';

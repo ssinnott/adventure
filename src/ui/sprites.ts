@@ -267,7 +267,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, poacher: bandit.draw, billman: bandit.draw, slinger: bandit.draw, cutthroat: bandit.draw,
   bargeman: bandit.draw, barge_master: bandit.draw,
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
-  acolyte: cultist.draw, deacon: cultist.draw,
+  acolyte: cultist.draw, deacon: cultist.draw, overseer: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
   barrow_guard: skeleton.draw, barrow_captain: skeleton.draw, drowned_chanter: skeleton.draw, choirmaster: skeleton.draw,
   riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw, brineling: riftling.draw,
@@ -275,7 +275,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw, eldest: oldwood.draw,
   wraith: wraith.draw,
   crow: birds.draw, owl: birds.draw, old_rook: birds.draw, grey_heron: birds.draw,
-  fen_eel: longbodies.draw,
+  fen_eel: longbodies.draw, leech: longbodies.draw,
   fen_toad: toads.draw,
   devilfish: devilfish.draw, great_devilfish: devilfish.draw,
 };
