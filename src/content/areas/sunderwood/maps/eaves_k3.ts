@@ -37,7 +37,7 @@ export const EAVES_K3: MapDef = {
     'Mdddvvvvv""""rdddddTTTTTTTTTTTTM',
     'Mdddvvvvv"rrrrdddddTTTTTTTTTTTTM',
     'Mdddvvvvv"rrrrdddddTTTTTTTTTTTTM',
-    'Mdddvvvvv"BrrrdddddTTTTTTTTTTTTM',
+    'Mdddvvvvv""rrrdddddTTTTTTTTTTTTM',
     'Mdddvvvvv"rrrrdddddTTTTTTTTTTTTM',
     'Mdddvvvvv"rrrrdddddTTTTTTTTTTTTM',
     'Mdddvvvvv"""rrdddddTTTTTTTTTTTTM',
@@ -62,8 +62,11 @@ export const EAVES_K3: MapDef = {
     'MddddddvvvdddccccccccdddddTTTTTM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
   ],
+  exits: [
+    { x: 10, y: 8, to: 'the_sunder', tx: 28, ty: 2, tf: SOUTH, label: 'In out of the rain, into the rock.' },
+  ],
   features: [
-    // The ledges' head on the east lip: the step. The door at 10,8 is drawn shut in the face; the Sunder (#199) opens it.
+    // The ledges' head on the east lip: the step. The door at 10,8 in the face is the Sunder's way in (#199).
     { kind: 'event', x: 12, y: 1, id: 'k3_ledges', once: true, text: 'Ledges cut into the gorge\'s face, a square wide, switchbacking down into rain. On the first landing, a door, and chip marks all round it.' },
     // The east lip: the camp back from it, and the glass to the south.
     { kind: 'camp', x: 18, y: 3, name: 'The last pines', text: 'A ring of stones where the pines give out and the dead wood begins, the last sound trunks at your back. The rain that falls here lands.' },

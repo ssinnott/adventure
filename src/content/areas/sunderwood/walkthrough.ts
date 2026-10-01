@@ -10,7 +10,10 @@
 // and the young sister's word, and the box's groups won at its floor. Then the Sunder's mouth (K3,
 // #198): the ledges walked down past the gleaners to the door and the camp below it, the river's old
 // bed found from its stones and the stack across it, the box's bears won at its floor, and its Rift
-// walked into and won, its groups still coming back.
+// walked into and won, its groups still coming back. Then the Sunder (#199): in at the door on the
+// first landing, down the ledges and over the thread, the gleaners' cache, down to the floor, its
+// groups and the Warden won, the wall found and the seam behind the chalk's last mark; the Warden
+// stays dead and the rest come back.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -29,6 +32,8 @@ const K2 = MAP_DEFS.find((d) => d.id === 'eaves_k2')!;
 const K3 = MAP_DEFS.find((d) => d.id === 'eaves_k3')!;
 const K3_RIFT = MAP_DEFS.find((d) => d.id === 'k3_rift')!;
 const L2 = MAP_DEFS.find((d) => d.id === 'lanternwood_l2')!;
+const LEDGES = MAP_DEFS.find((d) => d.id === 'the_sunder')!;
+const FLOOR = MAP_DEFS.find((d) => d.id === 'the_sunder2')!;
 const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'A young sister of the Watch') as Person;
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -170,10 +175,10 @@ export const walkthrough: Walkthrough = (ok) => {
   walkThrough(w, 'eaves_k2', 12, 29, SOUTH, 'eaves_k3', 4);
   see(w, 'eaves_k3:k3_ledges');
   // Down the ledges, a square wide: the gleaners at the door, then on down past it to their camp,
-  // where the ledges stop. The door is drawn shut in the face; the Sunder (#199) opens it.
+  // where the ledges stop. The door in the face is the Sunder's way in (#199), walked past here.
   fight(w, 'eaves_k3:k3_door');
   const k3 = out.zones.find((z) => z.id === 'eaves_k3')!;
-  ok(out.passable(k3.x + 10, k3.y + 8) !== 'ok', 'the door on the first landing stands shut in the rock');
+  ok(out.passable(k3.x + 10, k3.y + 8) === 'ok' && !!K3.exits?.some((e) => e.x === 10 && e.y === 8 && e.to === 'the_sunder'), 'the door on the first landing opens into the rock, the Sunder\'s way in');
   w.world.travel('eaves_k3', 12, 1, SOUTH);
   const turns = ['forward', 'forward', 'forward', 'forward', 'right', 'forward', 'forward', 'forward', 'left', 'forward', 'forward', 'forward', 'forward', 'forward', 'forward', 'left', 'forward', 'forward', 'right', 'forward'] as const;
   const stepped = turns.map((t) => (t === 'forward' ? w.world.move('forward') : (w.world.turn(t), { kind: 'moved' })));
@@ -213,4 +218,72 @@ export const walkthrough: Walkthrough = (ok) => {
   walkThrough(w, 'eaves_k3', 15, 26, EAST, 'k3_rift', 2);
   for (const g of K3_RIFT.encounters!) fight(w, `k3_rift:${g.id}`);
   ok(K3_RIFT.encounters!.every((e) => !!e.respawn && !e.until) && !K3_RIFT.features!.some((f) => 'after' in f && f.after), 'the Rift stays open: its groups come back, and its tear never goes quiet');
+
+  // The Sunder: in at the door on K3's first landing, from the ledge, and down the stair in the rock.
+  walkThrough(w, 'eaves_k3', 9, 8, EAST, 'the_sunder', 1);
+  see(w, 'the_sunder:su1_in');
+  see(w, 'the_sunder:su1_face');
+  see(w, 'the_sunder:su1_glass');
+  see(w, 'the_sunder:su1_threads');
+  // The spiders on the thread, and the thread walked across the drop, a square at a time.
+  fight(w, 'the_sunder:su1_spiders');
+  w.world.travel('the_sunder', 20, 20, WEST);
+  const onThread = Array.from({ length: 8 }, () => w.world.move('forward'));
+  ok(onThread.every((r) => r.kind === 'moved') && w.world.state.x === 12 && w.world.state.y === 20, 'the thread is walked across the drop, from the east face\'s ledge to the west\'s');
+  see(w, 'the_sunder:su1_cleft');
+  const plate = LEDGES.features!.find((f) => f.kind === 'chest' && f.id === 'su1_cache');
+  ok(plate?.kind === 'chest' && plate.items.includes('plate+2'), 'in the gleaners\' cache on the ledges, the Plate Mail +2');
+  see(w, 'the_sunder:su1_landing');
+  walkThrough(w, 'the_sunder', 5, 29, SOUTH, 'the_sunder2', 1);
+
+  // The floor: its groups won at its floor, then the Warden in the narrows, at 14, which drops its heart.
+  see(w, 'the_sunder2:su2_in');
+  see(w, 'the_sunder2:su2_river');
+  for (const g of FLOOR.encounters!.filter((e) => e.id !== 'su2_warden')) fight(w, `the_sunder2:${g.id}`);
+  // The narrows are the only way to the wall: walked, waded, climbed or floated, nothing past the Warden's square is reached but through it.
+  const floor = new GameMap(FLOOR), shut = (x: number, y: number, from: [number, number], past: [number, number]): boolean => {
+    const seen = new Set<number>(), stack = [from];
+    while (stack.length) {
+      const [cx, cy] = stack.pop()!, k = cy * floor.width + cx;
+      if (seen.has(k) || (cx === x && cy === y) || floor.passable(cx, cy, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (floor.inBounds(cx + dx, cy + dy)) stack.push([cx + dx, cy + dy]);
+    }
+    return seen.size > 50 && !seen.has(past[1] * floor.width + past[0]);
+  };
+  ok(shut(15, 16, [8, 2], [15, 25]), 'the wall is reached only through the narrows, where the Warden stands');
+  see(w, 'the_sunder2:su2_narrows');
+  fight(w, 'the_sunder2:su2_warden');
+  ok(w.party.bag.includes('sunder_heart'), 'the Warden of the Sunder falls, and its heart is taken');
+  ok(!FLOOR.encounters!.find((e) => e.id === 'su2_warden')!.respawn, 'the Warden never comes back');
+  const fallen = FLOOR.features!.find((f) => f.kind === 'chest' && f.id === 'su2_fallen_chest');
+  ok(fallen?.kind === 'chest' && fallen.items.includes('flail+1') && fallen.items.includes('ironwood_bow+1'), 'at the narrows, past the Warden, the Flail +1 and the Ironwood Bow +1');
+
+  // No group within four squares of the wall: the silence at the bottom (MONSTERS §6.3).
+  const wall: [number, number][] = [];
+  for (let y = 0; y < floor.height; y++) for (let x = 0; x < floor.width; x++) if (floor.at(x, y).solid === 'wall' || floor.at(x, y).door === 'secret') wall.push([x, y]);
+  const near = FLOOR.encounters!.filter((e) => wall.some(([x, y]) => Math.abs(x - e.x) + Math.abs(y - e.y) <= 4));
+  ok(wall.length > 30 && !near.length, `no group stands within four squares of the wall${near.length ? ` (not: ${near.map((e) => e.id).join(', ')})` : ''}`);
+
+  // The step: the wall, at 14 with the Sunder taken first. Its chapter's entry is #204's.
+  see(w, 'the_sunder2:su2_silence');
+  see(w, 'the_sunder2:su2_wall');
+
+  // The secret: the surveyor's chalk runs out at one mark; searched there, the face is not flat, and
+  // the recess behind it is reached only so.
+  ok(shut(6, 26, [8, 2], [6, 27]), 'the recess is shut but through the face at the chalk\'s last mark');
+  see(w, 'the_sunder2:su2_chalk');
+  w.world.travel('the_sunder2', 6, 25, SOUTH);
+  let seam = false;
+  for (let i = 0; i < 20 && !seam; i++) seam = w.world.search();
+  const inSeam = seam ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(seam && inSeam.every((r) => r.kind === 'moved') && w.world.used('su2_seam'), 'searched at the last chalk mark, the face gives, and the recess behind it can be stood in');
+  listen(w);
+
+  // The Warden is dead and nothing closes: two days on, the floor's groups are back, and it is not.
+  w.world.advance(2881);
+  const live = w.world.liveGroups().map((g) => g.def.id);
+  ok(live.includes('su2_wood') && live.includes('su2_bears') && !live.includes('su2_warden'), `the Sunder's groups keep coming after its Warden falls (${live.join(', ')})`);
+  walkThrough(w, 'the_sunder2', 7, 3, NORTH, 'the_sunder', 1);
+  walkThrough(w, 'the_sunder', 28, 2, NORTH, 'eaves_k3', 1);
 };
