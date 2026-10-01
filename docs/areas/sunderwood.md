@@ -450,8 +450,8 @@ features; the pay shared out over the area (§8).
   edge of the map, a strip of floor along its face running both ways into rock fall. It is drawn
   smooth (`wallStyle: 'smooth'`, #424), the only wall face on the level: the gorge's sides are rock.
   The step is the brief's line where the floor meets it. The secret: west along the strip a rock fall
-  closes it against the wall, and the chalk's last mark is at its foot; searched there, a gap in the
-  fall opens on a hollow of air beside the wall, and on the wall's face at its back the seam, a
+  closes it against the wall, and the chalk's last mark is at its foot; searched from a cleft in it,
+  a gap in the rock opens on a hollow of air beside the wall, and on the wall's face at its back the seam, a
   hairline that nobody passes, with rows of small scratched marks nobody can read beside it and 200
   gold and a Sapphire Vial. The gap is drawn as rock until found and as open ground after (#427). The
   Warden drops the Heart of the Sunder (`sunder_heart`), a keepsake; it never comes back, its death
@@ -969,7 +969,7 @@ Decided by delegate for #199, each the owner's to overturn:
    step's own square. The floor's gorge sides are rock and mountain, so the wall is its only wall face.
 5. **The secret is a hollow in the rock fall beside the wall, not a way into it** (the review of
    #426): the wall is flat and its ways open only to Wenna's palm (STORY), so nothing passes into it.
-   The chalk runs out at the fall's foot; searched there, a gap in the fall opens on a pocket of air
+   The chalk runs out at the fall's foot; searched from a cleft beside it, a gap opens on a pocket of air
    whose back is the wall's face, with the seam on it, drawn as a hairline on a wall square nobody
    walks through, and beside it rows of small marks nobody can read, which are not the knot. The
    seam's line is said on stepping into the hollow, where it is seen. The find is the sight, with 200
