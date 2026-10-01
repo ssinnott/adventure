@@ -50,11 +50,11 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // Thornmark's Armoury (#18) prices them.
   saltreach: {
     band: [10, 12], next: 12, price: 2000,
-    owed: { whose: '#153', why: 'Saltreach is built box by box', xp: 1115, gold: 300 },
+    owed: { whose: '#153', why: 'Saltreach is built box by box', xp: 2770, gold: 710 },
   },
   wrackholm: {
     band: [12, 14], next: 14, price: 2500,
-    owed: { whose: '#154', why: 'of Wrackholm only E6 and Kelp Hole are built (#187, #188)', xp: 5368, gold: 2080 },
+    owed: { whose: '#154', why: 'of Wrackholm only E6, Kelp Hole and F6 are built (#187, #188, #189)', xp: 7026, gold: 2567 },
   },
   sunderwood: {
     band: [14, 16], next: 16, price: 3000,
