@@ -98,9 +98,9 @@ own since I2 listed it. Its first map:
   pines to the box's far edge, where it runs on for J2. The rim closes the north, Lyngwyn fills the
   south-west and a crest along the south shuts the box from the Deepthorn's I3. A shrine where the
   road enters the wood, a cairn on the shoulder, the woodcutter's camp, the lookout on the crest and
-  the milestone face down by the road, with the Watch's last patrol's pack under it. Four groups:
-  pine bears in two pairs, lantern moths at the camp by night and a glass bear alone on the road at
-  the far end.
+  the milestone face down by the road, with the Watch's last patrol's pack under it. Three groups:
+  a pair of pine bears by the way in, lantern moths at the camp by night and a pine bear with a
+  glass bear on the road at the far end.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -189,15 +189,15 @@ features; the pay shared out over the area (§8).
 - **Finds.** A Warden's Halberd +1 in the pack.
 - **Pay.** About 1,150 xp a member.
 
-- **As built** (#195, 1 October): the brief's places, with four groups for its five. The lantern
+- **As built** (#195, 1 October): the brief's places, with three groups for its five. The lantern
   moths, eight, stand beside the camp by night, not on it, so the camp stays a rest. The stronger
-  group alone at the far end is a glass bear (MONSTERS §6.3 has it at the Sunder's floor): with one
-  pine bear on the roster, a pair at the far end could not be the hardest, and the curve asks a
-  group at 15 or more on every map. The first glass in the Eaves comes down the road to meet the
-  company. The pack holds a Warden's Halberd +1 (`wardens_halberd`), and the milestone reads STOW 40
-  where its letters meet the turf. A company at 14 wins every fight and manages 9.0 fights to a
-  rest, off the aim of 6.5 to 8.5 and inside the limit; the road is walked every time. As measured it
-  pays about 1,250 xp a member and 460 gold. Two under, at 12, it wins every fight too: past 10 the
+  group at the far end is a pine bear with a glass bear (MONSTERS §6.3 has the glass bear at the
+  Sunder's floor): with one pine bear on the roster, pine bears alone could not be the hardest, and
+  the curve asks a group at 15 or more on every map. The first glass in the Eaves comes down the
+  road to meet the company. The pack holds a Warden's Halberd +1 (`wardens_halberd`), and the
+  milestone reads STOW 40, the end of its line clear of the turf. A company at 14 wins every fight
+  and manages 7.3 fights to a rest, inside the aim; the road is walked every time. As measured it
+  pays about 1,060 xp a member and 460 gold. Two under, at 12, it wins every fight too: past 10 the
   company's gear stops growing, so a level-14 group cannot turn a level-10 or 12 company back, which
   the gate's limit asks (§8): owed to #18, as every Act II box will owe it until the gear past 10
   is built. Woods are on the road before it (the Downs' E2, the Deepthorn's H3
@@ -553,12 +553,14 @@ Decided by delegate for #194, each the owner's to overturn:
 
 Decided by delegate for #195, each the owner's to overturn:
 
-1. **A glass bear, alone, is the far end's stronger group,** against MONSTERS §6.3's Where column:
-   the curve asks a group at 15 or more on the map, the roster's one pine bear is 14, and a new
-   bear at 15 would want a drawing first.
-2. **Two pairs of pine bears and eight moths by night beside the camp:** a pair and eight are the
-   standard encounters the harness measures, and the four groups pay about 1,250 xp a member
-   against the brief's 1,150.
+1. **A pine bear with a glass bear is the far end's stronger group,** against MONSTERS §6.3's
+   Where column: the curve asks a group at 15 or more on the map, the roster's one pine bear is 14,
+   and a new bear at 15 would want a drawing first. A glass bear alone passed the curve only by
+   its level and was the easiest fight on the map; the pair is a real one.
+2. **One pair of pine bears by the way in and eight moths by night beside the camp:** a pair and
+   eight are the standard encounters the harness measures. A second pair in the south-east woods
+   was dropped with the far end's pair in: the box pays about 1,060 xp a member against the
+   brief's 1,150, where keeping it paid 1,430, and fights to a rest at 14 sit inside the aim.
 3. **Every bear group comes back after two days, the moths after one,** as Thornmark's ogre and
    owls do.
 4. **The shrine gives speed,** which no shrine or fountain on the road gave; the cairn 160 gold and

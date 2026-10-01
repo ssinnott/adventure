@@ -35,7 +35,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const pack = I2.features!.find((f) => f.kind === 'chest' && f.id === 'i2_pack_chest');
   ok(pack?.kind === 'chest' && pack.items.includes('wardens_halberd') && pack.x === 17 && pack.y === 12, 'beside it, the Warden\'s Halberd');
 
-  // The box's groups, each won at its floor: the bears, the moths at the camp by night and the glass bear on the road.
+  // The box's groups, each won at its floor: the bears by the way in, the moths at the camp by night and the bears on the road at the far end.
   for (const g of I2.encounters!) fight(w, `eaves_i2:${g.id}`);
 
   // The crest: from the road, walking or wading, the Deepthorn's I3 below it is never reached.
