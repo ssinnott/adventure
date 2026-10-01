@@ -13,6 +13,7 @@ import { defaultParty } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { EAST } from '../../src/game/types.ts';
 import { ok, owed, local, stopsWalk } from './lib.ts';
+import { logLines } from '../../src/ui/frame.ts';
 
 /**
  * Zone maps laid before the map that joins them to the rest, and whose map that is: their squares
@@ -112,4 +113,65 @@ export function outdoors(): void {
   ok(/'coast'/.test(refusal(() => layOutdoors(ATLAS, clash))), 'two zones may not share a feature id: the outdoors keeps one record for both');
   const heaped = { ...ATLAS, zones: ATLAS.zones.map((z): AtlasZone => (z.id === 'thornmark' ? { ...z, maps: [{ map: 'thornmark', at: [220, 30] }] } : z)) };
   ok(/laid over/.test(refusal(() => layOutdoors(heaped, MAP_DEFS))), 'nor may two zone maps be laid on the same squares');
+
+  // The line at a border (#166): the company's level against the floor of the land it steps into.
+  // Three boxes in a row, the road's (the Downs, 4 to 5) then two of the Delta (10 to 11, 11 to 12),
+  // laid on a strip of world of their own with the atlas's own rows for the two zones.
+  {
+    const row = (id: string): AtlasZone => ATLAS.zones.find((z) => z.id === id)!;
+    const box = (id: string, rows: string[], band: [number, number], exits: MapDef['exits'] = []): MapDef => ({ id, name: id, kind: 'outdoor', density: 'country', band, start: { x: 2, y: 1, facing: EAST }, rows, exits });
+    const strip = (crossing?: AtlasZone['crossing'], label?: string): Record<string, GameMap> => {
+      const atlas = { ...ATLAS, width: 18, height: 3, zones: [
+        { ...row('downs'), maps: [{ map: 'fx_road', at: [0, 0] as const }] },
+        { ...row('delta'), ...(crossing ? { crossing } : {}), maps: [{ map: 'fx_fen', at: [6, 0] as const }, { map: 'fx_deeper', at: [12, 0] as const }] },
+      ] };
+      const defs = [
+        box('fx_road', ['MMMMMM', 'M,,,,,', 'MMMMMM'], [4, 5], label ? [{ x: 5, y: 1, to: 'fx_fen', tx: 0, ty: 1, label }] : []),
+        box('fx_fen', ['MMMMMM', ',,,,,,', 'MMMMMM'], [10, 11]),
+        box('fx_deeper', ['MMMMMM', ',,,,,M', 'MMMMMM'], [11, 12]),
+      ];
+      return Object.fromEntries(layOutdoors(atlas, defs).map((d) => [d.id, new GameMap(d)]));
+    };
+    /** What a company of `level` reads walking east from x0 to x1 along the strip. */
+    const walk = (level: number, x0: number, x1: number, maps = strip()): string[] => {
+      const party = defaultParty(makeRng(3));
+      for (const m of party.members) m.level = level;
+      const w = new World(maps, party, makeRng(3));
+      w.travel(OUTDOORS, x0, 1, x1 > x0 ? EAST : 3);
+      const said: string[] = [];
+      for (let i = 0; i < Math.abs(x1 - x0); i++) { const r = w.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+      return said;
+    };
+    const warning = 'Nothing here would spare you. The road behind is still open.', harder = 'The land here is harder than the road behind.';
+    const at7 = walk(7, 4, 7), at10 = walk(10, 4, 7), at9 = walk(9, 4, 7), at12 = walk(12, 4, 7);
+    ok(at7.includes(`The Delta. ${warning}`), `a level-7 company stepping into the Delta reads the warning (${at7.join(' / ')})`);
+    ok(at10.includes('The Delta.') && !at10.some((t) => t.includes(harder) || t.includes(warning)), `a level-10 one reads the name (${at10.join(' / ')})`);
+    ok(at9.includes(`The Delta. ${harder}`) && at12.includes('The Delta.'), `one under, the land is harder than the road behind; over the band, the name alone (${at9.join(' / ')}; ${at12.join(' / ')})`);
+    // Deeper into the same land: no name again, and only a floor that rises over the company is said.
+    const deeper = walk(10, 8, 13), level = walk(11, 8, 13), down = walk(9, 13, 9);
+    ok(deeper.length === 1 && deeper[0] === harder && level.length === 0, `deeper into the Delta a rising floor is said without the name, and a company at it hears nothing (${deeper.join(' / ')}; ${level.join(' / ') || 'nothing'})`);
+    ok(down.length === 0, `and back down to a lower floor, still over the company, nothing is said (${down.join(' / ') || 'nothing'})`);
+    // Straight back over the line and on again within the hour: nothing more.
+    {
+      const party = defaultParty(makeRng(3));
+      for (const m of party.members) m.level = 7;
+      const w = new World(strip(), party, makeRng(3));
+      w.travel(OUTDOORS, 5, 1, EAST);
+      const over = w.move('forward'), back = w.move('back'), again = w.move('forward');
+      const lines = [over, back, again].map((r) => (r.kind === 'moved' ? r.messages.length : -1));
+      ok(lines[0] === 1 && lines[1] === 0 && lines[2] === 0, `stepping back over the line and on again says nothing more (${lines.join(', ')} lines)`);
+    }
+    // The way's own arrival line names the place, so the feel follows it alone; and a zone's own words stand in for the world's.
+    const arrival = walk(7, 4, 7, strip(undefined, 'The road drops into the fen.'));
+    const own = walk(7, 4, 7, strip({ warning: 'The reeds close in.' })), ownHarder = walk(9, 4, 7, strip({ harder: 'The fen sucks at the boots.' }));
+    ok(arrival.join(' / ') === `The road drops into the fen. ${warning}`, `after the way's own line, the feel alone, in the same entry of the log (${arrival.join(' / ')})`);
+    // Every zone's line, its name and the longer feel, its own or the world's, wraps to two lines of the log at most.
+    const long = ATLAS.zones.map((z) => [z.crossing?.harder ?? harder, z.crossing?.warning ?? warning].map((f) => `${z.name}. ${f}`)).flat().sort((a, b) => logLines(b).length - logLines(a).length)[0];
+    ok(logLines(long).length <= 2, `every zone's crossing line fits two lines of the log (the longest ${logLines(long).length}: ${long})`);
+    // And every way's arrival line between zone maps, with the longer feel folded in, keeps to the cap of three.
+    const laid = layOutdoors(ATLAS, MAP_DEFS).find((d) => d.id === OUTDOORS)!.zones ?? [];
+    const arrivals = laid.flatMap((z) => Object.values(z.enter ?? {}).map((a) => `${a} ${z.land?.crossing?.warning ?? warning}`)).sort((a, b) => logLines(b).length - logLines(a).length);
+    ok(arrivals.length > 0 && logLines(arrivals[0]).length <= 3, `every arrival line with the warning after it fits three lines of the log (the longest ${logLines(arrivals[0] ?? '').length}: ${arrivals[0]})`);
+    ok(own.includes('The Delta. The reeds close in.') && ownHarder.includes('The Delta. The fen sucks at the boots.'), `a zone's own words stand in for the world's (${own.join(' / ')}; ${ownHarder.join(' / ')})`);
+  }
 }

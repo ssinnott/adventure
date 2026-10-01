@@ -118,6 +118,15 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   and Thornmark's monsters decide. Monster groups may follow the party over a zone's edge. An exit
   with flags still becomes a gate on its square (`MapDef.gates`; the outdoors suite holds a fixture
   to it), but none is left between the zones.
+- **The line at a border** (#166, EXPANSION §5.2). Crossing into another atlas zone, the log names it
+  ("The Delta."), unless the way's arrival line has. Where the floor of the zone map stepped into is
+  over the company's level (its members' mean, rounded down), and the land is new or its floor
+  higher than the last, the line says how the land feels: "The land here is harder than the road
+  behind." one or two under, "Nothing here would spare you. The road behind is still open." three
+  or more under. A zone may give its own words in its atlas row (`crossing`). Never a wall, and
+  stepping straight back over a line just crossed says no more. Each zone map is its listed atlas
+  zone's for now: a box that straddles two (C4, B5, B6) waits on its own build to draw the line
+  inside it.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the `void`
   solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as

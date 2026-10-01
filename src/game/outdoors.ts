@@ -11,10 +11,11 @@
 // the stretch between two zones (the ridge the Scarth cuts) stays mountains. The maps' ways
 // out become the outdoors': a way into the next zone is walked, not jumped, so an exit from one
 // zone map into another is dropped, its flags kept as a gate on its cell and its arrival line said
-// on crossing into the zone. Every other exit, feature and monster group moves to where its zone
+// on crossing into the zone. Each zone carries the atlas zone it lies in, whose name and band the
+// line at the border says (World's `crossing`). Every other exit, feature and monster group moves to where its zone
 // sits, and the towns' and dungeons' ways out lead onto the outdoors instead. Pure.
 import type { Atlas } from './atlas.ts';
-import { mapAt } from './atlas.ts';
+import { mapAt, zoneOfMap } from './atlas.ts';
 import { VOID_CH } from './map.ts';
 import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell, Landmark } from './map.ts';
 
@@ -103,10 +104,14 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
       encounters.push(place(e));
     }
   }
-  const zones: MapZone[] = laid.map((l) => ({
-    id: l.def.id, name: l.def.name, x: l.x, y: l.y, w: l.w, h: l.h,
-    band: l.def.band, region: l.def.region, palette: l.def.palette, enter: enter.get(l.def.id),
-  }));
+  const zones: MapZone[] = laid.map((l) => {
+    const land = zoneOfMap(atlas, l.def.id)!;
+    return {
+      id: l.def.id, name: l.def.name, x: l.x, y: l.y, w: l.w, h: l.h,
+      band: l.def.band, region: l.def.region, palette: l.def.palette, enter: enter.get(l.def.id),
+      land: { id: land.id, name: land.name, ...(land.crossing ? { crossing: land.crossing } : {}) },
+    };
+  });
   const first = laid[0];
   const outdoors: MapDef = {
     id: OUTDOORS,
