@@ -3,10 +3,12 @@
 // under the milestone found from its hints, the box's groups won at its floor, and the crest along
 // its south shut against the Deepthorn, so the road is the only way between the two areas. Then the
 // Eaves (J2, #196): the road on through the pines, the rim of the Sunder seen, the secret in the
-// bear's cave found from the dog and the cutter's word, and the box's groups won at its floor.
+// bear's cave found from the dog and the cutter's word, and the box's groups won at its floor. Then
+// Sunderfall (K2, #197): the rope bridge crossed, the ledge behind the quiet fall found from its
+// rocks, and the box's groups won at its floor.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
-import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
+import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -17,6 +19,7 @@ const I2 = MAP_DEFS.find((d) => d.id === 'eaves_i2')!;
 const WOODCUTTER = I2.features!.find((f) => f.kind === 'npc' && f.name === 'A woodcutter') as Person;
 const J2 = MAP_DEFS.find((d) => d.id === 'eaves_j2')!;
 const CUTTER = J2.features!.find((f) => f.kind === 'npc' && f.name === 'Garret, a pine-cutter') as Person;
+const K2 = MAP_DEFS.find((d) => d.id === 'eaves_k2')!;
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -79,4 +82,38 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The box's other groups, each won at its floor: the bears by the way in, the moths at the steading by night and the hounds on the lip.
   for (const g of J2.encounters!.filter((e) => e.id !== 'j2_cave_bears')) fight(w, `eaves_j2:${g.id}`);
+
+  // Sunderfall: the road on out of J2 and over the gorge by the rope bridge, every plank of it walked.
+  w.level = 15;
+  walkThrough(w, 'eaves_j2', 31, 24, EAST, 'eaves_k2');
+  const over = Array.from({ length: 8 }, () => w.world.move('forward'));
+  ok(over.every((r) => r.kind === 'moved') && w.world.used('k2_bridge'), 'the rope bridge is crossed, plank by plank, to the east lip');
+  listen(w);
+  fight(w, 'eaves_k2:k2_hounds');
+
+  // The secret: the rocks under the quiet fall, one bare, then the search there and the ledge behind the water.
+  // Wading or walking, the ledge is never reached but through the bare rock.
+  const k2 = out.zones.find((z) => z.id === 'eaves_k2')!, door = [k2.x + 10, k2.y + 29], shelf = (k2.y + 29) * out.width + k2.x + 9;
+  const waded = new Set<number>(), wade = [[k2.x + 13, k2.y + 24]];
+  while (wade.length) {
+    const [x, y] = wade.pop()!, k = y * out.width + x;
+    if (waded.has(k) || (x === door[0] && y === door[1]) || !(x >= k2.x && x < k2.x + k2.w && y >= k2.y && y < k2.y + k2.h) || out.passable(x, y, { swim: true }) !== 'ok') continue;
+    waded.add(k);
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) wade.push([x + dx, y + dy]);
+  }
+  ok(waded.size > 200 && !waded.has(shelf), `the ledge behind the fall is shut but for the bare rock: none of K2's ${waded.size} squares walked or waded reaches it`);
+  see(w, 'eaves_k2:k2_fall');
+  see(w, 'eaves_k2:k2_rocks');
+  w.world.travel('eaves_k2', 11, 29, WEST);
+  let ledge = false;
+  for (let i = 0; i < 20 && !ledge; i++) ledge = w.world.search();
+  const behind = ledge ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(ledge && behind.every((r) => r.kind === 'moved'), 'searched at the bare rock, it opens, and the ledge behind the fall can be walked onto');
+  ok(w.world.used('k2_ledge'), 'on the ledge, the first gleaner\'s tally is found');
+  listen(w);
+  const sword = K2.features!.find((f) => f.kind === 'chest' && f.id === 'k2_ledge_chest');
+  ok(sword?.kind === 'chest' && sword.items.includes('longsword+2') && sword.x === 9 && sword.y === 29, 'beside it, the Long Sword +2');
+
+  // The box's other groups, each won at its floor: the gleaners at the dam and the glass bears on the road on east.
+  for (const g of K2.encounters!.filter((e) => e.id !== 'k2_hounds')) fight(w, `eaves_k2:${g.id}`);
 };

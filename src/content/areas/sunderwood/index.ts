@@ -3,6 +3,7 @@
 import type { Area } from '../../area.ts';
 import { EAVES_I2 } from './maps/eaves_i2.ts';
 import { EAVES_J2 } from './maps/eaves_j2.ts';
+import { EAVES_K2 } from './maps/eaves_k2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -10,7 +11,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'sunderwood' as const,
-  maps: [EAVES_I2, EAVES_J2],
+  maps: [EAVES_I2, EAVES_J2, EAVES_K2],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
@@ -20,6 +21,6 @@ export const AREA = {
   climate: { summer: 16, winter: -2, daily: 5, damp: [0.01, 0.08], wettest: 85, fog: 0.6, lag: 8,
     fogText: 'Mist comes down through the pines.', thunderText: 'Thunder rolls down the gorge.' },
   interiors: INTERIORS,
-  novel: { families: ['bears', 'moths'], terrain: ['deadwood', 'crystal', 'chasm'], mechanics: ['inflict:asleep'], landmarks: [] },
+  novel: { families: ['bears', 'moths'], terrain: ['deadwood', 'crystal', 'chasm'], mechanics: ['inflict:asleep'], landmarks: ['falls'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
