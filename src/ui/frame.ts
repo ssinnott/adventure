@@ -130,9 +130,11 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
     if (c.solid === 'void') col = VOID_PINK;
     else if (c.solid === 'wall' || c.solid === 'building') col = '#4a3a30';
     else if (c.door !== 'none') col = c.door === 'secret' ? '#4a3a30' : '#a0602a';
-    else if (c.solid === 'tree') col = '#4f7a3a';
+    else if (c.solid === 'tree') col = c.terrain === 'crystal' ? '#6a8cb0' : '#4f7a3a';
     else if (c.solid === 'mountain') col = '#6a6058';
     else if (c.solid === 'rock' || c.solid === 'pillar') col = '#8a7a6a';
+    // The chasm is inked as the drop it is, unwashed: nothing on the parchment is darker.
+    else if (c.terrain === 'chasm') col = '#16121e';
     else col = mix(TERRAIN_COLORS[c.terrain] ?? '#3c3a40', PARCHMENT, AUTOMAP_WASH);
     ctx.fillStyle = col;
     ctx.fillRect(ox + x * cell, oy + y * cell, cell, cell);

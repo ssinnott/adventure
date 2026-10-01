@@ -1,9 +1,10 @@
 // The Foreland's side quests, in the journal's words: The Cargo Ledger (Hale), The Bell That
 // Rang Twice (Osmund), The Rest of the Survey (Ebba and Ailith), The Clerk's Seal (Maud), The
 // Well Tastes of Iron (Mottram), A Boat With No Name-Board (Wat and Hamo, at Gullwick), Who
-// Lived at Ashcombe (Hob) and Oil for the Lamp (Aldred at Crowness Light, Mottram and Vask). Its
-// chapter of the one quest is in ./chapter.ts. How the words are keyed is in src/content/area.ts
-// (`quests`); tools/tests/quests.ts checks every key.
+// Lived at Ashcombe (Hob), Oil for the Lamp (Aldred at Crowness Light, Mottram and Vask) and
+// Riders in the Dark (Dunstan, at Coldharbour). Its chapter of the one quest is in ./chapter.ts.
+// How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks
+// every key.
 import type { QuestDef } from '../../../game/quests.ts';
 
 export const QUESTS: readonly QuestDef[] = [
@@ -207,6 +208,31 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { flag: 'q_hob_key' }, text: 'Hob let his cellar and sent his family away. Look again around the Ashcombe farmhouse.' },
       { when: { item: 'hearth_key' }, text: 'Take the hearth-key to Hob, by the Hearthlight\'s fire.' },
       { when: { flag: 'q_ashcombe_who' }, text: 'Find out where Hob\'s people went. Ashcombe is past Gullwick, across the Wend.' },
+    ],
+  },
+  {
+    // #56's sixth: who rode dark through Coldharbour's fields the week the Queen died. Dunstan
+    // writes to Hale, or keeps it under his roof.
+    id: 'riders',
+    title: 'Riders in the Dark',
+    start: { flag: 'q_riders' },
+    done: [{ flag: 'q_riders_hale' }, { flag: 'q_riders_kept' }],
+    entries: [
+      { id: 'dunstan', when: { flag: 'q_riders' },
+        text: 'Dunstan, once a Warden captain, farms Coldharbour. The week the Queen died eight riders crossed his fields by night, shod and unlit, west over the Wend\'s ford towards the Berth.' },
+      { id: 'ford', when: { seen: 'downs_e2:e2_riders' },
+        text: 'At the ford by night eight riders came back out of the west, unlit. Under a cloak, Warden grey.' },
+      { id: 'letter', when: { flag: 'q_riders_letter' },
+        text: 'Dunstan wrote to Hale at the Scarth, in the Wardens\' shorthand, and gave us the letter to carry.' },
+      { id: 'hale', when: { flag: 'q_riders_hale' },
+        text: 'Hale read Dunstan\'s letter twice and kept it. The Regent will have it from him, under his seal.' },
+      { id: 'kept', when: { flag: 'q_riders_kept' },
+        text: 'Dunstan kept it under his roof. The lamp in his window stays lit.' },
+    ],
+    goals: [
+      { when: { item: 'dunstan_letter' }, text: 'Take Dunstan\'s letter to Captain Hale at the Scarth.' },
+      { when: { flag: 'q_riders', seen: 'downs_e2:e2_riders' }, at: 'downs_f2', text: 'Tell Dunstan at Coldharbour what we saw at the ford.' },
+      { when: { flag: 'q_riders' }, at: 'downs_e2', text: 'Wait by night at the Wend\'s ford, west of Coldharbour, for the riders.' },
     ],
   },
 ];

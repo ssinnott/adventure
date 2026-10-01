@@ -54,7 +54,7 @@ export const SHELF: MapDef = {
   ],
   features: [
     { kind: 'sign', x: 16, y: 4, text: 'North: Helmstow. South and east along the road: Ellerby farm.' },
-    { kind: 'sign', x: 13, y: 9, text: 'South: the coast and Ellerby. West along the beach: Brandy Hole, and the Salt Road. East: the pass to Thornmark, Warden road.' },
+    { kind: 'sign', x: 13, y: 9, text: 'South: the coast and Ellerby. West along the beach: Brandy Hole. East: the pass to Thornmark, Warden road.' },
     { kind: 'sign', x: 30, y: 9, text: 'Warden checkpoint. The road east is open. Past it lies Thornmark, and the Wardens will not come in after you.' },
     { kind: 'sign', x: 18, y: 16, text: 'East: Ellerby.' },
     // Ellerby (#87), the farm where Ashcombe stood on this map before it moved past Gullwick: lived
@@ -122,6 +122,14 @@ export const SHELF: MapDef = {
         '"Hob. I know him. His father had Ashcombe before him and never let so much as a hayloft." He folds the paper into the cover of his ledger. "He goes to Gullwick, to his wife\'s people, tonight, and he doesn\'t come back to Helmstow until I say so. A man who\'ll sell his stairs for twenty gold wants somewhere with nothing to sell."',
         '"Tell him I said so. Tell him gently; he\'ll come quicker."',
       ],
+    }, {
+      // Riders in the Dark (#68): Dunstan's letter, from Coldharbour.
+      item: 'dunstan_letter', reward: 0, setFlag: 'q_riders_hale',
+      done: [
+        'Hale reads it standing, twice, and folds it along its own lines.',
+        '"Dunstan. He taught me the light in the window." He looks east, up the pass, and then west. "Wardens, riding dark to the Queen\'s barrow. The Regent should know what his own men are doing. He\'ll have it from me, under my seal."',
+        'He puts the letter inside his coat, not into the fire. "He says burn it. I don\'t burn things. He\'d tell you that\'s my fault, and it is."',
+      ],
     }] },
     { kind: 'sign', x: 3, y: 28, text: 'Brandy Hole. Chalked beneath, in Warden hand: CLOSED. DO NOT ENTER. ASK CAPT. HALE.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
@@ -130,7 +138,7 @@ export const SHELF: MapDef = {
     { kind: 'event', x: 2, y: 13, id: 'survey_ring', once: true, until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }], text: 'A scrap of Lantern grey on a thorn. Beyond it, a fire-ring so small and hidden that its maker feared smoke more than cold.' },
     { kind: 'npc', x: 2, y: 14, name: 'Ailith, adjunct of the survey', lines: [
       'A young woman in torn Lantern grey has her back to an oak and a survey stake held like a spear; her leg is bound in her own hem. "You\'re not Wardens. Wardens don\'t come off the road." The stake comes down an inch. "Adjunct Ailith, of the survey. What\'s left of it."',
-      '"It wasn\'t rats. I got out of the cellar when the floor opened and walked into a Warden patrol, and they weren\'t looking for survivors. They wanted our orders. The orders are at our camp over the Deepthorn\'s edge, and the other two went east to reach them first. I went west, and I didn\'t stop to pack."',
+      '"It wasn\'t rats. I got out of the cellar when the floor opened and walked into a Warden patrol, and they weren\'t looking for survivors. They wanted our orders. The orders are at our camp over the Deepthorn\'s edge, and the other two went east to reach them first. I made for Helmstow, got as far as this wood, and I didn\'t stop to pack."',
       '"The Regent sent us, under his seal: survey the ground under Ashcombe, report to him alone. That was before the Queen died, and before the floor opened. Ask how a man knows where to send a survey before there\'s anything to find. I\'ve asked. I don\'t like the answer, so I\'m hiding from it under a tree."',
     ], flag: 'q_ailith', until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }], choice: { ask: '"I can\'t stay under this tree. Where do I go? The Chapel in Helmstow is mine by right, and the Wardens know it. Thornhold is a long walk on this leg, and nobody\'s looking for me there."', answers: [
       { label: 'The Chapel, in Helmstow.', sets: 'q_survey_chapel', says: [
