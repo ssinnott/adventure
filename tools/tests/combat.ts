@@ -3,11 +3,11 @@
 // drain, and a hit that wakes a sleeper (#161).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
-import { defaultParty, equip, addCondition, hasCondition, killPay } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, frontStands, monsterAc, monsterHit, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE } from '../../src/game/combat.ts';
+import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult } from '../../src/game/party.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
-import { elementMult, monsterSpells, KINDS } from '../../src/game/monsters.ts';
+import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
 import { gateBlast } from '../gate.ts';
 import { wakeWith } from '../harness.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -106,7 +106,7 @@ export function combat(): void {
       }
       return n;
     };
-    const never = ['skeleton', 'drowned', 'ghoul', 'bone_knight', 'wraith', 'slime', 'shore_crab', 'rift_warden', 'cut_warden'];
+    const never = ['skeleton', 'drowned', 'ghoul', 'bone_knight', 'wraith', 'slime', 'shore_crab', 'rift_warden', 'cut_warden', 'tide_warden', 'sunder_warden'];
     const woke = never.filter((id) => slept(MONSTERS[id]) > 0);
     ok(!woke.length, `Slumber takes none of the dead, the slime, the crab or the wardens (${woke.join(', ') || 'none slept'})`);
     ok(slept(MONSTERS.rat) > 0 && slept(MONSTERS.bandit) > 0 && slept(MONSTERS.riftling) > 0, 'but rats, bandits and riftlings it does');
@@ -137,6 +137,7 @@ export function combat(): void {
   elements();
   casting();
   drain();
+  pastTen();
 }
 
 /** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
@@ -423,4 +424,118 @@ function drain(): void {
   ok(cassian.sp === 5 && cassian.hp === 30 && t.log.includes('Bog Light hits Cassian for 10 spell points.'), `a bog light takes spell points before hit points (${cassian.sp} sp, ${cassian.hp} hp)`);
   for (let k = 53; k < 60 && cassian.sp > 0; k++) untilActs(t, q, k, 0);
   ok(cassian.sp === 0 && cassian.hp === 25 && t.log.includes('Bog Light hits Cassian for 5 spell points and 5.'), `and the rest from hit points once they run dry (${cassian.sp} sp, ${cassian.hp} hp)`);
+}
+
+/** Tiers 6 and 7 and the ranks (DESIGN §7, #20). */
+function pastTen(): void {
+  const late = Object.values(SPELLS).filter((x) => x.level >= 6);
+  const named = (list: string, tier: number): string => late.filter((x) => x.list === list && x.level === tier).map((x) => x.name).join(', ');
+  ok(late.length === 13 && named('sorcerer', 6) === 'Hoarfrost, Walk on Water, Waymark' && named('sorcerer', 7) === 'Killing Frost, Levitate' && named('cleric', 6) === 'Hearthfire, Cleansing Light'
+    && named('cleric', 7) === 'Lampglass, Absolve' && named('druid', 6) === 'Wildfire, Grasping Roots' && named('druid', 7) === 'Wrath of the Wood, Greening', 'thirteen spells in tiers 6 and 7, as DESIGN §7 tables them');
+  const fixed = late.filter((x) => x.dice).map((x) => `${x.id} ${x.dice}d${x.sides} ${x.element} ${x.target}${x.perLevel ? ' grows' : ''}`).join('; ');
+  ok(fixed === 'hearthfire 6d8 fire group; hoarfrost 8d8 cold group; killing_frost 10d12 cold all; wildfire 6d8 fire group; wrath_wood 8d10 nature all', `their damage spells roll fixed dice (${fixed})`);
+  const monsters = late.filter((x) => monsterCanCast(x)).map((x) => x.id).sort().join();
+  ok(monsters === 'hearthfire,hoarfrost,killing_frost,wildfire,wrath_wood', `a monster may cast their damage spells and none of the rest (${monsters})`);
+  // A rank lifts a damage spell's dice and a mend's heal, a hybrid's half as much, and nothing else.
+  const tough: MonsterDef = { ...MONSTERS.bandit, id: 'test_wall', hp: 9999 };
+  const blast = (prestige: number): number => {
+    const r = makeRng(60), p = defaultParty(r), sorc = p.members[5];
+    sorc.level = 16; sorc.spells.push('hoarfrost'); sorc.sp = 99; sorc.prestige = prestige;
+    const s = startCombat(p, [{ id: 'w', monsters: [tough] }], r);
+    for (let guard = 0; guard < 60; guard++) {
+      const t = currentTurn(s, p, r); if (!t) break;
+      if (t.side === 'monster') monsterAct(s, p, r);
+      else if (t.i === 5) { partyAct(s, p, r, { type: 'cast', spellId: 'hoarfrost', target: 0 }); return 9999 - s.monsters[0].hp; }
+      else partyAct(s, p, r, { type: 'defend' });
+    }
+    return 0;
+  };
+  const bare = blast(0) - 2, third = blast(3) - 2;
+  ok(bare > 0 && third === Math.round(bare * 1.45), `the third rank lifts Hoarfrost's roll by 45%, Spellfire on top (${bare} and ${third}, each and 2)`);
+  const p = defaultParty(makeRng(61)), maren = p.members[4], idris = p.members[1], bram = p.members[0];
+  const mend = (c: typeof maren, n: number): number => { c.prestige = n; const h = spellHeal(c, 30); c.prestige = 0; return h; };
+  ok(mend(maren, 2) === mend(maren, 0) + Math.round(30 * 1.3) - 30 && mend(idris, 2) === mend(idris, 0) + Math.round(30 * 1.15) - 30, `a cleric's second rank lifts a mend of 30 by 30%, a paladin's by 15% (${mend(maren, 2)}, ${mend(idris, 2)})`);
+  bram.prestige = 3;
+  ok(rankMult(bram) === 1, 'and a knight\'s prestiges are no ranks');
+  // The sorcerer's third rank passes a resistance to its element, never an immunity.
+  {
+    const glass: MonsterDef = { ...tough, id: 'test_glass', resist: ['cold'], immune: ['lightning'] };
+    const hit = (prestige: number, spellId: string): number => {
+      const r = makeRng(67), q = defaultParty(r), sorc = q.members[5];
+      sorc.level = 16; sorc.spells.push(spellId); sorc.sp = 99; sorc.prestige = prestige;
+      const s = startCombat(q, [{ id: 'g', monsters: [glass] }], r);
+      for (let guard = 0; guard < 60; guard++) {
+        const t = currentTurn(s, q, r); if (!t) break;
+        if (t.side === 'monster') monsterAct(s, q, r);
+        else if (t.i === 5) { partyAct(s, q, r, { type: 'cast', spellId, target: 0 }); return 9999 - s.monsters[0].hp; }
+        else partyAct(s, q, r, { type: 'defend' });
+      }
+      return -1;
+    };
+    const second = hit(2, 'hoarfrost'), third = hit(3, 'hoarfrost'), whole = Math.round((third - 2) / 1.45) + 2;
+    ok(second === Math.ceil((Math.round((whole - 2) * 1.3) + 2) / 2) && third > second * 1.5 && hit(3, 'lightning') === 0, `a Magus's Hoarfrost passes a resistance to cold (${second} at the second rank, ${third} at the third), and its Chain Lightning still does nothing to what lightning cannot touch`);
+  }
+  // Grasping Roots holds a group, a hit does not free it, and each held monster tears free in time.
+  {
+    const r = makeRng(62), q = defaultParty(r), druid = q.members[2];
+    druid.spells.push('roots'); druid.sp = 99;
+    const s = startCombat(q, [{ id: 'b', monsters: [tough, tough, tough, tough] }], r);
+    for (let guard = 0; guard < 60 && !s.log.some((l) => l.includes('Grasping Roots')); guard++) {
+      const t = currentTurn(s, q, r); if (!t) break;
+      if (t.side === 'monster') monsterAct(s, q, r); else if (t.i === 2) partyAct(s, q, r, { type: 'cast', spellId: 'roots', target: 0 }); else partyAct(s, q, r, { type: 'defend' });
+    }
+    const held = s.monsters.filter((m) => m.conditions.includes('paralysed'));
+    const line = s.log.find((l) => l.includes('Grasping Roots')) ?? '';
+    ok(held.length > 0 && line === `Wren casts Grasping Roots: ${held.length} of the Bandits ${held.length === 1 ? 'is' : 'are'} held fast.`, `Grasping Roots holds some of a group fast (${line})`);
+    held[0].hp -= 1;
+    const bandit = s.monsters.indexOf(held[0]);
+    partyAct(s, q, r, { type: 'attack', target: bandit });
+    ok(held[0].conditions.includes('paralysed'), 'a blow does not free a held monster');
+    for (let guard = 0; guard < 400 && s.monsters.some((m) => m.conditions.includes('paralysed')); guard++) {
+      const t = currentTurn(s, q, r); if (!t) break;
+      if (t.side === 'monster') monsterAct(s, q, r); else partyAct(s, q, r, { type: 'defend' });
+    }
+    ok(!s.monsters.some((m) => m.conditions.includes('paralysed')) && s.log.some((l) => /Bandits? tears? free\.$/.test(l)), 'and the held tear free in a few rounds, and the log says so');
+  }
+  // Lampglass halves the chosen harm for five rounds; it will not be cast without a choice.
+  {
+    const adept: MonsterDef = { ...MONSTERS.bandit, id: 'test_adept', name: 'Adept', plural: 'Adepts', level: 10, cast: { spells: ['firebolt'], chance: 1 } };
+    const burn = (glass: boolean): number => {
+      const r = makeRng(63), q = defaultParty(r), maren = q.members[4];
+      maren.spells.push('lampglass'); maren.sp = 99;
+      const s = startCombat(q, [{ id: 'a', monsters: [adept] }], r);
+      if (glass) s.glass = { element: 'fire', rounds: 5 };
+      const before = q.members.reduce((t, c) => t + c.hp, 0);
+      untilActs(s, q, 64, 0);
+      return before - q.members.reduce((t, c) => t + c.hp, 0);
+    };
+    const bare = burn(false), dimmed = burn(true);
+    ok(dimmed > 0 && dimmed < bare, `under Lampglass against fire an adept's Fire Bolt does less (${dimmed} against ${bare})`);
+    const r = makeRng(65), q = defaultParty(r), maren = q.members[4];
+    maren.spells.push('lampglass'); maren.sp = 99;
+    const s = startCombat(q, [{ id: 'a', monsters: ['rat'] }], r);
+    let refused = false, cast = false;
+    for (let guard = 0; guard < 40 && !cast; guard++) {
+      const t = currentTurn(s, q, r); if (!t) break;
+      if (t.side === 'monster') { monsterAct(s, q, r); continue; }
+      if (t.i === 4) { refused = !partyAct(s, q, r, { type: 'cast', spellId: 'lampglass', target: 0 }); cast = partyAct(s, q, r, { type: 'cast', spellId: 'lampglass', target: 0, element: 'cold' }); }
+      else partyAct(s, q, r, { type: 'defend' });
+    }
+    ok(refused && cast && s.glass?.element === 'cold' && s.log.includes('Maren casts Lampglass. The glass dims the cold.'), 'Lampglass asks against what, and dims it');
+  }
+  // Cleansing Light and Greening on everyone; Absolve on stone and curse.
+  {
+    const q = defaultParty(makeRng(66)), maren = q.members[4];
+    for (const c of q.members) { addCondition(c, 'poisoned'); addCondition(c, 'diseased'); c.hp = 5; }
+    addCondition(q.members[0], 'paralysed');
+    const clean = castOnParty(maren, SPELLS.cleansing_light, q);
+    ok(q.members.every((c) => !hasCondition(c, 'poisoned') && !hasCondition(c, 'paralysed') && c.hp === 5) && clean === 'Maren casts Cleansing Light. The party is cleansed.', `Cleansing Light lifts every affliction from everyone and heals nothing (${clean})`);
+    for (const c of q.members) addCondition(c, 'poisoned');
+    const green = castOnParty(maren, SPELLS.greening, q);
+    ok(q.members.every((c) => !hasCondition(c, 'poisoned') && c.hp > 5) && green === 'Maren casts Greening. The party is healed and cleansed.', `Greening heals everyone and draws out poison (${green})`);
+    const bram = q.members[0];
+    addCondition(bram, 'stoned'); addCondition(bram, 'cursed');
+    const both = castOnAlly(maren, SPELLS.absolve, bram), none = castOnAlly(maren, SPELLS.absolve, bram);
+    ok(!hasCondition(bram, 'stoned') && !hasCondition(bram, 'cursed') && both === 'Maren casts Absolve: Bram is flesh again, and the curse lifts.' && none === 'Maren casts Absolve, but Bram needs no absolving.', `Absolve lifts stone and curse (${both})`);
+  }
 }

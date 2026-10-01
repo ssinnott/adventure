@@ -53,10 +53,15 @@ for (const id of SWEEP) if (!MAP_DEFS.some((d) => d.id === id)) throw new Error(
 const DETACHED: Partial<Record<MonsterSprite, { what: string; pieces: number; share: number }>> = {
   warden: { what: 'shard', pieces: 1, share: 0.01 },
   cut_warden: { what: 'shards', pieces: 2, share: 0.01 },
+  tide_warden: { what: 'shards', pieces: 2, share: 0.01 },
+  sunder_warden: { what: 'shards', pieces: 2, share: 0.01 },
   acolyte: { what: 'censer', pieces: 1, share: 0.05 },
   lampman: { what: 'lantern', pieces: 1, share: 0.07 },
   adept: { what: 'hand flame', pieces: 1, share: 0.03 },
   rift_hound: { what: 'embers', pieces: 3, share: 0.01 },
+  sunder_hound: { what: 'glass motes', pieces: 3, share: 0.01 },
+  lantern_moth: { what: 'dust', pieces: 3, share: 0.025 },
+  deathshead: { what: 'dust', pieces: 3, share: 0.025 },
   ashen_hand: { what: 'embers', pieces: 5, share: 0.01 },
   wraith: { what: 'fading tongue of cloth', pieces: 1, share: 0.01 },
 };
@@ -215,6 +220,34 @@ const coach = await (async () => {
     return { screens: g.screens.map((s: any) => s.constructor.name).join(','), map: g.world.state.mapId, gold: g.party.gold, day: g.world.day, hour: g.world.hour, minutes: g.world.state.minutes, log: g.log.slice(-3) };
   });
   return { before, words, menu, terms, after };
+})();
+// A prestige's trainer (#19, game/prestige.ts): an armourer put in Helmstow's street at run time
+// teaches knights their first. Faced and asked, her words close onto her menu, which lists Bram, the
+// one knight, with the title and the price; taking it pays and makes him a Knight-Errant.
+const trainer = await (async () => {
+  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  await page.evaluate(() => {
+    const g = (window as any).__game.game, bram = g.party.members[0];
+    while (g.screens.length > 1) g.pop();
+    g.world.travel('harrow', 7, 14, 0);
+    g.world.map.features.push({ kind: 'npc', x: 7, y: 13, name: 'An armourer', lines: ['"Steel, or a title?"'], teaches: { cls: 'knight', prestige: 1 } });
+    (window as any).__bram = { level: bram.level, maxHp: bram.maxHp, hp: bram.hp, gold: g.party.gold };
+    bram.level = 11; g.party.gold = 1500;
+  });
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const words = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const menu = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(100);
+  const after = await page.evaluate(() => {
+    const g = (window as any).__game.game, m = g.maps.harrow, bram = g.party.members[0];
+    m.features.splice(m.features.findIndex((f: any) => f.name === 'An armourer'), 1);
+    const out = { screens: g.screens.map((s: any) => s.constructor.name).join(','), prestige: bram.prestige ?? 0, gold: g.party.gold, log: g.log.slice(-1)[0] };
+    const was = (window as any).__bram;
+    bram.level = was.level; bram.maxHp = was.maxHp; bram.hp = was.hp; g.party.gold = was.gold; delete bram.prestige;
+    return out;
+  });
+  return { words, menu, after };
 })();
 // The Wardens' hall, the Drillyard, with First Watch's walk already made, so taking it pays at once.
 // Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
@@ -950,6 +983,55 @@ const hearth = await page.evaluate(async () => {
   w.party.flags = flags; w.state.minutes = minutes; w.cached = null; w.travel(place.map, place.x, place.y, place.f);
   return { south, north, home, steadier, plain };
 });
+
+// Lampglass in a fight: Cast, the spell, then the menu asks against what, and the pick is cast (#20).
+const glass = await page.evaluate(() => {
+  const g = (window as any).__game.game;
+  while (g.screens.length > 1) g.pop();
+  const maren = g.party.members[4];
+  g.world.travel('shelf', 16, 4, 2);
+  maren.spells.push('lampglass'); maren.sp = maren.maxSp = 99;
+  for (const c of g.party.members) { c.hp = c.maxHp = 999; c.conditions = []; }
+  g.fight(['road_rats']);
+  const scr = g.top, s = scr.state;
+  let asked = '';
+  for (let guard = 0; guard < 300 && s.outcome === 'ongoing' && !s.glass; guard++) {
+    scr.update(g, null);
+    const who = s.order[s.turn];
+    if (!who || who.side === 'monster') { scr.update(g, 'interact'); continue; }
+    if (g.party.members[who.i] !== maren) { scr.update(g, 'n4'); continue; }
+    scr.update(g, 'n2');
+    scr.sub = maren.spells.indexOf('lampglass');
+    scr.update(g, 'interact');
+    asked = scr.mode;
+    scr.update(g, 'down'); scr.update(g, 'interact');
+  }
+  const out = { asked, element: s.glass?.element ?? '', line: s.log.find((l: string) => l.includes('Lampglass')) ?? '' };
+  while (g.screens.length > 1) g.pop();
+  return out;
+});
+
+// Waymark with a mark set: the spell asks "Return to the mark" or "Set it here", and the first goes back (#20).
+const mark = await page.evaluate(async () => {
+  const S = await import('/src/ui/screens.ts' as string), P = await import('/src/game/spells.ts' as string);
+  const g = (window as any).__game.game, w = g.world, cassian = g.party.members[5];
+  while (g.screens.length > 1) g.pop();
+  w.travel('shelf', 16, 6, 0);
+  const set = w.setMark(), at = { ...w.state.mark };
+  w.travel('shelf', 16, 12, 0);
+  cassian.spells.push('waymark'); cassian.sp = cassian.maxSp = 99; cassian.conditions = [];
+  g.push(new S.SpellScreen('explore'));
+  g.top.update(g, 'n6');
+  g.top.sel = cassian.spells.filter((id: string) => P.spell(id).context !== 'combat').indexOf('waymark');
+  g.top.update(g, 'interact');
+  const asked = { screen: g.top.constructor.name, options: g.top.options ?? [] };
+  g.top.update(g, 'interact');
+  const back = w.state.x === at.x && w.state.y === at.y;
+  delete w.state.mark;
+  while (g.screens.length > 1) g.pop();
+  return { set, asked, back };
+});
+
 await browser.close();
 server.close();
 
@@ -964,6 +1046,8 @@ ok(gameSeed === SEED, `the new game starts from the pinned seed (${gameSeed}, we
 ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
 ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
 ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
+ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
+ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
 ok(thornColours > 20, `Thornmark's forest paints (${thornColours} colours)`);
 ok(thornFight.screen === 'CombatScreen' && /ogre/.test(thornFight.monsters) && /wraith/.test(thornFight.monsters) && thornFightColours > 20, `the ogre and wraith sprites paint in a fight (${thornFight.monsters}, ${thornFightColours} colours)`);
 ok(ogreView === 'ogre,brigand_archer,brigand', `before the fight the view draws the ogre's band as each of its kinds (${ogreView})`);
@@ -983,6 +1067,8 @@ ok(coach.words.text === '"Thornhold, at dawn."' && coach.menu.options.join('|') 
   `a coachman's words close onto his crossings, then their terms (${coach.menu.options.join(', ').replace(/\t/g, ' ')}; "${coach.terms.text}")`);
 ok(coach.after.screens === 'ExploreScreen' && coach.after.map === 'thornhold' && coach.after.gold === 400 && coach.after.day === coach.before.day + (coach.before.minutes % 1440 <= 360 ? 1 : 2) && coach.after.hour === 18,
   `paying takes the fare and lands the company in Thornhold, its calendar moved to the landing (day ${coach.before.day} to ${coach.after.day}, ${coach.after.hour}:00, ${coach.after.gold} gold; ${coach.after.log.join(' / ')})`);
+ok(trainer.words.text === '"Steel, or a title?"' && trainer.menu.options.join('|') === 'Bram: Knight-Errant\t1000g|Leave' && trainer.after.screens === 'ExploreScreen' && trainer.after.prestige === 1 && trainer.after.gold === 500 && trainer.after.log === 'Bram is a Knight-Errant now.',
+  `a trainer's words close onto the members of her class, and Bram takes the first for 1000 (${trainer.menu.options.join(', ').replace(/\t/g, ' ')}; "${trainer.after.log}")`);
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
   `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
