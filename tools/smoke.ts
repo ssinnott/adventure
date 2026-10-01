@@ -785,27 +785,27 @@ const hillSpill: string[] = await page.evaluate(async () => {
 // its idle motion, is one piece of ink. Ink is alpha 128 and up (a ground shadow is under it), a
 // piece is 8-connected, and specks under 6 px are left out. What stands apart must be declared.
 // Each is drawn where a fight seats a first group, its foot as far below the view's top as there
-// (`seatFoot`), on a canvas three heights wide, a height or the seat more above the view's top
+// (`seatFoot`: a tall boss on the third rank), on a canvas three heights wide, a height or the seat more above the view's top
 // (whichever is more) and 0.3 under the foot: ink above the view's top reaches over the frame, and ink on a border runs off the canvas.
-interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: '' | 'top' | 'edge'; room: number }
-const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhouette[]; seat: number } = await page.evaluate(async () => {
+interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: '' | 'top' | 'edge'; room: number; reach: number; size: number }
+const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: Silhouette[]; seat: number; tall: { size: number; reach: number } } = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const S = await load('/src/ui/sprites.ts'), C = await load('/src/content/index.ts');
   const F = await load('/src/ui/frame.ts'), G = await load('/src/ui/grouplabels.ts');
-  const seat = Math.round(G.seatFoot(0, F.LAYOUT.view.h));
-  const padOf = (h: number): number => Math.max(Math.ceil(h), seat);
+  const seat = Math.round(G.seatFoot(0, F.LAYOUT.view.h)), seatOf = (def: any): number => Math.round(G.seatFoot(0, F.LAYOUT.view.h, def.size));
+  const padOf = (h: number, foot = seat): number => Math.max(Math.ceil(h), foot);
   const c = document.createElement('canvas');
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
   type Draw = (ctx: CanvasRenderingContext2D, x: number, y: number, h: number, frame: number) => void;
   const scan = (def: any, draw: Draw): Silhouette => {
-    const worst: Silhouette = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: '', room: seat };
+    const foot = seatOf(def), worst: Silhouette = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: '', room: foot, reach: 0, size: def.size };
     for (const n of [1, 3, 6]) {
-      const h = S.combatHeight(def.size, n), pad = padOf(h), cw = Math.ceil(h * 3), ch = pad + seat + Math.ceil(h * 0.3);
+      const h = S.combatHeight(def.size, n), pad = padOf(h, foot), cw = Math.ceil(h * 3), ch = pad + foot + Math.ceil(h * 0.3);
       c.width = cw; c.height = ch;
       const seen = new Int32Array(cw * ch), stack = new Int32Array(cw * ch);
       for (let frame = 0; frame <= 176; frame += 4) {
         ctx.clearRect(0, 0, cw, ch);
-        draw(ctx, cw / 2, pad + seat, h, frame);
+        draw(ctx, cw / 2, pad + foot, h, frame);
         const d = ctx.getImageData(0, 0, cw, ch).data;
         seen.fill(0);
         const sizes: number[] = [];
@@ -817,6 +817,7 @@ const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhou
             const p = stack[--top], px = p % cw, py = (p - px) / cw;
             size++;
             if (py - pad < worst.room) worst.room = py - pad;
+            if ((pad + foot - py) / h > worst.reach) worst.reach = (pad + foot - py) / h;
             if (px === 0 || py === 0 || px === cw - 1 || py === ch - 1) worst.clipped = 'edge';
             else if (py < pad && worst.clipped !== 'edge') worst.clipped = 'top';
             for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
@@ -838,7 +839,7 @@ const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhou
   const defs = Object.values(C.MONSTERS) as any[];
   const silhouettes = defs.map((def) => scan(def, (g, x, y, h, frame) => S.drawMonsterSprite(g, def.sprite, x, y, h, def.tint, 1, frame)));
   // The fixtures: a def with the top fifth of its ink moved up, as a crest or a raised wing might
-  // be. Each has to fail for reaching above the view: the tallest def's moved half its height,
+  // be. Each has to fail for reaching above the view: the tallest def's moved a third of its height,
   // and the smallest's moved clear of the view by more than its own height.
   const o = document.createElement('canvas');
   const lifted = (def: any, id: string, lift: (h: number, top: number) => number): Silhouette => scan({ ...def, id }, (g, x, y, h, frame) => {
@@ -854,11 +855,11 @@ const { silhouettes, raised, seat }: { silhouettes: Silhouette[]; raised: Silhou
   });
   const tall = defs.reduce((a, b) => (b.size > a.size ? b : a)), small = defs.reduce((a, b) => (b.size < a.size ? b : a));
   const raised = [
-    lifted(tall, `${tall.id}, its top fifth raised a half`, (h) => h / 2),
+    lifted(tall, `${tall.id}, its top fifth raised a third`, (h) => h / 3),
     // Its band's foot a height and 8 px above the view's top, which is row `padOf(h)` of the canvas.
     lifted(small, `${small.id}, its top fifth raised a height clear of the view`, (h, top) => top + Math.round(h * 0.2) - (padOf(h) - h - 8)),
   ];
-  return { silhouettes, raised, seat };
+  return { silhouettes, raised, seat, tall: { size: G.TALL, reach: G.TALL_REACH } };
 });
 const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
 const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
@@ -941,8 +942,12 @@ ok(!hillSpill.length, `a hill's body, its crest light with it, is drawn inside i
 ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls beside the party are drawn, in ${cracks.views} views (${sweeps.map((m) => m.id + (m.all ? ' four ways' : '')).join(', ')})${cracks.bad.length ? ` -> ${cracks.bad.length} views, ` + cracks.bad.slice(0, 4).join(', ') : ''}`);
 ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped === 'top' ? 'reaches above the view' : s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
 const closest = silhouettes.reduce((a, b) => (b.room < a.room ? b : a));
-ok(closest.room >= 0, `every monster stands inside the view, its foot ${seat} px below the top as a fight seats it (the closest, ${closest.id}, ${closest.room} px under the top)`);
-ok(raised.every((r) => r.clipped === 'top'), `a monster with a part raised half its height, or clear of the view, reaches above it, and fails (${raised.map((r) => `${r.id}: ${r.clipped === 'top' ? 'reaches above the view' : `${r.room} px under the top`}`).join('; ')})`);
+ok(closest.room >= 0, `every monster stands inside the view, its foot where a fight seats it, a first group's ${seat} px below the top (the closest, ${closest.id}, ${closest.room} px under the top)`);
+// A tall boss's markers are painted over its crown at TALL_REACH of its height (ui/grouplabels.ts),
+// which tools/tests/labels.ts trusts: its ink must stand no higher.
+const towering = silhouettes.filter((s) => s.size > tall.size), over = towering.filter((s) => s.reach > tall.reach);
+ok(towering.length > 0 && over.length === 0, `every tall boss's crown stands within ${tall.reach} of its height, under its markers (${towering.map((s) => `${s.id} ${s.reach.toFixed(3)}`).join(', ')})${over.length ? ' -> ' + over.map((s) => `${s.id} reaches ${s.reach.toFixed(3)}`).join(', ') : ''}`);
+ok(raised.every((r) => r.clipped === 'top'), `a monster with a part raised a third of its height, or clear of the view, reaches above it, and fails (${raised.map((r) => `${r.id}: ${r.clipped === 'top' ? 'reaches above the view' : `${r.room} px under the top`}`).join('; ')})`);
 if (bad) console.log(`\nSMOKE_SEED=${SEED} (weather seed ${weatherSeed}) replays this run.`);
 console.log(bad ? '\nSMOKE FAILED' : '\nSMOKE OK: the game renders in a browser, served as TypeScript with no build step.');
 process.exit(bad ? 1 : 0);

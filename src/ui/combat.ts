@@ -14,7 +14,7 @@ import type { CombatState, PartyAction } from '../game/combat.ts';
 import { spell } from '../game/spells.ts';
 import { item } from '../game/items.ts';
 import { weaponOf } from '../game/party.ts';
-import { groupLabels, seatFoot, MARKER_RISE, LABEL_TOP } from './grouplabels.ts';
+import { groupLabels, seatFoot, crown, MARKER_RISE, LABEL_TOP } from './grouplabels.ts';
 import type { LabelLine } from './grouplabels.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'item' | 'itemTarget' | 'done';
@@ -165,10 +165,12 @@ export class CombatScreen implements Screen {
     const t = currentTurn(s, g.party, g.rng);
     const targeting = this.mode === 'target' || this.mode === 'spellTarget';
     const n = alive.length, slot = v.w / Math.max(5, n);
-    alive.forEach((mi, k) => {
+    // Painted from the back rank forward, so a tall boss on the third rank stands before its own.
+    const seats = alive.map((mi, k) => ({ mi, k, foot: seatFoot(s.monsters[mi].group, v.h, s.monsters[mi].def.size) })).sort((a, b) => a.foot - b.foot || a.k - b.k);
+    seats.forEach(({ mi, k, foot }) => {
       const m = s.monsters[mi];
-      const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + seatFoot(m.group, v.h);
-      const h = combatHeight(m.def.size, n);
+      const x = v.x + (v.w - slot * n) / 2 + slot * (k + 0.5), y = v.y + foot;
+      const h = combatHeight(m.def.size, n), top = crown(m.def.size, h);
       if (m.flash > 0) m.flash--;
       if (m.hp < this.lastMonsterHp[mi]) { this.burst(x, y - h * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070'); this.lastMonsterHp[mi] = m.hp; }
       const asleep = m.conditions.includes('asleep');
@@ -176,9 +178,9 @@ export class CombatScreen implements Screen {
       const hpFrac = m.hp / m.def.hp;
       ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(Math.round(x - 14), Math.round(y + 3), 28, 3);
       ctx.fillStyle = hpFrac > 0.5 ? GREEN : hpFrac > 0.25 ? YELLOW : RED; ctx.fillRect(Math.round(x - 14), Math.round(y + 3), Math.round(28 * hpFrac), 3);
-      if (targeting && k === this.sub) drawText(ctx, '↓', x, y - h - MARKER_RISE, { size: 1, color: YELLOW, align: 'center' });
-      if (t && t.side === 'monster' && t.i === mi) drawText(ctx, '*', x, y - h - MARKER_RISE, { size: 1, color: RED, align: 'center' });
-      if (asleep) drawText(ctx, 'z', x + 10, y - h - 2, { size: 1, color: TEXT_DIM });
+      if (targeting && k === this.sub) drawText(ctx, '↓', x, y - top - MARKER_RISE, { size: 1, color: YELLOW, align: 'center' });
+      if (t && t.side === 'monster' && t.i === mi) drawText(ctx, '*', x, y - top - MARKER_RISE, { size: 1, color: RED, align: 'center' });
+      if (asleep) drawText(ctx, 'z', x + 10, y - top - 2, { size: 1, color: TEXT_DIM });
     });
     // Sparks.
     for (const p of this.sparks) { ctx.fillStyle = p.col; ctx.globalAlpha = Math.min(1, p.life / 8); ctx.fillRect(Math.round(p.x), Math.round(p.y), 2, 2); p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life--; }

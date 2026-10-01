@@ -4,10 +4,10 @@
 // the monsters' markers, no line running into another.
 import { MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import { PLAYED_DEFS } from '../../src/content/maps.ts';
-import { groupLabels, seatFoot, LABEL_ROW, LABEL_TOP, MARKER_RISE } from '../../src/ui/grouplabels.ts';
+import { groupLabels, seatFoot, crown, LABEL_ROW, LABEL_TOP, MARKER_RISE, TALL } from '../../src/ui/grouplabels.ts';
 import { combatHeight } from '../../src/ui/sprites.ts';
 import type { LabelMonster, LabelLine } from '../../src/ui/grouplabels.ts';
-import { LAYOUT } from '../../src/ui/frame.ts';
+import { LAYOUT, COMBAT_LOG_LINES } from '../../src/ui/frame.ts';
 import { measureText } from '../../src/lib/engine/text.ts';
 import { ok } from './lib.ts';
 
@@ -41,11 +41,20 @@ export function labelFaults(monsters: readonly LabelMonster[], width: number = V
   }
   const box = (l: LabelLine): { x0: number; x1: number; y: number } => ({ x0: l.x, x1: l.x + measureText(l.text), y: l.y });
   const living = monsters.filter((m) => m.hp > 0);
-  const markers = Math.min(...living.map((m) => seatFoot(m.group, height) - combatHeight(MONSTERS[m.def.id]?.size ?? 1, living.length) - MARKER_RISE));
+  const size = (m: LabelMonster): number => MONSTERS[m.def.id]?.size ?? 1, h = (m: LabelMonster): number => combatHeight(size(m), living.length);
+  const markers = Math.min(...living.map((m) => seatFoot(m.group, height, size(m)) - crown(size(m), h(m)) - MARKER_RISE));
   for (const l of lines) {
     const b = box(l), foot = LABEL_TOP + b.y + GLYPH;
     if (b.x0 < 0 || b.x1 > width || b.y < 0) out.push(`"${l.text}" at ${b.x0},${b.y} runs past the view`);
     if (foot >= markers) out.push(`"${l.text}" reaches ${foot} px down, onto the monsters' markers at ${Math.round(markers)}`);
+  }
+  // A tall boss's crown stands below the labels, so its face is in the view and clear of them, and
+  // its health bar above the log's lines.
+  const under = lines.length ? LABEL_TOP + Math.max(...lines.map((l) => l.y)) + GLYPH : 0;
+  for (const m of living.filter((q) => size(q) > TALL)) {
+    const foot = seatFoot(m.group, height, size(m)), top = foot - crown(size(m), h(m));
+    if (top <= under) out.push(`${m.def.name}'s crown stands at ${Math.round(top)} px, up into the labels at ${under}`);
+    if (foot + 6 > height - (COMBAT_LOG_LINES * 10 + 6)) out.push(`${m.def.name} stands at ${Math.round(foot)} px, its health under the log`);
   }
   for (let i = 0; i < lines.length; i++) for (let j = i + 1; j < lines.length; j++) {
     const a = box(lines[i]), b = box(lines[j]);
@@ -88,10 +97,14 @@ export function labels(): void {
   fall('ogre', 1); fall('brigand', 2);
   ok(read(ogre) === `1 ${A.name}, 1 ${B.name}`, `and drops a kind when its last one falls (${read(ogre)})`);
 
-  // The Eldest and its heartwoods, at Penspern's tip: a lone proper name is not counted, and the
-  // want above follows, so a count put back on it fails both. The maps' sweep above seats it.
-  const eldest = seat([['eldest', 'heartwood', 'heartwood']]), { eldest: E, heartwood: T } = MONSTERS, misread = labelFaults(eldest).filter((f) => f.includes(' reads '));
-  ok(read(eldest) === `${E.name}, 2 ${T.plural}` && misread.length === 0, `a lone proper name is not counted (${read(eldest)}${misread.map((f) => ' -> ' + f).join('')})`);
+  // The Eldest and its heartwoods, at Penspern's tip: a lone proper name is not counted, and the want above follows,
+  // so a count put back on it fails both. Drawn at 2, it is a tall boss: whole, with its heartwoods
+  // or alone, it stands under the labels and over the log, and taller than they are.
+  const eldest = seat([['eldest', 'heartwood', 'heartwood']]), { eldest: E, heartwood: T } = MONSTERS, eldestFaults = labelFaults(eldest);
+  ok(read(eldest) === `${E.name}, 2 ${T.plural}` && eldestFaults.length === 0, `a lone proper name is not counted, and a tall boss is seated under its label (${read(eldest)}${eldestFaults.map((f) => ' -> ' + f).join('')})`);
+  for (const m of eldest.filter((q) => q.def.id === 'heartwood')) m.hp = 0;
+  const alone = labelFaults(eldest), stands = (id: string): number => crown(MONSTERS[id].size, combatHeight(MONSTERS[id].size, 3));
+  ok(E.size > TALL && alone.length === 0 && stands('eldest') > stands('heartwood') * 1.1, `the Eldest at ${E.size} stands ${Math.round(stands('eldest'))} px to the full height its heartwoods are drawn, ${Math.round(stands('heartwood'))}, and alone under its label too${alone.map((f) => ' -> ' + f).join('')}`);
 
   // A group of the six longest-named kinds is too long for a row: it breaks between its kinds and
   // stays inside the view, and a group beside it takes the row under it.

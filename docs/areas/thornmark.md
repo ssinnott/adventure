@@ -522,8 +522,8 @@ settled in its issue, and what the pilot teaches changes them.
   over two brambles stands across the neck where it is narrowest, and the rubbing is reached past
   it, not past the Eldest. The landing party is an adept and five zealots, by night; the owls are
   four. The Eldest is the Hand of Ash's weight, 450 hit points and 4d8+12, for the boss's odds: 55%
-  at 8 and 100% at 10. It is drawn at 1.35, not 2: at 2 it stands past the view's top and its
-  label falls on it, alone or with its heartwoods; 1.35 is the most that clears both (§7). The
+  at 8 and 100% at 10. It is drawn at 2, a tall boss (#318): in a fight it stands on the third
+  rank before its heartwoods, its roots sunk, under its label (§7). The
   rubbing pays 150 at Senara's hand-in, whose ask is now her hire, so that a rubbing brought
   unasked hears her early words. As measured it pays about 1,230 xp a member and 460 gold, the
   Eldest 650 of the xp. What the owner finds by hand goes here when the box has been played.
@@ -616,8 +616,8 @@ from the Grove into H3, which stop with the Grove's own; and the Hand at the hea
 with an adept. §4.2 to §4.7 place every group, box by box; the Deepthorn's five are unplaced until
 then (`tools/tests/maps.ts:21`), and each box drops the entries of those it places first: H3 the
 Bramble and the Rootwalker, I4 the Heartwood and the Great Owl, J5 the Eldest. The heartwood is drawn
-at 1.3 and the Eldest at 1.35, not the 1.8 and 2 they were drawn for: taller, a fight's label falls
-on its marker, and the Eldest at 2 stands past the view's top (#49, #218).
+at 1.3, not the 1.8 it was drawn for: taller, a fight's label falls on its marker (#49, #218). The
+Eldest is drawn at its 2, seated in a fight as a tall boss (#318).
 
 The old wood woke when the Stone was cut and sleeps when it is restored (MONSTERS §5.4): in the
 build, when the tear closes at the Warden of the Cut's death (#41, #49), its groups stop coming back
