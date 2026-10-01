@@ -4,6 +4,7 @@
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';
 import type { RegionId } from './weather.ts';
+import type { Crossing } from './atlas.ts';
 import type { Season, Tide } from './calendar.ts';
 import type { When } from './quests.ts';
 import type { Interior } from '../content/index.ts';
@@ -139,6 +140,8 @@ export interface MapZone {
   palette?: Partial<MapPalette>;
   /** What the log says on crossing into the zone, by the id of the zone left: the old exit's arrival line. */
   enter?: Record<string, string>;
+  /** The atlas zone the map lies in: what the crossing line names, and its own words, if it has any. */
+  land?: { id: string; name: string; crossing?: Crossing };
 }
 
 /**
