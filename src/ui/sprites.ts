@@ -21,6 +21,7 @@ import * as ogre from './monsters/ogre.ts';
 import * as wraith from './monsters/wraith.ts';
 import * as birds from './monsters/birds.ts';
 import * as oldwood from './monsters/oldwood.ts';
+import * as longbodies from './monsters/longbodies.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -272,6 +273,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw, eldest: oldwood.draw,
   wraith: wraith.draw,
   crow: birds.draw, owl: birds.draw, old_rook: birds.draw,
+  fen_eel: longbodies.draw,
 };
 
 /**
