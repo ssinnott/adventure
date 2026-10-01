@@ -1575,3 +1575,6 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   ("I made for Helmstow…"; moving her recuts #77's quest 8 for one word's truth); the other choices
   taken, the kitchen entry's loss said in the body, both survey texts recut and listed as Owner
   actions; the sheet OK. Round sent to the #77 session.
+- 00:17: the delegate on #307 (J4): the look OK, all five choices taken. Round sent to the
+  Thornmark session, after #304's: J4 lands second (drops its `CUT_OFF` and the owed-xp line),
+  §8's figure, the nits.
