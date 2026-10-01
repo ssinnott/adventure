@@ -10,7 +10,6 @@ export const SPRITES = [
   'bargeman', 'barge_master',
   'drowned_chanter', 'choirmaster',
   'fen_eel', 'leech',
-  'fen_toad',
   'fen_toad', 'bull_toad',
   'grey_heron',
   'salt_crab',
