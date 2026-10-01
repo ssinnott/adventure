@@ -14,7 +14,7 @@ import { item, priceIn, buy } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
@@ -236,7 +236,7 @@ export class SheetScreen implements Screen {
   render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
     const c = g.party.members[this.who];
     panel(ctx, 8, 8, 624, 268);
-    drawText(ctx, `${c.name}  ${RACES[c.race].name} ${CLASSES[c.cls].name}  LEVEL ${c.level}`, 20, 18, { size: 1, color: BRASS });
+    drawText(ctx, `${c.name}  ${RACES[c.race].name} ${className(c)}  LEVEL ${c.level}`, 20, 18, { size: 1, color: BRASS });
     drawText(ctx, c.level >= MAX_LEVEL ? `XP ${c.xp}  (AT THE CAP)` : `XP ${c.xp} / ${xpForLevel(c.level + 1)}`, 620, 18, { size: 1, color: canTrain(c) ? YELLOW : TEXT_DIM, align: 'right' });
     drawPortraitLarge(ctx, c, 20, 34);
     let y = 36;
@@ -297,6 +297,8 @@ export class SpellScreen implements Screen {
           c.sp -= sp.sp;
           g.say(castOnAlly(c, sp, g.party.members[i]));
         });
+      } else if (sp.explore === 'mark' && g.world.state.mark) {
+        g.push(new ChoiceScreen('The mark is set. Which?', ['Return to the mark', 'Set it here'], (i) => { if (i >= 0) g.castExplore(caster, sp.id, i === 0); }, sp.name));
       } else g.castExplore(caster, sp.id);
       this.onDone?.();
     }

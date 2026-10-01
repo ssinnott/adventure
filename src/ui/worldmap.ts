@@ -16,6 +16,8 @@ import { worldGrid, zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, gridCuts, 
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
 import type { QuestDef } from '../game/quests.ts';
+import { questLog } from '../game/quests.ts';
+import { sought } from '../game/seeking.ts';
 import { drawFrameBackground } from './frame.ts';
 import { MessageScreen } from './screens.ts';
 import { BRASS, TEXT, TEXT_DIM, PANEL } from './palette.ts';
@@ -1461,6 +1463,8 @@ function drawLegend(ctx: CanvasRenderingContext2D, y: number): void {
   label('QUEST');
   ctx.fillStyle = '#e0903c'; ctx.fillRect(x + 1, y + 1, 7, 5); x += 12;
   label('LATER STEP');
+  poly(ctx, [x + 4, y - 1, x + 8, y + 3, x + 4, y + 7, x, y + 3], SOUGHT, '#120c14'); x += 12;
+  label('SOUGHT');
 }
 
 /** The whole cloth, small, with the part on screen boxed: top right of the view. Screen coordinates. */
@@ -1479,6 +1483,30 @@ function drawLocator(ctx: CanvasRenderingContext2D, thumb: HTMLCanvasElement, vx
 // ---------------------------------------------------------------- the screen
 
 export type WorldMapMode = 'art' | 'zones';
+
+/** Where a map is on the cloth: its plate, else its middle if the atlas lays it, else its home map's middle. */
+function mapOnCloth(mapId: string): [number, number] | undefined {
+  // Over a place's plate, where the overlay would hide it.
+  const pl = ATLAS.places.find((q) => q.id === mapId);
+  if (pl) return [px(pl.at[0]), py(pl.at[1]) - 13];
+  const home = mapMiddle(mapId) ? undefined : homeMap(MAP_DEFS, mapId);
+  return mapMiddle(mapId) ?? (home && mapMiddle(home.id));
+}
+
+/** The places a seeking quest sends a member to (game/seeking.ts), on the cloth, with who is sought there. */
+function soughtOnCloth(world: World | null): { at: [number, number]; who: string[] }[] {
+  if (!world) return [];
+  return sought(questLog(world.state, world.party)).flatMap((p) => { const at = mapOnCloth(p.at); return at ? [{ at, who: p.who }] : []; });
+}
+
+/** The colour of a place a member is to seek: a green no padlock, way or the party's arrow wears. */
+const SOUGHT = '#7ee0a0';
+
+/** A sought place's pin: a small green diamond, and who is to go there lettered beside it. */
+function drawSought(ctx: CanvasRenderingContext2D, [x, y]: [number, number], who: readonly string[]): void {
+  poly(ctx, [x, y - 5, x + 4, y, x, y + 5, x - 4, y], SOUGHT, '#120c14');
+  drawTextOutlined(ctx, who.join(', ').toUpperCase(), r(x) + 7, r(y) - 3, { size: 1, color: SOUGHT, outline: '#120c14', thickness: 1, shadow: false });
+}
 
 /**
  * Where on the cloth the party is: its cell outdoors (the outdoors' cells are the world's, square for
@@ -1570,7 +1598,7 @@ export class WorldMapScreen implements Screen {
     if (!art) { this.renderProgress(ctx); return; }
     const world = g.world ?? null;
     const party = partyOnCloth(world);
-    if (this.whole) this.renderWhole(ctx, art, party, world?.state.facing ?? 0, frame);
+    if (this.whole) this.renderWhole(ctx, art, party, world?.state.facing ?? 0, frame, world);
     else {
       const vx = Math.round(this.vx), vy = Math.round(this.vy);
       ctx.drawImage(art.cloth, vx, vy, VIEW.w, VIEW.h, VIEW.x, VIEW.y, VIEW.w, VIEW.h);
@@ -1580,8 +1608,9 @@ export class WorldMapScreen implements Screen {
       drawHearth(ctx, frame, world?.stones ?? 0);
       if (this.mode === 'zones') {
         ctx.drawImage(art.overlay, vx, vy, VIEW.w, VIEW.h, vx, vy, VIEW.w, VIEW.h);
+        for (const p of soughtOnCloth(world)) drawSought(ctx, p.at, p.who);
         if (party) drawParty(ctx, party, world?.state.facing ?? 0, frame);
-      } else drawNames(ctx, art.names, vx, vy, VIEW.w, VIEW.h);
+      } else { drawNames(ctx, art.names, vx, vy, VIEW.w, VIEW.h); for (const p of soughtOnCloth(world)) drawSought(ctx, p.at, p.who); }
       ctx.restore();
       if (this.still < 90) drawLocator(ctx, art.thumb, vx, vy, Math.min(1, (90 - this.still) / 30));
     }
@@ -1613,7 +1642,7 @@ export class WorldMapScreen implements Screen {
   }
 
   /** The whole cloth fitted to the view: the overlay's colours with each step's numeral, the party, and a frame round what Z goes back to. */
-  private renderWhole(ctx: CanvasRenderingContext2D, art: Painted, party: [number, number] | null, facing: number, frame: number): void {
+  private renderWhole(ctx: CanvasRenderingContext2D, art: Painted, party: [number, number] | null, facing: number, frame: number, world: World | null = null): void {
     const { k, w, h, x, y } = WHOLE;
     ctx.fillStyle = '#120c14'; ctx.fillRect(VIEW.x, VIEW.y, VIEW.w, VIEW.h);
     ctx.save();
@@ -1635,6 +1664,7 @@ export class WorldMapScreen implements Screen {
         drawTextOutlined(ctx, a.name.toUpperCase(), r(ax), r(ay) - 3, { size: 1, color: '#6a2a18', outline: HALO, thickness: 1, shadow: false, align: 'center' });
       }
     }
+    for (const p of soughtOnCloth(world)) drawSought(ctx, at(p.at[0], p.at[1]), p.who);
     if (party) { const [cx, cy] = at(party[0], party[1]); drawParty(ctx, [cx, cy], facing, frame, 0); }
     const [fx, fy] = at(this.vx, this.vy);
     ctx.strokeStyle = '#fff0b0'; ctx.lineWidth = 1; ctx.strokeRect(r(fx) + 0.5, r(fy) + 0.5, r(VIEW.w * k), r(VIEW.h * k));

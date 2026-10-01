@@ -56,6 +56,12 @@ export interface WorldState {
   zones?: string[];
   /** The monster defs the company has seen or fought, first first, so each look is said once. Absent in older saves. */
   met?: string[];
+  /** Steps left of Walk on Water, which bears the party over shallow water as a swimmer; a fight ends it. Absent: none. */
+  walk?: number;
+  /** Steps left of Levitate, which floats the party over the chasm. Absent: none. */
+  float?: number;
+  /** Waymark's mark, on an outdoor map the party stood on. Absent: none set. */
+  mark?: { mapId: string; x: number; y: number; facing: Facing };
 }
 
 /** Whether cell `i` is set in a map's explored bits. */
@@ -332,7 +338,10 @@ export class World {
   get tide(): Tide { return tideAt(this.state.minutes); }
 
   /** What the party can cross, at this tide. */
-  private get can(): ReturnType<typeof partyCan> & { tide: Tide } { return { ...partyCan(this.party), tide: this.tide }; }
+  private get can(): ReturnType<typeof partyCan> & { tide: Tide; float: boolean } {
+    const can = partyCan(this.party);
+    return { ...can, swim: can.swim || (this.state.walk ?? 0) > 0, tide: this.tide, float: (this.state.float ?? 0) > 0 };
+  }
 
   /** Whether tidal ground lies within sight of the party, outdoors. */
   private tidalNear(): boolean {
@@ -356,6 +365,8 @@ export class World {
     const nx = this.state.x + FACING_DX[mf], ny = this.state.y + FACING_DY[mf];
     const pass = this.map.passable(nx, ny, this.can);
     if (pass !== 'ok' && pass !== 'unlock') return { kind: 'blocked', reason: BLOCK_TEXT[pass] };
+    // Levitate never leaves the party over the drop when it fails.
+    if (this.map.at(nx, ny).terrain === 'chasm' && (this.state.float ?? 0) <= 1) return { kind: 'blocked', reason: FLOAT_FAILS };
     const gate = this.map.gateAt(nx, ny) ?? this.map.exitAt(nx, ny);
     if (gate?.needFlag && ![gate.needFlag].flat().every((k) => this.party.flags[k])) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
     const left = this.zone;
@@ -378,6 +389,8 @@ export class World {
     if (this.tide !== tide && this.tidalNear()) messages.push(TIDE_TEXT[this.tide]);
     if (this.state.light > 0) this.state.light--;
     if (this.state.truce > 0 && --this.state.truce === 0) this.state.truceGroups = [];
+    if (this.state.walk && --this.state.walk === 0) messages.push(WALK_ENDS);
+    if (this.state.float && --this.state.float === 0) messages.push(FLOAT_ENDS);
     this.reveal();
     const zone = this.tread();
     const arrived = this.map.exitAt(nx, ny);
@@ -437,6 +450,34 @@ export class World {
     this.travel(id, m.def.start.x, m.def.start.y, m.def.start.facing);
     this.state.truce = 0; this.state.truceGroups = [];
     return m.name;
+  }
+
+  /** Walk on Water and Levitate, cast: steps of each. */
+  bear(what: 'walk' | 'float'): void { this.state[what] = what === 'walk' ? WALK_STEPS : FLOAT_STEPS; }
+  /** A fight ends Walk on Water: the party stands where it stands. */
+  endWalk(): void { delete this.state.walk; }
+
+  /**
+   * Whether Waymark can set its mark here: on an outdoor map, on ground the party stands on without
+   * swimming or floating, and never tidal ground, which the sea may cover by the time it returns.
+   */
+  canMark(): boolean {
+    const { x, y } = this.state;
+    return this.map.kind === 'outdoor' && this.map.at(x, y).terrain !== 'tidal' && this.map.passable(x, y, { tide: this.tide }) === 'ok';
+  }
+  /** Waymark: set the mark where the party stands. False where it will not take (`canMark`). */
+  setMark(): boolean {
+    if (!this.canMark()) return false;
+    this.state.mark = { mapId: this.state.mapId, x: this.state.x, y: this.state.y, facing: this.state.facing };
+    return true;
+  }
+  /** Waymark: back to the mark, as Town Portal goes back to a town. False with no mark. */
+  toMark(): boolean {
+    const m = this.state.mark;
+    if (!m || !this.maps[m.mapId]) return false;
+    this.travel(m.mapId, m.x, m.y, m.facing);
+    this.state.truce = 0; this.state.truceGroups = [];
+    return true;
   }
 
   /** Mark cells around the party seen: the four neighbours always, more with sight. */
@@ -687,6 +728,11 @@ const TIDE_TEXT: Record<Tide, string> = {
   high: 'The tide has turned. The sea comes in over the sand.',
   low: 'The tide has turned. The sea draws off the sand.',
 };
+
+/** The steps Walk on Water and Levitate last (DESIGN §7): a shortcut over a little water or a drop, never a road. */
+export const WALK_STEPS = 12, FLOAT_STEPS = 6;
+/** What the log says as each ends, and as a step would leave the party over the drop with the float spent. */
+export const WALK_ENDS = 'The water no longer bears you.', FLOAT_ENDS = 'Your feet find the ground.', FLOAT_FAILS = 'You would fall before the far side.';
 
 const BLOCK_TEXT: Record<string, string> = {
   void: 'The world ends here.',

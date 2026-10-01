@@ -1,5 +1,5 @@
-// What a spell is: five tiers per spell list, one per level band (tiers unlock at levels 1, 2, 4, 6
-// and 8; see party.ts spellTierAt). `list` is who can learn it; `sp` the cost; the effect fields say
+// What a spell is: seven tiers per spell list (tiers unlock at levels 1, 2, 4, 6 and 8, then 15 and
+// 23; see party.ts spellTierAt). `list` is who can learn it; `sp` the cost; the effect fields say
 // what it does. The spells themselves are content (src/content/spells.ts).
 import { SPELLS } from '../content/index.ts';
 
@@ -29,10 +29,15 @@ export interface SpellDef {
   /** A buff key applied to the party for `turns` rounds. */
   buff?: 'bless' | 'shield' | 'haste';
   turns?: number;
-  /** Chance-based condition on enemies. */
+  /** Chance-based condition on enemies: Slumber's sleep, the roots' hold. */
   inflict?: 'asleep' | 'paralysed';
-  /** Exploration effects. */
-  explore?: 'light' | 'wizard_eye' | 'town_portal';
+  /** The party takes half from the element the caster picks, for `turns` rounds: Lampglass. */
+  glass?: boolean;
+  /**
+   * Exploration effects: shallow water borne a while (`walk`), a drop floated over (`float`), a mark
+   * set or returned to (`mark`; see world.ts).
+   */
+  explore?: 'light' | 'wizard_eye' | 'town_portal' | 'walk' | 'float' | 'mark';
   text: string;
 }
 
