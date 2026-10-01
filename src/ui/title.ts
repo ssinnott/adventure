@@ -10,10 +10,14 @@ import { CreateScreen } from './create.ts';
 import { drawSkyBand } from './viewport.ts';
 import { drawFrameBackground } from './frame.ts';
 import { panel } from './draw.ts';
+import { savedStones, flickerOf } from '../game/stones.ts';
 
 export class TitleScreen implements Screen {
   private sel = 0;
   private items: string[];
+  /** The Stones the saved company has restored, read once from storage. */
+  private restored: number | null = null;
+  private stones(g: Game): number { return (this.restored ??= this.canContinue ? savedStones(g.store) : 0); }
   constructor(private canContinue: boolean, private note = '') {
     this.items = canContinue ? ['Continue', 'New Game'] : ['New Game'];
   }
@@ -37,16 +41,18 @@ export class TitleScreen implements Screen {
     const sea = ctx.createLinearGradient(0, horizon, 0, v.y + v.h);
     sea.addColorStop(0, '#2a4a7a'); sea.addColorStop(1, '#101a30');
     ctx.fillStyle = sea; ctx.fillRect(v.x, horizon, v.w, v.h / 2);
-    // The Hearth: a column of light on the horizon that flickers, and its path on the water.
-    const flick = 0.8 + 0.2 * Math.sin(frame / 7) * Math.sin(frame / 3);
-    const cx = v.x + v.w / 2;
-    const glow = ctx.createRadialGradient(cx, horizon, 4, cx, horizon, 140);
-    glow.addColorStop(0, `rgba(255,220,150,${0.5 * flick})`); glow.addColorStop(1, 'rgba(255,200,120,0)');
-    ctx.fillStyle = glow; ctx.fillRect(cx - 140, horizon - 140, 280, 280);
-    const col = ctx.createLinearGradient(0, v.y + 30, 0, horizon);
+    // The Hearth: a column of light on the horizon that flickers, and its path on the water. It is
+    // the saved company's: steadier, taller and wider by a step for each Stone restored (#168).
+    const n = Math.min(this.stones(g), 5), amp = flickerOf(n);
+    const flick = 1 - amp + amp * Math.sin(frame / 7) * Math.sin(frame / 3);
+    const cx = v.x + v.w / 2, rad = 110 + 12 * n, peak = 0.45 + 0.05 * n, tall = Math.min(70 + 22 * n, horizon - v.y);
+    const glow = ctx.createRadialGradient(cx, horizon, 4, cx, horizon, rad);
+    glow.addColorStop(0, `rgba(255,220,150,${peak * flick})`); glow.addColorStop(1, 'rgba(255,200,120,0)');
+    ctx.fillStyle = glow; ctx.fillRect(cx - rad, horizon - rad, rad * 2, rad * 2);
+    const col = ctx.createLinearGradient(0, horizon - tall, 0, horizon);
     col.addColorStop(0, `rgba(255,230,170,${0.05 * flick})`); col.addColorStop(1, `rgba(255,220,150,${0.85 * flick})`);
-    ctx.fillStyle = col; ctx.fillRect(cx - 5, v.y + 30, 10, horizon - v.y - 30);
-    ctx.fillStyle = `rgba(255,235,190,${0.9 * flick})`; ctx.fillRect(cx - 2, v.y + 60, 4, horizon - v.y - 60);
+    ctx.fillStyle = col; ctx.fillRect(cx - 5, horizon - tall, 10, tall);
+    ctx.fillStyle = `rgba(255,235,190,${0.9 * flick})`; ctx.fillRect(cx - 2, horizon - tall + 30, 4, tall - 30);
     for (let i = 0; i < 40; i++) {
       const y = horizon + 4 + i * 4, w = 12 + i * 3.5 * (0.7 + 0.3 * Math.sin(frame / 9 + i));
       ctx.fillStyle = `rgba(255,220,150,${(0.35 - i * 0.008) * flick})`; ctx.fillRect(cx - w / 2, y, w, 2);
