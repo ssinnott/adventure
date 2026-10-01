@@ -314,6 +314,16 @@
         "k2_rocks",
         "k2_shrine",
         "k2_stumps",
+        "l2_ash",
+        "l2_cairn",
+        "l2_knoll",
+        "l2_lamp_dark",
+        "l2_lamp_day",
+        "l2_lamp_night",
+        "l2_letter",
+        "l2_letter_chest",
+        "l2_lookout",
+        "l2_shrine",
         "lake",
         "lodestone",
         "scarth_watch",
@@ -447,6 +457,10 @@
         "k2_bears",
         "k2_dam",
         "k2_hounds",
+        "l2_bears",
+        "l2_hounds",
+        "l2_lamp_moths",
+        "l2_tower_moths",
         "lodge_brambles",
         "marsh_spiders",
         "road_bandits",
@@ -490,6 +504,7 @@
         "308,112",
         "312,32",
         "338,59",
+        "365,35",
         "53,140",
         "99,148"
       ]
@@ -808,6 +823,10 @@
     },
     "eaves_k2": {
       "at": "328,30",
+      "size": "32x32"
+    },
+    "lanternwood_l2": {
+      "at": "360,30",
       "size": "32x32"
     },
     "saltings_c6": {

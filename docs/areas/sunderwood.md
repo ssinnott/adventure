@@ -10,8 +10,8 @@ turns. This is its area doc (EXPANSION §4, §6 and §8.2). Its work is filed un
 (#204), its side quests (#205), its drawings (#206) and its rooms (#207). Figures are measured on
 main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Three maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), and K2,
-Sunderfall (#197). Its content is
+Four maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
+Sunderfall (#197), and L2, Lanternwood (#200). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -25,12 +25,12 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–15 | 8,084 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197) |
-| Lanternwood | 15–16 | 3,969 | none |
-| The area | 14–16 | 12,053 | three boxes |
+| The Eaves | 14–15 | 6,211 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197) |
+| Lanternwood | 15–16 | 6,041 | L2, Lanternwood, laid at 360,30 (#200) |
+| The area | 14–16 | 12,252 | four boxes |
 
 Squares are the land the zone check counts in each zone with K2 laid in the Eaves (#197), which
-moved the zone line east; the plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+moved the zone line east, and L2 in Lanternwood (#200), which moved it back west; the plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
 included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
@@ -119,6 +119,14 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   them, the camp on the west lip, the lookout down the gorge, the sawn glass, a cairn in the pines and
   a Lantern's stone by the road. Three groups: sunder hounds with a glass spider at the bridge's far
   end, gleaners with a hound at the dam and two glass bears on the road at the far end.
+- **Lanternwood** (L2, `lanternwood_l2`, core, band 15–16; #200): the east road on from the bridge
+  through the old forest and out at the box's south-east corner by the river for M2, with a spur
+  north to the tower's gate, barred until #201 makes it the way into Lantern Watch. Two wayside lamps
+  on the road, one lit and one dark, and a young sister of the Watch by the dark one; the knoll in
+  the north-west with the signal fire's ash and the pit under it; a shrine in the tower's yard, a
+  cairn in the wood north-east of it and a camp south of the road. Four groups: moths with a
+  deathshead at the lit lamp by night, sunder hounds on the knoll's path, two deathsheads at the
+  tower by night and two glass bears on the road by the river.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -411,6 +419,28 @@ features; the pay shared out over the area (§8).
 - **Finds.** A Lantern's Staff +1 under the ash, the ladder's (#399).
 - **Pay.** About 1,150 xp a member.
 
+- **As built** (#200, 1 October): the brief's places, with four groups for its eight. The road comes
+  in off K2 on world row 52 and leaves at the box's south-east corner, where the river from the rim
+  meets it, as the atlas runs it; the atlas carries it on through M2's corner into M3, which is cut,
+  so four squares of the edge are owed to #202. The tower's foot is drawn north of the gate, a block
+  five wide in a yard of woods, with a spur of road up to the gate at 12,16, barred: no exit, owed to
+  #201, which makes it the way in. The lit lamp stands by the road at the way in, with a text by day
+  and one by night; the dark lamp down the road, and by it a young sister of the Watch with lines of
+  her own and the hint; her quest, 31, and where she moves are #201's and #205's. The knoll is hills
+  in the north-west, its path down to the road; the ash on its crown, and north of it, under the
+  search, a pit with the letter, from a Reader at Helmstow, written last winter and naming neither
+  the seal nor the Regent, and a chest: the Lantern's Staff +1 (`lanterns_staff`), the monk's and the
+  druid's step at 16 (#406), with 250 gold. Nothing walked or waded reaches the pit but through the
+  ash. The plan's groups paid 1,370 and gave 9.6 fights to a rest at 15, over the aim: the lamp's
+  moths are four with their deathshead, and the tower's are two deathsheads, the box's group at 16,
+  the hardest fight on it (5.3 fights to a rest alone). Three hounds hold the knoll's path and two
+  glass bears the road by the river. A company at 15 wins every fight and manages 8.2 fights to a
+  rest, inside the aim; Lanternwood's road is walked every time. As measured it pays about 1,400 xp a
+  member and 430 gold, which takes up what I2, J2 and K2 fell short by: the four boxes pay 5,040
+  against their 5,000. Two under, at 13, it wins every fight: its floor is above the area's, so its
+  groups count two under in the area's pool, owed to #18. The moths and the bears were new on I2, so
+  the box claims nothing new. What the owner finds by hand goes here when the box has been played.
+
 ### 4.8 Lantern Watch (#201): town, 16×16, a tower, band 14–16
 
 - **Purpose.** The act's second town: the Lanterns' watchtower where they read the smugglers'
@@ -549,7 +579,7 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   four side quests 900 between them (29 and 30 200 each, 31 and 32 250 each, §6): about 11,500. They were the plan's, 11,800 before the
   side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
   supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
-  when it is built: I2 1,063, J2 1,509 and K2 1,072 so far, 3,644 against their 3,850; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
+  when it is built: I2 1,063, J2 1,509, K2 1,072 and L2 1,396 so far, 5,040 against their 5,000; a company should leave the Watch at 16, where the midpoint is, with the Kilns'
   floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
@@ -739,3 +769,36 @@ Decided by delegate for #197, each the owner's to overturn:
    cairn is out of sight of the road, not off any path.
 10. **The Long Sword +2 stays, under the Watch's stores:** #399 kept it off the ladder, a find that
     sells, as I2's halberd is. Every +1 has its box (#399), and none moves to K2.
+
+Decided by delegate for #200, each the owner's to overturn:
+
+1. **The rim's pines are drawn as forest, and no pine character is filed.** The atlas's 64 squares of
+   pine under the rim have no map character, so the scaffold refuses the box; it is cut by hand with
+   pine read as forest, as the Eaves draw theirs. Rimewater's pinewoods can ask for the character.
+2. **The tower's foot is drawn small, its gate shut until #201,** as Saltmouth's was on C6 (#176):
+   building squares north of the gate in a yard of woods, a spur of road to it, and one event before
+   it that says only what is seen. The atlas's site and link at 372,46 stand on it, so nothing moves.
+3. **The back row is the moths' reach, and nothing is filed.** The moths and the deathshead are
+   `ranged`, so they strike the back row from the first round, and their sleep does the rest. A
+   targeting preference would be a systems pull request of its own. The Light ask is not filed:
+   groups are placed, not wandering, so "come more often" has no rate to raise.
+4. **No dusk:** `when` has none, and the glass bears stand on the road by the river at all hours, as
+   §7 proposes them for Lanternwood by day; against MONSTERS §6.3's Where column, as I2's and K2's.
+5. **Four groups, measured down from the plan's:** five moths and a deathshead at the lamp, three
+   moths and one at the tower, three hounds and two bears paid 1,370 and gave 9.6 fights to a rest at
+   15. Four moths and a deathshead at the lamp and two deathsheads at the tower give 8.2, inside the
+   aim, with a true fight at 16, and pay about 1,400, taking up the Eaves' 200.
+6. **The young sister stands by the dark lamp** with a look, a line of her own and the brief's line
+   as half the hint: no flags and no `when`. Quest 31 is #201's and #205's.
+7. **The secret is on the knoll, under the ash:** a secret door north of the ash into a pit closed on
+   every other side, with the letter as event text only and a chest with the Lantern's Staff +1 and
+   250 gold. The letter names neither the seal nor the Regent: those are the tower's to read (§5).
+8. **The shrine gives intellect:** the Lanterns read, and sell the next spell tier.
+9. **The cairn gives 180 gold and a Sapphire Vial,** as J2's and K2's.
+10. **K2's east ring opens to forest where it meets L2,** with the road through, as J2's opened for
+    K2. L2's south and east edges are the ring, with the road out at its corner.
+11. **Bears and hounds come back after two days, the moths after one.**
+12. **The map is `lanternwood_l2`, called Lanternwood:** "Lantern Watch" is #201's map, and two places
+    of one name would confuse the log.
+13. **The road's corner is owed to #202:** the atlas runs the road out of L2 through M2's corner into
+    M3, which is cut; the four squares where map and atlas disagree wait on M2.
