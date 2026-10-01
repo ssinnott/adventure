@@ -18,6 +18,11 @@
 // The Old Rook, the keeper of a rookery, is the crow's frame grown heavy and ragged: bigger, the
 // throat and the thighs shaggy, a purple sheen on the black and the rook's bare grey-white face
 // round the base of its bill, which is what tells a rook from a crow across a field.
+// The Grey Heron is the crow's profile on stilts: the legs two and a half times the crow's, the
+// body slim and nearly level, the neck three times as long in a crouched S, and a yellow dagger
+// of a bill. Grey, the head and neck white with a black stripe from the eye into a trailing crest,
+// the neck's front streaked. Taller than a man, so it is drawn inside 0.74 of its height. It does
+// not hop; it stands and watches, and only the wings stir.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -26,7 +31,7 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook'];
+export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron'];
 
 /**
  * The frame's parts, as proportions of the crow's (1 = the crow, 0 = none). Each is named for the
@@ -78,31 +83,65 @@ interface Build {
   bars: number;
   /** Bare grey-white skin round the base of the bill, 0 none: the rook's. */
   mask: number;
+  /** Long plumes trailing from the back of the head, 0 none: the heron's black crest. */
+  crest: number;
+  /** A pale head and neck, 0 none to 1 white, with a dark stripe over the eye: the heron's. */
+  pale: number;
+  /** Dark streaks down the front of the neck, 0 none: the heron's. */
+  streaks: number;
+  /** The bill's colour, or null for horn: the heron's yellow dagger. */
+  billHex: string | null;
 }
 const CROW: Build = {
   body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
   sheen: '#5a68b0', gloss: 1, feathered: 0, lean: -0.36, hop: 1, tufts: 0, bars: 0, mask: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: null,
 };
 /** Upright and turned to the party, wings raised wide: a big round head sunk in the shoulders, a small hooked bill, short feathered legs. */
 const OWL: Build = {
   body: 1.1, neck: 0, head: 1.6, face: 1, bill: 0.35, hook: 0.8, leg: 0.6, wing: 1.4, broad: 1.3, tail: 0.6, wedge: 0, ruff: 0, bare: 0,
   sheen: null, gloss: 0, feathered: 1, lean: -1.2, hop: 0, tufts: 1, bars: 1, mask: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: null,
 };
 /** The old rook: bigger and heavier than the crow, shaggy at the throat and the thighs, the bill long and pale-based. */
 const ROOK: Build = {
   body: 1.2, neck: 1, head: 1.08, face: 0, bill: 1.2, hook: 0, leg: 1, wing: 1.08, broad: 1.12, tail: 1, wedge: 0.15, ruff: 1, bare: 0,
   sheen: '#7a5aa8', gloss: 0.8, feathered: 1, lean: -0.3, hop: 0.5, tufts: 0, bars: 0, mask: 1,
+  crest: 0, pale: 0, streaks: 0, billHex: null,
+};
+/**
+ * The grey heron: the crow's profile on stilts, the body slim and nearly level, the neck three
+ * times the crow's in a crouched S, the head small, and a yellow dagger of a bill. Grey on the back
+ * and wings, the head and neck white with a black stripe from the eye back into a trailing crest,
+ * and the front of the neck streaked. Matte, and it does not hop: it stands, and watches.
+ */
+const HERON: Build = {
+  body: 0.85, neck: 3, head: 0.8, face: 0, bill: 1.55, hook: 0, leg: 2.6, wing: 1.05, broad: 1.1, tail: 0.45, wedge: 0, ruff: 0, bare: 0,
+  sheen: null, gloss: 0.1, feathered: 0, lean: -0.18, hop: 0, tufts: 0, bars: 0, mask: 0,
+  crest: 1, pale: 1, streaks: 1, billHex: '#d8b040',
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : CROW;
+  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : CROW;
   // The pose is the Build's `face`. Turned to the party, the raised wings reach higher than the
   // crow's hop: drawn inside 0.85 of its height, as the lampman is, the owl's tips keep clear of the
   // top of the combat canvas (at full height and wing 1.6 they run off it), and the wings as much
   // as the body make its size.
   if (b.face >= 0.5) facing(ctx, x, y, h * 0.85, p, b);
+  // The heron's stilts and neck carry its crown to about 1.2 of the crow's frame: drawn inside 0.74
+  // of its height, its crown stands where a crow's does.
+  else if (b.leg > 2) bird(ctx, x, y, h * 0.74, p, b);
   else bird(ctx, x, y, h, p, b);
 };
+
+/**
+ * A long neck's spine in sprite units, from the breast (x0, y0) to under the head (x1, y1): back from
+ * the breast, then forward and up under the head, a crouched S the length of `nl` allows.
+ */
+function neckS(x0: number, y0: number, x1: number, y1: number, nl: number): number[] {
+  const dy = y1 - y0;
+  return [x0, y0, x0 + 0.03, y0 + dy * 0.22, x0 - nl * 0.12, y0 + dy * 0.5, x1 - nl * 0.28, y1 - dy * 0.18, x1, y1];
+}
 
 /** A direction back and up from the bird, `a` radians above the horizontal (the bird faces +x). */
 const back = (a: number): [number, number] => [-Math.cos(a), Math.sin(a)];
@@ -156,7 +195,8 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const plume = p.base, far = p.dark;
   const sheen = b.sheen ? shade(b.sheen, tone) : null;
   const horn = shade('#1c1a20', tone);
-  const shank = b.feathered ? plume : horn;
+  // Bare legs are horn, or the bill's colour dulled where the bill has one: the heron's yellow-brown.
+  const shank = b.feathered ? plume : b.billHex ? mix(shade(b.billHex, tone), horn, 0.55) : horn;
   const skin = shade('#c8807a', tone);
   const eyeCol = shade('#f0d890', Math.max(0.7, tone));
 
@@ -213,7 +253,11 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     { k: 'ell', x: X(-0.04), y: U(by + 0.22 * bs), rx: h * 0.32 * bs, ry: h * 0.16 * bs, rot: b.lean },
     { k: 'ell', x: X(0.12), y: U(by + 0.3 * bs), rx: h * 0.14 * bs, ry: h * 0.15 * bs },
     { k: 'ell', x: X(0.0), y: U(by + 0.1), rx: h * 0.07, ry: h * 0.06 },
-    { k: 'cap', x0: X(0.15), y0: U(by + 0.36 * bs), x1: X(hx - rH * 0.2), y1: U(hy - rH * 0.3), r0: h * 0.12 * bs, r1: h * rH * 0.78 },
+    // A long neck is a crouched S, back from the breast and forward again under the head; a short
+    // one is a straight piece of the mass.
+    b.neck > 1.5
+      ? { k: 'tube', pts: px(neckS(0.15, by + 0.36 * bs, hx - rH * 0.2, hy - rH * 0.3, nl)), r0: h * 0.07 * bs, r1: h * rH * 0.62 }
+      : { k: 'cap', x0: X(0.15), y0: U(by + 0.36 * bs), x1: X(hx - rH * 0.2), y1: U(hy - rH * 0.3), r0: h * 0.12 * bs, r1: h * rH * 0.78 },
   ];
   if (!bare) body.push({ k: 'ball', x: X(hx), y: U(hy), r: h * rH, gloss: 0.3 * b.gloss });
   // Hackles: the loose feathers of the throat, a ragged edge under the chin.
@@ -228,6 +272,22 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     { x0: X(-0.02), y0: U(by + 0.1), x1: X(0.05), y1: U(by + 0.05), r: h * 0.02, a: 0.25 },            // the thigh into the belly
   ] });
   if (bare) blob(ctx, B, mix(plume, skin, b.bare), [{ k: 'ball', x: X(hx), y: U(hy), r: h * rH }], { h, formK: 0.4 });
+  // The heron's white head and neck, a marking on the one mass, and the streaks down its front.
+  if (b.pale > 0) {
+    const white = mix(plume, shade('#f2f0ea', tone), b.pale);
+    const nk = neckS(0.15, by + 0.36 * bs, hx - rH * 0.2, hy - rH * 0.3, nl);
+    patch(ctx, B, white, [
+      { k: 'tube', pts: px(nk.slice(2)), r0: h * 0.06 * bs, r1: h * rH * 0.6 },
+      { k: 'ball', x: X(hx), y: U(hy), r: h * rH * 1.04 },
+    ], { alpha: 0.9, feather: 0.25 });
+    if (b.streaks > 0 && h >= 30) {
+      // Down the front of the neck, the side toward the bill: short dark dashes in a line.
+      for (let i = 1; i < nk.length / 2 - 1; i++) {
+        const [ax0, ay0, ax1, ay1] = [nk[i * 2] + 0.022, nk[i * 2 + 1] + 0.008, nk[i * 2 + 2] + 0.02, nk[i * 2 + 3] + 0.012];
+        softLine(ctx, B, px([ax0, ay0, ax0 + (ax1 - ax0) * 0.55, ay0 + (ay1 - ay0) * 0.55]), far, Math.max(1, h * 0.009 * b.streaks), 0.7);
+      }
+    }
+  }
 
   // ---- the near wing, half open over the body.
   const nw = wingOutline(sx, sy, th, W, b.broad, ax, ay);
@@ -254,10 +314,11 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     const pts = [bx0 - rH * 0.2, byb + dp * 0.6, bx0 + bl * 0.45, byb + dp * 0.45 - bl * 0.05, tip[0], tip[1]];
     if (b.hook > 0) pts.push(tip[0] - b.hook * bl * 0.12, tip[1] - b.hook * bl * 0.25);
     pts.push(bx0 + bl * 0.5, byb - dp * 0.35 - bl * 0.12, bx0 - rH * 0.15, byb - dp * 0.6);
-    blob(ctx, B, horn, [{ k: 'poly', pts: px(pts) }], { h, form: false, gloss: 0.35 * b.gloss });
+    const billCol = b.billHex ? shade(b.billHex, Math.max(0.6, tone)) : horn;
+    blob(ctx, B, billCol, [{ k: 'poly', pts: px(pts) }], { h, form: false, gloss: b.billHex ? 0.3 : 0.35 * b.gloss });
     // The gape, and the bristles that cover a crow's nostrils.
-    if (h >= 30) softLine(ctx, B, px([bx0 - rH * 0.1, byb - dp * 0.05, bx0 + bl * 0.7, byb - bl * 0.13]), horn, Math.max(1, h * 0.007), 0.7);
-    if (!bare && !b.mask) patch(ctx, B, plume, [{ k: 'ell', x: X(bx0 + bl * 0.12), y: U(byb + dp * 0.25), rx: h * bl * 0.2, ry: h * dp * 0.35 }], { alpha: 0.8, feather: 0.4 });
+    if (h >= 30) softLine(ctx, B, px([bx0 - rH * 0.1, byb - dp * 0.05, bx0 + bl * 0.7, byb - bl * 0.13]), b.billHex ? shade(billCol, 0.6) : horn, Math.max(1, h * 0.007), 0.7);
+    if (!bare && !b.mask && !b.billHex) patch(ctx, B, plume, [{ k: 'ell', x: X(bx0 + bl * 0.12), y: U(byb + dp * 0.25), rx: h * bl * 0.2, ry: h * dp * 0.35 }], { alpha: 0.8, feather: 0.4 });
     // The rook's bare face: grey-white skin round the base of the bill and under the chin.
     if (b.mask > 0) patch(ctx, B, shade('#cfcac4', Math.max(0.6, tone)), [
       { k: 'ell', x: X(bx0 + bl * 0.05), y: U(byb), rx: h * (rH * 0.5 + bl * 0.15), ry: h * rH * 0.55, rot: 0.15 },
@@ -267,6 +328,17 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // ---- a face half turned to the party: a pale disc about the eye (a full turn is the `facing` pose).
   if (b.face > 0) patch(ctx, B, mix(p.light, shade('#e8dcc0', tone), 0.5), [{ k: 'ell', x: X(hx + rH * 0.1), y: U(hy), rx: h * rH * 0.85 * b.face, ry: h * rH * 0.95 * b.face }], { alpha: 0.6 * b.face, feather: 0.35 });
+
+  // ---- the crest: a black stripe from over the eye back to the nape, and plumes trailing from it.
+  if (b.crest > 0) {
+    const ink = shade('#1a1820', tone);
+    patch(ctx, B, ink, [{ k: 'cap', x0: X(hx + rH * 0.35), y0: U(hy + rH * 0.35), x1: X(hx - rH * 0.75), y1: U(hy + rH * 0.45), r0: h * rH * 0.2, r1: h * rH * 0.3 }], { alpha: 0.9, feather: 0.2 });
+    const sway = p.breathe * 0.01;
+    const plumes: Part[] = [0, 1].map((i) => ({ k: 'tube', pts: px([
+      hx - rH * 0.6, hy + rH * 0.45, hx - rH * 0.6 - 0.07 * b.crest, hy + rH * (0.3 - i * 0.25) + sway, hx - rH * 0.6 - (0.14 - i * 0.03) * b.crest, hy + rH * (0.05 - i * 0.45) + sway * 2,
+    ]), r0: h * rH * 0.16, r1: h * 0.003 }));
+    blob(ctx, B, ink, plumes, { h, form: false });
+  }
 
   // ---- the eye: bright and watching. In profile only the one (a bird turned to the party is `facing`).
   const er = rH * 0.2 * h;
