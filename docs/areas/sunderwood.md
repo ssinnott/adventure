@@ -25,13 +25,18 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–16 | 10,023 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197); K3, the Sunder's mouth, at 328,62 (#198) |
-| Lanternwood | 15–16 | 2,448 | none |
-| The area | 14–16 | 12,471 | four boxes |
+| The Eaves | 14–16 | 8,387 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197); K3, the Sunder's mouth, at 328,62 (#198) |
+| Lanternwood | 15–16 | 4,078 | none |
+| The area | 14–16 | 12,465 | four boxes |
 
 Squares are the land the zone check counts in each zone with K2 and K3 laid in the Eaves (#197,
-#198), which moved the zone line east and south: K3 took 1,521 squares from Lanternwood's walk and
-391 from the Deepthorn's (5,948 to 5,557); the plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+#198). K2 moved the zone line east. K3 takes its own 264 squares that were not the Eaves' (152 of
+the Deepthorn's and 112 of Lanternwood's), and Lanternwood's line is held at K3's east and south
+edges by seeds (`atlas.ts`), since a laid map seeds the zones' walk from every square of it. The walk
+still moves some land past K3: the Eaves take 238 more of the Deepthorn's in J3 and K4 (5,957 to
+5,567), both boxes Sunderwood's on the grid; Lanternwood takes back the strip of L3 that K2 had given
+the Eaves (190) and 31 of the Iron Fells' in M3, which stand at 3,207 against 3,241. Holding those
+would need seeds in Thornmark's and the Kilns' rows (§9). The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
 included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
@@ -358,7 +363,7 @@ features; the pay shared out over the area (§8).
   - the bed: *Dead wood stacked across the old river bed, cut ends outward. Nobody stacks firewood
     on a riverbed.*
 - **New here.** The Hand as quarrymen; a Rift that stays open.
-- **Finds.** The fist-sized shard, a quest item the Watch reads (§5); a Warden's Dirk +1 in the
+- **Finds.** The fist-sized shard, the first Sunder Shard the company can hold; a Warden's Dirk +1 in the
   gleaners' camps, the ladder's (#399).
 - **Pay.** About 1,350 xp a member.
 
@@ -409,7 +414,7 @@ features; the pay shared out over the area (§8).
     are none.*
   - the surveyor, at the Watch: *I chalked it every ten paces and took rubbings. At one mark the
     paper tore. I stopped chalking there.*
-- **New here.** A wall no one built; the first thing on the road the
+- **New here.** A Rift that stays open; a wall no one built; the first thing on the road the
   company cannot fight.
 - **Finds.** The Warden's heart, a black-glass shard, named; a Plate Mail +2 in a gleaner's cache on
   the ledges, a step past the Watch's stores, which are the ladder's last in the act (§8); a Flail
@@ -794,7 +799,7 @@ Decided by delegate for #198, each the owner's to overturn:
    ends in air at the lip, and dead wood stacked across the bed, cut ends outward (the brief's line).
    "K2's fall gone quiet" goes: it is the dam's, and hints at nothing here.
 6. **The prize is a Sunder Shard and 200 gold,** the shard (`sunder_shard`, slot none, price 0, as
-   the Brine Shard) half cut from the rock, for the Watch to read. The bed is walled by rock and pines,
+   the Brine Shard) half cut from the rock. The bed is walled by rock and pines,
    so neither a swimmer, a climber nor Levitate reaches it.
 7. **Two groups on the box and two in the Rift, about 1,440 xp a member.** On the box, back after two
    days: two gleaners and two sunder hounds on the first landing, MONSTERS §6.3's fight, barring the
@@ -832,6 +837,13 @@ Decided by delegate for #198, each the owner's to overturn:
 17. **The map is `eaves_k3`, called The Sunder's Mouth, laid whole in the Eaves,** core, band 15–16,
     so the Eaves reads 14–16. The atlas's link at 338,70 keeps its ends. Its floor is above the
     area's, so its groups count two under in the area's pool, owed to #18.
-18. **"A Rift that stays open" is claimed in words, with K3:** the first Rift on the road with no
-    `until`. The novelty check has no word for it, so `novel` claims nothing new, and §4.6's New here
-    keeps the wall and the first thing the company cannot fight.
+18. **K3's Rift claims nothing new:** a Rift that stays open is the Sunder's (§4.6), where its
+    Warden falls and nothing closes, as §7 has it; K3's open Rift comes before it unclaimed.
+19. **The Sunder Shard is a keepsake, the bed's find and nothing more.** No hand-in takes it: the Watch
+    reads the Tide Ship's papers and log, not a shard (§5, #201, #204), so a secret's find never holds
+    up the act. It follows the Brine Shard, which neither the plinth nor any hand-in takes.
+20. **Lanternwood's line is held at K3's edges by seeds,** one a square down its east edge and along
+    its south edge east of the gorge, so that L4, L5 and M4 keep their squares and K4 its Lanternwood.
+    The Deepthorn's and the Iron Fells' lines would need seeds in Thornmark's and the Kilns' rows,
+    other lanes', or a systems change that settles unbuilt land as the plan has it; both are proposed
+    to the owner, not made here.
