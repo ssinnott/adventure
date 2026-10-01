@@ -27,8 +27,8 @@ export const LABEL_TOP = 6;
  * size under the labels. Nothing on the maps but the Eldest is so tall.
  */
 export const TALL = 1.5;
-/** How high a tall boss's crown stands, of its height: the Eldest is drawn inside 0.84 of it and its crown reaches 0.81. */
-export const TALL_REACH = 0.81;
+/** How high a tall boss's crown stands, of its height: the Eldest is drawn inside 0.84 of it and its crown reaches 0.812 (the smoke test holds it). */
+export const TALL_REACH = 0.82;
 /**
  * Where a monster of `group` and `size` stands in a fight painted in a view `viewH` high: the foot of
  * its sprite. A tall boss stands on the third rank whatever its group.
