@@ -75,7 +75,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(count.includes('Two') && count.includes('island'), 'the hermit on the hummock counts two lights, and sends the company to the island');
 
   // The secret: the pole-marks on the landing, then the search, the hollow under it and its cache.
-  w.world.travel('delta_b5', 12, 13, SOUTH);
+  w.world.travel('delta_b5', 13, 13, SOUTH);
   ok(w.world.eventsHere().some((m) => m.includes('barge-poles')), 'on the plinth\'s landing, the barge-poles\' marks');
   let under = false;
   for (let i = 0; i < 20 && !under; i++) under = w.world.search();
