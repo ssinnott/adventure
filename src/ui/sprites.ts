@@ -257,7 +257,7 @@ export function drawPillarSprite(ctx: CanvasRenderingContext2D, x: number, horiz
  * the gallery and `tools/changed.ts` read; tools/tests/art.ts holds the two to each other.
  */
 export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
-  rat: rat.draw, barn_rat: rat.draw,
+  rat: rat.draw, barn_rat: rat.draw, bilge_rat: rat.draw,
   slime: slime.draw,
   wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw, chalk_wolf: wolf.draw, barrow_wolf: wolf.draw,
   boar: boar.draw, tusker: boar.draw,
