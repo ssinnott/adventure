@@ -19,6 +19,7 @@ import { AREA as thornmark } from './areas/thornmark/index.ts';
 import * as saltreach from './areas/saltreach/monsters.ts';
 import * as wrackholm from './areas/wrackholm/monsters.ts';
 import * as saltreachRooms from './areas/saltreach/interiors.ts';
+import * as sunderwoodRooms from './areas/sunderwood/interiors.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -44,6 +45,7 @@ export const AHEAD = [
  */
 export const ROOMS_AHEAD = [
   { id: 'saltreach' as const, interiors: saltreachRooms.INTERIORS },
+  { id: 'sunderwood' as const, interiors: sunderwoodRooms.INTERIORS },
 ] as const;
 
 type AnyArea = (typeof AREAS)[number];
