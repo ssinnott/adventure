@@ -41,7 +41,7 @@ south-west corner where the Glasswold's coast comes near; no way runs there.
 Its edges are the sea on every side. Its ways:
 
 - **The landing,** at 152,172 on E6's south shore, where the smugglers' boat from Saltmouth puts
-  in (`src/content/atlas.ts:367`; #164). A crossing, open from the start for the fare (EXPANSION
+  in (`src/content/atlas.ts:368`; #164). A crossing, open from the start for the fare (EXPANSION
   §2.2, §7): Wrackholm is the first area a company reaches by paying, and the boat is how it
   leaves.
 - **Kelp Hole,** at 154,170 in E6, the cove's mouth in the cliff above the landing.

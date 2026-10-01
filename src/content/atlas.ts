@@ -306,7 +306,7 @@ export const PLAN: Atlas = {
     // III. Saltreach.
     { name: 'Rietum', icon: 'village', at: [80, 80], label: 'right', planned: true },
     { name: 'Saltmouth', icon: 'port', at: [102, 178], label: 'left', planned: true },
-    { name: 'Tide Stone', icon: 'stone', at: [48, 140], label: 'below', planned: true },
+    { name: 'Tide Stone', icon: 'stone', at: [48, 140], label: 'below', planned: true }, // the plinth on Stienwierde, the stone mound (saltreach.md §10)
     { name: 'Drowned Temples', icon: 'sunken', at: [56, 170], label: 'below', planned: true },
     { name: 'Sjonghol', icon: 'cave', at: [103, 76], label: 'right', planned: true }, // the singing hollow in Kestrel Edge's cliffs: the Monk's second prestige; a square west into C3, so D3 does not hold it (#71)
     // IV. Wrackholm.
