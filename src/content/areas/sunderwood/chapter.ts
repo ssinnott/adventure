@@ -6,13 +6,13 @@
 import type { Chapter } from '../../../game/quests.ts';
 
 export const CHAPTER: Chapter = {
-  // Begun by the Tide Ship's papers, carried or read: a company that takes the Sunder first finds
-  // the wall all the same, and its rim, crossing and wall are written when the papers come. Once
-  // Wrackholm's chapter names its done flag (#191), it takes the items' place here, so the papers
-  // picked up on the ship no longer take the goal from Wrackholm's last steps.
+  // Begun on Wrackholm's end, the Stone home with the Tide Ship's papers taken (#191), or on the
+  // papers read: a company that takes the Sunder first finds the wall all the same, and its rim,
+  // crossing and wall are written when Wrackholm's chapter is done. The papers picked up on the ship
+  // no longer take the goal from Wrackholm's last steps.
   id: 'wall',
   title: 'The Wall',
-  start: [{ item: 'ships_papers' }, { item: 'ships_log' }, { flag: 'papers_read' }],
+  start: [{ flag: 'q_tide_home', seen: 'tide_ship2:ts2_table' }, { flag: 'papers_read' }],
   // Vask's question answered: the company's one answer, no, sets its own flag and this one.
   done: { flag: 'q_salt_done' },
   entries: [
@@ -43,6 +43,7 @@ export const CHAPTER: Chapter = {
     { when: { flag: 'papers_read' }, at: 'the_sunder2', text: 'The papers are read. Now the Sunder: down by the door on the first landing of the Sunder\'s Mouth, to its floor.' },
     { when: [{ item: 'ships_papers', seen: 'the_sunder2:su2_wall' }, { item: 'ships_log', seen: 'the_sunder2:su2_wall' }], at: 'lantern_watch', text: 'Carry the papers across the gorge to Lantern Watch, and have them read there.' },
     { when: [{ item: 'ships_papers', seen: 'eaves_k2:k2_bridge' }, { item: 'ships_log', seen: 'eaves_k2:k2_bridge' }], at: 'the_sunder2', text: 'Before the Watch, the Sunder: go down by the door on the first landing of the Sunder\'s Mouth.' },
-    { when: [{ item: 'ships_papers' }, { item: 'ships_log' }], at: 'eaves_k2', text: 'Go east through the Eaves to Sunderfall and cross the rope bridge over the gorge.' },
+    // Wrackholm's end too: the start alone, the papers taken off the table, shows this goal (#191).
+    { when: [{ item: 'ships_papers' }, { item: 'ships_log' }, { flag: 'q_tide_home', seen: 'tide_ship2:ts2_table' }], at: 'eaves_k2', text: 'Go east through the Eaves to Sunderfall and cross the rope bridge over the gorge.' },
   ],
 };

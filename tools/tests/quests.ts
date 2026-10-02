@@ -128,8 +128,8 @@ export function quests(): void {
     // (`fromTheTideShip`) until that chapter is written to carry them from the ship.
     const wall = THE_QUEST.chapters.find((c) => c.id === 'wall'), wrack = AREAS.find((a) => a.id === 'wrackholm')?.chapter as Chapter | undefined;
     const flagsOf = (w: When): string[] => conds(w).flatMap((k) => [k.flag ?? []].flat());
-    owed(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
-      'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up', '#191');
+    ok(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
+      'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up');
     const seeds = readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8').includes('fromTheTideShip(');
     ok(!wrack || !seeds, 'with Wrackholm\'s chapter written, Sunderwood\'s walkthrough puts no papers in the bag by hand, and plays the Wall on from it');
     owed(!!wrack && !seeds, 'the act walks end to end: the log shows Act II in three chapters, and the Wall is played on from Wrackholm\'s chapter with the papers carried from the Tide Ship', '#191');
