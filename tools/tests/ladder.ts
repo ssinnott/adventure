@@ -126,8 +126,8 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
   {
     level: 16, name: "the Sunder's finds",
     from: {
-      'great_axe+1': ['sunderwood', ''], 'wardens_dirk+1': ['sunderwood', ''], 'flail+1': ['sunderwood', '#199'],
-      'ironwood_bow+1': ['sunderwood', '#199'], 'plate+2': ['sunderwood', '#199'], lanterns_staff: ['sunderwood', ''],
+      'great_axe+1': ['sunderwood', ''], 'wardens_dirk+1': ['sunderwood', ''], 'flail+1': ['sunderwood', ''],
+      'ironwood_bow+1': ['sunderwood', ''], 'plate+2': ['sunderwood', ''], lanterns_staff: ['sunderwood', ''],
     },
     classes: {
       knight: ['flail+1', 'plate+2'], paladin: ['flail+1', 'plate+2'], ranger: ['ironwood_bow+1'], barbarian: ['great_axe+1'],

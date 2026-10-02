@@ -884,6 +884,50 @@
         "3,11"
       ]
     },
+    "the_sunder": {
+      "size": "32x32",
+      "used": [
+        "su1_below",
+        "su1_cache",
+        "su1_chipped",
+        "su1_cleft",
+        "su1_face",
+        "su1_glass",
+        "su1_in",
+        "su1_landing",
+        "su1_thread",
+        "su1_threads"
+      ],
+      "groups": [
+        "su1_spiders"
+      ],
+      "doors": []
+    },
+    "the_sunder2": {
+      "size": "32x32",
+      "used": [
+        "su2_chalk",
+        "su2_east",
+        "su2_fall",
+        "su2_fallen",
+        "su2_fallen_chest",
+        "su2_in",
+        "su2_narrows",
+        "su2_river",
+        "su2_seam",
+        "su2_seam_chest",
+        "su2_silence",
+        "su2_wall"
+      ],
+      "groups": [
+        "su2_bears",
+        "su2_warden",
+        "su2_wood"
+      ],
+      "doors": [
+        "2,24"
+      ]
+    },
     "thornhold": {
       "size": "16x16",
       "used": [
@@ -1353,6 +1397,7 @@
     "stiletto",
     "stiletto+1",
     "stone_rubbing",
+    "sunder_heart",
     "sunder_shard",
     "survey_orders",
     "survey_wand",

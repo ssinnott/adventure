@@ -20,8 +20,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'pine_bear', name: 'Pine Bear', plural: 'Pine Bears', sprite: 'pine_bear', kind: 'beast', look: 'A bear, and then the rest of the bear.', level: 14, hp: 334, ac: 17, attack: 10, dice: 4, sides: 8, bonus: 2, speed: 8, xp: 1107, gold: [0, 0], tint: '#6b4a2e', size: 1.15 },
   // the Sunder's black glass (#198, #199), a skirmisher on MONSTERS §4.4's line at 14
   { id: 'sunderling', name: 'Sunderling', plural: 'Sunderlings', sprite: 'sunderling', kind: 'rift', look: 'Black glass, with a white light inside.', level: 14, hp: 156, ac: 18, attack: 9, dice: 2, sides: 8, bonus: 4, speed: 15, xp: 553, gold: [0, 0], tint: '#2c2e38', size: 0.74, inflict: { cond: 'paralysed', chance: 0.1 } },
-  // the gorge above the wall (#199), the area's boss at 16
-  { id: 'sunder_warden', name: 'Warden of the Sunder', plural: 'Wardens of the Sunder', sprite: 'sunder_warden', kind: 'rift', look: 'The Sunder\'s own knot, and it has held for centuries.', level: 16, hp: 872, ac: 21, attack: 12, dice: 16, sides: 8, bonus: 18, speed: 13, xp: 10133, gold: [0, 0], immune: ['asleep'], tint: '#2a2a34', size: 1.35 },
+  // the gorge above the wall (#199), the area's boss at 16; it drops its heart. Off MONSTERS §4.4's boss line (872 hp,
+  // 16d8+18, won 13% at 14 and 47% at 16), its blow is set for #199's gate: about half at its floor, 14, and nearly always at 16
+  { id: 'sunder_warden', name: 'Warden of the Sunder', plural: 'Wardens of the Sunder', sprite: 'sunder_warden', kind: 'rift', look: 'The Sunder\'s own knot, and it has held for centuries.', level: 16, hp: 872, ac: 21, attack: 12, dice: 10, sides: 8, bonus: 10, speed: 13, xp: 10133, gold: [0, 0], immune: ['asleep'], drops: [{ item: 'sunder_heart', chance: 1 }], tint: '#2a2a34', size: 1.35 },
   // the Sunder's ledges (#198), a soldier on MONSTERS §4.4's line at 15: the Hand, quarrying the Rift
   { id: 'ashen_gleaner', name: 'Ashen Gleaner', plural: 'Ashen Gleaners', sprite: 'gleaner', kind: 'person', steady: true, look: 'A sack of glowing shards, and a knife for the next.', level: 15, hp: 171, ac: 19, attack: 9, dice: 3, sides: 8, bonus: 2, speed: 11, xp: 593, gold: [25, 60], tint: '#54484e', size: 0.92 },
   // the Sunder's edge (#197, #198, #199), a controller on MONSTERS §4.4's line at 15: it paralyses, at 0.25 a hit

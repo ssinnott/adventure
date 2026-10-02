@@ -37,6 +37,8 @@ export const ITEMS: readonly ItemDef[] = [
   P(watchStaff, 1, { id: 'lanterns_staff', name: "Lantern's Staff +1" }),
   // J2's secret (#196): in the bear's cave, with the gleaner's sack.
   P(greatAxe, 1),
+  // The Warden of the Sunder's (#199): its heart, which it drops.
+  { id: 'sunder_heart', name: 'Heart of the Sunder', slot: 'none', price: 0 },
   // K3's secret (#198): in the river's old bed, where the first shards were quarried.
   { id: 'sunder_shard', name: 'Sunder Shard', slot: 'none', price: 0 },
   // K2's secret (#197): on the ledge behind Sunderfall's water.
