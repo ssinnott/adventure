@@ -21,6 +21,13 @@
 // before it is listed, and the plan spreads them in where its own were.
 import type { Atlas } from '../game/atlas.ts';
 
+/**
+ * The Iron Fells' line held at M2's east edge, a seed a square down x 424 from the rim at y 33 to 61: a
+ * laid map seeds the zones' walk from every square of it, so without these Lanternwood would run on
+ * from M2 into the Fells (#202).
+ */
+const HELD_AT_M2: [number, number][] = Array.from({ length: 29 }, (_, i): [number, number] => [424, 33 + i]);
+
 export const PLAN: Atlas = {
   width: 512,
   height: 384,
@@ -258,7 +265,7 @@ export const PLAN: Atlas = {
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
   ],
   zones: [
-    { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66]] },
+    { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66], ...HELD_AT_M2] },
     { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', seeds: [[452, 120], [470, 160]] },
     { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', seeds: [[408, 160], [404, 140]] },
     { id: 'highmoor', name: 'High Moor', area: 'cairnmoor', seeds: [[462, 212], [488, 230]] },
