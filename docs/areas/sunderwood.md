@@ -156,14 +156,14 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   reached by a cutters' track down out of J2's pines and from K3's west lip by the dead wood; its west
   and south edges stand closed against the Deepthorn's I3 and J4. A hermit in his clearing, a shrine and
   a cairn in the wood, and a bears' den under a fallen pine, its old bears gone to glass, with the
-  gleaners' cache behind its back. Three groups: the den's brood, two pine bears on the track and one on
-  the hermit's path, and its keepers, three glass bears.
+  gleaners' cache behind its back. Three groups: the den's brood, two pine bears on the track, two
+  deathsheads at the den's mouth by night and its keepers, two glass bears.
 - **The Fells Road** (M2, `lanternwood_m2`, country, band 15–16; #202): Lanternwood's forest east of
   L2, the river from the rim down its west side and a strip of hills under the range. The east road
   fords the river off L2 and clips the box's south-west corner, out by its south edge for the pass in
   M3, where the world ends until Act III. The milestone by the road, the Warden's grave behind the trees
   beside it, a shrine at the river's bend, a camp on a gravel bar and the cairn and lookout on the hills.
-  Three groups: two sunder hounds up the river, a moth and two deathsheads at the camp by night and two
+  Three groups: two sunder hounds and a moth up the river, two deathsheads at the camp by night and two
   glass bears under the range.
 - **Lantern Watch** (`lantern_watch`, town, band 14–16; #201): one tower in a walled yard over the
   gorge, through L2's gate. The Lamp Gallery at the top trains to 17; the prior's room, where the
@@ -590,28 +590,35 @@ features; the pay shared out over the area (§8).
     south through M3, where the pass and 404,70 are, so the road fords the river off L2, turns south and
     leaves by the box's south edge at 393–394,62, where the world ends until M3 is built (§9, #202's 1).
     The milestone stands by the road, ANVILHALL 12 on its face and THIS FAR on its back; through the tree
-    line beside it, searched for, the Warden's grave with Hale's old patrol badge on it (in words only)
-    and the dead Warden's pack, 250 gold and two Healing Draughts. Up the river the shrine at its bend
+    line beside it, searched for, the Warden's grave with a patrol badge of the Scarth set on it (in
+    words only; the Scarth is Hale's checkpoint, and the reader makes the link) and the dead Warden's
+    pack, 250 gold and two Healing Draughts. Up the river the shrine at its bend
     (endurance) and the camp on a gravel bar; on the hills under the range the cairn (180 gold and a
     Sapphire Vial) and a lookout south over the pass, smoke by day and a red glow by night. East of the
-    range the Fells' hills are drawn as the range, where nothing walked reached them. Two sunder hounds up
-    the river, the gentlest; a lantern moth and two deathsheads at the camp by night; and two glass bears
-    on the hills, the box's group at 16. A company at 15 wins every fight and manages 7.25 fights to a
-    rest, inside the aim, though 32% of its days end in a fight broken off at fifteen rounds. As measured
-    it pays about 948 xp a member and 430 gold. Density 100% within 12 steps, the furthest 10.
+    range the Fells' hills are drawn as the range, where nothing walked reached them. Two sunder hounds and
+    a lantern moth up the river, the gentlest; two deathsheads at the camp by night; and two glass bears
+    on the hills, the box's group at 16. A company at 15 wins every fight and manages 8.43 fights to a
+    rest, inside the aim, with 6.7% of its days ending in a fight broken off at fifteen rounds; the moth
+    with the deathsheads broke off 32%. Lanternwood's road, now L2's two groups and M2's hounds, is walked
+    every time at 15. As measured it pays about 948 xp a member and 430 gold. Density 100% within 12 steps, the furthest 10.
   - **J3, the Bears' Wood** (`eaves_j3`): a cutters' track two wide down out of J2's pines, and dead
     wood at the south-east onto K3's west lip; the west and south edges closed. The hermit's clearing,
     the shrine (luck), a cairn (170 gold and a Sapphire Vial), dead wood where the pines give out at the
-    lip, and the den (#88) under a fallen pine: it breeds pine bears, two on the track and one on the
-    hermit's path, back one a day until it is burnt, and its keepers beside it are three glass bears, the
-    old bears gone to glass, the box's group at 16; its hoard 140 gold and a Healing Draught. The hint is
-    moth dust at the den's mouth, and by night the moths themselves, with the hermit's word; behind the
+    lip, and the den (#88) under a fallen pine: it breeds pine bears, a pair on the track, back a day after
+    they fall until it is burnt, and its keepers beside it are two glass bears, the old bears gone to
+    glass, the box's group at 16; its hoard 140 gold and a Healing Draught. By night two deathsheads come
+    to the den's mouth, to the light in the cache. The hint is moth dust at the den's mouth, and by night
+    the moths themselves, with the hermit's word; behind the
     den's back, searched for, the gleaners' cache, a Chain Mail +2 (`chain+2`) and 200 gold, which no
     swimmer, climber or levitator reaches. A company at 15 wins every fight and manages 7.60 fights to a
-    rest, inside the aim, though 27% of its days end in a fight broken off. As measured it pays about
-    976 xp a member and 510 gold. Density 99.3% within 12 steps, the furthest 13.
-  - Both pay about 1,920 against their 1,600, near the issue's 900 each: fewer groups that were each a
-    real fight held fights to a rest inside the aim, where more and gentler groups put them past it.
+    rest, inside the aim, with 5.3% of its days ending in a fight broken off; three glass bears keeping
+    the den broke off 27%, and any three bears together near 40%. As measured it pays about 1,073 xp a
+    member and 510 gold. Density 99.3% within 12 steps, the furthest 13.
+  - Both pay about 2,020 against §8's 1,600, 800 each (the issue proposed 900): fewer groups that were
+    each a real fight held fights to a rest inside the aim and pairs kept them short, where more and
+    gentler groups put fights to a rest past their limit. The lightest mixes inside the aim with no group
+    of three bears are these; J3's lighter ones (a single pine bear for the brood, or the deathsheads
+    dropped) put it over the aim at 9.4 and 9.1.
     Their floors are above the area's, so their groups count two under in the area's pool, owed to #18.
     J2's south edge opens for the track and K3's west edge for the dead wood; J2 is re-measured, 91.7%
     within 8. Neither box claims anything new. What the owner finds by hand goes here when they have
@@ -704,8 +711,12 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
   supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
   when it is built: I2 1,063, J2 1,509, K2 1,072, K3 with its Rift 1,441 and L2 1,396 so far, 6,481
-  against their 6,350, about 130 over; with J3 976 and M2 948 (#202), 8,404 against their 7,950, about
-  450 over. A company should leave the Watch at 16, where the midpoint is, with the Kilns'
+  against their 6,350, about 130 over; with J3 1,073 and M2 948 (#202), 8,501 against their 7,950,
+  about 550 over. Nothing is taken back from the shares still to build (the Sunder 2,350, the Watch's
+  quests 300 and the side quests 900), so the area as planned now runs to about 12,050 against the
+  curve's 11,467, some 585 (5%) over: three quarters of it would take a company from 14 a little past
+  16. Taking it back is the Sunder's (#199) or the owner's to choose, as a smaller share there or lighter
+  boxes here. A company should leave the Watch at 16, where the midpoint is, with the Kilns'
   floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
@@ -1063,15 +1074,17 @@ Decided by delegate for #202, each the owner's to overturn:
    K3's west lip, so a country box off the road need not be left the way it was come into. Its west and
    south edges stay closed. J3 draws its land under the Sunder's planned plate at 24,0 and puts nothing on
    it.
-6. **The den's keepers are its old bears gone to glass,** and it breeds pine bears. Measured, the
-   delegate's two keepers, two broods of two, a way-in pair and six moths paid about 1,665 a member, and
-   gentler groups put fights to a rest past their limit (11.6): the keepers are three glass bears, the
-   brood two pine bears and one, and the moths are the hint's and not a group. No group stands at the
-   den's mouth.
-7. **M2's groups are two sunder hounds by the way in, a lantern moth and two deathsheads at the camp by
+6. **The den's keepers are its old bears gone to glass,** two glass bears, and it breeds pine bears,
+   a pair. Measured, the delegate's two keepers, two broods of two, a way-in pair and six moths paid
+   about 1,665 a member, and gentler groups put fights to a rest past their limit (11.6); three keepers
+   held the aim but broke off 27% of days at fifteen rounds (the review, #428). Two deathsheads come to
+   the den's mouth by night instead, the moths of the hint, a true fight at 16 that ends.
+7. **M2's groups are two sunder hounds and a lantern moth by the way in, two deathsheads at the camp by
    night and two glass bears under the range,** the box's group at 16 a true fight: the brief's four moths
-   and a deathshead were too gentle a fight (11.1 fights to a rest with the rest).
-8. **The finds:** Hale's badge is words on the grave, left by him on a comrade's, and nobody takes it; the
+   and a deathshead were too gentle a fight (11.1 fights to a rest with the rest), and the moth with the
+   deathsheads broke off 32% of days (the review, #428). The hounds are on Lanternwood's road.
+8. **The finds:** the badge is words on the grave, the Scarth's, left there and never named as Hale's (the
+   review, #428), and nobody takes it; the
    dead Warden's pack beside it holds 250 gold and two Healing Draughts. The cache holds the Chain Mail +2
    (`chain+2`), off the ladder, a find that sells, and 200 gold; the sack of glowing shards in it is the
    lamp the moths come to. Nothing on #406's ladder was owed to #202.

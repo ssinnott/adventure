@@ -53,7 +53,7 @@ export const LANTERNWOOD_M2: MapDef = {
     // The road over the corner, and the milestone where it leaves for the pass.
     { kind: 'event', x: 3, y: 30, id: 'm2_milestone', once: true, text: 'A milestone by the road, ANVILHALL 12 on its face. On the back, cut with a knife, the Wardens\' mark and two words: THIS FAR.' },
     // The secret: through the tree line beside the stone, the grave.
-    { kind: 'event', x: 6, y: 30, id: 'm2_grave', once: true, text: 'A Warden\'s grave under the pines, its mark cut by the same knife as the stone\'s. On it a patrol badge, the number Hale\'s, from before he was captain.' },
+    { kind: 'event', x: 6, y: 30, id: 'm2_grave', once: true, text: 'A Warden\'s grave under the pines, its mark cut by the same knife as the stone\'s. On it a patrol badge of the Scarth, set square on the stone. Left, not dropped.' },
     { kind: 'chest', x: 7, y: 30, id: 'm2_grave_chest', gold: 250, items: ['potion_heal', 'potion_heal'] },
     // Up the river: the shrine at its bend, and the camp in the forest's middle.
     { kind: 'shrine', x: 4, y: 22, id: 'm2_shrine', text: 'A wayside shrine at the river\'s bend, its foot in the water when the river is up. A pair of boots stands on it, soled twice and worn through again.', stat: 'endurance', done: 'The boots on the shrine, worn through.' },
@@ -65,10 +65,10 @@ export const LANTERNWOOD_M2: MapDef = {
   ],
   secrets: [{ x: 5, y: 30, hint: 'm2_milestone' }],
   encounters: [
-    // Sunder hounds up the river from the road, the gentlest; a moth and two deathsheads to the camp's
-    // fire by night; and on the hills under the range two glass bears, the box's group at 16.
-    { id: 'm2_hounds', x: 2, y: 25, monsters: ['sunder_hound', 'sunder_hound'], aware: 4, respawn: 2880 },
-    { id: 'm2_moths', x: 9, y: 10, monsters: ['lantern_moth', 'deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
+    // Sunder hounds up the river from the road with a moth among them, the gentlest; two deathsheads
+    // to the camp's fire by night; and on the hills under the range two glass bears, the box's group at 16.
+    { id: 'm2_hounds', x: 2, y: 25, monsters: ['sunder_hound', 'sunder_hound', 'lantern_moth'], aware: 4, respawn: 2880 },
+    { id: 'm2_moths', x: 9, y: 10, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
     { id: 'm2_bears', x: 24, y: 15, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false },
   ],
 };

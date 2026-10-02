@@ -67,7 +67,7 @@ export const EAVES_J3: MapDef = {
     { kind: 'event', x: 18, y: 20, id: 'j3_mouth', once: true, text: 'Moth dust on the ground at the den\'s mouth, thick as under a lamp. Bears keep no lamp.' },
     { kind: 'event', x: 17, y: 20, id: 'j3_mouth_night', once: true, when: { hours: 'night' }, text: 'Moths at the den\'s mouth after dark, thick as at any lamp. Bears keep no lamp.' },
     { kind: 'den', x: 20, y: 20, id: 'j3_den', name: 'A bears\' den', text: 'An old pine fallen against the rock, a den dug under it. The old bears lie at its mouth, grey, the light coming through them.',
-      breeds: ['pine_bear'], keepers: 'j3_keepers', brood: ['j3_brood1', 'j3_brood2'],
+      breeds: ['pine_bear'], keepers: 'j3_keepers', brood: ['j3_brood'],
       ask: 'The old bears are dead. Fire the den under the pine, and let the glass go with it?', burn: 'Fire it.', leave: 'Leave it.', burnt: 'The pine goes up like a torch. In the heat the glass at the den\'s mouth rings, and cracks, and falls in.', ruin: 'The pine lies in ash across its own den, the glass that was the old bears cracked through. Nothing growls under the Eaves.', gold: 140, items: ['potion_heal'] },
     // Where the wood gives out in dead wood, at the Sunder's west lip.
     { kind: 'event', x: 22, y: 26, id: 'j3_deadwood', once: true, text: 'The pines give out, and the trunks beyond are dead and grey, grain gone to glass at the tips. East through them the ground stops.' },
@@ -77,10 +77,11 @@ export const EAVES_J3: MapDef = {
   ],
   secrets: [{ x: 21, y: 20, hint: 'j3_mouth' }],
   encounters: [
-    // The den's brood abroad, a pair on the track and one on the hermit's path, and beside the den
-    // its keepers, the old bears gone to glass, the box's group at 16.
-    { id: 'j3_brood1', x: 15, y: 8, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: 1440, until: DEN_BURNT },
-    { id: 'j3_brood2', x: 7, y: 15, monsters: ['pine_bear'], aware: 4, respawn: 1440, until: DEN_BURNT },
-    { id: 'j3_keepers', x: 19, y: 20, monsters: ['glass_bear', 'glass_bear', 'glass_bear'], aware: 3, roams: false },
+    // The den's brood abroad, a pair on the track; by night two deathsheads come to the den's mouth,
+    // to the light in the cache; and beside the den its keepers, the old bears gone to glass, the
+    // box's group at 16.
+    { id: 'j3_brood', x: 15, y: 8, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: 1440, until: DEN_BURNT },
+    { id: 'j3_moths', x: 15, y: 20, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
+    { id: 'j3_keepers', x: 19, y: 20, monsters: ['glass_bear', 'glass_bear'], aware: 3, roams: false },
   ],
 };
