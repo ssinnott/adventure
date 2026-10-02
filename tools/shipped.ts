@@ -89,6 +89,7 @@ export function collect(c: Content): Ids {
       const spent = spentId(f); if (spent) used.push(spent);
       if (f.kind === 'guild') flags.add(guildFlag(f.name));
       if (f.kind === 'npc') for (const x of personFlags(f)) flags.add(x);
+      if (f.kind === 'event') for (const x of [f.sets ?? []].flat()) flags.add(x);
     }
     maps[m.id] = { size: `${m.width}x${m.height}`, used: sorted(used), groups: sorted(m.encounters.map((e) => e.id)), doors: sorted(doors) };
     for (const z of m.zones) zones[z.id] = { at: `${z.x},${z.y}`, size: `${z.w}x${z.h}` };

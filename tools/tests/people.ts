@@ -296,7 +296,7 @@ function presence(): void {
       { kind: 'npc', x: 2, y: 1, name: 'Alwin', lines: ['"By night."'], when: { hours: 'night' } },
       { kind: 'event', x: 1, y: 2, id: 'fx_dark', text: 'Dark.', until: { flag: 'fx_lit' } },
       { kind: 'event', x: 1, y: 2, id: 'fx_bright', text: 'Lit.', after: { flag: 'fx_lit' } },
-      { kind: 'event', x: 3, y: 2, id: 'fx_riders', text: 'Riders.', once: true, when: { hours: 'night' } },
+      { kind: 'event', x: 3, y: 2, id: 'fx_riders', text: 'Riders.', once: true, when: { hours: 'night' }, sets: 'fx_ridden' },
     ],
   };
   const rng = makeRng(8), party = defaultParty(rng), world = new World({ fx_town: new GameMap(def) }, party, rng);
@@ -324,10 +324,11 @@ function presence(): void {
   party.flags.fx_lit = 1;
   ok(dark === 'Dark.' && heardAt(1, 2) === 'Lit.', 'an event until a flag, then the one after it: the lamp room dark, then lit');
   world.state.minutes = midnight + 12 * 60;
-  const byDay = heardAt(3, 2), spentByDay = world.used('fx_riders');
+  const byDay = heardAt(3, 2), spentByDay = world.used('fx_riders'), setByDay = !!party.flags.fx_ridden;
   world.state.minutes = midnight + 24 * 60;
-  const byNight = heardAt(3, 2);
+  const byNight = heardAt(3, 2), setByNight = !!party.flags.fx_ridden;
   ok(byDay === '' && !spentByDay && byNight === 'Riders.' && heardAt(3, 2) === '', 'a once-event by night is not heard or spent by day, and is heard once by night');
+  ok(!setByDay && setByNight, 'an event sets its flag when it is said, and not while it is out of its presence (#156)');
   shut();
 }
 
