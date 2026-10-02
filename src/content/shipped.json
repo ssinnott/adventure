@@ -333,6 +333,15 @@
         "j2_sack_chest",
         "j2_shrine",
         "j2_steading",
+        "j3_cache",
+        "j3_cache_chest",
+        "j3_cairn",
+        "j3_deadwood",
+        "j3_den",
+        "j3_mouth",
+        "j3_mouth_night",
+        "j3_shrine",
+        "j3_track",
         "j4_cairn",
         "j4_cleft",
         "j4_cleft_box",
@@ -390,6 +399,13 @@
         "l2_shrine",
         "lake",
         "lodestone",
+        "m2_cairn",
+        "m2_grave",
+        "m2_grave_chest",
+        "m2_lookout",
+        "m2_lookout_night",
+        "m2_milestone",
+        "m2_shrine",
         "scarth_watch",
         "second_marker",
         "survey_ring",
@@ -520,6 +536,9 @@
         "j2_cave_bears",
         "j2_hounds",
         "j2_moths",
+        "j3_brood",
+        "j3_keepers",
+        "j3_moths",
         "j4_heartwood",
         "j4_owls",
         "j4_rootwalkers",
@@ -540,6 +559,9 @@
         "l2_lamp_moths",
         "l2_tower_moths",
         "lodge_brambles",
+        "m2_bears",
+        "m2_hounds",
+        "m2_moths",
         "marsh_spiders",
         "road_bandits",
         "road_rats",
@@ -582,9 +604,11 @@
         "297,145",
         "308,112",
         "312,32",
+        "317,82",
         "338,59",
         "344,77",
         "365,35",
+        "397,60",
         "48,181",
         "53,140",
         "77,108",
@@ -730,8 +754,13 @@
     "harrow": {
       "size": "16x16",
       "used": [
+        "chapel_shut",
+        "gate_wardens",
+        "gate_wardens2",
         "harrow_intro",
         "hob_chair",
+        "postern_wardens",
+        "postern_wardens2",
         "well_cart",
         "well_swept"
       ],
@@ -768,7 +797,9 @@
         "lw_gate",
         "lw_graves",
         "lw_lookout",
-        "lw_oil"
+        "lw_oil",
+        "lw_vask",
+        "lw_vask_e"
       ],
       "groups": [],
       "doors": []
@@ -1068,6 +1099,10 @@
       "at": "296,30",
       "size": "32x32"
     },
+    "eaves_j3": {
+      "at": "296,62",
+      "size": "32x32"
+    },
     "eaves_k2": {
       "at": "328,30",
       "size": "32x32"
@@ -1078,6 +1113,10 @@
     },
     "lanternwood_l2": {
       "at": "360,30",
+      "size": "32x32"
+    },
+    "lanternwood_m2": {
+      "at": "392,30",
       "size": "32x32"
     },
     "saltings_c6": {
@@ -1116,6 +1155,7 @@
     "guild_Lantern Guildhall",
     "guild_The Watch's Lantern Hall",
     "guild_Thornhold Lantern Hall",
+    "log_read",
     "meridian_read",
     "papers_read",
     "q_ailith",
@@ -1201,6 +1241,7 @@
     "q_orders_council",
     "q_orders_read",
     "q_orders_watch",
+    "q_ordgar",
     "q_osmund_ailith",
     "q_osmund_well",
     "q_paper_hale",
@@ -1212,6 +1253,7 @@
     "q_riders_hale",
     "q_riders_kept",
     "q_riders_letter",
+    "q_salt_done",
     "q_seal",
     "q_seal_hale",
     "q_seal_matched",
@@ -1220,6 +1262,7 @@
     "q_survey",
     "q_survey_chapel",
     "q_survey_thornhold",
+    "q_survey_watch",
     "q_sylvane_mended",
     "q_sylvane_treaty",
     "q_terms",
@@ -1232,6 +1275,9 @@
     "q_trees_home",
     "q_trees_sylvane",
     "q_trees_ulf",
+    "q_vask_no",
+    "q_vask_rain",
+    "q_vask_yes",
     "q_wardens_cult",
     "q_wardens_cult_done",
     "q_wardens_strongbox",
@@ -1249,6 +1295,7 @@
     "rank_compact",
     "rank_lanterns",
     "rank_wardens",
+    "seal_read",
     "watch_prior_met",
     "watch_reader_met"
   ],
@@ -1269,6 +1316,7 @@
     "captains_sword",
     "chain",
     "chain+1",
+    "chain+2",
     "clerks_seal",
     "club",
     "crabshell_buckler",

@@ -23,7 +23,7 @@
 // hides the sky behind it as well as the ground.
 import type { World } from '../game/world.ts';
 import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight } from '../game/world.ts';
-import type { GameMap, Cell, Solid, Terrain, MapPalette, Landmark } from '../game/map.ts';
+import type { GameMap, Cell, Solid, Terrain, MapPalette, Landmark, Feature } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
@@ -62,6 +62,8 @@ const CLEAR: Env = { murk: 0, cover: 0, wet: 0, day: 45, trees: HIGH_SUMMER, tid
 /** Tidal ground as it is drawn: the sea over it at high water, wet sand at low. */
 const asDrawn = (t: Terrain): Terrain => (t === 'tidal' && env.tide === 'high' ? 'water' : t);
 let env: Env = CLEAR;
+/** Whether a feature is there now, as the world being painted says: a shut business hangs no sign. */
+let present: (f: Feature) => boolean = () => true;
 
 /** How much the weather closes the view: fog, or rain and (more so) snow coming down hard. */
 export function murkOf(w: Weather): number { return Math.min(1, Math.max(w.fog, w.precip * (0.45 + 0.45 * w.snow) - 0.1)); }
@@ -178,7 +180,7 @@ export function drawViewport(
   monstersAt: (x: number, y: number) => readonly ViewMonster[] | null, frame: number, weather = true,
 ): void {
   // The minute and the weather seed pin down the weather, so they key the scene with the place.
-  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, world.map.landmarks.map((l) => (l.lit && world.party.flags[l.lit] ? 1 : 0)).join(''), world.stones, r.w, r.h].join('|');
+  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, Object.keys(world.party.flags).length, world.map.landmarks.map((l) => (l.lit && world.party.flags[l.lit] ? 1 : 0)).join(''), world.stones, r.w, r.h].join('|');
   if (!scene || scene.key !== key) {
     const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
@@ -251,6 +253,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const sight = world.sight;
   const wx = world.underSky ? world.weather : null, day = world.date.dayOfYear;
   env = wx ? { murk: murkOf(wx), cover: wx.cover, wet: wx.cover < 0.3 ? wx.wet : 0, day, trees: treeSeason(day, wx.cover), tide: world.tide } : CLEAR;
+  present = (q) => world.present(q);
   const cloud = wx?.cloud ?? 0;
   // A dark day lights the lamps early.
   const gloom = daylight * (1 - 0.3 * cloud - 0.25 * (wx?.precip ?? 0));
@@ -1212,7 +1215,8 @@ function drawWallDecor(ctx: CanvasRenderingContext2D, map: GameMap, cell: Cell, 
   const w = x1 - x0, h = bottom - top;
   if (w < 14) return;
   const pal = map.paletteAt(mx, my);
-  const feature = map.featuresAt(mx, my)[0];
+  // The business there now: one gone `until` a flag hangs no sign, and its twin hangs its own.
+  const feature = map.featuresAt(mx, my).find((q) => q.kind !== 'event' && present(q));
   const cx = (x0 + x1) / 2;
   const dressing = wallDressing(map, mx, my);
   if (house) {

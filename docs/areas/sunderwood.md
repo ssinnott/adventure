@@ -10,9 +10,10 @@ turns. This is its area doc (EXPANSION §4, §6 and §8.2). Its work is filed un
 (#204), its side quests (#205), its drawings (#206) and its rooms (#207). Figures are measured on
 main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Six maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
+Eight maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
 Sunderfall (#197), K3, the Sunder's mouth (#198), with its Rift, L2, Lanternwood (#200), and Lantern
-Watch, the town behind L2's gate (#201); and the Sunder's two levels below K3 (#199). Its content is
+Watch, the town behind L2's gate (#201); the Sunder's two levels below K3 (#199); and J3, the Bears'
+Wood, and M2, the Fells Road (#202). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -26,9 +27,9 @@ The atlas makes Sunderwood two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Eaves | 14–16 | 6,717 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197); K3, the Sunder's mouth, at 328,62 (#198) |
-| Lanternwood | 15–16 | 5,926 | L2, Lanternwood, laid at 360,30 (#200) |
-| The area | 14–16 | 12,643 | five boxes |
+| The Eaves | 14–16 | 7,155 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197); K3, the Sunder's mouth, at 328,62 (#198); J3, the Bears' Wood, at 296,62 (#202) |
+| Lanternwood | 15–16 | 8,802 | L2, Lanternwood, laid at 360,30 (#200); M2, the Fells Road, at 392,30 (#202) |
+| The area | 14–16 | 15,957 | seven boxes |
 
 Squares are the land the zone check counts in each zone with K2 and K3 laid in the Eaves (#197,
 #198) and L2 in Lanternwood (#200). K2 moved the zone line east and L2 moved it back west. K3 takes
@@ -37,7 +38,16 @@ Lanternwood's line is held at K3's east and south edges by seeds (`atlas.ts`), s
 the zones' walk from every square of it: without them the Eaves would run on into L3, L4 and K4. The
 walk still moves 252 more of the Deepthorn's into the Eaves in J3 and K4 (5,955 to 5,551), both boxes
 Sunderwood's on the grid, and 4 of Lanternwood's; the Iron Fells stand at 3,052 against 3,045.
-Holding the Deepthorn's line would need seeds in Thornmark's rows (§9). The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+Holding the Deepthorn's line would need seeds in Thornmark's rows (§9). J3 (#202), laid whole in the
+Eaves, takes the 445 of its squares the walk still gave the Deepthorn: the Deepthorn falls from 5,558 to
+5,113 and the Eaves rise from 6,710 to 7,155. Its west and south edges meet I3's and J4's closed forest,
+so the line a player could see does not move; the count does, and stays the owner's question (§9, #198's
+20). M2 (#202), laid whole in Lanternwood, seeds the walk from its east edge, and Lanternwood runs on
+east through the Fells' unbuilt land, into M3, N2, N3, O2 and O3: the Iron Fells fall from 3,048 to 583
+and Lanternwood rises from 5,927 to 8,802, Kilnmouth and the Kilns losing a little. Nobody walks it, since
+that land is void in play, but the world map paints it so. Holding the Fells' line wants seeds in the
+Iron Fells' row in `src/content/atlas.ts`, a shared file, one a square down x 424 as K3's hold
+Lanternwood's: proposed (§9, #202's 2), not made here. The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
 included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
@@ -148,11 +158,27 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   stair down from the last landing. The floor: dead wood and glass, the river into a crack, the
   narrows and the Warden of the Sunder, the fallen past it, bare rock with no sound, and the wall,
   running both ways along the floor; the chalk runs out at a rock fall, and behind it the face is not flat.
+- **The Bears' Wood** (J3, `eaves_j3`, country, band 15–16; #202): the deep forest south of J2,
+  reached by a cutters' track down out of J2's pines and from K3's west lip by the dead wood; its west
+  and south edges stand closed against the Deepthorn's I3 and J4. A hermit in his clearing, a shrine and
+  a cairn in the wood, and a bears' den under a fallen pine, its old bears gone to glass, with the
+  gleaners' cache behind its back. Three groups: the den's brood, two pine bears on the track, two
+  deathsheads at the den's mouth by night and its keepers, two glass bears.
+- **The Fells Road** (M2, `lanternwood_m2`, country, band 15–16; #202): Lanternwood's forest east of
+  L2, the river from the rim down its west side and a strip of hills under the range. The east road
+  fords the river off L2 and clips the box's south-west corner, out by its south edge for the pass in
+  M3, where the world ends until Act III. The milestone by the road, the Warden's grave behind the trees
+  beside it, a shrine at the river's bend, a camp on a gravel bar and the cairn and lookout on the hills.
+  Three groups: two sunder hounds and a moth up the river, two deathsheads at the camp by night and two
+  glass bears under the range.
 - **Lantern Watch** (`lantern_watch`, town, band 14–16; #201): one tower in a walled yard over the
   gorge, through L2's gate. The Lamp Gallery at the top trains to 17; the prior's room, where the
   Reader of the Watch sits; the stores, the band's step on the ladder; the refectory; and the
   Lanterns' hall at the tower's foot, which sells to tier 6. Prior Osric in the yard under the lamp,
-  Wouter Brink of the Cartographers on the west wall. No temple: Sunderfall's shrine cures.
+  Wouter Brink of the Cartographers on the west wall. No temple: Sunderfall's shrine cures. By day,
+  once the papers are read and the wall touched, Lord Vask at the gate with two Wardens and three
+  horses, until his question is answered (#204).
+- **The chapter,** The Wall (`chapter.ts`, #204): §5.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -300,7 +326,8 @@ features; the pay shared out over the area (§8).
   by the steading by night. A company at 14 wins every fight and manages 6.8 fights to a rest,
   inside the aim (6.9 after the re-stat to #409's line, #18); the road is walked every time. As
   measured it pays about 1,510 xp a member and 430 gold, I2 and J2 together 2,570 against their
-  2,500. Two under, at 12, it wins every fight: owed to #18, as I2's. The area claims dead wood,
+  2,500. Since #453 the moths are three, not six: the box pays about 1,370 and manages 7.6 fights to
+  a rest at 14. Two under, at 12, it wins every fight: owed to #18, as I2's. The area claims dead wood,
   crystal and the chasm as new, all three first on the road here. What the owner finds by hand goes
   here when the box has been played.
 
@@ -516,8 +543,13 @@ features; the pay shared out over the area (§8).
   rest, inside the aim; Lanternwood's road is walked every time. As measured it pays about 1,400 xp a
   member and 430 gold, which takes up what I2, J2 and K2 fell short by: the four boxes pay 5,040
   against their 5,000. Two under, at 13, it wins every fight: its floor is above the area's, so its
-  groups count two under in the area's pool, owed to #18. The moths and the bears were new on I2, so
+  groups count two under in the area's pool, owed to #18. Since #453 the lamp's moths are two with
+  their deathshead: the box pays about 1,300 and manages 8.2 fights to a rest at 15, the road still
+  walked every time. The moths and the bears were new on I2, so
   the box claims nothing new. What the owner finds by hand goes here when the box has been played.
+  Since M2 (#202) the road fords the river at the box's corner into M2, and the river runs out of the
+  corner's south edge for L3, so map and atlas agree at the edge and nothing is owed; L2's east ring
+  opens to M2's forest square for square.
 
 ### 4.8 Lantern Watch (#201): town, 16×16, a tower, band 14–16
 
@@ -537,10 +569,10 @@ features; the pay shared out over the area (§8).
 - **Lines:**
   - the gate: *Lantern Watch: one tower, and a lamp at the top lit in daylight. Moth dust lies on
     the step like flour.*
-  - Vask's morning: *Morning, and rain. Three horses at the gate, two Wardens holding them, and a
-    man standing in the wet as if it were not raining.*
+  - Vask's morning: *Rain. Three horses at the gate, two Wardens holding them, and a man standing
+    in the wet as if it were not raining.* (#204 drops "Morning": he comes at any hour of the day.)
 - **New here.** A town that is one tower; the act's midpoint.
-- **Pay.** About 300 xp a member in the tower's quests.
+- **Pay.** The tower's quests are 31 and 32, paid in §6 (#453).
 
 - **As built** (#201, 1 October): one tower in a walled yard, the yard's wall the map's edge, the
   road up from the gate to the tower's foot, grass and six oaks. The tower is six squares a side
@@ -559,8 +591,8 @@ features; the pay shared out over the area (§8).
   every page of the papers, and the one name at the foot of the log's entries, Vask, and puts what
   she read back in the company's hands. That sets `papers_read`, the midpoint's flag, which #204's
   chapter will read; what Vask believes is his to say the next morning. The prior, met and shown
-  the papers, asks for them for Helmstow's oil cart and takes nothing. The 300 xp of
-  the tower's quests waits on 31 and 32, so the area's curve stays owed to #155.
+  the papers, asks for them for Helmstow's oil cart and takes nothing. The tower's
+  quests are 31 and 32, whose pay §6 counts (#453), so the area's curve stays owed to #155.
 
 ### 4.9 M2 and J3, the road on and under the Eaves (#202): country, band 16
 
@@ -591,6 +623,46 @@ features; the pay shared out over the area (§8).
 - **Finds.** A Chain Mail +2 in the cache.
 - **Pay.** About 800 xp a member each.
 
+- **As built** (#202, 2 October): both boxes at band 15–16, not 16: the curve asks the hardest group to
+  stand above the floor however narrow the band, and no monster stands above 16 before the Kilns.
+  - **M2, the Fells Road** (`lanternwood_m2`): the atlas's road clips only the box's corner and runs on
+    south through M3, where the pass and 404,70 are, so the road fords the river off L2, turns south and
+    leaves by the box's south edge at 393–394,62, where the world ends until M3 is built (§9, #202's 1).
+    The milestone stands by the road, ANVILHALL 12 on its face and THIS FAR on its back; through the tree
+    line beside it, searched for, the Warden's grave with a patrol badge of the Scarth set on it (in
+    words only; the Scarth is Hale's checkpoint, and the reader makes the link) and the dead Warden's
+    pack, 250 gold and two Healing Draughts. Up the river the shrine at its bend
+    (endurance) and the camp on a gravel bar; on the hills under the range the cairn (180 gold and a
+    Sapphire Vial) and a lookout south over the pass, smoke by day and a red glow by night. East of the
+    range the Fells' hills are drawn as the range, where nothing walked reached them. Two sunder hounds and
+    a lantern moth up the river, the gentlest; two deathsheads at the camp by night; and two glass bears
+    on the hills, the box's group at 16. A company at 15 wins every fight and manages 8.43 fights to a
+    rest, inside the aim, with 6.7% of its days ending in a fight broken off at fifteen rounds; the moth
+    with the deathsheads broke off 32%. Lanternwood's road, now L2's two groups and M2's hounds, is walked
+    every time at 15. As measured it pays about 948 xp a member and 430 gold. Density 100% within 12 steps, the furthest 10.
+  - **J3, the Bears' Wood** (`eaves_j3`): a cutters' track two wide down out of J2's pines, and dead
+    wood at the south-east onto K3's west lip; the west and south edges closed. The hermit's clearing,
+    the shrine (luck), a cairn (170 gold and a Sapphire Vial), dead wood where the pines give out at the
+    lip, and the den (#88) under a fallen pine: it breeds pine bears, a pair on the track, back a day after
+    they fall until it is burnt, and its keepers beside it are two glass bears, the old bears gone to
+    glass, the box's group at 16; its hoard 140 gold and a Healing Draught. By night two deathsheads come
+    to the den's mouth, to the light in the cache. The hint is moth dust at the den's mouth, and by night
+    the moths themselves, with the hermit's word; behind the
+    den's back, searched for, the gleaners' cache, a Chain Mail +2 (`chain+2`) and 200 gold, which no
+    swimmer, climber or levitator reaches. A company at 15 wins every fight and manages 7.60 fights to a
+    rest, inside the aim, with 5.3% of its days ending in a fight broken off; three glass bears keeping
+    the den broke off 27%, and any three bears together near 40%. As measured it pays about 1,073 xp a
+    member and 510 gold. Density 99.3% within 12 steps, the furthest 13.
+  - Both pay about 2,020 against §8's 1,600, 800 each (the issue proposed 900): fewer groups that were
+    each a real fight held fights to a rest inside the aim and pairs kept them short, where more and
+    gentler groups put fights to a rest past their limit. The lightest mixes inside the aim with no group
+    of three bears are these; J3's lighter ones (a single pine bear for the brood, or the deathsheads
+    dropped) put it over the aim at 9.4 and 9.1.
+    Their floors are above the area's, so their groups count two under in the area's pool, owed to #18.
+    J2's south edge opens for the track and K3's west edge for the dead wood; J2 is re-measured, 91.7%
+    within 8. Neither box claims anything new. What the owner finds by hand goes here when they have
+    been played.
+
 ### 4.10 L3, L4 and K4, Lanternwood's depths (#203): country, band 16, parked
 
 - **Purpose.** The forest south of the Watch, built once the owner has played the act (#151, call
@@ -605,30 +677,42 @@ features; the pay shared out over the area (§8).
 ## 5. The one quest here
 
 Sunderwood's chapter is The Wall (`chapter.ts`, #204), the last of Act II, joined after
-Wrackholm's; every zone holds a step (EXPANSION §5.8): the Eaves' at the rim, the bridge and the
-way down, Lanternwood's at the Watch. Its entries:
+Wrackholm's; every zone holds a step (EXPANSION §5.8): the Eaves' at the bridge and the way down,
+Lanternwood's at the Watch. It begins once the company carries the Tide Ship's papers or its log,
+or has had them read; Wrackholm's done flag takes the items' place once #191 names it. Its entries:
 
-- **The wood split in half,** seen from the Eaves' rim: the trees along the edge gone to glass, and
-  the gorge falling away further than the rain lets you see. The goal points to the bridge.
-- **The crossing,** on the rope bridge over the gorge, and the way down from the ledges beyond it.
-- **The wall,** at the bottom, under the soil and the rock: flat and seamless, going down further
-  than the light reaches, and warm. Nothing more than what the hand feels; the log never says what
-  it is (DESIGN §7).
-- **The papers read,** at the Watch: every cargo, the shards and the people, went below under the
-  Helmstow customs seal, the same seal as on the crates in the caves, and every page is
-  countersigned by the Regent. The Tide Ship's log names Vask (DESIGN §9's midpoint, at 16).
-- **Vask in the rain,** the next morning at the gate, with two Wardens: *You've read the papers.
-  Good. Then you know half of what I know.* He tells the rest; the company says no; *I don't need
-  you. I have the girl.* His choice, put by a person (#76), sets a flag and nothing else: the
-  endings are the one quest's later (DESIGN §9).
-- **Home.** The goal turns back west to Helmstow, where the walls have Wardens on them (#157). The
-  chapter's done flag ends the act; its name is #204's.
+- **The wood split in half,** seen from the Eaves' rim (`rim`): the trees along the edge gone to
+  glass, and the gorge falling away further than the rain lets you see.
+- **The crossing,** on the rope bridge at Sunderfall (`crossing`).
+- **The wall,** at the bottom, under the soil and the rock (`wall`): flat and without a join, going
+  down further than the light reaches, and warm. Nothing more than what the hand feels; the log
+  never says what it is (DESIGN §7).
+- **The papers read,** at the Watch (`seal`): every cargo, the shards and the people, went below
+  under the Helmstow customs seal, the same seal as on the crates in the caves, and every page is
+  countersigned by the Regent. **The log read** (`name`): a clerk's cipher, and one name at the
+  foot of each entry, Vask (DESIGN §9's midpoint). The Reader sets `seal_read` or `log_read` for
+  what she read, beside `papers_read`.
+- **Vask in the rain,** at the Watch's gate with two Wardens (`rain`): *You've read the papers.
+  Good. Then you know half of what I know.* He tells the rest and asks for help. His question, put
+  by a person (#76), is answered yes (`yes`, `q_vask_yes`) or no (`no`, `q_vask_no`), which sets
+  that flag and nothing else; either way *I don't need you. I have the girl* (`girl`). The endings
+  are the one quest's later (DESIGN §9).
+- **Home** (`home`): the road west to Helmstow, the act's last line. Either answer also sets
+  `q_salt_done`, the chapter's done flag, which ends the act; what Helmstow has become is #157's.
+
+Its goals, furthest along first: riders at the Watch's gate (the papers read and the wall
+touched); down the Sunder (read, the wall not seen); across to the Watch (the wall seen, the papers
+carried); down the Sunder by K3's first landing (over the bridge with the papers); over the rope
+bridge at Sunderfall (the papers in hand). Home is not a goal: Helmstow's maps are banded 1–4, and
+the act's end is #157's to show.
 
 No lock (#151, call 1): the bridge stands whatever the story does, and the Watch reads the papers
 for whoever carries them, whenever they come; a company that takes the Sunder before the Tide Ship
-finds the wall all the same.
+finds the wall all the same, and the chapter's first entries are written when the papers come.
 
-The walkthrough plays it at 14, 15 and 16, in order and with the Sunder taken first.
+The walkthrough plays it in order at 15, the Watch first at 16 and the Sunder first at 14, from
+before the Tide Ship. The act end to end, with Saltreach's and Wrackholm's chapters, is owed to
+#191 (§9).
 
 ## 6. Side quests
 
@@ -637,12 +721,12 @@ with its box on the systems of #76 (#205):
 
 | # | Quest | Level | Where | What it needs | Pay | Built in |
 |---|---|---|---|---|---|---|
-| 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 200 | #196, #201 |
-| 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 200 | #197, #198 |
-| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #205 (L2, #200, places the sister and her hint only; #201 leaves her there) |
-| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #205, #199 (#201 places the surveyor and his lines only) |
+| 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 110 | #196, #201 |
+| 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 110 | #197, #198 |
+| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 140 | #205 (L2, #200, places the sister and her hint only; #201 leaves her there) |
+| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 140 | #205, #199 (#201 places the surveyor and his lines only) |
 
-Pay is xp a member, whichever way the choice goes, shared by level: 900 between the four (§8).
+Pay is xp a member, whichever way the choice goes, shared by level: 500 between the four (§8), 900 until #453.
 
 No change to #56's drafts. 31 opens the Lanterns' split now, with the company on the sister's side,
 or leaves the prior his Watch (#21); 32 puts a wall in it.
@@ -671,16 +755,31 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
 ## 8. The numbers
 
 - **Experience.** The curve (EXPANSION §5.2, #159) asks the climb from 14 to 16 over 0.75: 8,600 /
-  0.75, about 11,467 xp a member, with today's `xpForLevel`. The shares of §4 add up to it, as
-  Saltreach's and Wrackholm's do, the side quests inside and the depths outside: I2 1,150, J2
-  1,350, K2 1,350, K3 1,350, the Sunder 2,350, L2 1,150, the Watch 300, M2 800 and J3 800; and the
-  four side quests 900 between them (29 and 30 200 each, 31 and 32 250 each, §6): about 11,500. They were the plan's, 11,800 before the
-  side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
-  supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
-  when it is built: I2 1,063, J2 1,509, K2 1,072, K3 with its Rift 1,441, L2 1,396 and the Sunder
-  2,704 so far, 9,185 against their 8,700, about 485 over: the Sunder's 2,704 against its 2,350 is
-  the rest (#199, §9). A company should leave the Watch at 16, where the midpoint is, with the Kilns'
-  floor ahead.
+  0.75, about 11,467 xp a member, with today's `xpForLevel`, the side quests inside and the depths
+  outside, as Saltreach and Wrackholm count theirs. The plan's shares were I2 1,150, J2 1,350, K2
+  1,350, K3 1,350, the Sunder 2,350, L2 1,150, the Watch 300, M2 800, J3 800 and the side quests
+  900; the boxes as built ran 900 over theirs, and the area as planned to about 12,400, 8% over.
+  Brought back by #453, share by share:
+
+  | Share | Plan | Now | |
+  |---|---|---|---|
+  | I2 | 1,150 | 1,063 | built |
+  | J2 | 1,350 | 1,370 | built; three moths, not six (#453) |
+  | K2 | 1,350 | 1,072 | built |
+  | K3 with its Rift | 1,350 | 1,441 | built |
+  | The Sunder | 2,350 | 2,704 | built |
+  | L2 | 1,150 | 1,303 | built; the lamp's moths two, not four (#453) |
+  | J3 | 800 | 1,073 | built |
+  | M2 | 800 | 948 | built |
+  | The Watch | 300 | 0 | its quests are 31 and 32 (#453) |
+  | Side quests | 900 | 500 | planned: 29 and 30 110 each, 31 and 32 140 each (§6, #205) |
+  | **The area** | 11,500 | 11,474 | 12,400 before #453 |
+
+  The boxes as built pay 10,974 (the curve's own count, every group once), and the area as planned
+  11,474 against the curve's 11,467, under a tenth of a per cent over. The depths add about 1,350
+  when they are built (450 each). Until the side quests are, a clear gives 10,974, the floor the
+  owed record in `progression.ts` holds. A company should leave the Watch at 16, where the midpoint
+  is, with the Kilns' floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
   at 1,600 and the act's dearest find the Sunder's Plate Mail +2 at 1,500, against 3,000. The
@@ -860,6 +959,21 @@ Decided by delegate for #201, each the owner's to overturn:
     company that comes in carrying them hears who they are before the reading, and "Shut it, if you
     would" sets up the shut door.
 
+Decided by delegate for #453, each the owner's to overturn:
+
+1. **The Watch's 300 is dropped:** its quests are 31 and 32, which §6 pays already, so it was
+   counted twice.
+2. **The side quests pay 500 between them, not 900:** 29 and 30 110 each, 31 and 32 140 each, about
+   a third of a fight; a quest that pays nothing reads oddly, and the 16s keep their step.
+3. **J2's moths are three, not six:** 138 xp a member against 277; at 14 the box wins every fight
+   and manages 7.6 fights to a rest against 6.9, nearer the aim's middle.
+4. **L2's lamp moths are two and a deathshead, not four and one:** 303 against 396; at 15 it wins
+   every fight and manages 8.2 fights to a rest, as before, inside the aim.
+5. **The Sunder, J3 and M2 keep their groups:** a monster off any of them puts fights to a rest past
+   the aim (the Sunder's wood 9.8, its first spiders 10.4, J3's brood 9.4, M2's hounds 8.9).
+6. **The area as planned comes to 11,474,** the boxes 10,974 with the side quests' 500, against the
+   curve's 11,467; the owed floor in `progression.ts` falls to 10,974 with it.
+
 ## 10. Names
 
 Sunderwood's names are English already, the Crown's and the Lanterns', and stay: the Sunder, the
@@ -872,7 +986,9 @@ and the Lanterns Helmstow's. A naming pass is the owner's to ask for; none is fi
 - **The rim's row,** I1 to M1: 2,984 squares of land, 1,708 a company could walk, mountain and
   pine under the world's edge, with the springs of both rivers in it. The maps of row 2 end in it.
 - **The mountain edges,** M3, M4 and L5: 405 squares, 264 walkable, the mountains between
-  Lanternwood and Kilnmouth, with no way through (§1).
+  Lanternwood and Kilnmouth, with no way through (§1). M3 holds the east road's pass into the Iron
+  Fells and 404,70, so it is proposed to the owner as Act III's first box, laid in the Iron Fells
+  (§9, #202's 1).
 - **The Deepthorn's boxes,** I3, I4 and J4: 817 squares of the Eaves' land over the Hoarhills and
   round their end, built whole by Thornmark as its own (docs/areas/thornmark.md §4 and §9, 7), their
   Eaves' forest drawn closed. Not void: the Deepthorn's, and not Sunderwood's to build.
@@ -1063,3 +1179,104 @@ Decided by delegate for #199, each the owner's to overturn:
     their vault is near black, the night over a gorge.
 14. **K3's step and lookout lines see the way in open,** a way cut into the rock with a stair inside,
     where they saw a shut door.
+
+Decided by delegate for #202, each the owner's to overturn:
+
+1. **M2's road follows the atlas:** it crosses M2's corner and leaves by its south edge into M3, the
+   world's end there. The crossing, the pass and 404,70 are M3's, and M3 is proposed to the owner as
+   Act III's first box, laid in the Iron Fells, which would carry the road on from M2's 1–2,31; the
+   crossing line facing back (#166) needs two built zone maps, so it is owed to that box. A road cut east
+   through M2's own range would run to a closed edge, or one that disagrees with N2's grass. The atlas's
+   link at 404,70 keeps its ends: a shared file's line that nothing here walks.
+2. **M2 is laid whole in Lanternwood.** Its way in, its wood and its river are Lanternwood's. The delegate
+   expected only the 109 squares east of the range to move; as built, the walk runs on east from M2's
+   edge and the Iron Fells fall to 583 (§1). Holding them wants seeds in the Iron Fells' row, a shared
+   file: proposed, not made.
+3. **L2's corner is re-drawn:** the river leaves M2 into L2's corner and runs out of its south edge
+   against L3's atlas river at 391,62, and the road fords it into M2 on row 29; L2's four squares owed to
+   #202 agree, and the entry goes from `EDGES_OWED`.
+4. **J3 is laid whole in the Eaves,** taking the Deepthorn's 445 squares, recorded as the owner's
+   question with #198's 20. thornmark.md's counts are Thornmark's, measured earlier, and are not touched.
+5. **J3 opens two ways,** a cutters' track two wide down from J2's cairn clearing and the dead wood onto
+   K3's west lip, so a country box off the road need not be left the way it was come into. Its west and
+   south edges stay closed. J3 draws its land under the Sunder's planned plate at 24,0 and puts nothing on
+   it.
+6. **The den's keepers are its old bears gone to glass,** two glass bears, and it breeds pine bears,
+   a pair. Measured, the delegate's two keepers, two broods of two, a way-in pair and six moths paid
+   about 1,665 a member, and gentler groups put fights to a rest past their limit (11.6); three keepers
+   held the aim but broke off 27% of days at fifteen rounds (the review, #428). Two deathsheads come to
+   the den's mouth by night instead, the moths of the hint, a true fight at 16 that ends.
+7. **M2's groups are two sunder hounds and a lantern moth by the way in, two deathsheads at the camp by
+   night and two glass bears under the range,** the box's group at 16 a true fight: the brief's four moths
+   and a deathshead were too gentle a fight (11.1 fights to a rest with the rest), and the moth with the
+   deathsheads broke off 32% of days (the review, #428). The hounds are on Lanternwood's road.
+8. **The finds:** the badge is words on the grave, the Scarth's, left there and never named as Hale's (the
+   review, #428), and nobody takes it; the
+   dead Warden's pack beside it holds 250 gold and two Healing Draughts. The cache holds the Chain Mail +2
+   (`chain+2`), off the ladder, a find that sells, and 200 gold; the sack of glowing shards in it is the
+   lamp the moths come to. Nothing on #406's ladder was owed to #202.
+9. **M2's shrine gives endurance and J3's luck;** neither had been given in Sunderwood. The cairns give
+   180 and 170 gold and a Sapphire Vial, as I2's to L2's.
+10. **The hints are things seen:** the milestone's back, cut by another hand; the moth dust at the den's
+    mouth by day and the moths by night, with the hermit's word. The grave's way is a secret door in the
+    tree line beside the stone, so the box has one wall and the pre-#9 dressing check still sees it.
+11. **The maps are `lanternwood_m2`, called The Fells Road, and `eaves_j3`, called The Bears' Wood.** Bears
+    and hounds come back after two days, the moths after one, the brood one a day.
+
+Decided by delegate for #204, each the owner's to overturn:
+
+1. **The chapter is `wall`, The Wall,** and #205's The Length of the Wall takes another id.
+2. **It begins on the Tide Ship's papers, carried or read,** not on the rim, the bridge or the wall:
+   the log tries the furthest chapter begun first, so a Wall begun on the rim would hold the goal
+   over Wrackholm's for a company that walked east early. A company that takes the Sunder first
+   finds the wall all the same, and the rim, the crossing and the wall are written when the papers
+   come. Neither paper can be sold or handed in, so the start stays true.
+3. **Wrackholm's done flag takes the items' place once #191 names it,** so the papers picked up on
+   the ship no longer take the goal from Wrackholm's last steps. It is owed to #191 in
+   `tools/tests/quests.ts` and said in `chapter.ts`.
+4. **Vask's answer sets `q_salt_done`,** beside its own flag (`q_vask_yes` or `q_vask_no`): only a
+   person sets a flag, and Helmstow is the Foreland's lane, so the act ends at the Watch. The flag is
+   the same for both answers, so the choice changes nothing but its own.
+5. **The chapter is done on `q_salt_done`,** the one flag #157 and Act III's first chapter key on.
+6. **Home to Helmstow is an entry, not a goal:** Helmstow's maps are banded 1–4, which the road's own
+   test refuses for a company of 16, and what it finds there is #157's.
+7. **Vask is the keep's Lord Aumery Vask, Regent-Warden,** on the grass west of the gate's road at
+   6,14, the road and the gate left clear.
+8. **He waits on the papers read and the wall touched,** since he says *You've touched that wall*.
+   The wall is a step of the chapter, as the story has it.
+9. **He is gone once answered** (`until: q_salt_done`); his last words are the answer's.
+10. **By day stands for the next morning:** the clock knows day and night and no more, so a company
+    that reads at night meets him at the next daylight, and one that reads by day with the wall seen
+    finds him on its way out. A true next morning would be a systems change, not asked for. The gate's
+    line drops its "Morning" for the same reason, and keeps the rain, as every line at the Watch has it.
+11. **His words do not change with what the company carries:** everyone who meets him has had the
+    papers read and touched the wall, and the narrows give the heart with the wall. His meeting sets
+    `q_vask_rain`, and a company that walks away from the question hears it again.
+12. **The two Wardens are in his lines,** not people of their own; the gate's once-events `lw_vask`
+    and `lw_vask_e`, on the two squares of the road in at 7,13 and 8,13, carry the brief's line,
+    with his `after`, `until` and `when`, and each ends once the other is seen.
+13. **Two answers, each with its own flag and `q_salt_done`.**
+14. **A yes gives nothing:** no gold and no gift. The endings are the quest's later.
+15. **"I have the girl" closes both answers:** Wenna alive, below and his reaches every company.
+16. **Five goals, furthest along first,** each its own words: the gate; down the Sunder, read; to the
+    Watch, the wall seen; down the Sunder, over the bridge; over the bridge. The Sunder taken first
+    with no papers shows no goal of the Wall's: today the quest has none there, and once #191's
+    chapter is written Wrackholm's shows. A goal at the Tide Ship would fail the band at 14–16.
+17. **The papers and the log read each have an entry,** keyed on `seal_read` and `log_read`, which the
+    Reader now sets beside `papers_read`: an entry keyed on an item would vanish with it.
+18. **The walk is at 15 in order, at 16 the Watch first and at 14 the Sunder first.** The curve
+    gives each step its level, 15 or 14, which the band checks; the company fights and meets Vask at
+    16 in the second run. In order plays the Foreland and the Grove from a new game; the other two
+    are seeded from their flags and events. Saltreach and Wrackholm are seeded in every run: the
+    papers and the log go into the bag where Wrackholm's chapter will have carried them.
+19. **The act's end-to-end walk is owed to #191** in `tools/tests/quests.ts`, beside the chapter
+    #191 owes: the log shows Act II in three chapters and the Wall is played on from Wrackholm's
+    with the papers carried from the Tide Ship. The walkthrough puts the papers in the bag by hand
+    only through `fromTheTideShip`, and the check fails once Wrackholm's chapter is written while
+    it is still used. The start's swap (3) is owed too, and holds only once the Wall's start names
+    Wrackholm's done flag and no item.
+20. **An order of play may end at a chapter,** and a walkthrough checks only its own chapters' goals
+    walked: a quality pull request first (#430), since a third chapter breaks the checks pinned to
+    the Grove's seal. Sunderwood's walkthrough runs last in road order, so it checks every
+    chapter's goals.
+21. **The text was drafted in the voice by a separate agent,** and no line names what the wall is.

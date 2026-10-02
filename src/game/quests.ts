@@ -7,7 +7,7 @@
 import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem, prestigeOf } from './party.ts';
-import type { ClassId } from './party.ts';
+import type { ClassId, RaceId } from './party.ts';
 import { seekingQuests, trainersIn } from './seeking.ts';
 import type { Trainer } from './seeking.ts';
 import { OUTDOORS } from './outdoors.ts';
@@ -26,10 +26,11 @@ export interface QuestCond {
   /** A map the party has set foot on, or a zone map of the outdoors it has walked into. */
   visited?: string;
   /**
-   * A member (the one in party slot `who`, else any) of the class, at the level or over it, with the
-   * prestiges or more (game/seeking.ts). At least, never exactly, so what holds stays held.
+   * A member (the one in party slot `who`, else any) of the class and the race, at the level or over
+   * it, with the prestiges or more (game/seeking.ts). At least, never exactly, so what holds stays
+   * held; but for the race, which holds only while that member is in the company.
    */
-  member?: { who?: number; cls?: ClassId; level?: number; prestige?: number };
+  member?: { who?: number; cls?: ClassId; race?: RaceId; level?: number; prestige?: number };
 }
 
 /**
@@ -126,7 +127,7 @@ function condHolds(c: QuestCond, w: WorldState, p: Party): boolean {
   if (c.visited !== undefined && !w.maps[c.visited] && !w.zones?.includes(c.visited)) return false;
   if (c.member !== undefined) {
     const m = c.member, who = m.who === undefined ? p.members : [p.members[m.who]].filter((x) => !!x);
-    if (!who.some((x) => (m.cls === undefined || x.cls === m.cls) && x.level >= (m.level ?? 0) && prestigeOf(x) >= (m.prestige ?? 0))) return false;
+    if (!who.some((x) => (m.cls === undefined || x.cls === m.cls) && (m.race === undefined || x.race === m.race) && x.level >= (m.level ?? 0) && prestigeOf(x) >= (m.prestige ?? 0))) return false;
   }
   return true;
 }

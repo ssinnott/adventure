@@ -23,17 +23,23 @@ const UNPLACED: Record<string, string> = {
 /**
  * What is wrong with a town's doorways: the business must come first on its square (the game
  * opens the first feature there, and the door's sign is drawn from it), and after it only people
- * with no room of their own and events.
+ * with no room of their own and events. A business is always there, but for two ways it may change
+ * (#157): gone `until` a condition with an event `after` it saying the door is shut, or so with a
+ * twin after it on the same condition, which takes its square.
  */
 export function doorwayFaults(m: GameMap): string[] {
   if (m.kind !== 'town') return [];
   const out: string[] = [];
   const squares = new Map<string, Feature[]>();
   for (const f of m.features) if (m.at(f.x, f.y).door !== 'none') squares.set(`${f.x},${f.y}`, [...(squares.get(`${f.x},${f.y}`) ?? []), f]);
-  for (const [at, [first, ...rest]] of squares) {
-    if (!('interior' in first && first.interior)) out.push(`the doorway at ${at} opens on the ${first.kind} there, which has no room`);
-    // A business is always there: gone, its doorway would open on the person after it.
-    else if ('when' in first || 'after' in first || 'until' in first) out.push(`the business at ${at} comes and goes`);
+  const same = (a: unknown, b: unknown): boolean => a !== undefined && JSON.stringify(a) === JSON.stringify(b);
+  const comes = (f: Feature): boolean => 'when' in f || 'after' in f || 'until' in f;
+  for (const [at, [first, ...more]] of squares) {
+    if (!('interior' in first && first.interior)) { out.push(`the doorway at ${at} opens on the ${first.kind} there, which has no room`); continue; }
+    const twin = more[0] && 'interior' in more[0] && more[0].interior && 'until' in first && same(first.until, 'after' in more[0] ? more[0].after : undefined) && !('when' in first) && !('after' in first) && !('when' in more[0]) && !('until' in more[0]) ? more[0] : undefined;
+    const rest = twin ? more.slice(1) : more;
+    // Gone, its doorway would open on the person after it: only a twin or a shut door's word may follow.
+    if (!twin && comes(first) && !('until' in first && !('when' in first) && !('after' in first) && rest.some((f) => f.kind === 'event' && same(first.until, f.after)))) out.push(`the business at ${at} comes and goes`);
     for (const f of rest) if (!(f.kind === 'event' || (f.kind === 'npc' && !f.interior))) out.push(`the doorway at ${at} holds the ${f.kind}${'interior' in f && f.interior ? ' with a room' : ''} after its business`);
   }
   return out;
@@ -162,7 +168,8 @@ export function maps(): void {
     ok(!bad.length, `${def.id}: every doorway opens into its business first, with only people and events after it${bad.length ? ' -> ' + bad.join('; ') : ''}`);
     for (const f of m.features) {
       const interior = 'interior' in f ? f.interior : undefined;
-      if (interior) { interiors.push(interior); ok(m.at(f.x, f.y).door !== 'none', `${def.id}: ${interior} is entered through a door`); }
+      // A twin that takes its business's square opens into the same room, and is counted once.
+      if (interior && !m.features.some((g) => g !== f && g.x === f.x && g.y === f.y && 'interior' in g && g.interior === interior && m.features.indexOf(g) < m.features.indexOf(f))) { interiors.push(interior); ok(m.at(f.x, f.y).door !== 'none', `${def.id}: ${interior} is entered through a door`); }
     }
   }
   { // The doorway rule, on a fixture town with an inn: a person after it passes, and so do an event
@@ -175,6 +182,11 @@ export function maps(): void {
     ok(!doorwayFaults(town([inn, person, event])).length && !doorwayFaults(town([keeper, person])).length, 'a person or an event after the business on its doorway passes, a tavern keeper who is the business too');
     ok(doorwayFaults(town([person, inn])).length > 0 && doorwayFaults(town([inn, keeper])).length === 1 && doorwayFaults(town([person])).length === 1 && doorwayFaults(town([{ ...keeper, until: { flag: 'fx_gone' } }, person])).length === 1,
       'a person before the business, a second business, a doorway with no business and a business that comes and goes each fail');
+    const shut = { flag: 'fx_shut' }, notice: Feature = { ...event, id: 'fx_notice', text: 'Shut.', after: shut };
+    ok(!doorwayFaults(town([{ ...inn, until: shut }, notice])).length && !doorwayFaults(town([{ ...inn, until: shut }, { ...inn, price: 2, after: shut }, person])).length,
+      'a business gone with a shut door\'s word after it passes, and so does one with a twin that takes its square on the same flag');
+    ok(doorwayFaults(town([{ ...inn, until: shut }, { ...notice, after: { flag: 'fx_other' } }])).length === 1 && doorwayFaults(town([{ ...inn, until: shut }, { ...inn, after: { flag: 'fx_other' } }])).length === 2,
+      'but not with the word or the twin on another flag');
   }
   const opened = INTERIORS.filter((i) => !Object.hasOwn(UNPLACED, i));
   ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);

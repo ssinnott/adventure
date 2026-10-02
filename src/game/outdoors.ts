@@ -87,7 +87,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[]): MapDef[] {
       const to = byId.get(e.to);
       if (!to || Math.hypot(e.x + l.x - (e.tx + to.x), e.y + l.y - (e.ty + to.y)) > SEAM) { exits.push(place(lead(e))); continue; }
       // Into the zone next door: walked across, through the gate the exit's flags make, if any.
-      if (e.needFlag) gates.push({ x: e.x + l.x, y: e.y + l.y, needFlag: e.needFlag, blockedText: e.blockedText });
+      if (e.needFlag || e.shut) gates.push({ x: e.x + l.x, y: e.y + l.y, needFlag: e.needFlag, shut: e.shut, blockedText: e.blockedText });
       if (e.label) enter.set(e.to, { ...enter.get(e.to), [l.def.id]: e.label });
     }
     for (const f of l.def.features ?? []) {

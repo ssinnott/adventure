@@ -6,7 +6,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, GUILD_QUESTS } from '../../src/content/index.ts';
 import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, takeItem } from '../../src/game/party.ts';
@@ -57,12 +57,22 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
   return bad;
 }
 
+/**
+ * The parts of a condition that can stop holding once they hold: a member's race, which goes when
+ * that member leaves the company. A journal's start, entries and end must stay written, so none may
+ * ask one; a presence or a shut exit may.
+ */
+export function fleeting(w: When): string[] {
+  return ([w].flat() as QuestCond[]).flatMap((c) => c.member?.race !== undefined ? [`member's race ${c.member.race}`] : []);
+}
+
 export function quests(): void {
   // A flag owed to an issue counts as real until that issue sets it, and only then.
   const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])));
   for (const [f, whose] of Object.entries(UNSET)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
   ok(!condFaults({ flag: Object.keys(UNSET)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
     'a flag owed to an issue names something real, and one nobody sets or owes does not');
+  ok(fleeting({ member: { race: 'orcblood' } }).length === 1 && !fleeting({ member: { cls: 'paladin', level: 16 } }).length, 'a member\'s race can stop holding, so a journal may not ask it, and the rest of a member may');
   const conds = (w: When): QuestCond[] => [w].flat();
   // Every quest's steps: its own, or its chapters'. Each check reads these, so none passes the one
   // quest without reading a chapter.
@@ -102,7 +112,7 @@ export function quests(): void {
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
     // Saltreach's zones hold their steps once its chapter, The Tide Stone, is written (#180).
-    const PLANNED: Record<string, string> = { upperwater: '#180', delta: '#180', saltings: '#180', wrackholm: '#191', eaves: '#204', lanternwood: '#204' };
+    const PLANNED: Record<string, string> = { upperwater: '#180', delta: '#180', saltings: '#180', wrackholm: '#191' };
     const built = new Set(AREAS.map((a) => a.id as string));
     for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
       const msg = `zone ${z.id} holds a step of the one quest`;
@@ -110,10 +120,20 @@ export function quests(): void {
       else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
     // An area listed by its first map before its chapter is written: the chapter is owed by its issue.
-    const CHAPTER_OWED: Record<string, string> = { saltreach: '#180', wrackholm: '#191', sunderwood: '#204' };
+    const CHAPTER_OWED: Record<string, string> = { saltreach: '#180', wrackholm: '#191' };
     const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
     ok(AREAS.every((a) => a.chapter || CHAPTER_OWED[a.id]) && !walks.length, `every area has a chapter of the one quest, or owes it, and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
     for (const a of AREAS.filter((x) => CHAPTER_OWED[x.id])) owed(!!a.chapter, `${a.id} has a chapter of the one quest`, CHAPTER_OWED[a.id]);
+    // Act II read end to end (#204): the Wall is begun by the Tide Ship's papers until Wrackholm's
+    // chapter names its done flag, and Sunderwood's walkthrough puts the papers in the bag by hand
+    // (`fromTheTideShip`) until that chapter is written to carry them from the ship.
+    const wall = THE_QUEST.chapters.find((c) => c.id === 'wall'), wrack = AREAS.find((a) => a.id === 'wrackholm')?.chapter as Chapter | undefined;
+    const flagsOf = (w: When): string[] => conds(w).flatMap((k) => [k.flag ?? []].flat());
+    owed(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
+      'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up', '#191');
+    const seeds = readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8').includes('fromTheTideShip(');
+    ok(!wrack || !seeds, 'with Wrackholm\'s chapter written, Sunderwood\'s walkthrough puts no papers in the bag by hand, and plays the Wall on from it');
+    owed(!!wrack && !seeds, 'the act walks end to end: the log shows Act II in three chapters, and the Wall is played on from Wrackholm\'s chapter with the papers carried from the Tide Ship', '#191');
   }
   { // A chapter too long for one page goes on over the next, and keeps every entry.
     const c = THE_QUEST.chapters[0];
@@ -180,6 +200,8 @@ export function quests(): void {
       for (const k of [c.start, ...c.entries.map((e) => e.when)].flatMap(conds)) if (k.item && (handedIn.has(k.item) || Math.floor(ITEMS[k.item].price / 2) > 0)) lost.add(`${k.item}, which can be taken`);
     }
     ok(!lost.size, `${id}: nothing in the log vanishes when an item leaves the party${lost.size ? ' -> ' + [...lost].join(', ') : ''}`);
+    const gone = [c.start, ...(c.done ? [c.done] : []), ...c.entries.map((e) => e.when)].flatMap(fleeting);
+    ok(!gone.length, `${id}: nothing in the log is keyed to what can stop holding, as a member's race${gone.length ? ' -> ' + gone.join(', ') : ''}`);
   });
   { // The one quest in two chapters, with the side quests beside it as quests of their own.
     const s = fresh();
@@ -264,8 +286,10 @@ export function quests(): void {
     ok(news() === 'Quest log updated: The Dimming.' && /Henlys/.test(goal()), `Sylvane's pay sends the company south to the treaty (${goal()})`);
     world.travel('deepthorn_i4', 9, 9, 0); world.eventsHere(); // the treaty's seal, in Henlys's hall
     const end = news();
-    ok(end.startsWith('Chapter complete: The Grove Stone. Quest complete: The Dimming.') && quest(THE_QUEST.id).done && log().filter((v) => v.done).length === 2,
-      `the last chapter's end, the seal seen, finishes the one quest; it and the Cargo Ledger are done (${end})`);
+    // The quest ends here only while the Grove is its last chapter.
+    const last = THE_QUEST.chapters.at(-1)!.id === 'grove';
+    ok(end.startsWith('Chapter complete: The Grove Stone.') && chapter('grove').done && quest('greywater').done && quest(THE_QUEST.id).done === last && end.includes(`Quest complete: ${THE_QUEST.title}.`) === last,
+      `the seal seen ends the Grove's chapter, and the one quest only if no chapter follows; the Cargo Ledger is done (${end})`);
     const expedition = quest('meridian');
     ok(!expedition.done && /Meridian/.test(expedition.goal ?? '') && expedition.pages[0].entries.length === 1, `and the Lost Expedition stays open with a goal, its trail not built yet (${expedition.goal})`);
   }

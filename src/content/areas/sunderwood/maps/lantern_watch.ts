@@ -4,7 +4,8 @@
 // prior's room, where the papers are read, and the Lamp Gallery at the top, which trains to 17. No
 // temple: the shrine at Sunderfall cures. Prior Osric keeps the lamp in the yard; Hester Dunmore, the
 // Watch's Reader, sits in his room; Wouter Brink of the Cartographers sights the gorge from the west
-// wall. docs/areas/sunderwood.md §4.8 is its brief.
+// wall. By day, once the papers are read and the wall touched, Vask waits at the gate (#204).
+// docs/areas/sunderwood.md §4.8 is its brief.
 import type { MapDef, Words } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
@@ -13,25 +14,29 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
  * plainly or, to a company that found the letter under L2's ash, knowing it has been on the knoll.
  * Each holds only once she has met the company (`MET`), so her introduction always comes first; the
  * papers only and the log only stand before both, so whichever is carried alone finds its own.
+ * Each sets what it read beside the midpoint's flag, `seal_read` or `log_read`, for the chapter.
  */
 const MET = 'watch_reader_met', PRIOR_MET = 'watch_prior_met';
 const SEAL = '"The Helmstow customs seal on every cargo, the same as on the crates in the caves. Under it on every page a countersign. The Regent\'s."';
 const READINGS = [
-  { has: 'ships_papers', not: 'ships_log', plain: 'She sees the papers before she sees you, and gets up, and shuts the door herself. "Sit." She lays them open under the window.',
+  { has: 'ships_papers', not: 'ships_log', sets: ['papers_read', 'seal_read'], plain: 'She sees the papers before she sees you, and gets up, and shuts the door herself. "Sit." She lays them open under the window.',
     knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and lays the papers open under the window.',
     read: [`${SEAL} She puts them back in your hands.`] },
-  { has: 'ships_log', not: 'ships_papers', plain: 'She sees the log before she sees you, and gets up, and shuts the door herself. "Sit." She opens it under the window.',
+  { has: 'ships_log', not: 'ships_papers', sets: ['papers_read', 'log_read'], plain: 'She sees the log before she sees you, and gets up, and shuts the door herself. "Sit." She opens it under the window.',
     knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and opens the log under the window.',
     read: ['"The log is a clerk\'s cipher. I know it." At the foot of each entry, in another ink, one name: Vask. She puts it back in your hands.'] },
-  { has: 'ships_papers', plain: 'She sees what you carry before she sees you, and gets up, and shuts the door herself. "Sit." Papers and log go open under the window.',
+  { has: 'ships_papers', sets: ['papers_read', 'seal_read', 'log_read'], plain: 'She sees what you carry before she sees you, and gets up, and shuts the door herself. "Sit." Papers and log go open under the window.',
     knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and lays papers and log open under the window.',
     read: [SEAL, '"The log is a clerk\'s cipher. I know it." At the foot of each entry, the other ink, one name: Vask. She puts both back in your hands.'] },
 ];
 const reading = (knoll: boolean): Words[] => READINGS.map((r) => ({
   after: { flag: MET, item: r.has, ...(knoll ? { seen: 'lanternwood_l2:l2_letter' } : {}) },
   ...(r.not ? { until: { item: r.not } } : {}),
-  sets: 'papers_read', lines: [knoll ? r.knoll : r.plain, ...r.read],
+  sets: r.sets, lines: [knoll ? r.knoll : r.plain, ...r.read],
 }));
+
+/** Where Vask is: the papers read and the wall touched, by day, until he has his answer. */
+const VASK_HERE = { after: { flag: 'papers_read', seen: 'the_sunder2:su2_wall' }, until: { flag: 'q_salt_done' }, when: { hours: 'day' } } as const;
 
 export const LANTERN_WATCH: MapDef = {
   id: 'lantern_watch',
@@ -105,6 +110,28 @@ export const LANTERN_WATCH: MapDef = {
       '"Brink. Wouter. The Guild\'s. The bridge is four hundred and twelve feet, near enough. The gorge has no near enough. My line ran out before the bottom did."',
       '"The ledges are mine, on the prior\'s wall. Below the last I ruled a line. I had nothing else to put there." He goes back to the rod.',
     ] },
+    // Vask at the gate (#204): once the papers are read and the wall touched, by day, the nearest the
+    // clock gives to the next morning. His question is the act's turn: either answer ends it, and
+    // sets its own flag and nothing else. He is gone once answered.
+    { kind: 'npc', x: 6, y: 14, name: 'Lord Aumery Vask, Regent-Warden', flag: 'q_vask_rain', ...VASK_HERE, lines: [
+      'Lord Vask stands on the grass by the gate, bareheaded, the rain running off him unregarded. Behind him two Wardens hold three horses, and look at nothing.',
+      '"You\'ve read the papers. Good. Then you know half of what I know."',
+      '"The rest is this. The world is a cage, and the Hearth is its lock. Beyond the sky there is somewhere else, somewhere real, and I mean to open the door."',
+    ], choice: { ask: '"Help me. You\'ve touched that wall. You know I\'m right."', answers: [
+      { label: 'We\'ll help you.', sets: ['q_vask_yes', 'q_salt_done'], says: [
+        'He hears it, and looks at you a moment longer than the words needed. "Good. Then go home, and keep out of the rain. I don\'t need you for this part."',
+        '"I have the girl." He takes the reins from the Warden, and the three of them ride out of the gate, and the rain closes behind them.',
+      ] },
+      { label: 'No.', sets: ['q_vask_no', 'q_salt_done'], says: [
+        'He does not seem surprised. "Then stay out of my way. I don\'t need you. I have the girl."',
+        'He takes the reins from the Warden without looking for them, mounts, and is gone through the gate; the two go after.',
+      ] },
+    ] } },
+    // The gate's line on either square of the road in, said once whichever is walked.
+    ...([[7, 'lw_vask', 'lw_vask_e'], [8, 'lw_vask_e', 'lw_vask']] as const).map(([x, id, other]) => ({
+      kind: 'event' as const, x, y: 13, id, once: true, ...VASK_HERE, until: [VASK_HERE.until, { seen: `lantern_watch:${other}` }],
+      text: 'Rain. Three horses at the gate, two Wardens holding them, and a man standing in the wet as if it were not raining.',
+    })),
     { kind: 'event', x: 7, y: 14, id: 'lw_gate', once: true, text: 'Lantern Watch: one tower in a walled yard over the gorge, and a lamp at the top lit in daylight. Moth dust lies on the step like flour.' },
     { kind: 'sign', x: 8, y: 14, text: 'Lantern Watch. The hall, the refectory, the stores. Lamp oil, bread and a bed.' },
     { kind: 'event', x: 9, y: 9, id: 'lw_lamp_night', when: { hours: 'night' }, text: 'The yard by night. Under the lamp the moths go up in one grey column, close enough to touch, and none comes down.' },

@@ -3,8 +3,15 @@
 // area's first box lists it (#457).
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
+/**
+ * The Iron Fells' line held at M2's east edge, a seed a square down x 424 from the rim at y 33 to 61: a
+ * laid map seeds the zones' walk from every square of it, so without these Lanternwood would run on
+ * from M2 into the Fells (#202, #429).
+ */
+const HELD_AT_M2: [number, number][] = Array.from({ length: 29 }, (_, i): [number, number] => [424, 33 + i]);
+
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], seeds: [[432, 50], [414, 66]] },
+  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], seeds: [[432, 50], [414, 66], ...HELD_AT_M2] },
   { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], seeds: [[452, 120], [470, 160]] },
   { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [17, 18], seeds: [[408, 160], [404, 140]] },
 ];

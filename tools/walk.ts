@@ -187,9 +187,12 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
 /** Every goal a run of `playChapter` has come to, in this process. */
 const WALKED = new Set<string>();
 
-/** Every goal of every chapter came up in some run: none is words no company is ever shown. */
-export function everyGoalWalked(ok: Ok): void {
-  const missed = THE_QUEST.chapters.flatMap((c) => c.goals.filter((g) => !WALKED.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
+/**
+ * Every goal of every chapter given came up in some run: none is words no company is ever shown. An
+ * area's walkthrough gives its own chapters, as a later area's goals are walked after it.
+ */
+export function everyGoalWalked(ok: Ok, chapters: readonly Chapter[] = THE_QUEST.chapters): void {
+  const missed = chapters.flatMap((c) => c.goals.filter((g) => !WALKED.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
   ok(!missed.length, `every goal of the one quest comes up in a run${missed.length ? ' -> ' + missed.join('; ') : ''}`);
 }
 
@@ -202,12 +205,18 @@ export function goalFromBegun(w: Walk, how: string): void {
   w.ok(i >= 0 && i <= last, `${how}: the goal comes from no chapter past the last begun (${v.goal})`);
 }
 
-/** The entries written, by chapter, and every end said once: what an order of play must end with. */
-export function ending(w: Walk, how: string): string[] {
-  const v = quest(w);
-  w.ok(!!v?.done && v.goal === null, `${how}: the quest is done, with no goal`);
-  const ends = [...THE_QUEST.chapters.map((c) => `Chapter complete: ${c.title}.`), `Quest complete: ${THE_QUEST.title}.`];
-  const twice = ends.filter((e) => w.news.filter((n) => n === e).length !== 1);
-  w.ok(!twice.length && w.news.filter((n) => n === `New quest: ${THE_QUEST.title}.`).length === 1, `${how}: the quest begins once, and each chapter's end and the quest's is said once${twice.length ? ' -> ' + twice.join(' ') : ''}`);
-  return (v?.pages ?? []).flatMap((p) => p.entries.map((e) => `${p.def.id}.${e.id}`)).sort();
+/**
+ * The entries written, by chapter, and every end said once: what an order of play must end with.
+ * Given `upTo`, it ends there: the chapters to it are done and each end said once, and the quest's
+ * own end is said only if no chapter comes after it.
+ */
+export function ending(w: Walk, how: string, upTo?: Chapter): string[] {
+  const v = quest(w), n = upTo ? THE_QUEST.chapters.indexOf(upTo) + 1 : THE_QUEST.chapters.length;
+  const upto = THE_QUEST.chapters.slice(0, n), last = n === THE_QUEST.chapters.length, end = `Quest complete: ${THE_QUEST.title}.`;
+  if (last) w.ok(!!v?.done && v.goal === null, `${how}: the quest is done, with no goal`);
+  else w.ok(n > 0 && upto.every((c) => v?.pages.some((p) => p.def === c && p.done)) && !v?.done, `${how}: the quest is done to ${upTo?.title}, and goes on`);
+  const ends = [...upto.map((c) => `Chapter complete: ${c.title}.`), ...(last ? [end] : [])];
+  const twice = [...ends.filter((e) => w.news.filter((x) => x === e).length !== 1), ...(last ? [] : [end].filter((e) => w.news.includes(e)))];
+  w.ok(!twice.length && w.news.filter((x) => x === `New quest: ${THE_QUEST.title}.`).length === 1, `${how}: the quest begins once, and each chapter's end${last ? ' and the quest\'s' : ` to ${upTo?.title}`} is said once${twice.length ? ' -> ' + twice.join(' ') : ''}`);
+  return (v?.pages ?? []).filter((p) => upto.includes(p.def as Chapter)).flatMap((p) => p.entries.map((e) => `${p.def.id}.${e.id}`)).sort();
 }
