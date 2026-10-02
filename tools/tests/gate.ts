@@ -7,7 +7,9 @@
 // until it holds.
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
-import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
+import { ATLAS, ITEMS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
+import type { ItemDef } from '../../src/game/items.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
 import { rest } from '../../src/game/party.ts';
@@ -249,6 +251,23 @@ function road(groups: readonly EncounterDef[], level: number): number {
 }
 
 export function gate(): void {
+  // The gate's company plays a member's resistance (#555): the bearer of a charm against cold takes
+  // less from a frost-caster's spells, and the rest what they took without it.
+  {
+    const charm: ItemDef = { id: 'test_gate_charm', name: 'Frost Charm', slot: 'none', price: 0, resist: ['cold'] };
+    ITEMS[charm.id] = charm;
+    const frost: MonsterDef = { ...MONSTERS.bandit, id: 'test_gate_frost', name: 'Frost Adept', plural: 'Frost Adepts', hp: 400, level: 10, cast: { spells: ['killing_frost'], chance: 1 } };
+    const taken = (carry: boolean): number[] => {
+      const p = gateCompany(12, 7);
+      for (const c of p.members) c.hp = c.maxHp = 9999;
+      if (carry) p.members[0].pack.push(charm.id);
+      gateFight(p, [frost], 7, 3);
+      return p.members.map((c) => 9999 - c.hp);
+    };
+    const bare = taken(false), held = taken(true);
+    ok(bare[0] > 0 && held[0] < bare[0] && held[0] >= bare[0] / 2 && held.slice(1).join() === bare.slice(1).join(), `the gate's company plays a resistance: its bearer takes ${held[0]} from a frost-caster's spells, against ${bare[0]} without`);
+    delete ITEMS[charm.id];
+  }
   // A figure inside its aim passes; one between its aim and its limit passes and is listed; one past
   // its limit fails. Probed either side of whatever the aim and the limit are, so the pilot may move them.
   {

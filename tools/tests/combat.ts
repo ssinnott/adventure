@@ -3,7 +3,7 @@
 // drain, and a hit that wakes a sleeper (#161).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
-import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult } from '../../src/game/party.ts';
+import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
@@ -522,6 +522,34 @@ function pastTen(): void {
       else partyAct(s, q, r, { type: 'defend' });
     }
     ok(refused && cast && s.glass?.element === 'cold' && s.log.includes('Maren casts Lampglass. The glass dims the cold.'), 'Lampglass asks against what, and dims it');
+  }
+  // A member's own resistance (#555): an item worn, or a slotless one in their pack, halves its
+  // element as Lampglass does, and the two together still halve it once.
+  {
+    const charm = { id: 'test_frost_charm', name: 'Frost Charm', slot: 'none' as const, price: 0, resist: ['cold' as const] };
+    const coat = { id: 'test_frost_coat', name: 'Frost Coat', slot: 'armor' as const, price: 0, ac: 1, resist: ['cold' as const] };
+    ITEMS[charm.id] = charm; ITEMS[coat.id] = coat;
+    const frost: MonsterDef = { ...MONSTERS.bandit, id: 'test_frost', name: 'Frost Adept', plural: 'Frost Adepts', level: 10, cast: { spells: ['killing_frost'], chance: 1 } };
+    const chill = (dress: (q: Party) => void, glass = false): number[] => {
+      const r = makeRng(71), q = defaultParty(r);
+      for (const c of q.members) c.hp = c.maxHp = 999;
+      dress(q);
+      const s = startCombat(q, [{ id: 'a', monsters: [frost] }], r);
+      if (glass) s.glass = { element: 'cold', rounds: 5 };
+      untilActs(s, q, 72, 0);
+      return q.members.map((c) => 999 - c.hp);
+    };
+    const bare = chill(() => {}), half = (d: number[]): number[] => d.map((x) => Math.ceil(x / 2));
+    const carried = chill((q) => { q.members[0].pack.push(charm.id); });
+    const worn = chill((q) => { equip(q.members[1], coat.id); });
+    const unworn = chill((q) => { q.members[1].pack.push(coat.id); });
+    const bagged = chill((q) => { q.bag.push(charm.id); });
+    const glass = chill(() => {}, true), both = chill((q) => { q.members[0].pack.push(charm.id); }, true);
+    ok(bare[0] > 1 && carried[0] === half(bare)[0] && carried.slice(1).join() === bare.slice(1).join(), `a member carrying a charm against cold takes half from a cold spell, the rest whole (${carried[0]} against ${bare[0]})`);
+    ok(worn[1] === half(bare)[1] && (() => { const c = defaultParty(makeRng(73)).members[1]; equip(c, coat.id); c.pack.push(charm.id); return resists(c).join() === 'cold'; })(), `armour against cold halves it worn (${worn[1]} against ${bare[1]})`);
+    ok(unworn.join() === bare.join() && bagged.join() === bare.join(), 'armour in the pack and a charm in the bag resist nothing');
+    ok(glass.join() === half(bare).join() && both.join() === glass.join(), `under Lampglass a member with a resistance to the same element still takes half, not a quarter (${both[0]} against ${glass[0]})`);
+    delete ITEMS[charm.id]; delete ITEMS[coat.id];
   }
   // Cleansing Light and Greening on everyone; Absolve on stone and curse.
   {

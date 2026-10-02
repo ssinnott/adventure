@@ -4,8 +4,8 @@ import type { RngInstance } from '../lib/engine/rng.ts';
 import { item } from './items.ts';
 import { ITEMS } from '../content/index.ts';
 import type { ItemDef } from './items.ts';
-import { spellsFor } from './spells.ts';
-import type { SpellList } from './spells.ts';
+import { spellsFor, ELEMENTS } from './spells.ts';
+import type { SpellList, Element } from './spells.ts';
 
 export type Stat = 'might' | 'intellect' | 'personality' | 'endurance' | 'accuracy' | 'speed' | 'luck';
 export const STATS: readonly Stat[] = ['might', 'intellect', 'personality', 'endurance', 'accuracy', 'speed', 'luck'];
@@ -312,6 +312,15 @@ export function hasTrait(c: Character, t: TraitId): boolean { return CLASSES[c.c
 /** Whether race or class keeps the condition off entirely. */
 export function immuneTo(c: Character, k: Condition): boolean {
   return !!RACES[c.race].resist?.includes(k) || CLASSES[c.cls].traits.some((t) => TRAITS[t].immune?.includes(k));
+}
+/**
+ * The elements a member takes half from (#555): those of what they wear, and of a slotless item in
+ * their own pack. Armour in the pack is not worn, and the bag is nobody's. In ELEMENTS' order.
+ */
+export function resists(c: Character): Element[] {
+  const worn = [c.equipment.weapon, c.equipment.armor, c.equipment.shield].filter((id): id is string => !!id);
+  const ids = [...worn, ...c.pack.filter((id) => item(id).slot === 'none')];
+  return ELEMENTS.filter((el) => ids.some((id) => item(id).resist?.includes(el)));
 }
 export function addCondition(c: Character, k: Condition): void {
   if (immuneTo(c, k)) return;
