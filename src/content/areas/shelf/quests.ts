@@ -39,7 +39,9 @@ export const QUESTS: readonly QuestDef[] = [
     id: 'bell',
     title: 'The Bell That Rang Twice',
     start: { flag: 'q_bell' },
-    done: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }],
+    // After Act II the Chapel is shut and Osmund gone to the Watch, so an unanswered bell ends at its
+    // door, once the notice is read (#157).
+    done: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }, { flag: 'q_bell', seen: 'harrow:chapel_shut' }],
     entries: [
       { id: 'osmund', when: { flag: 'q_bell' },
         text: 'Osmund, sexton of the Chapel, wants a name for his book: whoever rang the Queen\'s death bell at midnight, hours before anyone knew she was dead.' },
@@ -53,8 +55,12 @@ export const QUESTS: readonly QuestDef[] = [
         text: 'We gave Osmund her name for his book. The Wardens will want her at the keep.' },
       { id: 'kept', when: { flag: 'q_bell_kept' },
         text: 'We told Osmund we could not find out. He wrote RANG ITSELF, and shut the book.' },
+      { id: 'shut', when: { flag: 'q_bell', seen: 'harrow:chapel_shut' },
+        text: 'We came home to the Chapel boarded and the sexton gone to Lantern Watch, his book with him.' },
     ],
     goals: [
+      // After Act II its witnesses are gone, and the Chapel is where it ends (#157).
+      { when: { flag: ['q_bell', 'q_salt_done'] }, text: 'Go back to Osmund at the Chapel and tell him whose hand was on the rope, or that we could not find out.' },
       { when: { flag: 'q_bell_ebba' }, text: 'Tell Osmund at the Chapel whose hand was on the rope, or that we could not find out.' },
       { when: { flag: ['q_bell_boats', 'q_bell_wall'] }, text: 'Someone in grey went down towards the Gilded Eel that night. Ask there.' },
       { when: { flag: 'q_bell' }, text: 'Ask in Helmstow who rang the bell: at the Gilded Eel, and on the wall by the Chapel.' },
@@ -66,7 +72,7 @@ export const QUESTS: readonly QuestDef[] = [
     id: 'survey',
     title: 'The Rest of the Survey',
     start: [{ seen: 'shelf:survey_ring' }, { flag: 'q_survey' }, { flag: 'q_ailith' }],
-    done: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }],
+    done: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }, { flag: 'q_survey_watch' }],
     entries: [
       { id: 'ebba', when: { flag: 'q_survey' },
         text: 'Ebba, a Lantern adjunct, says four of the survey team went south before the Queen died, and one lies dead under Ashcombe. She wants word of Ailith, who would hide in a wood.' },
@@ -78,8 +84,12 @@ export const QUESTS: readonly QuestDef[] = [
         text: 'We sent Ailith home to the Chapel in Helmstow.' },
       { id: 'thornhold', when: { flag: 'q_survey_thornhold' },
         text: 'We sent Ailith over the Scarth to Thornhold, where nobody is looking for her.' },
+      { id: 'watch', when: { flag: 'q_survey_watch' },
+        text: 'We sent Ailith over the Sunder to Lantern Watch, where the Lanterns have gone and the sexton\'s book with them.' },
     ],
     goals: [
+      // After Act II the Chapel is shut, and she asks after the Watch in its place (#157).
+      { when: { flag: ['q_ailith', 'q_salt_done'] }, text: 'Tell Ailith where to go: Lantern Watch over the Sunder, or Thornhold over the Scarth.' },
       { when: { flag: 'q_ailith' }, text: 'Tell Ailith where to go: the Chapel in Helmstow, or Thornhold over the Scarth.' },
       { when: { flag: 'q_survey' }, text: 'Look for Ailith in the woods south-west of Helmstow, off the road.' },
       { when: { seen: 'shelf:survey_ring' }, text: 'Find whoever lit the fire-ring in the woods south-west of Helmstow, and hid from its smoke.' },

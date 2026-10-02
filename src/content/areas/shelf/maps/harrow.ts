@@ -1,8 +1,18 @@
 // Helmstow, capital of the Foreland. The party's home town for the slice: inn, temple, shop, guild,
-// trainer and tavern, with the gate south onto the Foreland road and the gatehouse north into the
-// keep's ward (keep.ts), where the Regent-Warden holds court.
+// trainer and tavern, with the gate south onto the Foreland road, the harbour postern beside it and
+// the gatehouse north into the keep's ward (keep.ts), where the Regent-Warden holds court. After Act
+// II it is his city (#157).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+
+const STOCK = ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'lantern_oil', 'rations', 'torch'];
+const DEARER: Readonly<Record<string, number>> = {
+  club: 8, dagger: 18, staff: 12, shortsword: 60, mace: 68, longsword: 180, axe: 135, spear: 90, sling: 23, shortbow: 120, longbow: 300,
+  robe: 15, leather: 90, scale: 330, chain: 750, buckler: 60, shield: 225, potion_heal: 45, antidote: 38, rations: 6, torch: 3,
+};
+const CURFEW = 'The curfew bell, from the Chapel tower: whoever has the rope now hauls it like a bucket.';
+const GATE_WARDENS = 'Wardens on the wall-walk and Wardens inside the gate, new faces all of them. They look you over slowly, the way men do who have nothing else to look at.';
+const POSTERN_WARDENS = 'Wardens on the wall above the postern, grey against the grey. None of them looks down; a fish cart is not their business, and nor, it seems, are you.';
 
 export const HARROW: MapDef = {
   id: 'harrow',
@@ -26,32 +36,67 @@ export const HARROW: MapDef = {
     '#,BBB,,==,,BBB,#',
     '#,BDB,,==,,BDB,#',
     '#,,,,,,==,,,,,,#',
-    '#######==#######',
+    '#######==####,##',
   ],
   exits: [
     { x: 7, y: 15, to: 'shelf', tx: 16, ty: 4, tf: SOUTH, label: 'You leave Helmstow by the south gate.' },
     { x: 8, y: 15, to: 'shelf', tx: 16, ty: 4, tf: SOUTH, label: 'You leave Helmstow by the south gate.' },
+    // The harbour postern (#157), by the Gilded Eel: open in both cities, and the way in for a company
+    // the south gate turns back after Act II.
+    { x: 13, y: 15, to: 'shelf', tx: 18, ty: 4, tf: SOUTH, label: 'You leave Helmstow by the harbour postern, the way the fish carts go down to the boats.' },
     { x: 7, y: 0, to: 'keep', tx: 7, ty: 8, tf: NORTH, label: 'You pass under the gatehouse into the keep\'s ward.' },
     { x: 8, y: 0, to: 'keep', tx: 8, ty: 8, tf: NORTH, label: 'You pass under the gatehouse into the keep\'s ward.' },
   ],
   features: [
-    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn' },
-    { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel' },
-    { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'lantern_oil', 'rations', 'torch'], interior: 'harrow_provisioner' },
+    // After Act II (`q_salt_done`, #157) Helmstow is Vask's: the inn and the stores come back dearer on
+    // their squares, the Chapel shuts with a notice on its door and the Eel's talk is the curfew's.
+    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn', until: { flag: 'q_salt_done' } },
+    { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 18, interior: 'hearthlight_inn', after: { flag: 'q_salt_done' } },
+    { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel', until: { flag: 'q_salt_done' } },
+    { kind: 'event', x: 11, y: 4, id: 'chapel_shut', once: true, after: { flag: 'q_salt_done' },
+      text: 'The Chapel, boarded, a notice under the Regent\'s seal across the boards. Low on the door, in chalk: GONE TO THE WATCH. THE BOOK WITH ME.' },
+    { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, interior: 'harrow_provisioner', until: { flag: 'q_salt_done' } },
+    // Half as much again, but the Lantern Oil, whose forty Mottram names in Oil for the Lamp.
+    { kind: 'shop', x: 4, y: 10, name: "Mottram's Stores", stock: STOCK, prices: DEARER, interior: 'harrow_provisioner', after: { flag: 'q_salt_done' } },
     { kind: 'guild', x: 11, y: 10, name: 'Lantern Guildhall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 50, interior: 'lantern_guildhall', hall: 'lanterns' },
     { kind: 'trainer', x: 3, y: 13, name: 'Warden Drillyard', maxLevel: 6, interior: 'warden_drillyard', hall: 'wardens' },
-    { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', interior: 'gilded_eel', lines: [
+    // The Wardens split quietly (#151, call 5): the captains who back the Queen's cousin keep the
+    // Drillyard and give its work, and the walls are Vask's.
+    { kind: 'npc', x: 3, y: 13, name: 'Captain Ordgar, of the Drillyard', after: { flag: 'q_salt_done' }, flag: 'q_ordgar', lines: [
+      'A captain in Warden grey sits on the drillmaster\'s bench with his sword across his knees. The Crown badge on his sleeve is the old one, and he has not had it cut off.',
+      '"The Drillyard\'s open; the captains give its work. The walls are Vask\'s." He lets the yard\'s noise lower his voice for him. "Same grey, both. Learn the faces."',
+    ], says: [
+      { after: { flag: 'q_ordgar' }, lines: [
+        '"The board\'s there. Take what\'s on it and be back by the bell; I\'ll not have the walls say the Drillyard breaks curfew."',
+      ] },
+    ] },
+    { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', interior: 'gilded_eel', until: { flag: 'q_salt_done' }, lines: [
       'The tavern is loud and smells of eel.',
       'A fisherman, to nobody: "The Hearth stuttered the night the Queen died. I saw it from the boats. Out, and back, and out, like a man blowing on a wick that won\'t take."',
       'A Warden, into his cup: "Something came up out of the Ashcombe farm. Rats first, then worse. Nobody has gone to look, and nobody\'s been told to."',
       'A Lantern adjunct, drunk: "The survey team went south-west a week ago. A week. They should have been back by now. They should have been back."',
       'A dockhand: "Cheap brandy comes out of the caves at Brandy Hole, west end of the beach. Folk who buy it lately don\'t all come back. Captain Hale at the pass wants them cleared."',
     ] },
+    { kind: 'npc', x: 12, y: 13, name: 'The Gilded Eel', interior: 'gilded_eel', after: { flag: 'q_salt_done' }, lines: [
+      'The tavern is half as loud as it was, and dearer, and still smells of eel.',
+      'A fisherman, to nobody: "Thirty years that bell told me when to come in off the water. Now it tells me when to get off the street. Same bell. Different rope."',
+      'A dockhand: "They boarded the Chapel on a Tuesday. Nobody carried anything out but the sexton, and he had a book under his coat, out of the rain. There was no rain."',
+      'A Warden, into his cup: "Ask at the Drillyard if you want paying. Ask on the wall if you want telling. Don\'t ask either one about the other."',
+    ] },
     { kind: 'well', x: 7, y: 6, text: 'The town well. The water tastes faintly of iron.' },
     { kind: 'sign', x: 8, y: 14, text: 'Helmstow. North gate: the keep. South gate: the Foreland road, the farms and the Salt Road.' },
     { kind: 'event', x: 7, y: 14, id: 'harrow_intro', once: true, text: 'Helmstow. The Hearth flickered last night and the Queen is dead. The Regent-Warden is hiring.' },
+    // After Act II: the curfew bell by night on the middle street, the Wardens at the gate and over the
+    // postern on the first step inside each (either square of a pair, once), and the postern's chalk.
+    { kind: 'event', x: 7, y: 6, id: 'curfew_bell', when: { hours: 'night' }, after: { flag: 'q_salt_done' }, text: CURFEW },
+    { kind: 'event', x: 8, y: 6, id: 'curfew_bell2', when: { hours: 'night' }, after: { flag: 'q_salt_done' }, text: CURFEW },
+    { kind: 'event', x: 7, y: 13, id: 'gate_wardens', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:gate_wardens2' }, text: GATE_WARDENS },
+    { kind: 'event', x: 8, y: 13, id: 'gate_wardens2', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:gate_wardens' }, text: GATE_WARDENS },
+    { kind: 'event', x: 12, y: 14, id: 'postern_wardens', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:postern_wardens2' }, text: POSTERN_WARDENS },
+    { kind: 'event', x: 14, y: 14, id: 'postern_wardens2', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:postern_wardens' }, text: POSTERN_WARDENS },
+    { kind: 'sign', x: 13, y: 14, text: 'Chalked over the postern, in a dockhand\'s hand: CARTS DOWN BEFORE THE BELL. Under it, newer and smaller: AND THE REST OF YOU.' },
     // The Bell That Rang Twice and The Rest of the Survey (#77, from #56): Osmund in the Chapel, the
-    // two who saw the bell rung, and Ebba, at the Eel from a new game or, her name kept, in the Chapel.
+    // two who saw the bell rung (all three gone after Act II, #157), and Ebba, at the Eel from a new game or, her name kept, in the Chapel.
     // A words entry keyed to another quest's flag names its person's own hire as well, so it never
     // stands before their first meeting, but for two of Ebba's at the Eel, whose first meeting there
     // is the survey's own start: her confession, which comes before it by design, and her word of
@@ -61,7 +106,7 @@ export const HARROW: MapDef = {
       '"Sexton. Thirty years, and I\'ve rung every hour of them: the dawn, the noon, the dusk, the deaths. A death bell is rung when the Chapel has seen the body. That is the rule, and it is a good one."',
       '"The Queen\'s bell rang at midnight. I was in my bed. She was not found until dawn, when I rang it myself, properly, and it had already been rung. Nobody knew at midnight that she was dead. Nobody but whoever had hold of my rope."',
       '"Find out who. Ask in the town; the Eel hears everything and remembers half of it. I want a name for the book."',
-    ], flag: 'q_bell', says: [
+    ], flag: 'q_bell', until: { flag: 'q_salt_done' }, says: [
       { after: { flag: ['q_bell', 'q_bell_ebba'] }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }], lines: [
         '"Well? My bell rang at midnight, and I want the hand that rang it, for the book."',
       ], choice: { ask: '"Whose was it?"', answers: [
@@ -89,14 +134,14 @@ export const HARROW: MapDef = {
     ] },
     { kind: 'npc', x: 12, y: 13, name: 'the fisherman, at the Gilded Eel', lines: [
       '"Midnight, near enough. I was hauling by it and had to stop with the net half in." He drinks. "The bell? Aye, I heard the bell. I thought it was for the light."',
-    ], flag: 'q_bell_boats', after: { flag: 'q_bell' }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }] },
+    ], flag: 'q_bell_boats', after: { flag: 'q_bell' }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }, { flag: 'q_salt_done' }] },
     { kind: 'npc', x: 14, y: 3, name: 'a Warden on the wall', lines: [
       '"I had the wall by the Chapel that night. The wheel creaked before it rang; that\'s someone on the rope who doesn\'t know it. Six strokes, and a seventh that didn\'t sound. Then the tower door, and someone in grey going down towards the Eel." He shrugs. "Grey\'s grey in the dark. Ours or the Lanterns\', I couldn\'t swear."',
-    ], flag: 'q_bell_wall', after: { flag: 'q_bell' }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }] },
+    ], flag: 'q_bell_wall', after: { flag: 'q_bell' }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }, { flag: 'q_salt_done' }] },
     { kind: 'npc', x: 12, y: 13, name: 'Ebba, a Lantern adjunct', lines: [
       '"The survey team. Four went south a week before the Queen died. I told half the Eel and none of them listened. One\'s dead under Ashcombe, they say, with her wand beside her. That leaves three, and one of them is Ailith, who shared my cell at the Guildhall for six years and can\'t light a fire to save her life."',
       '"If she\'s alive she\'s hiding, and if she\'s hiding it\'s in a wood; she was raised in one. Look south-west along the coast, off the road. Find her, or find where she\'s buried, so I can stop looking at the door."',
-    ], flag: 'q_survey', until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }], says: [
+    ], flag: 'q_survey', until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }, { flag: 'q_salt_done' }], says: [
       { after: { flag: ['q_bell', 'q_bell_boats', 'q_bell_wall'] }, sets: 'q_bell_ebba', lines: [
         'The Lantern adjunct at the corner table has a cup she is not drinking from, and the look of someone who has been waiting for a particular question.',
         '"You\'ve been to the wall and the boats, so you know. Yes. I rang it. Seven for a Queen, and I couldn\'t lift the seventh; my arms had gone. I\'d never touched a bell rope in my life."',
@@ -114,7 +159,7 @@ export const HARROW: MapDef = {
       'Ebba is in the Chapel, sober, trimming lamps. Her hands have stopped shaking; the rest of her has not caught up.',
       '"The sexton wrote \'rang itself\'. He told me so, not looking at me, and gave me the lamps to do. That\'s forgiveness, in a sexton."',
       '"Something for you, since you kept my name. Lord Vask came here the morning after, before the Queen was cold. He didn\'t ask who rang the bell. He asked what hour, to the minute, and whether anyone had counted the light. Everyone in Helmstow was surprised that morning but one man, and he\'s the one holding the city."',
-    ], flag: 'q_ebba_chapel', after: { flag: 'q_bell_kept' }, says: [
+    ], flag: 'q_ebba_chapel', after: { flag: 'q_bell_kept' }, until: { flag: 'q_salt_done' }, says: [
       { after: { flag: ['q_ebba_chapel', 'q_survey_thornhold'] }, lines: [
         '"Thornhold. Good. Elves don\'t hand people over; they just look at you until you leave." She almost laughs. "Six years in one cell and she can\'t light a fire, and she\'s the one who ends up safe. I\'ll take it."',
       ] },

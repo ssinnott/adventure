@@ -2,12 +2,12 @@
 // the game's own moves and checked a step at a time (tools/walk.ts); Thornmark's plays the chain.
 // Then a new company walks out of Helmstow to the Lodestone, and Gytha gives it the lesson, and
 // her later words as Thornhold's news reaches her. Then its side quests, each choice both ways: the
-// log reads true and the people stand where it says.
+// log reads true and the people stand where it says. Last, Helmstow before and after Act II (#157).
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
-import { EAST, SOUTH, WEST } from '../../../game/types.ts';
+import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
 import { MAP_DEFS, MONSTERS } from '../../index.ts';
@@ -96,6 +96,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   sideQuests(ok);
   walkWorth(ok);
+  homecoming(ok);
 };
 
 /**
@@ -584,5 +585,84 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     listen(w);
     w.ok(!!m.choice && w.news.at(-1) === 'New quest: The Rest of the Survey.' && page(w, 'survey')?.goal === 'Tell Ailith where to go: the Chapel in Helmstow, or Thornhold over the Scarth.', `Ailith met first begins The Rest of the Survey, with her question as its goal (${w.news.at(-1)})`);
     w.ok(!!meet(ailith, w.party, heard(w.world, ailith)).choice, 'unanswered, her question is put again');
+  }
+}
+
+// ---- Helmstow between acts (#157) ----
+
+/**
+ * Helmstow before Act II is done and after (`q_salt_done`, which Vask's answer at Lantern Watch sets):
+ * the old city, then the changed one to the default company, whose paladin Idris is orcblood, and
+ * to one without him. The flag is set by hand, since Helmstow's band refuses a company of 16 on the
+ * road (sunderwood.md §9, 6). Either company gets in, and the shops and trainers stay.
+ */
+function homecoming(ok: (cond: boolean, msg: string) => void): void {
+  const business = (w: Walk, x: number, y: number) => { w.world.travel('harrow', x, y, NORTH); const f = w.world.featureHere(); return f && f.x === x && f.y === y ? f : undefined; };
+  const night = (w: Walk, x: number, y: number): string[] => { at(w, 0); w.world.travel('harrow', x, y, NORTH); return w.world.eventsHere(); };
+  const day = (w: Walk, x: number, y: number): string[] => { at(w, 12); w.world.travel('harrow', x, y, NORTH); return w.world.eventsHere(); };
+  const step = (w: Walk, turn?: 'left' | 'right'): string[] => { if (turn) w.world.turn(turn); const r = w.world.move('forward'); return r.kind === 'moved' ? r.messages : [`blocked: ${'reason' in r ? r.reason : ''}`]; };
+  const inn = (w: Walk) => { const f = business(w, 4, 4); return f?.kind === 'inn' ? f.price : 0; };
+  const shop = (w: Walk, id: string) => { const f = business(w, 4, 10); return f?.kind === 'shop' ? priceIn(f, id) : 0; };
+  const bell = (w: Walk) => questLog(w.world.state, w.party).find((v) => v.def.id === 'bell')?.pages[0];
+  const CAPTAIN = (): Person => who('harrow', 3, 13, 'Captain Ordgar');
+  { // The old city: the gate lets Idris in, the Chapel cures, the old Eel and prices, no bell or Wardens.
+    const w = newWalk(ok);
+    w.ok(w.party.members.some((m) => m.race === 'orcblood'), 'the default company has an orcblood member, Idris');
+    walkThrough(w, 'shelf', 16, 4, NORTH, 'harrow');
+    w.ok(w.world.state.x === 7 && w.world.state.y === 14, 'before Act II is done, the south gate lets a company with an orcblood member into Helmstow');
+    const eel = business(w, 12, 13);
+    w.ok(business(w, 11, 4)?.kind === 'temple' && there(w, OSMUND(), 'harrow') && eel?.kind === 'npc' && eel.lines[0] === 'The tavern is loud and smells of eel.', 'the old city: the Chapel open with Osmund in it, and the Eel\'s old talk');
+    w.ok(inn(w) === 12 && shop(w, 'rations') === 4 && shop(w, 'longsword') === 120, `the old city's prices: the inn at 12, rations at 4 and a long sword at 120 (${inn(w)}, ${shop(w, 'rations')}, ${shop(w, 'longsword')})`);
+    w.ok(!night(w, 7, 6).length && !there(w, CAPTAIN(), 'harrow') && !day(w, 7, 13).length, 'the old city: no curfew bell by night, no captain at the Drillyard and no Wardens at the gate');
+    walkThrough(w, 'harrow', 13, 14, SOUTH, 'shelf');
+    walkThrough(w, 'shelf', 18, 4, NORTH, 'harrow');
+    w.ok(w.world.state.x === 13 && w.world.state.y === 14, 'the harbour postern is open both ways in the old city too');
+  }
+  { // The changed city, to a company with Idris in it: turned back at the gate, in by the postern.
+    const w = newWalk(ok);
+    meetWho(w, 'q_bell');
+    w.party.flags.q_salt_done = 1;
+    w.world.travel('shelf', 16, 4, NORTH);
+    const gate = step(w);
+    w.ok(gate[0] === 'blocked: A sergeant steps into the gate: "No orcblood past the gate. Regent\'s orders."' && w.world.zone?.id === 'shelf', `after Act II the sergeant turns back a company with an orcblood member at the south gate (${gate[0]})`);
+    walkThrough(w, 'shelf', 18, 4, NORTH, 'harrow');
+    w.ok(w.world.state.x === 13 && w.world.state.y === 14, 'and the harbour postern lets it in, by the Gilded Eel');
+    const wardens = step(w, 'left'), again = (w.world.travel('harrow', 14, 14, NORTH), w.world.eventsHere());
+    w.ok(wardens.some((m) => m.startsWith('Wardens on the wall above the postern')) && !again.length, 'the Wardens over the postern are said on the first step inside, once');
+    w.ok(business(w, 11, 4)?.kind !== 'temple' && !there(w, OSMUND(), 'harrow') && !there(w, EBBA_EEL(), 'harrow'), 'the Chapel is shut: no cure, no Osmund and no Ebba');
+    see(w, 'harrow:chapel_shut');
+    const rung = bell(w);
+    w.ok(w.world.used('chapel_shut') && !!rung?.done && rung.entries.some((e) => e.id === 'shut') && w.news.includes('Quest complete: The Bell That Rang Twice.'), 'its notice read, an unanswered bell ends at the shut door, and says where the sexton went');
+    const night6 = night(w, 7, 6), day6 = day(w, 8, 6);
+    w.ok(night6.length === 1 && night6[0].startsWith('The curfew bell') && !day6.length && night(w, 7, 6).length === 1, 'the curfew bell rings by night on the middle street, every time, and not by day');
+    const yard = business(w, 3, 13);
+    w.ok(yard?.kind === 'trainer' && there(w, CAPTAIN(), 'harrow'), 'the Drillyard stays, and the cousin\'s captain is in it');
+    const first = hear(w, 'harrow', CAPTAIN()), then = hear(w, 'harrow', CAPTAIN());
+    w.ok(first.startsWith('A captain in Warden grey') && then.startsWith('"The board\'s there.') && wrap(first, SAY_W).length <= SAY_LINES, 'the captain says the walls are Vask\'s, then where the work is');
+    w.ok(inn(w) === 18 && shop(w, 'rations') === 6 && shop(w, 'longsword') === 180 && shop(w, 'lantern_oil') === 40, `the shops stay, dearer: the inn at 18, rations at 6, a long sword at 180, the oil still 40 (${inn(w)}, ${shop(w, 'rations')}, ${shop(w, 'longsword')}, ${shop(w, 'lantern_oil')})`);
+    const eel = business(w, 12, 13);
+    w.ok(eel?.kind === 'npc' && eel.lines[0].startsWith('The tavern is half as loud'), 'the Eel\'s talk is the curfew\'s');
+    walkThrough(w, 'harrow', 7, 14, SOUTH, 'shelf');
+    // The bell's witnesses are gone with Osmund, and Ailith, met now, asks after the Watch, not the Chapel.
+    w.ok(!there(w, FISHERMAN(), 'harrow') && !there(w, WALL(), 'harrow'), 'after Act II the bell\'s witnesses are gone too');
+    const ailith = who('shelf', 2, 14, 'Ailith'), twin = MAP_DEFS.find((d) => d.id === 'shelf')!.features!.filter((f): f is Person => f.kind === 'npc' && f.name === ailith.name)[1];
+    w.ok(!there(w, ailith, 'shelf') && there(w, twin, 'shelf'), 'Ailith in the wood is the one who has heard the Chapel is shut');
+    const m = meet(twin, w.party, heard(w.world, twin)), watch = m.choice?.answers.find((a) => a.label === 'Lantern Watch, over the Sunder.');
+    listen(w);
+    const asked = page(w, 'survey')?.goal ?? '';
+    w.ok(!!watch && !m.choice?.answers.some((a) => a.label.includes('Chapel')) && asked.startsWith('Tell Ailith where to go: Lantern Watch'), `she asks between the Watch and Thornhold, and the goal says so (${asked})`);
+    if (watch) answer(watch, w.party);
+    listen(w);
+    reads(w, 'survey', 'The Rest of the Survey', ['ailith', 'watch'], ['chapel', 'thornhold'], 'Ailith sent to the Watch, after Act II');
+    w.ok(!there(w, twin, 'shelf'), 'and she is gone from the wood');
+  }
+  { // The changed city, to a company with no orcblood member: the gate lets it in, under the Wardens.
+    const w = newWalk(ok);
+    w.party.members.splice(w.party.members.findIndex((m) => m.race === 'orcblood'), 1);
+    w.party.flags.q_salt_done = 1;
+    walkThrough(w, 'shelf', 16, 4, NORTH, 'harrow');
+    w.ok(w.world.state.x === 7 && w.world.state.y === 14, 'after Act II the south gate lets a company with no orcblood member in');
+    const wardens = step(w), beside = (w.world.travel('harrow', 8, 13, NORTH), w.world.eventsHere());
+    w.ok(wardens.some((m) => m.startsWith('Wardens on the wall-walk')) && !beside.length, 'and the Wardens at the gate look it over on the first step inside, once');
   }
 }
