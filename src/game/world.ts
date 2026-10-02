@@ -678,8 +678,8 @@ export class World {
   }
 
   /**
-   * Whether a feature is there now. A person, an event or a business wears a presence, as a group
-   * does: there only in its `when`, once its `after` holds and until its `until` does. Everything
+   * Whether a feature is there now. A person, an event, a business, a shrine or a fountain wears a
+   * presence, as a group does: there only in its `when`, once its `after` holds and until its `until` does. Everything
    * else always is, having none.
    */
   present(f: Feature): boolean {

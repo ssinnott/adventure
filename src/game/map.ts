@@ -73,8 +73,12 @@ export type { Interior };
 /** What a statue gives for its riddle's answer: gold, items or a stat point to every member (game/wilds.ts). */
 export interface Gift { gold?: number; items?: string[]; stat?: import('./party.ts').Stat; amount?: number }
 
-/** A shrine's or a fountain's: `amount` (1) of `stat` to every member, once; `done` is said after. */
-interface Blessing { x: number; y: number; id: string; name?: string; text: string; stat: import('./party.ts').Stat; amount?: number; done: string }
+/**
+ * A shrine's or a fountain's: `amount` (1) of `stat` to every member, once; `done` is said after. It
+ * wears a presence, as an event does: out of it, it is not there, and nothing is spent (the Tidefolk's
+ * blessing, there once the Tide Bell is back on its frame, #554).
+ */
+interface Blessing extends Presence { x: number; y: number; id: string; name?: string; text: string; stat: import('./party.ts').Stat; amount?: number; done: string }
 
 /**
  * What every business has: its room, and `hall` where it is also a guild's hall, which gives out

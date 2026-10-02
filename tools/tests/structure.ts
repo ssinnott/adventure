@@ -96,8 +96,8 @@ export function presenceFaults(def: MapDef, maps: readonly MapDef[] = MAP_DEFS):
   ];
   return [
     ...(def.encounters ?? []).flatMap((e) => [...worn(e.id, e), ...(e.until && !e.respawn ? [`${e.id}: until, but it never comes back`] : [])]),
-    // A person or an event wears the same: gone once its until holds, there once its after does.
-    ...(def.features ?? []).flatMap((f) => (f.kind === 'npc' ? worn(`${f.name.split(',')[0]} at ${f.x},${f.y}`, f) : f.kind === 'event' ? worn(f.id, f) : [])),
+    // A person, an event, a shrine or a fountain wears the same: gone once its until holds, there once its after does.
+    ...(def.features ?? []).flatMap((f) => (f.kind === 'npc' ? worn(`${f.name.split(',')[0]} at ${f.x},${f.y}`, f) : f.kind === 'event' || f.kind === 'shrine' || f.kind === 'fountain' ? worn(f.id, f) : [])),
   ];
 }
 
@@ -117,7 +117,7 @@ export function structure(): void {
     const out = respawnsOutOfRange(def);
     ok(!out.length, `${def.id}: every respawn is ${RESPAWN[0]} to ${RESPAWN[1]} minutes${list(out)}`);
     const when = presenceFaults(def);
-    ok(!when.length, `${def.id}: every group's, person's and event's until and after names something real, and none asks for a sky underground${list(when)}`);
+    ok(!when.length, `${def.id}: every group's, person's, event's and blessing's until and after names something real, and none asks for a sky underground${list(when)}`);
   }
   const thornmark = AREAS.find((a) => a.id === 'thornmark')!.maps;
   for (const def of thornmark) {
@@ -182,6 +182,8 @@ export function structure(): void {
     const worn = (f: MapDef['features']): string => presenceFaults({ ...map('mill'), features: f }).join();
     ok(worn([{ kind: 'event', x: 1, y: 1, id: 'fx_lamp', text: 'Dark.', until: { flag: 'no_such_flag' } }, { kind: 'npc', x: 1, y: 1, name: 'Alwin, a fixture', lines: ['Hm.'], after: { seen: 'mill:no_such_event' }, when: { sky: 'fog' } }])
       === 'fx_lamp until: flag no_such_flag,Alwin at 1,1 after: seen mill:no_such_event,Alwin at 1,1: a sky underground', "an event's until and a person's after naming nothing real are refused, and a person's fog underground");
+    ok(worn([{ kind: 'shrine', x: 1, y: 1, id: 'fx_shrine', text: 'You kneel.', stat: 'luck', done: 'Quiet.', after: { flag: 'no_such_flag' } }, { kind: 'fountain', x: 2, y: 1, id: 'fx_fountain', text: 'You drink.', stat: 'speed', done: 'Dry.' }])
+      === 'fx_shrine after: flag no_such_flag', "a shrine's after naming nothing real is refused, as an event's is, and a fountain with no presence passes");
     const tm = map('thornmark');
     ok(riftStillComing(group(tm, 'tm_hounds', { until: undefined })).join() === 'tm_hounds', 'thornmark with tm_hounds coming back past the tear is refused');
     ok(!riftStillComing(group(tm, 'tm_wolves1', { until: undefined })).length, 'and its wolves, no Rift, need no until');
