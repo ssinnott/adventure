@@ -1814,3 +1814,8 @@ road) and #118 (#41's `look`, which closes #41). The four drawing sessions waite
   each with a comment that it is closed on the owner's word with their own play still to come (the
   last line of each Done when), its findings for the area docs' §8. **Phase 1 is closed.** Still
   open and approved outside it: #57 (the bow), put to the owner.
+- 2 October, the owner: "Can you merge anything outstanding?" No open pull requests; main at
+  c192173 (#550, the Acts III and IV plan, merged by the owner). Every branch pushed since 1 October
+  landed through its pull request but this log and `claude/m1-69-d2`, whose last commit (a merge of
+  main) has the tree that landed as #306. Then "this session is totally done": nothing scheduled
+  here, nothing in flight. **The orchestration of Phase 1 ends.**
