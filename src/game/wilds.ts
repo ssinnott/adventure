@@ -60,11 +60,15 @@ export function lookLine(f: Wild): string {
   }
 }
 
-/** The look as the party steps onto one; '' for one spent. */
-export const stepLine = (world: World, f: Wild): string => (f.kind !== 'camp' && world.used(f.id) ? '' : lookLine(f));
+/** The look as the party steps onto one; '' for one spent, or one not there. */
+export const stepLine = (world: World, f: Wild): string => (!world.present(f) || (f.kind !== 'camp' && world.used(f.id)) ? '' : lookLine(f));
 
-/** Kneel at a shrine or drink at a fountain: its stat to every member the first time, its `done` after. */
+/**
+ * Kneel at a shrine or drink at a fountain: its stat to every member the first time, its `done`
+ * after. One out of its presence is not there, says nothing and is not spent.
+ */
 export function useShrine(world: World, party: Party, f: Extract<Wild, { kind: 'shrine' | 'fountain' }>): string[] {
+  if (!world.present(f)) return [];
   if (world.used(f.id)) return [f.done];
   world.markUsed(f.id);
   return [f.text, give(party, giftOf(f)!).join(', ') + '.'];
