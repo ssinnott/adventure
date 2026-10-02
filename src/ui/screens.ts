@@ -14,7 +14,7 @@ import { item, priceIn, buy } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
@@ -248,6 +248,8 @@ export class SheetScreen implements Screen {
     drawText(ctx, 'WEAPON ' + (c.equipment.weapon ? item(c.equipment.weapon).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, 'ARMOUR ' + (c.equipment.armor ? item(c.equipment.armor).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
     drawText(ctx, 'SHIELD ' + (c.equipment.shield ? item(c.equipment.shield).name : 'none'), 20, y, { size: 1, color: TEXT }); y += 10;
+    const res = resists(c);
+    if (res.length) { drawText(ctx, 'RESISTS ' + res.join(', ').toUpperCase(), 20, y, { size: 1, color: TEXT }); y += 10; }
     drawText(ctx, 'TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '), 20, y, { size: 1, color: TEXT }); y += 10;
     if (c.spells.length) { drawText(ctx, 'SPELLS ' + c.spells.map((s) => spell(s).name).join(', '), 20, y, { size: 1, color: TEXT }); }
     // Items column
