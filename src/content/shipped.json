@@ -333,6 +333,15 @@
         "j2_sack_chest",
         "j2_shrine",
         "j2_steading",
+        "j3_cache",
+        "j3_cache_chest",
+        "j3_cairn",
+        "j3_deadwood",
+        "j3_den",
+        "j3_mouth",
+        "j3_mouth_night",
+        "j3_shrine",
+        "j3_track",
         "j4_cairn",
         "j4_cleft",
         "j4_cleft_box",
@@ -390,6 +399,13 @@
         "l2_shrine",
         "lake",
         "lodestone",
+        "m2_cairn",
+        "m2_grave",
+        "m2_grave_chest",
+        "m2_lookout",
+        "m2_lookout_night",
+        "m2_milestone",
+        "m2_shrine",
         "scarth_watch",
         "second_marker",
         "survey_ring",
@@ -520,6 +536,9 @@
         "j2_cave_bears",
         "j2_hounds",
         "j2_moths",
+        "j3_brood",
+        "j3_keepers",
+        "j3_moths",
         "j4_heartwood",
         "j4_owls",
         "j4_rootwalkers",
@@ -540,6 +559,9 @@
         "l2_lamp_moths",
         "l2_tower_moths",
         "lodge_brambles",
+        "m2_bears",
+        "m2_hounds",
+        "m2_moths",
         "marsh_spiders",
         "road_bandits",
         "road_rats",
@@ -582,9 +604,11 @@
         "297,145",
         "308,112",
         "312,32",
+        "317,82",
         "338,59",
         "344,77",
         "365,35",
+        "397,60",
         "48,181",
         "53,140",
         "77,108",
@@ -1069,6 +1093,10 @@
       "at": "296,30",
       "size": "32x32"
     },
+    "eaves_j3": {
+      "at": "296,62",
+      "size": "32x32"
+    },
     "eaves_k2": {
       "at": "328,30",
       "size": "32x32"
@@ -1079,6 +1107,10 @@
     },
     "lanternwood_l2": {
       "at": "360,30",
+      "size": "32x32"
+    },
+    "lanternwood_m2": {
+      "at": "392,30",
       "size": "32x32"
     },
     "saltings_c6": {
@@ -1276,6 +1308,7 @@
     "captains_sword",
     "chain",
     "chain+1",
+    "chain+2",
     "clerks_seal",
     "club",
     "crabshell_buckler",
