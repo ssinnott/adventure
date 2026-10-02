@@ -56,6 +56,11 @@ export interface Exit {
   label?: string;
   /** Party flags that must all be set before the exit opens; `blockedText` says why not. */
   needFlag?: string | readonly string[];
+  /**
+   * Closed while this holds, read afresh at every step, so it opens again once it stops holding
+   * (Helmstow's gate to a company with an orcblood member, #157); `blockedText` says why.
+   */
+  shut?: When;
   blockedText?: string;
 }
 
@@ -73,9 +78,11 @@ interface Blessing { x: number; y: number; id: string; name?: string; text: stri
 
 /**
  * What every business has: its room, and `hall` where it is also a guild's hall, which gives out
- * that guild's quests beside its own trade (game/guilds.ts; DESIGN §8).
+ * that guild's quests beside its own trade (game/guilds.ts; DESIGN §8). It wears a presence, as a
+ * person does: a shut door is one gone `until` a flag, and a twin on its square `after` it is the
+ * business changed (Helmstow after Act II, #157).
  */
-interface Business { x: number; y: number; name: string; interior: Interior; hall?: GuildId }
+interface Business extends Presence { x: number; y: number; name: string; interior: Interior; hall?: GuildId }
 
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
@@ -120,12 +127,14 @@ export type Feature =
   | ({ kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean } & Presence);
 
 /**
- * A cell the party may not step onto until every flag is set: a gated exit whose way on is simply
+ * A cell the party may not step onto until every flag is set, or while `shut` holds: a gated exit whose way on is simply
  * the next cell. The outdoors has these where an exit used to join one zone map to the next.
  */
 export interface Gate {
   x: number; y: number;
-  needFlag: string | readonly string[];
+  needFlag?: string | readonly string[];
+  /** Closed while this holds, as an exit's `shut` is. */
+  shut?: When;
   blockedText?: string;
 }
 

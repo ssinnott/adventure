@@ -369,6 +369,7 @@ export class World {
     if (this.map.at(nx, ny).terrain === 'chasm' && (this.state.float ?? 0) <= 1) return { kind: 'blocked', reason: FLOAT_FAILS };
     const gate = this.map.gateAt(nx, ny) ?? this.map.exitAt(nx, ny);
     if (gate?.needFlag && ![gate.needFlag].flat().every((k) => this.party.flags[k])) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
+    if (gate?.shut && holds(gate.shut, this.state, this.party)) return { kind: 'blocked', reason: gate.blockedText ?? 'The way is closed.' };
     const left = this.zone;
     const messages: string[] = [];
     if (pass === 'unlock') {
@@ -677,12 +678,13 @@ export class World {
   }
 
   /**
-   * Whether a feature is there now. A person or an event wears a presence, as a group does: there
-   * only in its `when`, once its `after` holds and until its `until` does. Everything else always is.
+   * Whether a feature is there now. A person, an event or a business wears a presence, as a group
+   * does: there only in its `when`, once its `after` holds and until its `until` does. Everything
+   * else always is, having none.
    */
   present(f: Feature): boolean {
-    if (f.kind !== 'npc' && f.kind !== 'event') return true;
-    return this.walks(f, f.x, f.y) && !this.ended(f);
+    const p = f as Presence;
+    return this.walks(p, f.x, f.y) && !this.ended(p);
   }
 
   /** Event and sign texts for the party's cell; once-only events are marked used. */

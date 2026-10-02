@@ -12,7 +12,7 @@ import type { Person } from '../../src/game/people.ts';
 import { questLog } from '../../src/game/quests.ts';
 import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
 import type { MapDef, Words, Answer } from '../../src/game/map.ts';
-import { NORTH } from '../../src/game/types.ts';
+import { NORTH, EAST } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { CONTENT, collect } from '../shipped.ts';
 import { condFaults } from './quests.ts';
@@ -328,4 +328,31 @@ function presence(): void {
   world.state.minutes = midnight + 24 * 60;
   const byNight = heardAt(3, 2);
   ok(byDay === '' && !spentByDay && byNight === 'Riders.' && heardAt(3, 2) === '', 'a once-event by night is not heard or spent by day, and is heard once by night');
+  shut();
+}
+
+/** A business that shuts, and its twin after; and a gate shut to a company with a member of a race (#157). */
+function shut(): void {
+  const def: MapDef = {
+    id: 'fx_gate', name: 'Fixture', kind: 'town', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#####'],
+    exits: [{ x: 3, y: 1, to: 'fx_gate', tx: 1, ty: 1, shut: { flag: 'fx_shut', member: { race: 'orcblood' } }, blockedText: 'No orcblood past the gate.' }],
+    features: [
+      { kind: 'temple', x: 1, y: 1, name: 'The Chapel', interior: 'lantern_chapel', until: { flag: 'fx_shut' } },
+      { kind: 'inn', x: 2, y: 1, name: 'The Inn', price: 12, interior: 'hearthlight_inn', until: { flag: 'fx_shut' } },
+      { kind: 'inn', x: 2, y: 1, name: 'The Inn, dearer', price: 18, interior: 'hearthlight_inn', after: { flag: 'fx_shut' } },
+    ],
+  };
+  const rng = makeRng(8), party = defaultParty(rng), world = new World({ fx_gate: new GameMap(def) }, party, rng);
+  const here = (x: number): string | undefined => { world.travel('fx_gate', x, 1, NORTH); return (world.featureHere() as { name?: string } | undefined)?.name; };
+  const east = (): string => { world.travel('fx_gate', 2, 1, EAST); const r = world.move('forward'); return r.kind === 'blocked' ? r.reason : r.kind; };
+  const orc = party.members.some((m) => m.race === 'orcblood');
+  const before = [here(1), here(2), east()].join();
+  party.flags.fx_shut = 1;
+  const after = [here(1), here(2), east()].join();
+  const idris = party.members.splice(party.members.findIndex((m) => m.race === 'orcblood'), 1);
+  const without = east();
+  party.members.push(...idris);
+  ok(orc && before === 'The Chapel,The Inn,moved', `before the flag the business is open and the gate lets a company with an orcblood member through (${before})`);
+  ok(after === ',The Inn, dearer,No orcblood past the gate.', `after it the shut business is gone, its twin stands on its square and the gate is shut to that company (${after})`);
+  ok(without === 'moved', `the same gate lets a company with no orcblood member through (${without})`);
 }

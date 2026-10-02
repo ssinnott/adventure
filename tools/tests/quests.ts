@@ -57,12 +57,22 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
   return bad;
 }
 
+/**
+ * The parts of a condition that can stop holding once they hold: a member's race, which goes when
+ * that member leaves the company. A journal's start, entries and end must stay written, so none may
+ * ask one; a presence or a shut exit may.
+ */
+export function fleeting(w: When): string[] {
+  return ([w].flat() as QuestCond[]).flatMap((c) => c.member?.race !== undefined ? [`member's race ${c.member.race}`] : []);
+}
+
 export function quests(): void {
   // A flag owed to an issue counts as real until that issue sets it, and only then.
   const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])));
   for (const [f, whose] of Object.entries(UNSET)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
   ok(!condFaults({ flag: Object.keys(UNSET)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
     'a flag owed to an issue names something real, and one nobody sets or owes does not');
+  ok(fleeting({ member: { race: 'orcblood' } }).length === 1 && !fleeting({ member: { cls: 'paladin', level: 16 } }).length, 'a member\'s race can stop holding, so a journal may not ask it, and the rest of a member may');
   const conds = (w: When): QuestCond[] => [w].flat();
   // Every quest's steps: its own, or its chapters'. Each check reads these, so none passes the one
   // quest without reading a chapter.
@@ -190,6 +200,8 @@ export function quests(): void {
       for (const k of [c.start, ...c.entries.map((e) => e.when)].flatMap(conds)) if (k.item && (handedIn.has(k.item) || Math.floor(ITEMS[k.item].price / 2) > 0)) lost.add(`${k.item}, which can be taken`);
     }
     ok(!lost.size, `${id}: nothing in the log vanishes when an item leaves the party${lost.size ? ' -> ' + [...lost].join(', ') : ''}`);
+    const gone = [c.start, ...(c.done ? [c.done] : []), ...c.entries.map((e) => e.when)].flatMap(fleeting);
+    ok(!gone.length, `${id}: nothing in the log is keyed to what can stop holding, as a member's race${gone.length ? ' -> ' + gone.join(', ') : ''}`);
   });
   { // The one quest in two chapters, with the side quests beside it as quests of their own.
     const s = fresh();
