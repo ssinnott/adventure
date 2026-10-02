@@ -1,5 +1,14 @@
-// Wrackholm's walkthrough. Its chapter, The Stone Carried Home, is #191's, so for now it walks the
-// built maps as a company the boat has put ashore at 12 (tools/walk.ts): the landing, the gulls'
+// Wrackholm's walkthrough. First its chapter, The Stone Carried Home (#191), played a step at a
+// time (tools/walk.ts) on from Saltreach's runs, which leave the company on the landing. In order:
+// the Foreland, the Grove and the Tide Stone played from a new game; Kelp Hole's crates, east over
+// the moor at 13 and out to the ship by night; the decks at 12, the captain's table, Hale freed and
+// the Warden at 14 for the Stone; and home by the boat and the fen to the plinth, which ends the Tide
+// Stone and this chapter, begins the Wall, lights the Hearth, quiets the fen's Rifts and sets the
+// temples singing. Saltmouth first, the temples not seen: the ship boarded with the table left
+// shut, the Stone home, then back aboard for the papers; and the temples sing though the count goes
+// on below. Hale waits on #156, set by hand where it will be.
+//
+// Then the built maps as a company the boat has put ashore at 12: the landing, the gulls'
 // roof and the cache under it, found by a search and not told, and every group of E6 won at the
 // floor; then up into Kelp Hole, its crews and overseers, the strongbox and the brother by the
 // rows; down to the sea cave, the boy at the black pool and the beast at 14; and out by the flooded
@@ -12,8 +21,12 @@
 // side, and the shard-cut behind it found by a search and not told; the tear, the Warden at 14 and
 // the Stone; and down the hatch to the stair's foot, and back up.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
-import type { Walk } from '../../../../tools/walk.ts';
+import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import type { Step, Walk } from '../../../../tools/walk.ts';
+import { CHAPTER } from './chapter.ts';
+import { CHAPTER as TIDE } from '../saltreach/chapter.ts';
+import { inOrder, saltmouthFirst } from '../saltreach/walkthrough.ts';
+import { stonesRestored } from '../../../game/stones.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { take } from '../../../game/passage.ts';
@@ -39,7 +52,157 @@ function open(w: Walk, map: string, id: string): readonly string[] {
   return c.items;
 }
 
+// ---- the chapter (#191) ----
+
+const E6 = WRACKHOLM_E6, F6 = WRACKHOLM_F6;
+const KITTO = E6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
+const DANDO = F6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
+const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
+const COUNTER = B5.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('a hermit'))!;
+
+/** East over the moor into F6 at 13, and out to the ship in Dando's boat by night. */
+function outToTheShip(w: Walk): void {
+  w.level = 13;
+  walkThrough(w, E6.id, 30, 12, EAST, F6.id, 4);
+  fight(w, `${F6.id}:f6_crew`);
+  clock(w, 23);
+  see(w, `${F6.id}:f6_boats`);
+  w.world.travel(F6.id, DANDO.x, DANDO.y);
+  meet(DANDO, w.party, heard(w.world, DANDO));
+  w.party.gold += DANDO.passage![0].fare;
+  const rowed = take(DANDO.passage![0], w.world, w.party);
+  w.ok(rowed.taken && w.world.state.mapId === TIDE_SHIP.id, 'Dando rows the company out to the ship by night');
+  see(w, `${TIDE_SHIP.id}:ts_aboard`);
+}
+
+/**
+ * The decks at 12, the captain's table opened or left shut, the hold's crew and Hale freed if he is
+ * there, past the elder at the bulkhead door, and the Warden at 14 for the Stone.
+ */
+function theStone(table: boolean): (w: Walk) => void {
+  return (w) => {
+    const ship = TIDE_SHIP, lower = TIDE_SHIP2, hold = TIDE_SHIP3;
+    w.level = 12;
+    for (const g of ship.encounters ?? []) fight(w, `${ship.id}:${g.id}`);
+    walkThrough(w, ship.id, 8, 5, NORTH, lower.id, 2);
+    for (const g of lower.encounters ?? []) fight(w, `${lower.id}:${g.id}`);
+    if (table) { see(w, `${lower.id}:ts2_cabin`); open(w, lower.id, 'ts2_table'); listen(w); }
+    walkThrough(w, lower.id, 4, 9, SOUTH, hold.id, 2);
+    see(w, `${hold.id}:ts3_beam`);
+    fight(w, `${hold.id}:ts3_crew`);
+    if (w.party.flags.q_hale_taken) meetWho(w, 'q_hale_freed');
+    else see(w, `${hold.id}:ts3_last_row`);
+    fight(w, `${hold.id}:ts3_elder`);
+    see(w, `${hold.id}:ts3_forward`);
+    const tear = hold.features!.find((f) => f.kind === 'rift')!;
+    walkThrough(w, hold.id, tear.x, tear.y + 1, NORTH, TIDE_RIFT.map.id, 1);
+    for (const g of (TIDE_RIFT.map.encounters ?? []).filter((e) => !e.id.endsWith('_warden'))) fight(w, `${TIDE_RIFT.map.id}:${g.id}`);
+    w.level = 14;
+    fight(w, `${TIDE_RIFT.map.id}:tide_ship_rift_warden`);
+    open(w, TIDE_RIFT.map.id, 'tide_ship_rift_hoard');
+    listen(w);
+    w.ok(w.party.bag.includes('tide_stone'), 'beside the fallen Warden, the Tide Stone, carried');
+  };
+}
+
+/** Over the side to the shingle, Kitto's boat back to Saltmouth, out by the land gate, and west over the fen to the plinth. */
+function home(w: Walk): void {
+  w.level = 12;
+  walkThrough(w, TIDE_SHIP.id, 5, 9, WEST, F6.id, 1);
+  w.world.travel(E6.id, KITTO.x, KITTO.y);
+  w.party.gold += KITTO.passage![0].fare;
+  const back = take(KITTO.passage![0], w.world, w.party);
+  w.ok(back.taken && w.world.state.mapId === 'saltmouth', 'Kitto takes the company back to Saltmouth\'s quay');
+  walkThrough(w, 'saltmouth', 7, 1, NORTH, 'saltings_c6', 2);
+  walkThrough(w, 'saltings_c6', 26, 1, NORTH, 'delta_c5', 3);
+  walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2);
+  meetWho(w, 'q_tide_home');
+  w.ok(!!w.party.flags.q_tide_home && !w.party.bag.includes('tide_stone'), 'the plinth takes the Stone, and the Stone is home');
+}
+
+/** Back out to the ship for the papers left on the captain's table. */
+function thePapers(w: Walk): void {
+  w.level = 12;
+  w.world.travel('saltmouth', 14, 10);
+  const kitto = MAP_DEFS.find((d) => d.id === 'saltmouth')!.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
+  w.party.gold += kitto.passage![0].fare;
+  take(kitto.passage![0], w.world, w.party);
+  listen(w);
+  w.level = 13;
+  walkThrough(w, E6.id, 30, 12, EAST, F6.id, 4);
+  clock(w, 23);
+  w.world.travel(F6.id, DANDO.x, DANDO.y);
+  w.party.gold += DANDO.passage![0].fare;
+  take(DANDO.passage![0], w.world, w.party);
+  w.level = 12;
+  walkThrough(w, TIDE_SHIP.id, 8, 5, NORTH, TIDE_SHIP2.id, 2);
+  open(w, TIDE_SHIP2.id, 'ts2_table');
+  listen(w);
+  w.ok(w.party.bag.includes('ships_papers') && w.party.bag.includes('ships_log'), 'the papers and the log, off the captain\'s table');
+}
+
+/** The chapter in order: by Kelp Hole's crates out to the ship, the Stone and the table, and home. */
+export const STEPS: readonly Step[] = [
+  { name: 'out to the ship', play: (w) => { walkThrough(w, E6.id, 18, 13, NORTH, SMUGGLERS_COVE.id, 2); see(w, `${SMUGGLERS_COVE.id}:kh1_crates`); walkThrough(w, SMUGGLERS_COVE.id, 12, 13, SOUTH, E6.id, 2); outToTheShip(w); } },
+  { name: 'the Stone', play: theStone(true) },
+  { name: 'home', play: home },
+];
+
+/** The entries written on the chapter's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+/** What the Stone home changes outside the log: the Hearth, the fen's Rifts, the hermit, the porch. */
+function stoneHomeShows(w: Walk, how: string): void {
+  w.ok(stonesRestored(w.world.state, w.party) === 1, `${how}: the Tide Stone home is the Hearth's first step`);
+  const rifts = ['b5_rift_n', 'b5_rift_s', 'c5_rift'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const tears = rifts.map((r) => r.features!.find((f) => f.kind === 'event' && f.id === `${r.id}_tear`)!);
+  w.ok(tears.every((t) => t.kind === 'event' && w.world.ended(t)), `${how}: the fen's Rifts go quiet with the Stone home, their wardens standing`);
+  w.world.travel(B5.id, COUNTER.x, COUNTER.y);
+  w.ok(meet(COUNTER, w.party, heard(w.world, COUNTER)).text.startsWith('"None tonight'), `${how}: the hermit on the hummock counts no lights`);
+  see(w, 'delta_b6:b6_stair_sing');
+  w.ok(w.world.used('b6_stair_sing') && !w.world.used('b6_stair'), `${how}: at the far roof's porch, something sings below`);
+}
+
+/** In order, and with the ship boarded before the temples are seen. */
+function theStoneCarriedHome(ok: (cond: boolean, msg: string) => void): void {
+  const chain = inOrder(ok);
+  goalFromBegun(chain, 'in order, on the isle');
+  playChapter(chain, CHAPTER, STEPS, 'in order');
+  ok(['cove', 'ship', 'hold', 'hale', 'papers', 'stone', 'home'].every((e) => written(chain).includes(e)), `in order, the whole chapter is written (${written(chain).join(', ')})`);
+  const said = chain.news.slice(chain.news.lastIndexOf('Chapter complete: The Tide Stone.'));
+  ok(said.join(' ') === 'Chapter complete: The Tide Stone. Chapter complete: The Stone Carried Home. New chapter: The Wall.', `in order, the plinth ends the Tide Stone and the Stone Carried Home, and begins the Wall (${said.join(' ')})`);
+  const wall = quest(chain)?.goal ?? '';
+  ok(/^Go east through the Eaves/.test(wall), `in order, the Wall's goal is the way east (${wall})`);
+  stoneHomeShows(chain, 'in order');
+  const want = ending(chain, 'in order', CHAPTER);
+
+  // Saltmouth first, the temples not seen: the table left shut, the Stone home, then the papers.
+  const first = saltmouthFirst(ok);
+  playChapter(first, CHAPTER, [
+    { name: 'out to the ship', play: outToTheShip },
+    { name: 'the Stone, the table shut', play: theStone(false) },
+    { name: 'home', play: home },
+    { name: 'the papers', play: thePapers },
+  ], 'Saltmouth first');
+  ok(first.news.includes('Chapter complete: The Tide Stone.') && first.news.at(-1) === 'New chapter: The Wall.', `Saltmouth first, the papers taken end the chapter and begin the Wall (${first.news.slice(-2).join(' ')})`);
+  goalFromBegun(first, 'Saltmouth first, the papers taken');
+  stoneHomeShows(first, 'Saltmouth first');
+  // The temples first seen with the Stone home: the god sings at the apse's stair, though the count
+  // goes on below while the Choirmaster stands.
+  walkThrough(first, 'delta_b6', 16, 12, NORTH, 'drowned_temples', 2);
+  see(first, 'drowned_temples:dt1_stair_sing');
+  ok(first.world.used('dt1_stair_sing') && !first.world.used('dt1_stair') && !first.world.used('dt1_stair_quiet'), 'Saltmouth first, the apse\'s stair sings, and no count comes up it');
+  const tide = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === TIDE)?.entries ?? []).map((e) => e.id);
+  ok(JSON.stringify(tide(first)) === JSON.stringify(['plinth', 'ship']), `Saltmouth first, the Tide Stone holds only what was seen and said (${tide(first).join(', ')})`);
+  const read = written(first).map((e) => `wrack.${e}`).sort();
+  ok(JSON.stringify(read) === JSON.stringify(want.filter((e) => e.startsWith('wrack.') && e !== 'wrack.cove' && e !== 'wrack.hale')), `Saltmouth first, the chapter reads as in order, without the crates and Hale (${read.join(', ')})`);
+
+  everyGoalWalked(ok, [CHAPTER]);
+}
+
 export const walkthrough: Walkthrough = (ok) => {
+  theStoneCarriedHome(ok);
+
   const w = newWalk(ok);
   w.level = 12;
   const e6 = WRACKHOLM_E6, { x, y, facing } = e6.start;
