@@ -69,6 +69,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
   deepthorn: ['deepthorn_j5:j5_eldest'],
   wrackholm: ['smugglers_cove2:kh2_great_devilfish', 'tide_ship_rift:tide_ship_rift_warden'],
+  eaves: ['the_sunder2:su2_warden'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -112,6 +113,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'delta_c5: under': { whose: '#18', at: 1 },
   'c5_rift: under': { whose: '#18', at: 1 },
   'k3_rift: under': { whose: '#18', at: 1 },
+  'the_sunder: under': { whose: '#18', at: 1 },
   'delta_c4: under': { whose: '#18', at: 1 },
   'upperwater_c3: under': { whose: '#18', at: 1 },
   'Saltreach: under': { whose: '#18', at: 1 },

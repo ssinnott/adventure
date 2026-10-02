@@ -12,7 +12,7 @@ main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Six maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
 Sunderfall (#197), K3, the Sunder's mouth (#198), with its Rift, L2, Lanternwood (#200), and Lantern
-Watch, the town behind L2's gate (#201). Its content is
+Watch, the town behind L2's gate (#201); and the Sunder's two levels below K3 (#199). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -142,6 +142,12 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   cairn in the wood north-east of it and a camp south of the road. Four groups: moths with a
   deathshead at the lit lamp by night, sunder hounds on the knoll's path, two deathsheads at the
   tower by night and two glass bears on the road by the river.
+- **The Sunder** (`the_sunder` and `the_sunder2`, dungeon, bands 14–15 and 14–16; #199): in at K3's
+  door, a stair in the rock out onto the east face's ledges, black glass at the first landing, glass
+  threads strung across the drop and one walked to the west face, the gleaners' cache in a cleft and a
+  stair down from the last landing. The floor: dead wood and glass, the river into a crack, the
+  narrows and the Warden of the Sunder, the fallen past it, bare rock with no sound, and the wall,
+  running both ways along the floor; the chalk runs out at a rock fall, and behind it the face is not flat.
 - **Lantern Watch** (`lantern_watch`, town, band 14–16; #201): one tower in a walled yard over the
   gorge, through L2's gate. The Lamp Gallery at the top trains to 17; the prior's room, where the
   Reader of the Watch sits; the stores, the band's step on the ladder; the refectory; and the
@@ -435,6 +441,33 @@ features; the pay shared out over the area (§8).
   +1 and an Ironwood Bow +1 at the Warden's narrows, the ladder's (#399).
 - **Pay.** About 2,350 xp a member.
 
+- **As built** (#199, 1 October): two levels of 32 by 32, hand-built. **The ledges** (`the_sunder`,
+  band 14–15): K3's door opens on a stair cut down in the rock that comes out lower on the east face,
+  onto a ledge a square wide; black glass round the first landing; threads of glass strung across the
+  drop, and one a square wide walked over it to the west face, four glass spiders on it; the west
+  ledge north to the gleaners' cleft, a Plate Mail +2 and 250 gold under their hide, and south past
+  the face chipped to the glass to the last landing and a stair down. **The floor** (`the_sunder2`,
+  band 14–16): dead wood and glass at the ledges' foot, two glass spiders and a glass bear there, the
+  river down the east face into a pool and a crack, two glass bears toward the narrows; the gorge
+  pinched to a square, the Warden of the Sunder in it, the only way on; past it a niche with the fallen
+  and their Flail +1, Ironwood Bow +1 and 300 gold; bare rock and no sound; and the wall, from edge to
+  edge of the map, a strip of floor along its face running both ways into rock fall. It is drawn
+  smooth (`wallStyle: 'smooth'`, #424), the only wall face on the level: the gorge's sides are rock.
+  The step is the brief's line where the floor meets it. The secret: west along the strip a rock fall
+  closes it against the wall, and the chalk's last mark is at its foot; searched from a cleft in it,
+  a gap in the rock opens on a hollow of air beside the wall, and on the wall's face at its back the seam, a
+  hairline that nobody passes, with rows of small scratched marks nobody can read beside it and 200
+  gold and a Sapphire Vial. The gap is drawn as rock until found and as open ground after (#427). The
+  Warden drops the Heart of the Sunder (`sunder_heart`), a keepsake; it never comes back, its death
+  text says nothing closes, and every other group comes back after two days. No group stands within
+  four squares of the wall (the walkthrough holds it); the silence holds the step's and the chalk's
+  events, so the density check passes it with no exception. Density: the ledges 100% within 7, the
+  furthest 6; the floor 99.6%, the furthest 8. At 14 the ledges give 7.14 fights to a rest and the
+  floor 7.85; the floor's groups are won 84.3% at its floor with the Warden pooled, off the aim and
+  inside the limit. The Warden is won 53% at 14 and 95% at 16. Two under, the ledges are owed to #18;
+  the floor is inside its limit (67.7%). As measured the two levels pay 2,704 xp a member and 750
+  gold. What the owner finds by hand goes here when it has been played.
+
 ### 4.7 L2, Lantern Watch's box (#200): core, band 15–16
 
 - **Purpose.** Lanternwood's step: the Lanterns' watchtower across the gorge, the wood round it,
@@ -644,8 +677,9 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   four side quests 900 between them (29 and 30 200 each, 31 and 32 250 each, §6): about 11,500. They were the plan's, 11,800 before the
   side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
   supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
-  when it is built: I2 1,063, J2 1,509, K2 1,072, K3 with its Rift 1,441 and L2 1,396 so far, 6,481
-  against their 6,350, about 130 over. A company should leave the Watch at 16, where the midpoint is, with the Kilns'
+  when it is built: I2 1,063, J2 1,509, K2 1,072, K3 with its Rift 1,441, L2 1,396 and the Sunder
+  2,704 so far, 9,185 against their 8,700, about 485 over: the Sunder's 2,704 against its 2,350 is
+  the rest (#199, §9). A company should leave the Watch at 16, where the midpoint is, with the Kilns'
   floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
@@ -656,8 +690,9 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   turns an Act I company back (#40); the Warden of the Sunder is won about half the time at 14 and
   nearly always at 16.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one, and the Sunder's
-  floor held empty within four squares of the wall (MONSTERS §6.3): the density check's one
-  allowed silence, to be declared when the map is built.
+  floor held empty within four squares of the wall (MONSTERS §6.3). As built (#199) the silence holds
+  no group but two events, so the density check needs no exception; the walkthrough holds the four
+  squares.
 
 ## 9. Decisions
 
@@ -979,3 +1014,52 @@ Decided by delegate for #200, each the owner's to overturn:
     of one name would confuse the log.
 13. **The road's corner is owed to #202:** the atlas runs the road out of L2 through M2's corner into
     M3, which is cut; the four squares where map and atlas disagree wait on M2.
+
+Decided by delegate for #199, each the owner's to overturn:
+
+1. **Four groups and the Warden, not seven and the Warden,** about 2,700 xp a member against the
+   brief's 2,350. The brief's three spider groups, three sunderling groups and a glass bear would pay
+   about 4,100; the Warden alone pays 1,689. The ledges keep one group, four glass spiders on the
+   walked thread; the floor two, two spiders with a glass bear at the ledges' foot and two glass bears
+   toward the narrows. Sunderlings are dropped: K3's Rift holds them, and the black glass stays as a
+   sight. The floor needs two standard groups: with one, its fights at its floor, the Warden pooled in,
+   fall past the limit (76.5%), and smaller groups run past it on fights to a rest. The two levels run
+   about 350 over §8's share and the five boxes with them about 485 over theirs.
+2. **The ledges are banded 14–15 and the floor 14–16,** as Kelp Hole's levels are 12–13 and 12–14:
+   the gate judges a boss at its map's floor, so the floor's 14 has the Warden won about half at 14
+   and nearly always at 16, as #199 asks; and a level banded 15–16 would want a group at 16, which the
+   spiders on the ledges are not. Two under, the ledges are owed to #18 as every Act II box is.
+3. **The Warden's blow is cut by hand,** its hit points kept on MONSTERS §4.4's line (872): 16d8+18
+   won 13% at 14 and 47% at 16; 10d8+10 wins 53% and 95%, as Kelp Hole's Great Devilfish was set.
+4. **The wall is drawn smooth, a systems pull request first (#424):** `wallStyle: 'smooth'`, one face
+   with no join, and a door in it its seam alone. Drawn in courses the wall would be false on the
+   step's own square. The floor's gorge sides are rock and mountain, so the wall is its only wall face.
+5. **The secret is a hollow in the rock fall beside the wall, not a way into it** (the review of
+   #426): the wall is flat and its ways open only to Wenna's palm (STORY), so nothing passes into it.
+   The chalk runs out at the fall's foot; searched from a cleft beside it, a gap opens on a pocket of air
+   whose back is the wall's face, with the seam on it, drawn as a hairline on a wall square nobody
+   walks through, and beside it rows of small marks nobody can read, which are not the knot. The
+   seam's line is said on stepping into the hollow, where it is seen. The find is the sight, with 200
+   gold and a Sapphire Vial so the search pays. A systems pull request first (#427) draws a secret door
+   among rock underground as the rock, and once found as the gap it is, so the smooth style never
+   shows a slab of the wall in the fall.
+6. **The Warden drops the Heart of the Sunder** (`sunder_heart`, slot none, price 0), a keepsake, as
+   K3's Sunder Shard is. No hand-in takes it.
+7. **The threads are walked:** one a square wide, glass ground over the chasm by the level's own
+   legend, the only way from the east face's ledges to the west's, and the spiders on it.
+8. **K3's door becomes the way in,** cut stone on the first landing with an exit, no flag and no lock;
+   K3's walkthrough checks it open.
+9. **The step is the brief's line on the wall's square where the floor meets it.** The chapter's entry
+   that keys on it is #204's; quest 32's surveyor, his flags and his once-event at the wall's end that
+   is not there are #201's and #205's. Only the chalk, his hint, is placed.
+10. **The Warden never comes back and nothing closes:** every other group comes back after two days,
+    the Warden has no `respawn` and its death text says only that nothing closes.
+11. **The finds are the ladder's (#399, #406):** the Plate Mail +2 in the gleaners' cleft on the
+    ledges, the Flail +1 and the Ironwood Bow +1 with the fallen past the narrows.
+12. **The text was drafted in the voice by a separate agent,** and no line names what the wall is.
+13. **The floor has no sky and no rain** (the review of #426): a dungeon draws a vault overhead, so
+    the floor's lines say the faces lean together so high that no sky shows and no rain comes down,
+    rather than open the dungeon's sky, a systems change for one level. The ledges keep their rain:
+    their vault is near black, the night over a gorge.
+14. **K3's step and lookout lines see the way in open,** a way cut into the rock with a stair inside,
+    where they saw a shut door.
