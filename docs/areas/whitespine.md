@@ -456,6 +456,10 @@ shards over the sea.
   (docs/areas/saltreach.md §8). Each box is priced by its fights when it is built, the sum here is
   restated with each, and the curve's row reports what a clear falls short of as owed to #445 until
   the boxes exist. A company that pays the toll forgoes the king's share and keeps its gold.
+  Scaled to the curve, which §9 proposes as the briefs' working figures until each box is built,
+  the shares are J11 2,650, Highcell 3,800, I11 2,350, I10 3,500, I9 2,050, I8 2,200 and the side
+  quests about 1,300: about 17,850. The issues (#499 to #506) carry the first figures until their
+  briefs are settled.
 - **Gold.** Training six members from 22 to 24 costs about 10,800 with today's `trainPrice`, but
   nothing trains here (#443, call 7): the gold goes over the range to Cinderport, which teaches to
   27, and the third prestiges ask quests, not gold (DESIGN §5). The band's price window is 5,000,

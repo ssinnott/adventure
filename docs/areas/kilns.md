@@ -205,13 +205,11 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
 - **Landmarks.** The east road in at 404,70, up through the pines to the trail's head at 410,76 and
   south-east for N3; the first spoil heap by an old adit, walled; a woodcutters' camp; the mountain
   along the north and east, the Fells' first tops.
-- **Points of interest,** about six features and five groups:
-  - a milestone, ANVILHALL 4, LANTERN WATCH 8, counted along the trails at about 13 squares to the
-    unit (docs/areas/saltreach.md §9, #176's 4);
-  - the camp, to rest at (#45), and a woodcutter with a rumour of what the dwarves sell;
-  - a cairn on the shoulder (#45), a shrine of the dwarves' at the adit, a niche with a cold
-    hearth in it (#45);
-  - a lookout west over Lanternwood.
+- **Points of interest,** about six features and five groups: a milestone, ANVILHALL 4, LANTERN
+  WATCH 8, counted along the trails at about 13 squares to the unit (docs/areas/saltreach.md §9,
+  #176's 4); the camp, to rest at (#45), and a woodcutter with a rumour of what the dwarves sell; a
+  cairn on the shoulder (#45) and a shrine of the dwarves' at the adit, a niche with a cold hearth
+  in it (#45); a lookout west over Lanternwood.
 - **Encounters.** Fire beetles on the spoil (two groups, the gentlest, a proposal against the
   roster's Where column, §7); a rock worm in the adit at the box's far end, the group above the
   floor.
@@ -304,11 +302,8 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   crag's back that nothing opens, walls with words on them (#434's 4), and before them the first
   ore-finders' hoard, left where they stopped digging. The hint: the cave floor is worn in a line to
   a blank face, and the scholar's chalk marks stop short of it.
-- **Lines:**
-  - the wall: *Cut into the rock, older than the hall's. The dwarves say it is the first blessing.
-    Read: KEEP CLEAR OF THE DOORS.*
-  - the doors: *Iron, in a row, shut. No handle, no hinge, no sound. Nobody has stood here for a
-    long time.*
+- **Lines:** the wall: *Cut into the rock, older than the hall's. The dwarves say it is the first
+  blessing. Read: KEEP CLEAR OF THE DOORS.*
 - **New here.** A door that is a wall; a trainer in a cave, as Sjonghol's.
 - **Finds.** The hoard: the step's two-hander with a plus (#535), and gold.
 - **Pay.** About 600 xp a member.
@@ -320,14 +315,10 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
 - **Landmarks.** The trail from N3 across the box to 446,118 and the drove road's head; the mine's
   mouth at 440,96, the way into #462, with its headworks, a wheel and a gantry; the miners' camp; the
   rock along the east, the first crags; the wagon yard behind the headworks.
-- **Points of interest,** about nine features and nine groups:
-  - the mouth, and the event at it: the step (§5);
-  - the headworks, and the tally board on it;
-  - the miners' camp, to rest at (#45), and the oldest miner by day when he is not in the hall
-    (#56's 36);
-  - a shrine over the shaft, the miners' blessing (#45), a cairn (#45);
-  - the wagon yard's gate;
-  - a lookout from the gantry.
+- **Points of interest,** about nine features and nine groups: the mouth, and the event at it, the
+  step (§5); the headworks, and the tally board on it; the miners' camp, to rest at (#45), and the
+  oldest miner by day when he is not in the hall (#56's 36); a shrine over the shaft, the miners'
+  blessing (#45), and a cairn (#45); the wagon yard's gate; a lookout from the gantry.
 - **Encounters.** Fire beetles on the fresh spoil (two groups); rock worms in the old workings' open
   cuts (two); the Hand's overseers at the wagon yard by night, walking the cargo in (`when`), from
   Act II's roster at level (MONSTERS §7.1's Back, §7).
@@ -336,10 +327,8 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   down in stand under tarpaulins, and what the cargo left in them. The hint: the tally board counts
   loads down and none up, and the yard's wall has a wagon's width of fresh mortar in it. Read, the
   blessing over the shaft says COUNT ALL DOWN. COUNT ALL UP.
-- **Lines:**
-  - the mouth: *The shaft goes down under a wheel and a gantry. The miners sing going in, a verse at
-    the door. Nobody sings coming out.*
-  - the board: *A tally board, chalked: loads down, by the day. The column for loads up is clean.*
+- **Lines:** the mouth: *The shaft goes down under a wheel and a gantry. The miners sing going in,
+  a verse at the door. Nobody sings coming out.*
 - **New here.** A mine's headworks; a count that comes up short.
 - **Finds.** The cargo's belongings, a Fells' find with a plus (#535).
 - **Pay.** About 900 xp a member.
@@ -392,13 +381,11 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
 - **Landmarks.** The drove road from N4's 446,118 south through the box to 440,150; the smelter at
   436,126, its chimneys and its slag heap, with the charcoal burners' clamps in the woods about it;
   a water of 78 squares the smelter draws on; the mountain along the east.
-- **Points of interest,** about nine features and eight groups:
-  - the smelter, and the smiths at the anvil with the crown (#56's 35);
-  - the slag heap;
-  - the charcoal burners' camp, to rest at (#45);
-  - a shrine, the verse carved over the smelter's mouth (#45), a cairn in the woods (#45);
-  - the Compact's factor at the smelter door, who pays in shards;
-  - a lookout from the slag heap's top, south over the heart to the ash.
+- **Points of interest,** about nine features and eight groups: the smelter, and the smiths at the
+  anvil with the crown (#56's 35); the slag heap; the charcoal burners' camp, to rest at (#45); a
+  shrine, the verse carved over the smelter's mouth (#45), and a cairn in the woods (#45); the
+  Compact's factor at the smelter door, who pays in shards; a lookout from the slag heap's top,
+  south over the heart to the ash.
 - **Encounters.** Fire beetles at the forges, the roster's Where (two groups); salamanders on the
   slag heap; a rock worm under the woods.
 - **Quests.** A Crown to Order begins here (§6).
@@ -406,10 +393,8 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   Compact pays them, warm. The hint: the heap is tipped loose on every face but one, which is laid
   in blocks. Read, the verse over the mouth is the boiler's warning, as at Anvilhall; it hints at
   nothing here, and the heap does.
-- **Lines:**
-  - the smelter: *Chimneys, and the heat from the door felt across the yard. Over the door, the
-    verse again. Inside, somebody is making a crown.*
-  - the heap: *Slag tipped loose down the hill. One face is laid in blocks, by hand.*
+- **Lines:** the smelter: *Chimneys, and the heat from the door felt across the yard. Over the
+  door, the verse again. Inside, somebody is making a crown.*
 - **New here.** A smelter; woods that are a fuel.
 - **Finds.** Shards the Compact paid, and the step's shield with a plus (#535).
 - **Pay.** About 900 xp a member.
@@ -422,14 +407,11 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   Stone at 468,136, cut square on three faces; the Rift's way in at 468,142, the tear in the ground
   below the cut, slag and iron, red (MONSTERS §2.1), the way into #465; the cutters' sheds and their
   saws; the thane's iron, if the Stone is taken.
-- **Points of interest,** about nine features and eight groups:
-  - the Stone, and the event at it: the step (§5);
-  - the tear, and the slag walking out of it;
-  - the cutters' sheds, the foreman and his saws;
-  - the Anvil Guard's post on the approach, there only `after` the taking (#434's 1, #41);
-  - a camp back from the cut (#45), a cairn (#45), a shrine, the Stone's own inscription on its
-    plinth (#45);
-  - a lookout from the crag over the Rift's light by night.
+- **Points of interest,** about nine features and eight groups: the Stone, and the event at it, the
+  step (§5); the tear, and the slag walking out of it; the cutters' sheds, the foreman and his saws;
+  the Anvil Guard's post on the approach, there only `after` the taking (#434's 1, #41); a camp back
+  from the cut (#45), a cairn (#45) and a shrine, the Stone's own inscription on its plinth (#45); a
+  lookout from the crag over the Rift's light by night.
 - **Encounters.** Slaglings from the tear (two groups); a slag elder at the tear's lip; the Anvil
   Guard, armoured dwarves in the thane's iron, on the approach after the taking: the dwarves, if
   crossed (MONSTERS §2). All but the Guard `until` the Warden falls.
@@ -442,7 +424,6 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   - the Stone: *The Stone, on its anvil of rock, cut square on three sides. Below the cut the ground
     is torn open, and runs red.*
   - the plinth: *The dwarves' words for what holds. Read: KEEP WHOLE. NO CUTTING.*
-  - the Guard, after: *Short, broad, and in the thane's iron.* (MONSTERS §7.1)
 - **New here.** A Stone cut by its own people; a group that comes after a choice (`after`).
 - **Finds.** The cutter's piece, a second Anvil Shard, a keepsake; the step's helm with a plus
   (#535) in the foreman's shed.
@@ -486,11 +467,9 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
 - **Landmarks.** Ash from the ridge west to the grass, the drove road beyond the box's west edge in
   N6; the vent ridge from 479,171 to 484,184, blowing hot; the tubes' mouth at 478,178 under it, the
   way into the dungeon; a hermit's shelter in a cold vent.
-- **Points of interest,** about five features and five groups:
-  - the mouth, and the inscription over it;
-  - the ridge, and the vents along it;
-  - a camp at the ash's edge (#45), a cairn (#45);
-  - a hermit who counts the vents by their breath.
+- **Points of interest,** about five features and five groups: the mouth, and the inscription over
+  it; the ridge, and the vents along it; a camp at the ash's edge (#45) and a cairn (#45); a hermit
+  who counts the vents by their breath.
 - **Encounters.** Salamanders on the ash (two groups, a proposal against the roster's Where
   column, §7); fire beetles at the ridge's foot.
 - **Quests.** None.
@@ -504,10 +483,8 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   The roster's Where for the salamanders. The secret: a tube that was cut, not run, square in
   section, ending at a plate that nothing opens; the hint: the heat drops where the tube's walls go
   square.
-- **Lines:**
-  - the ash: *Ash underfoot, warm, and more of it on the wind. The ridge ahead breathes out.*
-  - the mouth: *The dwarves' words for the mountain's breath, cut over the adit. Read: VENT. STAND
-    CLEAR.*
+- **Lines:** the mouth: *The dwarves' words for the mountain's breath, cut over the adit. Read:
+  VENT. STAND CLEAR.*
 - **New here.** Ash underfoot (#536); the salamanders, a new family; lava under a floor; a world map
   mark made by reading.
 - **Finds.** The first dwarves' shelter: the step's bow with a plus (#535); in the deepest chamber,
@@ -522,11 +499,11 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
 - **Landmarks.** N6: the drove road from N5's 440,150 to 428,180 and south out of the box, the
   coach's road; the fork at 428,180; the heather beginning. M6: the branch from the fork through
   412,162 to L6; the farms; a row of lime kilns on the hill; a water of 60 squares.
-- **Points of interest,** about five features and five groups each:
-  - N6: a milestone at the fork, ANVILHALL 8, KILNHAVEN 3; a camp (#45), a cairn at the border
-    (#45), a shrine (#45); a drover with a rumour of what came up out of the ice at Rime Lodge;
-  - M6: the kilns; a farmer whose son went down the mine (#56's 33's echo, words only); a shrine
-    (#45), a cairn (#45); a lookout from the kilns' hill over Kilnhaven and the sea.
+- **Points of interest,** about five features and five groups each. N6: a milestone at the fork,
+  ANVILHALL 8, KILNHAVEN 3; a camp (#45), a cairn at the border (#45) and a shrine (#45); a drover
+  with a rumour of what came up out of the ice at Rime Lodge. M6: the kilns; a farmer whose son
+  went down the mine (words only); a shrine (#45) and a cairn (#45); a lookout from the kilns' hill
+  over Kilnhaven and the sea.
 - **Encounters.** N6: fire beetles on the road's verges; a rock worm pair at the far end, the box's
   top. M6: fire beetles in the kilns, which are warm (two groups); a rock worm under the fields.
 - **Quests.** None.
@@ -534,10 +511,8 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   Compact's carts. The hint: every kiln in the row has its draw-hole open but one, stopped with a
   dressed stone. N6: the coach's old halt, a stone shelter off the road with a Rime Lodge coach bill
   in it; the hint, the road's verge worn wide where nothing stops now.
-- **Lines:**
-  - N6's border: *The road goes on south into heather and wind. Cairns on the skyline, and no
-    smoke anywhere.*
-  - the kilns: *Lime kilns in a row, drawing. One has a stone in its draw-hole, dressed to fit.*
+- **Lines:** N6's border: *The road goes on south into heather and wind. Cairns on the skyline,
+  and no smoke anywhere.*
 - **New here.** Cairnmoor seen: the drove road into Act III's second step.
 - **Finds.** The step's dagger with a plus in the kiln (#535).
 - **Pay.** About 700 xp a member, the two together.
@@ -549,12 +524,10 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
 - **Landmarks.** The branch from M6 to the gate at 391,162, the way into #469; the ore quay outside
   the wall and the bonded store on it; the coach yard; heather and sand along the shore, 85 squares
   of shallows; the Compact ship riding off the port.
-- **Points of interest,** about eight features and six groups:
-  - the gate, and the coach yard outside it (#539);
-  - the ore quay, the store and its clerk;
-  - a milestone, ANVILHALL 11, and the sea;
-  - a shrine on the shore (#45), a cairn on the heath (#45), a camp under the wall (#45);
-  - a lookout from the heath over the sea to the far side.
+- **Points of interest,** about eight features and six groups: the gate, and the coach yard
+  outside it (#539); the ore quay, the store and its clerk; a milestone, ANVILHALL 11; a shrine on
+  the shore (#45), a cairn on the heath (#45) and a camp under the wall (#45); a lookout from the
+  heath over the sea to the far side.
 - **Encounters.** Fire beetles in the ore heaps on the quay (two groups); a rock worm pair under the
   heath, the box's top; by night, the Hand's crew on the quay, from Act II's roster at level (§7).
 - **Quests.** The chapter's goals point into the town (§5). A Crown to Order ends here (§6).
@@ -562,10 +535,8 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   Sheer Point wait under the customs seal, with shards in their straw: found before the
   harbourmaster's manifests say it. The hint: every crate on the quay is open-topped but one row
   under tarpaulins, sealed.
-- **Lines:**
-  - the quay: *Ore in heaps and a quay black with it. One row of crates is tarred over and sealed,
-    and nobody goes near it.*
-  - the sea: *The inland sea, and the Hearth's column on it. From here it is only a light.*
+- **Lines:** the quay: *Ore in heaps and a quay black with it. One row of crates is tarred over
+  and sealed, and nobody goes near it.*
 - **New here.** The sea seen from the far shore of Act II; a coach yard that runs.
 - **Finds.** The step's robe with a plus in the store (#535).
 - **Pay.** About 600 xp a member.

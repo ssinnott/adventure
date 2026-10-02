@@ -518,6 +518,10 @@ a door under the ice, rows of glass beds, a glacier, a pass.
   by its fights at about 300 a fight as the built boxes were, or part of the country is unparked
   with the act: §9 puts it to the owner. Each box is priced when it is built and recorded here, and
   the curve's row reports what a clear falls short of as owed to #438 until the boxes exist.
+  Scaled to the curve, which §9 proposes as the briefs' working figures until each box is built,
+  the shares are M9 2,650, Rime Lodge 900, L9 2,300, K9 2,650, the bay 4,250, K10 1,950 and the
+  side quests about 1,600: about 16,300. The issues (#486 to #494) carry the first figures until
+  their briefs are settled.
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and
   tier 7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at
   least, in chests, drops and the hall's pay; the furrier's step is priced within the band's window

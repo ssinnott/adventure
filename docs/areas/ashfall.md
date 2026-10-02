@@ -572,6 +572,10 @@ spider frame as the cinder beetle, the skeleton frame as the ash husk.
   that comes by ship at 26 earns less than the shares say; the curve's row reports what a clear
   falls short of as owed to #446 until the boxes exist, and each box is priced by its fights when
   it is built and recorded here.
+  Scaled to the curve without the camp's levels, which §9 offers the owner beside the reading
+  above, the shares are H10 2,250, G10 2,000, Cinderport 800, G11 2,650, F11 2,400, Old Cinder
+  3,450, the Ember Stone 2,950, F10 and E10 1,850 and the side quests about 1,100: about 19,450. The
+  issues (#510 to #519) carry the first figures until their briefs are settled.
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts,

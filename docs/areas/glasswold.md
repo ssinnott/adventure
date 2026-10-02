@@ -502,6 +502,10 @@ cliff from its top.
   A kill pays by level (#159), so a company that arrives at 26 earns the shares as written and one
   at 28 earns less; the curve's row reports what a clear falls short of as owed to #447 until the
   boxes exist.
+  Scaled to the curve, which §9 proposes as the briefs' working figures until each box is built,
+  the shares are E10 2,450, D9 3,250, D8 1,950, D10 3,250, C8 1,650, B8 4,250, B9 2,600 and the
+  side quests about 1,650: about 21,050. The issues (#524 to #532) carry the first figures until
+  their briefs are settled.
 - **Gold.** Training six members from 26 to 28 costs about 12,720 with today's `trainPrice`, and
   nothing on the Wold trains: Cinderport teaches to 27, a Rider's ride away (call 5, #547), and 28
   is Hearth Isle's to teach or the owner's to place. A clear should pay for the training at least,
