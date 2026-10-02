@@ -12,7 +12,11 @@
 // who counts the Rifts' lights; the hollow under the landing found from its pole-marks; and the
 // box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6, #174):
 // the priestess at the dry door and her count; the far roof's door found from the count's pause;
-// and the box's groups won at 11. Then back to the road and down it into Saltmouth's box (C6, #176):
+// and the box's groups won at 11. Then the Drowned Temples (#175): down the far roof's wet stair into
+// the sacristy, its silver had that way alone, and out again; in at the dry door, the nave's drowned
+// and the count up the apse's stair; the choir and the Choirmaster won at 11, the Tide Bell taken and
+// the count stopped for good; and the bell up to the priestess, who rings it. Then back to the road
+// and down it into Saltmouth's box (C6, #176):
 // the Saltings named at the seam, the land gate at the road's end, the smugglers' stair found from
 // the rope that hangs over it, and the quay's and the pans' groups won at the box's floor. Then in
 // at the gate to Saltmouth (#177) and out again: the band's gear bought, training to 13 and a first
@@ -24,7 +28,7 @@
 // (C7, #178): the Scarp across the south and its stair's fallen foot, the sealed pan's hoard found
 // from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, fight, listen, see, meetWho } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature } from '../../../game/map.ts';
@@ -55,6 +59,8 @@ const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
 const B5_COUNTER = B5.features!.find((f) => f.kind === 'npc') as Person;
 const B6 = MAP_DEFS.find((d) => d.id === 'delta_b6')!;
 const PRIESTESS = B6.features!.find((f) => f.kind === 'npc') as Person;
+const L1 = MAP_DEFS.find((d) => d.id === 'drowned_temples')!;
+const L2 = MAP_DEFS.find((d) => d.id === 'drowned_temples2')!;
 const C6 = MAP_DEFS.find((d) => d.id === 'saltings_c6')!;
 const C7 = MAP_DEFS.find((d) => d.id === 'saltings_c7')!;
 const TOWN = MAP_DEFS.find((d) => d.id === 'saltmouth')!;
@@ -294,13 +300,78 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('delta_b6', 8, 22, SOUTH);
   let door = false;
   for (let i = 0; i < 20 && !door; i++) door = w.world.search();
-  const porch = door ? [w.world.move('forward'), w.world.move('forward')] : [];
+  const porch = door ? [w.world.move('forward')] : [];
   ok(door && porch.every((r) => r.kind === 'moved'), 'searched from the far roof\'s ledge, a door in its wall opens, and can be walked into');
-  ok(w.world.used('b6_stair'), 'behind it, the stair down');
+  ok(w.world.used('b6_stair'), 'behind it, the wet stair down');
+  porch.push(w.world.move('forward'));
+  ok(w.world.state.mapId === 'drowned_temples2' && w.world.state.x === 14 && w.world.state.y === 1, 'and down it, the company comes into the choir\'s back, the sacristy (#175)');
   listen(w);
+
+  // The sacristy: the count through its wall, the god's silver, and the priests' pool, which no one
+  // crosses to the chancel. The silver is had through the far roof's door and no other way.
+  w.world.move('forward');
+  ok(w.world.used('dt2_back'), 'in the sacristy, the count through the wall');
+  const choir = new GameMap(L2);
+  const reachL2 = (from: { x: number; y: number }, to: { x: number; y: number }): boolean => {
+    const seen = new Set([`${from.x},${from.y}`]), q = [[from.x, from.y]];
+    while (q.length) {
+      const [x, y] = q.shift()!;
+      if (x === to.x && y === to.y) return true;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        if (!choir.inBounds(nx, ny) || seen.has(`${nx},${ny}`)) continue;
+        const r = choir.passable(nx, ny, { swim: true, float: true });
+        if (r === 'ok' || r === 'unlock') { seen.add(`${nx},${ny}`); q.push([nx, ny]); }
+      }
+    }
+    return false;
+  };
+  const silver = L2.features!.find((f) => f.kind === 'chest' && f.id === 'dt2_silver')!;
+  ok(reachL2({ x: 14, y: 1 }, silver) && !reachL2(L2.start, silver), 'the god\'s silver is reached from the far roof\'s stair, and not from the choir\'s, even by a swimmer');
+  ok(silver.kind === 'chest' && ['silver_mace', 'tide_symbol'].every((id) => silver.items.includes(id)), `in the sacristy, the Silver Mace +1 and the Holy Symbol of the Tide (${silver.kind === 'chest' ? silver.items.map((id) => item(id).name).join(', ') : ''})`);
+  see(w, 'drowned_temples2:dt2_pool');
+  walkThrough(w, 'drowned_temples2', 14, 2, NORTH, 'delta_b6', 2);
+  ok(w.world.zone?.id === 'delta_b6' && w.world.state.x - w.world.zone.x === 8 && w.world.state.y - w.world.zone.y === 22, 'and back up the wet stair, the company stands on the far roof\'s ledge');
 
   // The box's groups, each won at its floor.
   for (const g of B6.encounters!) fight(w, `delta_b6:${g.id}`);
+
+  // In at the dry door to the Drowned Temples (#175): the narthex and the bell's empty frame, the
+  // drowned in the nave and the north-east chapel, and the count from the apse's stair.
+  walkThrough(w, 'delta_b6', 16, 12, NORTH, 'drowned_temples', 2);
+  w.world.move('forward');
+  ok(w.world.used('dt1_in'), 'through the dry door, the narthex');
+  for (const e of ['dt1_frame', 'dt1_nave', 'dt1_flooded', 'dt1_font_se', 'dt1_font_ne', 'dt1_sunk']) see(w, `drowned_temples:${e}`);
+  for (const g of L1.encounters!) fight(w, `drowned_temples:${g.id}`);
+  see(w, 'drowned_temples:dt1_stair');
+  ok(w.world.used('dt1_stair'), 'at the apse\'s stair head, the count comes up from below');
+  walkThrough(w, 'drowned_temples', 8, 2, NORTH, 'drowned_temples2', 2);
+
+  // The choir: the drowned man at the stair's foot, the choir and the stalls, then the Choirmaster on
+  // the chancel step, and the bell it beat time on. The count stops, and does not come back.
+  see(w, 'drowned_temples2:dt2_in');
+  ok(w.world.used('dt2_in'), 'at the stair\'s foot, the count loud ahead');
+  for (const e of ['dt2_choir', 'dt2_psalters', 'dt2_chancel']) see(w, `drowned_temples2:${e}`);
+  for (const g of L2.encounters!) fight(w, `drowned_temples2:${g.id}`);
+  ok(w.party.bag.includes('tide_bell'), 'the Choirmaster falls, and the company has the Tide Bell');
+  see(w, 'drowned_temples2:dt2_vestry_look');
+  const vestry = L2.features!.find((f) => f.kind === 'chest' && f.id === 'dt2_vestry')!;
+  ok(vestry.kind === 'chest' && ['morning_star+1', 'ironshod_staff+1'].every((id) => vestry.items.includes(id)), 'behind the chancel, the vestry holds the ladder\'s Morning Star +1 and Ironshod Staff +1');
+  see(w, 'drowned_temples2:dt2_quiet');
+  ok(w.world.used('dt2_quiet'), 'and the stair\'s foot is quiet');
+  see(w, 'drowned_temples2:dt2_chancel_after');
+  ok(w.world.used('dt2_chancel_after'), 'the chancel step is bare, and nothing beats');
+  w.world.state.minutes += 3 * MINUTES_PER_DAY;
+  w.world.travel('drowned_temples2', 7, 13);
+  ok(!w.world.liveGroups().some((g) => ['dt2_choir', 'dt2_choirmaster'].includes(g.def.id)), 'three days on, the choir does not come back to count');
+
+  // Up with the bell to the priestess: she takes it, hangs it on its frame and rings it.
+  meetWho(w, 'tide_bell');
+  const bell = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'tide_bell');
+  ok(!!w.party.flags.q_tide_bell_done && !w.party.bag.includes('tide_bell') && !!bell()?.done, `the priestess takes the bell, and The Tide Bell is done (${bell()?.pages[0]?.entries.map((e) => e.id).join(', ')})`);
+  see(w, 'delta_b6:b6_rung');
+  ok(w.world.used('b6_rung'), 'and she rings it inside the door');
+  see(w, 'drowned_temples:dt1_frame_hung');
+  ok(w.world.used('dt1_frame_hung'), 'the bell hangs on its frame in the narthex');
 
   // On down the road into Saltmouth's box: the fen gives way to the Saltings at the seam.
   w.world.travel('delta_c5', 26, 30, SOUTH);

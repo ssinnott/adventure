@@ -12,8 +12,9 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 
 Eight boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
 Rietum (#171), Rietum (#172), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's box (#176) and
-the salt pans (#178), and the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
-in it (#182); with the first two the area was listed. Its content is `src/content/areas/saltreach/`
+the salt pans (#178), the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
+in it (#182), and the Drowned Temples below B6, two levels (#175); with the first two the area
+was listed. Its content is `src/content/areas/saltreach/`
 (maps, monsters, items, climate, its part of the world map, its side quests in `quests.ts` and its
 guild quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` is still
 to come) and its businesses' rooms
@@ -160,8 +161,13 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   are quiet, and two bull toads on the flats past the far roof. The secret is a door in the far
   roof's wall under the tideline, a porch behind it and a stair down; the hint is the priestess's
   count, one to ten with her hand to each roof and a pause towards the far roof before eleven. The
-  doors are events until the temples are built (#175). The gate holds at 11, at 7.0 fights to a
-  rest.
+  dry door is the way into the temples' upper level and the porch's stair the way into the choir's
+  back (#175). The gate holds at 11, at 7.0 fights to a rest.
+- **The Drowned Temples** (`drowned_temples` and `drowned_temples2`, dungeon, two levels of 16×16,
+  band 11–12; #175): the upper temple behind B6's dry door, half flooded, its nave's drowned and the
+  bull toads in its north-east chapel; the choir below, the chanters counting and the Choirmaster
+  on the chancel step with the Tide Bell; the sacristy at the back, reached only down the far
+  roof's wet stair, with the god's silver. §4.7's "As built" has the rest.
 - **Saltmouth's box** (C6, `saltings_c6`, core, band 11–12; #176): the Salt Road's last reach from
   C5 down the fen's east side, its milestone (SALTMOUTH 2, RIETUM 7) and the road's end at the town's
   land gate at 26,19, the way into Saltmouth (#177); the coach yard outside it;
@@ -440,9 +446,8 @@ settled in its issue, and what the pilot teaches changes them.
   move. The groups are three, each a real fight at 11: five fen toads on the causeway in, the
   nearest; five brinelings in the channel by night, B5's Rifts' spill, until both are quiet; two bull
   toads on the flats past the far roof, the farthest and the hardest at 12. The far roof's door
-  opens on a porch and a stair down, an event until #175 makes it the way into the second level's
-  back; tidal ground lies either side of the ledge before it and round the roof's foot, never beside
-  the porch, so nothing behind the door is reached across the flats. The hint is an event beside
+  opens on a porch and a stair down, the way into the second level's back since #175; tidal ground
+  lies either side of the ledge before it and round the roof's foot, never beside the porch, so nothing behind the door is reached across the flats. The hint is an event beside
   the priestess, always there: she counts the doors one to ten with her hand to each roof, then
   lifts it towards the far roof, where no door shows, and says eleven. The camp is on the last dry
   ground before the door; the cairn holds gold and a potion, no gear. The Tide Bell is #175's
@@ -469,6 +474,26 @@ settled in its issue, and what the pilot teaches changes them.
 - **Finds.** The god's silver: a Silver Mace +1 and a Holy Symbol of the tide, a resistance to
   cold worn; beside it a Morning Star +1 and an Ironshod Staff +1, the ladder's (#399).
 - **Pay.** About 1,800 xp a member.
+- **As built** (#175, 2 October): band 11–12, two levels. The upper temple, `drowned_temples`, is
+  entered at B6's dry door into the narthex, where the bell's oak frame stands empty; the nave runs
+  north between its pillars, its west aisle under shallow water, two drowned men in its dry strip;
+  of its four chapels the north-west is sunk in deep water, the south-west flooded to the chin of
+  the drowned standing in it, and the two east are dry, each with a font, two bull toads come in
+  with the fen at the north-east's; the apse's stair goes down, the count heard at its head. The
+  choir, `drowned_temples2`, is dry: a drowned man alone at the stair's foot; the stalls north,
+  two chanters behind two drowned men, the brief's choir cut to the share, and the west bay's
+  stalls empty but for their psalters; the Choirmaster alone on the chancel step, blessing itself each round it can, and the
+  vestry behind it with the ladder's two finds. The sacristy at the back is cut off from the
+  chancel by the deep pool the priests drowned themselves in, and reached only down the far roof's
+  wet stair, B6's secret: the god's silver is had that way and no other, by a swimmer or not. When
+  the Choirmaster falls the count stops, the stair's head, the stair's foot, the chancel, the
+  pool and the sacristy go quiet, and the choir does not come back. The Choirmaster
+  drops the Tide Bell, which the priestess takes at the first meeting and rings inside the door
+  (§6); its blessing waits on #554 (§9). The god's name is on its silver alone (§10). The gate
+  holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 83% of its
+  fights with the boss among them, every fight but the boss's, at 7.5 to a rest; the Choirmaster
+  is won 48% of the time at 11 and 98% at 13. As measured, a clear pays about 1,580 xp a member at
+  11 and about 1,130 gold (§8).
 
 ### 4.8 C6, Saltmouth's box (#176): core, band 11–12
 
@@ -657,7 +682,7 @@ with its box on the systems of #76 (#183):
 |---|---|---|---|---|---|
 | 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | not yet approved; #172 places the child and her hint |
 | 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171; the boat reads its flag (#413) |
-| 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175 |
+| 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175; the blessing owed to #554 (§9) |
 | 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178 |
 
 One change to #56's drafts, decided with the boat (#164): 22's favour is the boat's fare, never
@@ -730,11 +755,15 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   them at any hour. C7 as built pays its 700 (#178). B6 as built pays about 970 over its 800
   (#174), its three fights at about 300 each and its brinelings only by night. C3 as built pays
   about 1,010 against its 1,000 (#172), its four groups about 260 to 280 each with the company at
-  10 and the quay's by day and the brinelings by night both counted. No other share gives back the
-  600, the 90, the 330, the 170 and the 10, so the area comes to about 9,950, some 20% over the
-  curve's 8,267. Paid by level in the road's order, a clear of what is built gives about 7,610 a
-  member and 3,170 gold, the rest owed to #153 (`src/content/progression.ts`). The surplus is for a kill paid by level to damp, and each box still to build is
-  priced by its fights, about 300 a fight, and recorded as built where that passes its share; the
+  10 and the quay's by day and the brinelings by night both counted. The temples as built pay about
+  1,580 a member at 11 and 1,220 at 12 (#175), inside their share and the issue's 1,600: the
+  Choirmaster is paid as one fight, not as the boss line (§9). No other share gives back the 600,
+  the 90, the 330, the 170 and the 10, so the area comes to about 9,730, some 18% over the curve's
+  8,267. Paid by level in the road's order, a clear of what is built gives about 9,100 a member,
+  over the curve, and 4,370 gold, the gold's rest owed to #153
+  (`src/content/progression.ts`). The surplus is for a kill paid by level to damp, and each box
+  still to build is priced by its fights, about 300 a fight, and recorded as built where that passes
+  its share; the
   sum here is restated with each. The willows add 800 when they are built. From here on a kill pays
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
   at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
@@ -1144,6 +1173,57 @@ Decided by delegate for #451, each the owner's to overturn:
    Foreland's slack hang and from the chanters' robes, at a glance.
 6. **It stands unplaced, owed to #175,** which puts it in the nave and two in the choir's front row.
 
+Decided by delegate for #175, each the owner's to overturn:
+
+1. **Two levels, the upper temple flooded and the choir dry:** `drowned_temples`, the narthex, the
+   nave and its four chapels, the north-west sunk in deep water and the south-west flooded shallow,
+   with nothing anyone needs standing in water; and `drowned_temples2`, the choir. Each level's way
+   in is the square a company lands on, as Kelp Hole's are, and B6's dry door lands it at the
+   narthex.
+2. **The sacristy is cut off from the chancel by deep water,** the priests' pool, which nobody
+   crosses, so the god's silver is had only down the far roof's wet stair, and a company that comes
+   in that way leaves the same way. From the sacristy it sees the Choirmaster's back across the
+   water. Neither level has a secret door of its own: B6's is the secret.
+3. **The Choirmaster stands alone,** level 12, past MONSTERS §4.4's boss line in its blows as the
+   Great Devilfish is: 680 hit points, armour 20, +11, 11d8+15, speed 13, and paid as 6 says.
+   It casts Bless whenever its group is not blessed, so alone it blesses itself; with two chanters
+   behind it, the group's mean level was 11.3 and the curve asks the hardest group of a band 11–12
+   map to stand at 12. It is won 48% of the time at 11 and 98% at 13.
+4. **The choir is MONSTERS' cut to the share,** two chanters behind two drowned men, the front
+   row still asleep while the chanters count, with a drowned man alone at the stair's foot, both
+   back after two days until the Choirmaster falls, when the choir stops for good. The west bay's
+   two chanters were dropped with the pay (6). The lone drowned man is no real fight alone; he
+   keeps the level's day at 7.5 fights to a rest. MONSTERS' full four chanters would pay about 190
+   more a member, a clear about 1,770.
+5. **The upper level's far group is two bull toads,** come in with the fen through the sunk
+   chapels, and its nave holds two drowned men: every temple dead is 11, and the curve asks the
+   levels to rise from the way in to a group at 12. Three drowned men with the toads measured 5.6
+   fights to a rest; two measure 7.2.
+6. **The Choirmaster is paid as a fight, not as the boss line** (the owner agreed to bring the
+   temples towards their share). Its xp is 1,565 against the line's 7,573, so it pays about 300 a
+   member at 11, what any fight there costs (§8). At the line's figure the boss alone paid about
+   1,450, nearly the whole share. Levelling it down to 11 would leave level 2 with no group at 12,
+   which the curve asks of a map banded 11–12, so it keeps its level and its stats, and the gate
+   still judges it at 48% at 11 and 98% at 13; only its pay changes. With the choir cut and the
+   west bay's chanters dropped (4), a clear pays about 1,580 a member at 11 and 1,220 at 12. It was
+   about 3,115 at 11 before.
+7. **The Tide Bell drops from the Choirmaster,** and the priestess at the dry door asks for it at
+   her first meeting and takes it at the first meeting from a company she never asked, paying 300
+   gold; she rings it inside the door, ten strokes and the eleventh late, and it hangs on the
+   narthex's frame after. **The blessing is owed to #554:** a shrine has no presence, so it cannot
+   wait on the bell without presence on a shrine and a fountain; and #56's resistance would need
+   members to carry one, #555. Until then The Tide Bell is done at the hand-in.
+8. **The finds:** the ladder's Morning Star +1 and Ironshod Staff +1 in the vestry behind the boss,
+   since the ladder's step should not hang on a secret found from another map; the god's silver,
+   a Silver Mace +1 on the morning star's base and the Holy Symbol of the Tide, in the sacristy.
+   The Symbol is a valuable with words on it for now: its resistance to cold is owed to #555.
+9. **The god is named on its silver alone,** *Tijsjonger*, the tide singer, read on the Symbol's
+   rim and spoken by nobody (§10).
+10. **B6's two events move or change:** `b6_stair` moves onto the secret door's square, since an
+    event on an exit is never shown, and says the door stands open below; it and the stair's head,
+    the stair's foot, the chancel, the pool and the sacristy each have a quiet twin once the count
+    has stopped.
+
 ## 10. Names
 
 Saltreach's naming pass, by the rules of `docs/NAMES.md`: the Tidefolk's tongue was left to it
@@ -1156,8 +1236,8 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
   Cornish: short parts, spelled as they are said, with no accent the font lacks. *Wierde* a mound
   above the flood, *-um* home, *riet* reed, *syl* a sluice or a way through the dyke, *diep* a
   channel, *skor* salt marsh, *wad* tidal flat, *meer* a broad water, *stien* stone, *hol* a hollow
-  or a cave, *sjong* song, *tel* count, *dyk* dyke, *sâlt* salt (written *salt*). It goes into NAMES
-  §2's row for the Tidefolk.
+  or a cave, *sjong* song, *tel* count, *dyk* dyke, *tij* tide, *sâlt* salt (written *salt*). It
+  goes into NAMES §2's row for the Tidefolk.
 - **The names:**
 
   | Was | Now | What it means | Also thought of |
@@ -1175,8 +1255,9 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
   Stone, plain names for plain things, as the Grove and the Grove Stone are; the Long Water, which the Tidefolk
   call the Diep in their own speech and nowhere on the map; the Upper Water and the Delta, the
   zones; the Scarp and Kestrel Edge, the Foreland folk's; Wrackholm and the Tide Ship, the sailors'.
-- **The god** has no name yet; the Tidefolk say *the one who counts* until its Stone is home. It
-  is named, if at all, with the temples (#175).
+- **The god** is *Tijsjonger*, the tide singer (*tij* tide, *sjonger* singer), a name found only on
+  the rim of its Holy Symbol in the temples' sacristy (#175). Nobody speaks it: the Tidefolk say
+  *the one who counts* until its Stone is home. *Tij* goes into the tongue's list.
 - **Ids stay:** `reedholm` is nowhere yet, so Rietum's id is its own; the rest keep the plan's.
 
 ## 11. What was cut

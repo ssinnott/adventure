@@ -114,7 +114,9 @@
         "b6_fen7",
         "b6_in",
         "b6_roof",
+        "b6_rung",
         "b6_stair",
+        "b6_stair_quiet",
         "barrow",
         "c3_barges",
         "c3_cache",
@@ -623,6 +625,51 @@
         "dd_foot"
       ],
       "groups": [],
+      "doors": []
+    },
+    "drowned_temples": {
+      "size": "16x16",
+      "used": [
+        "dt1_flooded",
+        "dt1_font",
+        "dt1_font_ne",
+        "dt1_font_se",
+        "dt1_frame",
+        "dt1_frame_hung",
+        "dt1_in",
+        "dt1_nave",
+        "dt1_stair",
+        "dt1_stair_quiet",
+        "dt1_sunk"
+      ],
+      "groups": [
+        "dt1_chapel",
+        "dt1_nave"
+      ],
+      "doors": []
+    },
+    "drowned_temples2": {
+      "size": "16x16",
+      "used": [
+        "dt2_back",
+        "dt2_back_quiet",
+        "dt2_chancel",
+        "dt2_chancel_after",
+        "dt2_choir",
+        "dt2_in",
+        "dt2_pool",
+        "dt2_pool_after",
+        "dt2_psalters",
+        "dt2_quiet",
+        "dt2_silver",
+        "dt2_vestry",
+        "dt2_vestry_look"
+      ],
+      "groups": [
+        "dt2_choir",
+        "dt2_choirmaster",
+        "dt2_verger"
+      ],
       "doors": []
     },
     "greywater1": {
@@ -1269,6 +1316,8 @@
     "q_terms_carry",
     "q_terms_refuse",
     "q_terms_taken",
+    "q_tide_bell",
+    "q_tide_bell_done",
     "q_treaty",
     "q_trees",
     "q_trees_done",
@@ -1401,6 +1450,7 @@
     "shortsword",
     "shortsword+1",
     "silver_locket",
+    "silver_mace",
     "silver_torc",
     "sling",
     "smugglers_sword",
@@ -1416,8 +1466,10 @@
     "survey_orders",
     "survey_wand",
     "tenant_paper",
+    "tide_bell",
     "tide_cutlass",
     "tide_stone",
+    "tide_symbol",
     "tidefolk_robe",
     "tidefolk_robe+1",
     "torch",
