@@ -264,8 +264,10 @@ export function quests(): void {
     ok(news() === 'Quest log updated: The Dimming.' && /Henlys/.test(goal()), `Sylvane's pay sends the company south to the treaty (${goal()})`);
     world.travel('deepthorn_i4', 9, 9, 0); world.eventsHere(); // the treaty's seal, in Henlys's hall
     const end = news();
-    ok(end.startsWith('Chapter complete: The Grove Stone. Quest complete: The Dimming.') && quest(THE_QUEST.id).done && log().filter((v) => v.done).length === 2,
-      `the last chapter's end, the seal seen, finishes the one quest; it and the Cargo Ledger are done (${end})`);
+    // The quest ends here only while the Grove is its last chapter.
+    const last = THE_QUEST.chapters.at(-1)!.id === 'grove';
+    ok(end.startsWith('Chapter complete: The Grove Stone.') && chapter('grove').done && quest('greywater').done && quest(THE_QUEST.id).done === last && end.includes(`Quest complete: ${THE_QUEST.title}.`) === last,
+      `the seal seen ends the Grove's chapter, and the one quest only if no chapter follows; the Cargo Ledger is done (${end})`);
     const expedition = quest('meridian');
     ok(!expedition.done && /Meridian/.test(expedition.goal ?? '') && expedition.pages[0].entries.length === 1, `and the Lost Expedition stays open with a goal, its trail not built yet (${expedition.goal})`);
   }

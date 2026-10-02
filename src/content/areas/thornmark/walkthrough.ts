@@ -58,10 +58,11 @@ export const walkthrough: Walkthrough = (ok) => {
   playChapter(chain, FORELAND, FORELAND_STEPS, 'in order');
   ok(chain.news.slice(-2).join(' ') === 'Chapter complete: The Quiet Farm. New chapter: The Grove Stone.', `in order, the wand ends the farm and opens the Grove (${chain.news.slice(-2).join(' ')})`);
   playChapter(chain, CHAPTER, STEPS, 'in order');
-  const sealed = chain.news.slice(-3).join(' ');
-  ok(sealed === 'Chapter complete: The Grove Stone. Quest complete: The Dimming. New quest: The Empty Throne.', `in order, the seal seen ends the Grove and the quest, and opens The Empty Throne (${sealed})`);
+  // The quest's own end is the last chapter's, which ending() checks.
+  const sealed = chain.news.slice(chain.news.lastIndexOf('Chapter complete: The Grove Stone.'));
+  ok(sealed[0] === 'Chapter complete: The Grove Stone.' && sealed.at(-1) === 'New quest: The Empty Throne.', `in order, the seal seen ends the Grove and opens The Empty Throne (${sealed.join(' ')})`);
   henlys(chain, 'in order');
-  const want = ending(chain, 'in order');
+  const want = ending(chain, 'in order', CHAPTER);
 
   // Thornmark before Vask's hire: through the pass with no quest, to Sylvane and the Grove done
   // before anyone in Helmstow has spoken of it.
@@ -76,7 +77,7 @@ export const walkthrough: Walkthrough = (ok) => {
   goalFromBegun(early, 'early, before the hire, the Grove done');
   // The farm before Gullwick here, so the Foreland's goal for a company that did it first comes up.
   playChapter(early, FORELAND, [HIRE, ...FARM_FIRST], 'early, before the hire');
-  ok(JSON.stringify(ending(early, 'early, before the hire')) === JSON.stringify(want), 'early, before the hire: the log ends with the same entries as in order');
+  ok(JSON.stringify(ending(early, 'early, before the hire', CHAPTER)) === JSON.stringify(want), 'early, before the hire: the log ends with the same entries as in order');
 
   // Thornmark after the hire, before the wand: the quest never sends the company to the Stone
   // before the farm, and the Grove's own chapter opens when Sylvane speaks.
@@ -91,7 +92,7 @@ export const walkthrough: Walkthrough = (ok) => {
   playChapter(hiredEarly, CHAPTER, FROM_SYLVANE, 'hired, early');
   goalFromBegun(hiredEarly, 'hired, early, the Grove done');
   playChapter(hiredEarly, FORELAND, FORELAND_STEPS, 'hired, early');
-  ok(JSON.stringify(ending(hiredEarly, 'hired, early')) === JSON.stringify(want), 'hired, early: the log ends with the same entries as in order');
+  ok(JSON.stringify(ending(hiredEarly, 'hired, early', CHAPTER)) === JSON.stringify(want), 'hired, early: the log ends with the same entries as in order');
 
   // In order, but to the Stone before Thornhold: the chisel goes to Sylvane at the first meeting.
   // She never hires, so her own entry is never written, and the entries are not compared.
@@ -99,7 +100,7 @@ export const walkthrough: Walkthrough = (ok) => {
   hired(unsent);
   playChapter(unsent, FORELAND, FORELAND_STEPS, 'in order, the Stone first');
   playChapter(unsent, CHAPTER, STONE_FIRST, 'in order, the Stone first');
-  ending(unsent, 'in order, the Stone first');
+  ending(unsent, 'in order, the Stone first', CHAPTER);
 
   // The treaty seen before the Stone: a seal the company does not know, and Senara says so; the
   // chisel, found after and paid for, makes the match and ends the chapter.
@@ -112,7 +113,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const unknown = hear(treatyFirst, 'deepthorn_i4', SENARA());
   ok(unknown.includes('No word from Sylvane') && !!treatyFirst.party.flags.q_seal_unknown, 'the treaty first, Senara shows a seal that means nothing yet');
   playChapter(treatyFirst, CHAPTER, STEPS.slice(1, 4), 'the treaty first');
-  const ids = ending(treatyFirst, 'the treaty first');
+  const ids = ending(treatyFirst, 'the treaty first', CHAPTER);
   ok(['grove.seal_early', 'grove.seal', 'grove.lead', 'grove.paid'].every((e) => ids.includes(e)), `the treaty first, the log reads the seal unknown and then matched (${ids.filter((e) => e.startsWith('grove.')).join(', ')})`);
 
   // The seal shown by Senara, from her square, and the treaty's never stepped on: the chapter ends
@@ -121,7 +122,7 @@ export const walkthrough: Walkthrough = (ok) => {
   hired(shown);
   playChapter(shown, FORELAND, FORELAND_STEPS, 'shown by Senara');
   playChapter(shown, CHAPTER, [...STEPS.slice(0, 4), { name: 'Senara shows the seal', play: (w) => meetWho(w, 'q_mark') }], 'shown by Senara');
-  ok(JSON.stringify(ending(shown, 'shown by Senara')) === JSON.stringify(want), 'shown by Senara: the log ends with the same entries as in order');
+  ok(JSON.stringify(ending(shown, 'shown by Senara', CHAPTER)) === JSON.stringify(want), 'shown by Senara: the log ends with the same entries as in order');
 
   // The chisel carried to Senara before Sylvane has paid for it: she makes the match, the chapter
   // waits on the pay, and her next words, the match not yet made, ask all the same.
@@ -134,7 +135,7 @@ export const walkthrough: Walkthrough = (ok) => {
     'the chisel carried, Senara makes the match and the chapter waits on the pay');
   ok(hear(carried, 'deepthorn_i4', SENARA()).includes('longer than most') && !!carried.party.flags.q_mark, 'the chisel carried, Senara, the match not yet made, asks for the rubbing');
   playChapter(carried, CHAPTER, [STEPS[3]], 'the chisel carried');
-  ok(JSON.stringify(ending(carried, 'the chisel carried')) === JSON.stringify(want), 'the chisel carried: the log ends with the same entries as in order');
+  ok(JSON.stringify(ending(carried, 'the chisel carried', CHAPTER)) === JSON.stringify(want), 'the chisel carried: the log ends with the same entries as in order');
 
   everyGoalWalked(ok);
   sideQuests(ok);
