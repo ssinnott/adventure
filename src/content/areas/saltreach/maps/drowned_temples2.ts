@@ -44,16 +44,19 @@ export const DROWNED_TEMPLES2: MapDef = {
     // The stair's foot: the count loud ahead, until it stops.
     { kind: 'event', x: 7, y: 13, id: 'dt2_in', once: true, until: COUNT_STOPPED, text: 'The choir. Dressed stone, dry, and the count loud ahead, many voices on one number, and a bell struck under it, slow, keeping them to it.' },
     { kind: 'event', x: 7, y: 13, id: 'dt2_quiet', once: true, after: COUNT_STOPPED, text: 'The stair\'s foot, the choir quiet ahead. Dry stone, dry air, and your own steps loud in it. You find you are counting them, and stop.' },
-    // The stalls, the west bay, the chancel and the vestry behind it.
+    // The stalls, the west bay, the chancel and the vestry behind it; the chancel quiet once the count stops.
     { kind: 'event', x: 7, y: 10, id: 'dt2_choir', once: true, text: 'The stalls, oak, their seats up, run north to the chancel. The chanters stand in them with their hands on the rails and their eyes shut and count, and the front row sleeps on its feet.' },
     { kind: 'event', x: 1, y: 5, id: 'dt2_psalters', once: true, text: 'The west bay\'s stalls, a psalter open on each desk. The pages are tides, in and out, notes above them. On the last page the notes stop and the numbers go on.' },
-    { kind: 'event', x: 6, y: 3, id: 'dt2_chancel', once: true, text: 'The chancel step, worn to a dish. Beyond it the bell, mouth up on the stone, and the beat on it that you have heard since the door, once to each number and once after the breath.' },
+    { kind: 'event', x: 6, y: 3, id: 'dt2_chancel', once: true, until: COUNT_STOPPED, text: 'The chancel step, worn to a dish. Beyond it the bell, mouth up on the stone, and the beat on it that you have heard since the door, once to each number and once after the breath.' },
+    { kind: 'event', x: 6, y: 3, id: 'dt2_chancel_after', once: true, after: COUNT_STOPPED, text: 'The chancel step, worn to a dish. The stone beyond it is bare, a ring worn in it where the bell sat, and nothing beats. Water laps somewhere behind.' },
     { kind: 'event', x: 8, y: 1, id: 'dt2_vestry_look', once: true, text: 'The vestry behind the chancel, copes on their pegs in a row, rotting to the hem, the gold thread the one thing on them that has held. One peg is bare.' },
     { kind: 'chest', x: 9, y: 1, id: 'dt2_vestry', gold: 300, items: ['morning_star+1', 'ironshod_staff+1', 'potion_sp'] },
-    // The sacristy, in from the far roof's wet stair, and the priests' pool between it and the chancel.
+    // The sacristy, in from the far roof's wet stair, and the priests' pool between it and the chancel,
+    // each quiet once the count stops.
     { kind: 'event', x: 14, y: 2, id: 'dt2_back', once: true, until: COUNT_STOPPED, text: 'The sacristy, in from the wet stair, the tideline along its wall a hand above your head. Through the stone the count comes, near as the next room, and the bell under it.' },
     { kind: 'event', x: 14, y: 2, id: 'dt2_back_quiet', once: true, after: COUNT_STOPPED, text: 'The sacristy, the tideline along its wall above your head. The wall is quiet. Water drips off the stair behind you, and that is the only time kept.' },
-    { kind: 'event', x: 12, y: 2, id: 'dt2_pool', once: true, text: 'A pool fills the floor to the chancel, deep and clear. The priests lie on its bottom, stones roped on, faces up. Across it the Choirmaster beats on, back to them.' },
+    { kind: 'event', x: 12, y: 2, id: 'dt2_pool', once: true, until: COUNT_STOPPED, text: 'A pool fills the floor to the chancel, deep and clear. The priests lie on its bottom, stones roped on, faces up. Across it the Choirmaster beats on, back to them.' },
+    { kind: 'event', x: 12, y: 2, id: 'dt2_pool_after', once: true, after: COUNT_STOPPED, text: 'A pool fills the floor to the chancel, deep and clear. The priests lie on its bottom, stones roped on, faces up. Across it the step is bare, and nothing moves.' },
     { kind: 'chest', x: 12, y: 4, id: 'dt2_silver', gold: 250, items: ['silver_mace', 'tide_symbol'] },
   ],
   encounters: [

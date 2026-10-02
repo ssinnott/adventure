@@ -358,6 +358,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(vestry.kind === 'chest' && ['morning_star+1', 'ironshod_staff+1'].every((id) => vestry.items.includes(id)), 'behind the chancel, the vestry holds the ladder\'s Morning Star +1 and Ironshod Staff +1');
   see(w, 'drowned_temples2:dt2_quiet');
   ok(w.world.used('dt2_quiet'), 'and the stair\'s foot is quiet');
+  see(w, 'drowned_temples2:dt2_chancel_after');
+  ok(w.world.used('dt2_chancel_after'), 'the chancel step is bare, and nothing beats');
   w.world.state.minutes += 3 * MINUTES_PER_DAY;
   w.world.travel('drowned_temples2', 7, 13);
   ok(!w.world.liveGroups().some((g) => ['dt2_choir', 'dt2_stalls', 'dt2_choirmaster'].includes(g.def.id)), 'three days on, the choir does not come back to count');

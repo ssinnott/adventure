@@ -1,10 +1,10 @@
 // The Drowned Temples, level one: the upper temple behind B6's dry door, half flooded. The narthex
 // and the bell's empty frame inside the door; the nave north between its pillars, its west aisle under
-// the water and three drowned men in its dry strip; four chapels off it, the north-west sunk deep,
+// the water and two drowned men in its dry strip; four chapels off it, the north-west sunk deep,
 // the south-west flooded to the chin of the drowned standing in it, and two dry ones east with their
-// fonts, two bull toads come in with the fen at the north-east's; the apse at the nave's head and its stair down to
-// the choir, where the count is heard from the top. Band 11-12; docs/areas/saltreach.md §4.7 is its
-// brief.
+// fonts, two bull toads come in with the fen at the north-east's; the apse at the nave's head and
+// its stair down to the choir, where the count is heard from the top. Band 11-12;
+// docs/areas/saltreach.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';

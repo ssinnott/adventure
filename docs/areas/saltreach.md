@@ -13,7 +13,8 @@ its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52
 Eight boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
 Rietum (#171), Rietum (#172), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's box (#176) and
 the salt pans (#178), the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
-in it (#182), and the Drowned Temples below B6, two levels (#175); with the first two the area was listed. Its content is `src/content/areas/saltreach/`
+in it (#182), and the Drowned Temples below B6, two levels (#175); with the first two the area
+was listed. Its content is `src/content/areas/saltreach/`
 (maps, monsters, items, climate, its part of the world map, its side quests in `quests.ts` and its
 guild quests in `guilds.ts`; its chapter of the one quest, The Tide Stone, in `chapter.ts` is still
 to come) and its businesses' rooms
@@ -445,8 +446,8 @@ settled in its issue, and what the pilot teaches changes them.
   move. The groups are three, each a real fight at 11: five fen toads on the causeway in, the
   nearest; five brinelings in the channel by night, B5's Rifts' spill, until both are quiet; two bull
   toads on the flats past the far roof, the farthest and the hardest at 12. The far roof's door
-  opens on a porch and a stair down, the way into the second level's back since #175; tidal ground lies either side of the ledge before it and round the roof's foot, never beside
-  the porch, so nothing behind the door is reached across the flats. The hint is an event beside
+  opens on a porch and a stair down, the way into the second level's back since #175; tidal ground
+  lies either side of the ledge before it and round the roof's foot, never beside the porch, so nothing behind the door is reached across the flats. The hint is an event beside
   the priestess, always there: she counts the doors one to ten with her hand to each roof, then
   lifts it towards the far roof, where no door shows, and says eleven. The camp is on the last dry
   ground before the door; the cairn holds gold and a potion, no gear. The Tide Bell is #175's
@@ -485,11 +486,11 @@ settled in its issue, and what the pilot teaches changes them.
   vestry behind it with the ladder's two finds. The sacristy at the back is cut off from the
   chancel by the deep pool the priests drowned themselves in, and reached only down the far roof's
   wet stair, B6's secret: the god's silver is had that way and no other, by a swimmer or not. When
-  the Choirmaster falls the count stops, the stair's head, the stair's foot and the sacristy go
-  quiet, and the choir and the stalls do not come back. The Choirmaster drops the Tide Bell, which
-  the priestess takes at the first meeting and rings inside the door (§6); its blessing waits on a
-  systems change (§9). The god's name is on its silver alone (§10). The gate holds at 11: the upper
-  level wins every fight at 7.2 fights to a rest; the choir wins 87% of its fights with the boss
+  the Choirmaster falls the count stops, the stair's head, the stair's foot, the chancel, the
+  pool and the sacristy go quiet, and the choir and the stalls do not come back. The Choirmaster
+  drops the Tide Bell, which the priestess takes at the first meeting and rings inside the door
+  (§6); its blessing waits on a systems change (§9). The god's name is on its silver alone (§10).
+  The gate holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 87% of its fights with the boss
   among them, every fight but the boss's, at 6.8 to a rest, though 29% of its days end in a fight
   broken off, the choir's own; the Choirmaster is won 48% of the time at 11 and 98% at 13. As
   measured, a clear pays about 3,115 xp a member at 11 and about 1,220 gold (§8).
@@ -760,8 +761,8 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   gives back the 600, the 90, the 330, the 170, the 10 and the 1,315, so the area comes to about
   11,265, some 36% over the curve's 8,267. Paid by level in the road's order, a clear of what is
   built gives about 10,490 a member, over the curve, and 4,400 gold, the gold's rest owed to #153
-  (`src/content/progression.ts`). The surplus is for a kill paid by level to damp, and each box still to build is
-  priced by its fights, about 300 a fight, and recorded as built where that passes its share; the
+  (`src/content/progression.ts`). The surplus is for a kill paid by level to damp, and each box
+  still to build is priced by its fights, about 300 a fight, and recorded as built where that passes its share; the
   sum here is restated with each. The willows add 800 when they are built. From here on a kill pays
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
   at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
@@ -1215,7 +1216,8 @@ Decided by delegate for #175, each the owner's to overturn:
    rim and spoken by nobody (§10).
 10. **B6's two events move or change:** `b6_stair` moves onto the secret door's square, since an
     event on an exit is never shown, and says the door stands open below; it and the stair's head,
-    the stair's foot and the sacristy each have a quiet twin once the count has stopped.
+    the stair's foot, the chancel, the pool and the sacristy each have a quiet twin once the count
+    has stopped.
 
 ## 10. Names
 
@@ -1229,8 +1231,8 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
   Cornish: short parts, spelled as they are said, with no accent the font lacks. *Wierde* a mound
   above the flood, *-um* home, *riet* reed, *syl* a sluice or a way through the dyke, *diep* a
   channel, *skor* salt marsh, *wad* tidal flat, *meer* a broad water, *stien* stone, *hol* a hollow
-  or a cave, *sjong* song, *tel* count, *dyk* dyke, *tij* tide, *sâlt* salt (written *salt*). It goes into NAMES
-  §2's row for the Tidefolk.
+  or a cave, *sjong* song, *tel* count, *dyk* dyke, *tij* tide, *sâlt* salt (written *salt*). It
+  goes into NAMES §2's row for the Tidefolk.
 - **The names:**
 
   | Was | Now | What it means | Also thought of |
