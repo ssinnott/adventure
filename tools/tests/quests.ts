@@ -19,7 +19,7 @@ import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src
 import { wrap } from '../../src/ui/draw.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { Feature, MapDef } from '../../src/game/map.ts';
 import { spentId } from '../../src/game/wilds.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok, owed } from './lib.ts';
@@ -33,16 +33,19 @@ export const UNSET: Record<string, string> = {
   q_hale_taken: '#156', // Hale gone from the Scarth, which the Tide Ship's last row waits on (#190)
 };
 
+/** The flags a feature sets: a person's, met, and an event's, said (#156). */
+const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : [];
+
 /**
- * What in a condition names nothing real: a flag no NPC or guild quest sets (nor one UNSET owes), an item, something spent once and kept
+ * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one UNSET owes), an item, something spent once and kept
  * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue), a guardian that
  * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
  * maps are the game's unless given.
  */
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
-  // The flags people set, and the guild quests' own (a hall sets them: game/guilds.ts).
+  // The flags people and events set, and the guild quests' own (a hall sets them: game/guilds.ts).
   const npcFlags = new Set([
-    ...maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])),
+    ...maps.flatMap((d) => (d.features ?? []).flatMap(featureFlags)),
     ...GUILD_QUESTS.flatMap((q) => [takenFlag(q.id), doneFlag(q.id)]),
   ]);
   const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };
@@ -68,10 +71,14 @@ export function fleeting(w: When): string[] {
 
 export function quests(): void {
   // A flag owed to an issue counts as real until that issue sets it, and only then.
-  const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])));
+  const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap(featureFlags)));
   for (const [f, whose] of Object.entries(UNSET)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
   ok(!condFaults({ flag: Object.keys(UNSET)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
     'a flag owed to an issue names something real, and one nobody sets or owes does not');
+  const crossing: MapDef = { id: 'fx_shore', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'],
+    features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: 'fx_crossed' }] };
+  ok(!condFaults({ flag: 'fx_crossed' }, [crossing]).length && condFaults({ flag: 'fx_crossed' }, []).join() === 'flag fx_crossed',
+    'a flag an event sets names something real, as one a person sets does');
   ok(fleeting({ member: { race: 'orcblood' } }).length === 1 && !fleeting({ member: { cls: 'paladin', level: 16 } }).length, 'a member\'s race can stop holding, so a journal may not ask it, and the rest of a member may');
   const conds = (w: When): QuestCond[] => [w].flat();
   // Every quest's steps: its own, or its chapters'. Each check reads these, so none passes the one

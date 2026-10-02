@@ -124,7 +124,8 @@ export type Feature =
    */
   | { kind: 'den'; x: number; y: number; id: string; name?: string; text: string; breeds: readonly string[]; keepers: string; brood: readonly string[]; ask: string; burn: string; leave?: string; burnt: string; ruin?: string; gold: number; items: string[] }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
-  | ({ kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean } & Presence);
+  /** Said on stepping in; `sets` is set as it is said (Hale gone from the Scarth once the Delta is reached, #156). */
+  | ({ kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean; sets?: string | readonly string[] } & Presence);
 
 /**
  * A cell the party may not step onto until every flag is set, or while `shut` holds: a gated exit whose way on is simply
