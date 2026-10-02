@@ -14,6 +14,7 @@ import { LANTERN_WATCH } from './maps/lantern_watch.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
+import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -23,8 +24,7 @@ export const AREA = {
   sprites: SPRITES,
   items: ITEMS,
   quests: [],
-  // The Wall, the act's last chapter, is #204's.
-  chapter: undefined,
+  chapter: CHAPTER,
   climate: { summer: 16, winter: -2, daily: 5, damp: [0.01, 0.08], wettest: 85, fog: 0.6, lag: 8,
     fogText: 'Mist comes down through the pines.', thunderText: 'Thunder rolls down the gorge.' },
   interiors: INTERIORS,
