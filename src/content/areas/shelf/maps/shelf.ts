@@ -143,7 +143,21 @@ export const SHELF: MapDef = {
         '"Dunstan. He taught me the light in the window." He looks east, up the pass, and then west. "Wardens, riding dark to the Queen\'s barrow. The Regent should know what his own men are doing. He\'ll have it from me, under my seal."',
         'He puts the letter inside his coat, not into the fire. "He says burn it. I don\'t burn things. He\'d tell you that\'s my fault, and it is."',
       ],
-    }] },
+    }], until: { flag: 'q_hale_taken' } },
+    // Hale gone from the Scarth (#156): two men in Warden grey who do not know the road hold it, warn
+    // of nothing and ask the company's business (#151's call 5). They take Dunstan's letter, if it is
+    // still in the pack, and it goes no further.
+    { kind: 'npc', x: 29, y: 8, name: 'two Wardens at the Scarth', lines: [
+      'Two men in Warden grey at the checkpoint, one up and one sitting against the post with his hat down. Where the crate stood there is a square of pale dust and nothing on it.',
+      '"Your business?" You tell him, and he takes it the way a wall takes rain. "Open road. Go on through." The other man does not lift his hat.',
+      '"Hale?" He looks at the other, who shrugs under the hat. "Nobody of that name at this post." He nods up the road. "That goes through to Thornmark, does it. Good." The pole goes up.',
+    ], quest: {
+      item: 'dunstan_letter', reward: 0, setFlag: 'q_riders_grey',
+      done: [
+        'The one standing takes the letter and reads it through once, in no hurry. The one sitting does not look up.',
+        '"Noted." It goes inside his coat, not into the post\'s bag, and he buttons the coat over it. He does not reach for the strongbox.',
+      ],
+    }, after: { flag: 'q_hale_taken' } },
     { kind: 'sign', x: 3, y: 28, text: 'Brandy Hole. Chalked beneath, in Warden hand: CLOSED. DO NOT ENTER. ASK CAPT. HALE.' },
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
     // The Rest of the Survey (#77): Ailith behind the west wood, hiding from the Wardens, until the

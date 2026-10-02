@@ -95,6 +95,7 @@ export const walkthrough: Walkthrough = (ok) => {
     'Sylvane met first: Gytha gives the lesson, and then the cut\'s words');
 
   sideQuests(ok);
+  haleGone(ok);
   walkWorth(ok);
   homecoming(ok);
 };
@@ -596,6 +597,61 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * to one without him. The flag is set by hand, since Helmstow's band refuses a company of 16 on the
  * road (sunderwood.md §9, 6). Either company gets in, and the shops and trainers stay.
  */
+/** The Cargo Ledger found in Brandy Hole and given to Hale, as his first hand-in. */
+export function ledgerGiven(w: Walk): void {
+  open(w, 'greywater2:gw2_ledger');
+  meetWho(w, 'q_greywater_done');
+  w.ok(!!w.party.flags.q_greywater_done && !w.party.bag.includes('greywater_ledger'), 'Hale takes the ledger');
+}
+
+const HALE = (): Person => who('shelf', 29, 8, 'Captain Hale'), STRANGERS = (): Person => who('shelf', 29, 8, 'two Wardens');
+
+/** Down the Edge into the Delta, by the Salt Road: what the first step there says. */
+function intoTheDelta(w: Walk): string[] {
+  w.world.travel('downs_d4', 1, 30, SOUTH);
+  const said: string[] = [];
+  for (let i = 0; i < 3 && w.world.zone?.id !== 'delta_d5'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+  listen(w);
+  return said;
+}
+
+/**
+ * Hale gone from the Scarth (#156): the ledger given and the Delta set foot in, two strangers in
+ * Warden grey hold the pass, warn nothing and take Dunstan's letter; the pass is walked as before.
+ * The Delta first, or the ledger kept, and Hale is there.
+ */
+function haleGone(ok: (cond: boolean, msg: string) => void): void {
+  { // The Delta before the ledger: nothing is seen on the Edge, and Hale still holds the Scarth.
+    const w = newWalk(ok);
+    const said = intoTheDelta(w);
+    w.ok(!said.some((m) => m.includes('two riders in Warden grey')) && !w.party.flags.q_hale_taken, 'into the Delta before Hale has the ledger, nothing goes over the Edge');
+    w.ok(there(w, HALE(), 'shelf') && !there(w, STRANGERS(), 'shelf'), 'and Hale holds the Scarth');
+  }
+  const w = newWalk(ok);
+  // Dunstan writes to Hale, and the letter is carried no further than the pack.
+  meetWho(w, 'q_riders');
+  at(w, 0);
+  see(w, 'downs_e2:e2_riders');
+  answerWho(w, 'q_riders', 'Write to Hale.');
+  w.ok(w.party.bag.includes('dunstan_letter'), 'Dunstan writes to Hale, and gives the company the letter');
+  meetWho(w, 'q_seal');
+  sealFound(w);
+  ledgerGiven(w);
+  w.ok(there(w, HALE(), 'shelf') && !there(w, STRANGERS(), 'shelf'), 'the ledger given, Hale holds the Scarth until the company is down the Edge');
+  const said = intoTheDelta(w);
+  w.ok(said.some((m) => m.includes('two riders in Warden grey')) && !!w.party.flags.q_hale_taken, `into the Delta, two riders go over the Edge towards the Scarth, and Hale is taken (${said.join(' | ')})`);
+  w.ok(!intoTheDelta(w).some((m) => m.includes('Warden grey')), 'down the Edge again, they are not seen again');
+  w.ok(page(w, 'riders')?.goal === 'Take Dunstan\'s letter to the Scarth.' && page(w, 'seal')?.goal === 'Take the seal to Maud at the Gilded Eel.', `Hale gone, the letter goes to the Scarth and the seal to Maud (${page(w, 'riders')?.goal}; ${page(w, 'seal')?.goal})`);
+  w.ok(!there(w, HALE(), 'shelf') && there(w, STRANGERS(), 'shelf'), 'Hale is gone from the Scarth, and two strangers in Warden grey hold it');
+  const took = hear(w, 'shelf', STRANGERS());
+  w.ok(took.includes('"Noted."') && !w.party.bag.includes('dunstan_letter') && !!w.party.flags.q_riders_grey, 'they take Dunstan\'s letter, and it goes into a coat');
+  reads(w, 'riders', 'Riders in the Dark', ['dunstan', 'ford', 'letter', 'grey'], ['hale', 'kept'], 'the letter to the strangers');
+  const asked = hear(w, 'shelf', STRANGERS());
+  w.ok(asked.includes('"Your business?"') && asked.includes('Nobody of that name') && !asked.includes('wolves'), 'they ask the company\'s business, do not know Hale\'s name and warn of nothing');
+  w.ok(w.party.bag.includes('clerks_seal') && !w.party.flags.q_seal_hale, 'they take nothing else: the seal stays in the pack');
+  walkThrough(w, 'shelf', 30, 9, EAST, 'thornmark');
+}
+
 function homecoming(ok: (cond: boolean, msg: string) => void): void {
   const business = (w: Walk, x: number, y: number) => { w.world.travel('harrow', x, y, NORTH); const f = w.world.featureHere(); return f && f.x === x && f.y === y ? f : undefined; };
   const night = (w: Walk, x: number, y: number): string[] => { at(w, 0); w.world.travel('harrow', x, y, NORTH); return w.world.eventsHere(); };

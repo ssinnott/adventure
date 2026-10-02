@@ -309,6 +309,10 @@ settled in its issue, and what the pilot teaches changes them.
   cellar's Rift shows its Wardstone shard set in the tear's lip (#398). The hint is the mast's stump
   at the arch, which is always there; the green glow is said by night beside it. As measured, the box pays about 680 xp a member and its Rift about 430, 1,115
   together, and 300 gold. What the owner finds by hand goes here when the box has been played.
+  D5's first row, the crossing line at D4's foot, holds a once-event on each of its ten squares a
+  company can stand on (#156): once Hale has had the ledger, the first step onto the Delta sees two
+  riders in Warden grey go over the Edge towards the Scarth and sets `q_hale_taken`, and the rest
+  are gone.
 
 ### 4.3 C4, the spur to Rietum (#171): country, band 10–11
 
