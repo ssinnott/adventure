@@ -1344,6 +1344,8 @@
     "rank_lanterns",
     "rank_wardens",
     "seal_read",
+    "sm_hale_word",
+    "sm_ship_word",
     "watch_prior_met",
     "watch_reader_met"
   ],

@@ -1,5 +1,13 @@
-// Saltreach's walkthrough. Its chapter, The Tide Stone, is #180's, which plays it here; until then,
-// the Delta road (C5 and D5, #170) walked: down off Kestrel Edge onto the shore, where the land says
+// Saltreach's walkthrough. First its chapter, The Tide Stone (#180), played a step at a time
+// (tools/walk.ts). In order, at 10 and 11: the Foreland and the Grove played from a new game, then
+// down off the Edge into the Delta, up the spur to Wytske on Rietum's quay, west to the empty
+// plinth, south to the priestess at the temples' dry door and in, and down to Saltmouth, where the
+// Warden has the news of Hale and Kitto the ship; then the boat out to Wrackholm, where the goal
+// stands until the Stone is home. Saltmouth first, at 12, before the Grove: Kitto's word begins
+// the chapter, the plinth is seen before the boat, and the Grove is played on after. The news of
+// Hale waits on #156 and the Stone home on #191, each set by hand where they will be.
+//
+// Then the area as built: the Delta road (C5 and D5, #170) walked: down off Kestrel Edge onto the shore, where the land says
 // what it is to a company under its band; the hermit on the islet, who points up the spur; the
 // barge under the causeway's arch found from its hint; and the box's groups and its Rift's won at
 // its floor. Then the spur to Rietum (C4, #171): the eel-trapper's word on the poleman, the crews'
@@ -28,7 +36,13 @@
 // (C7, #178): the Scarp across the south and its stair's fallen foot, the sealed pan's hoard found
 // from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, fight, listen, see, meetWho } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, fight, listen, see, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import type { Step, Walk } from '../../../../tools/walk.ts';
+import { CHAPTER } from './chapter.ts';
+import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
+import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
+import { STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
+import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature } from '../../../game/map.ts';
@@ -72,7 +86,111 @@ const C3 = MAP_DEFS.find((d) => d.id === 'upperwater_c3')!;
 const c3person = (name: string): Person => C3.features!.find((f) => f.kind === 'npc' && f.name.includes(name)) as Person;
 const QUAYHAND = c3person('quay'), PRIEST = c3person('priest'), SMUGGLER = C3.features!.find((f): f is Person => f.kind === 'npc' && f.teaches?.cls === 'thief')!;
 
+// ---- the chapter (#180) ----
+
+const WARDEN = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.flag === 'sm_hale_word')!;
+const KITTO = TOWN.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
+
+/** Hale taken from the Scarth, set by hand where #156 will set it (Wrackholm's walkthrough does the same). */
+const haleTaken = (w: Walk): void => { w.party.flags.q_hale_taken = 1; };
+
+/**
+ * The Stone set back on its plinth, by hand, where Wrackholm's chapter (#191) will have carried it
+ * home. Until then the chapter's goal is the boat, and stays the boat on the isle.
+ */
+function stoneHome(w: Walk): void {
+  w.party.flags.q_tide_home = 1;
+  listen(w);
+}
+
+/** Into Saltmouth by the land gate, from the Salt Road out of C5. */
+function toSaltmouth(w: Walk): void {
+  walkThrough(w, 'delta_c5', 26, 30, SOUTH, 'saltings_c6', 3);
+  walkThrough(w, 'saltings_c6', 26, 17, SOUTH, 'saltmouth');
+}
+
+/** The boat from the quay's end to Wrackholm's landing: the goal stands there until the Stone is home. */
+function theBoat(w: Walk): void {
+  const goal = quest(w)?.goal;
+  w.world.travel('saltmouth', KITTO.x, KITTO.y);
+  w.party.gold = Math.max(w.party.gold, KITTO.passage![0].fare);
+  const out = take(KITTO.passage![0], w.world, w.party);
+  listen(w);
+  w.ok(out.taken && w.world.zone?.id === 'wrackholm_e6' && quest(w)?.goal === goal, `the boat lands the company on Wrackholm, and the goal stands until the Stone is home (${quest(w)?.goal})`);
+  stoneHome(w);
+}
+
+const PLINTH: Step = { name: 'the plinth', play: (w) => { walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2); see(w, 'delta_b5:b5_plinth'); } };
+const BOAT: Step = { name: 'the boat', play: theBoat };
+
+/** The chapter in order: into the Delta, Rietum, the plinth, the temples, Saltmouth and the boat. */
+const STEPS: readonly Step[] = [
+  { name: 'into the Delta', play: (w) => walkThrough(w, 'downs_d4', 1, 30, SOUTH, 'delta_d5', 3) },
+  { name: 'to Rietum', play: (w) => {
+    walkThrough(w, 'delta_d5', 0, 2, WEST, 'delta_c5');
+    walkThrough(w, 'delta_c5', 7, 1, NORTH, 'delta_c4', 3);
+    walkThrough(w, 'delta_c4', 3, 1, NORTH, 'upperwater_c3', 3);
+    meetWho(w, 'c3_saw_stone');
+  } },
+  PLINTH,
+  { name: 'the temples', play: (w) => {
+    walkThrough(w, 'delta_b5', 16, 31, SOUTH, 'delta_b6', 2);
+    meetWho(w, 'q_tide_bell');
+    walkThrough(w, 'delta_b6', 16, 12, NORTH, 'drowned_temples', 2);
+    see(w, 'drowned_temples:dt1_stair');
+  } },
+  { name: 'to Saltmouth', play: (w) => {
+    toSaltmouth(w);
+    w.ok(!w.world.present(WARDEN), 'while Hale holds the Scarth, no Warden sits by Saltmouth\'s gate');
+    haleTaken(w);
+    w.ok(w.world.present(WARDEN), 'once Hale is gone from the Scarth, the Warden off the coast road sits by the gate');
+    meetWho(w, 'sm_hale_word');
+    meetWho(w, 'sm_ship_word');
+  } },
+  BOAT,
+];
+
+/** The entries written on the Tide Stone's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+function theTideStone(ok: (cond: boolean, msg: string) => void): void {
+  // In order: the Foreland and the Grove played, and the treaty's seal, the Grove's end, begins the Tide Stone.
+  const chain = newWalk(ok);
+  hired(chain);
+  playChapter(chain, FORELAND, FORELAND_STEPS, 'in order');
+  playChapter(chain, GROVE, GROVE_STEPS, 'in order');
+  const sealed = chain.news.slice(chain.news.lastIndexOf('Chapter complete: The Grove Stone.'));
+  ok(sealed.slice(0, 2).join(' ') === 'Chapter complete: The Grove Stone. New chapter: The Tide Stone.', `in order, the Grove's end begins the Tide Stone (${sealed.join(' ')})`);
+  playChapter(chain, CHAPTER, STEPS, 'in order');
+  ok(['saw', 'plinth', 'count', 'stair', 'hale', 'ship'].every((e) => written(chain).includes(e)), `in order, the whole chapter is written (${written(chain).join(', ')})`);
+  ok(chain.news.includes('Chapter complete: The Tide Stone.') && !quest(chain)?.done, 'in order, the Stone home ends the Tide Stone, and the quest goes on');
+  const want = ending(chain, 'in order', CHAPTER);
+
+  // Saltmouth first, at 12, the farm done and the Grove not begun: Kitto's word begins the chapter,
+  // no Warden sits by the gate while Hale holds the Scarth, and the plinth comes before the boat.
+  const first = newWalk(ok);
+  hired(first);
+  playChapter(first, FORELAND, FORELAND_STEPS, 'Saltmouth first');
+  first.level = 12;
+  toSaltmouth(first);
+  ok(!first.world.present(WARDEN), 'Saltmouth first, while Hale holds the Scarth, no Warden sits by the gate');
+  meetWho(first, 'sm_ship_word');
+  ok(first.news.at(-1) === 'New chapter: The Tide Stone.', `Saltmouth first, Kitto's word begins the Tide Stone (${first.news.at(-1)})`);
+  goalFromBegun(first, 'Saltmouth first');
+  const at12 = (s: Step): Step => ({ name: s.name, play: (w) => { w.level = 12; s.play(w); } });
+  playChapter(first, CHAPTER, [at12(PLINTH), at12(BOAT)], 'Saltmouth first');
+  goalFromBegun(first, 'Saltmouth first, the Stone home');
+  ok(GROVE.goals.some((g) => g.text === quest(first)?.goal), `Saltmouth first, the Stone home, the quest goes back to the Grove (${quest(first)?.goal})`);
+  playChapter(first, GROVE, GROVE_STEPS, 'Saltmouth first');
+  const read = ending(first, 'Saltmouth first', CHAPTER).filter((e) => e.startsWith('tide.'));
+  ok(JSON.stringify(read) === JSON.stringify(want.filter((e) => e === 'tide.plinth' || e === 'tide.ship')), `Saltmouth first, the Tide Stone reads as in order, with only what was seen and said (${read.join(', ')})`);
+
+  everyGoalWalked(ok, [CHAPTER]);
+}
+
 export const walkthrough: Walkthrough = (ok) => {
+  theTideStone(ok);
+
   const w = newWalk(ok);
 
   // Down off the Edge: the Salt Road leaves D4's foot and the shore under it is the Delta's, which
