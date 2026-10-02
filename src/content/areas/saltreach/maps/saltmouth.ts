@@ -112,8 +112,7 @@ export const SALTMOUTH: MapDef = {
     { kind: 'npc', x: 14, y: 10, name: 'Kitto, who has a boat', lines: [
       'A man at the quay\'s end with a boat under him, coiling a line. He has seen you coming and not stopped coiling.',
       '"Kitto. Wrackholm, the landing, a hundred and fifty the boat. We go out at eight tonight and you step off at six, with the light."',
-      '"A fare is a fare, and I don\'t ask why. Favours I don\'t do. Debts I pay." He goes back to his line.',
-      '"Midsummer, a barge came down with no lamp lit and never tied up. Straight out past the harbour lamps to a ship riding off Wrackholm, and I watched it go." He pulls the line tight. "My boat goes out there. I don\'t ask why."',
+      '"A fare is a fare. Favours I don\'t do, debts I pay. Midsummer a barge came down with no lamp lit and never tied up. Straight out past the harbour lamps to a ship riding off Wrackholm. My boat goes out there. I don\'t ask why." He pulls the line tight.',
     // The ship the Stone went to (#180): his word, whichever words he greets a company with.
     ], flag: 'sm_ship_word', says: [{ after: { flag: 'q_passage_owed' }, sets: 'sm_ship_word', lines: [
       '"Hessel\'s word, is it." He looks at the water as though it owed him. "That squares him with me. Out to Wrackholm for nothing, back is a fare, and I still don\'t ask why. Get in."',
