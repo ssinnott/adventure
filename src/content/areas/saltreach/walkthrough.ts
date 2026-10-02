@@ -93,10 +93,10 @@ const WARDEN = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.fla
 const KITTO = TOWN.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
 
 /** Hale taken from the Scarth, set by hand where #156 will set it (Wrackholm's walkthrough does the same). */
-export const haleTaken = (w: Walk): void => { w.party.flags.q_hale_taken = 1; };
+const haleTaken = (w: Walk): void => { w.party.flags.q_hale_taken = 1; };
 
 /** Into Saltmouth by the land gate, from the Salt Road out of C5. */
-export function toSaltmouth(w: Walk): void {
+function toSaltmouth(w: Walk): void {
   walkThrough(w, 'delta_c5', 26, 30, SOUTH, 'saltings_c6', 3);
   walkThrough(w, 'saltings_c6', 26, 17, SOUTH, 'saltmouth');
 }
@@ -115,8 +115,8 @@ function theBoat(w: Walk): void {
     `the boat lands the company on Wrackholm, which begins the Stone Carried Home, and the Tide Stone stays open (${w.news.at(-1)})`);
 }
 
-export const PLINTH: Step = { name: 'the plinth', play: (w) => { walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2); see(w, 'delta_b5:b5_plinth'); } };
-export const BOAT: Step = { name: 'the boat', play: theBoat };
+const PLINTH: Step = { name: 'the plinth', play: (w) => { walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2); see(w, 'delta_b5:b5_plinth'); } };
+const BOAT: Step = { name: 'the boat', play: theBoat };
 
 /** The chapter in order: into the Delta, Rietum, the plinth, the temples, Saltmouth and the boat. */
 export const STEPS: readonly Step[] = [

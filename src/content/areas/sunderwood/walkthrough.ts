@@ -210,6 +210,17 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   playChapter(sunder, CHAPTER, [READ, { name: 'Vask, no', play: vaskRefused() }], 'the Sunder first');
   ok(JSON.stringify(ending(sunder, 'the Sunder first').filter((e) => e.startsWith('wall.'))) === JSON.stringify(wall), `the Sunder first, the Wall reads as in order (${written(sunder).join(', ')})`);
 
+  // The Reader's single readings, seeded: the table gives both papers, so no run carries one alone,
+  // but she reads either alone, and the Wall begins on it with only that one written.
+  for (const [one, read, not, flag, other] of [['ships_papers', 'seal', 'name', 'seal_read', 'log_read'], ['ships_log', 'name', 'seal', 'log_read', 'seal_read']] as const) {
+    const alone = seeded(ok);
+    alone.level = 16;
+    alone.party.bag.push(one);
+    toTheReader(alone);
+    ok(!!alone.party.flags[flag] && !alone.party.flags[other] && written(alone).includes(read) && !written(alone).includes(not),
+      `${one} alone, the Reader reads the ${read} and not the ${not}, and the Wall begins on it (${written(alone).join(', ')})`);
+  }
+
   // Sunderwood's runs last in road order, so every chapter's goals are checked here.
   everyGoalWalked(ok);
 }
