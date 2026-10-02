@@ -41,6 +41,12 @@ export const ITEMS: readonly ItemDef[] = [
   P(core('scale'), 1),
   // C7's secret (#178): the salter's hoard in the sealed pan, beside the ladder's Horn Bow +1.
   P(core('buckler'), 2, { id: 'crabshell_buckler', name: 'Crab-Shell Buckler +2' }),
+  // The Drowned Temples (#175): the bell the Choirmaster beats time on, for the priestess at B6's dry
+  // door (#56's 23); and the god's silver in the sacristy, a mace and the Holy Symbol of the Tide, its
+  // resistance to cold owed to a systems change (docs/areas/saltreach.md §9).
+  { id: 'tide_bell', name: 'The Tide Bell', slot: 'none', price: 0 },
+  P(morningStar, 1, { id: 'silver_mace', name: 'Silver Mace +1', price: 850 }),
+  { id: 'tide_symbol', name: 'Holy Symbol of the Tide', slot: 'none', price: 400, text: ['A disc of silver on a cord, worn thin at the back by a chest. Round its rim a tide is cut, a wave and two open hands, and a name: TIJSJONGER.', 'Nobody at the temples said it. The wave goes out between the hands, not in.'] },
   // The Compact's first task (#182): the warehouse clerk's cask, carried to the Keel past the customs house.
   { id: 'brandy_cask', name: 'Cask of Brandy', slot: 'none', price: 0 },
 ];

@@ -1,12 +1,13 @@
 // The Delta, box B6: the Drowned Temples' approach. Core, band 11-12: the temples' roofs standing out
 // of the fen south of Stienwierde (B5), joined by causeways; the dry door at 16,11, the way into the
-// temples (#175), with tidal flats at its foot and the priestess beside it, counting; the drowned
-// standing in the water; and the far roof alone in the flats, with a door in its wall under the
-// tideline. Tidal ground that shows and hides a door is new here. Cut from the atlas by
+// temples (#175), with tidal flats at its foot and the priestess beside it, counting, who asks for the
+// temple's bell (#56's 23); the drowned standing in the water; and the far roof alone in the flats,
+// with a door in its wall under the tideline and a wet stair behind it down into the choir's back. Tidal ground that shows and hides a door is new here. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/saltreach.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
+import { BELL_HUNG, COUNT_STOPPED } from './drowned_temples.ts';
 
 /** Both of Stienwierde's Rifts gone quiet (B5): their spill stops coming down the channel. */
 export const RIFTS_CLOSED: When = { slain: ['b5_rift_n:b5_rift_n_warden', 'b5_rift_s:b5_rift_s_warden'] };
@@ -19,6 +20,11 @@ export const DELTA_B6: MapDef = {
   band: [11, 12],
   region: 'saltreach',
   start: { x: 16, y: 0, facing: SOUTH },
+  exits: [
+    // The dry door, into the upper temple; and the far roof's porch, down the wet stair into the choir's back.
+    { x: 16, y: 11, to: 'drowned_temples', tx: 8, ty: 14, tf: NORTH, label: 'You go down the dry stair into the temple.' },
+    { x: 8, y: 24, to: 'drowned_temples2', tx: 14, ty: 1, tf: SOUTH, label: 'You go down the wet stair and through the door at its foot.' },
+  ],
   rows: [
     'wwwwwwwwwwwwwwww:w~~wwwwwwwwwwww',
     'wwwwwwwwwwwwwwww:w~~wwwwwwwwwwww',
@@ -56,21 +62,26 @@ export const DELTA_B6: MapDef = {
   features: [
     // The causeway in from Stienwierde.
     { kind: 'event', x: 16, y: 1, id: 'b6_in', once: true, text: 'Roofs rise out of the fen ahead, slate and weed, no wall under them that shows. Causeways of packed earth go roof to roof. The temples are drowned.' },
-    // Before the temple's dry door (16,11), the way in (#175 makes it the exit); the priestess beside it and her count.
+    // Before the temple's dry door (16,11), the way in; the priestess beside it and her count, and the
+    // Tide Bell she asks for (#56's 23), which she rings once it is back.
     { kind: 'event', x: 16, y: 12, id: 'b6_door', text: 'The temples\' dry door stands open, a stair going down out of the light, its steps dry. At its foot the flats run out grey to the water, worm-cast and shining.' },
     { kind: 'npc', x: 15, y: 12, name: 'a priestess at the dry door', lines: [
       'A woman of the Tidefolk stands at the dry door with her back to it, grey robe wet to the knee, and counts on her fingers with her eyes on the roofs. She does not stop for you.',
       '"Eleven." Her hand comes down. "The one who counts sang the tides once, in and out, and we sang after it. Now it counts, and I count with it, and that is the number." Her hand goes up again. "Eleven."',
       '"What it means? Nothing. Not yet." She looks past you, south, where the fen ends. "The port is that way, if you want men who talk. I have the doors to count." And she begins again at one.',
-    ] },
+      '"There was a bell on the frame inside this door, and it went below when the choir did. The master of the choir beats the count on it now." Her hand comes down, open. "Bring it up. The frame is still there, and I have the rope."',
+    ], flag: 'q_tide_bell', quest: { item: 'tide_bell', reward: 300, setFlag: 'q_tide_bell_done', done: ['She takes the bell in both arms and does not look at it, only at the stair. "Then it is done beating." She goes in at the door with it, and you hear the rope go through the hook.'], early: ['Her count stops. She looks at the bell in your hands, then at you, and takes it in both arms. "Nobody asked you for that. The one who counts will have to make what it can of it."'], after: ['"It hangs, and it rings the number." Her hand goes up again. "Eleven."'] } },
     { kind: 'event', x: 17, y: 12, id: 'b6_count', text: 'The priestess counts the doors, her hand to each roof in turn, one to ten. Then it lifts towards the far roof in the flats, where no door shows, and stays. "Eleven."' },
+    { kind: 'event', x: 14, y: 12, id: 'b6_rung', once: true, after: BELL_HUNG, text: 'The priestess carries the bell in at the door and rings it there, ten even strokes, and the eleventh a beat late. She comes out again with her hand still up.' },
     { kind: 'camp', x: 9, y: 10, name: 'The last dry ground', text: 'A camp on the causeway\'s last dry ground before the door: a hearth of temple slates, cut reed for bedding and the water on three sides.' },
     { kind: 'cairn', x: 5, y: 8, id: 'b6_cairn', text: 'A cairn by the small roof, for one the water kept. The stones are temple slates, laid flat as a roof is laid, and weed grows between them as it does on the roofs.', gold: 70, items: ['potion_heal'] },
     // The causeway south, its drowned, and the far roof in the flats.
     { kind: 'event', x: 11, y: 17, id: 'b6_drowned', once: true, text: 'The drowned stand waist-deep either side of the causeway, facing the temples, robes gone to weed. Not one turns as you pass. Their lips move, and no sound comes.' },
     { kind: 'event', x: 9, y: 21, id: 'b6_far', once: true, text: 'The far roof, alone in the flats to the south-west. Weed on its slates, and its wall going down into brown water, and the tideline drawn along it in salt.' },
-    // Behind the far roof's wall: the stair down to the temples' second level (#175 makes it the exit).
-    { kind: 'event', x: 8, y: 24, id: 'b6_stair', once: true, text: 'A porch sunk below the tideline, dark. A stair goes down from it, the steps wet, to a door at its foot. From below the door, faint and steady, someone is counting.' },
+    // In the far roof's wall, on the door's own square: the porch behind it and the wet stair down into
+    // the choir's back (its foot, 8,24, is the way), counting below until the Choirmaster falls.
+    { kind: 'event', x: 8, y: 23, id: 'b6_stair', once: true, until: COUNT_STOPPED, text: 'A porch sunk below the tideline, dark. A stair goes down from it, the steps wet, to a door standing open at its foot, and up through the door, faint and steady, someone counting.' },
+    { kind: 'event', x: 8, y: 23, id: 'b6_stair_quiet', once: true, after: COUNT_STOPPED, text: 'The porch below the tideline, the wet stair down to the open door. The counting has stopped. Water runs off the steps, and that is all that comes up.' },
     // Over the channel to the east roof; the fen.
     { kind: 'event', x: 25, y: 14, id: 'b6_crossing', once: true, text: 'The channel, crossed on a causeway of sunk stones a hand under the water. Each stone is a flagstone from a floor, and the water pulls at your knees.' },
     { kind: 'event', x: 27, y: 8, id: 'b6_roof', once: true, text: 'The east roof over the channel, its doors silted to the lintel, the mud in them dry and cracked. Whatever was sung in there was sung before the silt.' },
