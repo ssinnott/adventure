@@ -11,6 +11,8 @@
 // in her blue and gold; her captain wears it under a cloak of her blue gone nearly black. The
 // Drowned Temples' priests are bones in sodden robes with the drowned god's collar at the throat,
 // the jaw open on the count; their Choirmaster is the same, taller and fuller, beating it on a bell.
+// The temples' own drowned man is their congregation: heavier, bowed, salt-crusted, hugging the
+// stone it roped to its neck.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow, eye } from './common.ts';
@@ -30,12 +32,13 @@ const BONE = (t: number): Mats => ({
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard', 'barrow_captain', 'drowned_chanter', 'choirmaster'];
+export const KINDS: readonly MonsterSprite[] = ['skeleton', 'bone_knight', 'ghoul', 'drowned', 'barrow_guard', 'barrow_captain', 'temple_drowned', 'drowned_chanter', 'choirmaster'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'bone_knight') knight(ctx, x, y, h, p);
   else if (kind === 'ghoul') ghoul(ctx, x, y, h, p);
   else if (kind === 'drowned') drowned(ctx, x, y, h, p);
+  else if (kind === 'temple_drowned') templeDrowned(ctx, x, y, h, p);
   else if (kind === 'barrow_guard') guard(ctx, x, y, h, p);
   else if (kind === 'barrow_captain') captain(ctx, x, y, h, p);
   else if (kind === 'drowned_chanter' || kind === 'choirmaster') priest(ctx, x, y, h, p, kind === 'choirmaster');
@@ -739,6 +742,128 @@ function drowned(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
     const dy2 = [hy + hr * 0.9, farWr.y + h * 0.05, nearWr.y + h * 0.05, D(0.42)][i];
     ctx.fillStyle = B.col(rgba(shade('#cfe4e0', p.tone), 0.5 * (1 - t)));
     ctx.beginPath(); ctx.ellipse(dx2, dy2 + t * h * 0.11, Math.max(0.6, h * 0.008), Math.max(0.8, h * 0.014), 0, 0, Math.PI * 2); ctx.fill();
+  }
+  void p.light;
+}
+
+/**
+ * The temples' drowned man: one of the drowned god's congregation, who went down with the temple
+ * and meant to. Where the Foreland's hangs slack with its head lolled back, this one stands planted
+ * and squared, head bowed chin to chest, and hugs to its belly the ballast stone it roped to its own
+ * neck, the knot hung with a scallop of the god's bronze. Salt and barnacles crust it, not weed.
+ */
+function templeDrowned(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
+  const lift = p.breathe * h * 0.006, BY = (v: number) => y + v * u - lift;
+  const flesh = p.base, deep = shade(mix(p.dark, '#0e1c1e', 0.5), 1);
+  const rag = shade(mix(p.dark, '#3a3e34', 0.5), 1);
+  const salt = shade('#e6e2d4', p.tone), barn = shade('#bcb6a4', p.tone);
+  const stone = shade('#7c7a72', p.tone), rope = shade('#5a4a34', p.tone);
+  const gilt = shade(GILT, p.tone);
+  const nod = Math.sin(p.frame / 37) * 0.6;                                     // the bowed head barely moves
+  groundShadow(ctx, x, y + 1, h * 0.7);
+
+  // ---- the legs, short and thick and set wide, the far one darker; flat heavy feet.
+  blob(ctx, B, shade(flesh, 0.8), [
+    ...limb(X(-9), Y(-42), X(-13), Y(-21), X(-14), Y(-3), 7 * u, 5.6 * u, 601),
+    { k: 'ell', x: X(-16), y: Y(-1.6), rx: 6 * u, ry: 2.6 * u, rot: 0.05 },
+  ], { h, formK: 0.5, spread: 0.72 });
+  blob(ctx, B, shade(flesh, 0.92), [
+    ...limb(X(9), Y(-42), X(13), Y(-21), X(14), Y(-3), 7.2 * u, 5.8 * u, 603),
+    { k: 'ell', x: X(16), y: Y(-1.6), rx: 6.2 * u, ry: 2.6 * u, rot: -0.05 },
+  ], { h, formK: 0.5, spread: 0.72 });
+  // What is left of its clothes: a short rag at the hip, torn above the knee.
+  blob(ctx, B, rag, [{ k: 'curve', pts: [
+    X(-19), BY(-50), X(0), BY(-52), X(19), BY(-50), X(20), Y(-36), X(13), Y(-31), X(7), Y(-35),
+    X(1), Y(-29), X(-5), Y(-34), X(-12), Y(-30), X(-20), Y(-35),
+  ], wobble: 0.08, spiky: 0.05, seed: 605, sub: 3 }], { h, tex: 'folds', seed: 605, amount: 0.5, formK: 0.5, spread: 0.7 });
+
+  // ---- the trunk: broad, the shoulders squared and hunched forward over the stone.
+  blob(ctx, B, flesh, [
+    { k: 'curve', pts: [
+      X(-23), BY(-74), X(-12), BY(-81), X(0), BY(-82), X(12), BY(-81), X(23), BY(-74),
+      X(22), BY(-60), X(19), BY(-46), X(0), BY(-43), X(-19), BY(-46), X(-22), BY(-60),
+    ], wobble: 0.04, seed: 607, sub: 3 },
+    { k: 'ball', x: X(-21), y: BY(-74), r: 8 * u },
+    { k: 'ball', x: X(21), y: BY(-74), r: 8.4 * u },
+  ], { h, formK: 0.6, spread: 0.85 });
+  // The upper arms, down the flanks to the elbows at the stone's sides.
+  blob(ctx, B, shade(flesh, 0.82), [shaft(X(-23), BY(-72), X(-26), BY(-55), 6 * u, 609)], { h, formK: 0.5, spread: 0.7 });
+  blob(ctx, B, shade(flesh, 0.96), [shaft(X(23), BY(-72), X(26), BY(-55), 6.2 * u, 611)], { h, formK: 0.5, spread: 0.7 });
+
+  // ---- the head, bowed chin to chest and sunk between the shoulders: the crown is what shows.
+  const hx = X(0.5 + nod), hy = BY(-84), hr = 8.4 * u;
+  blob(ctx, B, shade(flesh, 1.04), [{ k: 'curve', pts: [
+    hx - hr, hy + hr * 0.2, hx - hr * 0.86, hy - hr * 0.62, hx, hy - hr * 1.0, hx + hr * 0.86, hy - hr * 0.62,
+    hx + hr, hy + hr * 0.2, hx + hr * 0.7, hy + hr * 0.78, hx, hy + hr * 0.96, hx - hr * 0.7, hy + hr * 0.78,
+  ], wobble: 0.04, seed: 613, sub: 3 }], { h, formK: 0.6, spread: 0.8 });
+  // Salt crusted on the crown, where the head bows into the light.
+  blob(ctx, B, salt, [{ k: 'curve', pts: [
+    hx - hr * 0.78, hy - hr * 0.42, hx - hr * 0.3, hy - hr * 0.92, hx + hr * 0.4, hy - hr * 0.9, hx + hr * 0.8, hy - hr * 0.4,
+    hx + hr * 0.4, hy - hr * 0.5, hx + hr * 0.1, hy - hr * 0.3, hx - hr * 0.3, hy - hr * 0.48,
+  ], wobble: 0.1, spiky: 0.08, seed: 615, sub: 2 }], { h, tex: 'stipple', seed: 615, amount: 0.5, formK: 0.4, spread: 0.7, outline: false });
+  if (!B.override) {
+    // The face turned down: a heavy brow, the sockets under it with white blind eyes, a nose, no mouth to see.
+    ctx.fillStyle = B.col(deep);
+    for (const sd of [-1, 1]) { ctx.beginPath(); ctx.ellipse(hx + sd * hr * 0.36, hy + hr * 0.36, hr * 0.24, hr * 0.16, sd * 0.2, 0, Math.PI * 2); ctx.fill(); }
+    eye(ctx, hx - hr * 0.36, hy + hr * 0.4, Math.max(0.8, hr * 0.09), shade('#e4ece0', p.tone), false);
+    eye(ctx, hx + hr * 0.36, hy + hr * 0.4, Math.max(0.8, hr * 0.09), shade('#e4ece0', p.tone), false);
+    softLine(ctx, B, [hx - hr * 0.7, hy + hr * 0.1, hx - hr * 0.2, hy + hr * 0.2, hx + hr * 0.2, hy + hr * 0.2, hx + hr * 0.7, hy + hr * 0.08], shade(flesh, 0.62), Math.max(1, 1.1 * u), 0.7);
+    softLine(ctx, B, [hx + hr * 0.02, hy + hr * 0.3, hx + hr * 0.08, hy + hr * 0.66, hx - hr * 0.08, hy + hr * 0.72], shade(flesh, 0.66), Math.max(1, 0.8 * u), 0.6);
+  }
+
+  // ---- the noose round the neck under the chin, and the rope down to the knot on the stone.
+  const sx = X(0), sy = BY(-58), srx = 18 * u, sry = 14.5 * u;
+  const knot = { x: X(2), y: sy - sry + 1.5 * u };
+  blob(ctx, B, rope, [
+    { k: 'tube', pts: [X(-8.5), BY(-75), X(0), BY(-72.6), X(8.5), BY(-75)], r0: 1.5 * u, r1: 1.5 * u },
+    { k: 'tube', pts: [X(-0.5), BY(-73), X(1.4), BY(-70.5), knot.x, knot.y], r0: 1.7 * u, r1: 1.6 * u, wobble: 0.05, seed: 617 },
+  ], { h, formK: 0.5, spread: 0.7 });
+
+  // ---- the stone, round and grey, as wide as the belly it is held against.
+  blob(ctx, B, stone, [{ k: 'curve', pts: [
+    sx - srx, sy, sx - srx * 0.72, sy - sry * 0.74, sx, sy - sry, sx + srx * 0.74, sy - sry * 0.72,
+    sx + srx, sy + sry * 0.04, sx + srx * 0.7, sy + sry * 0.76, sx, sy + sry, sx - srx * 0.72, sy + sry * 0.72,
+  ], wobble: 0.05, seed: 619, sub: 3 }], { h, tex: 'cracks', seed: 619, amount: 0.6, formK: 0.6, spread: 0.85 });
+  // Salt along its top, and the barnacles that took to it on the bottom.
+  blob(ctx, B, salt, [{ k: 'curve', pts: [
+    sx - srx * 0.78, sy - sry * 0.5, sx - srx * 0.3, sy - sry * 0.96, sx + srx * 0.4, sy - sry * 0.94, sx + srx * 0.86, sy - sry * 0.42,
+    sx + srx * 0.4, sy - sry * 0.62, sx, sy - sry * 0.5, sx - srx * 0.4, sy - sry * 0.62,
+  ], wobble: 0.1, spiky: 0.08, seed: 621, sub: 2 }], { h, tex: 'stipple', seed: 621, amount: 0.5, formK: 0.4, spread: 0.7, outline: false });
+  // The knot on top of it, and the god's scallop hung from the knot.
+  blob(ctx, B, rope, [{ k: 'ball', x: knot.x, y: knot.y, r: 2.6 * u }], { h, formK: 0.5 });
+  const scx = knot.x + 0.4 * u, scy = knot.y + 4.4 * u;
+  blob(ctx, B, gilt, [{ k: 'curve', pts: [scx - 2.6 * u, scy - 1.2 * u, scx, scy - 3 * u, scx + 2.6 * u, scy - 1.2 * u, scx + 2 * u, scy + 1.8 * u, scx, scy + 2.6 * u, scx - 2 * u, scy + 1.8 * u], wobble: 0.02, seed: 623, sub: 2, gloss: 0.6 }], { h, formK: 0.5, spread: 0.7 });
+  if (!B.override && u >= 0.8) softLine(ctx, B, [scx, scy - 2.2 * u, scx, scy + 1.8 * u], shade('#7a6230', p.tone), Math.max(1, 0.4 * u), 0.6);
+
+  // ---- the forearms round the stone's sides, the hands cupped under it, the fingers curled up its front.
+  for (const [s, k, seed] of [[-1, 0.84, 625], [1, 1, 629]] as const) {
+    const el = { x: X(26 * s), y: BY(-55) }, wr = { x: X(11 * s), y: sy + sry * 0.94 };
+    blob(ctx, B, shade(flesh, k), [
+      { k: 'tube', pts: [el.x, el.y, X(23.5 * s), sy + sry * 0.56, X(18 * s), sy + sry * 0.92, wr.x, wr.y], r0: 5.4 * u, r1: 4 * u, wobble: 0.04, seed },
+      { k: 'ell', x: wr.x - s * 1.6 * u, y: wr.y - 0.6 * u, rx: 4.6 * u, ry: 3.4 * u, rot: -0.2 * s },
+    ], { h, formK: 0.5, spread: 0.72 });
+    const fingers: Part[] = [];
+    for (let i = 0; i < 4; i++) {
+      const bx = wr.x - s * (2.8 + i * 1.6) * u, by = wr.y - (1.6 + i * 0.3) * u;
+      fingers.push({ k: 'tube', pts: [bx, by, bx - s * 0.8 * u, by - 3 * u, bx - s * 0.4 * u, by - 5 * u], r0: 1.3 * u, r1: 0.9 * u, wobble: 0.05, seed: seed + 1 + i });
+    }
+    blob(ctx, B, shade(flesh, k * 1.04), fingers, { h, formK: 0.5, spread: 0.75 });
+  }
+
+  // ---- barnacles: on the shoulders and the stone's flanks, small white cones with a dark mouth.
+  for (const [bx, by, r] of [[-22, -77, 1.8], [-18, -79.5, 1.3], [20, -78, 1.6], [24, -75, 1.2], [-14, -60, 1.6], [-12, -56.5, 1.2], [13.5, -62, 1.4]] as const) {
+    const cx2 = X(bx), cy2 = BY(by);
+    blob(ctx, B, barn, [{ k: 'ell', x: cx2, y: cy2, rx: r * u, ry: r * 0.86 * u, rot: 0 }], { h, formK: 0.5, spread: 0.7 });
+    if (!B.override && u >= 0.8) { ctx.fillStyle = B.col(deep); ctx.beginPath(); ctx.ellipse(cx2, cy2 - r * 0.1 * u, r * 0.36 * u, r * 0.26 * u, 0, 0, Math.PI * 2); ctx.fill(); }
+  }
+
+  // Water still running off it: off the chin, the elbows and the stone's bottom.
+  if (!B.override) for (let i = 0; i < 4; i++) {
+    const t = ((p.frame * 0.02 + i * 0.27) % 1);
+    const dx2 = [hx, X(-26), X(26), sx + srx * 0.3][i], dy2 = [hy + hr, BY(-52), BY(-52), sy + sry][i];
+    ctx.fillStyle = B.col(rgba(shade('#cfe4e0', p.tone), 0.5 * (1 - t)));
+    ctx.beginPath(); ctx.ellipse(dx2, dy2 + t * h * 0.1, Math.max(0.6, h * 0.008), Math.max(0.8, h * 0.014), 0, 0, Math.PI * 2); ctx.fill();
   }
   void p.light;
 }

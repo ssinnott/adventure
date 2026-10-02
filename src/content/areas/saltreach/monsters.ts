@@ -7,7 +7,7 @@ import type { MonsterDef } from '../../../game/monsters.ts';
 export const SPRITES = [
   'brineling',
   'bargeman', 'barge_master',
-  'drowned_chanter', 'choirmaster',
+  'temple_drowned', 'drowned_chanter', 'choirmaster',
   'fen_eel', 'leech',
   'fen_toad', 'bull_toad',
   'grey_heron',
@@ -18,6 +18,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'brineling', name: 'Brineling', plural: 'Brinelings', sprite: 'brineling', kind: 'rift', look: 'Green glass, walking, with a light in it.', level: 10, hp: 89, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 393, gold: [0, 0], tint: '#3a9a82', size: 0.72, inflict: { cond: 'paralysed', chance: 0.1 }, weak: ['lightning'], immune: ['cold'] },
   { id: 'bargeman', name: 'Bargeman', plural: 'Bargemen', sprite: 'bargeman', kind: 'person', look: 'A barge pole, a knife, and no questions.', level: 10, hp: 90, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 11, xp: 393, gold: [12, 35], tint: '#6e7c86', size: 0.92 },
   { id: 'barge_master', name: 'Barge Master', plural: 'Barge Masters', sprite: 'barge_master', kind: 'person', look: 'A ledger in one hand and a cudgel in the other.', level: 11, hp: 113, ac: 17, attack: 7, dice: 1, sides: 10, bonus: 6, speed: 11, xp: 433, gold: [40, 100], tint: '#3a3e52', size: 1.0 },
+  // the Drowned Temples' nave and the choir's front row (#175), a brute on MONSTERS §4.4's line at 11
+  { id: 'temple_drowned', name: 'Drowned Man', plural: 'Drowned Men', sprite: 'temple_drowned', kind: 'dead', look: 'It roped the stone to its own neck, and it has not let go.', level: 11, hp: 219, ac: 15, attack: 8, dice: 3, sides: 8, bonus: 3, speed: 8, xp: 867, gold: [0, 15], tint: '#788672', size: 1.15 },
   // the Drowned Temples' choir (#175), a caster on MONSTERS §4.4's line at 11
   { id: 'drowned_chanter', name: 'Drowned Chanter', plural: 'Drowned Chanters', sprite: 'drowned_chanter', kind: 'dead', look: 'A priest of the drowned god, still chanting.', level: 11, hp: 141, ac: 17, attack: 9, dice: 2, sides: 8, bonus: 3, speed: 12, xp: 578, gold: [0, 15], ranged: true, cast: { spells: ['sleep'], chance: 0.1 }, tint: '#5e7a74', size: 0.95 },
   // the choir's end (#175), the area's boss at 12; its damage is an escorted boss's, for #175's gate to tune

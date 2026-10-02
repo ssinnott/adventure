@@ -880,7 +880,8 @@ Decided by delegate for #174, each the owner's to overturn:
 2. **No drowned men fight on B6;** it is built from the monsters that exist. A Drowned Chanter here
    would spend #175's caster among the dead early, and a level-11 Drowned Man is a drawing and a
    sprite, outside the area lane. #175 needs one for its nave and its choir's front row, so it is
-   owed before #175, for the owner to agree and file. The causeways' drowned are events.
+   owed before #175, for the owner to agree and file; filed and drawn as #451. The causeways'
+   drowned are events.
 3. **Three groups, each a real fight at 11,** the hardest two bull toads at 12 with no averaging:
    five fen toads on the causeway in, five brinelings in the channel by night until both of B5's
    Rifts are quiet, and the bull toads on the flats past the far roof. The brief's seven groups
@@ -1122,6 +1123,26 @@ Decided by delegate for #182, each the owner's to overturn:
 7. **The Compact pays 160 xp a member and 280 gold** across its three quests, the first task 20 a
    member, so that with the Cartographers' 140 the two halls come to Saltmouth's 300 (§8), the area
    being some 19% over its curve (changed on review).
+
+Decided by delegate for #451, each the owner's to overturn:
+
+1. **It is the Drowned Man again, `temple_drowned`, with a sprite kind of its own:** MONSTERS §6.1
+   brings the Drowned Man back in the temples, and the name is the return. It shares a name with the
+   Foreland's `drowned`, which does no harm: they stand at 3 and 11 and never meet, and nothing keys
+   on a name.
+2. **A brute at 11 on #409's line:** 219 hit points, armour 15, +8, 3d8+3, speed 8, 867 xp, and no
+   condition. The line's brute carries none, and the choir's chanters already put the front row to
+   sleep; a disease would add a cost #175's gate has not measured. The Foreland's keeps its own.
+3. **Size 1.15, tint #788672:** heavier than the chanters behind it and level with the Choirmaster,
+   under the ogre and clear of every label limit; a pale grey-olive, apart from the Foreland's teal
+   and the chanters' blue-grey, in the same dead green.
+4. **Gold 0 to 15 and no drop,** as the chanter: the temple's dead pay alike, and its treasure is
+   the god's silver in the sacristy, not to be spent early.
+5. **The drawing is a ballast stone hugged to the belly,** roped to its own neck, the knot hung with
+   one scallop of the god's bronze; the head bowed chin to chest, no hood; planted wide and squared;
+   salt and barnacles where the Foreland's has weed. The stone is what tells it apart, from the
+   Foreland's slack hang and from the chanters' robes, at a glance.
+6. **It stands unplaced, owed to #175,** which puts it in the nave and two in the choir's front row.
 
 ## 10. Names
 
