@@ -653,15 +653,23 @@ and nothing is a story lock (#151, call 1):
   another inside the postern (12,14 or 14,14). No fights.
 - **The curfew bell,** by night, every time the company crosses the middle street at 7,6 or 8,6.
 - **The Chapel shut:** the temple, and with it cure and raise, is gone; a notice is said on its
-  door once, with the chalked word that the sexton went to the Watch with his book. Osmund and Ebba
-  are gone. An unanswered Bell That Rang Twice ends at the notice.
+  door once, with the chalked word that the sexton went to the Watch with his book, and the door
+  hangs no sign. Osmund, Ebba and the bell's two witnesses are gone. An unanswered Bell That Rang
+  Twice sends the company back to the Chapel and ends at the notice. Ailith, met in the wood after
+  the act, has heard: she asks between Lantern Watch and Thornhold, not the Chapel.
 - **The Drillyard** stays, and so do its trainer and its quests. Captain Ordgar, who backs the
-  Queen's cousin, sits in it and says the walls are Vask's (#151, call 5).
+  Queen's cousin, sits in it and says the walls are Vask's (#151, call 5). The quests are still
+  given by the Drillyard's own hall: a guild's quests come from a business that is its hall, and
+  their offer is one text, so a person cannot give them, and the first task's still names the
+  drillmaster. Every company of Act II has had it.
 - **Prices rise:** the Hearthlight at 18 a night for 12, and Mottram's half as much again, but the
   Lantern Oil, whose forty he names in Oil for the Lamp. The Lantern Guildhall and the trainer
   keep theirs.
 - **The Gilded Eel's** talk is the curfew's, the Chapel's and the captains'.
 - **The Keep** is unchanged.
+- **No lock:** the lock scan finds the gate shut and passes it on the postern beside it, and finds
+  each business gone and passes it on its twin or, for the Chapel, on the temples of Thornhold and
+  Saltmouth.
 
 The Foreland's walkthrough walks both cities: the old one, then the changed one to the default
 company, whose paladin Idris is orcblood, and to one without him. The flag is set by hand, since
@@ -902,10 +910,11 @@ Decided by delegate for #157, on 2 October 2026 (the owner's to overturn):
 17. **The Chapel shuts with its cure and raise,** which Thornhold and Saltmouth still sell; its people
     go, the notice says where the sexton went, and an unanswered bell ends there. Businesses wear a
     presence for it (#454).
-18. **The Wardens are events, not monster groups:** there is no Warden monster, and a fight in a town
-    of band 1–4 with a company of 16, before the act's war with them, would say the wrong thing.
+18. **The Wardens are events, not monster groups:** no standing group that does not fight exists
+    (the `warden` drawing is the Rift Warden's, not a soldier's), and a fight in a town of band 1–4
+    with a company of 16, before the act's war with them, would say the wrong thing.
 19. **One of the cousin's captains** sits in the Drillyard, a person with two lines and one after; the
-    guild's quests are as they were.
+    guild's quests are as they were, given by the hall, since a person cannot give them.
 20. **Prices rise** by half: "prices do not" read as do not stay, since Helmstow changes never for the
     better. The inn and the stores are twins on their squares after the flag; the oil keeps its
     forty for Mottram's word.

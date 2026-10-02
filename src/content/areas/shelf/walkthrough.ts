@@ -631,8 +631,8 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
     w.ok(wardens.some((m) => m.startsWith('Wardens on the wall above the postern')) && !again.length, 'the Wardens over the postern are said on the first step inside, once');
     w.ok(business(w, 11, 4)?.kind !== 'temple' && !there(w, OSMUND(), 'harrow') && !there(w, EBBA_EEL(), 'harrow'), 'the Chapel is shut: no cure, no Osmund and no Ebba');
     see(w, 'harrow:chapel_shut');
-    const page = bell(w);
-    w.ok(w.world.used('chapel_shut') && !!page?.done && page.entries.some((e) => e.id === 'shut') && w.news.includes('Quest complete: The Bell That Rang Twice.'), 'its notice read, an unanswered bell ends at the shut door, and says where the sexton went');
+    const rung = bell(w);
+    w.ok(w.world.used('chapel_shut') && !!rung?.done && rung.entries.some((e) => e.id === 'shut') && w.news.includes('Quest complete: The Bell That Rang Twice.'), 'its notice read, an unanswered bell ends at the shut door, and says where the sexton went');
     const night6 = night(w, 7, 6), day6 = day(w, 8, 6);
     w.ok(night6.length === 1 && night6[0].startsWith('The curfew bell') && !day6.length && night(w, 7, 6).length === 1, 'the curfew bell rings by night on the middle street, every time, and not by day');
     const yard = business(w, 3, 13);
@@ -643,6 +643,18 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
     const eel = business(w, 12, 13);
     w.ok(eel?.kind === 'npc' && eel.lines[0].startsWith('The tavern is half as loud'), 'the Eel\'s talk is the curfew\'s');
     walkThrough(w, 'harrow', 7, 14, SOUTH, 'shelf');
+    // The bell's witnesses are gone with Osmund, and Ailith, met now, asks after the Watch, not the Chapel.
+    w.ok(!there(w, FISHERMAN(), 'harrow') && !there(w, WALL(), 'harrow'), 'after Act II the bell\'s witnesses are gone too');
+    const ailith = who('shelf', 2, 14, 'Ailith'), twin = MAP_DEFS.find((d) => d.id === 'shelf')!.features!.filter((f): f is Person => f.kind === 'npc' && f.name === ailith.name)[1];
+    w.ok(!there(w, ailith, 'shelf') && there(w, twin, 'shelf'), 'Ailith in the wood is the one who has heard the Chapel is shut');
+    const m = meet(twin, w.party, heard(w.world, twin)), watch = m.choice?.answers.find((a) => a.label === 'Lantern Watch, over the Sunder.');
+    listen(w);
+    const asked = page(w, 'survey')?.goal ?? '';
+    w.ok(!!watch && !m.choice?.answers.some((a) => a.label.includes('Chapel')) && asked.startsWith('Tell Ailith where to go: Lantern Watch'), `she asks between the Watch and Thornhold, and the goal says so (${asked})`);
+    if (watch) answer(watch, w.party);
+    listen(w);
+    reads(w, 'survey', 'The Rest of the Survey', ['ailith', 'watch'], ['chapel', 'thornhold'], 'Ailith sent to the Watch, after Act II');
+    w.ok(!there(w, twin, 'shelf'), 'and she is gone from the wood');
   }
   { // The changed city, to a company with no orcblood member: the gate lets it in, under the Wardens.
     const w = newWalk(ok);

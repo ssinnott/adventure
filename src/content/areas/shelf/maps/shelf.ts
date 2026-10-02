@@ -2,8 +2,18 @@
 // south gate, the Ellerby farm to the south-east, woods to the west, marsh and the sea at the
 // south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef, Answer } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+
+// Ailith's first meeting and her Thornhold answer, the same before Act II and after (#157).
+const AILITH = [
+  'A young woman in torn Lantern grey has her back to an oak and a survey stake held like a spear; her leg is bound in her own hem. "You\'re not Wardens. Wardens don\'t come off the road." The stake comes down an inch. "Adjunct Ailith, of the survey. What\'s left of it."',
+  '"It wasn\'t rats. I got out of the cellar when the floor opened and walked into a Warden patrol, and they weren\'t looking for survivors. They wanted our orders. The orders are at our camp over the Deepthorn\'s edge, and the other two went east to reach them first. I made for Helmstow, got as far as this wood, and I didn\'t stop to pack."',
+  '"The Regent sent us, under his seal: survey the ground under Ashcombe, report to him alone. That was before the Queen died, and before the floor opened. Ask how a man knows where to send a survey before there\'s anything to find. I\'ve asked. I don\'t like the answer, so I\'m hiding from it under a tree."',
+];
+const THORNHOLD: Answer = { label: 'Thornhold, over the Scarth.', sets: 'q_survey_thornhold', says: [
+  '"Thornhold. Elves and trees and nobody in grey." She takes the stake for a crutch. "Elder Sylvane knows a Lantern\'s word when she hears one. I\'ll tell her about you. She\'ll pretend not to have listened, and then she\'ll have listened. That\'s how the Chapterhouse works."',
+] };
 
 export const SHELF: MapDef = {
   id: 'shelf',
@@ -138,18 +148,20 @@ export const SHELF: MapDef = {
     { kind: 'well', x: 26, y: 22, text: 'A cistern behind the farm. The water is clean.', heal: true },
     // The Rest of the Survey (#77): Ailith behind the west wood, hiding from the Wardens, until the
     // company tells her where to go.
-    { kind: 'event', x: 2, y: 13, id: 'survey_ring', once: true, until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }], text: 'A scrap of Lantern grey on a thorn. Beyond it, a fire-ring so small and hidden that its maker feared smoke more than cold.' },
-    { kind: 'npc', x: 2, y: 14, name: 'Ailith, adjunct of the survey', lines: [
-      'A young woman in torn Lantern grey has her back to an oak and a survey stake held like a spear; her leg is bound in her own hem. "You\'re not Wardens. Wardens don\'t come off the road." The stake comes down an inch. "Adjunct Ailith, of the survey. What\'s left of it."',
-      '"It wasn\'t rats. I got out of the cellar when the floor opened and walked into a Warden patrol, and they weren\'t looking for survivors. They wanted our orders. The orders are at our camp over the Deepthorn\'s edge, and the other two went east to reach them first. I made for Helmstow, got as far as this wood, and I didn\'t stop to pack."',
-      '"The Regent sent us, under his seal: survey the ground under Ashcombe, report to him alone. That was before the Queen died, and before the floor opened. Ask how a man knows where to send a survey before there\'s anything to find. I\'ve asked. I don\'t like the answer, so I\'m hiding from it under a tree."',
-    ], flag: 'q_ailith', until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }], choice: { ask: '"I can\'t stay under this tree. Where do I go? The Chapel in Helmstow is mine by right, and the Wardens know it. Thornhold is a long walk on this leg, and nobody\'s looking for me there."', answers: [
+    { kind: 'event', x: 2, y: 13, id: 'survey_ring', once: true, until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }, { flag: 'q_survey_watch' }], text: 'A scrap of Lantern grey on a thorn. Beyond it, a fire-ring so small and hidden that its maker feared smoke more than cold.' },
+    { kind: 'npc', x: 2, y: 14, name: 'Ailith, adjunct of the survey', lines: AILITH, flag: 'q_ailith', until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }, { flag: 'q_salt_done' }], choice: { ask: '"I can\'t stay under this tree. Where do I go? The Chapel in Helmstow is mine by right, and the Wardens know it. Thornhold is a long walk on this leg, and nobody\'s looking for me there."', answers: [
       { label: 'The Chapel, in Helmstow.', sets: 'q_survey_chapel', says: [
         '"Home, then. Lamps and quiet and my own cell." She tests the leg, and it holds. "If you come asking after me at the Chapel and they say I\'m resting, I\'m resting. Don\'t ask a second time. That\'s not a warning. It\'s advice, from someone who was given it."',
       ] },
-      { label: 'Thornhold, over the Scarth.', sets: 'q_survey_thornhold', says: [
-        '"Thornhold. Elves and trees and nobody in grey." She takes the stake for a crutch. "Elder Sylvane knows a Lantern\'s word when she hears one. I\'ll tell her about you. She\'ll pretend not to have listened, and then she\'ll have listened. That\'s how the Chapterhouse works."',
+      THORNHOLD,
+    ] } },
+    // After Act II the Chapel is boarded and its people gone to Lantern Watch (#157): she has heard,
+    // and the Watch takes the Chapel's place in her question.
+    { kind: 'npc', x: 2, y: 14, name: 'Ailith, adjunct of the survey', lines: AILITH, flag: 'q_ailith', after: { flag: 'q_salt_done' }, until: [{ flag: 'q_survey_chapel' }, { flag: 'q_survey_thornhold' }, { flag: 'q_survey_watch' }], choice: { ask: '"I can\'t stay here. Where do I go? Not the Chapel; they say it\'s boarded and the Lanterns gone west to the Watch, over the Sunder. Thornhold is nearer, and nobody\'s looking there."', answers: [
+      { label: 'Lantern Watch, over the Sunder.', sets: 'q_survey_watch', says: [
+        '"The Watch. One lamp, a prior who asks nothing and the sexton with his book, they say." She takes the stake for a crutch. "A long walk to be written down. Good. I\'d like to be written down properly, for once."',
       ] },
+      THORNHOLD,
     ] } },
   ],
   encounters: [

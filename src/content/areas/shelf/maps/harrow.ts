@@ -11,7 +11,7 @@ const DEARER: Readonly<Record<string, number>> = {
   robe: 15, leather: 90, scale: 330, chain: 750, buckler: 60, shield: 225, potion_heal: 45, antidote: 38, rations: 6, torch: 3,
 };
 const CURFEW = 'The curfew bell, from the Chapel tower: whoever has the rope now hauls it like a bucket.';
-const GATE_WARDENS = 'Wardens on the wall-walk and Wardens inside the gate, new faces all of them. They look you over the way the Scarth watched its pole: slowly, with nothing else to do.';
+const GATE_WARDENS = 'Wardens on the wall-walk and Wardens inside the gate, new faces all of them. They look you over slowly, the way men do who have nothing else to look at.';
 const POSTERN_WARDENS = 'Wardens on the wall above the postern, grey against the grey. None of them looks down; a fish cart is not their business, and nor, it seems, are you.';
 
 export const HARROW: MapDef = {
@@ -64,7 +64,7 @@ export const HARROW: MapDef = {
     // Drillyard and give its work, and the walls are Vask's.
     { kind: 'npc', x: 3, y: 13, name: 'Captain Ordgar, of the Drillyard', after: { flag: 'q_salt_done' }, flag: 'q_ordgar', lines: [
       'A captain in Warden grey sits on the drillmaster\'s bench with his sword across his knees. The Crown badge on his sleeve is the old one, and he has not had it cut off.',
-      '"The Drillyard\'s open; the captains give its work, same as ever. The men on the walls are Vask\'s." He does not lower his voice, exactly; he lets the yard\'s noise do it. "Same grey, both. Learn the faces."',
+      '"The Drillyard\'s open; the captains give its work. The walls are Vask\'s." He lets the yard\'s noise lower his voice for him. "Same grey, both. Learn the faces."',
     ], says: [
       { after: { flag: 'q_ordgar' }, lines: [
         '"The board\'s there. Take what\'s on it and be back by the bell; I\'ll not have the walls say the Drillyard breaks curfew."',
@@ -96,7 +96,7 @@ export const HARROW: MapDef = {
     { kind: 'event', x: 14, y: 14, id: 'postern_wardens2', once: true, after: { flag: 'q_salt_done' }, until: { seen: 'harrow:postern_wardens' }, text: POSTERN_WARDENS },
     { kind: 'sign', x: 13, y: 14, text: 'Chalked over the postern, in a dockhand\'s hand: CARTS DOWN BEFORE THE BELL. Under it, newer and smaller: AND THE REST OF YOU.' },
     // The Bell That Rang Twice and The Rest of the Survey (#77, from #56): Osmund in the Chapel, the
-    // two who saw the bell rung, and Ebba, at the Eel from a new game or, her name kept, in the Chapel.
+    // two who saw the bell rung (all three gone after Act II, #157), and Ebba, at the Eel from a new game or, her name kept, in the Chapel.
     // A words entry keyed to another quest's flag names its person's own hire as well, so it never
     // stands before their first meeting, but for two of Ebba's at the Eel, whose first meeting there
     // is the survey's own start: her confession, which comes before it by design, and her word of
@@ -134,10 +134,10 @@ export const HARROW: MapDef = {
     ] },
     { kind: 'npc', x: 12, y: 13, name: 'the fisherman, at the Gilded Eel', lines: [
       '"Midnight, near enough. I was hauling by it and had to stop with the net half in." He drinks. "The bell? Aye, I heard the bell. I thought it was for the light."',
-    ], flag: 'q_bell_boats', after: { flag: 'q_bell' }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }] },
+    ], flag: 'q_bell_boats', after: { flag: 'q_bell' }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }, { flag: 'q_salt_done' }] },
     { kind: 'npc', x: 14, y: 3, name: 'a Warden on the wall', lines: [
       '"I had the wall by the Chapel that night. The wheel creaked before it rang; that\'s someone on the rope who doesn\'t know it. Six strokes, and a seventh that didn\'t sound. Then the tower door, and someone in grey going down towards the Eel." He shrugs. "Grey\'s grey in the dark. Ours or the Lanterns\', I couldn\'t swear."',
-    ], flag: 'q_bell_wall', after: { flag: 'q_bell' }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }] },
+    ], flag: 'q_bell_wall', after: { flag: 'q_bell' }, until: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }, { flag: 'q_salt_done' }] },
     { kind: 'npc', x: 12, y: 13, name: 'Ebba, a Lantern adjunct', lines: [
       '"The survey team. Four went south a week before the Queen died. I told half the Eel and none of them listened. One\'s dead under Ashcombe, they say, with her wand beside her. That leaves three, and one of them is Ailith, who shared my cell at the Guildhall for six years and can\'t light a fire to save her life."',
       '"If she\'s alive she\'s hiding, and if she\'s hiding it\'s in a wood; she was raised in one. Look south-west along the coast, off the road. Find her, or find where she\'s buried, so I can stop looking at the door."',
