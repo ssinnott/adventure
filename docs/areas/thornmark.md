@@ -795,8 +795,8 @@ overturn:
 33. **The token is `hale_token`, Hale's Token,** a bronze disc with the Scarth's notch and Hale's
     mark. No shop buys it and nothing takes it, so it stays in the pack for #56's 41.
 34. **Hale names the token and leaves it.** In tide_ship3 his freeing words have a twin `after` the
-    token carried, setting `q_hale_freed` and `q_sergeant_hale`: the first three lines the same and
-    the last knowing the disc and Wystan.
+    token carried, setting `q_hale_freed` and `q_sergeant_hale`: three lines, the first two the same
+    and the last folding the bilge's pins into his knowing the disc and Wystan.
 35. **The quest is done at the answer.** Hale knowing the token is an entry written after the end,
     not a step, so a company that frees Hale first is left with no goal it cannot finish.
 36. **Hale freed first changes nothing at Thornhold.** Wystan has not had the news, so he still

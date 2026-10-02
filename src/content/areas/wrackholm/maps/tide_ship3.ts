@@ -36,7 +36,7 @@ export const TIDE_RIFT = rift({
   until: TIDE_RIFT_CLOSED,
 });
 
-/** Hale's words in the last row, before the last iron drops: the same with his token carried or not. */
+/** Hale's words in the last row, before the last iron drops; with his token carried, the first two and the token's. */
 const HALE_WORDS = [
   'In the last row a man sits straight in his irons, thin as a rake and filthy, his beard gone white, telling the boy beside him to keep his feet out of the wet. He knows you before you know him.',
   '"The Scarth. You brought me a ledger." The voice has not changed. "The Regent got his copy. He came for me that same night."',
@@ -89,8 +89,8 @@ export const TIDE_SHIP3: MapDef = {
       'When the last iron drops he stands, which costs him, and goes to the ladder on the first man\'s shoulder. He does not look back. "Thank me when it\'s done. It isn\'t."',
     ],
       says: [{ after: { item: 'hale_token' }, sets: ['q_hale_freed', 'q_sergeant_hale'], lines: [
-        ...HALE_WORDS,
-        'When the last iron drops he stands, which costs him, and sees the disc and knows it. "Mine. Then Wystan got as far as you." Up the ladder on the first man\'s shoulder, not looking back. "Keep it. And thank me when it\'s done. It isn\'t."',
+        ...HALE_WORDS.slice(0, 2),
+        '"Never mind me. The pins knock out from the bilge. Start at the front, children first." When the last iron drops he sees the disc and knows it. "Mine. Then Wystan got as far as you. Keep it. And thank me when it\'s done. It isn\'t."',
       ] }],
       after: { ...HALE_TAKEN, slain: 'tide_ship3:ts3_crew' }, until: HALE_FREED },
     { kind: 'event', x: 7, y: 13, id: 'ts3_hatch', once: true, text: 'A hatch in the floor, and up through it cold clean air with nothing of ship or sea in it. What is below is not for a company that came for a Stone.' },
