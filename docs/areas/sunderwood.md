@@ -678,8 +678,8 @@ features; the pay shared out over the area (§8).
 
 Sunderwood's chapter is The Wall (`chapter.ts`, #204), the last of Act II, joined after
 Wrackholm's; every zone holds a step (EXPANSION §5.8): the Eaves' at the bridge and the way down,
-Lanternwood's at the Watch. It begins once the company carries the Tide Ship's papers or its log,
-or has had them read; Wrackholm's done flag takes the items' place once #191 names it. Its entries:
+Lanternwood's at the Watch. It begins on Wrackholm's end, the Stone home with the captain's table
+opened (#191), or once the papers are read. Its entries:
 
 - **The wood split in half,** seen from the Eaves' rim (`rim`): the trees along the edge gone to
   glass, and the gorge falling away further than the rain lets you see.
@@ -708,11 +708,13 @@ the act's end is #157's to show.
 
 No lock (#151, call 1): the bridge stands whatever the story does, and the Watch reads the papers
 for whoever carries them, whenever they come; a company that takes the Sunder before the Tide Ship
-finds the wall all the same, and the chapter's first entries are written when the papers come.
+finds the wall all the same, and the chapter's first entries are written when the Stone is home.
 
 The walkthrough plays it in order at 15, the Watch first at 16 and the Sunder first at 14, from
-before the Tide Ship. The act end to end, with Saltreach's and Wrackholm's chapters, is owed to
-#191 (§9).
+before the Tide Ship. Each run plays the Tide Stone and Wrackholm's chapter before the Wall, the
+papers carried from the ship (#191): in order from a new game, the other two with the Foreland's
+and the Grove's ends seeded. The Wall's first goal also holds on Wrackholm's end, so the start
+alone shows it.
 
 ## 6. Side quests
 

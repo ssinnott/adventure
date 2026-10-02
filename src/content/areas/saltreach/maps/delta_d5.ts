@@ -3,8 +3,18 @@
 // bar out to an islet and on to a spit, with tidal flats either side. The rest is Sylmeer. Laid
 // with C5 (#170) so the road out of D4 has somewhere to go; docs/areas/saltreach.md §4.2 is its
 // brief. Cut from the atlas by tools/scaffold.ts.
-import type { MapDef } from '../../../../game/map.ts';
+import type { Feature, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+
+/**
+ * Hale taken from the Scarth (#156): once he has had the ledger, the company's first step onto the
+ * Delta, wherever it crosses the line at D4's foot, sees his men going up to the pass and sets the
+ * flag the pass, Saltmouth's gate and the Tide Ship's hold read. The first said, the rest are gone.
+ */
+const HALE_TAKEN: Feature[] = Array.from({ length: 10 }, (_, x) => ({
+  kind: 'event' as const, x, y: 0, id: `d5_grey${x}`, once: true, after: { flag: 'q_greywater_done' }, until: { flag: 'q_hale_taken' }, sets: 'q_hale_taken',
+  text: 'Up on the Edge behind you two riders in Warden grey go over the top, east, towards the Scarth. Neither looks down.',
+}));
 
 export const DELTA_D5: MapDef = {
   id: 'delta_d5',
@@ -49,6 +59,7 @@ export const DELTA_D5: MapDef = {
     'WWWWWW~~,,,,,_~~WWWWWWWWWWWWWWWW',
   ],
   features: [
+    ...HALE_TAKEN,
     { kind: 'sign', x: 1, y: 1, text: 'SALTMOUTH 4, RIETUM 9.' },
     // The Cartographers' first task (#181): the chain begins at the stone once the Guild has sent the company.
     { kind: 'event', x: 0, y: 1, id: 'd5_milestone', once: true, after: { flag: 'q_carto_chain' }, text: 'The chain runs out from the foot of the stone, a hundred links, and the count begins. SALTMOUTH 4, it says; the Guild\'s chart says the same. So far it holds.' },

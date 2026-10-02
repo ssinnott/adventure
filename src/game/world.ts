@@ -678,8 +678,8 @@ export class World {
   }
 
   /**
-   * Whether a feature is there now. A person, an event or a business wears a presence, as a group
-   * does: there only in its `when`, once its `after` holds and until its `until` does. Everything
+   * Whether a feature is there now. A person, an event, a business, a shrine or a fountain wears a
+   * presence, as a group does: there only in its `when`, once its `after` holds and until its `until` does. Everything
    * else always is, having none.
    */
   present(f: Feature): boolean {
@@ -692,7 +692,11 @@ export class World {
     const out: string[] = [];
     for (const f of this.map.featuresAt(this.state.x, this.state.y)) {
       // An event out of its presence is not spent: a night's event waits for the night.
-      if (f.kind === 'event' && this.present(f) && !(f.once && this.mapState.used[f.id])) { out.push(f.text); if (f.once) this.mapState.used[f.id] = 1; }
+      if (f.kind === 'event' && this.present(f) && !(f.once && this.mapState.used[f.id])) {
+        out.push(f.text);
+        if (f.once) this.mapState.used[f.id] = 1;
+        for (const flag of [f.sets ?? []].flat()) this.party.flags[flag] = 1;
+      }
       if (f.kind === 'sign') out.push(signLine(f.text));
     }
     return out;

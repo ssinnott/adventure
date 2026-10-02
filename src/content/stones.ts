@@ -22,7 +22,8 @@ export const WHOLE = 'Lodestone';
 
 export const STONES: readonly Wardstone[] = [
   // Set back on its plinth at the end of Act II's second chapter: the Hearth's first step.
-  { name: 'Tide Stone', area: 'saltreach', restored: { flag: 'q_tide_home' }, owed: '#191' },
+  // Its flag is set by the plinth at Stienwierde when it takes the Stone (#191), and ends the Tide Stone too.
+  { name: 'Tide Stone', area: 'saltreach', restored: { flag: 'q_tide_home' } },
   // Not the Grove's end (q_grove_done): it counts once a Lantern has mended it (#56's 18).
   { name: 'Grove Stone', area: 'thornmark', restored: { flag: 'q_grove_mended' }, owed: '#56' },
   { name: 'Anvil Stone', area: 'kilns' },

@@ -1,5 +1,14 @@
-// Saltreach's walkthrough. Its chapter, The Tide Stone, is #180's, which plays it here; until then,
-// the Delta road (C5 and D5, #170) walked: down off Kestrel Edge onto the shore, where the land says
+// Saltreach's walkthrough. First its chapter, The Tide Stone (#180), played a step at a time
+// (tools/walk.ts). In order, at 10 and 11: the Foreland and the Grove played from a new game, then
+// down off the Edge into the Delta, up the spur to Wytske on Rietum's quay, west to the empty
+// plinth, south to the priestess at the temples' dry door and in, and down to Saltmouth, where the
+// Warden has the news of Hale and Kitto the ship; then the boat out to Wrackholm, where the goal
+// passes to Wrackholm's chapter and the Tide Stone stays open until the Stone is home. Saltmouth
+// first, at 12, before the Grove: Kitto's word begins the chapter, and the plinth is seen before the
+// boat. Wrackholm's walkthrough plays both runs on from the landing (#191). The news of Hale waits
+// on #156, set by hand where it will be.
+//
+// Then the area as built: the Delta road (C5 and D5, #170) walked: down off Kestrel Edge onto the shore, where the land says
 // what it is to a company under its band; the hermit on the islet, who points up the spur; the
 // barge under the causeway's arch found from its hint; and the box's groups and its Rift's won at
 // its floor. Then the spur to Rietum (C4, #171): the eel-trapper's word on the poleman, the crews'
@@ -12,7 +21,11 @@
 // who counts the Rifts' lights; the hollow under the landing found from its pole-marks; and the
 // box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6, #174):
 // the priestess at the dry door and her count; the far roof's door found from the count's pause;
-// and the box's groups won at 11. Then back to the road and down it into Saltmouth's box (C6, #176):
+// and the box's groups won at 11. Then the Drowned Temples (#175): down the far roof's wet stair into
+// the sacristy, its silver had that way alone, and out again; in at the dry door, the nave's drowned
+// and the count up the apse's stair; the choir and the Choirmaster won at 11, the Tide Bell taken and
+// the count stopped for good; and the bell up to the priestess, who rings it. Then back to the road
+// and down it into Saltmouth's box (C6, #176):
 // the Saltings named at the seam, the land gate at the road's end, the smugglers' stair found from
 // the rope that hangs over it, and the quay's and the pans' groups won at the box's floor. Then in
 // at the gate to Saltmouth (#177) and out again: the band's gear bought, training to 13 and a first
@@ -24,7 +37,13 @@
 // (C7, #178): the Scarp across the south and its stair's fallen foot, the sealed pan's hoard found
 // from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, fight, listen, see } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, fight, listen, see, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import type { Step, Walk } from '../../../../tools/walk.ts';
+import { CHAPTER } from './chapter.ts';
+import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
+import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
+import { STEPS as FORELAND_STEPS, hired, ledgerGiven } from '../shelf/walkthrough.ts';
+import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature } from '../../../game/map.ts';
@@ -52,9 +71,11 @@ const C5 = MAP_DEFS.find((d) => d.id === 'delta_c5')!;
 const RIFT = MAP_DEFS.find((d) => d.id === 'c5_rift')!;
 const C4 = MAP_DEFS.find((d) => d.id === 'delta_c4')!;
 const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
-const B5_COUNTER = B5.features!.find((f) => f.kind === 'npc') as Person;
+const B5_COUNTER = B5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('a hermit')) as Person;
 const B6 = MAP_DEFS.find((d) => d.id === 'delta_b6')!;
 const PRIESTESS = B6.features!.find((f) => f.kind === 'npc') as Person;
+const L1 = MAP_DEFS.find((d) => d.id === 'drowned_temples')!;
+const L2 = MAP_DEFS.find((d) => d.id === 'drowned_temples2')!;
 const C6 = MAP_DEFS.find((d) => d.id === 'saltings_c6')!;
 const C7 = MAP_DEFS.find((d) => d.id === 'saltings_c7')!;
 const TOWN = MAP_DEFS.find((d) => d.id === 'saltmouth')!;
@@ -66,7 +87,115 @@ const C3 = MAP_DEFS.find((d) => d.id === 'upperwater_c3')!;
 const c3person = (name: string): Person => C3.features!.find((f) => f.kind === 'npc' && f.name.includes(name)) as Person;
 const QUAYHAND = c3person('quay'), PRIEST = c3person('priest'), SMUGGLER = C3.features!.find((f): f is Person => f.kind === 'npc' && f.teaches?.cls === 'thief')!;
 
+// ---- the chapter (#180) ----
+
+const WARDEN = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.flag === 'sm_hale_word')!;
+const KITTO = TOWN.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
+
+/** Into Saltmouth by the land gate, from the Salt Road out of C5. */
+function toSaltmouth(w: Walk): void {
+  walkThrough(w, 'delta_c5', 26, 30, SOUTH, 'saltings_c6', 3);
+  walkThrough(w, 'saltings_c6', 26, 17, SOUTH, 'saltmouth');
+}
+
+/**
+ * The boat from the quay's end to Wrackholm's landing, which begins Wrackholm's chapter: its goal
+ * takes over, and the Tide Stone stays open until the Stone is home (#191).
+ */
+function theBoat(w: Walk): void {
+  w.world.travel('saltmouth', KITTO.x, KITTO.y);
+  w.party.gold = Math.max(w.party.gold, KITTO.passage![0].fare);
+  const out = take(KITTO.passage![0], w.world, w.party);
+  listen(w);
+  const tide = quest(w)?.pages.find((p) => p.def === CHAPTER);
+  w.ok(out.taken && w.world.zone?.id === 'wrackholm_e6' && w.news.at(-1) === 'New chapter: The Stone Carried Home.' && !!tide && !tide.done,
+    `the boat lands the company on Wrackholm, which begins the Stone Carried Home, and the Tide Stone stays open (${w.news.at(-1)})`);
+}
+
+const PLINTH: Step = { name: 'the plinth', play: (w) => { walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2); see(w, 'delta_b5:b5_plinth'); } };
+const BOAT: Step = { name: 'the boat', play: theBoat };
+
+/** The chapter in order: into the Delta, Rietum, the plinth, the temples, Saltmouth and the boat. */
+export const STEPS: readonly Step[] = [
+  { name: 'into the Delta', play: (w) => {
+    walkThrough(w, 'downs_d4', 1, 30, SOUTH, 'delta_d5', 3);
+    w.ok(!!w.party.flags.q_hale_taken === !!w.party.flags.q_greywater_done, 'set foot in the Delta, Hale is taken from the Scarth if he has had the ledger (#156)');
+  } },
+  { name: 'to Rietum', play: (w) => {
+    walkThrough(w, 'delta_d5', 0, 2, WEST, 'delta_c5');
+    walkThrough(w, 'delta_c5', 7, 1, NORTH, 'delta_c4', 3);
+    walkThrough(w, 'delta_c4', 3, 1, NORTH, 'upperwater_c3', 3);
+    meetWho(w, 'c3_saw_stone');
+  } },
+  PLINTH,
+  { name: 'the temples', play: (w) => {
+    walkThrough(w, 'delta_b5', 16, 31, SOUTH, 'delta_b6', 2);
+    meetWho(w, 'q_tide_bell');
+    walkThrough(w, 'delta_b6', 16, 12, NORTH, 'drowned_temples', 2);
+    see(w, 'drowned_temples:dt1_stair');
+  } },
+  { name: 'to Saltmouth', play: (w) => {
+    toSaltmouth(w);
+    w.ok(w.world.present(WARDEN) === !!w.party.flags.q_hale_taken, 'the Warden off the coast road sits by the gate once Hale is gone from the Scarth, and not before');
+    if (w.party.flags.q_hale_taken) meetWho(w, 'sm_hale_word');
+    meetWho(w, 'sm_ship_word');
+  } },
+  BOAT,
+];
+
+/** The entries written on the Tide Stone's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+/**
+ * In order, from a new game: the Foreland and the Grove played, and the treaty's seal, the Grove's
+ * end, begins the Tide Stone; then its steps to the boat. Left on Wrackholm's landing, where
+ * Wrackholm's walkthrough plays on.
+ */
+export function inOrder(ok: (cond: boolean, msg: string) => void): Walk {
+  const chain = newWalk(ok);
+  hired(chain);
+  playChapter(chain, FORELAND, FORELAND_STEPS, 'in order');
+  playChapter(chain, GROVE, GROVE_STEPS, 'in order');
+  const sealed = chain.news.slice(chain.news.lastIndexOf('Chapter complete: The Grove Stone.'));
+  ok(sealed.slice(0, 2).join(' ') === 'Chapter complete: The Grove Stone. New chapter: The Tide Stone.', `in order, the Grove's end begins the Tide Stone (${sealed.join(' ')})`);
+  // Hale has had the ledger, so the Delta takes him from the Scarth (#156) and the Warden brings the news.
+  ledgerGiven(chain);
+  playChapter(chain, CHAPTER, STEPS, 'in order');
+  ok(['saw', 'plinth', 'count', 'stair', 'hale', 'ship'].every((e) => written(chain).includes(e)), `in order, the whole chapter is written to the boat (${written(chain).join(', ')})`);
+  return chain;
+}
+
+/**
+ * Saltmouth first, at 12, the farm done and the Grove not begun: Kitto's word begins the chapter,
+ * no Warden sits by the gate while Hale holds the Scarth, and the plinth comes before the boat. Left
+ * on Wrackholm's landing, the temples not seen.
+ */
+export function saltmouthFirst(ok: (cond: boolean, msg: string) => void): Walk {
+  const first = newWalk(ok);
+  hired(first);
+  playChapter(first, FORELAND, FORELAND_STEPS, 'Saltmouth first');
+  first.level = 12;
+  toSaltmouth(first);
+  ok(!first.world.present(WARDEN), 'Saltmouth first, while Hale holds the Scarth, no Warden sits by the gate');
+  meetWho(first, 'sm_ship_word');
+  ok(first.news.at(-1) === 'New chapter: The Tide Stone.', `Saltmouth first, Kitto's word begins the Tide Stone (${first.news.at(-1)})`);
+  goalFromBegun(first, 'Saltmouth first');
+  const at12 = (s: Step): Step => ({ name: s.name, play: (w) => { w.level = 12; s.play(w); } });
+  playChapter(first, CHAPTER, [at12(PLINTH), at12(BOAT)], 'Saltmouth first');
+  goalFromBegun(first, 'Saltmouth first, on the isle');
+  ok(JSON.stringify(written(first)) === JSON.stringify(['plinth', 'ship']), `Saltmouth first, the Tide Stone holds only what was seen and said (${written(first).join(', ')})`);
+  return first;
+}
+
+function theTideStone(ok: (cond: boolean, msg: string) => void): void {
+  inOrder(ok);
+  saltmouthFirst(ok);
+  everyGoalWalked(ok, [CHAPTER]);
+}
+
 export const walkthrough: Walkthrough = (ok) => {
+  theTideStone(ok);
+
   const w = newWalk(ok);
 
   // Down off the Edge: the Salt Road leaves D4's foot and the shore under it is the Delta's, which
@@ -294,13 +423,78 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('delta_b6', 8, 22, SOUTH);
   let door = false;
   for (let i = 0; i < 20 && !door; i++) door = w.world.search();
-  const porch = door ? [w.world.move('forward'), w.world.move('forward')] : [];
+  const porch = door ? [w.world.move('forward')] : [];
   ok(door && porch.every((r) => r.kind === 'moved'), 'searched from the far roof\'s ledge, a door in its wall opens, and can be walked into');
-  ok(w.world.used('b6_stair'), 'behind it, the stair down');
+  ok(w.world.used('b6_stair'), 'behind it, the wet stair down');
+  porch.push(w.world.move('forward'));
+  ok(w.world.state.mapId === 'drowned_temples2' && w.world.state.x === 14 && w.world.state.y === 1, 'and down it, the company comes into the choir\'s back, the sacristy (#175)');
   listen(w);
+
+  // The sacristy: the count through its wall, the god's silver, and the priests' pool, which no one
+  // crosses to the chancel. The silver is had through the far roof's door and no other way.
+  w.world.move('forward');
+  ok(w.world.used('dt2_back'), 'in the sacristy, the count through the wall');
+  const choir = new GameMap(L2);
+  const reachL2 = (from: { x: number; y: number }, to: { x: number; y: number }): boolean => {
+    const seen = new Set([`${from.x},${from.y}`]), q = [[from.x, from.y]];
+    while (q.length) {
+      const [x, y] = q.shift()!;
+      if (x === to.x && y === to.y) return true;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        if (!choir.inBounds(nx, ny) || seen.has(`${nx},${ny}`)) continue;
+        const r = choir.passable(nx, ny, { swim: true, float: true });
+        if (r === 'ok' || r === 'unlock') { seen.add(`${nx},${ny}`); q.push([nx, ny]); }
+      }
+    }
+    return false;
+  };
+  const silver = L2.features!.find((f) => f.kind === 'chest' && f.id === 'dt2_silver')!;
+  ok(reachL2({ x: 14, y: 1 }, silver) && !reachL2(L2.start, silver), 'the god\'s silver is reached from the far roof\'s stair, and not from the choir\'s, even by a swimmer');
+  ok(silver.kind === 'chest' && ['silver_mace', 'tide_symbol'].every((id) => silver.items.includes(id)), `in the sacristy, the Silver Mace +1 and the Holy Symbol of the Tide (${silver.kind === 'chest' ? silver.items.map((id) => item(id).name).join(', ') : ''})`);
+  see(w, 'drowned_temples2:dt2_pool');
+  walkThrough(w, 'drowned_temples2', 14, 2, NORTH, 'delta_b6', 2);
+  ok(w.world.zone?.id === 'delta_b6' && w.world.state.x - w.world.zone.x === 8 && w.world.state.y - w.world.zone.y === 22, 'and back up the wet stair, the company stands on the far roof\'s ledge');
 
   // The box's groups, each won at its floor.
   for (const g of B6.encounters!) fight(w, `delta_b6:${g.id}`);
+
+  // In at the dry door to the Drowned Temples (#175): the narthex and the bell's empty frame, the
+  // drowned in the nave and the north-east chapel, and the count from the apse's stair.
+  walkThrough(w, 'delta_b6', 16, 12, NORTH, 'drowned_temples', 2);
+  w.world.move('forward');
+  ok(w.world.used('dt1_in'), 'through the dry door, the narthex');
+  for (const e of ['dt1_frame', 'dt1_nave', 'dt1_flooded', 'dt1_font_se', 'dt1_font_ne', 'dt1_sunk']) see(w, `drowned_temples:${e}`);
+  for (const g of L1.encounters!) fight(w, `drowned_temples:${g.id}`);
+  see(w, 'drowned_temples:dt1_stair');
+  ok(w.world.used('dt1_stair'), 'at the apse\'s stair head, the count comes up from below');
+  walkThrough(w, 'drowned_temples', 8, 2, NORTH, 'drowned_temples2', 2);
+
+  // The choir: the drowned man at the stair's foot, the choir and the stalls, then the Choirmaster on
+  // the chancel step, and the bell it beat time on. The count stops, and does not come back.
+  see(w, 'drowned_temples2:dt2_in');
+  ok(w.world.used('dt2_in'), 'at the stair\'s foot, the count loud ahead');
+  for (const e of ['dt2_choir', 'dt2_psalters', 'dt2_chancel']) see(w, `drowned_temples2:${e}`);
+  for (const g of L2.encounters!) fight(w, `drowned_temples2:${g.id}`);
+  ok(w.party.bag.includes('tide_bell'), 'the Choirmaster falls, and the company has the Tide Bell');
+  see(w, 'drowned_temples2:dt2_vestry_look');
+  const vestry = L2.features!.find((f) => f.kind === 'chest' && f.id === 'dt2_vestry')!;
+  ok(vestry.kind === 'chest' && ['morning_star+1', 'ironshod_staff+1'].every((id) => vestry.items.includes(id)), 'behind the chancel, the vestry holds the ladder\'s Morning Star +1 and Ironshod Staff +1');
+  see(w, 'drowned_temples2:dt2_quiet');
+  ok(w.world.used('dt2_quiet'), 'and the stair\'s foot is quiet');
+  see(w, 'drowned_temples2:dt2_chancel_after');
+  ok(w.world.used('dt2_chancel_after'), 'the chancel step is bare, and nothing beats');
+  w.world.state.minutes += 3 * MINUTES_PER_DAY;
+  w.world.travel('drowned_temples2', 7, 13);
+  ok(!w.world.liveGroups().some((g) => ['dt2_choir', 'dt2_choirmaster'].includes(g.def.id)), 'three days on, the choir does not come back to count');
+
+  // Up with the bell to the priestess: she takes it, hangs it on its frame and rings it.
+  meetWho(w, 'tide_bell');
+  const bell = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'tide_bell');
+  ok(!!w.party.flags.q_tide_bell_done && !w.party.bag.includes('tide_bell') && !!bell()?.done, `the priestess takes the bell, and The Tide Bell is done (${bell()?.pages[0]?.entries.map((e) => e.id).join(', ')})`);
+  see(w, 'delta_b6:b6_rung');
+  ok(w.world.used('b6_rung'), 'and she rings it inside the door');
+  see(w, 'drowned_temples:dt1_frame_hung');
+  ok(w.world.used('dt1_frame_hung'), 'the bell hangs on its frame in the narthex');
 
   // On down the road into Saltmouth's box: the fen gives way to the Saltings at the seam.
   w.world.travel('delta_c5', 26, 30, SOUTH);

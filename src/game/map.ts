@@ -73,8 +73,12 @@ export type { Interior };
 /** What a statue gives for its riddle's answer: gold, items or a stat point to every member (game/wilds.ts). */
 export interface Gift { gold?: number; items?: string[]; stat?: import('./party.ts').Stat; amount?: number }
 
-/** A shrine's or a fountain's: `amount` (1) of `stat` to every member, once; `done` is said after. */
-interface Blessing { x: number; y: number; id: string; name?: string; text: string; stat: import('./party.ts').Stat; amount?: number; done: string }
+/**
+ * A shrine's or a fountain's: `amount` (1) of `stat` to every member, once; `done` is said after. It
+ * wears a presence, as an event does: out of it, it is not there, and nothing is spent (the Tidefolk's
+ * blessing, there once the Tide Bell is back on its frame, #554).
+ */
+interface Blessing extends Presence { x: number; y: number; id: string; name?: string; text: string; stat: import('./party.ts').Stat; amount?: number; done: string }
 
 /**
  * What every business has: its room, and `hall` where it is also a guild's hall, which gives out
@@ -124,7 +128,8 @@ export type Feature =
    */
   | { kind: 'den'; x: number; y: number; id: string; name?: string; text: string; breeds: readonly string[]; keepers: string; brood: readonly string[]; ask: string; burn: string; leave?: string; burnt: string; ruin?: string; gold: number; items: string[] }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
-  | ({ kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean } & Presence);
+  /** Said on stepping in; `sets` is set as it is said (Hale gone from the Scarth once the Delta is reached, #156). */
+  | ({ kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean; sets?: string | readonly string[] } & Presence);
 
 /**
  * A cell the party may not step onto until every flag is set, or while `shut` holds: a gated exit whose way on is simply

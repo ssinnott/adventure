@@ -378,6 +378,24 @@ lock (call 1): the boat sails both ways for the fare, and a company that boards 
 has seen the temples reads the journal true. The walkthrough plays it at 12, 13 and 14, in order
 and with the ship boarded first.
 
+**As built** (#191, 2 October): `chapter.ts`, joined after Saltreach's. It begins on landing
+(`visited: 'wrackholm_e6'`) and is done once the Stone is home with the captain's table opened
+(`q_tide_home` and `tide_ship2:ts2_table`, exported as `WRACK_DONE`), which is where the Wall now
+begins. Seven entries: Kelp Hole's crates, the ship at anchor, the hold, Hale freed (once #156 has
+taken him from the Scarth), the papers, the Stone found and the Stone home. Four goals, furthest
+along first: back aboard for the papers, for a company that left the table shut; the Stone home to
+the plinth in the Delta; down to the Hold; out to the Tide Ship. No goal sits on F6, whose floor of
+13 would put the plinth's step over B5's band; the walk raises the level inside its plays, F6 at 13
+and the Warden at 14. The plinth at Stienwierde takes the Stone: a feature met by its name, never a
+person, there only with the Stone carried or set back, whose hand-in sets `q_tide_home`. That ends
+the Tide Stone, lights the Hearth's first step, quiets the Delta's three Rifts and B6's brinelings,
+gives the hermit on the hummock a last line and sets the temples singing on the approach to the
+far roof's porch and across the nave's head before the apse's stair, whether or not the count has
+stopped below. The
+walkthrough plays it in order on from Saltreach's run, and with Saltmouth first, the temples not
+seen: the ship boarded with the table shut, the Stone home, then the papers and the temples
+singing while the Choirmaster stands. Sunderwood's walkthrough plays the Wall on from it.
+
 ## 6. Side quests
 
 #56's four for Wrackholm, all taken by the owner on 28 September 2026 (#151, call 13), each built
@@ -462,6 +480,37 @@ Proposed, for the owner, each in the issue that would build it:
 - **The bands on the atlas's rows** (#186): the zone 12–14, Kelp Hole 12–14, the Tide Ship 13–14.
   They are set already in `src/content/areas/wrackholm/atlas.ts`, where only the scaffold reads
   them, for a box's draft; the owner's word changes them there.
+
+Decided by delegate for #191, each the owner's to overturn:
+
+1. **The plinth takes the Stone,** a feature on its square named Stienwierde, met as a person is
+   met but drawn and worded as the stone: only a person's hand-in takes an item and sets a flag, and
+   a new kind of feature would be a systems change. The hermit on the hummock counts the Rifts; he
+   is not the step.
+2. **The chapter begins on landing,** since only Kitto's boat reaches the isle: a company still in
+   the Delta keeps the Tide Stone's goals.
+3. **It is done on the Stone home with the captain's table opened,** a condition that stays true and
+   asks no item; the Wall begins on the same, or on the papers read (sunderwood.md §9.3). The way
+   east is the Wall's own first goal, so the chapter writes none: one at the Eaves would only repeat
+   it. The Wall's first goal takes the same condition beside the papers, so the start alone shows a goal.
+4. **A Stone home without the papers sends the company back aboard,** a goal at the lower deck, so
+   the log is never blank.
+5. **No goal on F6:** its floor of 13 would carry every later step over B5's band of 11–12.
+6. **The temples sing on the approach to two stairs,** the far roof's porch (B6) and the apse's,
+   once the Stone is home, and the count and the quiet there give way to it. The song is the
+   god's, so it does not wait on the Choirmaster; the choir below keeps its count while he stands.
+   One step short of each stair, since the log holds the count and the song together no other way;
+   at the apse across the nave's whole head, heard once, so no way up to the stair misses it.
+7. **The Stone home closes the Delta's Rifts** (B5's two and C5's) and B6's brinelings, the other
+   way #170 and #173 left to #191. The brinelings at Nynke's window stay The Night-Light's.
+8. **The hermit on the hummock gets one line** once the Stone is home, and sets nothing.
+9. **The walkthroughs:** Saltreach's runs stop on the landing, the Tide Stone open; Wrackholm's play
+   them on, in order and with Saltmouth first; Sunderwood's play the Tide Stone and Wrackholm's
+   chapter before the Wall in all three runs, the Foreland and the Grove seeded in two. The Watch
+   first and the Sunder first now read both papers, since the table gives both: the papers alone
+   and the log alone are no longer walked.
+10. **A company that skips the Grove** and brings the Stone home is sent on by the Wall's goal, the
+    furthest along, and not back to the Grove, as the log reads every chapter.
 
 Decided by delegate for #190, each the owner's to overturn:
 

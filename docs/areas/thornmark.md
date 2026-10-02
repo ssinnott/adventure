@@ -571,7 +571,7 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
 | 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218), built |
-| 20 | Hale's Sergeant | 10 | Thornhold; the Deepthorn's shore | Hale gone from the Scarth | Act II (#156, #190) |
+| 20 | Hale's Sergeant | 10 | Thornhold; the Deepthorn's shore | Hale gone from the Scarth | Act II (#558, after #156 and #190) |
 
 Taken: 9 to 12 and 14 to 19. The changes to #56's drafts:
 
@@ -580,8 +580,9 @@ Taken: 9 to 12 and 14 to 19. The changes to #56's drafts:
   (MONSTERS §8.1), first needed in the Whitespine. It is built with that system, not before.
 - **20 goes to Act II.** Hale's vanishing is Act II's news (DESIGN §9, STORY) and his checkpoint is
   the Wardens' first task (DESIGN §8); the quest would take him off the Foreland map at level 10. It
-  is Act II's: #156 starts it at Thornhold once Hale is gone from the pass, and #190 ends it on the
-  Tide Ship with his pass-token.
+  is Act II's: it starts at Thornhold once Hale is gone from the pass (`q_hale_taken`, which #156
+  sets) and ends on the Tide Ship with his pass-token (#190). #156 built the pass and left the
+  quest to #558: it is a whole quest, and its token is known in Wrackholm's hold.
 - **11 follows the Lanterns' Dark Marker.** #146 builds the Lanterns' rank 1 quest at the same
   marker as a look and a report (DESIGN §8). 11 stays a plain quest, given at the Chapterhouse as #56
   has it, which asks for the glass once the marker is known dark.

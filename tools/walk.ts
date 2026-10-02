@@ -20,6 +20,8 @@ import type { Person } from '../src/game/people.ts';
 import { questLog, questMarks, questNews } from '../src/game/quests.ts';
 import type { Chapter, QuestCond, QuestView } from '../src/game/quests.ts';
 import { homeMap } from '../src/game/atlas.ts';
+import { useShrine } from '../src/game/wilds.ts';
+import type { Feature } from '../src/game/map.ts';
 import type { Facing } from '../src/game/types.ts';
 import { winRate, gateOpts } from './gate.ts';
 
@@ -81,6 +83,21 @@ export function see(w: Walk, at: string): void {
   if (!f) { w.ok(false, `there is an event ${at}`); return; }
   w.world.travel(map, f.x, f.y);
   w.world.eventsHere();
+  listen(w);
+}
+
+/**
+ * Kneel at a shrine or drink at a fountain, 'map:id': it has to be there, its `after` held, and bless
+ * the company the once.
+ */
+export function kneel(w: Walk, at: string): void {
+  const [map, id] = ref(at);
+  const f = def(map)?.features?.find((x): x is Extract<Feature, { kind: 'shrine' | 'fountain' }> => (x.kind === 'shrine' || x.kind === 'fountain') && x.id === id);
+  if (!f) { w.ok(false, `there is a shrine or a fountain ${at}`); return; }
+  w.world.travel(map, f.x, f.y);
+  w.ok(w.world.present(f) && w.world.featureHere() === f, `${at} is there to kneel at`);
+  const lines = useShrine(w.world, w.party, f);
+  w.ok(lines[0] === f.text, `${at} blesses the company${lines.length ? ` (${lines.join(' ')})` : ''}`);
   listen(w);
 }
 

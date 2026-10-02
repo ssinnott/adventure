@@ -19,7 +19,7 @@ import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src
 import { wrap } from '../../src/ui/draw.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { Feature, MapDef } from '../../src/game/map.ts';
 import { spentId } from '../../src/game/wilds.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok, owed } from './lib.ts';
@@ -29,20 +29,21 @@ import { ok, owed } from './lib.ts';
  * reported as that issue's while nothing does, and failed once something does, so its entry is
  * dropped here.
  */
-export const UNSET: Record<string, string> = {
-  q_hale_taken: '#156', // Hale gone from the Scarth, which the Tide Ship's last row waits on (#190)
-};
+export const UNSET: Record<string, string> = {};
+
+/** The flags a feature sets: a person's, met, and an event's, said (#156). */
+const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : [];
 
 /**
- * What in a condition names nothing real: a flag no NPC or guild quest sets (nor one UNSET owes), an item, something spent once and kept
+ * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one UNSET owes), an item, something spent once and kept
  * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue), a guardian that
  * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
  * maps are the game's unless given.
  */
 export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
-  // The flags people set, and the guild quests' own (a hall sets them: game/guilds.ts).
+  // The flags people and events set, and the guild quests' own (a hall sets them: game/guilds.ts).
   const npcFlags = new Set([
-    ...maps.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])),
+    ...maps.flatMap((d) => (d.features ?? []).flatMap(featureFlags)),
     ...GUILD_QUESTS.flatMap((q) => [takenFlag(q.id), doneFlag(q.id)]),
   ]);
   const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };
@@ -68,10 +69,14 @@ export function fleeting(w: When): string[] {
 
 export function quests(): void {
   // A flag owed to an issue counts as real until that issue sets it, and only then.
-  const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? personFlags(f) : [])));
+  const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap(featureFlags)));
   for (const [f, whose] of Object.entries(UNSET)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
   ok(!condFaults({ flag: Object.keys(UNSET)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
     'a flag owed to an issue names something real, and one nobody sets or owes does not');
+  const crossing: MapDef = { id: 'fx_shore', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'],
+    features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: 'fx_crossed' }] };
+  ok(!condFaults({ flag: 'fx_crossed' }, [crossing]).length && condFaults({ flag: 'fx_crossed' }, []).join() === 'flag fx_crossed',
+    'a flag an event sets names something real, as one a person sets does');
   ok(fleeting({ member: { race: 'orcblood' } }).length === 1 && !fleeting({ member: { cls: 'paladin', level: 16 } }).length, 'a member\'s race can stop holding, so a journal may not ask it, and the rest of a member may');
   const conds = (w: When): QuestCond[] => [w].flat();
   // Every quest's steps: its own, or its chapters'. Each check reads these, so none passes the one
@@ -111,8 +116,7 @@ export function quests(): void {
     // yet is owed by whoever builds its step.
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
-    // Saltreach's zones hold their steps once its chapter, The Tide Stone, is written (#180).
-    const PLANNED: Record<string, string> = { upperwater: '#180', delta: '#180', saltings: '#180', wrackholm: '#191' };
+    const PLANNED: Record<string, string> = {};
     const built = new Set(AREAS.map((a) => a.id as string));
     for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
       const msg = `zone ${z.id} holds a step of the one quest`;
@@ -120,20 +124,19 @@ export function quests(): void {
       else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
     // An area listed by its first map before its chapter is written: the chapter is owed by its issue.
-    const CHAPTER_OWED: Record<string, string> = { saltreach: '#180', wrackholm: '#191' };
+    const CHAPTER_OWED: Record<string, string> = {};
     const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
     ok(AREAS.every((a) => a.chapter || CHAPTER_OWED[a.id]) && !walks.length, `every area has a chapter of the one quest, or owes it, and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
     for (const a of AREAS.filter((x) => CHAPTER_OWED[x.id])) owed(!!a.chapter, `${a.id} has a chapter of the one quest`, CHAPTER_OWED[a.id]);
-    // Act II read end to end (#204): the Wall is begun by the Tide Ship's papers until Wrackholm's
-    // chapter names its done flag, and Sunderwood's walkthrough puts the papers in the bag by hand
-    // (`fromTheTideShip`) until that chapter is written to carry them from the ship.
+    // Act II read end to end (#204, #191): the Wall begins on Wrackholm's done flag, not on the Tide
+    // Ship's papers picked up, and Sunderwood's walkthrough plays it on from Wrackholm's chapter, the
+    // papers carried from the ship and none put in the bag by hand.
     const wall = THE_QUEST.chapters.find((c) => c.id === 'wall'), wrack = AREAS.find((a) => a.id === 'wrackholm')?.chapter as Chapter | undefined;
     const flagsOf = (w: When): string[] => conds(w).flatMap((k) => [k.flag ?? []].flat());
-    owed(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
-      'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up', '#191');
-    const seeds = readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8').includes('fromTheTideShip(');
-    ok(!wrack || !seeds, 'with Wrackholm\'s chapter written, Sunderwood\'s walkthrough puts no papers in the bag by hand, and plays the Wall on from it');
-    owed(!!wrack && !seeds, 'the act walks end to end: the log shows Act II in three chapters, and the Wall is played on from Wrackholm\'s chapter with the papers carried from the Tide Ship', '#191');
+    ok(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
+      'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up');
+    const seeds = /fromTheTideShip\(|party\.flags\.q_tide_home = 1/.test(readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8'));
+    ok(!seeds, 'Sunderwood\'s walkthrough puts no papers in the bag and no Stone home by hand, and plays the Wall on from Wrackholm\'s chapter');
   }
   { // A chapter too long for one page goes on over the next, and keeps every entry.
     const c = THE_QUEST.chapters[0];

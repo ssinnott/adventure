@@ -8,6 +8,8 @@ import { DELTA_C4 } from './maps/delta_c4.ts';
 import { UPPERWATER_C3 } from './maps/upperwater_c3.ts';
 import { DELTA_B5, B5_RIFT_N, B5_RIFT_S } from './maps/delta_b5.ts';
 import { DELTA_B6 } from './maps/delta_b6.ts';
+import { DROWNED_TEMPLES } from './maps/drowned_temples.ts';
+import { DROWNED_TEMPLES2 } from './maps/drowned_temples2.ts';
 import { SALTINGS_C6 } from './maps/saltings_c6.ts';
 import { SALTMOUTH } from './maps/saltmouth.ts';
 import { SALTINGS_C7 } from './maps/saltings_c7.ts';
@@ -17,12 +19,13 @@ import { QUESTS } from './quests.ts';
 import { INTERIORS } from './interiors.ts';
 import { GUILDS } from './guilds.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
+import { CHAPTER } from './chapter.ts';
 
 export const AREA = {
   id: 'saltreach' as const,
   // The road's order: the shore under the Edge, the fen, the spur up the river to Rietum, west over
-  // the fen to the plinth and south to the temples, then Saltmouth's box, the town and the pans below.
-  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, SALTINGS_C6, SALTMOUTH, SALTINGS_C7],
+  // the fen to the plinth and south to the temples and down them, then Saltmouth's box, the town and the pans below.
+  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
@@ -30,8 +33,8 @@ export const AREA = {
   // The Cartographers' first task and first rank at the Map Room (#181), and the Salt Compact's at
   // the Keel (#182).
   guilds: GUILDS,
-  // The Tide Stone, the act's first chapter, is #180's.
-  chapter: undefined,
+  // The Tide Stone, the act's first chapter (#180).
+  chapter: CHAPTER,
   // The delta's: mild and wet, with sea fog off the gulf.
   climate: { summer: 19, winter: 4, daily: 4, damp: [0.02, 0.09], wettest: 300, fog: 0.9, lag: 4,
     fogText: 'Fog comes in off the gulf.', thunderText: 'Thunder rolls over the fen.' },

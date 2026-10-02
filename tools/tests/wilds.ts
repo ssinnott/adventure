@@ -171,6 +171,21 @@ export function wilds(): void {
   press('r', 'KeyR'); press('m', 'KeyM');
   ok(input.next() === 'rest' && input.next() === 'map', 'and R and M are actions again');
 
+  // A blessing that waits on a flag (#554): out of its presence it is not there, says nothing and is
+  // not spent; once the flag is set it blesses, once.
+  const waits = { ...shrine, id: 'w_tide', x: 1, y: 3, after: { flag: 'w_bell' } };
+  const late: MapDef = { ...FIXTURE, features: [...FIXTURE.features!, waits] };
+  const tide = (() => { const rng = makeRng(3), p = defaultParty(rng); return { world: new World({ wilds: new GameMap(late) }, p, rng), party: p }; })();
+  tide.world.state.x = waits.x; tide.world.state.y = waits.y;
+  before = stat(tide.party, 'might');
+  ok(!tide.world.present(waits) && tide.world.featureHere() === undefined && stepLine(tide.world, waits) === '', 'a shrine after a flag nobody has set is not there: not found underfoot, and nothing said stepping on it');
+  ok(useShrine(tide.world, tide.party, waits).length === 0 && !tide.world.used(waits.id) && plus(before, stat(tide.party, 'might'), 0), 'knelt at all the same, it gives nothing and is not spent');
+  tide.party.flags.w_bell = 1;
+  ok(tide.world.present(waits) && tide.world.featureHere() === waits && stepLine(tide.world, waits).includes('Space kneels'), 'once the flag is set it is there');
+  ok(useShrine(tide.world, tide.party, waits)[0] === waits.text && plus(before, stat(tide.party, 'might'), 1) && tide.world.used(waits.id), 'and blesses, a point of Might to each');
+  ok(useShrine(tide.world, tide.party, waits)[0] === waits.done && plus(before, stat(tide.party, 'might'), 1), 'once');
+  ok(condFaults({ flag: 'w_bell' }, [late]).length === 1, 'its flag is one some person or event has to set');
+
   // The hint chain: every statue's answer is said somewhere else.
   const bare: MapDef = { ...FIXTURE, features: FIXTURE.features!.filter((f) => f.kind !== 'npc') };
   ok(hintless([FIXTURE]).length === 0, 'a statue whose answer a hermit says has its hint');

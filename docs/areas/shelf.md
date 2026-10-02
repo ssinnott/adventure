@@ -77,7 +77,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 |---|---|---|---|
 | Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores, with Lantern Oil on his shelf and the keeper's oil to put, and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`); Hob by the Hearthlight's fire until his paper is given, and his empty chair (`hob_chair`) once it went to Vask; the harbour postern in the south wall by the Eel; after Act II, the changed city (§5.1) |
 | The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask, who takes Hob's paper too, and his contract in the throne room behind the keep's door, and the keeper's oil to put to him |
-| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ellerby farm where Ashcombe stood, and its store (rations at 3 gold, in the farm kitchen); Hale's checkpoint at the Scarth, where he takes Dunstan's letter; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
+| The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ellerby farm where Ashcombe stood, and its store (rations at 3 gold, in the farm kitchen); Hale's checkpoint at the Scarth, where he takes Dunstan's letter, until he is taken from it and two strangers in Warden grey hold it (#156); ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
 | Ashcombe Cellar | dungeon, 16×16 | 2–4 | under Ashcombe in E3; four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key; a clerk's coat among the drowned (`gw1_coat`) and his seal in the den's strongbox (`gw1_strongbox`, `gw1_seal`) |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
@@ -920,6 +920,33 @@ Decided by delegate for #157, on 2 October 2026 (the owner's to overturn):
     forty for Mottram's word.
 21. **The Gilded Eel's rumours change,** since its old ones are Act I's; the Keep is left as it is, and
     Vask in his throne room after the act is a question for the owner.
+
+The Scarth once the Regent has the ledger (#156), each the owner's to overturn:
+
+22. **Hale is taken on the Delta's first step,** not at the pass: a once-event on each square of
+    D5's first row a company can stand on, there once `q_greywater_done` holds, sets `q_hale_taken`
+    (an event sets a flag as it is said, the systems change #156 asked for) and shows two riders in
+    Warden grey going over the Edge towards the Scarth. Every way down from the Downs crosses that
+    row; a way into Saltreach that does not, such as a later act's boat to Saltmouth, leaves Hale at
+    the pass.
+23. **Hale and the strangers wear the flag itself,** Hale `until` it and the strangers `after` it,
+    as Saltmouth's Warden and the Tide Ship's last row do, so Hale is never at the pass and in the
+    hold at once. A company that has been to the Delta and gives the ledger later finds Hale gone on
+    its next walk down the Edge, not as it hands the book over.
+24. **The strangers are one person,** `two Wardens at the Scarth`, on Hale's square: one up, one
+    under his hat, the crate gone. They ask the company's business, do not know Hale's name and warn
+    of nothing (#151's call 5: Vask's Wardens). They hire no one and set nothing of their own.
+25. **They take Dunstan's letter** if it is still in the pack (`q_riders_grey`), so Riders in the
+    Dark does not stick open, and it goes into a coat. They take nothing else: the seal goes to Maud
+    and the paper to Vask, and the goals say so once Hale is gone.
+26. **Vask's after-words name the Wardens,** not Hale, as holding the Scarth: the words are fixed, and
+    are true both before and after.
+27. **The sign, First Watch's `scarth_watch` and the rest are kept:** the road is still open, the
+    two Wardens watching the pole are the strangers once Hale is gone, and Hob, Dunstan and the
+    Eel's dockhand do not know he is.
+28. **No journal entry says Hale is gone:** Saltreach's chapter writes the news at Saltmouth's gate,
+    where it is told.
+29. **Hale's Sergeant (#56's 20) is left to #558** (docs/areas/thornmark.md §6).
 
 Proposed, for the owner, each in the issue that would build it:
 
