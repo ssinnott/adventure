@@ -1,12 +1,13 @@
 // Sunderwood's walkthrough. First its chapter, The Wall (#204), the last of Act II, played three
-// ways, each a step at a time (tools/walk.ts). In order, at 15: the Foreland and the Grove played
-// from a new game, the Tide Ship's papers and log put in the bag where Wrackholm's chapter (#191)
-// will have carried them, then over the bridge, down the Sunder to the wall, the papers read at the
-// Watch and Vask at its gate the next morning, answered no. The Watch first, a company at 16, with
-// the papers alone: read before the wall, so Vask waits on it, then answered no. The Sunder first,
-// at 14, before the Tide Ship: the wall found with no chapter begun, then the log alone, which
-// begins it with the rim, the crossing and the wall written at once. No is the one answer offered
-// (#452), as STORY has it; it ends the act, and Vask is gone.
+// ways, each a step at a time (tools/walk.ts). In order, at 15: the Foreland, the Grove, the Tide
+// Stone and the Stone Carried Home played from a new game, the papers carried from the Tide Ship
+// and the Stone home beginning the Wall (#191), then over the bridge, down the Sunder to the wall,
+// the papers read at the Watch and Vask at its gate the next morning, answered no. The Watch first,
+// a company at 16: read before the wall, so Vask waits on it, then answered no. The Sunder first,
+// at 14, before the Tide Ship: the wall found with no chapter of its own begun, then the ship and
+// the Stone home, which begin it with the rim, the crossing and the wall written at once. The
+// Foreland's and the Grove's ends are seeded in the last two, and Saltreach and Wrackholm played.
+// No is the one answer offered (#452), as STORY has it; it ends the act, and Vask is gone.
 //
 // Then the area as built: the Eaves' way in (I2, #195) walked: the east road out of Thornmark over
 // the Hoarhills, the secret under the milestone found from its hints, the box's groups won at its
@@ -38,6 +39,10 @@ import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
 import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
 import { STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
+import { CHAPTER as TIDE } from '../saltreach/chapter.ts';
+import { CHAPTER as WRACK } from '../wrackholm/chapter.ts';
+import { STEPS as TIDE_STEPS } from '../saltreach/walkthrough.ts';
+import { STEPS as WRACK_STEPS } from '../wrackholm/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
@@ -137,78 +142,84 @@ const BRIDGE: Step = { name: 'over the bridge', play: eastToTheBridge };
 const DOWN: Step = { name: 'down to the wall', play: downToTheWall };
 const READ: Step = { name: 'the papers read', play: toTheReader };
 
-/**
- * The Tide Ship's papers or log put in the bag by hand, and the Tide Stone set home (`q_tide_home`,
- * the end of Saltreach's chapter), where Wrackholm's chapter (#191) will have carried them.
- * tools/tests/quests.ts fails once that chapter is written and this is still used: the act is then
- * walked end to end, the papers carried from the ship.
- */
-function fromTheTideShip(w: Walk, ...ids: ('ships_papers' | 'ships_log')[]): void {
-  w.party.bag.push(...ids);
-  w.party.flags.q_tide_home = 1;
-}
-
 /** A company the Foreland's and the Grove's chapters are done for, by their own events and flags, at the Thornmark road's end. */
 function seeded(ok: (cond: boolean, msg: string) => void): Walk {
   const w = newWalk(ok);
-  // The Tide Stone home too, by hand where Wrackholm's chapter (#191) will have set it, so every chapter before the Wall is done.
-  for (const f of ['q_ashcombe', 'q_wenna', 'q_ashcombe_done', 'q_grove', 'q_grove_done', 'q_tide_home']) w.party.flags[f] = 1;
+  for (const f of ['q_ashcombe', 'q_wenna', 'q_keeper', 'q_ashcombe_done', 'q_grove', 'q_treaty', 'q_grove_done']) w.party.flags[f] = 1;
   w.world.travel('downs_e3', 16, 28);
   w.world.markUsed('e3_log');
   see(w, 'deepthorn_i4:i4_treaty');
-  ok(!!quest(w)?.pages.every((p) => p.done) && !quest(w)?.pages.some((p) => p.def === CHAPTER), 'seeded, the farm, the Grove and the Tide Stone are done and the Wall not begun');
+  ok(quest(w)?.pages.filter((p) => p.done).length === 2 && !!quest(w)?.pages.some((p) => p.def === TIDE && !p.done) && !quest(w)?.pages.some((p) => p.def === CHAPTER), 'seeded, the farm and the Grove are done, the Tide Stone begun and the Wall not');
   return w;
+}
+
+/** Saltreach's chapter to the boat, and Wrackholm's from the landing to the Stone home, played: the Wall begins there. */
+function act(w: Walk, how: string): void {
+  playChapter(w, TIDE, TIDE_STEPS, how);
+  playChapter(w, WRACK, WRACK_STEPS, how);
 }
 
 /** The entries written on the Wall's page. */
 const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
 
 function theWall(ok: (cond: boolean, msg: string) => void): void {
-  // In order, at 15: the Foreland and the Grove played, then the papers and the log, as Wrackholm's
-  // chapter will have them carried from the Tide Ship (#191).
+  // In order, at 15: the Foreland and the Grove played, then the Tide Stone and Wrackholm's chapter,
+  // the papers and the log carried from the Tide Ship and the Stone home beginning the Wall.
   const chain = newWalk(ok);
   hired(chain);
   playChapter(chain, FORELAND, FORELAND_STEPS, 'in order');
   playChapter(chain, GROVE, GROVE_STEPS, 'in order');
-  fromTheTideShip(chain, 'ships_papers', 'ships_log');
-  listen(chain);
-  ok(chain.news.at(-1) === 'New chapter: The Wall.', `in order, the papers begin the Wall (${chain.news.at(-1)})`);
+  act(chain, 'in order');
+  ok(chain.news.at(-1) === 'New chapter: The Wall.' && chain.party.bag.includes('ships_papers') && chain.party.bag.includes('ships_log'), `in order, the Stone home begins the Wall, the papers carried from the ship (${chain.news.at(-1)})`);
   playChapter(chain, CHAPTER, [BRIDGE, DOWN, READ, { name: 'Vask, no', play: vaskRefused() }], 'in order');
   ok(written(chain).includes('seal') && written(chain).includes('name') && !!chain.party.flags.q_vask_no && !chain.party.flags.q_vask_yes, 'in order, the seal and the name are read, and the answer is no');
   ok(chain.news.slice(-2).join(' ') === 'Chapter complete: The Wall. Quest complete: The Dimming.', `in order, the answer ends the Wall and, the last chapter yet, the quest (${chain.news.slice(-2).join(' ')})`);
+  const pages = quest(chain)?.pages.map((p) => p.def.title) ?? [];
+  ok(JSON.stringify(pages.slice(-3)) === JSON.stringify([TIDE.title, WRACK.title, CHAPTER.title]), `in order, the log shows Act II in three chapters (${pages.join(', ')})`);
   const want = ending(chain, 'in order');
 
-  // The Watch first, at 16, with the papers alone: read before the wall, so the goal sends the
-  // company down and Vask waits on it; then answered no, as every company answers.
+  // The Watch first, at 16: read before the wall, so the goal sends the company down and Vask waits
+  // on it; then answered no, as every company answers.
   const watch = seeded(ok);
-  fromTheTideShip(watch, 'ships_papers');
-  listen(watch);
-  ok(watch.news.at(-1) === 'New chapter: The Wall.', `the papers alone begin the Wall (${watch.news.at(-1)})`);
+  act(watch, 'the Watch first');
+  ok(watch.news.at(-1) === 'New chapter: The Wall.', `the Watch first, the Stone home begins the Wall (${watch.news.at(-1)})`);
   const at16 = (s: Step): Step => ({ name: s.name, play: (w) => { w.level = 16; s.play(w); } });
   playChapter(watch, CHAPTER, [at16(BRIDGE), at16(READ), at16({ name: 'the wall unseen, so Vask is not come', play: (w) => {
     clock(w, 10);
     w.ok(!w.world.present(VASK), 'read, but the wall not touched: nobody waits at the gate by day');
     downToTheWall(w);
   } }), at16({ name: 'Vask, no', play: vaskRefused() })], 'the Watch first');
-  ok(written(watch).includes('seal') && !written(watch).includes('name') && !!watch.party.flags.q_vask_no && !watch.party.flags.q_vask_yes, 'the Watch first, the seal is read and not the name, and the answer is no');
-  const first = want.filter((e) => e !== 'wall.name' && !e.startsWith('ashcombe.') && !e.startsWith('grove.')).sort();
-  ok(JSON.stringify(written(watch).map((e) => `wall.${e}`).sort()) === JSON.stringify(first), `the Watch first, the Wall reads as in order, without the name (${written(watch).join(', ')})`);
+  ok(!!watch.party.flags.q_vask_no && !watch.party.flags.q_vask_yes, 'the Watch first, the answer is no');
+  const wall = want.filter((e) => e.startsWith('wall.')).sort();
+  ok(JSON.stringify(written(watch).map((e) => `wall.${e}`).sort()) === JSON.stringify(wall), `the Watch first, the Wall reads as in order (${written(watch).join(', ')})`);
 
-  // The Sunder first, at 14, before the Tide Ship: the wall is found, and nothing is begun. The
-  // log alone begins the Wall, with the rim, the crossing and the wall written at once.
+  // The Sunder first, at 14, before the Tide Ship: the wall is found, and nothing of the Wall's is
+  // begun while Wrackholm's goal stands. The Stone home begins it, with the rim, the crossing and
+  // the wall written at once.
   const sunder = seeded(ok);
+  playChapter(sunder, TIDE, TIDE_STEPS, 'the Sunder first');
   sunder.level = 14;
   const before = quest(sunder)?.goal;
+  ok(WRACK.goals.some((g) => g.text === before), `the Sunder first, on the isle, the goal is Wrackholm's (${before})`);
   eastToTheBridge(sunder);
   downToTheWall(sunder);
   ok(!quest(sunder)?.pages.some((p) => p.def === CHAPTER) && !sunder.news.includes('New chapter: The Wall.') && quest(sunder)?.goal === before, `the Sunder first, the wall begins nothing and the goal stands (${before})`);
   goalFromBegun(sunder, 'the Sunder first');
-  fromTheTideShip(sunder, 'ships_log');
-  listen(sunder);
-  ok(sunder.news.at(-1) === 'New chapter: The Wall.' && ['rim', 'crossing', 'wall'].every((e) => written(sunder).includes(e)), `the log begins the Wall, with the rim, the crossing and the wall written at once (${written(sunder).join(', ')})`);
+  playChapter(sunder, WRACK, WRACK_STEPS, 'the Sunder first');
+  ok(sunder.news.at(-1) === 'New chapter: The Wall.' && ['rim', 'crossing', 'wall'].every((e) => written(sunder).includes(e)), `the Stone home begins the Wall, with the rim, the crossing and the wall written at once (${written(sunder).join(', ')})`);
   playChapter(sunder, CHAPTER, [READ, { name: 'Vask, no', play: vaskRefused() }], 'the Sunder first');
-  ok(written(sunder).includes('name') && !written(sunder).includes('seal'), 'the Sunder first, the name is read and not the seal');
-  ok(JSON.stringify(ending(sunder, 'the Sunder first').filter((e) => e.startsWith('wall.'))) === JSON.stringify(want.filter((e) => e.startsWith('wall.') && e !== 'wall.seal')), `the Sunder first, the Wall reads as in order, without the seal (${written(sunder).join(', ')})`);
+  ok(JSON.stringify(ending(sunder, 'the Sunder first').filter((e) => e.startsWith('wall.'))) === JSON.stringify(wall), `the Sunder first, the Wall reads as in order (${written(sunder).join(', ')})`);
+
+  // The Reader's single readings, seeded: the table gives both papers, so no run carries one alone,
+  // but she reads either alone, and the Wall begins on it with only that one written.
+  for (const [one, read, not, flag, other] of [['ships_papers', 'seal', 'name', 'seal_read', 'log_read'], ['ships_log', 'name', 'seal', 'log_read', 'seal_read']] as const) {
+    const alone = seeded(ok);
+    alone.level = 16;
+    alone.party.bag.push(one);
+    toTheReader(alone);
+    ok(!!alone.party.flags[flag] && !alone.party.flags[other] && written(alone).includes(read) && !written(alone).includes(not),
+      `${one} alone, the Reader reads the ${read} and not the ${not}, and the Wall begins on it (${written(alone).join(', ')})`);
+  }
 
   // Sunderwood's runs last in road order, so every chapter's goals are checked here.
   everyGoalWalked(ok);

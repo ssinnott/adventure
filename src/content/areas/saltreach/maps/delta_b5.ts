@@ -7,11 +7,12 @@ import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
+import { STONE_HOME } from './drowned_temples.ts';
 
-/** The north Rift gone quiet: its warden fallen. #191 adds the Tide Stone home, either to do. */
-export const RIFT_N_CLOSED: When = { slain: 'b5_rift_n:b5_rift_n_warden' };
+/** The north Rift gone quiet: its warden fallen, or the Tide Stone home (#191). */
+export const RIFT_N_CLOSED: When = [{ slain: 'b5_rift_n:b5_rift_n_warden' }, STONE_HOME];
 /** The south Rift gone quiet, likewise. */
-export const RIFT_S_CLOSED: When = { slain: 'b5_rift_s:b5_rift_s_warden' };
+export const RIFT_S_CLOSED: When = [{ slain: 'b5_rift_s:b5_rift_s_warden' }, STONE_HOME];
 
 /** The brine Rift on the hummock north of the boards (#165): two tide elders at the tear's heart. */
 export const B5_RIFT_N = rift({
@@ -83,6 +84,16 @@ export const DELTA_B5: MapDef = {
     { kind: 'event', x: 13, y: 15, id: 'b5_under', once: true, text: 'Dry mud under the landing, and in it what was dropped in haste: a shield face down, and beside it a green glow through the dark.' },
     { kind: 'chest', x: 13, y: 16, id: 'b5_under_cache', gold: 80, items: ['brine_shard', 'shield+1'] },
     { kind: 'event', x: 8, y: 14, id: 'b5_plinth', once: true, text: 'Stienwierde. The plinth, and nothing on it: a socket cut clean, a man\'s width. You have seen that cut before, a hand-span of it, under the roots.' },
+    // The plinth takes the Stone home (#191): met as a feature, never as a person, and there only with
+    // the Stone carried or set back. Its hand-in sets q_tide_home, which ends the Tide Stone, closes
+    // the fen's Rifts and sets the temples singing.
+    { kind: 'npc', x: 8, y: 14, name: 'Stienwierde', after: [{ item: 'tide_stone' }, STONE_HOME], lines: [
+      'Stienwierde. The plinth, and nothing on it: a socket cut clean, a man\'s width, and the wind going over it.',
+    ], quest: { item: 'tide_stone', reward: 0, setFlag: 'q_tide_home', done: [
+      'You get the sacking off and set the Stone in the socket, and it goes down into the clean cut without a sound, a man\'s width into a man\'s width. The green comes up through it and steadies. Out in the fen the two lights on the hummocks go out, the north one and then the south.',
+    ], after: [
+      'The Tide Stone on its plinth, the cut round it gone to a line you could not get a knife into. The water under the landing comes and goes.',
+    ] } },
     { kind: 'cairn', x: 5, y: 11, id: 'b5_cairn', text: 'A cairn on the island\'s slope for one the sea kept. Every stone in it is holed through by the water, and the wind speaks in them.', gold: 60, items: ['potion_heal'] },
     { kind: 'event', x: 7, y: 10, id: 'b5_mound', once: true, text: 'House-footings on the mound\'s north slope, a ring of them on heaps of shell above the flood. Homes stood by the Stone, while there was one.' },
     // The Rifts, and the hermit between them who counts their lights.
@@ -92,7 +103,9 @@ export const DELTA_B5: MapDef = {
       'An old man of the Tidefolk sits on the hummock with his back to the island, a stick in his hand and a row of notches in the mud before him, and does not turn round.',
       '"Two. There were none before midsummer, and then two, green, out in the fen where nothing should burn. I count them every night when the dark comes down, and every night it is two." He cuts a notch. "Not more. Not yet."',
       '"The one who counts kept the tally once, the tides in and out, and we only sang it after. Now the tally is mine and I have no voice for it." He looks west, to the mound. "Go and see what is on the island. Then you will know why I count."',
-    ] },
+    ], says: [{ after: STONE_HOME, lines: [
+      '"None tonight, and I sat the dark through to be sure." He lays the stick down by the notches, and does not cut, and turns round at last to the island.',
+    ] }] },
     // The fen.
     { kind: 'event', x: 12, y: 28, id: 'b5_glass', once: true, text: 'A pool set to brine glass from bank to bank, a fen toad caught in it mid-leap. Walk on it and it rings.' },
     { kind: 'event', x: 4, y: 24, id: 'b5_punt', once: true, text: 'A punt sunk to its gunwales, reed grown up through its boards, its pole still leaning where a hand let it go.' },

@@ -31,7 +31,6 @@ import { ok, owed } from './lib.ts';
  */
 export const UNSET: Record<string, string> = {
   q_hale_taken: '#156', // Hale gone from the Scarth, which the Tide Ship's last row waits on (#190)
-  q_tide_home: '#191', // the Tide Stone set back on its plinth, which ends Saltreach's chapter (#180)
 };
 
 /**
@@ -112,7 +111,7 @@ export function quests(): void {
     // yet is owed by whoever builds its step.
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
-    const PLANNED: Record<string, string> = { wrackholm: '#191' };
+    const PLANNED: Record<string, string> = {};
     const built = new Set(AREAS.map((a) => a.id as string));
     for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
       const msg = `zone ${z.id} holds a step of the one quest`;
@@ -120,20 +119,19 @@ export function quests(): void {
       else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
     // An area listed by its first map before its chapter is written: the chapter is owed by its issue.
-    const CHAPTER_OWED: Record<string, string> = { wrackholm: '#191' };
+    const CHAPTER_OWED: Record<string, string> = {};
     const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
     ok(AREAS.every((a) => a.chapter || CHAPTER_OWED[a.id]) && !walks.length, `every area has a chapter of the one quest, or owes it, and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
     for (const a of AREAS.filter((x) => CHAPTER_OWED[x.id])) owed(!!a.chapter, `${a.id} has a chapter of the one quest`, CHAPTER_OWED[a.id]);
-    // Act II read end to end (#204): the Wall is begun by the Tide Ship's papers until Wrackholm's
-    // chapter names its done flag, and Sunderwood's walkthrough puts the papers in the bag by hand
-    // (`fromTheTideShip`) until that chapter is written to carry them from the ship.
+    // Act II read end to end (#204, #191): the Wall begins on Wrackholm's done flag, not on the Tide
+    // Ship's papers picked up, and Sunderwood's walkthrough plays it on from Wrackholm's chapter, the
+    // papers carried from the ship and none put in the bag by hand.
     const wall = THE_QUEST.chapters.find((c) => c.id === 'wall'), wrack = AREAS.find((a) => a.id === 'wrackholm')?.chapter as Chapter | undefined;
     const flagsOf = (w: When): string[] => conds(w).flatMap((k) => [k.flag ?? []].flat());
-    owed(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
-      'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up', '#191');
-    const seeds = readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8').includes('fromTheTideShip(');
-    ok(!wrack || !seeds, 'with Wrackholm\'s chapter written, Sunderwood\'s walkthrough puts no papers in the bag by hand, and plays the Wall on from it');
-    owed(!!wrack && !seeds, 'the act walks end to end: the log shows Act II in three chapters, and the Wall is played on from Wrackholm\'s chapter with the papers carried from the Tide Ship', '#191');
+    ok(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
+      'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up');
+    const seeds = /fromTheTideShip\(|party\.flags\.q_tide_home = 1/.test(readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8'));
+    ok(!seeds, 'Sunderwood\'s walkthrough puts no papers in the bag and no Stone home by hand, and plays the Wall on from Wrackholm\'s chapter');
   }
   { // A chapter too long for one page goes on over the next, and keeps every entry.
     const c = THE_QUEST.chapters[0];
