@@ -642,6 +642,7 @@
     "drowned_temples": {
       "size": "16x16",
       "used": [
+        "dt1_bell",
         "dt1_flooded",
         "dt1_font",
         "dt1_font_ne",

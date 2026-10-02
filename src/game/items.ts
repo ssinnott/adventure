@@ -5,6 +5,7 @@
 import { ITEMS } from '../content/index.ts';
 import type { Feature } from './map.ts';
 import type { Party } from './party.ts';
+import type { Element } from './spells.ts';
 
 export type ItemSlot = 'weapon' | 'armor' | 'shield' | 'none';
 
@@ -34,6 +35,8 @@ export interface ItemDef {
   classes?: readonly string[];
   /** Consumable effect. */
   use?: { heal?: number; sp?: number; cure?: readonly string[]; food?: number };
+  /** Elements its bearer takes half from: worn where it has a slot, carried in the pack where it has none. */
+  resist?: readonly Element[];
   /** Words to read: a letter, read from the pack. */
   text?: readonly string[];
 }

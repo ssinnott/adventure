@@ -10,7 +10,7 @@ import { item } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
   hasTrait, spellHeal, rankMult, spellRank, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
-  prestigeOf, deathAt,
+  prestigeOf, deathAt, resists,
 } from './party.ts';
 import type { ClassId } from './party.ts';
 import type { ItemDef } from './items.ts';
@@ -558,7 +558,9 @@ function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: MonsterI
   const dmgOf = (k: number): number => {
     let d = roll(rng, spellDice(sp, m.def.level), sp.sides ?? 4, 0);
     if (s.defending[k]) d = Math.ceil(d / 2);
-    return s.glass && s.glass.element === sp.element ? Math.ceil(d / 2) : d;
+    // Lampglass and a member's own resistance halve it once between them, never to a quarter (#555).
+    const dimmed = !!sp.element && (s.glass?.element === sp.element || resists(party.members[k]).includes(sp.element));
+    return dimmed ? Math.ceil(d / 2) : d;
   };
   if (sp.heal) {
     const mine = bandOf(s, m);

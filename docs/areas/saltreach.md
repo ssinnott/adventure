@@ -495,7 +495,7 @@ settled in its issue, and what the pilot teaches changes them.
   the Choirmaster falls the count stops, the stair's head, the stair's foot, the chancel, the
   pool and the sacristy go quiet, and the choir does not come back. The Choirmaster
   drops the Tide Bell, which the priestess takes at the first meeting and rings inside the door
-  (§6); its blessing waits on #554 (§9). The god's name is on its silver alone (§10). The gate
+  (§6), and the Tidefolk's blessing waits on its frame once it hangs (§9). The god's name is on its silver alone (§10). The gate
   holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 83% of its
   fights with the boss among them, every fight but the boss's, at 7.5 to a rest; the Choirmaster
   is won 48% of the time at 11 and 98% at 13. As measured, a clear pays about 1,580 xp a member at
@@ -705,7 +705,7 @@ with its box on the systems of #76 (#183):
 |---|---|---|---|---|---|
 | 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | not yet approved; #172 places the child and her hint |
 | 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171; the boat reads its flag (#413) |
-| 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175; the blessing owed to #554 (§9) |
+| 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175; the blessing #554 (§9) |
 | 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178 |
 
 One change to #56's drafts, decided with the boat (#164): 22's favour is the boat's fare, never
@@ -1233,9 +1233,13 @@ Decided by delegate for #175, each the owner's to overturn:
 7. **The Tide Bell drops from the Choirmaster,** and the priestess at the dry door asks for it at
    her first meeting and takes it at the first meeting from a company she never asked, paying 300
    gold; she rings it inside the door, ten strokes and the eleventh late, and it hangs on the
-   narthex's frame after. **The blessing is owed to #554:** a shrine has no presence, so it cannot
-   wait on the bell without presence on a shrine and a fountain; and #56's resistance would need
-   members to carry one, #555. Until then The Tide Bell is done at the hand-in.
+   narthex's frame after. **The blessing is a shrine on the frame** (#554, decided by delegate and
+   the owner's to overturn), `dt1_bell` on its square in the narthex, there once the bell hangs (`after` `q_tide_bell_done`)
+   and not before: kneeling gives a point of Endurance to each of the company, once. Endurance is the
+   Tidefolk's own, and the area's shrines already give Personality twice. The priestess gives it as
+   she gives the bell, by hanging it, and stays at her door. The quest is still done at the hand-in,
+   the blessing found after. #56 asked for a once-only resistance: that waits on members carrying
+   one, #555.
 8. **The finds:** the ladder's Morning Star +1 and Ironshod Staff +1 in the vestry behind the boss,
    since the ladder's step should not hang on a secret found from another map; the god's silver,
    a Silver Mace +1 on the morning star's base and the Holy Symbol of the Tide, in the sacristy.
