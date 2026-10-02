@@ -19,6 +19,7 @@ import { QUESTS } from './quests.ts';
 import { INTERIORS } from './interiors.ts';
 import { GUILDS } from './guilds.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
+import { CHAPTER } from './chapter.ts';
 
 export const AREA = {
   id: 'saltreach' as const,
@@ -32,8 +33,8 @@ export const AREA = {
   // The Cartographers' first task and first rank at the Map Room (#181), and the Salt Compact's at
   // the Keel (#182).
   guilds: GUILDS,
-  // The Tide Stone, the act's first chapter, is #180's.
-  chapter: undefined,
+  // The Tide Stone, the act's first chapter (#180).
+  chapter: CHAPTER,
   // The delta's: mild and wet, with sea fog off the gulf.
   climate: { summer: 19, winter: 4, daily: 4, damp: [0.02, 0.09], wettest: 300, fog: 0.9, lag: 4,
     fogText: 'Fog comes in off the gulf.', thunderText: 'Thunder rolls over the fen.' },

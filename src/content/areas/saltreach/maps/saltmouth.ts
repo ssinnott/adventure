@@ -4,7 +4,8 @@
 // locksmith's, the Keel (the harbour tavern, the Salt Compact's hall, #182) and the Map Room,
 // the Cartographers' Guild's hall (#181). Four first prestiges are taught here, each by a person at their
 // trade: the astrologer, the locksmith, the stevedore and the ferryman. Jory Tallis stands at his
-// house front on the quay, and Kitto sells the boat to Wrackholm at the quay's end.
+// house front on the quay, Kitto sells the boat to Wrackholm at the quay's end, and once Hale is gone a
+// Warden off the coast road sits by the gate with the news.
 // docs/areas/saltreach.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
@@ -112,15 +113,27 @@ export const SALTMOUTH: MapDef = {
       'A man at the quay\'s end with a boat under him, coiling a line. He has seen you coming and not stopped coiling.',
       '"Kitto. Wrackholm, the landing, a hundred and fifty the boat. We go out at eight tonight and you step off at six, with the light."',
       '"A fare is a fare, and I don\'t ask why. Favours I don\'t do. Debts I pay." He goes back to his line.',
-    ], says: [{ after: { flag: 'q_passage_owed' }, lines: [
+      '"Midsummer, a barge came down with no lamp lit and never tied up. Straight out past the harbour lamps to a ship riding off Wrackholm, and I watched it go." He pulls the line tight. "My boat goes out there. I don\'t ask why."',
+    // The ship the Stone went to (#180): his word, whichever words he greets a company with.
+    ], flag: 'sm_ship_word', says: [{ after: { flag: 'q_passage_owed' }, sets: 'sm_ship_word', lines: [
       '"Hessel\'s word, is it." He looks at the water as though it owed him. "That squares him with me. Out to Wrackholm for nothing, back is a fare, and I still don\'t ask why. Get in."',
-    ] }, { after: { flag: 'q_compact_run_done' }, lines: [
+      '"There was a barge at midsummer, no lamp on her, that never tied up. Straight out past the harbour lamps to a ship off Wrackholm. My boat goes there too, and I still don\'t ask why."',
+    ] }, { after: { flag: 'q_compact_run_done' }, sets: 'sm_ship_word', lines: [
       '"Keel\'s people, are you." He looks at the sky as though it had arranged this. "Seventy-five to Wrackholm, then. A fare is a fare and a half fare is a half fare, and I still don\'t ask why. Get in."',
+      '"A barge came down at midsummer with no lamp lit and never touched the quay. Out past the lamps to a ship riding off Wrackholm, and that is where I go. I don\'t ask why."',
     ] }],
     // Half to a member of the Compact, never withheld from anyone (EXPANSION §2.2; #182); nothing on
     // Hessel's word, for the barge pushed off his shoal (Passage Paid, C4, #171).
     passage: [{ to: 'wrackholm_e6', x: 16, y: 15, facing: NORTH, name: 'Wrackholm', by: 'boat', fare: 150, half: { flag: 'q_compact_run_done' }, free: { flag: 'q_passage_owed' }, departs: 20, days: 1, arrives: 6,
       label: 'The boat grounds at the stage with the first light and you step ashore, rested. The cliff is already between you and the sea.' }] },
+    // The Warden come down the coast road with the news of Hale (#180): there once #156 has taken
+    // Hale from the Scarth, and gone once Hale is freed from the Tide Ship's hold, so the news is
+    // never told before it is true or after it is stale.
+    { kind: 'npc', x: 9, y: 1, name: 'a Warden off the coast road', lines: [
+      'A man in Warden grey sits on an upturned crate by the gate with his boots beside him and the coast road still on his cloak. He looks up as if you were one more mile.',
+      '"Down the coast road from the Scarth, and I have told it at every post on the way, so I will tell it here. Captain Hale sent his copy of the ledger up to the Regent. It reached him. Hale has not been seen since."',
+      '"The Scarth is held now by men in grey I never saw before, and they did not know my name either. I am not going back up." He puts his boots on, slowly.',
+    ], flag: 'sm_hale_word', after: { flag: 'q_hale_taken' }, until: { flag: 'q_hale_freed' } },
     { kind: 'event', x: 8, y: 11, id: 'sm_lineage', text: 'Through Tallis\'s door a hall, and on its wall a lineage framed, name over name up to a crown. The ink is one shade from top to bottom.' },
     { kind: 'event', x: 7, y: 1, id: 'saltmouth_intro', once: true, text: 'Saltmouth. Grey stone, tarred wood, gulls on everything, and under the gate\'s noise the slap of water that never stops.' },
     { kind: 'sign', x: 6, y: 1, text: 'Saltmouth. Land gate: the Salt Road, the barge quay, Rietum.' },

@@ -566,7 +566,7 @@ settled in its issue, and what the pilot teaches changes them.
   ferryman at the steps (the Monk's). Jory Tallis stands at his house front on the quay, his
   lineage framed on the wall through the open door, and his words touch the throne and no more.
   The pump in the square is brackish and does not heal. The halls are #181's and #182's (below),
-  the Warden with the news of Hale #180's, and The Star That Moved #183's. No coach runs from the
+  the Warden with the news of Hale #180's (built with the chapter, §9), and The Star That Moved #183's. No coach runs from the
   yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
   and onto Wrackholm's stage at 6 the next morning, and back the same from the stage, landing on
   the quay. The walkthrough goes in by the gate and out again, buys each class its step at the
@@ -672,6 +672,19 @@ Nothing in the chapter is a lock (EXPANSION §2.3; #151, call 1): the boat sails
 the fare, the temples open at either tide, and a company that reaches Saltmouth first reads the
 journal true in that order. The walkthrough plays it at 10, 11 and 12, in order and with Saltmouth
 taken first.
+
+**As built** (#180, 2 October): `chapter.ts`, joined after the Grove. It begins once the Foreland
+and the Grove are both done, or on Wytske's word at Rietum (`c3_saw_stone`) or Kitto's at
+Saltmouth (`sm_ship_word`). Six entries: Wytske's sighting, the plinth, the priestess's count, the
+count up the apse's stair, the Warden's news of Hale and Kitto's word on the ship. Seven goals,
+furthest along first: the boat; before the boat, the plinth (Saltmouth taken first); Saltmouth;
+the temples; the plinth; Rietum; down into the Delta. Its end is `q_tide_home`, the Stone set back,
+owed to #191 in tools/tests/quests.ts's UNSET; the boat stays the goal on the isle until then. Two
+people at Saltmouth carry the beats: Kitto gains a line on the midsummer barge in all three of his
+greetings, and a Warden off the coast road sits by the gate at 9,1 once #156 has taken Hale from
+the Scarth (`q_hale_taken`), until Hale is freed. The walkthrough plays it in order at 10 and 11
+from a new game, the Foreland and the Grove first, and with Saltmouth taken first at 12, before the
+Grove; it sets `q_hale_taken` by hand, owed to #156, and `q_tide_home`, owed to #191 (§9).
 
 ## 6. Side quests
 
@@ -1223,6 +1236,33 @@ Decided by delegate for #175, each the owner's to overturn:
     event on an exit is never shown, and says the door stands open below; it and the stair's head,
     the stair's foot, the chancel, the pool and the sacristy each have a quiet twin once the count
     has stopped.
+
+Decided by delegate for #180, each the owner's to overturn:
+
+1. **The chapter begins when the Foreland and the Grove are both done, or on a word that names the
+   Stone:** Wytske's at Rietum or Kitto's at Saltmouth, for a company there early. Arriving, the
+   plinth and the priestess begin nothing, as a thing found begins neither the Grove nor the Wall;
+   their entries are written once it begins. A condition holds one `seen`, so the two chapters'
+   ends are joined twice, each with a flag standing for the other's event (Senara's `q_treaty`, the
+   keeper's `q_keeper`). A company that met the keeper and never opened his log is told of the
+   Delta once the Grove is done. Starting on the hand-ins alone overtook the Foreland's Crowness
+   goal and broke Thornmark's early run.
+2. **Its end is `q_tide_home`,** the Tide Stone's own restored flag (`src/content/stones.ts`),
+   owed to #191 in UNSET, so the goal stays open until Wrackholm's chapter sets the Stone back. The
+   chapter writes no entry for the Stone home: those are Wrackholm's chapter's words.
+3. **The news of Hale is a Warden by Saltmouth's gate, and an entry, not a step:** he sits there
+   once `q_hale_taken` holds (#156) and goes once Hale is freed (`q_hale_freed`), so the news is
+   never told before it is true or after it is stale. Keyed to `q_hale_taken` alone it would be
+   written at the Edge's foot, where #156 sets it, with nobody saying it. No goal waits on him.
+4. **Kitto names the ship,** as he already sells the boat: a line on the midsummer barge that never
+   tied up and went out to a ship off Wrackholm, in each of his three greetings, each setting
+   `sm_ship_word`, so a company with Hessel's word or the Keel's half fare hears it too. STORY puts
+   the boat in a harbour tavern, but the Keel's words are kept clear of the Compact.
+5. **Saltmouth first, the plinth comes before the boat,** a goal and not a lock, as the Wall sends
+   a company down the Sunder before its Watch: the boat sails for the fare whenever.
+6. **The walkthrough's third level is played, not given:** no map of Saltreach is floored at 12,
+   so the curve gives 10 and 11 in order, and the Saltmouth-first run is played at 12 by hand, as
+   Sunderwood's Watch-first run is at 16.
 
 ## 10. Names
 
