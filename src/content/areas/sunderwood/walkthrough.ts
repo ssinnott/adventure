@@ -138,22 +138,25 @@ const DOWN: Step = { name: 'down to the wall', play: downToTheWall };
 const READ: Step = { name: 'the papers read', play: toTheReader };
 
 /**
- * The Tide Ship's papers or log put in the bag by hand, where Wrackholm's chapter (#191) will have
- * carried them. tools/tests/quests.ts fails once that chapter is written and this is still used: the
- * act is then walked end to end, the papers carried from the ship.
+ * The Tide Ship's papers or log put in the bag by hand, and the Tide Stone set home (`q_tide_home`,
+ * the end of Saltreach's chapter), where Wrackholm's chapter (#191) will have carried them.
+ * tools/tests/quests.ts fails once that chapter is written and this is still used: the act is then
+ * walked end to end, the papers carried from the ship.
  */
 function fromTheTideShip(w: Walk, ...ids: ('ships_papers' | 'ships_log')[]): void {
   w.party.bag.push(...ids);
+  w.party.flags.q_tide_home = 1;
 }
 
 /** A company the Foreland's and the Grove's chapters are done for, by their own events and flags, at the Thornmark road's end. */
 function seeded(ok: (cond: boolean, msg: string) => void): Walk {
   const w = newWalk(ok);
-  for (const f of ['q_ashcombe', 'q_wenna', 'q_ashcombe_done', 'q_grove', 'q_grove_done']) w.party.flags[f] = 1;
+  // The Tide Stone home too, by hand where Wrackholm's chapter (#191) will have set it, so every chapter before the Wall is done.
+  for (const f of ['q_ashcombe', 'q_wenna', 'q_ashcombe_done', 'q_grove', 'q_grove_done', 'q_tide_home']) w.party.flags[f] = 1;
   w.world.travel('downs_e3', 16, 28);
   w.world.markUsed('e3_log');
   see(w, 'deepthorn_i4:i4_treaty');
-  ok(!!quest(w)?.pages.every((p) => p.done) && !quest(w)?.pages.some((p) => p.def === CHAPTER), 'seeded, the farm and the Grove are done and the Wall not begun');
+  ok(!!quest(w)?.pages.every((p) => p.done) && !quest(w)?.pages.some((p) => p.def === CHAPTER), 'seeded, the farm, the Grove and the Tide Stone are done and the Wall not begun');
   return w;
 }
 
