@@ -768,7 +768,8 @@
         "lw_gate",
         "lw_graves",
         "lw_lookout",
-        "lw_oil"
+        "lw_oil",
+        "lw_vask"
       ],
       "groups": [],
       "doors": []
@@ -1116,6 +1117,7 @@
     "guild_Lantern Guildhall",
     "guild_The Watch's Lantern Hall",
     "guild_Thornhold Lantern Hall",
+    "log_read",
     "meridian_read",
     "papers_read",
     "q_ailith",
@@ -1212,6 +1214,7 @@
     "q_riders_hale",
     "q_riders_kept",
     "q_riders_letter",
+    "q_salt_done",
     "q_seal",
     "q_seal_hale",
     "q_seal_matched",
@@ -1232,6 +1235,9 @@
     "q_trees_home",
     "q_trees_sylvane",
     "q_trees_ulf",
+    "q_vask_no",
+    "q_vask_rain",
+    "q_vask_yes",
     "q_wardens_cult",
     "q_wardens_cult_done",
     "q_wardens_strongbox",
@@ -1249,6 +1255,7 @@
     "rank_compact",
     "rank_lanterns",
     "rank_wardens",
+    "seal_read",
     "watch_prior_met",
     "watch_reader_met"
   ],

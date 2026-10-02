@@ -1,22 +1,38 @@
-// Sunderwood's walkthrough. Its chapter, The Wall, is #204's, which plays it here; until then, the
-// Eaves' way in (I2, #195) walked: the east road out of Thornmark over the Hoarhills, the secret
-// under the milestone found from its hints, the box's groups won at its floor, and the crest along
-// its south shut against the Deepthorn, so the road is the only way between the two areas. Then the
-// Eaves (J2, #196): the road on through the pines, the rim of the Sunder seen, the secret in the
-// bear's cave found from the dog and the cutter's word, and the box's groups won at its floor. Then
-// Sunderfall (K2, #197): the rope bridge crossed, the ledge behind the quiet fall found from its
-// rocks, and the box's groups won at its floor. Then Lanternwood (L2, #200): the road on through the
-// wood to the tower's gate and in at it to Lantern Watch (#201), where a company rests, buys, studies
-// and trains and the Reader reads the Tide Ship's papers and its log, the pit under the signal
-// fire's ash found from the ash and the young sister's word, and the box's groups won at its floor.
-// Then the Sunder's mouth (K3, #198): the ledges walked down past the gleaners to the door and the
-// camp below it, the river's old bed found from its stones and the stack across it, the box's bears
-// won at its floor, and its Rift walked into and won, its groups still coming back. Then the Sunder
-// (#199): in at the door on the first landing, down the ledges and over the thread, the gleaners'
-// cache, down to the floor, its groups and the Warden won, the wall found and the seam behind the
-// rock fall at the chalk's last mark; the Warden stays dead and the rest come back.
+// Sunderwood's walkthrough. First its chapter, The Wall (#204), the last of Act II, played three
+// ways, each a step at a time (tools/walk.ts). In order, at 15: the Foreland and the Grove played
+// from a new game, the Tide Ship's papers and log put in the bag where Wrackholm's chapter (#191)
+// will have carried them, then over the bridge, down the Sunder to the wall, the papers read at the
+// Watch and Vask at its gate the next morning, answered no. The Watch first, a company at 16, with
+// the papers alone: read before the wall, so Vask waits on it, then answered yes, which gives
+// nothing. The Sunder first, at 14, before the Tide Ship: the wall found with no chapter begun,
+// then the log alone, which begins it with the rim, the crossing and the wall written at once.
+// Either answer ends the act, and Vask is gone.
+//
+// Then the area as built: the Eaves' way in (I2, #195) walked: the east road out of Thornmark over
+// the Hoarhills, the secret under the milestone found from its hints, the box's groups won at its
+// floor, and the crest along its south shut against the Deepthorn, so the road is the only way
+// between the two areas. Then the Eaves (J2, #196): the road on through the pines, the rim of the
+// Sunder seen, the secret in the bear's cave found from the dog and the cutter's word, and the
+// box's groups won at its floor. Then Sunderfall (K2, #197): the rope bridge crossed, the ledge
+// behind the quiet fall found from its rocks, and the box's groups won at its floor. Then
+// Lanternwood (L2, #200): the road on through the wood to the tower's gate and in at it to Lantern
+// Watch (#201), where a company rests, buys, studies and trains and the Reader reads the Tide
+// Ship's papers and its log, the pit under the signal fire's ash found from the ash and the young
+// sister's word, and the box's groups won at its floor. Then the Sunder's mouth (K3, #198): the
+// ledges walked down past the gleaners to the door and the camp below it, the river's old bed found
+// from its stones and the stack across it, the box's bears won at its floor, and its Rift walked
+// into and won, its groups still coming back. Then the Sunder (#199): in at the door on the first
+// landing, down the ledges and over the thread, the gleaners' cache, down to the floor, its groups
+// and the Warden won, the wall found and the seam behind the rock fall at the chalk's last mark;
+// the Warden stays dead and the rest come back.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import type { Step, Walk } from '../../../../tools/walk.ts';
+import { CHAPTER } from './chapter.ts';
+import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
+import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
+import { STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
+import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
@@ -28,7 +44,7 @@ import { makeRng } from '../../../lib/engine/rng.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { ACT_II } from '../../../../tools/tests/ladder.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import { meet, heard } from '../../../game/people.ts';
+import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 
 const I2 = MAP_DEFS.find((d) => d.id === 'eaves_i2')!;
@@ -45,8 +61,136 @@ const PRIOR = WATCH.features!.find((f) => f.kind === 'npc' && f.name === 'Prior 
 const LEDGES = MAP_DEFS.find((d) => d.id === 'the_sunder')!;
 const FLOOR = MAP_DEFS.find((d) => d.id === 'the_sunder2')!;
 const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'A young sister of the Watch') as Person;
+const VASK = WATCH.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Lord Aumery Vask')) as Person;
+
+// ---- the chapter (#204) ----
+
+/** The clock on to the next day's hour given. */
+const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
+
+/** East out of Thornmark, through the Eaves to the rim, and over the rope bridge, plank by plank. */
+function eastToTheBridge(w: Walk): void {
+  walkThrough(w, 'thornmark', 28, 10, EAST, 'eaves_i2');
+  walkThrough(w, 'eaves_i2', 29, 11, EAST, 'eaves_j2');
+  see(w, 'eaves_j2:j2_rim');
+  walkThrough(w, 'eaves_j2', 31, 24, EAST, 'eaves_k2');
+  const over = Array.from({ length: 8 }, () => w.world.move('forward'));
+  w.ok(over.every((r) => r.kind === 'moved') && w.world.used('k2_bridge'), 'the rope bridge is crossed to the east lip');
+  listen(w);
+}
+
+/** Down the Sunder from K3's first landing to the floor, the Warden in the narrows, and the wall. */
+function downToTheWall(w: Walk): void {
+  walkThrough(w, 'eaves_k2', 12, 29, SOUTH, 'eaves_k3', 4);
+  walkThrough(w, 'eaves_k3', 9, 8, EAST, 'the_sunder', 1);
+  walkThrough(w, 'the_sunder', 5, 29, SOUTH, 'the_sunder2', 1);
+  fight(w, 'the_sunder2:su2_warden');
+  see(w, 'the_sunder2:su2_wall');
+}
+
+/** In at the Watch's gate, and up to the Reader: met, then read to. */
+function toTheReader(w: Walk): void {
+  walkThrough(w, 'lanternwood_l2', 12, 17, NORTH, 'lantern_watch');
+  meetWho(w, 'watch_reader_met');
+  meetWho(w, 'watch_reader_met');
+  w.ok(!!w.party.flags.papers_read, 'the Reader reads what the company carries');
+}
+
+/**
+ * Vask at the gate: not there by night, there the next morning, and his question answered with
+ * `label`. Either answer ends the act, sets its own flag and gives nothing, and he is gone.
+ */
+function vaskAnswered(label: string): (w: Walk) => void {
+  return (w) => {
+    clock(w, 23);
+    w.ok(!w.world.present(VASK), 'by night, nobody waits at the Watch\'s gate');
+    clock(w, 8);
+    see(w, 'lantern_watch:lw_vask');
+    w.ok(w.world.used('lw_vask'), 'the next morning, riders at the gate');
+    const gold = w.party.gold, bag = [...w.party.bag].sort().join();
+    meetWho(w, 'q_vask_rain');
+    w.world.travel('lantern_watch', VASK.x, VASK.y);
+    const m = meet(VASK, w.party, heard(w.world, VASK)), a = m.choice?.answers.find((x) => x.label === label);
+    w.ok(!!a, `Vask asks, and '${label}' is an answer (${m.choice?.ask ?? 'no question'})`);
+    const said = a ? answer(a, w.party) : '';
+    listen(w);
+    w.ok(/girl/.test(said), `whatever the answer, he has the girl (${said})`);
+    w.ok(w.party.gold === gold && [...w.party.bag].sort().join() === bag, 'the answer gives nothing and takes nothing');
+    w.ok(!w.world.present(VASK) && !meet(VASK, w.party, () => false).choice, 'and Vask is gone, his question closed');
+  };
+}
+
+const BRIDGE: Step = { name: 'over the bridge', play: eastToTheBridge };
+const DOWN: Step = { name: 'down to the wall', play: downToTheWall };
+const READ: Step = { name: 'the papers read', play: toTheReader };
+
+/** A company the Foreland's and the Grove's chapters are done for, by their own events and flags, at the Thornmark road's end. */
+function seeded(ok: (cond: boolean, msg: string) => void): Walk {
+  const w = newWalk(ok);
+  for (const f of ['q_ashcombe', 'q_wenna', 'q_ashcombe_done', 'q_grove', 'q_grove_done']) w.party.flags[f] = 1;
+  w.world.travel('downs_e3', 16, 28);
+  w.world.markUsed('e3_log');
+  see(w, 'deepthorn_i4:i4_treaty');
+  ok(!!quest(w)?.pages.every((p) => p.done) && !quest(w)?.pages.some((p) => p.def === CHAPTER), 'seeded, the farm and the Grove are done and the Wall not begun');
+  return w;
+}
+
+/** The entries written on the Wall's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+function theWall(ok: (cond: boolean, msg: string) => void): void {
+  // In order, at 15: the Foreland and the Grove played, then the papers and the log, as Wrackholm's
+  // chapter will have them carried from the Tide Ship (#191).
+  const chain = newWalk(ok);
+  hired(chain);
+  playChapter(chain, FORELAND, FORELAND_STEPS, 'in order');
+  playChapter(chain, GROVE, GROVE_STEPS, 'in order');
+  chain.party.bag.push('ships_papers', 'ships_log');
+  listen(chain);
+  ok(chain.news.at(-1) === 'New chapter: The Wall.', `in order, the papers begin the Wall (${chain.news.at(-1)})`);
+  playChapter(chain, CHAPTER, [BRIDGE, DOWN, READ, { name: 'Vask, no', play: vaskAnswered('No.') }], 'in order');
+  ok(written(chain).includes('seal') && written(chain).includes('name') && !!chain.party.flags.q_vask_no && !chain.party.flags.q_vask_yes, 'in order, the seal and the name are read, and the answer is no');
+  ok(chain.news.slice(-2).join(' ') === 'Chapter complete: The Wall. Quest complete: The Dimming.', `in order, the answer ends the Wall and, the last chapter yet, the quest (${chain.news.slice(-2).join(' ')})`);
+  const want = ending(chain, 'in order');
+
+  // The Watch first, at 16, with the papers alone: read before the wall, so the goal sends the
+  // company down and Vask waits on it; then answered yes, which gives nothing.
+  const watch = seeded(ok);
+  watch.party.bag.push('ships_papers');
+  listen(watch);
+  ok(watch.news.at(-1) === 'New chapter: The Wall.', `the papers alone begin the Wall (${watch.news.at(-1)})`);
+  const at16 = (s: Step): Step => ({ name: s.name, play: (w) => { w.level = 16; s.play(w); } });
+  playChapter(watch, CHAPTER, [at16(BRIDGE), at16(READ), at16({ name: 'the wall unseen, so Vask is not come', play: (w) => {
+    clock(w, 10);
+    w.ok(!w.world.present(VASK), 'read, but the wall not touched: nobody waits at the gate by day');
+    downToTheWall(w);
+  } }), at16({ name: 'Vask, yes', play: vaskAnswered('We\'ll help you.') })], 'the Watch first');
+  ok(written(watch).includes('seal') && !written(watch).includes('name') && !!watch.party.flags.q_vask_yes, 'the Watch first, the seal is read and not the name, and the answer is yes');
+  const yes = [...want.filter((e) => e !== 'wall.no' && e !== 'wall.name' && !e.startsWith('ashcombe.') && !e.startsWith('grove.')), 'wall.yes'].sort();
+  ok(JSON.stringify(written(watch).map((e) => `wall.${e}`).sort()) === JSON.stringify(yes), `the Watch first, the Wall reads as in order, yes for no and without the name (${written(watch).join(', ')})`);
+
+  // The Sunder first, at 14, before the Tide Ship: the wall is found, and nothing is begun. The
+  // log alone begins the Wall, with the rim, the crossing and the wall written at once.
+  const sunder = seeded(ok);
+  sunder.level = 14;
+  const before = quest(sunder)?.goal;
+  eastToTheBridge(sunder);
+  downToTheWall(sunder);
+  ok(!quest(sunder)?.pages.some((p) => p.def === CHAPTER) && !sunder.news.includes('New chapter: The Wall.') && quest(sunder)?.goal === before, `the Sunder first, the wall begins nothing and the goal stands (${before})`);
+  goalFromBegun(sunder, 'the Sunder first');
+  sunder.party.bag.push('ships_log');
+  listen(sunder);
+  ok(sunder.news.at(-1) === 'New chapter: The Wall.' && ['rim', 'crossing', 'wall'].every((e) => written(sunder).includes(e)), `the log begins the Wall, with the rim, the crossing and the wall written at once (${written(sunder).join(', ')})`);
+  playChapter(sunder, CHAPTER, [READ, { name: 'Vask, no', play: vaskAnswered('No.') }], 'the Sunder first');
+  ok(written(sunder).includes('name') && !written(sunder).includes('seal'), 'the Sunder first, the name is read and not the seal');
+  ok(JSON.stringify(ending(sunder, 'the Sunder first').filter((e) => e.startsWith('wall.'))) === JSON.stringify(want.filter((e) => e.startsWith('wall.') && e !== 'wall.seal')), `the Sunder first, the Wall reads as in order, without the seal (${written(sunder).join(', ')})`);
+
+  everyGoalWalked(ok, [CHAPTER]);
+}
 
 export const walkthrough: Walkthrough = (ok) => {
+  theWall(ok);
+
   const w = newWalk(ok);
   w.level = 14;
   // The east road: out of Thornmark's east edge and over the shoulder into the Eaves.

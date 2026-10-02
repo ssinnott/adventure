@@ -152,7 +152,10 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   gorge, through L2's gate. The Lamp Gallery at the top trains to 17; the prior's room, where the
   Reader of the Watch sits; the stores, the band's step on the ladder; the refectory; and the
   Lanterns' hall at the tower's foot, which sells to tier 6. Prior Osric in the yard under the lamp,
-  Wouter Brink of the Cartographers on the west wall. No temple: Sunderfall's shrine cures.
+  Wouter Brink of the Cartographers on the west wall. No temple: Sunderfall's shrine cures. By day,
+  once the papers are read and the wall touched, Lord Vask at the gate with two Wardens and three
+  horses, until his question is answered (#204).
+- **The chapter,** The Wall (`chapter.ts`, #204): §5.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -537,8 +540,8 @@ features; the pay shared out over the area (§8).
 - **Lines:**
   - the gate: *Lantern Watch: one tower, and a lamp at the top lit in daylight. Moth dust lies on
     the step like flour.*
-  - Vask's morning: *Morning, and rain. Three horses at the gate, two Wardens holding them, and a
-    man standing in the wet as if it were not raining.*
+  - Vask's morning: *Rain. Three horses at the gate, two Wardens holding them, and a man standing
+    in the wet as if it were not raining.* (#204 drops "Morning": he comes at any hour of the day.)
 - **New here.** A town that is one tower; the act's midpoint.
 - **Pay.** About 300 xp a member in the tower's quests.
 
@@ -605,30 +608,42 @@ features; the pay shared out over the area (§8).
 ## 5. The one quest here
 
 Sunderwood's chapter is The Wall (`chapter.ts`, #204), the last of Act II, joined after
-Wrackholm's; every zone holds a step (EXPANSION §5.8): the Eaves' at the rim, the bridge and the
-way down, Lanternwood's at the Watch. Its entries:
+Wrackholm's; every zone holds a step (EXPANSION §5.8): the Eaves' at the bridge and the way down,
+Lanternwood's at the Watch. It begins once the company carries the Tide Ship's papers or its log,
+or has had them read; Wrackholm's done flag takes the items' place once #191 names it. Its entries:
 
-- **The wood split in half,** seen from the Eaves' rim: the trees along the edge gone to glass, and
-  the gorge falling away further than the rain lets you see. The goal points to the bridge.
-- **The crossing,** on the rope bridge over the gorge, and the way down from the ledges beyond it.
-- **The wall,** at the bottom, under the soil and the rock: flat and seamless, going down further
-  than the light reaches, and warm. Nothing more than what the hand feels; the log never says what
-  it is (DESIGN §7).
-- **The papers read,** at the Watch: every cargo, the shards and the people, went below under the
-  Helmstow customs seal, the same seal as on the crates in the caves, and every page is
-  countersigned by the Regent. The Tide Ship's log names Vask (DESIGN §9's midpoint, at 16).
-- **Vask in the rain,** the next morning at the gate, with two Wardens: *You've read the papers.
-  Good. Then you know half of what I know.* He tells the rest; the company says no; *I don't need
-  you. I have the girl.* His choice, put by a person (#76), sets a flag and nothing else: the
-  endings are the one quest's later (DESIGN §9).
-- **Home.** The goal turns back west to Helmstow, where the walls have Wardens on them (#157). The
-  chapter's done flag ends the act; its name is #204's.
+- **The wood split in half,** seen from the Eaves' rim (`rim`): the trees along the edge gone to
+  glass, and the gorge falling away further than the rain lets you see.
+- **The crossing,** on the rope bridge at Sunderfall (`crossing`).
+- **The wall,** at the bottom, under the soil and the rock (`wall`): flat and without a join, going
+  down further than the light reaches, and warm. Nothing more than what the hand feels; the log
+  never says what it is (DESIGN §7).
+- **The papers read,** at the Watch (`seal`): every cargo, the shards and the people, went below
+  under the Helmstow customs seal, the same seal as on the crates in the caves, and every page is
+  countersigned by the Regent. **The log read** (`name`): a clerk's cipher, and one name at the
+  foot of each entry, Vask (DESIGN §9's midpoint). The Reader sets `seal_read` or `log_read` for
+  what she read, beside `papers_read`.
+- **Vask in the rain,** at the Watch's gate with two Wardens (`rain`): *You've read the papers.
+  Good. Then you know half of what I know.* He tells the rest and asks for help. His question, put
+  by a person (#76), is answered yes (`yes`, `q_vask_yes`) or no (`no`, `q_vask_no`), which sets
+  that flag and nothing else; either way *I don't need you. I have the girl* (`girl`). The endings
+  are the one quest's later (DESIGN §9).
+- **Home** (`home`): the road west to Helmstow, the act's last line. Either answer also sets
+  `q_salt_done`, the chapter's done flag, which ends the act; what Helmstow has become is #157's.
+
+Its goals, furthest along first: riders at the Watch's gate (the papers read and the wall
+touched); down the Sunder (read, the wall not seen); across to the Watch (the wall seen, the papers
+carried); down the Sunder by K3's first landing (over the bridge with the papers); over the rope
+bridge at Sunderfall (the papers in hand). Home is not a goal: Helmstow's maps are banded 1–4, and
+the act's end is #157's to show.
 
 No lock (#151, call 1): the bridge stands whatever the story does, and the Watch reads the papers
 for whoever carries them, whenever they come; a company that takes the Sunder before the Tide Ship
-finds the wall all the same.
+finds the wall all the same, and the chapter's first entries are written when the papers come.
 
-The walkthrough plays it at 14, 15 and 16, in order and with the Sunder taken first.
+The walkthrough plays it in order at 15, the Watch first at 16 and the Sunder first at 14, from
+before the Tide Ship. The act end to end, with Saltreach's and Wrackholm's chapters, is owed to
+#191 (§9).
 
 ## 6. Side quests
 
@@ -1063,3 +1078,56 @@ Decided by delegate for #199, each the owner's to overturn:
     their vault is near black, the night over a gorge.
 14. **K3's step and lookout lines see the way in open,** a way cut into the rock with a stair inside,
     where they saw a shut door.
+
+Decided by delegate for #204, each the owner's to overturn:
+
+1. **The chapter is `wall`, The Wall,** and #205's The Length of the Wall takes another id.
+2. **It begins on the Tide Ship's papers, carried or read,** not on the rim, the bridge or the wall:
+   the log tries the furthest chapter begun first, so a Wall begun on the rim would hold the goal
+   over Wrackholm's for a company that walked east early. A company that takes the Sunder first
+   finds the wall all the same, and the rim, the crossing and the wall are written when the papers
+   come. Neither paper can be sold or handed in, so the start stays true.
+3. **Wrackholm's done flag takes the items' place once #191 names it,** so the papers picked up on
+   the ship no longer take the goal from Wrackholm's last steps. It is owed to #191 in
+   `tools/tests/quests.ts` and said in `chapter.ts`.
+4. **Vask's answer sets `q_salt_done`,** beside its own flag (`q_vask_yes` or `q_vask_no`): only a
+   person sets a flag, and Helmstow is the Foreland's lane, so the act ends at the Watch. The flag is
+   the same for both answers, so the choice changes nothing but its own.
+5. **The chapter is done on `q_salt_done`,** the one flag #157 and Act III's first chapter key on.
+6. **Home to Helmstow is an entry, not a goal:** Helmstow's maps are banded 1–4, which the road's own
+   test refuses for a company of 16, and what it finds there is #157's.
+7. **Vask is the keep's Lord Aumery Vask, Regent-Warden,** on the grass west of the gate's road at
+   6,14, the road and the gate left clear.
+8. **He waits on the papers read and the wall touched,** since he says *You've touched that wall*.
+   The wall is a step of the chapter, as the story has it.
+9. **He is gone once answered** (`until: q_salt_done`); his last words are the answer's.
+10. **By day stands for the next morning:** the clock knows day and night and no more, so a company
+    that reads at night meets him at the next daylight, and one that reads by day with the wall seen
+    finds him on its way out. A true next morning would be a systems change, not asked for. The gate's
+    line drops its "Morning" for the same reason, and keeps the rain, as every line at the Watch has it.
+11. **His words do not change with what the company carries:** everyone who meets him has had the
+    papers read and touched the wall, and the narrows give the heart with the wall. His meeting sets
+    `q_vask_rain`, and a company that walks away from the question hears it again.
+12. **The two Wardens are in his lines,** not people of their own; the gate's once-event `lw_vask`
+    at 7,13 carries the brief's line, with his `after`, `until` and `when`.
+13. **Two answers, each with its own flag and `q_salt_done`.**
+14. **A yes gives nothing:** no gold and no gift. The endings are the quest's later.
+15. **"I have the girl" closes both answers:** Wenna alive, below and his reaches every company.
+16. **Five goals, furthest along first,** each its own words: the gate; down the Sunder, read; to the
+    Watch, the wall seen; down the Sunder, over the bridge; over the bridge. The Sunder taken first
+    with no papers shows no goal of the Wall's: today the quest has none there, and once #191's
+    chapter is written Wrackholm's shows. A goal at the Tide Ship would fail the band at 14–16.
+17. **The papers and the log read each have an entry,** keyed on `seal_read` and `log_read`, which the
+    Reader now sets beside `papers_read`: an entry keyed on an item would vanish with it.
+18. **The walk is at 15 in order, at 16 the Watch first and at 14 the Sunder first.** The curve
+    gives each step its level, 15 or 14, which the band checks; the company fights and meets Vask at
+    16 in the second run. In order plays the Foreland and the Grove from a new game; the other two
+    are seeded from their flags and events. Saltreach and Wrackholm are seeded in every run: the
+    papers and the log go into the bag where Wrackholm's chapter will have carried them.
+19. **The act's end-to-end walk is owed to #191** in `tools/tests/quests.ts`, beside the chapter
+    #191 owes: the log shows Act II in three chapters and the Wall is played on from Wrackholm's
+    with the papers carried from the Tide Ship. So is the start's swap (3).
+20. **An order of play may end at a chapter,** and a walkthrough checks only its own chapters' goals
+    walked: a quality pull request first (#430), since a third chapter breaks the checks pinned to
+    the Grove's seal.
+21. **The text was drafted in the voice by a separate agent,** and no line names what the wall is.
