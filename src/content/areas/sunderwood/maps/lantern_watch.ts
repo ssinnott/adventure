@@ -111,17 +111,13 @@ export const LANTERN_WATCH: MapDef = {
       '"The ledges are mine, on the prior\'s wall. Below the last I ruled a line. I had nothing else to put there." He goes back to the rod.',
     ] },
     // Vask at the gate (#204): once the papers are read and the wall touched, by day, the nearest the
-    // clock gives to the next morning. His question is the act's turn: either answer ends it, and
-    // sets its own flag and nothing else. He is gone once answered.
+    // clock gives to the next morning. His question is the act's turn, and the company's one answer
+    // is no (#452), as STORY has it: it ends the act and gives nothing. He is gone once answered.
     { kind: 'npc', x: 6, y: 14, name: 'Lord Aumery Vask, Regent-Warden', flag: 'q_vask_rain', ...VASK_HERE, lines: [
       'Lord Vask stands on the grass by the gate, bareheaded, the rain running off him unregarded. Behind him two Wardens hold three horses, and look at nothing.',
       '"You\'ve read the papers. Good. Then you know half of what I know."',
       '"The rest is this. The world is a cage, and the Hearth is its lock. Beyond the sky there is somewhere else, somewhere real, and I mean to open the door."',
     ], choice: { ask: '"Help me. You\'ve touched that wall. You know I\'m right."', answers: [
-      { label: 'We\'ll help you.', sets: ['q_vask_yes', 'q_salt_done'], says: [
-        'He hears it, and looks at you a moment longer than the words needed. "Good. Then go home, and keep out of the rain. I don\'t need you for this part."',
-        '"I have the girl." He takes the reins from the Warden, and the three of them ride out of the gate, and the rain closes behind them.',
-      ] },
       { label: 'No.', sets: ['q_vask_no', 'q_salt_done'], says: [
         'He does not seem surprised. "Then stay out of my way. I don\'t need you. I have the girl."',
         'He takes the reins from the Warden without looking for them, mounts, and is gone through the gate; the two go after.',

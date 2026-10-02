@@ -1,6 +1,7 @@
 // Saves: a round trip, the outdoors kept small, a save from before the weather, a version 1 save
-// loaded onto the outdoors and onto a map that has since grown, the upgrades run by version, and
-// what a save meets on content changed since: a group added, a door moved off its square.
+// loaded onto the outdoors and onto a map that has since grown, a version 2 save's yes to Vask
+// brought to his no, the upgrades run by version, and what a save meets on content changed since:
+// a group added, a door moved off its square.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, seen } from '../../src/game/world.ts';
@@ -77,6 +78,14 @@ export function save(): void {
     const up = new World(maps, loaded.party, makeRng(1), loaded.world), hs = up.state.maps.harrow.explored;
     ok(up.map.id === OUTDOORS && local(up).map === 'thornmark' && up.state.x === 245 && up.state.y === 42, 'on a taller Helmstow, a version 1 save still loads, the party where it stood');
     ok(hs.length === 8 && seen(hs, 14 * 16 + 7) && !seen(hs, 14 * 16 + 8), 'and Helmstow\'s cells seen are packed into bits, as seen as they were');
+  }
+  { // A version 2 save that told Vask yes (#452) loads having told him no, the act still ended.
+    const v2 = upgrade(JSON.parse(JSON.stringify(v1)) as SaveData, UPGRADES, 2);
+    v2.party.flags = { q_vask_rain: 1, q_vask_yes: 1, q_salt_done: 1 };
+    const up = deserialize(JSON.stringify(v2));
+    ok(up.version === SAVE_VERSION && !up.party.flags.q_vask_yes && up.party.flags.q_vask_no === 1 && up.party.flags.q_salt_done === 1 && up.party.flags.q_vask_rain === 1, `a save that told Vask yes loads having told him no (${Object.keys(up.party.flags).join(', ')})`);
+    const no = deserialize(JSON.stringify({ ...v1, party: { ...v1.party, flags: { q_vask_no: 1, q_salt_done: 1 } } }));
+    ok(JSON.stringify(no.party.flags) === '{"q_vask_no":1,"q_salt_done":1}', 'and one that told him no loads as it was');
   }
   { // The upgrades run by version, each registered with the version it brings a save to.
     const to3 = (d: SaveData): SaveData => ({ ...d, world: { ...d.world, steps: d.world.steps + 1 } });

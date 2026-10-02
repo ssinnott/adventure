@@ -13,7 +13,7 @@ export const CHAPTER: Chapter = {
   id: 'wall',
   title: 'The Wall',
   start: [{ item: 'ships_papers' }, { item: 'ships_log' }, { flag: 'papers_read' }],
-  // Vask's question answered, either way: each answer sets its own flag and this one.
+  // Vask's question answered: the company's one answer, no, sets its own flag and this one.
   done: { flag: 'q_salt_done' },
   entries: [
     { id: 'rim', when: { seen: 'eaves_j2:j2_rim' },
@@ -29,8 +29,6 @@ export const CHAPTER: Chapter = {
       text: 'At Lantern Watch the Reader read the Tide Ship\'s log: a clerk\'s cipher, and at the foot of each entry, in another ink, one name. Vask.' },
     { id: 'rain', when: { flag: 'q_vask_rain' },
       text: 'Vask came to the Watch in the rain, with two Wardens. The world is a cage, he said, the Hearth its lock, and beyond the sky a door he means to open.' },
-    { id: 'yes', when: { flag: 'q_vask_yes' },
-      text: 'We told him we would help him. He did not thank us for it.' },
     { id: 'no', when: { flag: 'q_vask_no' },
       text: 'We told him no. He did not seem surprised.' },
     { id: 'girl', when: { flag: 'q_salt_done' },

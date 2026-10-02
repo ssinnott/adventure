@@ -3,10 +3,10 @@
 // from a new game, the Tide Ship's papers and log put in the bag where Wrackholm's chapter (#191)
 // will have carried them, then over the bridge, down the Sunder to the wall, the papers read at the
 // Watch and Vask at its gate the next morning, answered no. The Watch first, a company at 16, with
-// the papers alone: read before the wall, so Vask waits on it, then answered yes, which gives
-// nothing. The Sunder first, at 14, before the Tide Ship: the wall found with no chapter begun,
-// then the log alone, which begins it with the rim, the crossing and the wall written at once.
-// Either answer ends the act, and Vask is gone.
+// the papers alone: read before the wall, so Vask waits on it, then answered no. The Sunder first,
+// at 14, before the Tide Ship: the wall found with no chapter begun, then the log alone, which
+// begins it with the rim, the crossing and the wall written at once. No is the one answer offered
+// (#452), as STORY has it; it ends the act, and Vask is gone.
 //
 // Then the area as built: the Eaves' way in (I2, #195) walked: the east road out of Thornmark over
 // the Hoarhills, the secret under the milestone found from its hints, the box's groups won at its
@@ -108,10 +108,10 @@ function toTheReader(w: Walk): void {
 }
 
 /**
- * Vask at the gate: not there by night, there the next morning, and his question answered with
- * `label`. Either answer ends the act, sets its own flag and gives nothing, and he is gone.
+ * Vask at the gate: not there by night, there the next morning, and his question answered with the
+ * company's one answer, no (#452). It ends the act, sets its own flag and gives nothing, and he is gone.
  */
-function vaskAnswered(label: string): (w: Walk) => void {
+function vaskRefused(): (w: Walk) => void {
   return (w) => {
     clock(w, 23);
     w.ok(!w.world.present(VASK), 'by night, nobody waits at the Watch\'s gate');
@@ -122,11 +122,12 @@ function vaskAnswered(label: string): (w: Walk) => void {
     const gold = w.party.gold, bag = [...w.party.bag].sort().join();
     meetWho(w, 'q_vask_rain');
     w.world.travel('lantern_watch', VASK.x, VASK.y);
-    const m = meet(VASK, w.party, heard(w.world, VASK)), a = m.choice?.answers.find((x) => x.label === label);
-    w.ok(!!a, `Vask asks, and '${label}' is an answer (${m.choice?.ask ?? 'no question'})`);
+    const m = meet(VASK, w.party, heard(w.world, VASK)), labels = m.choice?.answers.map((x) => x.label) ?? [];
+    w.ok(JSON.stringify(labels) === JSON.stringify(['No.']), `Vask asks, and no is the one answer: no yes is offered (${labels.join(', ') || 'no question'})`);
+    const a = m.choice?.answers[0];
     const said = a ? answer(a, w.party) : '';
     listen(w);
-    w.ok(/girl/.test(said), `whatever the answer, he has the girl (${said})`);
+    w.ok(/girl/.test(said), `he has the girl (${said})`);
     w.ok(w.party.gold === gold && [...w.party.bag].sort().join() === bag, 'the answer gives nothing and takes nothing');
     w.ok(!w.world.present(VASK) && !meet(VASK, w.party, () => false).choice, 'and Vask is gone, his question closed');
   };
@@ -169,13 +170,13 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   fromTheTideShip(chain, 'ships_papers', 'ships_log');
   listen(chain);
   ok(chain.news.at(-1) === 'New chapter: The Wall.', `in order, the papers begin the Wall (${chain.news.at(-1)})`);
-  playChapter(chain, CHAPTER, [BRIDGE, DOWN, READ, { name: 'Vask, no', play: vaskAnswered('No.') }], 'in order');
+  playChapter(chain, CHAPTER, [BRIDGE, DOWN, READ, { name: 'Vask, no', play: vaskRefused() }], 'in order');
   ok(written(chain).includes('seal') && written(chain).includes('name') && !!chain.party.flags.q_vask_no && !chain.party.flags.q_vask_yes, 'in order, the seal and the name are read, and the answer is no');
   ok(chain.news.slice(-2).join(' ') === 'Chapter complete: The Wall. Quest complete: The Dimming.', `in order, the answer ends the Wall and, the last chapter yet, the quest (${chain.news.slice(-2).join(' ')})`);
   const want = ending(chain, 'in order');
 
   // The Watch first, at 16, with the papers alone: read before the wall, so the goal sends the
-  // company down and Vask waits on it; then answered yes, which gives nothing.
+  // company down and Vask waits on it; then answered no, as every company answers.
   const watch = seeded(ok);
   fromTheTideShip(watch, 'ships_papers');
   listen(watch);
@@ -185,10 +186,10 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
     clock(w, 10);
     w.ok(!w.world.present(VASK), 'read, but the wall not touched: nobody waits at the gate by day');
     downToTheWall(w);
-  } }), at16({ name: 'Vask, yes', play: vaskAnswered('We\'ll help you.') })], 'the Watch first');
-  ok(written(watch).includes('seal') && !written(watch).includes('name') && !!watch.party.flags.q_vask_yes, 'the Watch first, the seal is read and not the name, and the answer is yes');
-  const yes = [...want.filter((e) => e !== 'wall.no' && e !== 'wall.name' && !e.startsWith('ashcombe.') && !e.startsWith('grove.')), 'wall.yes'].sort();
-  ok(JSON.stringify(written(watch).map((e) => `wall.${e}`).sort()) === JSON.stringify(yes), `the Watch first, the Wall reads as in order, yes for no and without the name (${written(watch).join(', ')})`);
+  } }), at16({ name: 'Vask, no', play: vaskRefused() })], 'the Watch first');
+  ok(written(watch).includes('seal') && !written(watch).includes('name') && !!watch.party.flags.q_vask_no && !watch.party.flags.q_vask_yes, 'the Watch first, the seal is read and not the name, and the answer is no');
+  const first = want.filter((e) => e !== 'wall.name' && !e.startsWith('ashcombe.') && !e.startsWith('grove.')).sort();
+  ok(JSON.stringify(written(watch).map((e) => `wall.${e}`).sort()) === JSON.stringify(first), `the Watch first, the Wall reads as in order, without the name (${written(watch).join(', ')})`);
 
   // The Sunder first, at 14, before the Tide Ship: the wall is found, and nothing is begun. The
   // log alone begins the Wall, with the rim, the crossing and the wall written at once.
@@ -202,7 +203,7 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   fromTheTideShip(sunder, 'ships_log');
   listen(sunder);
   ok(sunder.news.at(-1) === 'New chapter: The Wall.' && ['rim', 'crossing', 'wall'].every((e) => written(sunder).includes(e)), `the log begins the Wall, with the rim, the crossing and the wall written at once (${written(sunder).join(', ')})`);
-  playChapter(sunder, CHAPTER, [READ, { name: 'Vask, no', play: vaskAnswered('No.') }], 'the Sunder first');
+  playChapter(sunder, CHAPTER, [READ, { name: 'Vask, no', play: vaskRefused() }], 'the Sunder first');
   ok(written(sunder).includes('name') && !written(sunder).includes('seal'), 'the Sunder first, the name is read and not the seal');
   ok(JSON.stringify(ending(sunder, 'the Sunder first').filter((e) => e.startsWith('wall.'))) === JSON.stringify(want.filter((e) => e.startsWith('wall.') && e !== 'wall.seal')), `the Sunder first, the Wall reads as in order, without the seal (${written(sunder).join(', ')})`);
 
