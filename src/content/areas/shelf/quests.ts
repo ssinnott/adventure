@@ -115,6 +115,8 @@ export const QUESTS: readonly QuestDef[] = [
         text: 'We gave the seal to Captain Hale. It goes to the Regent beside the smugglers\' ledger.' },
     ],
     goals: [
+      // Hale gone from the Scarth (#156), the seal goes to Maud or nowhere.
+      { when: { item: 'clerks_seal', flag: 'q_hale_taken' }, text: 'Take the seal to Maud at the Gilded Eel.' },
       { when: { item: 'clerks_seal' }, text: 'Take the seal to Maud at the Gilded Eel, or to Captain Hale at the pass.' },
       { when: { flag: 'q_seal', seen: 'greywater1:gw1_coat' }, text: 'Edwin drowned in Brandy Hole. Find what he had on him.' },
       { when: { flag: 'q_seal' }, text: 'Find Edwin, or find out what became of him, in the caves at Brandy Hole, west along the beach.' },
@@ -214,6 +216,8 @@ export const QUESTS: readonly QuestDef[] = [
         text: 'We gave the paper to Captain Hale. Hob goes to his wife\'s people at Gullwick, and stays there until Hale says.' },
     ],
     goals: [
+      // Hale gone from the Scarth (#156), the paper goes to Vask or nowhere.
+      { when: { item: 'tenant_paper', flag: 'q_hale_taken' }, text: 'Take the paper to Vask in the keep.' },
       { when: { item: 'tenant_paper' }, text: 'Take the paper to Vask in the keep, or to Captain Hale at the pass.' },
       { when: { flag: 'q_hob_key' }, text: 'Hob let his cellar and sent his family away. Look again around the Ashcombe farmhouse.' },
       { when: { item: 'hearth_key' }, text: 'Take the hearth-key to Hob, by the Hearthlight\'s fire.' },
@@ -222,11 +226,12 @@ export const QUESTS: readonly QuestDef[] = [
   },
   {
     // #56's sixth: who rode dark through Coldharbour's fields the week the Queen died. Dunstan
-    // writes to Hale, or keeps it under his roof.
+    // writes to Hale, or keeps it under his roof. Once Hale is gone from the Scarth (#156) the men at
+    // the pass take the letter.
     id: 'riders',
     title: 'Riders in the Dark',
     start: { flag: 'q_riders' },
-    done: [{ flag: 'q_riders_hale' }, { flag: 'q_riders_kept' }],
+    done: [{ flag: 'q_riders_hale' }, { flag: 'q_riders_kept' }, { flag: 'q_riders_grey' }],
     entries: [
       { id: 'dunstan', when: { flag: 'q_riders' },
         text: 'Dunstan, once a Warden captain, farms Coldharbour. The week the Queen died eight riders crossed his fields by night, shod and unlit, west over the Wend\'s ford towards the Berth.' },
@@ -236,10 +241,13 @@ export const QUESTS: readonly QuestDef[] = [
         text: 'Dunstan wrote to Hale at the Scarth, in the Wardens\' shorthand, and gave us the letter to carry.' },
       { id: 'hale', when: { flag: 'q_riders_hale' },
         text: 'Hale read Dunstan\'s letter twice and kept it. The Regent will have it from him, under his seal.' },
+      { id: 'grey', when: { flag: 'q_riders_grey' },
+        text: 'The men at the Scarth took Dunstan\'s letter. It went into a coat, and no further that we saw.' },
       { id: 'kept', when: { flag: 'q_riders_kept' },
         text: 'Dunstan kept it under his roof. The lamp in his window stays lit.' },
     ],
     goals: [
+      { when: { item: 'dunstan_letter', flag: 'q_hale_taken' }, text: 'Take Dunstan\'s letter to the Scarth.' },
       { when: { item: 'dunstan_letter' }, text: 'Take Dunstan\'s letter to Captain Hale at the Scarth.' },
       { when: { flag: 'q_riders', seen: 'downs_e2:e2_riders' }, at: 'downs_f2', text: 'Tell Dunstan at Coldharbour what we saw at the ford.' },
       { when: { flag: 'q_riders' }, at: 'downs_e2', text: 'Wait by night at the Wend\'s ford, west of Coldharbour, for the riders.' },

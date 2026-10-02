@@ -49,7 +49,7 @@ export const KEEP: MapDef = {
         '"A Lantern tool. So the Lanterns were at Ashcombe before the Crown was. Interesting." The wand goes into a pocket as if it had always lived there. "You have done what I asked. The Crown pays its debts; you\'ll find it does little else so reliably."',
         '"There will be more work. The Grove Stone in Thornmark has gone quiet too. Rest, train, and come back to me."',
       ],
-      after: ['"Thornmark, and the Grove Stone. Go and see why it has gone quiet, and bring me what you find. The road east runs through the Scarth; Captain Hale holds it, and will tell you the forest is dangerous, which it is. Thornhold will train you further than my drillyard can."'],
+      after: ['"Thornmark, and the Grove Stone. Go and see why it has gone quiet, and bring me what you find. The road east runs through the Scarth; the Wardens hold it, and always will. The forest is dangerous, whether or not anybody at the pole tells you so. Thornhold will train you further than my drillyard can."'],
     }, {
       // Who Lived at Ashcombe (#77): the tenant's paper, with no after-lines, so the wand's stay his.
       item: 'tenant_paper', reward: 50, setFlag: 'q_paper_vask',

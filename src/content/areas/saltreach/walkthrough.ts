@@ -42,7 +42,7 @@ import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
 import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
-import { STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
+import { STEPS as FORELAND_STEPS, hired, ledgerGiven } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -92,9 +92,6 @@ const QUAYHAND = c3person('quay'), PRIEST = c3person('priest'), SMUGGLER = C3.fe
 const WARDEN = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.flag === 'sm_hale_word')!;
 const KITTO = TOWN.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
 
-/** Hale taken from the Scarth, set by hand where #156 will set it (Wrackholm's walkthrough does the same). */
-const haleTaken = (w: Walk): void => { w.party.flags.q_hale_taken = 1; };
-
 /** Into Saltmouth by the land gate, from the Salt Road out of C5. */
 function toSaltmouth(w: Walk): void {
   walkThrough(w, 'delta_c5', 26, 30, SOUTH, 'saltings_c6', 3);
@@ -120,7 +117,10 @@ const BOAT: Step = { name: 'the boat', play: theBoat };
 
 /** The chapter in order: into the Delta, Rietum, the plinth, the temples, Saltmouth and the boat. */
 export const STEPS: readonly Step[] = [
-  { name: 'into the Delta', play: (w) => walkThrough(w, 'downs_d4', 1, 30, SOUTH, 'delta_d5', 3) },
+  { name: 'into the Delta', play: (w) => {
+    walkThrough(w, 'downs_d4', 1, 30, SOUTH, 'delta_d5', 3);
+    w.ok(!!w.party.flags.q_hale_taken === !!w.party.flags.q_greywater_done, 'set foot in the Delta, Hale is taken from the Scarth if he has had the ledger (#156)');
+  } },
   { name: 'to Rietum', play: (w) => {
     walkThrough(w, 'delta_d5', 0, 2, WEST, 'delta_c5');
     walkThrough(w, 'delta_c5', 7, 1, NORTH, 'delta_c4', 3);
@@ -136,10 +136,8 @@ export const STEPS: readonly Step[] = [
   } },
   { name: 'to Saltmouth', play: (w) => {
     toSaltmouth(w);
-    w.ok(!w.world.present(WARDEN), 'while Hale holds the Scarth, no Warden sits by Saltmouth\'s gate');
-    haleTaken(w);
-    w.ok(w.world.present(WARDEN), 'once Hale is gone from the Scarth, the Warden off the coast road sits by the gate');
-    meetWho(w, 'sm_hale_word');
+    w.ok(w.world.present(WARDEN) === !!w.party.flags.q_hale_taken, 'the Warden off the coast road sits by the gate once Hale is gone from the Scarth, and not before');
+    if (w.party.flags.q_hale_taken) meetWho(w, 'sm_hale_word');
     meetWho(w, 'sm_ship_word');
   } },
   BOAT,
@@ -160,6 +158,8 @@ export function inOrder(ok: (cond: boolean, msg: string) => void): Walk {
   playChapter(chain, GROVE, GROVE_STEPS, 'in order');
   const sealed = chain.news.slice(chain.news.lastIndexOf('Chapter complete: The Grove Stone.'));
   ok(sealed.slice(0, 2).join(' ') === 'Chapter complete: The Grove Stone. New chapter: The Tide Stone.', `in order, the Grove's end begins the Tide Stone (${sealed.join(' ')})`);
+  // Hale has had the ledger, so the Delta takes him from the Scarth (#156) and the Warden brings the news.
+  ledgerGiven(chain);
   playChapter(chain, CHAPTER, STEPS, 'in order');
   ok(['saw', 'plinth', 'count', 'stair', 'hale', 'ship'].every((e) => written(chain).includes(e)), `in order, the whole chapter is written to the boat (${written(chain).join(', ')})`);
   return chain;
