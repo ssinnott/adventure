@@ -120,6 +120,24 @@ export function outdoors(): void {
     ok(shut.kind === 'blocked' && shut.reason === 'Fixture gate.' && half.kind === 'blocked' && open.kind === 'moved' && local(world).x === 31,
       `the gate refuses the party with its words until every flag is set, then lets it through (${shut.kind}, ${half.kind}, ${open.kind})`);
   }
+  { // An exit into the zone next door that is shut while a condition holds is laid as a gate that
+    // carries it, and refuses the party only while it holds (#157).
+    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, shut: { flag: 'fixture_c', member: { race: 'orcblood' as const } }, blockedText: 'Fixture shut.' }) });
+    const laid = layOutdoors(ATLAS, defs), fx = new GameMap(laid.find((d) => d.id === OUTDOORS)!);
+    const g = fx.gates;
+    ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && g[0].needFlag === undefined && JSON.stringify(g[0].shut) === JSON.stringify({ flag: 'fixture_c', member: { race: 'orcblood' } }) && g[0].blockedText === 'Fixture shut.',
+      `an exit shut on a condition into the zone next door is laid as a gate on its square that carries it (${g.map((q) => `${q.x},${q.y}`).join(', ')})`);
+    const rng = makeRng(3), party = defaultParty(rng);
+    const world = new World(Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
+    const go = (): string => { world.travel('shelf', 30, 9, EAST); const r = world.move('forward'); return r.kind === 'blocked' ? r.reason : r.kind; };
+    const before = go();
+    party.flags.fixture_c = 1;
+    const shut = go();
+    const orc = party.members.splice(party.members.findIndex((m) => m.race === 'orcblood'), 1);
+    const without = go();
+    party.members.push(...orc);
+    ok(before === 'moved' && shut === 'Fixture shut.' && without === 'moved', `the shut gate lets the party through until its condition holds, refuses it while it does, and opens once it stops (${before}, ${shut}, ${without})`);
+  }
   { // Helmstow's south gate, its bottom row, opens onto the road, and the harbour postern beside it
     // onto the Lodestone's track (#157); its north gate into the keep's ward.
     const harrow = PLAYED_DEFS.find((d) => d.id === 'harrow')!, bottom = harrow.exits!.filter((e) => e.y === harrow.rows.length - 1);
