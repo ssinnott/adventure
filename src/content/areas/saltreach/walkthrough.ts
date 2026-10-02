@@ -24,7 +24,8 @@
 // and the box's groups won at 11. Then the Drowned Temples (#175): down the far roof's wet stair into
 // the sacristy, its silver had that way alone, and out again; in at the dry door, the nave's drowned
 // and the count up the apse's stair; the choir and the Choirmaster won at 11, the Tide Bell taken and
-// the count stopped for good; and the bell up to the priestess, who rings it. Then back to the road
+// the count stopped for good; and the bell up to the priestess, who rings it, and the Tidefolk's
+// blessing knelt for at its frame. Then back to the road
 // and down it into Saltmouth's box (C6, #176):
 // the Saltings named at the seam, the land gate at the road's end, the smugglers' stair found from
 // the rope that hangs over it, and the quay's and the pans' groups won at the box's floor. Then in
@@ -37,7 +38,7 @@
 // (C7, #178): the Scarp across the south and its stair's fallen foot, the sealed pan's hoard found
 // from the trodden wall, and the crabs and the toads won at 11.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, fight, listen, see, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -464,6 +465,8 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.move('forward');
   ok(w.world.used('dt1_in'), 'through the dry door, the narthex');
   for (const e of ['dt1_frame', 'dt1_nave', 'dt1_flooded', 'dt1_font_se', 'dt1_font_ne', 'dt1_sunk']) see(w, `drowned_temples:${e}`);
+  const blessing = L1.features!.find((f) => f.kind === 'shrine' && f.id === 'dt1_bell')!;
+  ok(!w.world.present(blessing), 'by the empty frame there is nothing to kneel at');
   for (const g of L1.encounters!) fight(w, `drowned_temples:${g.id}`);
   see(w, 'drowned_temples:dt1_stair');
   ok(w.world.used('dt1_stair'), 'at the apse\'s stair head, the count comes up from below');
@@ -495,6 +498,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.used('b6_rung'), 'and she rings it inside the door');
   see(w, 'drowned_temples:dt1_frame_hung');
   ok(w.world.used('dt1_frame_hung'), 'the bell hangs on its frame in the narthex');
+  const endurance = w.party.members.map((m) => m.stats.endurance);
+  kneel(w, 'drowned_temples:dt1_bell');
+  ok(w.party.members.every((m, i) => m.stats.endurance === endurance[i] + 1), 'and kneeling at it, the Tidefolk\'s blessing: a point of Endurance to each of the company');
 
   // On down the road into Saltmouth's box: the fen gives way to the Saltings at the seam.
   w.world.travel('delta_c5', 26, 30, SOUTH);
