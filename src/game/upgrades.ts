@@ -53,5 +53,15 @@ function toV2(data: OldSave): OldSave {
   return data;
 }
 
+/**
+ * 3: Vask at the Watch's gate is only refused (#452), as STORY has it. A company that told him yes
+ * told him no: `q_vask_yes` becomes `q_vask_no`, and `q_salt_done` stands.
+ */
+function toV3(data: OldSave): OldSave {
+  const f = data.party.flags;
+  if (f.q_vask_yes) { f.q_vask_no = f.q_vask_yes; delete f.q_vask_yes; }
+  return data;
+}
+
 /** Each upgrade by the version it brings a save to. A bump of SAVE_VERSION adds one here. */
-export const UPGRADES: Readonly<Record<number, Upgrade>> = { 2: toV2 };
+export const UPGRADES: Readonly<Record<number, Upgrade>> = { 2: toV2, 3: toV3 };

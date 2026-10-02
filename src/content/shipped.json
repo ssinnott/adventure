@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "maps": {
     "b5_rift_n": {
       "size": "12x12",
@@ -1277,7 +1277,6 @@
     "q_trees_ulf",
     "q_vask_no",
     "q_vask_rain",
-    "q_vask_yes",
     "q_wardens_cult",
     "q_wardens_cult_done",
     "q_wardens_strongbox",
