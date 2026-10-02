@@ -694,10 +694,10 @@ or has had them read; Wrackholm's done flag takes the items' place once #191 nam
   what she read, beside `papers_read`.
 - **Vask in the rain,** at the Watch's gate with two Wardens (`rain`): *You've read the papers.
   Good. Then you know half of what I know.* He tells the rest and asks for help. His question, put
-  by a person (#76), is answered yes (`yes`, `q_vask_yes`) or no (`no`, `q_vask_no`), which sets
-  that flag and nothing else; either way *I don't need you. I have the girl* (`girl`). The endings
-  are the one quest's later (DESIGN §9).
-- **Home** (`home`): the road west to Helmstow, the act's last line. Either answer also sets
+  by a person (#76), has one answer, the company's no (`no`, `q_vask_no`), as STORY has it (#452),
+  which sets that flag and nothing else; then *I don't need you. I have the girl* (`girl`). The
+  endings are the one quest's later (DESIGN §9).
+- **Home** (`home`): the road west to Helmstow, the act's last line. The no also sets
   `q_salt_done`, the chapter's done flag, which ends the act; what Helmstow has become is #157's.
 
 Its goals, furthest along first: riders at the Watch's gate (the papers read and the wall
@@ -1234,9 +1234,9 @@ Decided by delegate for #204, each the owner's to overturn:
 3. **Wrackholm's done flag takes the items' place once #191 names it,** so the papers picked up on
    the ship no longer take the goal from Wrackholm's last steps. It is owed to #191 in
    `tools/tests/quests.ts` and said in `chapter.ts`.
-4. **Vask's answer sets `q_salt_done`,** beside its own flag (`q_vask_yes` or `q_vask_no`): only a
-   person sets a flag, and Helmstow is the Foreland's lane, so the act ends at the Watch. The flag is
-   the same for both answers, so the choice changes nothing but its own.
+4. **Vask's answer sets `q_salt_done`,** beside its own flag (`q_vask_no`, the one answer since
+   #452): only a person sets a flag, and Helmstow is the Foreland's lane, so the act ends at the
+   Watch.
 5. **The chapter is done on `q_salt_done`,** the one flag #157 and Act III's first chapter key on.
 6. **Home to Helmstow is an entry, not a goal:** Helmstow's maps are banded 1–4, which the road's own
    test refuses for a company of 16, and what it finds there is #157's.
@@ -1255,9 +1255,12 @@ Decided by delegate for #204, each the owner's to overturn:
 12. **The two Wardens are in his lines,** not people of their own; the gate's once-events `lw_vask`
     and `lw_vask_e`, on the two squares of the road in at 7,13 and 8,13, carry the brief's line,
     with his `after`, `until` and `when`, and each ends once the other is seen.
-13. **Two answers, each with its own flag and `q_salt_done`.**
-14. **A yes gives nothing:** no gold and no gift. The endings are the quest's later.
-15. **"I have the girl" closes both answers:** Wenna alive, below and his reaches every company.
+13. **One answer, the company's no, as STORY has it** (#452, amending #204's two): it sets `q_vask_no`
+    and `q_salt_done`, and a company that walks away from the question hears it again. The yes and its
+    entry are gone, and save version 3 turns an old save's `q_vask_yes` into `q_vask_no`.
+14. **The no gives nothing:** no gold and no gift (#452; #204 said it of the yes). The endings are the
+    quest's later.
+15. **"I have the girl" closes the answer:** Wenna alive, below and his reaches every company.
 16. **Five goals, furthest along first,** each its own words: the gate; down the Sunder, read; to the
     Watch, the wall seen; down the Sunder, over the bridge; over the bridge. The Sunder taken first
     with no papers shows no goal of the Wall's: today the quest has none there, and once #191's
