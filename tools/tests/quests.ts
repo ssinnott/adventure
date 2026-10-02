@@ -31,7 +31,6 @@ import { ok, owed } from './lib.ts';
  */
 export const UNSET: Record<string, string> = {
   q_hale_taken: '#156', // Hale gone from the Scarth, which the Tide Ship's last row waits on (#190)
-  q_tide_home: '#191', // the Tide Stone set back on its plinth, which ends Saltreach's chapter (#180)
 };
 
 /**
