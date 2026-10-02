@@ -1,0 +1,694 @@
+# Ashfall: step X of the road, the far side of the sea
+
+The tenth step of the road of levels (DESIGN §9, EXPANSION §2.2), band 24–26, and the second of Act
+IV, Beyond the Sky: the land under the Sheer where the Giants' Stair comes down, black sand and
+hanging vines along the Ember Sound, a mountain that smokes over everything, a town it buried, and
+on a field of cinders the one Stone that was never finished. Cinderport is the far side's port,
+where the Compact's ship from Kilnhaven lands and the Riders come down to trade, and from it the
+last crossing leaves. Down Fire Mountain's vents lies Meridian Camp and the window (#22). This is
+its area doc (EXPANSION §4, §6 and §8.2): where the atlas puts it, what the atlas and the docs put in
+it, the plan for building it, box by box, and the briefs. Its work is filed under #446 (Phase 1.4,
+#441): the boxes as §4's table has them, Cinderport (#512), Old Cinder (#515), the Ember Stone
+(#516), its chapter (#518), its side quests (#519), its drawings (#520), its rooms (#521) and the
+country behind (#522, parked); this doc is #509. Figures are measured on main at `6032251` (2
+October 2026) with `worldGrid` (`src/game/atlas.ts`).
+
+Nothing is built. Its content will be `src/content/areas/ashfall/` (maps, monsters, items,
+climate, its part of the world map, its chapter of the one quest, The Window, in `chapter.ts`, its
+side quests in `quests.ts`) and its businesses' rooms `src/ui/interiors/ashfall/`. Its ids, the
+plan's: the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town
+`cinderport`, the dungeons `old_cinder`, `ember_stone` and `meridian_camp`.
+
+---
+
+## 1. Where it is
+
+The atlas (`src/content/areas/ashfall/atlas.ts`, spread into the plan, §3) makes Ashfall three
+zones:
+
+| Zone | Band | Squares | Built |
+|---|---|---|---|
+| Cindercoast | 24–25 | 3,657 | none |
+| Fire Mountain | 25–26 | 3,795 | none |
+| The Ember Waste | 25–26 | 3,284 | none |
+| The area | 24–26 | 10,736 | none |
+
+Squares are land without shallows or rivers, about 10.5 zone maps (EXPANSION §1 has 10.5), and
+9,228 of them a company could walk: the rest is Fire Mountain's cone, the Sheer's foot and the rim.
+Most of it is ash: Cindercoast is ash 1,438, grass 1,042, vines 631, hills 165 and pine 138; Fire
+Mountain ash 2,638, mountain 860, lava 147 and pine 92; the Ember Waste ash 2,086, mountain 465,
+rock 382, hills 203 and vines 71. It runs from the Cinder Hills at about x 146 east to the Sheer at
+x 266, and from the Sound's shore at about y 275 down to the rim at y 370. The zones' bands are the
+folder's: the atlas gives the area 24–26 and the boxes rise through it (§4).
+
+**The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Ashfall is the E to H columns from row 9 to
+row 12, with a sliver in I. The land worth a map is six boxes: H10 and G10 along the Sound, the
+Stair's foot and Cinderport; G11, Fire Mountain's flank with the vents; F11, Old Cinder and the
+Ember Stone; F10 and E10, the Waste's road to the Wold. Behind them seven boxes of country are
+parked (H11, H12 and G12 on the mountain's south slopes, E11 in the Waste, F9, G9 and H9 along the
+shore; §4.10), and F12 and E12 are cut (§11).
+
+Its edges:
+
+- **North: the Ember Sound,** the sea along Ashfall, with Sheer Point across it to the north-east
+  and Hearth Isle beyond. The Compact's ship from Kilnhaven comes in to Cinderport at 206,277
+  (`src/content/atlas.ts`; #547), a crossing open from the start for the fare (EXPANSION §2.2); the
+  last crossing leaves from the same quay for Hearth Isle (via 228,236 to 252,188), Act V's.
+- **East: the Sheer,** the cliff down the Whitespine's west side (x about 264 to 272), lettered at
+  262,300. The Giants' Stair comes down it at 258,306 from the High Spine's I10 (272,306; #502), a
+  road link open from the start and the only way over: a company that comes by land arrives here.
+  The link's `from` is `firemount` on the plan while its foot lands in Cindercoast's H10 (§9).
+- **South: the rim,** under Fire Mountain's south slopes and the Waste's.
+- **West: the Cinder Hills,** a hills ridge running north to south at x about 146 to 152 between
+  Ashfall and the Glasswold, with the road to the Wold over them at 156,312 to 144,300 in E10,
+  open from the start (#524, #517). The Wold's steppe lies beyond, Act IV's third area.
+
+Fire Mountain stands at 204–226,326, a volcano ridge with an ash foot seven wide, and three lava
+flows run from it: south-west from 212,326 to 188,366 through G11 into G12 and F12, south-east from
+218,327 to 240,358 into H12, and west from 209,325 to 174,330 across F11, between Old Cinder and
+the Stone's field. The vents open at 226,334 on its east flank, Grimsforge (Warlord's Forge, §10)
+beside them at 230,330. The road runs from Cinderport's gate south-west through G10 to Old Cinder at
+180,318, then west along F11's north edge to the Wold. No river: the Waste has none, and the water
+is Scaldwell's (the Hot Springs, §10) at 240,300.
+
+`node tools/worldmap.ts out.png --zones` paints it.
+
+## 2. What it is for
+
+The second half of Act IV (DESIGN §9): *what is Caldera?* The Whitespine found the machine in a
+monk's robe and the Hand's road over the water; Ashfall is where the company is told the answer
+and shown it. The Riders' eldest tells the oldest story on this side of the sea at Cinderport's
+trading ground: a door opened in the sky, something rose toward it on a pillar of fire and fell,
+and the land where it fell burned to glass. The Ember Stone was never finished, so the far side was
+never sealed: there are no Rifts and the machine is near the surface, the vents are the Underdeep's
+exhaust and the stokers that tend them walk out on the ash (MONSTERS §2.1, §8.2). The parts the
+Stone lacks are only below, down the vents, where Meridian Camp's old man says "You took your time"
+and shows a window (STORY, Act Four; #22). When the Stone is lit, every door below opens at once,
+what waited four hundred years comes up and hunts Ashfall from then on, and the Hearth burns
+steadier than in all our lives (#548). Three classes take their third prestige here and a fourth
+comes down from the Wold for it (DESIGN §5, #448). It ends at Cinderport, with the last crossing.
+
+The weather is the far side's: hot, ash on the wind, the mountain's smoke over everything, steam
+off the springs; the vines' shore humid.
+
+## 3. What is built
+
+Nothing. Its atlas rows (`src/content/areas/ashfall/atlas.ts`) are charted and spread into the plan
+(`src/content/atlas.ts` imports them where its rows were, as Saltreach's were before #170): the
+zones with their bands (Cindercoast 24–25, Fire Mountain 25–26, the Ember Waste 25–26), Cinderport
+at 24–26, Old Cinder at 25–26, the Ember Stone at 26 and Meridian Camp at 25–28 as planned plates,
+the sites (Cinderport, Fire Mountain, Old Cinder, the Ember Stone, Scaldwell, Meridian Camp,
+Grimsforge; the Sheer and the Cinder Hills, the plan's, §10) and its links: the Stair down the
+Sheer, the ship from Kilnhaven, the town's and the three dungeons' ways in, the road to the Wold
+and the last crossing. The area cannot be listed in AREAS until #510 gives it a map, which points
+the area's `atlas` at the folder and takes the import out.
+
+The systems it waits on are #442's: the curve's rows and the act's gear step (#542), the volcano,
+lava fields and vines underfoot (#543), the giants' toll (#544), sweep with fire (#545), stone
+(#546), the ship to Cinderport, the Riders' ride and the last crossing (#547), the Ember Stone for
+the Hearth and the sentries after (#548) and the bot grown to the band (#549). Its monsters are drawn
+in #520 and its rooms in #521. Meridian Camp is #22, parked until #443 unparks it.
+
+## 4. What is still to build
+
+All of it: 10,736 squares of land, 9,228 of them walkable. On the grid (§1) the plan is six boxes,
+two dungeons and a town, and the boxes hold 5,462 of those squares, 5,120 walkable; the seven parked
+behind them hold 4,454 (§4.10), the cuts and the sliver about 700 (§11):
+
+| Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
+|---|---|---|---|---|---|---|---|---|
+| H10 | The Stair's foot | Cindercoast | core | 24 | 1,009 (ash 644, vines 207, grass 82, pine 56), 15 shallow | the Stair down the Sheer at 258,306; Scaldwell at 240,300; the vines; the gentlest groups | the far side reached | #510 |
+| G10 | Cinderport's box | Cindercoast | core | 24–25 | 977 (ash 618, vines 236, grass 74), 47 shallow | the town's gate at 206,288 on the north edge; the trading ground; the road south-west | the eldest's story | #511 |
+| | Cinderport | | town, 16×16 | 24–26 | | eight businesses; the two halls; the ship; the trainer to 27 | the port; the last crossing | #512 |
+| G11 | Fire Mountain's flank | Fire Mountain | core | 25 | 1,024 (ash 641, mountain 281, lava 102) | the cone at 215,326; the vents at 226,334; Grimsforge at 230,330; the drakes | the vents | #513 |
+| F11 | Old Cinder's and the Ember Stone's box | the Ember Waste, Fire Mountain, Cindercoast | core | 25–26 | 1,024 (ash 664, rock 301, lava 46) | Old Cinder at 190,318; the Ember Stone at 176,342; the west lava flow between | the Stone seen; the Stone lit | #514 |
+| | Old Cinder | | dungeon, two levels of 16×16 | 25–26 | | the buried town and the Old Drake; the undercroft and the lamp | a part | #515 |
+| | The Ember Stone | | dungeon, one level of 16×16 | 26 | | the half-built Stone; the hand-in; the Sentinel | the Stone lit | #516 |
+| F10, E10 | The Ember Waste's road | the Ember Waste, Cindercoast | country | 25–26 | 1,024 (ash 760, vines 216, rock 48) and 404 (ash 403) | the road west to the Wold at 156,312; the Cinder Hills; the Druid's trainer | none | #517 |
+| | The chapter | | | | | The Window | | #518 |
+| | Side quests | | | | | #56's 49, 50 and 52 | | #519 |
+| | The nine drawings | | | | | MONSTERS §8.2's roster | | #520 |
+| | Cinderport's rooms | | | | | eight | | #521 |
+| H11, H12, G12, E11, F9, G9, H9 | The country behind | Fire Mountain, the Ember Waste, Cindercoast | country, parked | 25–26 | 983, 824, 674, 711, 509, 286, 467 | the mountain's south slopes and the lava's ends; the Waste's south; the Sound's shore | none | #522 |
+
+The core is the four boxes that hold a step of the quest (H10, G10, G11 and F11), built at full
+density; the rest is country, built to the looser floor with the wilderness features (EXPANSION
+§2.1 (b) and §5.3, #45). The road's two country boxes are built with the act; the country behind
+is parked until the owner has played it (#443, call 9). The bands rise from the way in, 24 at the
+Stair's foot, to 26 at the Stone and Old Cinder's crater, as the gate asks (EXPANSION §5.2), and
+each box holds a group at the top of its band for the curve (§7).
+
+**Boxes of more than one zone.** F11 is the Waste's (951) with a corner of Fire Mountain (40) and
+the road's end of Cindercoast (33); F10 is the Waste's (800) with Cindercoast's vines along its
+north (224); E10 is the Waste's, and the Wold's E10 is the same box, so whichever of #517 and #524
+lands first lays it. A map is its whole box (EXPANSION §8.2): each is built to its edges and laid in
+one zone, and the zone a square belongs to decides only its crossing line (#166) and its band.
+
+**The order** is the Stair's, and the quest's: H10, the only box that meets the Whitespine; G10 and
+Cinderport; G11 and the vents; F11 with Old Cinder and the Stone; then F10 and E10. Road order holds
+(#443, call 6), but Cinderport's box may begin by sea, the second area in flight, once the
+Whitespine's first box is in. Building waits on #442's systems (§3); the briefs and the drawings do
+not.
+
+The places, as the atlas and the docs have them:
+
+| Place | Box | What the docs say | On the atlas |
+|---|---|---|---|
+| The Giants' Stair | H10 | the road over the High Spine and down into Ashfall, past the giants (DESIGN §9); its head is the Whitespine's (#502) | a road link, 272,306 to 258,306 |
+| Scaldwell (the Hot Springs) | H10 | the springs that went cold the day the Anvil Stone was cut (#56's 49) | a springs site at 240,300 |
+| Cinderport | G10, and its own map | the far side's port, where the last crossing leaves (DESIGN §9); the Cartographers' second hall and the Compact's factor (#443, call 7); trains to 27 (DESIGN §5) | a port, its gate at 206,288 and its site at 206,277 on G9's shore |
+| Fire Mountain | G11 | the volcano; its vents are the Underdeep's exhaust and the way down (DESIGN §9) | a volcano at 215,326; a ridge at 204–226,326 with three lava flows |
+| Meridian Camp | G11, and below | the Meridian Company's last camp, Oriel Fane and the window (DESIGN §9, §10.3, STORY); three levels of 32×32 (#443, call 4) | a planned dungeon at 226,340, its way in at 226,334 |
+| Grimsforge (Warlord's Forge) | G11 | the Barbarian's third prestige, by the vents' mouth (DESIGN §5, #448) | a forge at 230,330 |
+| Old Cinder | F11, and below | the town the mountain buried, its people cast in ash (MONSTERS §8.2); the Paladin's third (DESIGN §5); the founding stone (#56's 50); the Old Drake | a planned dungeon at 190,324, its way in at 190,318 |
+| The Ember Stone | F11, and below | never finished; the company completes it with parts from below and the Underdeep notices (DESIGN §9); the Druid's third (DESIGN §5); the Sentinel (MONSTERS §8.2) | a planned dungeon at 176,348, its way in at 176,342 |
+| The Ember Waste | F11, F10, E10 | the field of cinders round the Stone (STORY) | ash and rock, the zone |
+| The Cinder Hills | E10 | the ridge between Ashfall and the Glasswold | hills, x about 146 to 152 |
+| The Ember Sound | north of H10 and G10 | the sea the ship crosses | water |
+
+### 4.1 The briefs
+
+As Saltreach's (docs/areas/saltreach.md §4.1): drafts for the owner, each settled in its issue,
+written before any box of Act IV is built. A core box is held to the Foreland map's density (about
+nine features, ten groups and four ways in or out to 870 open squares) and a country box to about
+half, with the wilderness features (#45); no more than one point in four is a sign.
+
+- **Encounters** are MONSTERS §8.2's roster and fights. A group is about one of MONSTERS §4.4's
+  standard encounters, a kill pays each member by the monster's level against theirs (#159), and the
+  figures below are for a company at the box's band.
+- **Pay.** The area owes 19,467 xp a member (§8). The shares below are the area's own maps';
+  Meridian Camp's two upper levels, which the chapter walks for two of the Stone's three parts, pay
+  their own under #22.
+- **Side quests** are #56's 49, 50 and 52, placed as §6 has them (#519).
+- **Finds** are the ladder's next step (#542): the act's gear at Cinderport's armourer by 25, the
+  same with a plus in the boxes and the dungeons by 26, and the sentries' parts after the Stone.
+  No find or ware is dearer than the band's window, 5,500.
+- **Lines** are drafts for the builder, two lines of the log each (DESIGN §11).
+
+### 4.2 H10, the Stair's foot (#510): core, band 24
+
+- **Purpose.** Act IV's second ground, and the far side reached: the Stair's last flights down the
+  Sheer onto black sand, Scaldwell's steam, the vines along the Sound, the area's gentlest groups
+  and the crossing line that tells a company under the band how the land feels (#166). It opens the
+  Whitespine's I10 for the Stair (#502).
+- **Landmarks.** The Sheer along the box's east edge, closed as mountain, with the Stair's foot at
+  258,306 in a notch; the Sound along the north with black sand under the cliff; Scaldwell at
+  240,300, pools in the ash with a bathhouse of planks beside them; the vines' shore west toward
+  Cinderport; the track along it.
+- **Points of interest,** about nine features and eight groups:
+  - the Stair's foot, and the line that says what is above it: the step (§5);
+  - a milestone where the track leaves the sand: CINDERPORT 5;
+  - the bathhouse keeper, a Rider, who says the springs went cold and came warm again (#56's 49);
+  - the springs' source, up a gully in the Sheer's foot, and the stoker at it (§6);
+  - a camp on the sand (#45), a cairn at the notch (#45), a shrine of the Riders' by the pools (#45);
+  - a lookout on the dune's crest, north over the Sound to Sheer Point.
+- **Encounters.** Cinder beetles on the sand (two groups, the first past the notch the area's
+  gentlest); strangler vines in the shore's trees, which never roam; the stoker at the source, a
+  quest's fight (§6); a cinder drake over the shore at the box's far end, the hardest, at 25
+  (proposed, §7).
+- **Quests.** The step. What the Springs Bring Up (§6).
+- **The secret and its hint.** A cleft in the Sheer's foot south of the Stair, behind the steam,
+  where what the giants let fall from the Stair comes to rest: coin of every age of the road and a
+  Plate Mail +2. The hint: the ash along the cliff's foot is trodden to a path that ends at the rock.
+- **Lines:**
+  - the foot, the step: *The last flight ends in black sand. Behind, the Sheer goes up out of
+    sight; ahead, a mountain smokes over everything.*
+  - the path: *A path trodden in the ash along the cliff's foot. It ends at the rock and goes
+    nowhere.*
+- **New here.** Ash and vines underfoot (#543); the far side's weather; a company told it is early.
+- **Finds.** The Plate Mail +2 in the cleft.
+- **Pay.** About 1,700 xp a member.
+
+### 4.3 G10, Cinderport's box (#511): core, band 24–25
+
+- **Purpose.** Cindercoast's step, the port from outside: the track's end at the town's gate on the
+  box's north edge, the trading ground where the Riders come down and the road south-west for Old
+  Cinder and the Wold.
+- **Landmarks.** The town's wall along the north edge with its gate at 206,288, the way into #512;
+  the harbour and the site at 206,277 are G9's shore, seen over the wall; the trading ground outside
+  the gate, horse-lines and the Riders' fires; the vines thick along the shore east of the town; the
+  road out of the ground south-west over the ash.
+- **Points of interest,** about nine features and seven groups:
+  - the gate, and the trading ground: the step (§5), where the eldest tells her story;
+  - a milestone at the road's start: OLD CINDER 4, THE WOLD 6;
+  - a shrine of the Riders' on the ground (#45), a camp beside the horse-lines (#45), a cairn where
+    the ash begins (#45);
+  - the chandler's drying racks under the wall, and the potter's clay pit in the vines (#56's 50);
+  - a hermit under the vines who came down from the mountain, as the first did.
+- **Encounters.** Cinder beetles on the ash south of the ground (two groups); strangler vines in the
+  shore's trees east of the gate; ember salamanders where the ash warms toward G11 at the box's far
+  end, the hardest, at 25 with a cinder drake (proposed, §7).
+- **Quests.** The chapter's goals point into the town (§5). The Founding Stone's giver is in the
+  town (§6).
+- **The secret and its hint.** The factor's hide in the vines east of the gate, where crates under
+  the Helmstow customs seal wait for a boat that comes by night: shards for the causeway (DESIGN
+  §9), a Long Sword +2 among them. The hint: the vines there are cut back, and the cut ends are
+  fresh.
+- **Lines:** the ground, the step: *Horses on the ash outside the gate, and fires. The Riders come
+  down to trade, the gate-ward says, and their eldest talks.*
+- **New here.** A port on the far side; the Riders seen.
+- **Finds.** The Long Sword +2 in the hide.
+- **Pay.** About 1,500 xp a member.
+
+### 4.4 Cinderport (#512): town, 16×16, band 24–26
+
+- **Purpose.** The act's second town and the road's last: the far side's port, the Compact's
+  landfall, the Cartographers' second hall, where three classes are sent to their third prestige
+  and where the last crossing leaves. It sells and teaches what the band needs (EXPANSION §4) and
+  trains to 27, the third prestige's level (DESIGN §5).
+- **Businesses,** each with a room of its own (#521), about eight: the inn (rest); the temple
+  (cures and raising at the band's price); the armourer (the act's gear step, #542, by 25); a
+  chandler (provisions, lamp oil); a trainer's yard to 27; the Cartographers' hall (its map of the
+  far side on the wall and the Meridian journals' shelf, #443, call 7); the Compact's house, the
+  factor's; the potter's. No spell hall: tier 7 is Rime Lodge's (DESIGN §7).
+- **People.** The harbourmaster and the ship's master (#547); the Cartographers' guildsman, whose
+  line ends at Meridian Camp (#56's 51); the Compact's factor, whose runner is #56's 54's; the
+  potter (#56's 50) and the smith (#56's 52); the Riders' eldest on trading days, at the ground
+  outside the gate (§5); the mason of #56's 48, who wants passage.
+- **Quests.** The chapter's goals (§5); The Founding Stone and The Shovel That Does Not Blunt given
+  here (§6); the two halls' quests (§6); the seeking quests for the third prestiges (#448).
+- **The ship** (#547): from Kilnhaven's quay to Cinderport's and back, a fare, never a favour,
+  halved for a member of the Compact as Kitto's boat is (docs/areas/saltreach.md §4.9); the last
+  crossing to Hearth Isle from the same steps, Act V's, open to anyone with the fare (EXPANSION
+  §2.2). The Riders' ride west to the Wold leaves from the trading ground (#547, §9).
+- **Lines:**
+  - the gate: *Cinderport: a wall of black stone and a gate, and the smell of the sea under the
+    smell of the mountain.*
+  - the quay: *The Compact's ship rides at the quay with Kilnhaven's mark on her. Beyond the Sound,
+    a column of light.*
+- **New here.** A guild hall with a map of the far side; a trainer to 27; the last crossing seen.
+- **Pay.** About 600 xp a member in the halls' quests.
+
+### 4.5 G11, Fire Mountain's flank (#513): core, band 25
+
+- **Purpose.** Fire Mountain's step: the cone, the vents like chimneys in its east flank, the
+  stokers walking out on the ash and the drakes over the slopes. The way down to Meridian Camp
+  (#22) and the Barbarian's trainer at its mouth.
+- **Landmarks.** The cone at 204–226,326 in the box's north-west, mountain with the volcano's
+  mouth lettered at 215,326, its ash foot round it; the south-west and south-east lava flows
+  leaving the box; the vents at 226,334, three mouths of iron in the ash with heat coming off them,
+  the way into #22; Grimsforge at 230,330, a forge of black stone with its fire lit; the track down
+  from G10 and the Hills' line on the west.
+- **Points of interest,** about nine features and nine groups:
+  - the vents' mouth: the step (§5);
+  - Grimsforge, and the old warlord's heir at the anvil, the Barbarian's third (#448);
+  - the furnace-draught, a vent that breathes and is not a way in;
+  - a camp in the lee of the forge (#45), a cairn on the ash foot (#45), a shrine at the track's
+    top where the stokers' tracks begin (#45);
+  - the scavenger's hole beside the forge (#56's 52, §6);
+  - a lookout on the cone's shoulder, over the Waste to the Stone.
+- **Encounters.** Ember salamanders on the slopes (two groups); cinder drakes on the flows (two,
+  one alone); the vents' fight at the mouth, two stokers with ember salamanders, where fire is
+  useless and lightning the answer (MONSTERS §8.2), the hardest, at 25–26.
+- **Quests.** The step. The Shovel That Does Not Blunt's scavenger (§6). The Barbarian's quest
+  goes down from here (#448).
+- **The secret and its hint.** The scavenger's hole, a second way into the vents' first level that
+  comes out behind the stokers' furnace room (#22), with his finds in it: grey parts, and a Great
+  Axe +2. The hint: a vine rope knotted to a rock where no vine grows, and the smith's word that the
+  man went down beside the forge.
+- **Lines:**
+  - the vents, the step: *Three mouths of iron in the ash, each as wide as a door, breathing heat.
+    The tracks in the ash go in and come out.*
+  - the rope: *A rope of vine knotted to a rock. The nearest vine is a day's walk.*
+- **New here.** The volcano and lava underfoot (#543); the heavy machines and the drakes, two new
+  families (#520); the sweep with fire (#545).
+- **Finds.** The Great Axe +2 in the hole; a Warhammer +1 at the forge, the ladder's (#542).
+- **Pay.** About 2,000 xp a member.
+
+### 4.6 F11, Old Cinder's and the Ember Stone's box (#514): core, band 25–26
+
+- **Purpose.** The Ember Waste's step, and two ways down: the buried town's crater at the box's
+  north edge, the Stone half-built on its field of cinders to the south-west, and the west lava
+  flow between them. After the Stone is lit, the first sentries, on a road that was safe the day
+  before (#548).
+- **Landmarks.** The road along the north edge from G10 to F10's corner; Old Cinder's crater at
+  190,318, a rim of ash and roof-ridges standing out of it, the way into #515 at its lip (plate
+  190,324); the lava flow from 209,325 west to 174,330, crossed by a causeway of slag; the Waste's
+  rock to the west; the Stone's field, cinders for forty squares round the Stone at 176,342, the
+  way into #516 (plate 176,348).
+- **Points of interest,** about nine features and eight groups:
+  - the Stone, seen from the causeway: the step (§5);
+  - the crater's lip and the Paladin's trainer at it, a Lightbearer grown old (#448);
+  - the causeway over the flow, and a milestone at its end: THE WOLD 4, CINDERPORT 5;
+  - a camp in the rock (#45), a cairn on the crater's rim (#45), a shrine at the field's edge, the
+    first Cinderport folk's (#45);
+  - a hermit in the rock who counts the stokers that walk out, and says their count has not
+    changed in forty years.
+- **Encounters.** Cinder beetles on the ash (two groups); ash husks out of the crater by night
+  (`when`), the dead walking where the Stone was never finished (MONSTERS §2); a cinder drake on the
+  flow, the hardest before the Stone, at 25; after the Stone is lit, sentries on the road (`after`,
+  two groups) at 26, the box's top.
+- **Quests.** The step. The Founding Stone's way in (§6). The Paladin's quest goes down from here
+  (#448).
+- **The secret and its hint.** A hollow in the rock west of the field where the Stone's builders
+  left their tools four hundred years ago, one of them the mate of the Cut Stone's chisel, and a
+  Chain Mail +2 with them. The hint: the rock's face is scored in straight lines, the way the Grove
+  Stone's cut was.
+- **Lines:**
+  - the Stone, the step: *On a field of cinders, a Stone half-built. The scaffold round it is iron
+    and has not rusted.*
+  - the scored rock: *The rock is scored in straight lines, each as clean as the cut at the Grove.
+    Nothing cuts rock like that.*
+- **New here.** `after` on a whole area (#548); a Stone's field without a Stone's light.
+- **Finds.** The Chain Mail +2 in the hollow; a part, carried by the first sentry (§5).
+- **Pay.** About 1,800 xp a member, and the sentries' after.
+
+### 4.7 Old Cinder (#515): dungeon, two levels of 16×16, band 25–26
+
+- **Purpose.** The area's first dungeon: the town the mountain buried, its people cast in the ash
+  where they stood, the mountain's eldest asleep on what is left of it, and under it the undercroft,
+  with the lamp at its bottom and one of the Stone's three parts (#443, call 2).
+- **Landmarks.** The buried town: the crater's floor where the ash has blown clear, a street of
+  roofs and doorways, the husks in them still holding their cups, the square at the far end and the
+  Old Drake on it; the hall's door under the square, and the stair down. The undercroft: cellars
+  under the hall, the founding stone in its niche, the lamp-keeper's walk and the lamp at the bottom,
+  dark, with the part set in the floor beside it as if someone had meant to carry it on.
+- **Points of interest,** about seven features and eight groups a level, as the Foreland's dungeons
+  are held: the doorways, the well, the square, the hall's door, the niche, the walk, the lamp.
+- **Encounters.** Ash husks in the street (three groups) and in the cellars (two); cinder beetles
+  nesting in the roofs; the Old Drake, boss, level 26, asleep on the square until the company is
+  near, its breath burning a row (#545); its death closes nothing.
+- **Quests.** A part, the chapter's (§5). The Founding Stone (§6). The Paladin's third: the lamp
+  relit at the bottom (#448).
+- **The secret and its hint.** A side cellar behind a fallen stair in the undercroft, the
+  lamp-keeper's own: his Holy Symbol of the Hearth and a Plate Mail +2. The hint: the lamp's oil
+  channel runs under the wall where no room is.
+- **Lines:**
+  - the street: *A street under the crater's rim, roofs and doorways out of the ash. In the doorways
+    the people stand as they stood.*
+  - the lamp: *A lamp at the bottom of the walk, dark, its oil long gone. Beside it on the floor,
+    something grey that was carried this far and no further.*
+- **New here.** The dead cast in ash; a boss that sleeps; a town under a dungeon's roof.
+- **Finds.** The part; the founding stone, a quest item (§6); the Holy Symbol of the Hearth, named;
+  the Plate Mail +2; a Flamberge +1 at the square, the ladder's (#542).
+- **Pay.** About 2,600 xp a member.
+
+### 4.8 The Ember Stone (#516): dungeon, one level of 16×16, band 26
+
+- **Purpose.** The Stone itself: its housing half-built on the field of cinders, the works round it
+  as the builders left them, three sockets empty and a door in the floor that has never opened.
+  Finishing the Stone is a hand-in of three items, which shuts nothing before it (#443, call 2;
+  #450); the moment it lights, the Sentinel comes up through the door, the first thing up (MONSTERS
+  §8.2), and the Hearth steadies (#548).
+- **Landmarks.** The housing, iron that has not rusted; the gallery round it; the three sockets at
+  its heart; the door in the floor, shut; the builders' benches; the seedling's bed at the field's
+  edge, where the Druid's quest ends (#448, §4.9).
+- **Points of interest,** about seven features and six groups: the sockets, the door, the benches,
+  the gallery's lookout over the Waste, the chain pin, the lower gallery.
+- **Encounters.** Cinder beetles nesting in the works (two groups); a cinder drake on the housing's
+  top; after the hand-in, the Sentinel, boss, level 26, in the chamber as the door opens, and
+  sentries up through it after (`after`), two groups.
+- **Quests.** The Stone lit: the chapter's last step (§5). The Druid's third: the seedling kept
+  alive until it is (#448).
+- **The secret and its hint.** A lower gallery under the housing where the Meridian Company stopped
+  on their way to the vents, and the fourth journal in it, the one the shelf at Cinderport lacks
+  (DESIGN §10.3). The hint: a chain pin driven in the housing's foot with the Guild's mark on it,
+  and the guildsman's word that Fane wrote at the Stone.
+- **Lines:** the sockets: *Three sockets in the Stone's heart, each the shape of something, each
+  empty. The builders stopped as if called away.*
+- **New here.** A hand-in of three parts; a boss that comes when the quest is done; a Stone that
+  lights.
+- **Finds.** The journal; the Sentinel's part, named; a Battle Staff +1 and a Scale Mail +1 on the
+  benches, the ladder's (#542).
+- **Pay.** About 2,200 xp a member.
+
+### 4.9 F10 and E10, the Ember Waste's road (#517): country, band 25–26
+
+- **Purpose.** The road from Old Cinder's causeway west over the Waste and the Cinder Hills to the
+  Wold at 156,312 to 144,300, Act IV's third area, the crossing line facing back; F10's ash and the
+  vines along its north, E10's hills; the Druid's trainer, far from the road.
+- **Landmarks.** F10: the road along the south rows from F11's corner; the vines' edge in the
+  north, where Cindercoast ends; a rock outcrop in the north-west, the Druid's. E10: the Cinder
+  Hills across the box, the road's notch through them at about 150,306, and the Wold's steppe
+  beyond, the world's end there until #524.
+- **Points of interest,** about five features and five groups each:
+  - F10: a milestone (THE WOLD 2, CINDERPORT 7), a camp (#45), a shrine (#45), a cairn (#45); the
+    Druid's trainer at the outcrop, an Archdruid who came from the Grove and stayed (#448);
+  - E10: a Rider's waymark at the notch, a cairn on the hills' crest (#45), a shrine (#45); a
+    hermit in the hills who saw the Stone's field from above every day of his life and has never
+    seen it lit.
+- **Encounters.** Cinder beetles on the ash (two groups a box); ember salamanders at the flow's end
+  in F10's south; a cinder drake on the Hills' crest, the far end, at 25; sentries after the Stone
+  (`after`), one group on each box's road, the band's top.
+- **Quests.** None. The Druid's quest is kept here (#448).
+- **The secret and its hint.** E10: a cairn in the Hills that is a grave, the first Rider who came
+  down to trade, with her saddle's silver and a Horn Bow +2. The hint: the Hills' cairns all face
+  the steppe but one. F10: a hollow under the vines' edge where the Wold's road once ran nearer the
+  shore, a milestone of the old road in it, face down. The hint: the ash dips in a line across the
+  box that the road does not follow.
+- **Lines:** the cairn: *The Hills' cairns all look west to the steppe. This one looks back at the
+  Stone.*
+- **New here.** Act IV's third area seen: the Wold's road.
+- **Finds.** The Horn Bow +2 in the grave.
+- **Pay.** About 1,400 xp a member between them.
+
+### 4.10 The country behind (#522): country, band 25–26, parked
+
+- **Purpose.** Seven boxes built once the owner has played the act (#443, call 9): H11, H12 and
+  G12, Fire Mountain's south slopes and the two lava flows' ends under the rim; E11, the Waste's
+  south; F9, G9 and H9, the Sound's shore, with Cinderport's harbour side on G9.
+- **Encounters.** Cinder drakes on the slopes; cinder beetles and strangler vines on the shore; the
+  sentries after.
+- **Pay.** About 450 xp a member each, outside the area's 19,467 (§8). The rest of the brief is
+  written when #522 is unparked.
+
+### 4.11 Meridian Camp (#22)
+
+Not this doc's to brief: three levels of 32×32 down the vents (#443, call 4), the vents at 25, the
+iron corridors at 26–27 and the camp at 27–28, with stokers, ember salamanders, the cinder drake
+that nests in the corridors (the Barbarian's quarry) and deep knockers below the camp. Two of the
+Stone's parts lie on its upper levels, never its bottom (call 2; §5), so the chapter walks the vents
+and the corridors and never needs the camp, the window or the map.
+
+## 5. The one quest here
+
+Ashfall's chapter is The Window (`chapter.ts`, #518, a working title), joined after the Whitespine's
+The Bells; every zone on the road holds a step (EXPANSION §5.8): Cindercoast's at Cinderport and the
+eldest's story, Fire Mountain's at the vents, the Ember Waste's at the Stone. Its entries and goals,
+in the journal's voice, keyed to flags, events and maps the save holds:
+
+- **The far side.** Down the Stair onto black sand, hanging vines, a mountain that smokes over
+  everything; the goal points west along the shore to Cinderport.
+- **The eldest's story.** At the trading ground the Riders' eldest tells the oldest story on this
+  side of the sea: a door opened in the sky, something rose toward it on a pillar of fire and fell,
+  and the land where it fell burned to glass. *Remember what that cost, if anyone ever offers to
+  open it for you.* The goal turns to the Stone.
+- **The Stone seen.** Half-built on a field of cinders, three sockets empty and the parts it lacks
+  only below. The goal names the three places: the vents, Old Cinder, the corridors.
+- **The vents.** Down the first level of the vents to the stokers' furnace room (#22), where the
+  machines shovel nothing into nothing, and the first part.
+- **Old Cinder.** Down through the buried town to the undercroft's bottom, and the second part
+  beside the dark lamp (§4.7).
+- **The corridors.** Iron corridors hot enough to blister, and at their end the third part (#22's
+  second level). Below them a camp, and an old man who says *You took your time*: the entry is
+  written if the company goes on down to the window, and never asked for. What it sees there is in
+  the entry and nowhere else, as the hand feels the wall at the Sunder's floor (DESIGN §7).
+- **The Stone lit.** The parts carried up and set, a hand-in of three items that takes each at the
+  first meeting (EXPANSION §2.3). The Stone lights; every door below opens at once; the Sentinel
+  comes up. The Hearth burns steadier than in all our lives (#548). From then on sentries walk the
+  road back to Cinderport (`after`), which was safe the day before.
+- **The road on.** The goal turns west to the Wold, whose chapter follows (#524); the last crossing
+  waits at Cinderport's quay for Act V.
+
+Nothing in the chapter is a lock (EXPANSION §2.3; #443, call 2; #450): the ship sails for anyone
+with the fare, the three dungeons are open at any hour, a part may be fetched in any order and the
+Stone takes them as they come. A company that reaches Cinderport by Kilnhaven's ship, or finds Old
+Cinder's part before it has heard the eldest, reads the journal true in that order. The walkthrough
+plays it at 24, 25 and 26, in order, once with Cinderport reached by the Stair and once by
+Kilnhaven's ship.
+
+## 6. Side quests
+
+#56's three for Ashfall, all taken by the owner on 2 October 2026 (#443, call 9), each built with
+its box on the systems of #76 (#519):
+
+| # | Quest | Level | Where | What it needs | Pay | Built in |
+|---|---|---|---|---|---|---|
+| 49 | What the Springs Bring Up | 25 | Scaldwell and its source (H10) | a choice put by a person; a quest's fight; an event that changes on a flag | 250 | #510 |
+| 50 | The Founding Stone | 25 | the potter at Cinderport; Old Cinder's undercroft | a quest item; a choice put by a person; a feature that appears `after` (#41) | 250 | #512, #515 |
+| 52 | The Shovel That Does Not Blunt | 26 | the smith at Cinderport; the scavenger's hole beside Grimsforge (G11) | a choice put by a person; an item that is a weapon, #542's | 300 | #512, #513 |
+
+Pay is xp a member, whichever way the choice goes, shared by level: about 800 between the three
+(§8).
+
+- **49.** The bathhouse keeper, a Rider, says the springs went cold the day the Anvil Stone was cut
+  and warm when it was restored, and that things come up in the water: a grey part, a bead of
+  glass, a bone. At the source a stoker shovels. Break it and the springs go cold for good, and the
+  pools' event says so; leave it and take what comes up, a find a day.
+- **50.** A Cinderport potter wants the town's founding stone brought out from under the ash; it
+  says the town was founded by the first who came down from the mountain. Bring it out and
+  Cinderport raises a shrine on the trading ground and the Riders object; leave it and the potter
+  keeps asking.
+- **52.** A Cinderport smith bought a smooth grey shovel-head from a vent-scavenger, and it does not
+  blunt, like the Underdeep chisel. The thane's agent and the Wardens want it. Sell, or keep it
+  hafted as a weapon that never dulls, and find the scavenger who found the way down beside
+  Grimsforge (§4.5). What "never dulls" is in the items is #542's to say.
+
+### The guilds' quests
+
+Two halls open here (DESIGN §8; #443, call 7), on the rules and the hall menu built in #132:
+
+- **The Cartographers' Guild's second hall** at Cinderport (#512): its map of the far side and the
+  Meridian journals' shelf, with a gap for the fourth; the Guild's line ends at Meridian Camp (DESIGN
+  §10.3), and #56's 51 is its guildsman's. The quests it offers a Surveyor and a Mapmaker are on
+  Ashfall's boxes, settled in #512 with the owner; Geographer, the top rank, has none
+  (docs/areas/saltreach.md §6).
+- **The Compact's factor's house** at Cinderport (#512): the Compact's ship lands here (#547), the
+  fare halved for a member; #56's 54's runner is theirs. What the factor's hide in G10's vines
+  holds (§4.3) is seen and never said, as the pole's notches were on C4.
+
+### The third prestiges' quests
+
+Built with #448 (DESIGN §5): each trainer waits on the surface and each quest goes down; where a
+third sits in country under 27 the quest's own fights are set at 26.
+
+| Class | Trainer, where | The quest |
+|---|---|---|
+| Paladin | Old Cinder's crater lip (F11) | down into the undercroft, and relight the lamp at its bottom |
+| Barbarian | Grimsforge, by the vents' mouth (G11) | down the vents to Meridian Camp, and kill the cinder drake that nests in the corridors (#22) |
+| Druid | the Ember Waste, the rock outcrop in F10's north-west (§4.9) | carry a seedling from the Grove into the Waste, and keep it alive at the Stone's field until the Stone is finished |
+| Ranger | the Eyrie, the Wold's (#524) | down the vents to Meridian Camp, and bring Oriel Fane's map back to the scout (DESIGN §10.3) |
+
+The Ranger's is the Wold's to place and #22's to end; it is here because its road is Ashfall's.
+
+## 7. Encounters, and what is new
+
+MONSTERS §8.2 has the roster and the fights: the Strangler Vine (controller 24, the old wood's
+frame, which never roams and holds, paralysis 0.3), the Cinder Beetle (armoured 24, the spider's
+frame), the Ember Salamander (skirmisher 24), the Ash Husk (soldier 25, the skeleton's frame, a man
+of ash still holding his cup), the Stoker (brute 25, heavy machines, new; fire does not touch it),
+the Cinder Drake (brute 25, drakes, new; flies, and its breath burns a row), the Sentry (elite 26,
+all of Ashfall once the Stone is lit, `after`), the Old Drake (boss 26, Old Cinder's crater) and the
+Sentinel (boss 26, the Ember Stone the moment it lights); the vents, two stokers with ember
+salamanders, where fire is useless and lightning the answer; after the Stone, sentries on the road
+back to Cinderport. Their drawings are #520's, nine. §4.2 to §4.9 place every group, box by box,
+the gentlest at the Stair's foot and the Sentinel at the top of the band.
+
+Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
+and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
+Salamander at G10's far end and F10's flow, where it has them at the vents. They stand in the
+briefs as proposals; if the owner takes them, MONSTERS' Where column says so, in a pull request of
+its own. One gap for the owner: before the Stone is lit the roster has no roaming monster at 26, so
+a box of 25–26 holds its top either in the sentries after or in two drakes together; whether the
+curve forgives it or #520 wants a 26 is the owner's.
+
+New in Ashfall, for the novelty check (EXPANSION §5.4): the drakes and the heavy machines, two new
+families (#520); sweep with fire, the drakes' breath (#545); the volcano, lava fields and vines
+underfoot (#543); `after` on a whole area, the sentries (#548); a hand-in of three parts and a boss
+that comes when it is done. Its landmarks: a volcano, hot springs, a buried town, a Stone
+half-built, a window below (#22). Back: the old wood as the strangler vine, the salamanders, the
+spider frame as the cinder beetle, the skeleton frame as the ash husk.
+
+## 8. The numbers
+
+- **Experience.** The curve (EXPANSION §5.2, #159) gives an area the climb from its floor to the
+  next area's floor, divided by 0.75: from 24 to 26 that is 14,600 / 0.75, about 19,467 xp a member,
+  with today's `xpForLevel`. The shares of §4 are H10 1,700, G10 1,500, Cinderport 600, G11 2,000,
+  F11 1,800 and the sentries' after, Old Cinder 2,600, the Ember Stone 2,200, F10 and E10 1,400
+  between them and the three side quests about 800: about 14,600 in the area's own maps.
+  Cinderport's 600 is its two halls' quests'. The balance, about 4,900, is Meridian Camp's two
+  upper levels', which the chapter walks for two of the Stone's three parts and which #22 budgets
+  as its own; with them a clear comes to the curve and a little over, as Saltreach's and
+  Sunderwood's do, for the curve to settle (#542) and the gate to check (#38). The country behind
+  adds about 3,150 when it is built, outside the budget. From here a kill pays by level (#159), so
+  a company that arrives at 24 earns the shares as written and one that comes by ship at 26 earns
+  less; the curve's row reports what a clear falls short of as owed to #446 until the boxes exist.
+  Each box is priced by its fights when it is built and recorded here, and the sum restated.
+- **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
+  the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
+  should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts,
+  and the ladder's step at Cinderport's armourer is priced within the band's window, 5,500 (#542).
+- **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
+  (docs/areas/thornmark.md §9, 17): a company at 24 wins nine in ten of H10's fights and walks the
+  shore resting at its camp; one at 22 wins no more than one in four, which is how the Stair's foot
+  turns a Whitespine company back. The Old Drake and the Sentinel are won about half the time at
+  26 and nearly always at 28. The bot grows to the band first (#549): at 24 it must drink, bless
+  and pick lightning for the machines, or the vents will read harder than they are.
+- **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
+  Stone's chamber holds the door's squares empty until it opens, as the Sunder's floor holds the
+  wall's.
+
+## 9. Decisions
+
+Decided by the owner's delegate on 2 October 2026 (#443), and followed here:
+
+1. **The Ember Stone takes three parts, and the act spends no story lock** (call 2): one part in
+   the stokers' furnace room at the vents' first level (Meridian Camp's top, #22), one in Old
+   Cinder's undercroft, one at the iron corridors' end on Meridian Camp's second level, never its
+   bottom, so the window and the map stay the Lost Expedition's and the road never needs them.
+   Finishing the Stone is a hand-in of three items, which shuts nothing before it (#450).
+2. **Meridian Camp is three levels of 32×32** (call 4): the vents at 25, the iron corridors at
+   26–27, the camp at 27–28, with stokers, ember salamanders, the cinder drake that nests in the
+   corridors and deep knockers below the camp.
+3. **Road order holds, but Cinderport's box may begin by sea** (call 6), the second area in flight
+   once the Whitespine's first box is in.
+4. **Cinderport holds the Cartographers' second hall and a Compact factor's house** (call 7): the
+   Guild's line ends at Meridian Camp and #56's 51 is its guildsman's; the Compact's ship lands here
+   and #56's 54's runner is theirs. The Riders come down to the trading ground outside the gate.
+   Cinderport has a temple and trains to 27.
+5. **The third prestiges built here** (call 8, #448): Old Cinder for the Paladin, Grimsforge by the
+   vents' mouth for the Barbarian, the Ember Waste for the Druid; the Ranger's goes down from the
+   Wold's Eyrie to Meridian Camp for Oriel Fane's map.
+6. **The cuts stand, the country behind is parked and all of #56's 49, 50 and 52 stand** (call 9):
+   §11, #522 and §6.
+7. **The names** (#444, §10).
+
+Proposed, for the owner, each in the issue that would build it:
+
+- **The briefs** of §4.2 to §4.10: each box's landmarks, points of interest, encounters, secret
+  and hint, finds and share of the pay.
+- **The core** is H10, G10, G11 and F11, the boxes that hold a step; the rest is country (§4).
+- **Old Cinder is two levels of 16×16,** the buried town and the undercroft, with the Old Drake on
+  the town's square and the part beside the lamp (#515); **the Ember Stone is one level of 16×16,**
+  the housing with its three sockets and the door in the floor (#516).
+- **Cinderport's eight businesses** (§4.4), the potter's among them, since 50's giver has a trade.
+- **The pay's shares** (§8), and Meridian Camp's two upper levels as the balance.
+- **The bands on the atlas's rows:** Cindercoast 24–25, Fire Mountain 25–26, the Ember Waste
+  25–26, Cinderport 24–26, Old Cinder 25–26, the Ember Stone 26, Meridian Camp 25–28. They are set
+  in `src/content/areas/ashfall/atlas.ts`, where only the scaffold reads them; the owner's word
+  changes them there.
+- **The window is an entry, not a goal** (§5): call 2 says the road never needs Meridian Camp's
+  bottom, and a goal there would; the journal writes the window for the company that goes down to
+  it, and the hidden third ending asks for the Lost Expedition anyway (DESIGN §9).
+- **The eldest stands on trading days** by `when` if #41 reads the day of the week; if not, she
+  stands always and "trading day" lives in her words, as dusk lived in the barge's on C4.
+- **The Stair's link** is `firemount` to `highspine` on the plan while its foot lands in
+  Cindercoast's H10; #510 or #547 moves its `from` to `cindercoast`, a shared file's change.
+- **The Riders' ride** (#547) leaves from Cinderport's trading ground for the Wold, a crossing the
+  Riders sell, so the Wold's core can be played before F10 and E10 are built (EXPANSION §2.1).
+- **The sentries carry parts,** not gold (MONSTERS §2); **the drakes over the shore and the
+  salamanders off the vents** (§7).
+
+## 10. Names
+
+Ashfall's naming pass, by the rules of `docs/NAMES.md`, chosen for #444. Cindercoast's folk came
+down from the mountain (#56's 50) and keep the Crown's trade-English for their coast, as Wrackholm's
+sailors did (NAMES §4), so most of the plan's names stand; two were bare descriptions, which NAMES
+§3 forbids. The Riders' tongue is the Wold's (NAMES §2; docs/areas/glasswold.md §10), and nothing
+of theirs is named here: the trading ground and Scaldwell are the coast's.
+
+| Was | Now | What it means | Also thought of |
+|---|---|---|---|
+| the Hot Springs | Scaldwell | a spring that scalds, in the coast's English: the pools under the Sheer where the Riders bathe | Steamwell; the Springs, kept |
+| Warlord's Forge | Grimsforge | Grim's forge: whose it was, as a farm is named, since the bare description is forbidden; the old warlord's name, worn down | Smithstead; Grimsanvil |
+
+- **Kept:** Ashfall, Cindercoast, Fire Mountain, the Ember Waste and the Ember Stone, plain names
+  for plain things, as the Grove and the Grove Stone are; Cinderport and Old Cinder, the coast's
+  English for the port and the town it was before the mountain buried it, the one place lending its
+  name to the other (NAMES §3); Meridian Camp, the Guild's name for the Company's last camp; the
+  Giants' Stair and the Sheer, the Whitespine's (#502); the Cinder Hills and the Ember Sound, the
+  plan's, each a name on a border Ashfall shares.
+- **Ids stay** where they exist (NAMES §3): the plan's sites are renamed in `atlas.ts` and the
+  sweep is one change through `src/`, `tools/` and `docs/`; the issues keep the old names until they
+  are edited.
+
+## 11. What was cut
+
+- **F12,** 445 squares of land, 194 a company could walk: the south-west lava flow's end and the
+  mountain under the rim, with nothing on the atlas or in the docs.
+- **E12,** 62 squares, none walkable: mountain.
+- **The I11 sliver,** 187 squares under the Sheer, the Whitespine's Peak Stone box. Not void: the
+  Whitespine's, and not Ashfall's to build.
+
+About 500 squares void, and 187 another area's. The country behind, 4,454 squares in seven boxes,
+is parked, not cut (#522, §4.10).

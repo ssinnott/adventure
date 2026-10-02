@@ -344,7 +344,7 @@ unranked.
 
 **Two tiers.** Tier 6 at 15 and tier 7 at 23, between the prestiges, so a caster gains something
 every four levels. A hybrid gains each two levels later, at 17 and 25, between its own perks. Lantern
-Watch's hall (band 14–16) sells to tier 6 and Rime Lodge's (20–22) to tier 7, each a level or three
+Watch's hall (band 14–16) sells to tier 6 and Rime Lodge's (20–22), the Lanterns' fourth (§8), to tier 7, each a level or three
 ahead; no other town sells a new tier, Saltmouth among them. Halls keep no level check, so a company
 that reaches the Watch early may buy early; the band's monsters and the price are the gate. New
 damage spells roll fixed dice, near tier 5's at 10, so that neither tier is the jump in monster hit
@@ -440,12 +440,15 @@ not its name in the world. Something like Standing may come back, but it will lo
 | Guild | Who they are | Halls | Skills they teach |
 |---|---|---|---|
 | **The Wardens** | soldiers and road guards | Helmstow | Arms Master, Danger Sense, Mountaineer |
-| **The Lanterns** | clergy and scholars of the Stones | Helmstow, Thornhold, Lantern Watch | Spirit Sense, Linguist, Perception |
-| **The Cartographers' Guild** | explorers and surveyors | Saltreach | Cartographer, Pathfinder, Swimmer |
-| **The Salt Compact** | smugglers and fences | Saltreach | Lockpick, Merchant, Navigator |
+| **The Lanterns** | clergy and scholars of the Stones | Helmstow, Thornhold, Lantern Watch, Rime Lodge | Spirit Sense, Linguist, Perception |
+| **The Cartographers' Guild** | explorers and surveyors | Saltreach, Cinderport | Cartographer, Pathfinder, Swimmer |
+| **The Salt Compact** | smugglers and fences | Saltreach, Cinderport | Lockpick, Merchant, Navigator |
 
-New guilds may come with later areas. M1 builds the two in Act I's cities, the Wardens and the
-Lanterns; the Cartographers' and the Compact's halls go in with Saltreach (docs/EXPANSION.md §7).
+No new guild comes with Acts III and IV (#434, call 8; #443, call 7): the four stand, and the
+dwarves have their thane. M1 builds the two in Act I's cities, the Wardens and the Lanterns; the
+Cartographers' and the Compact's halls go in with Saltreach (docs/EXPANSION.md §7), and their
+second halls with Cinderport (#512): the Cartographers' line ends at Meridian Camp and the Compact's
+ship lands there.
 
 - **The Wardens** keep Helmstow's roads, its checkpoints and its walls. Their hall is the Warden
   Drillyard, which goes on training levels. Lord Vask commands them as Regent-Warden, though some
@@ -453,18 +456,26 @@ Lanterns; the Cartographers' and the Compact's halls go in with Saltreach (docs/
   Hale's checkpoint and a lost watchtower in Thornmark. Between acts, under Vask's hand, the
   Wardens on Helmstow's walls are his and the captains who back the cousin give the Drillyard's
   quests: the hall stays open and the guild splits quietly, which is its line into Act III (#151).
-- **The Lanterns' halls are all three.** The Lantern Guildhall in Helmstow, the Thornhold Lantern
-  Hall (not the Lantern Chapterhouse, Thornhold's temple) and the Watch's Lantern Hall at Lantern
-  Watch (#201) go on selling spells, and give the
-  Lanterns' quests to a company that has done the first task. The fee to study is the hall's, §7's
-  regional toll; any company may pay it, and a Lantern pays it too. It is not membership.
+- **The Lanterns' halls are all four.** The Lantern Guildhall in Helmstow, the Thornhold Lantern
+  Hall (not the Lantern Chapterhouse, Thornhold's temple), the Watch's Lantern Hall at Lantern
+  Watch (#201) and the hall at Rime Lodge (#487), whose keepers hold the ice-hole open and are
+  Lanterns, since the cargo coming up is the Stones' business (#434, call 5), go on selling spells,
+  and give the Lanterns' quests to a company that has done the first task. The fee to study is the
+  hall's, §7's regional toll; any company may pay it, and a Lantern pays it too. It is not
+  membership. Every hall of theirs teaches Linguist once it exists (#538), and so does a Lantern
+  reader in Anvilhall, so no company goes back for it.
 
 ### Joining and ranks
 
 - **Joining is a first task,** a small quest any hall of the guild offers a stranger. There is no
   fee to join. The first task done, the company is a member at the first rank.
 - **Four ranks a guild.** All of a rank's quests done raise the company to the next, and each rank
-  opens the next quests. Act I takes the Wardens and the Lanterns to their third rank.
+  opens the next quests. Act I takes the Wardens and the Lanterns to their third rank; Act III opens
+  their fourth (#439): the Wardens' through the cousin's captains at the Drillyard, whose asks are
+  the act's own matter, the Lanterns' at Lantern Watch and Rime Lodge, whose asks are the Deep
+  Mines' inscriptions copied and the ring's voice reported. The Cartographers and the Compact climb
+  with their own areas, and no hall gives an Act III or Act IV side quest but Cinderport's two
+  (#56's 51 and 54).
 
   | Guild | 1 | 2 | 3 | 4 |
   |---|---|---|---|---|
@@ -633,21 +644,34 @@ means.
 ### Act III — The Deep Script (levels 16–22: the Kilns, Cairnmoor, Rimewater)
 
 - **The Iron Fells and the Kilns:** the dwarves cut their own Anvil Stone to sell the shards; the
-  party buys it back or seizes it. Kiln-script, which dwarves read, turns out to be a maintenance
-  language, and reading it is the act's own mechanic: each inscription read opens more of the map.
-  Anvilhall's holiest verse, THE FIRE IS KEPT BELOW AND NOT ABOVE, is a warning painted on a boiler,
-  and the lowest door of the Deep Mines says CREW ONLY. The Deep Mines have broken into the hull's
-  service ways.
-- **Kilnmouth:** Kilnhaven, the ore port, whose ship is one way to the far side of the sea.
+  party buys it back or takes it, a choice the thane puts in Anvilhall (#434, call 1): buying costs
+  about 6,000 gold, taking puts the Anvil Guard on the Stone's approach and shuts Anvilhall's forge
+  to the company for good, and either way the Warden of the Anvil must fall for the tear to close
+  and the thane never forgives. Kiln-script, which dwarves read, turns out to be a maintenance
+  language, and reading it is the act's own mechanic: each inscription read opens more of the map,
+  and never the road (call 2). An inscription is a sign with two texts, the marks anyone sees and
+  what a reader reads; a reader is a member with Linguist, a dwarf, or a copybook carried; reading
+  gives a secret's hint in the machine's own words, finds the Deep Mines' service ladders between
+  levels, and marks the machine's mouths (the ice-hole, the bay under Coldmere, the vents) on the
+  world map before the company reaches them. Anvilhall's holiest verse, THE FIRE IS KEPT BELOW AND
+  NOT ABOVE, is a warning painted on a boiler, and the lowest door of the Deep Mines says CREW ONLY.
+  The Deep Mines have broken into the hull's service ways. The Anvil Stone's Rift is the last on the
+  road, hand-built (call 3).
+- **Kilnmouth:** Kilnhaven, the ore port, whose ship is one way to the far side of the sea, and
+  whose ferry runs back to Saltmouth; the drove road's coach runs from it to Rime Lodge (call 9).
 - **High Moor and the Cairnfield:** a ring of stones older than the Wardstones, the first emitters,
   dead for centuries, with the cairns around it. The Custodian's oldest voice still speaks there,
   in the dark inside the ring, and asks the crew to report.
-- **Longmere:** some of Brandy Hole's cargo come back up through the ice at Rime Lodge. The doors
-  below opened for some of them and not for others: the captain's line, tested on its victims.
-  Wenna, whom the doors know, led them up. The way they came up is the way down.
-- **Coldmere:** a sealed bay under the frozen lake, opened by Wenna's hand, where rows of sleepers
-  who never woke have faces like the party's own. Every people of Caldera lies there: the races
-  came in the ship.
+- **Longmere:** some of Brandy Hole's cargo come back up through the ice at Rime Lodge, a few a
+  night over four nights, each night a rest at the lodge's inn (#434, call 5). The doors below
+  opened for some of them and not for others: the captain's line, tested on its victims. Wenna,
+  whom the doors know, led them up, the last one out on the fourth night. The way they came up is
+  the way down. The lodge is the Lanterns' fourth hall (§8). Cairnmoor behind it has no town: the
+  Watcher's Hut and the piper's fire by the tarn are camps (call 9).
+- **Coldmere:** a sealed bay under the frozen lake, a dungeon of two levels (the Sleepers' Bay,
+  call 6), opened by Wenna's hand and by nothing else: the act's one story lock (call 4). She waits
+  at the door. Inside, rows of sleepers who never woke have faces like the party's own. Every
+  people of Caldera lies there: the races came in the ship.
 
 ### Act IV — Beyond the Sky (levels 22–28: the Whitespine, Ashfall, the Wold)
 
@@ -656,19 +680,32 @@ means.
   robes. Its bells ring the eleven flickers of Crowness Light's log, the Hearth's pulse, rung by a
   machine that was told to ring them and never told to stop.
 - **Sheer Point:** its tip reaches toward the Hearth, and the Ashen Hand is building its crossing
-  there: a causeway out over the water, built from the smuggled shards. The party sees where the
-  end will come, an act early, and watches the Hand take Wenna out along it.
+  there: a causeway out over the water, built from the smuggled shards. It is reached along the
+  High Spine's crest from the Peak Stone (#443, call 3). The party sees where the end will come, an
+  act early, and watches the Hand take Wenna out along it: Wenna is a person who moves, at the lodge,
+  then at the monastery's gate, then at the camp on the point's shore, never in a fight, and the
+  first rest at that camp is the night she is taken.
 - **The Giants' Stair:** the road over the High Spine and down the far side of the range into
-  Ashfall, past the giants who gave it its name. Kilnhaven's ship over the sea is the other way.
-- **Cindercoast:** Cinderport, the far side's port, where the last crossing leaves.
+  Ashfall, past the giants who gave it its name, who ask a toll before they fight. The giants came
+  in the ship awake (call 1): the crew that built the inside, the heavy hands who raised the ranges
+  and set the Stones, never cargo, so they lie in no bay and are in no count. They stayed on the
+  mountain when the rest were put to sleep; the Stair is the service ramp they were posted to keep,
+  and the toll the order they were given, kept four hundred years. The Stair-king's words hint it
+  and never say it. Kilnhaven's ship over the sea is the other way, and Ashfall may be begun by it
+  (call 6).
+- **Cindercoast:** Cinderport, the far side's port, where the last crossing leaves; the
+  Cartographers' and the Compact's second halls (§8); the Riders come down to trade outside its
+  gate, and a Rider carries a company to their camp and back (call 5).
 - **The Wold:** the Riders remember the day the sky opened and the land burned, and they keep the
   only way into the Glass (the reach, below). They are the warning against arriving, in person.
 - **Fire Mountain:** the volcano's vents are the Underdeep's exhaust and the way down for the Ember
   Stone's parts. They lead down to Meridian Camp, the Meridian Company's last camp and a large
-  dungeon of its own, where their cartographer, Oriel Fane, is still alive, and to a room with a
-  window.
-- **The Ember Waste:** the Ember Stone was never finished. The party completes it with parts from
-  the Underdeep, and the Underdeep notices.
+  dungeon of its own, three levels of 32 by 32 (the vents, the iron corridors, the camp; #443, call
+  4), where their cartographer, Oriel Fane, is still alive, and to a room with a window.
+- **The Ember Waste:** the Ember Stone was never finished. The party completes it with three parts
+  from below (call 2): one at the vents' first level, one in Old Cinder's undercroft, one at the
+  iron corridors' end, never from the camp's bottom, so the window and the map stay the Lost
+  Expedition's. Finishing it is a hand-in, not a lock: Act IV spends none. The Underdeep notices.
 
 ### Act V — The Hearth (levels 28–32: Hearth Isle, the Underdeep, the Core)
 
@@ -725,7 +762,8 @@ converse holds too: everything on the road belongs to the quest.
 
 The two go opposite ways: the Buried Tower down into the ground, the Vault up into the sky.
 
-The reach sits at the cap and is harder than the Core. Its power comes from what it holds
+The reach sits at the cap and is harder than the Core: its dungeons' bands are 30–32, whatever the
+atlas's rows said before (docs/MONSTERS.md §12, open question 3; #434, call 7). Its power comes from what it holds
 (artifacts, some of the hidden Master trainers of §5, the richest shrines and fountains) rather
 than from more levels, so the quest still runs from level 1 to the cap. The reach is open before
 the choice: the Core waits.
@@ -768,8 +806,11 @@ weakens the Ashen Hand's presence in the final dungeon.
 
 The Compact runs Saltreach's smuggling and quietly feeds half of Caldera. The questline is a slow
 reveal that the Compact's founder has been dead for a decade and its "orders" now come from the
-Dead-Drop, a large dungeon below the Tide Ship's hold. Somebody down there has been running the
-smugglers, and what they have been smuggling is Wardstone shards.
+Dead-Drop, a large dungeon below the Tide Ship's hold, three levels of 32 by 32 (#22; #443, call
+4). Somebody down there has been running the smugglers, and what they have been smuggling is
+Wardstone shards. The writer is the Tallymaster, a keeper that counts the cargo and writes in the
+dead founder's hand what the Hand dictates: the Tidefolk's god only counts (§9) because this is
+where its fragment has been counting.
 
 Ends with a choice: take over the Compact and redirect it (it becomes your ferry, fence and spy
 network for Act V), or hand it to the Wardens (the Wardens siege becomes winnable, the sea lanes
@@ -812,8 +853,8 @@ very old, with their real map: the hull. The map shows what the Custodian will n
 |---|---|---|
 | **M0 — Vertical slice** | Helmstow, one Foreland outdoor map, one dungeon, one Rift; full party creation; combat; four spells per class; save/load; automap. | Prove the feel. Ship nothing else until this is fun. |
 | **M1 — Act I** | The Foreland and Thornmark complete, the Downs and the Deepthorn with them; the first guilds and their quests; the Grove Stone dungeon. | First real playthrough. |
-| **M2 — Acts II to IV** | Saltreach to Ashfall and their Wardstones; the rest of the guilds; the first and second prestiges; Meridian Camp and the Dead-Drop; the ship. | The open world. |
-| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, the third prestiges, Master trainers. | Content complete. |
+| **M2 — Acts II to IV** | Saltreach to the Wold and their Wardstones; the rest of the guilds; the first and second prestiges, and the eight third prestiges whose trainers live in Acts II to IV's country (#448; #443, call 8); Meridian Camp and the Dead-Drop; the ship. | The open world. |
+| **M3 — Act V + subplots** | Hearth Isle, the Underdeep and the Core, all endings, all three subplots, the Cleric's and the Sorcerer's third prestiges, Master trainers. | Content complete. |
 | **The reach** | The Glass and Glacier Foot, with the Buried Tower and the Vault (§9). | Optional by design: the game is whole without it. |
 | **Stretch** | New Game+, seeded Rift daily runs, second party mode, Arcomage-style tavern game. | Only after M3 ships. |
 

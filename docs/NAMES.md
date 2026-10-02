@@ -25,8 +25,10 @@ built or given a naming pass of its own.
 | The Foreland folk, the Crown's own | the Foreland | English place-names, Old English and Old Norse | -stow (place), -wick and wyke (bay, landing), -ness (headland), -combe (valley), -by (farm), -holt (wood), scarth (notch), -don and down (hill), hole (sea cave), harbour (shelter), mew (gull), brock (badger), callow (bare), kestrel, crow |
 | Thornmark's elves | Thornmark, the Deepthorn | Cornish, the older British of the far west: short parts, spelled as they are said. A few of the Foreland's oldest people carry names of it | pen (head), hen (old), lys (court), coos (wood), dar (oak), spern (thorns), kelli (grove), lyn (pool), dowr (water), rid (ford), hir (long), du (dark), gwyn (white) |
 | The Tidefolk | Saltreach: the fen, the villages, the temples' island | Frisian, the low coast of dykes and tidal flats | wierde (a mound above the flood), -um (home), riet (reed), syl (a sluice, a way through), diep (channel), skor (salt marsh), wad (tidal flat), meer (a broad water), stien (stone), hol (hollow, cave), sjong (song), tel (count), dyk (dyke), salt |
-| The dwarves | the Kilns | to choose, beside Kiln-script | |
-| The Wold Riders | the Glasswold | to choose | |
+| The dwarves | the Kilns | the German of the old mining country, the Erzgebirge, beside Kiln-script, which is the crew's and not theirs | erz (ore), eisen (iron), berg, hutte (smelter, written without its umlaut), stollen (adit), schacht (shaft), zeche (pit, mine), halde (spoil heap), kamm (crest), feuer, glut (ember), hammer, stein |
+| The hill folk | Cairnmoor, Rimewater: the moor and the lodges | Scots Gaelic, the tongue of moor and loch | carn (cairn), creag (crag), loch, moine (peat), tulach (knoll), dubh (dark), fionn (white), beinn (mountain), allt (stream), clach (stone), fuar (cold), fada (long), eas (fall), ceann (head), lios (ring, enclosure), bogach (bog) |
+| The monks and Cindercoast's folk | the Whitespine, Ashfall | the Crown's and the Lanterns' English, kept, as Sunderwood's and Wrackholm's were; the monks' own speech is Kiln-script | |
+| The Wold Riders | the Glasswold | the Turkic of the steppe | ak (white), kara (black), tash (stone), kum (sand), su (water), ordu (camp), yurt, kush (bird), dag (mountain), kol (lake), bash (head), uzun (long), yol (road) |
 
 ## 3. Rules
 
@@ -59,4 +61,19 @@ built or given a naming pass of its own.
   (`docs/areas/wrackholm.md` §10).
 - **Sunderwood** (step V): English, the Crown's and the Lanterns', kept (`docs/areas/sunderwood.md`
   §10).
+- **The Kilns** (step VI): named on 2 October 2026 with its area doc (#435). `docs/areas/kilns.md`
+  §10 has the dwarves' tongue and its names: Erzkamm, the Tiefzeche, Gluthutte, Feuerstollen; the
+  Kilns, Kilnmouth, the Iron Fells, Anvilhall, the Anvil Stone and Kilnhaven keep the Crown's
+  English, and CREW ONLY is the crew's.
+- **Cairnmoor** (step VII) and **Rimewater** (step VIII): named on 2 October 2026 with their docs
+  (#435). The hill folk's tongue: Fionnlios and Carn Dubh on the moor; Loch Fada and Loch Fuar for
+  the lakes. Rime Lodge keeps the Lanterns' English, Glacier Foot and the Ice Caves wait for the
+  reach's doc, and the Sleepers' Bay is the docs' plain name for a place nothing on the surface names.
+- **The Whitespine** (step IX): the Crown's and the Lanterns' English, kept, with Highcell for the
+  monastery (#444; `docs/areas/whitespine.md` §10).
+- **Ashfall** (step X): the coast's English, kept, with Scaldwell for the Hot Springs and Grimsforge
+  for Warlord's Forge, whose it was (#444; `docs/areas/ashfall.md` §10).
+- **The Glasswold** (step XI): the Riders' tongue for their own places, Akordu for their camp and
+  Kushtash for the Eyrie, with Tashkum their word for the Glass, left for the reach's doc to decide
+  (#444; `docs/areas/glasswold.md` §10).
 - **The rest:** with their areas.
