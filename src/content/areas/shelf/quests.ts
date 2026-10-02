@@ -39,7 +39,9 @@ export const QUESTS: readonly QuestDef[] = [
     id: 'bell',
     title: 'The Bell That Rang Twice',
     start: { flag: 'q_bell' },
-    done: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }],
+    // After Act II the Chapel is shut and Osmund gone to the Watch, so an unanswered bell ends at its
+    // door, once the notice is read (#157).
+    done: [{ flag: 'q_bell_named' }, { flag: 'q_bell_kept' }, { flag: 'q_bell', seen: 'harrow:chapel_shut' }],
     entries: [
       { id: 'osmund', when: { flag: 'q_bell' },
         text: 'Osmund, sexton of the Chapel, wants a name for his book: whoever rang the Queen\'s death bell at midnight, hours before anyone knew she was dead.' },
@@ -53,6 +55,8 @@ export const QUESTS: readonly QuestDef[] = [
         text: 'We gave Osmund her name for his book. The Wardens will want her at the keep.' },
       { id: 'kept', when: { flag: 'q_bell_kept' },
         text: 'We told Osmund we could not find out. He wrote RANG ITSELF, and shut the book.' },
+      { id: 'shut', when: { flag: 'q_bell', seen: 'harrow:chapel_shut' },
+        text: 'We came home to the Chapel boarded and the sexton gone to Lantern Watch, his book with him.' },
     ],
     goals: [
       { when: { flag: 'q_bell_ebba' }, text: 'Tell Osmund at the Chapel whose hand was on the rope, or that we could not find out.' },

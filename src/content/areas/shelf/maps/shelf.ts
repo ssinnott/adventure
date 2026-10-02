@@ -16,7 +16,7 @@ export const SHELF: MapDef = {
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'M,,,,,,,,,,,,,BBBBB,,,,,,,,,,,,M',
     'M,,T,,,,,,,,,,BBBBB,,,,,T,,,,,,M',
-    'M,,,,,T,,,,,,,BB=BB,,,,,,,,T,,,M',
+    'M,,,,,T,,,,,,,BB=B=,,,,,,,,T,,,M',
     'M,,,,,,,,,,,,,,,=====,,,,,,,,,,M',
     'M,,,,TT,,,,,,,,,=,,,,,,TT,,,,,,M',
     'M,,,TTT,,,,,,,,,=,,,,,TTTT,,,,,M',
@@ -47,7 +47,10 @@ export const SHELF: MapDef = {
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
   ],
   exits: [
-    { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Helmstow.' },
+    // After Act II the gate turns back a company with an orcblood member, and the harbour postern lets
+    // it in: no story lock (#151, call 1; #157).
+    { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Helmstow.', shut: { flag: 'q_salt_done', member: { race: 'orcblood' } }, blockedText: 'A sergeant steps into the gate: "No orcblood past the gate. Regent\'s orders."' },
+    { x: 18, y: 3, to: 'harrow', tx: 13, ty: 14, tf: NORTH, label: 'You come into Helmstow by the harbour postern, behind the fish carts.' },
     { x: 31, y: 9, to: 'thornmark', tx: 1, ty: 9, tf: EAST, label: 'The pass opens onto old forest. Thornmark.' },
     { x: 2, y: 28, to: 'greywater1', tx: 1, ty: 1, tf: SOUTH, label: 'A cave mouth in the cliff foot, half hidden by kelp. Brandy Hole.' },
     { x: 0, y: 29, to: 'downs_f2', tx: 30, ty: 29, tf: WEST, label: 'The Salt Road climbs off the beach. Callow Downs.' },

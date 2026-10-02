@@ -75,7 +75,7 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores, with Lantern Oil on his shelf and the keeper's oil to put, and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`); Hob by the Hearthlight's fire until his paper is given, and his empty chair (`hob_chair`) once it went to Vask |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores, with Lantern Oil on his shelf and the keeper's oil to put, and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`); Hob by the Hearthlight's fire until his paper is given, and his empty chair (`hob_chair`) once it went to Vask; the harbour postern in the south wall by the Eel; after Act II, the changed city (§5.1) |
 | The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask, who takes Hob's paper too, and his contract in the throne room behind the keep's door, and the keeper's oil to put to him |
 | The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ellerby farm where Ashcombe stood, and its store (rations at 3 gold, in the farm kitchen); Hale's checkpoint at the Scarth, where he takes Dunstan's letter; ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
 | Ashcombe Cellar | dungeon, 16×16 | 2–4 | under Ashcombe in E3; four rings; the dead Lantern and her survey wand; the Rift and its Warden |
@@ -635,6 +635,38 @@ zone of seven boxes (§9), so the pilot's step at Gullwick is the zone's, and th
 with their boxes. STORY opens at Gullwick on the night the light went out, and the company reaches
 Helmstow in the morning; a new game opens in Helmstow.
 
+### 5.1 Helmstow between acts
+
+DESIGN §9: Helmstow changes between acts, under Vask's hand, and never for the better. After Act II
+(`q_salt_done`, set by Vask's answer at Lantern Watch's gate) the company comes home to the changed
+city, built in #157; a company that has not finished the act finds the old one. Either can enter,
+and nothing is a story lock (#151, call 1):
+
+- **The gate.** A company with an orcblood member is turned back at the south gate by a sergeant:
+  "No orcblood past the gate. Regent's orders." The Foreland's exit into the town is `shut` on the
+  flag and the race (`member.race`), read at every step, so it opens again without him. A company
+  with no orcblood member walks in as before, and leaving by the gate is never shut.
+- **The harbour postern,** in the south wall by the Gilded Eel (harrow 13,15, out to the track to
+  the Lodestone at 18,4), is open in both cities: the fish carts' door down to the boats, and the
+  way in for a company the gate turns back. A chalked sign over it inside.
+- **Wardens on the walls:** a once-event on the first step inside the gate (7,13 or 8,13), and
+  another inside the postern (12,14 or 14,14). No fights.
+- **The curfew bell,** by night, every time the company crosses the middle street at 7,6 or 8,6.
+- **The Chapel shut:** the temple, and with it cure and raise, is gone; a notice is said on its
+  door once, with the chalked word that the sexton went to the Watch with his book. Osmund and Ebba
+  are gone. An unanswered Bell That Rang Twice ends at the notice.
+- **The Drillyard** stays, and so do its trainer and its quests. Captain Ordgar, who backs the
+  Queen's cousin, sits in it and says the walls are Vask's (#151, call 5).
+- **Prices rise:** the Hearthlight at 18 a night for 12, and Mottram's half as much again, but the
+  Lantern Oil, whose forty he names in Oil for the Lamp. The Lantern Guildhall and the trainer
+  keep theirs.
+- **The Gilded Eel's** talk is the curfew's, the Chapel's and the captains'.
+- **The Keep** is unchanged.
+
+The Foreland's walkthrough walks both cities: the old one, then the changed one to the default
+company, whose paladin Idris is orcblood, and to one without him. The flag is set by hand, since
+the road's band refuses Helmstow to a company of 16.
+
 ## 6. Side quests
 
 #56 drafts eight for the Foreland, levels 1 to 4. The owner asked for the ones that fit to be pulled
@@ -857,6 +889,28 @@ Decided by the owner on 27 and 28 September 2026:
 12. **The world map's lettering** is on the grid: the border names each box, and the strips at the
     world's edges go unlettered (§1; #66).
 13. **Crowness Light** stands on the point, at 156,90, rather than inland at 140,88 (#67).
+
+Decided by delegate for #157, on 2 October 2026 (the owner's to overturn):
+
+14. **The gate really turns back** a company with an orcblood member, as STORY has the sergeant step in
+    front of Idris; the postern, always open, is why it is no lock. It needed `Exit.shut` and
+    `member.race` (#454).
+15. **The postern is in the south wall by the Eel,** in both cities, and named the harbour postern for
+    the boats it goes down to, off the map.
+16. **The curfew bell is a night event** on the middle street, said every time, rather than a dusk bell
+    the clock would have to learn: a company of 16 is seldom in Helmstow at the turn of the light.
+17. **The Chapel shuts with its cure and raise,** which Thornhold and Saltmouth still sell; its people
+    go, the notice says where the sexton went, and an unanswered bell ends there. Businesses wear a
+    presence for it (#454).
+18. **The Wardens are events, not monster groups:** there is no Warden monster, and a fight in a town
+    of band 1–4 with a company of 16, before the act's war with them, would say the wrong thing.
+19. **One of the cousin's captains** sits in the Drillyard, a person with two lines and one after; the
+    guild's quests are as they were.
+20. **Prices rise** by half: "prices do not" read as do not stay, since Helmstow changes never for the
+    better. The inn and the stores are twins on their squares after the flag; the oil keeps its
+    forty for Mottram's word.
+21. **The Gilded Eel's rumours change,** since its old ones are Act I's; the Keep is left as it is, and
+    Vask in his throne room after the act is a question for the owner.
 
 Proposed, for the owner, each in the issue that would build it:
 

@@ -754,8 +754,13 @@
     "harrow": {
       "size": "16x16",
       "used": [
+        "chapel_shut",
+        "gate_wardens",
+        "gate_wardens2",
         "harrow_intro",
         "hob_chair",
+        "postern_wardens",
+        "postern_wardens2",
         "well_cart",
         "well_swept"
       ],
@@ -1236,6 +1241,7 @@
     "q_orders_council",
     "q_orders_read",
     "q_orders_watch",
+    "q_ordgar",
     "q_osmund_ailith",
     "q_osmund_well",
     "q_paper_hale",
