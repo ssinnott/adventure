@@ -86,7 +86,7 @@ export const LANTERNWOOD_L2: MapDef = {
     // Moths to the lit lamp by night, a deathshead among them; sunder hounds on the knoll's path; two
     // deathsheads at the tower's lamp by night, the box's group at 16; and two glass bears on the road
     // on by the river, where it leaves for M2.
-    { id: 'l2_lamp_moths', x: 4, y: 23, monsters: ['lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
+    { id: 'l2_lamp_moths', x: 4, y: 23, monsters: ['lantern_moth', 'lantern_moth', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
     { id: 'l2_hounds', x: 5, y: 15, monsters: ['sunder_hound', 'sunder_hound', 'sunder_hound'], aware: 4, respawn: 2880 },
     { id: 'l2_tower_moths', x: 16, y: 11, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
     { id: 'l2_bears', x: 29, y: 29, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false },

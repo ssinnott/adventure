@@ -20,13 +20,14 @@
 // charts replaces the plan's row of the same id. A planned area may chart its rows in its folder
 // before it is listed, and the plan spreads them in where its own were.
 import type { Atlas } from '../game/atlas.ts';
-
-/**
- * The Iron Fells' line held at M2's east edge, a seed a square down x 424 from the rim at y 33 to 61: a
- * laid map seeds the zones' walk from every square of it, so without these Lanternwood would run on
- * from M2 into the Fells (#202).
- */
-const HELD_AT_M2: [number, number][] = Array.from({ length: 29 }, (_, i): [number, number] => [424, 33 + i]);
+// The planned areas chart their own rows in their folders, spread in here where the plan's were
+// until each area's first box lists it (as Saltreach's and Sunderwood's were, #169, #194).
+import * as KILNS from './areas/kilns/atlas.ts';
+import * as CAIRNMOOR from './areas/cairnmoor/atlas.ts';
+import * as RIMEWATER from './areas/rimewater/atlas.ts';
+import * as WHITESPINE from './areas/whitespine/atlas.ts';
+import * as ASHFALL from './areas/ashfall/atlas.ts';
+import * as GLASSWOLD from './areas/glasswold/atlas.ts';
 
 export const PLAN: Atlas = {
   width: 512,
@@ -139,6 +140,9 @@ export const PLAN: Atlas = {
     { pts: [[212, 326], [206, 334], [198, 344], [194, 354], [188, 366]], kind: 'lava', width: 2.2 },
     { pts: [[218, 327], [226, 336], [232, 348], [240, 358]], kind: 'lava', width: 1.8 },
     { pts: [[209, 325], [198, 330], [186, 332], [174, 330]], kind: 'lava', width: 1.6 },
+    // The flow that seals the Glass from the Ember Waste, south of the Wold's road: the Riders' gap at
+    // the dunes is the reach's one way in (EXPANSION §5.8; #443, call 5; docs/areas/glasswold.md).
+    { pts: [[160, 318], [150, 332], [140, 348], [134, 362], [130, 376]], kind: 'lava', width: 2 },
   ],
   rivers: [
     { name: 'The Long Water', pts: [[30, 44], [40, 64], [50, 84], [58, 98], [66, 110], [70, 128], [80, 146], [92, 160], [100, 170]], width: [1, 3] },
@@ -247,6 +251,8 @@ export const PLAN: Atlas = {
     { pts: [[428, 180], [412, 162], [398, 164]] },
     // Over the Whitespine by the high pass.
     { pts: [[408, 266], [384, 278], [360, 290], [336, 300], [316, 318], [320, 340]] },
+    // Along the High Spine's crest from the Peak Stone north to Sheer Point (#443, call 3).
+    { pts: [[292, 318], [286, 300], [282, 280], [284, 262], [286, 236]] },
     // Ashfall and the Glasswold.
     { pts: [[206, 280], [196, 300], [180, 318], [160, 312], [140, 296], [116, 280], [92, 272]] },
   ],
@@ -265,78 +271,32 @@ export const PLAN: Atlas = {
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
   ],
   zones: [
-    { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', seeds: [[432, 50], [414, 66], ...HELD_AT_M2] },
-    { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', seeds: [[452, 120], [470, 160]] },
-    { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', seeds: [[408, 160], [404, 140]] },
-    { id: 'highmoor', name: 'High Moor', area: 'cairnmoor', seeds: [[462, 212], [488, 230]] },
-    { id: 'cairnfield', name: 'The Cairnfield', area: 'cairnmoor', seeds: [[426, 236], [412, 220]], label: [418, 214] },
-    { id: 'longmere', name: 'Longmere', area: 'rimewater', seeds: [[392, 284], [410, 272]] },
-    { id: 'coldmere', name: 'Coldmere', area: 'rimewater', seeds: [[344, 300], [340, 280]] },
-    { id: 'glacierfoot', name: 'Glacier Foot', area: 'rimewater', seeds: [[440, 330], [462, 300]], label: [458, 298] },
-    { id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', seeds: [[282, 244], [276, 262]] },
-    { id: 'highspine', name: 'The High Spine', area: 'whitespine', seeds: [[292, 310], [290, 350]] },
-    { id: 'monksvale', name: 'Monks\' Vale', area: 'whitespine', seeds: [[322, 344], [318, 318]], label: [318, 326] },
-    { id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', seeds: [[200, 284], [236, 286]], label: [238, 292] },
-    { id: 'firemount', name: 'Fire Mountain', area: 'ashfall', seeds: [[214, 330], [240, 340]] },
-    { id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', seeds: [[172, 336], [180, 300]] },
-    { id: 'wold', name: 'The Wold', area: 'glasswold', seeds: [[100, 232], [132, 262], [50, 230]] },
-    { id: 'theglass', name: 'The Glass', area: 'glasswold', seeds: [[80, 280], [110, 300]], label: [96, 304] },
+    ...KILNS.ZONES,
+    ...CAIRNMOOR.ZONES,
+    ...RIMEWATER.ZONES,
+    ...WHITESPINE.ZONES,
+    ...ASHFALL.ZONES,
+    ...GLASSWOLD.ZONES,
     { id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', seeds: [[256, 172]] },
   ],
   places: [
-    { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold
-    { id: 'anvilhall', name: 'Anvilhall', kind: 'town', planned: true, band: [16, 18], at: [452, 70] },
-    { id: 'kilnhaven', name: 'Kilnhaven', kind: 'town', planned: true, band: [16, 18], at: [378, 158] },
-    { id: 'deep_mines', name: 'The Deep Mines', kind: 'dungeon', planned: true, band: [16, 18], at: [440, 104] },
-    { id: 'anvil_stone', name: 'The Anvil Stone', kind: 'dungeon', planned: true, band: [16, 18], at: [468, 136] },
-    { id: 'lava_tubes', name: 'Lava Tubes', kind: 'dungeon', planned: true, band: [17, 18], at: [470, 194] },
-    { id: 'cairns', name: 'The Cairns', kind: 'dungeon', planned: true, band: [18, 20], at: [430, 246] },
-    { id: 'rime_lodge', name: 'Rime Lodge', kind: 'town', planned: true, band: [20, 22], at: [412, 256] },
-    { id: 'ice_caves', name: 'Ice Caves', kind: 'dungeon', planned: true, band: [20, 22], at: [446, 340] },
-    { id: 'monastery', name: 'The Monastery', kind: 'dungeon', planned: true, band: [22, 24], at: [330, 356] },
-    { id: 'cinderport', name: 'Cinderport', kind: 'town', planned: true, band: [24, 26], at: [206, 288] },
-    { id: 'old_cinder', name: 'Old Cinder', kind: 'dungeon', planned: true, band: [24, 26], at: [190, 324] },
-    { id: 'ember_stone', name: 'The Ember Stone', kind: 'dungeon', planned: true, band: [24, 26], at: [176, 348] },
-    { id: 'meridian_camp', name: 'Meridian Camp', kind: 'dungeon', planned: true, band: [26, 28], at: [226, 340] }, // down Fire Mountain's vents
-    { id: 'buried_tower', name: 'Buried Tower', kind: 'dungeon', planned: true, band: [26, 28], at: [84, 286] },
+    { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold: three levels of 32 by 32 (#22; #443, call 4)
+    ...KILNS.PLACES,
+    ...CAIRNMOOR.PLACES,
+    ...RIMEWATER.PLACES,
+    ...WHITESPINE.PLACES,
+    ...ASHFALL.PLACES,
+    ...GLASSWOLD.PLACES,
     { id: 'underdeep', name: 'The Underdeep', kind: 'deep', planned: true, order: 13, band: [30, 31], at: [216, 168] },
     { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
   ],
   sites: [
-    // VI. The Kilns.
-    { name: 'Anvilhall', icon: 'fortress', at: [452, 80], label: 'below', planned: true },
-    { name: 'Deep Mines', icon: 'mine', at: [440, 96], label: 'below', planned: true },
-    { name: 'Forges', icon: 'forge', at: [436, 126], label: 'below', planned: true },
-    { name: 'Anvil Stone', icon: 'stone', at: [468, 142], label: 'below', planned: true },
-    { name: 'Lava Tubes', icon: 'cave', at: [478, 178], label: 'below', planned: true },
-    { name: 'Kilnhaven', icon: 'port', at: [391, 162], label: 'right', planned: true },
-    { name: 'Iron Crag', icon: 'cave', at: [432, 44], label: 'below', planned: true }, // the Barbarian's second prestige
-    // VII. Cairnmoor.
-    { name: 'Stone Ring', icon: 'ring', at: [462, 214], label: 'below', planned: true },
-    { name: 'The Cairns', icon: 'barrow', at: [430, 240], label: 'below', planned: true },
-    { name: 'Watcher\'s Hut', icon: 'lodge', at: [466, 208], label: 'right', planned: true }, // the Sorcerer's second prestige
-    // VIII. Rimewater.
-    { name: 'Rime Lodge', icon: 'lodge', at: [410, 262], label: 'right', planned: true },
-    { name: 'Ice Caves', icon: 'cave', at: [452, 326], label: 'below', planned: true },
-    // IX. The Whitespine.
-    { name: 'Monastery', icon: 'monastery', at: [322, 342], label: 'right', planned: true },
-    { name: 'Peak Stone', icon: 'stone', at: [292, 318], label: 'below', planned: true },
-    { name: 'Giants', icon: 'label', at: [300, 296], planned: true },
-    { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right', planned: true }, // over the Giants' Stair: the Knight's third prestige
-    { name: 'Spine Summit', icon: 'camp', at: [300, 328], label: 'right', planned: true }, // the Monk's third prestige
-    { name: 'Rook\'s Nest', icon: 'cave', at: [286, 230], label: 'right', planned: true }, // on Sheer Point, over the Hand's causeway: the Thief's third prestige
-    // X. Ashfall.
-    { name: 'Cinderport', icon: 'port', at: [206, 277], label: 'right', planned: true },
-    { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none', planned: true },
-    { name: 'Old Cinder', icon: 'ruin', at: [190, 318], label: 'below', planned: true },
-    { name: 'Ember Stone', icon: 'stone', at: [176, 342], label: 'below', planned: true },
-    { name: 'Hot Springs', icon: 'springs', at: [240, 300], label: 'below', planned: true },
-    { name: 'Meridian Camp', icon: 'cave', at: [226, 334], label: 'below', planned: true }, // the vents' mouth: the Lost Expedition's last camp lies below
-    { name: 'Warlord\'s Forge', icon: 'forge', at: [230, 330], label: 'right', planned: true }, // by the vents' mouth: the Barbarian's third prestige
-    // XI. The Glasswold.
-    { name: 'Buried Tower', icon: 'obelisk', at: [84, 280], label: 'below', planned: true },
-    { name: 'Wold Riders', icon: 'camp', at: [120, 250], label: 'below', planned: true },
-    { name: 'The Eyrie', icon: 'camp', at: [132, 289], label: 'below', planned: true }, // a scout's lookout on a mesa: the Ranger's third prestige
+    ...KILNS.SITES,
+    ...CAIRNMOOR.SITES,
+    ...RIMEWATER.SITES,
+    ...WHITESPINE.SITES,
+    ...ASHFALL.SITES,
+    ...GLASSWOLD.SITES,
     // XII. The middle of the world, and the names of waters and walls.
     { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none', planned: true },
     { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right', planned: true }, // on Hearth Isle: the Cleric's third prestige
@@ -371,12 +331,15 @@ export const PLAN: Atlas = {
     { from: 'cairnfield', to: 'cairns', kind: 'enter', a: [430, 240] },
     { from: 'cairnfield', to: 'longmere', kind: 'road', a: [424, 250], b: [414, 262] },
     { from: 'longmere', to: 'rime_lodge', kind: 'enter', a: [410, 262] },
+    { from: 'coldmere', to: 'sleepers_bay', kind: 'enter', a: [352, 284], note: 'under the ice' },
+    { from: 'kilnhaven', to: 'rime_lodge', kind: 'coach', note: 'the drove road coach' },
     { from: 'glacierfoot', to: 'ice_caves', kind: 'enter', a: [452, 326] },
     { from: 'coldmere', to: 'monksvale', kind: 'road', a: [334, 302], b: [318, 318], note: 'the high pass' },
     { from: 'monksvale', to: 'monastery', kind: 'enter', a: [322, 342] },
     { from: 'kilnhaven', to: 'saltmouth', kind: 'sea', via: [[340, 150], [296, 160], [230, 146], [160, 150]], note: 'the ferry', noteAt: [230, 140] },
     { from: 'kilnhaven', to: 'cinderport', kind: 'sea', via: [[352, 162], [316, 168], [298, 198], [264, 220], [240, 254]], note: 'Compact ship', noteAt: [300, 210] },
     { from: 'cindercoast', to: 'cinderport', kind: 'enter', a: [206, 277] },
+    { from: 'cinderport', to: 'wold', kind: 'coach', b: [120, 250], note: 'a Rider\'s horse' },
     { from: 'firemount', to: 'old_cinder', kind: 'enter', a: [190, 318] },
     { from: 'firemount', to: 'meridian_camp', kind: 'enter', a: [226, 334] },
     { from: 'emberwaste', to: 'ember_stone', kind: 'enter', a: [176, 342] },

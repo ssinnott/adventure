@@ -326,7 +326,8 @@ features; the pay shared out over the area (§8).
   by the steading by night. A company at 14 wins every fight and manages 6.8 fights to a rest,
   inside the aim (6.9 after the re-stat to #409's line, #18); the road is walked every time. As
   measured it pays about 1,510 xp a member and 430 gold, I2 and J2 together 2,570 against their
-  2,500. Two under, at 12, it wins every fight: owed to #18, as I2's. The area claims dead wood,
+  2,500. Since #453 the moths are three, not six: the box pays about 1,370 and manages 7.6 fights to
+  a rest at 14. Two under, at 12, it wins every fight: owed to #18, as I2's. The area claims dead wood,
   crystal and the chasm as new, all three first on the road here. What the owner finds by hand goes
   here when the box has been played.
 
@@ -542,7 +543,9 @@ features; the pay shared out over the area (§8).
   rest, inside the aim; Lanternwood's road is walked every time. As measured it pays about 1,400 xp a
   member and 430 gold, which takes up what I2, J2 and K2 fell short by: the four boxes pay 5,040
   against their 5,000. Two under, at 13, it wins every fight: its floor is above the area's, so its
-  groups count two under in the area's pool, owed to #18. The moths and the bears were new on I2, so
+  groups count two under in the area's pool, owed to #18. Since #453 the lamp's moths are two with
+  their deathshead: the box pays about 1,300 and manages 8.2 fights to a rest at 15, the road still
+  walked every time. The moths and the bears were new on I2, so
   the box claims nothing new. What the owner finds by hand goes here when the box has been played.
   Since M2 (#202) the road fords the river at the box's corner into M2, and the river runs out of the
   corner's south edge for L3, so map and atlas agree at the edge and nothing is owed; L2's east ring
@@ -569,7 +572,7 @@ features; the pay shared out over the area (§8).
   - Vask's morning: *Rain. Three horses at the gate, two Wardens holding them, and a man standing
     in the wet as if it were not raining.* (#204 drops "Morning": he comes at any hour of the day.)
 - **New here.** A town that is one tower; the act's midpoint.
-- **Pay.** About 300 xp a member in the tower's quests.
+- **Pay.** The tower's quests are 31 and 32, paid in §6 (#453).
 
 - **As built** (#201, 1 October): one tower in a walled yard, the yard's wall the map's edge, the
   road up from the gate to the tower's foot, grass and six oaks. The tower is six squares a side
@@ -588,8 +591,8 @@ features; the pay shared out over the area (§8).
   every page of the papers, and the one name at the foot of the log's entries, Vask, and puts what
   she read back in the company's hands. That sets `papers_read`, the midpoint's flag, which #204's
   chapter will read; what Vask believes is his to say the next morning. The prior, met and shown
-  the papers, asks for them for Helmstow's oil cart and takes nothing. The 300 xp of
-  the tower's quests waits on 31 and 32, so the area's curve stays owed to #155.
+  the papers, asks for them for Helmstow's oil cart and takes nothing. The tower's
+  quests are 31 and 32, whose pay §6 counts (#453), so the area's curve stays owed to #155.
 
 ### 4.9 M2 and J3, the road on and under the Eaves (#202): country, band 16
 
@@ -718,12 +721,12 @@ with its box on the systems of #76 (#205):
 
 | # | Quest | Level | Where | What it needs | Pay | Built in |
 |---|---|---|---|---|---|---|
-| 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 200 | #196, #201 |
-| 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 200 | #197, #198 |
-| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 250 | #205 (L2, #200, places the sister and her hint only; #201 leaves her there) |
-| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 250 | #205, #199 (#201 places the surveyor and his lines only) |
+| 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 110 | #196, #201 |
+| 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 110 | #197, #198 |
+| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 140 | #205 (L2, #200, places the sister and her hint only; #201 leaves her there) |
+| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 140 | #205, #199 (#201 places the surveyor and his lines only) |
 
-Pay is xp a member, whichever way the choice goes, shared by level: 900 between the four (§8).
+Pay is xp a member, whichever way the choice goes, shared by level: 500 between the four (§8), 900 until #453.
 
 No change to #56's drafts. 31 opens the Lanterns' split now, with the company on the sister's side,
 or leaves the prior his Watch (#21); 32 puts a wall in it.
@@ -752,20 +755,31 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
 ## 8. The numbers
 
 - **Experience.** The curve (EXPANSION §5.2, #159) asks the climb from 14 to 16 over 0.75: 8,600 /
-  0.75, about 11,467 xp a member, with today's `xpForLevel`. The shares of §4 add up to it, as
-  Saltreach's and Wrackholm's do, the side quests inside and the depths outside: I2 1,150, J2
-  1,350, K2 1,350, K3 1,350, the Sunder 2,350, L2 1,150, the Watch 300, M2 800 and J3 800; and the
-  four side quests 900 between them (29 and 30 200 each, 31 and 32 250 each, §6): about 11,500. They were the plan's, 11,800 before the
-  side quests, scaled down by one fraction to fit; the box issues' figures are the plan's, and these
-  supersede them. The depths add about 1,350 when they are built (450 each). Each box is measured
-  when it is built: I2 1,063, J2 1,509, K2 1,072, K3 with its Rift 1,441, L2 1,396, the Sunder 2,704,
-  J3 1,073 and M2 948 so far, 11,205 against their 10,300, about 900 over: the Sunder's 354 (#199, §9)
-  and J3's and M2's 420 (#202, §9) are most of it. Nothing is taken back from the shares still to come
-  (the Watch's quests 300 and the side quests 900), so the area as planned runs to about 12,400 against
-  the curve's 11,467, some 940 (8%) over: three quarters of it would take a company from 14 past 16,
-  toward 17. Taking it back, a smaller share for the quests or lighter boxes, is the owner's to choose.
-  A company should leave the Watch at 16, where the midpoint is, with the Kilns'
-  floor ahead.
+  0.75, about 11,467 xp a member, with today's `xpForLevel`, the side quests inside and the depths
+  outside, as Saltreach and Wrackholm count theirs. The plan's shares were I2 1,150, J2 1,350, K2
+  1,350, K3 1,350, the Sunder 2,350, L2 1,150, the Watch 300, M2 800, J3 800 and the side quests
+  900; the boxes as built ran 900 over theirs, and the area as planned to about 12,400, 8% over.
+  Brought back by #453, share by share:
+
+  | Share | Plan | Now | |
+  |---|---|---|---|
+  | I2 | 1,150 | 1,063 | built |
+  | J2 | 1,350 | 1,370 | built; three moths, not six (#453) |
+  | K2 | 1,350 | 1,072 | built |
+  | K3 with its Rift | 1,350 | 1,441 | built |
+  | The Sunder | 2,350 | 2,704 | built |
+  | L2 | 1,150 | 1,303 | built; the lamp's moths two, not four (#453) |
+  | J3 | 800 | 1,073 | built |
+  | M2 | 800 | 948 | built |
+  | The Watch | 300 | 0 | its quests are 31 and 32 (#453) |
+  | Side quests | 900 | 500 | planned: 29 and 30 110 each, 31 and 32 140 each (§6, #205) |
+  | **The area** | 11,500 | 11,474 | 12,400 before #453 |
+
+  The boxes as built pay 10,974 (the curve's own count, every group once), and the area as planned
+  11,474 against the curve's 11,467, under a tenth of a per cent over. The depths add about 1,350
+  when they are built (450 each). Until the side quests are, a clear gives 10,974, the floor the
+  owed record in `progression.ts` holds. A company should leave the Watch at 16, where the midpoint
+  is, with the Kilns' floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
   at 1,600 and the act's dearest find the Sunder's Plate Mail +2 at 1,500, against 3,000. The
@@ -944,6 +958,21 @@ Decided by delegate for #201, each the owner's to overturn:
     (`watch_reader_met`, `watch_prior_met`), and their words about the papers wait on it, so a
     company that comes in carrying them hears who they are before the reading, and "Shut it, if you
     would" sets up the shut door.
+
+Decided by delegate for #453, each the owner's to overturn:
+
+1. **The Watch's 300 is dropped:** its quests are 31 and 32, which §6 pays already, so it was
+   counted twice.
+2. **The side quests pay 500 between them, not 900:** 29 and 30 110 each, 31 and 32 140 each, about
+   a third of a fight; a quest that pays nothing reads oddly, and the 16s keep their step.
+3. **J2's moths are three, not six:** 138 xp a member against 277; at 14 the box wins every fight
+   and manages 7.6 fights to a rest against 6.9, nearer the aim's middle.
+4. **L2's lamp moths are two and a deathshead, not four and one:** 303 against 396; at 15 it wins
+   every fight and manages 8.2 fights to a rest, as before, inside the aim.
+5. **The Sunder, J3 and M2 keep their groups:** a monster off any of them puts fights to a rest past
+   the aim (the Sunder's wood 9.8, its first spiders 10.4, J3's brood 9.4, M2's hounds 8.9).
+6. **The area as planned comes to 11,474,** the boxes 10,974 with the side quests' 500, against the
+   curve's 11,467; the owed floor in `progression.ts` falls to 10,974 with it.
 
 ## 10. Names
 

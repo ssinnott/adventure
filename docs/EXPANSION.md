@@ -173,7 +173,11 @@ service withheld, a way shut.
   go and find it, and had to talk again to hand it over. A hand-in takes its item at the first
   meeting, and its words know the company came early.
 
-The road had one lock, the flag on the pass, and it went (§2.2); there are none inside any place.
+The road had one lock, the flag on the pass, and it went (§2.2); Acts I and II spend none inside
+any place. Act III spends one, the Sleepers' Bay's door under Coldmere, which opens to Wenna's hand
+and nothing else (#434, call 4; #440); the Deep Mines' door marked CREW ONLY is not one, since
+nothing in the act opens it. Act IV spends none: the Ember Stone is finished by a hand-in of three
+parts, which shuts nothing before it (#443, call 2; #450).
 
 ---
 
@@ -462,10 +466,11 @@ docs/areas/<area>.md                    the area's brief, and what was built
 | Saltreach | 10–12 | the level cap past 10 and the xp budget (§5.2), with the first prestiges (DESIGN.md §5) and the spells past 10 (DESIGN.md §7); salt flats and tidal ground; the Cartographers' Guild's and the Salt Compact's halls (DESIGN.md §8) |
 | Wrackholm | 12–14 | a crossing from the mainland, open from the start |
 | Sunderwood | 14–16 | chasm, crystal and dead wood as terrain; the Rift generator |
-| The Kilns | 16–18 | ash; Kiln-script and Linguist |
-| Cairnmoor, Rimewater | 18–22 | heather, ice and lying snow as terrain; the rest of what they are, which DESIGN.md has yet to say |
-| The Whitespine | 22–24 | cliffs and peaks, with the road through them |
-| Ashfall | 24–28 | the crossing by ship, open from the start; volcano and lava fields |
+| The Kilns | 16–18 | ash; Kiln-script and Linguist; Kilnhaven's ferry and ship (#432) |
+| Cairnmoor, Rimewater | 18–22 | ice and lying snow as terrain (heather came with Act II); regeneration, curse and calls; the drove road's coach; the one story lock the act spends (#432, #440) |
+| The Whitespine | 22–24 | cliffs and peaks, with the road through them; a group that talks before it fights; sweep (#442) |
+| Ashfall | 24–26 | the crossing by ship, open from the start; volcano and lava fields; sweep with fire; the sentries after the Stone (#442) |
+| The Glasswold | 26–28 | steppe and dunes; stone and its cure; the Rider's ride to Cinderport; a lava flow sealing the Glass, drawn by the Wold's doc (#442, #523) |
 | Hearth Isle, the Underdeep | 28–32 | the Underdeep's look; the endings |
 | The reach: the Glass, and Glacier Foot with the Vault (DESIGN.md §9) | the cap | glass and dunes; a lava flow sealing the Glass from the Ember Waste; the Vault's new kind of map, the inside of the sky; the atlas marking reach areas beside the road, not on it (its test holds the bands rising along the road, and a reach area's would not); super dungeons of many levels; artifacts |
 
@@ -584,10 +589,20 @@ Rift generator, for the small Rifts; the danger made legible, the band said on c
 paged by chapter; the Hearth brightening with each Stone. Then Saltreach (#153), Wrackholm (#154)
 and Sunderwood (#155) in road order, each from its doc in docs/areas/.
 
-**1.3, Act III,** and **1.4, Act IV** (not filed yet): the Kilns, Cairnmoor and Rimewater; the
-Whitespine, Ashfall and the Wold. Each the same way: its systems first (§7: the next regions'
-climates and terrain, the skills that open shortcuts as the areas that have them come up), then its
-areas. 1.4 ends M2.
+**1.3, Act III, the Deep Script** (#431). First its systems (#432): the curve's rows and the gear
+steps at Anvilhall and Rime Lodge; ash, ice and pine underfoot; regeneration, curse and calls;
+Kiln-script and Linguist, the first secondary skill; Kilnhaven's ferry and ship and the drove road's
+coach; the Anvil Stone for the Hearth. Then the Kilns (#436), Cairnmoor (#437) and Rimewater (#438)
+in road order, each from its doc in docs/areas/, with the owner's calls written in (#434) and the
+areas named (#435). The act spends one story lock, the Sleepers' Bay's door (§2.3).
+
+**1.4, Act IV, Beyond the Sky** (#441). First its systems (#442): the curve's rows and the gear step
+at Cinderport; cliffs and peaks with the road through them, steppe, dunes, vines and the volcano; a
+group that talks before it fights, for the giants' toll; sweep, with fire for the drakes; stone and
+its cure; the ship to Cinderport, the Rider's ride and the last crossing; the Ember Stone for the
+Hearth and the sentries after. Then the Whitespine (#445), Ashfall (#446) and the Wold (#447), with
+their calls (#443) and names (#444); Meridian Camp and the Dead-Drop (#22) and the eight third
+prestiges whose trainers live in the act's country (#448). 1.4 ends M2.
 
 **1.5, Act V and the subplots** (M3).
 

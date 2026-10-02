@@ -774,8 +774,8 @@ The Kilns are where the machine is first met. Under the deepest mine the tunnel 
 humming corridor, and the things that live in it come up into the mines, knocking on the rock as
 they come: the dwarves call them knockers, and leave them a crust. They are small, many-legged and
 smooth, with one lamp for an eye, and every one carries the chisel's mark. The dwarves cut their
-own Anvil Stone to sell the pieces, so its Rift is here, in slag and iron, and the lava tubes run
-with fire things.
+own Anvil Stone to sell the pieces, so its Rift is here, in slag and iron, hand-built as the Sunder
+was and the last Rift on the road (#434, call 3; #465), and the lava tubes run with fire things.
 
 **New:** knockers, the first machines, and salamanders. **Back:** the Rift, in slag; the long
 bodies as the rock worm; the spider frame as the fire beetle; the Hand's overseers, walking the
@@ -901,7 +901,10 @@ eagles from the birds; the Hand as its masons.
   again.
 
 The giants' toll is a choice before the fight, put the way a business puts its menu, so it needs
-nothing new of the resolver; a company that pays walks up the Stair.
+nothing new of the resolver (#544); a company that pays walks up the Stair. The giants are `kind:
+person` and break when the king falls: they came in the ship awake, the crew that built the inside
+and were never cargo, posted to keep the Stair, which is the hull's service ramp, and the toll is
+the order they were given (#443, call 1; DESIGN.md §9). The king's words hint it and never say it.
 
 **Asks:** sweep.
 
@@ -1140,6 +1143,11 @@ To take in or leave, as STORY.md's were:
 - The drowned chanters' count and the monastery's bells, both ending on the eleven.
 - The giants' toll on the Stair.
 - Vask's signet commanding the core's machines, and the Core's fight on a clock.
+- The Tallymaster, a keeper in the Dead-Drop's last room that counts the cargo and writes the
+  Compact's orders in the dead founder's hand: the Tidefolk's god only counts because this is where
+  its fragment has been counting (#443, call 4; DESIGN.md §10.2).
+- The giants as the crew that built the inside, awake since the ship and posted to the Stair, a
+  people of the road and not of the bays (#443, call 1).
 
 Where this and DESIGN.md disagree, the design wins.
 
@@ -1154,9 +1162,16 @@ Where this and DESIGN.md disagree, the design wins.
 2. **What the giants are.** They are not among the sleepers, and every people came in the ship
    (DESIGN.md §7). Either they came awake, or they are something else. The monsters need only the
    surface; the design may want the rest.
+   *Answered (#443, call 1): they came awake. The crew that built the inside, the heavy hands who
+   raised the ranges and set the Stones, never cargo and so in no bay and no count; they stayed on
+   the mountain when the rest were put to sleep, and the Stair is the service ramp they were posted
+   to keep. §8.1 has what the monsters take of it.*
 3. **The reach's bands.** The atlas gives the Buried Tower 26–28 and the Ice Caves 20–22, where the
    reach is at the cap (DESIGN.md §9). The Ice Caves' way in lies in band-20 country, which is
    right; their monsters are the cap's.
+   *Answered (#434, call 7; #443, call 5): the reach's bands are the cap's, 30–32, for both. The
+   atlas's rows change with the reach's own atlas work in Phase 1.6; until then Rimewater's and the
+   Glasswold's docs say so, and Glacier Foot and the Glass are cut from their plans whole.*
 4. **What a fight is worth.** From Saltreach on, an area spans two levels over as much as fifteen
    zone maps of land, where Thornmark spans five levels over fewer than six. At the slice's density
    of groups a clear would pay several bands, unless each fight pays far less of a level than
