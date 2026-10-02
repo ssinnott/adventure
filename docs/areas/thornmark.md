@@ -133,7 +133,8 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   along the Wyke; the Dowrdu's ford, the keeper's empty post and, behind young thorns (the hint),
   her roofless house with a Tower Shield +1 in her strongbox; the spiders' nest in the brakes (a
   den, #88, its hoard a Rune Dagger +2); and How Did He Know's camp, whose orders Idony wants at the
-  Split Oak. Seven groups: dire wolves, the nest's two brood and its keepers, rift hounds until the
+  Split Oak. On the shingle below the camp, once Hale's sergeant has asked, the keel's groove and
+  the Compact knife where Hale's boat put out west (Hale's Sergeant, #558). Seven groups: dire wolves, the nest's two brood and its keepers, rift hounds until the
   tear is closed, brambles short of the ford and rootwalkers east of it, where the road runs on out
   of the east edge for I3 and Henlys. The gate holds at 8, at 7.9 fights to a rest.
 - **Deepthorn Lodge** (I3, `deepthorn_i3`, country, band 8–10; #215): the upper Dowrdu down the
@@ -571,9 +572,9 @@ were (docs/areas/shelf.md §6), each is built where its places are:
 | 17 | Terms From the Brigands | 9 | a brigands' camp off the Warden road; Thornhold | a choice; brigand groups that stop coming (`until`) | the built maps (#219), built |
 | 18 | The Mender | 9 | the Grove road, the Grove and the Cut Stone | a person who moves; an event that changes with a flag; an item | the built maps (#219), built |
 | 19 | The Light on Penspern | 10 | Penspern (J5), by night | people and groups by night (`when`); a choice | J5 (#218), built |
-| 20 | Hale's Sergeant | 10 | Thornhold; the Deepthorn's shore | Hale gone from the Scarth | Act II (#558, after #156 and #190) |
+| 20 | Hale's Sergeant | 10 | Thornhold; the Deepthorn's shore | Hale gone from the Scarth | Act II (#558, after #156 and #190), built |
 
-Taken: 9 to 12 and 14 to 19. The changes to #56's drafts:
+Taken: 9 to 12 and 14 to 20. The changes to #56's drafts:
 
 - **13 is held.** The Wardens' rank 1 quest (#144) kills the tower's ogre, and 13's bargain leaves it
   alive, which asks for a group that talks before it fights: the toll the giants take on their Stair
@@ -582,7 +583,9 @@ Taken: 9 to 12 and 14 to 19. The changes to #56's drafts:
   the Wardens' first task (DESIGN §8); the quest would take him off the Foreland map at level 10. It
   is Act II's: it starts at Thornhold once Hale is gone from the pass (`q_hale_taken`, which #156
   sets) and ends on the Tide Ship with his pass-token (#190). #156 built the pass and left the
-  quest to #558: it is a whole quest, and its token is known in Wrackholm's hold.
+  quest to #558: it is a whole quest, and its token is known in Wrackholm's hold. #558 built it:
+  Wystan at Thornhold's gate, the boat gone west from H3's shingle, his choice and Hale's token
+  (§9, 23 to 40).
 - **11 follows the Lanterns' Dark Marker.** #146 builds the Lanterns' rank 1 quest at the same
   marker as a look and a report (DESIGN §8). 11 stays a plain quest, given at the Chapterhouse as #56
   has it, which asks for the glass once the marker is known dark.
@@ -766,6 +769,46 @@ owner when the issues were filed on 29 September, under #208:
 21. **The names** of §10.
 22. **The epic** is Phase 1.1's, as the owner called it and #151's call 11 numbers #26: under #26 as
     #65 is, the second half of its build-out, before Act II's Phase 1.2 (#149).
+
+Hale's Sergeant (#56's 20), settled on 2 October 2026 by an agent for #558, each the owner's to
+overturn:
+
+23. **Wystan, sergeant of the Scarth,** a Foreland Warden of Hale's post, gives it. Leofwin is the
+    post's deserter (9) and Cenric is Vask's man on Penspern (19), so the name is free.
+24. **He stands by Thornhold's gate at 9,14,** a borrowed horse saddled, `after` `q_hale_taken` and
+    `until` either answer: a man about to leave, passed on the way in.
+25. **Talked down, he keeps the Split Oak's door:** a second person at 12,13 `after`
+    `q_sergeant_stays`, with no `until`, as the tavern's other people stand.
+26. **Let go, he is simply gone.** Nothing waits for him in Helmstow, which is the Foreland's file.
+27. **"Seen the strangers" is `q_hale_taken` itself.** The strangers set nothing (docs/areas/shelf.md
+    §9, 24), and the flag is what puts them at the pass. A company without it finds no sergeant.
+28. **The shore is H3's shingle below the camp, at 9,14,** the Deepthorn's edge and the shore
+    nearest Thornhold. I5's shingle keeps the youths' boat and J5's beach the Hand's landing.
+29. **The shore is one once-event, `h3_boat`, `after` `q_sergeant`:** keel and Warden boots to the
+    water, the boat gone west. Before he asks, the shingle shows nothing that would mean nothing.
+30. **The trail is the goal alone,** with no events on the way: the goal names the shingle and the
+    event is the trail's end.
+31. **The Compact knife is a look** in the event's words, not an item, so nothing has to take it.
+32. **The choice is put when the company brings the news:** his words `after` `h3_boat` seen, until
+    answered. "Don't ride." sets `q_sergeant_stays` and "Ride, then." `q_sergeant_rides`; both give
+    the token.
+33. **The token is `hale_token`, Hale's Token,** a bronze disc with the Scarth's notch and Hale's
+    mark. No shop buys it and nothing takes it, so it stays in the pack for #56's 41.
+34. **Hale names the token and leaves it.** In tide_ship3 his freeing words have a twin `after` the
+    token carried, setting `q_hale_freed` and `q_sergeant_hale`: three lines, the first two the same
+    and the last folding the bilge's pins into his knowing the disc and Wystan.
+35. **The quest is done at the answer.** Hale knowing the token is an entry written after the end,
+    not a step, so a company that frees Hale first is left with no goal it cannot finish.
+36. **Hale freed first changes nothing at Thornhold.** Wystan has not had the news, so he still
+    asks and gives the token, which then serves #56's 41 alone.
+37. **The quest is `sergeant`, Hale's Sergeant,** in Thornmark's `quests.ts`, begun by `q_sergeant`,
+    the hire his first meeting sets.
+38. **The journal has five entries, four of which a company writes:** Wystan's ask, the shore, the
+    door or the ride, and Hale knowing the token. Its goals are the shingle, then Wystan.
+39. **His words keep to the box:** the first meeting three lines, the shore two sentences, each
+    answer two lines and the door two.
+40. **The walk:** Thornmark's walkthrough sets `q_hale_taken` by hand, finds no sergeant without
+    it, plays both answers and frees Hale in the hold with the token and without it.
 
 Fitted on 29 September to Act II, filed as Phase 1.2 (#149) the night before: 7 (Sunderwood's plan
 cuts the same land), 14 (20 is #156's and #190's), 16 (#163 gives dead wood its character, so the

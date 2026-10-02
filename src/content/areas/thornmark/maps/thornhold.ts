@@ -54,6 +54,35 @@ export const THORNHOLD: MapDef = {
     ] },
     { kind: 'well', x: 7, y: 6, text: 'A spring in an oak-root basin. The water is cold and sweet.', heal: true },
     { kind: 'sign', x: 8, y: 14, text: 'Thornhold. South gate: the Warden road, the bridge, the Grove.' },
+    // Hale's Sergeant (#558): Wystan at the gate once Hale is taken from the Scarth (#156), until he
+    // is answered; the shore is on H3's shingle. Talked down, he keeps the Split Oak's door; let go,
+    // he is gone. Either answer gives Hale's token, which Hale knows in the Tide Ship's hold.
+    { kind: 'npc', x: 9, y: 14, name: 'Wystan, sergeant of the Scarth', lines: [
+      'An old Warden in grey stands by the gate with a borrowed horse saddled and the reins in his fist. He walked here; the boots say so.',
+      '"Hale\'s sergeant. I followed the riders from the post as far as this gate and lost them. Nobody here will say which way, and I\'ve not the legs to ask the forest."',
+      '"So I ride for Helmstow and say it to the Regent\'s face. Before I do, go down to the shingle below the camp, past the Grove, on the Deepthorn\'s edge. If they went to the water, the water will say."',
+    ], flag: 'q_sergeant', after: { flag: 'q_hale_taken' }, until: [{ flag: 'q_sergeant_stays' }, { flag: 'q_sergeant_rides' }], says: [
+      { after: { seen: 'deepthorn_h3:h3_boat' }, lines: [
+        'He hears it out with the reins in his hand, and at the knife his face shuts.',
+        '"Compact boat, Warden boots. Carried off west like cargo, by men who drew his pay." He puts a foot to the stirrup.',
+      ], choice: { ask: '"Well? Do I ride to Helmstow and put this to the Regent\'s face, or do I stand down?"', answers: [
+        { label: 'Don\'t ride.', sets: 'q_sergeant_stays', gives: 'hale_token', says: [
+          'He stands a long moment with the reins, then unbuckles the girth. "Aye. Two gone is no better than one, and somebody should keep a door here."',
+          'From inside his coat, a bronze disc notched at the rim for the Scarth, Hale\'s mark cut across it. "Every post captain carries one. He\'ll know it, if you find him."',
+        ] },
+        { label: 'Ride, then.', sets: 'q_sergeant_rides', gives: 'hale_token', says: [
+          'He nods once, the way a man does when told what he already knew, and takes a bronze disc from inside his coat, notched at the rim for the Scarth, Hale\'s mark cut across it.',
+          '"Every post captain carries one. He\'ll know it, if you find him. I\'ll not need it where I\'m going." He is in the saddle before the gate is fully open.',
+        ] },
+      ] } },
+      { after: { flag: 'q_sergeant' }, lines: [
+        '"The shingle below the camp. I\'ll hold the horse till you\'re back, and no longer."',
+      ] },
+    ] },
+    { kind: 'npc', x: 12, y: 13, name: 'Wystan, at the Split Oak\'s door', lines: [
+      'The old sergeant has a stool by the door and the look of a man who was given a post and means to hold it.',
+      '"A door is a pass with a roof. Somebody has to say who comes through it, and I\'ve the habit."',
+    ], after: { flag: 'q_sergeant_stays' } },
     { kind: 'npc', x: 9, y: 5, name: 'Elder Sylvane of Thornhold', lines: [
       'An elf in a robe the colour of bark, older than any human you have met. She does not rise.',
       '"The Grove Stone has been cut. Not failed: cut, by hands, with tools. My people will not go under the roots; what has come through has already taken four of them."',
