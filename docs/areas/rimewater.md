@@ -93,11 +93,11 @@ ends south, over the pass, after the two hundred she left behind.
 
 It is where the machines first look like people (MONSTERS §7.3): the keepers, tall, grey and gentle,
 whose touch puts the company to bed beside the sleepers, and whose walk the monks of the Whitespine
-have under their robes. It is Act III's one story lock, the bay's door (EXPANSION §2.3; call 4), and
-the Lanterns' fourth hall, where tier 7 is sold (DESIGN §7), their skills are taught, Linguist among
-them (#538), and their fourth rank opens (call 8). It is the act's second gear step, by 21 (#535),
-and training to 23. And it is where the reach is first seen: the glacier at M9's east edge, and a
-guide who says the sky came down to the ice and there are stairs in it (#56's 43).
+have under their robes. It is Act III's one story lock, the bay's door (EXPANSION §2.3; call 4), the
+Lanterns' fourth hall, where tier 7 is sold (DESIGN §7), their skills are taught, Linguist among
+them (#538), and their fourth rank opens (call 8), the act's second gear step by 21 (#535) and
+training to 23. And it is where the reach is first seen: the glacier at M9's east edge, and a guide
+who says the sky came down to the ice and there are stairs in it (#56's 43).
 
 The weather is the lochs': cold and still, snow lying, ice from autumn, clear nights.
 
@@ -138,10 +138,9 @@ behind 5,958, 4,870 walkable.
 
 **One box holds land of two zones.** L9 is Loch Fada's for 607 squares and Loch Fuar's for 361,
 the line running down the ridge. A map is its whole box (EXPANSION §8.2), so it is built to its
-edges; it is proposed laid in Loch Fada (§9), so Loch Fuar begins at K9 and K10 and the crossing
-line (#166) falls at L9's west edge. N9, M10 and the rest hold slivers of Glacier Foot (61, 52, 106
-and 255 squares) and are built whole as Loch Fada's when they are unparked, the glacier's edge drawn
-closed in them as M9 draws it (§4.2).
+edges and proposed laid in Loch Fada (§9): Loch Fuar begins at K9 and K10, and the crossing line
+(#166) falls at L9's west edge. The boxes behind that hold slivers of Glacier Foot are built whole
+as Loch Fada's, the glacier's edge drawn closed in them as M9 draws it (§4.2).
 
 **The order** is the drove road's, and the quest's: M9, the only box that meets Cairnmoor's N8, and
 Rime Lodge, where the nights are stood; L9, the shore and the ridge; K9 and the bay; K10 and the
@@ -197,12 +196,10 @@ what is new, with points of interest and a first share of the pay.
   - the gate, and the coach yard, where the coachman sells the run to Kilnhaven (#539);
   - a milestone where the road comes off the fells: RIME LODGE 1, THE PASS 9;
   - the ice-hole, and the fire kept beside it by a lodge-keeper who is a Lantern (call 5);
-  - the foot of the hole, a shelf of ice under the lip, where the one who went back down sits
-    (#56's 41, §6);
-  - the guide at the glacier's edge, frostbitten, and the cairn she builds there (#56's 43, §6);
+  - the foot of the hole, a shelf of ice under the lip, where the one who went back down sits (§6);
+  - the guide at the glacier's edge, frostbitten, and the cairn she builds there (§6);
   - a shrine of the Lanterns' by the gate (#45), a cairn on the fells' foot (#45), a camp on the
-    shore for a company that will not pay the inn (#45);
-  - a lookout on the hills over the loch, west down its length.
+    shore (#45); a lookout on the hills over the loch, west down its length.
 - **Encounters.** Ice pike under the loch's ice, a group placed on ice (#536) between the wall and
   the hole, which strike a company on the ice at one square (MONSTERS §7.3); snow lynx in the pines
   under the fells, the nearest and gentlest; an ice bear at the glacier's edge, the box's hardest
@@ -218,8 +215,6 @@ what is new, with points of interest and a first share of the pay.
 - **Lines:**
   - the hole: *A ring of black water in the ice, and a fire kept beside it. Somebody is coming up.*
   - the glacier: *The ice comes down from the rim in a wall. Snow lies on every face of it but one.*
-  - the crossing: *Snow lying, and the cold has a stillness to it. Lochs ahead, frozen to the far
-    shore.*
 - **New here.** Ice and lying snow underfoot (#536); a group placed on ice; a call (#537); the cats,
   a new family (#495); the reach seen.
 - **Finds.** A piece of the furrier's step with a plus in the hollow, #535's to name.
@@ -242,14 +237,12 @@ what is new, with points of interest and a first share of the pay.
   42, whose people are under Loch Fuar; the guide of 43, before she goes out to the glacier.
 - **The nights.** Four flags, `night_1` to `night_4`, a flag a night, each set by a rest at the inn
   once the one before is set (call 5). Each night's arrivals are a once-event in the yard keyed on
-  its flag: the first a man alone, the second three, the third a family; the fourth the tallyman
-  and the knockers out onto M9's ice, and Wenna the last one out after them, which sets
-  `q_wenna_up`, the lock's flag (§5). A company that rests nowhere else stands the four nights in
-  four rests; one that comes and goes stands them as it comes.
+  its flag: a man alone, then three, then a family; on the fourth the tallyman and the knockers out
+  onto M9's ice, and Wenna the last one out after them, which sets `q_wenna_up`, the lock's flag
+  (§5). A company that rests nowhere else stands the four nights in four rests.
 - **Quests.** The chapter's (§5); The Coach That Did Not Come, The Bell Under the Ice and Where the
-  Sky Meets the Ice begin here (§6); the Lanterns' quests to a member (§6).
-- **The coach** from the yard to Kilnhaven's (call 9, #539): a fare, never a favour, the way the
-  act stays a road while Cairnmoor's country behind is void.
+  Sky Meets the Ice begin here (§6); the Lanterns' quests to a member (§6). The coach from the yard
+  to Kilnhaven's (call 9, #539) is a fare, never a favour.
 - **Lines:**
   - the gate: *Rime Lodge: log walls on the shore, smoke, and a fire kept out on the ice. The
     keepers carry lanterns.*
@@ -269,8 +262,7 @@ what is new, with points of interest and a first share of the pay.
   and down to Loch Fuar's foot in K10; the loch's ice along the north rows (45 shallow); the
   ridge's crest with the lookout west over the cold loch; a drovers' shieling under the snow.
 - **Points of interest,** about five features and five groups:
-  - a milestone on the ridge: RIME LODGE 4, THE PASS 5;
-  - the lookout on the ridge, both lochs seen;
+  - a milestone on the ridge: RIME LODGE 4, THE PASS 5; the lookout on the crest, both lochs seen;
   - a camp in the pines (#45), a shrine (#45), a cairn on the crest (#45);
   - a drover wintering at the shieling with a rumour of the bell heard through the ice (#56's 42).
 - **Encounters.** Snow lynx in the pines, two groups, leaping at the back row (MONSTERS §7.3); ice
@@ -305,9 +297,8 @@ what is new, with points of interest and a first share of the pay.
   - the door, and the crack in the ice down to it: the step (§5);
   - the bell tower's cap, and the bell under it (#56's 42, §6);
   - the woman of 42's house-place on the old shore, a hearth-stone in the snow;
-  - a camp on the shore (#45), a cairn on the old bank (#45), a shrine (#45);
-  - a lookout on the hills east over the ice;
-  - the smith's hearth-hole, the secret.
+  - a camp on the shore (#45), a cairn on the old bank (#45), a shrine (#45); a lookout on the
+    hills east over the ice.
 - **Encounters.** Ice pike under the ice, two groups on ice (#536), one over the tower by night
   (`when`), which 42 walks over; snow lynx in the shore's pines; ice bears on the far shore, the
   box's hardest, proposed (§7).
@@ -319,8 +310,6 @@ what is new, with points of interest and a first share of the pay.
 - **Lines:**
   - the door, the step: *A wall of grey under the ice, with a door in it: no handle, no seam, and
     no frost on it anywhere.*
-  - the tower: *A bell tower's cap out of the ice, a square of it. The rest of the village is
-    under your feet.*
   - the strip: *Black ice, and one strip of it clear to the bottom. Stones under it, laid too
     square, going to the bank.*
 - **New here.** The story lock (call 4); a dungeon entered from the ice; a door that is a wall
@@ -345,18 +334,15 @@ what is new, with points of interest and a first share of the pay.
 - **Points of interest,** about seven features and eight groups a level, as the Foreland's dungeons
   are held: the door's inside, the voice's wall, the first bed, the rows, the back door, the locker.
 - **Encounters.** Knockers on the stair, the tallyman's that did not come up (two groups, proposed,
-  §7); a keeper alone at the stair's foot, the first, gentle (MONSTERS §7.3); the bay, three keepers
-  among the beds, whose touch puts to sleep (0.3), who mend each other, and to whom anyone asleep is
-  a sleeper (MONSTERS §7.3's second fight); the Matron, boss, level 22, in the last row, which has
-  tended them for four hundred years. Machines: lightning bites, sleep and the Hearth's light do
-  nothing, and they never run (MONSTERS §2).
+  §7); a keeper alone at the stair's foot, the first, gentle; the bay, three keepers among the beds,
+  whose touch puts to sleep (0.3), who mend each other, and to whom anyone asleep is a sleeper
+  (MONSTERS §7.3's second fight); the Matron, boss, level 22, in the last row. Machines: lightning
+  bites, sleep and the Hearth's light do nothing, and they never run (MONSTERS §2).
 - **Quests.** The chapter's entry: the sleepers (§5).
 - **The secret and its hint.** A locker behind the last row where the keepers put what the sleepers
   came with, four hundred years of pockets. The hint: the floor is worn to a path between the beds
   by the keepers' feet, and the path runs on past the last row to a wall.
 - **Lines:**
-  - the door's inside: *Scratched on the inside at a girl's shoulder, with a nail: THE BLOOD OPENS
-    THE DOOR.*
   - the beds, the step: *Rows of long glass beds, frosted over. Wipe one, and there is a face in it
     you have seen before.*
   - the path: *The floor is worn between the beds in a path. It runs on past the last row to the
@@ -379,12 +365,9 @@ what is new, with points of interest and a first share of the pay.
   below the mouth; a Lantern's wayside lamp, dark, by the road; the pass's walls rising.
 - **Points of interest,** about nine features and eight groups:
   - the pass's mouth, and the event at it: the step (§5);
-  - the pilgrims from Anvilhall in the snow, one dying, and the brother who comes down (#56's 44,
-    §6);
-  - a milestone: RIME LODGE 9, MONKS' VALE 6;
-  - the wayside lamp, dark, its jar full;
-  - a camp (#45), a cairn (#45), a shrine (#45);
-  - a lookout on the pass's first shoulder, back over the loch.
+  - the pilgrims from Anvilhall in the snow, one dying, and the brother who comes down (§6);
+  - a milestone: RIME LODGE 9, MONKS' VALE 6; the wayside lamp, dark, its jar full;
+  - a camp (#45), a cairn (#45), a shrine (#45); a lookout on the pass's first shoulder.
 - **Encounters.** Snow lynx in the pines, three groups, the band's own; ice pike under the shore's
   ice, on ice (#536); the box's group at the band's top is the roster's question (§7).
 - **Quests.** The step. The Pilgrims in the Pass (§6).
@@ -442,11 +425,10 @@ holds:
 **The lock** (EXPANSION §2.3; call 4). The door is Act III's one story lock: it opens for a company
 that has met Wenna, `q_wenna_up`, set when she comes up on the fourth night, and for no one before.
 It is declared in `content/locks.ts` with its square on K9 and its reason, and here: the bay is the
-act's revelation, and the door that knows a hand of the line is what the act has been about since
+act's revelation, and a door that knows a hand of the line is what the act has been about since
 the Deep Mines' CREW ONLY. Before the flag it is a door in plain sight with its reason on it, never
-"not yet", and nothing else in the area waits on the quest: the pass is open, the lodge sells and
-teaches to anyone, and a company that takes the pass before the bay reads the journal true in that
-order.
+"not yet". Nothing else in the area waits on the quest: the pass is open, the lodge sells and
+teaches to anyone, and a company that takes the pass first reads the journal true in that order.
 
 The walkthrough plays it at 20, 21 and 22, standing the nights at the inn, and once with the pass
 taken before the bay.
@@ -624,9 +606,9 @@ Rimewater's together.
   which the story leans on (DESIGN §7, §9); Glacier Foot and the Ice Caves, the reach's, to be named
   in Phase 1.6 with the reach; the Sleepers' Bay, the docs' plain name for a plain thing, as the
   Drowned Temples are, since nothing on the surface names it and no site paints it: the secret is
-  found; the Rimefells and the high pass, the plan's, names on borders Rimewater shares with
-  Cairnmoor and the Whitespine. The old names stand in brackets at each first mention above, and
-  the epic's titles keep them until they are edited (NAMES §3).
+  found; the Rimefells and the high pass, the plan's, names on borders Rimewater shares. The old
+  names stand in brackets at first mention above, and the epic's titles keep them until they are
+  edited (NAMES §3).
 - **Ids stay:** `longmere` and `coldmere`, as `harrow` is Helmstow (NAMES §3). The town, the bay and
   the caves are named as they are planned.
 

@@ -78,8 +78,8 @@ is Scaldwell's (the Hot Springs, §10) at 240,300.
 The second half of Act IV (DESIGN §9): *what is Caldera?* The Whitespine found the machine in a
 monk's robe and the Hand's road over the water; Ashfall is where the company is told the answer
 and shown it. The Riders' eldest tells the oldest story on this side of the sea at Cinderport's
-trading ground: a door opened in the sky, something rose toward it on a pillar of fire and fell,
-and the land where it fell burned to glass. The Ember Stone was never finished, so the far side was
+trading ground: a door opened in the sky, and the land where what rose toward it fell burned to
+glass. The Ember Stone was never finished, so the far side was
 never sealed: there are no Rifts and the machine is near the surface, the vents are the Underdeep's
 exhaust and the stokers that tend them walk out on the ash (MONSTERS §2.1, §8.2). The parts the
 Stone lacks are only below, down the vents, where Meridian Camp's old man says "You took your time"
@@ -104,10 +104,10 @@ and the last crossing. The area cannot be listed in AREAS until #510 gives it a 
 the area's `atlas` at the folder and takes the import out.
 
 The systems it waits on are #442's: the curve's rows and the act's gear step (#542), the volcano,
-lava fields and vines underfoot (#543), the giants' toll (#544), sweep with fire (#545), stone
-(#546), the ship to Cinderport, the Riders' ride and the last crossing (#547), the Ember Stone for
-the Hearth and the sentries after (#548) and the bot grown to the band (#549). Its monsters are drawn
-in #520 and its rooms in #521. Meridian Camp is #22, parked until #443 unparks it.
+lava fields and vines underfoot (#543), sweep with fire (#545), the ship to Cinderport, the Riders'
+ride and the last crossing (#547), the Ember Stone for the Hearth and the sentries after (#548) and
+the bot grown to the band (#549); the giants' toll (#544) and stone (#546) are its neighbours'. Its
+monsters are drawn in #520 and its rooms in #521. Meridian Camp is #22, parked until #443 unparks it.
 
 ## 4. What is still to build
 
@@ -162,9 +162,7 @@ The places, as the atlas and the docs have them:
 | Grimsforge (Warlord's Forge) | G11 | the Barbarian's third prestige, by the vents' mouth (DESIGN §5, #448) | a forge at 230,330 |
 | Old Cinder | F11, and below | the town the mountain buried, its people cast in ash (MONSTERS §8.2); the Paladin's third (DESIGN §5); the founding stone (#56's 50); the Old Drake | a planned dungeon at 190,324, its way in at 190,318 |
 | The Ember Stone | F11, and below | never finished; the company completes it with parts from below and the Underdeep notices (DESIGN §9); the Druid's third (DESIGN §5); the Sentinel (MONSTERS §8.2) | a planned dungeon at 176,348, its way in at 176,342 |
-| The Ember Waste | F11, F10, E10 | the field of cinders round the Stone (STORY) | ash and rock, the zone |
-| The Cinder Hills | E10 | the ridge between Ashfall and the Glasswold | hills, x about 146 to 152 |
-| The Ember Sound | north of H10 and G10 | the sea the ship crosses | water |
+| The Cinder Hills | E10 | the ridge between Ashfall and the Glasswold, the Wold's road over it | hills, x about 146 to 152 |
 
 ### 4.1 The briefs
 
@@ -181,9 +179,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   their own under #22.
 - **Side quests** are #56's 49, 50 and 52, placed as §6 has them (#519).
 - **Finds** are the ladder's next step (#542): the act's gear at Cinderport's armourer by 25, the
-  same with a plus in the boxes and the dungeons by 26, and the sentries' parts after the Stone.
-  No find or ware is dearer than the band's window, 5,500.
-- **Lines** are drafts for the builder, two lines of the log each (DESIGN §11).
+  same with a plus in the boxes and the dungeons by 26. No find or ware is dearer than the band's
+  window, 5,500. **Lines** are drafts for the builder, two lines of the log each (DESIGN §11).
 
 ### 4.2 H10, the Stair's foot (#510): core, band 24
 
@@ -210,11 +207,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **The secret and its hint.** A cleft in the Sheer's foot south of the Stair, behind the steam,
   where what the giants let fall from the Stair comes to rest: coin of every age of the road and a
   Plate Mail +2. The hint: the ash along the cliff's foot is trodden to a path that ends at the rock.
-- **Lines:**
-  - the foot, the step: *The last flight ends in black sand. Behind, the Sheer goes up out of
-    sight; ahead, a mountain smokes over everything.*
-  - the path: *A path trodden in the ash along the cliff's foot. It ends at the rock and goes
-    nowhere.*
+- **Lines:** the foot, the step: *The last flight ends in black sand. Behind, the Sheer goes up out
+  of sight; ahead, a mountain smokes over everything.*
 - **New here.** Ash and vines underfoot (#543); the far side's weather; a company told it is early.
 - **Finds.** The Plate Mail +2 in the cleft.
 - **Pay.** About 1,700 xp a member.
@@ -271,11 +265,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   halved for a member of the Compact as Kitto's boat is (docs/areas/saltreach.md §4.9); the last
   crossing to Hearth Isle from the same steps, Act V's, open to anyone with the fare (EXPANSION
   §2.2). The Riders' ride west to the Wold leaves from the trading ground (#547, §9).
-- **Lines:**
-  - the gate: *Cinderport: a wall of black stone and a gate, and the smell of the sea under the
-    smell of the mountain.*
-  - the quay: *The Compact's ship rides at the quay with Kilnhaven's mark on her. Beyond the Sound,
-    a column of light.*
+- **Lines:** the quay: *The Compact's ship rides at the quay with Kilnhaven's mark on her. Beyond
+  the Sound, a column of light.*
 - **New here.** A guild hall with a map of the far side; a trainer to 27; the last crossing seen.
 - **Pay.** About 600 xp a member in the halls' quests.
 
@@ -306,10 +297,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   comes out behind the stokers' furnace room (#22), with his finds in it: grey parts, and a Great
   Axe +2. The hint: a vine rope knotted to a rock where no vine grows, and the smith's word that the
   man went down beside the forge.
-- **Lines:**
-  - the vents, the step: *Three mouths of iron in the ash, each as wide as a door, breathing heat.
-    The tracks in the ash go in and come out.*
-  - the rope: *A rope of vine knotted to a rock. The nearest vine is a day's walk.*
+- **Lines:** the vents, the step: *Three mouths of iron in the ash, each as wide as a door,
+  breathing heat. The tracks in the ash go in and come out.*
 - **New here.** The volcano and lava underfoot (#543); the heavy machines and the drakes, two new
   families (#520); the sweep with fire (#545).
 - **Finds.** The Great Axe +2 in the hole; a Warhammer +1 at the forge, the ladder's (#542).
@@ -344,11 +333,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
   left their tools four hundred years ago, one of them the mate of the Cut Stone's chisel, and a
   Chain Mail +2 with them. The hint: the rock's face is scored in straight lines, the way the Grove
   Stone's cut was.
-- **Lines:**
-  - the Stone, the step: *On a field of cinders, a Stone half-built. The scaffold round it is iron
-    and has not rusted.*
-  - the scored rock: *The rock is scored in straight lines, each as clean as the cut at the Grove.
-    Nothing cuts rock like that.*
+- **Lines:** the Stone, the step: *On a field of cinders, a Stone half-built. The scaffold round it
+  is iron and has not rusted.*
 - **New here.** `after` on a whole area (#548); a Stone's field without a Stone's light.
 - **Finds.** The Chain Mail +2 in the hollow; a part, carried by the first sentry (§5).
 - **Pay.** About 1,800 xp a member, and the sentries' after.
@@ -373,11 +359,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **The secret and its hint.** A side cellar behind a fallen stair in the undercroft, the
   lamp-keeper's own: his Holy Symbol of the Hearth and a Plate Mail +2. The hint: the lamp's oil
   channel runs under the wall where no room is.
-- **Lines:**
-  - the street: *A street under the crater's rim, roofs and doorways out of the ash. In the doorways
-    the people stand as they stood.*
-  - the lamp: *A lamp at the bottom of the walk, dark, its oil long gone. Beside it on the floor,
-    something grey that was carried this far and no further.*
+- **Lines:** the street: *A street under the crater's rim, roofs and doorways out of the ash. In
+  the doorways the people stand as they stood.*
 - **New here.** The dead cast in ash; a boss that sleeps; a town under a dungeon's roof.
 - **Finds.** The part; the founding stone, a quest item (§6); the Holy Symbol of the Hearth, named;
   the Plate Mail +2; a Flamberge +1 at the square, the ladder's (#542).
@@ -433,9 +416,8 @@ half, with the wilderness features (#45); no more than one point in four is a si
 - **Quests.** None. The Druid's quest is kept here (#448).
 - **The secret and its hint.** E10: a cairn in the Hills that is a grave, the first Rider who came
   down to trade, with her saddle's silver and a Horn Bow +2. The hint: the Hills' cairns all face
-  the steppe but one. F10: a hollow under the vines' edge where the Wold's road once ran nearer the
-  shore, a milestone of the old road in it, face down. The hint: the ash dips in a line across the
-  box that the road does not follow.
+  the steppe but one. F10 has none of its own: the country's floor asks for one secret between the
+  two boxes.
 - **Lines:** the cairn: *The Hills' cairns all look west to the steppe. This one looks back at the
   Stone.*
 - **New here.** Act IV's third area seen: the Wold's road.
@@ -480,9 +462,9 @@ in the journal's voice, keyed to flags, events and maps the save holds:
 - **Old Cinder.** Down through the buried town to the undercroft's bottom, and the second part
   beside the dark lamp (§4.7).
 - **The corridors.** Iron corridors hot enough to blister, and at their end the third part (#22's
-  second level). Below them a camp, and an old man who says *You took your time*: the entry is
-  written if the company goes on down to the window, and never asked for. What it sees there is in
-  the entry and nowhere else, as the hand feels the wall at the Sunder's floor (DESIGN §7).
+  second level). Below them a camp, and an old man who says *You took your time*: the window's
+  entry is written if the company goes on down to it, and never asked for; what it sees there is in
+  the entry and nowhere else (DESIGN §7).
 - **The Stone lit.** The parts carried up and set, a hand-in of three items that takes each at the
   first meeting (EXPANSION §2.3). The Stone lights; every door below opens at once; the Sentinel
   comes up. The Hearth burns steadier than in all our lives (#548). From then on sentries walk the
@@ -513,12 +495,11 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 800 be
 
 - **49.** The bathhouse keeper, a Rider, says the springs went cold the day the Anvil Stone was cut
   and warm when it was restored, and that things come up in the water: a grey part, a bead of
-  glass, a bone. At the source a stoker shovels. Break it and the springs go cold for good, and the
-  pools' event says so; leave it and take what comes up, a find a day.
+  glass, a bone. At the source a stoker shovels. Break it and the springs go cold for good; leave it
+  and take what comes up.
 - **50.** A Cinderport potter wants the town's founding stone brought out from under the ash; it
   says the town was founded by the first who came down from the mountain. Bring it out and
-  Cinderport raises a shrine on the trading ground and the Riders object; leave it and the potter
-  keeps asking.
+  Cinderport raises a shrine on the trading ground and the Riders object; or leave it.
 - **52.** A Cinderport smith bought a smooth grey shovel-head from a vent-scavenger, and it does not
   blunt, like the Underdeep chisel. The thane's agent and the Wardens want it. Sell, or keep it
   hafted as a weapon that never dulls, and find the scavenger who found the way down beside
@@ -531,11 +512,10 @@ Two halls open here (DESIGN §8; #443, call 7), on the rules and the hall menu b
 - **The Cartographers' Guild's second hall** at Cinderport (#512): its map of the far side and the
   Meridian journals' shelf, with a gap for the fourth; the Guild's line ends at Meridian Camp (DESIGN
   §10.3), and #56's 51 is its guildsman's. The quests it offers a Surveyor and a Mapmaker are on
-  Ashfall's boxes, settled in #512 with the owner; Geographer, the top rank, has none
-  (docs/areas/saltreach.md §6).
+  Ashfall's boxes, settled in #512 with the owner.
 - **The Compact's factor's house** at Cinderport (#512): the Compact's ship lands here (#547), the
   fare halved for a member; #56's 54's runner is theirs. What the factor's hide in G10's vines
-  holds (§4.3) is seen and never said, as the pole's notches were on C4.
+  holds (§4.3) is seen and never said.
 
 ### The third prestiges' quests
 
@@ -553,16 +533,14 @@ The Ranger's is the Wold's to place and #22's to end; it is here because its roa
 
 ## 7. Encounters, and what is new
 
-MONSTERS §8.2 has the roster and the fights: the Strangler Vine (controller 24, the old wood's
-frame, which never roams and holds, paralysis 0.3), the Cinder Beetle (armoured 24, the spider's
-frame), the Ember Salamander (skirmisher 24), the Ash Husk (soldier 25, the skeleton's frame, a man
-of ash still holding his cup), the Stoker (brute 25, heavy machines, new; fire does not touch it),
-the Cinder Drake (brute 25, drakes, new; flies, and its breath burns a row), the Sentry (elite 26,
-all of Ashfall once the Stone is lit, `after`), the Old Drake (boss 26, Old Cinder's crater) and the
-Sentinel (boss 26, the Ember Stone the moment it lights); the vents, two stokers with ember
-salamanders, where fire is useless and lightning the answer; after the Stone, sentries on the road
-back to Cinderport. Their drawings are #520's, nine. §4.2 to §4.9 place every group, box by box,
-the gentlest at the Stair's foot and the Sentinel at the top of the band.
+MONSTERS §8.2 has the roster and the fights: the Strangler Vine (24, which never roams and holds),
+the Cinder Beetle (24), the Ember Salamander (24), the Ash Husk (25), the Stoker (25, which fire
+does not touch), the Cinder Drake (25, which flies and burns a row), the Sentry (26, all of Ashfall
+once the Stone is lit, `after`), the Old Drake (boss 26) and the Sentinel (boss 26, the moment the
+Stone lights); the vents, two stokers with ember salamanders, where fire is useless and lightning
+the answer; after the Stone, sentries on the road back to Cinderport. Their drawings are #520's,
+nine. §4.2 to §4.9 place every group, box by box, the gentlest at the Stair's foot and the Sentinel
+at the top of the band.
 
 Proposed, against the roster's Where column: the Cinder Drake over Cindercoast's shore (H10, G10)
 and on the Hills (E10), where MONSTERS §8.2 has it on Fire Mountain's slopes only, and the Ember
@@ -590,10 +568,10 @@ spider frame as the cinder beetle, the skeleton frame as the ash husk.
   upper levels', which the chapter walks for two of the Stone's three parts and which #22 budgets
   as its own; with them a clear comes to the curve and a little over, as Saltreach's and
   Sunderwood's do, for the curve to settle (#542) and the gate to check (#38). The country behind
-  adds about 3,150 when it is built, outside the budget. From here a kill pays by level (#159), so
-  a company that arrives at 24 earns the shares as written and one that comes by ship at 26 earns
-  less; the curve's row reports what a clear falls short of as owed to #446 until the boxes exist.
-  Each box is priced by its fights when it is built and recorded here, and the sum restated.
+  adds about 3,150 when it is built, outside the budget. A kill pays by level (#159), so a company
+  that comes by ship at 26 earns less than the shares say; the curve's row reports what a clear
+  falls short of as owed to #446 until the boxes exist, and each box is priced by its fights when
+  it is built and recorded here.
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts,

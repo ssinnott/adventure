@@ -21,8 +21,9 @@ Nothing is built. Its content will be `src/content/areas/glasswold/` (maps, mons
 climate, its part of the world map in `atlas.ts`, its chapter of the one quest, The Warning, in
 `chapter.ts` and its side quests in `quests.ts`); it has no town and no businesses, so no rooms.
 Its ids: the area `glasswold`, its zones `wold` and `theglass`, the plan's; the Buried Tower
-`buried_tower`, the plan's, left to the reach. Akordu's and Kushtash's ids are their boxes' to set
-(#526, #529); the Eyrie's site keeps its name in the issues until #444 renames it.
+`buried_tower`, the plan's, left to the reach. Akordu's (the Wold Riders' camp) and Kushtash's (the
+Eyrie) ids are their boxes' to set (#526, #529); the Eyrie's site keeps its name in the issues until
+#444 renames it.
 
 ---
 
@@ -248,9 +249,8 @@ settled in its issue, and what Ashfall teaches changes them.
   trader sells the band's consumables and leather and a Rider rides a company to Cinderport and
   back (call 5). The camp sells and teaches nothing else (call 7).
 - **Landmarks.** The white tents in a ring, the horses' lines, the fires; the mesa above with the
-  Riders' watch-fire on its top; the garden of glass at the camp's east edge, the glassed dead
-  standing where they were set, facing the Glass; the wells; the horse that came back, tethered
-  apart with a glass walker in its saddle, sitting still.
+  Riders' watch-fire on its top; the garden of glass at the camp's east edge, its figures facing
+  the Glass; the wells; the horse that came back, tethered apart with a walker in its saddle.
 - **Points of interest,** about nine features and six groups:
   - the eldest at her fire, the step (§5), and the Lion's Share's other voice (§6);
   - the trader's tent, a shop for consumables and leather at list price (call 5, call 7);
@@ -335,8 +335,8 @@ settled in its issue, and what Ashfall teaches changes them.
   the bird's rock, the far-west mesa where the scout who guided the Meridian Company keeps her
   lookout, the Ranger's third prestige (DESIGN §5, #448). The band's top on the Wold.
 - **Landmarks.** Kushtash at about 46,242, the tallest mesa of the Wold, its top out of sight; the
-  second mesa east of it; the lion's kill-ground between them, bones and vultures; the rim's
-  mountain as the box's west edge; the Riders' hunting camp.
+  second mesa east of it; the lion's kill-ground between them; the rim as the box's west edge; the
+  Riders' hunting camp.
 - **Points of interest,** about nine features and eight groups:
   - the Grey Lion's ground, the boss;
   - the Riders' hunting camp, the young Rider and the eldest's word (#56's 53, §6);
@@ -363,17 +363,15 @@ settled in its issue, and what Ashfall teaches changes them.
 - **Purpose.** Where the Wold ends: dunes to the rim's foot, the gap at the mesas and dunes where
   the Glass is entered, the Riders' watch on it, and the glass walkers walking out. The chapter's
   last step on the Wold, and the reach's one door, seen and not opened.
-- **Landmarks.** The dunes, the box's half, shifting with the wind; the rim's mountain down the
-  west; the gap at the box's south-east seam with C9, where the dunes give way to glass, the
-  Riders' watch-yurt and its fire on the last grass; the Glass beyond, the glare, the Tower's crown
-  at 84,280 standing out of it; a glass walker's tracks across the sand, one set, going out.
+- **Landmarks.** The dunes, the box's half, shifting with the wind; the rim down the west; the gap
+  at the box's south-east seam with C9, where the dunes give way to glass, the Riders' watch-yurt
+  on the last grass; the Glass beyond, the glare, the Tower's crown at 84,280 standing out of it; a
+  glass walker's tracks across the sand, one set, going out.
 - **Points of interest,** about five features and five groups:
   - the Riders' watch, three Riders who keep the gap and say what it keeps, the step (§5); the
     crossing line into the Glass is theirs to say (#166), the cap's band and the reach's word;
   - a cairn at the dunes' head, a camp on the last grass (#45);
-  - the walker's tracks, an event that ends at the glass;
-  - the glass's edge, where sand becomes glass underfoot, the one square of the Glass's ground the
-    Wold's map holds.
+  - the walker's tracks, an event that ends at the glass's edge, where sand becomes glass underfoot.
 - **Encounters.** Glass scorpions in the dunes (two groups); vultures; a glass walker alone at the
   dunes' middle; two glass walkers at the gap, the hardest, and the only group a company need not
   fight to see the Glass.
@@ -391,8 +389,7 @@ settled in its issue, and what Ashfall teaches changes them.
 
 - **Purpose.** The hills north of the road down to the coast, and the shore: the Wold's back,
   built once the owner has played the act (call 9).
-- **Landmarks.** The hills' north face over the sea; the shore, and Wrackholm's cliffs across the
-  water on a clear day; the Riders' summer pasture.
+- **Landmarks.** The hills' north face over the sea; the shore; the Riders' summer pasture.
 - **Encounters.** Prides, vultures, a basilisk in the hills; nothing of the Glass.
 - **Pay.** About 800 xp a member for E9 and 400 for E8, a first guess outside §8's sum.
 
@@ -473,18 +470,15 @@ between.
 
 ## 7. Encounters, and what is new
 
-MONSTERS §8.3 has the roster and the fight: the Vulture (fodder, 26, from the birds; it flies, and
-lands when something is about to die), the Wold Lion (skirmisher, 26, the cats' frame; prides of
-three or four, tawny as the grass and seen only when it moves), the Glass Scorpion (controller, 26,
-the spider frame; its sting is glass and so is its shell, poison 0.35), the Basilisk (controller,
-27, the salamanders' frame; it turns a member to glass, stone 0.15), the Glass Walker (elite, 27,
-the glass walkers, new; a machine older than the rest, walking out of the Glass) and the Grey Lion
-(boss, 28, the cats; old, scarred and king of all of this). The fight is the mesa: a basilisk behind
-a pride, the lions holding the front row while the basilisk glasses whoever looks up. Their drawings
-are #533's, six: four on frames that exist and the walker and the Grey Lion their own. §4.2 to §4.8
-place every group, box by box, the vultures at the hills' foot and the walkers in their pair at the
-gap. The Wold spends MONSTERS §3.3's stone (#546); the sweep (#545) and the toll (#544) are the
-Whitespine's and Ashfall's, spent before it.
+MONSTERS §8.3 has the roster and the fight: the Vulture (fodder, 26, the birds), the Wold Lion
+(skirmisher, 26, the cats; prides of three or four), the Glass Scorpion (controller, 26, the spider
+frame; poison 0.35), the Basilisk (controller, 27, the salamanders; stone 0.15), the Glass Walker
+(elite, 27, the glass walkers, new; a machine older than the rest) and the Grey Lion (boss, 28, the
+cats); the mesa, a basilisk behind a pride, the lions holding the front row while the basilisk
+glasses whoever looks up. Their drawings are #533's, six: four on frames that exist, the walker and
+the Grey Lion their own. §4.2 to §4.8 place every group, box by box, the vultures at the hills'
+foot and the walkers in their pair at the gap. The Wold spends MONSTERS §3.3's stone (#546); the
+sweep (#545) and the toll (#544) are the Whitespine's and Ashfall's, spent before it.
 
 New in the Glasswold, for the novelty check (EXPANSION §5.4): the glass walkers, a new family (D9
 claims it, placing one first); steppe and dunes underfoot (#543); stone and its cure (#546); a camp
@@ -503,17 +497,16 @@ cliff from its top.
   box built so far has come over its share: a fight inside the gate's aim costs what it costs
   whatever its monsters (docs/areas/saltreach.md §8, about 300 a member at 11, and several times
   that at 26), and the briefs' groups, about forty across the seven boxes with the boss, are priced
-  by their fights when each box is built and recorded here as built. If the first box built says
-  the shares cannot reach 21,067 inside the gate's fights to a rest, the curve's row is #542's to
-  weigh. A kill pays by level (#159), so a company that arrives at 26 earns the shares as written
-  and one that arrives at 28 earns less; the curve's row reports what a clear falls short of as
-  owed to #447 until the boxes exist.
+  by their fights when each box is built and recorded here as built. If the first box says the
+  shares cannot reach 21,067 inside the gate's fights to a rest, the curve's row is #542's to weigh.
+  A kill pays by level (#159), so a company that arrives at 26 earns the shares as written and one
+  at 28 earns less; the curve's row reports what a clear falls short of as owed to #447 until the
+  boxes exist.
 - **Gold.** Training six members from 26 to 28 costs about 12,720 with today's `trainPrice`, and
   nothing on the Wold trains: Cinderport teaches to 27, a Rider's ride away (call 5, #547), and 28
   is Hearth Isle's to teach or the owner's to place. A clear should pay for the training at least,
   in the hoards, the drops and the quests' pay, and the ride's fare on top; the band's price window
-  is 6,000, and no find or ware comes within 400 of it (docs/areas/saltreach.md §9, #399's 4). The
-  Wold adds no rung to the ladder (#542), so its gold is spent at Cinderport.
+  is 6,000, and no find or ware comes within 400 of it (docs/areas/saltreach.md §9, #399's 4).
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 26 wins nine in ten of E10's fights and walks the
   road over the hills resting at its camp; one at 24 wins no more than one in four. The Grey Lion is
@@ -527,9 +520,9 @@ cliff from its top.
 Decided by the owner's delegate on 2 October 2026 (#443), and followed here:
 
 1. **The lava flow is drawn** (call 5): a `lava` ridge, width 2, from the road's south side at
-   about 160,318 south-west through 150,332, 140,348 and 134,362 to the rim at 130,376, in the
-   plan's ridges. The Glass is a dead end with a single way in, the gap at the mesas and dunes (B9
-   and C9), and EXPANSION §5.8's reach check passes.
+   about 160,318 south-west through 150,332, 140,348 and 134,362 to the rim at 130,376. The Glass
+   is a dead end with a single way in, the gap at the mesas and dunes (B9 and C9), and EXPANSION
+   §5.8's reach check passes.
 2. **Akordu is the Wold's rest** (call 5): a camp, a trader who sells the band's consumables and
    leather, and a Rider who carries a company to Cinderport and back, a `coach` link open from the
    start (#547). The Wold trains at Cinderport.
@@ -537,13 +530,13 @@ Decided by the owner's delegate on 2 October 2026 (#443), and followed here:
    question 3 answered).
 4. **The Eyrie moves** from 132,289 in D10 to the far-west mesa under the rim at about 46,242 in B8
    (call 5), where DESIGN §5 already puts it and a third is hard to find.
-5. **The camp sells and teaches nothing but that trade** (call 7): no armourer, no trainer, no
-   spell hall; 51 and 54 are given from Cinderport's halls.
-6. **The third prestiges built in Act IV are the Eyrie's** (call 8, #448): the Ranger's, following
-   the Meridian journals down Fire Mountain's vents to Meridian Camp and bringing Oriel Fane's map
-   back to the scout. The Sorcerer's at the Buried Tower's crown is the reach's (Phase 1.6).
-7. **The cuts stand, and the country behind is parked** (call 9): §11, #534.
-8. **All four side quests stand** (call 9): #56's 51, 53, 54 and 55, §6.
+5. **The camp sells and teaches nothing but that trade** (call 7); 51 and 54 are given from
+   Cinderport's halls.
+6. **The third prestiges built in Act IV are the Eyrie's** (call 8, #448): the Ranger's, the
+   Meridian journals followed down Fire Mountain's vents to Meridian Camp and Oriel Fane's map
+   brought back to the scout. The Sorcerer's at the Buried Tower's crown is the reach's (Phase 1.6).
+7. **The cuts stand, the country behind is parked and all four side quests stand** (call 9): §11,
+   #534, §6.
 
 Proposed, for the owner, each in the issue that would build it:
 

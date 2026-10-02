@@ -1,16 +1,16 @@
 # The Whitespine: step IX of the road, the range the bells ring over
 
-The ninth step of the road of levels (DESIGN §9, EXPANSION §2.2), band 22–24, and the first of Act
-IV, Beyond the Sky: the great southern range south of Rimewater's lakes, with the Peak Stone whole
-on its crest and the monastery, Highcell (the Monastery), kept by monks who died long ago; Sheer
-Point, the finger of land toward the Hearth where the Ashen Hand builds its causeway of stolen
+The ninth step of the road of levels (DESIGN §9, EXPANSION §2.2), band 22–24, and the first of
+Act IV, Beyond the Sky: the great southern range south of Rimewater's lakes, with the Peak Stone
+whole on its crest and the monastery, Highcell (the Monastery), kept by monks who died long ago;
+Sheer Point, the finger of land toward the Hearth where the Ashen Hand builds its causeway of stolen
 shards; and the Giants' Stair, the road through the Sheer and down into Ashfall, where the giants
-take their toll. This is its area doc (EXPANSION §4, §6 and §8.2): where the atlas puts it, what is
-in it, the plan for building it, box by box, and the briefs. Its work is filed under #445 (Phase 1.4,
-#441): the boxes as §4's table has them, Highcell (#500), its chapter (#505), its side quests (#506),
-its eight drawings (#507) and the country behind (#508, parked); this doc is #498 and Act IV's
-systems are #442's (§3). Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
-(`src/game/atlas.ts`).
+take their toll. This is its area doc (EXPANSION §4, §6 and §8.2): where the atlas puts it, what
+is in it, the plan for building it, box by box, and the briefs. Its work is filed under #445 (Phase
+1.4, #441): the boxes as §4's table has them, Highcell (#500), its chapter (#505), its side quests
+(#506), its eight drawings (#507) and the country behind (#508, parked); this doc is #498 and Act
+IV's systems are #442's (§3). Figures are measured on main at `6032251` (2 October 2026) with
+`worldGrid` (`src/game/atlas.ts`).
 
 Nothing is built. Its content will be `src/content/areas/whitespine/` (maps, monsters, items,
 climate, its part of the world map, its chapter of the one quest, The Bells, in `chapter.ts` and
@@ -49,13 +49,13 @@ Its edges:
 
 - **North: the sea,** off Sheer Point's tip, with the Hearth beyond it at 256,174 so near its heat
   is felt (STORY, Act Four). The Point's shallows are I8's (86) and I9's (11).
-- **East: Coldmere,** Rimewater's frozen lake (20–22, Act III). The high pass comes over from K10 at
-  334,302 and down to J11's north edge at 318,318 (`src/content/atlas.ts`), the one way in from the
-  road behind, open from the start (EXPANSION §2.2: the atlas's "Mountaineer" road became a road
+- **East: Coldmere,** Rimewater's frozen lake (20–22, Act III). The high pass comes over from K10
+  at 334,302 and down to J11's north edge at 318,318 (`src/content/atlas.ts`), the one way in from
+  the road behind, open from the start (EXPANSION §2.2: the atlas's "Mountaineer" road became a road
   through the range). Rimewater's pass box is #491.
 - **West: the Sheer,** the cliff down the range's west side at x 264–272 from y 272 to y 372,
-  walling Ashfall (24–26) off; the Giants' Stair is the road through it, from the head at 272,306 in
-  I10 to Ashfall's H10 at 258,306 (`src/content/atlas.ts`; #510 builds the foot). North of the
+  walling Ashfall (24–26) off; the Giants' Stair is the road through it, from the head at 272,306
+  in I10 to Ashfall's H10 at 258,306 (`src/content/atlas.ts`; #510 builds the foot). North of the
   Sheer the Point's west side falls to the sea, Cindercoast across it.
 - **South: the range,** on through I12 and J12 to the rim: country behind, parked (#508).
 
@@ -89,7 +89,7 @@ crest the year round, wind, cloud below the peaks; clear and bitter at night.
 
 Its atlas rows (`src/content/areas/whitespine/atlas.ts`, #498): the zones with their bands (Monks'
 Vale 22–23, the High Spine 23–24, Sheer Point 23–24), Highcell at 23–24 with its plate at J11's
-gate, 322,342 (moved from K12's 330,356, §9), its sites (the Peak Stone, Stairwatch, Spine Summit,
+gate, 322,342 (moved from K12's, §9), its sites (the Peak Stone, Stairwatch, Spine Summit,
 Rook's Nest and the Giants, its own; the Sheer, the plan's, §10) and its links: the pass in, the
 monastery's way in, the Giants' Stair and the ridge trail (#443, call 3). The folder is spread into
 the plan (`src/content/atlas.ts` imports it where its rows were), as Saltreach's was before #170:
@@ -368,12 +368,10 @@ settled in its issue.
 
 ### 4.8 J10, I12 and J12, the country behind (#508): country, band 23–24, parked
 
-- **Purpose.** The giants' own ground above the Stair's head (J10, where the atlas letters them at
-  300,296) and the range running on south of the Stone and the Vale (I12, J12), built once the
-  owner has played the act (#443, call 9).
-- **Landmarks and encounters.** The giants' fires and stone seats, and giants at them who ask no
-  toll off the Stair; the crest south to the rim, with snow trolls and eagles; the Sheer's end.
-- **Pay.** About 400 xp a member each.
+- **Purpose.** The giants' own ground above the Stair's head (J10, lettered at 300,296) and the
+  range running on south of the Stone and the Vale (I12, J12), built once the owner has played the
+  act (#443, call 9): the giants' fires and stone seats, and giants at them who ask no toll off the
+  Stair; the crest south to the rim, with snow trolls and eagles. About 400 xp a member each.
 
 ## 5. The one quest here
 
@@ -435,10 +433,9 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 900 be
 
 MONSTERS §8.1 has the roster and the fights: the Spine Eagle, the Brother, the Bell-ringer, the Snow
 Troll, the Stair Giant, the Ashen Mason, the Abbot and the Stair-king; the chapter house and the
-Stair in snow. Their drawings are #507's, eight in all: the giants new, the keepers robed as the
-monks, the ogre frame as the troll, the birds as the eagle and the cultists as the masons. §4.2 to
-§4.7 place every group, box by box, the gentlest at the pass's foot and the Abbot, the king and the
-masons at the top of the band.
+Stair in snow. Their drawings are #507's, eight in all, the giants new and the rest on frames that
+exist. §4.2 to §4.7 place every group, box by box, the gentlest at the pass's foot and the Abbot,
+the king and the masons at the top of the band.
 
 New in the Whitespine, for the novelty check (EXPANSION §5.4): the giants, a new family (#507), and
 with them the toll, a choice before a fight (#544), and sweep, one blow at every member of a row
@@ -492,9 +489,8 @@ Decided by the owner's delegate on 2 October 2026 (#443), and followed here:
    machines, and the Bard's trainer in the bell tower is a living Laureate hiding among them.
 5. **The third prestiges are built in Act IV** (call 8, #448): Stairwatch, Spine Summit, Rook's
    Nest and the bell tower here, with their quests as DESIGN §5 sketches them.
-6. **The cuts stand, the country behind is parked, and all four side quests stand** (call 9): §11,
-   #508 and §6.
-7. **The names** (call 2 of #444; §10).
+6. **The cuts stand, the country behind is parked and all four side quests stand** (call 9): §11,
+   #508 and §6. **The names** are #444's (§10).
 
 Proposed, for the owner, each in the issue that would build it:
 
