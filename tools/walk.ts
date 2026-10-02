@@ -187,9 +187,12 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
 /** Every goal a run of `playChapter` has come to, in this process. */
 const WALKED = new Set<string>();
 
-/** Every goal of every chapter came up in some run: none is words no company is ever shown. */
-export function everyGoalWalked(ok: Ok): void {
-  const missed = THE_QUEST.chapters.flatMap((c) => c.goals.filter((g) => !WALKED.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
+/**
+ * Every goal of every chapter given came up in some run: none is words no company is ever shown. An
+ * area's walkthrough gives its own chapters, as a later area's goals are walked after it.
+ */
+export function everyGoalWalked(ok: Ok, chapters: readonly Chapter[] = THE_QUEST.chapters): void {
+  const missed = chapters.flatMap((c) => c.goals.filter((g) => !WALKED.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
   ok(!missed.length, `every goal of the one quest comes up in a run${missed.length ? ' -> ' + missed.join('; ') : ''}`);
 }
 

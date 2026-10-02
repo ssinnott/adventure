@@ -137,7 +137,7 @@ export const walkthrough: Walkthrough = (ok) => {
   playChapter(carried, CHAPTER, [STEPS[3]], 'the chisel carried');
   ok(JSON.stringify(ending(carried, 'the chisel carried', CHAPTER)) === JSON.stringify(want), 'the chisel carried: the log ends with the same entries as in order');
 
-  everyGoalWalked(ok);
+  everyGoalWalked(ok, [FORELAND, CHAPTER]);
   sideQuests(ok);
 };
 
