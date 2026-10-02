@@ -56,10 +56,12 @@ export const DROWNED_TEMPLES: MapDef = {
     { x: 8, y: 1, to: 'drowned_temples2', tx: 7, ty: 14, tf: NORTH, label: 'You go down the stair into the choir.' },
   ],
   features: [
-    // The narthex, and the bell's frame: empty until the priestess has the bell back and hangs it.
+    // The narthex, and the bell's frame: empty until the priestess has the bell back and hangs it, and
+    // the Tidefolk's blessing on it after (#554).
     { kind: 'event', x: 8, y: 13, id: 'dt1_in', once: true, text: 'The narthex, dry, the door\'s light at your back. Beyond the inner arch the water stands grey between the pillars, and something under the floor keeps time.' },
     { kind: 'event', x: 5, y: 12, id: 'dt1_frame', once: true, until: BELL_HUNG, text: 'The bell\'s frame stands in the narthex, oak, empty. Its hook is worn bright where a rope swung, and the rope is gone, and the bell with it.' },
     { kind: 'event', x: 5, y: 12, id: 'dt1_frame_hung', once: true, after: BELL_HUNG, text: 'The bell hangs on its frame again, on new rope, the knot still dark with wet. Wet footprints go from the door to the frame and back, one pair, bare.' },
+    { kind: 'shrine', x: 5, y: 12, id: 'dt1_bell', name: 'The Tide Bell', after: BELL_HUNG, text: 'Kneeling puts the brow to the bell\'s lip. The bronze is cold as a channel at the ebb, and the cold goes through like the tide through a net and does not stay.', stat: 'endurance', done: 'The bronze is only cold now.' },
     // The nave and its chapels.
     { kind: 'event', x: 8, y: 10, id: 'dt1_nave', once: true, text: 'The nave runs north between pillars to a dark apse. The west aisle lies under a hand of water, and the pillars on that side stand in it to the base, weeded green.' },
     { kind: 'event', x: 5, y: 9, id: 'dt1_flooded', once: true, text: 'The south-west chapel, flooded. The drowned stand in it to the chin, facing its altar, lips moving. Where the words would be, bubbles come up, and go on coming.' },
