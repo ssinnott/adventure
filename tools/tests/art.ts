@@ -179,7 +179,7 @@ export async function art(): Promise<void> {
   const outdoors = MAP_DEFS.filter((d) => d.kind === 'outdoor' && d.banners?.length).map((d) => d.id);
   ok(outdoors.length === 0, `no outdoor map places a banner: the outdoors is laid without them${outdoors.length ? ' -> ' + outdoors.join(', ') : ''}`);
 
-  // A secret door outdoors set among mountain, rock or trees is drawn as they are, so a sett or a
+  // A secret door outdoors or underground set among mountain, rock or trees is drawn as they are, so a sett or a
   // cave is found and never seen; in a wall, or in a town, it stays a door, and a door the map shows
   // (found, plain or locked) is never hidden, since only a secret door has a hint. The painter and
   // the automap draw each cell as drawnCell says, so this holds what they draw.
@@ -195,6 +195,15 @@ export async function art(): Promise<void> {
   ];
   for (const [row, want, what, below] of cases) { const got = guise(row, 'outdoor', below); ok(got === want, `outdoors, ${what} draws as ${want} (${row}${below ? ' over ' + below : ''}: ${got})`); }
   ok(guise('MMSMM', 'town') === 'a secret door', `in a town, a door among mountain stays a door (${guise('MMSMM', 'town')})`);
+  // Underground the same, and a found one among rock is the gap it is; in a wall it stays a door.
+  const cave = (row: string, opened = false): string => {
+    const m = new GameMap({ id: 'cave', name: 'Cave', kind: 'dungeon', start: { x: 0, y: 1, facing: 0 }, rows: [row, '.....'] });
+    if (opened) m.at(2, 0).door = 'door';
+    const c = drawnCell(m, 2, 0);
+    return isSolidWall(c) ? (c.door === 'secret' ? 'a secret door' : 'a door') : c.solid;
+  };
+  ok(cave('rrSrr') === 'rock' && cave('MMSMM') === 'mountain' && cave('##S##') === 'a secret door', `underground, a secret door among rock or mountain draws as they do, and in a wall as a door (${cave('rrSrr')}, ${cave('MMSMM')}, ${cave('##S##')})`);
+  ok(cave('rrSrr', true) === 'none' && cave('##S##', true) === 'a door' && cave('rrDrr') === 'a door', `underground, a found secret door among rock is a gap, in a wall a door, and a plain door stays one (${cave('rrSrr', true)}, ${cave('##S##', true)}, ${cave('rrDrr')})`);
   const guised = maps.flatMap((m) => m.cells.flatMap((c, i) => (drawnCell(m, i % m.width, Math.floor(i / m.width)) !== c ? [`${m.id} ${i % m.width},${Math.floor(i / m.width)}`] : [])));
   console.log(`  (doors drawn as their neighbours on the maps as played: ${guised.length}${guised.length ? ': ' + guised.join(', ') : ''})`);
 
