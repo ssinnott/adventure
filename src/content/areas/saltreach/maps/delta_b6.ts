@@ -8,10 +8,10 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
-import { BELL_HUNG, COUNT_STOPPED } from './drowned_temples.ts';
+import { BELL_HUNG, COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
 
-/** Both of Stienwierde's Rifts gone quiet (B5): their spill stops coming down the channel. */
-export const RIFTS_CLOSED: When = { slain: ['b5_rift_n:b5_rift_n_warden', 'b5_rift_s:b5_rift_s_warden'] };
+/** Both of Stienwierde's Rifts gone quiet (B5), or the Tide Stone home (#191): their spill stops coming down the channel. */
+export const RIFTS_CLOSED: When = [{ slain: ['b5_rift_n:b5_rift_n_warden', 'b5_rift_s:b5_rift_s_warden'] }, STONE_HOME];
 
 export const DELTA_B6: MapDef = {
   id: 'delta_b6',
@@ -80,8 +80,10 @@ export const DELTA_B6: MapDef = {
     { kind: 'event', x: 9, y: 21, id: 'b6_far', once: true, text: 'The far roof, alone in the flats to the south-west. Weed on its slates, and its wall going down into brown water, and the tideline drawn along it in salt.' },
     // In the far roof's wall, on the door's own square: the porch behind it and the wet stair down into
     // the choir's back (its foot, 8,24, is the way), counting below until the Choirmaster falls.
-    { kind: 'event', x: 8, y: 23, id: 'b6_stair', once: true, until: COUNT_STOPPED, text: 'A porch sunk below the tideline, dark. A stair goes down from it, the steps wet, to a door standing open at its foot, and up through the door, faint and steady, someone counting.' },
-    { kind: 'event', x: 8, y: 23, id: 'b6_stair_quiet', once: true, after: COUNT_STOPPED, text: 'The porch below the tideline, the wet stair down to the open door. The counting has stopped. Water runs off the steps, and that is all that comes up.' },
+    { kind: 'event', x: 8, y: 23, id: 'b6_stair', once: true, until: [COUNT_STOPPED, STONE_HOME], text: 'A porch sunk below the tideline, dark. A stair goes down from it, the steps wet, to a door standing open at its foot, and up through the door, faint and steady, someone counting.' },
+    { kind: 'event', x: 8, y: 23, id: 'b6_stair_quiet', once: true, after: [COUNT_STOPPED, STONE_HOME], until: STONE_HOME, text: 'The porch below the tideline, the wet stair down to the open door. The counting has stopped. Water runs off the steps, and that is all that comes up.' },
+    // Once the Tide Stone is home the god sings again, very faintly, heard a step short of the stair whether or not the count has stopped (#191).
+    { kind: 'event', x: 8, y: 22, id: 'b6_stair_sing', once: true, after: STONE_HOME, text: 'The flats before the far roof, grey and shining, the tideline drawn along its wall in salt. Through the wall, so faint the wind takes it, one note, held.' },
     // Over the channel to the east roof; the fen.
     { kind: 'event', x: 25, y: 14, id: 'b6_crossing', once: true, text: 'The channel, crossed on a causeway of sunk stones a hand under the water. Each stone is a flagstone from a floor, and the water pulls at your knees.' },
     { kind: 'event', x: 27, y: 8, id: 'b6_roof', once: true, text: 'The east roof over the channel, its doors silted to the lintel, the mud in them dry and cracked. Whatever was sung in there was sung before the silt.' },

@@ -12,6 +12,9 @@ import type { QuestCond } from '../../../../game/quests.ts';
 /** The Choirmaster fallen, and the count with it (level two). */
 export const COUNT_STOPPED: QuestCond = { slain: 'drowned_temples2:dt2_choirmaster' };
 
+/** The Tide Stone set back on its plinth (#191): the god sings again, and the fen's Rifts go quiet. */
+export const STONE_HOME: QuestCond = { flag: 'q_tide_home' };
+
 /** The Tide Bell back on its frame: the priestess's hand-in at B6's dry door (#56's 23). */
 export const BELL_HUNG: QuestCond = { flag: 'q_tide_bell_done' };
 
@@ -58,8 +61,10 @@ export const DROWNED_TEMPLES: MapDef = {
     { kind: 'event', x: 12, y: 9, id: 'dt1_font_se', once: true, text: 'The south-east chapel\'s font, full to the brim and brown. Notches are cut in its rim, ten old and worn smooth, and one more, new, cut deep.' },
     { kind: 'chest', x: 14, y: 10, id: 'dt1_font', gold: 200, items: ['potion_heal', 'potion_heal'] },
     // The apse: the stair head, and the count up it from the choir until the Choirmaster falls.
-    { kind: 'event', x: 8, y: 2, id: 'dt1_stair', once: true, until: COUNT_STOPPED, text: 'The apse. A stair goes down out of its floor, dry, and the count comes up it, many voices at once: one to ten, a breath, eleven, and one again.' },
-    { kind: 'event', x: 8, y: 2, id: 'dt1_stair_quiet', once: true, after: COUNT_STOPPED, text: 'The apse\'s stair, dry, going down into the dark. Nothing comes up it now. The water in the aisle lies flat, and you can hear it drip.' },
+    { kind: 'event', x: 8, y: 2, id: 'dt1_stair', once: true, until: [COUNT_STOPPED, STONE_HOME], text: 'The apse. A stair goes down out of its floor, dry, and the count comes up it, many voices at once: one to ten, a breath, eleven, and one again.' },
+    { kind: 'event', x: 8, y: 2, id: 'dt1_stair_quiet', once: true, after: [COUNT_STOPPED, STONE_HOME], until: STONE_HOME, text: 'The apse\'s stair, dry, going down into the dark. Nothing comes up it now. The water in the aisle lies flat, and you can hear it drip.' },
+    // Once the Tide Stone is home the god sings again, very faintly, heard a step short of the stair whether or not the count has stopped (#191).
+    { kind: 'event', x: 8, y: 3, id: 'dt1_stair_sing', once: true, after: STONE_HOME, text: 'The nave\'s head, the apse dark ahead and its stair going down out of the floor. Up it, under the drip of the aisle, one low note, held, and another a little above.' },
   ],
   encounters: [
     // Two drowned men in the nave's dry strip; and two bull toads in the north-east chapel, come in with

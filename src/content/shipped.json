@@ -117,6 +117,7 @@
         "b6_rung",
         "b6_stair",
         "b6_stair_quiet",
+        "b6_stair_sing",
         "barrow",
         "c3_barges",
         "c3_cache",
@@ -640,6 +641,7 @@
         "dt1_nave",
         "dt1_stair",
         "dt1_stair_quiet",
+        "dt1_stair_sing",
         "dt1_sunk"
       ],
       "groups": [
@@ -1318,6 +1320,7 @@
     "q_terms_taken",
     "q_tide_bell",
     "q_tide_bell_done",
+    "q_tide_home",
     "q_treaty",
     "q_trees",
     "q_trees_done",

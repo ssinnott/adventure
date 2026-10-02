@@ -148,7 +148,9 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   driftwood shrine at the boards' start, a cairn and house-footings on the mound, and a hermit on a
   hummock who counts the Rifts' lights. Two groups of five fen toads on the boards and two bull
   toads on the island's far side; two brine Rifts (`b5_rift_n`, #165's cells, and `b5_rift_s`, its
-  breach), each two tide elders at the heart, quiet once they fall. The secret is a hollow under the
+  breach), each two tide elders at the heart, quiet once they fall or the Stone is home. The plinth
+  takes the Stone when it comes home and sets `q_tide_home` (#191), and the hermit then counts no
+  lights. The secret is a hollow under the
   plinth's landing, a Brine Shard and a Kite Shield +1 in it; the hint is the barge-poles' marks on
   the landing, and one plank among them unscored and new-nailed. The gate holds at 11, at 7.1 fights
   to a rest on the box and 4.9 in each Rift (5.4 before the re-stat to #409's line, #18; §9).
@@ -302,7 +304,7 @@ settled in its issue, and what the pilot teaches changes them.
   the far end is the bull toad alone, the box's hardest group, and the fen toads wait for B5. The
   brinelings are the Rift's, three in its rooms and one beside a tide elder at its heart: the Tide
   Stone's Rifts' family (MONSTERS §2.1), and the tide elder's first placing. The Rift goes quiet
-  when the elder falls; #191 adds the Stone home as the other way. Its hoard holds no shard, and
+  when the elder falls, or once the Stone is home (#191). Its hoard holds no shard, and
   the brine tear's words show its shard grown into the glass, not lying to be taken, as the
   cellar's Rift shows its Wardstone shard set in the tear's lip (#398). The hint is the mast's stump
   at the arch, which is always there; the green glow is said by night beside it. As measured, the box pays about 680 xp a member and its Rift about 430, 1,115
@@ -409,7 +411,7 @@ settled in its issue, and what the pilot teaches changes them.
   groups are three on the box and one warden in each Rift, each a fight inside the gate's aim at 11:
   two groups of five fen toads on the boards, and two bull toads on the island's far side, the box's
   hardest; the Rifts, on #165's cells and breach, hold two tide elders each at the tear's heart and
-  go quiet when they fall, #191 adding the Stone home as the other way. No leeches: the pools are
+  go quiet when they fall, or once the Stone is home (#191). No leeches: the pools are
   C5's fight. The hint is the landing's pole-marks, always there; the priest at Rietum's line about
   a pole's mark is #172's. The shard under the landing is a Brine Shard, as C5's is. No camp. As
   measured, the box and its Rifts pay about 1,650 xp a member and 410 gold, the company at about 10
@@ -493,7 +495,9 @@ settled in its issue, and what the pilot teaches changes them.
   holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 83% of its
   fights with the boss among them, every fight but the boss's, at 7.5 to a rest; the Choirmaster
   is won 48% of the time at 11 and 98% at 13. As measured, a clear pays about 1,580 xp a member at
-  11 and about 1,130 gold (§8).
+  11 and about 1,130 gold (§8). Once the Tide Stone is home (#191) the god sings, very faintly, a step
+  short of the apse's stair and before the far roof's porch, whether or not the count has stopped,
+  and the count and the quiet at those stairs give way to it.
 
 ### 4.8 C6, Saltmouth's box (#176): core, band 11–12
 
@@ -679,12 +683,14 @@ Saltmouth (`sm_ship_word`). Six entries: Wytske's sighting, the plinth, the prie
 count up the apse's stair, the Warden's news of Hale and Kitto's word on the ship. Seven goals,
 furthest along first: the boat; before the boat, the plinth (Saltmouth taken first); Saltmouth;
 the temples; the plinth; Rietum; down into the Delta. Its end is `q_tide_home`, the Stone set back,
-owed to #191 in tools/tests/quests.ts's UNSET; the boat stays the goal on the isle until then. Two
+which the plinth at B5 sets when it takes the Stone (#191); on the isle the goal passes to
+Wrackholm's chapter, and the Tide Stone stays open until then. Two
 people at Saltmouth carry the beats: Kitto gains a line on the midsummer barge in all three of his
 greetings, and a Warden off the coast road sits by the gate at 9,1 once #156 has taken Hale from
 the Scarth (`q_hale_taken`), until Hale is freed. The walkthrough plays it in order at 10 and 11
 from a new game, the Foreland and the Grove first, and with Saltmouth taken first at 12, before the
-Grove; it sets `q_hale_taken` by hand, owed to #156, and `q_tide_home`, owed to #191 (§9).
+Grove; it sets `q_hale_taken` by hand, owed to #156 (§9). Both runs stop on Wrackholm's landing,
+and Wrackholm's walkthrough plays them on to the Stone home (#191).
 
 ## 6. Side quests
 

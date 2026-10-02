@@ -7,9 +7,10 @@ import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
+import { STONE_HOME } from './drowned_temples.ts';
 
-/** The Rift on the islet gone quiet: its warden fallen. #191 adds the Tide Stone home, either to do. */
-export const RIFT_CLOSED: When = { slain: 'c5_rift:c5_rift_warden' };
+/** The Rift on the islet gone quiet: its warden fallen, or the Tide Stone home (#191). */
+export const RIFT_CLOSED: When = [{ slain: 'c5_rift:c5_rift_warden' }, STONE_HOME];
 
 /** The brine Rift off the causeway (#165): brinelings in its rooms, and a tide elder at the tear's heart. */
 export const C5_RIFT = rift({
