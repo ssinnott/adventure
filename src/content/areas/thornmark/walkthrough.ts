@@ -4,7 +4,8 @@
 // but before the wand, where the log must still read true and end the same; and with the treaty in
 // Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side
 // quests on the built maps (#219) and in the Deepthorn, each from its giver to its choice and both
-// ways: the log reads true and the people stand where it says; and the Eldest on Penspern.
+// ways: the log reads true and the people stand where it says; Act II's Hale's Sergeant both ways;
+// and the Eldest on Penspern.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -174,6 +175,8 @@ const EDITH = (): Person => who('thornmark', 5, 27, 'Edith'), EDITH_STONE = (): 
 const IDONY = (): Person => who('thornhold', 12, 13, 'Idony');
 const KEA = (): Person => who('deepthorn_j5', 6, 18, 'Kea'), CENRIC = (): Person => who('deepthorn_j5', 7, 20, 'a Warden sergeant');
 const GODRIC = (): Person => who('deepthorn_i3', 11, 14, 'Godric');
+const WYSTAN = (): Person => who('thornhold', 9, 14, 'Wystan'), WYSTAN_DOOR = (): Person => who('thornhold', 12, 13, 'Wystan');
+const HALE = (): Person => who('tide_ship3', 10, 12, 'Captain Hale');
 
 /** Whether a person stands where they are listed now. */
 const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
@@ -504,6 +507,45 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(there(w, CENRIC(), 'deepthorn_j5') && hear(w, 'deepthorn_j5', CENRIC()).startsWith('A Warden sergeant stands on the crown'), 'by night Sergeant Cenric stands on the crown');
     at(w, 12);
     w.ok(there(w, CENRIC(), 'deepthorn_j5') && !there(w, KEA(), 'deepthorn_j5'), 'and by day, when Kea is gone');
+  }
+  { // Hale's Sergeant (#558): no sergeant while Hale holds the Scarth; once he is taken, Wystan at
+    // the gate, the shore on H3's shingle, Wystan talked down to keep the Split Oak's door, and the
+    // token known in the hold.
+    const w = newWalk(ok);
+    w.ok(!there(w, WYSTAN(), 'thornhold') && !shows(w, 'deepthorn_h3', 'h3_boat'), 'while Hale holds the Scarth there is no sergeant at the gate and nothing on the shingle');
+    w.party.flags.q_hale_taken = 1;
+    w.ok(there(w, WYSTAN(), 'thornhold') && !shows(w, 'deepthorn_h3', 'h3_boat'), 'once Hale is taken, Wystan stands at the gate, and the shingle shows nothing till he asks');
+    hear(w, 'thornhold', WYSTAN());
+    w.ok(w.news.at(-1) === 'New quest: Hale\'s Sergeant.' && /shingle below the camp/.test(page(w, 'sergeant')?.goal ?? ''), `Wystan's ask begins Hale's Sergeant, its goal the shore (${page(w, 'sergeant')?.goal})`);
+    w.ok(hear(w, 'thornhold', WYSTAN()).startsWith('"The shingle below the camp.'), 'asked again before the shore, he says only where it is');
+    see(w, 'deepthorn_h3:h3_boat');
+    w.ok(/Wystan at Thornhold's gate/.test(page(w, 'sergeant')?.goal ?? ''), `the boat found, the goal is Wystan (${page(w, 'sergeant')?.goal})`);
+    answerTo(w, 'thornhold', WYSTAN(), 'Don\'t ride.');
+    reads(w, 'sergeant', 'Hale\'s Sergeant', ['wystan', 'shore', 'stays'], ['rides', 'hale'], 'talked down');
+    w.ok(w.party.bag.includes('hale_token') && !there(w, WYSTAN(), 'thornhold') && there(w, WYSTAN_DOOR(), 'thornhold') && hear(w, 'thornhold', WYSTAN_DOOR()).includes('A door is a pass'),
+      'talked down, he gives Hale\'s token and keeps the Split Oak\'s door');
+    // In the Tide Ship's hold (#190), once its crew is down, Hale knows the token and leaves it.
+    w.level = 14;
+    fight(w, 'tide_ship3:ts3_crew');
+    const freed = hear(w, 'tide_ship3', HALE());
+    w.ok(freed.includes('The Regent got his copy') && freed.includes('Wystan') && !!w.party.flags.q_hale_freed && w.party.bag.includes('hale_token') && !!page(w, 'sergeant')?.entries.some((e) => e.id === 'hale'),
+      'in the hold Hale knows his token, is freed and leaves it in the pack, and the log says so');
+  }
+  { // Hale's Sergeant: let ride, he gives the token and is gone.
+    const w = newWalk(ok);
+    w.party.flags.q_hale_taken = 1;
+    hear(w, 'thornhold', WYSTAN());
+    see(w, 'deepthorn_h3:h3_boat');
+    answerTo(w, 'thornhold', WYSTAN(), 'Ride, then.');
+    reads(w, 'sergeant', 'Hale\'s Sergeant', ['wystan', 'shore', 'rides'], ['stays', 'hale'], 'let ride');
+    w.ok(w.party.bag.includes('hale_token') && !there(w, WYSTAN(), 'thornhold') && !there(w, WYSTAN_DOOR(), 'thornhold'), 'let ride, he gives Hale\'s token and is gone from Thornhold');
+  }
+  { // Hale's Sergeant: Hale freed with no token, and his words name none.
+    const w = newWalk(ok);
+    w.party.flags.q_hale_taken = 1;
+    w.level = 14;
+    fight(w, 'tide_ship3:ts3_crew');
+    w.ok(!hear(w, 'tide_ship3', HALE()).includes('Wystan') && !!w.party.flags.q_hale_freed && !w.party.flags.q_sergeant_hale, 'with no token carried, Hale is freed and names none');
   }
   { // The Eldest (#218): awake whichever the company does first, beaten once, and its bough.
     const w = newWalk(ok);

@@ -82,6 +82,8 @@ export const DEEPTHORN_H3: MapDef = {
     { kind: 'event', x: 9, y: 3, id: 'h3_survey', once: true, text: 'Two tents cut open, and a fire-pit heaped with burnt paper. Nailed boot prints all round it: Wardens\'.' },
     { kind: 'event', x: 10, y: 4, id: 'h3_firepit', once: true, text: 'Under the ash, folded twice and burnt once: a paper with the Regent\'s seal, half of it gone to the flame.' },
     { kind: 'chest', x: 11, y: 4, id: 'h3_orders', gold: 0, items: ['survey_orders'] },
+    // Hale's Sergeant (#558): the trail's end on the shingle below the camp, once Wystan has asked.
+    { kind: 'event', x: 9, y: 14, id: 'h3_boat', once: true, after: { flag: 'q_sergeant' }, text: 'A keel\'s groove to the water and nailed boots beside it, Wardens\'. The boat is gone west; a Compact knife lies half in the stones.' },
   ],
   secrets: [{ x: 28, y: 24, hint: 'h3_thorns' }],
   encounters: [

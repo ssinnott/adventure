@@ -1,8 +1,9 @@
 // Thornmark's side quests, in the journal's words: The Lost Expedition and The Empty Throne,
 // subplots, and #56's six on the built maps (#219): A Coin Not From Caldera (Tegen), Leave the
 // Trees Standing (Piran), The Dark Glass (Tamsin), The Elder's Four (Keyne), Terms From the
-// Brigands and The Mender (Sylvane); and the Deepthorn's: How Did He Know (Idony), The Older
-// Mark (Senara) and The Light on Penspern (Kea). Its chapter of the one quest is in ./chapter.ts.
+// Brigands and The Mender (Sylvane); the Deepthorn's: How Did He Know (Idony), The Older Mark
+// (Senara) and The Light on Penspern (Kea); and Act II's Hale's Sergeant (Wystan, #558). Its
+// chapter of the one quest is in ./chapter.ts.
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every
 // key.
 import type { QuestDef } from '../../../game/quests.ts';
@@ -290,6 +291,31 @@ export const QUESTS: readonly QuestDef[] = [
       { when: { item: 'mending_kit' }, text: 'Take the kit to Edith, in the Grove\'s hollow.' },
       { when: { flag: 'q_mender' }, text: 'Find Edith\'s kit at the zealots\' camp, in the lee of the Grove\'s hollow.' },
       { when: { seen: 'thornmark:tm_mender_camp' }, text: 'Find the Lantern whose camp was turned over on the Grove road.' },
+    ],
+  },
+  {
+    // #56's twentieth (#558), Act II's: Hale's sergeant at Thornhold's gate once Hale is taken from
+    // the Scarth, the boat gone west from H3's shingle, and the sergeant talked down or let ride. Done
+    // at the answer; Hale knowing the token in the Tide Ship's hold is written after, if it comes.
+    id: 'sergeant',
+    title: 'Hale\'s Sergeant',
+    start: { flag: 'q_sergeant' },
+    done: [{ flag: 'q_sergeant_stays' }, { flag: 'q_sergeant_rides' }],
+    entries: [
+      { id: 'wystan', when: { flag: 'q_sergeant' },
+        text: 'Wystan, Hale\'s sergeant, followed the riders on foot as far as Thornhold\'s gate and lost them. He means to ride for Helmstow and the Regent; first we go down to the shingle for him.' },
+      { id: 'shore', when: { seen: 'deepthorn_h3:h3_boat' },
+        text: 'Keel marks and nailed boots to the waterline below the camp, and a boat gone west. A Compact knife in the stones.' },
+      { id: 'stays', when: { flag: 'q_sergeant_stays' },
+        text: 'We talked him off the horse. He keeps the Split Oak\'s door now, and calls it a pass.' },
+      { id: 'rides', when: { flag: 'q_sergeant_rides' },
+        text: 'He rode for Helmstow with his answer. We have not seen him since.' },
+      { id: 'hale', when: { flag: 'q_sergeant_hale' },
+        text: 'In the hold Hale saw the token and knew it for his own. We keep it.' },
+    ],
+    goals: [
+      { when: { seen: 'deepthorn_h3:h3_boat' }, text: 'Take word of the shore back to Wystan at Thornhold\'s gate.' },
+      { when: { flag: 'q_sergeant' }, text: 'Follow Hale\'s trail to the shingle below the camp on the Deepthorn\'s edge.' },
     ],
   },
 ];

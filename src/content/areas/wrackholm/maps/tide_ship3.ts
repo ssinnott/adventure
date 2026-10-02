@@ -36,6 +36,13 @@ export const TIDE_RIFT = rift({
   until: TIDE_RIFT_CLOSED,
 });
 
+/** Hale's words in the last row, before the last iron drops: the same with his token carried or not. */
+const HALE_WORDS = [
+  'In the last row a man sits straight in his irons, thin as a rake and filthy, his beard gone white, telling the boy beside him to keep his feet out of the wet. He knows you before you know him.',
+  '"The Scarth. You brought me a ledger." The voice has not changed. "The Regent got his copy. He came for me that same night."',
+  '"Never mind me. The rings pin under the floor; the pins knock out from the bilge. Start at the front, children first, and get them up to the boats before the watch counts heads."',
+];
+
 export const TIDE_SHIP3: MapDef = {
   id: 'tide_ship3',
   name: 'The Hold',
@@ -74,15 +81,17 @@ export const TIDE_SHIP3: MapDef = {
     { kind: 'event', x: 5, y: 6, id: 'ts3_straw', once: true, text: 'Straw stacked against the bulkhead. One side is grey and matted, old as the ship; the other yellow and new, and brine comes through it.' },
     { kind: 'event', x: 8, y: 7, id: 'ts3_bulkhead', once: true, text: 'The bulkhead, and a door in it, green light at every seam. Before the door stands something tall and wet that was not there before.' },
     // The last row: strangers, until Hale has been taken from the Scarth; then Hale, once the crew
-    // is down, who goes over the side with the freed (#43: he is freed, not handed to). The token he
-    // knows (#56's 20) is #156's to make, and his words for it come with it.
+    // is down, who goes over the side with the freed (#43: he is freed, not handed to). To a company
+    // carrying his token (Hale's Sergeant, #558) his last words know it, and leave it in the pack.
     { kind: 'event', x: 10, y: 12, id: 'ts3_last_row', once: true, until: HALE_TAKEN, text: 'The last row. A farmer, a boy, an old woman, irons on all three. None of them looks up. They have stopped looking up.' },
     { kind: 'npc', x: 10, y: 12, name: 'Captain Hale, in irons', flag: 'q_hale_freed', lines: [
-      'In the last row a man sits straight in his irons, thin as a rake and filthy, his beard gone white, telling the boy beside him to keep his feet out of the wet. He knows you before you know him.',
-      '"The Scarth. You brought me a ledger." The voice has not changed. "The Regent got his copy. He came for me that same night."',
-      '"Never mind me. The rings pin under the floor; the pins knock out from the bilge. Start at the front, children first, and get them up to the boats before the watch counts heads."',
+      ...HALE_WORDS,
       'When the last iron drops he stands, which costs him, and goes to the ladder on the first man\'s shoulder. He does not look back. "Thank me when it\'s done. It isn\'t."',
     ],
+      says: [{ after: { item: 'hale_token' }, sets: ['q_hale_freed', 'q_sergeant_hale'], lines: [
+        ...HALE_WORDS,
+        'When the last iron drops he stands, which costs him, and sees the disc and knows it. "Mine. Then Wystan got as far as you." Up the ladder on the first man\'s shoulder, not looking back. "Keep it. And thank me when it\'s done. It isn\'t."',
+      ] }],
       after: { ...HALE_TAKEN, slain: 'tide_ship3:ts3_crew' }, until: HALE_FREED },
     { kind: 'event', x: 7, y: 13, id: 'ts3_hatch', once: true, text: 'A hatch in the floor, and up through it cold clean air with nothing of ship or sea in it. What is below is not for a company that came for a Stone.' },
     // The forward hold, through the door past the elder or the shard-cut behind the straw: the Hand's
