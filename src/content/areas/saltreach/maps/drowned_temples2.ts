@@ -1,10 +1,10 @@
 // The Drowned Temples, level two: the choir, dry, below the nave's stair. A lone drowned man at the
-// stair's foot; the stalls north, four chanters counting behind two drowned men, and two more in the
-// west bay's stalls; the chancel at the choir's end, where the Choirmaster beats the count on the
+// stair's foot; the stalls north, two chanters counting behind two drowned men, and the west bay's
+// empty stalls; the chancel at the choir's end, where the Choirmaster beats the count on the
 // Tide Bell alone, blessing itself, and the vestry behind it with the ladder's finds. The
 // sacristy at the back, where the priests drowned themselves, is cut off from the chancel by their
 // pool and reached only by the wet stair from B6's far roof, the secret: the god's silver is there.
-// When the Choirmaster falls the count stops, and the chanters do not come back. Band 11-12;
+// When the Choirmaster falls the count stops, and the choir does not come back. Band 11-12;
 // docs/areas/saltreach.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
@@ -62,10 +62,9 @@ export const DROWNED_TEMPLES2: MapDef = {
   encounters: [
     // A drowned man alone at the stair's foot.
     { id: 'dt2_verger', x: 7, y: 12, monsters: ['temple_drowned'], aware: 2, roams: false, respawn: 2880 },
-    // The choir (MONSTERS §6.1): four chanters behind two drowned men, the front row asleep while the
-    // chanters count; and two more in the west bay. Neither comes back once the count has stopped.
-    { id: 'dt2_choir', x: 7, y: 6, monsters: ['temple_drowned', 'temple_drowned', 'drowned_chanter', 'drowned_chanter', 'drowned_chanter', 'drowned_chanter'], back: 4, aware: 3, roams: false, respawn: 2880, until: COUNT_STOPPED },
-    { id: 'dt2_stalls', x: 2, y: 7, monsters: ['drowned_chanter', 'drowned_chanter'], aware: 3, roams: false, respawn: 2880, until: COUNT_STOPPED },
+    // The choir (MONSTERS §6.1), cut to the temples' share: two chanters behind two drowned men, the
+    // front row asleep while the chanters count. It does not come back once the count has stopped.
+    { id: 'dt2_choir', x: 7, y: 6, monsters: ['temple_drowned', 'temple_drowned', 'drowned_chanter', 'drowned_chanter'], back: 2, aware: 3, roams: false, respawn: 2880, until: COUNT_STOPPED },
     // The Choirmaster on the chancel step, alone: the area's boss, which never comes back, and the
     // count stops with it.
     { id: 'dt2_choirmaster', x: 8, y: 2, monsters: ['choirmaster'], aware: 1, roams: false, slainText: 'The bell rolls from its hands and rings once on the stone. The count stops at seven, and nobody takes it up.' },

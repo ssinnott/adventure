@@ -481,19 +481,19 @@ settled in its issue, and what the pilot teaches changes them.
   the drowned standing in it, and the two east are dry, each with a font, two bull toads come in
   with the fen at the north-east's; the apse's stair goes down, the count heard at its head. The
   choir, `drowned_temples2`, is dry: a drowned man alone at the stair's foot; the stalls north,
-  four chanters behind two drowned men, the brief's choir, and two more chanters in the west bay's
-  stalls; the Choirmaster alone on the chancel step, blessing itself each round it can, and the
+  two chanters behind two drowned men, the brief's choir cut to the share, and the west bay's
+  stalls empty but for their psalters; the Choirmaster alone on the chancel step, blessing itself each round it can, and the
   vestry behind it with the ladder's two finds. The sacristy at the back is cut off from the
   chancel by the deep pool the priests drowned themselves in, and reached only down the far roof's
   wet stair, B6's secret: the god's silver is had that way and no other, by a swimmer or not. When
   the Choirmaster falls the count stops, the stair's head, the stair's foot, the chancel, the
-  pool and the sacristy go quiet, and the choir and the stalls do not come back. The Choirmaster
+  pool and the sacristy go quiet, and the choir does not come back. The Choirmaster
   drops the Tide Bell, which the priestess takes at the first meeting and rings inside the door
-  (§6); its blessing waits on a systems change (§9). The god's name is on its silver alone (§10).
-  The gate holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 87% of its fights with the boss
-  among them, every fight but the boss's, at 6.8 to a rest, though 29% of its days end in a fight
-  broken off, the choir's own; the Choirmaster is won 48% of the time at 11 and 98% at 13. As
-  measured, a clear pays about 3,115 xp a member at 11 and about 1,220 gold (§8).
+  (§6); its blessing waits on #554 (§9). The god's name is on its silver alone (§10). The gate
+  holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 83% of its
+  fights with the boss among them, every fight but the boss's, at 7.5 to a rest; the Choirmaster
+  is won 48% of the time at 11 and 98% at 13. As measured, a clear pays about 1,580 xp a member at
+  11 and about 1,130 gold (§8).
 
 ### 4.8 C6, Saltmouth's box (#176): core, band 11–12
 
@@ -682,7 +682,7 @@ with its box on the systems of #76 (#183):
 |---|---|---|---|---|---|
 | 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | not yet approved; #172 places the child and her hint |
 | 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171; the boat reads its flag (#413) |
-| 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175; the blessing owed (§9) |
+| 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175; the blessing owed to #554 (§9) |
 | 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178 |
 
 One change to #56's drafts, decided with the boat (#164): 22's favour is the boat's fare, never
@@ -756,13 +756,14 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   (#174), its three fights at about 300 each and its brinelings only by night. C3 as built pays
   about 1,010 against its 1,000 (#172), its four groups about 260 to 280 each with the company at
   10 and the quay's by day and the brinelings by night both counted. The temples as built pay about
-  3,115 a member at 11, 2,490 at 12 (#175), against the 1,800 here and the issue's 1,600: the boss
-  alone is about 1,450, and the choir and the gate's fights to a rest need the rest. No other share
-  gives back the 600, the 90, the 330, the 170, the 10 and the 1,315, so the area comes to about
-  11,265, some 36% over the curve's 8,267. Paid by level in the road's order, a clear of what is
-  built gives about 10,490 a member, over the curve, and 4,400 gold, the gold's rest owed to #153
+  1,580 a member at 11 and 1,220 at 12 (#175), inside their share and the issue's 1,600: the
+  Choirmaster is paid as one fight, not as the boss line (§9). No other share gives back the 600,
+  the 90, the 330, the 170 and the 10, so the area comes to about 9,730, some 18% over the curve's
+  8,267. Paid by level in the road's order, a clear of what is built gives about 9,100 a member,
+  over the curve, and 4,370 gold, the gold's rest owed to #153
   (`src/content/progression.ts`). The surplus is for a kill paid by level to damp, and each box
-  still to build is priced by its fights, about 300 a fight, and recorded as built where that passes its share; the
+  still to build is priced by its fights, about 300 a fight, and recorded as built where that passes
+  its share; the
   sum here is restated with each. The willows add 800 when they are built. From here on a kill pays
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
   at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
@@ -1184,34 +1185,38 @@ Decided by delegate for #175, each the owner's to overturn:
    in that way leaves the same way. From the sacristy it sees the Choirmaster's back across the
    water. Neither level has a secret door of its own: B6's is the secret.
 3. **The Choirmaster stands alone,** level 12, past MONSTERS §4.4's boss line in its blows as the
-   Great Devilfish is: 680 hit points, armour 20, +11, 11d8+15, speed 13, its xp the line's 7,573.
+   Great Devilfish is: 680 hit points, armour 20, +11, 11d8+15, speed 13, and paid as 6 says.
    It casts Bless whenever its group is not blessed, so alone it blesses itself; with two chanters
    behind it, the group's mean level was 11.3 and the curve asks the hardest group of a band 11–12
    map to stand at 12. It is won 48% of the time at 11 and 98% at 13.
-4. **The choir is MONSTERS' own,** four chanters behind two drowned men, with two more chanters in
-   the west bay's stalls and a drowned man alone at the stair's foot, all back after two days until
-   the Choirmaster falls, when the choir and the stalls stop for good. The lone drowned man is no
-   real fight alone; he is there so the level's day sits at 6.8 fights to a rest, where a pair
-   measured 5.2, under the aim.
+4. **The choir is MONSTERS' cut to the share,** two chanters behind two drowned men, the front
+   row still asleep while the chanters count, with a drowned man alone at the stair's foot, both
+   back after two days until the Choirmaster falls, when the choir stops for good. The west bay's
+   two chanters were dropped with the pay (6). The lone drowned man is no real fight alone; he
+   keeps the level's day at 7.5 fights to a rest. MONSTERS' full four chanters would pay about 190
+   more a member, a clear about 1,770.
 5. **The upper level's far group is two bull toads,** come in with the fen through the sunk
    chapels, and its nave holds two drowned men: every temple dead is 11, and the curve asks the
    levels to rise from the way in to a group at 12. Three drowned men with the toads measured 5.6
    fights to a rest; two measure 7.2.
-6. **The pay is built honestly at about 3,115 a member at 11,** against the issue's 1,600 and §8's
-   1,800, as Kelp Hole's was over its share: the boss alone is about 1,450 and the choir about 670,
-   and the gate's fights to a rest want the rest. No other share is cut.
+6. **The Choirmaster is paid as a fight, not as the boss line** (the owner agreed to bring the
+   temples towards their share). Its xp is 1,565 against the line's 7,573, so it pays about 300 a
+   member at 11, what any fight there costs (§8). At the line's figure the boss alone paid about
+   1,450, nearly the whole share. Levelling it down to 11 would leave level 2 with no group at 12,
+   which the curve asks of a map banded 11–12, so it keeps its level and its stats, and the gate
+   still judges it at 48% at 11 and 98% at 13; only its pay changes. With the choir cut and the
+   west bay's chanters dropped (4), a clear pays about 1,580 a member at 11 and 1,220 at 12. It was
+   about 3,115 at 11 before.
 7. **The Tide Bell drops from the Choirmaster,** and the priestess at the dry door asks for it at
    her first meeting and takes it at the first meeting from a company she never asked, paying 300
    gold; she rings it inside the door, ten strokes and the eleventh late, and it hangs on the
-   narthex's frame after. **The blessing is owed:** a shrine has no presence, so it cannot wait on
-   the bell without a small systems change, presence on a shrine and a fountain; and #56's
-   resistance would need members to carry one. Both are for the owner to agree and file; until
-   then The Tide Bell is done at the hand-in.
+   narthex's frame after. **The blessing is owed to #554:** a shrine has no presence, so it cannot
+   wait on the bell without presence on a shrine and a fountain; and #56's resistance would need
+   members to carry one, #555. Until then The Tide Bell is done at the hand-in.
 8. **The finds:** the ladder's Morning Star +1 and Ironshod Staff +1 in the vestry behind the boss,
    since the ladder's step should not hang on a secret found from another map; the god's silver,
    a Silver Mace +1 on the morning star's base and the Holy Symbol of the Tide, in the sacristy.
-   The Symbol is a valuable with words on it for now: its resistance to cold is owed with the
-   blessing's.
+   The Symbol is a valuable with words on it for now: its resistance to cold is owed to #555.
 9. **The god is named on its silver alone,** *Tijsjonger*, the tide singer, read on the Symbol's
    rim and spoken by nobody (§10).
 10. **B6's two events move or change:** `b6_stair` moves onto the secret door's square, since an

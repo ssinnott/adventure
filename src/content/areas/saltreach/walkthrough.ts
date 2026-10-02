@@ -362,7 +362,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.used('dt2_chancel_after'), 'the chancel step is bare, and nothing beats');
   w.world.state.minutes += 3 * MINUTES_PER_DAY;
   w.world.travel('drowned_temples2', 7, 13);
-  ok(!w.world.liveGroups().some((g) => ['dt2_choir', 'dt2_stalls', 'dt2_choirmaster'].includes(g.def.id)), 'three days on, the choir does not come back to count');
+  ok(!w.world.liveGroups().some((g) => ['dt2_choir', 'dt2_choirmaster'].includes(g.def.id)), 'three days on, the choir does not come back to count');
 
   // Up with the bell to the priestess: she takes it, hangs it on its frame and rings it.
   meetWho(w, 'tide_bell');

@@ -668,7 +668,6 @@
       "groups": [
         "dt2_choir",
         "dt2_choirmaster",
-        "dt2_stalls",
         "dt2_verger"
       ],
       "doors": []
