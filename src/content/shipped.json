@@ -793,7 +793,8 @@
         "lw_graves",
         "lw_lookout",
         "lw_oil",
-        "lw_vask"
+        "lw_vask",
+        "lw_vask_e"
       ],
       "groups": [],
       "doors": []

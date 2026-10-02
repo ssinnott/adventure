@@ -1223,8 +1223,9 @@ Decided by delegate for #204, each the owner's to overturn:
 11. **His words do not change with what the company carries:** everyone who meets him has had the
     papers read and touched the wall, and the narrows give the heart with the wall. His meeting sets
     `q_vask_rain`, and a company that walks away from the question hears it again.
-12. **The two Wardens are in his lines,** not people of their own; the gate's once-event `lw_vask`
-    at 7,13 carries the brief's line, with his `after`, `until` and `when`.
+12. **The two Wardens are in his lines,** not people of their own; the gate's once-events `lw_vask`
+    and `lw_vask_e`, on the two squares of the road in at 7,13 and 8,13, carry the brief's line,
+    with his `after`, `until` and `when`, and each ends once the other is seen.
 13. **Two answers, each with its own flag and `q_salt_done`.**
 14. **A yes gives nothing:** no gold and no gift. The endings are the quest's later.
 15. **"I have the girl" closes both answers:** Wenna alive, below and his reaches every company.
@@ -1241,7 +1242,10 @@ Decided by delegate for #204, each the owner's to overturn:
     papers and the log go into the bag where Wrackholm's chapter will have carried them.
 19. **The act's end-to-end walk is owed to #191** in `tools/tests/quests.ts`, beside the chapter
     #191 owes: the log shows Act II in three chapters and the Wall is played on from Wrackholm's
-    with the papers carried from the Tide Ship. So is the start's swap (3).
+    with the papers carried from the Tide Ship. The walkthrough puts the papers in the bag by hand
+    only through `fromTheTideShip`, and the check fails once Wrackholm's chapter is written while
+    it is still used. The start's swap (3) is owed too, and holds only once the Wall's start names
+    Wrackholm's done flag and no item.
 20. **An order of play may end at a chapter,** and a walkthrough checks only its own chapters' goals
     walked: a quality pull request first (#430), since a third chapter breaks the checks pinned to
     the Grove's seal. Sunderwood's walkthrough runs last in road order, so it checks every

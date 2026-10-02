@@ -6,7 +6,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, GUILD_QUESTS } from '../../src/content/index.ts';
 import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, takeItem } from '../../src/game/party.ts';
@@ -115,10 +115,15 @@ export function quests(): void {
     ok(AREAS.every((a) => a.chapter || CHAPTER_OWED[a.id]) && !walks.length, `every area has a chapter of the one quest, or owes it, and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
     for (const a of AREAS.filter((x) => CHAPTER_OWED[x.id])) owed(!!a.chapter, `${a.id} has a chapter of the one quest`, CHAPTER_OWED[a.id]);
     // Act II read end to end (#204): the Wall is begun by the Tide Ship's papers until Wrackholm's
-    // chapter names its done flag, and its walkthrough seeds the papers until that chapter is played.
-    const wall = THE_QUEST.chapters.find((c) => c.id === 'wall');
-    owed(!!wall && !conds(wall.start).some((k) => k.item), 'the Wall begins when Wrackholm\'s chapter ends, not when the Tide Ship\'s papers are picked up', '#191');
-    owed(!!AREAS.find((a) => a.id === 'wrackholm')?.chapter, 'the act walks end to end: the log shows Act II in three chapters, and the Wall is played on from Wrackholm\'s chapter with the papers carried from the Tide Ship', '#191');
+    // chapter names its done flag, and Sunderwood's walkthrough puts the papers in the bag by hand
+    // (`fromTheTideShip`) until that chapter is written to carry them from the ship.
+    const wall = THE_QUEST.chapters.find((c) => c.id === 'wall'), wrack = AREAS.find((a) => a.id === 'wrackholm')?.chapter as Chapter | undefined;
+    const flagsOf = (w: When): string[] => conds(w).flatMap((k) => [k.flag ?? []].flat());
+    owed(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
+      'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up', '#191');
+    const seeds = readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8').includes('fromTheTideShip(');
+    ok(!wrack || !seeds, 'with Wrackholm\'s chapter written, Sunderwood\'s walkthrough puts no papers in the bag by hand, and plays the Wall on from it');
+    owed(!!wrack && !seeds, 'the act walks end to end: the log shows Act II in three chapters, and the Wall is played on from Wrackholm\'s chapter with the papers carried from the Tide Ship', '#191');
   }
   { // A chapter too long for one page goes on over the next, and keeps every entry.
     const c = THE_QUEST.chapters[0];

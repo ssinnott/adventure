@@ -119,15 +119,19 @@ export const LANTERN_WATCH: MapDef = {
       '"The rest is this. The world is a cage, and the Hearth is its lock. Beyond the sky there is somewhere else, somewhere real, and I mean to open the door."',
     ], choice: { ask: '"Help me. You\'ve touched that wall. You know I\'m right."', answers: [
       { label: 'We\'ll help you.', sets: ['q_vask_yes', 'q_salt_done'], says: [
-        'He hears it, and looks at you a moment longer than the words needed. "Good. Go home, then, and wait to be sent for."',
-        '"I don\'t need you for this part. I have the girl." He takes the reins from the Warden, and the three of them ride out of the gate, and the rain closes behind them.',
+        'He hears it, and looks at you a moment longer than the words needed. "Good. Then go home, and keep out of the rain. I don\'t need you for this part."',
+        '"I have the girl." He takes the reins from the Warden, and the three of them ride out of the gate, and the rain closes behind them.',
       ] },
       { label: 'No.', sets: ['q_vask_no', 'q_salt_done'], says: [
         'He does not seem surprised. "Then stay out of my way. I don\'t need you. I have the girl."',
         'He takes the reins from the Warden without looking for them, mounts, and is gone through the gate; the two go after.',
       ] },
     ] } },
-    { kind: 'event', x: 7, y: 13, id: 'lw_vask', once: true, ...VASK_HERE, text: 'Rain. Three horses at the gate, two Wardens holding them, and a man standing in the wet as if it were not raining.' },
+    // The gate's line on either square of the road in, said once whichever is walked.
+    ...([[7, 'lw_vask', 'lw_vask_e'], [8, 'lw_vask_e', 'lw_vask']] as const).map(([x, id, other]) => ({
+      kind: 'event' as const, x, y: 13, id, once: true, ...VASK_HERE, until: [VASK_HERE.until, { seen: `lantern_watch:${other}` }],
+      text: 'Rain. Three horses at the gate, two Wardens holding them, and a man standing in the wet as if it were not raining.',
+    })),
     { kind: 'event', x: 7, y: 14, id: 'lw_gate', once: true, text: 'Lantern Watch: one tower in a walled yard over the gorge, and a lamp at the top lit in daylight. Moth dust lies on the step like flour.' },
     { kind: 'sign', x: 8, y: 14, text: 'Lantern Watch. The hall, the refectory, the stores. Lamp oil, bread and a bed.' },
     { kind: 'event', x: 9, y: 9, id: 'lw_lamp_night', when: { hours: 'night' }, text: 'The yard by night. Under the lamp the moths go up in one grey column, close enough to touch, and none comes down.' },

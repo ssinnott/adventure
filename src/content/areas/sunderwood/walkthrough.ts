@@ -117,7 +117,8 @@ function vaskAnswered(label: string): (w: Walk) => void {
     w.ok(!w.world.present(VASK), 'by night, nobody waits at the Watch\'s gate');
     clock(w, 8);
     see(w, 'lantern_watch:lw_vask');
-    w.ok(w.world.used('lw_vask'), 'the next morning, riders at the gate');
+    w.world.travel('lantern_watch', 8, 13);
+    w.ok(w.world.used('lw_vask') && !w.world.eventsHere().length, 'the next morning, riders at the gate, said once across the road\'s width');
     const gold = w.party.gold, bag = [...w.party.bag].sort().join();
     meetWho(w, 'q_vask_rain');
     w.world.travel('lantern_watch', VASK.x, VASK.y);
@@ -134,6 +135,15 @@ function vaskAnswered(label: string): (w: Walk) => void {
 const BRIDGE: Step = { name: 'over the bridge', play: eastToTheBridge };
 const DOWN: Step = { name: 'down to the wall', play: downToTheWall };
 const READ: Step = { name: 'the papers read', play: toTheReader };
+
+/**
+ * The Tide Ship's papers or log put in the bag by hand, where Wrackholm's chapter (#191) will have
+ * carried them. tools/tests/quests.ts fails once that chapter is written and this is still used: the
+ * act is then walked end to end, the papers carried from the ship.
+ */
+function fromTheTideShip(w: Walk, ...ids: ('ships_papers' | 'ships_log')[]): void {
+  w.party.bag.push(...ids);
+}
 
 /** A company the Foreland's and the Grove's chapters are done for, by their own events and flags, at the Thornmark road's end. */
 function seeded(ok: (cond: boolean, msg: string) => void): Walk {
@@ -156,7 +166,7 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   hired(chain);
   playChapter(chain, FORELAND, FORELAND_STEPS, 'in order');
   playChapter(chain, GROVE, GROVE_STEPS, 'in order');
-  chain.party.bag.push('ships_papers', 'ships_log');
+  fromTheTideShip(chain, 'ships_papers', 'ships_log');
   listen(chain);
   ok(chain.news.at(-1) === 'New chapter: The Wall.', `in order, the papers begin the Wall (${chain.news.at(-1)})`);
   playChapter(chain, CHAPTER, [BRIDGE, DOWN, READ, { name: 'Vask, no', play: vaskAnswered('No.') }], 'in order');
@@ -167,7 +177,7 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   // The Watch first, at 16, with the papers alone: read before the wall, so the goal sends the
   // company down and Vask waits on it; then answered yes, which gives nothing.
   const watch = seeded(ok);
-  watch.party.bag.push('ships_papers');
+  fromTheTideShip(watch, 'ships_papers');
   listen(watch);
   ok(watch.news.at(-1) === 'New chapter: The Wall.', `the papers alone begin the Wall (${watch.news.at(-1)})`);
   const at16 = (s: Step): Step => ({ name: s.name, play: (w) => { w.level = 16; s.play(w); } });
@@ -189,7 +199,7 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   downToTheWall(sunder);
   ok(!quest(sunder)?.pages.some((p) => p.def === CHAPTER) && !sunder.news.includes('New chapter: The Wall.') && quest(sunder)?.goal === before, `the Sunder first, the wall begins nothing and the goal stands (${before})`);
   goalFromBegun(sunder, 'the Sunder first');
-  sunder.party.bag.push('ships_log');
+  fromTheTideShip(sunder, 'ships_log');
   listen(sunder);
   ok(sunder.news.at(-1) === 'New chapter: The Wall.' && ['rim', 'crossing', 'wall'].every((e) => written(sunder).includes(e)), `the log begins the Wall, with the rim, the crossing and the wall written at once (${written(sunder).join(', ')})`);
   playChapter(sunder, CHAPTER, [READ, { name: 'Vask, no', play: vaskAnswered('No.') }], 'the Sunder first');
