@@ -340,9 +340,6 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  * fails once it agrees, so it is dropped here.
  */
 const EDGES_OWED: Record<string, readonly string[]> = {
-  // The east road leaves L2 at its corner, where the atlas runs it on through M2's corner into M3,
-  // which is cut: M2 settles where it crosses.
-  '#202': ['lanternwood_l2 31,30', 'lanternwood_l2 29,31', 'lanternwood_l2 30,31', 'lanternwood_l2 31,31'],
 };
 
 /** A flag that closes something, found in the maps: an exit, a hand-in, or anything else that names one. */

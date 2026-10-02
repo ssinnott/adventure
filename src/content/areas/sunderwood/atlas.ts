@@ -13,8 +13,8 @@ const HELD: [number, number][] = [
 ];
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }, { map: 'eaves_j2', at: [296, 30] }, { map: 'eaves_k2', at: [328, 30] }, { map: 'eaves_k3', at: [328, 62] }], seeds: [[292, 40], [300, 86]] },
-  { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], maps: [{ map: 'lanternwood_l2', at: [360, 30] }], seeds: [[372, 50], [370, 96], ...HELD], label: [378, 84] },
+  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }, { map: 'eaves_j2', at: [296, 30] }, { map: 'eaves_k2', at: [328, 30] }, { map: 'eaves_k3', at: [328, 62] }, { map: 'eaves_j3', at: [296, 62] }], seeds: [[292, 40], [300, 86]] },
+  { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], maps: [{ map: 'lanternwood_l2', at: [360, 30] }, { map: 'lanternwood_m2', at: [392, 30] }], seeds: [[372, 50], [370, 96], ...HELD], label: [378, 84] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [

@@ -7,6 +7,7 @@ import { ITEMS as THORNMARK } from '../thornmark/items.ts';
 
 const halberd = FORELAND.find((i) => i.id === 'halberd')!;
 const plate = THORNMARK.find((i) => i.id === 'plate')!;
+const chain = FORELAND.find((i) => i.id === 'chain')!;
 
 // Sold in the Watch's stores (#201): a step past Saltmouth's finds for every class, at 14.
 const flail = W('flail', 'Flail', 1100, 2, 8, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
@@ -42,6 +43,8 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'sunder_shard', name: 'Sunder Shard', slot: 'none', price: 0 },
   // K2's secret (#197): on the ledge behind Sunderfall's water.
   P(core('longsword'), 2),
+  // J3's secret (#202): in the gleaners' cache behind the bears' den.
+  P(chain, 2),
   // I2's secret (#195): the Watch's last patrol's, under the milestone.
   P(halberd, 1, { id: 'wardens_halberd', name: "Warden's Halberd +1" }),
 ];
