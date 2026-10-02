@@ -495,8 +495,8 @@ settled in its issue, and what the pilot teaches changes them.
   holds at 11: the upper level wins every fight at 7.2 fights to a rest; the choir wins 83% of its
   fights with the boss among them, every fight but the boss's, at 7.5 to a rest; the Choirmaster
   is won 48% of the time at 11 and 98% at 13. As measured, a clear pays about 1,580 xp a member at
-  11 and about 1,130 gold (§8). Once the Tide Stone is home (#191) the god sings, very faintly, a step
-  short of the apse's stair and before the far roof's porch, whether or not the count has stopped,
+  11 and about 1,130 gold (§8). Once the Tide Stone is home (#191) the god sings, very faintly, across
+  the nave's head before the apse's stair and before the far roof's porch, whether or not the count has stopped,
   and the count and the quiet at those stairs give way to it.
 
 ### 4.8 C6, Saltmouth's box (#176): core, band 11–12

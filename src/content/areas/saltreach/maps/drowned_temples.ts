@@ -7,7 +7,7 @@
 // docs/areas/saltreach.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
-import type { QuestCond } from '../../../../game/quests.ts';
+import type { QuestCond, When } from '../../../../game/quests.ts';
 
 /** The Choirmaster fallen, and the count with it (level two). */
 export const COUNT_STOPPED: QuestCond = { slain: 'drowned_temples2:dt2_choirmaster' };
@@ -17,6 +17,13 @@ export const STONE_HOME: QuestCond = { flag: 'q_tide_home' };
 
 /** The Tide Bell back on its frame: the priestess's hand-in at B6's dry door (#56's 23). */
 export const BELL_HUNG: QuestCond = { flag: 'q_tide_bell_done' };
+
+/** The nave's head, x 5 to 10 of row 3: the squares every way to the apse's stair crosses. */
+const SINGS = [5, 6, 7, 8, 9, 10];
+const singId = (x: number): string => (x === 8 ? 'dt1_stair_sing' : `dt1_sing_${x}`);
+/** The song heard once, on any of them. */
+const SUNG: When = SINGS.map((x) => ({ seen: `drowned_temples:${singId(x)}` }));
+const SONG = 'The nave\'s head, the apse dark ahead and its stair going down out of the floor. Up it, under the drip of the aisle, one low note, held, and another a little above.';
 
 export const DROWNED_TEMPLES: MapDef = {
   id: 'drowned_temples',
@@ -63,8 +70,10 @@ export const DROWNED_TEMPLES: MapDef = {
     // The apse: the stair head, and the count up it from the choir until the Choirmaster falls.
     { kind: 'event', x: 8, y: 2, id: 'dt1_stair', once: true, until: [COUNT_STOPPED, STONE_HOME], text: 'The apse. A stair goes down out of its floor, dry, and the count comes up it, many voices at once: one to ten, a breath, eleven, and one again.' },
     { kind: 'event', x: 8, y: 2, id: 'dt1_stair_quiet', once: true, after: [COUNT_STOPPED, STONE_HOME], until: STONE_HOME, text: 'The apse\'s stair, dry, going down into the dark. Nothing comes up it now. The water in the aisle lies flat, and you can hear it drip.' },
-    // Once the Tide Stone is home the god sings again, very faintly, heard a step short of the stair whether or not the count has stopped (#191).
-    { kind: 'event', x: 8, y: 3, id: 'dt1_stair_sing', once: true, after: STONE_HOME, text: 'The nave\'s head, the apse dark ahead and its stair going down out of the floor. Up it, under the drip of the aisle, one low note, held, and another a little above.' },
+    // Once the Tide Stone is home the god sings again, very faintly, whether or not the count has
+    // stopped (#191): heard once, on whichever square of the nave's head the company crosses, since
+    // every way to the apse's stair crosses it.
+    ...SINGS.map((x) => ({ kind: 'event' as const, x, y: 3, id: singId(x), once: true, after: STONE_HOME, until: SUNG, text: SONG })),
   ],
   encounters: [
     // Two drowned men in the nave's dry strip; and two bull toads in the north-east chapel, come in with

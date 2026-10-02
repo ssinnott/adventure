@@ -190,8 +190,16 @@ function theStoneCarriedHome(ok: (cond: boolean, msg: string) => void): void {
   // The temples first seen with the Stone home: the god sings at the apse's stair, though the count
   // goes on below while the Choirmaster stands.
   walkThrough(first, 'delta_b6', 16, 12, NORTH, 'drowned_temples', 2);
-  see(first, 'drowned_temples:dt1_stair_sing');
-  ok(first.world.used('dt1_stair_sing') && !first.world.used('dt1_stair') && !first.world.used('dt1_stair_quiet'), 'Saltmouth first, the apse\'s stair sings, and no count comes up it');
+  // Up the nave's east side, wide of the stair's own square: the song is heard all the same, and once.
+  first.world.travel('drowned_temples', 9, 3);
+  const heard9 = first.world.eventsHere();
+  first.world.travel('drowned_temples', 8, 3);
+  const heard8 = first.world.eventsHere();
+  first.world.travel('drowned_temples', 8, 2);
+  const atStair = first.world.eventsHere();
+  listen(first);
+  ok(heard9.length === 1 && first.world.used('dt1_sing_9') && !heard8.length && !atStair.length && !first.world.used('dt1_stair') && !first.world.used('dt1_stair_quiet'),
+    'Saltmouth first, the song comes up the apse\'s stair to whichever side of the nave the company walks, once, and no count comes up it');
   const tide = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === TIDE)?.entries ?? []).map((e) => e.id);
   ok(JSON.stringify(tide(first)) === JSON.stringify(['plinth', 'ship']), `Saltmouth first, the Tide Stone holds only what was seen and said (${tide(first).join(', ')})`);
   const read = written(first).map((e) => `wrack.${e}`).sort();

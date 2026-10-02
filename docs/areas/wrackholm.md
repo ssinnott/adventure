@@ -389,10 +389,11 @@ the plinth in the Delta; down to the Hold; out to the Tide Ship. No goal sits on
 and the Warden at 14. The plinth at Stienwierde takes the Stone: a feature met by its name, never a
 person, there only with the Stone carried or set back, whose hand-in sets `q_tide_home`. That ends
 the Tide Stone, lights the Hearth's first step, quiets the Delta's three Rifts and B6's brinelings,
-gives the hermit on the hummock a last line, and sets the temples singing on the approach to the
-far roof's porch and to the apse's stair, whether or not the count has stopped below. The
+gives the hermit on the hummock a last line and sets the temples singing on the approach to the
+far roof's porch and across the nave's head before the apse's stair, whether or not the count has
+stopped below. The
 walkthrough plays it in order on from Saltreach's run, and with Saltmouth first, the temples not
-seen: the ship boarded with the table shut, the Stone home, then the papers, and the temples
+seen: the ship boarded with the table shut, the Stone home, then the papers and the temples
 singing while the Choirmaster stands. Sunderwood's walkthrough plays the Wall on from it.
 
 ## 6. Side quests
@@ -498,7 +499,8 @@ Decided by delegate for #191, each the owner's to overturn:
 6. **The temples sing on the approach to two stairs,** the far roof's porch (B6) and the apse's,
    once the Stone is home, and the count and the quiet there give way to it. The song is the
    god's, so it does not wait on the Choirmaster; the choir below keeps its count while he stands.
-   One step short of each stair, since the log holds the count and the song together no other way.
+   One step short of each stair, since the log holds the count and the song together no other way;
+   at the apse across the nave's whole head, heard once, so no way up to the stair misses it.
 7. **The Stone home closes the Delta's Rifts** (B5's two and C5's) and B6's brinelings, the other
    way #170 and #173 left to #191. The brinelings at Nynke's window stay The Night-Light's.
 8. **The hermit on the hummock gets one line** once the Stone is home, and sets nothing.
