@@ -1,6 +1,6 @@
 // Saves: a round trip, the outdoors kept small, a save from before the weather, a version 1 save
 // loaded onto the outdoors and onto a map that has since grown, a version 2 save's yes to Vask
-// brought to his no, the upgrades run by version, and what a save meets on content changed since:
+// brought to his no, a version 3 save given its members' blessings, none, the upgrades run by version, and what a save meets on content changed since:
 // a group added, a door moved off its square.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
@@ -86,6 +86,12 @@ export function save(): void {
     ok(up.version === SAVE_VERSION && !up.party.flags.q_vask_yes && up.party.flags.q_vask_no === 1 && up.party.flags.q_salt_done === 1 && up.party.flags.q_vask_rain === 1, `a save that told Vask yes loads having told him no (${Object.keys(up.party.flags).join(', ')})`);
     const no = deserialize(JSON.stringify({ ...v1, party: { ...v1.party, flags: { q_vask_no: 1, q_salt_done: 1 } } }));
     ok(JSON.stringify(no.party.flags) === '{"q_vask_no":1,"q_salt_done":1}', 'and one that told him no loads as it was');
+  }
+  { // A version 3 save, from before a blessing kept an element off (#555), loads with none kept off.
+    const v3 = upgrade(JSON.parse(JSON.stringify(v1)) as SaveData, UPGRADES, 3);
+    for (const m of v3.party.members) delete (m as { blessed?: unknown }).blessed;
+    const up = deserialize(JSON.stringify(v3));
+    ok(up.version === SAVE_VERSION && up.party.members.every((m) => Array.isArray(m.blessed) && m.blessed.length === 0), 'a version 3 save loads with no member blessed against anything');
   }
   { // The upgrades run by version, each registered with the version it brings a save to.
     const to3 = (d: SaveData): SaveData => ({ ...d, world: { ...d.world, steps: d.world.steps + 1 } });

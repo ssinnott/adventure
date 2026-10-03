@@ -7,7 +7,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
 import { World } from '../../src/game/world.ts';
-import { defaultParty } from '../../src/game/party.ts';
+import { defaultParty, resists } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { NORTH } from '../../src/game/types.ts';
@@ -185,6 +185,25 @@ export function wilds(): void {
   ok(useShrine(tide.world, tide.party, waits)[0] === waits.text && plus(before, stat(tide.party, 'might'), 1) && tide.world.used(waits.id), 'and blesses, a point of Might to each');
   ok(useShrine(tide.world, tide.party, waits)[0] === waits.done && plus(before, stat(tide.party, 'might'), 1), 'once');
   ok(condFaults({ flag: 'w_bell' }, [late]).length === 1, 'its flag is one some person or event has to set');
+
+  // A blessing's resistance (#555): to every member, whatever their state; the kind kept to the next
+  // rest ends at it and the lasting one does not; both survive a save.
+  {
+    const warm = { ...shrine, id: 'w_warm', stat: undefined, resist: { element: 'fire' as const } };
+    const brine = { ...fountain, id: 'w_brine', stat: undefined, resist: { element: 'cold' as const, until: 'rest' as const } };
+    const b = (() => { const rng = makeRng(3), p = defaultParty(rng); p.food = 50; return { world: new World({ wilds: new GameMap({ ...FIXTURE, features: [warm, brine] }) }, p, rng), party: p }; })();
+    b.party.members[3].hp = -20; b.party.members[3].conditions = ['dead'];
+    before = stat(b.party, 'might');
+    const said = useShrine(b.world, b.party, warm);
+    ok(said[1] === 'Fire kept off each of the company.' && b.party.members.every((c) => resists(c).join() === 'fire') && plus(before, stat(b.party, 'might'), 0), `a shrine that gives only a resistance gives it to every member, the dead too, and no stat (${said.join(' ')})`);
+    useShrine(b.world, b.party, brine);
+    ok(b.party.members.every((c) => resists(c).join() === 'fire,cold'), 'a fountain adds its own, kept to the next rest');
+    const kept = deserialize(serialize(b.world.state, b.party, 0)).party;
+    ok(kept.members.every((c) => resists(c).join() === 'fire,cold'), 'a save keeps both');
+    b.world.state.x = camp.x; b.world.state.y = camp.y;
+    ok(restParty(b.world, b.party) && b.party.members.every((c) => resists(c).join() === 'fire'), 'a rest ends the one kept to it, and not the lasting one, on the dead as on the living');
+    ok(MAP_DEFS.every((d) => (d.features ?? []).every((f) => (f.kind !== 'shrine' && f.kind !== 'fountain') || !!f.stat || !!f.resist)), 'every shrine and fountain in the game gives a stat or a resistance');
+  }
 
   // The hint chain: every statue's answer is said somewhere else.
   const bare: MapDef = { ...FIXTURE, features: FIXTURE.features!.filter((f) => f.kind !== 'npc') };

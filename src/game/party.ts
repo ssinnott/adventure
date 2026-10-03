@@ -188,7 +188,12 @@ export interface Character {
   prestige?: number;
   /** A cleric's third prestige has kept someone from death since the last rest (`lastRite`). */
   riteSpent?: boolean;
+  /** The elements a blessing keeps off (#555): for good, or `until` the next rest. */
+  blessed: Blessed[];
 }
+
+/** An element a blessing keeps off a member, for good or `until` the next rest. */
+export interface Blessed { element: Element; until?: 'rest' }
 
 export interface Party {
   members: Character[];
@@ -257,7 +262,7 @@ export function createCharacter(name: string, race: RaceId, cls: ClassId, base: 
     name, race, cls, level: 1, xp: 0, stats,
     hp: 0, maxHp: 0, sp: 0, maxSp: 0,
     conditions: [], equipment: { weapon: null, armor: null, shield: null },
-    spells: [], pack: [],
+    spells: [], pack: [], blessed: [],
   };
   const cd = CLASSES[cls];
   c.maxHp = Math.max(4, cd.hpDie + bonus(stats.endurance) + 2);
@@ -314,13 +319,14 @@ export function immuneTo(c: Character, k: Condition): boolean {
   return !!RACES[c.race].resist?.includes(k) || CLASSES[c.cls].traits.some((t) => TRAITS[t].immune?.includes(k));
 }
 /**
- * The elements a member takes half from (#555): those of what they wear, and of a slotless item in
- * their own pack. Armour in the pack is not worn, and the bag is nobody's. In ELEMENTS' order.
+ * The elements a member takes half from (#555): those of what they wear, of a slotless item in
+ * their own pack and of a blessing. Armour in the pack is not worn, and the bag is nobody's. In
+ * ELEMENTS' order.
  */
 export function resists(c: Character): Element[] {
   const worn = [c.equipment.weapon, c.equipment.armor, c.equipment.shield].filter((id): id is string => !!id);
   const ids = [...worn, ...c.pack.filter((id) => item(id).slot === 'none')];
-  return ELEMENTS.filter((el) => ids.some((id) => item(id).resist?.includes(el)));
+  return ELEMENTS.filter((el) => ids.some((id) => item(id).resist?.includes(el)) || c.blessed.some((b) => b.element === el));
 }
 export function addCondition(c: Character, k: Condition): void {
   if (immuneTo(c, k)) return;
@@ -364,9 +370,10 @@ export function heal(c: Character, n: number): number {
   return c.hp - before;
 }
 
-/** Full recovery, as an inn or a night's rest gives. Does not raise the dead. */
+/** Full recovery, as an inn or a night's rest gives, and the end of a blessing kept to it. Does not raise the dead. */
 export function rest(c: Character): void {
   delete c.riteSpent;
+  c.blessed = c.blessed.filter((b) => !b.until);
   if (hasCondition(c, 'dead') || hasCondition(c, 'stoned')) return;
   c.hp = c.maxHp; c.sp = c.maxSp;
   c.conditions = c.conditions.filter((k) => k === 'poisoned' || k === 'diseased' || k === 'cursed');

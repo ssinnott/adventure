@@ -63,5 +63,11 @@ function toV3(data: OldSave): OldSave {
   return data;
 }
 
+/** 4: a blessing may keep an element off a member (#555); every member starts with none. */
+function toV4(data: OldSave): OldSave {
+  for (const m of data.party.members) m.blessed ??= [];
+  return data;
+}
+
 /** Each upgrade by the version it brings a save to. A bump of SAVE_VERSION adds one here. */
-export const UPGRADES: Readonly<Record<number, Upgrade>> = { 2: toV2, 3: toV3 };
+export const UPGRADES: Readonly<Record<number, Upgrade>> = { 2: toV2, 3: toV3, 4: toV4 };
