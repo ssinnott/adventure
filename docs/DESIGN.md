@@ -130,7 +130,10 @@ regular, materials become too smooth, and the monsters stop being animals. This 
 lives (§7). It is not a map beneath the world: a company walks it only in the final dungeon, from
 the Hearth Isle down to the Core (§9). Elsewhere the hull shows only at the foot of a few deep
 dungeons, among them two large ones built around it: Meridian Camp, down Fire Mountain's vents,
-and the Dead-Drop, below the Tide Ship's hold (§10.2, §10.3).
+and the Dead-Drop, below the Tide Ship's hold (§10.2, §10.3). Each is three levels and a glimpse, never a door
+into a wider map: the camp's door to the service ways and the Dead-Drop's rails go on through doors
+that open for nobody the company has, as the Deep Mines' CREW ONLY and the Sleepers' Bay's do
+(docs/areas/meridian_camp.md, docs/areas/dead_drop.md; #22).
 
 The **Hearth Isle** in the centre is reachable only by ship.
 
@@ -812,7 +815,9 @@ Wardstone shards. The writer is the Tallymaster, a keeper that counts the cargo 
 dead founder's hand what the Hand dictates: the Tidefolk's god only counts (§9) because this is
 where its fragment has been counting.
 
-Ends with a choice: take over the Compact and redirect it (it becomes your ferry, fence and spy
+The Tallymaster's orders, stolen from its out-tray and carried up, open the guild's last rank, and
+Ruan puts the choice in the Keel at Saltmouth, not below (#22). It ends with a choice: take over
+the Compact and redirect it (it becomes your ferry, fence and spy
 network for Act V), or hand it to the Wardens (the Wardens siege becomes winnable, the sea lanes
 close, the Ashfall crossing gets harder).
 
@@ -828,7 +833,9 @@ at night, a monastery bell that opens a door).
 Following the trail leads down Fire Mountain's vents to Meridian Camp, the Meridian Company's
 last camp and a large dungeon of its own, where their cartographer, Oriel Fane, is still alive and
 very old, with their real map: the hull. The map shows what the Custodian will not say in Act V
-(§9, hidden third ending), and bringing it out is the Ranger's third prestige quest (§5).
+(§9, hidden third ending), and bringing it out is the Ranger's third prestige quest (§5). Fane
+gives it at the first meeting, and the giving, not the map held, is the expedition completed; the
+map has nothing a player can read, so the hidden third is earned at the Core (#22).
 
 ---
 
