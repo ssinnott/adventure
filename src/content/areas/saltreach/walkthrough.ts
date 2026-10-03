@@ -12,7 +12,8 @@
 // what it is to a company under its band; the hermit on the islet, who points up the spur; the
 // barge under the causeway's arch found from its hint; and the box's groups and its Rift's won at
 // its floor. Then the spur to Rietum (C4, #171): the eel-trapper's word on the poleman, the crews'
-// hide found from the gap in the herons, Passage Paid answered both ways, and the box's groups won.
+// hide found from the gap in the herons, Passage Paid answered both ways and its people found after
+// each, and the box's groups won.
 // Then up the track into Rietum (C3, #172): the Upper Water named at the seam; the quay-hand who saw
 // the Stone go by, the step, and the priest's word on a pole's mark; the old smuggler's cache found
 // from the clean stone in the quay and reached no other way; the two second prestiges taught off the
@@ -418,6 +419,11 @@ export const walkthrough: Walkthrough = (ok) => {
     return false;
   };
   ok(onFoot('high') && onFoot('low'), 'the master on the shoal can be walked to from the way in with no swimmer, at either tide');
+  const SHOAL = Object.fromEntries((['q_passage_owed', 'q_passage_freed'] as const).map((f) => [f, C4.features!.find((x) => x.kind === 'event' && x.id === `c4_shoal_${f.slice('q_passage_'.length)}`)!]));
+  const GEESKE = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Geeske'))!;
+  const HESSEL = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Hessel'))!;
+  const BOY = C3.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'a boy of Rietum')!;
+  ok(!w.world.present(GEESKE) && !w.world.present(HESSEL) && !w.world.present(BOY), 'before Passage Paid is answered, nobody from the barge is in port or at Rietum');
   const page = (): string => questLog(w.world.state, w.party).find((v) => v.def.id === 'passage')?.pages[0]?.entries.map((e) => e.text).join(' ') ?? '';
   for (const [label, flag] of [['Push her off.', 'q_passage_owed'], ['Cut them loose.', 'q_passage_freed']] as const) {
     for (const f of ['q_passage', 'q_passage_owed', 'q_passage_freed']) delete w.party.flags[f];
@@ -428,6 +434,12 @@ export const walkthrough: Walkthrough = (ok) => {
     if (a) answer(a, w.party);
     ok(!!w.party.flags[flag] && !w.world.present(MASTER), `'${label}' sets ${flag}, and the barge is gone off the shoal`);
     ok(w.world.walks(CREW, CREW.x, CREW.y) === (flag === 'q_passage_freed'), `'${label}': a crew comes up the bank ${flag === 'q_passage_freed' ? 'after it' : 'only if they are freed'}`);
+    // After, a way each: the shoal, Geeske on Saltmouth's quay, the boy home at Rietum and Hessel in port.
+    const freed = flag === 'q_passage_freed';
+    ok(w.world.present(SHOAL[flag]) && !w.world.present(SHOAL[freed ? 'q_passage_owed' : 'q_passage_freed']), `'${label}': the shoal says what became of the barge`);
+    const geeske = meet(GEESKE, w.party, heard(w.world, GEESKE)).text;
+    ok(w.world.present(GEESKE) && geeske.includes(freed ? 'bank road' : 'tarpaulin'), `'${label}': Geeske, who paid, is on Saltmouth's quay and says how she came there`);
+    ok(w.world.present(BOY) === freed && w.world.present(HESSEL) === !freed, `'${label}': the boy is home at Rietum ${freed ? 'mending nets' : 'never'}, and Hessel is on Saltmouth's quay ${freed ? 'never' : 'with his ledger'}`);
   }
   ok(page().includes('waded ashore'), 'the log says the passengers went ashore');
   // Hessel's word waives the boat's fare out of Saltmouth; the passengers cut loose, it does not.

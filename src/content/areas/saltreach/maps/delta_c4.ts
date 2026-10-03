@@ -83,6 +83,9 @@ export const DELTA_C4: MapDef = {
         '"A debt\'s a debt. The boat at Saltmouth\'s quay, the one with no name on her: tell them Hessel\'s word carries you to Wrackholm. No fare. That\'s what you\'re owed, and all of it."',
       ] },
     ] } },
+    // The shoal after Passage Paid, a way each: the barge gone round the bend, or aground and empty.
+    { kind: 'event', x: 1, y: 17, id: 'c4_shoal_owed', once: true, after: { flag: 'q_passage_owed' }, text: 'The shoal, and the groove the barge left in the sand. Downstream, low in the water, she is already round the bend.' },
+    { kind: 'event', x: 1, y: 17, id: 'c4_shoal_freed', once: true, after: { flag: 'q_passage_freed' }, text: 'The barge on the shoal, empty, her hatch open. The people\'s tracks go up the bank in a line, and are not the only ones.' },
     // The ford, and the eel-trapper at his traps, who heard the Stone's barge go by and knows a stroke.
     { kind: 'event', x: 1, y: 21, id: 'c4_ford', once: true, text: 'The ford, the Long Water shallow over gravel, and willows on the far bank, their feet in the river, going on west.' },
     { kind: 'npc', x: 2, y: 21, name: 'an eel-trapper at the ford', lines: [

@@ -97,6 +97,11 @@ export const UPPERWATER_C3: MapDef = {
     ] },
     { kind: 'event', x: 1, y: 13, id: 'c3_sluice', once: true, text: 'The sluice-house at the diep\'s head, a gate of black oak in it, shut. Beyond it the diep runs on west under willows, out of sight, to the Long Water.' },
     { kind: 'event', x: 5, y: 11, id: 'c3_lofts', once: true, text: 'The net lofts on the north bank, nets hung from their beams to the water. A face at one window, then none.' },
+    // Passage Paid (#56's 22), the people cut loose from the barge on C4's shoal: the boy home.
+    { kind: 'npc', x: 6, y: 11, name: 'a boy of Rietum', after: { flag: 'q_passage_freed' }, lines: [
+      'A boy of fourteen sits by the net lofts with a net across his knees, mending it, badly, and does not stop when you come up. The rope has left its marks on his wrists.',
+      '"Mam says I\'m to thank you. Thanks." A knot, pulled tight. "They came off the barge at the willows and put a hand over my mouth. That\'s all. I don\'t know why me. I keep thinking there\'s a why, and there isn\'t."',
+    ] },
     // The quay: the barges, the quay-hand who saw the Stone go by (the step), the child at her window.
     { kind: 'event', x: 5, y: 13, id: 'c3_barges', once: true, text: 'Barges tied along the quay, decks a step below the stones. Their crews sit on the hatches with a cask between them and watch you along the bank. Nobody waves.' },
     { kind: 'npc', x: 6, y: 13, name: 'Wytske, a hand on the quay', lines: [

@@ -719,7 +719,9 @@ nothing with them and the second row of notches on his pole is shorter: the Carg
 seen and never said. Cut loose (`q_passage_freed`), they wade ashore, and a crew of three bargemen
 comes up the bank after them. Pushed off (`q_passage_owed`), Hessel's word carries the company to
 Wrackholm with no fare: Kitto's boat on Saltmouth's quay (#413) reads the flag as its `free`. Either way he is gone
-off the shoal.
+off the shoal. After it (#183) the shoal has an event for each answer; Geeske, who paid at the spur,
+stands on Saltmouth's quay with a text for each; cut loose, a boy of Rietum mends nets by the lofts;
+pushed off, Hessel checks a load on Saltmouth's quay.
 
 **The Night-Light, as built** (#183). The priest at the sluice asks for Nynke's light at his first
 meeting (`q_nightlight`), and still reads a pole's mark for B5. Nynke's first meeting stays the hint;
@@ -922,6 +924,19 @@ Decided by delegate for #171, each the owner's to overturn:
    at the fork, then C4's barge. It is walked 100% of the time at 10.
 8. **The boat reads Hessel's word here:** #413 sold the boat without it, so this pull request adds
    `free: { flag: 'q_passage_owed' }` to Kitto's passage out of Saltmouth. The way back is paid.
+
+Decided by delegate for #183's Passage Paid, each the owner's to overturn:
+
+1. **Passage Paid stays #171's.** There is no chit: the favour is the fare, read off
+   `q_passage_owed`, and Kitto already says so, so a letter he took would be the same favour twice.
+   There is no hold event: the hold is seen in Hessel's first meeting and never said. The answers keep
+   their words.
+2. **Its people after:** Geeske (the issue's Elowen, a fen passenger and Frisian) on Saltmouth's quay
+   at 9,10 with a text for each answer; Hessel (the issue's Jago) at 12,10 once pushed off; a boy of
+   Rietum mending nets by the lofts at 6,11 once cut loose, his wrists marked by rope, as the hold had
+   rope; and an event on the shoal for each. Saltmouth's steps are left to #192.
+3. **The second barge at dusk is cut:** the game has no dusk, and the crew that comes up the bank
+   after the people is it. A third fight on a country box would push C4 further over its share (§8).
 
 Decided by delegate for #173, each the owner's to overturn:
 
