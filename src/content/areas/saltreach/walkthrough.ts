@@ -49,7 +49,7 @@ import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature } from '../../../game/map.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, resists, rest } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
 import { questLog } from '../../../game/quests.ts';
 import type { QuestView } from '../../../game/quests.ts';
@@ -500,7 +500,10 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.used('dt1_frame_hung'), 'the bell hangs on its frame in the narthex');
   const endurance = w.party.members.map((m) => m.stats.endurance);
   kneel(w, 'drowned_temples:dt1_bell');
-  ok(w.party.members.every((m, i) => m.stats.endurance === endurance[i] + 1), 'and kneeling at it, the Tidefolk\'s blessing: a point of Endurance to each of the company');
+  ok(w.party.members.every((m, i) => m.stats.endurance === endurance[i] + 1 && resists(m).includes('cold')), 'and kneeling at it, the Tidefolk\'s blessing: a point of Endurance to each of the company, and the cold kept off');
+  const rested = structuredClone(w.party.members);
+  for (const m of rested) rest(m);
+  ok(rested.every((m, i) => m.stats.endurance === endurance[i] + 1 && !m.blessed.length), 'until the next rest; the point stays');
 
   // On down the road into Saltmouth's box: the fen gives way to the Saltings at the seam.
   w.world.travel('delta_c5', 26, 30, SOUTH);
