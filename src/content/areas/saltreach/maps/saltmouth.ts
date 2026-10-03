@@ -5,7 +5,8 @@
 // the Cartographers' Guild's hall (#181). Four first prestiges are taught here, each by a person at their
 // trade: the astrologer, the locksmith, the stevedore and the ferryman. Jory Tallis stands at his
 // house front on the quay, Kitto sells the boat to Wrackholm at the quay's end, and once Hale is gone a
-// Warden off the coast road sits by the gate with the news.
+// Warden off the coast road sits by the gate with the news. The Star That Moved (#56's 24): Hiske
+// asks, and the pilots' slate goes to her press or to Tallis (#183).
 // docs/areas/saltreach.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
@@ -86,11 +87,33 @@ export const SALTMOUTH: MapDef = {
         'She shuts it and holds it a moment longer than she needs to, then puts it in your hands. "Keep it. It came up out of the dark in yours, not ours. Bring the next and I will read that too."',
       ] },
     ] },
-    // The other three first prestiges, taught in the street by people who keep no shop.
+    // The other three first prestiges, taught in the street by people who keep no shop. The
+    // astrologer asks for the star that moved (#56's 24), and takes the pilots' slate for her press.
     { kind: 'npc', x: 10, y: 7, name: 'Hiske the astrologer', lines: [
-      'A woman in the street with charts rolled under her arm and ink on her thumb, stood where the pilots pass, looking up though it is day.',
-      '"Hiske. I draw the sky for the pilots, where the stars stand and where they will stand. Lately I draw it twice to be sure."',
+      'A woman in the street with charts rolled under her arm and ink to the elbow, stood where the pilots pass, looking at the noon sky as if it had lied to her.',
+      '"Hiske. I draw the pilots\' charts, my mother before me, and a Saltmouth pilot will take one out past the bar on a black night and trust it over his eyes. Since the Queen died, they don\'t. Three in a month have said the same thing, looking at their boots: a star has moved. Stars don\'t. I said so. They stopped coming."',
+      '"Go out to the pilots\' stone on the pans south of the town, on a clear night, and watch the sky over the Scarp. Then tell me what you saw. I\'ll believe six pairs of eyes where I wouldn\'t believe one."',
       '"One of you has gone as far as rote takes anyone. There is a next part. It is not cheap and it is not comfortable."',
+    ], flag: 'q_star', quest: { item: 'pilots_slate', reward: 200, setFlag: 'q_star_press', done: [
+      'Hiske reads the slate there in the street, tilted to the light, and her mouth thins with each line.',
+      '"Twelve hands. Twelve pilots who\'d sooner chalk it on a stone in the dark than say it to my face." She rubs the last line out with her thumb, and stops, and does not rub the rest. "It goes to the press tomorrow. A chart with a star that moves on it, and a note in the margin saying how much, and when. Let the port bolt. Ships don\'t sink from knowing."',
+      '"Here. Twenty years I\'ve been paid for the sky standing still. Have some of it, now it doesn\'t."',
+    ], early: [
+      'Hiske sees the slate before she sees you, and puts out her hand for it. She reads it there in the street, tilted to the light, and her mouth thins with each line.',
+      '"The pilots\' stone. A month I\'ve asked them about the sky, and they\'ve been answering it to a rock." She rubs the last line out with her thumb, and stops, and does not rub the rest. "Twelve hands. It goes to the press tomorrow: a chart with a star that moves on it, and a note saying how much, and when. Let the port bolt."',
+      '"I\'d have paid six strangers to fetch me this. I\'ll pay six who fetched it unasked."',
+    ] }, says: [
+      { after: { flag: 'q_star_tallis' }, lines: [
+        '"You took it to the dockmaster." She is drawing, a chart flat against the wall, and does not stop. "I know, because my pilots have new charts they didn\'t get from me, with a very sensible note on them about fresh bearings. Sensible. I could have wept."',
+        '"Something walks about over the Scarp at night, and the man with the hulls has decided we\'re better off not knowing. He may be right. I shan\'t forgive him either way."',
+      ] },
+      { after: { flag: 'q_star_press' }, lines: [
+        'The chart is pinned up where the pilots pass: their star over the Scarp, a dotted line behind it and a hand\'s width marked in red.',
+        '"They came and bought it and didn\'t look me in the eye. Every pilot in the port. Then the Compact\'s clerk came and bought ten, and asked had I drawn any others." She wipes her hands. "I don\'t sleep well. I didn\'t when it stood still either. I was just wrong about why."',
+      ] },
+      { after: { flag: 'q_star' }, lines: [
+        '"The pilots\' stone, on the pans south of the town, where the lanes cross. A clear night, and the sky over the Scarp. Then come and tell me." She looks up, though it is day.',
+      ] },
     ], teaches: { cls: 'sorcerer', prestige: 1 } },
     { kind: 'npc', x: 11, y: 10, name: 'Baukje the stevedore', lines: [
       'A woman the size of a door stands among the bales with a hook in her belt and a bale on her shoulder she has forgotten about.',
@@ -107,6 +130,25 @@ export const SALTMOUTH: MapDef = {
       'A big man in a good coat before the one stone house on the quay, his door open behind him. He looks at ships the way other men look at money.',
       '"Tallis. Dockmaster, and the hulls in the roads are mine, which in a free port is the same as mayor." He names three ships without turning to look at them.',
       '"Mine is an old name, older than the port. Helmstow\'s chair stands empty, and its Council counts on its fingers. A port counts hulls." He wishes you a good tide.',
+    // The Star That Moved (#56's 24): his throne words first, always, then the star's; he buys the
+    // pilots' slate at the first meeting, for more than the astrologer pays.
+    ], flag: 'sm_tallis_word', quest: [{ item: 'pilots_slate', reward: 400, setFlag: 'q_star_tallis', done: [
+      'Tallis reads the slate once, in the light of his door, and tucks it face down under his arm.',
+      '"A hand\'s width since midsummer. Well." He counts your coin out of his coat, and adds to it. "My pilots will have new charts by the month\'s end, with a note that a bearing is to be taken fresh each night, as good seamanship always said. Nothing printed about why. The astrologer will be paid for the drawing, and will not see this."',
+      '"You\'ll want to know what I make of it. I make of it that the sky has a matter before it, and so has Helmstow, and a man who keeps his head in the one may be remembered in the other."',
+    ] }], says: [
+      { after: { flag: ['sm_tallis_word', 'q_star_tallis'] }, lines: [
+        '"The charts are out, the port is calm, and nobody has said the word star to me in a week." Tallis does not turn from the roads. "That is what I paid for. You\'ll find I remember what I paid for, and who brought it, when remembering is useful. It will be."',
+      ] },
+      { after: { flag: ['sm_tallis_word', 'q_star_press'] }, lines: [
+        '"She printed it." Tallis says it lightly, a man remarking on rain. "Two crews refused to sail the night it went up, and I paid them to sail anyway, and they did. So it cost me, and I dislike a cost I didn\'t choose."',
+        '"No matter. A port forgets. I don\'t, but a port does."',
+      ] },
+      { after: { flag: ['sm_tallis_word', 'q_star'] }, until: [{ flag: 'q_star_press' }, { flag: 'q_star_tallis' }], lines: [
+        'Tallis stands at his door on the quay with his hands behind him and the hall with its lineage behind that. He does not ask you in.',
+        '"The astrologer has been asking my pilots about the sky. My pilots. I have a hundred and forty hulls that steer by her charts, and she\'d like to print, in ink, that the sky can\'t be trusted." He looks at the roads. "A port is a nervous animal. It bolts at a word."',
+        '"If there\'s a thing to know, I\'ll know it, and pay a company\'s price to be the one who does, and decide when Saltmouth hears it. That\'s not secrecy. That\'s a dockmaster\'s job."',
+      ] },
     ] },
     // The boat to Wrackholm's landing (#164): a fare, never a favour, at the quay's end.
     { kind: 'npc', x: 14, y: 10, name: 'Kitto, who has a boat', lines: [

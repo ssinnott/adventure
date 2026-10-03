@@ -36,7 +36,8 @@
 // rank's crate; the way down through the Keel's cellar to the stair found from its sawdust; and the
 // boat to Wrackholm's landing and back, at the half fare a member pays. Then south into the pans
 // (C7, #178): the Scarp across the south and its stair's fallen foot, the sealed pan's hoard found
-// from the trodden wall, and the crabs and the toads won at 11.
+// from the trodden wall, and the crabs and the toads won at 11; and The Star That Moved (#183)
+// played every way.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
@@ -273,6 +274,67 @@ function theNightLight(w: Walk): void {
   reset();
   w.party.gold = gold0;
   w.party.bag = bag0;
+}
+
+/**
+ * The Star That Moved (#56's 24), at Saltmouth and on the pans: the watch from the pilots' stone, by
+ * night and never by day; the slate at its foot found before Hiske asks, and her words for a company
+ * that came early; then asked, and the slate to Tallis, whose throne words come first, and to her
+ * press. Each one's words after, and the log read true each way.
+ */
+function theStar(w: Walk): void {
+  const ok = w.ok;
+  const HISKE = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Hiske'))!;
+  const TALLIS = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Jory Tallis'))!;
+  const SLATE = C7.features!.find((f) => f.kind === 'chest' && f.id === 'c7_slate')!;
+  const FLAGS = ['q_star', 'q_star_press', 'q_star_tallis', 'sm_tallis_word'];
+  const reset = (): void => { for (const f of FLAGS) delete w.party.flags[f]; w.party.bag = w.party.bag.filter((i) => i !== 'pilots_slate'); };
+  const hear = (p: Person): string => { w.world.travel('saltmouth', p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
+  const page = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'star');
+  const entries = (): string => page()?.pages[0]?.entries.map((e) => e.id).join(', ') ?? '';
+  const gold0 = w.party.gold;
+  reset();
+
+  // The pilots' stone: by day the stone and the slate, and the watch kept for the night.
+  const day = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY;
+  w.world.state.minutes = day + 12 * 60;
+  w.world.travel('saltings_c7', 25, 7, SOUTH);
+  const noon = w.world.eventsHere();
+  ok(noon.some((m) => m.includes('notch')) && !w.world.used('c7_star'), 'by day the pilots\' stone stands where the lanes cross, its notch to the Scarp, and the watch waits for the night');
+  w.world.travel('saltings_c7', SLATE.x, SLATE.y);
+  w.world.markUsed('c7_slate');
+  if (SLATE.kind === 'chest') w.party.bag.push(...SLATE.items);
+  ok(w.party.bag.includes('pilots_slate') && page()?.goal === 'Take the pilots\' slate to Hiske in the street or to Tallis at his door on the quay, in Saltmouth.', `at its foot the pilots' slate, found before anyone asked, and the log has it (${page()?.goal})`);
+  w.world.state.minutes = day + 23 * 60;
+  w.world.travel('saltings_c7', 25, 7, SOUTH);
+  ok(w.world.eventsHere().some((m) => m.includes('one star burns too steady')) && w.world.used('c7_star') && entries().includes('watch'), `by night the star walks in the notch, and the log has the watch (${entries()})`);
+  w.world.state.minutes = day + 12 * 60;
+  // Early: Hiske never asked, and takes it all the same.
+  const early = hear(HISKE);
+  ok(early.includes('unasked') && !!w.party.flags.q_star_press && w.party.gold === gold0 + 200 && !!page()?.done, `Hiske takes the slate from a company she never asked, pays 200, and The Star That Moved is done (${entries()})`);
+
+  // Asked, both ways: to Tallis, then to her press.
+  for (const to of ['Tallis', 'Hiske'] as const) {
+    reset();
+    w.party.gold = gold0;
+    const asks = hear(HISKE);
+    ok(!!w.party.flags.q_star && asks.includes('pilots\' stone') && asks.includes('rote') && page()?.goal?.startsWith('Watch the sky') === true, `Hiske asks for a watch from the pilots' stone, and still offers her prestige (${page()?.goal})`);
+    ok(hear(HISKE).startsWith('"The pilots\' stone'), 'asked again, she says where the stone is');
+    const first = hear(TALLIS), second = hear(TALLIS);
+    ok(first.includes('older than the port') && !!w.party.flags.sm_tallis_word && second.includes('nervous animal'), 'Tallis\'s throne words come first, and then his words on the star');
+    w.party.bag.push('pilots_slate');
+    if (to === 'Tallis') {
+      hear(TALLIS);
+      ok(!!w.party.flags.q_star_tallis && !w.party.bag.includes('pilots_slate') && w.party.gold === gold0 + 400 && !!page()?.done && entries().includes('tallis'), `Tallis takes the slate at the first meeting, pays 400, and the log says so (${entries()})`);
+      ok(hear(TALLIS).includes('the word star') && hear(HISKE).includes('dockmaster'), 'after, Tallis has his calm port, and Hiske knows where it went');
+    } else {
+      const done = hear(HISKE);
+      ok(done.includes('Twelve pilots') && !!w.party.flags.q_star_press && w.party.gold === gold0 + 200 && !!page()?.done && entries().includes('press'), `Hiske takes the slate at the first meeting, pays 200, and the log says so (${entries()})`);
+      ok(hear(HISKE).includes('pinned up') && hear(TALLIS).includes('She printed it'), 'after, the chart hangs where the pilots pass, and Tallis counts its cost');
+    }
+  }
+  reset();
+  w.party.gold = gold0;
 }
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -780,4 +842,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The box's groups at its floor: the crabs in the pans, the bull toads in the last marsh.
   for (const g of C7.encounters!) fight(w, `saltings_c7:${g.id}`);
+
+  // The Star That Moved (#56's 24), played every way.
+  theStar(w);
 };
