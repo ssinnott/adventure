@@ -60,8 +60,11 @@ export const SALTINGS_C7: MapDef = {
     // The secret: the one pan with no sluice, its hoard reached by the crabs' hole under its east wall.
     { kind: 'event', x: 31, y: 5, id: 'c7_trodden', text: 'At this wall\'s foot the crust is trodden to grey mud. Every other wall in the pans stands in salt unbroken.' },
     { kind: 'chest', x: 28, y: 4, id: 'c7_hoard', gold: 200, items: ['crabshell_buckler', 'horn_bow+1'] },
-    // The Star That Moved's watch (#56's 24): what is seen, by night. The quest, with Hiske, is #183's.
-    { kind: 'event', x: 25, y: 7, id: 'c7_star', text: 'Low over the Scarp a star stands where no star stood. Look again and it has crept along the rim.', when: { hours: 'night' } },
+    // The Star That Moved (#56's 24, #183): the pilots' stone where the lanes cross, the watch from it
+    // by night, once, and the pilots' slate at its foot, there at any hour.
+    { kind: 'event', x: 25, y: 7, id: 'c7_stone', once: true, text: 'Where the lanes cross, a stone waist high, a notch cut in its top facing the Scarp. Something is wedged at its foot.' },
+    { kind: 'event', x: 25, y: 7, id: 'c7_star', once: true, text: 'Low over the Scarp one star burns too steady. Through the notch it has moved since you sat down.', when: { hours: 'night' } },
+    { kind: 'chest', x: 24, y: 7, id: 'c7_slate', gold: 0, items: ['pilots_slate'] },
     { kind: 'npc', x: 24, y: 14, name: 'a salter', lines: [
       'A salter at the huts\' door, bare-armed and burnt, a rake on her shoulder, squinting at the glare off the pans.',
       '"We rake by night in summer, and you learn the sky. Since midsummer there\'s a star in it that is wrong."',
