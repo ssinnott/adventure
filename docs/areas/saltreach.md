@@ -478,7 +478,7 @@ settled in its issue, and what the pilot teaches changes them.
   behind it the sacristy the priests drowned themselves in, with their god's silver.
 - **New here.** A caster among the dead; a boss that blesses (#161); a count that stops.
 - **Finds.** The god's silver: a Silver Mace +1 and a Holy Symbol of the tide, a resistance to
-  cold worn; beside it a Morning Star +1 and an Ironshod Staff +1, the ladder's (#399).
+  cold carried; beside it a Morning Star +1 and an Ironshod Staff +1, the ladder's (#399).
 - **Pay.** About 1,800 xp a member.
 - **As built** (#175, 2 October): band 11–12, two levels. The upper temple, `drowned_temples`, is
   entered at B6's dry door into the narthex, where the bell's oak frame stands empty; the nave runs
@@ -1238,12 +1238,13 @@ Decided by delegate for #175, each the owner's to overturn:
    and not before: kneeling gives a point of Endurance to each of the company, once. Endurance is the
    Tidefolk's own, and the area's shrines already give Personality twice. The priestess gives it as
    she gives the bell, by hanging it, and stays at her door. The quest is still done at the hand-in,
-   the blessing found after. #56 asked for a once-only resistance: that waits on members carrying
-   one, #555.
+   the blessing found after. #56 asked for a once-only resistance: a member resists from an item
+   now, but a blessing's resistance, and the save that carries it, are still owed to #555.
 8. **The finds:** the ladder's Morning Star +1 and Ironshod Staff +1 in the vestry behind the boss,
    since the ladder's step should not hang on a secret found from another map; the god's silver,
    a Silver Mace +1 on the morning star's base and the Holy Symbol of the Tide, in the sacristy.
-   The Symbol is a valuable with words on it for now: its resistance to cold is owed to #555.
+   The Symbol resists cold (#555): it has no slot, so whoever carries it in their pack takes half
+   from cold, and their sheet says so.
 9. **The god is named on its silver alone,** *Tijsjonger*, the tide singer, read on the Symbol's
    rim and spoken by nobody (§10).
 10. **B6's two events move or change:** `b6_stair` moves onto the secret door's square, since an
