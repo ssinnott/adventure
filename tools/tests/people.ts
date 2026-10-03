@@ -7,7 +7,7 @@ import { MAP_DEFS, ITEMS, QUESTS } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
-import { meet, answer, heard, handIns, personFlags, personGives, readText, choices } from '../../src/game/people.ts';
+import { meet, answer, answerNote, heard, handIns, personFlags, personGives, readText, choices } from '../../src/game/people.ts';
 import type { Person } from '../../src/game/people.ts';
 import { questLog } from '../../src/game/quests.ts';
 import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
@@ -44,8 +44,9 @@ export function people(): void {
   // Everything a person says fits the box.
   for (const { map, p } of all) { const bad = boxFaults(p); ok(!bad.length, `${map} ${p.x},${p.y}: every text fits the box, and every question its answers${bad.length ? ' -> ' + bad.join('; ') : ''}`); }
   for (const i of Object.values(ITEMS)) if (i.text) ok(wrap(i.text.join('\n\n'), SAY_W).length <= SAY_LINES, `${i.id}: the letter fits the box's ${SAY_LINES} lines`);
-  // Every answer that hands over an item sets a flag, so the question is put once and the item given once.
-  for (const { map, p } of all) for (const c of choices(p)) for (const a of c.answers) if (a.gives) ok([a.sets ?? []].flat().length > 0, `${map} ${p.x},${p.y}: '${a.label}' gives ${a.gives} and sets a flag`);
+  // Every answer that hands over an item or pays sets a flag, so the question is put once and the item
+  // given, or the pay paid, once.
+  for (const { map, p } of all) for (const c of choices(p)) for (const a of c.answers) if (a.gives || a.pay) ok([a.sets ?? []].flat().length > 0, `${map} ${p.x},${p.y}: '${a.label}' ${a.gives ? `gives ${a.gives}` : 'pays'} and sets a flag, or it would ${a.gives ? 'give' : 'pay'} at every meeting`);
   // A question answered, the meetings after come to that answer's after-words: words put first that
   // hold whenever the question's do would say the question's words for good.
   const unsaid = all.flatMap(({ map, p }) => afterFaults(p).map((bad) => `${map} ${p.x},${p.y}: ${bad}`)), answers = all.reduce((n, { p }) => n + answered(p), 0);
@@ -111,13 +112,13 @@ function doneSeen(flag: string): string[] {
 
 /**
  * What a person says that would not fit: a text past the box's lines (a hand-in's with its gold
- * line, an answer's with its item's), a question past its lines in the box or the side panel, an
+ * line, an answer's with its item's and pay's), a question past its lines in the box or the side panel, an
  * answer longer than a line of the side panel's column.
  */
 export function boxFaults(p: Person): string[] {
   const gold = (q: { reward: number }): string[] => (q.reward ? [`(${q.reward} gold.)`] : []);
   const texts = [p.lines, ...handIns(p).flatMap((q) => [[...q.done, ...gold(q)], ...(q.early ? [[...q.early, ...gold(q)]] : []), q.after ?? []]), ...(p.says ?? []).map((w) => w.lines),
-    ...choices(p).flatMap((c) => c.answers.map((a) => [...a.says, ...(a.gives ? [`(${ITEMS[a.gives]?.name}.)`] : [])]))];
+    ...choices(p).flatMap((c) => c.answers.map((a) => [...a.says, ...answerNote(a)]))];
   const out = texts.flatMap((t) => { const n = wrap(t.join('\n\n'), SAY_W).length; return n > SAY_LINES ? [`'${t[0].slice(0, 24)}..' takes ${n} lines of ${SAY_LINES}`] : []; });
   for (const c of choices(p)) {
     const box = wrap(c.ask, SAY_W).length, side = wrap(c.ask, SIDE_W).length;
@@ -164,6 +165,16 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     meet(captain, kept.party, heard(kept.world, captain));
     answer(captain.choice!.answers[1], kept.party);
     ok(meet(captain, kept.party, heard(kept.world, captain)).text === '"Not a word to Hale."' && !countItem(kept.party, LETTER.id), 'the other answer, its own words, and no letter');
+
+    // An answer that pays: the gold to the company, the xp split among the living, and the line says both.
+    const paid = fresh(), purse = paid.party.gold, xp = paid.party.members.map((m) => m.xp);
+    paid.party.members[5].conditions.push('dead');
+    const fee: Answer = { label: 'Sell it', sets: 'fx_sold', gives: LETTER.id, pay: { gold: 300, xp: 500 }, says: ['He counts it out.'] };
+    const sold = answer(fee, paid.party);
+    ok(sold.startsWith('He counts it out.\n\n(300 gold, 500 experience, A Sealed Letter.)') && paid.party.gold === purse + 300 && !!paid.party.flags.fx_sold && countItem(paid.party, LETTER.id) === 1,
+      `an answer that pays: the gold to the company, the item handed over and the line says both (${sold.split('\n\n')[1]})`);
+    ok(paid.party.members.every((m, i) => m.xp === xp[i] + (i < 5 ? 100 : 0)), 'its xp is split among the living, as a fight\'s is: 100 each to five, none to the dead');
+    ok(answerNote({ label: 'x', says: [] }).length === 0 && answerNote({ label: 'x', pay: { xp: 60 }, says: [] }).join() === '(60 experience.)', 'an answer that pays nothing says no line, and one of xp alone says only that');
 
     // The log reads the answer's flag: a quest done either way, and the entry of the road taken.
     const quest: QuestDef = {

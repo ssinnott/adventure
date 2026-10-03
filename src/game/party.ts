@@ -243,6 +243,14 @@ export function rankMult(c: Character, step = RANK_STEP): number {
 export function canTrain(c: Character): boolean { return c.level < MAX_LEVEL && c.xp >= xpForLevel(c.level + 1); }
 /** Whether a trainer who teaches to `maxLevel` can teach the character its next level. */
 export function canTrainAt(c: Character, maxLevel: number): boolean { return c.level < maxLevel && canTrain(c); }
+
+/** Split xp among the living, as a fight's is; returns who it makes ready to train. */
+export function payXp(party: Party, xp: number): string[] {
+  const alive = party.members.filter((c) => !hasCondition(c, 'dead'));
+  const each = Math.floor(xp / Math.max(1, alive.length)), ready: string[] = [];
+  for (const c of alive) { const before = canTrain(c); c.xp += each; if (!before && canTrain(c)) ready.push(c.name); }
+  return ready;
+}
 /** What a trainer charges to teach the next level: 25 a level to 5, 40 a level after, to the cap. */
 export function trainPrice(c: Pick<Character, 'level'>): number { return c.level < 5 ? c.level * 25 : c.level * 40; }
 
