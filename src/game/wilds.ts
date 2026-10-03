@@ -1,4 +1,4 @@
-// The wilderness features (EXPANSION §5.3): a shrine or fountain that gives a stat once, a cairn
+// The wilderness features (EXPANSION §5.3): a shrine or fountain that blesses once, a cairn
 // with a cache, a statue that gives for its riddle's answer, typed, and a camp to rest at. A spent
 // one is its id in the map's `used`, as an opened chest is, so nothing new is saved. Pure, so the
 // tests load it; game.ts calls it and says what it returns.
@@ -12,11 +12,11 @@ import { item } from './items.ts';
 /** The features this module plays. */
 export type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' | 'cairn' | 'statue' | 'camp' }>;
 
-/** What a feature gives when it is used: a chest's, cairn's or den's gold and items, a shrine's stat, a statue's gift. */
+/** What a feature gives when it is used: a chest's, cairn's or den's gold and items, a shrine's stat or resistance, a statue's gift. */
 export function giftOf(f: Feature): Gift | undefined {
   switch (f.kind) {
     case 'chest': case 'cairn': case 'den': return { gold: f.gold, items: f.items };
-    case 'shrine': case 'fountain': return { stat: f.stat, amount: f.amount ?? 1 };
+    case 'shrine': case 'fountain': return { stat: f.stat, amount: f.amount ?? 1, resist: f.resist };
     case 'statue': return f.gift;
     default: return undefined;
   }
@@ -34,8 +34,9 @@ export function spentId(f: Feature): string | undefined {
 const STAT_NAMES: Record<Stat, string> = { might: 'Might', intellect: 'Intellect', personality: 'Personality', endurance: 'Endurance', accuracy: 'Accuracy', speed: 'Speed', luck: 'Luck' };
 
 /**
- * Hand the party a gift: gold and items to the purse and the bag, and `amount` of `stat` to every
- * member, whatever their state. Returns it in words for the log.
+ * Hand the party a gift: gold and items to the purse and the bag, and `amount` of `stat` and the
+ * element `resist` keeps off to every member, whatever their state, unless it is kept off them for
+ * as long already. Returns it in words for the log.
  */
 export function give(party: Party, gift: Gift): string[] {
   const words: string[] = [];
@@ -45,6 +46,12 @@ export function give(party: Party, gift: Gift): string[] {
     const n = gift.amount ?? 1;
     for (const m of party.members) m.stats[gift.stat] += n;
     words.push(`${n > 0 ? '+' : ''}${n} ${STAT_NAMES[gift.stat]} to each of the company`);
+  }
+  if (gift.resist) {
+    const { element, until } = gift.resist;
+    for (const m of party.members) if (!m.blessed.some((b) => b.element === element && (!b.until || until))) m.blessed.push({ ...gift.resist });
+    const kept = `${element} kept off each of the company${until ? ' until the next rest' : ''}`;
+    words.push(words.length ? kept : kept[0].toUpperCase() + kept.slice(1));
   }
   return words;
 }
@@ -64,7 +71,7 @@ export function lookLine(f: Wild): string {
 export const stepLine = (world: World, f: Wild): string => (!world.present(f) || (f.kind !== 'camp' && world.used(f.id)) ? '' : lookLine(f));
 
 /**
- * Kneel at a shrine or drink at a fountain: its stat to every member the first time, its `done`
+ * Kneel at a shrine or drink at a fountain: its blessing to every member the first time, its `done`
  * after. One out of its presence is not there, says nothing and is not spent.
  */
 export function useShrine(world: World, party: Party, f: Extract<Wild, { kind: 'shrine' | 'fountain' }>): string[] {

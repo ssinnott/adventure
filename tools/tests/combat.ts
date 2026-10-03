@@ -544,10 +544,12 @@ function pastTen(): void {
     const worn = chill((q) => { equip(q.members[1], coat.id); });
     const unworn = chill((q) => { q.members[1].pack.push(coat.id); });
     const bagged = chill((q) => { q.bag.push(charm.id); });
+    const blessed = chill((q) => { q.members[2].blessed.push({ element: 'cold', until: 'rest' }); });
     const glass = chill(() => {}, true), both = chill((q) => { q.members[0].pack.push(charm.id); }, true);
     ok(bare[0] > 1 && carried[0] === half(bare)[0] && carried.slice(1).join() === bare.slice(1).join(), `a member carrying a charm against cold takes half from a cold spell, the rest whole (${carried[0]} against ${bare[0]})`);
     ok(worn[1] === half(bare)[1] && (() => { const c = defaultParty(makeRng(73)).members[1]; equip(c, coat.id); c.pack.push(charm.id); return resists(c).join() === 'cold'; })(), `armour against cold halves it worn (${worn[1]} against ${bare[1]})`);
     ok(unworn.join() === bare.join() && bagged.join() === bare.join(), 'armour in the pack and a charm in the bag resist nothing');
+    ok(blessed[2] === half(bare)[2] && blessed.filter((_, i) => i !== 2).join() === bare.filter((_, i) => i !== 2).join(), `a member a blessing keeps the cold off takes half from a cold spell (${blessed[2]} against ${bare[2]})`);
     ok(glass.join() === half(bare).join() && both.join() === glass.join(), `under Lampglass a member with a resistance to the same element still takes half, not a quarter (${both[0]} against ${glass[0]})`);
     delete ITEMS[charm.id]; delete ITEMS[coat.id];
   }
