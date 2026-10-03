@@ -53,12 +53,33 @@ export const EAVES_J2: MapDef = {
     { kind: 'shrine', x: 19, y: 15, id: 'j2_shrine', text: 'A wayside shrine at the road\'s bend, a cutter\'s whetstone laid on it worn to a sliver. Resin has run down its east face and set clear.', stat: 'might', done: 'The whetstone lies on the shrine, worn to a sliver.' },
     { kind: 'camp', x: 8, y: 20, name: 'The old felling', text: 'An old felling in the pines south of the road, a ring of blackened stones among the stumps. The wind goes over the top and does not come down.' },
     { kind: 'cairn', x: 14, y: 27, id: 'j2_cairn', text: 'A cairn in the pines south of the road, out of sight of it. The lowest stones have moss and the top one none: somebody still comes.', gold: 180, items: ['potion_sp_great'] },
-    // The steading among the glass trees, and the cutter's word on the dog.
-    { kind: 'event', x: 19, y: 8, id: 'j2_steading', once: true, text: 'The pine-cutters\' cabin, fieldstone and turf, in a stand of pines gone half to glass. Washing hangs between two of them, a child\'s shirt on the end of the line.' },
-    { kind: 'npc', x: 22, y: 8, name: 'Garret, a pine-cutter', lines: [
+    // The steading among the glass trees, and the cutter's word on the dog. The Family at the Glass
+    // Trees (#205) is given here: Garret and Nell, until they go over the bridge to the Watch.
+    { kind: 'event', x: 19, y: 8, id: 'j2_steading', once: true, until: { flag: 'q_family_gone' }, text: 'The pine-cutters\' cabin, fieldstone and turf, in a stand of pines gone half to glass. Washing hangs between two of them, a child\'s shirt on the end of the line.' },
+    { kind: 'event', x: 19, y: 8, id: 'j2_cabin_shut', once: true, after: { flag: 'q_family_gone' }, text: 'The cabin, shut. Under the glass trees, a Lantern\'s grey ribbon tied round each of the two stones.' },
+    { kind: 'npc', x: 22, y: 8, name: 'Garret, a pine-cutter', flag: 'q_family', until: { flag: 'q_family_gone' }, lines: [
       'A man splits pine on a block by the cabin door, the trees over him half glass. He sets the next round before he looks at you.',
-      '"Glass takes a tree from the top. A year a bough, then it won\'t split and won\'t burn. Those two by the door were sound the year we came."',
+      '"Garret. The Watch across the gorge says it\'s the ground, and to leave. Nell\'s wrist has gone clear as ice. My wife\'s under those trees, and the boy that came after her. I\'ll not leave them to the glass."',
       '"Dog won\'t go up the north path now. Sits at the foot and whines. Never minded the bear up there; used to go and bark at it for sport."',
+    ], quest: { item: 'warding_lamp', reward: 0, setFlag: 'q_family_lit', done: [
+      'Garret turns the lamp in his hands and holds it by Nell\'s wrist, and the clear skin under the blue goes dull, like breath off a pane.',
+      '"That\'s it stopped. Not gone. Stopped." He hangs it from the beam over her bed. "A season\'s oil? Then in a season I\'m across that bridge with my hat in my hand, and she knows it. Clever, for a Lantern."',
+      '"I\'ve nothing to pay you with but the splitting, and you\'ll not want that. Come by when you\'re passing."',
+    ], after: [
+      'The lamp hangs blue in the cabin door, and Garret splits pine under it. He sets the next round before he looks at you.',
+      '"Nell\'s wrist does nothing, and she\'ll show you it doing it. The graves are where they were. So am I."',
+      '"Dog still won\'t go up the north path. Sits at the foot and whines. Never minded the bear up there."',
+    ] }, says: [
+      { after: { flag: 'q_family_come' }, sets: 'q_family_gone', lines: [
+        'Garret listens with the axe in his hand, and when you come to the graves he sets it down.',
+        '"She\'ll say the words herself. I\'d have gone for that in the spring, if she\'d said it then. Maybe she did, and I didn\'t hear. You don\'t, at first."',
+        '"Nell. Your mother\'s box and your good shoes. We\'re going over the bridge." To you: "Go on ahead and say we\'re coming, so there\'s a bed made and I don\'t have to ask for one."',
+      ] },
+    ] },
+    { kind: 'npc', x: 23, y: 8, name: 'Nell, the cutter\'s daughter', flag: 'q_family', until: { flag: 'q_family_gone' }, lines: [
+      'A girl at the cabin door with her sleeve pulled over her hand. She pushes it back for you: the wrist under it gone clear, the small bones in it like a fish in shallow water.',
+      '"It doesn\'t hurt. It\'s cold, and it doesn\'t hurt. At night I hold it up to the lamp and the light goes through."',
+      '"Mam\'s stone has gone clear too. You can read the letters from both sides."',
     ] },
     { kind: 'event', x: 24, y: 6, id: 'j2_graves', once: true, text: 'Two graves under the glass trees, a woman\'s and a small one. The markers have gone to glass. The names read from either side.' },
     // The secret: the dog at the north path's foot, and the cave under the rim.
