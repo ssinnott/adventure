@@ -119,6 +119,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'the_sunder: under': { whose: '#18', at: 1 },
   'delta_c4: under': { whose: '#18', at: 1 },
   'upperwater_c3: under': { whose: '#18', at: 1 },
+  'upperwater_b3: under': { whose: '#18', at: 1 },
+  'delta_b4: under': { whose: '#18', at: 1 },
   'Saltreach: under': { whose: '#18', at: 1 },
 };
 
