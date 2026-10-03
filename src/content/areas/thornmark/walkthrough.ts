@@ -5,7 +5,7 @@
 // Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side
 // quests on the built maps (#219) and in the Deepthorn, each from its giver to its choice and both
 // ways: the log reads true and the people stand where it says; Act II's Hale's Sergeant both ways;
-// and the Eldest on Penspern.
+// and the Eldest on Penspern. Last, the four prestige trainers here (#19), taught at 11 and 19.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -20,6 +20,12 @@ import { questLog } from '../../../game/quests.ts';
 import type { PageView } from '../../../game/quests.ts';
 import type { EncounterDef, Feature } from '../../../game/map.ts';
 import { dateAt } from '../../../game/calendar.ts';
+import { GameMap } from '../../../game/map.ts';
+import { xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES } from '../../../game/party.ts';
+import type { Party } from '../../../game/party.ts';
+import { teach } from '../../../game/prestige.ts';
+import { sought, seekId } from '../../../game/seeking.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
 
 /** Over the pass, walked: the road has to let a company by. */
 const pass = (w: Walk): void => walkThrough(w, 'shelf', 30, 9, EAST, 'thornmark');
@@ -140,6 +146,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   everyGoalWalked(ok, [FORELAND, CHAPTER]);
   sideQuests(ok);
+  trainers(ok);
 };
 
 /**
@@ -177,6 +184,8 @@ const KEA = (): Person => who('deepthorn_j5', 6, 18, 'Kea'), CENRIC = (): Person
 const GODRIC = (): Person => who('deepthorn_i3', 11, 14, 'Godric');
 const WYSTAN = (): Person => who('thornhold', 9, 14, 'Wystan'), WYSTAN_DOOR = (): Person => who('thornhold', 12, 13, 'Wystan');
 const HALE = (): Person => who('tide_ship3', 10, 12, 'Captain Hale');
+const JAGO = (): Person => who('thornhold', 4, 10, 'Jago'), DERWA = (): Person => who('thornhold', 11, 4, 'Derwa'), LOWEN = (): Person => who('thornhold', 14, 1, 'Lowen');
+const CUTHRED = (): Person => who('deepthorn_i3', 7, 2, 'Cuthred');
 
 /** Whether a person stands where they are listed now. */
 const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
@@ -558,4 +567,71 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.world.travel('deepthorn_j5', 6, 18);
     w.ok(!w.world.liveGroups().some((g) => g.def.id === 'j5_eldest'), 'and a month on it is still asleep');
   }
+}
+
+/**
+ * The prestiges taught here (#19): three firsts in Thornhold, each at a trade, and the Ranger's
+ * second at the lodge's hide, off the road and the fights. Each is there from a new game; at 11 a
+ * ranger, a cleric and a druid are sent to Thornhold and taught, and at 19 the ranger to the hide,
+ * whether or not the hold's gate is shut to the hunters.
+ */
+function trainers(ok: (cond: boolean, msg: string) => void): void {
+  const def = (id: string) => MAP_DEFS.find((d) => d.id === id)!;
+  const taught = (id: string) => (def(id).features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
+  const town = taught('thornhold'), lodge = taught('deepthorn_i3');
+  ok(town.length === 3 && ['ranger', 'cleric', 'druid'].every((c) => town.some((t) => t.cls === c && t.prestige === 1)), 'Thornhold teaches the first prestige of the ranger, the cleric and the druid');
+  ok(lodge.length === 1 && lodge[0].cls === 'ranger' && lodge[0].prestige === 2, 'the lodge\'s box teaches the Ranger\'s second');
+  const at = (p: Person) => (def('thornhold').features ?? []).filter((f) => f.x === p.x && f.y === p.y && f.kind !== 'npc');
+  const armoury = at(JAGO()).find((f) => f.kind === 'shop');
+  ok(armoury?.kind === 'shop' && ['elfbow', 'crossbow'].every((id) => armoury.stock.includes(id)), 'the fletcher stands in the Armoury, which sells his bows');
+  ok(at(DERWA()).some((f) => f.kind === 'temple'), 'the bone-setter stands in the Chapterhouse');
+  ok(def('thornhold').rows[LOWEN().y][LOWEN().x] === ',' && !at(LOWEN()).length, 'the beekeeper stands in the street, and keeps no shop');
+  const w = newWalk(ok);
+  ok([JAGO(), DERWA(), LOWEN()].every((p) => there(w, p, 'thornhold')) && there(w, CUTHRED(), 'deepthorn_i3'), 'all four are there from a new game, the bowman before the yard is cut');
+  w.world.travel('thornhold', 4, 10);
+  ok(w.world.peopleAt(4, 10).includes(JAGO()) && w.world.peopleAt(11, 4).includes(DERWA()), 'the fletcher is met in the Armoury and the bone-setter in the Chapterhouse');
+  ok([JAGO(), DERWA(), LOWEN(), CUTHRED()].every((p) => !!p.teaches?.seek?.includes(p.name.split(',')[0]) && p.teaches.seek.includes(PRESTIGES[p.teaches.cls].titles[p.teaches.prestige - 1])), 'each one\'s seeking names them and the title they give');
+
+  // At 11: the premade ranger and cleric, and a druid who joins for the look ahead.
+  const at11: Party = newWalk(ok).party;
+  at11.members[5] = createCharacter('Tamar', 'elf', 'druid', {}, makeRng(11));
+  for (const c of at11.members) { c.xp = xpForLevel(11); c.level = 11; }
+  const sent = sought(questLog(w.world.state, at11)).find((p) => p.at === 'thornhold');
+  const names = (cls: string[]) => cls.map((k) => at11.members.find((c) => c.cls === k)!.name);
+  ok(names(['ranger', 'cleric', 'druid']).every((n) => sent?.who.includes(n)), `at 11 the ranger, the cleric and the druid are sent to Thornhold (${sent?.who.join(', ')})`);
+  for (const p of [JAGO(), DERWA(), LOWEN()]) {
+    const who = at11.members.findIndex((c) => c.cls === p.teaches!.cls);
+    at11.gold = 1000;
+    ok(teach(p.teaches!, at11, w.world.state, who).taught && prestigeOf(at11.members[who]) === 1 && at11.gold === 0
+      && questLog(w.world.state, at11).find((v) => v.def.id === seekId(who, 1))?.done === true, `${p.name.split(',')[0]} makes ${/^[AEIOU]/.test(PRESTIGES[p.teaches!.cls].titles[0]) ? 'an' : 'a'} ${PRESTIGES[p.teaches!.cls].titles[0]} for 1,000 gold, and the seeking is done`);
+  }
+
+  // The second, off the beaten path: off the road and off the fights, and reached on foot.
+  const i3 = def('deepthorn_i3'), c = CUTHRED();
+  const road = i3.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
+  ok(road.every((r) => Math.abs(r.x - c.x) + Math.abs(r.y - c.y) > 10), 'the bowman is more than ten squares off the road');
+  ok(i3.encounters!.every((g) => Math.abs(g.x - c.x) + Math.abs(g.y - c.y) > 10), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');
+  const map = new GameMap(i3), seen = new Set([`${i3.start.x},${i3.start.y}`]), q = [[i3.start.x, i3.start.y]];
+  let reached = false;
+  while (q.length && !reached) {
+    const [x, y] = q.shift()!;
+    reached = x === c.x && y === c.y;
+    for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+      if (!map.inBounds(nx, ny) || seen.has(`${nx},${ny}`) || map.at(nx, ny).door === 'secret') continue;
+      const p = map.passable(nx, ny, { tide: 'low' });
+      if (p === 'ok' || p === 'unlock') { seen.add(`${nx},${ny}`); q.push([nx, ny]); }
+    }
+  }
+  ok(reached, 'the bowman is reached on foot from the box\'s way in, by no secret door');
+
+  // At 19, with the hold's gate shut to the hunters: the ranger is sent to the hide all the same.
+  const at19: Party = w.party;
+  for (const m of at19.members) { m.xp = xpForLevel(19); m.level = 19; }
+  const ranger = at19.members.findIndex((m) => m.cls === 'ranger');
+  takePrestige(at19.members[ranger]);
+  at19.flags.q_hunters_shut = 1;
+  ok(!!sought(questLog(w.world.state, at19)).find((p) => p.at === 'deepthorn_i3')?.who.includes(at19.members[ranger].name), 'at 19 the ranger is sent to the lodge\'s box');
+  at19.gold = 4000;
+  ok(there(w, c, 'deepthorn_i3') && teach(c.teaches!, at19, w.world.state, ranger).taught && prestigeOf(at19.members[ranger]) === 2 && at19.gold === 0,
+    `with the gate shut to the hunters, the bowman still makes a ${PRESTIGES.ranger.titles[1]} for 4,000 gold`);
 }

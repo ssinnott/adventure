@@ -1,7 +1,8 @@
 // The Deepthorn, box I3: Deepthorn Lodge. Country, band 8-10: the upper Dowrdu down the box's west
 // side out of Lyngwyn, the Hoarhills crossing it from the north-west corner to the south-east with
 // the Eaves' forest closed over them, and the hunters' lodge on its rise above the river, on the
-// cutters' way over the hills. The elves' road comes in from H3 and goes on south for Henlys (I4).
+// cutters' way over the hills, and its bowman up the game trail above the hide, who teaches the
+// Ranger's second prestige (#19). The elves' road comes in from H3 and goes on south for Henlys (I4).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
@@ -80,6 +81,13 @@ export const DEEPTHORN_I3: MapDef = {
       ask: 'The pack is dead. Fire the den under the roots, and bring the oak down over it?', burn: 'Bring it down.', leave: 'Leave it.',
       burnt: 'The roots catch, and the trunk settles over the den with a sound like a door. In the ash, Lantern grey.',
       ruin: 'The oak lies flat on its own den. Nothing howls under the Hoarhills.', gold: 110, items: ['runed_robe+2'] },
+    // The Ranger's second prestige (#19; DESIGN §5): the lodge's bowman, up the trail from the hide,
+    // off the road and the fights, and there whatever the Bargain comes to.
+    { kind: 'npc', x: 7, y: 2, name: 'Cuthred, the lodge\'s bowman', lines: [
+      'Above the hide, where the trail steepens, a lean man sits with his back to a trunk and his bow unstrung across his knees, the string coiled dry in his fist. No fire. The rain runs off him and he lets it.',
+      '"Cuthred. The lodge\'s bowman. A hide that smokes is a hut, and a hut gets found. I was at the hide the night the wood came up the yard, and I have watched from here since."',
+      '"Mist takes the mark and rain takes the string, and a man who shoots by what he sees goes hungry up here. Shoot by what you hear, and by what you know is there. One of you has the makings. Sit. Keep your string where I keep mine."',
+    ], teaches: { cls: 'ranger', prestige: 2, seek: 'Cuthred, the lodge\'s bowman, up the game trail above the hunters\' hide over Deepthorn Lodge, can make a Deadeye of an Outrider.' } },
     // The Hunters' Bargain (#56's 15): Godric at the cellar door once the yard is open.
     { kind: 'npc', x: 11, y: 14, name: 'Godric, eldest of the lodge\'s hunters', lines: [
       'The bar comes off the cellar door and a grey man comes up into the light with a boar-spear, and lowers it when he sees you are not made of wood.',
