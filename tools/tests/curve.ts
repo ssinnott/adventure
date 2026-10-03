@@ -13,7 +13,7 @@ import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import { areaBand } from '../../src/game/atlas.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
-import { handIns } from '../../src/game/people.ts';
+import { handIns, choices } from '../../src/game/people.ts';
 import { ok, owed } from './lib.ts';
 
 /**
@@ -115,14 +115,17 @@ export function curve(): void {
     const placed = groups.flatMap((e) => e.monsters.map((m) => MONSTERS[m]));
     // The area's guild quests pay too, counted with the area whose file holds them.
     const guild = area?.guilds ?? [];
-    const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0)) / MEMBERS);
     const features = maps.flatMap((d) => d.features ?? []);
+    // A question's pay, whichever way it is answered: of its answers, the least, for each of xp and gold.
+    const asked = features.flatMap((f) => f.kind === 'npc' ? choices(f) : []);
+    const sure = (k: 'xp' | 'gold'): number => asked.reduce((t, c) => t + Math.min(...c.answers.map((a) => a.pay?.[k] ?? 0)), 0);
+    const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0) + sure('xp')) / MEMBERS);
     // A hand-in's reward, once an item: of two people who take it, the larger.
     const rewards = new Map<string, number>();
     for (const f of features) if (f.kind === 'npc') for (const q of handIns(f)) rewards.set(q.item, Math.max(rewards.get(q.item) ?? 0, q.reward));
     const gold = placed.reduce((t, m) => t + (m.gold[0] + m.gold[1]) / 2, 0)
       + features.reduce((t, f) => t + (giftOf(f)?.gold ?? 0), 0) + [...rewards.values()].reduce((t, r) => t + r, 0)
-      + guild.reduce((t, q) => t + (q.pay.gold ?? 0), 0);
+      + guild.reduce((t, q) => t + (q.pay.gold ?? 0), 0) + sure('gold');
     budget(id, 'xp a member', xp, xpBudget(row), row.owed, row.owed?.xp);
     budget(id, 'gold', Math.floor(gold), goldBudget(row), row.owed, row.owed?.gold);
 

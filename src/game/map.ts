@@ -243,11 +243,16 @@ export interface Choice {
   answers: readonly Answer[];
 }
 
-/** An answer: it sets its flags, hands the company `gives` if it has an item and the person `says` it. */
+/**
+ * An answer: it sets its flags, hands the company `gives` if it has an item, pays `pay` if it has
+ * any (the gold to the company, the xp split among the living, as a fight's is) and the person
+ * `says` it. An answer that gives or pays sets a flag, so it is answered once.
+ */
 export interface Answer {
   label: string;
   sets?: string | readonly string[];
   gives?: string;
+  pay?: { gold?: number; xp?: number };
   says: readonly string[];
 }
 
