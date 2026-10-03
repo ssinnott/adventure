@@ -31,12 +31,19 @@
 // Wood (J3, #202): the cutters' track down out of J2, the hermit's word, the den's keepers and
 // brood won and the den burnt, the cache behind it found from the moths at its mouth, and the way
 // on east into K3's west lip.
+// Then Lanternwood's depths (#203): the Moth Wood (L3) down the Lanterns' bank path out of L2, the
+// sister at the moth shrine and its blessing, the box's groups won and the lamp-house found from the
+// hooks in the oaks; the Bay Wood (L4) over the gravel bar, its groups won, the sow's den burnt, the
+// stone Lantern's riddle answered and the Hand's store found from the prints; and the Sunder's Foot
+// (K4) along the shingle, its west lip walked to round the gorge's foot, its west edge rock against
+// the Deepthorn, its groups won, the boathouse found from the steps, and the way north to K3's lip.
 //
 // Then its side quests (#205), each choice played both ways and the log read after either: Under the
 // Glass Trees, the lamp taken to the cabin or the family brought over the bridge; The Dammed Fall, the
 // dam broken or the tally kept; The Watch's Lamp, the prior told on or let be; The Length of the
 // Wall, the measure sold or the Watch told. Last, the Paladin's second prestige, taught by the hermit in J3's
-// clearing (#19): heard after his hint, and taught at 19.
+// clearing (#19): heard after his hint, and taught at 19; and the Cleric's second, taught by the sister
+// at L3's moth shrine (#203): her lesson after her own words, and taught at 19.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
@@ -66,6 +73,7 @@ import { ACT_II } from '../../../../tools/tests/ladder.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, readText } from '../../../game/people.ts';
 import { approach, burn, burnt } from '../../../game/dens.ts';
+import { answerRiddle, useShrine } from '../../../game/wilds.ts';
 import type { Den } from '../../../game/dens.ts';
 import type { Person } from '../../../game/people.ts';
 
@@ -81,6 +89,11 @@ const M2 = MAP_DEFS.find((d) => d.id === 'lanternwood_m2')!;
 const J3 = MAP_DEFS.find((d) => d.id === 'eaves_j3')!;
 const HERMIT = J3.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Aylmer')) as Person;
 const DEN = J3.features!.find((f): f is Den => f.kind === 'den')!;
+const L3 = MAP_DEFS.find((d) => d.id === 'lanternwood_l3')!;
+const KEEPER = L3.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Sister Leofrun')) as Person;
+const L4 = MAP_DEFS.find((d) => d.id === 'lanternwood_l4')!;
+const SOW_DEN = L4.features!.find((f): f is Den => f.kind === 'den')!;
+const K4 = MAP_DEFS.find((d) => d.id === 'lanternwood_k4')!;
 const WATCH = MAP_DEFS.find((d) => d.id === 'lantern_watch')!;
 const READER = WATCH.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Hester Dunmore')) as Person;
 const PRIOR = WATCH.features!.find((f) => f.kind === 'npc' && f.name === 'Prior Osric' && f.x === 8 && f.y === 9) as Person;
@@ -618,8 +631,138 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(coat?.kind === 'chest' && coat.items.includes('chain+2'), 'in the cache, a Chain Mail +2');
   // And on east out of the wood onto K3's west lip.
   walkThrough(w, 'eaves_j3', 29, 28, EAST, 'eaves_k3', 4);
+
+  // Lanternwood's depths (#203). The Moth Wood: down the Lanterns' bank path out of L2's corner.
+  walkThrough(w, 'lanternwood_l2', 28, 29, SOUTH, 'lanternwood_l3', 3);
+  see(w, 'lanternwood_l3:l3_way');
+  w.world.travel('lanternwood_l3', KEEPER.x, KEEPER.y);
+  ok(meet(KEEPER, w.party, heard(w.world, KEEPER)).text.includes('I stayed'), 'Sister Leofrun says she stayed when the depths were called up');
+  const shrine = L3.features!.find((f): f is Extract<Feature, { kind: 'shrine' }> => f.kind === 'shrine' && f.id === 'l3_shrine')!;
+  w.world.travel('lanternwood_l3', shrine.x, shrine.y);
+  const here = w.world.featureHere();
+  ok(here?.kind === 'shrine' && useShrine(w.world, w.party, here)[0] === shrine.text, 'the sister\'s shrine is knelt at');
+  ok(w.party.members.every((c) => c.blessed.some((b) => b.element === 'fire' && b.until === 'rest')), 'the moth shrine keeps fire off the company until the next rest');
+  for (const g of L3.encounters!) fight(w, `lanternwood_l3:${g.id}`);
+  // The secret: the hooks in a line north off the old path, then the search there and the lamp-house
+  // up the thicket. Walked, waded, climbed or floated, it is never reached but through the hooks' tree.
+  const [l3, l4, k4] = ['lanternwood_l3', 'lanternwood_l4', 'lanternwood_k4'].map((id) => out.zones.find((z) => z.id === id)!);
+  const house = shutBox(l3, [29, 0], [17, 15], [17, 7]);
+  ok(house.size > 100 && !house.reached, `the lamp-house is shut but for the hooks' tree: none of L3's ${house.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'lanternwood_l3:l3_hooks');
+  w.world.travel('lanternwood_l3', 17, 16, NORTH);
+  let hooks = false;
+  for (let i = 0; i < 20 && !hooks; i++) hooks = w.world.search();
+  const upThicket = hooks ? Array.from({ length: 8 }, () => w.world.move('forward')) : [];
+  ok(hooks && upThicket.every((r) => r.kind === 'moved') && w.world.used('l3_lamphouse'), 'searched under the hooks, the thicket opens, and the lamp-house up it can be walked to');
+  listen(w);
+  const longsword = L3.features!.find((f) => f.kind === 'chest' && f.id === 'l3_lamphouse_chest');
+  ok(longsword?.kind === 'chest' && longsword.items.includes('longsword+2'), 'in the lamp-house, a Long Sword +2');
+
+  // The Bay Wood: on down the bank over the river's gravel bar, to the den, the statue and the landing.
+  walkThrough(w, 'lanternwood_l3', 22, 30, SOUTH, 'lanternwood_l4', 3);
+  see(w, 'lanternwood_l4:l4_way');
+  for (const g of L4.encounters!) fight(w, `lanternwood_l4:${g.id}`);
+  ok(approach(w.world, SOW_DEN).ask && burn(w.world, w.party, SOW_DEN).length > 0 && burnt(w.world, SOW_DEN), 'its keepers dead, the sow\'s den is fired, and its hoard is the company\'s');
+  const statue = L4.features!.find((f) => f.kind === 'statue' && f.id === 'l4_statue') as Extract<Feature, { kind: 'statue' }>;
+  const purse = w.party.gold;
+  w.world.travel('lanternwood_l4', statue.x, statue.y);
+  ok(!answerRiddle(w.world, w.party, statue, 'lamps').right && answerRiddle(w.world, w.party, statue, 'Moths').right && w.party.gold === purse + 300, 'the stone Lantern\'s riddle is answered moths, the word in Averil\'s line, for 300 gold');
+  ok(SISTER.lines.some((l) => l.includes('The moths agree with any light')), 'Averil, on L2\'s road, says what comes to any light');
+  // The secret: the prints up from the landing, then the search on the hills and the store.
+  const store = shutBox(l4, [21, 0], [22, 26], [23, 27]);
+  ok(store.size > 100 && !store.reached, `the store is shut but for the hills' foot: none of L4's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'lanternwood_l4:l4_prints');
+  w.world.travel('lanternwood_l4', 21, 26, EAST);
+  let cut = false;
+  for (let i = 0; i < 20 && !cut; i++) cut = w.world.search();
+  const inStore = cut ? [w.world.move('forward'), w.world.move('forward'), (w.world.turn('right'), w.world.move('forward'))] : [];
+  ok(cut && inStore.every((r) => r.kind === 'moved') && w.world.used('l4_store'), 'searched at the hills\' foot, the mountain opens, and the store behind it can be walked into');
+  listen(w);
+  const box = L4.features!.find((f) => f.kind === 'chest' && f.id === 'l4_store_chest');
+  ok(box?.kind === 'chest' && box.items.includes('wardens_dirk+2'), 'in the store, a Warden\'s Dirk +2');
+
+  // The Sunder's Foot: west along the shingle into K4. Its west lip is reached on foot only round the
+  // gorge's foot, and its west edge is rock against the Deepthorn.
+  walkThrough(w, 'lanternwood_l4', 2, 29, WEST, 'lanternwood_k4', 3);
+  const foot = new GameMap(K4), onFoot = new Set([`${K4.start.x},${K4.start.y}`]), todo = [[K4.start.x, K4.start.y]];
+  while (todo.length) {
+    const [x, y] = todo.pop()!;
+    for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+      if (!foot.inBounds(nx, ny) || onFoot.has(`${nx},${ny}`) || foot.at(nx, ny).door === 'secret' || foot.passable(nx, ny) !== 'ok') continue;
+      onFoot.add(`${nx},${ny}`); todo.push([nx, ny]);
+    }
+  }
+  ok(onFoot.has('4,12') && onFoot.has('4,3') && onFoot.has('31,29'), 'K4\'s west lip is walked to from the east lip round the gorge\'s foot, and the shingle on to L4');
+  ok(K4.rows.every((r) => r[0] === 'r'), 'K4\'s west edge is rock from the dead wood to the sea');
+  for (const g of K4.encounters!) fight(w, `lanternwood_k4:${g.id}`);
+  see(w, 'lanternwood_k4:k4_foot');
+  // The secret: the steps that end at a blank face, then the search there and the boathouse.
+  const boats = shutBox(k4, [23, 0], [2, 17], [1, 15]);
+  ok(boats.size > 100 && !boats.reached, `the boathouse is shut but for the blank face: none of K4's ${boats.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'lanternwood_k4:k4_steps');
+  w.world.travel('lanternwood_k4', 3, 17, WEST);
+  let face = false;
+  for (let i = 0; i < 20 && !face; i++) face = w.world.search();
+  const inBoats = face ? [w.world.move('forward'), (w.world.turn('right'), w.world.move('forward'))] : [];
+  ok(face && inBoats.every((r) => r.kind === 'moved') && w.world.used('k4_boathouse'), 'searched at the foot of the steps, the rock opens, and the boathouse behind it can be stood in');
+  listen(w);
+  const roll = K4.features!.find((f) => f.kind === 'chest' && f.id === 'k4_boathouse_chest');
+  ok(roll?.kind === 'chest' && roll.items.includes('flail+2') && roll.items.includes('lanterns_roll') && item('lanterns_roll').text?.some((t) => t.includes('LEOFRUN')) === true, 'in the boathouse, a Flail +2 and the Lanterns\' Roll, one name not struck');
+  // And north out of the foot onto K3's east lip.
+  walkThrough(w, 'lanternwood_k4', 23, 1, NORTH, 'eaves_k3', 3);
   trainers(ok);
+  keeper(ok);
 };
+
+/**
+ * The Cleric's second prestige (#19): Sister Leofrun at the moth shrine in L3's clearing, a Lantern who
+ * stayed when the depths were called up. She is there from a new game, off the fights and reached on
+ * foot; her own words come first, then her lesson, once, to a Curate of 19; and at 19 the cleric is
+ * sent to her and taught.
+ */
+function keeper(ok: (cond: boolean, msg: string) => void): void {
+  const taught = (L3.features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
+  ok(taught.length === 1 && taught[0].cls === 'cleric' && taught[0].prestige === 2, 'the Moth Wood teaches the Cleric\'s second');
+  ok(L3.rows[KEEPER.y][KEEPER.x] === 't' && L3.features!.every((f) => f === KEEPER || f.x !== KEEPER.x || f.y !== KEEPER.y), 'the sister stands in her clearing, with nothing else on her square');
+  const there = (w: Walk): boolean => { w.world.travel('lanternwood_l3', KEEPER.x, KEEPER.y); return w.world.present(KEEPER); };
+  ok(there(newWalk(ok)), 'she is there from a new game');
+  ok(!!KEEPER.teaches?.seek?.includes('Leofrun') && KEEPER.teaches.seek.includes(PRESTIGES.cleric.titles[1]), 'her seeking names her and the title she gives');
+  const road = L3.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
+  ok(road.every((r) => Math.abs(r.x - KEEPER.x) + Math.abs(r.y - KEEPER.y) > 10), 'she is more than ten squares off any road');
+  ok(L3.encounters!.every((g) => Math.abs(g.x - KEEPER.x) + Math.abs(g.y - KEEPER.y) > 10), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');
+  const map = new GameMap(L3), seen = new Set([`${L3.start.x},${L3.start.y}`]), q = [[L3.start.x, L3.start.y]];
+  let reached = false;
+  while (q.length && !reached) {
+    const [x, y] = q.shift()!;
+    reached = x === KEEPER.x && y === KEEPER.y;
+    for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+      if (!map.inBounds(nx, ny) || seen.has(`${nx},${ny}`) || map.at(nx, ny).door === 'secret') continue;
+      if (map.passable(nx, ny) === 'ok') { seen.add(`${nx},${ny}`); q.push([nx, ny]); }
+    }
+  }
+  ok(reached, 'she is reached on foot down the bank path and the old path, by no secret door');
+
+  // Her words first, then her lesson once to a Curate of 19, and to a company under it never.
+  const at = (level: number): Walk => {
+    const w = newWalk(ok);
+    for (const c of w.party.members) { c.xp = xpForLevel(level); c.level = level; }
+    return w;
+  };
+  const talk = (w: Walk): string => { w.world.travel('lanternwood_l3', KEEPER.x, KEEPER.y); return meet(KEEPER, w.party, heard(w.world, KEEPER)).text; };
+  const w = at(19), cleric = w.party.members.findIndex((c) => c.cls === 'cleric');
+  takePrestige(w.party.members[cleric]);
+  const said = [talk(w), talk(w), talk(w)];
+  ok(said[0].includes('I stayed') && !said[0].includes('Kneel at the shard') && said[1].includes('Leofrun') && said[1].includes('Kneel at the shard') && said[2].includes('I stayed'),
+    'her own words come first, then her lesson to a Curate of 19, once');
+  const young = at(15);
+  ok(![talk(young), talk(young)].some((t) => t.includes('Kneel at the shard')), 'to a company of 15 she says no lesson');
+
+  // At 19 the cleric is sent to the Moth Wood, and taught.
+  ok(sought(questLog(w.world.state, w.party)).find((p) => p.at === 'lanternwood_l3')?.who.includes(w.party.members[cleric].name) === true, 'at 19 the cleric is sent to the Moth Wood');
+  w.party.gold = 4000;
+  ok(teach(KEEPER.teaches!, w.party, w.world.state, cleric).taught && prestigeOf(w.party.members[cleric]) === 2 && w.party.gold === 0
+    && questLog(w.world.state, w.party).find((v) => v.def.id === seekId(cleric, 2))?.done === true, `she makes a ${PRESTIGES.cleric.titles[1]} for 4,000 gold, and the seeking is done`);
+}
 
 /**
  * The Paladin's second prestige (#19): the hermit in J3's clearing, a knight of the Crown that was.

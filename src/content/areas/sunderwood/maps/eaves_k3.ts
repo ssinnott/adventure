@@ -60,7 +60,7 @@ export const EAVES_K3: MapDef = {
     'dddddddvvvdddccccccccddddTTTTTTM',
     'dddddddvvvdddccccccccdddddTTTTTM',
     'dddddddvvvdddccccccccdddddTTTTTM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMMMMMMMMMMMMMMMdddddMMMMMM',
   ],
   exits: [
     { x: 10, y: 8, to: 'the_sunder', tx: 28, ty: 2, tf: SOUTH, label: 'In out of the rain, into the rock.' },
