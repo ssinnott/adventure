@@ -4,7 +4,7 @@
 import type { Feature, NpcQuest, Words, Choice, Answer } from './map.ts';
 import type { Party } from './party.ts';
 import type { World } from './world.ts';
-import { countItem, takeItem } from './party.ts';
+import { countItem, takeItem, payXp } from './party.ts';
 import { item } from './items.ts';
 
 export type Person = Extract<Feature, { kind: 'npc' }>;
@@ -68,9 +68,17 @@ export function meet(p: Person, party: Party, holds: (w: Words) => boolean): Mee
   return { text: p.lines.join('\n\n'), choice: open(p.choice, party) };
 }
 
-/** Answer a person's question: set its flags, hand over its item and return what the person says. */
+/** What an answer hands over and pays, as its line says it: "(300 gold, 660 experience, A Sealed Letter.)"; none if nothing. */
+export function answerNote(a: Answer): string[] {
+  const what = [a.pay?.gold ? `${a.pay.gold} gold` : '', a.pay?.xp ? `${a.pay.xp} experience` : '', a.gives ? item(a.gives).name : ''].filter(Boolean);
+  return what.length ? [`(${what.join(', ')}.)`] : [];
+}
+
+/** Answer a person's question: set its flags, hand over its item, pay and return what the person says. */
 export function answer(a: Answer, party: Party): string {
   set(party, a.sets);
   if (a.gives) party.bag.push(a.gives);
-  return [...a.says, ...(a.gives ? [`(${item(a.gives).name}.)`] : [])].join('\n\n');
+  party.gold += a.pay?.gold ?? 0;
+  const ready = a.pay?.xp ? payXp(party, a.pay.xp) : [];
+  return [...a.says, ...answerNote(a), ...(ready.length ? [`Ready to train: ${ready.join(', ')}.`] : [])].join('\n\n');
 }

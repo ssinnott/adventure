@@ -10,7 +10,7 @@ import { GUILDS, takenFlag, doneFlag, rankFlag } from '../content/guilds.ts';
 import { GUILD_QUESTS, ITEMS } from '../content/index.ts';
 import type { WorldState } from './world.ts';
 import type { Party } from './party.ts';
-import { countItem, takeItem, hasCondition, canTrain } from './party.ts';
+import { countItem, takeItem, payXp } from './party.ts';
 import type { QuestDef, When } from './quests.ts';
 import { holds } from './quests.ts';
 
@@ -80,14 +80,6 @@ export function inHand(guild: GuildId, party: Party, quests: readonly GuildQuest
 function met(q: GuildQuest, world: WorldState, party: Party): boolean {
   if (!q.goal && !q.item) return false;
   return (!q.goal || holds(q.goal, world, party)) && (!q.item || countItem(party, q.item) > 0);
-}
-
-/** Split xp among the living, as a fight's is; returns who it makes ready to train. */
-export function payXp(party: Party, xp: number): string[] {
-  const alive = party.members.filter((c) => !hasCondition(c, 'dead'));
-  const each = Math.floor(xp / Math.max(1, alive.length)), ready: string[] = [];
-  for (const c of alive) { const before = canTrain(c); c.xp += each; if (!before && canTrain(c)) ready.push(c.name); }
-  return ready;
 }
 
 function payOut(q: GuildQuest, party: Party, early: boolean): string {
