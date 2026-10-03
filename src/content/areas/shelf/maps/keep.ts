@@ -1,6 +1,7 @@
 // The keep's ward, behind Helmstow's north gatehouse: grey stone and the Queen's blue and gold, the
 // keep's great door at the head of the road, the chapel where she lay in state, a walled garden, a
-// rookery on the west tower. Vask holds court in the throne room behind the keep's door.
+// rookery on the west tower. Vask holds court in the throne room behind the keep's door. Before the
+// shut armoury the keep's armourer teaches the Knight's first prestige (#19).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
@@ -75,6 +76,13 @@ export const KEEP: MapDef = {
       'An old woman in black sits by the chapel wall.',
       '"I dressed her for the chapel. Forty years I served her, and she never once looked at the Hearth without frowning."',
     ] },
+    // The Knight's first prestige (#19; DESIGN §5): the armourer at his bench before the shut armoury,
+    // whose door and armour wait on an interior.
+    { kind: 'npc', x: 4, y: 7, name: 'Wulfric, armourer of the keep', lines: [
+      'Under the west wall, a shut building with the Queen\'s arms over its barred shutters, and before it a bench in the open with a man at it, raising a dent out of a breastplate. He keeps the hammer going while you come up.',
+      '"Wulfric. Armourer to the Queen, and now to whoever breaks what she paid for, which is the Wardens. That\'s the armoury behind me. The key went to the Regent with everything else, so I work out here."',
+      '"A blow rings. A good one rings a while, and a man who stands listening to it is a man standing still. Hit again before it stops. One of you has the makings. Hold this plate and don\'t flinch."',
+    ], teaches: { cls: 'knight', prestige: 1, seek: 'Wulfric the armourer, at his bench under the west wall of the keep\'s ward in Helmstow, can make a Knight-Errant of a knight.' } },
     { kind: 'npc', x: 3, y: 2, name: 'The rookery keeper', lines: [
       'A woman with feathers on her sleeves feeds the rooks at the foot of the west tower.',
       '"They come in off the Downs with barrow earth on their feet. The ones I send over the Scarth have stopped coming back."',

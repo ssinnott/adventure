@@ -11,7 +11,11 @@ import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
 import { MAP_DEFS, MONSTERS } from '../../index.ts';
-import { xpForLevel } from '../../../game/party.ts';
+import { xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES } from '../../../game/party.ts';
+import type { Party } from '../../../game/party.ts';
+import { teach } from '../../../game/prestige.ts';
+import { sought, seekId } from '../../../game/seeking.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
 import { priceIn } from '../../../game/items.ts';
 import { meet, answer, heard, readText } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
@@ -98,6 +102,7 @@ export const walkthrough: Walkthrough = (ok) => {
   haleGone(ok);
   walkWorth(ok);
   homecoming(ok);
+  trainers(ok);
 };
 
 /**
@@ -721,4 +726,80 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
     const wardens = step(w), beside = (w.world.travel('harrow', 8, 13, NORTH), w.world.eventsHere());
     w.ok(wardens.some((m) => m.startsWith('Wardens on the wall-walk')) && !beside.length, 'and the Wardens at the gate look it over on the first step inside, once');
   }
+}
+
+/**
+ * The prestiges taught here (#19): the Knight's first by the armourer in the keep's ward, the
+ * Paladin's by Mottram in his stores and the Bard's by the luthier under the Hearthlight's eaves,
+ * in the old city and the changed one; and the Knight's second at Coldharbour, off the road and the
+ * fights. At 11 a knight, a paladin and a bard are sent and taught; at 16, after Act II, again,
+ * Idris let in by the postern; at 19 the knight is sent to Coldharbour.
+ */
+function trainers(ok: (cond: boolean, msg: string) => void): void {
+  const WULFRIC = who('keep', 4, 7, 'Wulfric'), ALDITH = who('harrow', 5, 5, 'Aldith'), SIWARD = who('downs_f2', 19, 16, 'Siward');
+  const def = (id: string) => MAP_DEFS.find((d) => d.id === id)!;
+  const taught = (id: string) => (def(id).features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
+  const only = (id: string, want: [string, number][]) => taught(id).length === want.length && want.every(([c, n]) => taught(id).some((t) => t.cls === c && t.prestige === n));
+  ok(only('keep', [['knight', 1]]) && only('harrow', [['paladin', 1], ['bard', 1]]) && only('downs_f2', [['knight', 2]]), 'the keep teaches the Knight\'s first, Helmstow the Paladin\'s and the Bard\'s, and Coldharbour\'s box the Knight\'s second');
+  const others = (map: string, p: Person) => (def(map).features ?? []).filter((f) => f.x === p.x && f.y === p.y && f !== p);
+  const stores = others('harrow', MOTTRAM()).filter((f) => f.kind === 'shop');
+  ok(stores.length === 2 && stores.every((f) => f.kind === 'shop' && ['lantern_oil', 'torch'].every((id) => f.stock.includes(id))), 'Mottram the chandler stands in his stores, in both cities, and they sell Lantern Oil and torches');
+  ok(def('keep').rows[WULFRIC.y][WULFRIC.x] === '.' && !others('keep', WULFRIC).length, 'the armourer works at a bench in the ward, before the shut armoury, with no door');
+  ok(def('harrow').rows[ALDITH.y][ALDITH.x] === ',' && !others('harrow', ALDITH).length, 'the luthier sits in the street, and keeps no shop');
+  ok([WULFRIC, MOTTRAM(), ALDITH, SIWARD].every((p) => !!p.teaches?.seek?.includes(p.name.split(',')[0].split(' ')[0]) && p.teaches.seek.includes(PRESTIGES[p.teaches.cls].titles[p.teaches.prestige - 1])), 'each one\'s seeking names them and the title they give');
+
+  // Mottram's lesson: said once to a company he has hired with a paladin of 11, never to one without.
+  const lesson = (w: Walk) => { w.party.flags.q_well = 1; return hear(w, 'harrow', MOTTRAM()); };
+  const none = newWalk(ok);
+  for (const c of none.party.members) { c.xp = xpForLevel(11); c.level = 11; }
+  none.party.members.splice(none.party.members.findIndex((c) => c.cls === 'paladin'), 1);
+  const at11 = newWalk(ok);
+  at11.party.members[5] = createCharacter('Hollis', 'human', 'bard', {}, makeRng(11));
+  for (const c of at11.party.members) { c.xp = xpForLevel(11); c.level = 11; }
+  const first = lesson(at11), then = hear(at11, 'harrow', MOTTRAM());
+  ok(first.includes('lamp') && first !== then && !lesson(none).includes(first.slice(0, 40)), 'Mottram holds a lamp to a paladin of 11 once, and to a company with none never');
+
+  // At 11, the old city: the knight to the keep, the paladin and the bard to Helmstow, each taught.
+  const where = (p: Party, map: string) => sought(questLog(at11.world.state, p)).find((s) => s.at === map)?.who ?? [];
+  const named = (p: Party, cls: string) => p.members.find((c) => c.cls === cls)!.name;
+  ok(where(at11.party, 'keep').includes(named(at11.party, 'knight')) && ['paladin', 'bard'].every((c) => where(at11.party, 'harrow').includes(named(at11.party, c))), 'at 11 the knight is sent to the keep, and the paladin and the bard to Helmstow');
+  const teachAll = (w: Walk, how: string) => {
+    for (const p of [WULFRIC, MOTTRAM(), ALDITH]) {
+      const who = w.party.members.findIndex((c) => c.cls === p.teaches!.cls), title = PRESTIGES[p.teaches!.cls].titles[0];
+      w.party.gold = 1000;
+      ok(teach(p.teaches!, w.party, w.world.state, who).taught && prestigeOf(w.party.members[who]) === 1 && w.party.gold === 0
+        && questLog(w.world.state, w.party).find((v) => v.def.id === seekId(who, 1))?.done === true, `${how}, ${p.name.split(',')[0]} makes ${/^[AEIOU]/.test(title) ? 'an' : 'a'} ${title} for 1,000 gold, and the seeking is done`);
+    }
+  };
+  teachAll(at11, 'at 11');
+
+  // At 16, after Act II: Idris turned back at the gate and let in by the postern, and all three there.
+  const changed = newWalk(ok);
+  changed.party.members[5] = createCharacter('Hollis', 'human', 'bard', {}, makeRng(11));
+  for (const c of changed.party.members) { c.xp = xpForLevel(16); c.level = 16; }
+  changed.party.flags.q_salt_done = 1;
+  ok([WULFRIC, MOTTRAM(), ALDITH].every((p) => there(changed, p, p === WULFRIC ? 'keep' : 'harrow')), 'after Act II the three firsts\' trainers are all still there');
+  walkThrough(changed, 'shelf', 18, 4, NORTH, 'harrow');
+  ok(changed.world.state.x === 13 && changed.world.state.y === 14 && changed.party.members.some((c) => c.race === 'orcblood'), 'after Act II a company of 16 with Idris comes in by the postern');
+  const nobody = { x: -1, y: -1 } as Person;
+  ok(around('harrow', nobody, [13, 14], MOTTRAM()) && around('harrow', nobody, [13, 14], ALDITH), 'and walks from the postern to Mottram and the luthier');
+  walkThrough(changed, 'harrow', 7, 1, NORTH, 'keep');
+  ok(changed.world.state.mapId === 'keep' && around('keep', nobody, [7, 8], WULFRIC), 'and up through the gatehouse into the ward, to the armourer');
+  teachAll(changed, 'at 16, after Act II');
+
+  // The second, off the beaten path: off the road and off the fights, and reached on foot.
+  const f2 = def('downs_f2'), sw = SIWARD;
+  const road = f2.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
+  ok(road.every((r) => Math.abs(r.x - sw.x) + Math.abs(r.y - sw.y) > 10), 'the old standard-bearer is more than ten squares off the road');
+  ok(f2.encounters!.every((g) => Math.abs(g.x - sw.x) + Math.abs(g.y - sw.y) > 10), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');
+  ok(around('downs_f2', nobody, [f2.start.x, f2.start.y], sw), 'he is reached on foot from the box\'s way in, by no secret door');
+  const at19 = newWalk(ok);
+  for (const c of at19.party.members) { c.xp = xpForLevel(19); c.level = 19; }
+  const knight = at19.party.members.findIndex((c) => c.cls === 'knight');
+  takePrestige(at19.party.members[knight]);
+  at19.party.flags.q_salt_done = 1;
+  ok(sought(questLog(at19.world.state, at19.party)).find((s) => s.at === 'downs_f2')?.who.includes(at19.party.members[knight].name) === true, 'at 19 the knight is sent to Coldharbour\'s box');
+  at19.party.gold = 4000;
+  ok(there(at19, sw, 'downs_f2') && teach(sw.teaches!, at19.party, at19.world.state, knight).taught && prestigeOf(at19.party.members[knight]) === 2 && at19.party.gold === 0,
+    `he makes a ${PRESTIGES.knight.titles[1]} for 4,000 gold`);
 }
