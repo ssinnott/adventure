@@ -282,11 +282,12 @@ The places, as the atlas and the docs have them:
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
 | Henlys | I4 | keeps the two-hundred-year-old treaty behind the elves' claim to the throne, sealed with the chisel's mark (DESIGN §9, §10.1) | a planned site, about 274,104 |
-| Deepthorn Lodge | I3 | a hunting lodge; the Ranger's second prestige (#19); its hunters took the cutters' pay (#56's 15) | a planned lodge at 278,112, in I4 (`src/content/areas/thornmark/atlas.ts:23`) |
+| Deepthorn Lodge | I3 | a hunting lodge; the Ranger's second prestige, taught by Cuthred above the hide (#19; §9, 45); its hunters took the cutters' pay (#56's 15) | a planned lodge at 278,112, in I4 (`src/content/areas/thornmark/atlas.ts:23`) |
 | Penspern | J5, and I5 beside it | the Eldest (MONSTERS §5.4); a standing stone older than the elves (#56's 16); a fire for the boats (#56's 19) | the tip the sea goes round, about 300,148; a site on the crown, at the standing stone, 299.5,144.5 |
 | The Dowrdu | I3, H3 and H4 | nothing yet | a river from Lyngwyn to the Wyke, named |
 | Lyngwyn | H2 and I2 | its dark survey marker (built), and the Lanterns' Dark Marker (#146) | a lake, half on the built map, lettered |
 | The Hoarhills | I2, I3 and J4 | nothing yet | the ridge between Thornmark and Sunderwood, ending in Sunder Bay |
+| The wood to the head | I5 | the Druid's second prestige: an elf of the old wood, who comes out of the trees once the Grove Stone is mended (DESIGN §5, #19); waits on the mending (#56's 18) | the box, built (#217) |
 | The long glade | I4 and J4 | nothing yet | a strip of grass down the wood's east side, to the head |
 | The Mewstone | G4 | nothing yet | an isle in the Wyke's mouth, the Deepthorn's |
 
