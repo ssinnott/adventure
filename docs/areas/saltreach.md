@@ -10,9 +10,9 @@ work is filed under #153 (Phase 1.2, #149): the boxes as §4's table has them, t
 its drawings (#184) and its rooms (#185). Figures are measured on main at `2cc52cd` (29 September
 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Eight boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
-Rietum (#171), Rietum (#172), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's box (#176) and
-the salt pans (#178), the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
+Ten boxes of it are built, the Delta road and the shore under the Edge (#170), the spur to
+Rietum (#171), Rietum (#172), Stienwierde (#173), the Drowned Temples' approach (#174), Saltmouth's box (#176),
+the salt pans (#178) and the willows (#179), the town behind C6's gate, Saltmouth (#177), with the Salt Compact's hall
 in it (#182), and the Drowned Temples below B6, two levels (#175); with the first two the area
 was listed. Its content is `src/content/areas/saltreach/`
 (maps, monsters, items, climate, its part of the world map, its side quests in `quests.ts` and its
@@ -30,10 +30,10 @@ Saltreach three zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Upper Water | 10–11 | 7,714 | C3, Rietum, laid at 72,62 (#172) |
-| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); C4, the spur to Rietum, at 72,94 (#171); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174) |
+| The Upper Water | 10–11 | 7,714 | C3, Rietum, laid at 72,62 (#172); B3, the willows, at 40,62 (#179) |
+| The Delta | 10–12 | 3,697 | C5, the Delta road, laid at 72,126, and D5, the shore under the Edge, at 104,126 (#170); C4, the spur to Rietum, at 72,94 (#171); B5, Stienwierde, at 40,126 (#173); B6, the temples' approach, at 40,158 (#174); B4, the willows' end, at 40,94 (#179) |
 | The Saltings | 11–12 | 3,588 | C6, Saltmouth's box, laid at 72,158 (#176); C7, the salt pans, at 72,190 (#178) |
-| The area | 10–12 | 14,999 | eight boxes |
+| The area | 10–12 | 14,999 | ten boxes |
 
 Squares are the ones the atlas gives each zone, shallows and rivers included. Without the shallows
 the area is 14,143 squares, about 13.8 zone maps (EXPANSION §1 has 13.8), and 11,965 of them a
@@ -194,12 +194,26 @@ monsters are drawn in #184 and its rooms in #185. The boxes built:
   pan with no sluice, reached by the crabs' hole under its east wall, the salter's hoard in it; the
   hint is the salt trodden at that wall's foot and nowhere else. The gate holds at 11, at 6.0 fights
   to a rest.
+- **The willows** (B3, `upperwater_b3`, and B4, `delta_b4`, country, band 10–11, behind the road;
+  #179): B3 is the Upper Water behind Rietum, the Long Water out of the rim's hills and down through
+  the willows, Rietum's diep carried on west from C3's sluice to the river under its pollards with a
+  plank bridge over it, the willows' quay at its mouth with a barge lying up for the sluice, the
+  boathouse behind, the ford below and the carr past it; Hiltje cutting withies north of the diep, a
+  shrine at the bend whose bowl the river keeps full, and a cairn on the hill. B4 is laid in the
+  Delta: the river in under the heronry and out into the broad water that runs on into C4's
+  backwater, the drowned god's statue on the hill's crown with his name cut off the plinth, the
+  dyke-wrights' flood-store in the hill's side, the strand, C4's ford carried across the water's foot
+  and the fen's north end. The groups are five: the quay's crew, a master, three bargemen and two
+  herons, and a bull toad in the carr on B3; the heronry's brood of three and its five keepers, and
+  a bull toad at the fen's end on B4. The secrets are the boathouse's back room, the hint the green
+  worn off its back wall at a hand's height, and the flood-store, the hint the martins nesting where
+  the hill's facing is laid looser. The gate holds at 10, at 7.1 fights to a rest on each box.
 - **Weather.** The delta's: mild and wet, the wettest in late autumn, fog off the gulf. Fronts reach
   it four hours after they cross the Foreland.
 
 ## 4. What is still to build
 
-All but C5, D5, C4, C3, B5, B6, C6 and C7: 14,143 squares of land, 11,965 of them walkable. On the
+All but C5, D5, C4, C3, B5, B6, C6, C7, B3 and B4: 14,143 squares of land, 11,965 of them walkable. On the
 grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
@@ -218,7 +232,8 @@ grid (§1) the plan is ten boxes, a dungeon and a town, and the boxes hold 8,946
 The core is the four boxes that hold a step of the quest (C3, B5, B6 and C6), built at full
 density; the rest is country, built to the looser floor with the wilderness features (EXPANSION
 §2.1 (b) and §5.3, #45). The road's two country boxes and the pans are built with the act; the
-willows are parked until the owner has played it (#151, call 10). The bands rise from the way in,
+willows were parked until the owner had played it (#151, call 10), and the owner took them off
+parked on 3 October (#179). The bands rise from the way in,
 10 at the foot of the Edge, to 12 at the pans and the temples' choir, as the gate asks (EXPANSION
 §5.2), and each box holds a group at the top of its band for the curve.
 
@@ -244,7 +259,7 @@ The places, as the atlas and the docs have them:
 | The Drowned Temples | B6, and below | gone dark; the god used to sing the tides and now only counts, until its Stone comes home (DESIGN §9, STORY); the choir and the Choirmaster (MONSTERS §6.1); the bell (#56's 23) | a planned dungeon at 56,160, its way in at 56,170 |
 | Saltmouth | C6, and its own map | the free port, the Compact's home, the seat of Jory Tallis (DESIGN §9, §10.1); four first prestiges (#19); the Cartographers' and the Compact's halls (DESIGN §8); the boat to Wrackholm | a port, its gate at 98,177 and its plate at 99,180; the plate moved from 118,172 (D6) to C6 (#151, call 7, #177) |
 | The salt pans | C7 | the Salt Crab's ground (MONSTERS §6.1); the star that moved, seen from them at night (#56's 24) | salt, 337 squares of the Saltings |
-| The Long Water | C4, C5, B3, B4 | the Compact's barges, shards and people downriver (DESIGN §9); a barge on a shoal (#56's 22) | a river from the rim to Saltmouth, lettered |
+| The Long Water | C4, C5, B3, B4 | the Compact's barges, shards and people downriver (DESIGN §9); a barge on a shoal (#56's 22); the willows' quay (#179) | a river from the rim to Saltmouth, lettered |
 | The Scarp | C7's south edge | the Glasswold's border; Act IV's stair (#56's 54) | the escarpment, lettered at 70,208; the stair at 80,206 |
 | Sylmeer (the Salt Gulf) | east of C6 and C7 | the crossing to Wrackholm | water, lettered at 124,150 |
 
@@ -373,7 +388,8 @@ settled in its issue, and what the pilot teaches changes them.
 - **As built** (#172, 1 October): the first map of the Upper Water, so the crossing line falls at
   the C4/C3 seam. The atlas puts no water in the box, so the quay stands on a diep, a deep cut from a
   sluice-house on the west edge, its way on to the Long Water owed to B3 (#179); with no river there
-  is no ford and no eel, and the shrine stands by the sluice. The cliff is mountain, since no map
+  is no ford and no eel, and the shrine stands by the sluice. B3 carries the diep on to the river
+  (#179). The cliff is mountain, since no map
   character is cliff, and the Downs' strip above it is closed with it. Sjonghol is a cleft of four
   squares in the cliff's foot, Douwe at its mouth teaching the Monk's second prestige; Auke the old
   bargeman teaches the Thief's at his hut in the north fields, so both are more than ten squares off
@@ -649,13 +665,37 @@ settled in its issue, and what the pilot teaches changes them.
   pilots' slate in a chest at its foot. As measured, the box pays about 700 xp a member,
   its share, and 280 gold. What the owner finds by hand goes here when the box has been played.
 
-### 4.11 B3 and B4, the willows (#179): country, band 10–11, parked
+### 4.11 B3 and B4, the willows (#179): country, band 10–11
 
 - **Purpose.** The Upper Water behind Rietum: willows along the river and the fen's north end,
   built once the owner has played the act (#151, call 10).
 - **Landmarks.** The willows' quay; a heronry; the river's bend under the rim.
 - **Encounters.** Herons; barges at the willows' quay; a heronry as a den (#88).
 - **Pay.** About 400 xp a member each.
+- **As built** (#179, 3 October): B3, `upperwater_b3`, is laid in the Upper Water and B4,
+  `delta_b4`, in the Delta, so the crossing line falls at their seam as it does at C3/C4's. The
+  willows are stands of trees with rides between them. On B3 the Long Water comes out of the rim's
+  hills at 1,2, a mountain corner where the atlas's river meets the box under the rim, and bends
+  into the willows; the shrine at the bend (intellect) is the drowned god's one bowl the river
+  keeps full. Rietum's diep runs on west from C3's sluice along row 12 to the river, deep water under
+  its pollards, crossed by a plank bridge at 25,12; at its mouth the willows' quay, the barge lying
+  up for the sluice with its crew aboard, and the boathouse behind, its back room the secret at
+  11,16, the hint the green worn off its back wall at 11,17. Below the quay the river is forded at
+  8–9,18 and the carr lies past it, a bull toad in it, the box's farthest and hardest. Hiltje, a
+  withy-cutter of Rietum, cuts in the beds north of the diep: the god on the hill to the south has
+  had his name cut off, her grandmother would not say it, and the herons go home to the willows at
+  the river's end. On B4 the heronry, a den (#88), stands in the willows' last stand at 8,1 over the
+  north ford, breeding grey herons: a brood of three on the grass by the water, back a day after
+  they fall until it burns, and five keepers on the nests, the same bird in greater number; burnt,
+  it gives 100 gold, a Spear +1 and a draught. The drowned god's statue on the hill's crown asks for
+  the name cut off its plinth, which is on the Holy Symbol's rim in the temples' sacristy and
+  nowhere else (§10), and gives 50 gold and might. The dyke-wrights' flood-store in the hill's side
+  is the secret at 2,12, faced in stone, the hint at 2,13 the martins nesting where the facing is
+  laid looser, its chest 150 gold and a War Hammer +1. The strand, C4's ford carried across the
+  broad water's foot on row 22 and the fen's north end, a bull toad in it, the hardest. Each box's
+  gate holds at 10: B3 at 7.1 fights to a rest, B4 at 7.1, every fight won, the heronry's keepers
+  and its brood each won every time. As measured, B3 pays about 615 xp a member at 10 and 320 gold,
+  B4 about 730 and 360. What the owner finds by hand goes here when the boxes have been played.
 
 ## 5. The one quest here
 
@@ -808,10 +848,15 @@ mound, a Stone's plinth without its Stone, temples half under water, a port.
   the 90, the 330, the 170 and the 10, so the area comes to about 9,730, some 18% over the curve's
   8,267. Paid by level in the road's order, a clear of what is built gives about 9,100 a member,
   over the curve, and 4,370 gold, the gold's rest owed to #153
-  (`src/content/progression.ts`). The surplus is for a kill paid by level to damp, and each box
+  (`src/content/progression.ts`) until the willows paid it. The surplus is for a kill paid by level to damp, and each box
   still to build is priced by its fights, about 300 a fight, and recorded as built where that passes
   its share; the
-  sum here is restated with each. The willows add 800 when they are built. From here on a kill pays
+  sum here is restated with each. The willows, as built (#179), pay about 615 and 730 a member at
+  10 against their 800: the heronry needs its keepers and a brood, each box the curve's toad, and
+  B3 its quay's crew, five fights where a share of 400 a box buys about three. Paid by level in the
+  road's order, a clear of all ten boxes, the temples and the town gives about 10,340 a member, some
+  25% over the curve, and 5,700 gold, which meets the curve's 5,040, so #153 no longer owes the
+  area's gold. From here on a kill pays
   by level (#159), so a company that arrives at 10 earns the shares as written and one that arrives
   at 13 earns less; the curve's row reports what a clear falls short of as owed to #153 until the
   boxes exist.
@@ -842,7 +887,8 @@ followed here:
 5. **Saltmouth is on C6** (call 7), its gate at about 102,178, and the atlas's plate moves from
    118,172 to match.
 6. **Lantern Watch sells the next spell tier** (call 9); Saltmouth sells none.
-7. **The willows are built after the act is played** (call 10): #179 is parked.
+7. **The willows are built after the act is played** (call 10): #179 was parked, and the owner took
+   it off parked on 3 October.
 8. **The cuts stand** (call 12): §11.
 9. **All four side quests stand** (call 13): §6.
 10. **The names** (§10).
@@ -1020,7 +1066,7 @@ Decided by delegate for #172, each the owner's to overturn:
 1. **The quay stands on a cut, a diep, with no river in the box:** deep water from a sluice-house
    on the west edge at 0,12 to the quay under the mound. The sluice-house is a building square, so
    the edge check holds with no change to the atlas, and deep water carries the barges and keeps a
-   swimmer off the cache. The diep's way on through B3 to the Long Water is owed to #179. With no
+   swimmer off the cache. The diep's way on through B3 to the Long Water was owed to #179, which carries it. With no
    river the brief's eel and ford go, and the shrine stands by the sluice.
 2. **The Downs' strip above the cliff is closed as mountain with the Edge,** as C7 closed the
    Glasswold's squares (#178's 3). §1 says the only way over the Edge is the Salt Road in D4, and a
@@ -1363,6 +1409,61 @@ Decided by delegate for #183, each the owner's to overturn:
    after-line, the Stone away, asks for it. Words would outrank that after-line, so it stays one. Her
    first meeting and the count with the Stone home are #191's sweep.
 8. **Three pull requests, in order:** 21 with the bell's lines; 22; 24.
+
+Decided by delegate for #179, each the owner's to overturn:
+
+1. **B3 is laid in the Upper Water and B4 in the Delta,** each named for its zone: row 3 is the
+   Upper Water's (C3) and row 4 the Delta's (C4), as #171's 1 has it, so the crossing line falls at
+   the B3/B4 seam as at C3/C4's. B4's marsh meets B5's and its broad water C4's, both the Delta's.
+2. **B3 carries C3's diep west along row 12 to the Long Water,** deep water one square wide under
+   pollards, so C3's sluice line reads true, and a plank bridge at 25,12 crosses it, a road square
+   over deep water.
+3. **The willows' quay is at the diep's mouth on B3,** where the barges lie up for Rietum's sluice,
+   with a boathouse behind. Auke stays at C3 (#172's 4): the quay gives DESIGN §5's line a place,
+   and its wording stays the owner's.
+4. **The quay's crew is a fight and always there:** a master, three bargemen and two herons in
+   their back rank, as C4's barge has, back after two days. A master and three or four bargemen ran
+   7.6 to 8.0 fights to a rest, off the aim, since a crew that breaks when its master falls is short
+   whatever its number; the herons bring it to 7.1 (changed on measuring).
+5. **The heronry is on B4, in the willows' last stand at the water's head,** a den (#88) that
+   breeds grey herons: herons nest where they fish, and the broad water and C4's backwater are
+   their fishing.
+6. **Its keepers are five herons on the nests and its brood three on the grass by the water.** The
+   roster has no old heron and none may be drawn here (the creatures' lane), so the keepers are the
+   same bird in greater number, the camp's harder fight. Four ran B4 at 7.6 fights to a rest; five
+   bring it to 7.1 (changed on measuring).
+7. **Each box's hardest group is a bull toad alone,** in B3's carr past the ford and at B4's fen
+   end, each the farthest from its way in: neither the keepers nor the crew reaches the 11 the
+   curve asks, and this is C3's, C4's and C5's precedent (#172's 7).
+8. **The willows are built at about 1,345 a member at 10 against their 800,** and §8 says so: a den
+   needs its keepers and a brood and each map its toad, which is four fights before the quay's.
+   Fights to a rest is the gate and a share a proposal (#176's 3), and behind the road a company
+   that comes later is paid less by level.
+9. **The secrets are B3's boathouse back room and B4's flood-store in the hill,** each hint on its
+   near side and always there, saying only what is seen: the green worn off the boathouse's back
+   wall at a hand's height, and the martins nesting where the hill's facing is laid looser.
+10. **The finds are gold, draughts and an earlier act's piece with a plus:** a Brigandine +1 in the
+    boathouse, a War Hammer +1 in the store and a Spear +1 in the heronry's hoard. Every rung-13
+    plus is placed already (#399's 3), and none of these comes near the window or the ladder. Their
+    gold meets the curve's, which #153 owed.
+11. **The wilderness features are few:** on B3 a shrine at the bend (intellect), a cairn on the
+    hill and Hiltje in the withy beds with a rumour; on B4 the statue on the hill's crown (might)
+    and a cairn in the fen. No shrine of the area gave intellect or might. No camp, since C3's loft
+    and C4's carters' camp are a box away, and no sign.
+12. **The statue's answer is the god's name, *tijsjonger*,** which only the Holy Symbol's rim says
+    (#175's 9): the statue asks for it and never says it, so §10's "on its silver alone" holds, and
+    a company that has been to the sacristy has a reason to walk back. Hiltje says the name was cut
+    off and her grandmother would not say it.
+13. **C4's ford is carried into B4,** sand across the broad water's foot on row 22, and each box's
+    river has a ford of its own, B4's under the heronry and B3's below the quay, since the river's
+    shallows otherwise take a swimmer.
+14. **The river comes out of the rim's hills at B3's corner:** the atlas's river meets the box under
+    the rim's mountain, where no square can be water to the west and land to the north, so the
+    corner is mountain two squares deep and the river starts at 1,2.
+15. **The willows hold no step and no quest,** none of the side quests and no guild task; the
+    Cartographers' quests of ranks 2 and 3 are the owner's to file, and may point here.
+16. **The flood-store is faced in stone, drawn as building squares round its door,** so B4 has wall
+    faces enough to dress no more than half of them.
 
 ## 10. Names
 
