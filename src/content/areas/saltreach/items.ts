@@ -40,6 +40,13 @@ export const ITEMS: readonly ItemDef[] = [
   // The Night-Light (#56's 21): Nynke's shard in its jar, for the priest at the sluice or for Tobin.
   // A Brine Shard in kind, but its own, so that a hand-in never takes C4's or C5's in its place.
   { id: 'night_light', name: 'Nynke\'s Night-Light', slot: 'none', price: 0, text: ['A shard of green glass the size of a thumb, cool, and by day only glass. By night there is a light in it, slow as a sleeper\'s breath, and it is brighter when the river is up.'] },
+  // The Star That Moved (#56's 24): the pilots' slate at the foot of their stone on the pans, for
+  // Hiske's press or for Tallis.
+  { id: 'pilots_slate', name: 'The Pilots\' Slate', slot: 'none', price: 0, text: [
+    'A slate the size of a book, greasy with hands, chalked and re-chalked.',
+    'Down the left, dates, from midsummer on. Down the right, a bearing for the pilots\' star over the Scarp, and beside each a pilot\'s initials. The bearing walks, a little each night, all one way.',
+    'The last line, in a fresh hand: SHE\'S NOT IN THE CHART. NOBODY SAY.',
+  ] },
   // C6's find (#176): in a crate of the crews' cargo on the quay.
   P(core('scale'), 1),
   // C7's secret (#178): the salter's hoard in the sealed pan, beside the ladder's Horn Bow +1.

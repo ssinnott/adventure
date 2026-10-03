@@ -644,8 +644,9 @@ settled in its issue, and what the pilot teaches changes them.
   creek's end is said, not fought. The secret is a pan with no sluice, walled on four sides; the
   crabs' hole under its east wall is the way in and the only one, with no lane, sluice or tide
   reaching it. The hoard holds 200 gold, the Crab-Shell Buckler +2 and the ladder's Horn Bow +1
-  (#399). The star is a night event that sets nothing: Saltmouth's astrologer is Hiske (#177), and
-  the quest and its choice are #183's, which rewrites `c7_star` as the watch. As measured, the box pays about 700 xp a member,
+  (#399). The star was a night event that set nothing until #183 made it The Star That Moved's watch
+  (§6): the pilots' stone where the lanes cross at 25,7, the watch from it by night, once, and the
+  pilots' slate in a chest at its foot. As measured, the box pays about 700 xp a member,
   its share, and 280 gold. What the owner finds by hand goes here when the box has been played.
 
 ### 4.11 B3 and B4, the willows (#179): country, band 10–11, parked
@@ -707,7 +708,7 @@ with its box on the systems of #76 (#183):
 | 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | #183; #172 places the child and her hint |
 | 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171; the boat reads its flag (#413) |
 | 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175; the blessing #554 (§9); her after-lines #183 |
-| 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178 |
+| 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178; #183 |
 
 One change to #56's drafts, decided with the boat (#164): 22's favour is the boat's fare, never
 the boat, which sails for anyone from the start (EXPANSION §2.2).
@@ -734,6 +735,13 @@ Each of the three has words for each way.
 
 **The Tide Bell's after-lines** (#183). Once the bell hangs, the priestess asks for the Stone home;
 once it is home, the god sings the tide down and she sends the company away, not unkindly.
+
+**The Star That Moved, as built** (#183). Hiske asks at her first meeting (`q_star`) for a watch
+from the pilots' stone on C7, and still teaches. By night the star walks in the stone's notch
+(`c7_star`, once), and the pilots' slate lies in a chest at its foot at any hour. The slate goes to
+Hiske's press for 200 gold (`q_star_press`) or to Tallis for 400 (`q_star_tallis`), each at the first
+meeting, and Hiske has words for a company that brings it unasked. Tallis's throne words always come
+first (`sm_tallis_word`); then his words on the star, and after it his and Hiske's for each way.
 
 ### The guilds' quests
 
@@ -1146,6 +1154,20 @@ Decided by delegate for #178, each the owner's to overturn:
    earlier.
 7. **The shrine gives endurance,** the drowned god's as C5's and C6's are, its bowl full of salt
    where theirs are dry. No camp: C6's under the wall is the next box north.
+
+Decided by delegate for #183's The Star That Moved, each the owner's to overturn:
+
+1. **Hiske asks for the star at her first meeting and still teaches.** She is the issue's Idony,
+   since Idony is a Lantern in Thornhold (#177's 6).
+2. **Tallis gains `sm_tallis_word` on his first meeting,** so his throne words are always heard
+   before the star's. His after-lines are words, not a hand-in's, since #192 gives him a second
+   hand-in and of several only the last one's after-lines show.
+3. **The pilots' stone is an event where the pans' lanes cross, and `c7_star` becomes the watch from
+   it,** a once-event by night that the log keys on as seen, so it needs no flag and is never spent
+   by day. The stone says nothing of trodden salt, which is the sealed pan's hint.
+4. **The slate is in a plain chest at the stone's foot,** there at any hour, so Hiske has early
+   words and the quest begins with the slate carried. She pays 200 gold and Tallis 400; the slate in
+   his hands is the record #56's 64 may remember.
 
 Decided by delegate for #181, each the owner's to overturn:
 

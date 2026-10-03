@@ -7,6 +7,8 @@
 // And The Night-Light (Rietum, #56's 21): the priest at the sluice asks for Nynke's light, a shard
 // in a jar at her window that the glass people come up the bank to look at. Taken, it goes to the
 // priest or to Tobin, who sells it downriver; kept, they come until the Stone is home.
+// And The Star That Moved (Saltmouth and the pans, #56's 24): Hiske asks for a watch from the pilots'
+// stone, and their slate goes to her press or to Tallis.
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every
 // key.
 import type { QuestDef } from '../../../game/quests.ts';
@@ -68,6 +70,30 @@ export const QUESTS: readonly QuestDef[] = [
     goals: [
       { when: [{ item: 'tide_bell' }], text: 'Bring the bell up to the priestess at the Drowned Temples\' dry door.', at: 'delta_b6' },
       { when: { flag: 'q_tide_bell' }, text: 'Go down to the choir under the Drowned Temples, where the Choirmaster beats the count on the bell, and take it.', at: 'drowned_temples2' },
+    ],
+  },
+  {
+    // The Star That Moved (#56's 24): Hiske asks for a watch from the pilots' stone on the pans, and the
+    // pilots' slate at its foot goes to her press or to Tallis. Found before she asks, it is logged too.
+    id: 'star',
+    title: 'The Star That Moved',
+    start: [{ flag: 'q_star' }, { item: 'pilots_slate' }],
+    done: [{ flag: 'q_star_press' }, { flag: 'q_star_tallis' }],
+    entries: [
+      { id: 'hiske', when: { flag: 'q_star' },
+        text: 'Hiske the astrologer says her pilots swear a star has moved. We are to watch from the pilots\' stone on the pans by night.' },
+      { id: 'watch', when: { seen: 'saltings_c7:c7_star' },
+        text: 'We watched from the pilots\' stone by night. One star low over the Scarp burned too steady, and in the notch it moved.' },
+      { id: 'slate', when: [{ item: 'pilots_slate' }, { flag: 'q_star_press' }, { flag: 'q_star_tallis' }],
+        text: 'At the stone\'s foot lay the pilots\' slate: bearings in a dozen hands since midsummer, walking a little each night, one way.' },
+      { id: 'press', when: { flag: 'q_star_press' },
+        text: 'We gave the slate to Hiske. It goes to her press: a chart with a star that moves on it, and the port can bolt if it likes.' },
+      { id: 'tallis', when: { flag: 'q_star_tallis' },
+        text: 'We sold the slate to Tallis at his door. His pilots get new charts with a note about fresh bearings, and nothing about why.' },
+    ],
+    goals: [
+      { when: { item: 'pilots_slate' }, text: 'Take the pilots\' slate to Hiske in the street or to Tallis at his door on the quay, in Saltmouth.', at: 'saltmouth' },
+      { when: { flag: 'q_star' }, text: 'Watch the sky over the Scarp from the pilots\' stone on the salt pans south of Saltmouth, by night.', at: 'saltings_c7' },
     ],
   },
 ];
