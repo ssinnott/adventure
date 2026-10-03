@@ -160,7 +160,8 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   running both ways along the floor; the chalk runs out at a rock fall, and behind it the face is not flat.
 - **The Bears' Wood** (J3, `eaves_j3`, country, band 15–16; #202): the deep forest south of J2,
   reached by a cutters' track down out of J2's pines and from K3's west lip by the dead wood; its west
-  and south edges stand closed against the Deepthorn's I3 and J4. A hermit in his clearing, a shrine and
+  and south edges stand closed against the Deepthorn's I3 and J4. A hermit in his clearing, Aylmer, a knight of the Crown that was, who teaches the Paladin's
+  second prestige (#19); a shrine and
   a cairn in the wood, and a bears' den under a fallen pine, its old bears gone to glass, with the
   gleaners' cache behind its back. Three groups: the den's brood, two pine bears on the track, two
   deathsheads at the den's mouth by night and its keepers, two glass bears.
@@ -229,7 +230,8 @@ The places, as the atlas and the docs have them:
 |---|---|---|---|
 | The Sunder | K2 and K3, and below | a Rift that split a whole wood; the wall at its floor (DESIGN §9, STORY); the Warden of the Sunder, whose death closes nothing (MONSTERS §6.3); the length of the wall (#56's 32) | a planned dungeon at 320,62, its way in at 338,70; chasm from K1 to K4 |
 | The rope bridge | K2 | the east road's crossing of the gorge (DESIGN §9) | a road link at 330–346,56 |
-| Sunderfall | K2 | the Paladin's second prestige, a shrine (#19); the dammed fall (#56's 30) | a planned falls at 340,60 |
+| Sunderfall | K2 | the dammed fall (#56's 30), its shrine and Orm; the Paladin's second, once planned here, is taught under the Eaves in J3 (§4.9) | a planned falls at 340,60 |
+| The hermit's clearing | J3 | the Paladin's second prestige: a hermit's shrine by the clearing, kept by a knight of the Crown that was (DESIGN §5, #19) | not on the atlas |
 | Lantern Watch | L2, and its own map | the Lanterns' watchtower across the gorge, where the papers are read and the Lanterns begin to split (DESIGN §8, §9); the prior and the sister (#56's 31); the next spell tier (#151, call 9) | a planned town at 372,36, its way in at 372,46 |
 | The pine-cutters' steading | J2 | the family at the glass trees (#56's 29) | a site on J2 at 20.5,7.5 (#196) |
 | The Hoarhills | I2, and the Deepthorn's I3 and J4 | the ridge between Thornmark and Sunderwood (docs/areas/thornmark.md) | hills and mountain, lettered |
@@ -334,14 +336,14 @@ features; the pay shared out over the area (§8).
 ### 4.4 K2, Sunderfall and the rope bridge (#197): core, band 15
 
 - **Purpose.** The crossing of the gorge: the rope bridge the east road crosses the Sunder by,
-  Sunderfall where the river goes over the lip, and its shrine, the Paladin's second prestige.
+  Sunderfall where the river goes over the lip, and its shrine.
 - **Landmarks.** The chasm down the box's middle, glass trees along both lips; the bridge at
   330–346,56, the one crossing, a way and never a lock; Sunderfall at 340,60 on the east lip, where
   the river goes over, with its shrine and its hermit; the dam above the fall; the ledge behind the
   water.
 - **Points of interest,** about nine features and eight groups:
   - the bridge, and the event on it: the step (§5);
-  - the shrine at Sunderfall, the Paladin's trainer (#19) and the hermit (#56's 30);
+  - the shrine at Sunderfall and the hermit (#56's 30); the Paladin's trainer is J3's (§4.9);
   - the dam, and the gleaners' foreman;
   - the ledge behind the fall;
   - a camp on the west lip (#45), a cairn on the east (#45);
@@ -369,8 +371,8 @@ features; the pay shared out over the area (§8).
   over the chasm, then the river by a ford. The dam is pine trunks across the river where it leaves
   the pines, and the fall below it a thread, as quest 30 finds it: its lines (#205's) are written for
   a fall gone quiet, and the map draws no other. Orm keeps the shrine with lines of his own; his
-  ask, Hew and the choice are #205's. The shrine gives personality; the Paladin's trainer there is
-  owed to #19. The ledge is behind the bare rock under the fall, with the first gleaner's tally,
+  ask, Hew and the choice are #205's. The shrine gives personality; the Paladin's second is taught
+  in J3 (§4.9). The ledge is behind the bare rock under the fall, with the first gleaner's tally,
   BELOW, a Long Sword +2 (`longsword+2`) and 200 gold. Four sunder hounds and a glass spider were the
   plan at the bridge's far end; three and the spider keep fights to a rest inside the aim. Two glass
   bears on the road at the far end, where Lanternwood begins, are the box's group at 16: a narrow
@@ -603,10 +605,11 @@ features; the pay shared out over the area (§8).
   mountains rising. J3: deep forest, a bear's den, the hermit's clearing.
 - **Points of interest,** about five features and five groups each:
   - M2: a milestone (ANVILHALL 12), a camp (#45), a cairn at the border (#45), a shrine (#45);
-  - J3: a hermit who has seen the Rift grow, a bear's den (#88), a shrine, a cairn.
+  - J3: a hermit who has seen the Rift grow, a knight of the Crown that was, who teaches the
+    Paladin's second (#19); a bear's den (#88), a shrine, a cairn.
 - **Encounters.** M2: glass bears (proposed, §7) and a deathshead at the box's far end, the band's
   top. J3: pine bears, the den's brood; moths by night.
-- **Quests.** None.
+- **Quests.** None. J3's hermit teaches the Paladin's second prestige (#19; §9, #19's 1).
 - **The secret and its hint.** J3: a gleaners' cache in the den's back, which the bears have not
   touched; the hint is in two parts: moths at the den's mouth by night, thick as at a lamp where no
   lamp is, and the hermit's word that something goes up to the den on two legs and comes down
@@ -652,7 +655,10 @@ features; the pay shared out over the area (§8).
     swimmer, climber or levitator reaches. A company at 15 wins every fight and manages 7.60 fights to a
     rest, inside the aim, with 5.3% of its days ending in a fight broken off; three glass bears keeping
     the den broke off 27%, and any three bears together near 40%. As measured it pays about 1,073 xp a
-    member and 510 gold. Density 99.3% within 12 steps, the furthest 13.
+    member and 510 gold. Density 99.3% within 12 steps, the furthest 13. The hermit is Aylmer, a
+    knight of the Crown that was, his shrine a sword point-down in a heap of stones at the clearing's
+    south-west corner, 5,11, where he teaches the Paladin's second prestige (#19): 13 squares from the
+    nearest group, the brood on the track, and the box has no road. He stood at 6,8, nine from it.
   - Both pay about 2,020 against §8's 1,600, 800 each (the issue proposed 900): fewer groups that were
     each a real fight held fights to a rest inside the aim and pairs kept them short, where more and
     gentler groups put fights to a rest past their limit. The lightest mixes inside the aim with no group
@@ -1285,3 +1291,31 @@ Decided by delegate for #204, each the owner's to overturn:
     the Grove's seal. Sunderwood's walkthrough runs last in road order, so it checks every
     chapter's goals.
 21. **The text was drafted in the voice by a separate agent,** and no line names what the wall is.
+
+Decided by delegate for #19's trainer in Sunderwood, on 3 October 2026, each the owner's to
+overturn:
+
+1. **The hermit in J3's clearing is the knight of the Crown that was,** Aylmer: DESIGN §5 has one
+   hermit by the clearing, and a second man in it would be a muddle. His name is the Crown's English
+   (§10).
+2. **His shrine is a sword point-down in a heap of stones, in his words, not a feature:** a shrine
+   blesses, the box's luck shrine blesses already, and one that blesses nothing says an empty line.
+   The wayside shrine at 7,21 stays the bears'.
+3. **He moves from 6,8 to 5,11, the clearing's south-west corner:** at 6,8 he was nine squares from
+   the brood on the track; at 5,11 he is 13 from it and 19 and 23 from the den's groups, and the box
+   has no road, so the rule Rietum's are held to holds as written.
+4. **He is always there,** with no `after`, `until` or `when`: by night, and whatever the den came to.
+5. **His words keep the hint:** his three lines stand, the first given the sword in the stones. His
+   lesson is a `says` said once to a company with a Lightbearer of 19, keyed to his first meeting
+   (`j3_hermit_met`), so every company hears of the two legs before it. The cost, as Mottram's in the
+   Foreland: the menu follows his first words, so that paladin is offered the Justicar before the
+   lesson.
+6. **The lesson is Holy Strike's, on the dead that walk,** not on the den's bears, which are beasts.
+7. **He has a `seek` line of his own:** the system's would read "in The Bears' Wood" and say nothing
+   of the Eaves or the knight.
+8. **The Paladin's second leaves Sunderfall:** §4's places and K2's brief put it at the shrine
+   there, and #197's 6 owed it to #19; DESIGN §5 puts it under the Eaves, and J3 is the box. Orm and
+   K2's shrine change nothing.
+9. **The walk** finds him there from a new game, holds him to the road's and the groups' rule,
+   reaches him on foot from the cutters' track, hears the hint before the lesson, and at 19 sends the
+   paladin to J3 and teaches the Justicar for 4,000 gold.

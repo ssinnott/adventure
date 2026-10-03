@@ -30,7 +30,8 @@
 // grave found from the milestone's back, and the box's groups won at its floor. Then the Bears'
 // Wood (J3, #202): the cutters' track down out of J2, the hermit's word, the den's keepers and
 // brood won and the den burnt, the cache behind it found from the moths at its mouth, and the way
-// on east into K3's west lip.
+// on east into K3's west lip. Last, the Paladin's second prestige, taught by the hermit in J3's
+// clearing (#19): heard after his hint, and taught at 19.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
@@ -49,7 +50,10 @@ import { buildMaps } from '../../maps.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature } from '../../../game/map.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, CLASSES, rest, guildFlag, trainPrice, levelUp, countItem } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, CLASSES, rest, guildFlag, trainPrice, levelUp, countItem, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { teach } from '../../../game/prestige.ts';
+import { sought, seekId } from '../../../game/seeking.ts';
+import { questLog } from '../../../game/quests.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { ACT_II } from '../../../../tools/tests/ladder.ts';
@@ -69,7 +73,7 @@ const K3_RIFT = MAP_DEFS.find((d) => d.id === 'k3_rift')!;
 const L2 = MAP_DEFS.find((d) => d.id === 'lanternwood_l2')!;
 const M2 = MAP_DEFS.find((d) => d.id === 'lanternwood_m2')!;
 const J3 = MAP_DEFS.find((d) => d.id === 'eaves_j3')!;
-const HERMIT = J3.features!.find((f) => f.kind === 'npc' && f.name === 'A hermit') as Person;
+const HERMIT = J3.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Aylmer')) as Person;
 const DEN = J3.features!.find((f): f is Den => f.kind === 'den')!;
 const WATCH = MAP_DEFS.find((d) => d.id === 'lantern_watch')!;
 const READER = WATCH.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Hester Dunmore')) as Person;
@@ -607,4 +611,56 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(coat?.kind === 'chest' && coat.items.includes('chain+2'), 'in the cache, a Chain Mail +2');
   // And on east out of the wood onto K3's west lip.
   walkThrough(w, 'eaves_j3', 29, 28, EAST, 'eaves_k3', 4);
+  trainers(ok);
 };
+
+/**
+ * The Paladin's second prestige (#19): the hermit in J3's clearing, a knight of the Crown that was.
+ * He is there from a new game, off the fights and reached on foot; his hint comes first, then his
+ * lesson, once, to a Lightbearer of 19; and at 19 the paladin is sent to him and taught.
+ */
+function trainers(ok: (cond: boolean, msg: string) => void): void {
+  const taught = (J3.features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
+  ok(taught.length === 1 && taught[0].cls === 'paladin' && taught[0].prestige === 2, 'the Bears\' Wood teaches the Paladin\'s second');
+  ok(J3.rows[HERMIT.y][HERMIT.x] === 't' && J3.features!.every((f) => f === HERMIT || f.x !== HERMIT.x || f.y !== HERMIT.y), 'the hermit stands in his clearing, with nothing else on his square');
+  const there = (w: Walk): boolean => { w.world.travel('eaves_j3', HERMIT.x, HERMIT.y); return w.world.present(HERMIT); };
+  ok(there(newWalk(ok)), 'he is there from a new game, before the den is fought');
+  ok(!!HERMIT.teaches?.seek?.includes(HERMIT.name.split(',')[0]) && HERMIT.teaches.seek.includes(PRESTIGES.paladin.titles[1]), 'his seeking names him and the title he gives');
+  // The box has no road; the rule is kept as Rietum's is, for when one is drawn.
+  const road = J3.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
+  ok(road.every((r) => Math.abs(r.x - HERMIT.x) + Math.abs(r.y - HERMIT.y) > 10), 'he is more than ten squares off any road');
+  ok(J3.encounters!.every((g) => Math.abs(g.x - HERMIT.x) + Math.abs(g.y - HERMIT.y) > 10), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');
+  const map = new GameMap(J3), seen = new Set([`${J3.start.x},${J3.start.y}`]), q = [[J3.start.x, J3.start.y]];
+  let reached = false;
+  while (q.length && !reached) {
+    const [x, y] = q.shift()!;
+    reached = x === HERMIT.x && y === HERMIT.y;
+    for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+      if (!map.inBounds(nx, ny) || seen.has(`${nx},${ny}`) || map.at(nx, ny).door === 'secret') continue;
+      const p = map.passable(nx, ny, { tide: 'low' });
+      if (p === 'ok' || p === 'unlock') { seen.add(`${nx},${ny}`); q.push([nx, ny]); }
+    }
+  }
+  ok(reached, 'he is reached on foot down the cutters\' track, by no secret door');
+
+  // His hint first, then his lesson once to a Lightbearer of 19, and to a company under it never.
+  const at = (level: number): Walk => {
+    const w = newWalk(ok);
+    for (const c of w.party.members) { c.xp = xpForLevel(level); c.level = level; }
+    return w;
+  };
+  const talk = (w: Walk): string => { w.world.travel('eaves_j3', HERMIT.x, HERMIT.y); return meet(HERMIT, w.party, heard(w.world, HERMIT)).text; };
+  const w = at(19), paladin = w.party.members.findIndex((c) => c.cls === 'paladin');
+  takePrestige(w.party.members[paladin]);
+  const said = [talk(w), talk(w), talk(w)];
+  ok(said[0].includes('something on two legs') && !said[0].includes('Kneel') && said[1].includes('Aylmer') && said[1].includes('Kneel') && said[2].includes('something on two legs'),
+    'his hint comes first, then his lesson to a Lightbearer of 19, once');
+  const young = at(15);
+  ok(![talk(young), talk(young)].some((t) => t.includes('Kneel')), 'to a company of 15 he says no lesson');
+
+  // At 19 the paladin is sent to the clearing, and taught.
+  ok(sought(questLog(w.world.state, w.party)).find((p) => p.at === 'eaves_j3')?.who.includes(w.party.members[paladin].name) === true, 'at 19 the paladin is sent to the Bears\' Wood');
+  w.party.gold = 4000;
+  ok(teach(HERMIT.teaches!, w.party, w.world.state, paladin).taught && prestigeOf(w.party.members[paladin]) === 2 && w.party.gold === 0
+    && questLog(w.world.state, w.party).find((v) => v.def.id === seekId(paladin, 2))?.done === true, `he makes a ${PRESTIGES.paladin.titles[1]} for 4,000 gold, and the seeking is done`);
+}
