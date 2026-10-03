@@ -47,4 +47,16 @@ export const ITEMS: readonly ItemDef[] = [
   P(chain, 2),
   // I2's secret (#195): the Watch's last patrol's, under the milestone.
   P(halberd, 1, { id: 'wardens_halberd', name: "Warden's Halberd +1" }),
+  // The side quests' (#205): no shop buys them. Garret takes the lamp; the tally and the map are
+  // letters, read from the pack, and stay in it.
+  { id: 'warding_lamp', name: 'Warding Lamp', slot: 'none', price: 0 },
+  { id: 'foremans_tally', name: "The Foreman's Tally", slot: 'none', price: 0, text: [
+    'A tally board of pale pine, the columns scored with a knife and filled in with charcoal.',
+    'Sacks, by the week since midsummer: eight, eleven, fourteen. Where sent: TO THE SHIP, mostly, and a second column that starts in the autumn and grows: TO THE POINT.',
+    'The last week has nothing to the ship and everything to the Point, and under it, pressed hard: SHEER POINT WANTS ALL WE CAN SEND.',
+  ] },
+  { id: 'watch_map', name: "The Watch's Map", slot: 'none', price: 0, text: [
+    'A vellum gone soft, the Sunder drawn on it ledge by ledge in a hundred years of hands, each ledge named for the Lantern who first walked it.',
+    'The names go down the east face and stop. Below the lowest ledge, one line ruled edge to edge, and no name to it. Nothing under the line.',
+  ] },
 ];

@@ -67,6 +67,8 @@ export const THE_SUNDER2: MapDef = {
     // The wall: the step.
     { kind: 'event', x: 15, y: 25, id: 'su2_wall', once: true, text: 'A wall, under everything. Flat, no join, further both ways than the light. Warm under the hand.' },
     { kind: 'event', x: 26, y: 25, id: 'su2_east', once: true, text: 'The strip along the wall runs east into the dark. Rock has come down against the wall in a heap, and the wall goes on under it, flat, the same.' },
+    // The strip's east end, the Length of the Wall's (#205); its west end is the fall at the chalk's end.
+    { kind: 'event', x: 28, y: 25, id: 'su2_east_end', once: true, sets: 'q_wall_east', text: 'The east end. Rock over the wall, and behind the rock, wall, warm. The gorge is only where it shows.' },
     // The secret: the surveyor's chalk runs out at the fall; searched from the cleft above it, a gap in
     // the rock opens on a hollow beside the wall, and on the wall's face at its back, the seam.
     { kind: 'event', x: 4, y: 25, id: 'su2_fall', once: true, text: 'West the strip ends against a fall of rock, heaped higher than the light. Close to, the stones are loose underfoot, and air moves out of a cleft at its north edge.' },
