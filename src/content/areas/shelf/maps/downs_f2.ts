@@ -1,6 +1,7 @@
 // Callow Downs, box F2: the road west. Country, band 2-3: the Salt Road up off Brandy Hole's beach and
 // south-west into F3, stubble fields, Brockholt's beeches in the north with a woodcutter's camp, and
-// Coldharbour, the retired captain's steading, at the wood's south-west corner. Cut from the atlas by
+// Coldharbour, the retired captain's steading, at the wood's south-west corner, and in its east field
+// his old standard-bearer, who teaches the Knight's second prestige (#19). Cut from the atlas by
 // tools/scaffold.ts; docs/areas/shelf.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
@@ -55,6 +56,13 @@ export const DOWNS_F2: MapDef = {
     { kind: 'event', x: 6, y: 11, id: 'f2_lamp', once: true, when: { hours: 'day' }, text: 'Coldharbour: a farm kept like a barracks, whitewashed to the eaves, and not a weed in the yard.' },
     // Riders in the Dark (#68): Dunstan in his yard. The riders are seen at E2's ford by night; he
     // writes to Hale, who takes the letter at the Scarth, or keeps it under his roof.
+    // The Knight's second prestige (#19; DESIGN §5): the captain's old standard-bearer, in the east
+    // field off the farm's track, off the road and the fights.
+    { kind: 'npc', x: 19, y: 16, name: 'Siward, who carried the banner', lines: [
+      'Two oaks at the far edge of the east field, off the track, and a banner furled and lashed to the nearer, its pole worn dark where hands have been. A grey man forks hay beneath it, and works with one eye on the farmhouse window.',
+      '"Siward. I carried the captain\'s banner twenty years, and that\'s it, where I can see it. Now I carry hay and look after him. He keeps the lamp; I keep the rest."',
+      '"A line fights by what it can see. While it can see its banner it strikes true, and when the pole goes down the line goes with it, whoever\'s left standing. So the pole does not go down. One of you has the makings. Unlash it, and hold it till I say."',
+    ], teaches: { cls: 'knight', prestige: 2, seek: 'Siward, who carried Captain Dunstan\'s banner, in Coldharbour\'s east field under the two oaks, can make a Knight Banneret of a Knight-Errant.' } },
     { kind: 'npc', x: 10, y: 11, name: 'Captain Dunstan, retired', lines: [
       'Coldharbour. A lamp burns in the farmhouse window, as it does at every hour, and the man mending the gate has a Warden\'s shoulders and a farmer\'s hands. He does not stop working to talk.',
       '"Captain, once. Dunstan, now. You\'ll want to know about the lamp. Everyone does, and the gate won\'t mend itself, so I\'ll tell you while I work."',
