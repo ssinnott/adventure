@@ -253,7 +253,7 @@ const trainer = await (async () => {
   const after = await page.evaluate(() => {
     const g = (window as any).__game.game, m = g.maps.harrow, bram = g.party.members[0];
     m.features.splice(m.features.findIndex((f: any) => f.name === 'An armourer'), 1);
-    const out = { screens: g.screens.map((s: any) => s.constructor.name).join(','), prestige: bram.prestige ?? 0, gold: g.party.gold, log: g.log.slice(-1)[0] };
+    const out = { screens: g.screens.map((s: any) => s.constructor.name).join(','), prestige: bram.prestige ?? 0, gold: g.party.gold, log: g.log.slice(-2) };
     const was = (window as any).__bram;
     bram.level = was.level; bram.maxHp = was.maxHp; bram.hp = was.hp; g.party.gold = was.gold; delete bram.prestige;
     return out;
@@ -1122,8 +1122,8 @@ ok(coach.words.text === '"Thornhold, at dawn."' && coach.menu.options.join('|') 
   `a coachman's words close onto his crossings, then their terms (${coach.menu.options.join(', ').replace(/\t/g, ' ')}; "${coach.terms.text}")`);
 ok(coach.after.screens === 'ExploreScreen' && coach.after.map === 'thornhold' && coach.after.gold === 400 && coach.after.day === coach.before.day + (coach.before.minutes % 1440 <= 360 ? 1 : 2) && coach.after.hour === 18,
   `paying takes the fare and lands the company in Thornhold, its calendar moved to the landing (day ${coach.before.day} to ${coach.after.day}, ${coach.after.hour}:00, ${coach.after.gold} gold; ${coach.after.log.join(' / ')})`);
-ok(trainer.words.text === '"Steel, or a title?"' && trainer.menu.options.join('|') === 'Bram: Knight-Errant\t1000g|Leave' && trainer.after.screens === 'ExploreScreen' && trainer.after.prestige === 1 && trainer.after.gold === 500 && trainer.after.log === 'Bram is a Knight-Errant now.',
-  `a trainer's words close onto the members of her class, and Bram takes the first for 1000 (${trainer.menu.options.join(', ').replace(/\t/g, ' ')}; "${trainer.after.log}")`);
+ok(trainer.words.text === '"Steel, or a title?"' && trainer.menu.options.join('|') === 'Bram: Knight-Errant\t1000g|Leave' && trainer.after.screens === 'ExploreScreen' && trainer.after.prestige === 1 && trainer.after.gold === 500 && trainer.after.log.join(' / ') === 'Bram is a Knight-Errant now. / Quest complete: Bram: Knight-Errant.',
+  `a trainer's words close onto the members of her class, and Bram takes the first for 1000, and the seeking for it is done (${trainer.menu.options.join(', ').replace(/\t/g, ' ')}; "${trainer.after.log.join(' / ')}")`);
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
   `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
