@@ -124,7 +124,9 @@ Two lines of it are checked, beside the novelty check (EXPANSION.md §5.4; `pace
 `tools/tests/pillars.ts`, #158): no machine on the road before the bottom of the Deep Mines, and no
 Rift after Cairnmoor. A map's place on the road is its area's, unless its floor is over its area's
 band: the Dead-Drop, 26 to 28 under Act II's Tide Ship, is placed by its band, past the Mines and
-past Cairnmoor. The reach is exempt. They keep the secret's pace. A company that goes straight down finds a mystery, not a spoiler (DESIGN.md §14.4):
+past Cairnmoor, and so is Meridian Camp's last level, floored at 27 over Ashfall's 26. The
+Dead-Drop's stair's foot holds no group, so an Act II company sees no machine from the stair (#22).
+The reach is exempt. They keep the secret's pace. A company that goes straight down finds a mystery, not a spoiler (DESIGN.md §14.4):
 the first machines stand in band-16 country, where a company that arrives early does not live long
 enough to wonder what they are.
 
@@ -969,6 +971,61 @@ scorpion; the salamanders as the basilisk; vultures from the birds.
 
 **Asks:** stone, and its cure.
 
+### 8.4 Meridian Camp (band 25–28)
+
+*Three levels down Fire Mountain's vents: the vents, the iron corridors and the camp, with Oriel
+Fane and the window (docs/areas/meridian_camp.md; #22; DESIGN.md §10.3).*
+
+Ashfall's machine below the ash, at work: the stokers on their rounds, a drake's brood in the
+corridors' heat, and under the camp the knockers inspecting walls that have not cracked. They leave
+Fane alone, because he is not in their way. The look lines are the building session's, and this
+table holds none.
+
+**New:** no family; the camp is Ashfall's, which already adds two. **Back:** the stokers, the
+salamanders and the drakes; the knockers, deep.
+
+| Monster | Family | Role, level | Where | Look; what it does |
+|---|---|---|---|---|
+| Ember Salamander | salamanders | skirmisher, 24 | the vents | §8.2's |
+| Stoker | heavy machines | brute, 25 | the vents, the furnace room, the corridors | §8.2's; fire does not touch it |
+| Cinder Drake | drakes | brute, 25 | the corridors | §8.2's; burns a row |
+| Drakeling | drakes, a new def | fodder, 26 | the nest | Flies; six to a group |
+| Flue Walker | heavy machines, a new def | elite, 27 | the corridors | Walks the corridor end to end; fire does not touch it |
+| The Brood Drake | drakes, a new def | boss, 27 | the nest off the corridors | The drake that nests in the corridors, the Barbarian's quarry (#448). Size 1.8; flies; its breath burns a row |
+| Deep Knocker | knockers | armoured, 28 | below the camp | §9.2's, first met here |
+| Inspector | knockers, a new def | caller, 28 | below the camp | Calls deep knockers |
+
+After the Ember Stone is lit, one sentry group joins the vents and one the corridors (`after`), as
+in all of Ashfall. The Brood Drake is judged at 26, the corridors' floor.
+
+**Asks:** sweep with fire; calls; elements.
+
+### 8.5 The Dead-Drop (band 26–28)
+
+*Three levels down the stair from the Tide Ship's hold: the drop, the vaults and the counting house
+(docs/areas/dead_drop.md; #22; DESIGN.md §10.2).*
+
+The machine counting: loaders that move the cargo, clerks that tally it, keepers that made up the
+beds, and at the last desk the Tallymaster, writing the Compact's orders in the dead founder's hand.
+The Hand is never met below: its crews leave the cargo at the stair's foot and go back up. The look
+lines are the building session's.
+
+**New:** no family. **Back:** the knockers, the keepers and the heavy machines, each a def of its own.
+
+| Monster | Family | Role, level | Where | Look; what it does |
+|---|---|---|---|---|
+| Loader | heavy machines, a new def | brute, 26 | the drop and the vaults | Lifts a crate the size of a cart |
+| Tally Clerk | knockers, a new def | caller, 26 | the drop | Calls loaders |
+| Hold Keeper | keepers, a new def | controller, 27 | the people's vault | Puts to sleep (0.3); mends its group |
+| Deep Knocker | knockers | armoured, 28 | at the rails' sealed door | §9.2's |
+| The Tallymaster | keepers, a new def | boss, 28 | the counting house | Fights only when the company steps to its desk; calls tally clerks; size 1.6 |
+
+The Tallymaster is judged at 27, the counting house's floor. The stair's foot, `dead_drop_stair`,
+holds no group, and `dead_drop`'s first stands out of sight of it: the band's sign is the warning
+(§2.2).
+
+**Asks:** calls and the sleeping touch, both Rimewater's.
+
 ---
 
 ## 9. Act V: The Hearth (levels 28–32)
@@ -1008,13 +1065,13 @@ are the only animals below the world, and nobody brought them: they came aboard 
 company that met its first rat in a farm cellar meets its last one here.
 
 **New:** crawlers, the long-legged things that walk the walls and ceilings. **Back:** every machine
-family, at work; the rats.
+family, at work, the deep knockers from Meridian Camp (§8.4); the rats.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
 | Deep Rat | rat | fodder, 30 | everywhere | *Rats. Even here.* Disease (0.2); twelve to a group |
 | Keeper | keepers | soldier, 30 | the service ways | *A keeper with no bay to keep, and no robe.* |
-| Deep Knocker | knockers | armoured, 30 | the corridors | *Still knocking, on a wall that has never cracked.* |
+| Deep Knocker | knockers | armoured, 30 | the corridors | *Still knocking, on a wall that has never cracked.* First met below Meridian Camp, at 28 (§8.4) |
 | Deep Crawler | crawlers, new | brute, 31 | walls and ceilings | *It comes down from above, on too many legs.* Reaches the back row |
 | The Catcher | crawlers, new | boss, 31 | the stairs down to the core, among the Hand's dead | *It caught the Hand on these stairs.* |
 
@@ -1101,19 +1158,20 @@ the pilot.
 | **devilfish** | Wrackholm | none |
 | **moths** | Sunderwood | the hearth moth (Hearth Isle) |
 | **bears** | Sunderwood | the ice bear (Rimewater) |
-| **knockers** | the Kilns | the tallyman (Rimewater), the deep knocker (the Underdeep) |
+| **knockers** | the Kilns | the tallyman (Rimewater), the deep knocker and the inspector (Meridian Camp), the tally clerk (the Dead-Drop), the deep knocker again (the Underdeep) |
 | **salamanders** | the Kilns | the ember salamander (Ashfall), the basilisk (the Wold) |
 | **lights** | Cairnmoor | the rime light (the Ice Caves) |
-| **keepers** | Rimewater | the brothers, the bell-ringers and the Abbot, robed (the Whitespine); the keeper (the Underdeep); the lamplighters (the Vault) |
+| **keepers** | Rimewater | the brothers, the bell-ringers and the Abbot, robed (the Whitespine); the hold keeper and the Tallymaster (the Dead-Drop); the keeper (the Underdeep); the lamplighters (the Vault) |
 | **cats** | Rimewater | the Wold's lions |
 | **giants** | the Whitespine | none |
-| **drakes** | Ashfall | none |
-| **heavy machines** | Ashfall | the core sentry (the Core) |
+| **drakes** | Ashfall | the drakeling and the Brood Drake (Meridian Camp) |
+| **heavy machines** | Ashfall | the flue walker (Meridian Camp), the loader (the Dead-Drop), the core sentry (the Core) |
 | **glass walkers** | the Wold | the Buried Tower |
 | **crawlers** | the Underdeep | none |
 
-In all, 105 new defs in 17 new families: with today's 33 in 11, 138 in 28, each def a drawing of
-its own (EXPANSION.md §5.6). No area adds more than two families, and Hearth Isle and the Core add
+In all, 113 new defs in 17 new families: with today's 33 in 11, 146 in 28, each def a drawing of
+its own (EXPANSION.md §5.6); eight of them are Meridian Camp's and the Dead-Drop's (§8.4, §8.5;
+#22). No area adds more than two families, and Hearth Isle, the Core and the two large dungeons add
 none. Five families serve a single area: the toads and the devilfish, which can be cut, and the
 giants, the drakes and the crawlers, which are their areas' centrepieces and cannot.
 
@@ -1148,6 +1206,9 @@ To take in or leave, as STORY.md's were:
   its fragment has been counting (#443, call 4; DESIGN.md §10.2).
 - The giants as the crew that built the inside, awake since the ship and posted to the Stair, a
   people of the road and not of the bays (#443, call 1).
+- Meridian Camp's and the Dead-Drop's rosters (§8.4, §8.5; #22): no new family, the deep
+  knockers first met below the camp, and the Hand never met below the Tide Ship's stair, where its
+  crews leave the cargo and go back up.
 
 Where this and DESIGN.md disagree, the design wins.
 
