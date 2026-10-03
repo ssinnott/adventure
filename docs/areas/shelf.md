@@ -194,9 +194,9 @@ The places, as the atlas and the docs have them:
 | The fields round Gullwick | F2, E2 and F3 | crows over wolves in the stubble | farmland, 1,123 squares |
 | Brockholt | F2 | nothing yet | a wood astride the two zones, its north tip in the rim's row |
 | The Wend | E2 and F3 | nothing yet | a river from the rim down to Gullwick, cutting a corner of E3 |
-| Gullwick | F3 | Wenna's village, where her mother asks the company to find her (DESIGN §9) and where STORY opens; an old shanty singer who teaches the Bard's second prestige (#19) | a planned village at 172,70 |
-| Crowness Light | E3 | the keeper who counted the eleven and wrote down the gaps (DESIGN §9, STORY); the Cleric's second prestige (#19); shore crabs under it | charted on E3 at the point, 156,90 (#67) |
-| Coldharbour | F2 | a retired Warden captain's farm; the Knight's second prestige (#19) | a planned farm at 176,42 |
+| Gullwick | F3 | Wenna's village, where her mother asks the company to find her (DESIGN §9) and where STORY opens; an old shanty singer (the Bard's second, once planned here, is taught on High Moor: DESIGN §5, docs/areas/cairnmoor.md) | a planned village at 172,70 |
+| Crowness Light | E3 | the keeper who counted the eleven and wrote down the gaps (DESIGN §9, STORY); shore crabs under it (the Cleric's second, once planned here, is taught in Lanternwood: DESIGN §5) | charted on E3 at the point, 156,90 (#67) |
+| Coldharbour | F2 | a retired Warden captain's farm; the Knight's second prestige, taught by Siward in its east field (#19; §9, 34) | a planned farm at 176,42 |
 | The Berth | a dungeon, entered from D2 | the Queen's barrow, opened, and only her signet gone (DESIGN §9); band 4–5, her guard two by two down the passage and her captain at the bier (MONSTERS §5.2) | a ruin on D2 at 114.5,42.5, and its plate at 108,54 |
 | The Salt Road | F2, F3, E3, a corner of D3, and D4 | the wreckers and their lampman in fog; crows at the gibbet (MONSTERS §5.2) | a road through F2, F3, E3, D3's corner and down the Edge in D4 |
 | The Lodestone | G2, the built map (21.5,4) | "already intact; tutorial" (DESIGN §4) | built (#73): the stone's words, Gytha and the track from the gate road |
@@ -280,8 +280,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     already read the Cargo Ledger has seen Wenna's name, and she hears it in their faces;
   - the boats, and the mark on them;
   - the net loft, a camp to rest at (#45);
-  - an old man mending nets who sings the shanty, with a rumour (the Bard's second prestige, later:
-    #19);
+  - an old man mending nets who sings the shanty, with a rumour;
   - the family whose boat never came in, and the Compact's man on the road west (The Boat With No
     Name-Board, §6);
   - the ashes of a camp on the rise, and the whole bay below it;

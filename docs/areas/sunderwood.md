@@ -234,6 +234,7 @@ The places, as the atlas and the docs have them:
 | The pine-cutters' steading | J2 | the family at the glass trees (#56's 29) | a site on J2 at 20.5,7.5 (#196) |
 | The Hoarhills | I2, and the Deepthorn's I3 and J4 | the ridge between Thornmark and Sunderwood (docs/areas/thornmark.md) | hills and mountain, lettered |
 | The Iron Fells | east of M2 | the Kilns' first zone, Act III | mountain, lettered at 420,70 |
+| The moth shrine | Lanternwood, L3 or L4 | the Cleric's second prestige: its keeper, a Lantern who stayed when the wood split (DESIGN §5, #19); waits on Lanternwood's depths (#203) | not yet sited |
 
 ### 4.1 The briefs
 
