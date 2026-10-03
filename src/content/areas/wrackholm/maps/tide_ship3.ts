@@ -93,6 +93,8 @@ export const TIDE_SHIP3: MapDef = {
         '"Never mind me. The pins knock out from the bilge. Start at the front, children first." When the last iron drops he sees the disc and knows it. "Mine. Then Wystan got as far as you. Keep it. And thank me when it\'s done. It isn\'t."',
       ] }],
       after: { ...HALE_TAKEN, slain: 'tide_ship3:ts3_crew' }, until: HALE_FREED },
+    // The rows, the crew down and nobody yet freed (Every Name in the Column, #192).
+    { kind: 'event', x: 9, y: 11, id: 'ts3_chained', once: true, after: { slain: 'tide_ship3:ts3_crew' }, until: HALE_FREED, text: 'The rows. Thirty people in irons on the boards, and none speaks until one does: "Are you the Regent\'s?" Nobody answers yes.' },
     { kind: 'event', x: 7, y: 13, id: 'ts3_hatch', once: true, text: 'A hatch in the floor, and up through it cold clean air with nothing of ship or sea in it. What is below is not for a company that came for a Stone.' },
     // The forward hold, through the door past the elder or the shard-cut behind the straw: the Hand's
     // strongbox, the pay for the cargo, and the Stone in its tear.

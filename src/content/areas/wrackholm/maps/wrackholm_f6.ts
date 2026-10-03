@@ -4,10 +4,21 @@
 // on it; the cliff over the anchorage, cut into the south hills, and its path down to the shingle at
 // the plan's 182,188, where the boats lie that row out to the Tide Ship by night (#190). Cut from the
 // atlas by tools/scaffold.ts; docs/areas/wrackholm.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef, Choice } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 
 const BURNT = { seen: 'wrackholm_f6:f6_watch' };
+
+/** Merryn's question: the founder's letter carried, or not yet, put again until it is carried (#192). */
+const MERRYN_ASKS: Choice = { ask: '"Will you carry it? To the hall, where it\'s owed, or to whoever will pay for it; I stopped caring which about the third year."', answers: [
+  { label: 'We\'ll carry it.', sets: 'q_hermit_carried', gives: 'founders_letter', says: [
+    'She takes it from inside her coat, where it has worn the shape of itself into the cloth, and gives it over without a look.',
+    '"Ten years. It\'s lighter than I remember." She picks up the knife. "Go on, before I ask for it back. If the hall asks who sent it, say a woman who counts ships. They\'ll know. There was only ever one of me."',
+  ] },
+  { label: 'Not yet.', says: [
+    '"No. Well." She cuts a stroke. "It\'s kept ten years in a coat. It\'ll keep in one a while longer. There\'s a ship in tonight, low in the water. That\'s four thousand and one."',
+  ] },
+] };
 
 export const WRACKHOLM_F6: MapDef = {
   id: 'wrackholm_f6',
@@ -55,7 +66,31 @@ export const WRACKHOLM_F6: MapDef = {
     // The way in from the moor, and the rock.
     { kind: 'event', x: 1, y: 12, id: 'f6_moor', once: true, text: 'Heather climbs east to a grey hump of rock, and the path with it, worn to peat and bearing south round the rock\'s foot.' },
     // The point: the hermit at her cell, her tally on its wall, and the cairn with the grave under it.
-    { kind: 'npc', x: 26, y: 13, name: 'the hermit', lines: ['A woman at the cell door, salt-grey, a knife in her hand. She looks past you at the water, and cuts a stroke in the wall.', '"One stroke a ship. I began on a night I\'ll not speak of; the wall has the day. There\'s a letter in here. It is not for you. Not yet."'] },
+    // Merryn, who buried the Compact's founder and has counted the ships since (The Hermit of the
+    // East Rocks, #192): she gives his last letter to a company that will carry it, to the Keel or
+    // to Tallis, and asks again until one does.
+    { kind: 'npc', x: 26, y: 13, name: 'Merryn, the hermit of the east rocks', flag: 'q_hermit', lines: [
+      'A woman sits in the mouth of a cell cut in the rock, a knife in her hand, and cuts a stroke in a tally that runs row under row the length of the wall.',
+      '"Four thousand and some. Ships. Every hull in under those cliffs since the eleventh of Frost ten years gone, and a date for each. Ask me why that date. Nobody has. The day the Old Man died, that the hall in Saltmouth still takes its orders from. A paper comes down the coast every quarter in his hand, and they read it out in the back room and do what it says. He\'s been ten years in the ground, and I put him there."',
+      '"He wrote one letter at the end and gave it to me to carry, and I\'ve carried it as far as this rock. Somebody young can take it the rest of the way."',
+    ],
+      choice: MERRYN_ASKS,
+      says: [
+        { after: { flag: 'q_hermit_hall' }, lines: [
+          '"The hall has it." She does not ask how you know she knows. "A boat came round the point the next night with no lamp, and somebody stood out there on the point a long while, and left a bottle. Compact rum. He\'d have laughed."',
+          '"I\'ve stopped counting. There\'s nothing to count for. Four thousand and eleven, and the last one was theirs."',
+        ] },
+        { after: { flag: 'q_hermit_tallis' }, lines: [
+          '"You sold it to the dockmaster." She cuts a stroke in the wall. "I\'d have done the same at your age, and told myself the hall would have burnt it. Maybe they would. He\'ll not burn it. He\'ll keep it in a drawer until it\'s worth more."',
+          '"Four thousand and twelve. I count on. It\'s what I do."',
+        ] },
+        { after: { flag: 'q_hermit_carried' }, lines: [
+          'She does not look up from the wall. "Go on. It\'s in your coat now, not mine. The hall, or whoever pays."',
+        ] },
+        { after: { flag: 'q_hermit' }, lines: [
+          'Another stroke on the wall since you came. The letter is where it was.',
+        ], choice: MERRYN_ASKS },
+      ] },
     { kind: 'event', x: 25, y: 12, id: 'f6_tally', once: true, text: 'Strokes in fives cut in the cell wall, row under row, the last ones sharp. At the head: the 11th of Frost, 1006.' },
     { kind: 'event', x: 27, y: 14, id: 'f6_cairn', once: true, text: 'A cairn on the point beside the cell, shore stones laid close and true, long and low, and kept. The gulls do not sit on it.' },
     { kind: 'chest', x: 29, y: 14, id: 'f6_grave', gold: 150, items: ['founders_seal'] },

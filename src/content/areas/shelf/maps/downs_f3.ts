@@ -96,10 +96,23 @@ export const DOWNS_F3: MapDef = {
         '"Up in the loft with the nine, and every family that had one waiting took it home for a night first and hung it after." He has a new plank on the hull. "I\'ve stopped watching the sea. I watch the far beach now."',
       ],
     }, says: [
+      // His elder boy home by the coast road from the Tide Ship (Every Name in the Column, #192).
+      { after: { flag: ['q_column_road', 'q_board_home'] }, lines: [
+        'Wat has two planks on the hull, and a second pair of hands on the far side of it, and does not look up.',
+        '"You\'ll have seen who\'s on the other end of that plank." He runs a thumb along the edge. "I\'ve a board in the loft with PATIENCE on it that wants taking down and burning, and I find I can\'t. Three coats. It\'ll keep."',
+      ] },
+      { after: { flag: 'q_column_road' }, lines: [
+        'Wat has two planks on the hull, and a second pair of hands on the far side of it, and does not look up.',
+        '"You\'ll have seen who\'s on the other end of that plank." He runs a thumb along the edge. "I said the sea had her, and the sea can keep what it\'s got. I\'ll build him another, and he can cut the board himself. I\'m done cutting boards."',
+      ] },
       { after: { flag: 'q_board_sold' }, lines: [
         '"You sold them." He does not stop planing. "By the plank, I expect. He\'s fair, by the plank." A long stroke, and another. "Go on. There\'s nothing here you can buy."',
       ] },
     ] },
+    { kind: 'npc', x: 10, y: 14, name: 'Wat\'s elder boy, of Gullwick', lines: [
+      'Wat\'s boy is on the shingle at Gullwick, planing a plank beside his father, badly, out of practice, and neither of them says anything about it.',
+      '"We walked in at dusk and he\'d a plane in my hand before I\'d got my mouth open." A long stroke. "He\'s not said the word sea since. Neither have I. There\'s a lot we\'re not saying, and it\'s the best week of my life."',
+    ], after: { flag: 'q_column_road' } },
     { kind: 'npc', x: 0, y: 9, name: 'Hamo, the Compact\'s buyer', lines: [
       'A neat man in a good coat sits on a milestone with a ledger on his knee, as if the road were his shop. His vowels are Saltmouth\'s.',
       '"Travellers. Wonderful. I buy, if you sell: timber, cordage, brass, anything the sea has finished with. The Compact pays in coin and asks nothing, which is more than the Crown does on either count."',

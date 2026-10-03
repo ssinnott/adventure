@@ -20,6 +20,13 @@
 // holds the Scarth and Hale once he is taken from it, freed and gone; the straw that is fresh on one
 // side, and the shard-cut behind it found by a search and not told; the tear, the Warden at 14 and
 // the Stone; and down the hatch to the stair's foot, and back up.
+//
+// Last, the side quests (#192), each played both ways and in more than one order: Kitto asks and
+// the truth is told, so the cove's landing crew comes no more, or Colan is met first and his letter
+// carried; Merryn's letter after a Not yet to the Keel, or at once to Tallis; Hale at the rail asks
+// for the clerk's book and the thirty go to Saltmouth, or the book is found first and they go home
+// by the road, where Wat has words with the board in the loft and without; and Tam left feeding the
+// beast and his mother told, or the beast slain before she is met and Tam home on the steps.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
@@ -27,7 +34,9 @@ import { CHAPTER } from './chapter.ts';
 import { CHAPTER as TIDE } from '../saltreach/chapter.ts';
 import { inOrder, saltmouthFirst } from '../saltreach/walkthrough.ts';
 import { stonesRestored } from '../../../game/stones.ts';
-import { meet, heard } from '../../../game/people.ts';
+import { meet, heard, answer } from '../../../game/people.ts';
+import { questLog } from '../../../game/quests.ts';
+import type { PageView } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { take } from '../../../game/passage.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
@@ -210,6 +219,7 @@ function theStoneCarriedHome(ok: (cond: boolean, msg: string) => void): void {
 
 export const walkthrough: Walkthrough = (ok) => {
   theStoneCarriedHome(ok);
+  sideQuests(ok);
 
   const w = newWalk(ok);
   w.level = 12;
@@ -260,7 +270,7 @@ export const walkthrough: Walkthrough = (ok) => {
   w.level = 14;
   fight(w, `${down.id}:kh2_great_devilfish`);
   w.world.travel(down.id, 13, 11, NORTH);
-  ok(!w.world.peopleAt(13, 12).length, 'with the beast dead, the boy is gone from the pool');
+  ok(w.world.peopleAt(13, 12).map((p) => p.flag).join() === 'q_feed_home', 'with the beast dead, the boy at the pool has done with feeding it');
 
   // The tide-mark stops short, and a search west of it finds the flooded passage: out, onto E6's shore.
   const mark = down.features!.find((f) => f.kind === 'event' && f.id === 'kh2_tidemark')!, gap = down.secrets![0];
@@ -375,3 +385,212 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, `${foot.id}:dd_door`);
   walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
 };
+
+// ---- the side quests (#192) ----
+
+/** A side quest's page as the log shows it now. */
+const page = (w: Walk, id: string): PageView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+
+/** The person on `map` whose name starts so and who stands on `x,y`, and is keyed by `flag` if given: one of a person's places. */
+function who(map: string, x: number, y: number, name: string, flag?: string): Person {
+  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name) && (flag === undefined || f.flag === flag));
+  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
+  return p;
+}
+const KITTO_E6 = (): Person => who('wrackholm_e6', 15, 14, 'Kitto'), COLAN = (): Person => who('smugglers_cove', 12, 5, 'Colan');
+const MERRYN = (): Person => who('wrackholm_f6', 26, 13, 'Merryn');
+const RUAN = (): Person => who('saltmouth', 12, 4, 'Ruan'), TALLIS = (): Person => who('saltmouth', 8, 11, 'Jory Tallis');
+const HALE_IRONS = (): Person => who('tide_ship3', 10, 12, 'Captain Hale, in irons'), HALE_DECK = (): Person => who('tide_ship', 5, 10, 'Captain Hale');
+const BOY_DECK = (): Person => who('tide_ship', 6, 11, 'Wat\'s elder boy'), BOY_QUAY = (): Person => who('saltmouth', 12, 10, 'Wat\'s elder boy');
+const BOY_HOME = (): Person => who('downs_f3', 10, 14, 'Wat\'s elder boy'), WAT = (): Person => who('downs_f3', 11, 14, 'Wat,');
+const LOVEDAY = (): Person => who('saltmouth', 8, 13, 'Loveday');
+const TAM = (): Person => who('smugglers_cove2', 13, 12, 'Tam', 'q_feed_tam'), TAM_FREE = (): Person => who('smugglers_cove2', 13, 12, 'Tam', 'q_feed_home');
+const TAM_HOME = (): Person => who('saltmouth', 9, 13, 'Tam');
+
+/** Whether a person stands where they are listed now. */
+const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
+
+/** What a person says at the next meeting, as the game would have it. */
+function hear(w: Walk, map: string, p: Person): string {
+  w.world.travel(map, p.x, p.y);
+  const said = meet(p, w.party, heard(w.world, p)).text;
+  listen(w);
+  return said;
+}
+
+/** The words of a person's that hold `flag` in their `after` (the first such), as said. */
+const words = (p: Person, flag: string): string => (p.says ?? []).find((x) => [x.after ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)))?.lines.join('\n\n') ?? `(no words of ${p.name} after ${flag})`;
+
+/** Meet a person and answer the question they put with the answer setting `sets` (or the one setting nothing); what it says. */
+function answerTo(w: Walk, map: string, p: Person, sets: string | null): string {
+  w.world.travel(map, p.x, p.y);
+  const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => (x.sets ?? null) === sets);
+  w.ok(!!a, `${p.name.split(',')[0]} asks, and an answer sets ${sets ?? 'nothing'} (${m.choice?.ask ?? 'no question'})`);
+  const said = a ? answer(a, w.party) : '';
+  listen(w);
+  return said;
+}
+
+/** A group of `map` by its id, alive now. */
+function alive(w: Walk, map: string, id: string): boolean {
+  const g = MAP_DEFS.find((d) => d.id === map)!.encounters!.find((e) => e.id === id)!;
+  w.world.travel(map, g.x, g.y);
+  return w.world.liveGroups().some((l) => l.def.id === id);
+}
+
+/** An event of `map` by its id, there now. */
+function shows(w: Walk, map: string, id: string): boolean {
+  const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
+  w.world.travel(map, f.x, f.y);
+  return w.world.present(f);
+}
+
+/** A quest done with no goal, its entries those `want` names and none of `not`, finished once. */
+function reads(w: Walk, id: string, title: string, want: readonly string[], not: readonly string[], how: string): void {
+  const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [];
+  const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
+  w.ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
+    `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
+}
+
+/** The goal a side quest's page shows now. */
+const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
+
+/** The days on, a whole number of them. */
+const days = (w: Walk, n: number): void => { w.world.state.minutes += n * 1440; };
+
+/** Up into Kelp Hole and its rows' keepers put down, at 13: Colan comes to his crate. */
+function toTheRows(w: Walk): void {
+  w.level = 13;
+  fight(w, 'smugglers_cove:kh1_overseers');
+}
+
+/** Hale taken from the Scarth, the hold's crew down and Hale freed: up at the rail with the thirty. */
+function haleFreed(w: Walk): void {
+  w.party.flags.q_hale_taken = 1;
+  w.level = 12;
+  w.ok(!shows(w, 'tide_ship3', 'ts3_chained'), 'before the hold\'s crew is down, the rows say nothing to the company');
+  fight(w, 'tide_ship3:ts3_crew');
+  w.ok(shows(w, 'tide_ship3', 'ts3_chained'), 'the crew down, the chained rows ask whose the company is');
+  w.ok(!there(w, HALE_DECK(), 'tide_ship') && !there(w, BOY_DECK(), 'tide_ship'), 'before Hale is freed, nobody waits at the rail');
+  hear(w, 'tide_ship3', HALE_IRONS());
+  w.ok(!!w.party.flags.q_hale_freed && !shows(w, 'tide_ship3', 'ts3_chained'), 'Hale freed, the rows are empty');
+  w.ok(there(w, HALE_DECK(), 'tide_ship') && there(w, BOY_DECK(), 'tide_ship') && shows(w, 'tide_ship', 'ts_freed'), 'freed, Hale waits at the rail over the boats with the thirty, Wat\'s boy among them');
+}
+
+function sideQuests(ok: (cond: boolean, msg: string) => void): void {
+  { // The Captain's Brother: Kitto asks, Colan answers, and the truth is told. The cove's landing
+    // crew comes no more once it is next put down.
+    const w = newWalk(ok);
+    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === KITTO_E6().lines.join('\n\n') && w.news.at(-1) === 'New quest: The Captain\'s Brother.' && /Kelp Hole/.test(goal(w, 'brother')),
+      `Kitto's first lines ashore begin The Captain's Brother, its goal Kelp Hole (${goal(w, 'brother')})`);
+    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother'), 'asked again, Kitto says it short');
+    w.ok(!there(w, COLAN(), 'smugglers_cove'), 'Colan is not at his crate while the overseers stand');
+    toTheRows(w);
+    w.ok(there(w, COLAN(), 'smugglers_cove'), 'the overseers down, Colan sits by the rows');
+    answerTo(w, 'smugglers_cove', COLAN(), 'q_brother_truth');
+    w.ok(!there(w, COLAN(), 'smugglers_cove') && shows(w, 'smugglers_cove', 'kh1_colan_gone') && !w.party.bag.includes('colans_letter'), 'the truth to carry, Colan goes below, his crate empty, and no letter');
+    w.ok(/Kitto/.test(goal(w, 'brother')), `the goal is Kitto at the landing (${goal(w, 'brother')})`);
+    fight(w, 'smugglers_cove:kh1_crew_landing');
+    days(w, 3);
+    w.ok(alive(w, 'smugglers_cove', 'kh1_crew_landing'), 'until Kitto is told, the cove\'s landing crew comes back');
+    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother_truth') && !!w.party.flags.q_brother_told, 'Kitto hears what his brother is');
+    reads(w, 'brother', 'The Captain\'s Brother', ['kitto', 'found', 'truth', 'told'], ['letter', 'delivered'], 'the truth told');
+    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother_told'), 'Kitto\'s after-lines are the truth\'s');
+    fight(w, 'smugglers_cove:kh1_crew_landing');
+    days(w, 3);
+    w.ok(!alive(w, 'smugglers_cove', 'kh1_crew_landing') && alive(w, 'smugglers_cove', 'kh1_crew_fires'), 'told, Kitto carries for the cove no more: its landing crew, put down, does not come back, and the fires\' crew does');
+  }
+  { // The Captain's Brother: Colan found before Kitto has asked, and his letter carried sealed.
+    const w = newWalk(ok);
+    toTheRows(w);
+    answerTo(w, 'smugglers_cove', COLAN(), 'q_brother_letter');
+    w.ok(w.news.includes('New quest: The Captain\'s Brother.') && w.party.bag.includes('colans_letter') && !there(w, COLAN(), 'smugglers_cove'), 'Colan met first begins the quest; his letter in the pack, he goes below');
+    w.ok(/Kitto/.test(goal(w, 'brother')), `the goal is Kitto at the landing (${goal(w, 'brother')})`);
+    const gold = w.party.gold;
+    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()).startsWith((KITTO_E6().quest as { done: string[] }).done.join('\n\n')) && w.party.gold === gold + 200 && !w.party.bag.includes('colans_letter'), 'Kitto, never having asked, takes the letter at the first meeting and pays 200');
+    reads(w, 'brother', 'The Captain\'s Brother', ['found', 'letter', 'delivered'], ['kitto', 'truth', 'told'], 'the letter carried');
+    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === (KITTO_E6().quest as { after: string[] }).after.join('\n\n') && !w.party.flags.q_brother, 'Kitto\'s after-lines are the letter\'s, and he never hires');
+    fight(w, 'smugglers_cove:kh1_crew_landing');
+    days(w, 3);
+    w.ok(alive(w, 'smugglers_cove', 'kh1_crew_landing'), 'the letter carried, the cove\'s landing crew comes back');
+  }
+  { // The Hermit of the Point: not yet, then carried, and to the Keel.
+    const w = newWalk(ok);
+    w.level = 13;
+    answerTo(w, 'wrackholm_f6', MERRYN(), null);
+    w.ok(w.news.at(-1) === 'New quest: The Hermit of the Point.' && !w.party.bag.includes('founders_letter') && /point/.test(goal(w, 'hermit')), `Not yet: the quest begins, no letter, and its goal is her answer (${goal(w, 'hermit')})`);
+    answerTo(w, 'wrackholm_f6', MERRYN(), 'q_hermit_carried');
+    w.ok(w.party.bag.includes('founders_letter') && /Keel/.test(goal(w, 'hermit')) && hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_carried'), `asked again she gives the letter, sends the company on, and the goal is the Keel or Tallis (${goal(w, 'hermit')})`);
+    const gold = w.party.gold;
+    hear(w, 'saltmouth', RUAN());
+    w.ok(w.party.gold === gold + 300 && !w.party.bag.includes('founders_letter'), 'Ruan takes the letter at the Keel and pays 300');
+    reads(w, 'hermit', 'The Hermit of the Point', ['asked', 'carried', 'hall'], ['tallis'], 'to the hall');
+    w.ok(hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_hall'), 'Merryn\'s after-lines are the hall\'s');
+  }
+  { // The Hermit of the Point: carried at once, and sold to Tallis.
+    const w = newWalk(ok);
+    w.level = 13;
+    answerTo(w, 'wrackholm_f6', MERRYN(), 'q_hermit_carried');
+    const gold = w.party.gold;
+    hear(w, 'saltmouth', TALLIS());
+    w.ok(w.party.gold === gold + 500 && !w.party.bag.includes('founders_letter'), 'Tallis takes the letter and pays 500');
+    reads(w, 'hermit', 'The Hermit of the Point', ['asked', 'carried', 'tallis'], ['hall'], 'to Tallis');
+    w.ok(hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_tallis'), 'Merryn\'s after-lines are Tallis\'s');
+  }
+  { // Every Name in the Column: Hale at the rail asks for the book, it is fetched, and the thirty go
+    // to Saltmouth by the boat.
+    const w = newWalk(ok);
+    haleFreed(w);
+    w.ok(hear(w, 'tide_ship', HALE_DECK()) === HALE_DECK().lines.join('\n\n') && w.news.at(-1) === 'New quest: Every Name in the Column.' && /lower deck/.test(goal(w, 'column')),
+      `at the rail Hale asks for the clerk's book, and the goal is the cabin below (${goal(w, 'column')})`);
+    w.ok(hear(w, 'tide_ship', HALE_DECK()) === words(HALE_DECK(), 'q_column'), 'asked again, Hale says it short');
+    w.ok(hear(w, 'tide_ship', BOY_DECK()) === BOY_DECK().lines.join('\n\n'), 'Wat\'s elder boy is among the freed');
+    see(w, 'tide_ship2:ts2_clerk_desk');
+    open(w, 'tide_ship2', 'ts2_clerk');
+    listen(w);
+    w.ok(w.party.bag.includes('clerks_book') && /rail/.test(goal(w, 'column')), `the book in the pack, the goal is Hale at the rail (${goal(w, 'column')})`);
+    answerTo(w, 'tide_ship', HALE_DECK(), 'q_column_saltmouth');
+    reads(w, 'column', 'Every Name in the Column', ['hale', 'book', 'saltmouth'], ['road'], 'to Saltmouth');
+    w.ok(!there(w, HALE_DECK(), 'tide_ship') && !there(w, BOY_DECK(), 'tide_ship') && !shows(w, 'tide_ship', 'ts_freed') && w.party.bag.includes('clerks_book'), 'answered, Hale and the thirty are gone from the rail, and the book stays in the pack');
+    w.ok(there(w, BOY_QUAY(), 'saltmouth') && !there(w, BOY_HOME(), 'downs_f3'), 'Wat\'s boy is on Saltmouth\'s quay, not at Gullwick');
+    w.ok(hear(w, 'downs_f3', WAT()) === WAT().lines.join('\n\n'), 'Wat, his boy not home, says what he said');
+  }
+  { // Every Name in the Column: the book found first, and the thirty home by the coast road; Wat,
+    // with his boat's board home in the loft and without it.
+    const w = newWalk(ok);
+    open(w, 'tide_ship2', 'ts2_clerk');
+    haleFreed(w);
+    const first = hear(w, 'tide_ship', HALE_DECK());
+    w.ok(first === HALE_DECK().says![0].lines.join('\n\n') && w.news.includes('New quest: Every Name in the Column.'), 'the book carried, Hale goes straight to it and the quest begins');
+    answerTo(w, 'tide_ship', HALE_DECK(), 'q_column_road');
+    reads(w, 'column', 'Every Name in the Column', ['hale', 'book', 'road'], ['saltmouth'], 'home by the road');
+    w.ok(!there(w, BOY_QUAY(), 'saltmouth') && there(w, BOY_HOME(), 'downs_f3') && hear(w, 'downs_f3', BOY_HOME()) === BOY_HOME().lines.join('\n\n'), 'Wat\'s boy is on Gullwick\'s shingle, not the quay');
+    w.ok(hear(w, 'downs_f3', WAT()) === WAT().says![1].lines.join('\n\n'), 'with no board in the loft, Wat\'s words are his boy\'s and no board\'s');
+    w.party.flags.q_board_home = 1;
+    w.ok(hear(w, 'downs_f3', WAT()) === WAT().says![0].lines.join('\n\n'), 'with the board in the loft, Wat\'s words are his boy\'s and the board\'s');
+  }
+  { // What the Smugglers Feed: Tam met and the beast left alone; his mother told why he stays.
+    const w = newWalk(ok);
+    hear(w, 'saltmouth', LOVEDAY());
+    w.ok(w.news.at(-1) === 'New quest: What the Smugglers Feed.' && /sea cave/.test(goal(w, 'feed')), `Loveday on the steps begins What the Smugglers Feed, its goal the sea cave (${goal(w, 'feed')})`);
+    w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed'), 'asked again, Loveday says it short');
+    w.ok(!there(w, TAM_FREE(), 'smugglers_cove2') && hear(w, 'smugglers_cove2', TAM()) === TAM().lines.join('\n\n'), 'Tam feeds the beast at the pool');
+    w.ok(/steps/.test(goal(w, 'feed')), `Tam met, the goal is his mother on the steps (${goal(w, 'feed')})`);
+    w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed_tam'), 'Loveday is told he stays');
+    reads(w, 'feed', 'What the Smugglers Feed', ['loveday', 'tam', 'told'], ['home'], 'the beast left alone');
+    w.ok(!there(w, TAM_HOME(), 'saltmouth') && there(w, TAM(), 'smugglers_cove2'), 'Tam stays at the pool, and is not on the steps');
+  }
+  { // What the Smugglers Feed: the beast slain before Loveday is met; Tam goes home to the steps.
+    const w = newWalk(ok);
+    hear(w, 'smugglers_cove2', TAM());
+    w.ok(w.news.at(-1) === 'New quest: What the Smugglers Feed.', 'Tam met first begins the quest');
+    w.level = 14;
+    fight(w, 'smugglers_cove2:kh2_great_devilfish');
+    w.ok(!there(w, TAM(), 'smugglers_cove2') && there(w, TAM_FREE(), 'smugglers_cove2') && /black pool/.test(goal(w, 'feed')), `the beast dead, Tam stands over his bucket, and the goal is him (${goal(w, 'feed')})`);
+    w.ok(hear(w, 'smugglers_cove2', TAM_FREE()) === TAM_FREE().lines.join('\n\n') && !there(w, TAM_FREE(), 'smugglers_cove2'), 'Tam has done with the arrangement, and goes');
+    reads(w, 'feed', 'What the Smugglers Feed', ['tam', 'home'], ['loveday', 'told'], 'the beast slain');
+    w.ok(there(w, TAM_HOME(), 'saltmouth') && hear(w, 'saltmouth', TAM_HOME()) === TAM_HOME().lines.join('\n\n'), 'Tam is on the harbour steps');
+    w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed_home') && !w.party.flags.q_feed, 'Loveday, beside him, has her son home, and never hires');
+  }
+}

@@ -6,6 +6,9 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
+/** The Great Devilfish dead, a guardian that stays so: the boy has fed it for the last time. */
+export const BEAST_SLAIN = { slain: 'smugglers_cove2:kh2_great_devilfish' } as const;
+
 export const SMUGGLERS_COVE2: MapDef = {
   id: 'smugglers_cove2',
   name: 'The Sea Cave',
@@ -44,13 +47,18 @@ export const SMUGGLERS_COVE2: MapDef = {
     { kind: 'event', x: 4, y: 11, id: 'kh2_tidemark', once: true, text: 'Dried weed lines the wall at head height, level as a shelf. By the west wall it breaks, and the stone below is scoured bare.' },
     { kind: 'event', x: 1, y: 12, id: 'kh2_passage', once: true, text: 'The water is at your chest and cold through. The roof comes down to meet it. Ahead, a grey light lies on the surface.' },
     { kind: 'event', x: 6, y: 13, id: 'kh2_bones', once: true, text: 'Fish heads heaped by the black pool, eyes gone white. Among them a boot, a buckle, and a thin bone that is not a fish\'s.' },
-    // Tam, who feeds it (#56's 28), a square short of it while it lives. His words once it is dead, and
-    // his going home, are #192's.
-    { kind: 'npc', x: 13, y: 12, name: 'Tam, who feeds it', lines: [
+    // Tam, who feeds it (#56's 28), a square short of it while it lives. What the Smugglers Feed (#192):
+    // once it is dead, his twin has done with the arrangement and goes home to Saltmouth's steps.
+    { kind: 'npc', x: 13, y: 12, name: 'Tam, who feeds it', flag: 'q_feed_tam', lines: [
       'A boy of sixteen stands at the edge of the black pool with a bucket of fish heads, and throws them in one at a time, and counts between. Something under the water takes each before it sinks.',
       '"Don\'t. Don\'t come nearer than me. It knows me." He throws another. "Tam. From Saltmouth, off the steps. They put me here in the spring when the last one got careless, and I\'ve not been careless. It spares whoever feeds it. That\'s the whole of the arrangement, and I keep it."',
       '"Mam sent you. Tell her I\'m alive. Tell her the pay stopped because they stopped paying, not because of me. And go back up. If you kill it they\'ll kill me, and if you don\'t, I\'m all right here. I\'m all right."',
-    ], until: { slain: 'smugglers_cove2:kh2_great_devilfish' } },
+    ], until: BEAST_SLAIN },
+    { kind: 'npc', x: 13, y: 12, name: 'Tam, who feeds it', flag: 'q_feed_home', lines: [
+      'Tam stands over the bucket a long time, and then kicks it into the pool, where nothing takes it.',
+      '"Well. That\'s the arrangement done." His voice is steadier than his hands. "They\'ll be down the ladder inside the hour to see what the noise was, and find it dead and me alive, and do their sums. I\'d sooner not be here for the sums."',
+      '"Home, then. Mam\'ll have my hide, and I\'ll let her, and then I\'m going to sit on the steps and say things about that cove out loud, to anyone. Whoever gives the orders in there isn\'t in there. I heard them say where. I\'ll say that too."',
+    ], after: BEAST_SLAIN, until: { flag: 'q_feed_home' } },
     { kind: 'chest', x: 14, y: 14, id: 'kh2_hoard', gold: 300, items: ['elixir'] },
   ],
   secrets: [{ x: 3, y: 11, hint: 'kh2_tidemark' }],

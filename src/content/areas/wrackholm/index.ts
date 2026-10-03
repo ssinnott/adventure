@@ -11,6 +11,7 @@ import { TIDE_SHIP3, TIDE_RIFT } from './maps/tide_ship3.ts';
 import { DEAD_DROP_STAIR } from './maps/dead_drop_stair.ts';
 import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
+import { QUESTS } from './quests.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
@@ -20,7 +21,7 @@ export const AREA = {
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
-  quests: [],
+  quests: QUESTS,
   chapter: CHAPTER,
   // Out in the gulf: mild winters, cool summers, wind and spray, and fog off the water.
   climate: { summer: 16, winter: 4, daily: 3, damp: [0.02, 0.09], wettest: 300, fog: 0.9, lag: 3,
