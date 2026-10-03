@@ -118,6 +118,9 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   Hall (tier 4; the Lanterns' hall), the Elder's Yard, the Split Oak tavern (rumours about Vask's
   timing), a healing spring and Elder Sylvane, who pays 1500 gold for the Underdeep chisel. Ailith
   of the survey is in the Chapterhouse once the company sends her there (docs/areas/shelf.md §6, 8).
+  Three first prestiges are taught here, each by a person at their trade (#19): Jago the fletcher
+  in the Armoury, whose bows it sells (the Ranger's); Derwa the bone-setter in the Chapterhouse (the
+  Cleric's); and Lowen at her hives under the north-east oak (the Druid's).
 - **The Grove Roots** (dungeon, 16×16, band 6–9): two halves joined by a locked door; the iron
   key is behind a secret door on the west side; the stairs down are guarded.
 - **The Cut Stone** (dungeon, 16×16, band 8–10): three square rings of Underdeep corridor. A
@@ -141,7 +144,8 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   box's west side, the Hoarhills across it with the Eaves' forest closed over them, and the lodge on
   its rise at 272,76, its yard shut by four brambles (a guardian) with its hunters in the cellar
   (The Hunters' Bargain). A game trail runs north past the hunters' hide and a spring to a cairn on
-  the saddle and the cutters' boot prints; a dire wolves' den lies under a fallen oak off the road
+  the saddle and the cutters' boot prints, and above the hide Cuthred, the lodge's bowman, teaches
+  the Ranger's second prestige, 21 squares from the road and eleven from the nearest group (#19); a dire wolves' den lies under a fallen oak off the road
   (its hoard a Runed Robe +2); behind the blazed oak the hunters' path runs south to the den's
   track. Eight groups, none above eight: thorn spiders in the brakes, the den's pack and two brood,
   the ogre alone on the road, the brambles, four great owls over the lodge by night and two
@@ -226,7 +230,8 @@ under, the zone's groups at 3 and the dungeons' at the area's 3 too, it wins 21.
 Its `walkthrough.ts` plays the chain of the one quest, the Foreland's chapter and then its own,
 The Grove Stone, a step at a time (`tools/walk.ts`); then again with Thornmark taken before Vask's
 hire, and after it but before the wand, where the log must read true and end the same. A step added
-to the chapter adds its play there. The other end-to-end tests (the pass, the stairs) cross between
+to the chapter adds its play there. Then the side quests, both ways, and the prestiges' four trainers:
+where each stands, the three firsts taught at 11 and the second at 19, off the road and the fights. The other end-to-end tests (the pass, the stairs) cross between
 the Foreland and Thornmark, so they stay in `tools/tests/`.
 
 ## 4. What is still to build
@@ -372,8 +377,8 @@ settled in its issue, and what the pilot teaches changes them.
   of eight to ten, and the den's pack, which never leaves it; thorn spiders in the river brakes; a
   great owl over the lodge by night (`when`); the ogre alone in the deep (MONSTERS §5.4); and a
   heartwood on the game trail, the box's hardest group, at 10.
-- **Quests.** The Hunters' Bargain (#56's 15). The lodge is where the Ranger's second prestige is
-  taught, later (#19).
+- **Quests.** The Hunters' Bargain (#56's 15). The Ranger's second prestige is taught at the
+  lodge's hide, by Cuthred (#19; §9, 45).
 - **The secret and its hint.** The hunters' path: a way south through a thicket the brambles do not
   cross, a secret door in the trees, towards Henlys. The hint: an oak at the thicket's edge
   blazed with three notches, the hunters' mark for a way through. The eldest hunter shows it to a
@@ -387,7 +392,8 @@ settled in its issue, and what the pilot teaches changes them.
   Godric comes up once they are cut down. The hunters' path runs south from the yard to the den's
   track, since a way to I4 of its own would cross the road. As measured it pays about 1,100 xp a
   member and 210 gold, and brings Thornmark's gold to the curve's 8,400, so its owed gold is
-  dropped. What the owner finds by hand goes here when the box has been played.
+  dropped. Cuthred teaches the Ranger's second above the hide (#19). What the owner finds by hand
+  goes here when the box has been played.
 
 ### 4.4 I4, Henlys (#49): core, band 8–10
 
@@ -809,6 +815,33 @@ overturn:
     answer two lines and the door two.
 40. **The walk:** Thornmark's walkthrough sets `q_hale_taken` by hand, finds no sergeant without
     it, plays both answers and frees Hale in the hold with the token and without it.
+
+Decided by delegate for #19's trainers in Thornmark, on 3 October 2026, each the owner's to
+overturn:
+
+41. **Four new people teach:** Jago, Derwa and Lowen in Thornhold and Cuthred at the lodge. Kerrow
+    is a smith, and stands only once the terms are taken; Tamsin is a Reader; Godric carries a spear,
+    his first meeting is the Bargain's choice, and he comes up only once the yard is cut.
+42. **Jago, the hold's fletcher, stands in the Armoury,** whose bows are his: no new business, the
+    shop his as much as the smith's.
+43. **Derwa, the bone-setter, stands in the Lantern Chapterhouse,** whose cures are her trade.
+44. **Lowen keeps the hold's bees under the north-east oak, in the street.** Honey and salves wait on
+    #18, so she keeps no shop, as Saltmouth's street trainers keep none.
+45. **Cuthred, the lodge's bowman, keeps the hunters' hide, at 7,2 above it.** The yard is nine
+    squares from the road at most; the hide's height is 21 from it and eleven from the nearest
+    group, the heartwood, so the rule Rietum's are held to holds as written.
+46. **All four are always there,** with no `after`, `until` or `when`, so no trainer is missed.
+    Cuthred was at the hide when the wood came up the yard and is not one of Godric's six; the
+    Bargain, kept or told, and the gate shut to the hunters change nothing at the hide.
+47. **Names:** the three in Thornhold take the elves' tongue (§10); Cuthred the Crown's English, as
+    the lodge's hunters do.
+48. **Each has a `seek` line of their own.** Thornhold names its people by a comma, not by their
+    trade, and I3's map is The Deepthorn, so the system's line would not read true.
+49. **Their words:** three lines at the first meeting and no `says`. No one else's words change; the
+    hide's unburnt wood stays true, since Cuthred lights no fire.
+50. **The walk** checks each trainer's place and presence, sends a ranger, a cleric and a druid at
+    11 and teaches them, holds Cuthred to the road's and the groups' rule, finds him on foot and
+    teaches the Deadeye at 19 with the hunters' gate shut.
 
 Fitted on 29 September to Act II, filed as Phase 1.2 (#149) the night before: 7 (Sunderwood's plan
 cuts the same land), 14 (20 is #156's and #190's), 16 (#163 gives dead wood its character, so the

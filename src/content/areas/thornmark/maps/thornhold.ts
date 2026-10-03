@@ -1,7 +1,8 @@
 // Thornhold, the elf-hold of Thornmark. The second town: an inn, the Lantern Chapterhouse (the
 // temple), the Lantern Hall (spells to tier 4 and the Lanterns' quests), an armoury with the
 // Thornmark tier of gear, the Elder's training yard (to level 11, a level past its band), the Split
-// Oak tavern and Elder Sylvane, who wants proof of who cut the Stone.
+// Oak tavern and Elder Sylvane, who wants proof of who cut the Stone. Three first prestiges are
+// taught here: the Ranger's, the Cleric's and the Druid's (#19).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
@@ -139,6 +140,25 @@ export const THORNHOLD: MapDef = {
       ] },
       { after: { flag: ['q_grove_done', 'q_treaty'] }, lines: TREATY_SEEN },
     ] },
+    // The three first prestiges taught here (#19; DESIGN §5), each by a person at their trade.
+    // The Ranger's: the fletcher, in the Armoury, whose bows it sells.
+    { kind: 'npc', x: 4, y: 10, name: 'Jago, fletcher of Thornhold', lines: [
+      'A bench at the back, past the racked steel, and an elf at it with a shaft across his knee, laying the third feather. He finishes it before he looks up.',
+      '"Jago. Bows, and the shafts for them; the smith does the heads. Those on the wall are mine, and there is not a bad one among them." He sights down the shaft.',
+      '"An arrow is a long time in the air. Long enough to nock the next, if the hand knows the way without the eye. One of you has the makings. Bring your bow to the bench."',
+    ], teaches: { cls: 'ranger', prestige: 1, seek: 'Jago the fletcher, at his bench in the Thornhold Armoury, can make an Outrider of a ranger.' } },
+    // The Cleric's: the bone-setter, in the Chapterhouse, whose cures are her trade.
+    { kind: 'npc', x: 11, y: 4, name: 'Derwa, bone-setter of the Chapterhouse', lines: [
+      'Linen and splints on the benches, and the hold\'s hurt laid along them. An elf woman goes down the row with her sleeves pinned back, and does not pause for you.',
+      '"Derwa. The Lanterns pray over them, and then I set them. Both are needed. Only one of them is a trade." She ties off a splint.',
+      '"A prayer goes as far as a prayer goes. Put a hand behind it and it goes further; I have measured the difference in bone. One of you has the makings. Wash your hands and hold this end."',
+    ], teaches: { cls: 'cleric', prestige: 1, seek: 'Derwa the bone-setter, among the benches of the Lantern Chapterhouse in Thornhold, can make a Curate of a cleric.' } },
+    // The Druid's: the beekeeper, under the north-east oak; honey and salves wait on #18, so no shop.
+    { kind: 'npc', x: 14, y: 1, name: 'Lowen, who keeps the bees', lines: [
+      'Skeps in a row under the oak by the wall, and an elf woman among them with her arms bare and the bees walking on them. She is not stung, and does not seem to expect to be.',
+      '"Lowen. I keep the bees, and the Chapterhouse burns their wax. They have not settled since the Stone. Nor have I, but they show it."',
+      '"A swarm is not commanded. It is led, and only by one who can bear to stand in the middle of it. One of you has the makings. Bare your arms and stand where I stand."',
+    ], teaches: { cls: 'druid', prestige: 1, seek: 'Lowen, who keeps the bees under the oak in Thornhold\'s north-east corner, can make a Swarmcaller of a druid.' } },
     { kind: 'event', x: 7, y: 14, id: 'thornhold_intro', once: true, text: 'Thornhold. Houses grown around living trees, and a hush that is not peace.' },
     // The Rest of the Survey (#77): Ailith, once the company sent her here.
     { kind: 'npc', x: 11, y: 4, name: 'Ailith, adjunct of the survey', lines: [
