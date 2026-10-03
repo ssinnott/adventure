@@ -1,6 +1,7 @@
 // Sunderwood, box J3: the Bears' Wood. Country, band 15-16: the deep forest south of the Eaves,
 // between the rim's pines and the Hoarhills' end, the bears' country. A cutters' track down from
-// J2, a hermit's clearing, a bears' den whose old bears have gone to glass, and the dead wood at its
+// J2, a hermit's clearing, where a knight of the Crown that was teaches the Paladin's second
+// prestige (#19), a bears' den whose old bears have gone to glass, and the dead wood at its
 // south-east where the Sunder's west lip begins (K3). Its west and south edges are the Deepthorn's
 // closed forest (I3, J4), and open no way.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.9 is its brief.
@@ -55,12 +56,20 @@ export const EAVES_J3: MapDef = {
   ],
   features: [
     { kind: 'event', x: 14, y: 1, id: 'j3_track', once: true, text: 'The cutters\' track comes down out of the pines into older wood. The stumps stop, and the first whole tree is marked by a bear higher than your head.' },
-    // The hermit's clearing, and half the hint.
-    { kind: 'npc', x: 6, y: 8, name: 'A hermit', lines: [
-      'A hermit in a clearing, a bearskin over his shoulders and a bear\'s smell on him. He does not stop whittling.',
+    // The hermit's clearing, and half the hint. He is Aylmer, a knight of the Crown that was, and
+    // teaches the Paladin's second prestige (#19; DESIGN §5): his lesson is said once to a
+    // Lightbearer of 19, after his first words, so every company hears the hint first.
+    { kind: 'npc', x: 5, y: 11, name: 'Aylmer, the hermit', lines: [
+      'A hermit in a clearing, a bearskin over his shoulders and a bear\'s smell on him. Behind him a sword stands point-down in a heap of stones, rusted to the cross-guard. He does not stop whittling.',
       '"The glass was a day\'s walk off when I came. Now I hear it from here on a still night, a tick when the cold gets into it. Come winter I\'ll hear it from bed."',
       '"Bears go up to that den. So does something on two legs, and it comes down lighter."',
-    ] },
+    ], flag: 'j3_hermit_met', says: [
+      { after: { flag: 'j3_hermit_met', member: { cls: 'paladin', level: 19, prestige: 1 } }, until: { flag: 'j3_hermit_lesson' }, sets: 'j3_hermit_lesson', lines: [
+        'The knife stops. He looks at your paladin a long moment, then at the sword in the stones.',
+        '"Aylmer. A knight, once, when the Crown kept knights; I was among the last it kept. When it stopped I brought the sword to the wood, and kept that instead."',
+        '"The light in your arm is wasted on the living; they die of iron well enough. The dead that walk should feel it deeper, and I can show you where to put it. Kneel at the stones."',
+      ] },
+    ], teaches: { cls: 'paladin', prestige: 2, seek: 'Aylmer, the hermit in the clearing of the Bears\' Wood under the Eaves, a knight of the Crown that was, can make a Justicar of a Lightbearer.' } },
     { kind: 'shrine', x: 7, y: 21, id: 'j3_shrine', text: 'A wayside shrine in the wood, a hare\'s foot nailed to its face, the nail rusted to nothing and the foot still hanging. The bears have let it be.', stat: 'luck', done: 'The hare\'s foot on the shrine, still hanging.' },
     { kind: 'cairn', x: 26, y: 4, id: 'j3_cairn', text: 'A cairn in a clearing the bears use, the grass flat round it and the stones clawed to the height of a standing bear. The top stone has not been touched.', gold: 170, items: ['potion_sp_great'] },
     // The den (#88), its old bears gone to glass beside it; by night the moths at its mouth.
