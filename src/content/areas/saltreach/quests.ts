@@ -4,12 +4,40 @@
 // the master's word pays the boat's fare out of Saltmouth (Kitto's passage reads `q_passage_owed`).
 // And The Tide Bell (the Drowned Temples, #175): the priestess at B6's dry door asks for the bell the
 // Choirmaster beats time on, and takes it at the first meeting from a company she never asked.
+// And The Night-Light (Rietum, #56's 21): the priest at the sluice asks for Nynke's light, a shard
+// in a jar at her window that the glass people come up the bank to look at. Taken, it goes to the
+// priest or to Tobin, who sells it downriver; kept, they come until the Stone is home.
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every
 // key.
 import type { QuestDef } from '../../../game/quests.ts';
 import { BELL_HUNG, COUNT_STOPPED } from './maps/drowned_temples.ts';
 
 export const QUESTS: readonly QuestDef[] = [
+  {
+    id: 'nightlight',
+    title: 'The Night-Light',
+    start: { flag: 'q_nightlight' },
+    // Answered, or asked and never answered by the time the Stone is home and the light goes out.
+    done: [{ flag: 'q_nightlight_temple' }, { flag: 'q_nightlight_sold' }, { flag: 'q_nightlight_kept' }, { flag: ['q_nightlight', 'q_tide_home'] }],
+    entries: [
+      { id: 'asked', when: { flag: 'q_nightlight' },
+        text: 'The priest at the sluice in Rietum asked us for the night-light at Nynke\'s window. It is a piece of the god\'s, he says.' },
+      { id: 'taken', when: { flag: 'q_nightlight_taken' },
+        text: 'We took the night-light from Nynke at her window. She asked us not to give it to Tobin.' },
+      { id: 'kept', when: { flag: 'q_nightlight_kept' },
+        text: 'We left the night-light with Nynke. The glass people still come up the bank to her window by night.' },
+      { id: 'temple', when: { flag: 'q_nightlight_temple' },
+        text: 'The priest laid the night-light in the shrine\'s dry bowl by the sluice. The god has a piece of itself back, and still counts.' },
+      { id: 'sold', when: { flag: 'q_nightlight_sold' },
+        text: 'We sold the night-light to Tobin, and he went down with the tide that night. His berth on the north bank is empty.' },
+      { id: 'home', when: { flag: ['q_nightlight', 'q_tide_home'] },
+        text: 'The Tide Stone is home. The temples sing, and nothing comes up Rietum\'s quay by night now.' },
+    ],
+    goals: [
+      { when: { flag: 'q_nightlight_taken' }, text: 'Take the night-light to the priest at the sluice or to Tobin\'s barge on the diep\'s north bank, in Rietum.', at: 'upperwater_c3' },
+      { when: { flag: 'q_nightlight' }, text: 'See Nynke at her window in Rietum about her night-light.', at: 'upperwater_c3' },
+    ],
+  },
   {
     id: 'passage',
     title: 'Passage Paid',
