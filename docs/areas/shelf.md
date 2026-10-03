@@ -75,13 +75,13 @@ and with it failing the coast is dark, and the dark has people in it who were wa
 
 | Map | Kind | Band | What is there |
 |---|---|---|---|
-| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores, with Lantern Oil on his shelf and the keeper's oil to put, and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`); Hob by the Hearthlight's fire until his paper is given, and his empty chair (`hob_chair`) once it went to Vask; the harbour postern in the south wall by the Eel; after Act II, the changed city (§5.1) |
-| The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask, who takes Hob's paper too, and his contract in the throne room behind the keep's door, and the keeper's oil to put to him |
+| Helmstow | town, 16×16 | 1–4 | the Hearthlight Inn, the Chapel of the Lanterns, Mottram's Stores, the Lantern Guildhall (spells to tier 2; the Lanterns' hall), the Warden Drillyard (training to 6; the Wardens' hall), the Gilded Eel and its four rumours, the gatehouse north into the keep's ward; Osmund the sexton in the Chapel, Ebba at the Eel (or in the Chapel once her name is kept) and, while the bell is asked after, a fisherman at the Eel and a Warden on the wall by the Chapel; Maud at the Eel until her husband's seal is found and given; Mottram in his stores, with Lantern Oil on his shelf and the keeper's oil to put, and, by night, a cart (`well_cart`) and Alwin, a Warden mason, at the north gatehouse until the Wardens are told, then the gatehouse swept (`well_swept`); Hob by the Hearthlight's fire until his paper is given, and his empty chair (`hob_chair`) once it went to Vask; the harbour postern in the south wall by the Eel; after Act II, the changed city (§5.1); in both cities, Mottram teaching the Paladin's first prestige and Aldith the luthier under the Hearthlight's eaves the Bard's (#19) |
+| The Keep | town, 16×10 | 1–4 | the keep's ward behind Helmstow's north gatehouse, grey stone and the Queen's blue and gold: the Regent's proclamation, petitioners on the steps, the chapel where the Queen lay in state and a mourner, the rookery keeper, the garden well; Vask, who takes Hob's paper too, and his contract in the throne room behind the keep's door, and the keeper's oil to put to him; Wulfric, the keep's armourer, at his bench before the shut armoury, teaching the Knight's first prestige (#19) |
 | The Foreland | outdoor zone, 32×32 | 1–5 | the road, woods, marsh and beach; the Lodestone and Gytha; the Ellerby farm where Ashcombe stood, and its store (rations at 3 gold, in the farm kitchen); Hale's checkpoint at the Scarth, where he takes Dunstan's letter, until he is taken from it and two strangers in Warden grey hold it (#156); ten groups; behind the west wood, Ailith's fire-ring (`survey_ring`) and Ailith, until the company sends her on |
 | Ashcombe Cellar | dungeon, 16×16 | 2–4 | under Ashcombe in E3; four rings; the dead Lantern and her survey wand; the Rift and its Warden |
 | Brandy Hole | dungeon, 16×16 | 2–4 | smugglers, crabs and the drowned; the captain's den and the iron key; a clerk's coat among the drowned (`gw1_coat`) and his seal in the den's strongbox (`gw1_strongbox`, `gw1_seal`) |
 | The Seam | dungeon, 16×16 | 3–5 | the Ashen cult's galleries; the Ashen Deacon and the Cargo Ledger |
-| Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour and Captain Dunstan, retired (Riders in the Dark); Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; six groups (§4.2) |
+| Callow Downs, F2 | outdoor zone, 32×32 | 2–3 | the Salt Road west; Coldharbour and Captain Dunstan, retired (Riders in the Dark); Brockholt and its woodcutter's camp; a shrine, a cairn and a milestone; Siward, Dunstan's old standard-bearer, in Coldharbour's east field, teaching the Knight's second prestige (#19); six groups (§4.2) |
 | Callow Downs, F3 | outdoor zone, 32×32 | 2–3 | Gullwick at the Wend's mouth, its net loft and boats; the rise; the wreckers' far beach and their cave; three groups (§4.3); Hob on the shingle by the net loft once Hale has sent him |
 | Callow Downs, E3 | outdoor zone, 32×32 | 3–4 | Crowness Light and the keeper's cottage on the point; the Salt Road west in fog; the gibbet; the wreck and the wreckers' niche below the light; Aldred, the keeper, his log and the lamp room; eight groups (§4.4); in the north-east corner, Ashcombe: the farmhouse over the cellar, its gate (`ashcombe_gate`) and rats (`farm_rats`) and at its back the kitchen (`ash_kitchen`, the hearth-key in `ash_hearth`) and the flour crock (`ash_crock`, the tenant's paper in `ash_crock_c`) |
 | Callow Downs, E2 | outdoor zone, 32×32 | 3–4 | the Wend's fields and its ford on the track from Coldharbour west to the Berth, where the riders come back by night once Dunstan has asked; the drowned mill and its wheel-pit; the rookery in the willows, the first den; a boundary stone with a riddle, a spring, a cairn and a shepherd's camp; five groups (§4.5) |
@@ -116,8 +116,9 @@ In more detail, as SLICE.md had it before the area docs:
   sign and the gatehouse in the north wall.
 - **The Keep** (town, 16×10): the keep's ward behind the gatehouse, with a palette of its own and
   the Queen's banners placed (`banners`); Lord Vask on the keep's door, holding court in the throne
-  room (the contract and the hand-in); people and a well. A building on its west side stands empty
-  for the armourer (#19).
+  room (the contract and the hand-in); people and a well. A building on its west side stands shut,
+  the Queen's armoury; Wulfric, its armourer, works at a bench before it and teaches the Knight's
+  first prestige (#19). Its door and shop wait on an interior.
 - **The Foreland** (outdoor zone, 32×32): road, woods, hills, marsh, the coast, ten roaming or
   lurking monster groups with respawn timers, the Ellerby farm, lived in, where Ashcombe stood until
   it moved past Gullwick (#87), with a store in its kitchen that sells rations at 3 gold. The
@@ -149,7 +150,9 @@ Its content is in `src/content/areas/shelf/` (maps, monsters, items, chapter, qu
 its part of the world map) and its businesses' rooms in `src/ui/interiors/shelf/`. Its
 `walkthrough.ts` plays its chapter, The Quiet Farm, from a new game, a step at a time
 (`tools/walk.ts`); Thornmark's plays the chain on from it. A step added to the chapter adds its
-play there. The other end-to-end tests (the pass, the stairs) cross into Thornmark, so they stay in
+play there. It walks the prestiges' four trainers too: where each stands in both cities, the
+firsts taught at 11 and again at 16 after Act II, and the Knight's second at 19. The other
+end-to-end tests (the pass, the stairs) cross into Thornmark, so they stay in
 `tools/tests/`.
 
 ## 4. What is still to build
@@ -233,7 +236,8 @@ settled in its issue, and what the pilot teaches changes the ones after it.
   - a milestone where the road leaves the Foreland: GULLWICK 2, CROWNESS 4.
 - **Encounters.** Wolves in Brockholt (three), a boar in the wood, bandits with an archer on the
   road, as on the Foreland map; crows in the stubble (six); rats in Coldharbour's barn (five).
-- **Quests.** No step of the one quest (§9). Riders in the Dark is the captain's (§6).
+- **Quests.** No step of the one quest (§9). Riders in the Dark is the captain's (§6). The Knight's
+  second prestige is taught in the east field by Siward (#19; §9, 34).
 - **The secret and its hint.** Under the holly at Brockholt's heart one sett runs deeper than
   badgers dig: a smugglers' cache from before Brandy Hole was cleared, brandy and a crate with the
   customs seal. The woodcutter's rumour is the hint: the badgers never go near the holly.
@@ -246,6 +250,7 @@ settled in its issue, and what the pilot teaches changes the ones after it.
     Hole's mouth so the road does not walk a company into the caves, and leaves by the south edge at
     15–17 into F3. The rim is F2's north edge; the west is open land that ends in the void until E2
     is built.
+  - Siward in the east field at 19,16, under the two oaks, off the farm's track (#19).
   - Coldharbour at 5–11,9–13: the farmhouse and the barn about a yard, the lamp (an event), the
     well, the rats in the barn and a track down to the road; a square by the gate is left for the
     captain (#68). The shrine stands where the track meets the road, the milestone by the gap.
@@ -667,6 +672,7 @@ and nothing is a story lock (#151, call 1):
   keep theirs.
 - **The Gilded Eel's** talk is the curfew's, the Chapel's and the captains'.
 - **The Keep** is unchanged.
+- **The trainers stay** (#19): Mottram and Aldith in the city, Wulfric in the keep.
 - **No lock:** the lock scan finds the gate shut and passes it on the postern beside it, and finds
   each business gone and passes it on its twin or, for the Chapel, on the temples of Thornhold and
   Saltmouth.
@@ -947,6 +953,36 @@ The Scarth once the Regent has the ledger (#156), each the owner's to overturn:
 28. **No journal entry says Hale is gone:** Saltreach's chapter writes the news at Saltmouth's gate,
     where it is told.
 29. **Hale's Sergeant (#56's 20) is left to #558** (docs/areas/thornmark.md §6).
+
+Decided by delegate for #19's trainers in the Foreland, on 3 October 2026, each the owner's to
+overturn:
+
+30. **Three new people teach and one who was here:** Wulfric in the keep's ward, Aldith in Helmstow
+    and Siward at Coldharbour, and Mottram in his stores. Mottram's first meeting puts no choice, so
+    the trainer's menu follows it; Dunstan's yard fails the road's rule, and moving him would break
+    Riders in the Dark.
+31. **Mottram is the chandler,** whose stores sell Lantern Oil and torches. His lesson is a `says`
+    said once to a company with a paladin of 11, keyed to his hire as his other words are. The cost:
+    the menu follows his words from the first meeting, so a paladin under 11 reads "from level 11"
+    there. A lampmaker of his own in the stores is the alternative.
+32. **Wulfric works at a bench before the empty building, in the open.** A door there would need a
+    business, and every business a room of its own: the armoury's door, its armour and its shields
+    wait on an interior (another lane), as Pender's picks wait on #18.
+33. **Aldith keeps no shop,** as DESIGN has the luthier, and sits under the Hearthlight's eaves.
+34. **Siward, Dunstan's old standard-bearer, teaches in Coldharbour's east field at 19,16.** The yard
+    is seven squares from the track to the Berth, a road and the one quest's way, and one from the
+    barn's rats; the field is 14 from the road and 13 from the nearest group.
+35. **All four are always there,** in both cities and whatever Riders in the Dark came to. A company
+    of 16 or more reaches them: an orcblood member by the postern, and the keep's gatehouse is never
+    shut. The band warns and never walls.
+36. **Each has a `seek` line of their own,** since the system's would read "in The Keep" and "in
+    Callow Downs". The goal's "Find Wulfric, armourer of the keep in The Keep." is the system's
+    wording, left to it.
+37. **Their words:** three lines at the first meeting for the three new people, and three in
+    Mottram's lesson. Dunstan's words do not change.
+38. **The walk** checks each place and presence in both cities; teaches a knight, a paladin and a
+    bard at 11 in the old city and again at 16 in the changed one, Idris let in by the postern;
+    holds Siward to the road's and the groups' rule; and teaches the Banneret at 19.
 
 Proposed, for the owner, each in the issue that would build it:
 

@@ -1,7 +1,8 @@
 // Helmstow, capital of the Foreland. The party's home town for the slice: inn, temple, shop, guild,
 // trainer and tavern, with the gate south onto the Foreland road, the harbour postern beside it and
 // the gatehouse north into the keep's ward (keep.ts), where the Regent-Warden holds court. After Act
-// II it is his city (#157).
+// II it is his city (#157). Two first prestiges are taught here, in both cities: the Paladin's by
+// Mottram the chandler and the Bard's by a luthier under the Hearthlight's eaves (#19).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
@@ -52,6 +53,12 @@ export const HARROW: MapDef = {
     // their squares, the Chapel shuts with a notice on its door and the Eel's talk is the curfew's.
     { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 12, interior: 'hearthlight_inn', until: { flag: 'q_salt_done' } },
     { kind: 'inn', x: 4, y: 4, name: 'The Hearthlight Inn', price: 18, interior: 'hearthlight_inn', after: { flag: 'q_salt_done' } },
+    // The Bard's first prestige (#19; DESIGN §5): the luthier, who keeps no shop, under the inn's eaves.
+    { kind: 'npc', x: 5, y: 5, name: 'Aldith the luthier', lines: [
+      'An old woman on a bench under the Hearthlight\'s eaves, out of the drip, with a lute in pieces across her knees and a glue pot at her foot. She fits the neck to the body, holds it there, and talks past it.',
+      '"Aldith. Lutes, and the mending of them, which is the better trade. I keep no shop. The Eel breaks one a week and the Eel\'s down the street, so I sit where the work walks past."',
+      '"Any Guildhall boy can sing a line into heart. A song with an edge in it goes in with the line and comes out the other side. One of you has the makings. Sit, and keep the neck straight while this sets."',
+    ], teaches: { cls: 'bard', prestige: 1, seek: 'Aldith the luthier, on her bench under the Hearthlight\'s eaves in Helmstow, can make a Troubadour of a bard.' } },
     { kind: 'temple', x: 11, y: 4, name: 'Chapel of the Lanterns', interior: 'lantern_chapel', until: { flag: 'q_salt_done' } },
     { kind: 'event', x: 11, y: 4, id: 'chapel_shut', once: true, after: { flag: 'q_salt_done' },
       text: 'The Chapel, boarded, a notice under the Regent\'s seal across the boards. Low on the door, in chalk: GONE TO THE WATCH. THE BOOK WITH ME.' },
@@ -231,13 +238,20 @@ export const HARROW: MapDef = {
       { after: { flag: ['q_well', 'q_oil', 'q_oil_lit'] }, until: { flag: 'q_oil_told' }, sets: 'q_oil_told', lines: [
         '"Lit, is it? Good. Then that\'s a cask a month the Lanterns will have to start finding again, and a sergeant with a paper who\'ll have to explain a light he stopped that\'s burning." He counts on. "Not my shop, not my paper. Cheaper than a Regent, oil."',
       ] },
+      // The Paladin's first prestige (#19): said once to a paladin of 11, keyed to the hire, as his
+      // other words are; then the trainer's menu follows his words.
+      { after: { flag: 'q_well', member: { cls: 'paladin', level: 11 } }, until: { flag: 'q_mottram_lamp' }, sets: 'q_mottram_lamp', lines: [
+        'Mottram comes round the counter with a lamp, unasked, and holds it up to your paladin\'s face, close, the way he holds a coin to the light.',
+        '"I\'ve made the Chapel\'s lamps forty years, my father\'s hand and mine. A lamp is a little fire that agreed to behave. Any fool can make the fire. It\'s the agreeing that\'s the work."',
+        '"You carry a light. I can see it from here, and it gutters. One worth the name burns steady, and I can teach it. Not cheap; nothing on these shelves is." He sets the lamp down between you. "Say the word and I\'ll shut the door."',
+      ] },
       { after: { flag: 'q_well_wardens' }, lines: [
         '"Still iron." He does not offer you the bucket. "The mason\'s gone; nobody has seen him since, nor the cart. The dust isn\'t gone. Whatever they\'re cutting down there, they\'re still cutting it."',
       ] },
       { after: { flag: 'q_well_lanterns' }, lines: [
         '"Still iron. It\'s in a book now, the sexton tells me, in his best hand." A dry sound that might be a laugh. "I send a boy to the Ellerby cistern with a barrel twice a week. Four miles for sweet water. There\'s a sum in that somewhere, and I\'d rather not do it."',
       ] },
-    ] },
+    ], teaches: { cls: 'paladin', prestige: 1, seek: 'Mottram the chandler, in Mottram\'s Stores in Helmstow, can make a Lightbearer of a paladin.' } },
     { kind: 'event', x: 7, y: 1, id: 'well_cart', once: true, when: { hours: 'night' }, until: { flag: 'q_well_wardens' },
       text: 'A cart with no lamp leaves the gatehouse, its wheels muffled in sacking, trailing a grey dust that the dew turns to rust.' },
     { kind: 'event', x: 7, y: 1, id: 'well_swept', once: true, when: { hours: 'night' }, after: { flag: 'q_well_wardens' },
