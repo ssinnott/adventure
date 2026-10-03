@@ -70,7 +70,16 @@ export const DELTA_B6: MapDef = {
       'A woman of the Tidefolk stands at the dry door with her back to it, grey robe wet to the knee, and counts on her fingers with her eyes on the roofs. She does not stop for you.',
       '"Eleven." Her hand comes down. "The one who counts sang the tides once, in and out, and we sang after it. Now it counts, and I count with it. What it means? Nothing. Not yet." Her hand goes up again.',
       '"The port is south, if you want men who talk. I have the doors to count, and a bell to want back. It hung inside this door, and the master of the choir beats the count on it below. The frame stands. I have the rope." And she begins again at one.',
-    ], flag: 'q_tide_bell', quest: { item: 'tide_bell', reward: 300, setFlag: 'q_tide_bell_done', done: ['She takes the bell in both arms and does not look at it, only at the stair. "Then it is done beating." She goes in at the door with it, and you hear the rope go through the hook.'], early: ['Her count stops. She looks at the bell in your hands, then at you, and takes it in both arms. "Nobody asked you for that. The one who counts will have to make what it can of it."'], after: ['"It hangs, and it rings the number." Her hand goes up again. "Eleven."'] } },
+    ], flag: 'q_tide_bell', quest: { item: 'tide_bell', reward: 300, setFlag: 'q_tide_bell_done', done: ['She takes the bell in both arms and does not look at it, only at the stair. "Then it is done beating." She goes in at the door with it, and you hear the rope go through the hook.'], early: ['Her count stops. She looks at the bell in your hands, then at you, and takes it in both arms. "Nobody asked you for that. The one who counts will have to make what it can of it."'], after: [
+      '"It hangs, and it rings the number." Her hand goes up again. "Eleven."',
+      '"It\'s not singing. But it\'s not only counting either, now. There\'s a place in it where something\'s missing, and a bell that knows what\'s missing is nearer a song than a number is. Bring the Stone home. I\'ve stopped asking the god for things. I\'m asking you."',
+    ] }, says: [
+      // The Tide Bell (#56's 23) with the Stone home (#191): the god sings, and she is done counting.
+      { after: { flag: ['q_tide_bell_done', 'q_tide_home'] }, lines: [
+        'The temples\' steps are dry to the door, and from inside comes a sound the whole fen seems to lean towards: the god, singing the tide down.',
+        'The priestess sits on the top step with her face in her hands, and does not look up. "Go away," she says, not unkindly. "I\'ve forty years of this to catch up on, and it\'s mine."',
+      ] },
+    ] },
     { kind: 'event', x: 17, y: 12, id: 'b6_count', text: 'The priestess counts the doors, her hand to each roof in turn, one to ten. Then it lifts towards the far roof in the flats, where no door shows, and stays. "Eleven."' },
     { kind: 'event', x: 14, y: 12, id: 'b6_rung', once: true, after: BELL_HUNG, text: 'The priestess carries the bell in at the door and rings it there, ten even strokes, and the eleventh a beat late. She comes out again with her hand still up.' },
     { kind: 'camp', x: 9, y: 10, name: 'The last dry ground', text: 'A camp on the causeway\'s last dry ground before the door: a hearth of temple slates, cut reed for bedding and the water on three sides.' },

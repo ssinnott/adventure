@@ -379,10 +379,11 @@ settled in its issue, and what the pilot teaches changes them.
   bargeman teaches the Thief's at his hut in the north fields, so both are more than ten squares off
   the road and off the step (DESIGN §5, whose "willows' quay" is the owner's to reword). The groups
   are four, a company at one hour meeting three: herons by the track, the nearest; the quay's crew
-  by day, which breaks when its master falls; brinelings at Nynke's window by night, with no `until`
-  until the Stone home (#191) or The Night-Light (#56's 21) gives one; and a bull toad alone in the
-  drain at the east fields' end, the hardest, as on C4 and C5. Nynke stands and gives the hint and no more:
-  21 is not yet approved. Wytske's words set `c3_saw_stone` for the chapter (#180). The cache is the
+  by day, which breaks when its master falls; brinelings at Nynke's window by night, until her light
+  leaves it or the Stone is home (The Night-Light, #183); and a bull toad alone in the
+  drain at the east fields' end, the hardest, as on C4 and C5. Nynke gives the hint at her first meeting and no more; The
+  Night-Light (§6) is put once the priest has asked, and Tobin, a bargeman from upriver, waits on the
+  diep's north bank to buy her light (#183). Wytske's words set `c3_saw_stone` for the chapter (#180). The cache is the
   old bargeman's from his Compact days, closed by deep water and walls on every side but its secret
   door, and he lets the company keep his sword. As measured, the box pays about 1,010 xp a member at
   10, about 950 in the road's order, and 380 gold. What the owner finds by hand goes here when the
@@ -703,9 +704,9 @@ with its box on the systems of #76 (#183):
 
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
-| 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | not yet approved; #172 places the child and her hint |
+| 21 | The Night-Light | 11 | Rietum (C3) | a choice put by a person; `until` (#41) | #183; #172 places the child and her hint |
 | 22 | Passage Paid | 11 | the Long Water (C4); the boat at Saltmouth | a choice put by a person; `after` (#41); the fare (#164) | #171; the boat reads its flag (#413) |
-| 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175; the blessing #554 (§9) |
+| 23 | The Tide Bell | 12 | the Drowned Temples and their door (B6) | a hand-in at the first meeting (#43); a once-only blessing (#45) | #175; the blessing #554 (§9); her after-lines #183 |
 | 24 | The Star That Moved | 12 | Saltmouth; the pans at night (C7) | `when` (#41); a choice put by a person | #177, #178 |
 
 One change to #56's drafts, decided with the boat (#164): 22's favour is the boat's fare, never
@@ -718,6 +719,19 @@ seen and never said. Cut loose (`q_passage_freed`), they wade ashore, and a crew
 comes up the bank after them. Pushed off (`q_passage_owed`), Hessel's word carries the company to
 Wrackholm with no fare: Kitto's boat on Saltmouth's quay (#413) reads the flag as its `free`. Either way he is gone
 off the shoal.
+
+**The Night-Light, as built** (#183). The priest at the sluice asks for Nynke's light at his first
+meeting (`q_nightlight`), and still reads a pole's mark for B5. Nynke's first meeting stays the hint;
+once he has asked, she puts the choice. Taken (`q_nightlight_taken`), the light goes in the pack, and
+the priest lays it in the shrine's dry bowl for 100 gold (`q_nightlight_temple`) or Tobin, a bargeman
+from upriver on the diep's north bank, buys it for 250 and goes down with the tide
+(`q_nightlight_sold`), leaving a heron on his berth. Kept (`q_nightlight_kept`), it stays on her sill.
+The brinelings at her window and the green on the water by night come until the light leaves her or
+the Stone is home (`q_tide_home`), which puts it out; a quest asked and never answered ends there too.
+Each of the three has words for each way.
+
+**The Tide Bell's after-lines** (#183). Once the bell hangs, the priestess asks for the Stone home;
+once it is home, the god sings the tide down and she sends the company away, not unkindly.
 
 ### The guilds' quests
 
@@ -1283,6 +1297,35 @@ Decided by delegate for #180, each the owner's to overturn:
 6. **The walkthrough's third level is played, not given:** no map of Saltreach is floored at 12,
    so the curve gives 10 and 11 in order, and the Saltmouth-first run is played at 12 by hand, as
    Sunderwood's Watch-first run is at 16.
+
+Decided by delegate for #183, each the owner's to overturn:
+
+1. **Main's people keep their names; the issue's become them.** Brannoc is the priest at the
+   sluice, Nessa is Nynke at her window, Jago is Hessel, Morwen is the priestess at the dry door and
+   Idony is Hiske. The two priests stay unnamed, called by their place as the god is by its office
+   (§10). Elowen is Geeske, a fen passenger, Frisian as the Tidefolk are; Tobin, a river bargeman
+   from upriver, keeps his English name.
+2. **The night-light is green glass, as main has it, and an item of its own,** `night_light`, priced
+   at nothing. In kind it is a Brine Shard (#171's 4), but a hand-in cannot tell one Brine Shard from
+   another, and C4's or C5's would be taken in its place. No word says the plinth takes it (#173's
+   3).
+3. **The priest asks and Nynke puts the choice once he has.** His first meeting sets
+   `q_nightlight` and keeps the pole-mark line. Her first meeting stays the hint, and her quest words
+   keep the stone of the quay that shines back. The light goes to the priest for 100 gold or to
+   Tobin for 250, each at the first meeting. Nobody needs early words, since only her choice hands it
+   over.
+4. **Tobin stands on the diep's north bank at 9,11,** always there until he buys it, then gone, and
+   the berth has an event. His barge is the river crews', not the Compact's (call 4), and he names no
+   master.
+5. **The brinelings and the water's glow go once the light leaves her window,** `until`
+   `q_nightlight_taken` or the Stone home, not only once it is sold or given (#172's 8 paid). Kept,
+   they come until the Stone is home. The hint stays the scrubbed stone, always there.
+6. **The Stone home puts the light out:** Nynke says so, and a quest asked and never answered is done
+   with it, the log saying only what is true on every path.
+7. **The Tide Bell gains one line,** for the Stone home once the bell hangs, and her hand-in's
+   after-line, the Stone away, asks for it. Words would outrank that after-line, so it stays one. Her
+   first meeting and the count with the Stone home are #191's sweep.
+8. **Three pull requests, in order:** 21 with the bell's lines; 22; 24.
 
 ## 10. Names
 

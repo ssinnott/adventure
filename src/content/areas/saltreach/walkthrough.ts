@@ -16,7 +16,7 @@
 // Then up the track into Rietum (C3, #172): the Upper Water named at the seam; the quay-hand who saw
 // the Stone go by, the step, and the priest's word on a pole's mark; the old smuggler's cache found
 // from the clean stone in the quay and reached no other way; the two second prestiges taught off the
-// road; and the box's groups won at 10.
+// road; the box's groups won at 10; and The Night-Light (#183) played every way.
 // Then west over the fen to Stienwierde (B5, #173): the duckboards to the plinth, empty; the hermit
 // who counts the Rifts' lights; the hollow under the landing found from its pole-marks; and the
 // box's groups and its two Rifts' won at 11. Then south to the Drowned Temples' approach (B6, #174):
@@ -25,7 +25,7 @@
 // the sacristy, its silver had that way alone, and out again; in at the dry door, the nave's drowned
 // and the count up the apse's stair; the choir and the Choirmaster won at 11, the Tide Bell taken and
 // the count stopped for good; and the bell up to the priestess, who rings it, and the Tidefolk's
-// blessing knelt for at its frame. Then back to the road
+// blessing knelt for at its frame, and her words after it with the Stone away and home. Then back to the road
 // and down it into Saltmouth's box (C6, #176):
 // the Saltings named at the seam, the land gate at the road's end, the smugglers' stair found from
 // the rope that hangs over it, and the quay's and the pans' groups won at the box's floor. Then in
@@ -192,6 +192,87 @@ function theTideStone(ok: (cond: boolean, msg: string) => void): void {
   inOrder(ok);
   saltmouthFirst(ok);
   everyGoalWalked(ok, [CHAPTER]);
+}
+
+/**
+ * The Night-Light (#56's 21), at Rietum: Nynke's first words the hint and no more; the priest at the
+ * sluice asks, and still reads a pole's mark; then each way played from the asking: the light taken
+ * and given to the priest, taken and sold to Tobin, and kept, until the Stone home puts it out; and
+ * asked and never answered, with the Stone home. The glass people come to her window by night while
+ * the light is there, and the log reads true after each.
+ */
+function theNightLight(w: Walk): void {
+  const ok = w.ok;
+  const NYNKE = c3person('Nynke'), TOBIN = c3person('Tobin');
+  const BRINE = C3.encounters!.find((g) => g.id === 'c3_brine')!;
+  const GLOW = C3.features!.find((f) => f.kind === 'event' && f.id === 'c3_glow')!;
+  const BERTH = C3.features!.find((f) => f.kind === 'event' && f.id === 'c3_berth')!;
+  const FLAGS = ['q_nightlight', 'q_nightlight_taken', 'q_nightlight_kept', 'q_nightlight_temple', 'q_nightlight_sold', 'q_tide_home'];
+  const reset = (): void => { for (const f of FLAGS) delete w.party.flags[f]; w.party.bag = w.party.bag.filter((i) => i !== 'night_light'); };
+  const hear = (p: Person): ReturnType<typeof meet> => { w.world.travel('upperwater_c3', p.x, p.y); return meet(p, w.party, heard(w.world, p)); };
+  const page = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'nightlight');
+  const entries = (): string => page()?.pages[0]?.entries.map((e) => e.id).join(', ') ?? '';
+  // By night, at the window: the glass people and the light on the water.
+  const byNight = (): { brine: boolean; glow: boolean } => {
+    const then = w.world.state.minutes;
+    w.world.state.minutes = Math.floor(then / MINUTES_PER_DAY) * MINUTES_PER_DAY + 23 * 60;
+    w.world.travel('upperwater_c3', NYNKE.x, NYNKE.y);
+    const seen = { brine: w.world.walks(BRINE, BRINE.x, BRINE.y) && !w.world.ended(BRINE), glow: w.world.present(GLOW) };
+    w.world.state.minutes = then;
+    return seen;
+  };
+  const gold0 = w.party.gold, bag0 = [...w.party.bag];
+
+  reset();
+  const first = hear(NYNKE);
+  ok(first.text.includes('goes green underneath') && !first.choice && !page(), 'before the priest asks, Nynke at her window gives the hint and no more, and the log has nothing');
+  ok(byNight().brine && byNight().glow, 'by night the glass people come to her window, and her light throws green along the diep');
+  const asked = hear(PRIEST);
+  ok(!!w.party.flags.q_nightlight && asked.text.includes('pole') && asked.text.includes('Nynke') && page()?.goal === 'See Nynke at her window in Rietum about her night-light.', `the priest asks for the child's light, and still reads a pole's mark (${page()?.goal})`);
+  ok(hear(TOBIN).text.includes('buyer downriver'), 'Tobin, across the diep, would buy it for a buyer downriver');
+
+  for (const way of ['the priest', 'Tobin', 'kept'] as const) {
+    reset();
+    w.party.gold = gold0;
+    hear(PRIEST);
+    const m = hear(NYNKE), a = m.choice?.answers.find((x) => x.label === (way === 'kept' ? 'Keep it, Nynke.' : 'We\'ll take it.'));
+    ok(!!a, `asked, Nynke puts the choice, and '${a?.label}' is an answer (${m.choice?.ask ?? 'no question'})`);
+    if (!a) continue;
+    answer(a, w.party);
+    if (way === 'kept') {
+      ok(!!w.party.flags.q_nightlight_kept && !w.party.bag.includes('night_light') && !!page()?.done, `kept: the light stays at her window, and The Night-Light is done (${entries()})`);
+      ok(byNight().brine && byNight().glow, 'kept: the glass people still come to her window by night');
+      ok(hear(NYNKE).text.includes('sweet shop') && hear(PRIEST).text.includes('kindness to a child') && hear(TOBIN).text.includes('I can wait') && w.world.present(TOBIN), 'kept: Nynke, the priest and Tobin each say so, and Tobin waits');
+      w.party.flags.q_tide_home = 1;
+      const night = byNight();
+      ok(!night.brine && !night.glow && hear(NYNKE).text.includes('went out') && entries().includes('home'), `the Stone home, the light goes out: the glass people stop coming and the log says so (${entries()})`);
+      continue;
+    }
+    ok(w.party.bag.includes('night_light') && !byNight().brine && !byNight().glow && page()?.goal?.startsWith('Take the night-light') === true, `taken: the company has the light, the glass people stop coming and the goal is the priest or Tobin (${page()?.goal})`);
+    ok(hear(NYNKE).text.includes('stopped coming'), 'taken: Nynke\'s window is dark, and she says so');
+    if (way === 'the priest') {
+      hear(PRIEST);
+      ok(!!w.party.flags.q_nightlight_temple && !w.party.bag.includes('night_light') && w.party.gold === gold0 + 100 && !!page()?.done, `the priest takes it at the first meeting and pays 100, and The Night-Light is done (${entries()})`);
+      ok(hear(PRIEST).text.includes('In the bowl') && w.world.present(TOBIN) && hear(TOBIN).text.includes('a man who counts') && !w.world.present(BERTH), 'after, the light lies in the bowl, and Tobin stays at his barge, sour');
+    } else {
+      hear(TOBIN);
+      ok(!!w.party.flags.q_nightlight_sold && !w.party.bag.includes('night_light') && w.party.gold === gold0 + 250 && !!page()?.done, `Tobin takes it at the first meeting and pays 250, and The Night-Light is done (${entries()})`);
+      ok(!w.world.present(TOBIN) && w.world.present(BERTH) && hear(PRIEST).text.includes('sold it'), 'after, Tobin is gone down the river, a heron has his berth, and the priest knows it was sold');
+    }
+    w.party.flags.q_tide_home = 1;
+    ok(entries().includes('home') && !byNight().brine, `the Stone home, the log reads true after it too (${entries()})`);
+  }
+
+  // Asked and never answered: the Stone home puts the light out, and the quest is over with it.
+  reset();
+  hear(PRIEST);
+  w.party.flags.q_tide_home = 1;
+  const dark = hear(NYNKE);
+  ok(!dark.choice && dark.text.includes('went out') && !!page()?.done && entries() === 'asked, home', `asked and never answered, the Stone home puts the light out and ends it (${entries()})`);
+
+  reset();
+  w.party.gold = gold0;
+  w.party.bag = bag0;
 }
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -375,6 +456,9 @@ export const walkthrough: Walkthrough = (ok) => {
   // the child's window by night and the bull toad in the drain at the east fields' end.
   for (const g of C3.encounters!) fight(w, `upperwater_c3:${g.id}`);
 
+  // The Night-Light (#56's 21), played every way.
+  theNightLight(w);
+
   // West off the Delta road over the fen, onto the duckboards of B5.
   w.level = 11;
   walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2);
@@ -498,6 +582,13 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.used('b6_rung'), 'and she rings it inside the door');
   see(w, 'drowned_temples:dt1_frame_hung');
   ok(w.world.used('dt1_frame_hung'), 'the bell hangs on its frame in the narthex');
+  // Her words after: the bell rung and the god still counting, and the Stone home.
+  w.world.travel('delta_b6', PRIESTESS.x, PRIESTESS.y);
+  const hung = meet(PRIESTESS, w.party, heard(w.world, PRIESTESS)).text;
+  w.party.flags.q_tide_home = 1;
+  const sung = meet(PRIESTESS, w.party, heard(w.world, PRIESTESS)).text;
+  delete w.party.flags.q_tide_home;
+  ok(hung.includes('Eleven') && hung.includes('Bring the Stone home') && sung.includes('singing the tide down') && !sung.includes('Eleven'), 'after, the priestess asks for the Stone home; with it home, the god sings and she is done counting');
   const endurance = w.party.members.map((m) => m.stats.endurance);
   kneel(w, 'drowned_temples:dt1_bell');
   ok(w.party.members.every((m, i) => m.stats.endurance === endurance[i] + 1 && resists(m).includes('cold')), 'and kneeling at it, the Tidefolk\'s blessing: a point of Endurance to each of the company, and the cold kept off');
