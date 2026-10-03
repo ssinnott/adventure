@@ -276,7 +276,7 @@ export function afterFaults(p: Person): string[] {
   const out: string[] = [];
   for (const { w, a, after } of withAfter(p)) {
     const first = [w.after ?? []].flat()[0] ?? {};
-    const party = { flags: Object.fromEntries(flagsOf(first.flag).map((f) => [f, 1])), bag: [] as string[], gold: 0 } as unknown as Party;
+    const party = { flags: Object.fromEntries(flagsOf(first.flag).map((f) => [f, 1])), bag: [] as string[], gold: 0, members: [] } as unknown as Party;
     // What the save records besides flags is taken as the question's words found it, and stays so.
     const facts = { seen: first.seen, item: first.item, slain: flagsOf(first.slain), visited: first.visited };
     const cond = (c: QuestCond): boolean => flagsOf(c.flag).every((f) => party.flags[f]) && (c.seen === undefined || c.seen === facts.seen) && (c.item === undefined || c.item === facts.item)

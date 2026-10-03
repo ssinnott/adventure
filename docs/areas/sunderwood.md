@@ -147,7 +147,8 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
 - **Lanternwood** (L2, `lanternwood_l2`, core, band 15–16; #200): the east road on from the bridge
   through the old forest and out at the box's south-east corner by the river for M2, with a spur
   north to the tower's gate, the way into Lantern Watch (#201). Two wayside lamps
-  on the road, one lit and one dark, and a young sister of the Watch by the dark one; the knoll in
+  on the road, one lit and one dark, and Averil, a young sister of the Watch, by the dark one until the
+  papers are read (#205); the knoll in
   the north-west with the signal fire's ash and the pit under it; a shrine in the tower's yard, a
   cairn in the wood north-east of it and a camp south of the road. Four groups: moths with a
   deathshead at the lit lamp by night, sunder hounds on the knoll's path, two deathsheads at the
@@ -176,10 +177,13 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   gorge, through L2's gate. The Lamp Gallery at the top trains to 17; the prior's room, where the
   Reader of the Watch sits; the stores, the band's step on the ladder; the refectory; and the
   Lanterns' hall at the tower's foot, which sells to tier 6. Prior Osric in the yard under the lamp,
-  Wouter Brink of the Cartographers on the west wall. No temple: Sunderfall's shrine cures. By day,
+  Wouter Brink of the Cartographers on the west wall. No temple: Sunderfall's shrine cures. From the
+  night the papers are read the great lamp is dark and Averil stands in the hall, until the prior is
+  answered (#205). By day,
   once the papers are read and the wall touched, Lord Vask at the gate with two Wardens and three
   horses, until his question is answered (#204).
 - **The chapter,** The Wall (`chapter.ts`, #204): §5.
+- **The side quests,** #56's four (`quests.ts`, #205): §6.
 - **Weather.** Colder than the Foreland and milder than the pass, wetter than both: rain in the
   gorge and mist under the pines. Fronts reach it eight hours after they cross the Foreland.
 
@@ -725,20 +729,39 @@ alone shows it.
 
 ## 6. Side quests
 
-#56's four for Sunderwood, all taken by the owner on 28 September 2026 (#151, call 13), each built
-with its box on the systems of #76 (#205):
+#56's four for Sunderwood, all taken by the owner on 28 September 2026 (#151, call 13), built on the
+systems of #76 (#205) in `quests.ts`, each choice paid by `pay` on its answers (#573):
 
 | # | Quest | Level | Where | What it needs | Pay | Built in |
 |---|---|---|---|---|---|---|
-| 29 | The Family at the Glass Trees | 15 | the steading (J2); the Watch's stores | a choice put by a person; an item from a shop's stock (#98) | 110 | #196, #201 |
-| 30 | The Dammed Fall | 15 | Sunderfall's shrine, the dam above it and the foreman (K2); the ledges that stop (K3) | a choice; `until` (#41) | 110 | #197, #198 |
-| 31 | The Watch's Lamp | 16 | Lantern Watch (L2) | a choice; a person who moves | 140 | #205 (L2, #200, places the sister and her hint only; #201 leaves her there) |
-| 32 | The Length of the Wall | 16 | the surveyor at the Watch; the Sunder's floor | a choice; a once-event at the wall's end that is not there | 140 | #205, #199 (#201 places the surveyor and his lines only) |
+| 29 | Under the Glass Trees (#56's The Family at the Glass Trees) | 15 | Garret and Nell at the steading (J2); Averil on L2's road or in the Watch's hall | a choice put by a person; a hand-in at the first meeting; people who move | 110 | #205 |
+| 30 | The Dammed Fall | 15 | Orm at Sunderfall's shrine, the dam above it and Hew, its foreman (K2); the ledges that stop (K3) | a choice; a letter; `until` (#41) | 110 | #205 |
+| 31 | The Watch's Lamp | 16 | Lantern Watch: Averil in the hall, Prior Osric, Brother Cuthwin in the stores, the wick in the Lamp Gallery; the gate on L2 | a choice; a letter; people who move | 140 | #205 |
+| 32 | The Length of the Wall | 16 | Wouter Brink on the Watch's west wall; the wall's two ends on the Sunder's floor | a choice; an event that sets a flag | 140, and 500 gold if sold | #205 |
 
-Pay is xp a member, whichever way the choice goes, shared by level: 500 between the four (§8), 900 until #453.
+Pay is xp a member, whichever way the choice goes, split among the living: 500 between the four (§8),
+900 until #453. The issue's lines are adapted to the people on main (§9, decided for #205): its Oswy
+is Osric, its Hollin is Brink and its sister is L2's, named Averil. 31 opens the Lanterns' split now
+(`lanterns_split`, for #21 to read), with the company on Averil's side, or leaves the prior his
+Watch; 32 puts a wall in it.
 
-No change to #56's drafts. 31 opens the Lanterns' split now, with the company on the sister's side,
-or leaves the prior his Watch (#21); 32 puts a wall in it.
+- **Under the Glass Trees.** Garret or Nell met (`q_family`), Averil asks: Give us the lamp hands the
+  warding lamp (`q_family_lamp`), which Garret takes at the meeting (`q_family_lit`); We'll bring them
+  to you (`q_family_come`) is carried to Garret, whose words set `q_family_gone`, and he and Nell move
+  to the refectory and the cabin stands shut.
+- **The Dammed Fall.** Orm (`q_dam`), the dam seen or its gleaners killed begins it; the gleaners stay
+  dead, and Hew sits on the dam's end. Break it (`q_dam_broken`): Sunderfall runs, L2's lookout hears
+  it and K3's first landing's gleaners stop. We'll take the tally (`q_dam_kept`): the foreman's tally,
+  a letter naming Sheer Point.
+- **The Watch's Lamp.** From `papers_read` the great lamp is dark: the gate, the yard by night and the
+  oil jars say so. Averil (`q_lamp`) or the cut wick in the Lamp Gallery (`lw_wick`) begins it;
+  Cuthwin counts the casks (`q_lamp_casks`); the wick seen, Osric owns it. We'll tell her
+  (`q_lamp_exposed`, `lanterns_split`): he moves to his room. We'll let it be (`q_lamp_kept`): the
+  Watch's map, a letter that marks no secret. Either lights the lamp.
+- **The Length of the Wall.** Brink met (`wall_met`) and the wall touched, he asks (`q_wall`); the
+  strip's east end (`su2_east_end`, which sets `q_wall_east`) and its west, the fall at the chalk's
+  end (`su2_fall`), walked, he puts the choice: Sell the measure (`q_wall_sold`, 500 gold) or We'll
+  tell the Watch too (`q_wall_told`), which Averil and the Reader each say once.
 
 ## 7. Encounters, and what is new
 
@@ -781,13 +804,13 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   | J3 | 800 | 1,073 | built |
   | M2 | 800 | 948 | built |
   | The Watch | 300 | 0 | its quests are 31 and 32 (#453) |
-  | Side quests | 900 | 500 | planned: 29 and 30 110 each, 31 and 32 140 each (§6, #205) |
+  | Side quests | 900 | 500 | built: 29 and 30 110 each, 31 and 32 140 each (§6, #205) |
   | **The area** | 11,500 | 11,474 | 12,400 before #453 |
 
   The boxes as built pay 10,974 (the curve's own count, every group once), and the area as planned
   11,474 against the curve's 11,467, under a tenth of a per cent over. The depths add about 1,350
-  when they are built (450 each). Until the side quests are, a clear gives 10,974, the floor the
-  owed record in `progression.ts` holds. A company should leave the Watch at 16, where the midpoint
+  when they are built (450 each). With the side quests built (#205) a clear gives 11,474, and the
+  owed record in `progression.ts` keeps only the gold. A company should leave the Watch at 16, where the midpoint
   is, with the Kilns' floor ahead.
 - **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
@@ -982,6 +1005,66 @@ Decided by delegate for #453, each the owner's to overturn:
    the aim (the Sunder's wood 9.8, its first spiders 10.4, J3's brood 9.4, M2's hounds 8.9).
 6. **The area as planned comes to 11,474,** the boxes 10,974 with the side quests' 500, against the
    curve's 11,467; the owed floor in `progression.ts` falls to 10,974 with it.
+
+Decided by delegate for #205, each the owner's to overturn:
+
+1. **The flags are `q_family`, `q_dam`, `q_lamp` and `q_wall` and their kin, not the issue's `q_glass`,**
+   which is Thornmark's (The Dark Glass). `lanterns_split` is set with `q_lamp_exposed` for #21 to
+   read; the quests are `family`, `dam`, `watch_lamp` and `length`, and the chapter keeps `wall`.
+2. **The people on main win:** Osric is the issue's Oswy and Brink its Hollin, and Orm and Garret keep
+   their names as built. L2's young sister is named Averil, a sister of the Watch. The issue's lines
+   are redrafted to them.
+3. **Old saves keep:** a flag added to a person's first meeting is set the next time they are met,
+   and every `sets` is on a new event. Old events only take `until`, which hides them (EXPANSION §5.5).
+4. **Averil stands on L2 until the papers are read, and at the foot of the lamp's stair in the
+   Lantern Hall after:** 31's person who moves (#201, 4). Her L2 lines stay word for word, since they
+   carry the knoll's hint, and her first meeting in either place is always her own lines
+   (`averil_met`): the family's question and the wall's line wait on it.
+5. **Averil's words go open questions first, then lines said once, then after-lines, the newest
+   quest first, and the after-lines are the hall's only:** the first of a person's words that holds
+   is said and an after-line holds for ever, so in any other order one quest's end would stop the
+   next being put, and on L2 she would never come back to the knoll's hint. A line said once sets a
+   flag and is `until` it.
+6. **29 is given at the steading:** Garret's first and third paragraphs stay as #196 wrote them, the
+   dog's among them, and his second is redrafted for the daughter and the graves. Nell, the cutter's
+   daughter, new beside him (23,8), shows the wrist. Meeting either sets `q_family`.
+7. **The warding lamp is a quest thing at no price, not a ware:** the stores' stock stands, and the
+   Watch is "one lamp short" in words only. Garret's after-lines end on the dog, so the hint is never
+   lost.
+8. **29's title is Under the Glass Trees:** #56's The Family at the Glass Trees is wider than the
+   log's list (185 pixels of 172).
+9. **30 is given at the shrine, or by the dam seen or its gleaners killed:** Orm's first two
+   paragraphs stay as #197 wrote them and the third sends the company up the river to the dam.
+10. **The dam's gleaners (`k2_dam`) come back no more,** so the foreman can wait on them; Hew sits on
+    the dam's west end (20,10) once they are dead, until either answer. The curve counts every group
+    once, so the xp stands.
+11. **Break it stops K3's first landing's gleaners and says the fall running,** at Sunderfall and L2's
+    lookout. The ledges stay walkable, the chapter's way down: the water runs down them, never a
+    flood. The shrine's look stays, since a twin would bless twice.
+12. **The great lamp goes dark on `papers_read` and is lit by either answer to 31:** L2's gate and the
+    yard by night have a dark twin and a lit twin each, and `lw_oil` hides. The gate's lines are
+    shortened to two, so that the lit and the unlit together fit the log.
+13. **The cut wick is found, not told:** `lw_wick`, on the Lamp Gallery's door, is there from the
+    papers until the lamp is lit, for anyone who climbs to train, and it alone opens the prior's
+    confession, so a company that finds it before Averil asks has the quest and its end.
+14. **Osric's words go: a dark-lamp introduction, the confession and the choice, the let-be after-lines,
+    the oil sold, then the warm chair:** the introduction holds from the papers until
+    `watch_prior_met`, since his first lines say the lamp burns.
+15. **Brother Cuthwin, new in the stores, counts eleven casks** once the lamp is asked about, and sets
+    `q_lamp_casks`, which the log reads and nothing waits on.
+16. **The Watch's map marks no secret:** the secret is found, never told, and the one at the wall's
+    west end has its chalk. It holds the Lanterns' ledges, each named, and below the lowest one line
+    ruled edge to edge, the Watch's own to Brink's.
+17. **32 waits on the wall touched:** Brink's first meeting keeps his lines, the wall's hint, and he
+    asks for the length only of a company that has been down, since his line never reached the bottom.
+18. **The east end is a new event at the strip's end (28,25), which sets `q_wall_east`;** the west is
+    `su2_fall`. A condition takes one `seen`, so the flag carries one end and the seen the other.
+19. **The measure sold pays 500 gold:** a step past Thornmark's and Saltreach's dearest hand-ins (400
+    and 300), and telling costs the company something.
+20. **Each answer pays its quest's xp, split among the living,** by `pay` on an answer (#573). 29 pays
+    at Averil's answer, since the lamp's hand-in pays nothing. The curve counts the least of a
+    question's answers, once a question, so the xp owed goes and the gold floor stays at 4,242.
+21. **Levels are not enforced:** no person turns away a company under 15 (#56's rules, no story lock).
 
 ## 10. Names
 

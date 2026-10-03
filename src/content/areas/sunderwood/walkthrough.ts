@@ -30,7 +30,12 @@
 // grave found from the milestone's back, and the box's groups won at its floor. Then the Bears'
 // Wood (J3, #202): the cutters' track down out of J2, the hermit's word, the den's keepers and
 // brood won and the den burnt, the cache behind it found from the moths at its mouth, and the way
-// on east into K3's west lip. Last, the Paladin's second prestige, taught by the hermit in J3's
+// on east into K3's west lip.
+//
+// Then its side quests (#205), each choice played both ways and the log read after either: Under the
+// Glass Trees, the lamp taken to the cabin or the family brought over the bridge; The Dammed Fall, the
+// dam broken or the tally kept; The Watch's Lamp, the prior told on or let be; The Length of the
+// Wall, the measure sold or the Watch told. Last, the Paladin's second prestige, taught by the hermit in J3's
 // clearing (#19): heard after his hint, and taught at 19.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
@@ -48,17 +53,18 @@ import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature } from '../../../game/map.ts';
+import type { Feature, EncounterDef } from '../../../game/map.ts';
 import { buy, item } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, CLASSES, rest, guildFlag, trainPrice, levelUp, countItem, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { questLog } from '../../../game/quests.ts';
+import type { PageView } from '../../../game/quests.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { ACT_II } from '../../../../tools/tests/ladder.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import { meet, heard, answer } from '../../../game/people.ts';
+import { meet, heard, answer, readText } from '../../../game/people.ts';
 import { approach, burn, burnt } from '../../../game/dens.ts';
 import type { Den } from '../../../game/dens.ts';
 import type { Person } from '../../../game/people.ts';
@@ -77,10 +83,10 @@ const HERMIT = J3.features!.find((f) => f.kind === 'npc' && f.name.startsWith('A
 const DEN = J3.features!.find((f): f is Den => f.kind === 'den')!;
 const WATCH = MAP_DEFS.find((d) => d.id === 'lantern_watch')!;
 const READER = WATCH.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Hester Dunmore')) as Person;
-const PRIOR = WATCH.features!.find((f) => f.kind === 'npc' && f.name === 'Prior Osric') as Person;
+const PRIOR = WATCH.features!.find((f) => f.kind === 'npc' && f.name === 'Prior Osric' && f.x === 8 && f.y === 9) as Person;
 const LEDGES = MAP_DEFS.find((d) => d.id === 'the_sunder')!;
 const FLOOR = MAP_DEFS.find((d) => d.id === 'the_sunder2')!;
-const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'A young sister of the Watch') as Person;
+const SISTER = L2.features!.find((f) => f.kind === 'npc' && f.name === 'Averil, a sister of the Watch') as Person;
 const VASK = WATCH.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Lord Aumery Vask')) as Person;
 
 // ---- the chapter (#204) ----
@@ -231,6 +237,7 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
 
 export const walkthrough: Walkthrough = (ok) => {
   theWall(ok);
+  sideQuests(ok);
 
   const w = newWalk(ok);
   w.level = 14;
@@ -663,4 +670,198 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   w.party.gold = 4000;
   ok(teach(HERMIT.teaches!, w.party, w.world.state, paladin).taught && prestigeOf(w.party.members[paladin]) === 2 && w.party.gold === 0
     && questLog(w.world.state, w.party).find((v) => v.def.id === seekId(paladin, 2))?.done === true, `he makes a ${PRESTIGES.paladin.titles[1]} for 4,000 gold, and the seeking is done`);
+}
+
+// ---- the side quests (#205) ----
+
+/** A side quest's page as the log shows it now. */
+const page = (w: Walk, id: string): PageView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+
+/** The person on `map` whose name starts so and who stands on `x,y`: one of a person's places. */
+function who(map: string, x: number, y: number, name: string): Person {
+  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name));
+  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
+  return p;
+}
+const GARRET = (): Person => who('eaves_j2', 22, 8, 'Garret'), NELL = (): Person => who('eaves_j2', 23, 8, 'Nell');
+const GARRET_IN = (): Person => who('lantern_watch', 10, 7, 'Garret'), NELL_IN = (): Person => who('lantern_watch', 10, 7, 'Nell');
+const AVERIL_ROAD = (): Person => who('lanternwood_l2', 17, 22, 'Averil'), AVERIL_HALL = (): Person => who('lantern_watch', 7, 8, 'Averil');
+const ORM = (): Person => who('eaves_k2', 14, 27, 'Orm'), HEW = (): Person => who('eaves_k2', 20, 10, 'Hew');
+const OSRIC = (): Person => who('lantern_watch', 8, 9, 'Prior Osric'), OSRIC_IN = (): Person => who('lantern_watch', 5, 5, 'Prior Osric');
+const ROOM = (): Person => who('lantern_watch', 5, 5, "The Prior's Room"), CUTHWIN = (): Person => who('lantern_watch', 10, 5, 'Brother Cuthwin');
+const BRINK = (): Person => who('lantern_watch', 2, 4, 'Wouter Brink');
+
+/** Whether a person stands where they are listed now. */
+const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
+
+/** What a person says at the next meeting, as the game would have it. */
+function hear(w: Walk, map: string, p: Person): string {
+  w.world.travel(map, p.x, p.y);
+  const said = meet(p, w.party, heard(w.world, p)).text;
+  listen(w);
+  return said;
+}
+
+/** Meet a person and answer the question they put with `label`; what the answer says. */
+function answerTo(w: Walk, map: string, p: Person, label: string): string {
+  w.world.travel(map, p.x, p.y);
+  const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.label === label);
+  w.ok(!!a, `${p.name.split(',')[0]} asks, and '${label}' is an answer (${m.choice?.ask ?? 'no question'})`);
+  const said = a ? answer(a, w.party) : '';
+  listen(w);
+  return said;
+}
+
+/** A feature or group of `map` by its id, and whether it is there now. */
+function shows(w: Walk, map: string, id: string): boolean {
+  const d = MAP_DEFS.find((m) => m.id === map)!;
+  const f = [...(d.features ?? []), ...(d.encounters ?? [])].find((x) => 'id' in x && x.id === id) as Feature | EncounterDef;
+  w.world.travel(map, f.x, f.y);
+  return 'monsters' in f ? w.world.walks(f, f.x, f.y) && !w.world.ended(f) : w.world.present(f);
+}
+
+/** A quest done with no goal, its entries those `want` names and none of `not`, finished once. */
+function reads(w: Walk, id: string, title: string, want: readonly string[], not: readonly string[], how: string): void {
+  const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [];
+  const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
+  w.ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
+    `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
+}
+
+/** Each member's xp now, to see what an answer paid. */
+const xps = (w: Walk): number[] => w.party.members.map((m) => m.xp);
+const paid = (w: Walk, before: readonly number[], each: number): boolean => w.party.members.every((m, i) => m.xp === before[i] + each);
+
+const FAMILY = 'Under the Glass Trees', DAM = 'The Dammed Fall', LAMP = 'The Watch\'s Lamp', LENGTH = 'The Length of the Wall';
+
+function sideQuests(ok: (cond: boolean, msg: string) => void): void {
+  { // Under the Glass Trees: the warding lamp, the papers unread, so Averil is on the road.
+    const w = newWalk(ok);
+    w.ok(hear(w, 'eaves_j2', GARRET()).includes('Never minded the bear') && w.news.at(-1) === `New quest: ${FAMILY}.` && /Averil/.test(page(w, 'family')?.goal ?? ''),
+      `Garret's first meeting keeps the dog and begins ${FAMILY}, its goal Averil (${page(w, 'family')?.goal})`);
+    see(w, 'eaves_j2:j2_graves');
+    w.ok(hear(w, 'lanternwood_l2', AVERIL_ROAD()).includes('I burnt it on the knoll'), 'Averil met first on the road says her own lines, the knoll\'s hint');
+    const before = xps(w);
+    answerTo(w, 'lanternwood_l2', AVERIL_ROAD(), 'Give us the lamp.');
+    w.ok(w.party.bag.includes('warding_lamp') && paid(w, before, 110) && /warding lamp to Garret/.test(page(w, 'family')?.goal ?? ''), `the lamp given, it is in the pack, each member is paid 110 and the goal is Garret (${page(w, 'family')?.goal})`);
+    w.ok(hear(w, 'eaves_j2', GARRET()).startsWith('Garret turns the lamp') && !w.party.bag.includes('warding_lamp'), 'Garret takes the lamp at the meeting');
+    reads(w, 'family', FAMILY, ['garret', 'graves', 'lamp', 'lit'], ['promise', 'gone'], 'the lamp lit');
+    w.ok(hear(w, 'eaves_j2', GARRET()).includes('Dog still won\'t go up the north path') && there(w, GARRET(), 'eaves_j2') && !there(w, GARRET_IN(), 'lantern_watch'), "Garret's after-lines end on the dog, and he stays at his cabin");
+    w.ok(hear(w, 'lanternwood_l2', AVERIL_ROAD()).includes('I burnt it on the knoll'), 'on the road Averil comes back to her own lines');
+  }
+  { // The family brought over: the papers read, Averil in the hall, Nell met first.
+    const w = newWalk(ok);
+    w.party.flags.papers_read = 1;
+    w.ok(!there(w, AVERIL_ROAD(), 'lanternwood_l2') && there(w, AVERIL_HALL(), 'lantern_watch'), 'the papers read, Averil has gone from the road to the hall');
+    hear(w, 'eaves_j2', NELL());
+    w.ok(w.news.at(-1) === `New quest: ${FAMILY}.`, `Nell's first meeting begins ${FAMILY}`);
+    w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).includes('It went out the night the papers were read') && page(w, 'watch_lamp')?.begun === true, 'met first in the hall, Averil speaks of the lamp, and The Watch\'s Lamp begins');
+    const before = xps(w);
+    answerTo(w, 'lantern_watch', AVERIL_HALL(), 'We\'ll bring them to you.');
+    w.ok(paid(w, before, 110) && /promise/.test(page(w, 'family')?.goal ?? '') && !w.party.bag.includes('warding_lamp'), `the promise carried, each member is paid 110, no lamp, and the goal is Garret (${page(w, 'family')?.goal})`);
+    w.ok(hear(w, 'eaves_j2', GARRET()).startsWith('Garret listens'), 'Garret hears the promise');
+    reads(w, 'family', FAMILY, ['garret', 'promise', 'gone'], ['lamp', 'lit'], 'the family brought over');
+    w.ok(!there(w, GARRET(), 'eaves_j2') && !there(w, NELL(), 'eaves_j2') && !shows(w, 'eaves_j2', 'j2_steading') && shows(w, 'eaves_j2', 'j2_cabin_shut'), 'Garret and Nell are gone from the cabin, which stands shut');
+    w.ok(there(w, GARRET_IN(), 'lantern_watch') && there(w, NELL_IN(), 'lantern_watch') && hear(w, 'lantern_watch', NELL_IN()).includes('Mam\'s not in the trees'), 'they are in the refectory');
+    w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).startsWith('"They\'re in the refectory'), 'Averil\'s after-lines are the family\'s');
+  }
+  { // The Dammed Fall: Orm's ask, the dam's gleaners won, the dam broken.
+    const w = newWalk(ok);
+    w.level = 15;
+    w.ok(hear(w, 'eaves_k2', ORM()).includes('The shrine\'s owed a fall') && w.news.at(-1) === `New quest: ${DAM}.` && /dam/.test(page(w, 'dam')?.goal ?? ''), `Orm's first meeting begins ${DAM}, its goal the dam (${page(w, 'dam')?.goal})`);
+    see(w, 'eaves_k2:k2_dam');
+    w.ok(!there(w, HEW(), 'eaves_k2'), 'before the gleaners are dead, Hew is not on the dam');
+    fight(w, 'eaves_k2:k2_dam');
+    w.ok(there(w, HEW(), 'eaves_k2') && /Hew/.test(page(w, 'dam')?.goal ?? ''), `the gleaners dead, Hew sits on the dam's end, and the goal is his question (${page(w, 'dam')?.goal})`);
+    const before = xps(w);
+    answerTo(w, 'eaves_k2', HEW(), 'Break it.');
+    w.ok(paid(w, before, 110) && !there(w, HEW(), 'eaves_k2'), 'the dam broken, each member is paid 110 and Hew is gone');
+    reads(w, 'dam', DAM, ['orm', 'dam', 'hew', 'broken'], ['kept'], 'the dam broken');
+    w.ok(shows(w, 'eaves_k2', 'k2_fall_running') && !shows(w, 'eaves_k2', 'k2_fall') && shows(w, 'lanternwood_l2', 'l2_lookout_fall') && !shows(w, 'lanternwood_l2', 'l2_lookout'), 'Sunderfall runs, and L2\'s lookout hears it');
+    w.ok(!shows(w, 'eaves_k3', 'k3_door') && !shows(w, 'eaves_k2', 'k2_dam'), 'the gleaners on K3\'s first landing come no more, and the dam is gone');
+    walkThrough(w, 'eaves_k3', 10, 7, SOUTH, 'the_sunder', 2);
+    w.ok(hear(w, 'eaves_k2', ORM()).startsWith('Orm on his stone'), 'Orm\'s after-lines are the running fall\'s, and the way down the ledges still opens');
+  }
+  { // The Dammed Fall: the gleaners won before Orm is met, and the tally kept.
+    const w = newWalk(ok);
+    w.level = 15;
+    fight(w, 'eaves_k2:k2_dam');
+    w.ok(w.news.at(-1) === `New quest: ${DAM}.` && /Hew/.test(page(w, 'dam')?.goal ?? ''), `the gleaners killed first, ${DAM} begins, its goal Hew (${page(w, 'dam')?.goal})`);
+    const before = xps(w);
+    answerTo(w, 'eaves_k2', HEW(), 'We\'ll take the tally.');
+    w.ok(paid(w, before, 110) && w.party.bag.includes('foremans_tally') && (readText('foremans_tally') ?? []).join(' ').includes('SHEER POINT'), 'the tally kept, each member is paid 110, and the letter names Sheer Point');
+    reads(w, 'dam', DAM, ['hew', 'kept'], ['broken'], 'the tally kept, Orm never met');
+    w.ok(shows(w, 'eaves_k2', 'k2_fall') && !shows(w, 'eaves_k2', 'k2_fall_running') && shows(w, 'eaves_k3', 'k3_door'), 'the fall stays quiet and K3\'s gleaners still come');
+    w.ok(hear(w, 'eaves_k2', ORM()).startsWith('"Still dry.'), 'Orm, met after, says the dam kept');
+  }
+  { // The Watch's Lamp: dark from the papers, Averil's ask, the casks, the wick, and the prior told on.
+    const w = newWalk(ok);
+    clock(w, 12);
+    w.ok(shows(w, 'lanternwood_l2', 'l2_gate') && !shows(w, 'lanternwood_l2', 'l2_gate_dark') && !page(w, 'watch_lamp'), 'before the papers are read the lamp burns, and there is no quest');
+    w.party.flags.papers_read = 1;
+    w.ok(!shows(w, 'lanternwood_l2', 'l2_gate') && shows(w, 'lanternwood_l2', 'l2_gate_dark') && !shows(w, 'lanternwood_l2', 'l2_gate_lit'), 'the papers read, the gate says the lamp is dark');
+    clock(w, 0);
+    w.ok(shows(w, 'lantern_watch', 'lw_lamp_night_dark') && !shows(w, 'lantern_watch', 'lw_lamp_night'), 'and by night the yard has no moths');
+    hear(w, 'lantern_watch', AVERIL_HALL());
+    w.ok(w.news.at(-1) === `New quest: ${LAMP}.` && /casks/.test(page(w, 'watch_lamp')?.goal ?? ''), `Averil begins ${LAMP}, its goal the casks and the lamp (${page(w, 'watch_lamp')?.goal})`);
+    w.ok(hear(w, 'lantern_watch', OSRIC()).includes('it is out'), 'the prior, met after the papers, says his lamp is out');
+    w.ok(hear(w, 'lantern_watch', OSRIC()).includes('The oil was sold'), 'then that the oil was sold');
+    w.ok(there(w, CUTHWIN(), 'lantern_watch') && hear(w, 'lantern_watch', CUTHWIN()).includes('Eleven') && page(w, 'watch_lamp')?.entries.some((e) => e.id === 'casks') === true, 'Cuthwin in the stores counts eleven casks');
+    see(w, 'lantern_watch:lw_wick');
+    w.ok(w.world.used('lw_wick') && /wick/.test(page(w, 'watch_lamp')?.goal ?? ''), `up at the Lamp Gallery the wick is seen cut, and the goal is the prior (${page(w, 'watch_lamp')?.goal})`);
+    const before = xps(w);
+    answerTo(w, 'lantern_watch', OSRIC(), 'We\'ll tell her.');
+    w.ok(paid(w, before, 140) && !!w.party.flags.lanterns_split, 'the prior told on, each member is paid 140, and the split at the Watch opens');
+    reads(w, 'watch_lamp', LAMP, ['dark', 'casks', 'wick', 'exposed'], ['kept'], 'the prior told on');
+    w.ok(!there(w, OSRIC(), 'lantern_watch') && there(w, OSRIC_IN(), 'lantern_watch') && hear(w, 'lantern_watch', ROOM()).includes('the prior at the desk'), 'the prior has left the yard for his room, and the room says so');
+    w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).startsWith('The great lamp turns overhead'), 'Averil\'s after-lines are the lamp lit');
+    w.ok(shows(w, 'lantern_watch', 'lw_lamp_lit') && !shows(w, 'lantern_watch', 'lw_wick') && shows(w, 'lantern_watch', 'lw_lamp_night_lit'), 'the gallery and the yard have the lamp lit again');
+    clock(w, 12);
+    w.ok(shows(w, 'lanternwood_l2', 'l2_gate_lit') && !shows(w, 'lanternwood_l2', 'l2_gate_dark'), 'and so has the gate');
+  }
+  { // The Watch's Lamp: the wick found before Averil asks, and let be for the Watch's map.
+    const w = newWalk(ok);
+    w.party.flags.papers_read = 1;
+    see(w, 'lantern_watch:lw_wick');
+    w.ok(w.news.at(-1) === `New quest: ${LAMP}.` && /wick/.test(page(w, 'watch_lamp')?.goal ?? ''), `the wick found first begins ${LAMP}, its goal the prior (${page(w, 'watch_lamp')?.goal})`);
+    w.ok(hear(w, 'lantern_watch', OSRIC()).includes('it is out'), 'the prior meets the company first');
+    const before = xps(w);
+    answerTo(w, 'lantern_watch', OSRIC(), 'We\'ll let it be.');
+    w.ok(paid(w, before, 140) && w.party.bag.includes('watch_map') && (readText('watch_map') ?? []).join(' ').includes('ruled edge to edge') && !w.party.flags.lanterns_split, 'let be, each member is paid 140, the Watch\'s map is in the pack, and nothing splits');
+    reads(w, 'watch_lamp', LAMP, ['wick', 'kept'], ['dark', 'exposed'], 'the prior let be');
+    w.ok(there(w, OSRIC(), 'lantern_watch') && !there(w, OSRIC_IN(), 'lantern_watch') && hear(w, 'lantern_watch', OSRIC()).startsWith('"It burns.'), 'the prior stays in the yard, and his after-lines are the price');
+    w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).includes('It went out the night') && hear(w, 'lantern_watch', AVERIL_HALL()).startsWith('"The oil came.'), 'Averil, met after, speaks of the lamp once, then says the oil came');
+  }
+  { // The Length of the Wall: asked once the wall is touched, both ends walked, the measure sold.
+    const w = newWalk(ok);
+    w.ok(hear(w, 'lantern_watch', BRINK()).includes('My line ran out') && !page(w, 'length'), 'Brink met before the wall says his own lines, and asks nothing');
+    see(w, 'the_sunder2:su2_wall');
+    hear(w, 'lantern_watch', BRINK());
+    w.ok(w.news.at(-1) === `New quest: ${LENGTH}.` && /west till it ends/.test(page(w, 'length')?.goal ?? ''), `the wall touched, Brink asks its length (${page(w, 'length')?.goal})`);
+    see(w, 'the_sunder2:su2_east_end');
+    w.ok(!!w.party.flags.q_wall_east && /Walk/.test(page(w, 'length')?.goal ?? ''), 'the east end walked, the west is still to walk');
+    see(w, 'the_sunder2:su2_fall');
+    w.ok(/Answer Brink/.test(page(w, 'length')?.goal ?? ''), `both ends walked, the goal is Brink (${page(w, 'length')?.goal})`);
+    const before = xps(w), gold = w.party.gold;
+    answerTo(w, 'lantern_watch', BRINK(), 'Sell the measure.');
+    w.ok(paid(w, before, 140) && w.party.gold === gold + 500, 'the measure sold, each member is paid 140 and the company 500 gold');
+    reads(w, 'length', LENGTH, ['brink', 'east', 'both', 'sold'], ['told'], 'the measure sold');
+    w.ok(hear(w, 'lantern_watch', BRINK()).startsWith('"It\'s in the post'), 'Brink\'s after-lines are the sale\'s');
+  }
+  { // The Length of the Wall: the ends walked before he asks, and the Watch told; Averil and the Reader say so once.
+    const w = newWalk(ok);
+    see(w, 'the_sunder2:su2_wall');
+    see(w, 'the_sunder2:su2_fall');
+    see(w, 'the_sunder2:su2_east_end');
+    hear(w, 'lantern_watch', BRINK());
+    w.ok(!page(w, 'length') && hear(w, 'lantern_watch', BRINK()).startsWith('"You\'ve been down') && /Answer Brink/.test(page(w, 'length')?.goal ?? ''), 'the ends walked first, Brink introduces himself, then asks, and his question is next');
+    const before = xps(w), gold = w.party.gold;
+    answerTo(w, 'lantern_watch', BRINK(), 'We\'ll tell the Watch too.');
+    w.ok(paid(w, before, 140) && w.party.gold === gold, 'the Watch told, each member is paid 140 and no gold');
+    reads(w, 'length', LENGTH, ['brink', 'east', 'both', 'told'], ['sold'], 'the Watch told');
+    const road = [hear(w, 'lanternwood_l2', AVERIL_ROAD()), hear(w, 'lanternwood_l2', AVERIL_ROAD()), hear(w, 'lanternwood_l2', AVERIL_ROAD())];
+    w.ok(road[0].includes('I burnt it on the knoll') && road[1].startsWith('"The surveyor\'s wall.') && road[2].includes('I burnt it on the knoll'), 'Averil on the road says the wall once, after her own lines, and goes back to them');
+    w.party.flags.watch_reader_met = 1;
+    w.ok(hear(w, 'lantern_watch', READER).startsWith('"The surveyor\'s six words') && !hear(w, 'lantern_watch', READER).startsWith('"The surveyor\'s six words'), 'the Reader says the wall once');
+  }
 }

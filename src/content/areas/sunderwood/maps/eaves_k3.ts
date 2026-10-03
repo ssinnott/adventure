@@ -93,7 +93,8 @@ export const EAVES_K3: MapDef = {
     // On the first landing by the way cut into the rock, the gleaners and their hounds, chipping at
     // it, on a ledge a square wide, between the company and their camp below; and in the dead wood east of the crystal
     // at the far south end, the glass bears.
-    { id: 'k3_door', x: 9, y: 8, monsters: ['ashen_gleaner', 'ashen_gleaner', 'sunder_hound', 'sunder_hound'], aware: 3, respawn: 2880, roams: false },
+    // Once Sunderfall runs again the water is down the ledges and the gleaners come no more (#205).
+    { id: 'k3_door', x: 9, y: 8, monsters: ['ashen_gleaner', 'ashen_gleaner', 'sunder_hound', 'sunder_hound'], aware: 3, respawn: 2880, roams: false, until: { flag: 'q_dam_broken' } },
     { id: 'k3_bears', x: 23, y: 29, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false },
   ],
 };
