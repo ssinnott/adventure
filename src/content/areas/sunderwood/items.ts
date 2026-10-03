@@ -47,6 +47,16 @@ export const ITEMS: readonly ItemDef[] = [
   P(chain, 2),
   // I2's secret (#195): the Watch's last patrol's, under the milestone.
   P(halberd, 1, { id: 'wardens_halberd', name: "Warden's Halberd +1" }),
+  // The depths' secrets (#203): the Hand's store above L4's landing, and K4's boathouse at the
+  // gorge's foot with the depths' roll of Lanterns, read from the pack. L3's lamp-house gives K2's
+  // Long Sword +2 again.
+  P(wardensDirk, 2),
+  P(flail, 2),
+  { id: 'lanterns_roll', name: "The Lanterns' Roll", slot: 'none', price: 0, text: [
+    'THE LANTERNS OF THE DEPTHS, the hand steady, and under it the names in a column as a prior keeps them, a lamp beside each and the lamp\'s place.',
+    'Every name is struck through. The strokes are one hand\'s, one ink, done at one sitting, the pen pressed hard enough to cut.',
+    'One name is not struck. LEOFRUN, the moth shrine. Beside it, in a smaller hand and later: STILL LIT.',
+  ] },
   // The side quests' (#205): no shop buys them. Garret takes the lamp; the tally and the map are
   // letters, read from the pack, and stay in it.
   { id: 'warding_lamp', name: 'Warding Lamp', slot: 'none', price: 0 },

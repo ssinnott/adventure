@@ -54,7 +54,7 @@ export const LANTERNWOOD_L2: MapDef = {
     'TTTTTTTTTTTTTTTTTTTtttttttt===~~',
     'TTTTTTTTTTTTTTTTTTTtttttTTttt===',
     'TTTTTTTTTTTTTTTTTTTTTTTTTTTTttt~',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM~',
+    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMtt~~',
   ],
   exits: [
     { x: 12, y: 16, to: 'lantern_watch', tx: 7, ty: 14, tf: NORTH, label: 'You go in under the gate, through the moth dust on the step, into the Watch\'s yard.' },

@@ -12,8 +12,9 @@ main at `2cc52cd` (29 September 2026) with `worldGrid` (`src/game/atlas.ts`).
 
 Eight maps are built: I2, the Eaves' way in (#195), which lists the area, J2, the Eaves (#196), K2,
 Sunderfall (#197), K3, the Sunder's mouth (#198), with its Rift, L2, Lanternwood (#200), and Lantern
-Watch, the town behind L2's gate (#201); the Sunder's two levels below K3 (#199); and J3, the Bears'
-Wood, and M2, the Fells Road (#202). Its content is
+Watch, the town behind L2's gate (#201); the Sunder's two levels below K3 (#199); J3, the Bears'
+Wood, and M2, the Fells Road (#202); and Lanternwood's depths, L3, the Moth Wood, L4, the Bay Wood, and
+K4, the Sunder's Foot (#203). Its content is
 `src/content/areas/sunderwood/` (maps, monsters, items, its chapter of the one quest, The Wall, in
 `chapter.ts` (#204), its side quests in `quests.ts`, climate and its part of the world map) and its
 businesses' rooms `src/ui/interiors/sunderwood/`. Its ids: the area `sunderwood`, its zones `eaves`
@@ -28,8 +29,8 @@ The atlas makes Sunderwood two zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Eaves | 14–16 | 7,155 | I2, the Eaves' way in, laid at 264,30 (#195); J2, the Eaves, at 296,30 (#196); K2, Sunderfall, at 328,30 (#197); K3, the Sunder's mouth, at 328,62 (#198); J3, the Bears' Wood, at 296,62 (#202) |
-| Lanternwood | 15–16 | 8,802 | L2, Lanternwood, laid at 360,30 (#200); M2, the Fells Road, at 392,30 (#202) |
-| The area | 14–16 | 15,957 | seven boxes |
+| Lanternwood | 15–16 | 8,802 | L2, Lanternwood, laid at 360,30 (#200); M2, the Fells Road, at 392,30 (#202); L3, the Moth Wood, at 360,62, L4, the Bay Wood, at 360,94, and K4, the Sunder's Foot, at 328,94 (#203) |
+| The area | 14–16 | 15,957 | ten boxes |
 
 Squares are the land the zone check counts in each zone with K2 and K3 laid in the Eaves (#197,
 #198) and L2 in Lanternwood (#200). K2 moved the zone line east and L2 moved it back west. K3 takes
@@ -47,7 +48,13 @@ east through the Fells' unbuilt land, into M3, N2, N3, O2 and O3: the Iron Fells
 and Lanternwood rises from 5,927 to 8,802, Kilnmouth and the Kilns losing a little. Nobody walks it, since
 that land is void in play, but the world map paints it so. Holding the Fells' line wants seeds in the
 Iron Fells' row in `src/content/atlas.ts`, a shared file, one a square down x 424 as K3's hold
-Lanternwood's: proposed (§9, #202's 2), not made here. The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+Lanternwood's: proposed (§9, #202's 2), not made here (#429 made it). L3, L4 and K4 (#203), laid whole
+in Lanternwood, put K3's seeds and the one at 370,96 inside laid maps, so they go. Counted by `worldGrid`
+before and after: Lanternwood rises from 6,097 to 7,763; K4 takes 128 of the Eaves' (7,155 to 7,027) and
+270 of the Deepthorn's (5,113 to 4,843); and the walk from L4's south and east edges runs on into the cut
+L5 and M4, so Kilnmouth falls from 5,108 to 3,961 and the Iron Fells from 3,361 to 3,286. Nobody walks it;
+holding Kilnmouth's line wants seeds in its rows in `src/content/atlas.ts`, a shared file, as #429 held the
+Fells': proposed (§9, #203's 9), not made here. The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
 included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
@@ -173,6 +180,26 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   beside it, a shrine at the river's bend, a camp on a gravel bar and the cairn and lookout on the hills.
   Three groups: two sunder hounds and a moth up the river, two deathsheads at the camp by night and two
   glass bears under the range.
+- **The Moth Wood** (L3, `lanternwood_l3`, country, band 15–16; #203): Lanternwood's old forest south of
+  the Watch, the river from L2's corner down it to the south-west. The Lanterns' bank path comes down
+  beside the river out of L2's south ring and crosses by a gravel bar at the box's foot; off it the old
+  path runs west to the moth shrine in a clearing, its lamp a shard of the Sunder's glass lit cold, where
+  Sister Leofrun, who stayed when the depths were called up, teaches the Cleric's second prestige (#19). A
+  fallen wayside lamp, a cairn at the fork, a camp in the clearing and, up a thicket behind the hooks in
+  the oaks, the Lanterns' lamp-house. Two groups: sunder hounds and a moth on the bank path and two
+  deathsheads by night at the crossing.
+- **The Bay Wood** (L4, `lanternwood_l4`, country, band 15–16; #203): the river on to Sunder Bay, a meadow
+  and shingle at its mouth, hills and the range to the east. A den under the hill's foot where a sow gone
+  to glass bears cubs born glass; a stone Lantern at the river's mouth with a riddle; a mooring post, a
+  cairn, a camp on the meadow, a lookout over the bay; and the Hand's store cut into the mountain above
+  the landing. Three groups: a deathshead and two hounds by night on the bank, the den's brood and the sow
+  and her last beside it.
+- **The Sunder's Foot** (K4, `lanternwood_k4`, country, band 15–16; #203): the gorge's last reach, dead
+  wood on both lips and crystal on the east, the chasm closing to a crack above the shingle. In from K3's
+  east lip; round the foot to the west lip, a pocket, and east along the shingle to L4. Its west edge is
+  rock against the Deepthorn's J4. A way-mark, a cairn, a camp, the foot's lookout and, behind the rock
+  where the steps stop, the depths' Lanterns' boathouse. Two groups: two of the Hand's gleaners and a hound
+  at the foot and two deathsheads by night on the west lip.
 - **Lantern Watch** (`lantern_watch`, town, band 14–16; #201): one tower in a walled yard over the
   gorge, through L2's gate. The Lamp Gallery at the top trains to 17; the prior's room, where the
   Reader of the Watch sits; the stores, the band's step on the ladder; the refectory; and the
@@ -208,7 +235,7 @@ a dungeon and a town, and the boxes hold 9,181 of those squares:
 | L2 | Lantern Watch's box | Lanternwood | core | 15–16 | 1,021 (forest 957, pine 64) | the tower at 372,46; moths by night; the road east | the papers read; Vask comes | #200 |
 | | Lantern Watch | | town, 16×16, a tower | 14–16 | | the hall, the refectory, the stores, the prior's room | the midpoint | #201 |
 | M2, J3 | The road on, and under the Eaves | Lanternwood, the Eaves | country | 16 | 796 (forest 643) and 1,024 (forest 996) | the road east to the Iron Fells and Act III's border; the forest south of J2 | none | #202 |
-| L3, L4, K4 | Lanternwood's depths | Lanternwood, the Eaves | country, behind the road | 16 | 973, 866, 730 | forest, moths and deathsheads, a bear's den; the dead wood at K4's gorge and Sunder Bay's shore | none | #203 |
+| L3, L4, K4 | Lanternwood's depths | Lanternwood, the Eaves | country, behind the road | 16 | 973, 866, 730 | forest, moths and deathsheads, a bear's den; the dead wood at K4's gorge and Sunder Bay's shore; the moth shrine and the Cleric's second (L3) | none | #203 |
 
 The core is the four boxes that hold a step of the quest (J2, K2, K3 and L2), built at full
 density; the rest is country, built to the looser floor with the wilderness features (EXPANSION
@@ -240,7 +267,7 @@ The places, as the atlas and the docs have them:
 | The pine-cutters' steading | J2 | the family at the glass trees (#56's 29) | a site on J2 at 20.5,7.5 (#196) |
 | The Hoarhills | I2, and the Deepthorn's I3 and J4 | the ridge between Thornmark and Sunderwood (docs/areas/thornmark.md) | hills and mountain, lettered |
 | The Iron Fells | east of M2 | the Kilns' first zone, Act III | mountain, lettered at 420,70 |
-| The moth shrine | Lanternwood, L3 or L4 | the Cleric's second prestige: its keeper, a Lantern who stayed when the wood split (DESIGN §5, #19); waits on Lanternwood's depths (#203) | not yet sited |
+| The moth shrine | L3, its west clearing | the Cleric's second prestige: its keeper, a Lantern who stayed when the wood split (DESIGN §5, #19); Sister Leofrun (#203) | not on the atlas |
 
 ### 4.1 The briefs
 
@@ -674,16 +701,70 @@ features; the pay shared out over the area (§8).
     within 8. Neither box claims anything new. What the owner finds by hand goes here when they have
     been played.
 
-### 4.10 L3, L4 and K4, Lanternwood's depths (#203): country, band 16, parked
+### 4.10 L3, L4 and K4, Lanternwood's depths (#203): country, band 15–16
 
-- **Purpose.** The forest south of the Watch, built once the owner has played the act (#151, call
-  10): moths and deathsheads by night, a bear's den, and K4's dead wood at the gorge, where the
-  Deepthorn's shore runs on into Sunderwood.
-- **Landmarks.** The river south to Sunder Bay; K4's gorge and shore.
-- **Encounters.** Lantern moths and deathsheads; bears (proposed, §7); sunderlings at K4's gorge.
-- **Pay.** About 450 xp a member each, outside the area's 11,467 (§8).
-- Points of interest, the secret and its hint, what is new and the finds are written when #203 is
-  unparked (#151, call 10).
+Built once the owner took #203 off parked (3 October); the brief was settled by delegate (§9, #203's).
+
+- **Purpose.** The forest south of the Watch, off the road: the moth shrine and the Cleric's second
+  prestige; the river to Sunder Bay; the gorge's foot.
+- **Landmarks.** The river from L2's corner to the bay; the moth shrine in L3's clearing; the gorge
+  closing to a crack above the shingle in K4; the stone Lantern at the river's mouth.
+- **Points of interest:**
+  - L3: the shrine and Sister Leofrun, a camp, a cairn, a fallen wayside lamp;
+  - L4: the den (#88), a statue, a cairn, a lookout, a camp, a mooring post;
+  - K4: a cairn, a camp, the foot's lookout, a way-mark, the glass on the east lip.
+- **Encounters.** Moths and deathsheads by night, glass bears at the den, the Hand's gleaners at the foot.
+- **Quests.** None. Leofrun teaches the Cleric's second prestige (#19).
+- **The secrets and their hints.** L3: the Lanterns' lamp-house up a thicket, found from iron lamp-hooks
+  grown into the oaks in a line north where no path goes. L4: the Hand's carriers' store in the mountain
+  above the landing, found from boot prints deep going down to the water and shallow coming back. K4: the
+  depths' Lanterns' boathouse at the gorge's foot, found from steps cut down the west lip that end at a
+  blank face of rock.
+- **Lines,** drafted by a separate agent in the voice:
+  - Leofrun: *They called us up when the glass came, every lamp in the depths to the tower. I stayed.*
+  - her lesson: *One lamp is enough to be seen by. This one is for the rest.*
+  - the foot: *The chasm closes to a crack above the shingle and stops there, and the sea goes in under
+    it, and does not come out.*
+- **New here.** Nothing claimed: the moths, the bears, dead wood, crystal and the chasm are I2's and J2's.
+- **Finds.** A Long Sword +2 (L3), a Warden's Dirk +2 (L4), a Flail +2 and the Lanterns' Roll (K4).
+- **Pay.** About 500 xp a member each in the brief, outside the area's 11,467 (§8).
+
+- **As built** (#203, 3 October):
+  - **L3, the Moth Wood** (`lanternwood_l3`): the bank path two wide down the river's west bank from L2's
+    south ring, opened at 28–29 beside the river, over a gravel bar at row 29 to the east bank, and out by
+    the south edge for L4. The river is pulled one square in from the east edge at the top, where M3 is
+    cut and the atlas has forest past it, and L2's corner turns to meet it. The old path runs west on row
+    16 to the clearing (3–9, 9–15): the shrine at 5,11 keeps fire off the company until the next rest, and
+    Leofrun stands at 5,12, 23 squares from the nearest group, with no road in the box. Her lesson is a
+    `says` said once to a Curate of 19 after her first meeting (`l3_keeper_met`, `l3_keeper_lesson`), as
+    Aylmer's is, and she makes a Prelate for 4,000. The hint, the hooks, is on the old path at 17,16;
+    searched there, the thicket opens at 17,15 on a track north to the lamp-house, its chest 300 gold and a
+    Long Sword +2, shut in by forest on every side. Sunder hounds and a moth on the bank path and two
+    deathsheads by night at the crossing: a company at 15 wins every fight and manages 7.92 fights to a
+    rest, inside the aim, 4.3% of days ending in a fight broken off. As measured it pays about 666 xp a
+    member and 480 gold. Density 100% within 12, the furthest 9.
+  - **L4, the Bay Wood** (`lanternwood_l4`): the bank path on down the river's east bank to the meadow and
+    shingle at its mouth; a track east off it to the den under the hill's foot, 24,21, which breeds glass
+    bears. Its brood, a pair, stand on the bank, back a day after they fall until it is burnt; the sow and
+    her last, a pair, keep it and never come back; its hoard 140 gold and a Healing Draught. The stone
+    Lantern at 9,29 asks WHAT COMES TO ANY LIGHT? and gives 300 gold for moths, which Averil says on L2's
+    road. The hint, the prints, is on the hills at 17,28; searched at the hills' foot, 22,26, the mountain
+    opens on the store, its strongbox 1,100 gold and a Warden's Dirk +2, walled in rock so that no climber
+    reaches it. The hills past the range are drawn as the range, and the east and south edges are closed.
+    A deathshead and two sunder hounds by night on the bank, the den's brood and the sow's pair: 8.50
+    fights to a rest at 15, inside the aim, 3.3% broken off. As measured it pays about 971 xp a member and
+    1,710 gold. Density 100% within 12, the furthest 10.
+  - **K4, the Sunder's Foot** (`lanternwood_k4`): in from K3's east lip, whose south ring opens at 21–25.
+    The chasm runs down to row 22 and stops; the west lip is reached on foot round its foot, a pocket, and
+    the shingle runs east along the bay to L4's meadow. The whole west column is rock, so neither a walker,
+    a swimmer nor a climber passes into the Deepthorn's J4. The hint, the steps, is on the west lip at
+    4,17; searched there, the rock opens at 2,17 on the boathouse, its chest 300 gold, a Flail +2 and the
+    Lanterns' Roll, every name struck through but LEOFRUN. Two gleaners and a hound at the foot and two
+    deathsheads by night on the west lip: 7.34 fights to a rest at 15, inside the aim, 5.7% broken off. As
+    measured it pays about 718 xp a member and 565 gold. Density 99.8% within 12, the furthest 13.
+  - The three pay about 2,355 xp a member against the brief's 1,500 (§8; #203's 4). Their floors are above
+    the area's, so their groups count two under in the area's pool, owed to #18. They claim nothing new.
+    What the owner finds by hand goes here when they have been played.
 
 ## 5. The one quest here
 
@@ -808,11 +889,14 @@ named. Its landmarks: a falls, a bridge, a tower, a rift.
   | **The area** | 11,500 | 11,474 | 12,400 before #453 |
 
   The boxes as built pay 10,974 (the curve's own count, every group once), and the area as planned
-  11,474 against the curve's 11,467, under a tenth of a per cent over. The depths add about 1,350
-  when they are built (450 each). With the side quests built (#205) a clear gives 11,474, and the
-  owed record in `progression.ts` keeps only the gold. A company should leave the Watch at 16, where the midpoint
+  11,474 against the curve's 11,467, under a tenth of a per cent over. The depths (#203) add about
+  2,355 as built (L3 666, L4 971, K4 718), outside the plan's count as Saltreach's and Wrackholm's
+  country is; the curve counts every built map, so a clear reads 13,831, and xp over the curve never
+  fails. Their fights had to be real ones to keep fights to a rest inside the aim (§9, #203's 4). A company should leave the Watch at 16, where the midpoint
   is, with the Kilns' floor ahead.
-- **Gold.** Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
+- **Gold.** A clear gives 6,997 since the depths (#203): their chests, cairns, den, statue and
+  gleaners 2,755, the Hand's strongbox in L4 the most of it; the owed record in `progression.ts` is
+  gone. Training six members from 14 to 16 costs about 6,960 with today's `trainPrice`, and the
   next spell tier its fee (#20); the Watch's stores are the ladder's last step in the act (#399), their dearest ware the Lamellar
   at 1,600 and the act's dearest find the Sunder's Plate Mail +2 at 1,500, against 3,000. The
   stores' full set for the premade six comes to about 10,000.
@@ -834,7 +918,8 @@ Decided by the owner on 28 September 2026 (#151), and followed here:
 3. **The Wardens' hall stays open and the guild splits quietly** (call 5): Vask's two Wardens at
    the Watch's gate are his, and the Drillyard's quests go on under the cousin's captains (#157).
 4. **Lantern Watch sells the next spell tier** (call 9).
-5. **The depths are built after the act is played** (call 10): #203 is parked.
+5. **The depths are built after the act is played** (call 10): #203 was parked, and taken off parked by
+   the owner on 3 October 2026.
 6. **The cuts stand** (call 12): §11, and the Deepthorn's three boxes.
 7. **All four side quests stand** (call 13).
 
@@ -1403,3 +1488,52 @@ overturn:
 9. **The walk** finds him there from a new game, holds him to the road's and the groups' rule,
    reaches him on foot from the cutters' track, hears the hint before the lesson, and at 19 sends the
    paladin to J3 and teaches the Justicar for 4,000 gold.
+
+Decided by delegate for #203, each the owner's to overturn (where measuring changed the plan, the
+builder says so in the decision):
+
+1. **The maps are `lanternwood_l3`, The Moth Wood; `lanternwood_l4`, The Bay Wood; and `lanternwood_k4`,
+   The Sunder's Foot,** all three laid whole in Lanternwood, band 15–16, as J3 and M2. K4 takes 270 of the
+   Deepthorn's squares and 128 of the Eaves', which go to the owner with #198's 20; `atlas.ts`'s seeds at
+   K3's edges and at 370,96 now sit inside laid maps, and go.
+2. **The ways make one loop off the road:** L2 to L3 by the bank path through L2's south ring; L3 to L4 by
+   the river's bank; L4 to K4 along the shingle; K4 to K3 through K3's south ring at the east lip's dead
+   wood. K3 stays closed to L3, and its west lip to K4, so the gorge's foot in K4, which the atlas draws,
+   joins only Lanternwood's two lips, and the rope bridge stays the one crossing between the Eaves and
+   Lanternwood. K4's west column is rock, sea rows and all: swimming exists, and mountain is climbed.
+   Measured, shallows are a swimmer's only, so the river is crossed by a gravel bar in L3 and the shore
+   is shingle, not a wade; and K3's ring stays mountain over the chasm, since the gorge drawn open at the
+   seam left K3's west lip unreached from its own start.
+3. **The moth shrine is in L3's west clearing, kept by Sister Leofrun,** a Lantern who stayed when the
+   Watch called its people up out of the depths as the glass came. Her lesson goes Aylmer's way, a `says`
+   once to a Curate of 19 after her first words, which are for every company; it is a light kept for
+   whoever comes to it, not to be seen by, an answer to the Watch's one lamp without naming anyone. She
+   is more than ten squares from any group and the box has no road, and she is reached on foot with no
+   secret door. The shrine keeps fire off the company until the next rest and gives no stat: every stat
+   has been given once in the area, and its lamp is a shard lit cold that the moths do not burn on.
+4. **The groups,** planned at about 500 a member a box, had to be real fights once measured. The plan's L3
+   (hounds and a moth; two glass bears) gave 11.4 fights to a rest at 15, L4's (two moths by night; a brood
+   of two glass bears; a lone sow) 19.4 and K4's (two sunderlings; two gleaners; a lone deathshead) 20.4,
+   all past the limit. Each box now has one hard fight. L3 has two deathsheads by night at the crossing
+   for the bears (7.9). L4 has a deathshead and two hounds by night for the moths, and the sow is a pair
+   (8.5); two deathsheads and a moth broke off 35% of days, and a lone sow was a free fight. K4 has two
+   deathsheads by night for one, and the gleaners a hound; its sunderlings are dropped, too gentle at any
+   size that kept the aim (7.3). The three pay about 2,355, not 1,500.
+5. **The features:** L3 the shrine, a camp, a cairn (180 gold and a Sapphire Vial) and a fallen wayside
+   lamp, L2's dark one's mirror; L4 a cairn (170 and a Vial), the stone Lantern with its riddle (300 gold,
+   its answer in Averil's L2 line), a lookout over the bay, a camp on the meadow and the den; K4 a cairn
+   (180 and a Vial), a camp, the foot's lookout, a way-mark and an event at the east lip's glass where the
+   sunderlings were, for density. No hermit and no repeated stat.
+6. **One secret a box, each prize shut in on every side,** so a swimmer, a climber or a levitator reaches
+   the hint and never the prize: L3's lamp-house in forest, with a Long Sword +2 and 300 gold, a find that
+   sells (a Watch Habit +2 would go against #399's 3); L4's store walled in rock, with a Warden's Dirk +2
+   and 1,100 gold; K4's boathouse in forest and rock, with a Flail +2, 300 gold and the Lanterns' Roll, a
+   keepsake. The dearest find stays the Sunder's Plate Mail +2.
+7. **Ties stay light, and the side quests are untouched:** the statue's answer is Averil's, the gleaners
+   carry east to L4's landing, the Roll names the keeper and her lesson answers the Watch's one lamp.
+8. **The gold closes:** the depths pay 2,755, the strongbox raised from the plan's 1,000 to 1,100 to clear
+   the curve's 6,960, and Sunderwood's owed gold in `progression.ts` goes.
+9. **Kilnmouth's line moves, and is not held here:** the zone walk from L4's south and east edges takes
+   1,147 of Kilnmouth's unbuilt squares (§1). Holding it wants seeds in `src/content/atlas.ts`, a shared
+   file, as #429 held the Fells': proposed, not made here.
+10. **The text was drafted in the voice by a separate agent.**
