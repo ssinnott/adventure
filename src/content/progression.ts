@@ -50,14 +50,13 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // Armoury (#399) fits inside them, its dearest ware 1,600 and its dearest find 1,500.
   saltreach: {
     band: [10, 12], next: 12, price: 2000,
-    owed: { whose: '#153', why: 'Saltreach is built box by box', gold: 4367 },
   },
   wrackholm: {
     band: [12, 14], next: 14, price: 2500,
   },
   sunderwood: {
     band: [14, 16], next: 16, price: 3000,
-    owed: { whose: '#155', why: 'Sunderwood is built box by box', xp: 10974, gold: 4242 },
+    owed: { whose: '#155', why: 'Sunderwood is built box by box', gold: 4242 },
   },
 };
 

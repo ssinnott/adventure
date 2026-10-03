@@ -117,7 +117,8 @@ export function curve(): void {
     const guild = area?.guilds ?? [];
     const features = maps.flatMap((d) => d.features ?? []);
     // A question's pay, whichever way it is answered: of its answers, the least, for each of xp and gold.
-    const asked = features.flatMap((f) => f.kind === 'npc' ? choices(f) : []);
+    // A question two people share (one person in two places) is counted once.
+    const asked = [...new Set(features.flatMap((f) => f.kind === 'npc' ? choices(f) : []))];
     const sure = (k: 'xp' | 'gold'): number => asked.reduce((t, c) => t + Math.min(...c.answers.map((a) => a.pay?.[k] ?? 0)), 0);
     const xp = Math.floor((placed.reduce((t, m) => t + m.xp, 0) + guild.reduce((t, q) => t + (q.pay.xp ?? 0), 0) + sure('xp')) / MEMBERS);
     // A hand-in's reward, once an item: of two people who take it, the larger.
