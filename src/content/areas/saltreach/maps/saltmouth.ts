@@ -56,7 +56,13 @@ export const SALTMOUTH: MapDef = {
       'Behind the bar a woman dries a glass that was dry when she picked it up. The mirror behind her shows the door; she has not turned round once.',
       '"Beer is two, brandy is four. The back room is not for strangers and the sawdust is not for spitting in."',
       '"You want work? Drink first. The Keel likes to know a face before it knows a name."',
-    ], says: [{ after: { flag: 'q_compact_run_done' }, lines: [
+    // The founder's last letter, carried from the hermit on Wrackholm's east rocks (#192): the hall's
+    // own name back, the Compact's line's first proof (DESIGN §10.2).
+    ], quest: { item: 'founders_letter', reward: 300, setFlag: 'q_hermit_hall', done: [
+      'Ruan reads it standing at the bar, and the bar goes quiet round her the way a room does when the one who keeps it has stopped moving.',
+      '"The Old Man\'s hand. I\'d know it in the dark." She reads it again. "Ten years of quarter-papers, and I\'ve read every one aloud in that back room and done what it said, and he\'s been under a cairn on Wrackholm the whole while."',
+      'She folds it small and puts it inside her bodice, not in the box under the bar. "This doesn\'t leave me. Not for Tallis, not for the Wardens, not for you. Here\'s what a hall pays for its own name back. Say nothing in the front room. Say nothing anywhere."',
+    ] }, says: [{ after: { flag: 'q_compact_run_done' }, lines: [
       '"Runner." A glass is set down before you ask. "The river crews have found somebody who pays in grey. We pay in coin and we are still here. Sit."',
       'She goes back to the door in the mirror. "Work comes when it comes."',
     ] }] },
@@ -137,7 +143,14 @@ export const SALTMOUTH: MapDef = {
       'Tallis reads the slate once, in the light of his door, and tucks it face down under his arm.',
       '"A hand\'s width since midsummer. Well." He counts your coin out of his coat, and adds to it. "My pilots will have new charts by the month\'s end, with a note that a bearing is to be taken fresh each night, as good seamanship always said. Nothing printed about why. The astrologer will be paid for the drawing, and will not see this."',
       '"You\'ll want to know what I make of it. I make of it that the sky has a matter before it, and so has Helmstow, and a man who keeps his head in the one may be remembered in the other."',
-    ] }], says: [
+    ] }, {
+      // The founder's last letter, sold him instead of carried to the Keel (#192): he pays more.
+      item: 'founders_letter', reward: 500, setFlag: 'q_hermit_tallis', done: [
+        'Tallis reads it twice, and smiles once, at the end, briefly.',
+        '"\'Bury me where I can see the ships.\' He always did like a view." He steps in through his door, and comes back without it. "The Compact takes its orders from a dead man\'s hand, or from whoever holds the pen now, and its hall doesn\'t know. That is worth a great deal to a man who has to live beside that hall."',
+        '"Here. And a thing to remember: I didn\'t ask you to bring me this. You chose to. Choices of that kind are remembered too."',
+      ],
+    }], says: [
       { after: { flag: ['sm_tallis_word', 'q_star_tallis'] }, lines: [
         '"The charts are out, the port is calm, and nobody has said the word star to me in a week." Tallis does not turn from the roads. "That is what I paid for. You\'ll find I remember what I paid for, and who brought it, when remembering is useful. It will be."',
       ] },
@@ -198,6 +211,35 @@ export const SALTMOUTH: MapDef = {
     { kind: 'well', x: 4, y: 7, text: 'An iron pump in the square with a trough under it. The water comes up brown and tastes of the harbour.' },
     { kind: 'event', x: 13, y: 10, id: 'sm_quay', once: true, text: 'The quay. Hulls two deep, bales under tarpaulin, a crane and the horse that works it. Everyone is busy and nobody is in a hurry.' },
     { kind: 'event', x: 14, y: 7, id: 'sm_wall', once: true, text: 'The sea wall. Beyond it the harbour mouth, a lamp on a post either side, and Sylmeer going out grey to no edge at all.' },
+    // What the Smugglers Feed (#192): Loveday on the harbour steps wants her son back from Wrackholm;
+    // home, he sits beside her. Every Name in the Column (#192): Wat's elder boy, sent to Saltmouth by
+    // the boat, on the quay.
+    { kind: 'npc', x: 8, y: 13, name: 'Loveday, a fishwife of Saltmouth', flag: 'q_feed', lines: [
+      'A woman on the harbour steps is gutting fish for the boats that come in, and asks each crew the same thing as they land, and gets the same nothing.',
+      '"You\'re going over. To the isle. They said a company had the boat." She does not stop gutting. "My Tam went over in the spring for the money they pay a lad to carry, and the money came back twice, and then it stopped, and he didn\'t."',
+      '"The crews say he\'s alive, and say it like they\'ve a mouthful of stones. Find him. Bring him if he\'ll come. If he won\'t, come and tell me why, to my face. I\'ve had enough of finding things out from the backs of men\'s heads."',
+    ], says: [
+      { after: { flag: 'q_feed_home' }, lines: [
+        'Loveday has stopped gutting. She sits on the harbour steps with her hands in her lap, and a boy beside her with a bruise on his jaw the shape of a mother\'s hand.',
+        '"He\'s home." That is all, for a while. "He says things about the cove, on these steps, to the boats, and the boats listen and say nothing back, which is how you know they\'re listening."',
+        '"I\'ve nothing to pay you with. I\'ve a son. You\'ll take that as payment, and I\'ll not hear otherwise."',
+      ] },
+      { after: { flag: 'q_feed_tam' }, until: { slain: 'smugglers_cove2:kh2_great_devilfish' }, sets: 'q_feed_told', lines: [
+        '"Alive, and feeding a thing in a hole, and all right." Loveday says it flat, and guts the next fish. "That\'s what you came to tell me to my face. Well, you\'ve told me. Thank you for the face."',
+        '"I\'ll be on these steps when he\'s done being all right. Tell him that, if you\'re over again. Tell him the steps are here."',
+      ] },
+      { after: { flag: 'q_feed' }, lines: [
+        'Loveday does not stop gutting. "Nothing on your face yet. Go over, then, and come back with something on it."',
+      ] },
+    ] },
+    { kind: 'npc', x: 9, y: 13, name: 'Tam, who fed it', lines: [
+      'Tam is on the steps beside his mother, and says, to the boats, loud enough: "It\'s dead, and I fed it, and the men who set me to it took their orders from a man who isn\'t there." A boat\'s crew looks at its feet.',
+      '"I\'ve said it every tide for a week. Somebody will ask me to say it somewhere else, eventually. I\'ve the whole of it to say when they do."',
+    ], after: { flag: 'q_feed_home' } },
+    { kind: 'npc', x: 10, y: 10, name: 'Wat\'s elder boy, of Gullwick', lines: [
+      'Wat\'s boy is on Saltmouth\'s quay in a borrowed coat, watching the boats come in the way a man does who knows how they are built.',
+      '"There\'s a Gullwick hull in this harbour, painted over. I know her lines." He does not say which. "I\'ll work my way home along the coast, boat to boat. It\'s what my father would do. He\'d be slower about it."',
+    ], after: { flag: 'q_column_saltmouth' } },
     { kind: 'event', x: 8, y: 14, id: 'sm_steps', once: true, text: 'Stone steps down to the water, green from the third one. A flat boat rides at them, and across the harbour the far quay.' },
     { kind: 'event', x: 1, y: 8, id: 'sm_nets', once: true, text: 'Nets hung to dry along the wall, and women with needles going along the holes. The fish on the slabs behind are few and small.' },
     { kind: 'event', x: 3, y: 13, id: 'sm_customs', once: true, text: 'The customs house, shut, the Crown\'s arms over the door and the brass gone green. A chalk mark on the step that somebody renews.' },

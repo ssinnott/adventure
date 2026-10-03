@@ -15,7 +15,7 @@ two levels are built under it (#188), F6, the east rocks, beside it (#189), and 
 three decks, its Rift and the stair's foot off F6's shore (#190). Its content is
 `src/content/areas/wrackholm/` (`index.ts`, its maps, monsters, items and atlas, its walkthrough;
 its chapter of the one quest, The Stone Carried Home, in `chapter.ts`, and its side quests in
-`quests.ts` to come); it has no town and no businesses, so no rooms. Its part of the world map is
+`quests.ts`, #192); it has no town and no businesses, so no rooms. Its part of the world map is
 its folder's (`atlas.ts`, #186), which the Area now carries; the plan no longer spreads it in. Its
 ids: the area and its zone `wrackholm`, the cove `smugglers_cove` (the id stays under the new name,
 NAMES §3) and its sea cave `smugglers_cove2`, the ship's decks `tide_ship`, `tide_ship2` and
@@ -257,7 +257,7 @@ Foreland map's density.
   - a camp in a hollow (#45), a shrine on the shore (#45).
 - **Encounters.** Bilge rats on the shore; smugglers and bowmen at the den; gulls on the rocks;
   devilfish in the pools under the cliff at night.
-- **Quests.** The Hermit of the East Rocks (§6). The chapter's entry: the ship at anchor (§5).
+- **Quests.** The Hermit of the Point (§6). The chapter's entry: the ship at anchor (§5).
 - **The secret and its hint.** The founder's grave under the cairn on the point, with his seal.
   The hint: the hermit's count starts at a date.
 - **New here.** Nothing, as built: dens are on the Downs already, and boarding by night is #190's.
@@ -277,7 +277,7 @@ Foreland map's density.
   the south hills, so a rock face is cut into them, with a path a square wide from the cliff top
   down to a shingle where the boats lie: the boats are there by night, the shingle empty by day, and
   the way aboard is #190's. The hermit stands at her cell on the point with two lines and no flag,
-  for The Hermit of the East Rocks to hang on (#192, #182). Her tally of ships is cut in her cell's
+  for The Hermit of the Point to hang on (#192, #182). Her tally of ships is cut in her cell's
   wall from a date; the cairn a few steps off, on the point itself, has a door a search finds, and
   behind it the founder's grave, with his seal and 150 gold. The camp in a hollow of the south-west
   moor, the shrine on the north-east shore (personality), the cliff top and five more points are the
@@ -404,13 +404,46 @@ with its map on the systems of #76 (#192):
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
 | 25 | The Captain's Brother | 13 | the captain at the landing (E6); the brother, who keeps the rows in Kelp Hole | a letter read from the pack; `after` (#41) | #187, #188 |
-| 26 | The Hermit of the East Rocks | 13 | the hermit (F6); the Compact's hall or Tallis, in Saltmouth | a letter; a hand-in at the first meeting (#43) | #189, #182 |
-| 27 | Every Name in the Column | 14 | the Tide Ship's hold | the Cargo Ledger read against the rows; a choice put by a person | #190 |
+| 26 | The Hermit of the Point | 13 | the hermit (F6); the Compact's hall or Tallis, in Saltmouth | a letter; a hand-in at the first meeting (#43) | #189, #182 |
+| 27 | Every Name in the Column | 14 | the Tide Ship's hold | the clerk's book read against the freed; a choice put by a person | #190 |
 | 28 | What the Smugglers Feed | 14 | Kelp Hole's sea cave; the mother in Saltmouth | a choice; `after` | #188, #177 |
 
 No change to #56's drafts. 26 is the Compact's line's first proof, taken at the harbour tavern
 (#182, DESIGN §10.2); 27's sending decides who is at Rime Lodge to meet the freed (#56's 41, Act
 III).
+
+**As built** (#192, 3 October): `quests.ts`, the four on the built maps, every line #192's draft
+or fitted to the maps by a fable pass (§9, decided by delegate for #192).
+
+- **The Captain's Brother** (`brother`). Kitto on the landing stage asks, setting `q_brother`;
+  Colan by the rows in Kelp Hole, once the overseers are down, sets `q_brother_found` and puts the
+  choice: the truth carried (`q_brother_truth`) or his letter, sealed (`q_brother_letter`, Colan's
+  Letter). Either way he is gone below and his crate stands empty (`kh1_colan_gone`). Told, Kitto
+  sets `q_brother_told` and carries for the cove no more: Kelp Hole's landing crew, where his boats
+  tie up, stands `until` it, so once next put down it does not come back. Given the letter, he takes
+  it at the first meeting, asked or not, and pays 200 (`q_brother_delivered`). Saltmouth's Kitto is
+  unchanged.
+- **The Hermit of the Point** (`hermit`). Merryn (the draft's Senara is the lorekeeper of
+  Henlys) at her cell on the point sets `q_hermit` and asks; Not yet sets nothing and she asks again,
+  We'll carry it hands the founder's letter and sets `q_hermit_carried`. Ruan at the Keel takes it
+  and pays 300 (`q_hermit_hall`), Tallis on the quay 500 (`q_hermit_tallis`). Her count begins on the
+  11th of Frost, as her wall has it, and she does not say where the Old Man lies: the grave under
+  the cairn is F6's secret.
+- **Every Name in the Column** (`column`). Hale, freed in the hold, goes up the ladder with the
+  freed as his words say, and waits at the weather deck's rail over the boats with the thirty and
+  Wat's elder boy, at any hour, from `q_hale_freed` until he is answered. He asks for the clerk's
+  book (`q_column`), in a chest in the cabin's corner (`ts2_clerk`) beside the papers; with the book
+  carried, asked or not, he reads it and puts the choice: Saltmouth by the boat
+  (`q_column_saltmouth`), or home by the coast road (`q_column_road`). Answered, they are gone with
+  him, and the book stays in the pack. The boy is then on Saltmouth's quay, or on Gullwick's shingle
+  beside Wat, who has words for him home with the board in the loft and without it. Before Hale is
+  freed the rows ask whose the company is (`ts3_chained`), once the crew is down.
+- **What the Smugglers Feed** (`feed`). Loveday on Saltmouth's harbour steps sets `q_feed`; Tam at
+  the black pool sets `q_feed_tam`. The beast left alone, Loveday told sets `q_feed_told`; the beast
+  slain, Tam's twin at the pool sets `q_feed_home` and he sits on the steps beside her. Her pay is
+  words.
+
+The walkthrough plays each both ways, in more than one order, and reads the log after each.
 
 ## 7. Encounters, and what is new
 
@@ -480,6 +513,37 @@ Proposed, for the owner, each in the issue that would build it:
 - **The bands on the atlas's rows** (#186): the zone 12–14, Kelp Hole 12–14, the Tide Ship 13–14.
   They are set already in `src/content/areas/wrackholm/atlas.ts`, where only the scaffold reads
   them, for a box's draft; the owner's word changes them there.
+
+Decided by delegate for #192, each the owner's to overturn:
+
+1. **Hale waits at the weather deck's rail,** not in the hold: his freeing words send the freed up
+   to the boats and him to the ladder, and they stand, with the token's twin and Hale's Sergeant's
+   checks. He asks for the book there, and goes with the thirty once answered, placed nowhere else;
+   the draft's after-lines in the hold are dropped, since the company keeps the book. The chapter's
+   Hale entry has him go up the ladder to the boats, which narrows #190's decision 3.
+2. **The clerk's book is a third letter,** The Clerk's Book (The Cargo Ledger is the Foreland's),
+   in its own chest in the cabin's corner and not on the table, so a save that opened the table
+   still finds it. A chest cannot wait on a flag, so it may be taken before Hale asks; then he goes
+   straight to it.
+3. **The truth's cost falls on Kelp Hole's landing crew,** since the Tide Ship's deck has no
+   smugglers to thin: Kitto's boats tie up there, the group stops coming back once next killed, and
+   no first clear or gate figure moves. Kitto's after-lines say the cove's landing, not the deck.
+4. **Only the landing's Kitto carries 25,** the hand-in with no early words, since his lines read
+   true to a company he never asked; the quay's Kitto is left alone, clear of #183.
+5. **The hermit is Merryn,** renamed by a fable pass: Senara is Henlys's lorekeeper.
+6. **Merryn's count begins on the 11th of Frost,** as her wall has it, and her words keep the grave
+   for the company to find.
+7. **The pay:** Kitto 200 (the fare back and a bit), Ruan 300, Tallis 500; 27 and 28 pay in words.
+8. **28 is done either way:** the beast slain and Tam home (`q_feed_home`), or Tam met and Loveday
+   told while the beast lives (`q_feed_told`). Tam's meeting at the pool sets a flag rather than an
+   event, since his words are the meeting.
+9. **Each quest begins at whichever of its people is met first:** Colan before Kitto, Tam before
+   Loveday, the book before Hale, so the log never waits on an order.
+10. **Wat has two new versions,** his boy home with the board in the loft and without it; nothing
+    for the boy at Saltmouth, who is not home yet. A company that sends the boy home before it
+    ever meets Wat hears his boy's words and not the board's ask, and can still hand the board in.
+11. **26 is The Hermit of the Point,** since #56's title, The Hermit of the East Rocks, is 7 px too
+    wide for the log's list; the point is where she sits.
 
 Decided by delegate for #191, each the owner's to overturn:
 

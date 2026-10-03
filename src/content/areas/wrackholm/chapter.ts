@@ -27,7 +27,7 @@ export const CHAPTER: Chapter = {
       text: 'The hold carries two kinds of cargo: shards of stone packed in straw like eggs, each with a light in it, and people chained in rows, fishermen and farmers and children. The beam over the rows is carved deep, the letters fresh in the black oak: EVERY SHARD IS A STEP.' },
     // Hale is in the last row once #156 has taken him from the Scarth (q_hale_taken).
     { id: 'hale', when: { flag: 'q_hale_freed' },
-      text: 'Captain Hale was in the last row, thin as a rake and his beard gone white, telling the boy beside him to keep his feet out of the wet. The Regent got his copy of the ledger, he said, and came for him that same night. When the last iron dropped he went over the side with the others, and did not look back.' },
+      text: 'Captain Hale was in the last row, thin as a rake and his beard gone white, telling the boy beside him to keep his feet out of the wet. The Regent got his copy of the ledger, he said, and came for him that same night. When the last iron dropped he went up the ladder with the others, to the boats, and did not look back.' },
     { id: 'papers', when: { seen: 'tide_ship2:ts2_table' },
       text: 'On the captain\'s table we found the ship\'s papers and its log. The papers count every cargo passed and sent to the one place, BELOW, and midway the girl from Gullwick, delivered below months since by way of the dwarves\' deepest mine. The log is in a hand none of us can read.' },
     { id: 'stone', when: { seen: 'tide_ship_rift:tide_ship_rift_hoard' },

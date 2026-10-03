@@ -46,6 +46,9 @@ export const TIDE_SHIP2: MapDef = {
     // at Lantern Watch (#204).
     { kind: 'chest', x: 7, y: 13, id: 'ts2_table', gold: 0, items: ['ships_papers', 'ships_log'] },
     { kind: 'chest', x: 10, y: 13, id: 'ts2_sea_chest', gold: 1000, items: ['tide_cutlass'] },
+    // The clerk's corner, and his book of names, which Hale asks for (Every Name in the Column, #192).
+    { kind: 'chest', x: 5, y: 13, id: 'ts2_clerk', gold: 0, items: ['clerks_book'] },
+    { kind: 'event', x: 5, y: 13, id: 'ts2_clerk_desk', once: true, text: 'A clerk\'s stool in the corner, a shelf for a desk, the ink dry in the well. On it a book, a ribbon in the last page.' },
   ],
   encounters: [
     { id: 'ts2_rats', x: 7, y: 6, monsters: new Array(8).fill('bilge_rat'), aware: 2, respawn: 1440 },

@@ -8,6 +8,9 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 const CREW = ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'];
 
+/** Colan answered, and gone below: the truth to be told his brother, or his letter carried (#192). */
+const COLAN_GONE = [{ flag: 'q_brother_truth' }, { flag: 'q_brother_letter' }] as const;
+
 export const SMUGGLERS_COVE: MapDef = {
   id: 'smugglers_cove',
   name: 'Kelp Hole',
@@ -46,19 +49,34 @@ export const SMUGGLERS_COVE: MapDef = {
     { kind: 'chest', x: 6, y: 5, id: 'kh1_crate', gold: 150, items: ['potion_heal', 'potion_heal'] },
     { kind: 'event', x: 4, y: 3, id: 'kh1_ledge', once: true, text: 'The ledge drops into the dark. Cold comes up it, and a slow wash, and now and then a wet slap on rock.' },
     { kind: 'event', x: 11, y: 7, id: 'kh1_rows', once: true, text: 'Irons set in the floor in rows, a ring to each. Those sitting in them look up. Grey finger marks are on every collar.' },
-    // Colan, the boat's captain's brother, who keeps the rows (#56's 25): once the overseers are down. His
-    // choice, his letter and his going are #192's.
-    { kind: 'npc', x: 12, y: 5, name: 'Colan, keeper of the rows', lines: [
+    // Colan, the boat's captain's brother, who keeps the rows (#56's 25): once the overseers are down.
+    // He puts The Captain's Brother's choice (#192): the truth told Kitto, or his letter carried
+    // sealed; either way he goes below, and his crate stands empty.
+    { kind: 'npc', x: 12, y: 5, name: 'Colan, keeper of the rows', flag: 'q_brother_found', lines: [
       'Among the crates a man sits on an upturned one with a chain across his knees, and his hands are grey to the wrist. He did not fight, and he does not get up.',
       '"You\'re Kitto\'s. He\'s got that look, of having sent someone." He turns his hands over and looks at them as if they were somebody else\'s. "I keep the rows. That\'s what a guard becomes down here, if he stays. He keeps the rows, and after a while he stops asking what\'s in them."',
       '"I\'m not coming out. There\'s a door below, and a work, and I\'ve a place in it I\'d not have had on a boat in all my life. Kitto won\'t understand that, and I\'d not have him try."',
-    ], after: { slain: 'smugglers_cove:kh1_overseers' } },
+    ],
+      choice: { ask: '"You\'ll go back to him, and he\'ll ask. Tell him what I am and let him make of it what he will, or take him this and tell him I\'m well; it isn\'t a lie, I\'m the best I\'ve ever been."', answers: [
+        { label: 'We\'ll tell him what you are.', sets: 'q_brother_truth', says: [
+          '"Then tell him." He stands, and the chain slides off his knees and rings on the rock, and he does not pick it up. "Tell him the hands. He\'ll want to know about the hands. Everybody does."',
+          '"And tell him I said goodbye properly, in the one letter, two years ago, and he\'ll not have read it right. Nobody does, the first time."',
+        ] },
+        { label: 'We\'ll take him the letter.', sets: 'q_brother_letter', gives: 'colans_letter', says: [
+          'He takes a folded paper from inside his coat, where it has been a long while, and gives it to you with his grey hand, and watches you not flinch.',
+          '"Sealed. Leave it so. He\'ll not open it either; he\'ll put it in the boat\'s locker with the other one, and row." He sits back down and gathers the chain. "Go on. The rows want keeping, and the tide\'s making."',
+        ] },
+      ] },
+      after: { slain: 'smugglers_cove:kh1_overseers' }, until: COLAN_GONE },
+    { kind: 'event', x: 12, y: 5, id: 'kh1_colan_gone', once: true, after: COLAN_GONE, text: 'The upturned crate where the grey-handed man sat is empty. The chain lies where it fell. Somebody keeps the rows below.' },
     { kind: 'event', x: 9, y: 2, id: 'kh1_store', once: true, text: 'Sacks, coils of rope, kegs of tar. On a crate at the back sits a strongbox, iron-bound, scratched round the lock.' },
     { kind: 'chest', x: 14, y: 1, id: 'kh1_strongbox', gold: 600, items: ['plate+1'] },
   ],
   encounters: [
     { id: 'kh1_crew_fires', x: 10, y: 11, monsters: CREW, back: 2, aware: 3, respawn: 2880 },
-    { id: 'kh1_crew_landing', x: 4, y: 9, monsters: CREW, back: 2, aware: 3, respawn: 2880 },
+    // Kitto's boats tie up at the landing: told what his brother is, he carries for the cove no more,
+    // and once this crew is next put down no other comes (The Captain's Brother, #192).
+    { id: 'kh1_crew_landing', x: 4, y: 9, monsters: CREW, back: 2, aware: 3, respawn: 2880, until: { flag: 'q_brother_told' } },
     { id: 'kh1_overseers', x: 9, y: 7, monsters: ['ashen_overseer', 'ashen_overseer', 'ashen_overseer', 'ashen_overseer'], aware: 2, roams: false },
   ],
 };
