@@ -86,6 +86,27 @@
         "ash_hearth",
         "ash_kitchen",
         "ashcombe_gate",
+        "b3_boathouse",
+        "b3_boathouse_chest",
+        "b3_bridge",
+        "b3_cairn",
+        "b3_carr",
+        "b3_drains",
+        "b3_ford",
+        "b3_quay",
+        "b3_rim",
+        "b3_shrine",
+        "b4_cairn",
+        "b4_fen",
+        "b4_ford_n",
+        "b4_ford_s",
+        "b4_heronry",
+        "b4_in",
+        "b4_mud",
+        "b4_statue",
+        "b4_store",
+        "b4_store_chest",
+        "b4_strand",
         "b5_bank",
         "b5_boards",
         "b5_cairn",
@@ -445,6 +466,11 @@
         "tower"
       ],
       "groups": [
+        "b3_quay",
+        "b3_toad",
+        "b4_brood",
+        "b4_keepers",
+        "b4_toad",
         "b5_bulls",
         "b5_toads_e",
         "b5_toads_w",
@@ -629,7 +655,9 @@
         "344,77",
         "365,35",
         "397,60",
+        "42,106",
         "48,181",
+        "51,78",
         "53,140",
         "77,108",
         "81,75",
@@ -1115,6 +1143,10 @@
       "at": "296,126",
       "size": "32x32"
     },
+    "delta_b4": {
+      "at": "40,94",
+      "size": "32x32"
+    },
     "delta_b5": {
       "at": "40,126",
       "size": "32x32"
@@ -1205,6 +1237,10 @@
     },
     "thornmark": {
       "at": "232,30",
+      "size": "32x32"
+    },
+    "upperwater_b3": {
+      "at": "40,62",
       "size": "32x32"
     },
     "upperwater_c3": {
