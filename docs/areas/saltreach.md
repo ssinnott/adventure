@@ -473,7 +473,7 @@ settled in its issue, and what the pilot teaches changes them.
   front row asleep while the chanters count (#160, #161); the Choirmaster, boss, level 12, blessing
   its group each round; when it falls, the count stops.
 - **Quests.** The Tide Bell (§6): the bell taken from the Choirmaster and set back on its frame,
-  and the Tidefolk's blessing given once.
+  and the Tidefolk's blessing given once, a point of Endurance and the cold kept off to the next rest.
 - **The secret and its hint.** The door from the far roof into the second level's back (§4.6), and
   behind it the sacristy the priests drowned themselves in, with their god's silver.
 - **New here.** A caster among the dead; a boss that blesses (#161); a count that stops.
@@ -1238,8 +1238,13 @@ Decided by delegate for #175, each the owner's to overturn:
    and not before: kneeling gives a point of Endurance to each of the company, once. Endurance is the
    Tidefolk's own, and the area's shrines already give Personality twice. The priestess gives it as
    she gives the bell, by hanging it, and stays at her door. The quest is still done at the hand-in,
-   the blessing found after. #56 asked for a once-only resistance: a member resists from an item
-   now, but a blessing's resistance, and the save that carries it, are still owed to #555.
+   the blessing found after. **It keeps the cold off too, until the next rest** (#555, decided by
+   delegate and the owner's to overturn): cold, the sea god's own, comes with the point and does not
+   replace it, since the point is the Tidefolk's and a resistance kept to a rest is too small to be
+   the whole gift. It is #56's once-only resistance read as one that is spent: kept for good, the
+   whole company would halve cold at 12, the Holy Symbol from the same temples would be worth nothing
+   and Rimewater would be blunted two acts early, and a resistance for good is the Lamplighter's, at
+   the cap. The shrine's text says the cold goes in and stays.
 8. **The finds:** the ladder's Morning Star +1 and Ironshod Staff +1 in the vestry behind the boss,
    since the ladder's step should not hang on a secret found from another map; the god's silver,
    a Silver Mace +1 on the morning star's base and the Holy Symbol of the Tide, in the sacristy.
