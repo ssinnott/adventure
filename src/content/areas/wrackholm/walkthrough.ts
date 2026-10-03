@@ -401,7 +401,7 @@ const KITTO_E6 = (): Person => who('wrackholm_e6', 15, 14, 'Kitto'), COLAN = ():
 const MERRYN = (): Person => who('wrackholm_f6', 26, 13, 'Merryn');
 const RUAN = (): Person => who('saltmouth', 12, 4, 'Ruan'), TALLIS = (): Person => who('saltmouth', 8, 11, 'Jory Tallis');
 const HALE_IRONS = (): Person => who('tide_ship3', 10, 12, 'Captain Hale, in irons'), HALE_DECK = (): Person => who('tide_ship', 5, 10, 'Captain Hale');
-const BOY_DECK = (): Person => who('tide_ship', 6, 11, 'Wat\'s elder boy'), BOY_QUAY = (): Person => who('saltmouth', 12, 10, 'Wat\'s elder boy');
+const BOY_DECK = (): Person => who('tide_ship', 6, 11, 'Wat\'s elder boy'), BOY_QUAY = (): Person => who('saltmouth', 10, 10, 'Wat\'s elder boy');
 const BOY_HOME = (): Person => who('downs_f3', 10, 14, 'Wat\'s elder boy'), WAT = (): Person => who('downs_f3', 11, 14, 'Wat,');
 const LOVEDAY = (): Person => who('saltmouth', 8, 13, 'Loveday');
 const TAM = (): Person => who('smugglers_cove2', 13, 12, 'Tam', 'q_feed_tam'), TAM_FREE = (): Person => who('smugglers_cove2', 13, 12, 'Tam', 'q_feed_home');

@@ -192,7 +192,7 @@ export const SALTMOUTH: MapDef = {
       'Tam is on the steps beside his mother, and says, to the boats, loud enough: "It\'s dead, and I fed it, and the men who set me to it took their orders from a man who isn\'t there." A boat\'s crew looks at its feet.',
       '"I\'ve said it every tide for a week. Somebody will ask me to say it somewhere else, eventually. I\'ve the whole of it to say when they do."',
     ], after: { flag: 'q_feed_home' } },
-    { kind: 'npc', x: 12, y: 10, name: 'Wat\'s elder boy, of Gullwick', lines: [
+    { kind: 'npc', x: 10, y: 10, name: 'Wat\'s elder boy, of Gullwick', lines: [
       'Wat\'s boy is on Saltmouth\'s quay in a borrowed coat, watching the boats come in the way a man does who knows how they are built.',
       '"There\'s a Gullwick hull in this harbour, painted over. I know her lines." He does not say which. "I\'ll work my way home along the coast, boat to boat. It\'s what my father would do. He\'d be slower about it."',
     ], after: { flag: 'q_column_saltmouth' } },
