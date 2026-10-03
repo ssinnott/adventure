@@ -5,7 +5,8 @@
 // the Cartographers' Guild's hall (#181). Four first prestiges are taught here, each by a person at their
 // trade: the astrologer, the locksmith, the stevedore and the ferryman. Jory Tallis stands at his
 // house front on the quay, Kitto sells the boat to Wrackholm at the quay's end, and once Hale is gone a
-// Warden off the coast road sits by the gate with the news.
+// Warden off the coast road sits by the gate with the news. After Passage Paid, Geeske and Hessel
+// are on the quay (#183).
 // docs/areas/saltreach.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
@@ -125,6 +126,22 @@ export const SALTMOUTH: MapDef = {
     // Hessel's word, for the barge pushed off his shoal (Passage Paid, C4, #171).
     passage: [{ to: 'wrackholm_e6', x: 16, y: 15, facing: NORTH, name: 'Wrackholm', by: 'boat', fare: 150, half: { flag: 'q_compact_run_done' }, free: { flag: 'q_passage_owed' }, departs: 20, days: 1, arrives: 6,
       label: 'The boat grounds at the stage with the first light and you step ashore, rested. The cliff is already between you and the sea.' }] },
+    // Passage Paid (#56's 22), after: Geeske, who paid, landed either way, a text for each; and Hessel
+    // on the quay once his barge was pushed off his shoal.
+    { kind: 'npc', x: 9, y: 10, name: 'Geeske, a woman of the fen', after: [{ flag: 'q_passage_freed' }, { flag: 'q_passage_owed' }], lines: [
+      'A woman of the fen stands on Saltmouth\'s quay with a bundle, where the barge put her off, and has not gone up to her sister\'s yet. She knows your faces from the hold.',
+      '"Geeske. I was forward, with the bundles. Two gold at the spur to Saltmouth, honest. He landed us at dawn, and the ones aft went on downriver under a tarpaulin, and nobody on this quay looked."',
+      '"I\'ve been stood here trying to make myself go up that street and be a woman with a place in her sister\'s shop." She picks up the bundle. "Two gold. I\'d have paid twenty to be someone who didn\'t know."',
+    ], says: [{ after: { flag: 'q_passage_freed' }, lines: [
+      'A woman of the fen stands on Saltmouth\'s quay, footsore, with a bundle. She was forward in the hold, with the ones who paid, and she knows you.',
+      '"Geeske. Days on the bank road. The boy went home to Rietum; the rest came on with us and went their ways at the gate, and none of them said thank you, and I don\'t blame them. Thanking\'s for after."',
+      'She almost smiles. "Two gold at the spur, for a place in my sister\'s shop. It\'s up that street. I\'m going to go and be dull in it for the rest of my life."',
+    ] }] },
+    { kind: 'npc', x: 12, y: 10, name: 'Hessel, master of a barge', after: { flag: 'q_passage_owed' }, lines: [
+      'Hessel is on Saltmouth\'s quay with a ledger, checking a load aboard, and gives you a nod that costs him nothing.',
+      '"Used my word yet? Use it. Kitto, at the quay\'s end, the boat with no name on her. A word keeps better than paper, and it keeps best spent." He runs a finger down a column. "The ones aft went on where they were going. Don\'t ask me where; I\'m a barge, not a road."',
+      '"You\'ll have decided by now what kind of company you are. Most do about here."',
+    ] },
     // The Warden come down the coast road with the news of Hale (#180): there once #156 has taken
     // Hale from the Scarth, and gone once Hale is freed from the Tide Ship's hold, so the news is
     // never told before it is true or after it is stale.
