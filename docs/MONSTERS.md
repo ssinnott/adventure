@@ -809,10 +809,10 @@ Mender carries a spool of wire and a needle and mends one turn in two; the Forem
 slate (docs/areas/kilns.md §9). The Tiefzeche places them (#462).
 
 Drawn (#472), on the salamanders' frame (`src/ui/monsters/salamanders.ts`): a lizard coming at the
-company three-quarter on, legs sprawled and the tail curled, the fire showing through its skin in
-blotches as a fire salamander wears its yellow, and embers rising off its back. The Great Salamander
-is its kin gone to a crust of rock with the fire in every seam, horned, its head thrown back on a
-jaw open on the fire (docs/areas/kilns.md §9). The spoil heaps and the tubes place them (#458, #463,
+company three-quarter on, legs sprawled and the tail curled, with the fire showing through its skin
+in blotches as a fire salamander wears its yellow; embers rise off its back. The Great Salamander is
+its kin gone to a crust of rock with the fire in every seam, horned, its head thrown back on a jaw
+open on the fire (docs/areas/kilns.md §9). The spoil heaps and the tubes place them (#458, #463,
 #466).
 
 **Asks:** `kind` for the machines, if it has not come before; `after`, for the Anvil Guard.

@@ -22,9 +22,9 @@
 // The Great Salamander: the fire in the rock, with a head. Its kin grown old in the deepest chamber,
 // heavy, the skin gone to a crust of rock over the fire, split in plates with the fire in every seam,
 // a ridge of rock plates down its spine and claws on its fingers. The head is the most of it, half as
-// big again against its body, horned with rock at the back of the skull, knobbed over the brows and
-// the cheeks, and thrown back on a jaw hanging open on a mouth full of fire. Idle: the fire in the
-// seams swells and sinks as it breathes, the jaw works, the embers rise, and now and then it heaves.
+// big again against its body, horned with rock at the back of the skull and knobbed over the brows
+// and the cheeks; it is thrown back on a jaw hanging open on a mouth full of fire. Idle: the fire in
+// the seams swells and sinks as it breathes, the jaw works and the embers rise; now and then it heaves.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B } from './common.ts';
