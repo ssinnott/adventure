@@ -34,10 +34,22 @@ export class CombatScreen implements Screen {
   /** Sparks: position, velocity, life. */
   private sparks: { x: number; y: number; vx: number; vy: number; life: number; col: string }[] = [];
   private lastMonsterHp: number[] = [];
+  /** How many groups the fight held when last looked at: a call adds one (`meetCalled`). */
+  private bands: number;
   /** The group labels as last painted, for the smoke test to read. */
   labels: LabelLine[] = [];
   constructor(readonly state: CombatState, readonly groupIds: string[]) {
     this.lastMonsterHp = state.monsters.map((m) => m.hp);
+    this.bands = state.groupIds.length;
+  }
+
+  /** A group called into the fight says the look of each kind in it the company has not met, as the fight's first groups do. */
+  private meetCalled(g: Game): void {
+    const s = this.state;
+    if (s.groupIds.length === this.bands) return;
+    const come = s.monsters.filter((m) => m.band >= this.bands).map((m) => m.def.id);
+    this.bands = s.groupIds.length;
+    s.log.push(...g.world.meet(come));
   }
 
   private burst(x: number, y: number, col: string, n = 10): void {
@@ -77,7 +89,7 @@ export class CombatScreen implements Screen {
     const t = currentTurn(s, g.party, g.rng);
     if (!t) { this.mode = 'done'; return; }
     if (t.side === 'monster') {
-      if (++this.timer >= MONSTER_DELAY || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); }
+      if (++this.timer >= MONSTER_DELAY || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.meetCalled(g); }
       return;
     }
     if (!a) return;
@@ -196,7 +208,10 @@ export class CombatScreen implements Screen {
       const x = across(mi), y = v.y + foot;
       const h = combatHeight(m.def.size, n) * (m.back ? BACK_SCALE : 1), top = crown(m.def.size, h);
       if (m.flash > 0) m.flash--;
-      if (m.hp < this.lastMonsterHp[mi]) { this.burst(x, y - h * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070'); this.lastMonsterHp[mi] = m.hp; }
+      // One called in since is taken as it comes; one that mends is followed up as well as down.
+      const was = this.lastMonsterHp[mi] ?? m.hp;
+      if (m.hp < was) this.burst(x, y - h * 0.5, m.hp <= 0 ? '#ffffff' : '#ffd070');
+      this.lastMonsterHp[mi] = m.hp;
       const asleep = m.conditions.includes('asleep');
       drawMonsterSprite(ctx, m.def.sprite, x, y, h, m.def.tint, asleep ? 0.6 : 1, frame + mi * 11, m.flash > 0);
       const hpFrac = m.hp / m.def.hp;

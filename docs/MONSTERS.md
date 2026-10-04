@@ -162,9 +162,17 @@ group while none runs; a damage spell at one member, a row or the party; Slumber
 more awake. It casts at its level held at 10, unranked, and does not wait in the back rank. Its
 hits may `drain`: heal it by their damage, or take spell points before hit points. A hit wakes a
 sleeper, and a fight's sleepers wake when it ends. Both bots learn what an element does to a foe
-from the first spell of it they see land, and wake a sleeper of the front row, or a caster. No
-monster calls for help or regenerates. Nothing gives a curse or stone, though both conditions
-exist: Restore lifts a curse, and a temple a stoning.
+from the first spell of it they see land, and wake a sleeper of the front row, or a caster.
+
+And for regeneration, curse and calls (#537). A monster that mends (`regen`) heals its amount at
+each round's end, never past its own hit points, unless fire struck it that round, and one felled
+stays down. A hit may curse (`inflict: cursed`): the curse outlasts the fight, a rest and a raising;
+Faith keeps it off a cleric, and Restore, Absolve or a temple lifts it. It takes nothing in a fight.
+A monster that `calls` names a group and a chance a turn to spend its turn bringing the whole of it
+into the fight, as a group of its own that acts from the next round, while the fight has room for it
+under 12 monsters in three groups, those already down counted; the called pay as the rest. Both
+bots burn with fire what they have seen mend, and aim at a caller that has room to call as at a
+leader. Nothing gives stone, though the condition exists: Absolve lifts it, and a temple.
 
 ### 3.2 What the numbers show
 
@@ -221,6 +229,36 @@ made once in the systems lane and first spent by the area named, which waits for
 | Sweep | one attack at every member of a row, with an element if it has one | the Whitespine; with fire, Ashfall | the giants; the drakes' breath |
 | A light seen past the fog | a monster carrying a light is seen a square further than the weather allows (wanted, not needed) | the Downs | the lampmen |
 | The Core's clock | the last fight counts rounds to the light going out | the Core | STORY.md, Act Five |
+
+Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
+elements, casting and drain (#161); regeneration, curse and calls (#537), each with the gate bot's
+answer. Still to come: stone and its cure, sweep, a light seen past the fog and the Core's clock.
+
+Decided by delegate for #537, each the owner's to overturn:
+
+1. **A troll mends a tenth of its hit points a round, on three quarters of a brute's** (`TROLL` in
+   `tools/testmonster.ts`, `node tools/harness.ts --abilities`): at 19, 361 mending 36. With fire a
+   company fights 12.4 pairs to a rest where it fights 11.7 pairs of brutes, a pair in 4.6 rounds
+   for 7% of itself; with none it takes 6.7 rounds for 9%, a grind. On a brute's whole hit points a
+   tenth nears a wall once spells are spent: weapons alone win 54% inside fifteen rounds at 19.
+   Measured on #535's ladder, before #541 makes the test monsters past 16 again.
+2. **A troll felled stays down:** mending is the living's, so no company meets a fight it cannot
+   finish for want of fire. "Or they get up again" (§7.2) is the mending.
+3. **Fire stops the mending for the round it lands in,** any of the four fire spells that does
+   damage; the log says "Tor Troll mends 36." and, burnt, "Tor Troll smoulders and does not mend."
+4. **A curse is what `party.ts` makes it, as disease is:** it outlasts a rest and a raising; Faith
+   keeps it off, and Restore, Absolve (tier 7) or a temple lifts it. It takes nothing in a fight, so
+   no bot answers it; a bite there (Bless turned round) is the owner's to ask for.
+5. **A call brings its whole group or none, and the cap counts every monster that came in,** the
+   fallen too: never more than 12 in three groups, and no caller to farm. The called stand as their
+   own group, act from the next round and pay as the rest; one called may call in its turn.
+6. **A call is a chance a turn, as casting is, naming its group by id,** for any caller: Vask's
+   sentries need nothing new, and one only ever called counts as placed. The test caller (three
+   fodder at a half, beside six) costs a company of 20 a fight or two a day: 8.0 to a rest, not 9.6.
+7. **The bots aim at a caller with room to call, as at a leader,** a leader first, since its fall
+   stops the fight growing; they read the fight as it stands each turn, its called groups with it.
+8. **A hit's line says only a condition that takes:** none for a cleric's Faith, nor one already
+   taken.
 
 ---
 
@@ -514,6 +552,8 @@ fights before a rest, what ended the day, the rounds a fight took, what one figh
 costs, and the boss's odds. `--map thornmark --level 5` puts a map's own groups against a company
 of that level, each on its own and then all of them dealt in a new order. `--stats` prints the stat
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
+`--abilities` puts Act III's abilities on the test monsters, two trolls, four wights and a caller
+beside six fodder (§3.3, #537), at 19 and 20 or the levels asked.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.

@@ -153,3 +153,35 @@ export function standardEncounter(role: Role, level: number, hp = scaleAt(HP, ro
   const m = testMonster(role, level, hp, damage);
   return Array.from({ length: ROLES[role].group }, () => m);
 }
+
+// Act III's abilities on the test monsters (docs/MONSTERS.md §3.3, #537), each at the size decided
+// there. None is a role the calibration makes: each stands on a role's numbers.
+
+/** What a troll is made of: TROLL.hp of the test brute's hit points, of which it mends TROLL.regen a round. */
+export const TROLL = { hp: 0.75, regen: 0.1 };
+/** What a wight's hit curses at, where the test controller's held (MONSTERS §7.2). */
+export const WIGHT_CURSE = 0.2;
+/** What a caller brings: CALL.monsters of the test fodder, at CALL.chance a turn. */
+export const CALL = { monsters: 3, chance: 0.5 };
+
+/** The test troll: the test brute with fewer hit points, which it mends (`regen`). */
+export function testTroll(level: number): MonsterDef {
+  const m = testMonster('brute', level), hp = Math.round(m.hp * TROLL.hp);
+  return { ...m, id: `test_troll_${level}`, name: 'Test Troll', plural: 'Test Trolls', hp, regen: Math.round(hp * TROLL.regen) };
+}
+/** The test wight: the test controller, its hold a curse. */
+export function testWight(level: number): MonsterDef {
+  return { ...testMonster('controller', level), id: `test_wight_${level}`, name: 'Test Wight', plural: 'Test Wights', inflict: { cond: 'cursed', chance: WIGHT_CURSE } };
+}
+/** The test caller: the test soldier, calling a group of the test fodder (`calls`). */
+export function testCaller(level: number): MonsterDef {
+  const fodder = testMonster('fodder', level);
+  return { ...testMonster('soldier', level), id: `test_caller_${level}`, name: 'Test Caller', plural: 'Test Callers', calls: { monsters: Array.from({ length: CALL.monsters }, () => fodder), chance: CALL.chance } };
+}
+/**
+ * Their standard encounters (§4.4): two trolls, as brutes come; four wights, as controllers do; and a
+ * caller beside six fodder, a soldier's share and three quarters of fodder's, before it calls.
+ */
+export const trollEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.brute.group }, () => testTroll(level));
+export const wightEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.controller.group }, () => testWight(level));
+export const callerEncounter = (level: number): MonsterDef[] => [testCaller(level), ...Array.from({ length: 6 }, () => testMonster('fodder', level))];
