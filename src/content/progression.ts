@@ -9,7 +9,8 @@
 // (2,759 a sweep once the Warden of the Cut is dead and the Rift's groups stop).
 // Training six members from 5 to 10 costs 8,400 gold. Since #159 a kill pays by level: a clear of
 // Act I in road order is worth 15,292 a member, level 10, where the rows' ×1 sum gives 19,957. Act
-// II's areas have rows before their maps, owed to the issues that build them.
+// II's areas had rows before their maps (#159), and Act III's have them now (#535), owed to the
+// issues that build them.
 import type { RegionId } from './index.ts';
 import { xpForLevel, trainPrice } from '../game/party.ts';
 
@@ -36,7 +37,7 @@ export const MEMBERS = 6;
  * The areas next on the road that have a row before they have a map, in road order. An area leaves
  * this list when its first map lists it in AREAS; the curve check fails while it is in both.
  */
-export const PLANNED = [] as const;
+export const PLANNED = ['kilns', 'cairnmoor', 'rimewater'] as const;
 
 /** Every area's row, and every planned area's: an area without one is a type error. */
 export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
@@ -56,6 +57,21 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   sunderwood: {
     band: [14, 16], next: 16, price: 3000,
+  },
+  // Act III (#535). The windows rise 500 a band, as Act II's did; the ladder past Lantern Watch's
+  // stores fits inside them, its dearest ware 2,500 and its dearest find 2,050, and Kilnhaven's
+  // smith's quarter more on the forge's dearest, 2,500, inside the Kilns'.
+  kilns: {
+    band: [16, 18], next: 18, price: 3500,
+    owed: { whose: '#436', why: 'the Kilns are not built yet', xp: 0, gold: 0 },
+  },
+  cairnmoor: {
+    band: [18, 20], next: 20, price: 4000,
+    owed: { whose: '#437', why: 'Cairnmoor is not built yet', xp: 0, gold: 0 },
+  },
+  rimewater: {
+    band: [20, 22], next: 22, price: 4500,
+    owed: { whose: '#438', why: 'Rimewater is not built yet', xp: 0, gold: 0 },
   },
 };
 

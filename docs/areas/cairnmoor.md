@@ -90,10 +90,13 @@ Moor 18–19, the Cairnfield 19–20), Carn Dubh's two plates at 19–20 and the
 plan as Saltreach's and Wrackholm's were until their first box (docs/areas/saltreach.md §9, #169).
 The atlas has the plan's: the Stone Ring at 462,214, the Cairns at 430,240 and the Watcher's Hut
 at 466,208 as planned sites, and its links, the drove road from the Kilns, the Cairns' way in and
-the drove road down to Longmere. Nothing else. The systems it waits on are #432's: the curve's
-rows and the act's gear ladder (#535), ice and lying snow underfoot (#536; heather is #162's),
-regeneration and curse (#537), the drove road's coach (#539) and the bot that plays them (#541).
-Its monsters are drawn in #483.
+the drove road down to Longmere. Its row on the curve and its share of the act's gear ladder are in
+(#535): the row in `src/content/progression.ts`, planned until #476 lists the area (band 18–20,
+next 20, window 4,000), and O7's Banded Staff +1 in `src/content/areas/cairnmoor/items.ts`, made
+ahead of the area as the Kilns' step is (docs/areas/kilns.md §3), owed to #477 until placed.
+Nothing else. The systems it waits on are the rest of #432's: ice and lying snow underfoot (#536;
+heather is #162's), regeneration and curse (#537), the drove road's coach (#539) and the bot that
+plays them (#541). Its monsters are drawn in #483.
 
 ## 4. What is still to build
 
@@ -157,9 +160,12 @@ settled in its issue, and what the Kilns teach changes them.
 - **Pay.** The area owes 14,667 xp a member (§8). The shares below are #437's, and add up to well
   under it (§8, §9).
 - **Side quests** are #56's 37 to 39, placed as §6 has them (#482); 40 is Rimewater's, found here.
-- **Finds** are the act's ladder (#535): the Kilns' towns' gear by 18, the same with a plus in the
-  boxes by 20, inside the band's window of 4,000. Nothing on the moor sells or trains: Anvilhall
-  and Kilnhaven train to 19 behind, Rime Lodge to 23 ahead, and the coach runs between (#539).
+- **Finds** are the act's ladder (#535): the Kilns' towns' gear by 18 and the same with a plus by
+  19. The moor's own plus on the ladder is O7's Banded Staff +1; N7 and O8 hold seconds of the
+  Kilns' Forge Hammer +1 and Seax +1, lines three classes share; N8's and Carn Dubh's pluses are
+  their own, off the ladder. All sit inside the band's window of 4,000. Nothing on the moor sells or
+  trains: Anvilhall and Kilnhaven train to 19 behind and Rime Lodge to 23 ahead, and the coach runs
+  between (#539).
 - **Camps.** The Watcher's Hut and the piper's fire are camps of EXPANSION §5.3's kind, where a
   company rests safely (#434, call 9), and the ring's inside is proposed as a third (§9), since the
   chapter sleeps there.
@@ -189,7 +195,8 @@ settled in its issue, and what the Kilns teach changes them.
   cairn and on no other, and a company that has walked the Cairnfield knows why.
 - **New here.** Snow lying underfoot (#536); the crossing line said in snow; a moor hound, the
   Downs' black dog grown old and huge (MONSTERS §7.2).
-- **Finds.** The cache's plus, the ladder's (#535).
+- **Finds.** The cache's plus, the ladder's: a second Forge Hammer +1, for the second of the knight,
+  the paladin and the cleric (#535).
 - **Pay.** About 1,400 xp a member.
 
 ### 4.3 O7, Fionnlios's box (#477): core, band 18–19
@@ -221,7 +228,7 @@ settled in its issue, and what the Kilns teach changes them.
 - **New here.** The lights, a new family (#483); drain of spell points (`drain: 'sp'`, #161, first
   spent on spell points here, MONSTERS §3.3); a voice that is no monster, an event by night that
   fires once; two trainers at camps; a ring older than the Stones.
-- **Finds.** The hollow's plus, the ladder's (#535).
+- **Finds.** The hollow's plus, the ladder's: a Banded Staff +1 (#535).
 - **Pay.** About 1,600 xp a member.
 
 ### 4.4 O8, the bog (#478): country, band 19
@@ -251,7 +258,8 @@ settled in its issue, and what the Kilns teach changes them.
 - **New here.** Regeneration (#537): the first monster that gets up again unless burned, and the
   druid's and the sorcerer's fire the answer (DESIGN §7); a monster that is a landmark by day and a
   group by night.
-- **Finds.** The hoard's plus, the ladder's (#535); the body's ring (§6).
+- **Finds.** The hoard's plus, the ladder's: a second Seax +1, for the second of the thief, the bard
+  and the sorcerer (#535); the body's ring (§6).
 - **Pay.** About 1,400 xp a member.
 
 ### 4.5 N8, the Cairnfield's box (#479): core, band 19–20
@@ -277,12 +285,13 @@ settled in its issue, and what the Kilns teach changes them.
   the road by night (`when`), the box's farthest.
 - **Quests.** The step. The Watcher's Tally's grave (§6). The Coach That Did Not Come is found
   here and asked at Rime Lodge (§6).
-- **The secret and its hint.** The coach's strongbox, under its seat, with the ladder's plus for a
-  ranger and the fare the coach was carrying to the lodge. The hint: the coach's door hangs open and
-  the snow inside it is trodden, and nothing was taken from the luggage on its roof.
+- **The secret and its hint.** The coach's strongbox, under its seat, with a plus for a ranger and
+  the fare the coach was carrying to the lodge. The hint: the coach's door hangs open and the snow
+  inside it is trodden, and nothing was taken from the luggage on its roof.
 - **New here.** Curse (#537), the first condition on the road the temples cure and Absolve lifts
   (DESIGN §7); a crossing met stopped (#539).
-- **Finds.** The strongbox's plus, the ladder's (#535).
+- **Finds.** The strongbox's plus, off the ladder, the box's to choose: the ranger's Steel Bow +1 is
+  O6's in the Kilns (#535).
 - **Pay.** About 1,500 xp a member.
 
 ### 4.6 Carn Dubh (#480): dungeon, two levels of 16×16, band 19–20
@@ -308,8 +317,8 @@ settled in its issue, and what the Kilns teach changes them.
   wall and their feet to the stair, every one but those.
 - **New here.** A boss that curses; a cairn built over something that is not a cairn; the smooth
   wall underground, the Sunder's, seen again and not named (docs/areas/sunderwood.md §4.6).
-- **Finds.** The grave-gold; a named piece of the hill folk's, a Torc or a Blade, with the plus for
-  a cleric, the ladder's (#535); the Watcher's first page, a letter read from the pack (#76).
+- **Finds.** The grave-gold; a named piece of the hill folk's, a Torc or a Blade, off the ladder,
+  the dungeon's to name (#535); the Watcher's first page, a letter read from the pack (#76).
 - **Pay.** About 2,200 xp a member.
 
 ### 4.7 M7 and M8, the country behind (#484): country, band 18–19, parked
@@ -414,7 +423,7 @@ landmarks: a stone ring, a cairnfield, a tor, a tarn.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
-  price window is 4,000: no find on the moor is dearer, and the ladder's pluses are #535's.
+  price window is 4,000 (#535): no find on the moor is dearer, the ladder's there 1,450 to 1,550.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
@@ -468,6 +477,16 @@ Proposed, for the owner, each in the issue that would build it:
   MONSTERS §7.2's Where column has them on the tors and names no box.
 - **The Faces on the Tors is at 20 on a box at 19,** its fight the box's trolls, as The Star That
   Moved was at 12 on C7 (docs/areas/saltreach.md §6).
+
+Decided by delegate for #535, each the owner's to overturn:
+
+1. **The moor's own plus on the ladder is O7's Banded Staff +1,** the caster's its brief asks; the
+   rest of the rung by 19 is the Kilns' (docs/areas/kilns.md §9), so a company two under the
+   moor's floors at 20 goes without it.
+2. **N7 and O8 hold seconds of the Kilns' Forge Hammer +1 and Seax +1,** the ladder's for a fighter
+   and a thief: three classes share each line, and the Kilns place one of each.
+3. **N8's ranger's plus and Carn Dubh's named piece are off the ladder,** their boxes' to choose:
+   the ranger's line has one bearer, and its Steel Bow +1 is O6's.
 
 ## 10. Names
 
