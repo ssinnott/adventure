@@ -147,6 +147,10 @@ only once the fight's front is down and which waits, bow or spell aside, till th
 people break once its `leader` falls, a group's beasts bolt at three in four down, and the fled pay
 nothing; the Hand never breaks (`steady`).
 
+And for a group placed on ice (#536): `under: 'ice'` keeps it under the ice, where alone it moves;
+it strikes only a company standing on the ice beside it and in the fight reaches only the front row
+over it.
+
 And for casting, drain and elements (#161). Every damage spell carries fire, cold, lightning,
 nature or holy (DESIGN.md §7), and a monster may `resist` one (half, rounded up), be `immune` to one
 (none) or be `weak` to one (half again); the dead are weak to holy and immune to nature by their
@@ -158,9 +162,17 @@ group while none runs; a damage spell at one member, a row or the party; Slumber
 more awake. It casts at its level held at 10, unranked, and does not wait in the back rank. Its
 hits may `drain`: heal it by their damage, or take spell points before hit points. A hit wakes a
 sleeper, and a fight's sleepers wake when it ends. Both bots learn what an element does to a foe
-from the first spell of it they see land, and wake a sleeper of the front row, or a caster. No
-monster calls for help or regenerates. Nothing gives a curse or stone, though both conditions
-exist: Restore lifts a curse, and a temple a stoning.
+from the first spell of it they see land, and wake a sleeper of the front row, or a caster.
+
+And for regeneration, curse and calls (#537). A monster that mends (`regen`) heals its amount at
+each round's end, never past its own hit points, unless fire struck it that round, and one felled
+stays down. A hit may curse (`inflict: cursed`): the curse outlasts the fight, a rest and a raising;
+Faith keeps it off a cleric, and Restore, Absolve or a temple lifts it. It takes nothing in a fight.
+A monster that `calls` names a group and a chance a turn to spend its turn bringing the whole of it
+into the fight, as a group of its own that acts from the next round, while the fight has room for it
+under 12 monsters in three groups, those already down counted; the called pay as the rest. Both
+bots burn with fire what they have seen mend, and aim at a caller that has room to call as at a
+leader. Nothing gives stone, though the condition exists: Absolve lifts it, and a temple.
 
 ### 3.2 What the numbers show
 
@@ -217,6 +229,36 @@ made once in the systems lane and first spent by the area named, which waits for
 | Sweep | one attack at every member of a row, with an element if it has one | the Whitespine; with fire, Ashfall | the giants; the drakes' breath |
 | A light seen past the fog | a monster carrying a light is seen a square further than the weather allows (wanted, not needed) | the Downs | the lampmen |
 | The Core's clock | the last fight counts rounds to the light going out | the Core | STORY.md, Act Five |
+
+Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
+elements, casting and drain (#161); regeneration, curse and calls (#537), each with the gate bot's
+answer. Still to come: stone and its cure, sweep, a light seen past the fog and the Core's clock.
+
+Decided by delegate for #537, each the owner's to overturn:
+
+1. **A troll mends a tenth of its hit points a round, on three quarters of a brute's** (`TROLL` in
+   `tools/testmonster.ts`, `node tools/harness.ts --abilities`): at 19, 361 mending 36. With fire a
+   company fights 12.4 pairs to a rest where it fights 11.7 pairs of brutes, a pair in 4.6 rounds
+   for 7% of itself; with none it takes 6.7 rounds for 9%, a grind. On a brute's whole hit points a
+   tenth nears a wall once spells are spent: weapons alone win 54% inside fifteen rounds at 19.
+   Measured on #535's ladder, before #541 makes the test monsters past 16 again.
+2. **A troll felled stays down:** mending is the living's, so no company meets a fight it cannot
+   finish for want of fire. "Or they get up again" (§7.2) is the mending.
+3. **Fire stops the mending for the round it lands in,** any of the four fire spells that does
+   damage; the log says "Tor Troll mends 36." and, burnt, "Tor Troll smoulders and does not mend."
+4. **A curse is what `party.ts` makes it, as disease is:** it outlasts a rest and a raising; Faith
+   keeps it off, and Restore, Absolve (tier 7) or a temple lifts it. It takes nothing in a fight, so
+   no bot answers it; a bite there (Bless turned round) is the owner's to ask for.
+5. **A call brings its whole group or none, and the cap counts every monster that came in,** the
+   fallen too: never more than 12 in three groups, and no caller to farm. The called stand as their
+   own group, act from the next round and pay as the rest; one called may call in its turn.
+6. **A call is a chance a turn, as casting is, naming its group by id,** for any caller: Vask's
+   sentries need nothing new, and one only ever called counts as placed. The test caller (three
+   fodder at a half, beside six) costs a company of 20 a fight or two a day: 8.0 to a rest, not 9.6.
+7. **The bots aim at a caller with room to call, as at a leader,** a leader first, since its fall
+   stops the fight growing; they read the fight as it stands each turn, its called groups with it.
+8. **A hit's line says only a condition that takes:** none for a cleric's Faith, nor one already
+   taken.
 
 ---
 
@@ -510,6 +552,8 @@ fights before a rest, what ended the day, the rounds a fight took, what one figh
 costs, and the boss's odds. `--map thornmark --level 5` puts a map's own groups against a company
 of that level, each on its own and then all of them dealt in a new order. `--stats` prints the stat
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
+`--abilities` puts Act III's abilities on the test monsters, two trolls, four wights and a caller
+beside six fodder (§3.3, #537), at 19 and 20 or the levels asked.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
@@ -789,14 +833,14 @@ cargo down the Deep Mines.
 | Knocker | knockers, new | fodder, 16 | the Deep Mines' lowest levels | *Something small and grey, knocking on the rock as it comes.* A machine (§2); four to eight |
 | Salamander | salamanders, new | skirmisher, 16 | the lava tubes | *A lizard with the fire showing through its skin.* Fire does not touch it; cold bites |
 | Fire Beetle | spider | armoured, 16 | the spoil heaps and the forges | *A beetle with a coal in its back.* Fire does not touch it |
-| Slagling | riftling | skirmisher, 16 | the Anvil Stone's Rift | *Slag, walking, with a red iron heart.* Cold bites |
+| Slagling | riftling | skirmisher, 16 | the Anvil Stone's Rift | *Slag, walking, with a red iron heart.* Cold bites; fire does half |
 | Mender | knockers, new | healer, 17 | with the knockers | *It stops to mend the others, and they let it.* Mends its group |
 | Rock Worm | long bodies | brute, 17 | the old workings | *This tunnel was not dug by dwarves.* Size 1.6 |
 | Anvil Guard | bandit, a dwarf on the figure frame | armoured, 17 | the Anvil Stone, if the company takes the Stone rather than buys it | *Short, broad, and in the thane's iron.* There only after the choice (`after`) |
-| Slag Elder | riftling | elite, 18 | the Anvil Stone's Rift | *Iron runs off it like sweat.* |
+| Slag Elder | riftling | elite, 18 | the Anvil Stone's Rift | *Iron runs off it like sweat.* Paralyses (0.15). Cold bites; fire does half |
 | The Foreman | knockers, new | boss, 18 | the Deep Mines, before the door marked CREW ONLY | *It checks you the way a clerk checks a list, and finds nobody on it.* The door stays shut when it falls |
-| Great Salamander | salamanders, new | boss, 18 | the lava tubes' deepest chamber | *The fire in the rock, with a head.* |
-| Warden of the Anvil | riftling | boss, 18 | the Anvil Stone | *The Stone's heat, standing up out of the cut.* The tear closes when it falls |
+| Great Salamander | salamanders, new | boss, 18 | the lava tubes' deepest chamber | *The fire in the rock, with a head.* Size 1.6; fire does not touch it, and cold bites, as its kin's |
+| Warden of the Anvil | riftling | boss, 18 | the Anvil Stone | *The Stone's heat, standing up out of the cut.* The tear closes when it falls; cold bites it, and fire does half |
 
 - **The clean corridor**: six knockers and a mender. Kill the mender, or fight the rest twice; and
   the cleric's Wrath goes into them like a hand into a glove, the first time the road says so.
@@ -807,6 +851,20 @@ Drawn (#472), on the knockers' frame (`src/ui/monsters/knockers.ts`): smooth gre
 of legs, one lamp in the cowl's face and the chisel's mark cut on a plate, a lozenge on a stem. The
 Mender carries a spool of wire and a needle and mends one turn in two; the Foreman rears up over a
 slate (docs/areas/kilns.md §9). The Tiefzeche places them (#462).
+
+Drawn (#472), on the salamanders' frame (`src/ui/monsters/salamanders.ts`): a lizard coming at the
+company three-quarter on, legs sprawled and the tail curled, with the fire showing through its skin
+in blotches as a fire salamander wears its yellow; embers rise off its back. The Great Salamander is
+its kin gone to a crust of rock with the fire in every seam, horned, its head thrown back on a jaw
+open on the fire (docs/areas/kilns.md §9). The spoil heaps and the tubes place them (#458, #463,
+#466).
+
+The six on frames that exist are drawn as well (#472): the Fire Beetle, a beetle's own body on the
+spider frame with the coal set in its back; the Slagling and the Slag Elder, the riftling broken
+rough as clinker and cracked red; the Rock Worm, the long bodies come up through rubble; the Anvil
+Guard, a dwarf rebuilt on the figure frame; and the Warden of the Anvil, with no legs, standing up
+out of a pool of slag. Their numbers are their roles' at their levels (§4.4), and the Warden's blow
+is #465's gate's to set.
 
 **Asks:** `kind` for the machines, if it has not come before; `after`, for the Anvil Guard.
 

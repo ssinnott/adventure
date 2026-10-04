@@ -27,6 +27,7 @@ import * as devilfish from './monsters/devilfish.ts';
 import * as bears from './monsters/bears.ts';
 import * as moths from './monsters/moths.ts';
 import * as knockers from './monsters/knockers.ts';
+import * as salamanders from './monsters/salamanders.ts';
 import * as lights from './monsters/lights.ts';
 
 export { groundShadow } from './monsters/common.ts';
@@ -265,27 +266,28 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   slime: slime.draw,
   wolf: wolf.draw, dire_wolf: wolf.draw, rift_hound: wolf.draw, black_dog: wolf.draw, chalk_wolf: wolf.draw, barrow_wolf: wolf.draw, sunder_hound: wolf.draw, moor_hound: wolf.draw,
   boar: boar.draw, tusker: boar.draw,
-  spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw, barnacle_crab: spider.draw, salt_crab: spider.draw, glass_spider: spider.draw,
+  spider: spider.draw, thorn_spider: spider.draw, crab: spider.draw, rift_crawler: spider.draw, barnacle_crab: spider.draw, salt_crab: spider.draw, glass_spider: spider.draw, fire_beetle: spider.draw,
   bandit: bandit.draw, archer: bandit.draw, brigand: bandit.draw, brigand_archer: bandit.draw,
   smuggler: bandit.draw, smuggler_bow: bandit.draw, smuggler_captain: bandit.draw,
   wrecker: bandit.draw, lampman: bandit.draw, footpad: bandit.draw, poacher: bandit.draw, billman: bandit.draw, slinger: bandit.draw, cutthroat: bandit.draw,
-  bargeman: bandit.draw, barge_master: bandit.draw, wrack_smuggler: bandit.draw, wrack_bowman: bandit.draw,
+  bargeman: bandit.draw, barge_master: bandit.draw, wrack_smuggler: bandit.draw, wrack_bowman: bandit.draw, anvil_guard: bandit.draw,
   cultist: cultist.draw, zealot: cultist.draw, adept: cultist.draw, ashen_hand: cultist.draw,
   acolyte: cultist.draw, deacon: cultist.draw, overseer: cultist.draw, gleaner: cultist.draw,
   skeleton: skeleton.draw, bone_knight: skeleton.draw, ghoul: skeleton.draw, drowned: skeleton.draw,
   barrow_guard: skeleton.draw, barrow_captain: skeleton.draw, temple_drowned: skeleton.draw, drowned_chanter: skeleton.draw, choirmaster: skeleton.draw,
   bog_body: skeleton.draw, cairn_king: skeleton.draw,
-  riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw, brineling: riftling.draw, tide_elder: riftling.draw, tide_warden: riftling.draw, sunderling: riftling.draw, sunder_warden: riftling.draw,
+  riftling: riftling.draw, riftling_elder: riftling.draw, warden: riftling.draw, cut_warden: riftling.draw, brineling: riftling.draw, tide_elder: riftling.draw, tide_warden: riftling.draw, sunderling: riftling.draw, sunder_warden: riftling.draw, slagling: riftling.draw, slag_elder: riftling.draw, anvil_warden: riftling.draw,
   ogre: ogre.draw, tor_troll: ogre.draw,
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw, eldest: oldwood.draw,
   wraith: wraith.draw, cairn_wight: wraith.draw,
   crow: birds.draw, owl: birds.draw, old_rook: birds.draw, grey_heron: birds.draw, wrack_gull: birds.draw, raven: birds.draw,
-  fen_eel: longbodies.draw, leech: longbodies.draw,
+  fen_eel: longbodies.draw, leech: longbodies.draw, rock_worm: longbodies.draw,
   fen_toad: toads.draw, bull_toad: toads.draw,
   devilfish: devilfish.draw, great_devilfish: devilfish.draw,
   pine_bear: bears.draw, glass_bear: bears.draw,
   lantern_moth: moths.draw, deathshead: moths.draw,
   knocker: knockers.draw, mender: knockers.draw, foreman: knockers.draw,
+  salamander: salamanders.draw, great_salamander: salamanders.draw,
   bog_light: lights.draw,
 };
 
