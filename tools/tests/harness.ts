@@ -8,7 +8,7 @@ import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { gateCompany } from '../gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, testTroll, trollEncounter, wightEncounter, callerEncounter } from '../testmonster.ts';
-import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, thrifty, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
+import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
 import { GATE } from './gate.ts';
 import { ok } from './lib.ts';
 
@@ -113,17 +113,15 @@ export function harness(): void {
 const fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(id).element !== 'fire'); return p; };
 
 /**
- * One fight a seed from `from`, the thrifty bot playing a company of `level` dressed by `dress`, as
- * harness's `fight` plays it: the share won, its rounds and its cost on average, and each fight's
- * state and company, to read.
+ * One fight a seed from `from`, a company of `level` dressed by `dress`, as `measure` fights them:
+ * the share won, its rounds and its cost on average, and each fight's end and company, to read.
  */
 function bout(level: number, enc: readonly MonsterDef[], seeds: number, from: number, dress: (p: Party) => Party = (p) => p): { won: number; rounds: number; cost: number; fights: { s: CombatState; p: Party }[] } {
   let won = 0, rounds = 0, cost = 0;
   const fights: { s: CombatState; p: Party }[] = [];
   for (let k = from; k < from + seeds; k++) {
-    const p = dress(companyAt(level, k)), rng = makeRng(k * 7919 + 13), s = startCombat(p, [{ id: 'test', monsters: enc }], rng);
-    for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > ROUND_CAP) break; if (t.side === 'monster') monsterAct(s, p, rng); else thrifty(s, p, rng, t.i); }
-    won += s.outcome === 'victory' ? 1 : 0; rounds += Math.min(s.round, ROUND_CAP); cost += spent(p).cost; fights.push({ s, p });
+    const p = dress(companyAt(level, k)), s = play(p, enc, k * 7919 + 13), o = outcomeOf(s, p);
+    won += o.won ? 1 : 0; rounds += o.rounds; cost += o.cost; fights.push({ s, p });
   }
   return { won: won / seeds, rounds: rounds / seeds, cost: cost / seeds, fights };
 }

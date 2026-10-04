@@ -332,8 +332,8 @@ export function spent(p: Party): { cost: number; hp: number; sp: number } {
 export type Encounter = Fighters;
 export interface Outcome { won: boolean; cost: number; hp: number; sp: number; rounds: number; down: boolean; broken: boolean }
 
-/** One fight to its end from however the company stands: what it cost, read from what it has left. */
-export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
+/** One fight to its end from however the company stands, the bot playing it: the fight as it ended, to read. */
+export function play(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): CombatState {
   const edge = RULES.levelTraits || RULES.levelBonus ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round) : undefined;
   const rng = makeRng(seed), s = startCombat(p, [asGroup('harness', monsters)], rng, { spellsGrowTo: RULES.spellsGrowTo, rankStep: RULES.rankStep, edge });
   for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
@@ -341,7 +341,15 @@ export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = th
     if (!t || s.round > ROUND_CAP) break;
     if (t.side === 'monster') monsterAct(s, p, rng); else bot(s, p, rng, t.i);
   }
-  return { won: s.outcome === 'victory', ...spent(p), rounds: Math.min(s.round, ROUND_CAP), down: p.members.some(isDown), broken: s.outcome === 'ongoing' };
+  return s;
+}
+
+/** What a fight played came to, read from its end and from what the company has left. */
+export const outcomeOf = (s: CombatState, p: Party): Outcome => ({ won: s.outcome === 'victory', ...spent(p), rounds: Math.min(s.round, ROUND_CAP), down: p.members.some(isDown), broken: s.outcome === 'ongoing' });
+
+/** One fight to its end from however the company stands: what it cost, read from what it has left. */
+export function fight(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty): Outcome {
+  return outcomeOf(play(p, monsters, seed, bot), p);
 }
 
 export interface Tally { cost: number; p90: number; hp: number; sp: number; won: number; rounds: number; down: number }
@@ -620,11 +628,10 @@ async function main(): Promise<void> {
     const at = opt('levels') ? levels : [19, 20];
     const forget = (keep: (sp: SpellDef) => boolean) => (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => keep(spell(id))); return p; };
     const fireless = forget((x) => x.element !== 'fire'), unarmed = forget((x) => !x.dice);
-    /** Seeds of one fight from fresh, as `fight` plays it, each fight's end kept to read. */
+    /** Seeds of one fight from fresh, as `measure` fights them, each fight's end kept to read. */
     const fights = (level: number, enc: Encounter, dress = (p: Party): Party => p): { s: CombatState; p: Party; o: Outcome }[] => Array.from({ length: seeds }, (_, n) => {
-      const k = n + 1, p = dress(companyAt(level, k)), rng = makeRng(k * 7919 + 13), s = startCombat(p, [asGroup('harness', enc)], rng);
-      for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > ROUND_CAP) break; if (t.side === 'monster') monsterAct(s, p, rng); else thrifty(s, p, rng, t.i); }
-      return { s, p, o: { won: s.outcome === 'victory', ...spent(p), rounds: Math.min(s.round, ROUND_CAP), down: p.members.some(isDown), broken: s.outcome === 'ongoing' } };
+      const p = dress(companyAt(level, n + 1)), s = play(p, enc, (n + 1) * 7919 + 13);
+      return { s, p, o: outcomeOf(s, p) };
     });
     const mean = (fs: { o: Outcome }[], f: (o: Outcome) => number): number => fs.reduce((t, x) => t + f(x.o), 0) / fs.length;
     const one = (fs: { o: Outcome }[]): string => `${mean(fs, (o) => o.rounds).toFixed(1)} rounds, ${pct(mean(fs, (o) => o.cost))}%, won ${pct(mean(fs, (o) => (o.won ? 1 : 0)))}%`;
