@@ -14,8 +14,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'ice_pike', name: 'Ice Pike', plural: 'Ice Pike', sprite: 'ice_pike', kind: 'beast', look: "The ice under Ottilie's feet has an eye in it.", level: 20, hp: 239, ac: 21, attack: 12, dice: 3, sides: 7, bonus: 4, speed: 15, xp: 793, gold: [0, 0], tint: '#56634a', size: 0.85 },
   // the pinewoods (#486), a skirmisher on MONSTERS §4.4's line at 20: it leaps at the back row
   { id: 'snow_lynx', name: 'Snow Lynx', plural: 'Snow Lynxes', sprite: 'snow_lynx', kind: 'beast', look: 'Grey, tufted, and it has already jumped.', level: 20, hp: 239, ac: 21, attack: 12, dice: 3, sides: 7, bonus: 4, speed: 15, xp: 793, gold: [0, 0], ranged: true, tint: '#9c978c', size: 0.8 },
-  // up through Rime Lodge's ice-hole on the fourth night (#487), a caller on a soldier's numbers at 20 (MONSTERS §4.2), with six knockers
-  { id: 'tallyman', name: 'Tallyman', plural: 'Tallymen', sprite: 'tallyman', kind: 'machine', look: 'It stops and clicks, once for each of you.', level: 20, hp: 241, ac: 21, attack: 12, dice: 3, sides: 8, bonus: 4, speed: 11, xp: 793, gold: [0, 0], tint: '#6e7884', size: 0.6 },
+  // up through Rime Lodge's ice-hole on the fourth night (#487), a caller on a soldier's numbers at 20 (MONSTERS §4.2), with six
+  // knockers: it calls three more at a half a turn, as #537's test caller does, room for one call beside the six
+  { id: 'tallyman', name: 'Tallyman', plural: 'Tallymen', sprite: 'tallyman', kind: 'machine', look: 'It stops and clicks, once for each of you.', level: 20, hp: 241, ac: 21, attack: 12, dice: 3, sides: 8, bonus: 4, speed: 11, xp: 793, gold: [0, 0], calls: { monsters: ['knocker', 'knocker', 'knocker'], chance: 0.5 }, tint: '#6e7884', size: 0.6 },
   // the glacier's edge (#486), a brute on MONSTERS §4.4's line at 21
   { id: 'ice_bear', name: 'Ice Bear', plural: 'Ice Bears', sprite: 'ice_bear', kind: 'beast', look: 'White, and bigger than the last one.', level: 21, hp: 518, ac: 20, attack: 13, dice: 4, sides: 8, bonus: 6, speed: 8, xp: 1667, gold: [0, 0], tint: '#e4dfd2', size: 1.3 },
   // the Sleepers' Bay (#490), a controller on MONSTERS §4.4's line at 21: its touch puts to sleep, at 0.3 a hit, and it mends
