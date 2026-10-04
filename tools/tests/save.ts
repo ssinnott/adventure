@@ -29,10 +29,11 @@ export function save(): void {
   const world2 = new World(buildMaps(), data.party, makeRng(1), data.world);
   ok(world2.map.at(7, 11).door === 'door', 'loading re-applies the unlocked door to fresh map content');
   ok(seen(world2.state.maps.harrow.explored, 14 * 16 + 7) && world2.state.mapId === 'mill' && world2.state.x === 7, 'loading keeps the explored cells and the position');
-  { // The outdoors saves small: its cells seen are kept a bit apiece.
+  { // The outdoors saves small: its cells seen are kept a bit apiece, beside every laid box's groups,
+    // some forty characters a group, so the cap rises with the boxes (O5's passed 20,000, #464).
     world.travel('shelf', 16, 8, 2);
     const outdoors = JSON.stringify(world.state.maps[OUTDOORS]).length;
-    ok(outdoors < 20_000 && seen(world.state.maps[OUTDOORS].explored, world.state.y * world.map.width + world.state.x), `the whole outdoors' state saves in ${outdoors} characters, and it knows where the party has been`);
+    ok(outdoors < 24_000 &&seen(world.state.maps[OUTDOORS].explored, world.state.y * world.map.width + world.state.x), `the whole outdoors' state saves in ${outdoors} characters, and it knows where the party has been`);
   }
   ok(data.world.weatherSeed === world.state.weatherSeed && JSON.stringify(world2.weather) === JSON.stringify(world.weather), 'the weather seed round-trips, and with it the weather');
   // A save from before there was weather has no seed: it loads with the legacy one and keeps it.

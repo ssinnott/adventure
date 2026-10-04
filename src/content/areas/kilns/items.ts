@@ -61,4 +61,7 @@ export const ITEMS: readonly ItemDef[] = [
   // N5's secret (#463): in the smiths' shard store under the slag heap, their own work, off the
   // ladder as #535's 4 leaves it, the forge's shield with a plus.
   P(forgeShield, 1),
+  // O5's find (#464): in the cutters' foreman's shed, his own, off the ladder: a hammer the knight,
+  // the paladin and the cleric have a level before the Tiefzeche's.
+  P(forgeHammer, 1, { id: 'cutters_hammer', name: "Cutter's Hammer +1" }),
 ];
