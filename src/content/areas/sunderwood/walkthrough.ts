@@ -26,7 +26,7 @@
 // landing, down the ledges and over the thread, the gleaners' cache, down to the floor, its groups
 // and the Warden won, the wall found and the seam behind the rock fall at the chalk's last mark;
 // the Warden stays dead and the rest come back. Then the Fells Road (M2, #202): the road off L2 by
-// its ford and out by M2's south edge, where the world ends until the pass is built, the Warden's
+// its ford and out by M2's south edge into the Iron Fells' M3 (#457), the Warden's
 // grave found from the milestone's back, and the box's groups won at its floor. Then the Bears'
 // Wood (J3, #202): the cutters' track down out of J2, the hermit's word, the den's keepers and
 // brood won and the den burnt, the cache behind it found from the moths at its mouth, and the way
@@ -585,11 +585,11 @@ export const walkthrough: Walkthrough = (ok) => {
   };
 
   // The Fells Road: off L2 over the river by its ford, and onto M2's corner, where the road turns
-  // south for the pass. Past M2's south edge the world ends, until M3 is built.
+  // south for the pass. Past M2's south edge the road runs on into M3, the Kilns' first box (#457).
   w.level = 15;
   walkThrough(w, 'lanternwood_l2', 29, 29, EAST, 'lanternwood_m2', 3);
   const m2 = out.zones.find((z) => z.id === 'lanternwood_m2')!;
-  ok(['=', '='].join() === [out.at(m2.x + 1, m2.y + 31).ch, out.at(m2.x + 2, m2.y + 31).ch].join() && out.passable(m2.x + 1, m2.y + 32) !== 'ok', 'the road leaves M2 by its south edge, and past it, for now, the world ends');
+  ok(['=', '='].join() === [out.at(m2.x + 1, m2.y + 31).ch, out.at(m2.x + 2, m2.y + 31).ch].join() && out.passable(m2.x + 1, m2.y + 32) === 'ok' && out.at(m2.x + 1, m2.y + 32).ch === '=', 'the road leaves M2 by its south edge, and runs on into the Iron Fells');
   // The secret: the milestone's back, then the search there and the grave through the tree line.
   // Walked, waded, climbed or floated, the grave is never reached but through the trees by the stone.
   const grave = shutBox(m2, [1, 29], [5, 30], [6, 30]);

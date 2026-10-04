@@ -94,10 +94,12 @@ export const ROADS: Record<string, readonly string[]> = {
   // Up the last of the spur past the herons in the stubble, onto the mound and the quay by day (#172).
   upperwater: ['upperwater_c3:c3_herons', 'upperwater_c3:c3_quay'],
   saltings: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'],
+  // Over the pass and down the trail past the spoil heap's beetles (#457).
+  ironfells: ['ironfells_m3:m3_beetles1', 'ironfells_m3:m3_beetles2'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -127,6 +129,10 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'upperwater_b3: under': { whose: '#18', at: 1 },
   'delta_b4: under': { whose: '#18', at: 1 },
   'Saltreach: under': { whose: '#18', at: 1 },
+  // And Act III's first box (#457): a company two under M3, in the Watch's gear, still beats every
+  // group that a company at its floor fights eight of to a rest, as Act II's did.
+  'ironfells_m3: under': { whose: '#18', at: 1 },
+  'the Kilns: under': { whose: '#18', at: 1 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;

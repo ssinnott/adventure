@@ -1,6 +1,5 @@
 // The Kilns' part of the world map: its three zones, the plates of its towns and dungeons, and its
-// sites. docs/areas/kilns.md is its brief (#456). Spread into the plan (content/atlas.ts) until the
-// area's first box lists it (#457).
+// sites. docs/areas/kilns.md is its brief (#456).
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 /**
@@ -10,9 +9,17 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
  */
 const HELD_AT_M2: [number, number][] = Array.from({ length: 29 }, (_, i): [number, number] => [424, 33 + i]);
 
+/**
+ * The line between the Fells and the heart held on the seam of rows 3 and 4 under N3 and O3, a seed a
+ * square either side of it from x 424 to 487, the Fells' along y 93 and the heart's along y 94: laid
+ * whole in the Fells, M3 seeds the walk from every square of it, and without these the Fells would run
+ * on south into N4, its mine's mouth and O4, which are the heart's (#457, docs/areas/kilns.md §4).
+ */
+const seam = (y: number): [number, number][] => Array.from({ length: 64 }, (_, i): [number, number] => [424 + i, y]);
+
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], seeds: [[432, 50], [414, 66], ...HELD_AT_M2] },
-  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], seeds: [[452, 120], [470, 160]] },
+  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
+  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], seeds: [[452, 120], [470, 160], ...seam(94)] },
   { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [17, 18], seeds: [[408, 160], [404, 140]] },
 ];
 
