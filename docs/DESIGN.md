@@ -468,8 +468,8 @@ ship lands there.
   Lanterns, since the cargo coming up is the Stones' business (#434, call 5), go on selling spells,
   and give the Lanterns' quests to a company that has done the first task. The fee to study is the
   hall's, §7's regional toll; any company may pay it, and a Lantern pays it too. It is not
-  membership. Every hall of theirs teaches Linguist to a company of theirs (#538), and so will a
-  Lantern reader in Anvilhall (#459), so no company goes back for it.
+  membership. Every hall of theirs teaches Linguist to a company of theirs (#538), and so does a
+  Lantern reader in Anvilhall's great hall (#459), so no company goes back for it.
 
 ### Joining and ranks
 

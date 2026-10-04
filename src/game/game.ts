@@ -8,7 +8,7 @@ import { signSays } from './inscriptions.ts';
 import type { WorldState } from './world.ts';
 import { groupDrawn } from './world.ts';
 import { defaultParty, isDown, allDown } from './party.ts';
-import { meet, answer, heard } from './people.ts';
+import { meet, answer, answerLabel, asked, barred, heard } from './people.ts';
 import type { Person } from './people.ts';
 import type { Party } from './party.ts';
 import { buildMaps } from '../content/maps.ts';
@@ -236,15 +236,16 @@ export class Game {
   }
 
   /**
-   * Put a question: its answers through the choice screen, and the answer's words in a box titled
-   * `title`, or to `said` (words for the log). Esc answers nothing, and the question comes again.
+   * Put a question: its answers through the choice screen, each with its price where it has one and
+   * barred to a company short of it, and the answer's words in a box titled `title`, or to `said`
+   * (words for the log). Esc answers nothing, and the question comes again.
    */
   ask(c: Choice, title: string, said?: (text: string) => void): void {
-    this.push(new ChoiceScreen(c.ask, c.answers.map((a) => a.label), (i) => {
+    this.push(new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
       if (i < 0) return;
       const text = answer(c.answers[i], this.party);
       if (said) said(text); else this.push(new MessageScreen(text, undefined, title));
-    }, title));
+    }, title, c.answers.map((a) => barred(a, this.party))));
   }
 
   /**
