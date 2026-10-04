@@ -540,7 +540,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   company at 16 wins every fight and manages 8.73 fights to a rest, inside the aim, with 1% of its
   days ending in a fight broken off; the heart's road, past both groups on the spoil, is walked every
   time. As measured it pays about 1,468 xp a member and 950 gold. Two under, at 14, it wins every fight too,
-  owed to #18. Density 99.8% within 8 steps, the furthest 10, with one sign among its 25 points.
+  owed to #18. Density 97.7% within 8 steps, the furthest 13, with one sign among its 25 points.
 
 ### 4.7 The Tiefzeche (#462): dungeon, three levels of 16×16, band 16–18
 
@@ -956,8 +956,8 @@ it, since the check asks that what is claimed be used: pine with M3 (#457), the 
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
-  within 8 and the furthest 10, with one sign among its 22 (#458); N4 99.8% within 8 and the furthest
-  10, with one sign among its 25 (#461).
+  within 8 and the furthest 10, with one sign among its 22 (#458); N4 97.7% within 8 and the furthest
+  13, with one sign among its 25 (#461).
 
 ## 9. Decisions
 
