@@ -663,12 +663,12 @@ async function main(): Promise<void> {
       const fs = fights(l, callerEncounter(l)), mute = callerEncounter(l).map((m) => (m.calls ? { ...m, calls: undefined } : m));
       console.log(`  ${l}: ${one(fs)}, the fight holding ${(fs.reduce((t, { s }) => t + s.monsters.length, 0) / seeds).toFixed(1)} monsters; ${rest(l, callerEncounter(l))}, and ${days(l, [mute], seeds).fights.toFixed(1)} with no call`);
     }
-    console.log(`Three lights and a hound: the test controller, flying, its touch taking spell points at ${LIGHT.blow} of its blow where it held, beside the test skirmisher (#541).`);
+    console.log(`Three lights and a hound: the test controller come down whole to ${LIGHT.share} of its line, flying, its touch taking spell points where it held, beside the test skirmisher (#541).`);
     for (const l of at) {
       const enc = lightEncounter(l), fs = fights(l, enc), houndFirst = { monsters: enc, leader: enc[enc.length - 1].id };
       const plain = [...Array.from({ length: 3 }, () => testMonster('controller', l)), testMonster('skirmisher', l)];
       const whole = enc.map((m): MonsterDef => (m.drain ? { ...testMonster('controller', l), id: m.id, kind: m.kind, ranged: true, drain: m.drain, inflict: undefined } : m));
-      console.log(`  ${l}: ${one(fs)}, its spell points ${pct(mean(fs, (o) => o.sp))}% spent or taken (${pct(mean(fights(l, houndFirst), (o) => o.sp))}% with the hound marked first); ${rest(l, enc, ['the hound marked first', houndFirst])}; ${days(l, [plain], seeds).fights.toFixed(1)} for three test controllers and the hound, and ${days(l, [whole], seeds).fights.toFixed(1)} for lights on the controller's whole blow`);
+      console.log(`  ${l}: ${one(fs)}, its spell points ${pct(mean(fs, (o) => o.sp))}% spent or taken (${pct(mean(fights(l, houndFirst), (o) => o.sp))}% with the hound marked first); ${rest(l, enc, ['the hound marked first', houndFirst])}; ${days(l, [plain], seeds).fights.toFixed(1)} for three test controllers and the hound, and ${days(l, [whole], seeds).fights.toFixed(1)} for lights on the controller's whole line`);
     }
     return;
   }

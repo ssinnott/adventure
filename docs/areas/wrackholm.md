@@ -350,10 +350,13 @@ Foreland map's density.
   stair, and its foot is one room of clean cold stone, its sign the Dead-Drop's band, a way on into
   the dark at its far end and the stair back up. The Warden is set off the boss line, at 674 hit
   points and 10d7+15 against the line's 13d7+19 (38% at 12) and the escorted boss's 7d7+11 (97%):
-  the gate wins him 63% at 12 and 96% at 14, dressed by #399's ladder and measured after #414's re-stat (94% and 100% once the gate's company takes its first prestige, #541, past the limit at 12 and owed to #18). As measured the ship pays about 3,500 xp a member, 1,843
+  the gate wins him 63% at 12 and 96% at 14, dressed by #399's ladder and measured after #414's
+  re-stat (94% and 100% once the gate's company takes its first prestige, #541, past the limit at
+  12 and owed to #18). As measured the ship pays about 3,500 xp a member, 1,843
   of it the Rift's, and 3,532 gold, which brings the area's gold to the 6,000 its
   training costs. Each deck at 12 wins every fight, at 6.1, 7.6 and 7.0 fights to a rest, inside the
-  aim of 6 to 8, the Rift 81.5% with its boss (97% with the first prestige) and 7.6 to a rest; two under, at 10,
+  aim of 6 to 8, the Rift 81.5% with its boss (97% with the first prestige) and 7.6 to a rest;
+  two under, at 10,
   the decks win every fight too, owed to #18 with E6's, the Rift 55.5%. Every square of every deck is within 5 steps
   of a point. The walkthrough rows out by night, plays the three decks at 12, finds the shard-cut,
   frees Hale once he is taken, wins the Warden at 14 and the Stone, and goes down the stair and

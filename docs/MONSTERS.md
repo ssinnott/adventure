@@ -436,11 +436,13 @@ points, armour, to-hit, blow and xp are `testMonster(role, level)`'s (`node tool
 --roles soldier --levels 17` prints them), and its notes go on top: an `inflict`, a resistance, a
 healer's `cast`. When `--calibrate --write` makes the line again, a def on it is re-derived the same
 way, from its role and level, and keeps its notes: only its hit points and its dice move, since its
-armour, to-hit and xp come from the line's formulas and the curve. A def set off the line on purpose,
-a boss its box's gate tuned, keeps its numbers and is named in `OFF_LINE` (`tools/tests/harness.ts`)
-with the issue that set it. The harness suite fails any other monster past 10 that stands on no
-role's line at its level, so a def drawn on the old line fails until it is re-derived, as #414
-re-derived Act II's after #409 and #541 Act III's.
+armour, to-hit and xp come from the line's formulas and the curve. A def on a shape of the line, the
+test troll (`testTroll`) or a role come down whole by a share named in `WHOLE`, is re-derived from
+that shape, its mending with it. A def set off the line on purpose, a boss its box's gate tuned,
+keeps its numbers and is named in `OFF_LINE` (`tools/tests/harness.ts`) with the issue that set it.
+The harness suite fails any other monster past 10 that stands on no shape of the line at its level,
+so a def drawn on the old line fails until it is re-derived, as #414 re-derived Act II's after #409
+and #541 Act III's.
 
 What it shows:
 
@@ -625,13 +627,13 @@ Decided by delegate for #541, each the owner's to overturn:
 3. **The bots mark a light whose touch takes spell points, after a leader and a caller** (`markOf`),
    from its nature, as they mark a caller before it calls: its fall keeps the casters' points. Only
    spell points, so no built figure moves: a leech that drinks hit points is no mark. Three test
-   lights and a hound at 19 are fought 8.5 to a rest felled lights first and 7.5 felled hound first
+   lights and a hound at 19 are fought 10.1 to a rest felled lights first and 7.2 felled hound first
    (8.75 asked). The gate's bot, which spends its points from the first turn, gains little by it in
    one fight, so its check is the aim itself: its first blade falls on a light.
-4. **The test light takes a third of the controller's blow** (`LIGHT`). On the whole blow three
-   lights and a hound halve a company's day, 4.8 to a rest at 19 and 5.1 at 20; at a third they cost
-   about what three controllers and the hound do (8.7 and 9.5). The bog light is #483's to state
-   from it and #478's gate to tune.
+4. **The test light is the bog light's shape** (`LIGHT`): the test controller come down whole to
+   0.575 of its line, as #597 brought the Bog Light down, flying, its touch taking spell points. On
+   the controller's whole line three lights and a hound halve a company's day, 4.8 to a rest at 19;
+   four bog lights end it in four fights at 18 on the line, and fight 8.9 at 0.575.
 5. **Curse, Absolve and Lampglass ask nothing of the bots.** A curse takes nothing in a fight or a
    day (#537's 4), so neither bot lifts it, and Absolve is the company's to cast at leisure;
    Lampglass waits on a monster that casts an element at the company, and Act III's roster has none.
@@ -639,20 +641,24 @@ Decided by delegate for #541, each the owner's to overturn:
 6. **Kiln-script asks nothing of the bot:** a reading opens no way and no fight (#538's 5 and 7), a
    ladder it points to is a secret a search finds, and the gate walks a zone's road by its groups, so
    the walk without the ladders is the harder one, and the one held.
-7. **Every monster past 10 stands on the line or is named off it** (`OFF_LINE`,
-   `tools/tests/harness.ts`): its hit points some role's test monster's at its level and its blow
-   within half a point, or the issue that set it off. Act II's four bosses set by their gates are
-   named; a def drawn on the old line fails until it is re-derived ("When the line moves", above).
+7. **Every monster past 10 stands on the line or is named off it** (`tools/tests/harness.ts`): its
+   hit points and its blow, within half a point, some role's test monster's at its level, the test
+   troll's, or a role's come down whole by a share named in `WHOLE` (the Bog Light's 0.575); else the
+   issue that set it off is named in `OFF_LINE`, as Act II's four bosses set by their gates are. A
+   def drawn on the old line fails until it is re-derived ("When the line moves", above).
 8. **Act III's monsters are re-stated as #414 re-stated Act II's,** each on its role's line at its
    level with its notes kept: the Kilns' Mender, Rock Worm and Anvil Guard at 17 and Slag Elder,
    Foreman, Warden of the Anvil and Great Salamander at 18, and Rimewater's Ice Pike, Snow Lynx and
-   Tallyman at 20, Ice Bear and Bay Keeper at 21 and Matron at 22, the casts and the calls kept and
-   the bosses' blows still their gates' to set. The four at 16 do not move, since 16 is not made
-   again. The area docs give each before and after.
+   Tallyman at 20, Ice Bear and Bay Keeper at 21 and Matron at 22, and Cairnmoor's Raven, Bog Light
+   and Bog Body at 18, Moor Hound, Cairn Wight and Tor Troll at 19 and Cairn King at 20: the casts and
+   the call kept, the light come down whole, the troll and the wight #537's, and the bosses' blows
+   still their gates' to set. The four at 16 do not move, since 16 is not made again. The area docs
+   give each before and after.
 9. **The troll's tenth and the caller's call stand on the line made again:** two trolls with fire
-   are fought 8.6 to a rest at 19 where plain brutes are 8.9 (8.75 asked), and on a brute's whole hit
-   points weapons alone win 2% inside fifteen rounds; the caller costs a company of 20 about two
-   fights a day, 7.0 to a rest where it fights 9.0 with no call.
+   are fought 8.6 to a rest at 19 where plain brutes are 8.9 (8.75 asked), their days ending badly
+   about as often, 35% to 29%, in fights broken off where the brutes' end in deaths; on a brute's
+   whole hit points weapons alone win 2% inside fifteen rounds. The caller costs a company of 20
+   about two fights a day, 7.0 to a rest where it fights 9.0 with no call.
 
 ---
 

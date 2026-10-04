@@ -186,15 +186,15 @@ export const trollEncounter = (level: number): MonsterDef[] => Array.from({ leng
 export const wightEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.controller.group }, () => testWight(level));
 export const callerEncounter = (level: number): MonsterDef[] => [testCaller(level), ...Array.from({ length: 6 }, () => testMonster('fodder', level))];
 
-/** What a light's touch takes: LIGHT.blow of the test controller's blow, in spell points before hit points. */
-export const LIGHT = { blow: 0.33 };
+/** What a light is made of: LIGHT.share of the test controller's hit points and blow together, as the bog light comes down whole (#597). */
+export const LIGHT = { share: 0.575 };
 /**
- * The test light (MONSTERS §7.2's bog light, #541): the test controller, flying, its touch taking
- * spell points before hit points (`drain: 'sp'`, #161) where the controller's held, at LIGHT.blow of
- * its blow, and of the Rift, which never runs.
+ * The test light (MONSTERS §7.2's bog light, #541): the test controller come down whole to
+ * LIGHT.share of its line, flying, its touch taking spell points before hit points (`drain: 'sp'`,
+ * #161) where the controller's held, and of the Rift, which never runs.
  */
 export function testLight(level: number): MonsterDef {
-  const m = testMonster('controller', level, scaleAt(HP, 'controller', level), scaleAt(DAMAGE, 'controller', level) * LIGHT.blow);
+  const m = testMonster('controller', level, scaleAt(HP, 'controller', level) * LIGHT.share, scaleAt(DAMAGE, 'controller', level) * LIGHT.share);
   return { ...m, id: `test_light_${level}`, name: 'Test Light', plural: 'Test Lights', kind: 'rift', ranged: true, drain: 'sp', inflict: undefined };
 }
 /** Lights round the ring with a hound (§7.2's fight): three lights, a controller's three shares, and the test skirmisher's one. */
