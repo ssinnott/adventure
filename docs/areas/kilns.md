@@ -141,9 +141,12 @@ are #41's; the machine `kind` is MONSTERS §3.3's, first spent here. Its monster
 eleven issues, nine of them so far (below), and its rooms in #473.
 
 Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
-Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462). Their defs are in
-`src/content/areas/kilns/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until the first box
-lists the area, and each is owed to #462 in `UNPLACED` (`tools/tests/maps.ts`). §9 has the decisions.
+Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462); and the
+salamanders, the Salamander and the Great Salamander (`src/ui/monsters/salamanders.ts`), for the
+spoil heaps and the tubes (#458, #463, #466). Their defs are in `src/content/areas/kilns/monsters.ts`,
+listed in `AHEAD` (`src/content/index.ts`) until the first box lists the area, and each is owed in
+`UNPLACED` (`tools/tests/maps.ts`): the knockers to #462, the Salamander to #458 and the Great
+Salamander to #466. §9 has the decisions.
 
 The six on frames that exist are drawn too (#472): the Fire Beetle on the spider frame, the
 Slagling, the Slag Elder and the Warden of the Anvil on the riftling's, the Rock Worm on the long
@@ -1034,6 +1037,28 @@ Decided by delegate for #472 (the six), each the owner's to overturn:
     Heart of the Sunder came with the Sunder's box (#426).
 13. **No surface monster at 18:** #472 adds none; the 17–18 boxes hold their top with rock worm
     pairs at 17, as §7 proposes.
+
+Decided by delegate for #472 (the salamanders), each the owner's to overturn:
+
+1. **The Salamander is a beast, a skirmisher on MONSTERS §4.4's line at 16** (179 hit points, armour
+   19, 3d8+2, speed 15), immune to fire and weak to cold as its row says, size 0.68: the sorcerer's
+   cold is the answer, and the cleric's Hearthfire and the druid's Wildfire are not (DESIGN §7).
+2. **The Great Salamander is a beast boss on the boss line at 18** (961, armour 22, 17d8+20), immune to
+   fire and to sleep and weak to cold, as its kin and as the Eldest and the Great Devilfish. Its blow
+   is #466's to set for the gate, as #426 set the Warden of the Sunder's, and its hide #466's to drop.
+3. **It is a tall boss, size 1.6,** seated on the third rank with its crown at 0.79 of its height,
+   under its markers' 0.82: the deepest chamber's boss, and the biggest thing in the tubes.
+4. **The frame is a lizard three-quarter on, coming at the company,** its head turned on toward the
+   company's right. Side on, as the bears stand, a lizard is as wide as a bear and read as a dinosaur
+   standing up; three-quarter on it reads as a lizard at a glance, and its mouth can open to them.
+5. **The fire shows in blotches, as a fire salamander wears its yellow,** and on the Great Salamander
+   in the seams of a crust of rock and in its open mouth. The embers are the parts apart, declared in
+   `tools/smoke.ts` as the rift hound's are: three pieces, 1% of the ink.
+6. **The frame is a Build for the kin to come** (MONSTERS §11): the ember salamander a hotter fire on
+   a lither body, the basilisk no fire, a crest, a crown and a stare, each a Build and a colouring.
+7. **The Salamander is owed to N3 (#458),** the first box whose brief places one (§4.3's spoil heaps,
+   the roster's second fight), and the Great Salamander to the tubes (#466): `UNPLACED` in
+   `tools/tests/maps.ts` says so until each is placed.
 
 ## 10. Names
 

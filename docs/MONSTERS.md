@@ -839,7 +839,7 @@ cargo down the Deep Mines.
 | Anvil Guard | bandit, a dwarf on the figure frame | armoured, 17 | the Anvil Stone, if the company takes the Stone rather than buys it | *Short, broad, and in the thane's iron.* There only after the choice (`after`) |
 | Slag Elder | riftling | elite, 18 | the Anvil Stone's Rift | *Iron runs off it like sweat.* Paralyses (0.15). Cold bites; fire does half |
 | The Foreman | knockers, new | boss, 18 | the Deep Mines, before the door marked CREW ONLY | *It checks you the way a clerk checks a list, and finds nobody on it.* The door stays shut when it falls |
-| Great Salamander | salamanders, new | boss, 18 | the lava tubes' deepest chamber | *The fire in the rock, with a head.* |
+| Great Salamander | salamanders, new | boss, 18 | the lava tubes' deepest chamber | *The fire in the rock, with a head.* Size 1.6; fire does not touch it, and cold bites, as its kin's |
 | Warden of the Anvil | riftling | boss, 18 | the Anvil Stone | *The Stone's heat, standing up out of the cut.* The tear closes when it falls; cold bites it, and fire does half |
 
 - **The clean corridor**: six knockers and a mender. Kill the mender, or fight the rest twice; and
@@ -851,6 +851,13 @@ Drawn (#472), on the knockers' frame (`src/ui/monsters/knockers.ts`): smooth gre
 of legs, one lamp in the cowl's face and the chisel's mark cut on a plate, a lozenge on a stem. The
 Mender carries a spool of wire and a needle and mends one turn in two; the Foreman rears up over a
 slate (docs/areas/kilns.md §9). The Tiefzeche places them (#462).
+
+Drawn (#472), on the salamanders' frame (`src/ui/monsters/salamanders.ts`): a lizard coming at the
+company three-quarter on, legs sprawled and the tail curled, with the fire showing through its skin
+in blotches as a fire salamander wears its yellow; embers rise off its back. The Great Salamander is
+its kin gone to a crust of rock with the fire in every seam, horned, its head thrown back on a jaw
+open on the fire (docs/areas/kilns.md §9). The spoil heaps and the tubes place them (#458, #463,
+#466).
 
 The six on frames that exist are drawn as well (#472): the Fire Beetle, a beetle's own body on the
 spider frame with the coal set in its back; the Slagling and the Slag Elder, the riftling broken
