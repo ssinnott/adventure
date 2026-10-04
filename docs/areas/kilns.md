@@ -129,15 +129,16 @@ with its fare, its days and its hours, the same either way (§4.14, §9). The fe
 Saltmouth's quay; every other end waits on its town, Kilnhaven's three on #469, and nothing is sold
 toward a town not built, so none runs yet.
 
-The systems it waits on are the rest of #432's: ash, ice and pine underfoot (#536: ash on O6, pine
-on M3 and O3, where Sunderwood drew its pine as forest, docs/areas/sunderwood.md §9, #200's 1);
-Kiln-script and Linguist (#538, built: §4.1 says how a box writes an inscription, and §9 what was
-decided); the crossings, the ferry, the ship and the coach (#539); the Anvil Stone counting for the
-Hearth (#540, #168); and the bot, which must learn to put cold on what fire does not touch (#541,
-EXPANSION §5.2). Regeneration, curse and calls (#537) are Cairnmoor's and Rimewater's; the Kilns
-need none of them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is
-MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues, and its rooms in
-#473.
+The systems it waits on are the rest of #432's: ash and pine underfoot (#536, built: ash, `a`, on
+O6, slow going as hills are, and pine, `p`, on M3 and O3, a ground of its own where Sunderwood drew
+its pine as forest, docs/areas/sunderwood.md §9, #200's 1; the scaffold drafts both, and
+docs/SLICE.md says what was decided); Kiln-script and Linguist (#538, built: §4.1 says how a box
+writes an inscription, and §9 what was decided); the crossings, the ferry, the ship and the coach
+(#539); the Anvil Stone counting for the Hearth (#540, #168); and the bot, which must learn to put
+cold on what fire does not touch (#541, EXPANSION §5.2). Regeneration, curse and calls (#537) are
+Cairnmoor's and Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `when`
+are #41's; the machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472,
+eleven issues, and its rooms in #473.
 
 Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
 Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462). Their defs are in
