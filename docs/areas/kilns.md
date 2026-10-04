@@ -130,12 +130,18 @@ toward a town not built, so none runs yet.
 
 The systems it waits on are the rest of #432's: ash, ice and pine underfoot (#536: ash on O6, pine
 on M3 and O3, where Sunderwood drew its pine as forest, docs/areas/sunderwood.md §9, #200's 1);
-Kiln-script and Linguist (#538); the crossings, the ferry, the ship and the coach (#539); the Anvil
-Stone counting for the Hearth (#540, #168); and the bot, which must learn to put cold on what fire
-does not touch (#541, EXPANSION §5.2). Regeneration, curse and calls (#537) are Cairnmoor's and
-Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `when` are #41's; the
-machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues,
-and its rooms in #473.
+Kiln-script and Linguist (#538, built: §4.1 says how a box writes an inscription, and §9 what was
+decided); the crossings, the ferry, the ship and the coach (#539); the Anvil Stone counting for the
+Hearth (#540, #168); and the bot, which must learn to put cold on what fire does not touch (#541,
+EXPANSION §5.2). Regeneration, curse and calls (#537) are Cairnmoor's and Rimewater's; the Kilns
+need none of them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is
+MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues, and its rooms in
+#473.
+
+Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
+Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462). Their defs are in
+`src/content/areas/kilns/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until the first box
+lists the area, and each is owed to #462 in `UNPLACED` (`tools/tests/maps.ts`). §9 has the decisions.
 
 ## 4. What is still to build
 
@@ -212,7 +218,14 @@ dearer than the band's window, 3,500. Side quests are #56's 33 to 36, placed as 
 it says. The second shows to a company with a reader, a member with Linguist, a dwarf or 34's
 copybook, and never has to. Where a brief gives one, the first line is the dwarves' and the second
 the machine's; both are drafts. A secret's hint is a thing seen first, and the reading a second
-hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
+hint beside it, so the hint check (EXPANSION §5.4) passes without a reader. As built
+(`src/game/inscriptions.ts`), it is a sign with an `id`, its words in `text` and the machine's in
+`read`, and the log says the reading as its reader's: a brief's *Read: KEEP WHOLE. NO CUTTING.* is
+`read: 'KEEP WHOLE. NO CUTTING.'`, said *Maren reads: "KEEP WHOLE. NO CUTTING."* after the sign's
+words. Read, it is kept by its id, so `seen: '<map>:<id>'` names it for a person's words or a
+journal's entry (the verse, §4.4). One that `marks` names atlas places, which the world map pins
+once it is read (Feuerstollen's mouth, §4.11), and its first reading says so. The secret, the
+ladder and the mark are what a reading opens; no way waits on one (§9).
 
 ### 4.2 M3, the Iron Fells' way in (#457): country, band 16
 
@@ -708,10 +721,10 @@ at 17 and the dungeons hold the 18s, or #472 adds one (§9).
 New in the Kilns, for the novelty check (EXPANSION §5.4): the knockers and the salamanders, two new
 families; the machine kind, with the cleric's Wrath passing through it (MONSTERS §2); pine and ash
 underfoot (#536); Kiln-script read, a sign with two texts, a shortcut found by reading and a world
-map mark made by it (#538); a choice sold like a ware, and a shop that shuts for good; a group that
-comes `after` a choice; a coach that runs (#539); the second prestige (#19). Its landmarks: a town cut
-into a hill, a mine's headworks, a smelter, a Stone cut by its own people, a ridge of vents, an ore
-port.
+map mark made by it (#538; the mechanics `sign:read` and `sign:marks`); a choice sold like a ware,
+and a shop that shuts for good; a group that comes `after` a choice; a coach that runs (#539); the
+second prestige (#19). Its landmarks: a town cut into a hill, a mine's headworks, a smelter, a Stone
+cut by its own people, a ridge of vents, an ore port.
 
 ## 8. The numbers
 
@@ -795,7 +808,8 @@ Proposed, for the owner, each in the issue that would build it:
 - **The verse is read aloud by the Lantern reader the first time,** so the step needs no skill, and
   a company with a reader of its own reads it first (§4.4, #459).
 - **The service ladders are secret doors found by reading** (§4.7): the hatch opens to a search once
-  the inscription beside it has been read, and the stairs stay the way for everyone.
+  the inscription beside it has been read, and the stairs stay the way for everyone. As #538 built
+  it, the reading is the hatch's hint and a search finds it as any door (#538's 5, below).
 - **The pay's shares** (§8).
 - **The bands on the atlas's rows** (#456): the Iron Fells 16–17, the Kilns' heart 16–18,
   Kilnmouth 17–18, Anvilhall 16–18, the Tiefzeche 16–18, the Anvil Stone 17–18 (the plan has 16–18),
@@ -859,6 +873,87 @@ Decided by delegate for #539, each the owner's to overturn:
    name, and not again as planned.
 8. **The gate needs nothing new:** #164's `landings` makes a town a crossing lands in a way into the
    zones its ways out open on, so each town is held to it from the day a crossing to it runs.
+
+Decided by delegate for #538, each the owner's to overturn:
+
+1. **An inscription is a sign with `read`**, not a feature of its own: its words are said as any
+   sign's, and the reading after them as its reader's line, *Maren reads: "STORE."*, so a brief's
+   *Read: X* is written `read: 'X'`.
+2. **A reader** is the first standing member with Linguist or a dwarf, else, while an item with
+   `skill: 'linguist'` is carried, its carrier or the first standing member; one knocked down reads
+   nothing.
+3. **A reading is kept by the inscription's id in its map's `used`,** as a once-event is: `seen`
+   names it for a person's words or an entry, and nothing new is saved. An inscription must have an
+   id, and the type asks for one.
+4. **A reading may be a secret's only hint, and the hint check counts it** as any sign on the near
+   side; the briefs' seen hint beside it (§4.1) stays the boxes' practice, so no secret needs a
+   reader.
+5. **A reading is a hint, never a key:** a hatch it names is found by a search as any secret door
+   is. Gating the hatch on the reading (the ladders' proposal below) is not built; it would want a
+   field on `secrets`, #462's to ask for.
+6. **`marks` names atlas places,** planned or built, one or several; once read, the world map pins
+   each with a hollow square of its own colour, with no name and no word in the legend, which is
+   full, and the first reading says *Maren marks the world map.*
+7. **Reading never opens the road:** it sets no flag and changes no door, and the check refuses a
+   way whose `shut` names a reading.
+8. **Linguist is a list on the member, `skills`,** absent in an old save and read as none, so no
+   save bump; the dwarves are born to it (the skill's `race`), so the sheet lists it for a dwarf too.
+9. **A guild's halls teach its skills to its members** (DESIGN §5 and §8, "taught to its members"):
+   every business with `hall: 'lanterns'` offers "Learn a skill", Rime Lodge's too once #487 builds
+   it, and a stranger to the guild hears *"We teach our own."*
+10. **A person teaches a skill with `skill`,** beside `teaches`, which stays the prestiges', so the
+    walkthroughs that read `teaches.cls` keep their types; Anvilhall's reader is #459's to place.
+11. **Linguist costs 1,000 gold a member:** a first prestige's price, under a tier 6 spell at the
+    Watch (1,280) and an eighth of training six through the band (7,920, §8).
+12. **The copybook is any item with `skill: 'linguist'`,** tested with a fixture until #471 builds
+    the Primer's. A carried thing's own Kiln-script (34's rubbing) is not built: an item would want
+    a reading of its own, a few lines in the systems lane, for #471 to ask for.
+13. **The line check hears an inscription as a reader with a ten-letter name does the first time:**
+    its words, reading and mark said together, which Feuerstollen's brief (§4.11) fills exactly.
+14. **The novelty check names the new mechanics** `sign:read` and `sign:marks`, for §7's claim.
+
+Decided by delegate for #472 (the knockers), each the owner's to overturn:
+
+1. **The knockers are woodlice the vessel made:** smooth grey plates laid one over the next, round
+   over the back and flat under the belly, on thin legs with ball joints, all alike, stepping in a
+   wave. Small, many-legged and smooth read at once, and nothing on the road is shaped so; the
+   spider frame, eight legs with the knees high, was left to the spiders.
+2. **One lamp in the cowl's face, under a brow,** warm as a miner's lamp and the same in every one:
+   a pool of it lies on the rock ahead of a knocker, and now and then it dims, as a blink. The cowl
+   is a plate of its own over the shell's front.
+3. **The chisel's mark is a lozenge on a stem,** cut straight and even into a plate of every one.
+   It is the mark's first drawing, so the chisel's and the treaty's seal can follow it. It is not the
+   loop inside a loop: that is Wenna's family knot (STORY, Acts One and Three), hers alone, on the
+   frame of the door marked CREW ONLY.
+4. **The Knocker knocks:** two feelers off the cowl's chin end in knobs, and it raps the rock ahead
+   with them in turn. Fodder on #409's line at 16: 127 hit points, armour 18, +9, 3d5+2, speed 12,
+   317 xp; size 0.45, tint #84878e.
+5. **The Mender carries its trade,** domed higher, a spool of copper wire on its back and an arm
+   that brings a needle down before its cowl, a cold light at the point, so a company picks it out
+   of six knockers at a glance. A soldier's numbers at 17: 196 hit points, armour 20, +10, 3d7+5,
+   speed 11, 673 xp; size 0.55, tint #9a9c96.
+6. **The Mender casts Mending Light one turn in two** that one of its group is hurt. At every turn,
+   the harness's bot, which never singles it out, broke off half its days at fifteen rounds at 16
+   and 17; at one in two, 6 to 7% of them, the fight a round longer than with a mender that never
+   mends (5.4 rounds to 4.4 at 16, 300 seeds).
+7. **The Foreman is a knocker grown long and reared up,** its cowl bowed over a slate held before
+   it with the list cut on it in rows, an empty box at each row's end; a stylus goes down the boxes
+   and ticks none, and now and then the lamp lifts from the slate to the company. Size 1.3, under
+   the tall boss's 1.5, so it stands on its group's rank; tint #5c6068.
+8. **The Foreman stands on #409's boss line at 18,** 961 hit points, armour 22, +13, 17d8+20, for
+   #462's gate to tune, as #199 tuned the Warden of the Sunder: a company wins it 17% of the time at
+   14, 66% at 16, 82% at 18 and 99% at 20 (300 seeds).
+9. **One frame, a Build to a kind:** length, dome, taper, rear, plates, legs, stance, step, cowl,
+   feelers, spool, needle, slate and the mark, so MONSTERS §11's tallyman, deep knocker, inspector
+   and tally clerk are each a Build, a colouring and what their trades carry.
+10. **No gold and no drops:** machines carry parts (MONSTERS §2), and the parts are items, #462's
+    to add with the groups it places, as the Heart of the Sunder came with #199.
+11. **They stand unplaced, owed to #462,** which seats six knockers and a mender twice in the clean
+    corridor and the Foreman before the door.
+
+Owed elsewhere: MONSTERS §2's line for the first time the Hearth's light passes through a machine,
+*The light goes into it like a hand into a glove.*, is not in the combat log, which says only that a
+knocker takes 0. It is the systems lane's, wanted before #462 seats the knockers.
 
 Decided by delegate for #535, each the owner's to overturn:
 

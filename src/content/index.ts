@@ -19,6 +19,7 @@ import { AREA as thornmark } from './areas/thornmark/index.ts';
 import { AREA as saltreach } from './areas/saltreach/index.ts';
 import { AREA as wrackholm } from './areas/wrackholm/index.ts';
 import { AREA as sunderwood } from './areas/sunderwood/index.ts';
+import * as kilns from './areas/kilns/monsters.ts';
 import { ITEMS as KILNS_ITEMS } from './areas/kilns/items.ts';
 import { ITEMS as CAIRNMOOR_ITEMS } from './areas/cairnmoor/items.ts';
 import { ITEMS as RIMEWATER_ITEMS } from './areas/rimewater/items.ts';
@@ -35,6 +36,7 @@ export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood] as con
  * an area's are; once the area is listed, its Area takes the import and its line here goes.
  */
 export const AHEAD = [
+  { id: 'kilns' as const, sprites: kilns.SPRITES, monsters: kilns.MONSTERS },
 ] as const;
 
 /**
