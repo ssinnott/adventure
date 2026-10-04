@@ -103,10 +103,13 @@ export const ROADS: Record<string, readonly string[]> = {
   kilnsheart: ['kilnsheart_n4:n4_beetles', 'kilnsheart_n4:n4_salamanders'],
   // Up the branch from N6's fork past the warm kilns' east end, where the beetles overlook the road (#467).
   kilnmouth: ['kilnmouth_m6:m6_beetles_east'],
+  // Over the low hills and down the drove road past the ravens on the first cairn, the bog bodies in
+  // the marsh beside it and, on its southern reach by night, the hounds (#476).
+  highmoor: ['highmoor_n7:n7_ravens', 'highmoor_n7:n7_bodies_north', 'highmoor_n7:n7_hounds'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -148,6 +151,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'kilnsheart_n6: under': { whose: '#18', at: 1 },
   'kilnmouth_m6: under': { whose: '#18', at: 1 },
   'the Kilns: under': { whose: '#18', at: 1 },
+  // And Cairnmoor's first box (#476), in the Kilns' gear and its finds by 19, as the Kilns' are.
+  'highmoor_n7: under': { whose: '#18', at: 1 },
+  'Cairnmoor: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
   // twice a turn and the casters cast at their first rank, and each boss is won nearly always at its

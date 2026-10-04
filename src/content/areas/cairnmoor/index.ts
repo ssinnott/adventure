@@ -1,0 +1,26 @@
+// Cairnmoor, the moor with the ring (band 18-20): High Moor and the Cairnfield, the second of Act
+// III. docs/areas/cairnmoor.md is its brief.
+import type { Area } from '../../area.ts';
+import { HIGHMOOR_N7 } from './maps/highmoor_n7.ts';
+import { MONSTERS, SPRITES } from './monsters.ts';
+import { ITEMS } from './items.ts';
+import { ZONES, PLACES, SITES } from './atlas.ts';
+
+export const AREA = {
+  id: 'cairnmoor' as const,
+  maps: [HIGHMOOR_N7],
+  monsters: MONSTERS,
+  sprites: SPRITES,
+  items: ITEMS,
+  quests: [],
+  // The Ring, the act's second chapter, is #481's.
+  chapter: undefined,
+  // The moor's: cold, wet and windy, sleet and snow from the autumn on, lying long in the winter,
+  // and fog off the bog.
+  climate: { summer: 13, winter: -6, daily: 5, damp: [0.02, 0.09], wettest: 90, fog: 0.7, lag: 12,
+    fogText: 'Fog comes up off the bog and lies on the heather.', thunderText: 'Thunder rolls over the moor.' },
+  // No town, and no business (#434, call 9).
+  interiors: [] as const,
+  novel: { families: [], terrain: ['snow'], mechanics: [], landmarks: [] },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+} satisfies Area;
