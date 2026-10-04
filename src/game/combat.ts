@@ -129,6 +129,12 @@ export const MAX_MONSTERS = 12, MAX_GROUPS = 3;
 /** The log's line when people break at their leader's fall, and when beasts run; given who goes, and whether one. */
 export const BREAK_LINE = (names: string, one: boolean): string => one ? `${names} breaks and runs.` : `${names} break and run.`;
 export const ROUT_LINE = (names: string, one: boolean): string => one ? `${names} bolts.` : `${names} bolt.`;
+/**
+ * The log's line the first time Smite or Wrath of the Hearth passes through a machine and does nothing
+ * (MONSTERS §2), given whether through one; said once a game, and kept by its flag in the party's flags.
+ */
+export const GLOVE_LINE = (one: boolean): string => `The light goes into ${one ? 'it' : 'them'} like a hand into a glove.`;
+export const GLOVE_FLAG = 'glove_seen';
 /** What the buffs are worth while they last. */
 export const BLESS_HIT = 2, HASTE_HIT = 1, HASTE_SPEED = 8, WARD_AC = 3;
 
@@ -414,13 +420,22 @@ function hurtMonster(s: CombatState, m: MonsterInst, dmg: number): void {
 function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number, element?: Element): void {
   // A damage spell's roll on one monster: its dice lifted by the caster's ranks, then Spellfire, then
   // what its element does to the monster, which the company now has seen.
+  let gloved = 0;
   const dmgOf = (m: MonsterInst): number => {
     const d = Math.round(roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, 0) * rankMult(c, s.rankStep)) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
     if (sp.element) (s.seen[m.def.id] ??= {})[sp.element] = elementMult(m.def, sp.element);
     const took = elementDamage(m.def, sp.element, d, pierces(c));
     // Fire that lands keeps one that mends from mending at this round's end (`regenerate`).
     if (sp.element === 'fire' && took > 0 && m.def.regen) m.burnt = true;
+    // The Hearth's light passes through a machine, doing nothing.
+    if (sp.element === 'holy' && took === 0 && m.def.kind === 'machine') gloved++;
     return took;
+  };
+  // The first time it does, the log says so, once a game.
+  const glove = (): void => {
+    if (!gloved || party.flags[GLOVE_FLAG]) return;
+    party.flags[GLOVE_FLAG] = 1;
+    s.log.push(GLOVE_LINE(gloved === 1));
   };
   switch (sp.target) {
     case 'enemy': {
@@ -429,6 +444,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       const d = dmgOf(m);
       hurtMonster(s, m, d);
       s.log.push(`${c.name} casts ${sp.name}: ${m.def.name} takes ${d}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
+      glove();
       return;
     }
     case 'group': {
@@ -445,6 +461,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
         let total = 0, killed = 0;
         for (const m of members) { const d = dmgOf(m); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
         s.log.push(`${c.name} casts ${sp.name}: ${total} damage to the ${m0.def.plural}` + (killed ? `, ${killed} slain.` : '.'));
+        glove();
       }
       return;
     }
@@ -453,6 +470,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       let total = 0, killed = 0;
       for (const m of members) { const d = dmgOf(m); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
       s.log.push(`${c.name} casts ${sp.name}: ${total} damage to every foe` + (killed ? `, ${killed} slain.` : '.'));
+      glove();
       return;
     }
     case 'ally': {

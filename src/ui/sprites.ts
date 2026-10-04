@@ -296,11 +296,52 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
 };
 
 /**
+ * How far each kind's drawing reaches left and right of its centre, as shares of the height it is
+ * drawn at: the most over its idle at combat size. The fight spaces its row by them (ui/row.ts). The
+ * smoke test holds every drawing to its span, give or take SPAN_SLACK pixels at any size, and the span
+ * to no more than a twentieth of a height wider than the drawing; a kind drawn new or redrawn takes the
+ * numbers the test prints.
+ */
+export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = {
+  rat: [1.05, 0.97], barn_rat: [1.06, 1.01], bilge_rat: [1.06, 0.92],
+  slime: [1.11, 0.88],
+  wolf: [0.58, 0.77], dire_wolf: [0.59, 0.82], rift_hound: [0.57, 0.78], black_dog: [0.58, 0.86], chalk_wolf: [0.58, 0.83], barrow_wolf: [0.57, 0.8], sunder_hound: [0.56, 0.79], moor_hound: [0.67, 0.76],
+  boar: [0.74, 0.74], tusker: [0.74, 0.73],
+  spider: [0.93, 1.03], thorn_spider: [0.94, 1.05], crab: [0.55, 0.55], rift_crawler: [0.9, 1.01], barnacle_crab: [0.56, 0.58], salt_crab: [0.55, 0.55], glass_spider: [1.42, 1.42], fire_beetle: [0.52, 0.52],
+  bandit: [0.41, 0.41], archer: [0.56, 0.31], brigand: [0.45, 0.47], brigand_archer: [0.39, 0.31],
+  smuggler: [0.26, 0.3], smuggler_bow: [0.26, 0.42], smuggler_captain: [0.33, 0.44],
+  wrecker: [0.26, 0.37], lampman: [0.26, 0.49], footpad: [0.26, 0.47], poacher: [0.34, 0.28], billman: [0.27, 0.44], slinger: [0.3, 0.39], cutthroat: [0.28, 0.49],
+  bargeman: [0.64, 0.88], barge_master: [0.42, 0.33], wrack_smuggler: [0.32, 0.42], wrack_bowman: [0.26, 0.47], anvil_guard: [0.44, 0.5],
+  cultist: [0.25, 0.33], zealot: [0.47, 0.51], adept: [0.42, 0.39], ashen_hand: [0.47, 0.47],
+  acolyte: [0.23, 0.43], deacon: [0.29, 0.29], overseer: [0.46, 0.5], gleaner: [0.43, 0.45],
+  skeleton: [0.22, 0.39], bone_knight: [0.36, 0.42], ghoul: [0.33, 0.38], drowned: [0.27, 0.3],
+  barrow_guard: [0.2, 0.33], barrow_captain: [0.27, 0.29], temple_drowned: [0.34, 0.34], drowned_chanter: [0.27, 0.28], choirmaster: [0.32, 0.35],
+  bog_body: [0.23, 0.25], cairn_king: [0.32, 0.35],
+  riftling: [0.42, 0.55], riftling_elder: [0.51, 0.7], warden: [0.63, 0.66], cut_warden: [0.64, 0.66], brineling: [0.39, 0.54], tide_elder: [0.5, 0.7], tide_warden: [0.64, 0.66], sunderling: [0.42, 0.55], sunder_warden: [0.64, 0.66], slagling: [0.42, 0.57], slag_elder: [0.5, 0.69], anvil_warden: [0.68, 0.7],
+  ogre: [0.41, 0.45], tor_troll: [0.4, 0.41],
+  bramble: [0.49, 0.49], rootwalker: [0.39, 0.41], heartwood: [0.4, 0.36], eldest: [0.72, 0.72],
+  wraith: [0.27, 0.27], cairn_wight: [0.28, 0.3],
+  crow: [0.6, 0.6], owl: [0.86, 0.86], old_rook: [0.61, 0.63], grey_heron: [0.36, 0.55], wrack_gull: [0.73, 0.62], raven: [0.79, 0.72],
+  fen_eel: [0.6, 0.6], leech: [0.46, 0.46], rock_worm: [0.66, 0.53], ice_pike: [0.44, 0.65],
+  fen_toad: [0.58, 0.58], bull_toad: [0.61, 0.61],
+  devilfish: [0.51, 0.51], great_devilfish: [0.66, 0.7],
+  pine_bear: [0.75, 0.66], glass_bear: [0.7, 0.65], ice_bear: [0.73, 0.73],
+  lantern_moth: [0.71, 0.71], deathshead: [0.81, 0.81],
+  knocker: [0.51, 0.68], mender: [0.46, 0.63], foreman: [0.45, 0.52], tallyman: [0.58, 0.55],
+  salamander: [0.78, 0.84], great_salamander: [0.71, 0.72],
+  bog_light: [0.15, 0.16],
+  bay_keeper: [0.28, 0.28], matron: [0.32, 0.33],
+  snow_lynx: [0.48, 0.47],
+};
+/** How many pixels a drawing may reach past its span at any size, and so how far inside the view's edge a fight keeps the spans. */
+export const SPAN_SLACK = 2;
+
+/**
  * How tall a monster draws on the combat screen. Xeen fills most of the window with the thing you
  * are fighting, so a lone enemy is drawn a quarter taller than the old flat size and a pair nearly
- * so. The row is always spaced the same, though, so every extra monster is width the neighbours do
- * not have: the height comes back down as the row fills, reaching the old size at five and going
- * under it at six, where the old flat size used to overlap badly.
+ * so. Every extra monster is width the neighbours do not have, so the height comes back down as the
+ * row fills, reaching the old size at five and going under it at six, where the old flat size used to
+ * overlap badly. A row too wide for the view even so is drawn smaller as a whole (ui/row.ts).
  * @param size the def's size (1 = a full cell)
  * @param count how many monsters are in the row
  */
