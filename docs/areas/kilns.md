@@ -940,8 +940,9 @@ the rest with theirs.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
-  within 8 and the furthest 10, with one sign among its 22 (#458), 23 with its gate open (#459);
-  Anvilhall, a town, 100% within 7 and the furthest 4, five signs among its 22 points (#459).
+  within 8 and the furthest 10, with one sign among its 22 (#458), the gate's exit for its event
+  once the gate opened (#459); Anvilhall, a town, 100% within 7 and the furthest 4, five signs among
+  its 22 points (#459).
 
 ## 9. Decisions
 
@@ -1362,10 +1363,11 @@ Decided by delegate for #459, each the owner's to overturn:
 8. **The town is a court cut down into the hill and open to the sky,** three terraces up from a gate
    one door wide to the great hall's doors: a town has the sky over it, so the hold's rooms are the
    rooms (#473) and the court their street.
-9. **N3's gate opens** (#458's 3): the town lists `GATE` in N3's exits, its square is a door in the
-   dressed front, and `n3_gate` says the door stands open; the way out lands on N3's 28,9, facing
-   south. The plate moves into the hill behind the gate, at 452,66, as Saltmouth's moved onto its
-   walled ground (docs/areas/saltreach.md §9, #177's 9), and the site at the gate is built.
+9. **N3's gate opens** (#458's 3): the town lists `GATE` in N3's exits and its square is a door in
+   the dressed front; `n3_gate`, which said the door was barred, goes, since the gate's label says
+   the door as a company goes in (10). The way out lands on N3's 28,9, facing south. The plate
+   moves into the hill behind the gate, at 452,66, as Saltmouth's moved onto its walled ground
+   (docs/areas/saltreach.md §9, #177's 9), and the site at the gate is built.
 10. **The brief's gate line is the gate's own,** `GATE`'s label, said as a company goes in: the game
     says an arrival square's events only once it is stepped on again. A step inside, the court is
     named, and the hold's name is over the gate.

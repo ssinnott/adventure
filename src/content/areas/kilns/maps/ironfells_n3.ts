@@ -72,8 +72,7 @@ export const IRONFELLS_N3: MapDef = {
     // The outer workings: an adit in the west hills and a working in the crag, their spoil warm.
     { kind: 'event', x: 10, y: 20, id: 'n3_adit', once: true, text: 'An old adit in the hillside, its spoil fanned out below it to the road. The spoil is warm to the hand.' },
     { kind: 'event', x: 21, y: 8, id: 'n3_working', once: true, text: 'An old working in the crag, timbered and open, rails running out of it onto the spoil. The air that comes out is warm.' },
-    // The gate under the crag, and the lookout from the top terrace.
-    { kind: 'event', x: 28, y: 9, id: 'n3_gate', text: 'The spur ends under the crag at a front of dressed stone, its door standing open. The hammering is under the hill now.' },
+    // The lookout from the top terrace. The gate's own words are its label, said going in (GATE).
     { kind: 'event', x: 31, y: 10, id: 'n3_lookout', once: true, when: { hours: 'day' }, text: 'South-east from the top terrace, the heart: the smelter\'s smoke going up, and past it the ash, grey to the skyline.' },
     { kind: 'event', x: 31, y: 10, id: 'n3_lookout_night', once: true, when: { hours: 'night' }, text: 'South-east the heart lies dark but for the smelter\'s fires, and far past them a line of red along the ground.' },
     // The terrace well, and the mother at it (#56's 33).
