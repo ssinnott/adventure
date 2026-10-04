@@ -11,7 +11,7 @@
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
-//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 16
+//   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 22
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
 //   node tools/harness.ts --rank-step 0.25 [...]       ... or a spell rank added another share than play's 15%
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
@@ -104,9 +104,11 @@ export function edgeOf(c: Character, round: number): Edge {
  * 5 the kits' armour with a plus and the Downs' last finds, then Thornmark's armoury from 8, where
  * plate is dear, its chests' gear with a plus by 9 and the Deepthorn's +2s by 10. Past them, Act II's
  * (#399): Saltmouth's armourer's step from 11, the same with a plus from Saltreach's and Wrackholm's
- * boxes by 13, Lantern Watch's stores from 14 and theirs with a plus from the Sunder by 16. Each member takes
- * the best its class can use of the kind it already carries, which flatters the company a little.
- * The harness and the gate check both dress their company from it.
+ * boxes by 13, Lantern Watch's stores from 14 and theirs with a plus from the Sunder by 16. Then
+ * Act III's (#535): Anvilhall's forge from 17, the same with a plus from the Kilns' and Cairnmoor's
+ * boxes by 19, Rime Lodge's furrier from 21 and theirs with a plus from Rimewater by 22. Each member
+ * takes the best its class can use of the kind it already carries, which flatters the company a
+ * little. The harness and the gate check both dress their company from it.
  */
 export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [3, ['longsword', 'axe', 'longbow', 'shield', 'scale', 'chain', 'dagger+1', 'mace+1', 'shortsword+1', 'staff+1']],
@@ -118,6 +120,10 @@ export const GEAR: readonly (readonly [number, readonly string[]])[] = [
   [13, ['morning_star+1', 'stiletto+1', 'ironshod_staff+1', 'tidefolk_robe+1', 'horn_bow+1', 'plate+1', 'long_axe+1']],
   [14, ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield']],
   [16, ['flail+1', 'ironwood_bow+1', 'plate+2', 'wardens_dirk+1', 'lanterns_staff', 'great_axe+1']],
+  [17, ['forge_hammer', 'seax', 'steel_bow', 'mattock', 'banded_staff', 'dwarf_mail', 'kiln_robe', 'forge_shield']],
+  [19, ['plate+3', 'forge_hammer+1', 'mattock+1', 'steel_bow+1', 'seax+1', 'kiln_robe+1', 'banded_staff+1']],
+  [21, ['ice_axe', 'skinning_knife', 'hunters_bow', 'bear_spear', 'guides_staff', 'bearskin', 'fur_robe']],
+  [22, ['ice_axe+1', 'skinning_knife+1', 'bear_spear+1', 'guides_staff+1', 'hunters_bow+1', 'plate+4']],
 ];
 /** The ladder's top: past it, gear grows only in a what-if (`RULES.gearGrows`). */
 export const GEAR_TOP = GEAR[GEAR.length - 1][0];

@@ -7,9 +7,15 @@
 // inside Thornmark's window and owed to its box until placed. Past it, Act II (#399): Saltmouth's
 // armourer's step at 11, its plus finds by 13, Lantern Watch's stores' at 14 and theirs by 16, each
 // rung bettered by every class, each ware and find inside its area's window and owed to its shop or
-// box until it is sold or placed.
+// box until it is sold or placed. Past that, Act III (#535) the same way: Anvilhall's forge at 17,
+// the Kilns' and Cairnmoor's plus finds by 19, Rime Lodge's furrier at 21 and Rimewater's by 22,
+// each owed to its shop or box while its area is planned; and Kilnhaven's smith's quarter more on
+// the forge's wares sits inside the Kilns' window too.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
+import type { Area } from '../../src/content/area.ts';
 import { CURVE } from '../../src/content/progression.ts';
+import { FORGE, SMITH_PRICES, quarterMore } from '../../src/content/areas/kilns/items.ts';
+import { FURRIER } from '../../src/content/areas/rimewater/items.ts';
 import { CLASSES, robeLike } from '../../src/game/party.ts';
 import type { ClassId } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
@@ -137,6 +143,62 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
   },
 ];
 
+/** A rung past Act I's: its level and name, where each of its items comes from, and what each class takes. */
+type Rung<Where extends string> = { level: number; name: string; from: Record<string, readonly [area: Where, whose: string]>; classes: Record<ClassId, readonly string[]> };
+
+/**
+ * Act III's rungs (#535, docs/areas/kilns.md §9), as Act II's: a ware's area and the shop's issue
+ * that sells it, a find's area and the box's issue that places it; '' once sold or placed. Its
+ * areas are planned, so every one is owed until its area is listed and its shop or box built.
+ */
+export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
+  {
+    level: 17, name: "Anvilhall's forge",
+    from: Object.fromEntries(FORGE.map((id) => [id, ['kilns', '#459']])),
+    classes: {
+      knight: ['forge_hammer', 'forge_shield'], paladin: ['forge_hammer', 'forge_shield'], ranger: ['steel_bow', 'dwarf_mail'], barbarian: ['mattock', 'dwarf_mail'],
+      cleric: ['forge_hammer', 'kiln_robe'], sorcerer: ['seax', 'kiln_robe'], thief: ['seax', 'dwarf_mail'], bard: ['seax', 'dwarf_mail'],
+      monk: ['banded_staff'], druid: ['banded_staff', 'dwarf_mail'],
+    },
+  },
+  {
+    level: 19, name: "the Kilns' and Cairnmoor's finds",
+    from: {
+      'plate+3': ['kilns', '#458'], 'forge_hammer+1': ['kilns', '#462'], 'mattock+1': ['kilns', '#460'], 'steel_bow+1': ['kilns', '#466'],
+      'seax+1': ['kilns', '#467'], 'kiln_robe+1': ['kilns', '#468'], 'banded_staff+1': ['cairnmoor', '#477'],
+    },
+    classes: {
+      knight: ['forge_hammer+1', 'plate+3'], paladin: ['forge_hammer+1', 'plate+3'], ranger: ['steel_bow+1'], barbarian: ['mattock+1'],
+      cleric: ['forge_hammer+1', 'kiln_robe+1'], sorcerer: ['seax+1', 'kiln_robe+1'], thief: ['seax+1'], bard: ['seax+1'],
+      monk: ['banded_staff+1'], druid: ['banded_staff+1'],
+    },
+  },
+  {
+    level: 21, name: "Rime Lodge's furrier",
+    from: Object.fromEntries(FURRIER.map((id) => [id, ['rimewater', '#487']])),
+    classes: {
+      knight: ['ice_axe'], paladin: ['ice_axe'], ranger: ['hunters_bow', 'bearskin'], barbarian: ['bear_spear', 'bearskin'],
+      cleric: ['ice_axe', 'fur_robe'], sorcerer: ['skinning_knife', 'fur_robe'], thief: ['skinning_knife', 'bearskin'], bard: ['skinning_knife', 'bearskin'],
+      monk: ['guides_staff'], druid: ['guides_staff', 'bearskin'],
+    },
+  },
+  {
+    level: 22, name: "Rimewater's finds",
+    from: {
+      'ice_axe+1': ['rimewater', '#486'], 'skinning_knife+1': ['rimewater', '#488'], 'bear_spear+1': ['rimewater', '#489'],
+      'guides_staff+1': ['rimewater', '#491'], 'hunters_bow+1': ['rimewater', '#490'], 'plate+4': ['rimewater', '#490'],
+    },
+    classes: {
+      knight: ['ice_axe+1', 'plate+4'], paladin: ['ice_axe+1', 'plate+4'], ranger: ['hunters_bow+1'], barbarian: ['bear_spear+1'],
+      cleric: ['ice_axe+1'], sorcerer: ['skinning_knife+1'], thief: ['skinning_knife+1'], bard: ['skinning_knife+1'],
+      monk: ['guides_staff+1'], druid: ['guides_staff+1'],
+    },
+  },
+];
+
+/** Who owes Kilnhaven's smith, selling the forge's step at a quarter more (#434's call 1); '' once sold. */
+export const SMITH = '#469';
+
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
 const kind = (d: ItemDef): string => (d.slot === 'weapon' ? (d.ranged ? 'bow' : 'hand') : d.slot);
 /** How good an item is of its kind: a weapon's mean blow with its plus, armour's and a shield's AC. */
@@ -187,10 +249,12 @@ export function ladder(): void {
   const unlisted = by(10).filter((id) => !by(9).includes(id) && !(id in DEEP_FINDS));
   ok(!unlisted.length, `every rung at 10 is a Deepthorn find with its box${unlisted.length ? ` (not: ${unlisted.join(', ')})` : ''}`);
 
-  // Act II, rung by rung, as the Deepthorn's: each item is in the ladder at its rung and no sooner, the
-  // class can use it, and it betters the best of its kind the class had on the rung before.
-  ACT_II.forEach((rung, k) => {
-    const before = k ? ACT_II[k - 1].level : 10;
+  // Acts II and III, rung by rung, as the Deepthorn's: each item is in the ladder at its rung and
+  // no sooner, the class can use it, and it betters the best of its kind the class had on the rung
+  // before.
+  const rungs: readonly Rung<keyof typeof CURVE>[] = [...ACT_II, ...ACT_III];
+  rungs.forEach((rung, k) => {
+    const before = k ? rungs[k - 1].level : 10;
     for (const [cls, ids] of Object.entries(rung.classes) as [ClassId, readonly string[]][]) {
       // A class that bears a shield had no two-hander to better.
       const shielded = [...CLASSES[cls].kit, ...ids].some((id) => ITEMS[id]?.slot === 'shield');
@@ -234,18 +298,29 @@ export function ladder(): void {
     if (whose) owed(found.has(id), msg, whose); else ok(found.has(id), msg);
   }
 
-  // Act II's wares are sold in their area and its finds placed there, each inside the area's window;
-  // each owed to its shop or box until it is.
-  const areaOf = (id: string) => AREAS.find((a) => a.id === id)!;
-  for (const rung of ACT_II) for (const [id, [area, whose]] of Object.entries(rung.from)) {
+  // Acts II's and III's wares are sold in their area and their finds placed there, each inside the
+  // area's window; each owed to its shop or box until it is, as all is in an area not yet listed.
+  const areaOf = (id: string): Area | undefined => (AREAS as readonly Area[]).find((a) => a.id === id);
+  for (const rung of rungs) for (const [id, [area, whose]] of Object.entries(rung.from)) {
     const d = ITEMS[id], a = areaOf(area), plus = !!d?.plus;
     ok(!!d && d.price > 0 && d.price <= CURVE[area].price, `${plus ? 'find' : 'ware'} ${id} is an item within ${area}'s window (${d?.price} of ${CURVE[area].price} gold)`);
-    const there = plus
+    const there = !!a && (plus
       ? a.maps.some((m) => (m.features ?? []).some((f) => giftOf(f)?.items?.includes(id))) || a.monsters.some((m) => (m.drops ?? []).some((x) => x.item === id))
-      : a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && f.stock.includes(id)));
+      : a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && f.stock.includes(id))));
     const msg = plus ? `find ${id} lies in a chest, a cairn, a statue's gift or a hoard in ${area}` : `ware ${id} is sold in ${area}`;
     if (whose) owed(there, msg, whose); else ok(there, msg);
   }
+
+  // Kilnhaven's smith asks a quarter more for the forge's step (#434's call 1), in whole gold and
+  // inside the Kilns' window as the forge's own prices are; owed to the smith till it sells them so.
+  const smithFaults = FORGE.flatMap((id) => {
+    const p = SMITH_PRICES[id];
+    return Number.isInteger(p) && p === quarterMore(ITEMS[id].price) && p <= CURVE.kilns.price ? [] : [`${id} at ${p}`];
+  });
+  ok(Object.keys(SMITH_PRICES).length === FORGE.length && !smithFaults.length,
+    `Kilnhaven's smith asks a quarter more for each of the forge's ${FORGE.length} wares, the dearest ${Math.max(...Object.values(SMITH_PRICES))} gold, inside the Kilns' window (${CURVE.kilns.price})${smithFaults.length ? ` (not: ${smithFaults.join(', ')})` : ''}`);
+  const smithSells = !!areaOf('kilns')?.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && FORGE.every((id) => f.stock.includes(id) && f.prices?.[id] === SMITH_PRICES[id])));
+  if (SMITH) owed(smithSells, "Kilnhaven's smith sells the forge's step at a quarter more", SMITH); else ok(smithSells, "Kilnhaven's smith sells the forge's step at a quarter more");
 
   // Mottram's sells the ladder's plain step: the band's gear.
   const shop = MAP_DEFS.find((d) => d.id === 'harrow')?.features?.find((f) => f.kind === 'shop');

@@ -1,0 +1,50 @@
+// The Kilns' items: Anvilhall's forge's step on the ladder (#535), the same with a plus that the
+// Kilns' boxes and the Tiefzeche give up by 19 (Cairnmoor's share is in its own table), what
+// Kilnhaven's smith asks for the forge's wares, and what the thane asks for the Stone. Made ahead of
+// the area (ITEMS_AHEAD in content/index.ts): the first box (#457) takes the table into its Area,
+// the forge (#459) sells the step and the smith (#469) the same at a quarter more.
+// docs/areas/kilns.md §8 and §9 have the sums.
+import type { ItemDef } from '../../../game/items.ts';
+import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
+import { ITEMS as THORNMARK } from '../thornmark/items.ts';
+
+const plate = THORNMARK.find((i) => i.id === 'plate')!;
+
+// Sold at Anvilhall's forge (#459): a step past the Sunder's finds for every class, at 17.
+export const forgeHammer = W('forge_hammer', 'Forge Hammer', 1400, 2, 10, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
+export const seax = W('seax', 'Seax', 1400, 1, 8, { kind: 'light', bonus: 9 });
+export const steelBow = W('steel_bow', 'Steel Bow', 1500, 1, 12, { kind: 'bow', bonus: 8, ranged: true, twoHanded: true, classes: ['ranger'] });
+export const mattock = W('mattock', 'Mattock', 1500, 2, 10, { bonus: 4, twoHanded: true, classes: MARTIAL });
+export const bandedStaff = W('banded_staff', 'Banded Staff', 1300, 1, 10, { kind: 'staff', bonus: 8, twoHanded: true });
+export const dwarfMail = A('dwarf_mail', 'Dwarf Mail', 2000, 11, { classes: NO_CASTER_HEAVY });
+export const kilnRobe = A('kiln_robe', 'Kiln Robe', 1300, 9);
+export const forgeShield: ItemDef = { id: 'forge_shield', name: 'Forge Shield', slot: 'shield', price: 1100, ac: 6, classes: MAIL };
+const WARES = [forgeHammer, seax, steelBow, mattock, bandedStaff, dwarfMail, kilnRobe, forgeShield];
+
+/** The forge's stock, the act's first step (#459); Kilnhaven's smith stocks the same (#469). */
+export const FORGE: readonly string[] = WARES.map((d) => d.id);
+
+/** A quarter more than an item's own price, in whole gold: what Kilnhaven's smith asks (#434's call 1). */
+export const quarterMore = (price: number): number => Math.ceil((price * 5) / 4);
+
+/** Kilnhaven's smith's prices for the forge's stock, a shop's `prices` (#469). */
+export const SMITH_PRICES: Readonly<Record<string, number>> = Object.fromEntries(WARES.map((d) => [d.id, quarterMore(d.price)]));
+
+/**
+ * What the thane asks for the Anvil Stone (#434's call 1), for the great hall's question (#459): so
+ * much that a clear of the Fells and the Tiefzeche can just pay it (docs/areas/kilns.md §8).
+ */
+export const ANVIL_STONE_PRICE = 6000;
+
+export const ITEMS: readonly ItemDef[] = [
+  ...WARES,
+  // Found, not sold, by 19: N3's tithe-cellar, the Tiefzeche's side room, Erzkamm's hoard, the first
+  // dwarves' shelter on O6, the lime kiln on M6 and Kilnhaven's bonded store (docs/areas/kilns.md
+  // §4). The plate is plate's wearers' step past the forge's shield, as the Sunder's was past the Watch's.
+  P(plate, 3),
+  P(forgeHammer, 1),
+  P(mattock, 1),
+  P(steelBow, 1),
+  P(seax, 1),
+  P(kilnRobe, 1),
+];
