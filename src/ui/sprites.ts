@@ -27,6 +27,7 @@ import * as devilfish from './monsters/devilfish.ts';
 import * as bears from './monsters/bears.ts';
 import * as moths from './monsters/moths.ts';
 import * as knockers from './monsters/knockers.ts';
+import * as salamanders from './monsters/salamanders.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -284,6 +285,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   pine_bear: bears.draw, glass_bear: bears.draw,
   lantern_moth: moths.draw, deathshead: moths.draw,
   knocker: knockers.draw, mender: knockers.draw, foreman: knockers.draw,
+  salamander: salamanders.draw, great_salamander: salamanders.draw,
 };
 
 /**

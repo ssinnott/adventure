@@ -11,6 +11,7 @@ export const SPRITES = [
   'slagling', 'slag_elder', 'anvil_warden',
   'rock_worm',
   'anvil_guard',
+  'salamander', 'great_salamander',
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
@@ -34,4 +35,9 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'slag_elder', name: 'Slag Elder', plural: 'Slag Elders', sprite: 'slag_elder', kind: 'rift', look: 'Iron runs off it like sweat.', level: 18, hp: 383, ac: 21, attack: 12, dice: 4, sides: 8, bonus: 3, speed: 15, xp: 1427, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, weak: ['cold'], resist: ['fire'], tint: '#4a3a33', size: 0.95 },
   // the Anvil Stone's Rift, standing up out of the cut (#465), the area's boss at 18 on MONSTERS §4.4's boss line, for #465's gate to tune; cold bites it, and fire does half
   { id: 'anvil_warden', name: 'Warden of the Anvil', plural: 'Wardens of the Anvil', sprite: 'anvil_warden', kind: 'rift', look: 'The Stone\'s heat, standing up out of the cut.', level: 18, hp: 961, ac: 22, attack: 13, dice: 17, sides: 8, bonus: 20, speed: 13, xp: 11413, gold: [0, 0], immune: ['asleep'], weak: ['cold'], resist: ['fire'], tint: '#3a2e2a', size: 1.45 },
+  // the tubes and the spoil heaps (#458, #463, #466), a skirmisher on MONSTERS §4.4's line at 16: fire does not touch it, and cold bites
+  { id: 'salamander', name: 'Salamander', plural: 'Salamanders', sprite: 'salamander', kind: 'beast', look: 'A lizard with the fire showing through its skin.', level: 16, hp: 179, ac: 19, attack: 10, dice: 3, sides: 8, bonus: 2, speed: 15, xp: 633, gold: [0, 0], immune: ['fire'], weak: ['cold'], tint: '#3a2c28', size: 0.68 },
+  // the tubes' deepest chamber (#466), the tubes' boss at 18, on MONSTERS §4.4's boss line: fire does not touch it, and
+  // cold bites, as its kin's; it shrugs off sleep, as the road's beasts that are bosses do
+  { id: 'great_salamander', name: 'Great Salamander', plural: 'Great Salamanders', sprite: 'great_salamander', kind: 'beast', look: 'The fire in the rock, with a head.', level: 18, hp: 961, ac: 22, attack: 13, dice: 17, sides: 8, bonus: 20, speed: 13, xp: 11413, gold: [0, 0], immune: ['asleep', 'fire'], weak: ['cold'], tint: '#4a423c', size: 1.6 },
 ];

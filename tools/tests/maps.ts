@@ -22,6 +22,7 @@ const UNPLACED: Record<string, string> = {
   fire_beetle: '#457', rock_worm: '#457',
   slagling: '#458', slag_elder: '#464', anvil_warden: '#465',
   anvil_guard: '#464',
+  salamander: '#458', great_salamander: '#466',
   anvilhall_great_hall: '#459', anvilhall_forge: '#459', anvilhall_training_hall: '#459', anvilhall_inn: '#459', anvilhall_surgeon: '#459', anvilhall_stores: '#459',
   kilnhaven_inn: '#469', kilnhaven_smith: '#469', kilnhaven_training_hall: '#469', kilnhaven_harbourmaster: '#469', kilnhaven_chapel: '#469', kilnhaven_chandlery: '#469',
 };
