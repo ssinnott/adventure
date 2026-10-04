@@ -123,6 +123,10 @@ Kilns need none of them. `after`, for the Anvil Guard, and `when` are #41's; the
 MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues, and its rooms in
 #473.
 
+The salamanders are drawn ahead of the first box (#472): the Salamander and the Great Salamander on
+their own frame (`src/ui/monsters/salamanders.ts`), their defs in `src/content/areas/kilns/monsters.ts`,
+which `AHEAD` in `src/content/index.ts` lists until #457 lists the area (§9).
+
 ## 4. What is still to build
 
 All of it: 14,791 squares of land, 12,399 of them walkable. On the grid (§1) the plan is ten boxes,
@@ -779,6 +783,28 @@ Proposed, for the owner, each in the issue that would build it:
 - **The heart's zone keeps the area's name on the atlas** ("The Kilns", `kilnsheart`): a name of
   its own is the owner's to give with #435 (§10), since the crossing line into it says the area's
   name twice.
+
+Decided by delegate for #472 (the salamanders), each the owner's to overturn:
+
+1. **The Salamander is a beast, a skirmisher on MONSTERS §4.4's line at 16** (179 hit points, armour
+   19, 3d8+2, speed 15), immune to fire and weak to cold as its row says, size 0.68: the sorcerer's
+   cold is the answer, and the cleric's Hearthfire and the druid's Wildfire are not (DESIGN §7).
+2. **The Great Salamander is a beast boss on the boss line at 18** (961, armour 22, 17d8+20), immune to
+   fire and to sleep and weak to cold, as its kin and as the Eldest and the Great Devilfish. Its blow
+   is #466's to set for the gate, as #426 set the Warden of the Sunder's, and its hide #466's to drop.
+3. **It is a tall boss, size 1.6,** seated on the third rank with its crown at 0.79 of its height,
+   under its markers' 0.82: the deepest chamber's boss, and the biggest thing in the tubes.
+4. **The frame is a lizard three-quarter on, coming at the company,** its head turned on toward the
+   company's right. Side on, as the bears stand, a lizard is as wide as a bear and read as a dinosaur
+   standing up; three-quarter on it reads as a lizard at a glance, and its mouth can open to them.
+5. **The fire shows in blotches, as a fire salamander wears its yellow,** and on the Great Salamander
+   in the seams of a crust of rock and in its open mouth. The embers are the parts apart, declared in
+   `tools/smoke.ts` as the rift hound's are: three pieces, 1% of the ink.
+6. **The frame is a Build for the kin to come** (MONSTERS §11): the ember salamander a hotter fire on
+   a lither body, the basilisk no fire, a crest, a crown and a stare, each a Build and a colouring.
+7. **The Salamander is owed to N3 (#458),** the first box whose brief places one (§4.3's spoil heaps,
+   the roster's second fight), and the Great Salamander to the tubes (#466): `UNPLACED` in
+   `tools/tests/maps.ts` says so until each is placed.
 
 ## 10. Names
 
