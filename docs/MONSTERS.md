@@ -147,6 +147,10 @@ only once the fight's front is down and which waits, bow or spell aside, till th
 people break once its `leader` falls, a group's beasts bolt at three in four down, and the fled pay
 nothing; the Hand never breaks (`steady`).
 
+And for a group placed on ice (#536): `under: 'ice'` keeps it under the ice, where alone it moves;
+it strikes only a company standing on the ice beside it and in the fight reaches only the front row
+over it.
+
 And for casting, drain and elements (#161). Every damage spell carries fire, cold, lightning,
 nature or holy (DESIGN.md §7), and a monster may `resist` one (half, rounded up), be `immune` to one
 (none) or be `weak` to one (half again); the dead are weak to holy and immune to nature by their
