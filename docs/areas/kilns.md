@@ -131,6 +131,11 @@ Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `whe
 machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues,
 and its rooms in #473.
 
+Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
+Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462). Their defs are in
+`src/content/areas/kilns/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until the first box
+lists the area, and each is owed to #462 in `UNPLACED` (`tools/tests/maps.ts`). §9 has the decisions.
+
 ## 4. What is still to build
 
 All of it: 14,791 squares of land, 12,399 of them walkable. On the grid (§1) the plan is ten boxes,
@@ -882,6 +887,49 @@ Decided by delegate for #538, each the owner's to overturn:
 13. **The line check hears an inscription as a reader with a ten-letter name does the first time:**
     its words, reading and mark said together, which Feuerstollen's brief (§4.11) fills exactly.
 14. **The novelty check names the new mechanics** `sign:read` and `sign:marks`, for §7's claim.
+
+Decided by delegate for #472 (the knockers), each the owner's to overturn:
+
+1. **The knockers are woodlice the vessel made:** smooth grey plates laid one over the next, round
+   over the back and flat under the belly, on thin legs with ball joints, all alike, stepping in a
+   wave. Small, many-legged and smooth read at once, and nothing on the road is shaped so; the
+   spider frame, eight legs with the knees high, was left to the spiders.
+2. **One lamp in the cowl's face, under a brow,** warm as a miner's lamp and the same in every one:
+   a pool of it lies on the rock ahead of a knocker, and now and then it dims, as a blink. The cowl
+   is a plate of its own over the shell's front.
+3. **The chisel's mark is a lozenge on a stem,** cut straight and even into a plate of every one.
+   It is the mark's first drawing, so the chisel's and the treaty's seal can follow it. It is not the
+   loop inside a loop: that is Wenna's family knot (STORY, Acts One and Three), hers alone, on the
+   frame of the door marked CREW ONLY.
+4. **The Knocker knocks:** two feelers off the cowl's chin end in knobs, and it raps the rock ahead
+   with them in turn. Fodder on #409's line at 16: 127 hit points, armour 18, +9, 3d5+2, speed 12,
+   317 xp; size 0.45, tint #84878e.
+5. **The Mender carries its trade,** domed higher, a spool of copper wire on its back and an arm
+   that brings a needle down before its cowl, a cold light at the point, so a company picks it out
+   of six knockers at a glance. A soldier's numbers at 17: 196 hit points, armour 20, +10, 3d7+5,
+   speed 11, 673 xp; size 0.55, tint #9a9c96.
+6. **The Mender casts Mending Light one turn in two** that one of its group is hurt. At every turn,
+   the harness's bot, which never singles it out, broke off half its days at fifteen rounds at 16
+   and 17; at one in two, 6 to 7% of them, the fight a round longer than with a mender that never
+   mends (5.4 rounds to 4.4 at 16, 300 seeds).
+7. **The Foreman is a knocker grown long and reared up,** its cowl bowed over a slate held before
+   it with the list cut on it in rows, an empty box at each row's end; a stylus goes down the boxes
+   and ticks none, and now and then the lamp lifts from the slate to the company. Size 1.3, under
+   the tall boss's 1.5, so it stands on its group's rank; tint #5c6068.
+8. **The Foreman stands on #409's boss line at 18,** 961 hit points, armour 22, +13, 17d8+20, for
+   #462's gate to tune, as #199 tuned the Warden of the Sunder: a company wins it 17% of the time at
+   14, 66% at 16, 82% at 18 and 99% at 20 (300 seeds).
+9. **One frame, a Build to a kind:** length, dome, taper, rear, plates, legs, stance, step, cowl,
+   feelers, spool, needle, slate and the mark, so MONSTERS §11's tallyman, deep knocker, inspector
+   and tally clerk are each a Build, a colouring and what their trades carry.
+10. **No gold and no drops:** machines carry parts (MONSTERS §2), and the parts are items, #462's
+    to add with the groups it places, as the Heart of the Sunder came with #199.
+11. **They stand unplaced, owed to #462,** which seats six knockers and a mender twice in the clean
+    corridor and the Foreman before the door.
+
+Owed elsewhere: MONSTERS §2's line for the first time the Hearth's light passes through a machine,
+*The light goes into it like a hand into a glove.*, is not in the combat log, which says only that a
+knocker takes 0. It is the systems lane's, wanted before #462 seats the knockers.
 
 ## 10. Names
 
