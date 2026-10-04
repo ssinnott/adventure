@@ -4,6 +4,7 @@ import type { Area } from '../../area.ts';
 import { IRONFELLS_M3 } from './maps/ironfells_m3.ts';
 import { IRONFELLS_N3 } from './maps/ironfells_n3.ts';
 import { ANVILHALL } from './maps/anvilhall.ts';
+import { KILNSHEART_N4 } from './maps/kilnsheart_n4.ts';
 import { IRONFELLS_N2 } from './maps/ironfells_n2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
@@ -12,7 +13,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'kilns' as const,
-  maps: [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, IRONFELLS_N2],
+  maps: [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, IRONFELLS_N2],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

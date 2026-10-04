@@ -97,6 +97,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // Over the pass and down the trail past the spoil heap's beetles (#457), then up the spur past the
   // low heap by the road and the high one under the crag's working, to Anvilhall's gate (#458).
   ironfells: ['ironfells_m3:m3_beetles1', 'ironfells_m3:m3_beetles2', 'ironfells_n3:n3_spoil_low', 'ironfells_n3:n3_spoil_high'],
+  // On down the trail past the fresh spoil below the Tiefzeche's shaft: the beetles at its head and
+  // the salamanders at its warm end (#461).
+  kilnsheart: ['kilnsheart_n4:n4_beetles', 'kilnsheart_n4:n4_salamanders'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -134,6 +137,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // group that a company at its floor fights eight of to a rest, as Act II's did.
   'ironfells_m3: under': { whose: '#18', at: 1 },
   'ironfells_n3: under': { whose: '#18', at: 1 },
+  'kilnsheart_n4: under': { whose: '#18', at: 1 },
   'ironfells_n2: under': { whose: '#18', at: 1 },
   'the Kilns: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
