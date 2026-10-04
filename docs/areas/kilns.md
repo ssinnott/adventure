@@ -13,8 +13,9 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Its first two boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area, and
-N3, Anvilhall's box (#458, §4.3), with the gate barred until the town is built; eleven of its
+Its first three boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area; N3,
+Anvilhall's box (#458, §4.3), with the gate barred until the town is built; and N4, the Tiefzeche's
+box (#461, §4.6), the heart's first, with the shaft shut until the mine is built. Eleven of its
 monsters and its twelve rooms are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, and its side quests in
@@ -33,9 +34,9 @@ zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Iron Fells | 16–17 | 3,059 | M3, N3 |
-| The Kilns' heart (`kilnsheart`, "The Kilns" on the atlas) | 16–18 | 6,933 | none |
+| The Kilns' heart (`kilnsheart`, "The Kilns" on the atlas) | 16–18 | 6,933 | N4 |
 | Kilnmouth | 17–18 | 4,799 | none |
-| The area | 16–18 | 14,791 | M3, N3 |
+| The area | 16–18 | 14,791 | M3, N3, N4 |
 
 Squares are land, without shallows or rivers: about 14.4 zone maps, and 12,399 of them a company
 could walk. The rest is the rim's mountain in row 1 and the P column, the Fells' peaks and the
@@ -51,6 +52,11 @@ walk from every square of it. The line between the Fells and the heart is held o
 rows the Fells'; M4's north, about 400 of Lanternwood's squares, goes to the Fells, parked land
 nobody walks yet (§9). N3 (#458), laid whole in the Fells, was the Fells' already, square for square;
 seeding the walk from it moves 62 squares between zones elsewhere on the world, none on a built map.
+N4 (#461), laid whole in the heart, was the heart's already too, and seeding the walk from it moves
+1,004: the heart takes M4's south-east (415 squares, the Fells' and Lanternwood's), M5's north-east
+(198 of Kilnmouth's), N5's west (271 of Kilnmouth's, which laying N5 in the heart gives it anyway,
+§4) and 35 squares of N6 and O6. It is parked land and boxes the plan lays in the heart, and none of
+it is held (§9). The seam's seeds under N3 and N4 go, since the two boxes hold their own rows.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Kilns are the L to P columns from row 1
 to row 6, with K6 on the shore. The land worth a map is fourteen boxes: M3, N3, N2 and O3 in the
@@ -112,7 +118,8 @@ on the Fells' tops in winter (the area's `climate`, with its first box).
 
 ## 3. What is built
 
-Two boxes, the area's first, which lists the area (#457), and the box of its first town (#458):
+Three boxes: the area's first, which lists the area (#457), the box of its first town (#458) and the
+box of its first dungeon, the heart's first (#461):
 
 - **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
   Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
@@ -133,12 +140,21 @@ Two boxes, the area's first, which lists the area (#457), and the box of its fir
   groups: slaglings on the trail by night, beetles and salamanders on the two heaps and a rock worm
   in a collapsed working. Under the lowest terrace, the tithe-cellar, and over its wall the niche,
   the first inscription read (§4.3).
+- **The Tiefzeche's box** (N4, `kilnsheart_n4`, core, band 16–17; #461): the trail on from N3 over
+  the line into the heart, down across the box to the drove road's head and out south for N5. The
+  headworks at the foot of the first crags: the spur to the shaft at 16,2, its cage chained until the
+  Tiefzeche is built (#462); the winding house with its tally board, the lookout from the gantry, the
+  crust on the fence and the lamp-niche over the shaft with the miners' blessing cut above it. The
+  miners' camp and a miner on the grass west of the trail, a cairn on the knoll, an ore tub by the
+  trail, a spring under the crag, the old workings' open cuts, the drovers' fold and the smelter's
+  smoke past the south edge. Four groups: beetles and salamanders on the fresh spoil below the shaft
+  and a rock worm in each of two open cuts. Behind the fresh mortar in its wall, the wagon yard (§4.6).
 
 Its atlas rows are charted in `src/content/areas/kilns/atlas.ts`, the area's own `atlas` since M3
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
 Saltreach's and Sunderwood's were before their first box (docs/areas/saltreach.md §9,
 docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–17, with M3 and N3 laid
-on it and its line to the heart held, §1; the heart 16–18; Kilnmouth 17–18), the towns
+on it and its line to the heart held, §1; the heart 16–18, with N4 laid on it; Kilnmouth 17–18), the towns
 (Anvilhall and Kilnhaven at 16–18), the dungeons (the Tiefzeche 16–18, the Anvil Stone 17–18,
 Feuerstollen 17–18) as planned plates, the sites (Anvilhall, the Deep Mines, the Forges, the Anvil
 Stone, the Lava Tubes, Kilnhaven, Iron Crag, to be renamed with #435, §10) and its links: the east
@@ -148,14 +164,16 @@ Compact ship, and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's 
 
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
 `src/content/progression.ts`: band 16–18, next 18, window 3,500, owed to #436 while the area is built
-box by box, with M3's and N3's 2,594 xp a member and 1,690 gold the clear's floor (§8). The step is in
+box by box, with M3's, N3's and N4's 4,063 xp a member and 2,640 gold the clear's floor (§8). The
+step is in
 `src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`, `src/content/index.ts`)
 so that the harness and the gate dressed by it before the first box took the table into its Area
 (#457): Anvilhall's forge's eight
 wares (`FORGE`, §4.4), the step's plus finds by 19 (§4.1), Kilnhaven's smith's prices at a quarter
 more (`SMITH_PRICES`, for #469) and the thane's price for the Stone (`ANVIL_STONE_PRICE`, 6,000, for
 #459, §8). Each ware is owed to the forge (#459) and each find to its box until it is sold or placed;
-N3's Plate Mail +3 is placed (§4.3), and M3's find, off the ladder, is its own (§4.2).
+N3's Plate Mail +3 is placed (§4.3), and M3's and N4's finds, off the ladder, are their own (§4.2,
+§4.6).
 
 Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
 Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
@@ -215,8 +233,8 @@ day in it somewhere, a window, a shaft, a breach or a door, so that nine at nigh
 
 ## 4. What is still to build
 
-All of it but M3 and N3, built (#457, §4.2; #458, §4.3): 14,791 squares of land, 12,399 of them
-walkable, the plan's figures (§1). On the grid the plan is ten boxes,
+All of it but M3, N3 and N4, built (#457, §4.2; #458, §4.3; #461, §4.6): 14,791 squares of land,
+12,399 of them walkable, the plan's figures (§1). On the grid the plan is ten boxes,
 three dungeons and two towns, with four more boxes parked, and the ten hold 8,419 of those squares,
 7,686 walkable; the parked four 3,886 and 3,397:
 
@@ -494,6 +512,35 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **New here.** A mine's headworks; a count that comes up short.
 - **Finds.** The cargo's belongings, and a plus off the ladder, the box's to choose (#535).
 - **Pay.** About 900 xp a member.
+
+- **As built** (#461, 4 October): the brief's places, with four groups for its nine, laid whole in
+  the heart (§1). The trail comes over the line from N3 at 428 and 429,94 (4,0 and 5,0), where a
+  boundary stone carries a hammer on its north face and a kiln on its south; the log names the Kilns,
+  and to a company under 16 says the land is harder than the road behind. It runs down across the
+  box past the headworks, turns south at the drove road's head (22,24) and leaves by the south edge
+  at 444,125 (20,31) for N5. The headworks stand at the foot of the first crags: a spur of nine
+  squares off the trail to the shaft at the site's own square, 440,96 (16,2), where the mouth's line
+  is said and the cage stands chained until the Tiefzeche is built. Its exit is written for #462
+  (§9). Beside the shaft are the winding house, its tally board counting loads down and none up, and
+  the lookout from the gantry, south down the drove road by day and to a red glow under a far crag by
+  night. A crust is left on the shaft's fence. Over the shaft the lamp-niche (luck) has the box's
+  inscription, the miners' blessing, which a reader reads COUNT ALL DOWN. COUNT ALL UP. By night a
+  cart comes down the trail with its lamps hooded and turns in for the headworks, the Hand's
+  overseers seen and not fought. Below the shaft the fresh spoil is tipped toward the trail: four
+  fire beetles at its head and three salamanders and a beetle at its warm end, the roster's fight.
+  The wagon yard is walled into the rock behind the headworks, a wagon's width of its wall new
+  mortar. Searched there, the wall gives on the cages the cargo rode down in, a name scratched on a
+  bar and a child's shoe in the straw; in the overseers' strongbox, 700 gold and a Sharkskin Coat +2
+  (`sharkskin+2`), the cargo's, which no walker, swimmer, climber or levitator reaches but through
+  the wall. West of the trail are the miners' camp and a miner, who says a verse is sung at every
+  door going down and nobody sings coming up, the cairn on the knoll (250 gold and a Sapphire Vial)
+  and an ore tub; east, a spring under the crag. In the south-west lie the old workings' open cuts,
+  with a rock worm in the deepest, and in the east a second worm in a cut, the box's groups at 17;
+  the drovers' fold stands by the road, and the smelter's smoke rises close past the south edge. A
+  company at 16 wins every fight and manages 8.73 fights to a rest, inside the aim, with 1% of its
+  days ending in a fight broken off; the heart's road, past both groups on the spoil, is walked every
+  time. As measured it pays about 1,468 xp a member and 950 gold. Two under, at 14, it wins every fight too,
+  owed to #18. Density 99.8% within 8 steps, the furthest 10, with one sign among its 25 points.
 
 ### 4.7 The Tiefzeche (#462): dungeon, three levels of 16×16, band 16–18
 
@@ -875,8 +922,8 @@ it, since the check asks that what is claimed be used: pine with M3 (#457), the 
   it is built (450 each, #474). Each box is measured when it is built and recorded here as built,
   a fight inside the gate's aim costing what it costs; the sum is restated with each. A company
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
-  finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457) and N3 1,525 (#458), so the
-  shares stand at about 14,090.
+  finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458) and N4 1,468
+  (#461), so the shares stand at about 14,660.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -894,7 +941,8 @@ it, since the check asks that what is claimed be used: pine with M3 (#457), the 
   The forge's full set for the premade six comes to about 17,300, its weapons 8,500; at the smith a
   taker pays about 4,300 more for the same. As built: M3 holds 740 (#457), its share by the brief's
   700 of the 13,900, in its cairn and the drover's box; N3 holds 950 (#458), its share by the brief's
-  900, in its cairn and the tithe-cellar; their monsters carry none.
+  900, in its cairn and the tithe-cellar; N4 holds 950 too (#461), in its cairn and the wagon yard;
+  their monsters carry none.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman and
@@ -902,12 +950,14 @@ it, since the check asks that what is claimed be used: pine with M3 (#457), the 
   above. Act II's boxes owed their two-under figures to the gear past 10 (#18). #535's ladder now
   dresses a company at each of the Kilns' floors past one two under it, Anvilhall's forge at 17 and
   its finds by 19; whether that holds the figure is each box's to measure. As built: M3's does not,
-  nor N3's. A company at 16 wins every fight in either and walks the Fells' road every time, and one
-  at 14 wins every fight too, owed to #18 as Act II's are (§4.2, §4.3).
+  nor N3's nor N4's. A company at 16 wins every fight in each and walks the Fells' road and the
+  heart's every time, and one at 14 wins every fight too, owed to #18 as Act II's are (§4.2, §4.3,
+  §4.6).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
-  within 8 and the furthest 10, with one sign among its 22 (#458).
+  within 8 and the furthest 10, with one sign among its 22 (#458); N4 99.8% within 8 and the furthest
+  10, with one sign among its 25 (#461).
 
 ## 9. Decisions
 
@@ -1305,6 +1355,43 @@ Decided by delegate for #458, each the owner's to overturn:
     cellar with the Anvil Shard (`anvil_shard`) and the Plate Mail +3, the ladder's (#535).
 12. **Two under is owed to #18,** as M3's is: a company of 14 beats every group at the line's standard
     size; the gate's other figures are inside their aims.
+
+Decided by delegate for #461, each the owner's to overturn:
+
+1. **The brief is §4.6, not the issue's draft:** the secret is the wagon yard, not a miners' bothy
+   in the spoil, and its hint the tally board and the fresh mortar, with the blessing's reading
+   beside them. The issue's salamanders at the heap's warm end and its crust at the mouth are kept.
+   Ash stays O6's, as §4.11 and §7 have it.
+2. **The shaft is the site's own square, 440,96 (N4's 16,2),** where the atlas's site and its way in
+   stand; the dungeon's plate stays at 440,104. `MOUTH` lands on the workings' first level at 7,14,
+   facing north, the start this asks #462 to give `deep_mines`, and the way back up lands on 15,2,
+   facing west, the spur's end.
+3. **The shaft is shut until the Tiefzeche is built,** as N3's gate is (#458's 3): the shaft's square
+   is wall and `n4_cage` says the cage is chained at the top. #462 lists `MOUTH` in N4's exits, opens
+   the square and drops the event. The mouth's line, `n4_mouth`, is said once on the spur before it,
+   for the chapter (#470) to read.
+4. **Four groups for nine:** four fire beetles at the spoil's head by the trail, three salamanders and
+   a beetle at its warm end and a rock worm in each of two open cuts, the box's groups at 17. They give
+   8.73 fights to a rest at 16 and 1,468 xp a member for the brief's 900, as #457's 3 has it.
+5. **The Hand's overseers are seen, not fought:** a cart comes down the trail by night with its lamps
+   hooded and turns in for the headworks. The roster holds no overseer, and one at level would want a
+   drawing of its own (§7).
+6. **The oldest miner is left to #459 and #462** with The Miners' Hymn, so that one man does not stand
+   in two places built by two hands. A miner at the camp speaks of the verses, and the mouth's line
+   says them.
+7. **The find is a Sharkskin Coat +2** (`sharkskin+2`, 1,400 gold), left in a cage by the cargo,
+   which came from the coast. It is off the ladder as §4.6 asks, a coat the medium wearers have a
+   level before the forge's Dwarf Mail, as M3's goad is a staff before its Banded Staff.
+8. **Its gold is 950, its share by the brief of the 13,900** (§8): 250 in the cairn and 700 in the
+   overseers' strongbox in the yard. The lamp-niche over the shaft gives luck.
+9. **The crossing says the heart's atlas name,** *The Kilns.*, and to a company under 16 that the land
+   is harder; a name of the zone's own is #435's (§9's proposal above).
+10. **The stream for the smelter touches the box's south-east corner,** so the corner's two edge
+    squares are its water, as the edge check asks.
+11. **The zone walk moves 1,004 squares, unheld** (§1): the heart takes parked land in M4 and M5 and
+    boxes the plan lays in the heart, as M4's north went to the Fells (#457's 7). The seam's seeds
+    under N3 and N4 go, the two boxes holding their own rows.
+12. **Two under is owed to #18,** as M3's and N3's are.
 
 ## 10. Names
 
