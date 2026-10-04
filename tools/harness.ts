@@ -641,12 +641,12 @@ async function main(): Promise<void> {
     });
     const mean = (fs: { o: Outcome }[], f: (o: Outcome) => number): number => fs.reduce((t, x) => t + f(x.o), 0) / fs.length;
     const one = (fs: { o: Outcome }[]): string => `${mean(fs, (o) => o.rounds).toFixed(1)} rounds, ${pct(mean(fs, (o) => o.cost))}%, won ${pct(mean(fs, (o) => (o.won ? 1 : 0)))}%`;
-    const rest = (level: number, enc: Encounter): string => `${days(level, [enc], seeds).fights.toFixed(1)} to a rest (${fightsPerRest(level)} asked)`;
+    const rest = (level: number, enc: Encounter, beside?: [string, Encounter]): string => `${days(level, [enc], seeds).fights.toFixed(1)} to a rest (${beside ? `${beside[0]} ${days(level, [beside[1]], seeds).fights.toFixed(1)}, ` : ''}${fightsPerRest(level)} asked)`;
     console.log(`Act III's abilities on the test monsters, ${seeds} seeds: one fight from fresh (its rounds, its cost, won) and fights before a rest.`);
     console.log(`Two trolls: the test brute on ${TROLL.hp} of its hit points, mending ${TROLL.regen} of them a round but a round fire struck it.`);
     for (const l of at) {
       const brute = testMonster('brute', l), whole: MonsterDef = { ...brute, regen: Math.round(brute.hp * TROLL.regen) }, enc = trollEncounter(l);
-      console.log(`  ${l}: with fire ${one(fights(l, enc))}, ${rest(l, enc)}; with none ${one(fights(l, enc, fireless))}; weapons alone ${one(fights(l, enc, unarmed))}; weapons alone on a brute's whole hit points ${one(fights(l, [whole, whole], unarmed))}`);
+      console.log(`  ${l}: with fire ${one(fights(l, enc))}, ${rest(l, enc, ['plain brutes', standardEncounter('brute', l)])}; with none ${one(fights(l, enc, fireless))}; weapons alone ${one(fights(l, enc, unarmed))}; weapons alone on a brute's whole hit points ${one(fights(l, [whole, whole], unarmed))}`);
     }
     console.log(`Four wights: the test controller, its hold a curse at ${WIGHT_CURSE} a hit.`);
     for (const l of at) {

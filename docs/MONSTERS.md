@@ -232,15 +232,16 @@ answer. Still to come: stone and its cure, sweep, a light seen past the fog and 
 
 Decided by delegate for #537, each the owner's to overturn:
 
-1. **A troll mends a tenth of its hit points a round, on seven tenths of a brute's** (`TROLL` in
-   `tools/testmonster.ts`, `node tools/harness.ts --abilities`): at 19, 337 hit points mending 34.
-   With fire a company beats two in 4.3 rounds for 8% of itself, 10.7 fights to a rest (8.75
-   asked); with none in 6.4 rounds for 10%, a grind. On a brute's whole hit points a tenth is a wall
-   once spells are spent: weapons alone win 1% of those fights, where on seven tenths they win all.
+1. **A troll mends a tenth of its hit points a round, on three quarters of a brute's** (`TROLL` in
+   `tools/testmonster.ts`, `node tools/harness.ts --abilities`): at 19, 361 mending 36. With fire a
+   company fights 12.4 pairs to a rest where it fights 11.7 pairs of brutes, a pair in 4.6 rounds
+   for 7% of itself; with none it takes 6.7 rounds for 9%, a grind. On a brute's whole hit points a
+   tenth nears a wall once spells are spent: weapons alone win 54% inside fifteen rounds at 19.
+   Measured on #535's ladder, before #541 makes the test monsters past 16 again.
 2. **A troll felled stays down:** mending is the living's, so no company meets a fight it cannot
    finish for want of fire. "Or they get up again" (§7.2) is the mending.
 3. **Fire stops the mending for the round it lands in,** any of the four fire spells that does
-   damage; the log says "Tor Troll mends 34." and, burnt, "Tor Troll smoulders and does not mend."
+   damage; the log says "Tor Troll mends 36." and, burnt, "Tor Troll smoulders and does not mend."
 4. **A curse is what `party.ts` makes it, as disease is:** it outlasts a rest and a raising; Faith
    keeps it off, and Restore, Absolve (tier 7) or a temple lifts it. It takes nothing in a fight, so
    no bot answers it; a bite there (Bless turned round) is the owner's to ask for.
@@ -249,7 +250,7 @@ Decided by delegate for #537, each the owner's to overturn:
    own group, act from the next round and pay as the rest; one called may call in its turn.
 6. **A call is a chance a turn, as casting is, naming its group by id,** for any caller: Vask's
    sentries need nothing new, and one only ever called counts as placed. The test caller (three
-   fodder at a half, beside six) costs a company of 20 about a fight a day: 7.8 to a rest, not 9.0.
+   fodder at a half, beside six) costs a company of 20 a fight or two a day: 8.0 to a rest, not 9.6.
 7. **The bots aim at a caller with room to call, as at a leader,** a leader first, since its fall
    stops the fight growing; they read the fight as it stands each turn, its called groups with it.
 8. **A hit's line says only a condition that takes:** none for a cleric's Faith, nor one already

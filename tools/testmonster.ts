@@ -158,7 +158,7 @@ export function standardEncounter(role: Role, level: number, hp = scaleAt(HP, ro
 // there. None is a role the calibration makes: each stands on a role's numbers.
 
 /** What a troll is made of: TROLL.hp of the test brute's hit points, of which it mends TROLL.regen a round. */
-export const TROLL = { hp: 0.7, regen: 0.1 };
+export const TROLL = { hp: 0.75, regen: 0.1 };
 /** What a wight's hit curses at, where the test controller's held (MONSTERS §7.2). */
 export const WIGHT_CURSE = 0.2;
 /** What a caller brings: CALL.monsters of the test fodder, at CALL.chance a turn. */

@@ -144,7 +144,7 @@ function abilities(): void {
   ok(fire.won >= 0.95 && burnt >= 30, `a company of 19 with fire wins ${pc(fire.won)} of two trolls' fights, burning them in ${burnt} of 40`);
   ok(none.won >= 0.9 && none.rounds >= fire.rounds * 1.25 && none.cost > fire.cost, `with none it grinds: ${none.rounds.toFixed(1)} rounds and ${(none.cost * 100).toFixed(1)}% of itself a fight, against ${fire.rounds.toFixed(1)} and ${(fire.cost * 100).toFixed(1)}%, and wins ${pc(none.won)}`);
   const day = days(19, [trollEncounter(19)], 40, 5001), brutes = days(19, [standardEncounter('brute', 19)], 40, 5001);
-  ok(Math.abs(day.fights - brutes.fights) <= 1.5, `with fire it fights ${day.fights.toFixed(1)} of their encounters to a rest, about as many as of plain brutes (${brutes.fights.toFixed(1)}; ${fightsPerRest(19)} asked)`);
+  ok(Math.abs(day.fights - brutes.fights) <= 1.5, `with fire it fights ${day.fights.toFixed(1)} of their encounters to a rest, about as many as of plain brutes (${brutes.fights.toFixed(1)}; ${fightsPerRest(19)} asked, until #541 makes the line past 16 again)`);
   // The wights' curses land and outlast the fight, and end no day.
   const wights = bout(19, wightEncounter(19), 20, 5001), cursed = wights.fights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'cursed'))).length;
   const marked = companyAt(19, 1);
