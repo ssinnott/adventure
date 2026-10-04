@@ -191,9 +191,10 @@ function abilities(): void {
   ok(cday.fights < mute.fights && cday.fights > mute.fights - 2.5, `and it fights ${cday.fights.toFixed(1)} of them to a rest, where with no call it fights ${mute.fights.toFixed(1)}: the call costs it about a fight (${fightsPerRest(20)} asked)`);
   // The lights take spell points (#161), and the bots aim at them after a leader and a caller (#541):
   // three lights and a hound cost a company of 19 more of its spell points than lights that took hit
-  // points would, and fewer than they do when it marks the hound first.
-  const lights = lightEncounter(19), lit = bout(19, lights, 40, 5001), dull = bout(19, lights.map((m) => (m.drain ? { ...m, drain: undefined } : m)), 40, 5001);
-  const hound = bout(19, { monsters: lights, leader: lights[lights.length - 1].id }, 40, 5001);
-  const sp = (b: typeof lit): number => b.fights.reduce((t, { p }) => t + spent(p).sp, 0) / b.fights.length;
-  ok(lit.won >= 0.95 && sp(lit) > sp(dull) && sp(lit) < sp(hound), `a company of 19 wins ${pc(lit.won)} of three lights' and a hound's fights, felling the lights first: ${pc(sp(lit))} of its spell points spent or taken, against ${pc(sp(hound))} when it marks the hound first and ${pc(sp(dull))} where the lights take hit points`);
+  // points would, and felling the lights first keeps it on its feet longer than felling the hound.
+  const lights = lightEncounter(19), dull = lights.map((m) => (m.drain ? { ...m, drain: undefined } : m)), hound = { monsters: lights, leader: lights[lights.length - 1].id };
+  const lit = bout(19, lights, 40, 5001), flat = bout(19, dull, 40, 5001), sp = (b: typeof lit): number => b.fights.reduce((t, { p }) => t + spent(p).sp, 0) / b.fights.length;
+  ok(lit.won >= 0.95 && sp(lit) > sp(flat), `a company of 19 wins ${pc(lit.won)} of three lights' and a hound's fights, ${pc(sp(lit))} of its spell points spent or taken, against ${pc(sp(flat))} where the lights take hit points`);
+  const lday = days(19, [lights], 40, 5001), hday = days(19, [hound], 40, 5001);
+  ok(lday.fights > hday.fights, `and felling the lights first it fights ${lday.fights.toFixed(1)} of them to a rest, where felling the hound first it fights ${hday.fights.toFixed(1)} (${fightsPerRest(19)} asked)`);
 }

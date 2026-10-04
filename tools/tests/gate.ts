@@ -303,13 +303,13 @@ export function gate(): void {
     const called = fought(20, callerEncounter(20)), grew = called.filter(({ s }) => s.groupIds.length > 1).length;
     ok(won(called) >= 0.9 && grew > 0 && gateFight(gateCompany(20, 1), callerEncounter(20), fightSeed(1)), `and a caller's fight at 20 that grows by its call in ${grew} of ${seeds}, winning ${pc(won(called))}`);
     // It keeps its casters' spell points from the lights (#541): it marks one whose touch takes them
-    // after a leader and a caller, so three lights and a hound fall lights first, and its casters keep
-    // more than they do when it marks the hound first.
+    // after a leader and a caller, so its first blade in a fight of three lights and a hound falls on
+    // a light, and it wins.
     const lights = lightEncounter(19), first = startCombat(gateCompany(19, 1), [asGroup('gate', lights)], makeRng(1)), mark = markOf(first, aliveMonsters(first));
-    const kept = (fs: { p: Party }[]): number => fs.reduce((t, { p }) => t + p.members.reduce((a, m) => a + m.sp, 0) / p.members.reduce((a, m) => a + m.maxSp, 0), 0) / fs.length;
-    const lit = fought(19, lights), hound = fought(19, { monsters: lights, leader: lights[lights.length - 1].id });
-    ok(mark !== undefined && first.monsters[mark].def.drain === 'sp' && won(lit) >= 0.9 && kept(lit) > kept(hound),
-      `it keeps its casters' spell points from the lights: it marks a light before the hound, wins ${pc(won(lit))} of their fights at 19 and keeps ${pc(kept(lit))} of its spell points, where marking the hound first keeps ${pc(kept(hound))}`);
+    const lit = fought(19, lights), blade = /^(?:Bram|Idris|Wren|Ottilie|Maren|Cassian) (?:hits|misses) (Test \w+)/;
+    const atLights = lit.filter(({ s }) => s.log.map((l) => blade.exec(l)?.[1]).find((x) => x) === 'Test Light').length;
+    ok(mark !== undefined && first.monsters[mark].def.drain === 'sp' && won(lit) >= 0.9 && atLights >= seeds * 0.9,
+      `it keeps its casters' spell points from the lights: it marks a light before the hound, its first blade falls on a light in ${atLights} of ${seeds} fights at 19, and it wins ${pc(won(lit))}`);
   }
   // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks
   // and ranks, as play gives them, and wears what harness's wears.

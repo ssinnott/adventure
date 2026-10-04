@@ -42,7 +42,7 @@ import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from './testmonster.ts';
+import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from './testmonster.ts';
 import type { Role } from './testmonster.ts';
 
 /**
@@ -663,11 +663,12 @@ async function main(): Promise<void> {
       const fs = fights(l, callerEncounter(l)), mute = callerEncounter(l).map((m) => (m.calls ? { ...m, calls: undefined } : m));
       console.log(`  ${l}: ${one(fs)}, the fight holding ${(fs.reduce((t, { s }) => t + s.monsters.length, 0) / seeds).toFixed(1)} monsters; ${rest(l, callerEncounter(l))}, and ${days(l, [mute], seeds).fights.toFixed(1)} with no call`);
     }
-    console.log(`Three lights and a hound: the test controller, flying, its touch taking spell points where it held, beside the test skirmisher (#541).`);
+    console.log(`Three lights and a hound: the test controller, flying, its touch taking spell points at ${LIGHT.blow} of its blow where it held, beside the test skirmisher (#541).`);
     for (const l of at) {
       const enc = lightEncounter(l), fs = fights(l, enc), houndFirst = { monsters: enc, leader: enc[enc.length - 1].id };
-      const dull = enc.map((m) => (m.drain ? { ...m, drain: undefined } : m));
-      console.log(`  ${l}: ${one(fs)}, its spell points ${pct(mean(fs, (o) => o.sp))}% spent or taken (${pct(mean(fights(l, houndFirst), (o) => o.sp))}% with the hound marked first); ${rest(l, enc, ['the hound marked first', houndFirst])}, and ${days(l, [dull], seeds).fights.toFixed(1)} where the lights take hit points`);
+      const plain = [...Array.from({ length: 3 }, () => testMonster('controller', l)), testMonster('skirmisher', l)];
+      const whole = enc.map((m): MonsterDef => (m.drain ? { ...testMonster('controller', l), id: m.id, kind: m.kind, ranged: true, drain: m.drain, inflict: undefined } : m));
+      console.log(`  ${l}: ${one(fs)}, its spell points ${pct(mean(fs, (o) => o.sp))}% spent or taken (${pct(mean(fights(l, houndFirst), (o) => o.sp))}% with the hound marked first); ${rest(l, enc, ['the hound marked first', houndFirst])}; ${days(l, [plain], seeds).fights.toFixed(1)} for three test controllers and the hound, and ${days(l, [whole], seeds).fights.toFixed(1)} for lights on the controller's whole blow`);
     }
     return;
   }
@@ -688,21 +689,23 @@ async function main(): Promise<void> {
     jobs.forEach((j, k) => put(j, made[k]));
     // A monster never has fewer hit points than the one a level under it, at the levels made or any
     // between: where a point's factor falls so fast from the one before that the hit points drawn
-    // between them would dip, it is raised until they would not, and its damage is solved again.
-    const held: Job[] = [];
-    for (const r of roles.filter((x) => x !== 'boss')) {
+    // between them would dip, it is raised until they would not, and its damage is solved again. A
+    // boss's one factor is both, so held it hits a little harder as well, and is not solved again.
+    const held: Job[] = [], bosses: string[] = [];
+    for (const r of roles) {
       LEVELS.forEach((b, k) => {
         if (k === 0) return;
         const a = LEVELS[k - 1], grow = line(b).hp - line(b - 1).hp;
         const least = (next.hp[r][k - 1] * line(b).hp) / (line(b).hp + grow * (b - a));
         if (next.hp[r][k] < least - 1e-9 && levels.includes(b)) {
           next.hp[r][k] = Math.ceil(least * 100) / 100;
-          held.push({ kind: 'refit', role: r, level: b, seeds, under: 0, hp: next.hp[r][k], rules });
+          if (r === 'boss') { next.dmg[r][k] = next.hp[r][k]; bosses.push(`boss ${b}`); }
+          else held.push({ kind: 'refit', role: r, level: b, seeds, under: 0, hp: next.hp[r][k], rules });
         }
       });
     }
+    if (held.length || bosses.length) console.log(`  holding hit points at the level under's: ${[...held.map((j) => `${j.role} ${j.level}`), ...bosses].join(', ')}`);
     if (held.length) {
-      console.log(`  holding hit points at the level under's: ${held.map((j) => `${j.role} ${j.level}`).join(', ')}`);
       const again = await onCores<Point>(held, say);
       held.forEach((j, k) => put(j, again[k]));
     }
@@ -710,7 +713,7 @@ async function main(): Promise<void> {
     console.log(`\nDays that end in a death, a lost fight or one broken off, at the points made (%; the boss: fights lost from two under)`);
     row('', levels.map((l) => `L${l}`));
     for (const r of roles) row(r, levels.map((l) => pct(next.bad[r][at(l)])));
-    console.log(`(${jobs.length} points${held.length ? `, ${held.length} held` : ''}, ${seeds} seeds each, ${secs()})`);
+    console.log(`(${jobs.length} points${held.length + bosses.length ? `, ${held.length + bosses.length} held` : ''}, ${seeds} seeds each, ${secs()})`);
     if (args.includes('--write')) {
       const file = new URL('./testmonster.ts', import.meta.url);
       let src = fs.readFileSync(file, 'utf8');
