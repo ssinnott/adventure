@@ -9,6 +9,7 @@ import type { Season, Tide } from './calendar.ts';
 import type { When } from './quests.ts';
 import type { Interior } from '../content/index.ts';
 import type { GuildId } from '../content/guilds.ts';
+import type { SkillId } from './skills.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
 
@@ -99,7 +100,15 @@ interface Business extends Presence { x: number; y: number; name: string; interi
 
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
-  | { kind: 'sign'; x: number; y: number; text: string; id?: string }
+  /**
+   * A sign: its words, said to every company that steps on it, or stands on it and presses Space.
+   * `read` makes it an inscription in Kiln-script (game/inscriptions.ts): a second text, said after
+   * the first only to a company with a reader, which keeps it read by its `id` in the map's `used`, as
+   * a once-event is (a quest condition's `seen` names it). `marks` are the atlas places (`AtlasPlace`)
+   * its reading puts on the world map.
+   */
+  | { kind: 'sign'; x: number; y: number; text: string; id?: string; read?: undefined; marks?: undefined }
+  | { kind: 'sign'; x: number; y: number; text: string; id: string; read: string; marks?: string | readonly string[] }
   | ({ kind: 'inn'; price: number } & Business)
   | ({ kind: 'temple' } & Business)
   | ({ kind: 'shop'; stock: string[]; prices?: Readonly<Record<string, number>> } & Business)
@@ -113,10 +122,12 @@ export type Feature =
    * Where a person stands they stand only in their `when`, once `after` holds and until `until` does.
    * `passage` makes them a coachman or a boatman: once their words are said they sell the crossings
    * listed (game/passage.ts). `teaches` makes them a prestige's trainer: once their words are said
-   * they offer it (game/prestige.ts). `hall`, on a person with a room, makes the tavern a guild's
-   * hall, as a business's does: a hall that does not look like one.
+   * they offer it (game/prestige.ts). `skill` makes them a teacher of a secondary skill, as its
+   * guild's halls are: once their words are said they offer it to the company's members
+   * (game/skills.ts). `hall`, on a person with a room, makes the tavern a guild's hall, as a
+   * business's does: a hall that does not look like one.
    */
-  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; hall?: GuildId; passage?: readonly Passage[]; teaches?: Teaching } & Presence)
+  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; hall?: GuildId; passage?: readonly Passage[]; teaches?: Teaching; skill?: SkillId } & Presence)
   /** A tear into a Rift (game/rifts.ts): stepped on, it takes the party through, as an exit does. */
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number; tf?: Facing; label?: string }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
@@ -331,7 +342,10 @@ export interface MapDef {
   start: { x: number; y: number; facing: Facing };
   exits?: Exit[];
   features?: Feature[];
-  /** Each secret door and the id of the event or sign on its near side that hints at it (tools/tests/pillars.ts). */
+  /**
+   * Each secret door and the id of the event or sign on its near side that hints at it
+   * (tools/tests/pillars.ts); an inscription's reading may be the hint (game/inscriptions.ts).
+   */
   secrets?: { x: number; y: number; hint: string }[];
   encounters?: EncounterDef[];
   /** Wall and floor tints. */

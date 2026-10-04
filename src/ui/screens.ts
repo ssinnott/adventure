@@ -1,5 +1,6 @@
 // Modal screens over the exploration frame: messages, choices, the character sheet, the spell
-// picker, and the town services (inn, temple, shop, guild, trainer) with the visit that frames them.
+// picker, and the town services (inn, temple, shop, guild, trainer, a guild's skills) with the visit
+// that frames them.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
@@ -19,6 +20,8 @@ import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
 import { rankOf, rankName, offered, inHand, report, take, guildName } from '../game/guilds.ts';
+import { taughtBy, mayLearn, skillOffers, skillLine, learn, askSkill, skillNames, LEAVE_SKILLS, STRANGER } from '../game/skills.ts';
+import type { SkillId } from '../game/skills.ts';
 
 const BOX = { x: 40, y: 40, w: SAY_W + 24, h: 220 };
 
@@ -251,6 +254,8 @@ export class SheetScreen implements Screen {
     const res = resists(c);
     if (res.length) { drawText(ctx, 'RESISTS ' + res.join(', ').toUpperCase(), 20, y, { size: 1, color: TEXT }); y += 10; }
     drawText(ctx, 'TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '), 20, y, { size: 1, color: TEXT }); y += 10;
+    const skills = skillNames(c);
+    if (skills.length) { drawText(ctx, 'SKILLS ' + skills.join(', '), 20, y, { size: 1, color: TEXT }); y += 10; }
     if (c.spells.length) { drawText(ctx, 'SPELLS ' + c.spells.map((s) => spell(s).name).join(', '), 20, y, { size: 1, color: TEXT }); }
     // Items column
     const items = this.items(g);
@@ -330,19 +335,25 @@ export interface BusinessEntry { label: string; open: () => Screen }
 
 /** What each kind of business trades in, as its first menu names it. */
 const TRADE: Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
+/** A hall's first menu's line for its guild's skills. */
+const LEARN = 'Learn a skill';
 
 /** A person as a menu names them: to the first comma ("Hob", not "Hob, once tenant of Ashcombe"). */
 export const shortName = (name: string): string => name.split(',')[0];
 
 /**
  * What a business offers the party on the way in, in order: its own trade (a tavern's is its
- * keeper's words), then a guild's work where it is a hall, then "Talk to <name>" for each person
- * there now (`World.peopleAt`); Leave is always last. This is the one place the list is made, and
- * it is made afresh each time it is read, so the people are those there now.
+ * keeper's words), then a guild's work where it is a hall, and its skills where the guild has any
+ * built, then "Talk to <name>" for each person there now (`World.peopleAt`); Leave is always last.
+ * This is the one place the list is made, and it is made afresh each time it is read, so the people
+ * are those there now.
  */
 export function businessEntries(g: Game, f: Business): BusinessEntry[] {
   const out: BusinessEntry[] = [f.kind === 'npc' ? { label: 'The talk of the room', open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
   if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
+  // A hall teaches its guild's skills (game/skills.ts), once a skill of theirs is built.
+  const taught = f.hall ? taughtBy(f.hall) : [];
+  if (taught.length) out.push({ label: LEARN, open: () => skillMenu(g, taught, f.name) });
   for (const p of g.world.peopleAt(f.x, f.y)) out.push({ label: `Talk to ${shortName(p.name)}`, open: () => g.talkScreen(p) });
   return out;
 }
@@ -410,6 +421,23 @@ function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
       g.push(guildOffers(g, id, hallName));
     }, hallName)), hallName));
   }, hallName);
+}
+
+/**
+ * A guild's skills, at one of its halls or from a person who teaches one (game/skills.ts): each member
+ * with each skill, its price or why not, and what it does in the note; chosen, it is taught and the
+ * menu comes again. A company that is not of the guild is told so.
+ */
+export function skillMenu(g: Game, ids: readonly SkillId[], title: string): Screen {
+  if (!ids.every((id) => mayLearn(id, g.party))) return new MessageScreen(STRANGER, undefined, title);
+  const list = skillOffers(ids, g.party);
+  return new ChoiceScreen(askSkill(g.party), [...list.map((o) => skillLine(o, g.party)), LEAVE_SKILLS], (i) => {
+    const o = list[i];
+    if (!o) return;
+    const { line } = learn(o.skill, g.party, o.who);
+    if (line) g.say(line);
+    g.push(skillMenu(g, ids, title));
+  }, title, [...list.map((o) => !!o.bar), false]);
 }
 
 function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {

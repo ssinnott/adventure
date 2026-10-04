@@ -261,6 +261,93 @@ const trainer = await (async () => {
   });
   return { words, menu, after };
 })();
+// Kiln-script (#538, game/inscriptions.ts, game/skills.ts): an inscription put in Helmstow's street at
+// run time, that marks Feuerstollen. Stepped on by the premade six, who have no reader, it is a sign.
+// A person who teaches Linguist, put in the street too, tells a company not of the Lanterns that they
+// teach their own. In the Lantern Guildhall, the company a Taper for the run, the hall's first menu
+// offers its skill, and Maren learns Linguist, which her sheet then lists. Stepped on again, she reads
+// it after its words and marks the world map, which shows the mark, whole, and none once forgotten.
+const script = await (async () => {
+  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  const said = (from: number): Promise<string[]> => page.evaluate((s0: number) => { const g = (window as any).__game.game; return g.log.slice(Math.max(0, g.log.length - (g.said - s0))); }, from);
+  // Maren's sheet, under her traits, where a member's skills are listed: its pixels, to compare.
+  const sheet = async (): Promise<string> => {
+    await page.keyboard.press('Digit5'); await page.waitForTimeout(80);
+    const px = await page.evaluate(() => { const c = document.getElementById('stage') as HTMLCanvasElement; return Array.from(c.getContext('2d')!.getImageData(20, 190, 300, 50).data).join(); });
+    await page.keyboard.press('Escape'); await page.waitForTimeout(60);
+    return px;
+  };
+  // Pixels painted the colour of a marked place's pin.
+  const marked = (): Promise<number> => page.evaluate(() => {
+    const c = document.getElementById('stage') as HTMLCanvasElement, d = c.getContext('2d')!.getImageData(0, 0, c.width, c.height).data;
+    let n = 0;
+    for (let i = 0; i < d.length; i += 4) if (d[i] === 0xbd && d[i + 1] === 0xf4 && d[i + 2] === 0xff) n++;
+    return n;
+  });
+  // Onto the inscription from the west, facing east.
+  const onto = async (): Promise<string[]> => {
+    const s0 = await page.evaluate(() => { const g = (window as any).__game.game; while (g.screens.length > 1) g.pop(); g.world.travel('harrow', 9, 11, 1); return g.said; });
+    await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100);
+    return said(s0);
+  };
+  await page.evaluate(() => {
+    const g = (window as any).__game.game;
+    while (g.screens.length > 1) g.pop();
+    g.world.travel('harrow', 9, 11, 1);
+    g.world.map.features.push({ kind: 'sign', x: 10, y: 11, id: 'fx_vent', text: 'The dwarves\' words for the mountain\'s breath.', read: 'VENT. STAND CLEAR.', marks: 'lava_tubes' });
+    (window as any).__purse = g.party.gold;
+    g.party.gold = 1500;
+  });
+  const unread = await onto();
+  const sheetBefore = await sheet();
+  // A person who teaches it (`skill`), faced by a company not yet of the Lanterns: their words close
+  // onto the stranger's answer, and nothing is taught.
+  await page.evaluate(() => {
+    const g = (window as any).__game.game;
+    g.world.travel('harrow', 7, 14, 0);
+    g.world.map.features.push({ kind: 'npc', x: 7, y: 13, name: 'A Lantern reader', lines: ['"The old way, word by word."'], skill: 'linguist' });
+  });
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const teacher = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const stranger = await top();
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  await page.evaluate(() => { const g = (window as any).__game.game; g.party.flags.rank_lanterns = 1; g.world.travel('harrow', 11, 11, 0); });
+  await page.keyboard.press('ArrowUp'); await page.waitForTimeout(150);
+  const hall = await top();
+  for (let i = 0; i < hall.options.indexOf('Learn a skill'); i++) { await page.keyboard.press('ArrowDown'); await page.waitForTimeout(40); }
+  await page.keyboard.press('Space'); await page.waitForTimeout(80);
+  const menu = await top();
+  for (let i = 0; i < 4; i++) { await page.keyboard.press('ArrowDown'); await page.waitForTimeout(40); }
+  await page.keyboard.press('Space'); await page.waitForTimeout(100);
+  const learnt = await page.evaluate(() => { const g = (window as any).__game.game; return { skills: (g.party.members[4].skills ?? []).join(), gold: g.party.gold, log: g.log.at(-1), screen: g.top.constructor.name, options: g.top.options ?? [] }; });
+  await page.keyboard.press('Escape'); await page.waitForTimeout(60);
+  await page.keyboard.press('Escape'); await page.waitForTimeout(100);
+  const left = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+  const sheetAfter = await sheet();
+  const read = await onto();
+  const again = await onto();
+  // The world map, whole: the mark shows once read, and not once the reading is forgotten.
+  await page.keyboard.press('KeyM');
+  await page.waitForFunction(() => (window as any).__game.game.top.ready === true, null, { timeout: 60000 });
+  await page.keyboard.press('KeyZ'); await page.waitForTimeout(150);
+  const pins = await marked();
+  await page.evaluate(() => { delete (window as any).__game.game.world.state.maps.harrow.used.fx_vent; });
+  await page.waitForTimeout(150);
+  const unpinned = await marked();
+  await page.keyboard.press('KeyZ'); await page.waitForTimeout(60);
+  await page.keyboard.press('KeyM'); await page.waitForTimeout(100);
+  const closed = await page.evaluate(() => {
+    const g = (window as any).__game.game, m = g.maps.harrow, top = g.top.constructor.name;
+    while (g.screens.length > 1) g.pop();
+    m.features.splice(m.features.findIndex((f: any) => f.id === 'fx_vent'), 1);
+    m.features.splice(m.features.findIndex((f: any) => f.name === 'A Lantern reader'), 1);
+    delete g.party.flags.rank_lanterns; delete g.party.members[4].skills;
+    g.party.gold = (window as any).__purse;
+    return top;
+  });
+  return { unread, teacher, stranger, hall, menu, learnt, left, sheetChanged: sheetBefore !== sheetAfter, read, again, pins, unpinned, closed };
+})();
 // The Wardens' hall, the Drillyard, with First Watch's walk already made, so taking it pays at once.
 // Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
 // when the menu was first opened.
@@ -1174,6 +1261,16 @@ ok(coach.after.screens === 'ExploreScreen' && coach.after.map === 'thornhold' &&
   `paying takes the fare and lands the company in Thornhold, its calendar moved to the landing (day ${coach.before.day} to ${coach.after.day}, ${coach.after.hour}:00, ${coach.after.gold} gold; ${coach.after.log.join(' / ')})`);
 ok(trainer.words.text === '"Steel, or a title?"' && trainer.menu.options.join('|') === 'Bram: Knight-Errant\t1000g|Leave' && trainer.after.screens === 'ExploreScreen' && trainer.after.prestige === 1 && trainer.after.gold === 500 && trainer.after.log.join(' / ') === 'Bram is a Knight-Errant now. / Quest complete: Bram: Knight-Errant.',
   `a trainer's words close onto the members of her class, and Bram takes the first for 1000, and the seeking for it is done (${trainer.menu.options.join(', ').replace(/\t/g, ' ')}; "${trainer.after.log.join(' / ')}")`);
+ok(script.unread.join(' / ') === 'A sign reads: "The dwarves\' words for the mountain\'s breath."', `with nobody to read it, an inscription is a sign (${script.unread.join(' / ')})`);
+ok(script.teacher.text === '"The old way, word by word."' && script.stranger.screen === 'MessageScreen' && script.stranger.text === '"We teach our own. Take the first task, and you are one."',
+  `a person who teaches Linguist says their words, then tells a company not of the Lanterns that they teach their own (${script.stranger.text})`);
+ok(script.hall.screen === 'ChoiceScreen' && script.hall.options.join('|') === 'Study spells|Work for the Lanterns|Learn a skill|Leave' && script.menu.text === '"Who would learn?" (1500 gold.)' && script.menu.options[4] === 'Maren: Linguist\t1000g\tReads Kiln-script.' && script.menu.options.length === 7,
+  `a Lantern hall offers its skill after its work, each member at its price (${script.hall.options.join(', ')}; ${script.menu.options[4]?.replace(/\t/g, ' | ')})`);
+ok(script.learnt.skills === 'linguist' && script.learnt.gold === 500 && script.learnt.log === 'Maren learns Linguist.' && script.learnt.screen === 'ChoiceScreen' && script.learnt.options[4] === 'Maren: Linguist\tknown\tReads Kiln-script.' && script.left === 'ExploreScreen' && script.sheetChanged,
+  `Maren learns Linguist for 1000, the menu comes again with her known, Esc twice leaves, and her sheet lists it ("${script.learnt.log}"; ${script.left})`);
+ok(script.read.join(' / ') === 'A sign reads: "The dwarves\' words for the mountain\'s breath." / Maren reads: "VENT. STAND CLEAR." / Maren marks the world map.' && script.again.length === 2,
+  `stepped on again, Maren reads it after its words and marks the world map, once (${script.read.slice(1).join(' / ')})`);
+ok(script.pins >= 40 && script.unpinned === 0 && script.closed === 'ExploreScreen', `the world map, whole, pins the place the reading marked, and none once it is forgotten (${script.pins} pixels of the pin, then ${script.unpinned}; ${script.closed})`);
 ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
   `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
 ok(interiors.kinds >= 12 && interiors.missing.length === 0 && interiors.n === interiors.kinds * 2 && interiors.thin.length === 0, `all ${interiors.kinds} interiors paint by day and by night (${interiors.n} painted${interiors.thin.length ? ', too flat: ' + interiors.thin.join(', ') : ''})`);
