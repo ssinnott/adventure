@@ -15,10 +15,10 @@ measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas
 
 Its first five boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area; N3,
 Anvilhall's box (#458, §4.3), and with it its first town, Anvilhall, behind N3's gate (#459, §4.4);
-N4, the Tiefzeche's box (#461, §4.6), the heart's first, with the shaft shut until the mine is
-built; N2, Erzkamm (#460, §4.5), with the Barbarian's second prestige; and N5, Gluthutte's box
-(#463, §4.8), the smelter in the charcoal woods. Eleven of its monsters and its twelve rooms are
-drawn (§3), and the rest is to build. Its content is
+N4, the Tiefzeche's box (#461, §4.6), the heart's first, and under its shaft the Tiefzeche, its
+first dungeon (#462, §4.7); N2, Erzkamm (#460, §4.5), with the Barbarian's second prestige; and N5,
+Gluthutte's box (#463, §4.8), the smelter in the charcoal woods. Eleven of its monsters and its
+twelve rooms are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, and its side quests in
 `quests.ts`, to come) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
@@ -129,9 +129,10 @@ on the Fells' tops in winter (the area's `climate`, with its first box).
 
 ## 3. What is built
 
-Five boxes and a town: the area's first box, which lists the area (#457); the box of its first town
-(#458) and the town behind its gate (#459); the box of its first dungeon, the heart's first (#461);
-the crag north of Anvilhall, off the road (#460); and the smelter's (#463):
+Five boxes, a town and a dungeon: the area's first box, which lists the area (#457); the box of its
+first town (#458) and the town behind its gate (#459); the box of its first dungeon, the heart's
+first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhall, off the road
+(#460); and the smelter's (#463):
 
 - **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
   Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
@@ -158,13 +159,21 @@ the crag north of Anvilhall, off the road (#460); and the smelter's (#463):
   19, the inn, the mine-surgeon's and the stores (§4.4).
 - **The Tiefzeche's box** (N4, `kilnsheart_n4`, core, band 16–17; #461): the trail on from N3 over
   the line into the heart, down across the box to the drove road's head and out south for N5. The
-  headworks at the foot of the first crags: the spur to the shaft at 16,2, its cage chained until the
-  Tiefzeche is built (#462); the winding house with its tally board, the lookout from the gantry, the
-  crust on the fence and the lamp-niche over the shaft with the miners' blessing cut above it. The
-  miners' camp and a miner on the grass west of the trail, a cairn on the knoll, an ore tub by the
-  trail, a spring under the crag, the old workings' open cuts, the drovers' fold and the smelter's
+  headworks at the foot of the first crags: the spur to the shaft at 16,2 and the cage's gate on it,
+  the way into the Tiefzeche (#462); the winding house with its tally board, the lookout from the
+  gantry, the crust on the fence and the lamp-niche over the shaft with the miners' blessing cut above
+  it. The miners' camp and a miner on the grass west of the trail, a cairn on the knoll, an ore tub by
+  the trail, a spring under the crag, the old workings' open cuts, the drovers' fold and the smelter's
   smoke past the south edge. Four groups: beetles and salamanders on the fresh spoil below the shaft
   and a rock worm in each of two open cuts. Behind the fresh mortar in its wall, the wagon yard (§4.6).
+- **The Tiefzeche** (`deep_mines`, `deep_mines2` and `deep_mines3`, dungeon, three levels of 16 by 16,
+  band 16–18; #462): down N4's shaft by the cage. The workings, timbered, the hymn's three doors and
+  the crust on its ledge, the hewer at the face, beetles and a rock worm; the old workings, the Hand's
+  cages on their rails and what the cargo left in them, beetles and a pair of worms in their bores; and
+  the bottom, where the pick marks stop at a smooth face with a square hole cut through it and the
+  clean corridor runs beyond: six knockers and a mender twice, the knockers' swept room behind a wall
+  and the Foreman before the door marked CREW ONLY, which stays shut. Two service ladders, each
+  behind a niche that reads LADDER, are the shortcut down (§4.7).
 - **Erzkamm** (N2, `ironfells_n2`, country, band 16–17; #460): the open fell up out of N3 and the
   hills climbing to the crag under the rim, no road on it. In the crag's face the cave where the
   first ore was found: Hartmut at its mouth, who teaches the Barbarian's second prestige, Ironhide
@@ -191,25 +200,25 @@ Saltreach's and Sunderwood's were before their first box (docs/areas/saltreach.m
 docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–17, with M3, N3 and N2
 laid on it and its line to the heart held, §1; the heart 16–18, with N4 and N5 laid on it; Kilnmouth
 17–18), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the Tiefzeche 16–18, the Anvil
-Stone 17–18, Feuerstollen 17–18) as planned plates, the sites (Anvilhall, the Deep Mines, the
-Forges, the Anvil Stone, the Lava Tubes, Kilnhaven, Iron Crag, to be renamed with #435, §10) and its
-links: the east road in, the towns' and the dungeons' ways in, the drove road on to High Moor, the
-ferry and the Compact ship, and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's coach
-(#434, call 9; #539 builds it).
+Stone 17–18, Feuerstollen 17–18) as planned plates, the Tiefzeche's now its three levels' (#462),
+the sites (Anvilhall, the Deep Mines, the Forges, the Anvil Stone, the Lava Tubes, Kilnhaven, Iron
+Crag, to be renamed with #435, §10) and its links: the east road in, the towns' and the dungeons'
+ways in, the drove road on to High Moor, the ferry and the Compact ship, and a new `coach` link,
+Kilnhaven to Rime Lodge, the drove road's coach (#434, call 9; #539 builds it).
 
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
 `src/content/progression.ts`: band 16–18, next 18, window 3,500, owed to #436 while the area is built
-box by box, with M3's, N3's, N4's, N2's and N5's 6,838 xp a member and 4,230 gold the clear's floor
-(§8).
-The step is in
+box by box, with M3's, N3's, N4's, N2's, N5's and the Tiefzeche's 11,116 xp a member and 6,780 gold
+the clear's floor (§8). The step is in
 `src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`, `src/content/index.ts`)
 so that the harness and the gate dressed by it before the first box took the table into its Area
 (#457): Anvilhall's forge's eight
 wares (`FORGE`, §4.4), the step's plus finds by 19 (§4.1), Kilnhaven's smith's prices at a quarter
 more (`SMITH_PRICES`, for #469) and the thane's price for the Stone (`ANVIL_STONE_PRICE`, 6,000, for
 #459, §8). The forge sells every ware (#459), and each find is owed to its box until it is placed;
-N3's Plate Mail +3 and N2's Mattock +1 are placed (§4.3, §4.5), and M3's, N4's and N5's finds, off
-the ladder, are their own (§4.2, §4.6, §4.8). The thane asks the price as an answer's `price` (§9).
+N3's Plate Mail +3, N2's Mattock +1 and the Tiefzeche's Forge Hammer +1 are placed (§4.3, §4.5,
+§4.7), and M3's, N4's, N5's and the Tiefzeche's finds, off the ladder, are their own (§4.2, §4.6,
+§4.8, §4.7). The thane asks the price as an answer's `price` (§9).
 
 Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
 Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
@@ -236,9 +245,9 @@ Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462)
 salamanders, the Salamander and the Great Salamander (`src/ui/monsters/salamanders.ts`), for the
 spoil heaps and the tubes (#458, #463, #466). Their defs are in `src/content/areas/kilns/monsters.ts`,
 the area's own since M3 lists it (`AHEAD`, `src/content/index.ts`, listed them until then), and each
-was owed in `UNPLACED` (`tools/tests/maps.ts`) to the box that places it: the knockers to #462 and
-the Great Salamander to #466 still; N3 places the Salamander on its spoil (#458). §9 has the
-decisions.
+was owed in `UNPLACED` (`tools/tests/maps.ts`) to the box that places it: the Great Salamander to
+#466 still; N3 places the Salamander on its spoil (#458), and the Tiefzeche the knockers at its
+bottom (#462). §9 has the decisions.
 
 The six on frames that exist are drawn too (#472): the Fire Beetle on the spider frame, the
 Slagling, the Slag Elder and the Warden of the Anvil on the riftling's, the Rock Worm on the long
@@ -272,10 +281,10 @@ day in it somewhere, a window, a shaft, a breach or a door, so that nine at nigh
 ## 4. What is still to build
 
 All of it but M3, N3, N4, N2 and N5, built (#457, §4.2; #458, §4.3; #461, §4.6; #460, §4.5; #463,
-§4.8), and Anvilhall behind N3's gate (#459, §4.4): 14,791 squares of land, 12,399 of them walkable,
-the plan's figures (§1). On the grid the plan is ten boxes, three dungeons and two towns, with four
-more boxes parked, and the ten hold 8,419 of those squares, 7,686 walkable; the parked four 3,886
-and 3,397:
+§4.8), Anvilhall behind N3's gate (#459, §4.4) and the Tiefzeche under N4's shaft (#462, §4.7):
+14,791 squares of land, 12,399 of them walkable, the plan's figures (§1). On the grid the plan is ten
+boxes, three dungeons and two towns, with four more boxes parked, and the ten hold 8,419 of those
+squares, 7,686 walkable; the parked four 3,886 and 3,397:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -605,14 +614,15 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   box past the headworks, turns south at the drove road's head (22,24) and leaves by the south edge
   at 444,125 (20,31) for N5. The headworks stand at the foot of the first crags: a spur of nine
   squares off the trail to the shaft at the site's own square, 440,96 (16,2), where the mouth's line
-  is said and the cage stands chained until the Tiefzeche is built. Its exit is written for #462
-  (§9). Beside the shaft are the winding house, its tally board counting loads down and none up, and
-  the lookout from the gantry, south down the drove road by day and to a red glow under a far crag by
-  night. A crust is left on the shaft's fence. Over the shaft the lamp-niche (luck) has the box's
-  inscription, the miners' blessing, which a reader reads COUNT ALL DOWN. COUNT ALL UP. By night a
-  cart comes down the trail with its lamps hooded and turns in for the headworks, the Hand's
-  overseers seen and not fought. Below the shaft the fresh spoil is tipped toward the trail: four
-  fire beetles at its head and three salamanders and a beetle at its warm end, the roster's fight.
+  is said, and the cage's gate on the shaft is the way down into the Tiefzeche (#462, §4.7), whose
+  cage brings a company back up to the spur's end (§9). Beside the shaft are the winding house, its
+  tally board counting loads down and none up, and the lookout from the gantry, south down the drove
+  road by day and to a red glow under a far crag by night. A crust is left on the shaft's fence.
+  Over the shaft the lamp-niche (luck) has the box's inscription, the miners' blessing, which a reader
+  reads COUNT ALL DOWN. COUNT ALL UP. By night a cart comes down the trail with its lamps hooded and
+  turns in for the headworks, the Hand's overseers seen and not fought. Below the shaft the fresh
+  spoil is tipped toward the trail: four fire beetles at its head and three salamanders and a beetle
+  at its warm end, the roster's fight.
   The wagon yard is walled into the rock behind the headworks, a wagon's width of its wall new
   mortar. Searched there, the wall gives on the cages the cargo rode down in, a name scratched on a
   bar and a child's shoe in the straw; in the overseers' strongbox, 700 gold and a Sharkskin Coat +2
@@ -667,6 +677,44 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   the ladder's (#535), and in the Hand's cages what the cargo left, pluses off the ladder for the
   classes the Fells' finds miss, the dungeon's to choose.
 - **Pay.** About 2,400 xp a member.
+
+- **As built** (#462, 4 October): three levels of 16 by 16 under N4's shaft, hand-built, each with a
+  group at the top of its band (§9). **The workings** (`deep_mines`, band 16–17): the cage's gate on
+  N4's shaft lets a company down to the shaft's foot, 7,14, facing in, and the cage there takes it up
+  to the spur's end, 15,2, facing west. Timbered galleries in stone and beams: the haulage way north
+  through two air doors to where the galleries meet, and a third door west to the stair down, an old
+  miner on a stool at each to work it, who sings its verse as the company passes, *One door shut, and
+  all hands counted.*, then two and three (#56's 36). The crust lies on a ledge by the stair, crumbs
+  going on down the steps; at the face east a hewer, who says they do not go to the bottom and hear
+  the knocking under the floor, and past it a hole no dwarf cut, a rock worm in it, the level's group
+  at 17; four fire beetles in a warm gallery west. Off the haulage way the miners' candles before a
+  walled niche lean into the wall, and the prayer for the dead cut over it reads LADDER to a reader;
+  searched there, the wall gives on a square shaft with iron rungs, 400 gold in coins on its floor
+  pushed through for the dead, and the rungs go down to the old workings. **The old workings**
+  (`deep_mines2`, band 16–17): galleries nobody works, a fall of roof at the end of the first, two
+  beetles in an old stall, the cargo's footprints down to the old haulage way, its rails bright on
+  top, and on them the Hand's cages, the straw fresh; in them what the cargo left, an Ironwood Bow +2,
+  a Warden's Dirk +2 and 900 gold. By night the overseers' lamps go away down the bore, seen and not
+  fought. A second niche, the dust blown back from it, reads LADDER, and its hatch gives on the shaft
+  again, whose rungs run on down to the bottom; the worms' round bores wind north to a pair of rock
+  worms, the level's group at 17, and south to the steep stair down. **The bottom** (`deep_mines3`,
+  band 17–18): the stair comes down into the dwarves' last squares, earth underfoot, and the brief's
+  line is said before a face of smooth wall with a square hole cut through it, crusts on a ledge
+  beside it, none eaten. Through it runs the clean corridor, drawn smooth and bare, the hull's: west
+  past six knockers and a mender, and a wall their tracks run to, the dust swept in arcs before it,
+  where a search opens their room, parts stacked by kind and among them combs and buttons and a spoon,
+  with the Forge Hammer +1, a Knocker's Plate and 1,250 gold; north past six knockers and a mender
+  again; east to the Foreman, and past it the door at the corridor's end, a wall with a door drawn in
+  it, with the brief's line on the square before it. East of the hole the service ladder comes down
+  out of the ceiling. The knockers, the menders and the levels' beasts come back; the Foreman never
+  does, and drops its slate, and the door stays shut. The stairs join the three levels with no hatch
+  found and nothing read. A company at 16 wins every fight on the upper two, 7.52 and 8.67 fights to a
+  rest, inside the aim. At 17 it wins every fight with the knockers and half with the Foreman, which
+  it wins 95% at 19; the bottom's day runs 9.64 fights to a rest, 13.3% of its days ending in a fight
+  broken off, and its groups pooled with the Foreman are won 83.3%, both off the aim and inside the
+  limit (§9). Two under, at 14, the upper two are won every time, owed to #18. As measured the three
+  levels pay 4,278 xp a member and 2,550 gold. Density 100% within 7 on each, the furthest 4, 4 and
+  5, with one sign among 18 and 19 points on the upper two and none among the bottom's 15.
 
 ### 4.8 N5, Gluthutte (#463): core, band 17
 
@@ -1031,9 +1079,10 @@ second prestige (#19). Its landmarks: a town cut into a hill, a mine's headworks
 cut by its own people, a ridge of vents, an ore port. The area's `novel` claims each as a box places
 it, since the check asks that what is claimed be used: pine with M3 (#457), the salamanders and
 `sign:read` with N3 (#458), the town cut into a hill with Anvilhall (#459, its site's `fortress`),
-the smelter with N5 (#463, its site's `forge`), the rest with theirs. N2 (#460) claims nothing:
-Act II's road taught the second prestige first (Rietum's two, #425) and Sjonghol held the first
-trainer in a cave, and a door that is a wall is no mechanic the check reads.
+the smelter with N5 (#463, its site's `forge`), the knockers and the mine's headworks with the
+Tiefzeche (#462, the shaft's site's `mine`, built with it), the rest with theirs. N2 (#460) claims
+nothing: Act II's road taught the second prestige first (Rietum's two, #425) and Sjonghol held the
+first trainer in a cave, and a door that is a wall is no mechanic the check reads.
 
 ## 8. The numbers
 
@@ -1047,8 +1096,10 @@ trainer in a cave, and a door that is a wall is no mechanic the check reads.
   a fight inside the gate's aim costing what it costs; the sum is restated with each. A company
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
   finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458), N4 1,468
-  (#461), N2 1,095 (#460) and N5 1,679 (#463), so the shares stand at about 15,940. Anvilhall pays
-  nothing of its own (#459): its 300 is the chapter's and #471's.
+  (#461), N2 1,095 (#460), N5 1,679 (#463) and the Tiefzeche 4,278 (#462), so the shares stand at
+  about 17,820. The Tiefzeche's Foreman alone pays 1,902 a member and its two corridor groups 858,
+  past the brief's 2,400 before the upper levels' beasts (§9). Anvilhall pays nothing of its own
+  (#459): its 300 is the chapter's and #471's.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1068,8 +1119,10 @@ trainer in a cave, and a door that is a wall is no mechanic the check reads.
   700 of the 13,900, in its cairn and the drover's box; N3 holds 950 (#458), its share by the brief's
   900, in its cairn and the tithe-cellar; N4 holds 950 too (#461), in its cairn and the wagon yard;
   N2 holds 640 (#460), its share by the brief's 600, in its cairn and the hoard; N5 950 (#463), in
-  its cairn and the shard store; their monsters carry none. Anvilhall holds none (#459): its forge
-  sells the step at the prices above, and its thane takes the 6,000.
+  its cairn and the shard store; their monsters carry none. The Tiefzeche holds 2,550 (#462), its
+  share by the brief's 2,400, in the coins behind the first niche (400), the Hand's cages (900) and
+  the knockers' room (1,250); its beasts carry none, and its machines carry parts. Anvilhall holds
+  none (#459): its forge sells the step at the prices above, and its thane takes the 6,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman and
@@ -1079,7 +1132,11 @@ trainer in a cave, and a door that is a wall is no mechanic the check reads.
   its finds by 19; whether that holds the figure is each box's to measure. As built: M3's does not,
   nor N3's, N4's, N2's or N5's. A company at its floor, 16 on the first four and 17 on N5, wins
   every fight in each and walks the Fells' road and the heart's every time, and one two under wins
-  every fight too, owed to #18 as Act II's are (§4.2, §4.3, §4.5, §4.6, §4.8).
+  every fight too, owed to #18 as Act II's are (§4.2, §4.3, §4.5, §4.6, §4.8); so do the Tiefzeche's
+  two upper levels, banded from the area's floor (§4.7). The Foreman is won 50% at the bottom's
+  floor, 17, and 95% at 19, its hit points and its blow set off the line by the gate (§9); the
+  bottom's day, 9.64 fights to a rest, and its groups pooled with the Foreman, won 83.3%, are off the
+  aim and inside the limit.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
@@ -1087,7 +1144,9 @@ trainer in a cave, and a door that is a wall is no mechanic the check reads.
   place of its event, #459); Anvilhall, a town, 100% within 7 and the furthest 4, five signs among
   its 22 points (#459); N4 97.7% within 8 and the furthest 13, with one sign among its 25 (#461); N2
   100% within 12 and the furthest 12, with one sign among its 16 (#460); N5 97.4% within 8 and the
-  furthest 11, with one sign among its 27 (#463).
+  furthest 11, with one sign among its 27 (#463); the Tiefzeche's three levels 100% within 7, the
+  furthest 4, 4 and 5, with one sign among 18 and 19 points on the upper two and none among the
+  bottom's 15, the side room inside it (#462).
 
 ## 9. Decisions
 
@@ -1645,6 +1704,64 @@ Decided by delegate for #463, each the owner's to overturn:
 13. **Owed on:** the drove road at N6's 12,0 (436,158, #467); the cutters' track at O5's 0,24
     (456,150, #464), to be run on to the Stone; the stream at M5's 31,25 and 31,26, with no road
     across that edge (#474, parked); the elder's flag, the Rift's (#465).
+
+Decided by delegate for #462, each the owner's to overturn:
+
+1. **The brief is §4.7, not the issue's draft:** the issue's corridor at 17–18 and its Foreman half
+   won at 16 gave way to §4.7's levels and to a Foreman half won at its map's floor (§8).
+2. **The levels are banded 16–17, 16–17 and 17–18,** not §4.7's 16–17, 17 and 18: the curve's rise
+   asks a group at a map's top above its floor, so a band of one level would want a group a level over
+   it, and the old workings hold none at 18 nor the bottom one at 19. The Foreman is judged at 17.
+3. **The Foreman is set off the line by the gate,** as #199 set the Warden of the Sunder: 1,500 hit
+   points and 15d8+14, where the line's 1,001 and 18d8+20 won 71% at 17 and 93% at 19 and a harder
+   blow alone took 19 under 90%. It is won 50% and 95%, and named in `OFF_LINE`.
+4. **Two groups a level above the bottom, not eight:** four fire beetles and a rock worm in its hole
+   on the workings, two beetles and a pair of worms in their bore on the old workings, 7.52 and 8.67
+   fights to a rest at 16; a worm at each level's far end is its group at 17.
+5. **The bottom holds the brief's groups and no more,** six knockers and a mender twice and the
+   Foreman. Its day, 9.64 fights to a rest, and its groups pooled with a Foreman won half, 83.3%, are
+   off the aim and inside the limit, as the Sunder's floor's were; the menders draw fights out, and a
+   third group would be one the brief does not hold.
+6. **The pay is 4,278 xp a member for the brief's 2,400:** the Foreman (1,902) and the corridor (858)
+   pass the brief before the beasts above them, fights to a rest being the gate and a share a proposal
+   (#457's 3). Its gold is 2,550, its share by the brief of the 13,900 (§8).
+7. **The bottom is drawn smooth throughout** (`wallStyle: 'smooth'`, `bare`), the corridor being the
+   hull's, and the dwarves' last squares show earth underfoot where the corridor has its floor. A wall
+   style a square at a time is the systems lane's to give, and would show the pick marks stopping.
+8. **The door marked CREW ONLY is a wall with a door drawn in it,** a seam in the smooth wall as the
+   Sunder's is (`solid: 'wall', door: 'door'`): the brief's line on the square before it, *A wall
+   blocks the way.* into it, no exit, no flag and nothing in `content/locks.ts`. #56's 60 opens it
+   from the other side.
+9. **The service ladders are two hatches,** secret doors at a walled niche whose prayer reads LADDER,
+   each with a hint seen beside it, the candles leaning into the wall and the dust blown back in a fan,
+   so no company needs a reader (#538's 4 and 5). A search finds each as any secret door, and the
+   field that would gate it on the reading, #538's 5 left to this issue, is not asked for. One shaft
+   of rungs runs from the workings to the bottom's ceiling; behind the first hatch lie the coins the
+   miners push through for the dead.
+10. **The hymn's doors are the workings' three air doors,** an old miner at each to work it who sings
+    its verse as the company passes, *One door shut, and all hands counted.*, then two and three:
+    once-events for #471 to read. No door below has a verse; the last is CREW ONLY's, the oldest
+    miner's to sing (§6).
+11. **The crust lies on two ledges:** by the workings' stair, §4.7's landmark, crumbs going on down
+    the steps; and by the hole at the bottom, crusts in a row and none eaten, where #471 puts the
+    crust-bearer's son (§6). Neither says who carries them.
+12. **The Hand's overseers are seen, not fought,** as on N4 (#461's 5): their lamps go away down the
+    bore by night, and the cages, their fresh straw and the cargo's footprints say the rest.
+13. **The machines carry parts, three keepsakes** with no price and no hand-in: a Knocker's Plate,
+    which about one knocker in seven drops; the Mender's Spool, which every mender drops; and the
+    Foreman's Slate, its list with no box ticked, read from the pack. The knockers' room holds a plate.
+14. **The finds:** the ladder's Forge Hammer +1 in the knockers' room; in the cages an Ironwood Bow +2
+    and a Warden's Dirk +2, Sunderwood's, at the forge's blow a level before it, for the ranger and
+    the light blades the Fells' finds miss.
+15. **The ids are `deep_mines`, `deep_mines2` and `deep_mines3`,** as the brief and the Sunder's second
+    level have them, named The Tiefzeche, The Old Workings and The Clean Corridor, their plates under
+    the shaft at 440,104, 110 and 116. The shaft's site is built, and the area claims the knockers and
+    the mine (§7).
+16. **N4's shaft opens** (#461's 2 and 3): `MOUTH` is listed with the cage's line said going down, its
+    square the cage's gate, a door, and `n4_cage` goes; the cage at the shaft's foot brings a company
+    back up to 15,2, facing west.
+17. **Two under is owed to #18** on the upper two levels, as on every box; the bottom's floor is over
+    the area's, so its groups count two under in the area's pool.
 
 ## 10. Names
 

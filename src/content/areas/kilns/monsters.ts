@@ -14,19 +14,24 @@ export const SPRITES = [
 ] as const;
 
 export const MONSTERS: readonly MonsterDef[] = [
-  // the Tiefzeche's lowest level (#462), fodder on MONSTERS §4.4's line at 16, six to a mender: the first machine on the road
-  { id: 'knocker', name: 'Knocker', plural: 'Knockers', sprite: 'knocker', kind: 'machine', look: 'Something small and grey, knocking on the rock as it comes.', level: 16, hp: 127, ac: 18, attack: 9, dice: 3, sides: 5, bonus: 2, speed: 12, xp: 317, gold: [0, 0], tint: '#84878e', size: 0.45 },
+  // the Tiefzeche's lowest level (#462), fodder on MONSTERS §4.4's line at 16, six to a mender: the first machine on the road;
+  // it carries no gold, only parts, and about one in seven a plate of its own
+  { id: 'knocker', name: 'Knocker', plural: 'Knockers', sprite: 'knocker', kind: 'machine', look: 'Something small and grey, knocking on the rock as it comes.', level: 16, hp: 127, ac: 18, attack: 9, dice: 3, sides: 5, bonus: 2, speed: 12, xp: 317, gold: [0, 0], drops: [{ item: 'knocker_plate', chance: 0.15 }], tint: '#84878e', size: 0.45 },
   // with the knockers (#462), a healer on a soldier's numbers at 17 (MONSTERS §4.2): Mending Light on its group, one turn in
-  // two that one of it is hurt (at every turn a bot that never singles it out broke off half its days at fifteen rounds)
-  { id: 'mender', name: 'Mender', plural: 'Menders', sprite: 'mender', kind: 'machine', look: 'It stops to mend the others, and they let it.', level: 17, hp: 199, ac: 20, attack: 10, dice: 3, sides: 8, bonus: 4, speed: 11, xp: 673, gold: [0, 0], cast: { spells: ['mend_all'], chance: 0.5 }, tint: '#9a9c96', size: 0.55 },
-  // before the door marked CREW ONLY (#462), the lowest level's boss at 18 on MONSTERS §4.4's boss line, for #462's gate to
-  // tune; it never comes back, and the door stays shut when it falls
-  { id: 'foreman', name: 'The Foreman', plural: 'Foremen', sprite: 'foreman', kind: 'machine', look: 'It checks you the way a clerk checks a list, and finds nobody on it.', level: 18, hp: 1001, ac: 22, attack: 13, dice: 18, sides: 8, bonus: 20, speed: 13, xp: 11413, gold: [0, 0], tint: '#5c6068', size: 1.3 },
-  // the spoil heaps, the forges and the kilns (#457, #458, #461, #463, #467, #468), armoured on MONSTERS §4.4's line at 16; fire does not touch it
+  // two that one of it is hurt (at every turn a bot that never singles it out broke off half its days at fifteen rounds); it
+  // carries its spool of wire
+  { id: 'mender', name: 'Mender', plural: 'Menders', sprite: 'mender', kind: 'machine', look: 'It stops to mend the others, and they let it.', level: 17, hp: 199, ac: 20, attack: 10, dice: 3, sides: 8, bonus: 4, speed: 11, xp: 673, gold: [0, 0], cast: { spells: ['mend_all'], chance: 0.5 }, drops: [{ item: 'mender_spool', chance: 1 }], tint: '#9a9c96', size: 0.55 },
+  // before the door marked CREW ONLY (#462), the lowest level's boss at 18; it never comes back, the door stays shut when it
+  // falls and it drops its slate. Off MONSTERS §4.4's boss line (1,001 hp, 18d8+20, won 71% at 17 and 93% at 19), its hit
+  // points and its blow are set for #462's gate: about half at its floor, 17, and nearly always at 19
+  { id: 'foreman', name: 'The Foreman', plural: 'Foremen', sprite: 'foreman', kind: 'machine', look: 'It checks you the way a clerk checks a list, and finds nobody on it.', level: 18, hp: 1500, ac: 22, attack: 13, dice: 15, sides: 8, bonus: 14, speed: 13, xp: 11413, gold: [0, 0], drops: [{ item: 'foreman_slate', chance: 1 }], tint: '#5c6068', size: 1.3 },
+  // the spoil heaps, the forges, the kilns and the Tiefzeche's warm galleries (#457, #458, #461, #462, #463, #467, #468),
+  // armoured on MONSTERS §4.4's line at 16; fire does not touch it
   { id: 'fire_beetle', name: 'Fire Beetle', plural: 'Fire Beetles', sprite: 'fire_beetle', kind: 'beast', look: 'A beetle with a coal in its back.', level: 16, hp: 249, ac: 21, attack: 10, dice: 3, sides: 7, bonus: 6, speed: 8, xp: 844, gold: [0, 0], immune: ['fire'], tint: '#2e2622', size: 0.72 },
   // the Anvil Stone's Rift and its tear (#458, #464, #465), a skirmisher on MONSTERS §4.4's line at 16: it paralyses, at 0.1 a hit; cold bites the slag, and fire does half
   { id: 'slagling', name: 'Slagling', plural: 'Slaglings', sprite: 'slagling', kind: 'rift', look: 'Slag, walking, with a red iron heart.', level: 16, hp: 179, ac: 19, attack: 10, dice: 3, sides: 8, bonus: 2, speed: 15, xp: 633, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.1 }, weak: ['cold'], resist: ['fire'], tint: '#3e3633', size: 0.74 },
-  // the old workings and the surface's adits and cuts (#457, #460, #461, #462), a brute on MONSTERS §4.4's line at 17
+  // the Tiefzeche's workings and old workings and the surface's adits and cuts (#457, #460, #461, #462), a brute on
+  // MONSTERS §4.4's line at 17
   { id: 'rock_worm', name: 'Rock Worm', plural: 'Rock Worms', sprite: 'rock_worm', kind: 'beast', look: 'This tunnel was not dug by dwarves.', level: 17, hp: 404, ac: 18, attack: 11, dice: 4, sides: 8, bonus: 7, speed: 8, xp: 1347, gold: [0, 0], tint: '#6a6056', size: 1.6 },
   // the Anvil Stone's approach, only after the Stone is taken (#464), armoured on MONSTERS §4.4's line at 17: the dwarves, crossed
   { id: 'anvil_guard', name: 'Anvil Guard', plural: 'Anvil Guards', sprite: 'anvil_guard', kind: 'person', look: 'Short, broad, and in the thane\'s iron.', level: 17, hp: 250, ac: 22, attack: 10, dice: 3, sides: 7, bonus: 6, speed: 8, xp: 898, gold: [30, 70], tint: '#4a4c54', size: 0.8 },
