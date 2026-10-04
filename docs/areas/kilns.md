@@ -13,7 +13,7 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Nothing a company walks is built; six of its monsters are drawn ahead of its first box (§3). Its
+Nothing a company walks is built; nine of its monsters are drawn ahead of its first box (§3). Its
 content will be `src/content/areas/kilns/` (maps, monsters, items, climate, its part of the world
 map, its chapter of the one quest, The Anvil Stone, in `chapter.ts`, its side quests in
 `quests.ts`) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
@@ -120,11 +120,6 @@ with its fare, its days and its hours, the same either way (§4.14, §9). The fe
 Saltmouth's quay; every other end waits on its town, Kilnhaven's three on #469, and nothing is sold
 toward a town not built, so none runs yet.
 
-Six of its monsters are drawn, ahead of its first box (#472): the Fire Beetle, the Slagling, the
-Slag Elder, the Rock Worm, the Anvil Guard and the Warden of the Anvil, in
-`src/content/areas/kilns/monsters.ts`, which `src/content/index.ts` lists in AHEAD until #457 lists
-the area. Each is owed a map by the box that first places it (§7, §9).
-
 The systems it waits on are #432's: the curve's rows for Act III, the gear ladder's next step and
 the Stone's price (#535); ash, ice and pine underfoot (#536: ash on O6, pine on M3 and O3, where
 Sunderwood drew its pine as forest, docs/areas/sunderwood.md §9, #200's 1); Kiln-script and
@@ -133,8 +128,18 @@ crossings, the ferry, the ship and the coach (#539); the Anvil Stone counting fo
 #168); and the bot, which must learn to put cold on what fire does not touch (#541, EXPANSION
 §5.2). Regeneration, curse and calls (#537) are Cairnmoor's and Rimewater's; the Kilns need none of
 them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is MONSTERS §3.3's,
-first spent here. Its monsters are drawn in #472, eleven issues, six of them drawn (above), and its
-rooms in #473.
+first spent here. Its monsters are drawn in #472, eleven issues, nine of them so far (below), and
+its rooms in #473.
+
+Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
+Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462). Their defs are in
+`src/content/areas/kilns/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until the first box
+lists the area, and each is owed to #462 in `UNPLACED` (`tools/tests/maps.ts`). §9 has the decisions.
+
+The six on frames that exist are drawn too (#472): the Fire Beetle on the spider frame, the
+Slagling, the Slag Elder and the Warden of the Anvil on the riftling's, the Rock Worm on the long
+bodies' and the Anvil Guard on the figure frame, in the same table, each owed a map by the box that
+first places it (§7, §9).
 
 ## 4. What is still to build
 
@@ -688,11 +693,12 @@ MONSTERS §7.1 has the roster and the fights: the Knocker, the Mender and the Fo
 machines; the Salamander and the Great Salamander; the Fire Beetle on the spider frame; the Rock
 Worm on the long bodies'; the Slagling, the Slag Elder and the Warden of the Anvil, the Rift in
 slag; the Anvil Guard, a dwarf on the figure frame, `after` the taking. Their drawings are #472's,
-eleven issues: the six on frames that exist are drawn (§3, §9), and the knockers and the salamanders
-are to come. §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil the gentlest
-and the Warden, the Foreman and the Great Salamander at the top of the band. No machine stands on
-the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the first machines on the
-road are met at the bottom of the deepest mine, by a company that has walked all of it.
+eleven issues: the knockers and the six on frames that exist are drawn (§3, §9), and the
+salamanders are to come. §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil
+the gentlest and the Warden, the Foreman and the Great Salamander at the top of the band. No
+machine stands on the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the
+first machines on the road are met at the bottom of the deepest mine, by a company that has walked
+all of it.
 
 Proposed, against the roster's Where column, and standing in the briefs as proposals: the Fire
 Beetle on every box's spoil, kilns and ore heaps, where the roster has it at the spoil heaps and the
@@ -889,11 +895,54 @@ Decided by delegate for #538, each the owner's to overturn:
     its words, reading and mark said together, which Feuerstollen's brief (§4.11) fills exactly.
 14. **The novelty check names the new mechanics** `sign:read` and `sign:marks`, for §7's claim.
 
+Decided by delegate for #472 (the knockers), each the owner's to overturn:
+
+1. **The knockers are woodlice the vessel made:** smooth grey plates laid one over the next, round
+   over the back and flat under the belly, on thin legs with ball joints, all alike, stepping in a
+   wave. Small, many-legged and smooth read at once, and nothing on the road is shaped so; the
+   spider frame, eight legs with the knees high, was left to the spiders.
+2. **One lamp in the cowl's face, under a brow,** warm as a miner's lamp and the same in every one:
+   a pool of it lies on the rock ahead of a knocker, and now and then it dims, as a blink. The cowl
+   is a plate of its own over the shell's front.
+3. **The chisel's mark is a lozenge on a stem,** cut straight and even into a plate of every one.
+   It is the mark's first drawing, so the chisel's and the treaty's seal can follow it. It is not the
+   loop inside a loop: that is Wenna's family knot (STORY, Acts One and Three), hers alone, on the
+   frame of the door marked CREW ONLY.
+4. **The Knocker knocks:** two feelers off the cowl's chin end in knobs, and it raps the rock ahead
+   with them in turn. Fodder on #409's line at 16: 127 hit points, armour 18, +9, 3d5+2, speed 12,
+   317 xp; size 0.45, tint #84878e.
+5. **The Mender carries its trade,** domed higher, a spool of copper wire on its back and an arm
+   that brings a needle down before its cowl, a cold light at the point, so a company picks it out
+   of six knockers at a glance. A soldier's numbers at 17: 196 hit points, armour 20, +10, 3d7+5,
+   speed 11, 673 xp; size 0.55, tint #9a9c96.
+6. **The Mender casts Mending Light one turn in two** that one of its group is hurt. At every turn,
+   the harness's bot, which never singles it out, broke off half its days at fifteen rounds at 16
+   and 17; at one in two, 6 to 7% of them, the fight a round longer than with a mender that never
+   mends (5.4 rounds to 4.4 at 16, 300 seeds).
+7. **The Foreman is a knocker grown long and reared up,** its cowl bowed over a slate held before
+   it with the list cut on it in rows, an empty box at each row's end; a stylus goes down the boxes
+   and ticks none, and now and then the lamp lifts from the slate to the company. Size 1.3, under
+   the tall boss's 1.5, so it stands on its group's rank; tint #5c6068.
+8. **The Foreman stands on #409's boss line at 18,** 961 hit points, armour 22, +13, 17d8+20, for
+   #462's gate to tune, as #199 tuned the Warden of the Sunder: a company wins it 17% of the time at
+   14, 66% at 16, 82% at 18 and 99% at 20 (300 seeds).
+9. **One frame, a Build to a kind:** length, dome, taper, rear, plates, legs, stance, step, cowl,
+   feelers, spool, needle, slate and the mark, so MONSTERS §11's tallyman, deep knocker, inspector
+   and tally clerk are each a Build, a colouring and what their trades carry.
+10. **No gold and no drops:** machines carry parts (MONSTERS §2), and the parts are items, #462's
+    to add with the groups it places, as the Heart of the Sunder came with #199.
+11. **They stand unplaced, owed to #462,** which seats six knockers and a mender twice in the clean
+    corridor and the Foreman before the door.
+
+Owed elsewhere: MONSTERS §2's line for the first time the Hearth's light passes through a machine,
+*The light goes into it like a hand into a glove.*, is not in the combat log, which says only that a
+knocker takes 0. It is the systems lane's, wanted before #462 seats the knockers.
+
 Decided by delegate for #472 (the six), each the owner's to overturn:
 
 1. **The six on frames that exist are drawn ahead of the first box,** in AHEAD, each owed a map by
    the box that first places it: the beetle and the worm #457's, the slagling #458's, the slag elder
-   and the guard #464's, the Warden #465's. The knockers and the salamanders come on their own.
+   and the guard #464's, the Warden #465's. The salamanders come on their own, as the knockers did.
 2. **Each is on its role's line at its level** (MONSTERS §4.4): the beetle armoured and the slagling a
    skirmisher at 16, the worm a brute and the guard armoured at 17, the slag elder an elite at 18.
 3. **The Warden of the Anvil is on the boss line at 18,** 961 hit points and 17d8+20, its blow left

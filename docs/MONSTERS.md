@@ -802,12 +802,17 @@ cargo down the Deep Mines.
 - **The spoil heaps**: fire beetles and salamanders, where the sorcerer's fire does nothing and the
   answer is Wren's Hailstorm.
 
-Drawn (#472), the six on frames that exist, ahead of the area's first box: the Fire Beetle, a
-beetle's own body on the spider frame with the coal set in its back; the Slagling and the Slag
-Elder, the riftling broken rough as clinker and cracked red; the Rock Worm, the long bodies come up
-through rubble; the Anvil Guard, a dwarf rebuilt on the figure frame; and the Warden of the Anvil,
-with no legs, standing up out of a pool of slag. Their numbers are their roles' at their levels
-(§4.4), and the Warden's blow is #465's gate's to set.
+Drawn (#472), on the knockers' frame (`src/ui/monsters/knockers.ts`): smooth grey plates on a comb
+of legs, one lamp in the cowl's face and the chisel's mark cut on a plate, a lozenge on a stem. The
+Mender carries a spool of wire and a needle and mends one turn in two; the Foreman rears up over a
+slate (docs/areas/kilns.md §9). The Tiefzeche places them (#462).
+
+The six on frames that exist are drawn as well (#472): the Fire Beetle, a beetle's own body on the
+spider frame with the coal set in its back; the Slagling and the Slag Elder, the riftling broken
+rough as clinker and cracked red; the Rock Worm, the long bodies come up through rubble; the Anvil
+Guard, a dwarf rebuilt on the figure frame; and the Warden of the Anvil, with no legs, standing up
+out of a pool of slag. Their numbers are their roles' at their levels (§4.4), and the Warden's blow
+is #465's gate's to set.
 
 **Asks:** `kind` for the machines, if it has not come before; `after`, for the Anvil Guard.
 
