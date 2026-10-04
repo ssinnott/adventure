@@ -83,9 +83,9 @@ export function outdoors(): void {
   const wood = '%' + 'T'.repeat(21) + '=' + 'T'.repeat(8), river = '%' + 'T'.repeat(24) + '~~~~=~';
   ok(k2east === wood + 'T' && l2west === wood + 'M', `K2's east edge and L2's west edge are the wood on into Lanternwood, with the road through it, K2's corner over K3 pines (${k2east}; ${l2west})`);
   ok(l2east === river + '~' && m2west === river + 'T', `L2's east edge and M2's west edge are the wood, the river down the seam and the road over it by a ford (${l2east}; ${m2west})`);
-  const m2south = line(m2.x, m2.y + m2.h - 1, 1, 0, m2.w);
-  ok([line(l2.x, l2.y, 1, 0, l2.w), line(m2.x, m2.y, 1, 0, m2.w), line(m2.x + m2.w - 1, m2.y, 0, 1, m2.h)].every((l) => /^%+$/.test(l)) && m2south === 'T==MMMrr' + 'M'.repeat(23) + '%',
-    `L2's and M2's north edges, the rim, and M2's east edge are the world's end, and M2's south edge is the ridge against M3, with the road through it (${m2south})`);
+  const m2south = line(m2.x, m2.y + m2.h - 1, 1, 0, m2.w), m2east = line(m2.x + m2.w - 1, m2.y, 0, 1, m2.h);
+  ok([line(l2.x, l2.y, 1, 0, l2.w), line(m2.x, m2.y, 1, 0, m2.w)].every((l) => /^%+$/.test(l)) && m2east === '%' + 'M'.repeat(31) && m2south === 'T==MMMrr' + 'M'.repeat(24),
+    `L2's and M2's north edges, the rim, are the world's end; M2's east edge is the range against N2 (#460), and its south edge the ridge against M3, with the road through it (${m2east}; ${m2south})`);
   const k2south = line(k2.x, k2.y + k2.h - 1, 1, 0, k2.w), k3north = line(k3.x, k3.y, 1, 0, k3.w);
   ok(k2south === 'cdddvvvvvrrrdd' + 'T'.repeat(18) && k3north === 'MdddvvvvvrrrddTTTTTTTTTTTTTTTTTM', `K2's south edge and K3's north edge are the gorge, square for square, with both lips through (${k2south}; ${k3north})`);
   const j2south = line(j2.x, j2.y + j2.h - 1, 1, 0, j2.w), j3north = line(j3.x, j3.y, 1, 0, j3.w), track = 'M'.repeat(14) + 'tt' + 'M'.repeat(16);
@@ -112,13 +112,22 @@ export function outdoors(): void {
   ok(eastOf(m3) === '^^' + ','.repeat(16) + 'p'.repeat(9) + '==' + ',,,' && southOf(m3) === 'T' + '%'.repeat(11) + 'p'.repeat(8) + '%%rr%%' + 'ppppp,',
     `M3's east edge is open land on into N3 with the trail through it, and its south edge pine but for the ridge and the crag, the world's end over M4 (${eastOf(m3)}; ${southOf(m3)})`);
   // Anvilhall's box (N3, #458): open land on from M3 with the trail through it at rows 27 and 28, and
-  // the trail out by the south edge for N4, which is not built; the crag over the gate is the world's
-  // end under N2, and the terraces' east end and the hills and rock past them under O3.
+  // the trail out by the south edge for N4, which is not built; the open fell on north into N2 (#460)
+  // and the crag over the gate running on into N2's, and the terraces' east end and the hills and rock
+  // past them under O3.
   const n3 = out.zones.find((z) => z.id === 'ironfells_n3')!;
   ok(westOf(n3) === ','.repeat(27) + '==' + ',,,' && southOf(n3) === ',,,,==' + ','.repeat(18) + 'r'.repeat(8),
     `N3's west edge is open land on from M3 with the trail through it, and its south edge open land with the trail out for N4 and rock at the corner (${westOf(n3)}; ${southOf(n3)})`);
-  ok(northOf(n3) === ','.repeat(13) + '^' + '%'.repeat(18) && eastOf(n3) === '%'.repeat(9) + ':::ff:ff####::' + '^'.repeat(7) + 'rr',
-    `N3's north edge is open fell but for the crag, the world's end, and its east edge the crag, the terraces' end and the hills (${northOf(n3)}; ${eastOf(n3)})`);
+  ok(northOf(n3) === ','.repeat(13) + '^' + 'M'.repeat(17) + '%' && eastOf(n3) === '%'.repeat(9) + ':::ff:ff####::' + '^'.repeat(7) + 'rr',
+    `N3's north edge is open fell on into N2 but for the crag, and its east edge the crag, the terraces' end and the hills (${northOf(n3)}; ${eastOf(n3)})`);
+  // Erzkamm's box (N2, #460): the open fell on from N3 square for square, the crag over Anvilhall's
+  // gate running on along it; the rim over its north and east the world's end; and on its west the
+  // rim's mountain, then the hills and the fell under it, against M2's range.
+  const n2 = out.zones.find((z) => z.id === 'ironfells_n2')!;
+  ok(southOf(n2) === northOf(n3) && /^%+$/.test(northOf(n2)) && /^%+$/.test(eastOf(n2)),
+    `N2's south edge meets N3's north edge square for square, and its north and east edges, the rim, are the world's end (${southOf(n2)}; ${northOf(n2)}; ${eastOf(n2)})`);
+  ok(westOf(n2) === '%' + 'M'.repeat(19) + '^'.repeat(8) + ','.repeat(4),
+    `N2's west edge is the rim's mountain, then the hills and the fell under it, against M2's range (${westOf(n2)})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);

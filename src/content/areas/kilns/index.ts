@@ -3,6 +3,7 @@
 import type { Area } from '../../area.ts';
 import { IRONFELLS_M3 } from './maps/ironfells_m3.ts';
 import { IRONFELLS_N3 } from './maps/ironfells_n3.ts';
+import { IRONFELLS_N2 } from './maps/ironfells_n2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -10,7 +11,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'kilns' as const,
-  maps: [IRONFELLS_M3, IRONFELLS_N3],
+  maps: [IRONFELLS_M3, IRONFELLS_N3, IRONFELLS_N2],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
