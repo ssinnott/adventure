@@ -274,7 +274,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // it (the dwarves' first blessing to a company with no reader; KEEP CLEAR OF THE DOORS to one with);
   // the search at the face, and behind it the doors and the hoard before them. Walked, waded,
   // climbed or floated, they are never reached but through the face.
-  const doors = shut(n2, [8, 16], [9, 13], [10, 11]);
+  const doors = shut(n2, [8, 16], [9, 13], [10, 10]);
   ok(doors.size > 600 && !doors.reached, `the doors are shut but for the blank face: none of N2's ${doors.size} squares walked, waded, climbed or floated reaches them`);
   see(w, 'ironfells_n2:n2_floor');
   w.world.travel('ironfells_n2', 8, 14, NORTH);
@@ -287,11 +287,11 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('ironfells_n2', 9, 14, NORTH);
   let face = false;
   for (let i = 0; i < 20 && !face; i++) face = w.world.search();
-  const behind = face ? [w.world.move('forward'), w.world.move('forward'), w.world.move('forward')] : [];
+  const behind = face ? Array.from({ length: 4 }, () => w.world.move('forward')) : [];
   ok(face && behind.every((r) => r.kind === 'moved') && w.world.used('n2_doors') && w.world.used('n2_hoard'), 'searched at the blank face, it gives, and the doors behind it and the hoard before them can be walked to');
   listen(w);
   const hoard = N2.features!.find((f) => f.kind === 'chest' && f.id === 'n2_hoard_chest');
-  ok(hoard?.kind === 'chest' && hoard.items.includes('mattock+1') && hoard.x === 10 && hoard.y === 11, 'before the doors, the first ore-finders\' hoard, and a Mattock +1 in it');
+  ok(hoard?.kind === 'chest' && hoard.items.includes('mattock+1') && hoard.x === 10 && hoard.y === 10, 'before the doors, the first ore-finders\' hoard, and a Mattock +1 in it');
 
   ironhide(ok);
 };

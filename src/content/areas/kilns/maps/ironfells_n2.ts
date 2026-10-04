@@ -28,10 +28,10 @@ export const IRONFELLS_N2: MapDef = {
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'MMMMMMr#####rMMMMMMMMMMMMMMMMMMM',
+    'MMMMMM#######MMMMMMMMMMMMMMMMMMM',
     'MMMMMMr"""""rMMMMMMMMMMMMMMMMMMM',
     'MMMMMMrrr"rrrMMMMMMMMMMMMMMMMMMM',
+    'MMMMMMMMr"rMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMMMSMMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMM"""MMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMM"MMMMMMMMMMMMMMMMMMMMMMM',
@@ -81,9 +81,9 @@ export const IRONFELLS_N2: MapDef = {
     ] },
     { kind: 'event', x: 9, y: 14, id: 'n2_floor', once: true, text: 'The floor is worn in a line from the mouth to a blank face at the back. The chalk on the wall stops a hand short of it.' },
     // The secret: behind the blank face, the doors the wall means, and before them the hoard.
-    { kind: 'event', x: 9, y: 12, id: 'n2_doors', once: true, text: 'A passage cut square, and past it iron doors in a row in the crag\'s back, lettered over in the old script. No handle on any.' },
-    { kind: 'event', x: 9, y: 11, id: 'n2_hoard', once: true, text: 'Before the doors, picks laid down in a row and a heap of ore beside them, rust on all of it. Nobody dug on.' },
-    { kind: 'chest', x: 10, y: 11, id: 'n2_hoard_chest', gold: 400, items: ['mattock+1'] },
+    { kind: 'event', x: 9, y: 12, id: 'n2_doors', once: true, text: 'A rough passage, and at its end iron doors in a row in the crag\'s back, smooth and lettered over. No handle on any.' },
+    { kind: 'event', x: 9, y: 10, id: 'n2_hoard', once: true, text: 'Before the doors, picks laid down in a row and a heap of ore beside them, rust on all of it. Nobody dug on.' },
+    { kind: 'chest', x: 10, y: 10, id: 'n2_hoard_chest', gold: 400, items: ['mattock+1'] },
     // Under the crag's shoulder, the camp; the cairn on the crest; and the lookout south from the
     // Fells' top over the crag to Anvilhall's smoke.
     { kind: 'camp', x: 12, y: 17, name: 'The lee of the crag', text: 'A ring of stones in the lee of the crag, a wall of turf on the wind\'s side. The wind goes over you.' },

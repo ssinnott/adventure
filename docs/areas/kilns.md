@@ -542,18 +542,18 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   which a reader reads KEEP CLEAR OF THE DOORS, and the scholar copies it into a book beside it, his
   primers wrapped in Helmstow paper (his words only; 34 is #471's). The floor is worn in a line to a
   blank face at the back, and the chalk on the wall stops a hand short of it; searched there, the
-  face gives on a passage cut square and a row of iron doors in the crag's back with no handle on
-  any, and before them the first ore-finders' picks and ore, 400 gold and the Mattock +1, which no
-  walker, swimmer, climber or levitator reaches but through the face. Below the crag the first
-  ore-finders' spoil, three fire beetles on it nearest the way up, and their two adits, a rock worm
-  in the one cut into a knob of rock to the west and a pair in the one under the rim at the far end,
-  the box's groups at 17. The camp is in the crag's lee, the cairn on the crest (240 gold and a
-  Sapphire Vial) and the lookout south from the Fells' top, Anvilhall's smoke coming out of the hill
-  by day and the hill glowing at its seams by night. A company at 16 wins every fight and manages
-  8.76 fights to a rest, inside the aim, with 1% of its days ending in a fight broken off. As measured
-  it pays about 1,095 xp a member and 640 gold. Two under, at 14, it wins every fight too, owed to
-  #18. Density 100% within 12 steps, the furthest 12, with one sign among its 16 points. It claims
-  nothing new (§7).
+  face gives on a rough passage and a row of iron doors in the crag's back, smooth and lettered over
+  with no handle on any, and before them the first ore-finders' picks and ore, 400 gold and the
+  Mattock +1, which no walker, swimmer, climber or levitator reaches but through the face. Below the
+  crag the first ore-finders' spoil, three fire beetles on it nearest the way up, and their two
+  adits, a rock worm in the one cut into a knob of rock to the west and a pair in the one under the
+  rim at the far end, the box's groups at 17. The camp is in the crag's lee, the cairn on the crest
+  (240 gold and a Sapphire Vial) and the lookout south from the Fells' top, Anvilhall's smoke coming
+  out of the hill by day and the hill glowing at its seams by night. A company at 16 wins every fight
+  and manages 8.76 fights to a rest, inside the aim, with 1% of its days ending in a fight broken
+  off. As measured it pays about 1,095 xp a member and 640 gold. Two under, at 14, it wins every
+  fight too, owed to #18. Density 100% within 12 steps, the furthest 12, with one sign among its 16
+  points. It claims nothing new (§7).
 
 ### 4.6 N4, the Tiefzeche's box (#461): core, band 16–17
 
@@ -977,8 +977,8 @@ second prestige (#19). Its landmarks: a town cut into a hill, a mine's headworks
 cut by its own people, a ridge of vents, an ore port. The area's `novel` claims each as a box places
 it, since the check asks that what is claimed be used: pine with M3 (#457), the salamanders and
 `sign:read` with N3 (#458), the town cut into a hill with Anvilhall (#459, its site's `fortress`),
-the rest with theirs. N2 (#460) claims nothing: the second prestige was first taught on Act II's road
-(Rietum's two, #425), a trainer in a cave first at Sjonghol, and a door that is a wall is no
+the rest with theirs. N2 (#460) claims nothing: Act II's road taught the second prestige first
+(Rietum's two, #425) and Sjonghol held the first trainer in a cave, and a door that is a wall is no
 mechanic the check reads.
 
 ## 8. The numbers
@@ -1528,14 +1528,16 @@ Decided by delegate for #460, each the owner's to overturn:
 5. **Hartmut, a dwarf, keeps the cave's mouth and teaches Ironhide:** his own words first, then his
    lesson once to a Berserker of 19, as Aylmer's and Leofrun's are, for the second's 4,000. His name
    is the dwarves' tongue's (§10): hard courage.
-6. **The cave is cut at the site's square, 432,44 (8,14), its mouth at 8,15,** walled in rock so
-   that no climber comes down into it or into the room behind the face. The wall is an inscription on
-   8,14, the second hint beside the worn floor (#538's 4), so no company needs a reader for the doors.
+6. **The cave is cut at the site's square, 432,44 (8,14), its mouth at 8,15,** a cleft in the crag
+   as Sjonghol's is. The passage and the room behind the face are walled in rock, so that no climber
+   comes down into them, and only the doors at the back are dressed stone, out of sight from every
+   square outside. The wall is an inscription on 8,14, the second hint beside the worn floor (#538's
+   4), so no company needs a reader for the doors.
 7. **The scholar has his words and nothing more,** unnamed and at the wall from a new game: his
    primers in Helmstow paper are seen, and he says he copies for himself. The choice, the copybook,
    his journal and when he comes up from Anvilhall are #471's (34), as the mother's are (#458's 9).
-8. **The doors are walls with words** (#434's 4): five squares of dressed stone in a row, as N3's
-   barred gate is, lettered over and with no handle. Nothing opens them and nothing is declared in
+8. **The doors are walls with words** (#434's 4): five squares of dressed stone in a row at the
+   room's back, lettered over and with no handle. Nothing opens them and nothing is declared in
    `content/locks.ts`; the lettering is seen and not read, as N3's markers are, since the brief gives
    it no words and a reading behind the face would hint at nothing.
 9. **The find is the ladder's Mattock +1** (`mattock+1`, #535), with 400 gold in the hoard. Its gold
