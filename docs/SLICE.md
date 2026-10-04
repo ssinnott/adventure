@@ -401,14 +401,15 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   window and the Split Oak's living oak; the throne room behind the keep's door, its throne under
   black cloth. The farm kitchen is Ellerby's store (#87). Saltreach's eight, Lantern Watch's five,
   Anvilhall's six, Kilnhaven's six and Rime Lodge's six are painted beside them, the last three
-  ahead of their towns (`ROOMS_AHEAD` in `content/index.ts`; docs/areas/kilns.md §3 and
-  docs/areas/rimewater.md §3 describe them). No people: the rooms are backdrops. `kit.ts` has the
-  walls, floors, windows and light, `props.ts` the furniture and goods; each scene is a file in
-  `ui/interiors/<area>/`, and what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`,
-  `yards.ts` and `taverns.ts`. A scene is painted once into an offscreen canvas and multiplied by a
-  light map (the ambient for the hour plus a pool round every lamp, fire and window it put down), so
-  the corners fall dark on their own; flames, glows and drifting motes are drawn over it every
-  frame. Windows and the two yards follow the clock.
+  ahead of their towns (the Kilns' are their area's since its first box, Rime Lodge's wait in
+  `ROOMS_AHEAD` in `content/index.ts`; docs/areas/kilns.md §3 and docs/areas/rimewater.md §3
+  describe them). No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
+  light, `props.ts` the furniture and goods; each scene is a file in `ui/interiors/<area>/`, and
+  what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
+  A scene is painted once into an offscreen canvas and multiplied by a light map (the ambient for
+  the hour plus a pool round every lamp, fire and window it put down), so the corners fall dark on
+  their own; flames, glows and drifting motes are drawn over it every frame. Windows and the two
+  yards follow the clock.
 - The Xeen pass: saturated palette with no distance fog outdoors; per-cell wall dressing chosen by
   hash (torch sconces with flames animated over the cached scene, banners in the map's colour,
   cobwebs, cracks, damp streaks, iron rings, barred grates, carved glyph panels; on houses flower
