@@ -1,10 +1,14 @@
 // The combat resolver: a seeded fight replays byte for byte, the cap, the rows, fleeing, the spells
 // that hit every foe, Ward and Revive; the ranks and morale (#160); elements, monsters that cast and
-// drain, and a hit that wakes a sleeper (#161); regeneration, curse and calls (#537).
+// drain, and a hit that wakes a sleeper (#161); regeneration, curse and calls (#537); and the light
+// that goes into a machine like a hand into a glove.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
+import { buildMaps } from '../../src/content/maps.ts';
+import { World } from '../../src/game/world.ts';
+import { serialize, deserialize } from '../../src/game/save.ts';
 import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, MAX_MONSTERS, MAX_GROUPS } from '../../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup, PartyAction } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
@@ -160,6 +164,7 @@ export function combat(): void {
   regeneration();
   curse();
   calls();
+  glove();
 }
 
 /** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
@@ -771,4 +776,35 @@ function calls(): void {
     const paid = Math.round(tallyman.xp * killPay(tallyman.level, 1) + 3 * knocker.xp * killPay(knocker.level, 1));
     ok(s.outcome === 'victory' && s.loot?.xp === paid, `the knockers it called pay when they fall, as the rest do (${s.loot?.xp} xp, ${paid} asked)`);
   }
+}
+
+/** The glove (MONSTERS §2): the first time the Hearth's light passes through a machine the log says so, once a game, and a save keeps it said. */
+function glove(): void {
+  // Maren casts the spell at the first monster standing, in the round's first turn she has.
+  const cast = (p: Party, monsters: readonly string[], spellId: string, seed: number): CombatState => {
+    const maren = p.members[4];
+    if (!maren.spells.includes(spellId)) maren.spells.push(spellId);
+    maren.sp = maren.maxSp = 99;
+    for (const c of p.members) c.hp = c.maxHp = 999;
+    const s = startCombat(p, [{ id: 'g', monsters }], makeRng(seed));
+    throughRound(s, p, seed, (i) => (i === 4 ? { type: 'cast', spellId, target: aliveMonsters(s)[0] } : undefined));
+    return s;
+  };
+  const said = (s: CombatState): string[] => s.log.filter((l) => l.startsWith('The light goes into'));
+  const p = defaultParty(makeRng(110));
+  const first = cast(p, ['knocker', 'knocker'], 'smite', 110), at = first.log.findIndex((l) => l.startsWith('Maren casts Smite'));
+  ok(MONSTERS.knocker.kind === 'machine' && first.log[at] === 'Maren casts Smite: Knocker takes 0.' && first.log[at + 1] === GLOVE_LINE(true) && p.flags[GLOVE_FLAG] === 1,
+    `the first Smite to pass through a machine says so after its line, and the flag keeps it said (${first.log.slice(at, at + 2).join(' / ')})`);
+  const again = cast(p, ['knocker'], 'smite', 111), wrath = cast(p, ['knocker', 'mender'], 'wrath', 112);
+  ok(said(again).length === 0 && said(wrath).length === 0 && again.log.includes('Maren casts Smite: Knocker takes 0.') && wrath.log.includes('Maren casts Wrath of the Hearth: 0 damage to every foe.'), 'the second does not, Smite or Wrath of the Hearth');
+  // Through several at once it says them; nothing says it but the Hearth's light through a machine.
+  const q = defaultParty(makeRng(113)), several = cast(q, ['knocker', 'knocker', 'mender'], 'wrath', 113);
+  ok(said(several).join() === GLOVE_LINE(false) && GLOVE_LINE(false) === 'The light goes into them like a hand into a glove.', `Wrath of the Hearth through three machines says them (${said(several).join()})`);
+  const r = defaultParty(makeRng(114)), bandit = cast(r, ['bandit'], 'smite', 114), skeleton = cast(r, ['skeleton'], 'wrath', 115), spark = cast(r, ['knocker'], 'spark', 116);
+  const struck = [bandit.log.some((l) => /^Maren casts Smite: Bandit takes [1-9]/.test(l)), skeleton.log.some((l) => /^Maren casts Wrath of the Hearth: [1-9]/.test(l)), spark.log.some((l) => /^Maren casts Spark: Knocker takes [1-9]/.test(l))];
+  ok([bandit, skeleton, spark].every((s) => said(s).length === 0) && !r.flags[GLOVE_FLAG] && struck.every(Boolean),
+    'a bandit or a skeleton the light strikes never says it, nor Spark through a machine, which bites');
+  // The flag goes into the save with the party, and the company that loads it is not told again.
+  const loaded = deserialize(serialize(new World(buildMaps(), p, makeRng(117)).state, p, 0)).party;
+  ok(loaded.flags[GLOVE_FLAG] === 1 && said(cast(loaded, ['knocker'], 'smite', 118)).length === 0, 'the flag survives a save and a load, and the light goes through again unsaid');
 }

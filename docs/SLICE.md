@@ -58,6 +58,8 @@ DESIGN.md first for the why.
   sleep ends with the fight (#161). A monster may mend each round but a round fire struck it
   (`regen`), curse with its hits and spend a turn calling its group into the fight while there is
   room for the whole of it under twelve monsters in three groups, the fallen counted (`calls`) (#537).
+  The first Smite or Wrath of the Hearth to pass through a machine and do nothing is followed in the
+  log by the light going into it like a hand into a glove, once a game (`glove_seen`, MONSTERS §2).
   A group placed on ice (`under: 'ice'`, #536) lives under it: it
   moves only under the ice, strikes only a company standing on the ice beside it and in the fight
   reaches only the front row over it, never the back, bow or none.
@@ -691,7 +693,7 @@ does.
 | `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
-| `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
+| `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |

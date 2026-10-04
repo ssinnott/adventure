@@ -174,6 +174,10 @@ under 12 monsters in three groups, those already down counted; the called pay as
 bots burn with fire what they have seen mend, and aim at a caller that has room to call as at a
 leader. Nothing gives stone, though the condition exists: Absolve lifts it, and a temple.
 
+And for the Hearth's light through a machine (§2). The first time Smite or Wrath of the Hearth
+passes through one and does nothing, the log says so after the spell's line, once a game: *The light
+goes into it like a hand into a glove.*, or into them, through several.
+
 ### 3.2 What the numbers show
 
 **Holy Strike lands on the wrong things.** The paladin's +3 is keyed to `mindless` (`traitDamage`),
@@ -259,6 +263,24 @@ Decided by delegate for #537, each the owner's to overturn:
    stops the fight growing; they read the fight as it stands each turn, its called groups with it.
 8. **A hit's line says only a condition that takes:** none for a cleric's Faith, nor one already
    taken.
+
+Decided by delegate for the combat row and the glove line, each the owner's to overturn:
+
+1. **The fight's row is spaced by each drawing's span** (`SPAN` in `src/ui/sprites.ts`): how far
+   its ink reaches either side of its centre, which the smoke test measures and holds within 2 px.
+2. **Neighbours in a line may overlap by a third of the narrower's span** (`OVERLAP`, `ui/row.ts`):
+   a tail, a wing or a shield behind the next, never a body across it. A back rank is not held to it.
+3. **A row that fitted stands as it did,** a slot apart and at its old size: 71,428 of the 167,991
+   fights the maps can start. Only one past the view's edge or over a neighbour moves.
+4. **Such a row stands wider where it has room, closes up to the third where it would run off, and
+   slides in;** only one still too wide is drawn smaller, the whole fight at one scale.
+5. **The smallest on the maps is k3_rift's four glass spiders, at half their height:** their legs
+   span nearly three heights each, and fitting them whole outranks their size.
+6. **A span counts ink of half opacity and more, as the silhouette check does,** so the rats'
+   whiskers count, and the Foreland's three road rats stand 7 px further apart than they did.
+7. **The glove line is said once a game,** after the first Smite or Wrath of the Hearth that passes
+   through a machine and does nothing, kept by `glove_seen` in the party's flags, which a save holds.
+8. **Through one machine it says it, as §2 has it; through several, them.**
 
 ---
 
