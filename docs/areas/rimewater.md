@@ -589,6 +589,18 @@ Proposed, for the owner, each in the issue that would build it:
   them there.
 - **The names** (§10), for #435.
 
+Decided by delegate for #539, each the owner's to overturn (docs/areas/kilns.md §9 has the rest):
+
+1. **Rime Lodge owes the coach its landing and its seller** (#487): the yard's square, on its end of
+   `DROVE_COACH` in `content/crossings.ts`, and a coachman whose `passage` is `sells('rime_lodge',
+   DROVE_COACH)`. Once Kilnhaven lands too, the check wants both ends to sell it.
+2. **The run is 250 gold and a day,** leaving either end at 6 and landing at 12 the next day, by
+   Rime Lodge's floor of 20, the dearer end's. No guild halves it.
+3. **The Coach That Did Not Come stops one coach, never the run:** the coachman sells whatever 40's
+   flags say, since no crossing waits on the story (EXPANSION §2.2).
+4. **The lodge is a way in once the coach runs:** the gate counts its ways out onto M9 as the coach's
+   landing (#164's `landings`), so the groups nearest them are held to the zone's gentlest (#486).
+
 ## 10. Names
 
 Rimewater's naming pass, by the rules of `docs/NAMES.md`, chosen for #435. The lodge-keepers are

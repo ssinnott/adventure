@@ -802,7 +802,8 @@ export interface ZoneEdge {
 
 /**
  * The ways: every pair of built maps an exit joins, merged with its return exit, then the crossings
- * people sell, then the atlas's planned links. Outdoor-to-outdoor exits run from the exit cell to the arrival cell; an exit into a
+ * people sell, then the atlas's planned links; a crossing link that a crossing is now sold both ways
+ * on is planned no longer, and the crossing takes its course and name. Outdoor-to-outdoor exits run from the exit cell to the arrival cell; an exit into a
  * town or dungeon runs from its cell to that place's plate; stairs join plates.
  */
 export function zoneEdges(atlas: Atlas, defs: readonly MapDef[]): ZoneEdge[] {
@@ -844,6 +845,16 @@ export function zoneEdges(atlas: Atlas, defs: readonly MapDef[]): ZoneEdge[] {
     }
   }
   for (const l of atlas.links) {
+    // A crossing link the crossings now run on, sold both ways between the two places it names, is
+    // built (#539): the crossing takes its course and its name, and it is not drawn again as planned.
+    const sold = (l.kind === 'sea' || l.kind === 'coach') && edges.find((x) => !x.planned && x.both && x.kind === l.kind && ((x.from === l.from && x.to === l.to) || (x.from === l.to && x.to === l.from)));
+    if (sold) {
+      const on = sold.from === l.from;
+      sold.a ??= on ? l.a : l.b; sold.b ??= on ? l.b : l.a;
+      sold.via = l.via && (on ? l.via : [...l.via].reverse());
+      sold.note = l.note; sold.noteAt = l.noteAt;
+      continue;
+    }
     edges.push({
       from: l.from, to: l.to, kind: l.kind, planned: true, both: l.kind === 'road' || l.kind === 'enter' || l.kind === 'sea' || l.kind === 'coach',
       gate: [], opens: l.opens, a: l.a, b: l.b, via: l.via, note: l.note, noteAt: l.noteAt,
