@@ -18,6 +18,7 @@ import { spentId } from '../src/game/wilds.ts';
 import { readId } from '../src/game/inscriptions.ts';
 import { SKILLS } from '../src/game/skills.ts';
 import { personFlags } from '../src/game/people.ts';
+import { GLOVE_FLAG } from '../src/game/combat.ts';
 import { UPGRADES } from '../src/game/upgrades.ts';
 import type { Upgrade } from '../src/game/upgrades.ts';
 import { ATLAS, MAP_DEFS, AREAS, GUILD_QUESTS } from '../src/content/index.ts';
@@ -28,8 +29,8 @@ import { SPELLS } from '../src/content/spells.ts';
 
 export const SHIPPED_FILE = fileURLToPath(new URL('../src/content/shipped.json', import.meta.url));
 
-/** Flags the code sets rather than the content: the temple's count of gifts. */
-const CODE_FLAGS = ['donations'];
+/** Flags the code sets rather than the content: the temple's count of gifts, and the Hearth's light seen to pass through a machine. */
+const CODE_FLAGS = ['donations', GLOVE_FLAG];
 
 /** The content a save refers to: the maps as written and the atlas that lays them out, and the tables. */
 export interface Content {

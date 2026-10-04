@@ -163,17 +163,19 @@ with its fare, its days and its hours, the same either way (§4.14, §9). The fe
 Saltmouth's quay; every other end waits on its town, Kilnhaven's three on #469, and nothing is sold
 toward a town not built, so none runs yet.
 
-The systems it waits on are the rest of #432's: ash and pine underfoot (#536, built: ash, `a`, on
+The systems it waited on were the rest of #432's: ash and pine underfoot (#536, built: ash, `a`, on
 O6, slow going as hills are, and pine, `p`, on M3 and O3, a ground of its own where Sunderwood drew
 its pine as forest, docs/areas/sunderwood.md §9, #200's 1; the scaffold drafts both, and
 docs/SLICE.md says what was decided); Kiln-script and Linguist (#538, built: §4.1 says how a box
 writes an inscription, and §9 what was decided); the crossings, the ferry, the ship and the coach
-(#539); the Anvil Stone counting for the Hearth (#540, #168); and the bot (#541, built: it puts
-cold on what fire does not touch once it has seen fire do nothing, as it has since #161, and its
-company takes its prestiges, MONSTERS §4.4). Regeneration, curse and calls (#537) are
-Cairnmoor's and Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `when`
-are #41's; the machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472,
-eleven issues, all eleven now (below), and its rooms in #473.
+(#539, built: written above, and §9 and docs/SLICE.md say what was decided); the Anvil Stone
+counting for the Hearth (#540, #168, built: §9 and docs/SLICE.md say what was decided, and the Rift
+sets its flag, #465, not built yet); and the bot (#541, built: it puts cold on what fire does not
+touch once it has seen fire do nothing, as it has since #161, and its company takes its prestiges,
+MONSTERS §4.4). Regeneration, curse and calls (#537, built) are Cairnmoor's and Rimewater's; the
+Kilns need none of them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is
+MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues, all eleven now
+(below), and its rooms in #473.
 
 Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
 Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462); and the
@@ -1095,9 +1097,9 @@ Decided by delegate for #472 (the knockers), each the owner's to overturn:
 11. **They stand unplaced, owed to #462,** which seats six knockers and a mender twice in the clean
     corridor and the Foreman before the door.
 
-Owed elsewhere: MONSTERS §2's line for the first time the Hearth's light passes through a machine,
-*The light goes into it like a hand into a glove.*, is not in the combat log, which says only that a
-knocker takes 0. It is the systems lane's, wanted before #462 seats the knockers.
+Built since, in the systems lane: MONSTERS §2's line for the first time the Hearth's light passes
+through a machine, *The light goes into it like a hand into a glove.*, follows in the combat log the
+knocker that takes 0, once a game (MONSTERS §3).
 
 Decided by delegate for #535, each the owner's to overturn:
 
