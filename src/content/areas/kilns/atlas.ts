@@ -20,7 +20,7 @@ const seam = (y: number): [number, number][] => Array.from({ length: 32 }, (_, i
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
-  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
+  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
   { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [17, 18], seeds: [[408, 160], [404, 140]] },
 ];
 
@@ -36,7 +36,7 @@ export const SITES: readonly AtlasSite[] = [
   // VI. The Kilns (docs/areas/kilns.md §10 has the dwarves' names).
   { name: 'Anvilhall', icon: 'fortress', at: [452, 70], label: 'below' }, // at the gate on N3, 28,8 (#458, #459)
   { name: 'Tiefzeche', icon: 'mine', at: [440, 96], label: 'below', planned: true }, // the Deep Mines
-  { name: 'Gluthutte', icon: 'forge', at: [436, 126], label: 'below', planned: true }, // the Forges
+  { name: 'Gluthutte', icon: 'forge', map: 'kilnsheart_n5', at: [12.5, 1.5], label: 'below' }, // the Forges: the smelter on N5 (#463)
   { name: 'Anvil Stone', icon: 'stone', at: [468, 142], label: 'below', planned: true },
   { name: 'Feuerstollen', icon: 'cave', at: [478, 178], label: 'below', planned: true }, // the Lava Tubes
   { name: 'Kilnhaven', icon: 'port', at: [391, 162], label: 'right', planned: true },

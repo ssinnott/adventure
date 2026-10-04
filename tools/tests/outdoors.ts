@@ -129,6 +129,16 @@ export function outdoors(): void {
     `N4's north edge is N3's south edge, square for square, with the trail through it, and its south edge the old workings' ground, the grass and the drove road out for N5 (${northOf(n4)}; ${southOf(n4)})`);
   ok(westOf(n4) === ','.repeat(18) + '^^^,,f' + ':'.repeat(8) && eastOf(n4) === 'r'.repeat(14) + '^'.repeat(13) + ',,^^~',
     `N4's west edge is grass, the knoll and the old workings' ground against M4, and its east edge the crags and the hills against O4 (${westOf(n4)}; ${eastOf(n4)})`);
+  // Gluthutte's box (N5, #463): in from N4 by the drove road at column 20 and the stream at the corner,
+  // the slag heap's loose slag on the line; out by the south edge at column 12 for N6. The stream
+  // leaves by the west edge at rows 25 and 26 against M5, beside the farms' fields and the woods; on the
+  // east, against O5, the hills, the mountain, the world's end where its ring faces nothing built, and
+  // the cutters' track at row 24 in dirt, since the atlas has no road there.
+  const n5 = out.zones.find((z) => z.id === 'kilnsheart_n5')!;
+  ok(northOf(n5) === ':::' + '"'.repeat(6) + '::' + ','.repeat(9) + '=,' + '^'.repeat(8) + '~~' && southOf(n5) === '^,,' + 't'.repeat(9) + '=' + 't'.repeat(9) + ','.repeat(10),
+    `N5's north edge meets N4's with the drove road and the stream, and its south edge is the woods with the drove road out for N6 (${northOf(n5)}; ${southOf(n5)})`);
+  ok(westOf(n5) === ':'.repeat(7) + 'f'.repeat(7) + 't'.repeat(11) + '~~t,,,^' && eastOf(n5) === '~^,^^^' + '%'.repeat(11) + '^^^,,,,:' + ','.repeat(7),
+    `N5's west edge is the smelter's ground, the fields, the woods and the stream against M5, and its east edge the hills, the mountain and the cutters' track against O5 (${westOf(n5)}; ${eastOf(n5)})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);
