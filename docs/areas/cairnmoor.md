@@ -47,12 +47,12 @@ the zones' walk from every square of it. The Kilns' boxes had walked 2,002 of ro
 the Kilns' zones (docs/areas/kilns.md §1); seeds in the area's own rows now hold its lines (§9), the
 Cairnfield's along M7's north and east edges and N8's north and east, High Moor's along O7's and
 P7's north edges and O8's west, so that the row is the moor's again. Laying N7 and seeding the walk
-moves 2,826 squares: High Moor takes N7's 666 of the heart's and 120 of the Cairnfield's, 412 of the
-heart's in O7 and P7, 46 of the Cairnfield's in O8 and 765 of the heart's in O6 and P6 north of O7,
+moves 2,687 squares: High Moor takes N7's 666 of the heart's and 120 of the Cairnfield's, 412 of the
+heart's in O7 and P7, 46 of the Cairnfield's in O8 and 587 of the heart's in O6 and P6 north of O7,
 which O6 takes back when it is laid in the heart (#466); the Cairnfield takes 523 of Kilnmouth's in
 M7 and 77 of High Moor's in N8; the Rimefells, cut, give the moor 106 of Loch Fada's and Glacier
-Foot's; and about 85 change hands elsewhere on the world, none on a built map. High Moor walks to
-4,813 squares and the Cairnfield to 2,938; Kilnmouth keeps L7, K7 and 11 squares of M7's coast.
+Foot's; and about 120 change hands elsewhere on the world, none on a built map. High Moor walks to
+4,635 squares and the Cairnfield to 2,938; Kilnmouth keeps L7, K7 and 11 squares of M7's coast.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Cairnmoor is the M to P columns from row 6
 to row 9. The land worth a map is six boxes: N7 and N8 down the drove road; O7 and O8, the ring and
@@ -655,7 +655,7 @@ Decided by delegate for #476, each the owner's to overturn:
     The seams down N8's and O8's sides stop at y 246, so the Rimefells walk as they did.
 12. **M7's two westmost squares go unseeded:** a seed there carries the Cairnfield round the coast into
     Kilnmouth's L6 and K6, so Kilnmouth keeps L7, K7 and 11 squares of M7's coast.
-13. **High Moor holds O6's south and P6 until O6 is laid in the heart** (#466): 765 squares, where the
+13. **High Moor holds O6's south and P6 until O6 is laid in the heart** (#466): 587 squares, where the
     plan gave the moor 285. The Kilns' rows hold no seam there, and O6 laid whole takes its own back.
 14. **The stream clips the south-east corner,** so the corner square is its water, as the edge check
     asks (docs/areas/kilns.md §9, #461's 10).
