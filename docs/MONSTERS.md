@@ -440,7 +440,7 @@ armour, to-hit and xp come from the line's formulas and the curve. A def set off
 a boss its box's gate tuned, keeps its numbers and is named in `OFF_LINE` (`tools/tests/harness.ts`)
 with the issue that set it. The harness suite fails any other monster past 10 that stands on no
 role's line at its level, so a def drawn on the old line fails until it is re-derived, as #414
-re-derived Act II's after #409 and #541 the Kilns'.
+re-derived Act II's after #409 and #541 Act III's.
 
 What it shows:
 
@@ -644,9 +644,11 @@ Decided by delegate for #541, each the owner's to overturn:
    within half a point, or the issue that set it off. Act II's four bosses set by their gates are
    named; a def drawn on the old line fails until it is re-derived ("When the line moves", above).
 8. **Act III's monsters are re-stated as #414 re-stated Act II's,** each on its role's line at its
-   level with its notes kept: the Mender, the Rock Worm and the Anvil Guard at 17, and the Slag
-   Elder, the Foreman, the Warden of the Anvil and the Great Salamander at 18, the bosses' blows still
-   their gates' to set. The four at 16 do not move, since 16 is not made again.
+   level with its notes kept: the Kilns' Mender, Rock Worm and Anvil Guard at 17 and Slag Elder,
+   Foreman, Warden of the Anvil and Great Salamander at 18, and Rimewater's Ice Pike, Snow Lynx and
+   Tallyman at 20, Ice Bear and Bay Keeper at 21 and Matron at 22, the casts and the calls kept and
+   the bosses' blows still their gates' to set. The four at 16 do not move, since 16 is not made
+   again. The area docs give each before and after.
 9. **The troll's tenth and the caller's call stand on the line made again:** two trolls with fire
    are fought 8.6 to a rest at 19 where plain brutes are 8.9 (8.75 asked), and on a brute's whole hit
    points weapons alone win 2% inside fifteen rounds; the caller costs a company of 20 about two

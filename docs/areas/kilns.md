@@ -986,8 +986,8 @@ Decided by delegate for #472 (the knockers), each the owner's to overturn:
    the tall boss's 1.5, so it stands on its group's rank; tint #5c6068.
 8. **The Foreman stands on the boss line at 18,** 1,001 hit points, armour 22, +13, 18d8+20 on #541's
    line (961 and 17d8+20 on #409's), for #462's gate to tune, as #199 tuned the Warden of the Sunder:
-   the gate's company, with its prestiges since #541, wins it 6% of the time at 14, 59% at 16, 80% at
-   18 and 99% at 20 (300 seeds; 17%, 66%, 82% and 99% before both).
+   a company wins it 9% of the time at 14, 50% at 16, 79% at 18 and 99% at 20 (300 seeds; 17%, 66%,
+   82% and 99% when it was drawn).
 9. **One frame, a Build to a kind:** length, dome, taper, rear, plates, legs, stance, step, cowl,
    feelers, spool, needle, slate and the mark, so MONSTERS §11's tallyman, deep knocker, inspector
    and tally clerk are each a Build, a colouring and what their trades carry.

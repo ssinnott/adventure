@@ -707,12 +707,14 @@ Decided by delegate for #495, each the owner's to overturn:
    where her apron does, so a brother is a Build and a robe.
 5. **The Bay Keeper mends the most hurt of its group one turn in four,** and its touch sleeps at 0.3:
    at one in two the harness broke off a fifth of the days of four keepers at fifteen rounds, at one
-   in four 3%, in fights of 7.6 rounds (300 seeds).
-6. **The Matron does not mend:** her mend is 20 of her 1,145, a blow lost, and at a quarter of her
-   turns it lifts a company's odds at 20 from 74% to 86% (88% with two keepers by her). §4.6's
-   boss that mends is #490's to give her.
+   in four 3%, in fights of 7.6 rounds (300 seeds). On #541's line, 248 hit points and 4d8+2 where it
+   had 227 and 3d7+5, one in four breaks off 17%, for #490's gate to weigh.
+6. **The Matron does not mend:** her mend is 20 of her 1,145 (1,299 on #541's line), a blow lost, and
+   at a quarter of her turns it lifted a company's odds at 20 from 74% to 86% (88% with two keepers by
+   her). §4.6's boss that mends is #490's to give her.
 7. **The Matron is on the boss line at 22, for #490's gate to tune,** as the Foreman is #462's: won
-   74% at 20, 86% at 21, 94% at 22 and 98% at 23 (300 seeds), where #490 asks about half at 21.
+   74% at 20, 86% at 21, 94% at 22 and 98% at 23 (300 seeds), where #490 asks about half at 21. On
+   #541's line, 1,299 hit points and 22d8+27 where she had 1,145 and 20d8+21, 45%, 59%, 78% and 90%.
 8. **The cats are posed from a table** of where the body, the head and each leg's joints stand, the
    tufts, the ruff, the tail and the paws in the Build: the lynx at the top of its leap, and the
    Wold's lions a Build and a stalk of their own. The lynx leaps at the back row as flyers reach it.
@@ -724,13 +726,17 @@ Decided by delegate for #495, each the owner's to overturn:
     and icicles from the hole; the knockers' Build takes `count`, `tally` and `rime`.
 11. **The Tallyman calls three knockers at a half a turn,** as #537's test caller calls three fodder,
     so the ice-hole's six leave room for one call: a company of 20 fights it 12.1 times to a rest,
-    against 14.3 with no call, and wins it from fresh at 18, which is #487's gate to tune.
+    against 14.3 with no call, and wins it from fresh at 18, which is #487's gate to tune. On #541's
+    line, the tallyman 314 hit points and 3d7+5 where it had 241 and 3d8+4, 10.4 times against 13.8,
+    30% of the days ending in a fight broken off, and still won from fresh at 18.
 12. **The Ice Bear is the bears' frame long in the neck,** low in the hump, the head small and the
     muzzle long, white with black claws, lifting its head to the wind. The roster gives the ice
     things no element, so cold stays an answer here.
 13. **Each is today's test monster at its role and level, and none carries gold:** the levels past 16
     are #541's to make again, and all six move with them; the machines' parts are their boxes' to
-    add, as the knockers' are #462's.
+    add, as the knockers' are #462's. #541 re-stated them: the pike and the lynx 288 hit points and
+    3d7+5 where they had 239 and 3d7+4, the bear 570 and 5d7+7 where it had 518 and 4d8+6, and the
+    tallyman, the keeper and the Matron as 11, 5 and 7 say.
 14. **No seventh drawing:** the cats get no elite at 22 for the pass, and K9's and K10's top stays
     #491's (§7).
 15. **Each is owed to the box that first places it:** the pike, the lynx and the bear to #486; the
