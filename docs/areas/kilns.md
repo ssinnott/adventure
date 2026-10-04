@@ -449,7 +449,7 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   tear closes when the Warden falls, and the Rift's groups and O5's slaglings stop coming
   (`until`); the Warden never comes back.
 - **Quests.** The chapter's entry: the tear closed (§5). The Stone counts for the Hearth once the
-  tear is closed and the Stone is the company's, bought or taken (#540, #168).
+  tear is closed, bought or taken alike (#540, #168), on the flag the Rift sets (§9).
 - **The secret and its hint.** A hollow in the slag where the Stone's cut face shows through, and
   against it the first cutter's tools, left when the ground opened under him. The hint: the slag
   has run downhill in every lane but one, where it has set running up.
@@ -784,6 +784,25 @@ Proposed, for the owner, each in the issue that would build it:
 - **The heart's zone keeps the area's name on the atlas** ("The Kilns", `kilnsheart`): a name of
   its own is the owner's to give with #435 (§10), since the crossing line into it says the area's
   name twice.
+
+Decided by delegate for #540, each the owner's to overturn:
+
+1. **The flag is `q_anvil_closed`,** set once the Warden of the Anvil has fallen and the tear is
+   closed. The Rift sets it (#465), the chapter's Stone entry reads it (#470) and O5's slaglings may
+   stop `until` it before the Rift is built (#464). It is the Stones' own form (`q_tide_home`,
+   `q_grove_mended`), and not `_done`, which would read as the chapter's end. Nobody renames it or
+   adds a second.
+2. **The Hearth does not read the thane's choice.** Bought (`anvil_bought`) or taken
+   (`anvil_taken`), the count is the same: the choice is how the Stone came to the company, never
+   what restores it, and the Rift opens whatever the thane said (§5). A company that closes the tear
+   before it has spoken to him steadies the Hearth all the same. §4.10 asked that the Stone be the
+   company's as well, and now says bought or taken alike.
+3. **A flag, not the Warden's death read as `slain`,** as the issue has it: the Rift's map is not
+   built to name, and one flag is what the Hearth, the chapter and O5's groups all read. It is owed
+   to #470 in `tools/tests/quests.ts`'s `UNSET` (#415) until something sets it, and the first to do
+   so drops the entry there.
+4. **No wording changes.** The title, the sky and the almanac read the count, which stands at five
+   Stones already, so the Anvil Stone is one step more wherever it falls.
 
 Decided by delegate for #472 (the knockers), each the owner's to overturn:
 
