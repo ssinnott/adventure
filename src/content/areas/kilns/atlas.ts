@@ -30,7 +30,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'deep_mines', kind: 'dungeon', at: [440, 104] }, // the Tiefzeche, the Deep Mines: the workings, under N4's shaft at 16,2 (#461, #462)
   { id: 'deep_mines2', kind: 'dungeon', at: [440, 110] }, // the old workings, below them
   { id: 'deep_mines3', kind: 'dungeon', at: [440, 116] }, // the clean corridor, at the bottom
-  { id: 'anvil_stone', name: 'The Anvil Stone', kind: 'dungeon', planned: true, band: [17, 18], at: [468, 136] }, // the Stone's Rift, one level through O5's tear (#465)
+  { id: 'anvil_stone', kind: 'dungeon', at: [468, 142] }, // the Anvil Stone's Rift, the Slag Rift: one level, on the tear on O5, 12,16 (#464, #465)
   { id: 'lava_tubes', name: 'Feuerstollen', kind: 'dungeon', planned: true, band: [17, 18], at: [470, 194] }, // the Lava Tubes, two levels under O6 (#466)
 ];
 

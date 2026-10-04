@@ -78,7 +78,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   wrackholm: ['smugglers_cove2:kh2_great_devilfish', 'tide_ship_rift:tide_ship_rift_warden'],
   eaves: ['the_sunder2:su2_warden'],
   delta: ['drowned_temples2:dt2_choirmaster'],
-  kilnsheart: ['deep_mines3:dm3_foreman'],
+  kilnsheart: ['deep_mines3:dm3_foreman', 'anvil_stone:as_warden'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */

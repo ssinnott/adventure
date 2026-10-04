@@ -2,20 +2,18 @@
 // hills and up past the tear to the Stone on its anvil of rock, cut square on three sides; the
 // cutters' sheds and the foreman's east of it, and their camp back down the track; the mountain across
 // the north-west, with the stream at its corner, and the crag across the south-east, its top a lookout.
-// The tear at 12,16 is the way into the Anvil Stone's Rift (#465), shut until it is built (TEAR).
+// The tear at 12,16 is the way into the Anvil Stone's Rift (#465, TEAR).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.9 is its brief.
 import type { Feature, MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
-import { SLAG } from '../../../rifts/materials.ts';
 
 /**
  * The tear into the Anvil Stone's Rift (#465): on its square below the cut, 12,16, onto the Rift's
- * start at 7,14, facing north, which this asks #465 to give it (docs/areas/kilns.md §4.10 gives none),
- * saying the slag's words going in. A tear leads only into a built map, so the Rift puts it among
- * this map's features, opens the square and drops `o5_tear`; its way back lands on 12,15, facing
- * north, away from the tear.
+ * start at 7,14, facing north, saying the brief's line for the tear going in (docs/areas/kilns.md
+ * §4.10); the Rift's way back lands on 12,15, facing north, away from the tear.
  */
-export const TEAR: Extract<Feature, { kind: 'rift' }> = { kind: 'rift', x: 12, y: 16, id: 'anvil_stone_way', to: 'anvil_stone', tx: 7, ty: 14, tf: NORTH, label: SLAG.enter };
+export const TEAR: Extract<Feature, { kind: 'rift' }> = { kind: 'rift', x: 12, y: 16, id: 'anvil_stone_way', to: 'anvil_stone', tx: 7, ty: 14, tf: NORTH,
+  label: 'Slag, in ridges, and iron running in it like sweat. The light comes up from below.' };
 
 export const KILNSHEART_O5: MapDef = {
   id: 'kilnsheart_o5',
@@ -42,7 +40,7 @@ export const KILNSHEART_O5: MapDef = {
     'MM^^^^^^^^^::^^^^^^^^^^^^^^^^^^^',
     'M^^^^^^^^^^:^^^^^^^^^^^^^^^^^^^^',
     '^^^^^^^^^^^:^^^^^^^^^^^^^^^^^^^^',
-    '^^^^^^^^^^^:v^^^^^^^^^^^^^^^^^^^',
+    '^^^^^^^^^^^:"^^^^^^^^^^^^^^^^^^^',
     '^^^^^^^^^^^:^^^^^^^^^^^^^^^^^^^^',
     '^^^^^^^^^^^:^^^^^^^^^^^^^^^^^^^^',
     ',,^^^^^^^^::^^^^^^^^^^^^^^^^^^^^',
@@ -63,8 +61,11 @@ export const KILNSHEART_O5: MapDef = {
     // The cutters' track in from N5, and the slag's footprints coming down onto it.
     { kind: 'event', x: 2, y: 24, id: 'o5_track', once: true, text: 'The track climbs east into bare hills, worn to the rock by sledges coming down heavy.' },
     { kind: 'event', x: 10, y: 20, id: 'o5_burnt', once: true, text: 'Footprints burnt into the turf come down off the hill onto the track, all out of one place higher up.' },
-    // The tear below the cut, beside the track, shut until the Rift is built (TEAR).
+    // The tear below the cut, beside the track, the way into the Rift (TEAR); once its Warden has
+    // fallen, the torn ground closed over.
+    TEAR,
     { kind: 'event', x: 11, y: 16, id: 'o5_tear', once: true, until: { flag: 'q_anvil_closed' }, text: 'Beside the track the ground is torn open, red at the bottom. Heat comes up out of it, and a slow hammering.' },
+    { kind: 'event', x: 11, y: 16, id: 'o5_closed', once: true, after: { flag: 'q_anvil_closed' }, text: 'Beside the track the torn ground has closed over, a seam of black slag. No heat comes up out of it.' },
     // The thane's iron on the approach, once the Stone is taken (#434's 1).
     { kind: 'event', x: 11, y: 14, id: 'o5_post', once: true, after: { flag: 'anvil_taken' }, text: 'The thane\'s iron, ahead of you as he said: dwarves in mail by a brazier, between the track and the Stone.' },
     // The Stone on its anvil of rock: its line on the approach, its plinth and the words cut in it,
