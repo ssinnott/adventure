@@ -93,10 +93,19 @@ at 466,208 as planned sites, and its links, the drove road from the Kilns, the C
 the drove road down to Longmere. Its row on the curve and its share of the act's gear ladder are in
 (#535): the row in `src/content/progression.ts`, planned until #476 lists the area (band 18–20,
 next 20, window 4,000), and O7's Banded Staff +1 in `src/content/areas/cairnmoor/items.ts`, made
-ahead of the area as the Kilns' step is (docs/areas/kilns.md §3), owed to #477 until placed.
-Nothing else. The systems it waits on are the rest of #432's: ice and lying snow underfoot (#536;
-heather is #162's), regeneration and curse (#537), the drove road's coach (#539) and the bot that
-plays them (#541). Its monsters are drawn in #483.
+ahead of the area as the Kilns' step is (docs/areas/kilns.md §3), owed to #477 until placed. Its
+monsters are drawn (#483, below), and nothing else is built. Of the systems it waits on, the rest
+of #432's, ice and lying snow underfoot (#536; heather is #162's) and regeneration and curse (#537)
+are built; the drove road's coach (#539) and the bot that plays them (#541) are to come.
+
+Drawn ahead of the boxes that place them (#483): the lights, a new family, with the Bog Light
+(`src/ui/monsters/lights.ts`); and the six on frames that exist, the Raven on the birds', the Bog
+Body and the Cairn King on the skeleton's, the Moor Hound on the wolf's, the Cairn Wight on the
+wraith's and the Tor Troll on the ogre's. Their defs are in
+`src/content/areas/cairnmoor/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until #476
+lists the area, and each is owed in `UNPLACED` (`tools/tests/maps.ts`) to the first box whose brief
+places it (§4): the ravens, the bog bodies and the hound to N7 (#476), the lights and the troll to
+O7 (#477), the wights to N8 (#479) and the King to Carn Dubh (#480). §9 has the decisions.
 
 ## 4. What is still to build
 
@@ -388,9 +397,9 @@ stood on F6 before her quest (docs/areas/wrackholm.md §4.4).
 
 MONSTERS §7.2 has the roster and the fights: the Raven, the Bog Light, the Bog Body, the Moor
 Hound, the Cairn Wight, the Tor Troll and the Cairn King; lights round the ring, trolls on the tor.
-Their drawings are #483's, seven. The ring itself holds no monster: inside it there is only the
-voice. §4.2 to §4.6 place every group, box by box, the ravens and the bog bodies at the way in and
-the Cairn King at the top of the band.
+Their drawings are #483's, seven, all drawn (§3, §9). The ring itself holds no monster: inside it
+there is only the voice. §4.2 to §4.6 place every group, box by box, the ravens and the bog bodies
+at the way in and the Cairn King at the top of the band.
 
 Cairnmoor spends four of MONSTERS §3.3's asks, each built in the systems lane first (#537; #41 and
 #161 exist): regeneration, for the trolls, which mend each round except a round they took fire;
@@ -487,6 +496,45 @@ Decided by delegate for #535, each the owner's to overturn:
    and a thief: three classes share each line, and the Kilns place one of each.
 3. **N8's ranger's plus and Carn Dubh's named piece are off the ladder,** their boxes' to choose:
    the ranger's line has one bearer, and its Steel Bow +1 is O6's.
+
+Decided by delegate for #483, each the owner's to overturn:
+
+1. **The lights are drawn as light, never as a thing:** a flame within a flame over a pool of its
+   light, unoutlined, swinging and bobbing at a walker's hip with nobody there, and guttering.
+2. **Motes rise out of the peat into a light as it gutters,** its one part apart, declared in
+   `tools/smoke.ts` as the moths' dust is: two pieces, 6% of the ink. The Rime Light is a Build.
+3. **The Bog Light comes down whole, to 0.575 of the controller's line** (124 hit points, 2d6+2):
+   on the line four sent a company of 18 to rest in four fights; whole, it fights 8.5 of 8.5 asked.
+4. **Its touch takes spell points in place of the line's paralysis,** and it flies, reaching the
+   back row; it is the Rift's, so it never runs (MONSTERS §2).
+5. **The Raven is the crow's frame grown big and at its ease, its wings folded,** the bill deep and
+   arched, the throat shaggy and the tail a long wedge; it does not hop, and now and then it calls.
+6. **The Bog Body is leather over bone,** tanned dark and pressed thin, the head lolled on the
+   broken neck, the hair red; one fist is at the rope round its neck, and peat blackens its shins.
+7. **The Moor Hound is the black dog grown old and huge:** the head low, the hackles up, an ear
+   torn, the muzzle and brows grey and its breath smoking in the cold, unlike any of its kin.
+8. **The Cairn Wight stands where the wraith hangs:** grave linen hooded and wound with bands, the
+   hem torn and dragging, two cold points in the hood, a gold torc at its throat and two bone claws.
+9. **The wight is #537's,** the controller's line at 19 with its hold a curse at 0.2 a hit, as the
+   test wight is (MONSTERS §3.3), and as §4.5 and §4.6 ask.
+10. **The Tor Troll is a beast, as the old wood is:** the land grown large, carrying nothing. It is
+    weathered granite in stacked slabs, lichen and heather on it, and a face cut in the stone.
+11. **The troll is #537's,** size 1.6 with its crown at 0.79 of its height, under 0.82: three
+    quarters of the brute's line at 19, 361 hit points, mending 36 a round unless fire struck it.
+12. **A troll runs as beasts do,** once three in four of its group are down: seated with eight
+    ravens in one group, the pair runs as they fall, in two rounds; #478 seats them as two groups.
+13. **The Cairn King sits on a seat cut cleaner than the hill folk could,** smooth, dark and square,
+    with nothing carved on it, and nothing says why: the chamber's walls say the rest (§4.6).
+14. **The King is on the boss line at 20** (1,048 hit points, armour 23, 18d8+22), cursing as its
+    wights do (0.2), for #480's gate to tune: won 63% at 18 and 91% at 19; §8 asks half at 19.
+15. **Grave-gold on the dead that wear it:** the wight 20 to 60 and the King 150 to 300; the beasts,
+    the light and the bog body carry none, and the body's ring is #478's (§6).
+16. **The rest are on their roles' lines at their levels** (MONSTERS §4.4, 300 seeds): eight
+    ravens fight 8.4 to a rest at 18, four bog bodies 8.5; past 18 the line is soft, owed to #541.
+17. **Each is owed to the first box whose brief places it** (§3). #476's issue puts a troll on N7,
+    where §4.2 has none; whichever box places one first drops its entry.
+18. **What was drawn before is unchanged to the pixel:** the raven and the hound are Builds on
+    their frames; the bog body, the King, the wight and the troll are functions of their own.
 
 ## 10. Names
 

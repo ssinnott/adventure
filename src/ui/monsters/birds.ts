@@ -26,6 +26,10 @@
 // The Wrack Gull is the crow's frame white, with the gull's long wings: a grey mantle over the
 // back and wings, the long primaries black-tipped with white mirrors, and a yellow bill with a red
 // spot, hooked at the tip and open. It screams: the bill gapes and shuts, and it hops at the company.
+// The Raven is the crow's frame grown big and heavy and at its ease, its wings folded: the
+// primaries lie back along its side and over a long wedge of a tail, the bill is deep and arched,
+// the throat shaggy, and the black takes a green and violet gloss. It does not hop. Now and then it
+// calls: the head bows forward, the bill opens and the hackles bristle out into a beard.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -34,7 +38,7 @@ import type { Part } from './gloss.ts';
 import { mix, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron', 'wrack_gull'];
+export const KINDS: readonly MonsterSprite[] = ['crow', 'owl', 'old_rook', 'grey_heron', 'wrack_gull', 'raven'];
 
 /**
  * The frame's parts, as proportions of the crow's (1 = the crow, 0 = none). Each is named for the
@@ -56,6 +60,8 @@ interface Build {
   bill: number;
   /** How far the bill's tip hooks down: the eagle's and the vulture's. */
   hook: number;
+  /** How far the bill's top bows up, and the base deepens with it: the raven's arched bill. */
+  arch: number;
   /** Length of the legs: the heron's stilts. */
   leg: number;
   /** Length of the wing: the wrack gull's is long. */
@@ -64,7 +70,7 @@ interface Build {
   broad: number;
   /** Length of the tail. */
   tail: number;
-  /** 0 a square or rounded tail end, 1 a wedge: the raven's. */
+  /** 0 a square or rounded tail end, 1 a wedge, and past it a longer one: the raven's. */
   wedge: number;
   /** Hackles at the throat and collar: the raven's shaggy throat, the vulture's ruff. */
   ruff: number;
@@ -100,23 +106,27 @@ interface Build {
   tips: number;
   /** How far the bill opens, 0 shut: the gull's scream. */
   gape: number;
+  /** 0 the wings half open (the crow's), 1 folded along the side with the primaries over the tail: the raven's. */
+  fold: number;
+  /** The call, 0 none: now and then the head bows, the bill opens and the hackles bristle, the raven's. */
+  call: number;
 }
 const CROW: Build = {
-  body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
+  body: 1, neck: 1, head: 1, face: 0, bill: 1, hook: 0, arch: 0, leg: 1, wing: 1, broad: 1, tail: 1, wedge: 0.3, ruff: 0.35, bare: 0,
   sheen: '#5a68b0', gloss: 1, feathered: 0, lean: -0.36, hop: 1, tufts: 0, bars: 0, mask: 0,
-  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0, fold: 0, call: 0,
 };
 /** Upright and turned to the party, wings raised wide: a big round head sunk in the shoulders, a small hooked bill, short feathered legs. */
 const OWL: Build = {
-  body: 1.1, neck: 0, head: 1.6, face: 1, bill: 0.35, hook: 0.8, leg: 0.6, wing: 1.4, broad: 1.3, tail: 0.6, wedge: 0, ruff: 0, bare: 0,
+  body: 1.1, neck: 0, head: 1.6, face: 1, bill: 0.35, hook: 0.8, arch: 0, leg: 0.6, wing: 1.4, broad: 1.3, tail: 0.6, wedge: 0, ruff: 0, bare: 0,
   sheen: null, gloss: 0, feathered: 1, lean: -1.2, hop: 0, tufts: 1, bars: 1, mask: 0,
-  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0, fold: 0, call: 0,
 };
 /** The old rook: bigger and heavier than the crow, shaggy at the throat and the thighs, the bill long and pale-based. */
 const ROOK: Build = {
-  body: 1.2, neck: 1, head: 1.08, face: 0, bill: 1.2, hook: 0, leg: 1, wing: 1.08, broad: 1.12, tail: 1, wedge: 0.15, ruff: 1, bare: 0,
+  body: 1.2, neck: 1, head: 1.08, face: 0, bill: 1.2, hook: 0, arch: 0, leg: 1, wing: 1.08, broad: 1.12, tail: 1, wedge: 0.15, ruff: 1, bare: 0,
   sheen: '#7a5aa8', gloss: 0.8, feathered: 1, lean: -0.3, hop: 0.5, tufts: 0, bars: 0, mask: 1,
-  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0, fold: 0, call: 0,
 };
 /**
  * The grey heron: the crow's profile on stilts, the body slim and nearly level, the neck three
@@ -125,22 +135,32 @@ const ROOK: Build = {
  * and the front of the neck streaked. Matte, and it does not hop: it stands, and watches.
  */
 const HERON: Build = {
-  body: 0.85, neck: 3, head: 0.8, face: 0, bill: 1.55, hook: 0, leg: 2.6, wing: 1.05, broad: 1.1, tail: 0.45, wedge: 0, ruff: 0, bare: 0,
+  body: 0.85, neck: 3, head: 0.8, face: 0, bill: 1.55, hook: 0, arch: 0, leg: 2.6, wing: 1.05, broad: 1.1, tail: 0.45, wedge: 0, ruff: 0, bare: 0,
   sheen: null, gloss: 0.1, feathered: 0, lean: -0.18, hop: 0, tufts: 0, bars: 0, mask: 0,
-  crest: 1, pale: 1, streaks: 1, billHex: '#d8b040', mantle: null, tips: 0, gape: 0,
+  crest: 1, pale: 1, streaks: 1, billHex: '#d8b040', mantle: null, tips: 0, gape: 0, fold: 0, call: 0,
 };
 /**
  * The wrack gull: the crow's frame white and lighter in the body, with long narrow wings in a grey
  * mantle and black tips, a hooked yellow bill with the red spot, open. Matte, and it hops at you.
  */
 const GULL: Build = {
-  body: 0.92, neck: 1, head: 1, face: 0, bill: 1.1, hook: 0.45, leg: 0.85, wing: 1.45, broad: 0.8, tail: 0.75, wedge: 0, ruff: 0, bare: 0,
+  body: 0.92, neck: 1, head: 1, face: 0, bill: 1.1, hook: 0.45, arch: 0, leg: 0.85, wing: 1.45, broad: 0.8, tail: 0.75, wedge: 0, ruff: 0, bare: 0,
   sheen: null, gloss: 0.15, feathered: 0, lean: -0.3, hop: 1.2, tufts: 0, bars: 0, mask: 0,
-  crest: 0, pale: 0, streaks: 0, billHex: '#e8c040', mantle: '#9aa2ac', tips: 1, gape: 1,
+  crest: 0, pale: 0, streaks: 0, billHex: '#e8c040', mantle: '#9aa2ac', tips: 1, gape: 1, fold: 0, call: 0,
+};
+/**
+ * The raven: bigger and heavier than the crow and at its ease, the wings folded with the primaries
+ * crossing a long wedge of a tail, a deep arched bill, a shaggy throat and a green and violet gloss.
+ * It stands and does not hop; it calls.
+ */
+const RAVEN: Build = {
+  body: 1.16, neck: 1.05, head: 1.1, face: 0, bill: 1.45, hook: 0.3, arch: 1, leg: 1.05, wing: 1.1, broad: 1, tail: 1.3, wedge: 1.7, ruff: 1.5, bare: 0,
+  sheen: '#4e9488', gloss: 0.9, feathered: 0, lean: -0.3, hop: 0, tufts: 0, bars: 0, mask: 0,
+  crest: 0, pale: 0, streaks: 0, billHex: null, mantle: null, tips: 0, gape: 0, fold: 1, call: 1,
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : CROW;
+  const b = kind === 'owl' ? OWL : kind === 'old_rook' ? ROOK : kind === 'grey_heron' ? HERON : kind === 'wrack_gull' ? GULL : kind === 'raven' ? RAVEN : CROW;
   // The pose is the Build's `face`. Turned to the party, the raised wings reach higher than the
   // crow's hop: drawn inside 0.85 of its height, as the lampman is, the owl's tips keep clear of the
   // top of the combat canvas (at full height and wing 1.6 they run off it), and the wings as much
@@ -209,6 +229,8 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const ht = f % 120, hop = ht < 20 ? Math.sin(ht / 20 * Math.PI) * b.hop : 0;
   const ft = (f + 64) % 96, flick = ft < 16 ? Math.sin(ft / 16 * Math.PI) : 0;
   const L = 0.2 * b.leg, by = L + hop * 0.07 + p.breathe * 0.004, feet = hop * 0.03;
+  // The call, every 110 frames: the head bows forward, the bill opens, the hackles bristle out.
+  const ct = f % 110, call = b.call > 0 && ct < 30 ? Math.sin(ct / 30 * Math.PI) * b.call : 0;
 
   const plume = p.base, far = p.dark;
   const sheen = b.sheen ? shade(b.sheen, tone) : null;
@@ -222,7 +244,7 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
 
   // Where the parts join, in sprite units.
   const nl = 0.06 * b.neck, rH = 0.115 * b.head;
-  const hx = 0.24 + nl * 0.6, hy = by + 0.4 * bs + nl + 0.07;
+  const hx = 0.24 + nl * 0.6 + 0.04 * call, hy = by + 0.4 * bs + nl + 0.07 - 0.05 * call;
   const sx = 0.08, sy = by + 0.4 * bs;
   const ax = -0.18, ay = by + 0.22 * bs;
   // The flick and the hop both lift the wings, never more than one at a time's worth: together they
@@ -240,13 +262,16 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   };
 
   // ---- far side, in shadow: the far wing raised a little higher than the near, and the far leg.
+  // A folded far wing lies on the bird's far side, hidden by the body.
   const farLeg: Part[] = [];
   leg(-0.09, farLeg);
   blob(ctx, B, shade(shank, 0.85), farLeg, { h, formK: 0.3 });
-  const fw = wingOutline(sx - 0.05, sy + 0.02, th + 0.15, W, b.broad, ax, ay + 0.04);
   const mantle = b.mantle ? shade(b.mantle, tone) : null;
-  blob(ctx, B, mantle ? shade(mantle, 0.78) : far, [{ k: 'poly', pts: px(fw.pts) }], { h, formK: 0.3 });
-  wingTips(ctx, fw, b.tips, h, px, tone, 0.8);
+  if (!b.fold) {
+    const fw = wingOutline(sx - 0.05, sy + 0.02, th + 0.15, W, b.broad, ax, ay + 0.04);
+    blob(ctx, B, mantle ? shade(mantle, 0.78) : far, [{ k: 'poly', pts: px(fw.pts) }], { h, formK: 0.3 });
+    wingTips(ctx, fw, b.tips, h, px, tone, 0.8);
+  }
 
   // ---- the tail: its own mass behind the rump, angled down, fanned a little toward its end.
   {
@@ -282,10 +307,10 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   if (!bare) body.push({ k: 'ball', x: X(hx), y: U(hy), r: h * rH, gloss: 0.3 * b.gloss });
   // Hackles: the loose feathers of the throat, a ragged edge under the chin.
   if (b.ruff > 0) {
-    const rr = rH * (0.4 + 0.5 * b.ruff), cx = hx - rH * 0.15, cy = hy - rH * 1.05;
+    const rr = rH * (0.4 + 0.5 * b.ruff) * (1 + 0.3 * call), cx = hx - rH * 0.15, cy = hy - rH * 1.05;
     const ring: number[] = [];
     for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; ring.push(X(cx + Math.cos(a) * rr), U(cy + Math.sin(a) * rr * 0.8)); }
-    body.push({ k: 'curve', pts: ring, wobble: 0.05, spiky: 0.1 * b.ruff, seed: 7, sub: 2 });
+    body.push({ k: 'curve', pts: ring, wobble: 0.05, spiky: 0.1 * b.ruff * (1 + call), seed: 7, sub: 2 });
   }
   blob(ctx, B, plume, body, { h, formK: 0.4, spread: 0.8, creases: [
     { x0: X(0.2), y0: U(by + 0.5 * bs), x1: X(0.14), y1: U(by + 0.36 * bs), r: h * 0.03, a: 0.22 },   // where the neck meets the breast
@@ -309,39 +334,46 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     }
   }
 
-  // ---- the near wing, half open over the body.
-  const nw = wingOutline(sx, sy, th, W, b.broad, ax, ay);
-  // The gull's grey mantle over the back, under the wing's root.
-  if (mantle) patch(ctx, B, mantle, [{ k: 'ell', x: X(-0.06), y: U(by + 0.3 * bs), rx: h * 0.24 * bs, ry: h * 0.07 * bs, rot: b.lean }], { alpha: 0.85, feather: 0.4 });
-  blob(ctx, B, mantle ?? mix(plume, far, 0.15), [{ k: 'poly', pts: px(nw.pts) }], { h, formK: 0.35, spread: 0.8, gloss: 0.2 * b.gloss });
-  wingTips(ctx, nw, b.tips, h, px, tone, 1);
-  // The sheen: blue-violet on the coverts and the nape, where a crow's black catches the light.
-  if (sheen) patch(ctx, B, sheen, [
-    { k: 'ell', x: X((sx + nw.wrist[0] + ax) / 3), y: U((sy + nw.wrist[1] + ay) / 3), rx: h * 0.1 * W, ry: h * 0.07 * W, rot: -0.9 },
-  ], { alpha: 0.3, feather: 0.7 });
-  if (sheen && !bare) patch(ctx, B, sheen, [{ k: 'ell', x: X(hx - rH * 0.35), y: U(hy + rH * 0.3), rx: h * rH * 0.55, ry: h * rH * 0.4, rot: -0.4 }], { alpha: 0.26, feather: 0.6 });
-  // The primaries' separations, and the edge of the coverts over them.
-  if (h >= 36) {
-    const lw = Math.max(1, h * 0.008);
-    for (let i = 0; i < nw.notches.length; i += 2) {
-      const nx = nw.notches[i], ny = nw.notches[i + 1];
-      softLine(ctx, B, px([nw.wrist[0] + (nx - nw.wrist[0]) * 0.45, nw.wrist[1] + (ny - nw.wrist[1]) * 0.45, nx, ny]), plume, lw, 0.6);
+  // ---- the near wing, half open over the body, or folded along its side.
+  const napeSheen = (): void => { if (sheen && !bare) patch(ctx, B, sheen, [{ k: 'ell', x: X(hx - rH * 0.35), y: U(hy + rH * 0.3), rx: h * rH * 0.55, ry: h * rH * 0.4, rot: -0.4 }], { alpha: 0.26, feather: 0.6 }); };
+  if (b.fold > 0) {
+    foldedWing(ctx, b, h, px, by, bs, sx, sy, call, mix(plume, far, 0.15), plume, sheen);
+    napeSheen();
+  } else {
+    const nw = wingOutline(sx, sy, th, W, b.broad, ax, ay);
+    // The gull's grey mantle over the back, under the wing's root.
+    if (mantle) patch(ctx, B, mantle, [{ k: 'ell', x: X(-0.06), y: U(by + 0.3 * bs), rx: h * 0.24 * bs, ry: h * 0.07 * bs, rot: b.lean }], { alpha: 0.85, feather: 0.4 });
+    blob(ctx, B, mantle ?? mix(plume, far, 0.15), [{ k: 'poly', pts: px(nw.pts) }], { h, formK: 0.35, spread: 0.8, gloss: 0.2 * b.gloss });
+    wingTips(ctx, nw, b.tips, h, px, tone, 1);
+    // The sheen: blue-violet on the coverts and the nape, where a crow's black catches the light.
+    if (sheen) patch(ctx, B, sheen, [
+      { k: 'ell', x: X((sx + nw.wrist[0] + ax) / 3), y: U((sy + nw.wrist[1] + ay) / 3), rx: h * 0.1 * W, ry: h * 0.07 * W, rot: -0.9 },
+    ], { alpha: 0.3, feather: 0.7 });
+    napeSheen();
+    // The primaries' separations, and the edge of the coverts over them.
+    if (h >= 36) {
+      const lw = Math.max(1, h * 0.008);
+      for (let i = 0; i < nw.notches.length; i += 2) {
+        const nx = nw.notches[i], ny = nw.notches[i + 1];
+        softLine(ctx, B, px([nw.wrist[0] + (nx - nw.wrist[0]) * 0.45, nw.wrist[1] + (ny - nw.wrist[1]) * 0.45, nx, ny]), plume, lw, 0.6);
+      }
+      softLine(ctx, B, px([sx - 0.02, sy - 0.02, nw.wrist[0] + 0.02, nw.wrist[1] - 0.06, ax + 0.02, ay + 0.04]), plume, lw, 0.45);
     }
-    softLine(ctx, B, px([sx - 0.02, sy - 0.02, nw.wrist[0] + 0.02, nw.wrist[1] - 0.06, ax + 0.02, ay + 0.04]), plume, lw, 0.45);
   }
 
   // ---- the bill: its own material, deep at the base and sloping a little down to the tip.
   {
-    const bl = 0.17 * b.bill, dp = 0.06 * Math.sqrt(b.bill), bx0 = hx + rH * 0.7, byb = hy - rH * 0.12;
+    const bl = 0.17 * b.bill, dp = 0.06 * Math.sqrt(b.bill) * (1 + 0.25 * b.arch), bx0 = hx + rH * 0.7, byb = hy - rH * 0.12;
     const tip = [bx0 + bl, byb - bl * 0.2 - b.hook * bl * 0.15];
-    const pts = [bx0 - rH * 0.2, byb + dp * 0.6, bx0 + bl * 0.45, byb + dp * 0.45 - bl * 0.05, tip[0], tip[1]];
+    const pts = [bx0 - rH * 0.2, byb + dp * 0.6, bx0 + bl * 0.45, byb + dp * 0.45 - bl * 0.05 + b.arch * bl * 0.1, tip[0], tip[1]];
     if (b.hook > 0) pts.push(tip[0] - b.hook * bl * 0.12, tip[1] - b.hook * bl * 0.25);
     pts.push(bx0 + bl * 0.5, byb - dp * 0.35 - bl * 0.12, bx0 - rH * 0.15, byb - dp * 0.6);
     const billCol = b.billHex ? shade(b.billHex, Math.max(0.6, tone)) : horn;
-    if (b.gape > 0) {
-      // Open: the lower mandible swung down from the base, the mouth dark between, the red spot on
-      // its angle. The scream comes and goes.
-      const open = b.gape * (0.22 + 0.2 * Math.max(0, Math.sin(f / 9)));
+    // Open: the gull's scream comes and goes; the raven's bill opens as it calls.
+    const open = b.gape > 0 ? b.gape * (0.22 + 0.2 * Math.max(0, Math.sin(f / 9))) : 0.32 * call;
+    if (open > 0.02) {
+      // The lower mandible swung down from the base, the mouth dark between, and on a gull the red
+      // spot on its angle.
       const lx = bx0 - rH * 0.15, ly = byb - dp * 0.15, ll = bl * 0.9;
       const lt = [lx + Math.cos(-0.2 - open) * ll, ly + Math.sin(-0.2 - open) * ll];
       const lower = [lx, ly + dp * 0.1, bx0 + bl * 0.4, ly - dp * 0.1 - open * bl * 0.35, lt[0], lt[1], bx0 + bl * 0.35, ly - dp * 0.55 - open * bl * 0.45, lx, ly - dp * 0.5];
@@ -349,7 +381,7 @@ function bird(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
       if (!B.override) {
         const mouth = px([bx0 - rH * 0.05, byb - dp * 0.1, tip[0] - bl * 0.1, tip[1] - bl * 0.02, lt[0] - bl * 0.1, lt[1] + bl * 0.05]);
         ctx.fillStyle = shade('#5a1a1c', Math.max(0.5, tone)); ctx.beginPath(); ctx.moveTo(mouth[0], mouth[1]); ctx.lineTo(mouth[2], mouth[3]); ctx.lineTo(mouth[4], mouth[5]); ctx.closePath(); ctx.fill();
-        patch(ctx, B, shade('#d02a20', Math.max(0.6, tone)), [{ k: 'ell', x: X(lx + (lt[0] - lx) * 0.72), y: U(ly + (lt[1] - ly) * 0.72 - dp * 0.12), rx: h * dp * 0.3, ry: h * dp * 0.24 }], { alpha: 0.95, feather: 0.2 });
+        if (b.gape > 0) patch(ctx, B, shade('#d02a20', Math.max(0.6, tone)), [{ k: 'ell', x: X(lx + (lt[0] - lx) * 0.72), y: U(ly + (lt[1] - ly) * 0.72 - dp * 0.12), rx: h * dp * 0.3, ry: h * dp * 0.24 }], { alpha: 0.95, feather: 0.2 });
       }
     } else blob(ctx, B, billCol, [{ k: 'poly', pts: px(pts) }], { h, form: false, gloss: b.billHex ? 0.3 : 0.35 * b.gloss });
     // The gape, and the bristles that cover a crow's nostrils.
@@ -398,6 +430,35 @@ function wingTips(ctx: CanvasRenderingContext2D, w: { pts: number[]; wrist: [num
   if (h >= 30) for (const i of [4, 6]) {
     const x = w.pts[i * 2], y = w.pts[i * 2 + 1];
     patch(ctx, B, shade('#f4f4f0', tone * lit), [{ k: 'ball', x: px([wx + (x - wx) * 0.86, 0])[0], y: px([0, wy + (y - wy) * 0.86])[1], r: h * 0.013 }], { alpha: 0.9, feather: 0.3 });
+  }
+}
+
+/**
+ * A wing folded along the bird's side, the raven's: the bend of the wing high on the breast, the
+ * coverts over the flank, and the primaries lying back over the rump and down the tail, their tips
+ * crossing it. One mass in sprite units, the feathers' edges soft lines on it and the gloss along
+ * its top; it lifts a little, a shrug, as the bird calls.
+ */
+function foldedWing(ctx: CanvasRenderingContext2D, b: Build, h: number, px: (u: readonly number[]) => number[], by: number, bs: number, sx: number, sy: number, call: number, col: string, plume: string, sheen: string | null): void {
+  const tl = 0.34 * b.tail, d = [-0.894, -0.447];
+  const rx = -0.26, ry = by + 0.17 * bs;                                   // the tail's root, as the tail has it
+  const reach = 0.6 * b.fold * b.wing, lift = 0.014 * call;
+  const tx = rx + d[0] * tl * reach, ty = ry + d[1] * tl * reach + 0.012;  // the primaries' tips
+  blob(ctx, B, col, [{ k: 'poly', pts: px([
+    sx + 0.02, sy - 0.035, sx - 0.02, sy + 0.012 + lift, sx - 0.07, sy + 0.022 + lift,
+    -0.1, by + 0.372 * bs + lift, -0.22, by + 0.3 * bs + lift * 0.6,
+    tx + 0.07, ty + 0.05, tx, ty, tx + 0.06, ty - 0.004,
+    -0.2, by + 0.135 * bs, -0.06, by + 0.12 * bs, sx - 0.01, by + 0.2 * bs, sx + 0.025, sy - 0.09,
+  ]) }], { h, formK: 0.35, spread: 0.8, gloss: 0.2 * b.gloss });
+  // The gloss along the coverts, where the light runs.
+  if (sheen) patch(ctx, B, sheen, [{ k: 'ell', x: px([-0.06, 0])[0], y: px([0, by + 0.31 * bs + lift])[1], rx: h * 0.13, ry: h * 0.045, rot: 0.22 }], { alpha: 0.32, feather: 0.7 });
+  if (h < 36) return;
+  // The coverts' edge over the primaries, and the primaries' own edges, stacked, out to the tips.
+  const lw = Math.max(1, h * 0.008);
+  softLine(ctx, B, px([sx + 0.0, sy - 0.08, -0.04, by + 0.24 * bs, -0.17, by + 0.2 * bs + lift * 0.5]), plume, lw, 0.45);
+  for (let i = 0; i < 3; i++) {
+    const o = i * 0.022;
+    softLine(ctx, B, px([-0.14 - o, by + 0.29 * bs - o * 0.6 + lift * 0.5, tx + 0.05 + o * 0.6, ty + 0.02 + o * 0.2]), plume, lw, 0.5);
   }
 }
 
