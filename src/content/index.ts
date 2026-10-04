@@ -23,6 +23,7 @@ import * as kilns from './areas/kilns/monsters.ts';
 import { ITEMS as KILNS_ITEMS } from './areas/kilns/items.ts';
 import { ITEMS as CAIRNMOOR_ITEMS } from './areas/cairnmoor/items.ts';
 import { ITEMS as RIMEWATER_ITEMS } from './areas/rimewater/items.ts';
+import * as rimewaterRooms from './areas/rimewater/interiors.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -46,6 +47,7 @@ export const AHEAD = [
  * list as `interiors` and its line here goes.
  */
 export const ROOMS_AHEAD = [
+  { id: 'rimewater' as const, interiors: rimewaterRooms.INTERIORS },
 ] as const;
 
 /**

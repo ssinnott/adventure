@@ -15,9 +15,10 @@ bot (#541). Figures are measured on main at `6032251` (2 October 2026) with `wor
 (`src/game/atlas.ts`), for land without shallows or rivers; "walkable" is land that is not mountain,
 peak, cliff or chasm.
 
-Nothing of it is built. Its content will be `src/content/areas/rimewater/` (maps, monsters, items,
-climate, its part of the world map, its chapter of the one quest, The Sleepers, in `chapter.ts`, its
-side quests in `quests.ts` and the Lanterns' quests in `guilds.ts`) and its businesses' rooms
+Nothing a company walks is built: the businesses' rooms are drawn, ahead of the town (§3). Its
+content will be `src/content/areas/rimewater/` (maps, monsters, items, climate, its part of the
+world map, its chapter of the one quest, The Sleepers, in `chapter.ts`, its side quests in
+`quests.ts` and the Lanterns' quests in `guilds.ts`), and its businesses' rooms are
 `src/ui/interiors/rimewater/`. Its ids: the area `rimewater`, its zones `longmere`, `coldmere` and
 `glacierfoot`, the town `rime_lodge`, the bay `sleepers_bay` and the reach's `ice_caves`. The zones
 are renamed in §10 and keep their ids (NAMES §3).
@@ -113,9 +114,27 @@ area's `atlas` at the folder. Its row on the curve and its step on the gear ladd
 the row in `src/content/progression.ts`, planned until #486 lists the area (band 20–22, next 22,
 window 4,500), and the step in `src/content/areas/rimewater/items.ts`, made ahead of the area as
 the Kilns' is (docs/areas/kilns.md §3): the furrier's seven (`FURRIER`, for #487) and their plus
-finds by 22 (§4.1), each owed to its shop or box until it is sold or placed. Nothing else: no map,
-no monster, no room. The systems it waits on are the rest of #432's (§2). Its monsters are drawn in
-#495 and its rooms in #496.
+finds by 22 (§4.1), each owed to its shop or box until it is sold or placed. No map and no monster
+yet. The systems it waits on are the rest of #432's (§2). Its monsters are drawn in #495.
+
+The rooms are drawn (#496), one to each business of Rime Lodge, ahead of the town as Lantern
+Watch's were. `src/content/areas/rimewater/interiors.ts` lists them and `ROOMS_AHEAD` in
+`src/content/index.ts` merges them, until #486 lists the area and its `interiors` takes the list;
+`tools/tests/maps.ts` reports each owed to #487 until a business there opens into it, and §4.3
+names the ids. They are a scene to a file in `src/ui/interiors/rimewater/`, what they share in
+`lodge.ts`: round logs with moss in the joints, pelts, frost on the glass and the loch through a
+window, the keepers' fire out on the ice by the hole. The inn, the great fire with a
+bear's skull over it, the lodge's blankets drying on a rail, an ice bear's hide on the boards, the
+long table and the yard's door with the ice through its glass; the Lanterns' hall, the spells
+shelved by tier up a tall case with the seventh's few new books at the top, an iron stove, the
+keepers' lanterns on their pegs with one gone out to the hole and a rubbing off an inscription on
+the counter; the temple, a steep gable over a stone with a cup in it, snow in the cup, lights round
+its foot and the day let down on it through the smoke hole, the healer's cot, brazier and herbs by;
+the furrier, pelts laced in hoops and hung from the beam, the bearskin coat on its stand, the fur
+robe, the arms racked and the fleshing beam; the provisioner, fish drying from the rafters, a hand
+sledge and ice creepers on the wall and peat heaped for the fire on the ice; the trainer's yard,
+trodden snow inside the stockade, a bear of straw and old hide for the spear, fire-baskets for the
+dark and the glacier over the stakes. §9 has the decisions.
 
 ## 4. What is still to build
 
@@ -232,13 +251,19 @@ what is new, with points of interest and a first share of the pay.
 - **Purpose.** The act's last town and the Lanterns' fourth hall (call 5): where the cargo comes up
   through the ice, where the company stands the four nights, where tier 7 is sold (DESIGN §7) and
   the act's gear step is bought (#535), and where Wenna waits after the bay (#76).
-- **Businesses,** each with a room of its own (#496): the inn, whose rests count the nights, with
-  the yard's door onto the ice at the hole; the Lanterns' hall, selling spells to tier 7 for the
-  hall's fee (DESIGN §7), teaching the Lanterns' three skills, Linguist among them (#538), and giving
-  their quests to a member, the fourth rank's among them (call 8, #439); a temple, cures and
-  raising at the band's price; the furrier, the band's gear, a step past the Kilns' (#535: an Ice
-  Axe, a Skinning Knife, a Hunter's Bow, a Bear Spear, a Guide's Staff, a Bearskin Coat and a Fur
-  Robe, 1,600 to 2,500 gold, `FURRIER`); the provisioner; the trainer's yard, to 23 (DESIGN §5).
+- **Businesses,** each with a room of its own (#496), the `interior` its feature names given with
+  it:
+  - The inn, whose rests count the nights, with the yard's door onto the ice at the hole. Interior:
+    `rime_inn`.
+  - The Lanterns' hall, selling spells to tier 7 for the hall's fee (DESIGN §7), teaching the
+    Lanterns' three skills, Linguist among them (#538), and giving their quests to a member, the
+    fourth rank's among them (call 8, #439). Interior: `rime_hall`.
+  - A temple, the hill folk's, cures and raising at the band's price. Interior: `rime_temple`.
+  - The furrier, the band's gear, a step past the Kilns' (#535: an Ice Axe, a Skinning Knife, a
+    Hunter's Bow, a Bear Spear, a Guide's Staff, a Bearskin Coat and a Fur Robe, 1,600 to 2,500
+    gold, `FURRIER`). Interior: `rime_furrier`.
+  - The provisioner. Interior: `rime_provisioner`.
+  - The trainer's yard, to 23 (DESIGN §5). Interior: `rime_yard`.
 - **People.** The lodge-keepers, Lanterns who hold the hole open; the arrivals, a few a night, in
   the yard by the fire; Wenna, after the bay (§5); the coachman of the yard (#539), and the one who
   did not come (#56's 40); the stonecutter of Cairnmoor's 39, come down the drove road; the woman of
@@ -627,6 +652,35 @@ Decided by delegate for #535, each the owner's to overturn:
    a Lantern's, so their names are their boxes' to give, the ids the ladder's.
 4. **The ladder's top is 22,** Rimewater's finds, so the Whitespine's floor wears the act's last
    step, and the harness's what-if grows gear past it.
+
+Decided by delegate for #496, each the owner's to overturn:
+
+1. **The rooms are §4.3's six, which are the issue's:** the inn, the Lanterns' hall, the temple, the
+   furrier, the provisioner and the trainer's yard. The coachman sells the coach in the yard as a
+   person with no room, as Kitto sells his boat on Saltmouth's quay.
+2. **The ids are `rime_` and the business,** as Lantern Watch's are `watch_` (`watch_hall`), since
+   "lodge" is Deepthorn Lodge's as well; §4.3 gives them for #487 to name, and each scene's file is
+   named for its id, as `tools/changed.ts` reads a room by its file.
+3. **The temple is the hill folk's, not the Lanterns':** a healer's house round a stone with a cup in
+   it, snow in the cup, as the moor's shrines are (docs/areas/cairnmoor.md §4), since 40 sends its
+   sleeper to the Lanterns' hall or to the temple's healer, two hands and not one.
+4. **Tier 7 is on the shelves, and not lettered:** the hall's case shelves the spells by tier, a
+   brass plate with each shelf's number from 1 at the foot to 7 at the top, where a few new books
+   stand. No spell's name is written.
+5. **The inn shows the ice-hole's fire, never the hole:** the hole is M9's, out on the loch (§4.2), so
+   the yard's door shows the fire far off through its glass, smoke by day and its light on the ice
+   by night, and lets the snow in under it.
+6. **What the rooms share is in `lodge.ts` beside them,** as the Kilns' towns share theirs: the logs,
+   the pelts, the frost on the glass and the loch through a window; what one room alone draws stays
+   in its scene. The trade helpers are borrowed as they stand: the Lanterns' bookcase, the yards'
+   butt and rack and the shops' flask.
+7. **Every room lets the day in,** by a window, the door's glass, the temple's smoke hole or the open
+   sky, so nine at night is not noon.
+8. **The yard looks east to the glacier** over the stockade, as M9 has it on its east edge (§4.2),
+   drawn plain, snow on every face: the bare face is M9's hint for its hollow, and stays M9's.
+9. **The furrier shows its seven:** the Bearskin Coat on its stand, the Fur Robe on its peg, the
+   Bear Spear, the Ice Axe, the Hunter's Bow and the Guide's Staff racked and the Skinning Knife on
+   the block by the fleshing beam (#535).
 
 ## 10. Names
 

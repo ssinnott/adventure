@@ -18,6 +18,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   knocker: '#462', mender: '#462', foreman: '#462',
+  rime_inn: '#487', rime_hall: '#487', rime_temple: '#487', rime_furrier: '#487', rime_provisioner: '#487', rime_yard: '#487',
 };
 
 /**
