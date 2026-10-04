@@ -4,20 +4,56 @@
 // cloth falls as overlapping tongues, each fading in out of the mass above and out again at its own
 // tip, so the body thins into the glow instead of ending on a line. Nothing is mirrored: one claw
 // reaches low and one hangs high, the cowl leans, and every tongue is a different length.
+//
+// The Cairn Wight is the wraith's frame with a body in it, standing: a shroud with grave-gold at
+// its throat. Grave linen, pale and earth-stained, drawn over the head as a hood and wound about
+// with bands, falls to the ground and drags there, its hem torn and dark with the cairn's soil;
+// the hood leans forward over a dark face with two cold points in it; a torc of the hill folk's
+// gold is round its throat, the terminals at the front; and two claws of old bone reach out of the
+// shroud, low. Idle: it sways where it stands, the claws flex, the eyes flare and the gold glints.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow } from './common.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
-import { blob, glossTaper, glow, patch, softLine } from './gloss.ts';
+import { appendCurve, blob, glossTaper, glow, lumpy, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wraith'];
+export const KINDS: readonly MonsterSprite[] = ['wraith', 'cairn_wight'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  wraith(ctx, x, y, h, p);
+  if (kind === 'cairn_wight') wight(ctx, x, y, h, p);
+  else wraith(ctx, x, y, h, p);
 };
+
+/** Units of the height, across from the sprite's x and up from its ground line, to the canvas. */
+type K = (k: number) => number;
+
+/**
+ * A claw out of the cloth. Every bone is drawn on its own, in two segments with a joint between
+ * them, and lit ACROSS its axis rather than along it: a finger is nearly parallel to the light,
+ * so the one ramp meant to model a mass runs its whole length and turns it into wet plastic.
+ * Bones inside one outline weld into a web at the knuckles, which is what a glove looks like.
+ */
+function claw(ctx: CanvasRenderingContext2D, X: K, Y: K, h: number, kx: number, ky: number, s: number, curl: number, hex: string): void {
+  blob(ctx, B, shade(hex, 0.66), [{ k: 'ell', x: X(kx), y: Y(ky + 0.006), rx: h * 0.016, ry: h * 0.013, rot: -0.3 * s }],
+    { h, formK: 0.2, spread: 1.4 });
+  //        out   length  bend   the middle finger longest, each one hooking by its own amount
+  const fing: readonly (readonly [number, number, number])[] =
+    [[-0.66, 0.118, 0.82], [-0.18, 0.152, 0.54], [0.44, 0.130, 0.94], [-1.16, 0.064, 0.46]];
+  for (let i = 0; i < fing.length; i++) {
+    const [out, len, bend] = fing[i], thumb = i === 3, l = h * len;
+    const bh = shade(hex, thumb ? 0.84 : i === 0 ? 0.9 : 1);
+    const rr = [h * (thumb ? 0.0086 : 0.0096), h * 0.0058, h * 0.0010];
+    let ax = Math.PI / 2 - s * out * 0.72;
+    let px = X(kx + out * s * 0.028), py = Y(ky - (thumb ? 0.006 : 0.002) + Math.abs(out) * 0.006);
+    for (let j = 0; j < 2; j++) {                       // two phalanges, the joint between them inked
+      const nx = px + Math.cos(ax) * l * (j ? 0.44 : 0.56), ny = py + Math.sin(ax) * l * (j ? 0.44 : 0.56);
+      glossTaper(ctx, B, px, py, nx, ny, rr[j], rr[j + 1], bh, { h });
+      px = nx; py = ny; ax += s * curl * bend * 0.55;
+    }
+  }
+}
 
 /** Stable 0..1 noise; never seeded from the frame, or the contour would boil. */
 function rnd(a: number, b: number): number {
@@ -83,35 +119,9 @@ function wraith(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     ctx.fillStyle = g; ctx.fill();
   };
 
-  /**
-   * A claw out of the cloth. Every bone is drawn on its own, in two segments with a joint between
-   * them, and lit ACROSS its axis rather than along it: a finger is nearly parallel to the light,
-   * so the one ramp meant to model a mass runs its whole length and turns it into wet plastic.
-   * Bones inside one outline weld into a web at the knuckles, which is what a glove looks like.
-   */
-  const claw = (kx: number, ky: number, s: number, curl: number, seed: number, hex: string): void => {
-    blob(ctx, B, shade(hex, 0.66), [{ k: 'ell', x: X(kx), y: Y(ky + 0.006), rx: h * 0.016, ry: h * 0.013, rot: -0.3 * s }],
-      { h, formK: 0.2, spread: 1.4 });
-    //        out   length  bend   the middle finger longest, each one hooking by its own amount
-    const fing: readonly (readonly [number, number, number])[] =
-      [[-0.66, 0.118, 0.82], [-0.18, 0.152, 0.54], [0.44, 0.130, 0.94], [-1.16, 0.064, 0.46]];
-    for (let i = 0; i < fing.length; i++) {
-      const [out, len, bend] = fing[i], thumb = i === 3, l = h * len;
-      const bh = shade(hex, thumb ? 0.84 : i === 0 ? 0.9 : 1);
-      const rr = [h * (thumb ? 0.0086 : 0.0096), h * 0.0058, h * 0.0010];
-      let ax = Math.PI / 2 - s * out * 0.72;
-      let px = X(kx + out * s * 0.028), py = Y(ky - (thumb ? 0.006 : 0.002) + Math.abs(out) * 0.006);
-      for (let j = 0; j < 2; j++) {                       // two phalanges, the joint between them inked
-        const nx = px + Math.cos(ax) * l * (j ? 0.44 : 0.56), ny = py + Math.sin(ax) * l * (j ? 0.44 : 0.56);
-        glossTaper(ctx, B, px, py, nx, ny, rr[j], rr[j + 1], bh, { h });
-        px = nx; py = ny; ax += s * curl * bend * 0.55;
-      }
-    }
-  };
-
   // 1. The far claw: higher than the near one, smaller, darker, and half swallowed by the cloth
   //    that goes over it. A pair of hands at the same height on the same arms is a coat on a peg.
-  claw(-0.138, 0.582, -1, 0.86, 40, shade(bone, 0.88));
+  claw(ctx, X, Y, h, -0.138, 0.582, -1, 0.86, shade(bone, 0.88));
 
   // 2. The bell: cowl and body in one unbroken line from the peak of the hood to below the mantle,
   //    with no neck anywhere on it, and one arm reaching out of the near side under a sleeve that
@@ -217,7 +227,7 @@ function wraith(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   gaze(-0.023, 0.878, 0.0102, 0.0062, 0.36, 0.7);
 
   // 7. The near claw, in front of everything it hangs over.
-  claw(0.180, 0.512, 1, 0.62, 30, bone);
+  claw(ctx, X, Y, h, 0.180, 0.512, 1, 0.62, bone);
 
   // 8. Motes drifting up through the glow (emissive: not part of the flash silhouette).
   if (!B.override) {
@@ -231,4 +241,114 @@ function wraith(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
       ctx.fillStyle = rgba('#ffffff', a * 0.8); ctx.fillRect(Math.round(mx), Math.round(my), 1, 1);
     }
   }
+}
+
+/**
+ * The Cairn Wight, in units of the height up from the ground line: the hood's peak at 0.92, sunk
+ * forward between hunched shoulders at 0.75, the face at 0.8, and the shroud from the shoulders to
+ * the ground, wider at the hem. It sways about its hem where it stands, the hood most.
+ */
+function wight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const t = p.frame, tone = p.tone;
+  const sway = Math.sin(t / 37) * 0.012, stir = Math.sin(t / 23) * 0.006;
+  const flare = 0.5 + 0.5 * Math.sin(t / 19), curl = 0.6 + 0.14 * Math.sin(t / 21);
+  const X = (k: number) => x + h * k, Y = (k: number) => y - h * k;
+  /** How far a point at height ky sways over, and points in units, swaying so, to the canvas. */
+  const lean = (ky: number): number => sway * Math.max(0, ky - 0.1);
+  const S = (pts: readonly number[]): number[] => pts.map((v, i) => (i % 2 ? Y(v) : X(v + lean(pts[i + 1]))));
+  const at = (ky: number): K => (k: number) => x + h * (k + lean(ky));
+  const linen = p.base, deep = shade(mix(p.dark, '#241c14', 0.45), 1), lit = mix(p.light, '#f2eee2', 0.3);
+  const soil = shade('#3a2e20', tone), stain = shade('#6a5a40', tone), band = mix(p.dark, '#3e3428', 0.5);
+  const bone = shade(mix('#cfc2a2', '#8a7c62', 0.25), tone);
+  const gold = shade('#e0b44a', Math.max(0.6, tone)), goldD = shade('#7a5618', Math.max(0.6, tone));
+  const voidHex = shade('#0b0810', Math.max(0.55, tone)), cold = '#d4f2c8';
+  groundShadow(ctx, X(0), y + 1, h * 0.46);
+
+  // 1. The far claw, out of the shroud's far side, a step darker; the shroud's edge goes over its root.
+  claw(ctx, at(0.53), Y, h, -0.214, 0.53, -1, curl + 0.18, shade(bone, 0.84));
+
+  // 2. The shroud: hood, hunched shoulders and the fall to the ground in one, the near arm reaching
+  //    out of it in a fold of its own, and a fold over the far arm. The hem is torn into strips that
+  //    drag, and stir a little.
+  const body = [
+    0.02, 0.915, 0.07, 0.9, 0.105, 0.86, 0.12, 0.8, 0.112, 0.752,
+    0.15, 0.756, 0.186, 0.722, 0.198, 0.66, 0.19, 0.55, 0.18, 0.42, 0.185, 0.28, 0.2, 0.14,
+    0.216 + stir, 0.04, 0.2, -0.004, 0.178, 0.07, 0.15 + stir, -0.004, 0.122, 0.052, 0.098 + stir, -0.006, 0.07, 0.078,
+    0.04 + stir, -0.004, 0.01, 0.046, -0.024 + stir, -0.006, -0.055, 0.082, -0.09 + stir, -0.004, -0.12, 0.05,
+    -0.15 + stir, -0.006, -0.174, 0.062, -0.198, 0.004,
+    -0.19, 0.14, -0.178, 0.32, -0.18, 0.5, -0.194, 0.62, -0.19, 0.69,
+    -0.164, 0.742, -0.122, 0.768, -0.09, 0.8, -0.088, 0.85, -0.06, 0.895,
+  ];
+  const shroud: Part[] = [
+    { k: 'curve', pts: S(body), wobble: 0.006, seed: 201, sub: 2 },
+    { k: 'curve', pts: S([0.15, 0.74, 0.196, 0.712, 0.232, 0.64, 0.254, 0.545, 0.252, 0.476, 0.216, 0.468, 0.208, 0.522, 0.176, 0.5, 0.166, 0.6]), wobble: 0.02, seed: 203, sub: 2 },
+    { k: 'curve', pts: S([-0.16, 0.738, -0.208, 0.68, -0.232, 0.59, -0.228, 0.54, -0.194, 0.534, -0.18, 0.6]), wobble: 0.02, seed: 205, sub: 2 },
+  ];
+  blob(ctx, B, linen, shroud, { h, tex: 'folds', seed: 207, amount: 0.7, formK: 0.3, spread: 0.7, creases: [
+    { x0: X(0.1 + lean(0.6)), y0: Y(0.6), x1: X(0.12), y1: Y(0.09), r: h * 0.02, a: 0.38 },     // the folds of the fall
+    { x0: X(-0.02 + lean(0.56)), y0: Y(0.56), x1: X(-0.03), y1: Y(0.07), r: h * 0.018, a: 0.3 },
+    { x0: X(-0.12 + lean(0.62)), y0: Y(0.62), x1: X(-0.13), y1: Y(0.1), r: h * 0.02, a: 0.34 },
+    { x0: X(0.16 + lean(0.7)), y0: Y(0.7), x1: X(0.17 + lean(0.5)), y1: Y(0.5), r: h * 0.02, a: 0.45 },  // under the reaching arm
+    { x0: X(0.218 + lean(0.49)), y0: Y(0.49), x1: X(0.248 + lean(0.49)), y1: Y(0.488), r: h * 0.012, a: 0.7 }, // the dark inside the cuff
+    { x0: X(-0.12 + lean(0.77)), y0: Y(0.77), x1: X(0.13 + lean(0.77)), y1: Y(0.765), r: h * 0.022, a: 0.3 },  // the hood sunk in the shoulders
+  ] });
+  if (!B.override) {
+    // The cairn's soil, dark along the dragging hem, and the grave's stains on the linen.
+    ctx.save(); ctx.beginPath(); appendCurve(ctx, lumpy(S(body), 0.006, 201, 2)); ctx.clip();
+    const g = ctx.createLinearGradient(0, Y(0), 0, Y(0.26));
+    g.addColorStop(0, rgba(soil, 0.78)); g.addColorStop(1, rgba(soil, 0));
+    ctx.fillStyle = g; ctx.fillRect(X(-0.3), Y(0.28), h * 0.6, h * 0.3);
+    ctx.restore();
+    patch(ctx, B, stain, [{ k: 'ell', x: X(0.07 + lean(0.36)), y: Y(0.36), rx: h * 0.045, ry: h * 0.06, rot: 0.4 }], { alpha: 0.32, feather: 0.8 });
+    patch(ctx, B, stain, [{ k: 'ell', x: X(-0.06 + lean(0.66)), y: Y(0.66), rx: h * 0.035, ry: h * 0.03 }], { alpha: 0.26, feather: 0.8 });
+    // Light on the hood and the shoulder the light falls on, and a shadow down the far side.
+    patch(ctx, B, lit, [{ k: 'ell', x: X(-0.03 + lean(0.87)), y: Y(0.87), rx: h * 0.04, ry: h * 0.045, rot: 0.3 }], { alpha: 0.4, feather: 0.85 });
+    patch(ctx, B, lit, [{ k: 'ell', x: X(-0.13 + lean(0.71)), y: Y(0.71), rx: h * 0.035, ry: h * 0.045 }], { alpha: 0.28, feather: 0.9 });
+    patch(ctx, B, deep, [{ k: 'ell', x: X(0.13 + lean(0.52)), y: Y(0.52), rx: h * 0.04, ry: h * 0.16 }], { alpha: 0.3, feather: 1 });
+  }
+
+  // 3. The bands it is wound in, round and round from the shoulder down, the last end hanging loose.
+  const bands: Part[] = [];
+  for (const [yl, yr] of [[0.66, 0.6], [0.45, 0.39], [0.26, 0.2]] as const) {
+    bands.push({ k: 'tube', pts: S([-0.19, yl, -0.06, (yl * 2 + yr) / 3 - 0.012, 0.06, (yl + yr * 2) / 3 - 0.012, 0.188, yr]), r0: h * 0.011, r1: h * 0.011 });
+  }
+  bands.push({ k: 'tube', pts: S([0.186, 0.2, 0.206 + stir, 0.14, 0.198 + stir * 1.5, 0.07]), r0: h * 0.009, r1: h * 0.006, wobble: 0.1, seed: 209 });
+  blob(ctx, B, band, bands, { h, formK: 0.4, spread: 0.7 });
+
+  // 4. The face: a hole in the front of the hood, its top darkened by the hood's overhang.
+  const fx = 0.016 + lean(0.8), fy = 0.8;
+  blob(ctx, B, voidHex, [{ k: 'curve', pts: [
+    X(fx + 0.05), Y(fy - 0.02), X(fx + 0.054), Y(fy + 0.024), X(fx + 0.036), Y(fy + 0.062), X(fx - 0.004), Y(fy + 0.08),
+    X(fx - 0.042), Y(fy + 0.058), X(fx - 0.054), Y(fy + 0.02), X(fx - 0.044), Y(fy - 0.024), X(fx - 0.004), Y(fy - 0.042),
+  ], wobble: 0.04, seed: 211, sub: 2 }], { outline: false, form: false, spread: 0.35 });
+  if (!B.override) {
+    softLine(ctx, B, [X(fx - 0.058), Y(fy + 0.01), X(fx - 0.046), Y(fy + 0.064), X(fx - 0.004), Y(fy + 0.09), X(fx + 0.04), Y(fy + 0.072)], lit, h * 0.012, 0.5);
+    softLine(ctx, B, [X(fx - 0.05), Y(fy - 0.03), X(fx), Y(fy - 0.05), X(fx + 0.05), Y(fy - 0.03)], linen, h * 0.016, 0.5);
+  }
+  // Two cold points far back in it, the near one larger and lower.
+  for (const [ex, ey, r, bloom] of [[fx + 0.022, fy + 0.008, 0.0095, 1], [fx - 0.018, fy + 0.018, 0.007, 0.7]] as const) {
+    glow(ctx, B, X(ex), Y(ey), h * (0.02 + 0.018 * flare) * bloom, cold, 0.3 + 0.4 * flare, '#ffffff');
+    ctx.beginPath(); ctx.ellipse(X(ex), Y(ey), h * r, h * r * 0.8, 0, 0, Math.PI * 2);
+    ctx.fillStyle = B.col(mix(cold, '#ffffff', 0.3 + 0.5 * flare)); ctx.fill();
+  }
+
+  // 5. The torc: the hill folk's gold round its throat, twisted like a rope, the two knobbed ends
+  //    meeting at the front with a gap between.
+  const tx = 0.016 + lean(0.73), ty = 0.718;
+  const halves = [[tx - 0.09, ty + 0.042, tx - 0.074, ty + 0.018, tx - 0.044, ty + 0.004, tx - 0.018, ty], [tx + 0.018, ty, tx + 0.044, ty + 0.004, tx + 0.076, ty + 0.018, tx + 0.094, ty + 0.042]];
+  const torc: Part[] = halves.map((pts) => ({ k: 'tube', pts: pts.map((v, i) => (i % 2 ? Y(v) : X(v))), r0: h * 0.013, r1: h * 0.013 }));
+  torc.push({ k: 'ball', x: X(tx - 0.016), y: Y(ty), r: h * 0.019 }, { k: 'ball', x: X(tx + 0.016), y: Y(ty), r: h * 0.019 });
+  blob(ctx, B, gold, torc, { h, formK: 0.45, spread: 0.6, gloss: 0.6 });
+  if (!B.override && h >= 40) {
+    // The twist, as dark ticks across the gold, and a glint that runs round it now and then.
+    for (const pts of halves) for (let i = 0; i < 3; i++) {
+      const a = i / 3 + 0.12, k = Math.floor(a * 3), f = a * 3 - k, x0 = pts[k * 2] + (pts[k * 2 + 2] - pts[k * 2]) * f, y0 = pts[k * 2 + 1] + (pts[k * 2 + 3] - pts[k * 2 + 1]) * f;
+      softLine(ctx, B, [X(x0 - 0.006), Y(y0 + 0.009), X(x0 + 0.006), Y(y0 - 0.009)], goldD, Math.max(1, h * 0.006), 0.7);
+    }
+    const gt = (t % 90) / 90;
+    if (gt < 0.3) glow(ctx, B, X(tx - 0.08 + gt / 0.3 * 0.16), Y(ty + 0.01 + Math.abs(gt / 0.3 - 0.5) * 0.04), h * 0.022, '#fff4c0', 0.8 * Math.sin(gt / 0.3 * Math.PI), '#ffffff');
+  }
+
+  // 6. The near claw, out of the reaching fold, in front of everything.
+  claw(ctx, at(0.47), Y, h, 0.236, 0.47, 1, curl, bone);
 }

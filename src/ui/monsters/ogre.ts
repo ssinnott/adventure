@@ -8,19 +8,45 @@
 // triangles floated under a dark smear of nose, and the club was a straight board of one thickness
 // crossing the whole body, three grey dots down it like rivets. A club is a tree limb -- a gnarled
 // head several times the grip, knots where branches were cut, and a taper between them.
+//
+// The Tor Troll is the frame made of the moor: a tor that stood up. The stooped brute's body in
+// weathered granite, split along its beds as a tor is, so it is stacked slabs from the hump of its
+// back to its feet; lichen in yellow and rust on the stone, heather rooted on its shoulders and moss
+// on its crown. It is more stoop than height: the head sunk forward under the hump, the arms long
+// enough that the fists, two boulders, rest on the ground. The face is cut in the stone, as the
+// stonecutter cuts his on the tors by day: a brow like a lintel, two pits with a dull light far down
+// in them, a wedge of a nose and a mouth that is a straight cut. It carries nothing. A tall one: it
+// is drawn inside the tall boss's crown (TALL_REACH, src/ui/grouplabels.ts). Idle: it breathes, the
+// slabs of its shoulders shift on each other, and the light in its eyes comes and goes.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
-import { blob, softLine } from './gloss.ts';
+import { blob, glow, patch, softLine } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['ogre'];
+export const KINDS: readonly MonsterSprite[] = ['ogre', 'tor_troll'];
+
+/**
+ * What a troll is made of, as the tor troll's numbers (1 = the tor troll, 0 = none), so the
+ * Whitespine's snow troll is a Build and a colouring (MONSTERS §11).
+ */
+interface Build {
+  /** Lichen on the stone, yellow and rust. */
+  lichen: number;
+  /** Heather rooted on the shoulders and the hump, and moss on the crown. */
+  heather: number;
+  /** The light far down in the eye pits. */
+  eyeHex: string;
+}
+const TOR: Build = { lichen: 1, heather: 1, eyeHex: '#ffb04a' };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  void kind;
-  ogre(ctx, x, y, h, p);
+  // A tall one stands on the third rank with its markers over its crown: drawn inside 0.8 of its
+  // height, its crown keeps under TALL_REACH.
+  if (kind === 'tor_troll') troll(ctx, x, y, h * 0.8, p, TOR);
+  else ogre(ctx, x, y, h, p);
 };
 
 /** Stable 0..1 noise; never seeded from the frame, or the contour would boil. */
@@ -281,4 +307,154 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   for (const tx of [-0.1, 0.2]) { ctx.beginPath(); ctx.moveTo(...P(tx - 0.09, 0.88)); ctx.lineTo(...P(tx + 0.09, 0.88)); ctx.lineTo(...P(tx + 0.06, 1.0)); ctx.lineTo(...P(tx - 0.06, 1.0)); ctx.closePath(); ctx.fill(); }
   softLine(ctx, B, M([1.08, 0.12, 1.16, 0.48]), p.dark, hr * 0.13, 0.45);
   softLine(ctx, B, M([-1.04, 0.12, -1.12, 0.48]), p.dark, hr * 0.13, 0.45);
+}
+
+/**
+ * A troll, in units of `h` (the tall one's drawn height) up from the ground line: the hump of its
+ * back at 0.97, the head sunk under it at 0.76, the hips at 0.42 and the fists on the ground either
+ * side of the feet.
+ */
+function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build): void {
+  const X = (k: number) => x + h * k, Y = (k: number) => y - h * k;
+  const br = p.breathe * h * 0.008;                  // the slabs of the shoulders lift on a breath
+  const nod = Math.sin(p.frame / 41) * 0.012;        // the head turns a little under the hump
+  const tone = p.tone, stone = p.base, back = shade(mix(p.dark, p.base, 0.4), 0.95), farHex = shade(p.dark, 0.82);
+  const lit = mix(p.light, '#f2f0e8', 0.3), joint = shade(mix(p.dark, '#18161a', 0.5), 1);
+  const yellow = shade('#aeac4c', tone), rust = shade('#a86e3e', tone), moss = shade('#56703a', tone);
+  const heath = shade('#5e4c3c', tone), bloom = shade('#9c6a88', tone);
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 13);
+  groundShadow(ctx, X(0), y + 1, h * 0.98);
+
+  /** A boulder's outline: a ring, flattened where it sits, rounded where it weathered. */
+  const boulder = (cx: number, cy: number, rx: number, ry: number, seed: number): Part => {
+    const pts: number[] = [];
+    for (let i = 0; i < 10; i++) { const a = (i / 10) * Math.PI * 2, s = Math.sin(a); pts.push(X(cx + Math.cos(a) * rx), Y(cy + s * ry * (s < 0 ? 0.8 : 1))); }
+    return { k: 'curve', pts, wobble: 0.07, seed, sub: 2 };
+  };
+  /** A bed of the stone: a joint along it, dark, and the lit edge of the slab under it. */
+  const bed = (pts: readonly number[], w = 1): void => {
+    if (B.override) return;
+    const px = pts.map((v, i) => (i % 2 ? Y(v) : X(v)));
+    softLine(ctx, B, px.map((v, i) => (i % 2 ? v + h * 0.006 : v)), lit, Math.max(1, h * 0.006 * w), 0.32);
+    softLine(ctx, B, px, joint, Math.max(1, h * 0.011 * w), 0.6);
+  };
+  /** Lichen: crusts of it, yellow or rust, laid on the stone as markings. */
+  const lichen = (cx: number, cy: number, r: number, hex: string, seed: number): void => {
+    if (b.lichen <= 0) return;
+    patch(ctx, B, hex, [{ k: 'curve', pts: [X(cx - r), Y(cy), X(cx - r * 0.3), Y(cy + r * 0.8), X(cx + r * 0.6), Y(cy + r * 0.6), X(cx + r), Y(cy - r * 0.1), X(cx + r * 0.2), Y(cy - r * 0.7), X(cx - r * 0.6), Y(cy - r * 0.5)], wobble: 0.18, spiky: 0.12, seed, sub: 2 }], { alpha: 0.6 * b.lichen, feather: 0.4 });
+  };
+
+  // ---- the far leg and the far arm, behind, a step darker: two masses, the fist a boulder on the ground.
+  blob(ctx, B, farHex, [
+    { k: 'tube', pts: [X(-0.11), Y(0.42), X(-0.2), Y(0.23), X(-0.18), Y(0.07)], r0: h * 0.1, r1: h * 0.076, wobble: 0.04, seed: 61 },
+    { k: 'curve', pts: [X(-0.31), Y(0.008), X(-0.3), Y(0.07), X(-0.2), Y(0.105), X(-0.1), Y(0.08), X(-0.09), Y(0.012)], wobble: 0.06, seed: 62, sub: 2 },
+  ], { h, formK: 0.45 });
+  blob(ctx, B, shade(farHex, 1.08), [
+    { k: 'tube', pts: [X(-0.27), Y(0.8) - br, X(-0.39), Y(0.56), X(-0.38), Y(0.24)], r0: h * 0.085, r1: h * 0.066, wobble: 0.04, seed: 64 },
+    boulder(-0.39, 0.105, 0.09, 0.1, 65),
+    { k: 'ell', x: X(-0.39), y: Y(0.035), rx: h * 0.07, ry: h * 0.03 },
+  ], { h, formK: 0.5, creases: [
+    { x0: X(-0.43), y0: Y(0.13), x1: X(-0.35), y1: Y(0.13), r: h * 0.01, a: 0.45 },   // the knuckles
+  ] });
+  bed([-0.44, 0.44, -0.33, 0.45]);
+
+  // ---- the hump: the slabs of its back, stacked behind its head and shoulders, each its own stone.
+  blob(ctx, B, back, [boulder(-0.19, 0.84, 0.15, 0.1, 67)], { h, formK: 0.45 });
+  blob(ctx, B, back, [boulder(0.21, 0.83, 0.15, 0.1, 69)], { h, formK: 0.45 });
+  blob(ctx, B, shade(back, 1.05), [boulder(0.01, 0.875 + br / h, 0.17, 0.095, 71)], { h, formK: 0.45 });
+  lichen(-0.12, 0.88, 0.026, yellow, 73);
+  lichen(0.24, 0.86, 0.022, rust, 74);
+
+  // ---- the body: barrel, gut, the shoulders like boulders, and the near leg, one mass of stone.
+  blob(ctx, B, stone, [
+    { k: 'curve', pts: [
+      X(-0.3), Y(0.81) - br, X(-0.34), Y(0.72), X(-0.31), Y(0.58), X(-0.27), Y(0.46), X(-0.2), Y(0.4), X(0.2), Y(0.4),
+      X(0.28), Y(0.46), X(0.32), Y(0.58), X(0.35), Y(0.72), X(0.31), Y(0.81) - br, X(0.15), Y(0.85) - br, X(-0.15), Y(0.85) - br,
+    ], wobble: 0.04, seed: 75, sub: 3 },
+    { k: 'ell', x: X(0.01), y: Y(0.5), rx: h * 0.25, ry: h * 0.12 },
+    boulder(-0.285, 0.765 + br / h, 0.11, 0.09, 76),
+    boulder(0.29, 0.765 + br / h, 0.115, 0.095, 77),
+    { k: 'tube', pts: [X(0.11), Y(0.42), X(0.21), Y(0.23), X(0.19), Y(0.07)], r0: h * 0.106, r1: h * 0.08, wobble: 0.04, seed: 78 },
+    { k: 'curve', pts: [X(0.09), Y(0.012), X(0.1), Y(0.08), X(0.2), Y(0.108), X(0.31), Y(0.072), X(0.32), Y(0.01)], wobble: 0.06, seed: 79, sub: 2 },
+  ], { h, formK: 0.5, creases: [
+    { x0: X(-0.19), y0: Y(0.75), x1: X(-0.23), y1: Y(0.62), r: h * 0.024, a: 0.4 },     // the far armpit
+    { x0: X(0.2), y0: Y(0.75), x1: X(0.24), y1: Y(0.62), r: h * 0.024, a: 0.4 },         // the near
+    { x0: X(-0.18), y0: Y(0.58), x1: X(0.2), y1: Y(0.57), r: h * 0.022, a: 0.3 },        // the gut's fold
+    { x0: X(0.16), y0: Y(0.25), x1: X(0.18), y1: Y(0.19), r: h * 0.02, a: 0.5 },         // behind the near knee
+    { x0: X(-0.15), y0: Y(0.83) - br, x1: X(0.17), y1: Y(0.83) - br, r: h * 0.02, a: 0.35 }, // the head's root, sunk in
+  ] });
+  // Its beds: the joints a tor splits along, across the chest, the gut and the leg, and a few up them.
+  bed([-0.31, 0.665, -0.1, 0.676, 0.12, 0.668, 0.33, 0.68]);
+  bed([-0.24, 0.47, 0.0, 0.455, 0.24, 0.47]);
+  bed([0.12, 0.3, 0.27, 0.31], 0.9);
+  bed([-0.06, 0.668, -0.07, 0.58], 0.8);
+  bed([0.18, 0.672, 0.2, 0.6], 0.8);
+  lichen(-0.17, 0.72, 0.032, yellow, 81);
+  lichen(-0.13, 0.69, 0.016, yellow, 811);
+  lichen(0.1, 0.6, 0.026, rust, 82);
+  lichen(-0.08, 0.45, 0.022, yellow, 83);
+  lichen(0.22, 0.18, 0.024, rust, 84);
+  lichen(0.3, 0.78, 0.022, yellow, 85);
+
+  // ---- the near arm, its own mass in front: down past the gut to the fist, a boulder on the ground.
+  softLine(ctx, B, [X(0.33), Y(0.74), X(0.31), Y(0.6), X(0.31), Y(0.5)], p.dark, h * 0.04, 0.38);
+  blob(ctx, B, stone, [
+    { k: 'tube', pts: [X(0.28), Y(0.8) - br, X(0.4), Y(0.56), X(0.385), Y(0.24)], r0: h * 0.09, r1: h * 0.068, wobble: 0.04, seed: 86 },
+    boulder(0.392, 0.105, 0.095, 0.105, 87),
+    { k: 'ell', x: X(0.392), y: Y(0.035), rx: h * 0.072, ry: h * 0.03 },
+  ], { h, formK: 0.55, creases: [
+    { x0: X(0.36), y0: Y(0.6), x1: X(0.41), y1: Y(0.52), r: h * 0.02, a: 0.45 },       // the inside of the elbow
+    { x0: X(0.35), y0: Y(0.135), x1: X(0.44), y1: Y(0.135), r: h * 0.011, a: 0.5 },    // the knuckles
+    { x0: X(0.385), y0: Y(0.13), x1: X(0.39), y1: Y(0.07), r: h * 0.008, a: 0.4 },
+  ] });
+  bed([0.33, 0.45, 0.45, 0.44]);
+  bed([0.335, 0.28, 0.44, 0.285], 0.9);
+  lichen(0.41, 0.36, 0.022, yellow, 89);
+
+  // ---- the head, a block of the stone sunk forward under the hump, and the face cut in it.
+  const hx = X(0.03 + nod), hy = Y(0.74) - br, hr = h * 0.135;
+  const P = (px: number, py: number): [number, number] => [hx + px * hr, hy + py * hr];
+  const M = (a: readonly number[]): number[] => { const o: number[] = []; for (let i = 0; i < a.length; i += 2) o.push(...P(a[i], a[i + 1])); return o; };
+  blob(ctx, B, shade(stone, 1.04), [{ k: 'curve', pts: M([
+    -0.96, -0.5, -0.62, -0.94, 0, -1.02, 0.64, -0.92, 0.98, -0.48, 1.02, 0.12, 0.86, 0.72, 0.42, 1.02, -0.36, 1.02, -0.86, 0.72, -1.02, 0.12,
+  ]), wobble: 0.04, seed: 90, sub: 2 }], { h, formK: 0.5 });
+  const fill = (a: readonly number[], hex: string): void => {
+    ctx.beginPath(); ctx.moveTo(...P(a[0], a[1]));
+    for (let k = 2; k < a.length; k += 2) ctx.lineTo(...P(a[k], a[k + 1]));
+    ctx.closePath(); ctx.fillStyle = B.col(hex); ctx.fill();
+  };
+  // The brow, a lintel lit along its top, and its shadow over the pits.
+  fill([-0.86, -0.5, 0.88, -0.5, 0.86, -0.24, -0.84, -0.24], mix(lit, '#ffffff', 0.08));
+  softLine(ctx, B, M([-0.8, -0.18, 0.82, -0.18]), joint, hr * 0.16, 0.65);
+  // The pits, deep, a dull light far down in each.
+  ctx.fillStyle = B.col(mix(joint, '#060508', 0.5));
+  for (const sx of [-0.43, 0.45]) { const [ax, ay] = P(sx, 0.06); ctx.beginPath(); ctx.ellipse(ax, ay, hr * 0.25, hr * 0.17, 0, 0, Math.PI * 2); ctx.fill(); }
+  for (const sx of [-0.43, 0.45]) {
+    const [ax, ay] = P(sx, 0.08);
+    glow(ctx, B, ax, ay, hr * (0.32 + 0.12 * pulse), b.eyeHex, 0.35 + 0.3 * pulse, '#fff0c0');
+    eye(ctx, ax, ay, Math.max(0.8, hr * 0.08), mix(b.eyeHex, '#fff4d0', 0.3 + 0.3 * pulse), false);
+  }
+  // The nose, a wedge: a lit top plane down from the brow, and the shade under it.
+  fill([-0.1, -0.2, 0.14, -0.2, 0.24, 0.44, -0.2, 0.44], mix(lit, stone, 0.35));
+  fill([-0.22, 0.42, 0.26, 0.42, 0.22, 0.54, -0.18, 0.54], mix(joint, stone, 0.4));
+  // The mouth, a straight cut, and the lit ledge of the lip under it.
+  fill([-0.58, 0.66, 0.62, 0.64, 0.62, 0.76, -0.58, 0.78], mix(joint, '#060508', 0.4));
+  softLine(ctx, B, M([-0.54, 0.86, 0.6, 0.84]), lit, hr * 0.08, 0.45);
+  // The stonecutter's marks: the chisel's strokes along the cheek, where the face was cut.
+  if (!B.override && hr >= 6) for (let i = 0; i < 3; i++) softLine(ctx, B, M([0.68 + i * 0.07, 0.12, 0.76 + i * 0.07, 0.34]), joint, Math.max(1, hr * 0.05), 0.5);
+
+  // ---- what grows on it: moss on the crown, heather rooted along the shoulders and the hump.
+  if (b.heather > 0) {
+    blob(ctx, B, moss, [{ k: 'curve', pts: M([-0.62, -0.86, -0.3, -1.08, 0.2, -1.1, 0.58, -0.9, 0.2, -0.94, -0.3, -0.92]), wobble: 0.12, spiky: 0.12, seed: 92, sub: 2 }], { h, formK: 0.4, spread: 0.7 });
+    // Heather: low bushy mounds in the cracks of the stone, brown in the cold, a few bells still on it.
+    const tufts: Part[] = [];
+    for (const [cx, cy, r] of [[-0.29, 0.85, 0.055], [-0.18, 0.925, 0.042], [0.25, 0.91, 0.055]] as const) {
+      tufts.push({ k: 'curve', pts: [X(cx - r), Y(cy - r * 0.25), X(cx - r * 0.75), Y(cy + r * 0.5), X(cx - r * 0.2), Y(cy + r * 0.8), X(cx + r * 0.35), Y(cy + r * 0.72), X(cx + r), Y(cy + r * 0.3), X(cx + r * 0.9), Y(cy - r * 0.3), X(cx), Y(cy - r * 0.45)], wobble: 0.16, spiky: 0.14, seed: 93, sub: 3 });
+    }
+    blob(ctx, B, heath, tufts, { h, tex: 'bristle', seed: 94, amount: 0.6, formK: 0.35, spread: 0.7 });
+    if (!B.override && h >= 60) for (const [cx, cy] of [[-0.3, 0.875], [-0.18, 0.948], [0.26, 0.94]] as const) {
+      ctx.fillStyle = bloom;
+      for (let i = 0; i < 3; i++) ctx.fillRect(Math.round(X(cx + (i - 1) * 0.016)), Math.round(Y(cy + (i % 2) * 0.012)), Math.max(1, Math.round(h * 0.008)), Math.max(1, Math.round(h * 0.008)));
+    }
+  }
 }
