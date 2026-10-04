@@ -3,7 +3,8 @@
 // exploration screen is here because it is the game's spine, the others live in ui/.
 import { rng } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
-import { World, signLine } from './world.ts';
+import { World } from './world.ts';
+import { signSays } from './inscriptions.ts';
 import type { WorldState } from './world.ts';
 import { groupDrawn } from './world.ts';
 import { defaultParty, isDown, allDown } from './party.ts';
@@ -25,7 +26,7 @@ import { drawViewport } from '../ui/viewport.ts';
 import type { ViewMonster } from '../ui/viewport.ts';
 import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawFrameBackground, drawPurse, drawViewportFrame } from '../ui/frame.ts';
 import { CombatScreen } from '../ui/combat.ts';
-import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, InteriorScreen } from '../ui/screens.ts';
+import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, InteriorScreen, skillMenu } from '../ui/screens.ts';
 import { QuestScreen } from '../ui/quests.ts';
 import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
@@ -160,7 +161,7 @@ export class Game {
   interact(f: Feature, stepped = false): void {
     const w = this.world;
     switch (f.kind) {
-      case 'sign': if (!stepped) this.say(signLine(f.text)); return;
+      case 'sign': if (!stepped) for (const l of signSays(w, f)) this.say(l); return;
       case 'well': this.say(f.text); if (f.heal) { for (const m of this.party.members) if (!isDown(m)) m.hp = m.maxHp; this.say('The party drinks and feels restored.'); } return;
       case 'npc': this.talk(f); return;
       case 'chest': {
@@ -223,10 +224,14 @@ export class Game {
     if (!(menu instanceof MessageScreen)) this.push(this.talkScreen(p));
   }
 
-  /** What talking to a person opens: their words in a box, which close onto their question, if they put one. */
+  /**
+   * What talking to a person opens: their words in a box, which close onto their question, if they
+   * put one, else the crossings they sell, the prestige or the skill they teach.
+   */
   talkScreen(p: Person): Screen {
     const m = meet(p, this.party, heard(this.world, p));
-    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => this.offer(p.passage!, p.name) : p.teaches ? (): void => this.train(p.teaches!, p.name) : undefined;
+    const then = m.choice ? (): void => this.ask(m.choice!, p.name) : p.passage?.length ? (): void => this.offer(p.passage!, p.name) : p.teaches ? (): void => this.train(p.teaches!, p.name)
+      : p.skill ? (): void => this.push(skillMenu(this, [p.skill!], p.name)) : undefined;
     return new MessageScreen(m.text, then, p.name);
   }
 

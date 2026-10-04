@@ -14,8 +14,9 @@ import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Presence } from '../../src/game/map.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS, areaBand, zoneOfMap, homeMap } from '../../src/game/atlas.ts';
-import { CLASSES, RACES, TRAITS } from '../../src/game/party.ts';
+import { CLASSES, RACES, TRAITS, NAME_MAX } from '../../src/game/party.ts';
 import { signLine } from '../../src/game/world.ts';
+import { signTexts, readLine, isInscription, marksOf } from '../../src/game/inscriptions.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { logLines, logTail, LOG_LINES, COMBAT_LOG_LINES, LAYOUT } from '../../src/ui/frame.ts';
@@ -28,7 +29,8 @@ import { ok, owed, familyModules } from './lib.ts';
  * What is wrong with a map's secret doors and their hints: a secret door with no hint declared, a
  * hint on a square with no secret door, a hint that names nothing on the map, or one that cannot be
  * reached from the start with that door shut. The flood is the strictest: no keys, no swimming or
- * climbing; the other secret doors are walkable, as the party finds doors by walking into walls.
+ * climbing; the other secret doors are walkable, as the party finds doors by walking into walls. A
+ * hint is an event or a sign, and an inscription's reading counts (game/inscriptions.ts, #538).
  */
 export function hintFaults(def: MapDef): string[] {
   const map = new GameMap(def), out: string[] = [];
@@ -59,6 +61,9 @@ export function hintFaults(def: MapDef): string[] {
 /** The most lines of the log an event or sign may take: two is the aim, and four fill it. */
 export const MOST_LINES = 3;
 
+/** The longest name a member can have, in the font's widest letter: who reads an inscription, as the line check hears it. */
+const LONGEST_NAME = 'M'.repeat(NAME_MAX);
+
 /** An event or sign as the log shows it, a sign with its prefix. */
 const shown = (f: { kind: string; text: string }): string => (f.kind === 'sign' ? signLine(f.text) : f.text);
 
@@ -76,7 +81,8 @@ function apart(a: Partial<Presence>, b: Partial<Presence>): boolean {
 /**
  * What is wrong with a map's events and signs as the log shows them: one that wraps past
  * MOST_LINES, or a square whose texts that can show together are more than the log shows at once,
- * so the first is pushed off it.
+ * so the first is pushed off it. An inscription is said as a reader with the longest name hears it
+ * the first time, its words, its reading and its mark each an entry (`signTexts`).
  */
 export function lineFaults(def: MapDef): string[] {
   const out: string[] = [], squares = new Map<string, { n: number; p: Partial<Presence> }[]>();
@@ -100,9 +106,12 @@ export function lineFaults(def: MapDef): string[] {
       continue;
     }
     if (f.kind !== 'event' && f.kind !== 'sign') continue;
-    const n = logLines(shown(f)).length, at = `${f.x},${f.y}`;
-    if (n > MOST_LINES) out.push(`the ${f.kind} at ${at} takes ${n} lines`);
-    squares.set(at, [...(squares.get(at) ?? []), { n, p: f.kind === 'event' ? f : {} }]);
+    const at = `${f.x},${f.y}`;
+    for (const [i, t] of (f.kind === 'sign' ? signTexts(f, LONGEST_NAME) : [f.text]).entries()) {
+      const n = logLines(t).length;
+      if (n > MOST_LINES) out.push(`the ${f.kind}${i ? `'s ${i === 1 ? 'reading' : 'mark'}` : ''} at ${at} takes ${n} lines`);
+      squares.set(at, [...(squares.get(at) ?? []), { n, p: f.kind === 'event' ? f : {} }]);
+    }
   }
   for (const [at, texts] of squares) {
     // The most lines the texts that can be said together take: every set of them no two of which are apart.
@@ -133,6 +142,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
     for (const f of d.features ?? []) {
       const where = `${d.id} ${f.kind} ${f.x},${f.y}`;
       if ('text' in f) add(where, f.text);
+      if (f.kind === 'sign') add(where, f.read);
       if ('name' in f) add(where, f.name);
       if (f.kind === 'shrine' || f.kind === 'fountain' || f.kind === 'statue') add(where, f.done);
       if (f.kind === 'statue') add(where, f.riddle, f.answer);
@@ -199,7 +209,11 @@ export function uses(area: Pick<Area, 'maps' | 'atlas'>, family: Map<string, rea
       if (c.solid !== 'void') out.terrain.add(c.terrain);
       if (c.door !== 'none') out.mechanics.add(`door:${c.door}`);
     }
-    for (const f of def.features ?? []) out.mechanics.add(`feature:${f.kind}`);
+    for (const f of def.features ?? []) {
+      out.mechanics.add(`feature:${f.kind}`);
+      // Kiln-script (#538): an inscription read, and a reading that marks the world map.
+      if (isInscription(f)) { out.mechanics.add('sign:read'); if (marksOf(f).length) out.mechanics.add('sign:marks'); }
+    }
     for (const e of def.encounters ?? []) {
       for (const k of Object.keys(e)) if (!['id', 'x', 'y', 'monsters'].includes(k)) out.mechanics.add(`encounter:${k}`);
       for (const id of e.monsters) {
@@ -473,6 +487,9 @@ export async function pillars(): Promise<void> {
     ok(hintFaults(room([{ x: 3, y: 1, hint: 'nowhere' }])).length === 1, 'a hint that names nothing fails');
     ok(hintFaults({ ...room([{ x: 3, y: 1, hint: 'near' }]), features: room([]).features!.map((f) => (f.kind === 'event' && f.id === 'near' ? { ...f, when: { hours: 'night' as const } } : f)) }).length === 1, 'a hint there only by night fails');
     ok(hintFaults(room([{ x: 3, y: 1, hint: 'near' }, { x: 2, y: 1, hint: 'near' }])).length === 1, 'a hint on a square with no secret door fails');
+    // Kiln-script (#538): an inscription's reading may be the hint, on the near side, and counts; behind the door it fails as any sign does.
+    const scribed = (x: number): MapDef => ({ ...room([{ x: 3, y: 1, hint: 'store' }]), features: [{ kind: 'sign', x, y: 1, id: 'store', text: 'The dwarves\' words for plenty.', read: 'STORE.' }] });
+    ok(!hintFaults(scribed(2)).length && hintFaults(scribed(4)).length === 1, 'an inscription\'s reading on the near side is a hint the check counts, and behind the door it is not');
   }
 
   // Text: no event or sign wraps past three lines of the log as it shows them.
@@ -505,6 +522,16 @@ export async function pillars(): Promise<void> {
     const lamp = (lit: Partial<Presence>): MapDef => at([{ kind: 'event', x: 1, y: 1, id: 'dark', text: two + ' ' + two, until: { flag: 'q_lit' } }, { kind: 'event', x: 1, y: 1, id: 'lit', text: two + ' ' + two, ...lit }]);
     ok(2 * logLines(two + ' ' + two).length > LOG_LINES && !lineFaults(lamp({ after: { flag: 'q_lit' } })).length && lineFaults(lamp({})).length === 1,
       'a text until a flag and one after it are not added together, but one with no presence is');
+    // An inscription (#538) is measured as a reader with the longest name hears it the first time:
+    // its words, its reading and its mark, three entries that are said together.
+    const vent = (text: string, read: string, marks?: string): MapDef => at([{ kind: 'sign', x: 1, y: 1, id: 'vent', text, read, ...(marks ? { marks } : {}) }]);
+    const mouth = 'The dwarves\' words for the mountain\'s breath, cut over the adit.';
+    const heard = signTexts({ kind: 'sign', x: 1, y: 1, id: 'vent', text: mouth, read: 'VENT. STAND CLEAR.', marks: 'lava_tubes' }, LONGEST_NAME).map((t) => logLines(t).length);
+    ok(heard.join() === '2,1,1' && !lineFaults(vent(mouth, 'VENT. STAND CLEAR.', 'lava_tubes')).length, `the Feuerstollen brief's inscription, read and marking the map, fills the log and no more (${heard.join(' + ')} lines)`);
+    const longer = 'VENT. STAND CLEAR. NO NAKED FLAME. KEEP THIS DOOR SHUT.';
+    ok(logLines(readLine(LONGEST_NAME, longer)).length === 2 && lineFaults(vent(mouth, longer, 'lava_tubes')).length === 1 && !lineFaults(vent(mouth, longer)).length,
+      'a reading a line longer fails while it marks the map, and passes when it marks nothing');
+    ok(lineFaults(vent(mouth, two + ' ' + two)).some((f) => f.includes('reading')), 'and a reading of four lines fails on its own');
   }
 
   // A monster's look fits two lines of the log; the looks go through the glyph and spelling checks below with every text.
@@ -578,6 +605,10 @@ export async function pillars(): Promise<void> {
     ok(claim({ landmarks: ['city'] }).length === 1, `a landmark ${first.id} already has fails`);
     ok(claim({ mechanics: ['feature:sign'] }).length === 1, `a mechanic ${first.id} already has fails`);
     ok(claim({}).length === 1, 'an area after the first that claims nothing fails');
+    // Kiln-script (#538): an inscription is a mechanic of its own, and so is a reading that marks the map.
+    const scribe: MapDef = { id: 'fixture_scribe', name: 'Scribe fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['###', '#.#', '###'], features: [{ kind: 'sign', x: 1, y: 1, id: 'fx_vent', text: 'Words.', read: 'VENT.', marks: 'lava_tubes' }] };
+    const novel = (maps: readonly MapDef[]): string[] => noveltyFaults([first, { ...second, maps: [...second.maps, ...maps], novel: { families: [], terrain: [], mechanics: ['sign:read', 'sign:marks'], landmarks: [] } }], family);
+    ok(!novel([scribe]).length && novel([]).length === 2, 'an area that reads an inscription marking the map may claim both, and one with none may not');
   }
 
   // The land agrees with the map: water and roads carry on across a zone map's edge.

@@ -18,6 +18,7 @@ import type { World } from '../game/world.ts';
 import type { QuestDef } from '../game/quests.ts';
 import { questLog } from '../game/quests.ts';
 import { sought } from '../game/seeking.ts';
+import { readMarks } from '../game/inscriptions.ts';
 import { drawFrameBackground } from './frame.ts';
 import { MessageScreen } from './screens.ts';
 import { BRASS, TEXT, TEXT_DIM, PANEL } from './palette.ts';
@@ -1508,6 +1509,23 @@ function drawSought(ctx: CanvasRenderingContext2D, [x, y]: [number, number], who
   drawTextOutlined(ctx, who.join(', ').toUpperCase(), r(x) + 7, r(y) - 3, { size: 1, color: SOUGHT, outline: '#120c14', thickness: 1, shadow: false });
 }
 
+/** The places an inscription read has marked (game/inscriptions.ts), on the cloth, where a sought place's pin would stand. */
+function readOnCloth(world: World | null): [number, number][] {
+  if (!world) return [];
+  return readMarks(world).flatMap((id) => { const at = mapOnCloth(id); return at ? [at] : []; });
+}
+
+/** The colour of a place a reading has marked: a cold light no way, pin or ink of the cloth wears. */
+const READ = '#bdf4ff';
+
+/** A marked place's pin: a small square with a dark heart, like a hatch, and no name, since nothing yet names the place. */
+function drawRead(ctx: CanvasRenderingContext2D, [x, y]: [number, number]): void {
+  const X = r(x) - 4, Y = r(y) - 4;
+  ctx.fillStyle = '#120c14'; ctx.fillRect(X - 1, Y - 1, 10, 10);
+  ctx.fillStyle = READ; ctx.fillRect(X, Y, 8, 8);
+  ctx.fillStyle = '#120c14'; ctx.fillRect(X + 2, Y + 2, 4, 4);
+}
+
 /**
  * Where on the cloth the party is: its cell outdoors (the outdoors' cells are the world's, square for
  * square), else its town or dungeon's plate, else its home map's middle.
@@ -1608,9 +1626,14 @@ export class WorldMapScreen implements Screen {
       drawHearth(ctx, frame, world?.stones ?? 0);
       if (this.mode === 'zones') {
         ctx.drawImage(art.overlay, vx, vy, VIEW.w, VIEW.h, vx, vy, VIEW.w, VIEW.h);
+        for (const at of readOnCloth(world)) drawRead(ctx, at);
         for (const p of soughtOnCloth(world)) drawSought(ctx, p.at, p.who);
         if (party) drawParty(ctx, party, world?.state.facing ?? 0, frame);
-      } else { drawNames(ctx, art.names, vx, vy, VIEW.w, VIEW.h); for (const p of soughtOnCloth(world)) drawSought(ctx, p.at, p.who); }
+      } else {
+        drawNames(ctx, art.names, vx, vy, VIEW.w, VIEW.h);
+        for (const at of readOnCloth(world)) drawRead(ctx, at);
+        for (const p of soughtOnCloth(world)) drawSought(ctx, p.at, p.who);
+      }
       ctx.restore();
       if (this.still < 90) drawLocator(ctx, art.thumb, vx, vy, Math.min(1, (90 - this.still) / 30));
     }
@@ -1664,6 +1687,7 @@ export class WorldMapScreen implements Screen {
         drawTextOutlined(ctx, a.name.toUpperCase(), r(ax), r(ay) - 3, { size: 1, color: '#6a2a18', outline: HALO, thickness: 1, shadow: false, align: 'center' });
       }
     }
+    for (const p of readOnCloth(world)) drawRead(ctx, at(p[0], p[1]));
     for (const p of soughtOnCloth(world)) drawSought(ctx, at(p.at[0], p.at[1]), p.who);
     if (party) { const [cx, cy] = at(party[0], party[1]); drawParty(ctx, [cx, cy], facing, frame, 0); }
     const [fx, fy] = at(this.vx, this.vy);
