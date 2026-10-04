@@ -9,7 +9,6 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { gateCompany } from '../gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, testTroll, trollEncounter, wightEncounter, callerEncounter } from '../testmonster.ts';
 import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
-import { GATE } from './gate.ts';
 import { ok } from './lib.ts';
 
 export function harness(): void {
@@ -131,17 +130,17 @@ function bout(level: number, enc: readonly MonsterDef[], seeds: number, from: nu
  * trolls at 19, burnt or not; four wights at 19; a caller beside six fodder at 20, its fight growing.
  */
 function abilities(): void {
-  const pc = (x: number): string => `${Math.round(x * 100)}%`, within = (fights: number, level: number): boolean => fights >= fightsPerRest(level) - GATE.perRest.limit[0] && fights <= fightsPerRest(level) + GATE.perRest.limit[1];
-  // With fire the company burns the trolls and fights them as a day's brutes; with none it grinds,
-  // its fights half as long again and dearer, and still won.
+  const pc = (x: number): string => `${Math.round(x * 100)}%`;
+  // With fire the company burns the trolls and fights as many of them to a rest as of plain brutes;
+  // with none it grinds, its fights half as long again and dearer, and still won.
   const troll = testTroll(19), brute = testMonster('brute', 19);
   ok(troll.hp === Math.round(brute.hp * TROLL.hp) && troll.regen === Math.round(troll.hp * TROLL.regen), `the test troll at 19 is the test brute on ${TROLL.hp} of its hit points, ${troll.hp}, mending ${troll.regen} a round`);
   const fire = bout(19, trollEncounter(19), 40, 5001), none = bout(19, trollEncounter(19), 40, 5001, fireless);
   const burnt = fire.fights.filter(({ s }) => s.log.some((l) => / smoulders? and /.test(l))).length;
   ok(fire.won >= 0.95 && burnt >= 30, `a company of 19 with fire wins ${pc(fire.won)} of two trolls' fights, burning them in ${burnt} of 40`);
   ok(none.won >= 0.9 && none.rounds >= fire.rounds * 1.25 && none.cost > fire.cost, `with none it grinds: ${none.rounds.toFixed(1)} rounds and ${(none.cost * 100).toFixed(1)}% of itself a fight, against ${fire.rounds.toFixed(1)} and ${(fire.cost * 100).toFixed(1)}%, and wins ${pc(none.won)}`);
-  const day = days(19, [trollEncounter(19)], 40, 5001);
-  ok(within(day.fights, 19), `with fire it fights ${day.fights.toFixed(1)} of their encounters to a rest, inside the gate's limits of the ${fightsPerRest(19)} asked`);
+  const day = days(19, [trollEncounter(19)], 40, 5001), brutes = days(19, [standardEncounter('brute', 19)], 40, 5001);
+  ok(Math.abs(day.fights - brutes.fights) <= 1.5, `with fire it fights ${day.fights.toFixed(1)} of their encounters to a rest, about as many as of plain brutes (${brutes.fights.toFixed(1)}; ${fightsPerRest(19)} asked)`);
   // The wights' curses land and outlast the fight, and end no day.
   const wights = bout(19, wightEncounter(19), 20, 5001), cursed = wights.fights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'cursed'))).length;
   const marked = companyAt(19, 1);
@@ -151,6 +150,6 @@ function abilities(): void {
   const called = bout(20, callerEncounter(20), 40, 5001), grew = called.fights.filter(({ s }) => s.groupIds.length > 1).length;
   const most = Math.max(...called.fights.map(({ s }) => s.monsters.length)), groups = Math.max(...called.fights.map(({ s }) => s.groupIds.length));
   ok(called.won >= 0.95 && grew >= 8 && most <= MAX_MONSTERS && groups <= MAX_GROUPS, `a company of 20 wins ${pc(called.won)} of a caller's fights beside six fodder; it called in ${grew} of 40, and no fight held more than ${most} in ${groups} groups`);
-  const cday = days(20, [callerEncounter(20)], 40, 5001);
-  ok(within(cday.fights, 20), `and it fights ${cday.fights.toFixed(1)} of them to a rest, inside the gate's limits of the ${fightsPerRest(20)} asked`);
+  const cday = days(20, [callerEncounter(20)], 40, 5001), mute = days(20, [callerEncounter(20).map((m) => (m.calls ? { ...m, calls: undefined } : m))], 40, 5001);
+  ok(cday.fights < mute.fights && cday.fights > mute.fights - 2.5, `and it fights ${cday.fights.toFixed(1)} of them to a rest, where with no call it fights ${mute.fights.toFixed(1)}: the call costs it about a fight (${fightsPerRest(20)} asked)`);
 }

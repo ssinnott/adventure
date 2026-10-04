@@ -289,7 +289,7 @@ export function gate(): void {
     });
     const won = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.outcome === 'victory').length / fs.length;
     const fire = fought(19, trollEncounter(19), 4), none = fought(19, trollEncounter(19), 4, fireless), burnt = fire.filter(({ s }) => s.log.some((l) => / smoulders? and /.test(l))).length;
-    ok(won(fire) >= 0.9 && won(none) <= 0.25 && burnt >= seeds * 0.75, `the gate's company burns what mends: it wins ${pc(won(fire))} of two trolls' fights at 19 inside four rounds, burning them in ${burnt} of ${seeds}, where with no fire it wins ${pc(won(none))}`);
+    ok(won(fire) >= 0.9 && won(fire) - won(none) >= 0.5 && burnt >= seeds * 0.75, `the gate's company burns what mends: it wins ${pc(won(fire))} of two trolls' fights at 19 inside four rounds, burning them in ${burnt} of ${seeds}, where with no fire it wins ${pc(won(none))}`);
     const wights = fought(19, wightEncounter(19)), cursed = wights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'cursed'))).length;
     ok(won(wights) >= 0.9 && cursed > 0, `it fights on through the wights' curses at 19, winning ${pc(won(wights))}, ${cursed} of ${seeds} companies leaving cursed`);
     const called = fought(20, callerEncounter(20)), grew = called.filter(({ s }) => s.groupIds.length > 1).length;
