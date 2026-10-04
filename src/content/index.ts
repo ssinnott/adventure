@@ -19,11 +19,9 @@ import { AREA as thornmark } from './areas/thornmark/index.ts';
 import { AREA as saltreach } from './areas/saltreach/index.ts';
 import { AREA as wrackholm } from './areas/wrackholm/index.ts';
 import { AREA as sunderwood } from './areas/sunderwood/index.ts';
-import * as kilns from './areas/kilns/monsters.ts';
+import { AREA as kilns } from './areas/kilns/index.ts';
 import * as cairnmoor from './areas/cairnmoor/monsters.ts';
-import * as kilnsRooms from './areas/kilns/interiors.ts';
 import * as rimewater from './areas/rimewater/monsters.ts';
-import { ITEMS as KILNS_ITEMS } from './areas/kilns/items.ts';
 import { ITEMS as CAIRNMOOR_ITEMS } from './areas/cairnmoor/items.ts';
 import { ITEMS as RIMEWATER_ITEMS } from './areas/rimewater/items.ts';
 import * as rimewaterRooms from './areas/rimewater/interiors.ts';
@@ -32,7 +30,7 @@ import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
 
 /** The areas in road order. The order is behaviour: a new game starts on the first area's first map. */
-export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood] as const;
+export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns] as const;
 
 /**
  * Monsters drawn ahead of their area: an area is listed in AREAS only once it has a map to start
@@ -40,7 +38,6 @@ export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood] as con
  * an area's are; once the area is listed, its Area takes the import and its line here goes.
  */
 export const AHEAD = [
-  { id: 'kilns' as const, sprites: kilns.SPRITES, monsters: kilns.MONSTERS },
   { id: 'cairnmoor' as const, sprites: cairnmoor.SPRITES, monsters: cairnmoor.MONSTERS },
   { id: 'rimewater' as const, sprites: rimewater.SPRITES, monsters: rimewater.MONSTERS },
 ] as const;
@@ -52,7 +49,6 @@ export const AHEAD = [
  * list as `interiors` and its line here goes.
  */
 export const ROOMS_AHEAD = [
-  { id: 'kilns' as const, interiors: kilnsRooms.INTERIORS },
   { id: 'rimewater' as const, interiors: rimewaterRooms.INTERIORS },
 ] as const;
 
@@ -64,7 +60,6 @@ export const ROOMS_AHEAD = [
  * once the area is listed, its Area takes the table as `items` and its line here goes.
  */
 export const ITEMS_AHEAD = [
-  { id: 'kilns' as const, items: KILNS_ITEMS },
   { id: 'cairnmoor' as const, items: CAIRNMOOR_ITEMS },
   { id: 'rimewater' as const, items: RIMEWATER_ITEMS },
 ] as const;

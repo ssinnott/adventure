@@ -1,11 +1,12 @@
 // Sunderwood, box M2: the Fells Road. Country, band 15-16: Lanternwood's forest on east of the Watch,
 // the river from the rim down its west side and a strip of hills under the range that is the Iron
-// Fells' edge. The east road clips its south-west corner off L2 and runs on south into M3, where the
-// pass into the Fells lies: the world's end there until Act III's first box (#202).
+// Fells' edge. The east road clips its south-west corner off L2 and runs on south into M3, the Iron
+// Fells' way in, where the pass into the Fells lies (#202, #457); over the grave the ridge is rock,
+// so that no climber off the road comes down on it from M3's side.
 // Cut from the atlas by hand, its rim's pine drawn as forest and the void at its corner as mountain;
 // docs/areas/sunderwood.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST } from '../../../../game/types.ts';
+import { EAST, SOUTH } from '../../../../game/types.ts';
 
 export const LANTERNWOOD_M2: MapDef = {
   id: 'lanternwood_m2',
@@ -47,11 +48,15 @@ export const LANTERNWOOD_M2: MapDef = {
     '~TtTTTTTTTTTTTTTTTTTMMMMMMMMMMMM',
     '==tTTTTTTTTTTTTTTTTMMMMMMMMMMMMM',
     '~==ttSttTTTTTTTTTTTMMMMMMMMMMMMM',
-    'T==MMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
+    'T==MMMrrMMMMMMMMMMMMMMMMMMMMMMMM',
+  ],
+  exits: [
+    // The east road on south over the border, into the Iron Fells (#457): walked, and said on crossing.
+    { x: 1, y: 31, to: 'ironfells_m3', tx: 1, ty: 0, tf: SOUTH, label: 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.' },
   ],
   features: [
     // The road over the corner, and the milestone where it leaves for the pass.
-    { kind: 'event', x: 3, y: 30, id: 'm2_milestone', once: true, text: 'A milestone by the road, ANVILHALL 12 on its face. On the back, cut with a knife, the Wardens\' mark and two words: THIS FAR.' },
+    { kind: 'event', x: 3, y: 30, id: 'm2_milestone', once: true, text: 'A milestone by the road, ANVILHALL 8 on its face. On the back, cut with a knife, the Wardens\' mark and two words: THIS FAR.' },
     // The secret: through the tree line beside the stone, the grave.
     { kind: 'event', x: 6, y: 30, id: 'm2_grave', once: true, text: 'A Warden\'s grave under the pines, its mark cut by the same knife as the stone\'s. On it a patrol badge of the Scarth, set square on the stone. Left, not dropped.' },
     { kind: 'chest', x: 7, y: 30, id: 'm2_grave_chest', gold: 250, items: ['potion_heal', 'potion_heal'] },
