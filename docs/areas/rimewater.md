@@ -109,8 +109,13 @@ before #170, docs/areas/saltreach.md §9): the zones with their bands (Loch Fada
 Lodge, its own; the Ice Caves, the reach's, placed and not banded for this act) and its links: the
 drove road down from the Cairnfield, the lodge's way in at 410,262, the pass to Monks' Vale and the
 Ice Caves' way in. The area cannot be listed in AREAS until #486 gives it a map, which points the
-area's `atlas` at the folder. Nothing else: no map, no monster, no room. The systems it waits on are
-#432's (§2). Its monsters are drawn in #495 and its rooms in #496.
+area's `atlas` at the folder. Its row on the curve and its step on the gear ladder are in (#535):
+the row in `src/content/progression.ts`, planned until #486 lists the area (band 20–22, next 22,
+window 4,500), and the step in `src/content/areas/rimewater/items.ts`, made ahead of the area as
+the Kilns' is (docs/areas/kilns.md §3): the furrier's seven (`FURRIER`, for #487) and their plus
+finds by 22 (§4.1), each owed to its shop or box until it is sold or placed. Nothing else: no map,
+no monster, no room. The systems it waits on are the rest of #432's (§2). Its monsters are drawn in
+#495 and its rooms in #496.
 
 ## 4. What is still to build
 
@@ -164,7 +169,7 @@ The places, as the atlas and the docs have them:
 ### 4.1 The briefs
 
 As Saltreach's (docs/areas/saltreach.md §4.1): drafts for the owner, each settled in its issue,
-written before the act's first box is built and before #535 sets the act's ladder. Each is what
+written before the act's first box is built, with the act's ladder as #535 set it. Each is what
 EXPANSION §8.2 asks of one: purpose, band, landmarks, the secret and its hint, the encounters and
 what is new, with points of interest and a first share of the pay.
 
@@ -176,8 +181,10 @@ what is new, with points of interest and a first share of the pay.
 - **Pay.** The area owes 16,267 xp a member; the shares below are the plan's (§8).
 - **Side quests** are #56's 40 to 44, placed as §6 has them (#494).
 - **Finds** are the ladder's next step (#535): the act's second gear step at Rime Lodge's furrier by
-  21, the same with a plus in the boxes by 22, and the bay's named pieces, each placed when its box
-  is built and none dearer than the band's window, 4,500. Their names are #535's.
+  21 (§4.3) and the same with a plus in the boxes by 22: M9's Ice Axe +1, L9's Skinning Knife +1,
+  K9's Bear Spear +1, K10's Guide's Staff +1 and the bay's two, a Hunter's Bow +1 and a Plate Mail
+  +4, each placed when its box is built and none dearer than the band's window, 4,500. A box may
+  give its find a name of its own; the id stays the ladder's.
 - **Lines** are drafts for the builder, two lines of the log each (DESIGN §11).
 
 ### 4.2 M9, Rime Lodge's box (#486): core, band 20–21
@@ -217,7 +224,7 @@ what is new, with points of interest and a first share of the pay.
   - the glacier: *The ice comes down from the rim in a wall. Snow lies on every face of it but one.*
 - **New here.** Ice and lying snow underfoot (#536); a group placed on ice; a call (#537); the cats,
   a new family (#495); the reach seen.
-- **Finds.** A piece of the furrier's step with a plus in the hollow, #535's to name.
+- **Finds.** The lost guide's Ice Axe +1 in the hollow, the ladder's (#535).
 - **Pay.** About 1,500 xp a member, the ice-hole's fight inside it.
 
 ### 4.3 Rime Lodge (#487): town, 16×16, band 20–22
@@ -229,8 +236,9 @@ what is new, with points of interest and a first share of the pay.
   the yard's door onto the ice at the hole; the Lanterns' hall, selling spells to tier 7 for the
   hall's fee (DESIGN §7), teaching the Lanterns' three skills, Linguist among them (#538), and giving
   their quests to a member, the fourth rank's among them (call 8, #439); a temple, cures and
-  raising at the band's price; the furrier, the band's gear, a step past the Kilns' (#535); the
-  provisioner; the trainer's yard, to 23 (DESIGN §5).
+  raising at the band's price; the furrier, the band's gear, a step past the Kilns' (#535: an Ice
+  Axe, a Skinning Knife, a Hunter's Bow, a Bear Spear, a Guide's Staff, a Bearskin Coat and a Fur
+  Robe, 1,600 to 2,500 gold, `FURRIER`); the provisioner; the trainer's yard, to 23 (DESIGN §5).
 - **People.** The lodge-keepers, Lanterns who hold the hole open; the arrivals, a few a night, in
   the yard by the fire; Wenna, after the bay (§5); the coachman of the yard (#539), and the one who
   did not come (#56's 40); the stonecutter of Cairnmoor's 39, come down the drove road; the woman of
@@ -279,7 +287,7 @@ what is new, with points of interest and a first share of the pay.
   - the ridge: *Both lochs from here, white to their far shores. Nothing moves on either.*
 - **New here.** Nothing the road has not had by M9; the first box laid over two zones' land in the
   area (§4).
-- **Finds.** The drove's strongbox: gold, and a piece of the furrier's step with a plus (#535).
+- **Finds.** The drove's strongbox: gold, and a Skinning Knife +1, the ladder's (#535).
 - **Pay.** About 1,300 xp a member.
 
 ### 4.5 K9, Loch Fuar (#489): core, band 21–22
@@ -314,7 +322,8 @@ what is new, with points of interest and a first share of the pay.
     square, going to the bank.*
 - **New here.** The story lock (call 4); a dungeon entered from the ice; a door that is a wall
   with its reason on it.
-- **Finds.** The smith's iron: a piece of the step with a plus and a named blade, #535's to name.
+- **Finds.** The smith's iron: a Bear Spear +1, the ladder's (#535), and a named blade off the
+  ladder, the box's to name.
 - **Pay.** About 1,500 xp a member.
 
 ### 4.6 The Sleepers' Bay (#490): dungeon, two levels of 16×16, band 21–22
@@ -350,8 +359,8 @@ what is new, with points of interest and a first share of the pay.
 - **New here.** The keepers, a new family (#495); machines shaped like people; a touch that puts to
   sleep; a boss that mends; Kiln-script read (#538).
 - **Finds.** The Matron's part, a keepsake, as machines carry parts and no gold; in the locker the
-  act's named pieces, two with a plus (#535) and one of the sleepers' own, a ring, for the owner to
-  name or cut.
+  act's named pieces: the ladder's Hunter's Bow +1 and Plate Mail +4 (#535), each the bay's to name,
+  and one of the sleepers' own, a ring, for the owner to name or cut.
 - **Pay.** About 2,400 xp a member.
 
 ### 4.7 K10, the high pass (#491): core, band 22
@@ -381,7 +390,7 @@ what is new, with points of interest and a first share of the pay.
   - the lamp: *A Lantern's wayside lamp, dark. Its jar is full to the stopper. Nobody ran out of
     oil here.*
 - **New here.** Act IV seen: the pass, and a brother who does not bleed.
-- **Finds.** The lamp's silver: a Lantern's piece with a plus, #535's.
+- **Finds.** The lamp's silver, and the Lantern's staff, a Guide's Staff +1, the ladder's (#535).
 - **Pay.** About 1,100 xp a member.
 
 ### 4.8 L10, L11, M10, M11, N9, J9 and K11, the country behind (#497): country, band 20–22, parked
@@ -525,8 +534,10 @@ a door under the ice, rows of glass beds, a glacier, a pass.
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and
   tier 7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at
   least, in chests, drops and the hall's pay; the furrier's step is priced within the band's window
-  on the curve, 4,500, and no find comes within 400 of it (#535, as #399 held Act II's). The
-  machines carry no gold, only parts (MONSTERS §2), so the bay's gold is its locker's.
+  on the curve, 4,500, and no find comes within 400 of it (#535, as #399 held Act II's): the
+  dearest ware the Bearskin Coat at 2,500, the dearest finds the Hunter's Bow +1 and the Bear Spear
+  +1 at 2,050. The furrier's full set for the premade six comes to about 19,100, its weapons
+  10,900. The machines carry no gold, only parts (MONSTERS §2), so the bay's gold is its locker's.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
@@ -562,6 +573,22 @@ Decided by the owner's delegate on 2 October 2026 (#434), and followed here:
 7. **The cuts stand, and the country behind is parked** (call 10): §11, and #497.
 8. **All of #56's 40 to 44 stand** (call 11), with 43 ended at Loch Fada's edge and 40's coach found
    stopped on Cairnmoor's N8.
+
+Decided by delegate for #535, each the owner's to overturn:
+
+1. **The furrier sells seven, a hunter's and a guide's:** an Ice Axe, a Skinning Knife, a Hunter's
+   Bow, a Bear Spear, a Guide's Staff, a Bearskin Coat (12) and a Fur Robe (11), a point of blow
+   past the Kilns' finds for every class and the medium wearers' and the casters' armour step. No
+   shield: plate's wearers step at 22 instead, with the bay's Plate Mail +4, as the Kilns' doc has
+   it (docs/areas/kilns.md §9, #535's 3).
+2. **The finds by 22 go where the briefs ask a piece of the step:** the lost guide's Ice Axe +1 in
+   M9's hollow, a drover's Skinning Knife +1 in L9's strongbox, the drowned smith's Bear Spear +1 on
+   K9, the Lantern's Guide's Staff +1 under K10's lamp and the bay's two, a Hunter's Bow +1 and a
+   Plate Mail +4. K9's named blade and the sleepers' ring stay off the ladder, their boxes' own.
+3. **A box names its find, and the ladder keeps the id:** the bay's two are "named pieces" and K10's
+   a Lantern's, so their names are their boxes' to give, the ids the ladder's.
+4. **The ladder's top is 22,** Rimewater's finds, so the Whitespine's floor wears the act's last
+   step, and the harness's what-if grows gear past it.
 
 Proposed, for the owner, each in the issue that would build it:
 

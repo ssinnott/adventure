@@ -19,6 +19,9 @@ import { AREA as thornmark } from './areas/thornmark/index.ts';
 import { AREA as saltreach } from './areas/saltreach/index.ts';
 import { AREA as wrackholm } from './areas/wrackholm/index.ts';
 import { AREA as sunderwood } from './areas/sunderwood/index.ts';
+import { ITEMS as KILNS_ITEMS } from './areas/kilns/items.ts';
+import { ITEMS as CAIRNMOOR_ITEMS } from './areas/cairnmoor/items.ts';
+import { ITEMS as RIMEWATER_ITEMS } from './areas/rimewater/items.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -41,6 +44,19 @@ export const AHEAD = [
  * list as `interiors` and its line here goes.
  */
 export const ROOMS_AHEAD = [
+] as const;
+
+/**
+ * Items made ahead of their area, as AHEAD's monsters are: the gear ladder's steps are priced, and
+ * the harness and the gate dress by them, before the towns that sell them and the boxes that hold
+ * them are built (#535). Each area's table is merged into ITEMS as a listed area's is, and no save
+ * can hold one until a listed area sells or places it (tools/shipped.ts records a listed area's);
+ * once the area is listed, its Area takes the table as `items` and its line here goes.
+ */
+export const ITEMS_AHEAD = [
+  { id: 'kilns' as const, items: KILNS_ITEMS },
+  { id: 'cairnmoor' as const, items: CAIRNMOOR_ITEMS },
+  { id: 'rimewater' as const, items: RIMEWATER_ITEMS },
 ] as const;
 
 type AnyArea = (typeof AREAS)[number];
@@ -79,8 +95,8 @@ export const MAP_DEFS: readonly MapDef[] = once('map', AREAS.flatMap((a) => a.ma
 
 export const MONSTERS: Record<string, MonsterDef> = byId('monster', [...AREAS, ...AHEAD].flatMap((a) => a.monsters));
 
-/** The items no area owns first, then each area's. */
-export const ITEMS: Record<string, ItemDef> = byId('item', [...CORE_ITEMS, ...AREAS.flatMap((a) => a.items)]);
+/** The items no area owns first, then each area's, then those made ahead of their area. */
+export const ITEMS: Record<string, ItemDef> = byId('item', [...CORE_ITEMS, ...[...AREAS, ...ITEMS_AHEAD].flatMap((a) => a.items)]);
 
 export const SPELLS: Record<string, SpellDef> = byId('spell', ALL_SPELLS);
 
