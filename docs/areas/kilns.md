@@ -113,6 +113,12 @@ Compact ship, and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's 
 9; #539 builds it). The first box (#457) points the area's `atlas` at the folder and takes the import
 out, and lists the area.
 
+Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
+Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
+with its fare, its days and its hours, the same either way (§4.14, §9). The ferry lands on
+Saltmouth's quay; every other end waits on its town, Kilnhaven's three on #469, and nothing is sold
+toward a town not built, so none runs yet.
+
 The systems it waits on are #432's: the curve's rows for Act III, the gear ladder's next step and
 the Stone's price (#535); ash, ice and pine underfoot (#536: ash on O6, pine on M3 and O3, where
 Sunderwood drew its pine as forest, docs/areas/sunderwood.md §9, #200's 1); Kiln-script and
@@ -555,9 +561,14 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
   at the quay, who sell their passages (#539); the coachman in the yard; Jory Tallis's man, come for
   the crown (#56's 35); a dwarf who says the corridors run south under the world, toward the lakes.
 - **Quests.** The chapter's last step (§5); A Crown to Order's end (§6).
-- **The crossings** (#539): the ferry to Saltmouth and the Compact ship to Cinderport, each a fare
-  and never a favour, both from the start (EXPANSION §2.2); the coach to Rime Lodge, the drove
-  road's, a fare and days (#434's 9). Nothing is sold cheaper to a member of any guild here.
+- **The crossings** (#539): the ferry to Saltmouth, 400 gold and two days, and the Compact ship to
+  Cinderport, 600 and two days, each a fare and never a favour, both from the start (EXPANSION
+  §2.2); the coach to Rime Lodge, the drove road's, 250 and a day (#434's 9). Nothing is sold
+  cheaper to a member of any guild here. The town writes where each puts a company down, the quay
+  for the two boats and the coach yard for the coach, in `content/crossings.ts`, and sells each by
+  a person whose `passage` is `sells('kilnhaven', ...)`: the ferryman, the shipmaster and the
+  coachman. The ship and the coach are sold only once Cinderport and Rime Lodge are built, and the
+  ferry's other seller stands on Saltmouth's quay (§9).
 - **Lines:**
   - the gate: *Kilnhaven: ore on the quay, iron in the air, and the sea. Three ways out, and all
     of them cost.*
@@ -779,6 +790,31 @@ Proposed, for the owner, each in the issue that would build it:
 - **The heart's zone keeps the area's name on the atlas** ("The Kilns", `kilnsheart`): a name of
   its own is the owner's to give with #435 (§10), since the crossing line into it says the area's
   name twice.
+
+Decided by delegate for #539, each the owner's to overturn:
+
+1. **A crossing is written once, both ends together,** in `content/crossings.ts`, as
+   `content/stones.ts` lists the Stones: one fare, length and timetable either way, and each end's
+   landing once its town is built. A town sells one by a person whose `passage` is `sells(...)`.
+2. **Nothing is sold toward a town not built:** an end with no landing names the issue that writes
+   it (#469 for Kilnhaven's three, #487 for Rime Lodge and #512 for Cinderport), and a seller whose
+   crossings all wait only talks. So none runs yet; the ferry runs first, once #469 writes the quay.
+3. **Once both ends land, both sell it** (a crossing that runs one way is not honest, #177's 1), or
+   the check fails: #469 puts the ferry's seller on Saltmouth's quay, as #177 gave E6's captain the
+   way back. Saltmouth's landing is written now: 13,10 on the quay, facing west, where Kitto's lands.
+4. **A fare is 12.5 gold a level of the dearer end's floor for each day,** as Kitto's boat is 150
+   for a night to Wrackholm's 12: the ferry 400, the Compact ship 600 (Cinderport's 24) and the coach
+   250 (Rime Lodge's 20). The check holds the rule.
+5. **The days are the way's length at Kitto's pace,** some five squares an hour, and at least one:
+   two for the ferry's 290 squares of sea and the ship's 230, one for the coach's 140 of road. The
+   ferry sails at 8 and the ship at 20, as his does, each landing at 16; the coach runs 6 to 12.
+6. **A seller may halve a fare for his own guild at his own end,** and Kilnhaven halves none
+   (§4.14). Whether Cinderport halves the ship for the Compact, as docs/areas/ashfall.md §4 has it,
+   is #547's to settle with #512.
+7. **The atlas's link, sold both ways, is drawn as that way built,** on its course and under its
+   name, and not again as planned.
+8. **The gate needs nothing new:** #164's `landings` makes a town a crossing lands in a way into the
+   zones its ways out open on, so each town is held to it from the day a crossing to it runs.
 
 ## 10. Names
 
