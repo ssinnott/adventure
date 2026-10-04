@@ -4,6 +4,7 @@ import type { Area } from '../../area.ts';
 import { IRONFELLS_M3 } from './maps/ironfells_m3.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
+import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -19,7 +20,7 @@ export const AREA = {
   // forges' smoke in the haze.
   climate: { summer: 21, winter: -3, daily: 7, damp: [0, 0.05], wettest: 80, fog: 0.3, lag: 10,
     fogText: 'A haze comes down off the Fells, and it smells of smoke.', thunderText: 'Thunder rolls along the Fells.' },
-  interiors: [] as const,
+  interiors: INTERIORS,
   novel: { families: [], terrain: ['pine'], mechanics: [], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

@@ -839,7 +839,7 @@ cargo down the Deep Mines.
 | Anvil Guard | bandit, a dwarf on the figure frame | armoured, 17 | the Anvil Stone, if the company takes the Stone rather than buys it | *Short, broad, and in the thane's iron.* There only after the choice (`after`) |
 | Slag Elder | riftling | elite, 18 | the Anvil Stone's Rift | *Iron runs off it like sweat.* Paralyses (0.15). Cold bites; fire does half |
 | The Foreman | knockers, new | boss, 18 | the Deep Mines, before the door marked CREW ONLY | *It checks you the way a clerk checks a list, and finds nobody on it.* The door stays shut when it falls |
-| Great Salamander | salamanders, new | boss, 18 | the lava tubes' deepest chamber | *The fire in the rock, with a head.* |
+| Great Salamander | salamanders, new | boss, 18 | the lava tubes' deepest chamber | *The fire in the rock, with a head.* Size 1.6; fire does not touch it, and cold bites, as its kin's |
 | Warden of the Anvil | riftling | boss, 18 | the Anvil Stone | *The Stone's heat, standing up out of the cut.* The tear closes when it falls; cold bites it, and fire does half |
 
 - **The clean corridor**: six knockers and a mender. Kill the mender, or fight the rest twice; and
@@ -851,6 +851,13 @@ Drawn (#472), on the knockers' frame (`src/ui/monsters/knockers.ts`): smooth gre
 of legs, one lamp in the cowl's face and the chisel's mark cut on a plate, a lozenge on a stem. The
 Mender carries a spool of wire and a needle and mends one turn in two; the Foreman rears up over a
 slate (docs/areas/kilns.md §9). The Tiefzeche places them (#462).
+
+Drawn (#472), on the salamanders' frame (`src/ui/monsters/salamanders.ts`): a lizard coming at the
+company three-quarter on, legs sprawled and the tail curled, with the fire showing through its skin
+in blotches as a fire salamander wears its yellow; embers rise off its back. The Great Salamander is
+its kin gone to a crust of rock with the fire in every seam, horned, its head thrown back on a jaw
+open on the fire (docs/areas/kilns.md §9). The spoil heaps and the tubes place them (#458, #463,
+#466).
 
 The six on frames that exist are drawn as well (#472): the Fire Beetle, a beetle's own body on the
 spider frame with the coal set in its back; the Slagling and the Slag Elder, the riftling broken
@@ -919,6 +926,18 @@ tallyman among them; the long bodies as the ice pike; the bears as the ice bear.
 - **The ice-hole**: a tallyman and six knockers up through the hole on the lodge's fourth night,
   with the lodge's fire at the company's back.
 - **The bay**: three keepers among the beds, where anyone who falls asleep is a sleeper to them.
+
+Drawn (#495), on the keepers' frame (`src/ui/monsters/keepers.ts`): a figure too tall and too thin,
+in the knockers' grey plate on their ball joints, a waist of rings, an egg of a head with two soft
+lights and no mouth, and the chisel's mark on its chest; six long fingers to a hand, lit at the
+tips, and the keeper mends one turn in four. The Matron is the tallest, stooped, in a starched cap
+and an apron of plate, a second pair of arms folded over it and eight fingers to a hand; a robe
+goes where her apron does. On the cats' frame (`src/ui/monsters/cats.ts`), posed from a table, the
+lynx at the top of its leap, tufted and ruffed. On the frames that exist: the Ice Pike up through a
+hole it broke in the ice, its body dark under it; the Tallyman, a knocker scratched over with
+tallies, six lights on its cowl coming on one a click, frosted from the hole and calling three
+knockers; the Ice Bear, long in the neck and white (docs/areas/rimewater.md §9). The boxes and the
+bay place them (#486, #487, #490).
 
 **Asks:** calls; a group placed on ice.
 

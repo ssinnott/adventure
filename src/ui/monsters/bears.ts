@@ -12,15 +12,20 @@
 // The Pine Bear: a bear, and then the rest of the bear. Brown, grizzled over the hump. Idle: the
 // barrel breathes, the head swings low and the nose works, and now and then the bear rocks back
 // on its haunches and lifts its forepaws off the ground.
+//
+// The Ice Bear: white, and bigger than the last one. Long in the neck and low in the hump, the head
+// smaller on it and the muzzle longer, the ears small, the coat a yellowed white with no grizzle and
+// the claws black. Idle: it carries the head low and swings it, and now and then lifts it high on
+// the neck, nose up, to take the wind.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, glossBall, glow, patch, softLine } from './gloss.ts';
 import type { Part } from './gloss.ts';
-import { mix, rgba, shade } from '../../lib/art/palettes.ts';
+import { hexToRgb, mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['pine_bear', 'glass_bear'];
+export const KINDS: readonly MonsterSprite[] = ['pine_bear', 'glass_bear', 'ice_bear'];
 
 /**
  * The frame's parts, as proportions of the pine bear's (1 = the pine bear, 0 = none), each named
@@ -50,18 +55,26 @@ interface Build {
   frost: number;
   /** The glass's colour. */
   frostColour: string;
-  /** Whether it rocks back off its forepaws now and then: the pine bear does; the glass bear, stiff with glass, shakes its shoulders instead. */
-  rears: boolean;
+  /** How long the neck is, carrying the head out and down: the ice bear's. */
+  neck: number;
+  /** The claws' colour: pale on the brown bears, black on the white one. */
+  clawHex: string;
+  /**
+   * What it does now and then: the pine bear rocks back off its forepaws; the glass bear, stiff with
+   * glass, shakes its shoulders; the ice bear lifts its head on its neck to take the wind.
+   */
+  idle: 'rear' | 'shake' | 'scent';
 }
-const PINE: Build = { bulk: 1, hump: 1, head: 1, snout: 1, shag: 1, claws: 1, grizzle: 0.42, muzzle: '#c8a478', frost: 0, frostColour: '#d8eaf4', ears: 1, rears: true };
+const PINE: Build = { bulk: 1, hump: 1, head: 1, snout: 1, shag: 1, claws: 1, grizzle: 0.42, muzzle: '#c8a478', frost: 0, frostColour: '#d8eaf4', ears: 1, neck: 1, clawHex: '#d8ccb4', idle: 'rear' };
 /**
  * The Glass Bear: the pine bear gone dull and ash-grey on the Sunder's floor, the coat stiff with
  * glass grown through it like hoarfrost, heaviest over the hump and the shoulders.
  */
-const GLASS: Build = { bulk: 1.05, hump: 1.1, head: 0.95, snout: 1, ears: 0.9, shag: 0.6, claws: 1.1, grizzle: 0.12, muzzle: '#9a9288', frost: 1, frostColour: '#e6f0f6', rears: false };
+const GLASS: Build = { bulk: 1.05, hump: 1.1, head: 0.95, snout: 1, ears: 0.9, shag: 0.6, claws: 1.1, grizzle: 0.12, muzzle: '#9a9288', frost: 1, frostColour: '#e6f0f6', neck: 1, clawHex: '#d8ccb4', idle: 'shake' };
+const ICE: Build = { bulk: 1.1, hump: 0.3, head: 0.82, snout: 1.4, ears: 0.6, shag: 0.7, claws: 1.15, grizzle: 0, muzzle: '#d6cebc', frost: 0, frostColour: '#d8eaf4', neck: 1.45, clawHex: '#2e2824', idle: 'scent' };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  bear(ctx, x, y, h, p, kind === 'glass_bear' ? GLASS : PINE);
+  bear(ctx, x, y, h, p, kind === 'glass_bear' ? GLASS : kind === 'ice_bear' ? ICE : PINE);
 };
 
 /** A ring of n points round (cx, cy), the raw contour a 'curve' part lumps further. */
@@ -87,11 +100,12 @@ function rearAt(frame: number): number {
 }
 
 function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p: Paint, b: Build): void {
-  const t = p.frame, br = p.breathe * h * (b.rears ? 0.006 : 0.004), tone = p.tone;
+  const t = p.frame, br = p.breathe * h * (b.idle === 'rear' ? 0.006 : 0.004), tone = p.tone;
   // A bear that does not rear shakes its shoulders instead, a shudder that dies away.
-  const sk = t % 200, shake = !b.rears && sk < 18 ? Math.sin(sk * 1.7) * 0.006 * (1 - sk / 18) : 0;
-  // The head reaches out to the right; shift the mass left so the whole bear is centred on x0.
-  const x = x0 - h * 0.06 + shake * h;
+  const sk = t % 200, shake = b.idle === 'shake' && sk < 18 ? Math.sin(sk * 1.7) * 0.006 * (1 - sk / 18) : 0;
+  // The head reaches out to the right, the further for a longer neck; shift the mass left so the
+  // whole bear is centred on x0.
+  const nk = b.neck - 1, x = x0 - h * (0.06 + 0.08 * nk) + shake * h;
   // Seen three-quarter on, the body runs back from the company: its length is foreshortened.
   const X = (u: number): number => x + u * h * 0.8;
   const U = (u: number): number => y - u * h;
@@ -99,11 +113,11 @@ function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   const tips = mix(hide, shade('#e6d6b4', tone), 0.6);
   const snoutCol = mix(hide, shade(b.muzzle, tone), 0.7);
   const ink = shade('#16100c', Math.max(0.6, tone));
-  const claw = shade('#d8ccb4', Math.max(0.6, tone));
+  const claw = shade(b.clawHex, Math.max(0.6, tone));
 
   // The rear: the forequarters lift about the hind feet. `lift` raises a point by how far forward
-  // it is, so the hind feet stay put and the head goes up most.
-  const r = b.rears ? rearAt(t) : 0, pitch = r * 0.3;
+  // it is, so the hind feet stay put and the head goes up most. The ice bear lifts its head alone.
+  const r = b.idle === 'rear' ? rearAt(t) : 0, pitch = r * 0.3, scent = b.idle === 'scent' ? rearAt(t) : 0;
   const L = (u: number, v: number): [number, number] => {
     const du = u + 0.5, a = pitch;                  // pivot at the hind feet
     if (a <= 0) return [X(u), U(v)];
@@ -143,8 +157,9 @@ function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
     // The near legs: a pillar at the shoulder, a heavy thigh behind.
     { k: 'tube', pts: pt([0.26, 0.6, 0.27, 0.34, 0.27, 0.09]), r0: h * 0.11, r1: h * 0.08 },
     { k: 'tube', pts: pt([-0.48, 0.6, -0.44, 0.36, -0.46, 0.09]), r0: h * 0.13, r1: h * 0.08 },
-    // The neck, as thick as the head, low off the shoulders.
-    { k: 'tube', pts: pt([0.24, 0.74, 0.4, 0.7, 0.5, 0.64]), r0: h * 0.17, r1: h * 0.13 * head },
+    // The neck, as thick as the head, low off the shoulders; a long one reaches out and down, and
+    // comes up as the head lifts to the wind.
+    { k: 'tube', pts: pt([0.24, 0.74, 0.4 + 0.12 * nk, 0.7 - 0.03 * nk + 0.07 * scent, 0.5 + 0.2 * nk - 0.04 * scent, 0.64 - 0.06 * nk + 0.14 * scent]), r0: h * 0.17, r1: h * 0.13 * head },
   ];
   // The fringe: long hair hanging behind each foreleg and under the barrel.
   if (b.shag > 0) {
@@ -178,9 +193,12 @@ function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   if (b.frost > 0) frost(ctx, L, h, hm, b, t, shake !== 0);
 
   // --- the head: broad, turned to the company, carried low ----------------------------------------
-  const hc = L(0.6 + sway, 0.6 + sway * 0.5);
+  const hu = 0.6 + 0.2 * nk - 0.04 * scent + sway, hv = 0.6 - 0.06 * nk + 0.14 * scent + sway * 0.5;
+  const hc = L(hu, hv);
   const hr = h * 0.17 * head;
-  const mz = L(0.6 + sway + 0.17 * sn, 0.53 + sway * 0.5 + sniff);
+  // The muzzle off it, turned up as the nose takes the wind.
+  const up = 0.55 * scent, mdx = 0.17 * sn, mdy = -0.07 + sniff;
+  const mz = L(hu + mdx * Math.cos(up) - mdy * Math.sin(up), hv + mdx * Math.sin(up) + mdy * Math.cos(up));
   const tilt = -pitch * 0.6;
   // The ears, round and furred, set wide on the crown: drawn first so the skull covers their roots.
   blob(ctx, B, shade(hide, 0.9), [
@@ -207,7 +225,9 @@ function bear(ctx: CanvasRenderingContext2D, x0: number, y: number, h: number, p
   }
   // The paler muzzle, and the brow's shadow over the eyes.
   patch(ctx, B, snoutCol, [{ k: 'cap', x0: hc[0] + hr * 0.35, y0: hc[1] + hr * 0.25, x1: mz[0], y1: mz[1], r0: hr * 0.5, r1: hr * 0.4 }], { alpha: 0.75, feather: 0.55 });
-  patch(ctx, B, ink, [{ k: 'ell', x: hc[0] + hr * 0.1, y: hc[1] - hr * 0.1, rx: hr * 0.7, ry: hr * 0.18, rot: tilt }], { alpha: 0.18, feather: 0.8 });
+  // On a white face the brow's shadow would read as a mask: it lightens with the hide.
+  const [hr8, hg8, hb8] = hexToRgb(hide), light = (0.299 * hr8 + 0.587 * hg8 + 0.114 * hb8) / 255;
+  patch(ctx, B, ink, [{ k: 'ell', x: hc[0] + hr * 0.1, y: hc[1] - hr * 0.1, rx: hr * 0.7, ry: hr * 0.18, rot: tilt }], { alpha: 0.18 * Math.min(1, (1 - light) / 0.65), feather: 0.8 });
   // The nose: black, wet, broad at the end of the muzzle; the mouth a line back under it.
   glossBall(ctx, B, mz[0] + hr * 0.18, mz[1] - hr * 0.06, hr * 0.24, ink, { gloss: 0.6 });
   if (!B.override) {

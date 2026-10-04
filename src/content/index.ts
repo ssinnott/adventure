@@ -20,8 +20,10 @@ import { AREA as saltreach } from './areas/saltreach/index.ts';
 import { AREA as wrackholm } from './areas/wrackholm/index.ts';
 import { AREA as sunderwood } from './areas/sunderwood/index.ts';
 import { AREA as kilns } from './areas/kilns/index.ts';
+import * as rimewater from './areas/rimewater/monsters.ts';
 import { ITEMS as CAIRNMOOR_ITEMS } from './areas/cairnmoor/items.ts';
 import { ITEMS as RIMEWATER_ITEMS } from './areas/rimewater/items.ts';
+import * as rimewaterRooms from './areas/rimewater/interiors.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -35,6 +37,7 @@ export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns]
  * an area's are; once the area is listed, its Area takes the import and its line here goes.
  */
 export const AHEAD = [
+  { id: 'rimewater' as const, sprites: rimewater.SPRITES, monsters: rimewater.MONSTERS },
 ] as const;
 
 /**
@@ -44,6 +47,7 @@ export const AHEAD = [
  * list as `interiors` and its line here goes.
  */
 export const ROOMS_AHEAD = [
+  { id: 'rimewater' as const, interiors: rimewaterRooms.INTERIORS },
 ] as const;
 
 /**
