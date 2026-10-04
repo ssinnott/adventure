@@ -327,7 +327,9 @@ carry parts, which is one place the Ember Stone's can come from (DESIGN.md §9).
 **Size.** Today it runs from 0.3, the carrion crow, to 2, the Eldest. A lone monster stands
 34 + 92 × size pixels (`combatHeight`) in a view 268 high: the ogre 149, a size of 2 about 218,
 four-fifths of the view, and 2.5 fills it. A pair stands as tall as one. That is room for the bigger
-monsters of DESIGN.md §6: the heartwood, the giants, the drakes, the crawlers below. A monster over
+monsters of DESIGN.md §6: the heartwood, the giants, the drakes, the crawlers below. A row too wide
+for the view at those heights stands closer, then smaller as a whole, so every drawing stays whole
+inside it (`ui/row.ts`, §3). A monster over
 1.5 is a tall boss (`TALL` in `src/ui/grouplabels.ts`): in a fight it stands on the third rank, its
 roots sunk into the ground, and its markers sit over its crown, so it keeps its size under the
 labels.

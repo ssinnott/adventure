@@ -11,6 +11,7 @@ import { changedFiles, changedMaps } from './changed.ts';
 import { GROUND_SAMPLES } from './grounds.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
 import type { MonsterSprite } from '../src/content/index.ts';
+import { SPAN, SPAN_SLACK } from '../src/ui/sprites.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(import.meta.url);
@@ -1055,7 +1056,15 @@ const hillSpill: string[] = await page.evaluate(async () => {
 // Each is drawn where a fight seats a first group, its foot as far below the view's top as there
 // (`seatFoot`: a tall boss on the third rank), on a canvas three heights wide, a height or the seat more above the view's top
 // (whichever is more) and 0.3 under the foot: ink above the view's top reaches over the frame, and ink on a border runs off the canvas.
-interface Silhouette { id: string; sprite: string; pieces: number; share: number; at: string; clipped: '' | 'top' | 'edge'; room: number; reach: number; size: number }
+// Each is held to its span too (SPAN in ui/sprites.ts), which the fight's row is spaced by: alone, three,
+// six and twelve abreast, its ink reaches no more than SPAN_SLACK px past it either side, and its span is
+// no more than SPAN_LOOSE of its height wider than the most it reaches alone, three or six abreast.
+interface Silhouette {
+  id: string; sprite: string; pieces: number; share: number; at: string; clipped: '' | 'top' | 'edge'; room: number; reach: number; size: number;
+  /** The most it reaches left and right of its centre, as shares of its height, alone, three and six abreast; the least span that holds it at every size; and its px past its span. */
+  wide: [number, number]; need: [number, number]; past: number;
+}
+const SPAN_LOOSE = 0.05;
 const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: Silhouette[]; seat: number; tall: { size: number; reach: number } } = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const S = await load('/src/ui/sprites.ts'), C = await load('/src/content/index.ts');
@@ -1066,9 +1075,12 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
   type Draw = (ctx: CanvasRenderingContext2D, x: number, y: number, h: number, frame: number) => void;
   const scan = (def: any, draw: Draw): Silhouette => {
-    const foot = seatOf(def), worst: Silhouette = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: '', room: foot, reach: 0, size: def.size };
-    for (const n of [1, 3, 6]) {
-      const h = S.combatHeight(def.size, n), pad = padOf(h, foot), cw = Math.ceil(h * 3), ch = pad + foot + Math.ceil(h * 0.3);
+    const foot = seatOf(def), span: [number, number] = S.SPAN[def.sprite];
+    const worst: Silhouette = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: '', room: foot, reach: 0, size: def.size, wide: [0, 0], need: [0, 0], past: 0 };
+    // Twelve abreast is for the span alone: so small a drawing is not held to one piece.
+    for (const n of [1, 3, 6, 12]) {
+      const spanOnly = n === 12;
+      const h = S.combatHeight(def.size, n), pad = padOf(h, foot), cw = Math.ceil(h * 3) + (spanOnly ? 8 : 0), ch = pad + foot + Math.ceil(h * 0.3);
       c.width = cw; c.height = ch;
       const seen = new Int32Array(cw * ch), stack = new Int32Array(cw * ch);
       for (let frame = 0; frame <= 176; frame += 4) {
@@ -1077,6 +1089,7 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
         const d = ctx.getImageData(0, 0, cw, ch).data;
         seen.fill(0);
         const sizes: number[] = [];
+        let minX = cw, maxX = -1;
         for (let i = 0; i < cw * ch; i++) {
           if (seen[i] || d[i * 4 + 3] < 128) continue;
           let top = 0, size = 0;
@@ -1084,10 +1097,14 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
           while (top) {
             const p = stack[--top], px = p % cw, py = (p - px) / cw;
             size++;
-            if (py - pad < worst.room) worst.room = py - pad;
-            if ((pad + foot - py) / h > worst.reach) worst.reach = (pad + foot - py) / h;
-            if (px === 0 || py === 0 || px === cw - 1 || py === ch - 1) worst.clipped = 'edge';
-            else if (py < pad && worst.clipped !== 'edge') worst.clipped = 'top';
+            if (px < minX) minX = px;
+            if (px > maxX) maxX = px;
+            if (!spanOnly) {
+              if (py - pad < worst.room) worst.room = py - pad;
+              if ((pad + foot - py) / h > worst.reach) worst.reach = (pad + foot - py) / h;
+              if (px === 0 || py === 0 || px === cw - 1 || py === ch - 1) worst.clipped = 'edge';
+              else if (py < pad && worst.clipped !== 'edge') worst.clipped = 'top';
+            }
             for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
               const qx = px + dx, qy = py + dy, q = qy * cw + qx;
               if (qx < 0 || qy < 0 || qx >= cw || qy >= ch || seen[q] || d[q * 4 + 3] < 128) continue;
@@ -1096,6 +1113,13 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
           }
           if (size >= 6) sizes.push(size);
         }
+        // How far its ink reaches either side of its centre, against its span.
+        if (maxX >= 0) [cw / 2 - minX, maxX + 1 - cw / 2].forEach((px, k) => {
+          if (!spanOnly) worst.wide[k] = Math.max(worst.wide[k], px / h);
+          worst.need[k] = Math.max(worst.need[k], (px - S.SPAN_SLACK) / h);
+          worst.past = Math.max(worst.past, px - span[k] * h);
+        });
+        if (spanOnly) continue;
         sizes.sort((a, b) => b - a);
         const ink = sizes.reduce((a, b) => a + b, 0), apart = ink - (sizes[0] ?? 0);
         if (sizes.length - 1 > worst.pieces) { worst.pieces = sizes.length - 1; worst.at = `${n} abreast, frame ${frame}: ${sizes.slice(1).join('+')} px apart of ${ink}`; }
@@ -1131,6 +1155,10 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
 });
 const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
 const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
+// A drawing held to its span, and the span a builder should write where it is not: the least that holds
+// it at every size, and no less than the most it reaches alone, three or six abreast.
+const spanFor = (s: Silhouette): number[] => [0, 1].map((k) => Math.ceil(Math.max(s.wide[k], s.need[k]) * 100 - 1e-6) / 100);
+const misspanned = silhouettes.filter((s) => s.past > SPAN_SLACK || [0, 1].some((k) => SPAN[s.sprite as MonsterSprite][k] - s.wide[k] > SPAN_LOOSE));
 
 // The Hearth's measure (#168): at midnight under a clear sky, looking south from the Foreland by
 // Helmstow, the Hearth stands over the hills where it lies, and brighter once the Tide Stone is home;
@@ -1347,6 +1375,7 @@ ok(cracks.bad.length === 0, `the walls meet without a crack, and the walls besid
 ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped === 'top' ? 'reaches above the view' : s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
 const closest = silhouettes.reduce((a, b) => (b.room < a.room ? b : a));
 ok(closest.room >= 0, `every monster stands inside the view, its foot where a fight seats it, a first group's ${seat} px below the top (the closest, ${closest.id}, ${closest.room} px under the top)`);
+ok(misspanned.length === 0, `every monster's drawing stands within its span, which the fight's row is spaced by, give or take ${SPAN_SLACK} px alone, three, six and twelve abreast, and no span is more than ${SPAN_LOOSE} of a height wider than the drawing${misspanned.map((s) => ` -> ${s.id} reaches ${s.wide.map((w) => w.toFixed(2)).join(' and ')} of its height${s.past > SPAN_SLACK ? `, ${s.past.toFixed(1)} px past its span` : ''}: SPAN ${s.sprite}: [${spanFor(s).join(', ')}]`).join('')}`);
 // A tall boss's markers are painted over its crown at TALL_REACH of its height (ui/grouplabels.ts),
 // which tools/tests/labels.ts trusts: its ink must stand no higher.
 const towering = silhouettes.filter((s) => s.size > tall.size), over = towering.filter((s) => s.reach > tall.reach);
