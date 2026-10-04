@@ -28,6 +28,12 @@ const SUNDER_AT = [328, 62] as const;
 const SALT_AT = [72, 158] as const;
 /** F6, Wrackholm's moor, with its heather. */
 const MOOR_AT = [168, 158] as const;
+/** O6, the Kilns' heart under the vent ridge, with its ash. */
+const ASH_AT = [456, 158] as const;
+/** M3, the Iron Fells' way in, with its pines. */
+const PINE_AT = [392, 62] as const;
+/** N10, Glacier Foot under the glacier, with the atlas's ice: the lochs are water on it, and a box draws them frozen. */
+const ICE_AT = [424, 286] as const;
 
 /** The draft as the tool writes it: its module, written out and imported back, by export name. */
 async function exported(d: Draft, zone: string, x: number, y: number): Promise<Record<string, MapDef>> {
@@ -162,8 +168,12 @@ export async function scaffold(): Promise<void> {
   ok(filled === (sdr.counts.chasm ?? 0) + (sdr.counts.crystal ?? 0), `and with them written as rock it does not (${filled} squares differ)`);
 
   // The Saltings and Wrackholm: salt, tidal ground and heather, which no map character was until
-  // #162, cut and laid back; written as sand, shallows and grass, they are not the atlas.
-  for (const [zoneId, [bx, by], kinds, plain] of [['saltings', SALT_AT, ['salt', 'tidal'], { '-': '_', ';': '~' }], ['wrackholm', MOOR_AT, ['heather'], { h: ',' }]] as const) {
+  // #162, cut and laid back; written as sand, shallows and grass, they are not the atlas. The same
+  // for the Kilns' ash and pine and Glacier Foot's ice (#536), written as dirt, forest and shallows.
+  for (const [zoneId, [bx, by], kinds, plain] of [
+    ['saltings', SALT_AT, ['salt', 'tidal'], { '-': '_', ';': '~' }], ['wrackholm', MOOR_AT, ['heather'], { h: ',' }],
+    ['kilnsheart', ASH_AT, ['ash'], { a: ':' }], ['ironfells', PINE_AT, ['pine'], { p: 'T' }], ['glacierfoot', ICE_AT, ['ice'], { i: '~' }],
+  ] as const) {
     const world = unbuilt(bx, by), gr = baseline(world.atlas, world.defs);
     const dr = cut(world.atlas, world.defs, gr, REGIONS, zoneId, bx, by);
     const has = 'refused' in dr ? '' : kinds.map((k) => `${k} ${dr.counts[k] ?? 0}`).join(', ');

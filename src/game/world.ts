@@ -4,7 +4,7 @@
 // the party's zone, not its map, says where it is, what the weather does and what the log calls
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
 import type { RngInstance } from '../lib/engine/rng.ts';
-import { GameMap, HILL_DRAG } from './map.ts';
+import { GameMap, DRAG } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
@@ -381,11 +381,11 @@ export class World {
     }
     this.state.x = nx; this.state.y = ny;
     this.state.steps++;
-    // Six minutes a step in the open, more onto hills and more through deep snow, the two adding up;
-    // two in the streets and underground.
-    const hills = this.map.at(nx, ny).terrain === 'hills' ? HILL_DRAG : 0;
+    // Six minutes a step in the open, more onto hills or ash and more through deep snow, the two
+    // adding up; two in the streets and underground.
+    const drag = DRAG[this.map.at(nx, ny).terrain] ?? 0;
     const tide = this.tide;
-    this.advance(this.map.kind === 'outdoor' ? 6 + hills + snowDrag(this.weather) : 2);
+    this.advance(this.map.kind === 'outdoor' ? 6 + drag + snowDrag(this.weather) : 2);
     // The tide turning is said where the party can see the ground it covers.
     if (this.tide !== tide && this.tidalNear()) messages.push(TIDE_TEXT[this.tide]);
     if (this.state.light > 0) this.state.light--;
@@ -583,8 +583,12 @@ export class World {
     return this.liveGroups().find((g) => g.state.x === x && g.state.y === y);
   }
 
-  /** Where a group may step: where the party could with no key, swimmer or mountaineer, and no group stands. */
-  private monsterPassable(x: number, y: number): boolean {
+  /**
+   * Where a group may step: where the party could with no key, swimmer or mountaineer, and no group
+   * stands; a group under the ice, only under the ice.
+   */
+  private monsterPassable(x: number, y: number, g?: LiveGroup): boolean {
+    if (g?.def.under === 'ice' && this.map.at(x, y).terrain !== 'ice') return false;
     return this.map.passable(x, y, { tide: this.tide }) === 'ok' && !this.groupAt(x, y);
   }
 
@@ -603,26 +607,31 @@ export class World {
         : [[0, Math.sign(dy)], [Math.sign(dx), 0]];
       for (const [sx, sy] of tries) {
         if (sx === 0 && sy === 0) continue;
-        if (this.monsterPassable(g.state.x + sx, g.state.y + sy)) { g.state.x += sx; g.state.y += sy; break; }
+        if (this.monsterPassable(g.state.x + sx, g.state.y + sy, g)) { g.state.x += sx; g.state.y += sy; break; }
       }
     }
   }
 
-  /** Group ids within one cell of the party, up to 3 groups and 12 monsters. */
+  /**
+   * Group ids within one cell of the party, up to 3 groups and 12 monsters; a group under the ice
+   * only where the party stands on the ice.
+   */
   adjacentGroups(): string[] {
     const ids: string[] = [];
     let n = 0;
+    const onIce = this.map.at(this.state.x, this.state.y).terrain === 'ice';
     for (const g of this.liveGroups()) {
       if (this.state.truceGroups.includes(g.def.id)) continue;
       if (manhattan(g.state.x, g.state.y, this.state.x, this.state.y) > 1) continue;
+      if (g.def.under === 'ice' && !onIce) continue;
       if (ids.length >= 3 || n + g.def.monsters.length > 12) break;
       ids.push(g.def.id); n += g.def.monsters.length;
     }
     return ids;
   }
 
-  groupDefs(ids: string[]): { id: string; monsters: string[]; back?: number; leader?: string }[] {
-    return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters, back: e.back, leader: e.leader }; });
+  groupDefs(ids: string[]): { id: string; monsters: string[]; back?: number; leader?: string; under?: 'ice' }[] {
+    return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters, back: e.back, leader: e.leader, under: e.under }; });
   }
 
   /** Mark the groups dead; returns what the log says about it (each group's `slainText`). */

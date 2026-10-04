@@ -21,13 +21,18 @@ export type MapKind = 'town' | 'dungeon' | 'outdoor';
  * The chasm is the Sunder's drop: seen across, never walked, and no wall.
  * Salt is the pans' white crust, walked as sand is; heather is moor, walked as grass is.
  * Tidal ground is the shore the sea leaves twice a day: sand at low water, water at high (`tideAt`).
+ * Ash is the vents' fall, deep and loose, walked as slowly as hills; pine is the pinewoods, walked
+ * through among the pines as the woods are; ice is a frozen lake, walked, with what lives under it.
  */
 export type Terrain =
   | 'floor' | 'grass' | 'dirt' | 'road' | 'sand' | 'water' | 'deep' | 'swamp' | 'lava' | 'stone' | 'snow'
-  | 'hills' | 'farm' | 'woods' | 'deadwood' | 'crystal' | 'chasm' | 'salt' | 'heather' | 'tidal';
+  | 'hills' | 'farm' | 'woods' | 'deadwood' | 'crystal' | 'chasm' | 'salt' | 'heather' | 'tidal'
+  | 'ash' | 'pine' | 'ice';
 
 /** Minutes a step onto hills costs over the usual six in the open. */
 export const HILL_DRAG = 2;
+/** Minutes a step onto slow ground costs over the usual six in the open: hills, and ash as much. */
+export const DRAG: Partial<Record<Terrain, number>> = { hills: HILL_DRAG, ash: HILL_DRAG };
 
 /**
  * What stands in a cell. `wall` blocks movement and sight; billboards block movement, not sight;
@@ -277,6 +282,11 @@ export interface EncounterDef extends Presence {
   respawn?: number;
   /** Said in the log when the party beats the group: what its death changes. */
   slainText?: string;
+  /**
+   * Placed on ice, it lives under it (the pike): it moves only under the ice, strikes only a company
+   * standing on the ice beside it and in the fight reaches only the front row over it.
+   */
+  under?: 'ice';
 }
 
 /**
@@ -399,6 +409,9 @@ export const LEGEND: Record<string, Cell> = {
   '-': cell('salt'),
   'h': cell('heather'),
   ';': cell('tidal'),
+  'a': cell('ash'),
+  'p': cell('pine'),
+  'i': cell('ice'),
   'T': cell('grass', 'tree'),
   'r': cell('dirt', 'rock'),
   'M': cell('stone', 'mountain'),

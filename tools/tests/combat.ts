@@ -132,6 +132,25 @@ export function combat(): void {
   const noted = startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4), { rangedPenalty: RANGED_PENALTY, note: 'The downpour spoils every archer\'s aim.' });
   ok(noted.rangedPenalty === RANGED_PENALTY && noted.log[1] === 'The downpour spoils every archer\'s aim.', 'a fight in the weather carries the penalty and says why');
   ok(startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4)).rangedPenalty === 0, 'and a fight with no word of the weather has none');
+  // A group fought from under the ice (#536) reaches one square: the front row over it and never the
+  // back, bows or none; with the front row down, nobody. Bowmen on dry ground reach anyone.
+  {
+    const struck = (under: 'ice' | undefined, frontDown: boolean): { back: number; all: number } => {
+      let back = 0, all = 0;
+      for (let seed = 1; seed <= 20; seed++) {
+        const r = makeRng(seed), pp = defaultParty(r), rear = pp.members.slice(3).map((c) => ` ${c.name}`);
+        for (const c of pp.members) c.hp = c.maxHp = 999;
+        if (frontDown) for (const c of pp.members.slice(0, 3)) addCondition(c, 'unconscious');
+        const s = startCombat(pp, [{ id: 'pike', monsters: new Array(6).fill('smuggler_bowman'), under }], r);
+        for (let i = 0; i < 40 && s.outcome === 'ongoing'; i++) { const t = currentTurn(s, pp, r); if (!t) break; if (t.side === 'monster') monsterAct(s, pp, r); else partyAct(s, pp, r, { type: 'defend' }); }
+        for (const l of s.log) if (/^Smuggler Bowman (hits|misses) /.test(l)) { all++; if (rear.some((n) => l.includes(n))) back++; }
+      }
+      return { back, all };
+    };
+    const dry = struck(undefined, false), iced = struck('ice', false), downed = struck('ice', true);
+    ok(dry.back > 0 && iced.all > 0 && iced.back === 0, `bowmen under the ice strike only the front row, where on dry ground they reach the back (${iced.all} shots, ${iced.back} at the back; dry ${dry.back} of ${dry.all})`);
+    ok(downed.all === 0, `and with the front row down they reach nobody (${downed.all} shots)`);
+  }
   ranks();
   morale();
   elements();

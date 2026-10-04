@@ -114,8 +114,9 @@ Compact ship, and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's 
 out, and lists the area.
 
 The systems it waits on are #432's: the curve's rows for Act III, the gear ladder's next step and
-the Stone's price (#535); ash, ice and pine underfoot (#536: ash on O6, pine on M3 and O3, where
-Sunderwood drew its pine as forest, docs/areas/sunderwood.md §9, #200's 1); Kiln-script and
+the Stone's price (#535); ash and pine underfoot, built (#536: ash, `a`, on O6, slow going as hills
+are, and pine, `p`, on M3 and O3, a ground of its own walked among the pines where Sunderwood drew
+its pine as forest, docs/areas/sunderwood.md §9, #200's 1; the scaffold drafts both); Kiln-script and
 Linguist (#538); the crossings, the ferry, the ship and the coach (#539); the Anvil Stone counting
 for the Hearth (#540, #168); and the bot, which must learn to put cold on what fire does not touch
 (#541, EXPANSION §5.2). Regeneration, curse and calls (#537) are Cairnmoor's and Rimewater's; the

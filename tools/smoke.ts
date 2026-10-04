@@ -8,6 +8,7 @@ import { createRequire } from 'node:module';
 import { randomInt } from 'node:crypto';
 import { createServer } from './server.ts';
 import { changedFiles, changedMaps } from './changed.ts';
+import { GROUND_SAMPLES } from './grounds.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
 import type { MonsterSprite } from '../src/content/index.ts';
 
@@ -307,6 +308,8 @@ const interiors = await page.evaluate(async () => {
 const PATH_MAX = 15;
 /** The least of the band over the horizon the dead wood's bare trees fill: about 1.7% as drawn, 0% with none. */
 const DEAD_MIN = 1;
+/** The least of the band over the horizon the pinewoods' pines fill: about 43% as drawn, closer than the woods' 27%. */
+const PINE_MIN = 20;
 const terrains = await page.evaluate(async () => {
   const load = (p: string): Promise<any> => import(p);
   const V = await load('/src/ui/viewport.ts');
@@ -325,13 +328,15 @@ const terrains = await page.evaluate(async () => {
   // The search is bounded: a view it cannot find fails the check plainly rather than hanging.
   const fits = (): boolean => V.fieldAt(w.state.x, w.state.y - 1).crop <= 1 && crops(w.state.x, w.state.y).size >= 2;
   for (let tries = 0; tries < 200 && !fits(); tries++) w.state.x++;
-  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, dead: { trees: 0, path: 0, overWall: 0 }, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[], flats: null as any };
+  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, dead: { trees: 0, path: 0, overWall: 0 }, pine: { trees: 0, path: 0, overWall: 0 }, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[], flats: null as any, ground: null as any };
   const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
   let hedge = { off: 999, apart: 0 }, patchwork = 0;
+  // The ash's embers glowing by night: the floor's pixels that are a hot orange, by season.
+  const embers: Record<string, number> = {};
   // The square ahead spans y 194..254 on the view and x 140..260 at its far edge: sample well inside.
   const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
-  for (const terrain of ['grass', 'hills', 'farm', 'woods', 'deadwood', 'salt', 'heather', 'tidal']) {
+  for (const terrain of ['grass', 'hills', 'farm', 'woods', 'deadwood', 'salt', 'heather', 'tidal', 'ash', 'pine', 'ice']) {
     for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
     for (const [name, doy] of days) for (const hour of [12, 0]) {
       if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
@@ -342,6 +347,7 @@ const terrains = await page.evaluate(async () => {
       const d = ctx.getImageData(0, 0, W, H).data, seen = new Set<number>();
       for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
       if (seen.size < 20) thin.push(`${terrain} ${name}@${hour} (${seen.size})`);
+      if (terrain === 'ash') { let hot = 0; for (let i = (H / 2) * W * 4; i < d.length; i += 4) if (d[i] > 180 && d[i + 1] < 140 && d[i + 2] < 90) hot++; embers[`${name}@${hour}`] = hot; }
       if (hour !== 12) continue;
       const g = ctx.getImageData(x0, y0, sw, sh).data, sum = [0, 0, 0];
       for (let i = 0; i < g.length; i += 4) { sum[0] += g[i]; sum[1] += g[i + 1]; sum[2] += g[i + 2]; }
@@ -398,15 +404,17 @@ const terrains = await page.evaluate(async () => {
   const shot = (backdrop?: string) => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, 0, W, H / 2).data; };
   woodsBy('woods'); const withTrees = shot();
   woodsBy('deadwood'); const withDead = shot();
+  woodsBy('pine'); const withPines = shot();
   woodsBy('grass'); const bare = shot(), mask = shot('#ff00ff');
-  // Dead wood stands its trees as the woods do, so it is held to the same.
-  let overWall = 0, deadOverWall = 0;
+  // Dead wood and the pinewoods stand their trees as the woods do, so they are held to the same.
+  let overWall = 0, deadOverWall = 0, pineOverWall = 0;
   const off = (a: Uint8ClampedArray, i: number): boolean => Math.abs(a[i] - bare[i]) + Math.abs(a[i + 1] - bare[i + 1]) + Math.abs(a[i + 2] - bare[i + 2]) > 30;
   for (let i = 0; i < mask.length; i += 4) {
     // The backdrop shows through where nothing stands, a little dimmed by the day's veil.
     const wall = !(mask[i] > 200 && mask[i + 1] < 40 && mask[i + 2] > 200);
     if (wall && off(withTrees, i)) overWall++;
     if (wall && off(withDead, i)) deadOverWall++;
+    if (wall && off(withPines, i)) pineOverWall++;
   }
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
   w.state.minutes = minutes; w.cached = undefined;
@@ -425,13 +433,15 @@ const terrains = await page.evaluate(async () => {
     }
     return { trees: Math.round(1000 * risen / (upper[t].length / 4)) / 10, path: Math.round(1000 * blocked / strip) / 10 };
   };
-  const { trees, path } = stand('woods'), dead = { ...stand('deadwood'), overWall: deadOverWall };
+  const { trees, path } = stand('woods'), dead = { ...stand('deadwood'), overWall: deadOverWall }, pine = { ...stand('pine'), overWall: pineOverWall };
   return {
-    trees, path, overWall, dead,
+    trees, path, overWall, dead, pine,
     missing: '', thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
-    whiten: ['hills', 'farm', 'woods', 'deadwood', 'heather'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
+    whiten: ['hills', 'farm', 'woods', 'deadwood', 'heather', 'ash', 'pine'].map((t) => Math.round(light(mean[`${t} snow`]) - light(mean[`${t} winter`]))),
     // The salt by day against the grass; the heather in flower against Sowing's; tidal ground at low and high water.
     flats: { salt: Math.round(light(mean['salt summer'])), grass: Math.round(light(mean['grass summer'])), bloom: mean['heather summer'], sowing: mean['heather spring'], low: mean['tidal summer'], high: mean['tidal high'] },
+    // The ash by day against the grass, and its embers by night; the ice at Harvest, in Frost and under snow.
+    ground: { ash: Math.round(light(mean['ash summer'])), grass: Math.round(light(mean['grass summer'])), embers, ice: mean['ice summer'], frost: Math.round(light(mean['ice winter'])), snowed: Math.round(light(mean['ice snow'])) },
   };
 });
 // A torch behind a tree and behind a monster: a sconced wall three squares ahead on the Foreland at
@@ -661,6 +671,39 @@ const lighthouse = await page.evaluate(async () => {
   w.party.flags = flags; w.state.minutes = minutes; w.cached = undefined;
   return out;
 });
+// A group placed on ice (#536): on the Foreland at noon, ice laid all about, two fen eels two squares
+// ahead drawn as the view draws a group. Under the ice they paint its floor and nothing over the
+// horizon; the same pair not under it stands up over it.
+const iced = await page.evaluate(async () => {
+  const V = await import('/src/ui/viewport.ts' as string), M = await import('/src/game/map.ts' as string);
+  const w = (window as any).__game.game.world;
+  const W = 400, H = 268, c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  const ctx = c.getContext('2d', { willReadFrequently: true })!;
+  const minutes = w.state.minutes;
+  w.travel('shelf', 16, 16, 0);
+  // A minute no other check paints at, so the view's cached scene is painted afresh over the ice.
+  w.state.minutes = 50 * 1440 + 12 * 60 + 7;
+  w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  const m = w.map, kept = m.cells.slice(), px = w.state.x, py = w.state.y;
+  for (let y = py - 7; y <= py + 2; y++) for (let x = px - 7; x <= px + 7; x++) m.cells[y * m.width + x] = { ...M.LEGEND.i, ch: 'i' };
+  const pair = (under: boolean): any[] => [0, 1].map(() => ({ id: 'fen_eel', sprite: 'fen_eel', tint: '#3c4228', size: 0.75, ...(under ? { under: 'ice' } : {}) }));
+  const frame = (who: any[] | null): Uint8ClampedArray => {
+    ctx.clearRect(0, 0, W, H); V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, (x: number, y: number) => (x === px && y === py - 2 ? who : null), 40, false);
+    return ctx.getImageData(0, 0, W, H).data;
+  };
+  const none = frame(null), under = frame(pair(true)), over = frame(pair(false));
+  for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
+  w.state.minutes = minutes; w.cached = undefined;
+  const differs = (a: Uint8ClampedArray, i: number): boolean => Math.abs(a[i] - none[i]) + Math.abs(a[i + 1] - none[i + 1]) + Math.abs(a[i + 2] - none[i + 2]) > 24;
+  let below = 0, above = 0, standing = 0;
+  for (let i = 0; i < none.length; i += 4) {
+    const top = Math.floor(i / 4 / W) <= H / 2;
+    if (differs(under, i)) { if (top) above++; else below++; }
+    if (differs(over, i) && top) standing++;
+  }
+  return { below, above, standing };
+});
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
 // holds court on the keep's door, in the throne room.
 await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
@@ -832,8 +875,14 @@ if (process.env.SMOKE_SHOT) {
 // crack between two faces does not depend on the hills. That passes anything drawn as part of a
 // hill, so the check after the sweep holds a hill's body to its outline. And where walls stand on
 // both hands of the party the edges of the view are wall: those once went undrawn. A zone of the
-// outdoors is walked over its own squares.
-const sweeps = [...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
+// outdoors is walked over its own squares. The ground's samples (tools/grounds.ts) are swept one way
+// on every run, first, put into the game's maps for it and taken out after, so a ground no built map
+// holds yet is swept too and the party ends where it did.
+await page.evaluate(async (defs: any[]) => {
+  const M = await import('/src/game/map.ts' as string), w = (window as any).__game.game.world;
+  for (const d of defs) w.maps[d.id] = new M.GameMap(d);
+}, GROUND_SAMPLES as any[]);
+const sweeps = [...GROUND_SAMPLES.map((d) => ({ id: d.id, all: false })), ...FLOOR.filter((id) => !SWEEP.includes(id)).map((id) => ({ id, all: false })), ...SWEEP.map((id) => ({ id, all: true }))];
 const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) => {
   const load = (p: string): Promise<any> => import(p);
   const V = await load('/src/ui/viewport.ts'), T = await load('/src/game/types.ts');
@@ -883,6 +932,7 @@ const cracks = await page.evaluate(async (maps: { id: string; all: boolean }[]) 
   }
   return { bad, views };
 }, sweeps);
+await page.evaluate((ids: string[]) => { const w = (window as any).__game.game.world; for (const id of ids) { delete w.maps[id]; delete w.state.maps[id]; } }, GROUND_SAMPLES.map((d) => d.id));
 // A hill's body stays inside its outline. The sweep lays hills flat, so it cannot see a crest
 // light drawn off its hill, floating clear of it with sky beneath; this can. Each hill is painted alone, near and far, left, ahead and right, and every inked
 // pixel lies within a pixel of its outline.
@@ -1131,6 +1181,7 @@ ok(!torches.missing && torches.lit > 0 && torches.out > 0 && torches.over === 0,
 ok(torches.shown && torches.covers && torches.behind, `an ogre before a sconced wall stands in front of its torch's flame (flame shown ${torches.shown}, ogre over it ${torches.covers}, flame behind the ogre ${torches.behind})`);
 ok(sunder.rows > 20 && sunder.drop > 40 && sunder.wall > 20, `a chasm paints darker than grass, its far wall under the rim lighter than the drop (${sunder.rows} rows straight ahead, ${sunder.drop} darker than grass in the lower half; the wall ${sunder.wall} lighter than the foot)`);
 ok(sunder.glass > 200 && sunder.bluer, `glass trees stand over the horizon beyond the chasm, bluer than red (${sunder.glass} pixels, ${sunder.bluer ? 'bluer' : 'not bluer'})`);
+ok(iced.below > 100 && iced.above === 0 && iced.standing > 100, `a group placed on ice is drawn under it, in the ice and nothing of it over the horizon, where the same group on the ice stands up over it (${iced.below} pixels in the ice, ${iced.above} over the horizon; standing, ${iced.standing} over it)`);
 ok(smooth.stone.end > 2 && smooth.stone.side > 2 && smooth.flat.end === 1 && smooth.flat.side === 1, `a smooth wall is one colour down its face, end and side, where stone shows its courses (stone ${smooth.stone.end} and ${smooth.stone.side} colours, smooth ${smooth.flat.end} and ${smooth.flat.side})`);
 ok(smooth.door > 2 && smooth.seam === 1, `a door in a smooth wall is its seam alone, where in stone it is planks and bands (smooth, ${smooth.seam} colour in its middle; in stone, ${smooth.door})`);
 {
@@ -1141,23 +1192,32 @@ ok(smooth.door > 2 && smooth.seam === 1, `a door in a smooth wall is its seam al
 }
 ok(!terrains.missing, `a view over the fields is found for the hills and farmland checks${terrains.missing ? ' -> ' + terrains.missing : ''}`);
 if (!terrains.missing) {
-  ok(terrains.thin.length === 0, `hills, farmland, woods, dead wood, salt, heather and tidal ground paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
+  ok(terrains.thin.length === 0, `hills, farmland, woods, dead wood, salt, heather, tidal ground, ash, pine and ice paint by day and by night in each season and under snow${terrains.thin.length ? ' -> too flat: ' + terrains.thin.join(', ') : ''}`);
   {
     const { grass, hills, farm, woods } = terrains.form;
     ok(terrains.trees >= 10 && terrains.path <= PATH_MAX && woods.edges > grass.edges, `trees stand about the woods where grass lies open, and the way ahead stays open (${terrains.trees}% of the band over the horizon is trees, ${terrains.path}% of the strip straight ahead, at most ${PATH_MAX}; edges across the square ahead: grass ${grass.edges}, woods ${woods.edges})`);
     ok(terrains.overWall === 0, `no tree of the woods stands in front of a wall beside its square (${terrains.overWall} pixels over the wall's faces)`);
     const dead = terrains.dead;
     ok(dead.trees >= DEAD_MIN && dead.path <= PATH_MAX && dead.overWall === 0, `dead trees stand about the dead wood, the way ahead open and none in front of a wall beside its square (${dead.trees}% of the band over the horizon is trees, at least ${DEAD_MIN}; ${dead.path}% of the strip ahead, at most ${PATH_MAX}; ${dead.overWall} pixels over the wall's faces)`);
+    const pine = terrains.pine;
+    ok(pine.trees >= PINE_MIN && pine.path <= PATH_MAX && pine.overWall === 0, `pines stand about the pinewoods, the way ahead open and none in front of a wall beside its square (${pine.trees}% of the band over the horizon is trees, at least ${PINE_MIN}; ${pine.path}% of the strip ahead, at most ${PATH_MAX}; ${pine.overWall} pixels over the wall's faces)`);
     ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
     ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
   }
-  ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills, the fields, the woods, the dead wood and the heather (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
+  ok(terrains.turns > 20 && terrains.whiten.every((v: number) => v > 60), `the fields turn from Sowing to Harvest, and snow lies white on the hills, the fields, the woods, the dead wood, the heather, the ash and the pinewoods (${terrains.turns} apart; ${terrains.whiten.join(' and ')} lighter under snow)`);
   {
     const { salt, grass, bloom, sowing, low, high } = terrains.flats;
     const purple = (c: number[]): number => (c[0] + c[2]) / 2 - c[1];
     ok(salt > grass + 60, `the salt flats lie white where the grass lies green (${salt} and ${grass} light)`);
     ok(purple(bloom) > purple(sowing) + 8, `the heather flowers purple at Harvest (${Math.round(purple(bloom))} purple, ${Math.round(purple(sowing))} in Sowing)`);
     ok(high[2] > high[0] + 20 && low[0] >= low[2], `tidal ground is wet sand at low water and the sea at high (${low.map(Math.round).join(',')} at noon, ${high.map(Math.round).join(',')} at five)`);
+  }
+  {
+    const { ash, grass, embers, ice, frost, snowed } = terrains.ground;
+    ok(ash < grass - 25, `the ash lies dark where the grass lies green (${ash} and ${grass} light)`);
+    ok(embers['summer@0'] > 0 && embers['winter@0'] > 0 && embers['summer@12'] === 0 && embers['snow@0'] === 0, `by night an ember glows in the ash here and there and by day none does; a deep snow puts them out (${embers['summer@0']} and ${embers['winter@0']} pixels by night, ${embers['summer@12']} at noon, ${embers['snow@0']} under snow)`);
+    const iceLight = Math.round((ice[0] + ice[1] + ice[2]) / 3);
+    ok(ice[2] > ice[0] + 10 && iceLight > grass + 40 && frost > iceLight + 10 && snowed >= frost, `the ice lies pale and blue, whiter in Frost than at Harvest and white under snow (${ice.map(Math.round).join(',')} at Harvest, ${frost} light in Frost, ${snowed} under snow)`);
   }
 }
 ok(questLine === 'New quest: The Dimming.', `closing Vask's dialogue announces his quest (${questLine})`);

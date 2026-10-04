@@ -27,6 +27,8 @@ export interface MonsterInst {
   back: boolean;
   /** Broke and left the fight (`morale`): no longer in it, and paying nothing. */
   fled: boolean;
+  /** Under the ice with its group (`Ranks`): its blows reach only the front row. */
+  under?: 'ice';
   conditions: Condition[];
   /** Set for one render frame when hit. */
   flash: number;
@@ -102,9 +104,10 @@ export interface Edge { blows: number; damage: number; ac: number }
 
 /**
  * How a group stands (docs/MONSTERS.md §3.3): the last `back` of its monsters in the back rank, and
- * the monster id of its leader, whose fall breaks the fight's people (`morale`).
+ * the monster id of its leader, whose fall breaks the fight's people (`morale`). `under` is a group
+ * that fights from under the ice, reaching one square: the front row over it, never the back.
  */
-export interface Ranks { back?: number; leader?: string }
+export interface Ranks { back?: number; leader?: string; under?: 'ice' }
 
 /** A group as a fight takes it. Its monsters by id; a tool may hand in defs that no map places (tools/harness.ts). */
 export interface CombatGroup extends Ranks { id: string; monsters: readonly (string | MonsterDef)[] }
@@ -113,7 +116,7 @@ export interface CombatGroup extends Ranks { id: string; monsters: readonly (str
 export type Fighters = readonly (string | MonsterDef)[] | (Ranks & { monsters: readonly (string | MonsterDef)[] });
 
 /** The group a tool's fighters make, under `id`. */
-export const asGroup = (id: string, f: Fighters): CombatGroup => ('monsters' in f ? { id, monsters: f.monsters, back: f.back, leader: f.leader } : { id, monsters: f });
+export const asGroup = (id: string, f: Fighters): CombatGroup => ('monsters' in f ? { id, monsters: f.monsters, back: f.back, leader: f.leader, under: f.under } : { id, monsters: f });
 
 export const FRONT_ROW = 3;
 
@@ -197,7 +200,7 @@ export function startCombat(party: Party, groups: readonly CombatGroup[], rng: R
       if (monsters.length >= 12) return;
       if (k === 0 || k === front) rank++;
       const def = typeof m === 'string' ? monster(m) : m;
-      monsters.push({ def, hp: def.hp, group: rank, band, back: k >= front, fled: false, conditions: [], flash: 0 });
+      monsters.push({ def, hp: def.hp, group: rank, band, back: k >= front, fled: false, ...(g.under ? { under: g.under } : {}), conditions: [], flash: 0 });
     });
   });
   const s: CombatState = {
@@ -623,7 +626,8 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const seen = party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c) && !vanished(s, c));
   const front = seen.filter(({ i }) => i < FRONT_ROW);
   const any = seen.length ? seen : party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c));
-  const pool = m.def.ranged || front.length === 0 ? any : front;
+  // From under the ice it reaches one square, the front row over it, bow or none; with that row down, nobody.
+  const pool = m.under ? front : m.def.ranged || front.length === 0 ? any : front;
   const pick = rng.pick(pool);
   if (!pick) { s.turn++; checkOutcome(s, party, rng); return true; }
   const ac = armorClass(pick.c) + (s.defending[pick.i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0) + (s.edge?.(pick.c, s).ac ?? 0);
