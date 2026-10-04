@@ -10,7 +10,8 @@ import type { Season } from '../../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../../src/game/weather.ts';
 import type { Climate, Sky, Weather } from '../../src/game/weather.ts';
 import { START_MINUTES } from '../../src/game/world.ts';
-import { GameMap, HILL_DRAG } from '../../src/game/map.ts';
+import { GameMap, HILL_DRAG, DRAG } from '../../src/game/map.ts';
+import type { Terrain } from '../../src/game/map.ts';
 import { SOUTH } from '../../src/game/types.ts';
 import { ok } from './lib.ts';
 
@@ -96,10 +97,10 @@ export function weather(): void {
   const b2 = world.state.minutes; world.move('forward');
   ok(world.state.minutes - b2 === 6 && weatherSight(world.weather) === 4 && rangedPenalty(world.weather) === 0, 'a dry step on bare ground takes the usual six');
   // Hills slow a step by the square stepped onto, outdoors only, and deep snow on them adds its own.
-  const hillStep = (map: string, x: number, y: number, at: number, onto: boolean): number => {
+  const hillStep = (map: string, x: number, y: number, at: number, onto: boolean, terrain: Terrain = 'hills'): number => {
     world.travel(map, x, y, SOUTH); world.state.minutes = at;
     const c = world.map.at(world.state.x, world.state.y + (onto ? 1 : 0)), was = c.terrain;
-    c.terrain = 'hills';
+    c.terrain = terrain;
     const b = world.state.minutes, moved = world.move('forward').kind === 'moved';
     c.terrain = was;
     return moved ? world.state.minutes - b : -1;
@@ -107,6 +108,9 @@ export function weather(): void {
   ok(HILL_DRAG === 2 && hillStep('shelf', 16, 8, clearAt, true) === 8, `a dry step onto hills takes eight minutes (${hillStep('shelf', 16, 8, clearAt, true)})`);
   ok(hillStep('thornmark', 13, 12, snowAt, true) === 10, `and ten with deep snow lying (${hillStep('thornmark', 13, 12, snowAt, true)})`);
   ok(hillStep('shelf', 16, 8, clearAt, false) === 6, 'a step down off the hills takes the usual six');
+  // Ash is as slow as hills (#536); the pinewoods and the ice are walked at the usual pace.
+  const [ash, pine, ice] = (['ash', 'pine', 'ice'] as const).map((t) => hillStep('shelf', 16, 8, clearAt, true, t));
+  ok(DRAG.ash === HILL_DRAG && ash === 8 && pine === 6 && ice === 6, `a dry step onto ash takes eight minutes, as onto hills, and onto pine or ice the usual six (${ash}, ${pine}, ${ice})`);
   const street = MAP_DEFS.find((d) => d.id === 'harrow')!, streets = new GameMap(street);
   let sx = -1, sy = -1;
   for (let y = 1; y < streets.height - 1 && sx < 0; y++) for (let x = 1; x < streets.width - 1; x++) {

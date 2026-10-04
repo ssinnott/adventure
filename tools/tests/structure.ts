@@ -2,9 +2,9 @@
 // the party spends its keys; no guardian that comes back (a group that drops a quest item or says
 // something when it dies, beside the quests suite's check for groups a quest names); every respawn
 // within 720 to 2,880 minutes; a group's `until` and `after` naming something real, and no sky
-// underground; Thornmark's Rift stopping with the tear; every outdoor map one box of the atlas's
-// grid. Each is first run on the content as it is, then on a map broken on purpose, to show it can
-// fail.
+// underground; a group under the ice standing on ice; Thornmark's Rift stopping with the tear; every
+// outdoor map one box of the atlas's grid. Each is first run on the content as it is, then on a map
+// broken on purpose, to show it can fail.
 import { AREAS, MAP_DEFS, MONSTERS, QUESTS, ATLAS } from '../../src/content/index.ts';
 import { TEAR_CLOSED } from '../../src/content/areas/thornmark/maps/grove2.ts';
 import { condFaults } from './quests.ts';
@@ -101,6 +101,12 @@ export function presenceFaults(def: MapDef, maps: readonly MapDef[] = MAP_DEFS):
   ];
 }
 
+/** The groups of a map placed under the ice that do not stand on ice (#536). */
+export function underFaults(def: MapDef): string[] {
+  const m = new GameMap(def);
+  return (def.encounters ?? []).filter((e) => e.under === 'ice' && m.at(e.x, e.y).terrain !== 'ice').map((e) => `${e.id} at ${e.x},${e.y} on ${m.at(e.x, e.y).terrain}`);
+}
+
 /** The respawning groups of a map with a Rift monster in them that do not stop coming back when the tear closes. */
 export function riftStillComing(def: MapDef): string[] {
   return (def.encounters ?? []).filter((e) => e.respawn && e.monsters.some((id) => MONSTERS[id]?.kind === 'rift') && JSON.stringify(e.until) !== JSON.stringify(TEAR_CLOSED)).map((e) => e.id);
@@ -118,6 +124,14 @@ export function structure(): void {
     ok(!out.length, `${def.id}: every respawn is ${RESPAWN[0]} to ${RESPAWN[1]} minutes${list(out)}`);
     const when = presenceFaults(def);
     ok(!when.length, `${def.id}: every group's, person's, event's and blessing's until and after names something real, and none asks for a sky underground${list(when)}`);
+  }
+  { // A group under the ice stands on it: on any map, and not the mill's rats put under it on its floor.
+    const iced = MAP_DEFS.flatMap((d) => (d.encounters ?? []).filter((e) => e.under === 'ice')).length;
+    const wrong = MAP_DEFS.flatMap((d) => underFaults(d).map((f) => `${d.id}: ${f}`));
+    ok(!wrong.length, `every group placed under the ice stands on ice (${iced} placed)${list(wrong)}`);
+    const rats = MAP_DEFS.find((d) => d.id === 'mill')!;
+    const floor = underFaults({ ...rats, encounters: (rats.encounters ?? []).map((e) => (e.id === 'm_rats' ? { ...e, under: 'ice' as const } : e)) });
+    ok(floor.length === 1 && /^m_rats at \d+,\d+ on floor$/.test(floor[0]), `and the mill's rats put under the ice on its floor are refused${list(floor)}`);
   }
   const thornmark = AREAS.find((a) => a.id === 'thornmark')!.maps;
   for (const def of thornmark) {

@@ -12,10 +12,15 @@ import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
-import { rest } from '../../src/game/party.ts';
-import { gateCompany, gateFight, gateOpts, winRate } from '../gate.ts';
+import { rest, hasCondition } from '../../src/game/party.ts';
+import type { Party } from '../../src/game/party.ts';
+import { makeRng } from '../../src/lib/engine/rng.ts';
+import { startCombat, currentTurn, monsterAct, asGroup } from '../../src/game/combat.ts';
+import type { CombatState, Fighters } from '../../src/game/combat.ts';
+import { spell } from '../../src/game/spells.ts';
+import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate } from '../gate.ts';
 import { days, fightsPerRest, mendBetween, mustRest, ROUND_CAP } from '../harness.ts';
-import { testMonster } from '../testmonster.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { ok, owed } from './lib.ts';
 
@@ -156,8 +161,8 @@ const rates = new Map<string, number>();
  * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters and
  * that weather, each computed once: the maps and their areas share them.
  */
-export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}@${level}~${opts.rangedPenalty ?? 0}`;
+export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under'>, level: number): number {
+  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}@${level}~${opts.rangedPenalty ?? 0}`;
   let r = rates.get(key);
   if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
@@ -270,6 +275,26 @@ export function gate(): void {
     ok(bare[0] > 0 && held[0] < bare[0] && held[0] >= bare[0] / 2 && held.slice(1).join() === bare.slice(1).join(), `the gate's company plays a resistance: its bearer takes ${held[0]} from a frost-caster's spells, against ${bare[0]} without`);
     delete ITEMS[charm.id];
   }
+  // The gate's company plays Act III's abilities (#537), each on its test monsters' standard encounter
+  // at the floor the road first meets it: it burns what it has seen mend, so two trolls fall to it in
+  // four rounds where a company with no fire grinds on past them; it fights on through curses; and it
+  // reads a fight that grows by a call, and wins it.
+  {
+    const seeds = 40, fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(id).element !== 'fire'); return p; };
+    /** Seeds 1 to `seeds` of a gate fight, `cap` rounds at most, played as gateFight plays it: each fight's end. */
+    const fought = (level: number, monsters: Fighters, cap = ROUND_CAP, dress = (p: Party): Party => p): { s: CombatState; p: Party }[] => Array.from({ length: seeds }, (_, n) => {
+      const k = n + 1, p = dress(gateCompany(level, k)), rng = makeRng(fightSeed(k)), s = startCombat(p, [asGroup('gate', monsters)], rng);
+      for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > cap) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i); }
+      return { s, p };
+    });
+    const won = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.outcome === 'victory').length / fs.length;
+    const fire = fought(19, trollEncounter(19), 4), none = fought(19, trollEncounter(19), 4, fireless), burnt = fire.filter(({ s }) => s.log.some((l) => / smoulders? and /.test(l))).length;
+    ok(won(fire) >= 0.9 && won(fire) - won(none) >= 0.5 && burnt >= seeds * 0.75, `the gate's company burns what mends: it wins ${pc(won(fire))} of two trolls' fights at 19 inside four rounds, burning them in ${burnt} of ${seeds}, where with no fire it wins ${pc(won(none))}`);
+    const wights = fought(19, wightEncounter(19)), cursed = wights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'cursed'))).length;
+    ok(won(wights) >= 0.9 && cursed > 0, `it fights on through the wights' curses at 19, winning ${pc(won(wights))}, ${cursed} of ${seeds} companies leaving cursed`);
+    const called = fought(20, callerEncounter(20)), grew = called.filter(({ s }) => s.groupIds.length > 1).length;
+    ok(won(called) >= 0.9 && grew > 0 && gateFight(gateCompany(20, 1), callerEncounter(20), fightSeed(1)), `and a caller's fight at 20 that grows by its call in ${grew} of ${seeds}, winning ${pc(won(called))}`);
+  }
   // A figure inside its aim passes; one between its aim and its limit passes and is listed; one past
   // its limit fails. Probed either side of whatever the aim and the limit are, so the pilot may move them.
   {
@@ -295,6 +320,12 @@ export function gate(): void {
     const bows = new Array(6).fill('smuggler_bowman'), dry = rate({ monsters: bows }, 1), fog = rate({ monsters: bows, when: { sky: 'fog' } }, 1);
     ok(fog !== dry && rate({ monsters: bows, when: [{ hours: 'night' }, { season: 'winter' }] }, 1) === dry, `six smuggler bowmen that walk only in fog are fought in it (${pc(fog)} won at 1, against ${pc(dry)} dry), and by night or in winter dry`);
     ok(rate({ monsters: bows, when: [{ sky: 'fog' }, { hours: 'night' }] }, 1) === dry, 'and one that walks in fog or by night is fought dry too');
+    // The ground (#536): six bowmen placed on ice are fought from under it, reaching the front row
+    // alone, and won more often; the walk from a way in crosses ash, pine and ice as open ground.
+    const iced = rate({ monsters: bows, under: 'ice' }, 1);
+    ok(iced > dry, `six smuggler bowmen under the ice are fought from under it (${pc(iced)} won at 1, against ${pc(dry)} on dry ground)`);
+    const strip: MapDef = { id: 'fx_strip', name: 'Strip', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMM', 'M,apiaM', 'MMMMMMM'] };
+    ok(stepsFrom(strip)(5, 1) === 4, `the walk from a way in crosses ash, pine and ice (${stepsFrom(strip)(5, 1)} steps over four squares)`);
     const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
     ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
     // A den's keepers are its camp's hardest fight: won no more often than any of its brood.
