@@ -68,14 +68,34 @@ export function meet(p: Person, party: Party, holds: (w: Words) => boolean): Mee
   return { text: p.lines.join('\n\n'), choice: open(p.choice, party) };
 }
 
-/** What an answer hands over and pays, as its line says it: "(300 gold, 660 experience, A Sealed Letter.)"; none if nothing. */
+/**
+ * What an answer costs, hands over and pays, as its line says it: "(6000 gold paid.)", "(300 gold,
+ * 660 experience, A Sealed Letter.)"; none if nothing.
+ */
 export function answerNote(a: Answer): string[] {
-  const what = [a.pay?.gold ? `${a.pay.gold} gold` : '', a.pay?.xp ? `${a.pay.xp} experience` : '', a.gives ? item(a.gives).name : ''].filter(Boolean);
+  const what = [a.price ? `${a.price} gold paid` : '', a.pay?.gold ? `${a.pay.gold} gold` : '', a.pay?.xp ? `${a.pay.xp} experience` : '', a.gives ? item(a.gives).name : ''].filter(Boolean);
   return what.length ? [`(${what.join(', ')}.)`] : [];
 }
 
-/** Answer a person's question: set its flags, hand over its item, pay and return what the person says. */
+/** An answer as the choice screen lists it: its label, and its price where it has one, as a ware's. */
+export const answerLabel = (a: Answer): string => (a.price ? `${a.label}\t${a.price}g` : a.label);
+
+/** Whether an answer's price is more than the company has: the choice screen bars it. */
+export const barred = (a: Answer, party: Party): boolean => (a.price ?? 0) > party.gold;
+
+/** A question as the choice screen puts it: with the purse after it where an answer has a price, as a shop's is. */
+export const asked = (c: Choice, party: Pick<Party, 'gold'>): string => (c.answers.some((a) => a.price) ? `${c.ask} (${party.gold} gold.)` : c.ask);
+
+/** Said for an answer the company cannot pay for, which changes nothing. */
+export const SHORT = 'You cannot afford it.';
+
+/**
+ * Answer a person's question: pay its price, set its flags, hand over its item, pay and return what
+ * the person says. Short of the price, nothing changes, and it says so.
+ */
 export function answer(a: Answer, party: Party): string {
+  if (barred(a, party)) return SHORT;
+  party.gold -= a.price ?? 0;
   set(party, a.sets);
   if (a.gives) party.bag.push(a.gives);
   party.gold += a.pay?.gold ?? 0;
