@@ -20,6 +20,7 @@ import { AREA as saltreach } from './areas/saltreach/index.ts';
 import { AREA as wrackholm } from './areas/wrackholm/index.ts';
 import { AREA as sunderwood } from './areas/sunderwood/index.ts';
 import * as kilns from './areas/kilns/monsters.ts';
+import * as kilnsRooms from './areas/kilns/interiors.ts';
 import { ITEMS as KILNS_ITEMS } from './areas/kilns/items.ts';
 import { ITEMS as CAIRNMOOR_ITEMS } from './areas/cairnmoor/items.ts';
 import { ITEMS as RIMEWATER_ITEMS } from './areas/rimewater/items.ts';
@@ -46,6 +47,7 @@ export const AHEAD = [
  * list as `interiors` and its line here goes.
  */
 export const ROOMS_AHEAD = [
+  { id: 'kilns' as const, interiors: kilnsRooms.INTERIORS },
 ] as const;
 
 /**
