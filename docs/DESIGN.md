@@ -292,7 +292,10 @@ quest's own fights are set at 26.
 - Seven stats: Might, Intellect, Personality, Endurance, Accuracy, Speed, Luck.
 - **Secondary skills,** three to a guild, taught to its members for a price (§8):
   *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
-  Perception, Arms Master, Spirit Sense, Navigator.*
+  Perception, Arms Master, Spirit Sense, Navigator.* Built with #538: Linguist, the first, a list on
+  each member that the sheet shows, learnt for 1,000 gold at any hall of the Lanterns or from a person
+  who teaches it, by a company that is a Lantern; the dwarves are born to it, and a copybook carried
+  does its work (§9, Act III). The other eleven come as their shortcuts and secrets do.
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
   regional towns; Master trainers are hidden, expensive, and often want a favour.
 
@@ -465,8 +468,8 @@ ship lands there.
   Lanterns, since the cargo coming up is the Stones' business (#434, call 5), go on selling spells,
   and give the Lanterns' quests to a company that has done the first task. The fee to study is the
   hall's, §7's regional toll; any company may pay it, and a Lantern pays it too. It is not
-  membership. Every hall of theirs teaches Linguist once it exists (#538), and so does a Lantern
-  reader in Anvilhall, so no company goes back for it.
+  membership. Every hall of theirs teaches Linguist to a company of theirs (#538), and so will a
+  Lantern reader in Anvilhall (#459), so no company goes back for it.
 
 ### Joining and ranks
 
@@ -499,7 +502,8 @@ ship lands there.
 
 - **Its quests pay gold, items and xp,** the xp split among the living as a fight's is.
 - **Its skills,** three to a guild, taught to members for a price (§5) once the skills are built
-  (#18). The Lanterns' Linguist reads Kiln-script, so it matters from the Kilns on.
+  (#18). The Lanterns' Linguist reads Kiln-script, so it matters from the Kilns on; it is the first
+  built (#538), and every hall of a guild teaches the guild's skills as each is built.
 - **Its line.** The Charters' storylines are the guilds' lines: the Wardens' siege, the Lanterns'
   split at Lantern Watch (§9, Act II), the Compact's line with its ending kept (§10.2) and the
   Cartographers' Lost Expedition (§10.3).
