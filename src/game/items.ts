@@ -6,6 +6,7 @@ import { ITEMS } from '../content/index.ts';
 import type { Feature } from './map.ts';
 import type { Party } from './party.ts';
 import type { Element } from './spells.ts';
+import type { SkillId } from './skills.ts';
 
 export type ItemSlot = 'weapon' | 'armor' | 'shield' | 'none';
 
@@ -39,6 +40,11 @@ export interface ItemDef {
   resist?: readonly Element[];
   /** Words to read: a letter, read from the pack. */
   text?: readonly string[];
+  /**
+   * A secondary skill it does the work of while anyone in the company carries it, as a member who has
+   * the skill would (game/skills.ts): a scholar's copybook reads Kiln-script as a Linguist does.
+   */
+  skill?: SkillId;
 }
 
 export function item(id: string): ItemDef {
