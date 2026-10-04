@@ -1837,5 +1837,8 @@
     "poisoned",
     "stoned",
     "unconscious"
+  ],
+  "skills": [
+    "linguist"
   ]
 }

@@ -19,6 +19,7 @@ import { CLIMATES } from '../content/index.ts';
 import { holds } from './quests.ts';
 import { pace, denLooks, densOf } from './dens.ts';
 import { stonesRestored, steadier } from './stones.ts';
+import { signLine, signSays } from './inscriptions.ts';
 
 export { MINUTES_PER_DAY };
 export const START_MINUTES = 7 * 60;
@@ -134,8 +135,8 @@ export function groupDrawn(monsters: readonly string[]): string[] {
   return [...out, ...rest].slice(0, DRAWN_MAX);
 }
 
-/** A sign as the log shows it. */
-export const signLine = (text: string): string => `A sign reads: "${text}"`;
+// A sign as the log shows it: game/inscriptions.ts has it, beside an inscription's reading.
+export { signLine };
 
 export class World {
   readonly maps: Record<string, GameMap>;
@@ -687,7 +688,7 @@ export class World {
     return this.walks(p, f.x, f.y) && !this.ended(p);
   }
 
-  /** Event and sign texts for the party's cell; once-only events are marked used. */
+  /** Event and sign texts for the party's cell; once-only events are marked used, and inscriptions a reader reads kept read. */
   eventsHere(): string[] {
     const out: string[] = [];
     for (const f of this.map.featuresAt(this.state.x, this.state.y)) {
@@ -697,7 +698,7 @@ export class World {
         if (f.once) this.mapState.used[f.id] = 1;
         for (const flag of [f.sets ?? []].flat()) this.party.flags[flag] = 1;
       }
-      if (f.kind === 'sign') out.push(signLine(f.text));
+      if (f.kind === 'sign') out.push(...signSays(this, f));
     }
     return out;
   }

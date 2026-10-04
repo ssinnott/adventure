@@ -17,12 +17,13 @@ DESIGN.md first for the why.
   steps the party back into the street, facing the door. A shop may name its own price for an item
   it stocks (`prices`); the rest sell at their own, and anything sells back for half its own price.
 - **Guild halls:** a business may also be a guild's hall (`hall`, DESIGN §8). It then opens on a
-  first menu, its own trade, the guild's work and Leave, which each choice returns to; a business
-  with its trade alone opens straight on it. The guild's work pays what is done, then offers the
-  quests at or under the company's rank. Membership and rank are worked out from the guild quests'
-  done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). The Warden Drillyard
-  is the Wardens' hall, and the Lantern Guildhall and the Thornhold Lantern Hall the Lanterns'. A
-  spell hall's fee buys the right to study, not membership.
+  first menu, its own trade, the guild's work, its skills where the guild has one built (below) and
+  Leave, which each choice returns to; a business with its trade alone opens straight on it. The
+  guild's work pays what is done, then offers the quests at or under the company's rank. Membership
+  and rank are worked out from the guild quests' done flags, and a rank reached is kept by its own
+  flag (`game/guilds.ts`). The Warden Drillyard is the Wardens' hall, and the Lantern Guildhall and
+  the Thornhold Lantern Hall the Lanterns'. A spell hall's fee buys the right to study, not
+  membership.
 - **People in a business:** a person with no room of their own on a business's doorway, listed after
   it, is in the business while present, and its first menu offers "Talk to <name to its first
   comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
@@ -111,6 +112,28 @@ DESIGN.md first for the why.
   where a crossing lands in a town, that town's ways out (`landings`, `tools/tests/gate.ts`), and
   the outdoors' walk (`tools/tests/outdoors.ts`) starts from each landing as well. Saltmouth's quay
   sells the boat to Wrackholm's landing and the landing sells it back (#177); no coach runs yet.
+  The crossings between towns (`content/crossings.ts`, #539) are written once, both ends together:
+  one fare, length and timetable either way, on a link the atlas charts, and each end's landing once
+  its town is built. A town sells one by a person whose `passage` is `sells('<town>', ...)`, which
+  sells nothing toward a town not built, so nothing ever lands where nothing is. The check holds each
+  to its link and its fare's rule, each built end to a landing on open ground and, once both ends
+  land, each end to a seller; on the world map the link a crossing is sold both ways on is drawn as
+  that way built. Kilnhaven's ferry to Saltmouth, the Compact ship to Cinderport and the drove road's
+  coach to Rime Lodge are written, and wait on Kilnhaven (#469), Cinderport (#512) and Rime Lodge
+  (#487); the ferry lands on Saltmouth's quay.
+- **Kiln-script and the secondary skills** (`game/inscriptions.ts`, `game/skills.ts`, #538; DESIGN
+  §5, §9): a sign with a second text (`read`) is an inscription. Its words are said to every
+  company, and its reading after them only to one with a reader, as `<name> reads: "<reading>"`:
+  the first standing member with Linguist or born to it, a dwarf, else, while an item that does
+  Linguist's work is carried (`ItemDef.skill`, the copybook #471 builds), its carrier or the first
+  standing member. Read, it is kept by its id in its map's `used`, as a once-event is, so `seen`
+  names it and nothing new is saved; one that `marks` atlas places pins them on the world map once
+  read, a hollow square with no name and no word in the legend, and its first reading says so. A
+  reading may be a secret's hint, which the hint check counts; it sets no flag and opens no way. The
+  secondary skills are a list on each member (`skills`, none in a save from before them) that the
+  sheet shows. Linguist is the first built: the Lanterns', 1,000 gold a member, taught at every hall
+  of theirs ("Learn a skill" on its first menu) and by a person who teaches it (`skill`), to a
+  company that is of the guild. No map places an inscription or a teacher yet: the Kilns' boxes do.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -402,9 +425,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
   millisecond a frame.  ## Stubbed or absent
-- No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; no secondary skills yet beyond race
-  innate ones. The Meridian journal opens The Lost Expedition in the quest log, and the
-  Cartographers' Geographer in Saltmouth reads it (#181), but no second volume exists.
+- No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; of the
+  secondary skills only Linguist (#538), with the race-innate ones. The Meridian journal opens The
+  Lost Expedition in the quest log, and the Cartographers' Geographer in Saltmouth reads it (#181),
+  but no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
 - Prestiges, the Compact's hall, the succession, the Salt Compact, the Lost Expedition past its
   first journal: design only. The Cartographers' hall is built in Saltmouth (#181).
@@ -482,9 +506,10 @@ over content broken on purpose too, and two tools to theirs:
   gives its hoard once and none of its brood comes back in thirty days, through a save and a load.
   Its look is said once, on first sight, never for a ruin. Every den keeps its rules: keepers
   beside it that never leave, brood of its kind that come back until it burns.
-- `pillars` (§5.4): a hint on the near side of every secret door, there always; no text past three
-  lines of the log, nor a square's texts that can show together (day and night, or `until` and
-  `after` the same thing, never do) past the log's four; no monster's look past two, every glyph in
+- `pillars` (§5.4): a hint on the near side of every secret door, there always, an inscription's
+  reading among them; no text past three lines of the log, nor a square's texts that can show
+  together (day and night, or `until` and `after` the same thing, never do) past the log's four, an
+  inscription's words, reading and mark said together; no monster's look past two, every glyph in
   the font, British spelling; each `Area.novel` holds; water and roads carry on into the atlas;
   story locks (`content/locks.ts`) signed in, none between areas and every hand-in taking its item
   at the first meeting.
@@ -507,6 +532,16 @@ over content broken on purpose too, and two tools to theirs:
   to #49.
 - `shipped` (§5.5): nothing in `content/shipped.json` goes or moves without a `SAVE_VERSION` bump
   and its upgrade; `node tools/shipped.ts` records what is new.
+- `inscriptions` (#538): on a fixture hall, an inscription said as a sign to the premade six, who
+  have no reader, and read after its words by a dwarf, a Linguist or anyone with a copybook carried,
+  never by a member knocked down; kept read by its id through a save and by the shipped list; its
+  marks pinned once read and said once; no flag set and no door changed. Every inscription of the
+  content has an id of its own on its map and a reading, its marks name atlas places, and no way
+  waits on a reading.
+- `skills` (#538): each skill built one of DESIGN §5's twelve, its guild's by DESIGN §8; every hall of
+  the Lanterns teaches Linguist and no other hall a skill yet; a stranger to the guild learns
+  nothing, a member learns once for the price, a dwarf is born to it; a save keeps a member's skills
+  and one from before them has none.
 - `glyphs`: every symbol `src/ui/` draws past plain ASCII (arrows, stars, hearts) is in the pixel
   font, so none is painted as nothing.
 - `drawn`: every group on the maps is drawn while exploring as each of its kinds, to three, and a
@@ -579,16 +614,18 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather and tidal ground named as the atlas names them), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather and tidal ground named as the atlas names them), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
-| `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links) and the road's steps |
+| `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links, a crossing link sold both ways drawn as built) and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
-| `game/party.ts` | races, classes, `Character`, `Party`, conditions, equip, levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
+| `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
 | `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
 | `game/seeking.ts` | the seeking quests: the trainers placed (`trainersIn`), a quest for each member and prestige (`seekingQuests`), and the places the world map marks (`sought`); pure |
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
+| `game/skills.ts` | the secondary skills (`SKILLS`, Linguist the first): a member's list, who has one (learnt or born to it) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, each member's bar, and learning one; pure |
+| `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
@@ -603,8 +640,8 @@ does.
 | `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods and the dead wood, the glass trees and the chasm's drop, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
-| `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space) |
-| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`) and a guild's work at its hall, and the visit that frames them (`InteriorScreen`) |
+| `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
+| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it, the skills a member has), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there or from a person (`skillMenu`), and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver) |
 | `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living (a lone proper name none), laid out inside the view; pure |
@@ -619,7 +656,8 @@ does.
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |
 | `content/stones.ts` | the Wardstones a company may restore, each with its area and the condition it is restored on (or the issue that owes it); held to the atlas by `tools/tests/stones.ts`, read by `game/stones.ts` |
+| `content/crossings.ts` | the crossings between towns, each with its fare, days and hours and its two ends, each end's landing once its town is built (or the issue that owes it), and `sells`, the passages a town's person sells on them; held to the atlas and the towns by `tools/tests/passage.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
-| `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
+| `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, inscriptions read, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races, conditions and skills; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
 | `content/atlas.ts` | the world map's plan: the land, the areas of the road, and the zones, places and sites not built yet; each area charts its own in `areas/<area>/atlas.ts`, and `content/index.ts` merges them into `ATLAS` |

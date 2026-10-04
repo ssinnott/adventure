@@ -63,12 +63,13 @@ export interface Novelty {
 }
 
 /**
- * The mechanics an area can claim, all named in its data: a kind of feature or door, a monster that
- * shoots, shrugs off a condition or inflicts a condition, a field an encounter uses. The list grows with the
- * systems.
+ * The mechanics an area can claim, all named in its data: a kind of feature or door, an inscription
+ * in Kiln-script and a reading that marks the world map (`sign:read`, `sign:marks`, #538), a monster
+ * that shoots, shrugs off a condition or inflicts a condition, a field an encounter uses. The list
+ * grows with the systems.
  */
 export type Mechanic =
-  | `feature:${Feature['kind']}` | `door:${Exclude<Door, 'none'>}`
+  | `feature:${Feature['kind']}` | `door:${Exclude<Door, 'none'>}` | 'sign:read' | 'sign:marks'
   | 'monster:ranged' | 'monster:missile' | `immune:${Condition}` | `inflict:${NonNullable<MonsterDef['inflict']>['cond']}`
   | `encounter:${Exclude<keyof EncounterDef, 'id' | 'x' | 'y' | 'monsters'>}`;
 
