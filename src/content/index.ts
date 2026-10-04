@@ -20,6 +20,7 @@ import { AREA as saltreach } from './areas/saltreach/index.ts';
 import { AREA as wrackholm } from './areas/wrackholm/index.ts';
 import { AREA as sunderwood } from './areas/sunderwood/index.ts';
 import * as kilns from './areas/kilns/monsters.ts';
+import * as cairnmoor from './areas/cairnmoor/monsters.ts';
 import * as kilnsRooms from './areas/kilns/interiors.ts';
 import * as rimewater from './areas/rimewater/monsters.ts';
 import { ITEMS as KILNS_ITEMS } from './areas/kilns/items.ts';
@@ -40,6 +41,7 @@ export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood] as con
  */
 export const AHEAD = [
   { id: 'kilns' as const, sprites: kilns.SPRITES, monsters: kilns.MONSTERS },
+  { id: 'cairnmoor' as const, sprites: cairnmoor.SPRITES, monsters: cairnmoor.MONSTERS },
   { id: 'rimewater' as const, sprites: rimewater.SPRITES, monsters: rimewater.MONSTERS },
 ] as const;
 

@@ -1,5 +1,8 @@
-// The wolf family: wolf, dire wolf, rift hound, black dog, chalk wolf, barrow wolf and sunder hound
-// on one canine frame, standing alert in profile. The sunder hound is the rift hound gone to glass:
+// The wolf family: wolf, dire wolf, rift hound, black dog, chalk wolf, barrow wolf, sunder hound and
+// moor hound on one canine frame, standing alert in profile. The moor hound is the black dog grown
+// old and huge: bigger and heavier still, the head carried low, the hackles up along its back, one
+// ear torn, the muzzle, brows and throat gone grey, the coals of its eyes still lit, and its breath
+// smoking in the cold. The sunder hound is the rift hound gone to glass:
 // the coat dark, with plates of the Sunder's black glass grown through it at the shoulder, the
 // haunch and along the back, its spines clear glass, and its seams and eyes the Sunder's white
 // light rather than embers, and what rises off its back is motes of glass. The barrow wolf, the chalk pit's old leader, is the chalk wolf's
@@ -24,7 +27,7 @@ import { celBall } from '../../lib/art/shading.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf', 'barrow_wolf', 'sunder_hound'];
+export const KINDS: readonly MonsterSprite[] = ['wolf', 'dire_wolf', 'rift_hound', 'black_dog', 'chalk_wolf', 'barrow_wolf', 'sunder_hound', 'moor_hound'];
 
 /** Proportions that tell the kinds apart on the shared frame (1 = the lean grey wolf). */
 interface Build { neck: number; head: number; jaw: number; ruff: number; leg: number; body: number; fang: number; tail: number }
@@ -37,8 +40,10 @@ const DOG: Build = { neck: 1.4, head: 1.22, jaw: 1.15, ruff: 1.9, leg: 1.18, bod
 const CHALK: Build = { neck: 0.82, head: 0.97, jaw: 1.02, ruff: 0.5, leg: 0.78, body: 1, fang: 1, tail: 0.72 };
 /** The barrow wolf: the chalk wolf grown old and heavy, the neck and the ruff thick, the fangs long. */
 const BARROW: Build = { neck: 1.25, head: 1.14, jaw: 1.15, ruff: 1.45, leg: 1.08, body: 1.1, fang: 1.5, tail: 0.95 };
+/** The moor hound: the black dog grown old and huge, heavier in the neck, the head and the ruff, the jaw long. */
+const MOOR: Build = { neck: 1.5, head: 1.25, jaw: 1.2, ruff: 2.3, leg: 1.12, body: 1.16, fang: 1.45, tail: 1.05 };
 
-type Variant = 'wolf' | 'dire' | 'rift' | 'dog' | 'chalk' | 'barrow' | 'sunder';
+type Variant = 'wolf' | 'dire' | 'rift' | 'dog' | 'chalk' | 'barrow' | 'sunder' | 'moor';
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'dire_wolf') canine(ctx, x, y, h, p, DIRE, 'dire');
@@ -47,6 +52,9 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'black_dog') canine(ctx, x, y, h, p, DOG, 'dog');
   else if (kind === 'chalk_wolf') canine(ctx, x, y, h, p, CHALK, 'chalk');
   else if (kind === 'barrow_wolf') canine(ctx, x, y, h, p, BARROW, 'barrow');
+  // The moor hound's big head runs further forward than the rest's: it stands a little back to keep
+  // its nose over its own ground.
+  else if (kind === 'moor_hound') canine(ctx, x - h * 0.09, y, h, p, MOOR, 'moor');
   else canine(ctx, x, y, h, p, LEAN, 'wolf');
 };
 
@@ -63,6 +71,8 @@ const COAL = '#ff4a14', COAL_HOT = '#ffc060';
 
 function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build, v: Variant): void {
   const br = p.breathe, f = p.frame, rift = v === 'rift' || v === 'sunder', lit = v === 'sunder' ? SUNDER : EMBERS, dog = v === 'dog', chalk = v === 'chalk';
+  /** The moor hound is the black dog grown old: what is the dog's is its too, unless it is said otherwise. */
+  const moor = v === 'moor', heavy = dog || moor;
   /** The Downs' pale wolves: the chalk wolf, and the barrow wolf on its heavier frame. */
   const pallid = chalk || v === 'barrow';
   const base = p.base, dark = p.dark, light = p.light;
@@ -88,14 +98,14 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // legs and an arched back is what made the animal read as a bean on stumps.
   const rH = h * 0.147 * b.head;
   // The black dog carries it lower, level with the withers and heavier; the chalk wolf low and
-  // out in front, the way a lean wolf travels.
-  const hx = X(dog ? 0.47 : chalk ? 0.52 : 0.45), hy = U(dog ? 0.74 : chalk ? 0.71 : 0.80) + bob;
+  // out in front, the way a lean wolf travels; the moor hound lower still, an old dog's.
+  const hx = X(heavy ? 0.47 : chalk ? 0.52 : 0.45), hy = U(moor ? 0.7 : dog ? 0.74 : chalk ? 0.71 : 0.80) + bob;
 
   // ---- far side, in shadow: the two off legs and the far ear, one mass behind everything.
   const far: Part[] = [];
   legParts(far, [X(0.10), U(0.68), X(0.125), U(0.46), X(0.14), U(0.24), X(0.15), U(0.03)], h, b.leg * 0.92, 13);
   legParts(far, [X(-0.36), U(0.64), X(-0.26), U(0.45), X(-0.38), U(0.255), X(-0.33), U(0.03)], h, b.leg * 0.92, 14);
-  earPart(far, hx - rH * 0.82, hy - rH * 0.72, rH * (dog ? 0.72 : 0.92), false);
+  earPart(far, hx - rH * 0.82, hy - rH * 0.72, rH * (heavy ? 0.72 : 0.92), false);
   blob(ctx, B, dark, far, { h, formK: 0.35 });
 
   // ---- the tail: its own mass behind the rump, a brush hanging low and coming to a point.
@@ -125,26 +135,28 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
       X(0.285), U(0.805), X(chalk ? 0.29 : 0.315), U(0.62), X(chalk ? 0.26 : 0.275), U(0.465 + tuck * 0.4),
       X(0.11), U(0.43) + belly, X(-0.05), U(0.425) + belly, X(-0.18), U(0.49) + belly,
       X(-0.31), U(0.56), X(-0.41), U(0.72),
-    ], wobble: 0.03, spiky: dog ? 0.1 : 0.035, seed: 1, sub: 3 },
+    ], wobble: 0.03, spiky: moor ? 0.13 : dog ? 0.1 : 0.035, seed: 1, sub: 3 },
     // Shoulder and haunch under the coat.
     { k: 'ell', x: X(0.17), y: U(0.66), rx: h * 0.095 * slim, ry: h * 0.115 * slim, rot: 0.12 },
     { k: 'ell', x: X(-0.27), y: U(0.66), rx: h * 0.125 * slim, ry: h * 0.135 * slim, rot: -0.12 },
     // Neck: short and thick, sloping down and forward from the withers into the skull.
     { k: 'cap', x0: X(0.20), y0: U(0.835), x1: hx - rH * 0.55, y1: hy - rH * 0.1, r0: h * 0.118 * b.neck, r1: h * 0.10 * b.neck },
     // The ruff: the thick collar of fur behind the jaw.
-    { k: 'curve', pts: ring(X(0.30), U(0.755), h * (0.10 + 0.035 * b.ruff), h * (0.12 + 0.04 * b.ruff), 10), wobble: 0.06, spiky: dog ? 0.24 : 0.13, seed: 3, sub: 2 },
+    { k: 'curve', pts: ring(X(0.30), U(0.755), h * (0.10 + 0.035 * b.ruff), h * (0.12 + 0.04 * b.ruff), 10), wobble: 0.06, spiky: heavy ? 0.24 : 0.13, seed: 3, sub: 2 },
     // The head in profile: back of skull, crown, brow, stop, bridge, nose, lip, jaw, throat.
     { k: 'curve', pts: [
       hx - rH * 0.98, hy - rH * 0.12, hx - rH * 0.55, hy - rH * 0.78, hx + rH * 0.1, hy - rH * 0.92,
       hx + rH * 0.52, hy - rH * 0.62, hx + rH * 1.15, hy - rH * 0.46, hx + rH * 1.75, hy - rH * 0.3,
       hx + rH * 1.92, hy - rH * 0.04, hx + rH * 1.76, hy + rH * 0.28, hx + rH * 1.2, hy + rH * 0.5,
       hx + rH * 0.35, hy + rH * 0.72, hx - rH * 0.35, hy + rH * 0.8, hx - rH * 0.92, hy + rH * 0.42,
-    ], wobble: 0.025, spiky: dog ? 0.07 : 0.035, seed: 4, sub: 2 },
+    ], wobble: 0.025, spiky: heavy ? 0.07 : 0.035, seed: 4, sub: 2 },
     { k: 'cap', x0: hx + rH * 0.45, y0: hy + rH * 0.56, x1: hx + rH * 1.45, y1: hy + rH * 0.6 * b.jaw, r0: rH * 0.26, r1: rH * 0.18 },
   ];
   // Erect ears: two upright triangles on the crown, which is most of a wolf's head silhouette.
-  earPart(fur, hx - rH * 0.2, hy - rH * 0.82, rH * (dog ? 0.78 : 1), v === 'dire');
-  if (dog) {
+  earPart(fur, hx - rH * 0.2, hy - rH * 0.82, rH * (heavy ? 0.78 : 1), v === 'dire' || moor);
+  // The moor hound's hackles, up along its spine from the withers: a ridge of rough hair.
+  if (moor) fur.push({ k: 'curve', pts: [X(-0.3), U(0.85), X(-0.1), U(0.89), X(0.08), U(0.905), X(0.21), U(0.9), X(0.2), U(0.84), X(0.0), U(0.83), X(-0.2), U(0.82)], wobble: 0.05, spiky: 0.22, seed: 45, sub: 3 });
+  if (heavy) {
     // A calf's chest: deep and broad, the brisket hanging below the elbow.
     fur.push({ k: 'ell', x: X(0.22), y: U(0.56), rx: h * 0.11, ry: h * 0.14, rot: 0.2 });
     // The head is turned a little toward the company, so the far brow rises over the bridge.
@@ -161,7 +173,7 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     { x0: hx - rH * 0.9, y0: hy - rH * 0.5, x1: hx - rH * 0.8, y1: hy + rH * 0.4, r: rH * 0.16, a: 0.28 }, // cheek
     { x0: hx + rH * 0.55, y0: hy - rH * 0.4, x1: hx + rH * 0.62, y1: hy + rH * 0.35, r: rH * 0.12, a: 0.18 }, // the stop
   ];
-  blob(ctx, B, base, fur, { h, tex: 'fur', seed: 1, amount: dog ? 0.75 : 0.55, formK: 0.5, creases });
+  blob(ctx, B, base, fur, { h, tex: 'fur', seed: 1, amount: moor ? 0.85 : dog ? 0.75 : 0.55, formK: 0.5, creases });
 
   // ---- counter-shading, which is how a wolf is actually coloured: a dark mantle over the back and
   // shoulders, and pale legs, belly, chest, throat and muzzle. A single flat value ear to tail is
@@ -193,6 +205,7 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
 
   if (v === 'sunder') glassPlates(ctx, X, U, h, base);
+  if (moor) grizzle(ctx, hx, hy, rH, shade('#c4c0b8', p.tone));
 
   // ---- the open mouth, fangs, nose and eye.
   const jx0 = hx + rH * 0.45, jy0 = hy + rH * 0.56, jx1 = hx + rH * 1.45, jy1 = hy + rH * 0.6 * b.jaw;
@@ -211,22 +224,46 @@ function canine(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // second eye has nowhere to be. If this head is ever turned toward the party it becomes a matched
   // PAIR of the same size, the far one only slightly narrowed by the turn, as the black dog's is
   // (coals()); the rat and the boar are profiles with one eye.
-  const eyeCol = v === 'wolf' || pallid ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : v === 'dog' ? COAL : lit.hot;
-  const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * (dog ? 0.17 : 0.15);
+  const eyeCol = v === 'wolf' || pallid ? p.amber : v === 'dire' ? shade('#e8f060', Math.max(0.6, p.tone)) : heavy ? COAL : lit.hot;
+  const ex = hx + rH * 0.42, ey = hy - rH * 0.4, er = rH * (heavy ? 0.17 : 0.15);
   if (rift) glow(ctx, B, ex, ey, er * 3, lit.glow, 0.4 + 0.3 * pulse, lit.hot);
-  if (dog) coals(ctx, hx, hy, rH, ex, ey, er, pulse);
+  if (heavy) coals(ctx, hx, hy, rH, ex, ey, er, pulse);
   // The dark surround a wolf carries around the eye, which is what makes it read from across a room.
-  if (rH >= 9 && !dog) softLine(ctx, B, [ex - er * 1.2, ey + er * 0.2, ex + er * 1.6, ey - er * 0.1], shade(base, 0.6), Math.max(1, er * 1.5), 0.5);
-  eye(ctx, ex, ey, er, eyeCol, !rift && !dog);
-  if (dog && !B.override) eye(ctx, ex + er * 0.15, ey - er * 0.1, er * 0.5, COAL_HOT, false);
-  // The brow; the black dog's sits clear of the coals, low over them, so they glower.
-  const bl = dog ? er * 0.9 : 0;
-  softLine(ctx, B, [ex + er * 1.5, ey - er * 1.5 - bl, ex - er * 1.3, ey - er * 0.8 - bl], base, Math.max(1, rH * 0.13), 0.8);
+  if (rH >= 9 && !heavy) softLine(ctx, B, [ex - er * 1.2, ey + er * 0.2, ex + er * 1.6, ey - er * 0.1], shade(base, 0.6), Math.max(1, er * 1.5), 0.5);
+  eye(ctx, ex, ey, er, eyeCol, !rift && !heavy);
+  if (heavy && !B.override) eye(ctx, ex + er * 0.15, ey - er * 0.1, er * 0.5, COAL_HOT, false);
+  // The brow; the black dog's sits clear of the coals, low over them, so they glower. The moor
+  // hound's is grey.
+  const bl = heavy ? er * 0.9 : 0;
+  softLine(ctx, B, [ex + er * 1.5, ey - er * 1.5 - bl, ex - er * 1.3, ey - er * 0.8 - bl], moor ? shade('#c4c0b8', p.tone) : base, Math.max(1, rH * 0.13), moor ? 0.6 : 0.8);
 
   if (v === 'dire') scars(ctx, x, y, h, mx, my, rH, shade('#c0b0a4', p.tone));
   // The barrow wolf's scars are dark on its pale coat: bare hide where the fur never grew back.
   if (v === 'barrow') scars(ctx, x, y, h, mx, my, rH, shade('#6a6258', p.tone));
+  // The moor hound's are old and grey, as it is.
+  if (moor) scars(ctx, x, y, h, mx, my, rH, shade('#9a948c', p.tone));
   if (rift) riftFx(ctx, x, y, h, hx, hy, rH, f, light, pulse, lit);
+  if (moor) breath(ctx, hx, hy, rH, h, f);
+}
+
+/** The moor hound's grey: an old dog's muzzle, brows and chin gone grey, markings on the coat with no line. */
+function grizzle(ctx: CanvasRenderingContext2D, hx: number, hy: number, rH: number, grey: string): void {
+  patch(ctx, B, grey, [
+    { k: 'cap', x0: hx + rH * 0.6, y0: hy + rH * 0.12, x1: hx + rH * 1.62, y1: hy + rH * 0.08, r0: rH * 0.3, r1: rH * 0.2 },
+    { k: 'cap', x0: hx + rH * 0.3, y0: hy + rH * 0.62, x1: hx + rH * 1.3, y1: hy + rH * 0.72, r0: rH * 0.22, r1: rH * 0.16 },
+    { k: 'ell', x: hx + rH * 0.36, y: hy - rH * 0.62, rx: rH * 0.3, ry: rH * 0.16, rot: -0.2 },
+  ], { alpha: 0.72, feather: 0.5 });
+}
+
+/**
+ * The moor hound's breath, smoking in the cold: a puff out of its open jaws with every breath,
+ * drifting forward and up, spreading and thinning as it goes. Never ink: a puff is too faint for
+ * the silhouette to count.
+ */
+function breath(ctx: CanvasRenderingContext2D, hx: number, hy: number, rH: number, h: number, f: number): void {
+  if (B.override) return;
+  const k = (f % 40) / 40, x = hx + rH * (2.0 + 1.3 * k), y = hy + rH * (0.3 - 0.9 * k);
+  glow(ctx, B, x, y, h * (0.035 + 0.06 * k), '#dfe6ea', 0.32 * Math.sin(k * Math.PI), '#f4f8fa');
 }
 
 /**
