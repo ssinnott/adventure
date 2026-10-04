@@ -121,7 +121,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const stone = M3.features!.find((f) => f.kind === 'event' && f.id === 'm3_milestone')!;
   const [sx, sy] = [m3.x + stone.x, m3.y + stone.y], beside = [...steps(sx, sy, (x, y) => out.passable(x, y) === 'ok')].filter(([k]) => out.at(k % out.width, Math.floor(k / out.width)).ch === '=').sort((a, b) => a[1] - b[1])[0];
   const miles = beside[1] + (steps(beside[0] % out.width, Math.floor(beside[0] / out.width), (x, y) => out.at(x, y).ch === '=').get(front) ?? Infinity);
-  ok(Math.round(miles / 13) === 5 && 'text' in stone && /ANVILHALL 5/.test(stone.text), `M3's milestone says ANVILHALL 5, and the gate is ${miles} squares on along the trail and the spur`);
+  ok(Math.round(miles / 13) === 5 && stone.kind === 'event' && /ANVILHALL 5/.test(stone.text), `M3's milestone says ANVILHALL 5, and the gate is ${miles} squares on along the trail and the spur`);
 
   // The box's groups, each won at its floor: the slaglings on the trail by night, the beetles and
   // salamanders on the two heaps of spoil and the worm in the collapsed working.
