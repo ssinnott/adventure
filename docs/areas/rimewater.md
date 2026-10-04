@@ -8,10 +8,11 @@ cold loch the sealed bay where every people of Caldera lies asleep in rows. This
 plan for building it, box by box, and the briefs. Its work is filed under #438 (Phase 1.3, #431):
 the boxes as §4's table has them, Rime Lodge (#487), the Sleepers' Bay (#490), its chapter (#492),
 its side quests (#494), its six drawings (#495), Rime Lodge's rooms (#496) and the country behind
-the road, parked (#497); this doc is #485. Its systems are #432's: the curve's rows and the act's
-gear (#535), ash, ice and pine and a group placed on ice (#536), regeneration, curse and calls
-(#537), Kiln-script and Linguist (#538), the crossings with the drove road's coach (#539) and the
-bot (#541). Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
+the road, parked (#497); this doc is #485. Its systems are #432's, built but for the bot's last
+lessons (#541): the curve's rows and the act's gear (#535), ash, ice and pine and a group placed on
+ice (#536), regeneration, curse and calls (#537), Kiln-script and Linguist (#538) and the crossings
+with the drove road's coach (#539), which docs/SLICE.md, docs/MONSTERS.md §3 and EXPANSION §5.2
+describe. Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
 (`src/game/atlas.ts`), for land without shallows or rivers; "walkable" is land that is not mountain,
 peak, cliff or chasm.
 
@@ -115,8 +116,11 @@ the row in `src/content/progression.ts`, planned until #486 lists the area (band
 window 4,500), and the step in `src/content/areas/rimewater/items.ts`, made ahead of the area as
 the Kilns' is (docs/areas/kilns.md §3): the furrier's seven (`FURRIER`, for #487) and their plus
 finds by 22 (§4.1), each owed to its shop or box until it is sold or placed. Nothing else: no map.
-The systems it waits on are the rest of #432's (§2). Its monsters are drawn in #495 and its rooms
-in #496.
+The systems it waits on are #432's, built but for #541's (the opening names them and where each is
+described): the bot burns what mends and aims at a caller since #537, and what else it must learn,
+with the harness from 16 to 22 again, is to come. The drove road's coach is written
+(docs/areas/kilns.md §3) and runs once Kilnhaven (#469) and Rime Lodge (#487) are built. Its
+monsters are drawn in #495 and its rooms in #496.
 
 The monsters are drawn (#495), the six of MONSTERS §7.3, ahead of the boxes that place them: the
 keepers, the Bay Keeper and the Matron (`src/ui/monsters/keepers.ts`), and the cats, the Snow Lynx

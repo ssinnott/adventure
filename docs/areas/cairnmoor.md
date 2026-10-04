@@ -95,8 +95,10 @@ the drove road down to Longmere. Its row on the curve and its share of the act's
 next 20, window 4,000), and O7's Banded Staff +1 in `src/content/areas/cairnmoor/items.ts`, made
 ahead of the area as the Kilns' step is (docs/areas/kilns.md §3), owed to #477 until placed. Its
 monsters are drawn (#483, below), and nothing else is built. Of the systems it waits on, the rest
-of #432's, ice and lying snow underfoot (#536; heather is #162's) and regeneration and curse (#537)
-are built; the drove road's coach (#539) and the bot that plays them (#541) are to come.
+of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse (#537)
+and the drove road's coach (#539) are built, and docs/SLICE.md says what each does; the coach runs
+once Kilnhaven (#469) and Rime Lodge (#487) are built. The bot that plays them burns what mends
+since #537, and what else it must learn (#541) is to come.
 
 Drawn ahead of the boxes that place them (#483): the lights, a new family, with the Bog Light
 (`src/ui/monsters/lights.ts`); and the six on frames that exist, the Raven on the birds', the Bog
@@ -437,7 +439,7 @@ landmarks: a stone ring, a cairnfield, a tor, a tarn.
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
   about half the time at 19 and nearly always at 21. The ring's camp is where the road's walk rests
-  on O7; the bot learns the trolls' fire with #541.
+  on O7; the bot burns the trolls once it has seen them mend (#537, docs/MONSTERS.md §3.1).
 - **Density.** Core boxes at the Foreland's floor, the bog at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp and the voice, so it needs no exception.
 
