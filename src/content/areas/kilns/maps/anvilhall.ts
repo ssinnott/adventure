@@ -135,7 +135,7 @@ export const ANVILHALL: MapDef = {
       { after: { flag: BOUGHT }, lines: ['"Your names are in the book. Beside them, in the thane\'s hand: paid." He turns the page.'] },
       { after: { flag: TAKEN }, lines: ['"Your names are in the book, in red now." He does not look up. "The gate lets you by. I would not."'] },
     ] },
-    { kind: 'event', x: 7, y: 14, id: 'ah_gate', once: true, text: 'A door in the hill, iron-bound, and the hammering behind it. Over the lintel, words cut deep and painted red.' },
+    { kind: 'event', x: 7, y: 13, id: 'ah_court', once: true, text: 'Anvilhall: a court cut down into the hill and open to the sky, its terraces climbing to the great hall\'s doors.' },
     { kind: 'sign', x: 8, y: 14, id: 'ah_lintel', text: 'The words over the gate: the hold\'s name, the Seventh House of the Mountain.', read: 'SECTION 7.' },
   ],
 };
