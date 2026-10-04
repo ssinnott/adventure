@@ -29,7 +29,9 @@ import { ok, owed } from './lib.ts';
  * reported as that issue's while nothing does, and failed once something does, so its entry is
  * dropped here.
  */
-export const UNSET: Record<string, string> = {};
+export const UNSET: Record<string, string> = {
+  q_anvil_closed: '#470', // the Warden of the Anvil fallen and its tear closed: the Rift sets it (#465), the Kilns' chapter reads it, and the Hearth counts the Anvil Stone on it (#540)
+};
 
 /** The flags a feature sets: a person's, met, and an event's, said (#156). */
 const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : [];
