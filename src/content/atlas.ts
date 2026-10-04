@@ -319,7 +319,7 @@ export const PLAN: Atlas = {
     { from: 'ironfells', to: 'deep_mines', kind: 'enter', a: [440, 96] },
     { from: 'kilnsheart', to: 'anvil_stone', kind: 'enter', a: [468, 142] },
     { from: 'kilnsheart', to: 'lava_tubes', kind: 'enter', a: [478, 178] },
-    { from: 'kilnmouth', to: 'kilnhaven', kind: 'enter', a: [391, 162] },
+    { from: 'kilnmouth', to: 'kilnhaven', kind: 'enter', a: [388, 162] },
     { from: 'kilnsheart', to: 'highmoor', kind: 'road', a: [430, 196], b: [432, 212] },
     { from: 'cairnfield', to: 'cairns', kind: 'enter', a: [430, 240] },
     { from: 'cairnfield', to: 'longmere', kind: 'road', a: [424, 250], b: [414, 262] },

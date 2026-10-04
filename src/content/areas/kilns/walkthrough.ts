@@ -24,13 +24,21 @@
 // Gluthutte's box (N5, #463): the drove road on from N4, harder to a company under its floor of 17;
 // the smelter, the verse over its mouth read by a reader alone, the master smith with his crown and
 // the Compact's factor; the box's groups won at its floor; the cutters' track east for the Stone; the
-// drove road out south; and the shard store found from the slag heap's laid face. The roads south and
-// west (N6 and M6, #467): the drove road on from N5 with nothing said, and out for Cairnmoor past the
-// moor's border; the milestone at the fork, counted along the roads; the drover at the camp; the
-// boxes' groups won at their floor; the coach's old halt found from the worn verge; the branch over
-// the line into Kilnmouth, named, and harder to a company under its floor, out to the west edge
-// before Kilnhaven's gate; the farmer at his gate; and the drover's cache found from the stopped kiln.
-// Erzkamm (N2,
+// drove road out south; and the shard store found from the slag heap's laid face. The Anvil Stone's
+// box (O5, #464): the cutters' track on from N5 with nothing said, up past the tear, shut until the
+// Rift is built, to the Stone; the box's groups won at its floor, no Guard among them; the plinth's
+// words read by a reader alone; the foreman at his shed and his hammer in it; the hollow under the
+// anvil-rock's lip found from the cut that stops half way; and the thane's choice seen at the
+// Stone, the saws off it once it is bought and his iron on the approach once it is taken. The roads
+// south and west (N6 and M6, #467): the drove road on from N5 with nothing said, and out for
+// Cairnmoor past the moor's border; the milestone at the fork, counted along the roads; the drover
+// at the camp; the boxes' groups won at their floor; the coach's old halt found from the worn
+// verge; the branch over the line into Kilnmouth, named, and harder to a company under its floor,
+// out to the west edge before Kilnhaven's gate; the farmer at his gate; and the drover's cache
+// found from the stopped kiln. Kilnhaven's box (L6, #468): the branch on from M6 with nothing said,
+// to the gate in the town's wall, shut until the town is built; the milestone before it, counted
+// along the roads; the coach yard; the store's clerk; the box's groups won at its floor; and the
+// bonded store found from the sealed row. Erzkamm (N2,
 // #460): up the open fell out of N3 with nothing said, the box's groups won at its floor, the scholar
 // at the wall, and the doors behind the blank face found from the worn floor, the wall beside it read
 // by a reader alone; last, the Barbarian's second prestige, taught by Hartmut at the cave's mouth
@@ -61,6 +69,8 @@ import { FORGE, ANVIL_STONE_PRICE } from './items.ts';
 import { GATE } from './maps/ironfells_n3.ts';
 import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
+import { TEAR } from './maps/kilnsheart_o5.ts';
+import { GATE as HAVEN_GATE } from './maps/kilnmouth_l6.ts';
 
 const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
 const N2 = MAP_DEFS.find((d) => d.id === 'ironfells_n2')!;
@@ -70,11 +80,15 @@ const MINER = N4.features!.find((f) => f.kind === 'npc' && f.name === 'A miner')
 const N5 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n5')!;
 const SMITH = N5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Eckhart')) as Person;
 const FACTOR = N5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Kerensa')) as Person;
+const O5 = MAP_DEFS.find((d) => d.id === 'kilnsheart_o5')!;
+const FOREMAN = O5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Reinhart')) as Person;
 const SCHOLAR = N2.features!.find((f) => f.kind === 'npc' && f.name === 'A scholar at the wall') as Person;
 const HARTMUT = N2.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Hartmut')) as Person;
 const N6 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n6')!, M6 = MAP_DEFS.find((d) => d.id === 'kilnmouth_m6')!;
 const DROVER = N6.features!.find((f) => f.kind === 'npc' && f.name === 'A drover') as Person;
 const FARMER = M6.features!.find((f) => f.kind === 'npc' && f.name.startsWith('A farmer')) as Person;
+const L6 = MAP_DEFS.find((d) => d.id === 'kilnmouth_l6')!;
+const CLERK = L6.features!.find((f) => f.kind === 'npc' && f.name.startsWith('The store')) as Person;
 const CROSSING = 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.';
 const TOWN = MAP_DEFS.find((d) => d.id === 'anvilhall')!;
 const person = (name: string): Person => TOWN.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
@@ -338,9 +352,97 @@ export const walkthrough: Walkthrough = (ok) => {
   const shards = N5.features!.find((f) => f.kind === 'chest' && f.id === 'n5_store_chest');
   ok(shards?.kind === 'chest' && shards.items.includes('forge_shield+1') && shards.x === 6 && shards.y === 2, 'in the store, among the boxes of stone, a Forge Shield +1');
 
+  // The Anvil Stone's box (O5, #464). On along the cutters' track over the line from N5: the same land
+  // at the same floor, so the log names nothing and warns of nothing.
+  const o5 = out.zones.find((z) => z.id === 'kilnsheart_o5')!;
+  w.world.travel('kilnsheart_n5', 29, 24, EAST);
+  const onTrack: string[] = [];
+  for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnsheart_o5'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') onTrack.push(...r.messages); }
+  ok(w.world.zone?.id === 'kilnsheart_o5' && !onTrack.some((m) => /Kilns|harder|spare you/.test(m)), `the cutters' track crosses from N5 into O5 with nothing said of the land (${onTrack.join(' / ') || 'nothing'})`);
+
+  // The track: dirt from the box's west edge up past the tear to the foot of the Stone's plinth.
+  const inO5 = (x: number, y: number): boolean => x >= o5.x && x < o5.x + o5.w && y >= o5.y && y < o5.y + o5.h;
+  const toStone = steps(o5.x, o5.y + 24, (x, y) => out.at(x, y).ch === ':' && inO5(x, y)).get((o5.y + 12) * out.width + o5.x + 12);
+  ok(toStone === 24, `the cutters' track runs ${toStone} squares of dirt from the box's west edge up to the Stone`);
+
+  // The tear below the cut, beside the track: its square shut until the Rift is built (#465), TEAR
+  // written for it there, and the torn ground's line said from the track beside it.
+  ok(TEAR.x === 12 && TEAR.y === 16 && TEAR.to === 'anvil_stone' && out.passable(o5.x + TEAR.x, o5.y + TEAR.y) !== 'ok' && !O5.features!.some((f) => f.kind === 'rift'),
+    'the tear below the cut is shut until the Anvil Stone\'s Rift is built, TEAR written for its square');
+  see(w, 'kilnsheart_o5:o5_tear');
+  w.world.travel('kilnsheart_o5', TEAR.x - 1, TEAR.y, EAST);
+  const torn = w.world.move('forward');
+  ok(torn.kind === 'blocked' && w.world.state.x - o5.x === TEAR.x - 1, `a step into the tear is refused (${torn.kind === 'blocked' ? torn.reason : torn.kind})`);
+
+  // The box's groups, each won at its floor: the slaglings out of the tear on the track and on the
+  // slope beside it, and the slag elder at its lip. To a company that has not answered the thane no
+  // Anvil Guard stands on the approach.
+  const guard = O5.encounters!.find((g) => g.id === 'o5_guard')!;
+  ok(!w.world.walks(guard, guard.x, guard.y), 'with the thane not answered, no Anvil Guard stands on the approach');
+  for (const g of O5.encounters!.filter((e) => e !== guard)) fight(w, `kilnsheart_o5:${g.id}`);
+  ok(O5.encounters!.filter((g) => g.monsters.includes('slagling')).every((g) => !!g.respawn && JSON.stringify(g.until) === JSON.stringify({ flag: 'q_anvil_closed' }))
+    && O5.encounters!.filter((g) => !g.monsters.includes('slagling')).every((g) => !g.respawn), 'the slaglings come back until the tear is closed; the elder and the Guard never come back');
+
+  // The Stone on its anvil of rock: its line on the approach, and the words cut in its plinth (the
+  // dwarves' words for what holds to a company with no reader; KEEP WHOLE. NO CUTTING. to one with).
+  see(w, 'kilnsheart_o5:o5_stone');
+  w.world.travel('kilnsheart_o5', 12, 11, NORTH);
+  const holds = w.world.eventsHere();
+  ok(holds.some((t) => t.includes('what holds')) && !holds.some((t) => t.includes('KEEP WHOLE')) && !w.world.used('o5_plinth'), `with no reader the plinth's words are the dwarves' and no more (${holds.join(' / ')})`);
+  w.party.members[4].skills = ['linguist'];
+  const whole = w.world.eventsHere();
+  ok(whole.includes('Maren reads: "KEEP WHOLE. NO CUTTING."') && w.world.used('o5_plinth'), `Maren, taught Linguist, reads it the old way, and it is kept read (${whole.join(' / ')})`);
+  w.party.members[4].skills = [];
+
+  // The foreman at his shed, minding the saws the others left, and in the shed his own hammer.
+  w.world.travel('kilnsheart_o5', FOREMAN.x, FOREMAN.y);
+  const minds = says(w, FOREMAN);
+  ok(minds.includes('the ground opened') && minds.includes('minds the saws'), 'the cutters\' foreman stayed at his shed when the others went, and minds the saws');
+  w.world.travel('kilnsheart_o5', FOREMAN.x, FOREMAN.y, EAST);
+  const inShed = [w.world.move('forward'), w.world.move('forward')];
+  const hammer = O5.features!.find((f) => f.kind === 'chest' && f.id === 'o5_shed_chest');
+  ok(inShed.every((r) => r.kind === 'moved') && hammer?.kind === 'chest' && hammer.items.includes('cutters_hammer') && w.world.state.x - o5.x === hammer.x && w.world.state.y - o5.y === hammer.y,
+    'through the foreman\'s door, in his shed, a Cutter\'s Hammer +1');
+
+  // The secret: every saw-cut through but one on the Stone's north face; the search at the anvil-rock's
+  // lip beside it and the hollow behind, where one cutter hid the piece he would not sell. Walked,
+  // waded, climbed or floated, it is never reached but through the lip.
+  const hollow = shut(o5, [12, 9], [11, 9], [9, 9]);
+  ok(hollow.size > 600 && !hollow.reached, `the hollow is shut but for the lip: none of O5's ${hollow.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'kilnsheart_o5:o5_cut');
+  w.world.travel('kilnsheart_o5', 12, 9, WEST);
+  let lip = false;
+  for (let i = 0; i < 20 && !lip; i++) lip = w.world.search();
+  const underLip = lip ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(lip && underLip.every((r) => r.kind === 'moved') && w.world.used('o5_hollow'), 'searched at the anvil-rock\'s lip, it gives, and the hollow behind it can be walked into');
+  listen(w);
+  const piece = O5.features!.find((f) => f.kind === 'chest' && f.id === 'o5_hollow_chest');
+  ok(piece?.kind === 'chest' && piece.items.includes('anvil_shard') && piece.x === 9 && piece.y === 9, 'in the hollow, the cutter\'s piece, a second Anvil Shard');
+
+  // The thane's choice at the Stone, each way on a company of 17 of its own. Bought, the saws are off
+  // the Stone, the foreman takes them down and no Guard stands; taken, the thane's iron stands on the
+  // approach, won at the box's floor, and the foreman keeps to his door.
+  const post = O5.features!.find((f) => f.kind === 'event' && f.id === 'o5_post')!;
+  const saw = O5.features!.find((f) => f.kind === 'event' && f.id === 'o5_saw')!, sawOff = O5.features!.find((f) => f.kind === 'event' && f.id === 'o5_saw_off')!;
+  for (const way of [BOUGHT, TAKEN]) {
+    const t = newWalk(ok);
+    t.level = 17;
+    t.world.travel('anvilhall', THANE.x, THANE.y);
+    const [buyIt, takeIt] = meet(THANE, t.party, heard(t.world, THANE)).choice?.answers ?? [];
+    t.party.gold = way === BOUGHT ? ANVIL_STONE_PRICE : 0;
+    answer(way === BOUGHT ? buyIt : takeIt, t.party);
+    ok(!!t.party.flags[way], `${way}: the thane's answer is given`);
+    const stands = t.world.walks(guard, guard.x, guard.y) && t.world.present(post), cut = t.world.present(saw), off = t.world.present(sawOff);
+    t.world.travel('kilnsheart_o5', FOREMAN.x, FOREMAN.y);
+    const foreman = says(t, FOREMAN);
+    ok(way === BOUGHT ? !stands && off && !cut && foreman.includes('The saws come off') : stands && cut && !off && foreman.includes('thane\'s iron'),
+      way === BOUGHT ? 'bought, no Guard stands, the saws are off the Stone and the foreman is taking them down' : 'taken, the thane\'s iron stands on the approach, the saw is still in the cut and the foreman keeps to his door');
+    if (way === TAKEN) fight(t, 'kilnsheart_o5:o5_guard');
+  }
+
   // The roads south and west (N6 and M6, #467). On down the drove road over the line from N5: the
   // same land, its floor 16 under N5's 17, so nothing is said of it at any level.
-  const n6 = out.zones.find((z) => z.id === 'kilnsheart_n6')!, m6 = out.zones.find((z) => z.id === 'kilnmouth_m6')!;
+  const n6 = out.zones.find((z) => z.id === 'kilnsheart_n6')!, m6 = out.zones.find((z) => z.id === 'kilnmouth_m6')!, l6 = out.zones.find((z) => z.id === 'kilnmouth_l6')!;
   for (const m of w.party.members) m.level = 14;
   w.world.travel('kilnsheart_n5', 12, 29, SOUTH);
   const intoN6: string[] = [];
@@ -353,11 +455,11 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'kilnsheart_n6:n6_border');
 
   // The fork's milestone, counted along the roads at 13 squares to the unit, a corner walked where the
-  // road turns on a diagonal: to the front of Anvilhall's gate, and to Kilnhaven's gate at 391,162,
-  // two squares past the branch's last road square on M6.
+  // road turns on a diagonal: to the front of Anvilhall's gate, and to Kilnhaven's gate on L6 (#468),
+  // a square past the road's end before it.
   const roadish = (x: number, y: number): boolean => out.at(x, y).ch === '=' || (out.passable(x, y) === 'ok' && [-1, 1].some((d) => out.at(x + d, y).ch === '=') && [-1, 1].some((d) => out.at(x, y + d).ch === '='));
   const byRoad = steps(n6.x + 4, n6.y + 18, roadish);
-  const toHall = byRoad.get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity, toPort = (byRoad.get((m6.y + 4) * out.width + m6.x + 1) ?? Infinity) + 2;
+  const toHall = byRoad.get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity, toPort = (byRoad.get((l6.y + HAVEN_GATE.y) * out.width + l6.x + HAVEN_GATE.x + 1) ?? Infinity) + 1;
   const mile = N6.features!.find((f) => f.kind === 'event' && f.id === 'n6_milestone')!;
   ok(mile.kind === 'event' && mile.x === 4 && mile.y === 18 && mile.text.includes(`ANVILHALL ${Math.round(toHall / 13)} `) && mile.text.includes(`KILNHAVEN ${Math.round(toPort / 13)} `),
     `the milestone at the fork says ANVILHALL ${Math.round(toHall / 13)} and KILNHAVEN ${Math.round(toPort / 13)}: ${toHall} squares along the roads to Anvilhall's gate and ${toPort} to Kilnhaven's`);
@@ -397,9 +499,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(due6.includes('Kilnmouth.') && !due6.some((m) => m.includes('harder')), `a company of 16 hears Kilnmouth named, and no warning (${due6.join(' / ')})`);
   w.level = 16;
 
-  // The branch reaches the west edge beside Kilnhaven's gate, its last square dirt where the atlas has
-  // no road beyond; past it, for now, the world ends.
-  ok(out.at(m6.x + 1, m6.y + 4).ch === '=' && out.at(m6.x, m6.y + 4).ch === ':' && out.passable(m6.x - 1, m6.y + 4) !== 'ok', 'the branch runs to M6\'s west edge beside Kilnhaven\'s gate, and past it, for now, the world ends');
+  // The branch runs on west along the river's bank to M6's west edge and over it into L6, road all the
+  // way since L6 is laid (#468).
+  ok(out.at(m6.x + 1, m6.y + 4).ch === '=' && out.at(m6.x, m6.y + 4).ch === '=' && out.zoneAt(m6.x - 1, m6.y + 4)?.id === 'kilnmouth_l6' && out.at(m6.x - 1, m6.y + 4).ch === '=', 'the branch leaves M6 by its west edge and runs on into L6');
   see(w, 'kilnmouth_m6:m6_port');
 
   // The farmer at his gate, whose son went up to the mine; and the box's groups, each won at its
@@ -423,6 +525,50 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const cache = M6.features!.find((f) => f.kind === 'chest' && f.id === 'm6_cache_chest');
   ok(cache?.kind === 'chest' && cache.items.includes('seax+1') && cache.x === 21 && cache.y === 22, 'in the cache, among the Compact\'s cloth, a Seax +1');
+
+  // Kilnhaven's box (L6, #468). On along the branch over the line from M6: the same land at the same
+  // floor, so nothing is said of it.
+  w.world.travel('kilnmouth_m6', 2, 4, WEST);
+  const intoL6: string[] = [];
+  for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnmouth_l6'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') intoL6.push(...r.messages); }
+  ok(w.world.zone?.id === 'kilnmouth_l6' && !intoL6.some((m) => /Kilnmouth|harder|spare you/.test(m)), `the branch crosses from M6 into L6 with nothing said of the land (${intoL6.join(' / ') || 'nothing'})`);
+
+  // The gate in the town's wall, shut until Kilnhaven is built (#469), its way in written beside the
+  // map; and the milestone before it, counted along the roads as the stones are.
+  ok(!L6.exits?.length && out.passable(l6.x + HAVEN_GATE.x, l6.y + HAVEN_GATE.y) !== 'ok' && HAVEN_GATE.to === 'kilnhaven' && HAVEN_GATE.x === 28 && HAVEN_GATE.y === 4 && out.at(l6.x + 29, l6.y + 4).ch === '=',
+    'the road runs from the east edge to Kilnhaven\'s gate in the wall at 28,4, and the gate is shut until the town is built');
+  w.world.travel('kilnmouth_l6', HAVEN_GATE.x + 1, HAVEN_GATE.y, WEST);
+  ok(w.world.eventsHere().some((t) => t.includes('barred')), 'before the gate, it is shut and barred from inside');
+  const fromStone = steps(l6.x + 30, l6.y + 4, roadish), toHall6 = fromStone.get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity;
+  const stone6 = L6.features!.find((f) => f.kind === 'event' && f.id === 'l6_milestone')!;
+  ok(stone6.kind === 'event' && stone6.x === 30 && stone6.y === 4 && stone6.text.includes(`ANVILHALL ${Math.round(toHall6 / 13)} `), `the milestone before Kilnhaven's gate says ANVILHALL ${Math.round(toHall6 / 13)}: ${toHall6} squares along the roads to Anvilhall's gate`);
+  see(w, 'kilnmouth_l6:l6_yard');
+
+  // Past its west edge, the cut heath of K6, and past its south edge Cairnmoor's L7, the world ends.
+  ok(out.passable(l6.x - 1, l6.y + 25) !== 'ok' && out.passable(l6.x + 20, l6.y + 32) !== 'ok', 'past L6\'s west and south edges, for now, the world ends');
+
+  // The store's clerk on the quay; and the box's groups, each won at its floor: the beetles in the ore
+  // heaps, the Hand's crew on the pier by night and the worm pair under the heath.
+  w.world.travel('kilnmouth_l6', CLERK.x, CLERK.y);
+  const sealedRow = meet(CLERK, w.party, heard(w.world, CLERK)).text;
+  ok(sealedRow.includes('Compact') && sealedRow.includes('nobody opens it'), 'the store\'s clerk says the sealed row is the Compact\'s, and nobody opens it');
+  for (const g of L6.encounters!) fight(w, `kilnmouth_l6:${g.id}`);
+
+  // The secret: every crate on the quay open but the sealed row against the store's wall, the search
+  // there and the bonded store behind its stopped door. Walked, waded, climbed or floated, never
+  // reached but through the door.
+  const bonded = shut(l6, [21, 10], [21, 11], [22, 12]);
+  ok(bonded.size > 400 && !bonded.reached, `the bonded store is shut but for its stopped door: none of L6's ${bonded.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'kilnmouth_l6:l6_quay');
+  see(w, 'kilnmouth_l6:l6_store');
+  w.world.travel('kilnmouth_l6', 21, 10, SOUTH);
+  let unsealed = false;
+  for (let i = 0; i < 20 && !unsealed; i++) unsealed = w.world.search();
+  const inBonded = unsealed ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(unsealed && inBonded.every((r) => r.kind === 'moved') && w.world.used('l6_bonded'), 'searched at the store\'s wall behind the sealed row, its stopped door gives, and the bonded store behind it can be walked into');
+  listen(w);
+  const robe = L6.features!.find((f) => f.kind === 'chest' && f.id === 'l6_store_chest');
+  ok(robe?.kind === 'chest' && robe.items.includes('kiln_robe+1') && robe.x === 22 && robe.y === 12, 'among the crates for Cinderport and Sheer Point, a Kiln Robe +1');
 
   anvilhall(w, ok);
 

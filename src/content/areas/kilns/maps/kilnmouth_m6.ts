@@ -19,7 +19,7 @@ export const KILNMOUTH_M6: MapDef = {
     'ffffBBffffffffffffff~~~~~~ff,,,^',
     'ffffBBfffffffffff~~~~~~fffff,,^^',
     'fffffffffff==========ffffffff,,,',
-    ':===========~~~~~fff==ffffff,,,,',
+    '============~~~~~fff==ffffff,,,,',
     '~~~~~~~~~~~~~~~ffffff==fffff,,,,',
     '~~~~~~~~~~~~~fffffffff==fff,,,,,',
     'ffff~~~~~~~ffffffffffff==ff,,,,,',
