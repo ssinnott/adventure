@@ -3,18 +3,18 @@
 // mine's headworks at the foot of the first crags, its shaft under a wheel and a gantry, the fresh
 // spoil tipped below it and the wagon yard walled into the rock behind; the miners' camp on the
 // grass west of the trail, and the old workings' open cuts in the south-west.
-// The shaft at 16,2 is the way into the Tiefzeche (#462), shut until it is built (MOUTH).
+// The shaft at 16,2 is the way into the Tiefzeche (#462, MOUTH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 /**
- * The way down into the Tiefzeche (#462): the cage on the shaft at 16,2, onto the workings' first
- * level at 7,14, facing north. An exit leads only to a built map, so the dungeon lists it in this
- * map's exits, opens the shaft's square and drops `n4_cage`; its way back up lands on 15,2, facing
- * west, the end of the spur before the shaft.
+ * The way down into the Tiefzeche (#462): the cage's gate on the shaft at 16,2, onto the workings'
+ * first level at 7,14, facing north, at the shaft's foot; the cage's way back up lands on 15,2,
+ * facing west, the end of the spur before the shaft.
  */
-export const MOUTH: Exit = { x: 16, y: 2, to: 'deep_mines', tx: 7, ty: 14, tf: NORTH };
+export const MOUTH: Exit = { x: 16, y: 2, to: 'deep_mines', tx: 7, ty: 14, tf: NORTH,
+  label: 'The cage drops down the shaft, the daylight going small overhead, and bumps to a stop at the bottom.' };
 
 export const KILNSHEART_N4: MapDef = {
   id: 'kilnsheart_n4',
@@ -27,7 +27,7 @@ export const KILNSHEART_N4: MapDef = {
   rows: [
     ',,,,==,,,,,,,,,,,,,,,,,,rrrrrrrr',
     ',,,,,=,,,,,,,,,::BB,,,rrrrrrrrrr',
-    ',,,,,,==========#rrrrrrrrrrrrrrr',
+    ',,,,,,==========Drrrrrrrrrrrrrrr',
     ',,,,,,==,,,,,,,::######rrrrrrrrr',
     ',,,,,,,==,^,,,,,:#::::#rrrrrrrrr',
     ',,,,,,,,==^,,,,,:S::::#rrrrrrrrr',
@@ -58,14 +58,14 @@ export const KILNSHEART_N4: MapDef = {
     ':::rrr:::::^,,,^,,,,=,,,^,,,,,,^',
     ':::::::::::,,,,,,,,,=,,^^^^^,,~~',
   ],
+  exits: [MOUTH],
   features: [
     // Over the line from the Fells: the boundary stone by the trail.
     { kind: 'event', x: 3, y: 1, id: 'n4_boundary', once: true, text: 'A boundary stone by the trail, a hammer cut on its north face and a kiln on its south.' },
-    // The headworks: the spur's end before the shaft, the cage chained until the Tiefzeche is built;
-    // the tally board on the winding house, the lookout from the gantry, the crust on the fence and
-    // the lamp-niche over the shaft with the miners' blessing cut above it.
+    // The headworks: the spur's end before the shaft and the cage's gate on it, the way into the
+    // Tiefzeche (MOUTH); the tally board on the winding house, the lookout from the gantry, the crust
+    // on the fence and the lamp-niche over the shaft with the miners' blessing cut above it.
     { kind: 'event', x: 14, y: 2, id: 'n4_mouth', once: true, text: 'The shaft goes down under a wheel and a gantry. The miners sing going in, a verse at the door. Nobody sings coming out.' },
-    { kind: 'event', x: 15, y: 2, id: 'n4_cage', text: 'The cage stands at the top of the shaft, chained. No shift goes down today.' },
     { kind: 'event', x: 16, y: 1, id: 'n4_tally', once: true, text: 'The tally board on the winding house, a stroke a load. Under DOWN the strokes run to the foot of it. Under UP, none.' },
     { kind: 'event', x: 15, y: 1, id: 'n4_lookout', once: true, when: { hours: 'day' }, text: 'From the gantry\'s top the drove road runs on south out of sight. Far to the south-east a crag stands cut square on one face.' },
     { kind: 'event', x: 15, y: 1, id: 'n4_lookout_night', once: true, when: { hours: 'night' }, text: 'From the gantry\'s top, far to the south-east, something glows red at the foot of a crag, and the glow does not move.' },
