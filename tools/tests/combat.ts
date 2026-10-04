@@ -1,15 +1,15 @@
 // The combat resolver: a seeded fight replays byte for byte, the cap, the rows, fleeing, the spells
 // that hit every foe, Ward and Revive; the ranks and morale (#160); elements, monsters that cast and
-// drain, and a hit that wakes a sleeper (#161).
+// drain, and a hit that wakes a sleeper (#161); regeneration, curse and calls (#537).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
-import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE } from '../../src/game/combat.ts';
-import type { CombatState, CombatGroup } from '../../src/game/combat.ts';
+import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt } from '../../src/game/party.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, MAX_MONSTERS, MAX_GROUPS } from '../../src/game/combat.ts';
+import type { CombatState, CombatGroup, PartyAction } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
-import { gateBlast } from '../gate.ts';
-import { wakeWith } from '../harness.ts';
+import { gateBlast, gateBurn } from '../gate.ts';
+import { wakeWith, markOf } from '../harness.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
@@ -157,6 +157,9 @@ export function combat(): void {
   casting();
   drain();
   pastTen();
+  regeneration();
+  curse();
+  calls();
 }
 
 /** A fight played out: each member strikes `aim`'s pick where it can and braces where it cannot. */
@@ -586,5 +589,186 @@ function pastTen(): void {
     addCondition(bram, 'stoned'); addCondition(bram, 'cursed');
     const both = castOnAlly(maren, SPELLS.absolve, bram), none = castOnAlly(maren, SPELLS.absolve, bram);
     ok(!hasCondition(bram, 'stoned') && !hasCondition(bram, 'cursed') && both === 'Maren casts Absolve: Bram is flesh again, and the curse lifts.' && none === 'Maren casts Absolve, but Bram needs no absolving.', `Absolve lifts stone and curse (${both})`);
+  }
+}
+
+/** The party braces, or does what `act` gives a member where it gives anything, until the round in hand is over. */
+function throughRound(s: CombatState, p: Party, seed: number, act?: (i: number) => PartyAction | undefined): void {
+  const rng = makeRng(seed), round = s.round;
+  for (let guard = 0; guard < 200 && s.outcome === 'ongoing'; guard++) {
+    const t = currentTurn(s, p, rng);
+    if (!t || s.round !== round) return;
+    if (t.side === 'monster') { monsterAct(s, p, rng); continue; }
+    const a = act?.(t.i);
+    if (!a || !partyAct(s, p, rng, a)) partyAct(s, p, rng, { type: 'defend' });
+  }
+}
+
+/** Regeneration (MONSTERS §3.3, #537): a troll mends each round but a round fire burnt it, one felled stays down, and the bots burn what they have seen mend. */
+function regeneration(): void {
+  const troll: MonsterDef = { ...MONSTERS.ogre, id: 'test_troll', name: 'Troll', plural: 'Trolls', hp: 200, regen: 20, attack: 0, dice: 1, sides: 2, bonus: 0 };
+  const fresh = (seed: number, defs: readonly MonsterDef[] = [troll]): { s: CombatState; p: Party } => {
+    const p = defaultParty(makeRng(seed)), mage = p.members[5];
+    mage.spells.push('firebolt'); mage.sp = mage.maxSp = 99;
+    return { s: startCombat(p, [{ id: 't', monsters: defs }], makeRng(seed)), p };
+  };
+  const cassian = (spellId: string) => (i: number): PartyAction | undefined => (i === 5 ? { type: 'cast', spellId, target: 0 } : undefined);
+  {
+    const { s, p } = fresh(80);
+    s.monsters[0].hp = 150;
+    throughRound(s, p, 80);
+    ok(s.monsters[0].hp === 170 && s.log.includes(MEND_LINE('Troll', true, 20)) && s.mends?.test_troll === 20, `a hurt troll mends 20 at the round's end, and the company has seen it mend (${s.monsters[0].hp} hp)`);
+    s.monsters[0].hp = 195;
+    throughRound(s, p, 81);
+    ok(s.monsters[0].hp === 200 && s.log.includes(MEND_LINE('Troll', true, 5)), 'and never past its own hit points');
+    throughRound(s, p, 82);
+    ok(s.monsters[0].hp === 200 && s.log.filter((l) => l.startsWith('Troll mends')).length === 2, 'and a whole one says nothing');
+  }
+  {
+    // Fire that lands keeps it from mending that round, and the next round it mends again; lightning does not.
+    const { s, p } = fresh(83);
+    s.monsters[0].hp = 150;
+    throughRound(s, p, 83, cassian('firebolt'));
+    const burnt = s.monsters[0].hp;
+    ok(burnt < 150 && s.log.includes(SMOULDER_LINE('Troll', true)) && !s.log.some((l) => l.startsWith('Troll mends')) && !s.monsters[0].burnt, `a troll Fire Bolt struck smoulders and does not mend at the round's end (${burnt} hp; ${s.log.find((l) => l.startsWith('Cassian casts'))})`);
+    throughRound(s, p, 84);
+    ok(s.monsters[0].hp === burnt + 20, `and mends again the round after, unburnt (${s.monsters[0].hp} hp)`);
+    const sparked = fresh(85);
+    sparked.s.monsters[0].hp = 150;
+    throughRound(sparked.s, sparked.p, 85, cassian('spark'));
+    const struck = sparked.s.log.find((l) => l.startsWith('Cassian casts Spark')) ?? '';
+    ok(!!struck && sparked.s.log.includes(MEND_LINE('Troll', true, 20)), `Spark's lightning does not keep it from mending (${struck})`);
+    const proof = fresh(86, [{ ...troll, immune: ['fire'] }]);
+    proof.s.monsters[0].hp = 150;
+    throughRound(proof.s, proof.p, 86, cassian('firebolt'));
+    ok(proof.s.monsters[0].hp === 170 && proof.s.log.some((l) => /Fire Bolt: 0 damage/.test(l)), 'and fire that does nothing to it keeps nothing from mending');
+  }
+  {
+    // Mending is for the living: one felled stays down while the rest mend, and two mend in one line.
+    const { s, p } = fresh(87, [troll, troll, troll]);
+    s.monsters[0].hp = -5; s.monsters[1].hp = 150; s.monsters[2].hp = 120;
+    throughRound(s, p, 87);
+    ok(s.monsters[0].hp === -5 && s.monsters[1].hp === 170 && s.monsters[2].hp === 140 && s.log.includes(MEND_LINE('2 Trolls', false, 40)), `a felled troll stays down while two mend 40 between them (${s.log.find((l) => l.includes('Trolls mend'))})`);
+    s.monsters[1].hp = 0; s.monsters[2].hp = 0;
+    partyAct(s, p, makeRng(88), { type: 'defend' });
+    ok(s.outcome === 'victory', 'and the fight is won once every one is down');
+  }
+  {
+    // The gate bot burns what it has seen mend, with the widest fire it has, until fire has struck it this round.
+    const { s, p } = fresh(89), mage = p.members[5];
+    ok(gateBurn(s, mage) === undefined, 'the gate bot burns nothing it has not seen mend');
+    s.mends = { test_troll: 20 };
+    const burn = gateBurn(s, mage);
+    ok(burn?.spellId === 'firebolt' && burn.target === 0, `and once it has, it burns it with Fire Bolt (${JSON.stringify(burn)})`);
+    mage.spells.push('meteor');
+    ok(gateBurn(s, mage)?.spellId === 'meteor', 'or Meteor Swarm, which reaches further');
+    s.monsters[0].burnt = true;
+    ok(gateBurn(s, mage) === undefined, 'and nothing fire has struck already this round');
+    s.monsters[0].burnt = false; s.seen.test_troll = { fire: 0 };
+    ok(gateBurn(s, mage) === undefined, 'nor what it has seen fire do nothing to');
+    s.seen = {};
+    ok(gateBurn(s, p.members[0]) === undefined, 'and a member with no fire burns nothing');
+  }
+}
+
+/** Curse (MONSTERS §3.3, #537): a wight's hit curses, and the curse outlasts the fight, a rest and a raising until a cure lifts it; it takes nothing in a fight. */
+function curse(): void {
+  const wight: MonsterDef = { ...MONSTERS.wraith, id: 'test_wight', name: 'Wight', plural: 'Wights', attack: 99, dice: 1, sides: 1, bonus: 0, inflict: { cond: 'cursed', chance: 1 } };
+  const p = defaultParty(makeRng(90)), s = startCombat(p, [{ id: 'w', monsters: [wight] }], makeRng(90));
+  untilActs(s, p, 90, 0);
+  const line = s.log.find((l) => l.startsWith('Wight hits')) ?? '', hit = p.members.find((c) => line.startsWith(`Wight hits ${c.name} `));
+  ok(!!hit && hasCondition(hit, 'cursed') && line === `Wight hits ${hit.name} for 1. ${hit.name} is cursed!`, `a wight's hit curses (${line})`);
+  if (!hit) return;
+  {
+    // Faith keeps it off a cleric, and the line claims none; a curse already taken is not said again.
+    const q = defaultParty(makeRng(91)), maren = q.members[4];
+    for (const c of q.members) if (c !== maren) addCondition(c, 'unconscious');
+    const t = startCombat(q, [{ id: 'w', monsters: [wight] }], makeRng(91));
+    untilActs(t, q, 91, 0);
+    const l = t.log.find((x) => x.startsWith('Wight hits Maren')) ?? '';
+    ok(l === 'Wight hits Maren for 1.' && !hasCondition(maren, 'cursed'), `Faith keeps a curse off a cleric, and the log claims none (${l})`);
+    const bram = q.members[0];
+    bram.conditions = ['cursed'];
+    for (const c of q.members) if (c !== bram) c.conditions = ['unconscious'];
+    const u = startCombat(q, [{ id: 'w', monsters: [wight] }], makeRng(92));
+    untilActs(u, q, 92, 0);
+    const again = u.log.find((x) => x.startsWith('Wight hits Bram')) ?? '';
+    ok(again === 'Wight hits Bram for 1.', `and a curse already taken is not said again (${again})`);
+  }
+  // Not the fight's, as sleep is: it outlasts the fight's end, a rest and a raising.
+  s.monsters[0].hp = 0;
+  partyAct(s, p, makeRng(93), { type: 'defend' });
+  ok(s.outcome === 'victory' && hasCondition(hit, 'cursed'), 'the curse outlasts the fight');
+  rest(hit);
+  ok(hasCondition(hit, 'cursed'), 'and a rest');
+  const maren = p.members[4];
+  addCondition(hit, 'dead');
+  castOnAlly(maren, spell('revive'), hit);
+  ok(!hasCondition(hit, 'dead') && hasCondition(hit, 'cursed'), 'and a raising');
+  // Restore lifts it at tier 4 and Absolve at tier 7, which a cleric learns at 23 (DESIGN §7).
+  const lifted = castOnAlly(maren, spell('restore'), hit);
+  ok(!hasCondition(hit, 'cursed') && spell('restore').level === 4, `Restore lifts it (${lifted})`);
+  addCondition(hit, 'cursed');
+  const absolved = castOnAlly(maren, spell('absolve'), hit);
+  ok(!hasCondition(hit, 'cursed') && absolved === `Maren casts Absolve: the curse lifts from ${hit.name}.` && spell('absolve').level === 7 && spellTierAt(22) === 6 && spellTierAt(23) === 7, `and Absolve, of tier 7, which comes at 23 (${absolved})`);
+  // It takes nothing in a fight: a cursed member strikes, wears its armour and acts as it did.
+  const plain = defaultParty(makeRng(94)).members[0], cursed = structuredClone(plain);
+  addCondition(cursed, 'cursed');
+  ok(attackBonus(cursed) === attackBonus(plain) && armorClass(cursed) === armorClass(plain) && canAct(cursed), 'and a curse takes nothing in a fight: what it costs is the cure');
+}
+
+/** Calls (MONSTERS §3.3, #537): a caller's turn brings its group in whole, as a group of its own, inside the cap of 12 in three groups, those down counted. */
+function calls(): void {
+  ok(Object.values(MONSTERS).every((d) => !d.calls || (d.calls.monsters.length > 0 && d.calls.monsters.length < MAX_MONSTERS && d.calls.monsters.every((q) => typeof q === 'string' && q in MONSTERS))), 'every monster that calls names a group of monsters that exist, by id, smaller than a fight');
+  const knocker: MonsterDef = { ...MONSTERS.rat, id: 'test_knocker', name: 'Knocker', plural: 'Knockers', kind: 'machine', hp: 50, xp: 40 };
+  const tallyman: MonsterDef = { ...MONSTERS.bandit, id: 'test_tallyman', name: 'Tallyman', plural: 'Tallymen', kind: 'machine', hp: 80, xp: 100, calls: { monsters: [knocker, knocker, knocker], chance: 1 } };
+  const six = [knocker, knocker, knocker, knocker, knocker, knocker];
+  {
+    const p = defaultParty(makeRng(100)), s = startCombat(p, [{ id: 'hole', monsters: [tallyman, ...six] }], makeRng(100));
+    ok(canCall(s, s.monsters[0]) && markOf(s, aliveMonsters(s)) === 0, 'a tallyman beside six knockers may call, and the bots aim at it first');
+    untilActs(s, p, 100, 0);
+    const come = s.monsters.filter((m) => m.band === 1);
+    ok(s.groupIds.length === 2 && s.leaders.length === 2 && come.length === 3 && come.every((m) => m.def === knocker && !m.back && m.group === 1 && m.hp === knocker.hp) && s.log.includes(CALL_LINE('Tallyman', '3 Knockers', false)),
+      `its turn brings three knockers in, a group of their own (${s.log.find((l) => l.startsWith('Tallyman calls'))})`);
+    ok(s.order.every((t) => t.side === 'party' || t.i < 7), 'and they wait for the next round to act');
+    throughRound(s, p, 101);
+    ok(s.order.some((t) => t.side === 'monster' && t.i >= 7), 'and act in it');
+    ok(!canCall(s, s.monsters[0]) && markOf(s, aliveMonsters(s)) === undefined, 'with ten in the fight it may not call three more: a group comes whole or not at all, and the bots aim at it no longer');
+    untilActs(s, p, 102, 0);
+    ok(s.monsters.length === 10 && s.log.filter((l) => l.startsWith('Tallyman calls')).length === 1, 'so it strikes instead, and the fight stays at ten');
+  }
+  {
+    // Those down count: nine with three of them fallen leave room for a call of three, not four.
+    const four: MonsterDef = { ...tallyman, calls: { monsters: [knocker, knocker, knocker, knocker], chance: 1 } };
+    const p = defaultParty(makeRng(103)), s = startCombat(p, [{ id: 'hole', monsters: [tallyman, ...six, knocker, knocker] }], makeRng(103)), t = startCombat(p, [{ id: 'hole', monsters: [four, ...six, knocker, knocker] }], makeRng(103));
+    for (const f of [s, t]) f.monsters.slice(1, 4).forEach((m) => { m.hp = 0; });
+    ok(canCall(s, s.monsters[0]) && !canCall(t, t.monsters[0]), `a fight of nine with three fallen has room for a call of three and none for four (${MAX_MONSTERS} at most, the fallen counted)`);
+    // Three groups are the most: a fight that starts with three never grows.
+    const three = startCombat(p, [{ id: 'a', monsters: [tallyman] }, { id: 'b', monsters: [knocker] }, { id: 'c', monsters: [knocker] }], makeRng(104));
+    ok(MAX_GROUPS === 3 && !canCall(three, three.monsters[0]), 'and a fight of three groups has room for none');
+  }
+  {
+    // Called in by one called in: a tally clerk the Tallymaster calls may call its loaders, until the fight holds three groups.
+    const loader: MonsterDef = { ...knocker, id: 'test_loader', name: 'Loader', plural: 'Loaders' };
+    const clerk: MonsterDef = { ...knocker, id: 'test_clerk', name: 'Tally Clerk', plural: 'Tally Clerks', calls: { monsters: [loader, loader], chance: 1 } };
+    const master: MonsterDef = { ...tallyman, id: 'test_master', name: 'The Tallymaster', plural: 'Tallymasters', calls: { monsters: [clerk, clerk], chance: 1 } };
+    const p = defaultParty(makeRng(105)), s = startCombat(p, [{ id: 'desk', monsters: [master] }], makeRng(105));
+    for (let k = 0; k < 4 && s.outcome === 'ongoing'; k++) throughRound(s, p, 105 + k);
+    ok(s.groupIds.length === MAX_GROUPS && s.log.includes(CALL_LINE('The Tallymaster', '2 Tally Clerks', false)) && s.log.includes(CALL_LINE('Tally Clerk', '2 Loaders', false)) && s.log.filter((l) => / calls, /.test(l)).length === 2,
+      `the Tallymaster calls its clerks, a clerk its loaders, and then the fight is full (${s.monsters.length} monsters in ${s.groupIds.length} groups)`);
+  }
+  {
+    // A caller in the back rank calls while the front stands, rather than wait.
+    const p = defaultParty(makeRng(106)), s = startCombat(p, [{ id: 'hole', monsters: [knocker, knocker, tallyman], back: 1 }], makeRng(106));
+    ok(untilActs(s, p, 106, 2) && frontStands(s) && s.groupIds.length === 2, 'a tallyman in the back rank calls while its knockers stand before it');
+  }
+  {
+    // The called are fought as the rest are: slain, they pay.
+    const p = defaultParty(makeRng(107)), s = startCombat(p, [{ id: 'hole', monsters: [tallyman] }], makeRng(107));
+    untilActs(s, p, 107, 0);
+    for (const m of s.monsters) m.hp = 0;
+    partyAct(s, p, makeRng(108), { type: 'defend' });
+    const paid = Math.round(tallyman.xp * killPay(tallyman.level, 1) + 3 * knocker.xp * killPay(knocker.level, 1));
+    ok(s.outcome === 'victory' && s.loot?.xp === paid, `the knockers it called pay when they fall, as the rest do (${s.loot?.xp} xp, ${paid} asked)`);
   }
 }

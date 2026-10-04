@@ -66,8 +66,8 @@ export interface MonsterDef {
   ranged?: boolean;
   /** Shoots bows rather than casting, so bad weather spoils the aim. */
   missile?: boolean;
-  /** Chance per hit to inflict the condition. */
-  inflict?: { cond: 'poisoned' | 'diseased' | 'asleep' | 'paralysed'; chance: number };
+  /** Chance per hit to inflict the condition: a curse the wights' (#537), which outlasts the fight. */
+  inflict?: { cond: 'poisoned' | 'diseased' | 'asleep' | 'paralysed' | 'cursed'; chance: number };
   /** Gold dropped per monster, as a range. */
   gold: [number, number];
   drops?: readonly { item: string; chance: number }[];
@@ -84,6 +84,17 @@ export interface MonsterDef {
   cast?: { spells: readonly string[]; chance: number };
   /** Its hits heal it by their damage ('hp', the leech), or take spell points before hit points ('sp', the bog light). */
   drain?: 'hp' | 'sp';
+  /**
+   * Hit points it mends at each round's end, never past its own, unless fire burnt it that round: the
+   * trolls (#537). One felled stays down. MONSTERS §3.3 sizes it.
+   */
+  regen?: number;
+  /**
+   * A group it may spend a turn bringing into the fight, at `chance` a turn, while the fight has room
+   * for the whole of it under the cap of 12 monsters in three groups, those already down counted
+   * (combat.ts `canCall`): the tallyman's knockers, Vask's sentries (#537). By id; a tool may hand in defs.
+   */
+  calls?: { monsters: readonly (string | MonsterDef)[]; chance: number };
   /** Never breaks, whatever its kind: the Hand (docs/MONSTERS.md §2). */
   steady?: boolean;
   /** Tint of the sprite. */

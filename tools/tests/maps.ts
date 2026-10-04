@@ -4,6 +4,7 @@
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
@@ -19,6 +20,14 @@ import { ok, owed, stopsWalk } from './lib.ts';
 const UNPLACED: Record<string, string> = {
   knocker: '#462', mender: '#462', foreman: '#462',
 };
+
+/** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
+export function placedMonsters(defs: readonly MapDef[], table: Readonly<Record<string, MonsterDef>> = MONSTERS): Set<string> {
+  const placed = new Set(defs.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
+  // A set walked as it grows takes in what is added on the way.
+  for (const id of placed) for (const q of table[id]?.calls?.monsters ?? []) if (typeof q === 'string') placed.add(q);
+  return placed;
+}
 
 /**
  * What is wrong with a town's doorways: the business must come first on its square (the game
@@ -152,8 +161,12 @@ export function maps(): void {
   ok(deep.size > 0, 'the Deepthorn has maps');
   const big = MAP_DEFS.filter((d) => deep.has(d.id)).flatMap((d) => (d.encounters ?? []).filter((e) => e.monsters.length > 8).map((e) => `${e.id} (${e.monsters.length})`));
   ok(!big.length, `no group in the Deepthorn is above eight${big.length ? ' -> ' + big.join(', ') : ''}`);
-  // Every quest item is dropped or found somewhere; every monster is placed on some map.
-  const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((e) => e.monsters)));
+  // Every quest item is dropped or found somewhere; every monster is placed on some map, or called by
+  // one that is: the core's sentries come only at Vask's call (#537).
+  const placed = placedMonsters(MAP_DEFS);
+  const fixture: MapDef = { id: 'fx', name: '', kind: 'outdoor', start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: [{ id: 'g', x: 0, y: 0, monsters: ['test_caller'] }] };
+  const called = placedMonsters([fixture], { test_caller: { ...MONSTERS.bandit, id: 'test_caller', calls: { monsters: ['test_clerk'], chance: 1 } }, test_clerk: { ...MONSTERS.rat, id: 'test_clerk', calls: { monsters: ['test_loader'], chance: 1 } } });
+  ok([...called].join() === 'test_caller,test_clerk,test_loader', `a monster called by a placed one counts as placed, and so does one it calls (${[...called].join(', ')})`);
   for (const id of Object.keys(MONSTERS)) {
     if (Object.hasOwn(UNPLACED, id)) owed(placed.has(id), `monster '${id}' appears on a map`, UNPLACED[id]);
     else ok(placed.has(id), `monster '${id}' appears on a map`);
