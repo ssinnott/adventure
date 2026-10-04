@@ -1160,21 +1160,22 @@ all of it.
 
 Proposed, against the roster's Where column, and standing in the briefs as proposals: the Fire
 Beetle on every box's spoil, kilns and ore heaps, where the roster has it at the spoil heaps and the
-forges; the Salamander on O6's ash outside the tubes and on N3's and N5's heaps, where the roster has
-it in the tubes and in the spoil heaps' fight; the Rock Worm in the surface adits and cuts of M3, N2,
-N4, N6, M6 and L6, where the roster has it in the old workings; the Slag Elder strayed onto N5's
-cutters' track and at O5's tear's lip, where the roster has it in the Rift. If the owner takes them, MONSTERS'
-Where column says so in a pull request of its own. Two things the briefs lean on that the roster
-does not hold: the Hand's overseers walking the cargo down (MONSTERS §7.1's Back, with no row), and
-the Hand's crew on Kilnhaven's quay by night, both from Act II's roster at level, or said and not
-fought, which #461, #462 and #468 settle with the owner; and a surface group at 18, which the roster
-has only in the dungeons. The 17–18 boxes (O5, N6, M6, L6) were to hold their top with a rock worm
-pair at 17 and the dungeons the 18s (#472's 13), but the curve asks every map's hardest group at its
-floor and one more at least (`tools/tests/curve.ts`): 18 on a box whose floor is 17, and 19 on O6 at
-18. N5 holds its top with a slag elder strayed from the Stone, gone once the tear is closed (#463's
-4), and O5 with the elder at the tear's lip (#464's 4). By the orchestrator's call (#467's 1), N6, M6 and L6 take their floor a
-level down, 16–18, so a worm at 17 is their top, and O6 takes 17–18 with the elder's strays as its
-18; no monster of Cairnmoor's roster comes into the Kilns.
+forges; the Salamander on O6's ash outside the tubes and on N3's and N5's heaps, where the roster
+has it in the tubes and in the spoil heaps' fight; the Rock Worm in the surface adits and cuts of
+M3, N2, N4, N6, M6 and L6, where the roster has it in the old workings; the Slag Elder strayed onto
+N5's cutters' track and at O5's tear's lip, where the roster has it in the Rift. If the owner takes
+them, MONSTERS' Where column says so in a pull request of its own. Two things the briefs lean on
+that the roster does not hold: the Hand's overseers walking the cargo down (MONSTERS §7.1's Back,
+with no row), and the Hand's crew on Kilnhaven's quay by night, both from Act II's roster at level,
+or said and not fought, which #461, #462 and #468 settle with the owner; and a surface group at 18,
+which the roster has only in the dungeons. The 17–18 boxes (O5, N6, M6, L6) were to hold their top
+with a rock worm pair at 17 and the dungeons the 18s (#472's 13), but the curve asks every map's
+hardest group at its floor and one more at least (`tools/tests/curve.ts`): 18 on a box whose floor
+is 17, and 19 on O6 at 18. N5 holds its top with a slag elder strayed from the Stone, gone once the
+tear is closed (#463's 4), and O5 with the elder at the tear's lip (#464's 4). By the orchestrator's
+call (#467's 1), N6, M6 and L6 take their floor a level down, 16–18, so a worm at 17 is their top,
+and O6 takes 17–18 with the elder's strays as its 18; no monster of Cairnmoor's roster comes into
+the Kilns.
 
 New in the Kilns, for the novelty check (EXPANSION §5.4): the knockers and the salamanders, two new
 families; the machine kind, with the cleric's Wrath passing through it (MONSTERS §2); pine and ash
