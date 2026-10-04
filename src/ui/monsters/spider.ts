@@ -15,15 +15,18 @@
 // thigh. Facing the party in a slight three-quarter; idle is a leg twitch and an abdomen bob.
 // The glass spider is the marsh spider's body in the Sunder's black glass, a white light inside it,
 // standing on threads of glass it has strung from its feet out across the air.
+// The fire beetle is no arachnid either, and like the crab has a body of its own: six short legs
+// braced under a high domed shell, a broad shield over a low head, and a live coal set in its back.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
 import { blob, softLine, glow, patch } from './gloss.ts';
 import type { Part, Crease } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
+import { pathEllipse } from '../../lib/art/shapes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab', 'glass_spider'];
+export const KINDS: readonly MonsterSprite[] = ['spider', 'thorn_spider', 'crab', 'rift_crawler', 'barnacle_crab', 'salt_crab', 'glass_spider', 'fire_beetle'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'thorn_spider') thorn(ctx, x, y, h, p);
@@ -32,6 +35,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'salt_crab') crab(ctx, x, y, h, p, 'salt');
   else if (kind === 'rift_crawler') crawler(ctx, x, y, h, p);
   else if (kind === 'glass_spider') glassSpider(ctx, x, y, h, p);
+  else if (kind === 'fire_beetle') beetle(ctx, x, y, h, p);
   else marsh(ctx, x, y, h, p);
 };
 
@@ -643,6 +647,170 @@ function glassSpider(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
   glow(ctx, B, cx, cy - h * 0.095, h * 0.15, SUNDER, 0.2 + pulse * 0.1, SUNDER_HOT);
   eyes(ctx, cx, cy - h * 0.095, h, mix(SUNDER, '#b8c8e8', 0.3 - pulse * 0.2));
   fangs(ctx, cx, cy + h * 0.03, h, h * 0.028, h * 0.13, shade(mix(SUNDER, '#9aa8c4', 0.5), Math.max(0.7, p.tone)));
+}
+
+// ------------------------------------------------------------------ the fire beetle ----
+/** The coal's light: a red heat and a yellow heart, never toned, since it is a light source. */
+const COAL = '#ff6a1c', COAL_HOT = '#ffe2a0';
+
+/**
+ * One of a beetle's six legs: hip, knee and foot, in px. A beetle's leg is not a spider's: it is
+ * short and angled, the thigh going out flat from under the shell to a knee held low, a broad shin
+ * coming down to the ground with spurs along its back edge, and a hooked foot.
+ */
+interface BLeg { hip: Pt2; knee: Pt2; foot: Pt2; s: number; i: number }
+
+function beetleLegs(x: number, y: number, h: number, frame: number): BLeg[] {
+  // Front, middle and rear pairs: the front reach forward and down toward the company, the rear
+  // back and up the screen. The near side (+1) a touch wider and lower, for the turn.
+  const L = [
+    { hx: 0.12, hy: 0.22, kx: 0.27, ky: 0.27, fx: 0.33, fy: 0.02 },
+    { hx: 0.16, hy: 0.29, kx: 0.37, ky: 0.33, fx: 0.44, fy: 0.07 },
+    { hx: 0.16, hy: 0.36, kx: 0.36, ky: 0.39, fx: 0.42, fy: 0.13 },
+  ];
+  const out: BLeg[] = [];
+  for (const s of [-1, 1]) for (let i = 0; i < 3; i++) {
+    const d = L[i], wide = s > 0 ? 1.05 : 0.93, cx = x + h * (0.04 - i * 0.05);
+    const tw = Math.sin(frame / 9 + i * 2.1 + s * 0.9) * h * 0.01;
+    out.push({
+      s, i,
+      hip: { x: cx + s * h * d.hx, y: y - h * d.hy },
+      knee: { x: cx + s * h * d.kx * wide, y: y - h * d.ky + tw },
+      foot: { x: cx + s * h * d.fx * wide, y: y - h * d.fy },
+    });
+  }
+  return out;
+}
+
+/** A leg's parts for one blob: thigh, knee, a broad shin with spurs on its back edge, a hooked foot. */
+function beetleLegParts(l: BLeg, h: number, k: number): Part[] {
+  const { hip, knee, foot, s } = l, seed = 140 + l.i * 2 + (s > 0 ? 1 : 0);
+  const dx = foot.x - knee.x, dy = foot.y - knee.y, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+  const parts: Part[] = [
+    { k: 'tube', pts: [hip.x, hip.y, (hip.x + knee.x) / 2, (hip.y + knee.y) / 2 - h * 0.02, knee.x, knee.y], r0: h * 0.045 * k, r1: h * 0.034 * k, seed },
+    { k: 'ball', x: knee.x, y: knee.y, r: h * 0.036 * k },
+    { k: 'tube', pts: [knee.x, knee.y, foot.x - ux * h * 0.04, foot.y - uy * h * 0.04], r0: h * 0.034 * k, r1: h * 0.022 * k, seed: seed + 20 },
+    // The foot: a short hook out past the shin's end, its claw on the ground.
+    { k: 'tube', pts: [foot.x - ux * h * 0.05, foot.y - uy * h * 0.05, foot.x, foot.y, foot.x + s * h * 0.035, foot.y + h * 0.004], r0: h * 0.014 * k, r1: h * 0.008 * k, seed: seed + 40 },
+  ];
+  // Spurs along the shin's outer edge, pointing down toward the foot.
+  for (const t of [0.3, 0.55, 0.78]) {
+    const px = knee.x + dx * t * 0.9, py = knee.y + dy * t * 0.9, nx = -uy * s, ny = ux * s, w = h * 0.012 * k;
+    parts.push({ k: 'poly', pts: [px + nx * h * 0.014 - ux * w, py + ny * h * 0.014 - uy * w, px + nx * h * 0.014 + ux * w, py + ny * h * 0.014 + uy * w, px + nx * h * 0.04 + ux * h * 0.03, py + ny * h * 0.04 + uy * h * 0.03] });
+  }
+  return parts;
+}
+
+/**
+ * The Fire Beetle: a beetle with a coal in its back. Six short thick legs braced wide under a high
+ * domed shell, the wing cases black with the copper of hot iron along their edges; a broad shield
+ * behind the head, the head low and forward with a pair of hooked jaws and two elbowed feelers held
+ * up. At the top of the dome the wing cases part on a hollow, and in it a live coal sits and
+ * breathes, red through its black crust, its light on the shell round it and a spark or two going
+ * up from it. Idle: the coal breathes, the legs shift, the feelers sweep.
+ */
+function beetle(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const pulse = 0.5 + 0.5 * Math.sin(p.frame / 9), bob = p.breathe * h * 0.008;
+  const shell = mix(p.base, '#20140e', 0.2), copper = shade(mix(p.base, '#c0602c', 0.55), Math.max(0.7, p.tone));
+  const legs = beetleLegs(x, y, h, p.frame);
+  groundShadow(ctx, x - h * 0.02, y + 1, h * 0.98);
+  // The dome: the wing cases from the shield back and up, the coal in the hollow at their top.
+  const ex = x - h * 0.04, ey = y - h * 0.43 + bob, erx = h * 0.29, ery = h * 0.25;
+  const coalX = ex - h * 0.01, coalY = ey - ery * 0.78;
+  glow(ctx, B, coalX, coalY, h * 0.46, COAL, 0.14 + pulse * 0.07, COAL);
+
+  // The rear pairs and the far middle leg, a darker mass behind the dome.
+  const behind = legs.filter((l) => l.i === 2 || (l.i === 1 && l.s < 0));
+  blob(ctx, B, shade(shell, 0.72), behind.flatMap((l) => beetleLegParts(l, h, 0.95)), { h, formK: 0.4, spread: 0.75 });
+  // The wing cases: two halves in one domed mass, glossy as lacquer, widest at the shoulders by the
+  // shield and closing to the hollow at the top, where the coal makes a lump in the skyline.
+  const dome: number[] = [];
+  for (let i = 0; i < 14; i++) {
+    const a = (i / 14) * Math.PI * 2, s = Math.sin(a), c = Math.cos(a);
+    const shoulder = 1 + 0.08 * Math.max(0, s);                    // fuller toward the shield
+    dome.push(ex + c * erx * shoulder, ey + s * ery);
+  }
+  blob(ctx, B, shell, [
+    { k: 'curve', pts: dome, wobble: 0.02, seed: 151, sub: 3, gloss: 0.7 },
+    { k: 'curve', pts: ring(coalX, coalY + h * 0.012, h * 0.11, h * 0.07, 9, 3), wobble: 0.05, seed: 152, sub: 2 },
+  ], { h, formK: 0.55, spread: 0.7, gloss: 0.4, creases: [
+    { x0: coalX + h * 0.01, y0: coalY + h * 0.06, x1: ex + h * 0.035, y1: ey + ery * 0.95, r: h * 0.012, a: 0.7 },
+  ] });
+  // Hot-iron copper along the cases' lips and down the seam where they meet, lit by the coal.
+  if (!B.override) {
+    ctx.save(); pathEllipse(ctx, ex, ey, erx * 1.08, ery); ctx.clip();
+    softLine(ctx, B, [ex - erx * 0.95, ey + ery * 0.2, ex - erx * 0.8, ey - ery * 0.5, ex - erx * 0.3, ey - ery * 0.92], copper, Math.max(1, h * 0.018), 0.55);
+    softLine(ctx, B, [ex + erx * 0.97, ey + ery * 0.15, ex + erx * 0.78, ey - ery * 0.55, ex + erx * 0.26, ey - ery * 0.93], copper, Math.max(1, h * 0.016), 0.45);
+    ctx.strokeStyle = rgba(copper, 0.6); ctx.lineWidth = Math.max(1, h * 0.012); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(coalX + h * 0.01, coalY + h * 0.07); ctx.quadraticCurveTo(ex + h * 0.025, ey + ery * 0.3, ex + h * 0.035, ey + ery * 0.97); ctx.stroke();
+    // Grooves down each case, as a beetle's wing case carries.
+    for (const s of [-1, 1]) for (const k of [0.38, 0.7]) {
+      ctx.strokeStyle = rgba('#000000', 0.25); ctx.lineWidth = Math.max(1, h * 0.007);
+      ctx.beginPath(); ctx.moveTo(coalX + s * erx * k * 0.45, coalY + h * 0.06); ctx.quadraticCurveTo(ex + s * erx * k * 1.02, ey - ery * 0.1, ex + s * erx * k * 0.86, ey + ery * 0.92); ctx.stroke();
+    }
+    // The coal's light on the shell round the hollow.
+    ctx.restore();
+  }
+  // The coal in its hollow: a lump with a black crust, cracked, red inside and yellow at the heart.
+  blob(ctx, B, shade('#140a06', Math.max(0.6, p.tone)), [{ k: 'curve', pts: ring(coalX, coalY + h * 0.008, h * 0.095, h * 0.058, 9, 4), wobble: 0.05, seed: 153, sub: 2 }], { h, outline: false, form: false });
+  glow(ctx, B, coalX, coalY, h * 0.2, COAL, 0.5 + pulse * 0.3, COAL_HOT);
+  blob(ctx, B, shade('#4a1e10', Math.max(0.6, p.tone)), [
+    { k: 'curve', pts: ring(coalX + h * 0.003, coalY - h * 0.012, h * 0.08, h * 0.056, 8, 7), wobble: 0.1, seed: 154, sub: 2 },
+  ], { h, formK: 0.4, spread: 0.6 });
+  if (!B.override) {
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const crack of [
+      [coalX - h * 0.06, coalY - h * 0.02, coalX - h * 0.015, coalY - h * 0.005, coalX + h * 0.02, coalY - h * 0.035],
+      [coalX - h * 0.015, coalY - h * 0.005, coalX + h * 0.004, coalY + h * 0.03],
+      [coalX + h * 0.02, coalY - h * 0.035, coalX + h * 0.062, coalY - h * 0.014],
+      [coalX - h * 0.035, coalY - h * 0.045, coalX - h * 0.02, coalY - h * 0.012],
+    ]) for (const [w, a] of [[h * 0.034, 0.3], [h * 0.014, 0.75 + pulse * 0.25]] as const) {
+      ctx.strokeStyle = rgba(a > 0.5 ? COAL_HOT : COAL, a); ctx.lineWidth = Math.max(1, w);
+      ctx.beginPath(); ctx.moveTo(crack[0], crack[1]); for (let i = 2; i < crack.length; i += 2) ctx.lineTo(crack[i], crack[i + 1]); ctx.stroke();
+    }
+    glow(ctx, B, coalX - h * 0.005, coalY - h * 0.015, h * 0.07, COAL_HOT, 0.45 + pulse * 0.35, COAL_HOT);
+  }
+  // Sparks going up off the coal, each on its own beat: apart from the beetle, as embers are.
+  if (!B.override) for (let i = 0; i < 2; i++) {
+    const k = ((p.frame / 30 + i * 0.5) % 1), sx = coalX + Math.sin(k * 5 + i * 2) * h * 0.04, sy = coalY - h * (0.1 + k * 0.28);
+    glow(ctx, B, sx, sy, h * 0.03 * (1 - k), COAL, 0.6 * (1 - k), COAL_HOT);
+    ctx.fillStyle = rgba(COAL_HOT, 0.9 * (1 - k)); ctx.beginPath(); ctx.arc(sx, sy, Math.max(0.6, h * 0.011 * (1 - k * 0.5)), 0, Math.PI * 2); ctx.fill();
+  }
+
+  // The front pairs and the near middle leg, over the dome, their roots under the shield.
+  const front = legs.filter((l) => l.i === 0 || (l.i === 1 && l.s > 0));
+  blob(ctx, B, shade(shell, 0.9), front.flatMap((l) => beetleLegParts(l, h, 1)), { h, formK: 0.5, spread: 0.7 });
+  // The head: broad and flat, its top tucked under the shield's rim, two short pincers out of its
+  // front, curved in and open; feelers out sideways from under the rim, elbowed, each with a club.
+  const hx = x + h * 0.06, hy = y - h * 0.15 + bob * 0.4;
+  const sweep = Math.sin(p.frame / 16) * h * 0.012, horn = shade(mix(shell, copper, 0.4), 1.05);
+  const jaw = (s: number): Part => ({ k: 'tube', pts: [hx + s * h * 0.055, hy + h * 0.02, hx + s * h * 0.085, hy + h * 0.06, hx + s * h * 0.06, hy + h * 0.1, hx + s * h * 0.02, hy + h * 0.112], r0: h * 0.028, r1: h * 0.008, seed: 157 + (s > 0 ? 1 : 0) });
+  blob(ctx, B, horn, [-1, 1].flatMap((s, i): Part[] => {
+    const ex2 = hx + s * h * 0.19, ey2 = hy - h * 0.085, tx = hx + s * h * 0.3 + sweep * s, ty = hy - h * 0.03 + sweep * 0.5;
+    return [
+      { k: 'tube', pts: [hx + s * h * 0.08, hy - h * 0.02, hx + s * h * 0.14, hy - h * 0.07, ex2, ey2], r0: h * 0.015, r1: h * 0.013, seed: 161 + i },
+      { k: 'tube', pts: [ex2, ey2, (ex2 + tx) / 2 + s * h * 0.01, (ey2 + ty) / 2 - h * 0.012, tx, ty], r0: h * 0.012, r1: Math.max(0.9, h * 0.011), seed: 163 + i },
+      { k: 'ell', x: tx + s * h * 0.008, y: ty + h * 0.01, rx: h * 0.016, ry: h * 0.026, rot: s * -0.4 },
+    ];
+  }), { h, formK: 0.4, spread: 0.7 });
+  blob(ctx, B, horn, [jaw(-1), jaw(1)], { h, formK: 0.5, spread: 0.65, gloss: 0.3 });
+  blob(ctx, B, shade(shell, 1.05), [
+    { k: 'curve', pts: ring(hx, hy, h * 0.12, h * 0.056, 9, 9), wobble: 0.03, seed: 159, sub: 2, gloss: 0.3 },
+  ], { h, formK: 0.5, spread: 0.65 });
+  // Eyes: small, dark and glossy at the head's outer corners, just under the rim.
+  for (const s of [-1, 1]) {
+    const exx = hx + s * h * 0.095, eyy = hy - h * 0.008;
+    eye(ctx, exx, eyy, h * 0.019, shade('#0c0806', Math.max(0.6, p.tone)), false);
+    if (!B.override) { ctx.fillStyle = rgba('#ffffff', 0.55); ctx.beginPath(); ctx.arc(exx - h * 0.005, eyy - h * 0.006, Math.max(0.5, h * 0.005), 0, Math.PI * 2); ctx.fill(); }
+  }
+  // The shield over the head's top: broad and glossy, its front edge hollowed, its rim lit.
+  const px = x + h * 0.05, py = y - h * 0.29 + bob * 0.6;
+  blob(ctx, B, shade(mix(shell, copper, 0.1), 1.12), [{ k: 'curve', pts: [
+    px - h * 0.25, py - h * 0.01, px - h * 0.23, py + h * 0.055, px - h * 0.12, py + h * 0.088, px - h * 0.05, py + h * 0.072,
+    px + h * 0.06, py + h * 0.072, px + h * 0.13, py + h * 0.088, px + h * 0.24, py + h * 0.05, px + h * 0.26, py - h * 0.015,
+    px + h * 0.15, py - h * 0.06, px, py - h * 0.07, px - h * 0.15, py - h * 0.06,
+  ], wobble: 0.015, seed: 156, sub: 3, gloss: 0.3 }], { h, formK: 0.55, spread: 0.65, gloss: 0.15 });
+  softLine(ctx, B, [px - h * 0.22, py + h * 0.045, px - h * 0.12, py + h * 0.074, px - h * 0.05, py + h * 0.06, px + h * 0.06, py + h * 0.06, px + h * 0.13, py + h * 0.074, px + h * 0.22, py + h * 0.04], copper, Math.max(1, h * 0.014), 0.6);
 }
 
 /** A pale edge down each segment of a glass leg, on its lit side: what makes a dark rod read as glass. */

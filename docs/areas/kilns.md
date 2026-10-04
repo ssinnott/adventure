@@ -13,7 +13,8 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Nothing is built. Its content will be `src/content/areas/kilns/` (maps, monsters, items, climate,
+Nothing a company walks is built; eleven of its monsters and twelve rooms are drawn ahead of its
+first box (§3). Its content will be `src/content/areas/kilns/` (maps, monsters, items, climate,
 its part of the world map, its chapter of the one quest, The Anvil Stone, in `chapter.ts`, its side
 quests in `quests.ts`) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
 `kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
@@ -138,12 +139,42 @@ cold on what fire does not touch once it has seen fire do nothing, as it has sin
 company takes its prestiges, MONSTERS §4.4). Regeneration, curse and calls (#537) are
 Cairnmoor's and Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `when`
 are #41's; the machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472,
-eleven issues, and its rooms in #473.
+eleven issues, nine of them so far (below), and its rooms in #473.
 
 Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
-Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462). Their defs are in
-`src/content/areas/kilns/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until the first box
-lists the area, and each is owed to #462 in `UNPLACED` (`tools/tests/maps.ts`). §9 has the decisions.
+Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462); and the
+salamanders, the Salamander and the Great Salamander (`src/ui/monsters/salamanders.ts`), for the
+spoil heaps and the tubes (#458, #463, #466). Their defs are in `src/content/areas/kilns/monsters.ts`,
+listed in `AHEAD` (`src/content/index.ts`) until the first box lists the area, and each is owed in
+`UNPLACED` (`tools/tests/maps.ts`): the knockers to #462, the Salamander to #458 and the Great
+Salamander to #466. §9 has the decisions.
+
+The six on frames that exist are drawn too (#472): the Fire Beetle on the spider frame, the
+Slagling, the Slag Elder and the Warden of the Anvil on the riftling's, the Rock Worm on the long
+bodies' and the Anvil Guard on the figure frame, in the same table, each owed a map by the box that
+first places it (§7, §9).
+
+The rooms are drawn (#473), one to each business of the two towns, ahead of the towns as
+Saltmouth's and Lantern Watch's were. `src/content/areas/kilns/interiors.ts` lists them and
+`ROOMS_AHEAD` in `src/content/index.ts` merges them, until the first box lists the area and its
+`interiors` takes the list; `tools/tests/maps.ts` reports each owed to its town (#459, #469) until
+a business there opens into it, and §4.4 and §4.14 name the ids. They are a scene to a file in
+`src/ui/interiors/kilns/`, what Anvilhall's share in `hold.ts` and what Kilnhaven's share in
+`port.ts`. Anvilhall's are cut stone, iron and fire, the hammer and pick on the banners and the old
+script cut over the doors: the great hall, a nave of square pillars up to the thane's seat with the
+kings' forge glowing behind it and the verse cut red over all; the forge, the verse big over a
+hearth under an iron hood, the great bellows, the anvil and the steel racked; the training hall, an
+old working timbered like the mine and broken out onto the hillside, lifting stones and a round of
+oak with axes in it; the inn, bunks cut in two tiers in the rock and an arch of candles on the
+mantel; the mine-surgeon's, limewashed, the table under its lamp, a canary in the window and a niche
+for the dead; the stores, racks to the roof and the mine's tub of potatoes on its rails. Kilnhaven's
+are tar, rope and the ore's red dust: the inn, the coach for Rime Lodge in the yard through its
+window; the smith, a forge of brick, an anchor in for mending and the quay through the stable door;
+the training hall, an ore shed with a ring roped off and an ore tub on the hoist to hit; the
+harbourmaster's office, the manifests on the desk under a bay of small panes on the harbour and the
+board of sailings by it; the chapel, a ship hung from its tie beam and the sea through the window
+behind the altar; the chandlery, candles in pairs and lamps hung from its rods. Every room has the
+day in it somewhere, a window, a shaft, a breach or a door, so that nine at night is not noon.
 
 ## 4. What is still to build
 
@@ -290,14 +321,19 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 
 - **Purpose.** The act's first town and the dwarves' seat: the great hall with the verse over the
   forge, the thane with his menu, and the first place the company reads the old way.
-- **Businesses,** each with a room of its own (#473): the great hall, the thane's, where the choice
-  is put as a business puts its menu (#434's 1); the forge, under the verse, the act's first step on
-  the ladder by 17 (#535: a Forge Hammer, a Seax, a Steel Bow, a Mattock, a Banded Staff, Dwarf
-  Mail, a Kiln Robe and a Forge Shield, 1,100 to 2,000 gold, `FORGE`), shut to the company for
-  good if the Stone is taken; the training hall, to 19 (DESIGN §5); the inn, the miners' lodging;
-  the mine-surgeon's, cures and raising at the band's price; the stores, provisions at list price.
-  No spell hall (#434's 9): Lantern Watch sold tier 6 and Rime Lodge sells tier 7 (DESIGN §7). No
-  guild hall (#434's 8).
+- **Businesses,** each with a room of its own (#473), the `interior` its feature names given with
+  it. No spell hall (#434's 9): Lantern Watch sold tier 6 and Rime Lodge sells tier 7 (DESIGN §7).
+  No guild hall (#434's 8).
+  - The great hall, the thane's, where the choice is put as a business puts its menu (#434's 1).
+    Interior: `anvilhall_great_hall`.
+  - The forge, under the verse, the act's first step on the ladder by 17 (#535: a Forge Hammer, a
+    Seax, a Steel Bow, a Mattock, a Banded Staff, Dwarf Mail, a Kiln Robe and a Forge Shield, 1,100
+    to 2,000 gold, `FORGE`), shut to the company for good if the Stone is taken.
+    Interior: `anvilhall_forge`.
+  - The training hall, to 19 (DESIGN §5). Interior: `anvilhall_training_hall`.
+  - The inn, the miners' lodging. Interior: `anvilhall_inn`.
+  - The mine-surgeon's, cures and raising at the band's price. Interior: `anvilhall_surgeon`.
+  - The stores, provisions at list price. Interior: `anvilhall_stores`.
 - **People.** The thane, with the verse over his forge and the Stone on his menu; the Lantern reader,
   a scholar lodged in the hall who reads the verse the old way for the company and teaches Linguist
   as the Lanterns' halls do (#538); the Regent's scholar, before he goes up to Erzkamm (#56's 34);
@@ -579,12 +615,16 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 
 - **Purpose.** The act's second town and the ore port: where the harbourmaster's manifests name the
   Compact ship's cargo, and three ways out of the Kilns leave.
-- **Businesses,** each with a room of its own (#473): the inn (rest, and the coach yard outside,
-  #539); the smith, the act's first step at a quarter more than Anvilhall's forge (#434's 1, #535:
-  1,375 to 2,500 gold, `SMITH_PRICES`), the company's only forge if the Stone was taken; the
-  training hall, to 19; the harbourmaster's office, where the manifests are read; the chapel, cures
-  and raising; the chandlery, provisions and lamp oil at list price. No spell hall and no guild hall
-  (#434's 8 and 9).
+- **Businesses,** each with a room of its own (#473), the `interior` its feature names given with
+  it. No spell hall and no guild hall (#434's 8 and 9).
+  - The inn (rest, and the coach yard outside, #539). Interior: `kilnhaven_inn`.
+  - The smith, the act's first step at a quarter more than Anvilhall's forge (#434's 1, #535: 1,375
+    to 2,500 gold, `SMITH_PRICES`), the company's only forge if the Stone was taken.
+    Interior: `kilnhaven_smith`.
+  - The training hall, to 19. Interior: `kilnhaven_training_hall`.
+  - The harbourmaster's office, where the manifests are read. Interior: `kilnhaven_harbourmaster`.
+  - The chapel, cures and raising. Interior: `kilnhaven_chapel`.
+  - The chandlery, provisions and lamp oil at list price. Interior: `kilnhaven_chandlery`.
 - **People.** The harbourmaster, who reads the manifests for a company that asks and hears the
   Compact's cargo named, Cinderport and Sheer Point (§5); the Compact's shipmaster and the ferryman
   at the quay, who sell their passages (#539); the coachman in the yard; Jory Tallis's man, come for
@@ -703,10 +743,12 @@ MONSTERS §7.1 has the roster and the fights: the Knocker, the Mender and the Fo
 machines; the Salamander and the Great Salamander; the Fire Beetle on the spider frame; the Rock
 Worm on the long bodies'; the Slagling, the Slag Elder and the Warden of the Anvil, the Rift in
 slag; the Anvil Guard, a dwarf on the figure frame, `after` the taking. Their drawings are #472's,
-eleven issues. §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil the gentlest
-and the Warden, the Foreman and the Great Salamander at the top of the band. No machine stands on
-the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the first machines on the
-road are met at the bottom of the deepest mine, by a company that has walked all of it.
+eleven issues: the knockers and the six on frames that exist are drawn (§3, §9), and the
+salamanders are to come. §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil
+the gentlest and the Warden, the Foreman and the Great Salamander at the top of the band. No
+machine stands on the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the
+first machines on the road are met at the bottom of the deepest mine, by a company that has walked
+all of it.
 
 Proposed, against the roster's Where column, and standing in the briefs as proposals: the Fire
 Beetle on every box's spoil, kilns and ore heaps, where the roster has it at the spoil heaps and the
@@ -995,6 +1037,91 @@ Decided by delegate for #535, each the owner's to overturn:
     with it, as #409 did after Act II's.
 12. **The windows stay at 3,500, 4,000 and 4,500,** 500 a band as the issue has them: no ware or
     find comes within 400 of its area's.
+
+Decided by delegate for #472 (the six), each the owner's to overturn:
+
+1. **The six on frames that exist are drawn ahead of the first box,** in AHEAD, each owed a map by
+   the box that first places it: the beetle and the worm #457's, the slagling #458's, the slag elder
+   and the guard #464's, the Warden #465's. The salamanders come on their own, as the knockers did.
+2. **Each is on its role's line at its level** (MONSTERS §4.4): the beetle armoured and the
+   slagling a skirmisher at 16, the worm a brute and the guard armoured at 17, the slag elder an
+   elite at 18.
+3. **The Warden of the Anvil is on the boss line at 18,** 961 hit points and 17d8+20, its blow left
+   for #465's gate to set, as #426 set the Sunder's; it shrugs off sleep, as every warden does.
+4. **Cold bites the slag and fire does it half:** the slagling, the slag elder and the Warden are
+   weak to cold and resist fire, so in the Rift Hoarfrost is the answer and Hearthfire is not.
+5. **The Fire Beetle is immune to fire and nothing more,** so on the spoil heaps the sorcerer's fire
+   does nothing and Hailstorm is the answer (MONSTERS §7.1).
+6. **The slag holds as the other Rifts' things do:** the slagling paralyses at 0.1 a hit and the
+   slag elder at 0.15, as the sunderling and the tide elder.
+7. **Sizes:** the beetle 0.72, the slagling 0.74, the slag elder 0.95 and the guard 0.8, drawn as
+   broad as he is tall; the worm 1.6, MONSTERS' figure, a tall monster; the Warden 1.45, the biggest
+   warden yet and short of a tall boss.
+8. **The beetle is a body of its own on the spider frame,** six legs under a dome with the coal set
+   in its top, as the crabs have theirs, so Ashfall's cinder beetle can be its variant.
+9. **The slag is the riftling broken rough as clinker,** cracked red and hung with drops still
+   molten, the elder running with iron; the Warden has no legs, and stands up out of a pool of slag.
+10. **The Warden's cut is a straight fissure down its chest,** opening on the heart, with a low crown
+    of clinker, hot at the tips, where the other wardens wear shards.
+11. **The worm comes up through a ring of rubble,** blind, its maw ring inside ring of teeth; the
+    guard is a dwarf rebuilt on the figure frame, a maul stood beside him and an anvil buckle.
+12. **The Warden drops nothing yet:** the Heart of the Anvil comes with #465, which places it, as the
+    Heart of the Sunder came with the Sunder's box (#426).
+13. **No surface monster at 18:** #472 adds none; the 17–18 boxes hold their top with rock worm
+    pairs at 17, as §7 proposes.
+
+Decided by delegate for #472 (the salamanders), each the owner's to overturn:
+
+1. **The Salamander is a beast, a skirmisher on MONSTERS §4.4's line at 16** (179 hit points, armour
+   19, 3d8+2, speed 15), immune to fire and weak to cold as its row says, size 0.68: the sorcerer's
+   cold is the answer, and the cleric's Hearthfire and the druid's Wildfire are not (DESIGN §7).
+2. **The Great Salamander is a beast boss on the boss line at 18** (961, armour 22, 17d8+20), immune to
+   fire and to sleep and weak to cold, as its kin and as the Eldest and the Great Devilfish. Its blow
+   is #466's to set for the gate, as #426 set the Warden of the Sunder's, and its hide #466's to drop.
+3. **It is a tall boss, size 1.6,** seated on the third rank with its crown at 0.79 of its height,
+   under its markers' 0.82: the deepest chamber's boss, and the biggest thing in the tubes.
+4. **The frame is a lizard three-quarter on, coming at the company,** its head turned on toward the
+   company's right. Side on, as the bears stand, a lizard is as wide as a bear and read as a dinosaur
+   standing up; three-quarter on it reads as a lizard at a glance, and its mouth can open to them.
+5. **The fire shows in blotches, as a fire salamander wears its yellow,** and on the Great Salamander
+   in the seams of a crust of rock and in its open mouth. The embers are the parts apart, declared in
+   `tools/smoke.ts` as the rift hound's are: three pieces, 1% of the ink.
+6. **The frame is a Build for the kin to come** (MONSTERS §11): the ember salamander a hotter fire on
+   a lither body, the basilisk no fire, a crest, a crown and a stare, each a Build and a colouring.
+7. **The Salamander is owed to N3 (#458),** the first box whose brief places one (§4.3's spoil heaps,
+   the roster's second fight), and the Great Salamander to the tubes (#466): `UNPLACED` in
+   `tools/tests/maps.ts` says so until each is placed.
+
+Decided by delegate for #473, each the owner's to overturn:
+
+1. **The ids follow the towns,** `anvilhall_` or `kilnhaven_` and the business, as Saltmouth's do
+   (`saltmouth_inn`): §4.4 and §4.14 give them for #459 and #469 to name, and each scene's file is
+   named for its id, as `tools/changed.ts` reads a room by its file.
+2. **The verse is lettered twice:** in the great hall over the kings' forge, where the reader reads
+   it (§5), and in the forge over its hearth (§4.4, "under the verse"), since the dwarves read it at
+   their forges and Gluthutte has it again (§4.8). It is the dwarves' words, cut and painted red in
+   the font's capitals, never a reading (#538).
+3. **The old script over the other doors is drawn as cut marks, never letters,** angular like the
+   runes on the Grove Stone's copy in Thornhold: #459's "every door carries a verse" is kept without
+   lettering verses the docs do not hold, and what one says is an inscription's on the town's map
+   (#538, #459).
+4. **The great hall's forge is the kings' forge, behind the thane's seat** (STORY, #459), its coals
+   heaped in the arch so the seat stands dark against them; the forge business is the smiths'
+   working forge, a room of its own.
+5. **No crown on Anvilhall's anvil,** though #473's list had one: A Crown to Order's crown is made
+   at Gluthutte (§6, #463), and a second in Anvilhall's forge would put it in two places.
+6. **The rooms follow §4.4 and §4.14, not #473's older list:** the mine-surgeon's for a temple, the
+   stores for a provisioner, training halls for trainers' yards. Kilnhaven's chapel is the Lanterns'
+   (the ring on its altar) and a sailors' chapel, a ship hung from its beam as the coast hangs them.
+7. **Kilnhaven's chandlery is a chandler's in the old sense,** candles and lamps, the miners' frog
+   lamps among them, so that it is not Saltmouth's ship's chandlery again; it sells what §4.14 says.
+8. **Kilnhaven letters its three ways out and nothing else:** RIME LODGE on the coach's board,
+   SALTMOUTH and CINDERPORT on the board of sailings, with no times or fares, which are #539's. The
+   manifests are ruled and never lettered: Sheer Point is the harbourmaster's to say (§4.14).
+9. **Every room lets the day in,** by a window, a shaft, a breach or a door, so nine at night is not
+   noon: Anvilhall's look out from the terraces over the heart, Gluthutte's smoke by day and the far
+   fires red by night; Kilnhaven's on the harbour, the yard and the street; and the harbourmaster's
+   and the chapel's windows hold the Hearth on the sea, as Helmstow's throne room's does.
 
 ## 10. Names
 
