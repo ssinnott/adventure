@@ -262,13 +262,16 @@ export interface Choice {
 /**
  * An answer: it sets its flags, hands the company `gives` if it has an item, pays `pay` if it has
  * any (the gold to the company, the xp split among the living, as a fight's is) and the person
- * `says` it. An answer that gives or pays sets a flag, so it is answered once.
+ * `says` it. One with a `price` is sold as a ware is: listed at it, barred to a company with less,
+ * and paid as it is answered (the thane's for the Anvil Stone, #459). An answer that gives, pays or
+ * costs sets a flag, so it is answered once.
  */
 export interface Answer {
   label: string;
   sets?: string | readonly string[];
   gives?: string;
   pay?: { gold?: number; xp?: number };
+  price?: number;
   says: readonly string[];
 }
 

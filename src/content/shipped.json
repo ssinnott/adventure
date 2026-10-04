@@ -1,6 +1,24 @@
 {
   "version": 4,
   "maps": {
+    "anvilhall": {
+      "size": "16x16",
+      "used": [
+        "ah_berths",
+        "ah_caps",
+        "ah_chalk",
+        "ah_court",
+        "ah_crowns",
+        "ah_hammer",
+        "ah_lintel",
+        "ah_muster",
+        "ah_sickbay",
+        "ah_tub",
+        "ah_verse"
+      ],
+      "groups": [],
+      "doors": []
+    },
     "b5_rift_n": {
       "size": "12x12",
       "used": [
@@ -1360,6 +1378,9 @@
     }
   },
   "flags": [
+    "anvil_bought",
+    "anvil_taken",
+    "anvil_verse_read",
     "averil_met",
     "c3_saw_stone",
     "compact_cask",
@@ -1568,6 +1589,7 @@
     "sm_hale_word",
     "sm_ship_word",
     "sm_tallis_word",
+    "thane_met",
     "wall_met",
     "watch_prior_met",
     "watch_reader_met"

@@ -21,6 +21,7 @@ import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
 import { spentId } from '../../src/game/wilds.ts';
+import { readId } from '../../src/game/inscriptions.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok, owed } from './lib.ts';
 
@@ -38,7 +39,7 @@ const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? perso
 
 /**
  * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one UNSET owes), an item, something spent once and kept
- * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue), a guardian that
+ * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue, or an inscription read, #538), a guardian that
  * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
  * maps are the game's unless given.
  */
@@ -53,7 +54,7 @@ export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[
   for (const c of [w].flat() as QuestCond[]) {
     for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f) && !Object.hasOwn(UNSET, f)) bad.push(`flag ${f}`);
     if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
-    if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => id !== undefined && spentId(f) === id)) bad.push(`seen ${c.seen}`); }
+    if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => id !== undefined && (spentId(f) === id || readId(f) === id))) bad.push(`seen ${c.seen}`); }
     for (const ref of [c.slain ?? []].flat()) { const { map, id } = onMap(ref); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${ref}`); }
     if (c.visited !== undefined && !maps.some((d) => d.id === c.visited)) bad.push(`visited ${c.visited}`);
   }
@@ -79,6 +80,10 @@ export function quests(): void {
     features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: 'fx_crossed' }] };
   ok(!condFaults({ flag: 'fx_crossed' }, [crossing]).length && condFaults({ flag: 'fx_crossed' }, []).join() === 'flag fx_crossed',
     'a flag an event sets names something real, as one a person sets does');
+  // A reading is kept by its inscription's id (#538), so `seen` names it; a plain sign is kept by nothing.
+  const lintel: MapDef = { ...crossing, features: [{ kind: 'sign', x: 0, y: 0, id: 'fx_lintel', text: 'Marks.', read: 'STORE.' }, { kind: 'sign', x: 1, y: 0, text: 'A post.' }] };
+  ok(!condFaults({ seen: 'fx_shore:fx_lintel' }, [lintel]).length && condFaults({ seen: 'fx_shore:fx_post' }, [lintel]).join() === 'seen fx_shore:fx_post',
+    'an inscription read names something real by its id, as a once-event does');
   ok(fleeting({ member: { race: 'orcblood' } }).length === 1 && !fleeting({ member: { cls: 'paladin', level: 16 } }).length, 'a member\'s race can stop holding, so a journal may not ask it, and the rest of a member may');
   const conds = (w: When): QuestCond[] => [w].flat();
   // Every quest's steps: its own, or its chapters'. Each check reads these, so none passes the one
