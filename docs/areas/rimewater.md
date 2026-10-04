@@ -727,15 +727,16 @@ Decided by delegate for #495, each the owner's to overturn:
 11. **The Tallyman calls three knockers at a half a turn,** as #537's test caller calls three fodder,
     so the ice-hole's six leave room for one call: a company of 20 fights it 12.1 times to a rest,
     against 14.3 with no call, and wins it from fresh at 18, which is #487's gate to tune. On #541's
-    line, the tallyman 314 hit points and 3d7+5 where it had 241 and 3d8+4, 10.4 times against 13.8,
-    30% of the days ending in a fight broken off, and still won from fresh at 18.
+    line the tallyman has 314 hit points and 3d7+5 where it had 241 and 3d8+4: the hole is fought
+    10.4 times against 13.8, 30% of its days ending in a fight broken off, and is still won from fresh
+    at 18.
 12. **The Ice Bear is the bears' frame long in the neck,** low in the hump, the head small and the
     muzzle long, white with black claws, lifting its head to the wind. The roster gives the ice
     things no element, so cold stays an answer here.
 13. **Each is today's test monster at its role and level, and none carries gold:** the levels past 16
     are #541's to make again, and all six move with them; the machines' parts are their boxes' to
     add, as the knockers' are #462's. #541 re-stated them: the pike and the lynx 288 hit points and
-    3d7+5 where they had 239 and 3d7+4, the bear 570 and 5d7+7 where it had 518 and 4d8+6, and the
+    3d7+5 where they had 239 and 3d7+4, the bear 570 and 5d7+7 where it had 518 and 4d8+6; the
     tallyman, the keeper and the Matron as 11, 5 and 7 say.
 14. **No seventh drawing:** the cats get no elite at 22 for the pass, and K9's and K10's top stays
     #491's (§7).

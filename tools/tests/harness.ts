@@ -121,7 +121,7 @@ export function harness(): void {
 /**
  * The monsters past Act I set off the line on purpose (MONSTERS §4.4), each with why. Every other
  * monster of level 11 or more stands on the line at its level: some role's test monster's hit points
- * and blow, the test troll's (#537), or a role's come down whole by a share named in WHOLE. So when
+ * and blow, the test troll's (#537) or a role's come down whole by a share named in WHOLE. So when
  * the line is made again a monster left on the old one fails until it is re-derived. One a box's gate
  * tunes off the line goes here with the issue that tuned it.
  */
@@ -139,7 +139,7 @@ export const WHOLE: Record<string, { role: Role; share: number; why: string }> =
 /** Every monster past 10 on the line at its level, or set off it with a reason (OFF_LINE). */
 function onTheLine(): void {
   const blow = (m: Pick<MonsterDef, 'dice' | 'sides' | 'bonus'>): number => (m.dice * (m.sides + 1)) / 2 + m.bonus;
-  /** The shapes a monster of its level may stand on: each role's line, the test troll's, and its share in WHOLE. */
+  /** The shapes a monster of its level may stand on: each role's line, the test troll's and its share in WHOLE. */
   const shapes = (m: MonsterDef): MonsterDef[] => {
     const w = WHOLE[m.id], l = m.level;
     return [...ROLE_IDS.map((r) => testMonster(r, l)), testTroll(l), ...(w ? [testMonster(w.role, l, scaleAt(HP, w.role, l) * w.share, scaleAt(DAMAGE, w.role, l) * w.share)] : [])];
@@ -153,8 +153,8 @@ function onTheLine(): void {
   ok(!off.length, `every monster past 10 stands on the line at its level, its hit points and its blow, or is set off it with a reason: ${past.length - set.length} on it, ${set.length} set off it${off.length ? ` (off it: ${off.join('; ')})` : ''}`);
   const stale = [...Object.keys(OFF_LINE), ...Object.keys(WHOLE)].filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || (OFF_LINE[id] && on(MONSTERS[id])));
   ok(!stale.length, `and every monster set off it or come down whole is a monster past 10, and one set off it is off it${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
-  // It can fail: a soldier a few hit points off the line, a troll left mending what it did, and a light
-  // still the size it was, each fail; on the line they pass.
+  // It can fail: a soldier a few hit points short, a troll mending four too few and a light seven too
+  // many are each caught; on the line they pass.
   const soldier = testMonster('soldier', 19), troll = testTroll(19), share = WHOLE.bog_light, light = MONSTERS.bog_light;
   const lit = testMonster(share.role, light.level, scaleAt(HP, share.role, light.level) * share.share, scaleAt(DAMAGE, share.role, light.level) * share.share);
   const probes = [{ ...soldier, hp: soldier.hp - 5 }, { ...troll, regen: (troll.regen ?? 0) - 4 }, { ...light, hp: lit.hp + 7 }];

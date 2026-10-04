@@ -172,7 +172,7 @@ A monster that `calls` names a group and a chance a turn to spend its turn bring
 into the fight, as a group of its own that acts from the next round, while the fight has room for it
 under 12 monsters in three groups, those already down counted; the called pay as the rest. Both
 bots burn with fire what they have seen mend, and aim at a caller that has room to call as at a
-leader, and after both at a light whose touch takes spell points (#541). Nothing gives stone,
+leader and after both at a light whose touch takes spell points (#541). Nothing gives stone,
 though the condition exists: Absolve lifts it, and a temple.
 
 ### 3.2 What the numbers show
@@ -569,8 +569,8 @@ What it shows:
   leave the controllers 18% at 24: the ranks are growth the monsters answer, and the days are no
   worse for them.
 - **Made again with Act III's ladder, at every level of the act (#541).** In the ladder's gear to 22
-  (#535) a company on #409's line fought 9.8 to 11.7 standard encounters to a rest at 19, where 8.75
-  are asked, and 10.5 to 14.3 at 22 and 10.9 to 15.7 at 24; on that line drawn straight from 16 to
+  (#535) a company on #409's line fought 9.8 to 11.7 standard encounters to a rest at 19 where 8.75
+  are asked, 10.5 to 14.3 at 22 and 10.9 to 15.7 at 24; on that line drawn straight from 16 to
   20, the armoured ended 47% of their days badly at 17. Made again at every level from 17 to 22, and
   at 24, 28 and 32: from 17 to 22 monsters carry 3.5 to 6.5 times the line's hit points, where
   #409's line gave 3.3 to 5.6, and hit 1.2 to 2 times as hard, in fights of three to ten rounds; hit
@@ -638,22 +638,22 @@ Decided by delegate for #541, each the owner's to overturn:
    day (#537's 4), so neither bot lifts it, and Absolve is the company's to cast at leisure;
    Lampglass waits on a monster that casts an element at the company, and Act III's roster has none.
    Killing Frost and Wrath of the Wood, tier 7's damage, both bots weigh as any spell.
-6. **Kiln-script asks nothing of the bot:** a reading opens no way and no fight (#538's 5 and 7), a
-   ladder it points to is a secret a search finds, and the gate walks a zone's road by its groups, so
-   the walk without the ladders is the harder one, and the one held.
+6. **Kiln-script asks nothing of the bot:** a reading opens no way and no fight (#538's 5 and 7),
+   and a ladder it points to is a secret a search finds. The gate walks a zone's road by its groups,
+   so the walk without the ladders is the harder one, and the one held.
 7. **Every monster past 10 stands on the line or is named off it** (`tools/tests/harness.ts`): its
    hit points and its blow, within half a point, some role's test monster's at its level, the test
-   troll's, or a role's come down whole by a share named in `WHOLE` (the Bog Light's 0.575); else the
+   troll's or a role's come down whole by a share named in `WHOLE` (the Bog Light's 0.575); else the
    issue that set it off is named in `OFF_LINE`, as Act II's four bosses set by their gates are. A
    def drawn on the old line fails until it is re-derived ("When the line moves", above).
 8. **Act III's monsters are re-stated as #414 re-stated Act II's,** each on its role's line at its
    level with its notes kept: the Kilns' Mender, Rock Worm and Anvil Guard at 17 and Slag Elder,
-   Foreman, Warden of the Anvil and Great Salamander at 18, and Rimewater's Ice Pike, Snow Lynx and
-   Tallyman at 20, Ice Bear and Bay Keeper at 21 and Matron at 22, and Cairnmoor's Raven, Bog Light
-   and Bog Body at 18, Moor Hound, Cairn Wight and Tor Troll at 19 and Cairn King at 20: the casts and
-   the call kept, the light come down whole, the troll and the wight #537's, and the bosses' blows
-   still their gates' to set. The four at 16 do not move, since 16 is not made again. The area docs
-   give each before and after.
+   Foreman, Warden of the Anvil and Great Salamander at 18; Rimewater's Ice Pike, Snow Lynx and
+   Tallyman at 20, Ice Bear and Bay Keeper at 21 and Matron at 22; Cairnmoor's Raven, Bog Light and
+   Bog Body at 18, Moor Hound, Cairn Wight and Tor Troll at 19 and Cairn King at 20. The casts and the
+   call are kept and the light comes down whole; the troll and the wight are #537's; the bosses stand
+   on the boss line, still their gates' to tune. The four at 16 do not move, since 16 is not made
+   again. The area docs give each before and after.
 9. **The troll's tenth and the caller's call stand on the line made again:** two trolls with fire
    are fought 8.6 to a rest at 19 where plain brutes are 8.9 (8.75 asked), their days ending badly
    about as often, 35% to 29%, in fights broken off where the brutes' end in deaths; on a brute's

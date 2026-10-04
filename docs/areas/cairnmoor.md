@@ -95,8 +95,8 @@ the drove road down to Longmere. Its row on the curve and its share of the act's
 next 20, window 4,000), and O7's Banded Staff +1 in `src/content/areas/cairnmoor/items.ts`, made
 ahead of the area as the Kilns' step is (docs/areas/kilns.md §3), owed to #477 until placed. Its
 monsters are drawn (#483, below), and nothing else is built. Of the systems it waits on, the rest
-of #432's, ice and lying snow underfoot (#536; heather is #162's) and regeneration and curse (#537)
-are built, and the bot that plays them (#541); the drove road's coach (#539) is to come.
+of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse (#537)
+and the bot that plays them (#541) are built; the drove road's coach (#539) is to come.
 
 Drawn ahead of the boxes that place them (#483): the lights, a new family, with the Bog Light
 (`src/ui/monsters/lights.ts`); and the six on frames that exist, the Raven on the birds', the Bog
@@ -505,7 +505,7 @@ Decided by delegate for #483, each the owner's to overturn:
    `tools/smoke.ts` as the moths' dust is: two pieces, 6% of the ink. The Rime Light is a Build.
 3. **The Bog Light comes down whole, to 0.575 of the controller's line** (124 hit points, 2d6+2):
    on the line four sent a company of 18 to rest in four fights; whole, it fights 8.5 of 8.5 asked.
-   On #541's line, 117 hit points and 2d6+2: four fights on the line, and 8.9 at 0.575.
+   On #541's line, 117 hit points and 2d6+2: four fights on the line and 8.9 at 0.575.
 4. **Its touch takes spell points in place of the line's paralysis,** and it flies, reaching the
    back row; it is the Rift's, so it never runs (MONSTERS §2).
 5. **The Raven is the crow's frame grown big and at its ease, its wings folded,** the bill deep and

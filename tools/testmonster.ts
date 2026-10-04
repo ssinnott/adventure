@@ -190,12 +190,12 @@ export const callerEncounter = (level: number): MonsterDef[] => [testCaller(leve
 export const LIGHT = { share: 0.575 };
 /**
  * The test light (MONSTERS §7.2's bog light, #541): the test controller come down whole to
- * LIGHT.share of its line, flying, its touch taking spell points before hit points (`drain: 'sp'`,
- * #161) where the controller's held, and of the Rift, which never runs.
+ * LIGHT.share of its line, flying and of the Rift, which never runs. Its touch takes spell points
+ * before hit points (`drain: 'sp'`, #161) where the controller's held.
  */
 export function testLight(level: number): MonsterDef {
   const m = testMonster('controller', level, scaleAt(HP, 'controller', level) * LIGHT.share, scaleAt(DAMAGE, 'controller', level) * LIGHT.share);
   return { ...m, id: `test_light_${level}`, name: 'Test Light', plural: 'Test Lights', kind: 'rift', ranged: true, drain: 'sp', inflict: undefined };
 }
-/** Lights round the ring with a hound (§7.2's fight): three lights, a controller's three shares, and the test skirmisher's one. */
+/** Lights round the ring with a hound (§7.2's fight): three lights in a controller's three shares and the test skirmisher in its one. */
 export const lightEncounter = (level: number): MonsterDef[] => [...Array.from({ length: 3 }, () => testLight(level)), testMonster('skirmisher', level)];

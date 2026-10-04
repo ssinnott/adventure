@@ -235,8 +235,7 @@ Foreland map's density.
   1,230 of it in the chests. The Great Devilfish is set off the boss line for the gate, at 600 hit
   points and 8d7+10: the bot wins it 66% at 12 and 91% at 14, where the line's 674 and 13d7+19 won
   11% and 28% (69% and 96% after the re-stat to #409's line, #18, which leaves it as set; 96% and
-  100% once the gate's company takes its first prestige, #541, past the limit at 12 and owed to
-  #18). The
+  100% with the first prestige, #541, past the limit at 12 and owed to #18). The
   crews' cave at 12 wins every fight, at 6.8 fights to a rest (7.0 after the re-stat), and two
   under, at 10, wins every fight too, which is owed to #18 with E6's; the sea cave at 12 wins 91.5%
   of its fights with the boss, at 6.5 to a rest (92.3% and 6.6 after the re-stat, 99% with the
