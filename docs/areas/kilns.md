@@ -13,12 +13,13 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Its first five boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area; N3,
+Its first seven boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area; N3,
 Anvilhall's box (#458, §4.3), and with it its first town, Anvilhall, behind N3's gate (#459, §4.4);
 N4, the Tiefzeche's box (#461, §4.6), the heart's first, with the shaft shut until the mine is
-built; N2, Erzkamm (#460, §4.5), with the Barbarian's second prestige; and N5, Gluthutte's box
-(#463, §4.8), the smelter in the charcoal woods. Eleven of its monsters and its twelve rooms are
-drawn (§3), and the rest is to build. Its content is
+built; N2, Erzkamm (#460, §4.5), with the Barbarian's second prestige; N5, Gluthutte's box (#463,
+§4.8), the smelter in the charcoal woods; and N6 and M6, the roads south and west (#467, §4.12), M6
+Kilnmouth's first. Eleven of its monsters and its twelve rooms are drawn (§3), and the rest is to
+build. Its content is
 `src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, and its side quests in
 `quests.ts`, to come) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
@@ -36,9 +37,9 @@ zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Iron Fells | 16–17 | 3,059 | M3, N3, N2 |
-| The Kilns' heart (`kilnsheart`, "The Kilns" on the atlas) | 16–18 | 6,933 | N4, N5 |
-| Kilnmouth | 17–18 | 4,799 | none |
-| The area | 16–18 | 14,791 | M3, N3, N4, N2, N5 |
+| The Kilns' heart (`kilnsheart`, "The Kilns" on the atlas) | 16–18 | 6,933 | N4, N5, N6 |
+| Kilnmouth | 16–18 | 4,799 | M6 |
+| The area | 16–18 | 14,791 | M3, N3, N4, N2, N5, N6, M6 |
 
 Squares are land, without shallows or rivers: about 14.4 zone maps, and 12,399 of them a company
 could walk. The rest is the rim's mountain in row 1 and the P column, the Fells' peaks and the
@@ -68,6 +69,13 @@ Kilnmouth's but for 210 of Cairnmoor's; 241 of High Moor's in O6 and P6; and 380
 in M7, N7 and O7. About 85 more change hands between zones elsewhere on the world, none on a built
 map. M6, N6 and O6 take their own squares when they are laid, M5 is parked and P6 cut, and
 Cairnmoor's row holds its own when its boxes are laid or its rows seeded (§9).
+N6 and M6 (#467), laid whole, N6 in the heart and M6 in Kilnmouth, settle M6's 517 squares to
+Kilnmouth, 422 of them the heart's and 95 the Cairnfield's; N6 was the heart's already. Seeding the
+walk from them moves 2,262 in all: Kilnmouth takes 59 more of M5's from the heart and 815 of
+Cairnmoor's in K7, L7 and M7, and the heart 46 of High Moor's in O6 and P6 and 735 of Cairnmoor's in
+N7, O7 and P7; about 90 change hands elsewhere, L6's and Lanternwood's edges among them, none on a
+built map. Row 7, Cairnmoor's, now holds 2,002 of the Kilns' squares, until its boxes are laid or
+its rows seeded, which is Cairnmoor's to do (§9).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Kilns are the L to P columns from row 1
 to row 6, with K6 on the shore. The land worth a map is fourteen boxes: M3, N3, N2 and O3 in the
@@ -129,9 +137,10 @@ on the Fells' tops in winter (the area's `climate`, with its first box).
 
 ## 3. What is built
 
-Five boxes and a town: the area's first box, which lists the area (#457); the box of its first town
+Seven boxes and a town: the area's first box, which lists the area (#457); the box of its first town
 (#458) and the town behind its gate (#459); the box of its first dungeon, the heart's first (#461);
-the crag north of Anvilhall, off the road (#460); and the smelter's (#463):
+the crag north of Anvilhall, off the road (#460); the smelter's (#463); and the roads south and west
+(#467):
 
 - **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
   Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
@@ -184,13 +193,27 @@ the crag north of Anvilhall, off the road (#460); and the smelter's (#463):
   older smelter's slag gone to moss. Four groups: beetles behind the smelter and at the yard's foot,
   salamanders on the heap and a slag elder strayed onto the cutters' track. Behind the heap's laid
   face, the shard store (§4.8).
+- **The drove road's last reach** (N6, `kilnsheart_n6`, country, band 16–18; #467): the drove road
+  on south from N5 out of the charcoal woods over the open grass to the fork, where the branch goes
+  west for Kilnhaven, and on south to the moor's first heather and out for Cairnmoor. The drovers'
+  stone by the road, a dwarf caravan coming up it by day, the milestone, the drovers' camp and a
+  drover at the fork; the dew pond, the cattle and the smoking ridge east past the grass; the heather,
+  a curlew, the cairn at the border and the border's line on the road. Two groups: beetles on the
+  verge and a rock worm at the far end. Behind the verge worn wide, the coach's old halt (§4.12).
+- **The way to Kilnhaven** (M6, `kilnmouth_m6`, country, band 16–18; #467): the branch in from the
+  fork past a lime cart, up through the farms, over the stream on a white bridge and west along the
+  river's bank to the west edge before Kilnhaven's gate. The farmers' shrine, the farmer at his gate,
+  the limed fields and a field barn; the lime kilns in a row in the hill, the quarry in its flank and
+  the lookout from its top over the port and the sea; a cairn on the grass. Three groups: beetles
+  at either end of the kilns and a rock worm under the fields. Behind the one draw-hole stopped with a
+  dressed stone, the drover's cache (§4.12).
 
 Its atlas rows are charted in `src/content/areas/kilns/atlas.ts`, the area's own `atlas` since M3
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
 Saltreach's and Sunderwood's were before their first box (docs/areas/saltreach.md §9,
 docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–17, with M3, N3 and N2
-laid on it and its line to the heart held, §1; the heart 16–18, with N4 and N5 laid on it; Kilnmouth
-17–18), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the Tiefzeche 16–18, the Anvil
+laid on it and its line to the heart held, §1; the heart 16–18, with N4, N5 and N6 laid on it;
+Kilnmouth 16–18, with M6, §9), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the Tiefzeche 16–18, the Anvil
 Stone 17–18, Feuerstollen 17–18) as planned plates, the sites (Anvilhall, the Deep Mines, the
 Forges, the Anvil Stone, the Lava Tubes, Kilnhaven, Iron Crag, to be renamed with #435, §10) and its
 links: the east road in, the towns' and the dungeons' ways in, the drove road on to High Moor, the
@@ -199,8 +222,8 @@ ferry and the Compact ship, and a new `coach` link, Kilnhaven to Rime Lodge, the
 
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
 `src/content/progression.ts`: band 16–18, next 18, window 3,500, owed to #436 while the area is built
-box by box, with M3's, N3's, N4's, N2's and N5's 6,838 xp a member and 4,230 gold the clear's floor
-(§8).
+box by box, with M3's, N3's, N4's, N2's, N5's, N6's and M6's 8,693 xp a member and 4,970 gold the
+clear's floor (§8).
 The step is in
 `src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`, `src/content/index.ts`)
 so that the harness and the gate dressed by it before the first box took the table into its Area
@@ -208,8 +231,8 @@ so that the harness and the gate dressed by it before the first box took the tab
 wares (`FORGE`, §4.4), the step's plus finds by 19 (§4.1), Kilnhaven's smith's prices at a quarter
 more (`SMITH_PRICES`, for #469) and the thane's price for the Stone (`ANVIL_STONE_PRICE`, 6,000, for
 #459, §8). The forge sells every ware (#459), and each find is owed to its box until it is placed;
-N3's Plate Mail +3 and N2's Mattock +1 are placed (§4.3, §4.5), and M3's, N4's and N5's finds, off
-the ladder, are their own (§4.2, §4.6, §4.8). The thane asks the price as an answer's `price` (§9).
+N3's Plate Mail +3, N2's Mattock +1 and M6's Seax +1 are placed (§4.3, §4.5, §4.12), and M3's, N4's
+and N5's finds, off the ladder, are their own (§4.2, §4.6, §4.8). The thane asks the price as an answer's `price` (§9).
 
 Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
 Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
@@ -271,11 +294,11 @@ day in it somewhere, a window, a shaft, a breach or a door, so that nine at nigh
 
 ## 4. What is still to build
 
-All of it but M3, N3, N4, N2 and N5, built (#457, §4.2; #458, §4.3; #461, §4.6; #460, §4.5; #463,
-§4.8), and Anvilhall behind N3's gate (#459, §4.4): 14,791 squares of land, 12,399 of them walkable,
-the plan's figures (§1). On the grid the plan is ten boxes, three dungeons and two towns, with four
-more boxes parked, and the ten hold 8,419 of those squares, 7,686 walkable; the parked four 3,886
-and 3,397:
+All of it but M3, N3, N4, N2, N5, N6 and M6, built (#457, §4.2; #458, §4.3; #461, §4.6; #460, §4.5;
+#463, §4.8; #467, §4.12), and Anvilhall behind N3's gate (#459, §4.4): 14,791 squares of land,
+12,399 of them walkable, the plan's figures (§1). On the grid the plan is ten boxes, three dungeons
+and two towns, with four more boxes parked, and the ten hold 8,419 of those squares, 7,686 walkable;
+the parked four 3,886 and 3,397:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -289,7 +312,7 @@ and 3,397:
 | O5 | The Anvil Stone's box | the heart | core | 17–18 | 1,023 (hills 654, rock 178, mountain 145) | the Stone's cut and the Rift's way in at 468,142; the cutters' sheds; the Anvil Guard, `after` | the Stone | #464 |
 | | The Anvil Stone's Rift | | dungeon, one level of 16×16, hand-built | 17–18 | | slag and iron; the Slag Elders; the Warden of the Anvil | the tear closed | #465 |
 | O6 | Feuerstollen's box (the Lava Tubes') | the heart | country, with the tubes | 18 | 829 (ash 274, hills 273, grass 203, rock 50) | the vent ridge 479,171 to 484,184; the tubes' mouth at 478,178, two levels; the Great Salamander | none | #466 |
-| N6, M6 | The roads south and west | the heart, Kilnmouth | country | 17–18 | 844 (grass 751, woods 49, hills 44) and 837 (grass 362, farm 323, hills 151), 60 shallow | the drove road out at 430,196; the branch to Kilnhaven; the lime kilns and the farms | none | #467 |
+| N6, M6 | The roads south and west | the heart, Kilnmouth | country | 16–18 | 844 (grass 751, woods 49, hills 44) and 837 (grass 362, farm 323, hills 151), 60 shallow | the drove road out at 430,196; the branch to Kilnhaven; the lime kilns and the farms | none | #467 |
 | L6 | Kilnhaven's box | Kilnmouth | core | 17–18 | 576 (grass 326, heather 170, hills 53, sand 15), 85 shallow | the port's gate at 391,162; the ore quay; the coach yard | the port | #468 |
 | | Kilnhaven | | town, 16×16 | 16–18 | | the harbourmaster and his manifests, the smith, the ferry, the ship, the coach, training to 19 | the manifests | #469 |
 | O3, O4, M4, M5 | The country behind the road | the Iron Fells, the heart, Kilnmouth | country, behind the road, parked | 17–18 | 937, 972, 974, 1,003 | pine behind Anvilhall; the quarries; Kilnmouth's farms | none | #474 |
@@ -816,7 +839,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   chamber, the Great Salamander's hide, a resistance to fire worn.
 - **Pay.** About 1,500 xp a member, the box and the tubes together.
 
-### 4.12 N6 and M6, the roads south and west (#467): country, band 17–18
+### 4.12 N6 and M6, the roads south and west (#467): country, band 16–18
 
 - **Purpose.** N6: the drove road's last reach to Cairnmoor's border at 430,196, the crossing line
   facing back, and the branch west. M6: Kilnmouth's farms along the branch to Kilnhaven, and the
@@ -841,6 +864,44 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **New here.** Cairnmoor seen: the drove road into Act III's second step.
 - **Finds.** A Seax +1 in M6's kiln, the ladder's (#535).
 - **Pay.** About 700 xp a member, the two together.
+
+- **As built** (#467, 4 October): the brief's places, with two groups on N6 and three on M6, N6 laid
+  whole in the heart and M6 in Kilnmouth (§1), both at 16–18 by the orchestrator's call (§9).
+  - **N6.** The drove road comes on from N5 at 436,158 (12,0) into the same land, its floor 16 under
+    N5's 17, so nothing is said of it. It runs out of the last of the charcoal woods over the open
+    grass, past the drovers' stone (speed) and, by day, a dwarf caravan coming up with its ore under
+    tarpaulin, its guards watching and not fighting, to the fork at 4,18, where the milestone reads
+    ANVILHALL 13 and KILNHAVEN 4, counted along the roads (§9). The branch goes west from the fork
+    and leaves by the west edge at 424,176 (0,18) for M6; the drove road goes on south and leaves by
+    the south edge at 427,189 (3,31) for Cairnmoor's N7, where the border's line is said on the road
+    and, for now, the world ends. At the fork are the drovers' camp and a drover with a rumour of
+    something come up out of the ice at Rime Lodge. East of the road the grass runs to the hills
+    under O6's smoking ridge, with a dew pond and the drovers' black cattle; the moor's first heather
+    comes in from the south-east, with a curlew in it and a cairn by the road at the border (110 gold
+    and a Sapphire Vial). Off the road at 4,24 the verge is worn wide where nothing stops now;
+    searched there, the stopped door beside it gives on the coach's old halt, a stone shelter with a
+    bench and a faded coach bill for Rime Lodge, and in it 230 gold and a Healing Draught. Four fire
+    beetles on the verge out of the woods and a rock worm by the heather at the far end, the top.
+  - **M6.** The branch comes in from the fork at 423,176 (31,18) past a lime cart, climbs through
+    the farms, crosses the stream on a white bridge at 16,3 and runs west along the river's north
+    bank to the west edge, its last square, 392,162 (0,4), dirt beside Kilnhaven's gate at 391,162,
+    since the atlas has no road beyond; past it, for now, the world ends. The stream comes in from M5
+    at 415 to 418,158 (23 to 26,0), passes under the bridge and widens into the river's last reach,
+    out by the west edge at rows 5 and 6. The farmers' shrine at a field's corner (personality), the
+    farmer at his gate, whose son went up to the Tiefzeche and writes nothing, the limed fields over
+    the river and a field barn. On the hill the lime kilns stand in a row, warm, each open at its
+    draw-hole but one, stopped with a dressed stone; searched there, the stone gives on a drover's
+    cache, the Compact's cloth and a strongbox with its seal broken, and in it 250 gold and a Seax +1
+    (`seax+1`), the ladder's, which no walker, swimmer, climber or levitator reaches but through the
+    stone. From the hill's top the lookout over Kilnhaven's harbour and the sea; a quarry in its
+    flank and a cairn of white stones on the grass below (150 gold and a Sapphire Vial). Three fire
+    beetles at either end of the kilns and a rock worm under the fields past the river, the top.
+  - **Measured.** A company at 16 wins every fight in both and manages 7.52 fights to a rest on N6
+    and 8.97 on M6, inside the aim, with 0.7% and 4% of its days ending in a fight broken off; it
+    walks Kilnmouth's road, past the kilns' east end, every time. N6 pays about 787 xp a member and
+    340 gold, M6 about 1,068 and 400. Two under, at 14, it wins every fight in both, owed to #18.
+    Density: N6 99.9% within 12 steps and the furthest 13, no sign among its 17 points; M6 99.4%
+    within 12 and the furthest 15, none among its 16.
 
 ### 4.13 L6, Kilnhaven's box (#468): core, band 17–18
 
@@ -1019,8 +1080,9 @@ has only in the dungeons. The 17–18 boxes (O5, N6, M6, L6) were to hold their 
 pair at 17 and the dungeons the 18s (#472's 13), but the curve asks every map's hardest group at its
 floor and one more at least (`tools/tests/curve.ts`): 18 on a box whose floor is 17, and 19 on O6 at
 18. N5 holds its top with a slag elder strayed from the Stone, gone once the tear is closed (#463's
-4), as O5 can at the Stone; N6, M6, L6 and O6 want the owner's call or a surface monster of #472's
-(§9).
+4), as O5 can at the Stone. By the orchestrator's call (#467's 1), N6, M6 and L6 take their floor a
+level down, 16–18, so a worm at 17 is their top, and O6 takes 17–18 with the elder's strays as its
+18; no monster of Cairnmoor's roster comes into the Kilns.
 
 New in the Kilns, for the novelty check (EXPANSION §5.4): the knockers and the salamanders, two new
 families; the machine kind, with the cleric's Wrath passing through it (MONSTERS §2); pine and ash
@@ -1047,8 +1109,8 @@ trainer in a cave, and a door that is a wall is no mechanic the check reads.
   a fight inside the gate's aim costing what it costs; the sum is restated with each. A company
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
   finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458), N4 1,468
-  (#461), N2 1,095 (#460) and N5 1,679 (#463), so the shares stand at about 15,940. Anvilhall pays
-  nothing of its own (#459): its 300 is the chapter's and #471's.
+  (#461), N2 1,095 (#460), N5 1,679 (#463), N6 787 and M6 1,068 (#467), so the shares stand at
+  about 17,090. Anvilhall pays nothing of its own (#459): its 300 is the chapter's and #471's.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1068,7 +1130,8 @@ trainer in a cave, and a door that is a wall is no mechanic the check reads.
   700 of the 13,900, in its cairn and the drover's box; N3 holds 950 (#458), its share by the brief's
   900, in its cairn and the tithe-cellar; N4 holds 950 too (#461), in its cairn and the wagon yard;
   N2 holds 640 (#460), its share by the brief's 600, in its cairn and the hoard; N5 950 (#463), in
-  its cairn and the shard store; their monsters carry none. Anvilhall holds none (#459): its forge
+  its cairn and the shard store; N6 340 and M6 400 (#467), their share by the brief's 700 together,
+  in their cairns, the halt and the kiln; their monsters carry none. Anvilhall holds none (#459): its forge
   sells the step at the prices above, and its thane takes the 6,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
@@ -1077,9 +1140,9 @@ trainer in a cave, and a door that is a wall is no mechanic the check reads.
   above. Act II's boxes owed their two-under figures to the gear past 10 (#18). #535's ladder now
   dresses a company at each of the Kilns' floors past one two under it, Anvilhall's forge at 17 and
   its finds by 19; whether that holds the figure is each box's to measure. As built: M3's does not,
-  nor N3's, N4's, N2's or N5's. A company at its floor, 16 on the first four and 17 on N5, wins
-  every fight in each and walks the Fells' road and the heart's every time, and one two under wins
-  every fight too, owed to #18 as Act II's are (§4.2, §4.3, §4.5, §4.6, §4.8).
+  nor N3's, N4's, N2's, N5's, N6's or M6's. A company at its floor, 17 on N5 and 16 on the rest,
+  wins every fight in each and walks the Fells' road, the heart's and Kilnmouth's every time, and one
+  two under wins every fight too, owed to #18 as Act II's are (§4.2, §4.3, §4.5, §4.6, §4.8, §4.12).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
@@ -1087,7 +1150,9 @@ trainer in a cave, and a door that is a wall is no mechanic the check reads.
   place of its event, #459); Anvilhall, a town, 100% within 7 and the furthest 4, five signs among
   its 22 points (#459); N4 97.7% within 8 and the furthest 13, with one sign among its 25 (#461); N2
   100% within 12 and the furthest 12, with one sign among its 16 (#460); N5 97.4% within 8 and the
-  furthest 11, with one sign among its 27 (#463).
+  furthest 11, with one sign among its 27 (#463); N6 99.9% within 12 and the furthest 13, with no
+  sign among its 17 points, and M6 99.4% within 12 and the furthest 15, with none among its 16
+  (#467).
 
 ## 9. Decisions
 
@@ -1645,6 +1710,61 @@ Decided by delegate for #463, each the owner's to overturn:
 13. **Owed on:** the drove road at N6's 12,0 (436,158, #467); the cutters' track at O5's 0,24
     (456,150, #464), to be run on to the Stone; the stream at M5's 31,25 and 31,26, with no road
     across that edge (#474, parked); the elder's flag, the Rift's (#465).
+
+Decided for #467, each the owner's to overturn, the first by the orchestrator and the rest by
+delegate:
+
+1. **The roster call, binding for N6, M6, L6 and O6:** the curve asks a box's hardest group at its
+   floor and one more at least, and the roster's only surface 18 is the slag elder, a Rift's thing.
+   Where the roster cannot meet the check at the doc's band, a box takes its floor a level down, as
+   N2 did (#460's 2), and a worm at 17 is its top; or the elder stands only where the Stone's strays
+   plausibly roam, by O5 and O6. N6, M6 and L6 take 16–18, and O6 17–18 with the elder's strays as
+   its 18. No monster of Cairnmoor's roster comes into the Kilns: its families, regeneration, curse
+   and calls, the hounds, the ravens and the bog bodies are its novelty and stay its.
+2. **The top stays 18:** the call said 16–17, but the curve holds the area's band to its built zone
+   maps' bands, and with Kilnmouth built at 16–17 the Kilns would read 16–17 until O5 is built. At
+   16–18 the top the curve asks is still 17, the floor and one more, so a worm meets it. Kilnmouth's
+   band on the atlas goes to 16–18 with it.
+3. **The brief is §4.12, not the issue's draft:** M6's secret is the drover's cache in the stopped
+   kiln, not a dwarf's hoard in a farm's cellar hinted by a verse. The issue's drovers' camp at the
+   fork, its first heather at N6's south edge and its dwarf caravan, whose guards do not fight, are
+   kept; the caravan comes up the road by day, seen and not fought, as N4's overseers are (#461's 5).
+4. **Two groups on N6 and three on M6, for five each:** on N6 four beetles on the verge and a lone
+   worm at the far end give 7.52 fights to a rest, where the brief's worm pair gave 5.63, under the
+   aim, and 5.84 with another beetle group. On M6 three beetles at either end of the kilns and the
+   worm under the fields give 8.97. They pay 787 and 1,068 xp a member for the brief's 700 together,
+   as #457's 3 has it.
+5. **The milestone reads ANVILHALL 13, KILNHAVEN 4,** the brief's 8 and 3 counted again at 13
+   squares to the unit (#457's 4): 167 squares along the roads to the front of Anvilhall's gate, a
+   corner walked where the road turns on a diagonal, as it does on N4 and N5, and 53 to Kilnhaven's
+   gate at 391,162, two squares past the branch's last road square. The walkthrough holds both.
+6. **The branch crosses into M6 at row 18,** N6's 0,18 to M6's 31,18, where the atlas's road stepped
+   on a diagonal between 423,174 and 424,175. The two edges meet square for square, and both roads are
+   laid square to square.
+7. **The branch ends at M6's west edge in dirt,** 392,162 (0,4), beside Kilnhaven's gate at 391,162
+   on L6's east edge: the atlas's trail stopped in the river at 398,164, and the edge check asks for
+   no road where the atlas has none beyond. #468 takes it on into the gate, and may make the square
+   road once L6 is laid.
+8. **The stream** comes in from M5 at 23 to 26,0, as the atlas's river asks, passes under the bridge
+   at row 3 and goes out at the west edge's rows 5 and 6; from the bridge west the branch keeps to its
+   north bank, where the atlas took it into the water.
+9. **The halt is a shelter with its door stopped,** two squares inside, the worn verge before it the
+   hint, and the coach bill is seen, not carried. M6's kilns are a row of fronts with every draw-hole
+   open but the stopped one, which is a secret door; the cache lies two squares deep behind it.
+10. **The find is the ladder's Seax +1** (#535), in M6's cache. The gold is 740, the two boxes' share
+    by the brief of the 13,900 (§8): 110 in N6's cairn, 230 in the halt, 150 in M6's cairn and 250 in
+    the cache. The drovers' stone gives speed and the farmers' shrine personality.
+11. **Kilnmouth's road is the kilns' east end,** where the beetles overlook the branch: the gate names
+    each zone's road (`ROADS`), and Kilnmouth's way in is M6's start at 31,18, on the branch.
+12. **The zone walk moves 2,262 squares, unheld** (§1): M6's own settle to Kilnmouth, and Cairnmoor's
+    row 7 holds 2,002 of the Kilns' squares until its boxes are laid or its rows seeded, which is
+    Cairnmoor's to do (#437, #476).
+13. **Two under is owed to #18,** as the other boxes' is.
+14. **Owed on:** the drove road at N7's 3,0 (427,190, #476), the coach's road over it without a stop
+    (#539); the branch at L6's 31,4 (391,162, #468), Kilnhaven's gate; on M6's north the stream at
+    M5's 23 to 26,31 (415 to 418,157), with no road (#474, parked); on N6's east the grass and the
+    heather against O6, with no road (#466); on M6's south the grass and the hill against
+    Cairnmoor's M7, with no road.
 
 ## 10. Names
 

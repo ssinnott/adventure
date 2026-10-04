@@ -100,6 +100,8 @@ export const ROADS: Record<string, readonly string[]> = {
   // On down the trail past the fresh spoil below the Tiefzeche's shaft: the beetles at its head and
   // the salamanders at its warm end (#461).
   kilnsheart: ['kilnsheart_n4:n4_beetles', 'kilnsheart_n4:n4_salamanders'],
+  // Up the branch from N6's fork past the warm kilns' east end, where the beetles overlook the road (#467).
+  kilnmouth: ['kilnmouth_m6:m6_beetles_east'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -139,6 +141,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'ironfells_n3: under': { whose: '#18', at: 1 },
   'kilnsheart_n4: under': { whose: '#18', at: 1 },
   'ironfells_n2: under': { whose: '#18', at: 1 },
+  'kilnsheart_n6: under': { whose: '#18', at: 1 },
+  'kilnmouth_m6: under': { whose: '#18', at: 1 },
   'the Kilns: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike

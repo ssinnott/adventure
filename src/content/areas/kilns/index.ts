@@ -7,6 +7,8 @@ import { ANVILHALL } from './maps/anvilhall.ts';
 import { KILNSHEART_N4 } from './maps/kilnsheart_n4.ts';
 import { IRONFELLS_N2 } from './maps/ironfells_n2.ts';
 import { KILNSHEART_N5 } from './maps/kilnsheart_n5.ts';
+import { KILNSHEART_N6 } from './maps/kilnsheart_n6.ts';
+import { KILNMOUTH_M6 } from './maps/kilnmouth_m6.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -14,7 +16,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'kilns' as const,
-  maps: [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, IRONFELLS_N2, KILNSHEART_N5],
+  maps: [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, IRONFELLS_N2, KILNSHEART_N5, KILNSHEART_N6, KILNMOUTH_M6],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
