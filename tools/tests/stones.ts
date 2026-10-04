@@ -34,6 +34,18 @@ export function stones(): void {
   ok(world.stones === 1 && one === `${plain} ${steadier(1)}`, `the Tide Stone home is one, and the almanac says the Hearth burns steadier ("${one}")`);
   party.flags.q_grove_mended = 1;
   ok(world.stones === 2 && steadier(2) !== steadier(1) && MOST === STONES.length, `the Grove mended by a Lantern is a second ("${steadier(2)}")`);
+  // The Anvil Stone counts once its Warden has fallen and its tear is closed (#540), bought back or taken alike
+  // (docs/areas/kilns.md §9): the thane's choice restores nothing by itself, and the tear closed is a third either way.
+  for (const [how, flag] of [['bought', 'anvil_bought'], ['taken', 'anvil_taken']] as const) {
+    party.flags[flag] = 1;
+    const chosen = world.stones;
+    party.flags.q_anvil_closed = 1;
+    ok(chosen === 2 && world.stones === 3 && steadier(3) !== steadier(2) && world.almanac().split('\n')[0] === `${plain} ${steadier(3)}`,
+      `the Anvil Stone ${how} counts once its tear is closed and not before, and the almanac says the Hearth holds its light ("${steadier(3)}")`);
+    delete party.flags[flag]; delete party.flags.q_anvil_closed;
+  }
+  party.flags.q_anvil_closed = 1;
+  ok(world.stones === 3, 'a tear closed before the thane was spoken to counts too: the choice is how the Stone came to the company, not what restores it');
   ok([0, 1, 2, 3, 4, 5].every((n, i, a) => i === 0 || flickerOf(n) < flickerOf(a[i - 1])) && flickerOf(9) === flickerOf(5), 'each Stone steadies the flicker, and past the last it holds');
 
   // The title reads the save in storage: none, or one that cannot be read, is none restored.
@@ -42,7 +54,7 @@ export function stones(): void {
   save(store, world.state, party, 0);
   const kept = savedStones(store);
   box.set([...box.keys()][0], '{not a save');
-  ok(empty === 0 && kept === 2 && savedStones(store) === 0 && savedStones(null) === 0, `the title reads the saved company's count (${kept}), and none from no save or a broken one`);
+  ok(empty === 0 && kept === 3 && savedStones(store) === 0 && savedStones(null) === 0, `the title reads the saved company's count (${kept}), and none from no save or a broken one`);
 
   // The night sky's Hearth lies where the Hearth does: south of Helmstow, east from the far west shore.
   world.travel('harrow', 7, 14);

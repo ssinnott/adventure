@@ -114,6 +114,15 @@ DESIGN.md first for the why.
   where a crossing lands in a town, that town's ways out (`landings`, `tools/tests/gate.ts`), and
   the outdoors' walk (`tools/tests/outdoors.ts`) starts from each landing as well. Saltmouth's quay
   sells the boat to Wrackholm's landing and the landing sells it back (#177); no coach runs yet.
+  The crossings between towns (`content/crossings.ts`, #539) are written once, both ends together:
+  one fare, length and timetable either way, on a link the atlas charts, and each end's landing once
+  its town is built. A town sells one by a person whose `passage` is `sells('<town>', ...)`, which
+  sells nothing toward a town not built, so nothing ever lands where nothing is. The check holds each
+  to its link and its fare's rule, each built end to a landing on open ground and, once both ends
+  land, each end to a seller; on the world map the link a crossing is sold both ways on is drawn as
+  that way built. Kilnhaven's ferry to Saltmouth, the Compact ship to Cinderport and the drove road's
+  coach to Rime Lodge are written, and wait on Kilnhaven (#469), Cinderport (#512) and Rime Lodge
+  (#487); the ferry lands on Saltmouth's quay.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -628,7 +637,7 @@ does.
 |---|---|
 | `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine and ice named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
-| `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links) and the road's steps |
+| `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links, a crossing link sold both ways drawn as built) and the road's steps |
 | `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
@@ -666,6 +675,7 @@ does.
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |
 | `content/stones.ts` | the Wardstones a company may restore, each with its area and the condition it is restored on (or the issue that owes it); held to the atlas by `tools/tests/stones.ts`, read by `game/stones.ts` |
+| `content/crossings.ts` | the crossings between towns, each with its fare, days and hours and its two ends, each end's landing once its town is built (or the issue that owes it), and `sells`, the passages a town's person sells on them; held to the atlas and the towns by `tools/tests/passage.ts` |
 | `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
 | `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races and conditions; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
