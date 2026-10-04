@@ -140,12 +140,12 @@ export function outdoors(): void {
   // Gluthutte's box (N5, #463): in from N4 by the drove road at column 20 and the stream at the corner,
   // the slag heap's loose slag on the line; out by the south edge at column 12 for N6. The stream
   // leaves by the west edge at rows 25 and 26 against M5, beside the farms' fields and the woods; on the
-  // east, against O5, the hills, the mountain, the world's end where its ring faces nothing built, and
-  // the cutters' track at row 24 in dirt, since the atlas has no road there.
+  // east, against O5 (#464), the hills, the mountain and the cutters' track at row 24 in dirt, since the
+  // atlas has no road there.
   const n5 = out.zones.find((z) => z.id === 'kilnsheart_n5')!;
   ok(northOf(n5) === ':::' + '"'.repeat(6) + '::' + ','.repeat(9) + '=,' + '^'.repeat(8) + '~~' && southOf(n5) === '^,,' + 't'.repeat(9) + '=' + 't'.repeat(9) + ','.repeat(10),
     `N5's north edge meets N4's with the drove road and the stream, and its south edge is the woods with the drove road out for N6 (${northOf(n5)}; ${southOf(n5)})`);
-  ok(westOf(n5) === ':'.repeat(7) + 'f'.repeat(7) + 't'.repeat(11) + '~~t,,,^' && eastOf(n5) === '~^,^^^' + '%'.repeat(11) + '^^^,,,,:' + ','.repeat(7),
+  ok(westOf(n5) === ':'.repeat(7) + 'f'.repeat(7) + 't'.repeat(11) + '~~t,,,^' && eastOf(n5) === '~^,^^^' + 'M'.repeat(11) + '^^^,,,,:' + ','.repeat(7),
     `N5's west edge is the smelter's ground, the fields, the woods and the stream against M5, and its east edge the hills, the mountain and the cutters' track against O5 (${westOf(n5)}; ${eastOf(n5)})`);
   // The roads south and west (N6 and M6, #467): N6 in from N5 square for square with the drove road at
   // column 12, out by the south edge at column 3 for Cairnmoor's N7 among the hills and the heather;
@@ -159,6 +159,16 @@ export function outdoors(): void {
     `M6's east edge meets N6's west edge square for square, with the branch through it at row 18 (${westOf(n6)})`);
   ok(northOf(m6) === '_' + 'f'.repeat(22) + '~~~~f,,,^' && westOf(m6) === '_fff:~~' + 'f'.repeat(8) + ','.repeat(17) && southOf(m6) === ','.repeat(11) + '^,,,' + '^'.repeat(17),
     `M6's north edge is the farms with the stream in from M5, its west edge the farms, the branch's dirt and the river against L6, and its south edge the grass and the hill against M7 (${northOf(m6)}; ${westOf(m6)}; ${southOf(m6)})`);
+  // The Anvil Stone's box (O5, #464): in from N5 by the cutters' track at row 24 and over the open hills
+  // and grass either side of it, the mountain between them on both sides of the seam and the stream at
+  // the corner. The stream runs on at the north edge's corner into O4, past it the hills and the
+  // mountain, the world's end where its ring faces nothing built; the hills and the crag, run on to the
+  // rim, against P5, cut; and the grass, the hills and the crag against O6 (#466), not built yet.
+  const o5 = out.zones.find((z) => z.id === 'kilnsheart_o5')!;
+  ok(westOf(o5) === '~^^^^' + 'M'.repeat(10) + '^^^^' + ','.repeat(5) + ':' + ','.repeat(7) && northOf(o5) === '~~' + '^'.repeat(8) + '%'.repeat(17) + '^'.repeat(5),
+    `O5's west edge meets N5's with the cutters' track, the hills and the mountain, and its north edge is the stream at the corner and the hills under the world's end over O4 (${westOf(o5)}; ${northOf(o5)})`);
+  ok(eastOf(o5) === '^'.repeat(22) + 'r'.repeat(10) && southOf(o5) === ',,,,,' + '^'.repeat(8) + 'r'.repeat(19),
+    `O5's east edge is the hills and the crag against P5, and its south edge the grass, the hills and the crag against O6 (${eastOf(o5)}; ${southOf(o5)})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);

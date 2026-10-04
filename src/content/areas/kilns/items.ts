@@ -75,4 +75,8 @@ export const ITEMS: readonly ItemDef[] = [
     'A slate of the same smooth grey as the knockers, rows cut down it close in the old script.',
     'At the end of every row, a box. None is ticked.',
   ] },
+  // O5's find (#464): in the cutters' foreman's shed, his own, off the ladder: a second hammer with a
+  // plus beside the Tiefzeche's, for the forge's hammer has three hands, the knight's, the paladin's
+  // and the cleric's.
+  P(forgeHammer, 1, { id: 'cutters_hammer', name: "Cutter's Hammer +1" }),
 ];
