@@ -338,8 +338,8 @@ to place and worth the walk.
 - **Hints.** If every secret door is to have a hint (today all five give one, the Foreland's two
   since #51), each names its hint (`hint: '<event id>'`, an event or a sign, and an inscription's
   reading counts, #538), and the check proves the hint can be reached from the start without
-  passing through that door. A check by distance alone would count
-  Brandy Hole's stash, which lies behind its door.
+  passing through that door. A check by distance alone would count Brandy Hole's stash, which lies
+  behind its door.
 - **Text.** No event or sign wraps past three lines of the log, measured with the log's own `wrap`
   (four fill it; two is the aim). Every glyph is in the font, for all text and not only the quest
   log's. British spelling, as the game has it (colour, armour).

@@ -16,7 +16,7 @@ export type SkillId = 'linguist';
 export interface SkillDef {
   id: SkillId;
   name: string;
-  /** What it does, in a line: the sheet's and the menu's note. */
+  /** What it does, in a line: the note under it on the menu that teaches it. */
   text: string;
   /** The guild whose halls teach it, to the guild's members. */
   guild: GuildId;

@@ -18,11 +18,12 @@ DESIGN.md first for the why.
   it stocks (`prices`); the rest sell at their own, and anything sells back for half its own price.
 - **Guild halls:** a business may also be a guild's hall (`hall`, DESIGN §8). It then opens on a
   first menu, its own trade, the guild's work, its skills where the guild has one built (below) and
-  Leave, which each choice returns to; a business with its trade alone opens straight on it. The guild's work pays what is done, then offers the
-  quests at or under the company's rank. Membership and rank are worked out from the guild quests'
-  done flags, and a rank reached is kept by its own flag (`game/guilds.ts`). The Warden Drillyard
-  is the Wardens' hall, and the Lantern Guildhall and the Thornhold Lantern Hall the Lanterns'. A
-  spell hall's fee buys the right to study, not membership.
+  Leave, which each choice returns to; a business with its trade alone opens straight on it. The
+  guild's work pays what is done, then offers the quests at or under the company's rank. Membership
+  and rank are worked out from the guild quests' done flags, and a rank reached is kept by its own
+  flag (`game/guilds.ts`). The Warden Drillyard is the Wardens' hall, and the Lantern Guildhall and
+  the Thornhold Lantern Hall the Lanterns'. A spell hall's fee buys the right to study, not
+  membership.
 - **People in a business:** a person with no room of their own on a business's doorway, listed after
   it, is in the business while present, and its first menu offers "Talk to <name to its first
   comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
@@ -112,18 +113,18 @@ DESIGN.md first for the why.
   the outdoors' walk (`tools/tests/outdoors.ts`) starts from each landing as well. Saltmouth's quay
   sells the boat to Wrackholm's landing and the landing sells it back (#177); no coach runs yet.
 - **Kiln-script and the secondary skills** (`game/inscriptions.ts`, `game/skills.ts`, #538; DESIGN
-  §5, §9): a sign with a second text (`read`) is an inscription. Its words are said to every company,
-  and its reading after them only to one with a reader, as `<name> reads: "<reading>"`: the first
-  standing member with Linguist or born to it, a dwarf, else, while an item that does Linguist's work
-  is carried (`ItemDef.skill`, the copybook #471 builds), its carrier or the first standing member.
-  Read, it is kept by its id in its map's `used`, as a once-event is, so `seen` names it and nothing
-  new is saved; one that `marks` atlas places pins them on the world map once read, a hollow square
-  with no name and no word in the legend, and its first reading says so. A reading may be a secret's
-  hint, which the hint check counts; it sets no flag and opens no way. The secondary skills
-  are a list on each member (`skills`, none in a save from before them) that the sheet shows.
-  Linguist is the first built: the Lanterns', 1,000 gold a member, taught at every hall of theirs
-  ("Learn a skill" on its first menu) and by a person who teaches it (`skill`), to a company that is
-  of the guild. No map places an inscription or a teacher yet: the Kilns' boxes do.
+  §5, §9): a sign with a second text (`read`) is an inscription. Its words are said to every
+  company, and its reading after them only to one with a reader, as `<name> reads: "<reading>"`:
+  the first standing member with Linguist or born to it, a dwarf, else, while an item that does
+  Linguist's work is carried (`ItemDef.skill`, the copybook #471 builds), its carrier or the first
+  standing member. Read, it is kept by its id in its map's `used`, as a once-event is, so `seen`
+  names it and nothing new is saved; one that `marks` atlas places pins them on the world map once
+  read, a hollow square with no name and no word in the legend, and its first reading says so. A
+  reading may be a secret's hint, which the hint check counts; it sets no flag and opens no way. The
+  secondary skills are a list on each member (`skills`, none in a save from before them) that the
+  sheet shows. Linguist is the first built: the Lanterns', 1,000 gold a member, taught at every hall
+  of theirs ("Learn a skill" on its first menu) and by a person who teaches it (`skill`), to a
+  company that is of the guild. No map places an inscription or a teacher yet: the Kilns' boxes do.
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,
@@ -415,9 +416,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
   millisecond a frame.  ## Stubbed or absent
-- No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; no secondary skills yet beyond race
-  innate ones. The Meridian journal opens The Lost Expedition in the quest log, and the
-  Cartographers' Geographer in Saltmouth reads it (#181), but no second volume exists.
+- No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; of the
+  secondary skills only Linguist (#538), with the race-innate ones. The Meridian journal opens The
+  Lost Expedition in the quest log, and the Cartographers' Geographer in Saltmouth reads it (#181),
+  but no second volume exists.
 - No audio. The engine's synth stack is vendored, unused.
 - Prestiges, the Compact's hall, the succession, the Salt Compact, the Lost Expedition past its
   first journal: design only. The Cartographers' hall is built in Saltmouth (#181).

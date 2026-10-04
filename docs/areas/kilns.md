@@ -751,44 +751,6 @@ number, and those that are not the Kilns' are left out:
 8. **All of #56's 33 to 36 stand** (call 11): §6.
 9. **The names** (#435): §10.
 
-Decided by delegate for #538, each the owner's to overturn:
-
-1. **An inscription is a sign with `read`**, not a feature of its own: its words are said as any
-   sign's, and the reading after them as its reader's line, *Maren reads: "STORE."*, so a brief's
-   *Read: X* is written `read: 'X'`.
-2. **A reader** is the first standing member with Linguist or a dwarf, else, while an item with
-   `skill: 'linguist'` is carried, its carrier or the first standing member; one knocked down reads
-   nothing.
-3. **A reading is kept by the inscription's id in its map's `used`,** as a once-event is: `seen`
-   names it for a person's words or an entry, and nothing new is saved. An inscription must have an
-   id, and the type asks for one.
-4. **A reading may be a secret's only hint, and the hint check counts it** as any sign on the near
-   side; the briefs' seen hint beside it (§4.1) stays the boxes' practice, so no secret needs a
-   reader.
-5. **A reading is a hint, never a key:** a hatch it names is found by a search as any secret door
-   is. Gating the hatch on the reading (the ladders' proposal below) is not built; it would want a
-   field on `secrets`, #462's to ask for.
-6. **`marks` names atlas places,** planned or built, one or several; once read, the world map pins
-   each with a hollow square of its own colour, with no name and no word in the legend, which is
-   full, and the first reading says *Maren marks the world map.*
-7. **Reading never opens the road:** it sets no flag and changes no door, and the check refuses a
-   way whose `shut` names a reading.
-8. **Linguist is a list on the member, `skills`,** absent in an old save and read as none, so no
-   save bump; the dwarves are born to it (the skill's `race`), so the sheet lists it for a dwarf too.
-9. **A guild's halls teach its skills to its members** (DESIGN §5 and §8, "taught to its members"):
-   every business with `hall: 'lanterns'` offers "Learn a skill", Rime Lodge's too once #487 builds
-   it, and a stranger to the guild hears *"We teach our own."*
-10. **A person teaches a skill with `skill`,** beside `teaches`, which stays the prestiges', so the
-    walkthroughs that read `teaches.cls` keep their types; Anvilhall's reader is #459's to place.
-11. **Linguist costs 1,000 gold a member:** a first prestige's price, under a tier 6 spell at the
-    Watch (1,280) and an eighth of training six through the band (7,920, §8).
-12. **The copybook is any item with `skill: 'linguist'`,** tested with a fixture until #471 builds
-    the Primer's. A carried thing's own Kiln-script (34's rubbing) is not built: an item would want
-    a reading of its own, a few lines in the systems lane, for #471 to ask for.
-13. **The line check hears an inscription as a reader with a ten-letter name does the first time:**
-    its words, reading and mark said together, which Feuerstollen's brief (§4.11) fills exactly.
-14. **The novelty check names the new mechanics** `sign:read` and `sign:marks`, for §7's claim.
-
 Proposed, for the owner, each in the issue that would build it:
 
 - **The briefs** of §4.2 to §4.15: each box's landmarks, points of interest, encounters, secret and
@@ -805,7 +767,7 @@ Proposed, for the owner, each in the issue that would build it:
   a company with a reader of its own reads it first (§4.4, #459).
 - **The service ladders are secret doors found by reading** (§4.7): the hatch opens to a search once
   the inscription beside it has been read, and the stairs stay the way for everyone. As #538 built
-  it, the reading is the hatch's hint and a search finds it as any door (the decisions above, 5).
+  it, the reading is the hatch's hint and a search finds it as any door (#538's 5, below).
 - **The pay's shares** (§8).
 - **The bands on the atlas's rows** (#456): the Iron Fells 16–17, the Kilns' heart 16–18,
   Kilnmouth 17–18, Anvilhall 16–18, the Tiefzeche 16–18, the Anvil Stone 17–18 (the plan has 16–18),
@@ -844,6 +806,44 @@ Decided by delegate for #540, each the owner's to overturn:
    so drops the entry there.
 4. **No wording changes.** The title, the sky and the almanac read the count, which stands at five
    Stones already, so the Anvil Stone is one step more wherever it falls.
+
+Decided by delegate for #538, each the owner's to overturn:
+
+1. **An inscription is a sign with `read`**, not a feature of its own: its words are said as any
+   sign's, and the reading after them as its reader's line, *Maren reads: "STORE."*, so a brief's
+   *Read: X* is written `read: 'X'`.
+2. **A reader** is the first standing member with Linguist or a dwarf, else, while an item with
+   `skill: 'linguist'` is carried, its carrier or the first standing member; one knocked down reads
+   nothing.
+3. **A reading is kept by the inscription's id in its map's `used`,** as a once-event is: `seen`
+   names it for a person's words or an entry, and nothing new is saved. An inscription must have an
+   id, and the type asks for one.
+4. **A reading may be a secret's only hint, and the hint check counts it** as any sign on the near
+   side; the briefs' seen hint beside it (§4.1) stays the boxes' practice, so no secret needs a
+   reader.
+5. **A reading is a hint, never a key:** a hatch it names is found by a search as any secret door
+   is. Gating the hatch on the reading (the ladders' proposal below) is not built; it would want a
+   field on `secrets`, #462's to ask for.
+6. **`marks` names atlas places,** planned or built, one or several; once read, the world map pins
+   each with a hollow square of its own colour, with no name and no word in the legend, which is
+   full, and the first reading says *Maren marks the world map.*
+7. **Reading never opens the road:** it sets no flag and changes no door, and the check refuses a
+   way whose `shut` names a reading.
+8. **Linguist is a list on the member, `skills`,** absent in an old save and read as none, so no
+   save bump; the dwarves are born to it (the skill's `race`), so the sheet lists it for a dwarf too.
+9. **A guild's halls teach its skills to its members** (DESIGN §5 and §8, "taught to its members"):
+   every business with `hall: 'lanterns'` offers "Learn a skill", Rime Lodge's too once #487 builds
+   it, and a stranger to the guild hears *"We teach our own."*
+10. **A person teaches a skill with `skill`,** beside `teaches`, which stays the prestiges', so the
+    walkthroughs that read `teaches.cls` keep their types; Anvilhall's reader is #459's to place.
+11. **Linguist costs 1,000 gold a member:** a first prestige's price, under a tier 6 spell at the
+    Watch (1,280) and an eighth of training six through the band (7,920, §8).
+12. **The copybook is any item with `skill: 'linguist'`,** tested with a fixture until #471 builds
+    the Primer's. A carried thing's own Kiln-script (34's rubbing) is not built: an item would want
+    a reading of its own, a few lines in the systems lane, for #471 to ask for.
+13. **The line check hears an inscription as a reader with a ten-letter name does the first time:**
+    its words, reading and mark said together, which Feuerstollen's brief (§4.11) fills exactly.
+14. **The novelty check names the new mechanics** `sign:read` and `sign:marks`, for §7's claim.
 
 ## 10. Names
 

@@ -51,8 +51,9 @@ export function signSays(world: { party: Party; used(id: string): boolean; markU
 }
 
 /**
- * Every text a sign can say at once, as a reader with the longest name hears it the first time: its
- * words, its reading and its mark, each an entry of the log (what tools/tests/pillars.ts measures).
+ * Every text a sign can say at once, as a company whose reader is called `name` hears it the first
+ * time: its words, its reading and its mark, each an entry of the log. tools/tests/pillars.ts
+ * measures them with the longest name a member can have.
  */
 export function signTexts(f: Sign, name: string): string[] {
   if (!isInscription(f)) return [signLine(f.text)];

@@ -293,9 +293,9 @@ quest's own fights are set at 26.
 - **Secondary skills,** three to a guild, taught to its members for a price (§8):
   *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
   Perception, Arms Master, Spirit Sense, Navigator.* Built with #538: Linguist, the first, a list on
-  each member that the sheet shows, learnt for 1,000 gold at any hall of the Lanterns or from a person
-  who teaches it, by a company that is a Lantern; the dwarves are born to it, and a copybook carried
-  does its work (§9, Act III). The other eleven come as their shortcuts and secrets do.
+  each member that the sheet shows, learnt for 1,000 gold at any hall of the Lanterns or from a
+  person who teaches it, by a company that is a Lantern; the dwarves are born to it, and a copybook
+  carried does its work (§9, Act III). The other eleven come as their shortcuts and secrets do.
 - Weapon and magic skills have **Novice / Expert / Master** tiers. Trainers for Expert live in
   regional towns; Master trainers are hidden, expensive, and often want a favour.
 
