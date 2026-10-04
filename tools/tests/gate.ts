@@ -138,6 +138,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'ironfells_m3: under': { whose: '#18', at: 1 },
   'ironfells_n3: under': { whose: '#18', at: 1 },
   'kilnsheart_n4: under': { whose: '#18', at: 1 },
+  'ironfells_n2: under': { whose: '#18', at: 1 },
   'the Kilns: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
