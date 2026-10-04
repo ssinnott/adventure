@@ -160,7 +160,7 @@ writes an inscription, and §9 what was decided); the crossings, the ferry, the 
 cold on what fire does not touch (#541, EXPANSION §5.2). Regeneration, curse and calls (#537) are
 Cairnmoor's and Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `when`
 are #41's; the machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472,
-eleven issues, nine of them so far (below), and its rooms in #473.
+eleven issues, all eleven now (below), and its rooms in #473.
 
 Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
 Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462); and the
@@ -790,8 +790,8 @@ MONSTERS §7.1 has the roster and the fights: the Knocker, the Mender and the Fo
 machines; the Salamander and the Great Salamander; the Fire Beetle on the spider frame; the Rock
 Worm on the long bodies'; the Slagling, the Slag Elder and the Warden of the Anvil, the Rift in
 slag; the Anvil Guard, a dwarf on the figure frame, `after` the taking. Their drawings are #472's,
-eleven issues: the knockers and the six on frames that exist are drawn (§3, §9), and the
-salamanders are to come. §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil
+eleven issues, all drawn: the knockers, the six on frames that exist and the salamanders (§3,
+§9). §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil
 the gentlest and the Warden, the Foreman and the Great Salamander at the top of the band. No
 machine stands on the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the
 first machines on the road are met at the bottom of the deepest mine, by a company that has walked
