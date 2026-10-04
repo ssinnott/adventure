@@ -51,4 +51,7 @@ export const ITEMS: readonly ItemDef[] = [
   P(kilnRobe, 1),
   // M3's secret (#457): in the Hand's wagon stage behind the walled adit, the drover's, off the ladder.
   P(watchStaff, 2, { id: 'drovers_goad', name: "Drover's Goad +2" }),
+  // N3's secret (#458): a piece of the Stone boxed in the tithe-cellar, a keepsake as the Brine and
+  // Sunder Shards are; O5's cutter keeps the second (#464).
+  { id: 'anvil_shard', name: 'Anvil Shard', slot: 'none', price: 0 },
 ];

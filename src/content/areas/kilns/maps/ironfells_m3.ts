@@ -58,7 +58,7 @@ export const IRONFELLS_M3: MapDef = {
     { kind: 'event', x: 8, y: 12, id: 'm3_lookout', once: true, when: { hours: 'day' }, text: 'West from the knoll the land falls away, and Lanternwood is one roof of green the whole way to the Watch\'s tower.' },
     { kind: 'event', x: 8, y: 12, id: 'm3_lookout_night', once: true, when: { hours: 'night' }, text: 'West, Lanternwood lies black under you. One light stands up out of it, high: the Watch.' },
     // Down the trail: the milestone, and below it the ruts off the road.
-    { kind: 'event', x: 24, y: 20, id: 'm3_milestone', once: true, text: 'A milestone by the trail, ANVILHALL 4 on its face and LANTERN WATCH 6 on its back.' },
+    { kind: 'event', x: 24, y: 20, id: 'm3_milestone', once: true, text: 'A milestone by the trail, ANVILHALL 5 on its face and LANTERN WATCH 6 on its back.' },
     { kind: 'event', x: 26, y: 22, id: 'm3_ruts', once: true, text: 'Wheel ruts turn off the road here and go south into the pines, where no track runs.' },
     // The woodcutters, their camp under the shoulder and their felling in the pines below the pass; the cairn on the shoulder.
     { kind: 'camp', x: 25, y: 8, name: 'The woodcutters\' camp', text: 'A woodcutters\' camp under the shoulder: a fire pit, a lean-to of boughs and pine stacked to dry. Here the hammering is plainer.' },

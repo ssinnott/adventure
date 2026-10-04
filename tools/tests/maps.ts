@@ -19,9 +19,9 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   knocker: '#462', mender: '#462', foreman: '#462',
-  slagling: '#458', slag_elder: '#464', anvil_warden: '#465',
+  slag_elder: '#464', anvil_warden: '#465',
   anvil_guard: '#464',
-  salamander: '#458', great_salamander: '#466',
+  great_salamander: '#466',
   raven: '#476', bog_body: '#476', moor_hound: '#476', bog_light: '#477', tor_troll: '#477', cairn_wight: '#479', cairn_king: '#480',
   ice_pike: '#486', snow_lynx: '#486', ice_bear: '#486', tallyman: '#487', bay_keeper: '#490', matron: '#490',
   anvilhall_great_hall: '#459', anvilhall_forge: '#459', anvilhall_training_hall: '#459', anvilhall_inn: '#459', anvilhall_surgeon: '#459', anvilhall_stores: '#459',
