@@ -115,6 +115,24 @@ export function frogLamp(ctx: CanvasRenderingContext2D, s: Stage, x: number, y: 
   pool(s, fx, fy - size * 0.3, reach, '#ffb060', 0.7);
 }
 
+/** A mattock stood haft down in a rack, foot on y: a pick's point on one side of its head and an adze's blade on the other. */
+export function mattock(ctx: CanvasRenderingContext2D, x: number, y: number, len: number, metal = '#8a929e'): void {
+  const hw = Math.max(2, len * 0.028), top = y - len;
+  glossPoly(ctx, K, [x - hw, y, x - hw, top, x + hw, top, x + hw, y], '#6a4626', { spread: 0.7 });
+  glossPoly(ctx, K, [x - len * 0.05, top, x - len * 0.3, top + len * 0.1, x - len * 0.05, top + len * 0.06], metal, { gloss: 0.5 });
+  glossPoly(ctx, K, [x + len * 0.05, top, x + len * 0.22, top + len * 0.01, x + len * 0.26, top + len * 0.11, x + len * 0.05, top + len * 0.06], metal, { gloss: 0.5 });
+  glossPoly(ctx, K, [x - len * 0.06, top - len * 0.03, x + len * 0.06, top - len * 0.03, x + len * 0.06, top + len * 0.08, x - len * 0.06, top + len * 0.08], shade(metal, 0.9), { gloss: 0.5 });
+}
+
+/** A seax stood point up, its grip's foot on y: a broad single edge, its back breaking down to the point. */
+export function seax(ctx: CanvasRenderingContext2D, x: number, y: number, len: number, metal = '#c0c6d0'): void {
+  const g = y - len * 0.3, w = Math.max(3, len * 0.1);
+  glossPoly(ctx, K, [x - w * 0.5, g, x - w * 0.5, y - len * 0.72, x + w * 0.4, y - len, x + w * 0.5, y - len * 0.9, x + w * 0.5, g], metal, { gloss: 0.6, spread: 0.6 });
+  line(ctx, [x - w * 0.2, g - 2, x - w * 0.2, y - len * 0.7], rgba(shade(metal, 0.6), 0.8), 1);
+  glossPoly(ctx, K, [x - w * 0.35, y, x - w * 0.35, g, x + w * 0.35, g, x + w * 0.35, y], '#3a2416', {});
+  glossPoly(ctx, K, [x - w * 0.75, g + 1, x - w * 0.75, g - 2, x + w * 0.75, g - 2, x + w * 0.75, g + 1], BRASS, { gloss: 0.5 });
+}
+
 /** The miners' hammer and pick crossed, heads up, centred on (cx, cy) and `r` across; inlaid in `metal`. */
 export function hammerPick(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, metal = BRASS): void {
   const haft = (sd: number): void => {

@@ -5,9 +5,10 @@
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
 import { STAGE_W, STAGE_H, rnd, beam, planks, flagstones, stones, line, smudge, fillPoly, path, ink, inkRect, slab, pool, contact, DAY_POOL } from '../kit.ts';
-import { K, anvil, sword, axe, lantern } from '../props.ts';
+import { K, anvil, warhammer, bow, lantern } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
 import { TAR, IRON, oreDust, rubble, harbour } from './port.ts';
+import { mattock, seax } from './hold.ts';
 
 const FLOOR = 206, BRICK = '#8a4a36';
 /** The forge: its middle, its half-width and the top of its bed. */
@@ -128,13 +129,14 @@ export const SMITH: Scene = {
     stableDoor(ctx, s);
     lantern(ctx, s, 222, 74, 10, IRON, 14, 190);
     forge(ctx, s);
-    // The band's steel on its rack, left: axes and swords.
+    // The band's steel on its rack, left, brought down from the Fells: the mattock, the seax, the
+    // forge hammer and the steel bow.
     beam(ctx, 14, 64, 92, 5, TAR, 867);
     beam(ctx, 14, 168, 92, 5, TAR, 868);
-    axe(ctx, 26, 172, 92, true, '#8a929e');
-    sword(ctx, 44, 168, 96, { w: 2.8 });
-    axe(ctx, 62, 172, 84, false, '#9aa2ae');
-    sword(ctx, 80, 168, 90, { w: 2.6, hilt: '#8a8e96' });
+    mattock(ctx, 28, 172, 90);
+    seax(ctx, 46, 172, 56);
+    warhammer(ctx, 68, 172, 88);
+    bow(ctx, 98, 168, 96, '#9aa2ae', true);
     // The anchor in for mending and its chain, the hoist's hook over them; the anvil by the forge.
     hook(ctx, 120, 14, 150);
     anchor(ctx, 30, 236, 190, 228);

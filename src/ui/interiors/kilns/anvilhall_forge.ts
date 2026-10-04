@@ -5,9 +5,9 @@
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
 import { STAGE_W, rnd, block, flagstones, line, smudge, fillPoly, path, ink, slab, pool, contact, beam } from '../kit.ts';
-import { K, anvil, axe, warhammer, mail, shield } from '../props.ts';
+import { K, anvil, warhammer, staff, bow, mail, shield } from '../props.ts';
 import { glossPoly, glossBall } from '../../monsters/gloss.ts';
-import { ROCK, IRON, BRASS, hewn, verse, rockWindow, terraceView, hammerPick } from './hold.ts';
+import { ROCK, IRON, BRASS, hewn, verse, rockWindow, terraceView, hammerPick, mattock, seax } from './hold.ts';
 
 const FLOOR = 204, OAK = '#4a3424', LEATHER = '#6a4028', BLACK_SHIELD = '#2a2226';
 /** The hearth: its middle, its half-width and the top of its bed where the coals lie. */
@@ -159,16 +159,20 @@ export const FORGE: Scene = {
     hearth(ctx, s);
     tongs(ctx, HX + HW - 2, 112, 146); tongs(ctx, HX + HW - 12, 112, 140);
     bellows(ctx, 58, FLOOR - 4, 76);
-    // The steel for sale on the right: helms on the shelf, axes and hammers in their rack under
-    // it, mail on its peg, a shield on the rock with the hold's mark on it.
+    // The steel for sale on the right: helms on the shelf; the mattock, the forge hammer, the banded
+    // staff and the seax in their rack under it; the steel bow hung by them, the mail on its peg and
+    // the forge shield on the rock with the hold's mark on it.
     beam(ctx, 268, 92, 128, 5, OAK, 635);
     for (let i = 0; i < 4; i++) helm(ctx, 284 + i * 28, 92, 18, i % 2 ? '#8a929e' : '#a2aab6');
-    beam(ctx, 268, 192, 98, 6, OAK, 636);
-    axe(ctx, 280, 196, 80, true, '#7a828e');
-    warhammer(ctx, 304, 196, 76);
-    axe(ctx, 324, 196, 84, false, '#9aa2ae');
-    warhammer(ctx, 346, 196, 70);
-    mail(ctx, 382, 102, 50, '#8a929e');
+    beam(ctx, 268, 192, 80, 6, OAK, 636);
+    mattock(ctx, 280, 196, 82);
+    warhammer(ctx, 300, 196, 78);
+    staff(ctx, 318, 196, 96, '#6a4a2e');
+    for (const f of [0.3, 0.5, 0.7]) slab(ctx, 315.5, 196 - 96 * f, 5, 3, IRON, { lit: 1, outline: false });
+    seax(ctx, 333, 196, 54);
+    glossBall(ctx, K, 364, 104, 1.6, IRON, {});
+    bow(ctx, 364, 196, 90, '#9aa2ae', true);
+    mail(ctx, 385, 104, 40, '#8a929e');
     shield(ctx, 382, 178, 14, BLACK_SHIELD, 'round');
     hammerPick(ctx, 382, 178, 12);
     // The anvil before the hearth with a bar at heat on it; the slack tub at the left; bar iron and
