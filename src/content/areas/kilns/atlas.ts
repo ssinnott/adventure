@@ -27,7 +27,9 @@ export const ZONES: readonly AtlasZone[] = [
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'anvilhall', kind: 'town', at: [452, 66] }, // on N3, in the hill behind its gate at 28,8 (#458, #459)
   { id: 'kilnhaven', name: 'Kilnhaven', kind: 'town', planned: true, band: [16, 18], at: [378, 158] }, // the ore port, behind L6's gate (#468, #469)
-  { id: 'deep_mines', name: 'The Tiefzeche', kind: 'dungeon', planned: true, band: [16, 18], at: [440, 104] }, // the Deep Mines, three levels under N4 (#462)
+  { id: 'deep_mines', kind: 'dungeon', at: [440, 104] }, // the Tiefzeche, the Deep Mines: the workings, under N4's shaft at 16,2 (#461, #462)
+  { id: 'deep_mines2', kind: 'dungeon', at: [440, 110] }, // the old workings, below them
+  { id: 'deep_mines3', kind: 'dungeon', at: [440, 116] }, // the clean corridor, at the bottom
   { id: 'anvil_stone', name: 'The Anvil Stone', kind: 'dungeon', planned: true, band: [17, 18], at: [468, 136] }, // the Stone's Rift, one level through O5's tear (#465)
   { id: 'lava_tubes', name: 'Feuerstollen', kind: 'dungeon', planned: true, band: [17, 18], at: [470, 194] }, // the Lava Tubes, two levels under O6 (#466)
 ];
@@ -35,7 +37,7 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // VI. The Kilns (docs/areas/kilns.md §10 has the dwarves' names).
   { name: 'Anvilhall', icon: 'fortress', at: [452, 70], label: 'below' }, // at the gate on N3, 28,8 (#458, #459)
-  { name: 'Tiefzeche', icon: 'mine', at: [440, 96], label: 'below', planned: true }, // the Deep Mines
+  { name: 'Tiefzeche', icon: 'mine', at: [440, 96], label: 'below' }, // the Deep Mines, at the shaft on N4, 16,2 (#461, #462)
   { name: 'Gluthutte', icon: 'forge', map: 'kilnsheart_n5', at: [12.5, 1.5], label: 'below' }, // the Forges: the smelter on N5 (#463)
   { name: 'Anvil Stone', icon: 'stone', map: 'kilnsheart_o5', at: [12.5, 10.5], label: 'below' }, // the Stone on its anvil of rock on O5, 12,10 (#464)
   { name: 'Feuerstollen', icon: 'cave', at: [478, 178], label: 'below', planned: true }, // the Lava Tubes

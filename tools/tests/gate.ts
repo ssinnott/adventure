@@ -78,6 +78,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   wrackholm: ['smugglers_cove2:kh2_great_devilfish', 'tide_ship_rift:tide_ship_rift_warden'],
   eaves: ['the_sunder2:su2_warden'],
   delta: ['drowned_temples2:dt2_choirmaster'],
+  kilnsheart: ['deep_mines3:dm3_foreman'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -139,6 +140,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'ironfells_n3: under': { whose: '#18', at: 1 },
   'kilnsheart_n4: under': { whose: '#18', at: 1 },
   'ironfells_n2: under': { whose: '#18', at: 1 },
+  // And the Tiefzeche's two upper levels (#462), banded from the area's floor as Kelp Hole's are.
+  'deep_mines: under': { whose: '#18', at: 1 },
+  'deep_mines2: under': { whose: '#18', at: 1 },
   'the Kilns: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
