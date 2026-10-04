@@ -1,17 +1,20 @@
 // The pillars, where a machine can check them (EXPANSION §5.4): every secret door has a hint on its
-// near side; no event or sign runs past three lines of the log, every glyph is in the font and the
-// spelling is British; each area's claim of what is new in it holds; a zone map's water and roads
-// carry on into the atlas land beyond its edge; every story lock is signed in, none stands between
-// areas, and every hand-in takes its item at the first meeting. Each check is a function of the content it reads, so it runs over every area and over
-// fixtures broken on purpose, which it must refuse.
+// near side; no event, sign, landing line or seller's warning runs past three lines of the log, every
+// glyph is in the font and the spelling is British; each area's claim of what is new in it holds; a
+// zone map's water and roads carry on into the atlas land beyond its edge; every story lock is
+// signed in, none stands between areas, and every hand-in takes its item at the first meeting. Each
+// check is a function of the content it reads, so it runs over every area and over fixtures broken
+// on purpose, which it must refuse.
 import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS, GUILD_QUESTS } from '../../src/content/index.ts';
 import { GUILDS } from '../../src/content/guilds.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { Area, Novelty } from '../../src/content/area.ts';
 import { LOCKS, MOST_AN_AREA, MOST_ON_THE_ROAD } from '../../src/content/locks.ts';
 import type { StoryLock } from '../../src/content/locks.ts';
+import { CROSSINGS } from '../../src/content/crossings.ts';
+import type { Crossing, CrossingEnd } from '../../src/content/crossings.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Presence } from '../../src/game/map.ts';
+import type { MapDef, Passage, Presence } from '../../src/game/map.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS, areaBand, zoneOfMap, homeMap } from '../../src/game/atlas.ts';
 import { CLASSES, RACES, TRAITS, NAME_MAX } from '../../src/game/party.ts';
@@ -133,8 +136,33 @@ export function lookFaults(monsters: readonly MonsterDef[]): string[] {
   return monsters.flatMap((m) => { const n = m.look ? logLines(m.look).length : 0; return n > LOOK_LINES ? [`${m.id}'s look takes ${n} lines`] : []; });
 }
 
-/** Every text the company reads, by where it is: names, lines, events, notes. Ids, rows, legends and palettes are not text. */
-export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text: string }[] {
+/**
+ * The crossings' words that take more than MOST_LINES of the log: the line said as a company lands
+ * and a seller's warning (game/passage.ts), held as an event is. Read on every passage a person sells
+ * and on both ends of every crossing between towns, so an end's words are held before anyone sells
+ * them. A passage's name is the menu's one row, and goes through the font and the spelling with every
+ * text (`texts`).
+ */
+export function crossingLineFaults(defs: readonly MapDef[] = MAP_DEFS, crossings: readonly Crossing[] = CROSSINGS): string[] {
+  const out: string[] = [];
+  const hold = (whose: string, p: { label?: string; warning?: string }): void => {
+    for (const [what, text] of [['landing line', p.label], ['warning', p.warning]] as const) {
+      const n = text === undefined ? 0 : logLines(text).length;
+      if (n > MOST_LINES) out.push(`${whose}: its ${what} takes ${n} lines`);
+    }
+  };
+  for (const d of defs) for (const f of d.features ?? []) if (f.kind === 'npc') for (const p of f.passage ?? []) hold(`${d.id}'s ${f.name}, to ${p.name}`, p);
+  for (const c of crossings) for (const e of c.ends) hold(`${c.name}, at ${e.name}`, e);
+  return out;
+}
+
+/**
+ * Every text the company reads, by where it is: names, lines, events, notes. Ids, rows, legends and
+ * palettes are not text. A crossing's words are three: where it goes as the menu names it, the line
+ * said as it lands and the seller's warning (game/passage.ts), on a person who sells it and on each
+ * end of the crossings between towns, which are held whether or not a town sells them yet.
+ */
+export function texts(defs: readonly MapDef[] = MAP_DEFS, crossings: readonly Crossing[] = CROSSINGS): { where: string; text: string }[] {
   const out: { where: string; text: string }[] = [];
   const add = (where: string, ...t: (string | readonly string[] | undefined)[]): void => { for (const x of t.flat()) if (x !== undefined) out.push({ where, text: x }); };
   for (const d of defs) {
@@ -150,11 +178,13 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS): { where: string; text
       if (f.kind === 'npc') {
         add(where, f.lines, ...handIns(f).flatMap((q) => [q.early, q.done, q.after]), ...(f.says ?? []).map((w) => w.lines));
         for (const c of choices(f)) add(where, c.ask, ...c.answers.flatMap((a) => [a.label, a.says]));
+        for (const p of f.passage ?? []) add(`${where} passage to ${p.to}`, p.name, p.label, p.warning);
       }
     }
     for (const e of d.exits ?? []) add(`${d.id} exit ${e.x},${e.y}`, e.label, e.blockedText);
     for (const e of d.encounters ?? []) add(`${d.id} ${e.id}`, e.slainText);
   }
+  for (const c of crossings) for (const e of c.ends) add(`crossing ${c.name} at ${e.at}`, e.name, e.label, e.warning);
   for (const i of Object.values(ITEMS)) add(`item ${i.id}`, i.name);
   for (const i of Object.values(ITEMS)) add(`item ${i.id}`, i.text);
   for (const m of Object.values(MONSTERS)) add(`monster ${m.id}`, m.name, m.plural, m.look);
@@ -549,6 +579,42 @@ export async function pillars(): Promise<void> {
     const withLook = (() => { const r = MONSTERS.rat; (MONSTERS as Record<string, MonsterDef>).rat = { ...r, look: 'A gray rat—big as a dog.' }; try { return texts(); } finally { (MONSTERS as Record<string, MonsterDef>).rat = r; } })();
     const bad = withLook.filter((t) => t.where === 'monster rat');
     ok(bad.some((t) => missingGlyphs(t.text).length === 1 && americanisms(t.text).length === 1), 'a look is read with every text: a dash and gray in one are caught');
+  }
+
+  // A crossing's words (#539, game/passage.ts): where it goes as the menu names it, the line said as it lands and the seller's
+  // warning. Those of every person who sells one and of both ends of every crossing between towns go through the glyph and
+  // spelling checks below with every text, and the landing line and the warning are held to the lines of the log as an event is.
+  {
+    const sold = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' ? f.passage ?? [] : [])));
+    const ends = CROSSINGS.flatMap((c) => c.ends);
+    const faults = crossingLineFaults();
+    ok(!faults.length, `every landing line and warning of a crossing fits ${MOST_LINES} lines of the log (${sold.length} passages sold, ${ends.length} crossing ends)${faults.length ? ' -> ' + faults.join('; ') : ''}`);
+    const read = texts().filter((t) => t.where.includes(' passage to ') || t.where.startsWith('crossing ')).map((t) => t.text);
+    const words = [...sold, ...ends].flatMap((p) => [p.name, p.label, p.warning]).filter((t): t is string => t !== undefined);
+    ok(words.length > 0 && words.every((t) => read.includes(t)), `the ${words.length} words of the passages sold and the crossing ends are among the texts the company reads`);
+    // Fixtures: a boatman who sells a passage, and a crossing between two towns, each with one word broken at a time.
+    const person = (p: Partial<Passage>): MapDef => ({
+      id: 'fixture_seller', name: 'Seller fixture', kind: 'town', start: { x: 1, y: 1, facing: NORTH }, rows: ['###', '#.#', '###'],
+      features: [{ kind: 'npc', x: 1, y: 1, name: 'A boatman', lines: ['"Aye."'], passage: [{ to: 'nowhere', x: 1, y: 1, name: 'The isle', by: 'boat', fare: 10, departs: 20, days: 1, arrives: 6, ...p }] }],
+    });
+    const run = (e: Partial<CrossingEnd>): Crossing => ({ name: 'the fixture boat', by: 'boat', fare: 10, departs: 20, days: 1, arrives: 6, ends: [{ at: 'fx_isle', name: 'The isle', ...e }, { at: 'fx_port', name: 'The port' }] });
+    const sellers = (p: Partial<Passage>): { text: string }[] => texts([person(p)], []).filter((t) => t.where.includes(' passage to '));
+    const crossed = (e: Partial<CrossingEnd>): { text: string }[] => texts([], [run(e)]).filter((t) => t.where.startsWith('crossing the fixture boat '));
+    const lacking = (t: { text: string }[]): number => t.reduce((n, x) => n + missingGlyphs(x.text).length, 0);
+    const broken = { name: 'Café', label: 'The boat comes in—late.', warning: '"It’s no night for it."' } as const;
+    ok(lacking(sellers({})) === 0 && lacking(crossed({})) === 0 && (['name', 'label', 'warning'] as const).every((k) => lacking(sellers({ [k]: broken[k] })) === 1 && lacking(crossed({ [k]: broken[k] })) === 1),
+      "a passage's name, landing line or warning with a glyph the font lacks is caught, on a person who sells it and on the end of a crossing");
+    const spelt = (t: { text: string }[]): number => t.reduce((n, x) => n + americanisms(x.text).length, 0);
+    ok(spelt(sellers({ warning: '"I carry no armor."' })) === 1 && spelt(crossed({ label: 'The color of the sea.' })) === 1 && !spelt(sellers({ warning: '"I carry no armour."' })),
+      'and so is an American spelling in one');
+    let three = 'The boat comes in under the cliff with the tide.';
+    while (logLines(three).length < MOST_LINES) three += ' Nobody speaks.';
+    let four = three;
+    while (logLines(four).length <= MOST_LINES) four += ' Nobody speaks.';
+    ok(logLines(three).length === MOST_LINES && logLines(four).length === MOST_LINES + 1 && !crossingLineFaults([person({ label: three, warning: three })], [run({ label: three, warning: three })]).length,
+      `a landing line and a warning of ${MOST_LINES} lines pass`);
+    const long = [crossingLineFaults([person({ label: four })], []), crossingLineFaults([person({ warning: four })], []), crossingLineFaults([], [run({ label: four })]), crossingLineFaults([], [run({ warning: four })])];
+    ok(long.every((f) => f.length === 1), `and of ${MOST_LINES + 1} fail, on a person who sells the passage and on the end of a crossing (${long.map((f) => f.join()).join('; ')})`);
   }
 
   // Every glyph is in the font, and the spelling is British, in every text.

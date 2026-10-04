@@ -95,8 +95,10 @@ the drove road down to Longmere. Its row on the curve and its share of the act's
 next 20, window 4,000), and O7's Banded Staff +1 in `src/content/areas/cairnmoor/items.ts`, made
 ahead of the area as the Kilns' step is (docs/areas/kilns.md §3), owed to #477 until placed. Its
 monsters are drawn (#483, below), and nothing else is built. Of the systems it waits on, the rest
-of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse (#537)
-and the bot that plays them (#541) are built; the drove road's coach (#539) is to come.
+of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse (#537),
+the bot that plays them (#541) and the drove road's coach (#539) are built, and docs/SLICE.md and
+docs/MONSTERS.md say what each does; the coach runs once Kilnhaven (#469) and Rime Lodge (#487) are
+built.
 
 Drawn ahead of the boxes that place them (#483): the lights, a new family, with the Bog Light
 (`src/ui/monsters/lights.ts`); and the six on frames that exist, the Raven on the birds', the Bog
