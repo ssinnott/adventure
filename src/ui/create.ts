@@ -8,7 +8,7 @@ import { makeRng } from '../lib/engine/rng.ts';
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { panel, menu, paragraph } from './draw.ts';
 import { INK, BRASS, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';
-import { RACES, CLASSES, TRAITS, STATS, createCharacter, createParty, defaultParty, bonus } from '../game/party.ts';
+import { RACES, CLASSES, TRAITS, STATS, createCharacter, createParty, defaultParty, bonus, NAME_MAX } from '../game/party.ts';
 import type { Character, RaceId, ClassId, Stats } from '../game/party.ts';
 
 type Step = 'intro' | 'name' | 'race' | 'class' | 'stats' | 'review';
@@ -42,7 +42,7 @@ export class CreateScreen implements Screen {
 
   update(g: Game, a: Action | null): void {
     // Text entry runs every step, action or not.
-    if (this.step === 'name' && g.input) this.name = g.input.drainText(this.name, 10);
+    if (this.step === 'name' && g.input) this.name = g.input.drainText(this.name, NAME_MAX);
     if (!a) return;
     switch (this.step) {
       case 'intro':
