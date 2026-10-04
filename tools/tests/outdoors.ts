@@ -70,12 +70,13 @@ export function outdoors(): void {
   // K2 and L2 (#200) meet in one wood, forest on both sides of the seam with the east road through
   // it. K2 and K3 (#198) meet in the gorge: both lips' dead wood, the chasm between them and the rock
   // that walls K2's ledge, the pines east of it. L2 and M2 (#202) meet in one wood, its river down
-  // the seam and the road over it by a ford; M2's road leaves by its south edge for the pass in M3.
-  // J3 (#202) meets J2 by the cutters' track and K3 by the west lip's dead wood, and the Deepthorn's
-  // I3 and J4 in closed forest. Lanternwood's depths (#203): L2 meets L3 by the Lanterns' bank path
-  // and the river; K3 meets K4 by its east lip's dead wood, and L3 in closed forest; L3 meets L4 by
-  // the river and the path beside it; K4 meets L4 by the shingle along the bay, and the Deepthorn's
-  // J4 in rock, sea and all. Past them the world ends at M3, M4 and L5, which are cut.
+  // the seam and the road over it by a ford; M2's road leaves by its south edge into M3 (#457), the
+  // Kilns' first box, over the ridge between them. J3 (#202) meets J2 by the cutters' track and K3
+  // by the west lip's dead wood, and the Deepthorn's I3 and J4 in closed forest. Lanternwood's depths
+  // (#203): L2 meets L3 by the Lanterns' bank path and the river; K3 meets K4 by its east lip's dead
+  // wood, and L3 in closed forest; L3 meets L4 by the river and the path beside it, and M3 in closed
+  // forest; K4 meets L4 by the shingle along the bay, and the Deepthorn's J4 in rock, sea and all.
+  // Past them the world ends at M4 and L5, which are not built.
   const l2 = out.zones.find((z) => z.id === 'lanternwood_l2')!, k3 = out.zones.find((z) => z.id === 'eaves_k3')!;
   const m2 = out.zones.find((z) => z.id === 'lanternwood_m2')!, j3 = out.zones.find((z) => z.id === 'eaves_j3')!;
   const k2east = line(k2.x + k2.w - 1, k2.y, 0, 1, k2.h), l2west = line(l2.x, l2.y, 0, 1, l2.h), l2east = line(l2.x + l2.w - 1, l2.y, 0, 1, l2.h), m2west = line(m2.x, m2.y, 0, 1, m2.h);
@@ -83,8 +84,8 @@ export function outdoors(): void {
   ok(k2east === wood + 'T' && l2west === wood + 'M', `K2's east edge and L2's west edge are the wood on into Lanternwood, with the road through it, K2's corner over K3 pines (${k2east}; ${l2west})`);
   ok(l2east === river + '~' && m2west === river + 'T', `L2's east edge and M2's west edge are the wood, the river down the seam and the road over it by a ford (${l2east}; ${m2west})`);
   const m2south = line(m2.x, m2.y + m2.h - 1, 1, 0, m2.w);
-  ok([line(l2.x, l2.y, 1, 0, l2.w), line(m2.x, m2.y, 1, 0, m2.w), line(m2.x + m2.w - 1, m2.y, 0, 1, m2.h)].every((l) => /^%+$/.test(l)) && m2south === 'T==' + '%'.repeat(29),
-    `L2's and M2's north edges, the rim, and M2's east edge are the world's end, and M2's south edge, but for its road on into M3 (${m2south})`);
+  ok([line(l2.x, l2.y, 1, 0, l2.w), line(m2.x, m2.y, 1, 0, m2.w), line(m2.x + m2.w - 1, m2.y, 0, 1, m2.h)].every((l) => /^%+$/.test(l)) && m2south === 'T==MMMrr' + 'M'.repeat(23) + '%',
+    `L2's and M2's north edges, the rim, and M2's east edge are the world's end, and M2's south edge is the ridge against M3, with the road through it (${m2south})`);
   const k2south = line(k2.x, k2.y + k2.h - 1, 1, 0, k2.w), k3north = line(k3.x, k3.y, 1, 0, k3.w);
   ok(k2south === 'cdddvvvvvrrrdd' + 'T'.repeat(18) && k3north === 'MdddvvvvvrrrddTTTTTTTTTTTTTTTTTM', `K2's south edge and K3's north edge are the gorge, square for square, with both lips through (${k2south}; ${k3north})`);
   const j2south = line(j2.x, j2.y + j2.h - 1, 1, 0, j2.w), j3north = line(j3.x, j3.y, 1, 0, j3.w), track = 'M'.repeat(14) + 'tt' + 'M'.repeat(16);
@@ -103,6 +104,13 @@ export function outdoors(): void {
   ok(eastOf(k4) === 'M' + 'T'.repeat(28) + '_~W' && westOf(l4) === 'T'.repeat(29) + '_~~', `K4's east edge and L4's west edge are closed forest, but for the shingle along the bay (${eastOf(k4)}; ${westOf(l4)})`);
   ok(/^r+$/.test(westOf(k4)) && eastOf(j4) === 'T'.repeat(17) + '_~~' + 'W'.repeat(12), `K4's west edge is rock against the Deepthorn's J4, its shore and its sea, so no way opens between the two areas (${westOf(k4)})`);
   ok(/^T+$/.test(eastOf(l3)) && /^%+$/.test(eastOf(l4)) && southOf(l4) === '~~~~' + '%'.repeat(28) && southOf(k4) === 'r' + 'W'.repeat(31), `L3's east edge is closed forest against M3, and L4's east and south edges, and K4's, are the world's end and the bay (${southOf(l4)})`);
+  // The Iron Fells' way in (M3, #457): in from M2 by the road over the ridge, Lanternwood's trees
+  // closed against L3 on its west, and open land east into N3 with the trail through it, which is
+  // not built; its south edge's ridge and crag are the world's end above M4, between the pines.
+  const m3 = out.zones.find((z) => z.id === 'ironfells_m3')!;
+  ok(northOf(m3) === 'T==pp' + 'T'.repeat(12) + 'M'.repeat(10) + '^'.repeat(5) && /^T+$/.test(westOf(m3)), `M3's north edge is the ridge under M2 with the road through it, and its west edge closed forest against L3 (${northOf(m3)})`);
+  ok(eastOf(m3) === '^^' + ','.repeat(16) + 'p'.repeat(9) + '==' + ',,,' && southOf(m3) === 'T' + '%'.repeat(11) + 'p'.repeat(8) + '%%rr%%' + 'ppppp,',
+    `M3's east edge is open land on into N3 with the trail through it, and its south edge pine but for the ridge and the crag, the world's end over M4 (${eastOf(m3)}; ${southOf(m3)})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);

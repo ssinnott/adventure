@@ -172,7 +172,8 @@ A monster that `calls` names a group and a chance a turn to spend its turn bring
 into the fight, as a group of its own that acts from the next round, while the fight has room for it
 under 12 monsters in three groups, those already down counted; the called pay as the rest. Both
 bots burn with fire what they have seen mend, and aim at a caller that has room to call as at a
-leader. Nothing gives stone, though the condition exists: Absolve lifts it, and a temple.
+leader and after both at a light whose touch takes spell points (#541). Nothing gives stone,
+though the condition exists: Absolve lifts it, and a temple.
 
 ### 3.2 What the numbers show
 
@@ -232,7 +233,8 @@ made once in the systems lane and first spent by the area named, which waits for
 
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
 elements, casting and drain (#161); regeneration, curse and calls (#537), each with the gate bot's
-answer. Still to come: stone and its cure, sweep, a light seen past the fog and the Core's clock.
+answer, a drain of spell points' with #541. Still to come: stone and its cure, sweep, a light seen
+past the fog and the Core's clock.
 
 Decided by delegate for #537, each the owner's to overturn:
 
@@ -275,9 +277,9 @@ for **3 + L/2** on average:
 |---|---|---|---|---|
 | 2 | 10 | 12 | 2.5 | 4 |
 | 8 | 28 | 15 | 5.5 | 7 |
-| 16 | 127 / 11 | 179 / 15.5 | 182 / 16.5 | 187 / 13 | 278 / 15.5 | 203 / 13 | 249 / 18 | 351 / 19.5 | 393 / 23 | 872 / 90 |
-| 24 | 163 / 17.5 | 264 / 15 | 270 / 15.5 | 287 / 16 | 343 / 20 | 230 / 16 | 316 / 20 | 424 / 23 | 526 / 25 | 1242 / 119 |
-| 32 | 244 / 18 | 416 / 19 | 417 / 20 | 452 / 22 | 524 / 32 | 336 / 23 | 463 / 28.5 | 619 / 32 | 722 / 37 | 1754 / 162 |
+| 16 | 52 | 19 | 9.5 | 11 |
+| 24 | 76 | 23 | 13.5 | 15 |
+| 32 | 100 | 27 | 17.5 | 19 |
 
 A character's to-hit gains half a point a level (`attackBonus`), so armour on the line keeps the
 chance of hitting a soldier the same at every level: Bram 75%, Wren 80% and Cassian 60%, at level 2
@@ -378,16 +380,18 @@ calibration:
   step that ends fewest.
 - Where a role on the line already leaves the company short of its fights, it comes down whole, hit
   points and damage together.
-- No monster has fewer hit points than the one a level under it, at the levels made or between.
+- No monster has fewer hit points than the one a level under it, at the levels made or between; a
+  boss held so takes the raised factor for its blow as well (#541).
 - The boss, one monster acting once a round against six, has both raised together until a company
   two levels under it wins half the time (EXPANSION.md §5.2).
-- It is made at every level to 10 and every fourth level to 32, 300 seeds a point (200 for the
-  levels past 10, made again with #20), with the levels between interpolated. Past 10 the company
-  runs on play's rules: its spells stop growing at 10 (#159), it takes its prestiges at 11, 19 and
-  27 with their hit points, spell points and perks (#19), and with them its spell ranks, and it
-  learns tiers 6 and 7 at 15 and 23 (#20). It wore the ladder's gear to 16 (#399) when the levels
-  past 10 were made again with it (#18); Act III's steps take the ladder's top to 22 (#535), and the
-  levels past 16 wait to be made again with them (#541).
+- It is made at every level to 10, every fourth level to 32 and every level of Act III, 300 seeds a
+  point (200 for the levels past 10, made again with #20 and #541), with the levels between
+  interpolated. Past 10 the company runs on play's rules: its spells stop growing at 10 (#159), it
+  takes its prestiges at 11, 19 and 27 with their hit points, spell points and perks (#19), and with
+  them its spell ranks, and it learns tiers 6 and 7 at 15 and 23 (#20). It wears the ladder's gear to
+  its top at 22: Act II's steps were in when the levels past 10 were made again (#399, #18), and Act
+  III's when the levels past 16 were (#535, #541), each of 17 to 22 on its own, since the company
+  steps at 17, 19, 21 and 22.
 
 Hit points / average damage a hit, by role and level:
 
@@ -404,11 +408,16 @@ Hit points / average damage a hit, by role and level:
 | 9 | 50 / 9 | 73 / 7 | 73 / 8 | 72 / 8 | 81 / 9 | 69 / 9 | 83 / 10 | 102 / 14 | 136 / 14 | 350 / 41 |
 | 10 | 60 / 10 | 89 / 10 | 90 / 10 | 86 / 9 | 102 / 11.5 | 87 / 10 | 99 / 14 | 122 / 15 | 165 / 15.5 | 415 / 47 |
 | 12 | 107 / 6.5 | 133 / 11.5 | 138 / 13 | 138 / 10 | 184 / 14 | 124 / 12 | 158 / 16.5 | 244 / 15.5 | 278 / 18 | 540 / 59 |
-| 16 | 119 / 10 | 173 / 11.5 | 169 / 12 | 177 / 11.5 | 202 / 15 | 158 / 12 | 200 / 15.5 | 274 / 17.5 | 315 / 20 | 821 / 84.5 |
-| 20 | 158 / 13 | 239 / 16 | 241 / 17.5 | 257 / 15 | 334 / 19 | 224 / 17.5 | 304 / 20 | 413 / 22 | 512 / 24 | 1048 / 103 |
-| 24 | 188 / 9 | 233 / 14.5 | 230 / 15 | 255 / 15 | 300 / 19.5 | 194 / 16.5 | 275 / 18.5 | 337 / 23 | 414 / 23 | 1160 / 111 |
-| 28 | 237 / 14 | 371 / 19 | 377 / 20 | 396 / 22 | 467 / 30 | 308 / 22 | 410 / 29.5 | 570 / 31 | 664 / 35 | 1398 / 131 |
-| 32 | 236 / 17 | 360 / 18 | 354 / 19 | 410 / 21 | 483 / 27.5 | 263 / 27 | 450 / 23 | 544 / 28.5 | 621 / 34 | 1666 / 153.5 |
+| 16 | 127 / 11 | 179 / 15.5 | 182 / 16.5 | 187 / 13 | 278 / 15.5 | 203 / 13 | 249 / 18 | 351 / 19.5 | 393 / 23 | 872 / 90 |
+| 17 | 128 / 14 | 196 / 16.5 | 199 / 17.5 | 193 / 15 | 279 / 15.5 | 204 / 15 | 250 / 18 | 360 / 22 | 404 / 25 | 970 / 99 |
+| 18 | 132 / 13 | 213 / 15.5 | 200 / 17 | 204 / 14 | 280 / 18 | 204 / 15.5 | 252 / 21 | 365 / 21 | 418 / 23 | 1001 / 101 |
+| 19 | 158 / 14.5 | 270 / 17 | 294 / 17.5 | 244 / 17 | 361 / 19 | 232 / 21 | 325 / 22 | 434 / 26 | 529 / 26.5 | 1102 / 109.5 |
+| 20 | 170 / 13 | 288 / 17 | 314 / 17 | 264 / 18 | 393 / 19.5 | 247 / 19 | 358 / 20 | 450 / 25.5 | 554 / 25 | 1113 / 110 |
+| 21 | 170 / 15 | 289 / 17.5 | 315 / 16 | 268 / 18 | 394 / 20 | 248 / 20 | 358 / 18.5 | 504 / 24 | 570 / 27 | 1294 / 126.5 |
+| 22 | 186 / 14.5 | 328 / 18 | 317 / 20 | 324 / 18 | 427 / 22 | 282 / 20 | 360 / 24 | 505 / 27.5 | 621 / 28 | 1299 / 126 |
+| 24 | 188 / 15 | 330 / 17.5 | 319 / 20 | 327 / 18 | 443 / 24 | 284 / 19.5 | 397 / 23 | 509 / 27 | 641 / 28 | 1381 / 132 |
+| 28 | 300 / 11.5 | 414 / 23 | 408 / 25.5 | 437 / 25.5 | 635 / 28.5 | 381 / 25 | 517 / 31 | 665 / 37 | 834 / 38 | 1497 / 140.5 |
+| 32 | 305 / 13 | 449 / 23 | 449 / 25 | 484 / 26 | 644 / 33 | 387 / 25 | 525 / 33 | 721 / 36 | 847 / 40 | 1876 / 173 |
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -421,6 +430,19 @@ counted it: the Foreland 81 over 4, Thornmark 75 over 5, and past them Thornmark
 first box settles open question 4). That is 99 at
 level 1, 1,573 at 10 and 5,093 at 32; a boss pays four. There is no boss under level 3, since a boss
 sits at its band's top.
+
+**When the line moves.** A monster past Act I stands on the line by its role and its level: its hit
+points, armour, to-hit, blow and xp are `testMonster(role, level)`'s (`node tools/harness.ts --stats
+--roles soldier --levels 17` prints them), and its notes go on top: an `inflict`, a resistance, a
+healer's `cast`. When `--calibrate --write` makes the line again, a def on it is re-derived the same
+way, from its role and level, and keeps its notes: only its hit points and its dice move, since its
+armour, to-hit and xp come from the line's formulas and the curve. A def on a shape of the line, the
+test troll (`testTroll`) or a role come down whole by a share named in `WHOLE`, is re-derived from
+that shape, its mending with it. A def set off the line on purpose, a boss its box's gate tuned,
+keeps its numbers and is named in `OFF_LINE` (`tools/tests/harness.ts`) with the issue that set it.
+The harness suite fails any other monster past 10 that stands on no shape of the line at its level,
+so a def drawn on the old line fails until it is re-derived, as #414 re-derived Act II's after #409
+and #541 Act III's.
 
 What it shows:
 
@@ -546,19 +568,97 @@ What it shows:
   a bot that never cures. Ranks of nothing in their place would ask 5 to 15% fewer hit points and
   leave the controllers 18% at 24: the ranks are growth the monsters answer, and the days are no
   worse for them.
+- **Made again with Act III's ladder, at every level of the act (#541).** In the ladder's gear to 22
+  (#535) a company on #409's line fought 9.8 to 11.7 standard encounters to a rest at 19 where 8.75
+  are asked, 10.5 to 14.3 at 22 and 10.9 to 15.7 at 24; on that line drawn straight from 16 to
+  20, the armoured ended 47% of their days badly at 17. Made again at every level from 17 to 22, and
+  at 24, 28 and 32: from 17 to 22 monsters carry 3.5 to 6.5 times the line's hit points, where
+  #409's line gave 3.3 to 5.6, and hit 1.2 to 2 times as hard, in fights of three to ten rounds; hit
+  points are held at the level under's for 28 of the 90 points, the boss's at 22 among them. Every
+  role fights within a fight of its aim at every level from 16 to 24, and the boss is won 41 to 55%
+  from two under. Fights to a rest, the least and the most of the nine regular roles:
+
+  | Level | 16 | 17 | 18 | 19 | 20 | 21 | 22 | 24 |
+  |---|---|---|---|---|---|---|---|---|
+  | Asked | 8 | 8.25 | 8.5 | 8.75 | 9 | 9.25 | 9.5 | 10 |
+  | On #409's line | 7.5–8.6 | 7.0–8.9 | 7.3–8.3 | 9.8–11.7 | 9.7–11.4 | 9.9–12.2 | 10.5–14.3 | 10.9–15.7 |
+  | Made again | 7.5–8.6 | 7.8–8.6 | 7.9–8.8 | 8.1–9.1 | 8.8–9.3 | 8.9–9.7 | 9.3–9.9 | 9.2–10.3 |
+
+  The days are not all safe. From 17 to 22 fodder and archers end a tenth of their days badly or
+  fewer, and skirmishers and soldiers about a tenth; the casters 8 to 20%, the elites 14 to 22%, the
+  controllers 14 to 33%, the brutes 17 to 29% and the armoured 15 to 42%, in deaths and in fights
+  broken off, against a bot that never cures paralysis or blesses (#584). The brutes ended 23% at 16
+  already. At 21, where the line's armour rounds up and the company's to-hit does not, the soldiers
+  and the armoured are held at 20's hit points and their fights run long: 35% and 42% of their days
+  end in one broken off. A line made at 18, 20 and 22 alone left 19 up to two and a half fights over
+  its aim, and one made at 20 and 24, as before, left the armoured at 17 and 18 ending two days in
+  three badly; both were worse at 21 too.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
 costs, and the boss's odds. `--map thornmark --level 5` puts a map's own groups against a company
 of that level, each on its own and then all of them dealt in a new order. `--stats` prints the stat
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
-`--abilities` puts Act III's abilities on the test monsters, two trolls, four wights and a caller
-beside six fodder (§3.3, #537), at 19 and 20 or the levels asked.
+`--abilities` puts Act III's abilities on the test monsters, two trolls, four wights, a caller
+beside six fodder and three lights with a hound (§3.3, #537, #541), at 19 and 20 or the levels
+asked.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
 They combine, and play has none of them; `--calibrate` under them says what
 share of days end badly at each point it makes, and writes nothing.
+
+Decided by delegate for #541, each the owner's to overturn:
+
+1. **The line is made at every level of Act III, 17 to 22, and again at 24, 28 and 32.** The
+   company steps at 17 (the forge), 19 (the second prestige and the finds), 21 (the furrier) and 22
+   (the finds), and a line drawn straight over four levels left the steps' levels off their day
+   (above). 16 is kept, since its company has not changed and Act II's monsters at 13 to 16 stand on
+   it; 24, 28 and 32 are made again, since their company now wears the ladder's top. Where a boss's
+   hit points would dip it is held as the rest are, its blow with them: at 22, 5.3 for 5.2.
+2. **The gate's company is harness's, prestiges and all** (`gateCompany` is `companyAt`). #380 made
+   the prestiges play "in the harness and the gate", but the gate's company never took them, so the
+   gate judged Act II without the first prestige and would have judged Act III without either. With
+   them Act II's four bosses, set by their gates against the company without, are won 94 to 98% at
+   their floors, past the limit: owed to #18 in `OWED` with those figures, for their boxes to set
+   again. On the boss line at its level the Great Devilfish would be won about 51% at 12, the Warden
+   of the Tide 72% and the Warden of the Sunder 64% at 14; the Choirmaster nearly always, since the
+   line at 12 is made against a company of 10, before its first prestige.
+3. **The bots mark a light whose touch takes spell points, after a leader and a caller** (`markOf`),
+   from its nature, as they mark a caller before it calls: its fall keeps the casters' points. Only
+   spell points, so no built figure moves: a leech that drinks hit points is no mark. Three test
+   lights and a hound at 19 are fought 10.1 to a rest felled lights first and 7.2 felled hound first
+   (8.75 asked). The gate's bot, which spends its points from the first turn, gains little by it in
+   one fight, so its check is the aim itself: its first blade falls on a light.
+4. **The test light is the bog light's shape** (`LIGHT`): the test controller come down whole to
+   0.575 of its line, as #597 brought the Bog Light down, flying, its touch taking spell points. On
+   the controller's whole line three lights and a hound halve a company's day, 4.8 to a rest at 19;
+   four bog lights end it in four fights at 18 on the line, and fight 8.9 at 0.575.
+5. **Curse, Absolve and Lampglass ask nothing of the bots.** A curse takes nothing in a fight or a
+   day (#537's 4), so neither bot lifts it, and Absolve is the company's to cast at leisure;
+   Lampglass waits on a monster that casts an element at the company, and Act III's roster has none.
+   Killing Frost and Wrath of the Wood, tier 7's damage, both bots weigh as any spell.
+6. **Kiln-script asks nothing of the bot:** a reading opens no way and no fight (#538's 5 and 7),
+   and a ladder it points to is a secret a search finds. The gate walks a zone's road by its groups,
+   so the walk without the ladders is the harder one, and the one held.
+7. **Every monster past 10 stands on the line or is named off it** (`tools/tests/harness.ts`): its
+   hit points and its blow, within half a point, some role's test monster's at its level, the test
+   troll's or a role's come down whole by a share named in `WHOLE` (the Bog Light's 0.575); else the
+   issue that set it off is named in `OFF_LINE`, as Act II's four bosses set by their gates are. A
+   def drawn on the old line fails until it is re-derived ("When the line moves", above).
+8. **Act III's monsters are re-stated as #414 re-stated Act II's,** each on its role's line at its
+   level with its notes kept: the Kilns' Mender, Rock Worm and Anvil Guard at 17 and Slag Elder,
+   Foreman, Warden of the Anvil and Great Salamander at 18; Rimewater's Ice Pike, Snow Lynx and
+   Tallyman at 20, Ice Bear and Bay Keeper at 21 and Matron at 22; Cairnmoor's Raven, Bog Light and
+   Bog Body at 18, Moor Hound, Cairn Wight and Tor Troll at 19 and Cairn King at 20. The casts and the
+   call are kept and the light comes down whole; the troll and the wight are #537's; the bosses stand
+   on the boss line, still their gates' to tune. The four at 16 do not move, since 16 is not made
+   again. The area docs give each before and after.
+9. **The troll's tenth and the caller's call stand on the line made again:** two trolls with fire
+   are fought 8.6 to a rest at 19 where plain brutes are 8.9 (8.75 asked), their days ending badly
+   about as often, 35% to 29%, in fights broken off where the brutes' end in deaths; on a brute's
+   whole hit points weapons alone win 2% inside fifteen rounds. The caller costs a company of 20
+   about two fights a day, 7.0 to a rest where it fights 9.0 with no call.
 
 ---
 

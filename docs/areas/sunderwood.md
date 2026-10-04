@@ -82,8 +82,8 @@ Its edges:
 - **South: Sunder Bay,** and the Deepthorn's shore running on into the dead wood at K4 (15
   squares of border); Penspern across the water.
 - **East: the Iron Fells,** the Kilns' first zone (16–18, Act III), 84 squares of border, with the
-  east road running on into them at 404,70 (`src/content/atlas.ts:377`), open from the start: the
-  world's end there until Act III's first box; and south of the Fells, Kilnmouth (69 squares) over
+  east road running on into them at 404,70 (`src/content/atlas.ts:377`), open from the start: into
+  M3, Act III's first box, since #457; and south of the Fells, Kilnmouth (69 squares) over
   the mountains, with no way through.
 
 The Sunder runs north to south through K1, K2, K3 and K4: a gorge of chasm with dead wood and
@@ -175,8 +175,8 @@ own since I2 listed it, the steading's since J2 (#196). Its maps:
   deathsheads at the den's mouth by night and its keepers, two glass bears.
 - **The Fells Road** (M2, `lanternwood_m2`, country, band 15–16; #202): Lanternwood's forest east of
   L2, the river from the rim down its west side and a strip of hills under the range. The east road
-  fords the river off L2 and clips the box's south-west corner, out by its south edge for the pass in
-  M3, where the world ends until Act III. The milestone by the road, the Warden's grave behind the trees
+  fords the river off L2 and clips the box's south-west corner, out by its south edge into the Iron
+  Fells' M3 and the pass (#457). The milestone by the road, the Warden's grave behind the trees
   beside it, a shrine at the river's bend, a camp on a gravel bar and the cairn and lookout on the hills.
   Three groups: two sunder hounds and a moth up the river, two deathsheads at the camp by night and two
   glass bears under the range.
@@ -525,8 +525,10 @@ features; the pay shared out over the area (§8).
   events, so the density check passes it with no exception. Density: the ledges 100% within 7, the
   furthest 6; the floor 99.6%, the furthest 8. At 14 the ledges give 7.14 fights to a rest and the
   floor 7.85; the floor's groups are won 84.3% at its floor with the Warden pooled, off the aim and
-  inside the limit. The Warden is won 53% at 14 and 95% at 16. Two under, the ledges are owed to #18;
-  the floor is inside its limit (67.7%). As measured the two levels pay 2,704 xp a member and 750
+  inside the limit. The Warden is won 53% at 14 and 95% at 16. Once the gate's company takes its
+  first prestige (#541) they are won 99.3%, the Warden 98% and 100%, past the limit at 14 and owed to
+  #18. Two under, the ledges are owed to #18; the floor is inside its limit (67.7%, 82.3% with the
+  prestige). As measured the two levels pay 2,704 xp a member and 750
   gold. What the owner finds by hand goes here when it has been played.
 
 ### 4.7 L2, Lantern Watch's box (#200): core, band 15–16
@@ -662,8 +664,9 @@ features; the pay shared out over the area (§8).
   stand above the floor however narrow the band, and no monster stands above 16 before the Kilns.
   - **M2, the Fells Road** (`lanternwood_m2`): the atlas's road clips only the box's corner and runs on
     south through M3, where the pass and 404,70 are, so the road fords the river off L2, turns south and
-    leaves by the box's south edge at 393–394,62, where the world ends until M3 is built (§9, #202's 1).
-    The milestone stands by the road, ANVILHALL 12 on its face and THIS FAR on its back; through the tree
+    leaves by the box's south edge at 393–394,62 into M3, built since (#457; §9, #202's 1). The
+    milestone stands by the road, ANVILHALL 8 on its face (12 until #457 put it right with M3's, as
+    docs/areas/kilns.md §9 has it) and THIS FAR on its back; through the tree
     line beside it, searched for, the Warden's grave with a patrol badge of the Scarth set on it (in
     words only; the Scarth is Hale's checkpoint, and the reader makes the link) and the dead Warden's
     pack, 250 gold and two Healing Draughts. Up the river the shrine at its bend
@@ -1165,7 +1168,8 @@ and the Lanterns Helmstow's. A naming pass is the owner's to ask for; none is fi
 - **The mountain edges,** M3, M4 and L5: 405 squares, 264 walkable, the mountains between
   Lanternwood and Kilnmouth, with no way through (§1). M3 holds the east road's pass into the Iron
   Fells and 404,70, so it is proposed to the owner as Act III's first box, laid in the Iron Fells
-  (§9, #202's 1).
+  (§9, #202's 1). It is built so (#457, docs/areas/kilns.md §4.2), and over the Warden's grave M2's
+  ridge against it is rock for two squares, so that no climber off the road comes down on the grave.
 - **The Deepthorn's boxes,** I3, I4 and J4: 817 squares of the Eaves' land over the Hoarhills and
   round their end, built whole by Thornmark as its own (docs/areas/thornmark.md §4 and §9, 7), their
   Eaves' forest drawn closed. Not void: the Deepthorn's, and not Sunderwood's to build.

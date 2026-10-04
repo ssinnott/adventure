@@ -13,10 +13,11 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Nothing a company walks is built; eleven of its monsters and twelve rooms are drawn ahead of its
-first box (§3). Its content will be `src/content/areas/kilns/` (maps, monsters, items, climate,
-its part of the world map, its chapter of the one quest, The Anvil Stone, in `chapter.ts`, its side
-quests in `quests.ts`) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
+Its first box is built, M3, the Iron Fells' way in (#457, §4.2), and lists the area; eleven of its
+monsters and its twelve rooms are drawn (§3), and the rest is to build. Its content is
+`src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map and its
+walkthrough; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, and its side quests in
+`quests.ts`, to come) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
 `kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
 the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass
 (§10, NAMES §3).
@@ -25,15 +26,15 @@ the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through 
 
 ## 1. Where it is
 
-The atlas (`src/content/areas/kilns/atlas.ts`, spread into the plan, §3) makes the Kilns three
+The atlas (`src/content/areas/kilns/atlas.ts`, the area's own since #457, §3) makes the Kilns three
 zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| The Iron Fells | 16–17 | 3,059 | none |
+| The Iron Fells | 16–17 | 3,059 | M3 |
 | The Kilns' heart (`kilnsheart`, "The Kilns" on the atlas) | 16–18 | 6,933 | none |
 | Kilnmouth | 17–18 | 4,799 | none |
-| The area | 16–18 | 14,791 | nothing |
+| The area | 16–18 | 14,791 | M3 |
 
 Squares are land, without shallows or rivers: about 14.4 zone maps, and 12,399 of them a company
 could walk. The rest is the rim's mountain in row 1 and the P column, the Fells' peaks and the
@@ -41,6 +42,13 @@ heart's crags. The Fells are hills, mountain, pine and grass; the heart hills an
 mountain, rock and 363 squares of ash round the vents; Kilnmouth grass, farm, hills, heather and a
 little wood. The bands are this doc's, written on the atlas's rows (§9): the area is 16–18 and the
 boxes rise through it (§4).
+
+The squares are the plan's, before any box. M3 (#457), laid whole in the Fells, takes the 554 of
+Lanternwood's squares in its west with it, as a map laid in one zone does (§4), and seeds the zones'
+walk from every square of it. The line between the Fells and the heart is held on the seam of rows
+3 and 4 by seeds in the area's atlas rows, so N4 and O4 are the heart's whole and N3's and O3's south
+rows the Fells', as laying N3 will make them; M4's north, about 400 of Lanternwood's squares, goes to
+the Fells, parked land nobody walks yet (§9).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Kilns are the L to P columns from row 1
 to row 6, with K6 on the shore. The land worth a map is fourteen boxes: M3, N3, N2 and O3 in the
@@ -98,30 +106,44 @@ girl's shoulder. The act's one story lock is not here (#434, call 4; #440): it i
 under Coldmere.
 
 The weather is the dwarf country's: dry, hot by the forges, ash on the wind near the tubes, and snow
-on the Fells' tops in winter (`climate.ts`, with the area's first box).
+on the Fells' tops in winter (the area's `climate`, with its first box).
 
 ## 3. What is built
 
-Nothing a company walks. Its atlas rows are charted in `src/content/areas/kilns/atlas.ts`, spread
-into the plan (`src/content/atlas.ts` imports it where its rows were), as Saltreach's and
-Sunderwood's were before their first box (docs/areas/saltreach.md §9, docs/areas/sunderwood.md §9):
-the zones with their bands (the Iron Fells 16–17, the heart 16–18, Kilnmouth 17–18), the towns
+One box, the area's first, which lists the area (#457):
+
+- **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
+  Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
+  over the pass between the Fells' first tops and onto the trail's head; then the pinewood under the
+  mountain to the east edge, where the trail runs on for N3. The lookout west over Lanternwood from a
+  knoll at the pass, the woodcutters' camp and a woodcutter under the shoulder, the cairn on the
+  shoulder, the milestone and the ruts off the trail and the woodcutters' felling; at the box's far
+  end a crag with the old adit in it, walled, the dwarves' cold hearth by its mouth and the first
+  spoil heap below it. Three groups: fire beetles at the heap's toe and more on its west side; a rock
+  worm in the adit's cut. Behind the wall, the Hand's wagon stage (§4.2).
+
+Its atlas rows are charted in `src/content/areas/kilns/atlas.ts`, the area's own `atlas` since M3
+lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
+Saltreach's and Sunderwood's were before their first box (docs/areas/saltreach.md §9,
+docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–17, with M3 laid on it
+and its line to the heart held, §1; the heart 16–18; Kilnmouth 17–18), the towns
 (Anvilhall and Kilnhaven at 16–18), the dungeons (the Tiefzeche 16–18, the Anvil Stone 17–18,
 Feuerstollen 17–18) as planned plates, the sites (Anvilhall, the Deep Mines, the Forges, the Anvil
 Stone, the Lava Tubes, Kilnhaven, Iron Crag, to be renamed with #435, §10) and its links: the east
 road in, the towns' and the dungeons' ways in, the drove road on to High Moor, the ferry and the
 Compact ship, and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's coach (#434, call
-9; #539 builds it). The first box (#457) points the area's `atlas` at the folder and takes the import
-out, and lists the area.
+9; #539 builds it).
 
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
-`src/content/progression.ts`, planned until #457 lists the area: band 16–18, next 18, window 3,500.
-The step is in `src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`,
-`src/content/index.ts`) so that the harness and the gate dress by it: Anvilhall's forge's eight
+`src/content/progression.ts`: band 16–18, next 18, window 3,500, owed to #436 while the area is built
+box by box, with M3's 1,068 xp a member and 740 gold the clear's floor (§8). The step is in
+`src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`, `src/content/index.ts`)
+so that the harness and the gate dressed by it before the first box took the table into its Area
+(#457): Anvilhall's forge's eight
 wares (`FORGE`, §4.4), the step's plus finds by 19 (§4.1), Kilnhaven's smith's prices at a quarter
 more (`SMITH_PRICES`, for #469) and the thane's price for the Stone (`ANVIL_STONE_PRICE`, 6,000, for
-#459, §8). The first box takes the table into its Area; each ware is owed to the forge (#459) and
-each find to its box until it is sold or placed.
+#459, §8). Each ware is owed to the forge (#459) and each find to its box until it is sold or placed;
+M3's find, off the ladder, is its own (§4.2).
 
 Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
 Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
@@ -129,36 +151,37 @@ with its fare, its days and its hours, the same either way (§4.14, §9). The fe
 Saltmouth's quay; every other end waits on its town, Kilnhaven's three on #469, and nothing is sold
 toward a town not built, so none runs yet.
 
-The systems it waits on are the rest of #432's: ash and pine underfoot (#536, built: ash, `a`, on
+The systems it waited on were the rest of #432's: ash and pine underfoot (#536, built: ash, `a`, on
 O6, slow going as hills are, and pine, `p`, on M3 and O3, a ground of its own where Sunderwood drew
 its pine as forest, docs/areas/sunderwood.md §9, #200's 1; the scaffold drafts both, and
 docs/SLICE.md says what was decided); Kiln-script and Linguist (#538, built: §4.1 says how a box
 writes an inscription, and §9 what was decided); the crossings, the ferry, the ship and the coach
 (#539, built: written above, and §9 and docs/SLICE.md say what was decided); the Anvil Stone
 counting for the Hearth (#540, #168, built: §9 and docs/SLICE.md say what was decided, and the Rift
-sets its flag, #465, not built yet); and the bot, which must learn to put cold on what fire does not
-touch (#541, EXPANSION §5.2). Regeneration, curse and calls (#537, built) are Cairnmoor's and
-Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `when` are #41's; the
-machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues,
-nine of them so far (below), and its rooms in #473.
+sets its flag, #465, not built yet); and the bot (#541, built: it puts cold on what fire does not
+touch once it has seen fire do nothing, as it has since #161, and its company takes its prestiges,
+MONSTERS §4.4). Regeneration, curse and calls (#537, built) are Cairnmoor's and Rimewater's; the
+Kilns need none of them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is
+MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues, all eleven now
+(below), and its rooms in #473.
 
 Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
 Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462); and the
 salamanders, the Salamander and the Great Salamander (`src/ui/monsters/salamanders.ts`), for the
 spoil heaps and the tubes (#458, #463, #466). Their defs are in `src/content/areas/kilns/monsters.ts`,
-listed in `AHEAD` (`src/content/index.ts`) until the first box lists the area, and each is owed in
-`UNPLACED` (`tools/tests/maps.ts`): the knockers to #462, the Salamander to #458 and the Great
-Salamander to #466. §9 has the decisions.
+the area's own since M3 lists it (`AHEAD`, `src/content/index.ts`, listed them until then), and each
+is owed in `UNPLACED` (`tools/tests/maps.ts`): the knockers to #462, the Salamander to #458 and the
+Great Salamander to #466. §9 has the decisions.
 
 The six on frames that exist are drawn too (#472): the Fire Beetle on the spider frame, the
 Slagling, the Slag Elder and the Warden of the Anvil on the riftling's, the Rock Worm on the long
 bodies' and the Anvil Guard on the figure frame, in the same table, each owed a map by the box that
-first places it (§7, §9).
+first places it (§7, §9): M3 places the beetle and the worm (#457).
 
 The rooms are drawn (#473), one to each business of the two towns, ahead of the towns as
-Saltmouth's and Lantern Watch's were. `src/content/areas/kilns/interiors.ts` lists them and
-`ROOMS_AHEAD` in `src/content/index.ts` merges them, until the first box lists the area and its
-`interiors` takes the list; `tools/tests/maps.ts` reports each owed to its town (#459, #469) until
+Saltmouth's and Lantern Watch's were. `src/content/areas/kilns/interiors.ts` lists them, the
+area's `interiors` since M3 lists it (`ROOMS_AHEAD` in `src/content/index.ts` merged them until
+then); `tools/tests/maps.ts` reports each owed to its town (#459, #469) until
 a business there opens into it, and §4.4 and §4.14 name the ids. They are a scene to a file in
 `src/ui/interiors/kilns/`, what Anvilhall's share in `hold.ts` and what Kilnhaven's share in
 `port.ts`. Anvilhall's are cut stone, iron and fire, the hammer and pick on the banners and the old
@@ -179,7 +202,8 @@ day in it somewhere, a window, a shaft, a breach or a door, so that nine at nigh
 
 ## 4. What is still to build
 
-All of it: 14,791 squares of land, 12,399 of them walkable. On the grid (§1) the plan is ten boxes,
+All of it but M3, built (#457, §4.2): 14,791 squares of land, 12,399 of them walkable, the plan's
+figures (§1). On the grid the plan is ten boxes,
 three dungeons and two towns, with four more boxes parked, and the ten hold 8,419 of those squares,
 7,686 walkable; the parked four 3,886 and 3,397:
 
@@ -208,11 +232,13 @@ call 10). The bands rise from the way in, 16 under the pines of M3, to 18 at the
 the drove road's end, as the gate asks (EXPANSION §5.2), and each box holds a group at the top of
 its band for the curve (§7 says where the roster is short).
 
-**Boxes of two zones.** N3 and O3 hold the heart's land along their south rows (202 and 268
-squares), N5 holds Kilnmouth's along its west (250) and N6 is near half Kilnmouth's (399). A map is
+**Boxes of two zones.** On the plan N3 and O3 held the heart's land along their south rows (202 and
+268 squares), N5 holds Kilnmouth's along its west (250) and N6 is near half Kilnmouth's (399). A map is
 laid in one zone and all its squares are that zone's (docs/areas/sunderwood.md §4): N3 is laid in
 the Fells, N4, N5, O5, O6 and N6 in the heart, M6 and L6 in Kilnmouth, so the heart begins at N4's
-north edge, on the trail, and Kilnmouth at the branch into M6 (§9).
+north edge, on the trail, and Kilnmouth at the branch into M6 (§9). M3, laid whole in the Fells
+(#457), took Lanternwood's land in its west, and the seeds that hold the Fells off N4 give N3's and
+O3's south rows to the Fells already (§1).
 
 **The order** is the east road's, and the quest's: M3, the only box that meets Lanternwood, and the
 way in; N3 and Anvilhall, the first steps and the choice; N4 and the Tiefzeche; N5; O5 and the Rift;
@@ -287,6 +313,30 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **New here.** Pine underfoot (#536); the Fells; a company told it is early.
 - **Finds.** A piece with a plus in the wagon, off the ladder, the box's to choose (#535).
 - **Pay.** About 700 xp a member.
+
+- **As built** (#457, 4 October): the brief's places, with three groups for its five, laid whole in
+  the Fells (§1). The road comes over the ridge from M2's south edge, through Lanternwood's last trees
+  with pines at the verge, over the pass and out at the trail's head; M2's road says the crossing
+  going south, *The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being
+  hammered, and has been all day.*, and to a company of 14 or 15 the land is harder than the road
+  behind. The woodcutters' camp and a woodcutter, who says the dwarves sell something in little
+  boxes by night, are under the shoulder in the pocket north of the trail's head, with the cairn on
+  the shoulder above them (240 gold and a Sapphire Vial). The lookout is a knoll at the pass's foot,
+  west over Lanternwood by day and the Watch's light by night; the milestone reads ANVILHALL 4,
+  LANTERN WATCH 6 (§9). The old adit is in a crag at the box's far end, south of the trail by the
+  east edge, with the dwarves' cold hearth by its mouth (might) and the spoil heap tipped below it
+  toward the trail: three fire beetles at its toe and three on its west side, the gentlest; a rock
+  worm in the adit's cut, the box's group at 17. The ruts turn off the trail for the crag and the
+  wall's foot is swept; searched there, the wall gives on the Hand's stage: a cage-wagon with a boot
+  and a net-needle in its straw; beside it the drover's box, 500 gold and a Drover's Goad +2
+  (`drovers_goad`), which no walker, swimmer, climber or levitator reaches but through the wall. A
+  company at 16 wins every fight and manages 8.95 fights to a rest, inside the aim, with 6.3% of its
+  days ending in a fight broken off (8.97 and 4% once #541 re-stated the worm); the Fells' road, the
+  two beetle groups, is walked every time. As
+  measured it pays about 1,068 xp a member and 740 gold. Two under, at 14, it wins every fight too,
+  owed to #18 as every Act II box's is. Density 98.5% within 12 steps, the furthest 15. It claims pine
+  underfoot as new (§7). M2 gains the way over the border with the crossing line and its milestone
+  is put right to ANVILHALL 8; its ridge over the Warden's grave is rock for two squares (§9).
 
 ### 4.3 N3, Anvilhall's box (#458): core, band 16–17
 
@@ -744,8 +794,8 @@ MONSTERS §7.1 has the roster and the fights: the Knocker, the Mender and the Fo
 machines; the Salamander and the Great Salamander; the Fire Beetle on the spider frame; the Rock
 Worm on the long bodies'; the Slagling, the Slag Elder and the Warden of the Anvil, the Rift in
 slag; the Anvil Guard, a dwarf on the figure frame, `after` the taking. Their drawings are #472's,
-eleven issues: the knockers and the six on frames that exist are drawn (§3, §9), and the
-salamanders are to come. §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil
+eleven issues, all drawn: the knockers, the six on frames that exist and the salamanders (§3,
+§9). §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil
 the gentlest and the Warden, the Foreman and the Great Salamander at the top of the band. No
 machine stands on the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the
 first machines on the road are met at the bottom of the deepest mine, by a company that has walked
@@ -769,7 +819,8 @@ underfoot (#536); Kiln-script read, a sign with two texts, a shortcut found by r
 map mark made by it (#538; the mechanics `sign:read` and `sign:marks`); a choice sold like a ware,
 and a shop that shuts for good; a group that comes `after` a choice; a coach that runs (#539); the
 second prestige (#19). Its landmarks: a town cut into a hill, a mine's headworks, a smelter, a Stone
-cut by its own people, a ridge of vents, an ore port.
+cut by its own people, a ridge of vents, an ore port. The area's `novel` claims each as a box places
+it, since the check asks that what is claimed be used: pine with M3 (#457), the rest with theirs.
 
 ## 8. The numbers
 
@@ -782,7 +833,8 @@ cut by its own people, a ridge of vents, an ore port.
   it is built (450 each, #474). Each box is measured when it is built and recorded here as built,
   a fight inside the gate's aim costing what it costs; the sum is restated with each. A company
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
-  finds Kilnmouth's 17 waiting on the quay.
+  finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), so the shares stand at about
+  13,470.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -798,16 +850,20 @@ cut by its own people, a ridge of vents, an ore port.
   the dearest ware the Dwarf Mail at 2,000 and the dearest finds the Plate Mail +3, the Mattock +1
   and the Steel Bow +1 at 1,650; the smith's quarter more on the Dwarf Mail, 2,500, sits inside too.
   The forge's full set for the premade six comes to about 17,300, its weapons 8,500; at the smith a
-  taker pays about 4,300 more for the same.
+  taker pays about 4,300 more for the same. As built: M3 holds 740 (#457), its share by the brief's
+  700 of the 13,900, in its cairn and the drover's box; its monsters carry none.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman and
   the Warden of the Anvil are won about half the time at their maps' floors and nearly always two
   above. Act II's boxes owed their two-under figures to the gear past 10 (#18). #535's ladder now
   dresses a company at each of the Kilns' floors past one two under it, Anvilhall's forge at 17 and
-  its finds by 19; whether that holds the figure is each box's to measure.
+  its finds by 19; whether that holds the figure is each box's to measure. As built: M3's does not. A
+  company at 16 wins every fight there and walks its road every time, and one at 14 wins every fight
+  too, owed to #18 as Act II's are (§4.2).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
-  Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it.
+  Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
+  M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457).
 
 ## 9. Decisions
 
@@ -975,19 +1031,20 @@ Decided by delegate for #472 (the knockers), each the owner's to overturn:
    317 xp; size 0.45, tint #84878e.
 5. **The Mender carries its trade,** domed higher, a spool of copper wire on its back and an arm
    that brings a needle down before its cowl, a cold light at the point, so a company picks it out
-   of six knockers at a glance. A soldier's numbers at 17: 196 hit points, armour 20, +10, 3d7+5,
-   speed 11, 673 xp; size 0.55, tint #9a9c96.
+   of six knockers at a glance. A soldier's numbers at 17: 199 hit points, armour 20, +10, 3d8+4,
+   speed 11, 673 xp, on #541's line (196 and 3d7+5 on #409's); size 0.55, tint #9a9c96.
 6. **The Mender casts Mending Light one turn in two** that one of its group is hurt. At every turn,
    the harness's bot, which never singles it out, broke off half its days at fifteen rounds at 16
    and 17; at one in two, 6 to 7% of them, the fight a round longer than with a mender that never
-   mends (5.4 rounds to 4.4 at 16, 300 seeds).
+   mends (5.4 rounds to 4.4 at 16, 300 seeds). On #541's line, the Mender re-stated, 7% and 13%.
 7. **The Foreman is a knocker grown long and reared up,** its cowl bowed over a slate held before
    it with the list cut on it in rows, an empty box at each row's end; a stylus goes down the boxes
    and ticks none, and now and then the lamp lifts from the slate to the company. Size 1.3, under
    the tall boss's 1.5, so it stands on its group's rank; tint #5c6068.
-8. **The Foreman stands on #409's boss line at 18,** 961 hit points, armour 22, +13, 17d8+20, for
-   #462's gate to tune, as #199 tuned the Warden of the Sunder: a company wins it 17% of the time at
-   14, 66% at 16, 82% at 18 and 99% at 20 (300 seeds).
+8. **The Foreman stands on the boss line at 18,** 1,001 hit points, armour 22, +13, 18d8+20 on #541's
+   line (961 and 17d8+20 on #409's), for #462's gate to tune, as #199 tuned the Warden of the Sunder:
+   a company wins it 9% of the time at 14, 50% at 16, 79% at 18 and 99% at 20 (300 seeds; 17%, 66%,
+   82% and 99% when it was drawn).
 9. **One frame, a Build to a kind:** length, dome, taper, rear, plates, legs, stance, step, cowl,
    feelers, spool, needle, slate and the mark, so MONSTERS §11's tallyman, deep knocker, inspector
    and tally clerk are each a Build, a colouring and what their trades carry.
@@ -1035,7 +1092,7 @@ Decided by delegate for #535, each the owner's to overturn:
     box takes the table.
 11. **The harness's line at 24 is owed to #541:** in the ladder's gear to 22 a company of 24 fights
     14.9 standard encounters to a rest where 10 are asked, and #541 makes the line past 16 again
-    with it, as #409 did after Act II's.
+    with it, as #409 did after Act II's (made again, 9.9 at 24: MONSTERS §4.4).
 12. **The windows stay at 3,500, 4,000 and 4,500,** 500 a band as the issue has them: no ware or
     find comes within 400 of its area's.
 
@@ -1046,9 +1103,11 @@ Decided by delegate for #472 (the six), each the owner's to overturn:
    and the guard #464's, the Warden #465's. The salamanders come on their own, as the knockers did.
 2. **Each is on its role's line at its level** (MONSTERS §4.4): the beetle armoured and the
    slagling a skirmisher at 16, the worm a brute and the guard armoured at 17, the slag elder an
-   elite at 18.
-3. **The Warden of the Anvil is on the boss line at 18,** 961 hit points and 17d8+20, its blow left
-   for #465's gate to set, as #426 set the Sunder's; it shrugs off sleep, as every warden does.
+   elite at 18. #541 re-stated the worm, the guard and the elder to its line: 404 hit points and
+   4d8+7, 250 and 3d7+6, 365 and 4d8+3, where they had 422, 263 and 383.
+3. **The Warden of the Anvil is on the boss line at 18,** 1,001 hit points and 18d8+20 on #541's
+   line (961 and 17d8+20 on #409's), its blow left for #465's gate to set, as #426 set the Sunder's;
+   it shrugs off sleep, as every warden does.
 4. **Cold bites the slag and fire does it half:** the slagling, the slag elder and the Warden are
    weak to cold and resist fire, so in the Rift Hoarfrost is the answer and Hearthfire is not.
 5. **The Fire Beetle is immune to fire and nothing more,** so on the spoil heaps the sorcerer's fire
@@ -1076,9 +1135,10 @@ Decided by delegate for #472 (the salamanders), each the owner's to overturn:
 1. **The Salamander is a beast, a skirmisher on MONSTERS §4.4's line at 16** (179 hit points, armour
    19, 3d8+2, speed 15), immune to fire and weak to cold as its row says, size 0.68: the sorcerer's
    cold is the answer, and the cleric's Hearthfire and the druid's Wildfire are not (DESIGN §7).
-2. **The Great Salamander is a beast boss on the boss line at 18** (961, armour 22, 17d8+20), immune to
-   fire and to sleep and weak to cold, as its kin and as the Eldest and the Great Devilfish. Its blow
-   is #466's to set for the gate, as #426 set the Warden of the Sunder's, and its hide #466's to drop.
+2. **The Great Salamander is a beast boss on the boss line at 18** (1,001, armour 22, 18d8+20 on
+   #541's line; 961 and 17d8+20 on #409's), immune to fire and to sleep and weak to cold, as its kin
+   and as the Eldest and the Great Devilfish. Its blow is #466's to set for the gate, as #426 set the
+   Warden of the Sunder's, and its hide #466's to drop.
 3. **It is a tall boss, size 1.6,** seated on the third rank with its crown at 0.79 of its height,
    under its markers' 0.82: the deepest chamber's boss, and the biggest thing in the tubes.
 4. **The frame is a lizard three-quarter on, coming at the company,** its head turned on toward the
@@ -1123,6 +1183,41 @@ Decided by delegate for #473, each the owner's to overturn:
    noon: Anvilhall's look out from the terraces over the heart, Gluthutte's smoke by day and the far
    fires red by night; Kilnhaven's on the harbour, the yard and the street; and the harbourmaster's
    and the chapel's windows hold the Hearth on the sea, as Helmstow's throne room's does.
+
+Decided by delegate for #457, each the owner's to overturn:
+
+1. **The brief is §4.2, not the issue's draft:** the issue's waymark in Kiln-script and the cache
+   under it gave way to §4.2's milestone and walled adit, written after it, so N3's niche stays the
+   first inscription a company reads (§4.3).
+2. **The old adit is in a crag at the box's far end,** south of the trail by the east edge, not in
+   the Fells' flank: the curve walks the mountains as a climber does, and only there is the worm
+   further from the way in than the beetles on its spoil, as the rise asks.
+3. **Three groups for five:** two threes of beetles on the spoil and the one worm, 1,068 xp a member
+   for the brief's 700. Beetle pairs put fights to a rest past 10, and "a rock worm" is one; fights to
+   a rest is the gate and a share a proposal, as Saltreach's C6 had it (docs/areas/saltreach.md §9).
+4. **The milestone reads ANVILHALL 4, LANTERN WATCH 6,** at about 13 squares to the unit along the
+   trails: the brief's 8 was long. M2's stone is put right from 12 to 8 so that the two agree, as
+   Saltreach's D5 was; N3's spur, about 40 squares from M3's edge to the gate, keeps them so.
+5. **M3 is laid whole in the Fells,** with Lanternwood's 554 squares of trees in its west, so the
+   pass, the crossing and 404,70 are the Fells'. M2's road says the crossing as it arrives, with the
+   world's harder line after it under the floor; going back the land's name is said. This is the line
+   facing back that #202's 1 owed to this box.
+6. **A pine verge at the crossing:** the forest beside the road in M3's first eight rows is pine two
+   squares deep, so the pine the crossing names is there; the rest of the west stays forest, shut
+   against L3.
+7. **The Fells' line with the heart is held on the seam of rows 3 and 4** by seeds in the area's own
+   rows, as at M2's edge: laid whole, M3 would run the Fells into N4, its mine's mouth and O4. N3's and
+   O3's south rows go to the Fells, as laying N3 will make them; M4's north goes too, unheld, parked.
+8. **M2's ridge over the Warden's grave is rock for two squares:** with M3 laid, M2's south row is
+   mountain and no longer the world's end, and a climber off the road would come down on the grave.
+9. **The find is a Drover's Goad +2,** the Watch Staff's line at 1,300 gold: off the ladder as §4.2
+   asks and the wagon's own, a staff a monk or a druid has a level before the forge's.
+10. **Its gold is 740, its share by the brief of the 13,900** (§8): 240 in the cairn on the shoulder
+    and 500 with the goad. The dwarves' hearth by the adit gives might.
+11. **Two under is owed to #18:** a company of 14 in the Watch's gear beats every group at the line's
+    standard size, as on every Act II box; the gate's other figures are inside their aims.
+12. **The woodcutters camp under the shoulder north of the trail's head and fell in the pines
+    south-west of it,** each a point where the country floor wants one and the land is otherwise bare.
 
 ## 10. Names
 

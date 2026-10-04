@@ -1,14 +1,16 @@
 // The Kilns' items: Anvilhall's forge's step on the ladder (#535), the same with a plus that the
 // Kilns' boxes and the Tiefzeche give up by 19 (Cairnmoor's share is in its own table), what
-// Kilnhaven's smith asks for the forge's wares, and what the thane asks for the Stone. Made ahead of
-// the area (ITEMS_AHEAD in content/index.ts): the first box (#457) takes the table into its Area,
-// the forge (#459) sells the step and the smith (#469) the same at a quarter more.
+// Kilnhaven's smith asks for the forge's wares, what the thane asks for the Stone, and the finds of
+// its boxes off the ladder. Made ahead of the area (#535) until its first box (#457) took the table
+// into its Area; the forge (#459) sells the step and the smith (#469) the same at a quarter more.
 // docs/areas/kilns.md §8 and §9 have the sums.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
+import { ITEMS as SUNDERWOOD } from '../sunderwood/items.ts';
 
 const plate = THORNMARK.find((i) => i.id === 'plate')!;
+const watchStaff = SUNDERWOOD.find((i) => i.id === 'watch_staff')!;
 
 // Sold at Anvilhall's forge (#459): a step past the Sunder's finds for every class, at 17.
 export const forgeHammer = W('forge_hammer', 'Forge Hammer', 1400, 2, 10, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
@@ -47,4 +49,6 @@ export const ITEMS: readonly ItemDef[] = [
   P(steelBow, 1),
   P(seax, 1),
   P(kilnRobe, 1),
+  // M3's secret (#457): in the Hand's wagon stage behind the walled adit, the drover's, off the ladder.
+  P(watchStaff, 2, { id: 'drovers_goad', name: "Drover's Goad +2" }),
 ];
