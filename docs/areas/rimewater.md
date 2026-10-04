@@ -8,10 +8,11 @@ cold loch the sealed bay where every people of Caldera lies asleep in rows. This
 plan for building it, box by box, and the briefs. Its work is filed under #438 (Phase 1.3, #431):
 the boxes as §4's table has them, Rime Lodge (#487), the Sleepers' Bay (#490), its chapter (#492),
 its side quests (#494), its six drawings (#495), Rime Lodge's rooms (#496) and the country behind
-the road, parked (#497); this doc is #485. Its systems are #432's: the curve's rows and the act's
-gear (#535), ash, ice and pine and a group placed on ice (#536), regeneration, curse and calls
-(#537), Kiln-script and Linguist (#538), the crossings with the drove road's coach (#539) and the
-bot (#541). Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
+the road, parked (#497); this doc is #485. Its systems are #432's, all built: the curve's rows and
+the act's gear (#535), ash, ice and pine and a group placed on ice (#536), regeneration, curse and
+calls (#537), Kiln-script and Linguist (#538), the crossings with the drove road's coach (#539) and
+the bot (#541), which docs/SLICE.md, docs/MONSTERS.md §3 and §4.4 and EXPANSION §5.2 describe.
+Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
 (`src/game/atlas.ts`), for land without shallows or rivers; "walkable" is land that is not mountain,
 peak, cliff or chasm.
 
@@ -115,8 +116,9 @@ the row in `src/content/progression.ts`, planned until #486 lists the area (band
 window 4,500), and the step in `src/content/areas/rimewater/items.ts`, made ahead of the area as
 the Kilns' is (docs/areas/kilns.md §3): the furrier's seven (`FURRIER`, for #487) and their plus
 finds by 22 (§4.1), each owed to its shop or box until it is sold or placed. Nothing else: no map.
-The systems it waits on are the rest of #432's (§2). Its monsters are drawn in #495 and its rooms
-in #496.
+The systems it waited on, #432's, are all built (the opening names them and where each is
+described); the drove road's coach is written (docs/areas/kilns.md §3) and runs once Kilnhaven
+(#469) and Rime Lodge (#487) are built. Its monsters are drawn in #495 and its rooms in #496.
 
 The monsters are drawn (#495), the six of MONSTERS §7.3, ahead of the boxes that place them: the
 keepers, the Bay Keeper and the Matron (`src/ui/monsters/keepers.ts`), and the cats, the Snow Lynx
@@ -707,12 +709,14 @@ Decided by delegate for #495, each the owner's to overturn:
    where her apron does, so a brother is a Build and a robe.
 5. **The Bay Keeper mends the most hurt of its group one turn in four,** and its touch sleeps at 0.3:
    at one in two the harness broke off a fifth of the days of four keepers at fifteen rounds, at one
-   in four 3%, in fights of 7.6 rounds (300 seeds).
-6. **The Matron does not mend:** her mend is 20 of her 1,145, a blow lost, and at a quarter of her
-   turns it lifts a company's odds at 20 from 74% to 86% (88% with two keepers by her). §4.6's
-   boss that mends is #490's to give her.
+   in four 3%, in fights of 7.6 rounds (300 seeds). On #541's line, 248 hit points and 4d8+2 where it
+   had 227 and 3d7+5, one in four breaks off 17%, for #490's gate to weigh.
+6. **The Matron does not mend:** her mend is 20 of her 1,145 (1,299 on #541's line), a blow lost, and
+   at a quarter of her turns it lifted a company's odds at 20 from 74% to 86% (88% with two keepers by
+   her). §4.6's boss that mends is #490's to give her.
 7. **The Matron is on the boss line at 22, for #490's gate to tune,** as the Foreman is #462's: won
-   74% at 20, 86% at 21, 94% at 22 and 98% at 23 (300 seeds), where #490 asks about half at 21.
+   74% at 20, 86% at 21, 94% at 22 and 98% at 23 (300 seeds), where #490 asks about half at 21. On
+   #541's line, 1,299 hit points and 22d8+27 where she had 1,145 and 20d8+21, 45%, 59%, 78% and 90%.
 8. **The cats are posed from a table** of where the body, the head and each leg's joints stand, the
    tufts, the ruff, the tail and the paws in the Build: the lynx at the top of its leap, and the
    Wold's lions a Build and a stalk of their own. The lynx leaps at the back row as flyers reach it.
@@ -724,13 +728,18 @@ Decided by delegate for #495, each the owner's to overturn:
     and icicles from the hole; the knockers' Build takes `count`, `tally` and `rime`.
 11. **The Tallyman calls three knockers at a half a turn,** as #537's test caller calls three fodder,
     so the ice-hole's six leave room for one call: a company of 20 fights it 12.1 times to a rest,
-    against 14.3 with no call, and wins it from fresh at 18, which is #487's gate to tune.
+    against 14.3 with no call, and wins it from fresh at 18, which is #487's gate to tune. On #541's
+    line the tallyman has 314 hit points and 3d7+5 where it had 241 and 3d8+4: the hole is fought
+    10.4 times against 13.8, 30% of its days ending in a fight broken off, and is still won from fresh
+    at 18.
 12. **The Ice Bear is the bears' frame long in the neck,** low in the hump, the head small and the
     muzzle long, white with black claws, lifting its head to the wind. The roster gives the ice
     things no element, so cold stays an answer here.
 13. **Each is today's test monster at its role and level, and none carries gold:** the levels past 16
     are #541's to make again, and all six move with them; the machines' parts are their boxes' to
-    add, as the knockers' are #462's.
+    add, as the knockers' are #462's. #541 re-stated them: the pike and the lynx 288 hit points and
+    3d7+5 where they had 239 and 3d7+4, the bear 570 and 5d7+7 where it had 518 and 4d8+6; the
+    tallyman, the keeper and the Matron as 11, 5 and 7 say.
 14. **No seventh drawing:** the cats get no elite at 22 for the pass, and K9's and K10's top stays
     #491's (§7).
 15. **Each is owed to the box that first places it:** the pike, the lynx and the bear to #486; the

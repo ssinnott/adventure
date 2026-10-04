@@ -21,8 +21,8 @@
 // before it is listed, and the plan spreads them in where its own were.
 import type { Atlas } from '../game/atlas.ts';
 // The planned areas chart their own rows in their folders, spread in here where the plan's were
-// until each area's first box lists it (as Saltreach's and Sunderwood's were, #169, #194).
-import * as KILNS from './areas/kilns/atlas.ts';
+// until each area's first box lists it (as Saltreach's, Sunderwood's and the Kilns' were, #169,
+// #194, #457).
 import * as CAIRNMOOR from './areas/cairnmoor/atlas.ts';
 import * as RIMEWATER from './areas/rimewater/atlas.ts';
 import * as WHITESPINE from './areas/whitespine/atlas.ts';
@@ -271,7 +271,6 @@ export const PLAN: Atlas = {
     { id: 'hearth', name: 'Hearth Isle', order: 12, band: [28, 30], label: [256, 196], note: 'The temple over the core' },
   ],
   zones: [
-    ...KILNS.ZONES,
     ...CAIRNMOOR.ZONES,
     ...RIMEWATER.ZONES,
     ...WHITESPINE.ZONES,
@@ -281,7 +280,6 @@ export const PLAN: Atlas = {
   ],
   places: [
     { id: 'dead_drop', name: 'The Dead-Drop', kind: 'dungeon', planned: true, band: [26, 28], at: [208, 204] }, // below the Tide Ship's hold: three levels of 32 by 32 (#22; #443, call 4)
-    ...KILNS.PLACES,
     ...CAIRNMOOR.PLACES,
     ...RIMEWATER.PLACES,
     ...WHITESPINE.PLACES,
@@ -291,7 +289,6 @@ export const PLAN: Atlas = {
     { id: 'core', name: 'The Core', kind: 'deep', planned: true, order: 14, band: [32, 32], at: [216, 176] },
   ],
   sites: [
-    ...KILNS.SITES,
     ...CAIRNMOOR.SITES,
     ...RIMEWATER.SITES,
     ...WHITESPINE.SITES,

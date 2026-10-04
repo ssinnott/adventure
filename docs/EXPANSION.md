@@ -315,7 +315,8 @@ and the warning's nearest groups ten points under the median.
 - **The reach asks the most.** In a reach area, a company at the cap that has walked the road wins
   about half its first fights; what it finds there is what makes the rest winnable.
 - **The bot improves with the game.** It learns to sleep, bless, drink and flee as the party can,
-  and to wear the gear the curve says a company has at each level, so the check keeps up.
+  and to wear the gear the curve says a company has at each level and take the prestiges it brings
+  (#541), so the check keeps up.
 
 ### 5.3 Density: the map is the reward
 

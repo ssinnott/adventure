@@ -102,13 +102,16 @@ DESIGN.md first for the why.
   map marks the place of every open quest that asks (`mark`) with a green diamond and who is sought
   there (SOUGHT in its legend). Nothing is saved.
 - **The Hearth's measure** (`game/stones.ts`, #168; DESIGN §9): the Stones restored, counted from
-  the save's flags against `content/stones.ts` (the Tide Stone once `q_tide_home` holds, the Grove
-  once a Lantern has mended it, `q_grove_mended`; the rest as their areas write them), so nothing new
-  is saved. By night, outdoors and in a town, the Hearth stands over the far hills in its true bearing
-  from the party, faint from the first night and taller and brighter by a step for each Stone. The
-  title reads the save in storage and draws its column steadier, taller and wider by a step; the
-  world map's flickers less; the almanac adds a word on it once one is restored. No Stone can be
-  restored yet: #191 and #56 set the flags.
+  the save's flags against `content/stones.ts`, so nothing new is saved: the Tide Stone once
+  `q_tide_home` holds, which the plinth at Stienwierde sets as it takes the Stone (#191); the Grove
+  once a Lantern has mended it, `q_grove_mended`, which nothing sets yet (#56); the Anvil Stone once
+  the Warden of the Anvil has fallen and its tear is closed, bought back or taken alike,
+  `q_anvil_closed` (#540), which the Rift will set (#465, not built yet); the rest as their areas
+  write them. By night, outdoors and in a town, the Hearth stands over the far hills in its true
+  bearing from the party, faint from the first night and taller and brighter by a step for each
+  Stone. The title reads the save in storage and draws its column steadier, taller and wider by a
+  step; the world map's flickers less; the almanac adds a word on it once one is restored. Only the
+  Tide Stone can be restored yet.
 - **Crossings** (`game/passage.ts`, #164): a person may sell passage by coach or by boat (`passage`,
   a list of `Passage`). Their words close onto a menu of the crossings, each with its fare and days,
   then the terms: when it leaves and when it lands, and to a company under the far end's floor the
@@ -396,14 +399,18 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
   two bands of distant hills that turn with the party. The static scene is cached per world state
   and monsters are drawn over it each frame with a line-of-sight check.
-- `ui/interior.ts` and `ui/interiors/` paint the thirteen businesses' interiors, one per business
-  (`interior` on the map feature names it): the Hearthlight's common room round its fire and the
-  Green Man's under a carved face of leaves; the Chapel's stained-glass apse and the Chapterhouse's
-  grove; the Provisioner's pigeonholes and the Armoury's forge; the Guildhall's map of Caldera and
-  the Lantern Hall's copy of the Grove Stone; the Drillyard inside Helmstow's wall and the Elder's
-  ring of stones; the Gilded Eel's harbour window and the Split Oak's living oak; the throne room
-  behind the keep's door, its throne under black cloth. The farm kitchen is Ellerby's store
-  (#87). No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
+- `ui/interior.ts` and `ui/interiors/` paint the businesses' interiors, 45 of them, one per business
+  (`interior` on the map feature names it). The Foreland's eight and Thornmark's six: the
+  Hearthlight's common room round its fire and the Green Man's under a carved face of leaves; the
+  Chapel's stained-glass apse and the Chapterhouse's grove; the Provisioner's pigeonholes and the
+  Armoury's forge; the Guildhall's map of Caldera and the Lantern Hall's copy of the Grove Stone;
+  the Drillyard inside Helmstow's wall and the Elder's ring of stones; the Gilded Eel's harbour
+  window and the Split Oak's living oak; the throne room behind the keep's door, its throne under
+  black cloth. The farm kitchen is Ellerby's store (#87). Saltreach's eight, Lantern Watch's five,
+  Anvilhall's six, Kilnhaven's six and Rime Lodge's six are painted beside them, the last three
+  ahead of their towns (the Kilns' are their area's since its first box, Rime Lodge's wait in
+  `ROOMS_AHEAD` in `content/index.ts`; docs/areas/kilns.md §3 and docs/areas/rimewater.md §3
+  describe them). No people: the rooms are backdrops. `kit.ts` has the walls, floors, windows and
   light, `props.ts` the furniture and goods; each scene is a file in `ui/interiors/<area>/`, and
   what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
   A scene is painted once into an offscreen canvas and multiplied by a light map (the ambient for
@@ -475,7 +482,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   flat in a blizzard; fog banks drifting low; and the flash of a strike. Particles take their
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
   unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
-  millisecond a frame.  ## Stubbed or absent
+  millisecond a frame.
+
+## Stubbed or absent
+
 - No hall sells tier 7 yet (the Watch's Lantern Hall sells 6, #201); no Master trainers; of the
   secondary skills only Linguist (#538), with the race-innate ones. The Meridian journal opens The
   Lost Expedition in the quest log, and the Cartographers' Geographer in Saltmouth reads it (#181),
@@ -535,8 +545,9 @@ over content broken on purpose too, and two tools to theirs:
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
-- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder,
-  against every group alone; each map is held to its band, and each area pools its groups, each
+- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder
+  and with its prestiges, harness's own (#541), against every group alone; each map is held to its
+  band, and each area pools its groups, each
   fought at its own map's floor: nine fights in ten won at the floor, a quarter at most two under it
   (of a map whose floor is its area's, and of the area, a zone map's groups two under its own floor
   and a town's or dungeon's two under the area's), a boss three to seven times in ten, 6.5 fights to
@@ -564,10 +575,11 @@ over content broken on purpose too, and two tools to theirs:
 - `pillars` (§5.4): a hint on the near side of every secret door, there always, an inscription's
   reading among them; no text past three lines of the log, nor a square's texts that can show
   together (day and night, or `until` and `after` the same thing, never do) past the log's four, an
-  inscription's words, reading and mark said together; no monster's look past two, every glyph in
-  the font, British spelling; each `Area.novel` holds; water and roads carry on into the atlas;
-  story locks (`content/locks.ts`) signed in, none between areas and every hand-in taking its item
-  at the first meeting.
+  inscription's words, reading and mark said together; no monster's look past two, no crossing's
+  landing line or seller's warning past three, every glyph in the font, British spelling, a
+  crossing's name and words among them; each `Area.novel` holds; water and roads carry on into the
+  atlas; story locks (`content/locks.ts`) signed in, none between areas and every hand-in taking its
+  item at the first meeting.
 - `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
   each played hired first and early, the words, the pay and the log true either way round; every
   person's words fit the box (a hand-in's with its gold line), a question leaves room for its
@@ -647,9 +659,11 @@ monster as a strip ending in the hit flash; and each interior at noon and at nig
 pinned, so the same tree makes the same PNG; an unknown flag or id, a flag given twice or one with
 no value is refused. `--changed <base>` draws what changed since the base (tools/changed.ts), which
 is how the checks attach a sheet to every pull request that changes a map, a monster or an
-interior; with nothing changed it says so and writes none. `--ground all` (or `--ground ash,ice`)
-draws the ground's samples (`tools/grounds.ts`), each with its plan in its grounds' colours, and a
-change that draws every map draws them too, so a new ground is seen before a map holds it.
+interior (a file anywhere in an area's folder of rooms, `ui/interiors/<area>/`, counts every room
+of that area); with nothing changed it says so and writes none. `--ground all` (or
+`--ground ash,ice`) draws the ground's samples (`tools/grounds.ts`), each with its plan in its
+grounds' colours, and a change that draws every map draws them too, so a new ground is seen before
+a map holds it.
 `node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--rank-step 0.25]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
@@ -659,7 +673,8 @@ growing past Thornmark's, `--level-bonus` one where every member gains a point o
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
-premade company, trained to each level and dressed by the gear ladder, wins each map's groups alone
+premade company, trained to each level, dressed by the gear ladder and with the prestiges its level
+brings, wins each map's groups alone
 from full health; `--road thornmark:tm_wolves1,tm_brigands2` fights the groups named in a row with
 no rest and counts the companies still standing. `tools/tests/gate.ts` holds the maps and areas to
 it.
