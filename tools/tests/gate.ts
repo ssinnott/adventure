@@ -161,8 +161,8 @@ const rates = new Map<string, number>();
  * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters and
  * that weather, each computed once: the maps and their areas share them.
  */
-export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}@${level}~${opts.rangedPenalty ?? 0}`;
+export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under'>, level: number): number {
+  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}@${level}~${opts.rangedPenalty ?? 0}`;
   let r = rates.get(key);
   if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
   return r;
@@ -320,6 +320,12 @@ export function gate(): void {
     const bows = new Array(6).fill('smuggler_bowman'), dry = rate({ monsters: bows }, 1), fog = rate({ monsters: bows, when: { sky: 'fog' } }, 1);
     ok(fog !== dry && rate({ monsters: bows, when: [{ hours: 'night' }, { season: 'winter' }] }, 1) === dry, `six smuggler bowmen that walk only in fog are fought in it (${pc(fog)} won at 1, against ${pc(dry)} dry), and by night or in winter dry`);
     ok(rate({ monsters: bows, when: [{ sky: 'fog' }, { hours: 'night' }] }, 1) === dry, 'and one that walks in fog or by night is fought dry too');
+    // The ground (#536): six bowmen placed on ice are fought from under it, reaching the front row
+    // alone, and won more often; the walk from a way in crosses ash, pine and ice as open ground.
+    const iced = rate({ monsters: bows, under: 'ice' }, 1);
+    ok(iced > dry, `six smuggler bowmen under the ice are fought from under it (${pc(iced)} won at 1, against ${pc(dry)} on dry ground)`);
+    const strip: MapDef = { id: 'fx_strip', name: 'Strip', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMM', 'M,apiaM', 'MMMMMMM'] };
+    ok(stepsFrom(strip)(5, 1) === 4, `the walk from a way in crosses ash, pine and ice (${stepsFrom(strip)(5, 1)} steps over four squares)`);
     const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
     ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
     // A den's keepers are its camp's hardest fight: won no more often than any of its brood.

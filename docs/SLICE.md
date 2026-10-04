@@ -34,7 +34,8 @@ DESIGN.md first for the why.
   (each with a hint on its near side, the event or sign `MapDef.secrets` names), water and mountains
   gated by party abilities, hills (`^`), farmland (`f`), light woods (`t`) and dead wood (`d`, on no
   built map yet) open to all, the Sunder's glass trees (`c`) and chasm (`v`), on none yet, salt
-  (`-`), heather (`h`) and tidal ground (`;`), on none yet, a calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
+  (`-`), heather (`h`) and tidal ground (`;`), on none yet, ash (`a`), pine (`p`) and ice (`i`), on
+  none yet (#536), a calendar and weather over a day/night clock (below), automap with field-of-view reveal, rest with
   food, a search action, exploration spells (Light, Wizard Eye). The wilderness features (a shrine
   on F2; the rest on E2): a shrine or fountain that gives every member a stat point once, a cairn
   with a cache, a statue whose riddle takes its answer typed and a camp where the party may rest
@@ -57,6 +58,9 @@ DESIGN.md first for the why.
   sleep ends with the fight (#161). A monster may mend each round but a round fire struck it
   (`regen`), curse with its hits and spend a turn calling its group into the fight while there is
   room for the whole of it under twelve monsters in three groups, the fallen counted (`calls`) (#537).
+  A group placed on ice (`under: 'ice'`, #536) lives under it: it
+  moves only under the ice, strikes only a company standing on the ice beside it and in the fight
+  reaches only the front row over it, never the back, bow or none.
   Gear may carry a plus: a point is +1 to hit and damage on a weapon, +1 armour class on armour or
   a shield (`P`, `src/content/items.ts`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
@@ -214,6 +218,37 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   name zone maps: `visited: 'thornmark'` holds once the party has set foot in the zone
   (`WorldState.zones`), and a `seen` or `slain` on a zone map reads the outdoors' state. `travel()`
   takes a zone map's own coordinates, so tools and tests can still say `shelf 16 8`.
+- **Act III's ground** (#536). Ash, pine and ice have their characters (`a`, `p`, `i`), and on the
+  world map they are the atlas's ash, pine and ice, so the scaffold drafts the Kilns' ash and pines
+  and Glacier Foot's ice. Rimewater's lochs are water on the atlas (docs/areas/rimewater.md §1): a
+  box draws its frozen loch as ice by hand and places its pike on it `under: 'ice'` (Combat, above).
+
+Decided by delegate for #536, each the owner's to overturn:
+
+1. **Pine is its own ground, `p`,** walked through among pines as the woods are, closer, taller and
+   green all year; the forest's `T` stays the wall of trunks. The Kilns' M3 and Rimewater's K10 are
+   mostly pine (K10 770 of 782 squares) with groups in the pines, and a wall of trees leaves them
+   nowhere to stand; #200's 1 left the character to Rimewater. Sunderwood keeps its pines as forest.
+2. **Ash is slow going, two minutes more a step as hills are, and nothing else:** loose ash is the
+   heart's hardest ground, and the atlas prices it near hills already. Pine and ice take the usual six.
+3. **The ice holds in every season:** the lochs under the glacier never open. A thaw would shut the
+   bay's door under Loch Fuar half the year, a lock by the calendar (EXPANSION §2.2); the tide (#162)
+   shows what ground that comes and goes costs. The ice greys in the summer and whitens in the winter.
+4. **The lochs stay water on the atlas,** as docs/areas/rimewater.md §1 has them, and a box draws them
+   frozen by hand; frozen on the atlas, they would turn the world map's lochs to ice before any box.
+5. **A group is placed on ice by its own mark, `under: 'ice'`,** not by the square it stands on, so
+   an ice bear may cross the ice without going under it, and the gate, which fights groups without
+   their maps, fights it as play does. Under the ice it moves only under it, strikes only a company
+   standing on the ice beside it and lets one on the shore beside it walk by, though one facing it
+   may strike first as at any group; it is drawn as a shape in the ice, nothing of it over the horizon.
+6. **In the fight it reaches one square: the front row over it, bow or none,** and once that row is
+   down, nobody; the company strikes it as it strikes any group. The gate bot and the harness fight it
+   so, and the gate check keys its rate apart from the same group on dry ground.
+7. **Lying snow is the maps' snow, `*`,** walked, white in every season, on no built map yet, so
+   Cairnmoor or Rimewater may claim it; nothing new was needed for it.
+8. **A sample of each ground stands in for the maps to come** (`tools/grounds.ts`): the smoke test
+   sweeps them for cracks every run and paints the grounds through the year, and the sheet shows them
+   with `--ground` and whenever it draws every map, as the Rift samples show the templates.
 
 ## The calendar and the weather
 
@@ -417,7 +452,14 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   20:00, read from the clock and saved nowhere). At low water it is wet sand with ripples and pools,
   walked; at high water it is drawn as the sea, and a step onto it is refused ("The tide is in. The
   sands will show again.") unless someone swims, and a group keeps off it. The log says the tide
-  turning where the flats are in sight, and a `when` can name the tide. Broadleaf trees bud in Thaw, blossom in
+  turning where the flats are in sight, and a `when` can name the tide. Ash (`a`) lies dark grey
+  under the vents, drifted and rippled, a cinder in it and here and there an ember, dull by day and
+  glowing by night; it is slow going, two minutes more a step as hills are. Pine (`p`) is walked as
+  the woods are, the pines closer and taller about the square and green in every season, over
+  needles and cones. Ice (`i`) is a frozen lake, walked: pale and blue, whitest in the winter and
+  greyer with meltwater in the summer but never open, with black ice, the light along it and
+  hairlines frozen in; a group placed on ice is drawn under it, its shape dark through the ice and
+  nothing of it standing over it. Lying snow underfoot is the maps' snow (`*`). Broadleaf trees bud in Thaw, blossom in
   Sowing, turn orange and gold in Leafturn, brown and drop in Mistfall and stand bare through the
   winter (`treeSeason()` in `ui/sprites.ts`); flowers only come out between Sowing and Leafturn.
   Lamps and windows light early on a dark day. Every frame, over the scene (and over the monsters in
@@ -463,7 +505,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   screen painted with no page error, and a line for each check as well. Every run plays the same
   world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it). It holds every monster to
   one silhouette and every pair of sprite part kinds to a union with no hole, and sweeps for cracks
-  between walls: one way from every square of the cellar, Helmstow and its keep each run, all four
+  between walls: one way from every square of the cellar, Helmstow, its keep and the ground's samples
+  (`tools/grounds.ts`, a small map each of ash, pine and ice) each run, all four
   ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the pull request's base;
   `node tools/changed.ts <ref> maps` names them, and `monsters` or `interiors` the sheet's), or on
   those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_SHOT=<png>` saves a screenshot of the play, which
@@ -479,7 +522,8 @@ over content broken on purpose too, and two tools to theirs:
 - `structure` (§5.1): no iron key behind its own lock however the keys are spent, no guardian that
   comes back, every respawn 720 to 2,880 minutes, every group's, person's and event's `until` and
   `after` naming something real (an `until` only on a group that comes back), no sky asked
-  underground, and every Rift group of Thornmark's that comes back stopping with the tear.
+  underground, every group placed under the ice standing on ice and every Rift group of
+  Thornmark's that comes back stopping with the tear.
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
@@ -490,7 +534,8 @@ over content broken on purpose too, and two tools to theirs:
   and a town's or dungeon's two under the area's), a boss three to seven times in ten, 6.5 fights to
   a rest give or take one, its bosses left out of the day and each zone's road walked at its floor
   eight times in ten, its nearest groups at its way in among its gentlest. A group that walks only
-  in fog is fought with the bows' toll; one that waits on an `after` is no warning at the way in.
+  in fog is fought with the bows' toll, and one placed on ice from under it; one that waits on an
+  `after` is no warning at the way in.
   Each figure has an aim (these) and a limit beyond it (#273): between the two it passes and is
   listed at the end of the suite as off its aim, and only past its limit does it fail or go into
   `OWED`. A den's keepers are its camp's hardest fight, won no more often than any of its brood; its
@@ -560,8 +605,9 @@ over content broken on purpose too, and two tools to theirs:
   which only their own; and that it reads each family module's `KINDS` from the module's text as the
   module lists them.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
-  C6 and Wrackholm's F6, their light woods, dead wood, chasm, crystal, salt, tidal ground and heather
-  and all, laid back into the atlas, are the atlas square for square.
+  C6, Wrackholm's F6, the Kilns' O6 and M3 and Glacier Foot's N10, their light woods, dead wood,
+  chasm, crystal, salt, tidal ground, heather, ash, pine and ice and all, laid back into the atlas,
+  are the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
   `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
   a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
@@ -589,7 +635,9 @@ monster as a strip ending in the hit flash; and each interior at noon and at nig
 pinned, so the same tree makes the same PNG; an unknown flag or id, a flag given twice or one with
 no value is refused. `--changed <base>` draws what changed since the base (tools/changed.ts), which
 is how the checks attach a sheet to every pull request that changes a map, a monster or an
-interior; with nothing changed it says so and writes none.
+interior; with nothing changed it says so and writes none. `--ground all` (or `--ground ash,ice`)
+draws the ground's samples (`tools/grounds.ts`), each with its plan in its grounds' colours, and a
+change that draws every map draws them too, so a new ground is seen before a map holds it.
 `node tools/harness.ts [--levels 2,6,10] [--roles soldier,brute] [--seeds 400] [--under 2] [--map thornmark --level 5] [--stats] [--calibrate --write] [--spell-cap 10] [--gear-grows] [--level-bonus] [--level-traits] [--rank-step 0.25]`
 fights the premade company at a level against standard encounters of the test monster, or a map's
 own groups, one after another until it must rest, and says how many it managed against the six or
@@ -616,10 +664,10 @@ does.
 
 | File | Owns |
 |---|---|
-| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather and tidal ground named as the atlas names them), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
+| `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine and ice named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates and zones; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView, the zone and palette at a cell, `bannerAt`); the void; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built, their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links, a crossing link sold both ways drawn as built) and the road's steps |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers, rest, search |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates, reveal, the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
@@ -639,7 +687,7 @@ does.
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the brood's `until` (`denBurnt`), the pace, the approach, the burning and its hoard, the look on first sight; pure |
 | `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
-| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods and the dead wood, the glass trees and the chasm's drop, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
+| `ui/viewport.ts` | the depth-layered first-person compositor, the hills, the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year and a group drawn under the ice, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), the sky, the end of the world in pink and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
