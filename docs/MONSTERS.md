@@ -272,7 +272,7 @@ Decided by delegate for the combat row and the glove line, each the owner's to o
    its ink reaches either side of its centre, which the smoke test measures and holds within 2 px.
 2. **Neighbours in a line may overlap by a third of the narrower's span** (`OVERLAP`, `ui/row.ts`):
    a tail, a wing or a shield behind the next, never a body across it. A back rank is not held to it.
-3. **A row that fitted stands as it did,** a slot apart and at its old size: 71,428 of the 167,991
+3. **A row that fitted stands as it did,** a slot apart and at its old size: two in five of the
    fights the maps can start. Only one past the view's edge or over a neighbour moves.
 4. **Such a row stands wider where it has room, closes up to the third where it would run off, and
    slides in;** only one still too wide is drawn smaller, the whole fight at one scale.
