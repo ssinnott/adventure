@@ -118,7 +118,7 @@ function keeper(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   };
   const plate = p.base, limb = shade(plate, 0.93), joint = shade(mix(p.dark, '#20242a', 0.45), 0.95);
   const pale = mix(plate, shade('#f2f0e8', p.tone), 0.55);
-  // Now and then a hand comes up to touch: the near hand, the company's left, for a while in every 180 frames.
+  // Now and then a hand comes up to touch: the one on the company's right, for a while in every 180 frames.
   const k = t % 180, reach = k < 44 ? Math.sin((k / 44) * Math.PI) : 0;
 
   groundShadow(ctx, f.X(pelvis.x * 0.5), y + 1, 30 * u);

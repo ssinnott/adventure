@@ -709,7 +709,7 @@ Decided by delegate for #495, each the owner's to overturn:
    at one in two the harness broke off a fifth of the days of four keepers at fifteen rounds, at one
    in four 3%, in fights of 7.6 rounds (300 seeds).
 6. **The Matron does not mend:** her mend is 20 of her 1,145, a blow lost, and at a quarter of her
-   turns it lifts the odds against her at 20 from 74% to 86% (88% with two keepers by her). §4.6's
+   turns it lifts a company's odds at 20 from 74% to 86% (88% with two keepers by her). §4.6's
    boss that mends is #490's to give her.
 7. **The Matron is on the boss line at 22, for #490's gate to tune,** as the Foreman is #462's: won
    74% at 20, 86% at 21, 94% at 22 and 98% at 23 (300 seeds), where #490 asks about half at 21.
