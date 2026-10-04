@@ -527,8 +527,9 @@ over content broken on purpose too, and two tools to theirs:
 - `curve` (§5.2): each area against its row in `content/progression.ts`: its band, the xp and gold a
   clear gives, its monsters' levels in their maps' bands, groups harder with steps from the way in,
   no chest or drop dearer than its window.
-- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder,
-  against every group alone; each map is held to its band, and each area pools its groups, each
+- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder
+  and with its prestiges, harness's own (#541), against every group alone; each map is held to its
+  band, and each area pools its groups, each
   fought at its own map's floor: nine fights in ten won at the floor, a quarter at most two under it
   (of a map whose floor is its area's, and of the area, a zone map's groups two under its own floor
   and a town's or dungeon's two under the area's), a boss three to seven times in ten, 6.5 fights to
@@ -647,7 +648,8 @@ growing past Thornmark's, `--level-bonus` one where every member gains a point o
 armour every two levels past 10, and `--level-traits` one where fighters strike once more a turn
 from 11 and again from 29, and sneak attacks grow.
 `node tools/gate.ts [--maps thornmark,grove2] [--levels 2,3,4,5] [--seeds 200]` prints how often the
-premade company, trained to each level and dressed by the gear ladder, wins each map's groups alone
+premade company, trained to each level, dressed by the gear ladder and with the prestiges its level
+brings, wins each map's groups alone
 from full health; `--road thornmark:tm_wolves1,tm_brigands2` fights the groups named in a row with
 no rest and counts the companies still standing. `tools/tests/gate.ts` holds the maps and areas to
 it.

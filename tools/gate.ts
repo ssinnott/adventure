@@ -3,14 +3,16 @@
 //   node tools/gate.ts                                 every map with monsters, levels 1-8, 10, 12 and 14
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots
-// The premade company is trained to each level and dressed by the ladder (GEAR, tools/harness.ts:
-// to 22, Rime Lodge's furrier's with a plus, and past it in that top step),
+// The premade company is trained to each level, dressed by the ladder (GEAR, tools/harness.ts: to
+// 22, Rime Lodge's furrier's with a plus, and past it in that top step) and takes the prestiges its
+// level brings, at 11, 19 and 27, as harness's company does (it is that company, `companyAt`),
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;
 // one group is one fight. A plain bot plays the party: mend the weakest when someone is under 40%,
 // else the strongest damage spell it can afford, else a weapon, else brace; it aims at a leader where
 // it can reach one, since the people break at its fall, or at a caller while the fight has room for
-// its call, and else a weapon at the first foe it reaches. Once it has seen what an element does to a
+// its call, or at a light whose touch takes spell points, since its fall keeps the casters' points,
+// and else a weapon at the first foe it reaches. Once it has seen what an element does to a
 // foe it casts the element that foe is weakest to, and never one it has seen do nothing to any foe
 // still standing; once it has seen a foe mend, it burns it with fire each round before it casts
 // anything else. It reads the fight as it stands each turn, the groups called into it too. It wakes a
@@ -22,7 +24,7 @@
 // line.
 import { pathToFileURL } from 'node:url';
 import { makeRng } from '../src/lib/engine/rng.ts';
-import { defaultParty, xpForLevel, levelUp, isDown, MAX_LEVEL } from '../src/game/party.ts';
+import { isDown, MAX_LEVEL } from '../src/game/party.ts';
 import type { Party, Character } from '../src/game/party.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, asGroup, seenMult } from '../src/game/combat.ts';
@@ -31,18 +33,17 @@ import { RANGED_PENALTY } from '../src/game/weather.ts';
 import { spell } from '../src/game/spells.ts';
 import type { SpellDef, SpellTarget } from '../src/game/spells.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { outfit, wakeWith, markOf } from './harness.ts';
+import { companyAt, wakeWith, markOf } from './harness.ts';
 import type { EncounterDef } from '../src/game/map.ts';
 
 /**
- * The premade company, every member trained to `level` and dressed by the ladder, as harness's is,
- * whole. Under level 1 it is no company, and throws.
+ * The premade company, every member trained to `level`, dressed by the ladder and with the prestiges
+ * that level brings, whole: harness's own (`companyAt`), a fresh copy every call. Under level 1 it is
+ * no company, and throws.
  */
 export function gateCompany(level: number, seed: number): Party {
   if (!(level >= 1)) throw new Error(`no company at level ${level}: levels start at 1`);
-  const rng = makeRng(seed), p = defaultParty(rng);
-  for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); outfit(c, level); c.hp = c.maxHp; c.sp = c.maxSp; }
-  return p;
+  return companyAt(level, seed);
 }
 
 /** How far a damage spell reaches; the bot casts the widest it can afford. */

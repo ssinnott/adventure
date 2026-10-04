@@ -156,8 +156,9 @@ O6, slow going as hills are, and pine, `p`, on M3 and O3, a ground of its own wh
 its pine as forest, docs/areas/sunderwood.md §9, #200's 1; the scaffold drafts both, and
 docs/SLICE.md says what was decided); Kiln-script and Linguist (#538, built: §4.1 says how a box
 writes an inscription, and §9 what was decided); the crossings, the ferry, the ship and the coach
-(#539); the Anvil Stone counting for the Hearth (#540, #168); and the bot, which must learn to put
-cold on what fire does not touch (#541, EXPANSION §5.2). Regeneration, curse and calls (#537) are
+(#539); the Anvil Stone counting for the Hearth (#540, #168); and the bot (#541, built: it puts
+cold on what fire does not touch once it has seen fire do nothing, as it has since #161, and its
+company takes its prestiges, MONSTERS §4.4). Regeneration, curse and calls (#537) are
 Cairnmoor's and Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `when`
 are #41's; the machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472,
 eleven issues, all eleven now (below), and its rooms in #473.
@@ -328,7 +329,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   and a net-needle in its straw; beside it the drover's box, 500 gold and a Drover's Goad +2
   (`drovers_goad`), which no walker, swimmer, climber or levitator reaches but through the wall. A
   company at 16 wins every fight and manages 8.95 fights to a rest, inside the aim, with 6.3% of its
-  days ending in a fight broken off; the Fells' road, the two beetle groups, is walked every time. As
+  days ending in a fight broken off (8.97 and 4% once #541 re-stated the worm); the Fells' road, the
+  two beetle groups, is walked every time. As
   measured it pays about 1,068 xp a member and 740 gold. Two under, at 14, it wins every fight too,
   owed to #18 as every Act II box's is. Density 98.5% within 12 steps, the furthest 15. It claims pine
   underfoot as new (§7). M2 gains the way over the border with the crossing line and its milestone
@@ -1027,19 +1029,20 @@ Decided by delegate for #472 (the knockers), each the owner's to overturn:
    317 xp; size 0.45, tint #84878e.
 5. **The Mender carries its trade,** domed higher, a spool of copper wire on its back and an arm
    that brings a needle down before its cowl, a cold light at the point, so a company picks it out
-   of six knockers at a glance. A soldier's numbers at 17: 196 hit points, armour 20, +10, 3d7+5,
-   speed 11, 673 xp; size 0.55, tint #9a9c96.
+   of six knockers at a glance. A soldier's numbers at 17: 199 hit points, armour 20, +10, 3d8+4,
+   speed 11, 673 xp, on #541's line (196 and 3d7+5 on #409's); size 0.55, tint #9a9c96.
 6. **The Mender casts Mending Light one turn in two** that one of its group is hurt. At every turn,
    the harness's bot, which never singles it out, broke off half its days at fifteen rounds at 16
    and 17; at one in two, 6 to 7% of them, the fight a round longer than with a mender that never
-   mends (5.4 rounds to 4.4 at 16, 300 seeds).
+   mends (5.4 rounds to 4.4 at 16, 300 seeds). On #541's line, the Mender re-stated, 7% and 13%.
 7. **The Foreman is a knocker grown long and reared up,** its cowl bowed over a slate held before
    it with the list cut on it in rows, an empty box at each row's end; a stylus goes down the boxes
    and ticks none, and now and then the lamp lifts from the slate to the company. Size 1.3, under
    the tall boss's 1.5, so it stands on its group's rank; tint #5c6068.
-8. **The Foreman stands on #409's boss line at 18,** 961 hit points, armour 22, +13, 17d8+20, for
-   #462's gate to tune, as #199 tuned the Warden of the Sunder: a company wins it 17% of the time at
-   14, 66% at 16, 82% at 18 and 99% at 20 (300 seeds).
+8. **The Foreman stands on the boss line at 18,** 1,001 hit points, armour 22, +13, 18d8+20 on #541's
+   line (961 and 17d8+20 on #409's), for #462's gate to tune, as #199 tuned the Warden of the Sunder:
+   a company wins it 9% of the time at 14, 50% at 16, 79% at 18 and 99% at 20 (300 seeds; 17%, 66%,
+   82% and 99% when it was drawn).
 9. **One frame, a Build to a kind:** length, dome, taper, rear, plates, legs, stance, step, cowl,
    feelers, spool, needle, slate and the mark, so MONSTERS §11's tallyman, deep knocker, inspector
    and tally clerk are each a Build, a colouring and what their trades carry.
@@ -1087,7 +1090,7 @@ Decided by delegate for #535, each the owner's to overturn:
     box takes the table.
 11. **The harness's line at 24 is owed to #541:** in the ladder's gear to 22 a company of 24 fights
     14.9 standard encounters to a rest where 10 are asked, and #541 makes the line past 16 again
-    with it, as #409 did after Act II's.
+    with it, as #409 did after Act II's (made again, 9.9 at 24: MONSTERS §4.4).
 12. **The windows stay at 3,500, 4,000 and 4,500,** 500 a band as the issue has them: no ware or
     find comes within 400 of its area's.
 
@@ -1098,9 +1101,11 @@ Decided by delegate for #472 (the six), each the owner's to overturn:
    and the guard #464's, the Warden #465's. The salamanders come on their own, as the knockers did.
 2. **Each is on its role's line at its level** (MONSTERS §4.4): the beetle armoured and the
    slagling a skirmisher at 16, the worm a brute and the guard armoured at 17, the slag elder an
-   elite at 18.
-3. **The Warden of the Anvil is on the boss line at 18,** 961 hit points and 17d8+20, its blow left
-   for #465's gate to set, as #426 set the Sunder's; it shrugs off sleep, as every warden does.
+   elite at 18. #541 re-stated the worm, the guard and the elder to its line: 404 hit points and
+   4d8+7, 250 and 3d7+6, 365 and 4d8+3, where they had 422, 263 and 383.
+3. **The Warden of the Anvil is on the boss line at 18,** 1,001 hit points and 18d8+20 on #541's
+   line (961 and 17d8+20 on #409's), its blow left for #465's gate to set, as #426 set the Sunder's;
+   it shrugs off sleep, as every warden does.
 4. **Cold bites the slag and fire does it half:** the slagling, the slag elder and the Warden are
    weak to cold and resist fire, so in the Rift Hoarfrost is the answer and Hearthfire is not.
 5. **The Fire Beetle is immune to fire and nothing more,** so on the spoil heaps the sorcerer's fire
@@ -1128,9 +1133,10 @@ Decided by delegate for #472 (the salamanders), each the owner's to overturn:
 1. **The Salamander is a beast, a skirmisher on MONSTERS §4.4's line at 16** (179 hit points, armour
    19, 3d8+2, speed 15), immune to fire and weak to cold as its row says, size 0.68: the sorcerer's
    cold is the answer, and the cleric's Hearthfire and the druid's Wildfire are not (DESIGN §7).
-2. **The Great Salamander is a beast boss on the boss line at 18** (961, armour 22, 17d8+20), immune to
-   fire and to sleep and weak to cold, as its kin and as the Eldest and the Great Devilfish. Its blow
-   is #466's to set for the gate, as #426 set the Warden of the Sunder's, and its hide #466's to drop.
+2. **The Great Salamander is a beast boss on the boss line at 18** (1,001, armour 22, 18d8+20 on
+   #541's line; 961 and 17d8+20 on #409's), immune to fire and to sleep and weak to cold, as its kin
+   and as the Eldest and the Great Devilfish. Its blow is #466's to set for the gate, as #426 set the
+   Warden of the Sunder's, and its hide #466's to drop.
 3. **It is a tall boss, size 1.6,** seated on the third rank with its crown at 0.79 of its height,
    under its markers' 0.82: the deepest chamber's boss, and the biggest thing in the tubes.
 4. **The frame is a lizard three-quarter on, coming at the company,** its head turned on toward the

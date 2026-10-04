@@ -12,15 +12,15 @@ import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
-import { rest, hasCondition } from '../../src/game/party.ts';
+import { rest, hasCondition, className } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { startCombat, currentTurn, monsterAct, asGroup } from '../../src/game/combat.ts';
+import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
 import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate } from '../gate.ts';
-import { days, fightsPerRest, mendBetween, mustRest, ROUND_CAP } from '../harness.ts';
-import { testMonster, trollEncounter, wightEncounter, callerEncounter } from '../testmonster.ts';
+import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP } from '../harness.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { ok, owed } from './lib.ts';
 
@@ -133,6 +133,14 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // group that a company at its floor fights eight of to a rest, as Act II's did.
   'ironfells_m3: under': { whose: '#18', at: 1 },
   'the Kilns: under': { whose: '#18', at: 1 },
+  // Act II's bosses were set by their gates against a company without its first prestige, which the
+  // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
+  // twice a turn and the casters cast at their first rank, and each boss is won nearly always at its
+  // floor: setting them again against the company with it is #18's.
+  'drowned_temples2:dt2_choirmaster: floor': { whose: '#18', at: 0.94 },
+  'smugglers_cove2:kh2_great_devilfish: floor': { whose: '#18', at: 0.96 },
+  'tide_ship_rift:tide_ship_rift_warden: floor': { whose: '#18', at: 0.94 },
+  'the_sunder2:su2_warden: floor': { whose: '#18', at: 0.98 },
 };
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
@@ -300,6 +308,20 @@ export function gate(): void {
     ok(won(wights) >= 0.9 && cursed > 0, `it fights on through the wights' curses at 19, winning ${pc(won(wights))}, ${cursed} of ${seeds} companies leaving cursed`);
     const called = fought(20, callerEncounter(20)), grew = called.filter(({ s }) => s.groupIds.length > 1).length;
     ok(won(called) >= 0.9 && grew > 0 && gateFight(gateCompany(20, 1), callerEncounter(20), fightSeed(1)), `and a caller's fight at 20 that grows by its call in ${grew} of ${seeds}, winning ${pc(won(called))}`);
+    // It keeps its casters' spell points from the lights (#541): it marks one whose touch takes them
+    // after a leader and a caller, so its first blade in a fight of three lights and a hound falls on
+    // a light, and it wins.
+    const lights = lightEncounter(19), first = startCombat(gateCompany(19, 1), [asGroup('gate', lights)], makeRng(1)), mark = markOf(first, aliveMonsters(first));
+    const lit = fought(19, lights), blade = /^(?:Bram|Idris|Wren|Ottilie|Maren|Cassian) (?:hits|misses) (Test \w+)/;
+    const atLights = lit.filter(({ s }) => s.log.map((l) => blade.exec(l)?.[1]).find((x) => x) === 'Test Light').length;
+    ok(mark !== undefined && first.monsters[mark].def.drain === 'sp' && won(lit) >= 0.9 && atLights >= seeds * 0.9,
+      `it keeps its casters' spell points from the lights: it marks a light before the hound, so its first blade falls on a light in ${atLights} of ${seeds} fights at 19, and it wins ${pc(won(lit))}`);
+  }
+  // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks
+  // and ranks, as play gives them, and wears what harness's wears.
+  {
+    const taken = [10, 11, 19, 27].map((l) => gateCompany(l, 3)), same = taken.every((p, k) => JSON.stringify(p) === JSON.stringify(companyAt([10, 11, 19, 27][k], 3)));
+    ok(same && taken.every((p, k) => p.members.every((m) => (m.prestige ?? 0) === k)), `the gate's company takes its prestiges as harness's does: ${taken.map((p) => p.members[0].prestige ?? 0).join(', ')} at 10, 11, 19 and 27, its knight a ${className(taken[3].members[0])} at 27`);
   }
   // A figure inside its aim passes; one between its aim and its limit passes and is listed; one past
   // its limit fails. Probed either side of whatever the aim and the limit are, so the pilot may move them.

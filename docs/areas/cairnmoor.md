@@ -95,8 +95,8 @@ the drove road down to Longmere. Its row on the curve and its share of the act's
 next 20, window 4,000), and O7's Banded Staff +1 in `src/content/areas/cairnmoor/items.ts`, made
 ahead of the area as the Kilns' step is (docs/areas/kilns.md §3), owed to #477 until placed. Its
 monsters are drawn (#483, below), and nothing else is built. Of the systems it waits on, the rest
-of #432's, ice and lying snow underfoot (#536; heather is #162's) and regeneration and curse (#537)
-are built; the drove road's coach (#539) and the bot that plays them (#541) are to come.
+of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse (#537)
+and the bot that plays them (#541) are built; the drove road's coach (#539) is to come.
 
 Drawn ahead of the boxes that place them (#483): the lights, a new family, with the Bog Light
 (`src/ui/monsters/lights.ts`); and the six on frames that exist, the Raven on the birds', the Bog
@@ -437,7 +437,7 @@ landmarks: a stone ring, a cairnfield, a tor, a tarn.
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
   about half the time at 19 and nearly always at 21. The ring's camp is where the road's walk rests
-  on O7; the bot learns the trolls' fire with #541.
+  on O7; the bots burn the trolls (#537).
 - **Density.** Core boxes at the Foreland's floor, the bog at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp and the voice, so it needs no exception.
 
@@ -505,6 +505,7 @@ Decided by delegate for #483, each the owner's to overturn:
    `tools/smoke.ts` as the moths' dust is: two pieces, 6% of the ink. The Rime Light is a Build.
 3. **The Bog Light comes down whole, to 0.575 of the controller's line** (124 hit points, 2d6+2):
    on the line four sent a company of 18 to rest in four fights; whole, it fights 8.5 of 8.5 asked.
+   On #541's line, 117 hit points and 2d6+2: four fights on the line and 8.9 at 0.575.
 4. **Its touch takes spell points in place of the line's paralysis,** and it flies, reaching the
    back row; it is the Rift's, so it never runs (MONSTERS §2).
 5. **The Raven is the crow's frame grown big and at its ease, its wings folded,** the bill deep and
@@ -520,17 +521,21 @@ Decided by delegate for #483, each the owner's to overturn:
 10. **The Tor Troll is a beast, as the old wood is:** the land grown large, carrying nothing. It is
     weathered granite in stacked slabs, lichen and heather on it, and a face cut in the stone.
 11. **The troll is #537's,** size 1.6 with its crown at 0.79 of its height, under 0.82: three
-    quarters of the brute's line at 19, 361 hit points, mending 36 a round unless fire struck it.
+    quarters of the brute's line at 19, 361 hit points, mending 36 a round unless fire struck it
+    (397 and 40 on #541's line).
 12. **A troll runs as beasts do,** once three in four of its group are down: seated with eight
     ravens in one group, the pair runs as they fall, in two rounds; #478 seats them as two groups.
 13. **The Cairn King sits on a seat cut cleaner than the hill folk could,** smooth, dark and square,
     with nothing carved on it, and nothing says why: the chamber's walls say the rest (§4.6).
 14. **The King is on the boss line at 20** (1,048 hit points, armour 23, 18d8+22), cursing as its
-    wights do (0.2), for #480's gate to tune: won 63% at 18 and 91% at 19; §8 asks half at 19.
+    wights do (0.2), for #480's gate to tune: won 63% at 18 and 91% at 19; §8 asks half at 19. On
+    #541's line, 1,113 hit points and 20d8+20: won 46% at 18 and 81% at 19.
 15. **Grave-gold on the dead that wear it:** the wight 20 to 60 and the King 150 to 300; the beasts,
     the light and the bog body carry none, and the body's ring is #478's (§6).
 16. **The rest are on their roles' lines at their levels** (MONSTERS §4.4, 300 seeds): eight
-    ravens fight 8.4 to a rest at 18, four bog bodies 8.5; past 18 the line is soft, owed to #541.
+    ravens fight 8.4 to a rest at 18, four bog bodies 8.5; past 18 the line was soft, owed to #541,
+    which made it again: on it each group fights 8.6 to 9.2 to a rest at its level, the trolls' days
+    ending 35% badly, 25% in a fight broken off.
 17. **Each is owed to the first box whose brief places it** (§3). #476's issue puts a troll on N7,
     where §4.2 has none; whichever box places one first drops its entry.
 18. **What was drawn before is unchanged to the pixel:** the raven and the hound are Builds on

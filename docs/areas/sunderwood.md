@@ -525,8 +525,10 @@ features; the pay shared out over the area (§8).
   events, so the density check passes it with no exception. Density: the ledges 100% within 7, the
   furthest 6; the floor 99.6%, the furthest 8. At 14 the ledges give 7.14 fights to a rest and the
   floor 7.85; the floor's groups are won 84.3% at its floor with the Warden pooled, off the aim and
-  inside the limit. The Warden is won 53% at 14 and 95% at 16. Two under, the ledges are owed to #18;
-  the floor is inside its limit (67.7%). As measured the two levels pay 2,704 xp a member and 750
+  inside the limit. The Warden is won 53% at 14 and 95% at 16. Once the gate's company takes its
+  first prestige (#541) they are won 99.3%, the Warden 98% and 100%, past the limit at 14 and owed to
+  #18. Two under, the ledges are owed to #18; the floor is inside its limit (67.7%, 82.3% with the
+  prestige). As measured the two levels pay 2,704 xp a member and 750
   gold. What the owner finds by hand goes here when it has been played.
 
 ### 4.7 L2, Lantern Watch's box (#200): core, band 15–16
