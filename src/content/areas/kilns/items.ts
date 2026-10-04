@@ -1,7 +1,8 @@
 // The Kilns' items: Anvilhall's forge's step on the ladder (#535), the same with a plus that the
 // Kilns' boxes and the Tiefzeche give up by 19 (Cairnmoor's share is in its own table), what
-// Kilnhaven's smith asks for the forge's wares, what the thane asks for the Stone, and the finds of
-// its boxes off the ladder. Made ahead of the area (#535) until its first box (#457) took the table
+// Kilnhaven's smith asks for the forge's wares, what the thane asks for the Stone, the finds of its
+// boxes and its dungeon off the ladder, and the parts its machines carry. Made ahead of the area
+// (#535) until its first box (#457) took the table
 // into its Area; the forge (#459) sells the step and the smith (#469) the same at a quarter more.
 // docs/areas/kilns.md §8 and §9 have the sums.
 import type { ItemDef } from '../../../game/items.ts';
@@ -12,6 +13,7 @@ import { sharkskin } from '../saltreach/items.ts';
 
 const plate = THORNMARK.find((i) => i.id === 'plate')!;
 const watchStaff = SUNDERWOOD.find((i) => i.id === 'watch_staff')!;
+const ironwoodBow = SUNDERWOOD.find((i) => i.id === 'ironwood_bow')!;
 
 // Sold at Anvilhall's forge (#459): a step past the Sunder's finds for every class, at 17.
 export const forgeHammer = W('forge_hammer', 'Forge Hammer', 1400, 2, 10, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
@@ -58,4 +60,16 @@ export const ITEMS: readonly ItemDef[] = [
   // N4's secret (#461): in the wagon yard behind the headworks, left in a cage by the cargo, which came
   // from the coast; off the ladder, a coat the medium wearers have a level before the forge's mail.
   P(sharkskin, 2),
+  // The Tiefzeche's old workings (#462): in the Hand's cages on the rails, what the cargo left, off the
+  // ladder, for the classes the Fells' finds miss: this bow, and a Warden's Dirk +2 (Sunderwood's), each
+  // at the forge's blow a level before it.
+  P(ironwoodBow, 2),
+  // The parts the machines carry, which no shop buys and no hand-in takes (MONSTERS §2): a plate off a
+  // knocker, the Mender's spool of wire and the Foreman's slate, its list with nothing ticked.
+  { id: 'knocker_plate', name: "Knocker's Plate", slot: 'none', price: 0 },
+  { id: 'mender_spool', name: "Mender's Spool", slot: 'none', price: 0 },
+  { id: 'foreman_slate', name: "The Foreman's Slate", slot: 'none', price: 0, text: [
+    'A slate of the same smooth grey as the knockers, rows cut down it close in the old script.',
+    'At the end of every row, a box. None is ticked.',
+  ] },
 ];

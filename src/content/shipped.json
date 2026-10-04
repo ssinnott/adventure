@@ -790,6 +790,79 @@
       "groups": [],
       "doors": []
     },
+    "deep_mines": {
+      "size": "16x16",
+      "used": [
+        "dm1_candles",
+        "dm1_crust",
+        "dm1_door1",
+        "dm1_door2",
+        "dm1_door3",
+        "dm1_face",
+        "dm1_hall",
+        "dm1_hole",
+        "dm1_in",
+        "dm1_niche",
+        "dm1_warm",
+        "dm1_well",
+        "dm1_well_chest"
+      ],
+      "groups": [
+        "dm1_beetles",
+        "dm1_worm"
+      ],
+      "doors": [
+        "13,10"
+      ]
+    },
+    "deep_mines2": {
+      "size": "16x16",
+      "used": [
+        "dm2_bore",
+        "dm2_cage_chest",
+        "dm2_cages",
+        "dm2_draught",
+        "dm2_fall",
+        "dm2_in",
+        "dm2_lamps",
+        "dm2_niche",
+        "dm2_prints",
+        "dm2_rails",
+        "dm2_stair",
+        "dm2_stall",
+        "dm2_well"
+      ],
+      "groups": [
+        "dm2_beetles",
+        "dm2_worms"
+      ],
+      "doors": [
+        "5,10"
+      ]
+    },
+    "deep_mines3": {
+      "size": "16x16",
+      "used": [
+        "dm3_corner",
+        "dm3_door",
+        "dm3_end",
+        "dm3_far",
+        "dm3_ledge",
+        "dm3_mouth",
+        "dm3_parts",
+        "dm3_parts_chest",
+        "dm3_rungs",
+        "dm3_tracks"
+      ],
+      "groups": [
+        "dm3_foreman",
+        "dm3_knockers1",
+        "dm3_knockers2"
+      ],
+      "doors": [
+        "5,10"
+      ]
+    },
     "drowned_temples": {
       "size": "16x16",
       "used": [
@@ -1663,6 +1736,7 @@
     "flail",
     "flail+1",
     "flail+2",
+    "foreman_slate",
     "foremans_tally",
     "forge_hammer",
     "forge_hammer+1",
@@ -1688,10 +1762,12 @@
     "ironshod_staff+1",
     "ironwood_bow",
     "ironwood_bow+1",
+    "ironwood_bow+2",
     "keepers_log",
     "key_iron",
     "kiln_robe",
     "kiln_robe+1",
+    "knocker_plate",
     "lamellar",
     "lantern_oil",
     "lanterns_roll",
@@ -1710,6 +1786,7 @@
     "marker_glass",
     "mattock",
     "mattock+1",
+    "mender_spool",
     "mending_kit",
     "meridian_journal",
     "morning_star",
