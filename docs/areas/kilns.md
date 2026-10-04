@@ -202,9 +202,9 @@ laid on it and its line to the heart held, §1; the heart 16–18, with N4 and N
 17–18), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the Tiefzeche 16–18, the Anvil
 Stone 17–18, Feuerstollen 17–18) as planned plates, the Tiefzeche's now its three levels' (#462),
 the sites (Anvilhall, the Deep Mines, the Forges, the Anvil Stone, the Lava Tubes, Kilnhaven, Iron
-Crag, to be renamed with #435, §10) and its links: the east road in, the towns' and the dungeons' ways in, the drove road on to High Moor, the
-ferry and the Compact ship, and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's coach
-(#434, call 9; #539 builds it).
+Crag, to be renamed with #435, §10) and its links: the east road in, the towns' and the dungeons'
+ways in, the drove road on to High Moor, the ferry and the Compact ship, and a new `coach` link,
+Kilnhaven to Rime Lodge, the drove road's coach (#434, call 9; #539 builds it).
 
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
 `src/content/progression.ts`: band 16–18, next 18, window 3,500, owed to #436 while the area is built
@@ -617,11 +617,12 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   is said, and the cage's gate on the shaft is the way down into the Tiefzeche (#462, §4.7), whose
   cage brings a company back up to the spur's end (§9). Beside the shaft are the winding house, its
   tally board counting loads down and none up, and the lookout from the gantry, south down the drove
-  road by day and to a red glow under a far crag by night. A crust is left on the shaft's fence. Over the shaft the lamp-niche (luck) has the box's
-  inscription, the miners' blessing, which a reader reads COUNT ALL DOWN. COUNT ALL UP. By night a
-  cart comes down the trail with its lamps hooded and turns in for the headworks, the Hand's
-  overseers seen and not fought. Below the shaft the fresh spoil is tipped toward the trail: four
-  fire beetles at its head and three salamanders and a beetle at its warm end, the roster's fight.
+  road by day and to a red glow under a far crag by night. A crust is left on the shaft's fence.
+  Over the shaft the lamp-niche (luck) has the box's inscription, the miners' blessing, which a reader
+  reads COUNT ALL DOWN. COUNT ALL UP. By night a cart comes down the trail with its lamps hooded and
+  turns in for the headworks, the Hand's overseers seen and not fought. Below the shaft the fresh
+  spoil is tipped toward the trail: four fire beetles at its head and three salamanders and a beetle
+  at its warm end, the roster's fight.
   The wagon yard is walled into the rock behind the headworks, a wagon's width of its wall new
   mortar. Searched there, the wall gives on the cages the cargo rode down in, a name scratched on a
   bar and a child's shoe in the straw; in the overseers' strongbox, 700 gold and a Sharkskin Coat +2
@@ -711,10 +712,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   rest, inside the aim. At 17 it wins every fight with the knockers and half with the Foreman, which
   it wins 95% at 19; the bottom's day runs 9.64 fights to a rest, 13.3% of its days ending in a fight
   broken off, and its groups pooled with the Foreman are won 83.3%, both off the aim and inside the
-  limit (§9).
-  Two under, at 14, the upper two are won every time, owed to #18. As measured the three levels pay
-  4,278 xp a member and 2,550 gold. Density 100% within 7 on each, the furthest 4, 4 and 5, with one
-  sign among 18 and 19 points on the upper two and none among the bottom's 15.
+  limit (§9). Two under, at 14, the upper two are won every time, owed to #18. As measured the three
+  levels pay 4,278 xp a member and 2,550 gold. Density 100% within 7 on each, the furthest 4, 4 and
+  5, with one sign among 18 and 19 points on the upper two and none among the bottom's 15.
 
 ### 4.8 N5, Gluthutte (#463): core, band 17
 
@@ -1748,7 +1748,7 @@ Decided by delegate for #462, each the owner's to overturn:
 12. **The Hand's overseers are seen, not fought,** as on N4 (#461's 5): their lamps go away down the
     bore by night, and the cages, their fresh straw and the cargo's footprints say the rest.
 13. **The machines carry parts, three keepsakes** with no price and no hand-in: a Knocker's Plate,
-    which about one knocker in six drops; the Mender's Spool, which every mender drops; and the
+    which about one knocker in seven drops; the Mender's Spool, which every mender drops; and the
     Foreman's Slate, its list with no box ticked, read from the pack. The knockers' room holds a plate.
 14. **The finds:** the ladder's Forge Hammer +1 in the knockers' room; in the cages an Ironwood Bow +2
     and a Warden's Dirk +2, Sunderwood's, at the forge's blow a level before it, for the ranger and

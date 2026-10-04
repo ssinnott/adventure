@@ -15,7 +15,7 @@ export const SPRITES = [
 
 export const MONSTERS: readonly MonsterDef[] = [
   // the Tiefzeche's lowest level (#462), fodder on MONSTERS §4.4's line at 16, six to a mender: the first machine on the road;
-  // it carries no gold, only parts, and one in six or so a plate of its own
+  // it carries no gold, only parts, and about one in seven a plate of its own
   { id: 'knocker', name: 'Knocker', plural: 'Knockers', sprite: 'knocker', kind: 'machine', look: 'Something small and grey, knocking on the rock as it comes.', level: 16, hp: 127, ac: 18, attack: 9, dice: 3, sides: 5, bonus: 2, speed: 12, xp: 317, gold: [0, 0], drops: [{ item: 'knocker_plate', chance: 0.15 }], tint: '#84878e', size: 0.45 },
   // with the knockers (#462), a healer on a soldier's numbers at 17 (MONSTERS §4.2): Mending Light on its group, one turn in
   // two that one of it is hurt (at every turn a bot that never singles it out broke off half its days at fifteen rounds); it
