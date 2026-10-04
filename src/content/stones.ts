@@ -26,7 +26,10 @@ export const STONES: readonly Wardstone[] = [
   { name: 'Tide Stone', area: 'saltreach', restored: { flag: 'q_tide_home' } },
   // Not the Grove's end (q_grove_done): it counts once a Lantern has mended it (#56's 18).
   { name: 'Grove Stone', area: 'thornmark', restored: { flag: 'q_grove_mended' }, owed: '#56' },
-  { name: 'Anvil Stone', area: 'kilns' },
+  // Counts once the Warden of the Anvil has fallen and the tear is closed, bought back or taken alike: the thane's
+  // choice is how the Stone came to the company, not what restores it (docs/areas/kilns.md §9, #540). Its flag is owed
+  // to #470 in tools/tests/quests.ts's UNSET: the Rift sets it (#465) and the Kilns' chapter reads it.
+  { name: 'Anvil Stone', area: 'kilns', restored: { flag: 'q_anvil_closed' } },
   { name: 'Peak Stone', area: 'whitespine' },
   { name: 'Ember Stone', area: 'ashfall' },
 ];
