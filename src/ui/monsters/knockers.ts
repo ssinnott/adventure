@@ -14,6 +14,13 @@
 // The Knocker: something small and grey, knocking on the rock as it comes. Two feelers off the
 // cowl end in knobs, and it raps the ground ahead with them in turn. Idle: the wave runs down the
 // legs, the knobs knock, the lamp burns steady and now and then dims for a moment, as a blink.
+//
+// The Tallyman: it stops and clicks, once for each of you. A knocker grown bigger and slate-blue,
+// its front lifted off the ground so the cowl faces the company square, and every plate of it but
+// the one with the mark cut over with tallies, fours and a stroke across, rows of them. Along the
+// cowl behind the lamp, a row of six small lights. It has come up through the ice: frost along its
+// back and icicles off the lip of its shell. Idle: it stands, and a light comes on with each click,
+// six, the lamp dipping at each; then they all go out together and the count begins again.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -22,7 +29,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['knocker', 'mender', 'foreman'];
+export const KINDS: readonly MonsterSprite[] = ['knocker', 'mender', 'foreman', 'tallyman'];
 
 /**
  * The frame's parts, as proportions of the knocker's where they are numbers (1 = the knocker, 0 =
@@ -56,6 +63,12 @@ interface Build {
   needle: number;
   /** The slate held up, the list on it, and the stylus that goes down it, 0 none: the Foreman's. */
   slate: number;
+  /** The row of lights along the cowl that come on one a click, 0 none: the tallyman's count. */
+  count: number;
+  /** The tallies cut over every plate but the mark's, 0 none: the tallyman's. */
+  tally: number;
+  /** Frost along the back and icicles off the shell's lip, 0 none: the tallyman's, up through the ice. */
+  rime: number;
   /** How large the mark is cut, and where along the body (0 the tail, 1 the cowl). */
   mark: number;
   markAt: number;
@@ -66,7 +79,7 @@ interface Build {
   arcHex: string;
 }
 const KNOCKER: Build = {
-  length: 1, dome: 1, taper: 0, rear: 0, plates: 6, legs: 6, stance: 1, step: 1, cowl: 1, feelers: 1, spool: 0, needle: 0, slate: 0, mark: 1, markAt: 0.42,
+  length: 1, dome: 1, taper: 0, rear: 0, plates: 6, legs: 6, stance: 1, step: 1, cowl: 1, feelers: 1, spool: 0, needle: 0, slate: 0, count: 0, tally: 0, rime: 0, mark: 1, markAt: 0.42,
   lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
 };
 /**
@@ -76,7 +89,7 @@ const KNOCKER: Build = {
  * and out, and the light at its point flares each time.
  */
 const MENDER: Build = {
-  length: 0.9, dome: 1.22, taper: 0, rear: 0, plates: 5, legs: 5, stance: 1.05, step: 1, cowl: 1, feelers: 0.5, spool: 1, needle: 1, slate: 0, mark: 1, markAt: 0.6,
+  length: 0.9, dome: 1.22, taper: 0, rear: 0, plates: 5, legs: 5, stance: 1.05, step: 1, cowl: 1, feelers: 0.5, spool: 1, needle: 1, slate: 0, count: 0, tally: 0, rime: 0, mark: 1, markAt: 0.6,
   lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
 };
 /**
@@ -87,12 +100,16 @@ const MENDER: Build = {
  * the company and bows to the slate again.
  */
 const FOREMAN: Build = {
-  length: 1.25, dome: 0.86, taper: 0.38, rear: 1, plates: 10, legs: 6, stance: 1.2, step: 0.35, cowl: 1.1, feelers: 0, spool: 0, needle: 0, slate: 1, mark: 1.35, markAt: 0.25,
+  length: 1.25, dome: 0.86, taper: 0.38, rear: 1, plates: 10, legs: 6, stance: 1.2, step: 0.35, cowl: 1.1, feelers: 0, spool: 0, needle: 0, slate: 1, count: 0, tally: 0, rime: 0, mark: 1.35, markAt: 0.25,
+  lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
+};
+const TALLYMAN: Build = {
+  length: 1.08, dome: 1.06, taper: 0.12, rear: 0.46, plates: 7, legs: 6, stance: 1.12, step: 0.3, cowl: 1.14, feelers: 0, spool: 0, needle: 0, slate: 0, count: 1, tally: 1, rime: 1, mark: 1.1, markAt: 0.3,
   lampHex: '#fff3c4', glowHex: '#ffc860', arcHex: '#d8f0ff',
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  knocker(ctx, x, y, h, p, kind === 'mender' ? MENDER : kind === 'foreman' ? FOREMAN : KNOCKER);
+  knocker(ctx, x, y, h, p, kind === 'mender' ? MENDER : kind === 'foreman' ? FOREMAN : kind === 'tallyman' ? TALLYMAN : KNOCKER);
 };
 
 interface Pt { x: number; y: number }
@@ -195,12 +212,17 @@ function nz(a: number, b: number): number {
 function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, b: Build): void {
   const t = p.frame, u = h / 100;
   const f: F = { u, X: (v) => x + v * u, Y: (v) => y - v * u };
-  // The Foreman looks from the slate to the company and back: a slow lift and bow of the cowl.
-  const look = b.rear > 0 ? smooth(0, 1, 0.5 + 0.5 * Math.sin(t / 23)) : 0;
+  // The tallyman's count: a click every 14 frames, six of them, the lights held a while and then all
+  // put out together. `counted` is how many are lit; `click` jumps at each and dies away.
+  const ck = t % 126, counted = b.count > 0 ? (ck < 84 ? Math.floor(ck / 14) + 1 : ck < 110 ? 6 : 0) : 0;
+  const click = b.count > 0 && ck < 84 && ck % 14 < 5 ? 1 - (ck % 14) / 5 : 0;
+  // The Foreman looks from the slate to the company and back: a slow lift and bow of the cowl. The
+  // tallyman faces the company, and nods at each click.
+  const look = b.slate > 0 ? smooth(0, 1, 0.5 + 0.5 * Math.sin(t / 23)) : b.count > 0 ? 0.85 - 0.3 * click : 0;
   const body = layout(b, 1 - look);
   const shell = p.base, under = shade(mix(p.dark, '#1c1e24', 0.45), 0.92), joint = shade(mix(p.light, '#e8ecf0', 0.25), 1);
   const ink = shade('#14161a', Math.max(0.6, p.tone));
-  const lampOn = (t % 160) < 150 ? 1 : 0.35;   // a blink, now and then
+  const lampOn = b.count > 0 ? 1 - 0.5 * click : (t % 160) < 150 ? 1 : 0.35;   // a blink, now and then; the tallyman's dips at each click
   const g0 = body.at(0), g1 = body.at(body.ground);
   groundShadow(ctx, f.X((g0.x + g1.x) / 2 + 3), y + 1, (g1.x - g0.x + 30) * u);
   // Where the lamp sits, in the cowl's face, and the light it throws on the rock ahead of a body on the ground.
@@ -258,11 +280,14 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
     }
   }
   // --- the chisel's mark, cut into a plate -------------------------------------------------------
+  const markPlate = Math.min(b.plates - 1, Math.floor(b.markAt * b.plates));
   {
-    const k = Math.min(b.plates - 1, Math.floor(b.markAt * b.plates)), s = ((k + 0.5) / b.plates) * COWL, d = body.dir(s);
+    const s = ((markPlate + 0.5) / b.plates) * COWL, d = body.dir(s);
     const c = add(body.at(s), body.up(s), (body.r(s) - body.rb(s)) * 0.5 - 0.5);
     chiselMark(ctx, f, c, 5 * b.mark, Math.atan2(d.y, d.x), shell);
   }
+  if (b.tally > 0) tallies(ctx, f, body, b, markPlate, shell);
+  if (b.rime > 0) rime(ctx, f, body, b, h, p.tone);
 
   // --- the cowl: a plate of its own over the shell's front, and the lamp in its face ----------------
   const cowl = shade(shell, 1.07);
@@ -278,6 +303,7 @@ function knocker(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
     // The brow's shadow across the top of the lens.
     const sc = add(lampC, n1, lr * 0.5);
     ctx.fillStyle = rgba(ink, 0.32); ctx.beginPath(); ctx.ellipse(f.X(sc.x), f.Y(sc.y), lr * 0.72 * u, lr * 0.26 * u, -Math.atan2(d1.y, d1.x), 0, Math.PI * 2); ctx.fill();
+    if (b.count > 0) countLights(ctx, f, body, b, counted, click, ink);
   }
 
   // --- the feelers, and the knobs on them that knock --------------------------------------------------
@@ -316,9 +342,10 @@ function line(ctx: CanvasRenderingContext2D, pts: readonly number[], col: string
 
 /**
  * The chisel's mark: a lozenge on a stem, cut straight and even into the plate, the same on every
- * knocker. A cut is a dark groove with its far wall lit; under a few pixels it is the groove alone.
+ * knocker and every keeper (keepers.ts). A cut is a dark groove with its far wall lit; under a few
+ * pixels it is the groove alone.
  */
-function chiselMark(ctx: CanvasRenderingContext2D, f: F, c: Pt, s: number, rot: number, shell: string): void {
+export function chiselMark(ctx: CanvasRenderingContext2D, f: F, c: Pt, s: number, rot: number, shell: string): void {
   if (B.override) return;
   const ca = Math.cos(rot), sa = Math.sin(rot);
   const P = (dx: number, dy: number): [number, number] => [f.X(c.x + dx * ca - dy * sa), f.Y(c.y + dx * sa + dy * ca)];
@@ -333,6 +360,72 @@ function chiselMark(ctx: CanvasRenderingContext2D, f: F, c: Pt, s: number, rot: 
       st.forEach(([dx, dy], i) => { const [px, py] = P(dx * s, dy * s); (i ? ctx.lineTo(px + off, py + off) : ctx.moveTo(px + off, py + off)); });
       ctx.stroke();
     }
+  }
+}
+
+/**
+ * The tallyman's tallies: on every plate but the one with the mark, rows of them scratched across
+ * the plate, bright where the scratch goes through, four strokes and one across, the last of a row
+ * left short. Finer than the mark, and under a few pixels no more than a scuffing of the plate.
+ */
+function tallies(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, markPlate: number, shell: string): void {
+  if (B.override) return;
+  const cut = rgba(mix(shell, '#ffffff', 0.55), 0.5), w = Math.max(1, 0.34 * f.u), L = 84 * b.length;
+  for (let k = 0; k < b.plates; k++) {
+    if (k === markPlate) continue;
+    const s0 = (k / b.plates) * COWL, span = (COWL / b.plates) * L;
+    for (const [row, v] of [[1, 0.36], [2, 0.64]] as const) {
+      // Groups of four strokes and one across, a row begun at a different place on each plate, and
+      // the last group of a row left short.
+      for (let at0 = 1.6 + nz(k, row) * 1.8, g = 0; at0 + 2.6 < span - 1.4; at0 += 4.3 + nz(k + g, row + 5) * 0.8, g++) {
+        const last = at0 + 7 >= span - 1.4, strokes = last ? 1 + Math.floor(nz(k * 7 + g, row) * 5) : 5;
+        const ends: Pt[][] = [];
+        for (let i = 0; i < Math.min(4, strokes); i++) {
+          const s = s0 + (at0 + i * 0.95) / L, n = body.up(s);
+          const c = add(body.at(s), n, -body.rb(s) + v * (body.r(s) + body.rb(s)));
+          ends.push([add(c, n, -1.1), add(c, n, 1.1)]);
+        }
+        for (const [a, z] of ends) line(ctx, flat(f, [a, z]), cut, w);
+        if (strokes === 5 && ends.length === 4) line(ctx, flat(f, [add(ends[0][0], body.dir(s0), -0.5), add(ends[3][1], body.dir(s0), 0.5)]), cut, w);
+      }
+    }
+  }
+}
+
+/**
+ * The tallyman's rime, from coming up through the ice: frost lying along the crest of its back, and
+ * icicles hanging off the lip of the shell between the legs, rooted in it so they are one piece with it.
+ */
+function rime(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, h: number, tone: number): void {
+  const frost = shade('#eef6fa', Math.max(0.6, tone)), crest: Pt[] = [];
+  for (let i = 0; i <= 14; i++) { const s = 0.06 + (COWL - 0.1) * (i / 14); crest.push(add(body.back(s), body.up(s), -1.6)); }
+  if (!B.override) {
+    for (let i = 0; i < crest.length - 1; i += 2) {
+      const r = (1.5 + 1.4 * nz(i, 11)) * b.rime * f.u;
+      ctx.fillStyle = rgba(frost, 0.55); ctx.beginPath(); ctx.ellipse(f.X(crest[i].x), f.Y(crest[i].y), r * 1.8, r, 0, 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  const icicles: Part[] = [];
+  for (let i = 0; i < 7; i++) {
+    const s = 0.08 + (body.ground - 0.14) * ((i + 0.3 * nz(i, 19)) / 6.3), root = add(body.belly(s), body.up(s), 1.4), len = (1.6 + 4.6 * nz(i, 13)) * b.rime, wd = 0.5 + 0.35 * nz(i, 17);
+    icicles.push({ k: 'poly', pts: flat(f, [add(root, { x: -wd, y: 0 }), add(root, { x: wd, y: 0 }), { x: root.x + 0.15, y: root.y - 1.4 - len }]) });
+  }
+  blob(ctx, B, mix(frost, '#a8c8dc', 0.3), icicles, { h, form: false, spread: 0.6, gloss: 0.7 });
+}
+
+/**
+ * The tallyman's count: six small lights in a row along the side of the cowl, behind the lamp, each
+ * in a dark socket; `counted` of them lit, the newest flaring as it clicks on.
+ */
+function countLights(ctx: CanvasRenderingContext2D, f: F, body: Body, b: Build, counted: number, click: number, ink: string): void {
+  for (let i = 0; i < 6; i++) {
+    const s = COWL + 0.018 + (1 - COWL - 0.03) * (i / 5), q = add(body.at(s), body.up(s), -body.rb(s) + 0.6 * (body.r(s) + body.rb(s)));
+    const r = Math.max(0.7, 0.95 * b.count * f.u), lit = i < counted;
+    ctx.fillStyle = rgba(ink, 0.75); ctx.beginPath(); ctx.arc(f.X(q.x), f.Y(q.y), r * 1.3, 0, Math.PI * 2); ctx.fill();
+    if (!lit) continue;
+    const fresh = i === counted - 1 ? click : 0;
+    glow(ctx, B, f.X(q.x), f.Y(q.y), r * (3 + 2 * fresh), b.glowHex, 0.35 + 0.4 * fresh, b.lampHex);
+    ctx.fillStyle = mix(b.glowHex, b.lampHex, 0.6 + 0.4 * fresh); ctx.beginPath(); ctx.arc(f.X(q.x), f.Y(q.y), r, 0, Math.PI * 2); ctx.fill();
   }
 }
 
