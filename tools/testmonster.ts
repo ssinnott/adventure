@@ -46,7 +46,9 @@ export function line(level: number): { hp: number; ac: number; hit: number; dmg:
  * The levels the calibration is made at: each one to 10, then every fourth to the road's cap. Past
  * 10 the company runs on play's rules: its spells stopped growing, its prestiges taken at 11, 19
  * and 27 with their spell ranks (#19, #20) and tiers 6 and 7 at 15 and 23 (#20), dressed by the
- * ladder to its top at 16 (#399) and made again with it (#18). Levels between are interpolated.
+ * ladder to 16 (#399) and made again with it (#18). Act III's steps take the ladder's top to 22
+ * (#535), and the levels past 16 wait to be made again with them (#541). Levels between are
+ * interpolated.
  */
 export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32] as const;
 

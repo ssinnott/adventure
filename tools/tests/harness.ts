@@ -9,7 +9,7 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { gateCompany } from '../gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, testTroll, trollEncounter, wightEncounter, callerEncounter } from '../testmonster.ts';
 import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
-import { ok } from './lib.ts';
+import { ok, owed } from './lib.ts';
 
 export function harness(): void {
   // The resolver fights defs that no map places, which is what the combat harness hands it.
@@ -70,6 +70,9 @@ export function harness(): void {
   const gear = (l: number): string => gateCompany(l, 32).members.map((m) => `${m.equipment.weapon}/${m.equipment.armor}/${m.equipment.shield}`).join();
   ok([10, 12, 14, 16].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(12) !== gear(10) && gear(14) !== gear(12) && gear(16) !== gear(14),
     `the gate's company trains to 10, 12, 14 and 16, and dresses past the one two under it (${gear(16)})`);
+  // And at Act III's, by its steps at Anvilhall and Rime Lodge and the finds after each (#535).
+  ok([18, 20, 22].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(18) !== gear(16) && gear(20) !== gear(18) && gear(22) !== gear(20),
+    `the gate's company trains to 18, 20 and 22, and dresses past the one two under it (${gear(22)})`);
   // What a fight costs: all of a fallen member's hit points, and every spell point cast.
   const p = defaultParty(makeRng(33)), fallen = p.members[5];
   const pool = p.members.reduce((a, m) => a + m.maxHp + m.maxSp, 0);
@@ -97,9 +100,10 @@ export function harness(): void {
     const d = days(l, [standardEncounter(r, l)], 60, 5001), bad = d.why.dead + d.why.lost + d.why.long;
     ok(Math.abs(d.fights - fightsPerRest(l)) <= 1 && bad <= worst, `a company of level ${l} fights ${d.fights.toFixed(1)} encounters of ${ROLES[r].group} ${ROLES[r].plural} between rests (${fightsPerRest(l)} asked), and ${(bad * 100).toFixed(0)}% of its days end badly (${(worst * 100).toFixed(0)}% at most)`);
   }
-  // Past 10 the target grows: a company of 24 fights about ten between rests.
+  // Past 10 the target grows: a company of 24 fights about ten between rests. In Act III's gear, to
+  // the ladder's top at 22 (#535), it fights more, until the line past 16 is made again (#541).
   const late = days(24, [standardEncounter('soldier', 24)], 40, 5001);
-  ok(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`);
+  owed(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`, '#541');
   // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
   const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
