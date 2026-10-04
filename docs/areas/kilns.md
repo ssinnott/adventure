@@ -1711,8 +1711,8 @@ Decided by delegate for #463, each the owner's to overturn:
     (456,150, #464), to be run on to the Stone; the stream at M5's 31,25 and 31,26, with no road
     across that edge (#474, parked); the elder's flag, the Rift's (#465).
 
-Decided for #467, each the owner's to overturn, the first by the orchestrator and the rest by
-delegate:
+Decided for #467, each the owner's to overturn, the first and the last by the orchestrator and the
+rest by delegate:
 
 1. **The roster call, binding for N6, M6, L6 and O6:** the curve asks a box's hardest group at its
    floor and one more at least, and the roster's only surface 18 is the slag elder, a Rift's thing.
@@ -1765,6 +1765,12 @@ delegate:
     M5's 23 to 26,31 (415 to 418,157), with no road (#474, parked); on N6's east the grass and the
     heather against O6, with no road (#466); on M6's south the grass and the hill against
     Cairnmoor's M7, with no road.
+15. **The save budget scales with the content:** `tools/tests/save.ts` held the outdoors' saved state
+    under a fixed 20,000 characters, and N6's and M6's five groups took it to 20,106, as every later
+    box would. It now holds the state to its explored bits as stored, which the world's size fixes,
+    60 characters for each group the outdoors holds as played and 1,000 to spare: 24,923 today. It
+    still fails if the cells are kept a number apiece or a group's state grows past 60 characters,
+    and its probes show both.
 
 ## 10. Names
 

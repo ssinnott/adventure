@@ -16,6 +16,11 @@ import { LEGACY_WEATHER_SEED } from '../../src/game/world.ts';
 import type { WorldState } from '../../src/game/world.ts';
 import { ok, local } from './lib.ts';
 
+/** What the outdoors' saved state may spend on a group, about half again its position and its death. */
+const GROUP_CHARS = 60;
+/** What the outdoors' saved state may spend past its explored bits and its groups: what it has used, its doors. */
+const SLACK = 1000;
+
 export function save(): void {
   const rng = makeRng(9);
   const party = defaultParty(rng);
@@ -29,10 +34,25 @@ export function save(): void {
   const world2 = new World(buildMaps(), data.party, makeRng(1), data.world);
   ok(world2.map.at(7, 11).door === 'door', 'loading re-applies the unlocked door to fresh map content');
   ok(seen(world2.state.maps.harrow.explored, 14 * 16 + 7) && world2.state.mapId === 'mill' && world2.state.x === 7, 'loading keeps the explored cells and the position');
-  { // The outdoors saves small: its cells seen are kept a bit apiece.
+  { // The outdoors saves small: its cells seen are kept a bit apiece, 32 to a number, and each group's
+    // state in a few characters. The bound grows with the content, as a fixed one would fail every box
+    // that adds groups: the explored bits as stored, which the world's size fixes, GROUP_CHARS for
+    // each group the outdoors holds as played, and SLACK to spare (#467).
     world.travel('shelf', 16, 8, 2);
-    const outdoors = JSON.stringify(world.state.maps[OUTDOORS]).length;
-    ok(outdoors < 20_000 && seen(world.state.maps[OUTDOORS].explored, world.state.y * world.map.width + world.state.x), `the whole outdoors' state saves in ${outdoors} characters, and it knows where the party has been`);
+    const ms = world.state.maps[OUTDOORS], cells = world.map.width * world.map.height, groups = world.map.encounters.length;
+    const aBitApiece = (explored: readonly number[]): boolean => explored.length === Math.ceil(cells / 32) && JSON.stringify(explored).length < cells;
+    const bits = JSON.stringify(ms.explored).length, groupChars = JSON.stringify(ms.groups).length, budget = bits + GROUP_CHARS * groups + SLACK;
+    const outdoors = JSON.stringify(ms).length;
+    ok(aBitApiece(ms.explored), `the outdoors' ${cells} cells are kept a bit apiece, 32 to a number, in ${bits} characters`);
+    ok(groupChars <= GROUP_CHARS * groups, `its ${groups} groups' state takes ${groupChars} characters, inside ${GROUP_CHARS} a group`);
+    ok(outdoors <= budget && seen(ms.explored, world.state.y * world.map.width + world.state.x),
+      `the whole outdoors' state saves in ${outdoors} characters, inside ${budget}: its explored bits' ${bits}, ${GROUP_CHARS} for each of its ${groups} groups and ${SLACK} to spare; and it knows where the party has been`);
+    // And the bound still bites: the cells kept a number apiece fail it, and so does a group's state
+    // grown past GROUP_CHARS.
+    ok(!aBitApiece(new Array(cells).fill(0)), `kept a number apiece, the cells would fail it (${JSON.stringify(new Array(cells).fill(0)).length} characters for ${cells} cells)`);
+    const fat = Object.fromEntries(Object.entries(ms.groups).map(([id, g]) => [id, { ...g, pad: 'x'.repeat(GROUP_CHARS) }]));
+    const fatChars = JSON.stringify(fat).length, fatAll = JSON.stringify({ ...ms, groups: fat }).length;
+    ok(fatChars > GROUP_CHARS * groups && fatAll > budget, `and a group's state grown past ${GROUP_CHARS} characters would fail it (${fatChars} characters for ${groups} groups; ${fatAll} in all, against ${budget})`);
   }
   ok(data.world.weatherSeed === world.state.weatherSeed && JSON.stringify(world2.weather) === JSON.stringify(world.weather), 'the weather seed round-trips, and with it the weather');
   // A save from before there was weather has no seed: it loads with the legacy one and keeps it.
