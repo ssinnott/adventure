@@ -6,7 +6,7 @@ import { is } from '../input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect, logTail, COMBAT_LOG_LINES } from './frame.ts';
-import { drawMonsterSprite, combatHeight } from './sprites.ts';
+import { drawMonsterSprite } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
@@ -14,8 +14,9 @@ import type { CombatState, PartyAction } from '../game/combat.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
 import { item } from '../game/items.ts';
 import { weaponOf } from '../game/party.ts';
-import { groupLabels, seatOf, crown, MARKER_RISE, LABEL_TOP, BACK_SCALE } from './grouplabels.ts';
+import { groupLabels, crown, MARKER_RISE, LABEL_TOP } from './grouplabels.ts';
 import type { LabelLine } from './grouplabels.ts';
+import { seatRow } from './row.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | 'itemTarget' | 'done';
 const MONSTER_DELAY = 22;
@@ -187,26 +188,18 @@ export class CombatScreen implements Screen {
     drawViewport(ctx, g.world, v, () => null, frame, false);
     ctx.fillStyle = 'rgba(10,8,12,0.28)'; ctx.fillRect(v.x, v.y, v.w, v.h);
     // Monsters in a row, grouped, with a marker on the targeted one. A back rank has a row of its own,
-    // behind the front and smaller, each of it between two of the front.
+    // behind the front and smaller, each of it between two of the front (ui/row.ts).
     const alive = aliveMonsters(s);
     const t = currentTurn(s, g.party, g.rng);
     const targeting = (this.mode === 'target' || this.mode === 'spellTarget') && t?.side === 'party';
     const aimed = targeting && t ? this.targets(g, t.i)[this.sub] : -1;
-    const n = alive.length, front = alive.filter((mi) => !s.monsters[mi].back), rear = alive.filter((mi) => s.monsters[mi].back);
-    // Two lines of the same parity would stand one behind another, so each steps a quarter aside.
-    const ranked = front.length > 0 && rear.length > 0, step = ranked && (front.length - rear.length) % 2 === 0 ? 0.25 : 0;
-    const row = ranked ? Math.max(front.length, rear.length) : n, slot = v.w / Math.max(5, row + 2 * step);
-    const across = (mi: number): number => {
-      const back = ranked && s.monsters[mi].back, line = !ranked ? alive : back ? rear : front, k = line.indexOf(mi);
-      return v.x + (v.w - slot * line.length) / 2 + slot * (k + 0.5) + (back ? step : -step) * slot;
-    };
+    const row = seatRow(alive.map((mi) => s.monsters[mi]), v.w, v.h);
     // Painted from the back forward, so a tall boss on the third rank stands before its own and a
     // group's front before its back rank.
-    const seats = alive.map((mi, k) => ({ mi, k, foot: seatOf(s.monsters[mi], v.h, s.monsters[mi].def.size) })).sort((a, b) => a.foot - b.foot || a.k - b.k);
-    seats.forEach(({ mi, foot }) => {
+    const seats = alive.map((mi, k) => ({ mi, k, ...row[k] })).sort((a, b) => a.foot - b.foot || a.k - b.k);
+    seats.forEach(({ mi, x: across, foot, h }) => {
       const m = s.monsters[mi];
-      const x = across(mi), y = v.y + foot;
-      const h = combatHeight(m.def.size, n) * (m.back ? BACK_SCALE : 1), top = crown(m.def.size, h);
+      const x = v.x + across, y = v.y + foot, top = crown(m.def.size, h);
       if (m.flash > 0) m.flash--;
       // One called in since is taken as it comes; one that mends is followed up as well as down.
       const was = this.lastMonsterHp[mi] ?? m.hp;

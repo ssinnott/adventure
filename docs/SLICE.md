@@ -58,6 +58,8 @@ DESIGN.md first for the why.
   sleep ends with the fight (#161). A monster may mend each round but a round fire struck it
   (`regen`), curse with its hits and spend a turn calling its group into the fight while there is
   room for the whole of it under twelve monsters in three groups, the fallen counted (`calls`) (#537).
+  The first Smite or Wrath of the Hearth to pass through a machine and do nothing is followed in the
+  log by the light going into it like a hand into a glove, once a game (`glove_seen`, MONSTERS §2).
   A group placed on ice (`under: 'ice'`, #536) lives under it: it
   moves only under the ice, strikes only a company standing on the ice beside it and in the fight
   reaches only the front row over it, never the back, bow or none.
@@ -381,12 +383,17 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `tools/smoke.ts` declares apart (the wardens' shards, the acolyte's censer, the lampman's
   lantern, the adept's hand flame, the rift hound's and the Hand of Ash's embers, the wraith's
   fading cloth), and stands inside the view where a fight seats it, its foot 184 px below the
-  view's top (`seatFoot`); the smoke test holds it.
+  view's top (`seatFoot`), and within its span (below); the smoke test holds both.
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
-  three and four taper down, five is the old flat size and six goes under it. The row's spacing is
-  fixed, so every extra monster is width its neighbours do not have. A back rank stands in a row of
-  its own behind the front, a fifth smaller and between them (`BACK_RISE`, `BACK_SCALE`).
+  three and four taper down, five is the old flat size and six goes under it. Across the view the
+  row is seated by `seatRow` in `ui/row.ts`: each kind's span (`SPAN`, beside `FAMILY`) says how far
+  its drawing reaches either side of its centre, and neighbours stand a slot apart as they always
+  have, or further where they would overlap by more than a third of the narrower (`OVERLAP`). A row
+  that would run past the view's edge closes up, never past the third, and slides in; one still too
+  wide is drawn smaller, the whole fight at one scale, so every monster stands whole inside the view
+  with two pixels to spare (`SPAN_SLACK`). A row that fits stands as it did. A back rank stands in a
+  row of its own behind the front, a fifth smaller and between them (`BACK_RISE`, `BACK_SCALE`).
 - `ui/viewport.ts` textures every surface procedurally: stone courses (front faces and receding
   side faces), timber-framed houses with hipped roofs and windows lit at night, flagstones with
   mortar, grass tufts, pebbles, waves; a sky with a sun and moon on the compass, clouds, stars and
@@ -514,9 +521,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - `smoke`: `node tools/smoke.ts`, headless Chromium playing the game through the dev server: every
   screen painted with no page error, and a line for each check as well. Every run plays the same
   world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it). It holds every monster to
-  one silhouette and every pair of sprite part kinds to a union with no hole, and sweeps for cracks
-  between walls: one way from every square of the cellar, Helmstow, its keep and the ground's samples
-  (`tools/grounds.ts`, a small map each of ash, pine and ice) each run, all four
+  one silhouette and to its span (within 2 px at any size, and no more than a twentieth of a height
+  wider; it prints the span to write), every pair of sprite part kinds to a union with no hole, and
+  sweeps for cracks between walls: one way from every square of the cellar, Helmstow, its keep and
+  the ground's samples (`tools/grounds.ts`, a small map each of ash, pine and ice) each run, all four
   ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the pull request's base;
   `node tools/changed.ts <ref> maps` names them, and `monsters` or `interiors` the sheet's), or on
   those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_SHOT=<png>` saves a screenshot of the play, which
@@ -609,6 +617,10 @@ over content broken on purpose too, and two tools to theirs:
   together, labelled with each kind and its count of the living, but for a lone proper name ("The
   Eldest, 2 Heartwoods"). A kind leaves the label when its last one falls; every line stays inside
   the view and above the monsters' markers, running into no other.
+- `row`: every fight the maps can start, and the cap's worst (twelve of every kind drawn, those ahead
+  of their maps too, and three groups of the widest and of the tallest), seats every span inside the
+  view with no neighbour over more than a third of the next; a fight that fitted as the row stood
+  before stands as it did, and only a row too wide for the view is drawn smaller.
 - `art` (§5.6): every monster def its own sprite kind, each family module's `KINDS` the kinds
   `FAMILY` sends it and the walls dressed under their caps, each kind at its rate; a secret door
   outdoors among mountain, rock or trees drawn as they are (`drawnCell`), and any other door, or one
@@ -696,7 +708,7 @@ does.
 | `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
-| `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`; pure and seeded |
+| `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |
 | `game/quests.ts` | `QuestDef`, `Chapter` and `ChapteredQuest`; `questLog` (the quests known, their pages, entries and goal, worked out from the world state and party), `questNews` (what changed between two looks) |
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
@@ -708,10 +720,11 @@ does.
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
 | `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it, the skills a member has), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there or from a person (`skillMenu`), and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
-| `ui/combat.ts` | the combat screen (menus over the resolver) |
+| `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them |
+| `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
 | `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living (a lone proper name none), laid out inside the view; pure |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
-| `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, and the shared brush and helpers |
+| `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each kind's span (`SPAN`), and the shared brush and helpers |
 | `ui/create.ts` | party creation |
 | `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
 | `content/guilds.ts` | the four guilds (`GUILDS`: names and ranks), a guild quest's flags and its side of the quest log |

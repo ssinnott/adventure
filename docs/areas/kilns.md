@@ -1053,9 +1053,9 @@ Decided by delegate for #472 (the knockers), each the owner's to overturn:
 11. **They stand unplaced, owed to #462,** which seats six knockers and a mender twice in the clean
     corridor and the Foreman before the door.
 
-Owed elsewhere: MONSTERS §2's line for the first time the Hearth's light passes through a machine,
-*The light goes into it like a hand into a glove.*, is not in the combat log, which says only that a
-knocker takes 0. It is the systems lane's, wanted before #462 seats the knockers.
+Built since, in the systems lane: MONSTERS §2's line for the first time the Hearth's light passes
+through a machine, *The light goes into it like a hand into a glove.*, follows in the combat log the
+knocker that takes 0, once a game (MONSTERS §3).
 
 Decided by delegate for #535, each the owner's to overturn:
 
