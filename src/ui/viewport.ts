@@ -47,8 +47,8 @@ export const LANDMARK_REACH = 40;
 
 export interface ViewRect { x: number; y: number; w: number; h: number; }
 
-/** A figure the viewport draws for a group: the monster, its sprite, tint and size. */
-export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; }
+/** A figure the viewport draws for a group: the monster, its sprite, tint and size. `under` draws it under the ice. */
+export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; under?: 'ice'; }
 
 function unit(k: number, h: number): number { return (h / 2) * NEAR / (k + 0.5); }
 
@@ -89,6 +89,8 @@ const SNOW = '#eef2f7';
 export const SNOW_HOLD: Record<Terrain, number> = {
   grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, deadwood: 0.85, crystal: 0.5, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
   salt: 0.6, heather: 0.85, water: 0, deep: 0, lava: 0, chasm: 0, tidal: 0,
+  // The ash is warm and greys what falls on it; the pines keep some off; a frozen lake takes it all.
+  ash: 0.65, pine: 0.72, ice: 0.8,
 };
 type Ramp = readonly [number, string][];
 /** A colour through the year: the ramp's stops by day of the year, mixed between. */
@@ -109,6 +111,14 @@ export function heatherBloom(day: number): number { return Math.max(0, Math.min(
 function heatherColor(day: number): string { return mix('#644a48', '#7a4a6c', heatherBloom(day)); }
 /** The floor of the woods: the grass of the year in the trees' shade, over moss and leaf litter. */
 function woodsColor(day: number): string { return mix(grassColor(day), '#3e5028', 0.45); }
+/** The pinewoods' floor: needles and moss, brown through the year and a little greener in the spring. */
+function pineColor(day: number): string { return mix(TERRAIN_COLORS.pine, grassColor(day), 0.18); }
+/**
+ * A frozen lake through the year: white-grey deep in the winter and bluer and darker with meltwater
+ * in the summer, but never open (the lakes under the glacier keep their ice).
+ */
+const ICE: Ramp = [[0, '#c0d0dc'], [24, '#a8bccc'], [46, '#98b0c2'], [66, '#a8bcca'], [88, '#c4d4e0'], [104, '#d2dee8'], [120, '#c0d0dc']];
+export function iceColor(day: number): string { return rampColor(ICE, day); }
 
 /**
  * The crops of the fields through the year (Thaw is day 0, Harvest 45, Mistfall 75): wheat and
@@ -143,7 +153,8 @@ function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 
 function groundColor(t: Terrain, kind: string, floorPal: string, crop = 0): string {
   if (kind === 'dungeon') return floorPal;
   const terrain = asDrawn(t);
-  let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : terrain === 'heather' ? heatherColor(env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
+  let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : terrain === 'heather' ? heatherColor(env.day)
+    : terrain === 'pine' ? pineColor(env.day) : terrain === 'ice' ? iceColor(env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
   if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava' && terrain !== 'chasm') c = shade(c, 1 - 0.18 * env.wet);
   const s = env.cover * SNOW_HOLD[terrain];
   return s > 0 ? mix(c, SNOW, s) : c;
@@ -222,7 +233,8 @@ export function drawViewport(
       const n = ms.length;
       ms.forEach((m, i) => {
         const off = (i - (n - 1) / 2) * u * 0.8;
-        drawMonsterSprite(ctx, m.sprite, cx + l * 2 * u + off, horizon + u * 0.95, u * 2 * m.size, m.tint, tone, frame + i * 7);
+        if (m.under === 'ice') drawUnderIce(ctx, m, cx + l * 2 * u + off, cx, horizon, r.h, d, l, tone, frame + i * 7);
+        else drawMonsterSprite(ctx, m.sprite, cx + l * 2 * u + off, horizon + u * 0.95, u * 2 * m.size, m.tint, tone, frame + i * 7);
       });
     }
   }
@@ -235,6 +247,22 @@ export function drawViewport(
   }
   ctx.restore();
   if (weather) drawWeather(ctx, world, r, frame);
+}
+
+/**
+ * A figure under the ice: its shape dark through the ice, laid flat in its own square and clipped to
+ * it, so nothing of it stands over the ice.
+ */
+function drawUnderIce(ctx: CanvasRenderingContext2D, m: ViewMonster, x: number, cx: number, horizon: number, h: number, d: number, l: number, tone: number, frame: number): void {
+  const pt = (s: number, t: number): [number, number] => floorPt(cx, horizon, h, d, l, s, t);
+  const near = pt(0, 0)[1], far = pt(1, 0)[1], mid = (near + far) / 2, tall = unit(d, h) * 2 * m.size;
+  const squash = Math.min(0.45, ((near - far) * 0.8) / tall);
+  ctx.save();
+  ctx.beginPath(); addPoly(ctx, [pt(0, 0), pt(0, 1), pt(1, 1), pt(1, 0)]); ctx.clip();
+  ctx.globalAlpha = 0.4;
+  ctx.translate(x, mid); ctx.scale(1, squash); ctx.translate(-x, -mid);
+  drawMonsterSprite(ctx, m.sprite, x, mid + tall / 2, tall, m.tint, tone * 0.5, frame);
+  ctx.restore();
 }
 
 // ------------------------------------------------------------------ the scene ----
@@ -408,18 +436,18 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
-      } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood') && !backdrop) {
+      } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood' || cell.terrain === 'pine') && !backdrop) {
         // Light woods: a tree or two stand to the sides of the square, leaving the way through it open.
         // None stands on a side a wall or the void closes: drawn after them, it would stand in front.
-        // Dead wood stands the same, its trees dead.
-        const u = unit(d, r.h);
+        // Dead wood stands the same, its trees dead; the pinewoods closer, taller and all pines.
+        const u = unit(d, r.h), pine = cell.terrain === 'pine';
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
         for (const side of [-1, 1]) {
-          if (hash(c.x, c.y, 60 + side) < 0.3 || solidAt(d, l + side)) continue;
+          if (hash(c.x, c.y, 60 + side) < (pine ? 0.15 : 0.3) || solidAt(d, l + side)) continue;
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
-          const s = u * (0.5 + 0.2 * hash(c.x, c.y, 66 + side));
+          const s = u * (pine ? 0.55 + 0.25 * hash(c.x, c.y, 66 + side) : 0.5 + 0.2 * hash(c.x, c.y, 66 + side));
           if (cell.terrain === 'deadwood') drawDeadTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 3), env.cover);
-          else drawTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
+          else drawTreeSprite(ctx, bx, by, s, tone, pine ? 3 + Math.floor(hash(c.x, c.y, 68 + side) * 2) : Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
         }
       }
     }
@@ -899,7 +927,7 @@ function drawFloor(ctx: CanvasRenderingContext2D, laid: Terrain, kind: string, c
   for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
     const v = hash(seed, i, j) - 0.5;
     // Tiles vary a little; lying snow evens them out.
-    let col = shade(base, 1 + v * (flag ? 0.16 : terrain === 'grass' ? 0.12 : terrain === 'farm' ? 0.04 : 0.08) * (1 - 0.75 * env.cover));
+    let col = shade(base, 1 + v * (flag ? 0.16 : terrain === 'grass' ? 0.12 : terrain === 'farm' || terrain === 'ice' ? 0.04 : 0.08) * (1 - 0.75 * env.cover));
     if (terrain === 'water' || terrain === 'deep') col = shade(base, 1 + v * 0.1 + ((i + j) % 2) * 0.05);
     col = fog(col, d, dark, haze);
     // Flagstones sit inside a mortar gap; other terrains overlap a little so no seam shows.
@@ -925,7 +953,8 @@ function drawFloor(ctx: CanvasRenderingContext2D, laid: Terrain, kind: string, c
       ctx.strokeStyle = fog(shade(base, 0.55), d, dark, haze); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
     }
   }
-  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'deadwood' ? 5 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'salt' ? 5 : terrain === 'heather' ? 7 : terrain === 'tidal' ? 5 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2 : flag ? 2 : 0;
+  const deco = terrain === 'grass' ? 7 : terrain === 'woods' ? 6 : terrain === 'deadwood' ? 5 : terrain === 'dirt' ? 3 : terrain === 'sand' ? 4 : terrain === 'salt' ? 5 : terrain === 'heather' ? 7 : terrain === 'tidal' ? 5 : terrain === 'swamp' ? 3 : terrain === 'water' ? 3 : terrain === 'snow' ? 2
+    : terrain === 'ash' ? 6 : terrain === 'pine' ? 6 : terrain === 'ice' ? 4 : flag ? 2 : 0;
   for (let i = 0; i < deco; i++) {
     const s = hash(seed, 7, i), t = hash(seed, 9, i);
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
@@ -998,6 +1027,53 @@ function drawFloor(ctx: CanvasRenderingContext2D, laid: Terrain, kind: string, c
       }
       ctx.strokeStyle = fog(shade(base, 0.78), d, dark, haze); ctx.lineWidth = Math.max(1, sc * 0.8);
       ctx.beginPath(); ctx.moveTo(x - 5 * sc, y); ctx.quadraticCurveTo(x - 2.5 * sc, y - 1.2 * sc, x, y); ctx.quadraticCurveTo(x + 2.5 * sc, y + 1.2 * sc, x + 5 * sc, y); ctx.stroke();
+    } else if (terrain === 'ash') {
+      // Ash drifted and rippled by the wind, a cinder or two in it; now and then an ember, dull by
+      // day and glowing by night. A deep snow hides them.
+      if (env.cover > 0.55) continue;
+      if (i === 0) {
+        if (hash(seed, 58) > 0.25) continue;
+        const ew = Math.max(1, Math.round(3 * sc)), eh = Math.max(1, Math.round(1.5 * sc)), ex = Math.round(x), ey = Math.round(y - sc);
+        if (dark) { ctx.fillStyle = 'rgba(224, 100, 42, 0.3)'; ctx.beginPath(); ctx.ellipse(ex + ew / 2, ey + eh / 2, ew * 1.4, eh * 1.6, 0, 0, Math.PI * 2); ctx.fill(); }
+        ctx.fillStyle = dark ? '#e0642a' : fog('#7a3a26', d, dark, haze);
+        ctx.fillRect(ex, ey, ew, eh);
+      } else if (i === 1) {
+        // A drift, kept inside its square, so it never reaches the foot of a wall beyond.
+        if (d > 2) continue;
+        const ds = 0.25 + 0.45 * s, [px, py] = floorPt(cx, horizon, h, d, l, ds, 0.25 + 0.5 * t), pw = unitIn(d, ds, h) * (0.22 + 0.12 * hash(seed, 57)), ph = pw * 0.16;
+        ctx.beginPath(); ctx.ellipse(px, py, pw, ph, 0, 0, Math.PI * 2); ctx.fillStyle = fog(shade(base, 1.22), d, dark, haze); ctx.fill();
+      } else if (i < 4) {
+        ctx.strokeStyle = fog(shade(base, 1.7), d, dark, haze); ctx.lineWidth = Math.max(1, sc * 0.8);
+        ctx.beginPath(); ctx.moveTo(x - 5 * sc, y); ctx.quadraticCurveTo(x, y - 1.4 * sc, x + 5 * sc, y); ctx.stroke();
+      } else {
+        ctx.fillStyle = fog(i % 2 ? '#181616' : shade(base, 1.5), d, dark, haze);
+        ctx.beginPath(); ctx.ellipse(x, y, 1.4 * sc + 0.4, 0.9 * sc + 0.3, 0, 0, Math.PI * 2); ctx.fill();
+      }
+    } else if (terrain === 'pine') {
+      // Cones and needles under the pines, buried by a deep snow.
+      if (env.cover > 0.55) continue;
+      if (i < 2) {
+        ctx.fillStyle = fog(i ? '#6a4a2a' : '#7e5c34', d, dark, haze);
+        ctx.beginPath(); ctx.ellipse(x, y - sc, 1.6 * sc + 0.4, 1 * sc + 0.3, 0, 0, Math.PI * 2); ctx.fill();
+      } else {
+        const a = (hash(seed, 46, i) - 0.5) * 1.4, len = (2 + 3 * hash(seed, 48, i)) * sc;
+        ctx.strokeStyle = fog(i % 2 ? '#8a6a3c' : shade(base, 0.7), d, dark, haze); ctx.lineWidth = Math.max(1, sc * 0.7);
+        ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len * 0.4); ctx.lineTo(x + Math.cos(a) * len, y + Math.sin(a) * len * 0.4); ctx.stroke();
+      }
+    } else if (terrain === 'ice') {
+      // A frozen lake: a patch of black ice, the light lying along it and hairlines frozen into it.
+      // A deep snow lies over all of it.
+      if (env.cover > 0.55) continue;
+      if (i < 2) {
+        // The black ice and the light along it, kept inside the square, so neither reaches the foot of a wall beyond.
+        if (d > 2) continue;
+        const ds = 0.25 + 0.45 * s, [px, py] = floorPt(cx, horizon, h, d, l, ds, 0.25 + 0.5 * t), pw = unitIn(d, ds, h) * (i ? 0.3 : 0.18 + 0.1 * hash(seed, 59)), ph = pw * (i ? 0.08 : 0.2);
+        ctx.beginPath(); ctx.ellipse(px, py, pw, ph, 0, 0, Math.PI * 2); ctx.fillStyle = fog(shade(base, i ? 1.12 : 0.78), d, dark, haze); ctx.fill();
+      } else {
+        const a = (hash(seed, 60, i) - 0.5) * 1.6, len = (4 + 5 * hash(seed, 61, i)) * sc, b = a + (hash(seed, 62, i) - 0.5);
+        ctx.strokeStyle = fog(shade(base, 1.2), d, dark, haze); ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len * 0.4); ctx.lineTo(x, y); ctx.lineTo(x + Math.cos(b) * len, y + Math.sin(b) * len * 0.4); ctx.stroke();
+      }
     } else if (terrain === 'swamp') {
       ctx.strokeStyle = fog('#6a7a3a', d, dark, haze); ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 0.5 * sc, y - 7 * sc); ctx.moveTo(x + 2 * sc, y); ctx.lineTo(x + 1.5 * sc, y - 5 * sc); ctx.stroke();

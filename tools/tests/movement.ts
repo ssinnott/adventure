@@ -1,11 +1,14 @@
 // Moving about: steps and the clock, doors, keys and secrets, water and mountains, the end of the
-// world, the open pass walked into Thornmark and back, Town Portal, the stairs, and Helmstow's two
-// gates.
+// world, the open pass walked into Thornmark and back, Town Portal, the stairs, Helmstow's two
+// gates and a group under the ice.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
-import { LEGEND } from '../../src/game/map.ts';
+import { GameMap, LEGEND } from '../../src/game/map.ts';
+import type { EncounterDef, MapDef } from '../../src/game/map.ts';
+import { NORTH, EAST, WEST } from '../../src/game/types.ts';
+import type { Facing } from '../../src/game/types.ts';
 import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';
 import { logLines } from '../../src/ui/frame.ts';
 import { defaultParty, partyCan } from '../../src/game/party.ts';
@@ -242,4 +245,29 @@ export function movement(): void {
     ok(comes.includes('The tide has turned. The sea comes in over the sand.') && goes.includes('The tide has turned. The sea draws off the sand.'), `the tide turning is said near the flats, coming in at 04:00 and going out at 08:00 (${comes.concat(goes).join(' / ')})`);
     ok(!unseen.some((t) => t.includes('tide')), 'and not where there are none');
   }
+  underIce();
+}
+
+/**
+ * A group placed on ice (#536), on a frozen lake with a shore along its south: the pike under the
+ * ice strikes a company on the ice beside it and lets one on the shore beside it walk by. One that
+ * roams comes on under the ice and no further, and its fight is told it is under the ice.
+ */
+function underIce(): void {
+  const lake = (pike: Partial<EncounterDef>): MapDef => ({
+    id: 'fx_lake', name: 'Lake', kind: 'outdoor', start: { x: 1, y: 3, facing: NORTH },
+    rows: ['MMMMMMMM', 'M,iiii,M', 'M,iiii,M', 'M,,,,,,M', 'MMMMMMMM'],
+    encounters: [{ id: 'pike', x: 3, y: 2, monsters: ['fen_eel', 'fen_eel'], roams: false, under: 'ice', ...pike }],
+  });
+  const rng = makeRng(11);
+  const at = (def: MapDef, x: number, y: number, f: Facing): World => { const w = new World({ fx_lake: new GameMap(def) }, defaultParty(rng), rng); w.travel('fx_lake', x, y, f); return w; };
+  const step = (def: MapDef, x: number, y: number, f: Facing): string[] => { const r = at(def, x, y, f).move('forward'); return r.kind === 'moved' ? r.encounter ?? [] : ['blocked']; };
+  const onIce = step(lake({}), 5, 2, WEST), onShore = step(lake({}), 2, 3, EAST), dry = step(lake({ under: undefined }), 2, 3, EAST);
+  ok(onIce.join() === 'pike', `a pike under the ice strikes a company that steps onto the ice beside it (${onIce.join() || 'nothing'})`);
+  ok(!onShore.length && dry.join() === 'pike', `and lets one on the shore beside it walk by, where a group on the ice that is not under it comes on (${onShore.join() || 'nothing'}; ${dry.join() || 'nothing'})`);
+  // One that roams comes on under the ice toward a company on the shore, to the ice's edge and no further.
+  const w = at(lake({ x: 2, y: 1, roams: true, aware: 8 }), 6, 3, NORTH), g = w.liveGroups()[0], path: string[] = [];
+  for (let k = 0; k < 6; k++) { w.moveMonsters(); path.push(`${g.state.x},${g.state.y}`); }
+  ok(path.every((p) => { const [x, y] = p.split(',').map(Number); return w.map.at(x, y).terrain === 'ice'; }) && path.at(-1) === '5,2', `a roaming pike comes on under the ice and stops at its edge (${path.join(' ')})`);
+  ok(w.groupDefs(['pike'])[0].under === 'ice', 'and its fight is told it fights from under the ice');
 }

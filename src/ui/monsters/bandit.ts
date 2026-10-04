@@ -21,7 +21,7 @@ import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, 
 import { band } from '../../lib/art/shading.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat', 'bargeman', 'barge_master', 'wrack_smuggler', 'wrack_bowman'];
+export const KINDS: readonly MonsterSprite[] = ['bandit', 'archer', 'brigand', 'brigand_archer', 'smuggler', 'smuggler_bow', 'smuggler_captain', 'wrecker', 'lampman', 'footpad', 'poacher', 'billman', 'slinger', 'cutthroat', 'bargeman', 'barge_master', 'wrack_smuggler', 'wrack_bowman', 'anvil_guard'];
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   if (kind === 'archer') archer(ctx, x, y, h, p);
@@ -34,6 +34,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   else if (kind === 'barge_master') bargeMaster(ctx, x, y, h, p);
   else if (kind === 'wrack_smuggler') wrackSmuggler(ctx, x, y, h, p);
   else if (kind === 'wrack_bowman') wrackBowman(ctx, x, y, h, p);
+  else if (kind === 'anvil_guard') anvilGuard(ctx, x, y, h, p);
   else if (kind === 'brigand') brigand(ctx, x, y, h, p);
   else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
   else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
@@ -1560,4 +1561,163 @@ function wrackBowman(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
   hand(ctx, R, anchor, aim, 535, { flip: 1, k: 0.9 });
   hand(ctx, R, grip, ba, 536, { flip: -1 });
   void p.light;
+}
+
+// ------------------------------------------------------------------ the Anvil Guard ----
+/** The thane's iron's trim and a dwarf's beard: hammered brass, and a red going to rust. */
+const THANE_BRASS = '#c49a48', BEARD = '#8e4626', BEARD_DEEP = '#5a2a16';
+
+/**
+ * A dwarf on the frame: the measured man rebuilt about four heads high and near as broad as he is
+ * tall. The shoulder line comes down to 0.68 of the height and the joints go out to 0.23 a side,
+ * the trunk is a barrel 0.2 wide from chest to hip, the head is half as big again as a man's, and
+ * the legs are short and thick, the crotch at 0.33 and the knee at 0.18. Everything the frame's
+ * helpers measure off the rig, the trunk's width, the torso and the arms, follows.
+ */
+function dwarfRig(x: number, y: number, h: number, p: Paint): Rig {
+  const R = makeRig(x, y, h, p, { tilt: 0.008, hipTilt: 0.01, turn: 0.012, near: [0.085, 0.125, 0.135], far: [-0.075, -0.115, -0.13], toe: [0.9, -0.8], lift: [0, 0.015] });
+  const lift = p.breathe * h * 0.006, sy = y - h * 0.68 - lift;
+  const L = (u: readonly [number, number, number], d: number, lf: number): [Pt, Pt, Pt] =>
+    [{ x: x + u[0] * h, y: y - h * 0.33 + d }, { x: x + u[1] * h, y: y - h * (0.18 + lf * 0.45) }, { x: x + u[2] * h, y: y - h * (0.065 + lf) }];
+  return {
+    ...R, sy, wSh: h * 0.2, wWa: h * 0.19, wHi: h * 0.2, waistY: sy + h * 0.14,
+    sNear: { x: x + h * 0.247, y: sy + h * 0.045 }, sFar: { x: x - h * 0.203, y: sy + h * 0.025 },
+    hx: x + h * 0.02, hy: sy - h * 0.165 - lift * 0.4, hr: h * 0.1,
+    legR: L([0.085, 0.125, 0.135], R.hipd, 0), legL: L([-0.075, -0.115, -0.13], -R.hipd, 0.015),
+    lift: [0, h * 0.015],
+  };
+}
+
+/** A dwarf's boot: broad, iron-shod, the toe round and turned out; `s` is the side the toe points to. */
+function dwarfBoot(R: Rig, ankle: Pt, s: number, lift: number, seed: number): Part {
+  const { h } = R, y = R.y - lift;
+  const pts = [-0.07, 0.115, 0.06, 0.115, 0.085, 0.07, 0.14, 0.045, 0.16, 0.012, 0.15, 0.0, -0.075, 0.0, -0.088, 0.05];
+  const o: number[] = [];
+  for (let i = 0; i < pts.length; i += 2) o.push(ankle.x + s * pts[i] * h, y - pts[i + 1] * h);
+  return { k: 'curve', pts: o, wobble: 0.02, seed, sub: 2 };
+}
+
+/**
+ * The Anvil Guard: short, broad, and in the thane's iron. A dwarf planted wide on short legs, one
+ * fist on his hip with the elbow out, the other on the haft of a maul whose head stands on the
+ * ground beside him like a small anvil. Blackened plate on his chest and shins and great layered
+ * plates on his shoulders, mail on his arms and in a skirt to the knee, a broad belt whose buckle
+ * is the thane's anvil in brass. An iron cap with a nasal and cheek plates, and under it a red beard
+ * that spills over the breastplate to the belt in two braids, each closed with an iron ring.
+ * Idle: he breathes, and the beard's braids shift.
+ */
+function anvilGuard(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = dwarfRig(x, y, h, p);
+  const { sy, hx, hy, hr } = R;
+  const iron = p.base, ironDark = shade(p.dark, 0.85), mail = shade(mix(p.base, '#6a6e78', 0.4), 0.82);
+  const brass = shade(THANE_BRASS, p.tone), beard = shade(BEARD, p.tone), beardDeep = shade(BEARD_DEEP, p.tone);
+  const sway = Math.sin(p.frame / 23) * h * 0.006;
+  groundShadow(ctx, x + h * 0.04, y + 1, h * 0.96);
+  // The near arm hangs to the maul's haft; the far one is out at the elbow, its fist on the hip.
+  const mx = x + h * 0.36;
+  const near: Arm = [R.sNear, { x: x + h * 0.345, y: y - h * 0.5 }, { x: mx - h * 0.004, y: y - h * 0.405 }];
+  const far: Arm = [R.sFar, { x: x - h * 0.355, y: y - h * 0.515 }, { x: x - h * 0.222, y: y - h * 0.445 }];
+  blob(ctx, B, shade(mail, 0.8), armParts(R, far, 301, 1.5), { h, formK: 0.45, tex: 'mail', seed: 301, amount: 0.6, creases: [elbowCrease(R, far)] });
+
+  // Legs: short and thick, dark breeches under iron at the knee and down the shin, then the boots.
+  const limb = (l: [Pt, Pt, Pt], sd: number): Part[] => [
+    tube([l[0].x, l[0].y, l[1].x, l[1].y], h * 0.08, h * 0.066, 0.02, sd),
+    tube([l[1].x, l[1].y, l[2].x, l[2].y], h * 0.068, h * 0.054, 0.02, sd + 5),
+  ];
+  blob(ctx, B, shade('#3a332e', p.tone), [...limb(R.legL, 311), ...limb(R.legR, 312)], { h, formK: 0.5 });
+  const greave = (l: [Pt, Pt, Pt]): Part[] => [
+    { k: 'cap', x0: l[1].x, y0: l[1].y + h * 0.02, x1: l[2].x, y1: l[2].y - h * 0.01, r0: h * 0.066, r1: h * 0.058 },
+    { k: 'ell', x: l[1].x, y: l[1].y - h * 0.004, rx: h * 0.074, ry: h * 0.052, gloss: 0.45 },
+  ];
+  blob(ctx, B, iron, [...greave(R.legL), ...greave(R.legR)], { h, formK: 0.6, gloss: 0.3, spread: 0.6 });
+  for (const l of [R.legL, R.legR]) softLine(ctx, B, [l[1].x, l[1].y + h * 0.04, l[2].x, l[2].y], iron, Math.max(1, h * 0.012), 0.5);
+  blob(ctx, B, ironDark, [dwarfBoot(R, R.legL[2], -1, R.lift[1], 313), dwarfBoot(R, R.legR[2], 1, R.lift[0], 314)], { h, formK: 0.5, spread: 0.65, gloss: 0.2 });
+
+  // The mail skirt, belt to knee, and the breastplate over the barrel of him, ridged down the middle.
+  const hemY = y - h * 0.445;
+  blob(ctx, B, mail, [{ k: 'curve', pts: [
+    x - h * 0.19, hemY - h * 0.02, x + h * 0.2, hemY - h * 0.02, x + h * 0.225, y - h * 0.27, x + h * 0.1, y - h * 0.255,
+    x - h * 0.02, y - h * 0.268, x - h * 0.13, y - h * 0.255, x - h * 0.215, y - h * 0.27,
+  ], wobble: 0.02, seed: 315, sub: 3 }], { h, formK: 0.45, tex: 'mail', seed: 315, amount: 0.8, creases: [
+    { x0: x - h * 0.02, y0: hemY + h * 0.02, x1: x - h * 0.02, y1: y - h * 0.27, r: h * 0.012, a: 0.3 },
+  ] });
+  blob(ctx, B, iron, [{ k: 'curve', pts: torsoPts(R, hemY, 0.02), wobble: 0.015, seed: 316, sub: 3 }],
+    { h, formK: 0.55, gloss: 0.45, spread: 0.65, creases: torsoCreases(R, hemY) });
+  softLine(ctx, B, [x + h * 0.004, sy + h * 0.02, x + h * 0.012, hemY - h * 0.01], shade(iron, 1.6), Math.max(1, h * 0.01), 0.45);
+  // Rivets round the breastplate's edge.
+  if (!B.override && h >= 40) for (let i = 0; i < 6; i++) {
+    const yy = sy + h * (0.05 + i * 0.033), w = trunkW(R, yy) - h * 0.016;
+    for (const s of [-1, 1]) { ctx.fillStyle = rgba(shade(iron, 1.8), 0.8); ctx.beginPath(); ctx.arc(x + s * w * (s < 0 ? FAR : 1), yy, Math.max(0.6, h * 0.006), 0, Math.PI * 2); ctx.fill(); }
+  }
+
+  // The maul: its head stood on the ground by the near foot, the haft up beside him to his hand.
+  const hb = y - h * 0.135, top = y - h * 0.62;
+  blob(ctx, B, R.wood, [{ k: 'cap', x0: mx, y0: hb + h * 0.01, x1: mx + h * 0.008, y1: top, r0: h * 0.022, r1: h * 0.02 }], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 317, amount: 0.3 });
+  for (const v of [0.2, 0.52]) band(ctx, B, mx - h * 0.026, y - h * v, h * 0.054, h * 0.018, ironDark);
+  glossBall(ctx, B, mx + h * 0.008, top - h * 0.006, h * 0.03, iron, { gloss: 0.5 });
+  const head = [mx - h * 0.105, y, mx + h * 0.11, y, mx + h * 0.118, y - h * 0.02, mx + h * 0.1, hb, mx - h * 0.095, hb, mx - h * 0.112, y - h * 0.02];
+  glossPoly(ctx, B, head, iron, { gloss: 0.35, spread: 0.6, h, tex: 'stipple', seed: 318, amount: 0.25 });
+  // Its striking face catching the light, and the band round its waist.
+  glossPoly(ctx, B, [mx - h * 0.095, hb, mx + h * 0.1, hb, mx + h * 0.085, hb + h * 0.022, mx - h * 0.082, hb + h * 0.022], shade(iron, 1.35), { gloss: 0.4, spread: 0.6 });
+  band(ctx, B, mx - h * 0.112, y - h * 0.07, h * 0.23, h * 0.02, ironDark);
+
+  // The near arm: mail to the elbow, an iron vambrace on the forearm, a gauntlet on the haft.
+  blob(ctx, B, mail, armParts(R, near, 319, 1.5), { h, formK: 0.5, tex: 'mail', seed: 319, amount: 0.6, creases: [elbowCrease(R, near)] });
+  blob(ctx, B, iron, [tube([near[1].x, near[1].y + h * 0.012, near[2].x, near[2].y - h * 0.03], h * 0.05, h * 0.044, 0, 320)], { h, formK: 0.6, gloss: 0.35, spread: 0.6 });
+  const ga = Math.atan2(top - hb, h * 0.008);
+  hand(ctx, R, near[2], ga, 321, { hex: iron, plate: true, gloss: 0.5, k: 1.35, flip: -1 });
+  // The far fist on the hip, a gauntlet in front of the skirt's top.
+  hand(ctx, R, far[2], null, 322, { hex: ironDark, k: 1.3 });
+
+  // The belt, broad, and its buckle the thane's anvil: a horn, a face and a foot, in brass.
+  const by = hemY - h * 0.045;
+  blob(ctx, B, R.strap, [beltPart(R, by, h * 0.052, 323)], { h, formK: 0.4 });
+  const ax = x + h * 0.006, ay = by + h * 0.026, u = h * 0.012;
+  glossPoly(ctx, B, [
+    ax - 5.2 * u, ay - 2 * u, ax - 2.2 * u, ay - 2.4 * u, ax + 3.6 * u, ay - 2.4 * u, ax + 3.6 * u, ay - 0.6 * u,
+    ax + 1.6 * u, ay, ax + 2.4 * u, ay + 2.2 * u, ax - 2.6 * u, ay + 2.2 * u, ax - 1.8 * u, ay, ax - 2.6 * u, ay - 0.9 * u,
+  ], brass, { gloss: 0.5, spread: 0.6 });
+
+  // Shoulder plates, two lames each, wider than the shoulders under them.
+  const pauldron = (at: Pt, s: number, sd: number): Part[] => [
+    { k: 'curve', pts: [at.x - s * h * 0.075, at.y - h * 0.01, at.x - s * h * 0.03, at.y - h * 0.058, at.x + s * h * 0.06, at.y - h * 0.056, at.x + s * h * 0.1, at.y - h * 0.008, at.x + s * h * 0.085, at.y + h * 0.032, at.x - s * h * 0.055, at.y + h * 0.022], wobble: 0.02, seed: sd, sub: 2, gloss: 0.4 },
+    { k: 'curve', pts: [at.x - s * h * 0.04, at.y + h * 0.02, at.x + s * h * 0.088, at.y + h * 0.028, at.x + s * h * 0.092, at.y + h * 0.07, at.x + s * h * 0.035, at.y + h * 0.082, at.x - s * h * 0.03, at.y + h * 0.06], wobble: 0.02, seed: sd + 1, sub: 2 },
+  ];
+  blob(ctx, B, iron, [...pauldron(R.sNear, 1, 324), ...pauldron(R.sFar, -1, 326)], { h, formK: 0.6, gloss: 0.35, spread: 0.6 });
+  for (const [at, s] of [[R.sNear, 1], [R.sFar, -1]] as const) softLine(ctx, B, [at.x - s * h * 0.035, at.y + h * 0.024, at.x + s * h * 0.088, at.y + h * 0.032], ironDark, Math.max(1, h * 0.012), 0.6);
+
+  // The head: skin under an iron cap, then the beard over the breastplate, then the cap's plates.
+  headNeck(ctx, R);
+  // The beard: out from under the cheek plates, broad over the chest, forked into two braids that
+  // reach the belt, each closed with a ring; a moustache over all of it.
+  const bx = hx - hr * 0.05, bt = hy + hr * 0.25, bm = hy + hr * 1.6, bb = hy + hr * 2.6;
+  blob(ctx, B, beard, [
+    { k: 'curve', pts: [bx - hr * 1.02, bt, bx - hr * 1.25, hy + hr * 1.0, bx - hr * 1.15, bm, bx - hr * 0.55, bb, bx, hy + hr * 2.2, bx + hr * 0.55, bb, bx + hr * 1.2, bm, bx + hr * 1.28, hy + hr * 1.0, bx + hr * 1.04, bt], wobble: 0.06, spiky: 0.1, seed: 328, sub: 2 },
+    tube([bx - hr * 0.42, bb - hr * 0.3, bx - hr * 0.5 + sway, bb + hr * 0.4, bx - hr * 0.44 + sway * 1.4, bb + hr * 0.95], hr * 0.2, hr * 0.13, 0.05, 329),
+    tube([bx + hr * 0.42, bb - hr * 0.3, bx + hr * 0.52 - sway, bb + hr * 0.4, bx + hr * 0.48 - sway * 1.4, bb + hr * 0.95], hr * 0.2, hr * 0.13, 0.05, 330),
+  ], { h, formK: 0.45, tex: 'fur', seed: 328, amount: 0.8, creases: [
+    { x0: bx, y0: hy + hr * 1.3, x1: bx, y1: hy + hr * 2.15, r: hr * 0.08, a: 0.5 },
+    { x0: bx - hr * 0.5, y0: hy + hr * 0.8, x1: bx - hr * 0.62, y1: bm, r: hr * 0.06, a: 0.3 },
+    { x0: bx + hr * 0.5, y0: hy + hr * 0.8, x1: bx + hr * 0.62, y1: bm, r: hr * 0.06, a: 0.3 },
+  ] });
+  for (const rx of [bx - hr * 0.47 + sway, bx + hr * 0.5 - sway]) band(ctx, B, rx - hr * 0.2, bb + hr * 0.62, hr * 0.4, hr * 0.18, iron);
+  blob(ctx, B, beardDeep, [
+    { k: 'curve', pts: [bx - hr * 0.08, hy + hr * 0.42, bx - hr * 0.55, hy + hr * 0.5, bx - hr * 0.95, hy + hr * 0.82, bx - hr * 0.62, hy + hr * 0.72, bx - hr * 0.1, hy + hr * 0.62], wobble: 0.05, seed: 331, sub: 2 },
+    { k: 'curve', pts: [bx + hr * 0.08, hy + hr * 0.42, bx + hr * 0.55, hy + hr * 0.5, bx + hr * 0.98, hy + hr * 0.82, bx + hr * 0.64, hy + hr * 0.72, bx + hr * 0.1, hy + hr * 0.62], wobble: 0.05, seed: 332, sub: 2 },
+  ], { h, formK: 0.4 });
+  // The nose, big and red with the forge, under the nasal.
+  blob(ctx, B, shade(mix(R.skin, '#b8644c', 0.22), 0.95), [{ k: 'ell', x: hx + hr * 0.04, y: hy + hr * 0.3, rx: hr * 0.2, ry: hr * 0.17 }], { h, formK: 0.6, spread: 0.7 });
+  // The cap: a dome to the brow, a band round it, cheek plates down over the beard's top, a nasal,
+  // and a knob at the crown; the eyes are two glints in the brow's shadow.
+  softLine(ctx, B, [hx - hr * 0.8, hy - hr * 0.08, hx + hr * 0.85, hy - hr * 0.08], R.skin, hr * 0.42, 0.7);
+  blob(ctx, B, iron, [
+    { k: 'curve', pts: [hx - hr * 1.08, hy - hr * 0.2, hx - hr * 1.0, hy - hr * 0.8, hx - hr * 0.55, hy - hr * 1.2, hx + hr * 0.1, hy - hr * 1.3, hx + hr * 0.7, hy - hr * 1.14, hx + hr * 1.06, hy - hr * 0.74, hx + hr * 1.12, hy - hr * 0.2], wobble: 0.015, seed: 333, sub: 3, gloss: 0.5 },
+    { k: 'curve', pts: [hx - hr * 1.1, hy - hr * 0.3, hx - hr * 0.86, hy - hr * 0.3, hx - hr * 0.8, hy + hr * 0.55, hx - hr * 1.0, hy + hr * 0.62, hx - hr * 1.12, hy + hr * 0.2], wobble: 0.015, seed: 334, sub: 2 },
+    { k: 'curve', pts: [hx + hr * 1.14, hy - hr * 0.3, hx + hr * 0.9, hy - hr * 0.3, hx + hr * 0.84, hy + hr * 0.55, hx + hr * 1.04, hy + hr * 0.62, hx + hr * 1.16, hy + hr * 0.2], wobble: 0.015, seed: 335, sub: 2 },
+    { k: 'poly', pts: [hx - hr * 0.1, hy - hr * 0.3, hx + hr * 0.14, hy - hr * 0.3, hx + hr * 0.1, hy + hr * 0.2, hx + hr * 0.04, hy + hr * 0.26, hx - hr * 0.06, hy + hr * 0.2] },
+    { k: 'ball', x: hx + hr * 0.08, y: hy - hr * 1.33, r: hr * 0.16 },
+  ], { h, formK: 0.55, spread: 0.6, gloss: 0.3 });
+  band(ctx, B, hx - hr * 1.1, hy - hr * 0.42, hr * 2.24, hr * 0.22, shade(iron, 0.8));
+  softLine(ctx, B, [hx - hr * 0.5, hy - hr * 1.05, hx + hr * 0.1, hy - hr * 1.22, hx + hr * 0.62, hy - hr * 1.06], shade(iron, 1.7), Math.max(1, hr * 0.1), 0.5);
+  for (const s of [-1, 1]) eye(ctx, hx + s * hr * 0.42 + hr * 0.04, hy - hr * 0.05, hr * 0.085, R.bone, false);
 }
