@@ -13,9 +13,10 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Nothing is built. Its content will be `src/content/areas/kilns/` (maps, monsters, items, climate,
-its part of the world map, its chapter of the one quest, The Anvil Stone, in `chapter.ts`, its side
-quests in `quests.ts`) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
+Nothing a company walks is built: the businesses' rooms are drawn, ahead of the towns (§3). Its
+content will be `src/content/areas/kilns/` (maps, monsters, items, climate, its part of the world
+map, its chapter of the one quest, The Anvil Stone, in `chapter.ts`, its side quests in
+`quests.ts`), and its businesses' rooms are `src/ui/interiors/kilns/`. Its ids: the area
 `kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
 the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass
 (§10, NAMES §3).
@@ -122,6 +123,28 @@ for the Hearth (#540, #168); and the bot, which must learn to put cold on what f
 Kilns need none of them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is
 MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues, and its rooms in
 #473.
+
+The rooms are drawn (#473), one to each business of the two towns, ahead of the towns as
+Saltmouth's and Lantern Watch's were. `src/content/areas/kilns/interiors.ts` lists them and
+`ROOMS_AHEAD` in `src/content/index.ts` merges them, until the first box lists the area and its
+`interiors` takes the list; `tools/tests/maps.ts` reports each owed to its town (#459, #469) until
+a business there opens into it, and §4.4 and §4.14 name the ids. They are a scene to a file in
+`src/ui/interiors/kilns/`, what Anvilhall's share in `hold.ts` and what Kilnhaven's share in
+`port.ts`. Anvilhall's are cut stone, iron and fire, the hammer and pick on the banners and the old
+script cut over the doors: the great hall, a nave of square pillars up to the thane's seat with the
+kings' forge glowing behind it and the verse cut red over all; the forge, the verse big over a
+hearth under an iron hood, the great bellows, the anvil and the steel racked; the training hall, an
+old working timbered like the mine and broken out onto the hillside, lifting stones and a round of
+oak with axes in it; the inn, bunks cut in two tiers in the rock and an arch of candles on the
+mantel; the mine-surgeon's, limewashed, the table under its lamp, a canary in the window and a niche
+for the dead; the stores, racks to the roof and the mine's tub of potatoes on its rails. Kilnhaven's
+are tar, rope and the ore's red dust: the inn, the coach for Rime Lodge in the yard through its
+window; the smith, a forge of brick, an anchor in for mending and the quay through the stable door;
+the training hall, an ore shed with a ring roped off and an ore tub on the hoist to hit; the
+harbourmaster's office, the manifests on the desk under a bay of small panes on the harbour and the
+board of sailings by it; the chapel, a ship hung from its tie beam and the sea through the window
+behind the altar; the chandlery, candles in pairs and lamps hung from its rods. Every room has the
+day in it somewhere, a window, a shaft, a breach or a door, so that nine at night is not noon.
 
 ## 4. What is still to build
 
@@ -258,12 +281,17 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
 
 - **Purpose.** The act's first town and the dwarves' seat: the great hall with the verse over the
   forge, the thane with his menu, and the first place the company reads the old way.
-- **Businesses,** each with a room of its own (#473): the great hall, the thane's, where the choice
-  is put as a business puts its menu (#434's 1); the forge, under the verse, the act's first step on
-  the ladder by 17 (#535), shut to the company for good if the Stone is taken; the training hall,
-  to 19 (DESIGN §5); the inn, the miners' lodging; the mine-surgeon's, cures and raising at the
-  band's price; the stores, provisions at list price. No spell hall (#434's 9): Lantern Watch sold
-  tier 6 and Rime Lodge sells tier 7 (DESIGN §7). No guild hall (#434's 8).
+- **Businesses,** each with a room of its own (#473), the `interior` its feature names given with
+  it. No spell hall (#434's 9): Lantern Watch sold tier 6 and Rime Lodge sells tier 7 (DESIGN §7).
+  No guild hall (#434's 8).
+  - The great hall, the thane's, where the choice is put as a business puts its menu (#434's 1).
+    Interior: `anvilhall_great_hall`.
+  - The forge, under the verse, the act's first step on the ladder by 17 (#535), shut to the
+    company for good if the Stone is taken. Interior: `anvilhall_forge`.
+  - The training hall, to 19 (DESIGN §5). Interior: `anvilhall_training_hall`.
+  - The inn, the miners' lodging. Interior: `anvilhall_inn`.
+  - The mine-surgeon's, cures and raising at the band's price. Interior: `anvilhall_surgeon`.
+  - The stores, provisions at list price. Interior: `anvilhall_stores`.
 - **People.** The thane, with the verse over his forge and the Stone on his menu; the Lantern reader,
   a scholar lodged in the hall who reads the verse the old way for the company and teaches Linguist
   as the Lanterns' halls do (#538); the Regent's scholar, before he goes up to Erzkamm (#56's 34);
@@ -545,11 +573,15 @@ hint beside it, so the hint check (EXPANSION §5.4) passes without a reader.
 
 - **Purpose.** The act's second town and the ore port: where the harbourmaster's manifests name the
   Compact ship's cargo, and three ways out of the Kilns leave.
-- **Businesses,** each with a room of its own (#473): the inn (rest, and the coach yard outside,
-  #539); the smith, the act's first step at a quarter more than Anvilhall's forge (#434's 1, #535),
-  the company's only forge if the Stone was taken; the training hall, to 19; the harbourmaster's
-  office, where the manifests are read; the chapel, cures and raising; the chandlery, provisions and
-  lamp oil at list price. No spell hall and no guild hall (#434's 8 and 9).
+- **Businesses,** each with a room of its own (#473), the `interior` its feature names given with
+  it. No spell hall and no guild hall (#434's 8 and 9).
+  - The inn (rest, and the coach yard outside, #539). Interior: `kilnhaven_inn`.
+  - The smith, the act's first step at a quarter more than Anvilhall's forge (#434's 1, #535), the
+    company's only forge if the Stone was taken. Interior: `kilnhaven_smith`.
+  - The training hall, to 19. Interior: `kilnhaven_training_hall`.
+  - The harbourmaster's office, where the manifests are read. Interior: `kilnhaven_harbourmaster`.
+  - The chapel, cures and raising. Interior: `kilnhaven_chapel`.
+  - The chandlery, provisions and lamp oil at list price. Interior: `kilnhaven_chandlery`.
 - **People.** The harbourmaster, who reads the manifests for a company that asks and hears the
   Compact's cargo named, Cinderport and Sheer Point (§5); the Compact's shipmaster and the ferryman
   at the quay, who sell their passages (#539); the coachman in the yard; Jory Tallis's man, come for
@@ -779,6 +811,36 @@ Proposed, for the owner, each in the issue that would build it:
 - **The heart's zone keeps the area's name on the atlas** ("The Kilns", `kilnsheart`): a name of
   its own is the owner's to give with #435 (§10), since the crossing line into it says the area's
   name twice.
+
+Decided by delegate for #473, each the owner's to overturn:
+
+1. **The ids follow the towns,** `anvilhall_` or `kilnhaven_` and the business, as Saltmouth's do
+   (`saltmouth_inn`): §4.4 and §4.14 give them for #459 and #469 to name, and each scene's file is
+   named for its id, as `tools/changed.ts` reads a room by its file.
+2. **The verse is lettered twice:** in the great hall over the kings' forge, where the reader reads
+   it (§5), and in the forge over its hearth (§4.4, "under the verse"), since the dwarves read it at
+   their forges and Gluthutte has it again (§4.8). It is the dwarves' words, cut and painted red in
+   the font's capitals, never a reading (#538).
+3. **The old script over the other doors is drawn as cut marks, never letters,** angular like the
+   runes on the Grove Stone's copy in Thornhold: #459's "every door carries a verse" is kept without
+   lettering verses the docs do not hold, and what they say is #538's, on the maps' signs.
+4. **The great hall's forge is the kings' forge, behind the thane's seat** (STORY, #459), its coals
+   heaped in the arch so the seat stands dark against them; the forge business is the smiths'
+   working forge, a room of its own.
+5. **No crown on Anvilhall's anvil,** though #473's list had one: A Crown to Order's crown is made
+   at Gluthutte (§6, #463), and a second in Anvilhall's forge would put it in two places.
+6. **The rooms follow §4.4 and §4.14, not #473's older list:** the mine-surgeon's for a temple, the
+   stores for a provisioner, training halls for trainers' yards. Kilnhaven's chapel is the Lanterns'
+   (the ring on its altar) and a sailors' chapel, a ship hung from its beam as the coast hangs them.
+7. **Kilnhaven's chandlery is a chandler's in the old sense,** candles and lamps, the miners' frog
+   lamps among them, so that it is not Saltmouth's ship's chandlery again; it sells what §4.14 says.
+8. **Kilnhaven letters its three ways out and nothing else:** RIME LODGE on the coach's board,
+   SALTMOUTH and CINDERPORT on the board of sailings, with no times or fares, which are #539's. The
+   manifests are ruled and never lettered: Sheer Point is the harbourmaster's to say (§4.14).
+9. **Every room lets the day in,** by a window, a shaft, a breach or a door, so nine at night is not
+   noon: Anvilhall's look out from the terraces over the heart, Gluthutte's smoke by day and the far
+   fires red by night; Kilnhaven's on the harbour, the yard and the street; and the harbourmaster's
+   and the chapel's windows hold the Hearth on the sea, as Helmstow's throne room's does.
 
 ## 10. Names
 

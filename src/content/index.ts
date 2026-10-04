@@ -19,6 +19,7 @@ import { AREA as thornmark } from './areas/thornmark/index.ts';
 import { AREA as saltreach } from './areas/saltreach/index.ts';
 import { AREA as wrackholm } from './areas/wrackholm/index.ts';
 import { AREA as sunderwood } from './areas/sunderwood/index.ts';
+import * as kilnsRooms from './areas/kilns/interiors.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -41,6 +42,7 @@ export const AHEAD = [
  * list as `interiors` and its line here goes.
  */
 export const ROOMS_AHEAD = [
+  { id: 'kilns' as const, interiors: kilnsRooms.INTERIORS },
 ] as const;
 
 type AnyArea = (typeof AREAS)[number];
