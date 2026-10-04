@@ -40,7 +40,7 @@ export function skills(): void {
     `every hall of the Lanterns teaches Linguist (${lanterns.map((h) => h.name).join(', ')}), and the other guilds' halls no skill yet (${halls.filter((h) => h.hall !== 'lanterns').map((h) => h.name).join(', ')})`);
   ok(['Lantern Guildhall', 'Thornhold Lantern Hall', 'The Watch\'s Lantern Hall'].every((n) => lanterns.some((h) => h.name === n)), 'Helmstow\'s, Thornhold\'s and the Watch\'s among them');
   const teachers = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' && f.skill ? [`${f.name} (${f.skill})`] : [])));
-  ok(true, `the people who teach a skill: ${teachers.length ? teachers.join(', ') : 'none placed yet (Anvilhall\'s Lantern reader comes with #459)'}`);
+  ok(teachers.some((t) => t.startsWith('Wystan Crane') && t.endsWith('(linguist)')), `the people who teach a skill, Anvilhall's Lantern reader among them (#459): ${teachers.join(', ')}`);
 
   // A stranger to the guild learns nothing; a member, for the price, once.
   {

@@ -154,7 +154,7 @@ type Rung<Where extends string> = { level: number; name: string; from: Record<st
 export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
   {
     level: 17, name: "Anvilhall's forge",
-    from: Object.fromEntries(FORGE.map((id) => [id, ['kilns', '#459']])),
+    from: Object.fromEntries(FORGE.map((id) => [id, ['kilns', '']])),
     classes: {
       knight: ['forge_hammer', 'forge_shield'], paladin: ['forge_hammer', 'forge_shield'], ranger: ['steel_bow', 'dwarf_mail'], barbarian: ['mattock', 'dwarf_mail'],
       cleric: ['forge_hammer', 'kiln_robe'], sorcerer: ['seax', 'kiln_robe'], thief: ['seax', 'dwarf_mail'], bard: ['seax', 'dwarf_mail'],

@@ -7,11 +7,11 @@ import { MAP_DEFS, ITEMS, QUESTS } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
-import { meet, answer, answerNote, heard, handIns, personFlags, personGives, readText, choices } from '../../src/game/people.ts';
+import { meet, answer, answerNote, answerLabel, asked, barred, SHORT, heard, handIns, personFlags, personGives, readText, choices } from '../../src/game/people.ts';
 import type { Person } from '../../src/game/people.ts';
 import { questLog } from '../../src/game/quests.ts';
 import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
-import type { MapDef, Words, Answer } from '../../src/game/map.ts';
+import type { MapDef, Words, Answer, Choice } from '../../src/game/map.ts';
 import { NORTH, EAST } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { CONTENT, collect } from '../shipped.ts';
@@ -44,9 +44,9 @@ export function people(): void {
   // Everything a person says fits the box.
   for (const { map, p } of all) { const bad = boxFaults(p); ok(!bad.length, `${map} ${p.x},${p.y}: every text fits the box, and every question its answers${bad.length ? ' -> ' + bad.join('; ') : ''}`); }
   for (const i of Object.values(ITEMS)) if (i.text) ok(wrap(i.text.join('\n\n'), SAY_W).length <= SAY_LINES, `${i.id}: the letter fits the box's ${SAY_LINES} lines`);
-  // Every answer that hands over an item or pays sets a flag, so the question is put once and the item
-  // given, or the pay paid, once.
-  for (const { map, p } of all) for (const c of choices(p)) for (const a of c.answers) if (a.gives || a.pay) ok([a.sets ?? []].flat().length > 0, `${map} ${p.x},${p.y}: '${a.label}' ${a.gives ? `gives ${a.gives}` : 'pays'} and sets a flag, or it would ${a.gives ? 'give' : 'pay'} at every meeting`);
+  // Every answer that hands over an item, pays or costs sets a flag, so the question is put once and
+  // the item given, the pay paid or the price taken, once.
+  for (const { map, p } of all) for (const c of choices(p)) for (const a of c.answers) if (a.gives || a.pay || a.price) ok([a.sets ?? []].flat().length > 0, `${map} ${p.x},${p.y}: '${a.label}' ${a.gives ? `gives ${a.gives}` : a.pay ? 'pays' : 'costs'} and sets a flag, or it would ${a.gives ? 'give' : a.pay ? 'pay' : 'take its price'} at every meeting`);
   // A question answered, the meetings after come to that answer's after-words: words put first that
   // hold whenever the question's do would say the question's words for good.
   const unsaid = all.flatMap(({ map, p }) => afterFaults(p).map((bad) => `${map} ${p.x},${p.y}: ${bad}`)), answers = all.reduce((n, { p }) => n + answered(p), 0);
@@ -112,8 +112,9 @@ function doneSeen(flag: string): string[] {
 
 /**
  * What a person says that would not fit: a text past the box's lines (a hand-in's with its gold
- * line, an answer's with its item's and pay's), a question past its lines in the box or the side panel, an
- * answer longer than a line of the side panel's column.
+ * line, an answer's with its item's and pay's), a question past its lines in the box or the side panel
+ * (with the purse after it, where an answer has a price), an answer longer than a line of the side
+ * panel's column beside its price.
  */
 export function boxFaults(p: Person): string[] {
   const gold = (q: { reward: number }): string[] => (q.reward ? [`(${q.reward} gold.)`] : []);
@@ -121,9 +122,11 @@ export function boxFaults(p: Person): string[] {
     ...choices(p).flatMap((c) => c.answers.map((a) => [...a.says, ...answerNote(a)]))];
   const out = texts.flatMap((t) => { const n = wrap(t.join('\n\n'), SAY_W).length; return n > SAY_LINES ? [`'${t[0].slice(0, 24)}..' takes ${n} lines of ${SAY_LINES}`] : []; });
   for (const c of choices(p)) {
-    const box = wrap(c.ask, SAY_W).length, side = wrap(c.ask, SIDE_W).length;
+    // The purse as the richest company could hold it.
+    const ask = asked(c, { gold: 999999 });
+    const box = wrap(ask, SAY_W).length, side = wrap(ask, SIDE_W).length;
     if (box > ASK_LINES || side > ASK_SIDE_LINES) out.push(`'${c.ask.slice(0, 24)}..' takes ${box} lines of ${ASK_LINES} in the box and ${side} of ${ASK_SIDE_LINES} in the side panel`);
-    for (const a of c.answers) if (measure(a.label) > columnLabelWidth(SIDE_W, '', false)) out.push(`the answer '${a.label}' is past a line of the side panel`);
+    for (const a of c.answers) if (measure(a.label) > columnLabelWidth(SIDE_W, a.price ? `${a.price}g` : '', false)) out.push(`the answer '${a.label}' is past a line of the side panel`);
   }
   return out;
 }
@@ -175,6 +178,21 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
       `an answer that pays: the gold to the company, the item handed over and the line says both (${sold.split('\n\n')[1]})`);
     ok(paid.party.members.every((m, i) => m.xp === xp[i] + (i < 5 ? 100 : 0)), 'its xp is split among the living, as a fight\'s is: 100 each to five, none to the dead');
     ok(answerNote({ label: 'x', says: [] }).length === 0 && answerNote({ label: 'x', pay: { xp: 60 }, says: [] }).join() === '(60 experience.)', 'an answer that pays nothing says no line, and one of xp alone says only that');
+
+    // An answer with a price, sold as a ware is: listed at it, barred to a company with less, which
+    // it changes nothing for; paid as it is answered, and the line says so.
+    const deed: Answer = { label: 'Buy it', sets: 'fx_bought', price: 5000, says: ['He counts it.'] };
+    const dear: Choice = { ask: '"Five thousand."', answers: [deed, { label: 'Take it', sets: 'fx_taken', says: ['He shrugs.'] }] };
+    const poor = fresh();
+    poor.party.gold = 4999;
+    ok(answerLabel(deed) === 'Buy it\t5000g' && answerLabel(dear.answers[1]) === 'Take it' && asked(dear, poor.party) === '"Five thousand." (4999 gold.)' && asked(captain.choice!, poor.party) === captain.choice!.ask,
+      `an answer with a price is listed at it, and its question puts the purse after it (${asked(dear, poor.party)} | ${answerLabel(deed).replace('\t', ' | ')})`);
+    ok(barred(deed, poor.party) && !barred(dear.answers[1], poor.party) && answer(deed, poor.party) === SHORT && poor.party.gold === 4999 && !poor.party.flags.fx_bought,
+      'a company short of the price is barred from it, and answered anyway, nothing changes');
+    poor.party.gold = 5000;
+    const bought = answer(deed, poor.party);
+    ok(!barred(deed, { ...poor.party, gold: 5000 }) && bought === 'He counts it.\n\n(5000 gold paid.)' && poor.party.gold === 0 && !!poor.party.flags.fx_bought,
+      `with the price, it is paid, its flag set and the line says so (${bought.split('\n\n')[1]})`);
 
     // The log reads the answer's flag: a quest done either way, and the entry of the road taken.
     const quest: QuestDef = {
@@ -276,7 +294,7 @@ export function afterFaults(p: Person): string[] {
   const out: string[] = [];
   for (const { w, a, after } of withAfter(p)) {
     const first = [w.after ?? []].flat()[0] ?? {};
-    const party = { flags: Object.fromEntries(flagsOf(first.flag).map((f) => [f, 1])), bag: [] as string[], gold: 0, members: [] } as unknown as Party;
+    const party = { flags: Object.fromEntries(flagsOf(first.flag).map((f) => [f, 1])), bag: [] as string[], gold: a.price ?? 0, members: [] } as unknown as Party;
     // What the save records besides flags is taken as the question's words found it, and stays so.
     const facts = { seen: first.seen, item: first.item, slain: flagsOf(first.slain), visited: first.visited };
     const cond = (c: QuestCond): boolean => flagsOf(c.flag).every((f) => party.flags[f]) && (c.seen === undefined || c.seen === facts.seen) && (c.item === undefined || c.item === facts.item)

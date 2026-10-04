@@ -76,7 +76,9 @@ DESIGN.md first for the why.
   keeps the kinds of monster the company has met (`met`); one made before has met none.
 - **People** (`game/people.ts`): a person's first meeting may hire (one flag or several) and end in
   a question put through the choice screen, whose answer sets flags, may hand over an item and has
-  its own words; a question once answered is not put again, and Esc answers nothing. A person may
+  its own words; a question once answered is not put again, and Esc answers nothing. An answer may
+  have a price (`price`), sold as a ware is: listed at it with the purse after the question, barred
+  to a company with less and paid as it is answered (Anvilhall's thane and the Stone, #459). A person may
   say other words once a flag holds, by night or until a flag (`says`, wearing `Presence`, the first
   that holds said, furthest along first), and take several items (`quest` one or a list, one a
   meeting, in order; one paying nothing says no gold line). An item with `text` is a letter, read
@@ -309,7 +311,8 @@ trainer one level past it, onto Act II's road:
   under it does; the sheet says so at the cap. What a company reaches is set by the towns built:
   each town's trainer teaches to its area's band's top plus one (`trainerCeiling` in
   `content/progression.ts`), the Warden Drillyard in Helmstow to 6, the Elder's Yard in
-  Thornhold to 11, the Sail Loft in Saltmouth to 13 and the Lamp Gallery at Lantern Watch to 17. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
+  Thornhold to 11, the Sail Loft in Saltmouth to 13, the Lamp Gallery at Lantern Watch to 17 and the
+  Old Working at Anvilhall to 19. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
   spells stop growing at 10 (`SPELLS_GROW_TO`, DESIGN.md §7). Trainers charge 25 a level to 5 and
   40 a level after, to the cap (`trainPrice` in `party.ts`, which the curve's gold reads). Guilds
   sell up to a tier of their own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320 gold;
@@ -583,10 +586,10 @@ over content broken on purpose too, and two tools to theirs:
 - `people` (§2.3): every hand-in takes its item at the first meeting; Vask, Hale and Sylvane
   each played hired first and early, the words, the pay and the log true either way round; every
   person's words fit the box (a hand-in's with its gold line), a question leaves room for its
-  answers and an answer that hands over an item sets a flag. A fixture town holds the rest: a
-  question and its two roads read by the log and the save list, words by flag and by night,
-  several hand-ins, a letter, a person gone from one place and found in another, one by night and
-  events by night or by flag.
+  answers and an answer that hands over an item, pays or costs sets a flag. A fixture town holds the
+  rest: a question and its two roads read by the log and the save list, an answer with a price
+  barred to a company short of it, words by flag and by night, several hand-ins, a letter, a person
+  gone from one place and found in another, one by night and events by night or by flag.
 - The walkthroughs (EXPANSION §5.8): `walkthrough:shelf` plays The Quiet Farm from a new game,
   `walkthrough:thornmark` the chain and then Thornmark taken early, before Vask's hire and after it
   but before the wand. Each step, by the game's own moves (`tools/walk.ts`): the goal is the
@@ -698,7 +701,7 @@ does.
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), the premade party |
-| `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`; `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
+| `game/people.ts` | `meet`: what a person says and asks, in order (a hand-in the company can make, their words that hold, a done hand-in's after-lines, the first meeting); a hand-in taking its item at the first meeting and paying, with the `early` words to a company never hired; `answer`, with an answer's price as the choice screen lists and bars it (`answerLabel`, `asked`, `barred`); `readText`; `handIns`, `personFlags` and `personGives`, what the checks and the save list read |
 | `game/seeking.ts` | the seeking quests: the trainers placed (`trainersIn`), a quest for each member and prestige (`seekingQuests`), and the places the world map marks (`sought`); pure |
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
 | `game/skills.ts` | the secondary skills (`SKILLS`, Linguist the first): a member's list, who has one (learnt or born to it) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, each member's bar, and learning one; pure |

@@ -3,24 +3,38 @@
 // the crossing line read by a company two under the Fells' floor and by one at it, the secret behind
 // the walled adit found from its hints, the box's groups won at its floor, and Lanternwood's trees
 // shut against L3, so the road is the only way between the two areas. Anvilhall's box (N3, #458): the
-// trail on over the line from M3 with nothing said, the spur up to the gate, barred until the town is
-// built, five on from M3's milestone; the box's groups won at its floor; the mother at the terrace
-// well; and the tithe-cellar found from the ruts, the niche over its wall read by a reader alone. The
-// Tiefzeche's box (N4, #461), the heart's first: the trail on over the line from N3 into new land,
-// named, and harder to a company under its floor; the spur to the shaft, its cage chained until the
-// mine is built; the drove road out south; the box's groups won at its floor; the miner at the camp;
-// and the wagon yard found from the tally board and the fresh mortar, the blessing over the shaft read
-// by a reader alone.
+// trail on over the line from M3 with nothing said, the spur up to the gate, five on from M3's
+// milestone; the box's groups won at its floor; the mother at the terrace well; and the tithe-cellar
+// found from the ruts, the niche over its wall read by a reader alone. Then Anvilhall (#459), in at
+// N3's gate and out again: a company rests, buys the act's first step at the forge and trains to 19;
+// hears the Lantern reader read the verse the old way, or reads it first with a reader of its own and
+// hears him read it after; learns Linguist of him as a Lantern; and puts the thane's choice both
+// ways, the Stone barred to a company short of its price and each way setting its flag and changing
+// the words after; taken, the forge shuts for good. The Tiefzeche's box (N4, #461), the heart's
+// first: the trail on over the line from N3 into new land, named, and harder to a company under its
+// floor; the spur to the shaft, its cage chained until the mine is built; the drove road out south;
+// the box's groups won at its floor; the miner at the camp; and the wagon yard found from the tally
+// board and the fresh mortar, the blessing over the shaft read by a reader alone.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
+import type { Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
 import { MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import type { MapZone } from '../../../game/map.ts';
-import { meet, heard } from '../../../game/people.ts';
+import type { Feature, MapZone } from '../../../game/map.ts';
+import { meet, heard, answer, barred, SHORT } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
+import { buy, item } from '../../../game/items.ts';
+import { canTrainAt, xpForLevel, rest, trainPrice, levelUp } from '../../../game/party.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
+import { mayLearn, learn, hasSkill } from '../../../game/skills.ts';
+import { rankFlag } from '../../guilds.ts';
+import { readLine } from '../../../game/inscriptions.ts';
+import { ACT_III } from '../../../../tools/tests/ladder.ts';
+import { FORGE, ANVIL_STONE_PRICE } from './items.ts';
 import { GATE } from './maps/ironfells_n3.ts';
+import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
 
 const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
@@ -28,6 +42,13 @@ const WOODCUTTER = M3.features!.find((f) => f.kind === 'npc' && f.name === 'A wo
 const MOTHER = N3.features!.find((f) => f.kind === 'npc' && f.name === 'A dwarf woman at the well') as Person;
 const MINER = N4.features!.find((f) => f.kind === 'npc' && f.name === 'A miner') as Person;
 const CROSSING = 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.';
+const TOWN = MAP_DEFS.find((d) => d.id === 'anvilhall')!;
+const person = (name: string): Person => TOWN.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
+const THANE = person('Thane Wolfram'), CRANE = person('Wystan Crane'), GERDA = person('Gerda'), KONRAD = person('Konrad');
+const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => TOWN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
+const FORGE_SHOP = business('shop').find((f) => f.interior === 'anvilhall_forge')!;
+/** What a person says to a walk's company now, met as the game meets them. */
+const says = (w: Walk, p: Person): string => meet(p, w.party, heard(w.world, p)).text;
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -109,9 +130,9 @@ export const walkthrough: Walkthrough = (ok) => {
   for (let i = 0; i < 4 && w.world.zone?.id !== 'ironfells_n3'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') over.push(...r.messages); }
   ok(w.world.zone?.id === 'ironfells_n3' && !over.some((m) => /Iron Fells|harder|spare you/.test(m)), `the trail crosses from M3 into N3 with nothing said of the land (${over.join(' / ') || 'nothing'})`);
 
-  // The spur: road from the trail all the way to the forecourt under the crag, where the gate stands
-  // barred until the town is built (#459), GATE written for it on the gate's square. From M3's
-  // milestone the walk to it is about five at 13 squares to the unit, as the stone says.
+  // The spur: road from the trail all the way to the forecourt under the crag, where the gate is the
+  // way into Anvilhall (#459). From M3's milestone the walk to it is about five at 13 squares to the
+  // unit, as the stone says.
   const steps = (fx: number, fy: number, ok2: (x: number, y: number) => boolean): Map<number, number> => {
     const d = new Map([[fy * out.width + fx, 0]]), q = [[fx, fy]];
     for (let i = 0; i < q.length; i++) {
@@ -122,8 +143,8 @@ export const walkthrough: Walkthrough = (ok) => {
   };
   const front = (n3.y + GATE.y + 1) * out.width + n3.x + GATE.x;
   const spur = steps(n3.x, n3.y + 27, (x, y) => out.at(x, y).ch === '=' && x >= n3.x && x < n3.x + n3.w && y >= n3.y && y < n3.y + n3.h).get(front);
-  ok(spur === 46 && out.at(n3.x + GATE.x, n3.y + GATE.y).ch === '#' && out.passable(n3.x + GATE.x, n3.y + GATE.y) !== 'ok' && GATE.to === 'anvilhall',
-    `the spur runs ${spur} squares of road from the trail to the forecourt, and the gate before it is barred until Anvilhall is built`);
+  ok(spur === 46 && !!N3.exits?.includes(GATE) && GATE.to === 'anvilhall' && out.at(n3.x + GATE.x, n3.y + GATE.y).door === 'door',
+    `the spur runs ${spur} squares of road from the trail to the forecourt, and the gate before it is a door, the way into Anvilhall`);
   // Counted along the trails, as the stones are: from the road beside the stone, on the road.
   const stone = M3.features!.find((f) => f.kind === 'event' && f.id === 'm3_milestone')!;
   const [sx, sy] = [m3.x + stone.x, m3.y + stone.y], beside = [...steps(sx, sy, (x, y) => out.passable(x, y) === 'ok')].filter(([k]) => out.at(k % out.width, Math.floor(k / out.width)).ch === '=').sort((a, b) => a[1] - b[1])[0];
@@ -218,4 +239,110 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const strongbox = N4.features!.find((f) => f.kind === 'chest' && f.id === 'n4_yard_chest');
   ok(strongbox?.kind === 'chest' && strongbox.items.includes('sharkskin+2') && strongbox.x === 20 && strongbox.y === 5, 'among the cages, a Sharkskin Coat +2 the cargo left');
+
+  anvilhall(w, ok);
 };
+
+/**
+ * Anvilhall (#459): the gate's line; a night at the inn, the forge's step bought, training to 19; the
+ * verse read the old way by the Lantern reader, or by the company's own reader first; Linguist taught
+ * to a Lantern; and the thane's choice both ways.
+ */
+function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  // In at N3's gate, by the door in the hill, and out by it again onto the forecourt before it,
+  // whatever the thane was told: nothing shuts it.
+  w.world.travel('ironfells_n3', GATE.x, GATE.y + 1, NORTH);
+  const step = w.world.move('forward'), inside = step.kind === 'moved' ? step.messages : [];
+  ok(w.world.state.mapId === 'anvilhall' && w.world.state.x === TOWN.start.x && w.world.state.y === TOWN.start.y && w.world.state.facing === NORTH, 'N3\'s gate lets the company in at the foot of the court, facing up it');
+  ok(inside.join() === 'A door in the hill, iron-bound, and the hammering behind it. Over the lintel, words cut deep and painted red.', `going in, the door in the hill and the words cut over it (${inside.join(' / ')})`);
+  const first = w.world.move('forward');
+  ok(first.kind === 'moved' && first.messages.some((t) => t.startsWith('Anvilhall: a court cut down into the hill')), `a step inside, the court and its terraces (${first.kind === 'moved' ? first.messages.join(' / ') : first.kind})`);
+  listen(w);
+  w.world.travel('anvilhall', TOWN.start.x, TOWN.start.y, SOUTH);
+  const back = w.world.move('forward');
+  ok(back.kind === 'moved' && w.world.zone?.id === 'ironfells_n3' && w.world.state.x - w.world.zone.x === GATE.x && w.world.state.y - w.world.zone.y === GATE.y + 1 && w.world.state.facing === SOUTH,
+    'and out again onto the forecourt before the gate, facing down the spur');
+  ok(TOWN.exits!.length === 1 && TOWN.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate, either way');
+  listen(w);
+
+  // A company of 16 rests, buys the act's first step and trains to 19, each as the business's screen
+  // does it (src/ui/screens.ts).
+  ok(business('inn').length === 1 && business('temple').length === 1, 'Anvilhall has an inn to rest at and a mine-surgeon who cures');
+  w.party.gold = 30000;
+  const inn = business('inn')[0], night = inn.price * w.party.members.length;
+  for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
+  w.party.gold -= night;
+  for (const m of w.party.members) rest(m);
+  w.world.sleepUntilMorning();
+  ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
+  const rung = ACT_III.find((r) => r.level === 17)!;
+  ok(FORGE_SHOP.stock.length === FORGE.length && FORGE.every((id) => FORGE_SHOP.stock.includes(id)), `the smiths' forge sells the act's first step, all ${FORGE.length} wares and nothing else`);
+  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, FORGE_SHOP, id), `${m.name} buys a ${item(id).name} at the forge`);
+  const stores = business('shop').find((f) => f.interior === 'anvilhall_stores')!;
+  ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FORGE.includes(id)), 'the stores sell provisions and lamp oil, and no steel');
+  const yard = business('trainer')[0];
+  // Trained on a copy, so the company walks on as it was.
+  const trainee = structuredClone(w.party.members[0]);
+  trainee.level = 18; trainee.xp = xpForLevel(19);
+  ok(business('trainer').length === 1 && yard.maxLevel === 19 && yard.interior === 'anvilhall_training_hall' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 18`);
+  const fee = trainPrice(trainee);
+  levelUp(trainee, makeRng(1), 19);
+  ok(trainee.level === 19 && !canTrainAt(trainee, yard.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
+
+  // The verse. With no reader of its own the company sees it at the great hall's doors, and the
+  // Lantern reader reads it the old way; after, every holy word is a sign on a door.
+  w.world.travel('anvilhall', 7, 2, NORTH);
+  const doors = w.world.eventsHere();
+  ok(doors.some((t) => t.includes('THE FIRE IS KEPT BELOW AND NOT ABOVE')) && !w.world.used('ah_verse'), 'over the great hall\'s doors the verse is seen, and with no reader nobody reads it');
+  w.world.travel('anvilhall', CRANE.x, CRANE.y);
+  const aloud = says(w, CRANE);
+  ok(aloud.includes('DANGER. KEEP FIRE BELOW THIS LINE.') && aloud.endsWith('"It\'s a warning. The kind you paint on a boiler."') && !!w.party.flags[VERSE_READ], 'the reader reads it aloud, the old way: a warning, the kind you paint on a boiler');
+  ok(says(w, CRANE).includes('a sign on a door'), 'and after, every holy word in the hall is a sign on a door');
+  listen(w);
+
+  // With a reader of its own (Cassian, taught Linguist), a company reads the verse at the doors, and
+  // the reader reads it after them. A stranger to the Lanterns is taught nothing by him; a Lantern
+  // learns Linguist of him for its price.
+  const own = newWalk(ok);
+  const cassian = own.party.members.find((m) => m.name === 'Cassian')!;
+  cassian.skills = ['linguist'];
+  own.world.travel('anvilhall', 7, 2, NORTH);
+  const read = own.world.eventsHere();
+  ok(read.includes(readLine('Cassian', 'DANGER. KEEP FIRE BELOW THIS LINE.')) && own.world.used('ah_verse'), `a company with a reader reads the verse at the doors (${read.at(-1)})`);
+  own.world.travel('anvilhall', CRANE.x, CRANE.y);
+  const after = says(own, CRANE);
+  ok(after.includes('You read that one at the doors') && !after.includes('DANGER') && after.endsWith('"A warning. The kind you paint on a boiler."') && !!own.party.flags[VERSE_READ], 'and the reader\'s words change: he reads it after them');
+  const maren = own.party.members.findIndex((m) => m.name === 'Maren');
+  own.party.gold = 1000;
+  ok(CRANE.skill === 'linguist' && !mayLearn('linguist', own.party) && !learn('linguist', own.party, maren).taught, 'the reader teaches Linguist, and to a stranger to the Lanterns, nothing');
+  own.party.flags[rankFlag('lanterns')] = 1;
+  ok(learn('linguist', own.party, maren).taught && hasSkill(own.party.members[maren], 'linguist') && own.party.gold === 0, 'to a Taper of the Lanterns, Linguist, for 1,000 gold');
+
+  // The thane's choice, both ways, each on a company of 17 of its own. Short of the price the Stone is
+  // barred and nothing changes; bought, the forge stays open; taken, it is shut for good, its smiths
+  // gone and its door barred. Either way his last word is the same, the question is not put again
+  // and the town's words change; the inn and the stores keep their doors open.
+  for (const way of [BOUGHT, TAKEN]) {
+    const t = newWalk(ok);
+    t.level = 17;
+    t.world.travel('anvilhall', THANE.x, THANE.y);
+    const menu = meet(THANE, t.party, heard(t.world, THANE));
+    const [buyIt, takeIt] = menu.choice?.answers ?? [];
+    ok(menu.text.includes('we cut it') && buyIt?.price === ANVIL_STONE_PRICE && buyIt.sets === BOUGHT && takeIt?.sets === TAKEN && !takeIt.price, `${way}: the thane puts the Stone at ${ANVIL_STONE_PRICE} gold, or taken`);
+    if (way === BOUGHT) {
+      t.party.gold = ANVIL_STONE_PRICE - 1;
+      ok(barred(buyIt, t.party) && !barred(takeIt, t.party) && answer(buyIt, t.party) === SHORT && !t.party.flags[BOUGHT] && t.party.gold === ANVIL_STONE_PRICE - 1, 'a gold short of six thousand, the Stone is barred, and nothing changes');
+      t.party.gold = ANVIL_STONE_PRICE;
+    } else t.party.gold = 0;
+    const said = answer(way === BOUGHT ? buyIt : takeIt, t.party);
+    ok(!!t.party.flags[way] && !t.party.flags[way === BOUGHT ? TAKEN : BOUGHT] && t.party.gold === 0, `${way}: its flag set, and only its own (${said.split('\n\n').at(-1)})`);
+    const last = meet(THANE, t.party, heard(t.world, THANE));
+    ok(last.text.endsWith('"The mountain has to eat. Remember that, when you are somewhere it does not."') && !last.choice, `${way}: the thane's last word, and the question is not put again`);
+    t.world.travel('anvilhall', FORGE_SHOP.x, FORGE_SHOP.y);
+    const shut = t.world.eventsHere();
+    const open = t.world.present(FORGE_SHOP) && t.world.present(GERDA);
+    ok(way === BOUGHT ? open && !shut.length && says(t, GERDA).includes('He will not thank you') : !open && shut.join() === 'The forge door is barred. Behind it the hammering goes on, and nobody comes to it.',
+      way === BOUGHT ? 'bought, the forge stays open, and Gerda thanks the company for the thane' : 'taken, the forge is shut for good: its smiths gone, its door barred');
+    ok(says(t, KONRAD).includes(way === BOUGHT ? 'paid' : 'in red now') && [...business('inn'), ...business('shop').filter((f) => f !== FORGE_SHOP)].every((f) => t.world.present(f)), `${way}: the warder's book says so, and the inn and the stores keep their doors open`);
+  }
+}
