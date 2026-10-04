@@ -201,7 +201,8 @@ The rooms are drawn (#473), one to each business of the two towns, ahead of the 
 Saltmouth's and Lantern Watch's were. `src/content/areas/kilns/interiors.ts` lists them, the
 area's `interiors` since M3 lists it (`ROOMS_AHEAD` in `src/content/index.ts` merged them until
 then); Anvilhall's six open into theirs (#459), and `tools/tests/maps.ts` reports each of
-Kilnhaven's owed to #469 until a business there opens into it; §4.4 and §4.14 name the ids. They are a scene to a file in
+Kilnhaven's owed to #469 until a business there opens into it; §4.4 and §4.14 name the ids. They
+are a scene to a file in
 `src/ui/interiors/kilns/`, what Anvilhall's share in `hold.ts` and what Kilnhaven's share in
 `port.ts`. Anvilhall's are cut stone, iron and fire, the hammer and pick on the banners and the old
 script cut over the doors: the great hall, a nave of square pillars up to the thane's seat with the
@@ -453,9 +454,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   who is not a hall.
 - **Pay.** About 300 xp a member in the town's quests and hand-ins.
 - **As built** (#459, 4 October): N3's gate at 28,8, its door now open, lets a company in at the foot
-  of the court, 7,14, saying the brief's gate line as it goes; the hold's name is cut over the gate
-  inside, one door wide. The court climbs north in three terraces, a stair up through each terrace's
-  wall, to the great hall's doors at its head.
+  of the court, 7,14, through a gate one door wide, saying the brief's gate line as it goes; the
+  hold's name is cut over the gate inside. The court climbs north in three terraces, a stair up
+  through each terrace's wall, to the great hall's doors at its head.
   The businesses are the brief's six, each its own room and each a door in the rock: the Great Hall,
   a room with the thane and the Lantern reader in it; the Smiths' Forge, selling the step's eight
   wares and nothing else, gone with its smiths once the Stone is taken, its door barred; the Old
@@ -907,8 +908,8 @@ the rest with theirs.
   a fight inside the gate's aim costing what it costs; the sum is restated with each. A company
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
   finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457) and N3 1,525 (#458), so the
-  shares stand at about 14,090. Anvilhall pays nothing of its own (#459): its 300 is
-  the chapter's and #471's.
+  shares stand at about 14,090. Anvilhall pays nothing of its own (#459): its 300 is the
+  chapter's and #471's.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -926,8 +927,8 @@ the rest with theirs.
   The forge's full set for the premade six comes to about 17,300, its weapons 8,500; at the smith a
   taker pays about 4,300 more for the same. As built: M3 holds 740 (#457), its share by the brief's
   700 of the 13,900, in its cairn and the drover's box; N3 holds 950 (#458), its share by the brief's
-  900, in its cairn and the tithe-cellar; their monsters carry none. Anvilhall holds none (#459); its forge sells the step at
-  the prices above, and its thane takes the 6,000.
+  900, in its cairn and the tithe-cellar; their monsters carry none. Anvilhall holds none (#459):
+  its forge sells the step at the prices above, and its thane takes the 6,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman and
@@ -940,8 +941,8 @@ the rest with theirs.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
-  within 8 and the furthest 10, with one sign among its 22 (#458), the gate's exit for its event
-  once the gate opened (#459); Anvilhall, a town, 100% within 7 and the furthest 4, five signs among
+  within 8 and the furthest 10, with one sign among its 22 (#458; the open gate's exit takes the
+  place of its event, #459); Anvilhall, a town, 100% within 7 and the furthest 4, five signs among
   its 22 points (#459).
 
 ## 9. Decisions
