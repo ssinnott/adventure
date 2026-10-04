@@ -15,10 +15,10 @@ bot (#541). Figures are measured on main at `6032251` (2 October 2026) with `wor
 (`src/game/atlas.ts`), for land without shallows or rivers; "walkable" is land that is not mountain,
 peak, cliff or chasm.
 
-Nothing a company walks is built: the businesses' rooms are drawn, ahead of the town (§3). Its
-content will be `src/content/areas/rimewater/` (maps, monsters, items, climate, its part of the
-world map, its chapter of the one quest, The Sleepers, in `chapter.ts`, its side quests in
-`quests.ts` and the Lanterns' quests in `guilds.ts`), and its businesses' rooms are
+Nothing a company walks is built: the businesses' rooms and the monsters are drawn, ahead of the
+town and the boxes (§3). Its content will be `src/content/areas/rimewater/` (maps, monsters, items,
+climate, its part of the world map, its chapter of the one quest, The Sleepers, in `chapter.ts`, its
+side quests in `quests.ts` and the Lanterns' quests in `guilds.ts`), and its businesses' rooms are
 `src/ui/interiors/rimewater/`. Its ids: the area `rimewater`, its zones `longmere`, `coldmere` and
 `glacierfoot`, the town `rime_lodge`, the bay `sleepers_bay` and the reach's `ice_caves`. The zones
 are renamed in §10 and keep their ids (NAMES §3).
@@ -114,9 +114,18 @@ area's `atlas` at the folder. Its row on the curve and its step on the gear ladd
 the row in `src/content/progression.ts`, planned until #486 lists the area (band 20–22, next 22,
 window 4,500), and the step in `src/content/areas/rimewater/items.ts`, made ahead of the area as
 the Kilns' is (docs/areas/kilns.md §3): the furrier's seven (`FURRIER`, for #487) and their plus
-finds by 22 (§4.1), each owed to its shop or box until it is sold or placed. Nothing else: no map
-and no monster. The systems it waits on are the rest of #432's (§2). Its monsters are drawn in #495
-and its rooms in #496.
+finds by 22 (§4.1), each owed to its shop or box until it is sold or placed. Nothing else: no map.
+The systems it waits on are the rest of #432's (§2). Its monsters are drawn in #495 and its rooms
+in #496.
+
+The monsters are drawn (#495), the six of MONSTERS §7.3, ahead of the boxes that place them: the
+keepers, the Bay Keeper and the Matron (`src/ui/monsters/keepers.ts`), and the cats, the Snow Lynx
+(`src/ui/monsters/cats.ts`), two new frames; and the Ice Pike, the Tallyman and the Ice Bear on the
+long bodies', the knockers' and the bears' frames. Their defs are in
+`src/content/areas/rimewater/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until #486
+lists the area, and each is owed in `UNPLACED` (`tools/tests/maps.ts`) to the issue that places it:
+the pike, the lynx and the bear to #486, the tallyman to #487 and the keepers to #490. §9 has the
+decisions.
 
 The rooms are drawn (#496), one to each business of Rime Lodge, ahead of the town as Lantern
 Watch's were. `src/content/areas/rimewater/interiors.ts` lists them and `ROOMS_AHEAD` in
@@ -515,7 +524,7 @@ The first task for a company that is not yet a Taper is to keep the hole's fire 
 
 MONSTERS §7.3 has the roster and the fights: the Ice Pike, the Snow Lynx, the Tallyman, the Ice
 Bear, the Bay Keeper and the Matron; the ice-hole on the fourth night, the bay among the beds.
-Their drawings are #495's, six, two of them new families: the keepers, tall, thin, grey and
+They are drawn (#495, §3), six, two of them new families: the keepers, tall, thin, grey and
 many-fingered, whose frame the Whitespine's monks wear under their robes and the Vault's
 lamplighters bare (MONSTERS §11), and the cats, which the Wold's lions follow. The tallyman is the
 knockers' (the Kilns', MONSTERS §7.1), the ice pike the long bodies' and the ice bear the bears'.
@@ -529,8 +538,8 @@ column says so, in a pull request of its own. **The band's top is a question.** 
 nothing at 22 outside the bay: the keeper and the bear are 21, the rest 20. K10 at 22 alone wants a
 hardest group at 23 by the curve's rule, as C7 at 12 wanted one at 13 and had none
 (docs/areas/saltreach.md §9, #178's 2). Either K9 and K10 are both 21–22 with bear pairs at the top,
-as the pans took the bull toads, or #495 gives the cats an elite at 22 for the pass. The owner's, in
-#491.
+as the pans took the bull toads, or the cats are given an elite at 22 for the pass, a seventh drawing
+#495 did not make (§9). The owner's, in #491.
 
 New in Rimewater, for the novelty check (EXPANSION §5.4): the keepers and the cats, two new
 families; ice and lying snow underfoot (#536), with a group placed on ice; calls (#537); a story
@@ -682,6 +691,54 @@ Decided by delegate for #496, each the owner's to overturn:
 9. **The furrier shows its seven:** the Bearskin Coat on its stand, the Fur Robe on its peg, the
    Bear Spear, the Ice Axe, the Hunter's Bow and the Guide's Staff racked and the Skinning Knife on
    the block by the fleshing beam (#535).
+
+Decided by delegate for #495, each the owner's to overturn:
+
+1. **The keepers are mannequins in the vessel's plate:** too tall and too thin, the knockers' grey
+   plate on their ball joints, a waist of rings and an egg of a head with two soft lights and no
+   mouth; people in outline and nothing else, so a company knows the walk again under a robe.
+2. **Too many fingers is six to a hand, eight to the Matron's,** long, jointed and lit at the tips,
+   the sleeping touch's light; now and then a keeper's hand comes up to touch.
+3. **The keepers carry the chisel's mark,** the knockers' lozenge on a stem beside the chest's seam,
+   by docs/areas/kilns.md §9's rule (#472's 3) and the same drawing (`chiselMark`): every hand of the
+   vessel is marked, and the Abbot's robe will fall open on it.
+4. **The Matron is a keeper in a matron's shape:** the tallest, stooped, a starched cap and an apron
+   of pale plate, a second pair of arms folded over it. One frame, a Build to a kind, and a robe goes
+   where her apron does, so a brother is a Build and a robe.
+5. **The Bay Keeper mends the most hurt of its group one turn in four,** and its touch sleeps at 0.3:
+   at one in two the harness broke off a fifth of the days of four keepers at fifteen rounds, at one
+   in four 3%, in fights of 7.6 rounds (300 seeds).
+6. **The Matron does not mend:** her mend is 20 of her 1,145, a blow lost, and at a quarter of her
+   turns it lifts a company's odds at 20 from 74% to 86% (88% with two keepers by her). §4.6's
+   boss that mends is #490's to give her.
+7. **The Matron is on the boss line at 22, for #490's gate to tune,** as the Foreman is #462's: won
+   74% at 20, 86% at 21, 94% at 22 and 98% at 23 (300 seeds), where #490 asks about half at 21.
+8. **The cats are posed from a table** of where the body, the head and each leg's joints stand, the
+   tufts, the ruff, the tail and the paws in the Build: the lynx at the top of its leap, and the
+   Wold's lions a Build and a stalk of their own. The lynx leaps at the back row as flyers reach it.
+9. **The Ice Pike comes up through a hole it broke in the ice,** its body dark under the ice behind,
+   a bill of a head with one gold eye, spotted: the long bodies' frame takes a straight thrust, a
+   head tipped up, the bill, the spots and the body under the ice.
+10. **The Tallyman is a knocker that counts:** slate-blue, its front lifted to the company, tallies
+    scratched over every plate but the mark's, six lights on its cowl coming on one a click, frost
+    and icicles from the hole; the knockers' Build takes `count`, `tally` and `rime`.
+11. **The Tallyman calls three knockers at a half a turn,** as #537's test caller calls three fodder,
+    so the ice-hole's six leave room for one call: a company of 20 fights it 12.1 times to a rest,
+    against 14.3 with no call, and wins it from fresh at 18, which is #487's gate to tune.
+12. **The Ice Bear is the bears' frame long in the neck,** low in the hump, the head small and the
+    muzzle long, white with black claws, lifting its head to the wind. The roster gives the ice
+    things no element, so cold stays an answer here.
+13. **Each is today's test monster at its role and level, and none carries gold:** the levels past 16
+    are #541's to make again, and all six move with them; the machines' parts are their boxes' to
+    add, as the knockers' are #462's.
+14. **No seventh drawing:** the cats get no elite at 22 for the pass, and K9's and K10's top stays
+    #491's (§7).
+15. **Each is owed to the box that first places it:** the pike, the lynx and the bear to #486; the
+    keepers to #490; the tallyman to #487, whose fourth night holds its fight though the hole is on
+    M9's ice (§4.2).
+
+Owed elsewhere: MONSTERS §7.3 has anyone asleep a sleeper to the keepers, and nothing in the combat
+lets one leave a sleeper be or tend it; it is the systems lane's to build if it is wanted.
 
 ## 10. Names
 

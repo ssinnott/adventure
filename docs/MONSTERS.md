@@ -939,6 +939,18 @@ tallyman among them; the long bodies as the ice pike; the bears as the ice bear.
   with the lodge's fire at the company's back.
 - **The bay**: three keepers among the beds, where anyone who falls asleep is a sleeper to them.
 
+Drawn (#495), on the keepers' frame (`src/ui/monsters/keepers.ts`): a figure too tall and too thin,
+in the knockers' grey plate on their ball joints, a waist of rings, an egg of a head with two soft
+lights and no mouth, and the chisel's mark on its chest; six long fingers to a hand, lit at the
+tips, and the keeper mends one turn in four. The Matron is the tallest, stooped, in a starched cap
+and an apron of plate, a second pair of arms folded over it and eight fingers to a hand; a robe
+goes where her apron does. On the cats' frame (`src/ui/monsters/cats.ts`), posed from a table, the
+lynx at the top of its leap, tufted and ruffed. On the frames that exist: the Ice Pike up through a
+hole it broke in the ice, its body dark under it; the Tallyman, a knocker scratched over with
+tallies, six lights on its cowl coming on one a click, frosted from the hole and calling three
+knockers; the Ice Bear, long in the neck and white (docs/areas/rimewater.md §9). The boxes and the
+bay place them (#486, #487, #490).
+
 **Asks:** calls; a group placed on ice.
 
 ---

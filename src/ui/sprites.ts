@@ -29,6 +29,8 @@ import * as moths from './monsters/moths.ts';
 import * as knockers from './monsters/knockers.ts';
 import * as salamanders from './monsters/salamanders.ts';
 import * as lights from './monsters/lights.ts';
+import * as keepers from './monsters/keepers.ts';
+import * as cats from './monsters/cats.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -281,14 +283,16 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   bramble: oldwood.draw, rootwalker: oldwood.draw, heartwood: oldwood.draw, eldest: oldwood.draw,
   wraith: wraith.draw, cairn_wight: wraith.draw,
   crow: birds.draw, owl: birds.draw, old_rook: birds.draw, grey_heron: birds.draw, wrack_gull: birds.draw, raven: birds.draw,
-  fen_eel: longbodies.draw, leech: longbodies.draw, rock_worm: longbodies.draw,
+  fen_eel: longbodies.draw, leech: longbodies.draw, rock_worm: longbodies.draw, ice_pike: longbodies.draw,
   fen_toad: toads.draw, bull_toad: toads.draw,
   devilfish: devilfish.draw, great_devilfish: devilfish.draw,
-  pine_bear: bears.draw, glass_bear: bears.draw,
+  pine_bear: bears.draw, glass_bear: bears.draw, ice_bear: bears.draw,
   lantern_moth: moths.draw, deathshead: moths.draw,
-  knocker: knockers.draw, mender: knockers.draw, foreman: knockers.draw,
+  knocker: knockers.draw, mender: knockers.draw, foreman: knockers.draw, tallyman: knockers.draw,
   salamander: salamanders.draw, great_salamander: salamanders.draw,
   bog_light: lights.draw,
+  bay_keeper: keepers.draw, matron: keepers.draw,
+  snow_lynx: cats.draw,
 };
 
 /**
