@@ -452,16 +452,6 @@ Decided by the owner's delegate on 2 October 2026 (#434), and followed here:
    on N8's drove road, built with Rimewater's #494.
 7. **The names** (#435): §10.
 
-Decided by delegate for #535, each the owner's to overturn:
-
-1. **The moor's own plus on the ladder is O7's Banded Staff +1,** the caster's its brief asks; the
-   rest of the rung by 19 is the Kilns' (docs/areas/kilns.md §9), so a company two under the
-   moor's floors at 20 goes without it.
-2. **N7 and O8 hold seconds of the Kilns' Forge Hammer +1 and Seax +1,** the ladder's for a fighter
-   and a thief: three classes share each line, and the Kilns place one of each.
-3. **N8's ranger's plus and Carn Dubh's named piece are off the ladder,** their boxes' to choose:
-   the ranger's line has one bearer, and its Steel Bow +1 is O6's.
-
 Proposed, for the owner, each in the issue that would build it:
 
 - **The briefs** of §4.2 to §4.7: each box's landmarks, points of interest, encounters, secret and
@@ -487,6 +477,16 @@ Proposed, for the owner, each in the issue that would build it:
   MONSTERS §7.2's Where column has them on the tors and names no box.
 - **The Faces on the Tors is at 20 on a box at 19,** its fight the box's trolls, as The Star That
   Moved was at 12 on C7 (docs/areas/saltreach.md §6).
+
+Decided by delegate for #535, each the owner's to overturn:
+
+1. **The moor's own plus on the ladder is O7's Banded Staff +1,** the caster's its brief asks; the
+   rest of the rung by 19 is the Kilns' (docs/areas/kilns.md §9), so a company two under the
+   moor's floors at 20 goes without it.
+2. **N7 and O8 hold seconds of the Kilns' Forge Hammer +1 and Seax +1,** the ladder's for a fighter
+   and a thief: three classes share each line, and the Kilns place one of each.
+3. **N8's ranger's plus and Carn Dubh's named piece are off the ladder,** their boxes' to choose:
+   the ranger's line has one bearer, and its Steel Bow +1 is O6's.
 
 ## 10. Names
 

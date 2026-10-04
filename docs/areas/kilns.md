@@ -769,45 +769,6 @@ number, and those that are not the Kilns' are left out:
 8. **All of #56's 33 to 36 stand** (call 11): §6.
 9. **The names** (#435): §10.
 
-Decided by delegate for #535, each the owner's to overturn:
-
-1. **Act III's ladder is built as Act II's was** (#399's 1): each town sells every class a new line,
-   a point of blow a rung and a two-hander a point over a one-hander, and the boxes give it with a
-   plus: Anvilhall's forge at 17, the Kilns' and Cairnmoor's finds by 19, Rime Lodge's furrier at
-   21 and Rimewater's finds by 22.
-2. **The forge sells eight, a smith's and a miner's:** a Forge Hammer, a Seax, a Steel Bow, a
-   Mattock, a Banded Staff, Dwarf Mail, a Kiln Robe and a Forge Shield (§4.4).
-3. **Armour steps on alternate rungs, as Act II's** (#399's 2): the medium wearers take the Dwarf
-   Mail (11) at 17 and the furrier's Bearskin Coat (12) at 21; plate's wearers the Forge Shield (6)
-   at 17, N3's Plate Mail +3 (12) at 19 and the Sleepers' Bay's Plate Mail +4 (13) at 22; the
-   casters the Kiln Robe (9) at 17, L6's Kiln Robe +1 (10) at 19 and the furrier's Fur Robe (11)
-   at 21. Each gains in the act what it gained in Act II.
-4. **No Dwarf Mail with a plus, and no Forge Shield +1 on the ladder:** a Dwarf Mail +1 would leave
-   the furrier's coat no step, and N5's shield with a plus is its box's to place or not.
-5. **The finds by 19 go where the briefs name the piece** (#399's 3): N3's armour, the Tiefzeche's
-   weapon, Erzkamm's two-hander, O6's bow, M6's dagger and L6's robe, with Cairnmoor's caster's plus
-   at O7. M3's, N4's, O5's and the Rift's are their boxes' to choose, off the ladder; O5's helm is
-   none, as no item is worn on the head.
-6. **The finds' rung is 19,** as Act II's was 13, in the middle of the act's second area: a company
-   two under Cairnmoor's floors at 20 goes without it.
-7. **A ware rises about a quarter a town, its dearest a little over half its window,** as
-   Saltmouth's Sharkskin Coat (1,100 of 2,000) and the Watch's Lamellar (1,600 of 3,000) were: the
-   Dwarf Mail 2,000 of 3,500, the Bearskin Coat 2,500 of 4,500. Act II's half again a town would
-   bring Cinderport's step to the edge of Ashfall's 5,500 (#542).
-8. **Kilnhaven's smith asks a quarter more, in whole gold** (`quarterMore` and `SMITH_PRICES`, for
-   #469): its dearest, 2,500, sits inside the window, and the ladder test holds it and owes the
-   shop to #469.
-9. **The Stone is 6,000** (`ANVIL_STONE_PRICE`, for #459), sized as §8 says; the curve's row asks
-   the training alone, and the boxes carry the Stone.
-10. **The step is made ahead of the area** (`ITEMS_AHEAD`, `src/content/index.ts`), as monsters and
-    rooms drawn ahead are: no save holds it until a listed area sells or places it, and the first
-    box takes the table.
-11. **The harness's line at 24 is owed to #541:** in the ladder's gear to 22 a company of 24 fights
-    14.9 standard encounters to a rest where 10 are asked, and #541 makes the line past 16 again
-    with it, as #409 did after Act II's.
-12. **The windows stay at 3,500, 4,000 and 4,500,** 500 a band as the issue has them: no ware or
-    find comes within 400 of its area's.
-
 Proposed, for the owner, each in the issue that would build it:
 
 - **The briefs** of §4.2 to §4.15: each box's landmarks, points of interest, encounters, secret and
@@ -862,6 +823,45 @@ Decided by delegate for #540, each the owner's to overturn:
    so drops the entry there.
 4. **No wording changes.** The title, the sky and the almanac read the count, which stands at five
    Stones already, so the Anvil Stone is one step more wherever it falls.
+
+Decided by delegate for #535, each the owner's to overturn:
+
+1. **Act III's ladder is built as Act II's was** (#399's 1): each town sells every class a new line,
+   a point of blow a rung and a two-hander a point over a one-hander, and the boxes give it with a
+   plus: Anvilhall's forge at 17, the Kilns' and Cairnmoor's finds by 19, Rime Lodge's furrier at
+   21 and Rimewater's finds by 22.
+2. **The forge sells eight, a smith's and a miner's:** a Forge Hammer, a Seax, a Steel Bow, a
+   Mattock, a Banded Staff, Dwarf Mail, a Kiln Robe and a Forge Shield (§4.4).
+3. **Armour steps on alternate rungs, as Act II's** (#399's 2): the medium wearers take the Dwarf
+   Mail (11) at 17 and the furrier's Bearskin Coat (12) at 21; plate's wearers the Forge Shield (6)
+   at 17, N3's Plate Mail +3 (12) at 19 and the Sleepers' Bay's Plate Mail +4 (13) at 22; the
+   casters the Kiln Robe (9) at 17, L6's Kiln Robe +1 (10) at 19 and the furrier's Fur Robe (11)
+   at 21. Each gains in the act what it gained in Act II.
+4. **No Dwarf Mail with a plus, and no Forge Shield +1 on the ladder:** a Dwarf Mail +1 would leave
+   the furrier's coat no step, and N5's shield with a plus is its box's to place or not.
+5. **The finds by 19 go where the briefs name the piece** (#399's 3): N3's armour, the Tiefzeche's
+   weapon, Erzkamm's two-hander, O6's bow, M6's dagger and L6's robe, with Cairnmoor's caster's plus
+   at O7. M3's, N4's, O5's and the Rift's are their boxes' to choose, off the ladder; O5's helm is
+   none, as no item is worn on the head.
+6. **The finds' rung is 19,** as Act II's was 13, in the middle of the act's second area: a company
+   two under Cairnmoor's floors at 20 goes without it.
+7. **A ware rises about a quarter a town, its dearest a little over half its window,** as
+   Saltmouth's Sharkskin Coat (1,100 of 2,000) and the Watch's Lamellar (1,600 of 3,000) were: the
+   Dwarf Mail 2,000 of 3,500, the Bearskin Coat 2,500 of 4,500. Act II's half again a town would
+   bring Cinderport's step to the edge of Ashfall's 5,500 (#542).
+8. **Kilnhaven's smith asks a quarter more, in whole gold** (`quarterMore` and `SMITH_PRICES`, for
+   #469): its dearest, 2,500, sits inside the window, and the ladder test holds it and owes the
+   shop to #469.
+9. **The Stone is 6,000** (`ANVIL_STONE_PRICE`, for #459), sized as §8 says; the curve's row asks
+   the training alone, and the boxes carry the Stone.
+10. **The step is made ahead of the area** (`ITEMS_AHEAD`, `src/content/index.ts`), as monsters and
+    rooms drawn ahead are: no save holds it until a listed area sells or places it, and the first
+    box takes the table.
+11. **The harness's line at 24 is owed to #541:** in the ladder's gear to 22 a company of 24 fights
+    14.9 standard encounters to a rest where 10 are asked, and #541 makes the line past 16 again
+    with it, as #409 did after Act II's.
+12. **The windows stay at 3,500, 4,000 and 4,500,** 500 a band as the issue has them: no ware or
+    find comes within 400 of its area's.
 
 ## 10. Names
 

@@ -574,22 +574,6 @@ Decided by the owner's delegate on 2 October 2026 (#434), and followed here:
 8. **All of #56's 40 to 44 stand** (call 11), with 43 ended at Loch Fada's edge and 40's coach found
    stopped on Cairnmoor's N8.
 
-Decided by delegate for #535, each the owner's to overturn:
-
-1. **The furrier sells seven, a hunter's and a guide's:** an Ice Axe, a Skinning Knife, a Hunter's
-   Bow, a Bear Spear, a Guide's Staff, a Bearskin Coat (12) and a Fur Robe (11), a point of blow
-   past the Kilns' finds for every class and the medium wearers' and the casters' armour step. No
-   shield: plate's wearers step at 22 instead, with the bay's Plate Mail +4, as the Kilns' doc has
-   it (docs/areas/kilns.md §9, #535's 3).
-2. **The finds by 22 go where the briefs ask a piece of the step:** the lost guide's Ice Axe +1 in
-   M9's hollow, a drover's Skinning Knife +1 in L9's strongbox, the drowned smith's Bear Spear +1 on
-   K9, the Lantern's Guide's Staff +1 under K10's lamp and the bay's two, a Hunter's Bow +1 and a
-   Plate Mail +4. K9's named blade and the sleepers' ring stay off the ladder, their boxes' own.
-3. **A box names its find, and the ladder keeps the id:** the bay's two are "named pieces" and K10's
-   a Lantern's, so their names are their boxes' to give, the ids the ladder's.
-4. **The ladder's top is 22,** Rimewater's finds, so the Whitespine's floor wears the act's last
-   step, and the harness's what-if grows gear past it.
-
 Proposed, for the owner, each in the issue that would build it:
 
 - **The briefs** of §4.2 to §4.8: each box's landmarks, points of interest, encounters, secret and
@@ -615,6 +599,22 @@ Proposed, for the owner, each in the issue that would build it:
   there already, where only the scaffold reads them, for a box's draft; the owner's word changes
   them there.
 - **The names** (§10), for #435.
+
+Decided by delegate for #535, each the owner's to overturn:
+
+1. **The furrier sells seven, a hunter's and a guide's:** an Ice Axe, a Skinning Knife, a Hunter's
+   Bow, a Bear Spear, a Guide's Staff, a Bearskin Coat (12) and a Fur Robe (11), a point of blow
+   past the Kilns' finds for every class and the medium wearers' and the casters' armour step. No
+   shield: plate's wearers step at 22 instead, with the bay's Plate Mail +4, as the Kilns' doc has
+   it (docs/areas/kilns.md §9, #535's 3).
+2. **The finds by 22 go where the briefs ask a piece of the step:** the lost guide's Ice Axe +1 in
+   M9's hollow, a drover's Skinning Knife +1 in L9's strongbox, the drowned smith's Bear Spear +1 on
+   K9, the Lantern's Guide's Staff +1 under K10's lamp and the bay's two, a Hunter's Bow +1 and a
+   Plate Mail +4. K9's named blade and the sleepers' ring stay off the ladder, their boxes' own.
+3. **A box names its find, and the ladder keeps the id:** the bay's two are "named pieces" and K10's
+   a Lantern's, so their names are their boxes' to give, the ids the ladder's.
+4. **The ladder's top is 22,** Rimewater's finds, so the Whitespine's floor wears the act's last
+   step, and the harness's what-if grows gear past it.
 
 ## 10. Names
 
