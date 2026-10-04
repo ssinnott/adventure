@@ -63,7 +63,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   // smith's quarter more on the forge's dearest, 2,500, inside the Kilns'.
   kilns: {
     band: [16, 18], next: 18, price: 3500,
-    owed: { whose: '#436', why: 'the Kilns are built box by box', xp: 5158, gold: 3280 },
+    owed: { whose: '#436', why: 'the Kilns are built box by box', xp: 6838, gold: 4230 },
   },
   cairnmoor: {
     band: [18, 20], next: 20, price: 4000,

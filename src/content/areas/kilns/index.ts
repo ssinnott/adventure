@@ -6,6 +6,7 @@ import { IRONFELLS_N3 } from './maps/ironfells_n3.ts';
 import { ANVILHALL } from './maps/anvilhall.ts';
 import { KILNSHEART_N4 } from './maps/kilnsheart_n4.ts';
 import { IRONFELLS_N2 } from './maps/ironfells_n2.ts';
+import { KILNSHEART_N5 } from './maps/kilnsheart_n5.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -13,7 +14,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'kilns' as const,
-  maps: [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, IRONFELLS_N2],
+  maps: [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, IRONFELLS_N2, KILNSHEART_N5],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
@@ -25,6 +26,6 @@ export const AREA = {
   climate: { summer: 21, winter: -3, daily: 7, damp: [0, 0.05], wettest: 80, fog: 0.3, lag: 10,
     fogText: 'A haze comes down off the Fells, and it smells of smoke.', thunderText: 'Thunder rolls along the Fells.' },
   interiors: INTERIORS,
-  novel: { families: ['salamanders'], terrain: ['pine'], mechanics: ['sign:read'], landmarks: ['fortress'] },
+  novel: { families: ['salamanders'], terrain: ['pine'], mechanics: ['sign:read'], landmarks: ['fortress', 'forge'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

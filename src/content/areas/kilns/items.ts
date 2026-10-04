@@ -58,4 +58,7 @@ export const ITEMS: readonly ItemDef[] = [
   // N4's secret (#461): in the wagon yard behind the headworks, left in a cage by the cargo, which came
   // from the coast; off the ladder, a coat the medium wearers have a level before the forge's mail.
   P(sharkskin, 2),
+  // N5's secret (#463): in the smiths' shard store under the slag heap, their own work, off the
+  // ladder as #535's 4 leaves it, the forge's shield with a plus.
+  P(forgeShield, 1),
 ];

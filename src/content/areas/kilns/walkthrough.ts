@@ -14,11 +14,15 @@
 // first: the trail on over the line from N3 into new land, named, and harder to a company under its
 // floor; the spur to the shaft, its cage chained until the mine is built; the drove road out south;
 // the box's groups won at its floor; the miner at the camp; and the wagon yard found from the tally
-// board and the fresh mortar, the blessing over the shaft read by a reader alone. Erzkamm (N2, #460):
-// up the open fell out of N3 with nothing said, the box's groups won at its floor, the scholar at the
-// wall, and the doors behind the blank face found from the worn floor, the wall beside it read by a
-// reader alone; last, the Barbarian's second prestige, taught by Hartmut at the cave's mouth (#19):
-// his lesson after his own words, and taught at 19.
+// board and the fresh mortar, the blessing over the shaft read by a reader alone. Gluthutte's box (N5,
+// #463): the drove road on from N4, harder to a company under its floor of 17; the smelter, the verse
+// over its mouth read by a reader alone, the master smith with his crown and the Compact's factor; the
+// box's groups won at its floor; the cutters' track east for the Stone; the drove road out south; and
+// the shard store found from the slag heap's laid face. Erzkamm (N2, #460): up the open fell out of N3
+// with nothing said, the box's groups won at its floor, the scholar at the wall, and the doors behind
+// the blank face found from the worn floor, the wall beside it read by a reader alone; last, the
+// Barbarian's second prestige, taught by Hartmut at the cave's mouth (#19): his lesson after his own
+// words, and taught at 19.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -50,6 +54,9 @@ const N2 = MAP_DEFS.find((d) => d.id === 'ironfells_n2')!;
 const WOODCUTTER = M3.features!.find((f) => f.kind === 'npc' && f.name === 'A woodcutter') as Person;
 const MOTHER = N3.features!.find((f) => f.kind === 'npc' && f.name === 'A dwarf woman at the well') as Person;
 const MINER = N4.features!.find((f) => f.kind === 'npc' && f.name === 'A miner') as Person;
+const N5 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n5')!;
+const SMITH = N5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Eckhart')) as Person;
+const FACTOR = N5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Kerensa')) as Person;
 const SCHOLAR = N2.features!.find((f) => f.kind === 'npc' && f.name === 'A scholar at the wall') as Person;
 const HARTMUT = N2.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Hartmut')) as Person;
 const CROSSING = 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.';
@@ -206,7 +213,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const under14 = down(14), at16 = down(16);
   ok(under14.includes('The Kilns. The land here is harder than the road behind.'), `a company of 14 hears the Kilns named, and that the land is harder than the road behind (${under14.join(' / ')})`);
   ok(at16.includes('The Kilns.') && !at16.some((m) => m.includes('harder')), `a company of 16 hears the Kilns named, and no warning (${at16.join(' / ')})`);
-  ok(out.at(n4.x + 20, n4.y + 31).ch === '=' && out.passable(n4.x + 20, n4.y + 32) !== 'ok', 'the drove road leaves N4 by its south edge, and past it, for now, the world ends');
+  ok(out.at(n4.x + 20, n4.y + 31).ch === '=' && out.zoneAt(n4.x + 20, n4.y + 32)?.id === 'kilnsheart_n5' && out.at(n4.x + 20, n4.y + 32).ch === '=', 'the drove road leaves N4 by its south edge and runs on into N5');
 
   // The spur off the trail to the headworks, and the shaft at its end, the way into the Tiefzeche
   // (#462): its cage chained until the mine is built, MOUTH written for it on the shaft's square.
@@ -250,6 +257,70 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const strongbox = N4.features!.find((f) => f.kind === 'chest' && f.id === 'n4_yard_chest');
   ok(strongbox?.kind === 'chest' && strongbox.items.includes('sharkskin+2') && strongbox.x === 20 && strongbox.y === 5, 'among the cages, a Sharkskin Coat +2 the cargo left');
+
+
+  // Gluthutte's box (N5, #463). On down the drove road over the line from N4: the same land, but its
+  // floor is 17, so a company of 16 hears the land is harder and one of 17 hears nothing.
+  const n5 = out.zones.find((z) => z.id === 'kilnsheart_n5')!;
+  const onSouth = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('kilnsheart_n4', 20, 29, SOUTH);
+    const said: string[] = [];
+    for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnsheart_n5'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+    ok(w.world.zone?.id === 'kilnsheart_n5', `the drove road crosses from N4 into N5 at ${level}`);
+    return said;
+  };
+  const at16n5 = onSouth(16), at17 = onSouth(17);
+  ok(at16n5.includes('The land here is harder than the road behind.') && !at16n5.some((m) => m.includes('The Kilns')), `a company of 16 hears the land is harder, and no name (${at16n5.join(' / ')})`);
+  ok(!at17.some((m) => /harder|spare you|Kilns/.test(m)), `a company of 17 hears nothing of the land (${at17.join(' / ') || 'nothing'})`);
+  w.level = 17;
+  ok(out.at(n5.x + 12, n5.y + 31).ch === '=' && out.passable(n5.x + 12, n5.y + 32) !== 'ok', 'the drove road leaves N5 by its south edge, and past it, for now, the world ends');
+
+  // The spur off the road to the smelter's yard, the smelter's line, and the verse over its mouth:
+  // the dwarves' words to a company with no reader, the boiler's warning to one with.
+  const inN5 = (x: number, y: number): boolean => x >= n5.x && x < n5.x + n5.w && y >= n5.y && y < n5.y + n5.h;
+  const spurN5 = steps(n5.x + 20, n5.y + 3, (x, y) => out.at(x, y).ch === '=' && inN5(x, y)).get((n5.y + 3) * out.width + n5.x + 14);
+  ok(spurN5 === 6, `a spur of ${spurN5} squares of road runs off the drove road west to the smelter's yard`);
+  see(w, 'kilnsheart_n5:n5_smelter');
+  w.world.travel('kilnsheart_n5', 11, 2, EAST);
+  const verse = w.world.eventsHere();
+  ok(verse.some((t) => t.includes('THE FIRE IS KEPT BELOW AND NOT ABOVE')) && !verse.some((t) => t.includes('DANGER')) && !w.world.used('n5_verse'), `with no reader the verse over the smelter's mouth is the dwarves' words and no more (${verse.join(' / ')})`);
+  w.party.members[4].skills = ['linguist'];
+  const boiler = w.world.eventsHere();
+  ok(boiler.includes('Maren reads: "DANGER. KEEP FIRE BELOW THIS LINE."') && w.world.used('n5_verse'), `Maren, taught Linguist, reads it as the boiler's warning, as at Anvilhall (${boiler.join(' / ')})`);
+  w.party.members[4].skills = [];
+
+  // The master smith with the crown, and the Compact's factor, who pays in stone.
+  w.world.travel('kilnsheart_n5', SMITH.x, SMITH.y);
+  const crown = meet(SMITH, w.party, heard(w.world, SMITH)).text;
+  ok(crown.includes('A crown to order') && crown.includes('paid for in stone'), 'the master smith at the anvil is making a crown to order, paid for in stone');
+  w.world.travel('kilnsheart_n5', FACTOR.x, FACTOR.y);
+  const factor = meet(FACTOR, w.party, heard(w.world, FACTOR)).text;
+  ok(factor.includes('Salt Compact') && factor.includes('Not coin'), 'the Compact\'s factor pays the smiths, and not in coin');
+
+  // The box's groups, each won at its floor: the beetles at the forges, the salamanders on the slag
+  // heap and the slag elder on the cutters' track.
+  for (const g of N5.encounters!) fight(w, `kilnsheart_n5:${g.id}`);
+
+  // The cutters' track east for the Stone: dirt off the drove road to the east edge, where O5 takes it.
+  ok([...Array(16).keys()].every((i) => out.at(n5.x + 16 + i, n5.y + 24).ch === ':') && out.at(n5.x + 15, n5.y + 24).ch === '=',
+    'the cutters\' track leaves the drove road at 440,150 and runs east to the box\'s edge');
+  const elder = N5.encounters!.find((g) => g.id === 'n5_elder')!;
+  ok(elder.monsters.join() === 'slag_elder' && JSON.stringify(elder.until) === JSON.stringify({ flag: 'q_anvil_closed' }), 'on the track a slag elder strayed from the Stone, until the tear is closed');
+
+  // The secret: the slag heap tipped loose on every face but its laid one, the search there and the
+  // shard store behind. Walked, waded, climbed or floated, it is never reached but through the face.
+  const store = shut(n5, [5, 5], [5, 4], [6, 2]);
+  ok(store.size > 600 && !store.reached, `the shard store is shut but for the laid face: none of N5's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'kilnsheart_n5:n5_laid');
+  w.world.travel('kilnsheart_n5', 5, 5, NORTH);
+  let laid = false;
+  for (let i = 0; i < 20 && !laid; i++) laid = w.world.search();
+  const inStore = laid ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(laid && inStore.every((r) => r.kind === 'moved') && w.world.used('n5_store'), 'searched at the laid face, the heap gives, and the shard store behind it can be walked into');
+  listen(w);
+  const shards = N5.features!.find((f) => f.kind === 'chest' && f.id === 'n5_store_chest');
+  ok(shards?.kind === 'chest' && shards.items.includes('forge_shield+1') && shards.x === 6 && shards.y === 2, 'in the store, among the boxes of stone, a Forge Shield +1');
 
   anvilhall(w, ok);
 
