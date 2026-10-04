@@ -802,6 +802,11 @@ cargo down the Deep Mines.
 - **The spoil heaps**: fire beetles and salamanders, where the sorcerer's fire does nothing and the
   answer is Wren's Hailstorm.
 
+Drawn (#472), on the knockers' frame (`src/ui/monsters/knockers.ts`): smooth grey plates on a comb
+of legs, one lamp in the cowl's face and the chisel's mark cut on a plate, a lozenge on a stem. The
+Mender carries a spool of wire and a needle and mends one turn in two; the Foreman rears up over a
+slate (docs/areas/kilns.md §9). The Tiefzeche places them (#462).
+
 **Asks:** `kind` for the machines, if it has not come before; `after`, for the Anvil Guard.
 
 ### 7.2 Cairnmoor (band 18–20)
