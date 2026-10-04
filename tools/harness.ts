@@ -9,6 +9,7 @@
 //   node tools/harness.ts --under 2                    the company two levels under the monsters
 //   node tools/harness.ts --map thornmark --level 5    a map's own groups, against a company of 5
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
+//   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights and caller on the test monsters (#537)
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 16
@@ -18,7 +19,9 @@
 // that level brings (game/party.ts), and dressed in what the item tables give it by then (GEAR). A thrifty bot plays it (see `thrifty`), where tools/gate.ts's
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
 // the spell saves outweigh its spell points, each weighed by what the company has left of that pool,
-// and counts a spell's element for what it has seen it do to each foe.
+// and counts a spell's element for what it has seen it do to each foe, and fire for the mending it
+// stops in what it has seen mend. It aims at a leader, else a caller while its call has room, and
+// reads the fight as it stands each turn, called groups and all.
 // It wakes a sleeper of the front row, or a caster, where it can, and never blesses, sleeps, cures
 // anything else, drinks or flees. Between fights it mends as a player would. The
 // report and the calibration run on every core.
@@ -30,7 +33,7 @@ import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { CLASSES, defaultParty, xpForLevel, levelUp, isDown, hasCondition, removeCondition, heal, equip, weaponOf, attackBonus, armorClass, bonus, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, isLeader, canCall, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW } from '../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../src/game/spells.ts';
 import type { SpellDef } from '../src/game/spells.ts';
@@ -39,7 +42,7 @@ import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster } from './testmonster.ts';
+import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, trollEncounter, wightEncounter, callerEncounter } from './testmonster.ts';
 import type { Role } from './testmonster.ts';
 
 /**
@@ -241,6 +244,14 @@ export function wakeWith(p: Party, c: Character): { spellId: string; target: num
   return who && { spellId: cure.id, target: who.j };
 }
 
+/**
+ * The foe the bots aim at first among `foes`: a leader, since the people break at its fall, else a
+ * caller while the fight has room for its call, since its fall stops the fight growing (`canCall`).
+ */
+export function markOf(s: CombatState, foes: readonly number[]): number | undefined {
+  return foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f]));
+}
+
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
 function mendRate(c: Character): number {
   let best = 1;
@@ -277,8 +288,8 @@ export const thrifty: Bot = (s, p, rng, i) => {
   if (sleeper && partyAct(s, p, rng, { type: 'cast', ...sleeper })) return;
   const foes = aliveMonsters(s);
   if (!foes.length) { partyAct(s, p, rng, { type: 'defend' }); return; }
-  // A blade at a leader it reaches, since the people break at its fall, else at the weakest it reaches.
-  const lead = foes.find((f) => isLeader(s, s.monsters[f])), near = foes.filter((f) => canReach(s, c, f));
+  // A blade at a leader or a caller it reaches (`markOf`), else at the weakest it reaches.
+  const lead = markOf(s, foes), near = foes.filter((f) => canReach(s, c, f));
   const weakest = lead !== undefined && near.includes(lead) ? lead : (near.length ? near : foes).reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a));
   const armed = canAttackFromRow(c, i), blow = armed ? weaponDamage(s, p, c, s.monsters[weakest]) : 0;
   const weapons = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(s, p, m, s.monsters[weakest], false) : 0), 0);
@@ -290,8 +301,11 @@ export const thrifty: Bot = (s, p, rng, i) => {
   for (const x of known) {
     if (!x.dice || (x.target !== 'enemy' && x.target !== 'group' && x.target !== 'all')) continue;
     // What the spell would do, by what the company has seen its element do to each, no target counted
-    // for more than it has left.
-    const each = spellDamage(c, x), take = (f: number): number => Math.min(each * seenMult(s, s.monsters[f], x.element), s.monsters[f].hp);
+    // for more than it has left; and fire, the mending it stops this round in each it leaves standing
+    // that the company has seen mend and nothing has burnt yet.
+    const each = spellDamage(c, x), dealt = (f: number): number => Math.min(each * seenMult(s, s.monsters[f], x.element), s.monsters[f].hp);
+    const stops = (f: number): number => { const m = s.monsters[f]; return x.element === 'fire' && !m.burnt && dealt(f) > 0 && dealt(f) < m.hp ? s.mends?.[m.def.id] ?? 0 : 0; };
+    const take = (f: number): number => dealt(f) + stops(f);
     let dmg = 0, target = weakest;
     if (x.target === 'all') dmg = foes.reduce((a, f) => a + take(f), 0);
     else if (x.target === 'enemy') { if (lead !== undefined) { dmg = take(lead); target = lead; } else for (const f of foes) if (take(f) > dmg) { dmg = take(f); target = f; } }
@@ -597,6 +611,39 @@ async function main(): Promise<void> {
         const m = testMonster(r, l);
         console.log(`| ${l} | ${m.hp} | ${m.ac} | ${m.attack} | ${m.dice}d${m.sides}${m.bonus ? (m.bonus > 0 ? '+' : '') + m.bonus : ''} (${(m.dice * (m.sides + 1) / 2 + m.bonus).toFixed(1)}) | ${m.xp} |`);
       }
+    }
+    return;
+  }
+
+  if (args.includes('--abilities')) {
+    // Act III's abilities on the test monsters (docs/MONSTERS.md §3.3, #537): the figures their sizes were decided on.
+    const at = opt('levels') ? levels : [19, 20];
+    const forget = (keep: (sp: SpellDef) => boolean) => (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => keep(spell(id))); return p; };
+    const fireless = forget((x) => x.element !== 'fire'), unarmed = forget((x) => !x.dice);
+    /** Seeds of one fight from fresh, as `fight` plays it, each fight's end kept to read. */
+    const fights = (level: number, enc: Encounter, dress = (p: Party): Party => p): { s: CombatState; p: Party; o: Outcome }[] => Array.from({ length: seeds }, (_, n) => {
+      const k = n + 1, p = dress(companyAt(level, k)), rng = makeRng(k * 7919 + 13), s = startCombat(p, [asGroup('harness', enc)], rng);
+      for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > ROUND_CAP) break; if (t.side === 'monster') monsterAct(s, p, rng); else thrifty(s, p, rng, t.i); }
+      return { s, p, o: { won: s.outcome === 'victory', ...spent(p), rounds: Math.min(s.round, ROUND_CAP), down: p.members.some(isDown), broken: s.outcome === 'ongoing' } };
+    });
+    const mean = (fs: { o: Outcome }[], f: (o: Outcome) => number): number => fs.reduce((t, x) => t + f(x.o), 0) / fs.length;
+    const one = (fs: { o: Outcome }[]): string => `${mean(fs, (o) => o.rounds).toFixed(1)} rounds, ${pct(mean(fs, (o) => o.cost))}%, won ${pct(mean(fs, (o) => (o.won ? 1 : 0)))}%`;
+    const rest = (level: number, enc: Encounter): string => `${days(level, [enc], seeds).fights.toFixed(1)} to a rest (${fightsPerRest(level)} asked)`;
+    console.log(`Act III's abilities on the test monsters, ${seeds} seeds: one fight from fresh (its rounds, its cost, won) and fights before a rest.`);
+    console.log(`Two trolls: the test brute on ${TROLL.hp} of its hit points, mending ${TROLL.regen} of them a round but a round fire struck it.`);
+    for (const l of at) {
+      const brute = testMonster('brute', l), whole: MonsterDef = { ...brute, regen: Math.round(brute.hp * TROLL.regen) }, enc = trollEncounter(l);
+      console.log(`  ${l}: with fire ${one(fights(l, enc))}, ${rest(l, enc)}; with none ${one(fights(l, enc, fireless))}; weapons alone ${one(fights(l, enc, unarmed))}; weapons alone on a brute's whole hit points ${one(fights(l, [whole, whole], unarmed))}`);
+    }
+    console.log(`Four wights: the test controller, its hold a curse at ${WIGHT_CURSE} a hit.`);
+    for (const l of at) {
+      const fs = fights(l, wightEncounter(l)), cursed = fs.filter(({ p }) => p.members.some((m) => hasCondition(m, 'cursed'))).length;
+      console.log(`  ${l}: ${one(fs)}, ${cursed} of ${seeds} leaving someone cursed; ${rest(l, wightEncounter(l))}`);
+    }
+    console.log(`A caller beside six fodder: the test soldier, calling ${CALL.monsters} of the test fodder at ${CALL.chance} a turn.`);
+    for (const l of at) {
+      const fs = fights(l, callerEncounter(l)), mute = callerEncounter(l).map((m) => (m.calls ? { ...m, calls: undefined } : m));
+      console.log(`  ${l}: ${one(fs)}, the fight holding ${(fs.reduce((t, { s }) => t + s.monsters.length, 0) / seeds).toFixed(1)} monsters; ${rest(l, callerEncounter(l))}, and ${days(l, [mute], seeds).fights.toFixed(1)} with no call`);
     }
     return;
   }

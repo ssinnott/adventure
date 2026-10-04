@@ -30,6 +30,8 @@ export interface MonsterInst {
   conditions: Condition[];
   /** Set for one render frame when hit. */
   flash: number;
+  /** One that mends (`MonsterDef.regen`) took fire this round, and will not mend at its end (`regenerate`). */
+  burnt?: boolean;
 }
 
 export type TurnRef = { side: 'party'; i: number } | { side: 'monster'; i: number };
@@ -73,6 +75,8 @@ export interface CombatState {
    * spell's damage it took (`elementMult`). A bot learns from it; a player from the log.
    */
   seen: Record<string, Partial<Record<Element, number>>>;
+  /** The most the company has seen each kind of monster mend at a round's end, by its id (`regen`). A bot learns from it. */
+  mends?: Record<string, number>;
   defending: boolean[];
   /** To-hit lost by bows, slings and crossbows on both sides: the weather (see weather.ts). */
   rangedPenalty: number;
@@ -116,6 +120,8 @@ export type Fighters = readonly (string | MonsterDef)[] | (Ranks & { monsters: r
 export const asGroup = (id: string, f: Fighters): CombatGroup => ('monsters' in f ? { id, monsters: f.monsters, back: f.back, leader: f.leader } : { id, monsters: f });
 
 export const FRONT_ROW = 3;
+/** The most a fight ever holds, those down counted: twelve monsters in three groups (DESIGN §6). A call keeps to it (`canCall`). */
+export const MAX_MONSTERS = 12, MAX_GROUPS = 3;
 
 /** The log's line when people break at their leader's fall, and when beasts run; given who goes, and whether one. */
 export const BREAK_LINE = (names: string, one: boolean): string => one ? `${names} breaks and runs.` : `${names} break and run.`;
@@ -194,7 +200,7 @@ export function startCombat(party: Party, groups: readonly CombatGroup[], rng: R
   groups.forEach((g, band) => {
     const front = g.monsters.length - Math.max(0, Math.min(g.back ?? 0, g.monsters.length - 1));
     g.monsters.forEach((m, k) => {
-      if (monsters.length >= 12) return;
+      if (monsters.length >= MAX_MONSTERS) return;
       if (k === 0 || k === front) rank++;
       const def = typeof m === 'string' ? monster(m) : m;
       monsters.push({ def, hp: def.hp, group: rank, band, back: k >= front, fled: false, conditions: [], flash: 0 });
@@ -274,6 +280,7 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   const freed = s.monsters.filter((m) => standing(m) && m.conditions.includes('paralysed') && rng.chance(HOLD_BREAKS));
   for (const m of freed) m.conditions = m.conditions.filter((k) => k !== 'paralysed');
   if (freed.length) s.log.push(`${describe(freed)} ${freed.length === 1 ? 'tears' : 'tear'} free.`);
+  regenerate(s);
   for (const c of party.members) {
     if (hasCondition(c, 'poisoned') && !isDown(c)) { damage(c, 1); s.log.push(`${c.name} suffers from poison.`); }
     if (hasCondition(c, 'paralysed') && rng.chance(0.35)) { removeCondition(c, 'paralysed'); s.log.push(`${c.name} can move again.`); }
@@ -310,8 +317,8 @@ export function canReach(s: CombatState, c: Character, target: number): boolean 
   return !!m && standing(m) && (!m.back || !!weaponOf(c).ranged || !frontStands(s));
 }
 
-/** A monster of the back rank with no bow or spell waits for the front to fall before it steps up. */
-const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.ranged && !m.def.cast && frontStands(s);
+/** A monster of the back rank with no bow, spell or call waits for the front to fall before it steps up. */
+const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.ranged && !m.def.cast && !m.def.calls && frontStands(s);
 
 /** A monster's armour, with a Ward over its group. */
 export const monsterAc = (s: CombatState, m: MonsterInst): number => m.def.ac + (s.foeShield[m.band] > 0 ? WARD_AC : 0);
@@ -407,7 +414,10 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
   const dmgOf = (m: MonsterInst): number => {
     const d = Math.round(roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, 0) * rankMult(c, s.rankStep)) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
     if (sp.element) (s.seen[m.def.id] ??= {})[sp.element] = elementMult(m.def, sp.element);
-    return elementDamage(m.def, sp.element, d, pierces(c));
+    const took = elementDamage(m.def, sp.element, d, pierces(c));
+    // Fire that lands keeps one that mends from mending at this round's end (`regenerate`).
+    if (sp.element === 'fire' && took > 0 && m.def.regen) m.burnt = true;
+    return took;
   };
   switch (sp.target) {
     case 'enemy': {
@@ -608,12 +618,66 @@ function wake(party: Party): void { for (const c of party.members) removeConditi
 /** The chance Slumber puts each one it falls on to sleep, cast by either side. */
 export const SLUMBER_CHANCE = 0.7;
 
+/** The log's lines: a round's mending, one kept from it by fire (`regenerate`) and a call answered (`call`). */
+export const MEND_LINE = (names: string, one: boolean, n: number): string => `${names} ${one ? 'mends' : 'mend'} ${n}.`;
+export const SMOULDER_LINE = (names: string, one: boolean): string => one ? `${names} smoulders and does not mend.` : `${names} smoulder and do not mend.`;
+export const CALL_LINE = (caller: string, names: string, one: boolean): string => `${caller} calls, and ${names} ${one ? 'answers' : 'answer'}.`;
+
+/**
+ * The round's end for what mends (`MonsterDef.regen`): each one standing mends its amount, never past
+ * its own hit points, unless fire burnt it this round, and the burns are the round's. The company
+ * sees each kind mend (`mends`), and the log says who mended and who smouldered.
+ */
+function regenerate(s: CombatState): void {
+  const mended: MonsterInst[] = [], burnt: MonsterInst[] = [];
+  let total = 0;
+  for (const m of s.monsters) {
+    if (!m.def.regen) continue;
+    const fire = !!m.burnt;
+    m.burnt = false;
+    if (!standing(m) || m.hp >= m.def.hp) continue;
+    if (fire) { burnt.push(m); continue; }
+    const n = Math.min(m.def.regen, m.def.hp - m.hp), known = (s.mends ??= {});
+    m.hp += n; total += n; mended.push(m);
+    known[m.def.id] = Math.max(known[m.def.id] ?? 0, n);
+  }
+  if (mended.length) s.log.push(MEND_LINE(describe(mended), mended.length === 1, total));
+  if (burnt.length) s.log.push(SMOULDER_LINE(describe(burnt), burnt.length === 1));
+}
+
+/** The group a caller brings (`MonsterDef.calls`), as defs; none for one that calls nobody. */
+const calledBy = (d: MonsterDef): MonsterDef[] => (d.calls?.monsters ?? []).map((q) => (typeof q === 'string' ? monster(q) : q));
+
+/**
+ * Whether a monster may call its group now: it stands, it calls someone, and the fight has room for
+ * the whole group under MAX_GROUPS and MAX_MONSTERS, those already down counted, so that however long
+ * a fight runs it never grows past the cap. A group too big for the room left is not called at all.
+ */
+export function canCall(s: CombatState, m: MonsterInst): boolean {
+  const n = m.def.calls?.monsters.length ?? 0;
+  return standing(m) && n > 0 && s.groupIds.length < MAX_GROUPS && s.monsters.length + n <= MAX_MONSTERS;
+}
+
+/**
+ * A caller's turn spent on its call: its group comes into the fight whole, as a group of its own in
+ * the front rank, with no leader, and acts from the next round.
+ */
+function call(s: CombatState, m: MonsterInst): void {
+  const band = s.groupIds.length, rank = Math.max(-1, ...s.monsters.map((q) => q.group)) + 1;
+  const come = calledBy(m.def).map((def): MonsterInst => ({ def, hp: def.hp, group: rank, band, back: false, fled: false, conditions: [], flash: 0 }));
+  s.groupIds.push(`${s.groupIds[m.band]}:call${band}`); s.leaders.push(undefined); s.foeBless.push(0); s.foeShield.push(0);
+  s.monsters.push(...come);
+  s.log.push(CALL_LINE(m.def.name, describe(come), come.length === 1));
+}
+
 /** Resolve the acting monster's turn. */
 export function monsterAct(s: CombatState, party: Party, rng: RngInstance): boolean {
   const t = currentTurn(s, party, rng);
   if (!t || t.side !== 'monster') return false;
   const m = s.monsters[t.i];
-  // A caster may spend its turn on a spell; one in the back rank with nothing to cast and no bow holds.
+  // A caller may spend its turn bringing its group in, while the fight has room for the whole of it.
+  if (m.def.calls && canCall(s, m) && rng.chance(m.def.calls.chance)) { call(s, m); s.turn++; checkOutcome(s, party, rng); return true; }
+  // A caster may spend its turn on a spell; one in the back rank with nothing to cast or call and no bow holds.
   if (m.def.cast && rng.chance(m.def.cast.chance)) {
     const sp = monsterSpells(m.def).find((x) => castable(s, party, m, x));
     if (sp) { monsterCast(s, party, rng, m, sp); s.turn++; checkOutcome(s, party, rng); return true; }
@@ -639,7 +703,12 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
     let line = fromSp === 0 ? `${m.def.name} hits ${pick.c.name} for ${dmg}${m.def.drain === 'hp' ? ' and drinks' : ''}.`
       : fromSp === dmg ? `${m.def.name} hits ${pick.c.name} for ${dmg} spell points.` : `${m.def.name} hits ${pick.c.name} for ${fromSp} spell points and ${dmg - fromSp}.`;
     line += woke;
-    if (m.def.inflict && !isDown(pick.c) && !songWards(party, m.def.inflict.cond) && rng.chance(m.def.inflict.chance)) { addCondition(pick.c, m.def.inflict.cond); line += ` ${pick.c.name} is ${m.def.inflict.cond}!`; }
+    // The line says only what takes: not on one it cannot touch (Faith keeps a curse off a cleric), nor again.
+    if (m.def.inflict && !isDown(pick.c) && !songWards(party, m.def.inflict.cond) && rng.chance(m.def.inflict.chance)) {
+      const k = m.def.inflict.cond, had = hasCondition(pick.c, k);
+      addCondition(pick.c, k);
+      if (!had && hasCondition(pick.c, k)) line += ` ${pick.c.name} is ${k}!`;
+    }
     if (isDown(pick.c)) line += ` ${pick.c.name} falls!`;
     s.log.push(line);
   } else s.log.push(`${m.def.name} misses ${pick.c.name}.`);

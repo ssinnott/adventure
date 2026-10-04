@@ -43,7 +43,7 @@ DESIGN.md first for the why.
   its keepers dead, a step or Space asks to burn it, and burnt it gives its hoard, breeds no more
   and shows as ash on the automap.
 - **Combat:** turn-based, speed-ordered; front/back rows; attack, cast, use, defend, flee;
-  conditions (poison, disease, sleep, paralysis, unconscious, dead); a 12-monster cap; xp, gold and
+  conditions (poison, disease, sleep, paralysis, curse, unconscious, dead); a 12-monster cap; xp, gold and
   drops; readiness to train reported. Every monster is a beast, a person, the dead, the Rift or a
   machine: the dead and machines never sleep, and a def may shrug off more of its own (`immune`).
   A group may stand in two ranks (`back`): a blade reaches its back once the fight's front is down,
@@ -53,7 +53,9 @@ DESIGN.md first for the why.
   do, and the fled pay nothing (#160). Every damage spell has an element, which a monster may
   resist (half), be immune to (none) or be weak to (half again); a monster may cast from the tables
   (`cast`) and drain hit points or spell points with its hits (`drain`); a hit wakes a sleeper, and
-  sleep ends with the fight (#161).
+  sleep ends with the fight (#161). A monster may mend each round but a round fire struck it
+  (`regen`), curse with its hits and spend a turn calling its group into the fight while there is
+  room for the whole of it under twelve monsters in three groups, the fallen counted (`calls`) (#537).
   Gear may carry a plus: a point is +1 to hit and damage on a weapon, +1 armour class on armour or
   a shield (`P`, `src/content/items.ts`).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all

@@ -1,11 +1,15 @@
-// The combat harness and its test monster (docs/MONSTERS.md §4.4).
+// The combat harness and its test monster (docs/MONSTERS.md §4.4), and Act III's abilities on it (#537).
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult } from '../../src/game/party.ts';
-import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf } from '../../src/game/combat.ts';
+import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition } from '../../src/game/party.ts';
+import type { Party } from '../../src/game/party.ts';
+import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf, MAX_MONSTERS, MAX_GROUPS } from '../../src/game/combat.ts';
+import type { CombatState } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import { gateCompany } from '../gate.ts';
-import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS } from '../testmonster.ts';
-import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
+import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, testTroll, trollEncounter, wightEncounter, callerEncounter } from '../testmonster.ts';
+import { measure, days, fight, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, thrifty, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
+import { GATE } from './gate.ts';
 import { ok } from './lib.ts';
 
 export function harness(): void {
@@ -102,4 +106,53 @@ export function harness(): void {
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
   const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
   ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
+  abilities();
+}
+
+/** The company with no fire: its members' fire spells forgotten. */
+const fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(id).element !== 'fire'); return p; };
+
+/**
+ * One fight a seed from `from`, the thrifty bot playing a company of `level` dressed by `dress`, as
+ * harness's `fight` plays it: the share won, its rounds and its cost on average, and each fight's
+ * state and company, to read.
+ */
+function bout(level: number, enc: readonly MonsterDef[], seeds: number, from: number, dress: (p: Party) => Party = (p) => p): { won: number; rounds: number; cost: number; fights: { s: CombatState; p: Party }[] } {
+  let won = 0, rounds = 0, cost = 0;
+  const fights: { s: CombatState; p: Party }[] = [];
+  for (let k = from; k < from + seeds; k++) {
+    const p = dress(companyAt(level, k)), rng = makeRng(k * 7919 + 13), s = startCombat(p, [{ id: 'test', monsters: enc }], rng);
+    for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > ROUND_CAP) break; if (t.side === 'monster') monsterAct(s, p, rng); else thrifty(s, p, rng, t.i); }
+    won += s.outcome === 'victory' ? 1 : 0; rounds += Math.min(s.round, ROUND_CAP); cost += spent(p).cost; fights.push({ s, p });
+  }
+  return { won: won / seeds, rounds: rounds / seeds, cost: cost / seeds, fights };
+}
+
+/**
+ * Act III's abilities on the test monsters (MONSTERS §3.3, #537), where the road first meets them: two
+ * trolls at 19, burnt or not; four wights at 19; a caller beside six fodder at 20, its fight growing.
+ */
+function abilities(): void {
+  const pc = (x: number): string => `${Math.round(x * 100)}%`, within = (fights: number, level: number): boolean => fights >= fightsPerRest(level) - GATE.perRest.limit[0] && fights <= fightsPerRest(level) + GATE.perRest.limit[1];
+  // With fire the company burns the trolls and fights them as a day's brutes; with none it grinds,
+  // its fights half as long again and dearer, and still won.
+  const troll = testTroll(19), brute = testMonster('brute', 19);
+  ok(troll.hp === Math.round(brute.hp * TROLL.hp) && troll.regen === Math.round(troll.hp * TROLL.regen), `the test troll at 19 is the test brute on ${TROLL.hp} of its hit points, ${troll.hp}, mending ${troll.regen} a round`);
+  const fire = bout(19, trollEncounter(19), 40, 5001), none = bout(19, trollEncounter(19), 40, 5001, fireless);
+  const burnt = fire.fights.filter(({ s }) => s.log.some((l) => / smoulders? and /.test(l))).length;
+  ok(fire.won >= 0.95 && burnt >= 30, `a company of 19 with fire wins ${pc(fire.won)} of two trolls' fights, burning them in ${burnt} of 40`);
+  ok(none.won >= 0.9 && none.rounds >= fire.rounds * 1.25 && none.cost > fire.cost, `with none it grinds: ${none.rounds.toFixed(1)} rounds and ${(none.cost * 100).toFixed(1)}% of itself a fight, against ${fire.rounds.toFixed(1)} and ${(fire.cost * 100).toFixed(1)}%, and wins ${pc(none.won)}`);
+  const day = days(19, [trollEncounter(19)], 40, 5001);
+  ok(within(day.fights, 19), `with fire it fights ${day.fights.toFixed(1)} of their encounters to a rest, inside the gate's limits of the ${fightsPerRest(19)} asked`);
+  // The wights' curses land and outlast the fight, and end no day.
+  const wights = bout(19, wightEncounter(19), 20, 5001), cursed = wights.fights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'cursed'))).length;
+  const marked = companyAt(19, 1);
+  addCondition(marked.members[0], 'cursed');
+  ok(wights.won >= 0.9 && cursed >= 4 && mustRest(marked) === null, `a company of 19 wins ${pc(wights.won)} of four wights' fights and leaves ${cursed} of 20 with someone cursed, and a curse alone sends no company to rest`);
+  // The caller's fight grows by its call and never past the cap; the company's day holds.
+  const called = bout(20, callerEncounter(20), 40, 5001), grew = called.fights.filter(({ s }) => s.groupIds.length > 1).length;
+  const most = Math.max(...called.fights.map(({ s }) => s.monsters.length)), groups = Math.max(...called.fights.map(({ s }) => s.groupIds.length));
+  ok(called.won >= 0.95 && grew >= 8 && most <= MAX_MONSTERS && groups <= MAX_GROUPS, `a company of 20 wins ${pc(called.won)} of a caller's fights beside six fodder; it called in ${grew} of 40, and no fight held more than ${most} in ${groups} groups`);
+  const cday = days(20, [callerEncounter(20)], 40, 5001);
+  ok(within(cday.fights, 20), `and it fights ${cday.fights.toFixed(1)} of them to a rest, inside the gate's limits of the ${fightsPerRest(20)} asked`);
 }
