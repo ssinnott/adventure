@@ -1,6 +1,7 @@
 // What a pull request changed, for the checks that look only at that: the files since the base, and
 // the maps among them to sweep, and the monsters and interiors among them for the contact sheet
-// (tools/sheet.ts). A change to how every map, monster or room is laid out or painted counts them all.
+// (tools/sheet.ts). A change to how every map, monster or room is laid out or painted counts them all,
+// and a change to any file in an area's folder of rooms counts every room of that area.
 //   node tools/changed.ts <base>              the files changed since <base>, one a line
 //   node tools/changed.ts <base> maps         'all', or the ids of the maps changed, comma-separated
 //   node tools/changed.ts <base> monsters     the same for the monsters
@@ -99,21 +100,33 @@ export async function changedMonsters(files: readonly string[], base?: string): 
 
 /** What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the brushes they borrow (ui/brush.ts, ui/monsters/gloss.ts), the art library and the pixel font (some rooms letter their signs). */
 const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//, /^src\/lib\/engine\/text\.ts$/];
-const SCENE_FILE = /^src\/ui\/interiors\/[^/]+\/([^/]+)\.ts$/;
+/** A file under an area's folder of rooms (src/ui/interiors/<area>/): its scenes, the helpers they share and the folder's registry. */
+const AREA_ROOMS = /^src\/ui\/interiors\/([^/]+)\//;
 const AREA_INDEX = /^src\/content\/areas\/([^/]+)\/(index|interiors)\.ts$/;
 
+/** The rooms an area's folder registers in its index.ts, as `SCENES` keys them; none where the folder or its registry is gone. */
+async function roomsIn(folder: string): Promise<string[]> {
+  const index = path.join(ROOT, 'src/ui/interiors', folder, 'index.ts');
+  if (!existsSync(index)) return [];
+  const mod = (await import(pathToFileURL(index).href)) as { SCENES?: Record<string, unknown> };
+  return Object.keys(mod.SCENES ?? {});
+}
+
 /**
- * The interiors among the files: each whose scene file (named for it) changed, and each an area's
- * index (or its list of rooms drawn ahead of it) lists that its base did not. `all` where a file
- * changed that every room is painted by.
+ * The interiors among the files: every room of an area when any file under its folder of rooms
+ * changed (src/ui/interiors/<area>/), since the folder's scenes share helpers (kilns/hold.ts,
+ * rimewater/lodge.ts) and borrow from one another (shelf/throne_room.ts takes its tower device from
+ * warden_drillyard.ts), which no file's name says; the rooms are those the folder's own registry,
+ * its index.ts, keys. And each an area's index (or its list of rooms drawn ahead of it) lists that
+ * its base did not. `all` where a file changed that every room is painted by.
  */
 export async function changedInteriors(files: readonly string[], base?: string): Promise<{ all: boolean; interiors: string[] }> {
   const { AREAS, ROOMS_AHEAD, INTERIORS } = await import('../src/content/index.ts');
   const all = files.some((f) => EVERY_INTERIOR.some((re) => re.test(f)));
   const out = new Set<string>();
   for (const f of files) {
-    const id = SCENE_FILE.exec(f)?.[1];
-    if (id && (INTERIORS as readonly string[]).includes(id)) out.add(id);
+    const folder = AREA_ROOMS.exec(f)?.[1];
+    if (folder) for (const id of await roomsIn(folder)) if ((INTERIORS as readonly string[]).includes(id)) out.add(id);
     const area = [...AREAS, ...ROOMS_AHEAD].find((a) => a.id === AREA_INDEX.exec(f)?.[1]);
     if (area) { const was = base ? atBase(base, f) : ''; for (const i of area.interiors) if (!was.includes(`'${i}'`)) out.add(i); }
   }
