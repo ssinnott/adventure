@@ -6,6 +6,7 @@ import { ITEMS } from '../content/index.ts';
 import type { ItemDef } from './items.ts';
 import { spellsFor, ELEMENTS } from './spells.ts';
 import type { SpellList, Element } from './spells.ts';
+import type { SkillId } from './skills.ts';
 
 export type Stat = 'might' | 'intellect' | 'personality' | 'endurance' | 'accuracy' | 'speed' | 'luck';
 export const STATS: readonly Stat[] = ['might', 'intellect', 'personality', 'endurance', 'accuracy', 'speed', 'luck'];
@@ -190,6 +191,8 @@ export interface Character {
   riteSpent?: boolean;
   /** The elements a blessing keeps off (#555): for good, or `until` the next rest. */
   blessed: Blessed[];
+  /** The secondary skills learnt (game/skills.ts; DESIGN §5); absent in a save from before them, which is none. */
+  skills?: SkillId[];
 }
 
 /** An element a blessing keeps off a member, for good or `until` the next rest. */
@@ -262,6 +265,9 @@ export const KILL_PAY: Readonly<Record<number, number>> = { [-3]: 0.1, [-2]: 0.4
 export function killPay(monsterLevel: number, memberLevel: number): number {
   return KILL_PAY[Math.max(-3, Math.min(3, Math.round(monsterLevel - memberLevel)))];
 }
+
+/** The most letters a member's name may have (ui/create.ts): what a line that names a member is measured with. */
+export const NAME_MAX = 10;
 
 export function createCharacter(name: string, race: RaceId, cls: ClassId, base: Partial<Stats>, rng: RngInstance): Character {
   const stats = { ...BASE_STATS, ...base };
