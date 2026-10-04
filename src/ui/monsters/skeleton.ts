@@ -1438,13 +1438,13 @@ function bogHand(ctx: CanvasRenderingContext2D, wx: number, wy: number, s: numbe
 // ------------------------------------------------------------------ the Cairn King ----
 /**
  * The Cairn King: crowned, and older than the crown. The oldest bones on the road, brown with age,
- * seated upright on a high-backed seat at the end of his chamber: a seat cut cleaner than anything
- * the hill folk made, dark, smooth and square, with nothing carved on it. A mantle of fur gone black
- * lies over his shoulders and down the seat behind him; the hill folk's grave-gold is on him, a
- * crescent collar on the breast, a ring on the arm and a crown of points on the skull. The far hand
- * rests on the arm of the seat; the near one is up, open toward the company, and something cold is
- * in the palm: the curse. In hundredths of the height up from the ground line, the seat's back
- * reaches 98 and the crown's points 95.
+ * seated upright on a seat at the end of his chamber, a post at each corner of its back: a seat cut
+ * cleaner than anything the hill folk made, dark, smooth and square, with nothing carved on it. A
+ * mantle of fur gone black lies over his shoulders and down the seat behind him; the hill folk's
+ * grave-gold is on him, a crescent collar on the breast, a ring on the arm and a crown of points on
+ * the skull. The far hand rests on the arm of the seat; the near one is up, open toward the company,
+ * and something cold is in the palm: the curse. In hundredths of the height up from the ground line,
+ * the seat's back reaches 77, its posts 88 and the crown's points 97.
  */
 function cairnKing(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const u = h / 100, X = (v: number) => x + v * u, U = (v: number) => y - v * u;
@@ -1458,10 +1458,15 @@ function cairnKing(ctx: CanvasRenderingContext2D, x: number, y: number, h: numbe
   const cold = '#cbb8ff';
   groundShadow(ctx, x, y + 1, h * 0.62);
 
-  // ---- the seat: the back, square with its corners rounded, the arms, and the block he sits on.
-  const back: number[] = [X(-24), U(30), X(-24), U(91)];
-  for (let i = 1; i < 8; i++) { const a = Math.PI - (i / 8) * Math.PI; back.push(X(Math.cos(a) * 24), U(91 + Math.sin(a) * 7)); }
-  back.push(X(24), U(91), X(24), U(30));
+  // ---- the seat: the back, as high as his shoulders with a rounded post at each corner, so the
+  //      crowned head stands clear of it between them, flashed as well as lit; the arms; and the
+  //      block he sits on.
+  const back: number[] = [X(-24), U(30), X(-24), U(85)];
+  const post = (x0: number, x1: number): void => {
+    for (let i = 0; i <= 6; i++) { const a = Math.PI - (i / 6) * Math.PI; back.push(X((x0 + x1) / 2 + Math.cos(a) * (x1 - x0) / 2), U(85 + Math.sin(a) * 3)); }
+  };
+  post(-24, -17); back.push(X(-17), U(77), X(17), U(77)); post(17, 24);
+  back.push(X(24), U(85), X(24), U(30));
   blob(ctx, B, seat, [{ k: 'poly', pts: back }], { h, form: false, spread: 0.6, gloss: 0.25 });
   blob(ctx, B, shade(seat, 1.06), [
     { k: 'poly', pts: [X(-30), U(35), X(-30), U(48), X(-19), U(48), X(-19), U(35)] },
@@ -1471,8 +1476,9 @@ function cairnKing(ctx: CanvasRenderingContext2D, x: number, y: number, h: numbe
   if (!B.override) {
     // Its edges, cut clean: a fine lit line along each top and left edge, a dark one along the right.
     const lw = Math.max(1, 0.7 * u);
-    softLine(ctx, B, [X(-22.6), U(31), X(-22.6), U(90.5), X(-17), U(96.2), X(0), U(97.6), X(17), U(96.2)], seatL, lw, 0.7);
-    softLine(ctx, B, [X(22.6), U(31), X(22.6), U(90.5)], seatD, lw * 1.4, 0.6);
+    softLine(ctx, B, [X(-22.6), U(31), X(-22.6), U(85), X(-20.5), U(86.6), X(-18.4), U(85), X(-18.4), U(76)], seatL, lw, 0.7);
+    softLine(ctx, B, [X(-16), U(75.6), X(16), U(75.6)], seatL, lw, 0.5);
+    softLine(ctx, B, [X(22.6), U(31), X(22.6), U(85)], seatD, lw * 1.4, 0.6);
     softLine(ctx, B, [X(-25.6), U(1), X(-25.6), U(34.6), X(25.6), U(34.6)], seatL, lw, 0.6);
     for (const s of [-1, 1]) softLine(ctx, B, [X(s * 29), U(36), X(s * 29), U(46.8), X(s * 20), U(46.8)], seatL, lw, 0.6);
     softLine(ctx, B, [X(-26), U(31.5), X(26), U(31.5)], seatD, lw, 0.45);
