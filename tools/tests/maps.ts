@@ -18,6 +18,7 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   knocker: '#462', mender: '#462', foreman: '#462',
+  ice_pike: '#486', snow_lynx: '#486', ice_bear: '#486', tallyman: '#487', bay_keeper: '#490', matron: '#490',
 };
 
 /**

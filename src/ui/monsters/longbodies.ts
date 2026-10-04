@@ -20,6 +20,13 @@
 // feeds with, three pale jaws inside it. No eyes, no fin, no jaw: a mouth and nothing else for a
 // face. Wet black, a muddy stripe down the near side. Idle: it sways and quests, and the sucker
 // opens and closes.
+//
+// The Ice Pike: the ice under Ottilie's feet has an eye in it. A loch's ice, and the pike come up
+// through a hole it has broken in it, slabs of the ice tipped up round the hole; the rest of it lies
+// dark under the ice behind, as long again. What is out is a thick straight thrust and the head on
+// it, tipped up and open: a long flat bill of a jaw full of needle teeth, a big gold eye set high,
+// cold olive with rows of pale spots down its side and a white throat. Idle: it sways in the hole
+// and the jaw works, and the black water laps at it.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, eye, groundShadow } from './common.ts';
@@ -28,7 +35,7 @@ import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['fen_eel', 'leech'];
+export const KINDS: readonly MonsterSprite[] = ['fen_eel', 'leech', 'ice_pike'];
 
 /**
  * The frame's parts, as proportions of the eel's (1 = the eel, 0 = none). Each is named for the
@@ -41,6 +48,10 @@ interface Build {
   rise: number;
   /** How many humps break the surface, 0 to 2. */
   coils: number;
+  /** How far the rise bends in an S, 0 a straight thrust: the eel's 1, the pike's least. */
+  bend: number;
+  /** How far the head tips up off the rise, in radians: the pike's. */
+  pitch: number;
   /** A fin along the back, 0 none: the eel's ragged ridge, the pike's sail. */
   fin: number;
   /** Length of the jaw: the pike's, and the eel's gape. 0 is no jaw at all (the leech, the worm). */
@@ -49,6 +60,8 @@ interface Build {
   teeth: number;
   /** A round mouth at the head's end, 0 none: the leech's sucker, the worm's maw. */
   sucker: number;
+  /** A long flat bill of a head, the lower jaw the longer, one eye in profile, 0 none: the pike's. */
+  bill: number;
   /** Rings round the body, 0 a smooth skin (the eel) to 1 (the leech's, the worm's annuli). */
   rings: number;
   /** Eyes, 0 none: the worms are blind. */
@@ -61,19 +74,28 @@ interface Build {
   belly: string;
   /** How much of the belly shows, 0..1. */
   pale: number;
+  /** Rows of pale spots down the near side, 0 none: the pike's. */
+  spots: number;
+  /** How much of the body shows dark under a clear surface behind the rise, 0 none: the pike's under the ice. */
+  under: number;
 }
 const EEL: Build = {
-  girth: 1, rise: 1, coils: 2, fin: 1, jaw: 1, teeth: 1, sucker: 0, rings: 0, eyes: 1,
-  ground: 'water', gloss: 0.7, belly: '#c8b870', pale: 0.7,
+  girth: 1, rise: 1, coils: 2, bend: 1, pitch: 0, fin: 1, jaw: 1, teeth: 1, sucker: 0, bill: 0, rings: 0, eyes: 1,
+  ground: 'water', gloss: 0.7, belly: '#c8b870', pale: 0.7, spots: 0, under: 0,
 };
 
 const LEECH: Build = {
-  girth: 1.1, rise: 0.6, coils: 1, fin: 0, jaw: 0, teeth: 0, sucker: 1, rings: 0.8, eyes: 0,
-  ground: 'water', gloss: 0.95, belly: '#7a6a44', pale: 0.25,
+  girth: 1.1, rise: 0.6, coils: 1, bend: 1, pitch: 0, fin: 0, jaw: 0, teeth: 0, sucker: 1, bill: 0, rings: 0.8, eyes: 0,
+  ground: 'water', gloss: 0.95, belly: '#7a6a44', pale: 0.25, spots: 0, under: 0,
+};
+
+const PIKE: Build = {
+  girth: 1.55, rise: 0.56, coils: 0, bend: 0.2, pitch: 0.38, fin: 0, jaw: 1, teeth: 1.2, sucker: 0, bill: 1, rings: 0, eyes: 1,
+  ground: 'ice', gloss: 0.55, belly: '#ece8d0', pale: 0.75, spots: 1, under: 1,
 };
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  longBody(ctx, x, y, h, p, kind === 'leech' ? LEECH : EEL);
+  longBody(ctx, x, y, h, p, kind === 'leech' ? LEECH : kind === 'ice_pike' ? PIKE : EEL);
 };
 
 /** A frame: x and y map hundredths of the height (x right, y up from the ground) to the canvas. */
@@ -124,18 +146,24 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   // water and the silhouette is that piece. Flat across, seen from a little above.
   // One hump and the rise want less water than two: the pool closes in round them, to the left.
   const PX = b.coils < 2 ? -14 : 0, PY = 8, RX = b.coils < 2 ? 42 : 58, RY = 8;
+  // On ice the rise comes up through a hole it has broken, at its foot.
+  const ice = b.ground === 'ice', hole = { x: -2.5, y: PY - 0.6, rx: g * 1.5, ry: 2.9 };
   const pool = (): void => {
     blob(ctx, B, water.face, [{ k: 'curve', pts: ring(f.X(PX), f.Y(PY), RX * u, RY * u, 18), wobble: 0.025, seed: 11, sub: 3 }], { h, form: false, spread: 0.9 });
     if (B.override) return;
-    const pg = ctx.createRadialGradient(f.X(PX + 4), f.Y(PY + 1), 0, f.X(PX + 4), f.Y(PY + 1), RX * u);
-    pg.addColorStop(0, rgba(water.deep, 0.8)); pg.addColorStop(0.7, rgba(water.deep, 0.4)); pg.addColorStop(1, rgba(water.deep, 0));
     ctx.save(); ctx.beginPath(); ctx.ellipse(f.X(PX), f.Y(PY), RX * u, RY * u, 0, 0, Math.PI * 2); ctx.clip();
-    ctx.fillStyle = pg; ctx.fillRect(f.X(PX - RX), f.Y(PY + RY), RX * 2 * u, RY * 2 * u);
+    if (ice) iceFace(ctx, f, b, water, hole, PX, PY, RX, RY, skin, t, p.tone);
+    else {
+      const pg = ctx.createRadialGradient(f.X(PX + 4), f.Y(PY + 1), 0, f.X(PX + 4), f.Y(PY + 1), RX * u);
+      pg.addColorStop(0, rgba(water.deep, 0.8)); pg.addColorStop(0.7, rgba(water.deep, 0.4)); pg.addColorStop(1, rgba(water.deep, 0));
+      ctx.fillStyle = pg; ctx.fillRect(f.X(PX - RX), f.Y(PY + RY), RX * 2 * u, RY * 2 * u);
+    }
     // The sky on the water, a pale streak along the far side.
     ctx.fillStyle = rgba(water.ring, 0.18); ctx.beginPath(); ctx.ellipse(f.X(PX - 8), f.Y(PY + RY * 0.55), RX * 0.6 * u, RY * 0.22 * u, 0, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
   };
   pool();
+  if (ice) slabs(ctx, f, hole, water.face, h, false);
 
   // --- the coils --------------------------------------------------------------------------------
   // Each hump is a tube arching out of the water and back in, rolling: it rises and sinks a little
@@ -157,27 +185,45 @@ function longBody(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
   }
 
   // --- the rise ---------------------------------------------------------------------------------
-  // The neck comes up out of the water in an S and turns the head to the company. It sways.
+  // The neck comes up out of the water in an S, or straight as `bend` falls, and turns the head to
+  // the company. It sways.
   const sw = s * 3, R = b.rise;
-  const neck = spine([-4, PY - 3, -9 + sw * 0.3, 22 * R, -2 + sw * 0.7, 44 * R, 8 + sw, 60 * R, 10 + sw, 70 * R], 6);
+  const lean = (yy: number, xx: number): number => { const k = (yy - (PY - 3)) / (70 * R - (PY - 3)); return -4 + 14 * k + (xx + 4 - 14 * k) * b.bend; };
+  const neck = spine([-4, PY - 3, lean(22 * R, -9) + sw * 0.3, 22 * R, lean(44 * R, -2) + sw * 0.7, 44 * R, lean(60 * R, 8) + sw, 60 * R, 10 + sw, 70 * R], 6);
   if (b.fin > 0) fin(ctx, f, finAlong(f, neck, g * 0.9, 4.5 * b.fin, 0.08, 0.7, t), finHex, 37);
+  // Through ice, nothing of the body shows in front of the ice's near edge: a thick one would.
+  ctx.save();
+  if (ice) { ctx.beginPath(); ctx.rect(f.X(-200), f.Y(200), 400 * u, (200 - (PY - RY * 0.45)) * u); ctx.clip(); }
   blob(ctx, B, skin, [{ k: 'tube', pts: at(f, neck), r0: g * u, r1: g * 0.88 * u, wobble: 0.02, seed: 45 }], { h, formK: 0.45, spread: 0.85 });
   rings(ctx, f, neck, g, g * 0.88, b.rings, skin, t / 30);
   wet(ctx, f, neck, g * 0.94, b.gloss);
   // The pale throat and belly, down the near side of the neck: a marking, not a part.
   patch(ctx, B, under, [{ k: 'tube', pts: at(f, neck.slice(0, -4).map((v, i) => v + (i % 2 ? 0 : g * 0.42))), r0: g * 0.55 * u, r1: g * 0.5 * u }], { alpha: 0.75, feather: 0.6 });
+  if (b.spots > 0) spots(ctx, f, neck, g, under, b.spots);
+  ctx.restore();
 
   // --- the head ---------------------------------------------------------------------------------
+  // Tipped up off the rise by `pitch`, about the back of the skull, which stays on the neck.
   const hx = 10 + sw, hy = 75 * R;
+  ctx.save();
+  if (b.pitch) { const px = f.X(hx - g * 0.7), py = f.Y(hy); ctx.translate(px, py); ctx.rotate(-b.pitch); ctx.translate(-px, -py); }
   head(ctx, f, hx, hy, g * 1.15, b, p, skin, under);
+  ctx.restore();
 
   // --- where it goes in -------------------------------------------------------------------------
   // The near half of the water again, over the body's feet, so the coils and the neck go into it
-  // rather than stand on it; then rings spreading from each place the body breaks the surface.
+  // rather than stand on it; then rings spreading from each place the body breaks the surface. On
+  // ice it is the hole's near half and the slabs before it, and the water only laps.
   ctx.save(); ctx.beginPath(); ctx.rect(f.X(PX - RX - 4), f.Y(PY), (RX + 4) * 2 * u, (PY + 4) * u); ctx.clip();
   pool();
   ctx.restore();
-  if (!B.override) {
+  if (ice) {
+    slabs(ctx, f, hole, water.face, h, true);
+    if (!B.override) {
+      ctx.strokeStyle = rgba(water.ring, 0.25 + 0.12 * Math.sin(t / 9)); ctx.lineWidth = Math.max(1, u * 0.5);
+      ctx.beginPath(); ctx.ellipse(f.X(neck[0] + 0.5), f.Y(PY - 0.9), g * 1.02 * u, 0.8 * u, 0, Math.PI * 0.15, Math.PI * 0.85); ctx.stroke();
+    }
+  } else if (!B.override) {
     const feet: number[] = [neck[0], PY];
     for (const c of humps) feet.push(c.pts[0], PY, c.pts[c.pts.length - 2], PY);
     for (let i = 0; i < feet.length; i += 2) {
@@ -229,6 +275,85 @@ function wet(ctx: CanvasRenderingContext2D, f: F, pts: readonly number[], r: num
   ctx.beginPath(); ctx.moveTo(q[0], q[1]); for (let i = 2; i < q.length; i += 2) ctx.lineTo(q[i], q[i + 1]); ctx.stroke();
 }
 
+/** Where the rise comes up through the ice, in frame units. */
+interface Hole { x: number; y: number; rx: number; ry: number }
+
+/**
+ * A loch's ice, inside the pool's outline: a cold depth toward its near edge, the rest of the body
+ * lying dark under it behind the hole (`under`), cracks run out from the hole, and the hole itself,
+ * black water with the broken wall of the ice lit along its far side.
+ */
+function iceFace(ctx: CanvasRenderingContext2D, f: F, b: Build, water: { deep: string; face: string; ring: string }, hole: Hole, PX: number, PY: number, RX: number, RY: number, skin: string, t: number, tone: number): void {
+  const u = f.u;
+  const ig = ctx.createLinearGradient(0, f.Y(PY + RY), 0, f.Y(PY - RY));
+  ig.addColorStop(0, rgba(water.ring, 0.3)); ig.addColorStop(1, rgba(water.deep, 0.4));
+  ctx.fillStyle = ig; ctx.fillRect(f.X(PX - RX), f.Y(PY + RY), RX * 2 * u, RY * 2 * u);
+  if (b.under > 0) {
+    // As long again as what is out, lying flat under the ice, its tail fanned at the far end.
+    const len = 38 * b.under, x0 = hole.x - hole.rx * 0.5, y0 = hole.y + 0.6, sway = Math.sin(t / 19) * 1.2;
+    const fish = [
+      x0, y0 + 2.4, x0 - len * 0.45, y0 + 3, x0 - len * 0.8, y0 + 2.2 + sway * 0.3, x0 - len, y0 + 1.4 + sway * 0.6, x0 - len - 5, y0 + 3.4 + sway,
+      x0 - len - 3.4, y0 + 0.2 + sway, x0 - len - 5, y0 - 2.8 + sway, x0 - len, y0 - 0.8 + sway * 0.6, x0 - len * 0.8, y0 - 1.2 + sway * 0.3,
+      x0 - len * 0.45, y0 - 2.2, x0, y0 - 2,
+    ];
+    patch(ctx, B, shade(mix(skin, water.deep, 0.4), 0.6), [{ k: 'curve', pts: at(f, fish), wobble: 0, sub: 1 }], { alpha: 0.8, feather: 0.25 });
+  }
+  // The cracks, jagged, from the hole's rim out across the ice.
+  ctx.strokeStyle = rgba(water.deep, 0.55); ctx.lineWidth = Math.max(1, u * 0.4); ctx.lineCap = 'round';
+  for (let i = 0; i < 7; i++) {
+    const a = (i / 7) * Math.PI * 2 + 0.4;
+    let cx = hole.x + Math.cos(a) * hole.rx, cy = hole.y + Math.sin(a) * hole.ry;
+    ctx.beginPath(); ctx.moveTo(f.X(cx), f.Y(cy));
+    for (let k = 0; k < 3; k++) { cx += Math.cos(a + (nzl(i, k) - 0.5)) * (4 + 4 * nzl(i, k + 5)); cy += Math.sin(a + (nzl(i, k) - 0.5)) * (1.3 + 1.2 * nzl(i, k + 9)); ctx.lineTo(f.X(cx), f.Y(cy)); }
+    ctx.stroke();
+  }
+  // The hole: black water, ragged, and the ice's broken wall lit along its far side.
+  const rim: number[] = [];
+  for (let i = 0; i < 14; i++) { const a = (i / 14) * Math.PI * 2, k = 1 + (nzl(i, 3) - 0.5) * 0.16; rim.push(hole.x + Math.cos(a) * hole.rx * k, hole.y + Math.sin(a) * hole.ry * k); }
+  const pts = at(f, rim);
+  ctx.fillStyle = shade('#0a1218', Math.max(0.6, tone));
+  ctx.beginPath(); ctx.moveTo(pts[0], pts[1]); for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = rgba(water.ring, 0.75); ctx.lineWidth = Math.max(1, u * 0.9);
+  ctx.beginPath(); ctx.ellipse(f.X(hole.x), f.Y(hole.y + hole.ry * 0.35), hole.rx * 0.92 * u, hole.ry * 0.62 * u, 0, Math.PI * 1.08, Math.PI * 1.92); ctx.stroke();
+}
+
+/**
+ * Slabs of the broken ice tipped up round the hole, lit and hard-edged: the ones behind it (`near`
+ * false) before the body comes up, the ones before it after, beside it and never across it.
+ */
+function slabs(ctx: CanvasRenderingContext2D, f: F, hole: Hole, face: string, h: number, near: boolean): void {
+  // [angle round the hole, width, height, lean out]
+  const SLABS: readonly (readonly [number, number, number, number])[] = [[0.35, 5.5, 3.6, 0.5], [1.15, 4.2, 4.6, -0.2], [2.25, 5, 3.4, -0.45], [2.95, 3.6, 2.6, -0.6], [-0.45, 4.6, 3, 0.55], [-2.65, 5.2, 3.4, -0.5]];
+  const parts: Part[] = [];
+  for (const [a, w, tall, lean] of SLABS) {
+    if ((Math.sin(a) < 0) !== near) continue;
+    const cx = hole.x + Math.cos(a) * hole.rx * 1.02, cy = hole.y + Math.sin(a) * hole.ry * 1.02;
+    const tx = -Math.sin(a), ty = Math.cos(a) * (hole.ry / hole.rx), tl = Math.hypot(tx, ty), ux = (tx / tl) * w * 0.5, uy = (ty / tl) * w * 0.5;
+    parts.push({ k: 'poly', pts: at(f, [cx - ux, cy - uy, cx + ux, cy + uy, cx + ux * 0.8 + lean * tall, cy + uy * 0.8 + tall, cx - ux * 0.7 + lean * tall, cy - uy * 0.7 + tall * 0.85]) });
+  }
+  if (parts.length) blob(ctx, B, mix(face, '#ffffff', 0.25), parts, { h, form: false, spread: 0.65, gloss: 0.8 });
+}
+
+/** Pale spots in two rows down the near side of a body along its spine (frame units): the pike's. */
+function spots(ctx: CanvasRenderingContext2D, f: F, pts: readonly number[], r: number, hex: string, k: number): void {
+  if (B.override) return;
+  const n = pts.length / 2;
+  for (let i = 3; i < n - 4; i += 3) {
+    const dx = pts[i * 2 + 2] - pts[i * 2 - 2], dy = pts[i * 2 + 3] - pts[i * 2 - 1], L = Math.hypot(dx, dy) || 1, nx = -dy / L, ny = dx / L;
+    for (const [side, off] of [[-0.3, 0], [0.25, 1.4]] as const) {
+      const cx = pts[i * 2] + nx * r * side + (dx / L) * off, cy = pts[i * 2 + 1] + ny * r * side + (dy / L) * off;
+      patch(ctx, B, hex, [{ k: 'ell', x: f.X(cx), y: f.Y(cy), rx: 1.5 * k * f.u, ry: 0.85 * k * f.u, rot: -Math.atan2(dy, dx) }], { alpha: 0.7, feather: 0.35 });
+    }
+  }
+}
+
+/** Stable 0..1 noise; never from the frame, or the cracks would crawl. */
+function nzl(a: number, b: number): number {
+  let v = (Math.imul(a | 0, 374761393) + Math.imul(b | 0, 668265263)) | 0;
+  v = Math.imul(v ^ (v >>> 13), 1274126177);
+  return ((v ^ (v >>> 16)) >>> 0) / 4294967296;
+}
+
 /** A fin from finAlong's outline: a membrane with its rays, from the base out to each point of the edge. */
 function fin(ctx: CanvasRenderingContext2D, f: F, pts: readonly number[], hex: string, seed: number): void {
   blob(ctx, B, hex, [{ k: 'curve', pts: [...pts], wobble: 0.03, seed, sub: 1 }], { h: f.h, form: false, spread: 0.8 });
@@ -277,6 +402,7 @@ function ring(cx: number, cy: number, rx: number, ry: number, n: number): number
  */
 function head(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, g: number, b: Build, p: Paint, skin: string, under: string): void {
   if (b.jaw <= 0 && b.sucker > 0) { sucker(ctx, f, hx, hy, g, b, p, skin); return; }
+  if (b.bill > 0) { bill(ctx, f, hx, hy, g, b, p, skin, under); return; }
   const u = f.u, gape = 0.5 + 0.5 * Math.sin(p.frame / 17);
   const W = g * 1.25, L = g * 2.2 * Math.max(0.6, b.jaw);
   // The jaw first, under the skull, hanging open; the mouth's inside, then the teeth along both.
@@ -315,6 +441,40 @@ function head(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, g: nu
     eye(ctx, f.X(hx + L * 0.28), f.Y(hy + W * 0.5), Math.max(0.8, 1.35 * u * b.eyes), p.amber);
     eye(ctx, f.X(hx + L * 0.52), f.Y(hy + W * 0.42), Math.max(0.8, 1.05 * u * b.eyes), p.amber);
   }
+}
+
+/**
+ * The pike's head, at (hx, hy) in frame units, side on, the body running straight into it with no
+ * neck: a flat crown to a bump over the eye, then a long flat bill; the lower jaw hinged under the
+ * eye, longer than the upper and hanging open; needle teeth along both and the mouth dark between;
+ * the gill cover's curve behind the eye, and one big gold eye high on the side of the head.
+ */
+function bill(ctx: CanvasRenderingContext2D, f: F, hx: number, hy: number, g: number, b: Build, p: Paint, skin: string, under: string): void {
+  const u = f.u, gape = 0.5 + 0.5 * Math.sin(p.frame / 17), Lh = g * 2.5 * b.bill, back = hx - g * 0.75;
+  const drop = (2.5 + gape * 3.5) * b.jaw, hinge = { x: hx + Lh * 0.18, y: hy - g * 0.42 };
+  const tipY = hy - g * 0.34 - drop * 1.25;
+  const jaw = [back, hy - g * 0.6, hinge.x, hinge.y - g * 0.12, hx + Lh * 1.04, tipY, hx + Lh * 1.07, tipY - g * 0.2, hx + Lh * 0.5, hy - g * 0.8 - drop * 0.72, back + g * 0.2, hy - g * 0.92];
+  blob(ctx, B, mix(skin, under, 0.5), [{ k: 'curve', pts: at(f, jaw), wobble: 0.01, seed: 56, sub: 2 }], { h: f.h, formK: 0.3, spread: 0.8 });
+  const skull = [back, hy + g * 0.9, hx + Lh * 0.12, hy + g * 0.94, hx + Lh * 0.3, hy + g * 0.86, hx + Lh * 0.62, hy + g * 0.42, hx + Lh * 0.96, hy + g * 0.14, hx + Lh, hy - g * 0.06, hx + Lh * 0.7, hy - g * 0.22, hinge.x, hinge.y, back, hy - g * 0.52];
+  blob(ctx, B, skin, [{ k: 'curve', pts: at(f, skull), wobble: 0.01, seed: 58, sub: 2, gloss: b.gloss }], { h: f.h, formK: 0.45, spread: 0.85 });
+  if (B.override) return;
+  // The mouth between the jaws, dark and wet, and the needles along both.
+  const mouth = at(f, [hinge.x, hinge.y, hx + Lh * 0.7, hy - g * 0.24, hx + Lh * 0.96, hy - g * 0.1, hx + Lh * 1.0, tipY + g * 0.04, hx + Lh * 0.5, hy - g * 0.56 - drop * 0.66]);
+  ctx.fillStyle = shade('#2a0c10', Math.max(0.5, p.tone));
+  ctx.beginPath(); ctx.moveTo(mouth[0], mouth[1]); for (let i = 2; i < mouth.length; i += 2) ctx.lineTo(mouth[i], mouth[i + 1]); ctx.closePath(); ctx.fill();
+  const tooth = shade('#ece4c8', Math.max(0.55, p.tone));
+  for (let i = 0; i < 9; i++) {
+    const k = (i + 0.5) / 9;
+    for (const [x0, y0, x1, y1, dir] of [[hinge.x + 1, hinge.y + 0.3, hx + Lh * 0.95, hy - g * 0.12, -1], [hinge.x + 1, hinge.y - g * 0.14, hx + Lh * 0.99, tipY + g * 0.06, 1]] as const) {
+      const tx = x0 + (x1 - x0) * k, ty = y0 + (y1 - y0) * k, len = (1 + (i % 2) * 0.6) * b.teeth * (g / 9);
+      const q = at(f, [tx - 0.4, ty, tx + 0.4, ty, tx + 0.15 * dir, ty + dir * len]);
+      ctx.fillStyle = tooth; ctx.beginPath(); ctx.moveTo(q[0], q[1]); ctx.lineTo(q[2], q[3]); ctx.lineTo(q[4], q[5]); ctx.closePath(); ctx.fill();
+    }
+  }
+  // The pale throat along the jaw, and the gill cover's edge behind the eye.
+  patch(ctx, B, under, [{ k: 'ell', x: f.X(hx + Lh * 0.35), y: f.Y(hy - g * 0.66 - drop * 0.4), rx: Lh * 0.42 * u, ry: g * 0.2 * u, rot: 0.12 }], { alpha: 0.55, feather: 0.6 });
+  softLine(ctx, B, at(f, [hx + Lh * 0.02, hy + g * 0.78, hx + Lh * 0.13, hy + g * 0.15, hx + Lh * 0.08, hy - g * 0.55]), skin, Math.max(1, u * 0.9), 0.65);
+  eye(ctx, f.X(hx + Lh * 0.26), f.Y(hy + g * 0.5), Math.max(1, g * 0.22 * u * b.eyes), p.amber);
 }
 
 /**
