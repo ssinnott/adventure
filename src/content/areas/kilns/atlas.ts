@@ -19,7 +19,7 @@ const HELD_AT_M2: [number, number][] = Array.from({ length: 29 }, (_, i): [numbe
 const seam = (y: number): [number, number][] => Array.from({ length: 32 }, (_, i): [number, number] => [456 + i, y]);
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
+  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }, { map: 'ironfells_n2', at: [424, 30] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
   { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
   { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [17, 18], seeds: [[408, 160], [404, 140]] },
 ];
@@ -40,5 +40,5 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Anvil Stone', icon: 'stone', at: [468, 142], label: 'below', planned: true },
   { name: 'Feuerstollen', icon: 'cave', at: [478, 178], label: 'below', planned: true }, // the Lava Tubes
   { name: 'Kilnhaven', icon: 'port', at: [391, 162], label: 'right', planned: true },
-  { name: 'Erzkamm', icon: 'cave', at: [432, 44], label: 'below', planned: true }, // Iron Crag: the Barbarian's second prestige
+  { name: 'Erzkamm', icon: 'cave', map: 'ironfells_n2', at: [8.5, 14.5], label: 'below' }, // Iron Crag: the cave in the crag on N2, 8,14, the Barbarian's second prestige (#460)
 ];

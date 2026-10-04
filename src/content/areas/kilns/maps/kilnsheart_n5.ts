@@ -55,7 +55,7 @@ export const KILNSHEART_N5: MapDef = {
     { kind: 'event', x: 14, y: 3, id: 'n5_smelter', once: true, text: 'Chimneys, and the heat from the door felt across the yard. Over the door, the verse again. Inside, somebody is making a crown.' },
     { kind: 'shrine', x: 11, y: 2, id: 'n5_shrine', text: 'The smelter\'s mouth, a furnace roaring behind it. A smith\'s tongs hang by the door on a nail driven into the verse.', stat: 'accuracy', done: 'The smelter\'s mouth, roaring.' },
     { kind: 'sign', x: 11, y: 2, id: 'n5_verse', text: 'Over the smelter\'s mouth, cut red as in the thane\'s hall: THE FIRE IS KEPT BELOW AND NOT ABOVE.', read: 'DANGER. KEEP FIRE BELOW THIS LINE.' },
-    { kind: 'npc', x: 11, y: 1, name: 'Hartmut, the master smith', lines: [
+    { kind: 'npc', x: 11, y: 1, name: 'Eckhart, the master smith', lines: [
       'A dwarf at the anvil in the smelter\'s door, a crown on its horn: gold beaten over iron, the old pattern.',
       '"A crown to order. The kings\' crowns were made at the hall. This one is made here, and paid for in stone."',
       '"Who for? Somebody on the coast with the price. We are smiths. We do not ask a purse its name."',
