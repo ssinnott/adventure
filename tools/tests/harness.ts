@@ -188,7 +188,7 @@ function abilities(): void {
   const most = Math.max(...called.fights.map(({ s }) => s.monsters.length)), groups = Math.max(...called.fights.map(({ s }) => s.groupIds.length));
   ok(called.won >= 0.95 && grew >= 8 && most <= MAX_MONSTERS && groups <= MAX_GROUPS, `a company of 20 wins ${pc(called.won)} of a caller's fights beside six fodder; it called in ${grew} of 40, and no fight held more than ${most} in ${groups} groups`);
   const cday = days(20, [callerEncounter(20)], 40, 5001), mute = days(20, [callerEncounter(20).map((m) => (m.calls ? { ...m, calls: undefined } : m))], 40, 5001);
-  ok(cday.fights < mute.fights && cday.fights > mute.fights - 2.5, `and it fights ${cday.fights.toFixed(1)} of them to a rest, where with no call it fights ${mute.fights.toFixed(1)}: the call costs it about a fight (${fightsPerRest(20)} asked)`);
+  ok(cday.fights < mute.fights && cday.fights > mute.fights - 2.5, `and it fights ${cday.fights.toFixed(1)} of them to a rest, where with no call it fights ${mute.fights.toFixed(1)}: the call costs it a fight or two (${fightsPerRest(20)} asked)`);
   // The lights take spell points (#161), and the bots aim at them after a leader and a caller (#541):
   // three lights and a hound cost a company of 19 more of its spell points than lights that took hit
   // points would, and felling the lights first keeps it on its feet longer than felling the hound.
