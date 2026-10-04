@@ -13,9 +13,10 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Nothing is built. Its content will be `src/content/areas/kilns/` (maps, monsters, items, climate,
-its part of the world map, its chapter of the one quest, The Anvil Stone, in `chapter.ts`, its side
-quests in `quests.ts`) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
+Nothing a company walks is built; nine of its monsters are drawn ahead of its first box (§3). Its
+content will be `src/content/areas/kilns/` (maps, monsters, items, climate, its part of the world
+map, its chapter of the one quest, The Anvil Stone, in `chapter.ts`, its side quests in
+`quests.ts`) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
 `kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
 the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass
 (§10, NAMES §3).
@@ -137,12 +138,17 @@ writes an inscription, and §9 what was decided); the crossings, the ferry, the 
 cold on what fire does not touch (#541, EXPANSION §5.2). Regeneration, curse and calls (#537) are
 Cairnmoor's and Rimewater's; the Kilns need none of them. `after`, for the Anvil Guard, and `when`
 are #41's; the machine `kind` is MONSTERS §3.3's, first spent here. Its monsters are drawn in #472,
-eleven issues, and its rooms in #473.
+eleven issues, nine of them so far (below), and its rooms in #473.
 
 Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
 Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462). Their defs are in
 `src/content/areas/kilns/monsters.ts`, listed in `AHEAD` (`src/content/index.ts`) until the first box
 lists the area, and each is owed to #462 in `UNPLACED` (`tools/tests/maps.ts`). §9 has the decisions.
+
+The six on frames that exist are drawn too (#472): the Fire Beetle on the spider frame, the
+Slagling, the Slag Elder and the Warden of the Anvil on the riftling's, the Rock Worm on the long
+bodies' and the Anvil Guard on the figure frame, in the same table, each owed a map by the box that
+first places it (§7, §9).
 
 ## 4. What is still to build
 
@@ -702,10 +708,12 @@ MONSTERS §7.1 has the roster and the fights: the Knocker, the Mender and the Fo
 machines; the Salamander and the Great Salamander; the Fire Beetle on the spider frame; the Rock
 Worm on the long bodies'; the Slagling, the Slag Elder and the Warden of the Anvil, the Rift in
 slag; the Anvil Guard, a dwarf on the figure frame, `after` the taking. Their drawings are #472's,
-eleven issues. §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil the gentlest
-and the Warden, the Foreman and the Great Salamander at the top of the band. No machine stands on
-the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the first machines on the
-road are met at the bottom of the deepest mine, by a company that has walked all of it.
+eleven issues: the knockers and the six on frames that exist are drawn (§3, §9), and the
+salamanders are to come. §4.2 to §4.13 place every group, box by box, the beetles on M3's spoil
+the gentlest and the Warden, the Foreman and the Great Salamander at the top of the band. No
+machine stands on the surface or above the Tiefzeche's lowest level (MONSTERS §2.2, #158): the
+first machines on the road are met at the bottom of the deepest mine, by a company that has walked
+all of it.
 
 Proposed, against the roster's Where column, and standing in the briefs as proposals: the Fire
 Beetle on every box's spoil, kilns and ore heaps, where the roster has it at the spoil heaps and the
@@ -994,6 +1002,38 @@ Decided by delegate for #535, each the owner's to overturn:
     with it, as #409 did after Act II's.
 12. **The windows stay at 3,500, 4,000 and 4,500,** 500 a band as the issue has them: no ware or
     find comes within 400 of its area's.
+
+Decided by delegate for #472 (the six), each the owner's to overturn:
+
+1. **The six on frames that exist are drawn ahead of the first box,** in AHEAD, each owed a map by
+   the box that first places it: the beetle and the worm #457's, the slagling #458's, the slag elder
+   and the guard #464's, the Warden #465's. The salamanders come on their own, as the knockers did.
+2. **Each is on its role's line at its level** (MONSTERS §4.4): the beetle armoured and the
+   slagling a skirmisher at 16, the worm a brute and the guard armoured at 17, the slag elder an
+   elite at 18.
+3. **The Warden of the Anvil is on the boss line at 18,** 961 hit points and 17d8+20, its blow left
+   for #465's gate to set, as #426 set the Sunder's; it shrugs off sleep, as every warden does.
+4. **Cold bites the slag and fire does it half:** the slagling, the slag elder and the Warden are
+   weak to cold and resist fire, so in the Rift Hoarfrost is the answer and Hearthfire is not.
+5. **The Fire Beetle is immune to fire and nothing more,** so on the spoil heaps the sorcerer's fire
+   does nothing and Hailstorm is the answer (MONSTERS §7.1).
+6. **The slag holds as the other Rifts' things do:** the slagling paralyses at 0.1 a hit and the
+   slag elder at 0.15, as the sunderling and the tide elder.
+7. **Sizes:** the beetle 0.72, the slagling 0.74, the slag elder 0.95 and the guard 0.8, drawn as
+   broad as he is tall; the worm 1.6, MONSTERS' figure, a tall monster; the Warden 1.45, the biggest
+   warden yet and short of a tall boss.
+8. **The beetle is a body of its own on the spider frame,** six legs under a dome with the coal set
+   in its top, as the crabs have theirs, so Ashfall's cinder beetle can be its variant.
+9. **The slag is the riftling broken rough as clinker,** cracked red and hung with drops still
+   molten, the elder running with iron; the Warden has no legs, and stands up out of a pool of slag.
+10. **The Warden's cut is a straight fissure down its chest,** opening on the heart, with a low crown
+    of clinker, hot at the tips, where the other wardens wear shards.
+11. **The worm comes up through a ring of rubble,** blind, its maw ring inside ring of teeth; the
+    guard is a dwarf rebuilt on the figure frame, a maul stood beside him and an anvil buckle.
+12. **The Warden drops nothing yet:** the Heart of the Anvil comes with #465, which places it, as the
+    Heart of the Sunder came with the Sunder's box (#426).
+13. **No surface monster at 18:** #472 adds none; the 17–18 boxes hold their top with rock worm
+    pairs at 17, as §7 proposes.
 
 ## 10. Names
 
