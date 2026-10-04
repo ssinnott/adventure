@@ -113,21 +113,30 @@ Compact ship, and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's 
 9; #539 builds it). The first box (#457) points the area's `atlas` at the folder and takes the import
 out, and lists the area.
 
+Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
+`src/content/progression.ts`, planned until #457 lists the area: band 16–18, next 18, window 3,500.
+The step is in `src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`,
+`src/content/index.ts`) so that the harness and the gate dress by it: Anvilhall's forge's eight
+wares (`FORGE`, §4.4), the step's plus finds by 19 (§4.1), Kilnhaven's smith's prices at a quarter
+more (`SMITH_PRICES`, for #469) and the thane's price for the Stone (`ANVIL_STONE_PRICE`, 6,000, for
+#459, §8). The first box takes the table into its Area; each ware is owed to the forge (#459) and
+each find to its box until it is sold or placed.
+
 Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
 Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
 with its fare, its days and its hours, the same either way (§4.14, §9). The ferry lands on
 Saltmouth's quay; every other end waits on its town, Kilnhaven's three on #469, and nothing is sold
 toward a town not built, so none runs yet.
 
-The systems it waits on are #432's: the curve's rows for Act III, the gear ladder's next step and
-the Stone's price (#535); ash, ice and pine underfoot (#536: ash on O6, pine on M3 and O3, where
-Sunderwood drew its pine as forest, docs/areas/sunderwood.md §9, #200's 1); Kiln-script and
-Linguist (#538, built: §4.1 says how a box writes an inscription, and §9 what was decided); the
-crossings, the ferry, the ship and the coach (#539); the Anvil Stone counting for the Hearth (#540,
-#168); and the bot, which must learn to put cold on what fire does not touch (#541, EXPANSION
-§5.2). Regeneration, curse and calls (#537) are Cairnmoor's and Rimewater's; the Kilns need none of
-them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is MONSTERS §3.3's,
-first spent here. Its monsters are drawn in #472, eleven issues, and its rooms in #473.
+The systems it waits on are the rest of #432's: ash, ice and pine underfoot (#536: ash on O6, pine
+on M3 and O3, where Sunderwood drew its pine as forest, docs/areas/sunderwood.md §9, #200's 1);
+Kiln-script and Linguist (#538, built: §4.1 says how a box writes an inscription, and §9 what was
+decided); the crossings, the ferry, the ship and the coach (#539); the Anvil Stone counting for the
+Hearth (#540, #168); and the bot, which must learn to put cold on what fire does not touch (#541,
+EXPANSION §5.2). Regeneration, curse and calls (#537) are Cairnmoor's and Rimewater's; the Kilns
+need none of them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is
+MONSTERS §3.3's, first spent here. Its monsters are drawn in #472, eleven issues, and its rooms in
+#473.
 
 Drawn ahead of the boxes that place them (#472): the knockers, the Knocker, the Mender and the
 Foreman (`src/ui/monsters/knockers.ts`), for the Tiefzeche's lowest level (#462); and the
@@ -201,8 +210,11 @@ about nine features, ten groups and four ways in or out to 870 open squares, a c
 half with the wilderness features (#45), and no more than one point in four is a sign. A group is
 about one of MONSTERS §4.4's standard encounters at the box's band, paid by level (#159). The area
 owes 13,067 xp a member (§8), and the shares below add up to a little over it. Finds are the ladder's
-Act III step (#535): the band's gear at Anvilhall's forge by 17, the same at Kilnhaven's smith at a
-quarter more (#434's 1), and the same with a plus in the boxes and the dungeons; no find or ware is
+Act III step (#535): the band's gear at Anvilhall's forge by 17 (§4.4), the same at Kilnhaven's
+smith at a quarter more (#434's 1) and six of them with a plus in the boxes and the Tiefzeche by
+19, with Cairnmoor's one (docs/areas/cairnmoor.md §4.1): N3's Plate Mail +3, the Tiefzeche's Forge
+Hammer +1, Erzkamm's Mattock +1, O6's Steel Bow +1, M6's Seax +1 and L6's Kiln Robe +1. The other
+boxes' pluses are theirs to choose, off the ladder, and none is Dwarf Mail (§9). No find or ware is
 dearer than the band's window, 3,500. Side quests are #56's 33 to 36, placed as §6 has them (#471).
 
 **Inscriptions.** An inscription is a sign with two texts (#538): what the dwarves read, and what
@@ -242,7 +254,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **Lines:** the crossing: *Pine, and the ground going up. Somewhere ahead something is being
   hammered, and has been all day.*
 - **New here.** Pine underfoot (#536); the Fells; a company told it is early.
-- **Finds.** The step's first piece with a plus, in the wagon (#535).
+- **Finds.** A piece with a plus in the wagon, off the ladder, the box's to choose (#535).
 - **Pay.** About 700 xp a member.
 
 ### 4.3 N3, Anvilhall's box (#458): core, band 16–17
@@ -272,7 +284,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   way, one word: STORE.*
 - **New here.** The first inscription read (#538); a town cut into a hill.
 - **Finds.** A boxed piece of the Stone, the Anvil Shard, a keepsake as the Brine and Sunder Shards
-  are; the step's armour with a plus (#535).
+  are; a Plate Mail +3, plate's wearers' armour on the step, the ladder's (#535).
 - **Pay.** About 900 xp a member.
 
 ### 4.4 Anvilhall (#459): town, 16×16, band 16–18
@@ -281,10 +293,12 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   forge, the thane with his menu, and the first place the company reads the old way.
 - **Businesses,** each with a room of its own (#473): the great hall, the thane's, where the choice
   is put as a business puts its menu (#434's 1); the forge, under the verse, the act's first step on
-  the ladder by 17 (#535), shut to the company for good if the Stone is taken; the training hall,
-  to 19 (DESIGN §5); the inn, the miners' lodging; the mine-surgeon's, cures and raising at the
-  band's price; the stores, provisions at list price. No spell hall (#434's 9): Lantern Watch sold
-  tier 6 and Rime Lodge sells tier 7 (DESIGN §7). No guild hall (#434's 8).
+  the ladder by 17 (#535: a Forge Hammer, a Seax, a Steel Bow, a Mattock, a Banded Staff, Dwarf
+  Mail, a Kiln Robe and a Forge Shield, 1,100 to 2,000 gold, `FORGE`), shut to the company for
+  good if the Stone is taken; the training hall, to 19 (DESIGN §5); the inn, the miners' lodging;
+  the mine-surgeon's, cures and raising at the band's price; the stores, provisions at list price.
+  No spell hall (#434's 9): Lantern Watch sold tier 6 and Rime Lodge sells tier 7 (DESIGN §7). No
+  guild hall (#434's 8).
 - **People.** The thane, with the verse over his forge and the Stone on his menu; the Lantern reader,
   a scholar lodged in the hall who reads the verse the old way for the company and teaches Linguist
   as the Lanterns' halls do (#538); the Regent's scholar, before he goes up to Erzkamm (#56's 34);
@@ -326,7 +340,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **Lines:** the wall: *Cut into the rock, older than the hall's. The dwarves say it is the first
   blessing. Read: KEEP CLEAR OF THE DOORS.*
 - **New here.** A door that is a wall; a trainer in a cave, as Sjonghol's.
-- **Finds.** The hoard: the step's two-hander with a plus (#535), and gold.
+- **Finds.** The hoard: a Mattock +1, the ladder's (#535), and gold.
 - **Pay.** About 600 xp a member.
 
 ### 4.6 N4, the Tiefzeche's box (#461): core, band 16–17
@@ -351,7 +365,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **Lines:** the mouth: *The shaft goes down under a wheel and a gantry. The miners sing going in,
   a verse at the door. Nobody sings coming out.*
 - **New here.** A mine's headworks; a count that comes up short.
-- **Finds.** The cargo's belongings, a Fells' find with a plus (#535).
+- **Finds.** The cargo's belongings, and a plus off the ladder, the box's to choose (#535).
 - **Pay.** About 900 xp a member.
 
 ### 4.7 The Tiefzeche (#462): dungeon, three levels of 16×16, band 16–18
@@ -390,9 +404,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     line. On the frame, at a girl's shoulder, a loop inside a loop.*
 - **New here.** The machine (MONSTERS §2, `kind`); a healer among the machines; a corridor nobody
   dug; a door that is a wall; a shortcut found by reading.
-- **Finds.** The parts the machines carry, which no shop buys; in the side room the step's weapon
-  with a plus (#535), and in the Hand's cages the ladder's gear for the classes the Fells' finds
-  miss.
+- **Finds.** The parts the machines carry, which no shop buys; in the side room a Forge Hammer +1,
+  the ladder's (#535), and in the Hand's cages what the cargo left, pluses off the ladder for the
+  classes the Fells' finds miss, the dungeon's to choose.
 - **Pay.** About 2,400 xp a member.
 
 ### 4.8 N5, Gluthutte (#463): core, band 17
@@ -417,7 +431,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **Lines:** the smelter: *Chimneys, and the heat from the door felt across the yard. Over the
   door, the verse again. Inside, somebody is making a crown.*
 - **New here.** A smelter; woods that are a fuel.
-- **Finds.** Shards the Compact paid, and the step's shield with a plus (#535).
+- **Finds.** Shards the Compact paid, and a Forge Shield +1, off the ladder (#535).
 - **Pay.** About 900 xp a member.
 
 ### 4.9 O5, the Anvil Stone's box (#464): core, band 17–18
@@ -446,8 +460,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     is torn open, and runs red.*
   - the plinth: *The dwarves' words for what holds. Read: KEEP WHOLE. NO CUTTING.*
 - **New here.** A Stone cut by its own people; a group that comes after a choice (`after`).
-- **Finds.** The cutter's piece, a second Anvil Shard, a keepsake; the step's helm with a plus
-  (#535) in the foreman's shed.
+- **Finds.** The cutter's piece, a second Anvil Shard, a keepsake; a piece with a plus in the
+  foreman's shed, off the ladder, the box's to choose: no item is worn on the head (#535).
 - **Pay.** About 1,000 xp a member.
 
 ### 4.10 The Anvil Stone's Rift (#465): dungeon, one level of 16×16, hand-built, band 17–18
@@ -477,8 +491,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **New here.** A Rift in slag; the last Rift; a Stone's tear closed by the company for the second
   time, after the Grove's.
 - **Finds.** The Warden's heart, the Heart of the Anvil, a keepsake as the Heart of the Sunder is
-  (docs/areas/sunderwood.md §9, #199's 6); the first cutter's tools, the step's two pieces with a
-  plus (#535).
+  (docs/areas/sunderwood.md §9, #199's 6); the first cutter's tools, two pieces with a plus off the
+  ladder, the Rift's to choose (#535).
 - **Pay.** About 1,800 xp a member.
 
 ### 4.11 O6, Feuerstollen's box (#466): country, band 18, with the tubes
@@ -508,8 +522,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   VENT. STAND CLEAR.*
 - **New here.** Ash underfoot (#536); the salamanders, a new family; lava under a floor; a world map
   mark made by reading.
-- **Finds.** The first dwarves' shelter: the step's bow with a plus (#535); in the deepest chamber,
-  the Great Salamander's hide, a resistance to fire worn.
+- **Finds.** The first dwarves' shelter: a Steel Bow +1, the ladder's (#535); in the deepest
+  chamber, the Great Salamander's hide, a resistance to fire worn.
 - **Pay.** About 1,500 xp a member, the box and the tubes together.
 
 ### 4.12 N6 and M6, the roads south and west (#467): country, band 17–18
@@ -535,7 +549,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **Lines:** N6's border: *The road goes on south into heather and wind. Cairns on the skyline,
   and no smoke anywhere.*
 - **New here.** Cairnmoor seen: the drove road into Act III's second step.
-- **Finds.** The step's dagger with a plus in the kiln (#535).
+- **Finds.** A Seax +1 in M6's kiln, the ladder's (#535).
 - **Pay.** About 700 xp a member, the two together.
 
 ### 4.13 L6, Kilnhaven's box (#468): core, band 17–18
@@ -559,7 +573,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **Lines:** the quay: *Ore in heaps and a quay black with it. One row of crates is tarred over
   and sealed, and nobody goes near it.*
 - **New here.** The sea seen from the far shore of Act II; a coach yard that runs.
-- **Finds.** The step's robe with a plus in the store (#535).
+- **Finds.** A Kiln Robe +1 in the store, the ladder's (#535).
 - **Pay.** About 600 xp a member.
 
 ### 4.14 Kilnhaven (#469): town, 16×16, band 16–18
@@ -567,10 +581,11 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **Purpose.** The act's second town and the ore port: where the harbourmaster's manifests name the
   Compact ship's cargo, and three ways out of the Kilns leave.
 - **Businesses,** each with a room of its own (#473): the inn (rest, and the coach yard outside,
-  #539); the smith, the act's first step at a quarter more than Anvilhall's forge (#434's 1, #535),
-  the company's only forge if the Stone was taken; the training hall, to 19; the harbourmaster's
-  office, where the manifests are read; the chapel, cures and raising; the chandlery, provisions and
-  lamp oil at list price. No spell hall and no guild hall (#434's 8 and 9).
+  #539); the smith, the act's first step at a quarter more than Anvilhall's forge (#434's 1, #535:
+  1,375 to 2,500 gold, `SMITH_PRICES`), the company's only forge if the Stone was taken; the
+  training hall, to 19; the harbourmaster's office, where the manifests are read; the chapel, cures
+  and raising; the chandlery, provisions and lamp oil at list price. No spell hall and no guild hall
+  (#434's 8 and 9).
 - **People.** The harbourmaster, who reads the manifests for a company that asks and hears the
   Compact's cargo named, Cinderport and Sheer Point (§5); the Compact's shipmaster and the ferryman
   at the quay, who sell their passages (#539); the coachman in the yard; Jory Tallis's man, come for
@@ -618,7 +633,7 @@ holds:
   word by word: *"It's a warning. The kind you paint on a boiler."* Every holy word in the dwarf
   halls is a sign on a door. The goal turns to the thane.
 - **The thane.** The dwarves have been cutting their own Stone for years and selling the pieces.
-  Buy it back, about 6,000 gold, or take it (#434's 1): a choice put by a person (#76), which sets
+  Buy it back, 6,000 gold (#535), or take it (#434's 1): a choice put by a person (#76), which sets
   `anvil_bought` or `anvil_taken` and nothing else the map can see but the Anvil Guard (`after`) and
   the forge's door. Either way the thane never forgives: his words change, nothing else. The goal
   points down to the mine and east to the Stone.
@@ -727,17 +742,28 @@ cut by its own people, a ridge of vents, an ore port.
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
   finds Kilnmouth's 17 waiting on the quay.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
-  member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is about
-  6,000, set with #535 so that a clear of the Fells and the Tiefzeche can just pay it: a company that
-  buys trains later, and one that takes pays a quarter more for its gear at Kilnhaven's smith. The
-  step's wares at Anvilhall's forge and its finds with a plus sit inside the band's window, 3,500
-  (#535), the smith's at a quarter more inside it too.
+  member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
+  (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
+  company that buys trains later, and one that takes pays a quarter more for its gear at Kilnhaven's
+  smith. Sized so: M3, N3, N2, N4 and the Tiefzeche are 5,500 of the 13,100 xp a member of §4's
+  shares, about 42%. If the area's clear pays both its training and the Stone, and its gold lies
+  where its xp does, those boxes hold 42% of 7,920 and the price, which is the price itself at
+  about 5,730, or 7,560 with the three side quests that lie in them (33, 34 and 36) and Anvilhall's
+  hand-ins counted in; 6,000 lies between, nearer the boxes alone. So the Kilns' clear owes about
+  13,900 gold, the training and the Stone, 6,000 of it in the Fells and the Tiefzeche; the curve's
+  row asks only the training, so each box's issue carries its share of the Stone. The step's
+  wares at Anvilhall's forge and its finds with a plus sit inside the band's window, 3,500 (#535):
+  the dearest ware the Dwarf Mail at 2,000 and the dearest finds the Plate Mail +3, the Mattock +1
+  and the Steel Bow +1 at 1,650; the smith's quarter more on the Dwarf Mail, 2,500, sits inside too.
+  The forge's full set for the premade six comes to about 17,300, its weapons 8,500; at the smith a
+  taker pays about 4,300 more for the same.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman and
   the Warden of the Anvil are won about half the time at their maps' floors and nearly always two
-  above. Act II's boxes owed their two-under figures to the gear past 10 (#18); the Kilns' hold only
-  if #535's ladder dresses the company at 16 as the curve says.
+  above. Act II's boxes owed their two-under figures to the gear past 10 (#18). #535's ladder now
+  dresses a company at each of the Kilns' floors past one two under it, Anvilhall's forge at 17 and
+  its finds by 19; whether that holds the figure is each box's to measure.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it.
 
@@ -931,6 +957,45 @@ Decided by delegate for #472 (the knockers), each the owner's to overturn:
 Owed elsewhere: MONSTERS §2's line for the first time the Hearth's light passes through a machine,
 *The light goes into it like a hand into a glove.*, is not in the combat log, which says only that a
 knocker takes 0. It is the systems lane's, wanted before #462 seats the knockers.
+
+Decided by delegate for #535, each the owner's to overturn:
+
+1. **Act III's ladder is built as Act II's was** (#399's 1): each town sells every class a new line,
+   a point of blow a rung and a two-hander a point over a one-hander, and the boxes give it with a
+   plus: Anvilhall's forge at 17, the Kilns' and Cairnmoor's finds by 19, Rime Lodge's furrier at
+   21 and Rimewater's finds by 22.
+2. **The forge sells eight, a smith's and a miner's:** a Forge Hammer, a Seax, a Steel Bow, a
+   Mattock, a Banded Staff, Dwarf Mail, a Kiln Robe and a Forge Shield (§4.4).
+3. **Armour steps on alternate rungs, as Act II's** (#399's 2): the medium wearers take the Dwarf
+   Mail (11) at 17 and the furrier's Bearskin Coat (12) at 21; plate's wearers the Forge Shield (6)
+   at 17, N3's Plate Mail +3 (12) at 19 and the Sleepers' Bay's Plate Mail +4 (13) at 22; the
+   casters the Kiln Robe (9) at 17, L6's Kiln Robe +1 (10) at 19 and the furrier's Fur Robe (11)
+   at 21. Each gains in the act what it gained in Act II.
+4. **No Dwarf Mail with a plus, and no Forge Shield +1 on the ladder:** a Dwarf Mail +1 would leave
+   the furrier's coat no step, and N5's shield with a plus is its box's to place or not.
+5. **The finds by 19 go where the briefs name the piece** (#399's 3): N3's armour, the Tiefzeche's
+   weapon, Erzkamm's two-hander, O6's bow, M6's dagger and L6's robe, with Cairnmoor's caster's plus
+   at O7. M3's, N4's, O5's and the Rift's are their boxes' to choose, off the ladder; O5's helm is
+   none, as no item is worn on the head.
+6. **The finds' rung is 19,** as Act II's was 13, in the middle of the act's second area: a company
+   two under Cairnmoor's floors at 20 goes without it.
+7. **A ware rises about a quarter a town, its dearest a little over half its window,** as
+   Saltmouth's Sharkskin Coat (1,100 of 2,000) and the Watch's Lamellar (1,600 of 3,000) were: the
+   Dwarf Mail 2,000 of 3,500, the Bearskin Coat 2,500 of 4,500. Act II's half again a town would
+   bring Cinderport's step to the edge of Ashfall's 5,500 (#542).
+8. **Kilnhaven's smith asks a quarter more, in whole gold** (`quarterMore` and `SMITH_PRICES`, for
+   #469): its dearest, 2,500, sits inside the window, and the ladder test holds it and owes the
+   shop to #469.
+9. **The Stone is 6,000** (`ANVIL_STONE_PRICE`, for #459), sized as §8 says; the curve's row asks
+   the training alone, and the boxes carry the Stone.
+10. **The step is made ahead of the area** (`ITEMS_AHEAD`, `src/content/index.ts`), as monsters and
+    rooms drawn ahead are: no save holds it until a listed area sells or places it, and the first
+    box takes the table.
+11. **The harness's line at 24 is owed to #541:** in the ladder's gear to 22 a company of 24 fights
+    14.9 standard encounters to a rest where 10 are asked, and #541 makes the line past 16 again
+    with it, as #409 did after Act II's.
+12. **The windows stay at 3,500, 4,000 and 4,500,** 500 a band as the issue has them: no ware or
+    find comes within 400 of its area's.
 
 Decided by delegate for #472 (the salamanders), each the owner's to overturn:
 
