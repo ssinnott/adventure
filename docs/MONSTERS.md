@@ -897,6 +897,18 @@ skeleton's as the bog body and the Cairn King; the wolf's as the moor hound; rav
 
 The ring itself holds no monster. Inside it there is only the voice.
 
+Drawn (#483), on the lights' frame (`src/ui/monsters/lights.ts`): a flame within a flame, pale
+green and cold, hung at a walker's hip with nobody there, over a pool of its own light; it swings,
+bobs and gutters, and motes rise out of the peat into it. Its touch takes spell points, and it
+comes down whole from the controller's line (docs/areas/cairnmoor.md §9).
+
+The six on frames that exist are drawn as well (#483): the Raven, the crow's frame grown big, its
+wings folded; the Bog Body, leather over bone with the rope at its throat; the Moor Hound, the
+black dog grown old and grey at the muzzle; the Cairn Wight, a shroud standing, wound with bands,
+the torc at its throat; the Tor Troll, a tor's stacked granite with a face cut in it; and the Cairn
+King, crowned on a stone seat, the curse cold in his raised hand. The trolls mend and the wights
+and the King curse as #537 made them, and the boxes place them (#476 to #480).
+
 **Asks:** regeneration, curse, drain of spell points, and `when`.
 
 ### 7.3 Rimewater (band 20–22)
