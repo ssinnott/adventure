@@ -20,8 +20,8 @@ const seam = (y: number): [number, number][] => Array.from({ length: 32 }, (_, i
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }, { map: 'ironfells_n2', at: [424, 30] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
-  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }, { map: 'kilnsheart_o5', at: [456, 126] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
-  { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [17, 18], seeds: [[408, 160], [404, 140]] },
+  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }, { map: 'kilnsheart_n6', at: [424, 158] }, { map: 'kilnsheart_o5', at: [456, 126] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
+  { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnmouth_m6', at: [392, 158] }], seeds: [[408, 160], [404, 140]] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [

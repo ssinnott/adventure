@@ -147,6 +147,18 @@ export function outdoors(): void {
     `N5's north edge meets N4's with the drove road and the stream, and its south edge is the woods with the drove road out for N6 (${northOf(n5)}; ${southOf(n5)})`);
   ok(westOf(n5) === ':'.repeat(7) + 'f'.repeat(7) + 't'.repeat(11) + '~~t,,,^' && eastOf(n5) === '~^,^^^' + 'M'.repeat(11) + '^^^,,,,:' + ','.repeat(7),
     `N5's west edge is the smelter's ground, the fields, the woods and the stream against M5, and its east edge the hills, the mountain and the cutters' track against O5 (${westOf(n5)}; ${eastOf(n5)})`);
+  // The roads south and west (N6 and M6, #467): N6 in from N5 square for square with the drove road at
+  // column 12, out by the south edge at column 3 for Cairnmoor's N7 among the hills and the heather;
+  // the grass and the heather on the east against O6. M6 meets N6 square for square, the branch at row
+  // 18; on its north the stream comes in from M5 at columns 23 to 26 beside the farms, and on its west
+  // the river goes out at rows 5 and 6 under the branch's last square, dirt, where the atlas has no road.
+  const n6 = out.zones.find((z) => z.id === 'kilnsheart_n6')!, m6 = out.zones.find((z) => z.id === 'kilnmouth_m6')!;
+  ok(northOf(n6) === southOf(n5) && southOf(n6) === '^^^=' + '^'.repeat(18) + 'h'.repeat(8) + '^^' && eastOf(n6) === ','.repeat(22) + 'h'.repeat(8) + '^^',
+    `N6's north edge meets N5's with the drove road, its south edge is the hills and the heather with the drove road out for N7, and its east edge the grass and the heather against O6 (${southOf(n6)}; ${eastOf(n6)})`);
+  ok(eastOf(m6) === westOf(n6) && westOf(n6) === '^^^' + ','.repeat(15) + '=' + ','.repeat(6) + '^'.repeat(7),
+    `M6's east edge meets N6's west edge square for square, with the branch through it at row 18 (${westOf(n6)})`);
+  ok(northOf(m6) === '_' + 'f'.repeat(22) + '~~~~f,,,^' && westOf(m6) === '_fff:~~' + 'f'.repeat(8) + ','.repeat(17) && southOf(m6) === ','.repeat(11) + '^,,,' + '^'.repeat(17),
+    `M6's north edge is the farms with the stream in from M5, its west edge the farms, the branch's dirt and the river against L6, and its south edge the grass and the hill against M7 (${northOf(m6)}; ${westOf(m6)}; ${southOf(m6)})`);
   // The Anvil Stone's box (O5, #464): in from N5 by the cutters' track at row 24 and over the open hills
   // and grass either side of it, the mountain between them on both sides of the seam and the stream at
   // the corner. The stream runs on at the north edge's corner into O4, past it the hills and the
