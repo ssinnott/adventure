@@ -10,7 +10,11 @@
 // hears the Lantern reader read the verse the old way, or reads it first with a reader of its own and
 // hears him read it after; learns Linguist of him as a Lantern; and puts the thane's choice both
 // ways, the Stone barred to a company short of its price and each way setting its flag and changing
-// the words after; taken, the forge shuts for good.
+// the words after; taken, the forge shuts for good. The Tiefzeche's box (N4, #461), the heart's
+// first: the trail on over the line from N3 into new land, named, and harder to a company under its
+// floor; the spur to the shaft, its cage chained until the mine is built; the drove road out south;
+// the box's groups won at its floor; the miner at the camp; and the wagon yard found from the tally
+// board and the fresh mortar, the blessing over the shaft read by a reader alone.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -31,10 +35,12 @@ import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { FORGE, ANVIL_STONE_PRICE } from './items.ts';
 import { GATE } from './maps/ironfells_n3.ts';
 import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
+import { MOUTH } from './maps/kilnsheart_n4.ts';
 
-const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!;
+const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
 const WOODCUTTER = M3.features!.find((f) => f.kind === 'npc' && f.name === 'A woodcutter') as Person;
 const MOTHER = N3.features!.find((f) => f.kind === 'npc' && f.name === 'A dwarf woman at the well') as Person;
+const MINER = N4.features!.find((f) => f.kind === 'npc' && f.name === 'A miner') as Person;
 const CROSSING = 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.';
 const TOWN = MAP_DEFS.find((d) => d.id === 'anvilhall')!;
 const person = (name: string): Person => TOWN.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
@@ -174,6 +180,65 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const crate = N3.features!.find((f) => f.kind === 'chest' && f.id === 'n3_cellar_chest');
   ok(crate?.kind === 'chest' && crate.items.includes('anvil_shard') && crate.items.includes('plate+3') && crate.x === 30 && crate.y === 18, 'in the cellar, a boxed piece of the Stone, the Anvil Shard, and a Plate Mail +3');
+
+  // The Tiefzeche's box (N4, #461), the heart's first. On down the trail over the line from N3 into
+  // new land: the log names it, and to a company two under its floor says the land is harder.
+  const n4 = out.zones.find((z) => z.id === 'kilnsheart_n4')!;
+  const down = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('ironfells_n3', 4, 29, SOUTH);
+    const said: string[] = [];
+    for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnsheart_n4'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+    ok(w.world.zone?.id === 'kilnsheart_n4', `the trail crosses from N3 into N4 at ${level}`);
+    return said;
+  };
+  const under14 = down(14), at16 = down(16);
+  ok(under14.includes('The Kilns. The land here is harder than the road behind.'), `a company of 14 hears the Kilns named, and that the land is harder than the road behind (${under14.join(' / ')})`);
+  ok(at16.includes('The Kilns.') && !at16.some((m) => m.includes('harder')), `a company of 16 hears the Kilns named, and no warning (${at16.join(' / ')})`);
+  ok(out.at(n4.x + 20, n4.y + 31).ch === '=' && out.passable(n4.x + 20, n4.y + 32) !== 'ok', 'the drove road leaves N4 by its south edge, and past it, for now, the world ends');
+
+  // The spur off the trail to the headworks, and the shaft at its end, the way into the Tiefzeche
+  // (#462): its cage chained until the mine is built, MOUTH written for it on the shaft's square.
+  const inN4 = (x: number, y: number): boolean => x >= n4.x && x < n4.x + n4.w && y >= n4.y && y < n4.y + n4.h;
+  const toShaft = steps(n4.x + 6, n4.y + 2, (x, y) => out.at(x, y).ch === '=' && inN4(x, y)).get((n4.y + MOUTH.y) * out.width + n4.x + MOUTH.x - 1);
+  ok(toShaft === 9 && out.passable(n4.x + MOUTH.x, n4.y + MOUTH.y) !== 'ok' && MOUTH.to === 'deep_mines',
+    `the spur runs ${toShaft} squares of road from the trail to the shaft, and the shaft is shut until the Tiefzeche is built`);
+  see(w, 'kilnsheart_n4:n4_mouth');
+  w.world.travel('kilnsheart_n4', MOUTH.x - 1, MOUTH.y, EAST);
+  ok(w.world.eventsHere().some((t) => t.includes('chained')), 'at the spur\'s end the cage stands chained at the top of the shaft');
+
+  // The box's groups, each won at its floor: the beetles and salamanders on the fresh spoil and the
+  // worms in the old workings' open cuts.
+  for (const g of N4.encounters!) fight(w, `kilnsheart_n4:${g.id}`);
+
+  // The miner at the camp, on the verses sung going down.
+  w.world.travel('kilnsheart_n4', MINER.x, MINER.y);
+  const sung = meet(MINER, w.party, heard(w.world, MINER)).text;
+  ok(sung.includes('A verse at every door') && sung.includes('nobody sings'), 'the miner at the camp says a verse is sung at every door going down, and nobody sings coming up');
+
+  // The secret: the tally board's loads down and none up, the blessing over the shaft (words to a
+  // company with no reader; COUNT ALL DOWN. COUNT ALL UP. to one with), the fresh mortar in the yard
+  // wall, the search there and the wagon yard behind. Walked, waded, climbed or floated, the yard is
+  // never reached but through the wall.
+  const yard = shut(n4, [16, 5], [17, 5], [19, 5]);
+  ok(yard.size > 600 && !yard.reached, `the wagon yard is shut but for the wall: none of N4's ${yard.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'kilnsheart_n4:n4_tally');
+  w.world.travel('kilnsheart_n4', 16, 3, NORTH);
+  const bare = w.world.eventsHere();
+  ok(bare.some((t) => t.includes('the miners\' blessing')) && !bare.some((t) => t.includes('COUNT')) && !w.world.used('n4_blessing'), `with no reader the blessing over the shaft is words and no more (${bare.join(' / ')})`);
+  w.party.members[4].skills = ['linguist'];
+  const counted = w.world.eventsHere();
+  ok(counted.includes('Maren reads: "COUNT ALL DOWN. COUNT ALL UP."') && w.world.used('n4_blessing'), `Maren, taught Linguist, reads it the old way, and it is kept read (${counted.join(' / ')})`);
+  w.party.members[4].skills = [];
+  see(w, 'kilnsheart_n4:n4_mortar');
+  w.world.travel('kilnsheart_n4', 16, 5, EAST);
+  let gave = false;
+  for (let i = 0; i < 20 && !gave; i++) gave = w.world.search();
+  const inYard = gave ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(gave && inYard.every((r) => r.kind === 'moved') && w.world.used('n4_yard'), 'searched at the fresh mortar, the yard wall gives, and the wagon yard behind it can be walked into');
+  listen(w);
+  const strongbox = N4.features!.find((f) => f.kind === 'chest' && f.id === 'n4_yard_chest');
+  ok(strongbox?.kind === 'chest' && strongbox.items.includes('sharkskin+2') && strongbox.x === 20 && strongbox.y === 5, 'among the cages, a Sharkskin Coat +2 the cargo left');
 
   anvilhall(w, ok);
 };

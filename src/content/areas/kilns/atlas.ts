@@ -10,16 +10,17 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 const HELD_AT_M2: [number, number][] = Array.from({ length: 29 }, (_, i): [number, number] => [424, 33 + i]);
 
 /**
- * The line between the Fells and the heart held on the seam of rows 3 and 4 under N3 and O3, a seed a
- * square either side of it from x 424 to 487, the Fells' along y 93 and the heart's along y 94: laid
- * whole in the Fells, M3 seeds the walk from every square of it, and without these the Fells would run
- * on south into N4, its mine's mouth and O4, which are the heart's (#457, docs/areas/kilns.md §4).
+ * The line between the Fells and the heart held on the seam of rows 3 and 4 under O3, a seed a square
+ * either side of it from x 456 to 487, the Fells' along y 93 and the heart's along y 94: laid whole in
+ * the Fells, M3 and N3 seed the walk from every square of them, and without these the Fells would run
+ * on south into O4, which is the heart's (#457, docs/areas/kilns.md §4). Under N3 the seam is N3's own
+ * south edge and N4's north (#458, #461), each laid in its zone.
  */
-const seam = (y: number): [number, number][] => Array.from({ length: 64 }, (_, i): [number, number] => [424 + i, y]);
+const seam = (y: number): [number, number][] => Array.from({ length: 32 }, (_, i): [number, number] => [456 + i, y]);
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
-  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], seeds: [[452, 120], [470, 160], ...seam(94)] },
+  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
   { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [17, 18], seeds: [[408, 160], [404, 140]] },
 ];
 

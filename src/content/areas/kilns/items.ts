@@ -8,6 +8,7 @@ import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
 import { ITEMS as SUNDERWOOD } from '../sunderwood/items.ts';
+import { sharkskin } from '../saltreach/items.ts';
 
 const plate = THORNMARK.find((i) => i.id === 'plate')!;
 const watchStaff = SUNDERWOOD.find((i) => i.id === 'watch_staff')!;
@@ -54,4 +55,7 @@ export const ITEMS: readonly ItemDef[] = [
   // N3's secret (#458): a piece of the Stone boxed in the tithe-cellar, a keepsake as the Brine and
   // Sunder Shards are; O5's cutter keeps the second (#464).
   { id: 'anvil_shard', name: 'Anvil Shard', slot: 'none', price: 0 },
+  // N4's secret (#461): in the wagon yard behind the headworks, left in a cage by the cargo, which came
+  // from the coast; off the ladder, a coat the medium wearers have a level before the forge's mail.
+  P(sharkskin, 2),
 ];
