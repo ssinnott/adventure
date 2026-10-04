@@ -9,7 +9,7 @@
 //   node tools/harness.ts --under 2                    the company two levels under the monsters
 //   node tools/harness.ts --map thornmark --level 5    a map's own groups, against a company of 5
 //   node tools/harness.ts --stats                      the test monsters' stat lines, as markdown
-//   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights and caller on the test monsters (#537)
+//   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights, caller and lights on the test monsters (#537, #541)
 //   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 22
@@ -20,8 +20,8 @@
 // bot spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
 // the spell saves outweigh its spell points, each weighed by what the company has left of that pool,
 // and counts a spell's element for what it has seen it do to each foe, and fire for the mending it
-// stops in what it has seen mend. It aims at a leader, else a caller while its call has room, and
-// reads the fight as it stands each turn, called groups and all.
+// stops in what it has seen mend. It aims at a leader, else a caller while its call has room, else
+// a light that takes spell points, and reads the fight as it stands each turn, called groups and all.
 // It wakes a sleeper of the front row, or a caster, where it can, and never blesses, sleeps, cures
 // anything else, drinks or flees. Between fights it mends as a player would. The
 // report and the calibration run on every core.
@@ -42,7 +42,7 @@ import { ITEMS } from '../src/content/index.ts';
 import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, trollEncounter, wightEncounter, callerEncounter } from './testmonster.ts';
+import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from './testmonster.ts';
 import type { Role } from './testmonster.ts';
 
 /**
@@ -189,7 +189,10 @@ function prestige(p: Party): void {
 }
 
 const companies = new Map<string, Party>();
-/** The premade six trained to `level` and outfitted for it, whole; a fresh copy every call. */
+/**
+ * The premade six trained to `level`, outfitted for it and with the prestiges it brings, whole; a
+ * fresh copy every call. The gate's company is this one (tools/gate.ts `gateCompany`).
+ */
 export function companyAt(level: number, seed: number): Party {
   const key = `${level}:${seed}:${RULES.gearGrows ? 'gear' : ''}`;
   let p = companies.get(key);
@@ -252,10 +255,12 @@ export function wakeWith(p: Party, c: Character): { spellId: string; target: num
 
 /**
  * The foe the bots aim at first among `foes`: a leader, since the people break at its fall, else a
- * caller while the fight has room for its call, since its fall stops the fight growing (`canCall`).
+ * caller while the fight has room for its call, since its fall stops the fight growing (`canCall`),
+ * else one whose touch takes spell points (`drain: 'sp'`, the lights), since its fall keeps the
+ * casters' points.
  */
 export function markOf(s: CombatState, foes: readonly number[]): number | undefined {
-  return foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f]));
+  return foes.find((f) => isLeader(s, s.monsters[f])) ?? foes.find((f) => canCall(s, s.monsters[f])) ?? foes.find((f) => s.monsters[f].def.drain === 'sp');
 }
 
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
@@ -630,7 +635,7 @@ async function main(): Promise<void> {
   }
 
   if (args.includes('--abilities')) {
-    // Act III's abilities on the test monsters (docs/MONSTERS.md §3.3, #537): the figures their sizes were decided on.
+    // Act III's abilities on the test monsters (docs/MONSTERS.md §3.3, #537, #541): the figures their sizes were decided on.
     const at = opt('levels') ? levels : [19, 20];
     const forget = (keep: (sp: SpellDef) => boolean) => (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => keep(spell(id))); return p; };
     const fireless = forget((x) => x.element !== 'fire'), unarmed = forget((x) => !x.dice);
@@ -657,6 +662,12 @@ async function main(): Promise<void> {
     for (const l of at) {
       const fs = fights(l, callerEncounter(l)), mute = callerEncounter(l).map((m) => (m.calls ? { ...m, calls: undefined } : m));
       console.log(`  ${l}: ${one(fs)}, the fight holding ${(fs.reduce((t, { s }) => t + s.monsters.length, 0) / seeds).toFixed(1)} monsters; ${rest(l, callerEncounter(l))}, and ${days(l, [mute], seeds).fights.toFixed(1)} with no call`);
+    }
+    console.log(`Three lights and a hound: the test controller, flying, its touch taking spell points where it held, beside the test skirmisher (#541).`);
+    for (const l of at) {
+      const enc = lightEncounter(l), fs = fights(l, enc), houndFirst = { monsters: enc, leader: enc[enc.length - 1].id };
+      const dull = enc.map((m) => (m.drain ? { ...m, drain: undefined } : m));
+      console.log(`  ${l}: ${one(fs)}, its spell points ${pct(mean(fs, (o) => o.sp))}% spent or taken (${pct(mean(fights(l, houndFirst), (o) => o.sp))}% with the hound marked first); ${rest(l, enc, ['the hound marked first', houndFirst])}, and ${days(l, [dull], seeds).fights.toFixed(1)} where the lights take hit points`);
     }
     return;
   }
@@ -737,7 +748,7 @@ async function main(): Promise<void> {
   block('rounds a fight, over the day', (c) => c.day!.rounds.toFixed(1), true);
   block('one fight from fresh: cost %', (c) => pct(c.fresh.cost));
   block('one fight from fresh: someone down at the end %', (c) => pct(c.fresh.down));
-  if (Math.max(...levels) > SPELLS_GROW_TO) console.log(`\nPast level ${SPELLS_GROW_TO} the company runs on play's rules: its spells stop growing, it takes its prestiges at ${PRESTIGES.join(', ')} and their spell ranks, and tiers 6 and 7 at 15 and 23, and it gains no gear.`);
+  if (Math.max(...levels) > SPELLS_GROW_TO) console.log(`\nPast level ${SPELLS_GROW_TO} the company runs on play's rules: its spells stop growing, it takes its prestiges at ${PRESTIGES.join(', ')} and their spell ranks, and tiers 6 and 7 at 15 and 23, and it wears the ladder's gear to ${GEAR_TOP} and none past it.`);
 }
 
 if (isMainThread && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) main().catch((e: unknown) => { console.error(e); process.exit(1); });

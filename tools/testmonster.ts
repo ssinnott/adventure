@@ -50,7 +50,7 @@ export function line(level: number): { hp: number; ac: number; hit: number; dmg:
  * (#535), and the levels past 16 wait to be made again with them (#541). Levels between are
  * interpolated.
  */
-export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32] as const;
+export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 17, 18, 19, 20, 21, 22, 24, 28, 32] as const;
 
 /**
  * The calibration, two factors on each role's shape at each of LEVELS: HP on its hit points, DAMAGE on
@@ -66,28 +66,28 @@ export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 20, 24, 28, 32] as
  * --calibrate --write`; do not tune by hand.
  */
 export const HP: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.08, 0.88, 1.4, 1.53, 1.63, 1.83, 2.77, 2.71, 2.93, 4.46, 4.08, 4.11, 3.58, 4.49, 4.06],
-  skirmisher: [0.83, 1.25, 1.27, 1.47, 1.4, 1.43, 1.54, 2.05, 2.34, 2.61, 3.33, 3.44, 3.73, 3.48, 4.22, 4.16],
-  soldier:    [1.07, 1.45, 1.27, 1.41, 1.35, 1.34, 1.38, 2.09, 2.34, 2.64, 3.45, 3.5, 3.77, 3.55, 4.28, 4.17],
-  archer:     [0.93, 1.59, 1.49, 1.73, 1.64, 1.57, 1.82, 2.37, 2.75, 2.99, 4.05, 4.23, 4.72, 4.44, 5.29, 5.32],
-  caster:     [1.13, 2.16, 1.91, 2.01, 1.85, 1.84, 1.88, 2.62, 2.76, 3.16, 4.84, 5.63, 5.5, 4.75, 5.59, 5.52],
-  controller: [0.98, 1.25, 1.11, 1.28, 1.29, 1.3, 1.34, 2.02, 2.24, 2.57, 3.11, 3.9, 3.5, 3.03, 3.5, 3.36],
-  armoured:   [1.54, 1.4, 1.26, 1.45, 1.45, 1.28, 1.32, 1.99, 2.14, 2.33, 3.15, 3.83, 3.8, 3.33, 3.73, 3.7],
-  elite:      [1.23, 1.82, 1.68, 2.16, 1.87, 1.65, 1.59, 2.16, 2.27, 2.47, 4.21, 4.66, 4.45, 3.85, 4.47, 4.27],
-  brute:      [1.99, 1.82, 1.64, 2.19, 2.21, 1.95, 1.75, 2.23, 2.31, 2.56, 3.66, 3.98, 4.21, 3.64, 3.97, 3.8],
-  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 4.79, 4.68, 4.67, 4.54, 5.01],
+  fodder:     [0.83, 1.08, 0.88, 1.4, 1.53, 1.63, 1.83, 2.77, 2.71, 2.93, 4.46, 4.08, 4.09, 4.1, 4.1, 4.11, 3.98, 3.85, 3.58, 4.49, 4.06],
+  skirmisher: [0.83, 1.25, 1.27, 1.47, 1.4, 1.43, 1.54, 2.05, 2.34, 2.61, 3.33, 3.44, 3.51, 3.58, 3.66, 3.73, 3.67, 3.6, 3.48, 4.22, 4.16],
+  soldier:    [1.07, 1.45, 1.27, 1.41, 1.35, 1.34, 1.38, 2.09, 2.34, 2.64, 3.45, 3.5, 3.57, 3.63, 3.7, 3.77, 3.71, 3.66, 3.55, 4.28, 4.17],
+  archer:     [0.93, 1.59, 1.49, 1.73, 1.64, 1.57, 1.82, 2.37, 2.75, 2.99, 4.05, 4.23, 4.35, 4.47, 4.6, 4.72, 4.65, 4.58, 4.44, 5.29, 5.32],
+  caster:     [1.13, 2.16, 1.91, 2.01, 1.85, 1.84, 1.88, 2.62, 2.76, 3.16, 4.84, 5.63, 5.6, 5.56, 5.53, 5.5, 5.31, 5.13, 4.75, 5.59, 5.52],
+  controller: [0.98, 1.25, 1.11, 1.28, 1.29, 1.3, 1.34, 2.02, 2.24, 2.57, 3.11, 3.9, 3.8, 3.7, 3.6, 3.5, 3.38, 3.26, 3.03, 3.5, 3.36],
+  armoured:   [1.54, 1.4, 1.26, 1.45, 1.45, 1.28, 1.32, 1.99, 2.14, 2.33, 3.15, 3.83, 3.82, 3.81, 3.81, 3.8, 3.68, 3.56, 3.33, 3.73, 3.7],
+  elite:      [1.23, 1.82, 1.68, 2.16, 1.87, 1.65, 1.59, 2.16, 2.27, 2.47, 4.21, 4.66, 4.61, 4.55, 4.5, 4.45, 4.3, 4.15, 3.85, 4.47, 4.27],
+  brute:      [1.99, 1.82, 1.64, 2.19, 2.21, 1.95, 1.75, 2.23, 2.31, 2.56, 3.66, 3.98, 4.04, 4.09, 4.15, 4.21, 4.07, 3.92, 3.64, 3.97, 3.8],
+  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 4.79, 4.76, 4.73, 4.71, 4.68, 4.68, 4.67, 4.67, 4.54, 5.01],
 };
 export const DAMAGE: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.15, 1.39, 1.42, 1.44, 1.04, 1, 1.13, 2.11, 1.98, 1.16, 1.7, 1.73, 1.97, 1.33, 1.56],
-  skirmisher: [0.83, 1, 1.11, 1.38, 1.44, 1.32, 1.06, 1.28, 1.05, 1.25, 1.37, 1.46, 1.28, 1.07, 1.19, 1.04],
-  soldier:    [1, 1.06, 1.17, 1.5, 1.55, 1.42, 1.31, 1.22, 1.13, 1.19, 1.39, 1.52, 1.33, 1.05, 1.16, 1.04],
-  archer:     [0.93, 1, 1.11, 1.11, 1.34, 1.29, 1.04, 1.43, 1.18, 1.25, 1.37, 1.44, 1.34, 1.24, 1.49, 1.39],
-  caster:     [1, 1, 1, 1.25, 1.3, 1.35, 1.1, 1.16, 1.08, 1.34, 1.43, 1.36, 1.4, 1.3, 1.69, 1.58],
-  controller: [0.98, 1.33, 1.46, 1.87, 1.93, 1.56, 1.64, 1.7, 1.58, 1.49, 1.73, 1.53, 1.66, 1.35, 1.65, 1.49],
-  armoured:   [1, 1.79, 1.58, 2, 1.81, 1.66, 1.65, 1.43, 1.33, 1.61, 1.72, 1.58, 1.5, 1.3, 1.64, 1.42],
-  elite:      [1, 1.15, 1.33, 1.67, 1.64, 1.4, 1.45, 1.43, 1.44, 1.52, 1.36, 1.4, 1.38, 1.25, 1.45, 1.33],
-  brute:      [1, 1.3, 1.45, 1.55, 1.42, 1.21, 1.19, 1.24, 1.25, 1.32, 1.39, 1.42, 1.25, 1.13, 1.44, 1.34],
-  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 4.79, 4.68, 4.67, 4.54, 5.01],
+  fodder:     [0.83, 1.15, 1.39, 1.42, 1.44, 1.04, 1, 1.13, 2.11, 1.98, 1.16, 1.7, 1.71, 1.71, 1.72, 1.73, 1.79, 1.85, 1.97, 1.33, 1.56],
+  skirmisher: [0.83, 1, 1.11, 1.38, 1.44, 1.32, 1.06, 1.28, 1.05, 1.25, 1.37, 1.46, 1.42, 1.37, 1.32, 1.28, 1.23, 1.18, 1.07, 1.19, 1.04],
+  soldier:    [1, 1.06, 1.17, 1.5, 1.55, 1.42, 1.31, 1.22, 1.13, 1.19, 1.39, 1.52, 1.47, 1.43, 1.38, 1.33, 1.26, 1.19, 1.05, 1.16, 1.04],
+  archer:     [0.93, 1, 1.11, 1.11, 1.34, 1.29, 1.04, 1.43, 1.18, 1.25, 1.37, 1.44, 1.42, 1.39, 1.36, 1.34, 1.31, 1.29, 1.24, 1.49, 1.39],
+  caster:     [1, 1, 1, 1.25, 1.3, 1.35, 1.1, 1.16, 1.08, 1.34, 1.43, 1.36, 1.37, 1.38, 1.39, 1.4, 1.38, 1.35, 1.3, 1.69, 1.58],
+  controller: [0.98, 1.33, 1.46, 1.87, 1.93, 1.56, 1.64, 1.7, 1.58, 1.49, 1.73, 1.53, 1.56, 1.59, 1.63, 1.66, 1.58, 1.5, 1.35, 1.65, 1.49],
+  armoured:   [1, 1.79, 1.58, 2, 1.81, 1.66, 1.65, 1.43, 1.33, 1.61, 1.72, 1.58, 1.56, 1.54, 1.52, 1.5, 1.45, 1.4, 1.3, 1.64, 1.42],
+  elite:      [1, 1.15, 1.33, 1.67, 1.64, 1.4, 1.45, 1.43, 1.44, 1.52, 1.36, 1.4, 1.4, 1.39, 1.38, 1.38, 1.35, 1.31, 1.25, 1.45, 1.33],
+  brute:      [1, 1.3, 1.45, 1.55, 1.42, 1.21, 1.19, 1.24, 1.25, 1.32, 1.39, 1.42, 1.38, 1.33, 1.29, 1.25, 1.22, 1.19, 1.13, 1.44, 1.34],
+  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 4.79, 4.76, 4.73, 4.71, 4.68, 4.68, 4.67, 4.67, 4.54, 5.01],
 };
 
 /** A role's factor from a table at a level, straight between the levels it was made at. */
@@ -154,8 +154,8 @@ export function standardEncounter(role: Role, level: number, hp = scaleAt(HP, ro
   return Array.from({ length: ROLES[role].group }, () => m);
 }
 
-// Act III's abilities on the test monsters (docs/MONSTERS.md §3.3, #537), each at the size decided
-// there. None is a role the calibration makes: each stands on a role's numbers.
+// Act III's abilities on the test monsters (docs/MONSTERS.md §3.3, #537; the light #541's), each at
+// the size decided there. None is a role the calibration makes: each stands on a role's numbers.
 
 /** What a troll is made of: TROLL.hp of the test brute's hit points, of which it mends TROLL.regen a round. */
 export const TROLL = { hp: 0.75, regen: 0.1 };
@@ -185,3 +185,14 @@ export function testCaller(level: number): MonsterDef {
 export const trollEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.brute.group }, () => testTroll(level));
 export const wightEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.controller.group }, () => testWight(level));
 export const callerEncounter = (level: number): MonsterDef[] => [testCaller(level), ...Array.from({ length: 6 }, () => testMonster('fodder', level))];
+
+/**
+ * The test light (MONSTERS §7.2's bog light, #541): the test controller, flying, its touch taking
+ * spell points before hit points (`drain: 'sp'`, #161) where the controller's held, and of the Rift,
+ * which never runs.
+ */
+export function testLight(level: number): MonsterDef {
+  return { ...testMonster('controller', level), id: `test_light_${level}`, name: 'Test Light', plural: 'Test Lights', kind: 'rift', ranged: true, drain: 'sp', inflict: undefined };
+}
+/** Lights round the ring with a hound (§7.2's fight): three lights, a controller's three shares, and the test skirmisher's one. */
+export const lightEncounter = (level: number): MonsterDef[] => [...Array.from({ length: 3 }, () => testLight(level)), testMonster('skirmisher', level)];

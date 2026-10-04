@@ -3,13 +3,14 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { defaultParty, xpForLevel, levelUp, armorClass, weaponOf, MAX_LEVEL, addCondition, className, rankMult, hasCondition } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, describeGroups, blowsOf, MAX_MONSTERS, MAX_GROUPS } from '../../src/game/combat.ts';
-import type { CombatState } from '../../src/game/combat.ts';
+import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
+import { MONSTERS } from '../../src/content/index.ts';
 import { gateCompany } from '../gate.ts';
-import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, testTroll, trollEncounter, wightEncounter, callerEncounter } from '../testmonster.ts';
+import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter } from '../testmonster.ts';
 import { measure, days, fight, play, outcomeOf, companyAt, edgeOf, spent, mustRest, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, RULES, GEAR_TOP } from '../harness.ts';
-import { ok, owed } from './lib.ts';
+import { ok } from './lib.ts';
 
 export function harness(): void {
   // The resolver fights defs that no map places, which is what the combat harness hands it.
@@ -100,16 +101,47 @@ export function harness(): void {
     const d = days(l, [standardEncounter(r, l)], 60, 5001), bad = d.why.dead + d.why.lost + d.why.long;
     ok(Math.abs(d.fights - fightsPerRest(l)) <= 1 && bad <= worst, `a company of level ${l} fights ${d.fights.toFixed(1)} encounters of ${ROLES[r].group} ${ROLES[r].plural} between rests (${fightsPerRest(l)} asked), and ${(bad * 100).toFixed(0)}% of its days end badly (${(worst * 100).toFixed(0)}% at most)`);
   }
-  // Past 10 the target grows: a company of 24 fights about ten between rests. In Act III's gear, to
-  // the ladder's top at 22 (#535), it fights more, until the line past 16 is made again (#541).
+  // Past 10 the target grows: a company of 24 fights about ten between rests, in Act III's gear to the
+  // ladder's top at 22 (#535), the line past 16 made again with it (#541).
   const late = days(24, [standardEncounter('soldier', 24)], 40, 5001);
-  owed(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`, '#541');
+  ok(Math.abs(late.fights - fightsPerRest(24)) <= 1.5, `a company of level 24 fights ${late.fights.toFixed(1)} encounters of 4 Test Soldiers between rests (${fightsPerRest(24)} asked)`);
+  // And through Act III, 16 to 22, about its fights at every level, a fight more every four levels.
+  const act = [16, 17, 18, 19, 20, 21, 22].map((l) => ({ l, d: days(l, [standardEncounter('soldier', l)], 40, 5001) }));
+  ok(act.every(({ l, d }) => Math.abs(d.fights - fightsPerRest(l)) <= 1.5), `through Act III a company fights about its own of 4 Test Soldiers between rests: ${act.map(({ l, d }) => `${d.fights.toFixed(1)} at ${l} (${fightsPerRest(l)})`).join(', ')}`);
   // A test monster's encounter pays what the curve gives a group at the built areas' pinned pace (docs/MONSTERS.md §4.4).
   const pays = [1, 10, 32].map((l) => Math.round((6 * (xpForLevel(l + 1) - xpForLevel(l))) / (0.75 * groupsPerLevel(l))));
   ok(pays.join() === '99,1573,5093' && xpFor('boss', 10) === 6293, `an encounter pays ${pays.join(', ')} at 1, 10 and 32, as MONSTERS §4.4 says, and a boss four`);
   const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
   ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
+  onTheLine();
   abilities();
+}
+
+/**
+ * The monsters past Act I set off the line on purpose (MONSTERS §4.4), each with why. Every other
+ * monster of level 11 or more has the hit points and the blow of some role's test monster at its
+ * level, so when the line is made again a monster left on the old one fails until it is re-derived.
+ * One a box's gate tunes off the line goes here with the issue that tuned it.
+ */
+export const OFF_LINE: Record<string, string> = {
+  choirmaster: "the Drowned Temples' boss, set by their gate (#175)",
+  great_devilfish: "Kelp Hole's boss, set by its gate (#188)",
+  tide_warden: "the Tide Ship's boss, set by its gate (#190)",
+  sunder_warden: "the Sunder's boss, on the boss line's hit points with its blow set by its gate (#199)",
+};
+
+/** Every monster past 10 on a role's line at its level (`testMonster`), or set off it with a reason (OFF_LINE). */
+function onTheLine(): void {
+  const blow = (m: Pick<MonsterDef, 'dice' | 'sides' | 'bonus'>): number => (m.dice * (m.sides + 1)) / 2 + m.bonus;
+  const on = (m: MonsterDef): string[] => ROLE_IDS.filter((r) => { const t = testMonster(r, m.level); return t.hp === m.hp && Math.abs(blow(t) - blow(m)) <= 0.5; });
+  const past = Object.values(MONSTERS).filter((m) => m.level > 10), set = past.filter((m) => OFF_LINE[m.id]);
+  const off = past.filter((m) => !OFF_LINE[m.id] && !on(m).length).map((m) => {
+    const near = ROLE_IDS.map((r) => testMonster(r, m.level)).sort((a, b) => Math.abs(a.hp - m.hp) - Math.abs(b.hp - m.hp))[0];
+    return `${m.id} at ${m.level}, ${m.hp} / ${blow(m)}, where the nearest is ${near.name} ${near.hp} / ${blow(near)}`;
+  });
+  ok(!off.length, `every monster past 10 stands on a role's line at its level, its hit points and its blow, or is set off it with a reason: ${past.length - set.length} on it, ${set.length} set off it${off.length ? ` (off it: ${off.join('; ')})` : ''}`);
+  const stale = Object.keys(OFF_LINE).filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || on(MONSTERS[id]).length);
+  ok(!stale.length, `and every monster set off it is a monster past 10 off it${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
 }
 
 /** The company with no fire: its members' fire spells forgotten. */
@@ -119,7 +151,7 @@ const fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.
  * One fight a seed from `from`, a company of `level` dressed by `dress`, as `measure` fights them:
  * the share won, its rounds and its cost on average, and each fight's end and company, to read.
  */
-function bout(level: number, enc: readonly MonsterDef[], seeds: number, from: number, dress: (p: Party) => Party = (p) => p): { won: number; rounds: number; cost: number; fights: { s: CombatState; p: Party }[] } {
+function bout(level: number, enc: Fighters, seeds: number, from: number, dress: (p: Party) => Party = (p) => p): { won: number; rounds: number; cost: number; fights: { s: CombatState; p: Party }[] } {
   let won = 0, rounds = 0, cost = 0;
   const fights: { s: CombatState; p: Party }[] = [];
   for (let k = from; k < from + seeds; k++) {
@@ -130,8 +162,9 @@ function bout(level: number, enc: readonly MonsterDef[], seeds: number, from: nu
 }
 
 /**
- * Act III's abilities on the test monsters (MONSTERS §3.3, #537), where the road first meets them: two
- * trolls at 19, burnt or not; four wights at 19; a caller beside six fodder at 20, its fight growing.
+ * Act III's abilities on the test monsters (MONSTERS §3.3, #537, #541), where the road first meets
+ * them: two trolls at 19, burnt or not; four wights at 19; a caller beside six fodder at 20, its fight
+ * growing; three lights and a hound at 19, the lights felled first.
  */
 function abilities(): void {
   const pc = (x: number): string => `${Math.round(x * 100)}%`;
@@ -144,7 +177,7 @@ function abilities(): void {
   ok(fire.won >= 0.95 && burnt >= 30, `a company of 19 with fire wins ${pc(fire.won)} of two trolls' fights, burning them in ${burnt} of 40`);
   ok(none.won >= 0.9 && none.rounds >= fire.rounds * 1.25 && none.cost > fire.cost, `with none it grinds: ${none.rounds.toFixed(1)} rounds and ${(none.cost * 100).toFixed(1)}% of itself a fight, against ${fire.rounds.toFixed(1)} and ${(fire.cost * 100).toFixed(1)}%, and wins ${pc(none.won)}`);
   const day = days(19, [trollEncounter(19)], 40, 5001), brutes = days(19, [standardEncounter('brute', 19)], 40, 5001);
-  ok(Math.abs(day.fights - brutes.fights) <= 1.5, `with fire it fights ${day.fights.toFixed(1)} of their encounters to a rest, about as many as of plain brutes (${brutes.fights.toFixed(1)}; ${fightsPerRest(19)} asked, until #541 makes the line past 16 again)`);
+  ok(Math.abs(day.fights - brutes.fights) <= 1.5, `with fire it fights ${day.fights.toFixed(1)} of their encounters to a rest, about as many as of plain brutes (${brutes.fights.toFixed(1)}; ${fightsPerRest(19)} asked)`);
   // The wights' curses land and outlast the fight, and end no day.
   const wights = bout(19, wightEncounter(19), 20, 5001), cursed = wights.fights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'cursed'))).length;
   const marked = companyAt(19, 1);
@@ -156,4 +189,11 @@ function abilities(): void {
   ok(called.won >= 0.95 && grew >= 8 && most <= MAX_MONSTERS && groups <= MAX_GROUPS, `a company of 20 wins ${pc(called.won)} of a caller's fights beside six fodder; it called in ${grew} of 40, and no fight held more than ${most} in ${groups} groups`);
   const cday = days(20, [callerEncounter(20)], 40, 5001), mute = days(20, [callerEncounter(20).map((m) => (m.calls ? { ...m, calls: undefined } : m))], 40, 5001);
   ok(cday.fights < mute.fights && cday.fights > mute.fights - 2.5, `and it fights ${cday.fights.toFixed(1)} of them to a rest, where with no call it fights ${mute.fights.toFixed(1)}: the call costs it about a fight (${fightsPerRest(20)} asked)`);
+  // The lights take spell points (#161), and the bots aim at them after a leader and a caller (#541):
+  // three lights and a hound cost a company of 19 more of its spell points than lights that took hit
+  // points would, and fewer than they do when it marks the hound first.
+  const lights = lightEncounter(19), lit = bout(19, lights, 40, 5001), dull = bout(19, lights.map((m) => (m.drain ? { ...m, drain: undefined } : m)), 40, 5001);
+  const hound = bout(19, { monsters: lights, leader: lights[lights.length - 1].id }, 40, 5001);
+  const sp = (b: typeof lit): number => b.fights.reduce((t, { p }) => t + spent(p).sp, 0) / b.fights.length;
+  ok(lit.won >= 0.95 && sp(lit) > sp(dull) && sp(lit) < sp(hound), `a company of 19 wins ${pc(lit.won)} of three lights' and a hound's fights, felling the lights first: ${pc(sp(lit))} of its spell points spent or taken, against ${pc(sp(hound))} when it marks the hound first and ${pc(sp(dull))} where the lights take hit points`);
 }

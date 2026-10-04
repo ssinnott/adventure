@@ -172,7 +172,8 @@ A monster that `calls` names a group and a chance a turn to spend its turn bring
 into the fight, as a group of its own that acts from the next round, while the fight has room for it
 under 12 monsters in three groups, those already down counted; the called pay as the rest. Both
 bots burn with fire what they have seen mend, and aim at a caller that has room to call as at a
-leader. Nothing gives stone, though the condition exists: Absolve lifts it, and a temple.
+leader, and after both at a light whose touch takes spell points (#541). Nothing gives stone,
+though the condition exists: Absolve lifts it, and a temple.
 
 ### 3.2 What the numbers show
 
@@ -232,7 +233,8 @@ made once in the systems lane and first spent by the area named, which waits for
 
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
 elements, casting and drain (#161); regeneration, curse and calls (#537), each with the gate bot's
-answer. Still to come: stone and its cure, sweep, a light seen past the fog and the Core's clock.
+answer, a drain of spell points' with #541. Still to come: stone and its cure, sweep, a light seen
+past the fog and the Core's clock.
 
 Decided by delegate for #537, each the owner's to overturn:
 
@@ -275,9 +277,9 @@ for **3 + L/2** on average:
 |---|---|---|---|---|
 | 2 | 10 | 12 | 2.5 | 4 |
 | 8 | 28 | 15 | 5.5 | 7 |
-| 16 | 127 / 11 | 179 / 15.5 | 182 / 16.5 | 187 / 13 | 278 / 15.5 | 203 / 13 | 249 / 18 | 351 / 19.5 | 393 / 23 | 872 / 90 |
-| 24 | 163 / 17.5 | 264 / 15 | 270 / 15.5 | 287 / 16 | 343 / 20 | 230 / 16 | 316 / 20 | 424 / 23 | 526 / 25 | 1242 / 119 |
-| 32 | 244 / 18 | 416 / 19 | 417 / 20 | 452 / 22 | 524 / 32 | 336 / 23 | 463 / 28.5 | 619 / 32 | 722 / 37 | 1754 / 162 |
+| 16 | 52 | 19 | 9.5 | 11 |
+| 24 | 76 | 23 | 13.5 | 15 |
+| 32 | 100 | 27 | 17.5 | 19 |
 
 A character's to-hit gains half a point a level (`attackBonus`), so armour on the line keeps the
 chance of hitting a soldier the same at every level: Bram 75%, Wren 80% and Cassian 60%, at level 2
@@ -421,6 +423,17 @@ counted it: the Foreland 81 over 4, Thornmark 75 over 5, and past them Thornmark
 first box settles open question 4). That is 99 at
 level 1, 1,573 at 10 and 5,093 at 32; a boss pays four. There is no boss under level 3, since a boss
 sits at its band's top.
+
+**When the line moves.** A monster past Act I stands on the line by its role and its level: its hit
+points, armour, to-hit, blow and xp are `testMonster(role, level)`'s (`node tools/harness.ts --stats
+--roles soldier --levels 17` prints them), and its notes go on top: an `inflict`, a resistance, a
+healer's `cast`. When `--calibrate --write` makes the line again, a def on it is re-derived the same
+way, from its role and level, and keeps its notes: only its hit points and its dice move, since its
+armour, to-hit and xp come from the line's formulas and the curve. A def set off the line on purpose,
+a boss its box's gate tuned, keeps its numbers and is named in `OFF_LINE` (`tools/tests/harness.ts`)
+with the issue that set it. The harness suite fails any other monster past 10 that stands on no
+role's line at its level, so a def drawn on the old line fails until it is re-derived, as #414
+re-derived Act II's after #409 and #541 the Kilns'.
 
 What it shows:
 
