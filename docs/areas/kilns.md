@@ -203,7 +203,7 @@ first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhal
   Stone on its anvil of rock, cut square on three sides, the dwarves' words for what holds cut in its
   plinth and a saw in its last cut. The cutters' sheds and the foreman at his own; their camp back
   down the track; a sledge under the mountain, a cairn where the stream comes off the fell, the
-  thane's mark and a spring under the rim, and the lookout from the crag's top. Four groups:
+  thane's mark under the rim, a spring and the lookout from the crag's top. Four groups:
   slaglings on the track and on the slope by the tear, the slag elder at its lip and, once the Stone
   is taken, the Anvil Guard on the approach. Under the anvil-rock's lip, the piece one cutter would
   not sell (§4.9).
@@ -212,13 +212,13 @@ Its atlas rows are charted in `src/content/areas/kilns/atlas.ts`, the area's own
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
 Saltreach's and Sunderwood's were before their first box (docs/areas/saltreach.md §9,
 docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–17, with M3, N3 and N2
-laid on it and its line to the heart held, §1; the heart 16–18, with N4, N5 and O5 laid on it; Kilnmouth
-17–18), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the Tiefzeche 16–18, the Anvil
-Stone 17–18, Feuerstollen 17–18) as planned plates, the Tiefzeche's now its three levels' (#462),
-the sites (Anvilhall, the Deep Mines, the Forges, the Anvil Stone, the Lava Tubes, Kilnhaven, Iron
-Crag, to be renamed with #435, §10) and its links: the east road in, the towns' and the dungeons'
-ways in, the drove road on to High Moor, the ferry and the Compact ship, and a new `coach` link,
-Kilnhaven to Rime Lodge, the drove road's coach (#434, call 9; #539 builds it).
+laid on it and its line to the heart held, §1; the heart 16–18, with N4, N5 and O5 laid on it;
+Kilnmouth 17–18), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the Tiefzeche 16–18,
+the Anvil Stone 17–18, Feuerstollen 17–18) as planned plates, the Tiefzeche's now its three levels'
+(#462), the sites (Anvilhall, the Deep Mines, the Forges, the Anvil Stone, the Lava Tubes,
+Kilnhaven, Iron Crag, to be renamed with #435, §10) and its links: the east road in, the towns' and
+the dungeons' ways in, the drove road on to High Moor, the ferry and the Compact ship, and a new
+`coach` link, Kilnhaven to Rime Lodge, the drove road's coach (#434, call 9; #539 builds it).
 
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
 `src/content/progression.ts`: band 16–18, next 18, window 3,500, owed to #436 while the area is built
@@ -831,7 +831,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   track's bend and five the slope beside the tear, until it is closed; the slag elder stands at its
   lip, the box's group at 18; and once the Stone is taken three of the Anvil Guard, the thane's iron,
   stand on the approach between the track and the Stone, their post said as the company comes up.
-  East of the Stone stand the cutters' two sheds, shut, and the foreman's, where Reinhart minds the
+  East of the Stone the cutters' two sheds stand shut beside the foreman's, where Reinhart minds the
   saws the others left when the ground opened; in his shed, 310 gold and a Cutter's Hammer +1
   (`cutters_hammer`). On the Stone's north face every saw-cut runs through but one, which stops half
   way; searched at the anvil-rock's lip beside it (11,9), the rock gives on a hollow, and in it,
@@ -1831,15 +1831,16 @@ Decided by delegate for #464, each the owner's to overturn:
    a reader reads KEEP WHOLE. NO CUTTING. The line and the tear's go quiet once the tear is closed
    (`until: q_anvil_closed`); what is said then is #465's and #470's.
 4. **The tear is the atlas's way in, 468,142 (12,16), shut until the Rift is built,** as N4's shaft
-   was until the Tiefzeche opened it (#461's 3): its square is a chasm, which refuses a step, and `o5_tear` says the torn ground
-   from the track beside it. `TEAR` in `kilnsheart_o5.ts` writes the feature, into the Rift's start
-   at 7,14 facing north (§4.10 gives none: the Tiefzeche's and Anvilhall's), saying the slag's words
-   going in, for #465 to place, open the square and drop the event; its way back lands on 12,15,
-   facing north.
+   was until the Tiefzeche opened it (#461's 3): its square is a chasm, which refuses a step, and
+   `o5_tear` says the torn ground from the track beside it. `TEAR` in `kilnsheart_o5.ts` writes the
+   feature, into the Rift's start at 7,14 facing north (§4.10 gives none: the Tiefzeche's and
+   Anvilhall's), saying the slag's words going in, for #465 to place, open the square and drop the
+   event; its way back lands on 12,15, facing north.
 5. **Four groups for eight:** five slaglings above the track's bend and five on the slope by the
-   tear, the slag elder at its lip, the box's group at 18 (§7), and three of the Anvil Guard on the
+   tear; the slag elder at its lip, the box's group at 18 (§7); three of the Anvil Guard on the
    approach. They give 8.42 fights to a rest at 17 and 1,742 xp a member, 1,292 on the buying, for
-   the brief's 1,000 (#457's 3): slaglings in fours gave 10.4, and four guards broke off half the days.
+   the brief's 1,000 (#457's 3): slaglings in fours gave 10.4, and four guards broke off half the
+   days.
 6. **The Guard stands only once the Stone is taken** (`after: anvil_taken`, #459), and so never for a
    company that bought, since the thane puts his question once; its post is said "ahead of you as he
    said". Bought, the saw in the last cut gives way to the saws off the Stone, as he promised.
@@ -1853,7 +1854,7 @@ Decided by delegate for #464, each the owner's to overturn:
 9. **The finds:** the cutter's piece, the area's second Anvil Shard (`anvil_shard`), with 500 gold in
    the hollow; and in the foreman's shed a Cutter's Hammer +1 (`cutters_hammer`, 1,550 gold), the
    Forge Hammer with a plus under a name of its own, off the ladder: the forge's hammer has three
-   hands, the knight's, the paladin's and the cleric's, and the Tiefzeche's bottom gives one (#462).
+   hands (the knight's, the paladin's and the cleric's), and the Tiefzeche's bottom gives one (#462).
 10. **Its gold is 1,060, its share by the brief of the 13,900** (§8): 250 in the cairn, 310 in the
     shed and 500 in the hollow; the Guard carries about 150 more on the taking.
 11. **The crag runs on east to the rim** over the atlas's last two columns of hills from row 22 down,
