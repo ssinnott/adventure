@@ -866,8 +866,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   fights to a rest, inside the aim, with 9.7% of its days ending in a fight broken off, most of them
   the Guard's. As measured it pays about 1,742 xp a member, 1,292 to a company that bought, which
   meets no Guard, and 1,060 gold, the Guard about 150 more. Two under, at 15, its groups count in the
-  area's pool, where every fight is won, owed to #18. Density 97.4% within 8 steps, the furthest 11,
-  with one sign among its 23 points.
+  area's pool, where 97.1% of fights are won, owed to #18. Density 97.4% within 8 steps, the furthest
+  11, with one sign among its 23 points.
 
 ### 4.10 The Anvil Stone's Rift (#465): dungeon, one level of 16×16, hand-built, band 17–18
 
@@ -1987,7 +1987,7 @@ Decided by delegate for #464, each the owner's to overturn:
 12. **The zone walk moves 78 squares, unheld** (§1), none on a built map; O6 takes its own when it
     is laid (#466).
 13. **Two under is the area's pool's:** O5's floor is over the area's, so the gate counts its groups
-    at 15 in the area's pool, where every fight is won, owed to #18 as N5's are (#463's 12).
+    at 15 in the area's pool, where 97.1% of fights are won, owed to #18 as N5's are (#463's 12).
 14. **Owed on:** the tear's feature, the square opened and the way back, #465's; the Rift's flag,
     which the slaglings, the Stone's line and the tear's read, #465's too; the chapter's step at the
     Stone, #470's, which may read `o5_stone`; the grass and the hills at O6's 0 to 12,0, with no road
