@@ -329,7 +329,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   and a net-needle in its straw; beside it the drover's box, 500 gold and a Drover's Goad +2
   (`drovers_goad`), which no walker, swimmer, climber or levitator reaches but through the wall. A
   company at 16 wins every fight and manages 8.95 fights to a rest, inside the aim, with 6.3% of its
-  days ending in a fight broken off; the Fells' road, the two beetle groups, is walked every time. As
+  days ending in a fight broken off (8.97 and 4% once #541 re-stated the worm); the Fells' road, the
+  two beetle groups, is walked every time. As
   measured it pays about 1,068 xp a member and 740 gold. Two under, at 14, it wins every fight too,
   owed to #18 as every Act II box's is. Density 98.5% within 12 steps, the furthest 15. It claims pine
   underfoot as new (§7). M2 gains the way over the border with the crossing line and its milestone
