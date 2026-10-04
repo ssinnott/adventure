@@ -139,6 +139,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'ironfells_m3: under': { whose: '#18', at: 1 },
   'ironfells_n3: under': { whose: '#18', at: 1 },
   'kilnsheart_n4: under': { whose: '#18', at: 1 },
+  'ironfells_n2: under': { whose: '#18', at: 1 },
   // And the Tiefzeche's two upper levels (#462), banded from the area's floor as Kelp Hole's are.
   'deep_mines: under': { whose: '#18', at: 1 },
   'deep_mines2: under': { whose: '#18', at: 1 },
