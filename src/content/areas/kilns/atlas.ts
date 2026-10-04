@@ -24,7 +24,7 @@ export const ZONES: readonly AtlasZone[] = [
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
-  { id: 'anvilhall', name: 'Anvilhall', kind: 'town', planned: true, band: [16, 18], at: [452, 70] }, // behind N3's gate (#458, #459)
+  { id: 'anvilhall', kind: 'town', at: [452, 66] }, // on N3, in the hill behind its gate at 28,8 (#458, #459)
   { id: 'kilnhaven', name: 'Kilnhaven', kind: 'town', planned: true, band: [16, 18], at: [378, 158] }, // the ore port, behind L6's gate (#468, #469)
   { id: 'deep_mines', name: 'The Tiefzeche', kind: 'dungeon', planned: true, band: [16, 18], at: [440, 104] }, // the Deep Mines, three levels under N4 (#462)
   { id: 'anvil_stone', name: 'The Anvil Stone', kind: 'dungeon', planned: true, band: [17, 18], at: [468, 136] }, // the Stone's Rift, one level through O5's tear (#465)
@@ -33,7 +33,7 @@ export const PLACES: readonly AtlasPlace[] = [
 
 export const SITES: readonly AtlasSite[] = [
   // VI. The Kilns (docs/areas/kilns.md §10 has the dwarves' names).
-  { name: 'Anvilhall', icon: 'fortress', at: [452, 80], label: 'below', planned: true },
+  { name: 'Anvilhall', icon: 'fortress', at: [452, 70], label: 'below' }, // at the gate on N3, 28,8 (#458, #459)
   { name: 'Tiefzeche', icon: 'mine', at: [440, 96], label: 'below', planned: true }, // the Deep Mines
   { name: 'Gluthutte', icon: 'forge', at: [436, 126], label: 'below', planned: true }, // the Forges
   { name: 'Anvil Stone', icon: 'stone', at: [468, 142], label: 'below', planned: true },

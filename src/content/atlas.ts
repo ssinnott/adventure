@@ -319,7 +319,7 @@ export const PLAN: Atlas = {
     { from: 'eaves', to: 'the_sunder', kind: 'enter', a: [338, 70] },
     { from: 'lanternwood', to: 'lantern_watch', kind: 'enter', a: [372, 46] },
     { from: 'lanternwood', to: 'ironfells', kind: 'road', a: [404, 70], b: [416, 84] },
-    { from: 'ironfells', to: 'anvilhall', kind: 'enter', a: [452, 80] },
+    { from: 'ironfells', to: 'anvilhall', kind: 'enter', a: [452, 70] },
     { from: 'ironfells', to: 'deep_mines', kind: 'enter', a: [440, 96] },
     { from: 'kilnsheart', to: 'anvil_stone', kind: 'enter', a: [468, 142] },
     { from: 'kilnsheart', to: 'lava_tubes', kind: 'enter', a: [478, 178] },

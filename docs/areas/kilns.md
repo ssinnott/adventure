@@ -13,8 +13,9 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Its first box is built, M3, the Iron Fells' way in (#457, §4.2), and lists the area; eleven of its
-monsters and its twelve rooms are drawn (§3), and the rest is to build. Its content is
+Its first box is built, M3, the Iron Fells' way in (#457, §4.2), and lists the area, and its first
+town, Anvilhall, behind N3's gate (#459, §4.4); eleven of its monsters and its twelve rooms are drawn
+(§3), and the rest is to build. Its content is
 `src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, and its side quests in
 `quests.ts`, to come) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
@@ -121,6 +122,10 @@ One box, the area's first, which lists the area (#457):
   end a crag with the old adit in it, walled, the dwarves' cold hearth by its mouth and the first
   spoil heap below it. Three groups: fire beetles at the heap's toe and more on its west side; a rock
   worm in the adit's cut. Behind the wall, the Hand's wagon stage (§4.2).
+- **Anvilhall** (`anvilhall`, town, band 16–18; #459): the dwarves' hold behind N3's gate, a court
+  cut down into the hill with the great hall at its head, where the Lantern reader reads the verse
+  and the thane sells the Stone back or loses it; the smiths' forge, the old working that trains to
+  19, the inn, the mine-surgeon's and the stores (§4.4).
 
 Its atlas rows are charted in `src/content/areas/kilns/atlas.ts`, the area's own `atlas` since M3
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
@@ -142,8 +147,8 @@ so that the harness and the gate dressed by it before the first box took the tab
 (#457): Anvilhall's forge's eight
 wares (`FORGE`, §4.4), the step's plus finds by 19 (§4.1), Kilnhaven's smith's prices at a quarter
 more (`SMITH_PRICES`, for #469) and the thane's price for the Stone (`ANVIL_STONE_PRICE`, 6,000, for
-#459, §8). Each ware is owed to the forge (#459) and each find to its box until it is sold or placed;
-M3's find, off the ladder, is its own (§4.2).
+#459, §8). The forge sells every ware (#459), and each find is owed to its box until it is placed;
+M3's find, off the ladder, is its own (§4.2). The thane asks the price as an answer's `price` (§9).
 
 Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
 Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
@@ -179,8 +184,8 @@ first places it (§7, §9): M3 places the beetle and the worm (#457).
 The rooms are drawn (#473), one to each business of the two towns, ahead of the towns as
 Saltmouth's and Lantern Watch's were. `src/content/areas/kilns/interiors.ts` lists them, the
 area's `interiors` since M3 lists it (`ROOMS_AHEAD` in `src/content/index.ts` merged them until
-then); `tools/tests/maps.ts` reports each owed to its town (#459, #469) until
-a business there opens into it, and §4.4 and §4.14 name the ids. They are a scene to a file in
+then); Anvilhall's six open into theirs (#459), and `tools/tests/maps.ts` reports each of
+Kilnhaven's owed to #469 until a business there opens into it; §4.4 and §4.14 name the ids. They are a scene to a file in
 `src/ui/interiors/kilns/`, what Anvilhall's share in `hold.ts` and what Kilnhaven's share in
 `port.ts`. Anvilhall's are cut stone, iron and fire, the hammer and pick on the banners and the old
 script cut over the doors: the great hall, a nave of square pillars up to the thane's seat with the
@@ -200,8 +205,8 @@ day in it somewhere, a window, a shaft, a breach or a door, so that nine at nigh
 
 ## 4. What is still to build
 
-All of it but M3, built (#457, §4.2): 14,791 squares of land, 12,399 of them walkable, the plan's
-figures (§1). On the grid the plan is ten boxes,
+All of it but M3, built (#457, §4.2), and Anvilhall behind N3's gate (#459, §4.4): 14,791 squares of
+land, 12,399 of them walkable, the plan's figures (§1). On the grid the plan is ten boxes,
 three dungeons and two towns, with four more boxes parked, and the ten hold 8,419 of those squares,
 7,686 walkable; the parked four 3,886 and 3,397:
 
@@ -402,6 +407,28 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **New here.** A choice sold like a ware; a shop that shuts for good; a skill taught by a person
   who is not a hall.
 - **Pay.** About 300 xp a member in the town's quests and hand-ins.
+- **As built** (#459, 4 October): N3's gate at 28,8 opens on the foot of the court, 7,14, one door
+  wide, the brief's gate line said inside it and the hold's name cut over it; the court climbs north
+  in three terraces, a stair up through each terrace's wall, to the great hall's doors at its head.
+  The businesses are the brief's six, each its own room and each a door in the rock: the Great Hall,
+  a room with the thane and the Lantern reader in it; the Smiths' Forge, selling the step's eight
+  wares and nothing else, gone with its smiths once the Stone is taken, its door barred; the Old
+  Working, training to 19; the Candle Arch, the inn, 35 a head; the Mine-Surgeon's, which cures; and
+  the Hold Stores, the provisions at list price. The verse is cut over the great hall's doors as over
+  the kings' forge within. Wystan Crane, the Lantern reader, reads it aloud the old way, *DANGER.
+  KEEP FIRE BELOW THIS LINE.*, and says the brief's line; to a company whose own reader read it at
+  the doors he says it after them; either way he sets `anvil_verse_read` for the chapter, and he
+  teaches Linguist to a Lantern (#538). Thane Wolfram puts the Stone at 6,000 gold or taken, the
+  price barred to a company with less, and sets `anvil_bought` or `anvil_taken`; his last word is the
+  brief's either way. Gerda at the forge and Konrad, the gate's warder, change their words with the
+  choice; Ilse cuts the old script fresh over the mine-surgeon's door. Four doors and the gate carry
+  an inscription: SECTION 7. over the gate, BERTHS. over the inn, SICKBAY. over the mine-surgeon's,
+  MUSTER STATION. ALL HANDS. over the old working and the verse over the hall. The Regent's scholar,
+  the oldest miner and the Crust-Bearer's hand-in are #471's (§6). The walkthrough rests, buys each
+  class its step at the forge, trains a member of 18 to 19, hears the verse read both ways, teaches
+  a Lantern Linguist and puts the thane's choice both ways. The town pays nothing of its own: its 300
+  is its quests', the chapter's and #471's. Density 100% within 7 steps, the furthest 4, five signs
+  among its 22 points.
 
 ### 4.5 N2, Erzkamm (#460): country, band 17
 
@@ -818,7 +845,8 @@ map mark made by it (#538; the mechanics `sign:read` and `sign:marks`); a choice
 and a shop that shuts for good; a group that comes `after` a choice; a coach that runs (#539); the
 second prestige (#19). Its landmarks: a town cut into a hill, a mine's headworks, a smelter, a Stone
 cut by its own people, a ridge of vents, an ore port. The area's `novel` claims each as a box places
-it, since the check asks that what is claimed be used: pine with M3 (#457), the rest with theirs.
+it, since the check asks that what is claimed be used: pine with M3 (#457), the town cut into a hill
+with Anvilhall (#459, its site's `fortress`), the rest with theirs.
 
 ## 8. The numbers
 
@@ -832,7 +860,7 @@ it, since the check asks that what is claimed be used: pine with M3 (#457), the 
   a fight inside the gate's aim costing what it costs; the sum is restated with each. A company
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
   finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), so the shares stand at about
-  13,470.
+  13,470. Anvilhall pays nothing of its own (#459): its 300 is the chapter's and #471's.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -849,7 +877,8 @@ it, since the check asks that what is claimed be used: pine with M3 (#457), the 
   and the Steel Bow +1 at 1,650; the smith's quarter more on the Dwarf Mail, 2,500, sits inside too.
   The forge's full set for the premade six comes to about 17,300, its weapons 8,500; at the smith a
   taker pays about 4,300 more for the same. As built: M3 holds 740 (#457), its share by the brief's
-  700 of the 13,900, in its cairn and the drover's box; its monsters carry none.
+  700 of the 13,900, in its cairn and the drover's box; its monsters carry none. Anvilhall holds none
+  (#459); its forge sells the step at the prices above, and its thane takes the 6,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman and
@@ -861,7 +890,8 @@ it, since the check asks that what is claimed be used: pine with M3 (#457), the 
   too, owed to #18 as Act II's are (§4.2).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
-  M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457).
+  M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); Anvilhall,
+  a town, 100% within 7 and the furthest 4, five signs among its 22 points (#459).
 
 ## 9. Decisions
 
@@ -1216,6 +1246,43 @@ Decided by delegate for #457, each the owner's to overturn:
     standard size, as on every Act II box; the gate's other figures are inside their aims.
 12. **The woodcutters camp under the shoulder north of the trail's head and fell in the pines
     south-west of it,** each a point where the country floor wants one and the land is otherwise bare.
+
+Decided by delegate for #459, each the owner's to overturn:
+
+1. **The Stone is sold as a ware: an answer may have a `price`** (`src/game/map.ts`,
+   `src/game/people.ts`), listed at it, barred to a company with less and paid as it is answered. No
+   answer could take gold, and a negative pay would have run a purse below nothing.
+2. **The great hall is a room with people in it,** as Lantern Watch's prior's room holds its Reader:
+   the room says the nave and the verse, and the thane and the Lantern reader are each a "Talk to" on
+   its menu, the thane's question the menu he puts.
+3. **The verse is cut over the great hall's doors as over the kings' forge,** so a company with a
+   reader of its own reads it at the doors, kept by its id (`seen: 'anvilhall:ah_verse'`), and the
+   reader then says it after them; either way he sets `anvil_verse_read`, the chapter's step (#470).
+4. **The reading is DANGER. KEEP FIRE BELOW THIS LINE.,** the line painted on a boiler, which the
+   reader says aloud to a company with no reader before the brief's words.
+5. **Four doors and the gate carry an inscription, not all six:** one point in four may be a sign,
+   so the town holds five among its 22 points. The forge and the stores carry none.
+6. **The forge is gone `until` `anvil_taken`,** its smiths with it, a barred door's word after it, as
+   Helmstow's chapel shut (#157); no lock, since its trade is had at Kilnhaven's smith (§5, §9's 1).
+7. **The thane's answers set their flags and pay nothing;** his first meeting sets `thane_met`, for
+   the chapter to read. The town pays nothing of its own, as Saltmouth paid nothing of its own (#177).
+8. **The town is a court cut down into the hill and open to the sky,** three terraces up from a gate
+   one door wide to the great hall's doors: a town has the sky over it, so the hold's rooms are the
+   rooms (#473) and the court their street.
+9. **The gate is N3's 28,8, world 452,70, the place's own square:** the plate moves into the hill
+   behind it at 452,66, and the site and the plan's way in move onto the gate, as Saltmouth's did
+   (docs/areas/saltreach.md §9, #177's 9). The way out lands on N3 before the gate.
+10. **The brief's gate line is said once inside the gate,** at the town's start, so N3's own gate
+    event does not say it again.
+11. **The inn is 35 a head,** a step past the Watch's refectory (30), as each town's is past the
+    last; the stores sell the provisions at list price, and the forge the step and nothing else.
+12. **The names are the dwarves':** Thane Wolfram, Gerda at the forge, Konrad the warder and Ilse the
+    carver; the reader is Wystan Crane, a Reader by his rank. The businesses are named for what they
+    are: the Old Working, the Smiths' Forge, the Candle Arch for its arch of candles.
+13. **The side quests' people are #471's,** which places them: the Regent's scholar, the oldest miner
+    and the Crust-Bearer's hand-in (§6). The court leaves its free squares for them.
+14. **A condition's `seen` names a reading in the checks too:** `tools/tests/quests.ts` knew only
+    once-events and caches, though #538 keeps a reading by its id as a once-event is.
 
 ## 10. Names
 
