@@ -79,4 +79,9 @@ export const ITEMS: readonly ItemDef[] = [
   // plus beside the Tiefzeche's, for the forge's hammer has three hands, the knight's, the paladin's
   // and the cleric's.
   P(forgeHammer, 1, { id: 'cutters_hammer', name: "Cutter's Hammer +1" }),
+  // Feuerstollen's deepest chamber (#466): the Great Salamander's hide, which it drops, carried against
+  // fire as the Tide's symbol is carried against cold.
+  { id: 'salamander_hide', name: "Great Salamander's Hide", slot: 'none', price: 500, resist: ['fire'], text: [
+    'A hide gone grey as slate, cool to the hand however long it is held.',
+  ] },
 ];

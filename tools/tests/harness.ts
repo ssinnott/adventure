@@ -131,6 +131,7 @@ export const OFF_LINE: Record<string, string> = {
   tide_warden: "the Tide Ship's boss, set by its gate (#190)",
   sunder_warden: "the Sunder's boss, on the boss line's hit points with its blow set by its gate (#199)",
   foreman: "the Tiefzeche's boss, its hit points and its blow set by its gate (#462)",
+  great_salamander: "Feuerstollen's boss, its hit points and its blow set by its gate (#466)",
 };
 /** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */
 export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {
