@@ -105,7 +105,8 @@ export const ROADS: Record<string, readonly string[]> = {
   kilnmouth: ['kilnmouth_m6:m6_beetles_east'],
   // Over the low hills and down the drove road past the ravens on the first cairn, the bog bodies in
   // the marsh beside it and, on its southern reach by night, the hounds (#476).
-  highmoor: ['highmoor_n7:n7_ravens', 'highmoor_n7:n7_bodies_north', 'highmoor_n7:n7_hounds'],
+  // On O7 (#477), the peat-cutter's track east to the ring past the lights that go round it by night.
+  highmoor: ['highmoor_n7:n7_ravens', 'highmoor_n7:n7_bodies_north', 'highmoor_n7:n7_hounds', 'highmoor_o7:o7_lights'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -154,6 +155,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'the Kilns: under': { whose: '#18', at: 1 },
   // And Cairnmoor's first box (#476), in the Kilns' gear and its finds by 19, as the Kilns' are.
   'highmoor_n7: under': { whose: '#18', at: 1 },
+  'highmoor_o7: under': { whose: '#18', at: 1 },
   'Cairnmoor: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
