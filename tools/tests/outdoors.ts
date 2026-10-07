@@ -175,6 +175,17 @@ export function outdoors(): void {
     `O5's west edge meets N5's with the cutters' track, the hills and the mountain, and its north edge is the stream at the corner and the hills under the world's end over O4 (${westOf(o5)}; ${northOf(o5)})`);
   ok(eastOf(o5) === '^'.repeat(22) + 'r'.repeat(10) && southOf(o5) === ',,,,,' + '^'.repeat(8) + 'r'.repeat(19),
     `O5's east edge is the hills and the crag against P5, and its south edge the grass, the hills and the crag against O6 (${eastOf(o5)}; ${southOf(o5)})`);
+  // The road up onto the moor (N7, #476), Cairnmoor's first box: in from N6's hills by the drove road
+  // at column 3, N6's heather running on south at columns 22 to 29; out by the south edge at column 7
+  // for N8 among the heather, the snow and the marsh, the stream from the tarn clipping the corner; the
+  // peat-cutter's track out by the east edge at row 22 in dirt against O7, since the atlas has no road
+  // there; and on the west the grass, the snow, the heather and the hills against M7. None of N8, O7
+  // and M7 is built, so the world ends past them.
+  const n7 = out.zones.find((z) => z.id === 'highmoor_n7')!;
+  ok(northOf(n7) === ',,,=,' + '^'.repeat(12) + ',,^^^' + 'h'.repeat(8) + '^^' && southOf(n7) === 'hh*hhhw=' + 'w'.repeat(6) + 'hhhh**' + 'h'.repeat(11) + '~',
+    `N7's north edge meets N6's hills with the drove road at column 3, and its south edge is the heather, the snow and the marsh with the drove road out for N8 and the stream at the corner (${northOf(n7)}; ${southOf(n7)})`);
+  ok(eastOf(n7) === '^'.repeat(11) + ',,' + 'h'.repeat(9) + ':' + 'h'.repeat(8) + '~' && westOf(n7) === ',,,,,,**hhhh^^^^' + 'h'.repeat(16),
+    `N7's east edge is the hills and the heather against O7 with the peat-cutter's track out at row 22, and its west edge the grass, the snow, the heather and the hills against M7 (${eastOf(n7)}; ${westOf(n7)})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);

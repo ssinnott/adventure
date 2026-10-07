@@ -450,9 +450,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.zone?.id === 'kilnsheart_n6' && !intoN6.some((m) => /Kilns|harder|spare you/.test(m)), `the drove road crosses from N5 into N6 with nothing said of the land, even at 14 (${intoN6.join(' / ') || 'nothing'})`);
   w.level = 16;
 
-  // Out by the south edge for Cairnmoor's N7, the moor's border said on the road; past it, for now,
-  // the world ends.
-  ok(out.at(n6.x + 3, n6.y + 31).ch === '=' && out.passable(n6.x + 3, n6.y + 32) !== 'ok', 'the drove road leaves N6 by its south edge for Cairnmoor, and past it, for now, the world ends');
+  // Out by the south edge into Cairnmoor's N7 (#476), the moor's border said on the road.
+  ok(out.at(n6.x + 3, n6.y + 31).ch === '=' && out.zoneAt(n6.x + 3, n6.y + 32)?.id === 'highmoor_n7' && out.at(n6.x + 3, n6.y + 32).ch === '=', 'the drove road leaves N6 by its south edge and runs on into Cairnmoor\'s N7');
   see(w, 'kilnsheart_n6:n6_border');
 
   // The fork's milestone, counted along the roads at 13 squares to the unit, a corner walked where the

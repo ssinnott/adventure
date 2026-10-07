@@ -75,14 +75,16 @@ Kilnmouth, 422 of them the heart's and 95 the Cairnfield's; N6 was the heart's a
 walk from them moves 2,262 in all: Kilnmouth takes 59 more of M5's from the heart and 815 of
 Cairnmoor's in K7, L7 and M7, and the heart 46 of High Moor's in O6 and P6 and 735 of Cairnmoor's in
 N7, O7 and P7; about 90 change hands elsewhere, L6's and Lanternwood's edges among them, none on a
-built map. Row 7, Cairnmoor's, now holds 2,002 of the Kilns' squares, until its boxes are laid or
-its rows seeded, which is Cairnmoor's to do (§9).
+built map. Row 7, Cairnmoor's, held 2,002 of the Kilns' squares until its rows were seeded, which was
+Cairnmoor's to do (§9).
 O5 (#464), laid whole in the heart, was the heart's already, square for square, and seeding the walk
 from it moves 78 squares, none on a built map: the heart takes one of M5's and one of O7's and gives
 two of N7's to Cairnmoor, and the other 74 change hands elsewhere on the world.
 L6 (#468), laid whole in Kilnmouth, was Kilnmouth's already but for 6 squares of the bay its wall and
 its quay stand on; seeding the walk from it moves 105 squares between zones elsewhere, none on a
 built map.
+Cairnmoor's first box, N7 (#476), seeds its rows: row 7 is the moor's again, and High Moor holds O6's
+south and P6 until O6 is laid (docs/areas/cairnmoor.md §1, §9).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Kilns are the L to P columns from row 1
 to row 6, with K6 on the shore. The land worth a map is fourteen boxes: M3, N3, N2 and O3 in the
@@ -979,8 +981,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     tarpaulin, its guards watching and not fighting, to the fork at 4,18, where the milestone reads
     ANVILHALL 13 and KILNHAVEN 4, counted along the roads (§9). The branch goes west from the fork
     and leaves by the west edge at 424,176 (0,18) for M6; the drove road goes on south and leaves by
-    the south edge at 427,189 (3,31) for Cairnmoor's N7, where the border's line is said on the road
-    and, for now, the world ends. At the fork are the drovers' camp and a drover with a rumour of
+    the south edge at 427,189 (3,31) into Cairnmoor's N7 (#476), where the border's line is said on
+    the road. At the fork are the drovers' camp and a drover with a rumour of
     something come up out of the ice at Rime Lodge. East of the road the grass runs to the hills
     under O6's smoking ridge, with a dew pond and the drovers' black cattle; the moor's first heather
     comes in from the south-east, with a curlew in it and a cairn by the road at the border (110 gold
