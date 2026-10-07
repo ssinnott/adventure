@@ -20,7 +20,7 @@ const seam = (y: number): [number, number][] => Array.from({ length: 32 }, (_, i
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }, { map: 'ironfells_n2', at: [424, 30] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
-  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }, { map: 'kilnsheart_n6', at: [424, 158] }, { map: 'kilnsheart_o5', at: [456, 126] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
+  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }, { map: 'kilnsheart_n6', at: [424, 158] }, { map: 'kilnsheart_o5', at: [456, 126] }, { map: 'kilnsheart_o6', at: [456, 158] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
   { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnmouth_m6', at: [392, 158] }], seeds: [[408, 160], [404, 140]] },
 ];
 
@@ -31,7 +31,8 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'deep_mines2', kind: 'dungeon', at: [440, 110] }, // the old workings, below them
   { id: 'deep_mines3', kind: 'dungeon', at: [440, 116] }, // the clean corridor, at the bottom
   { id: 'anvil_stone', name: 'The Anvil Stone', kind: 'dungeon', planned: true, band: [17, 18], at: [468, 136] }, // the Stone's Rift, one level through O5's tear (#465)
-  { id: 'lava_tubes', name: 'Feuerstollen', kind: 'dungeon', planned: true, band: [17, 18], at: [470, 194] }, // the Lava Tubes, two levels under O6 (#466)
+  { id: 'lava_tubes', kind: 'dungeon', at: [470, 194] }, // Feuerstollen, the Lava Tubes: the fire adit, under O6's ridge at 22,20 (#466)
+  { id: 'lava_tubes2', kind: 'dungeon', at: [470, 200] }, // the deep tubes, below it
 ];
 
 export const SITES: readonly AtlasSite[] = [
@@ -40,7 +41,7 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Tiefzeche', icon: 'mine', at: [440, 96], label: 'below' }, // the Deep Mines, at the shaft on N4, 16,2 (#461, #462)
   { name: 'Gluthutte', icon: 'forge', map: 'kilnsheart_n5', at: [12.5, 1.5], label: 'below' }, // the Forges: the smelter on N5 (#463)
   { name: 'Anvil Stone', icon: 'stone', map: 'kilnsheart_o5', at: [12.5, 10.5], label: 'below' }, // the Stone on its anvil of rock on O5, 12,10 (#464)
-  { name: 'Feuerstollen', icon: 'cave', at: [478, 178], label: 'below', planned: true }, // the Lava Tubes
+  { name: 'Feuerstollen', icon: 'cave', map: 'kilnsheart_o6', at: [22.5, 20.5], label: 'below' }, // the Lava Tubes: the adit in the ridge on O6, 22,20 (#466)
   { name: 'Kilnhaven', icon: 'port', at: [391, 162], label: 'right', planned: true },
   { name: 'Erzkamm', icon: 'cave', map: 'ironfells_n2', at: [8.5, 14.5], label: 'below' }, // Iron Crag: the cave in the crag on N2, 8,14, the Barbarian's second prestige (#460)
 ];
