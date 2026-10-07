@@ -179,13 +179,25 @@ export function outdoors(): void {
   // at column 3, N6's heather running on south at columns 22 to 29; out by the south edge at column 7
   // for N8 among the heather, the snow and the marsh, the stream from the tarn clipping the corner; the
   // peat-cutter's track out by the east edge at row 22 in dirt against O7, since the atlas has no road
-  // there; and on the west the grass, the snow, the heather and the hills against M7. None of N8, O7
-  // and M7 is built, so the world ends past them.
+  // there; and on the west the grass, the snow, the heather and the hills against M7. Neither O7 nor M7
+  // is built, so the world ends past them.
   const n7 = out.zones.find((z) => z.id === 'highmoor_n7')!;
   ok(northOf(n7) === ',,,=,' + '^'.repeat(12) + ',,^^^' + 'h'.repeat(8) + '^^' && southOf(n7) === 'hh*hhhw=' + 'w'.repeat(6) + 'hhhh**' + 'h'.repeat(11) + '~',
     `N7's north edge meets N6's hills with the drove road at column 3, and its south edge is the heather, the snow and the marsh with the drove road out for N8 and the stream at the corner (${northOf(n7)}; ${southOf(n7)})`);
   ok(eastOf(n7) === '^'.repeat(11) + ',,' + 'h'.repeat(9) + ':' + 'h'.repeat(8) + '~' && westOf(n7) === ',,,,,,**hhhh^^^^' + 'h'.repeat(16),
     `N7's east edge is the hills and the heather against O7 with the peat-cutter's track out at row 22, and its west edge the grass, the snow, the heather and the hills against M7 (${eastOf(n7)}; ${westOf(n7)})`);
+  // The Cairnfield (N8, #479): in from N7 by the drove road at column 7, the marsh beside it and the
+  // stream from the tarn at the corner, N7's south edge square for square; on the west the crags and the
+  // stream out against M8, and at the corner the Rimefells' shoulder, the world's end, which the road's
+  // notch at 0,28 is taken through onto M9 once M9 is built (NOTCH), since the atlas's road crosses the
+  // corner on a diagonal and no square of it can be walked off the edge; on the south the hills and the
+  // heather against N9; on the east the heather and the marsh against O8, the stream at the corner. None
+  // of M8, N9 and O8 is built, so the world ends past them.
+  const n8 = out.zones.find((z) => z.id === 'cairnfield_n8')!;
+  ok(northOf(n8) === southOf(n7).replace('hhhw=wwwwww', 'hhhh=wwwwhh') && southOf(n8) === '%%' + '^'.repeat(15) + 'h'.repeat(15),
+    `N8's north edge meets N7's south edge with the drove road at column 7 and the stream at the corner, and its south edge is the Rimefells' shoulder, the hills and the heather against N9 (${northOf(n8)}; ${southOf(n8)})`);
+  ok(westOf(n8) === 'hhhhhhh~hhh' + 'r'.repeat(8) + 'h'.repeat(7) + 'rr^^%%' && eastOf(n8) === '~' + 'h'.repeat(21) + 'w'.repeat(6) + 'hhhh',
+    `N8's west edge is the heather, the stream, the crags and the notch against M8, and its east edge the stream, the heather and the marsh against O8 (${westOf(n8)}; ${eastOf(n8)})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);

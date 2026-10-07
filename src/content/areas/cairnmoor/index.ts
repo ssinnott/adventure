@@ -2,13 +2,14 @@
 // III. docs/areas/cairnmoor.md is its brief.
 import type { Area } from '../../area.ts';
 import { HIGHMOOR_N7 } from './maps/highmoor_n7.ts';
+import { CAIRNFIELD_N8 } from './maps/cairnfield_n8.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'cairnmoor' as const,
-  maps: [HIGHMOOR_N7],
+  maps: [HIGHMOOR_N7, CAIRNFIELD_N8],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
@@ -21,6 +22,6 @@ export const AREA = {
     fogText: 'Fog comes up off the bog and lies on the heather.', thunderText: 'Thunder rolls over the moor.' },
   // No town, and no business (#434, call 9).
   interiors: [] as const,
-  novel: { families: [], terrain: ['snow'], mechanics: [], landmarks: [] },
+  novel: { families: [], terrain: ['snow', 'ice'], mechanics: ['inflict:cursed'], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;
