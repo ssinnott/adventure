@@ -1,4 +1,4 @@
-// Rimewater's walkthrough. Its chapter, The Sleepers, is #492's, which plays it here; until then, Rime
+// Rimewater's walkthrough. Its chapter, The Sleepers (#492), is played last (theSleepers); first, Rime
 // Lodge's box (M9, #486) walked: down from the Cairnfield's notch onto the road's foot under the fells,
 // the loch's crossing line said at each level, and back up; the road square to square to the lodge's
 // gate and on over the causeway to the west edge for L9; the milestone, counted along the roads; the
@@ -28,7 +28,7 @@
 // where the stones under the clear ice stop. Then the Sleepers' Bay (#490), through the door: the stair
 // under the ice and the bay of beds, the Matron in the last row and the locker behind it.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
@@ -42,7 +42,8 @@ import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { FURRIER } from './items.ts';
 import { INTERIORS } from './interiors.ts';
-import { NIGHTS, WENNA_UP } from './maps/rime_lodge.ts';
+import { NIGHTS, WENNA_UP, WENNA_LODGE } from './maps/rime_lodge.ts';
+import { CHAPTER } from './chapter.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { worldGrid } from '../../../game/atlas.ts';
@@ -53,7 +54,7 @@ import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
 import { PASS } from './maps/longmere_l9.ts';
 import { RIDGE } from './maps/coldmere_k10.ts';
 import { DOOR } from './maps/coldmere_k9.ts';
-import type { Walk } from '../../../../tools/walk.ts';
+import type { Walk, Step } from '../../../../tools/walk.ts';
 import { GUILD_QUESTS } from '../../index.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take, rankOf } from '../../../game/guilds.ts';
@@ -497,6 +498,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(iron?.kind === 'chest' && iron.items.includes('bear_spear+1') && iron.items.includes('lann_fuar') && iron.x === 12 && iron.y === 18,
     'in the hole, the smith\'s iron: a Bear Spear +1, and his own blade, Lann Fuar');
   sleepersBay(w, ok);
+  theSleepers(ok);
 };
 
 /**
@@ -595,4 +597,103 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(locker?.kind === 'chest' && locker.items.join() === 'hunters_bow+1,plate+4' && locker.gold === 1500 && item('hunters_bow+1').name === 'Bogha Fionn +1' && item('plate+4').name === 'Luireach Dubh +4',
     'in the locker, four hundred years of pockets: 1,500 gold, Bogha Fionn and Luireach Dubh');
   listen(w);
+}
+
+// ---- the chapter (#492) ----
+
+/** A step played at a level, the company levelled to it. */
+const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
+  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+  w.level = level;
+  s.play(w);
+} });
+
+/** The entries written on the chapter's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+/**
+ * The four nights: a stay at the inn each, paid from the purse at its price as its screen pays it, and
+ * the morning in the yard. Each night's entry is written as its flag is set, and no more.
+ */
+const NIGHTS_STOOD: Step = { name: 'the four nights', play: (w) => {
+  const inn = business('inn')[0], night = inn.price * w.party.members.length;
+  for (const [i, flag] of NIGHTS.entries()) {
+    const purse = w.party.gold;
+    w.party.gold -= night;
+    for (const m of w.party.members) rest(m);
+    w.world.sleepUntilMorning();
+    const set = stayNight(w.party, inn.nights);
+    w.world.travel('rime_lodge', inn.x + 1, inn.y);
+    w.world.eventsHere();
+    listen(w);
+    w.ok(set === flag && purse - w.party.gold === night && written(w).includes(flag) && !written(w).includes(NIGHTS[i + 1] ?? 'up'),
+      `a night at ${inn.name} for ${night} gold sets ${flag}, and its entry and no later one is written`);
+  }
+} };
+
+/** The hole's fight on the fourth night, and the last one out, met. */
+const HOLE: Step = { name: 'the hole', play: (w) => { fight(w, 'longmere_m9:m9_night_4'); meetWho(w, WENNA_UP); } };
+
+/** Down the crack in Loch Fuar's ice and through the door under her palm, and its inside. */
+const DOWN: Step = { name: 'the door', play: (w) => {
+  walkThrough(w, K9.id, DOOR.x, DOOR.y - 1, SOUTH, 'sleepers_bay', 1);
+  see(w, 'sleepers_bay:sb1_door');
+} };
+
+/** Down the stair to its foot and the last flight into the bay, and the beds. */
+const BEDS: Step = { name: 'the beds', play: (w) => {
+  see(w, 'sleepers_bay:sb1_foot');
+  walkThrough(w, 'sleepers_bay', 6, 13, SOUTH, 'sleepers_bay2', 1);
+  see(w, 'sleepers_bay2:sb2_beds');
+} };
+
+/** Back up through the door from the landing: she speaks at it, and then she is at the lodge. */
+function backUp(w: Walk, how: string): void {
+  const [door, lodge] = [person(K9, 'The girl out of the hole'), person(TOWN, 'The girl out of the hole')];
+  walkThrough(w, 'sleepers_bay', 8, 1, NORTH, K9.id, 1);
+  const before = w.world.present(door) && !w.world.present(lodge);
+  w.world.travel(K9.id, door.x, door.y);
+  const words = meet(door, w.party, heard(w.world, door)).text;
+  listen(w);
+  w.ok(before && words.includes('marched them on south, under the world') && !!w.party.flags[WENNA_LODGE] && !w.world.present(door) && w.world.present(lodge),
+    `${how}, back up from the beds she speaks at the door, and then is at the lodge and not at the door (${words.replace(/\s+/g, ' ')})`);
+}
+
+/** Back up, and south over the pass to its mouth. */
+const SOUTH_OVER: Step = { name: 'back up, and the pass\'s mouth', play: (w) => { backUp(w, 'in order'); see(w, 'coldmere_k10:k10_mouth'); } };
+
+/**
+ * The Sleepers (#492), begun on Loch Fada down the notch from the Cairnfield: in order, the four nights
+ * at the inn and the hole at 20, the door at 21, and the beds and the pass's mouth at 22; and with the
+ * pass's mouth taken first, where the journal writes nothing of it until the beds, which end the
+ * chapter there. Each reads the same and ends once, and in each she speaks at the door after the beds.
+ */
+function theSleepers(ok: (cond: boolean, msg: string) => void): void {
+  const runs: [string, boolean, Step[]][] = [
+    ['in order', false, [atLevel(20, NIGHTS_STOOD), atLevel(20, HOLE), atLevel(21, DOWN), atLevel(22, BEDS), atLevel(22, SOUTH_OVER)]],
+    ['the pass first', true, [atLevel(20, NIGHTS_STOOD), atLevel(20, HOLE), atLevel(21, DOWN), atLevel(22, BEDS)]],
+  ];
+  const read: string[] = [];
+  for (const [how, passFirst, steps] of runs) {
+    const w = newWalk(ok);
+    for (const m of w.party.members) { m.level = 20; m.xp = xpForLevel(20); }
+    w.party.gold = 2000;
+    walkThrough(w, 'cairnfield_n8', NOTCH.x + 1, NOTCH.y, WEST, NOTCH.to, 2);
+    const lodge = CHAPTER.goals.at(-1)!.text;
+    ok(quest(w)?.goal === lodge && written(w).join() === 'lodge', `${how}, down the notch the chapter begins, its goal the lodge's nights (${quest(w)?.goal})`);
+    if (passFirst) {
+      see(w, 'coldmere_k10:k10_mouth');
+      ok(quest(w)?.goal === lodge && written(w).join() === 'lodge', `${how}, the pass's mouth reached first writes nothing, and the goal stays on the lodge (${written(w).join(', ')})`);
+    }
+    playChapter(w, CHAPTER, steps, how);
+    goalFromBegun(w, how);
+    const ends = w.news.filter((n) => n === `Chapter complete: ${CHAPTER.title}.`).length;
+    ok(!!quest(w)?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.level === 22,
+      `${how}, the beds seen and the pass's mouth reached, the chapter is done at 22, and said so once (${ends})`);
+    if (passFirst) backUp(w, how);
+    read.push(written(w).join(', '));
+  }
+  ok(read[0] === 'lodge, night_1, night_2, night_3, night_4, up, door, sleepers, south' && read[1] === read[0],
+    `the chapter reads the same in order and with the pass first (${read.join(' / ')})`);
+  everyGoalWalked(ok, [CHAPTER]);
 }
