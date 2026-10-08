@@ -132,8 +132,9 @@ DESIGN.md first for the why.
   to its link and its fare's rule, each built end to a landing on open ground and, once both ends
   land, each end to a seller; on the world map the link a crossing is sold both ways on is drawn as
   that way built. Kilnhaven's ferry to Saltmouth, the Compact ship to Cinderport and the drove road's
-  coach to Rime Lodge are written, and wait on Kilnhaven (#469), Cinderport (#512) and Rime Lodge
-  (#487); the ferry lands on Saltmouth's quay.
+  coach to Rime Lodge are written, and Kilnhaven writes its three landings (#469): the ferry runs,
+  sold on both quays by its master, and the ship and the coach wait on Cinderport (#512) and Rime
+  Lodge (#487).
 - **Kiln-script and the secondary skills** (`game/inscriptions.ts`, `game/skills.ts`, #538; DESIGN
   §5, §9): a sign with a second text (`read`) is an inscription. Its words are said to every
   company, and its reading after them only to one with a reader, as `<name> reads: "<reading>"`:
@@ -311,8 +312,8 @@ trainer one level past it, onto Act II's road:
   under it does; the sheet says so at the cap. What a company reaches is set by the towns built:
   each town's trainer teaches to its area's band's top plus one (`trainerCeiling` in
   `content/progression.ts`), the Warden Drillyard in Helmstow to 6, the Elder's Yard in
-  Thornhold to 11, the Sail Loft in Saltmouth to 13, the Lamp Gallery at Lantern Watch to 17 and the
-  Old Working at Anvilhall to 19. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
+  Thornhold to 11, the Sail Loft in Saltmouth to 13, the Lamp Gallery at Lantern Watch to 17, and the
+  Old Working at Anvilhall and the Ore Shed at Kilnhaven to 19. Five spell tiers, unlocked at levels 1, 2, 4, 6 and 8 (`spellTierAt`); damage
   spells stop growing at 10 (`SPELLS_GROW_TO`, DESIGN.md §7). Trainers charge 25 a level to 5 and
   40 a level after, to the cap (`trainPrice` in `party.ts`, which the curve's gold reads). Guilds
   sell up to a tier of their own (`maxTier`: Helmstow 2, Thornhold 4) at 40, 80, 160, 320 gold;

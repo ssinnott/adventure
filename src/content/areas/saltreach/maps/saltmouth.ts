@@ -4,13 +4,15 @@
 // locksmith's, the Keel (the harbour tavern, the Salt Compact's hall, #182) and the Map Room,
 // the Cartographers' Guild's hall (#181). Four first prestiges are taught here, each by a person at their
 // trade: the astrologer, the locksmith, the stevedore and the ferryman. Jory Tallis stands at his
-// house front on the quay, Kitto sells the boat to Wrackholm at the quay's end, and once Hale is gone a
+// house front on the quay, Kitto sells the boat to Wrackholm at the quay's end, Dunstan the ferry to
+// Kilnhaven at the quay's side (#469), and once Hale is gone a
 // Warden off the coast road sits by the gate with the news. After Passage Paid, Geeske and Hessel
 // are on the quay (#183). The Star That Moved (#56's 24): Hiske asks, and the pilots' slate goes to
 // her press or to Tallis (#183).
 // docs/areas/saltreach.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { FERRY, sells } from '../../../crossings.ts';
 
 export const SALTMOUTH: MapDef = {
   id: 'saltmouth',
@@ -181,6 +183,12 @@ export const SALTMOUTH: MapDef = {
     // Hessel's word, for the barge pushed off his shoal (Passage Paid, C4, #171).
     passage: [{ to: 'wrackholm_e6', x: 16, y: 15, facing: NORTH, name: 'Wrackholm', by: 'boat', fare: 150, half: { flag: 'q_compact_run_done' }, free: { flag: 'q_passage_owed' }, departs: 20, days: 1, arrives: 6,
       label: 'The boat grounds at the stage with the first light and you step ashore, rested. The cliff is already between you and the sea.' }] },
+    // Kilnhaven's ferry (#469; content/crossings.ts): its master at the quay's side, the same man as on
+    // Kilnhaven's quay, selling the way over to the Kilns, as Kitto sells his boat at both ends.
+    { kind: 'npc', x: 9, y: 12, name: 'Dunstan, master of the Kilnhaven ferry', lines: [
+      'A man at the quay\'s side with a boat-hook, a ferry warped in below him with red dust in her seams.',
+      '"Dunstan. The Kilnhaven ferry, over the sea to the Kilns and back. Four hundred the boat, two days, and she sails at eight."',
+    ], passage: sells('saltmouth', FERRY) },
     // Passage Paid (#56's 22), after: Geeske, who paid, landed either way, a text for each; and Hessel
     // on the quay once his barge was pushed off his shoal.
     { kind: 'npc', x: 9, y: 10, name: 'Geeske, a woman of the fen', after: [{ flag: 'q_passage_freed' }, { flag: 'q_passage_owed' }], lines: [

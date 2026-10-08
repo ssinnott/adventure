@@ -36,9 +36,13 @@
 // verge; the branch over the line into Kilnmouth, named, and harder to a company under its floor,
 // out to the west edge before Kilnhaven's gate; the farmer at his gate; and the drover's cache
 // found from the stopped kiln. Kilnhaven's box (L6, #468): the branch on from M6 with nothing said,
-// to the gate in the town's wall, shut until the town is built; the milestone before it, counted
-// along the roads; the coach yard; the store's clerk; the box's groups won at its floor; and the
-// bonded store found from the sealed row. Erzkamm (N2,
+// to the gate in the town's wall; the milestone before it, counted along the roads; the coach yard;
+// the store's clerk; the box's groups won at its floor; and the bonded store found from the sealed
+// row. Then Kilnhaven (#469), in at L6's gate and out again: a company rests, buys the act's first
+// step at the smith at a quarter more, open to it still when the Stone was taken, and trains to 19;
+// hears the harbourmaster read the manifests and the dwarf on the quay say where the corridors run;
+// takes the ferry over to Saltmouth's quay and back, a save made there loading there; and finds the
+// ship's master and the coachman selling nothing toward towns not built. Erzkamm (N2,
 // #460): up the open fell out of N3 with nothing said, the box's groups won at its floor, the scholar
 // at the wall, and the doors behind the blank face found from the worn floor, the wall beside it read
 // by a reader alone; last, the Barbarian's second prestige, taught by Hartmut at the cave's mouth
@@ -65,12 +69,18 @@ import { mayLearn, learn, hasSkill } from '../../../game/skills.ts';
 import { rankFlag } from '../../guilds.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
-import { FORGE, ANVIL_STONE_PRICE } from './items.ts';
+import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
 import { GATE } from './maps/ironfells_n3.ts';
 import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
 import { TEAR } from './maps/kilnsheart_o5.ts';
 import { GATE as HAVEN_GATE } from './maps/kilnmouth_l6.ts';
+import { MANIFESTS_READ } from './maps/kilnhaven.ts';
+import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../crossings.ts';
+import { take, terms } from '../../../game/passage.ts';
+import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
+import { serialize, deserialize } from '../../../game/save.ts';
+import { World } from '../../../game/world.ts';
 
 const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
 const N2 = MAP_DEFS.find((d) => d.id === 'ironfells_n2')!;
@@ -534,12 +544,10 @@ export const walkthrough: Walkthrough = (ok) => {
   for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnmouth_l6'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') intoL6.push(...r.messages); }
   ok(w.world.zone?.id === 'kilnmouth_l6' && !intoL6.some((m) => /Kilnmouth|harder|spare you/.test(m)), `the branch crosses from M6 into L6 with nothing said of the land (${intoL6.join(' / ') || 'nothing'})`);
 
-  // The gate in the town's wall, shut until Kilnhaven is built (#469), its way in written beside the
-  // map; and the milestone before it, counted along the roads as the stones are.
-  ok(!L6.exits?.length && out.passable(l6.x + HAVEN_GATE.x, l6.y + HAVEN_GATE.y) !== 'ok' && HAVEN_GATE.to === 'kilnhaven' && HAVEN_GATE.x === 28 && HAVEN_GATE.y === 4 && out.at(l6.x + 29, l6.y + 4).ch === '=',
-    'the road runs from the east edge to Kilnhaven\'s gate in the wall at 28,4, and the gate is shut until the town is built');
-  w.world.travel('kilnmouth_l6', HAVEN_GATE.x + 1, HAVEN_GATE.y, WEST);
-  ok(w.world.eventsHere().some((t) => t.includes('barred')), 'before the gate, it is shut and barred from inside');
+  // The gate in the town's wall, the way into Kilnhaven (#469); and the milestone before it, counted
+  // along the roads as the stones are.
+  ok(!!L6.exits?.includes(HAVEN_GATE) && out.at(l6.x + HAVEN_GATE.x, l6.y + HAVEN_GATE.y).door === 'door' && HAVEN_GATE.to === 'kilnhaven' && HAVEN_GATE.x === 28 && HAVEN_GATE.y === 4 && out.at(l6.x + 29, l6.y + 4).ch === '=',
+    'the road runs from the east edge to Kilnhaven\'s gate in the wall at 28,4, and the gate is a door, the way into the town');
   const fromStone = steps(l6.x + 30, l6.y + 4, roadish), toHall6 = fromStone.get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity;
   const stone6 = L6.features!.find((f) => f.kind === 'event' && f.id === 'l6_milestone')!;
   ok(stone6.kind === 'event' && stone6.x === 30 && stone6.y === 4 && stone6.text.includes(`ANVILHALL ${Math.round(toHall6 / 13)} `), `the milestone before Kilnhaven's gate says ANVILHALL ${Math.round(toHall6 / 13)}: ${toHall6} squares along the roads to Anvilhall's gate`);
@@ -571,6 +579,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const robe = L6.features!.find((f) => f.kind === 'chest' && f.id === 'l6_store_chest');
   ok(robe?.kind === 'chest' && robe.items.includes('kiln_robe+1') && robe.x === 22 && robe.y === 12, 'among the crates for Cinderport and Sheer Point, a Kiln Robe +1');
 
+  kilnhaven(ok);
   anvilhall(w, ok);
 
   // Erzkamm (N2, #460). Up the open fell out of N3 and over the line: the same land at the same
@@ -774,6 +783,137 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
       way === BOUGHT ? 'bought, the forge stays open, and Gerda thanks the company for the thane' : 'taken, the forge is shut for good: its smiths gone, its door barred');
     ok(says(t, KONRAD).includes(way === BOUGHT ? 'paid' : 'in red now') && [...business('inn'), ...business('shop').filter((f) => f !== FORGE_SHOP)].every((f) => t.world.present(f)), `${way}: the warder's book says so, and the inn and the stores keep their doors open`);
   }
+}
+
+/**
+ * Kilnhaven (#469): in at L6's gate with the town's gate line, a step inside to the inn yard, and out
+ * again; a night at the inn, the act's first step bought at the smith at a quarter more, open to a
+ * company the thane has shut out, and training to 19 at the ore shed; the manifests read by the
+ * harbourmaster, and the dwarf's word on the corridors; the ferry over to Saltmouth's quay and back
+ * from its master there, halved for nobody; and the ship and the coach, whose far ends are not built,
+ * sold by nobody yet, their masters only talking.
+ */
+function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
+  const HAVEN = MAP_DEFS.find((d) => d.id === 'kilnhaven')!;
+  const here = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => HAVEN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
+  const who = (name: string): Person => here('npc').find((f) => f.name.startsWith(name)) as Person;
+  const IRMGARD = who('Irmgard'), DUNSTAN = who('Dunstan'), JAGO = who('Jago'), MURDO = who('Murdo'), DIETMAR = who('Dietmar'), DWARF = who('A dwarf on a bollard');
+  const SMITHY = here('shop').find((f) => f.interior === 'kilnhaven_smith')!;
+  const w = newWalk(ok);
+  w.level = 16;
+  for (const m of w.party.members) m.level = 16;
+
+  // In at L6's gate, saying the town's gate line, onto the first square inside the east gate; a step
+  // in, the inn yard; and out by the gate onto the road's end before it, facing down the road.
+  w.world.travel('kilnmouth_l6', HAVEN_GATE.x + 1, HAVEN_GATE.y, WEST);
+  const step = w.world.move('forward'), inside = step.kind === 'moved' ? step.messages : [];
+  ok(w.world.state.mapId === 'kilnhaven' && w.world.state.x === HAVEN.start.x && w.world.state.y === HAVEN.start.y && w.world.state.facing === WEST && HAVEN_GATE.tx === HAVEN.start.x && HAVEN_GATE.ty === HAVEN.start.y,
+    'L6\'s gate lets the company in just inside Kilnhaven\'s east gate, facing down the street');
+  ok(inside.join() === 'Kilnhaven: ore on the quay, iron in the air, and the sea. Three ways out, and all of them cost.', `going in, the town's gate line (${inside.join(' / ')})`);
+  const yard = w.world.move('forward');
+  ok(yard.kind === 'moved' && yard.messages.some((t) => t.startsWith('The inn yard')), `a step inside, the inn yard and the coach for Rime Lodge (${yard.kind === 'moved' ? yard.messages.join(' / ') : yard.kind})`);
+  listen(w);
+  w.world.travel('kilnhaven', HAVEN.start.x, HAVEN.start.y, EAST);
+  const leave = w.world.move('forward');
+  ok(leave.kind === 'moved' && w.world.zone?.id === 'kilnmouth_l6' && w.world.state.x - w.world.zone.x === HAVEN_GATE.x + 1 && w.world.state.y - w.world.zone.y === HAVEN_GATE.y && w.world.state.facing === EAST,
+    'and out by the east gate onto L6\'s 29,4, the road\'s end before it, facing down the road');
+  ok(HAVEN.exits!.length === 1 && HAVEN.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate');
+  listen(w);
+
+  // A night at the inn, as the business's screen does it (src/ui/screens.ts).
+  ok(here('inn').length === 1 && here('temple').length === 1 && here('trainer').length === 1, 'Kilnhaven has an inn to rest at, a chapel that cures and a shed that trains');
+  w.party.gold = 30000;
+  const inn = here('inn')[0], night = inn.price * w.party.members.length;
+  for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
+  w.party.gold -= night;
+  for (const m of w.party.members) rest(m);
+  w.world.sleepUntilMorning();
+  ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
+
+  // The smith sells the act's first step at a quarter more than Anvilhall's forge (#535), each class
+  // its rung; the chandler's sells the provisions at list price, and no steel.
+  ok(SMITHY.stock.length === FORGE.length && FORGE.every((id) => SMITHY.stock.includes(id) && SMITHY.prices?.[id] === SMITH_PRICES[id] && SMITH_PRICES[id] === quarterMore(item(id).price)),
+    `the smith sells the forge's ${FORGE.length} wares and nothing else, each at a quarter more (${FORGE.map((id) => `${item(id).name} ${SMITH_PRICES[id]}`).join(', ')})`);
+  const rung = ACT_III.find((r) => r.level === 17)!;
+  for (const m of w.party.members) for (const id of rung.classes[m.cls]) {
+    const before = w.party.gold;
+    ok(!!buy(w.party, SMITHY, id) && before - w.party.gold === SMITH_PRICES[id], `${m.name} buys a ${item(id).name} at the smith for ${SMITH_PRICES[id]} gold`);
+  }
+  const chandler = here('shop').find((f) => f.interior === 'kilnhaven_chandlery')!;
+  ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => chandler.stock.includes(id)) && !chandler.stock.some((id) => FORGE.includes(id)) && !chandler.prices, 'the chandler\'s sells the provisions and lamp oil at list price, and no steel');
+
+  // The Stone taken, Anvilhall's forge is shut to the company for good, and the smith is open still.
+  const taker = newWalk(ok);
+  taker.party.flags[TAKEN] = 1;
+  taker.world.travel('kilnhaven', SMITHY.x, SMITHY.y);
+  ok(taker.world.present(SMITHY) && taker.world.present(DIETMAR) && !taker.world.present(FORGE_SHOP) && says(taker, DIETMAR).includes('Mine is open'), 'the Stone taken, Anvilhall\'s forge is shut, and the smith is open still and says so');
+
+  // Training to 19 at the ore shed, on a copy, so the company walks on as it was.
+  const shed = here('trainer')[0];
+  const trainee = structuredClone(w.party.members[0]);
+  trainee.level = 18; trainee.xp = xpForLevel(19);
+  ok(shed.maxLevel === 19 && shed.interior === 'kilnhaven_training_hall' && canTrainAt(trainee, shed.maxLevel), `${shed.name} will train a member of 18`);
+  const fee = trainPrice(trainee);
+  levelUp(trainee, makeRng(1), 19);
+  ok(trainee.level === 19 && !canTrainAt(trainee, shed.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
+
+  // The manifests, read by the harbourmaster in her office: iron to Cinderport, and the Compact's
+  // sealed crates for Cinderport and Sheer Point, the chapter's step (#470); after, her words change.
+  ok(here('npc').some((f) => f.interior === 'kilnhaven_harbourmaster' && f.x === IRMGARD.x && f.y === IRMGARD.y), 'the harbourmaster is in her office, a room of its own');
+  w.world.travel('kilnhaven', IRMGARD.x, IRMGARD.y);
+  const book = says(w, IRMGARD);
+  ok(book.includes('Iron to Cinderport, by the ton. Then a page in another hand: crates, sealed, for Cinderport and Sheer Point. No weight given.') && !!w.party.flags[MANIFESTS_READ],
+    'she reads the manifests: iron to Cinderport by the ton, and sealed crates for Cinderport and Sheer Point, no weight given');
+  ok(says(w, IRMGARD).includes('nobody\'s weight'), 'and after, she writes down what she is told');
+
+  // The dwarf on the quay, who will go no further down.
+  w.world.travel('kilnhaven', DWARF.x, DWARF.y);
+  const south = says(w, DWARF);
+  ok(south.includes('the corridors run south') && south.includes('Toward the lakes'), 'a dwarf on the quay says the corridors under the Tiefzeche run south under the world, toward the lakes');
+
+  // The ferry (#539): bought from its master on Kilnhaven's quay for its whole fare, it sails at eight
+  // and puts in on Saltmouth's quay two days on at 16:00; a save made there loads there; and its
+  // master on Saltmouth's quay sells the way back, warning a company under the Kilns' floor and
+  // landing it at the ferry's steps on Kilnhaven's quay.
+  const [over, ...more] = DUNSTAN.passage ?? [];
+  ok(!!over && !more.length && over.to === 'saltmouth' && over.x === 13 && over.y === 10 && over.fare === FERRY.fare && over.days === FERRY.days, `the ferry's master sells the ferry to Saltmouth's quay, ${over?.fare} gold and ${over?.days} days`);
+  const sold = here('npc').flatMap((f) => f.passage ?? []);
+  ok(sold.every((p) => !p.half && !p.free), 'and nobody in Kilnhaven halves a fare for any guild');
+  w.world.travel('kilnhaven', DUNSTAN.x, DUNSTAN.y);
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
+  w.party.gold = FERRY.fare;
+  const day = w.world.day, sailed = take(over, w.world, w.party);
+  ok(sailed.taken && w.party.gold === 0 && w.world.state.mapId === 'saltmouth' && w.world.state.x === 13 && w.world.state.y === 10 && w.world.state.facing === WEST, `the ferry lands the company on Saltmouth's quay (${sailed.lines.join(' ')})`);
+  ok(w.world.day === day + 3 && w.world.hour === 16, `bought at 09:00, after it sailed, it leaves the next morning and lands two days on at 16:00 (day ${day} to day ${w.world.day})`);
+  const kept = deserialize(serialize(w.world.state, w.party, 0)), loaded = new World(buildMaps(), kept.party, makeRng(1), kept.world);
+  ok(loaded.state.mapId === 'saltmouth' && loaded.state.x === 13 && loaded.state.minutes === w.world.state.minutes, 'a save made on Saltmouth\'s quay loads there');
+  const master = MAP_DEFS.find((d) => d.id === 'saltmouth')!.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Dunstan'));
+  const back = master?.passage?.[0];
+  ok(!!back && master!.passage!.length === 1 && back.to === 'kilnhaven' && back.fare === FERRY.fare && back.days === FERRY.days, `on Saltmouth's quay ${master?.name.split(',')[0] ?? 'nobody'}, the same master, sells the ferry back to Kilnhaven`);
+  for (const m of w.party.members) m.level = 12;
+  const warned = back ? terms(back, w.world) : '';
+  ok(warned.endsWith('Dunstan looks you over. "Over there they sell you iron, and the hills take it back off you."'), `to a company of 12 he gives his warning, never a refusal (${warned})`);
+  for (const m of w.party.members) m.level = 16;
+  w.party.gold = FERRY.fare;
+  const home = back ? take(back, w.world, w.party) : undefined, ashore = home?.taken ? w.world.eventsHere() : [];
+  ok(!!home?.taken && w.world.state.mapId === 'kilnhaven' && w.world.state.x === 4 && w.world.state.y === 7 && w.world.state.facing === EAST && w.party.gold === 0,
+    `and the ferry back puts the company on Kilnhaven's quay at the ferry's steps, facing up the street (${home?.lines.join(' ')})`);
+  ok(home?.lines.join() === FERRY.ends[0].label && ashore.some((t) => t.startsWith('The quay:')), `with Kilnhaven's own landing line, and the quay said as it steps ashore (${ashore.join(' / ')})`);
+
+  // The ship and the coach (#539's 2): sold by nobody toward a far end not built, Cinderport and Rime
+  // Lodge, their masters only talking and naming no fare; Kilnhaven writes where each puts a company
+  // down, the ship on the Compact's steps down the quay and the coach in the inn yard inside the gate.
+  for (const [man, c, far] of [[JAGO, COMPACT_SHIP, 'cinderport'], [MURDO, DROVE_COACH, 'rime_lodge']] as const) {
+    const built = MAP_DEFS.some((d) => d.id === far), routes = man.passage ?? [], [name, there] = [man.name.split(',')[0], c.ends.find((e) => e.at === far)!.name];
+    ok(built ? routes.length === 1 && routes[0].to === far && routes[0].fare === c.fare : !routes.length && !sells('kilnhaven', c).length,
+      built ? `${name} sells ${c.name} to ${there}` : `${name} sells nothing yet: ${there} is not built`);
+    w.world.travel('kilnhaven', man.x, man.y);
+    const talk = says(w, man);
+    ok(!/gold|fare|hundred/i.test(talk), `and his words name no fare (${talk.split('\n\n').at(-1)})`);
+  }
+  const [ship, coach] = [COMPACT_SHIP, DROVE_COACH].map((c) => c.ends.find((e) => e.at === 'kilnhaven')?.landing);
+  ok(ship?.x === 4 && ship.y === 12 && coach?.x === 12 && coach.y === 8 && Math.abs(coach.x - HAVEN.start.x) + Math.abs(coach.y - HAVEN.start.y) <= 3,
+    'the ship puts a company down on the Compact\'s steps down the quay, and the coach in the inn yard just inside the east gate');
 }
 
 /**

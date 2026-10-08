@@ -15,7 +15,7 @@
 import type { Passage } from '../game/map.ts';
 import type { When } from '../game/quests.ts';
 import type { Facing } from '../game/types.ts';
-import { WEST } from '../game/types.ts';
+import { EAST, WEST } from '../game/types.ts';
 
 /** One end of a crossing: a town, and where the crossing puts a company down there once it is built. */
 export interface CrossingEnd {
@@ -76,9 +76,12 @@ export function sells(at: string, ...crossings: readonly Crossing[]): Passage[] 
 export const FERRY: Crossing = {
   name: 'the ferry', by: 'boat', fare: 400, departs: 8, days: 2, arrives: 16,
   ends: [
-    { at: 'kilnhaven', name: 'Kilnhaven', owed: '#469' },
+    // At the ferry's steps on the quay, where the street comes down to it (#469).
+    { at: 'kilnhaven', name: 'Kilnhaven', landing: { x: 4, y: 7, facing: EAST },
+      label: 'The ferry warps in under Kilnhaven\'s wall, and you step onto the quay, rested. The air tastes of iron.' },
     // On the harbour quay, where Kitto's boat from Wrackholm puts in.
-    { at: 'saltmouth', name: 'Saltmouth', landing: { x: 13, y: 10, facing: WEST } },
+    { at: 'saltmouth', name: 'Saltmouth', landing: { x: 13, y: 10, facing: WEST },
+      warning: 'Dunstan looks you over. "Over there they sell you iron, and the hills take it back off you."' },
   ],
 };
 
@@ -86,7 +89,10 @@ export const FERRY: Crossing = {
 export const COMPACT_SHIP: Crossing = {
   name: 'the Compact ship', by: 'boat', fare: 600, departs: 20, days: 2, arrives: 16,
   ends: [
-    { at: 'kilnhaven', name: 'Kilnhaven', owed: '#469' },
+    // On the Compact's steps down the quay, where the ship's boat comes in (#469).
+    { at: 'kilnhaven', name: 'Kilnhaven', landing: { x: 4, y: 12, facing: EAST },
+      label: 'The ship\'s boat puts you on the Compact\'s steps, rested. Nobody on the quay looks up.',
+      warning: 'Jago looks you over. "Cinderport is ash and worse. I put you ashore; I don\'t come back for you."' },
     { at: 'cinderport', name: 'Cinderport', owed: '#512' },
   ],
 };
@@ -95,7 +101,11 @@ export const COMPACT_SHIP: Crossing = {
 export const DROVE_COACH: Crossing = {
   name: 'the drove road coach', by: 'coach', fare: 250, departs: 6, days: 1, arrives: 12,
   ends: [
-    { at: 'kilnhaven', name: 'Kilnhaven', owed: '#469' },
+    // In the inn yard just inside the east gate, on the town's own map: L6's yard outside the wall is
+    // where the coach turns and the carters wait (#469).
+    { at: 'kilnhaven', name: 'Kilnhaven', landing: { x: 12, y: 8, facing: WEST },
+      label: 'The coach comes in at the east gate and stops in the inn yard. You step down, rested, into red dust.',
+      warning: 'Murdo looks you over. "I drive the coach. What comes off the moor at it, you see to."' },
     { at: 'rime_lodge', name: 'Rime Lodge', owed: '#487' },
   ],
 };
