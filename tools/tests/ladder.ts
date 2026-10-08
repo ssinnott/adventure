@@ -165,7 +165,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
     level: 19, name: "the Kilns' and Cairnmoor's finds",
     from: {
       'plate+3': ['kilns', ''], 'forge_hammer+1': ['kilns', ''], 'mattock+1': ['kilns', ''], 'steel_bow+1': ['kilns', ''],
-      'seax+1': ['kilns', ''], 'kiln_robe+1': ['kilns', ''], 'banded_staff+1': ['cairnmoor', '#477'],
+      'seax+1': ['kilns', ''], 'kiln_robe+1': ['kilns', ''], 'banded_staff+1': ['cairnmoor', ''],
     },
     classes: {
       knight: ['forge_hammer+1', 'plate+3'], paladin: ['forge_hammer+1', 'plate+3'], ranger: ['steel_bow+1'], barbarian: ['mattock+1'],
@@ -175,7 +175,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
   },
   {
     level: 21, name: "Rime Lodge's furrier",
-    from: Object.fromEntries(FURRIER.map((id) => [id, ['rimewater', '#487']])),
+    from: Object.fromEntries(FURRIER.map((id) => [id, ['rimewater', '']])),
     classes: {
       knight: ['ice_axe'], paladin: ['ice_axe'], ranger: ['hunters_bow', 'bearskin'], barbarian: ['bear_spear', 'bearskin'],
       cleric: ['ice_axe', 'fur_robe'], sorcerer: ['skinning_knife', 'fur_robe'], thief: ['skinning_knife', 'bearskin'], bard: ['skinning_knife', 'bearskin'],
@@ -185,8 +185,8 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
   {
     level: 22, name: "Rimewater's finds",
     from: {
-      'ice_axe+1': ['rimewater', '#486'], 'skinning_knife+1': ['rimewater', '#488'], 'bear_spear+1': ['rimewater', '#489'],
-      'guides_staff+1': ['rimewater', '#491'], 'hunters_bow+1': ['rimewater', '#490'], 'plate+4': ['rimewater', '#490'],
+      'ice_axe+1': ['rimewater', ''], 'skinning_knife+1': ['rimewater', ''], 'bear_spear+1': ['rimewater', ''],
+      'guides_staff+1': ['rimewater', ''], 'hunters_bow+1': ['rimewater', ''], 'plate+4': ['rimewater', ''],
     },
     classes: {
       knight: ['ice_axe+1', 'plate+4'], paladin: ['ice_axe+1', 'plate+4'], ranger: ['hunters_bow+1'], barbarian: ['bear_spear+1'],

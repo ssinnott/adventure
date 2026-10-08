@@ -22,9 +22,10 @@ Gluthutte's box (#463, §4.8), the smelter in the charcoal woods; N6 and M6, the
 the Rift is built; L6, Kilnhaven's box (#468, §4.13), its gate shut until the town is built; and O6,
 Feuerstollen's box (#466, §4.11), with the tubes under its ridge, the area's second dungeon. Eleven
 of its monsters and its twelve rooms are drawn (§3), and the rest is to build. Its content is
-`src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, and its side quests in
-`quests.ts`, to come) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
+`src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map, its
+walkthrough and its guild quests in `guilds.ts`, #439; its chapter of the one quest, The Anvil
+Stone, in `chapter.ts`, and its side quests in `quests.ts`, to come) and its businesses' rooms
+`src/ui/interiors/kilns/`. Its ids: the area
 `kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
 the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass
 (§10, NAMES §3).
@@ -76,8 +77,8 @@ Kilnmouth, 422 of them the heart's and 95 the Cairnfield's; N6 was the heart's a
 walk from them moves 2,262 in all: Kilnmouth takes 59 more of M5's from the heart and 815 of
 Cairnmoor's in K7, L7 and M7, and the heart 46 of High Moor's in O6 and P6 and 735 of Cairnmoor's in
 N7, O7 and P7; about 90 change hands elsewhere, L6's and Lanternwood's edges among them, none on a
-built map. Row 7, Cairnmoor's, now holds 2,002 of the Kilns' squares, until its boxes are laid or
-its rows seeded, which is Cairnmoor's to do (§9).
+built map. Row 7, Cairnmoor's, held 2,002 of the Kilns' squares until its rows were seeded, which was
+Cairnmoor's to do (§9).
 O5 (#464), laid whole in the heart, was the heart's already, square for square, and seeding the walk
 from it moves 78 squares, none on a built map: the heart takes one of M5's and one of O7's and gives
 two of N7's to Cairnmoor, and the other 74 change hands elsewhere on the world.
@@ -89,6 +90,8 @@ from it moves 381 squares, none on a built map: the heart takes 306 of High Moor
 one of N7's, Kilnmouth one of M7's and five of the heart's in M5, and the other 68 change hands
 elsewhere on the world. Row 7 now holds 2,308 of the Kilns' squares, until Cairnmoor lays its boxes
 or seeds its rows (§9).
+TODO(O6 seeding after N7): Cairnmoor's first box, N7 (#476), seeds its rows: row 7 is the moor's again, and High Moor holds O6's
+south and P6 until O6 is laid (docs/areas/cairnmoor.md §1, §9).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Kilns are the L to P columns from row 1
 to row 6, with K6 on the shore. The land worth a map is fourteen boxes: M3, N3, N2 and O3 in the
@@ -985,8 +988,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     tarpaulin, its guards watching and not fighting, to the fork at 4,18, where the milestone reads
     ANVILHALL 13 and KILNHAVEN 4, counted along the roads (§9). The branch goes west from the fork
     and leaves by the west edge at 424,176 (0,18) for M6; the drove road goes on south and leaves by
-    the south edge at 427,189 (3,31) for Cairnmoor's N7, where the border's line is said on the road
-    and, for now, the world ends. At the fork are the drovers' camp and a drover with a rumour of
+    the south edge at 427,189 (3,31) into Cairnmoor's N7 (#476), where the border's line is said on
+    the road. At the fork are the drovers' camp and a drover with a rumour of
     something come up out of the ice at Rime Lodge. East of the road the grass runs to the hills
     under O6's smoking ridge, with a dew pond and the drovers' black cattle; the moor's first heather
     comes in from the south-east, with a curlew in it and a cairn by the road at the border (110 gold
@@ -1192,6 +1195,23 @@ and the Lanterns teach Linguist at every hall of theirs (#538); Anvilhall's Lant
 it too, a person and not a hall. Killing the Anvil Guard costs nothing with any guild: they are the
 thane's, and the thane's forgiveness is already spent.
 
+As built (#439, 8 October), in `guilds.ts`, the Tiefzeche holds two of the fourth ranks' four asks,
+filed here with their deeds (Cairnmoor's and Rimewater's hold one each: docs/areas/cairnmoor.md §6,
+docs/areas/rimewater.md §6). A hall gives each, and neither is a person's; both wait for Act II's
+end (§9, #439's 1) and pay 300 gold and 2,400 xp, 400 a member:
+
+- **The Night Carts** (`wardens_cages`, the Wardens'): given at the Drillyard in Captain Ordgar's
+  voice, since from Act II's end the cousin's captains keep it. Carts go into the Kilns by night,
+  lamps hooded, and come out light; the deed is the Hand's cages seen on the old workings
+  (`deep_mines2:dm2_cages`, 10,9), straw fresh in them.
+- **The Words Over the Dead** (`lanterns_niche`, the Lanterns'): given at any Lantern hall. The
+  words the dwarves cut over their dead are copied, mark for mark, which a reader does at either
+  niche, the workings' (`deep_mines:dm1_niche`, 12,10) or the old workings'
+  (`deep_mines2:dm2_niche`, 5,9); both say the one word. Not every Lantern wants them copied.
+
+A deed done before the ask is taken is paid at the taking, with words for a company that came
+early, as every guild quest is; the rank stays the third until the guild's other ask is done.
+
 ## 7. Encounters, and what is new
 
 MONSTERS §7.1 has the roster and the fights: the Knocker, the Mender and the Foreman, the first
@@ -1259,8 +1279,12 @@ fight), and the Stone's icon is the Lodestone's.
   so the shares stand at about 20,700. The Tiefzeche's Foreman alone pays 1,902 a member and its two
   corridor groups 858, past the brief's 2,400 before the upper levels' beasts (§9). With O5 a clear
   as measured gave 14,713 xp a member, past the curve's 13,067, so its row owes nothing; with L6 it
-  gives 16,303, with the Rift, O6 and its tubes and Kilnhaven's hand-ins still to come. Anvilhall pays
-  nothing of its own (#459): its 300 is the chapter's and #471's.
+  gives 16,303, with the Rift, O6 and its tubes and Kilnhaven's hand-ins still to come. The two
+  fourth-rank asks of the Tiefzeche (#439, §6) add 800 xp a member to a clear already over its ask:
+  17,103 of the 13,067. Three boxes are still to build, the Rift (#465), O6 and its tubes (#466)
+  and Kilnhaven (#469), and when they are, those boxes, not the asks, are what the 1.4 times line
+  holds to (§9, #439's 10). Anvilhall pays nothing of its own (#459): its 300 is the chapter's and
+  #471's.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1288,8 +1312,8 @@ fight), and the Stone's icon is the Lodestone's.
   (900) and the knockers' room (1,250); its beasts carry none, and its machines carry parts. O5 holds
   1,060 (#464), its share by the brief's 1,000, in its cairn, the foreman's shed and the hollow; of
   its monsters only the Anvil Guard carries gold, about 150 between them on the taking. With O5 a
-  clear's gold, 8,730, passed the training's 7,920, and with L6 it is 9,497; the Stone's share is
-  still the boxes' to carry.
+  clear's gold, 8,730, passed the training's 7,920, and with L6 it is 9,497, and 10,097 with the two
+  asks' 300 each (#439); the Stone's share is still the boxes' to carry.
   Anvilhall holds none (#459): its forge sells the step at the prices above, and its thane takes the
   6,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
@@ -1342,7 +1366,7 @@ number, and those that are not the Kilns' are left out:
 4. **The act's one story lock is the sealed bay under Coldmere** (call 4; #440), not the CREW ONLY
    door, which is a wall with words on it.
 5. **No new guild** (call 8): no hall gives an Act III side quest, and the Wardens' and Lanterns'
-   fourth ranks open in this act (#439).
+   fourth ranks open in this act (#439, built: §6, and the block for #439 below).
 6. **Cairnmoor has no town** (call 9): Anvilhall and Kilnhaven teach to 19, and the drove road's
    coach runs Kilnhaven to Rime Lodge.
 7. **The cuts stand and the country behind is parked** (call 10): §11, and #474.
@@ -2090,6 +2114,55 @@ delegate:
 14. **Two under is owed to #18,** as the other boxes' is.
 15. **Owed on:** the gate's exit and its arrival (#469); on the west edge, K6's cut heath (§11), with
     no road; on the south, Cairnmoor's L7, with no road. The north edge is the sea.
+
+Decided by delegate for #439, each the owner's to overturn (docs/areas/thornmark.md §9, 51 and 52,
+has the Druid's trainer):
+
+1. **A guild quest may wait for its act** (`GuildQuest.after`, a flag, in `src/game/guilds.ts`): a
+   hall offers it only once the company holds the flag, and the four fourth-rank asks wait on
+   `q_salt_done`, Act II done, from which Captain Ordgar keeps the Drillyard (#455). DESIGN §8 has
+   Act III open the fourth rank, and without the wait a Sergeant or a Reader made in Act I is
+   offered Act III's asks two acts early. Two lines there and a fixture check in
+   `tools/tests/guilds.ts`, taken as within #439's `lane: systems`. One oddity stands: `report()`
+   pays an item quest whether taken or not and does not read `after`, so an item quest that waited
+   for its act would be paid before it. No gated item quest exists.
+2. **One ladder holds over the four Lantern halls:** the Luminary asks are offered and reported at
+   Helmstow, Thornhold, Lantern Watch and Rime Lodge, and the goals name the Watch and the Lodge as
+   where to report, which is how the rank opens at those two (#434, call 8). DESIGN §8: every hall
+   of a guild offers the next quest on it. No per-hall rule exists and none is needed.
+3. **The hole's fire is dropped as a first task, and Rime Lodge's hall gives the Lanterns' ladder
+   as every hall does,** its first task the ladder's own, First Light. A stranger who joins at the
+   Lodge would still go back down the road for ranks 1 and 2, so a local first task saves no road;
+   it would need a second rule (rank 0 by any first task, first tasks per hall) and break "one
+   first task"; and DESIGN §8 has the Lodge's hall give the quests "to a company that has done the
+   first task". This settles #487's 12.
+4. **The Lanterns' asks are two deeds on built ground:** `lanterns_niche`, the words over the dead
+   read with a reader at either niche (`deep_mines:dm1_niche` or `deep_mines2:dm2_niche`: `seen`
+   names one id, so the goal is either, and both carry the same word); `lanterns_ring`, the ring's
+   voice (`q_ring_spoke`, set by O7's `o7_voice`, the chapter's own flag).
+5. **The Wardens' asks are the act's own matter, proposed:** `wardens_cages`, the Hand's cages on
+   the Tiefzeche's old workings (`deep_mines2:dm2_cages`), what the night carts carry;
+   `wardens_hole`, a sword at the ice-hole on the fourth night (`longmere_m9:m9_night_4`, once, no
+   respawn). The Wardens are road guards and soldiers, the captains who give the Drillyard's work
+   are set against Vask's side, and the Hand's cargo is the act's thread from the Kilns to the
+   hole. Both deeds stand on built maps on the chapter's road, and neither names a secret.
+6. **Pay is 300 gold and 2,400 xp each,** 400 a member, the ladder's rise: Thornmark's rank 1 asks
+   pay 150 and 900, its rank 2 asks 200 and 1,500, and Cairnmoor's answers 1,200 to 1,800 xp.
+7. **Each ask is filed with its deed's area,** as Thornmark's are, so the curve counts it there:
+   two here, one in Cairnmoor and one in Rimewater. Cairnmoor's and Rimewater's `owed` floors rise
+   to what a clear gives now (14,041 xp and 8,655 gold; 6,732 and 3,220); the Kilns' row owes
+   nothing, as before.
+8. **The voices:** the Wardens' asks are Ordgar's, the cousin's captain, with a book in his boot
+   ("the cousin will hear it before the walls do"); the Lanterns' show their split and never tell
+   it, a Lantern who would not have the words copied and one who goes out at what the ring said.
+   Each offer runs to three lines of the log, the most (EXPANSION §5.4), and the rest to one or two.
+9. **The Watcher still sends the page down:** the hall's ask is the ring's voice, not
+   `watchers_page`, which he takes at the first meeting and sends down by the drovers. A hall that
+   took it would undo the walked answers of #482 (docs/areas/cairnmoor.md §6).
+10. **The Kilns' numbers:** the two asks add 800 xp a member and 600 gold to a clear already above
+    its ask, 17,103 xp of the 13,067 and 10,097 gold of the 7,920 (§8). Three boxes are still to
+    build, the Rift (#465), O6 and its tubes (#466) and Kilnhaven (#469), and those boxes, not the
+    asks, are what the 1.4 times line holds to when they are built.
 
 ## 10. Names
 

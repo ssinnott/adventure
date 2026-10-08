@@ -109,7 +109,12 @@ export type Feature =
    */
   | { kind: 'sign'; x: number; y: number; text: string; id?: string; read?: undefined; marks?: undefined }
   | { kind: 'sign'; x: number; y: number; text: string; id: string; read: string; marks?: string | readonly string[] }
-  | ({ kind: 'inn'; price: number } & Business)
+  /**
+   * An inn. `nights` makes it count them (Rime Lodge's, docs/areas/rimewater.md §4.3): each stay
+   * sets the first of its flags not yet set, so the nights come in order, a flag a night (game/party.ts
+   * `stayNight`).
+   */
+  | ({ kind: 'inn'; price: number; nights?: readonly string[] } & Business)
   | ({ kind: 'temple' } & Business)
   | ({ kind: 'shop'; stock: string[]; prices?: Readonly<Record<string, number>> } & Business)
   | ({ kind: 'guild'; classes: string[]; fee: number; maxTier?: number } & Business)

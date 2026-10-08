@@ -384,6 +384,16 @@ export function heal(c: Character, n: number): number {
   return c.hp - before;
 }
 
+/**
+ * A night at an inn that counts them (`nights`, Rime Lodge's): the first of its flags the company has
+ * not set is set, so each stay is the next night, in order. The flag set, if any.
+ */
+export function stayNight(party: Party, nights: readonly string[] = []): string | undefined {
+  const night = nights.find((n) => !party.flags[n]);
+  if (night) party.flags[night] = 1;
+  return night;
+}
+
 /** Full recovery, as an inn or a night's rest gives, and the end of a blessing kept to it. Does not raise the dead. */
 export function rest(c: Character): void {
   delete c.riteSpent;

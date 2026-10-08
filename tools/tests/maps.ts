@@ -15,14 +15,13 @@ import { ok, owed, stopsWalk } from './lib.ts';
 /**
  * What is drawn before the map that places it, and whose map places it: a monster no map puts in a
  * group yet, a room no business opens into yet. Each is reported as that issue's while it waits,
- * and fails once it is placed, so its entry is dropped here.
+ * and fails once it is placed, so its entry is dropped here. Cairnmoor's part is empty: every monster
+ * its map files draw is placed, the last of them, the Cairn King, by #480; and Rimewater's, the
+ * keepers and the Matron by #490.
  */
 const UNPLACED: Record<string, string> = {
   anvil_warden: '#465',
-  raven: '#476', bog_body: '#476', moor_hound: '#476', bog_light: '#477', tor_troll: '#477', cairn_wight: '#479', cairn_king: '#480',
-  ice_pike: '#486', snow_lynx: '#486', ice_bear: '#486', tallyman: '#487', bay_keeper: '#490', matron: '#490',
   kilnhaven_inn: '#469', kilnhaven_smith: '#469', kilnhaven_training_hall: '#469', kilnhaven_harbourmaster: '#469', kilnhaven_chapel: '#469', kilnhaven_chandlery: '#469',
-  rime_inn: '#487', rime_hall: '#487', rime_temple: '#487', rime_furrier: '#487', rime_provisioner: '#487', rime_yard: '#487',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
