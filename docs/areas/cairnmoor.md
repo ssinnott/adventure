@@ -1308,7 +1308,9 @@ Owed by the chapter and the side quests (§5, §6):
 - **The coach's quest** (#56's 40): Rimewater's (#494); N8 holds the coach and its lines.
 - **The Lanterns' hall's page** (#439): the fourth rank's ask, the ring's voice reported, may take
   `watchers_page` at a hall; meanwhile the Watcher sends it down.
-- **The stonecutter at Rime Lodge** (#56's 39): his words there, gone home, are Rimewater's.
+- **The stonecutter at Rime Lodge** (#56's 39): the lodge places him from the start (#487), so
+  until he is gone home he stands at his fire and at the lodge both; his `after` on `q_faces_home`
+  and his words there are #494's.
 - **The ring once gone** (#56's 38): Tallis's man at the Lodge and the elves who would take it are
   no one's yet; the Council weighs the ring (#56's 64).
 - **M7 and M8** (#484): the curve's shortfall, 1,026 xp a member and 525 gold, is theirs.
