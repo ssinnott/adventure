@@ -81,7 +81,7 @@ export const CAIRNFIELD_N8: MapDef = {
     // The coach stopped on the road, its horses gone (#56's 40, #494), and under its seat the strongbox.
     // Beside it the man in the healer's coat and the woman who will not wake, until the lodge's sledge
     // comes for them: his note, carried down, sends it (Rimewater's The Coach That Did Not Come).
-    { kind: 'event', x: 6, y: 8, id: 'n8_coach', once: true, text: 'A coach stands stopped on the road, snow to its axles, its traces cut. On the box the coachman sits frozen, the reins in his fists.' },
+    { kind: 'event', x: 6, y: 8, id: 'n8_coach', once: true, text: 'A coach stands stopped on the road, its traces cut. Its coachman sits frozen on the box.' },
     { kind: 'npc', x: 5, y: 9, name: 'A man in a healer\'s coat', until: { flag: 'q_coach_sledge' }, lines: [
       'A man in a healer\'s coat by the coach, its hem white with salt. At his feet, under every rug the coach had, a woman who does not wake.',
       '"The coachman froze on his box the first night. She has not woken since Kilnhaven."',

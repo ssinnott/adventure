@@ -1,10 +1,11 @@
 // Rimewater's side quests, in the journal's words: #56's five, 40 to 44, each built on its box (#494;
-// §6 of docs/areas/rimewater.md). The Coach That Did Not Come (the coachman at Rime Lodge, and the
-// coach on Cairnmoor's N8), The One Who Went Back Down (the man at the foot of the ice-hole), The Bell
-// Under the Ice (the lodge woman, and the tower's cap on Loch Fuar's ice), Where the Sky Meets the Ice
-// (the guide, at the lodge and at the glacier's edge) and The Pilgrims in the Pass (below the high
-// pass's mouth). #56's 39 ends at the lodge, its words Rimewater's and its quest Cairnmoor's. How the
-// words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
+// §6 of docs/areas/rimewater.md). The Coach That Never Came (the coachman at Rime Lodge, and the coach
+// on Cairnmoor's N8), The One Who Went Back Down (the man at the foot of the ice-hole), The Bell Under
+// the Ice (the lodge woman, and the tower's cap on Loch Fuar's ice), Where the Sky Meets Ice (the
+// guide, at the lodge and at the glacier's edge) and The Pilgrims in the Pass (below the high pass's
+// mouth); 40's and 43's titles are #56's cut by a word to fit the log's list. #56's 39 ends at the
+// lodge, its words Rimewater's and its quest Cairnmoor's. How the words are keyed is in
+// src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
 
 export const QUESTS: readonly QuestDef[] = [

@@ -123,7 +123,7 @@ export const RIME_LODGE: MapDef = {
     { kind: 'npc', x: 14, y: 9, name: 'A guide', flag: 'q_sky', until: { flag: 'q_sky' }, lines: [
       'A guide by the gate, roping a pack, an ice axe through its straps.',
       '"A party wants taking up the glacier, to where they say the sky comes down to the ice."',
-      '"We go up in the morning. I will see it before they do."',
+      '"We go up in the morning, before the weather turns."',
     ] },
     { kind: 'event', x: 13, y: 8, id: 'rl_stockade', once: true, text: 'Inside the stockade, log houses roofed in turf and snow, a lantern over every door. The smoke goes straight up.' },
 
