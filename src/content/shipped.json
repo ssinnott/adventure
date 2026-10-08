@@ -1516,6 +1516,25 @@
       "groups": [],
       "doors": []
     },
+    "kilnhaven": {
+      "size": "16x16",
+      "used": [
+        "kh_bell",
+        "kh_dust",
+        "kh_lantern",
+        "kh_mouth",
+        "kh_nets",
+        "kh_quay",
+        "kh_rope",
+        "kh_steps",
+        "kh_tar",
+        "kh_trough",
+        "kh_tubs",
+        "kh_yard"
+      ],
+      "groups": [],
+      "doors": []
+    },
     "lantern_watch": {
       "size": "16x16",
       "used": [
@@ -2095,10 +2114,12 @@
     "guild_Thornhold Lantern Hall",
     "j3_hermit_lesson",
     "j3_hermit_met",
+    "kh_dwarf_met",
     "l3_keeper_lesson",
     "l3_keeper_met",
     "lanterns_split",
     "log_read",
+    "manifests_read",
     "meridian_read",
     "n2_hartmut_lesson",
     "n2_hartmut_met",

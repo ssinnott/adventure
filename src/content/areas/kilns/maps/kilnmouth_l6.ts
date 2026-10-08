@@ -2,18 +2,19 @@
 // in the wall along the shore, the coach yard outside it, and the road down over the river's mouth to
 // the ore quay, with its heaps, its pier and the bonded store; south of the bay the grass, the hill with
 // its beacon and the heath running down to the sea.
-// The gate at 28,4 is the way into Kilnhaven (#469), shut until it is built (GATE).
+// The gate at 28,4 is the way into Kilnhaven (#469, GATE).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.13 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 
 /**
- * The way into Kilnhaven (#469): the gate in the town's wall at 28,4, onto the town's first square
- * inside its own gate in the east wall, 14,7, facing west. An exit leads only to a built map, so the
- * town lists it in this map's exits, opens the gate's square and drops `l6_gate`; its way back out
- * lands on 29,4, facing east, the road's end before the gate.
+ * The way into Kilnhaven (#469): a door in the town's wall at 28,4, onto the town's first square
+ * inside its own gate in the east wall, 14,7, facing west, saying the town's gate line
+ * (docs/areas/kilns.md §4.14) as the company goes in; the town's way back out lands on 29,4, facing
+ * east, the road's end before the gate.
  */
-export const GATE: Exit = { x: 28, y: 4, to: 'kilnhaven', tx: 14, ty: 7, tf: WEST };
+export const GATE: Exit = { x: 28, y: 4, to: 'kilnhaven', tx: 14, ty: 7, tf: WEST,
+  label: 'Kilnhaven: ore on the quay, iron in the air, and the sea. Three ways out, and all of them cost.' };
 
 export const KILNMOUTH_L6: MapDef = {
   id: 'kilnmouth_l6',
@@ -28,7 +29,7 @@ export const KILNMOUTH_L6: MapDef = {
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWB::f',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWB::f',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWW~B::f',
-    'WWWWWWWWWWWWWWWWWWWWWWWWWW~~B===',
+    'WWWWWWWWWWWWWWWWWWWWWWWWWW~~D===',
     'WWWWWWWWWWWWWWWWWWWWWWWWW~~~~~=~',
     'WWWWWWWWWWWWWWWWWWWWWW"WW~~~~~=~',
     'WWWWWWWWWWWWWWWWWWWWWW"WW~~_,,=f',
@@ -57,10 +58,10 @@ export const KILNMOUTH_L6: MapDef = {
     'hhhhhhhhhhhhhhhhhhhhhhhhh,,,,,,,',
     'hhhhhhhhhhhhhhhhhhhhhhhhh,,,,,,,',
   ],
+  exits: [GATE],
   features: [
-    // The gate, shut until the town is built, the milestone before it, and the coach yard outside
-    // the wall with a camp under it.
-    { kind: 'event', x: 29, y: 4, id: 'l6_gate', text: 'Kilnhaven\'s gate, shut and barred from inside. Gulls on the wall, and the sound of the harbour behind it.' },
+    // The milestone before the gate, and the coach yard outside the wall with a camp under it. The
+    // gate's own words are its label, said going in (GATE).
     { kind: 'event', x: 30, y: 4, id: 'l6_milestone', once: true, text: 'A milestone before the gate, ANVILHALL 17 on its face, and on its top the ore dust of every cart that passed.' },
     { kind: 'event', x: 30, y: 1, id: 'l6_yard', once: true, text: 'The coach yard outside the wall: a trough, a mounting block and the ruts of the coach for Rime Lodge.' },
     { kind: 'camp', x: 29, y: 2, name: 'Under the wall', text: 'A fire-ring under the town\'s wall, out of the wind, where the carters wait for the gate.' },

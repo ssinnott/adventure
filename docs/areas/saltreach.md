@@ -596,7 +596,8 @@ settled in its issue, and what the pilot teaches changes them.
   the Warden with the news of Hale #180's (built with the chapter, §9), and The Star That Moved #183's. No coach runs from the
   yard yet (§9). Kitto sells the boat at the quay's end: 150 the crossing, out at 20
   and onto Wrackholm's stage at 6 the next morning, and back the same from the stage, landing on
-  the quay. The walkthrough goes in by the gate and out again, buys each class its step at the
+  the quay. Dunstan, at the quay's side, sells the ferry to Kilnhaven, 400 the crossing, out at 8
+  and onto Kilnhaven's quay at 16 two days on (#469). The walkthrough goes in by the gate and out again, buys each class its step at the
   armourer, trains a member of 12 to 13 at the loft and makes a Tumbler of Ottilie at 11, once
   the log has sent her to Pender; then it takes the boat to the isle, saves there and loads, and
   takes it home. The town pays nothing of its own: its 300

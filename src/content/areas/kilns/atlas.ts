@@ -26,7 +26,7 @@ export const ZONES: readonly AtlasZone[] = [
 
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'anvilhall', kind: 'town', at: [452, 66] }, // on N3, in the hill behind its gate at 28,8 (#458, #459)
-  { id: 'kilnhaven', name: 'Kilnhaven', kind: 'town', planned: true, band: [16, 18], at: [378, 158] }, // the ore port, behind L6's gate (#468, #469)
+  { id: 'kilnhaven', kind: 'town', at: [385, 162] }, // the ore port, on L6 over the harbour behind its gate at 28,4 (#468, #469)
   { id: 'deep_mines', kind: 'dungeon', at: [440, 104] }, // the Tiefzeche, the Deep Mines: the workings, under N4's shaft at 16,2 (#461, #462)
   { id: 'deep_mines2', kind: 'dungeon', at: [440, 110] }, // the old workings, below them
   { id: 'deep_mines3', kind: 'dungeon', at: [440, 116] }, // the clean corridor, at the bottom
@@ -42,6 +42,6 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Gluthutte', icon: 'forge', map: 'kilnsheart_n5', at: [12.5, 1.5], label: 'below' }, // the Forges: the smelter on N5 (#463)
   { name: 'Anvil Stone', icon: 'stone', map: 'kilnsheart_o5', at: [12.5, 10.5], label: 'below' }, // the Stone on its anvil of rock on O5, 12,10 (#464)
   { name: 'Feuerstollen', icon: 'cave', map: 'kilnsheart_o6', at: [22.5, 20.5], label: 'below' }, // the Lava Tubes: the adit in the ridge on O6, 22,20 (#466)
-  { name: 'Kilnhaven', icon: 'port', at: [388, 162], label: 'right', planned: true }, // at the gate on L6, 28,4 (#468, #469)
+  { name: 'Kilnhaven', icon: 'port', at: [388, 162], label: 'right' }, // at the gate on L6, 28,4 (#468, #469)
   { name: 'Erzkamm', icon: 'cave', map: 'ironfells_n2', at: [8.5, 14.5], label: 'below' }, // Iron Crag: the cave in the crag on N2, 8,14, the Barbarian's second prestige (#460)
 ];
