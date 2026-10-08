@@ -14,6 +14,8 @@ import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../../crossings.ts';
 
 /** The manifests read by the harbourmaster, the Compact ship's cargo named: the chapter's step at Kilnhaven (#470). */
 export const MANIFESTS_READ = 'manifests_read';
+/** The crown put into Wiebe's hands and sailed: Jory Tallis owes the company, which the Council reads later (#56's 35, #471). */
+export const TALLIS_OWES = 'q_crown_sailed';
 /** The dwarf on the quay heard, who says the corridors under the Tiefzeche run south toward the lakes (§5); the chapter may read it. */
 export const DWARF_MET = 'kh_dwarf_met';
 
@@ -64,13 +66,22 @@ export const KILNHAVEN: MapDef = {
 
     // The street down to the quay: the chandlery on it, the pump in the square and the ore's dust.
     { kind: 'event', x: 8, y: 7, id: 'kh_dust', once: true, text: 'Red dust in the gutters and on every sill, off the ore carts. It gets into the bread.' },
-    // Jory Tallis's man, come for the crown the smiths at the smelter are making (#56's 35): his words
-    // and nothing more, as Eckhart's and Kerensa's are; the choice put to a company and its flag are
-    // #471's. The crown is never named, and nobody says whose head it is for.
-    { kind: 'npc', x: 7, y: 8, name: 'Wiebe, Jory Tallis\'s man', lines: [
+    // Jory Tallis's man, come for the crown the smiths at the smelter are making (A Crown to Order,
+    // #56's 35, #471). Carried down from Eckhart's anvil, the parcel is his: he pays, sails, and Tallis
+    // owes the company (`TALLIS_OWES`); told to the thane, it never comes, and he waits on. The crown
+    // is never named, and nobody says whose head it is for.
+    { kind: 'npc', x: 7, y: 8, name: 'Wiebe, Jory Tallis\'s man', flag: 'q_crown_wiebe', until: { flag: TALLIS_OWES }, lines: [
       'A man in a good dark coat on a crate at the street\'s edge, his eyes on the east gate. His boots are clean of the red dust.',
       '"Wiebe. I am Jory Tallis\'s man, from Saltmouth. I wait on a parcel up from the smelter, and it is late."',
       '"What is in it? Tallis has not said. I am paid to wait, not to ask."',
+    ], quest: { item: 'crown_parcel', reward: 800, setFlag: TALLIS_OWES, done: [
+      'He weighs the parcel in both hands, and does not open it.',
+      '"Jory Tallis will hear whose hands brought it. He remembers a favour." He goes down to the quay for the next boat.',
+    ] }, says: [
+      { after: { flag: 'q_crown_told' }, lines: [
+        'Wiebe on his crate, his eyes on the east gate.',
+        '"Still nothing up from the smelter. Tallis does not like to wait."',
+      ] },
     ] },
     { kind: 'shop', x: 10, y: 9, name: 'The Chandler\'s', stock: ['rations', 'torch', 'lantern_oil', 'potion_heal', 'antidote', 'elixir', 'potion_sp', 'potion_sp_great'], interior: 'kilnhaven_chandlery' },
     { kind: 'well', x: 9, y: 6, text: 'A pump in the square. The water is sweet, and the bucket under it red with dust.' },

@@ -21,6 +21,7 @@ import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
+import { QUESTS } from './quests.ts';
 
 export const AREA = {
   id: 'kilns' as const,
@@ -28,7 +29,8 @@ export const AREA = {
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
-  quests: [],
+  // #56's four, 33 to 36 (#471).
+  quests: QUESTS,
   // The Anvil Stone, the act's first chapter, is #470's.
   chapter: undefined,
   // The fourth ranks' asks in the Tiefzeche, the Lanterns' and the Wardens' (#439).
