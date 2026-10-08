@@ -179,8 +179,8 @@ export function outdoors(): void {
   // at column 3, N6's heather running on south at columns 22 to 29; out by the south edge at column 7
   // for N8 among the heather, the snow and the marsh, the stream from the tarn clipping the corner; the
   // peat-cutter's track out by the east edge at row 22 in dirt against O7, since the atlas has no road
-  // there; and on the west the grass, the snow, the heather and the hills against M7. Neither O7 nor M7
-  // is built, so the world ends past them.
+  // there, meeting O7's (#477); and on the west the grass, the snow, the heather and the hills against
+  // M7. M7 is not built, so the world ends past it.
   const n7 = out.zones.find((z) => z.id === 'highmoor_n7')!;
   ok(northOf(n7) === ',,,=,' + '^'.repeat(12) + ',,^^^' + 'h'.repeat(8) + '^^' && southOf(n7) === 'hh*hhhw=' + 'w'.repeat(6) + 'hhhh**' + 'h'.repeat(11) + '~',
     `N7's north edge meets N6's hills with the drove road at column 3, and its south edge is the heather, the snow and the marsh with the drove road out for N8 and the stream at the corner (${northOf(n7)}; ${southOf(n7)})`);
@@ -210,6 +210,16 @@ export function outdoors(): void {
     `M9's north edge is the fells, closed but for its west corner against M8, its east edge the glacier's edge, closed against N9, and its corner and N8's the Rimefells' shoulder (${northOf(m9)}; ${eastOf(m9)})`);
   ok(southOf(m9) === ',_~~' + 'W'.repeat(9) + '~~,,,^^^%%' + 'p'.repeat(7) + '%%' && westOf(m9) === ',p~~~p' + ','.repeat(6) + '^'.repeat(8) + '=' + ','.repeat(11),
     `M9's south edge is the loch, its shores, the hills, the crag and the pines against M10, and its west edge the stream, the grass, the hills and the road out at row 20 against L9 (${southOf(m9)}; ${westOf(m9)})`);
+  // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
+  // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
+  // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
+  // corner; its east edge the hills under the rim, P7 being cut; its south edge the heather and the
+  // hills against O8, and the rim's shoulder at the corner, the world's end.
+  const o7 = out.zones.find((z) => z.id === 'highmoor_o7')!;
+  ok(westOf(o7) === eastOf(n7) && northOf(o7) === '^'.repeat(10) + ','.repeat(14) + '^'.repeat(8),
+    `O7's west edge meets N7's east edge square for square, the track at row 22 and the stream at the corner, and its north edge is the hills and the grass under O6 (${westOf(o7)}; ${northOf(o7)})`);
+  ok(eastOf(o7) === '^'.repeat(30) + '%%' && southOf(o7) === '~' + 'h'.repeat(16) + '**hh' + '^'.repeat(9) + '%%',
+    `O7's east edge is the hills under the rim, and its south edge the heather and the hills against O8 with the stream out at the west corner and the rim's shoulder at the east (${eastOf(o7)}; ${southOf(o7)})`);
   // West, the Downs: the Foreland's ring stands against F2 as mountains, with the Salt Road's gap.
   const west = line(sh.x, sh.y, 0, 1, sh.h);
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);

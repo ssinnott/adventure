@@ -24,7 +24,7 @@ const HIGHMOOR_HELD = [...row(456, 497, 190), ...col(456, 222, 246)];
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'highmoor', name: 'High Moor', area: 'cairnmoor', band: [18, 19], maps: [{ map: 'highmoor_n7', at: [424, 190] }], seeds: [[462, 212], [488, 230], ...HIGHMOOR_HELD],
+    id: 'highmoor', name: 'High Moor', area: 'cairnmoor', band: [18, 19], maps: [{ map: 'highmoor_n7', at: [424, 190] }, { map: 'highmoor_o7', at: [456, 190] }], seeds: [[462, 212], [488, 230], ...HIGHMOOR_HELD],
     // The crossing line said in snow (#166, #476): how the moor feels to a company under its floor.
     crossing: { harder: 'The snow begins here, and the land is harder than the road behind.', warning: 'Snow, and nothing on this moor would spare you. The road behind is still open.' },
   },
@@ -37,7 +37,7 @@ export const PLACES: readonly AtlasPlace[] = [
 
 export const SITES: readonly AtlasSite[] = [
   // VII. Cairnmoor (docs/areas/cairnmoor.md §10 has the hill folk's names).
-  { name: 'Fionnlios', icon: 'ring', at: [462, 214], label: 'below', planned: true }, // the Stone Ring
+  { name: 'Fionnlios', icon: 'ring', map: 'highmoor_o7', at: [6.5, 24.5], label: 'below' }, // the Stone Ring, on its rise on O7, 6,24 (#477)
   { name: 'Carn Dubh', icon: 'barrow', at: [430, 240], label: 'below', planned: true }, // the Cairns
-  { name: 'Watcher\'s Hut', icon: 'lodge', at: [466, 208], label: 'right', planned: true }, // the Sorcerer's second prestige
+  { name: 'Watcher\'s Hut', icon: 'lodge', map: 'highmoor_o7', at: [10.5, 18.5], label: 'right' }, // the Sorcerer's second prestige: the hut beside the ring on O7, 10,18 (#477)
 ];
