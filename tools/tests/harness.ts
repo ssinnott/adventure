@@ -132,6 +132,7 @@ export const OFF_LINE: Record<string, string> = {
   sunder_warden: "the Sunder's boss, on the boss line's hit points with its blow set by its gate (#199)",
   foreman: "the Tiefzeche's boss, its hit points and its blow set by its gate (#462)",
   anvil_warden: "the Anvil Stone's Rift's boss, its hit points and its blow set by its gate (#465)",
+  great_salamander: "Feuerstollen's boss, its hit points and its blow set by its gate (#466)",
   cairn_king: "Carn Dubh's boss, its hit points and its blow set by its gate (#480)",
   matron: "the Sleepers' Bay's boss, its hit points and its blow set by its gate (#490)",
 };

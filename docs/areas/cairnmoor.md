@@ -53,7 +53,7 @@ Cairnfield's along M7's north and east edges and N8's north and east, High Moor'
 P7's north edges and O8's west, so that the row is the moor's again. Laying N7 and seeding the walk
 moves 2,687 squares: High Moor takes N7's 666 of the heart's and 120 of the Cairnfield's, 412 of the
 heart's in O7 and P7, 46 of the Cairnfield's in O8 and 587 of the heart's in O6 and P6 north of O7,
-which O6 takes back when it is laid in the heart (#466); the Cairnfield takes 523 of Kilnmouth's in
+which O6 took back when it was laid in the heart (#466); the Cairnfield takes 523 of Kilnmouth's in
 M7 and 77 of High Moor's in N8; the Rimefells, cut, give the moor 106 of Loch Fada's and Glacier
 Foot's; and about 120 change hands elsewhere on the world, none on a built map. With N7 High Moor
 walks to 4,635 squares and the Cairnfield to 2,938; Kilnmouth keeps L7, K7 and 11 squares of M7's
@@ -82,8 +82,8 @@ Its edges:
 - **North: the Kilns,** over low hills along y 196 to 208. The drove road comes up from the Kilns'
   N6 over them, onto N7 at 427,190 (#476, §4.2), its link's ends at 430,196 and 432,212
   (`src/content/atlas.ts`), open from the start (EXPANSION §2.2); the crossing line (#166) falls where
-  N6 meets N7. The Lava Tubes' box, O6, is built whole by the Kilns, its 195 squares of the moor's
-  land with it.
+  N6 meets N7. The Lava Tubes' box, O6, is built whole by the Kilns (#466), its 388 squares of the
+  moor's land with it, where the plan counted 195.
 - **East: the rim,** the P column, mountain nine squares deep with heather under it.
 - **South: the Rimefells,** a ridge along y 256 to 264 between Cairnmoor and Rimewater. The drove
   road goes down through them from N8 at 424,250 to Rimewater's M9 at 414,262, a road link open
@@ -418,12 +418,12 @@ settled in its issue, and what the Kilns teach changes them.
   South-east the hills rise to a tor of grey slabs at 25,24, a face in its top slab by day and by
   night a tor troll alone.
   - **Seams.** West, N7's 31,22 to O7's 0,22 for the track (dirt) and N7's 31,31 to O7's 0,31 for
-    the tarn's stream (O8's 0,0 too); the two edges meet square for square. North, O6 (#466, not on
-    main yet): O7's row 0 is the hills and the Kilns' grass, square for square with the south edge
-    O6's branch draws but for the corner (O6's 31,31 is rim, void in the outdoors; O7's 31,0 is
-    hills), no road; the outdoors check pins the edge, to be re-pinned if O6 changes its own. East,
-    P7, cut: hills down column 31 and the rim's shoulder at 31,30, 30,31 and 31,31 (§9, #477's 10).
-    South, O8 (#478): heather, marsh and hills with the stream out at 0,31, no road.
+    the tarn's stream (O8's 0,0 too); the two edges meet square for square. North, O6 (#466): O7's
+    row 0 is the hills and the Kilns' grass, square for square with O6's south edge but for the
+    corner (O6's 31,31 is the rim's mountain; O7's 31,0 is hills), no road across it; the outdoors
+    check pins both. East, P7, cut: hills down column 31 and the rim's shoulder at 31,30, 30,31 and
+    31,31 (§9, #477's 10). South, O8 (#478): heather, marsh and hills with the stream out at 0,31,
+    no road.
   - **Measured.** A company at 18 wins every fight and manages 8.88 fights to a rest, inside the
     aim, with none of its days ending in a fight broken off; it walks High Moor's road, now on to
     the lights at the ring, every time; each of the four groups is won ten fights in ten. O7 pays
@@ -982,8 +982,9 @@ Decided by delegate for #476, each the owner's to overturn:
     The seams down N8's and O8's sides stop at y 246, so the Rimefells walk as they did.
 12. **M7's two westmost squares go unseeded:** a seed there carries the Cairnfield round the coast into
     Kilnmouth's L6 and K6, so Kilnmouth keeps L7, K7 and 11 squares of M7's coast.
-13. **High Moor holds O6's south and P6 until O6 is laid in the heart** (#466): 587 squares, where the
-    plan gave the moor 285. The Kilns' rows hold no seam there, and O6 laid whole takes its own back.
+13. **High Moor held O6's south and P6 until O6 was laid in the heart** (#466): 587 squares, where the
+    plan gave the moor 285. The Kilns' rows held no seam there, and O6 laid whole took its own back,
+    388 squares where the plan counted 195 (docs/areas/kilns.md §1).
 14. **The stream clips the south-east corner,** so the corner square is its water, as the edge check
     asks (docs/areas/kilns.md §9, #461's 10).
 15. **Two under is owed to #18,** as the Kilns' boxes' is: a company of 16 beats every group.
@@ -1285,9 +1286,9 @@ elves' Cornish and the Tidefolk's Frisian.
   column end in it.
 - **The Rimefells,** O9 and N9: 450 squares, 202 walkable (O9 145 of 277, N9 57 of 173), the ridge
   between Cairnmoor and Rimewater; the drove road's notch through them is N8's and M9's.
-- **The slivers** in the Kilns' boxes: O6 (195, in the Lava Tubes' box, built whole there), N6 (180)
-  and M6 (127), the moor's land north of the low hills, which the Kilns build with their boxes; and
-  L7 (181), in Kilnmouth's box, void. Not Cairnmoor's to build.
+- **The slivers** in the Kilns' boxes: O6 (388, the plan's 195, in the Lava Tubes' box, built whole
+  there), N6 (180) and M6 (127), the moor's land north of the low hills, which the Kilns build with
+  their boxes; and L7 (181), in Kilnmouth's box, void. Not Cairnmoor's to build.
 - **The country behind,** M7 and M8 (§4.7): 1,690 squares, parked, not cut (#434, call 10).
 
 About 1,200 squares void and 680 another area's, to come back as country only if the act plays

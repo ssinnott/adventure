@@ -30,6 +30,12 @@
 // by a reader alone; the foreman at his shed and his hammer in it; the hollow under the anvil-rock's
 // lip found from the cut that stops half way; and the thane's choice seen at the Stone, the saws off
 // it once it is bought and his iron on the approach once it is taken, and the tear open either way.
+// Feuerstollen's box (O6, #466): the open hills down from O5 with nothing said, and the grass in from
+// N6, harder to a company under its floor of 17; the box's groups won at its floor; the hermit in his
+// dead vent; the adit in the ridge's foot and the words over it, read by a reader alone, whose reading
+// marks the tubes and the machine's other mouths on the world map; the first dwarves' shelter found
+// from the cold vent's bare lip; and the grass on south over the line into Cairnmoor's O7, the moor
+// named, and harder to a company of 17.
 // Then the Anvil Stone's Rift (#465), in through the tear and out again: the lanes and the slag run
 // down them from the back, the groups won at its floor, the hollow found from the lane whose slag set
 // running up and the first cutter's tools in it, the Warden won and its heart taken, and the tear
@@ -52,8 +58,11 @@
 // master selling nothing toward a town not built. Erzkamm (N2,
 // #460): up the open fell out of N3 with nothing said, the box's groups won at its floor, the scholar
 // at the wall, and the doors behind the blank face found from the worn floor, the wall beside it read
-// by a reader alone; last, the Barbarian's second prestige, taught by Hartmut at the cave's mouth
-// (#19): his lesson after his own words, and taught at 19.
+// by a reader alone; the Barbarian's second prestige, taught by Hartmut at the cave's mouth (#19):
+// his lesson after his own words, and taught at 19. Last, Feuerstollen (#466), down O6's adit and up
+// again: the fire adit, its tube's floor showing the fire, the cutters' strongbox and the groups won;
+// the deep tubes, the groups won, the square tube found from the heat that drops where the walls go
+// square and the plate at its end, which nothing opens, and the Great Salamander won, its hide left.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -78,13 +87,14 @@ import type { GuildId } from '../../guilds.ts';
 import { offered, take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
 import { FOURTH_RANKS_OPEN } from './guilds.ts';
-import { readLine } from '../../../game/inscriptions.ts';
+import { readLine, markLine, readMarks } from '../../../game/inscriptions.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
 import { GATE } from './maps/ironfells_n3.ts';
 import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
 import { TEAR } from './maps/kilnsheart_o5.ts';
+import { ADIT } from './maps/kilnsheart_o6.ts';
 import { CLOSED, WARDEN_SLAIN } from './maps/anvil_stone.ts';
 import { SLAG } from '../../rifts/materials.ts';
 import { GATE as HAVEN_GATE } from './maps/kilnmouth_l6.ts';
@@ -105,6 +115,8 @@ const SMITH = N5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Ec
 const FACTOR = N5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Kerensa')) as Person;
 const O5 = MAP_DEFS.find((d) => d.id === 'kilnsheart_o5')!;
 const FOREMAN = O5.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Reinhart')) as Person;
+const O6 = MAP_DEFS.find((d) => d.id === 'kilnsheart_o6')!;
+const HERMIT = O6.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Einhart')) as Person;
 const SCHOLAR = N2.features!.find((f) => f.kind === 'npc' && f.name === 'A scholar at the wall') as Person;
 const HARTMUT = N2.features!.find((f) => f.kind === 'npc' && f.name.startsWith('Hartmut')) as Person;
 const N6 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n6')!, M6 = MAP_DEFS.find((d) => d.id === 'kilnmouth_m6')!;
@@ -464,6 +476,91 @@ export const walkthrough: Walkthrough = (ok) => {
     ok(into.kind === 'moved' && t.world.state.mapId === 'anvil_stone', `${way}: the tear lets the company down into the Rift all the same`);
   }
 
+  // Feuerstollen's box (O6, #466). Down off the Stone's hills over the line from O5: the same land at
+  // the same floor, so the log names nothing and warns of nothing. In from N6's grass, where the floor
+  // rises from 16 to 17, a company of 16 hears the land is harder and one of 17 hears nothing.
+  const o6 = out.zones.find((z) => z.id === 'kilnsheart_o6')!;
+  for (const m of w.party.members) m.level = 17;
+  w.world.travel('kilnsheart_o5', 2, 29, SOUTH);
+  const offHills: string[] = [];
+  for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnsheart_o6'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') offHills.push(...r.messages); }
+  ok(w.world.zone?.id === 'kilnsheart_o6' && !offHills.some((m) => /Kilns|harder|spare you/.test(m)), `the open hills run down from O5 into O6 with nothing said of the land (${offHills.join(' / ') || 'nothing'})`);
+  const eastward = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('kilnsheart_n6', 29, 18, EAST);
+    const said: string[] = [];
+    for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnsheart_o6'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+    ok(w.world.zone?.id === 'kilnsheart_o6', `the grass runs on east from N6 into O6 at ${level}`);
+    return said;
+  };
+  const at16o6 = eastward(16), at17o6 = eastward(17);
+  ok(at16o6.includes('The land here is harder than the road behind.') && !at16o6.some((m) => m.includes('The Kilns')), `a company of 16 coming from N6 hears the land is harder, and no name (${at16o6.join(' / ')})`);
+  ok(!at17o6.some((m) => /harder|spare you|Kilns/.test(m)), `a company of 17 hears nothing of the land (${at17o6.join(' / ') || 'nothing'})`);
+  w.level = 17;
+
+  // The box's groups, each won at its floor: the salamanders on the ash, the beetles at the ridge's foot
+  // and under the crag the slag elder strayed from the Stone, back until its tear is closed.
+  for (const g of O6.encounters!) fight(w, `kilnsheart_o6:${g.id}`);
+  const strays = O6.encounters!.find((g) => g.id === 'o6_elder')!;
+  ok(strays.monsters.join() === 'slag_elder' && !!strays.respawn && JSON.stringify(strays.until) === JSON.stringify({ flag: 'q_anvil_closed' }), 'under the crag a slag elder strayed from the Stone, back until the tear is closed');
+  ok(O6.encounters!.every((g) => g.monsters.every((m) => !['troll', 'wight', 'light', 'hound', 'raven', 'bog'].some((k) => m.includes(k)))), 'none of Cairnmoor\'s monsters comes onto the box, the moor\'s heather and all');
+
+  // The hermit in his dead vent at the ridge's end, who counts the vents by their breath.
+  w.world.travel('kilnsheart_o6', HERMIT.x, HERMIT.y);
+  const breaths = says(w, HERMIT);
+  ok(breaths.includes('by their breath') && breaths.includes('keep time'), 'the hermit in the dead vent counts the vents by their breath, and says a mountain should not keep time');
+
+  // The adit cut into the ridge's foot, rock on three sides of it, the way down into the tubes (ADIT),
+  // and the dwarves' words over it: to a company with no reader their words for the mountain's
+  // breath; to one with, VENT. STAND CLEAR., and the first reading marks the tubes on the world map and
+  // the machine's other mouths, the ice-hole by Rime Lodge, the bay under Coldmere and Fire Mountain's vents.
+  ok(ADIT.to === 'lava_tubes' && !!O6.exits?.includes(ADIT) && out.passable(o6.x + ADIT.x, o6.y + ADIT.y) === 'ok' && [[0, -1], [0, 1], [1, 0]].every(([dx, dy]) => out.at(o6.x + ADIT.x + dx, o6.y + ADIT.y + dy).solid === 'rock'),
+    'the adit is cut into the ridge\'s foot, rock on three sides, the way down into the tubes');
+  see(w, 'kilnsheart_o6:o6_adit');
+  w.world.travel('kilnsheart_o6', ADIT.x - 1, ADIT.y, EAST);
+  const breath = w.world.eventsHere();
+  ok(breath.some((t) => t.includes('the mountain\'s breath')) && !breath.some((t) => t.includes('VENT')) && !w.world.used('o6_mouth') && !readMarks(w.world).length, `with no reader the words over the adit are the dwarves' and no more, and nothing is marked (${breath.join(' / ')})`);
+  w.party.members[4].skills = ['linguist'];
+  const vent = w.world.eventsHere();
+  ok(vent.includes(readLine('Maren', 'VENT. STAND CLEAR.')) && vent.includes(markLine('Maren')) && w.world.used('o6_mouth'), `Maren, taught Linguist, reads them the old way and marks the world map (${vent.join(' / ')})`);
+  const marked = readMarks(w.world);
+  ok(marked.join() === 'lava_tubes,rime_lodge,sleepers_bay,meridian_camp', `the world map marks the tubes and the machine's other mouths: ${marked.join(', ')}`);
+  ok(!w.world.eventsHere().includes(markLine('Maren')), 'read again, the words mark nothing more');
+  w.party.members[4].skills = [];
+
+  // The secret: every hot vent along the ridge with ash on its lip, and near its end one bare, its air
+  // going in; the search there and the first dwarves' shelter behind it, with the ladder's Steel Bow +1.
+  // Walked, waded, climbed or floated, it is never reached but through the vent.
+  const shelter = shut(o6, [24, 25], [25, 25], [27, 25]);
+  ok(shelter.size > 600 && !shelter.reached, `the shelter is shut but for the cold vent: none of O6's ${shelter.size} squares walked, waded, climbed or floated reaches it`);
+  const vents = O6.features!.filter((f): f is Extract<Feature, { kind: 'event' }> => f.kind === 'event' && /^o6_vent\d$/.test(f.id));
+  ok(vents.length === 4 && vents.every((f) => /\bash\b/i.test(f.text) && f.text.includes('lip') && new GameMap(O6).at(f.x, f.y).terrain === 'lava'), 'four vents along the ridge show their fire, and each has ash on its lip');
+  for (const f of vents) see(w, `kilnsheart_o6:${f.id}`);
+  see(w, 'kilnsheart_o6:o6_cold');
+  w.world.travel('kilnsheart_o6', 24, 25, EAST);
+  let cold = false;
+  for (let i = 0; i < 20 && !cold; i++) cold = w.world.search();
+  const inShelter = cold ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(cold && inShelter.every((r) => r.kind === 'moved') && w.world.used('o6_shelter'), 'searched at the cold vent, its back gives, and the first dwarves\' shelter behind it can be walked into');
+  listen(w);
+  const bow = O6.features!.find((f) => f.kind === 'chest' && f.id === 'o6_shelter_chest');
+  ok(bow?.kind === 'chest' && bow.items.includes('steel_bow+1') && bow.x === 27 && bow.y === 25, 'in the shelter, what the first dwarves left: a Steel Bow +1');
+
+  // Out by the south edge over the line into Cairnmoor's O7 (#477): the grass runs on square for square,
+  // no road between, and the moor is named; a company of 17 hears the land is harder, one of 18 no more.
+  const southward = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('kilnsheart_o6', 15, 30, SOUTH);
+    const said: string[] = [];
+    for (let i = 0; i < 4 && w.world.zone?.id !== 'highmoor_o7'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+    ok(w.world.zone?.id === 'highmoor_o7', `the grass runs on south from O6 into Cairnmoor's O7 at ${level}`);
+    return said;
+  };
+  const at17o7 = southward(17), at18o7 = southward(18);
+  ok(out.at(o6.x + 15, o6.y + 31).ch === ',' && out.at(o6.x + 15, o6.y + 32).ch === ',' && at17o7.some((m) => /^High Moor\./.test(m) && m.includes('harder')) && at18o7.some((m) => /^High Moor\./.test(m)) && !at18o7.some((m) => /harder|spare you/.test(m)),
+    `over the line the moor is named and said harder to a company of 17 (${at17o7.join(' / ')}), and only named to one of 18 (${at18o7.join(' / ')})`);
+  w.level = 17;
+
   anvilRift(w, ok);
 
   // The roads south and west (N6 and M6, #467). On down the drove road over the line from N5: the
@@ -639,6 +736,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   ironhide(ok);
   tiefzeche(w, ok);
+  feuerstollen(w, ok);
 };
 
 /**
@@ -1042,7 +1140,7 @@ function anvilRift(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 
   // The first step after it falls, into the cut or back out of it, says the tear has gone quiet and
   // sets the flag; the other square says nothing more. The Hearth counts the Stone, and the Rift's
-  // groups, O5's slaglings and the strays on N3 and N5 come back no more.
+  // groups, O5's slaglings and the strays on N3, N5 and O6 come back no more.
   for (const [dx, dy] of [[0, -1], [0, 1]]) {
     const t = dy < 0 ? w : newWalk(ok);
     t.level = 17;
@@ -1055,8 +1153,8 @@ function anvilRift(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     ok(!t.world.eventsHere().includes(SLAG.quiet), 'and the other square says nothing more');
   }
   ok(w.world.stones === lit + 1, `the Hearth counts the Anvil Stone (${lit} Stones to ${w.world.stones})`);
-  const strays = [...rest, ...O5.encounters!.filter((g) => g.monsters.includes('slagling')), N3.encounters!.find((g) => g.id === 'n3_slaglings')!, N5.encounters!.find((g) => g.id === 'n5_elder')!];
-  ok(strays.every((g) => w.world.ended(g)), `the Rift's groups, O5's slaglings and the strays on N3 and N5 come back no more (${strays.map((g) => g.id).join(', ')})`);
+  const strays = [...rest, ...O5.encounters!.filter((g) => g.monsters.includes('slagling')), N3.encounters!.find((g) => g.id === 'n3_slaglings')!, N5.encounters!.find((g) => g.id === 'n5_elder')!, O6.encounters!.find((g) => g.id === 'o6_elder')!];
+  ok(strays.every((g) => w.world.ended(g)), `the Rift's groups, O5's slaglings and the strays on N3, N5 and O6 come back no more (${strays.map((g) => g.id).join(', ')})`);
   listen(w);
 
   // Outside, the torn ground has closed over: the tear's line and the Stone's are not said, and the
@@ -1252,6 +1350,94 @@ function tiefzeche(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(shut.kind === 'blocked' && w.world.state.x === 13 && bottom.at(14, 3).door === 'door' && bottom.at(14, 3).solid === 'wall' && !bottom.exitAt(14, 3) && !LOCKS.some((l) => l.map.startsWith('deep_mines')),
     `the door does not open, the Foreman dead or alive: it is a wall with a door drawn in it, and no lock (${shut.kind === 'blocked' ? shut.reason : shut.kind})`);
   listen(w);
+}
+
+/**
+ * Feuerstollen (#466): down O6's adit into the tubes and up again; the fire adit at 16, where the
+ * picks broke into a tube, the fire through its floor, the cutters' strongbox in the cooled side tube,
+ * the chamber, the bore no fire made and the groups won; down the steep floor to the deep tubes at 17
+ * and up again, the groups won, the square tube found from the heat that drops where the walls go
+ * square and the plate at its end, which nothing opens; and the Great Salamander won in the deepest
+ * chamber, its hide left, never to come back.
+ */
+function feuerstollen(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const [L1, L2] = ['lava_tubes', 'lava_tubes2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const at = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  /** Whether a map's square is reached from another without passing its secret doors, or swimming, climbing or floating. */
+  const reached = (d: MapDef, from: readonly [number, number], to: readonly [number, number]): boolean => {
+    const m = new GameMap(d), seen = new Set<number>(), todo = [[from[0], from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * m.width + x;
+      if (seen.has(k) || !m.inBounds(x, y) || m.at(x, y).door === 'secret' || m.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen.has(to[1] * m.width + to[0]);
+  };
+  w.level = 16;
+
+  // Down the adit: from under the words it takes the company into the tubes at the adit's foot, facing
+  // in; stepped back onto, the adit's foot takes it up and out under the words, facing away.
+  w.world.travel('kilnsheart_o6', ADIT.x - 1, ADIT.y, EAST);
+  const down = w.world.move('forward');
+  ok(down.kind === 'moved' && w.world.state.mapId === 'lava_tubes' && w.world.state.x === L1.start.x && w.world.state.y === L1.start.y && w.world.state.facing === NORTH && down.messages.length === 1 && down.messages[0] === ADIT.label,
+    `the adit takes the company down into the tubes at its foot, facing in, and says the way's line and no more (${at()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  const off = w.world.move('forward'), back = w.world.move('back');
+  const o6 = w.world.zone;
+  ok(off.kind === 'moved' && back.kind === 'moved' && o6?.id === 'kilnsheart_o6' && w.world.state.x - o6.x === ADIT.x - 1 && w.world.state.y - o6.y === ADIT.y && w.world.state.facing === WEST && back.messages.length === 1 && back.messages[0] === L1.exits![0].label,
+    `and the adit's foot takes it back up, out under the words, facing away from the ridge, with no crossing line said over a way that lands where it left (${at()})`);
+  ok([L1, L2].every((d) => (d.exits ?? []).every((e) => !e.shut && !e.needFlag)), 'nothing shuts a way in Feuerstollen: no flag, no reading');
+
+  // The fire adit: the dwarves' cut, timbered, breaking into a tube of black glassy rock, its floor
+  // showing the fire through it in places and walked over; nothing hangs on its walls.
+  const first = new GameMap(L1);
+  ok(L1.bare === true && first.at(4, 11).terrain === 'lava' && first.passable(4, 11) === 'ok' && first.at(7, 13).terrain === 'dirt' && first.at(7, 11).terrain === 'stone',
+    'the adit\'s floor is earth, the tube\'s is rock with the fire showing through it in places, walked over, and nothing hangs on its walls');
+  for (const id of ['lt1_adit', 'lt1_break', 'lt1_floor', 'lt1_cooled', 'lt1_tracks', 'lt1_chamber', 'lt1_north', 'lt1_slope', 'lt1_climb', 'lt1_bore', 'lt1_rubble', 'lt1_bend']) see(w, `lava_tubes:${id}`);
+  // Its groups, each won at its floor: the beetles in the cooled side tube, the salamanders on the
+  // chamber's fire and in the north tube, and the rock worm at the bore's end.
+  for (const g of L1.encounters!) fight(w, `lava_tubes:${g.id}`);
+  see(w, 'lava_tubes:lt1_pack');
+  const pack = L1.features!.find((f) => f.kind === 'chest' && f.id === 'lt1_pack_chest');
+  ok(pack?.kind === 'chest' && pack.gold === 300 && pack.x === 2 && pack.y === 13, 'in the cooled side tube, under a cutter\'s pack, the strongbox nobody came back for');
+
+  // Down the steep floor to the deep tubes, facing in, and up it again, facing away from the drop.
+  walkThrough(w, 'lava_tubes', 7, 2, NORTH, 'lava_tubes2', 1);
+  ok(w.world.state.x === L2.start.x && w.world.state.y === L2.start.y && w.world.state.facing === SOUTH, `the steep floor goes down to the deep tubes, facing in (${at()})`);
+  w.world.travel('lava_tubes2', L2.start.x, L2.start.y, NORTH);
+  const up = w.world.move('forward');
+  ok(up.kind === 'moved' && w.world.state.mapId === 'lava_tubes' && w.world.state.x === 7 && w.world.state.y === 2 && w.world.state.facing === SOUTH, `and up again to the first level, facing away from the drop (${at()})`);
+  listen(w);
+
+  // The deep tubes (17): the fire under a crust of floor, the choked middle tube, and the groups won.
+  walkThrough(w, 'lava_tubes', 7, 2, NORTH, 'lava_tubes2', 1);
+  w.level = 17;
+  for (const id of ['lt2_in', 'lt2_cross', 'lt2_crust', 'lt2_choked', 'lt2_narrow', 'lt2_east', 'lt2_chamber']) see(w, `lava_tubes2:${id}`);
+  for (const g of L2.encounters!.filter((e) => e.id !== 'lt2_great_salamander')) fight(w, `lava_tubes2:${g.id}`);
+
+  // The secret: the heat drops where the tube's walls go square; searched there, it gives on a tube
+  // running on square and straight, its floor laid even, and at its end a plate that nothing opens.
+  ok(!reached(L2, [L2.start.x, L2.start.y], [2, 12]), 'the square tube is reached only through the opening where the walls go square');
+  see(w, 'lava_tubes2:lt2_square');
+  w.world.travel('lava_tubes2', 2, 10, SOUTH);
+  let opening = false;
+  for (let i = 0; i < 20 && !opening; i++) opening = w.world.search();
+  const along = opening ? [w.world.move('forward'), w.world.move('forward'), w.world.move('forward')] : [];
+  ok(opening && along.every((r) => r.kind === 'moved') && w.world.used('lt2_cut') && w.world.used('lt2_plate'), 'searched where the walls go square, it gives, and the square tube behind can be walked to its end');
+  const deep = new GameMap(L2);
+  const plate = L2.features!.find((f) => f.kind === 'chest' && f.id === 'lt2_plate_chest');
+  ok(plate?.kind === 'chest' && plate.gold === 600 && deep.at(2, 12).terrain === 'floor' && deep.at(2, 9).terrain === 'stone', 'its floor laid even where the tubes\' is rock, and before the plate the picks worn to stubs and 600 gold');
+  const ahead = w.world.move('forward');
+  ok(ahead.kind === 'blocked' && deep.at(2, 14).door === 'door' && deep.at(2, 14).solid === 'wall' && !deep.exitAt(2, 14) && !LOCKS.some((l) => l.map.startsWith('lava_tubes')),
+    `the plate does not open: a wall with a seam drawn in it, and no lock (${ahead.kind === 'blocked' ? ahead.reason : ahead.kind})`);
+  listen(w);
+
+  // The Great Salamander in the deepest chamber, won at the deep tubes' floor: it leaves its hide,
+  // carried against fire, and never comes back.
+  fight(w, 'lava_tubes2:lt2_great_salamander');
+  const boss = L2.encounters!.find((e) => e.id === 'lt2_great_salamander')!;
+  ok(w.party.bag.includes('salamander_hide') && !!item('salamander_hide').resist?.includes('fire') && !boss.respawn && !!boss.slainText?.includes('hide'),
+    'the Great Salamander sinks into its fire and leaves its hide, carried against fire; it never comes back');
 }
 
 /**
