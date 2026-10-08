@@ -25,6 +25,7 @@ import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 import { QUESTS } from './quests.ts';
+import { CHAPTER } from './chapter.ts';
 
 export const AREA = {
   id: 'kilns' as const,
@@ -34,8 +35,8 @@ export const AREA = {
   items: ITEMS,
   // #56's four, 33 to 36 (#471).
   quests: QUESTS,
-  // The Anvil Stone, the act's first chapter, is #470's.
-  chapter: undefined,
+  // The Anvil Stone, the act's first chapter (#470).
+  chapter: CHAPTER,
   // The fourth ranks' asks in the Tiefzeche, the Lanterns' and the Wardens' (#439).
   guilds: GUILDS,
   // The dwarf country's: dry, hot in the summer, snow on the Fells' tops in the winter, and the

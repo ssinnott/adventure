@@ -21,13 +21,14 @@ Gluthutte's box (#463, §4.8), the smelter in the charcoal woods; N6 and M6, the
 (#467, §4.12), M6 Kilnmouth's first; O5, the Anvil Stone's box (#464, §4.9), and through its tear
 the Anvil Stone's Rift (#465, §4.10), its second dungeon; L6, Kilnhaven's box (#468, §4.13), and
 with it its second town, Kilnhaven, behind L6's gate (#469, §4.14); and O6, Feuerstollen's box
-(#466, §4.11), with the tubes under its ridge, its third dungeon. Its four side quests are in the
-log, their people on those maps (#471, §6). Eleven of its monsters and its
+(#466, §4.11), with the tubes under its ridge, its third dungeon. Its chapter of the one quest, The
+Anvil Stone, is written and walked (#470, §5), and its four side quests are in the log, their
+people on those maps (#471, §6). Eleven of its monsters and its
 twelve rooms are drawn (§3), and the
 rest is to build. Its content is `src/content/areas/kilns/` (maps, monsters, items, rooms, climate,
 its part of the world map, its walkthrough and its guild quests in `guilds.ts`, #439; its chapter of
-the one quest, The Anvil Stone, to come in `chapter.ts`; and its side quests in `quests.ts`) and
-its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
+the one quest, The Anvil Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its
+businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
 `kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
 the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass
 (§10, NAMES §3).
@@ -207,7 +208,7 @@ country under the vent ridge, with the tubes below it (#466); and the four side 
   hills climbing to the crag under the rim, no road on it. In the crag's face the cave where the
   first ore was found: Hartmut at its mouth, who teaches the Barbarian's second prestige, Ironhide
   (#19), and inside it the wall the dwarves call the first blessing, which a reader reads KEEP CLEAR
-  OF THE DOORS, with a scholar of Helmstow copying it (#56's 34, his words only). Below the crag the
+  OF THE DOORS, with a scholar of Helmstow copying it (The Primer, #56's 34, #471). Below the crag the
   first ore-finders' spoil and their two adits; the camp in the crag's lee, the cairn on the crest
   and the lookout south from the Fells' top to Anvilhall's smoke. Three groups: fire beetles on the
   spoil, a rock worm in the west adit and a pair in the one under the rim. Behind a blank face in the
@@ -641,13 +642,14 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   an inscription: SECTION 7. over the gate, BERTHS. over the inn, SICKBAY. over the mine-surgeon's,
   MUSTER STATION. ALL HANDS. over the old working and the verse over the hall. The side quests'
   people are #471's (§6), on the court's free squares: the oldest miner on the bench by the inn's
-  door, who sings the doors' last verse to a company that has heard the three; the crust-bearer on
+  door, who sings the doors' last verse to a company that has heard the third; the crust-bearer on
   the inn's step, once his mother's ring has brought him up; and the Regent's scholar on the great
   hall's steps between two of the thane's guard, once he is taken to the thane. The walkthrough
   rests, buys each class its step at the forge, trains a member of 18 to 19, hears the verse read
   both ways, teaches a Lantern Linguist and puts the thane's choice both ways. The town pays nothing
-  of its own: its 300 is its quests', the chapter's and #471's. Density 100% within 7 steps, the
-  furthest 4, five signs among its 25 points with #471's three.
+  of its own, and the chapter pays nothing (#470); its 300 was to be the side quests' (#471), which
+  pay in kind (§8): the thane's 500 gold for the scholar, and the oldest miner's verse. Density 100%
+  within 7 steps, the furthest 4, five signs among its 25 points with #471's three.
 
 ### 4.5 N2, Erzkamm (#460): country, band 16–17
 
@@ -1287,8 +1289,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   rests, buys each class its step at the smith, finds the smith open to a company that took the
   Stone, trains a member of 18 to 19, hears the manifests read, the dwarf's word and Tallis's man,
   takes the ferry to Saltmouth's quay and back and the coach to Rime Lodge's coach house and back,
-  and finds the ship's master with nothing to sell. The town pays nothing of its own: its 300 is
-  #471's and the chapter's, and #471 pays it in kind (§8). Density 100% within 7 steps, the
+  and finds the ship's master with nothing to sell. The town pays nothing of its own, and the
+  chapter pays nothing (#470); its 300 was to be the side quests' (#471), which pay in kind (§8):
+  Wiebe's 800 gold for the parcel. Density 100% within 7 steps, the
   furthest 3, two signs among its 27 points.
 
 ### 4.15 O3, O4, M4 and M5, the country behind the road (#474): country, band 17–18, parked
@@ -1342,6 +1345,23 @@ order: the manifests before the verse. The act's one lock is Coldmere's (#440).
 
 The walkthrough plays it at 16, 17 and 18, in order, both ways at the thane, and with Kilnhaven
 reached by ferry first.
+
+**As built** (#470, 8 October): `chapter.ts`, joined after the Wall and before the Ring. It begins on
+M3, the Fells' way in from Lanternwood, or at Kilnhaven to a company landed there first (§9). Its
+entries, in story order: the road up into the Fells, M3 walked; the verse read (`anvil_verse_read`);
+the Stone bought or taken, an entry each (`anvil_bought`, `anvil_taken`); the door, its footprints and
+its knot (`deep_mines3:dm3_door`); the tear closed (`q_anvil_closed`); the manifests (`manifests_read`);
+and the corridors south (`kh_dwarf_met`). Its goals, furthest along first: south down the drove road
+onto the moor; Kilnhaven, after the Stone; the Stone, after the door; the door, after the thane; the
+thane, after the verse; Anvilhall, from Kilnhaven or from M3; and the harbourmaster, to a company
+landed at Kilnhaven. It is done on the moor's first map, `highmoor_n7`, with the Stone bought or
+taken, its tear closed and Kilnhaven's two heard, where the Ring begins on the drove road out of the
+Kilns' hills; the verse and the door are steps on the way and lock nothing. The Fells' step is at
+Anvilhall, the heart's at the clean corridor, the Stone and N6's road south, and Kilnmouth's at
+Kilnhaven. The walkthrough plays it four times, in order and with Kilnhaven reached by ferry from
+Saltmouth first, each with the Stone bought and with it taken: each reads the same but for the road
+up from Lanternwood, which the ferry's company never walked, ends once on the moor, and the Hearth
+counts the Stone either way. It pays nothing (§8).
 
 ## 6. Side quests
 
@@ -1514,13 +1534,13 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   Tiefzeche (#439, §6) add 800 xp a member to a clear already over its ask: 26,928 of the 13,067,
   2.06 times. All ten boxes are built. The clear has been past 1.4 times the ask, about 18,300, the
   line #439's 10 held the three boxes to, since the Rift, and O6 with its tubes is 6,127 for the
-  brief's 1,500; no group is cut for it (§9, #466's 9). Anvilhall pays nothing of its own (#459): its
-  300 is the chapter's and #471's. Nor does Kilnhaven (#469), which holds no group: its 300 is
-  #471's hand-ins and the chapter's, and the clear stands at 26,928 with the asks. The side quests
-  (#471) pay in kind and a token: The Primer's and A Crown to Order's questions 900 xp each
-  whichever the answer, 300 a member between the four of the 800 planned; and the son's 300 gold and
-  Wiebe's 800, the thane's 500 being one answer's. A clear gives 27,228 xp a member and 14,707 gold,
-  2.08 times the ask (§9, #471's 1).
+  brief's 1,500; no group is cut for it (§9, #466's 9). The chapter pays nothing (#470): the clear is
+  past its ask without it. Anvilhall pays nothing of its own (#459), nor does Kilnhaven (#469), which
+  holds no group: the 300 each was to have from the side quests (#471) is paid in kind. The clear
+  stands at 26,928 with the asks. The side quests pay in kind and a token: The Primer's and A Crown
+  to Order's questions 900 xp each whichever the answer, 300 a member between the four of the 800
+  planned; and the son's 300 gold and Wiebe's 800, the thane's 500 being one answer's. A clear gives
+  27,228 xp a member and 14,707 gold, 2.08 times the ask (§9, #471's 1).
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1554,9 +1574,10 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   carries none. With it a clear's gold is 11,407, and 12,007 with the asks. O6 and its tubes hold
   1,600 (#466), none on a monster: O6's 700 lie in its cairn (250) and the first dwarves' shelter
   (450), the first level's 300 in the cutters' strongbox and the second's 600 before the plate. With
-  them a clear's gold is 13,007, and 13,607 with the asks.
+  them a clear's gold is 13,007, and 13,607 with the asks: 1.72 times the training's 7,920.
   Anvilhall holds none (#459): its forge sells the step at the prices above, and its thane takes the
-  6,000. Kilnhaven holds none either (#469): its smith sells the step at a quarter more.
+  6,000. Kilnhaven holds none either (#469): its smith sells the step at a quarter more. Nor does the
+  chapter (#470).
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman,
@@ -2568,9 +2589,9 @@ Decided by delegate for #469, each the owner's to overturn:
     list price, as the hold's stores do, and the chapel says the temple screen's own words, as the
     mine-surgeon's does.
 12. **The town holds no group and pays nothing of its own:** §4.14 names no group, and its 300 is
-    #471's hand-ins and the chapter's, as Anvilhall's is (#459's 7). The clear stands at 26,928 xp a
-    member and 13,607 gold with O6, the Rift and #439's asks, past the curve's 13,067 and 7,920;
-    nothing was cut, since nothing was added.
+    #471's hand-ins, the chapter paying nothing (#470), as Anvilhall's is (#459's 7). The clear
+    stands at 26,928 xp a member and 13,607 gold with O6, the Rift and #439's asks, past the curve's
+    13,067 and 7,920; nothing was cut, since nothing was added.
 13. **Tallis's man is here with his words and nothing more,** as the issue's People ask: Wiebe waits
     on the street for a parcel up from the smelter, as Eckhart and Kerensa stand at it (#463's 5),
     and the crown, the throne and the thane are never named. The choice put to a company, its
@@ -2594,6 +2615,24 @@ Decided by delegate for #469, each the owner's to overturn:
     its coachman back to the yard. The gate's `landings` now count the lodge's two ways out onto M9
     and hold the groups nearest them to the gentlest; the pike beside the lake door's landing, which
     #487 asked a look at, is won every time at 18 with the lynx, and nothing moves.
+
+Decided by delegate for #470, each the owner's to overturn:
+
+1. **Begun on M3 or at Kilnhaven, not on the Wall's end.** The Wall's last line sends the company
+   home to Helmstow, whose change is #157's; a goal east the moment it ends would say otherwise.
+2. **Done on the moor,** as the Ring is done at Loch Fada, with the Stone bought or taken, its tear
+   closed and Kilnhaven's two heard. The verse and the door are steps, not locks (#434's 4); the
+   thane must be answered, which costs nothing taken.
+3. **The dwarf's word goes with the manifests** in Kilnhaven's step (#469's 14 made it an entry): the
+   last goal points south because he says the corridors run south, and so waits on him.
+4. **The thane's choice is two entries,** one written for each company; the Stone's entry names
+   neither, since the tear may be closed before the thane is answered (#465's 2).
+5. **The door's goal names the clean corridor,** the lowest level's own name, as the walkthrough asks
+   a goal to name its place, and says nothing of the door.
+6. **The ferry's company has no road up from Lanternwood written,** never having walked it; its
+   journal is otherwise the same, the manifests read first and written in story order.
+7. **It pays nothing:** the clear is far past its ask (§8). Cairnmoor's chapter keeps its start, the
+   moor, where this one ends; only its comment changes.
 
 Decided by delegate for #471, each the owner's to overturn:
 
@@ -2619,8 +2658,8 @@ Decided by delegate for #471, each the owner's to overturn:
     (docs/areas/rimewater.md §4.6), and nothing says so. The hymn pays its verse and no xp.
 11. **The oldest miner is in Anvilhall only,** by the inn, not at N4's camp by day as N4's brief
     had him (#461's 6 left him here). The son, the miner and the scholar keep the brief's names.
-12. **Nothing in `tools/tests/quests.ts` was owed to #471:** its `PLANNED` and `CHAPTER_OWED` are
-    #470's, so no entry is dropped. The ids: `crust`, `primer`, `crown`, `hymn`.
+12. **Nothing in `tools/tests/quests.ts` was owed to #471:** what it owed was #470's (`PLANNED`,
+    `CHAPTER_OWED`), so no entry of #471's is dropped. The ids: `crust`, `primer`, `crown`, `hymn`.
 
 ## 10. Names
 

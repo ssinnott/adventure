@@ -10,7 +10,7 @@ import type { Chapter } from '../../../game/quests.ts';
 export const RING_SPOKE = 'q_ring_spoke';
 
 export const CHAPTER: Chapter = {
-  // Begun on the moor: the Kilns' chapter (#470) is not written, so nothing of it is asked.
+  // Begun on the moor, where the Kilns' chapter (#470) ends: nothing of it is asked.
   id: 'ring',
   title: 'The Ring',
   start: { visited: 'highmoor_n7' },
