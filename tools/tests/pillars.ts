@@ -384,9 +384,6 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
  * fails once it agrees, so it is dropped here.
  */
 const EDGES_OWED: Record<string, readonly string[]> = {
-  // O8's north edge is heather square for square under O7's south edge, which re-draws the atlas's
-  // line of the tarn's water along its foot (#477's 9): once O7 is laid the squares are its seam.
-  '#477': ['highmoor_o8 1,0', 'highmoor_o8 2,0', 'highmoor_o8 3,0', 'highmoor_o8 4,0'],
 };
 
 /**
