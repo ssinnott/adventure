@@ -9,7 +9,7 @@
 // square to square to its head and the notch, taken down onto M9 once that is built (NOTCH); Carn
 // Dubh's door, shut until the Cairns are built (DOOR); the milestone at the head; the hermit, who knows
 // the oldest cairn; the box's groups won at its floor, the wights cursing; and the coach's strongbox,
-// found from the coach's open door.
+// found from the coach's open door. The bog (O8, #478), off the road, is walked apart (theBog).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
 import { NORTH, SOUTH, EAST } from '../../../game/types.ts';
@@ -181,4 +181,87 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const strongbox = N8.features!.find((f) => f.kind === 'chest' && f.id === 'n8_strongbox');
   ok(strongbox?.kind === 'chest' && strongbox.items.includes('steel_bow+1') && strongbox.gold === 970 && strongbox.x === 8 && strongbox.y === 9, 'in the strongbox, the fare for the lodge and a second Steel Bow +1');
+  theBog(ok);
 };
+
+/**
+ * The bog (O8, #478), off the road: over the seam from N8's heather, High Moor named, the tarn's
+ * stream clipping the corner; the peat-cutter at his hut, who dug up the body laid out beside it, and
+ * the stonecutter at his fire under the tors, who cuts their faces (#56's 38 and 39, #482); a tor's
+ * face seen by day and not by night; the box's groups won at its floor, every one by night: the bog
+ * bodies up out of the body's cutting, two flights of lights, the hounds, and on the tors two trolls
+ * and the ravens, mended each round unless burned (#537); and the hoard in the cutting the peat-cutter
+ * stopped at, found from its black peat, the lights rising out of it by night.
+ */
+function theBog(ok: (cond: boolean, msg: string) => void): void {
+  const w = newWalk(ok);
+  w.level = 18;
+  for (const m of w.party.members) m.level = 18;
+  const O8 = MAP_DEFS.find((d) => d.id === 'highmoor_o8')!;
+  const out = buildMaps()[OUTDOORS], o8 = out.zones.find((z) => z.id === 'highmoor_o8')!, n8 = out.zones.find((z) => z.id === 'cairnfield_n8')!;
+  const onO8 = (x: number, y: number): boolean => x >= o8.x && x < o8.x + o8.w && y >= o8.y && y < o8.y + o8.h;
+  const day = Math.floor(w.world.state.minutes / (24 * 60)) * 24 * 60;
+  const at = (hour: number, x: number, y: number): string[] => { w.world.state.minutes = day + hour * 60; w.world.travel('highmoor_o8', x, y); return w.world.eventsHere(); };
+  const byNight = (when: unknown): boolean => JSON.stringify(when) === JSON.stringify({ hours: 'night' });
+
+  // Over the seam from N8's heather at 31,10 onto O8's 0,10, where High Moor is named; the tarn's
+  // stream at the corner, O8's 0,0 water as N8's 31,0 is.
+  w.world.state.minutes = day + 12 * 60;
+  w.world.travel('cairnfield_n8', 30, 10, EAST);
+  const into: string[] = [];
+  for (let i = 0; i < 3 && w.world.zone?.id !== 'highmoor_o8'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') into.push(...r.messages); }
+  ok(w.world.zone?.id === 'highmoor_o8' && w.world.state.x === o8.x && w.world.state.y === o8.y + 10 && into.includes('High Moor.'),
+    `the heather crosses from N8's 31,10 onto O8's 0,10, and High Moor is named (${into.join(' / ')})`);
+  ok(out.at(o8.x, o8.y).ch === '~' && out.at(n8.x + 31, n8.y).ch === '~', 'the tarn\'s stream clips O8\'s corner at 0,0 and runs on into N8\'s 31,0');
+
+  // The peat-cutter at his hut, the body he dug up laid out beside it and the cutting it lies down in
+  // again, where by night the bog bodies are up; and the stonecutter at his fire under the tors.
+  const person = (name: string): Person => O8.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const talk = (p: Person): string => { w.world.travel('highmoor_o8', p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
+  const cutter = talk(person('A peat-cutter')), mason = talk(person('A stonecutter'));
+  ok(cutter.includes('rope round his neck') && cutter.includes('a ring') && cutter.includes('stopped at'), 'the peat-cutter at his hut dug the body up with a rope round its neck and a ring, and stopped at a cutting out east');
+  ok(mason.includes('has a face') && mason.includes('The last is mine'), 'the stonecutter at his fire under the tors cuts the tors\' faces, and the last is his');
+  const ev = (id: string) => O8.features!.find((f) => f.kind === 'event' && f.id === id)!;
+  const body = ev('o8_body'), lies = ev('o8_lies'), bodies = O8.encounters!.find((g) => g.id === 'o8_bodies')!;
+  ok(O8.rows[body.y][body.x + 1] === 'B' && O8.rows[lies.y][lies.x] === ':' && Math.abs(bodies.x - lies.x) + Math.abs(bodies.y - lies.y) <= 2 && byNight(bodies.when),
+    'the body lies beside the peat-cutter\'s hut, and by night the bog bodies are up out of the cutting it lies down in again');
+
+  // A tor's face: not seen by night, seen by day.
+  const face = (said: string[]): boolean => said.some((m) => m.includes('a face is cut'));
+  const dark = at(23, 12, 26), noon = at(12, 12, 26);
+  ok(!face(dark) && face(noon), 'by night the first tor shows no face; by day a face is cut in it');
+
+  // The box's groups, each won at its floor, every one by night: the bog bodies, two flights of
+  // lights over the bog, the hounds on the hills, and on the tors two trolls and the ravens, who mend
+  // each round unless burned (#537).
+  for (const g of O8.encounters!) fight(w, `highmoor_o8:${g.id}`);
+  const trolls = O8.encounters!.find((g) => g.id === 'o8_trolls');
+  ok(O8.encounters!.every((g) => byNight(g.when)) && O8.encounters!.filter((g) => g.monsters.every((m) => m === 'bog_light')).length === 2
+    && trolls?.monsters.filter((m) => m === 'tor_troll').length === 2 && trolls.monsters.includes('raven') && !!MONSTERS.find((m) => m.id === 'tor_troll')?.regen,
+  'by night two flights of lights over the bog, and on the tors two trolls and the ravens, the trolls mending unless burned');
+
+  // The secret: the cutting the peat-cutter stopped at, its peat black, and by night the lights rising
+  // out of it; the search there and the hoard behind its face. Walked, waded, climbed or floated, it is
+  // never reached but through the face.
+  const rising = (said: string[]): boolean => said.some((m) => m.includes('a light comes up'));
+  const still = at(12, 16, 12), lit = at(23, 16, 12);
+  ok(!rising(still) && rising(lit) && w.world.used('o8_rising'), 'by day the cutting is still; by night the lights rise out of it and drift north to the ring');
+  const steps = [[1, 0], [-1, 0], [0, 1], [0, -1]], shut = new Set<number>(), todo = [[o8.x + 17, o8.y + 12]];
+  while (todo.length) {
+    const [x, y] = todo.pop()!, k = y * out.width + x;
+    if (shut.has(k) || (x === o8.x + 18 && y === o8.y + 12) || !onO8(x, y) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+    shut.add(k);
+    for (const [dx, dy] of steps) todo.push([x + dx, y + dy]);
+  }
+  ok(shut.size > 900 && [19, 20].every((x) => !shut.has((o8.y + 12) * out.width + o8.x + x)), `the hoard is shut but for the cutting's face: none of O8's ${shut.size} squares walked, waded, climbed or floated reaches it`);
+  w.world.state.minutes = day + 12 * 60;
+  see(w, 'highmoor_o8:o8_cutting');
+  w.world.travel('highmoor_o8', 17, 12, EAST);
+  let gives = false;
+  for (let i = 0; i < 20 && !gives; i++) gives = w.world.search();
+  const dug = gives ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(gives && dug.every((r) => r.kind === 'moved') && w.world.used('o8_gold'), 'searched at the black cutting, its face gives, and the hoard behind it can be reached');
+  listen(w);
+  const hoard = O8.features!.find((f) => f.kind === 'chest' && f.id === 'o8_hoard');
+  ok(hoard?.kind === 'chest' && hoard.items.includes('seax+1') && hoard.gold === 1140 && hoard.x === 20 && hoard.y === 12, 'in the cutting, the hill folk\'s grave-gold and a second Seax +1');
+}
