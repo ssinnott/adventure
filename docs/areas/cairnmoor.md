@@ -13,13 +13,13 @@ box, and the briefs. Its work is filed under #437 (Phase 1.3, #431): the doc (#4
 drawings (#483) and the country behind, parked (#484). Figures are measured on main at `6032251`
 (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Its first two boxes are built, N7, the road up onto the moor (#476, §4.2), which lists the area, and
-N8, the Cairnfield's box (#479, §4.5); its seven monsters are drawn (§3), and the rest is to build.
-Its content is `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of the world
-map and its walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, and its side
-quests in `quests.ts`, to come); it has no businesses, so no rooms. Its ids: the area `cairnmoor`,
-its zones `highmoor` and `cairnfield`, the dungeon `cairns` (the id stays under the new name,
-NAMES §3).
+Its first three boxes are built, N7, the road up onto the moor (#476, §4.2), which lists the area,
+N8, the Cairnfield's box (#479, §4.5) and O7, Fionnlios's box (#477, §4.3); its seven monsters are
+drawn (§3), and the rest is to build. Its content is `src/content/areas/cairnmoor/` (maps,
+monsters, items, climate, its part of the world map and its walkthrough; its chapter of the one
+quest, The Ring, in `chapter.ts`, and its side quests in `quests.ts`, to come); it has no
+businesses, so no rooms. Its ids: the area `cairnmoor`, its zones `highmoor` and `cairnfield`, the
+dungeon `cairns` (the id stays under the new name, NAMES §3).
 
 ---
 
@@ -30,9 +30,9 @@ two zones:
 
 | Zone | Band | Squares | Built |
 |---|---|---|---|
-| High Moor | 18–19 | 4,105 | N7 |
+| High Moor | 18–19 | 4,105 | N7, O7 |
 | The Cairnfield | 19–20 | 3,587 | N8 |
-| The area | 18–20 | 7,692 | N7, N8 |
+| The area | 18–20 | 7,692 | N7, N8, O7 |
 
 Squares are land, without the shallows and the rivers. The area is 7,692 squares, about 7.5 zone
 maps (EXPANSION §1 has 7.5), the smallest of the act, and 6,779 of them a company could walk: the
@@ -56,7 +56,11 @@ Foot's; and about 120 change hands elsewhere on the world, none on a built map. 
 walks to 4,635 squares and the Cairnfield to 2,938; Kilnmouth keeps L7, K7 and 11 squares of M7's
 coast. Laying N8 (#479) whole in the Cairnfield moves 1,007 more: High Moor gives the Cairnfield
 638, Loch Fada 226 and Glacier Foot 35, and about 110 change hands elsewhere on the world, none on
-a built map. With N8 High Moor walks to 3,994 squares and the Cairnfield to 3,838.
+a built map. With N8 High Moor walks to 3,994 squares and the Cairnfield to 3,838. Laying O7 (#477)
+whole in High Moor moves 76 more: High Moor gives the Cairnfield 9 and takes 3 of the heart's, and
+64 change hands elsewhere on the world, none on a built map; O7's own water, the tarn and its
+streams, takes 15 more of High Moor's squares than the atlas's shallows did. With O7 High Moor
+walks to 3,973 squares and the Cairnfield to 3,847.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Cairnmoor is the M to P columns from row 6
 to row 9. The land worth a map is six boxes: N7 and N8 down the drove road; O7 and O8, the ring and
@@ -104,7 +108,8 @@ crosses it in snow (STORY; MONSTERS §7.2).
 
 ## 3. What is built
 
-Two boxes, N7 the area's first, which lists the area (#476), and N8, the Cairnfield's (#479):
+Three boxes, N7 the area's first, which lists the area (#476), N8, the Cairnfield's (#479) and O7,
+Fionnlios's (#477):
 
 - **The road up onto the moor** (N7, `highmoor_n7`, core, band 18; #476): the drove road on from the
   Kilns' N6 over the low hills, past the milestone where they give out and the drovers' shelter at
@@ -131,21 +136,33 @@ Two boxes, N7 the area's first, which lists the area (#476), and N8, the Cairnfi
   camp in the notch's lee. Five groups: ravens among the first cairns, bog bodies out of the pool,
   cursing cairn wights at the open cairn and at the Watcher's grave and moor hounds at the road's
   head by night.
+- **Fionnlios's box** (O7, `highmoor_o7`, core, band 18–19; #477): the peat-cutter's track on from
+  N7 east and up onto a rise of rock to the Stone Ring, twelve stones standing and a thirteenth
+  fallen across the east gap, a camp at its heart and the ground inside bare of snow; there by night
+  the voice that asks the crew to report, once. Under the fallen stone a hollow (§4.3). North-east
+  of the ring the Watcher's Hut, a stone block with a tally cut in its lintel, and the Watcher
+  beside it; south of the ring the tarn, the piper's fire on its north shore and a spiral stone.
+  Round them heather and hills under the first snow, a cutter's bothy and a tor of grey slabs with a
+  face in it by day. Four groups: ravens on the cairn by the track, four bog lights with a moor
+  hound at their front by the way in at night, bog bodies in the marsh at the tarn's head and a tor
+  troll alone on the tor by night.
 
 Its atlas rows are charted in `src/content/areas/cairnmoor/atlas.ts`, the area's own `atlas` since N7
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
 the Kilns' were before their first box (docs/areas/kilns.md §3): the zones with their bands (High
-Moor 18–19, with N7 laid on it, its crossing line said in its own words and its lines held by seeds,
-§1, §9; the Cairnfield 19–20, with N8 laid on it, §1), Carn Dubh's two plates at 19–20 and the
-sites, the Stone Ring at 462,214, the Cairns at 430,240 and the Watcher's Hut at 466,208, planned.
-Its links are the drove road from the Kilns, the Cairns' way in and the drove road down to Longmere.
+Moor 18–19, with N7 and O7 laid on it, its crossing line said in its own words and its lines held
+by seeds, §1, §9; the Cairnfield 19–20, with N8 laid on it, §1), Carn Dubh's two plates at 19–20 and
+the sites, the Stone Ring at 462,214 and the Watcher's Hut at 466,208 on O7 and the Cairns at
+430,240, planned. Its links are the drove road from the Kilns, the Cairns' way in and the drove road
+down to Longmere.
 
 Its row on the curve and its share of the act's gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 18–20, next 20, window 4,000, owed to #437 while the area is built
-box by box, with N7's and N8's 3,884 xp a member and 2,920 gold the clear's floor (§8). O7's Banded
-Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of the area (`ITEMS_AHEAD`,
-`src/content/index.ts`) as the Kilns' step was, until N7 took the table into its Area, and owed to
-#477 until placed; N7's cache holds a second of the Kilns' Forge Hammer +1 (§4.2). Of the systems it
+box by box, with N7's, N8's and O7's 5,687 xp a member and 4,530 gold the clear's floor (§8). O7's
+Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of the area
+(`ITEMS_AHEAD`, `src/content/index.ts`) as the Kilns' step was, until N7 took the table into its
+Area, and owed to #477 until it was placed, in O7's hollow (§4.3); N7's cache holds a second of the
+Kilns' Forge Hammer +1 (§4.2). Of the systems it
 waits on, the rest of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration
 and curse (#537), the bot that plays them (#541) and the drove road's coach (#539) are built, and
 docs/SLICE.md and docs/MONSTERS.md say what each does; the coach runs once Kilnhaven (#469) and Rime
@@ -158,14 +175,14 @@ wraith's and the Tor Troll on the ogre's. Their defs are in
 `src/content/areas/cairnmoor/monsters.ts`, the area's own since N7 lists it (`AHEAD`,
 `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the first box whose brief places it (§4): N7 places the ravens, the bog
-bodies and the hounds (#476) and N8 the wights (#479); the lights and the troll are owed to O7
-(#477) and the King to Carn Dubh (#480). §9 has the decisions.
+bodies and the hounds (#476), N8 the wights (#479) and O7 the lights and the troll (#477); the King
+is owed to Carn Dubh (#480). §9 has the decisions.
 
 ## 4. What is still to build
 
-All of it but N7 and N8, built (#476, #479; §4.2, §4.5): 7,692 squares of land, 6,779 of them
-walkable, the plan's figures (§1). On the grid the plan is four boxes and a dungeon, with two boxes
-behind, and the four hold 3,945 of those squares:
+All of it but N7, N8 and O7, built (#476, #479, #477; §4.2, §4.5, §4.3): 7,692 squares of land,
+6,779 of them walkable, the plan's figures (§1). On the grid the plan is four boxes and a dungeon,
+with two boxes behind, and the four hold 3,945 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -329,6 +346,46 @@ settled in its issue, and what the Kilns teach changes them.
   fires once; two trainers at camps; a ring older than the Stones.
 - **Finds.** The hollow's plus, the ladder's: a Banded Staff +1 (#535).
 - **Pay.** About 1,600 xp a member.
+- **As built** (#477, 8 October): the brief's places, with its four named groups for its "eight",
+  laid whole in High Moor at band 18–19 (§1, §9). The peat-cutter's track comes on from N7's 31,22
+  onto O7's 0,22 (456,212) and runs up the rise, in dirt through the heather, to the ring's west gap
+  at 3,24. Snow lies over the moor, grey ash on it in the north, blown south off the Kilns: a hare
+  gone white, a ewe's bones with the snow trodden flat round them, a cross of rushes on a stake,
+  small stones set upright leading south, a cutter's bothy with its roof fallen in (a building,
+  19,7) and, under the rim, snow without a print in it. On the rise's shoulder at 3,17 a cairn holds
+  260 gold and a Sapphire Vial, a black feather in every chink, and eight ravens sit by it at 2,17.
+  From 1,22 the ring is seen on its rise, and by night with lights going round it; four bog lights
+  with a moor hound at their front keep 1,23. Fionnlios is twelve stones of rock standing round the
+  camp at 6,24, open at 6,21 north, 3,24 west and 6,27 south, the thirteenth fallen across the east
+  gap at 9,24; inside, short turf and no snow, though it lies all round. By night at the camp the
+  voice asks the crew to report, once. At 8,24 no snow lies and by the fallen stone not even frost
+  (`o7_bare`); searched there the stone lifts, and the hollow under it, 10,24, shut in the rise's
+  rock, holds the first Watchers' tallies, a Banded Staff +1 (`banded_staff+1`, the caster's) and
+  1,350 gold. North-east of the ring the Watcher's Hut is a stone block at 10,18, a camp at its
+  door, 9,18, and a tally cut along its lintel with a gap a hand wide near the end; the Watcher sits
+  on a bench against its wall at 11,19, and a flat stone at 16,18 is scratched with his count of the
+  lights. South of the ring the tarn, rows 27 to 30 and columns 8 to 18, with the piper at 9,27, his
+  peat fire a camp at 10,27 on its north shore, a worn spiral stone at 14,26 (personality) and, from
+  the far shore at 8,31, the ring dark on its rise. The tarn's stream goes out west along row 30 to
+  the corner, 0,31, and a burn comes in from the rim's foot through the marsh at its head. Reeds
+  stand in black water there with the peat torn open at 19,26; four bog bodies wait at 21,28.
+  South-east the hills rise to a tor of grey slabs at 25,24, a face in its top slab by day and by
+  night a tor troll alone.
+  - **Seams.** West, N7's 31,22 to O7's 0,22 for the track (dirt) and N7's 31,31 to O7's 0,31 for
+    the tarn's stream (O8's 0,0 too); the two edges meet square for square. North, O6 (#466, not on
+    main yet): O7's row 0 is the hills and the Kilns' grass, square for square with the south edge
+    O6's branch draws but for the corner (O6's 31,31 is rim, void in the outdoors; O7's 31,0 is
+    hills), no road; the outdoors check pins the edge, to be re-pinned if O6 changes its own. East,
+    P7, cut: hills down column 31 and the rim's shoulder at 31,30, 30,31 and 31,31 (§9, #477's 10).
+    South, O8 (#478): heather, marsh and hills with the stream out at 0,31, no road.
+  - **Measured.** A company at 18 wins every fight and manages 8.88 fights to a rest, inside the
+    aim, with none of its days ending in a fight broken off; it walks High Moor's road, now on to
+    the lights at the ring, every time; each of the four groups is won ten fights in ten. O7 pays
+    1,803 xp a member (the ravens 476, the lights 601, the bog bodies 475, the troll 251) and 1,610
+    gold. Two under, at 16, it wins every fight too, owed to #18 as N7's and N8's are. Density 99.3%
+    within 8 steps and the furthest 10, with no sign among its 31 points. The curve's rank
+    correlation is 0.32, the lights nearest at 2 steps (level 18.2) and the troll the hardest at 31
+    (level 19). It claims the lights and the ring as new (§7).
 
 ### 4.4 O8, the bog (#478): country, band 19
 
@@ -547,7 +604,8 @@ snow lying and ice underfoot (#536); regeneration and curse (#537); a voice that
 monster; a monster that is a landmark by day; a crossing met stopped on the road (#539). Its
 landmarks: a stone ring, a cairnfield, a tor, a tarn. The area's `novel` claims each as a box places
 it, since the check asks that what is claimed be used: snow underfoot with N7 (#476), ice and curse
-with N8 (#479), the rest with theirs.
+with N8 (#479), the lights and the ring with O7 (#477), the rest with theirs. Regeneration and the
+drain of spell points cannot be claimed: the check reads neither (§9, #477's 13).
 
 ## 8. The numbers
 
@@ -564,8 +622,8 @@ with N8 (#479), the rest with theirs.
   the sum restated with each. M7 and M8 add about 1,200 when they are built. From here on a kill
   pays by level (#159), so a company that arrives at 18 earns the shares as written and one that
   arrives at 21 earns less; the curve's row reports what a clear falls short of as owed to #437
-  until the boxes exist. As built: N7 1,803 (#476) and N8 2,081 (#479), so the shares stand at about
-  9,800.
+  until the boxes exist. As built: N7 1,803 (#476), N8 2,081 (#479) and O7 1,803 (#477), so the
+  shares stand at about 10,000.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
@@ -573,7 +631,8 @@ with N8 (#479), the rest with theirs.
   built: N7 holds 1,410 (#476), its share by the brief's 1,400 of the 8,880, in its cairn and the
   drovers' cache; its monsters carry none. N8 holds 1,510 (#479), its share by the brief's 1,500:
   970 in the coach's strongbox, 300 in the field's cairn and the rest on its six wights, 20 to 60
-  each; the two hold 2,920 of the 8,880.
+  each. O7 holds 1,610 (#477), its share by the brief's 1,600: 260 in the cairn and 1,350 in the
+  hollow, with the staff; its monsters carry none. The three hold 4,530 of the 8,880.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
@@ -581,11 +640,14 @@ with N8 (#479), the rest with theirs.
   on O7; the bots burn the trolls (#537). As built: a company at 18 wins every fight on N7 and walks
   High Moor's road every time, 8.57 fights to a rest; one at 16 wins every fight too, owed to #18 as
   the Kilns' boxes' is (§4.2). On N8 a company at 18 wins every fight and walks the Cairnfield's
-  road every time, 8.68 fights to a rest; one at 16 wins every fight too, owed to #18 (§4.5).
+  road every time, 8.68 fights to a rest; one at 16 wins every fight too, owed to #18 (§4.5). On O7
+  a company at 18 wins every fight and walks High Moor's road, now on to the lights at the ring,
+  every time, 8.88 fights to a rest; one at 16 wins every fight too, owed to #18 (§4.3).
 - **Density.** Core boxes at the Foreland's floor, the bog at the looser one (EXPANSION §5.3). The
-  ring's inside is held to no feature but the camp and the voice, so it needs no exception. As built:
-  N7 99.2% within 8 steps and the furthest 10, with one sign among its 26 points (#476). N8 99.6%
-  within 8 steps and the furthest 9, with no sign among its 31 points (#479).
+  ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
+  needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
+  26 points (#476). N8 99.6% within 8 steps and the furthest 9, with no sign among its 31 points
+  (#479). O7 99.3% within 8 steps and the furthest 10, with no sign among its 31 points (#477).
 
 ## 9. Decisions
 
@@ -736,9 +798,9 @@ Decided by delegate for #479, each the owner's to overturn:
 1. **N8 is band 18–20, not the issue's 19–20:** the curve holds a map's hardest group above its
    floor and within two of its top, so a floor of 19 asks a group at 20, and no surface monster is
    (the King is #480's). N2 lowered its floor the same way (docs/areas/kilns.md §9, #460's 2).
-2. **Five groups for the brief's six:** one group of eight ravens, not two, for the pay cap. N8 pays
-   2,081 xp a member, 81 over the cap of 2,000; leaving the bog bodies out too would give 1,605, if
-   the cap is strict. No group is weakened.
+2. **Five groups for the brief's six:** one group of eight ravens, not two, to hold the box's pay
+   near the brief's 1,500 xp. N8 pays 2,081 xp a member with the one; the second group may be
+   restored, for about 476 xp more. No group is weakened.
 3. **The frozen pool and its bog bodies stand among the first cairns,** south of the tarn's stream,
    not in the east marsh: the curve asks levels to rise from the way in, and the bodies at the far
    east gave a rank correlation of 0.00, here 0.87. The east marsh is the field's wet edge, a line
@@ -777,6 +839,63 @@ Decided by delegate for #479, each the owner's to overturn:
 16. **The seeds are unchanged,** the zone lines holding. `CAIRNFIELD_HELD`'s row along N8's north
     edge and column down its east are redundant now N8 is laid, its squares seeding the Cairnfield,
     and are left, as no test asks.
+
+Decided by delegate for #477, each the owner's to overturn:
+
+1. **The brief is §4.3, not the issue's draft:** the secret is the hollow under the fallen stone,
+   hinted by the bare ground (`o7_bare`, 8,24), and the ravens sit at any hour, as N7's, not by day.
+   The Watcher's Tally's first page stays Carn Dubh's (#480) and N8's grave line, its item unbuilt,
+   so there is no quest def here; the Watcher's third line points at it.
+2. **Band 18–19, the floor not lowered:** the troll (19) is the curve's hardest group and meets the
+   top, so no group at 20 is asked, unlike N2 (docs/areas/kilns.md §9, #460's 2) and N8 (#479's 1).
+3. **The brief's four named groups, none cut or weakened:** ravens (8) at 2,17 by the cairn; four
+   bog lights and a moor hound by night at 1,23, the hound at the front (`leader: 'moor_hound'`),
+   which is the gate's light fight (`lightEncounter` in `tools/testmonster.ts`, with a hound); bog
+   bodies (4) at 21,28 in the marsh at the tarn's head; a tor troll alone by night at 25,24. §4.3's
+   "eight groups" names these four only. O7 pays 1,803 xp for the brief's 1,600 (§8).
+4. **The ring:** twelve stones standing as rock round the camp at 6,24, three gaps open (north 6,21,
+   west 3,24 for the track, south 6,27 for the tarn) and the thirteenth fallen across the east gap,
+   9,24, the secret's door; the hollow, 10,24, is shut in the rise's rock. Grass inside, snow round
+   it.
+5. **The voice:** `o7_voice` on the camp's square, 6,24, `once`, `when: { hours: 'night' }`; the
+   walkthrough checks it silent at noon, said at 23:00 and not said again.
+6. **The lights stand west of the ring, by the way in:** each trainer is kept more than ten squares
+   from every group and any road, as the Kilns' and Saltreach's walkthroughs hold theirs (DESIGN §5,
+   off the beaten path), and with the hut at 10,18 and the tarn below only columns 0 to 2 of rows 20
+   to 24 are left. A company entering at night meets them at once. The gate holds (8.88 fights to a
+   rest, the road walked every time).
+7. **The Watcher** stands at 11,19 beside his hut (a building at 10,18, the site), the hut a camp at
+   its door, 9,18, with the lintel's tally and its gap (`o7_tally`). His lesson is said once to an
+   Arcanist of 19 after his own words, as Hartmut's (#460); seeking names him, his hut, High Moor
+   and Thaumaturge.
+8. **The piper** stands at 9,27, his fire a camp at 10,27 on the tarn's north shore; his lesson is
+   said once to a Troubadour of 19; seeking names him, the tarn, High Moor and Skald. Neither has a
+   given name: §10 gives none and the brief calls them the Watcher and the piper.
+9. **The tarn is re-authored:** the atlas paints its 38 shallow squares as a line along the box's
+   foot, and the scaffold's draft fails the edge check at 1 to 4,31 and 31,31. Built as a tarn (rows
+   27 to 30, columns 8 to 18) with its stream out west along row 30 to the corner, 0,31 (N7's 31,31
+   and O8's 0,0) and a burn in at its head from the rim's foot through the marsh (29,30 west). The
+   south edge is dry but 0,31: the atlas beyond is heather at 457 to 460,222 and hills at 487,222.
+10. **The rim's shoulder at the south-east corner:** mountain at 31,30, 30,31 and 31,31, void in the
+    outdoors, as N8's shoulder is: the atlas's river leaves east at 488,221 while 487,222 is hills,
+    so no corner square passes the edge check both ways, and the ring rule of `edgeFaults` skips it.
+11. **A cutter's bothy, a building at 19,7** (`o7_bothy` at 19,8): the art check fails the walls as
+    dressed before #9 on every map, so each must stand over its cap under that rule. With only the
+    hut and the fallen stone O7 had 4 of 8 faces dressed, 50%, at the cap; the bothy makes it 8 of
+    12.
+12. **The shrine by the tarn gives personality,** where N7's gives intellect and N8's endurance.
+13. **Novelty:** `families: ['lights']` and `landmarks: ['ring']` are claimed, Fionnlios being
+    built. Regeneration and the drain of spell points cannot be, the check's `uses` reading neither;
+    the hut's icon, 'lodge', was Thornmark's first (Deepthorn Lodge).
+14. **Gold is 1,610,** the brief's 1,600 of the 8,880: the cairn's 260 with a Sapphire Vial and the
+    hollow's 1,350 with the staff; the monsters carry none.
+15. **High Moor's road gains `highmoor_o7:o7_lights`** (the track to the ring's camp, where the walk
+    rests); O7's two under is owed to #18 (`highmoor_o7: under`), as N7's and N8's.
+16. **The seeds are unchanged:** `HIGHMOOR_HELD`'s row along y 190 is redundant for x 456 to 487 now
+    O7 is laid, and the seed at 462,212 lies inside O7; both are left, as the zone walk passes and
+    no test asks.
+17. **The atlas's sites are built:** Fionnlios (`map: 'highmoor_o7'`, at 6.5,24.5) and the Watcher's
+    Hut (at 10.5,18.5) lose `planned`.
 
 ## 10. Names
 
@@ -827,8 +946,13 @@ short.
 
 Cut from a brief as built (§4):
 
-- **N8's second raven group** (#479, §4.5): a second eight on the cairns, left out for the pay cap;
-  N8 pays 81 over it with one group (§9, 2).
+- **N8's second raven group** (#479, §4.5): a second eight on the cairns, left out to hold the box's
+  pay near the brief's 1,500 xp; it may be restored, for about 476 xp more (§9, #479's 2).
 - **The open cairn's second chamber,** the issue's draft of N8's secret: the coach's strongbox stands
   in its place, as §4.5 has it (§9, 4). The open cairn is built, a cist of slabs with only snow in
   it.
+- **O7's other groups** (#477, §4.3): the brief says "about nine features and eight groups" and
+  names four, which are built (§9, #477's 3).
+- **The issue's draft of O7's secret,** the Watcher's Tally's first page in a cairn under a wight:
+  the hollow under the fallen stone stands in its place, as §4.3 has it (§9, #477's 1). Its ravens
+  by day are built at any hour, as N7's.
