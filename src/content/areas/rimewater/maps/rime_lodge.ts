@@ -165,7 +165,7 @@ export const RIME_LODGE: MapDef = {
       '"Give me your map. I will put the way on it, while I can remember it."',
     ], choice: { ask: '"Your map?"', answers: [
       { label: 'Hand her the map.', sets: 'q_sky_marked', pay: { xp: 2100 }, says: [
-        'She draws with the charcoal: the loch, the lodge, the glacier\'s edge, and on off the edge of the map, east, into nothing.',
+        'She draws with the charcoal: the loch, the lodge and the glacier, and her line runs on east off the map, into nothing.',
         '"There. Where the sky comes down. Do not go yet."',
       ] },
     ] }, says: [
