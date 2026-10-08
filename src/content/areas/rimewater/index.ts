@@ -2,6 +2,7 @@
 // edge, Glacier Foot, the reach; the last of Act III. docs/areas/rimewater.md is its brief.
 import type { Area } from '../../area.ts';
 import { LONGMERE_M9 } from './maps/longmere_m9.ts';
+import { LONGMERE_L9 } from './maps/longmere_l9.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -9,7 +10,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'rimewater' as const,
-  maps: [LONGMERE_M9],
+  maps: [LONGMERE_M9, LONGMERE_L9],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

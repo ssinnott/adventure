@@ -165,8 +165,9 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'highmoor_o7: under': { whose: '#18', at: 1 },
   'highmoor_o8: under': { whose: '#18', at: 1 },
   'Cairnmoor: under': { whose: '#18', at: 1 },
-  // And Rimewater's first box (#486), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
+  // And Rimewater's boxes (#486, #488), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
   'longmere_m9: under': { whose: '#18', at: 1 },
+  'longmere_l9: under': { whose: '#18', at: 1 },
   'Rimewater: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
