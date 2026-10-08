@@ -200,8 +200,8 @@ second of the Kilns' Forge Hammer +1 (§4.2), O8's hoard a second of the Kilns' 
 Carn Dubh's cell off the stair the Hill Torc, a piece of its own (§4.6). Of the systems it waits on,
 the rest of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse
 (#537), the bot that plays them (#541) and the drove road's coach (#539) are built, and
-docs/SLICE.md and docs/MONSTERS.md say what each does; the coach runs once Kilnhaven (#469) and Rime
-Lodge (#487) are built.
+docs/SLICE.md and docs/MONSTERS.md say what each does; the coach runs, Kilnhaven (#469) and Rime
+Lodge (#487) being built.
 
 Drawn ahead of the boxes that place them (#483): the lights, a new family, with the Bog Light
 (`src/ui/monsters/lights.ts`); and the six on frames that exist, the Raven on the birds', the Bog

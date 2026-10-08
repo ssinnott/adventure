@@ -125,7 +125,7 @@ DESIGN.md first for the why.
   by sea and a coach a way of its own (`coach`); the gate check counts each landing as a way in, and
   where a crossing lands in a town, that town's ways out (`landings`, `tools/tests/gate.ts`), and
   the outdoors' walk (`tools/tests/outdoors.ts`) starts from each landing as well. Saltmouth's quay
-  sells the boat to Wrackholm's landing and the landing sells it back (#177); no coach runs yet.
+  sells the boat to Wrackholm's landing and the landing sells it back (#177).
   The crossings between towns (`content/crossings.ts`, #539) are written once, both ends together:
   one fare, length and timetable either way, on a link the atlas charts, and each end's landing once
   its town is built. A town sells one by a person whose `passage` is `sells('<town>', ...)`, which
@@ -133,9 +133,9 @@ DESIGN.md first for the why.
   to its link and its fare's rule, each built end to a landing on open ground and, once both ends
   land, each end to a seller; on the world map the link a crossing is sold both ways on is drawn as
   that way built. Kilnhaven's ferry to Saltmouth, the Compact ship to Cinderport and the drove road's
-  coach to Rime Lodge are written, and Kilnhaven writes its three landings (#469): the ferry runs,
-  sold on both quays by its master, and the ship and the coach wait on Cinderport (#512) and Rime
-  Lodge (#487).
+  coach to Rime Lodge are written, and Kilnhaven writes its three landings (#469): the ferry and the
+  coach run, each sold at both its ends by its master and its coachman, and the ship waits on
+  Cinderport (#512).
 - **Kiln-script and the secondary skills** (`game/inscriptions.ts`, `game/skills.ts`, #538; DESIGN
   §5, §9): a sign with a second text (`read`) is an inscription. Its words are said to every
   company, and its reading after them only to one with a reader, as `<name> reads: "<reading>"`:

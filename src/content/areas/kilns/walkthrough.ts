@@ -81,7 +81,7 @@ import { TEAR } from './maps/kilnsheart_o5.ts';
 import { GATE as HAVEN_GATE } from './maps/kilnmouth_l6.ts';
 import { MANIFESTS_READ } from './maps/kilnhaven.ts';
 import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../crossings.ts';
-import { take, terms } from '../../../game/passage.ts';
+import { take as sail, terms } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
 import { World } from '../../../game/world.ts';
@@ -800,7 +800,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   const HAVEN = MAP_DEFS.find((d) => d.id === 'kilnhaven')!;
   const here = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => HAVEN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
   const who = (name: string): Person => here('npc').find((f) => f.name.startsWith(name)) as Person;
-  const IRMGARD = who('Irmgard'), DUNSTAN = who('Dunstan'), JAGO = who('Jago'), MURDO = who('Murdo'), DIETMAR = who('Dietmar'), DWARF = who('A dwarf on a bollard');
+  const IRMGARD = who('Irmgard'), DUNSTAN = who('Dunstan'), JAGO = who('Jago'), MURDO = who('Murdo'), DIETMAR = who('Dietmar'), DWARF = who('A dwarf on a bollard'), WIEBE = who('Wiebe');
   const SMITHY = here('shop').find((f) => f.interior === 'kilnhaven_smith')!;
   const w = newWalk(ok);
   w.level = 16;
@@ -885,7 +885,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   w.world.travel('kilnhaven', DUNSTAN.x, DUNSTAN.y);
   w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
   w.party.gold = FERRY.fare;
-  const day = w.world.day, sailed = take(over, w.world, w.party);
+  const day = w.world.day, sailed = sail(over, w.world, w.party);
   ok(sailed.taken && w.party.gold === 0 && w.world.state.mapId === 'saltmouth' && w.world.state.x === 13 && w.world.state.y === 10 && w.world.state.facing === WEST, `the ferry lands the company on Saltmouth's quay (${sailed.lines.join(' ')})`);
   ok(w.world.day === day + 3 && w.world.hour === 16, `bought at 09:00, after it sailed, it leaves the next morning and lands two days on at 16:00 (day ${day} to day ${w.world.day})`);
   const kept = deserialize(serialize(w.world.state, w.party, 0)), loaded = new World(buildMaps(), kept.party, makeRng(1), kept.world);
@@ -898,25 +898,56 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   ok(warned.endsWith('Dunstan looks you over. "Over there they sell you iron, and the hills take it back off you."'), `to a company of 12 he gives his warning, never a refusal (${warned})`);
   for (const m of w.party.members) m.level = 16;
   w.party.gold = FERRY.fare;
-  const home = back ? take(back, w.world, w.party) : undefined, ashore = home?.taken ? w.world.eventsHere() : [];
+  const home = back ? sail(back, w.world, w.party) : undefined, ashore = home?.taken ? w.world.eventsHere() : [];
   ok(!!home?.taken && w.world.state.mapId === 'kilnhaven' && w.world.state.x === 4 && w.world.state.y === 7 && w.world.state.facing === EAST && w.party.gold === 0,
     `and the ferry back puts the company on Kilnhaven's quay at the ferry's steps, facing up the street (${home?.lines.join(' ')})`);
   ok(home?.lines.join() === FERRY.ends[0].label && ashore.some((t) => t.startsWith('The quay:')), `with Kilnhaven's own landing line, and the quay said as it steps ashore (${ashore.join(' / ')})`);
 
-  // The ship and the coach (#539's 2): sold by nobody toward a far end not built, Cinderport and Rime
-  // Lodge, their masters only talking and naming no fare; Kilnhaven writes where each puts a company
-  // down, the ship on the Compact's steps down the quay and the coach in the inn yard inside the gate.
-  for (const [man, c, far] of [[JAGO, COMPACT_SHIP, 'cinderport'], [MURDO, DROVE_COACH, 'rime_lodge']] as const) {
-    const built = MAP_DEFS.some((d) => d.id === far), routes = man.passage ?? [], [name, there] = [man.name.split(',')[0], c.ends.find((e) => e.at === far)!.name];
-    ok(built ? routes.length === 1 && routes[0].to === far && routes[0].fare === c.fare : !routes.length && !sells('kilnhaven', c).length,
-      built ? `${name} sells ${c.name} to ${there}` : `${name} sells nothing yet: ${there} is not built`);
-    w.world.travel('kilnhaven', man.x, man.y);
-    const talk = says(w, man);
-    ok(!/gold|fare|hundred/i.test(talk), `and his words name no fare (${talk.split('\n\n').at(-1)})`);
-  }
-  const [ship, coach] = [COMPACT_SHIP, DROVE_COACH].map((c) => c.ends.find((e) => e.at === 'kilnhaven')?.landing);
-  ok(ship?.x === 4 && ship.y === 12 && coach?.x === 12 && coach.y === 8 && Math.abs(coach.x - HAVEN.start.x) + Math.abs(coach.y - HAVEN.start.y) <= 3,
-    'the ship puts a company down on the Compact\'s steps down the quay, and the coach in the inn yard just inside the east gate');
+  // The coach (#539): Rime Lodge is built, so the coachman sells the drove road's coach to the lodge's
+  // coach house, a day and its fare; bought after it left it goes the next morning and puts the company
+  // down at noon behind the lodge's gate, rested; and the coachman there sells the way back, to the inn
+  // yard inside Kilnhaven's east gate, with the town's own landing line.
+  const lodge = DROVE_COACH.ends.find((e) => e.at === 'rime_lodge')!.landing!, [run, ...runs] = MURDO.passage ?? [];
+  ok(!!run && !runs.length && run.by === 'coach' && run.to === 'rime_lodge' && run.x === lodge.x && run.y === lodge.y && run.fare === DROVE_COACH.fare && run.days === DROVE_COACH.days,
+    `Murdo sells the drove road's coach to Rime Lodge's coach house, ${run?.fare} gold and ${run?.days} day`);
+  w.world.travel('kilnhaven', MURDO.x, MURDO.y);
+  const caution = run ? terms(run, w.world) : '';
+  ok(caution.endsWith('Murdo looks you over. "I drive the coach. What comes off the moor at it, you see to."'), `to a company of 16, under the lodge's floor of 20, he gives his warning, never a refusal (${caution})`);
+  w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 7 * 60;
+  w.party.gold = DROVE_COACH.fare;
+  const leaves = w.world.day, rode = sail(run, w.world, w.party);
+  ok(rode.taken && w.party.gold === 0 && w.world.state.mapId === 'rime_lodge' && w.world.state.x === lodge.x && w.world.state.y === lodge.y && w.world.state.facing === WEST,
+    `the coach sets the company down in Rime Lodge's coach house (${rode.lines.join(' ')})`);
+  ok(w.world.day === leaves + 2 && w.world.hour === 12, `bought at 07:00, after it left, it goes the next morning and lands a day on at noon (day ${leaves} to day ${w.world.day})`);
+  const coachman = MAP_DEFS.find((d) => d.id === 'rime_lodge')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'The coachman');
+  const returns = coachman?.passage ?? [], landing = DROVE_COACH.ends.find((e) => e.at === 'kilnhaven')!.landing!;
+  ok(returns.length === 1 && returns[0].to === 'kilnhaven' && returns[0].x === landing.x && returns[0].y === landing.y && returns[0].fare === DROVE_COACH.fare && returns[0].days === DROVE_COACH.days,
+    'and at the lodge the coachman sells the run back, to Kilnhaven\'s inn yard');
+  w.party.gold = DROVE_COACH.fare;
+  const landed = returns[0] ? sail(returns[0], w.world, w.party) : undefined, stood = landed?.taken ? w.world.eventsHere() : [];
+  ok(!!landed?.taken && w.world.state.mapId === 'kilnhaven' && w.world.state.x === landing.x && w.world.state.y === landing.y && w.world.state.facing === WEST && w.party.gold === 0
+    && landed.lines.join() === DROVE_COACH.ends.find((e) => e.at === 'kilnhaven')!.label && HAVEN.rows[landing.y][landing.x] === ':' && Math.abs(landing.x - HAVEN.start.x) + Math.abs(landing.y - HAVEN.start.y) <= 3,
+    `the coach back puts the company down in the inn yard just inside the east gate, with the town's own line (${landed?.lines.join(' ')}${stood.length ? ` / ${stood.join(' / ')}` : ''})`);
+
+  // The ship (#539's 2): sold by nobody while its far end, Cinderport, is not built, its master only
+  // talking and naming no fare; Kilnhaven has written where the ship's boat puts a company down, on the
+  // Compact's steps down the quay, and its far end's seller comes with Cinderport (#512).
+  const cinderport = MAP_DEFS.some((d) => d.id === 'cinderport'), cruise = JAGO.passage ?? [];
+  ok(cinderport ? cruise.length === 1 && cruise[0].to === 'cinderport' && cruise[0].fare === COMPACT_SHIP.fare : !cruise.length && !sells('kilnhaven', COMPACT_SHIP).length,
+    cinderport ? 'Jago sells the Compact ship to Cinderport' : 'Jago sells nothing yet: Cinderport is not built');
+  const ship = COMPACT_SHIP.ends.find((e) => e.at === 'kilnhaven')?.landing;
+  ok(ship?.x === 4 && ship.y === 12 && HAVEN.rows[ship.y][ship.x] === '"', 'and the ship puts a company down on the Compact\'s steps down the quay');
+  // A seller with nothing to sell only talks, and names no fare in his words.
+  w.world.travel('kilnhaven', JAGO.x, JAGO.y);
+  const shipTalk = says(w, JAGO);
+  ok(cinderport || !/gold|fare|hundred/i.test(shipTalk), `Jago's words name no fare, while he sells none (${shipTalk.split('\n\n').at(-1)})`);
+
+  // Tallis's man on the street, come for the parcel from the smelter (#56's 35): his words and nothing
+  // more, and the crown never named. The chapter's step and a flag of his own are the others'.
+  w.world.travel('kilnhaven', WIEBE.x, WIEBE.y);
+  const parcel = says(w, WIEBE);
+  ok(HAVEN.rows[WIEBE.y][WIEBE.x] === '"' && !WIEBE.quest && !WIEBE.choice && parcel.includes('Jory Tallis') && parcel.includes('a parcel up from the smelter') && !/crown|throne|king/i.test(parcel),
+    `Tallis's man waits on the street for a parcel up from the smelter, and names nothing in it (${parcel.split('\n\n').at(-1)})`);
 }
 
 /**

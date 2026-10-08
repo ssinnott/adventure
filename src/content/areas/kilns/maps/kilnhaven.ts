@@ -3,8 +3,9 @@
 // coach for Rime Lodge stands, and down the street to the quay along the harbour, where the ferry for
 // Saltmouth and the Compact ship's boat put in. The inn, the smith (Anvilhall's step at a quarter
 // more, and never shut), the ore shed that trains to 19, the harbourmaster's office where the
-// manifests are read, the Lanterns' chapel and the chandlery. No spell hall and no guild hall (#434's
-// 8 and 9), and no fare halved for any guild. docs/areas/kilns.md §4.14 is its brief.
+// manifests are read, the Lanterns' chapel and the chandlery; and on the street Tallis's man, waiting
+// on a parcel from the smelter (#56's 35). No spell hall and no guild hall (#434's 8 and 9), and no
+// fare halved for any guild. docs/areas/kilns.md §4.14 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { FORGE, SMITH_PRICES } from '../items.ts';
@@ -53,13 +54,22 @@ export const KILNHAVEN: MapDef = {
     { kind: 'inn', x: 12, y: 4, name: 'The Guard\'s Horn', price: 35, interior: 'kilnhaven_inn' },
     { kind: 'npc', x: 13, y: 5, name: 'Murdo, the coachman', lines: [
       'A man in a long coat greasing a wheel of the coach, the horses not put to.',
-      '"Murdo. The coach for Rime Lodge, by the drove road over the moor. A day of it, and no stop on the moor."',
+      '"Murdo. The coach for Rime Lodge, by the drove road over the moor. Two hundred and fifty the run, and she goes at six."',
+      '"A day of it, and no stop on the moor."',
     ], passage: sells('kilnhaven', DROVE_COACH) },
     { kind: 'sign', x: 14, y: 5, text: 'A board on the yard wall, lettered by a careful hand: RIME LODGE.' },
     { kind: 'event', x: 14, y: 9, id: 'kh_trough', once: true, text: 'A trough by the yard wall, red at the bottom with the ore\'s dust. The horses drink it anyway.' },
 
     // The street down to the quay: the chandlery on it, the pump in the square and the ore's dust.
     { kind: 'event', x: 8, y: 7, id: 'kh_dust', once: true, text: 'Red dust in the gutters and on every sill, off the ore carts. It gets into the bread.' },
+    // Jory Tallis's man, come for the crown the smiths at the smelter are making (#56's 35): his words
+    // and nothing more, as Eckhart's and Kerensa's are; the choice put to a company and its flag are
+    // #471's. The crown is never named, and nobody says whose head it is for.
+    { kind: 'npc', x: 7, y: 8, name: 'Wiebe, Jory Tallis\'s man', lines: [
+      'A man in a good dark coat on a crate at the street\'s edge, his eyes on the east gate. His boots are clean of the red dust.',
+      '"Wiebe. I am Jory Tallis\'s man, from Saltmouth. I wait on a parcel up from the smelter, and it is late."',
+      '"What is in it? Tallis has not said. I am paid to wait, not to ask."',
+    ] },
     { kind: 'shop', x: 10, y: 9, name: 'The Chandler\'s', stock: ['rations', 'torch', 'lantern_oil', 'potion_heal', 'antidote', 'elixir', 'potion_sp', 'potion_sp_great'], interior: 'kilnhaven_chandlery' },
     { kind: 'well', x: 9, y: 6, text: 'A pump in the square. The water is sweet, and the bucket under it red with dust.' },
 
@@ -71,7 +81,7 @@ export const KILNHAVEN: MapDef = {
       'An old dwarf sits on a bollard with a pick across his knees, looking at the sea and not the town.',
       '"Forty years I cut the Tiefzeche. Under the bottom the corridors run south. Under the moor, under the world. Toward the lakes."',
       '"I go no further down. I came to look at the sea."',
-    ] },
+    ], flag: 'kh_dwarf_met' },
     { kind: 'sign', x: 4, y: 4, text: 'The board of sailings, two names chalked on it: SALTMOUTH. CINDERPORT.' },
     // The harbourmaster's office, a room with her in it (as Anvilhall's great hall holds its thane):
     // she reads the manifests for a company that asks, and the Compact's cargo is named (§5).

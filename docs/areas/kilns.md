@@ -247,7 +247,9 @@ box (#468) and the town behind its gate (#469):
   its harbour, the inn yard inside the gate where the coach for Rime Lodge stands and the quay along
   the harbour where the ferry and the Compact ship's boat put in; the harbourmaster, who reads the
   manifests, the smith at a quarter more, the ore shed that trains to 19, the inn, the Lanterns'
-  chapel and the chandler's. The ferry runs to Saltmouth's quay and back (§4.14).
+  chapel and the chandler's; a dwarf on the quay and Jory Tallis's man on the street. The ferry runs
+  to Saltmouth's quay and back and the coach to Rime Lodge's coach house and back; the ship waits on
+  Cinderport (§4.14).
 
 Its atlas rows are charted in `src/content/areas/kilns/atlas.ts`, the area's own `atlas` since M3
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
@@ -283,8 +285,8 @@ Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its
 with its fare, its days and its hours, the same either way (§4.14, §9). Kilnhaven writes its three
 landings (#469): the ferry's at its steps on the quay, the ship's on the Compact's steps and the
 coach's in the inn yard. The ferry runs, its master selling it on Kilnhaven's quay and on
-Saltmouth's; the ship and the coach wait on Cinderport (#512) and Rime Lodge (#487), since nothing is
-sold toward a town not built.
+Saltmouth's, and so does the coach, its coachman selling it in the yard and in Rime Lodge's coach
+house (#487); the ship waits on Cinderport (#512), since nothing is sold toward a town not built.
 
 The systems it waited on were the rest of #432's: ash and pine underfoot (#536, built: ash, `a`, on
 O6, slow going as hills are, and pine, `p`, on M3 and O3, a ground of its own where Sunderwood drew
@@ -1057,17 +1059,18 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   for the ship. On the quay's landward side stand the bonded store and its clerk, who says the
   sealed row is the Compact's and nobody opens it. Searched at the store's wall behind the sealed
   row (21,11), its stopped door gives on crates stencilled CINDERPORT and SHEER POINT under the
-  customs' lead, grey stones in their straw, and among them 490 gold and a Kiln Robe +1 (`kiln_robe+1`), the ladder's, which no walker,
-  swimmer, climber or levitator reaches but through the door. South of the bay an ore cart lies off
-  the quay road; the beacon on the hill looks west over the sea to a smudge of smoke on the far shore;
-  the tide stone on the shore gives intellect, and the fishers' nets dry above the tide line. The heath
-  runs down the west and the south, with a cairn in the heather (150 gold and a Sapphire Vial), gorse,
-  a fold and a lark on the grass, and under it a rock worm pair, the box's top. Past the west edge,
-  K6's cut heath, and past the south, Cairnmoor's L7: for now the world ends. A company at 16 wins
-  every fight and manages 7.79 fights to a rest, inside the aim, with 2.3% of its days ending in a
-  fight broken off. As measured it pays about 1,590 xp a member and holds 640 gold, and the crew carry
-  about 130 a clear of their own. Two under, at 14, it wins every fight, owed to #18. Density 100%
-  within 8 steps, the furthest 8, with no sign among its 22 points.
+  customs' lead, grey stones in their straw, and among them 490 gold and a Kiln Robe +1
+  (`kiln_robe+1`), the ladder's, which no walker, swimmer, climber or levitator reaches but through
+  the door. South of the bay an ore cart lies off the quay road; the beacon on the hill looks west
+  over the sea to a smudge of smoke on the far shore; the tide stone on the shore gives intellect,
+  and the fishers' nets dry above the tide line. The heath runs down the west and the south, with a
+  cairn in the heather (150 gold and a Sapphire Vial), gorse, a fold and a lark on the grass, and
+  under it a rock worm pair, the box's top. Past the west edge, K6's cut heath, and past the south,
+  Cairnmoor's L7: for now the world ends. A company at 16 wins every fight and manages 7.79 fights
+  to a rest, inside the aim, with 2.3% of its days ending in a fight broken off. As measured it pays
+  about 1,590 xp a member and holds 640 gold, and the crew carry about 130 a clear of their own. Two
+  under, at 14, it wins every fight, owed to #18. Density 100% within 8 steps, the furthest 8, with
+  no sign among its 22 points.
 
 ### 4.14 Kilnhaven (#469): town, 16×16, band 16–18
 
@@ -1104,7 +1107,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
 - **New here.** A town with three ways out; the Compact ship, which is the quest's way over the sea
   in Act IV.
 - **Pay.** About 300 xp a member in the town's hand-ins, counted in §8 with the side quests.
-- **As built** (#469, 7 October): L6's gate at 28,4, its door now open, lets a company in at 14,7,
+- **As built** (#469, 8 October): L6's gate at 28,4, its door now open, lets a company in at 14,7,
   just inside the town's east gate, saying the brief's gate line as it goes; a step on, the inn yard
   is said, the coach for Rime Lodge standing in it with its pole down. Kilnhaven is a walled port of
   grey rubble on its harbour: the street runs west from the yard to the quay along the basin, and
@@ -1116,20 +1119,25 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   the manifests round for the company and reads the brief's line, Cinderport and Sheer Point named,
   and sets `manifests_read` for the chapter; the Sailors' Chapel, the Lanterns', which cures; and the
   Chandler's on the street, the provisions at list price. A dwarf on a bollard on the quay says the
-  corridors under the Tiefzeche run south, under the moor and under the world, toward the lakes. The
-  ferry's master, Dunstan, sells it at its steps, 400 gold and two days, sailing at 8 and landing at
-  16, and stands on Saltmouth's quay as well, selling it back; it puts a company down at the ferry's
-  steps (4,7) facing up the street, with the town's own landing line. Jago, master of the Compact
-  ship, stands by the Compact's steps (4,12), where the ship's boat will land a company, and Murdo,
-  the coachman, in the inn yard, where the coach will set one down (12,8), inside the gate and not in
-  L6's yard outside it (§9); both only talk until Cinderport (#512) and Rime Lodge (#487) are built,
-  and name no fare. No fare is halved for any guild. Two boards are lettered, the sailings',
-  SALTMOUTH and CINDERPORT, and the coach's, RIME LODGE. Tallis's man is #471's (§6), and the quay
-  leaves him room. The walkthrough comes in at the gate and goes out again, rests, buys each class
-  its step at the smith, finds the smith open to a company that took the Stone, trains a member of 18
-  to 19, hears the manifests read and the dwarf's word and takes the ferry to Saltmouth's quay and
-  back. The town pays nothing of its own: its 300 is #471's and the chapter's. Density 100% within 7
-  steps, the furthest 3, two signs among its 26 points.
+  corridors under the Tiefzeche run south, under the moor and under the world, toward the lakes, and
+  sets `kh_dwarf_met`. Wiebe, Jory Tallis's man, waits on the street for a parcel up from the
+  smelter, late, and names nothing in it: his words and nothing more, the crown's choice and its flag
+  being #471's (§6). The ferry's master, Dunstan, sells the ferry at its steps, 400 gold and two
+  days, sailing at 8 and landing at 16, and stands on Saltmouth's quay as well, selling it back; it
+  puts a company down at the ferry's steps (4,7) facing up the street, with the town's own landing
+  line. Murdo, the coachman, stands in the inn yard and sells the coach, Rime Lodge being built
+  (#487): 250 gold, leaving at 6 and landing at 12 the next day in the lodge's coach house, where
+  its coachman sells the run back, to the yard (12,8) inside the gate and not to L6's yard outside
+  it (§9). Jago, master of the Compact ship, stands by the Compact's steps (4,12), where the ship's
+  boat will land a company, and only talks until Cinderport (#512) is built: he names no fare and
+  sells none. No fare is halved for any guild. Two boards are lettered, the sailings', SALTMOUTH and
+  CINDERPORT, and the coach's, RIME LODGE. The walkthrough comes in at the gate and goes out again,
+  rests, buys each class its step at the smith, finds the smith open to a company that took the
+  Stone, trains a member of 18 to 19, hears the manifests read, the dwarf's word and Tallis's man,
+  takes the ferry to Saltmouth's quay and back and the coach to Rime Lodge's coach house and back,
+  and finds the ship's master with nothing to sell. The town pays nothing of its own: its 300 is
+  #471's and the chapter's. Density 100% within 7 steps, the furthest 3, two signs among its 27
+  points.
 
 ### 4.15 O3, O4, M4 and M5, the country behind the road (#474): country, band 17–18, parked
 
@@ -1170,7 +1178,9 @@ holds:
 - **Kilnhaven.** The harbourmaster's manifests name the Compact ship's cargo: iron to Cinderport,
   and sealed crates for Cinderport and Sheer Point. The dwarves say the corridors run south under
   the world, toward the lakes under the glacier. The goal points down the drove road into Cairnmoor,
-  and the chapter's done flag ends the Kilns' part of the act.
+  and the chapter's done flag ends the Kilns' part of the act. The town is built (#469): the
+  harbourmaster sets `manifests_read` at the first meeting and the dwarf on the quay `kh_dwarf_met`,
+  and the chapter reads them (§4.14, §9).
 
 Nothing in the chapter is a lock (EXPANSION §2.3; #434, call 4): the door is a wall with words on
 it, the thane sells to anyone with the gold and the Guard stands for anyone who took, the Rift opens
@@ -1287,7 +1297,7 @@ nothing: Act II's road taught the second prestige first (Rietum's two, #425) and
 first trainer in a cave, and a door that is a wall is no mechanic the check reads. Nor does O5
 (#464): a group that comes after a choice is Thornmark's already (its deserters after the coin
 fight), and the Stone's icon is the Lodestone's. Nor does Kilnhaven (#469): the port's icon is
-Saltmouth's, and a coach that runs, which waits on Rime Lodge, is no mechanic the check reads.
+Saltmouth's, and a coach that runs is no mechanic the check reads.
 
 ## 8. The numbers
 
@@ -1357,7 +1367,11 @@ Saltmouth's, and a coach that runs, which waits on Rime Lodge, is no mechanic th
   §4.6, §4.8, §4.12, §4.9, §4.13); so do the Tiefzeche's two upper levels, banded from the area's
   floor (§4.7). The Foreman is won 50% at the bottom's floor, 17, and 95% at 19, its hit points and
   its blow set off the line by the gate (§9); the bottom's day, 9.64 fights to a rest, and its groups
-  pooled with the Foreman, won 83.3%, are off the aim and inside the limit.
+  pooled with the Foreman, won 83.3%, are off the aim and inside the limit. Kilnhaven holds no group,
+  and a company the ferry or the coach puts down there walks out at L6's 29,4: the two groups
+  nearest it, the beetles at the quay's east end and the crew, are won every time at 14, and the
+  groups nearest the lodge's two ways out onto M9, which the coach now lands behind, the lynx and
+  the pike, every time at 18 (#469).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
@@ -1371,7 +1385,7 @@ Saltmouth's, and a coach that runs, which waits on Rime Lodge, is no mechanic th
   among its 17 points, and M6 99.4% within 12 and the furthest 15, with none among its 16 (#467); O5
   97.4% within 8 and the furthest 11, with one sign among its 23 (#464); L6 100% within 8 and the
   furthest 8, with no sign among its 22 (#468; the open gate's exit takes the place of its event,
-  #469); Kilnhaven, a town, 100% within 7 and the furthest 3, two signs among its 26 points (#469).
+  #469); Kilnhaven, a town, 100% within 7 and the furthest 3, two signs among its 27 points (#469).
 
 ## 9. Decisions
 
@@ -2189,8 +2203,8 @@ has the Druid's trainer):
    `watchers_page`, which he takes at the first meeting and sends down by the drovers. A hall that
    took it would undo the walked answers of #482 (docs/areas/cairnmoor.md §6).
 10. **The Kilns' numbers:** the two asks add 800 xp a member and 600 gold to a clear already above
-    its ask, 17,103 xp of the 13,067 and 10,097 gold of the 7,920 (§8). Three boxes are still to
-    build, the Rift (#465), O6 and its tubes (#466) and Kilnhaven (#469), and those boxes, not the
+    its ask, 17,103 xp of the 13,067 and 10,097 gold of the 7,920 (§8). Two boxes are still to
+    build, the Rift (#465) and O6 with its tubes (#466), and those boxes, not the
     asks, are what the 1.4 times line holds to when they are built.
 
 Decided by delegate for #469, each the owner's to overturn:
@@ -2210,10 +2224,10 @@ Decided by delegate for #469, each the owner's to overturn:
 5. **The two boats land at two steps on the quay:** the ferry at its own where the street comes down
    (4,7), facing up the street, and the Compact ship's boat at the Compact's (4,12). Each of the
    town's three ends has its own landing line, and the ship's and the coach's ends their sellers'
-   warnings, held to the voice checks before anyone sells them (#600).
-6. **The ship's master and the coachman only talk** (#539's 2): `sells` gives them nothing while
-   Cinderport and Rime Lodge are not built. Their words name no fare and promise no passage, and stay
-   true once #512 and #487 make them sell.
+   warnings, held to the voice checks (#600).
+6. **The ship's master only talks** (#539's 2): `sells` gives him nothing while Cinderport is not
+   built, so his words name no fare and promise no passage, and stay true once #512 makes him sell.
+   The coachman sells, Rime Lodge being built (#487), and names his fare as Dunstan names his.
 7. **The ferry's master is one man at both ends,** Dunstan, as Kitto is (docs/areas/saltreach.md §9,
    #177's 6): on Saltmouth's quay at 9,12 he sells `sells('saltmouth', FERRY)`, the one edit to a
    Saltreach file, which keeps every id, door and feature. His warning there is the Saltmouth end's.
@@ -2228,23 +2242,32 @@ Decided by delegate for #469, each the owner's to overturn:
     list price, as the hold's stores do, and the chapel says the temple screen's own words, as the
     mine-surgeon's does.
 12. **The town holds no group and pays nothing of its own:** §4.14 names no group, and its 300 is
-    #471's hand-ins and the chapter's, as Anvilhall's is (#459's 7). The clear stays at 16,303 xp a
-    member and 9,497 gold, past the curve's 13,067 and 7,920; nothing was cut, since nothing was added.
-13. **The side quests' people are #471's:** Tallis's man is left to it, as #459's 13 left Anvilhall's,
-    and the quay keeps free squares for him; the Wardens' word of Hale is #439's.
-14. **The dwarf on the quay has the brief's word and no flag** (§5): the chapter reads the manifests
-    (9), and a flag of his own is #470's to ask for.
+    #471's hand-ins and the chapter's, as Anvilhall's is (#459's 7). The clear stands at 17,103 xp a
+    member and 10,097 gold with #439's asks, past the curve's 13,067 and 7,920; nothing was cut,
+    since nothing was added.
+13. **Tallis's man is here with his words and nothing more,** as the issue's People ask: Wiebe waits
+    on the street for a parcel up from the smelter, as Eckhart and Kerensa stand at it (#463's 5),
+    and the crown, the throne and the thane are never named. The choice put to a company, its
+    hand-in and its flag are #471's, which adds them to his square, as #459's 13 left Anvilhall's.
+14. **The dwarf on the quay has the brief's word and a flag,** `kh_dwarf_met`, for a chapter entry
+    on the corridors (§5); the manifests are the step (9). The Wardens' word of Hale is #439's, whose
+    asks carry it, and no Warden stands in the port.
 15. **Two boards are lettered and no inscription is cut:** the sailings', SALTMOUTH and CINDERPORT,
     and the coach's, RIME LODGE, as #473's 8 letters the rooms, with no times or fares. Kilnhaven is
     the Crown's port, not a hold, and the brief gives it no Kiln-script.
 16. **The names** (§10): Irmgard, the harbourmaster, and Dietmar, the smith, in the dwarves' tongue;
     Dunstan in the Crown's, the port's own; Jago in Saltmouth's, as the Compact's Kitto and Kerensa;
-    Murdo in the hill folk's, whose moor the coach crosses. The Guard's Horn is named for the horn on
-    its chimney breast and the Anchor Smithy for the anchor in for mending.
-17. **Owed on:** the ship's landing and seller at Cinderport (#512) and the coach's at Rime Lodge
-    (#487); Tallis's man and the crown's end (#471); the chapter's step (#470). The sheet's crop of
-    the world map for the town centres on Saltmouth's gate, the first way in `tools/sheet.ts` finds,
-    the ferry's: the quality lane's to change.
+    Murdo in the hill folk's, whose moor the coach crosses; Wiebe in the Tidefolk's, Saltmouth's own.
+    The Guard's Horn is named for the horn on its chimney breast and the Anchor Smithy for the
+    anchor in for mending.
+17. **Owed on:** the ship's landing and seller at Cinderport (#512); Tallis's man's hand-in and the
+    crown's end (#471); the chapter's step (#470). The sheet's crop of the world map for the town
+    centres on Saltmouth's gate, the first way in `tools/sheet.ts` finds, the ferry's: the quality
+    lane's to change.
+18. **The coach runs,** Rime Lodge being built (#487): Murdo sells it to the lodge's coach house and
+    its coachman back to the yard. The gate's `landings` now count the lodge's two ways out onto M9
+    and hold the groups nearest them to the gentlest; the pike beside the lake door's landing, which
+    #487 asked a look at, is won every time at 18 with the lynx, and nothing moves.
 
 ## 10. Names
 
@@ -2278,7 +2301,8 @@ Tubes). Filed as #435.
   *eck* and *hart*, a hard edge, the master smith at Gluthutte (#463); Reinhart, *rein* and *hart*,
   clean and hard, the cutters' foreman at the Stone (#464); Irmgard, *irmin* and *gard*, a great
   enclosure, the harbourmaster who keeps Kilnhaven's harbour, and Dietmar, *diet* and *mar*, known
-  to the folk, the port's smith (#469).
+  to the folk, the port's smith (#469); Wiebe, Tallis's man, takes a Tidefolk name, as Saltmouth's
+  people do (#469).
 - **Ids stay** (NAMES §3): `deep_mines` is the Tiefzeche and `lava_tubes` is Feuerstollen; Erzkamm
   and Gluthutte are sites with no id. The old names stand in the issues until they are edited.
 
