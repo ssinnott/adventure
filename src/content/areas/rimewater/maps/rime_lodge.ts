@@ -96,7 +96,7 @@ export const RIME_LODGE: MapDef = {
     { kind: 'npc', x: 8, y: 4, name: 'A sleeper', after: { flag: 'q_coach_hall' }, lines: [
       'The woman from the coach on a cot at the hall\'s door, under the lamps. She does not wake.',
     ], says: [
-      { after: { flag: 'q_bell_rung' }, lines: [
+      { after: { flag: 'q_icebell_rung' }, lines: [
         'The woman from the coach is sitting up on her cot under the lamps, a keeper\'s bowl in her hands.',
         '"A bell. I heard a bell, and I was so cold. Then I was here."',
       ] },
@@ -133,28 +133,28 @@ export const RIME_LODGE: MapDef = {
     { kind: 'trainer', x: 11, y: 10, name: 'The Trainers\' Yard', maxLevel: 23, interior: 'rime_yard' },
     // The Bell Under the Ice (#56's 42, #494): once the coach's sleeper has a bed (40), she asks for the
     // bell rung; rung, she goes out to her people's hearth on K9 or stays by the fire.
-    { kind: 'npc', x: 9, y: 12, name: 'A lodge woman', until: { flag: 'q_bell_out' }, lines: [
+    { kind: 'npc', x: 9, y: 12, name: 'A lodge woman', until: { flag: 'q_icebell_out' }, lines: [
       'A lodge woman mending a net by the yard\'s fire, her eyes on the door to the ice.',
       '"My people were at Fuar when the loch came up over it. The tower still stands, under the ice."',
     ], says: [
-      { after: { flag: 'q_bell_stay' }, lines: [
+      { after: { flag: 'q_icebell_stay' }, lines: [
         'The lodge woman at her net by the fire, humming under her breath.',
         '"The ice is quiet again. I listen all the same."',
       ] },
-      { after: { flag: 'q_bell_rung' }, until: [{ flag: 'q_bell_out' }, { flag: 'q_bell_stay' }], lines: [
+      { after: { flag: 'q_icebell_rung' }, until: [{ flag: 'q_icebell_out' }, { flag: 'q_icebell_stay' }], lines: [
         'The lodge woman is on her feet by the door to the ice, the net fallen at her feet.',
         '"I heard it from here, under the ice, the whole length of the night."',
       ], choice: { ask: '"Do I go out to them, or stay?"', answers: [
-        { label: 'Go out to Fuar.', sets: 'q_bell_out', pay: { xp: 1800 }, says: [
+        { label: 'Go out to Fuar.', sets: 'q_icebell_out', pay: { xp: 1800 }, says: [
           'She rolls the net and ties it.',
           '"Somebody should sweep the hearth. It may as well be me."',
         ] },
-        { label: 'Stay by the fire.', sets: 'q_bell_stay', pay: { xp: 1800 }, says: [
+        { label: 'Stay by the fire.', sets: 'q_icebell_stay', pay: { xp: 1800 }, says: [
           'She takes up the net again.',
           '"They have had their bell. I have the door to watch."',
         ] },
       ] } },
-      { after: [{ flag: 'q_coach_hall' }, { flag: 'q_coach_temple' }], sets: 'q_bell', lines: [
+      { after: [{ flag: 'q_coach_hall' }, { flag: 'q_coach_temple' }], sets: 'q_icebell', lines: [
         'She puts the net down. "Nobody rang the bell for them. It hangs in the tower still, under the ice."',
         '"On a still night it can be reached from the cap, they say, if the pike let you."',
       ] },

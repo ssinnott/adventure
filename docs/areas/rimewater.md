@@ -1058,11 +1058,11 @@ people are the boxes', given words, flags and places; no group, drawing or syste
   (`q_wentback_home`), gone from the hole, or a witness at the lodge (`q_wentback_witness`), telling
   it at the lodge-keeper's side. Nothing is taken from the pack. 1,800 xp either way.
 - **The Bell Under the Ice** (`icebell`): once 40's sleeper has a bed the lodge woman asks for the
-  bell rung (`q_bell`). On K9 the bell's lip shows through the ice by the cap (`k9_bell`, 19,17),
+  bell rung (`q_icebell`). On K9 the bell's lip shows through the ice by the cap (`k9_bell`, 19,17),
   read KEEP THE COLD (#538); by night, beside the pike over the cap, the clapper (`k9_clapper`,
-  21,17) rings it under the ice (`q_bell_rung`), and by day is not there. The sleeper in the hall
+  21,17) rings it under the ice (`q_icebell_rung`), and by day is not there. The sleeper in the hall
   sits up at it; in the healer's house she sleeps on. The lodge woman goes out to Fuar
-  (`q_bell_out`) to sweep her people's hearth (K9, 9,17), or stays by the fire (`q_bell_stay`).
+  (`q_icebell_out`) to sweep her people's hearth (K9, 9,17), or stays by the fire (`q_icebell_stay`).
   1,800 xp either way.
 - **Where the Sky Meets Ice** (`sky`): the guide by the lodge's gate goes up the glacier with a
   party (`q_sky`), and only then is she at its foot on M9 with her half-built cairn
@@ -1857,7 +1857,8 @@ Decided by delegate for #494, each the owner's to overturn:
 
 1. **The five are `coach`, `wentback`, `icebell`, `sky` and `pilgrims`,** in `quests.ts`, each given
    by its person, finished at its level (40 at 20, 41 and 42 at 21, 43 and 44 at 22) and walked
-   every way it is answered. 42's is `icebell` because `bell` is the Shelf's.
+   every way it is answered. 42's is `icebell`, and its flags `q_icebell`, because `bell` and
+   `q_bell` are the Shelf's.
 2. **Two titles lose a word:** The Coach That Never Came and Where the Sky Meets Ice. #56's own run
    a pixel past the log's list (173 of 172).
 3. **40's hand-in is a note.** The man in the healer's coat by the coach writes it; the coachman

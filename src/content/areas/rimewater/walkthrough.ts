@@ -716,19 +716,19 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   // hall wakes at it, the healer's sleeps on; the lodge woman goes out to Fuar, or stays.
   const WOMAN = npc('rime_lodge', 'A lodge woman'), AT_HEARTH = npc('coldmere_k9', 'A lodge woman');
   const BELL = K9.features!.find((f) => f.kind === 'sign' && f.id === 'k9_bell')!;
-  for (const [bed, sets, entry] of [['q_coach_hall', 'q_bell_out', 'out'], ['q_coach_temple', 'q_bell_stay', 'stay']] as const) {
+  for (const [bed, sets, entry] of [['q_coach_hall', 'q_icebell_out', 'out'], ['q_coach_temple', 'q_icebell_stay', 'stay']] as const) {
     const w = at(21);
-    ok(hear(w, 'rime_lodge', WOMAN).includes('The tower still stands') && !w.party.flags.q_bell && !page(w, 'icebell'), `${entry}: before the coach's sleeper has a bed the lodge woman speaks of the tower, and asks nothing`);
+    ok(hear(w, 'rime_lodge', WOMAN).includes('The tower still stands') && !w.party.flags.q_icebell && !page(w, 'icebell'), `${entry}: before the coach's sleeper has a bed the lodge woman speaks of the tower, and asks nothing`);
     coach(w, bed);
     ok(hear(w, 'rime_lodge', WOMAN).includes('Nobody rang the bell') && began(w, 'The Bell Under the Ice') && /tower's cap/.test(goal(w, 'icebell')),
       `${entry}: with the sleeper in a bed she asks for the bell rung (${goal(w, 'icebell')})`);
     hour(w, 12);
     see(w, 'coldmere_k9:k9_clapper');
-    ok(!w.world.used('k9_clapper') && !w.party.flags.q_bell_rung, `${entry}: by day there is nothing at the cap but its slates`);
+    ok(!w.world.used('k9_clapper') && !w.party.flags.q_icebell_rung, `${entry}: by day there is nothing at the cap but its slates`);
     hour(w, 23);
     fight(w, 'coldmere_k9:k9_pike_tower');
     see(w, 'coldmere_k9:k9_clapper');
-    ok(!!w.party.flags.q_bell_rung && /lodge woman/.test(goal(w, 'icebell')), `${entry}: by night, the pike over the cap put down, the clapper rings the bell under the ice (${goal(w, 'icebell')})`);
+    ok(!!w.party.flags.q_icebell_rung && /lodge woman/.test(goal(w, 'icebell')), `${entry}: by night, the pike over the cap put down, the clapper rings the bell under the ice (${goal(w, 'icebell')})`);
     if (entry === 'out') w.party.members[4].skills = ['linguist'];
     w.world.travel(K9.id, BELL.x, BELL.y);
     const words = w.world.eventsHere();

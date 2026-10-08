@@ -53,21 +53,21 @@ export const QUESTS: readonly QuestDef[] = [
     // #56's 42: the lodge woman tells it once the coach's sleeper is placed (40). By night over the pike
     // at the tower's cap the clapper rings the bell, whose Kiln-script a reader reads (#538); the
     // sleeper the Lanterns have wakes at it. She goes out to her people's hearth, or stays. Its id is
-    // not `bell`, which is the Shelf's (The Tide Bell).
+    // not `bell` nor its flags `q_bell`, which are the Shelf's (The Bell That Rang Twice).
     id: 'icebell',
     title: 'The Bell Under the Ice',
-    start: { flag: 'q_bell' },
-    done: [{ flag: 'q_bell_out' }, { flag: 'q_bell_stay' }],
+    start: { flag: 'q_icebell' },
+    done: [{ flag: 'q_icebell_out' }, { flag: 'q_icebell_stay' }],
     entries: [
-      { id: 'woman', when: { flag: 'q_bell' }, text: 'A lodge woman by the inn\'s yard fire had her people at Fuar when the loch came up over it. Nobody rang the bell for them. On a still night, she says, it can be reached from the tower\'s cap.' },
-      { id: 'rung', when: { flag: 'q_bell_rung' }, text: 'By night, over the tower\'s cap on Loch Fuar\'s ice, we reached the clapper and rang the bell under the ice.' },
+      { id: 'woman', when: { flag: 'q_icebell' }, text: 'A lodge woman by the inn\'s yard fire had her people at Fuar when the loch came up over it. Nobody rang the bell for them. On a still night, she says, it can be reached from the tower\'s cap.' },
+      { id: 'rung', when: { flag: 'q_icebell_rung' }, text: 'By night, over the tower\'s cap on Loch Fuar\'s ice, we reached the clapper and rang the bell under the ice.' },
       { id: 'read', when: { seen: 'coldmere_k9:k9_bell' }, text: 'Round the bell\'s lip, in the old script: KEEP THE COLD.' },
-      { id: 'out', when: { flag: 'q_bell_out' }, text: 'She went out to Fuar, to sweep her people\'s hearth above the old bank.' },
-      { id: 'stay', when: { flag: 'q_bell_stay' }, text: 'She stays by the yard\'s fire, watching the door to the ice.' },
+      { id: 'out', when: { flag: 'q_icebell_out' }, text: 'She went out to Fuar, to sweep her people\'s hearth above the old bank.' },
+      { id: 'stay', when: { flag: 'q_icebell_stay' }, text: 'She stays by the yard\'s fire, watching the door to the ice.' },
     ],
     goals: [
-      { when: { flag: 'q_bell_rung' }, text: 'Answer the lodge woman by the inn\'s yard fire: out to Fuar, or stay.', at: 'rime_lodge' },
-      { when: { flag: 'q_bell' }, text: 'Ring the bell under Loch Fuar\'s ice from the tower\'s cap, on a still night.', at: 'coldmere_k9' },
+      { when: { flag: 'q_icebell_rung' }, text: 'Answer the lodge woman by the inn\'s yard fire: out to Fuar, or stay.', at: 'rime_lodge' },
+      { when: { flag: 'q_icebell' }, text: 'Ring the bell under Loch Fuar\'s ice from the tower\'s cap, on a still night.', at: 'coldmere_k9' },
     ],
   },
   {

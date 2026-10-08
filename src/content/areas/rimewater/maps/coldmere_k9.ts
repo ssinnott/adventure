@@ -82,9 +82,9 @@ export const COLDMERE_K9: MapDef = {
     // from the village to the bank.
     { kind: 'event', x: 20, y: 17, id: 'k9_tower', once: true, text: 'The cap of a bell tower stands out of the ice, its slates furred with frost. Below it the ice is black.' },
     // The Bell Under the Ice (#56's 42, #494): the bell under the cap, its words read (#538), and by
-    // night, beside the pike over the cap, its clapper, for a company the lodge woman sent (`q_bell`).
+    // night, beside the pike over the cap, its clapper, for a company the lodge woman sent (`q_icebell`).
     { kind: 'sign', x: 19, y: 17, id: 'k9_bell', text: 'Down through the black ice by the cap, the bell\'s lip, and round it the words Fuar called its blessing.', read: 'KEEP THE COLD.' },
-    { kind: 'event', x: 21, y: 17, id: 'k9_clapper', once: true, when: { hours: 'night' }, after: { flag: 'q_bell' }, sets: 'q_bell_rung', text: 'Through the cap\'s louvres, an arm\'s length down, the clapper. Swung, it strikes, and under the ice the bell rings.' },
+    { kind: 'event', x: 21, y: 17, id: 'k9_clapper', once: true, when: { hours: 'night' }, after: { flag: 'q_icebell' }, sets: 'q_icebell_rung', text: 'Through the cap\'s louvres, an arm\'s length down, the clapper. Swung, it strikes, and under the ice the bell rings.' },
     { kind: 'event', x: 22, y: 21, id: 'k9_street', once: true, text: 'Through the ice a street: a roof\'s ridge, a chimney\'s top, a cart. Nothing in it has moved.' },
     { kind: 'event', x: 16, y: 18, id: 'k9_strip', once: true, text: 'Black ice, and one strip of it clear to the bottom. Stones under it, laid too square, going to the bank.' },
     // The old shore's bank, where the loch rose: its cairn, and behind the face where the stones stop,
@@ -94,7 +94,7 @@ export const COLDMERE_K9: MapDef = {
     { kind: 'chest', x: 12, y: 18, id: 'k9_iron', gold: 800, items: ['bear_spear+1', 'lann_fuar'] },
     { kind: 'event', x: 9, y: 18, id: 'k9_hearth', once: true, text: 'A hearth-stone on the old shore, swept clean, and the line of a house\'s walls round it under the drift.' },
     // Gone out to Fuar once the bell has rung (42), the lodge woman keeps her people's hearth.
-    { kind: 'npc', x: 9, y: 17, name: 'A lodge woman', after: { flag: 'q_bell_out' }, lines: [
+    { kind: 'npc', x: 9, y: 17, name: 'A lodge woman', after: { flag: 'q_icebell_out' }, lines: [
       'The lodge woman at her people\'s hearth above the old bank, a broom of heather in her hand.',
       '"Swept every day now. They will want it clean when they come up."',
     ] },
