@@ -231,9 +231,10 @@ for this act) and its links: the drove road down from the Cairnfield, the lodge'
 the pass to Monks' Vale and the Ice Caves' way in.
 
 Its row on the curve and its step on the gear ladder are in (#535). The row is in
-`src/content/progression.ts`: band 20–22, next 22, window 4,500, owed to #438 while the area is
-built box by box, with 7,020 gold the clear's floor, its xp met: 21,045 a member of the 16,267
-asked, the built boxes', the bay's, K10's and the Wardens' ask's (#439, #490, #491; §8). The step is
+`src/content/progression.ts`: band 20–22, next 22, window 4,500, owed to #497, the country behind,
+now the area is built (its boxes, chapter and quests), with 7,220 gold the clear's floor, its xp
+met: 22,645 a member of the 16,267 asked, the built boxes', the bay's, K10's, the Wardens' ask's and
+the side quests' (#439, #490, #491, #494; §8). The step is
 in `src/content/areas/rimewater/items.ts`, made ahead of the area as the Kilns' was
 (docs/areas/kilns.md §3; `ITEMS_AHEAD`, `src/content/index.ts`) until M9 took the table into its
 Area: the furrier's seven (`FURRIER`) and their plus finds by 22 (§4.1), the seven sold by the
@@ -1172,7 +1173,8 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   pass about a level short of the Whitespine's floor. Either the road's shares rise, each box priced
   by its fights at about 300 a fight as the built boxes were, or part of the country is unparked
   with the act: §9 puts it to the owner. Each box is priced when it is built and recorded here, and
-  the curve's row reports what a clear falls short of as owed to #438 until the boxes exist.
+  the curve's row reports what a clear falls short of as owed to #497, the country behind, now the
+  area is built.
   Scaled to the curve, which §9 proposes as the briefs' working figures until each box is built,
   the shares are M9 2,650, Rime Lodge 900, L9 2,300, K9 2,650, the bay 4,250, K10 1,950 and the
   side quests about 1,600: about 16,300. The issues (#486 to #494) carry the first figures until
