@@ -6,6 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.9 is its brief.
 import type { Feature, MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
+import { WARDEN_SLAIN } from './anvil_stone.ts';
 
 /**
  * The tear into the Anvil Stone's Rift (#465): on its square below the cut, 12,16, onto the Rift's
@@ -62,10 +63,11 @@ export const KILNSHEART_O5: MapDef = {
     { kind: 'event', x: 2, y: 24, id: 'o5_track', once: true, text: 'The track climbs east into bare hills, worn to the rock by sledges coming down heavy.' },
     { kind: 'event', x: 10, y: 20, id: 'o5_burnt', once: true, text: 'Footprints burnt into the turf come down off the hill onto the track, all out of one place higher up.' },
     // The tear below the cut, beside the track, the way into the Rift (TEAR); once its Warden has
-    // fallen, the torn ground closed over.
+    // fallen, the torn ground closed over, which sets the flag for a company that came away over the
+    // Warden by Town Portal and walks back up the track.
     TEAR,
-    { kind: 'event', x: 11, y: 16, id: 'o5_tear', once: true, until: { flag: 'q_anvil_closed' }, text: 'Beside the track the ground is torn open, red at the bottom. Heat comes up out of it, and a slow hammering.' },
-    { kind: 'event', x: 11, y: 16, id: 'o5_closed', once: true, after: { flag: 'q_anvil_closed' }, text: 'Beside the track the torn ground has closed over, a seam of black slag. No heat comes up out of it.' },
+    { kind: 'event', x: 11, y: 16, id: 'o5_tear', once: true, until: WARDEN_SLAIN, text: 'Beside the track the ground is torn open, red at the bottom. Heat comes up out of it, and a slow hammering.' },
+    { kind: 'event', x: 11, y: 16, id: 'o5_closed', once: true, after: WARDEN_SLAIN, sets: 'q_anvil_closed', text: 'Beside the track the torn ground has closed over, a seam of black slag. No heat comes up out of it.' },
     // The thane's iron on the approach, once the Stone is taken (#434's 1).
     { kind: 'event', x: 11, y: 14, id: 'o5_post', once: true, after: { flag: 'anvil_taken' }, text: 'The thane\'s iron, ahead of you as he said: dwarves in mail by a brazier, between the track and the Stone.' },
     // The Stone on its anvil of rock: its line on the approach, its plinth and the words cut in it,

@@ -35,7 +35,7 @@
 // running up and the first cutter's tools in it, the Warden won and its heart taken, and the tear
 // closed by the first step after it falls, which the Hearth counts and the strays outside read;
 // outside, the torn ground closed over, and a company gone by Town Portal closing it on its first
-// step back in. The roads
+// step back in or on the track beside the tear. The roads
 // south and west (N6 and M6, #467): the drove road on from N5 with nothing said, and out for
 // Cairnmoor past the moor's border; the milestone at the fork, counted along the roads; the drover
 // at the camp; the boxes' groups won at their floor; the coach's old halt found from the worn
@@ -892,8 +892,8 @@ function anvilRift(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const closed = w.world.eventsHere(), shut = O5.features!.find((f) => f.kind === 'event' && f.id === 'o5_closed')!;
   ok(shut.kind === 'event' && closed.join() === shut.text && !w.world.present(O5.features!.find((f) => f.kind === 'event' && f.id === 'o5_stone')!), `beside the track the torn ground has closed over (${closed.join(' / ')})`);
 
-  // A company gone from the Rift another way over the Warden, by Town Portal, has not closed the tear;
-  // its first step back in closes it.
+  // A company gone from the Rift another way over the Warden, by Town Portal, has not closed the tear:
+  // its first step back in closes it, and so does the track beside the tear, walked up again.
   const away = newWalk(ok);
   away.level = 17;
   away.world.travel('anvil_stone', warden.x, warden.y + 1, NORTH);
@@ -904,6 +904,16 @@ function anvilRift(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const inAgain = [away.world.move('forward'), away.world.move('forward')];
   ok(open5 && inAgain.every((r) => r.kind === 'moved') && away.world.state.mapId === 'anvil_stone' && inAgain[1].kind === 'moved' && inAgain[1].messages.includes(SLAG.quiet) && !!away.party.flags.q_anvil_closed,
     `a company gone by Town Portal over the Warden closes the tear on its first step back into the Rift (${at(away)})`);
+  const track = newWalk(ok);
+  track.level = 17;
+  track.world.travel('anvil_stone', warden.x, warden.y + 1, NORTH);
+  track.world.killGroups([warden.id]);
+  track.world.townPortal();
+  const unlit = track.world.stones, open6 = !track.party.flags.q_anvil_closed;
+  track.world.travel('kilnsheart_o5', TEAR.x - 1, TEAR.y);
+  const walked = track.world.eventsHere();
+  ok(open6 && shut.kind === 'event' && walked.join() === shut.text && !!track.party.flags.q_anvil_closed && track.world.stones === unlit + 1,
+    `or walks back up the track beside the tear, which has closed over and closes it, and the Hearth counts the Stone (${walked.join(' / ')})`);
 }
 
 /**
