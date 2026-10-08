@@ -13,14 +13,15 @@ rooms (#473) and the country behind the road (#474). This doc is #456. The syste
 #432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
 measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Its first nine boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area; N3,
+Its first ten boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area; N3,
 Anvilhall's box (#458, §4.3), and with it its first town, Anvilhall, behind N3's gate (#459, §4.4);
 N4, the Tiefzeche's box (#461, §4.6), the heart's first, and under its shaft the Tiefzeche, its
 first dungeon (#462, §4.7); N2, Erzkamm (#460, §4.5), with the Barbarian's second prestige; N5,
 Gluthutte's box (#463, §4.8), the smelter in the charcoal woods; N6 and M6, the roads south and west
 (#467, §4.12), M6 Kilnmouth's first; O5, the Anvil Stone's box (#464, §4.9), with the tear shut until
-the Rift is built; and L6, Kilnhaven's box (#468, §4.13), its gate shut until the town is built.
-Eleven of its monsters and its twelve rooms are drawn (§3), and the rest is to build. Its content is
+the Rift is built; L6, Kilnhaven's box (#468, §4.13), its gate shut until the town is built; and O6,
+Feuerstollen's box (#466, §4.11), with the tubes under its ridge, the area's second dungeon. Eleven
+of its monsters and its twelve rooms are drawn (§3), and the rest is to build. Its content is
 `src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map and its
 walkthrough; its chapter of the one quest, The Anvil Stone, in `chapter.ts`, and its side quests in
 `quests.ts`, to come) and its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
@@ -38,9 +39,9 @@ zones:
 | Zone | Band | Squares | Built |
 |---|---|---|---|
 | The Iron Fells | 16–17 | 3,059 | M3, N3, N2 |
-| The Kilns' heart (`kilnsheart`, "The Kilns" on the atlas) | 16–18 | 6,933 | N4, N5, N6, O5 |
+| The Kilns' heart (`kilnsheart`, "The Kilns" on the atlas) | 16–18 | 6,933 | N4, N5, N6, O5, O6 |
 | Kilnmouth | 16–18 | 4,799 | M6, L6 |
-| The area | 16–18 | 14,791 | M3, N3, N4, N2, N5, N6, M6, O5, L6 |
+| The area | 16–18 | 14,791 | M3, N3, N4, N2, N5, N6, M6, O5, L6, O6 |
 
 Squares are land, without shallows or rivers: about 14.4 zone maps, and 12,399 of them a company
 could walk. The rest is the rim's mountain in row 1 and the P column, the Fells' peaks and the
@@ -83,6 +84,11 @@ two of N7's to Cairnmoor, and the other 74 change hands elsewhere on the world.
 L6 (#468), laid whole in Kilnmouth, was Kilnmouth's already but for 6 squares of the bay its wall and
 its quay stand on; seeding the walk from it moves 105 squares between zones elsewhere, none on a
 built map.
+O6 (#466), laid whole in the heart, was the heart's already, square for square, and seeding the walk
+from it moves 381 squares, none on a built map: the heart takes 306 of High Moor's in O7 and P7 and
+one of N7's, Kilnmouth one of M7's and five of the heart's in M5, and the other 68 change hands
+elsewhere on the world. Row 7 now holds 2,308 of the Kilns' squares, until Cairnmoor lays its boxes
+or seeds its rows (§9).
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). The Kilns are the L to P columns from row 1
 to row 6, with K6 on the shore. The land worth a map is fourteen boxes: M3, N3, N2 and O3 in the
