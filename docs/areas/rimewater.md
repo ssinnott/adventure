@@ -16,15 +16,15 @@ Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
 (`src/game/atlas.ts`), for land without shallows or rivers; "walkable" is land that is not mountain,
 peak, cliff or chasm.
 
-Two boxes are built, M9, Rime Lodge's box (#486, §4.2), which lists the area, and L9, the long
-loch's shore (#488, §4.4); the businesses' rooms and the monsters are drawn (§3), and the rest is to
-build. Its content is
-`src/content/areas/rimewater/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Sleepers, in `chapter.ts`, its side quests in
-`quests.ts` and the Lanterns' quests in `guilds.ts`, to come), and its businesses' rooms are
-`src/ui/interiors/rimewater/`. Its ids: the area `rimewater`, its zones `longmere`, `coldmere` and
-`glacierfoot`, the town `rime_lodge`, the bay `sleepers_bay` and the reach's `ice_caves`. The zones
-are renamed in §10 and keep their ids (NAMES §3).
+Three places are built: M9, Rime Lodge's box (#486, §4.2), which lists the area; the town behind its
+gate, Rime Lodge (#487, §4.3); and L9, the long loch's shore (#488, §4.4). The bay's keepers are
+drawn (§3), and the rest is to build. Its content is `src/content/areas/rimewater/` (maps, monsters,
+items, climate, its part of the world map and its walkthrough; its chapter of the one quest, The
+Sleepers, in `chapter.ts`, its side quests in `quests.ts` and the Lanterns' quests in `guilds.ts`,
+to come), and its businesses' rooms are `src/ui/interiors/rimewater/`. Its ids: the area
+`rimewater`, its zones `longmere`, `coldmere` and `glacierfoot`, the town `rime_lodge`, the bay
+`sleepers_bay` and the reach's `ice_caves`. The zones are renamed in §10 and keep their ids (NAMES
+§3).
 
 ---
 
@@ -120,16 +120,24 @@ The weather is the lochs': cold and still, snow lying, ice from autumn, clear ni
 
 ## 3. What is built
 
-Two boxes, the first of which lists the area (#486, #488):
+Three places: one box, the area's first, which lists the area (#486), the town behind its gate
+(#487) and a second box west along the drove road (#488):
 
 - **Rime Lodge's box** (M9, `longmere_m9`, core, band 20–21; #486): the drove road taken down from
   Cairnmoor's N8 by the notch onto the long loch's shore, past the coach yard to the lodge's gate,
-  shut until the town is built; the lodge's walls and the loch's frozen head before them, with the
-  ice-hole a few squares out from the lake wall, its fire and the one who waits at its foot, and the
-  road on over the head by a causeway and out west along the shore. Pines under the fells; along
-  the east the glacier's edge, a guide frostbitten at its foot with her cairn half built, and the
-  one bare face of the ice with a hollow behind it. Seven groups: snow lynx in the pines three
-  times, ice pike under the loch's ice twice and ice bears at the glacier's edge twice.
+  which is the way into the town; the lodge's walls and the loch's frozen head before them, with
+  the lake wall's door onto the ice and the ice-hole a few squares out from it, its fire and the
+  one who waits at its foot, and the road on over the head by a causeway and out west along the
+  shore. Pines under the fells; along the east the glacier's edge, a guide frostbitten at its foot
+  with her cairn half built, and the one bare face of the ice with a hollow behind it. Seven
+  groups: snow lynx in the pines three times, ice pike under the loch's ice twice and ice bears at
+  the glacier's edge twice; and an eighth (#487), the tallyman and six knockers on the ice over the
+  hole on the fourth night, with Wenna the last one out after them.
+- **Rime Lodge** (`rime_lodge`, town, band 20–22; #487): a stockade on the shore behind M9's gate,
+  with a lane down its middle: the Lanterns' fourth hall at its head, selling to the seventh tier,
+  the healer's house and the furrier's either side of it, the provisioner's, the coach house with
+  the coach's landing, the trainers' yard to 23 and, down the lane, the inn, The Thaw, whose stays
+  count the nights, with its yard and a door onto the ice (§4.3).
 - **The long loch's shore** (L9, `longmere_l9`, country, band 20–21; #488): the drove road walked in
   from M9 and on west under the pines, over the ridge between the lochs by a saddle and out by the
   south edge for K10, where it is taken, not walked, across parked L10's corner (`PASS`, listed in
@@ -140,26 +148,33 @@ Two boxes, the first of which lists the area (#486, #488):
   a drift, and under it the drovers' summer shieling. Four groups: snow lynx in the pines twice,
   ice pike under the loch's ice and an ice bear alone on the ridge's far side.
 
+#487 opens M9's gate and the lake wall's door, which were drawn shut with events for the town to
+drop (`m9_gate`, `m9_lake_door`, in no save), and puts the fourth night's group and Wenna on the
+ice (§4.2). The shared code it changed is under the issue's systems lane: an inn can count the
+nights it keeps a company (`nights` on the inn feature in `src/game/map.ts`, `stayNight` in
+`src/game/party.ts`, the inn's screen in `src/ui/screens.ts`); the curve test reads a caller's
+retinue at its own level; and the Kilns' first-machines rule is read as far as the Kilns only
+(#487's 1, 6 and 17 in §9).
+
 Its atlas rows are charted in `src/content/areas/rimewater/atlas.ts`, the area's own `atlas` since
 M9 lists the area; until then `src/content/atlas.ts` spread them into the plan, as Saltreach's were
-before #170 (docs/areas/saltreach.md §9): the zones with their bands (Loch Fada 20–21, with M9 laid
-on it, §1; Loch Fuar 21–22; Glacier Foot the reach's), Rime Lodge at 20–22, the Sleepers' Bay at
-21–22, the sites (Rime Lodge, its own; the Ice Caves, the reach's, placed and not banded for this
-act) and its links: the drove road down from the Cairnfield, the lodge's way in at 410,262, the
+before #170 (docs/areas/saltreach.md §9): the zones with their bands (Loch Fada 20–21, with M9 and
+L9 laid on it, §1; Loch Fuar 21–22; Glacier Foot the reach's), Rime Lodge at 20–22, the Sleepers'
+Bay at 21–22, the sites (Rime Lodge, its own; the Ice Caves, the reach's, placed and not banded for
+this act) and its links: the drove road down from the Cairnfield, the lodge's way in at 410,262, the
 pass to Monks' Vale and the Ice Caves' way in.
 
 Its row on the curve and its step on the gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 20–22, next 22, window 4,500, owed to #438 while the area is
-built box by box, with M9's and L9's 5,882 xp a member and 2,920 gold the clear's floor (§8). The
-step is in
-`src/content/areas/rimewater/items.ts`, made ahead of the area as the Kilns' was
+built box by box, with the built boxes' 6,332 xp a member and 2,920 gold the clear's floor (§8). The
+step is in `src/content/areas/rimewater/items.ts`, made ahead of the area as the Kilns' was
 (docs/areas/kilns.md §3; `ITEMS_AHEAD`, `src/content/index.ts`) until M9 took the table into its
-Area: the furrier's seven (`FURRIER`, for #487) and their plus finds by 22 (§4.1), each owed to its
-shop or box until it is sold or placed; M9 places the Ice Axe +1 and L9 the Skinning Knife +1. The
-systems it waited on, #432's,
-are all built (the opening names them and where each is described); the drove road's coach is
-written (docs/areas/kilns.md §3) and runs once Kilnhaven (#469) and Rime Lodge (#487) are built.
-Its monsters are drawn in #495 and its rooms in #496.
+Area: the furrier's seven (`FURRIER`) and their plus finds by 22 (§4.1), the seven sold by the
+lodge's furrier (#487) and each find owed to its box until it is placed; M9 places the Ice Axe +1
+and L9 the Skinning Knife +1. The systems it waited on, #432's, are all built (the opening names
+them and where each is described); the drove road's coach is written (docs/areas/kilns.md §3), Rime
+Lodge's end of it lands (#487) and the run waits for Kilnhaven's (#469). Its monsters are drawn in
+#495 and its rooms in #496.
 
 The monsters are drawn (#495), the six of MONSTERS §7.3, ahead of the boxes that place them: the
 keepers, the Bay Keeper and the Matron (`src/ui/monsters/keepers.ts`), and the cats, the Snow Lynx
@@ -168,13 +183,13 @@ long bodies', the knockers' and the bears' frames. Their defs are in
 `src/content/areas/rimewater/monsters.ts`, the area's own since M9 lists it (`AHEAD`,
 `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the issue that places it: M9 places the pike, the lynx and the bear
-(#486); the tallyman is owed to #487 and the keepers to #490. §9 has the decisions.
+(#486) and its hole the tallyman (#487), and the keepers are owed to #490. §9 has the decisions.
 
 The rooms are drawn (#496), one to each business of Rime Lodge, ahead of the town as Lantern
 Watch's were. `src/content/areas/rimewater/interiors.ts` lists them, and the area's `interiors` has
 held the list since M9 lists the area (`ROOMS_AHEAD` in `src/content/index.ts` merged them until
-then); `tools/tests/maps.ts` reports each owed to #487 until a business there opens into it, and
-§4.3 names the ids. They are a scene to a file in `src/ui/interiors/rimewater/`, what they share in
+then); each business of the lodge opens into its own (#487), and §4.3 names the ids. They are a
+scene to a file in `src/ui/interiors/rimewater/`, what they share in
 `lodge.ts`: round logs with moss in the joints, pelts, frost on the glass and the loch through a
 window, the keepers' fire out on the ice by the hole. The inn, the great fire with a bear's skull
 over it, the lodge's blankets drying on a rail, an ice bear's hide on the boards, the long table
@@ -191,15 +206,15 @@ glacier over the stakes. §9 has the decisions.
 
 ## 4. What is still to build
 
-All of it but M9 and L9, built (#486, #488; §4.2, §4.4): 13,219 squares of land, 10,021 of them
-walkable, the plan's
-figures (§1); on the road, 10,046. On the grid the plan is four boxes on the road, a town and a
-dungeon, with seven boxes behind the road parked, and the owner's epic #438 holds this table:
+All of it but M9, Rime Lodge and L9, built (#486, §4.2; #487, §4.3; #488, §4.4): 13,219 squares of
+land, 10,021 of them walkable, the plan's figures (§1); on the road, 10,046. On the grid the plan is
+four boxes on the road, a town and a dungeon, with seven boxes behind the road parked, and the
+owner's epic #438 holds this table:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
 | M9 | Rime Lodge's box | Loch Fada | core | 20–21 | 761 (mountain 246, pine 173, grass 129, hills 110), 104 shallow | the drove road down from N8; the lodge's gate at 410,262; the long loch's head; the ice-hole; the glacier's edge | the lodge; the nights | #486 |
-| | Rime Lodge | | town, 16×16 | 20–22 | | the inn whose rests count the nights; the Lanterns' fourth hall; the furrier; the trainer to 23 | the four nights; Wenna | #487 |
+| | Rime Lodge | | town, 16×16 | 20–22 | | the inn whose stays count the nights; the Lanterns' fourth hall, to tier 7; the furrier; the trainer to 23; the coach's landing; the hole's fight on the fourth night, on M9 | the four nights; Wenna | #487 |
 | L9 | The long lake's shore | Loch Fada 607, Loch Fuar 361 | country | 20–21 | 968 (pine 652, mountain 169, grass 87, hills 59), 45 shallow | the road west along the loch; the ridge between the lochs; lynx in the pines | none | #488 |
 | K9 | Loch Fuar (Coldmere) | Loch Fuar | core | 21–22 | 734 (grass 417, pine 274, hills 41), 113 shallow | the cold loch; the sealed door under the ice at about 352,284; the bell tower under the ice | the door | #489 |
 | | The Sleepers' Bay | | dungeon, two levels of 16×16 | 21–22 | | the stair under the ice; the bay of beds; the keepers; the Matron in the last row | the sleepers | #490 |
@@ -299,8 +314,9 @@ what is new, with points of interest and a first share of the pay.
   a new family (#495); the reach seen.
 - **Finds.** The lost guide's Ice Axe +1 in the hollow, the ladder's (#535).
 - **Pay.** About 1,500 xp a member, the ice-hole's fight inside it.
-- **As built** (#486, 8 October): the brief's places, with seven groups for its eight, laid whole in
-  Loch Fada at band 20–21 (§1, §9). The drove road is taken down from N8's notch, 0,28 (424,250),
+- **As built** (#486, 8 October): the brief's places, with seven groups for its eight, the hole's
+  being #487's (§4.3), laid whole in Loch Fada at band 20–21 (§1, §9). The drove road is taken down
+  from N8's notch, 0,28 (424,250),
   onto M9's 22,8 (414,262), facing west: the box's start and no exit, with the way back up the
   square beside it, 23,8 (§9, 1). Snow lies, `*`, in drifts among the pines and on the hills, and
   the loch's head is ice, `i`, from the lake wall to row 20. West from the landing the road passes
@@ -308,8 +324,8 @@ what is new, with points of interest and a first share of the pay.
   yard at 20,7, a trough frozen to the bottom and a mounting block, and comes to the lodge's gate at
   19,8, with the Lanterns' lamp on its post by it at 20,9 (a shrine, personality). The lodge's walls
   stand on the shore, 11 to 18, 6 to 10, building squares as L6's town wall is, grey where the
-  brief has logs: the gate, 18,8, is shut and barred from inside, and so is the lake wall's door at
-  13,10, onto the ice, both the town's to open (§9, 4). The road runs south down the loch's east
+  brief has logs: the gate, 18,8, and the lake wall's door at 13,10, onto the ice, open into Rime
+  Lodge (#487, §4.3; §9, 4). The road runs south down the loch's east
   shore, west over the ice by a causeway at row 16, down the west shore and out by the west edge at
   0,20 (392,274) for L9 (§9, 6). The ice-hole is a ring of black water at 12,14, three squares out
   from the wall, with a fire beside it and a lodge-keeper, a Lantern, feeding it at 14,14, who says
@@ -334,8 +350,8 @@ what is new, with points of interest and a first share of the pay.
     0,31 (424,253) are mountain, the Rimefells' shoulder, with void past them. The gate, 18,8,
     leads to `rime_lodge` 14,8 facing west and its way back lands on 19,8; the lake wall's door,
     13,10, leads to `rime_lodge` 7,14 facing north and its way back lands on 13,11. Both are
-    exported from the map (`GATE`, `LAKE_DOOR`) and listed in no exits until #487 builds the town,
-    whose squares are guesses for it to move. West, L9 (#488): the stream, water, at 0,2 to 0,4
+    exported from the map (`GATE`, `LAKE_DOOR`) and listed in its exits since #487 built the town,
+    which kept their squares (#487's 9). West, L9 (#488): the stream, water, at 0,2 to 0,4
     against the atlas's at L9's 31,2 to 31,4, and the road out at 0,20 against its 31,20, hills on
     rows 12 to 19 and grass from row 21; L9 puts water at 31,2 to 31,4 and the road at 31,20, which
     the edge check matches. North, M8 (#484, parked): grass and pines at columns 0 to 4, the rest
@@ -347,9 +363,9 @@ what is new, with points of interest and a first share of the pay.
     fights in ten. M9 pays about 3,754 xp a member (793 for each of the 12 lynx and 8 pike, 1,667
     for each of the 4 bears) and 1,520 gold. Two under, at 18, it wins every fight too, owed to #18
     as the Kilns' and Cairnmoor's boxes' are. Density 98.0% within 8 steps and the furthest 13,
-    with no sign among its 31 points. The curve's rank correlation is 0.32, the lynx by the landing
-    nearest at 3 steps (level 20) and the north bears the hardest at 14 (level 21). It claims the
-    cats and a group on ice as new (§7).
+    with no sign among its 31 points (32 since #487). The curve's rank correlation is 0.25 (0.32
+    before the hole's group, #487), the lynx by the landing nearest at 3 steps (level 20) and the
+    north bears the hardest at 14 (level 21). It claims the cats and a group on ice as new (§7).
 
 ### 4.3 Rime Lodge (#487): town, 16×16, band 20–22
 
@@ -391,6 +407,47 @@ what is new, with points of interest and a first share of the pay.
 - **New here.** A town whose inn counts nights; a guild hall that sells the last spell tier; the
   Lanterns' fourth rank.
 - **Pay.** About 500 xp a member in the hall's quests and the town's.
+- **As built** (#487, 8 October): the brief's six businesses and the four nights, in a stockade on
+  the shore with a lane down its middle, all 104 open squares reached from the start. M9's gate is
+  open: a company comes in at 14,8 facing west, and the brief's gate line is said as it goes; a
+  step on, at 13,8, the stockade is described. The lane runs from the Lanterns' hall at the head of
+  the yard (7,3), with the healer's house (1,3) and the furrier's (13,3) either side of it, south to
+  the lake wall's door at 7,15; the provisioner's is off the square at 3,6, the trainers' yard at
+  11,10 and the inn, The Thaw, at 5,12, with its yard between its door and the lane, 6,12 to 7,13.
+  East of the lane stands the coach house, with the coachman at 14,7 and the coach's landing at
+  13,7, facing west; a lodge-keeper stands at 9,5, a stonecutter come down the drove road at 2,8
+  and a lodge woman at 9,12, lines only and no names (#487's 15).
+  The Lodge's Lantern Hall sells to the seventh tier for 500 and teaches a Lantern Linguist, as
+  every Lantern hall does; it gives no quest yet (#487's 12). The furrier's sells the step's seven
+  (`FURRIER`), the provisioner's Anvilhall's stores' list, the healer's house is a temple and the
+  trainers' yard trains to 23. The coachman speaks of the overdue coach and sells nothing yet: the
+  coach lands here, but Kilnhaven's end of the run is #469's (#487's 10). The houses draw in the
+  game's one town style, half-timbered and white, where the brief has logs; the palette tints the
+  stockade only.
+  The Thaw takes 45 a member and counts the nights: a stay sets the first of `night_1` to `night_4`
+  not yet set, so they come in order, and the morning's arrivals stand on the yard square outside
+  its door, 6,12, one night's words at a time: a man alone, then three who came up together, then
+  a family who say a girl led them to the stair, and on the fourth nobody by the fire and the
+  keepers standing back from the hole, which is clicking. That night's fight is M9's, and comes the
+  once: the tallyman and six knockers at 12,13, on the ice over the hole, after `night_4`. After it
+  a girl with a nail in her fist, who will not go home, stands there and sets `q_wenna_up`. The way
+  out by the lake wall's door lands on M9's 13,11, beside the ice pike of `m9_pike_wall` (#486's)
+  at 13,12, which strike a company at once as it comes out and are back a day after they are
+  killed (§11).
+  - **Seams.** M9's gate, 18,8, leads to 14,8 facing west, the town's start; the town's way out,
+    15,8, lands on M9's 19,8 facing east. The lake wall's door, M9's 13,10, leads to 7,14 facing
+    north; the way out, 7,15, lands on M9's 13,11 facing south, on the ice. Neither arrival on M9
+    is an exit (#487's 9). For the chapter (#492) and the quests (#494): the flags `night_1` to
+    `night_4` (`NIGHTS`) and `q_wenna_up` (`WENNA_UP`), both exported from `maps/rime_lodge.ts`;
+    the events seen `rime_lodge:rl_night_1` to `rl_night_4`, `rl_yard`, `rl_stockade`, `rl_pelts`
+    and `rl_coach_house`; the group slain `longmere_m9:m9_night_4`.
+  - **Measured.** The town: 100% of its 104 open squares within 7 steps, the furthest 4, no sign
+    among its 19 points. The hole's fight is won every time, at 20 and at 18 (owed to #18 with the
+    rest): at 20 it is 10.4 fights to a rest, a little over the aim of 8 to 10 and inside the limit
+    of 12.5, and at 18 it is 6.5. M9 with it manages 9.55 fights to a rest by the gate (9.6 by the
+    harness, the box in a new order each seed), with 7.7% of its days ending in a fight broken off,
+    where the seven groups of #486 had 1.7%. The hole pays 449 xp a member and no gold, and the
+    town nothing of its own (§8).
 
 ### 4.4 L9, the long lake's shore (#488): country, band 20–21
 
@@ -655,6 +712,12 @@ taken before the bay.
   Brother (MONSTERS §8.1), a person here and no fight, the first machine in a robe. Let the brother
   take them up, or turn them back to the lodge.
 
+As built (#487, 8 October): the lodge places the people of three of these, lines only and no names,
+as M9's are: the coachman, whose coach is overdue (40), a stonecutter of Cairnmoor's 39, come down
+the drove road, and a lodge woman whose people are under Loch Fuar (42). The guide of 43 is not in
+the lodge, M9's guide being back from the glacier already: #494 stages her before she goes, with
+43's flags. Their words and flags are #494's (#487's 15).
+
 ### The guilds' quests
 
 One hall opens here, the Lanterns' fourth (call 5; DESIGN §8's three become four), on the rules
@@ -662,7 +725,9 @@ and the hall menu of #132: Rime Lodge's hall sells to tier 7, teaches the Lanter
 once #538 builds Linguist (Spirit Sense and Perception are #18's) and gives the Lanterns' quests to
 a member. The fourth rank, Luminary, opens at Lantern Watch and here (call 8, #439): its quests are
 the Lanterns' line's, the split that began at the Watch (DESIGN §8, §9), and are #439's to propose.
-The first task for a company that is not yet a Taper is to keep the hole's fire a night.
+The first task for a company that is not yet a Taper is to keep the hole's fire a night. As built,
+the hall sells and teaches and gives no quest yet: that task waits with the fourth rank for #439
+(#487's 12).
 
 ## 7. Encounters, and what is new
 
@@ -673,7 +738,10 @@ many-fingered, whose frame the Whitespine's monks wear under their robes and the
 lamplighters bare (MONSTERS §11), and the cats, which the Wold's lions follow. The tallyman is the
 knockers' (the Kilns', MONSTERS §7.1), the ice pike the long bodies' and the ice bear the bears'.
 §4.2 to §4.7 place every group, the lynx under the Rimefells the gentlest and the Matron at the top
-of the band.
+of the band. As built, the ice-hole's fight is M9's `m9_night_4` (#487): the tallyman, six knockers
+of the Kilns' at 16 and the three more the tallyman calls at half a turn (#537), once, after the
+fourth night. The curve test reads a caller's retinue at its own level, so the group stands at the
+tallyman's 20 (#487's 4 and 6).
 
 Proposed, against the roster's Where column: the Ice Bear on the lochs' shores and the ridge (L9,
 K9), where MONSTERS §7.3 has it at the glacier's edge only; knockers on the bay's stair, the
@@ -692,7 +760,8 @@ machines shaped like people, a touch that puts to sleep and a boss that mends; K
 a quest (#538). Its landmarks: a hole in the ice with a fire beside it, a bell tower out of the ice,
 a door under the ice, rows of glass beds, a glacier, a pass. The area's `novel` claims each as a box
 places it, since the check asks that what is claimed be used: the cats and a group on ice with M9
-(#486), the rest with theirs; snow and ice underfoot are Cairnmoor's.
+(#486), the rest with theirs; snow and ice underfoot are Cairnmoor's. Rime Lodge (#487) claims no
+landmark, its icon being the road's before, Deepthorn Lodge's, which the check refuses (#487's 16).
 
 ## 8. The numbers
 
@@ -711,11 +780,14 @@ places it, since the check asks that what is claimed be used: the cats and a gro
   Scaled to the curve, which §9 proposes as the briefs' working figures until each box is built,
   the shares are M9 2,650, Rime Lodge 900, L9 2,300, K9 2,650, the bay 4,250, K10 1,950 and the
   side quests about 1,600: about 16,300. The issues (#486 to #494) carry the first figures until
-  their briefs are settled. As built: M9 3,754 (#486), over the brief's 1,500 and the scaled 2,650,
-  and L9 2,128 (#488), over the brief's 1,300 and the scaled 2,300. Rimewater stands at 5,882 of
-  16,267; the scaled shares still to come (Rime Lodge 900, K9 2,650, the bay 4,250, K10 1,950 and
-  the side quests 1,600: 11,350), at M9's ratio of 1.42, come to 16,117, which would put it at about
-  21,999, under 1.4 times the ask (22,774), so no group is cut (§9, 21; #488's 15).
+  their briefs are settled. As built: M9 3,754 (#486), over the brief's 1,500 and the scaled 2,650;
+  Rime Lodge 449 (#487), the hole's fight alone (the tallyman 793 and six knockers at 317, over
+  six), under the brief's 500 and the scaled 900, the hall's quests being owed to #439; and L9 2,128
+  (#488), over the brief's 1,300 and the scaled 2,300. Rimewater stands at 6,332 of 16,267 (the
+  shares are rounded down, so they sum to 6,331). The scaled shares still to come (K9 2,650, the bay
+  4,250, K10 1,950 and the side quests 1,600: 10,450), paid at M9's 1.42 times its scaled share,
+  come to about 14,840, and Rimewater would stand at about 21,170, under 1.4 times the ask (22,774),
+  so no group is cut (#486's 21; #487's 18; #488's 15).
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and
   tier 7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at
   least, in chests, drops and the hall's pay; the furrier's step is priced within the band's window
@@ -724,9 +796,11 @@ places it, since the check asks that what is claimed be used: the cats and a gro
   +1 at 2,050. The furrier's full set for the premade six comes to about 19,100, its weapons
   10,900. The machines carry no gold, only parts (MONSTERS §2), so the bay's gold is its locker's.
   As built: M9 holds 1,520 (#486) of the 9,840, the lost guide's kit 1,200 and the fells' cairn 320;
-  its monsters carry none, and its dearest find, the Ice Axe +1 at 1,950, is inside the window. L9
-  adds 1,400 (#488), the drove's strongbox 1,100 and the crest's cairn 300; its find, the
-  Skinning Knife +1, is inside the window too, and the clear holds 2,920 of the 9,840.
+  its monsters carry none, and its dearest find, the Ice Axe +1 at 1,950, is inside the window. Rime
+  Lodge adds none (#487): its furrier sells the step at the prices above, its hall takes 500 for the
+  seventh tier and its inn 45 a member a night. L9 adds 1,400 (#488), the drove's strongbox 1,100
+  and the crest's cairn 300; its find, the Skinning Knife +1, is inside the window too, and the
+  clear holds 2,920 of the 9,840.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
@@ -734,12 +808,17 @@ places it, since the check asks that what is claimed be used: the cats and a gro
   nearly always at 23. The ice-hole's fight is judged with the fire at the company's back, one
   group and its call (#537), inside the aim at 20. As built: a company at 20 wins every fight on M9
   and walks Loch Fada's road every time, 9.55 fights to a rest; one at 18 wins every fight too,
-  owed to #18 as the Kilns' and Cairnmoor's boxes' are (§4.2). L9 the same: at 20 every fight won,
-  9.27 fights to a rest; at 18 every fight won too, owed to #18 (§4.4).
+  owed to #18 as the Kilns' and Cairnmoor's boxes' are (§4.2). Rime Lodge (#487) puts the hole's
+  fight on M9 as a group of its own: Rimewater at its maps' floors wins 100% of its 12 groups'
+  fights (8 before L9), and so does a company two under, the same debt; the hole alone is 10.4
+  fights to a rest at 20, a little over the aim of 8 to 10 and inside the limit of 12.5 (§4.3). L9
+  the same: at 20 every fight won, 9.27 fights to a rest; at 18 every fight won too, owed to #18
+  (§4.4).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   bay as a dungeon, 90% within 7 and none past 10. As built: M9 98.0% within 8 steps and the
-  furthest 13, with no sign among its 31 points (#486). L9 100.0% within 12 steps (the country floor)
-  and the furthest 11, with no sign among its 23 points (#488).
+  furthest 13, with no sign among its 31 points (#486), 32 since #487; Rime Lodge, a town, 100%
+  within 7 and the furthest 4, no sign among its 19 points (#487); L9 100.0% within 12 steps (the
+  country floor) and the furthest 11, with no sign among its 23 points (#488).
 
 ## 9. Decisions
 
@@ -782,7 +861,7 @@ Proposed, for the owner, each in the issue that would build it:
   under the ice from the hole to the door and is theirs, not the company's, which reaches the bay
   by the door Wenna opens (#486, #490).
 - **The nights are rests at the inn,** four flags in order (§4.3); whether a night asks the clock
-  past midnight as well is #487's to settle.
+  past midnight as well was #487's to settle, and it asks none (#487's 2).
 - **The bay's two levels,** the stair and the beds, with the back door in Kiln-script that opens
   for nobody and is no lock, the Mines' CREW ONLY's precedent (#490).
 - **The band's top** on K9 and K10 (§7): both 21–22 with bear pairs, or a cat at 22 (#491, #495).
@@ -977,6 +1056,62 @@ Decided by delegate for #486, each the owner's to overturn:
     scaled 2,650. Rimewater stands at 3,754 of 16,267; with §8's scaled shares still to come, about
     13,650, at about 17,400, under 1.4 times the ask (22,774), so no group is cut.
 
+Decided by delegate for #487, each the owner's to overturn:
+
+1. **The nights are the inn's `nights`:** a stay sets the first of `night_1` to `night_4` not yet
+   set, so they come in order (`stayNight` in `src/game/party.ts`, called by the inn's screen).
+   Nothing set a flag on a rest before; the issue carries the systems lane.
+2. **A night asks no clock past midnight** (the question §9 left for #487): a stay always sleeps to
+   morning, so a stay is a night.
+3. **Each night's arrivals are a once-event on 6,12,** the yard square outside the inn's door, the
+   only way out of it, each standing until the next night is set: the square never says more than
+   the log's four lines, and a company that stays twice without going out misses the first's words,
+   never a flag.
+4. **The hole's fight is on M9 at 12,13, `m9_night_4`,** on the ice over the hole (deep water at
+   12,14), after `night_4`: a guardian, with no respawn, `roams: false` and a `slainText`. The group
+   takes M9's prefix, since a zone map's ids share the outdoors' state.
+5. **"The fire at the company's back" is staging, not a mechanic:** the keeper's fire at 14,14, east
+   of the hole, and a company out of the inn's fourth stay fresh, as the gate judges it, one group
+   and its call from fresh.
+6. **The six knockers stay the Kilns' at 16:** the curve test now reads a caller's retinue (the kind
+   its `calls` names, in its own group) at its own level, as it reads its calls, so the band check
+   and the rise take the group's level from the tallyman, 20. No new def; no monster's level moved.
+7. **Wenna is "A girl out of the hole" on M9 at 12,13,** there once `longmere_m9:m9_night_4` is
+   slain, lines only (§4.3's line and §5's "two hundred more ... The doors know me."), setting
+   `q_wenna_up`. No `until`: the door (#489, #490) and the lodge after the bay (#492) move her.
+8. **The gate says §4.3's gate line going in,** as N3's gate says Anvilhall's; the lake door says
+   the yard; the first step inside the gate, 13,8, says the stockade.
+9. **The arrival squares stay M9's** (14,8, the town's start, facing west; 7,14, facing north): the
+   town was laid round them. The ways back land on 19,8 facing east and 13,11 facing south, neither
+   an exit.
+10. **The coach lands in the coach house inside the gate,** 13,7 facing west, with a landing line;
+    the coachman at 14,7 has `passage: sells('rime_lodge', DROVE_COACH)`, which sells nothing until
+    Kilnhaven writes its landing (#469), and speaks of the overdue coach (40) either way.
+11. **The hall is "The Lodge's Lantern Hall",** the Lanterns' (`hall: 'lanterns'`, so it teaches
+    Linguist as every Lantern hall does), `maxTier: 7`, fee 500 (Thornhold's 200 at the fourth
+    tier, the Watch's 400 at the sixth).
+12. **No guild quest is added:** §6's first task, "keep the hole's fire a night", would be a second
+    rank-0 Lanterns quest, and `rankOf` asks every quest of a rank, so every company that did
+    Helmstow's first task would stay a stranger until Act III. It waits for #439, with the fourth
+    rank's.
+13. **The rest of the town:** the inn "The Thaw" at 45 a member (Anvilhall's 35 at 16, the Watch's 30
+    at 14); the temple "The Healer's House"; the furrier's the seven of `FURRIER`; the provisioner's
+    Anvilhall's stores' list; "The Trainers' Yard" to 23 (the band's top plus one, as the check
+    asks).
+14. **No prestige trainer:** §4.3 places none at the lodge.
+15. **People, lines only and no names, as M9's:** the coachman (40's coach overdue), a lodge-keeper
+    (a Lantern), a stonecutter down the drove road (39) and a lodge woman whose people are under
+    Fuar (42). The guide of 43 is not placed: M9's is already back from the glacier, so the lodge's
+    guide before she goes is #494's to stage with 43's flags.
+16. **No novel landmark is claimed:** the lodge's icon is on the road before (Deepthorn Lodge), and
+    the check refuses it.
+17. **The Kilns' first-machines rule is read only as far as the Kilns** (its walkthrough), since the
+    hole puts machines on M9.
+18. **Pay: no group is cut** (§8): 4,203 xp a member built and about 22,300 projected, under the
+    limit of 22,774.
+19. **The issue against the doc:** the issue sets the tallyman's fight at the lodge's fire; the doc
+    puts it on M9's ice at the hole, and the doc won.
+
 Decided by delegate for #488, each the owner's to overturn:
 
 1. **The road keeps the atlas's line,** out by the south edge at 6,31 and 7,31 and on across parked
@@ -1027,9 +1162,10 @@ Decided by delegate for #488, each the owner's to overturn:
 14. **Novel claims nothing** (the brief has nothing new here) and **no zone-walk seeds are added:**
     laid whole in Loch Fada, L9 moved nothing the zone checks pin.
 15. **Pay is 2,128 xp a member** (10 lynx and 4 pike at 793 each, the bear's 1,667, over six)
-    against the brief's 1,300 and §8's scaled 2,300. Rimewater stands at 5,882 of 16,267; with
-    §8's scaled shares still to come (11,350) at M9's ratio of 1.42, 16,117, it would stand at
-    about 21,999, under 1.4 times the ask (22,774), so no group is cut.
+    against the brief's 1,300 and §8's scaled 2,300. Rimewater stands at 6,332 of 16,267, Rime
+    Lodge's share (#487) built; with §8's scaled shares still to come (K9 2,650, the bay 4,250, K10
+    1,950 and the side quests 1,600: 10,450) at M9's ratio of 1.42, 14,840, it would stand at about
+    21,170, under 1.4 times the ask (22,774), so no group is cut.
 16. **Two under is owed to #18** (`longmere_l9`, in the gate's `OWED`), as M9's.
 
 ## 10. Names
@@ -1079,18 +1215,30 @@ behind the road, 5,958 squares in seven boxes (§4.8), is parked and not cut (#4
 Cut from a brief as built (§4):
 
 - **The issue's fishing hut and cache,** its draft of M9's secret, on the frozen inlet: the guide's
-  hollow behind the glacier's bare face stands in their place, as §4.2 has it (§9, 12).
-- **The coachman and the fourth night,** left to Rime Lodge (#487): the coachman who sells the run
-  to Kilnhaven and the coach's landing are the town's (§9, 5), and the tallyman and six knockers up
-  through the ice-hole are `night_4`'s (§9, 8).
+  hollow behind the glacier's bare face stands in their place, as §4.2 has it (#486's 12).
 - **The issue's hollow pine, trapper's cache and woodcutters' hint,** its draft of L9's secret: the
-  drovers' shieling under the drift stands in their place, as §4.4 has it (§9, #488's 9).
+  drovers' shieling under the drift stands in their place, as §4.4 has it (#488's 9).
 - **The issue's narrows,** where the pike would lie by the road: the loch is 15 rows off it on the
-  atlas, so they lie under the ice off the woodcutters' camp (§9, #488's 6).
+  atlas, so they lie under the ice off the woodcutters' camp (#488's 6).
+
+Owed by Rime Lodge as built (#487, §4.3):
+
+- **To #439:** the Lanterns' fourth rank and its quests, and the hole's fire as a first task, left
+  out of the hall because it would be a second rank-0 quest and keep every company that did
+  Helmstow's first task a stranger until Act III (#487's 12); and the rule a hall's own first task
+  would need.
+- **To #469:** Kilnhaven's end of the coach, its landing and its seller. The coachman sells nothing
+  until it lands; then the passage check wants both ends to sell, and the gate counts the town's
+  ways out onto M9 as landings and holds the nearest groups to the gentlest (#539's 4), which wants
+  another look at the ice pike beside the lake door's landing, 13,12.
+- **To #492 and #494:** the chapter's entries on the nights and on Wenna, and her place at the lodge
+  after the bay (#492); the words of 39, 40, 42 and 43 on the people placed, and the lodge's guide
+  before she goes (#494).
+- **To #489 and #490:** Wenna's `until` at the hole, and her place at the door.
 
 Owed to the boxes beside L9 as built (§4.4, §4.7):
 
 - **K10 lists L9's pass,** `PASS`, in L9's exits and adds the way back onto L9's 7,31 facing north;
-  the landing, `coldmere_k10` at 31,4, is a guess for it to move (§9, #488's 2).
+  the landing, `coldmere_k10` at 31,4, is a guess for it to move (#488's 2).
 - **K9 puts dry land on its column 31** at rows 2 to 31 against L9's pines and writes Loch
-  Fuar's `crossing` words (§9, #488's 3).
+  Fuar's `crossing` words (#488's 3).

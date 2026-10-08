@@ -993,6 +993,7 @@
         "m9_lynx_fells",
         "m9_lynx_pines",
         "m9_lynx_south",
+        "m9_night_4",
         "m9_pike_loch",
         "m9_pike_wall",
         "marsh_spiders",
@@ -1452,6 +1453,21 @@
         "7,11"
       ]
     },
+    "rime_lodge": {
+      "size": "16x16",
+      "used": [
+        "rl_coach_house",
+        "rl_night_1",
+        "rl_night_2",
+        "rl_night_3",
+        "rl_night_4",
+        "rl_pelts",
+        "rl_stockade",
+        "rl_yard"
+      ],
+      "groups": [],
+      "doors": []
+    },
     "saltmouth": {
       "size": "16x16",
       "used": [
@@ -1863,6 +1879,7 @@
     "donations",
     "glove_seen",
     "guild_Lantern Guildhall",
+    "guild_The Lodge's Lantern Hall",
     "guild_The Watch's Lantern Hall",
     "guild_Thornhold Lantern Hall",
     "j3_hermit_lesson",
@@ -1874,6 +1891,10 @@
     "meridian_read",
     "n2_hartmut_lesson",
     "n2_hartmut_met",
+    "night_1",
+    "night_2",
+    "night_3",
+    "night_4",
     "o7_piper_lesson",
     "o7_piper_met",
     "o7_watcher_lesson",
@@ -2063,6 +2084,7 @@
     "q_well_lanterns",
     "q_well_wardens",
     "q_wenna",
+    "q_wenna_up",
     "rank_cartographers",
     "rank_compact",
     "rank_lanterns",

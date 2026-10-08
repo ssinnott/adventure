@@ -134,14 +134,18 @@ export function curve(): void {
     for (const d of maps) {
       if (!d.encounters?.length) continue;
       const [a, b] = d.band ?? [1, 0];
-      const kinds = [...new Set(d.encounters.flatMap((e) => e.monsters))];
+      // A caller's retinue, the kind it calls, stands in its group at its own level, as the calls it
+      // makes do (the tallyman's knockers at the ice-hole, docs/areas/rimewater.md §9, #487): the
+      // group's own monsters are the rest, and they set its level.
+      const own = (e: { monsters: readonly string[] }): string[] => e.monsters.filter((m) => !e.monsters.some((c) => (MONSTERS[c].calls?.monsters ?? []).some((q) => q === m)));
+      const kinds = [...new Set(d.encounters.flatMap(own))];
       const astray = kinds.filter((mid) => { const l = MONSTERS[mid].level; return !(Number.isInteger(l) && l >= 1 && l >= a - 2 && l <= b + 2); });
       ok(!astray.length, `${d.id}: its ${kinds.length} monsters' levels sit in ${a}-${b}, give or take two${astray.length ? `; not ${astray.map((m) => `${m} (${MONSTERS[m].level})`).join(', ')}` : ''}`);
       // Rising: a group's level (its monsters' mean) goes with its walking steps from the way in,
       // the nearest group is near the floor, and the hardest near the top. The hardest need not be
       // the farthest: Thornmark's farthest, the lake, is a middling group.
       const steps = stepsFrom(d);
-      const at = d.encounters.map((e) => ({ id: e.id, steps: steps(e.x, e.y), level: e.monsters.reduce((t, m) => t + MONSTERS[m].level, 0) / e.monsters.length }));
+      const at = d.encounters.map((e) => ({ id: e.id, steps: steps(e.x, e.y), level: own(e).reduce((t, m) => t + MONSTERS[m].level, 0) / own(e).length }));
       const lost = at.filter((g) => !Number.isFinite(g.steps));
       ok(!lost.length, `${d.id}: its ${at.length} groups can be walked to from the way in${lost.length ? `; not ${lost.map((g) => g.id).join(', ')}` : ''}`);
       const walked = at.filter((g) => Number.isFinite(g.steps));
