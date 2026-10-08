@@ -3,20 +3,19 @@
 // the Rimefells and the notch; east of it the field of cairns, a score of them, Carn Dubh the biggest
 // with its door in its side, one standing open and the Watcher's grave apart; and east of the field
 // the marsh at the bog's edge.
-// The door at 6,18 is the way into Carn Dubh (#480), shut until it is built (DOOR); the notch at 0,28
-// is the way down to Rime Lodge, taken onto M9 (#486, NOTCH).
+// The door at 6,18 is the way into Carn Dubh (#480, DOOR); the notch at 0,28 is the way down to Rime
+// Lodge, taken onto M9 (#486, NOTCH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 
 /**
  * The way into Carn Dubh (#480): the door of slabs in the biggest cairn's west side, 6,18, onto the
- * dungeon's first square at 7,15, facing north, which this asks #480 to give it (docs/areas/cairnmoor.md
- * §4.6 gives none). An exit leads only to a built map, so the Cairns list it in this map's exits, open
- * the door's square and drop `n8_door`; their way back lands on 5,18, facing west, on the road before
- * the door.
+ * passage's first square at 1,8, facing east, in under the cairn; the way back out lands on 5,18,
+ * facing west, on the road before the door.
  */
-export const DOOR: Exit = { x: 6, y: 18, to: 'cairns', tx: 7, ty: 15, tf: NORTH };
+export const DOOR: Exit = { x: 6, y: 18, to: 'cairns', tx: 1, ty: 8, tf: EAST,
+  label: 'The slabs of the door grind back, and you stoop in under the cairn.' };
 
 /**
  * The way down to Rime Lodge (#438): N8 and Rimewater's M9 meet only at a corner, and M8 between them
@@ -35,7 +34,7 @@ export const CAIRNFIELD_N8: MapDef = {
   band: [18, 20],
   region: 'cairnmoor',
   start: { x: 7, y: 0, facing: SOUTH },
-  exits: [NOTCH],
+  exits: [DOOR, NOTCH],
   rows: [
     'hh*hhhh=wwwwhhhhhh**hhhhhhhhhhh~',
     'hhhhhhh=whhhhhhhhhhhhhhhhhhhh~~h',
@@ -55,7 +54,7 @@ export const CAIRNFIELD_N8: MapDef = {
     'rrrrh=hhhhhhhhhhhhhhhhhhhhhhhhhh',
     'rrrrh=hhrrhhhhhhhhhhhhhhhhhrhhhh',
     'rrrrh=hrrrrhhhhhrhhhhhhhhhh**hhh',
-    'rhhhh=rrrrrhhhhhhhhhhhhhhhhhhhhh',
+    'rhhhh=Drrrrhhhhhhhhhhhhhhhhhhhhh',
     'hhhhh=hrrrrhh**hhhhhhhhhhrhhhhhh',
     'hhhhh=hhrrhhhhhhhhhhhhhhhhhhhhhh',
     'hhhh==hhhhhrrrhhhhhhhhrhhwhwwwwh',
@@ -88,8 +87,7 @@ export const CAIRNFIELD_N8: MapDef = {
     { kind: 'event', x: 2, y: 10, id: 'n8_crags', once: true, text: 'Grey crags west of the road. The wind has blown their lee bare to the heather.' },
     { kind: 'event', x: 20, y: 10, id: 'n8_cairns', once: true, text: 'Cairns on every side now, some knee high, some taller than a man, their stones grey with lichen.' },
     { kind: 'event', x: 29, y: 13, id: 'n8_bog', once: true, text: 'East the moor sinks into a bog, brown under the snow, and runs on out of sight.' },
-    // Carn Dubh, its door shut until the Cairns are built (DOOR), and the hermit in its lee.
-    { kind: 'event', x: 5, y: 18, id: 'n8_door', text: 'Carn Dubh, the oldest cairn and the biggest. In its side, a door of slabs, shut fast.' },
+    // Carn Dubh's door, the way into the Cairns (DOOR), and the hermit in its lee.
     { kind: 'npc', x: 11, y: 16, name: 'A hermit', lines: [
       'A hermit in the lee of the big cairn, wrapped in hides, a fire of heather roots at his feet.',
       '"Carn Dubh is the oldest. The rest were piled round it, to keep it in."',
