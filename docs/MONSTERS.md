@@ -1055,7 +1055,7 @@ tallyman among them; the long bodies as the ice pike; the bears as the ice bear.
 | Ice Pike | long bodies | skirmisher, 20 | under the lakes' ice | *The ice under Ottilie's feet has an eye in it.* Strikes a company on the ice, at one square |
 | Snow Lynx | cats, new | skirmisher, 20 | the pinewoods | *Grey, tufted, and it has already jumped.* Leaps at the back row |
 | Tallyman | knockers | caller, 20 | up through the ice-hole at Rime Lodge, by night; leading the knockers on the Sleepers' Bay's stair | *It stops and clicks, once for each of you.* Calls a group of knockers |
-| Ice Bear | bears | brute, 21 | the glacier's edge; L9's ridge (#488); K9's far shore (#489) | *White, and bigger than the last one.* |
+| Ice Bear | bears | brute, 21 | the glacier's edge; L9's ridge (#488); K9's far shore (#489); K10's pass (#491) | *White, and bigger than the last one.* |
 | Bay Keeper | keepers, new | controller, 21 | the sleepers' bay under Coldmere | *Tall and grey, with too many fingers, and gentle.* Its touch puts to sleep (0.3); mends its group |
 | The Matron | keepers, new | boss, 22 | the bay's last row | *It has tended them for four hundred years.* |
 
