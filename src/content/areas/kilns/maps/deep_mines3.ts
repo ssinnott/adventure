@@ -55,7 +55,7 @@ export const DEEP_MINES3: MapDef = {
       '"I bring the crust. They let me be, down here. Up there it is all hammering."',
     ], quest: { item: 'braid_ring', reward: 300, setFlag: 'q_crust_up', done: [
       'He knows the ring, and holds it a long time.',
-      '"Then she is not angry. Take my pay, there is nothing to spend it on down here. I will go up."',
+      '"Then she is not angry. Take my pay; there is nothing to spend it on down here. I will go up."',
     ] } },
     { kind: 'event', x: 13, y: 11, id: 'dm3_mouth', once: true, text: 'Through the hole, a corridor, square and clean and lit from nowhere. It runs both ways further than the light.' },
     { kind: 'event', x: 14, y: 10, id: 'dm3_rungs', once: true, text: 'Iron rungs come down the wall out of a square hole in the ceiling, cold to the hand.' },

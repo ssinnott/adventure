@@ -83,7 +83,7 @@ export const IRONFELLS_N2: MapDef = {
     ], choice: { ask: '"You will tell the thane, I suppose."', answers: [
       { label: 'Take him to the thane.', sets: 'q_primer_kept', pay: { gold: 500, xp: 900 }, says: [
         'He shuts the book and walks down the fell between you without a word.',
-        'The thane has him kept, puts the book in the forge, and pays you for the trouble.',
+        'The thane has him kept and his book put in the forge. He pays you for the trouble.',
       ] },
       { label: 'Take his copybook.', sets: 'q_primer_book', gives: 'copybook', pay: { xp: 900 }, says: [
         'He holds the book out without looking at it, and packs his primers.',
