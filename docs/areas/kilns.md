@@ -2417,8 +2417,9 @@ orchestrator's calls):
     the area's, so their groups count in its pool, O6's at 15 and the second level's at 14, where
     94.6% of 54 groups' fights are won; the first level's, at 14, are won every time (`lava_tubes:
     under`).
-17. **Owed on:** Cairnmoor's lines on O6 (12), and nothing else. The elder's flag, `q_anvil_closed`,
-    is the Rift's (#465), whose walk checks that the elder comes back no more.
+17. **Owed on:** Cairnmoor's lines on O6 (12) and the two-under figures to #18 (16). The elder's
+    flag, `q_anvil_closed`, is the Rift's (#465), whose walk checks that the elder comes back no
+    more.
 
 ## 10. Names
 
