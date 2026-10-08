@@ -32,12 +32,13 @@ export const ZONES: readonly AtlasZone[] = [
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
-  { id: 'cairns', name: 'Carn Dubh', kind: 'dungeon', planned: true, band: [19, 20], at: [430, 246] }, // the Cairns, two levels under N8 (#480)
+  { id: 'cairns', kind: 'dungeon', at: [430, 246] }, // Carn Dubh, the Cairns: the cairn, through N8's door at 6,18 (#479, #480)
+  { id: 'cairns2', kind: 'dungeon', at: [430, 252] }, // under the cairn, down its stair
 ];
 
 export const SITES: readonly AtlasSite[] = [
   // VII. Cairnmoor (docs/areas/cairnmoor.md §10 has the hill folk's names).
   { name: 'Fionnlios', icon: 'ring', map: 'highmoor_o7', at: [6.5, 24.5], label: 'below' }, // the Stone Ring, on its rise on O7, 6,24 (#477)
-  { name: 'Carn Dubh', icon: 'barrow', at: [430, 240], label: 'below', planned: true }, // the Cairns
+  { name: 'Carn Dubh', icon: 'barrow', at: [430, 240], label: 'below' }, // the Cairns, at the door on N8, 6,18 (#479, #480)
   { name: 'Watcher\'s Hut', icon: 'lodge', map: 'highmoor_o7', at: [10.5, 18.5], label: 'right' }, // the Sorcerer's second prestige: the hut beside the ring on O7, 10,18 (#477)
 ];
