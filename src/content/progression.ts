@@ -66,7 +66,9 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   cairnmoor: {
     band: [18, 20], next: 20, price: 4000,
-    owed: { whose: '#437', why: 'Cairnmoor is built box by box', xp: 12941, gold: 8155 },
+    // Built but for M7 and M8, the country behind (docs/areas/cairnmoor.md §4.7, §8): about 1,200 xp
+    // a member and their gold, which meet the curve.
+    owed: { whose: '#484', why: 'M7 and M8, the country behind, are parked', xp: 13641, gold: 8355 },
   },
   rimewater: {
     band: [20, 22], next: 22, price: 4500,
