@@ -2417,8 +2417,8 @@ orchestrator's calls):
     the area's, so their groups count in its pool, O6's at 15 and the second level's at 14, where
     94.6% of 54 groups' fights are won; the first level's, at 14, are won every time (`lava_tubes:
     under`).
-17. **Owed on:** the elder's flag, `q_anvil_closed`, which the Rift sets (#465) and this box reads
-    with two others; and Cairnmoor's lines on O6 (12).
+17. **Owed on:** Cairnmoor's lines on O6 (12), and nothing else. The elder's flag, `q_anvil_closed`,
+    is the Rift's (#465), whose walk checks that the elder comes back no more.
 
 ## 10. Names
 
@@ -2474,5 +2474,5 @@ short. The country behind the road (O3, O4, M4 and M5, 3,886 squares) is not cut
 (#474, #434's call 10).
 
 Nothing of O6's or the tubes' brief was cut (#466): its points of interest, groups and both secrets
-are built, and what waits is owed to others, the elder's strays to the Rift's flag (#465) and the
-first level's two-under figure to #18 (§8).
+are built, and what waits is owed to others, the first level's two-under figure to #18 (§8) and
+Cairnmoor's lines on O6 to Cairnmoor (§9).
