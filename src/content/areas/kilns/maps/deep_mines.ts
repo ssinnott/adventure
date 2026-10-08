@@ -43,11 +43,10 @@ export const DEEP_MINES: MapDef = {
   ],
   features: [
     { kind: 'event', x: 7, y: 13, id: 'dm1_in', once: true, text: 'The shaft\'s foot. Timbered galleries go off into the dark, and somewhere ahead picks are going.' },
-    // The hymn's doors (#56's 36, #471): a verse at each, a count of doors, sung going down. Each
-    // verse heard sets its flag; the three heard, the oldest miner at Anvilhall sings the last.
-    { kind: 'event', x: 7, y: 11, id: 'dm1_door1', once: true, sets: 'q_hymn_1', text: 'An air door, an old miner on a stool to work it. He sings as you pass: "One door shut, and all hands counted."' },
-    { kind: 'event', x: 7, y: 5, id: 'dm1_door2', once: true, sets: 'q_hymn_2', text: 'Another air door, another old miner beside it. He sings without looking up: "Two doors shut, and all hands counted."' },
-    { kind: 'event', x: 3, y: 1, id: 'dm1_door3', once: true, sets: 'q_hymn_3', text: 'The third door, and its keeper, older than the others. He sings it slowly: "Three doors shut, and all hands counted."' },
+    // The hymn's doors (#56's 36, #471): a verse at each, a count of doors, sung going down.
+    { kind: 'event', x: 7, y: 11, id: 'dm1_door1', once: true, text: 'An air door, an old miner on a stool to work it. He sings as you pass: "One door shut, and all hands counted."' },
+    { kind: 'event', x: 7, y: 5, id: 'dm1_door2', once: true, text: 'Another air door, another old miner beside it. He sings without looking up: "Two doors shut, and all hands counted."' },
+    { kind: 'event', x: 3, y: 1, id: 'dm1_door3', once: true, text: 'The third door, and its keeper, older than the others. He sings it slowly: "Three doors shut, and all hands counted."' },
     // Where the galleries meet; the stair down, and the crust on its ledge.
     { kind: 'event', x: 6, y: 1, id: 'dm1_hall', once: true, text: 'Where the galleries meet, picks racked on the wall and a bench worn smooth with sitting.' },
     { kind: 'event', x: 2, y: 2, id: 'dm1_crust', once: true, text: 'A ledge by the stair, and a crust on it in a clean cloth, set out for the knockers. Crumbs go on down the steps.' },

@@ -800,7 +800,7 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   to the spur's end, 15,2, facing west. Timbered galleries in stone and beams: the haulage way north
   through two air doors to where the galleries meet, and a third door west to the stair down, an old
   miner on a stool at each to work it, who sings its verse as the company passes, *One door shut, and
-  all hands counted.*, then two and three, each heard setting a flag for The Miners' Hymn (#471, §6).
+  all hands counted.*, then two and three, each kept by its id for The Miners' Hymn (#471, §6).
   The crust lies on a ledge by the stair, crumbs
   going on down the steps; at the face east a hewer, who says they do not go to the bottom and hear
   the knocking under the floor, and past it a hole no dwarf cut, a rock worm in it, the level's group
@@ -1403,9 +1403,9 @@ court; no group, drawing or system is added:
   (`q_crown_told`), the thane's men take the crown and the factor's stones, as the smith's words
   and hers say; Wiebe waits on. 900 xp either way, 150 a member.
 - **The Miners' Hymn** (`hymn`): the oldest miner on the bench by Anvilhall's inn begins it
-  (`q_hymn`), or the first verse heard does: each of the Tiefzeche's three doors sets its flag as
-  it is sung (`q_hymn_1` to `q_hymn_3`). The three heard, he sings the one they leave out, the
-  bottom door's, *Last door, the captain's door. Shut, and all hands counted.*, and sets
+  (`q_hymn`), or the first verse heard does, each of the Tiefzeche's three doors a once-event kept
+  by its id (`dm1_door1` to `dm1_door3`). The third heard, the last going down, he sings the one
+  they leave out, the bottom door's, *Last door, the captain's door. Shut, and all hands counted.*, and sets
   `q_hymn_sung` (`HYMN_SUNG` in `anvilhall.ts`), which the Bard's third reads (#448). It pays its
   verse.
 
@@ -2613,8 +2613,8 @@ Decided by delegate for #471, each the owner's to overturn:
    is why Wiebe's parcel is late. Told, the thane's men take it off-stage, as the words after say.
 8. **The flag the Council reads is `q_crown_sailed`** (`TALLIS_OWES`), set by Wiebe's hand-in:
    Tallis owes the company. Told, nothing is set for him but `q_crown_told`.
-9. **The doors set flags as they are sung,** since a condition names one event seen and the oldest
-   miner hears all three; his last verse sets `q_hymn_sung` (`HYMN_SUNG`) for the Bard's third.
+9. **The hymn reads the doors as seen,** kept by their ids, so a save that heard them before #471
+   finishes it; the third, the last going down, brings the verse, `q_hymn_sung` (`HYMN_SUNG`).
 10. **The last door is the captain's,** the bay under Coldmere's that calls Wenna Captain
     (docs/areas/rimewater.md §4.6), and nothing says so. The hymn pays its verse and no xp.
 11. **The oldest miner is in Anvilhall only,** by the inn, not at N4's camp by day as N4's brief

@@ -151,7 +151,7 @@ export const ANVILHALL: MapDef = {
       '"They feed me well. Nobody will say for how long."',
     ] },
     // The Miners' Hymn (#56's 36): the oldest miner, who sang the doors fifty years; told how they are
-    // sung now, the three heard going down, he sings the last, the bottom door's.
+    // sung now, the third door heard going down (`deep_mines`), he sings the last, the bottom door's.
     { kind: 'npc', x: 10, y: 13, name: 'The oldest miner', flag: 'q_hymn', lines: [
       'An old miner on the bench by the inn\'s door, his hands folded on a stick.',
       '"Fifty years I sang the doors going down. Go and hear how they sing them now, and come and tell me."',
@@ -160,7 +160,7 @@ export const ANVILHALL: MapDef = {
         'The oldest miner on his bench, humming the count.',
         '"Nobody sings the last going down. Nobody goes down that far."',
       ] },
-      { after: { flag: ['q_hymn_1', 'q_hymn_2', 'q_hymn_3'] }, sets: HYMN_SUNG, lines: [
+      { after: { seen: 'deep_mines:dm1_door3' }, sets: HYMN_SUNG, lines: [
         'He listens with his eyes shut, his lips moving with the count.',
         'Then he sings the one they leave out: "Last door, the captain\'s door. Shut, and all hands counted."',
       ] },

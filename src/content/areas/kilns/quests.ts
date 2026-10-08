@@ -66,21 +66,22 @@ export const QUESTS: readonly QuestDef[] = [
   },
   {
     // #56's 36: the verses at the Tiefzeche's three doors going down, or the oldest miner at Anvilhall,
-    // give it; the three heard, he sings the last, the verse for the door at the bottom, which the
-    // Bard's third reads (#448).
+    // give it; the third heard, the last going down, he sings the last verse, the bottom door's, which
+    // the Bard's third reads (#448). The doors are once-events kept by their ids, so a save that heard
+    // them before the quest was built reads them too.
     id: 'hymn',
     title: 'The Miners\' Hymn',
-    start: [{ flag: 'q_hymn_1' }, { flag: 'q_hymn_2' }, { flag: 'q_hymn_3' }, { flag: 'q_hymn' }],
+    start: [{ seen: 'deep_mines:dm1_door1' }, { seen: 'deep_mines:dm1_door2' }, { seen: 'deep_mines:dm1_door3' }, { flag: 'q_hymn' }],
     done: { flag: HYMN_SUNG },
     entries: [
       { id: 'oldest', when: { flag: 'q_hymn' }, text: 'The oldest miner at Anvilhall sang the doors going down for fifty years. He would hear how they sing them now.' },
-      { id: 'doors', when: [{ flag: 'q_hymn_1' }, { flag: 'q_hymn_2' }, { flag: 'q_hymn_3' }], text: 'In the Tiefzeche an old miner works each air door, and sings as we pass: one door shut, and all hands counted.' },
-      { id: 'three', when: { flag: ['q_hymn_1', 'q_hymn_2', 'q_hymn_3'] }, text: 'Three doors going down, a verse at each, counting. Below the third nobody sings.' },
+      { id: 'doors', when: [{ seen: 'deep_mines:dm1_door1' }, { seen: 'deep_mines:dm1_door2' }, { seen: 'deep_mines:dm1_door3' }], text: 'In the Tiefzeche an old miner works each air door, and sings as we pass: one door shut, and all hands counted.' },
+      { id: 'three', when: { seen: 'deep_mines:dm1_door3' }, text: 'Three doors going down, a verse at each, counting. Below the third nobody sings.' },
       { id: 'last', when: { flag: HYMN_SUNG }, text: 'He sang us the verse they leave out, the bottom door\'s: "Last door, the captain\'s door. Shut, and all hands counted."' },
     ],
     goals: [
-      { when: { flag: ['q_hymn_1', 'q_hymn_2', 'q_hymn_3'] }, text: 'Tell the oldest miner at Anvilhall how the doors are sung now.', at: 'anvilhall' },
-      { when: [{ flag: 'q_hymn_1' }, { flag: 'q_hymn_2' }, { flag: 'q_hymn_3' }, { flag: 'q_hymn' }], text: 'Hear the verses at the Tiefzeche\'s air doors, going down.', at: 'deep_mines' },
+      { when: { seen: 'deep_mines:dm1_door3' }, text: 'Tell the oldest miner at Anvilhall how the doors are sung now.', at: 'anvilhall' },
+      { when: [{ seen: 'deep_mines:dm1_door1' }, { seen: 'deep_mines:dm1_door2' }, { seen: 'deep_mines:dm1_door3' }, { flag: 'q_hymn' }], text: 'Hear the verses at the Tiefzeche\'s air doors, going down.', at: 'deep_mines' },
     ],
   },
 ];
