@@ -36,7 +36,7 @@ export const UNSET: Record<string, string> = {
 };
 
 /** The flags a feature sets: a person's, met, and an event's, said (#156). */
-const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : [];
+const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : [];
 
 /**
  * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one UNSET owes), an item, something spent once and kept

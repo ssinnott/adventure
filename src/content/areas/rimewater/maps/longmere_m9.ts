@@ -5,8 +5,8 @@
 // on west along the shore for the pass; the pines under the fells; and along the east the glacier's
 // edge, the guide's cairn and the one bare face of its foot.
 // The road is taken down from N8's notch onto 22,8 (NOTCH, in cairnfield_n8.ts) and back up from 23,8
-// (UP); the gate at 18,8 is the way into Rime Lodge (#487), shut until it is built (GATE), and the
-// door in the lake wall at 13,10 its way onto the ice (LAKE_DOOR).
+// (UP); the gate at 18,8 is the way into Rime Lodge (#487, GATE), and the door in the lake wall at
+// 13,10 its way onto the ice (LAKE_DOOR), where on the fourth night the hole gives up its fight.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, WEST } from '../../../../game/types.ts';
@@ -20,18 +20,20 @@ export const UP: Exit = { x: 23, y: 8, to: 'cairnfield_n8', tx: 1, ty: 28, tf: E
 
 /**
  * The way into Rime Lodge (#487): the gate in the lodge's east wall at 18,8, onto the town's first
- * square inside its own gate, 14,8, facing west (the town may move it). An exit leads only to a built
- * map, so the town lists it in this map's exits, opens the gate's square and drops `m9_gate`; its way
- * back out lands on 19,8, facing east, the road's end before the gate.
+ * square inside its own gate, 14,8, facing west, saying the town's gate line (docs/areas/rimewater.md
+ * §4.3) as the company goes in; the town's way back out lands on 19,8, facing east, the road's end
+ * before the gate.
  */
-export const GATE: Exit = { x: 18, y: 8, to: 'rime_lodge', tx: 14, ty: 8, tf: WEST };
+export const GATE: Exit = { x: 18, y: 8, to: 'rime_lodge', tx: 14, ty: 8, tf: WEST,
+  label: 'Rime Lodge: log walls on the shore, smoke, and a fire kept out on the ice. The keepers carry lanterns.' };
 
 /**
  * The inn yard's door in the lake wall at 13,10 (docs/areas/rimewater.md §9), the second way between
- * town and box: onto the town's yard at 7,14, facing north (the town may move it). Shut, as GATE is,
- * until the town lists it and drops `m9_lake_door`; its way back out lands on 13,11, on the ice.
+ * town and box: onto the town's yard at 7,14, facing north; the town's way back out lands on 13,11,
+ * on the ice.
  */
-export const LAKE_DOOR: Exit = { x: 13, y: 10, to: 'rime_lodge', tx: 7, ty: 14, tf: NORTH };
+export const LAKE_DOOR: Exit = { x: 13, y: 10, to: 'rime_lodge', tx: 7, ty: 14, tf: NORTH,
+  label: 'In off the ice by the lake wall\'s door, into the inn\'s yard and out of the wind.' };
 
 export const LONGMERE_M9: MapDef = {
   id: 'longmere_m9',
@@ -50,9 +52,9 @@ export const LONGMERE_M9: MapDef = {
     'p~~~^^^^^^^^^^^^^^^^^^MMMMMMMMMM',
     ',~~~pp*ppp^BBBBBBBB:::MMMMMMMMMM',
     ',,~~~ppppp,BBBBBBBB:::MMMMMMMMMM',
-    ',*,~~~ppp,,BBBBBBBB=====MMMMMMMM',
+    ',*,~~~ppp,,BBBBBBBD=====MMMMMMMM',
     ',,*,~~p,,,,BBBBBBBB=,pppppppMMMM',
-    ',,,^,~~,,,,BBBBBBBB=,,ppppppMMMM',
+    ',,,^,~~,,,,BBDBBBBB=,,ppppppMMMM',
     ',^^_~~iiiiiiiiiiii*=^^pppp***MMM',
     '^^^_iiiiiiiiiiiiii_=^^pp*piiiMMM',
     '^^^_iiiiiiiiiiiiii_=^^ppppiiiMMM',
@@ -75,13 +77,12 @@ export const LONGMERE_M9: MapDef = {
     ',_~~WWWWWWWWW~~,,,^^^^pppppppMMM',
     ',_~~WWWWWWWWW~~,,,^^^MMpppppppMM',
   ],
-  exits: [UP],
+  exits: [UP, GATE, LAKE_DOOR],
   features: [
     // Down off the fells: the road's foot under the cleft, the milestone, the coach yard and the gate,
     // shut, with the Lanterns' lamp before it.
     { kind: 'event', x: 21, y: 8, id: 'm9_milestone', once: true, text: 'A milestone where the road comes off the fells: RIME LODGE 1, THE PASS 9.' },
     { kind: 'event', x: 20, y: 7, id: 'm9_yard', once: true, text: 'The coach yard outside the gate: a trough frozen to the bottom, a mounting block, and the ruts of the coach for Kilnhaven.' },
-    { kind: 'event', x: 19, y: 8, id: 'm9_gate', text: 'Rime Lodge\'s gate, shut and barred from inside. Smoke over the log walls, and a dog barking.' },
     { kind: 'shrine', x: 20, y: 9, id: 'm9_shrine', text: 'A lantern on a post by the gate, in a box of glass, lit by day as by night.', stat: 'personality', done: 'The Lanterns\' lamp by the gate, lit.' },
     { kind: 'event', x: 25, y: 9, id: 'm9_pines', once: true, text: 'Pines under the fells, snow to their lowest boughs, and every trunk scored at the height of a man\'s chest.' },
     // Under the fells to the west: the stream into the loch and a cairn at the fells' foot.
@@ -89,7 +90,6 @@ export const LONGMERE_M9: MapDef = {
     { kind: 'cairn', x: 8, y: 5, id: 'm9_cairn', text: 'A cairn at the fells\' foot, its stones white with rime.', gold: 320, items: ['potion_sp_great'] },
     // The loch's head, frozen: the lake wall's door, the hole a few squares out with its fire and its
     // keeper, a Lantern, and at its foot, on a shelf of ice under the lip, the one who waits.
-    { kind: 'event', x: 13, y: 11, id: 'm9_lake_door', text: 'A door in the lodge\'s lake wall, onto the ice, barred. A lantern hangs over it, lit.' },
     { kind: 'event', x: 13, y: 14, id: 'm9_hole', once: true, text: 'A ring of black water in the ice, and a fire kept beside it. Somebody is coming up.' },
     { kind: 'npc', x: 14, y: 14, name: 'A lodge-keeper', lines: [
       'A lodge-keeper on the ice, a lantern at her belt, feeding the fire beside the hole with pine.',
@@ -100,6 +100,11 @@ export const LONGMERE_M9: MapDef = {
       'On a shelf of ice under the hole\'s lip a man sits, his boots over the black water.',
       '"She came up with the others. Then she went back down."',
       '"Somebody has to be here when she comes up."',
+    ] },
+    // The fourth night (#487): after the hole's fight, the last one out, who will not go home (§5).
+    { kind: 'npc', x: 12, y: 13, name: 'A girl out of the hole', flag: 'q_wenna_up', after: { slain: 'longmere_m9:m9_night_4' }, lines: [
+      'A girl of fifteen with a nail in her fist and her hair frozen to her face. "Are you the ones my mother sent?"',
+      'She will not go to the fire. "There are two hundred more of us down there. I\'m going back for them. The doors know me."',
     ] },
     // The causeway over the head, the road on west along the shore for the pass, and the shore camp.
     { kind: 'event', x: 10, y: 16, id: 'm9_causeway', once: true, text: 'Under the ice beside the causeway something long and pale turns over, and is gone.' },
@@ -127,7 +132,9 @@ export const LONGMERE_M9: MapDef = {
   encounters: [
     // Snow lynxes in the pines under the fells, three groups, the nearest the road's foot the gentlest;
     // ice pike under the loch's ice between the lake wall and the hole and beside the causeway; and the
-    // box's hardest, ice bears at the glacier's edge. The fourth night's ice-hole fight is #487's.
+    // box's hardest, ice bears at the glacier's edge. On the fourth night (#487), up through the hole
+    // onto the ice, the tallyman and six knockers, the fire at the company's back, the tallyman
+    // calling more (#537): once, and never again.
     { id: 'm9_lynx_pines', x: 23, y: 10, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
     { id: 'm9_lynx_fells', x: 7, y: 8, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
     { id: 'm9_pike_wall', x: 13, y: 12, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
@@ -135,5 +142,7 @@ export const LONGMERE_M9: MapDef = {
     { id: 'm9_lynx_south', x: 23, y: 26, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
     { id: 'm9_bear_north', x: 27, y: 17, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
     { id: 'm9_bear_south', x: 27, y: 28, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'm9_night_4', x: 12, y: 13, monsters: ['tallyman', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker'], aware: 3, roams: false, after: { flag: 'night_4' },
+      slainText: 'The last of them goes back into the black water, and the clicking stops. Then a hand comes up out of the hole.' },
   ],
 };

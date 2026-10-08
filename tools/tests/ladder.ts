@@ -175,7 +175,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
   },
   {
     level: 21, name: "Rime Lodge's furrier",
-    from: Object.fromEntries(FURRIER.map((id) => [id, ['rimewater', '#487']])),
+    from: Object.fromEntries(FURRIER.map((id) => [id, ['rimewater', '']])),
     classes: {
       knight: ['ice_axe'], paladin: ['ice_axe'], ranger: ['hunters_bow', 'bearskin'], barbarian: ['bear_spear', 'bearskin'],
       cleric: ['ice_axe', 'fur_robe'], sorcerer: ['skinning_knife', 'fur_robe'], thief: ['skinning_knife', 'bearskin'], bard: ['skinning_knife', 'bearskin'],
