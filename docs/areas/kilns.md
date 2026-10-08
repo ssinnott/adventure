@@ -285,7 +285,7 @@ docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–1
 laid on it and its line to the heart held, §1; the heart 16–18, with N4, N5, N6, O5 and O6 laid on it;
 Kilnmouth 16–18, with M6 and L6, §9), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the
 Tiefzeche 16–18, the Anvil Stone 17–18, Feuerstollen 17–18) as planned plates, the Tiefzeche's now
-its three levels' (#462), the Anvil Stone's the Rift's, on its tear (#465), and Feuerstollen's its
+its three levels' (#462), the Anvil Stone's the Rift's, on its tear (#465) and Feuerstollen's its
 two, 16–17 and 17–18 (#466), the sites (Anvilhall, the Deep Mines, the Forges, the Anvil Stone, the
 Lava Tubes, Kilnhaven, Iron Crag, to be renamed with #435, §10) and its links: the east road in, the
 towns' and the dungeons' ways in, the drove road on to High Moor, the ferry and the Compact ship,
@@ -295,7 +295,7 @@ it).
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
 `src/content/progression.ts`: band 16–18, next 18, window 3,500. It was owed to #436 while the area
 was built box by box; with O5 and L6 a clear gave 16,303 xp a member and 9,497 gold, past the 13,067
-and 7,920 the row asks, so it owes nothing (§8), with the Rift 20,000 and 11,407, and with O6 and
+and 7,920 the row asks, so it owes nothing (§8); with the Rift 20,000 and 11,407 and with O6 and
 its tubes 26,128 and 13,007, before the two fourth-rank asks. The step is in
 `src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`, `src/content/index.ts`)
 so that the harness and the gate dressed by it before the first box took the table into its Area
@@ -1403,15 +1403,16 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   the Rift 3,698 (#465) and O6 with its tubes 6,127 (#466), so the shares stand at about 27,200,
   Kilnhaven's 300 and the side quests' 800 still to come. The Tiefzeche's Foreman alone pays 1,902 a
   member and its two corridor groups 858, past the brief's 2,400 before the upper levels' beasts
-  (§9), the Warden of the Anvil 1,902, past the Rift's 1,800 before its slag, and the Great
-  Salamander 1,902 too, which with O6's box and the first level makes four times the brief's 1,500
-  (§9, #466's 9). With O5 a clear as measured gave 14,713 xp a member, past the curve's 13,067, so
-  its row owes nothing; with L6 it gave 16,303, with the Rift 20,000, and with O6 and its tubes it
-  gives 26,128, Kilnhaven's hand-ins still to come. The two fourth-rank asks of the Tiefzeche (#439,
-  §6) add 800 xp a member to a clear already over its ask: 26,928 of the 13,067, 2.06 times. One box
-  is still to build, Kilnhaven (#469), and O6 and its tubes alone took the clear past 1.4 times the
-  ask, about 18,300, the line #439's 10 held the three boxes to; no group is cut for it (§9, #466's
-  9). Anvilhall pays nothing of its own (#459): its 300 is the chapter's and #471's.
+  (§9). The Warden of the Anvil pays 1,902 too, past the Rift's 1,800 before its slag, and the Great
+  Salamander 1,902, so that O6 with its tubes pays four times the brief's 1,500 (§9, #466's 9). With
+  O5 a clear as measured gave 14,713 xp a member, past the curve's 13,067, so its row owes nothing;
+  with L6 it gave 16,303 and with the Rift 20,000; with O6 and its tubes it gives 26,128,
+  Kilnhaven's hand-ins still to come. The two fourth-rank asks of the Tiefzeche (#439, §6) add 800
+  xp a member to a clear already over its ask: 26,928 of the 13,067, 2.06 times. One box is still to
+  build, Kilnhaven (#469). The clear has been past 1.4 times the ask, about 18,300, the line #439's
+  10 held the three boxes to, since the Rift, and O6 with its tubes is 6,127 for the brief's 1,500;
+  no group is cut for it (§9, #466's 9). Anvilhall pays nothing of its own (#459): its 300 is the
+  chapter's and #471's.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1467,7 +1468,7 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   way (§9); the Rift's day, 8.00 fights to a rest, and its groups pooled with the Warden, won 90.8%,
   are inside the aims, and two under its groups count in the area's pool (§4.10). Feuerstollen's
   second level is the Foreman's case: its groups pooled with the Great Salamander are won 84.3%, off
-  the aim and inside the limit, and the boss 53% at 17 and 94% at 19, set off the line the same way
+  the aim and inside the limit; the boss is won 53% at 17 and 94% at 19, set off the line the same way
   (§9, #466's 4); its day, 7.56 fights to a rest, is inside the aim.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
