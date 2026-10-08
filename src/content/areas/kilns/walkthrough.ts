@@ -33,8 +33,10 @@
 // Feuerstollen's box (O6, #466): the open hills down from O5 with nothing said, and the grass in from
 // N6, harder to a company under its floor of 17; the box's groups won at its floor; the hermit in his
 // dead vent; the adit in the ridge's foot and the words over it, read by a reader alone, whose reading
-// marks the tubes and the machine's other mouths on the world map; and the first dwarves' shelter
-// found from the cold vent's bare lip. The roads south and west (N6 and M6, #467): the drove road on from N5 with nothing said, and out for
+// marks the tubes and the machine's other mouths on the world map; the first dwarves' shelter found
+// from the cold vent's bare lip; and the grass on south over the line into Cairnmoor's O7, the moor
+// named, and harder to a company of 17. The roads
+// south and west (N6 and M6, #467): the drove road on from N5 with nothing said, and out for
 // Cairnmoor past the moor's border; the milestone at the fork, counted along the roads; the drover
 // at the camp; the boxes' groups won at their floor; the coach's old halt found from the worn
 // verge; the branch over the line into Kilnmouth, named, and harder to a company under its floor,
@@ -523,6 +525,21 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const bow = O6.features!.find((f) => f.kind === 'chest' && f.id === 'o6_shelter_chest');
   ok(bow?.kind === 'chest' && bow.items.includes('steel_bow+1') && bow.x === 27 && bow.y === 25, 'in the shelter, what the first dwarves left: a Steel Bow +1');
+
+  // Out by the south edge over the line into Cairnmoor's O7 (#477): the grass runs on square for square,
+  // no road between, and the moor is named; a company of 17 hears the land is harder, one of 18 no more.
+  const southward = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('kilnsheart_o6', 15, 30, SOUTH);
+    const said: string[] = [];
+    for (let i = 0; i < 4 && w.world.zone?.id !== 'highmoor_o7'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
+    ok(w.world.zone?.id === 'highmoor_o7', `the grass runs on south from O6 into Cairnmoor's O7 at ${level}`);
+    return said;
+  };
+  const at17o7 = southward(17), at18o7 = southward(18);
+  ok(out.at(o6.x + 15, o6.y + 31).ch === ',' && out.at(o6.x + 15, o6.y + 32).ch === ',' && at17o7.some((m) => /^High Moor\./.test(m) && m.includes('harder')) && at18o7.some((m) => /^High Moor\./.test(m)) && !at18o7.some((m) => /harder|spare you/.test(m)),
+    `over the line the moor is named and said harder to a company of 17 (${at17o7.join(' / ')}), and only named to one of 18 (${at18o7.join(' / ')})`);
+  w.level = 17;
 
   // The roads south and west (N6 and M6, #467). On down the drove road over the line from N5: the
   // same land, its floor 16 under N5's 17, so nothing is said of it at any level.
@@ -1053,12 +1070,12 @@ function feuerstollen(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // in; stepped back onto, the adit's foot takes it up and out under the words, facing away.
   w.world.travel('kilnsheart_o6', ADIT.x - 1, ADIT.y, EAST);
   const down = w.world.move('forward');
-  ok(down.kind === 'moved' && w.world.state.mapId === 'lava_tubes' && w.world.state.x === L1.start.x && w.world.state.y === L1.start.y && w.world.state.facing === NORTH && down.messages.includes(ADIT.label!),
-    `the adit takes the company down into the tubes at its foot, facing in (${at()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  ok(down.kind === 'moved' && w.world.state.mapId === 'lava_tubes' && w.world.state.x === L1.start.x && w.world.state.y === L1.start.y && w.world.state.facing === NORTH && down.messages.length === 1 && down.messages[0] === ADIT.label,
+    `the adit takes the company down into the tubes at its foot, facing in, and says the way's line and no more (${at()}: ${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
   const off = w.world.move('forward'), back = w.world.move('back');
   const o6 = w.world.zone;
-  ok(off.kind === 'moved' && back.kind === 'moved' && o6?.id === 'kilnsheart_o6' && w.world.state.x - o6.x === ADIT.x - 1 && w.world.state.y - o6.y === ADIT.y && w.world.state.facing === WEST,
-    `and the adit's foot takes it back up, out under the words, facing away from the ridge (${at()})`);
+  ok(off.kind === 'moved' && back.kind === 'moved' && o6?.id === 'kilnsheart_o6' && w.world.state.x - o6.x === ADIT.x - 1 && w.world.state.y - o6.y === ADIT.y && w.world.state.facing === WEST && back.messages.length === 1 && back.messages[0] === L1.exits![0].label,
+    `and the adit's foot takes it back up, out under the words, facing away from the ridge, with no crossing line said over a way that lands where it left (${at()})`);
   ok([L1, L2].every((d) => (d.exits ?? []).every((e) => !e.shut && !e.needFlag)), 'nothing shuts a way in Feuerstollen: no flag, no reading');
 
   // The fire adit: the dwarves' cut, timbered, breaking into a tube of black glassy rock, its floor
