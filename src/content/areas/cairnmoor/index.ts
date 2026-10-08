@@ -9,6 +9,8 @@ import { CAIRNS } from './maps/cairns.ts';
 import { CAIRNS2 } from './maps/cairns2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
+import { QUESTS } from './quests.ts';
+import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -17,9 +19,8 @@ export const AREA = {
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
-  quests: [],
-  // The Ring, the act's second chapter, is #481's.
-  chapter: undefined,
+  quests: QUESTS,
+  chapter: CHAPTER,
   // The moor's: cold, wet and windy, sleet and snow from the autumn on, lying long in the winter,
   // and fog off the bog.
   climate: { summer: 13, winter: -6, daily: 5, damp: [0.02, 0.09], wettest: 90, fog: 0.7, lag: 12,
