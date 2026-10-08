@@ -21,6 +21,8 @@ export interface GuildQuest {
   guild: GuildId;
   /** The rank a company must hold to be offered it: 0, the first task, is offered to strangers. */
   rank: number;
+  /** A flag the company must hold as well: a later act's ask waits for its act (DESIGN §8), so a rank held early opens nothing ahead of the road. */
+  after?: string;
   /** What the hall says offering it. */
   offer: readonly string[];
   /** The deed: once it holds, the next report pays. */
@@ -65,10 +67,10 @@ export const guildName = (guild: GuildId): string => GUILDS[guild].name.replace(
 /** The name of a rank, or null for a stranger. */
 export const rankName = (guild: GuildId, rank: number): string | null => (rank > 0 ? GUILDS[guild].ranks[rank - 1] : null);
 
-/** The quests a hall of the guild offers: those at or under the company's rank, not yet taken. */
+/** The quests a hall of the guild offers: those at or under the company's rank whose act has come, not yet taken. */
 export function offered(guild: GuildId, party: Party, quests: readonly GuildQuest[] = GUILD_QUESTS): GuildQuest[] {
   const rank = rankOf(guild, party, quests);
-  return ofGuild(guild, quests).filter((q) => q.rank <= rank && !isTaken(q, party) && !isDone(q, party));
+  return ofGuild(guild, quests).filter((q) => q.rank <= rank && (!q.after || !!party.flags[q.after]) && !isTaken(q, party) && !isDone(q, party));
 }
 
 /** The quests taken and not yet paid. */

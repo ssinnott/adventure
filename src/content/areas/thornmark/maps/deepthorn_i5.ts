@@ -2,7 +2,9 @@
 // forest down Penspern's west side to the Wyke, walked by three paths: in from Henlys to the north,
 // down the shingle, and through the trees to the tip, where the beach runs on east under the head.
 // The owls' roost is a dead oak on the shore; past it, under a root at the water's edge, the hold's
-// youths keep their boat. The Hearth Isle's rocks in the south-west corner are kept and never walked.
+// youths keep their boat. At the tip, once the Grove Stone is mended, an elf of the old wood comes out
+// of the trees, who teaches the Druid's second prestige (#19). The Hearth Isle's rocks in the
+// south-west corner are kept and never walked.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
@@ -68,6 +70,13 @@ export const DEEPTHORN_I5: MapDef = {
     { kind: 'event', x: 21, y: 9, id: 'i5_groove', once: true, text: 'A root at the water\'s edge with a groove worn into it, deep and smooth, the way a rope wears wood. There is no rope.' },
     { kind: 'event', x: 22, y: 10, id: 'i5_hollow', once: true, text: 'Under the roots, a hollow with a boat in it, fresh-tarred, and a cask of lamp oil in the bow.' },
     { kind: 'chest', x: 22, y: 11, id: 'i5_boat', gold: 0, items: ['lantern_oil'] },
+    // The Druid's second prestige (#19, #439; DESIGN §5): an elf of the old wood, who comes out of the
+    // trees at the tip once the Grove Stone is mended, when the rootwalkers beside her sleep.
+    { kind: 'npc', x: 30, y: 18, name: 'Hendar, of the old wood', after: { flag: 'q_mender_done' }, lines: [
+      'Where the trees give out on the shingle, an elf stands with one hand flat on the last oak, as a groom feels a horse\'s neck. Moss grows in the folds of her cloak.',
+      '"Hendar. The Stone is whole, and the wood has stopped listening for the axe. So I came out to look at the sea."',
+      '"A swarm is many small minds that think as one. A wood is one mind that thinks very slowly. Sit, and learn to wait for it."',
+    ], teaches: { cls: 'druid', prestige: 2, seek: 'Hendar, of the old wood, on the shingle at the tip of the wood to the head, can make a Thornspeaker of a Swarmcaller once the Grove Stone is mended.' } },
   ],
   secrets: [{ x: 22, y: 9, hint: 'i5_groove' }],
   // The roost's old owls about it, its brood abroad by night; brambles on the way down to the shore,

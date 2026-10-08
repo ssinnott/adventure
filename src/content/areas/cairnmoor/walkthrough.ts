@@ -40,6 +40,26 @@ import { GATE } from '../kilns/maps/ironfells_n3.ts';
 import { DOOR, NOTCH } from './maps/cairnfield_n8.ts';
 import { CHAPTER } from './chapter.ts';
 import { MONSTERS } from './monsters.ts';
+import { GUILD_QUESTS } from '../../index.ts';
+import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
+import { take, rankOf } from '../../../game/guilds.ts';
+import type { Party } from '../../../game/party.ts';
+import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+
+/**
+ * The Lanterns' fourth rank's ask on High Moor (DESIGN §8, #439), on a copy of the walk's company made
+ * a Reader who has copied the Tiefzeche's words, Act II done: the ring heard, the ask is paid at the
+ * taking, with the words for a company that came early, and the company is a Luminary.
+ */
+function luminary(w: Walk): void {
+  const p: Party = structuredClone(w.party);
+  p.flags[rankFlag('lanterns')] = 3; p.flags[FOURTH_RANKS_OPEN] = 1;
+  p.flags[takenFlag('lanterns_niche')] = p.flags[doneFlag('lanterns_niche')] = 1;
+  const q = GUILD_QUESTS.find((g) => g.id === 'lanterns_ring')!;
+  const said = take(q, w.world.state, p);
+  w.ok(said.length === 2 && said[0].startsWith(q.early![0]) && said[1] === 'Your rank with the Lanterns is now Luminary.' && rankOf('lanterns', p) === 4,
+    `the ring heard, the Lanterns' ask is paid at the taking, and a company that copied the Tiefzeche's words is made a Luminary (${said.join(' ').replace(/\n+/g, ' ')})`);
+}
 
 const N7 = MAP_DEFS.find((d) => d.id === 'highmoor_n7')!, N8 = MAP_DEFS.find((d) => d.id === 'cairnfield_n8')!;
 const DROVER = N7.features!.find((f) => f.kind === 'npc' && f.name === 'A drover') as Person;
@@ -548,6 +568,7 @@ const RING: Step = { name: 'the ring by night', play: (w) => {
   w.world.travel('highmoor_o7', 6, 24);
   const said = w.world.eventsHere();
   w.ok(crew(said) && !!w.party.flags.q_ring_spoke, `inside Fionnlios by night the voice speaks, and the chapter's flag is set (${said.join(' / ')})`);
+  luminary(w);
   w.world.sleepUntilMorning();
   listen(w);
 } };
