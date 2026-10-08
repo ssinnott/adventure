@@ -1,14 +1,28 @@
 // Rimewater's walkthrough. Its chapter, The Sleepers, is #492's, which plays it here; until then, Rime
 // Lodge's box (M9, #486) walked: down from the Cairnfield's notch onto the road's foot under the fells
-// and back up; the road square to square to the lodge's gate, shut until the town is built, and on
-// over the causeway to the west edge for L9, where for now the world ends; the milestone, counted
-// along the roads; the coach yard, with nobody on the box selling the coach; the lodge-keeper at the
-// hole's fire, the man at its foot and the guide at the glacier's edge; the box's groups won at its
-// floor, the pike under the ice; and the guide's hollow behind the glacier's one bare face.
+// and back up; the road square to square to the lodge's gate and on over the causeway to the west edge
+// for L9, where for now the world ends; the milestone, counted along the roads; the coach yard, with
+// nobody on the box selling the coach; the lodge-keeper at the hole's fire, the man at its foot and the
+// guide at the glacier's edge; the box's groups won at its floor, the pike under the ice; and the
+// guide's hollow behind the glacier's one bare face. Then Rime Lodge (#487), in at the gate and the lake
+// wall's door and out by each: a company of 20 rests, buys the act's last step at the furrier's,
+// studies to the seventh tier at the Lanterns' hall and trains to 23; the coach's landing in the coach
+// house; and the four nights, a stay at the inn each and the arrivals in the yard every morning, the
+// hole's fight on the fourth only, and the girl out of the hole after it, who sets the lock's flag.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
-import { EAST, WEST } from '../../../game/types.ts';
-import { ATLAS, MAP_DEFS } from '../../index.ts';
+import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
+import type { Feature } from '../../../game/map.ts';
+import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
+import { DROVE_COACH } from '../../crossings.ts';
+import { buy, item } from '../../../game/items.ts';
+import { CLASSES, canTrainAt, xpForLevel, rest, stayNight, trainPrice, levelUp, guildFlag } from '../../../game/party.ts';
+import { spellsFor } from '../../../game/spells.ts';
+import { makeRng } from '../../../lib/engine/rng.ts';
+import { ACT_III } from '../../../../tools/tests/ladder.ts';
+import { FURRIER } from './items.ts';
+import { INTERIORS } from './interiors.ts';
+import { NIGHTS, WENNA_UP } from './maps/rime_lodge.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { worldGrid } from '../../../game/atlas.ts';
@@ -19,6 +33,8 @@ import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
 
 const M9 = MAP_DEFS.find((d) => d.id === 'longmere_m9')!;
 const person = (name: string): Person => M9.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+const TOWN = MAP_DEFS.find((d) => d.id === 'rime_lodge')!;
+const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => TOWN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -59,15 +75,11 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(road(m9.x, m9.y + 20) && out.passable(m9.x - 1, m9.y + 20) !== 'ok' && ATLAS.zones.find((z) => z.id === 'longmere')?.maps?.length === 1,
     'the road leaves M9 by its west edge for L9, and past it, for now, the world ends');
 
-  // The gate in the lodge's east wall, and the door in its lake wall, shut until Rime Lodge is built
-  // (#487), their ways in written beside the map.
-  ok(!M9.exits!.includes(GATE) && !M9.exits!.includes(LAKE_DOOR) && GATE.to === 'rime_lodge' && LAKE_DOOR.to === 'rime_lodge'
-    && out.passable(m9.x + GATE.x, m9.y + GATE.y) !== 'ok' && out.passable(m9.x + LAKE_DOOR.x, m9.y + LAKE_DOOR.y) !== 'ok' && out.at(m9.x + LAKE_DOOR.x, m9.y + LAKE_DOOR.y + 1).terrain === 'ice',
-    'the gate at 18,8 and the lake wall\'s door at 13,10, onto the ice, are shut until the town is built');
-  w.world.travel('longmere_m9', GATE.x + 1, GATE.y, WEST);
-  ok(w.world.eventsHere().some((t) => t.includes('barred')), 'before the gate, it is shut and barred from inside');
-  w.world.travel('longmere_m9', LAKE_DOOR.x, LAKE_DOOR.y + 1);
-  ok(w.world.eventsHere().some((t) => t.includes('barred')), 'and the lake wall\'s door, onto the ice, is barred too');
+  // The gate in the lodge's east wall, and the door in its lake wall onto the ice: doors, the ways
+  // into Rime Lodge (#487), walked below.
+  ok(M9.exits!.includes(GATE) && M9.exits!.includes(LAKE_DOOR) && GATE.to === 'rime_lodge' && LAKE_DOOR.to === 'rime_lodge'
+    && out.at(m9.x + GATE.x, m9.y + GATE.y).door === 'door' && out.at(m9.x + LAKE_DOOR.x, m9.y + LAKE_DOOR.y).door === 'door' && out.at(m9.x + LAKE_DOOR.x, m9.y + LAKE_DOOR.y + 1).terrain === 'ice',
+    'the gate at 18,8 and the lake wall\'s door at 13,10, onto the ice, are doors, the ways into Rime Lodge');
 
   // The milestone where the road comes off the fells, counted along the roads at 13 squares to the
   // unit, a stone saying 1 for anything under it: to the lodge's gate, and on along the drove road,
@@ -104,7 +116,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The box's groups, each won at its floor: the lynxes in the pines, the pike under the loch's ice,
   // on it, and the bears at the glacier's edge, the hardest.
   for (const g of M9.encounters!.filter((e) => e.under)) ok(g.under === 'ice' && out.at(m9.x + g.x, m9.y + g.y).terrain === 'ice', `${g.id} lives under the loch's ice`);
-  for (const g of M9.encounters!) fight(w, `longmere_m9:${g.id}`);
+  for (const g of M9.encounters!.filter((e) => !e.after)) fight(w, `longmere_m9:${g.id}`);
 
   // The secret: the glacier's foot, snow on every face but one, the search there and the hollow behind
   // the bare face. Walked, waded, climbed or floated, it is never reached but through the face.
@@ -129,4 +141,94 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const kit = M9.features!.find((f) => f.kind === 'chest' && f.id === 'm9_hollow_kit');
   ok(kit?.kind === 'chest' && kit.items.includes('ice_axe+1') && kit.x === 30 && kit.y === 24, 'in the hollow, the lost guide\'s kit and her Ice Axe +1');
+
+  // Rime Lodge (#487). In at M9's gate onto the town's start inside its own, saying the town's gate
+  // line, and a step in the stockade; out again onto the road's end before the gate. In off the ice by
+  // the lake wall's door onto the inn's yard, and out again onto the ice. Neither way back lands on a
+  // way in, and nothing shuts either.
+  w.world.travel('longmere_m9', GATE.x + 1, GATE.y, WEST);
+  const gate = w.world.move('forward'), inside = gate.kind === 'moved' ? gate.messages : [];
+  ok(w.world.state.mapId === 'rime_lodge' && w.world.state.x === TOWN.start.x && w.world.state.y === TOWN.start.y && w.world.state.facing === WEST && GATE.tx === TOWN.start.x && GATE.ty === TOWN.start.y,
+    'M9\'s gate lets the company in at the town\'s start inside its own gate, facing west');
+  ok(inside.join() === GATE.label, `going in, the gate line (${inside.join(' / ')})`);
+  const first = w.world.move('forward');
+  ok(first.kind === 'moved' && first.messages.some((t) => t.startsWith('Inside the stockade')), `a step inside, the stockade (${first.kind === 'moved' ? first.messages.join(' / ') : first.kind})`);
+  listen(w);
+  const landed = (x: number, y: number, facing: number): boolean => w.world.zone?.id === 'longmere_m9' && w.world.state.x - w.world.zone.x === x && w.world.state.y - w.world.zone.y === y && w.world.state.facing === facing;
+  w.world.travel('rime_lodge', TOWN.start.x, TOWN.start.y, EAST);
+  ok(w.world.move('forward').kind === 'moved' && landed(GATE.x + 1, GATE.y, EAST), 'and out at the gate onto the road\'s end before it, 19,8, facing east');
+  w.world.travel('longmere_m9', LAKE_DOOR.x, LAKE_DOOR.y + 1, NORTH);
+  const yard = w.world.move('forward');
+  ok(yard.kind === 'moved' && w.world.state.mapId === 'rime_lodge' && w.world.state.x === LAKE_DOOR.tx && w.world.state.y === LAKE_DOOR.ty && w.world.state.facing === NORTH && yard.messages.join() === LAKE_DOOR.label,
+    `in off the ice by the lake wall's door onto the inn's yard at ${LAKE_DOOR.tx},${LAKE_DOOR.ty}, facing north (${yard.kind === 'moved' ? yard.messages.join(' / ') : yard.kind})`);
+  w.world.travel('rime_lodge', LAKE_DOOR.tx, LAKE_DOOR.ty, SOUTH);
+  ok(w.world.move('forward').kind === 'moved' && landed(LAKE_DOOR.x, LAKE_DOOR.y + 1, SOUTH) && out.at(w.world.state.x, w.world.state.y).terrain === 'ice', 'and out by it onto the ice at 13,11, facing the hole');
+  ok(TOWN.exits!.length === 2 && TOWN.exits!.every((e) => e.to === 'longmere_m9' && !e.shut && !e.needFlag && !M9.exits!.some((x) => x.x === e.tx && x.y === e.ty)),
+    'nothing shuts either way, and neither way back lands on a way in');
+  listen(w);
+
+  // A company of 20 rests, buys the act's last step at the furrier's, studies to the seventh tier at
+  // the Lanterns' fourth hall and trains to 23, each as the business's screen does it (src/ui/screens.ts).
+  ok(business('inn').length === 1 && business('temple').length === 1 && business('guild').length === 1 && business('trainer').length === 1 && business('shop').length === 2
+    && INTERIORS.every((id) => TOWN.features!.some((f) => 'interior' in f && f.interior === id)), 'Rime Lodge has its six businesses, each opening into its room: the inn, the hall, the temple, the furrier\'s, the provisioner\'s and the yard');
+  w.party.gold = 40000;
+  const furrier = business('shop').find((f) => f.interior === 'rime_furrier')!, rung = ACT_III.find((r) => r.level === 21)!;
+  ok(furrier.stock.length === FURRIER.length && FURRIER.every((id) => furrier.stock.includes(id)), `the furrier's sells the act's last step, all ${FURRIER.length} wares and nothing else`);
+  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, furrier, id), `${m.name} buys a ${item(id).name} at the furrier's`);
+  const stores = business('shop').find((f) => f.interior === 'rime_provisioner')!;
+  ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FURRIER.includes(id)), 'the provisioner\'s sells provisions and lamp oil, and no gear');
+  const hall = business('guild')[0];
+  ok(hall.hall === 'lanterns' && hall.interior === 'rime_hall' && hall.maxTier === 7, `the Lanterns' fourth hall teaches to the seventh tier (${hall.name})`);
+  const caster = w.party.members.find((m) => CLASSES[m.cls].spells && hall.classes.includes(m.cls))!;
+  const seventh = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 7 && !caster.spells.includes(sp.id))!;
+  // The fee to study, once, then the spell at the hall's price for its tier (spellPrice: 40 doubling a tier).
+  const before = w.party.gold, price = 40 * 2 ** (seventh.level - 1);
+  w.party.gold -= hall.fee; w.party.flags[guildFlag(hall.name)] = 1;
+  w.party.gold -= price; caster.spells.push(seventh.id);
+  ok(w.party.gold === before - hall.fee - price && caster.spells.includes(seventh.id), `${caster.name} pays the hall's fee of ${hall.fee} and learns ${seventh.name} for ${price}`);
+  const drill = business('trainer')[0];
+  // Trained on a copy, so the company walks on as it was.
+  const trainee = structuredClone(w.party.members[0]);
+  trainee.level = 22; trainee.xp = xpForLevel(23);
+  ok(drill.maxLevel === 23 && drill.interior === 'rime_yard' && canTrainAt(trainee, drill.maxLevel), `${drill.name} will train a member of 22`);
+  const fee = trainPrice(trainee);
+  levelUp(trainee, makeRng(1), 23);
+  ok(trainee.level === 23 && !canTrainAt(trainee, drill.maxLevel), `who trains to 23 for ${fee} gold, and no further`);
+
+  // The coach (#539): Rime Lodge's end lands in the coach house, and its coachman there sells the run
+  // once Kilnhaven's end lands too (#469), and not before.
+  const ours = DROVE_COACH.ends.find((e) => e.at === 'rime_lodge')!, far = DROVE_COACH.ends.find((e) => e.at !== 'rime_lodge')!;
+  const coachman = TOWN.features!.find((f) => f.kind === 'npc' && f.name === 'The coachman') as Person;
+  ok(!!ours.landing && !ours.owed && TOWN.rows[ours.landing.y][ours.landing.x] === ':' && (coachman.passage ?? []).length === (far.landing ? 1 : 0),
+    `the coach lands in the coach house at ${ours.landing?.x},${ours.landing?.y}, and its coachman sells the run once Kilnhaven lands (${far.owed ?? 'landed'})`);
+
+  // The four nights: a stay at the inn each, as its screen does it, and the morning after the night's
+  // arrivals in the yard outside its door; the hole's fight, up on M9's ice, comes on the fourth only.
+  const inn = business('inn')[0], night = inn.price * w.party.members.length;
+  const hole = M9.encounters!.find((e) => e.id === 'm9_night_4')!, girl = person('A girl out of the hole');
+  const risen = (): boolean => { w.world.travel('longmere_m9', hole.x, hole.y - 1); return w.world.walks(hole, m9.x + hole.x, m9.y + hole.y); };
+  ok(inn.interior === 'rime_inn' && JSON.stringify(inn.nights) === JSON.stringify(NIGHTS), `${inn.name} counts the nights, ${NIGHTS.join(', ')}`);
+  for (const [i, flag] of NIGHTS.entries()) {
+    ok(!risen(), `before the ${['first', 'second', 'third', 'fourth'][i]} night, nothing on the ice at the hole but its fire`);
+    w.party.gold -= night;
+    for (const m of w.party.members) rest(m);
+    w.world.sleepUntilMorning();
+    const set = stayNight(w.party, inn.nights);
+    ok(set === flag && NIGHTS.every((n, j) => !!w.party.flags[n] === j <= i), `a night at ${inn.name} for ${night} gold sets ${set}, and only the nights so far`);
+    w.world.travel('rime_lodge', inn.x + 1, inn.y);
+    const morning = w.world.eventsHere();
+    ok(morning.length === 1 && morning[0].startsWith('Morning'), `the morning after, outside the inn's door: ${morning.join(' / ')}`);
+    listen(w);
+  }
+  ok(risen() && out.at(m9.x + hole.x, m9.y + hole.y).terrain === 'ice' && hole.roams === false && !hole.respawn, 'after the fourth, up through the hole onto the ice, a group that waits there and comes the once');
+  ok(hole.monsters[0] === 'tallyman' && hole.monsters.filter((m) => m === 'knocker').length === 6 && hole.monsters.length === 7 && (MONSTERS.tallyman.calls?.monsters ?? []).every((m) => m === 'knocker'),
+    'a tallyman and six knockers, and the tallyman calls more');
+  w.world.travel('longmere_m9', girl.x, girl.y);
+  ok(!w.world.present(girl), 'before the fight, nobody else is out of the hole');
+  fight(w, 'longmere_m9:m9_night_4');
+  w.world.travel('longmere_m9', girl.x, girl.y);
+  const words = meet(girl, w.party, heard(w.world, girl)).text;
+  ok(w.world.present(girl) && words.includes('"Are you the ones my mother sent?"') && words.includes('The doors know me.') && !!w.party.flags[WENNA_UP],
+    `after it the last one out, a girl with a nail in her fist, who will not go home: ${WENNA_UP} is set`);
+  listen(w);
 };

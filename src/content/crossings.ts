@@ -96,7 +96,8 @@ export const DROVE_COACH: Crossing = {
   name: 'the drove road coach', by: 'coach', fare: 250, departs: 6, days: 1, arrives: 12,
   ends: [
     { at: 'kilnhaven', name: 'Kilnhaven', owed: '#469' },
-    { at: 'rime_lodge', name: 'Rime Lodge', owed: '#487' },
+    // In the coach house inside the lodge's gate, where its coachman stands (#487).
+    { at: 'rime_lodge', name: 'Rime Lodge', landing: { x: 13, y: 7, facing: WEST }, label: 'Down off the coach in Rime Lodge\'s coach house, stiff with the cold.' },
   ],
 };
 
