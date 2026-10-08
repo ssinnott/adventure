@@ -15,13 +15,13 @@ export const ZONES: readonly AtlasZone[] = [
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
-  { id: 'rime_lodge', name: 'Rime Lodge', kind: 'town', planned: true, band: [20, 22], at: [412, 256] }, // behind M9's gate (#486, #487)
+  { id: 'rime_lodge', kind: 'town', at: [412, 256] }, // on M9, behind the lodge's gate at 18,8 (#486, #487)
   { id: 'sleepers_bay', name: 'The Sleepers\' Bay', kind: 'dungeon', planned: true, band: [21, 22], at: [352, 290] }, // under Loch Fuar's ice, K9: the act's turn (#434, call 6; #490)
   { id: 'ice_caves', name: 'Ice Caves', kind: 'dungeon', planned: true, band: [20, 22], at: [446, 340] }, // the reach: its band is the cap's (#434, call 7)
 ];
 
 export const SITES: readonly AtlasSite[] = [
   // VIII. Rimewater (docs/areas/rimewater.md §10). The Sleepers' Bay is painted nowhere: the secret is found.
-  { name: 'Rime Lodge', icon: 'lodge', at: [410, 262], label: 'right', planned: true },
+  { name: 'Rime Lodge', icon: 'lodge', at: [410, 262], label: 'right' },
   { name: 'Ice Caves', icon: 'cave', at: [452, 326], label: 'below', planned: true },
 ];

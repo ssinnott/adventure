@@ -15,7 +15,7 @@ import { item, priceIn, buy } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, removeCondition, isDown, hasCondition, xpForLevel, levelUp, rest, stayNight, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists } from '../game/party.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
@@ -448,8 +448,9 @@ function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {
         if (g.party.gold < cost) { g.say('You cannot afford a room.'); return; }
         g.party.gold -= cost;
         for (const m of g.party.members) rest(m);
-        // Sleep until 07:00, or first light in the depth of winter.
+        // Sleep until 07:00, or first light in the depth of winter: a night, which an inn may count.
         g.world.sleepUntilMorning();
+        stayNight(g.party, f.nights);
         g.say('You sleep well. Morning.');
       } else if (i === 1) {
         if (g.party.gold < 20) { g.say('Not enough gold.'); return; }
