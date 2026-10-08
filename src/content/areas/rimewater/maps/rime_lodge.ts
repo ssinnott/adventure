@@ -17,6 +17,8 @@ import { FURRIER } from '../items.ts';
 export const NIGHTS = ['night_1', 'night_2', 'night_3', 'night_4'] as const;
 /** Wenna met at the hole, the last one out on the fourth night: the bay's door reads it (§5, #440). */
 export const WENNA_UP = 'q_wenna_up';
+/** Her words at the door once the company is back up from the beds: she goes to the lodge (§5, #492). */
+export const WENNA_LODGE = 'q_wenna_lodge';
 
 export const RIME_LODGE: MapDef = {
   id: 'rime_lodge',
@@ -172,7 +174,7 @@ export const RIME_LODGE: MapDef = {
         '"They will want the way down. Somebody has to finish the cairn."',
       ] },
     ] },
-    { kind: 'npc', x: 9, y: 14, name: 'The pilgrims', after: { flag: 'q_pilgrims_back' }, lines: [
+    { kind: 'npc', x: 10, y: 14, name: 'The pilgrims', after: { flag: 'q_pilgrims_back' }, lines: [
       'Pilgrims from Anvilhall round the yard\'s fire, and the boy among them in a lodge blanket, eating.',
       '"He was cold, not hot. Anybody could see it."',
     ] },
@@ -181,5 +183,11 @@ export const RIME_LODGE: MapDef = {
     { kind: 'event', x: 6, y: 12, id: 'rl_night_2', once: true, after: { flag: 'night_2' }, until: { flag: 'night_3' }, text: 'Morning. Three by the fire who came up together in the night, and will not let go of each other\'s hands.' },
     { kind: 'event', x: 6, y: 12, id: 'rl_night_3', once: true, after: { flag: 'night_3' }, until: { flag: 'night_4' }, text: 'Morning. A family by the fire, the children asleep. "A girl led us to the stair. She went back down."' },
     { kind: 'event', x: 6, y: 12, id: 'rl_night_4', once: true, after: { flag: 'night_4' }, text: 'Morning, and nobody by the fire. Out on the ice the keepers stand back from the hole, and it is clicking.' },
+    // The girl out of the hole, by the yard's fire once she has spoken at the door after the bay (§5,
+    // #492): K9's girl goes on the same flag, so she is never in two places.
+    { kind: 'npc', x: 10, y: 13, name: 'The girl out of the hole', after: { flag: WENNA_LODGE }, lines: [
+      'The girl out of the hole, by the yard\'s fire at last in a lodge blanket, the nail still in her fist.',
+      '"Bring them up, and I\'ll go home to my mother. Not before."',
+    ] },
   ],
 };
