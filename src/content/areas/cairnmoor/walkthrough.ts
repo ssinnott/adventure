@@ -1,5 +1,5 @@
-// Cairnmoor's walkthrough. Its chapter, The Ring, is #481's, which plays it here; until then, the
-// road up onto the moor (N7, #476) and the Cairnfield (N8, #479) walked: the drove road on out of the
+// Cairnmoor's walkthrough. First the road up onto the moor (N7, #476) and the Cairnfield (N8, #479)
+// walked: the drove road on out of the
 // Kilns' N6 over the border, the crossing line said in snow to a company two under the moor's floor
 // and its name alone to one at it; the road square to square over the hills and on south into N8, and
 // the peat-cutter's track out east onto O7; the milestone where the hills
@@ -14,15 +14,18 @@
 // box's groups won at its floor, the wights cursing; and the coach's strongbox, found from the coach's
 // open door. Last, Fionnlios's box (O7, #477) in a walk of its own: the track on to the ring, the voice
 // there by night, the Watcher and the piper, the groups and the hollow (stoneRing); then the bog (O8,
-// #478), off the road, in another (theBog).
+// #478), off the road, in another (theBog). Then its chapter, The Ring (#481), played at 18, 19 and 20
+// in order and with the road's head taken first, resting inside the ring by night (theRing); and its
+// side quests (#482): the Watcher's tally, the ring on the bog body and the faces on the tors, each
+// answered every way (sideQuests).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen, type Walk } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, type Walk, type Step } from '../../../../tools/walk.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
 import { ATLAS, ITEMS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { worldGrid } from '../../../game/atlas.ts';
-import { meet, heard } from '../../../game/people.ts';
+import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { MapDef, MapZone } from '../../../game/map.ts';
@@ -35,6 +38,7 @@ import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { GATE } from '../kilns/maps/ironfells_n3.ts';
 import { DOOR, NOTCH } from './maps/cairnfield_n8.ts';
+import { CHAPTER } from './chapter.ts';
 import { MONSTERS } from './monsters.ts';
 
 const N7 = MAP_DEFS.find((d) => d.id === 'highmoor_n7')!, N8 = MAP_DEFS.find((d) => d.id === 'cairnfield_n8')!;
@@ -204,6 +208,9 @@ export const walkthrough: Walkthrough = (ok) => {
   stoneRing(ok);
   // The bog (O8, #478), off the road, in a walk of its own.
   theBog(ok);
+  // The chapter (#481) and the side quests (#482), each in walks of their own.
+  theRing(ok);
+  sideQuests(ok);
 };
 
 /**
@@ -495,10 +502,11 @@ function theBog(ok: (cond: boolean, msg: string) => void): void {
   // lights over the bog, the hounds on the hills, and on the tors two trolls and the ravens, who mend
   // each round unless burned (#537).
   for (const g of O8.encounters!) fight(w, `highmoor_o8:${g.id}`);
-  const trolls = O8.encounters!.find((g) => g.id === 'o8_trolls');
+  const trolls = O8.encounters!.find((g) => g.id === 'o8_trolls'), last = O8.encounters!.find((g) => g.id === 'o8_last_tor');
   ok(O8.encounters!.every((g) => byNight(g.when)) && O8.encounters!.filter((g) => g.monsters.every((m) => m === 'bog_light')).length === 2
-    && trolls?.monsters.filter((m) => m === 'tor_troll').length === 2 && trolls.monsters.includes('raven') && !!MONSTERS.find((m) => m.id === 'tor_troll')?.regen,
-  'by night two flights of lights over the bog, and on the tors two trolls and the ravens, the trolls mending unless burned');
+    && O8.encounters!.flatMap((g) => g.monsters).filter((m) => m === 'tor_troll').length === 2 && !!trolls?.monsters.includes('tor_troll') && trolls.monsters.includes('raven')
+    && last?.monsters.join() === 'tor_troll' && !!MONSTERS.find((m) => m.id === 'tor_troll')?.regen,
+  'by night two flights of lights over the bog, and on the tors two trolls, one with the ravens and one alone at the last tor, mending unless burned');
 
   // The secret: the cutting the peat-cutter stopped at, its peat black, and by night the lights rising
   // out of it; the search there and the hoard behind its face. Walked, waded, climbed or floated, it is
@@ -524,4 +532,214 @@ function theBog(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   const hoard = O8.features!.find((f) => f.kind === 'chest' && f.id === 'o8_hoard');
   ok(hoard?.kind === 'chest' && hoard.items.includes('seax+1') && hoard.gold === 1140 && hoard.x === 20 && hoard.y === 12, 'in the cutting, the hill folk\'s grave-gold and a second Seax +1');
+}
+
+// ---- the chapter (#481) ----
+
+/** The clock set to an hour of the walk's day. */
+const hour = (w: Walk, h: number): void => { w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + h * 60; };
+
+/** Whether the voice is among what was said. */
+const crew = (said: readonly string[]): boolean => said.some((m) => m.includes('"Crew. Report."'));
+
+/** Into the ring by night, to its camp: the voice speaks, and the company sleeps there till morning. */
+const RING: Step = { name: 'the ring by night', play: (w) => {
+  hour(w, 23);
+  w.world.travel('highmoor_o7', 6, 24);
+  const said = w.world.eventsHere();
+  w.ok(crew(said) && !!w.party.flags.q_ring_spoke, `inside Fionnlios by night the voice speaks, and the chapter's flag is set (${said.join(' / ')})`);
+  w.world.sleepUntilMorning();
+  listen(w);
+} };
+
+/** Down the drove road to its head above the lakes, by day. */
+const HEAD: Step = { name: 'the road\'s head', play: (w) => { hour(w, 12); see(w, 'cairnfield_n8:n8_head'); } };
+
+/** Down through the notch at the road's head onto M9's road (NOTCH). */
+const NOTCHED: Step = { name: 'down the notch', play: (w) => walkThrough(w, 'cairnfield_n8', NOTCH.x + 1, NOTCH.y, WEST, NOTCH.to, 2) };
+
+/** A step played at a level, the company levelled to it. */
+const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
+  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+  w.level = level;
+  s.play(w);
+} });
+
+/** The entries written on the chapter's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+/**
+ * The Ring (#481), begun on the drove road up onto the moor: in order, the ring by night, the road's
+ * head and the notch; and with the road's head taken first, the goal turning back to the ring. Played
+ * at 18, 19 and 20, each reads the same, ends once, down the notch with the voice heard, and the voice
+ * is said the once.
+ */
+function theRing(ok: (cond: boolean, msg: string) => void): void {
+  const runs: [string, Step[]][] = [
+    ['in order', [atLevel(18, RING), atLevel(19, HEAD), atLevel(20, NOTCHED)]],
+    ['the road\'s head first', [atLevel(18, HEAD), atLevel(19, RING), atLevel(20, NOTCHED)]],
+  ];
+  const read: string[] = [];
+  for (const [how, steps] of runs) {
+    const w = newWalk(ok);
+    for (const m of w.party.members) { m.level = 18; m.xp = xpForLevel(18); }
+    walkThrough(w, 'kilnsheart_n6', 3, 29, SOUTH, 'highmoor_n7', 4);
+    ok(quest(w)?.goal === CHAPTER.goals.at(-1)!.text, `${how}, on the moor the chapter begins, its goal the ring (${quest(w)?.goal})`);
+    playChapter(w, CHAPTER, steps, how);
+    goalFromBegun(w, how);
+    const ends = w.news.filter((n) => n === `Chapter complete: ${CHAPTER.title}.`).length;
+    ok(!!quest(w)?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.world.zone?.id === NOTCH.to,
+      `${how}, down the notch with the voice heard the chapter is done, and said so once (${ends})`);
+    hour(w, 23);
+    w.world.travel('highmoor_o7', 6, 24);
+    ok(!crew(w.world.eventsHere()), `${how}, the ring by night again says nothing`);
+    read.push(written(w).join(', '));
+  }
+  ok(read[0] === 'road, ring, head' && read[1] === read[0], `the chapter reads the same in order and with the road's head first (${read.join(' / ')})`);
+  everyGoalWalked(ok, [CHAPTER]);
+}
+
+// ---- the side quests (#482) ----
+
+/** A side quest's page as the log shows it now, and its goal. */
+const page = (w: Walk, id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
+
+/** A person of `map`, by the start of their name. */
+const person = (map: string, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
+
+/** What a person says at the next meeting, as the game would have it. */
+function hear(w: Walk, map: string, p: Person): string {
+  w.world.travel(map, p.x, p.y);
+  const said = meet(p, w.party, heard(w.world, p)).text;
+  listen(w);
+  return said;
+}
+
+/** Meet a person and answer the question they put with the answer setting `sets`: what it says. */
+function answerTo(w: Walk, map: string, p: Person, sets: string): string {
+  w.world.travel(map, p.x, p.y);
+  const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets);
+  w.ok(!!a, `${p.name} asks, and an answer sets ${sets} (${m.choice?.ask ?? 'no question'})`);
+  const said = a ? answer(a, w.party) : '';
+  listen(w);
+  return said;
+}
+
+/** Whether a person, an event or a group of `map` is there now. */
+const there = (w: Walk, map: string, p: Person): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
+const shows = (w: Walk, map: string, id: string): boolean => {
+  const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
+  w.world.travel(map, f.x, f.y);
+  return w.world.present(f);
+};
+const alive = (w: Walk, map: string, id: string): boolean => {
+  const g = MAP_DEFS.find((d) => d.id === map)!.encounters!.find((e) => e.id === id)!;
+  w.world.travel(map, g.x, g.y);
+  return w.world.liveGroups().some((l) => l.def.id === id);
+};
+
+/** A chest of `map` opened: its gold and its items into the company's purse and bag. */
+function open(w: Walk, map: string, id: string): void {
+  const c = MAP_DEFS.find((d) => d.id === map)!.features!.find((f) => f.kind === 'chest' && f.id === id);
+  if (c?.kind !== 'chest') { w.ok(false, `there is a chest ${map}:${id}`); return; }
+  w.world.travel(map, c.x, c.y);
+  w.world.markUsed(c.id); w.party.gold += c.gold; w.party.bag.push(...c.items);
+  listen(w);
+}
+
+/** A quest done with no goal, its entries those `want` names and none of `not`, finished once. */
+function reads(w: Walk, id: string, title: string, want: readonly string[], not: readonly string[], how: string): void {
+  const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [];
+  const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
+  w.ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
+    `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
+}
+
+/** The company's experience, summed: an answer's pay is split among the living. */
+const xpOf = (w: Walk): number => w.party.members.reduce((t, m) => t + m.xp, 0);
+
+/** A company of 19, as #56 sets the moor's quests. */
+function at19(ok: (cond: boolean, msg: string) => void): Walk {
+  const w = newWalk(ok);
+  w.level = 19;
+  for (const m of w.party.members) { m.level = 19; m.xp = xpForLevel(19); }
+  return w;
+}
+
+/**
+ * The side quests (#482), each answered every way: the Watcher's tally, its page under his
+ * predecessor's wight in Carn Dubh, taken back and its nights cut in the lintel or sent to the
+ * Lanterns, the page brought before the Watcher is met; the bog body's ring sold, carried for the
+ * elves or put back, when the body lies down; and the last face left or finished, when its tor never
+ * stands, the stonecutter gone home or staying.
+ */
+function sideQuests(ok: (cond: boolean, msg: string) => void): void {
+  const PEAT = person('highmoor_o8', 'A peat-cutter'), MASON = person('highmoor_o8', 'A stonecutter');
+  { // The Watcher's Tally: the Watcher asks; his predecessor's wight falls, the page under his hands
+    // is read from the pack and taken back, and its nights are cut in the lintel.
+    const w = at19(ok);
+    meetWho(w, 'o7_watcher_met');
+    ok(w.news.includes('New quest: The Watcher\'s Tally.') && /Carn Dubh/.test(goal(w, 'tally')), `the Watcher at his hut asks after his predecessor's page, and the goal is his grave (${goal(w, 'tally')})`);
+    fight(w, 'cairns:cd1_watcher');
+    open(w, 'cairns', 'cd1_page');
+    ok(w.party.bag.includes('watchers_page') && !!ITEMS.watchers_page.text?.some((t) => t.includes('eleven')) && /Watcher at his hut/.test(goal(w, 'tally')),
+      `under his hands the first page, read from the pack, and the goal is the Watcher again (${goal(w, 'tally')})`);
+    const gold = w.party.gold;
+    meetWho(w, 'q_tally_page');
+    ok(!w.party.bag.includes('watchers_page') && w.party.gold === gold + 200 && /lintel/.test(goal(w, 'tally')), `the Watcher takes the page and pays, and asks where its nights go (${goal(w, 'tally')})`);
+    const xp = xpOf(w), said = answerTo(w, 'highmoor_o7', WATCHER, 'q_tally_lintel');
+    ok(said.includes('eleven strokes') && xpOf(w) === xp + 1200, `the nights cut in the lintel, and the page burned (${said.split('\n')[0]})`);
+    reads(w, 'tally', 'The Watcher\'s Tally', ['watcher', 'grave', 'page', 'given', 'lintel'], ['lanterns'], 'the lintel');
+    ok(shows(w, 'highmoor_o7', 'o7_lintel') && hear(w, 'highmoor_o7', WATCHER).includes('Somebody must.'), 'eleven new strokes at the lintel\'s end, and the Watcher counting');
+  }
+  { // The page brought before the Watcher is ever met: he takes it all the same, and it goes to the
+    // Lanterns; met at last, his lesson can still come.
+    const w = at19(ok);
+    fight(w, 'cairns:cd1_watcher');
+    open(w, 'cairns', 'cd1_page');
+    const first = hear(w, 'highmoor_o7', WATCHER);
+    ok(first.includes('before you have said a word') && !!w.party.flags.q_tally_page && w.news.includes('New quest: The Watcher\'s Tally.'), 'brought before he is met, the Watcher takes the page all the same, and the quest begins');
+    answerTo(w, 'highmoor_o7', WATCHER, 'q_tally_lanterns');
+    reads(w, 'tally', 'The Watcher\'s Tally', ['page', 'given', 'lanterns'], ['lintel'], 'the Lanterns, the page brought first');
+    ok(!shows(w, 'highmoor_o7', 'o7_lintel') && hear(w, 'highmoor_o7', WATCHER).includes('Somebody must.') && !!w.party.flags.o7_watcher_met, 'nothing new at the lintel, and the Watcher counting, met at last');
+  }
+  // The Ring on the Bog Body: sold or carried for the elves, the body walks on by night; put back on
+  // its hand, it lies down in its cutting and the bog bodies by the hut get up no more.
+  for (const [sets, entry, back] of [['q_ring_sold', 'sold', false], ['q_ring_elves', 'elves', false], ['q_ring_back', 'back', true]] as const) {
+    const w = at19(ok);
+    ok(hear(w, 'highmoor_o8', PEAT).includes('The ring I kept') && w.news.includes('New quest: The Ring on the Bog Body.'), `${entry}: the peat-cutter kept the ring, and the quest begins`);
+    const xp = xpOf(w);
+    answerTo(w, 'highmoor_o8', PEAT, sets);
+    const paid = xpOf(w) - xp;
+    reads(w, 'bogring', 'The Ring on the Bog Body', ['cutter', entry], ['sold', 'elves', 'back'].filter((e) => e !== entry), entry);
+    // Put down by night, the bog bodies by the hut get up again the next night, or, the body's ring
+    // back on its hand, never (`until`).
+    hour(w, 23);
+    fight(w, 'highmoor_o8:o8_bodies');
+    w.world.state.minutes += 3 * MINUTES_PER_DAY;
+    hour(w, 23);
+    ok(paid === 1200 && alive(w, 'highmoor_o8', 'o8_bodies') === !back && w.party.bag.includes('bog_ring') === (entry === 'elves')
+      && shows(w, 'highmoor_o8', 'o8_laid') === back && shows(w, 'highmoor_o8', 'o8_body') === !back,
+    `${entry}: put down, the bog bodies ${back ? 'get up no more, the body laid in its cutting' : 'are up again by night, the body walking'}${entry === 'elves' ? ', and the ring is in the pack' : ''}`);
+  }
+  // The Faces on the Tors: home, the stonecutter is gone and the last tor stands by night; let
+  // finish, he stays at his fire, the face is whole and that tor never stands.
+  for (const [sets, entry, finished] of [['q_faces_home', 'home', false], ['q_faces_finished', 'finished', true]] as const) {
+    const w = at19(ok);
+    w.level = 20;
+    ok(hear(w, 'highmoor_o8', MASON).includes('The last is mine') && w.news.includes('New quest: The Faces on the Tors.'), `${entry}: the stonecutter's last face, and the quest begins`);
+    const xp = xpOf(w);
+    answerTo(w, 'highmoor_o8', MASON, sets);
+    const paid = xpOf(w) - xp;
+    reads(w, 'faces', 'The Faces on the Tors', ['mason', entry], [finished ? 'home' : 'finished'], entry);
+    // The last tor's troll put down by night: up again two nights on, or, its face finished, never.
+    hour(w, 23);
+    fight(w, 'highmoor_o8:o8_last_tor');
+    w.world.state.minutes += 3 * MINUTES_PER_DAY;
+    hour(w, 23);
+    ok(paid === 1800 && there(w, 'highmoor_o8', MASON) === finished && alive(w, 'highmoor_o8', 'o8_last_tor') === !finished && alive(w, 'highmoor_o8', 'o8_trolls')
+      && shows(w, 'highmoor_o8', 'o8_whole') === finished && shows(w, 'highmoor_o8', 'o8_half') === !finished,
+    `${entry}: ${finished ? 'the stonecutter at his fire, the last face whole, and its tor, put down, stands no more' : 'the stonecutter gone home, the last face half cut, and its tor up again by night'}`);
+  }
 }

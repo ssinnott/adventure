@@ -16,6 +16,13 @@ export const ITEMS: readonly ItemDef[] = [
   ] },
   { id: 'watchers_page', name: "The Watcher's Page", slot: 'none', price: 0, text: [
     'The first page of a tally in a careful hand: strokes in fives, a row to a night, the ink gone brown.',
+    'Beside eleven of the rows, a ring drawn small in the margin. At the head of the page a year, four hundred years gone.',
     'The rows go on over the page. The next is not here.',
+  ] },
+  // O8's (#478): the bog body's ring, given by the peat-cutter to carry for the elves (#56's 38, #482).
+  // Its crest is seen, and whose it is never said (DESIGN §10.1).
+  { id: 'bog_ring', name: 'The Bog Body\'s Ring', slot: 'none', price: 0, text: [
+    'A man\'s ring, gone black in the peat and heavy for its size.',
+    'A crest is cut deep in its bezel, worn soft and still whole.',
   ] },
 ];

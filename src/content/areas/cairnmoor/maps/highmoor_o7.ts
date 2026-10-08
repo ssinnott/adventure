@@ -7,6 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RING_SPOKE } from '../chapter.ts';
 
 export const HIGHMOOR_O7: MapDef = {
   id: 'highmoor_o7',
@@ -64,20 +65,45 @@ export const HIGHMOOR_O7: MapDef = {
     { kind: 'event', x: 23, y: 14, id: 'o7_drift', once: true, text: 'Snow drifted against a peat bank higher than your head, its lip curled over like a wave.' },
     // The Watcher's Hut: the hut a camp, the tally on its lintel, and the Watcher on his bench, who
     // counts the lights and teaches the Sorcerer's second prestige (#19; DESIGN §5): his lesson is said
-    // once to an Arcanist of 19, after his first words.
+    // once to an Arcanist of 19, after his first words. He gives The Watcher's Tally (#56's 37, #482):
+    // he takes the first page from Carn Dubh, and asks where its nights go, his lintel or the Lanterns.
     { kind: 'camp', x: 9, y: 18, name: 'The Watcher\'s Hut', text: 'A stone hut with a turf roof, its door on the lee side. A fire inside, and room by it.' },
     { kind: 'event', x: 9, y: 18, id: 'o7_tally', once: true, text: 'A tally cut along the lintel in fives, end to end. Near the end, a gap a hand wide, then a few fresh cuts.' },
+    { kind: 'event', x: 9, y: 18, id: 'o7_lintel', once: true, after: { flag: 'q_tally_lintel' }, text: 'At the lintel\'s far end, before the oldest cuts, eleven strokes whiter than the rest.' },
     { kind: 'npc', x: 11, y: 19, name: 'The Watcher', lines: [
       'An old man on a bench against the hut\'s wall, a notched stick across his knees, his eyes on the bog.',
       '"I count the lights. Watchers have, four hundred years. Somebody must."',
-      '"The last one stopped counting. They buried him with his tally, out among the cairns."',
+      '"The last one stopped counting. They buried him out among the cairns, the first page of his tally with him. I would have it."',
     ], flag: 'o7_watcher_met', says: [
       { after: { flag: 'o7_watcher_met', member: { cls: 'sorcerer', level: 19, prestige: 1 } }, until: { flag: 'o7_watcher_lesson' }, sets: 'o7_watcher_lesson', lines: [
         'He looks your sorcerer over, then points his stick at a light out over the bog.',
         '"That one drinks what you spell with. Learn how it drinks, and you need not let it."',
         '"Then turn it round. Sit with me tonight, and count."',
       ] },
-    ], teaches: { cls: 'sorcerer', prestige: 2, seek: 'The Watcher, at his hut by the stone ring on High Moor, can make a Thaumaturge of an Arcanist.' } },
+      { after: { flag: 'q_tally_page' }, until: [{ flag: 'q_tally_lintel' }, { flag: 'q_tally_lanterns' }], lines: [
+        'The Watcher has the page on his knee and his knife out.',
+        '"Eleven nights. They go in my lintel, before the first of mine. Or the Lanterns at the Lodge read them. Not both."',
+      ], choice: { ask: '"The lintel, or the Lanterns?"', answers: [
+        { label: 'Cut them in the lintel.', sets: 'q_tally_lintel', pay: { xp: 1200 }, says: [
+          'He cuts eleven strokes at the lintel\'s far end, slowly, and puts the page in the fire after.',
+          '"Now it is all in one place."',
+        ] },
+        { label: 'Send it to the Lanterns.', sets: 'q_tally_lanterns', pay: { xp: 1200 }, says: [
+          'He sews the page into a square of oilskin, and ties it.',
+          '"The drovers take it down. The Lanterns pay for news of the ring."',
+        ] },
+      ] } },
+      { after: [{ flag: 'q_tally_lintel' }, { flag: 'q_tally_lanterns' }], sets: 'o7_watcher_met', lines: [
+        'The Watcher is on his bench, the stick across his knees, counting.',
+        '"Somebody must."',
+      ] },
+    ], quest: { item: 'watchers_page', reward: 200, setFlag: 'q_tally_page', done: [
+      'He reads the page at arm\'s length, his lips moving, and counts the rings in its margin twice.',
+      '"Eleven. Before the hut was built." He sets a purse on the bench. "The Lodge sends it every spring. I have no use for it."',
+    ], early: [
+      'An old man on a bench by the hut takes the page out of your hand before you have said a word.',
+      '"His hand. I have looked for this since I was a boy." He sets a purse on the bench. "The Lodge sends it. Take it."',
+    ] }, teaches: { cls: 'sorcerer', prestige: 2, seek: 'The Watcher, at his hut by the stone ring on High Moor, can make a Thaumaturge of an Arcanist.' } },
     { kind: 'event', x: 16, y: 18, id: 'o7_count', once: true, text: 'A flat stone by the hut, scratched in rows: a mark a light, a row a night, the stone near full.' },
     { kind: 'event', x: 22, y: 18, id: 'o7_tor', once: true, text: 'South-east the hills rise to a tor, grey slabs heaped on the skyline.' },
     { kind: 'event', x: 29, y: 21, id: 'o7_cornice', once: true, text: 'The wind off the rim has scoured the hills to the stone, and piled the snow in their lee.' },
@@ -86,8 +112,9 @@ export const HIGHMOOR_O7: MapDef = {
     { kind: 'event', x: 1, y: 22, id: 'o7_ring', once: true, when: { hours: 'day' }, text: 'The track climbs onto a rise of rock. On its top a ring of stones, thirteen, one of them fallen.' },
     { kind: 'event', x: 1, y: 22, id: 'o7_ring_night', once: true, when: { hours: 'night' }, text: 'Ahead on the rise a ring of stones stands black against the snow. Lights go round it, low.' },
     // Fionnlios: the camp inside the ring, the voice by night, once, and the ground by the fallen stone.
+    // The voice sets the chapter's flag (#481).
     { kind: 'camp', x: 6, y: 24, name: 'Fionnlios', text: 'Inside the ring, out of the wind. Short turf, and the stones round you taller than a man.' },
-    { kind: 'event', x: 6, y: 24, id: 'o7_voice', once: true, when: { hours: 'night' }, text: 'A voice in the dark inside the ring, flat, from no mouth: "Crew. Report." It waits, and says it again.' },
+    { kind: 'event', x: 6, y: 24, id: 'o7_voice', once: true, when: { hours: 'night' }, sets: RING_SPOKE, text: 'A voice in the dark inside the ring, flat, from no mouth: "Crew. Report." It waits, and says it again.' },
     { kind: 'event', x: 8, y: 24, id: 'o7_bare', once: true, text: 'No snow on the ring\'s ground, though it lies all round. By the fallen stone not even the frost lies.' },
     // Under the fallen stone, the hollow where the first Watchers kept their tallies.
     { kind: 'event', x: 10, y: 24, id: 'o7_hollow', once: true, text: 'Under the stone, a hollow lined with slate: tally sticks in a bundle, older than the hut\'s, and a staff in oiled skin.' },
