@@ -20,14 +20,14 @@ Six places are built: M9, Rime Lodge's box (#486, §4.2), which lists the area; 
 gate, Rime Lodge (#487, §4.3); L9, the long loch's shore (#488, §4.4); K9, Loch Fuar (#489, §4.5),
 whose door down to the bay opens for the girl out of the hole; the Sleepers' Bay, two levels under
 the ice (#490, §4.6), where Act III's one story lock is signed in (#440, §5); and K10, the high pass
-(#491, §4.7), the road's last box and the act's last ground. The chapter and the side quests are to
-build. Its content is `src/content/areas/rimewater/` (maps, monsters, items, climate, its part of
-the world map, its walkthrough and its guild quest in `guilds.ts`, #439; its chapter of the one
-quest, The Sleepers, in `chapter.ts` and its side quests in `quests.ts` are to come), and its
-businesses' rooms are `src/ui/interiors/rimewater/`. Its ids: the area `rimewater`, its zones
-`longmere`, `coldmere` and `glacierfoot`, the town `rime_lodge`, the bay's two levels `sleepers_bay`
-and `sleepers_bay2` and the reach's `ice_caves`. The zones are renamed in §10 and keep their ids
-(NAMES §3).
+(#491, §4.7), the road's last box and the act's last ground. Its chapter, The Sleepers, is written
+(#492, §5); the side quests are to build. Its content is `src/content/areas/rimewater/` (maps,
+monsters, items, climate, its part of the world map, its walkthrough, its guild quest in
+`guilds.ts`, #439, and its chapter of the one quest, The Sleepers, in `chapter.ts`; its side
+quests in `quests.ts` are to come), and its businesses' rooms are `src/ui/interiors/rimewater/`.
+Its ids: the area `rimewater`, its zones `longmere`, `coldmere` and `glacierfoot`, the town
+`rime_lodge`, the bay's two levels `sleepers_bay` and `sleepers_bay2` and the reach's `ice_caves`.
+The zones are renamed in §10 and keep their ids (NAMES §3).
 
 ---
 
@@ -196,6 +196,15 @@ dungeon under the third (#490) and a fourth south of it, the pass (#491):
   Lantern's wayside lamp, dark and its jar full; under its jar-shelf is the Lanterns' cache with the
   lamp's silver and a Guide's Staff +1. Eight groups: snow lynx in the pines three times, ice pike
   under the lake's shore ice twice and ice bears in pairs three times, the box's hardest.
+
+The chapter, on the places built (#492):
+
+- **The Sleepers** (`chapter.ts`, #492): begun on M9, down the notch where The Ring ends; the four
+  nights at the lodge's inn, the hole's fight and the girl out of it on the fourth, the door under
+  Loch Fuar, the beds below it (`sb2_beds`, which sets the chapter's flag) and the pass's mouth on
+  K10 (`k10_mouth`), which end it in either order. Its goals stand at Rime Lodge, on M9, K9 and K10
+  and in the bay, so Loch Fada and Loch Fuar each hold a step. Back up from the beds the girl out of
+  the hole speaks at the door, and then she is at the lodge (§5).
 
 #487 opens M9's gate and the lake wall's door, which were drawn shut with events for the town to
 drop (`m9_gate`, `m9_lake_door`, in no save), and puts the fourth night's group and Wenna on the
@@ -888,9 +897,9 @@ what is new, with points of interest and a first share of the pay.
 
 ## 5. The one quest here
 
-Rimewater's chapter is The Sleepers (`chapter.ts`, #492, its name a working title), the last of
-Act III, joined after Cairnmoor's The Ring; every zone on the road holds a step (EXPANSION §5.8):
-Loch Fada's at the lodge, Loch Fuar's at the door and the bay. Glacier Foot is the reach and exempt
+Rimewater's chapter is The Sleepers (`chapter.ts`, #492), the last of Act III, joined after
+Cairnmoor's The Ring; every zone on the road holds a step (EXPANSION §5.8): Loch Fada's at the
+lodge, Loch Fuar's at the door and the bay. Glacier Foot is the reach and exempt
 (DESIGN §9). Its entries and goals, in the journal's voice, keyed to flags, events and maps the save
 holds:
 
@@ -960,8 +969,24 @@ two walls of rock, and the snow on it is trodden. South.* The chapter's last ent
 start; the road ends at K10's west edge, 0,19, with the world's end beyond it until J11 is laid
 (#499; §4.7; §9, #491's 10).
 
-The walkthrough plays it at 20, 21 and 22, standing the nights at the inn, and once with the pass
-taken before the bay.
+As built (#492, 8 October): `chapter.ts`, begun on M9 (`visited`), down the notch where The Ring
+ends. Nine entries: the lodge and its fire on the ice; one a night as `night_1` to `night_4` are set
+(the man alone; the three; the family and the girl who led them; nobody, and the hole clicking);
+the hole and the girl out of it, on `q_wenna_up`; the door, on the stair reached; the sleepers, on
+`sb2_beds`, with the door's inside and *We didn't grow here. We were brought.*, what is seen and
+what the hand feels and nothing of what the Stones are; and the south, on the beds and the pass's
+mouth together. Five goals: the nights at Rime Lodge, the hole on M9's ice, the door on K9, the bay
+(`sleepers_bay2`) and the pass's mouth on K10. `sb2_beds` sets `q_sleepers_seen`, since a condition
+holds one `seen`: the chapter is done with it and `k10_mouth` seen, in either order, and the act
+with it; the Whitespine's chapter (#505) takes it on over the pass. The door's label now says the
+voice's word as it opens, so the journal's door is what every company saw. Back up from the beds,
+the girl out of the hole speaks at the door (K9's 24,28): they have marched the two hundred on
+south, under the world, for the mountains and the sea. Her words set `q_wenna_lodge`, her `until`
+there and her `after` by the yard's fire at Rime Lodge, 10,13, so she is never in two places. She is
+unnamed in every line, and in the journal. The walkthrough plays it at 20, 21 and 22: the four
+nights stood at the inn and paid, the hole fought and the girl met at 20, the door at 21, the beds
+and the mouth at 22; in order, and with the pass's mouth reached first, when the journal writes
+nothing of it until the beds end the chapter. Each reads the same and ends once (§9, #492).
 
 ## 6. Side quests
 
@@ -1118,13 +1143,14 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   groups are the brief's, and its figure never agreed with them (§9, #491's 8).
   Rimewater stands at 20,645 of 16,267 (the shares are rounded down, so they sum to 20,644), and at
   21,045 with the ask #439 files here, A Sword at the Hole, 400 a member: its xp is met, and the
-  curve's owed row keeps gold only (§9, #490's 13). The shares still to come are the side quests'
-  (1,600 scaled) and the chapter's.
+  curve's owed row keeps gold only (§9, #490's 13). The chapter pays nothing, as no chapter does
+  (#492), so the share still to come is the side quests' (1,600 scaled).
   **The budget for the rest** (#490's 23; #491's 18). The ask is 16,267 xp and 9,840 gold a member,
   and the line is 1.4 times it, 22,774 xp. With K10 built and A Sword at the Hole filed (#439)
   Rimewater holds 21,045 xp, as the curve test prints it. So the side quests (#494) and the chapter
   (#492) together may pay at most about 1,729 xp a member (22,774 less 21,045); the quests' brief is
-  1,600, which leaves about 129 for the chapter. K10 had been held to about 4,440 and paid 4,311.
+  1,600, which leaves about 129 for the chapter. The chapter is written and pays nothing (#492), so
+  the 1,729 is the quests' alone. K10 had been held to about 4,440 and paid 4,311.
   The side quests and the chapter cut quests or rewards of their own, the least valuable first,
   rather than pass it. The figures are worked again from the curve test's own output after merging
   main.
@@ -1730,6 +1756,49 @@ Decided by delegate for #491, each the owner's to overturn:
     xp a member between them** (§8): the line, 22,774, less 21,045 (K10 built, #439's 400 counted).
     The quests' brief is 1,600. Each cuts its own, the least valuable first, rather than pass it.
 
+Decided by delegate for #492, each the owner's to overturn:
+
+1. **The chapter is `sleepers`, The Sleepers,** the working title kept, in `chapter.ts`, joined
+   after The Ring since Rimewater follows Cairnmoor in `AREAS`. It is begun on M9 (`visited`), as
+   The Ring is on N7, so it begins where The Ring ends.
+2. **Nine entries and five goals, as §5 has them.** A night's entry reads the inn's flag, not the
+   morning's event: a company that stays twice without going out misses a morning's words (#487's
+   3), never a night. The hole and the girl are one entry, on `q_wenna_up`; the door's reads the
+   stair reached (`visited` `sleepers_bay`), so it is written only through the door, never before
+   the girl. Before her flag the door is the lock's, its reason on it, and the journal says nothing.
+3. **The beds set a flag, `q_sleepers_seen`,** as O7's voice sets The Ring's: a condition holds one
+   `seen`, and the end asks two, the beds and the pass's mouth. The sleepers' entry reads the beds
+   by `seen`; the south's entry and the end read the flag and `k10_mouth`. No system is changed.
+4. **The end is the beds and the mouth, in either order.** With the pass taken first the journal
+   says nothing of it until the beds, which end the chapter there. The Matron is no step. Nothing in
+   the game marks an act, so the chapter's end is the act's and nothing more is set.
+5. **The journal leaves the girl unnamed,** as her lines do: a company that carried Hild's name from
+   Gullwick (the Shelf's chapter) makes the match itself.
+6. **The door's label says the voice's word:** "The door opens under her palm, and a voice in the
+   wall says "Captain?" She flinches, and waits at it while you go down.", two lines of the log. The
+   journal's door says the word, and every company now sees it: her own lines at the door, #489's
+   and untouched, are heard only by a company that talks to her, and the stair's voice is on its
+   west way alone.
+7. **Back up from the beds she speaks at the door, and then she is at the lodge:** a word of K9's
+   girl, `after` the beds' flag, sets `q_wenna_lodge`; K9's girl goes `until` it and a girl by the
+   yard's fire at Rime Lodge, 10,13, comes `after` it, as M9's girl hands on to K9's on
+   `q_wenna_up`. Her `until` on the beds alone would take her from the door before she could speak
+   there, so her words set the one new flag. No entry reads it, so nothing she says is written into
+   a chapter done. At the door: the two hundred marched on south, under the world, for the
+   mountains and the sea (STORY, Act Four); at the lodge: she goes home to her mother when they are
+   brought up, not before. She is unnamed in every line.
+8. **The south's entry says what is seen,** the two hundred not in the beds and the pass's snow
+   trodden, and not her words, since with the pass taken first it is written at the beds, before she
+   speaks. Its goal points up the road from Loch Fuar to the pass's mouth on K10.
+9. **The chapter pays nothing,** as no chapter does, so the side quests (#494) have the 1,729 alone
+   (§8). `tools/tests/quests.ts` drops `longmere` and `coldmere` from `PLANNED` and Rimewater from
+   `CHAPTER_OWED`.
+10. **The walkthrough, `theSleepers`,** plays it at 20 (the four nights stood at the inn and paid at
+    its price, the hole fought, the girl met), 21 (the door) and 22 (the stair's foot, the beds, the
+    mouth), in order and with the pass's mouth reached first. The bay's groups are left to
+    `sleepersBay`, which wins them; the Matron is not fought, the chapter not needing her. Every
+    goal comes up, the chapter reads the same both ways and it ends once.
+
 ## 10. Names
 
 Rimewater's naming pass, by the rules of `docs/NAMES.md`, chosen for #435. The lodge-keepers are
@@ -1821,7 +1890,8 @@ Owed by Rime Lodge as built (#487, §4.3):
   another look at the ice pike beside the lake door's landing, 13,12.
 - **To #492 and #494:** the chapter's entries on the nights and on Wenna, and her place at the lodge
   after the bay (#492); the words of 39, 40, 42 and 43 on the people placed, and the lodge's guide
-  before she goes (#494).
+  before she goes (#494). The chapter's are built: an entry a night, hers on the fourth and her
+  place by the yard's fire after she speaks at the door (§5; #492's 2 and 7).
 - **To #489 and #490:** Wenna's `until` at the hole, and her place at the door. K9 built both
   (§4.5, §5) and the bay the door's exit (§4.6, §5).
 
@@ -1863,7 +1933,9 @@ Owed to the boxes and the chapter beside the bay as built (§4.6, §5, §8):
   once read. `slain`: `sleepers_bay2:sb2_matron`, no respawn, her cap `matron_cap` dropped. Wenna is
   K9's "The girl out of the hole" at 24,28, `after` `q_wenna_up` with no `until`: she waits at the
   door and goes down with nobody (no hirelings, call 6), unnamed in every line. Her place at the
-  lodge after the bay is the chapter's.
+  lodge after the bay is the chapter's. Built: the door's entry reads the stair reached and the
+  sleepers' `sb2_beds`, which now sets `q_sleepers_seen`; back up, she speaks at the door and then
+  is at the lodge, her words setting the flag that moves her (§5; #492's 2, 3 and 7).
 - **To #494:** nothing placed in the bay; the bell under the ice (above) and the words of 39, 40, 42
   and 43 stay its own.
 
@@ -1872,6 +1944,9 @@ Owed to the chapter, the side quests and the boxes beside K10 as built (§4.7, �
 - **To #492:** the chapter's last entry, on the step. `seen`, as map:id: `coldmere_k10:k10_mouth`,
   an event at 5,15, `once`; its goal points over the pass, which is open from the start (§5). The
   chapter and the side quests may pay at most about 1,729 xp a member between them (§8; #491's 18).
+  Built: the south's entry and the end read it with the beds' flag, and the chapter pays nothing
+  (§5, §8; #492's 3 and 9). Its goal stops at the mouth, the road's end, until J11 is laid and the
+  Whitespine's chapter takes it on over the pass (#499, #505).
 - **To #494:** quest 44, The Pilgrims in the Pass, on the ids K10 leaves, lines only:
   `k10_pilgrims`, an event at K10 9,18, in the snow below the mouth (snow at rows 16 to 20, columns
   6 to 11: room for the pilgrims and the dying one); `k10_graves`, an event at 13,8 by the road,

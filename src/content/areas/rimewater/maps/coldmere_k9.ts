@@ -10,7 +10,8 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
-import { WENNA_UP } from './rime_lodge.ts';
+import { WENNA_UP, WENNA_LODGE } from './rime_lodge.ts';
+import { SLEEPERS_SEEN } from '../chapter.ts';
 
 /**
  * The way down to the Sleepers' Bay (#490): the door in the wall of grey at the crack's foot, 24,30,
@@ -21,7 +22,7 @@ import { WENNA_UP } from './rime_lodge.ts';
  */
 export const DOOR: Exit = { x: 24, y: 30, to: 'sleepers_bay', tx: 8, ty: 1, tf: SOUTH, needFlag: WENNA_UP,
   blockedText: 'A wall of grey under the ice, with a door in it: no handle, no seam, and no frost on it anywhere.',
-  label: 'The door opens under her palm, and she waits at it while you go down.' };
+  label: 'The door opens under her palm, and a voice in the wall says "Captain?" She flinches, and waits at it while you go down.' };
 
 export const COLDMERE_K9: MapDef = {
   id: 'coldmere_k9',
@@ -97,10 +98,14 @@ export const COLDMERE_K9: MapDef = {
     // waits there.
     { kind: 'event', x: 28, y: 30, id: 'k9_foot', once: true, text: 'At the loch\'s foot the ice gives out, and black water runs in under it from the south, smoking.' },
     { kind: 'event', x: 24, y: 27, id: 'k9_crack', once: true, text: 'A crack in the ice, a stride wide, going down into the dark. Its edges are worn smooth.' },
-    { kind: 'npc', x: 24, y: 28, name: 'The girl out of the hole', after: { flag: WENNA_UP }, lines: [
+    // Back up from the beds, she speaks at the door and goes to the lodge (§5, #492).
+    { kind: 'npc', x: 24, y: 28, name: 'The girl out of the hole', after: { flag: WENNA_UP }, until: { flag: WENNA_LODGE }, lines: [
       'The girl out of the hole, waiting at the door. She lays her palm on it.',
       'A soft voice in the wall: "Captain?" She flinches.',
-    ] },
+    ], says: [{ after: { flag: SLEEPERS_SEEN }, sets: WENNA_LODGE, lines: [
+      'The girl out of the hole, at the door still. She reads your faces, and her fist closes on the nail.',
+      '"Then they have marched them on south, under the world, for the mountains and the sea. I\'ll wait at the lodge."',
+    ] }] },
   ],
   secrets: [{ x: 13, y: 18, hint: 'k9_strip' }],
   encounters: [
