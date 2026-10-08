@@ -16,10 +16,10 @@ drawings (#483) and the country behind, parked (#484). Figures are measured on m
 Every box is built but the parked M7 and M8 (§4.7): N7, the road up onto the moor (#476, §4.2),
 which lists the area, N8, the Cairnfield's box (#479, §4.5), O7, Fionnlios's box (#477, §4.3), O8,
 the bog (#478, §4.4) and Carn Dubh, the dungeon through N8's door (#480, §4.6). Its seven monsters
-are drawn and every one is placed (§3); its chapter, its side quests and the country behind are to
-build. Its content is `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of
+are drawn and every one is placed (§3); its chapter, The Ring (#481, §5), and its three side quests
+(#482, §6) are built, and only the country behind is to build. Its content is `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of
 the world map and its walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, and its
-side quests in `quests.ts`, to come); it has no businesses, so no rooms. Its ids: the area
+side quests in `quests.ts`); it has no businesses, so no rooms. Its ids: the area
 `cairnmoor`, its zones `highmoor` and `cairnfield`, the dungeon `cairns` and `cairns2` (the ids stay
 under the new name, NAMES §3).
 
@@ -210,6 +210,17 @@ wraith's and the Tor Troll on the ogre's. Their defs are in
 (`tools/tests/maps.ts`) to the first box whose brief places it (§4): N7 places the ravens, the bog
 bodies and the hounds (#476), N8 the wights (#479), O7 the lights and the troll (#477) and Carn Dubh
 the King (#480), so that none is owed now. §9 has the decisions.
+
+The chapter and the side quests, on the boxes built (#481, #482):
+
+- **The Ring** (`chapter.ts`, #481): begun on N7, the drove road up onto the moor; the voice inside
+  Fionnlios by night (`o7_voice`, which sets the chapter's flag), the drove road's head above Loch
+  Fada (`n8_head`) and the notch down onto M9, which ends it with the voice heard. Its goals stand
+  on O7 and N8, so High Moor and the Cairnfield each hold a step (§5).
+- **The side quests** (`quests.ts`, #482): The Watcher's Tally (the Watcher on O7, the page in Carn
+  Dubh), The Ring on the Bog Body (the peat-cutter on O8) and The Faces on the Tors (the stonecutter
+  on O8), each answered by a choice its person puts (§6).
+
 
 ## 4. What is still to build
 
@@ -666,6 +677,17 @@ whoever sleeps there, and a company that walks the road's head first reads the j
 order. The act's one lock is #440's and lies elsewhere. The walkthrough plays it at 18, 19 and 20,
 resting inside the ring by night, in order and with the road's head taken first.
 
+As built (#481, 8 October): `chapter.ts`, begun on N7 (`visited`), as Wrackholm's is on its
+landing, since the Kilns' chapter (#470) is not written. Three entries, the road, the ring and the
+road's head, and four goals: east to Fionnlios on O7; with the road's head seen first, back to the
+ring; with the voice heard, down the drove road through the Cairnfield to its head; and with both,
+down through the notch to the long lake and Rime Lodge. `o7_voice`, at 6,24, sets `q_ring_spoke`;
+the chapter is done with the voice heard and M9 reached by the notch (`NOTCH`), where Rimewater's
+chapter (#492) takes it on. The walkthrough plays it at 18, 19 and 20, in order and with the road's
+head first, resting inside the ring by night: each reads the same, ends once, and the voice is said
+the once (§9, #481 and #482).
+
+
 ## 6. Side quests
 
 #56's three for Cairnmoor, all standing (#434, call 11), each built with its box on the systems of
@@ -697,6 +719,27 @@ trolls.
 
 No change to #56's drafts. 40's coach is built with #494 and stands on N8 from #479, as the hermit
 stood on F6 before her quest (docs/areas/wrackholm.md §4.4).
+
+As built (#482, 8 October), in `quests.ts`, each finished at its level and every answer walked:
+
+- **The Watcher's Tally** (`tally`): the Watcher's first words ask for the page, and meeting him
+  begins it. His predecessor's wight in Carn Dubh (`cd1_watcher`) is named by the journal, and the
+  page in the chest under his hands (`cd1_page`), `watchers_page`, is read from the pack: a ring
+  drawn small beside eleven rows, and a year four hundred years gone. The Watcher takes it at the
+  first meeting (#43), his early words to a company that never met him, pays 200 and asks: his
+  lintel, where eleven strokes are cut (`o7_lintel`) and the page burned, or the Lanterns at the
+  Lodge, the page sent down by the drovers. 1,200 xp either way.
+- **The Ring on the Bog Body** (`bogring`): the peat-cutter kept the ring, and puts the choice of
+  three: sold to Tallis's man at the Lodge; carried for the elves (`bog_ring`, its crest seen and
+  whose never said); or put back on the body's hand, when the body is laid in its cutting
+  (`o8_laid`) and the bog bodies by the hut (`o8_bodies`, `until`), put down once more, get up no
+  more. 1,200 xp each.
+- **The Faces on the Tors** (`faces`): the stonecutter puts it: home to Rime Lodge, when he leaves
+  the tors (`until`) and the last face stays half cut; or the last face finished (`o8_whole`), when
+  its tor's troll (`o8_last_tor`, `until`), put down, never stands again. 1,800 xp each. His words
+  at the Lodge are Rimewater's.
+- **The coach** (40): its lines stand on N8 as #479 built them; the quest is #494's.
+
 
 ## 7. Encounters, and what is new
 
@@ -740,8 +783,10 @@ passes without it.
   arrives at 21 earns less; the curve's row reports what a clear falls short of as owed to #437
   until the boxes exist. As built: N7 1,803 (#476), N8 2,081 (#479), O7 1,803 (#477) and O8 2,305
   (#478), 905 over its brief's 1,400 (§9, #478's 5). Carn Dubh pays 4,948 (#480), 2,748 over its
-  brief's 2,200 (§9, #480's 15). The five hold 12,941 of the 14,667, and the shares stand at about
-  13,640, with the side quests' 700 to come (and M7 and M8's 1,200, if they are built).
+  brief's 2,200 (§9, #480's 15). The five hold 12,941 of the 14,667. The side quests pay 700 by
+  their answers (#482: 37 and 38 200 a member each, 39 300) and the chapter nothing, so a clear
+  gives 13,641, 1,026 short: M7 and M8's 1,200 close it when they are built (#484), and the
+  curve's row owes it to them.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
@@ -755,7 +800,8 @@ passes without it.
   Seax +1; its monsters carry none. Carn Dubh holds 2,225 (#480), its share by the brief's 2,200:
   900 in the cell off the stair, with the Hill Torc, 250 in each of the two cells of rows, the
   fifteen wights' own 20 to 60 each and the King's 150 to 300; its bog bodies carry none. The five
-  hold 8,155 of the 8,880.
+  hold 8,155 of the 8,880, and the Watcher pays 200 for his page (#482): 8,355, the 525 short owed
+  to M7 and M8 with the experience (#484). No answer pays gold.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
@@ -772,15 +818,17 @@ passes without it.
   Carn Dubh a company at 18 wins every fight in the cairn and manages 10.70 fights to a rest, off
   the aim and inside the limit; one at 16 wins every fight too, owed to #18. Under the cairn a
   company at 19 wins 85.7% of the fights, off the aim and inside the limit, with 9.20 fights to a
-  rest; the Cairn King is won 57% at 19 and 94% at 21 (§4.6). Cairnmoor's 26 groups two under their
-  maps' floors are won 96.2% of the fights, owed to #18 as the Kilns' are.
+  rest; the Cairn King is won 57% at 19 and 94% at 21 (§4.6). With its trolls apart (#482), O8 at 18 manages
+  11.20 fights to a rest, off the aim and inside the limit, 4.3% of its days ending in a fight
+  broken off (§9, #481 and #482's 10). Cairnmoor's 27 groups two under their maps' floors are won
+  96.3% of the fights, owed to #18 as the Kilns' are.
 - **Density.** Core boxes at the Foreland's floor, the bog at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
   needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
   26 points (#476). N8 99.6% within 8 steps and the furthest 9, with no sign among its 31 points
   (#479). O7 99.3% within 8 steps and the furthest 10, with no sign among its 31 points (#477). O8
   100.0% within 12 steps, the country floor, and the furthest 9, with no sign among its 28 points
-  (#478). Carn Dubh's two levels 100.0% within 7 steps, the furthest 2 and 3, with no sign among
+  (#478), 29 with the last face whole (#482). Carn Dubh's two levels 100.0% within 7 steps, the furthest 2 and 3, with no sign among
   their 17 and 11 points (#480).
 
 ## 9. Decisions
@@ -1146,6 +1194,40 @@ Decided by delegate for #480, each the owner's to overturn:
     area's built shares stand at 12,941; with the side quests' 700 and M7 and M8's 1,200 still to
     come they make 14,841, about the ask of 14,667 and well under 1.4 times it, about 20,500.
 
+Decided by delegate for #481 and #482, each the owner's to overturn:
+
+1. **The chapter begins on N7** (`visited`), as Wrackholm's does on its landing: the Kilns' chapter
+   (#470) is not written, so nothing of it is asked, and the Wall's end leaves no goal until it is.
+2. **The voice sets `q_ring_spoke`** on `o7_voice` as built (#477's 5), and the chapter's ring is
+   written by it; nothing else of O7's changes for the chapter.
+3. **The chapter is done down the notch, with the voice heard** (M9 visited), not at the road's
+   head, so its last goal points down to Rime Lodge; its goals stand on O7 and N8 only, and Loch
+   Fada's step stays #492's.
+4. **Played at 18, 19 and 20** a step at a time, the company levelled as it goes: the bands give
+   every step 18, so the levels are the walk's, in order and with the road's head first.
+5. **Sunderwood's walkthrough no longer ends the quest at the Wall:** its ending stops there, and
+   its goals check takes Act I's and Act II's chapters; Act III's are walked by their own areas.
+6. **The Watcher's Tally is a hand-in, then a choice:** he takes the page at the first meeting
+   (#43) and pays 200, then asks lintel or Lanterns, 1,200 xp each. A hand-in pays no experience,
+   and a Lanterns' hall that takes the page is #439's fourth rank, unbuilt, so he sends it down.
+7. **The Watcher's third line asks for the page.** A company that brings it unmet hears his early
+   words, and his words after the answer meet him, so his lesson still comes.
+8. **The ring is the peat-cutter's to put,** each answer settled at his door: Tallis's man and the
+   elves are not on the moor, so the sale goes down to the Lodge with him and the ring is the
+   company's to carry for the elves. Only putting it back lays the body down, as #56 has it.
+9. **`until` on a group stops it coming back,** as the game reads it: put back, the bog bodies by
+   the hut, put down once more, get up no more; finished, the last tor's troll likewise.
+10. **The tors' trolls stand apart:** `o8_trolls` keeps a troll and the four ravens, and the last
+    tor's troll stands alone at 26,28 (`o8_last_tor`), so the finished face takes one troll (#56).
+    O8 goes from 7.94 fights to a rest to 11.20, inside the limit; its pay and monsters stand.
+11. **The pay is the answers':** 1,200 xp an answer for 37 and 38 and 1,800 for 39 (§8's 200, 200
+    and 300 a member); the Watcher pays 200 gold besides. No answer pays gold.
+12. **The curve's row stays owed, now to M7 and M8 (#484):** a clear gives 13,641 xp of 14,667 and
+    8,355 gold of 8,880, and their share closes both. Nothing is cut for pay.
+13. **The page shows its eleven nights and the ring its crest:** a ring drawn beside eleven rows
+    and a year four hundred years gone, seen and never said.
+
+
 ## 10. Names
 
 Cairnmoor's naming pass, by the rules of `docs/NAMES.md`, chosen for #435. The moor's folk and
@@ -1216,8 +1298,17 @@ Cut from a brief as built (§4):
 Owed by a box as built (§4):
 
 - **The Watcher's page** (#480, §4.6): it lies in the chest under the Watcher's hands, `cd1_page`,
-  and #482 must name the item, `watchers_page`, in the quest (#56's 37). A wight that carries it
-  instead needs a drawing of its own (#483's lane) and the page in its def's `drops` at chance 1
-  (§9, #480's 6).
+  and The Watcher's Tally names it (#482). A wight that carries it instead needs a drawing of its
+  own (#483's lane) and the page in its def's `drops` at chance 1 (§9, #480's 6).
 - **The door behind the seat** (#480, §4.6): a wall with a door drawn in it, no lock, no flag and no
-  exit. Nothing in Carn Dubh is a step of the chapter, which #481 builds.
+  exit. Nothing in Carn Dubh is a step of the chapter (#481).
+
+Owed by the chapter and the side quests (§5, §6):
+
+- **The coach's quest** (#56's 40): Rimewater's (#494); N8 holds the coach and its lines.
+- **The Lanterns' hall's page** (#439): the fourth rank's ask, the ring's voice reported, may take
+  `watchers_page` at a hall; meanwhile the Watcher sends it down.
+- **The stonecutter at Rime Lodge** (#56's 39): his words there, gone home, are Rimewater's.
+- **The ring once gone** (#56's 38): Tallis's man at the Lodge and the elves who would take it are
+  no one's yet; the Council weighs the ring (#56's 64).
+- **M7 and M8** (#484): the curve's shortfall, 1,026 xp a member and 525 gold, is theirs.
