@@ -63,7 +63,7 @@ change hands elsewhere on the world. Its own squares, 774 Loch Fada's, 239 Loch 
 none in the scaffold's cut after M9 (§4 has the plan's 607 and 361), are laid whole in Loch Fada.
 K9 (#489), laid whole in Loch Fuar, moves 541 squares more, none on a built map: Loch Fuar takes
 272 of Monks' Vale's, 128 of Sheer Point's, 46 of Loch Fada's and 8 of the High Spine's and gives
-24 to Monks' Vale and 9 to Loch Fada, and about 55 change hands elsewhere on the world. Its own
+24 to Monks' Vale and 9 to Loch Fada; about 55 change hands elsewhere on the world. Its own
 squares, 518 Loch Fuar's and 216 Loch Fada's in the cut after L9 (§4 has the plan's 734), are laid
 whole in Loch Fuar.
 
@@ -161,11 +161,11 @@ Four places: one box, the area's first, which lists the area (#486), the town be
   onto the cold loch's shore. The loch's open water along the north and its shallows frozen; its
   arm frozen white down the middle, walked, over the drowned village of Fuar, a bell tower's cap
   standing out of the ice; the old shore's bank on the west, with a house-place above it; a knoll
-  east over the ice. At the arm's foot a crack in the ice and down it a wall of grey with a door in
-  it, shut until the bay is built (#490), and after the fourth night the girl out of the hole
-  waiting at it. Under a clear strip of the ice, the drowned smith's hole in the bank, with his
-  iron. Eight groups: snow lynx in the shore's pines four times, ice pike under the arm's ice twice,
-  one of them over the tower by night, and ice bears in pairs on the far shore and its hills.
+  east over the ice. At the arm's foot a crack in the ice goes down to a wall of grey with a door in
+  it, shut until the bay is built (#490); after the fourth night the girl out of the hole waits at
+  it. Under a clear strip of the ice, the drowned smith's hole in the bank, with his iron. Eight
+  groups: snow lynx in the shore's pines four times; ice pike under the arm's ice twice, one of them
+  over the tower by night; and ice bears in pairs on the far shore and its hills.
 
 #487 opens M9's gate and the lake wall's door, which were drawn shut with events for the town to
 drop (`m9_gate`, `m9_lake_door`, in no save), and puts the fourth night's group and Wenna on the
@@ -186,8 +186,8 @@ in.
 
 Its row on the curve and its step on the gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 20–22, next 22, window 4,500, owed to #438 while the area is
-built box by box, with the built boxes' 10,879 xp a member and 4,020 gold, and the Wardens' ask
-(#439) 400 and 300 more, the clear's floor (§8). The step is in
+built box by box, with 11,279 xp a member and 4,320 gold the clear's floor: the built boxes' 10,879
+and 4,020 and the Wardens' ask's 400 and 300 (#439; §8). The step is in
 `src/content/areas/rimewater/items.ts`, made ahead of the area as the Kilns' was
 (docs/areas/kilns.md §3; `ITEMS_AHEAD`, `src/content/index.ts`) until M9 took the table into its
 Area: the furrier's seven (`FURRIER`) and their plus finds by 22 (§4.1), the seven sold by the
@@ -605,8 +605,8 @@ what is new, with points of interest and a first share of the pay.
   hearth-stone swept clean at 9,18: lines only, the bell being #494's (§6). Searched at 14,18 the
   bank's face gives at 13,18, and behind it the smith's hole at 12,18 holds his iron, dry: 800
   gold, a Bear Spear +1 and his own blade, Lann Fuar (§9, #489's 8, 9). Pike bones lie on the far
-  shore at 3,23, the cold loch's whole length is seen from the hills at 12,30, and a shrine stands
-  on the south shore at 17,25 (endurance). At the arm's foot the ice gives out at 28,30 and black
+  shore at 3,23; the cold loch's whole length is seen from the hills at 12,30; a shrine stands on
+  the south shore at 17,25 (endurance). At the arm's foot the ice gives out at 28,30 and black
   water runs in from the south; a crack in the ice goes down at 24,27 to 24,29 to a wall of grey on
   row 30, 22 to 26, with the door in it at 24,30 (352,284), shut, and after the fourth night the
   girl out of the hole waits on the crack at 24,28 (§5).
@@ -771,10 +771,10 @@ ice: drawn shut, a `#` in a wall of grey, with `q_wenna_up` for its flag and the
 reason, which `k9_door` says at the crack's foot, 24,29. It leads to `sleepers_bay` 8,1 facing
 south, and is listed in no exits, since an exit leads only to a built map: the bay (#490) lists it,
 opens the square, drops the event and adds the way back onto 24,29. Wenna waits at it as the doc
-has her: the girl out of the hole stands on the crack at 24,28 once the flag is set, her lines the
-ones above (she lays her palm on it; "Captain?"; she flinches), and "it opens" is left to the exit's
-label, `DOOR.label`, since the door does not open until the bay is built. M9's girl takes an
-`until` on the same flag: met once, she goes back down, and is never in two places (§9, #489's 5).
+has her: the girl out of the hole stands on the crack at 24,28 once the flag is set, with the lines
+above (she lays her palm on it; "Captain?"; she flinches). "It opens" is left to the exit's label,
+`DOOR.label`, since the door does not open until the bay is built. M9's girl takes an `until` on
+the same flag: met once, she goes back down and is never in two places (§9, #489's 5).
 **The lock is not signed in.** The pillars check finds locks only on exits a map lists, and this
 exit is listed nowhere until the bay lists it, so a row in `content/locks.ts` would close nothing
 there and fail. The lock and its paragraph above are #490's, with the exit and #440 (§9, #489's 4;
@@ -925,8 +925,8 @@ its exit is listed (#489's 15).
   holds 11,279 xp; the side quests (#494) reserve 1,600. So the Sleepers' Bay (#490) and K10 (#491)
   together may pay at most about 9,895 xp a member (22,774 less 11,279 and 1,600). Their scaled
   shares, 6,200, come to about 8,800 at M9's ratio and about 10,640 at K9's, 1.72, which is over.
-  Each builder cuts groups of its own box, the least valuable first, rather than pass the budget,
-  and works the figures again from the curve test's own output after merging main.
+  Each builder cuts groups of its own box, the least valuable first, rather than pass the budget.
+  The figures are worked again from the curve test's own output after merging main.
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and
   tier 7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at
   least, in chests, drops and the hall's pay; the furrier's step is priced within the band's window
@@ -955,8 +955,8 @@ its exit is listed (#489's 15).
   alone is 10.4 fights to a rest at 20, a little over the aim of 8 to 10 and inside the limit of
   12.5 (§4.3). L9 the same: at 20 every fight won, 9.27 fights to a rest; at 18 every fight won too,
   owed to #18 (§4.4). K9 the same: at 20 every fight won, 8.54 fights to a rest; at 18 every fight
-  won too, owed to #18, and its road, in past the lynx by the way and down to the crack, walked
-  every time (§4.5).
+  won too, owed to #18; its road, in past the lynx by the way and down to the crack, walked every
+  time (§4.5).
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   bay as a dungeon, 90% within 7 and none past 10. As built: M9 98.0% within 8 steps and the
   furthest 13, with no sign among its 31 points (#486), 32 since #487; Rime Lodge, a town, 100%
@@ -1321,11 +1321,11 @@ Decided by delegate for #489, each the owner's to overturn:
    group at 22 and nothing on the surface is; at 20–22 the bear pairs at 21 are the top, as N2, N8,
    O8, Carn Dubh and L9. The atlas row stays 21–22: the zone takes its band from its built map.
 2. **The loch is the doc's, laid on the atlas's ground:** the cut holds no lake (§4.5). The north's
-   deep stays open water and its shallows are ice, and the river is frozen and widened into the
-   basin the brief needs; about 115 land squares became ice, and the edges keep the atlas's ground.
+   deep stays open water and its shallows are ice; the river is frozen and widened into the basin
+   the brief needs. About 115 land squares became ice, and the edges keep the atlas's ground.
 3. **The door is `DOOR`, 24,30,** the scaffold's square and the atlas's enter link at 352,284:
    exported, listed in no exits, `needFlag` `WENNA_UP`, to `sleepers_bay` 8,1 facing south, a guess
-   #490 may move. It is drawn shut, a `#` in a wall of grey, and `k9_door` says the brief's line.
+   #490 may move. It is drawn shut, a `#` in a wall of grey; `k9_door` says the brief's line.
 4. **The lock is not signed in:** the pillars check finds locks only on exits a map lists, so a row
    in `content/locks.ts` for an exit listed nowhere fails as closing nothing there. The lock and
    §5's paragraph on it are #490's, with the exit and #440.
@@ -1339,7 +1339,7 @@ Decided by delegate for #489, each the owner's to overturn:
    the brief's 1,500 and §8's scaled 2,650: the brief's eight groups and its figure never agreed. No
    group is cut, the projection at M9's ratio being under 1.4 times the ask (§8).
 8. **The smith's iron** (`k9_iron`, 12,18): 800 gold, the Bear Spear +1 and **Lann Fuar**, off the
-   ladder: *lann*, the hill folk's blade (not yet in NAMES §2's row), and Fuar, the village the loch
+   ladder: *lann*, the hill folk's blade (not yet in NAMES §2's row) and Fuar, the village the loch
    came up over. A martial blade, 2d10 +6 for 2,000 gold, a sidegrade of the Ice Axe +1; its smith's
    mark is a little bell.
 9. **The secret is the brief's:** stones under a clear strip run west from the tower's cap to the
@@ -1354,7 +1354,7 @@ Decided by delegate for #489, each the owner's to overturn:
     hearth-stone swept clean at 9,18, above the bank. Lines only: the bell is #494's 42.
 13. **Loch Fuar's crossing words are written** on its atlas row, as Loch Fada's: the cold loch
     white below and the land harder than the long loch's shore, two under; black ice that would
-    spare no one, and the way back east under the pines still open, three under.
+    spare no one and the way back east under the pines still open, three under.
 14. **The zone's road** (`ROADS` in `tools/tests/gate.ts`, which the gate failed without): the
     lynx by the way in and the lynx at the loch's foot, on the way to the crack.
 15. **Core density,** the brief's, not the scaffold's country; **novel claims nothing,** the lock
