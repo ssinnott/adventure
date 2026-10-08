@@ -8,6 +8,7 @@
 // Band 21-22; docs/areas/rimewater.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { SLEEPERS_SEEN } from '../chapter.ts';
 
 export const SLEEPERS_BAY2: MapDef = {
   id: 'sleepers_bay2',
@@ -45,7 +46,7 @@ export const SLEEPERS_BAY2: MapDef = {
   features: [
     // The stair's foot, and the beds: the first wiped, and a face in it (the chapter's step, §5).
     { kind: 'event', x: 7, y: 12, id: 'sb2_stair', once: true, text: 'The stair comes out into a long hall, as cold as the ice above and lit grey from its walls.' },
-    { kind: 'event', x: 7, y: 11, id: 'sb2_beds', once: true, text: 'Rows of long glass beds, frosted over. Wipe one, and there is a face in it you have seen before.' },
+    { kind: 'event', x: 7, y: 11, id: 'sb2_beds', once: true, sets: SLEEPERS_SEEN, text: 'Rows of long glass beds, frosted over. Wipe one, and there is a face in it you have seen before.' },
     // The rows: every people of Caldera, asleep.
     { kind: 'event', x: 10, y: 9, id: 'sb2_row1', once: true, text: 'An orcblood under the frost, with Idris\'s brow. Past him a Tidefolk woman, and then a gnome.' },
     { kind: 'event', x: 3, y: 7, id: 'sb2_row2', once: true, text: 'Dwarves, a row of them, beards combed out on their chests. Then humans, more than you can count.' },

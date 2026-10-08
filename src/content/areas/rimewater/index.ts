@@ -10,6 +10,7 @@ import { SLEEPERS_BAY } from './maps/sleepers_bay.ts';
 import { SLEEPERS_BAY2 } from './maps/sleepers_bay2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
+import { CHAPTER } from './chapter.ts';
 import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
@@ -21,8 +22,7 @@ export const AREA = {
   sprites: SPRITES,
   items: ITEMS,
   quests: [],
-  // The Sleepers, the act's last chapter, is #492's.
-  chapter: undefined,
+  chapter: CHAPTER,
   // The Wardens' fourth rank's ask at the ice-hole, a sword on the fourth night (#439).
   guilds: GUILDS,
   // The lochs': cold, the snow lying from the autumn to the spring, the wind off the glacier, and
