@@ -48,4 +48,10 @@ export const ITEMS: readonly ItemDef[] = [
     'A cap of thin grey plate, folded stiff and white as starched linen.',
     'Inside the band, worn smooth, a loop inside a loop.',
   ] },
+  // The Coach That Did Not Come (#494, #56's 40): the note the man in the healer's coat writes by the
+  // coach on N8, read from the pack and taken by the coachman at the lodge, who sends the sledge.
+  { id: 'healers_note', name: 'The Healer\'s Note', slot: 'none', price: 0, text: [
+    'A leaf torn from a healer\'s book, in a careful hand.',
+    '"To Rime Lodge. The coach is stopped on the moor road, its coachman dead. One patient, asleep. Send a sledge."',
+  ] },
 ];

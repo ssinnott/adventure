@@ -79,7 +79,24 @@ export const CAIRNFIELD_N8: MapDef = {
     // The pool among the first cairns, and what is under its ice.
     { kind: 'event', x: 14, y: 7, id: 'n8_pool', once: true, text: 'A pool among the cairns, frozen hard. Under the ice a face looks up, its mouth open.' },
     // The coach stopped on the road, its horses gone (#56's 40, #494), and under its seat the strongbox.
-    { kind: 'event', x: 6, y: 8, id: 'n8_coach', once: true, text: 'A coach stands stopped on the road, snow to its axles. Its traces are cut, and there are no horses.' },
+    // Beside it the man in the healer's coat and the woman who will not wake, until the lodge's sledge
+    // comes for them: his note, carried down, sends it (Rimewater's The Coach That Did Not Come).
+    { kind: 'event', x: 6, y: 8, id: 'n8_coach', once: true, text: 'A coach stands stopped on the road, snow to its axles, its traces cut. On the box the coachman sits frozen, the reins in his fists.' },
+    { kind: 'npc', x: 5, y: 9, name: 'A man in a healer\'s coat', until: { flag: 'q_coach_sledge' }, lines: [
+      'A man in a healer\'s coat by the coach, its hem white with salt. At his feet, under every rug the coach had, a woman who does not wake.',
+      '"The coachman froze on his box the first night. She has not woken since Kilnhaven."',
+      '"She cannot walk, and I cannot carry her. The lodge has a sledge."',
+    ], choice: { ask: '"Will you take a note down to the lodge?"', answers: [
+      { label: 'Take his note.', sets: 'q_coach_note', gives: 'healers_note', says: [
+        'He writes on his knee with a stub of pencil and tears the leaf out.',
+        '"For the coachman at the lodge. A sledge, tell him, and blankets."',
+      ] },
+    ] }, says: [
+      { after: { flag: 'q_coach_note' }, lines: [
+        'The man in the healer\'s coat has not moved from her side.',
+        '"The note. The lodge. She is getting colder."',
+      ] },
+    ] },
     { kind: 'event', x: 6, y: 9, id: 'n8_coach_door', once: true, text: 'Its door hangs open, and the snow inside is trodden. The luggage on its roof is still corded down.' },
     { kind: 'event', x: 8, y: 9, id: 'n8_seat', once: true, text: 'Under the seat, a strongbox chained to the frame: the fare for the lodge, and a bow in oiled cloth.' },
     { kind: 'chest', x: 8, y: 9, id: 'n8_strongbox', gold: 970, items: ['steel_bow+1'] },
