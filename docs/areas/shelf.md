@@ -665,7 +665,9 @@ and nothing is a story lock (#151, call 1):
   Queen's cousin, sits in it and says the walls are Vask's (#151, call 5). The quests are still
   given by the Drillyard's own hall: a guild's quests come from a business that is its hall, and
   their offer is one text, so a person cannot give them, and the first task's still names the
-  drillmaster. Every company of Act II has had it.
+  drillmaster. Every company of Act II has had it. Once Act II is done the hall offers a Sergeant
+  the Wardens' fourth rank too, two asks, the cousin's captains' work in Ordgar's voice: the offer
+  is still the hall's one text, written as his (#439, §6).
 - **Prices rise:** the Hearthlight at 18 a night for 12, and Mottram's half as much again, but the
   Lantern Oil, whose forty he names in Oil for the Lamp. The Lantern Guildhall and the trainer
   keep theirs.
@@ -727,6 +729,10 @@ and Thornmark's):
 | 1 | The Cellar's Cult | both cultist bands in the Ashcombe cellar (`m_cult1`, `m_cult2`) | 60 gold, 240 xp |
 | 1 | The Old Watchtower | Thornmark's ogre (`tm_ogre`) | 150 gold, 900 xp |
 | 2 | The Garrison's Strongbox | a chest by Thornhold's north wall (`tm_strongbox`, 23,1) | 200 gold, 1,500 xp |
+
+The fourth rank's two, Captain Ordgar's, wait for Act II's end (#439): The Night Carts, in the
+Tiefzeche (docs/areas/kilns.md §6), and A Sword at the Hole, at Rime Lodge (docs/areas/rimewater.md
+§6), 300 gold and 2,400 xp each (DESIGN §8, Act III's guild quests).
 
 ### The Lanterns' quests
 

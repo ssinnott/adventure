@@ -19,11 +19,12 @@ DESIGN.md first for the why.
 - **Guild halls:** a business may also be a guild's hall (`hall`, DESIGN §8). It then opens on a
   first menu, its own trade, the guild's work, its skills where the guild has one built (below) and
   Leave, which each choice returns to; a business with its trade alone opens straight on it. The
-  guild's work pays what is done, then offers the quests at or under the company's rank. Membership
+  guild's work pays what is done, then offers the quests at or under the company's rank, those
+  that wait for an act (`after`, a flag) once the company holds it (#439). Membership
   and rank are worked out from the guild quests' done flags, and a rank reached is kept by its own
-  flag (`game/guilds.ts`). The Warden Drillyard is the Wardens' hall, and the Lantern Guildhall and
-  the Thornhold Lantern Hall the Lanterns'. A spell hall's fee buys the right to study, not
-  membership.
+  flag (`game/guilds.ts`). The Warden Drillyard is the Wardens' hall, and the Lanterns' are the
+  Lantern Guildhall, the Thornhold Lantern Hall, the Watch's and the Lodge's, one ladder over the
+  four (#439). A spell hall's fee buys the right to study, not membership.
 - **People in a business:** a person with no room of their own on a business's doorway, listed after
   it, is in the business while present, and its first menu offers "Talk to <name to its first
   comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
@@ -200,9 +201,10 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   higher than the last, the line says how the land feels: "The land here is harder than the road
   behind." one or two under, "Nothing here would spare you. The road behind is still open." three
   or more under. A zone may give its own words in its atlas row (`crossing`). Never a wall, and
-  stepping straight back over a line just crossed says no more. Each zone map is its listed atlas
-  zone's for now: a box that straddles two (C4, B5, B6) waits on its own build to draw the line
-  inside it.
+  stepping straight back over a line just crossed says no more. A way that jumps from one zone map
+  to another (N8's notch down onto M9) says it too, on landing, after its own label, which leaves the
+  land's name to the line. Each zone map is its listed atlas zone's for now: a box that straddles
+  two (C4, B5, B6) waits on its own build to draw the line inside it.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the `void`
   solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
@@ -709,7 +711,7 @@ does.
 | `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
-| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
+| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |
@@ -739,7 +741,7 @@ does.
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |
 | `content/stones.ts` | the Wardstones a company may restore, each with its area and the condition it is restored on (or the issue that owes it); held to the atlas by `tools/tests/stones.ts`, read by `game/stones.ts` |
 | `content/crossings.ts` | the crossings between towns, each with its fare, days and hours and its two ends, each end's landing once its town is built (or the issue that owes it), and `sells`, the passages a town's person sells on them; held to the atlas and the towns by `tools/tests/passage.ts` |
-| `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Empty: the road's one lock, the pass's flag, went with #40 |
+| `content/locks.ts` | the story locks (each flag that closes something, where and why) and how many an area and the road may spend; held to by `tools/tests/pillars.ts`, read by nothing in the game. Holds one: Act III's, the Sleepers' Bay's door under Loch Fuar's ice, shut on `q_wenna_up` (#440, docs/areas/rimewater.md §5); the road's first, the pass's flag, went with #40 |
 | `content/maps.ts` | the maps as played: `PLAYED_DEFS`, the outdoors laid out, and `buildMaps` |
 | `content/shipped.json` | what a save may refer to: each played map's size, chests, once-events, the other features spent once, inscriptions read, groups and door squares, the zones' places, the flags, items, spells, monsters, classes, races, conditions and skills; written by `tools/shipped.ts`, held to by `tools/tests/shipped.ts` |
 | `content/atlas.ts` | the world map's plan: the land, the areas of the road, and the zones, places and sites not built yet; each area charts its own in `areas/<area>/atlas.ts`, and `content/index.ts` merges them into `ATLAS` |

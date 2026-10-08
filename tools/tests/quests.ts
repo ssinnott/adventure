@@ -22,6 +22,7 @@ import { NORTH } from '../../src/game/types.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
 import { spentId } from '../../src/game/wilds.ts';
 import { readId } from '../../src/game/inscriptions.ts';
+import { REACH_ZONES } from './pillars.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok, owed } from './lib.ts';
 
@@ -35,7 +36,7 @@ export const UNSET: Record<string, string> = {
 };
 
 /** The flags a feature sets: a person's, met, and an event's, said (#156). */
-const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : [];
+const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : [];
 
 /**
  * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one UNSET owes), an item, something spent once and kept
@@ -125,7 +126,8 @@ export function quests(): void {
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
     const PLANNED: Record<string, string> = { ironfells: '#470', kilnsheart: '#470', kilnmouth: '#470' };
     const built = new Set(AREAS.map((a) => a.id as string));
-    for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
+    // The reach is off the road by design (DESIGN §9), and holds no step: Rimewater's Glacier Foot (#486).
+    for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !REACH_ZONES.includes(x.id))) {
       const msg = `zone ${z.id} holds a step of the one quest`;
       if (PLANNED[z.id]) owed(held.has(z.id), msg, PLANNED[z.id]);
       else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);

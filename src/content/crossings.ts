@@ -106,7 +106,8 @@ export const DROVE_COACH: Crossing = {
     { at: 'kilnhaven', name: 'Kilnhaven', landing: { x: 12, y: 8, facing: WEST },
       label: 'The coach comes in at the east gate and stops in the inn yard. You step down, rested, into red dust.',
       warning: 'Murdo looks you over. "I drive the coach. What comes off the moor at it, you see to."' },
-    { at: 'rime_lodge', name: 'Rime Lodge', owed: '#487' },
+    // In the coach house inside the lodge's gate, where its coachman stands (#487).
+    { at: 'rime_lodge', name: 'Rime Lodge', landing: { x: 13, y: 7, facing: WEST }, label: 'Down off the coach in Rime Lodge\'s coach house, stiff with the cold.' },
   ],
 };
 

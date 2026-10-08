@@ -51,7 +51,7 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import { MAP_DEFS, MONSTERS } from '../../index.ts';
+import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -67,6 +67,10 @@ import { questLog } from '../../../game/quests.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { mayLearn, learn, hasSkill } from '../../../game/skills.ts';
 import { rankFlag } from '../../guilds.ts';
+import type { GuildId } from '../../guilds.ts';
+import { offered, take, rankOf } from '../../../game/guilds.ts';
+import type { Party } from '../../../game/party.ts';
+import { FOURTH_RANKS_OPEN } from './guilds.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
@@ -460,9 +464,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.zone?.id === 'kilnsheart_n6' && !intoN6.some((m) => /Kilns|harder|spare you/.test(m)), `the drove road crosses from N5 into N6 with nothing said of the land, even at 14 (${intoN6.join(' / ') || 'nothing'})`);
   w.level = 16;
 
-  // Out by the south edge for Cairnmoor's N7, the moor's border said on the road; past it, for now,
-  // the world ends.
-  ok(out.at(n6.x + 3, n6.y + 31).ch === '=' && out.passable(n6.x + 3, n6.y + 32) !== 'ok', 'the drove road leaves N6 by its south edge for Cairnmoor, and past it, for now, the world ends');
+  // Out by the south edge into Cairnmoor's N7 (#476), the moor's border said on the road.
+  ok(out.at(n6.x + 3, n6.y + 31).ch === '=' && out.zoneAt(n6.x + 3, n6.y + 32)?.id === 'highmoor_n7' && out.at(n6.x + 3, n6.y + 32).ch === '=', 'the drove road leaves N6 by its south edge and runs on into Cairnmoor\'s N7');
   see(w, 'kilnsheart_n6:n6_border');
 
   // The fork's milestone, counted along the roads at 13 squares to the unit, a corner walked where the
@@ -1015,6 +1018,7 @@ function tiefzeche(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const second = w.world.eventsHere();
   ok(second.some((t) => t.includes('cut for their dead')) && second.includes(readLine('Maren', 'LADDER.')), `the second niche's prayer, which a reader reads LADDER (${second.join(' / ')})`);
   w.party.members[4].skills = [];
+  fourthRanks(w);
   let hatch2 = false;
   for (let i = 0; i < 20 && !hatch2; i++) hatch2 = w.world.search();
   const into2 = hatch2 ? [w.world.move('forward'), w.world.move('forward')] : [];
@@ -1038,7 +1042,9 @@ function tiefzeche(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     'the dwarves\' tunnel ends at a smooth face with a square hole cut through it, earth underfoot on their side and the corridor\'s floor on the other');
   for (const id of ['dm3_end', 'dm3_ledge', 'dm3_mouth']) see(w, `deep_mines3:${id}`);
   // No machine stands above the bottom (#158): the knockers, the menders and the Foreman are its own.
-  const machines = MAP_DEFS.filter((d) => (d.encounters ?? []).some((g) => g.monsters.some((m) => MONSTERS[m].kind === 'machine'))).map((d) => d.id);
+  // Past the Kilns they come up into the world (Rimewater's ice-hole, #487), so the road is read to here.
+  const later = new Set(AREAS.slice(AREAS.findIndex((a) => a.id === 'kilns') + 1).flatMap((a) => a.maps.map((d) => d.id)));
+  const machines = MAP_DEFS.filter((d) => !later.has(d.id) && (d.encounters ?? []).some((g) => g.monsters.some((m) => MONSTERS[m].kind === 'machine'))).map((d) => d.id);
   ok(machines.join() === 'deep_mines3', `the first machines on the road stand at the bottom of the deepest mine, and nowhere else (${machines.join(', ')})`);
   // The clean corridor: six knockers and a mender, twice, won at the bottom's floor; the menders drop their spools.
   for (const g of L3.encounters!.filter((e) => e.id !== 'dm3_foreman')) {
@@ -1076,4 +1082,25 @@ function tiefzeche(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(shut.kind === 'blocked' && w.world.state.x === 13 && bottom.at(14, 3).door === 'door' && bottom.at(14, 3).solid === 'wall' && !bottom.exitAt(14, 3) && !LOCKS.some((l) => l.map.startsWith('deep_mines')),
     `the door does not open, the Foreman dead or alive: it is a wall with a door drawn in it, and no lock (${shut.kind === 'blocked' ? shut.reason : shut.kind})`);
   listen(w);
+}
+
+/**
+ * The fourth ranks' asks in the Tiefzeche (DESIGN §8, #439), on a copy of the walk's company made a
+ * Reader of the Lanterns and a Sergeant of the Wardens: no hall offers them before Act III, and both
+ * once Act II is done; the words read and the cages seen, each is paid at the taking with the words
+ * for a company that came early, and the rank waits for the rest of the act's asks.
+ */
+function fourthRanks(w: Walk): void {
+  const p: Party = structuredClone(w.party);
+  p.flags[rankFlag('lanterns')] = 3; p.flags[rankFlag('wardens')] = 3;
+  const fourth = (g: GuildId): string => offered(g, p).filter((q) => q.rank === 3).map((q) => q.id).join(',');
+  w.ok(!fourth('lanterns') && !fourth('wardens'), 'before Act III a Reader and a Sergeant are offered no fourth rank\'s ask');
+  p.flags[FOURTH_RANKS_OPEN] = 1;
+  w.ok(fourth('lanterns') === 'lanterns_niche,lanterns_ring' && fourth('wardens') === 'wardens_cages,wardens_hole', `with Act II done, the halls offer the fourth ranks' asks (${fourth('lanterns')}; ${fourth('wardens')})`);
+  for (const id of ['lanterns_niche', 'wardens_cages']) {
+    const q = GUILD_QUESTS.find((g) => g.id === id)!, gold = p.gold;
+    const said = take(q, w.world.state, p);
+    w.ok(said.length === 1 && said[0].startsWith(q.early![0]) && p.gold === gold + 300 && rankOf(q.guild, p) === 3,
+      `${q.title}: done in the walk, paid at the taking, and the rank waits for the rest (${said.join(' ').replace(/\n+/g, ' ')})`);
+  }
 }

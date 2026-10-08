@@ -172,7 +172,9 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
   to the shore and three rootwalkers at the tip. The Hearth Isle's corner is kept, its land drawn as
   rock and never walked. A swimmer can reach the boat round the root by the water, as the skills
   that open the map are to (EXPANSION §7). The gate holds at 8, at 7.4 fights to a rest; the box
-  pays 514 xp a member as measured.
+  pays 514 xp a member as measured. Once the Grove Stone is mended, Hendar, an elf of the old wood,
+  stands on the shingle at the tip beside the rootwalkers (30,18) and teaches the Druid's second
+  prestige (#439, §9, 51 and 52).
 - **The Hoarhills' end** (J4, `deepthorn_j4`, country, band 8–10; #216): the long glade down the
   box's west side, in from Henlys's glade at the seam and on south for the head; the last crag over
   Sunder Bay, a lookout, with the carriers' cleft in it behind a door in the rock (a War Hammer +2)
@@ -287,7 +289,7 @@ The places, as the atlas and the docs have them:
 | The Dowrdu | I3, H3 and H4 | nothing yet | a river from Lyngwyn to the Wyke, named |
 | Lyngwyn | H2 and I2 | its dark survey marker (built), and the Lanterns' Dark Marker (#146) | a lake, half on the built map, lettered |
 | The Hoarhills | I2, I3 and J4 | nothing yet | the ridge between Thornmark and Sunderwood, ending in Sunder Bay |
-| The wood to the head | I5 | the Druid's second prestige: an elf of the old wood, who comes out of the trees once the Grove Stone is mended (DESIGN §5, #19); waits on the mending (#56's 18) | the box, built (#217) |
+| The wood to the head | I5 | the Druid's second prestige: an elf of the old wood, who comes out of the trees once the Grove Stone is mended (DESIGN §5, #19); waits on the mending (#56's 18); built as Hendar (#439, §9) | the box, built (#217) |
 | The long glade | I4 and J4 | nothing yet | a strip of grass down the wood's east side, to the head |
 | The Mewstone | G4 | nothing yet | an isle in the Wyke's mouth, the Deepthorn's |
 
@@ -484,7 +486,8 @@ settled in its issue, and what the pilot teaches changes them.
   - an owls' roost in a dead oak, a den (#88), with its hoard.
 - **Encounters.** Great owls by night, the roost's brood; the roost's keepers; brambles; rootwalkers,
   the box's hardest group, at 9.
-- **Quests.** None.
+- **Quests.** None. The Druid's second prestige is taught on the shingle at the tip, by Hendar, of
+  the old wood, once the Grove Stone is mended (#19, #439; §9, 51).
 - **The secret and its hint.** A hollow under an oak's roots at the water's edge, where the hold's
   youths keep their boat and the oil for the fire on the head (§4.7). The hint: a rope's groove worn
   into a root at the shore.
@@ -843,6 +846,21 @@ overturn:
 50. **The walk** checks each trainer's place and presence, sends a ranger, a cleric and a druid at
     11 and teaches them, holds Cuthred to the road's and the groups' rule, finds him on foot and
     teaches the Deadeye at 19 with the hunters' gate shut.
+
+Decided by delegate for #439's trainer in Thornmark, on 8 October 2026, each the owner's to
+overturn (docs/areas/kilns.md §9 has the guilds' asks):
+
+51. **The Druid's second is Hendar, of the old wood:** an elf on the shingle at I5's tip, 30,18
+    (*hen* old, *dar* oak: §10's tongue), who teaches the Thornspeaker (`teaches: { cls: 'druid',
+    prestige: 2 }`). She waits `after` `q_mender_done`, as DESIGN §5 has it ("once the Grove Stone
+    is restored") and §4's table does ("waits on the mending", #56's 18), so a company that has
+    not mended the Stone finds the shore empty. She has no flag of her own and three lines. Her
+    seek names the mending, so a druid of 19 who skipped The Mender knows why the shore is empty.
+    She is reached on foot by no secret door. The walk finds her absent from a new game and there
+    once mended, sends a druid of 19 to the tip and makes a Thornspeaker of it for 4,000 gold.
+52. **Hendar is not held to Rietum's ten-squares rule:** I5's strip has no square ten from all five
+    groups. She stands beside the rootwalkers, who sleep `until: TEAR_CLOSED`, which the mending
+    needs; while she is there the nearest group is the roost's night brood, seven squares off.
 
 Fitted on 29 September to Act II, filed as Phase 1.2 (#149) the night before: 7 (Sunderwood's plan
 cuts the same land), 14 (20 is #156's and #190's), 16 (#163 gives dead wood its character, so the

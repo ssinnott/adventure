@@ -1,7 +1,6 @@
 // Cairnmoor's monsters, band 18-20: High Moor and the Cairnfield. `sprite` names the drawing
 // (src/ui/sprites.ts); the numbers are the combat model's. A group on a map is a list of these ids,
 // and any area's maps may place them.
-// Drawn ahead of the area's first map, so src/content/index.ts lists them in AHEAD until then.
 import type { MonsterDef } from '../../../game/monsters.ts';
 
 /** The drawings Cairnmoor's monsters are drawn with, one kind to each. src/ui/sprites.ts must draw every one. */
@@ -26,7 +25,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the tors by night (#477, #478), a brute at 19 as MONSTERS §3.3 makes a troll (#537): three quarters of the line's hit
   // points, mending a tenth of them each round but a round fire struck it; a tall one, drawn inside TALL_REACH
   { id: 'tor_troll', name: 'Tor Troll', plural: 'Tor Trolls', sprite: 'tor_troll', kind: 'beast', look: 'A tor that stood up.', level: 19, hp: 397, ac: 19, attack: 12, dice: 5, sides: 8, bonus: 4, speed: 8, xp: 1507, gold: [0, 0], regen: 40, tint: '#807d74', size: 1.6 },
-  // on its seat at the end of Carn Dubh's lower chamber (#480), the area's boss at 20 on MONSTERS §4.4's boss line, for
-  // #480's gate to tune; it curses as its wights do (0.2)
-  { id: 'cairn_king', name: 'The Cairn King', plural: 'Cairn Kings', sprite: 'cairn_king', kind: 'dead', look: 'Crowned, and older than the crown.', level: 20, hp: 1113, ac: 23, attack: 14, dice: 20, sides: 8, bonus: 20, speed: 13, xp: 12693, gold: [150, 300], inflict: { cond: 'cursed', chance: 0.2 }, tint: '#b9a682', size: 1.3 },
+  // on its seat at the end of the hall under Carn Dubh (#480), the area's boss at 20; it never comes back, and it curses
+  // as its wights do (0.2). Off MONSTERS §4.4's boss line (1,113 hp, 20d8+20, won 81% at 19 and 91% at 21), its hit
+  // points and its blow are set for #480's gate: about half at its floor, 19, and nearly always at 21
+  { id: 'cairn_king', name: 'The Cairn King', plural: 'Cairn Kings', sprite: 'cairn_king', kind: 'dead', look: 'Crowned, and older than the crown.', level: 20, hp: 1800, ac: 23, attack: 14, dice: 16, sides: 8, bonus: 14, speed: 13, xp: 12693, gold: [150, 300], inflict: { cond: 'cursed', chance: 0.2 }, tint: '#b9a682', size: 1.3 },
 ];
