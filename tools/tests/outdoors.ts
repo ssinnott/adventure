@@ -198,6 +198,18 @@ export function outdoors(): void {
     `N8's north edge meets N7's south edge with the drove road at column 7 and the stream at the corner, and its south edge is the Rimefells' shoulder, the hills and the heather against N9 (${northOf(n8)}; ${southOf(n8)})`);
   ok(westOf(n8) === 'hhhhhhh~hhh' + 'r'.repeat(8) + 'h'.repeat(7) + 'rr^^%%' && eastOf(n8) === '~' + 'h'.repeat(21) + 'w'.repeat(6) + 'hhhh',
     `N8's west edge is the heather, the stream, the crags and the notch against M8, and its east edge the stream, the heather and the marsh against O8 (${westOf(n8)}; ${eastOf(n8)})`);
+  // Rime Lodge's box (M9, #486), Rimewater's first: taken down onto from N8's notch, not walked, since
+  // the two meet only at a corner across parked M8, where both stand as the Rimefells' shoulder; on the
+  // north the fells closed but for the pines and the grass of the corner against M8; on the east the
+  // glacier's edge, closed against N9 (#434, call 7); on the south the loch and its shores, the hills,
+  // the crag and the pines against M10; on the west the stream from the fells, the grass, the hills
+  // and the road out at row 20 for L9 along the loch's shore. None of M8, N9, M10 and L9 is built, so
+  // the world ends past them.
+  const m9 = out.zones.find((z) => z.id === 'longmere_m9')!;
+  ok(northOf(m9) === ',,,^^' + '%'.repeat(27) && eastOf(m9) === '%'.repeat(32) && out.at(m9.x + 31, m9.y).ch === '%' && out.at(n8.x, n8.y + 31).ch === '%',
+    `M9's north edge is the fells, closed but for its west corner against M8, its east edge the glacier's edge, closed against N9, and its corner and N8's the Rimefells' shoulder (${northOf(m9)}; ${eastOf(m9)})`);
+  ok(southOf(m9) === ',_~~' + 'W'.repeat(9) + '~~,,,^^^%%' + 'p'.repeat(7) + '%%' && westOf(m9) === ',p~~~p' + ','.repeat(6) + '^'.repeat(8) + '=' + ','.repeat(11),
+    `M9's south edge is the loch, its shores, the hills, the crag and the pines against M10, and its west edge the stream, the grass, the hills and the road out at row 20 against L9 (${southOf(m9)}; ${westOf(m9)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
@@ -223,11 +235,15 @@ export function outdoors(): void {
   ok(west === '%' + 'M'.repeat(28) + '=M%', `the Foreland's west edge is mountains against the Downs, with the Salt Road through a gap (${west})`);
   const ridge = '%' + 'M'.repeat(8) + '=' + 'M'.repeat(21) + '%';
   ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge.slice(0, -1) + 'M', 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at its north end and on Thornmark\'s side into the Deepthorn\'s edge at its south');
-  // The ways: every one lands on open ground; none joins one zone to the next, which is walked; no
-  // gate closes the road; and the towns and dungeons open onto the outdoors.
+  // The ways: every one lands on open ground; none joins one zone to the next, which is walked, but the
+  // drove road's notch, taken down from N8 onto M9 and back up, since the two meet only at a corner
+  // across parked M8 (#479, #486); no gate closes the road; and the towns and dungeons open onto the
+  // outdoors.
   const maps = buildMaps();
   for (const d of PLAYED_DEFS) for (const e of d.exits ?? []) ok(maps[e.to]?.passable(e.tx, e.ty) === 'ok', `${d.id} -> ${e.to}: lands on an open square (${e.tx},${e.ty})`);
-  ok(!out.exits.some((e) => e.to === OUTDOORS), 'no exit joins one zone to the next: the way between them is walked');
+  const notchN8 = out.zones.find((z) => z.id === 'cairnfield_n8')!, notchM9 = out.zones.find((z) => z.id === 'longmere_m9')!;
+  const taken = out.exits.filter((e) => e.to === OUTDOORS).map((e) => `${e.x},${e.y}`).sort().join(' ');
+  ok(taken === [`${notchN8.x},${notchN8.y + 28}`, `${notchM9.x + 23},${notchM9.y + 8}`].sort().join(' '), `no exit joins one zone to the next but the notch between N8 and M9, taken both ways: the way between them is walked (${taken})`);
   ok(out.gates.length === 0, `no gate closes the road through the outdoors${out.gates.length ? ' -> ' + out.gates.map((g) => `${g.x},${g.y}`).join(', ') : ''}`);
   { // The machinery stays for the story's own locks (EXPANSION §2.3): an exit into the zone next door
     // that asks for flags is laid as a gate on its square, and refuses the party until they are set.
@@ -283,10 +299,15 @@ export function outdoors(): void {
       const z = out.zones.find((q) => q.id === p.to);
       if (z) stack.push([z.x + p.x, z.y + p.y]);
     }
+    // A way taken between two zone maps of the outdoors, as N8's notch is down onto M9 (#486), is walked
+    // as a step: whoever stands on it is set down on its landing.
+    const jumps = new Map((out.def.exits ?? []).filter((e) => e.to === OUTDOORS).map((e) => [e.y * out.width + e.x, [e.tx, e.ty]]));
     while (stack.length) {
       const [x, y] = stack.pop()!, k = y * out.width + x;
       if (reached[k] || stopsWalk(out, x, y)) continue;
       reached[k] = 1;
+      const jump = jumps.get(k);
+      if (jump) { stack.push(jump); continue; }
       for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (out.inBounds(x + dx, y + dy)) stack.push([x + dx, y + dy]);
     }
     let open = 0, got = 0;

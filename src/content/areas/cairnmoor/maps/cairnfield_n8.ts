@@ -4,7 +4,7 @@
 // with its door in its side, one standing open and the Watcher's grave apart; and east of the field
 // the marsh at the bog's edge.
 // The door at 6,18 is the way into Carn Dubh (#480, DOOR); the notch at 0,28 is the way down to Rime
-// Lodge, taken onto M9 (#438) once it is built (NOTCH).
+// Lodge, taken onto M9 (#486, NOTCH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
@@ -20,11 +20,10 @@ export const DOOR: Exit = { x: 6, y: 18, to: 'cairns', tx: 1, ty: 8, tf: EAST,
 /**
  * The way down to Rime Lodge (#438): N8 and Rimewater's M9 meet only at a corner, and M8 between them
  * is parked, so the drove road is not walked across but taken: the notch at 0,28 (the atlas's 424,250)
- * leads onto M9's road at 22,8 (414,262), facing west for the lodge. Until M9 is built the road ends at
- * the notch and the world past it. M9 lists this in this map's exits; its way back lands on 1,28,
- * facing east, the road's last square.
+ * leads onto M9's road at 22,8 (414,262), facing west for the lodge. M9 (#486) lists it in this map's
+ * exits; its way back (M9's UP) lands on 1,28, facing east, the road's last square.
  */
-export const NOTCH: Exit = { x: 0, y: 28, to: 'longmere_m9', tx: 22, ty: 8, tf: WEST };
+export const NOTCH: Exit = { x: 0, y: 28, to: 'longmere_m9', tx: 22, ty: 8, tf: WEST, label: 'Down through the notch to the frozen loch. Loch Fada.' };
 
 export const CAIRNFIELD_N8: MapDef = {
   id: 'cairnfield_n8',
@@ -34,6 +33,7 @@ export const CAIRNFIELD_N8: MapDef = {
   band: [18, 20],
   region: 'cairnmoor',
   start: { x: 7, y: 0, facing: SOUTH },
+  exits: [DOOR, NOTCH],
   rows: [
     'hh*hhhh=wwwwhhhhhh**hhhhhhhhhhh~',
     'hhhhhhh=whhhhhhhhhhhhhhhhhhhh~~h',
@@ -68,7 +68,6 @@ export const CAIRNFIELD_N8: MapDef = {
     'MM^^^^^^^^^^^^^hhhhh**hhhhhhhhhh',
     'MM^^^^^^^^^^^^^^^hhhhhhhhhhhhhhh',
   ],
-  exits: [DOOR],
   features: [
     // In from N7 over the tarn's stream: a hare, the ford and its ruts, and the field ahead.
     { kind: 'event', x: 3, y: 2, id: 'n8_hare', once: true, text: 'A hare sits up in the snow, white already, and does not run.' },

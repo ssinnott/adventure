@@ -152,7 +152,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // taken down onto M9's road once M9 is built (NOTCH, the atlas's way); past it, for now, the world ends.
   ok(reach(n8.x + 7, n8.y, (x, y) => road(x, y) && onN8(x, y)).has((n8.y + 28) * out.width + n8.x + 1), 'the drove road runs square to square over N8 from 7,0 down its west side to its head at 1,28');
   const down = ATLAS.links.find((l) => l.from === 'cairnfield' && l.to === 'longmere');
-  ok(NOTCH.x === 0 && NOTCH.y === 28 && NOTCH.to === 'longmere_m9' && !N8.exits?.some((e) => e.to === NOTCH.to) && out.passable(n8.x + NOTCH.x, n8.y + NOTCH.y) === 'ok' && out.passable(n8.x + NOTCH.x - 1, n8.y + NOTCH.y) !== 'ok'
+  ok(NOTCH.x === 0 && NOTCH.y === 28 && NOTCH.to === 'longmere_m9' && !!N8.exits?.includes(NOTCH) && out.passable(n8.x + NOTCH.x, n8.y + NOTCH.y) === 'ok' && out.passable(n8.x + NOTCH.x - 1, n8.y + NOTCH.y) !== 'ok'
     && down?.a?.[0] === n8.x + NOTCH.x && down.a[1] === n8.y + NOTCH.y && down.b?.[0] === 392 + NOTCH.tx && down.b[1] === 254 + NOTCH.ty,
   'the road ends at the notch, 0,28, the atlas\'s way down to M9\'s road at 22,8 written beside the map (NOTCH), and past it, for now, the world ends');
 
