@@ -740,7 +740,9 @@ As built (#482, 8 October), in `quests.ts`, each finished at its level and every
   the tors (`until`) and the last face stays half cut; or the last face finished (`o8_whole`), when
   its tor's troll (`o8_last_tor`, `until`), put down, never stands again. 1,800 xp each. His words
   at the Lodge are Rimewater's.
-- **The coach** (40): its lines stand on N8 as #479 built them; the quest is #494's.
+- **The coach** (40): its lines stand on N8 as #479 built them, its coachman frozen on the box,
+  and beside it the man in the healer's coat, whose note for the Lodge begins Rimewater's quest
+  (#494; docs/areas/rimewater.md §6).
 
 As built (#439, 8 October), in `guilds.ts`, the Lanterns' fourth rank takes the ring's voice: **What
 the Ring Said** (`lanterns_ring`), offered at every Lantern hall once Act II is done and paid at
@@ -840,7 +842,8 @@ passes without it.
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
   needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
   26 points (#476). N8 99.6% within 8 steps and the furthest 9, with no sign among its 31 points
-  (#479). O7 99.3% within 8 steps and the furthest 10, with no sign among its 31 points (#477). O8
+  (#479), 33 now, the man in the healer's coat by the coach among them (#494). O7 99.3% within 8
+  steps and the furthest 10, with no sign among its 31 points (#477). O8
   100.0% within 12 steps, the country floor, and the furthest 9, with no sign among its 28 points
   (#478), 29 with the last face whole (#482). Carn Dubh's two levels 100.0% within 7 steps, the furthest 2 and 3, with no sign among
   their 17 and 11 points (#480).

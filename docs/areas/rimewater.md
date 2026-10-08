@@ -21,10 +21,10 @@ gate, Rime Lodge (#487, §4.3); L9, the long loch's shore (#488, §4.4); K9, Loc
 whose door down to the bay opens for the girl out of the hole; the Sleepers' Bay, two levels under
 the ice (#490, §4.6), where Act III's one story lock is signed in (#440, §5); and K10, the high pass
 (#491, §4.7), the road's last box and the act's last ground. Its chapter, The Sleepers, is written
-(#492, §5); the side quests are to build. Its content is `src/content/areas/rimewater/` (maps,
-monsters, items, climate, its part of the world map, its walkthrough, its guild quest in
-`guilds.ts`, #439, and its chapter of the one quest, The Sleepers, in `chapter.ts`; its side
-quests in `quests.ts` are to come), and its businesses' rooms are `src/ui/interiors/rimewater/`.
+(#492, §5), and its five side quests (#494, §6). Its content is `src/content/areas/rimewater/`
+(maps, monsters, items, climate, its part of the world map, its walkthrough, its guild quest in
+`guilds.ts`, #439, its chapter of the one quest, The Sleepers, in `chapter.ts` and its side quests
+in `quests.ts`), and its businesses' rooms are `src/ui/interiors/rimewater/`.
 Its ids: the area `rimewater`, its zones `longmere`, `coldmere` and `glacierfoot`, the town
 `rime_lodge`, the bay's two levels `sleepers_bay` and `sleepers_bay2` and the reach's `ice_caves`.
 The zones are renamed in §10 and keep their ids (NAMES §3).
@@ -145,8 +145,9 @@ dungeon under the third (#490) and a fourth south of it, the pass (#491):
   which is the way into the town; the lodge's walls and the loch's frozen head before them, with
   the lake wall's door onto the ice and the ice-hole a few squares out from it, its fire and the
   one who waits at its foot, and the road on over the head by a causeway and out west along the
-  shore. Pines under the fells; along the east the glacier's edge, a guide frostbitten at its foot
-  with her cairn half built, and the one bare face of the ice with a hollow behind it. Seven
+  shore. Pines under the fells; along the east the glacier's edge, old marks cut at its foot, a
+  guide frostbitten there by her half-built cairn once she has gone up from the lodge (#494), and
+  the one bare face of the ice with a hollow behind it. Seven
   groups: snow lynx in the pines three times, ice pike under the loch's ice twice and ice bears at
   the glacier's edge twice; and an eighth (#487), the tallyman and six knockers on the ice over the
   hole on the fourth night, with Wenna the last one out after them.
@@ -197,7 +198,7 @@ dungeon under the third (#490) and a fourth south of it, the pass (#491):
   lamp's silver and a Guide's Staff +1. Eight groups: snow lynx in the pines three times, ice pike
   under the lake's shore ice twice and ice bears in pairs three times, the box's hardest.
 
-The chapter, on the places built (#492):
+The chapter and the side quests, on the places built (#492, #494):
 
 - **The Sleepers** (`chapter.ts`, #492): begun on M9, down the notch where The Ring ends; the four
   nights at the lodge's inn, the hole's fight and the girl out of it on the fourth, the door under
@@ -205,6 +206,11 @@ The chapter, on the places built (#492):
   K10 (`k10_mouth`), which end it in either order. Its goals stand at Rime Lodge, on M9, K9 and K10
   and in the bay, so Loch Fada and Loch Fuar each hold a step. Back up from the beds the girl out of
   the hole speaks at the door, and then she is at the lodge (§5).
+- **The side quests** (`quests.ts`, #494): The Coach That Never Came (the coachman at the lodge,
+  the coach on Cairnmoor's N8), The One Who Went Back Down (the man at the hole on M9), The Bell
+  Under the Ice (the lodge woman, the tower's cap on K9), Where the Sky Meets Ice (the guide, at the
+  lodge and at the glacier's edge on M9) and The Pilgrims in the Pass (below K10's mouth), each
+  answered by a choice its person puts (§6).
 
 #487 opens M9's gate and the lake wall's door, which were drawn shut with events for the town to
 drop (`m9_gate`, `m9_lake_door`, in no save), and puts the fourth night's group and Wenna on the
@@ -995,11 +1001,11 @@ nothing of it until the beds end the chapter. Each reads the same and ends once 
 
 | # | Quest | Level | Where | What it needs | Built in |
 |---|---|---|---|---|---|
-| 40 | The Coach That Did Not Come | 20 | Rime Lodge's yard; the drove road on Cairnmoor's N8, where the coach stands in snow (call 11) | the coach (#539); a choice put by a person; a hand-in at the first meeting (#43) | #487, with N8's box |
-| 41 | The One Who Went Back Down | 21 | the foot of the ice-hole (M9); the coach yard | the token of #56's 20 or a name from 27 (docs/areas/wrackholm.md §6); a choice put by a person | #486 |
-| 42 | The Bell Under the Ice | 21 | Rime Lodge; Loch Fuar's ice at night (K9) | `when` (#41); a group on ice (#536); Kiln-script read (#538); `after` 40 | #487, #489 |
-| 43 | Where the Sky Meets the Ice | 22 | Rime Lodge; the glacier's edge (M9's east) | a mark on the world map into the void (call 7) | #487, #486 |
-| 44 | The Pilgrims in the Pass | 22 | the pass's mouth (K10) | a choice put by a person; a brother as a person, no fight | #491 |
+| 40 | The Coach That Did Not Come | 20 | Rime Lodge's yard; the drove road on Cairnmoor's N8, where the coach stands in snow (call 11) | the coach (#539); a choice put by a person; a hand-in at the first meeting (#43) | #487, with N8's box; #494 |
+| 41 | The One Who Went Back Down | 21 | the foot of the ice-hole (M9); the coach yard | the token of #56's 20 or a name from 27 (docs/areas/wrackholm.md §6); a choice put by a person | #486; #494 |
+| 42 | The Bell Under the Ice | 21 | Rime Lodge; Loch Fuar's ice at night (K9) | `when` (#41); a group on ice (#536); Kiln-script read (#538); `after` 40 | #487, #489; #494 |
+| 43 | Where the Sky Meets the Ice | 22 | Rime Lodge; the glacier's edge (M9's east) | a mark on the world map into the void (call 7) | #487, #486; #494 |
+| 44 | The Pilgrims in the Pass | 22 | the pass's mouth (K10) | a choice put by a person; a brother as a person, no fight | #491; #494 |
 
 - **40.** The lodge's coach is overdue. It stands in the snow on the drove road over the fells, the
   coachman dead of cold on his box, and inside a Hand's man in a healer's coat escorting someone who
@@ -1032,6 +1038,48 @@ house-place of the lodge woman's people at 9,18; the bell, its clapper and the w
 (§4.5, §11). K10 (#491) places the ground of 44, lines only: the pilgrims camped in the snow below
 the pass's mouth, one of them dying (`k10_pilgrims`, 9,18) and the new graves by the road
 (`k10_graves`, 13,8); the brother, his flags and the words are #494's (§4.7, §11).
+
+As built (#494, 8 October), in `quests.ts`, each finished at its level and every answer walked. The
+people are the boxes', given words, flags and places; no group, drawing or system is added:
+
+- **The Coach That Never Came** (`coach`): the coachman at the coach house begins it, the coach for
+  here two days late (`q_coach`). On N8 its coachman sits frozen on the box (`n8_coach`), and by it
+  a man in a healer's coat, salt white on his hem, with a woman under the rugs who does not wake.
+  He writes a note for the lodge (`healers_note`, read from the pack), which begins it too
+  (`q_coach_note`). The coachman takes the note at the first meeting (#43), his early words to a
+  company he never asked, pays 200 and sends the sledge (`q_coach_sledge`): the two are gone from
+  the moor and in the lodge's yard, where the man asks where she goes. The Lanterns' hall
+  (`q_coach_hall`), a cot at its door under the lamps, or the healer's house (`q_coach_temple`), out
+  of sight; he goes back up the road alone. 1,800 xp either way.
+- **The One Who Went Back Down** (`wentback`): the man at the hole went back down for his wife and
+  was counted and let go; he tells a stranger nothing (`q_wentback`). With Hale's token carried
+  (`hale_token`, #56's 20) or the clerk's book read (`tide_ship2:ts2_clerk`, 27) he says what he
+  saw, a wall with a door in it that opened for a girl, and asks: home on the coach
+  (`q_wentback_home`), gone from the hole, or a witness at the lodge (`q_wentback_witness`), telling
+  it at the lodge-keeper's side. Nothing is taken from the pack. 1,800 xp either way.
+- **The Bell Under the Ice** (`icebell`): once 40's sleeper has a bed the lodge woman asks for the
+  bell rung (`q_bell`). On K9 the bell's lip shows through the ice by the cap (`k9_bell`, 19,17),
+  read KEEP THE COLD (#538); by night, beside the pike over the cap, the clapper (`k9_clapper`,
+  21,17) rings it under the ice (`q_bell_rung`), and by day is not there. The sleeper in the hall
+  sits up at it; in the healer's house she sleeps on. The lodge woman goes out to Fuar
+  (`q_bell_out`) to sweep her people's hearth (K9, 9,17), or stays by the fire (`q_bell_stay`).
+  1,800 xp either way.
+- **Where the Sky Meets Ice** (`sky`): the guide by the lodge's gate goes up the glacier with a
+  party (`q_sky`), and only then is she at its foot on M9 with her half-built cairn
+  (`m9_guide_cairn`, `after` it too), frostbitten: the sky comes down to the ice, and there are
+  stairs in it. Met, she is carried in (`q_sky_in`) to the inn yard's fire, where she draws the way
+  on the company's map, east off the glacier's edge into nothing (`q_sky_marked`, 2,100 xp). It
+  ends at the glacier's edge (`m9_sky`, 28,20; call 7). Beside it, old marks at the ice's foot
+  (`m9_marks`, 28,19), read SERVICE STAIR. CREW ONLY, put the Ice Caves on the world map: the reach
+  seen before it can be taken (DESIGN §9).
+- **The Pilgrims in the Pass** (`pilgrims`): the old woman of Anvilhall below the mouth begins it
+  (`q_pilgrims`), the boy dying beside her. Met, a brother has come down the pass to them, the
+  Whitespine's Brother as a person and no fight: he has the blankets off the boy and rubs snow into
+  his chest, and his split hand does not bleed. She asks: up with him (`q_pilgrims_up`), which #445's
+  monastery reads, or back to the lodge (`q_pilgrims_back`), where the boy eats by the yard's fire.
+  Either way the camp is a cold fire-ring (`k10_camp`). 2,100 xp either way.
+- **The Faces on the Tors' end** (39): the stonecutter is at the lodge (2,8) only once sent home from
+  the tors (`after` `q_faces_home`), so never in both places, and says the last tor has one eye.
 
 ### The guilds' quests
 
@@ -1153,7 +1201,9 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   the 1,729 is the quests' alone. K10 had been held to about 4,440 and paid 4,311.
   The side quests and the chapter cut quests or rewards of their own, the least valuable first,
   rather than pass it. The figures are worked again from the curve test's own output after merging
-  main.
+  main. As built (#494): the side quests pay the scaled 1,600 a member by their answers, 300 each
+  for 40, 41 and 42 and 350 each for 43 and 44, every answer of a question paying alike, so a clear
+  gives 22,645, 129 under the line.
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and
   tier 7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at
   least, in chests, drops and the hall's pay; the furrier's step is priced within the band's window
@@ -1171,8 +1221,8 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   machines carrying none; its finds, Bogha Fionn +1 at 2,050 and Luireach Dubh +4 at 1,800, are
   inside the window too. K10 adds 1,200 (#491), the Lanterns' cache's 900 and a cairn's 300; its
   find, the Guide's Staff +1 at 1,750, is the ladder's and inside the window too, and the clear
-  holds 6,720 of the 9,840. A Sword at the Hole pays 300 more (#439): 7,020, which the curve's owed
-  row keeps.
+  holds 6,720 of the 9,840. A Sword at the Hole pays 300 more (#439): 7,020. The coachman pays 200
+  for the healer's note (#494), and no answer pays gold: 7,220, which the curve's owed row keeps.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
@@ -1198,6 +1248,7 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   fight broken off; at 18 every fight won too, owed to #18; its road is not the zone's (§4.7). With
   the bay and K10, Rimewater at its maps' floors wins 98.8% of its 35 groups' fights (98.5% of 27
   before K10), the Matron being the shortfall; a company two under wins 97.2% (96.4%), owed to #18.
+  The side quests (#494) place no group, and the gate is as it was.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   bay as a dungeon, 90% within 7 and none past 10. As built: M9 98.0% within 8 steps and the
   furthest 13, with no sign among its 31 points (#486), 32 since #487; Rime Lodge, a town, 100%
@@ -1207,7 +1258,10 @@ dungeon entered from the ice is no kind the check knows, so neither is claimed (
   among its 27 points (#489); the bay's stair 100.0% within 7 steps (56 of 56) and the furthest 4,
   with no sign among its 12 points, and its lower level 100.0% within 7 (66 of 66) and the furthest
   5, with one sign among its 14 (#490); K10 99.9% within 8 steps (848 of 849) and the furthest 9,
-  with no sign among its 25 points (#491).
+  with no sign among its 25 points (#491). With the chapter and the side quests (#492, #494), as the
+  check prints it now: M9 the same, with one sign, the old marks at the ice's edge, among its 34
+  points; Rime Lodge the same, with no sign among its 27; K9 the same, with one sign, the bell's lip,
+  among its 30; K10 the same, with no sign among its 28.
 
 ## 9. Decisions
 
@@ -1799,6 +1853,41 @@ Decided by delegate for #492, each the owner's to overturn:
     `sleepersBay`, which wins them; the Matron is not fought, the chapter not needing her. Every
     goal comes up, the chapter reads the same both ways and it ends once.
 
+Decided by delegate for #494, each the owner's to overturn:
+
+1. **The five are `coach`, `wentback`, `icebell`, `sky` and `pilgrims`,** in `quests.ts`, each given
+   by its person, finished at its level (40 at 20, 41 and 42 at 21, 43 and 44 at 22) and walked
+   every way it is answered. 42's is `icebell` because `bell` is the Shelf's.
+2. **Two titles lose a word:** The Coach That Never Came and Where the Sky Meets Ice. #56's own run
+   a pixel past the log's list (173 of 172).
+3. **40's hand-in is a note.** The man in the healer's coat by the coach writes it; the coachman
+   takes it at the first meeting (#43), pays 200 and sends the sledge, and the two from the coach
+   move by `after` and `until`. The question is put at the lodge, so its pay is Rimewater's.
+4. **The man in the healer's coat is shown, not named:** salt on his hem, a sleeper for the lodge,
+   and back up the road alone. In the healer's house she is out of sight: a person on its one
+   square of yard would shut its door.
+5. **41 hears either:** Hale's token carried, or the clerk's book read (`seen` its chest). Both are
+   reachable, and nothing is taken. A company with neither leaves him silent and 41 open.
+6. **42 has no clapper to carry.** The clapper is a once-event by night beside the pike over the
+   cap, `after` the woman's ask; the bell's lip is a sign, since a sign wears no presence, read by
+   day or night. Her ask waits on 40's answer, as §6 has it. Her pay is a question: out to Fuar, or
+   stay.
+7. **43's mark is a reading's.** No person can mark the world map, and only a reading's `marks` names
+   a place in the void, for a company with a reader. So the guide draws the way in words, and the
+   old marks at the ice's edge, beside where the quest ends, put the Ice Caves on the world map once
+   read (§11).
+8. **43's guide is staged:** by the lodge's gate until she goes up (`q_sky`), then at the glacier's
+   foot with her cairn (both `after` it), carried in when met (`q_sky_in`) and at the inn yard's fire
+   after. Handing her the map is her one question, and pays. M9's walkthrough finds nobody at the
+   glacier's foot before she goes.
+9. **44's brother comes once the pilgrims are met,** beside the boy, and is no fight: snow on a
+   freezing boy and a hand that does not bleed, with nothing said of either. The monastery's
+   pilgrims stand `after` `q_pilgrims_up` (#445).
+10. **39 ends at the lodge:** its stonecutter stands `after` `q_faces_home`, so never on the tors and
+    at the lodge at once.
+11. **Pay is §8's scaled 1,600 a member:** 300 for 40, 41 and 42, 350 for 43 and 44, every answer
+    alike. A clear gives 22,645, 129 under the line; gold 7,220 with the note's 200.
+
 ## 10. Names
 
 Rimewater's naming pass, by the rules of `docs/NAMES.md`, chosen for #435. The lodge-keepers are
@@ -1891,7 +1980,9 @@ Owed by Rime Lodge as built (#487, §4.3):
 - **To #492 and #494:** the chapter's entries on the nights and on Wenna, and her place at the lodge
   after the bay (#492); the words of 39, 40, 42 and 43 on the people placed, and the lodge's guide
   before she goes (#494). The chapter's are built: an entry a night, hers on the fourth and her
-  place by the yard's fire after she speaks at the door (§5; #492's 2 and 7).
+  place by the yard's fire after she speaks at the door (§5; #492's 2 and 7). The side quests' are
+  built: the words of 39, 40, 42 and 43, with the guide by the gate before she goes (§6; #494's 8
+  and 10).
 - **To #489 and #490:** Wenna's `until` at the hole, and her place at the door. K9 built both
   (§4.5, §5) and the bay the door's exit (§4.6, §5).
 
@@ -1914,7 +2005,9 @@ Owed to the boxes beside K9 as built (§4.5, §4.6, §4.7):
 - **To #491:** K10's north edge meets K9's south row, pinned, and K10's builder finds the atlas's
   lake under its own box (#489's 17). Built (§4.7; #491's 4 and 5).
 - **To #494:** the bell under the ice (#56's 42). K9 places the tower's cap, the pike over it by
-  night and the house-place, lines only; the bell, its clapper and the words are #494's.
+  night and the house-place, lines only; the bell, its clapper and the words are #494's. Built:
+  the bell's lip and the clapper by the cap, with the lodge woman at the house-place once it has
+  rung (§6; #494's 6).
 - **To a pull request of its own,** if the owner takes the shores: MONSTERS §7.3's Where column for
   the Ice Bear, which says the glacier's edge only (§7). Done in #490's, with the tallyman's and
   the knockers' (#490's 22).
@@ -1937,7 +2030,7 @@ Owed to the boxes and the chapter beside the bay as built (§4.6, §5, §8):
   sleepers' `sb2_beds`, which now sets `q_sleepers_seen`; back up, she speaks at the door and then
   is at the lodge, her words setting the flag that moves her (§5; #492's 2, 3 and 7).
 - **To #494:** nothing placed in the bay; the bell under the ice (above) and the words of 39, 40, 42
-  and 43 stay its own.
+  and 43 stay its own. Built (§6).
 
 Owed to the chapter, the side quests and the boxes beside K10 as built (§4.7, §5, §6, §8):
 
@@ -1953,7 +2046,21 @@ Owed to the chapter, the side quests and the boxes beside K10 as built (§4.7, �
   three new mounds with red cloth; the mouth, `k10_mouth`, at 5,15. The brother is #494's, and the
   words of both: he comes down the road from the west edge, 0,19, between the walls to the mouth.
   The cache's tally (`k10_cache`, 16,12: many up the pass, fewer down) is a line only, for #494 to
-  use or leave.
+  use or leave. Built: the pilgrims, the boy and the brother as people below the mouth, the brother
+  come once they are met; once they go, their camp is a cold fire-ring (`k10_camp`). The graves and
+  the tally are left as they stand (§6; #494's 9).
+
+Owed by the side quests as built (§6):
+
+- **To #445:** the pilgrims at the monastery, `after` `q_pilgrims_up`; turned back, they are at the
+  lodge (`q_pilgrims_back`).
+- **To #469:** 41's man goes home on the coach in words only, while the coach sells nothing until
+  Kilnhaven lands.
+- **To the systems lane, if it is wanted:** a mark on the world map for every company. 43's guide
+  draws the way in words; only a reader puts the Ice Caves on the map, by the old marks at the
+  ice's edge (#494's 7).
+- **To Phase 1.6:** the stairs the guide's party went up where the sky meets the ice, and the Ice
+  Caves the marks name (call 7).
 - **To #499 and #497:** K10's east, west and south edges end the world against parked L10, J10 and
   K11, pinned in `tools/tests/outdoors.ts` with void past them. The road leaves by the west edge at
   0,19 (328,305) against the atlas's at 327,305, which goes on over J10's corner to the link's
