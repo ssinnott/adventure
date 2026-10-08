@@ -196,10 +196,10 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   ok(chain.news.at(-1) === 'New chapter: The Wall.' && chain.party.bag.includes('ships_papers') && chain.party.bag.includes('ships_log'), `in order, the Stone home begins the Wall, the papers carried from the ship (${chain.news.at(-1)})`);
   playChapter(chain, CHAPTER, [BRIDGE, DOWN, READ, { name: 'Vask, no', play: vaskRefused() }], 'in order');
   ok(written(chain).includes('seal') && written(chain).includes('name') && !!chain.party.flags.q_vask_no && !chain.party.flags.q_vask_yes, 'in order, the seal and the name are read, and the answer is no');
-  ok(chain.news.slice(-2).join(' ') === 'Chapter complete: The Wall. Quest complete: The Dimming.', `in order, the answer ends the Wall and, the last chapter yet, the quest (${chain.news.slice(-2).join(' ')})`);
+  ok(chain.news.at(-1) === 'Chapter complete: The Wall.' && !chain.news.includes('Quest complete: The Dimming.'), `in order, the answer ends the Wall, and the quest goes on into Act III (${chain.news.slice(-2).join(' ')})`);
   const pages = quest(chain)?.pages.map((p) => p.def.title) ?? [];
   ok(JSON.stringify(pages.slice(-3)) === JSON.stringify([TIDE.title, WRACK.title, CHAPTER.title]), `in order, the log shows Act II in three chapters (${pages.join(', ')})`);
-  const want = ending(chain, 'in order');
+  const want = ending(chain, 'in order', CHAPTER);
 
   // The Watch first, at 16: read before the wall, so the goal sends the company down and Vask waits
   // on it; then answered no, as every company answers.
@@ -231,7 +231,7 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   playChapter(sunder, WRACK, WRACK_STEPS, 'the Sunder first');
   ok(sunder.news.at(-1) === 'New chapter: The Wall.' && ['rim', 'crossing', 'wall'].every((e) => written(sunder).includes(e)), `the Stone home begins the Wall, with the rim, the crossing and the wall written at once (${written(sunder).join(', ')})`);
   playChapter(sunder, CHAPTER, [READ, { name: 'Vask, no', play: vaskRefused() }], 'the Sunder first');
-  ok(JSON.stringify(ending(sunder, 'the Sunder first').filter((e) => e.startsWith('wall.'))) === JSON.stringify(wall), `the Sunder first, the Wall reads as in order (${written(sunder).join(', ')})`);
+  ok(JSON.stringify(ending(sunder, 'the Sunder first', CHAPTER).filter((e) => e.startsWith('wall.'))) === JSON.stringify(wall), `the Sunder first, the Wall reads as in order (${written(sunder).join(', ')})`);
 
   // The Reader's single readings, seeded: the table gives both papers, so no run carries one alone,
   // but she reads either alone, and the Wall begins on it with only that one written.
@@ -244,8 +244,9 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
       `${one} alone, the Reader reads the ${read} and not the ${not}, and the Wall begins on it (${written(alone).join(', ')})`);
   }
 
-  // Sunderwood's runs last in road order, so every chapter's goals are checked here.
-  everyGoalWalked(ok);
+  // Sunderwood's runs last of Act II's in road order, so every chapter's goals to the Wall are checked
+  // here; Act III's are checked by their own areas' walkthroughs (Cairnmoor's The Ring, #481).
+  everyGoalWalked(ok, [FORELAND, GROVE, TIDE, WRACK, CHAPTER]);
 }
 
 export const walkthrough: Walkthrough = (ok) => {
