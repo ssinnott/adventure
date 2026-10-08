@@ -26,7 +26,7 @@ export const ZONES: readonly AtlasZone[] = [
     // The crossing line said in snow (#166, #476): how the moor feels to a company under its floor.
     crossing: { harder: 'The snow begins here, and the land is harder than the road behind.', warning: 'Snow, and nothing on this moor would spare you. The road behind is still open.' },
   },
-  { id: 'cairnfield', name: 'The Cairnfield', area: 'cairnmoor', band: [19, 20], seeds: [[426, 236], [412, 220], ...CAIRNFIELD_HELD], label: [418, 214] },
+  { id: 'cairnfield', name: 'The Cairnfield', area: 'cairnmoor', band: [19, 20], maps: [{ map: 'cairnfield_n8', at: [424, 222] }], seeds: [[426, 236], [412, 220], ...CAIRNFIELD_HELD], label: [418, 214] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
