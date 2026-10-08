@@ -20,12 +20,12 @@ Four places are built: M9, Rime Lodge's box (#486, §4.2), which lists the area;
 gate, Rime Lodge (#487, §4.3); L9, the long loch's shore (#488, §4.4); and K9, Loch Fuar (#489,
 §4.5), whose door down to the bay is drawn shut until the bay is built. The bay's keepers are drawn
 (§3), and the rest is to build. Its content is `src/content/areas/rimewater/` (maps, monsters,
-items, climate, its part of the world map and its walkthrough; its chapter of the one quest, The
-Sleepers, in `chapter.ts`, its side quests in `quests.ts` and the Lanterns' quests in `guilds.ts`,
-to come), and its businesses' rooms are `src/ui/interiors/rimewater/`. Its ids: the area
-`rimewater`, its zones `longmere`, `coldmere` and `glacierfoot`, the town `rime_lodge`, the bay
-`sleepers_bay` and the reach's `ice_caves`. The zones are renamed in §10 and keep their ids (NAMES
-§3).
+items, climate, its part of the world map, its walkthrough and its guild quest in `guilds.ts`,
+#439; its chapter of the one quest, The Sleepers, in `chapter.ts` and its side quests in
+`quests.ts` are to come), and its businesses' rooms are `src/ui/interiors/rimewater/`. Its ids:
+the area `rimewater`, its zones `longmere`, `coldmere` and `glacierfoot`, the town `rime_lodge`,
+the bay `sleepers_bay` and the reach's `ice_caves`. The zones are renamed in §10 and keep their ids
+(NAMES §3).
 
 ---
 
@@ -186,8 +186,9 @@ in.
 
 Its row on the curve and its step on the gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 20–22, next 22, window 4,500, owed to #438 while the area is
-built box by box, with the built boxes' 10,879 xp a member and 4,020 gold the clear's floor (§8).
-The step is in `src/content/areas/rimewater/items.ts`, made ahead of the area as the Kilns' was
+built box by box, with the built boxes' 10,879 xp a member and 4,020 gold, and the Wardens' ask
+(#439) 400 and 300 more, the clear's floor (§8). The step is in
+`src/content/areas/rimewater/items.ts`, made ahead of the area as the Kilns' was
 (docs/areas/kilns.md §3; `ITEMS_AHEAD`, `src/content/index.ts`) until M9 took the table into its
 Area: the furrier's seven (`FURRIER`) and their plus finds by 22 (§4.1), the seven sold by the
 lodge's furrier (#487) and each find owed to its box until it is placed; M9 places the Ice Axe +1,
@@ -439,10 +440,11 @@ what is new, with points of interest and a first share of the pay.
   13,7, facing west; a lodge-keeper stands at 9,5, a stonecutter come down the drove road at 2,8
   and a lodge woman at 9,12, lines only and no names (#487's 15).
   The Lodge's Lantern Hall sells to the seventh tier for 500 and teaches a Lantern Linguist, as
-  every Lantern hall does; it gives no quest yet (#487's 12). The furrier's sells the step's seven
-  (`FURRIER`), the provisioner's Anvilhall's stores' list, the healer's house is a temple and the
-  trainers' yard trains to 23. The coachman speaks of the overdue coach and sells nothing yet: the
-  coach lands here, but Kilnhaven's end of the run is #469's (#487's 10). The houses draw in the
+  every Lantern hall does, and gives the Lanterns' quests as every hall does (#439, §6). The
+  furrier's sells the step's seven (`FURRIER`), the provisioner's Anvilhall's stores' list, the
+  healer's house is a temple and the trainers' yard trains to 23. The coachman speaks of the overdue
+  coach and sells nothing yet: the coach lands here, but Kilnhaven's end of the run is #469's
+  (#487's 10). The houses draw in the
   game's one town style, half-timbered and white, where the brief has logs; the palette tints the
   stockade only.
   The Thaw takes 45 a member and counts the nights: a stay sets the first of `night_1` to `night_4`
@@ -831,9 +833,23 @@ and the hall menu of #132: Rime Lodge's hall sells to tier 7, teaches the Lanter
 once #538 builds Linguist (Spirit Sense and Perception are #18's) and gives the Lanterns' quests to
 a member. The fourth rank, Luminary, opens at Lantern Watch and here (call 8, #439): its quests are
 the Lanterns' line's, the split that began at the Watch (DESIGN §8, §9), and are #439's to propose.
-The first task for a company that is not yet a Taper is to keep the hole's fire a night. As built,
-the hall sells and teaches and gives no quest yet: that task waits with the fourth rank for #439
-(#487's 12).
+The first task for a company that is not yet a Taper is to keep the hole's fire a night.
+
+As built, #487 sold and taught and added no quest of its own, that task waiting with the fourth
+rank for #439 (#487's 12), and #439 (8 October) makes the hall one hall of one ladder (DESIGN §8;
+docs/areas/kilns.md §9, #439's 2 and 3):
+
+- **The first task is the ladder's own,** First Light, given here as at every hall. The hole's
+  fire is dropped: it would be a second rank-0 quest, and a stranger who joins here still goes
+  back down the road for ranks 1 and 2, so it saves no road.
+- **The Luminary asks are offered and reported here** as at Helmstow, Thornhold and the Watch:
+  The Words Over the Dead, the words over the dead in the Tiefzeche copied (docs/areas/kilns.md
+  §6), and What the Ring Said, the ring's voice reported (docs/areas/cairnmoor.md §6). Their goals
+  name the Watch and the Lodge as where to report, which is how the rank opens at the two. They
+  wait for Act II's end.
+- **One ask is filed here,** the Wardens': A Sword at the Hole (`wardens_hole`, `guilds.ts`), given
+  at the Drillyard in Captain Ordgar's voice, the fourth night's fight at the ice-hole
+  (`longmere_m9:m9_night_4`) won. It pays 300 gold and 2,400 xp, 400 a member (§8).
 
 ## 7. Encounters, and what is new
 
@@ -895,21 +911,22 @@ its exit is listed (#489's 15).
   side quests about 1,600: about 16,300. The issues (#486 to #494) carry the first figures until
   their briefs are settled. As built: M9 3,754 (#486), over the brief's 1,500 and the scaled 2,650;
   Rime Lodge 449 (#487), the hole's fight alone (the tallyman 793 and six knockers at 317, over
-  six), under the brief's 500 and the scaled 900, the hall's quests being owed to #439; L9 2,128
-  (#488), over the brief's 1,300 and the scaled 2,300; and K9 4,547 (#489), over the brief's 1,500
-  and the scaled 2,650, the brief's eight groups and its figure never having agreed. Rimewater
-  stands at 10,879 of 16,267 (the shares are rounded down, so they sum to 10,878). The scaled
-  shares still to come (the bay 4,250, K10 1,950 and the side quests 1,600: 7,800), paid at M9's
-  1.42 times its scaled share, come to about 11,080, and Rimewater would stand at about 21,960,
-  under 1.4 times the ask (22,774), so no group is cut (#486's 21; #487's 18; #488's 15; #489's 7).
+  six), under the brief's 500 and the scaled 900, the hall's quests being the ladder's (#439, §6);
+  L9 2,128 (#488), over the brief's 1,300 and the scaled 2,300; and K9 4,547 (#489), over the
+  brief's 1,500 and the scaled 2,650, the brief's eight groups and its figure never having agreed.
+  Rimewater stands at 10,879 of 16,267 (the shares are rounded down, so they sum to 10,878), and at
+  11,279 with the ask #439 files here, A Sword at the Hole, 400 a member. The scaled shares still to
+  come (the bay 4,250, K10 1,950 and the side quests 1,600: 7,800), paid at M9's 1.42 times its
+  scaled share, come to about 11,080, and Rimewater would stand at about 21,960, under 1.4 times
+  the ask (22,774), so no group is cut (#486's 21; #487's 18; #488's 15; #489's 7); with the ask's
+  400, about 22,360, still under.
   **The budget for the rest** (#489's 19). The ask is 16,267 xp and 9,840 gold a member, and the
-  line is 1.4 times it, 22,774 xp. With K9 built Rimewater holds 10,879 xp, and #439's guild asks,
-  in a pull request of their own, add 400 to make 11,279; the side quests (#494) reserve 1,600. So
-  the Sleepers' Bay (#490) and K10 (#491) together may pay at most about 9,895 xp a member (22,774
-  less 11,279 and 1,600). Their scaled shares, 6,200, come to about 8,800 at M9's ratio and about
-  10,640 at K9's, 1.72, which is over. Each builder cuts groups of its own box, the least valuable
-  first, rather than pass the budget, and works the figures again from the curve test's own output
-  after merging main.
+  line is 1.4 times it, 22,774 xp. With K9 built and A Sword at the Hole filed (#439) Rimewater
+  holds 11,279 xp; the side quests (#494) reserve 1,600. So the Sleepers' Bay (#490) and K10 (#491)
+  together may pay at most about 9,895 xp a member (22,774 less 11,279 and 1,600). Their scaled
+  shares, 6,200, come to about 8,800 at M9's ratio and about 10,640 at K9's, 1.72, which is over.
+  Each builder cuts groups of its own box, the least valuable first, rather than pass the budget,
+  and works the figures again from the curve test's own output after merging main.
 - **Gold.** Training six members from 20 to 22 costs about 9,840 with today's `trainPrice`, and
   tier 7 its fee at the hall (#20; the Watch's is 400). A clear should pay for the training at
   least, in chests, drops and the hall's pay; the furrier's step is priced within the band's window
@@ -923,7 +940,8 @@ its exit is listed (#489's 15).
   seventh tier and its inn 45 a member a night. L9 adds 1,400 (#488), the drove's strongbox 1,100
   and the crest's cairn 300; its find, the Skinning Knife +1, is inside the window too. K9 adds
   1,100 (#489), the smith's iron 800 and the old bank's cairn 300; its finds, the Bear Spear +1 at
-  2,050 and Lann Fuar at 2,000, are inside the window, and the clear holds 4,020 of the 9,840.
+  2,050 and Lann Fuar at 2,000, are inside the window, and the clear holds 4,020 of the 9,840. A
+  Sword at the Hole pays 300 more (#439): 4,320.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 20 wins nine in ten of M9's fights and walks the
   drove road to the lodge resting at the inn; one at 18 wins no more than one in four, which is how
@@ -967,7 +985,8 @@ Decided by the owner's delegate on 2 October 2026 (#434), and followed here:
    ends at the glacier's edge in Loch Fada, M9's east, where the guide marks the way into the void.
    The reach's bands are the cap's, the Ice Caves at 30–32 and not the atlas's 20–22, written here
    and in MONSTERS §12.
-5. **The Lanterns' fourth rank opens at Lantern Watch and Rime Lodge** (call 8, #439).
+5. **The Lanterns' fourth rank opens at Lantern Watch and Rime Lodge** (call 8, #439): built as
+   the Luminary asks at every Lantern hall, the goals naming these two to report at (§6).
 6. **The drove road's coach runs Kilnhaven ↔ Rime Lodge** (call 9, #539).
 7. **The cuts stand, and the country behind is parked** (call 10): §11, and #497.
 8. **All of #56's 40 to 44 stand** (call 11), with 43 ended at Loch Fada's edge and 40's coach found
@@ -1219,7 +1238,9 @@ Decided by delegate for #487, each the owner's to overturn:
 12. **No guild quest is added:** §6's first task, "keep the hole's fire a night", would be a second
     rank-0 Lanterns quest, and `rankOf` asks every quest of a rank, so every company that did
     Helmstow's first task would stay a stranger until Act III. It waits for #439, with the fourth
-    rank's.
+    rank's. Settled by #439: the hole's fire is dropped, the hall gives the ladder's own first task
+    and the asks are the Luminary's, offered here as at every hall (§6; docs/areas/kilns.md §9,
+    #439's 2 and 3).
 13. **The rest of the town:** the inn "The Thaw" at 45 a member (Anvilhall's 35 at 16, the Watch's 30
     at 14); the temple "The Healer's House"; the furrier's the seven of `FURRIER`; the provisioner's
     Anvilhall's stores' list; "The Trainers' Yard" to 23 (the band's top plus one, as the check
@@ -1411,10 +1432,11 @@ Cut from a brief as built (§4):
 
 Owed by Rime Lodge as built (#487, §4.3):
 
-- **To #439:** the Lanterns' fourth rank and its quests, and the hole's fire as a first task, left
-  out of the hall because it would be a second rank-0 quest and keep every company that did
-  Helmstow's first task a stranger until Act III (#487's 12); and the rule a hall's own first task
-  would need.
+- **To #439, settled:** the Lanterns' fourth rank and its quests are built, one ladder over the four
+  halls (§6). The hole's fire as a first task, left out of the hall because it would be a second
+  rank-0 quest and keep every company that did Helmstow's first task a stranger until Act III
+  (#487's 12), is dropped, and with it the rule a hall's own first task would need
+  (docs/areas/kilns.md §9, #439's 3).
 - **To #469:** Kilnhaven's end of the coach, its landing and its seller. The coachman sells nothing
   until it lands; then the passage check wants both ends to sell, and the gate counts the town's
   ways out onto M9 as landings and holds the nearest groups to the gentlest (#539's 4), which wants

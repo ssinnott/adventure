@@ -9,6 +9,7 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
+import { GUILDS } from './guilds.ts';
 
 export const AREA = {
   id: 'rimewater' as const,
@@ -19,6 +20,8 @@ export const AREA = {
   quests: [],
   // The Sleepers, the act's last chapter, is #492's.
   chapter: undefined,
+  // The Wardens' fourth rank's ask at the ice-hole, a sword on the fourth night (#439).
+  guilds: GUILDS,
   // The lochs': cold, the snow lying from the autumn to the spring, the wind off the glacier, and
   // fog off the open water.
   climate: { summer: 10, winter: -10, daily: 6, damp: [0.03, 0.08], wettest: 320, fog: 0.5, lag: 12,

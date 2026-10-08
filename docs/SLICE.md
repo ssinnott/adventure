@@ -19,11 +19,12 @@ DESIGN.md first for the why.
 - **Guild halls:** a business may also be a guild's hall (`hall`, DESIGN §8). It then opens on a
   first menu, its own trade, the guild's work, its skills where the guild has one built (below) and
   Leave, which each choice returns to; a business with its trade alone opens straight on it. The
-  guild's work pays what is done, then offers the quests at or under the company's rank. Membership
+  guild's work pays what is done, then offers the quests at or under the company's rank, those
+  that wait for an act (`after`, a flag) once the company holds it (#439). Membership
   and rank are worked out from the guild quests' done flags, and a rank reached is kept by its own
-  flag (`game/guilds.ts`). The Warden Drillyard is the Wardens' hall, and the Lantern Guildhall and
-  the Thornhold Lantern Hall the Lanterns'. A spell hall's fee buys the right to study, not
-  membership.
+  flag (`game/guilds.ts`). The Warden Drillyard is the Wardens' hall, and the Lanterns' are the
+  Lantern Guildhall, the Thornhold Lantern Hall, the Watch's and the Lodge's, one ladder over the
+  four (#439). A spell hall's fee buys the right to study, not membership.
 - **People in a business:** a person with no room of their own on a business's doorway, listed after
   it, is in the business while present, and its first menu offers "Talk to <name to its first
   comma>" after its trade and the guild's work; the menu is made when drawn, so a person an answer
@@ -709,7 +710,7 @@ does.
 | `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
-| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers, taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
+| `game/guilds.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`; `MonsterDef`, `SpellDef`) and their lookups; a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct`, and the log's lines, the glove's once a game (`GLOVE_FLAG`); pure and seeded |

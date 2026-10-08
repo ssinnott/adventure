@@ -1,7 +1,8 @@
 // The guilds (DESIGN §8; game/guilds.ts): a stranger is offered the first task alone; taking it puts
 // it in the log; with its deed done the hall pays gold, xp to the living and items, and the company
 // is a member; each rank opens the next; an item is taken at the first meeting whatever the rank;
-// a deed done early is paid when its quest is taken; a save keeps the flags. Walked on a fixture
+// a deed done early is paid when its quest is taken; a later act's ask waits for its act; a save
+// keeps the flags. Walked on a fixture
 // guild, then every real guild quest held to the same rules.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
@@ -88,6 +89,11 @@ export function guilds(): void {
     const grown = [...FIXTURE, quest('fx_later', 1, { goal: { visited: 'thornmark' } })];
     ok(party.flags[rankFlag('wardens')] === 3 && rankOf('wardens', party, grown) === 3 && ids(offered('wardens', party, grown)) === 'fx_later',
       `a quest added later at a rank held is offered, and never lowers the rank (${rankOf('wardens', party, grown)}, offered ${ids(offered('wardens', party, grown))})`);
+    // A later act's ask waits for its act: at the rank, it is offered once its flag is set.
+    const act = [...FIXTURE, quest('fx_act', 3, { goal: { visited: 'thornmark' }, after: 'fx_act_come' })];
+    ok(!offered('wardens', party, act).length && rankOf('wardens', party, act) === 3, 'a quest whose act has not come is not offered, though the rank is held');
+    party.flags.fx_act_come = 1;
+    ok(ids(offered('wardens', party, act)) === 'fx_act', 'and is offered once its act has come');
   }
 
   { // An item is taken at the first meeting, whatever the rank, and pays with the early words.
@@ -132,9 +138,12 @@ export function guilds(): void {
   // A tavern may be a hall, as a business may: a person with a room, never one in the street.
   const roomless = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'npc' && f.hall && !f.interior ? [`${d.id}'s ${f.name}`] : [])));
   ok(!roomless.length, `every hall is a room${roomless.length ? ': not ' + roomless.join(', ') : ''}`);
-  // Each hall DESIGN §8 names is its guild's, by name: the Drillyard the Wardens', and both Lantern
-  // halls the Lanterns' ("The Lanterns' halls are both").
-  const HALLS: Readonly<Record<string, GuildId>> = { 'Warden Drillyard': 'wardens', 'Lantern Guildhall': 'lanterns', 'Thornhold Lantern Hall': 'lanterns' };
+  // Each hall DESIGN §8 names is its guild's, by name: the Drillyard the Wardens', and the four Lantern
+  // halls the Lanterns' ("The Lanterns' halls are all four").
+  const HALLS: Readonly<Record<string, GuildId>> = {
+    'Warden Drillyard': 'wardens', 'Lantern Guildhall': 'lanterns', 'Thornhold Lantern Hall': 'lanterns',
+    "The Watch's Lantern Hall": 'lanterns', "The Lodge's Lantern Hall": 'lanterns',
+  };
   for (const [name, g] of Object.entries(HALLS)) {
     const f = MAP_DEFS.flatMap((d) => d.features ?? []).find((x) => 'name' in x && x.name === name);
     ok(!!f && 'hall' in f && f.hall === g, `${name} is a hall of ${GUILDS[g].name.replace(/^The /, 'the ')}`);
@@ -148,7 +157,7 @@ export function guilds(): void {
   ok((Object.keys(GUILDS) as GuildId[]).every((g) => saved.includes(rankFlag(g))), 'the saves list records every guild\'s rank flag');
   for (const q of GUILD_QUESTS) {
     ok(saved.includes(takenFlag(q.id)) && saved.includes(doneFlag(q.id)), `${q.id}: the saves list records its flags`);
-    const bad = [...(q.goal ? condFaults(q.goal) : []), ...(q.item && !(q.item in ITEMS) ? [`item ${q.item}`] : []), ...(q.pay.items ?? []).filter((i) => !(i in ITEMS)).map((i) => `pay ${i}`)];
+    const bad = [...(q.goal ? condFaults(q.goal) : []), ...(q.after ? condFaults({ flag: q.after }) : []), ...(q.item && !(q.item in ITEMS) ? [`item ${q.item}`] : []), ...(q.pay.items ?? []).filter((i) => !(i in ITEMS)).map((i) => `pay ${i}`)];
     ok(!bad.length, `${q.id}: its deed and pay name real things${bad.length ? ' -> ' + bad.join(', ') : ''}`);
     ok(halls.has(q.guild), `${q.id}: ${q.guild} has a hall on the maps`);
     ok(!!q.goal || !!q.item, `${q.id}: has a deed`);
@@ -157,11 +166,12 @@ export function guilds(): void {
     ok(![takenFlag(q.id), doneFlag(q.id)].some((f) => npcFlags.has(f)), `${q.id}: its flags are its own, set by no person`);
   }
   // Every guild's quests, done in the order a hall offers them, raise a new company through every
-  // rank built; Act I builds its two guilds' to the third (DESIGN §8), and a later guild climbs as
-  // far as its area has built.
+  // rank built, each act come as its asks wait for it; Act I builds its two guilds' to the third and
+  // Act III their fourth (DESIGN §8), and a later guild climbs as far as its area has built.
   const ACT_I: readonly GuildId[] = ['wardens', 'lanterns'], ACT_I_RANK = 3;
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const { party } = fresh();
+    for (const q of GUILD_QUESTS) if (q.after) party.flags[q.after] = 1;
     for (let offers = offered(g, party); offers.length; offers = offered(g, party)) for (const q of offers) party.flags[takenFlag(q.id)] = party.flags[doneFlag(q.id)] = 1;
     const r = rankOf(g, party), built = Math.max(...GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank)) + 1;
     ok(r === built, `${g}: its quests, done as the hall offers them, raise a company to rank ${built}, ${rankName(g, built)} (${rankName(g, r) ?? 'none'})`);
@@ -171,8 +181,8 @@ export function guilds(): void {
   // last (1 to 3). A rank with no quests yet is owed to the issue that builds it, or to the owner
   // where none is filed, and fails once built, so its entry is dropped here.
   const OWED_RANKS: Readonly<Record<GuildId, readonly (string | undefined)[]>> = {
-    wardens: [undefined, undefined, undefined, 'the owner'],
-    lanterns: [undefined, undefined, undefined, 'the owner'],
+    wardens: [undefined, undefined, undefined, undefined],
+    lanterns: [undefined, undefined, undefined, undefined],
     cartographers: [undefined, undefined, 'the owner', 'the owner'],
     compact: [undefined, undefined, 'the owner', 'the owner'],
   };

@@ -12,6 +12,7 @@ import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
+import { GUILDS } from './guilds.ts';
 
 export const AREA = {
   id: 'cairnmoor' as const,
@@ -21,6 +22,8 @@ export const AREA = {
   items: ITEMS,
   quests: QUESTS,
   chapter: CHAPTER,
+  // The Lanterns' fourth rank's ask on High Moor, the ring's voice reported (#439).
+  guilds: GUILDS,
   // The moor's: cold, wet and windy, sleet and snow from the autumn on, lying long in the winter,
   // and fog off the bog.
   climate: { summer: 13, winter: -6, daily: 5, damp: [0.02, 0.09], wettest: 90, fog: 0.7, lag: 12,

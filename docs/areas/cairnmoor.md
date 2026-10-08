@@ -18,8 +18,9 @@ which lists the area, N8, the Cairnfield's box (#479, §4.5), O7, Fionnlios's bo
 the bog (#478, §4.4) and Carn Dubh, the dungeon through N8's door (#480, §4.6). Its seven monsters
 are drawn and every one is placed (§3); its chapter, The Ring (#481, §5), and its three side quests
 (#482, §6) are built, and only the country behind is to build. Its content is `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of
-the world map and its walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, and its
-side quests in `quests.ts`); it has no businesses, so no rooms. Its ids: the area
+the world map and its walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, its
+side quests in `quests.ts` and its guild quest, the Lanterns' ring ask, in `guilds.ts`, #439); it
+has no businesses, so no rooms. Its ids: the area
 `cairnmoor`, its zones `highmoor` and `cairnfield`, the dungeon `cairns` and `cairns2` (the ids stay
 under the new name, NAMES §3).
 
@@ -110,7 +111,8 @@ where the lodge-keepers say people are coming up through the ice (docs/areas/rim
 
 It is also where the second prestige falls (DESIGN §5): a character reaches 19 on the moor, and the
 Sorcerer's and the Bard's second trainers are here, at the Watcher's Hut and the piper's fire by
-the tarn (#434, call 9). The Kilns place the Barbarian's and #439 the other five behind the act.
+the tarn (#434, call 9). The Kilns place the Barbarian's, and the other five stand behind the act
+(#439), the last the Druid's in the Deepthorn.
 
 The weather is the moor's: wind, sleet, snow lying from autumn and fog on the bog. The company
 crosses it in snow (STORY; MONSTERS §7.2).
@@ -705,7 +707,7 @@ years; the last Watcher's tally says the ring spoke on the nights the Hearth fli
 page is buried with him in a cairn under a wight, and says the ring spoke eleven nights four hundred
 years ago. The company gives it to the Watcher, who writes it into the lintel, or to the Lanterns,
 whose fourth-rank ask includes the ring's voice reported (#434, call 8; #439). No hall gives the
-quest: the Watcher does (call 8).
+quest: the Watcher does (call 8); the ring's ask is the Lanterns', not the page's (below).
 
 **The Ring on the Bog Body.** A peat-cutter dug up a body with a rope round its neck and a ring
 patterned like the Helmstow signet; the body walks at night to get it back. Sell the ring to
@@ -739,6 +741,16 @@ As built (#482, 8 October), in `quests.ts`, each finished at its level and every
   its tor's troll (`o8_last_tor`, `until`), put down, never stands again. 1,800 xp each. His words
   at the Lodge are Rimewater's.
 - **The coach** (40): its lines stand on N8 as #479 built them; the quest is #494's.
+
+As built (#439, 8 October), in `guilds.ts`, the Lanterns' fourth rank takes the ring's voice: **What
+the Ring Said** (`lanterns_ring`), offered at every Lantern hall once Act II is done and paid at
+any, when the voice is heard inside the ring by night (`q_ring_spoke`, set by `o7_voice`, the
+chapter's own flag). It pays 300 gold and 2,400 xp, 400 a member (§8). The hall's ask is the ring's
+voice and not the page: the Watcher takes `watchers_page` at his first meeting and sends it down by
+the drovers, as #482 built it, since a hall that took it would undo the answers #482 walked
+(docs/areas/kilns.md §9, #439's 9). The goals name Lantern Watch and Rime Lodge as where to report.
+Its words show the Lanterns' split without telling it: she writes down what the ring said, and the
+Lantern beside her goes out without a word.
 
 
 ## 7. Encounters, and what is new
@@ -786,7 +798,8 @@ passes without it.
   brief's 2,200 (§9, #480's 15). The five hold 12,941 of the 14,667. The side quests pay 700 by
   their answers (#482: 37 and 38 200 a member each, 39 300) and the chapter nothing, so a clear
   gives 13,641, 1,026 short: M7 and M8's 1,200 close it when they are built (#484), and the
-  curve's row owes it to them.
+  curve's row owes it to them. The Lanterns' ring ask, What the Ring Said (#439, §6), is filed here
+  and pays 400 a member: a clear gives 14,041, 626 short, still M7 and M8's.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
@@ -801,7 +814,8 @@ passes without it.
   900 in the cell off the stair, with the Hill Torc, 250 in each of the two cells of rows, the
   fifteen wights' own 20 to 60 each and the King's 150 to 300; its bog bodies carry none. The five
   hold 8,155 of the 8,880, and the Watcher pays 200 for his page (#482): 8,355, the 525 short owed
-  to M7 and M8 with the experience (#484). No answer pays gold.
+  to M7 and M8 with the experience (#484). No answer pays gold. What the Ring Said pays 300
+  (#439): 8,655, 225 short.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
@@ -841,7 +855,7 @@ Decided by the owner's delegate on 2 October 2026 (#434), and followed here:
    lights are groups on the bog and round the ring, the Rift at its thinnest. #158's check holds
    that no Rift comes after Cairnmoor.
 3. **No new guild, and no hall gives an Act III quest** (call 8): the Watcher gives The Watcher's
-   Tally, and the Lanterns' fourth-rank ask includes the ring's voice reported (#439).
+   Tally, and the Lanterns' fourth-rank ask includes the ring's voice reported (#439, built in §6).
 4. **Cairnmoor has no town and needs none** (call 9): the Watcher's Hut and the piper's fire by the
    tarn are camps, EXPANSION §5.3's kind, where a company rests safely and the Sorcerer's second
    (Thaumaturge, at the hut) and the Bard's second (Skald, the piper) are taught; the drove road's
@@ -1209,7 +1223,8 @@ Decided by delegate for #481 and #482, each the owner's to overturn:
    its goals check takes Act I's and Act II's chapters; Act III's are walked by their own areas.
 6. **The Watcher's Tally is a hand-in, then a choice:** he takes the page at the first meeting
    (#43) and pays 200, then asks lintel or Lanterns, 1,200 xp each. A hand-in pays no experience,
-   and a Lanterns' hall that takes the page is #439's fourth rank, unbuilt, so he sends it down.
+   and a Lanterns' hall that took the page would be #439's fourth rank, which asks the ring's voice
+   instead (docs/areas/kilns.md §9, #439's 9), so he sends it down.
 7. **The Watcher's third line asks for the page.** A company that brings it unmet hears his early
    words, and his words after the answer meet him, so his lesson still comes.
 8. **The ring is the peat-cutter's to put,** each answer settled at his door: Tallis's man and the
@@ -1306,8 +1321,8 @@ Owed by a box as built (§4):
 Owed by the chapter and the side quests (§5, §6):
 
 - **The coach's quest** (#56's 40): Rimewater's (#494); N8 holds the coach and its lines.
-- **The Lanterns' hall's page** (#439): the fourth rank's ask, the ring's voice reported, may take
-  `watchers_page` at a hall; meanwhile the Watcher sends it down.
+- **The Lanterns' hall's page** (#439), settled: the fourth rank's ask is the ring's voice reported
+  and no hall takes `watchers_page`; the Watcher sends it down (docs/areas/kilns.md §9, #439's 9).
 - **The stonecutter at Rime Lodge** (#56's 39): the lodge places him from the start (#487), so
   until he is gone home he stands at his fire and at the lodge both; his `after` on `q_faces_home`
   and his words there are #494's.
