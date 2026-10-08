@@ -101,8 +101,9 @@ export const LONGMERE_M9: MapDef = {
       '"She came up with the others. Then she went back down."',
       '"Somebody has to be here when she comes up."',
     ] },
-    // The fourth night (#487): after the hole's fight, the last one out, who will not go home (§5).
-    { kind: 'npc', x: 12, y: 13, name: 'A girl out of the hole', flag: 'q_wenna_up', after: { slain: 'longmere_m9:m9_night_4' }, lines: [
+    // The fourth night (#487): after the hole's fight, the last one out, who will not go home (§5), and
+    // once met goes back down; she waits at K9's door (#489).
+    { kind: 'npc', x: 12, y: 13, name: 'A girl out of the hole', flag: 'q_wenna_up', after: { slain: 'longmere_m9:m9_night_4' }, until: { flag: 'q_wenna_up' }, lines: [
       'A girl of fifteen with a nail in her fist and her hair frozen to her face. "Are you the ones my mother sent?"',
       'She will not go to the fire. "There are two hundred more of us down there. I\'m going back for them. The doors know me."',
     ] },

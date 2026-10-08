@@ -114,6 +114,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // Down from the notch past the lynxes in the pines at the road's foot to the lodge's gate, and out
   // on the ice from the lake wall to the hole past the pike under it (#486).
   longmere: ['longmere_m9:m9_lynx_pines', 'longmere_m9:m9_pike_wall'],
+  // In from L9 under the pines past the lynxes there, and down the shore past the lynxes at the
+  // loch's foot to the crack in the ice and the door (#489).
+  coldmere: ['coldmere_k9:k9_lynx_pines', 'coldmere_k9:k9_lynx_foot'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
@@ -168,9 +171,10 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'highmoor_o7: under': { whose: '#18', at: 1 },
   'highmoor_o8: under': { whose: '#18', at: 1 },
   'Cairnmoor: under': { whose: '#18', at: 1 },
-  // And Rimewater's boxes (#486, #488), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
+  // And Rimewater's boxes (#486, #488, #489), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
   'longmere_m9: under': { whose: '#18', at: 1 },
   'longmere_l9: under': { whose: '#18', at: 1 },
+  'coldmere_k9: under': { whose: '#18', at: 1 },
   'Rimewater: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike

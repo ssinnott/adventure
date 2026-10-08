@@ -32,4 +32,9 @@ export const ITEMS: readonly ItemDef[] = [
   P(guidesStaff, 1),
   P(huntersBow, 1),
   P(plate, 4),
+  // K9's (#489), off the ladder: the drowned smith's own blade, beside his Bear Spear +1 in the hole
+  // under the old bank. Lann is the hill folk's blade, and Fuar the village the loch came up over.
+  W('lann_fuar', 'Lann Fuar', 2000, 2, 10, { bonus: 6, classes: MARTIAL, text: [
+    'A long blade of dark iron, wrapped in greased hide and never carried. On the tang, a smith\'s mark: a little bell.',
+  ] }),
 ];
