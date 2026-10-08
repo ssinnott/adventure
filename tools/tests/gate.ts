@@ -79,6 +79,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   eaves: ['the_sunder2:su2_warden'],
   delta: ['drowned_temples2:dt2_choirmaster'],
   kilnsheart: ['deep_mines3:dm3_foreman'],
+  cairnfield: ['cairns2:cd2_king'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -162,6 +163,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And Cairnmoor's boxes (#476, #477, #479), in the Kilns' gear and its finds by 19, as the Kilns' are.
   'highmoor_n7: under': { whose: '#18', at: 1 },
   'cairnfield_n8: under': { whose: '#18', at: 1 },
+  // And Carn Dubh's cairn (#480), banded from the area's floor as the Tiefzeche's upper levels are.
+  'cairns: under': { whose: '#18', at: 1 },
   'highmoor_o7: under': { whose: '#18', at: 1 },
   'highmoor_o8: under': { whose: '#18', at: 1 },
   'Cairnmoor: under': { whose: '#18', at: 1 },

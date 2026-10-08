@@ -66,7 +66,7 @@ export const CURVE: Record<RegionId | (typeof PLANNED)[number], AreaCurve> = {
   },
   cairnmoor: {
     band: [18, 20], next: 20, price: 4000,
-    owed: { whose: '#437', why: 'Cairnmoor is built box by box', xp: 7992, gold: 5930 },
+    owed: { whose: '#437', why: 'Cairnmoor is built box by box', xp: 12941, gold: 8155 },
   },
   rimewater: {
     band: [20, 22], next: 22, price: 4500,

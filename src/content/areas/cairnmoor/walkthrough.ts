@@ -7,23 +7,26 @@
 // the box's groups won at its floor, the hounds by night; and the drovers' cache under the first cairn,
 // found from what the ravens leave on it. Then over the seam into the Cairnfield, named; its road
 // square to square to its head and the notch, taken down onto M9 once that is built (NOTCH); Carn
-// Dubh's door, shut until the Cairns are built (DOOR); the milestone at the head; the hermit, who knows
-// the oldest cairn; the box's groups won at its floor, the wights cursing; and the coach's strongbox,
-// found from the coach's open door. Last, Fionnlios's box (O7, #477) in a walk of its own: the track on
-// to the ring, the voice there by night, the Watcher and the piper, the groups and the hollow (stoneRing);
-// then the bog (O8, #478), off the road, in another (theBog).
+// Dubh's door (DOOR) and the Cairns through it (#480): the cairn's passage, its cells of the dead in
+// rows and the Watcher's cell with the first page of his tally, the stair down to the smooth hall under
+// the cairn, the King on its seat and the door behind it, which nothing opens, and the cell off the
+// stair found from the rows; the milestone at the head; the hermit, who knows the oldest cairn; the
+// box's groups won at its floor, the wights cursing; and the coach's strongbox, found from the coach's
+// open door. Last, Fionnlios's box (O7, #477) in a walk of its own: the track on to the ring, the voice
+// there by night, the Watcher and the piper, the groups and the hollow (stoneRing); then the bog (O8,
+// #478), off the road, in another (theBog).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
-import { NORTH, SOUTH, EAST } from '../../../game/types.ts';
-import { ATLAS, MAP_DEFS } from '../../index.ts';
+import { newWalk, walkThrough, see, fight, listen, type Walk } from '../../../../tools/walk.ts';
+import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
+import { ATLAS, ITEMS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { worldGrid } from '../../../game/atlas.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
-import type { MapZone } from '../../../game/map.ts';
-import type { Walk } from '../../../../tools/walk.ts';
 import { GameMap } from '../../../game/map.ts';
+import type { MapDef, MapZone } from '../../../game/map.ts';
+import { LOCKS } from '../../locks.ts';
 import { xpForLevel, createCharacter, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
@@ -153,14 +156,16 @@ export const walkthrough: Walkthrough = (ok) => {
     && down?.a?.[0] === n8.x + NOTCH.x && down.a[1] === n8.y + NOTCH.y && down.b?.[0] === 392 + NOTCH.tx && down.b[1] === 254 + NOTCH.ty,
   'the road ends at the notch, 0,28, the atlas\'s way down to M9\'s road at 22,8 written beside the map (NOTCH), and past it, for now, the world ends');
 
-  // Carn Dubh's door in its side, where the atlas puts the Cairns' way in, shut until they are built
-  // (#480, DOOR).
+  // Carn Dubh's door in its side, where the atlas puts the Cairns' way in (DOOR), walked in `carnDubh`
+  // below (#480).
   const carn = ATLAS.sites.find((s) => s.name === 'Carn Dubh')!.at;
-  ok(DOOR.to === 'cairns' && carn[0] === n8.x + DOOR.x && carn[1] === n8.y + DOOR.y && out.passable(n8.x + DOOR.x, n8.y + DOOR.y) !== 'ok' && road(n8.x + DOOR.x - 1, n8.y + DOOR.y),
-    'Carn Dubh\'s door is in its side at 6,18, where the atlas puts the Cairns\' way in, beside the road, and shut until the Cairns are built');
+  ok(DOOR.to === 'cairns' && carn[0] === n8.x + DOOR.x && carn[1] === n8.y + DOOR.y && out.at(n8.x + DOOR.x, n8.y + DOOR.y).door === 'door' && !!N8.exits?.includes(DOOR) && road(n8.x + DOOR.x - 1, n8.y + DOOR.y),
+    'Carn Dubh\'s door is in its side at 6,18, where the atlas puts the Cairns\' way in, beside the road, and it is a door, the way into the Cairns');
   w.world.travel('cairnfield_n8', DOOR.x - 1, DOOR.y, EAST);
-  const knock = w.world.move('forward');
-  ok(knock.kind === 'blocked' && w.world.eventsHere().some((t) => t.includes('shut fast')), `before the door, it is shut fast, and a step into it is refused (${knock.kind})`);
+  ok(!w.world.eventsHere().length, 'before the door nothing more is said: it is no longer shut fast');
+  const before = w.level;
+  carnDubh(w, ok);
+  w.level = before;
 
   // The milestone at the road's head, counted as the first is.
   const head = N8.features!.find((f) => f.kind === 'event' && f.id === 'n8_milestone')!;
@@ -200,6 +205,117 @@ export const walkthrough: Walkthrough = (ok) => {
   // The bog (O8, #478), off the road, in a walk of its own.
   theBog(ok);
 };
+
+/**
+ * Carn Dubh (#480): in at the door in the cairn's side and out again; the cairn at 18, the bog's dead
+ * in its passage and the count cut in its wall, the cells of the dead in rows and their wights won, the
+ * Watcher's cell and his wight, which never comes back, and the first page of his tally under his
+ * hands; under the cairn at 19, down the stair through the bedrock to the smooth hall, the wights over
+ * the rows won, the King won on its seat and the door behind it, which nothing opens, with nothing
+ * beside it; and the cell off the stair, found from the rows, with the Hill Torc.
+ */
+function carnDubh(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const [L1, L2] = ['cairns', 'cairns2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const at = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  w.level = 18;
+
+  // In at the door: onto the passage's first square, facing in; stepped back into, the door lets the
+  // company out onto the road before it, facing the road.
+  w.world.travel('cairnfield_n8', DOOR.x - 1, DOOR.y, EAST);
+  const inside = w.world.move('forward');
+  ok(inside.kind === 'moved' && w.world.state.mapId === 'cairns' && w.world.state.x === L1.start.x && w.world.state.y === L1.start.y && w.world.state.facing === EAST && inside.messages.includes(DOOR.label!),
+    `the door takes the company in under the cairn, onto the passage facing in (${at()}: ${inside.kind === 'moved' ? inside.messages.join(' / ') : inside.kind})`);
+  const off = w.world.move('forward'), back = w.world.move('back');
+  const n8 = w.world.zone;
+  ok(off.kind === 'moved' && back.kind === 'moved' && n8?.id === 'cairnfield_n8' && w.world.state.x - n8.x === DOOR.x - 1 && w.world.state.y - n8.y === DOOR.y && w.world.state.facing === WEST,
+    `and the door lets it back out onto the road before it, facing the road (${at()})`);
+  ok([L1, L2].every((d) => (d.exits ?? []).every((e) => !e.shut && !e.needFlag)), 'nothing shuts a way in Carn Dubh: no flag, no reading');
+  ok([L1, L2].every((d) => !d.encounters!.some((g) => g.monsters.includes('bog_light'))), 'no light below ground: the lights are the ring\'s');
+
+  /** Whether a map's square is reached from another without passing its secret doors, or swimming, climbing or floating. */
+  const reached = (d: MapDef, from: readonly [number, number], to: readonly [number, number]): boolean => {
+    const m = new GameMap(d), seen = new Set<number>(), todo = [[from[0], from[1]]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * m.width + x;
+      if (seen.has(k) || !m.inBounds(x, y) || m.at(x, y).door === 'secret' || m.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen.has(to[1] * m.width + to[0]);
+  };
+
+  // The cairn (18): the passage, the count cut in its wall and the bog's dead come in along it; the
+  // chamber, and the cells of the dead in rows off it, a wight over each row.
+  see(w, 'cairns:cd1_in');
+  see(w, 'cairns:cd1_count');
+  for (const g of L1.encounters!.filter((e) => e.id !== 'cd1_watcher')) fight(w, `cairns:${g.id}`);
+  see(w, 'cairns:cd1_chamber');
+  see(w, 'cairns:cd1_north');
+  see(w, 'cairns:cd1_south');
+  const rows = L1.encounters!.filter((g) => g.id.startsWith('cd1_wights'));
+  ok(rows.length === 2 && rows.every((g) => g.monsters.join() === 'cairn_wight,cairn_wight,cairn_wight' && !!g.respawn) && L1.encounters!.filter((g) => g.monsters.includes('bog_body')).length === 2,
+    'the bog\'s dead in the passage, twice, and three wights over the three rows of each cell, twice');
+
+  // The Watcher's cell (#56's 37): newer than the rest, his wight over him, which never comes back,
+  // and the first page of his tally under his hands, a letter read from the pack (#482 takes it in).
+  fight(w, 'cairns:cd1_watcher');
+  const watcher = L1.encounters!.find((g) => g.id === 'cd1_watcher')!;
+  ok(watcher.monsters.join() === 'cairn_wight' && !watcher.respawn && !!watcher.slainText?.includes('the page'), 'the Watcher\'s wight, alone over him, falls and never comes back');
+  see(w, 'cairns:cd1_watcher');
+  const page = L1.features!.find((f) => f.kind === 'chest' && f.id === 'cd1_page'), letter = ITEMS.watchers_page;
+  ok(page?.kind === 'chest' && page.items.includes('watchers_page') && letter?.slot === 'none' && !!letter.text?.length && letter.text[0].includes('tally'),
+    'under his hands, the first page of his tally, a letter read from the pack');
+  ok(reached(L1, [L1.start.x, L1.start.y], [14, 3]) && reached(L1, [L1.start.x, L1.start.y], [14, 8]),
+    'the cairn is walked from its door to the Watcher\'s cell and to the stair with nothing searched for');
+
+  // Under the cairn (19): the stair down through the bedrock to where the tool marks stop, and the hall
+  // opening at its head, its walls smooth and one face with no join.
+  walkThrough(w, 'cairns', 13, 8, EAST, 'cairns2', 1);
+  w.level = 19;
+  ok(w.world.state.x === L2.start.x && w.world.state.y === L2.start.y && w.world.state.facing === NORTH, `the stair comes down through the bedrock to the hall under the cairn (${at()})`);
+  const hall = new GameMap(L2);
+  ok(hall.palette.wallStyle === 'smooth' && L2.bare === true && L1.bare === true, 'the hall\'s walls are smooth, and nothing hangs on any wall in Carn Dubh');
+  see(w, 'cairns2:cd2_stair');
+  see(w, 'cairns2:cd2_smooth');
+  const court = L2.encounters!.filter((g) => g.id.startsWith('cd2_wights'));
+  ok(court.length === 2 && court.every((g) => g.monsters.length === 4 && g.monsters.every((m) => m === 'cairn_wight') && !!g.respawn), 'wights over the rows on either side of the hall, four to a side');
+  for (const g of court) fight(w, `cairns2:${g.id}`);
+
+  // The King on its seat, alone, won at the hall's floor: it never comes back, and the door behind it
+  // stays shut.
+  see(w, 'cairns2:cd2_seat');
+  fight(w, 'cairns2:cd2_king');
+  const king = L2.encounters!.find((g) => g.id === 'cd2_king')!;
+  ok(king.monsters.join() === 'cairn_king' && !king.respawn && !!king.slainText?.includes('the door stays shut') && MONSTERS.find((m) => m.id === 'cairn_king')?.inflict?.cond === 'cursed',
+    'the Cairn King, alone on its seat and cursing, falls and never comes back, and the door behind it stays shut');
+
+  // The door behind the seat: a wall with a door in it and nothing to open it by, and beside it, at a
+  // girl's shoulder, nothing. No flag, no lock, no exit.
+  see(w, 'cairns2:cd2_door');
+  const door = L2.features!.find((f) => f.kind === 'event' && f.id === 'cd2_door');
+  ok(door?.kind === 'event' && door.text.includes('nothing to open it by') && door.text.endsWith('at a girl\'s shoulder, nothing.'), 'behind the seat a door in the smooth wall, and beside it, at a girl\'s shoulder, nothing');
+  w.world.travel('cairns2', 7, 2, NORTH);
+  const shut = w.world.move('forward');
+  ok(shut.kind === 'blocked' && w.world.state.y === 2 && hall.at(7, 1).door === 'door' && hall.at(7, 1).solid === 'wall' && !hall.exitAt(7, 1) && !LOCKS.some((l) => l.map.startsWith('cairns')),
+    `the door does not open, the King dead or alive: it is a wall with a door in it, and no lock (${shut.kind === 'blocked' ? shut.reason : shut.kind})`);
+
+  // The secret: the rows down the hall lie heads to the wall and feet to the stair; searched beside
+  // the stair's head, the wall gives on a cell whose dead lie the other way about, with the richest
+  // grave-gold and the Hill Torc. Walked, it is never reached but through that wall.
+  ok(!reached(L2, [L2.start.x, L2.start.y], [3, 11]) && reached(L2, [L2.start.x, L2.start.y], [7, 2]), 'the cell off the stair is reached only through its wall, and the stair joins the hall to the seat');
+  see(w, 'cairns2:cd2_rows');
+  const rowsHint = L2.features!.find((f) => f.kind === 'event' && f.id === 'cd2_rows');
+  ok(rowsHint?.kind === 'event' && rowsHint.text.includes('heads to the wall and feet to the stair'), 'at the stair\'s head, the dead in rows down the hall, heads to the wall and feet to the stair');
+  w.world.travel('cairns2', 7, 10, WEST);
+  let wall = false;
+  for (let i = 0; i < 20 && !wall; i++) wall = w.world.search();
+  const into = wall ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(wall && into.every((r) => r.kind === 'moved') && w.world.used('cd2_cell'), 'searched beside the stair\'s head, the wall gives on a cell of the dead');
+  const cell = L2.features!.find((f) => f.kind === 'event' && f.id === 'cd2_cell'), hoard = L2.features!.find((f) => f.kind === 'chest' && f.id === 'cd2_cell_chest');
+  ok(cell?.kind === 'event' && cell.text.includes('heads to the stair') && hoard?.kind === 'chest' && hoard.items.includes('hill_torc') && hoard.gold === 900 && ITEMS.hill_torc?.slot === 'none',
+    'its dead lie the other way about, heads to the stair, and with them the richest grave-gold, 900, and the Hill Torc');
+  listen(w);
+}
 
 /**
  * Fionnlios's box (O7, #477): the peat-cutter's track on from N7 to the ring's west gap; the ring,

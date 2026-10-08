@@ -199,9 +199,10 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   higher than the last, the line says how the land feels: "The land here is harder than the road
   behind." one or two under, "Nothing here would spare you. The road behind is still open." three
   or more under. A zone may give its own words in its atlas row (`crossing`). Never a wall, and
-  stepping straight back over a line just crossed says no more. Each zone map is its listed atlas
-  zone's for now: a box that straddles two (C4, B5, B6) waits on its own build to draw the line
-  inside it.
+  stepping straight back over a line just crossed says no more. A way that jumps from one zone map
+  to another (N8's notch down onto M9) says it too, on landing, after its own label, which leaves the
+  land's name to the line. Each zone map is its listed atlas zone's for now: a box that straddles
+  two (C4, B5, B6) waits on its own build to draw the line inside it.
 - **The end of the world.** Wherever no zone map is laid yet, the outdoors is void (`%`, the `void`
   solid): nothing crosses it ("The world ends here.") and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as

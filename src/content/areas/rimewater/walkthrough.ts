@@ -1,17 +1,18 @@
 // Rimewater's walkthrough. Its chapter, The Sleepers, is #492's, which plays it here; until then, Rime
-// Lodge's box (M9, #486) walked: down from the Cairnfield's notch onto the road's foot under the fells
-// and back up; the road square to square to the lodge's gate, shut until the town is built, and on
-// over the causeway to the west edge for L9; the milestone, counted along the roads; the coach yard,
-// with nobody on the box selling the coach; the lodge-keeper at the hole's fire, the man at its foot
-// and the guide at the glacier's edge; the box's groups won at its floor, the pike under the ice; and
-// the guide's hollow behind the glacier's one bare face. Then the long loch's shore (L9, #488): in from
-// M9 by the road, walked; the road over the ridge and out by the south edge for K10, where for now the
-// world ends; the milestone on the ridge; the drover by the road and his bell; the lookout over both
-// lochs; the box's groups, the pike under the loch's ice and the bear alone the hardest; and the
-// drovers' summer shieling under the drift at the end of the posts.
+// Lodge's box (M9, #486) walked: down from the Cairnfield's notch onto the road's foot under the fells,
+// the loch's crossing line said at each level, and back up; the road square to square to the lodge's
+// gate, shut until the town is built, and on over the causeway to the west edge for L9; the milestone,
+// counted along the roads; the coach yard, with nobody on the box selling the coach; the lodge-keeper
+// at the hole's fire, the man at its foot and the guide at the glacier's edge; the box's groups won at
+// its floor, the pike under the ice; and the guide's hollow behind the glacier's one bare face. Then
+// the long loch's shore (L9, #488): in from M9 by the road, walked; the road over the ridge and out by
+// the south edge, where the pass for K10 is taken, shut until K10 is built; the milestone on the ridge;
+// the drover by the road and his bell; the lookout over both lochs; the box's groups, the pike under
+// the loch's ice and the bear alone the hardest; and the drovers' summer shieling under the drift at
+// the end of the posts.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
-import { EAST, WEST } from '../../../game/types.ts';
+import { EAST, SOUTH, WEST } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -20,9 +21,11 @@ import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
+import { PASS } from './maps/longmere_l9.ts';
 
 const M9 = MAP_DEFS.find((d) => d.id === 'longmere_m9')!;
 const L9 = MAP_DEFS.find((d) => d.id === 'longmere_l9')!;
+const LOCH = ATLAS.zones.find((z) => z.id === 'longmere')!;
 const person = (def: typeof M9, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 
 export const walkthrough: Walkthrough = (ok) => {
@@ -34,17 +37,39 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const m of w.party.members) m.level = 20;
 
   // Down: from the Cairnfield's road's last square through the notch onto the road's foot under the
-  // fells' cleft, facing the lodge, the loch named; and back up from the square above it.
-  w.world.travel('cairnfield_n8', NOTCH.x + 1, NOTCH.y, WEST);
-  const down = w.world.move('forward');
-  ok(down.kind === 'moved' && w.world.zone?.id === 'longmere_m9' && w.world.state.x === m9.x + NOTCH.tx && w.world.state.y === m9.y + NOTCH.ty && w.world.state.facing === WEST
-    && down.messages.some((m) => m.includes('Loch Fada.')), `through the notch at N8's 0,28 onto M9's 22,8, facing west, and the loch named (${down.kind === 'moved' ? down.messages.join(' / ') : down.kind})`);
+  // fells' cleft, facing the lodge. After the notch's own line the loch's, as at a border walked
+  // (#166): at its floor the name alone, two under the rest in its own words, three under the harsher
+  // and the road back over the fells still open.
+  const notch = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('cairnfield_n8', NOTCH.x + 1, NOTCH.y, WEST);
+    const r = w.world.move('forward');
+    return r.kind === 'moved' ? r.messages : [r.kind];
+  };
+  const low = notch(17), two = notch(18), down = notch(20);
+  ok(w.world.zone?.id === 'longmere_m9' && w.world.state.x === m9.x + NOTCH.tx && w.world.state.y === m9.y + NOTCH.ty && w.world.state.facing === WEST,
+    'through the notch at N8\'s 0,28 onto M9\'s 22,8, facing west');
+  ok(down.join(' / ') === `${NOTCH.label} / Loch Fada.`, `at 20, the notch's line and then the loch named, no more (${down.join(' / ')})`);
+  ok(two.join(' / ') === `${NOTCH.label} / Loch Fada. ${LOCH.crossing?.harder}`, `at 18, the rest in the loch's own words (${two.join(' / ')})`);
+  ok(low.join(' / ') === `${NOTCH.label} / Loch Fada. ${LOCH.crossing?.warning}` && /road back over the fells is still open/.test(low[1] ?? ''),
+    `at 17, the harsher words, and the road back still open (${low.join(' / ')})`);
   ok(M9.start.x === NOTCH.tx && M9.start.y === NOTCH.ty && !M9.exits!.some((e) => e.x === NOTCH.tx && e.y === NOTCH.ty) && UP.x === NOTCH.tx + 1 && UP.y === NOTCH.ty,
     'the landing is the box\'s way in and no way out, and the way back up is the square beside it');
+  // Back up from the square beside the landing: straight back within the hour, the way's own line
+  // alone; come to it from elsewhere, the Cairnfield's line as the border walked from High Moor says it.
   w.world.travel('longmere_m9', NOTCH.tx, NOTCH.ty, EAST);
   const up = w.world.move('forward');
-  ok(up.kind === 'moved' && w.world.zone?.id === 'cairnfield_n8' && w.world.state.x === n8.x + UP.tx && w.world.state.y === n8.y + UP.ty && w.world.state.facing === EAST && UP.tx === NOTCH.x + 1 && UP.ty === NOTCH.y,
-    'up from M9\'s 23,8 onto N8\'s 1,28, facing east, beside the notch');
+  ok(up.kind === 'moved' && w.world.zone?.id === 'cairnfield_n8' && w.world.state.x === n8.x + UP.tx && w.world.state.y === n8.y + UP.ty && w.world.state.facing === EAST && UP.tx === NOTCH.x + 1 && UP.ty === NOTCH.y
+    && up.messages.join(' / ') === UP.label, `up from M9's 23,8 onto N8's 1,28, facing east, beside the notch; straight back, its own line alone (${up.kind === 'moved' ? up.messages.join(' / ') : up.kind})`);
+  for (const m of w.party.members) m.level = 17;
+  w.world.travel('highmoor_n7', 7, 30, SOUTH);
+  const walked: string[] = [];
+  for (let i = 0; i < 3 && w.world.zone?.id !== 'cairnfield_n8'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') walked.push(...r.messages); }
+  w.world.travel('longmere_m9', NOTCH.tx, NOTCH.ty, EAST);
+  const again = w.world.move('forward'), line = walked.find((m) => m.startsWith('The Cairnfield.'));
+  ok(again.kind === 'moved' && !!line && line !== 'The Cairnfield.' && again.messages.join(' / ') === `${UP.label} / ${line}`,
+    `at 17, up through the notch the Cairnfield's line, as walked over from High Moor (${again.kind === 'moved' ? again.messages.join(' / ') : again.kind}; walked: ${line})`);
+  for (const m of w.party.members) m.level = 20;
 
   // The road square to square from the landing to the gate's front, and from there down beside the
   // lodge, over the loch's head on the causeway and out by the west edge at 0,20 onto L9's road.
@@ -152,6 +177,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const l9Road = reach(l9.x + 31, l9.y + 20, (x, y) => road(x, y) && onL9(x, y));
   ok([6, 7].every((x) => l9Road.has((l9.y + 31) * out.width + l9.x + x)) && [6, 7].every((x) => out.passable(l9.x + x, l9.y + 32) !== 'ok'),
     'the road runs square to square over L9 from 31,20 over the ridge to the south edge at 6,31 and 7,31, and past it, for now, the world ends');
+  ok(PASS.x === 6 && PASS.y === 31 && PASS.to === 'coldmere_k10' && !(L9.exits ?? []).includes(PASS) && !MAP_DEFS.some((d) => d.id === PASS.to) && l9Road.has((l9.y + PASS.y) * out.width + l9.x + PASS.x + 1),
+    'the road is taken, not walked, from its last square at 6,31 onto K10\'s east edge, shut until K10 is built and lists it; the square beside it stays plain road');
   const l9Stone = counted(l9, L9, 'l9_milestone');
   ok(l9Stone.says, `on the ridge the milestone says RIME LODGE ${units(l9Stone.toLodge)} and THE PASS ${units(l9Stone.toPass)}: ${l9Stone.toLodge} squares along the road to the lodge's gate and ${l9Stone.toPass} to the high pass`);
 

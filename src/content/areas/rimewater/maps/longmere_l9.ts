@@ -5,10 +5,22 @@
 // ridge's north end where the drovers' summer shieling lies drifted over; a drover wintering in his
 // bothy by the road; and on the ridge's crest the lookout over both lochs and a cairn.
 // In from M9 by the road at 31,20; out by the south edge at 6,31 and 7,31, where the atlas's road runs
-// on across parked L10's corner for K10 (#491). The west edge meets K9 (#489), where Loch Fuar begins.
+// on across parked L10's corner for K10, taken, not walked (#491, PASS). The west edge meets K9 (#489),
+// where Loch Fuar begins.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+
+/**
+ * The way on to the cold loch (#491): the atlas's road leaves the south edge at 6,31 and 7,31 and runs
+ * on across parked L10's corner to K10's east edge, never entering K9, so L9 and K10 meet only at a
+ * corner and the road is not walked but taken. The road's last square, 6,31, leads onto K10's road at
+ * 31,4 (the atlas's 359,290), facing west, which this asks #491 to place (K10 may move it). An exit
+ * leads only to a built map, so K10 lists it in this map's exits and adds its way back, which lands on
+ * 7,31, facing north, the road's last square beside the pass. The label leaves the loch's name to the
+ * crossing line said after it (World's `crossing`, #166).
+ */
+export const PASS: Exit = { x: 6, y: 31, to: 'coldmere_k10', tx: 31, ty: 4, tf: WEST, label: 'On down the road to the cold loch.' };
 
 export const LONGMERE_L9: MapDef = {
   id: 'longmere_l9',
