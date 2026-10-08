@@ -85,6 +85,11 @@ export const ITEMS: readonly ItemDef[] = [
   P(mattock, 1, { id: 'cutters_pick', name: "Cutter's Pick +1" }),
   P(seax, 1, { id: 'cutters_chisel', name: "Cutter's Chisel +1" }),
   { id: 'anvil_heart', name: 'Heart of the Anvil', slot: 'none', price: 0 },
+  // Feuerstollen's deepest chamber (#466): the Great Salamander's hide, which it drops, carried against
+  // fire as the Tide's symbol is carried against cold.
+  { id: 'salamander_hide', name: "Great Salamander's Hide", slot: 'none', price: 500, resist: ['fire'], text: [
+    'A hide gone grey as slate, cool to the hand however long it is held.',
+  ] },
   // The side quests (#471; docs/areas/kilns.md §6). The Crust-Bearer (#56's 33): the ring off the
   // mother's braid at N3's well, which her son at the bottom of the Tiefzeche knows and takes.
   { id: 'braid_ring', name: 'The Braid-Ring', slot: 'none', price: 0, text: [

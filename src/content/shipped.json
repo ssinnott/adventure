@@ -825,6 +825,21 @@
         "o5_stone",
         "o5_tear",
         "o5_track",
+        "o6_adit",
+        "o6_ash",
+        "o6_burnt",
+        "o6_cairn",
+        "o6_cold",
+        "o6_heather",
+        "o6_lookout",
+        "o6_lookout_night",
+        "o6_mouth",
+        "o6_shelter",
+        "o6_shelter_chest",
+        "o6_vent1",
+        "o6_vent2",
+        "o6_vent3",
+        "o6_vent4",
         "o7_ash",
         "o7_bare",
         "o7_bog",
@@ -1113,6 +1128,10 @@
         "o5_guard",
         "o5_slag_low",
         "o5_slag_tear",
+        "o6_beetles",
+        "o6_elder",
+        "o6_salamanders_n",
+        "o6_salamanders_s",
         "o7_bodies",
         "o7_lights",
         "o7_ravens",
@@ -1191,6 +1210,7 @@
         "467,135",
         "474,234",
         "48,181",
+        "481,183",
         "51,78",
         "53,140",
         "77,108",
@@ -1531,6 +1551,56 @@
       ],
       "groups": [],
       "doors": []
+    },
+    "lava_tubes": {
+      "size": "16x16",
+      "used": [
+        "lt1_adit",
+        "lt1_bend",
+        "lt1_bore",
+        "lt1_break",
+        "lt1_chamber",
+        "lt1_climb",
+        "lt1_cooled",
+        "lt1_floor",
+        "lt1_north",
+        "lt1_pack",
+        "lt1_pack_chest",
+        "lt1_rubble",
+        "lt1_slope",
+        "lt1_tracks"
+      ],
+      "groups": [
+        "lt1_beetles",
+        "lt1_salamanders",
+        "lt1_salamanders_n",
+        "lt1_worm"
+      ],
+      "doors": []
+    },
+    "lava_tubes2": {
+      "size": "16x16",
+      "used": [
+        "lt2_chamber",
+        "lt2_choked",
+        "lt2_cross",
+        "lt2_crust",
+        "lt2_cut",
+        "lt2_east",
+        "lt2_in",
+        "lt2_narrow",
+        "lt2_plate",
+        "lt2_plate_chest",
+        "lt2_square"
+      ],
+      "groups": [
+        "lt2_great_salamander",
+        "lt2_salamanders_e",
+        "lt2_salamanders_w"
+      ],
+      "doors": [
+        "2,11"
+      ]
     },
     "mill": {
       "size": "16x16",
@@ -1963,6 +2033,10 @@
     },
     "kilnsheart_o5": {
       "at": "456,126",
+      "size": "32x32"
+    },
+    "kilnsheart_o6": {
+      "at": "456,158",
       "size": "32x32"
     },
     "lanternwood_k4": {
@@ -2455,6 +2529,7 @@
     "runed_robe",
     "runed_robe+1",
     "runed_robe+2",
+    "salamander_hide",
     "scale",
     "scale+1",
     "seax",
