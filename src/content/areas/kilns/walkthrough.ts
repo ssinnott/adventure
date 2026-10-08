@@ -94,14 +94,14 @@ import { readLine, markLine, readMarks } from '../../../game/inscriptions.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
 import { GATE } from './maps/ironfells_n3.ts';
-import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
+import { VERSE_READ, BOUGHT, TAKEN, HYMN_SUNG } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
 import { TEAR } from './maps/kilnsheart_o5.ts';
 import { ADIT } from './maps/kilnsheart_o6.ts';
 import { CLOSED, WARDEN_SLAIN } from './maps/anvil_stone.ts';
 import { SLAG } from '../../rifts/materials.ts';
 import { GATE as HAVEN_GATE } from './maps/kilnmouth_l6.ts';
-import { MANIFESTS_READ, DWARF_MET } from './maps/kilnhaven.ts';
+import { MANIFESTS_READ, DWARF_MET, TALLIS_OWES } from './maps/kilnhaven.ts';
 import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../crossings.ts';
 import { take as sail, terms } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
@@ -742,6 +742,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ironhide(ok);
   tiefzeche(w, ok);
   feuerstollen(w, ok);
+  sideQuests(ok);
   theAnvilStone(ok);
 };
 
@@ -911,7 +912,8 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * harbourmaster, and the dwarf's word on the corridors; the ferry over to Saltmouth's quay and back
  * from its master there, halved for nobody; the coach to Rime Lodge's coach house and back from its
  * coachman there; the ship, whose far end is not built, sold by nobody yet, its master only talking;
- * and Tallis's man on the street, with his words and nothing more.
+ * and Tallis's man on the street, whose words name nothing in his parcel (A Crown to Order is walked
+ * in `sideQuests`).
  */
 function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   const HAVEN = MAP_DEFS.find((d) => d.id === 'kilnhaven')!;
@@ -1059,11 +1061,11 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   const shipTalk = says(w, JAGO);
   ok(cinderport || !/gold|fare|hundred/i.test(shipTalk), `Jago's words name no fare, while he sells none (${shipTalk.split('\n\n').at(-1)})`);
 
-  // Tallis's man on the street, come for the parcel from the smelter (#56's 35): his words and nothing
-  // more, and the crown never named. The chapter's step and a flag of his own are the others'.
+  // Tallis's man on the street, come for the parcel from the smelter (#56's 35): the crown never named,
+  // and no question put. What is carried down to him is walked in `sideQuests` (#471).
   w.world.travel('kilnhaven', WIEBE.x, WIEBE.y);
   const parcel = says(w, WIEBE);
-  ok(HAVEN.rows[WIEBE.y][WIEBE.x] === '"' && !WIEBE.quest && !WIEBE.choice && parcel.includes('Jory Tallis') && parcel.includes('a parcel up from the smelter') && !/crown|throne|king/i.test(parcel),
+  ok(HAVEN.rows[WIEBE.y][WIEBE.x] === '"' && !WIEBE.choice && parcel.includes('Jory Tallis') && parcel.includes('a parcel up from the smelter') && !/crown|throne|king/i.test(parcel),
     `Tallis's man waits on the street for a parcel up from the smelter, and names nothing in it (${parcel.split('\n\n').at(-1)})`);
 }
 
@@ -1464,6 +1466,166 @@ function fourthRanks(w: Walk): void {
     const said = take(q, w.world.state, p);
     w.ok(said.length === 1 && said[0].startsWith(q.early![0]) && p.gold === gold + 300 && rankOf(q.guild, p) === 3,
       `${q.title}: done in the walk, paid at the taking, and the rank waits for the rest (${said.join(' ').replace(/\n+/g, ' ')})`);
+  }
+}
+
+/**
+ * The side quests (#471), each at its level and answered every way: the mother's ring carried down to
+ * her son at the bottom, who pays and goes up to the inn, and the scraps at her well read by a reader
+ * alone; the scholar at Erzkamm's wall taken to the thane and kept at Anvilhall, or his copybook taken,
+ * which reads as a Linguist does while it is carried; the crown off Gluthutte's anvil carried down to
+ * Tallis's man, who pays and sails, or the thane told, who takes it and the stones; and the three
+ * doors' verses heard going down, then the last sung by the oldest miner at Anvilhall.
+ */
+function sideQuests(ok: (cond: boolean, msg: string) => void): void {
+  const at = (level: number): Walk => {
+    const w = newWalk(ok);
+    w.level = level;
+    for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+    return w;
+  };
+  const npc = (map: string, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const page = (w: Walk, id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+  const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
+  const began = (w: Walk, title: string): boolean => w.news.includes(`New quest: ${title}.`);
+  const there = (w: Walk, map: string, p: Person): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
+  const hear = (w: Walk, map: string, p: Person): string => { w.world.travel(map, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
+  const answerTo = (w: Walk, map: string, p: Person, sets: string): string => {
+    w.world.travel(map, p.x, p.y);
+    const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets);
+    ok(!!a, `${p.name} asks, and an answer sets ${sets} (${m.choice?.ask ?? 'no question'})`);
+    const said = a ? answer(a, w.party) : '';
+    listen(w);
+    return said;
+  };
+  const reads = (w: Walk, id: string, want: readonly string[], not: readonly string[], how: string): void => {
+    const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [], title = pg?.def.title ?? id;
+    const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
+    ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
+      `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
+  };
+  const xpOf = (w: Walk): number => w.party.members.reduce((t, m) => t + m.xp, 0);
+  const signAt = (def: MapDef, id: string): Feature => def.features!.find((f) => f.kind === 'sign' && f.id === id)!;
+
+  // The Crust-Bearer (#56's 33), at 17: the mother at the well asks, and a company that says not now is
+  // asked again; her ring taken down to her son at the bottom, he knows it, pays and goes up to the
+  // inn, and her words change. The scraps in her well's rope are words to a company with no reader,
+  // and read ALL HANDS COUNTED to one with, which the journal keeps.
+  {
+    const w = at(17);
+    const SON = npc('deep_mines3', 'A young dwarf by the ledge'), UP = npc('anvilhall', 'The crust-bearer');
+    ok(there(w, 'deep_mines3', SON) && !there(w, 'anvilhall', UP) && hear(w, 'deep_mines3', SON).includes('I bring the crust') && !page(w, 'crust'),
+      'her son sits by the crusts at the bottom, nobody is on the inn\'s step, and met first he begins nothing');
+    w.world.travel('ironfells_n3', MOTHER.x, MOTHER.y);
+    const first = meet(MOTHER, w.party, heard(w.world, MOTHER));
+    const not = first.choice?.answers.find((a) => !a.sets);
+    ok(!!not && answer(not, w.party).includes('Another day') && !w.party.bag.includes('braid_ring'), 'not now, and she keeps her ring');
+    listen(w);
+    ok(began(w, 'The Crust-Bearer') && /terrace well/.test(goal(w, 'crust')), `she begins it, and the goal is her answer (${goal(w, 'crust')})`);
+    const ring = answerTo(w, 'ironfells_n3', MOTHER, 'q_crust_ring');
+    ok(ring.includes('off her braid') && w.party.bag.includes('braid_ring') && /bottom of the Tiefzeche/.test(goal(w, 'crust')), `asked again, she gives her ring for him (${goal(w, 'crust')})`);
+    const scraps = signAt(N3, 'n3_scraps');
+    w.world.travel('ironfells_n3', scraps.x, scraps.y);
+    const plain = w.world.eventsHere();
+    listen(w);
+    ok(plain.some((t) => t.includes('scraps of cloth')) && !plain.some((t) => t.includes('ALL HANDS COUNTED')) && !page(w, 'crust')?.entries.some((e) => e.id === 'scraps'),
+      'the scraps in the well\'s rope are words to a company with no reader, and the journal keeps nothing');
+    w.party.members[4].skills = ['linguist'];
+    w.world.travel('ironfells_n3', scraps.x, scraps.y);
+    ok(w.world.eventsHere().includes(readLine('Maren', 'ALL HANDS COUNTED.')), 'a reader reads them: ALL HANDS COUNTED');
+    w.party.members[4].skills = [];
+    listen(w);
+    const gold = w.party.gold, took = hear(w, 'deep_mines3', SON);
+    ok(took.startsWith('He knows the ring') && took.endsWith('(300 gold.)') && w.party.gold === gold + 300 && !w.party.bag.includes('braid_ring'), `her son knows the ring, pays and goes up (${took.split('\n')[0]})`);
+    reads(w, 'crust', ['well', 'scraps', 'ring', 'up'], [], 'up');
+    ok(!there(w, 'deep_mines3', SON) && there(w, 'anvilhall', UP) && hear(w, 'anvilhall', UP).includes('only knocking') && hear(w, 'ironfells_n3', MOTHER).includes('He is up'),
+      'gone from the bottom, he is on the inn\'s step at Anvilhall, and his mother says he is up');
+  }
+
+  // The Primer (#56's 34), at 17: the scholar asks whether the thane is told. Taken to the thane, he is
+  // kept on the great hall's steps, and the thane pays; or his copybook is taken, and with it in the
+  // bag the company reads the wall at Erzkamm as a Linguist does, and put down, it reads nothing.
+  const KEPT = npc('anvilhall', 'The scholar from the wall');
+  const wall = signAt(N2, 'n2_wall');
+  {
+    const w = at(17);
+    ok(!there(w, 'anvilhall', KEPT), 'nobody is kept on the great hall\'s steps');
+    hear(w, 'ironfells_n2', SCHOLAR);
+    ok(began(w, 'The Primer') && /scholar at the wall/.test(goal(w, 'primer')), `the scholar begins it (${goal(w, 'primer')})`);
+    const gold = w.party.gold, xp = xpOf(w);
+    answerTo(w, 'ironfells_n2', SCHOLAR, 'q_primer_kept');
+    reads(w, 'primer', ['scholar', 'kept'], ['book'], 'the thane');
+    ok(w.party.gold === gold + 500 && xpOf(w) === xp + 900 && !there(w, 'ironfells_n2', SCHOLAR) && there(w, 'anvilhall', KEPT) && hear(w, 'anvilhall', KEPT).includes('for how long') && !w.party.bag.includes('copybook'),
+      'the thane: 500 gold and 900 xp, the wall bare of him and he kept on the great hall\'s steps, and no copybook');
+  }
+  {
+    const w = at(17);
+    hear(w, 'ironfells_n2', SCHOLAR);
+    w.world.travel('ironfells_n2', wall.x, wall.y);
+    ok(!w.world.eventsHere().some((t) => t.includes('KEEP CLEAR')), 'without the copybook the company reads nothing on the wall');
+    const xp = xpOf(w), took = answerTo(w, 'ironfells_n2', SCHOLAR, 'q_primer_book');
+    reads(w, 'primer', ['scholar', 'book'], ['kept'], 'the copybook');
+    ok(took.includes('Copied fair') && xpOf(w) === xp + 900 && w.party.bag.includes('copybook') && !there(w, 'ironfells_n2', SCHOLAR) && !there(w, 'anvilhall', KEPT),
+      'the copybook: 900 xp, the book in the bag, and he is gone from the wall and kept nowhere');
+    w.world.travel('ironfells_n2', wall.x, wall.y);
+    ok(w.world.eventsHere().includes(readLine('Bram', 'KEEP CLEAR OF THE DOORS.')), 'with the copybook in the bag, the first standing member reads the wall: KEEP CLEAR OF THE DOORS');
+  }
+
+  // A Crown to Order (#56's 35), at 18: begun at Tallis's man in Kilnhaven or at the smith's anvil.
+  // Carried down, the parcel goes into Wiebe's hands, who pays and sails, and Tallis owes the company,
+  // the flag the Council reads; told, the thane's men take the crown and the stones, and Wiebe waits.
+  const WIEBE = npc('kilnhaven', 'Wiebe, Jory Tallis\'s man');
+  {
+    const w = at(18);
+    hear(w, 'kilnhaven', WIEBE);
+    ok(began(w, 'A Crown to Order') && /smelter/.test(goal(w, 'crown')), `Tallis's man begins it, and the goal is the smelter (${goal(w, 'crown')})`);
+    hear(w, 'kilnsheart_n5', SMITH);
+    const xp = xpOf(w), sewn = answerTo(w, 'kilnsheart_n5', SMITH, 'q_crown_carried');
+    ok(sewn.includes('sews it shut') && !/\b(Tallis|throne|king)\b/i.test(sewn) && w.party.bag.includes('crown_parcel') && xpOf(w) === xp + 900 && /Wiebe/.test(goal(w, 'crown')),
+      `carried: the crown sewn in sacking, 900 xp, and the goal is Wiebe (${goal(w, 'crown')})`);
+    const gold = w.party.gold, took = hear(w, 'kilnhaven', WIEBE);
+    ok(took.startsWith('He weighs the parcel') && took.endsWith('(800 gold.)') && w.party.gold === gold + 800 && !w.party.bag.includes('crown_parcel') && !!w.party.flags[TALLIS_OWES],
+      `Wiebe takes it, pays 800, and Tallis owes the company (${took.split('\n')[0]})`);
+    reads(w, 'crown', ['crown', 'man', 'carried', 'sailed'], ['told'], 'sailed');
+    ok(!there(w, 'kilnhaven', WIEBE) && hear(w, 'kilnsheart_n5', SMITH).includes('Gone down to the coast') && !hear(w, 'kilnsheart_n5', FACTOR).includes('took the stones'),
+      'he is gone on the next boat, the smith has a plain blade on his anvil, and the factor keeps her stones');
+  }
+  {
+    const w = at(18);
+    hear(w, 'kilnsheart_n5', SMITH);
+    ok(began(w, 'A Crown to Order') && /master smith/.test(goal(w, 'crown')), `the smith begins it (${goal(w, 'crown')})`);
+    const xp = xpOf(w);
+    answerTo(w, 'kilnsheart_n5', SMITH, 'q_crown_told');
+    reads(w, 'crown', ['crown', 'told'], ['carried', 'sailed'], 'told');
+    ok(xpOf(w) === xp + 900 && !w.party.flags[TALLIS_OWES] && !w.party.bag.includes('crown_parcel') && hear(w, 'kilnsheart_n5', SMITH).includes('A month\'s work') && hear(w, 'kilnsheart_n5', FACTOR).includes('took the stones') && there(w, 'kilnhaven', WIEBE) && hear(w, 'kilnhaven', WIEBE).includes('Still nothing'),
+      'told: 900 xp, Tallis owes nothing, the anvil bare and the stones gone, and Wiebe still waits');
+  }
+
+  // The Miners' Hymn (#56's 36), at 18: the oldest miner asks how the doors are sung now; heard going
+  // down, the three verses count the doors, and told, he sings the last, the bottom door's. Heard
+  // going down first, the doors begin it.
+  const OLDEST = npc('anvilhall', 'The oldest miner');
+  {
+    const w = at(18);
+    ok(hear(w, 'anvilhall', OLDEST).includes('Fifty years') && began(w, 'The Miners\' Hymn') && /air doors/.test(goal(w, 'hymn')), `the oldest miner begins it (${goal(w, 'hymn')})`);
+    see(w, 'deep_mines:dm1_door1');
+    see(w, 'deep_mines:dm1_door2');
+    ok(hear(w, 'anvilhall', OLDEST).includes('Fifty years') && !w.party.flags[HYMN_SUNG], 'two doors heard, he has not sung the last');
+    see(w, 'deep_mines:dm1_door3');
+    listen(w);
+    ok(/oldest miner/.test(goal(w, 'hymn')), `the three heard, the goal is the oldest miner (${goal(w, 'hymn')})`);
+    const last = hear(w, 'anvilhall', OLDEST);
+    ok(last.includes('"Last door, the captain\'s door. Shut, and all hands counted."') && !!w.party.flags[HYMN_SUNG], 'he sings the one they leave out, the bottom door\'s');
+    reads(w, 'hymn', ['oldest', 'doors', 'three', 'last'], [], 'sung');
+    ok(hear(w, 'anvilhall', OLDEST).includes('Nobody goes down that far'), 'after, he hums the count');
+  }
+  {
+    const w = at(18);
+    for (const i of [1, 2, 3]) see(w, `deep_mines:dm1_door${i}`);
+    listen(w);
+    ok(began(w, 'The Miners\' Hymn') && /oldest miner/.test(goal(w, 'hymn')), `heard going down first, the doors begin it (${goal(w, 'hymn')})`);
+    hear(w, 'anvilhall', OLDEST);
+    reads(w, 'hymn', ['doors', 'three', 'last'], ['oldest'], 'the doors first');
   }
 }
 

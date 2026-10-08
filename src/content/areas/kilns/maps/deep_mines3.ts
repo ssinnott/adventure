@@ -49,6 +49,14 @@ export const DEEP_MINES3: MapDef = {
     // the crust-bearer's son is (#56's 33, #471).
     { kind: 'event', x: 13, y: 13, id: 'dm3_end', once: true, text: 'The pick marks stop. Past them the wall is smooth, and the air hums.' },
     { kind: 'event', x: 12, y: 13, id: 'dm3_ledge', once: true, text: 'A ledge cut in the rock by the hole, and crusts on it in a row, the oldest gone hard as stone. None has been eaten.' },
+    // The Crust-Bearer (#56's 33, #471): shown his mother's ring, he goes up to Anvilhall's inn.
+    { kind: 'npc', x: 12, y: 14, name: 'A young dwarf by the ledge', until: { flag: 'q_crust_up' }, lines: [
+      'A young dwarf sits against the rock by the ledge, an empty cloth folded on his knee. Through the hole, knocking.',
+      '"I bring the crust. They let me be, down here. Up there it is all hammering."',
+    ], quest: { item: 'braid_ring', reward: 300, setFlag: 'q_crust_up', done: [
+      'He knows the ring, and holds it a long time.',
+      '"Then she is not angry. Take my pay; there is nothing to spend it on down here. I will go up."',
+    ] } },
     { kind: 'event', x: 13, y: 11, id: 'dm3_mouth', once: true, text: 'Through the hole, a corridor, square and clean and lit from nowhere. It runs both ways further than the light.' },
     { kind: 'event', x: 14, y: 10, id: 'dm3_rungs', once: true, text: 'Iron rungs come down the wall out of a square hole in the ceiling, cold to the hand.' },
     // The secret: the knockers' tracks run to a wall as often as along the corridor, the dust swept in

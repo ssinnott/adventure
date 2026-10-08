@@ -75,12 +75,30 @@ export const IRONFELLS_N3: MapDef = {
     // The lookout from the top terrace. The gate's own words are its label, said going in (GATE).
     { kind: 'event', x: 31, y: 10, id: 'n3_lookout', once: true, when: { hours: 'day' }, text: 'South-east from the top terrace, the heart: the smelter\'s smoke going up, and past it the ash, grey to the skyline.' },
     { kind: 'event', x: 31, y: 10, id: 'n3_lookout_night', once: true, when: { hours: 'night' }, text: 'South-east the heart lies dark but for the smelter\'s fires, and far past them a line of red along the ground.' },
-    // The terrace well, and the mother at it (#56's 33).
+    // The terrace well, and the mother at it. The Crust-Bearer (#56's 33, #471): she gives the ring off
+    // her braid for her son at the bottom of the Tiefzeche, who knows it and comes up to Anvilhall's
+    // inn. The scraps he sends up with the empty cloth are knotted in the windlass's rope, and read.
     { kind: 'well', x: 28, y: 12, text: 'The terrace well, a windlass over a shaft lined with dressed stone. The water tastes of iron.' },
-    { kind: 'npc', x: 27, y: 12, name: 'A dwarf woman at the well', lines: [
+    { kind: 'sign', x: 28, y: 12, id: 'n3_scraps', text: 'Knotted into the windlass\'s rope, scraps of cloth, marks on each in the old script. The same marks every time.', read: 'ALL HANDS COUNTED.' },
+    { kind: 'npc', x: 27, y: 12, name: 'A dwarf woman at the well', flag: 'q_crust', lines: [
       'A dwarf woman at the terrace well, a crust in a cloth on the coping by her bucket.',
       '"My son carries the crust down for the knockers. He went down with it at the new moon, and he will not come up."',
       '"He sends up that he is well. He sends it up with the empty cloth."',
+    ], choice: { ask: '"Take him my ring. He will know who sent you."', answers: [
+      { label: 'Take the ring.', sets: 'q_crust_ring', gives: 'braid_ring', says: [
+        'She works an iron ring off her braid and closes your hand on it.',
+        '"Tell him the cage can take the crust down."',
+      ] },
+      { label: 'Not now.', says: ['"Since the new moon. Another day, then."'] },
+    ] }, says: [
+      { after: { flag: 'q_crust_up' }, lines: [
+        'The dwarf woman at the well, the cloth on the coping empty.',
+        '"He is up, and sleeps at the hall\'s inn. The cage takes the crust down now."',
+      ] },
+      { after: { flag: 'q_crust_ring' }, lines: [
+        'The dwarf woman at the well, her braid hanging loose.',
+        '"He is at the bottom, where the crust goes. Show him the ring."',
+      ] },
     ] },
     // The terraces' foot: the tithe-house, the ruts to the wall and the hearth-niche over it; under
     // the lowest terrace, the tithe-cellar.

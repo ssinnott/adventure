@@ -55,15 +55,41 @@ export const KILNSHEART_N5: MapDef = {
     { kind: 'event', x: 14, y: 3, id: 'n5_smelter', once: true, text: 'Chimneys, and the heat from the door felt across the yard. Over the door, the verse again. Inside, somebody is making a crown.' },
     { kind: 'shrine', x: 11, y: 2, id: 'n5_shrine', text: 'The smelter\'s mouth, a furnace roaring behind it. A smith\'s tongs hang by the door on a nail driven into the verse.', stat: 'accuracy', done: 'The smelter\'s mouth, roaring.' },
     { kind: 'sign', x: 11, y: 2, id: 'n5_verse', text: 'Over the smelter\'s mouth, cut red as in the thane\'s hall: THE FIRE IS KEPT BELOW AND NOT ABOVE.', read: 'DANGER. KEEP FIRE BELOW THIS LINE.' },
-    { kind: 'npc', x: 11, y: 1, name: 'Eckhart, the master smith', lines: [
+    // A Crown to Order (#56's 35, #471): the crown is done and no carter has come for it. Carried down,
+    // it is Tallis's man's at Kilnhaven (`TALLIS_OWES`, kilnhaven.ts); told, the thane's men take it
+    // off the anvil, and the factor's stones with it.
+    { kind: 'npc', x: 11, y: 1, name: 'Eckhart, the master smith', flag: 'q_crown', lines: [
       'A dwarf at the anvil in the smelter\'s door, a crown on its horn: gold beaten over iron, the old pattern.',
       '"A crown to order. The kings\' crowns were made at the hall. This one is made here, and paid for in stone."',
       '"Who for? Somebody on the coast with the price. We are smiths. We do not ask a purse its name."',
+    ], choice: { ask: '"Done a week, and no carter. You are going down to Kilnhaven?"', answers: [
+      { label: 'Carry it down.', sets: 'q_crown_carried', gives: 'crown_parcel', pay: { xp: 900 }, says: [
+        'He wraps the crown in sacking and sews it shut.',
+        '"A man waits for it at Kilnhaven. Into his hands, and nobody else\'s."',
+      ] },
+      { label: 'Tell the thane.', sets: 'q_crown_told', pay: { xp: 900 }, says: [
+        'He looks at you a long time, then lays the hammer down.',
+        '"Tell him the smiths did the work they were paid for."',
+      ] },
+    ] }, says: [
+      { after: { flag: 'q_crown_told' }, lines: [
+        'The anvil in the smelter\'s door is bare. The thane\'s men came for the crown.',
+        '"And for the stones it was paid in. A month\'s work, for nothing."',
+      ] },
+      { after: { flag: 'q_crown_carried' }, lines: [
+        'Eckhart at the anvil, a plain blade on its horn now.',
+        '"Gone down to the coast in sacking. Good work, and paid for."',
+      ] },
     ] },
     { kind: 'npc', x: 11, y: 3, name: 'Kerensa, the Compact\'s factor', lines: [
       'A woman in a salt-stained coat by the smelter door, a Compact knife at her belt and a strongbox at her feet.',
       '"The Salt Compact buys what the smiths make, and pays them in what they want."',
       '"Not coin. Coin is for people who mean to spend it."',
+    ], says: [
+      { after: { flag: 'q_crown_told' }, lines: [
+        'The factor by the smelter door, no strongbox at her feet.',
+        '"The thane\'s men took the stones. The Compact will remember whose word sent them."',
+      ] },
     ] },
     // The slag heap: its laid face, and behind it the shard store; the lookout from its top.
     { kind: 'event', x: 5, y: 5, id: 'n5_laid', once: true, text: 'The heap is tipped loose on every side but this one, which is laid in blocks, close-fitted and warm to the hand.' },

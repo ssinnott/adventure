@@ -22,11 +22,12 @@ Gluthutte's box (#463, §4.8), the smelter in the charcoal woods; N6 and M6, the
 the Anvil Stone's Rift (#465, §4.10), its second dungeon; L6, Kilnhaven's box (#468, §4.13), and
 with it its second town, Kilnhaven, behind L6's gate (#469, §4.14); and O6, Feuerstollen's box
 (#466, §4.11), with the tubes under its ridge, its third dungeon. Its chapter of the one quest, The
-Anvil Stone, is written and walked (#470, §5). Eleven of its monsters and its
+Anvil Stone, is written and walked (#470, §5), and its four side quests are in the log, their
+people on those maps (#471, §6). Eleven of its monsters and its
 twelve rooms are drawn (§3), and the
 rest is to build. Its content is `src/content/areas/kilns/` (maps, monsters, items, rooms, climate,
 its part of the world map, its walkthrough and its guild quests in `guilds.ts`, #439; its chapter of
-the one quest, The Anvil Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, to come) and its
+the one quest, The Anvil Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its
 businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
 `kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
 the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass
@@ -159,8 +160,9 @@ Ten boxes, two towns and three dungeons: the area's first box, which lists the a
 its first town (#458) and the town behind its gate (#459); the box of its first dungeon, the heart's
 first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhall, off the road
 (#460); the smelter's (#463); the roads south and west (#467); the Stone's (#464), with the Rift
-through its tear (#465); Kilnhaven's box (#468) and the town behind its gate (#469); and the ash
-country under the vent ridge, with the tubes below it (#466):
+through its tear (#465); Kilnhaven's box (#468) and the town behind its gate (#469); the ash
+country under the vent ridge, with the tubes below it (#466); and the four side quests on them
+(#471):
 
 - **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
   Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
@@ -206,7 +208,7 @@ country under the vent ridge, with the tubes below it (#466):
   hills climbing to the crag under the rim, no road on it. In the crag's face the cave where the
   first ore was found: Hartmut at its mouth, who teaches the Barbarian's second prestige, Ironhide
   (#19), and inside it the wall the dwarves call the first blessing, which a reader reads KEEP CLEAR
-  OF THE DOORS, with a scholar of Helmstow copying it (#56's 34, his words only). Below the crag the
+  OF THE DOORS, with a scholar of Helmstow copying it (The Primer, #56's 34, #471). Below the crag the
   first ore-finders' spoil and their two adits; the camp in the crag's lee, the cairn on the crest
   and the lookout south from the Fells' top to Anvilhall's smoke. Three groups: fire beetles on the
   spoil, a rock worm in the west adit and a pair in the one under the rim. Behind a blank face in the
@@ -286,6 +288,12 @@ country under the vent ridge, with the tubes below it (#466):
   floor all fire, the Great Salamander, boss at 18, which leaves its hide. Where the walls go square
   in the west tube and the heat drops away, a tube cut and not run, ending at a plate that nothing
   opens (§4.11).
+- **The side quests** (`quests.ts`; #471): #56's four, 33 to 36, their people on the built maps
+  (§6). The mother's ring carried down to her son at the bottom of the Tiefzeche, who comes up to
+  Anvilhall's inn; the scholar at Erzkamm's wall, kept by the thane or parted from his copybook,
+  which reads the old script; the crown off Gluthutte's anvil carried down to Tallis's man at
+  Kilnhaven or told to the thane; and the miners' hymn, a verse at each of the Tiefzeche's three
+  doors and the last sung by the oldest miner at Anvilhall.
 
 Its atlas rows are charted in `src/content/areas/kilns/atlas.ts`, the area's own `atlas` since M3
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
@@ -561,8 +569,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   (28,8), a front of dressed stone in the crag, its iron-bound door the way into Anvilhall (#459,
   §4.4), whose way back lands on 28,9 facing south (§9). Four terraces of
   fields step down from the forecourt behind dry walls. The well is on the second down, and the
-  mother at it says her son took the crust down and will not come up; the lookout is at the top
-  one's east end.
+  mother at it says her son took the crust down and will not come up; she gives the ring off her
+  braid for him, and knotted in the windlass's rope are the scraps he sends up, which a reader reads
+  ALL HANDS COUNTED (The Crust-Bearer, #471, §6). The lookout is at the top one's east end.
   At their foot stand the tithe-house and the ruts along the lowest wall to a turning circle where
   no door is, the hearth-niche over it (endurance) with the box's inscription, the dwarves' words for
   plenty, which a reader reads STORE. Searched there, the wall gives on the tithe-cellar: crates
@@ -574,7 +583,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   fight and manages 8.49 fights to a rest, inside the aim, with 0.7% of its days ending in a fight
   broken off; the Fells' road, on now past the two heaps, is walked every time. As measured it pays
   about 1,525 xp a member and 950 gold. Two under, at 14, it wins every fight too, owed to #18.
-  Density 97.6% within 8 steps, the furthest 10, with one sign among its 22 points. It claims the
+  Density 97.6% within 8 steps, the furthest 10, with two signs among its 22 points, the scraps
+  #471's. It claims the
   salamanders and the reading as new (§7), and M3's milestone reads ANVILHALL 5 (§9).
 
 ### 4.4 Anvilhall (#459): town, 16×16, band 16–18
@@ -630,12 +640,16 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   brief's either way. Gerda at the forge and Konrad, the gate's warder, change their words with the
   choice; Ilse cuts the old script fresh over the mine-surgeon's door. Four doors and the gate carry
   an inscription: SECTION 7. over the gate, BERTHS. over the inn, SICKBAY. over the mine-surgeon's,
-  MUSTER STATION. ALL HANDS. over the old working and the verse over the hall. The Regent's scholar,
-  the oldest miner and the Crust-Bearer's hand-in are #471's (§6). The walkthrough rests, buys each
-  class its step at the forge, trains a member of 18 to 19, hears the verse read both ways, teaches
-  a Lantern Linguist and puts the thane's choice both ways. The town pays nothing of its own, and the
-  chapter pays nothing (#470): its 300 is the side quests' (#471). Density 100% within 7 steps, the
-  furthest 4, five signs among its 22 points.
+  MUSTER STATION. ALL HANDS. over the old working and the verse over the hall. The side quests'
+  people are #471's (§6), on the court's free squares: the oldest miner on the bench by the inn's
+  door, who sings the doors' last verse to a company that has heard the third; the crust-bearer on
+  the inn's step, once his mother's ring has brought him up; and the Regent's scholar on the great
+  hall's steps between two of the thane's guard, once he is taken to the thane. The walkthrough
+  rests, buys each class its step at the forge, trains a member of 18 to 19, hears the verse read
+  both ways, teaches a Lantern Linguist and puts the thane's choice both ways. The town pays nothing
+  of its own, and the chapter pays nothing (#470); its 300 was to be the side quests' (#471), which
+  pay in kind (§8): the thane's 500 gold for the scholar, and the oldest miner's verse. Density 100%
+  within 7 steps, the furthest 4, five signs among its 25 points with #471's three.
 
 ### 4.5 N2, Erzkamm (#460): country, band 16–17
 
@@ -669,7 +683,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   his shirt in the wind: to a Berserker of 19 who has heard him he gives his lesson once, and makes
   an Ironhide for 4,000 gold. Inside, the wall is the box's inscription, the dwarves' first blessing,
   which a reader reads KEEP CLEAR OF THE DOORS, and the scholar copies it into a book beside it, his
-  primers wrapped in Helmstow paper (his words only; 34 is #471's). The floor is worn in a line to a
+  primers wrapped in Helmstow paper. He asks whether the thane is told: taken down, he is kept at
+  Anvilhall; or his copybook is the company's, and he goes down the fell (The Primer, #471, §6).
+  Either way the stool is empty. The floor is worn in a line to a
   blank face at the back, and the chalk on the wall stops a hand short of it; searched there, the
   face gives on a rough passage and a row of iron doors in the crag's back, smooth and lettered over
   with no handle on any, and before them the first ore-finders' picks and ore, 400 gold and the
@@ -786,7 +802,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   to the spur's end, 15,2, facing west. Timbered galleries in stone and beams: the haulage way north
   through two air doors to where the galleries meet, and a third door west to the stair down, an old
   miner on a stool at each to work it, who sings its verse as the company passes, *One door shut, and
-  all hands counted.*, then two and three (#56's 36). The crust lies on a ledge by the stair, crumbs
+  all hands counted.*, then two and three, each kept by its id for The Miners' Hymn (#471, §6).
+  The crust lies on a ledge by the stair, crumbs
   going on down the steps; at the face east a hewer, who says they do not go to the bottom and hear
   the knocking under the floor, and past it a hole no dwarf cut, a rock worm in it, the level's group
   at 17; four fire beetles in a warm gallery west. Off the haulage way the miners' candles before a
@@ -802,7 +819,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   worms, the level's group at 17, and south to the steep stair down. **The bottom** (`deep_mines3`,
   band 17–18): the stair comes down into the dwarves' last squares, earth underfoot, and the brief's
   line is said before a face of smooth wall with a square hole cut through it, crusts on a ledge
-  beside it, none eaten. Through it runs the clean corridor, drawn smooth and bare, the hull's: west
+  beside it, none eaten, and by them the crust-bearer, until his mother's ring brings him up
+  (The Crust-Bearer, #471, §6). Through it runs the clean corridor, drawn smooth and bare, the
+  hull's: west
   past six knockers and a mender, and a wall their tracks run to, the dust swept in arcs before it,
   where a search opens their room, parts stacked by kind and among them combs and buttons and a spoon,
   with the Forge Hammer +1, a Knocker's Plate and 1,250 gold; north past six knockers and a mender
@@ -816,7 +835,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   broken off, and its groups pooled with the Foreman are won 83.3%, both off the aim and inside the
   limit (§9). Two under, at 14, the upper two are won every time, owed to #18. As measured the three
   levels pay 4,278 xp a member and 2,550 gold. Density 100% within 7 on each, the furthest 4, 4 and
-  5, with one sign among 18 and 19 points on the upper two and none among the bottom's 15.
+  5, with one sign among 18 and 19 points on the upper two and none among the bottom's 16, the
+  crust-bearer #471's.
 
 ### 4.8 N5, Gluthutte (#463): core, band 17
 
@@ -853,7 +873,10 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   a reader reads DANGER. KEEP FIRE BELOW THIS LINE., as at Anvilhall. Eckhart, the master smith, is
   at the anvil in the door with a crown on its horn, made to order and paid for in stone; Kerensa,
   the Compact's factor, stands by the door with a strongbox at her feet, and the Compact does not pay
-  in coin. West of the yard the slag heap is tipped loose on three sides and laid in blocks on its
+  in coin. The crown is done a week and no carter has come: Eckhart asks a company going down to
+  Kilnhaven to carry it, sewn in sacking for the man who waits there; or it tells the thane, whose
+  men take the crown and Kerensa's stones (A Crown to Order, #471, §6). Their words change.
+  West of the yard the slag heap is tipped loose on three sides and laid in blocks on its
   south face; from its top the heart runs south under its smoke by day, and by night a line of red
   breathes far to the south-east. Searched at the laid face (5,4), the heap gives on the shard store:
   boxes of grey stones the size of a fist, a tally of weights for the Compact and, in the smiths'
@@ -1250,8 +1273,10 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   Chandler's on the street, the provisions at list price. A dwarf on a bollard on the quay says the
   corridors under the Tiefzeche run south, under the moor and under the world, toward the lakes, and
   sets `kh_dwarf_met`. Wiebe, Jory Tallis's man, waits on the street for a parcel up from the
-  smelter, late, and names nothing in it: his words and nothing more, the crown's choice and its flag
-  being #471's (§6). The ferry's master, Dunstan, sells the ferry at its steps, 400 gold and two
+  smelter, late, and names nothing in it. Carried down from Gluthutte, the parcel goes into his
+  hands: he pays 800 gold, goes for the next boat and sets `q_crown_sailed` (`TALLIS_OWES`), the
+  flag the Council reads; told to the thane, it never comes, and he waits on (A Crown to Order,
+  #471, §6). The ferry's master, Dunstan, sells the ferry at its steps, 400 gold and two
   days, sailing at 8 and landing at 16, and stands on Saltmouth's quay as well, selling it back; it
   puts a company down at the ferry's steps (4,7) facing up the street, with the town's own landing
   line. Murdo, the coachman, stands in the inn yard and sells the coach, Rime Lodge being built
@@ -1265,7 +1290,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   Stone, trains a member of 18 to 19, hears the manifests read, the dwarf's word and Tallis's man,
   takes the ferry to Saltmouth's quay and back and the coach to Rime Lodge's coach house and back,
   and finds the ship's master with nothing to sell. The town pays nothing of its own, and the
-  chapter pays nothing (#470): its 300 is the side quests' (#471). Density 100% within 7 steps, the
+  chapter pays nothing (#470); its 300 was to be the side quests' (#471), which pay in kind (§8):
+  Wiebe's 800 gold for the parcel. Density 100% within 7 steps, the
   furthest 3, two signs among its 27 points.
 
 ### 4.15 O3, O4, M4 and M5, the country behind the road (#474): country, band 17–18, parked
@@ -1344,12 +1370,14 @@ built with its box on the systems of #76 (#471):
 
 | # | Quest | Level | Where | What it needs | Pay | Built in |
 |---|---|---|---|---|---|---|
-| 33 | The Crust-Bearer | 17 | Anvilhall's well (N3) and the Tiefzeche's lowest level | a token carried (#43); a choice put by a person; an inscription with two texts (#538) | 200 | #458, #462 |
-| 34 | The Primer | 17 | Anvilhall and Erzkamm (N2) | a choice put by a person; an item that reads while carried (#538) | 200 | #459, #460 |
-| 35 | A Crown to Order | 18 | Gluthutte (N5) and Kilnhaven | a choice put by a person; a flag another act reads | 200 | #463, #469 |
-| 36 | The Miners' Hymn | 18 | the Tiefzeche's doors and Anvilhall | once-events at each door; a verse for the Bard's third (#448) | 200 | #462, #459 |
+| 33 | The Crust-Bearer | 17 | Anvilhall's well (N3) and the Tiefzeche's lowest level | a token carried (#43); a choice put by a person; an inscription with two texts (#538) | 300 gold | #458, #462, #471 |
+| 34 | The Primer | 17 | Anvilhall and Erzkamm (N2) | a choice put by a person; an item that reads while carried (#538) | 150; 500 gold or the copybook | #459, #460, #471 |
+| 35 | A Crown to Order | 18 | Gluthutte (N5) and Kilnhaven | a choice put by a person; a flag another act reads | 150; 800 gold carried | #463, #469, #471 |
+| 36 | The Miners' Hymn | 18 | the Tiefzeche's doors and Anvilhall | once-events at each door; a verse for the Bard's third (#448) | its verse | #462, #459, #471 |
 
-Pay is xp a member, whichever way the choice goes, shared by level: about 800 between the four (§8).
+Pay was to be xp a member, about 800 between the four (§8). The Kilns' clear is far past its ask, so
+as built they pay in kind and a token of xp, 300 a member between the four, whichever way the
+choice goes (§9, #471's 1).
 
 - **The Crust-Bearer.** A dwarf mother at Anvilhall's well: her son carries the crust down for the
   knockers and will not come back up. He is on the lowest level, at the ledge where the crust is
@@ -1368,6 +1396,38 @@ Pay is xp a member, whichever way the choice goes, shared by level: about 800 be
   of doors, and the company hears each as it passes. The oldest miner at Anvilhall sings the last
   one above ground, the verse for the door at the bottom: the last door is for the captain. Heard
   whole, it is a verse of the eleven for the Bard's third prestige (#448, DESIGN §5).
+
+As built (#471, 8 October), in `quests.ts`, each finished at its level and every answer walked. The
+people are the boxes', given words, flags, questions and places, and three stand new in Anvilhall's
+court; no group, drawing or system is added:
+
+- **The Crust-Bearer** (`crust`): the mother at N3's well begins it (`q_crust`) and asks the company
+  to take her ring down. Put off, she asks again; taken (`q_crust_ring`, `braid_ring`), she says
+  where he is. Knotted in the windlass's rope on the well's square are the scraps he sends up with
+  the empty cloth (`n3_scraps`), which a reader reads ALL HANDS COUNTED and the journal keeps. Her
+  son sits by the crusts at the bottom (`deep_mines3`, 12,14), the knockers letting him be; met
+  first he begins nothing. Carrying her ring, the company is met by his hand-in: he knows it, pays
+  300 gold and goes up (`q_crust_up`), gone from the bottom and on the inn's step at Anvilhall
+  (11,11). Her words change.
+- **The Primer** (`primer`): the scholar at Erzkamm's wall begins it (`q_primer`) and asks whether
+  the thane is told. Taken to him (`q_primer_kept`), he is kept on the great hall's steps (9,4) and
+  his book goes in the forge, and the company has 500 gold. Or his copybook is taken
+  (`q_primer_book`, `copybook`, `skill: 'linguist'`) and he goes down the fell; while anyone
+  carries it, the company reads the old script as a Linguist does (#538). 900 xp either way, 150 a
+  member.
+- **A Crown to Order** (`crown`): Wiebe at Kilnhaven begins it (`q_crown_wiebe`), or Eckhart at the
+  anvil does (`q_crown`). Eckhart asks: the crown done a week and no carter, does the company carry
+  it down? Carried (`q_crown_carried`, `crown_parcel`, never named), Wiebe's hand-in pays 800 gold
+  and sets `q_crown_sailed` (`TALLIS_OWES` in `kilnhaven.ts`): he goes for the next boat, and Jory
+  Tallis owes the company, which the Council reads later (DESIGN §10.1, Phase 4). Told
+  (`q_crown_told`), the thane's men take the crown and the factor's stones, as the smith's words
+  and hers say; Wiebe waits on. 900 xp either way, 150 a member.
+- **The Miners' Hymn** (`hymn`): the oldest miner on the bench by Anvilhall's inn begins it
+  (`q_hymn`), or the first verse heard does, each of the Tiefzeche's three doors a once-event kept
+  by its id (`dm1_door1` to `dm1_door3`). The third heard, the last going down, he sings the one
+  they leave out, the bottom door's, *Last door, the captain's door. Shut, and all hands counted.*, and sets
+  `q_hymn_sung` (`HYMN_SUNG` in `anvilhall.ts`), which the Bard's third reads (#448). It pays its
+  verse.
 
 ### The guilds' quests
 
@@ -1463,8 +1523,8 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458), N4 1,468
   (#461), N2 1,095 (#460), N5 1,679 (#463), the Tiefzeche 4,278 (#462), N6 787 (#467), M6 1,068
   (#467), O5 1,742 (#464; 1,292 to a company that bought, which meets no Guard), L6 1,590 (#468),
-  the Rift 3,698 (#465) and O6 with its tubes 6,127 (#466), so the shares stand at about 27,200,
-  Kilnhaven's 300 (#471's hand-ins) and the side quests' 800 still to come. The Tiefzeche's Foreman
+  the Rift 3,698 (#465) and O6 with its tubes 6,127 (#466), so the shares stand at about 27,200
+  before the side quests (#471, below). The Tiefzeche's Foreman
   alone pays 1,902 a member and its two corridor groups 858, past the brief's 2,400 before the upper
   levels' beasts (§9). The Warden of the Anvil pays 1,902 too, past the Rift's 1,800 before its slag,
   and the Great Salamander 1,902, so that O6 with its tubes pays four times the brief's 1,500 (§9,
@@ -1475,9 +1535,12 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   2.06 times. All ten boxes are built. The clear has been past 1.4 times the ask, about 18,300, the
   line #439's 10 held the three boxes to, since the Rift, and O6 with its tubes is 6,127 for the
   brief's 1,500; no group is cut for it (§9, #466's 9). The chapter pays nothing (#470): the clear is
-  past its ask without it. Anvilhall pays nothing of its own (#459): its 300 is the side quests'
-  (#471). Nor does Kilnhaven (#469), which holds no group: its 300 is #471's hand-ins. The clear
-  stands at 26,928 with the asks.
+  past its ask without it. Anvilhall pays nothing of its own (#459), nor does Kilnhaven (#469), which
+  holds no group: the 300 each was to have from the side quests (#471) is paid in kind. The clear
+  stands at 26,928 with the asks. The side quests pay in kind and a token: The Primer's and A Crown
+  to Order's questions 900 xp each whichever the answer, 300 a member between the four of the 800
+  planned; and the son's 300 gold and Wiebe's 800, the thane's 500 being one answer's. A clear gives
+  27,228 xp a member and 14,707 gold, 2.08 times the ask (§9, #471's 1).
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -2571,6 +2634,33 @@ Decided by delegate for #470, each the owner's to overturn:
 7. **It pays nothing:** the clear is far past its ask (§8). Cairnmoor's chapter keeps its start, the
    moor, where this one ends; only its comment changes.
 
+Decided by delegate for #471, each the owner's to overturn:
+
+1. **The four pay in kind and a token:** the clear is far past its ask (§8), so §6's 200 a member
+   each is cut to 150 from two questions, 300 in all; the rest is gold and the copybook.
+2. **The Crust-Bearer ends one way, the son up:** a sign is in the world from a new game, so the
+   note he sends up is the scraps he has always sent, read at the well; no answer leaves him.
+3. **The mother gives her ring by a question** (Take the ring or Not now): an answer is how a
+   person hands over an item (#76), and a hand-in only takes. The son's hand-in is #43's token.
+4. **The son comes up to Anvilhall's inn step,** where #459's 13 left the court free for the
+   Crust-Bearer's hand-in, and is nowhere else once up; he pays the 300 gold, his unspent pay.
+5. **The scholar is at the wall from a new game,** as #460 built him, and in Anvilhall only kept,
+   so one man never stands in two places; the thane's own words are not touched (the chapter's).
+6. **The copybook reads every inscription as a Linguist does while carried** (#538). #56's 16's
+   rubbing is no inscription and is taken at Henlys, so it reads nothing there: Thornmark's lane.
+7. **A Crown to Order's question is the smith's,** the crown done a week and no carter come, which
+   is why Wiebe's parcel is late. Told, the thane's men take it off-stage, as the words after say.
+8. **The flag the Council reads is `q_crown_sailed`** (`TALLIS_OWES`), set by Wiebe's hand-in:
+   Tallis owes the company. Told, nothing is set for him but `q_crown_told`.
+9. **The hymn reads the doors as seen,** kept by their ids, so a save that heard them before #471
+   finishes it; the third, the last going down, brings the verse, `q_hymn_sung` (`HYMN_SUNG`).
+10. **The last door is the captain's,** the bay under Coldmere's that calls Wenna Captain
+    (docs/areas/rimewater.md §4.6), and nothing says so. The hymn pays its verse and no xp.
+11. **The oldest miner is in Anvilhall only,** by the inn, not at N4's camp by day as N4's brief
+    had him (#461's 6 left him here). The son, the miner and the scholar keep the brief's names.
+12. **Nothing in `tools/tests/quests.ts` was owed to #471:** what it owed was #470's (`PLANNED`,
+    `CHAPTER_OWED`), so no entry of #471's is dropped. The ids: `crust`, `primer`, `crown`, `hymn`.
+
 ## 10. Names
 
 The Kilns' naming pass, by the rules of `docs/NAMES.md`: the dwarves' tongue was left to choose
@@ -2628,3 +2718,7 @@ short. The country behind the road (O3, O4, M4 and M5, 3,886 squares) is not cut
 
 Nothing of O6's or the tubes' brief was cut (#466): its points of interest, groups and both secrets
 are built, and what waits is owed to another, the first level's two-under figure to #18 (§8).
+
+From the side quests' briefs (§6, #471): the crust-bearer left below, sending a note up, since he
+comes up and the scraps at the well are his notes (#471's 2); and the copybook's reading of #56's
+16's rubbing, which is no inscription, owed to Thornmark if the owner wants it (#471's 6).

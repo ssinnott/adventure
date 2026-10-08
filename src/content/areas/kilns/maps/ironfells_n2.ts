@@ -74,11 +74,22 @@ export const IRONFELLS_N2: MapDef = {
     // Inside the mouth: the wall, the first blessing, and the scholar copying it (#56's 34, his words
     // only); the floor worn to the blank face beside it.
     { kind: 'sign', x: 8, y: 14, id: 'n2_wall', text: 'Cut into the rock, older than the hall\'s. The dwarves say it is the first blessing.', read: 'KEEP CLEAR OF THE DOORS.' },
-    { kind: 'npc', x: 7, y: 14, name: 'A scholar at the wall', lines: [
+    // The Primer (#56's 34, #471): he asks whether the thane is told. Told, he is kept at Anvilhall;
+    // or his copybook is the company's, and he goes down the fell. Either way he leaves the wall.
+    { kind: 'npc', x: 7, y: 14, name: 'A scholar at the wall', flag: 'q_primer', until: [{ flag: 'q_primer_kept' }, { flag: 'q_primer_book' }], lines: [
       'A man of Helmstow on a stool at the wall, copying it into a book. At his feet, children\'s primers wrapped in Helmstow paper.',
       '"The dwarves will not teach it to a man. So I learn it as their children do, from the primer."',
       '"Who for? Myself." He does not look up from the book.',
-    ] },
+    ], choice: { ask: '"You will tell the thane, I suppose."', answers: [
+      { label: 'Take him to the thane.', sets: 'q_primer_kept', pay: { gold: 500, xp: 900 }, says: [
+        'He shuts the book and walks down the fell between you without a word.',
+        'The thane has him kept and his book put in the forge. He pays you for the trouble.',
+      ] },
+      { label: 'Take his copybook.', sets: 'q_primer_book', gives: 'copybook', pay: { xp: 900 }, says: [
+        'He holds the book out without looking at it, and packs his primers.',
+        '"Copied fair, every mark. There are more primers." He goes down the fell.',
+      ] },
+    ] } },
     { kind: 'event', x: 9, y: 14, id: 'n2_floor', once: true, text: 'The floor is worn in a line from the mouth to a blank face at the back. The chalk on the wall stops a hand short of it.' },
     // The secret: behind the blank face, the doors the wall means, and before them the hoard.
     { kind: 'event', x: 9, y: 12, id: 'n2_doors', once: true, text: 'A rough passage, and at its end iron doors in a row in the crag\'s back, smooth and lettered over. No handle on any.' },

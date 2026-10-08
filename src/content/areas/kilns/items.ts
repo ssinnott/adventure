@@ -90,4 +90,21 @@ export const ITEMS: readonly ItemDef[] = [
   { id: 'salamander_hide', name: "Great Salamander's Hide", slot: 'none', price: 500, resist: ['fire'], text: [
     'A hide gone grey as slate, cool to the hand however long it is held.',
   ] },
+  // The side quests (#471; docs/areas/kilns.md §6). The Crust-Bearer (#56's 33): the ring off the
+  // mother's braid at N3's well, which her son at the bottom of the Tiefzeche knows and takes.
+  { id: 'braid_ring', name: 'The Braid-Ring', slot: 'none', price: 0, text: [
+    'An iron ring off a dwarf woman\'s braid, worn smooth on the inside.',
+  ] },
+  // The Primer (#56's 34): the scholar's copybook at Erzkamm, which reads Kiln-script as a Linguist
+  // does while anyone in the company carries it (#538).
+  { id: 'copybook', name: 'The Scholar\'s Copybook', slot: 'none', price: 0, skill: 'linguist', text: [
+    'A copybook in a careful hand: the old script\'s marks down one side, the Crown\'s letters across from each.',
+    'Its covers are Helmstow paper.',
+  ] },
+  // A Crown to Order (#56's 35): the crown off Gluthutte's anvil, sewn up for Tallis's man at
+  // Kilnhaven, who takes it. It is never named.
+  { id: 'crown_parcel', name: 'A Parcel in Sacking', slot: 'none', price: 0, text: [
+    'Sewn up in sacking, heavy for its size. It does not rattle.',
+    'A tag on the string: KILNHAVEN. INTO WIEBE\'S HANDS.',
+  ] },
 ];

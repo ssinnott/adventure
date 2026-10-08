@@ -13,6 +13,8 @@ import { FORGE, ANVIL_STONE_PRICE } from '../items.ts';
 export const VERSE_READ = 'anvil_verse_read';
 /** The thane's question answered, one way or the other (#434's 1): the Hearth reads neither (#540). */
 export const BOUGHT = 'anvil_bought', TAKEN = 'anvil_taken';
+/** The miners' hymn heard whole, its last verse sung by the oldest miner: a verse for the Bard's third (#56's 36, #448). */
+export const HYMN_SUNG = 'q_hymn_sung';
 
 /** The reader's greeting, whichever words he greets a company with. */
 const CRANE = 'A man in Lantern grey at a lectern under the verse, chalk to the wrists. "Crane. Reader. The thane lodges me, and I read his walls."';
@@ -136,6 +138,33 @@ export const ANVILHALL: MapDef = {
       { after: { flag: TAKEN }, lines: ['"Your names are in the book, in red now." He does not look up. "The gate lets you by. I would not."'] },
     ] },
     { kind: 'event', x: 7, y: 13, id: 'ah_court', once: true, text: 'Anvilhall: a court cut down into the hill and open to the sky, its terraces climbing to the great hall\'s doors.' },
+
+    // The side quests' people (#471; docs/areas/kilns.md §6). The Crust-Bearer (#56's 33): the son, up
+    // from the bottom of the Tiefzeche once he has his mother's ring, on the inn's step.
+    { kind: 'npc', x: 11, y: 11, name: 'The crust-bearer', after: { flag: 'q_crust_up' }, lines: [
+      'The young dwarf from the bottom of the Tiefzeche on the inn\'s step, scrubbed pink, a bowl in his lap.',
+      '"Up here it is all hammering. Down there it was only knocking, and they let me be."',
+    ] },
+    // The Primer (#56's 34): the scholar from Erzkamm's wall, once he is taken to the thane, kept.
+    { kind: 'npc', x: 9, y: 4, name: 'The scholar from the wall', after: { flag: 'q_primer_kept' }, lines: [
+      'The man of Helmstow on the great hall\'s steps between two of the thane\'s guard, his hands empty.',
+      '"They feed me well. Nobody will say for how long."',
+    ] },
+    // The Miners' Hymn (#56's 36): the oldest miner, who sang the doors fifty years; told how they are
+    // sung now, the third door heard going down (`deep_mines`), he sings the last, the bottom door's.
+    { kind: 'npc', x: 10, y: 13, name: 'The oldest miner', flag: 'q_hymn', lines: [
+      'An old miner on the bench by the inn\'s door, his hands folded on a stick.',
+      '"Fifty years I sang the doors going down. Go and hear how they sing them now, and come and tell me."',
+    ], says: [
+      { after: { flag: HYMN_SUNG }, lines: [
+        'The oldest miner on his bench, humming the count.',
+        '"Nobody sings the last going down. Nobody goes down that far."',
+      ] },
+      { after: { seen: 'deep_mines:dm1_door3' }, sets: HYMN_SUNG, lines: [
+        'He listens with his eyes shut, his lips moving with the count.',
+        'Then he sings the one they leave out: "Last door, the captain\'s door. Shut, and all hands counted."',
+      ] },
+    ] },
     { kind: 'sign', x: 8, y: 14, id: 'ah_lintel', text: 'The words over the gate: the hold\'s name, the Seventh House of the Mountain.', read: 'SECTION 7.' },
   ],
 };
