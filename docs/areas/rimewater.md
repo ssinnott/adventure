@@ -844,7 +844,9 @@ Decided by delegate for #486, each the owner's to overturn:
    frozen loch. Loch Fada."): `World.move` returns on an exit before it says the crossing (#166), so
    a jump says neither the name nor the warning, and a company under 20 is not warned on the way
    down. A small change in `World.move` is the systems lane's to make; the crossing words stay on
-   Loch Fada's atlas row for L9's seam.
+   Loch Fada's atlas row for L9's seam. Overtaken: a jump now says the crossing line after its label
+   (SLICE, the line at a border), so the label is "Down through the notch to the frozen loch." and
+   the loch's name and words follow it.
 3. **No road crosses M9's north edge** (M8 parked): the atlas's road comes down the north-east
    diagonal, but here it starts at the landing under a cleft of the fells. The edge is the
    Rimefells, closed but for grass and pines at columns 0 to 4, and the north-east corner mountain,
