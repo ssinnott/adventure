@@ -96,6 +96,49 @@
       ],
       "doors": []
     },
+    "cairns": {
+      "size": "16x16",
+      "used": [
+        "cd1_chamber",
+        "cd1_count",
+        "cd1_in",
+        "cd1_north",
+        "cd1_north_gold",
+        "cd1_page",
+        "cd1_south",
+        "cd1_south_gold",
+        "cd1_stair",
+        "cd1_watcher"
+      ],
+      "groups": [
+        "cd1_bodies1",
+        "cd1_bodies2",
+        "cd1_watcher",
+        "cd1_wights1",
+        "cd1_wights2"
+      ],
+      "doors": []
+    },
+    "cairns2": {
+      "size": "16x16",
+      "used": [
+        "cd2_cell",
+        "cd2_cell_chest",
+        "cd2_door",
+        "cd2_rows",
+        "cd2_seat",
+        "cd2_smooth",
+        "cd2_stair"
+      ],
+      "groups": [
+        "cd2_king",
+        "cd2_wights1",
+        "cd2_wights2"
+      ],
+      "doors": [
+        "6,10"
+      ]
+    },
     "caldera": {
       "size": "512x384",
       "used": [
@@ -1969,6 +2012,7 @@
     "halberd+1",
     "hale_token",
     "hearth_key",
+    "hill_torc",
     "horn_bow",
     "horn_bow+1",
     "ironshod_staff",
@@ -2077,7 +2121,8 @@
     "watch_habit",
     "watch_map",
     "watch_shield",
-    "watch_staff"
+    "watch_staff",
+    "watchers_page"
   ],
   "spells": [
     "absolve",
