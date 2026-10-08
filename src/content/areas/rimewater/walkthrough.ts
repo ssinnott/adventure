@@ -47,7 +47,10 @@ import { CHAPTER } from './chapter.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { worldGrid } from '../../../game/atlas.ts';
-import { meet, heard } from '../../../game/people.ts';
+import { meet, heard, answer } from '../../../game/people.ts';
+import { questLog } from '../../../game/quests.ts';
+import { readMarks } from '../../../game/inscriptions.ts';
+import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import type { Person } from '../../../game/people.ts';
 import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
@@ -180,13 +183,14 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!M9.features!.some((f) => f.kind === 'npc' && f.passage), 'nobody on the box sells the coach: its coachman is the town\'s');
 
   // The hole's fire and its keeper, a Lantern, with the lodge-keepers' word of the glacier; the man on
-  // the shelf of ice at its foot; and the guide at the glacier's edge, building her cairn.
+  // the shelf of ice at its foot; and at the glacier's edge nobody yet, the guide not gone up (#494).
   see(w, 'longmere_m9:m9_hole');
   const said = (def: typeof M9, name: string): string => { const p = person(def, name); w.world.travel(def.id, p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
   ok(said(M9, 'A lodge-keeper').includes('glacier gives nothing back'), 'the lodge-keeper at the hole\'s fire says the glacier gives nothing back');
-  ok(said(M9, 'A man at the hole').includes('went back down'), 'the man on the shelf of ice under the hole\'s lip says she went back down');
-  ok(said(M9, 'A guide').includes('where the sky meets the ice'), 'the guide at the glacier\'s foot took a party up to where the sky meets the ice');
-  see(w, 'longmere_m9:m9_guide_cairn');
+  ok(said(M9, 'A man at the hole').includes('went back down'), 'the man on the shelf of ice under the hole\'s lip went back down for her');
+  const guide = person(M9, 'A guide');
+  w.world.travel(M9.id, guide.x, guide.y);
+  ok(!w.world.present(guide), 'the guide is not at the glacier\'s foot until she has gone up from the lodge (#494)');
   listen(w);
 
   // The box's groups, each won at its floor: the lynxes in the pines, the pike under the loch's ice,
@@ -498,6 +502,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(iron?.kind === 'chest' && iron.items.includes('bear_spear+1') && iron.items.includes('lann_fuar') && iron.x === 12 && iron.y === 18,
     'in the hole, the smith\'s iron: a Bear Spear +1, and his own blade, Lann Fuar');
   sleepersBay(w, ok);
+  sideQuests(ok);
   theSleepers(ok);
 };
 
@@ -597,6 +602,205 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(locker?.kind === 'chest' && locker.items.join() === 'hunters_bow+1,plate+4' && locker.gold === 1500 && item('hunters_bow+1').name === 'Bogha Fionn +1' && item('plate+4').name === 'Luireach Dubh +4',
     'in the locker, four hundred years of pockets: 1,500 gold, Bogha Fionn and Luireach Dubh');
   listen(w);
+}
+
+/**
+ * The side quests (#494), each at its level and answered every way: the coach on the drove road, its
+ * note carried down after the coachman asks or before (#43), its sleeper to the Lanterns' hall or the
+ * healer's house; the man at the hole, shown Hale's token or read the clerk's book, home on the coach
+ * or a witness at the lodge; the bell under Fuar's ice, asked once the sleeper has a bed, rung by night
+ * and not by day, read or not, waking the sleeper in the hall, the lodge woman out to Fuar or staying;
+ * the guide gone up, found frostbitten, carried in, the way drawn and the glacier's edge reached, and
+ * the old marks there read onto the world map; the pilgrims below the pass, up with the brother or back
+ * to the lodge; and the stonecutter at the lodge once he is sent home from the tors, and not before.
+ */
+function sideQuests(ok: (cond: boolean, msg: string) => void): void {
+  const at = (level: number): Walk => {
+    const w = newWalk(ok);
+    w.level = level;
+    for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+    return w;
+  };
+  const npc = (map: string, name: string, n = 0): Person => MAP_DEFS.find((d) => d.id === map)!.features!.filter((f) => f.kind === 'npc' && f.name === name)[n] as Person;
+  const page = (w: Walk, id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+  const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
+  const began = (w: Walk, title: string): boolean => w.news.includes(`New quest: ${title}.`);
+  const there = (w: Walk, map: string, p: Person): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
+  const hear = (w: Walk, map: string, p: Person): string => { w.world.travel(map, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
+  const answerTo = (w: Walk, map: string, p: Person, sets: string): string => {
+    w.world.travel(map, p.x, p.y);
+    const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets);
+    ok(!!a, `${p.name} asks, and an answer sets ${sets} (${m.choice?.ask ?? 'no question'})`);
+    const said = a ? answer(a, w.party) : '';
+    listen(w);
+    return said;
+  };
+  const shows = (w: Walk, map: string, id: string): boolean => {
+    const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
+    w.world.travel(map, f.x, f.y);
+    return w.world.present(f);
+  };
+  const reads = (w: Walk, id: string, want: readonly string[], not: readonly string[], how: string): void => {
+    const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [], title = pg?.def.title ?? id;
+    const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
+    ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
+      `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
+  };
+  const xpOf = (w: Walk): number => w.party.members.reduce((t, m) => t + m.xp, 0);
+  const hour = (w: Walk, h: number): void => { w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + h * 60; };
+
+  // The Coach That Never Came (#56's 40), at 20: the coachman asks; by the coach on the moor the man in
+  // the healer's coat writes his note; carried down, it sends the sledge, and the sleeper goes to the
+  // hall. Then the note brought before the coachman ever asks, which he takes all the same (#43), and
+  // the healer's house.
+  const COACHMAN = npc('rime_lodge', 'The coachman'), BY_COACH = npc('cairnfield_n8', 'A man in a healer\'s coat');
+  const IN_YARD = npc('rime_lodge', 'A man in a healer\'s coat'), ON_SLEDGE = npc('rime_lodge', 'A sleeper', 0), IN_HALL = npc('rime_lodge', 'A sleeper', 1);
+  const coach = (w: Walk, sets: string): void => {
+    hear(w, 'rime_lodge', COACHMAN);
+    answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note');
+    hear(w, 'rime_lodge', COACHMAN);
+    answerTo(w, 'rime_lodge', IN_YARD, sets);
+  };
+  {
+    const w = at(20);
+    ok(there(w, 'cairnfield_n8', BY_COACH) && !there(w, 'rime_lodge', IN_YARD) && !there(w, 'rime_lodge', ON_SLEDGE), 'by the coach on the moor a man in a healer\'s coat, and nobody from it in the lodge\'s yard');
+    ok(hear(w, 'rime_lodge', COACHMAN).includes('two days late') && began(w, 'The Coach That Never Came') && /Cairnfield/.test(goal(w, 'coach')),
+      `the coachman's coach is late, and the quest begins on the drove road (${goal(w, 'coach')})`);
+    const note = answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note');
+    ok(note.includes('tears the leaf out') && w.party.bag.includes('healers_note') && /coachman at Rime Lodge/.test(goal(w, 'coach')), `by the coach he writes a note for the lodge (${goal(w, 'coach')})`);
+    const gold = w.party.gold, took = hear(w, 'rime_lodge', COACHMAN);
+    ok(took.startsWith('He reads the note twice and shouts') && took.endsWith('(200 gold.)') && w.party.gold === gold + 200 && !w.party.bag.includes('healers_note'),
+      `the coachman takes the note, pays and sends the sledge (${took.split('\n')[0]})`);
+    ok(!there(w, 'cairnfield_n8', BY_COACH) && there(w, 'rime_lodge', IN_YARD) && there(w, 'rime_lodge', ON_SLEDGE) && /Lanterns/.test(goal(w, 'coach')),
+      `the two from the coach are down in the lodge's yard, and gone from the moor (${goal(w, 'coach')})`);
+    const xp = xpOf(w);
+    answerTo(w, 'rime_lodge', IN_YARD, 'q_coach_hall');
+    reads(w, 'coach', ['late', 'coach', 'sledge', 'hall'], ['temple'], 'the hall');
+    ok(xpOf(w) === xp + 1800 && there(w, 'rime_lodge', IN_HALL) && !there(w, 'rime_lodge', IN_YARD) && !there(w, 'rime_lodge', ON_SLEDGE) && hear(w, 'rime_lodge', COACHMAN).includes('froze him on his box'),
+      'the hall: 1,800 xp, she sleeps at the hall\'s door under the lamps, the yard is empty and the coachman mourns');
+  }
+  {
+    const w = at(20);
+    answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note');
+    ok(began(w, 'The Coach That Never Came') && /coachman at Rime Lodge/.test(goal(w, 'coach')), `found first, the coach begins it, and the goal is the coachman (${goal(w, 'coach')})`);
+    const first = hear(w, 'rime_lodge', COACHMAN);
+    ok(first.includes('The coach for here, stopped on the moor') && !w.party.flags.q_coach && !!w.party.flags.q_coach_sledge,
+      'brought before he asks, the coachman takes the note at the first meeting and sends the sledge, and does not hire');
+    answerTo(w, 'rime_lodge', IN_YARD, 'q_coach_temple');
+    reads(w, 'coach', ['coach', 'sledge', 'temple'], ['late', 'hall'], 'the healer\'s house, the note brought first');
+    ok(!there(w, 'rime_lodge', IN_HALL) && !there(w, 'rime_lodge', IN_YARD) && !there(w, 'rime_lodge', ON_SLEDGE), 'the healer\'s house: she is inside, out of sight, and nobody is left in the yard');
+  }
+
+  // The One Who Went Back Down (#56's 41), at 21: the man at the hole tells a stranger nothing; shown
+  // Hale's token he goes home on the coach, and read the clerk's book he stays at the lodge to tell it.
+  const MAN = npc('longmere_m9', 'A man at the hole'), WITNESS = npc('rime_lodge', 'A man from the hole');
+  const clerk = MAP_DEFS.find((d) => d.id === 'tide_ship2')!.features!.find((f) => f.kind === 'chest' && f.id === 'ts2_clerk')!;
+  for (const [how, sets, entry] of [['Hale\'s token', 'q_wentback_home', 'home'], ['the clerk\'s book', 'q_wentback_witness', 'witness']] as const) {
+    const w = at(21);
+    const first = hear(w, 'longmere_m9', MAN), again = hear(w, 'longmere_m9', MAN);
+    ok(first.includes('went back down for her') && again === first && began(w, 'The One Who Went Back Down') && /Hale's token/.test(goal(w, 'wentback')),
+      `${how}: the man at the hole went back down for her, and tells a stranger no more (${goal(w, 'wentback')})`);
+    if (entry === 'home') w.party.bag.push('hale_token');
+    else { w.world.travel('tide_ship2', clerk.x, clerk.y); w.world.markUsed('ts2_clerk'); w.party.bag.push('clerks_book'); }
+    const told = hear(w, 'longmere_m9', MAN);
+    ok(told.includes('it opened for her') && /home on the coach/.test(goal(w, 'wentback')), `${how}: he says what he saw, a door that opened for a girl (${told.split('\n')[0]})`);
+    const xp = xpOf(w);
+    answerTo(w, 'longmere_m9', MAN, sets);
+    reads(w, 'wentback', ['man', 'door', entry], [entry === 'home' ? 'witness' : 'home'], `${how}, ${entry}`);
+    ok(xpOf(w) === xp + 1800 && !there(w, 'longmere_m9', MAN) && there(w, 'rime_lodge', WITNESS) === (entry === 'witness') && w.party.bag.includes('hale_token') === (entry === 'home'),
+      `${how}: 1,800 xp, he is gone from the hole and ${entry === 'witness' ? 'tells it at the lodge-keeper\'s side' : 'is not at the lodge'}, and nothing is taken from the pack`);
+  }
+
+  // The Bell Under the Ice (#56's 42), at 21: asked once the coach's sleeper has a bed; rung by night
+  // over the pike at the tower's cap and not by day; its words read by a reader; the sleeper in the
+  // hall wakes at it, the healer's sleeps on; the lodge woman goes out to Fuar, or stays.
+  const WOMAN = npc('rime_lodge', 'A lodge woman'), AT_HEARTH = npc('coldmere_k9', 'A lodge woman');
+  const BELL = K9.features!.find((f) => f.kind === 'sign' && f.id === 'k9_bell')!;
+  for (const [bed, sets, entry] of [['q_coach_hall', 'q_icebell_out', 'out'], ['q_coach_temple', 'q_icebell_stay', 'stay']] as const) {
+    const w = at(21);
+    ok(hear(w, 'rime_lodge', WOMAN).includes('The tower still stands') && !w.party.flags.q_icebell && !page(w, 'icebell'), `${entry}: before the coach's sleeper has a bed the lodge woman speaks of the tower, and asks nothing`);
+    coach(w, bed);
+    ok(hear(w, 'rime_lodge', WOMAN).includes('Nobody rang the bell') && began(w, 'The Bell Under the Ice') && /tower's cap/.test(goal(w, 'icebell')),
+      `${entry}: with the sleeper in a bed she asks for the bell rung (${goal(w, 'icebell')})`);
+    hour(w, 12);
+    see(w, 'coldmere_k9:k9_clapper');
+    ok(!w.world.used('k9_clapper') && !w.party.flags.q_icebell_rung, `${entry}: by day there is nothing at the cap but its slates`);
+    hour(w, 23);
+    fight(w, 'coldmere_k9:k9_pike_tower');
+    see(w, 'coldmere_k9:k9_clapper');
+    ok(!!w.party.flags.q_icebell_rung && /lodge woman/.test(goal(w, 'icebell')), `${entry}: by night, the pike over the cap put down, the clapper rings the bell under the ice (${goal(w, 'icebell')})`);
+    if (entry === 'out') w.party.members[4].skills = ['linguist'];
+    w.world.travel(K9.id, BELL.x, BELL.y);
+    const words = w.world.eventsHere();
+    w.party.members[4].skills = [];
+    ok(words.some((t) => t.includes('"KEEP THE COLD."')) === (entry === 'out') && w.world.used('k9_bell') === (entry === 'out'),
+      `${entry}: the bell's lip ${entry === 'out' ? 'read, KEEP THE COLD' : 'unread, with no reader'} (${words.join(' / ')})`);
+    ok(there(w, 'rime_lodge', IN_HALL) === (bed === 'q_coach_hall') && (bed !== 'q_coach_hall' || hear(w, 'rime_lodge', IN_HALL).includes('I heard a bell')),
+      `${entry}: ${bed === 'q_coach_hall' ? 'in the hall the woman from the coach sits up, and heard a bell' : 'in the healer\'s house she sleeps on, out of sight'}`);
+    const xp = xpOf(w);
+    answerTo(w, 'rime_lodge', WOMAN, sets);
+    reads(w, 'icebell', entry === 'out' ? ['woman', 'rung', 'read', 'out'] : ['woman', 'rung', 'stay'], entry === 'out' ? ['stay'] : ['read', 'out'], entry);
+    ok(xpOf(w) === xp + 1800 && there(w, 'rime_lodge', WOMAN) === (entry === 'stay') && there(w, 'coldmere_k9', AT_HEARTH) === (entry === 'out')
+      && (entry === 'out' || hear(w, 'rime_lodge', WOMAN).includes('The ice is quiet again')),
+    `${entry}: 1,800 xp, and she is ${entry === 'out' ? 'at her people\'s hearth above the old bank' : 'by the yard\'s fire still, listening'}`);
+  }
+
+  // Where the Sky Meets Ice (#56's 43), at 22: the guide at the lodge's gate goes up; found at the
+  // glacier's foot by her cairn, frostbitten, she is carried in and draws the way east into nothing;
+  // it ends at the glacier's edge, and the old marks there, read, put the reach on the world map.
+  const GOING = npc('rime_lodge', 'A guide', 0), ON_ICE = npc('longmere_m9', 'A guide'), BROUGHT = npc('rime_lodge', 'A guide', 1);
+  const MARKS = M9.features!.find((f) => f.kind === 'sign' && f.id === 'm9_marks')!;
+  {
+    const w = at(22);
+    ok(there(w, 'rime_lodge', GOING) && !there(w, 'longmere_m9', ON_ICE) && !there(w, 'rime_lodge', BROUGHT) && !shows(w, 'longmere_m9', 'm9_guide_cairn'),
+      'the guide is at the lodge\'s gate before she goes up, and at the glacier\'s foot is neither guide nor cairn');
+    ok(hear(w, 'rime_lodge', GOING).includes('the sky comes down to the ice') && began(w, 'Where the Sky Meets Ice') && !there(w, 'rime_lodge', GOING),
+      `she goes up the glacier with her party, and the quest begins (${goal(w, 'sky')})`);
+    ok(there(w, 'longmere_m9', ON_ICE) && shows(w, 'longmere_m9', 'm9_guide_cairn') && !shows(w, 'longmere_m9', 'm9_sky'), 'gone up, she is at the glacier\'s foot by her half-built cairn');
+    const found = hear(w, 'longmere_m9', ON_ICE);
+    ok(found.includes('there are stairs in it') && !there(w, 'longmere_m9', ON_ICE) && there(w, 'rime_lodge', BROUGHT) && /yard fire/.test(goal(w, 'sky')),
+      `found frostbitten, she is carried in to the yard's fire (${goal(w, 'sky')})`);
+    const xp = xpOf(w), drawn = answerTo(w, 'rime_lodge', BROUGHT, 'q_sky_marked');
+    ok(xpOf(w) === xp + 2100 && drawn.includes('into nothing') && /glacier's edge/.test(goal(w, 'sky')) && !page(w, 'sky')?.done,
+      `she draws the way on the map, east into nothing, for 2,100 xp, and it ends at the glacier's edge (${goal(w, 'sky')})`);
+    see(w, 'longmere_m9:m9_sky');
+    reads(w, 'sky', ['guide', 'found', 'marked', 'edge'], [], 'the glacier\'s edge');
+    w.world.travel(M9.id, MARKS.x, MARKS.y);
+    const blind = w.world.eventsHere();
+    ok(!readMarks(w.world).includes('ice_caves') && !blind.some((t) => t.includes('CREW ONLY')), 'with no reader the marks at the ice\'s edge are marks, and the world map shows nothing past it');
+    w.party.members[4].skills = ['linguist'];
+    const read = w.world.eventsHere();
+    w.party.members[4].skills = [];
+    ok(read.some((t) => t.includes('"SERVICE STAIR. CREW ONLY."')) && read.some((t) => t.endsWith('marks the world map.')) && readMarks(w.world).includes('ice_caves') && ATLAS.places.some((p) => p.id === 'ice_caves' && p.planned),
+      `read, the marks put the Ice Caves on the world map, into the void (${read.slice(1).join(' / ')})`);
+  }
+
+  // The Pilgrims in the Pass (#56's 44), at 22: met below the pass, a brother comes down to them and
+  // tends the boy wrongly, and does not bleed; they go up with him, or back to the lodge.
+  const PILGRIM = npc('coldmere_k10', 'A pilgrim'), DYING = npc('coldmere_k10', 'A dying pilgrim'), BROTHER = npc('coldmere_k10', 'A brother'), BACK = npc('rime_lodge', 'The pilgrims');
+  for (const [sets, entry] of [['q_pilgrims_up', 'up'], ['q_pilgrims_back', 'back']] as const) {
+    const w = at(22);
+    ok(there(w, 'coldmere_k10', PILGRIM) && there(w, 'coldmere_k10', DYING) && !there(w, 'coldmere_k10', BROTHER), `${entry}: the pilgrims below the pass, the boy dying, and no brother yet`);
+    ok(hear(w, 'coldmere_k10', PILGRIM).includes('bells in Monks\' Vale') && began(w, 'The Pilgrims in the Pass') && there(w, 'coldmere_k10', BROTHER), `${entry}: met, the quest begins, and a brother has come down the pass to them`);
+    const tends = hear(w, 'coldmere_k10', BROTHER);
+    ok(tends.includes('rubbing snow into his chest') && tends.includes('it does not bleed'), `${entry}: he cools a boy who is freezing, and his split hand does not bleed`);
+    const xp = xpOf(w);
+    answerTo(w, 'coldmere_k10', PILGRIM, sets);
+    reads(w, 'pilgrims', ['camp', 'brother', entry], [entry === 'up' ? 'back' : 'up'], entry);
+    ok(xpOf(w) === xp + 2100 && ![PILGRIM, DYING, BROTHER].some((p) => there(w, 'coldmere_k10', p)) && shows(w, 'coldmere_k10', 'k10_camp') && !shows(w, 'coldmere_k10', 'k10_pilgrims') && there(w, 'rime_lodge', BACK) === (entry === 'back'),
+      `${entry}: 2,100 xp, below the pass a cold fire-ring, and ${entry === 'back' ? 'the pilgrims by the lodge\'s yard fire, the boy eating' : 'none of them at the lodge: the monastery is #445\'s'}`);
+  }
+
+  // The Faces on the Tors' end (#56's 39): the stonecutter is at the lodge once sent home from the
+  // tors on Cairnmoor's O8, and not before, so he never stands in both places.
+  {
+    const w = at(20);
+    const MASON = npc('rime_lodge', 'A stonecutter'), TORS = npc('highmoor_o8', 'A stonecutter');
+    ok(there(w, 'highmoor_o8', TORS) && !there(w, 'rime_lodge', MASON), 'the stonecutter is under the tors, and not at the lodge');
+    hear(w, 'highmoor_o8', TORS);
+    answerTo(w, 'highmoor_o8', TORS, 'q_faces_home');
+    ok(!there(w, 'highmoor_o8', TORS) && there(w, 'rime_lodge', MASON) && hear(w, 'rime_lodge', MASON).includes('one eye'), 'sent home, he is gone from the tors and at the lodge, the last tor with one eye');
+  }
 }
 
 // ---- the chapter (#492) ----

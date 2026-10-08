@@ -14,6 +14,7 @@ import { CHAPTER } from './chapter.ts';
 import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
+import { QUESTS } from './quests.ts';
 
 export const AREA = {
   id: 'rimewater' as const,
@@ -21,7 +22,8 @@ export const AREA = {
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
-  quests: [],
+  // #56's five, 40 to 44 (#494).
+  quests: QUESTS,
   chapter: CHAPTER,
   // The Wardens' fourth rank's ask at the ice-hole, a sword on the fourth night (#439).
   guilds: GUILDS,

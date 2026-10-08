@@ -9,7 +9,11 @@
 // square, walked anywhere; the west and south edges end the world against J10 and parked K11.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.7 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { When } from '../../../../game/quests.ts';
 import { NORTH, WEST } from '../../../../game/types.ts';
+
+/** The pilgrims gone from below the pass, up with the brother or back to the lodge (#56's 44, #494). */
+const GONE: When = [{ flag: 'q_pilgrims_up' }, { flag: 'q_pilgrims_back' }];
 
 /**
  * The way back to the long loch (#488): from the road's last square at the east edge, 31,3, across
@@ -79,7 +83,39 @@ export const COLDMERE_K10: MapDef = {
     // it (#494's 44 is theirs), and up on the first shoulder the first peak of the range.
     { kind: 'event', x: 9, y: 13, id: 'k10_milestone', once: true, text: 'A milestone at the foot of the pass: RIME LODGE 9, MONKS\' VALE 6.' },
     { kind: 'event', x: 5, y: 15, id: 'k10_mouth', once: true, text: 'The road climbs into the range between two walls of rock, and the snow on it is trodden. South.' },
-    { kind: 'event', x: 9, y: 18, id: 'k10_pilgrims', once: true, text: 'Pilgrims from Anvilhall, camped in the snow below the pass, a dozen under one sheet of sailcloth. One of them is dying.' },
+    // The Pilgrims in the Pass (#56's 44, #494): met, a brother comes down the pass to them, the
+    // Whitespine's Brother (MONSTERS §8.1), a person here and no fight. They go up with him
+    // (`q_pilgrims_up`, which #445's monastery reads) or back to the lodge (`q_pilgrims_back`).
+    { kind: 'event', x: 9, y: 18, id: 'k10_pilgrims', once: true, until: GONE, text: 'Pilgrims from Anvilhall, camped in the snow below the pass, a dozen under one sheet of sailcloth. One of them is dying.' },
+    { kind: 'event', x: 9, y: 18, id: 'k10_camp', once: true, after: GONE, text: 'Trodden snow below the pass round a fire-ring gone cold, and the tracks going away from it.' },
+    { kind: 'npc', x: 8, y: 17, name: 'A pilgrim', flag: 'q_pilgrims', until: GONE, lines: [
+      'An old woman of Anvilhall at the edge of the sailcloth, her boots bound in sacking.',
+      '"We are for the bells in Monks\' Vale. The snow shut the pass on us six days since."',
+      '"The boy is the worst. We have nothing left to burn."',
+    ], says: [
+      { after: { flag: 'q_pilgrims' }, lines: [
+        'She looks from the boy to the brother kneeling over him.',
+        '"The brother says the monks will take us in, the boy and all. Or there is the lodge, back down the road."',
+      ], choice: { ask: '"Up with him, or back down?"', answers: [
+        { label: 'Up with the brother.', sets: 'q_pilgrims_up', pay: { xp: 2100 }, says: [
+          'The brother lifts the boy as if he weighed nothing and walks up the road into the pass.',
+          'The pilgrims take up their bundles and follow him, singing.',
+        ] },
+        { label: 'Back to the lodge.', sets: 'q_pilgrims_back', pay: { xp: 2100 }, says: [
+          'The old woman wraps the boy again, and they carry him down the road between them.',
+          'The brother stands in the snow and watches them go. Then he goes back up alone.',
+        ] },
+      ] } },
+    ] },
+    { kind: 'npc', x: 10, y: 18, name: 'A dying pilgrim', until: GONE, lines: [
+      'A boy under every blanket the pilgrims have, grey in the face, his breath rattling.',
+      '"Are we there? Is that the bells?"',
+    ] },
+    { kind: 'npc', x: 10, y: 17, name: 'A brother', after: { flag: 'q_pilgrims' }, until: GONE, lines: [
+      'A brother in a grey robe, come down the pass in the snow with no cloak, kneeling by the boy.',
+      'He has the blankets off him and is rubbing snow into his chest. "He burns. He must be cooled."',
+      'The back of his hand is split to the white on the ice, and it does not bleed.',
+    ] },
     { kind: 'event', x: 3, y: 10, id: 'k10_shoulder', once: true, text: 'From the pass\'s first shoulder, the first peak of the range: white to its top, and snow smoking off its edge.' },
     // The lake's shore, iced, and the pines south of the road: a fishing hole, a shrine and a bear's lie.
     { kind: 'event', x: 24, y: 16, id: 'k10_hole', once: true, text: 'A hole cut in the shore ice and frozen over again, a line still in it. Nobody came back for the line.' },

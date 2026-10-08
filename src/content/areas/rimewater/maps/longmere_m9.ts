@@ -8,8 +8,23 @@
 // (UP); the gate at 18,8 is the way into Rime Lodge (#487, GATE), and the door in the lake wall at
 // 13,10 its way onto the ice (LAKE_DOOR), where on the fourth night the hole gives up its fight.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.2 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Choice, Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, WEST } from '../../../../game/types.ts';
+
+/**
+ * The man at the hole's question (#56's 41, #494), put once he has said what he saw, to a company with
+ * Hale's token or one that has read the clerk's book: one question, put by either words.
+ */
+const WENTBACK: Choice = { ask: '"She did not come up. Do I go home, or stay and tell it?"', answers: [
+  { label: 'Go home on the coach.', sets: 'q_wentback_home', pay: { xp: 1800 }, says: [
+    'He gets up off the ice for the first time in days, and stands looking at the hole.',
+    '"Home, then. Somebody has to tell her mother."',
+  ] },
+  { label: 'Stay and tell the Lanterns.', sets: 'q_wentback_witness', pay: { xp: 1800 }, says: [
+    'He gets up off the ice and looks to the lodge\'s lamps.',
+    '"I will tell it to the Lanterns, then, and to anybody who comes up."',
+  ] },
+] };
 
 /**
  * The way back up to the Cairnfield (#479): N8 and M9 meet only at a corner across parked M8, so the
@@ -96,10 +111,21 @@ export const LONGMERE_M9: MapDef = {
       '"We keep the hole open, and the fire lit. Every night, all night."',
       '"Out east the glacier gives nothing back. Not a glove, in forty years."',
     ] },
-    { kind: 'npc', x: 11, y: 14, name: 'A man at the hole', lines: [
+    // The One Who Went Back Down (#56's 41, #494): shown Hale's token or read the names in the clerk's
+    // book, he says what he saw below, and goes home on the coach or stays at the lodge to tell it.
+    { kind: 'npc', x: 11, y: 14, name: 'A man at the hole', flag: 'q_wentback', until: [{ flag: 'q_wentback_home' }, { flag: 'q_wentback_witness' }], lines: [
       'On a shelf of ice under the hole\'s lip a man sits, his boots over the black water.',
-      '"She came up with the others. Then she went back down."',
-      '"Somebody has to be here when she comes up."',
+      '"We came up together. She was not with us at the top, so I went back down for her."',
+      '"Something down there counted me, clicking, and let me go. What I saw I tell nobody I do not know."',
+    ], says: [
+      { after: { item: 'hale_token' }, sets: 'q_wentback', lines: [
+        'He looks at Hale\'s token a long while. "Hale\'s. He was chained in the hold the day they took us down."',
+        '"Down there is a wall with a door in it, and no handle. A girl put her hand on it, and it opened for her."',
+      ], choice: WENTBACK },
+      { after: { seen: 'tide_ship2:ts2_clerk' }, sets: 'q_wentback', lines: [
+        'You read him names from the clerk\'s book. At one he looks up. "Her. You have her name."',
+        '"Down there is a wall with a door in it, and no handle. A girl put her hand on it, and it opened for her."',
+      ], choice: WENTBACK },
     ] },
     // The fourth night (#487): after the hole's fight, the last one out, who will not go home (§5), and
     // once met goes back down; she waits at K9's door (#489).
@@ -119,12 +145,18 @@ export const LONGMERE_M9: MapDef = {
     // The glacier's edge: its snout, the guide and the cairn she builds, the face the snow will not lie
     // on, and behind it the hollow where a guide of the lodge's made camp forty years ago.
     { kind: 'event', x: 27, y: 12, id: 'm9_snout', once: true, text: 'The glacier\'s snout, blue in its cracks. The cold comes off it like a draught under a door.' },
-    { kind: 'npc', x: 27, y: 19, name: 'A guide', lines: [
+    // Where the Sky Meets the Ice (#56's 43, #494): the guide is at the lodge until she goes up (`q_sky`);
+    // here after, frostbitten, building her party a cairn, until she is carried in (`q_sky_in`). Her
+    // way, drawn at the lodge, ends past the cairn (`m9_sky`), where the old marks a reader reads put
+    // the reach on the world map (#538; call 7).
+    { kind: 'npc', x: 27, y: 19, name: 'A guide', flag: 'q_sky_in', after: { flag: 'q_sky' }, until: { flag: 'q_sky_in' }, lines: [
       'A guide at the glacier\'s foot, her hands bound in rags, her fingers black with frost.',
-      '"I took a party up to where the sky meets the ice. I came down."',
-      '"I am building them a cairn. They will want the way."',
+      '"I took a party up to where the sky meets the ice. It comes right down, and there are stairs in it."',
+      '"They went on up. I came down to build them a cairn, for the way. I cannot feel my hands."',
     ] },
-    { kind: 'event', x: 27, y: 20, id: 'm9_guide_cairn', once: true, text: 'A cairn on the ice, half built, every stone set with care. It points east, at nothing.' },
+    { kind: 'event', x: 27, y: 20, id: 'm9_guide_cairn', once: true, after: { flag: 'q_sky' }, text: 'A cairn on the ice, half built, every stone set with care. It points east, at nothing.' },
+    { kind: 'sign', x: 28, y: 19, id: 'm9_marks', text: 'Cut in the rock at the ice\'s edge and scoured nearly smooth, marks like the Kilns\'.', read: 'SERVICE STAIR. CREW ONLY.', marks: 'ice_caves' },
+    { kind: 'event', x: 28, y: 20, id: 'm9_sky', once: true, after: { flag: 'q_sky_marked' }, text: 'Past her cairn the glacier climbs into cloud, and where the cloud should end the sky comes down to meet it.' },
     { kind: 'event', x: 28, y: 24, id: 'm9_glacier', once: true, text: 'The ice comes down from the rim in a wall. Snow lies on every face of it but one.' },
     { kind: 'event', x: 30, y: 24, id: 'm9_hollow', once: true, text: 'Behind the bare face, a hollow, and a camp in it forty years cold: a bedroll, a stove, an axe.' },
     { kind: 'chest', x: 30, y: 24, id: 'm9_hollow_kit', gold: 1200, items: ['ice_axe+1'] },
