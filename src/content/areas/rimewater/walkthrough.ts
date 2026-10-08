@@ -13,7 +13,12 @@
 // ridge and out by the south edge, where the pass for K10 is taken, shut until K10 is built; the
 // milestone on the ridge; the drover by the road and his bell; the lookout over both lochs; the box's
 // groups, the pike under the loch's ice and the bear alone the hardest; and the drovers' summer shieling
-// under the drift at the end of the posts.
+// under the drift at the end of the posts. Then Loch Fuar (K9, #489): in from L9 over the pines, walked,
+// the cold loch's crossing line said at each level; the crack in the ice at the loch's foot and the
+// wall of grey with its door, shut until the bay is built; the girl out of the hole gone from M9's ice
+// and waiting at the door; the drowned village under the arm's ice and the house-place above the old
+// bank; the box's groups, the pike under the ice and over the tower by night and the bears the
+// hardest; and the smith's hole under the bank where the stones under the clear ice stop.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -36,10 +41,13 @@ import type { Person } from '../../../game/people.ts';
 import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
 import { PASS } from './maps/longmere_l9.ts';
+import { DOOR } from './maps/coldmere_k9.ts';
 
 const M9 = MAP_DEFS.find((d) => d.id === 'longmere_m9')!;
 const L9 = MAP_DEFS.find((d) => d.id === 'longmere_l9')!;
 const LOCH = ATLAS.zones.find((z) => z.id === 'longmere')!;
+const K9 = MAP_DEFS.find((d) => d.id === 'coldmere_k9')!;
+const FUAR = ATLAS.zones.find((z) => z.id === 'coldmere')!;
 const person = (def: typeof M9, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 const TOWN = MAP_DEFS.find((d) => d.id === 'rime_lodge')!;
 const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => TOWN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
@@ -263,8 +271,8 @@ export const walkthrough: Walkthrough = (ok) => {
   fight(w, 'longmere_m9:m9_night_4');
   w.world.travel('longmere_m9', girl.x, girl.y);
   const words = meet(girl, w.party, heard(w.world, girl)).text;
-  ok(w.world.present(girl) && words.includes('"Are you the ones my mother sent?"') && words.includes('The doors know me.') && !!w.party.flags[WENNA_UP],
-    `after it the last one out, a girl with a nail in her fist, who will not go home: ${WENNA_UP} is set`);
+  ok(words.includes('"Are you the ones my mother sent?"') && words.includes('The doors know me.') && !!w.party.flags[WENNA_UP] && !w.world.present(girl),
+    `after it the last one out, a girl with a nail in her fist, who will not go home: ${WENNA_UP} is set, and she is gone back down`);
   listen(w);
 
   // L9 (#488), the long loch's shore: west from M9's 0,20 onto L9's 31,20, walked, in Loch Fada still,
@@ -311,4 +319,73 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const box = L9.features!.find((f) => f.kind === 'chest' && f.id === 'l9_strongbox');
   ok(box?.kind === 'chest' && box.items.includes('skinning_knife+1') && box.x === 23 && box.y === 8, 'in the shieling, the drove\'s strongbox and a drover\'s Skinning Knife +1');
+
+  // K9 (#489), Loch Fuar: west from L9's 0,21 onto K9's 31,21 under the pines, walked, and the cold
+  // loch's crossing line said at each level, as at a border walked (#166): at its floor the name alone,
+  // two under the rest in its own words, three under the harsher and the way back east still open.
+  const k9 = out.zones.find((z) => z.id === 'coldmere_k9')!;
+  const fuar = (level: number): string[] => {
+    for (const m of w.party.members) m.level = level;
+    w.world.travel('longmere_l9', 0, 21, WEST);
+    const r = w.world.move('forward');
+    return r.kind === 'moved' ? r.messages : [r.kind];
+  };
+  const fuarLow = fuar(17), fuarTwo = fuar(18), fuarIn = fuar(20);
+  ok(w.world.zone?.id === 'coldmere_k9' && w.world.state.x === k9.x + 31 && w.world.state.y === k9.y + 21 && k9.x + k9.w === l9.x, 'west from L9\'s 0,21 onto K9\'s 31,21, walked');
+  ok(fuarIn.join(' / ') === 'Loch Fuar.', `at 20, the cold loch named, no more (${fuarIn.join(' / ')})`);
+  ok(fuarTwo.join(' / ') === `Loch Fuar. ${FUAR.crossing?.harder}`, `at 18, the rest in the cold loch's own words (${fuarTwo.join(' / ')})`);
+  ok(fuarLow.join(' / ') === `Loch Fuar. ${FUAR.crossing?.warning}` && /way back east under the pines is still open/.test(fuarLow[0] ?? ''),
+    `at 17, the harsher words, and the way back still open (${fuarLow.join(' / ')})`);
+  ok(K9.start.x === 31 && K9.start.y === 21 && !(K9.exits ?? []).length, 'the box starts at its east edge under the pines, and has no way out but its edges');
+
+  // The step (§5): the crack in the ice at the loch's foot, and at its foot the wall of grey with the
+  // door in it, its reason on it, shut until the bay is built and lists it (#490), and then only to a
+  // company that has met the girl out of the hole.
+  see(w, 'coldmere_k9:k9_crack');
+  w.world.travel('coldmere_k9', DOOR.x, DOOR.y - 1, SOUTH);
+  const wall = w.world.eventsHere(), through = w.world.move('forward');
+  ok(wall.join(' / ') === DOOR.blockedText && through.kind !== 'moved' && out.at(k9.x + DOOR.x, k9.y + DOOR.y).ch === '#',
+    `at the crack's foot the wall of grey and its door, said as it stands, and no way through it yet (${wall.join(' / ')})`);
+  ok(DOOR.to === 'sleepers_bay' && [DOOR.needFlag].flat().includes(WENNA_UP) && !(K9.exits ?? []).includes(DOOR) && !MAP_DEFS.some((d) => d.id === DOOR.to),
+    'the door leads to the Sleepers\' Bay for a company that has met the girl out of the hole, shut until the bay is built and lists it');
+  // The girl out of the hole, gone back down from M9's ice once met, waits at the door with her palm on
+  // it, and the voice in the wall says its word (§5). Before her flag nobody waits there.
+  const atDoor = person(K9, 'The girl out of the hole'), met = w.party.flags[WENNA_UP];
+  w.world.travel('coldmere_k9', atDoor.x, atDoor.y);
+  delete w.party.flags[WENNA_UP];
+  const early = w.world.present(atDoor);
+  w.party.flags[WENNA_UP] = met;
+  const voice = meet(atDoor, w.party, heard(w.world, atDoor)).text;
+  ok(!early && w.world.present(atDoor) && !w.world.present(girl) && voice.includes('"Captain?"'),
+    `after the fourth night she is at the door and not at the hole, and the wall speaks to her hand: ${voice.replace(/\s+/g, ' ')}`);
+  listen(w);
+
+  // The drowned village of Fuar under the arm's ice: its bell tower's cap out of the ice (#56's 42),
+  // the street under it, and above the old bank the house-place of the lodge woman's people; the knoll
+  // over the ice.
+  for (const id of ['k9_tower', 'k9_street', 'k9_hearth', 'k9_lookout']) see(w, `coldmere_k9:${id}`);
+  listen(w);
+
+  // The box's groups, each won at its floor: the lynxes in the shore's pines, the pike under the arm's
+  // ice and over the tower's cap by night, and the bears in pairs on the far shore, the hardest.
+  for (const g of K9.encounters!.filter((e) => e.under)) ok(g.under === 'ice' && out.at(k9.x + g.x, k9.y + g.y).terrain === 'ice', `${g.id} lives under the loch's ice`);
+  const byNight = K9.encounters!.find((e) => e.id === 'k9_pike_tower')!;
+  ok(JSON.stringify(byNight.when) === JSON.stringify({ hours: 'night' }) && out.at(k9.x + byNight.x - 1, k9.y + byNight.y).ch === 'B', 'the pike over the tower\'s cap come by night only');
+  for (const g of K9.encounters!) fight(w, `coldmere_k9:${g.id}`);
+
+  // The secret: the strip of clear ice over the stones laid too square, from the tower to the old
+  // bank, and the search where they stop; the smith's hole behind the bank's face, dry, with his iron.
+  // Walked, waded, climbed or floated, it is never reached but through the face.
+  const smiths = shut(k9, [14, 18], [13, 18], [12, 18]);
+  ok(smiths.size > 600 && !smiths.reached, `the hole is shut but for the bank's face: none of K9's ${smiths.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'coldmere_k9:k9_strip');
+  w.world.travel('coldmere_k9', 14, 18, WEST);
+  let gives = false;
+  for (let i = 0; i < 20 && !gives; i++) gives = w.world.search();
+  const under = gives ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(gives && under.every((r) => r.kind === 'moved') && w.world.used('k9_hole'), 'searched where the stones stop, the bank\'s face gives, and the hole behind it can be walked into');
+  listen(w);
+  const iron = K9.features!.find((f) => f.kind === 'chest' && f.id === 'k9_iron');
+  ok(iron?.kind === 'chest' && iron.items.includes('bear_spear+1') && iron.items.includes('lann_fuar') && iron.x === 12 && iron.y === 18,
+    'in the hole, the smith\'s iron: a Bear Spear +1, and his own blade, Lann Fuar');
 };
