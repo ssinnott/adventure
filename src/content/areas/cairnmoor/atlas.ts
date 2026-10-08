@@ -15,9 +15,11 @@ const col = (x: number, y0: number, y1: number): [number, number][] => Array.fro
  * a seed would carry it on west round the coast into Kilnmouth's L6 and K6) and its east edge beside
  * N7, and N8 along its north edge under N7 and its east edge beside O8; High Moor holds O7 and P7
  * along their north edges under O6 and P6, and O8 along its west edge. The seams down N8's and O8's
- * sides stop at y 246, short of the Rimefells, which their walk leaves as it was.
+ * sides stop at y 246, short of the Rimefells, which their walk leaves as it was. With Rimewater's M9
+ * laid whole in Loch Fada (#486), the Cairnfield holds parked M8 along its south edge over M9, where
+ * the loch's walk would otherwise climb the Rimefells into it.
  */
-const CAIRNFIELD_HELD = [...row(394, 423, 190), ...col(423, 191, 221), ...row(424, 455, 222), ...col(455, 223, 246)];
+const CAIRNFIELD_HELD = [...row(394, 423, 190), ...col(423, 191, 221), ...row(424, 455, 222), ...col(455, 223, 246), ...row(392, 423, 253)];
 const HIGHMOOR_HELD = [...row(456, 497, 190), ...col(456, 222, 246)];
 
 export const ZONES: readonly AtlasZone[] = [

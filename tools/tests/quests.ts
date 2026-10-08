@@ -22,6 +22,7 @@ import { NORTH } from '../../src/game/types.ts';
 import type { Feature, MapDef } from '../../src/game/map.ts';
 import { spentId } from '../../src/game/wilds.ts';
 import { readId } from '../../src/game/inscriptions.ts';
+import { REACH_ZONES } from './pillars.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { ok, owed } from './lib.ts';
 
@@ -123,15 +124,16 @@ export function quests(): void {
     // yet is owed by whoever builds its step.
     const zoneOf = (map: string): string | undefined => (zoneOfMap(ATLAS, map) ?? zoneOfMap(ATLAS, homeMap(MAP_DEFS, map)?.id ?? ''))?.id;
     const held = new Set(THE_QUEST.chapters.flatMap((c) => c.goals.map((g) => zoneOf(g.at))));
-    const PLANNED: Record<string, string> = { ironfells: '#470', kilnsheart: '#470', kilnmouth: '#470', highmoor: '#481', cairnfield: '#481' };
+    const PLANNED: Record<string, string> = { ironfells: '#470', kilnsheart: '#470', kilnmouth: '#470', highmoor: '#481', cairnfield: '#481', longmere: '#492', coldmere: '#492' };
     const built = new Set(AREAS.map((a) => a.id as string));
-    for (const z of ATLAS.zones.filter((x) => built.has(x.area))) {
+    // The reach is off the road by design (DESIGN §9), and holds no step: Rimewater's Glacier Foot (#486).
+    for (const z of ATLAS.zones.filter((x) => built.has(x.area) && !REACH_ZONES.includes(x.id))) {
       const msg = `zone ${z.id} holds a step of the one quest`;
       if (PLANNED[z.id]) owed(held.has(z.id), msg, PLANNED[z.id]);
       else ok(held.has(z.id), `${msg}${z.maps?.length ? '' : ' (not built, and owed by no one)'}`);
     }
     // An area listed by its first map before its chapter is written: the chapter is owed by its issue.
-    const CHAPTER_OWED: Record<string, string> = { kilns: '#470', cairnmoor: '#481' };
+    const CHAPTER_OWED: Record<string, string> = { kilns: '#470', cairnmoor: '#481', rimewater: '#492' };
     const walks = AREAS.filter((a) => !existsSync(new URL(`../../src/content/areas/${a.id}/walkthrough.ts`, import.meta.url)));
     ok(AREAS.every((a) => a.chapter || CHAPTER_OWED[a.id]) && !walks.length, `every area has a chapter of the one quest, or owes it, and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
     for (const a of AREAS.filter((x) => CHAPTER_OWED[x.id])) owed(!!a.chapter, `${a.id} has a chapter of the one quest`, CHAPTER_OWED[a.id]);

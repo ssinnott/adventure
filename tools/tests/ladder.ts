@@ -185,7 +185,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
   {
     level: 22, name: "Rimewater's finds",
     from: {
-      'ice_axe+1': ['rimewater', '#486'], 'skinning_knife+1': ['rimewater', '#488'], 'bear_spear+1': ['rimewater', '#489'],
+      'ice_axe+1': ['rimewater', ''], 'skinning_knife+1': ['rimewater', '#488'], 'bear_spear+1': ['rimewater', '#489'],
       'guides_staff+1': ['rimewater', '#491'], 'hunters_bow+1': ['rimewater', '#490'], 'plate+4': ['rimewater', '#490'],
     },
     classes: {

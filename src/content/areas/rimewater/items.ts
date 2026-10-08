@@ -1,7 +1,7 @@
 // Rimewater's items: Rime Lodge's furrier's step on the ladder (#535), the act's last, and the same
-// with a plus that its boxes and the Sleepers' Bay give up by 22. Made ahead of the area
-// (ITEMS_AHEAD in content/index.ts), as the Kilns' are: the first box (#486) takes the table into
-// its Area and the lodge (#487) sells the step.
+// with a plus that its boxes and the Sleepers' Bay give up by 22. Made ahead of the area (#535), as
+// the Kilns' were, until its first box (#486) took the table into its Area; the lodge (#487) sells the
+// step.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, NO_CASTER_HEAVY } from '../../items.ts';
 import { ITEMS as THORNMARK } from '../thornmark/items.ts';
