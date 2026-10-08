@@ -22,7 +22,7 @@ const HIGHMOOR_HELD = [...row(456, 497, 190), ...col(456, 222, 246)];
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'highmoor', name: 'High Moor', area: 'cairnmoor', band: [18, 19], maps: [{ map: 'highmoor_n7', at: [424, 190] }, { map: 'highmoor_o7', at: [456, 190] }], seeds: [[462, 212], [488, 230], ...HIGHMOOR_HELD],
+    id: 'highmoor', name: 'High Moor', area: 'cairnmoor', band: [18, 19], maps: [{ map: 'highmoor_n7', at: [424, 190] }, { map: 'highmoor_o7', at: [456, 190] }, { map: 'highmoor_o8', at: [456, 222] }], seeds: [[462, 212], [488, 230], ...HIGHMOOR_HELD],
     // The crossing line said in snow (#166, #476): how the moor feels to a company under its floor.
     crossing: { harder: 'The snow begins here, and the land is harder than the road behind.', warning: 'Snow, and nothing on this moor would spare you. The road behind is still open.' },
   },
