@@ -1,6 +1,33 @@
 {
   "version": 4,
   "maps": {
+    "anvil_stone": {
+      "size": "16x16",
+      "used": [
+        "as_back",
+        "as_east",
+        "as_hollow",
+        "as_hollow_chest",
+        "as_iron",
+        "as_lanes",
+        "as_quiet_back",
+        "as_quiet_cut",
+        "as_quiet_lanes",
+        "as_ridge",
+        "as_ripples",
+        "as_west"
+      ],
+      "groups": [
+        "as_elders_east",
+        "as_elders_west",
+        "as_slag_lane",
+        "as_slag_west",
+        "as_warden"
+      ],
+      "doors": [
+        "14,2"
+      ]
+    },
     "anvilhall": {
       "size": "16x16",
       "used": [
@@ -779,6 +806,7 @@
         "n8_wind",
         "o5_burnt",
         "o5_cairn",
+        "o5_closed",
         "o5_cut",
         "o5_hollow",
         "o5_hollow_chest",
@@ -2010,6 +2038,7 @@
     "o7_watcher_met",
     "papers_read",
     "q_ailith",
+    "q_anvil_closed",
     "q_ashcombe",
     "q_ashcombe_done",
     "q_ashcombe_who",
@@ -2248,6 +2277,7 @@
   ],
   "items": [
     "antidote",
+    "anvil_heart",
     "anvil_shard",
     "ashen_chisel",
     "axe",
@@ -2278,7 +2308,9 @@
     "crabshell_buckler",
     "crossbow",
     "customs_chit",
+    "cutters_chisel",
     "cutters_hammer",
+    "cutters_pick",
     "dagger",
     "dagger+1",
     "drovers_goad",

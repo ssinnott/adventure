@@ -79,4 +79,10 @@ export const ITEMS: readonly ItemDef[] = [
   // plus beside the Tiefzeche's, for the forge's hammer has three hands, the knight's, the paladin's
   // and the cleric's.
   P(forgeHammer, 1, { id: 'cutters_hammer', name: "Cutter's Hammer +1" }),
+  // The Anvil Stone's Rift (#465): the first cutter's tools in the hollow against the Stone's cut face,
+  // off the ladder, a pick and a chisel the forge's mattock and seax with a plus under names of their
+  // own; and the Warden's heart, a keepsake as the Heart of the Sunder is, which no hand-in takes.
+  P(mattock, 1, { id: 'cutters_pick', name: "Cutter's Pick +1" }),
+  P(seax, 1, { id: 'cutters_chisel', name: "Cutter's Chisel +1" }),
+  { id: 'anvil_heart', name: 'Heart of the Anvil', slot: 'none', price: 0 },
 ];
