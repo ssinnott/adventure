@@ -13,13 +13,15 @@ box, and the briefs. Its work is filed under #437 (Phase 1.3, #431): the doc (#4
 drawings (#483) and the country behind, parked (#484). Figures are measured on main at `6032251`
 (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Its first four boxes are built, N7, the road up onto the moor (#476, §4.2), which lists the area,
-N8, the Cairnfield's box (#479, §4.5), O7, Fionnlios's box (#477, §4.3) and O8, the bog (#478,
-§4.4); its seven monsters are drawn (§3), and the rest is to build. Its content is
-`src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, and its side quests in
-`quests.ts`, to come); it has no businesses, so no rooms. Its ids: the area `cairnmoor`, its zones
-`highmoor` and `cairnfield`, the dungeon `cairns` (the id stays under the new name, NAMES §3).
+Every box is built but the parked M7 and M8 (§4.7): N7, the road up onto the moor (#476, §4.2),
+which lists the area, N8, the Cairnfield's box (#479, §4.5), O7, Fionnlios's box (#477, §4.3), O8,
+the bog (#478, §4.4) and Carn Dubh, the dungeon through N8's door (#480, §4.6). Its seven monsters
+are drawn and every one is placed (§3); its chapter, its side quests and the country behind are to
+build. Its content is `src/content/areas/cairnmoor/` (maps, monsters, items, climate, its part of
+the world map and its walkthrough; its chapter of the one quest, The Ring, in `chapter.ts`, and its
+side quests in `quests.ts`, to come); it has no businesses, so no rooms. Its ids: the area
+`cairnmoor`, its zones `highmoor` and `cairnfield`, the dungeon `cairns` and `cairns2` (the ids stay
+under the new name, NAMES §3).
 
 ---
 
@@ -64,7 +66,9 @@ walks to 3,973 squares and the Cairnfield to 3,847. Laying O8 (#478) whole in Hi
 more: the Cairnfield gives High Moor 676 and Glacier Foot gives it 81, High Moor takes 12 that were
 no zone's and gives 4 to none, and 62 change hands elsewhere on the world, none on a built map; O8's
 own water, the pools and the stream at the corner, takes 5 more of High Moor's squares than the
-atlas's shallows did. With O8 High Moor walks to 4,733 squares and the Cairnfield to 3,171.
+atlas's shallows did. With O8 High Moor walks to 4,733 squares and the Cairnfield to 3,171. Laying
+Carn Dubh (#480) moves no square: its two plates, at 430,246 and 430,252, stand on N8's, where the
+planned ones stood.
 
 **The grid** (EXPANSION §8.2; docs/areas/shelf.md §1). Cairnmoor is the M to P columns from row 6
 to row 9. The land worth a map is six boxes: N7 and N8 down the drove road; O7 and O8, the ring and
@@ -112,8 +116,8 @@ crosses it in snow (STORY; MONSTERS §7.2).
 
 ## 3. What is built
 
-Four boxes, N7 the area's first, which lists the area (#476), N8, the Cairnfield's (#479), O7,
-Fionnlios's (#477) and O8, the bog (#478):
+Four boxes and a dungeon, N7 the area's first, which lists the area (#476), N8, the Cairnfield's
+(#479), O7, Fionnlios's (#477), O8, the bog (#478) and Carn Dubh, through N8's door (#480):
 
 - **The road up onto the moor** (N7, `highmoor_n7`, core, band 18; #476): the drove road on from the
   Kilns' N6 over the low hills, past the milestone where they give out and the drovers' shelter at
@@ -131,8 +135,9 @@ Fionnlios's (#477) and O8, the bog (#478):
 - **The Cairnfield's box** (N8, `cairnfield_n8`, core, band 18–20; #479): the drove road on south
   from N7 over the tarn's stream and down the box's west side under the crags to its head above the
   Rimefells, where the long lake is first seen and the notch leads down to Rime Lodge; east of the
-  road the field of cairns, a score of them, Carn Dubh the biggest with its door shut in its side,
-  one standing open and the Watcher's grave apart; east of the field the marsh at the bog's edge.
+  road the field of cairns, a score of them, Carn Dubh the biggest with its door in its side, the
+  way into the Cairns (§4.6), one standing open and the Watcher's grave apart; east of the field
+  the marsh at the bog's edge.
   Snow lies over the moor and a pool among the first cairns is frozen hard, with a face under the
   ice. The coach stands stopped on the road, its traces cut and no horses, its door open and the
   luggage on its roof still corded; under its seat a strongbox (§4.5). A hermit in Carn Dubh's lee
@@ -160,27 +165,40 @@ Fionnlios's (#477) and O8, the bog (#478):
   and the hill folk's cup-stone in the south-west corner. Five groups, every one by night: bog
   bodies at the body's cutting, two flights of three bog lights, three moor hounds on the east hills
   and two tor trolls with four ravens on the tors. By day the bog is empty.
+- **Carn Dubh** (`cairns` and `cairns2`, dungeon, two levels of 16 by 16, band 18–20; #480): in at
+  the door in N8's biggest cairn, open now, a low passage of laid slabs with the count of the dead
+  cut in its wall in fives; bog bodies come up along it. A chamber under one slab of roof with a
+  cell of the dead in rows to the north and another to the south, a shroud standing over each row, a
+  wight over it and gold at every throat. East the Watcher's cell, newer, squared and mortared: the
+  Watcher on the slab in a watchman's coat with the first page of his tally under his hands and a
+  wight over him that does not come back. Last the end cell, where a stair is cut down into the
+  hill's own rock. Under the cairn the tool marks stop and the walls are smooth: a hall with the
+  dead in rows down both sides and two courts of wights; at its end a seat cut from one stone with
+  the Cairn King on it, crowned, a boss that curses. Behind the seat a door that nothing opens. Off
+  the stair, found from the rows, a cell of the dead with the richest grave-gold and the Hill Torc
+  (§4.6).
 
 Its atlas rows are charted in `src/content/areas/cairnmoor/atlas.ts`, the area's own `atlas` since
 N7 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were,
 as the Kilns' were before their first box (docs/areas/kilns.md §3): the zones with their bands (High
 Moor 18–19, with N7, O7 and O8 laid on it, its crossing line said in its own words and its lines
-held by seeds, §1, §9; the Cairnfield 19–20, with N8 laid on it, §1), Carn Dubh's two plates at
-19–20 and the sites, the Stone Ring at 462,214 and the Watcher's Hut at 466,208 on O7 and the Cairns
-at 430,240, planned. Its links are the drove road from the Kilns, the Cairns' way in and the drove
-road down to Longmere.
+held by seeds, §1, §9; the Cairnfield 19–20, with N8 laid on it, §1), Carn Dubh's two plates
+(`cairns` at 430,246 and `cairns2` at 430,252) and the sites, the Stone Ring at 462,214 and the
+Watcher's Hut at 466,208 on O7 and Carn Dubh at 430,240, at its door on N8. Its links are the drove
+road from the Kilns, the Cairns' way in and the drove road down to Longmere.
 
 Its row on the curve and its share of the act's gear ladder are in (#535). The row is in
 `src/content/progression.ts`: band 18–20, next 20, window 4,000, owed to #437 while the area is
-built box by box, with N7's, N8's, O7's and O8's 7,992 xp a member and 5,930 gold the clear's floor
-(§8). O7's Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of the area
-(`ITEMS_AHEAD`, `src/content/index.ts`) as the Kilns' step was, until N7 took the table into its
-Area, and owed to #477 until it was placed, in O7's hollow (§4.3); N7's cache holds a second of the
-Kilns' Forge Hammer +1 (§4.2) and O8's hoard a second of the Kilns' Seax +1 (§4.4). Of the systems
-it waits on, the rest of #432's, ice and lying snow underfoot (#536; heather is #162's),
-regeneration and curse (#537), the bot that plays them (#541) and the drove road's coach (#539) are
-built, and docs/SLICE.md and docs/MONSTERS.md say what each does; the coach runs once Kilnhaven
-(#469) and Rime Lodge (#487) are built.
+built box by box, with N7's, N8's, O7's, O8's and Carn Dubh's 12,941 xp a member and 8,155 gold the
+clear's floor (§8). O7's Banded Staff +1 is in `src/content/areas/cairnmoor/items.ts`, made ahead of
+the area (`ITEMS_AHEAD`, `src/content/index.ts`) as the Kilns' step was, until N7 took the table
+into its Area, and owed to #477 until it was placed, in O7's hollow (§4.3); N7's cache holds a
+second of the Kilns' Forge Hammer +1 (§4.2), O8's hoard a second of the Kilns' Seax +1 (§4.4) and
+Carn Dubh's cell off the stair the Hill Torc, a piece of its own (§4.6). Of the systems it waits on,
+the rest of #432's, ice and lying snow underfoot (#536; heather is #162's), regeneration and curse
+(#537), the bot that plays them (#541) and the drove road's coach (#539) are built, and
+docs/SLICE.md and docs/MONSTERS.md say what each does; the coach runs once Kilnhaven (#469) and Rime
+Lodge (#487) are built.
 
 Drawn ahead of the boxes that place them (#483): the lights, a new family, with the Bog Light
 (`src/ui/monsters/lights.ts`); and the six on frames that exist, the Raven on the birds', the Bog
@@ -189,14 +207,14 @@ wraith's and the Tor Troll on the ogre's. Their defs are in
 `src/content/areas/cairnmoor/monsters.ts`, the area's own since N7 lists it (`AHEAD`,
 `src/content/index.ts`, listed them until then), and each was owed in `UNPLACED`
 (`tools/tests/maps.ts`) to the first box whose brief places it (§4): N7 places the ravens, the bog
-bodies and the hounds (#476), N8 the wights (#479) and O7 the lights and the troll (#477); the King
-is owed to Carn Dubh (#480). §9 has the decisions.
+bodies and the hounds (#476), N8 the wights (#479), O7 the lights and the troll (#477) and Carn Dubh
+the King (#480), so that none is owed now. §9 has the decisions.
 
 ## 4. What is still to build
 
-All of it but N7, N8, O7 and O8, built (#476, #479, #477, #478; §4.2, §4.5, §4.3, §4.4): 7,692
-squares of land, 6,779 of them walkable, the plan's figures (§1). On the grid the plan is four boxes
-and a dungeon, with two boxes behind, and the four hold 3,945 of those squares:
+All of it but M7 and M8, built (#476, #479, #477, #478, #480; §4.2 to §4.6): 7,692 squares of land,
+6,779 of them walkable, the plan's figures (§1). On the grid the plan is four boxes and a dungeon,
+with two boxes behind, and the four hold 3,945 of those squares:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -204,7 +222,7 @@ and a dungeon, with two boxes behind, and the four hold 3,945 of those squares:
 | O7 | Fionnlios's box | High Moor | core | 18–19 | 986 (heather 552, hills 263, rock 88, grass 83), 38 shallow | the ring at 462,214; the Watcher's Hut at 466,208; the tarn below the ring and the piper's fire | the voice inside the ring | #477 |
 | O8 | The bog | High Moor | country | 18–19 | 965 (heather 637, hills 159, marsh 120, mountain 23), 42 shallow | the peat bog and its lights; the tors; the peat-cutter | none | #478 |
 | N8 | The Cairnfield's box | the Cairnfield | core | 18–20 | 970 (heather 858, marsh 59, hills 28, rock 25), 54 shallow | Carn Dubh's way in at 430,240; the cairns; the drove road down to the Rimefells at 424,250; the coach stopped in the snow | the road's head above the lakes | #479 |
-| | Carn Dubh | | dungeon, two levels of 16×16 | 19–20 | | the oldest dead; the Watcher's first page; the Cairn King | | #480 |
+| | Carn Dubh | | dungeon, two levels of 16×16 | 18–20 | | the oldest dead; the Watcher's first page; the Cairn King | none: the door behind the seat stays shut | #480 |
 | M7, M8 | The country behind | the Cairnfield | country, parked | 18–19 | 856 (grass 381, heather 285, hills 164), 46 shallow, and 834 (heather 491, grass 240), 70 shallow | the grass west of the road under the Kilns' hills | none | #484 |
 
 The core is the three boxes that hold a step or carry the road to one (N7, O7 and N8), built at
@@ -234,7 +252,7 @@ The places, as the atlas and the docs have them:
 | The tarn | O7 | the Bard's second prestige, Skald: a piper camped by the tarn below the ring (DESIGN §5, #19); a camp (#434, call 9) | 38 squares of shallow on O7 |
 | The bog | O8 | the Bog Light's ground, the Rift at its thinnest (MONSTERS §2.1, §7.2); the body with the rope and the ring (#56's 38) | marsh, 120 squares of High Moor |
 | The tors | O8, O7 | trolls by night, stone with faces by day (MONSTERS §7.2); the stonecutter's faces (#56's 39) | hills, lettered nowhere |
-| Carn Dubh (the Cairns) | N8, and below | the oldest dead; the Cairn King (MONSTERS §7.2); the last Watcher's grave (#56's 37) | a planned barrow at 430,240 |
+| Carn Dubh (the Cairns) | N8, and below | the oldest dead; the Cairn King (MONSTERS §7.2); the last Watcher's grave (#56's 37) | a barrow at 430,240 and two plates, 430,246 and 430,252 |
 | The drove road | N7, N8 | the coach from Kilnhaven to Rime Lodge, no stop on the moor (#434, call 9; #539); the coach that did not come, stopped in the snow (#56's 40, Rimewater's #494) | the road links at 430,196 and 424,250 |
 | The Rimefells | N8's south edge | the ridge to Rimewater; the long lake seen from its head (STORY) | mountain along y 256 to 264 |
 
@@ -258,10 +276,10 @@ settled in its issue, and what the Kilns teach changes them.
 - **Side quests** are #56's 37 to 39, placed as §6 has them (#482); 40 is Rimewater's, found here.
 - **Finds** are the act's ladder (#535): the Kilns' towns' gear by 18 and the same with a plus by
   19. The moor's own plus on the ladder is O7's Banded Staff +1; N7 and O8 hold seconds of the
-  Kilns' Forge Hammer +1 and Seax +1, lines three classes share; N8's and Carn Dubh's pluses are
-  their own, off the ladder. All sit inside the band's window of 4,000. Nothing on the moor sells or
-  trains: Anvilhall and Kilnhaven train to 19 behind and Rime Lodge to 23 ahead, and the coach runs
-  between (#539).
+  Kilns' Forge Hammer +1 and Seax +1, lines three classes share; N8's plus and Carn Dubh's Hill Torc
+  are their own, off the ladder. All sit inside the band's window of 4,000. Nothing on the moor
+  sells or trains: Anvilhall and Kilnhaven train to 19 behind and Rime Lodge to 23 ahead, and the
+  coach runs between (#539).
 - **Camps.** The Watcher's Hut and the piper's fire are camps of EXPANSION §5.3's kind, where a
   company rests safely (#434, call 9), and the ring's inside is proposed as a third (§9), since the
   chapter sleeps there.
@@ -518,8 +536,9 @@ settled in its issue, and what the Kilns teach changes them.
   19, 6 to 8, a face under its ice; four bog bodies come up out of it at 17,9; eight ravens sit by
   the first cairns at 12,9. Cairns on every side then, some knee high and some taller than a man,
   and crags west of the road with their lee bare to the heather. Carn Dubh, the oldest and the
-  biggest, at 6 to 10, 16 to 20, has a door of slabs shut fast in its west side at 6,18 (430,240),
-  facing the road at 5,18; a hermit sits in its lee at 11,16. The field's own cairn at 24,17 holds
+  biggest, at 6 to 10, 16 to 20, has a door of slabs in its west side at 6,18 (430,240), facing the
+  road at 5,18, shut fast until #480 and now the way into the Cairns (§4.6); a hermit sits in its
+  lee at 11,16. The field's own cairn at 24,17 holds
   300 gold and a Sapphire Vial. The open cairn at 12,22 stands thrown open, a cist of slabs with
   only snow in it; three cairn wights wait south of it at 12,24. Bare footprints at 9,23 go east in
   among the cairns, none coming back. Apart from the rest, at 21 to 22, 28, the Watcher's grave
@@ -530,13 +549,13 @@ settled in its issue, and what the Kilns teach changes them.
   2,29 and, from 1,28, the long lake lying white under ice far below; by night three moor hounds
   keep 3,25, the box's farthest group.
   - **Seams.** North, N7's 7,31 to N8's 7,0 for the drove road and N7's 31,31 to N8's 31,0 for the
-    stream. The door, 6,18, leads to `cairns` 7,15 facing north (a proposal) and its way back lands
-    on 5,18 facing west; the notch, 0,28, leads to `longmere_m9` 22,8 (414,262) facing west and its
-    way back lands on 1,28 facing east. Both are jumps exported from the map (`DOOR`, `NOTCH`) and
-    listed in no exits yet: #480 lists the one and M9 (#438) the other. M9's north-east corner meets
-    the same diagonal as N8's south-west, so its edge check will need the same shoulder. West, M8
-    (#484, parked): no road, the stream out at 0,7. East, O8 (#478): heather and marsh, no road.
-    South, N9, cut: hills and heather.
+    stream. The door, 6,18, leads to `cairns` 1,8 facing east (#480, §9) and its way back lands on
+    5,18 facing west; the notch, 0,28, leads to `longmere_m9` 22,8 (414,262) facing west and its way
+    back lands on 1,28 facing east. Both are jumps exported from the map (`DOOR`, `NOTCH`); the door
+    is in the map's exits since #480, the notch in none yet: M9 (#438) lists it. M9's north-east
+    corner meets the same diagonal as N8's south-west, so its edge check will need the same
+    shoulder. West, M8 (#484, parked): no road, the stream out at 0,7. East, O8 (#478): heather and
+    marsh, no road. South, N9, cut: hills and heather.
   - **Measured.** A company at 18 wins every fight and manages 8.68 fights to a rest, inside the aim,
     with 3% of its days ending in a fight broken off; it walks the Cairnfield's road, the ravens, the
     open cairn's wights and the hounds, every time; each of the five groups is won ten fights in
@@ -546,7 +565,7 @@ settled in its issue, and what the Kilns teach changes them.
     points. The curve's rank correlation is 0.87, the ravens nearest at 14 steps (level 18) and the
     open cairn's wights the hardest at 31 (level 19). It claims ice and curse as new (§7).
 
-### 4.6 Carn Dubh (#480): dungeon, two levels of 16×16, band 19–20
+### 4.6 Carn Dubh (#480): dungeon, two levels of 16×16, band 18–20
 
 - **Purpose.** The area's dungeon: the oldest cairn and the oldest dead on the road, the Cairn King
   under it, crowned and older than the crown (MONSTERS §7.2), and the last Watcher's grave with
@@ -572,6 +591,47 @@ settled in its issue, and what the Kilns teach changes them.
 - **Finds.** The grave-gold; a named piece of the hill folk's, a Torc or a Blade, off the ladder,
   the dungeon's to name (#535); the Watcher's first page, a letter read from the pack (#76).
 - **Pay.** About 2,200 xp a member.
+
+- **As built** (#480, 8 October): two levels of 16 by 16, hand-built, the cairn at band 18–20 (the
+  floor one under the brief's 19) and under it 19–20 (§9). **The cairn** (`cairns`): N8's door, open
+  now (§4.5), lets a company in to the passage's first square, 1,8, facing east; the cairn lets it
+  out onto the road before the door, facing west. A passage of laid slabs, low enough to stoop and
+  smelling of the bog, runs in under the cairn (2,8); strokes are cut in its wall in fives, row
+  under row, on into the dark (6,8): there is nothing to read. Bog bodies come up along it in two
+  groups of four (4,8 and 7,8). At 9,8 it opens on a chamber under one great slab of roof, with
+  cells off it on three sides. North, the dead in three rows, a twist of gold at every throat and a
+  shroud standing over each row (9,4), three wights over them (9,3) and 250 gold (8,2); south,
+  another cell of the dead in rows, the gold gone green (9,12), three wights (9,13) and 250 gold
+  (9,14). East, the Watcher's cell, newer, its stones squared and mortared (13,3): a man on the slab
+  in a watchman's coat with his hands folded on a page and one wight over him (12,3), which does not
+  come back. Under his hands a chest (14,3) holds the page, The Watcher's Page, a letter read from
+  the pack. In the end cell the floor is the hill's own rock, and a stair is cut down into it (13,8
+  and 14,8). **Under the cairn** (`cairns2`): the stair comes down through the bedrock to 7,14 with
+  the marks of the tools on every step (7,13); at 7,11 they stop and the walls are smooth, going up
+  out of the light without a join, the Sunder's, seen again and not named. At 7,10 a hall opens with
+  the dead in rows down both sides of it, heads to the wall and feet to the stair; two courts of
+  four cairn wights keep it (5,7 and 9,5). At its end a seat cut from one stone (7,5), and on it the
+  King, crowned (7,3): level 20, 1,800 hit points, 16d8+14, cursing at 0.2, a boss that does not
+  come back. Behind the seat, at 7,1, the smooth wall has a door in it, fine as a hair at its edges,
+  with nothing to open it by: no lock, no flag and no way through. Its line (7,2) ends *Beside it,
+  at a girl's shoulder, nothing.* The secret is the cell off the stair: searched at the stair's head
+  beside the rows (7,10), the wall at 6,10 gives on a cell of the dead laid close, heads to the
+  stair and feet to the hall, the other way about (5,10), with the richest grave-gold (900) and the
+  Hill Torc in a chest (3,11).
+  - **Seams.** N8's door, 6,18, to `cairns` 1,8 facing east and back from 1,8 to N8's 5,18 facing
+    west (429,240); the cairn's stair, 14,8, to `cairns2` 7,14 facing north and back from 7,14 to
+    13,8 facing west. The secret wall is 6,10 and the door behind the seat 7,1. There is no other
+    way in or out.
+  - **Measured.** A company at 18 wins every fight in the cairn and manages 10.70 fights to a rest,
+    off the aim (7.5 to 9.5) and inside the limit (6 to 12), with 0.3% of its days ending in a fight
+    broken off; two under, at 16, it wins every fight too, owed to #18. Under the cairn a company at
+    19 wins 85.7% of the fights, off the aim of 90% and inside the limit of 80%; it manages 9.20
+    fights to a rest, inside the aim, and the King is won 57% at 19 and 94% at 21, set off the boss
+    line (§9). Carn Dubh pays 4,948 xp a member for the brief's 2,200 and holds 2,225 gold. Density
+    100.0% within 7 steps on both levels, the furthest 2 and 3, with no sign among their 17 and 11
+    points. The curve's rank correlation is 0.89 in the cairn (the bog bodies nearest at 3 steps,
+    level 18; the north rows' wights the hardest at 13, level 19) and 0.50 under it (the court
+    nearest at 9, level 19; the King the hardest at 11, level 20).
 
 ### 4.7 M7 and M8, the country behind (#484): country, band 18–19, parked
 
@@ -653,11 +713,13 @@ spent first. The fire the trolls ask for is the sorcerer's and the druid's by 15
 
 New in Cairnmoor, for the novelty check (EXPANSION §5.4): the lights, a new family (O7 claims it);
 snow lying and ice underfoot (#536); regeneration and curse (#537); a voice that is an event and no
-monster; a monster that is a landmark by day; a crossing met stopped on the road (#539). Its
-landmarks: a stone ring, a cairnfield, a tor, a tarn. The area's `novel` claims each as a box places
-it, since the check asks that what is claimed be used: snow underfoot with N7 (#476), ice and curse
-with N8 (#479), the lights and the ring with O7 (#477), the rest with theirs. Regeneration and the
-drain of spell points cannot be claimed: the check reads neither (§9, #477's 13).
+monster; a monster that is a landmark by day; a crossing met stopped on the road (#539); a boss that
+curses (#480). Its landmarks: a stone ring, a cairnfield, a tor, a tarn. The area's `novel` claims
+each as a box places it, since the check asks that what is claimed be used: snow underfoot with N7
+(#476), ice and curse with N8 (#479), the lights and the ring with O7 (#477), the rest with theirs.
+Regeneration and the drain of spell points cannot be claimed: the check reads neither (§9, #477's
+13). Carn Dubh claims nothing: its boss that curses is the curse N8 claimed, and the novelty check
+passes without it.
 
 ## 8. The numbers
 
@@ -675,8 +737,9 @@ drain of spell points cannot be claimed: the check reads neither (§9, #477's 13
   pays by level (#159), so a company that arrives at 18 earns the shares as written and one that
   arrives at 21 earns less; the curve's row reports what a clear falls short of as owed to #437
   until the boxes exist. As built: N7 1,803 (#476), N8 2,081 (#479), O7 1,803 (#477) and O8 2,305
-  (#478), 905 over its brief's 1,400 (§9, #478's 5), so the four hold 7,992 of the 14,667 and the
-  shares stand at about 10,900, with Carn Dubh's 2,200 and the side quests' 700 to come.
+  (#478), 905 over its brief's 1,400 (§9, #478's 5). Carn Dubh pays 4,948 (#480), 2,748 over its
+  brief's 2,200 (§9, #480's 15). The five hold 12,941 of the 14,667, and the shares stand at about
+  13,640, with the side quests' 700 to come (and M7 and M8's 1,200, if they are built).
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's
   chests and drops must carry the gold to Rime Lodge, and the coach's fare (#539) with it. The band's
@@ -687,7 +750,10 @@ drain of spell points cannot be claimed: the check reads neither (§9, #477's 13
   each. O7 holds 1,610 (#477), its share by the brief's 1,600: 260 in the cairn and 1,350 in the
   hollow, with the staff; its monsters carry none. O8 holds 1,400 (#478), its share by the brief's
   1,400: 260 in the cairn on the east hills, with a Sapphire Vial, and 1,140 in the hoard, with the
-  Seax +1; its monsters carry none. The four hold 5,930 of the 8,880.
+  Seax +1; its monsters carry none. Carn Dubh holds 2,225 (#480), its share by the brief's 2,200:
+  900 in the cell off the stair, with the Hill Torc, 250 in each of the two cells of rows, the
+  fifteen wights' own 20 to 60 each and the King's 150 to 300; its bog bodies carry none. The five
+  hold 8,155 of the 8,880.
 - **The gate.** The gate check (`tools/tests/gate.ts`, #38) holds each box at its own floor
   (docs/areas/thornmark.md §9, 17): a company at 18 wins nine in ten of N7's fights and walks the
   drove road resting at its camp; one at 16 wins no more than one in four. The Cairn King is won
@@ -700,14 +766,20 @@ drain of spell points cannot be claimed: the check reads neither (§9, #477's 13
   every time, 8.88 fights to a rest; one at 16 wins every fight too, owed to #18 (§4.3). On O8 a
   company at 18 wins every fight and manages 7.94 fights to a rest, but 24.7% of its days end in a
   fight broken off, the trolls mending each round unless burned and the gate's company having no
-  fire (the gate does not check the figure); one at 16 wins every fight too, owed to #18 (§4.4).
+  fire (the gate does not check the figure); one at 16 wins every fight too, owed to #18 (§4.4). On
+  Carn Dubh a company at 18 wins every fight in the cairn and manages 10.70 fights to a rest, off
+  the aim and inside the limit; one at 16 wins every fight too, owed to #18. Under the cairn a
+  company at 19 wins 85.7% of the fights, off the aim and inside the limit, with 9.20 fights to a
+  rest; the Cairn King is won 57% at 19 and 94% at 21 (§4.6). Cairnmoor's 26 groups two under their
+  maps' floors are won 96.2% of the fights, owed to #18 as the Kilns' are.
 - **Density.** Core boxes at the Foreland's floor, the bog at the looser one (EXPANSION §5.3). The
   ring's inside is held to no feature but the camp, the voice and the bare ground's line, so it
   needs no exception. As built: N7 99.2% within 8 steps and the furthest 10, with one sign among its
   26 points (#476). N8 99.6% within 8 steps and the furthest 9, with no sign among its 31 points
   (#479). O7 99.3% within 8 steps and the furthest 10, with no sign among its 31 points (#477). O8
   100.0% within 12 steps, the country floor, and the furthest 9, with no sign among its 28 points
-  (#478).
+  (#478). Carn Dubh's two levels 100.0% within 7 steps, the furthest 2 and 3, with no sign among
+  their 17 and 11 points (#480).
 
 ## 9. Decisions
 
@@ -873,7 +945,8 @@ Decided by delegate for #479, each the owner's to overturn:
    strongbox as the fare, 300 in the field's cairn and the rest on the six wights.
 6. **Carn Dubh's door is in the biggest cairn's west side, facing the road,** which runs west of the
    cairns as §4.5 has it, where the atlas's trail ran east of the site. `DOOR` is exported and
-   listed nowhere until #480 lists it; its arrival on the Cairns' 7,15 is a proposal, for #480 to set.
+   listed nowhere until #480 lists it; its arrival on the Cairns' 7,15 was a proposal, for #480 to
+   set, and is 1,8 (§9, #480's 7).
 7. **The road down to Rime Lodge is taken, not walked** (`NOTCH`): the atlas's trail crosses N8's
    west edge at the very corner on a diagonal, which no square can pass the edge check on (the
    scaffold's draft fails there). Zones that do not meet join by an exit kept as a jump
@@ -893,7 +966,7 @@ Decided by delegate for #479, each the owner's to overturn:
 13. **The hermit stands in Carn Dubh's lee** and says Carn Dubh is the oldest, the rest piled round
     it "to keep it in", and that a coach stopped in the night and he did not go to look.
 14. **The door's line `n8_door` is not once,** as L6's `l6_gate`: it says the door is shut for as
-    long as it is.
+    long as it is; #480 dropped it when the door opened (§9, #480's 7).
 15. **Two under is owed to #18** (`cairnfield_n8: under` in the gate's `OWED`), as N7's and the
     Kilns' boxes' are: a company of 16 beats every group.
 16. **The seeds are unchanged,** the zone lines holding. `CAIRNFIELD_HELD`'s row along N8's north
@@ -1021,6 +1094,55 @@ Decided by delegate for #478, each the owner's to overturn:
     `stoneRing` is: over the seams from N8's 31,10 and O7's 1,31, the two persons, a face by day and
     not by night, the groups, the lights rising by night and the hoard.
 
+Decided by delegate for #480, each the owner's to overturn:
+
+1. **Two levels,** `cairns` (Carn Dubh) and `cairns2` (Under Carn Dubh), their plates on the atlas
+   at 430,246 and 430,252, six apart as the Tiefzeche's are. The planned row's name and band go, as
+   #462's did, and the site at 430,240 loses `planned`.
+2. **The brief is §4.6, not the issue's draft:** the secret is the cell off the stair, hinted by the
+   rows, and the door behind the seat that nothing opens, not a passage onto the bog hinted by a
+   draught.
+3. **The cairn is band 18–20, not 19–20:** the curve asks a map's hardest group to stand at its
+   floor plus one, 20, and nothing but the King is 20; lowered by one as N2 and N8 were (#460's 2,
+   #479's 1). Two under it is owed to #18 (`cairns: under`), as the Tiefzeche's upper levels are.
+   Under the cairn is 19–20, so the King is judged at 19 and 21 as #480 asks.
+4. **Four groups of wights for the brief's three:** under the cairn the gate's share won at the
+   floor counts the King, and beside one group of three it read 78.5%, under its limit of 80%, with
+   14.08 fights to a rest (limit 12.25). The King's court is two groups of four, one each side of
+   the hall: 85.7% and 9.20. The cairn keeps a group of three over each of its two cells of rows.
+5. **The Cairn King is set off the boss line, as the Foreman was:** 1,800 hit points and 16d8+14 for
+   the line's 1,113 and 20d8+20, which won 81% at 19 and 91% at 21; now 57% at 19 and 94% at 21.
+   Named in `OFF_LINE` (#480) and in `BOSSES` under `cairnfield`, the zone its door opens from.
+6. **The Watcher's wight is a cairn wight alone, a guardian by its `slainText`** (no respawn), and
+   the first page lies in a chest under his hands behind it, not in a drop: a drop needs a def of
+   its own, and a def a drawing of its own (the art check: no two defs share a sprite kind), which
+   is #483's lane.
+7. **The way in lands on the passage's first square, 1,8, facing east,** not the proposal's 7,15
+   facing north (#479's 6): the door is in the cairn's west side, so the passage runs east from it,
+   and 7,15 is the map's edge row. The way back, 1,8, lands on N8's 5,18 facing west, the road
+   before the door, not the door. `n8_door` is dropped (#479's 14), N4's `n4_cage` the precedent;
+   `DOOR` has a label now.
+8. **The named piece is the Hill Torc** (`hill_torc`): no slot, it halves cold from the pack as
+   Saltreach's Holy Symbol of the Tide does, 1,500 (the ladder's middle at 19, inside the window of
+   4,000), off the ladder; one line of text, the twisted gold and its two hounds' heads.
+9. **The gold is 2,225,** Carn Dubh's share by the brief's 2,200 of the 8,880, as N7 and N8 were
+   held: 900 in the cell off the stair with the torc, 250 in each cell of rows, the fifteen wights'
+   own 20 to 60 and the King's 150 to 300.
+10. **No light below ground and nothing on the walls:** both levels `bare`, no bog light placed.
+11. **Under the cairn takes the Sunder's smooth palette** (`the_sunder2`'s colours), §4.6's smooth
+    wall seen again and not named; the door behind the seat is a wall with a door in it (legend
+    `Z`), as CREW ONLY was: no lock, no flag, no exit. Its line ends *Beside it, at a girl's
+    shoulder, nothing.*
+12. **The issue's count of the dead is kept** as strokes cut in fives in the passage wall: no
+    script, so nothing to read.
+13. **The hint stands beside the secret wall:** `cd2_rows` at 7,10, the stair's head, the wall at
+    6,10; the cell's dead lie heads to the stair and feet to the hall, the other way about.
+14. **Points:** the cairn 10 features (3 chests) and 5 groups; under it 7 features (1 chest) and 3
+    groups. Eight groups in all, the brief's seven and one for the gate (4), not eight a level.
+15. **No group is cut for pay:** Carn Dubh pays 4,948 xp a member for its brief's 2,200, and the
+    area's built shares stand at 12,941; with the side quests' 700 and M7 and M8's 1,200 still to
+    come they make 14,841, about the ask of 14,667 and well under 1.4 times it, about 20,500.
+
 ## 10. Names
 
 Cairnmoor's naming pass, by the rules of `docs/NAMES.md`, chosen for #435. The moor's folk and
@@ -1083,3 +1205,16 @@ Cut from a brief as built (§4):
 - **O8** (#478, §4.4): nothing is cut. The brief's four named groups are built and a fifth with them
   (§9, #478's 4). The issue's draft of its secret, a drowned causeway with a dry line, is not built;
   the hoard in the cutting stands in its place, as §4.4 has it (§9, #478's 1).
+- **Carn Dubh** (#480, §4.6): the issue's draft of its secret, a passage onto the bog hinted by a
+  draught, is not built; the cell off the stair and the door behind the seat stand in its place, as
+  §4.6 has them (§9, #480's 2). The brief's eight groups a level are eight in all, its own seven and
+  one more (§9, #480's 14). No group is cut for pay (§9, #480's 15).
+
+Owed by a box as built (§4):
+
+- **The Watcher's page** (#480, §4.6): it lies in the chest under the Watcher's hands, `cd1_page`,
+  and #482 must name the item, `watchers_page`, in the quest (#56's 37). A wight that carries it
+  instead needs a drawing of its own (#483's lane) and the page in its def's `drops` at chance 1
+  (§9, #480's 6).
+- **The door behind the seat** (#480, §4.6): a wall with a door drawn in it, no lock, no flag and no
+  exit. Nothing in Carn Dubh is a step of the chapter, which #481 builds.
