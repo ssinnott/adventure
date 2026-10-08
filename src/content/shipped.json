@@ -1514,6 +1514,47 @@
         "14,4"
       ]
     },
+    "sleepers_bay": {
+      "size": "16x16",
+      "used": [
+        "sb1_door",
+        "sb1_foot",
+        "sb1_ice",
+        "sb1_light",
+        "sb1_tallies",
+        "sb1_voice",
+        "sb1_water"
+      ],
+      "groups": [
+        "sb1_keeper",
+        "sb1_knockers1",
+        "sb1_knockers2"
+      ],
+      "doors": []
+    },
+    "sleepers_bay2": {
+      "size": "16x16",
+      "used": [
+        "sb2_back",
+        "sb2_beds",
+        "sb2_locker",
+        "sb2_locker_chest",
+        "sb2_path",
+        "sb2_row1",
+        "sb2_row2",
+        "sb2_row3",
+        "sb2_stair"
+      ],
+      "groups": [
+        "sb2_keepers1",
+        "sb2_keepers2",
+        "sb2_keepers3",
+        "sb2_matron"
+      ],
+      "doors": [
+        "7,2"
+      ]
+    },
     "smugglers_cove": {
       "size": "16x16",
       "used": [
@@ -2256,6 +2297,7 @@
     "mace",
     "mace+1",
     "marker_glass",
+    "matron_cap",
     "mattock",
     "mattock+1",
     "mender_spool",
