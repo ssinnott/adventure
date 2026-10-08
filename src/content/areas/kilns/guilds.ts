@@ -27,13 +27,13 @@ export const GUILDS: readonly GuildQuest[] = [
   },
   {
     id: 'wardens_cages', guild: 'wardens', rank: 3, after: FOURTH_RANKS_OPEN,
-    offer: ['Captain Ordgar keeps his voice under the yard\'s noise. "Carts go up the Kilns\' trail by night with their lamps hooded, and come back light. Find out what they carry."'],
+    offer: ['Captain Ordgar keeps his voice under the yard\'s noise. "Carts go into the Kilns by night with their lamps hooded, and come out light. Find out what they carry."'],
     goal: { seen: 'deep_mines2:dm2_cages' },
     paid: ['"Cages, and the straw fresh." Ordgar writes it in a book he keeps in his boot. "The walls will not hear it from me."'],
     early: ['"You have been down the Tiefzeche already, and seen the cages?" Ordgar writes it in a book he keeps in his boot.'],
     pay: { gold: 300, xp: 2400 },
     title: 'The Night Carts',
-    entries: [{ id: 'sent', when: { flag: 'q_wardens_cages' }, text: 'Captain Ordgar of the Drillyard wants to know what the carts carry that go up the Kilns\' trail by night.' }],
+    entries: [{ id: 'sent', when: { flag: 'q_wardens_cages' }, text: 'Captain Ordgar of the Drillyard wants to know what the carts carry that go into the Kilns by night.' }],
     goals: [
       { when: { seen: 'deep_mines2:dm2_cages' }, text: 'Report to the Warden Drillyard in Helmstow.' },
       { when: { flag: 'q_wardens_cages' }, text: 'Find where the night carts go, down the shaft at the Tiefzeche\'s headworks.' },
