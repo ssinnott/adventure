@@ -6,6 +6,8 @@ import { RIME_LODGE } from './maps/rime_lodge.ts';
 import { LONGMERE_L9 } from './maps/longmere_l9.ts';
 import { COLDMERE_K9 } from './maps/coldmere_k9.ts';
 import { COLDMERE_K10 } from './maps/coldmere_k10.ts';
+import { SLEEPERS_BAY } from './maps/sleepers_bay.ts';
+import { SLEEPERS_BAY2 } from './maps/sleepers_bay2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -14,7 +16,7 @@ import { GUILDS } from './guilds.ts';
 
 export const AREA = {
   id: 'rimewater' as const,
-  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10],
+  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
@@ -29,6 +31,7 @@ export const AREA = {
     fogText: 'Fog comes up off the open water and lies on the ice.', thunderText: 'Thunder rolls down off the glacier.' },
   // Rime Lodge's rooms (#496), opened by the town's businesses (#487).
   interiors: INTERIORS,
-  novel: { families: ['cats'], terrain: [], mechanics: ['encounter:under'], landmarks: [] },
+  // The cats and a group on ice with M9 (#486); the keepers with the bay (#490).
+  novel: { families: ['cats', 'keepers'], terrain: [], mechanics: ['encounter:under'], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES },
 } satisfies Area;

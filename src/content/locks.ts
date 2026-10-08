@@ -22,5 +22,14 @@ export const MOST_AN_AREA = 1;
 /** The road spends about one an act: four, to start. */
 export const MOST_ON_THE_ROAD = 4;
 
-/** Empty: the one lock the road had, the flag on the pass, went with #40. */
-export const LOCKS: readonly StoryLock[] = [];
+/**
+ * Act I and Act II spend none: the one lock the road had, the flag on the pass, went with #40. Act III
+ * spends one (#440, call 4 of #434).
+ */
+export const LOCKS: readonly StoryLock[] = [
+  {
+    flag: 'q_wenna_up', map: 'coldmere_k9', x: 24, y: 30,
+    what: 'The door under Loch Fuar\'s ice, at the crack\'s foot: a wall of grey with a door in it, no handle and no seam, which opens under the hand of the girl out of the hole and for nobody before her.',
+    reason: 'The Sleepers\' Bay is the act\'s turn, and a door that knows a hand of the line is what the act has been about since the Deep Mines\' CREW ONLY. It waits on her coming up on the fourth night at Rime Lodge, and nothing else in Rimewater does (docs/areas/rimewater.md §5).',
+  },
+];

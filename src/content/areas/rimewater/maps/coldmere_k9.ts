@@ -15,10 +15,9 @@ import { WENNA_UP } from './rime_lodge.ts';
 /**
  * The way down to the Sleepers' Bay (#490): the door in the wall of grey at the crack's foot, 24,30,
  * which opens for one hand in the world (docs/areas/rimewater.md §5, call 4), shut to a company that
- * has not met the girl out of the hole (`WENNA_UP`), with its reason on it. It lands on the bay's stair
- * at 8,1, facing south, a guess #490 may move. An exit leads only to a built map, so the bay lists it in
- * this map's exits, opens the square, drops `k9_door`, signs the lock in to src/content/locks.ts and
- * adds the way back up onto 24,29, the crack's foot.
+ * has not met the girl out of the hole (`WENNA_UP`), with its reason on it: Act III's one story lock,
+ * signed in to src/content/locks.ts (#440, #490). It lands on the bay's landing at 8,1, facing south,
+ * still in the ice; the way back up lands on 24,29, the crack's foot, facing north.
  */
 export const DOOR: Exit = { x: 24, y: 30, to: 'sleepers_bay', tx: 8, ty: 1, tf: SOUTH, needFlag: WENNA_UP,
   blockedText: 'A wall of grey under the ice, with a door in it: no handle, no seam, and no frost on it anywhere.',
@@ -32,6 +31,7 @@ export const COLDMERE_K9: MapDef = {
   band: [20, 22],
   region: 'rimewater',
   start: { x: 31, y: 21, facing: WEST },
+  exits: [DOOR],
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWiii',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWiii',
@@ -63,7 +63,7 @@ export const COLDMERE_K9: MapDef = {
     'ppppppp^^^^^^^,,,,,,,iii:iiiippp',
     'pppppppp^^^^^^,,,,,,,iii:iiiippp',
     'ppppppppp^^^^^^,,,,,,iii:iiiiipp',
-    'pppppppppp,^^^^,,,,,,i#####iiipp',
+    'pppppppppp,^^^^,,,,,,i##D##iiipp',
     'ppppppppppppp^,,,,,,,iiiiiiii~pp',
   ],
   features: [
@@ -97,7 +97,6 @@ export const COLDMERE_K9: MapDef = {
     // waits there.
     { kind: 'event', x: 28, y: 30, id: 'k9_foot', once: true, text: 'At the loch\'s foot the ice gives out, and black water runs in under it from the south, smoking.' },
     { kind: 'event', x: 24, y: 27, id: 'k9_crack', once: true, text: 'A crack in the ice, a stride wide, going down into the dark. Its edges are worn smooth.' },
-    { kind: 'event', x: 24, y: 29, id: 'k9_door', text: 'A wall of grey under the ice, with a door in it: no handle, no seam, and no frost on it anywhere.' },
     { kind: 'npc', x: 24, y: 28, name: 'The girl out of the hole', after: { flag: WENNA_UP }, lines: [
       'The girl out of the hole, waiting at the door. She lays her palm on it.',
       'A soft voice in the wall: "Captain?" She flinches.',

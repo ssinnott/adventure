@@ -14,21 +14,25 @@
 // drover by the road and his bell; the lookout over both lochs; the box's groups, the pike under the
 // loch's ice and the bear alone the hardest; and the drovers' summer shieling under the drift at the end
 // of the posts. Then the high pass (K10, #491): on from L9's pass, taken, not walked, the cold loch's
-// crossing line said after the pass's own at each level, and back; in from K9 over its south edge,
-// walked; the road square to square to the pass's mouth and out by the west edge for J11, where the world
-// ends; the milestone at the pass's foot, counted along the roads; the step at the mouth, the pilgrims
-// camped below it and the first peak from the shoulder; the box's groups, the pike under the lake's
-// shore ice and the bears the hardest; and the Lanterns' cache under the dark lamp's jar-shelf, its jar
-// full. Then Loch Fuar (K9, #489): in from L9 over the pines, walked,
-// the cold loch's crossing line said at each level; the crack in the ice at the loch's foot and the
-// wall of grey with its door, shut until the bay is built; the girl out of the hole gone from M9's ice
-// and waiting at the door; the drowned village under the arm's ice and the house-place above the old
-// bank; the box's groups, the pike under the ice and over the tower by night and the bears the
-// hardest; and the smith's hole under the bank where the stones under the clear ice stop.
+// crossing line said after the pass's own at each level, and back; in from the cold loch (K9) over its
+// south edge, walked, the land not named again; the road square to square to the pass's mouth and out by
+// the west edge for J11, where the world ends; the milestone at the pass's foot, counted along the
+// roads; the step at the mouth, the pilgrims camped below it and the first peak from the shoulder; the
+// box's groups, the pike under the lake's shore ice and the bears the hardest; and the Lanterns' cache
+// under the dark lamp's jar-shelf, its jar full. Then Loch Fuar (K9, #489): in from L9 over the pines,
+// walked, the cold loch's crossing line said at each level; the crack in the ice at the loch's foot and
+// the wall of grey with its door, Act III's one story lock, shut with its reason on it to a company that
+// has not met the girl out of the hole; the girl gone from M9's ice and waiting at the door; the drowned
+// village under the arm's ice and the house-place above the old bank; the box's groups, the pike under
+// the ice and over the tower by night and the bears the hardest; and the smith's hole under the bank
+// where the stones under the clear ice stop. Then the Sleepers' Bay (#490), through the door: the stair
+// under the ice and the bay of beds, the Matron in the last row and the locker behind it.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import type { Feature } from '../../../game/map.ts';
+import { GameMap } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/map.ts';
+import { LOCKS } from '../../locks.ts';
 import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { DROVE_COACH } from '../../crossings.ts';
 import { buy, item } from '../../../game/items.ts';
@@ -436,18 +440,22 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(fuarTwo.join(' / ') === `Loch Fuar. ${FUAR.crossing?.harder}`, `at 18, the rest in the cold loch's own words (${fuarTwo.join(' / ')})`);
   ok(fuarLow.join(' / ') === `Loch Fuar. ${FUAR.crossing?.warning}` && /way back east under the pines is still open/.test(fuarLow[0] ?? ''),
     `at 17, the harsher words, and the way back still open (${fuarLow.join(' / ')})`);
-  ok(K9.start.x === 31 && K9.start.y === 21 && !(K9.exits ?? []).length, 'the box starts at its east edge under the pines, and has no way out but its edges');
+  ok(K9.start.x === 31 && K9.start.y === 21 && (K9.exits ?? []).length === 1 && K9.exits![0] === DOOR, 'the box starts at its east edge under the pines, and has no way out but its edges and the door under the ice');
 
   // The step (§5): the crack in the ice at the loch's foot, and at its foot the wall of grey with the
-  // door in it, its reason on it, shut until the bay is built and lists it (#490), and then only to a
-  // company that has met the girl out of the hole.
+  // door in it, Act III's one story lock (#440): shut, its reason on it, to a company that has not met
+  // the girl out of the hole, and open to one that has (walked in `sleepersBay`).
   see(w, 'coldmere_k9:k9_crack');
+  const had = w.party.flags[WENNA_UP];
+  delete w.party.flags[WENNA_UP];
   w.world.travel('coldmere_k9', DOOR.x, DOOR.y - 1, SOUTH);
-  const wall = w.world.eventsHere(), through = w.world.move('forward');
-  ok(wall.join(' / ') === DOOR.blockedText && through.kind !== 'moved' && out.at(k9.x + DOOR.x, k9.y + DOOR.y).ch === '#',
-    `at the crack's foot the wall of grey and its door, said as it stands, and no way through it yet (${wall.join(' / ')})`);
-  ok(DOOR.to === 'sleepers_bay' && [DOOR.needFlag].flat().includes(WENNA_UP) && !(K9.exits ?? []).includes(DOOR) && !MAP_DEFS.some((d) => d.id === DOOR.to),
-    'the door leads to the Sleepers\' Bay for a company that has met the girl out of the hole, shut until the bay is built and lists it');
+  const through = w.world.move('forward');
+  w.party.flags[WENNA_UP] = had;
+  ok(through.kind === 'blocked' && through.reason === DOOR.blockedText && w.world.state.y === k9.y + DOOR.y - 1 && out.at(k9.x + DOOR.x, k9.y + DOOR.y).ch === 'D',
+    `at the crack's foot the wall of grey and its door, shut with its reason on it before the girl out of the hole is met (${through.kind === 'blocked' ? through.reason : through.kind})`);
+  const lock = LOCKS.find((l) => l.map === K9.id);
+  ok((K9.exits ?? []).includes(DOOR) && DOOR.to === 'sleepers_bay' && [DOOR.needFlag].flat().includes(WENNA_UP) && LOCKS.length === 1 && lock?.flag === WENNA_UP && lock.x === DOOR.x && lock.y === DOOR.y,
+    'the door leads to the Sleepers\' Bay, and is Act III\'s one story lock, signed in on its square and its flag');
   // The girl out of the hole, gone back down from M9's ice once met, waits at the door with her palm on
   // it, and the voice in the wall says its word (§5). Before her flag nobody waits there.
   const atDoor = person(K9, 'The girl out of the hole'), met = w.party.flags[WENNA_UP];
@@ -488,4 +496,103 @@ export const walkthrough: Walkthrough = (ok) => {
   const iron = K9.features!.find((f) => f.kind === 'chest' && f.id === 'k9_iron');
   ok(iron?.kind === 'chest' && iron.items.includes('bear_spear+1') && iron.items.includes('lann_fuar') && iron.x === 12 && iron.y === 18,
     'in the hole, the smith\'s iron: a Bear Spear +1, and his own blade, Lann Fuar');
+  sleepersBay(w, ok);
 };
+
+/**
+ * The Sleepers' Bay (#490): in at the door under the ice for a company that has met the girl out of
+ * the hole, and out again onto the crack's foot; the stair at 20, the door's inside, the ice giving out
+ * on the smooth walls, the voice's wall and the way the water runs, the tallymen's crews and the first
+ * keeper won; the bay at 21, the beds and the faces in them, the keepers in the rows won, the Matron
+ * won in the last row and her cap; the door at the back, read and shut; and the locker behind the last
+ * row, found from the path, with the bay's two named pieces.
+ */
+function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
+  const [B1, B2] = ['sleepers_bay', 'sleepers_bay2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const k9 = buildMaps()[OUTDOORS].zones.find((z) => z.id === K9.id)!;
+  const at = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+  w.level = 20;
+
+  // In at the door: onto the landing in the ice, facing in; stepped back into, the door lets the
+  // company back up onto the crack's foot, facing up the crack. Nothing else in the bay shuts.
+  w.world.travel(K9.id, DOOR.x, DOOR.y - 1, SOUTH);
+  const inside = w.world.move('forward');
+  ok(inside.kind === 'moved' && w.world.state.mapId === B1.id && w.world.state.x === B1.start.x && w.world.state.y === B1.start.y && w.world.state.facing === SOUTH && inside.messages.includes(DOOR.label!),
+    `the door opens under her palm and lets the company down onto the landing in the ice (${at()}: ${inside.kind === 'moved' ? inside.messages.join(' / ') : inside.kind})`);
+  const back = w.world.move('back');
+  ok(back.kind === 'moved' && w.world.zone?.id === K9.id && w.world.state.x - k9.x === DOOR.x && w.world.state.y - k9.y === DOOR.y - 1 && w.world.state.facing === NORTH,
+    `and lets it back up onto the crack's foot, facing up the crack (${at()})`);
+  ok([B1, B2].every((d) => (d.exits ?? []).every((e) => !e.shut && !e.needFlag)), 'nothing shuts a way inside the bay: the door under the ice is its one lock');
+
+  /** Whether a map's square is reached from its start without passing its secret doors, or swimming, climbing or floating. */
+  const reached = (d: MapDef, to: readonly [number, number]): boolean => {
+    const m = new GameMap(d), seen = new Set<number>(), todo = [[d.start.x, d.start.y]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!, k = y * m.width + x;
+      if (seen.has(k) || !m.inBounds(x, y) || m.at(x, y).door === 'secret' || m.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
+      seen.add(k);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    return seen.has(to[1] * m.width + to[0]);
+  };
+
+  // The stair (20): the door's inside, the ice giving out on walls too smooth to be stone, the light
+  // with no lamp and the voice's wall; the way the water runs and the tallies on its wall; the crews on
+  // both ways down, and the first keeper alone at the stair's foot.
+  const stair = new GameMap(B1), bay = new GameMap(B2);
+  ok(stair.palette.wallStyle === 'smooth' && bay.palette.wallStyle === 'smooth' && B1.bare === true && B2.bare === true && stair.at(B1.start.x, B1.start.y).terrain === 'ice',
+    'the landing is still in the ice, the walls below it are smooth, and nothing hangs on any wall in the bay');
+  for (const id of ['sb1_door', 'sb1_ice', 'sb1_light', 'sb1_voice', 'sb1_water', 'sb1_tallies']) see(w, `${B1.id}:${id}`);
+  const inner = B1.features!.find((f) => f.kind === 'event' && f.id === 'sb1_door'), voice = B1.features!.find((f) => f.kind === 'event' && f.id === 'sb1_voice');
+  ok(inner?.kind === 'event' && inner.text.endsWith('at a girl\'s shoulder: THE BLOOD OPENS THE DOOR.') && voice?.kind === 'event' && voice.text.includes('"Captain?"'),
+    'on the door\'s inside, at a girl\'s shoulder, THE BLOOD OPENS THE DOOR, and in the wall a voice asks its one word');
+  const crews = B1.encounters!.filter((g) => g.id.startsWith('sb1_knockers')), first = B1.encounters!.find((g) => g.id === 'sb1_keeper')!;
+  ok(crews.length === 2 && crews.every((g) => g.monsters.includes('tallyman') && g.monsters.includes('knocker') && !!g.respawn) && first.monsters.join() === 'bay_keeper',
+    'the tallymen\'s crews that did not come up, on both ways down, and the first keeper alone at the stair\'s foot');
+  for (const g of B1.encounters!) fight(w, `${B1.id}:${g.id}`);
+  see(w, `${B1.id}:sb1_foot`);
+  ok(reached(B1, [6, 14]) && reached(B1, [11, 11]), 'the stair and the way the water runs both come down to the stair\'s foot, with nothing searched for');
+
+  // The bay (21): down the last of the stair into the long hall, the beds and a face in the first, the
+  // rows of every people, the keepers four to a row won, and the Matron in the last row, won, who never
+  // comes back, and leaves her cap.
+  walkThrough(w, B1.id, 6, 13, SOUTH, B2.id, 1);
+  w.level = 21;
+  ok(w.world.state.x === B2.start.x && w.world.state.y === B2.start.y && w.world.state.facing === NORTH, `the stair comes out at the bay's foot, facing up the hall (${at()})`);
+  for (const id of ['sb2_stair', 'sb2_beds', 'sb2_row1', 'sb2_row2', 'sb2_row3']) see(w, `${B2.id}:${id}`);
+  const beds = B2.features!.find((f) => f.kind === 'event' && f.id === 'sb2_beds');
+  ok(beds?.kind === 'event' && beds.text.startsWith('Rows of long glass beds') && bay.cells.filter((c) => c.solid === 'pillar').length === 40,
+    'rows of long glass beds, forty of them, and in the first a face you have seen before');
+  const rows = B2.encounters!.filter((g) => g.id.startsWith('sb2_keepers'));
+  ok(rows.length === 3 && rows.every((g) => g.monsters.length === 4 && g.monsters.every((m) => m === 'bay_keeper') && !!g.respawn) && MONSTERS.bay_keeper?.inflict?.cond === 'asleep',
+    'keepers between the rows, four to a row, whose touch puts to sleep');
+  for (const g of rows) fight(w, `${B2.id}:${g.id}`);
+  const bag = w.party.bag.length;
+  fight(w, `${B2.id}:sb2_matron`);
+  const matron = B2.encounters!.find((g) => g.id === 'sb2_matron')!;
+  ok(matron.monsters.join() === 'matron' && !matron.respawn && !!matron.slainText?.endsWith('The sleepers sleep on.') && w.party.bag.slice(bag).includes('matron_cap'),
+    'the Matron in the last row falls and never comes back, the sleepers sleep on, and she leaves her cap');
+
+  // The door at the back: Kiln-script over it, and a wall with a door in it that opens for nobody. No
+  // flag, no lock, no exit.
+  const script = B2.features!.find((f) => f.kind === 'sign' && f.id === 'sb2_back');
+  w.world.travel(B2.id, 3, 3, NORTH);
+  const shut = w.world.move('forward');
+  ok(script?.kind === 'sign' && !!script.read && shut.kind === 'blocked' && w.world.state.y === 3 && bay.at(3, 2).door === 'door' && bay.at(3, 2).solid === 'wall' && !bay.exitAt(3, 2) && !LOCKS.some((l) => l.map.startsWith('sleepers_bay')),
+    `the door at the back, Kiln-script over it, does not open: a wall with a door in it, and no lock (${shut.kind === 'blocked' ? shut.reason : shut.kind})`);
+
+  // The secret: the keepers' path worn up the middle runs on past the last row to the wall and stops;
+  // searched there, the wall gives on the locker, where the keepers put what the sleepers came with.
+  // Walked, it is never reached but through that wall.
+  ok(!reached(B2, [7, 1]) && reached(B2, [10, 3]), 'the locker is reached only through the back wall, and the path runs from the stair to the last row');
+  see(w, `${B2.id}:sb2_path`);
+  w.world.travel(B2.id, 7, 3, NORTH);
+  let gives = false;
+  for (let i = 0; i < 20 && !gives; i++) gives = w.world.search();
+  const into = gives ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(gives && into.every((r) => r.kind === 'moved') && w.world.used('sb2_locker'), 'searched where the path stops, the back wall gives on the locker');
+  const locker = B2.features!.find((f) => f.kind === 'chest' && f.id === 'sb2_locker_chest');
+  ok(locker?.kind === 'chest' && locker.items.join() === 'hunters_bow+1,plate+4' && locker.gold === 1500 && item('hunters_bow+1').name === 'Bogha Fionn +1' && item('plate+4').name === 'Luireach Dubh +4',
+    'in the locker, four hundred years of pockets: 1,500 gold, Bogha Fionn and Luireach Dubh');
+  listen(w);
+}

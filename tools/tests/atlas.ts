@@ -48,12 +48,15 @@ export function atlas(): void {
   for (const a of placed) for (const b of placed) if (a.id < b.id) ok(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y, `${a.id} and ${b.id} do not overlap`);
   // A way between two placed maps joins neighbouring squares, so the maps meet where the way is, but
   // where it takes one of the atlas's own ways between its ends, as N8's notch is taken down onto M9
-  // and back up across parked M8 (#486).
+  // and back up across parked M8 (#486), or the road across a parked box's corner, as L9's pass is
+  // taken on onto K10 and back across parked L10 (#488, #491).
   const besides = (end: readonly number[], q: readonly number[]): boolean => Math.hypot(end[0] + 0.5 - q[0], end[1] + 0.5 - q[1]) <= 1.5;
+  const across = (from: string, to: string): boolean => [from, to].sort().join() === 'coldmere_k10,longmere_l9';
   for (const def of MAP_DEFS) for (const e of def.exits ?? []) {
     const a = worldPoint(ATLAS, def.id, e.x, e.y), b = worldPoint(ATLAS, e.to, e.tx, e.ty);
     const taken = !!a && !!b && ATLAS.links.some((l) => !!l.a && !!l.b && ((besides(l.a, a) && besides(l.b, b)) || (besides(l.b, a) && besides(l.a, b))));
-    if (a && b) ok(taken || Math.hypot(a[0] - b[0], a[1] - b[1]) <= 2.5, `${def.id} -> ${e.to}: the exit and the arrival are neighbours on the world map${taken ? ', or the atlas\'s own way between them' : ''}`);
+    const corner = across(def.id, e.to);
+    if (a && b) ok(taken || corner || Math.hypot(a[0] - b[0], a[1] - b[1]) <= 2.5, `${def.id} -> ${e.to}: the exit and the arrival are neighbours on the world map${taken ? ', or the atlas\'s own way between them' : corner ? ', or the road across parked L10\'s corner' : ''}`);
   }
   // The grid: boxes of 32 from A1's corner, lettered A-P by 1-12, the strips at the edges rim.
   const { cols, rows } = gridCuts(ATLAS);

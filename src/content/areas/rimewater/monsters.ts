@@ -21,6 +21,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the Sleepers' Bay (#490), a controller on MONSTERS §4.4's line at 21: its touch puts to sleep, at 0.3 a hit, and it mends
   // the most hurt of its group one turn in four (at one in two the harness's bot broke off a fifth of its days at fifteen rounds)
   { id: 'bay_keeper', name: 'Bay Keeper', plural: 'Bay Keepers', sprite: 'bay_keeper', kind: 'machine', look: 'Tall and grey, with too many fingers, and gentle.', level: 21, hp: 248, ac: 22, attack: 12, dice: 4, sides: 8, bonus: 2, speed: 12, xp: 833, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.25 }, tint: '#8d9399', size: 1.1 },
-  // the bay's last row (#490), its boss at 22 on MONSTERS §4.4's boss line, for #490's gate to tune; it never comes back
-  { id: 'matron', name: 'The Matron', plural: 'Matrons', sprite: 'matron', kind: 'machine', look: 'It has tended them for four hundred years.', level: 22, hp: 1299, ac: 24, attack: 15, dice: 22, sides: 8, bonus: 27, speed: 13, xp: 13973, gold: [0, 0], tint: '#b0b1ab', size: 1.45 },
+  // the bay's last row (#490), its boss at 22; it never comes back, it mends itself one turn in ten and it leaves its
+  // cap. Off MONSTERS §4.4's boss line (1,299 hp, 22d8+27, won 79% at 21 and 93% at 23), its hit points, its blow and
+  // its mending are set for #490's gate: about half at its floor, 21, and nearly always at 23
+  { id: 'matron', name: 'The Matron', plural: 'Matrons', sprite: 'matron', kind: 'machine', look: 'It has tended them for four hundred years.', level: 22, hp: 1900, ac: 24, attack: 15, dice: 17, sides: 8, bonus: 18, speed: 13, xp: 13973, gold: [0, 0], cast: { spells: ['heal'], chance: 0.1 }, drops: [{ item: 'matron_cap', chance: 1 }], tint: '#b0b1ab', size: 1.45 },
 ];
