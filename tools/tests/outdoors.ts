@@ -169,12 +169,23 @@ export function outdoors(): void {
   // and grass either side of it, the mountain between them on both sides of the seam and the stream at
   // the corner. The stream runs on at the north edge's corner into O4, past it the hills and the
   // mountain, the world's end where its ring faces nothing built; the hills and the crag, run on to the
-  // rim, against P5, cut; and the grass, the hills and the crag against O6 (#466), not built yet.
+  // rim, against P5, cut; and the grass, the hills and the crag against O6 (#466).
   const o5 = out.zones.find((z) => z.id === 'kilnsheart_o5')!;
   ok(westOf(o5) === '~^^^^' + 'M'.repeat(10) + '^^^^' + ','.repeat(5) + ':' + ','.repeat(7) && northOf(o5) === '~~' + '^'.repeat(8) + '%'.repeat(17) + '^'.repeat(5),
     `O5's west edge meets N5's with the cutters' track, the hills and the mountain, and its north edge is the stream at the corner and the hills under the world's end over O4 (${westOf(o5)}; ${northOf(o5)})`);
   ok(eastOf(o5) === '^'.repeat(22) + 'r'.repeat(10) && southOf(o5) === ',,,,,' + '^'.repeat(8) + 'r'.repeat(19),
     `O5's east edge is the hills and the crag against P5, and its south edge the grass, the hills and the crag against O6 (${eastOf(o5)}; ${southOf(o5)})`);
+  // Feuerstollen's box (O6, #466): in from O5 over the grass and the hills square for square, the crag
+  // running on across the seam, and from N6 over the grass and the heather square for square; no road
+  // crosses either. On the south the hills and the grass against Cairnmoor's O7 (#477, below), square
+  // for square but the corner, the box laid whole over the squares of High Moor's that lay in its
+  // south; and on the east the crag, the hills and the ash against P6, cut; the mountain at the corner
+  // the world's end.
+  const o6 = out.zones.find((z) => z.id === 'kilnsheart_o6')!;
+  ok(northOf(o6) === southOf(o5) && westOf(o6) === eastOf(n6),
+    `O6's north edge meets O5's square for square with the grass, the hills and the crag, and its west edge N6's with the grass and the heather (${northOf(o6)}; ${westOf(o6)})`);
+  ok(southOf(o6) === '^'.repeat(10) + ','.repeat(14) + '^'.repeat(7) + '%' && eastOf(o6) === 'rr^^' + 'a'.repeat(25) + '^%%',
+    `O6's south edge is the hills and the grass against O7, and its east edge the crag, the hills and the ash against P6 (${southOf(o6)}; ${eastOf(o6)})`);
   // The road up onto the moor (N7, #476), Cairnmoor's first box: in from N6's hills by the drove road
   // at column 3, N6's heather running on south at columns 22 to 29; out by the south edge at column 7
   // for N8 among the heather, the snow and the marsh, the stream from the tarn clipping the corner; the
@@ -248,6 +259,11 @@ export function outdoors(): void {
   const o7 = out.zones.find((z) => z.id === 'highmoor_o7')!;
   ok(westOf(o7) === eastOf(n7) && northOf(o7) === '^'.repeat(10) + ','.repeat(14) + '^'.repeat(8),
     `O7's west edge meets N7's east edge square for square, the track at row 22 and the stream at the corner, and its north edge is the hills and the grass under O6 (${westOf(o7)}; ${northOf(o7)})`);
+  // O6 (#466), laid over the 388 squares of High Moor's that lay in its south, meets O7 there: its
+  // south edge is O7's north edge square for square but the corner, the rim's mountain, the world's end,
+  // where O7's is hills; no road, no river and no wall crosses the line.
+  ok(southOf(o6).slice(0, 31) === northOf(o7).slice(0, 31) && southOf(o6)[31] === '%' && northOf(o7)[31] === '^' && !/[=~W]/.test(southOf(o6) + northOf(o7)),
+    `O6's south edge meets O7's north edge square for square but the corner, hills, grass and hills again, with no road or water across it (${southOf(o6)}; ${northOf(o7)})`);
   ok(eastOf(o7) === '^'.repeat(30) + '%%' && southOf(o7) === '~' + 'h'.repeat(16) + '**hh' + '^'.repeat(9) + 'M%',
     `O7's east edge is the hills under the rim, and its south edge the heather and the hills against O8 with the stream out at the west corner and the rim's shoulder at the east (${eastOf(o7)}; ${southOf(o7)})`);
   // The bog (O8, #478): in from N8 by the heather and the marsh at the bog's edge, the stream at the
