@@ -14,6 +14,8 @@ import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../../crossings.ts';
 
 /** The manifests read by the harbourmaster, the Compact ship's cargo named: the chapter's step at Kilnhaven (#470). */
 export const MANIFESTS_READ = 'manifests_read';
+/** The dwarf on the quay heard, who says the corridors under the Tiefzeche run south toward the lakes (§5); the chapter may read it. */
+export const DWARF_MET = 'kh_dwarf_met';
 
 export const KILNHAVEN: MapDef = {
   id: 'kilnhaven',
@@ -81,7 +83,7 @@ export const KILNHAVEN: MapDef = {
       'An old dwarf sits on a bollard with a pick across his knees, looking at the sea and not the town.',
       '"Forty years I cut the Tiefzeche. Under the bottom the corridors run south. Under the moor, under the world. Toward the lakes."',
       '"I go no further down. I came to look at the sea."',
-    ], flag: 'kh_dwarf_met' },
+    ], flag: DWARF_MET },
     { kind: 'sign', x: 4, y: 4, text: 'The board of sailings, two names chalked on it: SALTMOUTH. CINDERPORT.' },
     // The harbourmaster's office, a room with her in it (as Anvilhall's great hall holds its thane):
     // she reads the manifests for a company that asks, and the Compact's cargo is named (§5).

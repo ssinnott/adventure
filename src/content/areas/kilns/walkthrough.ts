@@ -40,9 +40,10 @@
 // the store's clerk; the box's groups won at its floor; and the bonded store found from the sealed
 // row. Then Kilnhaven (#469), in at L6's gate and out again: a company rests, buys the act's first
 // step at the smith at a quarter more, open to it still when the Stone was taken, and trains to 19;
-// hears the harbourmaster read the manifests and the dwarf on the quay say where the corridors run;
-// takes the ferry over to Saltmouth's quay and back, a save made there loading there; and finds the
-// ship's master and the coachman selling nothing toward towns not built. Erzkamm (N2,
+// hears the harbourmaster read the manifests and the dwarf on the quay say where the corridors run,
+// and meets Tallis's man on the street; takes the ferry over to Saltmouth's quay and back, a save
+// made there loading there, and the coach to Rime Lodge's coach house and back; and finds the ship's
+// master selling nothing toward a town not built. Erzkamm (N2,
 // #460): up the open fell out of N3 with nothing said, the box's groups won at its floor, the scholar
 // at the wall, and the doors behind the blank face found from the worn floor, the wall beside it read
 // by a reader alone; last, the Barbarian's second prestige, taught by Hartmut at the cave's mouth
@@ -79,7 +80,7 @@ import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
 import { TEAR } from './maps/kilnsheart_o5.ts';
 import { GATE as HAVEN_GATE } from './maps/kilnmouth_l6.ts';
-import { MANIFESTS_READ } from './maps/kilnhaven.ts';
+import { MANIFESTS_READ, DWARF_MET } from './maps/kilnhaven.ts';
 import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../crossings.ts';
 import { take as sail, terms } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
@@ -793,8 +794,9 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * again; a night at the inn, the act's first step bought at the smith at a quarter more, open to a
  * company the thane has shut out, and training to 19 at the ore shed; the manifests read by the
  * harbourmaster, and the dwarf's word on the corridors; the ferry over to Saltmouth's quay and back
- * from its master there, halved for nobody; and the ship and the coach, whose far ends are not built,
- * sold by nobody yet, their masters only talking.
+ * from its master there, halved for nobody; the coach to Rime Lodge's coach house and back from its
+ * coachman there; the ship, whose far end is not built, sold by nobody yet, its master only talking;
+ * and Tallis's man on the street, with his words and nothing more.
  */
 function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   const HAVEN = MAP_DEFS.find((d) => d.id === 'kilnhaven')!;
@@ -872,7 +874,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   // The dwarf on the quay, who will go no further down.
   w.world.travel('kilnhaven', DWARF.x, DWARF.y);
   const south = says(w, DWARF);
-  ok(south.includes('the corridors run south') && south.includes('Toward the lakes'), 'a dwarf on the quay says the corridors under the Tiefzeche run south under the world, toward the lakes');
+  ok(south.includes('the corridors run south') && south.includes('Toward the lakes') && !!w.party.flags[DWARF_MET], 'a dwarf on the quay says the corridors under the Tiefzeche run south under the world, toward the lakes');
 
   // The ferry (#539): bought from its master on Kilnhaven's quay for its whole fare, it sails at eight
   // and puts in on Saltmouth's quay two days on at 16:00; a save made there loads there; and its
