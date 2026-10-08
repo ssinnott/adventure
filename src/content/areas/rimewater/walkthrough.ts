@@ -36,6 +36,27 @@ import type { Person } from '../../../game/people.ts';
 import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
 import { PASS } from './maps/longmere_l9.ts';
+import type { Walk } from '../../../../tools/walk.ts';
+import { GUILD_QUESTS } from '../../index.ts';
+import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
+import { take, rankOf } from '../../../game/guilds.ts';
+import type { Party } from '../../../game/party.ts';
+import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+
+/**
+ * The Wardens' fourth rank's ask at the ice-hole (DESIGN §8, #439), on a copy of the walk's company made
+ * a Sergeant who has found the Tiefzeche's cages, Act II done: the fourth night fought, the ask is paid
+ * at the taking, with the words for a company that came early, and the company is a Captain.
+ */
+function captain(w: Walk): void {
+  const p: Party = structuredClone(w.party);
+  p.flags[rankFlag('wardens')] = 3; p.flags[FOURTH_RANKS_OPEN] = 1;
+  p.flags[takenFlag('wardens_cages')] = p.flags[doneFlag('wardens_cages')] = 1;
+  const q = GUILD_QUESTS.find((g) => g.id === 'wardens_hole')!;
+  const said = take(q, w.world.state, p);
+  w.ok(said.length === 2 && said[0].startsWith(q.early![0]) && said[1] === 'Your rank with the Wardens is now Captain.' && rankOf('wardens', p) === 4,
+    `the fourth night fought, the Wardens' ask is paid at the taking, and a company that found the cages is made a Captain (${said.join(' ').replace(/\n+/g, ' ')})`);
+}
 
 const M9 = MAP_DEFS.find((d) => d.id === 'longmere_m9')!;
 const L9 = MAP_DEFS.find((d) => d.id === 'longmere_l9')!;
@@ -261,6 +282,7 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('longmere_m9', girl.x, girl.y);
   ok(!w.world.present(girl), 'before the fight, nobody else is out of the hole');
   fight(w, 'longmere_m9:m9_night_4');
+  captain(w);
   w.world.travel('longmere_m9', girl.x, girl.y);
   const words = meet(girl, w.party, heard(w.world, girl)).text;
   ok(w.world.present(girl) && words.includes('"Are you the ones my mother sent?"') && words.includes('The doors know me.') && !!w.party.flags[WENNA_UP],
