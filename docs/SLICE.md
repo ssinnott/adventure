@@ -140,7 +140,7 @@ DESIGN.md first for the why.
   §5, §9): a sign with a second text (`read`) is an inscription. Its words are said to every
   company, and its reading after them only to one with a reader, as `<name> reads: "<reading>"`:
   the first standing member with Linguist or born to it, a dwarf, else, while an item that does
-  Linguist's work is carried (`ItemDef.skill`, the copybook #471 builds), its carrier or the first
+  Linguist's work is carried (`ItemDef.skill`, the copybook #471 built), its carrier or the first
   standing member. Read, it is kept by its id in its map's `used`, as a once-event is, so `seen`
   names it and nothing new is saved; one that `marks` atlas places pins them on the world map once
   read, a hollow square with no name and no word in the legend, and its first reading says so. A
@@ -148,7 +148,8 @@ DESIGN.md first for the why.
   secondary skills are a list on each member (`skills`, none in a save from before them) that the
   sheet shows. Linguist is the first built: the Lanterns', 1,000 gold a member, taught at every hall
   of theirs ("Learn a skill" on its first menu) and by a person who teaches it (`skill`), to a
-  company that is of the guild. No map places an inscription or a teacher yet: the Kilns' boxes do.
+  company that is of the guild. The Kilns' maps place both: inscriptions from N3's niche to O6's
+  adit, and Anvilhall's Lantern reader to teach it (docs/areas/kilns.md §4.1, §4.4).
 - **A monster's look.** The first time a company sees a kind, as the viewport draws it (each kind
   of the group to three, in line of sight), or meets one in a fight unseen, the log says its `look`,
   once. A group is drawn as up to three figures: each of its kinds once, in the order they stand,

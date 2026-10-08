@@ -680,7 +680,7 @@ order. The act's one lock is #440's and lies elsewhere. The walkthrough plays it
 resting inside the ring by night, in order and with the road's head taken first.
 
 As built (#481, 8 October): `chapter.ts`, begun on N7 (`visited`), as Wrackholm's is on its
-landing, since the Kilns' chapter (#470) is not written. Three entries, the road, the ring and the
+landing, where the Kilns' chapter (#470) ends. Three entries, the road, the ring and the
 road's head, and four goals: east to Fionnlios on O7; with the road's head seen first, back to the
 ring; with the voice heard, down the drove road through the Cairnfield to its head; and with both,
 down through the notch to the long lake and Rime Lodge. `o7_voice`, at 6,24, sets `q_ring_spoke`;
@@ -1215,7 +1215,9 @@ Decided by delegate for #480, each the owner's to overturn:
 Decided by delegate for #481 and #482, each the owner's to overturn:
 
 1. **The chapter begins on N7** (`visited`), as Wrackholm's does on its landing: the Kilns' chapter
-   (#470) is not written, so nothing of it is asked, and the Wall's end leaves no goal until it is.
+   (#470) is not written, so nothing of it is asked, and the Wall's end leaves no goal until it is
+   (written since, and ending on N7; the Wall's end still leaves none, docs/areas/kilns.md §9,
+   #470's 1).
 2. **The voice sets `q_ring_spoke`** on `o7_voice` as built (#477's 5), and the chapter's ring is
    written by it; nothing else of O7's changes for the chapter.
 3. **The chapter is done down the notch, with the voice heard** (M9 visited), not at the road's
