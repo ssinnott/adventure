@@ -987,8 +987,8 @@ The six on frames that exist are drawn as well (#472): the Fire Beetle, a beetle
 spider frame with the coal set in its back; the Slagling and the Slag Elder, the riftling broken
 rough as clinker and cracked red; the Rock Worm, the long bodies come up through rubble; the Anvil
 Guard, a dwarf rebuilt on the figure frame; and the Warden of the Anvil, with no legs, standing up
-out of a pool of slag. Their numbers are their roles' at their levels (§4.4), and the Warden's blow
-is #465's gate's to set.
+out of a pool of slag. Their numbers are their roles' at their levels (§4.4), and the Warden's hit points
+and blow were set by #465's gate, 1,200 and 13d8+12, as the Great Salamander's were by #466's, 950 and 15d8+14.
 
 **Asks:** `kind` for the machines, if it has not come before; `after`, for the Anvil Guard.
 
