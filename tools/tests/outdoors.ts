@@ -334,14 +334,19 @@ export function outdoors(): void {
   {
     const row = (id: string): AtlasZone => ATLAS.zones.find((z) => z.id === id)!;
     const box = (id: string, rows: string[], band: [number, number], exits: MapDef['exits'] = []): MapDef => ({ id, name: id, kind: 'outdoor', density: 'country', band, start: { x: 2, y: 1, facing: EAST }, rows, exits });
-    const strip = (crossing?: AtlasZone['crossing'], label?: string): Record<string, GameMap> => {
+    // With `jump`, steps down from the road's 2,1 to the fen's 2,1 and back up from its 3,1: ways that
+    // jump from one zone map to another, as N8's notch does onto M9.
+    const strip = (crossing?: AtlasZone['crossing'], label?: string, jump = false): Record<string, GameMap> => {
       const atlas = { ...ATLAS, width: 18, height: 3, zones: [
         { ...row('downs'), maps: [{ map: 'fx_road', at: [0, 0] as const }] },
         { ...row('delta'), ...(crossing ? { crossing } : {}), maps: [{ map: 'fx_fen', at: [6, 0] as const }, { map: 'fx_deeper', at: [12, 0] as const }] },
       ] };
       const defs = [
-        box('fx_road', ['MMMMMM', 'M,,,,,', 'MMMMMM'], [4, 5], label ? [{ x: 5, y: 1, to: 'fx_fen', tx: 0, ty: 1, label }] : []),
-        box('fx_fen', ['MMMMMM', ',,,,,,', 'MMMMMM'], [10, 11]),
+        box('fx_road', ['MMMMMM', 'M,,,,,', 'MMMMMM'], [4, 5], [
+          ...(label ? [{ x: 5, y: 1, to: 'fx_fen', tx: 0, ty: 1, label }] : []),
+          ...(jump ? [{ x: 2, y: 1, to: 'fx_fen', tx: 2, ty: 1, tf: EAST, label: 'Down the steps.' }] : []),
+        ]),
+        box('fx_fen', ['MMMMMM', ',,,,,,', 'MMMMMM'], [10, 11], jump ? [{ x: 3, y: 1, to: 'fx_road', tx: 3, ty: 1, tf: EAST, label: 'Back up the steps.' }] : []),
         box('fx_deeper', ['MMMMMM', ',,,,,M', 'MMMMMM'], [11, 12]),
       ];
       return Object.fromEntries(layOutdoors(atlas, defs).map((d) => [d.id, new GameMap(d)]));
@@ -387,5 +392,22 @@ export function outdoors(): void {
     const arrivals = laid.flatMap((z) => Object.values(z.enter ?? {}).map((a) => `${a} ${z.land?.crossing?.warning ?? warning}`)).sort((a, b) => logLines(b).length - logLines(a).length);
     ok(arrivals.length > 0 && logLines(arrivals[0]).length <= 3, `every arrival line with the warning after it fits three lines of the log (the longest ${logLines(arrivals[0] ?? '').length}: ${arrivals[0]})`);
     ok(own.includes('The Delta. The reeds close in.') && ownHarder.includes('The Delta. The fen sucks at the boots.'), `a zone's own words stand in for the world's (${own.join(' / ')}; ${ownHarder.join(' / ')})`);
+    // A way jumped from one zone map to another says its label, then the line the border walked says;
+    // straight back within the hour, its label alone.
+    {
+      /** What a company of `level` reads at each of `n` steps east from x on the strip with the steps. */
+      const jump = (level: number, x: number, n: number): string[][] => {
+        const party = defaultParty(makeRng(3));
+        for (const m of party.members) m.level = level;
+        const w = new World(strip(undefined, undefined, true), party, makeRng(3));
+        w.travel(OUTDOORS, x, 1, EAST);
+        return Array.from({ length: n }, () => w.move('forward')).map((r) => (r.kind === 'moved' ? r.messages : [r.kind]));
+      };
+      const down = [7, 9, 10].map((l) => [jump(l, 1, 1)[0].join(' / '), ['Down the steps.', ...walk(l, 4, 7)].join(' / ')]);
+      ok(down.every(([j, s]) => j === s), `a jump into the Delta says the way's label, then the line walked into it, at 7, 9 and 10 (${down.map(([j]) => j).join('; ')})`);
+      const back = jump(7, 1, 2)[1], up = jump(3, 8, 1)[0], walked = walk(3, 7, 4);
+      ok(back.join(' / ') === 'Back up the steps.', `straight back up within the hour, the label alone (${back.join(' / ')})`);
+      ok(walked.length === 1 && up.join(' / ') === `Back up the steps. / ${walked[0]}`, `up into the Downs, their line as walked into them (${up.join(' / ')})`);
+    }
   }
 }
