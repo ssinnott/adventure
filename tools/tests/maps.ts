@@ -20,7 +20,6 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * keepers and the Matron by #490.
  */
 const UNPLACED: Record<string, string> = {
-  anvil_warden: '#465',
   great_salamander: '#466',
 };
 

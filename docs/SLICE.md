@@ -109,12 +109,12 @@ DESIGN.md first for the why.
   `q_tide_home` holds, which the plinth at Stienwierde sets as it takes the Stone (#191); the Grove
   once a Lantern has mended it, `q_grove_mended`, which nothing sets yet (#56); the Anvil Stone once
   the Warden of the Anvil has fallen and its tear is closed, bought back or taken alike,
-  `q_anvil_closed` (#540), which the Rift will set (#465, not built yet); the rest as their areas
+  `q_anvil_closed` (#540), which the Rift sets once its Warden falls (#465); the rest as their areas
   write them. By night, outdoors and in a town, the Hearth stands over the far hills in its true
   bearing from the party, faint from the first night and taller and brighter by a step for each
   Stone. The title reads the save in storage and draws its column steadier, taller and wider by a
-  step; the world map's flickers less; the almanac adds a word on it once one is restored. Only the
-  Tide Stone can be restored yet.
+  step; the world map's flickers less; the almanac adds a word on it once one is restored. The Tide
+  Stone and the Anvil Stone can be restored so far.
 - **Crossings** (`game/passage.ts`, #164): a person may sell passage by coach or by boat (`passage`,
   a list of `Passage`). Their words close onto a menu of the crossings, each with its fare and days,
   then the terms: when it leaves and when it lands, and to a company under the far end's floor the
