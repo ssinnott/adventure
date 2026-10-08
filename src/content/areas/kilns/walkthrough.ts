@@ -1,5 +1,5 @@
-// The Kilns' walkthrough. Its chapter, The Anvil Stone, is #470's, which plays it here; until then,
-// the Iron Fells walked. The way in (M3, #457): the east road out of Lanternwood's M2 over the ridge,
+// The Kilns' walkthrough: the Iron Fells walked, and last its chapter, The Anvil Stone (#470), played
+// through. The way in (M3, #457): the east road out of Lanternwood's M2 over the ridge,
 // the crossing line read by a company two under the Fells' floor and by one at it, the secret behind
 // the walled adit found from its hints, the box's groups won at its floor, and Lanternwood's trees
 // shut against L3, so the road is the only way between the two areas. Anvilhall's box (N3, #458): the
@@ -59,13 +59,16 @@
 // #460): up the open fell out of N3 with nothing said, the box's groups won at its floor, the scholar
 // at the wall, and the doors behind the blank face found from the worn floor, the wall beside it read
 // by a reader alone; the Barbarian's second prestige, taught by Hartmut at the cave's mouth (#19):
-// his lesson after his own words, and taught at 19. Last, Feuerstollen (#466), down O6's adit and up
+// his lesson after his own words, and taught at 19. Then Feuerstollen (#466), down O6's adit and up
 // again: the fire adit, its tube's floor showing the fire, the cutters' strongbox and the groups won;
 // the deep tubes, the groups won, the square tube found from the heat that drops where the walls go
 // square and the plate at its end, which nothing opens, and the Great Salamander won, its hide left.
+// Last, The Anvil Stone (#470): in from Lanternwood and with Kilnhaven reached by ferry first, at 16,
+// 17 and 18, the Stone bought and taken; each reads the same but for the road up from Lanternwood,
+// ends once on the moor where the Ring takes it on, and the Hearth counts the Stone either way.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen } from '../../../../tools/walk.ts';
-import type { Walk } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import type { Walk, Step } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
@@ -104,6 +107,8 @@ import { take as sail, terms } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
 import { World } from '../../../game/world.ts';
+import { CHAPTER } from './chapter.ts';
+import { CHAPTER as RING } from '../cairnmoor/chapter.ts';
 
 const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
 const N2 = MAP_DEFS.find((d) => d.id === 'ironfells_n2')!;
@@ -737,6 +742,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ironhide(ok);
   tiefzeche(w, ok);
   feuerstollen(w, ok);
+  theAnvilStone(ok);
 };
 
 /**
@@ -1459,4 +1465,112 @@ function fourthRanks(w: Walk): void {
     w.ok(said.length === 1 && said[0].startsWith(q.early![0]) && p.gold === gold + 300 && rankOf(q.guild, p) === 3,
       `${q.title}: done in the walk, paid at the taking, and the rank waits for the rest (${said.join(' ').replace(/\n+/g, ' ')})`);
   }
+}
+
+// ---- the chapter (#470) ----
+
+const RIFT = MAP_DEFS.find((d) => d.id === 'anvil_stone')!;
+const WARDEN = RIFT.encounters!.find((g) => g.id === 'as_warden')!;
+
+/** A step played at a level, the company levelled to it. */
+const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
+  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+  w.level = level;
+  s.play(w);
+} });
+
+/** The entries written on the chapter's page. */
+const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
+
+/** The way the thane was answered, as the journal names it. */
+const named = (way: string): string => (way === BOUGHT ? 'bought' : 'taken');
+
+/** The verse over the kings' forge, read the old way by the Lantern reader in the great hall. */
+const VERSE: Step = { name: 'the verse', play: (w) => {
+  meetWho(w, VERSE_READ);
+  w.ok(written(w).includes('verse'), 'the verse over the kings\' forge, read the old way, is written');
+} };
+
+/** The thane's question, answered one way: the Stone bought at its price, or taken. */
+const thane = (way: string): Step => ({ name: `the Stone ${named(way)}`, play: (w) => {
+  w.world.travel('anvilhall', THANE.x, THANE.y);
+  const [buyIt, takeIt] = meet(THANE, w.party, heard(w.world, THANE)).choice?.answers ?? [];
+  w.party.gold = way === BOUGHT ? ANVIL_STONE_PRICE : 0;
+  answer(way === BOUGHT ? buyIt : takeIt, w.party);
+  listen(w);
+  w.ok(!!w.party.flags[way] && written(w).includes(named(way)) && !written(w).includes(named(way === BOUGHT ? TAKEN : BOUGHT)), `the Stone ${named(way)}, and that way alone is written`);
+} });
+
+/** The Foreman won at the bottom of the Tiefzeche, and the door marked CREW ONLY seen past it. */
+const DOOR: Step = { name: 'the door', play: (w) => {
+  fight(w, 'deep_mines3:dm3_foreman');
+  see(w, 'deep_mines3:dm3_door');
+  w.ok(written(w).includes('door'), 'the door marked CREW ONLY is written, with the footprints and the knot');
+} };
+
+/**
+ * In at the tear under the Stone, past the thane's iron if it was taken; the Warden won, and the first
+ * step after it closes the tear, which the Hearth counts.
+ */
+const stone = (way: string): Step => ({ name: 'the tear closed', play: (w) => {
+  if (way === TAKEN) fight(w, 'kilnsheart_o5:o5_guard');
+  walkThrough(w, 'kilnsheart_o5', TEAR.x - 1, TEAR.y, EAST, 'anvil_stone', 2);
+  const lit = w.world.stones;
+  fight(w, 'anvil_stone:as_warden');
+  w.world.travel('anvil_stone', WARDEN.x, WARDEN.y + 1, NORTH);
+  w.world.move('forward');
+  listen(w);
+  w.ok(!!w.party.flags.q_anvil_closed && w.world.stones === lit + 1 && written(w).includes('stone'),
+    `the Stone ${named(way)}, the tear closes, the Hearth counts it (${lit} Stones to ${w.world.stones}) and it is written`);
+} });
+
+/** At Kilnhaven, the harbourmaster's manifests read and the old dwarf heard on the quay. */
+const HAVEN: Step = { name: 'the manifests', play: (w) => {
+  meetWho(w, MANIFESTS_READ);
+  meetWho(w, DWARF_MET);
+  w.ok(written(w).includes('manifests') && written(w).includes('corridors'), 'the manifests are written, and the corridors that run south');
+} };
+
+/** Down the drove road out of N6 onto Cairnmoor's moor. */
+const MOOR: Step = { name: 'onto the moor', play: (w) => walkThrough(w, 'kilnsheart_n6', 3, 29, SOUTH, 'highmoor_n7', 4) };
+
+/**
+ * The Anvil Stone (#470), both ways at the thane: in from Lanternwood and played in order, the verse,
+ * the thane, the door, the Stone, Kilnhaven and the moor; and with Kilnhaven reached by ferry from
+ * Saltmouth first, its manifests before the verse. Played at 16, 17 and 18, each reads the same but for
+ * the way in from Lanternwood, never walked by the ferry's company; each ends once, on the moor, where
+ * the Ring begins on the drove road out of the Kilns' hills.
+ */
+function theAnvilStone(ok: (cond: boolean, msg: string) => void): void {
+  const master = MAP_DEFS.find((d) => d.id === 'saltmouth')!.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Dunstan'))!;
+  const read: string[] = [];
+  for (const first of [false, true]) for (const way of [BOUGHT, TAKEN]) {
+    const how = `${first ? 'Kilnhaven first' : 'in order'}, ${named(way)}`;
+    const w = newWalk(ok);
+    for (const m of w.party.members) { m.level = 16; m.xp = xpForLevel(16); }
+    if (first) {
+      w.world.travel('saltmouth', master.x, master.y);
+      w.party.gold = FERRY.fare;
+      const landed = sail(master.passage![0], w.world, w.party);
+      listen(w);
+      ok(landed.taken && w.world.state.mapId === 'kilnhaven' && quest(w)?.goal === CHAPTER.goals.at(-1)!.text, `${how}, landed at Kilnhaven by ferry the chapter begins, its goal the manifests (${quest(w)?.goal})`);
+    } else {
+      walkThrough(w, 'lanternwood_m2', 1, 29, SOUTH, 'ironfells_m3', 3);
+      ok(quest(w)?.goal === CHAPTER.goals.at(-2)!.text, `${how}, in the Fells from Lanternwood the chapter begins, its goal up the trail to Anvilhall (${quest(w)?.goal})`);
+    }
+    const steps = first
+      ? [atLevel(16, HAVEN), atLevel(16, VERSE), atLevel(16, thane(way)), atLevel(17, DOOR), atLevel(18, stone(way)), atLevel(18, MOOR)]
+      : [atLevel(16, VERSE), atLevel(16, thane(way)), atLevel(17, DOOR), atLevel(17, stone(way)), atLevel(18, HAVEN), atLevel(18, MOOR)];
+    playChapter(w, CHAPTER, steps, how);
+    goalFromBegun(w, how);
+    const v = quest(w), ring = v?.pages.find((p) => p.def === RING), ends = w.news.filter((n) => n === `Chapter complete: ${CHAPTER.title}.`).length;
+    ok(!!v?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.world.zone?.id === 'highmoor_n7', `${how}, down the drove road onto the moor the chapter is done, and said so once (${ends})`);
+    ok(!!ring?.begun && ring.entries.map((e) => e.id).join() === 'road' && v?.goal === RING.goals.at(-1)!.text && w.news.includes(`New chapter: ${RING.title}.`),
+      `${how}, on the moor the Ring takes it on from the drove road out of the Kilns' hills (${v?.goal})`);
+    read.push(written(w).join(', '));
+  }
+  const all = 'road, verse, bought, door, stone, manifests, corridors', taken = all.replace('bought', 'taken');
+  ok(JSON.stringify(read) === JSON.stringify([all, taken, all.replace('road, ', ''), taken.replace('road, ', '')]),
+    `the chapter reads the same in order and with Kilnhaven first, but for the way in from Lanternwood the ferry's company never walked (${read.join(' / ')})`);
+  everyGoalWalked(ok, [CHAPTER]);
 }
