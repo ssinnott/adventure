@@ -121,9 +121,9 @@ add, if the owner wants it.
 **Not before Act IV,** and last in it, with Rook's Nest and #448's Thief. Building it now would
 need first:
 
-- **Three machine families** with no module yet: the knockers (the Kilns'), the keepers (Rimewater's)
-  and the heavy machines (Ashfall's, #520), each to land before the area that first needs it
-  (MONSTERS §11).
+- **One machine family** with no module yet, the heavy machines (Ashfall's, #520), to land before
+  the area that first needs it (MONSTERS §11). The knockers (the Kilns', #472) and the keepers
+  (Rimewater's, #495) are drawn.
 - **The curve to 28.** `src/content/progression.ts` stops at Sunderwood's 14–16; the gate at 26–28
   needs the rows (#432, #442).
 - **The gear ladder to 26.** `GEAR` in `tools/harness.ts` tops out at 16, so a gate at 26–28 would

@@ -9,11 +9,11 @@ Kilnhaven, the ore port, whose ship is one way to the far side of the sea. This 
 plan for building it, box by box, and the briefs. Its work is filed under #436 (Phase 1.3, #431):
 the boxes as §4's table has them, the Tiefzeche (#462), the Anvil Stone's Rift (#465), Anvilhall
 (#459) and Kilnhaven (#469), its chapter (#470), its side quests (#471), its drawings (#472), its
-rooms (#473) and the country behind the road (#474). This doc is #456. The systems it waits on are
-#432's (§3), the owner's calls for the act are #434's (§9) and its names #435's (§10). Figures are
-measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
+rooms (#473) and the country behind the road (#474). This doc is #456. The systems it waited on were
+#432's, all built (§3); the owner's calls for the act are #434's (§9) and its names #435's (§10).
+Figures are measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Its first ten boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area; N3,
+Its ten boxes are built: M3, the Iron Fells' way in (#457, §4.2), which lists the area; N3,
 Anvilhall's box (#458, §4.3), and with it its first town, Anvilhall, behind N3's gate (#459, §4.4);
 N4, the Tiefzeche's box (#461, §4.6), the heart's first, and under its shaft the Tiefzeche, its
 first dungeon (#462, §4.7); N2, Erzkamm (#460, §4.5), with the Barbarian's second prestige; N5,
@@ -23,15 +23,15 @@ the Anvil Stone's Rift (#465, §4.10), its second dungeon; L6, Kilnhaven's box (
 with it its second town, Kilnhaven, behind L6's gate (#469, §4.14); and O6, Feuerstollen's box
 (#466, §4.11), with the tubes under its ridge, its third dungeon. Its chapter of the one quest, The
 Anvil Stone, is written and walked (#470, §5), and its four side quests are in the log, their
-people on those maps (#471, §6). Eleven of its monsters and its
-twelve rooms are drawn (§3), and the
-rest is to build. Its content is `src/content/areas/kilns/` (maps, monsters, items, rooms, climate,
-its part of the world map, its walkthrough and its guild quests in `guilds.ts`, #439; its chapter of
-the one quest, The Anvil Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its
-businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
-`kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
-the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass
-(§10, NAMES §3).
+people on those maps (#471, §6). Eleven of its monsters and its twelve rooms are drawn (§3). Only
+the country behind the road, O3, O4, M4 and M5 (#474, §4.15), is unbuilt, parked until the owner
+has played the act (#434, call 10); the ship to Cinderport waits on #512 (§4.14). Its content is
+`src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map, its
+walkthrough and its guild quests in `guilds.ts`, #439; its chapter of the one quest, The Anvil
+Stone, in `chapter.ts`, #470; its side quests in `quests.ts`, #471) and its businesses' rooms
+`src/ui/interiors/kilns/`. Its ids: the area `kilns`, its zones `ironfells`, `kilnsheart` and
+`kilnmouth`, the towns `anvilhall` and `kilnhaven`, the dungeons `deep_mines`, `anvil_stone` and
+`lava_tubes`. The ids stay through the naming pass (§10, NAMES §3).
 
 ---
 
@@ -100,7 +100,7 @@ square for square but the corner (§4.11).
 to row 6, with K6 on the shore. The land worth a map is fourteen boxes: M3, N3, N2 and O3 in the
 Fells; N4, O4, N5, O5 and O6 in the heart; N6, M6, L6, M4 and M5 in Kilnmouth. The rim's row (N1,
 O1, P1), the east edge under it (P3 to P6), O2, the slivers in M2, L4 and L5 and the heath of K6 are
-cut (§11); O3, O4, M4 and M5 are the country behind the road, parked (§4.14).
+cut (§11); O3, O4, M4 and M5 are the country behind the road, parked (§4.15).
 
 Its edges:
 
@@ -116,10 +116,11 @@ Its edges:
   open from the start. Cairnmoor has no town (#434, call 9): the drove road's coach runs from
   Kilnhaven to Rime Lodge (§4.13).
 - **East: the rim** again, the P column, mountain and hill with the heart's crags under it.
-- **South-west: the sea,** off Kilnhaven. Two crossings leave the port, both open from the start:
-  the ferry to Saltmouth (`kilnhaven` to `saltmouth`, `sea`, "the ferry") and the Compact ship to
-  Cinderport ("Compact ship"), the atlas's links. A company may come to the Kilns by water before
-  it comes by road; the band's monsters are the gate (EXPANSION §2.2, §5).
+- **South-west: the sea,** off Kilnhaven. Two crossings leave the port, both open from the start in
+  the plan: the ferry to Saltmouth (`kilnhaven` to `saltmouth`, `sea`, "the ferry") and the Compact
+  ship to Cinderport ("Compact ship"), the atlas's links. The ferry runs and the ship waits on
+  Cinderport (#512, §3). A company may come to the Kilns by water before it comes by road; the
+  band's monsters are the gate (EXPANSION §2.2, §5).
 
 The ways, as the atlas draws them. The east road enters M3 and the atlas's trail runs from 410,76
 south-east to 430,96 and on to 446,118, past Anvilhall's gate at 452,70 (its spur in N3) and the
@@ -161,8 +162,8 @@ its first town (#458) and the town behind its gate (#459); the box of its first 
 first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhall, off the road
 (#460); the smelter's (#463); the roads south and west (#467); the Stone's (#464), with the Rift
 through its tear (#465); Kilnhaven's box (#468) and the town behind its gate (#469); the ash
-country under the vent ridge, with the tubes below it (#466); and the four side quests on them
-(#471):
+country under the vent ridge, with the tubes below it (#466); its chapter of the one quest (#470);
+and the four side quests on them (#471):
 
 - **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
   Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
@@ -288,6 +289,10 @@ country under the vent ridge, with the tubes below it (#466); and the four side 
   floor all fire, the Great Salamander, boss at 18, which leaves its hide. Where the walls go square
   in the west tube and the heat drops away, a tube cut and not run, ending at a plate that nothing
   opens (§4.11).
+- **The chapter** (`chapter.ts`; #470): The Anvil Stone, joined after the Wall and before the Ring.
+  It reads the road up into the Fells, the verse, the thane's choice, the door, the tear closed, the
+  manifests and the corridors south, begun on M3 or at Kilnhaven and done on the moor's first map
+  (§5).
 - **The side quests** (`quests.ts`; #471): #56's four, 33 to 36, their people on the built maps
   (§6). The mother's ring carried down to her son at the bottom of the Tiefzeche, who comes up to
   Anvilhall's inn; the scholar at Erzkamm's wall, kept by the thane or parted from his copybook,
@@ -301,31 +306,30 @@ Saltreach's and Sunderwood's were before their first box (docs/areas/saltreach.m
 docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–17, with M3, N3 and N2
 laid on it and its line to the heart held, §1; the heart 16–18, with N4, N5, N6, O5 and O6 laid on it;
 Kilnmouth 16–18, with M6 and L6, §9), the towns (Anvilhall and Kilnhaven at 16–18) and the dungeons
-(the Tiefzeche 16–18, the Anvil Stone 17–18, Feuerstollen 17–18) as planned plates, the towns' now
-their maps' (#459, #469), the Tiefzeche's its three levels' (#462), the Anvil Stone's the Rift's, on
-its tear (#465) and Feuerstollen's its two, 16–17 and 17–18 (#466), the sites (Anvilhall, the Deep
-Mines, the Forges, the Anvil Stone, the Lava Tubes, Kilnhaven, Iron Crag, to be renamed with #435,
-§10) and its links: the east road in, the
-towns' and the dungeons' ways in, the drove road on to High Moor, the ferry and the Compact ship,
-and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's coach (#434, call 9; #539 builds
-it).
+(the Tiefzeche 16–18, the Anvil Stone 17–18, Feuerstollen 17–18) as planned plates until their boxes
+were laid, the towns' now their maps' (#459, #469), the Tiefzeche's its three levels' (#462), the
+Anvil Stone's the Rift's, on its tear (#465) and Feuerstollen's its two, 16–17 and 17–18 (#466), the
+sites (Anvilhall, the Tiefzeche, Gluthutte, the Anvil Stone, Feuerstollen, Kilnhaven and Erzkamm,
+named with #435, §10) and its links: the east road in, the towns' and the dungeons' ways in, the
+drove road on to High Moor, the ferry and the Compact ship, and a new `coach` link, Kilnhaven to Rime
+Lodge, the drove road's coach (#434, call 9; built by #539).
 
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
 `src/content/progression.ts`: band 16–18, next 18, window 3,500. It was owed to #436 while the area
 was built box by box; with O5 and L6 a clear gave 16,303 xp a member and 9,497 gold, past the 13,067
 and 7,920 the row asks, so it owes nothing (§8); with the Rift 20,000 and 11,407 and with O6 and
-its tubes 26,128 and 13,007, before the two fourth-rank asks. The step is in
-`src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`, `src/content/index.ts`)
-so that the harness and the gate dressed by it before the first box took the table into its Area
-(#457): Anvilhall's forge's eight
-wares (`FORGE`, §4.4), the step's plus finds by 19 (§4.1), Kilnhaven's smith's prices at a quarter
-more (`SMITH_PRICES`, §4.14) and the thane's price for the Stone (`ANVIL_STONE_PRICE`, 6,000, for
-#459, §8). The forge sells every ware (#459) and the smith every ware at its price (#469), and each
-find is owed to its box until it is placed; N3's Plate Mail +3, N2's Mattock +1, the Tiefzeche's
-Forge Hammer +1, O6's Steel Bow +1, M6's Seax +1 and L6's Kiln Robe +1 are placed, all six (§4.3,
-§4.5, §4.7, §4.11, §4.12, §4.13), and M3's, N4's, N5's, the Tiefzeche's, O5's, the Rift's and O6's
-finds, off the ladder, are their own (§4.2, §4.6, §4.8, §4.7, §4.9, §4.10, §4.11). The thane asks the
-price as an answer's `price` (§9).
+its tubes 26,128 and 13,007, before the two fourth-rank asks. With the asks and the side quests the
+whole clear gives 27,228 and 14,707, 2.08 and 1.86 times the row, and the row still owes nothing
+(§8). The step is in `src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`,
+`src/content/index.ts`) so that the harness and the gate dressed by it before the first box took the
+table into its Area (#457): Anvilhall's forge's eight wares (`FORGE`, §4.4), the step's plus finds by
+19 (§4.1), Kilnhaven's smith's prices at a quarter more (`SMITH_PRICES`, §4.14) and the thane's price
+for the Stone (`ANVIL_STONE_PRICE`, 6,000, for #459, §8). The forge sells every ware (#459) and the
+smith every ware at its price (#469), and each find was owed to its box until it was placed; N3's
+Plate Mail +3, N2's Mattock +1, the Tiefzeche's Forge Hammer +1, O6's Steel Bow +1, M6's Seax +1 and
+L6's Kiln Robe +1 are placed, all six (§4.3, §4.5, §4.7, §4.11, §4.12, §4.13), and M3's, N4's, N5's,
+the Tiefzeche's, O5's, the Rift's and O6's finds, off the ladder, are their own (§4.2, §4.6, §4.8,
+§4.7, §4.9, §4.10, §4.11). The thane asks the price as an answer's `price` (§9).
 
 Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
 Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
@@ -388,13 +392,14 @@ day in it somewhere, a window, a shaft, a breach or a door, so that nine at nigh
 
 ## 4. What is still to build
 
-All of it but M3, N3, N4, N2, N5, N6, M6, O5, L6 and O6, built (#457, §4.2; #458, §4.3; #461, §4.6;
-#460, §4.5; #463, §4.8; #467, §4.12; #464, §4.9; #468, §4.13; #466, §4.11), Anvilhall behind N3's
-gate (#459, §4.4), the Tiefzeche under N4's shaft (#462, §4.7), the Anvil Stone's Rift through O5's
-tear (#465, §4.10), Kilnhaven behind L6's gate (#469, §4.14) and Feuerstollen under O6's ridge
-(#466, §4.11): 14,791 squares of land, 12,399 of them walkable, the plan's figures (§1). On the grid
-the plan is ten boxes, three dungeons and two towns, with four more boxes parked, and the ten hold
-8,419 of those squares, 7,686 walkable; the parked four 3,886 and 3,397:
+Built: M3, N3, N4, N2, N5, N6, M6, O5, L6 and O6 (#457, §4.2; #458, §4.3; #461, §4.6; #460, §4.5;
+#463, §4.8; #467, §4.12; #464, §4.9; #468, §4.13; #466, §4.11), Anvilhall behind N3's gate (#459,
+§4.4), the Tiefzeche under N4's shaft (#462, §4.7), the Anvil Stone's Rift through O5's tear (#465,
+§4.10), Kilnhaven behind L6's gate (#469, §4.14) and Feuerstollen under O6's ridge (#466, §4.11).
+Still to build is the country behind the road, O3, O4, M4 and M5, parked (#474, §4.15). The plan's
+figures (§1) are 14,791 squares of land, 12,399 of them walkable. On the grid the plan is ten boxes,
+three dungeons and two towns, all built, with four more boxes parked, and the ten hold 8,419 of
+those squares, 7,686 walkable; the parked four 3,886 and 3,397:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -416,7 +421,7 @@ the plan is ten boxes, three dungeons and two towns, with four more boxes parked
 The core is the five boxes that hold a step of the quest or a dungeon's door (N3, N4, O5 and L6,
 and N5, the smelter), built at full density; the rest is country, built to the looser floor with
 the wilderness features (EXPANSION §2.1 (b) and §5.3, #45). The road's country (M3, N2, O6, N6
-and M6) is built with the act; the country behind is parked until the owner has played it (#434,
+and M6) was built with the act; the country behind is parked until the owner has played it (#434,
 call 10). The bands rise from the way in, 16 under the pines of M3, to 18 at the Rift, the tubes and
 the drove road's end, as the gate asks (EXPANSION §5.2), and each box holds a group at the top of
 its band for the curve (§7 says where the roster is short).
@@ -431,21 +436,21 @@ O3's south rows to the Fells already (§1).
 
 **The order** is the east road's, and the quest's: M3, the only box that meets Lanternwood, and the
 way in; N3 and Anvilhall, the first steps and the choice; N4 and the Tiefzeche; N5; O5 and the Rift;
-O6; N6 and M6, the roads out; L6 and Kilnhaven; then N2, which is off the road. Building waits on
-#432's systems (§3) and on the two-areas rule (EXPANSION §3), with Sunderwood's road finished
-(#202); the briefs and the drawings do not wait.
+O6; N6 and M6, the roads out; L6 and Kilnhaven; then N2, which is off the road. Building waited on
+#432's systems (§3, all built) and on the two-areas rule (EXPANSION §3), with Sunderwood's road
+finished (#202); the briefs and the drawings did not wait.
 
 The places, as the atlas and the docs have them:
 
 | Place | Box | What the docs say | On the atlas |
 |---|---|---|---|
-| Anvilhall | N3, and its own map | the great hall with the verse over the forge where the kings' crowns are made; the thane, who sells the Stone back or loses it and never forgives (DESIGN §9, STORY, #434's 1); training to 19 (DESIGN §5); the Lantern reader (#538); 33, 34 and 36 begin or end here (#56) | a planned town at 452,70, its way in there, N3's gate (§9) |
-| The Tiefzeche (the Deep Mines) | N4, and below | the deepest mine, broken into the hull's service ways; the clean corridor, the knockers, the Foreman and the door marked CREW ONLY (DESIGN §9, MONSTERS §7.1, STORY); the service ladders found by reading (#434's 2); the son who carries the crust (#56's 33); the hymn's doors (#56's 36) | a planned dungeon at 440,104, its way in at 440,96 |
-| Gluthutte (the Forges) | N5 | the smiths; the crown for Jory Tallis paid in shards (#56's 35); fire beetles at the forges (MONSTERS §7.1) | a site at 436,126 |
-| The Anvil Stone | O5, and below | cut by the dwarves to sell the pieces; its Rift in slag and iron; the Warden of the Anvil, whose fall closes the tear; the Anvil Guard, after the taking (MONSTERS §2.1, §7.1, #434's 1); counts for the Hearth (#168, #540) | a dungeon, the Rift, its plate on its way in at 468,142, the tear on O5 (#465) |
+| Anvilhall | N3, and its own map | the great hall with the verse over the forge where the kings' crowns are made; the thane, who sells the Stone back or loses it and never forgives (DESIGN §9, STORY, #434's 1); training to 19 (DESIGN §5); the Lantern reader (#538); 33, 34 and 36 begin or end here (#56) | a town at 452,66, in the hill behind N3's gate at 452,70 (#459, §9) |
+| The Tiefzeche (the Deep Mines) | N4, and below | the deepest mine, broken into the hull's service ways; the clean corridor, the knockers, the Foreman and the door marked CREW ONLY (DESIGN §9, MONSTERS §7.1, STORY); the service ladders found by reading (#434's 2); the son who carries the crust (#56's 33); the hymn's doors (#56's 36) | a dungeon of three levels at 440,104, 440,110 and 440,116, its way in the shaft at 440,96 (#462) |
+| Gluthutte (the Forges) | N5 | the smiths; the crown for Jory Tallis paid in shards (#56's 35); fire beetles at the forges (MONSTERS §7.1) | a site, moved onto the smelter on N5 at 12,1 (#463) |
+| The Anvil Stone | O5, and below | cut by the dwarves to sell the pieces; its Rift in slag and iron; the Warden of the Anvil, whose fall closes the tear; the Anvil Guard, after the taking (MONSTERS §2.1, §7.1, #434's 1); counts for the Hearth (#168, #540) | a dungeon, the Rift, its plate on its way in at 468,142, the tear on O5 (#465); a site on the Stone at 12,10 (#464) |
 | Feuerstollen (the Lava Tubes) | O6, and below | the fire things; salamanders and the Great Salamander in the deepest chamber (MONSTERS §7.1) | a dungeon of two levels at 470,194 and 470,200, its way in at 478,178 (#466) |
 | Erzkamm (Iron Crag) | N2 | the Barbarian's second prestige, Ironhide, off the beaten path and relatively safe (DESIGN §5); the wall that says KEEP CLEAR OF THE DOORS, which the Regent's scholar copies (#56's 34) | a site at 432,44, the cave on N2 at 8,14 (#460) |
-| Kilnhaven | L6, and its own map | the ore port, whose ship is one way to the far side of the sea (DESIGN §9); the harbourmaster's manifests (#470); training to 19; the ferry, the ship and the coach (#539) | a planned town at 378,158, its way in at 391,162 |
+| Kilnhaven | L6, and its own map | the ore port, whose ship is one way to the far side of the sea (DESIGN §9); the harbourmaster's manifests (#470); training to 19; the ferry, the ship and the coach (#539) | a town at 385,162 over the harbour, behind L6's gate at 388,162 (#469, §9) |
 | The drove road | N5, N6 | the road south into Cairnmoor, which has no town (#434's 9); the coach's road | a trail from 446,118 to 430,210, the branch to Kilnhaven off it |
 
 ### 4.1 The briefs
@@ -1154,13 +1159,13 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     beetles on the verge out of the woods and a rock worm by the heather at the far end, the top.
   - **M6.** The branch comes in from the fork at 423,176 (31,18) past a lime cart, climbs through
     the farms, crosses the stream on a white bridge at 16,3 and runs west along the river's north
-    bank to the west edge, its last square, 392,162 (0,4), dirt beside Kilnhaven's gate at 391,162,
-    since the atlas has no road beyond; past it, for now, the world ends. The stream comes in from M5
-    at 415 to 418,158 (23 to 26,0), passes under the bridge and widens into the river's last reach,
-    out by the west edge at rows 5 and 6. The farmers' shrine at a field's corner (personality), the
-    farmer at his gate, whose son went up to the Tiefzeche and writes nothing, the limed fields over
-    the river and a field barn. On the hill the lime kilns stand in a row, warm, each open at its
-    draw-hole but one, stopped with a dressed stone; searched there, the stone gives on a drover's
+    bank to the west edge, its last square, 392,162 (0,4), which L6's road takes on to Kilnhaven's
+    gate (#468, §4.13; #467's 7). The stream comes in from M5 at 415 to 418,158 (23 to 26,0), passes
+    under the bridge and widens into the river's last reach, out by the west edge at rows 5 and 6.
+    The farmers' shrine at a field's corner (personality), the farmer at his gate, whose son went up
+    to the Tiefzeche and writes nothing, the limed fields over the river and a field barn. On the
+    hill the lime kilns stand in a row, warm, each open at its draw-hole but one, stopped with a
+    dressed stone; searched there, the stone gives on a drover's
     cache, the Compact's cloth and a strongbox with its seal broken, and in it 250 gold and a Seax +1
     (`seax+1`), the ladder's, which no walker, swimmer, climber or levitator reaches but through the
     stone. From the hill's top the lookout over Kilnhaven's harbour and the sea; a quarry in its
@@ -1523,24 +1528,32 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458), N4 1,468
   (#461), N2 1,095 (#460), N5 1,679 (#463), the Tiefzeche 4,278 (#462), N6 787 (#467), M6 1,068
   (#467), O5 1,742 (#464; 1,292 to a company that bought, which meets no Guard), L6 1,590 (#468),
-  the Rift 3,698 (#465) and O6 with its tubes 6,127 (#466), so the shares stand at about 27,200
-  before the side quests (#471, below). The Tiefzeche's Foreman
-  alone pays 1,902 a member and its two corridor groups 858, past the brief's 2,400 before the upper
-  levels' beasts (§9). The Warden of the Anvil pays 1,902 too, past the Rift's 1,800 before its slag,
-  and the Great Salamander 1,902, so that O6 with its tubes pays four times the brief's 1,500 (§9,
-  #466's 9). With O5 a clear as measured gave 14,713 xp a member, past the curve's 13,067, so its row
-  owes nothing; with L6 it gave 16,303 and with the Rift 20,000; with O6 and its tubes it gives
-  26,128, and no more with Kilnhaven, which pays nothing of its own. The two fourth-rank asks of the
-  Tiefzeche (#439, §6) add 800 xp a member to a clear already over its ask: 26,928 of the 13,067,
-  2.06 times. All ten boxes are built. The clear has been past 1.4 times the ask, about 18,300, the
-  line #439's 10 held the three boxes to, since the Rift, and O6 with its tubes is 6,127 for the
-  brief's 1,500; no group is cut for it (§9, #466's 9). The chapter pays nothing (#470): the clear is
-  past its ask without it. Anvilhall pays nothing of its own (#459), nor does Kilnhaven (#469), which
-  holds no group: the 300 each was to have from the side quests (#471) is paid in kind. The clear
-  stands at 26,928 with the asks. The side quests pay in kind and a token: The Primer's and A Crown
-  to Order's questions 900 xp each whichever the answer, 300 a member between the four of the 800
-  planned; and the son's 300 gold and Wiebe's 800, the thane's 500 being one answer's. A clear gives
-  27,228 xp a member and 14,707 gold, 2.08 times the ask (§9, #471's 1).
+  the Rift 3,698 (#465) and O6 with its tubes 6,127 (#466), so the shares stand at 26,128 before the
+  asks and the side quests (below). The Tiefzeche's Foreman alone pays 1,902 a member and its two
+  corridor groups 858, past the brief's 2,400 before the upper levels' beasts (§9). The Warden of
+  the Anvil pays 1,902 too, past the Rift's 1,800 before its slag, and the Great Salamander 1,902,
+  so that O6 with its tubes pays four times the brief's 1,500 (§9, #466's 9). With O5 a clear as
+  measured gave 14,713 xp a member, past the curve's 13,067, so its row owes nothing; with L6 it gave
+  16,303 and with the Rift 20,000; with O6 and its tubes it gives 26,128, and no more with Kilnhaven,
+  which pays nothing of its own. The two fourth-rank asks of the Tiefzeche (#439, §6) add 800 xp a
+  member to a clear already over its ask: 26,928 of the 13,067, 2.06 times. All ten boxes are built.
+  The clear has been past 1.4 times the ask, about 18,300, the line #439's 10 held the three boxes
+  to, since the Rift, and O6 with its tubes is 6,127 for the brief's 1,500; no group is cut for it
+  (§9, #466's 9). The chapter pays nothing (#470): the clear is past its ask without it. Anvilhall
+  pays nothing of its own (#459), nor does Kilnhaven (#469), which holds no group: the 300 each was
+  to have from the side quests (#471) is paid in kind. The clear stands at 26,928 with the asks. The
+  side quests pay in kind and a token: The Primer's and A Crown to Order's questions 900 xp each
+  whichever the answer, 300 a member between the four of the 800 planned; and the son's 300 gold and
+  Wiebe's 800, the thane's 500 being one answer's. A clear gives 27,228 xp a member and 14,707 gold,
+  2.08 and 1.86 times the asks (§9, #471's 1).
+  **As finished** (the curve test prints it): the Kilns' clear gives 27,228 xp a member and 14,707
+  gold, 2.08 and 1.86 times the curve's 13,067 and 7,920, and the row owes nothing. It is high
+  because the bosses pay about 1,900 a member on the line (11,413 xp at 18, 1,902 over six) against
+  the briefs' 1,500 to 1,800 for the Rift and for O6 with its tubes, and a kill already pays by
+  level (`KILL_PAY`, `src/game/party.ts`, #159), which the curve's sum, each fight at its monsters'
+  own level, leaves out. No group is cut and no monster's pay lowered for it (§9, #466's 9). What
+  waits is the ship to Cinderport, on #512, and the country behind the road, on #474, which adds
+  about 1,800 xp more and is not in the figure.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1577,7 +1590,9 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   them a clear's gold is 13,007, and 13,607 with the asks: 1.72 times the training's 7,920.
   Anvilhall holds none (#459): its forge sells the step at the prices above, and its thane takes the
   6,000. Kilnhaven holds none either (#469): its smith sells the step at a quarter more. Nor does the
-  chapter (#470).
+  chapter (#470). The side quests add the son's 300 and Wiebe's 800, the thane's 500 being one
+  answer's: a clear gives 14,707, 1.86 times the training's 7,920 and 787 over the training and the
+  Stone together, 13,920, so a clear pays both (§9, #471's 1).
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
   company at 16 wins nine in ten of M3's fights and walks the trail resting at its camp; one at 14
   wins no more than one in four, which is how the Fells turn an Act II company back. The Foreman,
@@ -1691,18 +1706,18 @@ Decided by delegate for #540, each the owner's to overturn:
 
 1. **The flag is `q_anvil_closed`,** set once the Warden of the Anvil has fallen and the tear is
    closed. The Rift sets it (#465), the chapter's Stone entry reads it (#470) and O5's slaglings may
-   stop `until` it before the Rift is built (#464). It is the Stones' own form (`q_tide_home`,
-   `q_grove_mended`), and not `_done`, which would read as the chapter's end. Nobody renames it or
-   adds a second.
+   stop `until` it before the Rift is built (#464; built since: #465). It is the Stones' own form
+   (`q_tide_home`, `q_grove_mended`), and not `_done`, which would read as the chapter's end. Nobody
+   renames it or adds a second.
 2. **The Hearth does not read the thane's choice.** Bought (`anvil_bought`) or taken
    (`anvil_taken`), the count is the same: the choice is how the Stone came to the company, never
    what restores it, and the Rift opens whatever the thane said (§5). A company that closes the tear
    before it has spoken to him steadies the Hearth all the same. §4.10 asked that the Stone be the
    company's as well, and now says bought or taken alike.
 3. **A flag, not the Warden's death read as `slain`,** as the issue has it: the Rift's map is not
-   built to name, and one flag is what the Hearth, the chapter and O5's groups all read. It is owed
-   to #470 in `tools/tests/quests.ts`'s `UNSET` (#415) until something sets it, and the first to do
-   so drops the entry there.
+   built to name (built since: #465), and one flag is what the Hearth, the chapter and O5's groups
+   all read. It is owed to #470 in `tools/tests/quests.ts`'s `UNSET` (#415) until something sets it,
+   and the first to do so drops the entry there (dropped since: #465 sets it).
 4. **No wording changes.** The title, the sky and the almanac read the count, which stands at five
    Stones already, so the Anvil Stone is one step more wherever it falls.
 
@@ -1713,10 +1728,12 @@ Decided by delegate for #539, each the owner's to overturn:
    landing once its town is built. A town sells one by a person whose `passage` is `sells(...)`.
 2. **Nothing is sold toward a town not built:** an end with no landing names the issue that writes
    it (#469 for Kilnhaven's three, #487 for Rime Lodge and #512 for Cinderport), and a seller whose
-   crossings all wait only talks. So none runs yet; the ferry runs first, once #469 writes the quay.
+   crossings all wait only talks. So none runs yet; the ferry runs first, once #469 writes the quay
+   (run since: the ferry with #469 and the coach with #487; the ship waits on #512).
 3. **Once both ends land, both sell it** (a crossing that runs one way is not honest, #177's 1), or
-   the check fails: #469 puts the ferry's seller on Saltmouth's quay, as #177 gave E6's captain the
-   way back. Saltmouth's landing is written now: 13,10 on the quay, facing west, where Kitto's lands.
+   the check fails: #469 puts the ferry's seller on Saltmouth's quay (done: #469's 7), as #177 gave
+   E6's captain the way back. Saltmouth's landing is written now: 13,10 on the quay, facing west,
+   where Kitto's lands.
 4. **A fare is 12.5 gold a level of the dearer end's floor for each day,** as Kitto's boat is 150
    for a night to Wrackholm's 12: the ferry 400, the Compact ship 600 (Cinderport's 24) and the coach
    250 (Rime Lodge's 20). The check holds the rule.
@@ -1757,14 +1774,16 @@ Decided by delegate for #538, each the owner's to overturn:
    save bump; the dwarves are born to it (the skill's `race`), so the sheet lists it for a dwarf too.
 9. **A guild's halls teach its skills to its members** (DESIGN §5 and §8, "taught to its members"):
    every business with `hall: 'lanterns'` offers "Learn a skill", Rime Lodge's too once #487 builds
-   it, and a stranger to the guild hears *"We teach our own."*
+   it (built since: #487), and a stranger to the guild hears *"We teach our own."*
 10. **A person teaches a skill with `skill`,** beside `teaches`, which stays the prestiges', so the
-    walkthroughs that read `teaches.cls` keep their types; Anvilhall's reader is #459's to place.
+    walkthroughs that read `teaches.cls` keep their types; Anvilhall's reader is #459's to place
+    (placed since: #459).
 11. **Linguist costs 1,000 gold a member:** a first prestige's price, under a tier 6 spell at the
     Watch (1,280) and an eighth of training six through the band (7,920, §8).
 12. **The copybook is any item with `skill: 'linguist'`,** tested with a fixture until #471 builds
-    the Primer's. A carried thing's own Kiln-script (34's rubbing) is not built: an item would want
-    a reading of its own, a few lines in the systems lane, for #471 to ask for.
+    the Primer's (built since: #471). A carried thing's own Kiln-script (34's rubbing) is not built:
+    an item would want a reading of its own, a few lines in the systems lane, for #471 to ask for
+    (it did not: §11).
 13. **The line check hears an inscription as a reader with a ten-letter name does the first time:**
     its words, reading and mark said together, which Feuerstollen's brief (§4.11) fills exactly.
 14. **The novelty check names the new mechanics** `sign:read` and `sign:marks`, for §7's claim.
@@ -1805,9 +1824,10 @@ Decided by delegate for #472 (the knockers), each the owner's to overturn:
    feelers, spool, needle, slate and the mark, so MONSTERS §11's tallyman, deep knocker, inspector
    and tally clerk are each a Build, a colouring and what their trades carry.
 10. **No gold and no drops:** machines carry parts (MONSTERS §2), and the parts are items, #462's
-    to add with the groups it places, as the Heart of the Sunder came with #199.
+    to add with the groups it places, as the Heart of the Sunder came with #199 (added since:
+    #462's 13).
 11. **They stand unplaced, owed to #462,** which seats six knockers and a mender twice in the clean
-    corridor and the Foreman before the door.
+    corridor and the Foreman before the door (placed since: #462).
 
 Built since, in the systems lane: MONSTERS §2's line for the first time the Hearth's light passes
 through a machine, *The light goes into it like a hand into a glove.*, follows in the combat log the
@@ -1840,7 +1860,7 @@ Decided by delegate for #535, each the owner's to overturn:
    bring Cinderport's step to the edge of Ashfall's 5,500 (#542).
 8. **Kilnhaven's smith asks a quarter more, in whole gold** (`quarterMore` and `SMITH_PRICES`, for
    #469): its dearest, 2,500, sits inside the window, and the ladder test holds it and owes the
-   shop to #469.
+   shop to #469 (built since: #469's 10).
 9. **The Stone is 6,000** (`ANVIL_STONE_PRICE`, for #459), sized as §8 says; the curve's row asks
    the training alone, and the boxes carry the Stone.
 10. **The step is made ahead of the area** (`ITEMS_AHEAD`, `src/content/index.ts`), as monsters and
@@ -1894,7 +1914,7 @@ Decided by delegate for #472 (the salamanders), each the owner's to overturn:
 2. **The Great Salamander is a beast boss on the boss line at 18** (1,001, armour 22, 18d8+20 on
    #541's line; 961 and 17d8+20 on #409's), immune to fire and to sleep and weak to cold, as its kin
    and as the Eldest and the Great Devilfish. Its blow is #466's to set for the gate, as #426 set the
-   Warden of the Sunder's, and its hide #466's to drop.
+   Warden of the Sunder's, and its hide #466's to drop (both done: #466's 4 and 5).
 3. **It is a tall boss, size 1.6,** seated on the third rank with its crown at 0.79 of its height,
    under its markers' 0.82: the deepest chamber's boss, and the biggest thing in the tubes.
 4. **The frame is a lizard three-quarter on, coming at the company,** its head turned on toward the
@@ -1907,7 +1927,7 @@ Decided by delegate for #472 (the salamanders), each the owner's to overturn:
    a lither body, the basilisk no fire, a crest, a crown and a stare, each a Build and a colouring.
 7. **The Salamander is owed to N3 (#458),** the first box whose brief places one (§4.3's spoil heaps,
    the roster's second fight), and the Great Salamander to the tubes (#466): `UNPLACED` in
-   `tools/tests/maps.ts` says so until each is placed.
+   `tools/tests/maps.ts` says so until each is placed (both placed since, and `UNPLACED` is empty).
 
 Decided by delegate for #473, each the owner's to overturn:
 
@@ -1988,7 +2008,7 @@ Decided by delegate for #458, each the owner's to overturn:
    leads only to a built map. Its exit is written beside the map, `GATE` in `ironfells_n3.ts`, into
    the town's start inside its own gate at 7,14 facing north, for #459 to list and to open the
    square; the town's way back lands on 28,9, facing south. The gate's event, `n3_gate`, leaves the
-   town's line (§4.4) to the town, which says it on arrival.
+   town's line (§4.4) to the town, which says it on arrival (opened since: #459's 9).
 4. **M3's milestone reads ANVILHALL 5:** the gate is 61 squares on from it along the trail and the
    spur, where #457's 4 counted about 52 to 452,80; M2's 8 holds at 106. The walkthrough holds the
    figure.
@@ -2009,7 +2029,7 @@ Decided by delegate for #458, each the owner's to overturn:
    after the ruts (#538's 4), so no company needs a reader to find the cellar.
 9. **The mother at the well has her words and nothing more:** her token, her flag and the journal
    come with her son on the Tiefzeche's lowest level (#462, #471), so 33 never stands in the log with
-   nothing to do until the mine is built.
+   nothing to do until the mine is built (built since: #462, #471).
 10. **The fell holds the hall's air shaft and an old bloomery** besides the brief's burying ground and
     cairn, and the camp is under a knoll by the spur: a core box's points must reach its open grass,
     and the brief's gather at the terraces and the trail.
@@ -2071,7 +2091,7 @@ Decided by delegate for #461, each the owner's to overturn:
 3. **The shaft is shut until the Tiefzeche is built,** as N3's gate is (#458's 3): the shaft's square
    is wall and `n4_cage` says the cage is chained at the top. #462 lists `MOUTH` in N4's exits, opens
    the square and drops the event. The mouth's line, `n4_mouth`, is said once on the spur before it,
-   for the chapter (#470) to read.
+   for the chapter (#470) to read (opened since: #462's 16).
 4. **Four groups for nine:** four fire beetles at the spoil's head by the trail, three salamanders and
    a beetle at its warm end and a rock worm in each of two open cuts, the box's groups at 17. They give
    8.73 fights to a rest at 16 and 1,468 xp a member for the brief's 900, as #457's 3 has it.
@@ -2176,7 +2196,8 @@ Decided by delegate for #463, each the owner's to overturn:
     at 15 in the area's pool, where every fight is won, owed to #18 as the others are.
 13. **Owed on:** the drove road at N6's 12,0 (436,158, #467); the cutters' track at O5's 0,24
     (456,150, #464), to be run on to the Stone; the stream at M5's 31,25 and 31,26, with no road
-    across that edge (#474, parked); the elder's flag, the Rift's (#465).
+    across that edge (#474, parked); the elder's flag, the Rift's (#465) (built since: the road, the
+    track and the flag; the stream waits on #474).
 
 Decided by delegate for #462, each the owner's to overturn:
 
@@ -2269,7 +2290,7 @@ rest by delegate:
 7. **The branch ends at M6's west edge in dirt,** 392,162 (0,4), beside Kilnhaven's gate at 391,162
    on L6's east edge: the atlas's trail stopped in the river at 398,164, and the edge check asks for
    no road where the atlas has none beyond. #468 takes it on into the gate, and may make the square
-   road once L6 is laid.
+   road once L6 is laid (done: #468's 10).
 8. **The stream** comes in from M5 at 23 to 26,0, as the atlas's river asks, passes under the bridge
    at row 3 and goes out at the west edge's rows 5 and 6; from the bridge west the branch keeps to its
    north bank, where the atlas took it into the water.
@@ -2289,7 +2310,8 @@ rest by delegate:
     (#539); the branch at L6's 31,4 (391,162, #468), Kilnhaven's gate; on M6's north the stream at
     M5's 23 to 26,31 (415 to 418,157), with no road (#474, parked); on N6's east the grass and the
     heather against O6, with no road (#466); on M6's south the grass and the hill against
-    Cairnmoor's M7, with no road.
+    Cairnmoor's M7, with no road (built since: N7 with its road, L6 with its gate and O6; M5's stream
+    waits on #474 and M7's grass on #484).
 15. **The save budget scales with the content:** `tools/tests/save.ts` held the outdoors' saved state
     under a fixed 20,000 characters, and N6's and M6's five groups took it to 20,106, as every later
     box would. It now holds the state to its explored bits as stored, which the world's size fixes,
@@ -2315,7 +2337,7 @@ Decided by delegate for #464, each the owner's to overturn:
    `o5_tear` says the torn ground from the track beside it. `TEAR` in `kilnsheart_o5.ts` writes the
    feature, into the Rift's start at 7,14 facing north (§4.10 gives none: the Tiefzeche's and
    Anvilhall's), saying the slag's words going in, for #465 to place, open the square and drop the
-   event; its way back lands on 12,15, facing north.
+   event; its way back lands on 12,15, facing north (opened since: #465's 9).
 5. **Four groups for eight:** five slaglings above the track's bend and five on the slope by the
    tear; the slag elder at its lip, the box's group at 18 (§7); three of the Anvil Guard on the
    approach. They give 8.42 fights to a rest at 17 and 1,742 xp a member, 1,292 on the buying, for
@@ -2346,9 +2368,8 @@ Decided by delegate for #464, each the owner's to overturn:
     at 15 in the area's pool, where 97.1% of fights are won, owed to #18 as N5's are (#463's 12).
 14. **Owed on:** the tear's feature, the square opened and the way back, #465's; the Rift's flag,
     which the slaglings, the Stone's line and the tear's read, #465's too (both built, #465's 5 to 9);
-    the chapter's step at the
-    Stone, #470's, which may read `o5_stone`; the grass and the hills at O6's 0 to 12,0, with no road
-    across that edge (#466).
+    the chapter's step at the Stone, #470's, which may read `o5_stone`; the grass and the hills at
+    O6's 0 to 12,0, with no road across that edge (#466) (the last two built since: #470, #466).
 
 Decided for #468, each the owner's to overturn, the first by the orchestrator and the rest by
 delegate:
@@ -2358,12 +2379,13 @@ delegate:
 2. **The gate stands three squares in, at 28,4 (388,162):** the atlas's 391,162 is the east edge
    itself, so the road comes in from M6 on row 4, and the square before the gate, 29,4, is L6's. The
    site and the atlas's way in move onto the gate, as Anvilhall's moved onto N3's (#458's 2); the
-   town's plate stays at 378,158 for #469. The town's wall runs along the shore north of the gate.
+   town's plate stays at 378,158 for #469 (moved since: #469's 3). The town's wall runs along the
+   shore north of the gate.
 3. **The gate is shut until the town is built,** as N3's was (#458's 3): its square is wall, and
    `l6_gate` says it is barred from inside. Its exit is written beside the map, `GATE` in
    `kilnmouth_l6.ts`, into the town's first square inside its own east gate at 14,7, facing west, the
    start this asks #469 to give Kilnhaven; the way back out lands on 29,4, facing east. #469 lists
-   `GATE` in L6's exits, opens the square and drops the event.
+   `GATE` in L6's exits, opens the square and drops the event (opened since: #469's 2).
 4. **The brief is §4.13, not the issue's draft:** the secret is the bonded store behind the sealed
    row, not a customs chest under a beacon hinted by a carter. The issue's beacon stands on the hill as
    the lookout, and its salt crabs stay Saltreach's.
@@ -2386,12 +2408,12 @@ delegate:
     intellect.
 12. **The curve:** the row owes nothing since O5 (#464), and with L6 a clear gives 16,303 xp a member
     of the 13,067 the curve asks and 9,497 gold of the 7,920, before the Rift, O6 and its tubes and
-    Kilnhaven (§8).
+    Kilnhaven (§8; the whole gives 27,228 and 14,707).
 13. **The zone walk moves 105 squares** elsewhere, none on a built map: L6 was Kilnmouth's already,
     but for the 6 squares of the bay its wall and its quay stand on.
 14. **Two under is owed to #18,** as the other boxes' is.
-15. **Owed on:** the gate's exit and its arrival (#469); on the west edge, K6's cut heath (§11), with
-    no road; on the south, Cairnmoor's L7, with no road. The north edge is the sea.
+15. **Owed on:** the gate's exit and its arrival (#469; built since); on the west edge, K6's cut
+    heath (§11), with no road; on the south, Cairnmoor's L7, with no road. The north edge is the sea.
 
 Decided by delegate for #439, each the owner's to overturn (docs/areas/thornmark.md §9, 51 and 52,
 has the Druid's trainer):
@@ -2486,9 +2508,9 @@ Decided by delegate for #465, each the owner's to overturn:
 11. **Its gold is 1,910, its share by the brief of the 13,900** (§8), all in the hollow with the tools.
 12. **Two under is the area's pool's:** the Rift's floor is over the area's, so the gate counts its
     groups at 14 in the area's pool, where 95.4% of fights are won, owed to #18 as O5's are (#464's 13).
-13. **Owed on:** the chapter's step at the Stone, #470's, which reads `q_anvil_closed`; and a group's
-    own `sets`, said with its `slainText`, which would close the tear on the blow itself, the systems
-    lane's to give if it is wanted.
+13. **Owed on:** the chapter's step at the Stone, #470's, which reads `q_anvil_closed` (built since:
+    #470); and a group's own `sets`, said with its `slainText`, which would close the tear on the
+    blow itself, the systems lane's to give if it is wanted.
 
 Decided by delegate for #466, each the owner's to overturn (the first and the ninth follow the
 orchestrator's calls):
@@ -2528,7 +2550,8 @@ orchestrator's calls):
    first level 1,631 and the second 2,851, the Great Salamander alone 1,902. A clear gives 26,928 xp
    of the 13,067 (2.06 times) and 13,607 gold of the 7,920 (1.72 times), the Rift in and Kilnhaven
    too, which pays nothing of its own (#469's 12, §8): the area's total is the orchestrator's to
-   weigh now its boxes are all in.
+   weigh now its boxes are all in (27,228 xp and 14,707 gold, 2.08 and 1.86 times, with the side
+   quests: §8).
 10. **The gold is 1,600:** 450 in the shelter, 250 in the cairn, 300 in the cutters' strongbox and
     600 before the plate. The brief names none, and no monster carries any.
 11. **The find is the ladder's Steel Bow +1** (#535, the ranger's), in the shelter, and the ladder's
@@ -2591,7 +2614,8 @@ Decided by delegate for #469, each the owner's to overturn:
 12. **The town holds no group and pays nothing of its own:** §4.14 names no group, and its 300 is
     #471's hand-ins, the chapter paying nothing (#470), as Anvilhall's is (#459's 7). The clear
     stands at 26,928 xp a member and 13,607 gold with O6, the Rift and #439's asks, past the curve's
-    13,067 and 7,920; nothing was cut, since nothing was added.
+    13,067 and 7,920; nothing was cut, since nothing was added (27,228 and 14,707 with the side
+    quests: §8).
 13. **Tallis's man is here with his words and nothing more,** as the issue's People ask: Wiebe waits
     on the street for a parcel up from the smelter, as Eckhart and Kerensa stand at it (#463's 5),
     and the crown, the throne and the thane are never named. The choice put to a company, its
@@ -2608,9 +2632,9 @@ Decided by delegate for #469, each the owner's to overturn:
     The Guard's Horn is named for the horn on its chimney breast and the Anchor Smithy for the
     anchor in for mending.
 17. **Owed on:** the ship's landing and seller at Cinderport (#512); Tallis's man's hand-in and the
-    crown's end (#471); the chapter's step (#470). The sheet's crop of the world map for the town
-    centres on Saltmouth's gate, the first way in `tools/sheet.ts` finds, the ferry's: the quality
-    lane's to change.
+    crown's end (#471); the chapter's step (#470) (the last two built since; the ship still waits on
+    #512). The sheet's crop of the world map for the town centres on Saltmouth's gate, the first way
+    in `tools/sheet.ts` finds, the ferry's: the quality lane's to change.
 18. **The coach runs,** Rime Lodge being built (#487): Murdo sells it to the lodge's coach house and
     its coachman back to the yard. The gate's `landings` now count the lodge's two ways out onto M9
     and hold the groups nearest them to the gentlest; the pike beside the lake door's landing, which
@@ -2689,12 +2713,13 @@ Tubes). Filed as #435.
   lends its name to (NAMES §3); and CREW ONLY, the crew's words, read and never translated.
 - **People** are named with their issues, in the same tongue: the thane, the mother, the oldest
   miner, the harbourmaster. The Regent's scholar and Tallis's man are Helmstow's and Saltmouth's.
-  Named so far: Hartmut, *hart* and *mut*, hard courage, who keeps Erzkamm's mouth (#460); Eckhart,
+  Named: Hartmut, *hart* and *mut*, hard courage, who keeps Erzkamm's mouth (#460); Eckhart,
   *eck* and *hart*, a hard edge, the master smith at Gluthutte (#463); Reinhart, *rein* and *hart*,
   clean and hard, the cutters' foreman at the Stone (#464); Einhart, *ein* and *hart*, alone and
   hard, the hermit in O6's dead vent (#466); Irmgard, *irmin* and *gard*, a great enclosure, the
   harbourmaster who keeps Kilnhaven's harbour, and Dietmar, *diet* and *mar*, known to the folk, the
   port's smith (#469); Wiebe, Tallis's man, takes a Tidefolk name, as Saltmouth's people do (#469).
+  Anvilhall's people are named in #459's 12 and the port's boatmen and coachman in #469's 16 (§9).
 - **Ids stay** (NAMES §3): `deep_mines` is the Tiefzeche and `lava_tubes` is Feuerstollen; Erzkamm
   and Gluthutte are sites with no id. The old names stand in the issues until they are edited.
 
@@ -2722,3 +2747,16 @@ are built, and what waits is owed to another, the first level's two-under figure
 From the side quests' briefs (§6, #471): the crust-bearer left below, sending a note up, since he
 comes up and the scraps at the well are his notes (#471's 2); and the copybook's reading of #56's
 16's rubbing, which is no inscription, owed to Thornmark if the owner wants it (#471's 6).
+
+Owed by the Kilns as built, every box, town and dungeon of the road being in (#456):
+
+- **To #474, parked:** the country behind the road, O3, O4, M4 and M5: 3,886 squares of land, 3,397
+  walkable, about 1,800 xp a member when built (§4.15, §8), once the owner has played the act (#434,
+  call 10).
+- **To #512, Cinderport:** the Compact ship's landing and its seller. Jago talks and sells no fare
+  until then; the ferry and the coach run (§4.14, §9).
+- **To #18:** each box's two-under figure (§8).
+- **Nothing on the curve:** a clear gives 27,228 xp a member and 14,707 gold, 2.08 and 1.86 times
+  the curve's 13,067 and 7,920, and the row owes nothing. It is high because the bosses pay about
+  1,900 a member on the line against the briefs' 1,500 to 1,800, and a kill already pays by level
+  (`KILL_PAY`, `src/game/party.ts`); no group is cut and no monster's pay lowered (§8, #466's 9).
