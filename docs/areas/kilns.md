@@ -258,8 +258,9 @@ docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–1
 laid on it and its line to the heart held, §1; the heart 16–18, with N4, N5, N6 and O5 laid on it;
 Kilnmouth 16–18, with M6 and L6, §9), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the
 Tiefzeche 16–18, the Anvil Stone 17–18, Feuerstollen 17–18) as planned plates, the Tiefzeche's now
-its three levels' (#462) and the Anvil Stone's the Rift's, on its tear (#465), the sites (Anvilhall, the Deep Mines, the Forges, the Anvil Stone, the
-Lava Tubes, Kilnhaven, Iron Crag, to be renamed with #435, §10) and its links: the east road in, the
+its three levels' (#462) and the Anvil Stone's the Rift's, on its tear (#465), the sites (Anvilhall,
+the Deep Mines, the Forges, the Anvil Stone, the Lava Tubes, Kilnhaven, Iron Crag, to be renamed with
+#435, §10) and its links: the east road in, the
 towns' and the dungeons' ways in, the drove road on to High Moor, the ferry and the Compact ship,
 and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's coach (#434, call 9; #539 builds
 it).
@@ -873,8 +874,8 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   reads KEEP WHOLE. NO CUTTING. A two-man saw stands in the last cut on its east face; once the Stone
   is bought, the saws are off it. The tear is the atlas's way in, 468,142 (12,16), below the cut
   beside the track: its square, shut until the Rift was built, is bare stone now and `TEAR` on it the
-  way into the Rift (#465, §4.10); the torn ground is said from the track beside it, and once the tear
-  is closed, that it has closed over. Five slaglings out of it walk the hillside above the
+  way into the Rift (#465, §4.10); the torn ground is said from the track beside it, and once the
+  Warden has fallen, that it has closed over (§4.10). Five slaglings out of it walk the hillside above the
   track's bend and five the slope beside the tear, until it is closed; the slag elder stands at its
   lip, the box's group at 18; and once the Stone is taken three of the Anvil Guard, the thane's iron,
   stand on the approach between the track and the Stone, their post said as the company comes up.
@@ -939,18 +940,18 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   its hit points and its blow set off the line by the gate (§9); it never comes back, and drops the
   Heart of the Anvil (`anvil_heart`), a keepsake. Its fall says the brief's line, and the first step
   after it, into the cut or back out of it, says the slag has gone black and cold and sets
-  `q_anvil_closed` (#540), as does a first step back in by a company gone another way: the Rift's
-  groups, O5's slaglings and the strays on N3 and N5 stop coming back, the hum's lines go quiet, the
-  Hearth counts the Anvil Stone, and on O5 the torn ground has closed over. The secret: in the fourth
-  lane the ripples of slag run up toward the back, where every other lane's run down; searched at its
-  head (14,3), the slag gives on a hollow against the Stone's cut face, and in it the first cutter's
-  tools, a Cutter's Pick +1 and a Cutter's Chisel +1 (`cutters_pick`, `cutters_chisel`), with 1,910
-  gold, which nothing reaches but through the slag. A company at 17 wins every fight but the
-  Warden's, which it wins 54% of the time, and 93% at 19; its groups pooled with the Warden are won
-  90.8% and its day runs 8.00 fights to a rest, 6.3% of its days ending in a fight broken off, all
-  inside the aims. Two under, its groups count in the area's pool at 14, where 95.4% of fights are
-  won, owed to #18. As measured it pays 3,698 xp a member and 1,910 gold. Density 100% within 7, the
-  furthest 7, with no sign among its 15 points.
+  `q_anvil_closed` (#540), as does a first step back in by a company gone another way, or the track
+  beside the tear on O5, where the torn ground has closed over: the Rift's groups, O5's slaglings and
+  the strays on N3 and N5 stop coming back, the hum's lines go quiet and the Hearth counts the Anvil
+  Stone. The secret: in the fourth lane the ripples of slag run up toward the back, where every other
+  lane's run down; searched at its head (14,3), the slag gives on a hollow against the Stone's cut
+  face, and in it the first cutter's tools, a Cutter's Pick +1 and a Cutter's Chisel +1
+  (`cutters_pick`, `cutters_chisel`), with 1,910 gold, which nothing reaches but through the slag. A
+  company at 17 wins every fight but the Warden's, which it wins 54% of the time, and 93% at 19; its
+  groups pooled with the Warden are won 90.8% and its day runs 8.00 fights to a rest, 6.3% of its days
+  ending in a fight broken off, all inside the aims. Two under, its groups count in the area's pool at
+  14, where 95.4% of fights are won, owed to #18. As measured it pays 3,698 xp a member and 1,910
+  gold. Density 100% within 7, the furthest 7, with no sign among its 15 points.
 
 ### 4.11 O6, Feuerstollen's box (#466): country, band 18, with the tubes
 
@@ -1312,7 +1313,7 @@ came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
   measured gave 14,713 xp a member, past the curve's 13,067, so its row owes nothing; with L6 it gave
   16,303, and with the Rift it gives 20,000, with O6 and its tubes and Kilnhaven's hand-ins still to
   come. The two fourth-rank asks of the Tiefzeche (#439, §6) add 800 xp a member to a clear already
-  over its ask. Two boxes are still to build, O6 and its tubes (#466) and Kilnhaven (#469), and when
+  over its ask: 20,800 of the 13,067. Two boxes are still to build, O6 and its tubes (#466) and Kilnhaven (#469), and when
   they are, those boxes, not the asks, are what the 1.4 times line holds to (§9, #439's 10).
   Anvilhall pays nothing of its own (#459): its 300 is the chapter's and #471's.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
@@ -1641,7 +1642,7 @@ Decided by delegate for #472 (the six), each the owner's to overturn:
 11. **The worm comes up through a ring of rubble,** blind, its maw ring inside ring of teeth; the
     guard is a dwarf rebuilt on the figure frame, a maul stood beside him and an anvil buckle.
 12. **The Warden drops nothing yet:** the Heart of the Anvil comes with #465, which places it, as the
-    Heart of the Sunder came with the Sunder's box (#426).
+    Heart of the Sunder came with the Sunder's box (#426); placed, #465's 10.
 13. **No surface monster at 18:** #472 adds none; the 17–18 boxes hold their top with rock worm
     pairs at 17, as §7 proposes.
 
@@ -2104,7 +2105,8 @@ Decided by delegate for #464, each the owner's to overturn:
 13. **Two under is the area's pool's:** O5's floor is over the area's, so the gate counts its groups
     at 15 in the area's pool, where 97.1% of fights are won, owed to #18 as N5's are (#463's 12).
 14. **Owed on:** the tear's feature, the square opened and the way back, #465's; the Rift's flag,
-    which the slaglings, the Stone's line and the tear's read, #465's too; the chapter's step at the
+    which the slaglings, the Stone's line and the tear's read, #465's too (both built, #465's 5 to 9);
+    the chapter's step at the
     Stone, #470's, which may read `o5_stone`; the grass and the hills at O6's 0 to 12,0, with no road
     across that edge (#466).
 
@@ -2218,10 +2220,14 @@ Decided by delegate for #465, each the owner's to overturn:
    says its `slainText` and nothing more), so three events set `q_anvil_closed`, after the Warden's
    death and until the flag, as D5's row sets Hale's (#156): in the cut, back out of it and on the
    first square in from the tear. The Warden is fought only from the square before the cut, so any
-   step from there sets it, and a company gone by Town Portal sets it on its first step back in.
+   step from there sets it. A company gone by Town Portal sets it on its first step back in, or on
+   O5's track beside the tear, where `o5_closed` sets it too, so one that never goes down again is
+   not left with the Stone still red.
 6. **The tear closed is the slag gone quiet:** the Rift's groups come back until the flag and the
    Warden never; the lines that hear the hum go once it falls and the slag material's quiet words are
-   said in their place; on O5 `o5_closed` says the torn ground has closed over, which #464's 3 left here.
+   said in their place. On O5 `o5_closed`, which #464's 3 left here, says the torn ground has closed
+   over once the Warden has fallen, and `o5_tear` goes with it, `until` the Warden's death and not
+   the flag, which that line may be the one to set.
 7. **The Rift wears the slag material:** its palette, its bare walls, its words going out and its name,
    the Slag Rift, as the generated Rifts are named, so the world map letters the Stone and its Rift
    apart; the id stays `anvil_stone`. Its plate moves onto the tear, 468,142, as K3's and the Delta's
