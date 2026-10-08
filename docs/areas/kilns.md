@@ -252,7 +252,7 @@ first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhal
 - **Feuerstollen's box** (O6, `kilnsheart_o6`, country, band 17–18; #466): the grass and the hills
   in from N6 and O5 to the ash, and across the ash the vent ridge, black rock running north to south
   and blowing hot at four vents, ash on the lip of each. The hill at the ash's edge to see it from,
-  the camp, and Einhart, a hermit in a dead vent at the ridge's north end, who counts the vents by
+  the camp and Einhart, a hermit in a dead vent at the ridge's north end, who counts the vents by
   their breath; the adit cut into the ridge's foot at 22,20, the way into the tubes, with the
   dwarves' words over it, which a reader reads VENT. STAND CLEAR. and whose reading marks the tubes
   and the machine's other mouths on the world map. Burnt footprints down off the crag, a cairn on
@@ -264,7 +264,7 @@ first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhal
   #466): down O6's adit. The fire adit, the dwarves' cut broken into a tube of black glassy rock
   with the fire showing through its floor in places: beetles in a cooled side tube with a cutters'
   strongbox, salamanders on the chamber's fire and in the north tube, a rock worm in the bore no
-  fire made, and the steep floor down. The deep tubes, hotter, the fire under a crust of floor:
+  fire made and the steep floor down. The deep tubes, hotter, the fire under a crust of floor:
   salamanders west and east, a tube choked with a flow that set and, in the deepest chamber, its
   floor all fire, the Great Salamander, boss at 18, which leaves its hide. Where the walls go square
   in the west tube and the heat drops away, a tube cut and not run, ending at a plate that nothing
@@ -1029,15 +1029,15 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   - **Measured.** A company at 17 wins every fight on O6 and manages 8.75 fights to a rest, inside
     the aim, with 3.3% of its days ending in a fight broken off. At 16 it wins every fight on the
     first level, 7.31 fights to a rest with 2% of its days broken off. At 17 it wins 84.3% on the
-    second, 7.56 fights to a rest, none of its days broken off, and the Great Salamander is won 53%
-    at 17 and 94% at 19, its hit points and its blow set off the line by the gate (§9). As measured
-    the box pays about 1,645 xp a member and 700 gold, the first level 1,631 and 300 and the second
-    2,851 and 600, the Great Salamander 1,902 of it: 6,127 and 1,600 in all for the brief's 1,500
-    (§9). Two under, the groups of the maps whose floor is over the area's, O6's and the second
-    level's among them, count at 15 in the area's pool, where 96.1% of 49 groups' fights are won,
-    and the first level's at 14 are won every time, all owed to #18. Density: O6 98.6% within 12
-    steps and the furthest 14, with one sign among its 22 points; the tubes' two levels 100% within
-    7 and the furthest 3 and 3, with no sign among 19 points and 14.
+    second, with 7.56 fights to a rest and none of its days broken off. The Great Salamander is won
+    53% at 17 and 94% at 19, its hit points and its blow set off the line by the gate (§9). As
+    measured the box pays about 1,645 xp a member and 700 gold, the first level 1,631 and 300 and
+    the second 2,851 and 600, the Great Salamander 1,902 of it: 6,127 and 1,600 in all for the
+    brief's 1,500 (§9). Two under, the groups of the maps whose floor is over the area's, O6's and
+    the second level's among them, count at 15 in the area's pool, where 96.1% of 49 groups' fights
+    are won, and the first level's at 14 are won every time, all owed to #18. Density: O6 98.6%
+    within 12 steps and the furthest 14, with one sign among its 22 points; the tubes' two levels
+    100% within 7 and the furthest 3 and 3, with no sign among 19 points and 14.
 
 ### 4.12 N6 and M6, the roads south and west (#467): country, band 16–18
 
@@ -1402,10 +1402,10 @@ fight), and the Stone's icon is the Lodestone's.
   1,060 (#464), its share by the brief's 1,000, in its cairn, the foreman's shed and the hollow; of
   its monsters only the Anvil Guard carries gold, about 150 between them on the taking. With O5 a
   clear's gold, 8,730, passed the training's 7,920, and with L6 it is 9,497, and 10,097 with the two
-  asks' 300 each (#439), and 11,697 with O6 and its tubes, which hold 1,600 (#466) and none on a
-  monster: 700 on O6, in its cairn (250) and the first dwarves' shelter (450), 300 on the first
-  level, in the cutters' strongbox, and 600 on the second, before the plate; the Stone's share is
-  still the boxes' to carry.
+  asks' 300 each (#439), and 11,697 with O6 and its tubes, which hold 1,600 (#466), none on a
+  monster: O6's 700 lie in its cairn (250) and the first dwarves' shelter (450), the first level's
+  300 in the cutters' strongbox and the second's 600 before the plate; the Stone's share is still
+  the boxes' to carry.
   Anvilhall holds none (#459): its forge sells the step at the prices above, and its thane takes the
   6,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
@@ -2284,8 +2284,8 @@ orchestrator's calls):
 5. **The Great Salamander's hide is carried, not worn, and dropped once:** `salamander_hide`, a
    resistance to fire as the Tide's symbol is to cold (no slot, 500 gold), the boss's every time.
    The boss never comes back, so there is one.
-6. **Both secrets are §4.11's, the issue's draft naming one:** the cold vent on O6, hinted by ash on
-   every other lip, and in the deep tubes the tube cut and not run behind the heat's gap where the
+6. **Both secrets are §4.11's, the issue's draft naming one:** on O6 the cold vent, hinted by ash on
+   every other lip; in the deep tubes the tube cut and not run, behind the heat's gap where the
    walls go square (the draft's cooled tube behind the flow; a flow that set chokes the middle tube
    beside it). The plate at its end does not open: a wall with a door drawn in it, no flag and no
    lock (#434's 4, as the Tiefzeche's door), and before it lie picks worn to stubs and 600 gold.
