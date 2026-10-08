@@ -79,7 +79,8 @@ Its edges:
 - **South: the Rimefells,** a ridge along y 256 to 264 between Cairnmoor and Rimewater. The drove
   road goes down through them from N8 at 424,250 to Rimewater's M9 at 414,262, a road link open
   from the start, and Rime Lodge stands at 410,262 just over the ridge on the shore of Loch Fada
-  (the long lake, NAMES §4). N8 lays the road to its notch (#479, §4.5); M9 (#438) takes it down.
+  (the long lake, NAMES §4). N8 lays the road to its notch (#479, §4.5) and M9 takes it down
+  (#486, docs/areas/rimewater.md §4.2).
 - **West: Kilnmouth's mountains,** L7, and M7 and M8's grass under them, the country behind (§4).
 
 The drove road is the only road: up from the Kilns over N7, south down N8 and over the Rimefells to
@@ -454,8 +455,8 @@ settled in its issue, and what the Kilns teach changes them.
   the Cairnfield at band 18–20 (§1, §9). The drove road comes on from N7's 7,31 onto N8's 7,0
   (431,222), fords the tarn's stream at 7,4 and runs south down the box's west side, past the coach
   and under the crags, west of the cairns, to its head at 1,28 above the Rimefells. The notch beyond
-  it, 0,28 (424,250), is the way down to Rime Lodge, taken and not walked (§9), and until M9 is built
-  the world ends there. Snow lies, `*`, in drifts over the moor, and the pool among the first cairns
+  it, 0,28 (424,250), is the way down to Rime Lodge, taken and not walked (§9), and M9 (#486) takes
+  it down. Snow lies, `*`, in drifts over the moor, and the pool among the first cairns
   is ice, `i` (#536). A hare gone white that does not run, the stream black between banks of snow,
   the ford's ruts frozen hard and, south, the field of cairns, each with a drift in its lee. By the
   road at 6,8 the coach stands stopped, snow to its axles, its traces cut and no horses; at 6,9 its
@@ -480,9 +481,10 @@ settled in its issue, and what the Kilns teach changes them.
   - **Seams.** North, N7's 7,31 to N8's 7,0 for the drove road and N7's 31,31 to N8's 31,0 for the
     stream. The door, 6,18, leads to `cairns` 7,15 facing north (a proposal) and its way back lands
     on 5,18 facing west; the notch, 0,28, leads to `longmere_m9` 22,8 (414,262) facing west and its
-    way back lands on 1,28 facing east. Both are jumps exported from the map (`DOOR`, `NOTCH`) and
-    listed in no exits yet: #480 lists the one and M9 (#438) the other. M9's north-east corner meets
-    the same diagonal as N8's south-west, so its edge check will need the same shoulder. West, M8
+    way back lands on 1,28 facing east. Both are jumps exported from the map (`DOOR`, `NOTCH`): #480
+    lists the door, and the notch is listed in N8's `exits`, its way back up in M9's (#486). M9's
+    north-east corner meets the same diagonal as N8's south-west, and both stand as the Rimefells'
+    shoulder, mountain with void past it. West, M8
     (#484, parked): no road, the stream out at 0,7. East, O8 (#478): heather and marsh, no road.
     South, N9, cut: hills and heather.
   - **Measured.** A company at 18 wins every fight and manages 8.68 fights to a rest, inside the aim,
@@ -817,7 +819,8 @@ Decided by delegate for #479, each the owner's to overturn:
 7. **The road down to Rime Lodge is taken, not walked** (`NOTCH`): the atlas's trail crosses N8's
    west edge at the very corner on a diagonal, which no square can pass the edge check on (the
    scaffold's draft fails there). Zones that do not meet join by an exit kept as a jump
-   (`src/game/outdoors.ts`, SEAM 2.5), which M9's pull request lists.
+   (`src/game/outdoors.ts`, SEAM 2.5), which M9's pull request lists
+   (#486, docs/areas/rimewater.md §9, 1).
 8. **The milestone at the road's head, 2,27, reads RIME LODGE 2, ANVILHALL 19:** 29 squares to the
    lodge and 250 to Anvilhall's gate at 13 to the unit, counted as N7's is (the walkthrough's
    `count`). N7's stone still reads 6: 80 squares now the road is built through N8, 82 before.
