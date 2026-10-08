@@ -30,11 +30,22 @@ export const ITEMS: readonly ItemDef[] = [
   P(skinningKnife, 1),
   P(bearSpear, 1),
   P(guidesStaff, 1),
-  P(huntersBow, 1),
-  P(plate, 4),
+  // The bay's two (#490), in the locker behind its last row: the ladder's Hunter's Bow +1 and Plate
+  // Mail +4, each named in the hill folk's tongue (§10), bogha a bow and luireach a coat of mail.
+  P(huntersBow, 1, { name: 'Bogha Fionn +1', text: [
+    'A bow of pale wood, unstrung, its string coiled beside it. It bends as if it were cut last spring.',
+  ] }),
+  P(plate, 4, { name: 'Luireach Dubh +4', text: [
+    'Plate gone black with age and never rusted, laid flat in its drawer with a row\'s mark on it.',
+  ] }),
   // K9's (#489), off the ladder: the drowned smith's own blade, beside his Bear Spear +1 in the hole
   // under the old bank. Lann is the hill folk's blade, and Fuar the village the loch came up over.
   W('lann_fuar', 'Lann Fuar', 2000, 2, 10, { bonus: 6, classes: MARTIAL, text: [
     'A long blade of dark iron, wrapped in greased hide and never carried. On the tang, a smith\'s mark: a little bell.',
   ] }),
+  // The Matron's part (#490), a keepsake, as machines carry parts and no gold.
+  { id: 'matron_cap', name: "The Matron's Cap", slot: 'none', price: 0, text: [
+    'A cap of thin grey plate, folded stiff and white as starched linen.',
+    'Inside the band, worn smooth, a loop inside a loop.',
+  ] },
 ];

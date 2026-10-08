@@ -80,6 +80,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   delta: ['drowned_temples2:dt2_choirmaster'],
   kilnsheart: ['deep_mines3:dm3_foreman'],
   cairnfield: ['cairns2:cd2_king'],
+  coldmere: ['sleepers_bay2:sb2_matron'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -175,6 +176,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'longmere_m9: under': { whose: '#18', at: 1 },
   'longmere_l9: under': { whose: '#18', at: 1 },
   'coldmere_k9: under': { whose: '#18', at: 1 },
+  // And the Sleepers' Bay's stair (#490), banded from the area's floor as Carn Dubh's cairn is.
+  'sleepers_bay: under': { whose: '#18', at: 1 },
   'Rimewater: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike

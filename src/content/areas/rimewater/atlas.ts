@@ -20,7 +20,8 @@ export const ZONES: readonly AtlasZone[] = [
 
 export const PLACES: readonly AtlasPlace[] = [
   { id: 'rime_lodge', kind: 'town', at: [412, 256] }, // on M9, behind the lodge's gate at 18,8 (#486, #487)
-  { id: 'sleepers_bay', name: 'The Sleepers\' Bay', kind: 'dungeon', planned: true, band: [21, 22], at: [352, 290] }, // under Loch Fuar's ice, K9: the act's turn (#434, call 6; #490)
+  { id: 'sleepers_bay', kind: 'dungeon', at: [352, 284] }, // the Sleepers' Bay: the stair under Loch Fuar's ice, through K9's door at 24,30 (#489, #490)
+  { id: 'sleepers_bay2', kind: 'dungeon', at: [352, 290] }, // the bay itself, at the stair's foot: the act's turn (#434, call 6)
   { id: 'ice_caves', name: 'Ice Caves', kind: 'dungeon', planned: true, band: [20, 22], at: [446, 340] }, // the reach: its band is the cap's (#434, call 7)
 ];
 
