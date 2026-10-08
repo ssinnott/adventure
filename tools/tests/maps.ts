@@ -21,7 +21,6 @@ import { ok, owed, stopsWalk } from './lib.ts';
  */
 const UNPLACED: Record<string, string> = {
   great_salamander: '#466',
-  kilnhaven_inn: '#469', kilnhaven_smith: '#469', kilnhaven_training_hall: '#469', kilnhaven_harbourmaster: '#469', kilnhaven_chapel: '#469', kilnhaven_chandlery: '#469',
 };
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */

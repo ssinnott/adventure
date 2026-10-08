@@ -244,7 +244,7 @@ Lann Fuar, §9, #489's 8), the bay the Hunter's Bow +1 and the Plate Mail +4, na
 folk's tongue (§10; #490's 15) and K10 the Guide's Staff +1, the step's last find (#491). The
 systems it waited on, #432's, are all built (the opening names them and where each is described);
 the drove road's coach is written (docs/areas/kilns.md §3), Rime Lodge's end of it lands (#487) and
-the run waits for Kilnhaven's (#469). Its monsters are drawn in #495 and its rooms in #496.
+the run goes, Kilnhaven's landing written (#469). Its monsters are drawn in #495 and its rooms in #496.
 
 The monsters are drawn (#495), the six of MONSTERS §7.3, ahead of the boxes that place them: the
 keepers, the Bay Keeper and the Matron (`src/ui/monsters/keepers.ts`), and the cats, the Snow Lynx
@@ -492,10 +492,9 @@ what is new, with points of interest and a first share of the pay.
   every Lantern hall does, and gives the Lanterns' quests as every hall does (#439, §6). The
   furrier's sells the step's seven (`FURRIER`), the provisioner's Anvilhall's stores' list, the
   healer's house is a temple and the trainers' yard trains to 23. The coachman speaks of the overdue
-  coach and sells nothing yet: the coach lands here, but Kilnhaven's end of the run is #469's
-  (#487's 10). The houses draw in the
-  game's one town style, half-timbered and white, where the brief has logs; the palette tints the
-  stockade only.
+  coach and sells the run to Kilnhaven's inn yard, whose landing #469 wrote (#487's 10). The houses
+  draw in the game's one town style, half-timbered and white, where the brief has logs; the palette
+  tints the stockade only.
   The Thaw takes 45 a member and counts the nights: a stay sets the first of `night_1` to `night_4`
   not yet set, so they come in order, and the morning's arrivals stand on the yard square outside
   its door, 6,12, one night's words at a time: a man alone, then three who came up together, then
@@ -1976,10 +1975,11 @@ Owed by Rime Lodge as built (#487, §4.3):
   rank-0 quest and keep every company that did Helmstow's first task a stranger until Act III
   (#487's 12), is dropped, and with it the rule a hall's own first task would need
   (docs/areas/kilns.md §9, #439's 3).
-- **To #469:** Kilnhaven's end of the coach, its landing and its seller. The coachman sells nothing
-  until it lands; then the passage check wants both ends to sell, and the gate counts the town's
-  ways out onto M9 as landings and holds the nearest groups to the gentlest (#539's 4), which wants
-  another look at the ice pike beside the lake door's landing, 13,12.
+- **To #469, done:** Kilnhaven's end of the coach, its landing and its seller are written
+  (docs/areas/kilns.md §4.14), so the coachman sells the run and the passage check holds both ends.
+  The gate counts the town's ways out onto M9 as landings and holds the nearest groups to the
+  gentlest (#539's 4): the pike beside the lake door's landing, 13,12, is won every time at 18 with
+  the lynx, and nothing moves.
 - **To #492 and #494:** the chapter's entries on the nights and on Wenna, and her place at the lodge
   after the bay (#492); the words of 39, 40, 42 and 43 on the people placed, and the lodge's guide
   before she goes (#494). The chapter's are built: an entry a night, hers on the fourth and her
@@ -2057,8 +2057,8 @@ Owed by the side quests as built (§6):
 
 - **To #445:** the pilgrims at the monastery, `after` `q_pilgrims_up`; turned back, they are at the
   lodge (`q_pilgrims_back`).
-- **To #469:** 41's man goes home on the coach in words only, while the coach sells nothing until
-  Kilnhaven lands.
+- **To #469, done:** the coach sells since Kilnhaven landed (docs/areas/kilns.md §4.14); 41's man
+  still goes home on it in words only.
 - **To the systems lane, if it is wanted:** a mark on the world map for every company. 43's guide
   draws the way in words; only a reader puts the Ice Caves on the map, by the old marks at the
   ice's edge (#494's 7).

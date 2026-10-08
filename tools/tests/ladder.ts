@@ -197,7 +197,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
 ];
 
 /** Who owes Kilnhaven's smith, selling the forge's step at a quarter more (#434's call 1); '' once sold. */
-export const SMITH = '#469';
+export const SMITH = '';
 
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
 const kind = (d: ItemDef): string => (d.slot === 'weapon' ? (d.ranged ? 'bow' : 'hand') : d.slot);
