@@ -26,6 +26,7 @@ import type { Party } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
+import { TEAR_CLOSED } from './maps/grove2.ts';
 
 /** Over the pass, walked: the road has to let a company by. */
 const pass = (w: Walk): void => walkThrough(w, 'shelf', 30, 9, EAST, 'thornmark');
@@ -573,7 +574,8 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * The prestiges taught here (#19): three firsts in Thornhold, each at a trade, and the Ranger's
  * second at the lodge's hide, off the road and the fights. Each is there from a new game; at 11 a
  * ranger, a cleric and a druid are sent to Thornhold and taught, and at 19 the ranger to the hide,
- * whether or not the hold's gate is shut to the hunters.
+ * whether or not the hold's gate is shut to the hunters. The Druid's second (#439) is the elf at the
+ * tip of the wood to the head, who comes out of the trees once the Grove Stone is mended.
  */
 function trainers(ok: (cond: boolean, msg: string) => void): void {
   const def = (id: string) => MAP_DEFS.find((d) => d.id === id)!;
@@ -634,4 +636,39 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   at19.gold = 4000;
   ok(there(w, c, 'deepthorn_i3') && teach(c.teaches!, at19, w.world.state, ranger).taught && prestigeOf(at19.members[ranger]) === 2 && at19.gold === 0,
     `with the gate shut to the hunters, the bowman still makes a ${PRESTIGES.ranger.titles[1]} for 4,000 gold`);
+
+  // The Druid's second, at the tip of the wood to the head (DESIGN §5): the elf comes out of the trees
+  // once the Grove Stone is mended, when the rootwalkers beside her sleep, since the mending needs the
+  // tear shut; she is reached on foot by no secret door, and at 19 the druid is sent to her and taught.
+  const i5 = def('deepthorn_i5'), elf = who('deepthorn_i5', 30, 18, 'Hendar');
+  ok(taught('deepthorn_i5').length === 1 && elf.teaches?.cls === 'druid' && elf.teaches.prestige === 2, 'the wood to the head teaches the Druid\'s second');
+  ok(!!elf.teaches?.seek?.includes('Hendar') && elf.teaches.seek.includes(PRESTIGES.druid.titles[1]), 'her seeking names her and the title she gives');
+  const edith = (def('grove2').features ?? []).find((f) => f.kind === 'npc' && f.flag === 'q_mender_done');
+  const roots = i5.encounters!.find((g) => g.id === 'i5_rootwalkers');
+  ok(JSON.stringify(roots?.until) === JSON.stringify(TEAR_CLOSED) && edith?.kind === 'npc' && JSON.stringify(edith.after).includes('grove2:g2_warden'),
+    'the rootwalkers at the tip sleep once the tear is shut, which the mending needs');
+  const mended = newWalk(ok);
+  ok(!there(mended, elf, 'deepthorn_i5'), 'she is not there from a new game');
+  mended.party.flags.q_mender_done = 1;
+  ok(there(mended, elf, 'deepthorn_i5'), 'once the Grove Stone is mended, she has come out of the trees');
+  const map5 = new GameMap(i5), seen5 = new Set([`${i5.start.x},${i5.start.y}`]), q5 = [[i5.start.x, i5.start.y]];
+  let found = false;
+  while (q5.length && !found) {
+    const [x, y] = q5.shift()!;
+    found = x === elf.x && y === elf.y;
+    for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+      if (!map5.inBounds(nx, ny) || seen5.has(`${nx},${ny}`) || map5.at(nx, ny).door === 'secret') continue;
+      const p = map5.passable(nx, ny, { tide: 'low' });
+      if (p === 'ok' || p === 'unlock') { seen5.add(`${nx},${ny}`); q5.push([nx, ny]); }
+    }
+  }
+  ok(found, 'she is reached on foot from the box\'s way in, by no secret door');
+  const druids: Party = mended.party;
+  druids.members[5] = createCharacter('Tamar', 'elf', 'druid', {}, makeRng(11));
+  for (const m of druids.members) { m.xp = xpForLevel(19); m.level = 19; }
+  takePrestige(druids.members[5]);
+  ok(!!sought(questLog(mended.world.state, druids)).find((p) => p.at === 'deepthorn_i5')?.who.includes('Tamar'), 'at 19 the druid is sent to the wood to the head');
+  druids.gold = 4000;
+  ok(teach(elf.teaches!, druids, mended.world.state, 5).taught && prestigeOf(druids.members[5]) === 2 && druids.gold === 0,
+    `she makes a ${PRESTIGES.druid.titles[1]} for 4,000 gold`);
 }
