@@ -775,10 +775,8 @@ has her: the girl out of the hole stands on the crack at 24,28 once the flag is 
 above (she lays her palm on it; "Captain?"; she flinches). "It opens" is left to the exit's label,
 `DOOR.label`, since the door does not open until the bay is built. M9's girl takes an `until` on
 the same flag: met once, she goes back down and is never in two places (§9, #489's 5).
-**The lock is not signed in.** The pillars check finds locks only on exits a map lists, and this
-exit is listed nowhere until the bay lists it, so a row in `content/locks.ts` would close nothing
-there and fail. The lock and its paragraph above are #490's, with the exit and #440 (§9, #489's 4;
-§11).
+**The lock is signed in** (#490, #440): the bay lists the exit, and `content/locks.ts` holds it on
+K9's 24,30.
 
 The walkthrough plays it at 20, 21 and 22, standing the nights at the inn, and once with the pass
 taken before the bay.
