@@ -1,11 +1,15 @@
 // Rimewater's part of the world map: its three zones, the plates of its town and dungeons, and its
-// sites. docs/areas/rimewater.md is its brief (#485). Spread into the plan until the area's first box
-// lists it (#486). Glacier Foot is the reach (DESIGN §9), cut from the plan to Phase 1.6 (#434, call
-// 7); the Ice Caves' band is the cap's, 30-32, and the row changes with the reach's own atlas work.
+// sites. docs/areas/rimewater.md is its brief (#485). Glacier Foot is the reach (DESIGN §9), cut from
+// the plan to Phase 1.6 (#434, call 7); the Ice Caves' band is the cap's, 30-32, and the row changes
+// with the reach's own atlas work.
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'longmere', name: 'Loch Fada', area: 'rimewater', band: [20, 21], seeds: [[392, 284], [410, 272]] }, // Longmere, the long lake
+  {
+    id: 'longmere', name: 'Loch Fada', area: 'rimewater', band: [20, 21], maps: [{ map: 'longmere_m9', at: [392, 254] }], seeds: [[392, 284], [410, 272]], // Longmere, the long lake
+    // The crossing line said in ice (#166, #486): how the loch's shore feels to a company under its floor.
+    crossing: { harder: 'The loch lies frozen below, and the land is harder than the moor behind.', warning: 'Ice, and nothing on this shore would spare you. The road back over the fells is still open.' },
+  },
   { id: 'coldmere', name: 'Loch Fuar', area: 'rimewater', band: [21, 22], seeds: [[344, 300], [340, 280]] }, // Coldmere, the frozen lake
   { id: 'glacierfoot', name: 'Glacier Foot', area: 'rimewater', seeds: [[440, 330], [462, 300]], label: [458, 298] },
 ];
