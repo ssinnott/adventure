@@ -4,6 +4,7 @@ import type { Area } from '../../area.ts';
 import { LONGMERE_M9 } from './maps/longmere_m9.ts';
 import { RIME_LODGE } from './maps/rime_lodge.ts';
 import { LONGMERE_L9 } from './maps/longmere_l9.ts';
+import { COLDMERE_K9 } from './maps/coldmere_k9.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -11,7 +12,7 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'rimewater' as const,
-  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9],
+  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

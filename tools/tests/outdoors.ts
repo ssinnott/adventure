@@ -214,13 +214,23 @@ export function outdoors(): void {
   // edge square for square; on the north Loch Fada's ice, its open water, the pines and the stream
   // going off north against L8; on the west the ice and the pines against K9, where Loch Fuar begins;
   // on the south the pines, the road out at columns 6 and 7 for K10 across parked L10's corner, as the
-  // atlas's road runs, the ridge's tail and the grass. None of L8, K9 and L10 is built, so the world
-  // ends past them.
+  // atlas's road runs, the ridge's tail and the grass. None of L8 and L10 is built, so the world ends
+  // past them; K9 is (#489), below.
   const l9 = out.zones.find((z) => z.id === 'longmere_l9')!;
   ok(eastOf(l9) === westOf(m9) && northOf(l9) === 'iiiiiiiWWWWWWii_pppppp~~~~~~ppp,',
     `L9's east edge meets M9's west edge square for square, the stream at rows 2 to 4 and the road at row 20, and its north edge is the loch's ice, its open water, the pines and the stream against L8 (${eastOf(l9)}; ${northOf(l9)})`);
   ok(westOf(l9) === 'ii' + 'p'.repeat(30) && southOf(l9) === 'pppppp==ppp' + '%'.repeat(6) + 'p'.repeat(10) + ',,,,,',
     `L9's west edge is the ice and the pines against K9, and its south edge the pines, the road out at columns 6 and 7, the ridge's tail and the grass against L10 (${westOf(l9)}; ${southOf(l9)})`);
+  // Loch Fuar (K9, #489): its east edge L9's west edge square for square, the ice at rows 0 and 1 and
+  // the pines below, walked anywhere and crossed by no road; on the north the loch's open water and its
+  // ice against K8, on the west the open water, the ice and the pines against J9; on the south the
+  // pines, the hills, the grass, the ice and the loch's water running in at column 29 against K10. None
+  // of K8, J9 and K10 is built, so the world ends past them.
+  const k9 = out.zones.find((z) => z.id === 'coldmere_k9')!;
+  ok(eastOf(k9) === westOf(l9) && northOf(k9) === 'W'.repeat(29) + 'iii' && westOf(k9) === 'W'.repeat(10) + 'ii' + 'p'.repeat(20),
+    `K9's east edge meets L9's west edge square for square, the ice at rows 0 and 1 and the pines below, and its north and west edges are the loch's open water, its ice and the pines against K8 and J9 (${eastOf(k9)}; ${northOf(k9)}; ${westOf(k9)})`);
+  ok(southOf(k9) === 'p'.repeat(13) + '^' + ','.repeat(7) + 'i'.repeat(8) + '~pp' && [...Array(32).keys()].every((x) => out.at(k9.x + x, k9.y + 32).ch === '%'),
+    `K9's south edge is the pines, the hills, the grass, the ice and the loch's water at column 29 against K10, past which the world ends until K10 is built (${southOf(k9)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
