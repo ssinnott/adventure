@@ -3,8 +3,8 @@
 // the Rimefells and the notch; east of it the field of cairns, a score of them, Carn Dubh the biggest
 // with its door in its side, one standing open and the Watcher's grave apart; and east of the field
 // the marsh at the bog's edge.
-// The door at 6,18 is the way into Carn Dubh (#480, DOOR); the notch at 0,28
-// is the way down to Rime Lodge, taken onto M9 (#438) once it is built (NOTCH).
+// The door at 6,18 is the way into Carn Dubh (#480, DOOR); the notch at 0,28 is the way down to Rime
+// Lodge, taken onto M9 (#438) once it is built (NOTCH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
