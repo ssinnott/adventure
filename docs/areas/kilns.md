@@ -18,14 +18,14 @@ Anvilhall's box (#458, §4.3), and with it its first town, Anvilhall, behind N3'
 N4, the Tiefzeche's box (#461, §4.6), the heart's first, and under its shaft the Tiefzeche, its
 first dungeon (#462, §4.7); N2, Erzkamm (#460, §4.5), with the Barbarian's second prestige; N5,
 Gluthutte's box (#463, §4.8), the smelter in the charcoal woods; N6 and M6, the roads south and west
-(#467, §4.12), M6 Kilnmouth's first; O5, the Anvil Stone's box (#464, §4.9), with the tear shut until
-the Rift is built; L6, Kilnhaven's box (#468, §4.13), its gate shut until the town is built; and O6,
-Feuerstollen's box (#466, §4.11), with the tubes under its ridge, the area's second dungeon. Eleven
-of its monsters and its twelve rooms are drawn (§3), and the rest is to build. Its content is
-`src/content/areas/kilns/` (maps, monsters, items, rooms, climate, its part of the world map, its
-walkthrough and its guild quests in `guilds.ts`, #439; its chapter of the one quest, The Anvil
-Stone, in `chapter.ts`, and its side quests in `quests.ts`, to come) and its businesses' rooms
-`src/ui/interiors/kilns/`. Its ids: the area
+(#467, §4.12), M6 Kilnmouth's first; O5, the Anvil Stone's box (#464, §4.9), and through its tear
+the Anvil Stone's Rift (#465, §4.10), its second dungeon; L6, Kilnhaven's box (#468, §4.13), its
+gate shut until the town is built; and O6, Feuerstollen's box (#466, §4.11), with the tubes under
+its ridge, its third dungeon. Eleven of its monsters and its twelve rooms are drawn (§3), and the
+rest is to build. Its content is `src/content/areas/kilns/` (maps, monsters, items, rooms, climate,
+its part of the world map, its walkthrough and its guild quests in `guilds.ts`, #439; its chapter of
+the one quest, The Anvil Stone, in `chapter.ts`, and its side quests in `quests.ts`, to come) and
+its businesses' rooms `src/ui/interiors/kilns/`. Its ids: the area
 `kilns`, its zones `ironfells`, `kilnsheart` and `kilnmouth`, the towns `anvilhall` and `kilnhaven`,
 the dungeons `deep_mines`, `anvil_stone` and `lava_tubes`. The ids stay through the naming pass
 (§10, NAMES §3).
@@ -153,11 +153,12 @@ on the Fells' tops in winter (the area's `climate`, with its first box).
 
 ## 3. What is built
 
-Ten boxes, a town and two dungeons: the area's first box, which lists the area (#457); the box of
+Ten boxes, a town and three dungeons: the area's first box, which lists the area (#457); the box of
 its first town (#458) and the town behind its gate (#459); the box of its first dungeon, the heart's
 first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhall, off the road
-(#460); the smelter's (#463); the roads south and west (#467); the Stone's (#464); Kilnhaven's box
-(#468); and the ash country under the vent ridge, with the tubes below it (#466):
+(#460); the smelter's (#463); the roads south and west (#467); the Stone's (#464), with the Rift
+through its tear (#465); Kilnhaven's box (#468); and the ash country under the vent ridge, with the
+tubes below it (#466):
 
 - **The Iron Fells' way in** (M3, `ironfells_m3`, country, band 16; #457): the east road out of
   Lanternwood's M2 over the ridge, through the last of Lanternwood's trees with pines at the verge,
@@ -233,7 +234,7 @@ first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhal
   at either end of the kilns and a rock worm under the fields. Behind the one draw-hole stopped with a
   dressed stone, the drover's cache (§4.12).
 - **The Anvil Stone's box** (O5, `kilnsheart_o5`, core, band 17–18; #464): the cutters' track on from
-  N5 up into bare hills, past the tear below the cut, shut until the Rift is built (#465), to the
+  N5 up into bare hills, past the tear below the cut, the way into the Rift (#465), to the
   Stone on its anvil of rock, cut square on three sides, the dwarves' words for what holds cut in its
   plinth and a saw in its last cut. The cutters' sheds and the foreman at his own; their camp back
   down the track; a sledge under the mountain, a cairn where the stream comes off the fell, the
@@ -241,6 +242,13 @@ first (#461), and the dungeon under its shaft (#462); the crag north of Anvilhal
   slaglings on the track and on the slope by the tear, the slag elder at its lip and, once the Stone
   is taken, the Anvil Guard on the approach. Under the anvil-rock's lip, the piece one cutter would
   not sell (§4.9).
+- **The Anvil Stone's Rift** (`anvil_stone`, the Slag Rift, dungeon, one level of 16 by 16, hand-built,
+  band 17–18; #465): down through O5's tear into slag and iron. Lanes run up from a passage under the
+  ridges: the middle one to a ridge under the Stone's cut face, the west and the east round to the
+  heart under the face, and a fourth to a dead end. Slaglings down the middle lane and in the west, a
+  pair of slag elders at the head of each side lane and the Warden of the Anvil, standing up out of a
+  cut in the face; when it falls the tear closes. Where the fourth lane's slag has set running up,
+  behind the slag at its head, the hollow where the first cutter's tools lie against the Stone (§4.10).
 - **Kilnhaven's box** (L6, `kilnmouth_l6`, core, band 16–18; #468): the branch on from M6 to the
   gate in the town's wall along the shore, shut until the town is built (#469), with the milestone
   before it and the coach yard outside the wall, a camp under it; the road down over the river's mouth
@@ -277,9 +285,9 @@ docs/areas/sunderwood.md §9): the zones with their bands (the Iron Fells 16–1
 laid on it and its line to the heart held, §1; the heart 16–18, with N4, N5, N6, O5 and O6 laid on it;
 Kilnmouth 16–18, with M6 and L6, §9), the towns (Anvilhall and Kilnhaven at 16–18), the dungeons (the
 Tiefzeche 16–18, the Anvil Stone 17–18, Feuerstollen 17–18) as planned plates, the Tiefzeche's now
-its three levels' (#462) and Feuerstollen's its two, 16–17 and 17–18 (#466), the sites (Anvilhall,
-the Deep Mines, the Forges, the Anvil Stone, the Lava Tubes, Kilnhaven, Iron Crag, to be renamed
-with #435, §10) and its links: the east road in, the
+its three levels' (#462), the Anvil Stone's the Rift's, on its tear (#465), and Feuerstollen's its
+two, 16–17 and 17–18 (#466), the sites (Anvilhall, the Deep Mines, the Forges, the Anvil Stone, the
+Lava Tubes, Kilnhaven, Iron Crag, to be renamed with #435, §10) and its links: the east road in, the
 towns' and the dungeons' ways in, the drove road on to High Moor, the ferry and the Compact ship,
 and a new `coach` link, Kilnhaven to Rime Lodge, the drove road's coach (#434, call 9; #539 builds
 it).
@@ -287,8 +295,8 @@ it).
 Its row on the curve, its step on the gear ladder and the Stone's price are in (#535). The row is in
 `src/content/progression.ts`: band 16–18, next 18, window 3,500. It was owed to #436 while the area
 was built box by box; with O5 and L6 a clear gave 16,303 xp a member and 9,497 gold, past the 13,067
-and 7,920 the row asks, so it owes nothing, and with O6 and its tubes it gives 23,230 and 11,697
-(§8). The step is in
+and 7,920 the row asks, so it owes nothing (§8), with the Rift 20,000 and 11,407, and with O6 and
+its tubes 26,128 and 13,007, before the two fourth-rank asks. The step is in
 `src/content/areas/kilns/items.ts`, made ahead of the area (`ITEMS_AHEAD`, `src/content/index.ts`)
 so that the harness and the gate dressed by it before the first box took the table into its Area
 (#457): Anvilhall's forge's eight
@@ -297,8 +305,8 @@ more (`SMITH_PRICES`, for #469) and the thane's price for the Stone (`ANVIL_STON
 #459, §8). The forge sells every ware (#459), and each find is owed to its box until it is placed;
 N3's Plate Mail +3, N2's Mattock +1, the Tiefzeche's Forge Hammer +1, O6's Steel Bow +1, M6's Seax
 +1 and L6's Kiln Robe +1 are placed, all six (§4.3, §4.5, §4.7, §4.11, §4.12, §4.13), and M3's,
-N4's, N5's, the Tiefzeche's, O5's and O6's finds, off the ladder, are their own (§4.2, §4.6, §4.8,
-§4.7, §4.9, §4.11). The thane asks the price as an answer's `price` (§9).
+N4's, N5's, the Tiefzeche's, O5's, the Rift's and O6's finds, off the ladder, are their own (§4.2,
+§4.6, §4.8, §4.7, §4.9, §4.10, §4.11). The thane asks the price as an answer's `price` (§9).
 
 Its crossings are written (#539), in `src/content/crossings.ts`: the ferry to Saltmouth, the
 Compact ship to Cinderport and the drove road's coach to Rime Lodge, each on its link of the atlas
@@ -313,7 +321,7 @@ docs/SLICE.md says what was decided); Kiln-script and Linguist (#538, built: §4
 writes an inscription, and §9 what was decided); the crossings, the ferry, the ship and the coach
 (#539, built: written above, and §9 and docs/SLICE.md say what was decided); the Anvil Stone
 counting for the Hearth (#540, #168, built: §9 and docs/SLICE.md say what was decided, and the Rift
-sets its flag, #465, not built yet); and the bot (#541, built: it puts cold on what fire does not
+sets its flag, #465, §4.10); and the bot (#541, built: it puts cold on what fire does not
 touch once it has seen fire do nothing, as it has since #161, and its company takes its prestiges,
 MONSTERS §4.4). Regeneration, curse and calls (#537, built) are Cairnmoor's and Rimewater's; the
 Kilns need none of them. `after`, for the Anvil Guard, and `when` are #41's; the machine `kind` is
@@ -333,7 +341,7 @@ The six on frames that exist are drawn too (#472): the Fire Beetle on the spider
 Slagling, the Slag Elder and the Warden of the Anvil on the riftling's, the Rock Worm on the long
 bodies' and the Anvil Guard on the figure frame, in the same table, each owed a map by the box that
 first places it (§7, §9): M3 places the beetle and the worm (#457), N3 the slagling (#458), N5 the
-slag elder (#463) and O5 the Anvil Guard (#464).
+slag elder (#463), O5 the Anvil Guard (#464) and the Rift the Warden (#465).
 
 The rooms are drawn (#473), one to each business of the two towns, ahead of the towns as
 Saltmouth's and Lantern Watch's were. `src/content/areas/kilns/interiors.ts` lists them, the
@@ -362,11 +370,11 @@ day in it somewhere, a window, a shaft, a breach or a door, so that nine at nigh
 
 All of it but M3, N3, N4, N2, N5, N6, M6, O5, L6 and O6, built (#457, §4.2; #458, §4.3; #461, §4.6;
 #460, §4.5; #463, §4.8; #467, §4.12; #464, §4.9; #468, §4.13; #466, §4.11), Anvilhall behind N3's
-gate (#459, §4.4), the Tiefzeche under N4's shaft (#462, §4.7) and Feuerstollen under O6's ridge
-(#466, §4.11): 14,791 squares of land, 12,399 of them
-walkable, the plan's figures (§1). On the grid the plan is ten boxes, three dungeons and two towns,
-with four more boxes parked, and the ten hold 8,419 of those squares, 7,686 walkable; the parked four
-3,886 and 3,397:
+gate (#459, §4.4), the Tiefzeche under N4's shaft (#462, §4.7), the Anvil Stone's Rift through O5's
+tear (#465, §4.10) and Feuerstollen under O6's ridge (#466, §4.11): 14,791 squares of land, 12,399
+of them walkable, the plan's figures (§1). On the grid the plan is ten boxes, three dungeons and two
+towns, with four more boxes parked, and the ten hold 8,419 of those squares, 7,686 walkable; the
+parked four 3,886 and 3,397:
 
 | Box | Name | Zone | Kind | Band | Land | What is there | Its step of the quest | Issue |
 |---|---|---|---|---|---|---|---|---|
@@ -414,7 +422,7 @@ The places, as the atlas and the docs have them:
 | Anvilhall | N3, and its own map | the great hall with the verse over the forge where the kings' crowns are made; the thane, who sells the Stone back or loses it and never forgives (DESIGN §9, STORY, #434's 1); training to 19 (DESIGN §5); the Lantern reader (#538); 33, 34 and 36 begin or end here (#56) | a planned town at 452,70, its way in there, N3's gate (§9) |
 | The Tiefzeche (the Deep Mines) | N4, and below | the deepest mine, broken into the hull's service ways; the clean corridor, the knockers, the Foreman and the door marked CREW ONLY (DESIGN §9, MONSTERS §7.1, STORY); the service ladders found by reading (#434's 2); the son who carries the crust (#56's 33); the hymn's doors (#56's 36) | a planned dungeon at 440,104, its way in at 440,96 |
 | Gluthutte (the Forges) | N5 | the smiths; the crown for Jory Tallis paid in shards (#56's 35); fire beetles at the forges (MONSTERS §7.1) | a site at 436,126 |
-| The Anvil Stone | O5, and below | cut by the dwarves to sell the pieces; its Rift in slag and iron; the Warden of the Anvil, whose fall closes the tear; the Anvil Guard, after the taking (MONSTERS §2.1, §7.1, #434's 1); counts for the Hearth (#168, #540) | a planned dungeon at 468,136, its way in at 468,142 |
+| The Anvil Stone | O5, and below | cut by the dwarves to sell the pieces; its Rift in slag and iron; the Warden of the Anvil, whose fall closes the tear; the Anvil Guard, after the taking (MONSTERS §2.1, §7.1, #434's 1); counts for the Hearth (#168, #540) | a dungeon, the Rift, its plate on its way in at 468,142, the tear on O5 (#465) |
 | Feuerstollen (the Lava Tubes) | O6, and below | the fire things; salamanders and the Great Salamander in the deepest chamber (MONSTERS §7.1) | a dungeon of two levels at 470,194 and 470,200, its way in at 478,178 (#466) |
 | Erzkamm (Iron Crag) | N2 | the Barbarian's second prestige, Ironhide, off the beaten path and relatively safe (DESIGN §5); the wall that says KEEP CLEAR OF THE DOORS, which the Regent's scholar copies (#56's 34) | a site at 432,44, the cave on N2 at 8,14 (#460) |
 | Kilnhaven | L6, and its own map | the ore port, whose ship is one way to the far side of the sea (DESIGN §9); the harbourmaster's manifests (#470); training to 19; the ferry, the ship and the coach (#539) | a planned town at 378,158, its way in at 391,162 |
@@ -893,8 +901,9 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   laid on it gives intellect, and the dwarves' words for what holds are cut there, which a reader
   reads KEEP WHOLE. NO CUTTING. A two-man saw stands in the last cut on its east face; once the Stone
   is bought, the saws are off it. The tear is the atlas's way in, 468,142 (12,16), below the cut
-  beside the track: its square is shut until the Rift is built, `TEAR` written for it (§9), and the
-  torn ground is said from the track beside it. Five slaglings out of it walk the hillside above the
+  beside the track: its square, shut until the Rift was built, is bare stone now and `TEAR` on it the
+  way into the Rift (#465, §4.10); the torn ground is said from the track beside it, and once the
+  Warden has fallen, that it has closed over (§4.10). Five slaglings out of it walk the hillside above the
   track's bend and five the slope beside the tear, until it is closed; the slag elder stands at its
   lip, the box's group at 18; and once the Stone is taken three of the Anvil Guard, the thane's iron,
   stand on the approach between the track and the Stone, their post said as the company comes up.
@@ -945,6 +954,32 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
   (docs/areas/sunderwood.md §9, #199's 6); the first cutter's tools, two pieces with a plus off the
   ladder, the Rift's to choose (#535).
 - **Pay.** About 1,800 xp a member.
+
+- **As built** (#465, 4 October): one level of 16 by 16, hand-built in the slag material's look
+  (`src/content/rifts/materials.ts`): its palette, bare walls and its name, the Slag Rift (§9). O5's
+  tear lets a company down to the start, 7,14, facing north, saying the brief's tear line, and the way
+  back lands beside the tear on O5's 12,15, facing north. Lanes run up from a passage under the
+  ridges, where the ground hums: the middle one, an iron run set across it, to a ridge red at every
+  crack under the heart; the west and the east, each bowed round a ridge and the slag run down them
+  from the back, to the heart, an uneven cave under the Stone's cut face; and a fourth in the east, a
+  dead end. Four slaglings come down the middle lane and four stand in the west, a pair of slag elders
+  holds the head of each side lane, and all of them come back until the tear is closed. The Warden of
+  the Anvil stands up out of a cut a square wide in the face, fought only from the square before it,
+  its hit points and its blow set off the line by the gate (§9); it never comes back, and drops the
+  Heart of the Anvil (`anvil_heart`), a keepsake. Its fall says the brief's line, and the first step
+  after it, into the cut or back out of it, says the slag has gone black and cold and sets
+  `q_anvil_closed` (#540), as does a first step back in by a company gone another way, or the track
+  beside the tear on O5, where the torn ground has closed over: the Rift's groups, O5's slaglings and
+  the strays on N3, N5 and O6 stop coming back, the hum's lines go quiet and the Hearth counts the Anvil
+  Stone. The secret: in the fourth lane the ripples of slag run up toward the back, where every other
+  lane's run down; searched at its head (14,3), the slag gives on a hollow against the Stone's cut
+  face, and in it the first cutter's tools, a Cutter's Pick +1 and a Cutter's Chisel +1
+  (`cutters_pick`, `cutters_chisel`), with 1,910 gold, which nothing reaches but through the slag. A
+  company at 17 wins every fight but the Warden's, which it wins 54% of the time, and 93% at 19; its
+  groups pooled with the Warden are won 90.8% and its day runs 8.00 fights to a rest, 6.3% of its days
+  ending in a fight broken off, all inside the aims. Two under, its groups count in the area's pool at
+  14, where 95.4% of fights are won, owed to #18. As measured it pays 3,698 xp a member and 1,910
+  gold. Density 100% within 7, the furthest 7, with no sign among its 15 points.
 
 ### 4.11 O6, Feuerstollen's box (#466): country, band 17–18, with the tubes
 
@@ -1033,11 +1068,11 @@ ladder and the mark are what a reading opens; no way waits on one (§9).
     53% at 17 and 94% at 19, its hit points and its blow set off the line by the gate (§9). As
     measured the box pays about 1,645 xp a member and 700 gold, the first level 1,631 and 300 and
     the second 2,851 and 600, the Great Salamander 1,902 of it: 6,127 and 1,600 in all for the
-    brief's 1,500 (§9). Two under, the groups of the maps whose floor is over the area's, O6's and
-    the second level's among them, count at 15 in the area's pool, where 96.1% of 49 groups' fights
-    are won, and the first level's at 14 are won every time, all owed to #18. Density: O6 98.6%
-    within 12 steps and the furthest 14, with one sign among its 22 points; the tubes' two levels
-    100% within 7 and the furthest 3 and 3, with no sign among 19 points and 14.
+    brief's 1,500 (§9). Two under, O6's groups count at 15 and the second level's at 14 in the
+    area's pool, where 94.6% of 54 groups' fights are won, and the first level's at 14 are won every
+    time, all owed to #18. Density: O6 98.6% within 12 steps and the furthest 14, with one sign
+    among its 22 points; the tubes' two levels 100% within 7 and the furthest 3 and 3, with no sign
+    among 19 points and 14.
 
 ### 4.12 N6 and M6, the roads south and west (#467): country, band 16–18
 
@@ -1348,7 +1383,8 @@ mark with O6 (#466), the rest with theirs. N2 (#460) claims nothing: Act II's ro
 prestige first (Rietum's two, #425) and Sjonghol held the
 first trainer in a cave, and a door that is a wall is no mechanic the check reads. Nor does O5
 (#464): a group that comes after a choice is Thornmark's already (its deserters after the coin
-fight), and the Stone's icon is the Lodestone's.
+fight), and the Stone's icon is the Lodestone's. Nor does the Rift (#465): its family, the riftlings,
+came with the cellar's tear in Act I, and a Rift is no mechanic the check reads.
 
 ## 8. The numbers
 
@@ -1363,17 +1399,19 @@ fight), and the Stone's icon is the Lodestone's.
   should leave Kilnhaven at 18 with Cairnmoor's floor ahead, and a company that came by ferry at 16
   finds Kilnmouth's 17 waiting on the quay. As built: M3 1,068 (#457), N3 1,525 (#458), N4 1,468
   (#461), N2 1,095 (#460), N5 1,679 (#463), the Tiefzeche 4,278 (#462), N6 787 (#467), M6 1,068
-  (#467), O5 1,742 (#464; 1,292 to a company that bought, which meets no Guard), L6 1,590 (#468) and
-  O6 with its tubes 6,127 (#466), so the shares stand at about 25,300. The Tiefzeche's Foreman alone
-  pays 1,902 a member and its two corridor groups 858, past the brief's 2,400 before the upper
-  levels' beasts (§9); the Great Salamander pays 1,902 as well, and O6 with its tubes four times the
-  brief's 1,500 (§9, #466's 9). With O5 a clear as measured gave 14,713 xp a member, past the
-  curve's 13,067, so its row owes nothing; with L6 it gave 16,303, and with the two fourth-rank asks
-  of the Tiefzeche (#439, §6), 800 a member, 17,103. With O6 and its tubes it gives 23,230, 1.78
-  times the ask, the Rift (#465) and Kilnhaven's hand-ins (#469) still to come: O6 and its tubes
-  alone take it past 1.4 times the ask, about 18,300, the line #439's 10 held the three boxes to,
-  and no group is cut for it (§9, #466's 9). Anvilhall pays nothing of its own (#459): its 300 is
-  the chapter's and #471's.
+  (#467), O5 1,742 (#464; 1,292 to a company that bought, which meets no Guard), L6 1,590 (#468),
+  the Rift 3,698 (#465) and O6 with its tubes 6,127 (#466), so the shares stand at about 27,200,
+  Kilnhaven's 300 and the side quests' 800 still to come. The Tiefzeche's Foreman alone pays 1,902 a
+  member and its two corridor groups 858, past the brief's 2,400 before the upper levels' beasts
+  (§9), the Warden of the Anvil 1,902, past the Rift's 1,800 before its slag, and the Great
+  Salamander 1,902 too, which with O6's box and the first level makes four times the brief's 1,500
+  (§9, #466's 9). With O5 a clear as measured gave 14,713 xp a member, past the curve's 13,067, so
+  its row owes nothing; with L6 it gave 16,303, with the Rift 20,000, and with O6 and its tubes it
+  gives 26,128, Kilnhaven's hand-ins still to come. The two fourth-rank asks of the Tiefzeche (#439,
+  §6) add 800 xp a member to a clear already over its ask: 26,928 of the 13,067, 2.06 times. One box
+  is still to build, Kilnhaven (#469), and O6 and its tubes alone took the clear past 1.4 times the
+  ask, about 18,300, the line #439's 10 held the three boxes to; no group is cut for it (§9, #466's
+  9). Anvilhall pays nothing of its own (#459): its 300 is the chapter's and #471's.
 - **Gold.** Training six members from 16 to 18 costs 7,920 with today's `trainPrice` (640 and 680 a
   member a level), and the Barbarian's Ironhide about 4,000 (DESIGN §5). The Stone's price is 6,000
   (`ANVIL_STONE_PRICE`, #535), so that a clear of the Fells and the Tiefzeche can just pay it: a
@@ -1402,10 +1440,12 @@ fight), and the Stone's icon is the Lodestone's.
   1,060 (#464), its share by the brief's 1,000, in its cairn, the foreman's shed and the hollow; of
   its monsters only the Anvil Guard carries gold, about 150 between them on the taking. With O5 a
   clear's gold, 8,730, passed the training's 7,920, and with L6 it is 9,497, and 10,097 with the two
-  asks' 300 each (#439), and 11,697 with O6 and its tubes, which hold 1,600 (#466), none on a
-  monster: O6's 700 lie in its cairn (250) and the first dwarves' shelter (450), the first level's
-  300 in the cutters' strongbox and the second's 600 before the plate; the Stone's share is still
-  the boxes' to carry.
+  asks' 300 each (#439); the Stone's share is still the boxes' to carry. The Rift holds 1,910
+  (#465), its share by the brief's 1,800, all in the hollow with the first cutter's tools; its slag
+  carries none. With it a clear's gold is 11,407, and 12,007 with the asks. O6 and its tubes hold
+  1,600 (#466), none on a monster: O6's 700 lie in its cairn (250) and the first dwarves' shelter
+  (450), the first level's 300 in the cutters' strongbox and the second's 600 before the plate. With
+  them a clear's gold is 13,007, and 13,607 with the asks.
   Anvilhall holds none (#459): its forge sells the step at the prices above, and its thane takes the
   6,000.
 - **The gate.** Each map at its own floor (docs/areas/thornmark.md §9, 17; EXPANSION §5.2): a
@@ -1422,10 +1462,13 @@ fight), and the Stone's icon is the Lodestone's.
   §4.11); so do the Tiefzeche's two upper levels, banded from the area's floor (§4.7), and
   Feuerstollen's first (§4.11). The Foreman is won 50% at the bottom's floor, 17, and 95% at 19, its
   hit points and its blow set off the line by the gate (§9); the bottom's day, 9.64 fights to a
-  rest, and its groups pooled with the Foreman, won 83.3%, are off the aim and inside the limit.
-  Feuerstollen's second level's are the same, 84.3% pooled with the Great Salamander, which is won
-  53% at 17 and 94% at 19 on the same footing (§9, #466's 4); its day, 7.56 fights to a rest, is
-  inside the aim.
+  rest, and its groups pooled with the Foreman, won 83.3%, are off the aim and inside the limit. The
+  Warden of the Anvil is won 54% at the Rift's floor, 17, and 93% at 19, set off the line the same
+  way (§9); the Rift's day, 8.00 fights to a rest, and its groups pooled with the Warden, won 90.8%,
+  are inside the aims, and two under its groups count in the area's pool (§4.10). Feuerstollen's
+  second level is the Foreman's case: its groups pooled with the Great Salamander are won 84.3%, off
+  the aim and inside the limit, and the boss 53% at 17 and 94% at 19, set off the line the same way
+  (§9, #466's 4); its day, 7.56 fights to a rest, is inside the aim.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3); the
   Tiefzeche's lowest level at the dungeons' floor with the corridor's side room inside it. As built:
   M3 98.5% within 12 steps and the furthest 15, with no sign among its 14 points (#457); N3 97.6%
@@ -1438,9 +1481,10 @@ fight), and the Stone's icon is the Lodestone's.
   bottom's 15, the side room inside it (#462); N6 99.9% within 12 and the furthest 13, with no sign
   among its 17 points, and M6 99.4% within 12 and the furthest 15, with none among its 16 (#467); O5
   97.4% within 8 and the furthest 11, with one sign among its 23 (#464); L6 100% within 8 and the
-  furthest 8, with no sign among its 22 (#468); O6 98.6% within 12 and the furthest 14, with one
-  sign among its 22 points, and the tubes' two levels 100% within 7, the furthest 3 and 3, with no
-  sign among 19 points and 14 (#466).
+  furthest 8, with no sign among its 22 (#468); the Rift, a dungeon, 100% within 7 and the furthest
+  7, with no sign among its 15 points (#465); O6 98.6% within 12 and the furthest 14, with one sign
+  among its 22 points, and the tubes' two levels 100% within 7, the furthest 3 and 3, with no sign
+  among 19 points and 14 (#466).
 
 ## 9. Decisions
 
@@ -1703,7 +1747,7 @@ Decided by delegate for #472 (the six), each the owner's to overturn:
 11. **The worm comes up through a ring of rubble,** blind, its maw ring inside ring of teeth; the
     guard is a dwarf rebuilt on the figure frame, a maul stood beside him and an anvil buckle.
 12. **The Warden drops nothing yet:** the Heart of the Anvil comes with #465, which places it, as the
-    Heart of the Sunder came with the Sunder's box (#426).
+    Heart of the Sunder came with the Sunder's box (#426); placed, #465's 10.
 13. **No surface monster at 18:** #472 adds none; the 17–18 boxes hold their top with rock worm
     pairs at 17, as §7 proposes.
 
@@ -2166,7 +2210,8 @@ Decided by delegate for #464, each the owner's to overturn:
 13. **Two under is the area's pool's:** O5's floor is over the area's, so the gate counts its groups
     at 15 in the area's pool, where 97.1% of fights are won, owed to #18 as N5's are (#463's 12).
 14. **Owed on:** the tear's feature, the square opened and the way back, #465's; the Rift's flag,
-    which the slaglings, the Stone's line and the tear's read, #465's too; the chapter's step at the
+    which the slaglings, the Stone's line and the tear's read, #465's too (both built, #465's 5 to 9);
+    the chapter's step at the
     Stone, #470's, which may read `o5_stone`; the grass and the hills at O6's 0 to 12,0, with no road
     across that edge (#466).
 
@@ -2262,6 +2307,54 @@ has the Druid's trainer):
     build, the Rift (#465), O6 and its tubes (#466) and Kilnhaven (#469), and those boxes, not the
     asks, are what the 1.4 times line holds to when they are built.
 
+Decided by delegate for #465, each the owner's to overturn:
+
+1. **The brief is §4.10, not the issue's draft:** the secret is the hollow against the Stone's cut face
+   with the first cutter's tools, hinted by the one lane whose slag set running up, not a pocket of
+   unsold shards hinted by a slagling's path; the issue's elder's court is the elders at the lanes' heads.
+2. **Four lanes run up from a passage under the ridges:** the middle one to a ridge under the cut face
+   it cannot pass, the west and the east round to the heart with a pair of elders at each head and the
+   fourth to a dead end at the hollow, so the Warden is reached past a pair of elders either way.
+3. **The brief's groups, each a standard encounter** (MONSTERS §4.4): four slaglings twice, two slag
+   elders twice and the Warden. They give 8.00 fights to a rest at 17, where fives and pairs gave
+   6.59, and 3,698 xp a member for the brief's 1,800 (#457's 3).
+4. **The Warden is set off the line by the gate,** as the Foreman was (#462's 3): 1,200 hit points and
+   13d8+12, where the line's 1,001 and 18d8+20 won 32% at 17 and 69% at 19, past the limit two above.
+   It is won 54% and 93%, and named in `OFF_LINE` and `BOSSES`.
+5. **The flag is set by the first step after the Warden falls:** no group sets a flag (a fight's end
+   says its `slainText` and nothing more), so three events set `q_anvil_closed`, after the Warden's
+   death and until the flag, as D5's row sets Hale's (#156): in the cut, back out of it and on the
+   first square in from the tear. The Warden is fought only from the square before the cut, so any
+   step from there sets it. A company gone by Town Portal sets it on its first step back in, or on
+   O5's track beside the tear, where `o5_closed` sets it too, so one that never goes down again is
+   not left with the Stone still red.
+6. **The tear closed is the slag gone quiet:** the Rift's groups come back until the flag and the
+   Warden never; the lines that hear the hum go once it falls and the slag material's quiet words are
+   said in their place. On O5 `o5_closed`, which #464's 3 left here, says the torn ground has closed
+   over once the Warden has fallen, and `o5_tear` goes with it, `until` the Warden's death and not
+   the flag, which that line may be the one to set.
+7. **The Rift wears the slag material:** its palette, its bare walls, its words going out and its name,
+   the Slag Rift, as the generated Rifts are named, so the world map letters the Stone and its Rift
+   apart; the id stays `anvil_stone`. Its plate moves onto the tear, 468,142, as K3's and the Delta's
+   Rifts' plates stand on theirs.
+8. **The tear says the brief's tear line going in,** as Anvilhall's gate says its brief's line (#459's
+   10), not the material's, which said the red light twice beside the Rift's first words. Its arrival is
+   #464's, 7,14 facing north, and the way back lands on O5's 12,15, facing north.
+9. **`o5_tear` stays, though #464's 4 had this issue drop it:** it is a once-event a save may hold
+   (`shipped.json` only adds), and the open tear still wants its line from the track. The tear's square
+   is bare stone where it was the chasm; O5's other features stand, its lookouts' smoke and red light
+   among them.
+10. **The finds:** the Heart of the Anvil (`anvil_heart`, slot none, price 0), the Warden's drop on its
+    def as the Heart of the Sunder is its Warden's; and the first cutter's tools, a Cutter's Pick +1
+    and a Cutter's Chisel +1 (`cutters_pick`, `cutters_chisel`, 1,650 and 1,550 gold), the forge's
+    mattock and seax with a plus under names of their own, off the ladder, as O5's hammer is.
+11. **Its gold is 1,910, its share by the brief of the 13,900** (§8), all in the hollow with the tools.
+12. **Two under is the area's pool's:** the Rift's floor is over the area's, so the gate counts its
+    groups at 14 in the area's pool, where 95.4% of fights are won, owed to #18 as O5's are (#464's 13).
+13. **Owed on:** the chapter's step at the Stone, #470's, which reads `q_anvil_closed`; and a group's
+    own `sets`, said with its `slainText`, which would close the tear on the blow itself, the systems
+    lane's to give if it is wanted.
+
 Decided by delegate for #466, each the owner's to overturn (the first and the ninth follow the
 orchestrator's calls):
 
@@ -2297,9 +2390,10 @@ orchestrator's calls):
    where it came from.
 9. **Pay is 6,127 xp a member and 1,600 gold for the brief's 1,500 and none, by the orchestrator's
    call for the finishers:** no group is cut and no monster's pay lowered. The box is 1,645 xp, the
-   first level 1,631 and the second 2,851, the Great Salamander alone 1,902. A clear gives 23,230 xp
-   of the 13,067 (1.78 times) and 11,697 gold of the 7,920, before the Rift and Kilnhaven (§8): the
-   area's total is the orchestrator's to weigh when its boxes are all in.
+   first level 1,631 and the second 2,851, the Great Salamander alone 1,902. A clear gives 26,928 xp
+   of the 13,067 (2.06 times) and 13,607 gold of the 7,920 (1.72 times), the Rift in and Kilnhaven's
+   hand-ins still to come (§8): the area's total is the orchestrator's to weigh when its boxes are
+   all in.
 10. **The gold is 1,600:** 450 in the shelter, 250 in the cairn, 300 in the cutters' strongbox and
     600 before the plate. The brief names none, and no monster carries any.
 11. **The find is the ladder's Steel Bow +1** (#535, the ranger's), in the shelter, and the ladder's
@@ -2319,8 +2413,9 @@ orchestrator's calls):
 15. **Einhart is words and a name only,** the dwarves' tongue's (§10): the brief has the hermit
     count the vents by their breath and no more, and no quest hangs on him.
 16. **Two under is the area's pool's, and owed to #18:** O6's floor and the second level's are over
-    the area's, so their groups count at 15 there, where 96.1% of 49 groups' fights are won; the
-    first level's, at 14, are won every time (`lava_tubes: under`).
+    the area's, so their groups count in its pool, O6's at 15 and the second level's at 14, where
+    94.6% of 54 groups' fights are won; the first level's, at 14, are won every time (`lava_tubes:
+    under`).
 17. **Owed on:** the elder's flag, `q_anvil_closed`, which the Rift sets (#465) and this box reads
     with two others; and Cairnmoor's lines on O6 (12).
 

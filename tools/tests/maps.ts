@@ -20,7 +20,6 @@ import { ok, owed, stopsWalk } from './lib.ts';
  * keepers and the Matron by #490.
  */
 const UNPLACED: Record<string, string> = {
-  anvil_warden: '#465',
   kilnhaven_inn: '#469', kilnhaven_smith: '#469', kilnhaven_training_hall: '#469', kilnhaven_harbourmaster: '#469', kilnhaven_chapel: '#469', kilnhaven_chandlery: '#469',
 };
 
