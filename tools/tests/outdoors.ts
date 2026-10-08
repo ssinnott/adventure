@@ -224,13 +224,22 @@ export function outdoors(): void {
   // Loch Fuar (K9, #489): its east edge L9's west edge square for square, the ice at rows 0 and 1 and
   // the pines below, walked anywhere and crossed by no road; on the north the loch's open water and its
   // ice against K8, on the west the open water, the ice and the pines against J9; on the south the
-  // pines, the hills, the grass, the ice and the loch's water running in at column 29 against K10. None
-  // of K8, J9 and K10 is built, so the world ends past them.
+  // pines, the hills, the grass, the ice and the loch's water running in at column 29 against K10. Neither
+  // K8 nor J9 is built, so the world ends past them; K10 is (#491), below.
   const k9 = out.zones.find((z) => z.id === 'coldmere_k9')!;
   ok(eastOf(k9) === westOf(l9) && northOf(k9) === 'W'.repeat(29) + 'iii' && westOf(k9) === 'W'.repeat(10) + 'ii' + 'p'.repeat(20),
     `K9's east edge meets L9's west edge square for square, the ice at rows 0 and 1 and the pines below, and its north and west edges are the loch's open water, its ice and the pines against K8 and J9 (${eastOf(k9)}; ${northOf(k9)}; ${westOf(k9)})`);
-  ok(southOf(k9) === 'p'.repeat(13) + '^' + ','.repeat(7) + 'i'.repeat(8) + '~pp' && [...Array(32).keys()].every((x) => out.at(k9.x + x, k9.y + 32).ch === '%'),
-    `K9's south edge is the pines, the hills, the grass, the ice and the loch's water at column 29 against K10, past which the world ends until K10 is built (${southOf(k9)})`);
+  // The high pass (K10, #491): its north edge K9's south edge square for square, walked anywhere; on the
+  // east the pines, the road at row 3, where L9's pass lands beside it across parked L10's corner, the
+  // river and the lake against L10; on the west the pines, the pass's shoulder, its two walls (the map's
+  // ring, so the void) and the road out between them at row 19 for J11 (#499) against J10; on the south the pines and the lake's ice
+  // and water against K11. None of L10, J10 and K11 is built, so the world ends past them.
+  const k10 = out.zones.find((z) => z.id === 'coldmere_k10')!;
+  ok(northOf(k10) === southOf(k9) && southOf(k9) === 'p'.repeat(13) + '^' + ','.repeat(7) + 'i'.repeat(8) + '~pp',
+    `K9's south edge meets K10's north edge square for square, the pines, the hills, the grass, the ice and the loch's water at column 29 (${southOf(k9)}; ${northOf(k10)})`);
+  ok(eastOf(k10) === 'ppp=ppp~~' + 'W'.repeat(23) && westOf(k10) === 'p'.repeat(9) + '^^^^%%%%%^=%%%^^' + 'p'.repeat(7) && southOf(k10) === 'p'.repeat(27) + 'iiWWW'
+    && [...Array(32).keys()].every((i) => [out.at(k10.x + 32, k10.y + i), out.at(k10.x - 1, k10.y + i), out.at(k10.x + i, k10.y + 32)].every((c) => c.ch === '%')),
+    `K10's east edge is the pines, the road at row 3, the river and the lake against L10, its west edge the pines, the shoulder, the pass's walls and the road out at row 19 against J10, and its south edge the pines and the lake against K11, past which the world ends (${eastOf(k10)}; ${westOf(k10)}; ${southOf(k10)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its
@@ -258,13 +267,15 @@ export function outdoors(): void {
   ok(line(sh.x + sh.w - 1, sh.y, 0, 1, sh.h) === ridge && line(th.x, th.y, 0, 1, th.h) === ridge.slice(0, -1) + 'M', 'between them the ridge stands two squares thick with the pass through it, and runs out into the void at its north end and on Thornmark\'s side into the Deepthorn\'s edge at its south');
   // The ways: every one lands on open ground; none joins one zone to the next, which is walked, but the
   // drove road's notch, taken down from N8 onto M9 and back up, since the two meet only at a corner
-  // across parked M8 (#479, #486); no gate closes the road; and the towns and dungeons open onto the
-  // outdoors.
+  // across parked M8 (#479, #486), and its pass, taken on from L9 onto K10 and back, the two meeting only
+  // at a corner across parked L10 (#488, #491); no gate closes the road; and the towns and dungeons open
+  // onto the outdoors.
   const maps = buildMaps();
   for (const d of PLAYED_DEFS) for (const e of d.exits ?? []) ok(maps[e.to]?.passable(e.tx, e.ty) === 'ok', `${d.id} -> ${e.to}: lands on an open square (${e.tx},${e.ty})`);
   const notchN8 = out.zones.find((z) => z.id === 'cairnfield_n8')!, notchM9 = out.zones.find((z) => z.id === 'longmere_m9')!;
   const taken = out.exits.filter((e) => e.to === OUTDOORS).map((e) => `${e.x},${e.y}`).sort().join(' ');
-  ok(taken === [`${notchN8.x},${notchN8.y + 28}`, `${notchM9.x + 23},${notchM9.y + 8}`].sort().join(' '), `no exit joins one zone to the next but the notch between N8 and M9, taken both ways: the way between them is walked (${taken})`);
+  ok(taken === [`${notchN8.x},${notchN8.y + 28}`, `${notchM9.x + 23},${notchM9.y + 8}`, `${l9.x + 6},${l9.y + 31}`, `${k10.x + 31},${k10.y + 3}`].sort().join(' '),
+    `no exit joins one zone to the next but the notch between N8 and M9 and the pass between L9 and K10, each taken both ways: the way between them is walked (${taken})`);
   ok(out.gates.length === 0, `no gate closes the road through the outdoors${out.gates.length ? ' -> ' + out.gates.map((g) => `${g.x},${g.y}`).join(', ') : ''}`);
   { // The machinery stays for the story's own locks (EXPANSION §2.3): an exit into the zone next door
     // that asks for flags is laid as a gate on its square, and refuses the party until they are set.

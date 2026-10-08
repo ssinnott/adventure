@@ -5,8 +5,8 @@
 // under snow with the pines behind them; a knoll east over the ice; and at the arm's foot, down a crack
 // in the ice, a wall of grey with a door in it, the way to the Sleepers' Bay (#490, DOOR).
 // In from L9 (#488) over its west edge, walked, anywhere along the pines; the way in is 31,21. The
-// north and west edges end the world against parked K8 and J9, and the south edge against K10 (#491),
-// unbuilt, where the loch's water runs in at 29,31.
+// north and west edges end the world against parked K8 and J9, and the south edge meets K10 (#491)
+// square for square, where the loch's water runs in at 29,31.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
