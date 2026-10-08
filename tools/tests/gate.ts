@@ -158,6 +158,7 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   // And Cairnmoor's boxes (#476, #479), in the Kilns' gear and its finds by 19, as the Kilns' are.
   'highmoor_n7: under': { whose: '#18', at: 1 },
   'cairnfield_n8: under': { whose: '#18', at: 1 },
+  'highmoor_o8: under': { whose: '#18', at: 1 },
   'Cairnmoor: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
