@@ -490,6 +490,9 @@ export function lockFaults(found: readonly FoundLock[], locks: readonly StoryLoc
   return out;
 }
 
+/** The ways on the atlas that open on the story, once a step is done: none may (EXPANSION §2.3). */
+export const storyWays = (links: Atlas['links']): string[] => links.filter((l) => l.opens !== undefined).map((l) => `${l.from}-${l.to} after step ${l.opens}`);
+
 /** Locks someone else fixes, reported as theirs until it lands: none today. */
 const LOCKS_OWED: Record<string, readonly string[]> = {};
 
@@ -745,8 +748,8 @@ export async function pillars(): Promise<void> {
     const f = found.find((l) => l.key === key);
     owed(!f, key.startsWith('hand-in') ? `${key}: takes its item at the first meeting${f ? ` (today not before ${f.flags.join(', ')})` : ''}` : `${key}: no lock between areas${f ? ` (today ${f.flags.join(' and ')})` : ''}`, whose);
   }
-  const opens = ATLAS.links.filter((l) => l.opens !== undefined);
-  ok(!opens.length, `no way on the atlas opens on the story${opens.length ? ' -> ' + opens.map((l) => `${l.from}-${l.to} after step ${l.opens}`).join(', ') : ''}`);
+  const opens = storyWays(ATLAS.links);
+  ok(!opens.length, `no way on the atlas opens on the story${opens.length ? ' -> ' + opens.join(', ') : ''}`);
   {
     const room = (exits: MapDef['exits'], features: MapDef['features'] = []): MapDef => ({ id: 'fixture_lock', name: 'Lock fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits, features });
     const [first, second] = AREAS;
@@ -787,5 +790,16 @@ export async function pillars(): Promise<void> {
     ok(lonely.length === 1 && lockFaults(lonely, [], of).length === 1, 'a business gone on a flag is found as a service shut, and fails with its trade had nowhere else');
     const elsewhere = within(shutUp).filter((f) => f.kind === 'service');
     ok(!!elsewhere[0]?.way && !lockFaults(elsewhere, [], of).length, 'and passes while the same trade is sold elsewhere');
+    // Act III's lock stays on the bay's door (#440): the pass from Loch Fuar into Monks' Vale shut on its
+    // flag is a lock between areas, signed in or not, and the pass on the atlas opening on a step fails too.
+    const [fuar, vale] = ['coldmere', 'monksvale'].map((z) => ATLAS.zones.find((x) => x.id === z)!.area);
+    const pass = { ...room([{ x: 3, y: 1, to: 'fixture_vale', tx: 1, ty: 1, needFlag: 'q_wenna_up' }]), id: 'fixture_pass' };
+    const beyond = [{ id: fuar, maps: [pass] }, { id: vale, maps: [{ ...room([]), id: 'fixture_vale' }] }];
+    const shut = findLocks(beyond).filter((f) => f.map === pass.id), whose = (m: string): string | undefined => beyond.find((a) => a.maps.some((d) => d.id === m))?.id;
+    ok(shut.length === 1 && lockFaults(shut, [lock({ flag: 'q_wenna_up', map: pass.id })], whose).some((f) => f.text.endsWith(`a lock between ${fuar} and ${vale}`)),
+      'the pass from Loch Fuar into Monks\' Vale shut on the act\'s flag is a lock between areas, and fails signed in');
+    const high = ATLAS.links.find((l) => l.from === 'coldmere' && l.to === 'monksvale');
+    ok(!!high && high.opens === undefined && storyWays(ATLAS.links.map((l) => (l === high ? { ...l, opens: 1 } : l))).includes('coldmere-monksvale after step 1'),
+      'the pass is open on the atlas from the start, and fails shut until a step is done');
   }
 }

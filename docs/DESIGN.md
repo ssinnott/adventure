@@ -477,11 +477,11 @@ ship lands there.
   fee to join. The first task done, the company is a member at the first rank.
 - **Four ranks a guild.** All of a rank's quests done raise the company to the next, and each rank
   opens the next quests. Act I takes the Wardens and the Lanterns to their third rank; Act III opens
-  their fourth (#439): the Wardens' through the cousin's captains at the Drillyard, whose asks are
-  the act's own matter, the Lanterns' at Lantern Watch and Rime Lodge, whose asks are the Deep
-  Mines' inscriptions copied and the ring's voice reported. The Cartographers and the Compact climb
-  with their own areas, and no hall gives an Act III or Act IV side quest but Cinderport's two
-  (#56's 51 and 54).
+  their fourth (#439), two asks each, offered once Act II is done: the Wardens' through the cousin's
+  captains at the Drillyard, whose asks are the act's own matter, the Lanterns' at their halls,
+  whose asks are the Deep Mines' inscription copied and the ring's voice reported (Act III's guild
+  quests, below). The Cartographers and the Compact climb with their own areas, and no hall gives
+  an Act III or Act IV side quest but Cinderport's two (#56's 51 and 54).
 
   | Guild | 1 | 2 | 3 | 4 |
   |---|---|---|---|---|
@@ -536,6 +536,29 @@ Each quest's words, pay and level come with its build.
 | Lanterns | 2 | the second marker | Thornmark, by the boulders south of the river | a marker still lit; one new once-event there |
 
 Each guild's ladder climbs: a rank's quests are in the band of the last's or above.
+
+### Act III's guild quests
+
+Two asks a guild, the fourth rank's, each a deed on a built map of the act with no new monster
+group. A company at the third rank is offered both, and both done make it a Captain or a Luminary,
+the top. They wait for the act: a guild quest may wait for a flag, here Act II's end, so a Sergeant
+or a Reader made in Act I is offered nothing two acts early, and from the same flag Captain Ordgar
+keeps the Drillyard (docs/areas/shelf.md §5.1; docs/areas/kilns.md §9, #439's 1). The ladder stays
+one ladder (above): every hall of the Lanterns offers theirs, Helmstow's and Thornhold's as the
+Watch's and the Lodge's, which the goals name as where to report. Each ask pays 300 gold and 2,400
+xp shared, the next rise of the ladder after Thornmark's 150 and 900 and 200 and 1,500.
+
+| Guild | Rank | Quest | Given | The deed |
+|---|---|---|---|---|
+| Wardens | 3 | The Night Carts | the Drillyard, in Ordgar's voice | the Hand's cages seen on the Deep Mines' second level, what the night carts carry |
+| Wardens | 3 | A Sword at the Hole | the Drillyard, in Ordgar's voice | the fourth night's fight won at Rime Lodge's ice-hole |
+| Lanterns | 3 | The Words Over the Dead | any Lantern hall | the words over a niche of the dead in the Deep Mines, read by a reader |
+| Lanterns | 3 | What the Ring Said | any Lantern hall | the voice in the stone ring on High Moor, heard by night |
+
+The Wardens' asks are Ordgar's, the cousin's captain's, who writes what he is told in a book in his
+boot; the Lanterns' show their split and never tell it, a Lantern who would not have the words
+copied and one who goes out at what the ring said. No hall takes the Watcher's page: he sends it
+down (docs/areas/cairnmoor.md §6).
 
 ---
 

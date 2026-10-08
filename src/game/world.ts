@@ -399,6 +399,10 @@ export class World {
     if (arrived) {
       this.travel(arrived.to, arrived.tx, arrived.ty, arrived.tf);
       if (arrived.label) messages.push(arrived.label);
+      // A jump from one zone of the outdoors to another (N8's notch onto M9): the line its border
+      // would say, walked, after the way's own.
+      const landed = this.zone;
+      if (landed && left && landed.id !== left.id) messages.push(...this.crossing(left, landed, true));
       return { kind: 'moved', messages, arrived };
     }
     // Over the line into the next zone of the outdoors: what the way between them says, if anything,
@@ -418,10 +422,11 @@ export class World {
    * it; and how the land feels, all as one entry of the log where its floor is over the company's level and is new or higher than
    * the one left: harder one or two under, a plainer warning three or more under, in the zone's own
    * words if it has them. Never a wall. Stepping straight back over a line just crossed says no more
-   * than the way's own line.
+   * than the way's own line. A way `jumped` from one zone map to another has no arrival line: its
+   * exit's label is said before this, as its own entry, and the land is named here.
    */
-  private crossing(left: MapZone, zone: MapZone): string[] {
-    const arrival = zone.enter?.[left.id], was = this.lastCross, now = this.state.minutes;
+  private crossing(left: MapZone, zone: MapZone, jumped = false): string[] {
+    const arrival = jumped ? undefined : zone.enter?.[left.id], was = this.lastCross, now = this.state.minutes;
     this.lastCross = { from: left.id, to: zone.id, at: now };
     if (was && was.from === zone.id && was.to === left.id && now - was.at < 60) return arrival ? [arrival] : [];
     const newLand = zone.land?.id !== left.land?.id, floor = zone.band?.[0];

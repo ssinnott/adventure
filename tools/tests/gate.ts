@@ -79,6 +79,8 @@ export const BOSSES: Record<string, readonly string[]> = {
   eaves: ['the_sunder2:su2_warden'],
   delta: ['drowned_temples2:dt2_choirmaster'],
   kilnsheart: ['deep_mines3:dm3_foreman', 'anvil_stone:as_warden'],
+  cairnfield: ['cairns2:cd2_king'],
+  coldmere: ['sleepers_bay2:sb2_matron'],
 };
 
 /** Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one. */
@@ -103,10 +105,23 @@ export const ROADS: Record<string, readonly string[]> = {
   kilnsheart: ['kilnsheart_n4:n4_beetles', 'kilnsheart_n4:n4_salamanders'],
   // Up the branch from N6's fork past the warm kilns' east end, where the beetles overlook the road (#467).
   kilnmouth: ['kilnmouth_m6:m6_beetles_east'],
+  // Over the low hills and down the drove road past the ravens on the first cairn, the bog bodies in
+  // the marsh beside it and, on its southern reach by night, the hounds (#476).
+  // On O7 (#477), the peat-cutter's track east to the ring past the lights that go round it by night.
+  highmoor: ['highmoor_n7:n7_ravens', 'highmoor_n7:n7_bodies_north', 'highmoor_n7:n7_hounds', 'highmoor_o7:o7_lights'],
+  // Down the drove road past the ravens on the first cairns, the wights at the open cairn below Carn
+  // Dubh and, at the road's head by night, the hounds (#479).
+  cairnfield: ['cairnfield_n8:n8_ravens', 'cairnfield_n8:n8_wights_open', 'cairnfield_n8:n8_hounds'],
+  // Down from the notch past the lynxes in the pines at the road's foot to the lodge's gate, and out
+  // on the ice from the lake wall to the hole past the pike under it (#486).
+  longmere: ['longmere_m9:m9_lynx_pines', 'longmere_m9:m9_pike_wall'],
+  // In from L9 under the pines past the lynxes there, and down the shore past the lynxes at the
+  // loch's foot to the crack in the ice and the door (#489).
+  coldmere: ['coldmere_k9:k9_lynx_pines', 'coldmere_k9:k9_lynx_foot'],
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -149,6 +164,22 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'kilnmouth_m6: under': { whose: '#18', at: 1 },
   'kilnmouth_l6: under': { whose: '#18', at: 1 },
   'the Kilns: under': { whose: '#18', at: 1 },
+  // And Cairnmoor's boxes (#476, #477, #479), in the Kilns' gear and its finds by 19, as the Kilns' are.
+  'highmoor_n7: under': { whose: '#18', at: 1 },
+  'cairnfield_n8: under': { whose: '#18', at: 1 },
+  // And Carn Dubh's cairn (#480), banded from the area's floor as the Tiefzeche's upper levels are.
+  'cairns: under': { whose: '#18', at: 1 },
+  'highmoor_o7: under': { whose: '#18', at: 1 },
+  'highmoor_o8: under': { whose: '#18', at: 1 },
+  'Cairnmoor: under': { whose: '#18', at: 1 },
+  // And Rimewater's boxes (#486, #488, #489, #491), in Cairnmoor's gear and the finds by 21, as Cairnmoor's are.
+  'longmere_m9: under': { whose: '#18', at: 1 },
+  'longmere_l9: under': { whose: '#18', at: 1 },
+  'coldmere_k9: under': { whose: '#18', at: 1 },
+  'coldmere_k10: under': { whose: '#18', at: 1 },
+  // And the Sleepers' Bay's stair (#490), banded from the area's floor as Carn Dubh's cairn is.
+  'sleepers_bay: under': { whose: '#18', at: 1 },
+  'Rimewater: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
   // twice a turn and the casters cast at their first rank, and each boss is won nearly always at its
