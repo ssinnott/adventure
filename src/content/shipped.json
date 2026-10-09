@@ -1964,6 +1964,46 @@
         "7,11"
       ]
     },
+    "old_cinder": {
+      "size": "16x16",
+      "used": [
+        "oc1_board",
+        "oc1_door",
+        "oc1_hall",
+        "oc1_kilns",
+        "oc1_shop",
+        "oc1_sill",
+        "oc1_square",
+        "oc1_stall",
+        "oc1_street",
+        "oc1_table"
+      ],
+      "groups": [
+        "oc1_drake",
+        "oc1_husks"
+      ],
+      "doors": []
+    },
+    "old_cinder2": {
+      "size": "16x16",
+      "used": [
+        "oc2_cellars",
+        "oc2_fallen",
+        "oc2_keeper",
+        "oc2_keepers",
+        "oc2_niche",
+        "oc2_part",
+        "oc2_set",
+        "oc2_stone",
+        "oc2_walk"
+      ],
+      "groups": [
+        "oc2_husks"
+      ],
+      "doors": [
+        "7,10"
+      ]
+    },
     "rime_lodge": {
       "size": "16x16",
       "used": [
@@ -2824,11 +2864,13 @@
     "elfbow+2",
     "elixir",
     "ember_part1",
+    "ember_part2",
     "faceless_coin",
     "flail",
     "flail+1",
     "flail+2",
     "flamberge",
+    "flamberge+1",
     "foreman_slate",
     "foremans_tally",
     "forge_hammer",
@@ -2837,6 +2879,7 @@
     "forge_shield+1",
     "founders_letter",
     "founders_seal",
+    "founding_stone",
     "fur_robe",
     "great_axe",
     "great_axe+1",
@@ -2856,6 +2899,7 @@
     "hale_token",
     "healers_note",
     "hearth_key",
+    "hearth_symbol",
     "hill_torc",
     "horn_bow",
     "horn_bow+1",

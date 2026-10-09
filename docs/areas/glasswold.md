@@ -553,7 +553,7 @@ cliff from its top.
   12 meets C8's line and C8's lions: a warning, not a wall, and a fight it can run from.
 - **Density.** Core boxes at the Foreland's floor, country at the looser one (EXPANSION §5.3).
 - **As built.** E10 (#517, #524) pays 2,543 xp a member, 1.04 times its scaled 2,450, and 950 gold,
-  counted in Ashfall's row since its map is the Waste's (16,062 of 19,467). At its floor, 25, a
+  counted in Ashfall's row since its map is the Waste's (20,142 of 19,467, the row's xp met). At its floor, 25, a
   company wins every fight and manages 10.83 fights to a rest (aim 9.25 to 11.25), 7.7% of days
   ending in a fight broken off; two under, its groups count in Ashfall's pool, all won (owed to #18).
   Density 100.0% within 12, no sign among its 24 points. The Wold's own row is owed to #447 whole.
