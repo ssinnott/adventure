@@ -14,6 +14,14 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FERRY, sells } from '../../../crossings.ts';
 
+/**
+ * Ruan's choice at the Keel (#635), put once the Factor's rung is paid: the orders handed to the Wardens
+ * or the Compact taken over. Either way it takes no more of the Tallymaster's orders (docs/areas/
+ * dead_drop.md §5); each answer sets its own flag, and only Ruan's words read them.
+ */
+export const COMPACT_WARDENS = 'q_compact_wardens';
+export const COMPACT_OVER = 'q_compact_over';
+
 export const SALTMOUTH: MapDef = {
   id: 'saltmouth',
   name: 'Saltmouth',
@@ -64,7 +72,23 @@ export const SALTMOUTH: MapDef = {
       'Ruan reads it standing at the bar, and the bar goes quiet round her the way a room does when the one who keeps it has stopped moving.',
       '"The Old Man\'s hand. I\'d know it in the dark." She reads it again. "Ten years of quarter-papers, and I\'ve read every one aloud in that back room and done what it said, and he\'s been under a cairn on Wrackholm the whole while."',
       'She folds it small and puts it inside her bodice, not in the box under the bar. "This doesn\'t leave me. Not for Tallis, not for the Wardens, not for you. Here\'s what a hall pays for its own name back. Say nothing in the front room. Say nothing anywhere."',
-    ] }, says: [{ after: { flag: 'q_compact_run_done' }, lines: [
+    ] }, says: [
+    // The rank that reveals (#635, docs/areas/dead_drop.md §5): once the Factor's rung is paid she puts the
+    // Compact's choice, the orders to the Wardens or the Compact taken over, and says what follows each.
+    // These come first, since the first words that hold are said.
+    { after: { flag: COMPACT_WARDENS }, lines: [
+      'Ruan dries a glass that was dry when she picked it up.',
+      '"The Wardens have his orders. The back room is quiet on quarter-day. I find I listen for it."',
+    ] }, { after: { flag: COMPACT_OVER }, lines: [
+      'Ruan sets a glass before you without being asked.',
+      '"The Compact is yours, Partner. Quarter-day came and nobody read a word aloud. The back room has not got used to it."',
+    ] }, { after: { flag: 'q_compact_factor_done' }, lines: [
+      '"Partner. From below, in his hand." Ruan has stopped drying the glass. "Ten years under a cairn, and every quarter-day I read his orders aloud and the Compact does them."',
+      '"Somebody writes them. I do not ask who." She sets the glass down, and for once she looks at you and not the mirror. "I ask what we do now."',
+    ], choice: { ask: '"The Wardens would have them gladly. Or the Compact is yours. Which?"', answers: [
+      { label: 'Hand the orders to the Wardens.', sets: COMPACT_WARDENS, says: ['"Then they go to the Wardens, and the Keel takes no more of them." She says it to the mirror. "I will miss the reading."'] },
+      { label: 'Take the Compact over.', sets: COMPACT_OVER, says: ['"Then it is yours, Partner, and it takes no one\'s orders but yours." She sets the back room\'s key on the bar. "The reading stops."'] },
+    ] } }, { after: { flag: 'q_compact_run_done' }, lines: [
       '"Runner." A glass is set down before you ask. "The river crews have found somebody who pays in grey. We pay in coin and we are still here. Sit."',
       'She goes back to the door in the mirror. "Work comes when it comes."',
     ] }] },
