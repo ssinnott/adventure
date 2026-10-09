@@ -175,6 +175,13 @@ bots burn with fire what they have seen mend, and aim at a caller that has room 
 leader and after both at a light whose touch takes spell points (#541). Nothing gives stone,
 though the condition exists: Absolve lifts it, and a temple.
 
+And for sweep (#545). A monster that sweeps (`sweep`) may spend its turn, at a chance a turn, on one
+attack at every member of a row still standing, a to-hit and its own dice for each. Bare it is an
+arm, and takes the front row, the back once the front is down; with an element it is a breath, takes
+the row with more standing in it, the front on a tie, and is loosed from the back rank too. Bracing
+halves it, and Lampglass on a breath's element or a member's own resistance halves it once more.
+Both bots mend a member of the row a sweep would take once one sweep could fell them.
+
 And for the Hearth's light through a machine (§2). The first time Smite or Wrath of the Hearth
 passes through one and does nothing, the log says so after the spell's line, once a game: *The light
 goes into it like a hand into a glove.*, or into them, through several.
@@ -236,9 +243,9 @@ made once in the systems lane and first spent by the area named, which waits for
 | The Core's clock | the last fight counts rounds to the light going out | the Core | STORY.md, Act Five |
 
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
-elements, casting and drain (#161); regeneration, curse and calls (#537), each with the gate bot's
-answer, a drain of spell points' with #541. Still to come: stone and its cure, sweep, a light seen
-past the fog and the Core's clock.
+elements, casting and drain (#161); regeneration, curse and calls (#537) and sweep (#545), each with
+the gate bot's answer, a drain of spell points' with #541. Still to come: stone and its cure, a light
+seen past the fog and the Core's clock.
 
 Decided by delegate for #537, each the owner's to overturn:
 
@@ -283,6 +290,44 @@ Decided by delegate for the combat row and the glove line, each the owner's to o
 7. **The glove line is said once a game,** after the first Smite or Wrath of the Hearth that passes
    through a machine and does nothing, kept by `glove_seen` in the party's flags, which a save holds.
 8. **Through one machine it says it, as §2 has it; through several, them.**
+
+Decided by delegate for #545, each the owner's to overturn:
+
+1. **A sweep is a chance a turn, as a spell and a call are,** not a cooldown: one field
+   (`sweep: { chance, element }`), tried after a call and a spell and before a blow.
+2. **Its element makes it a breath, and sets its reach.** Bare, an arm takes the front row, the back
+   once the front is down, as its blows do, and holds in the back rank; with an element, a breath
+   takes the row with more standing in it, the front on a tie, as a monster's Fire Bolt falls, and is
+   loosed from either rank. Every sweeper the road names is one or the other; a breath bare or an arm
+   with an element would want one more field.
+3. **The resolver rolls once a member:** a to-hit against each one's armour, bracing, the Ward and
+   their edge counted as against a blow, and the monster's own dice for each one hit. Bracing halves
+   it; Lampglass on a breath's element or the member's own resistance halves it once between them
+   (#555). A bare arm has no element, and Lampglass does nothing to it.
+4. **The fallen are passed over;** the asleep, the held and a thief gone from sight are struck, since
+   a sweep marks nobody, as a monster's spell on a row does not. A sleeper wakes, a cleric's last rite
+   holds as against a blow, and a sweep neither drains nor inflicts: those are its blows'.
+5. **The log says it in a line,** "Stair Giant sweeps the front row: 96 damage.", "Cinder Drake
+   breathes fire on the back row: 84 damage. Maren falls!" or, hitting nobody, "Stair Giant sweeps
+   the front row and misses." Each member hit flashes as at a blow, so `src/ui/combat.ts` needs
+   nothing new.
+6. **A sweeper is the test brute come down whole to 0.85 of its line, sweeping a turn in four**
+   (`SWEEP` in `tools/testmonster.ts`, `node tools/harness.ts --abilities`): at 23, 537 hit points
+   and a blow of 24, so one sweep at its worst takes 38 of each of a front row whose least has 112.
+   A company fights 9.8 pairs to a rest where it fights 10.3 of brutes, a pair in 5.3 rounds for 11%
+   of itself, and 9.7 pairs of drakes at 25 where it fights 8.8. On the brute's whole line a sweep a
+   turn in four cost three fights a day: 7.3 pairs at 23.
+7. **The bots mend a member of the row a sweep would take once one sweep could fell them,** under the
+   most it deals at a blow, as well as anyone under 40%: the front row's hit points are spread, and a
+   breath does not turn on the back row for want of one of the front. At the test giant's size it
+   changes nothing; against giants of twice the blow one of a row fell to a sweep in 1 of 40 harness
+   fights at 23 where 4 did with no answer, and in none of 40 gate fights where 6 did.
+8. **The bots leave Lampglass to the player:** raised at the first breath it cost the cleric more
+   than it saved, 10 spell points a fight for half of a breath or two, and a company fought 7.8 pairs
+   of drakes to a rest at 23 where it fought 9.2 with none (on 7's first draft, mending at 60%).
+9. **A placed sweeper stands on the line as the test giant or drake does,** its chance and element
+   with it, or is set off it with a reason (`tools/tests/harness.ts`). The giants and the drakes are
+   neither placed nor drawn yet (#502, #507, #513, #515, #520): a fixture in the tests sweeps for them.
 
 ---
 
@@ -626,7 +671,7 @@ of that level, each on its own and then all of them dealt in a new order. `--sta
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
 `--abilities` puts Act III's abilities on the test monsters, two trolls, four wights, a caller
 beside six fodder and three lights with a hound (§3.3, #537, #541), at 19 and 20 or the levels
-asked.
+asked, and Act IV's sweep, two giants and two drakes (#545), at 23 and 25.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
