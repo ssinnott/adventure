@@ -189,8 +189,9 @@ settled in its issue, and what Ashfall teaches changes them.
 - **Finds.** The Wold adds no rung to the gear ladder (#542): its finds are gold, the band's
   consumables and, where a box promises one, a piece of Cinderport's with a plus, inside the band's
   price window of 6,000. The Riders' own gear is leather and horn, sold at Akordu (call 5).
-- **Stone.** The basilisk turns a member to glass (stone, 0.15), and #546 gives stone a cure short
-  of a temple; the temple is Cinderport's. No box with a basilisk is built before #546 lands.
+- **Stone.** The basilisk turns a member to glass (stone, 0.15), and #546 has built it with its
+  cures: Absolve, the Quickening Draught (2,000 gold, the trader's at Akordu and Cinderport's
+  chandler's) and a temple, Cinderport's the nearest (MONSTERS §3.3).
 
 ### 4.2 E10, the road onto the steppe (#524): country, band 26
 
@@ -258,7 +259,8 @@ settled in its issue, and what Ashfall teaches changes them.
   the Glass; the wells; the horse that came back, tethered apart with a walker in its saddle.
 - **Points of interest,** about nine features and six groups:
   - the eldest at her fire, the step (§5), and the Lion's Share's other voice (§6);
-  - the trader's tent, a shop for consumables and leather at list price (call 5, call 7);
+  - the trader's tent, a shop for consumables and leather at list price (call 5, call 7), the
+    Quickening Draught among them (#546);
   - the Rider at the horse-lines, who sells the ride to Cinderport: a `coach` link open from the
     start (#547), a fare and a day, landing at Cinderport's gate, and the same back;
   - the camp, to rest at (#45), the Riders' own; a well, a shrine (#45);
@@ -301,8 +303,8 @@ settled in its issue, and what Ashfall teaches changes them.
   and on top the basilisk's nest among the glassed bones of what looked up, with the hoard they
   carried. The hint: every glassed figure round the mesa faces the same notch.
 - **New here.** Stone and its cure (#546), first spent here; a fight won by not looking up.
-- **Finds.** Gold, a Shield with a plus, Cinderport's step (#542), and the stone cure's own item
-  if #546 makes one, so a company that climbs without it is not stranded.
+- **Finds.** Gold, a Shield with a plus, Cinderport's step (#542) and a Quickening Draught, the
+  stone cure (#546), so a company that climbs without one is not stranded.
 - **Pay.** About 2,000 xp a member.
 
 ### 4.6 C8, the Scarp's edge (#528): country, band 27

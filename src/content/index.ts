@@ -23,24 +23,20 @@ import { AREA as kilns } from './areas/kilns/index.ts';
 import { AREA as cairnmoor } from './areas/cairnmoor/index.ts';
 import { AREA as rimewater } from './areas/rimewater/index.ts';
 import { AREA as whitespine } from './areas/whitespine/index.ts';
-import * as ashfall from './areas/ashfall/monsters.ts';
-import { ITEMS as ASHFALL_ITEMS } from './areas/ashfall/items.ts';
-import * as ashfallRooms from './areas/ashfall/interiors.ts';
+import { AREA as ashfall } from './areas/ashfall/index.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
 
 /** The areas in road order. The order is behaviour: a new game starts on the first area's first map. */
-export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns, cairnmoor, rimewater, whitespine] as const;
+export const AREAS = [shelf, thornmark, saltreach, wrackholm, sunderwood, kilns, cairnmoor, rimewater, whitespine, ashfall] as const;
 
 /**
  * Monsters drawn ahead of their area: an area is listed in AREAS only once it has a map to start
  * on, and its monsters may be drawn before that. Each is merged into MONSTERS and MonsterSprite as
  * an area's are; once the area is listed, its Area takes the import and its line here goes.
  */
-export const AHEAD = [
-  { id: 'ashfall' as const, sprites: ashfall.SPRITES, monsters: ashfall.MONSTERS },
-] as const;
+export const AHEAD = [] as const;
 
 /**
  * Rooms drawn ahead of their area, as AHEAD's monsters are: an area's businesses' rooms may be
@@ -48,9 +44,7 @@ export const AHEAD = [
  * area's is (src/ui/interior.ts paints every one); once the area is listed, its Area takes the
  * list as `interiors` and its line here goes.
  */
-export const ROOMS_AHEAD = [
-  { id: 'ashfall' as const, interiors: ashfallRooms.INTERIORS },
-] as const;
+export const ROOMS_AHEAD = [] as const;
 
 /**
  * Items made ahead of their area, as AHEAD's monsters are: the gear ladder's steps are priced, and
@@ -59,9 +53,7 @@ export const ROOMS_AHEAD = [
  * can hold one until a listed area sells or places it (tools/shipped.ts records a listed area's);
  * once the area is listed, its Area takes the table as `items` and its line here goes.
  */
-export const ITEMS_AHEAD = [
-  { id: 'ashfall' as const, items: ASHFALL_ITEMS },
-] as const;
+export const ITEMS_AHEAD = [] as const;
 
 type AnyArea = (typeof AREAS)[number];
 /** The regions, one to an area; each map names its region and shares its sky. */

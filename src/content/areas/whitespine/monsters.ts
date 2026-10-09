@@ -17,8 +17,11 @@ export const MONSTERS: readonly MonsterDef[] = [
   // hit (§8.1), and it is heard from the back rank, as the devilfish reaches from it, so the bells hold the front row while
   // the brothers close
   { id: 'bell_ringer', name: 'Bell-ringer', plural: 'Bell-ringers', sprite: 'bell_ringer', kind: 'machine', look: 'Eleven strokes, a gap, and eleven more.', level: 23, hp: 284, ac: 23, attack: 13, dice: 4, sides: 8, bonus: 2, speed: 12, xp: 913, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#a39a86', size: 1.1 },
-  // the chapter house (#500), its boss at 24 on MONSTERS §4.4's boss line, for #500's gate to tune; its robe falls open
-  { id: 'abbot', name: 'The Abbot', plural: 'Abbots', sprite: 'abbot', kind: 'machine', look: 'The abbot keeps the hours, and it is time.', level: 24, hp: 1381, ac: 25, attack: 16, dice: 24, sides: 8, bonus: 24, speed: 13, xp: 15253, gold: [0, 0], tint: '#3a2f3b', size: 1.4 },
+  // the chapter house's seat (#500), Highcell's boss at 24; it never comes back, and its robe falls open as it falls. Off
+  // MONSTERS §4.4's boss line (1,381 hp, 24d8+24, won 59% at 23 and 80% at 25), its hit points and its blow are set for
+  // #500's gate: two times in three at its floor, 23, which keeps the lower house's floor with its one other fight, and
+  // nearly always at 25
+  { id: 'abbot', name: 'The Abbot', plural: 'Abbots', sprite: 'abbot', kind: 'machine', look: 'The abbot keeps the hours, and it is time.', level: 24, hp: 1700, ac: 25, attack: 16, dice: 19, sides: 8, bonus: 16, speed: 13, xp: 15253, gold: [0, 0], tint: '#3a2f3b', size: 1.4 },
   // over the High Spine, from J11 on (#499, #501, #504), a skirmisher on MONSTERS §4.4's line at 22: it flies, reaching the back row
   { id: 'spine_eagle', name: 'Spine Eagle', plural: 'Spine Eagles', sprite: 'spine_eagle', kind: 'beast', look: 'It takes the light out of the sky as it comes down.', level: 22, hp: 328, ac: 22, attack: 13, dice: 3, sides: 7, bonus: 6, speed: 15, xp: 873, gold: [0, 0], ranged: true, tint: '#4a3828', size: 0.9 },
   // the High Spine's snow, from J11 on (#499, #501, #503), a brute at 23 as MONSTERS §3.3 makes a troll (#537): three quarters of

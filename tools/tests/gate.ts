@@ -23,7 +23,7 @@ import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
 import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
 import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
-import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter } from '../testmonster.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { ok, owed } from './lib.ts';
 
@@ -84,6 +84,7 @@ export const BOSSES: Record<string, readonly string[]> = {
   kilnsheart: ['deep_mines3:dm3_foreman', 'anvil_stone:as_warden', 'lava_tubes2:lt2_great_salamander'],
   cairnfield: ['cairns2:cd2_king'],
   coldmere: ['sleepers_bay2:sb2_matron'],
+  monksvale: ['monastery2:hc2_abbot'],
   // The Stair-king at the Stair's head, who asks the toll first; the bot refuses (#502).
   highspine: ['highspine_i10:i10_king'],
 };
@@ -126,6 +127,9 @@ export const ROADS: Record<string, readonly string[]> = {
   // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
   // walking it (#499).
   monksvale: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
+  // Out of Cinderport's gate and south over the ash past the beetles below the ground to the salamanders
+  // where it warms toward the mountain (#511).
+  cindercoast: ['cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
   // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
   // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
   // snow short of the head (#502).
@@ -133,7 +137,7 @@ export const ROADS: Record<string, readonly string[]> = {
 };
 
 /** What an area is called in the check, apart from the map it shares an id with. */
-const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine' };
+const NAMES: Record<RegionId, string> = { shelf: 'the Foreland', thornmark: 'Thornmark', saltreach: 'Saltreach', wrackholm: 'Wrackholm', sunderwood: 'Sunderwood', kilns: 'the Kilns', cairnmoor: 'Cairnmoor', rimewater: 'Rimewater', whitespine: 'the Whitespine', ashfall: 'Ashfall' };
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -196,7 +200,11 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'Rimewater: under': { whose: '#18', at: 1 },
   // And the Whitespine's first box (#499), in Rimewater's gear and the finds by 22, as Rimewater's are.
   'monksvale_j11: under': { whose: '#18', at: 1 },
-  'the Whitespine: under': { whose: '#18', at: 1 },
+  // And Highcell's upper house (#500), banded from the area's floor as Carn Dubh's cairn is.
+  'monastery: under': { whose: '#18', at: 1 },
+  // And Ashfall's first box (#511), in Rimewater's gear and the finds by 24, as the Whitespine's are.
+  'cindercoast_g10: under': { whose: '#18', at: 1 },
+  'Ashfall: under': { whose: '#18', at: 1 },
   'highspine_i11: under': { whose: '#18', at: 1 },
   // Act II's bosses were set by their gates against a company without its first prestige, which the
   // gate's company never took until #541 made it harness's. With it, at 11, four of the six strike
@@ -393,6 +401,13 @@ export function gate(): void {
     const swept = giants.filter(({ s }) => s.log.some((l) => l.startsWith('Test Giant sweeps the front row'))).length;
     ok(won(giants) >= 0.9 && won(drakes) >= 0.9 && swept >= seeds / 2 && answered < bare,
       `it plays the sweep: it wins ${pc(won(giants))} of two giants' fights at 23, swept in ${swept} of ${seeds}, and ${pc(won(drakes))} of two drakes' at 25; and against giants of twice the blow one of a row falls to a sweep in ${answered} of ${seeds} fights, where with no answer in ${bare}`);
+    // It plays stone (#546): it wins the mesa at 27, someone glassed in some fights, and between
+    // fights lifts the stone as the road mends, by Absolve or by the draught it carries.
+    const mesas = fought(27, basiliskEncounter(27)), glassed = mesas.filter(({ p }) => p.members.some((m) => hasCondition(m, 'stoned')));
+    for (const { p } of glassed) mendBetween(p);
+    const lifted = glassed.filter(({ p }) => !p.members.some((m) => hasCondition(m, 'stoned'))).length, drunk = glassed.filter(({ p }) => !p.bag.includes('quickening')).length;
+    ok(won(mesas) >= 0.9 && glassed.length > 0 && lifted === glassed.length,
+      `it plays stone: it wins ${pc(won(mesas))} of the mesa's fights at 27, ${glassed.length} of ${seeds} leaving someone glassed, and lifts it between fights in ${lifted}, by the draught in ${drunk}`);
   }
   // The gate's company is harness's (#541): it takes its prestiges at 11, 19 and 27, with their perks
   // and ranks, as play gives them, and wears what harness's wears.

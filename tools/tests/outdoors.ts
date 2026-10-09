@@ -21,7 +21,11 @@ import { logLines } from '../../src/ui/frame.ts';
  * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut.
  * Wrackholm's isle is reached by the smugglers' boat from Saltmouth (#177), a crossing's landing.
  */
-const CUT_OFF: Record<string, string> = {};
+const CUT_OFF: Record<string, string> = {
+  // Ashfall is begun by sea (#443, call 6): G10 is reached through Cinderport's gate, where the Compact's
+  // ship and the Rider's ride come in (#547), until the Stair's foot joins it to the Whitespine (#510).
+  cindercoast_g10: '#512',
+};
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
@@ -287,6 +291,18 @@ export function outdoors(): void {
   ok(northOf(i10) === '|' + 'p'.repeat(17) + '=' + '%'.repeat(5) + 'A'.repeat(7) + '%' && westOf(i10) === '|'.repeat(20) + '=pppp' + 'aa' + 'p'.repeat(5) && eastOf(i10) === '%%%' + 'A'.repeat(11) + '%%' + 'A'.repeat(7) + '%'.repeat(9)
     && [...Array(32).keys()].every((i) => [out.at(i10.x - 1, i10.y + i), out.at(i10.x + 32, i10.y + i), out.at(i10.x + i, i10.y - 1)].every((c) => c.ch === '%')),
     `I10's north edge is the Sheer, the pines and the trail at 18,0 against I9, its west edge the Sheer with the Stair at 0,20 against H10 and its east edge the range against J10, past which the world ends (${northOf(i10)}; ${westOf(i10)}; ${eastOf(i10)})`);
+  // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined to nothing yet (CUT_OFF): on
+  // the north the vines, the road at column 3 up the wall's west side, Cinderport's wall, the stream
+  // and the grass against G9's shore; on the south the ash either side of Fire Mountain's foot (the ring,
+  // so the void) against G11; on the west the vines, the road out at rows 7 and 8 and the ash against
+  // F10; and on the east the vines, the ash and the stream at rows 22 and 23 against H10. None of G9,
+  // G11, F10 and H10 is built, so the world ends past them.
+  const g10 = out.zones.find((z) => z.id === 'cindercoast_g10')!;
+  ok(northOf(g10) === '&&&=' + 'B'.repeat(10) + '~~~,,,,^^,,,,,&&&&' && southOf(g10) === 'a'.repeat(6) + '%'.repeat(15) + 'a'.repeat(11)
+    && [...Array(32).keys()].every((i) => [out.at(g10.x + 32, g10.y + i), out.at(g10.x - 1, g10.y + i), out.at(g10.x + i, g10.y + 32), out.at(g10.x + i, g10.y - 1)].every((c) => c.ch === '%')),
+    `G10's north edge is the vines, the road at column 3, the town's wall, the stream and the grass against G9, and its south edge the ash either side of the mountain against G11, past which the world ends (${northOf(g10)}; ${southOf(g10)})`);
+  ok(westOf(g10) === '&'.repeat(7) + '==' + '&'.repeat(5) + 'a'.repeat(18) && eastOf(g10) === '&'.repeat(14) + 'a'.repeat(8) + '~~' + 'a'.repeat(8),
+    `G10's west edge is the vines, the road out at rows 7 and 8 and the ash against F10, and its east edge the vines, the ash and the stream against H10, past which the world ends (${westOf(g10)}; ${eastOf(g10)})`);
   // Fionnlios's box (O7, #477): its west edge meets N7's east edge square for square, the peat-cutter's
   // track crossing at row 22 and the tarn's stream at the corner, out into N7's corner and O8's; its
   // north edge the hills and the Kilns' grass under O6, square for square with O6's south edge but its

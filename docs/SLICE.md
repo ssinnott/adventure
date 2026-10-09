@@ -61,6 +61,8 @@ DESIGN.md first for the why.
   room for the whole of it under twelve monsters in three groups, the fallen counted (`calls`) (#537).
   A monster may sweep a row at a chance a turn, its arm the front row or its breath the fuller row
   with its element, which Lampglass halves (`sweep`) (#545).
+  A hit may turn a member to glass, out of the fight and the walk and through a rest till Absolve, a
+  Quickening Draught or a temple lifts it (`inflict: stoned`) (#546).
   The first Smite or Wrath of the Hearth to pass through a machine and do nothing is followed in the
   log by the light going into it like a hand into a glove, once a game (`glove_seen`, MONSTERS §2).
   A group placed on ice (`under: 'ice'`, #536) lives under it: it

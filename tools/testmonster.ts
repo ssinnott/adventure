@@ -218,3 +218,17 @@ export function testDrake(level: number): MonsterDef {
 /** Their standard encounters (§4.4): two giants and two drakes, as brutes come. */
 export const giantEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.brute.group }, () => testGiant(level));
 export const drakeEncounter = (level: number): MonsterDef[] => Array.from({ length: ROLES.brute.group }, () => testDrake(level));
+
+// Act IV's stone on the test monsters (docs/MONSTERS.md §3.3, #546), at the size decided there.
+
+/** What a basilisk's hit glasses at, where the test controller's held (MONSTERS §8.3). */
+export const BASILISK_STONE = 0.15;
+/**
+ * The test basilisk (MONSTERS §8.3; the Basilisk is #533's to draw): the test controller, its hold a
+ * stone, its gaze reaching the back row as a bow does (`ranged`).
+ */
+export function testBasilisk(level: number): MonsterDef {
+  return { ...testMonster('controller', level), id: `test_basilisk_${level}`, name: 'Test Basilisk', plural: 'Test Basilisks', ranged: true, inflict: { cond: 'stoned', chance: BASILISK_STONE } };
+}
+/** The mesa (§8.3's fight): a basilisk in a controller's one share behind three lions in a skirmisher's three, the test skirmisher. */
+export const basiliskEncounter = (level: number): MonsterDef[] => [...Array.from({ length: 3 }, () => testMonster('skirmisher', level)), testBasilisk(level)];

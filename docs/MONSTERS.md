@@ -172,8 +172,7 @@ A monster that `calls` names a group and a chance a turn to spend its turn bring
 into the fight, as a group of its own that acts from the next round, while the fight has room for it
 under 12 monsters in three groups, those already down counted; the called pay as the rest. Both
 bots burn with fire what they have seen mend, and aim at a caller that has room to call as at a
-leader and after both at a light whose touch takes spell points (#541). Nothing gives stone,
-though the condition exists: Absolve lifts it, and a temple.
+leader and after both at a light whose touch takes spell points (#541).
 
 And for sweep (#545). A monster that sweeps (`sweep`) may spend its turn, at a chance a turn, on one
 attack at every member of a row still standing, a to-hit and its own dice for each. Bare it is an
@@ -181,6 +180,14 @@ arm, and takes the front row, the back once the front is down; with an element i
 the row with more standing in it, the front on a tie, and is loosed from the back rank too. Bracing
 halves it, and Lampglass on a breath's element or a member's own resistance halves it once more.
 Both bots mend a member of the row a sweep would take once one sweep could fell them.
+
+And for stone (#546). A hit may turn a member to glass at its chance (`inflict`'s `stoned`), as a
+hit curses, and the log says *Bram turns to glass!* in place of a fall. The glassed is out of the
+fight and the walk, passed over by blows, sweeps and spells, and stays so through the fight's end
+and a rest, which mends nothing in it, till Absolve, a Quickening Draught or any temple lifts it;
+it comes back as it was, out cold if its wounds say so. Both bots lift it between fights, by
+Absolve where a member standing has it and the points, else by the draught the company carries
+from 25.
 
 And for the Hearth's light through a machine (§2). The first time Smite or Wrath of the Hearth
 passes through one and does nothing, the log says so after the spell's line, once a game: *The light
@@ -244,9 +251,9 @@ made once in the systems lane and first spent by the area named, which waits for
 | A question first | `choice` on a group: a person's question, put before the fight; the refusal fights, and an answer of gold, an item or a flag stands the group aside | Thornmark's ogre (#56's 13); the Whitespine | the ogre's bargain; the giants' toll |
 
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
-elements, casting and drain (#161); regeneration, curse and calls (#537) and sweep (#545), each with
-the gate bot's answer, a drain of spell points' with #541; a question first (#544), the bot refusing
-it. Still to come: stone and its cure, a light seen past the fog and the Core's clock.
+elements, casting and drain (#161); regeneration, curse and calls (#537), sweep (#545) and stone and
+its cure (#546), each with the gate bot's answer, a drain of spell points' with #541; a question
+first (#544), the bot refusing it. Still to come: a light seen past the fog and the Core's clock.
 
 Decided by delegate for #537, each the owner's to overturn:
 
@@ -360,6 +367,39 @@ Decided by delegate for #544, each the owner's to overturn:
 9. **Thornmark claims the mechanic (`encounter:choice`):** its ogre (#56's 13) is the first group on
    the road to ask, so the Whitespine's toll is the second, and its doc's "first choice put before a
    fight" (§2) is #502's to restate; the giants, sweep and the cliff stay the Whitespine's own.
+
+Decided by delegate for #546, each the owner's to overturn:
+
+1. **Stone rides a hit, as a curse does** (`inflict: { cond: 'stoned', chance }`): a hit that lands
+   and does not fell the member glasses it at its chance, and the log says "Bram turns to glass!"
+   in place of a fall, once. The party card shows it as it shows the fallen, STONED in grey.
+2. **The glassed are out of the fight and the walk, as `party.ts` had them, and a rest mends
+   nothing in them:** DESIGN §6's "or time" is not stone's. Their wounds wait as they were, and a
+   raising does not touch them.
+3. **One rule lifts it in three places:** Absolve (tier 7, from 23) as before; a Quickening
+   Draught, which lifts stone and nothing else, from the bag or a pack, in a fight or on the walk;
+   and any temple, at 80 gold a level of the member (`templePrice`, the rule and not a town's). The
+   lifted come back as they were, out cold if their wounds say so.
+4. **The draught is 2,000 gold, the temple's price for a member of 25,** Cinderport's step: it saves
+   the ride, not the gold (a temple asks 2,160 at 27). It is made ahead in Ashfall's items, inside
+   Ashfall's window of 5,500 and the Wold's of 6,000. The ladder check owes it to Cinderport's
+   chandler (#512) and the Riders' trader at Akordu (#526), as it owes the armourer's step to #512.
+   D10's box may place one as a find (#527).
+5. **The test basilisk is the test controller whole, its hold a stone at 0.15 and its gaze reaching
+   the back row** (`BASILISK_STONE`, `ranged`), so it glasses whoever looks up from behind the
+   lions (§8.3). On the mesa, a basilisk behind three test skirmishers in one standard encounter, a
+   company of 27 wins every fight, someone glassed in 3 to 5 of 40. It fights 11.9 to 12.6 of them
+   to a rest (the test's seeds and the harness's own) where with paralysis for the hold it fights
+   13.5: stone costs a fight or two a day and leaves more than the 10.75 asked. With neither
+   Absolve nor a draught it fights 7.0. A placed basilisk stands on the controller's line, as the
+   wights do.
+6. **The bots lift stone between fights, not in one** (`unstone`, before the mending): by Absolve
+   where a member standing has it and the points (the paladin has it too), else by a draught, the
+   bag's before a pack's. One with neither waits for a temple, and the company rests, as for the
+   dead. In a fight the glassed are out, as the fallen are, and the bots spend no turn on them.
+7. **The company carries one draught from 25** (`KIT`, `tools/harness.ts`; the gate's company is
+   harness's): with Absolve in two hands it is drunk only when both are glassed, so no figure the
+   checks print moves. The ladder check holds the kit to Ashfall's window.
 
 ---
 
@@ -703,7 +743,8 @@ of that level, each on its own and then all of them dealt in a new order. `--sta
 lines with their dice, and `--calibrate --write` re-derives the tables when the rules change.
 `--abilities` puts Act III's abilities on the test monsters, two trolls, four wights, a caller
 beside six fodder and three lights with a hound (§3.3, #537, #541), at 19 and 20 or the levels
-asked, and Act IV's sweep, two giants and two drakes (#545), at 23 and 25.
+asked; Act IV's sweep, two giants and two drakes (#545), at 23 and 25; and its stone, the mesa's
+basilisk behind three skirmishers (#546), at 27.
 `--spell-cap`, `--gear-grows`, `--level-bonus` and `--level-traits` run any of it as if damage
 spells stopped growing at another level than play's 10, or the company gained gear, a bonus or
 blows as it levelled past it; `--rank-step` as if a spell rank added another share than play's 15%.
@@ -1352,6 +1393,21 @@ salamanders and the drakes; the knockers, deep.
 After the Ember Stone is lit, one sentry group joins the vents and one the corridors (`after`), as
 in all of Ashfall. The Brood Drake is judged at 26, the corridors' floor.
 
+The five new here are drawn (#22), ahead of the levels, on frames that exist. On the drakes'
+(`src/ui/monsters/drakes.ts`): the Drakeling, small and round under a head too big even for it, its
+crust not set, the hide a soft ember-pink with the fire showing through, with two nubs of horn,
+large eyes, a short tail and stubs of wings beating fast, too young to breathe; and the Brood Drake,
+rust-dark as the corridors' iron, settled on its haunches over three eggs of clinker cracked with
+the fire, its wings mantled down and out round them and its horns long. On the heavy machines'
+(`machines.ts`): the Flue Walker, a length of flue on the family's long legs, hooped and pale with
+ash, with a chimney's cap over a collar open on the fire, a damper of three slots in its middle and
+its arms bowed out to climbing irons. On the knockers' (`knockers.ts`): the Deep Knocker, longer,
+higher on its legs and pale, the plates' edges standing up along its back, its knobs heavy and its
+lamp hard and cold in a ring of plate; and the Inspector, umber-dark on long legs, with no feelers
+and a mast off its back carrying a second lamp, which it turns from the wall to the company. Their
+numbers are their roles' at their levels (§4.4), the Brood Drake set off the line for the corridors'
+gate as the Old Drake is (docs/areas/meridian_camp.md §8). The levels place them (#22).
+
 **Asks:** sweep with fire; calls; elements.
 
 ### 8.5 The Dead-Drop (band 26–28)
@@ -1368,15 +1424,28 @@ lines are the building session's.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
-| Loader | heavy machines, a new def | brute, 26 | the drop and the vaults | Lifts a crate the size of a cart |
-| Tally Clerk | knockers, a new def | caller, 26 | the drop | Calls loaders |
-| Hold Keeper | keepers, a new def | controller, 27 | the people's vault | Puts to sleep (0.3); mends its group |
+| Loader | heavy machines, a new def | brute, 26 | the drop and the vaults | *It carries a crate the size of a cart, and does not set it down.* Size 1.4 |
+| Tally Clerk | knockers, a new def | caller, 26 | the drop | *It counts the crates, then turns and counts you.* Calls two loaders |
+| Hold Keeper | keepers, a new def | controller, 27 | the people's vault | *It carries water to the pens, and nobody is in them.* Puts to sleep (0.3); mends its group |
 | Deep Knocker | knockers | armoured, 28 | at the rails' sealed door | §9.2's |
-| The Tallymaster | keepers, a new def | boss, 28 | the counting house | Fights only when the company steps to its desk; calls tally clerks; size 1.6 |
+| The Tallymaster | keepers, a new def | boss, 28 | the counting house | *It writes, and does not look up.* Fights only when the company steps to its desk; calls two tally clerks; size 1.6 |
 
 The Tallymaster is judged at 27, the counting house's floor. The stair's foot, `dead_drop_stair`,
 holds no group, and `dead_drop`'s first stands out of sight of it: the band's sign is the warning
 (§2.2).
+
+The four new defs are drawn (#22), each on a frame that exists and in Wrackholm's table, ahead of
+the levels that place them. The Loader is the heavy machines' (`src/ui/monsters/machines.ts`): a
+squat hull on short bowed legs, both arms up and holding over its head a crate the size of a cart,
+planked, strapped with iron and chalked with a clerk's tally; it has no head, and the fire shows
+through two ports under the crate. The Tally Clerk is the knockers': low, long and the colour of the
+hold's dust, with no feelers, and stood up on its back a counting frame whose beads go across one a
+click. The Hold Keeper is the bay's keeper kept in the hold, bare, shorter and a little stooped, a
+yoke across its shoulders and a pail at each end. The Tallymaster is the keepers' largest and
+strangest, size 1.6: it stands behind a clerk's desk among piled ledgers on a neck grown long,
+writing with a pen in each hand in two ledgers at once, six lights counting across its brow. The
+deep knocker is Meridian Camp's, drawn with the inspector (§8.4, #657); the vaults place that one
+(docs/areas/dead_drop.md §8).
 
 **Asks:** calls and the sleeping touch, both Rimewater's.
 
