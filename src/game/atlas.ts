@@ -845,12 +845,15 @@ export function zoneEdges(atlas: Atlas, defs: readonly MapDef[]): ZoneEdge[] {
       edges.push(edge);
     }
   }
+  // A map stands for its place on the atlas: a town's for the town, a box's for its zone (#547).
+  const is = (map: string, place: string): boolean => map === place || atlas.zones.some((z) => z.id === place && !!z.maps?.some((m) => m.map === map));
   for (const l of atlas.links) {
-    // A crossing link the crossings now run on, sold both ways between the two places it names, is
-    // built (#539): the crossing takes its course and its name, and it is not drawn again as planned.
-    const sold = (l.kind === 'sea' || l.kind === 'coach') && edges.find((x) => !x.planned && x.both && x.kind === l.kind && ((x.from === l.from && x.to === l.to) || (x.from === l.to && x.to === l.from)));
+    // A crossing link the crossings now run on, sold both ways between the two places it names (a
+    // zone by its box), is built (#539): the crossing takes its course and its name, and it is not
+    // drawn again as planned.
+    const sold = (l.kind === 'sea' || l.kind === 'coach') && edges.find((x) => !x.planned && x.both && x.kind === l.kind && ((is(x.from, l.from) && is(x.to, l.to)) || (is(x.from, l.to) && is(x.to, l.from))));
     if (sold) {
-      const on = sold.from === l.from;
+      const on = is(sold.from, l.from);
       sold.a ??= on ? l.a : l.b; sold.b ??= on ? l.b : l.a;
       sold.via = l.via && (on ? l.via : [...l.via].reverse());
       sold.note = l.note; sold.noteAt = l.noteAt;
