@@ -158,7 +158,8 @@ comment on #22; each may be overturned:
 8. **No new family;** five defs (MONSTERS §8.5).
 9. **#158's rule stands as written;** the stair's foot holds no group by its brief.
 10. **It pays outside any area's budget,** about 9,000 xp a member, as Wrackholm's §9 already counts
-    it; its gold is the Compact's drop coin, heavy; its finds sit in the band-28 window.
+    it; its gold is the Compact's drop coin, heavy; its finds sit in the band-28 window. Wrackholm
+    declares it so by listing the three ids in its `outside` (EXPANSION §5.2).
 11. **It is built last in Act IV,** after the novelty check learns to place a map by its band.
 
 Decided by delegate for #22 (the drop's monsters), each the owner's to overturn:
