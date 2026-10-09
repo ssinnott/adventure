@@ -6,6 +6,7 @@ import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
 import { CINDERPORT } from './maps/cinderport.ts';
 import { FIREMOUNT_G11 } from './maps/firemount_g11.ts';
 import { MERIDIAN_CAMP } from './maps/meridian_camp.ts';
+import { MERIDIAN_CAMP2 } from './maps/meridian_camp2.ts';
 import { EMBERWASTE_F10 } from './maps/emberwaste_f10.ts';
 import { EMBERWASTE_E10 } from './maps/emberwaste_e10.ts';
 import { EMBERWASTE_F11 } from './maps/emberwaste_f11.ts';
@@ -19,13 +20,15 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 export const AREA = {
   id: 'ashfall' as const,
   // In road order: the Stair's foot (#510), Cinderport's box (#511), the town (#512), Fire Mountain's
-  // flank (#513), the vents beneath it (#22), the Waste's road west of the box (#517), Old Cinder's and
-  // the Ember Stone's box south of it (#514) and Old Cinder's two levels under its crater (#515).
-  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2],
+  // flank (#513), the vents beneath it and the iron corridors under them (#22), the Waste's road west of
+  // the box (#517), Old Cinder's and the Ember Stone's box south of it (#514) and Old Cinder's two
+  // levels under its crater (#515).
+  maps: [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2],
   monsters: MONSTERS,
   sprites: SPRITES,
   // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512); the
-  // boxes' finds; the Ember Stone's first part and the stokers' parts, on Meridian Camp's vents (#22).
+  // boxes' finds; the Ember Stone's first part and the stokers' parts, on Meridian Camp's vents, and its
+  // third part, the Company's mail and the flue walker's parts, on the iron corridors (#22).
   items: ITEMS,
   quests: [],
   // The Window, the act's second chapter, is #518's.
