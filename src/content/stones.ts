@@ -30,6 +30,8 @@ export const STONES: readonly Wardstone[] = [
   // choice is how the Stone came to the company, not what restores it (docs/areas/kilns.md §9, #540). The Rift sets its
   // flag on the first step after the Warden falls (#465), and the Kilns' chapter reads it (#470).
   { name: 'Anvil Stone', area: 'kilns', restored: { flag: 'q_anvil_closed' } },
-  { name: 'Peak Stone', area: 'whitespine' },
+  // Whole, never broken (the Whitespine has no Rift): it counts once the company has stood beside it, on
+  // the event at the Stone on I11 (docs/areas/whitespine.md §4.4, #501).
+  { name: 'Peak Stone', area: 'whitespine', restored: { seen: 'highspine_i11:i11_stone' } },
   { name: 'Ember Stone', area: 'ashfall' },
 ];

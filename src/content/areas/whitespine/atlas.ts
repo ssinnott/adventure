@@ -4,7 +4,11 @@ import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   { id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], seeds: [[282, 244], [276, 262]] },
-  { id: 'highspine', name: 'The High Spine', area: 'whitespine', band: [23, 24], seeds: [[292, 310], [290, 350]] },
+  {
+    id: 'highspine', name: 'The High Spine', area: 'whitespine', band: [23, 24], maps: [{ map: 'highspine_i11', at: [264, 318] }], seeds: [[292, 310], [290, 350]],
+    // The crossing line said over the crest from the vale (#166, #501).
+    crossing: { harder: 'Over the crest the wind is at you, and the range is harder still.', warning: 'Nothing on this crest would spare you. The way back down to the vale is still open.' },
+  },
   {
     id: 'monksvale', name: 'Monks\' Vale', area: 'whitespine', band: [22, 23], maps: [{ map: 'monksvale_j11', at: [296, 318] }], seeds: [[322, 344], [318, 318]], label: [318, 326],
     // The crossing line said over the pass (#166, #499): how the range feels to a company under its floor.
@@ -19,7 +23,7 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // IX. The Whitespine (docs/areas/whitespine.md §10: the Crown's and the Lanterns' English, kept).
   { name: 'Highcell', icon: 'monastery', at: [322, 342], label: 'right', planned: true }, // the Monastery
-  { name: 'Peak Stone', icon: 'stone', at: [292, 318], label: 'below', planned: true },
+  { name: 'Peak Stone', icon: 'stone', at: [292, 318], label: 'below' }, // whole, on I11 at 28,0 (#501)
   { name: 'Giants', icon: 'label', at: [300, 296], planned: true },
   { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right', planned: true }, // over the Giants' Stair: the Knight's third prestige
   { name: 'Spine Summit', icon: 'camp', at: [300, 328], label: 'right' }, // the Monk's third prestige: the camp on J11, 4,10 (#499, #448)
