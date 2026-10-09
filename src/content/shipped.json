@@ -2628,6 +2628,8 @@
     "q_carto_chain_done",
     "q_carto_fen_edge",
     "q_carto_fen_edge_done",
+    "q_carto_journal",
+    "q_carto_journal_done",
     "q_carto_west_arm",
     "q_carto_west_arm_done",
     "q_coach",

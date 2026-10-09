@@ -90,12 +90,18 @@ export const CINDERPORT: MapDef = {
     { kind: 'npc', x: 3, y: 8, name: 'The Chart House', interior: 'cinderport_cartographers', hall: 'cartographers', lines: [
       'Limewash above the sills, and north light. On the wall the far side as the Guild has it: the coast inked, the land behind it blank where the ink stops.',
       'A shelf of three journals in one green binding against a stone, and before the stone a gap a book wide.',
-    ] },
+    ],
+    // The fourth journal's fair copy fills the gap once the Surveyor's rung is paid (#516, #635).
+    says: [{ after: { flag: 'q_carto_journal_done' }, lines: [
+      'Limewash above the sills, and north light. On the wall the far side as the Guild has it: the coast inked, the land behind it blank where the ink stops.',
+      'A shelf of four journals in one green binding against a stone, the fourth a fair copy in a clerk\'s hand.',
+    ] }] },
     { kind: 'npc', x: 3, y: 8, name: 'Cador Lusk, of the Cartographers\' Guild', lines: [
       'A thin man at the plotting table, a rule in one hand and a pin in the other, ash in the creases of his coat.',
       '"Cador Lusk. The Guild\'s man on this side of the Sound, and this is its hall, such as it is."',
       '"Three of Fane\'s on the shelf, and a space. Fane wrote wherever they stopped, and they stopped at the Stone."',
-    ] },
+    ],
+    says: [{ after: { flag: 'q_carto_journal_done' }, lines: ['"Four of Fane\'s on the shelf now. The Guild has the Company as far as the vents, and no further."'] }] },
 
     // The cross street: the vines over the west wall, and a cup in the old shape on a doorstep.
     { kind: 'event', x: 1, y: 7, id: 'cp_vines', once: true, text: 'Vines hang over the town wall from the shore\'s trees, and over the windows. They are cut back, and they come back.' },

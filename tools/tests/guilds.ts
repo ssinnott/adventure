@@ -179,13 +179,13 @@ export function guilds(): void {
   }
   // DESIGN §8 gives every guild four ranks: a first task (0) and quests under each rank below the
   // last (1 to 3). A rank with no quests yet is owed to the issue that builds it, or to the owner
-  // where none is filed, and fails once built, so its entry is dropped here. The three left ride
-  // Act IV's dungeons (#635, DESIGN §8): the Surveyor's with the Ember Stone (#516), the Mapmaker's
-  // with Meridian Camp and the Factor's with the Dead-Drop (#22).
+  // where none is filed, and fails once built, so its entry is dropped here. The two left ride
+  // Act IV's dungeons (#635, DESIGN §8): the Mapmaker's with Meridian Camp and the Factor's with the
+  // Dead-Drop (#22); the Surveyor's rode the Ember Stone (#516).
   const OWED_RANKS: Readonly<Record<GuildId, readonly (string | undefined)[]>> = {
     wardens: [undefined, undefined, undefined, undefined],
     lanterns: [undefined, undefined, undefined, undefined],
-    cartographers: [undefined, undefined, '#516', '#22'],
+    cartographers: [undefined, undefined, undefined, '#22'],
     compact: [undefined, undefined, undefined, '#22'],
   };
   for (const g of Object.keys(GUILDS) as GuildId[]) {

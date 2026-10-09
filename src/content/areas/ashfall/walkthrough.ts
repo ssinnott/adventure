@@ -40,7 +40,8 @@
 // beside it; and the lamp-keeper's cellar behind the fallen stair. Then the Ember Stone (#516), down
 // inside the Stone: the gallery, the benches, the lookout and the seedling's bed; the three parts set in
 // their sockets in any order, the Stone lit, the Sentinel won in its door and the sentries after it;
-// and the lower gallery behind the housing's foot and the fourth journal in it.
+// the lower gallery behind the housing's foot and the fourth journal in it; and the Cartographers'
+// Surveyor's rung paid for it at a hall of the Guild, the Chart House's shelf full (#635).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough } from '../../../../tools/walk.ts';
 import type { Walk } from '../../../../tools/walk.ts';
@@ -58,7 +59,8 @@ import { buy, item } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition } from '../../../game/party.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { offered, take, inHand, report, rankOf } from '../../../game/guilds.ts';
-import { rankFlag } from '../../guilds.ts';
+import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
+import type { Party } from '../../../game/party.ts';
 import { take as sail, fareOf } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
@@ -73,6 +75,7 @@ import { STAIR } from './maps/meridian_camp.ts';
 import { STAIR2 } from './maps/meridian_camp2.ts';
 import { CRATER, STONE } from './maps/emberwaste_f11.ts';
 import { LIT, LIGHTS, SOCKETS } from './maps/ember_stone.ts';
+import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
 const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -781,7 +784,9 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * whichever it is, and then lit, the Sentinel in the door; the Sentinel won at the level's floor, never
  * back, its visor left, and the sentries up through the door after it, won; the door open on its shaft
  * and the Stone lit on F11; the lower gallery, found where the chain pin is driven into the housing's
- * foot and reached only through it, and the fourth journal in it.
+ * foot and reached only through it, and the fourth journal in it; and the Cartographers' Surveyor's rung
+ * for the journal found (#635), offered once Act III is done at any hall of the Guild, paid at the Chart
+ * House, whose shelf then holds four.
  */
 function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const ES = MAP_DEFS.find((d) => d.id === 'ember_stone')!;
@@ -905,6 +910,42 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(journal.kind === 'chest' && journal.items.join() === 'meridian_journal4' && w.party.bag.includes('meridian_journal4') && item('meridian_journal4').slot === 'none' && !item('meridian_journal4').price && w.world.used('es_journal'),
     'and in it the fourth Meridian journal, in Fane\'s hand');
   listen(w);
+
+  // The Cartographers' Surveyor's rung (#635), on fresh companies made Surveyors: not offered before Act
+  // III is done, then offered alone at any hall of the Guild and taking nothing; taken with the journal
+  // unfound, the hall pays nothing; found, the Chart House pays 500 gold and 3,600 xp, the book stays in
+  // the pack and the company are Mapmakers, and the shelf holds four. A company that had found the journal
+  // first is paid at the taking, with the words for one that came early.
+  const q = GUILD_QUESTS.find((g) => g.id === 'carto_journal')!;
+  const CP = MAP_DEFS.find((d) => d.id === 'cinderport')!, chart = CP.features!.find((f): f is Person => f.kind === 'npc' && f.interior === 'cinderport_cartographers')!;
+  const surveyors = (): Walk => {
+    const v = newWalk(ok);
+    for (const g of GUILD_QUESTS) if (g.guild === 'cartographers' && g.rank < 2) v.party.flags[takenFlag(g.id)] = v.party.flags[doneFlag(g.id)] = 1;
+    v.party.flags[rankFlag('cartographers')] = 2;
+    return v;
+  };
+  const shelf = (v: Walk): string => { v.world.travel('cinderport', chart.x, chart.y); return meet(chart, v.party, heard(v.world, chart)).text; };
+  const xpOf = (p: Party): number => p.members.reduce((t, m) => t + m.xp, 0);
+  const j = surveyors();
+  ok(!offered('cartographers', j.party).some((o) => o.id === q.id), `${q.title} waits for Act IV: a Surveyor is not offered it before the Sleepers are seen`);
+  j.party.flags[SLEEPERS_SEEN] = 1;
+  ok(offered('cartographers', j.party).map((o) => o.id).join() === q.id && !q.item && ['Map Room', 'Chart House'].every((h) => q.goals[0].text.includes(h)),
+    'then it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
+  const purse = j.party.gold, xp = xpOf(j.party), before = shelf(j);
+  ok(!take(q, j.world.state, j.party).length && !report('cartographers', j.world.state, j.party).length && rankOf('cartographers', j.party) === 2, 'taken with the journal unfound, the hall pays nothing');
+  open(j, ES.id, 'es_journal');
+  j.world.travel('cinderport', chart.x, chart.y);
+  const paid = report('cartographers', j.world.state, j.party), after = shelf(j);
+  ok(paid.length === 2 && paid[0].startsWith(q.paid[0]) && j.party.gold === purse + 500 && xpOf(j.party) >= xp + 3600 - j.party.members.length && rankOf('cartographers', j.party) === 3
+    && !!j.party.flags[doneFlag(q.id)] && j.party.bag.includes('meridian_journal4'),
+    `the journal found, the Chart House pays 500 gold and 3,600 xp, the book stays in the pack and the company are Mapmakers (${paid.join(' ').replace(/\n+/g, ' ')})`);
+  ok(before.includes('shelf of three journals') && after.includes('shelf of four journals'), 'and the Chart House\'s shelf, three journals and a gap before, holds four after');
+  const late = surveyors();
+  late.party.flags[SLEEPERS_SEEN] = 1;
+  open(late, ES.id, 'es_journal');
+  const lateGold = late.party.gold, early = take(q, late.world.state, late.party);
+  ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf('cartographers', late.party) === 3,
+    `a company that had found the journal is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
 }
 
 /**

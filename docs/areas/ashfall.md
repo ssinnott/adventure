@@ -1165,7 +1165,7 @@ group and the ruin's icon is the Shelf's Berth's (§9, #515's 16).
   with today's `xpForLevel`. The shares of §4 are H10 1,700, G10 1,500, Cinderport 600, G11 2,000,
   F11 1,800 and the sentries' after, Old Cinder 2,600, the Ember Stone 2,200, F10 and E10 1,400
   between them and the three side quests about 800: about 14,600 in the area's own maps.
-  Cinderport's 600 is its two halls' quests'. The balance, about 4,900, is Meridian Camp's two
+  Cinderport's 600 is the Cartographers' quest's. The balance, about 4,900, is Meridian Camp's two
   upper levels', which the chapter walks for two of the Stone's three parts and which #22 budgets
   as its own; with them a clear comes to the curve and a little over, as Saltreach's and
   Sunderwood's do, for the curve to settle (#542) and the gate to check (#38). The country behind
@@ -1188,8 +1188,9 @@ group and the ruin's icon is the Shelf's Berth's (§9, #515's 16).
   (#22) add 4,399, 1.63 of the brief's 2,700 and over the cap of 3,375, the Brood Drake alone paying
   2,862 (§9, #22's 4): 24,541, 1.26 times the ask. So with the Ember Stone's share (2,950) and the
   side quests (about 1,100) the shares stand at about 28,600, 1.47 times the ask, over 1.3.
-  Cinderport pays nothing, as a town pays none, and its two halls add no quest (§9, #512's 6): its
-  600, 800 scaled, is unpaid (§11).
+  Cinderport pays nothing, as a town pays none, and its halls add no quest of their own (§9, #512's
+  6): its 600 is the Cartographers' Surveyor's rung's, 3,600 xp and 500 gold for the fourth journal
+  found under the Ember Stone, paid at any hall of the Guild (#635).
 - **Gold.** Training six members from 24 to 26 costs 11,760 with today's `trainPrice`, and to 27,
   the third prestige's level, 6,240 more; the thirds ask a quest, not gold (DESIGN §5). A clear
   should pay for the training at least, in chests, drops, the halls' pay and the sentries' parts.

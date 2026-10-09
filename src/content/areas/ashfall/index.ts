@@ -13,6 +13,7 @@ import { EMBERWASTE_F11 } from './maps/emberwaste_f11.ts';
 import { OLD_CINDER } from './maps/old_cinder.ts';
 import { OLD_CINDER2 } from './maps/old_cinder2.ts';
 import { EMBER_STONE } from './maps/ember_stone.ts';
+import { GUILDS } from './guilds.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
@@ -32,6 +33,8 @@ export const AREA = {
   // third part, the Company's mail and the flue walker's parts, on the iron corridors (#22).
   items: ITEMS,
   quests: [],
+  // The Cartographers' Surveyor's rung, the fourth Meridian journal found under the Ember Stone (#635).
+  guilds: GUILDS,
   // The Window, the act's second chapter, is #518's.
   chapter: undefined,
   // The coast under the mountain: warm and wet, the vines green the year round, smoke for fog and the
