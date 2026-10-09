@@ -132,11 +132,11 @@ need first:
   be measured on the harness's what-if gear and say nothing (EXPANSION §5.2).
 - **Calls** (#537) and the keepers' sleep.
 - **Rook's Nest and #448,** for the Thief's quest to have a trainer.
-- **The novelty check by band** (quality lane): `noveltyFaults` counts every map in an area's
-  folder at that area's place, so the Dead-Drop's knockers, keepers, heavy machines and calls would
-  stand at Wrackholm's place and fail the Kilns', Rimewater's and Ashfall's claims as on the road
-  before them. The ledger must place a map by its band, as `paceFaults` does, sharing one
-  `placeOf`. This can be done now, in the quality lane, with a fixture.
+- **The novelty check by band** (quality lane) is done: `noveltyFaults` counts a map where
+  `roadPlace` puts it, as `paceFaults` does (with its area, or, where its floor is over the area's
+  band, with the last area whose floor is at or under its own), so the Dead-Drop's knockers,
+  keepers, heavy machines and calls stand with the Glasswold, after the Kilns', Rimewater's and
+  Ashfall's claims.
 
 ## 8. Decisions
 
@@ -160,7 +160,7 @@ comment on #22; each may be overturned:
 10. **It pays outside any area's budget,** about 9,000 xp a member, as Wrackholm's §9 already counts
     it; its gold is the Compact's drop coin, heavy; its finds sit in the band-28 window. Wrackholm
     declares it so by listing the three ids in its `outside` (EXPANSION §5.2).
-11. **It is built last in Act IV,** after the novelty check learns to place a map by its band.
+11. **It is built last in Act IV,** after the novelty check learns to place a map by its band (done in #682).
 
 Decided by delegate for #22 (the drop's monsters), each the owner's to overturn:
 
