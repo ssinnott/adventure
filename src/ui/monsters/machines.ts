@@ -26,6 +26,13 @@
 // a slit of fire for a visor, and down its chest a line like the one between two doors, the fire
 // showing through it. Size 2, drawn inside the tall boss's crown (TALL_REACH,
 // src/ui/grouplabels.ts). Idle: the fire in it pulses, slow.
+//
+// The Loader: the Dead-Drop's porter, and the one that carries. A squat hull on short legs bowed
+// under the weight, both arms up and their clamps gripping, over its head, a crate the size of a
+// cart: planked, strapped with iron at its ends and chalked with a clerk's tally. It has no head: the
+// fire shows through two round ports high in the hull, under the crate, where it looks out. Rust,
+// not soot: the hold is wet. Idle: the crate's weight settles, the arms give and the knees with
+// them, and it presses the crate back up.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -35,7 +42,7 @@ import type { Part } from './gloss.ts';
 import { chiselMark } from './knockers.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['stoker', 'sentry', 'sentinel'];
+export const KINDS: readonly MonsterSprite[] = ['stoker', 'sentry', 'sentinel', 'loader'];
 
 /**
  * A heavy machine's make, as the Stoker's, the Sentry's and the Sentinel's numbers, so another is a
@@ -43,8 +50,8 @@ export const KINDS: readonly MonsterSprite[] = ['stoker', 'sentry', 'sentinel'];
  * breadth, the legs it stands on, the fire in it and the soot it has taken.
  */
 interface Build {
-  /** The body: a boiler, a watcher's keel of a chest, or a keeper's block. */
-  body: 'boiler' | 'watcher' | 'keeper';
+  /** The body: a boiler, a watcher's keel of a chest, a keeper's block, or a loader's hull under its crate. */
+  body: 'boiler' | 'watcher' | 'keeper' | 'loader';
   /** Drawn height, of the frame's; a tall one's crown inside TALL_REACH. */
   reach: number;
   /** Breadth, against the drawing's own (1 = as drawn). */
@@ -59,7 +66,8 @@ interface Build {
 const STOKER: Build = { body: 'boiler', reach: 0.97, wide: 1, leg: 0.055, knee: 1, fire: '#ff8a2a', heart: '#fff0c0', soot: 1 };
 const SENTRY: Build = { body: 'watcher', reach: 0.97, wide: 1, leg: 0.04, knee: 1, fire: '#ff8a2a', heart: '#fff0c0', soot: 0.35 };
 const SENTINEL: Build = { body: 'keeper', reach: 0.86, wide: 1, leg: 0.068, knee: 0.78, fire: '#ff8a2a', heart: '#fff0c0', soot: 0.2 };
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { stoker: STOKER, sentry: SENTRY, sentinel: SENTINEL };
+const LOADER: Build = { body: 'loader', reach: 0.97, wide: 1, leg: 0.06, knee: 1.05, fire: '#ff8a2a', heart: '#fff0c0', soot: 0.3 };
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { stoker: STOKER, sentry: SENTRY, sentinel: SENTINEL, loader: LOADER };
 
 /** A machine's frame: X and Y take shares of its drawn height to the canvas, x toward the near side and y up from the ground. */
 interface Fr { H: number; X: (k: number) => number; Y: (k: number) => number }
@@ -68,10 +76,12 @@ type P = readonly [number, number];
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   const b = BUILDS[kind] ?? STOKER, H = h * b.reach;
   const f: Fr = { H, X: (k) => x + H * k * b.wide, Y: (k) => y - H * k };
-  (b.body === 'boiler' ? stoker : b.body === 'watcher' ? sentry : sentinel)(ctx, f, p, b);
+  (b.body === 'boiler' ? stoker : b.body === 'watcher' ? sentry : b.body === 'loader' ? loader : sentinel)(ctx, f, p, b);
 };
 
 const DEEP = '#9c2c0c', SOOT = '#0b0908', BLACK = '#07080a';
+/** The Loader's crate, and the clerk's chalk on it: darkened with distance, as the tint is. */
+const WOOD = '#6b4f33', CHALK = '#ece6d6';
 
 /** Shares, x and y in turn, to the canvas. */
 const at = (f: Fr, ...a: number[]): number[] => a.map((v, i) => (i % 2 ? f.Y(v) : f.X(v)));
@@ -381,4 +391,63 @@ function sentinel(ctx: CanvasRenderingContext2D, f: Fr, p: Paint, b: Build): voi
   mark(ctx, g, -0.115, 0.61, 0.024, k.plate);
   // 6. The shoulders: the family's drums at their greatest, set in the block's corners.
   for (const sd of [-1, 1] as const) drum(ctx, g.X(sd * 0.25), g.Y(0.776), H * 0.074, sd < 0 ? k.farJoint : k.joint);
+}
+
+/** The Loader, in units of its drawn height: the hull from 0.265 to its shoulders at 0.585, the arms raised from them, and the crate from 0.735 to 0.985. */
+function loader(ctx: CanvasRenderingContext2D, f: Fr, p: Paint, b: Build): void {
+  const k = inks(p, b), H = f.H;
+  // Now and then the crate's weight settles: the arms give and the hull sinks on its knees, and it presses the crate back up.
+  const sag = Math.pow(Math.max(0, Math.sin(p.frame / 13)), 4) * 0.018;
+  const c = Math.max(0, p.breathe) * 0.004 - sag * 0.5, g = lifted(f, c);
+  const heat = 0.55 + 0.45 * Math.sin(p.frame / 6.3) * Math.cos(p.frame / 9.1);
+  const w = Math.max(0.7, H * 0.008), rv = H * 0.007;
+  const S = (sd: number): P => [sd * 0.25, 0.535], E = (sd: number): P => [sd * (0.36 + 2 * sag), 0.632 - 0.6 * sag], W = (sd: number): P => [sd * 0.3, 0.728 - sag];
+  groundShadow(ctx, f.X(0), f.Y(0) + 1, H * 0.84);
+
+  // 1. The far arm, raised to the crate's far end: a step darker.
+  arm(ctx, g, S(-1), E(-1), W(-1), 0.036, k.far, k.farJoint);
+  // 2. The legs, short and bowed under the load.
+  for (const sd of [-1, 1] as const) leg(ctx, f, [sd * 0.125, 0.3 + c], [sd * 0.2, 0.17 + c / 2], sd * 0.18, b, sd < 0 ? k.far : k.plate, sd < 0 ? k.farJoint : k.joint);
+  // 3. The hull: a squat block chamfered at the shoulders, banded and riveted, rust where soot would be.
+  const hull = at(g, -0.2, 0.265, 0.2, 0.265, 0.236, 0.32, 0.25, 0.49, 0.22, 0.558, 0.09, 0.585, -0.09, 0.585, -0.22, 0.558, -0.25, 0.49, -0.236, 0.32);
+  blob(ctx, B, k.plate, [{ k: 'poly', pts: hull }], { h: H, formK: 0.25, spread: 0.65 });
+  inside(ctx, hull, false, () => {
+    seam(ctx, at(g, -0.26, 0.355, 0.26, 0.355), k.plate, w);
+    rivets(ctx, at(g, -0.18, 0.33, -0.09, 0.33, 0, 0.33, 0.09, 0.33, 0.18, 0.33), rv, k.plate);
+    seam(ctx, at(g, -0.26, 0.535, 0.26, 0.535), k.plate, w);
+    patch(ctx, B, mix(k.deep, SOOT, 0.55), [{ k: 'ell', x: g.X(-0.12), y: g.Y(0.29), rx: H * 0.12, ry: H * 0.035 }], { alpha: 0.55 * b.soot, feather: 0.8 });
+    patch(ctx, B, mix(k.deep, SOOT, 0.55), [{ k: 'ell', x: g.X(0.17), y: g.Y(0.5), rx: H * 0.05, ry: H * 0.08 }], { alpha: 0.45 * b.soot, feather: 0.8 });
+  });
+  mark(ctx, g, 0.155, 0.415, 0.02, k.plate);
+  // 4. The ports high in the hull, two, ringed in iron with a bar across, the fire behind them:
+  //    where it looks out from under its load.
+  for (const sd of [-1, 1] as const) {
+    const px = g.X(sd * 0.088), py = g.Y(0.452), r = H * 0.043;
+    blob(ctx, B, k.joint, [{ k: 'ball', x: px, y: py, r: r * 1.34 }], { formK: 0.5, spread: 0.7 });
+    fire(ctx, k, () => ctx.arc(px, py, r, 0, Math.PI * 2), px, py + r * 0.3, r * 1.3, heat, 0);
+    if (!B.override && H >= 40) line(ctx, [px - r, py, px + r, py], k.joint, Math.max(1, H * 0.011), 'butt');
+  }
+  if (!B.override) glow(ctx, B, g.X(0), g.Y(0.452), H * 0.2, k.fire, 0.1 + 0.1 * heat, k.heart);
+  // 5. The crate held over it: planks across, the underside in shadow, iron strapped round its ends
+  //    and nailed, and on its face a clerk's tally in chalk, four strokes and one across.
+  const y0 = 0.735 - sag, y1 = 0.985 - sag, wood = shade(WOOD, p.tone);
+  const crate = at(g, -0.37, y0, 0.37, y0, 0.37, y1, -0.37, y1);
+  blob(ctx, B, wood, [{ k: 'poly', pts: crate }], { h: H, formK: 0.2, spread: 0.6 });
+  inside(ctx, crate, false, () => {
+    for (let i = 1; i < 4; i++) seam(ctx, at(g, -0.37, y0 + ((y1 - y0) * i) / 4, 0.37, y0 + ((y1 - y0) * i) / 4), wood, w);
+    patch(ctx, B, BLACK, [{ k: 'poly', pts: at(g, -0.37, y0, 0.37, y0, 0.37, y0 + 0.028, -0.37, y0 + 0.028) }], { alpha: 0.4, feather: 0.4 });
+    for (const sd of [-1, 1] as const) {
+      ctx.fillStyle = k.joint; ctx.fillRect(g.X(sd * 0.315 - 0.024), g.Y(y1), H * 0.048, g.Y(y0) - g.Y(y1));
+      rivets(ctx, at(g, sd * 0.315, y0 + 0.05, sd * 0.315, (y0 + y1) / 2, sd * 0.315, y1 - 0.04), rv, k.joint);
+    }
+    if (H >= 50) {
+      const cw = Math.max(1, H * 0.009), ch = rgba(shade(CHALK, p.tone), 0.75);
+      for (let i = 0; i < 4; i++) line(ctx, at(g, 0.07 + i * 0.03, y0 + 0.075, 0.075 + i * 0.03, y0 + 0.165), ch, cw);
+      line(ctx, at(g, 0.05, y0 + 0.09, 0.2, y0 + 0.15), ch, cw);
+    }
+  });
+  // 6. The near arm, raised to the crate's near end; the clamps gripping it under both ends; the shoulders' drums.
+  arm(ctx, g, S(1), E(1), W(1), 0.036, k.plate, k.joint);
+  for (const sd of [-1, 1] as const) clamp(ctx, g, W(sd), Math.PI, 0.12, 0.034, sd < 0 ? k.farJoint : k.joint);
+  for (const sd of [-1, 1] as const) drum(ctx, g.X(sd * 0.25), g.Y(0.535), H * (sd < 0 ? 0.05 : 0.056), sd < 0 ? k.farJoint : k.joint);
 }

@@ -28,6 +28,18 @@
 // Abbot: the tallest of the three, in black lined pale, the hood drawn up to a point and a crook in
 // its left hand, the robe fallen open down the chest on the plate and the chisel's mark. Idle: at the
 // hour it lifts the crook and sets it down, and the robe gapes wider.
+//
+// The Dead-Drop's keepers wear nothing, as the bay's do. The Hold Keeper: the bay's keeper kept in
+// the hold, and it carries water to the pens, and nobody is in them. Shorter than the Bay Keeper, as
+// the hold's roof is lower, a little stooped and stained green-grey by the salt; across its shoulders
+// behind the neck a yoke, and from each end a pail on a rope, the hands held out under them as the
+// bay's are. Idle: its weight goes from one leg to the other and the pails swing after it. The
+// Tallymaster: the keeper that counts the cargo and writes the Compact's orders, the family at its
+// largest and strangest. It stands behind a clerk's desk among piled ledgers, its neck grown long,
+// and writes with both hands at once, a pen in each, in two ledgers open side by side; across its
+// brow a row of six lights counts as the tallyman's do. Size 1.6, drawn inside the tall boss's crown
+// (TALL_REACH, src/ui/grouplabels.ts). Idle: the pens go along the line together and back, and the
+// count runs on.
 import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint } from './common.ts';
 import { B, groundShadow } from './common.ts';
@@ -37,7 +49,7 @@ import { chiselMark } from './knockers.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 
 /** The kinds this module draws (tools/gallery.ts renders a family by this list). */
-export const KINDS: readonly MonsterSprite[] = ['bay_keeper', 'matron', 'brother', 'bell_ringer', 'abbot'];
+export const KINDS: readonly MonsterSprite[] = ['bay_keeper', 'matron', 'brother', 'bell_ringer', 'abbot', 'hold_keeper', 'tallymaster'];
 
 /**
  * The frame's parts, as proportions of the bay keeper's where they are numbers (1 = the keeper, 0 =
@@ -86,13 +98,23 @@ interface Build {
   crook: number;
   /** The cord at the robe's waist, and the lining of the Abbot's. */
   cordHex: string;
+  /** The yoke across the shoulders and a pail hung from each end, 0 none: the hold keeper's. */
+  yoke: number;
+  /** The desk it stands behind, the ledgers open and piled, and a pen in each hand, 0 none: the Tallymaster's. */
+  desk: number;
+  /** The lights across the brow that count, as the tallyman's do, 0 none: the Tallymaster's six. */
+  count: number;
+  /** How much longer the neck is than the keeper's, in body units: the Tallymaster's. */
+  neck: number;
+  /** The highest the crown stands, in hundredths of the height: a tall boss's inside TALL_REACH. */
+  stand: number;
   /** The light in the eyes and the fingertips, and its glow. */
   lightHex: string;
   glowHex: string;
 }
 const KEEPER: Build = {
   legs: 1, limb: 1, chest: 1, stoop: 0, tilt: 1, head: 1, arms: 1, fingers: 6, finger: 1, offer: 1, cap: 0, apron: 0, mark: 1,
-  hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2',
+  hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2', yoke: 0, desk: 0, count: 0, neck: 0, stand: 97,
   lightHex: '#eefaff', glowHex: '#9ad6ff',
 };
 /**
@@ -104,7 +126,7 @@ const KEEPER: Build = {
  */
 const MATRON: Build = {
   legs: 1.06, limb: 1.12, chest: 1.18, stoop: 1, tilt: 0.45, head: 1.1, arms: 2, fingers: 8, finger: 1.3, offer: 1.3, cap: 1, apron: 1, mark: 1.25,
-  hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2',
+  hem: 0, hood: 0, peak: 0, open: 0, march: 0, bell: 0, crook: 0, cordHex: '#d2c6a2', yoke: 0, desk: 0, count: 0, neck: 0, stand: 97,
   lightHex: '#eefaff', glowHex: '#9ad6ff',
 };
 /** The Brother: a keeper in a habit with the hood up, its hands held out, walking as it was told to. */
@@ -113,7 +135,11 @@ const BROTHER: Build = { ...KEEPER, tilt: 0.7, hem: 13, hood: 1, march: 1 };
 const BELL_RINGER: Build = { ...KEEPER, tilt: 1.1, offer: 0.85, hem: 15, bell: 1, cordHex: '#5e4a36' };
 /** The Abbot: the tallest of the three, its habit lined pale and fallen open, its hood drawn to a point, a crook. */
 const ABBOT: Build = { ...KEEPER, legs: 1.05, limb: 1.08, chest: 1.14, head: 1.05, tilt: 0.3, offer: 1.15, mark: 1.2, hem: 6.5, hood: 1, peak: 1, open: 1, crook: 1, cordHex: '#d9d1bb' };
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { matron: MATRON, brother: BROTHER, bell_ringer: BELL_RINGER, abbot: ABBOT };
+/** The Hold Keeper: the bay's keeper kept in the hold, shorter and a little stooped, a yoke on its shoulders and a pail at each end. */
+const HOLD_KEEPER: Build = { ...KEEPER, legs: 0.93, stoop: 0.3, tilt: 0.8, offer: 0.8, yoke: 1 };
+/** The Tallymaster: behind its desk among the ledgers, its neck grown long, a pen in each hand and the count across its brow. */
+const TALLYMASTER: Build = { ...KEEPER, legs: 1.1, limb: 1.1, chest: 1.2, head: 1.15, tilt: 0.35, fingers: 7, finger: 1.15, mark: 1.4, desk: 1, count: 6, neck: 5, stand: 80 };
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { matron: MATRON, brother: BROTHER, bell_ringer: BELL_RINGER, abbot: ABBOT, hold_keeper: HOLD_KEEPER, tallymaster: TALLYMASTER };
 /** The plate under a robe, the Bay Keeper's grey: the def's tint is the robe's. */
 const PLATE = '#8d9399';
 
@@ -140,10 +166,10 @@ function keeper(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // otherwise run over it.
   const legLen = 21 * b.legs, ankleY = 4.2, kneeY = ankleY + legLen, hipY0 = kneeY + legLen;
   const pelvisTop0 = hipY0 + 4.4, waistTop0 = pelvisTop0 + 7.5, chestTop0 = waistTop0 + 19;
-  const hr = 7 * b.head, neckTop0 = chestTop0 + 6 - 6 * b.stoop;
+  const hr = 7 * b.head, neckTop0 = chestTop0 + 6 - 6 * b.stoop + b.neck;
   // The Matron's cap and a hood stand over the crown, and the Abbot's hood is drawn up to a point.
   const top = neckTop0 + 2 * hr + b.cap * 4.6 + b.hood * (2.4 + 6.8 * b.peak);
-  const u = (h / 100) * Math.min(1, 97 / top);
+  const u = (h / 100) * Math.min(1, b.stand / top);
   const f: F = { u, X: (v) => x + v * u, Y: (v) => y - v * u };
 
   // The weight goes from one leg to the other: the pelvis shifts over the leg that bears it, the
@@ -173,8 +199,12 @@ function keeper(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // What it wears goes here, over the legs and the body: the Matron's apron, a brother's robe.
   if (b.apron > 0) apron(ctx, f, body, b, h, pale);
   if (robed) robe(ctx, f, body, b, h, w, lift, hour, cloth, cord);
+  // What it carries on its shoulders goes behind the head: the hold keeper's yoke.
+  if (b.yoke > 0) yoke(ctx, f, body, b, h, w, joint, p.tone);
   if (b.arms > 1) foldedArms(ctx, f, body, b, h, t, limb, joint, plate);
   head(ctx, f, body, b, h, t, plate, joint, pale, cloth);
+  // The Tallymaster's desk stands before it to the waist, and both its hands are on the ledgers.
+  if (b.desk > 0) { desk(ctx, f, b, h, p.tone); deskArms(ctx, f, body, b, h, t, limb, joint, plate, p.tone); return; }
   for (const side of [-1, 1] as const) {
     if (side > 0 && b.bell > 0) bellArm(ctx, f, body, b, h, t, cloth, joint, plate, shade('#b08a3e', p.tone));
     else if (side < 0 && b.crook > 0) crookArm(ctx, f, body, b, h, t, hour, top, cloth, joint, plate, shade('#4b3b2c', p.tone), shade('#c39d4e', p.tone));
@@ -272,7 +302,7 @@ function head(ctx: CanvasRenderingContext2D, f: F, d: Body, b: Build, h: number,
   if (hooded) hood(ctx, f, d, b, h, H0, hr, hw, cloth);
   else if (d.neckTop - d.chestTop > 1.5) {
     const n: Part[] = [cap(f, at(d.chest.x, d.chestTop - 1), H(at(0, -hr * 0.8)), 1.3, 1.2)];
-    for (const k of [0.3, 0.7]) n.push(ell(f, at(d.chest.x + (pivot.x - d.chest.x) * k, d.chestTop + (d.neckTop - d.chestTop) * k), 1.8, 0.9));
+    for (const k of b.neck > 0 ? [0.18, 0.39, 0.6, 0.81] : [0.3, 0.7]) n.push(ell(f, at(d.chest.x + (pivot.x - d.chest.x) * k, d.chestTop + (d.neckTop - d.chestTop) * k), 1.8, 0.9));
     blob(ctx, B, joint, n, { h, formK: 0.45, spread: 0.7, gloss: 0.4 });
   }
   const egg: Pt[] = [];
@@ -299,6 +329,114 @@ function head(ctx: CanvasRenderingContext2D, f: F, d: Body, b: Build, h: number,
     glow(ctx, B, f.X(e.x), f.Y(e.y), 4.2 * f.u, b.glowHex, 0.45 * on, b.lightHex);
     ctx.fillStyle = mix(b.glowHex, b.lightHex, on);
     ctx.beginPath(); ctx.ellipse(f.X(e.x), f.Y(e.y), Math.max(0.9, 1.35 * f.u), Math.max(0.7, 0.62 * f.u), d.tilt, 0, Math.PI * 2); ctx.fill();
+  }
+  // The Tallymaster's count: across the brow, one more light at each stroke of the pens, six, held a
+  // while, then all put out together, as the tallyman's go.
+  if (b.count > 0) {
+    const ck = t % 126, lit = ck < 84 ? Math.floor(ck / 14) + 1 : ck < 110 ? b.count : 0;
+    for (let i = 0; i < b.count; i++) {
+      const q = H(at(-hw * 0.62 + (i * hw * 1.24) / (b.count - 1), 4.6 + down)), x = f.X(q.x), y = f.Y(q.y);
+      if (i < lit) glow(ctx, B, x, y, 2 * f.u, b.glowHex, 0.4, b.lightHex);
+      ctx.fillStyle = i < lit ? b.lightHex : rgba(shade(plate, 0.42), 0.9);
+      ctx.beginPath(); ctx.arc(x, y, Math.max(0.6, 0.6 * f.u), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+}
+
+/**
+ * The hold keeper's yoke: a bar of wood across its shoulders behind the neck, bowed to them and
+ * drooping at the ends, and a pail hung from each end on a rope, staved and hooped, water in it. The
+ * pails swing a little behind the weight as it goes from one leg to the other.
+ */
+function yoke(ctx: CanvasRenderingContext2D, f: F, d: Body, b: Build, h: number, w: number, joint: string, tone: number): void {
+  const cx = d.chest.x, yy = d.shoulderY + 3.4, span = 28 * b.yoke, minR = 0.85 / f.u;
+  const wood = shade('#5e4a34', tone), stave = shade('#6d553a', tone), sway = -0.07 * w;
+  const down = turn(at(0, -1), sway), across = turn(at(1, 0), sway);
+  for (const s of [-1, 1] as const) {
+    const end = at(cx + s * span, yy - 2.6), bail = plus(end, down, 16), rim = plus(bail, down, 4.4), foot = plus(rim, down, 10);
+    const rl = plus(rim, across, -4.8), rr = plus(rim, across, 4.8);
+    blob(ctx, B, joint, [cap(f, end, bail, Math.max(minR, 0.62), Math.max(minR, 0.55)), cap(f, rl, bail, Math.max(minR, 0.5), Math.max(minR, 0.5)), cap(f, bail, rr, Math.max(minR, 0.5), Math.max(minR, 0.5))], { h, form: false });
+    blob(ctx, B, stave, [
+      { k: 'poly', pts: flat(f, [rl, rr, plus(foot, across, 3.9), plus(foot, across, -3.9)]) },
+      ell(f, rim, 4.8, 1.3, sway),
+    ], { h, formK: 0.35, spread: 0.75, gloss: 0.3 });
+    if (B.override || h < 40) continue;
+    // The water, dark in the rim, and a glint on it; the hoops and the staves.
+    ctx.fillStyle = rgba(shade('#1c2a30', tone), 0.9);
+    ctx.beginPath(); ctx.ellipse(f.X(rim.x), f.Y(rim.y), 4 * f.u, 0.8 * f.u, -sway, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = rgba('#dfeaf0', 0.5);
+    ctx.beginPath(); ctx.ellipse(f.X(rim.x - 1.4), f.Y(rim.y + 0.1), 1.2 * f.u, 0.3 * f.u, -sway, 0, Math.PI * 2); ctx.fill();
+    for (const k of [2.6, 8]) softLine(ctx, B, flat(f, [plus(plus(rim, down, k), across, -4.75 + k * 0.09), plus(plus(rim, down, k), across, 4.75 - k * 0.09)]), shade(joint, 0.9), Math.max(1, 0.8 * f.u), 0.8);
+    for (const k of [-2.2, 0.4, 2.8]) softLine(ctx, B, flat(f, [plus(plus(rim, down, 1.4), across, k), plus(plus(foot, down, -0.6), across, k * 0.82)]), stave, Math.max(1, 0.45 * f.u), 0.35);
+  }
+  blob(ctx, B, wood, [cap(f, at(cx, yy + 0.4), at(cx - span, yy - 2.6), 2.1, 1.4), cap(f, at(cx, yy + 0.4), at(cx + span, yy - 2.6), 2.1, 1.4), ell(f, at(cx, yy + 0.9), 5.6, 2.4)], { h, formK: 0.4, spread: 0.75, gloss: 0.3 });
+}
+
+/**
+ * The Tallymaster's desk, a clerk's, before it to the waist: a panel of dark wood sunk in two fields,
+ * on legs, its top seen from above with two ledgers open on it side by side and ledgers piled on its
+ * far corner; and on the floor at either side more ledgers piled, among which it stands.
+ */
+function desk(ctx: CanvasRenderingContext2D, f: F, b: Build, h: number, tone: number): void {
+  const W = 22 * b.desk, T = 53, BK = 60.5;
+  const wood = shade('#4a3a2b', tone), board = shade('#614d39', tone), page = shade('#e2d8bd', tone);
+  const cover = ['#6b3a2e', '#3e4a3c', '#5b4a31', '#4b3c50'].map((c) => shade(c, tone));
+  const rect = (x0: number, y0: number, x1: number, y1: number): Part => ({ k: 'poly', pts: flat(f, [at(x0, y0), at(x1, y0), at(x1, y1), at(x0, y1)]) });
+  // Ledgers lying one on another, each in its cover's colour, its pages' edge pale between the boards.
+  const pile = (x0: number, y0: number, books: readonly (readonly [number, number])[], from: number): void => {
+    books.forEach(([wd, off], i) => {
+      const y = y0 + i * 3.6, x = x0 + off;
+      blob(ctx, B, cover[(from + i) % cover.length], [rect(x, y, x + wd, y + 3.5)], { h, formK: 0.25, spread: 0.7 });
+      if (!B.override && h >= 40) { ctx.fillStyle = rgba(page, 0.85); ctx.fillRect(f.X(x + 0.9), f.Y(y + 2.5), (wd - 1.2) * f.u, 1.3 * f.u); }
+    });
+  };
+  // The back legs, behind and a step darker; the keeper's own legs show between them.
+  blob(ctx, B, shade(wood, 0.78), [cap(f, at(-W + 4, 41), at(-W + 4, 3), 1.3, 1.2), cap(f, at(W - 4, 41), at(W - 4, 3), 1.3, 1.2)], { h, formK: 0.25, spread: 0.7 });
+  pile(-W - 11, 0, [[12, 0], [11, 0.7], [12.2, -0.3], [10.6, 0.5]], 1);
+  pile(W - 1.2, 0, [[13, 0], [12, -0.7], [13.4, 0.4], [11.6, -0.3], [12.4, 0.5]], 0);
+  // The front legs and the rail between them low down, and the box of the desk on them.
+  blob(ctx, B, wood, [
+    cap(f, at(-W + 1.7, 41), at(-W + 1.7, 0.6), 1.7, 1.45), cap(f, at(W - 1.7, 41), at(W - 1.7, 0.6), 1.7, 1.45),
+    rect(-W + 1.7, 7, W - 1.7, 9.2), rect(-W, 40, W, T),
+  ], { h, formK: 0.25, spread: 0.7, gloss: 0.3 });
+  if (!B.override) {
+    for (const [x0, x1] of [[-W + 2.4, -1.2], [1.2, W - 2.4]]) {
+      ctx.fillStyle = rgba(shade(wood, 0.66), 0.7); ctx.fillRect(f.X(x0), f.Y(51), (x1 - x0) * f.u, 8.6 * f.u);
+      softLine(ctx, B, flat(f, [at(x0, 42.4), at(x1, 42.4)]), mix(wood, '#ffffff', 0.25), Math.max(1, 0.6 * f.u), 0.5);
+    }
+    softLine(ctx, B, flat(f, [at(-W, 40.2), at(W, 40.2)]), shade(wood, 0.5), Math.max(1, 0.8 * f.u), 0.6);
+  }
+  blob(ctx, B, board, [{ k: 'poly', pts: flat(f, [at(-W - 0.9, T - 0.6), at(W + 0.9, T - 0.6), at(W - 1.2, BK), at(-W + 1.2, BK)]) }], { h, formK: 0.2, spread: 0.7, gloss: 0.4 });
+  pile(-W + 0.6, BK - 3.6, [[8, 0], [7.4, 0.4], [7.8, -0.2], [7.2, 0.3]], 2);
+  // The two ledgers open on it, the near and the far, a line ruled on each page.
+  for (const cx of [-7, 7]) {
+    blob(ctx, B, cover[cx < 0 ? 3 : 0], [{ k: 'poly', pts: flat(f, [at(cx - 6.4, T + 0.5), at(cx + 6.4, T + 0.5), at(cx + 5.9, BK - 0.3), at(cx - 5.9, BK - 0.3)]) }], { h, formK: 0.2, spread: 0.7 });
+    blob(ctx, B, page, [
+      { k: 'poly', pts: flat(f, [at(cx - 5.9, T + 1), at(cx - 0.25, T + 1.5), at(cx - 0.25, BK - 0.8), at(cx - 5.5, BK - 1)]) },
+      { k: 'poly', pts: flat(f, [at(cx + 0.25, T + 1.5), at(cx + 5.9, T + 1), at(cx + 5.5, BK - 1), at(cx + 0.25, BK - 0.8)]) },
+    ], { h, formK: 0.15, spread: 0.8 });
+    if (B.override || h < 60) continue;
+    for (const k of [0.3, 0.55, 0.8]) for (const s of [-1, 1]) softLine(ctx, B, flat(f, [at(cx + s * 0.9, T + 1.6 + k * 5.4), at(cx + s * 5.1, T + 1.2 + k * 5.4)]), page, Math.max(1, 0.35 * f.u), 0.3);
+  }
+}
+
+/**
+ * The Tallymaster's arms, down from the shoulders to the two ledgers, a pen in each hand held up and
+ * leaning out, the nib on the page. Both go along the line together and back to its start, scratching
+ * as they go, and the long fingers lie spread over the pages.
+ */
+function deskArms(ctx: CanvasRenderingContext2D, f: F, d: Body, b: Build, h: number, t: number, limb: string, joint: string, plate: string, tone: number): void {
+  const L = b.limb, along = (t % 64) / 64, writing = along < 0.86, go = writing ? along / 0.86 : 1 - (along - 0.86) / 0.14;
+  const dx = -2.4 + 4.8 * go + (writing ? 0.45 * Math.sin(t / 2.2) : 0), dy = writing ? 0.4 * Math.sin(t / 2.2 + 1.3) : 0.8;
+  const ink = shade('#16181c', Math.max(0.6, tone)), quill = shade('#d8d2c4', tone), minR = 0.85 / f.u;
+  for (const s of [-1, 1] as const) {
+    const sh = at(d.chest.x + s * (d.cw + 0.4), d.shoulderY - 0.6), wr = at(s * 7 + dx, 60.6 + dy), el = at(sh.x + s * 4.4, (sh.y + wr.y) / 2 - 2);
+    blob(ctx, B, limb, [cap(f, sh, el, 1.95 * L, 1.6 * L), cap(f, el, wr, 1.6 * L, 1.3 * L)], { h, formK: 0.4, spread: 0.8, gloss: 0.35 });
+    blob(ctx, B, joint, [ball(f, el, 2.15 * L), ball(f, wr, 1.5 * L)], { h, formK: 0.5, spread: 0.7, gloss: 0.5 });
+    const c = at(wr.x + s * 0.4, wr.y - 1.6), nib = at(c.x - s * 0.8, 56.4 + dy), end = at(c.x + s * 5, c.y + 12);
+    blob(ctx, B, ink, [cap(f, nib, end, Math.max(minR, 0.55), Math.max(minR, 0.45))], { h, form: false });
+    blob(ctx, B, quill, [ell(f, at(c.x + s * 3.9, c.y + 9.2), 1.35, 5, -s * 0.4)], { h, formK: 0.3, spread: 0.7 });
+    hand(ctx, f, b, h, t, s, c, 0.78, s * 0.9, plate);
   }
 }
 
