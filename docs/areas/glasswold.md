@@ -11,7 +11,7 @@ what the atlas and the docs put in it, the plan for building it, box by box, and
 work is filed under #447 (Phase 1.4, #441): this doc (#523), the boxes as §4's table has them
 (#524 to #530), its chapter (#531), its side quests (#532), its six drawings (#533) and the country
 behind, parked (#534). The act's systems are #442's: the curve's row (#542, in: §3), steppe and
-dunes underfoot (#543), the toll (#544) and the sweep (#545), stone and its cure (#546),
+dunes underfoot (#543, in: §3), the toll (#544) and the sweep (#545), stone and its cure (#546),
 the crossings, the Rider's ride to Cinderport among them (#547), and the bot (#549). The owner's
 calls are #443's, the names #444's, the third prestiges' quests #448's and the road behind #449's.
 Figures are measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`):
@@ -112,7 +112,10 @@ the Buried Tower, "The Glass" and "Buried Tower" lettered as the plan letters th
 is drawn in the plan's ridges (`src/content/atlas.ts`), the one line outside the folder this doc
 asks for (call 5). Its row on the curve is in (#542), in `src/content/progression.ts`, planned until
 #524 lists the area (band 26–28, next 28, window 6,000); the Wold takes no step on the gear ladder,
-no town to sell one (§9). Nothing else: no map, no monster, no quest. Every brief below is a draft.
+no town to sell one (§9). Its ground is laid (#543): steppe (`s`), walked as grass and tawny at
+Harvest, and dunes (`u`), sand in ridges walked as slowly as hills, so the scaffold drafts D9 with its
+807 squares of steppe and 171 of dunes (docs/SLICE.md). Nothing else: no map, no monster, no quest.
+Every brief below is a draft.
 
 ## 4. What is still to build
 
