@@ -100,9 +100,16 @@ Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk int
 with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
 peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
 
-Nothing else is built. The systems it waits on are #442's: the curve's rows and the gear past 22
-(#542), the toll (#544), sweep (#545), stone (#546), the crossings (#547), the Ember Stone (#548)
-and the bot (#549). Its monsters are #507's.
+Nothing else is built but some of its monsters (below). The systems it waits on are #442's: the
+curve's rows and the gear past 22 (#542), the toll (#544), sweep (#545), stone (#546), the crossings
+(#547), the Ember Stone (#548) and the bot (#549). Its monsters are #507's.
+
+The monks are drawn (#507), three of MONSTERS §8.1's eight, ahead of the boxes that place them: the
+Brother, the Bell-ringer and the Abbot, robed on the keepers' frame (`src/ui/monsters/keepers.ts`).
+Their defs are in `src/content/areas/whitespine/monsters.ts`, listed in `AHEAD`
+(`src/content/index.ts`) until #499 lists the area, and each is owed in `UNPLACED`
+(`tools/tests/maps.ts`) to the issue that places it: the Brother to #499 and the Bell-ringer and the
+Abbot to #500. §9 has the decisions.
 
 ## 4. What is still to build
 
@@ -439,7 +446,8 @@ MONSTERS §8.1 has the roster and the fights: the Spine Eagle, the Brother, the 
 Troll, the Stair Giant, the Ashen Mason, the Abbot and the Stair-king; the chapter house and the
 Stair in snow. Their drawings are #507's, eight in all, the giants new and the rest on frames that
 exist. §4.2 to §4.7 place every group, box by box, the gentlest at the pass's foot and the Abbot,
-the king and the masons at the top of the band.
+the king and the masons at the top of the band. The monks are drawn (#507, §3): the Brother, the
+Bell-ringer and the Abbot, robed on the keepers' frame.
 
 New in the Whitespine, for the novelty check (EXPANSION §5.4): the giants, a new family (#507), and
 with them the toll, a choice before a fight (#544), and sweep, one blow at every member of a row
@@ -522,6 +530,32 @@ Proposed, for the owner, each in the issue that would build it:
   Stair stays open to that company; the king dead, nobody keeps it. The bot refuses (#549).
 - **The giants' ground is J10's,** parked with it; the Stair's head holds the king and the two
   that stand with him. **The lines** of §4 are drafts, the owner's to reword.
+
+Decided by delegate for #507 (the monks), each the owner's to overturn:
+
+1. **The monks are keepers in the dead monks' habits:** a robe goes where the Matron's apron does
+   (#495's 4), wool from the shoulders to the hem, girt with a cord, the sleeves wide and the six lit
+   fingers out of the cuffs; the plate shows at the shins and the feet, so the bay's walk is known.
+2. **Each robe is its def's tint, and the plate under it the Bay Keeper's grey:** the Brother brown,
+   its hood up and the lights in its shadow; the Bell-ringer oatmeal, its hood down in a cowl and the
+   egg bare; the Abbot black lined pale, the tallest of the three, its hood drawn up to a point.
+3. **The Brother walks as it was told to:** idle, one foot and then the other comes up stiff and
+   high and is set down flat where it was, and the hem lifts over it.
+4. **The Bell-ringer's bell is a bronze handbell held out at the hip,** swung eleven strokes, a gap
+   and eleven more. It holds at 0.2 a hit (MONSTERS §8.1) and is `ranged`, as the devilfish is: a
+   monster in the back rank without it waits while the front stands, and the chapter house puts the
+   bells behind the brothers (§4.3).
+5. **The Abbot carries a crook,** lifted and set down at the hour. Its robe has fallen open down the
+   chest to the cord, lined pale, on the plate and the chisel's mark (#495's 3), and gapes wider at
+   the hour. A drawing is not told its monster's wounds (`drawMonsterSprite` takes none, and the
+   fight draws only those standing), so a robe that opens as the Abbot is hurt waits on a systems
+   change, the owner's to ask for.
+6. **On the line:** the Brother a soldier at 22 (317 hit points, 4d8+2), the Bell-ringer a
+   controller at 23 (284, 4d8+2) and the Abbot on the boss line at 24 (1,381, 24d8+24), for #500's
+   gate to tune as the Matron was #490's; all three machines, with no gold and no drops until #500
+   gives the Abbot a find. Sizes 1.1, 1.1 and 1.4.
+7. **Each is owed to the box that places it first:** the Brother to #499, on the vale's road, and
+   the Bell-ringer and the Abbot to #500 (`UNPLACED` in `tools/tests/maps.ts`).
 
 ## 10. Names
 
