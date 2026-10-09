@@ -258,6 +258,14 @@ each area:
   rising from the floor near the area's way in to the band's top at the far end;
 - chest and drop items sit in the band's price window, so a band 1–4 cellar holds no plate.
 
+A map whose floor is over its area's band is a later area's country reached from it, as the
+Dead-Drop's stair under the Tide Ship is, and pays nothing there. The deepest levels, which the road
+never needs, may pay outside any area's budget instead: the area lists them in `outside`
+(`content/area.ts`), and only maps past its band may be listed. Each is held to its own band and to
+the window of the last area on the road whose floor is at or under its own; no area's clear counts
+its xp or gold, which the curve prints as a figure; and the gate judges it at its own floor, out of
+the area's pools. Meridian Camp's third level and the Dead-Drop's three are planned so.
+
 A kill pays each member by the monster's level against theirs: ×0.1 at three or more under, ×0.4
 at two under, ×0.7 at one under, ×1 at their level, ×1.15 at one over, ×1.3 at two over, and ×1.5
 at three or more over. Simulated from Saltreach on, that kept companies that clear anything from
