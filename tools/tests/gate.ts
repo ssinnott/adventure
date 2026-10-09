@@ -244,6 +244,8 @@ export const OWED: Record<string, { whose: string; at: number }> = {
   'meridian_camp3: under': { whose: '#18', at: 1 },
   // And the Glasswold's first box (#525): the steppe, two under, wins every fight, as Ashfall's boxes do.
   'wold_d9: under': { whose: '#18', at: 1 },
+  // Akordu's box (#526) the same.
+  'wold_d8: under': { whose: '#18', at: 1 },
   // And the mesas (#527), the same.
   'wold_d10: under': { whose: '#18', at: 1 },
   'the Glasswold: under': { whose: '#18', at: 1 },

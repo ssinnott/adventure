@@ -16,6 +16,17 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 /** The flag the Stone lights on (docs/areas/ashfall.md §9, #548's 1): the Hearth counts it, and the sentries wait on it. */
 export const LIT = 'q_ember_lit';
 
+/**
+ * The Druid's third (#448): the Archdruid on F10 has asked for a seedling from the Grove kept living in
+ * the Waste; it is lifted at the Grove (Thornmark's hollow, which sets the second flag by its own name)
+ * and planted in the bed under the lookout here. Planted and the Stone lit, he teaches.
+ */
+export const SEEDLING_ASKED = 'q_seedling';
+export const SEEDLING_TAKEN = 'q_seedling_taken';
+export const SEEDLING_PLANTED = 'q_seedling_planted';
+/** The seedling itself, a quest item: given at the Grove, taken by the bed. */
+export const SEEDLING = 'grove_seedling';
+
 /** Each socket's flag, set as its part goes in: the vents' part's, Old Cinder's and the corridors'. */
 export const SOCKETS = ['q_ember_socket1', 'q_ember_socket2', 'q_ember_socket3'] as const;
 const PARTS = ['ember_part1', 'ember_part2', 'ember_part3'] as const;
@@ -83,9 +94,18 @@ export const EMBER_STONE: MapDef = {
     // The builders' benches in an alcove off the west arm, and on them the ladder's staff and coat.
     { kind: 'event', x: 2, y: 7, id: 'es_benches', once: true, text: 'The builders\' benches, their tools laid out in rows. In a vice, a stroke of the file half made.' },
     { kind: 'chest', x: 1, y: 7, id: 'es_bench', gold: 600, items: ['battle_staff+1', 'drakeskin+1'] },
-    // The lookout over the Waste in the east arm, and under it the seedling's bed (#448: words only).
+    // The lookout over the Waste in the east arm, and under it the seedling's bed: the Druid's third
+    // (#448). Once the Grove's seedling is carried, the bed, a person with no face as a socket is, puts
+    // the planting; planted, it stands grey with cinders each time until the Stone is lit, and green after.
     { kind: 'event', x: 14, y: 7, id: 'es_lookout', once: true, text: 'A slit in the housing at eye height. Through it the Waste, grey to the mountain, and the causeway over the flow.' },
     { kind: 'event', x: 14, y: 8, id: 'es_bed', once: true, text: 'Under the slit, where the cinders blow in, a bed of earth carried here and ringed with stones. Nothing grows in it.' },
+    { kind: 'event', x: 14, y: 8, id: 'es_seedling', after: { flag: SEEDLING_PLANTED }, until: { flag: [SEEDLING_PLANTED, LIT] }, text: 'In the bed under the slit the seedling stands grey with cinders, its two leaves shut.' },
+    { kind: 'event', x: 14, y: 8, id: 'es_green', after: { flag: [SEEDLING_PLANTED, LIT] }, text: 'In the bed under the slit the seedling stands green, a new leaf on it. The earth is warm.' },
+    {
+      kind: 'npc', x: 14, y: 8, name: 'A bed of earth', after: { flag: SEEDLING_TAKEN }, until: { flag: SEEDLING_PLANTED },
+      lines: ['The bed of earth under the slit, ringed with stones. Nothing grows in it.'],
+      choice: { ask: 'Plant something in it?', answers: [{ label: 'The seedling.', takes: SEEDLING, sets: SEEDLING_PLANTED, says: ['It goes in to its first leaf, and the cinders blow over it.'] }] },
+    },
     // The heart: the Stone's core, its three sockets round it and the door in the floor below it, shut
     // until the Stone is lit.
     { kind: 'event', x: 8, y: 4, id: 'es_heart', once: true, text: 'Three sockets in the Stone\'s heart, each the shape of something, each empty. The builders stopped as if called away.' },

@@ -126,8 +126,9 @@ export const RIDERS_RIDE: Crossing = {
     { at: 'cinderport', name: 'Cinderport', landing: { x: 9, y: 14, facing: NORTH },
       label: 'The Rider sets you down at Cinderport\'s gate, rested, and turns back for the grass.',
       warning: 'The Rider looks you over. "There are lions in the grass. I outride them. You will not."' },
-    // At Akordu's horse-lines, on the map of D8, the Wold's box that holds the camp (#526).
-    { at: 'wold', name: 'Akordu', owed: '#526',
+    // At Akordu's horse-lines, on the map of D8, the Wold's box that holds the camp, where the Rider
+    // who rides back stands (#526).
+    { at: 'wold', name: 'Akordu', landing: { map: 'wold_d8', x: 9, y: 27, facing: EAST },
       label: 'You ride into Akordu behind a Rider and get down, rested, among the white tents.' },
   ],
 };
