@@ -141,7 +141,7 @@ The places, as the atlas and the docs have them:
 | Kelp Hole (Smugglers' Cove) | E6, and below | the Compact's crews and the Hand's cargo; the sea cave, where the Great Devilfish is fed (MONSTERS §6.2); the captain's brother (#56's 25); what the smugglers feed (#56's 28) | built: its two plates at 150,158 and 150,164, its way in at 154,170 |
 | The east rocks | F6 | the hermit who has counted the ships since the founder died (#56's 26) | rock, 105 squares at the isle's east end |
 | The Tide Ship | F6, and aboard | the hold's two kinds of cargo; Hale in the last row; the papers on Wenna; the Stone in the forward hold, with its Rift (DESIGN §9, STORY, MONSTERS §6.2); every name in the column (#56's 27) | a planned wreck at 182,188, its plate at 208,192 |
-| The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | built: the drop, the vaults and the counting house, their plates at 208,204, 208,210 and 208,216, band 26–28 (#22); the Compact's Factor's rung, which asks for its orders, is built (§6, #635); the third-prestige quests that go down are owed (docs/areas/dead_drop.md §10) |
+| The Dead-Drop | below the hold | the Compact's orders come from there; three third-prestige quests go down (#22, #19) | built: the drop, the vaults and the counting house, their plates at 208,204, 208,210 and 208,216, band 26–28 (#22); the Compact's Factor's rung, which asks for its orders, is built (§6, #635), and so is the Thief's third prestige, which steals them (docs/areas/dead_drop.md §5) |
 
 ### 4.1 The briefs
 
