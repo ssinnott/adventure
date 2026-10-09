@@ -21,7 +21,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'cinderport', kind: 'town', at: [206, 288] }, // the far side's port, behind G10's gate at 6,2 (#511, #512)
   { id: 'old_cinder', name: 'Old Cinder', kind: 'dungeon', planned: true, band: [25, 26], at: [190, 324] }, // two levels under F11's crater (#515)
   { id: 'ember_stone', name: 'The Ember Stone', kind: 'dungeon', planned: true, band: [26, 26], at: [176, 348] }, // one level under F11's field of cinders (#516)
-  { id: 'meridian_camp', name: 'Meridian Camp', kind: 'dungeon', planned: true, band: [25, 28], at: [226, 340] }, // three levels down Fire Mountain's vents (#22; #443, call 4)
+  { id: 'meridian_camp', kind: 'dungeon', band: [25, 28], at: [226, 340] }, // Meridian Camp: the vents, down the middle of G11's three mouths at 26,16 (#22); three levels in all, the band their union (#443, call 4)
 ];
 
 export const SITES: readonly AtlasSite[] = [
@@ -31,6 +31,6 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Old Cinder', icon: 'ruin', at: [190, 318], label: 'below', planned: true },
   { name: 'Ember Stone', icon: 'stone', at: [176, 342], label: 'below', planned: true },
   { name: 'Scaldwell', icon: 'springs', at: [240, 300], label: 'below', planned: true }, // the Hot Springs
-  { name: 'Meridian Camp', icon: 'cave', at: [226, 334], label: 'below', planned: true }, // the vents' mouth: the Lost Expedition's last camp lies below
+  { name: 'Meridian Camp', icon: 'cave', at: [226, 334], label: 'below' }, // the vents' mouth on G11, 26,16, the way down (#22): the Lost Expedition's last camp lies below
   { name: 'Grimsforge', icon: 'forge', at: [230, 330], label: 'right' }, // Warlord's Forge, by the vents' mouth on G11, 30,12 (#513): the Barbarian's third prestige
 ];

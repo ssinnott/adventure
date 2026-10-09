@@ -305,13 +305,14 @@ export function outdoors(): void {
   // edge, each as the atlas cuts it, the ash either side of the mountain's foot, walked across at columns
   // 0 to 4 and 23 to 31; on the west the ash, the cone's flank (the ring, so the void) and the two flows
   // leaving west against F11; on the east the ash, Grimsforge's wall, the scavenger's rocks and the
-  // south-east flow leaving against H11; on the south the ash against G12. None of F11, H11 and G12 is
+  // south-east flow leaving against H11, the hole's far end open ash, the way down into Meridian Camp
+// (#22); on the south the ash against G12. None of F11, H11 and G12 is
   // built, so the world ends past them.
   const g11 = out.zones.find((z) => z.id === 'firemount_g11')!;
   ok(g11.x === g10.x && g11.y === g10.y + 32 && northOf(g11) === 'a'.repeat(5) + 'M'.repeat(18) + 'a'.repeat(9) && southOf(g11) === 'a'.repeat(32)
     && [...Array(32).keys()].every((i) => [out.at(g11.x + 32, g11.y + i), out.at(g11.x - 1, g11.y + i), out.at(g11.x + i, g11.y + 32)].every((c) => c.ch === '%')),
     `G11's north edge meets G10's south edge, the ash either side of the mountain's foot, and its south edge is the ash against G12, past which the world ends (${northOf(g11)}; ${southOf(g11)})`);
-  ok(westOf(g11) === 'a'.repeat(4) + '%'.repeat(6) + '!!' + 'a'.repeat(9) + '!!!' + 'a'.repeat(8) && eastOf(g11) === 'a'.repeat(12) + 'BBararr' + 'a'.repeat(8) + '!!!!a',
+  ok(westOf(g11) === 'a'.repeat(4) + '%'.repeat(6) + '!!' + 'a'.repeat(9) + '!!!' + 'a'.repeat(8) && eastOf(g11) === 'a'.repeat(12) + 'BBaraar' + 'a'.repeat(8) + '!!!!a',
     `G11's west edge is the ash, the cone's flank and the two flows against F11, and its east edge the ash, Grimsforge, the scavenger's rocks and the south-east flow against H11, past which the world ends (${westOf(g11)}; ${eastOf(g11)})`);
   // The Ember Waste's road (F10 and E10, #517), joined to G10 alone, over its west edge. F10's east edge meets G10's
   // west square for square, the road at rows 7 and 8, and its west edge E10's east, the road at rows 29

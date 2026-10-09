@@ -4,6 +4,7 @@ import type { Area } from '../../area.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
 import { CINDERPORT } from './maps/cinderport.ts';
 import { FIREMOUNT_G11 } from './maps/firemount_g11.ts';
+import { MERIDIAN_CAMP } from './maps/meridian_camp.ts';
 import { EMBERWASTE_F10 } from './maps/emberwaste_f10.ts';
 import { EMBERWASTE_E10 } from './maps/emberwaste_e10.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
@@ -13,10 +14,11 @@ import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
-  maps: [CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, EMBERWASTE_F10, EMBERWASTE_E10],
+  maps: [CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, EMBERWASTE_F10, EMBERWASTE_E10],
   monsters: MONSTERS,
   sprites: SPRITES,
-  // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512).
+  // Cinderport's armourer's step (#542) and the chandler's stone cure (#546), sold in the town (#512); the
+  // boxes' finds; the Ember Stone's first part and the stokers' parts, on Meridian Camp's vents (#22).
   items: ITEMS,
   quests: [],
   // The Window, the act's second chapter, is #518's.
