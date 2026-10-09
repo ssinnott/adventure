@@ -106,17 +106,17 @@ export function outdoors(): void {
   ok(southOf(l2) === 'M'.repeat(28) + 'tt~~' && northOf(l3) === 'T'.repeat(28) + 'tt~T', `L2's south edge and L3's north edge are closed, but for the bank path and the river (${southOf(l2)}; ${northOf(l3)})`);
   ok(/^M+$/.test(eastOf(k3)) && /^T+$/.test(westOf(l3)), `K3's east edge and L3's west edge stand closed (${eastOf(k3)}; ${westOf(l3)})`);
   ok(southOf(k3) === 'M'.repeat(21) + 'ddddd' + 'M'.repeat(6) && northOf(k4) === 'r' + 'M'.repeat(20) + 'ddddd' + 'M'.repeat(6), `K3's south edge and K4's north edge are closed, but for the east lip's dead wood (${southOf(k3)}; ${northOf(k4)})`);
-  ok(southOf(l3) === 'T'.repeat(16) + 'ttt~~tt' + 'T'.repeat(9) && northOf(l4) === 'T'.repeat(19) + '~~tt' + 'T'.repeat(8) + '%', `L3's south edge and L4's north edge are the wood, the river and the path on its east bank (${southOf(l3)}; ${northOf(l4)})`);
+  ok(southOf(l3) === 'T'.repeat(16) + 'ttt~~tt' + 'T'.repeat(9) && northOf(l4) === 'T'.repeat(19) + '~~tt' + 'T'.repeat(8) + 'M', `L3's south edge and L4's north edge are the wood, the river and the path on its east bank (${southOf(l3)}; ${northOf(l4)})`);
   ok(eastOf(k4) === 'M' + 'T'.repeat(28) + '_~W' && westOf(l4) === 'T'.repeat(29) + '_~~', `K4's east edge and L4's west edge are closed forest, but for the shingle along the bay (${eastOf(k4)}; ${westOf(l4)})`);
   ok(/^r+$/.test(westOf(k4)) && eastOf(j4) === 'T'.repeat(17) + '_~~' + 'W'.repeat(12), `K4's west edge is rock against the Deepthorn's J4, its shore and its sea, so no way opens between the two areas (${westOf(k4)})`);
-  ok(/^T+$/.test(eastOf(l3)) && /^%+$/.test(eastOf(l4)) && southOf(l4) === '~~~~' + '%'.repeat(28) && southOf(k4) === 'r' + 'W'.repeat(31), `L3's east edge is closed forest against M3, and L4's east and south edges, and K4's, are the world's end and the bay (${southOf(l4)})`);
+  ok(/^T+$/.test(eastOf(l3)) && eastOf(l4) === 'M'.repeat(31) + '%' && southOf(l4) === '~~~~' + '%'.repeat(28) && southOf(k4) === 'r' + 'W'.repeat(31), `L3's east edge is closed forest against M3, L4's east edge the range against M4 (#474), and L4's south edge and K4's the world's end and the bay (${eastOf(l4)}; ${southOf(l4)})`);
   // The Iron Fells' way in (M3, #457): in from M2 by the road over the ridge, Lanternwood's trees
   // closed against L3 on its west, and open land east into N3 (#458) with the trail through it; its
-  // south edge's ridge and crag are the world's end above M4, between the pines.
+  // south edge's ridge and crag run on into M4 (#474), between the pines.
   const m3 = out.zones.find((z) => z.id === 'ironfells_m3')!;
   ok(northOf(m3) === 'T==pp' + 'T'.repeat(12) + 'M'.repeat(10) + '^'.repeat(5) && /^T+$/.test(westOf(m3)), `M3's north edge is the ridge under M2 with the road through it, and its west edge closed forest against L3 (${northOf(m3)})`);
-  ok(eastOf(m3) === '^^' + ','.repeat(16) + 'p'.repeat(9) + '==' + ',,,' && southOf(m3) === 'T' + '%'.repeat(11) + 'p'.repeat(8) + '%%rr%%' + 'ppppp,',
-    `M3's east edge is open land on into N3 with the trail through it, and its south edge pine but for the ridge and the crag, the world's end over M4 (${eastOf(m3)}; ${southOf(m3)})`);
+  ok(eastOf(m3) === '^^' + ','.repeat(16) + 'p'.repeat(9) + '==' + ',,,' && southOf(m3) === 'T' + 'M'.repeat(11) + 'p'.repeat(8) + 'MMrrMM' + 'ppppp,',
+    `M3's east edge is open land on into N3 with the trail through it, and its south edge pine but for the ridge and the crag, on into M4 (${eastOf(m3)}; ${southOf(m3)})`);
   // Anvilhall's box (N3, #458): open land on from M3 with the trail through it at rows 27 and 28, and
   // the trail out by the south edge into N4; the open fell on north into N2 (#460) and the crag over
   // the gate running on into N2's and O3's (#474), the terraces' east end shut by O3's crag, and the
@@ -148,8 +148,9 @@ export function outdoors(): void {
   // The Tiefzeche's box (N4, #461), the heart's first: open land on from N3 with the trail through it
   // at columns 4 and 5, square for square with N3's south edge; the drove road out by the south edge
   // for N5, with the stream for the smelter at the corner; open grass, the knoll and the old workings'
-  // ground on the west against M4, and the first crags and the hills on the east against O4 (#474),
-  // the crags against its crag and the hills open across, with the stream at the corner.
+  // ground on the west against M4, laid since (#474), and the first crags and the hills on the east
+  // against O4, laid since too: the crags against its crag and the hills open across, with the stream
+  // at the corner.
   const n4 = out.zones.find((z) => z.id === 'kilnsheart_n4')!;
   ok(northOf(n4) === southOf(n3) && southOf(n4) === ':'.repeat(11) + ','.repeat(9) + '=,,' + '^'.repeat(5) + ',,~~',
     `N4's north edge is N3's south edge, square for square, with the trail through it, and its south edge the old workings' ground, the grass and the drove road out for N5 (${northOf(n4)}; ${southOf(n4)})`);
@@ -190,6 +191,20 @@ export function outdoors(): void {
   const l6 = out.zones.find((z) => z.id === 'kilnmouth_l6')!;
   ok(eastOf(l6) === westOf(m6) && northOf(l6) === 'W'.repeat(28) + 'B::_' && westOf(l6) === 'W'.repeat(16) + '~~,,,' + 'h'.repeat(11) && southOf(l6) === 'h'.repeat(25) + ','.repeat(7),
     `L6's east edge meets M6's west edge square for square, its north edge is the sea and the town's wall, its west the sea, the shore and the heath, and its south the heath and the grass (${northOf(l6)}; ${westOf(l6)}; ${southOf(l6)})`);
+  // Kilnmouth's country (M4 and M5, #474). M4 meets M3's south edge square for square, the crag running
+  // on across the seam and the pines open either side of it, and N4's west edge square for square, the
+  // grass, the knoll and the old workings' ground the drovers' track climbs from; on its west the range's
+  // crag and then trees against L4's mountain, so no climber crosses and the road stays the only way
+  // between the two areas. M4's south edge and M5's north are open both sides. M5 meets N5's west edge
+  // and M6's north edge square for square, the stream in from N5 and on into M6; on its west the range
+  // down to the shingle, the world's end against cut L5.
+  const m4 = out.zones.find((z) => z.id === 'kilnmouth_m4')!, m5 = out.zones.find((z) => z.id === 'kilnmouth_m5')!;
+  ok(northOf(m4) === southOf(m3) && eastOf(m4) === westOf(n4) && westOf(m4) === 'T' + 'r'.repeat(22) + 'T'.repeat(9),
+    `M4's north edge meets M3's south edge and its east edge N4's west edge square for square, and its west edge is crag and trees against L4's range (${northOf(m4)}; ${westOf(m4)})`);
+  ok(southOf(m4) === 'T' + ','.repeat(10) + '^' + ','.repeat(6) + 'f'.repeat(11) + ':::' && northOf(m5) === '%,,,,,^^,,^^' + ','.repeat(6) + 'f'.repeat(11) + ':::',
+    `M4's south edge and M5's north edge are the grass, the fields and the old workings' ground, open both sides (${southOf(m4)}; ${northOf(m5)})`);
+  ok(eastOf(m5) === westOf(n5) && southOf(m5) === northOf(m6) && westOf(m5) === '%'.repeat(24) + '_'.repeat(8),
+    `M5's east edge meets N5's west edge and its south edge M6's north edge square for square, the stream through both, and its west edge is the range and the shingle, the world's end against cut L5 (${westOf(m5)})`);
   // The Anvil Stone's box (O5, #464): in from N5 by the cutters' track at row 24 and over the open hills
   // and grass either side of it, the mountain between them on both sides of the seam and the stream at
   // the corner. The stream runs on at the north edge's corner into O4 (#474), past it the hills open

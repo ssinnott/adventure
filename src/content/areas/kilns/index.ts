@@ -15,6 +15,8 @@ import { KILNMOUTH_M6 } from './maps/kilnmouth_m6.ts';
 import { KILNSHEART_O5 } from './maps/kilnsheart_o5.ts';
 import { ANVIL_STONE } from './maps/anvil_stone.ts';
 import { KILNMOUTH_L6 } from './maps/kilnmouth_l6.ts';
+import { KILNMOUTH_M4 } from './maps/kilnmouth_m4.ts';
+import { KILNMOUTH_M5 } from './maps/kilnmouth_m5.ts';
 import { KILNHAVEN } from './maps/kilnhaven.ts';
 import { KILNSHEART_O6 } from './maps/kilnsheart_o6.ts';
 import { LAVA_TUBES } from './maps/lava_tubes.ts';
@@ -31,7 +33,7 @@ import { CHAPTER } from './chapter.ts';
 
 export const AREA = {
   id: 'kilns' as const,
-  maps: [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, DEEP_MINES, DEEP_MINES2, DEEP_MINES3, IRONFELLS_N2, KILNSHEART_N5, KILNSHEART_N6, KILNMOUTH_M6, KILNSHEART_O5, ANVIL_STONE, KILNMOUTH_L6, KILNHAVEN, KILNSHEART_O6, LAVA_TUBES, LAVA_TUBES2, IRONFELLS_O3, KILNSHEART_O4],
+  maps: [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, DEEP_MINES, DEEP_MINES2, DEEP_MINES3, IRONFELLS_N2, KILNSHEART_N5, KILNSHEART_N6, KILNMOUTH_M6, KILNSHEART_O5, ANVIL_STONE, KILNMOUTH_L6, KILNHAVEN, KILNSHEART_O6, LAVA_TUBES, LAVA_TUBES2, KILNMOUTH_M4, KILNMOUTH_M5, IRONFELLS_O3, KILNSHEART_O4],
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

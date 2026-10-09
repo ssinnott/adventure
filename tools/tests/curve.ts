@@ -150,7 +150,7 @@ const LEAD = 1;
  * a row's `owed` holds a floor, so that none grows unnoticed; once inside the line, it is dropped.
  */
 const OVER_ROAD: Partial<Record<RegionId, { level: number; why: string }>> = {
-  kilns: { level: 19.3, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road its own (#474)' },
+  kilns: { level: 19.3, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road adds to it (#474)' },
   ashfall: { level: 27.2, why: 'the Stone, the rungs, the quests and the sentries' },
 };
 

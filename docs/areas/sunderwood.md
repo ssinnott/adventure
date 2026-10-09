@@ -54,7 +54,8 @@ before and after: Lanternwood rises from 6,097 to 7,763; K4 takes 128 of the Eav
 270 of the Deepthorn's (5,113 to 4,843); and the walk from L4's south and east edges runs on into the cut
 L5 and M4, so Kilnmouth falls from 5,108 to 3,961 and the Iron Fells from 3,361 to 3,286. Nobody walks it;
 holding Kilnmouth's line wants seeds in its rows in `src/content/atlas.ts`, a shared file, as #429 held the
-Fells': proposed (§9, #203's 9), not made here. The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
+Fells': proposed (§9, #203's 9), not made here (the Kilns' M4 and M5, #474, laid whole in Kilnmouth, settled it:
+docs/areas/kilns.md §1, §9). The plan gave the Eaves 5,764 and Lanternwood 7,971, shallows and rivers
 included, 13,735 in all. Without the shallows the area is 13,387 squares, about 13.1 zone maps (EXPANSION §1 has 13.1), and 11,383 of them a
 company could walk: the rest is the rim's mountain along its north, the mountains at its
 south-east and the chasm of the Sunder itself. It runs from x 267 to x 422 and from the rim down
@@ -1539,5 +1540,6 @@ builder says so in the decision):
    the curve's 6,960, and Sunderwood's owed gold in `progression.ts` goes.
 9. **Kilnmouth's line moves, and is not held here:** the zone walk from L4's south and east edges takes
    1,147 of Kilnmouth's unbuilt squares (§1). Holding it wants seeds in `src/content/atlas.ts`, a shared
-   file, as #429 held the Fells': proposed, not made here.
+   file, as #429 held the Fells': proposed, not made here (settled by the Kilns' M4 and M5:
+   docs/areas/kilns.md §9, #474's 14).
 10. **The text was drafted in the voice by a separate agent.**
