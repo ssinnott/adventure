@@ -1417,6 +1417,22 @@ scorpion; the salamanders as the basilisk; vultures from the birds.
 - **The mesa**: a basilisk behind a pride of lions, the lions keeping the front row busy while the
   basilisk glasses whoever looks up.
 
+The five on frames that exist are drawn (#533), ahead of the boxes that place them. On the birds'
+(`src/ui/monsters/birds.ts`): the Vulture, hunched on the ground to wait, its broad wings low and
+open round it, the head hung forward on a long bare neck out of a cream ruff, the head and neck bare
+and pink, a heavy brow and a pale hooked bill. On the cats' (`cats.ts`): the Wold Lion, tawny, long
+and low in a stalk, the shoulders high and the head carried level in front of them, the ears small
+and round, a long tail turned up at its end in a black tuft and the near forepaw lifting as it
+creeps; and the Grey Lion, the frame at its heaviest, standing square with its head up over a dark
+grizzled mane, the coat gone grey and three old rakes pale across the eye. On the spiders'
+(`spider.ts`): the Glass Scorpion, of the Wold's green glass, eight short legs splayed under a low
+body, two big claws raised open either side of a tail arched over toward the company, and a clear
+sting. On the salamanders' (`salamanders.ts`): the Basilisk, its kin gone cold, lichen-grey with no
+fire in the skin, the snout drawn out, a crown of glass spikes round the back of the skull, a crest
+of glass shards down the spine and big eyes lit a cold green-white. Their numbers are their roles'
+at their levels on the line #661 made again (§4.4), the basilisk the test basilisk (§3.3). The boxes
+place them (docs/areas/glasswold.md §9); the glass walker is the second pull request's.
+
 **Asks:** stone, and its cure.
 
 ### 8.4 Meridian Camp (band 25–28)
