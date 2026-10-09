@@ -12,6 +12,7 @@ import { ITEMS } from './items.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
+import { CHAPTER } from './chapter.ts';
 
 export const AREA = {
   id: 'glasswold' as const,
@@ -27,8 +28,7 @@ export const AREA = {
   items: ITEMS,
   // The Ranger's third prestige's quest, Oriel Fane's Map, from Aysu on Kushtash (#448).
   quests: QUESTS,
-  // The Warning, the act's third chapter, is #531's.
-  chapter: undefined,
+  chapter: CHAPTER,
   // The steppe: hot summers and hard winters, the days warm and the nights cold, little rain and that
   // in spring, dust for fog and thunder over the grass.
   climate: { summer: 26, winter: -4, daily: 11, damp: [0.01, 0.06], wettest: 120, fog: 0.1, lag: 18,
