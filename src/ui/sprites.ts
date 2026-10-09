@@ -31,6 +31,7 @@ import * as salamanders from './monsters/salamanders.ts';
 import * as lights from './monsters/lights.ts';
 import * as keepers from './monsters/keepers.ts';
 import * as cats from './monsters/cats.ts';
+import * as giants from './monsters/giants.ts';
 
 export { groundShadow } from './monsters/common.ts';
 
@@ -293,6 +294,7 @@ export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = {
   bog_light: lights.draw,
   bay_keeper: keepers.draw, matron: keepers.draw,
   snow_lynx: cats.draw,
+  stair_giant: giants.draw, stair_king: giants.draw,
 };
 
 /**
@@ -332,6 +334,7 @@ export const SPAN: Readonly<Record<MonsterSprite, readonly [number, number]>> = 
   bog_light: [0.15, 0.16],
   bay_keeper: [0.28, 0.28], matron: [0.32, 0.33],
   snow_lynx: [0.48, 0.47],
+  stair_giant: [0.21, 0.39], stair_king: [0.26, 0.47],
 };
 /** How many pixels a drawing may reach past its span at any size, and so how far inside the view's edge a fight keeps the spans. */
 export const SPAN_SLACK = 2;
