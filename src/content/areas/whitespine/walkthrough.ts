@@ -48,9 +48,12 @@ import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
 import { SADDLE } from '../rimewater/maps/coldmere_k10.ts';
 import { CLIMB, GATE } from './maps/monksvale_j11.ts';
-import { WENNA_TAKEN } from './maps/sheerpoint_i8.ts';
+import { WENNA_TAKEN, MASON_PASSAGE, MASON_SWAPPED } from './maps/sheerpoint_i8.ts';
 import { WENNA_LODGE } from '../rimewater/maps/rime_lodge.ts';
-import { STAIR_TOP } from './maps/highspine_i10.ts';
+import { STAIR_TOP, TOLL_DONE } from './maps/highspine_i10.ts';
+import { NOVICE_TOLD, NOVICE_KEPT } from './maps/monastery.ts';
+import { NEST_WATCH, NEST_CELL } from './maps/highspine_i11.ts';
+import { questLog } from '../../../game/quests.ts';
 import { CHAPTER } from './chapter.ts';
 
 const J11 = MAP_DEFS.find((d) => d.id === 'monksvale_j11')!;
@@ -298,7 +301,7 @@ export const walkthrough: Walkthrough = (ok) => {
     'the Stair goes down through the Sheer to the west edge at 0,20, and on down onto Ashfall\'s H10 at its 31,20');
 
   // The caravan drawn up short of the head that cannot pay (#56's 47, #506's), past the Stair in snow:
-  // the master by his wagons, and at the head his girl, whom the king keeps; people with words only.
+  // the master by his wagons, and at the head his girl, whom the king keeps (The Toll, #506, `sideQuests`).
   const who10 = (name: string): Person => I10.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
   const [master, girl, champion] = [who10('A caravan-master'), who10('A girl'), who10('An old champion')];
   const king = I10.encounters!.find((g) => g.id === 'i10_king')!, stair = I10.encounters!.find((g) => g.id === 'i10_stair')!;
@@ -643,6 +646,7 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const id of ['i8_tally', 'i8_hammer', 'i8_bones', 'i8_wreck', 'i8_pines']) see(w, `sheerpoint_i8:${id}`);
   listen(w);
   theBells(ok);
+  sideQuests(ok);
 };
 
 /**
@@ -710,7 +714,7 @@ function highcell(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     'brothers at their hours by the cells, three, and four ringers on the tower\'s stair');
   fight(w, `monastery:${walk.id}`);
 
-  // The Novice in the last cell (#56's 45; his letter is #506's): words only.
+  // The Novice in the last cell (#56's 45): his letter and his answer are The Novice's (#506, `sideQuests`).
   const novice = L1.features!.find((f) => f.kind === 'npc' && f.name === 'A novice') as Person;
   w.world.travel('monastery', novice.x, novice.y);
   ok(meet(novice, w.party, heard(w.world, novice)).text.includes('never once seen a brother break one'), 'the Novice in the last cell keeps the fasts with the brothers');
@@ -914,4 +918,149 @@ function theBells(ok: (cond: boolean, msg: string) => void): void {
   ok(read[0] === 'bells, cells, board, abbot, stone, causeway, night, knot, heart, far, stair, paid, top' && read[1] === read[0].replace('paid', 'fought'),
     `the chapter reads the same in order and with the Point first, but for the toll (${read.join(' / ')})`);
   everyGoalWalked(ok, [CHAPTER]);
+}
+
+/**
+ * The side quests (#506), each at its level and answered every way: the novice's letter carried from
+ * Highcell's last cell to his mother at Anvilhall, and on the company's return he is told and walks home
+ * to her, or is told she is well and sweeps on; the badge from the eagles' nest given to the Reader at
+ * Lantern Watch, who may be refused, or to the brother in Highcell's first cell; the king's toll paid in
+ * gold, the grey part or the faceless coin, or refused and the king fought, and each way the girl walks
+ * down to the wagons; and the deserter's passage bought, the Compact's 600, after which he is by the
+ * fire in Cinderport's inn, or the tally's page swapped and he is back at the causeway. Each pays its
+ * xp whichever way it goes.
+ */
+function sideQuests(ok: (cond: boolean, msg: string) => void): void {
+  const at = (level: number): Walk => {
+    const w = newWalk(ok);
+    w.level = level;
+    for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+    return w;
+  };
+  const npc = (map: string, name: string): Person => mapOf(map).features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const page = (w: Walk, id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+  const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
+  const began = (w: Walk, title: string): boolean => w.news.includes(`New quest: ${title}.`);
+  const there = (w: Walk, map: string, p: Person): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
+  const hear = (w: Walk, map: string, p: Person): string => { w.world.travel(map, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
+  const answerTo = (w: Walk, map: string, p: Person, sets: string): string => {
+    w.world.travel(map, p.x, p.y);
+    const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets);
+    ok(!!a, `${p.name} asks, and an answer sets ${sets} (${m.choice?.ask ?? 'no question'})`);
+    const said = a ? answer(a, w.party) : '';
+    listen(w);
+    return said;
+  };
+  const reads = (w: Walk, id: string, want: readonly string[], not: readonly string[], how: string): void => {
+    const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [], title = pg?.def.title ?? id;
+    const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
+    ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
+      `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
+  };
+  const xpOf = (w: Walk): number => w.party.members.reduce((t, m) => t + m.xp, 0);
+
+  // The Novice (#56's 45), at 23: the boy in the last cell asks, and a company that says not now is
+  // asked again; his letter carried to the woman knitting on Anvilhall's terrace, she reads it at the
+  // first meeting; back in his cell he is told, and is gone home to the step below her, or is told
+  // she is well and sweeps on. Either way 1,200 xp, 200 a member.
+  const NOVICE = npc('monastery', 'A novice'), MOTHER = npc('anvilhall', 'A woman knitting'), BOY = npc('anvilhall', 'The boy from Highcell');
+  for (const [how, sets] of [['told', NOVICE_TOLD], ['kept', NOVICE_KEPT]] as const) {
+    const w = at(23);
+    ok(there(w, 'anvilhall', MOTHER) && !there(w, 'anvilhall', BOY) && hear(w, 'anvilhall', MOTHER).includes('Not a word since') && !page(w, 'novice'),
+      `${how}: the woman knits on Anvilhall's terrace with nobody beside her, and met first she begins nothing`);
+    w.world.travel('monastery', NOVICE.x, NOVICE.y);
+    const first = meet(NOVICE, w.party, heard(w.world, NOVICE)), not = first.choice?.answers.find((a) => !a.sets);
+    ok(!!not && answer(not, w.party).includes('Another day') && !w.party.bag.includes('novice_letter'), `${how}: not now, and he keeps his letter`);
+    listen(w);
+    ok(began(w, 'The Novice') && /last cell/.test(goal(w, 'novice')), `${how}: he begins it, and the goal is his answer (${goal(w, 'novice')})`);
+    ok(answerTo(w, 'monastery', NOVICE, 'q_novice_letter').includes('candle wax') && w.party.bag.includes('novice_letter') && /Anvilhall/.test(goal(w, 'novice')),
+      `${how}: asked again, he gives his letter for his mother (${goal(w, 'novice')})`);
+    const read = hear(w, 'anvilhall', MOTHER);
+    ok(read.includes('reads it twice') && read.includes('come home') && !w.party.bag.includes('novice_letter') && /back up to the novice/.test(goal(w, 'novice')),
+      `${how}: his mother takes the letter at the first meeting and reads it (${goal(w, 'novice')})`);
+    const xp = xpOf(w), said = answerTo(w, 'monastery', NOVICE, sets);
+    ok(xpOf(w) - xp === 1200, `${how}: answered, 1,200 xp between the six (${said.split('\n\n')[0]})`);
+    reads(w, 'novice', ['cell', 'letter', 'read', how], [how === 'told' ? 'kept' : 'told'], how);
+    ok(there(w, 'monastery', NOVICE) === (how === 'kept') && there(w, 'anvilhall', BOY) === (how === 'told') && hear(w, 'anvilhall', MOTHER).includes(how === 'told' ? 'forgotten how' : 'write again'),
+      `${how}: ${how === 'told' ? 'he is gone from his cell and on the step below his mother' : 'he sweeps on in his cell, and his mother knits alone'}`);
+  }
+
+  // The Eagles' Nest (#56's 46), at 23: the herder at his fold begins it; the nest above the Peak Stone
+  // opened, he remembers the Lantern who went up for the Stone, and the badge goes to the Reader at
+  // Lantern Watch, who is refused once and asks again, or to the brother in Highcell's first cell, who
+  // holds out its hand only to a company carrying it. Either way 1,200 xp, 200 a member.
+  const HERDER = npc('monksvale_j11', 'A herder'), READER = npc('lantern_watch', 'Hester Dunmore, Reader of the Watch'), BROTHER = npc('monastery', 'A brother in its cell');
+  const nest = mapOf('highspine_i11').features!.find((f) => f.kind === 'chest' && f.id === 'i11_nest_bones');
+  const NEST = nest?.kind === 'chest' ? nest : undefined;
+  ok(!!NEST && NEST.items.includes('lantern_badge'), 'the nest above the Peak Stone holds the Lantern\'s badge');
+  for (const [how, who, map, sets] of [['watch', READER, 'lantern_watch', NEST_WATCH], ['cell', BROTHER, 'monastery', NEST_CELL]] as const) {
+    if (!NEST) break;
+    const w = at(23);
+    ok(hear(w, 'monksvale_j11', HERDER).includes('eagles take them') && began(w, 'The Eagles\' Nest') && /eagles nest/.test(goal(w, 'nest')),
+      `${how}: the herder at his fold begins it (${goal(w, 'nest')})`);
+    ok(!hear(w, map, who).includes('badge'), `${how}: carrying nothing, ${who.name.split(',')[0]} says nothing of a badge`);
+    w.world.travel('highspine_i11', NEST.x, NEST.y);
+    w.world.markUsed(NEST.id);
+    w.party.bag.push(...NEST.items);
+    listen(w);
+    ok(/Lantern Watch, or to Highcell/.test(goal(w, 'nest')) && hear(w, 'monksvale_j11', HERDER).includes('A Lantern came up the vale'),
+      `${how}: the nest opened, the herder remembers the Lantern who went up, and the goal is the badge's (${goal(w, 'nest')})`);
+    if (who === READER) {
+      w.world.travel(map, who.x, who.y);
+      const keep = meet(who, w.party, heard(w.world, who)).choice?.answers.find((a) => !a.sets);
+      ok(!!keep && answer(keep, w.party).includes('keep it close') && w.party.bag.includes('lantern_badge') && !page(w, 'nest')?.done, 'watch: refused, the Reader lets the company keep the badge');
+    }
+    const xp = xpOf(w), said = answerTo(w, map, who, sets);
+    ok(xpOf(w) - xp === 1200 && !w.party.bag.includes('lantern_badge'), `${how}: the badge given, 1,200 xp between the six (${said.split('\n\n')[0]})`);
+    reads(w, 'nest', ['herder', 'nest', how], [how === 'watch' ? 'cell' : 'watch'], how);
+    ok(!hear(w, map, who).includes('badge'), `${how}: given, ${who.name.split(',')[0]} asks for it no more`);
+  }
+
+  // The Toll (#56's 47), at 24: the caravan-master short of the head begins it, his girl at the head
+  // and nobody by the wagons; the king's toll paid in gold, given the grey part or the faceless coin,
+  // which are barred to a company without them, or refused and the king fought: each way the girl is
+  // gone from the head and by the wagons, and her father's thanks pay 1,500 xp, 250 a member.
+  const MASTER = npc('highspine_i10', 'A caravan-master'), GIRL = npc('highspine_i10', 'A girl'), FREED = npc('highspine_i10', 'The caravan-master\'s girl');
+  const TOLLS = [['paid', 'Pay the toll.', ''], ['part', 'Give him the grey part.', 'grey_part'], ['coin', 'Give him the faceless coin.', 'faceless_coin'], ['fought', 'Refuse.', '']] as const;
+  for (const [how, label, item] of TOLLS) {
+    const w = at(24);
+    w.party.gold = 1500;
+    ok(hear(w, 'highspine_i10', MASTER).includes('he has my girl') && began(w, 'The Toll') && /toll at the Stair/.test(goal(w, 'toll')) && there(w, 'highspine_i10', GIRL) && !there(w, 'highspine_i10', FREED),
+      `${how}: the caravan-master begins it, his girl at the head and nobody by the wagons (${goal(w, 'toll')})`);
+    if (item) {
+      const a = KING.choice!.answers.find((x) => x.takes === item)!;
+      ok(barred(a, w.party) && answer(a, w.party) === NONE, `${how}: without ${item} its answer is barred`);
+      w.party.bag.push(item);
+    }
+    const said = parley(w, label);
+    if (how === 'fought') fight(w, 'highspine_i10:i10_king');
+    ok(!there(w, 'highspine_i10', GIRL) && there(w, 'highspine_i10', FREED) && /caravan-master at his wagons/.test(goal(w, 'toll')),
+      `${how}: the girl is gone from the head and by the wagons, and the goal is her father (${said.split('\n\n')[0]})`);
+    const xp = xpOf(w), thanks = answerTo(w, 'highspine_i10', MASTER, TOLL_DONE);
+    ok(xpOf(w) - xp === 1500 && thanks.includes('your names'), `${how}: thanked for nothing, 1,500 xp between the six`);
+    reads(w, 'toll', ['caravan', how, 'down'], TOLLS.map(([h]) => h).filter((h) => h !== how), how);
+    ok(hear(w, 'highspine_i10', MASTER).includes('when the snow lets us'), `${how}: after, he waits on the snow`);
+  }
+
+  // The Mason's Tally (#56's 48), at 24: the deserter in the rocks asks, and a company short of the
+  // Compact's fare cannot buy his passage; bought, 600 gold, he is gone from the rocks and by the fire
+  // in Cinderport's inn; or the page swapped, the true tally is the company's and he is at work below
+  // the tally-house. Either way 1,500 xp, 250 a member.
+  const DESERTER = npc('sheerpoint_i8', 'A deserter'), BACK = npc('sheerpoint_i8', 'A mason below the tally-house'), PORT = npc('cinderport', 'A mason off the Point');
+  for (const [how, sets] of [['passage', MASON_PASSAGE], ['swapped', MASON_SWAPPED]] as const) {
+    const w = at(24);
+    w.party.gold = 599;
+    w.world.travel('sheerpoint_i8', DESERTER.x, DESERTER.y);
+    const buy = meet(DESERTER, w.party, heard(w.world, DESERTER)).choice?.answers.find((a) => a.sets === MASON_PASSAGE);
+    listen(w);
+    ok(!!buy && buy.price === 600 && barred(buy, w.party) && answer(buy, w.party) === SHORT && !w.party.flags[MASON_PASSAGE] && began(w, 'The Mason\'s Tally') && /deserter/.test(goal(w, 'mason')),
+      `${how}: the deserter begins it, and a company with 599 gold cannot buy his passage (${goal(w, 'mason')})`);
+    w.party.gold = 600;
+    const xp = xpOf(w), said = answerTo(w, 'sheerpoint_i8', DESERTER, sets);
+    ok(xpOf(w) - xp === 1500 && w.party.gold === (how === 'passage' ? 0 : 600) && w.party.bag.includes('masons_tally') === (how === 'swapped'),
+      `${how}: answered, 1,500 xp between the six${how === 'passage' ? ', the fare paid' : ', and the true tally the company\'s'} (${said.split('\n\n')[0]})`);
+    reads(w, 'mason', ['deserter', how], [how === 'passage' ? 'swapped' : 'passage'], how);
+    ok(!there(w, 'sheerpoint_i8', DESERTER) && there(w, 'cinderport', PORT) === (how === 'passage') && there(w, 'sheerpoint_i8', BACK) === (how === 'swapped'),
+      `${how}: he is gone from the rocks, and ${how === 'passage' ? 'by the fire in Cinderport\'s inn' : 'at work below the tally-house'}`);
+  }
 }

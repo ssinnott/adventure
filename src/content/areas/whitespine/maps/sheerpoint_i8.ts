@@ -18,6 +18,13 @@ import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
 /** Wenna taken from the camp on the night the company sleeps by her fire (§5, §9's 2; #505 reads it). */
 export const WENNA_TAKEN = 'q_wenna_taken';
 
+/**
+ * The Mason's Tally (#56's 48, #506): the deserter's passage to Cinderport bought, the Compact's fare
+ * (he stands in Cinderport's inn after it); or the tally's page swapped, a count chalked short, and he
+ * goes back to the causeway with it, so the Hand sends for the wrong count.
+ */
+export const MASON_PASSAGE = 'q_mason_passage', MASON_SWAPPED = 'q_mason_swapped';
+
 export const SHEERPOINT_I8: MapDef = {
   id: 'sheerpoint_i8',
   name: 'Sheer Point',
@@ -111,9 +118,23 @@ export const SHEERPOINT_I8: MapDef = {
     { kind: 'event', x: 28, y: 12, id: 'i8_bones', once: true, text: 'A goat\'s bones on the hill, cracked for the marrow. Too big a bite for any eagle.' },
     { kind: 'event', x: 30, y: 19, id: 'i8_hammer', once: true, text: 'In the needles a mason\'s hammer, dropped, and boot-marks going on south.' },
     { kind: 'event', x: 31, y: 29, id: 'i8_tally', once: true, text: 'A slate wedged in the rocks, chalked with a tally in fives. Under the last row: ELEVEN.' },
-    { kind: 'npc', x: 31, y: 30, name: 'A deserter', lines: [
+    { kind: 'npc', x: 31, y: 30, name: 'A deserter', flag: 'q_mason', until: [{ flag: MASON_PASSAGE }, { flag: MASON_SWAPPED }], lines: [
       'A mason crouched in the rocks, white with dust to the elbow, a slate held to his chest.',
       '"Eleven more and the road reaches the isle. I won\'t be the one who sets them."',
+    ], choice: { ask: '"A passage over the water to Cinderport, and I am gone. Or I take them back a count that is wrong."', answers: [
+      { label: 'Buy his passage.', price: 600, sets: MASON_PASSAGE, pay: { xp: 1500 }, says: [
+        'He counts the fare into his hat, twice, as if it might be less the second time.',
+        '"The Compact\'s boat. They never ask a man where he cut stone." He goes off down the shore.',
+      ] },
+      { label: 'Swap the page.', sets: MASON_SWAPPED, gives: 'masons_tally', pay: { xp: 1500 }, says: [
+        'He chalks a fresh slate from his, row for row, but the last. The true one he gives to you.',
+        '"They will send for what this says." He goes back up the pines to the causeway.',
+      ] },
+    ] } },
+    // Gone back with the page swapped, the deserter at work below the tally-house, among the masons.
+    { kind: 'npc', x: 18, y: 8, name: 'A mason below the tally-house', after: { flag: MASON_SWAPPED }, lines: [
+      'The deserter at work below the tally-house, white with dust again, his eyes on the stone in his hands.',
+      '"They read the count I brought back. They have sent for it."',
     ] },
     // The tip's west side: the hills down to the shingle and a grey boat's ribs, and the pines going down
     // into the sea toward I9's.

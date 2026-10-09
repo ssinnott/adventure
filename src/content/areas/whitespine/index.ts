@@ -11,6 +11,7 @@ import { SHEERPOINT_I8 } from './maps/sheerpoint_i8.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
+import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const AREA = {
@@ -19,7 +20,8 @@ export const AREA = {
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
-  quests: [],
+  // #56's four, 45 to 48 (#506).
+  quests: QUESTS,
   chapter: CHAPTER,
   // The range's: cold, the snow lying from the autumn to the late spring, the wind along the crest,
   // and cloud down in the vale.
