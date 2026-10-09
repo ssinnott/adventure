@@ -14,11 +14,19 @@ import { RIDERS_RIDE, sells } from '../../../crossings.ts';
 import { CURES } from '../../ashfall/items.ts';
 import { LIT } from '../../ashfall/maps/ember_stone.ts';
 import { ROAD_WEST } from '../../ashfall/maps/emberwaste_e10.ts';
+import { WATCH } from './wold_b9.ts';
 import { LION_ASKED, LION_HUNT, LION_LEFT, LION_TOLD, LION_TAKEN, LION_DOWN } from './wold_b8.ts';
 import { ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './wold_c8.ts';
 
 /** The flag the eldest's telling sets, said once: The Warning's step at Akordu keys on it (#531). */
 export const STORY = 'akordu_story';
+
+/**
+ * The Warning's done flag (#531), set at the horse-lines once the eldest and the watch are heard and the
+ * Glass is seen from the gap: the company turned east for Cinderport and the last crossing. Phase 1.5's
+ * chapter starts on it.
+ */
+export const ROAD_EAST = 'q_road_east';
 
 /**
  * The Horse That Came Back (#56's 51, #532): asked at the Chart House in Cinderport (`HORSE_ASKED`), the
@@ -121,8 +129,12 @@ export const WOLD_D8: MapDef = {
     // tethered apart, what sits it still until it is broken or taken, with the Rider who would break it.
     { kind: 'event', x: 7, y: 27, id: 'd8_lines', once: true, text: 'The horse-lines: a rope between stakes and sixty horses on it, heads down, a boy walking the line with water.' },
     // Where the ride sets a company down, once the Ember Stone is lit: Ashfall's chapter is done for a
-    // company that came west by the ride and never walked the road over the Cinder Hills (#518).
-    { kind: 'event', x: 9, y: 27, id: 'd8_east', once: true, after: { flag: LIT }, sets: ROAD_WEST, text: 'The Riders at the lines are looking east, over the hills, and none of them is talking.' },
+    // company that came west by the ride and never walked the road over the Cinder Hills (#518). Gone for
+    // one that came up the Scarp stair, whose Window the stair's head ends (#531).
+    { kind: 'event', x: 9, y: 27, id: 'd8_east', once: true, after: { flag: LIT }, until: { seen: 'wold_c8:c8_line' }, sets: ROAD_WEST, text: 'The Riders at the lines are looking east, over the hills, and none of them is talking.' },
+    // Back at the lines from the gap, the eldest and the watch heard: The Warning is done, the company
+    // turned east for the port and the last crossing (#531).
+    { kind: 'event', x: 8, y: 27, id: 'd8_turned', once: true, after: { flag: [STORY, WATCH], seen: 'wold_b9:b9_glass' }, sets: ROAD_EAST, text: 'A Rider at the lines looks at the white dust on your boots, and turns a saddled horse\'s head to the east.' },
     { kind: 'npc', x: 9, y: 26, name: 'A Rider at the lines', lines: [
       'A Rider checks a horse\'s feet at the end of the lines, a second horse saddled beside it.',
       '"East to the port, a day over the grass and the ash. We go at two, and we do not wait."',
