@@ -277,10 +277,24 @@ export const REACH_ZONES: readonly string[] = ['theglass', 'glacierfoot'];
 export interface PacedMap { def: MapDef; area: string; zone?: string }
 
 /**
+ * A map's place on the road, decided once for the pace check and the novelty check: the order of
+ * its area, or, where its floor is over its area's band (the Dead-Drop under the Tide Ship, 26 to
+ * 28 in Act II's isle), the order of the last area whose floor is at or under its own. A map with
+ * no floor, or an area with no band, stands where its area does.
+ */
+export function roadPlace(atlas: Atlas, defs: readonly MapDef[]): (area: string, def: Pick<MapDef, 'band'>) => number {
+  const order = (id: string): number => atlas.areas.find((a) => a.id === id)?.order ?? Infinity;
+  const bands = atlas.areas.map((a) => ({ order: a.order, band: areaBand(atlas, defs, a.id) })).filter((a): a is { order: number; band: [number, number] } => !!a.band);
+  return (area, def) => {
+    const own = order(area), top = bands.find((b) => b.order === own)?.band[1], floor = def.band?.[0];
+    if (floor === undefined || top === undefined || floor <= top) return own;
+    return Math.max(own, ...bands.filter((b) => b.band[0] <= floor).map((b) => b.order));
+  };
+}
+
+/**
  * The secret's pace (MONSTERS §2.2, #158): no machine on the road before the bottom of the Deep
- * Mines, and no Rift after Cairnmoor. A map's place on the road is its area's order; a map whose
- * floor is over its area's band (the Dead-Drop under the Tide Ship, 26 to 28 in Act II's isle)
- * takes the place of the last area whose floor is at or under its own. A machine stands only past
+ * Mines, and no Rift after Cairnmoor. A map stands at its `roadPlace`. A machine stands only past
  * the Kilns, or in the Kilns on the Deep Mines' last level (the highest-numbered `deep_mines` map);
  * with no Mines built, nowhere in the Kilns. A Rift is a tear, a group with a monster of the Rift's
  * kind, or a rift on the atlas, in an area past Cairnmoor. The reach is exempt.
@@ -288,18 +302,13 @@ export interface PacedMap { def: MapDef; area: string; zone?: string }
 export function paceFaults(maps: readonly PacedMap[], kindOf: (monster: string) => MonsterDef['kind'] | undefined, atlas: Atlas = ATLAS, defs: readonly MapDef[] = maps.map((m) => m.def), grid?: { zone: Int16Array; width: number; height: number }): string[] {
   const order = (id: string): number => atlas.areas.find((a) => a.id === id)?.order ?? Infinity;
   const KILNS = order('kilns'), CAIRNMOOR = order('cairnmoor');
-  const bands = atlas.areas.map((a) => ({ order: a.order, band: areaBand(atlas, defs, a.id) })).filter((a): a is { order: number; band: [number, number] } => !!a.band);
-  const placeOf = (m: PacedMap): number => {
-    const own = order(m.area), top = bands.find((b) => b.order === own)?.band[1], floor = m.def.band?.[0];
-    if (floor === undefined || top === undefined || floor <= top) return own;
-    return Math.max(own, ...bands.filter((b) => b.band[0] <= floor).map((b) => b.order));
-  };
+  const placeOf = roadPlace(atlas, defs);
   const mines = maps.map((m) => /^deep_mines(\d*)$/.exec(m.def.id)).filter((x): x is RegExpExecArray => !!x);
   const bottom = mines.length ? Math.max(...mines.map((x) => Number(x[1] || 0))) : null;
   const out: string[] = [];
   for (const m of maps) {
     if (m.zone && REACH_ZONES.includes(m.zone)) continue;
-    const at = placeOf(m), mine = /^deep_mines(\d*)$/.exec(m.def.id);
+    const at = placeOf(m.area, m.def), mine = /^deep_mines(\d*)$/.exec(m.def.id);
     const machineOk = at > KILNS || (at === KILNS && !!mine && bottom !== null && Number(mine[1] || 0) === bottom);
     for (const g of m.def.encounters ?? []) {
       const kinds = new Set(g.monsters.map(kindOf));
@@ -318,12 +327,21 @@ export function paceFaults(maps: readonly PacedMap[], kindOf: (monster: string) 
 /**
  * What is wrong with the areas' claims, in road order: a family with no module, a claim the area
  * does not use or an area earlier on the road already did, or an area after the first that claims
- * nothing new at all.
+ * nothing new at all. A map counts at its `roadPlace`, as in the pace check: in its folder's area,
+ * or, where its floor is over that area's band, in the last area whose floor is at or under its own
+ * (the Dead-Drop's knockers, keepers, heavy machines and calls stand with the Glasswold, after the
+ * Kilns', Rimewater's and Ashfall's claims); in its own where that area is not listed. An area's
+ * sites stay with it: a site is on the atlas, not on a map's floor.
  */
-export function noveltyFaults(areas: readonly Pick<Area, 'id' | 'maps' | 'atlas' | 'novel'>[], family: Map<string, readonly string[]>): string[] {
+export function noveltyFaults(areas: readonly Pick<Area, 'id' | 'maps' | 'atlas' | 'novel'>[], family: Map<string, readonly string[]>, atlas: Atlas = ATLAS, defs: readonly MapDef[] = areas.flatMap((a) => a.maps)): string[] {
   const out: string[] = [], before: Uses = { families: new Set(), terrain: new Set(), mechanics: new Set(), landmarks: new Set() };
+  const placeOf = roadPlace(atlas, defs), place = areas.map((a) => placeOf(a.id, {})), stand = areas.map(() => [] as MapDef[]);
+  areas.forEach((area, i) => area.maps.forEach((def) => {
+    const at = placeOf(area.id, def), j = at === place[i] ? i : place.indexOf(at);
+    stand[j < 0 ? i : j].push(def);
+  }));
   areas.forEach((area, i) => {
-    const here = uses(area, family);
+    const here = uses({ maps: stand[i], atlas: area.atlas }, family);
     const kinds = Object.keys(before) as (keyof Novelty)[];
     for (const k of kinds) for (const thing of area.novel[k]) {
       if (k === 'families' && !family.has(thing)) out.push(`${area.id}: the family '${thing}' has no module in src/ui/monsters/`);
@@ -663,7 +681,7 @@ export async function pillars(): Promise<void> {
   // Novelty: each area's claim of what is new in it exists, is used in it and is nowhere earlier on the road.
   const family = new Map((await familyModules()).map((m) => [m.name, m.kinds]));
   ok(family.size > 0, `the monster families: ${[...family.keys()].join(', ')}`);
-  const faults = noveltyFaults(AREAS, family);
+  const faults = noveltyFaults(AREAS, family, ATLAS, MAP_DEFS);
   for (const area of AREAS) {
     const mine = faults.filter((f) => f.startsWith(area.id + ':'));
     const claim = (Object.entries(area.novel) as [string, readonly string[]][]).filter(([, v]) => v.length).map(([k, v]) => `${k} ${v.join(', ')}`).join('; ');
@@ -682,6 +700,30 @@ export async function pillars(): Promise<void> {
     const scribe: MapDef = { id: 'fixture_scribe', name: 'Scribe fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['###', '#.#', '###'], features: [{ kind: 'sign', x: 1, y: 1, id: 'fx_vent', text: 'Words.', read: 'VENT.', marks: 'lava_tubes' }] };
     const novel = (maps: readonly MapDef[]): string[] => noveltyFaults([first, { ...second, maps: [...second.maps, ...maps], novel: { families: [], terrain: [], mechanics: ['sign:read', 'sign:marks'], landmarks: [] } }], family);
     ok(!novel([scribe]).length && novel([]).length === 2, 'an area that reads an inscription marking the map may claim both, and one with none may not');
+  }
+  {
+    // A map by its band (dead_drop §7): where its floor is over its area's band, it counts with the last
+    // area whose floor is at or under its own, as the pace check places it. Wrackholm (12 to 14) lists
+    // a level at 26, the Glasswold's; Ashfall (24 to 26) lies between.
+    const placeOf = roadPlace(ATLAS, MAP_DEFS), order = (id: string): number => ATLAS.areas.find((a) => a.id === id)?.order ?? -1;
+    ok(placeOf('wrackholm', { band: [26, 28] }) === order('glasswold') && placeOf('wrackholm', { band: [12, 13] }) === order('wrackholm') && placeOf('wrackholm', {}) === order('wrackholm'),
+      'a map of Wrackholm at 26 to 28 is placed with the Glasswold; one in its band, or with none, stays with Wrackholm');
+    const keeper = Object.values(MONSTERS).find((m) => family.get('keepers')?.includes(m.sprite))?.id ?? '';
+    const room = (id: string, band: [number, number], monsters: string[] = []): MapDef =>
+      ({ id, name: id, kind: 'dungeon', band, start: { x: 1, y: 1, facing: NORTH }, rows: ['###', '#.#', '###'], ...(monsters.length ? { encounters: [{ id: `${id}_g`, x: 1, y: 1, monsters }] } : {}) });
+    // What the check says of a claim of the keepers when the level at 26 alone has them, and when a room of Ashfall's has them too.
+    const claims = (claim: Record<string, Partial<Novelty>>, ashfall: MapDef[] = []): string[] => noveltyFaults([
+      { id: 'wrackholm', maps: [room('fx_hold', [12, 13]), room('fx_drop', [26, 27], [keeper])] },
+      { id: 'ashfall', maps: [room('fx_ash', [24, 25]), ...ashfall] },
+      { id: 'glasswold', maps: [room('fx_glass', [26, 27])] },
+    ].map((a) => ({ ...a, atlas: { zones: [], places: [], sites: [] }, novel: { families: [], terrain: [], mechanics: [], landmarks: [], ...claim[a.id] } })), family).filter((f) => f.includes("'keepers'"));
+    const keepers = { families: ['keepers'] }, only = (faults: string[], re: RegExp): boolean => faults.length === 1 && re.test(faults[0]);
+    const own = [room('fx_ash2', [24, 25], [keeper])];
+    ok(keeper !== '' && !claims({ glasswold: keepers }).length, 'the Glasswold may claim the keepers that a level of Wrackholm at 26 places: the level counts with it');
+    ok(only(claims({ wrackholm: keepers }), /^wrackholm: .*which it does not use/) && only(claims({ ashfall: keepers }), /^ashfall: .*which it does not use/),
+      'Wrackholm may not claim them, and nor may Ashfall between: neither places them, and neither is told they are on the road before');
+    ok(!claims({ ashfall: keepers }, own).length && only(claims({ ashfall: keepers, glasswold: keepers }, own), /^glasswold: .*on the road before it/),
+      'Ashfall, placing them in a room of its own, may claim them (the level is not before it), and the Glasswold then may not');
   }
 
   // The land agrees with the map: water and roads carry on across a zone map's edge.
