@@ -292,8 +292,8 @@ export const walkthrough: Walkthrough = (ok) => {
   // Up the Riders' track from D9's 16,0 over the seam onto D8's 16,31, the box's way in, and on into the
   // ring of tents under the mesa.
   w.world.travel('wold_d9', 16, 0, NORTH);
-  const up = w.world.move('forward');
-  ok(up.kind === 'moved' && w.world.zone?.id === 'wold_d8' && w.world.state.x === d8.x + 16 && w.world.state.y === d8.y + 31 && ch8(16, 31) === ':' && D8.start.x === 16 && D8.start.y === 31,
+  const up8 = w.world.move('forward');
+  ok(up8.kind === 'moved' && w.world.zone?.id === 'wold_d8' && w.world.state.x === d8.x + 16 && w.world.state.y === d8.y + 31 && ch8(16, 31) === ':' && D8.start.x === 16 && D8.start.y === 31,
     'up the Riders\' track from D9\'s 16,0 over the seam onto D8\'s 16,31, the box\'s way in, the track going on into the camp');
   listen(w);
   see(w, 'wold_d8:d8_akordu');
@@ -348,9 +348,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!west && west.to === 'wold_d8' && west.x === lines.landing?.x && west.y === lines.landing.y && west.fare === RIDERS_RIDE.fare, 'the Rider by Cinderport\'s gate sells it back to Akordu\'s horse-lines');
   r.world.travel('cinderport', port.x, port.y);
   r.party.gold = RIDERS_RIDE.fare;
-  const back = ride(west, r.world, r.party);
-  ok(back.taken && r.party.gold === 0 && r.world.zone?.id === 'wold_d8' && r.world.state.x === d8.x + lines.landing!.x && r.world.state.y === d8.y + lines.landing!.y && back.lines.join() === lines.label,
-    `and back, down among the white tents at the horse-lines (${back.lines.join(' ')})`);
+  const back8 = ride(west, r.world, r.party);
+  ok(back8.taken && r.party.gold === 0 && r.world.zone?.id === 'wold_d8' && r.world.state.x === d8.x + lines.landing!.x && r.world.state.y === d8.y + lines.landing!.y && back8.lines.join() === lines.label,
+    `and back, down among the white tents at the horse-lines (${back8.lines.join(' ')})`);
 
   // Under the mesa its watch-fire seen, a well and the Riders' shrine; the horse-lines and their well; the
   // horse that came back tethered apart, seen and no more (#56's 51, #532's), and the Rider who would break
@@ -395,8 +395,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const down = dug ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(dug && down.every((m) => m.kind === 'moved') && w.world.used('d8_hollow'), 'searched where the windlass stands bare, the dry well goes down to a walled shaft, and behind the wall a hollow in the rock, its things laid in rows');
   listen(w);
-  const hoard = feature8('d8_hoard');
-  ok(hoard.kind === 'chest' && hoard.gold > 0 && hoard.items.join() === 'leather_coat+2' && hoard.x === dry.x - 1 && hoard.y === dry.y - 1
+  const hoard8 = feature8('d8_hoard');
+  ok(hoard8.kind === 'chest' && hoard8.gold > 0 && hoard8.items.join() === 'leather_coat+2' && hoard8.x === dry.x - 1 && hoard8.y === dry.y - 1
     && item('leather_coat+2').ac === (item('leather_coat').ac ?? 0) + 2 && item('leather_coat+2').price <= CURVE.glasswold.price - 400,
-    `in the hoard ${hoard.kind === 'chest' ? hoard.gold : 0} gold and a Leather Coat +2, the Riders' own make, inside the band's window`);
+    `in the hoard ${hoard8.kind === 'chest' ? hoard8.gold : 0} gold and a Leather Coat +2, the Riders' own make, inside the band's window`);
 };
