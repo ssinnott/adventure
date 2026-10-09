@@ -656,13 +656,17 @@ export class World {
     return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters, back: e.back, leader: e.leader, under: e.under }; });
   }
 
-  /** Mark the groups dead; returns what the log says about it (each group's `slainText`). */
+  /**
+   * Mark the groups dead and set each one's flags as its `slainText` is said, into the party's flags
+   * as an event's are (#636); returns what the log says about it.
+   */
   killGroups(ids: string[]): string[] {
     const said: string[] = [];
     for (const id of ids) {
       const st = this.mapState.groups[id]; if (st) st.dead = this.state.minutes;
-      const text = this.map.encounters.find((e) => e.id === id)?.slainText;
-      if (text) said.push(text);
+      const def = this.map.encounters.find((e) => e.id === id);
+      if (def?.slainText) said.push(def.slainText);
+      for (const flag of [def?.sets ?? []].flat()) this.party.flags[flag] = 1;
     }
     return said;
   }

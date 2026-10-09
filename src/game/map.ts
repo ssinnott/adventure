@@ -316,6 +316,8 @@ export interface EncounterDef extends Presence {
   respawn?: number;
   /** Said in the log when the party beats the group: what its death changes. */
   slainText?: string;
+  /** Flags set as the party beats the group, with its `slainText`: what its death changes holds before the next step (#636). */
+  sets?: string | readonly string[];
   /**
    * A question put when the company comes beside the group, before the fight, as a person's is (the
    * giants' toll, MONSTERS §8.1, #544): its refusal starts the fight, and once another answer's

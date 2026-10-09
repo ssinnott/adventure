@@ -50,7 +50,12 @@
 // found from the stopped kiln. Kilnhaven's box (L6, #468): the branch on from M6 with nothing said,
 // to the gate in the town's wall; the milestone before it, counted along the roads; the coach yard;
 // the store's clerk; the box's groups won at its floor; and the bonded store found from the sealed
-// row. Then Kilnhaven (#469), in at L6's gate and out again: a company rests, buys the act's first
+// row. Kilnmouth's country (M4 and M5, #474): down out of M3's pines into M4, Kilnmouth named, its
+// west closed to a climber against L4; the drover at the shieling; the worms won at its floor; the
+// drovers' store found from the hearth's soot; the drovers' track from the shieling to M5's yard; in
+// off the smelter's ground into M5, the woman at the churn, the worms in the lime pits won, the loft
+// found from the swallows, the stream on from N5 to M6 and the world's end past the shingle.
+// Then Kilnhaven (#469), in at L6's gate and out again: a company rests, buys the act's first
 // step at the smith at a quarter more, open to it still when the Stone was taken, and trains to 19;
 // hears the harbourmaster read the manifests and the dwarf on the quay say where the corridors run,
 // and meets Tallis's man on the street; takes the ferry over to Saltmouth's quay and back, a save
@@ -129,6 +134,9 @@ const N6 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n6')!, M6 = MAP_DEFS.find((
 const DROVER = N6.features!.find((f) => f.kind === 'npc' && f.name === 'A drover') as Person;
 const FARMER = M6.features!.find((f) => f.kind === 'npc' && f.name.startsWith('A farmer')) as Person;
 const L6 = MAP_DEFS.find((d) => d.id === 'kilnmouth_l6')!;
+const M4 = MAP_DEFS.find((d) => d.id === 'kilnmouth_m4')!, M5 = MAP_DEFS.find((d) => d.id === 'kilnmouth_m5')!;
+const DROVER4 = M4.features!.find((f) => f.kind === 'npc' && f.name === 'A drover') as Person;
+const CHURN = M5.features!.find((f) => f.kind === 'npc' && f.name === 'A woman at a churn') as Person;
 const CLERK = L6.features!.find((f) => f.kind === 'npc' && f.name.startsWith('The store')) as Person;
 const CROSSING = 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.';
 const TOWN = MAP_DEFS.find((d) => d.id === 'anvilhall')!;
@@ -696,6 +704,80 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const robe = L6.features!.find((f) => f.kind === 'chest' && f.id === 'l6_store_chest');
   ok(robe?.kind === 'chest' && robe.items.includes('kiln_robe+1') && robe.x === 22 && robe.y === 12, 'among the crates for Cinderport and Sheer Point, a Kiln Robe +1');
+
+  // Kilnmouth's country (#474). Down out of M3's pines into M4, Kilnmouth's north: Kilnmouth named at
+  // the floor and nothing more. On its west the range's crag and the trees stand against L4's mountain,
+  // so not even a climber crosses there, and the road stays the only way between the two areas.
+  const m4 = out.zones.find((z) => z.id === 'kilnmouth_m4')!, m5 = out.zones.find((z) => z.id === 'kilnmouth_m5')!;
+  w.world.travel('ironfells_m3', 15, 29, SOUTH);
+  const intoM4: string[] = [];
+  for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnmouth_m4'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') intoM4.push(...r.messages); }
+  ok(w.world.zone?.id === 'kilnmouth_m4' && intoM4.includes('Kilnmouth.') && !intoM4.some((m) => m.includes('harder')), `the pines run down out of M3 into M4, and Kilnmouth is named (${intoM4.join(' / ') || 'nothing'})`);
+  listen(w);
+  ok(Array.from({ length: 31 }, (_, i) => out.passable(m4.x, m4.y + 1 + i, { climb: true })).every((p) => p !== 'ok'), 'M4\'s west edge is crag and trees against L4\'s range, and no climber crosses it');
+  see(w, 'kilnmouth_m4:m4_pines');
+
+  // The drover at the shieling, who keeps his cattle off the hills by the range; and the box's group won
+  // at its floor: the worms under those hills.
+  w.world.travel('kilnmouth_m4', DROVER4.x, DROVER4.y);
+  const graze = meet(DROVER4, w.party, heard(w.world, DROVER4)).text;
+  ok(graze.includes('by the range') && graze.includes('graze'), 'the drover at the shieling says the beasts will not graze the hills by the range, where the ground heaves');
+  for (const g of M4.encounters!) fight(w, `kilnmouth_m4:${g.id}`);
+
+  // The secret: the hearth under the knoll's rock face, its soot running into a crack; the search there
+  // and the drovers' store behind the face. Walked, waded, climbed or floated, never reached but
+  // through the face.
+  const droversStore = shut(m4, [22, 12], [22, 13], [22, 15]);
+  ok(droversStore.size > 600 && !droversStore.reached, `the drovers' store is shut but for the rock face: none of M4's ${droversStore.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'kilnmouth_m4:m4_hearth');
+  w.world.travel('kilnmouth_m4', 22, 12, SOUTH);
+  let faced = false;
+  for (let i = 0; i < 20 && !faced; i++) faced = w.world.search();
+  const intoStore = faced ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(faced && intoStore.every((r) => r.kind === 'moved') && w.world.used('m4_store'), 'searched at the hearth, the rock face gives, and the drovers\' store behind it can be walked into');
+  listen(w);
+  const crock = M4.features!.find((f) => f.kind === 'chest' && f.id === 'm4_store_chest');
+  ok(crock?.kind === 'chest' && crock.items.includes('elixir') && crock.gold === 150 && crock.x === 22 && crock.y === 15, 'in the drovers\' store, a crock with 150 gold and an Elixir');
+
+  // The drovers' track: from the shieling down to the old workings' ground on N4's edge, and on through
+  // M5's fields to the farmyard, dirt all the way.
+  const track = steps(m4.x + 27, m4.y + 10, (x, y) => out.at(x, y).ch === ':');
+  ok(track.has((m4.y + 25) * out.width + m4.x + 31) && track.has((m5.y + 8) * out.width + m5.x + 8), 'the drovers\' track runs from the shieling down to the old workings\' ground, and on through M5\'s fields to the farmyard');
+
+  // M5, Kilnmouth's farms: in off the smelter's ground by the drovers' track, the same land at the same
+  // floor, so nothing is said of it; the stream in from N5 and on into M6; past the west edge, cut L5,
+  // the world ends.
+  w.world.travel('kilnsheart_n5', 1, 3, WEST);
+  const offSmelter: string[] = [];
+  for (let i = 0; i < 4 && w.world.zone?.id !== 'kilnmouth_m5'; i++) { const r = w.world.move('forward'); if (r.kind === 'moved') offSmelter.push(...r.messages); }
+  ok(w.world.zone?.id === 'kilnmouth_m5' && offSmelter.includes('Kilnmouth.') && !offSmelter.some((m) => m.includes('harder')), `the drovers' track crosses from N5's smelter ground into M5, and Kilnmouth is named (${offSmelter.join(' / ') || 'nothing'})`);
+  listen(w);
+  ok(out.at(m5.x + 31, m5.y + 25).ch === '~' && out.at(m5.x + 32, m5.y + 25).ch === '~' && out.at(m5.x + 23, m5.y + 31).ch === '~' && out.at(m5.x + 23, m5.y + 32).ch === '~', 'the stream comes into M5 from N5 and runs on out into M6');
+  ok(out.passable(m5.x - 1, m5.y + 10) !== 'ok' && out.passable(m5.x - 1, m5.y + 28) !== 'ok', 'past M5\'s west edge, the range and the shingle, the world ends');
+  see(w, 'kilnmouth_m5:m5_track');
+
+  // The woman at the churn, whose gran knew the ground warm before the kilns; and the box's group won at
+  // its floor: the worms in the lime pits.
+  w.world.travel('kilnmouth_m5', CHURN.x, CHURN.y);
+  const warm = meet(CHURN, w.party, heard(w.world, CHURN)).text;
+  ok(warm.includes('warm') && warm.includes('kilns'), 'the woman at the churn says the ground was warm before ever there were kilns');
+  for (const g of M5.encounters!) fight(w, `kilnmouth_m5:${g.id}`);
+
+  // The secret: swallows in and out at a hole high in the barn's end, and none inside; the search at
+  // the end wall and the loft behind it. Walked, waded, climbed or floated, never reached but through
+  // the wall.
+  const loft = shut(m5, [11, 6], [12, 6], [14, 6]);
+  ok(loft.size > 600 && !loft.reached, `the loft is shut but for the barn's end wall: none of M5's ${loft.size} squares walked, waded, climbed or floated reaches it`);
+  see(w, 'kilnmouth_m5:m5_swallows');
+  see(w, 'kilnmouth_m5:m5_barn');
+  w.world.travel('kilnmouth_m5', 11, 6, EAST);
+  let walled = false;
+  for (let i = 0; i < 20 && !walled; i++) walled = w.world.search();
+  const inLoft = walled ? [w.world.move('forward'), w.world.move('forward')] : [];
+  ok(walled && inLoft.every((r) => r.kind === 'moved') && w.world.used('m5_loft'), 'searched at the barn\'s end wall, it gives, and the loft behind it can be walked into');
+  listen(w);
+  const loftBox = M5.features!.find((f) => f.kind === 'chest' && f.id === 'm5_loft_chest');
+  ok(loftBox?.kind === 'chest' && loftBox.items.includes('elixir') && loftBox.gold === 200 && loftBox.x === 14 && loftBox.y === 6, 'under the nests, a strongbox with 200 gold and an Elixir');
 
   kilnhaven(ok);
   anvilhall(w, ok);

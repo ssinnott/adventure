@@ -249,11 +249,12 @@ made once in the systems lane and first spent by the area named, which waits for
 | A light seen past the fog | a monster carrying a light is seen a square further than the weather allows (wanted, not needed) | the Downs | the lampmen |
 | The Core's clock | the last fight counts rounds to the light going out | the Core | STORY.md, Act Five |
 | A question first | `choice` on a group: a person's question, put before the fight; the refusal fights, and an answer of gold, an item or a flag stands the group aside | Thornmark's ogre (#56's 13); the Whitespine | the ogre's bargain; the giants' toll |
+| A flag on the fall | `sets` on a group: flags set as it falls, with its `slainText`, so what its death changes holds before the next step | the Kilns | the Warden of the Anvil, whose fall closes the tear |
 
 Built: `level` (#31); `kind`, `look`, `when`, `until` and `after` (#41); ranks and morale (#160);
 elements, casting and drain (#161); regeneration, curse and calls (#537), sweep (#545) and stone and
 its cure (#546), each with the gate bot's answer, a drain of spell points' with #541; a question
-first (#544), the bot refusing it. Still to come: a light seen past the fog and the Core's clock.
+first (#544), the bot refusing it; a flag on the fall (#636). Still to come: a light seen past the fog and the Core's clock.
 
 Decided by delegate for #537, each the owner's to overturn:
 
@@ -401,6 +402,20 @@ Decided by delegate for #546, each the owner's to overturn:
 7. **The company carries one draught from 25** (`KIT`, `tools/harness.ts`; the gate's company is
    harness's): with Absolve in two hands it is drunk only when both are glassed, so no figure the
    checks print moves. The ladder check holds the kit to Ashfall's window.
+
+Decided by delegate for #636, each the owner's to overturn:
+
+1. **A group's flags are set in `killGroups`, as its `slainText` is said:** into the party's flags,
+   where an event's go, so they hold from the blow, before the next step and the next look at the
+   map, and are saved as any flag is. Nothing new is saved.
+2. **`sets` does not make a group a guardian:** one that comes back and falls again sets what is set
+   already, so the structure check's guardians stay those with a quest item or a `slainText`. The
+   Warden of the Anvil has its `slainText`.
+3. **The checks count a group's flags with its question's** (`groupFlags`), so a condition on one
+   names something real and `src/content/shipped.json` keeps it.
+4. **The Kilns claims the mechanic (`encounter:sets`)** when the Warden of the Anvil sets
+   `q_anvil_closed`, the first group on the road to set a flag: that, its step events and its doc
+   are #636's second pull request.
 
 ---
 
