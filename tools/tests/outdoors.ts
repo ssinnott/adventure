@@ -19,13 +19,10 @@ import { logLines } from '../../src/ui/frame.ts';
  * Zone maps laid before the map that joins them to the rest, and whose map that is: their squares
  * are reported as that issue's while none can be walked to, and fail once they all can, so the
  * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut.
- * Wrackholm's isle is reached by the smugglers' boat from Saltmouth (#177), a crossing's landing.
+ * Wrackholm's isle is reached by the smugglers' boat from Saltmouth (#177), a crossing's landing, and
+ * Ashfall, begun by sea (#443, call 6), by the Compact's ship to Cinderport and out at its gate (#512).
  */
-const CUT_OFF: Record<string, string> = {
-  // Ashfall is begun by sea (#443, call 6): G10 is reached through Cinderport's gate, where the Compact's
-  // ship and the Rider's ride come in (#547), until the Stair's foot joins it to the Whitespine (#510).
-  cindercoast_g10: '#512',
-};
+const CUT_OFF: Record<string, string> = {};
 
 export function outdoors(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
@@ -280,7 +277,7 @@ export function outdoors(): void {
   ok(northOf(i11) === 'ppp||' + 'p'.repeat(20) + '%%="%%%' && southOf(i11) === 'aaa^^pp||' + 'p'.repeat(17) + '%'.repeat(6) && westOf(i11) === 'ppppppp,' + 'a'.repeat(13) + ',' + 'a'.repeat(10)
     && [...Array(32).keys()].every((i) => [out.at(i11.x - 1, i11.y + i), out.at(i11.x + i, i11.y + 32), out.at(i11.x + i, i11.y - 1)].every((c) => c.ch === '%')),
     `I11's north edge is the pines, the Sheer, the trail at 27,0 and the Stone at 28,0 against I10, its west edge Ashfall's ground under the Sheer against H11 and its south edge the ash, the Sheer, the pines and the mountain against I12, past which the world ends (${northOf(i11)}; ${westOf(i11)}; ${southOf(i11)})`);
-  // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined to nothing yet (CUT_OFF): on
+  // Cinderport's box (G10, #511), Ashfall's first, begun by sea and joined overland to nothing yet: on
   // the north the vines, the road at column 3 up the wall's west side, Cinderport's wall, the stream
   // and the grass against G9's shore; on the south the ash either side of Fire Mountain's foot (the ring,
   // so the void) against G11; on the west the vines, the road out at rows 7 and 8 and the ash against

@@ -206,13 +206,13 @@ export const SMITH = '';
 /**
  * Act IV's rung (#542, docs/areas/ashfall.md §9), as Act III's and with one step: Cinderport's
  * armourer's, at 25. The Whitespine has no town and the Wold none, whose Riders buy here by the ride
- * (#547). Ashfall is planned, so every ware is owed to the town's box until the area is listed and
- * the armourer built; a plus on it is the boxes' to choose, off the ladder.
+ * (#547). Every ware is sold at the armourer (#512); a plus on it is the boxes' to choose, off the
+ * ladder.
  */
 export const ACT_IV: readonly Rung<'ashfall'>[] = [
   {
     level: 25, name: "Cinderport's armourer",
-    from: Object.fromEntries(ARMOURER.map((id) => [id, ['ashfall', '#512']])),
+    from: Object.fromEntries(ARMOURER.map((id) => [id, ['ashfall', '']])),
     classes: {
       knight: ['slag_mace', 'basalt_shield'], paladin: ['slag_mace', 'basalt_shield'], ranger: ['ashwood_bow', 'drakeskin'], barbarian: ['flamberge', 'drakeskin'],
       cleric: ['slag_mace', 'cinder_robe'], sorcerer: ['marlinspike', 'cinder_robe'], thief: ['marlinspike', 'drakeskin'], bard: ['marlinspike', 'drakeskin'],
@@ -223,9 +223,9 @@ export const ACT_IV: readonly Rung<'ashfall'>[] = [
 
 /**
  * Who sells the stone cure (#546): Cinderport's chandler (#512) and the Riders' trader at Akordu
- * (#526), the Wold having no temple nearer; each owed it while its area is planned.
+ * (#526), the Wold having no temple nearer; each owed it while its area is planned, '' once sold.
  */
-export const CURE_SOLD: readonly (readonly ['ashfall' | 'glasswold', string])[] = [['ashfall', '#512'], ['glasswold', '#526']];
+export const CURE_SOLD: readonly (readonly ['ashfall' | 'glasswold', string])[] = [['ashfall', ''], ['glasswold', '#526']];
 
 /** An item's kind: a hand weapon, a bow, armour or a shield. Only the same kind is bettered. */
 const kind = (d: ItemDef): string => (d.slot === 'weapon' ? (d.ranged ? 'bow' : 'hand') : d.slot);
@@ -344,7 +344,8 @@ export function ladder(): void {
   for (const id of CURES) for (const [area, whose] of CURE_SOLD) {
     const d = ITEMS[id], a = areaOf(area);
     ok(!!d && d.slot === 'none' && !!d.use?.cure?.includes('stoned') && d.price > 0 && d.price <= CURVE[area].price, `ware ${id} is a cure for stone within ${area}'s window (${d?.price} of ${CURVE[area].price} gold)`);
-    owed(!!a && a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && f.stock.includes(id))), `ware ${id} is sold in ${area}`, whose);
+    const sold = !!a && a.maps.some((m) => (m.features ?? []).some((f) => f.kind === 'shop' && f.stock.includes(id)));
+    if (whose) owed(sold, `ware ${id} is sold in ${area}`, whose); else ok(sold, `ware ${id} is sold in ${area}`);
   }
   for (const [at, ids] of KIT) {
     const area = CURE_SOLD.map(([x]) => x).find((k) => CURVE[k].band[0] <= at && at <= CURVE[k].band[1]);
